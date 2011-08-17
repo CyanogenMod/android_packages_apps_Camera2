@@ -1,0 +1,7 @@
+# Keep all classes extended from com.android.gallery3d.common.Entry
+# Since we annotate on the fields and use reflection to create SQL
+# according to those field.
+
+-keep class * extends com.android.gallery3d.common.Entry {
+    @com.android.gallery3d.common.Entry$Column <fields>;
+}

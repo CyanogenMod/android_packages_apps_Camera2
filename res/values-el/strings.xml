@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name" msgid="1928079047368929634">"Συλλογή"</string>
+    <string name="gadget_title" msgid="259405922673466798">"Πλαίσιο εικόνας"</string>
+    <string name="details_ms" msgid="940634969189855292">"%1$02d:%2$02d"</string>
+    <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
+    <string name="movie_view_label" msgid="3526526872644898229">"Πρόγραμμα αναπαραγωγής βίντεο"</string>
+    <string name="loading_video" msgid="4013492720121891585">"Φόρτωση βίντεο..."</string>
+    <string name="loading_image" msgid="1200894415793838191">"Φόρτωση εικόνας…"</string>
+    <string name="loading_account" msgid="928195413034552034">"Φόρτωση λογαριασμού..."</string>
+    <string name="resume_playing_title" msgid="8996677350649355013">"Συνέχιση βίντεο"</string>
+    <string name="resume_playing_message" msgid="5184414518126703481">"Συνέχιση αναπαραγωγής από το %s;"</string>
+    <string name="resume_playing_resume" msgid="3847915469173852416">"Συνέχιση αναπαραγωγής"</string>
+    <string name="loading" msgid="7038208555304563571">"Φόρτωση..."</string>
+    <string name="fail_to_load" msgid="2710120770735315683">"Απέτυχε η φόρτωση"</string>
+    <string name="no_thumbnail" msgid="284723185546429750">"Δεν υπάρχει μικρογραφία"</string>
+    <string name="resume_playing_restart" msgid="5471008499835769292">"Έναρξη από την αρχή"</string>
+    <string name="crop_save_text" msgid="8821167985419282305">"OΚ"</string>
+    <string name="multiface_crop_help" msgid="3127018992717032779">"Πατήστε σε ένα πρόσωπο για να ξεκινήσετε."</string>
+    <string name="saving_image" msgid="7270334453636349407">"Αποθήκευση εικόνας..."</string>
+    <string name="crop_label" msgid="521114301871349328">"Περικοπή εικόνας"</string>
+    <string name="select_image" msgid="7841406150484742140">"Επιλογή φωτογραφίας"</string>
+    <string name="select_video" msgid="4859510992798615076">"Επιλογή βίντεο"</string>
+    <string name="select_item" msgid="2257529413100472599">"Επιλογή αντικειμένων"</string>
+    <string name="select_album" msgid="4632641262236697235">"Επιλογή λευκωμάτων"</string>
+    <string name="select_group" msgid="9090385962030340391">"Επιλέξτε ομάδες"</string>
+    <string name="set_image" msgid="2331476809308010401">"Ορισμός εικόνας ως"</string>
+    <string name="wallpaper" msgid="9222901738515471972">"Ρύθμιση ταπετσαρίας, περιμένετε..."</string>
+    <string name="camera_setas_wallpaper" msgid="797463183863414289">"Ταπετσαρία"</string>
+    <string name="delete" msgid="2839695998251824487">"Διαγραφή"</string>
+    <string name="confirm_delete" msgid="5731757674837098707">"Επιβεβαίωση διαγραφής"</string>
+    <string name="cancel" msgid="3637516880917356226">"Ακύρωση"</string>
+    <string name="share" msgid="3619042788254195341">"Κοινή χρήση"</string>
+    <string name="select_all" msgid="8623593677101437957">"Επιλογή όλων"</string>
+    <string name="deselect_all" msgid="7397531298370285581">"Κατάργηση επιλογής όλων"</string>
+    <string name="slideshow" msgid="4355906903247112975">"Προβολή διαφανειών"</string>
+    <string name="details" msgid="8415120088556445230">"Λεπτομέρειες"</string>
+    <string name="switch_to_camera" msgid="7280111806675169992">"Φωτογραφική μηχανή"</string>
+  <plurals name="number_of_items_selected">
+    <item quantity="zero" msgid="2142579311530586258">"Επιλέχθηκαν %1$d"</item>
+    <item quantity="one" msgid="2478365152745637768">"Επιλέχθηκαν %1$d"</item>
+    <item quantity="other" msgid="754722656147810487">"Επιλέχθηκαν %1$d"</item>
+  </plurals>
+  <plurals name="number_of_albums_selected">
+    <item quantity="zero" msgid="749292746814788132">"Επιλέχθηκαν %1$d"</item>
+    <item quantity="one" msgid="6184377003099987825">"Επιλέχθηκαν %1$d"</item>
+    <item quantity="other" msgid="53105607141906130">"Επιλέχθηκαν %1$d"</item>
+  </plurals>
+  <plurals name="number_of_groups_selected">
+    <item quantity="zero" msgid="3466388370310869238">"Επιλέχθηκαν %1$d"</item>
+    <item quantity="one" msgid="5030162638216034260">"Επιλέχθηκαν %1$d"</item>
+    <item quantity="other" msgid="3512041363942842738">"Επιλέχθηκαν %1$d"</item>
+  </plurals>
+    <string name="show_on_map" msgid="6157544221201750980">"Εμφάνιση στον χάρτη"</string>
+    <string name="rotate_left" msgid="7412075232752726934">"Αριστερή περιστροφή"</string>
+    <string name="rotate_right" msgid="7340681085011826618">"Δεξιά περιστροφή"</string>
+    <string name="no_such_item" msgid="3161074758669642065">"Το αντικείμενο δεν βρέθηκε"</string>
+    <string name="edit" msgid="1502273844748580847">"Επεξεργασία"</string>
+    <string name="activity_not_found" msgid="3731390759313019518">"Δεν υπάρχει διαθέσιμη εφαρμογή"</string>
+    <string name="process_caching_requests" msgid="1076938190997999614">"Επεξεργασία αιτημάτων προσωρινής αποθήκευσης"</string>
+    <string name="caching_label" msgid="3244800874547101776">"Προσωρ. αποθ..."</string>
+    <string name="crop" msgid="7970750655414797277">"Περικοπή"</string>
+    <string name="set_as" msgid="3636764710790507868">"Ορισμός ως"</string>
+    <string name="video_err" msgid="7917736494827857757">"Δεν είναι δυνατή η αναπαραγωγή του βίντεο"</string>
+    <string name="group_by_location" msgid="316641628989023253">"Κατά τοποθεσία"</string>
+    <string name="group_by_time" msgid="9046168567717963573">"Κατά ώρα"</string>
+    <string name="group_by_tags" msgid="3568731317210676160">"Κατά ετικέτα"</string>
+    <string name="group_by_faces" msgid="1566351636227274906">"Κατά άτομα"</string>
+    <string name="group_by_album" msgid="1532818636053818958">"Κατά λεύκωμα"</string>
+    <string name="group_by_size" msgid="153766174950394155">"Κατά μέγεθος"</string>
+    <string name="untagged" msgid="7281481064509590402">"Χωρίς ετικέτα"</string>
+    <string name="no_location" msgid="2036710947563713111">"Δεν εμφανίζεται τοποθεσία"</string>
+    <string name="show_images_only" msgid="7263218480867672653">"Μόνο εικόνες"</string>
+    <string name="show_videos_only" msgid="3850394623678871697">"Μόνο βίντεο"</string>
+    <string name="show_all" msgid="4780647751652596980">"Εικόνες και βίντεο"</string>
+    <string name="appwidget_title" msgid="6410561146863700411">"Συλλογή φωτογραφιών"</string>
+    <string name="appwidget_empty_text" msgid="4123016777080388680">"Δεν υπάρχουν φωτογραφίες"</string>
+    <string name="crop_saved" msgid="4684933379430649946">"Η εικόνα αποκοπής αποθηκεύτηκε κατά τη λήψη"</string>
+    <string name="crop_not_saved" msgid="1438309290700431923">"Η εικόνα αποκοπής δεν έχει αποθηκευτεί"</string>
+    <string name="no_albums_alert" msgid="3459550423604532470">"Δεν υπάρχουν διαθέσιμα λευκώματα"</string>
+    <string name="empty_album" msgid="6307897398825514762">"Δεν υπάρχουν διαθέσιμες εικόνες/βίντεο"</string>
+    <string name="picasa_web_albums" msgid="5167008066827481663">"Λευκώματα Ιστού Picasa"</string>
+    <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"Διαθέσιμα εκτός σύνδεσης"</string>
+    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
+    <skip />
+    <string name="done" msgid="217672440064436595">"Τέλος"</string>
+    <string name="sequence_in_set" msgid="7235465319919457488">"%1$d από %2$d στοιχεία:"</string>
+    <string name="title" msgid="7622928349908052569">"Τίτλος"</string>
+    <string name="description" msgid="3016729318096557520">"Περιγραφή"</string>
+    <string name="time" msgid="1367953006052876956">"Ώρα"</string>
+    <string name="location" msgid="3432705876921618314">"Τοποθεσία"</string>
+    <string name="path" msgid="4725740395885105824">"Διαδρομή"</string>
+    <string name="width" msgid="9215847239714321097">"Πλάτος"</string>
+    <string name="height" msgid="3648885449443787772">"Ύψος"</string>
+    <string name="orientation" msgid="4958327983165245513">"Προσανατολισμός"</string>
+    <string name="duration" msgid="8160058911218541616">"Διάρκεια"</string>
+    <string name="mimetype" msgid="3518268469266183548">"Τύπος MIME"</string>
+    <string name="file_size" msgid="4670384449129762138">"Μέγ. αρχείου"</string>
+    <string name="maker" msgid="7921835498034236197">"Δημιουργός"</string>
+    <string name="model" msgid="8240207064064337366">"Μοντέλο"</string>
+    <string name="flash" msgid="2816779031261147723">"Φλας"</string>
+    <string name="aperture" msgid="5920657630303915195">"Διάφραγμα"</string>
+    <string name="focal_length" msgid="1291383769749877010">"Μήκος εστίασης"</string>
+    <string name="white_balance" msgid="8122534414851280901">"Ισορροπία λευκού"</string>
+    <string name="exposure_time" msgid="3146642210127439553">"Χρόνος έκθεσης"</string>
+    <string name="iso" msgid="5028296664327335940">"ISO"</string>
+    <string name="unit_mm" msgid="1125768433254329136">"χιλιοστά"</string>
+    <string name="manual" msgid="6608905477477607865">"Μη αυτόματο"</string>
+    <string name="auto" msgid="4296941368722892821">"Αυτόματο"</string>
+    <string name="flash_on" msgid="7891556231891837284">"Το φλας άναψε"</string>
+    <string name="flash_off" msgid="1445443413822680010">"Όχι φλας"</string>
+  <plurals name="make_albums_available_offline">
+    <item quantity="one" msgid="2955975726887896888">"Διάθεση λευκώματος εκτός σύνδεσης"</item>
+    <item quantity="other" msgid="6929905722448632886">"Διάθεση λευκωμάτων εκτός σύνδεσης"</item>
+  </plurals>
+    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Αυτό το αντικείμενο είναι αποθηκευμένο τοπικά και διαθέσιμο εκτός σύνδεσης."</string>
+    <string name="set_label_all_albums" msgid="3507256844918130594">"Όλα τα Λευκώματα"</string>
+    <string name="set_label_local_albums" msgid="5227548825039781">"Τοπικά Λευκώματα"</string>
+    <string name="set_label_mtp_devices" msgid="5779788799122828528">"Συσκευές MTP"</string>
+    <string name="set_label_picasa_albums" msgid="2736308697306982589">"Λευκώματα Picasa"</string>
+    <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> ελεύθερα"</string>
+    <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> ή μικρότερο"</string>
+    <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> ή μεγαλύτερο"</string>
+    <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> έως <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
+    <string name="Import" msgid="3985447518557474672">"Εισαγωγή"</string>
+    <string name="import_complete" msgid="1098450310074640619">"Εισαγ. ολοκληρώθηκε"</string>
+    <string name="import_fail" msgid="5205927625132482529">"Αποτυχία εισαγωγής"</string>
+    <string name="camera_connected" msgid="6984353643349303075">"Φωτογραφική μηχανή συνδεδεμένη"</string>
+    <string name="camera_disconnected" msgid="3683036560562699311">"Φωτογρ. μηχανή αποσυνδεδεμένη"</string>
+    <string name="click_import" msgid="6407959065464291972">"Αγγίξτε εδώ για να κάνετε εισαγωγή"</string>
+    <string name="widget_type_album" msgid="3245149644830731121">"Εικόνες από ένα λεύκωμα"</string>
+    <string name="widget_type_shuffle" msgid="8594622705019763768">"Τυχαία αναπ. όλων των εικόνων"</string>
+    <string name="widget_type_photo" msgid="8384174698965738770">"Επιλέξτε μια εικόνα"</string>
+    <string name="widget_type" msgid="7308564524449340985">"Τύπος γραφ. στοιχ."</string>
+    <string name="slideshow_dream_name" msgid="6915963319933437083">"Προβολή διαφανειών"</string>
+    <string name="cache_status_title" msgid="8414708919928621485">"Προαναζήτηση φωτογραφιών Picasa:"</string>
+    <string name="cache_status" msgid="7690438435538533106">"Λήψη <xliff:g id="NUMBER_0">%1$s</xliff:g> από <xliff:g id="NUMBER_1">%2$s</xliff:g> φωτογρ."</string>
+    <string name="cache_done" msgid="9194449192869777483">"Ολοκλήρωση λήψης"</string>
+    <string name="albums" msgid="7320787705180057947">"Άλμπουμ"</string>
+    <string name="times" msgid="2023033894889499219">"Φορές"</string>
+    <string name="locations" msgid="6649297994083130305">"Τοποθεσίες"</string>
+    <string name="people" msgid="4114003823747292747">"Άτομα"</string>
+    <string name="tags" msgid="5539648765482935955">"Ετικέτες"</string>
+    <string name="group_by" msgid="4308299657902209357">"Ομαδοποίηση κατά"</string>
+    <string name="settings" msgid="1534847740615665736">"Ρυθμίσεις"</string>
+    <string name="prefs_accounts" msgid="7942761992713671670">"Ρυθμίσεις λογαριασμού"</string>
+    <string name="prefs_data_usage" msgid="410592732727343215">"Ρυθμίσεις χρήσης δεδομένων"</string>
+    <string name="prefs_auto_upload" msgid="2467627128066665126">"Αυτόματη μεταφόρτωση"</string>
+    <string name="prefs_other_settings" msgid="6034181851440646681">"Άλλες ρυθμίσεις"</string>
+    <string name="about_gallery" msgid="8667445445883757255">"Σχετικά με το Gallery"</string>
+    <string name="sync_on_wifi_only" msgid="5795753226259399958">"Συγχρονισμός μόνο σε WiFi"</string>
+    <string name="helptext_auto_upload" msgid="133741242503097377">"Αυτόματη μεταφόρτωση όλων των ληφθέντων φωτογραφιών και βίντεο σε ιδιωτικό λεύκωμα ιστού picasa"</string>
+    <string name="enable_auto_upload" msgid="1586329406342131">"Ενεργοποίηση αυτόματης μεταφόρτωσης"</string>
+    <string name="photo_sync_is_on" msgid="1653898269297050634">"Συγχρ.φωτογρ.Google ΕΝΕΡΓΟΣ"</string>
+    <string name="photo_sync_is_off" msgid="6464193461664544289">"Συγχρ.φωτογρ.Google ΑΝΕΝΕΡΓΟΣ"</string>
+    <string name="helptext_photo_sync" msgid="8617245939103545623">"Αλλάξτε τις προτι.συγχρ.ή καταρ.λογαρ."</string>
+    <string name="view_photo_for_account" msgid="5608040380422337939">"Προβολή φωτογραφιών και βίντεο από λογαριασμό στο Gallery"</string>
+    <string name="add_account" msgid="4271217504968243974">"Προσθήκη λογαριασμού"</string>
+    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Λογαρ. για αυτόμ. μεταφόρτωση"</string>
+</resources>

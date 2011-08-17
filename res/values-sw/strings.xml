@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name" msgid="1928079047368929634">"Matunzio"</string>
+    <string name="gadget_title" msgid="259405922673466798">"Fremu ya picha"</string>
+    <string name="details_ms" msgid="940634969189855292">"%1$02d:%2$02d"</string>
+    <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
+    <!-- outdated translation 3697303290960009886 -->     <string name="movie_view_label" msgid="3526526872644898229">"Filamu"</string>
+    <string name="loading_video" msgid="4013492720121891585">"Inapakia video..."</string>
+    <string name="loading_image" msgid="1200894415793838191">"Inapakia picha…"</string>
+    <!-- no translation found for loading_account (928195413034552034) -->
+    <skip />
+    <string name="resume_playing_title" msgid="8996677350649355013">"Endelea na video"</string>
+    <string name="resume_playing_message" msgid="5184414518126703481">"Endelea kucheza kutoka %s?"</string>
+    <string name="resume_playing_resume" msgid="3847915469173852416">"Endelea kucheza"</string>
+    <string name="loading" msgid="7038208555304563571">"Inapakia…"</string>
+    <!-- outdated translation 3355969119388837437 -->     <string name="fail_to_load" msgid="2710120770735315683">"Imeshindwa kupakia"</string>
+    <!-- no translation found for no_thumbnail (284723185546429750) -->
+    <skip />
+    <string name="resume_playing_restart" msgid="5471008499835769292">"Anza tena"</string>
+    <string name="crop_save_text" msgid="8821167985419282305">"Sawa"</string>
+    <!-- no translation found for multiface_crop_help (3127018992717032779) -->
+    <skip />
+    <string name="saving_image" msgid="7270334453636349407">"Inahifadhi picha…"</string>
+    <!-- no translation found for crop_label (521114301871349328) -->
+    <skip />
+    <string name="select_image" msgid="7841406150484742140">"Chagua picha"</string>
+    <string name="select_video" msgid="4859510992798615076">"Chagua video"</string>
+    <string name="select_item" msgid="2257529413100472599">"Chagua vipengee"</string>
+    <string name="select_album" msgid="4632641262236697235">"Chagua albamu"</string>
+    <string name="select_group" msgid="9090385962030340391">"Chagua vikundi"</string>
+    <string name="set_image" msgid="2331476809308010401">"Weka picha kama"</string>
+    <!-- no translation found for wallpaper (9222901738515471972) -->
+    <skip />
+    <!-- no translation found for camera_setas_wallpaper (797463183863414289) -->
+    <skip />
+    <!-- no translation found for delete (2839695998251824487) -->
+    <skip />
+    <string name="confirm_delete" msgid="5731757674837098707">"Thibitisha Kufuta"</string>
+    <!-- no translation found for cancel (3637516880917356226) -->
+    <skip />
+    <string name="share" msgid="3619042788254195341">"Shiriki"</string>
+    <string name="select_all" msgid="8623593677101437957">"Chagua Zote"</string>
+    <string name="deselect_all" msgid="7397531298370285581">"Ghairi Zote Zilizochaguliwa"</string>
+    <string name="slideshow" msgid="4355906903247112975">"Onyesho la slaidi"</string>
+    <!-- no translation found for details (8415120088556445230) -->
+    <skip />
+    <!-- no translation found for switch_to_camera (7280111806675169992) -->
+    <skip />
+  <plurals name="number_of_items_selected">
+    <item quantity="zero" msgid="2142579311530586258">"% 1 $ d imechaguliwa"</item>
+    <item quantity="one" msgid="2478365152745637768">"% 1 $ d imechaguliwa"</item>
+    <item quantity="other" msgid="754722656147810487">"% 1 $ d imechaguliwa"</item>
+  </plurals>
+  <plurals name="number_of_albums_selected">
+    <item quantity="zero" msgid="749292746814788132">"% 1 $ d imechaguliwa"</item>
+    <item quantity="one" msgid="6184377003099987825">"% 1 $ d imechaguliwa"</item>
+    <item quantity="other" msgid="53105607141906130">"% 1 $ d imechaguliwa"</item>
+  </plurals>
+  <plurals name="number_of_groups_selected">
+    <item quantity="zero" msgid="3466388370310869238">"% 1 $ d imechaguliwa"</item>
+    <item quantity="one" msgid="5030162638216034260">"% 1 $ d imechaguliwa"</item>
+    <item quantity="other" msgid="3512041363942842738">"% 1 $ d imechaguliwa"</item>
+  </plurals>
+    <string name="show_on_map" msgid="6157544221201750980">"Onyesha kwenye ramani"</string>
+    <string name="rotate_left" msgid="7412075232752726934">"Zungusha Kushoto"</string>
+    <string name="rotate_right" msgid="7340681085011826618">"Zungusha Kulia"</string>
+    <string name="no_such_item" msgid="3161074758669642065">"Kipengee hakikupatikana"</string>
+    <!-- no translation found for edit (1502273844748580847) -->
+    <skip />
+    <string name="activity_not_found" msgid="3731390759313019518">"Hakuna programu inayopatikana"</string>
+    <string name="process_caching_requests" msgid="1076938190997999614">"Maombi ya Kuakibisha Mchakato"</string>
+    <string name="caching_label" msgid="3244800874547101776">"Inaakibisha..."</string>
+    <string name="crop" msgid="7970750655414797277">"Kata"</string>
+    <string name="set_as" msgid="3636764710790507868">"Weka kama"</string>
+    <string name="video_err" msgid="7917736494827857757">"Haiwezi kucheza video"</string>
+    <string name="group_by_location" msgid="316641628989023253">"Kwa mahali"</string>
+    <string name="group_by_time" msgid="9046168567717963573">"Kwa saa"</string>
+    <string name="group_by_tags" msgid="3568731317210676160">"Kwa lebo"</string>
+    <!-- no translation found for group_by_faces (1566351636227274906) -->
+    <skip />
+    <string name="group_by_album" msgid="1532818636053818958">"Kwa albamu"</string>
+    <!-- no translation found for group_by_size (153766174950394155) -->
+    <skip />
+    <string name="untagged" msgid="7281481064509590402">"Ondoa lebo"</string>
+    <string name="no_location" msgid="2036710947563713111">"Hakuna Mahali"</string>
+    <string name="show_images_only" msgid="7263218480867672653">"Picha tu"</string>
+    <string name="show_videos_only" msgid="3850394623678871697">"Video tu"</string>
+    <string name="show_all" msgid="4780647751652596980">"Picha na video"</string>
+    <!-- no translation found for appwidget_title (6410561146863700411) -->
+    <skip />
+    <!-- no translation found for appwidget_empty_text (4123016777080388680) -->
+    <skip />
+    <string name="crop_saved" msgid="4684933379430649946">"Picha iliyopunguzwa imehifadhiwa katika vipakuzi"</string>
+    <string name="crop_not_saved" msgid="1438309290700431923">"Picha iliyopunguzwa haijahifadhiwa"</string>
+    <string name="no_albums_alert" msgid="3459550423604532470">"Hakuna albamu zinazopatikana"</string>
+    <string name="empty_album" msgid="6307897398825514762">"Hakuna picha/video zinazopatikana"</string>
+    <string name="picasa_web_albums" msgid="5167008066827481663">"Albamu Wavuti za Picasa"</string>
+    <!-- no translation found for picasa_posts (1055151689217481993) -->
+    <skip />
+    <string name="make_available_offline" msgid="5157950985488297112">"Fanya ipatikane nje ya mkondo"</string>
+    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
+    <skip />
+    <string name="done" msgid="217672440064436595">"Kwisha"</string>
+    <string name="sequence_in_set" msgid="7235465319919457488">"Vipengee %1$d kati ya %2$d:"</string>
+    <string name="title" msgid="7622928349908052569">"Kichwa"</string>
+    <string name="description" msgid="3016729318096557520">"Maelezo"</string>
+    <string name="time" msgid="1367953006052876956">"Saa"</string>
+    <string name="location" msgid="3432705876921618314">"Mahali"</string>
+    <string name="path" msgid="4725740395885105824">"Njia"</string>
+    <string name="width" msgid="9215847239714321097">"Upana"</string>
+    <string name="height" msgid="3648885449443787772">"Urefu"</string>
+    <string name="orientation" msgid="4958327983165245513">"Uelekezo"</string>
+    <string name="duration" msgid="8160058911218541616">"Muda"</string>
+    <string name="mimetype" msgid="3518268469266183548">"Aina ya MIME"</string>
+    <string name="file_size" msgid="4670384449129762138">"Ukubwa wa Faili"</string>
+    <string name="maker" msgid="7921835498034236197">"Mtengenezaji"</string>
+    <string name="model" msgid="8240207064064337366">"Mtindo"</string>
+    <string name="flash" msgid="2816779031261147723">"Mmweko"</string>
+    <string name="aperture" msgid="5920657630303915195">"Kilango"</string>
+    <string name="focal_length" msgid="1291383769749877010">"Urefu wa Lengo"</string>
+    <string name="white_balance" msgid="8122534414851280901">"Usawazishaji wa Weupe"</string>
+    <string name="exposure_time" msgid="3146642210127439553">"Muda wa Mfichuo"</string>
+    <string name="iso" msgid="5028296664327335940">"ISO"</string>
+    <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
+    <string name="manual" msgid="6608905477477607865">"Mwongozo"</string>
+    <string name="auto" msgid="4296941368722892821">"Kiotomatiki"</string>
+    <string name="flash_on" msgid="7891556231891837284">"Mmweko umeanzishwa"</string>
+    <string name="flash_off" msgid="1445443413822680010">"Hakuna flash"</string>
+    <!-- no translation found for make_albums_available_offline:one (2955975726887896888) -->
+    <!-- no translation found for make_albums_available_offline:other (6929905722448632886) -->
+    <!-- no translation found for try_to_set_local_album_available_offline (2184754031896160755) -->
+    <skip />
+    <!-- no translation found for set_label_all_albums (3507256844918130594) -->
+    <skip />
+    <!-- no translation found for set_label_local_albums (5227548825039781) -->
+    <skip />
+    <!-- no translation found for set_label_mtp_devices (5779788799122828528) -->
+    <skip />
+    <!-- no translation found for set_label_picasa_albums (2736308697306982589) -->
+    <skip />
+    <!-- no translation found for free_space_format (8766337315709161215) -->
+    <skip />
+    <!-- no translation found for size_below (2074956730721942260) -->
+    <skip />
+    <!-- no translation found for size_above (5324398253474104087) -->
+    <skip />
+    <!-- no translation found for size_between (8779660840898917208) -->
+    <skip />
+    <!-- no translation found for Import (3985447518557474672) -->
+    <skip />
+    <!-- no translation found for import_complete (1098450310074640619) -->
+    <skip />
+    <!-- no translation found for import_fail (5205927625132482529) -->
+    <skip />
+    <!-- no translation found for camera_connected (6984353643349303075) -->
+    <skip />
+    <!-- no translation found for camera_disconnected (3683036560562699311) -->
+    <skip />
+    <!-- no translation found for click_import (6407959065464291972) -->
+    <skip />
+    <!-- no translation found for widget_type_album (3245149644830731121) -->
+    <skip />
+    <!-- no translation found for widget_type_shuffle (8594622705019763768) -->
+    <skip />
+    <!-- no translation found for widget_type_photo (8384174698965738770) -->
+    <skip />
+    <!-- no translation found for widget_type (7308564524449340985) -->
+    <skip />
+    <!-- no translation found for slideshow_dream_name (6915963319933437083) -->
+    <skip />
+    <!-- no translation found for cache_status_title (8414708919928621485) -->
+    <skip />
+    <!-- no translation found for cache_status (7690438435538533106) -->
+    <skip />
+    <!-- no translation found for cache_done (9194449192869777483) -->
+    <skip />
+    <!-- no translation found for albums (7320787705180057947) -->
+    <skip />
+    <string name="times" msgid="2023033894889499219">"Nyakati"</string>
+    <!-- no translation found for locations (6649297994083130305) -->
+    <skip />
+    <!-- no translation found for people (4114003823747292747) -->
+    <skip />
+    <!-- no translation found for tags (5539648765482935955) -->
+    <skip />
+    <string name="group_by" msgid="4308299657902209357">"Panga kwa kikundi na"</string>
+    <!-- no translation found for settings (1534847740615665736) -->
+    <skip />
+    <!-- no translation found for prefs_accounts (7942761992713671670) -->
+    <skip />
+    <!-- no translation found for prefs_data_usage (410592732727343215) -->
+    <skip />
+    <!-- no translation found for prefs_auto_upload (2467627128066665126) -->
+    <skip />
+    <!-- no translation found for prefs_other_settings (6034181851440646681) -->
+    <skip />
+    <!-- no translation found for about_gallery (8667445445883757255) -->
+    <skip />
+    <!-- no translation found for sync_on_wifi_only (5795753226259399958) -->
+    <skip />
+    <!-- no translation found for helptext_auto_upload (133741242503097377) -->
+    <skip />
+    <!-- no translation found for enable_auto_upload (1586329406342131) -->
+    <skip />
+    <!-- no translation found for photo_sync_is_on (1653898269297050634) -->
+    <skip />
+    <!-- no translation found for photo_sync_is_off (6464193461664544289) -->
+    <skip />
+    <!-- no translation found for helptext_photo_sync (8617245939103545623) -->
+    <skip />
+    <!-- no translation found for view_photo_for_account (5608040380422337939) -->
+    <skip />
+    <!-- no translation found for add_account (4271217504968243974) -->
+    <skip />
+    <!-- no translation found for auto_upload_chooser_title (1494524693870792948) -->
+    <skip />
+</resources>

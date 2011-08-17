@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name" msgid="1928079047368929634">"Galerie"</string>
+    <string name="gadget_title" msgid="259405922673466798">"Cadre d\'image"</string>
+    <string name="details_ms" msgid="940634969189855292">"%1$02d:%2$02d"</string>
+    <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
+    <string name="movie_view_label" msgid="3526526872644898229">"Lecteur Google Vidéos"</string>
+    <string name="loading_video" msgid="4013492720121891585">"Chargement de la vidéo..."</string>
+    <string name="loading_image" msgid="1200894415793838191">"Chargement de l\'image..."</string>
+    <string name="loading_account" msgid="928195413034552034">"Chargement infos compte..."</string>
+    <string name="resume_playing_title" msgid="8996677350649355013">"Reprendre la vidéo"</string>
+    <string name="resume_playing_message" msgid="5184414518126703481">"Reprendre la lecture à partir de %s ?"</string>
+    <string name="resume_playing_resume" msgid="3847915469173852416">"Reprendre la lecture"</string>
+    <string name="loading" msgid="7038208555304563571">"Chargement en cours…"</string>
+    <string name="fail_to_load" msgid="2710120770735315683">"Échec du chargement"</string>
+    <string name="no_thumbnail" msgid="284723185546429750">"Aucune vignette"</string>
+    <string name="resume_playing_restart" msgid="5471008499835769292">"Démarrer"</string>
+    <string name="crop_save_text" msgid="8821167985419282305">"OK"</string>
+    <string name="multiface_crop_help" msgid="3127018992717032779">"Appuyez sur un visage pour commencer."</string>
+    <string name="saving_image" msgid="7270334453636349407">"Enregistrement de l\'image"</string>
+    <string name="crop_label" msgid="521114301871349328">"Rogner l\'image"</string>
+    <string name="select_image" msgid="7841406150484742140">"Sélectionner photo"</string>
+    <string name="select_video" msgid="4859510992798615076">"Sélectionner vidéo"</string>
+    <string name="select_item" msgid="2257529413100472599">"Sélection élément(s)"</string>
+    <string name="select_album" msgid="4632641262236697235">"Sélection album(s)"</string>
+    <string name="select_group" msgid="9090385962030340391">"Sélection groupe(s)"</string>
+    <string name="set_image" msgid="2331476809308010401">"Utiliser l\'image comme"</string>
+    <string name="wallpaper" msgid="9222901738515471972">"Configuration du fond d\'écran en cours. Veuillez patienter..."</string>
+    <string name="camera_setas_wallpaper" msgid="797463183863414289">"Fond d\'écran"</string>
+    <string name="delete" msgid="2839695998251824487">"Supprimer"</string>
+    <string name="confirm_delete" msgid="5731757674837098707">"Confirmer la suppression"</string>
+    <string name="cancel" msgid="3637516880917356226">"Annuler"</string>
+    <string name="share" msgid="3619042788254195341">"Partager"</string>
+    <string name="select_all" msgid="8623593677101437957">"Tout sélectionner"</string>
+    <string name="deselect_all" msgid="7397531298370285581">"Tout désélectionner"</string>
+    <string name="slideshow" msgid="4355906903247112975">"Diaporama"</string>
+    <string name="details" msgid="8415120088556445230">"Détails"</string>
+    <string name="switch_to_camera" msgid="7280111806675169992">"Passer en mode Appareil photo"</string>
+    <!-- no translation found for number_of_items_selected:zero (2142579311530586258) -->
+    <!-- no translation found for number_of_items_selected:one (2478365152745637768) -->
+    <!-- no translation found for number_of_items_selected:other (754722656147810487) -->
+    <!-- no translation found for number_of_albums_selected:zero (749292746814788132) -->
+    <!-- no translation found for number_of_albums_selected:one (6184377003099987825) -->
+    <!-- no translation found for number_of_albums_selected:other (53105607141906130) -->
+    <!-- no translation found for number_of_groups_selected:zero (3466388370310869238) -->
+    <!-- no translation found for number_of_groups_selected:one (5030162638216034260) -->
+    <!-- no translation found for number_of_groups_selected:other (3512041363942842738) -->
+    <string name="show_on_map" msgid="6157544221201750980">"Afficher sur la carte"</string>
+    <string name="rotate_left" msgid="7412075232752726934">"Rotation à gauche"</string>
+    <string name="rotate_right" msgid="7340681085011826618">"Rotation à droite"</string>
+    <string name="no_such_item" msgid="3161074758669642065">"Élément introuvable"</string>
+    <string name="edit" msgid="1502273844748580847">"Modifier"</string>
+    <string name="activity_not_found" msgid="3731390759313019518">"Aucune application disponible"</string>
+    <string name="process_caching_requests" msgid="1076938190997999614">"Demandes de mise en cache en cours de traitement"</string>
+    <string name="caching_label" msgid="3244800874547101776">"Mise en cache..."</string>
+    <string name="crop" msgid="7970750655414797277">"Rogner"</string>
+    <string name="set_as" msgid="3636764710790507868">"Définir comme"</string>
+    <string name="video_err" msgid="7917736494827857757">"Impossible de lire la vidéo."</string>
+    <string name="group_by_location" msgid="316641628989023253">"Par emplacement"</string>
+    <string name="group_by_time" msgid="9046168567717963573">"Par date"</string>
+    <string name="group_by_tags" msgid="3568731317210676160">"Par tag"</string>
+    <string name="group_by_faces" msgid="1566351636227274906">"Par personnes"</string>
+    <string name="group_by_album" msgid="1532818636053818958">"Par album"</string>
+    <string name="group_by_size" msgid="153766174950394155">"Par taille"</string>
+    <string name="untagged" msgid="7281481064509590402">"Aucun tag"</string>
+    <string name="no_location" msgid="2036710947563713111">"Aucune donnée de localisation"</string>
+    <string name="show_images_only" msgid="7263218480867672653">"Images uniquement"</string>
+    <string name="show_videos_only" msgid="3850394623678871697">"Vidéos uniquement"</string>
+    <string name="show_all" msgid="4780647751652596980">"Images et vidéos"</string>
+    <string name="appwidget_title" msgid="6410561146863700411">"Galerie photos"</string>
+    <string name="appwidget_empty_text" msgid="4123016777080388680">"Aucune photo"</string>
+    <string name="crop_saved" msgid="4684933379430649946">"Image rognée enregistrée dans les téléchargements"</string>
+    <string name="crop_not_saved" msgid="1438309290700431923">"L\'image rognée n\'a pas été enregistrée."</string>
+    <string name="no_albums_alert" msgid="3459550423604532470">"Aucun album disponible"</string>
+    <string name="empty_album" msgid="6307897398825514762">"Aucune image/vidéo disponible"</string>
+    <string name="picasa_web_albums" msgid="5167008066827481663">"Picasa Albums Web"</string>
+    <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"Consulter hors connexion"</string>
+    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
+    <skip />
+    <string name="done" msgid="217672440064436595">"OK"</string>
+    <string name="sequence_in_set" msgid="7235465319919457488">"%1$d élément(s) sur %2$d :"</string>
+    <string name="title" msgid="7622928349908052569">"Titre"</string>
+    <string name="description" msgid="3016729318096557520">"Description"</string>
+    <string name="time" msgid="1367953006052876956">"Heure"</string>
+    <string name="location" msgid="3432705876921618314">"Lieu"</string>
+    <string name="path" msgid="4725740395885105824">"Chemin d\'accès"</string>
+    <string name="width" msgid="9215847239714321097">"Largeur"</string>
+    <string name="height" msgid="3648885449443787772">"Hauteur"</string>
+    <string name="orientation" msgid="4958327983165245513">"Orientation"</string>
+    <string name="duration" msgid="8160058911218541616">"Durée"</string>
+    <string name="mimetype" msgid="3518268469266183548">"Type MIME"</string>
+    <string name="file_size" msgid="4670384449129762138">"Taille fichier"</string>
+    <string name="maker" msgid="7921835498034236197">"Auteur"</string>
+    <string name="model" msgid="8240207064064337366">"Modèle"</string>
+    <string name="flash" msgid="2816779031261147723">"Flash"</string>
+    <string name="aperture" msgid="5920657630303915195">"Ouverture"</string>
+    <string name="focal_length" msgid="1291383769749877010">"Longueur focale"</string>
+    <string name="white_balance" msgid="8122534414851280901">"Balance blancs"</string>
+    <string name="exposure_time" msgid="3146642210127439553">"Temps exposition"</string>
+    <string name="iso" msgid="5028296664327335940">"ISO"</string>
+    <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
+    <string name="manual" msgid="6608905477477607865">"Manuel"</string>
+    <string name="auto" msgid="4296941368722892821">"Automatique"</string>
+    <string name="flash_on" msgid="7891556231891837284">"Flash déclenché"</string>
+    <string name="flash_off" msgid="1445443413822680010">"Flash désactivé"</string>
+  <plurals name="make_albums_available_offline">
+    <item quantity="one" msgid="2955975726887896888">"Activation consultation album hors connexion"</item>
+    <item quantity="other" msgid="6929905722448632886">"Activation consultation albums hors connexion"</item>
+  </plurals>
+    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Cet élément est stocké localement et disponible hors connexion."</string>
+    <string name="set_label_all_albums" msgid="3507256844918130594">"Tous les albums"</string>
+    <string name="set_label_local_albums" msgid="5227548825039781">"Albums stockés en local"</string>
+    <string name="set_label_mtp_devices" msgid="5779788799122828528">"Appareils MTP"</string>
+    <string name="set_label_picasa_albums" msgid="2736308697306982589">"Albums Picasa"</string>
+    <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> disponible(s)"</string>
+    <string name="size_below" msgid="2074956730721942260">"jusqu\'à <xliff:g id="SIZE">%1$s</xliff:g>"</string>
+    <string name="size_above" msgid="5324398253474104087">"au-delà de <xliff:g id="SIZE">%1$s</xliff:g>"</string>
+    <string name="size_between" msgid="8779660840898917208">"de <xliff:g id="MIN_SIZE">%1$s</xliff:g> à <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
+    <string name="Import" msgid="3985447518557474672">"Importer"</string>
+    <string name="import_complete" msgid="1098450310074640619">"Importation terminée"</string>
+    <string name="import_fail" msgid="5205927625132482529">"Échec de l\'importation."</string>
+    <string name="camera_connected" msgid="6984353643349303075">"Appareil photo connecté"</string>
+    <string name="camera_disconnected" msgid="3683036560562699311">"Appareil photo déconnecté"</string>
+    <string name="click_import" msgid="6407959065464291972">"Appuyez ici pour importer"</string>
+    <string name="widget_type_album" msgid="3245149644830731121">"Images d\'un album"</string>
+    <string name="widget_type_shuffle" msgid="8594622705019763768">"Affichage aléatoire des images"</string>
+    <string name="widget_type_photo" msgid="8384174698965738770">"Choisir une photo"</string>
+    <string name="widget_type" msgid="7308564524449340985">"Type de widget"</string>
+    <string name="slideshow_dream_name" msgid="6915963319933437083">"Diaporama"</string>
+    <string name="cache_status_title" msgid="8414708919928621485">"Prélecture des photos de Picasa :"</string>
+    <string name="cache_status" msgid="7690438435538533106">"Téléchargement de <xliff:g id="NUMBER_0">%1$s</xliff:g> photos sur <xliff:g id="NUMBER_1">%2$s</xliff:g>"</string>
+    <string name="cache_done" msgid="9194449192869777483">"Téléchargement terminé"</string>
+    <string name="albums" msgid="7320787705180057947">"Albums"</string>
+    <!-- no translation found for times (2023033894889499219) -->
+    <skip />
+    <string name="locations" msgid="6649297994083130305">"Lieux"</string>
+    <string name="people" msgid="4114003823747292747">"Contacts"</string>
+    <string name="tags" msgid="5539648765482935955">"Tags"</string>
+    <string name="group_by" msgid="4308299657902209357">"Regrouper par"</string>
+    <string name="settings" msgid="1534847740615665736">"Paramètres"</string>
+    <string name="prefs_accounts" msgid="7942761992713671670">"Paramètres du compte"</string>
+    <string name="prefs_data_usage" msgid="410592732727343215">"Paramètres d\'utilisation des données"</string>
+    <string name="prefs_auto_upload" msgid="2467627128066665126">"Transfert automatique"</string>
+    <string name="prefs_other_settings" msgid="6034181851440646681">"Autres paramètres"</string>
+    <string name="about_gallery" msgid="8667445445883757255">"À propos de la galerie"</string>
+    <string name="sync_on_wifi_only" msgid="5795753226259399958">"Synchronisation via Wi-Fi uniquement"</string>
+    <string name="helptext_auto_upload" msgid="133741242503097377">"Transférez automatiquement toutes vos photos et vos vidéos dans un album Web Picasa privé."</string>
+    <string name="enable_auto_upload" msgid="1586329406342131">"Activer le transfert automatique"</string>
+    <string name="photo_sync_is_on" msgid="1653898269297050634">"Synchro Google Photos ACTIVÉE"</string>
+    <string name="photo_sync_is_off" msgid="6464193461664544289">"Synchro Google Photos DÉSACTIVÉE"</string>
+    <string name="helptext_photo_sync" msgid="8617245939103545623">"Modifier préf. synchro ou supprimer compte"</string>
+    <string name="view_photo_for_account" msgid="5608040380422337939">"Afficher les photos et vidéos de ce compte dans la galerie"</string>
+    <string name="add_account" msgid="4271217504968243974">"Ajouter un compte"</string>
+    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Sélect. compte transfert auto"</string>
+</resources>
