@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name" msgid="1928079047368929634">"Galeria"</string>
+    <string name="gadget_title" msgid="259405922673466798">"Marc de la imatge"</string>
+    <string name="details_ms" msgid="940634969189855292">"%1$02d:%2$02d"</string>
+    <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
+    <string name="movie_view_label" msgid="3526526872644898229">"Reproductor de vídeo"</string>
+    <string name="loading_video" msgid="4013492720121891585">"S\'està carregant el vídeo..."</string>
+    <string name="loading_image" msgid="1200894415793838191">"S\'està carregant la imatge…"</string>
+    <string name="loading_account" msgid="928195413034552034">"S\'està carregant el compte???"</string>
+    <string name="resume_playing_title" msgid="8996677350649355013">"Reprèn el vídeo"</string>
+    <string name="resume_playing_message" msgid="5184414518126703481">"Voleu reprendre la reproducció a partir de %s?"</string>
+    <string name="resume_playing_resume" msgid="3847915469173852416">"Reprèn la reproducció"</string>
+    <string name="loading" msgid="7038208555304563571">"S\'està carregant…"</string>
+    <string name="fail_to_load" msgid="2710120770735315683">"S\'ha produït un error en carregar"</string>
+    <string name="no_thumbnail" msgid="284723185546429750">"No hi ha cap miniatura"</string>
+    <string name="resume_playing_restart" msgid="5471008499835769292">"Torna a començar"</string>
+    <string name="crop_save_text" msgid="8821167985419282305">"D\'acord"</string>
+    <string name="multiface_crop_help" msgid="3127018992717032779">"Piqueu en una cara per començar."</string>
+    <string name="saving_image" msgid="7270334453636349407">"S\'està desant la imatge..."</string>
+    <string name="crop_label" msgid="521114301871349328">"Escapça la imatge"</string>
+    <string name="select_image" msgid="7841406150484742140">"Selecciona una foto"</string>
+    <string name="select_video" msgid="4859510992798615076">"Selecciona un vídeo"</string>
+    <string name="select_item" msgid="2257529413100472599">"Selecciona elements"</string>
+    <string name="select_album" msgid="4632641262236697235">"Selecciona àlbums"</string>
+    <string name="select_group" msgid="9090385962030340391">"Selecciona grups"</string>
+    <string name="set_image" msgid="2331476809308010401">"Defineix la imatge com a"</string>
+    <string name="wallpaper" msgid="9222901738515471972">"S\'està definint el fons de pantalla…"</string>
+    <string name="camera_setas_wallpaper" msgid="797463183863414289">"Fons de pantalla"</string>
+    <string name="delete" msgid="2839695998251824487">"Suprimeix"</string>
+    <string name="confirm_delete" msgid="5731757674837098707">"Confirmeu la supressió"</string>
+    <string name="cancel" msgid="3637516880917356226">"Cancel·la"</string>
+    <string name="share" msgid="3619042788254195341">"Comparteix"</string>
+    <string name="select_all" msgid="8623593677101437957">"Selecciona-ho tot"</string>
+    <string name="deselect_all" msgid="7397531298370285581">"Anul·la la selecció de tot"</string>
+    <string name="slideshow" msgid="4355906903247112975">"Presentació de diapositives"</string>
+    <string name="details" msgid="8415120088556445230">"Detalls"</string>
+    <string name="switch_to_camera" msgid="7280111806675169992">"Canvia a la càmera"</string>
+  <plurals name="number_of_items_selected">
+    <item quantity="zero" msgid="2142579311530586258">"%1$d seleccionats"</item>
+    <item quantity="one" msgid="2478365152745637768">"%1$d seleccionat"</item>
+    <item quantity="other" msgid="754722656147810487">"%1$d seleccionats"</item>
+  </plurals>
+  <plurals name="number_of_albums_selected">
+    <item quantity="zero" msgid="749292746814788132">"%1$d seleccionats"</item>
+    <item quantity="one" msgid="6184377003099987825">"%1$d seleccionat"</item>
+    <item quantity="other" msgid="53105607141906130">"%1$d seleccionats"</item>
+  </plurals>
+  <plurals name="number_of_groups_selected">
+    <item quantity="zero" msgid="3466388370310869238">"%1$d seleccionats"</item>
+    <item quantity="one" msgid="5030162638216034260">"%1$d seleccionat"</item>
+    <item quantity="other" msgid="3512041363942842738">"%1$d seleccionats"</item>
+  </plurals>
+    <string name="show_on_map" msgid="6157544221201750980">"Mostra al mapa"</string>
+    <string name="rotate_left" msgid="7412075232752726934">"Gira a l\'esquerra"</string>
+    <string name="rotate_right" msgid="7340681085011826618">"Gira a la dreta"</string>
+    <string name="no_such_item" msgid="3161074758669642065">"No s\'ha trobat l\'element"</string>
+    <string name="edit" msgid="1502273844748580847">"Edita"</string>
+    <string name="activity_not_found" msgid="3731390759313019518">"Cap aplicació disponible"</string>
+    <string name="process_caching_requests" msgid="1076938190997999614">"Processa les sol·licituds de memòria cau"</string>
+    <string name="caching_label" msgid="3244800874547101776">"S\'està desant a la memòria cau..."</string>
+    <string name="crop" msgid="7970750655414797277">"Escapça"</string>
+    <string name="set_as" msgid="3636764710790507868">"Defineix com a"</string>
+    <string name="video_err" msgid="7917736494827857757">"No es pot reproduir el vídeo"</string>
+    <string name="group_by_location" msgid="316641628989023253">"Per ubicació"</string>
+    <string name="group_by_time" msgid="9046168567717963573">"Per temps"</string>
+    <string name="group_by_tags" msgid="3568731317210676160">"Per etiquetes"</string>
+    <string name="group_by_faces" msgid="1566351636227274906">"Per persones"</string>
+    <string name="group_by_album" msgid="1532818636053818958">"Per àlbum"</string>
+    <string name="group_by_size" msgid="153766174950394155">"Per mida"</string>
+    <string name="untagged" msgid="7281481064509590402">"Sense etiquetar"</string>
+    <string name="no_location" msgid="2036710947563713111">"Sense ubicació"</string>
+    <string name="show_images_only" msgid="7263218480867672653">"Només imatges"</string>
+    <string name="show_videos_only" msgid="3850394623678871697">"Només vídeos"</string>
+    <string name="show_all" msgid="4780647751652596980">"Imatges i vídeos"</string>
+    <string name="appwidget_title" msgid="6410561146863700411">"Galeria de fotos"</string>
+    <string name="appwidget_empty_text" msgid="4123016777080388680">"No hi ha cap foto"</string>
+    <string name="crop_saved" msgid="4684933379430649946">"La imatge retallada s\'ha desat a la baixada"</string>
+    <string name="crop_not_saved" msgid="1438309290700431923">"La imatge retallada no s\'ha desat"</string>
+    <string name="no_albums_alert" msgid="3459550423604532470">"No hi ha cap àlbum disponible"</string>
+    <string name="empty_album" msgid="6307897398825514762">"No hi ha imatges/vídeos disponibles"</string>
+    <string name="picasa_web_albums" msgid="5167008066827481663">"Àlbums web de Picasa"</string>
+    <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"Disponible fora de línia"</string>
+    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
+    <skip />
+    <string name="done" msgid="217672440064436595">"Fet"</string>
+    <string name="sequence_in_set" msgid="7235465319919457488">"%1$d de %2$d elements:"</string>
+    <string name="title" msgid="7622928349908052569">"Títol"</string>
+    <string name="description" msgid="3016729318096557520">"Descripció"</string>
+    <string name="time" msgid="1367953006052876956">"Hora"</string>
+    <string name="location" msgid="3432705876921618314">"Ubicació"</string>
+    <string name="path" msgid="4725740395885105824">"Camí"</string>
+    <string name="width" msgid="9215847239714321097">"Amplada"</string>
+    <string name="height" msgid="3648885449443787772">"Alçada"</string>
+    <string name="orientation" msgid="4958327983165245513">"Orientació"</string>
+    <string name="duration" msgid="8160058911218541616">"Durada"</string>
+    <string name="mimetype" msgid="3518268469266183548">"Tipus MIME"</string>
+    <string name="file_size" msgid="4670384449129762138">"Mida del fitxer"</string>
+    <string name="maker" msgid="7921835498034236197">"Creador"</string>
+    <string name="model" msgid="8240207064064337366">"Model"</string>
+    <string name="flash" msgid="2816779031261147723">"Flaix"</string>
+    <string name="aperture" msgid="5920657630303915195">"Obertura"</string>
+    <string name="focal_length" msgid="1291383769749877010">"Longitud focal"</string>
+    <string name="white_balance" msgid="8122534414851280901">"Balanç de blancs"</string>
+    <string name="exposure_time" msgid="3146642210127439553">"Temps d\'exposició"</string>
+    <string name="iso" msgid="5028296664327335940">"ISO"</string>
+    <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
+    <string name="manual" msgid="6608905477477607865">"Manual"</string>
+    <string name="auto" msgid="4296941368722892821">"Automàtic"</string>
+    <string name="flash_on" msgid="7891556231891837284">"Flaix disparat"</string>
+    <string name="flash_off" msgid="1445443413822680010">"Sense flaix"</string>
+  <plurals name="make_albums_available_offline">
+    <item quantity="one" msgid="2955975726887896888">"Fent que l\'àlbum estigui disponible fora de línia"</item>
+    <item quantity="other" msgid="6929905722448632886">"Fent que àlbums estiguin disponibles fora de línia"</item>
+  </plurals>
+    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"L\'element s\'ha emmagatzemat localment i està disponible fora de línia."</string>
+    <string name="set_label_all_albums" msgid="3507256844918130594">"Tots els àlbums"</string>
+    <string name="set_label_local_albums" msgid="5227548825039781">"Àlbums locals"</string>
+    <string name="set_label_mtp_devices" msgid="5779788799122828528">"Dispositius MTP"</string>
+    <string name="set_label_picasa_albums" msgid="2736308697306982589">"Àlbums de Picasa"</string>
+    <string name="free_space_format" msgid="8766337315709161215">"Lliure: <xliff:g id="BYTES">%s</xliff:g>"</string>
+    <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> o menys"</string>
+    <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> o més"</string>
+    <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> a <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
+    <string name="Import" msgid="3985447518557474672">"Importa"</string>
+    <string name="import_complete" msgid="1098450310074640619">"Import. completada"</string>
+    <string name="import_fail" msgid="5205927625132482529">"Error d\'importació"</string>
+    <string name="camera_connected" msgid="6984353643349303075">"S\'ha connectat la càmera"</string>
+    <string name="camera_disconnected" msgid="3683036560562699311">"S\'ha desconnectat la càmera"</string>
+    <string name="click_import" msgid="6407959065464291972">"Toca aquí per importar"</string>
+    <string name="widget_type_album" msgid="3245149644830731121">"Imatges d\'un àlbum"</string>
+    <string name="widget_type_shuffle" msgid="8594622705019763768">"Barreja totes les imatges"</string>
+    <string name="widget_type_photo" msgid="8384174698965738770">"Tria una imatge"</string>
+    <string name="widget_type" msgid="7308564524449340985">"Tipus de widget"</string>
+    <string name="slideshow_dream_name" msgid="6915963319933437083">"Pres. diapositives"</string>
+    <string name="cache_status_title" msgid="8414708919928621485">"Obtenció prèvia de fotos de Picasa:"</string>
+    <string name="cache_status" msgid="7690438435538533106">"Baixada de <xliff:g id="NUMBER_0">%1$s</xliff:g> de <xliff:g id="NUMBER_1">%2$s</xliff:g> fotos"</string>
+    <string name="cache_done" msgid="9194449192869777483">"Baixada completada"</string>
+    <string name="albums" msgid="7320787705180057947">"Àlbums"</string>
+    <string name="times" msgid="2023033894889499219">"Vegades"</string>
+    <string name="locations" msgid="6649297994083130305">"Ubicacions"</string>
+    <string name="people" msgid="4114003823747292747">"Persones"</string>
+    <string name="tags" msgid="5539648765482935955">"Etiquetes"</string>
+    <string name="group_by" msgid="4308299657902209357">"Agrupa per"</string>
+    <!-- no translation found for settings (1534847740615665736) -->
+    <skip />
+    <string name="prefs_accounts" msgid="7942761992713671670">"Configuració del compte"</string>
+    <string name="prefs_data_usage" msgid="410592732727343215">"Configuració de l\'ús de dades"</string>
+    <string name="prefs_auto_upload" msgid="2467627128066665126">"Càrrega automàtica"</string>
+    <string name="prefs_other_settings" msgid="6034181851440646681">"Altres paràmetres de configuració"</string>
+    <string name="about_gallery" msgid="8667445445883757255">"Quant a la Galeria"</string>
+    <string name="sync_on_wifi_only" msgid="5795753226259399958">"Sincronització només amb connexió Wi-Fi"</string>
+    <string name="helptext_auto_upload" msgid="133741242503097377">"Penja automàticament totes les fotos i els vídeos que facis a un àlbum privat d\'Àlbums web de Picasa"</string>
+    <string name="enable_auto_upload" msgid="1586329406342131">"Activa la càrrega automàtica"</string>
+    <string name="photo_sync_is_on" msgid="1653898269297050634">"Sincron. fotos Google ACTIVADA"</string>
+    <string name="photo_sync_is_off" msgid="6464193461664544289">"Sinc. fotos Google DESACTIVADA"</string>
+    <string name="helptext_photo_sync" msgid="8617245939103545623">"Canvia les pref. de sinc. o elimina aquest compte"</string>
+    <string name="view_photo_for_account" msgid="5608040380422337939">"Visualitza fotos i vídeos d\'aquest compte a la Galeria"</string>
+    <string name="add_account" msgid="4271217504968243974">"Afegeix un compte"</string>
+    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Tria compte càrrega automàtica"</string>
+</resources>

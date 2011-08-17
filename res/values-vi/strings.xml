@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name" msgid="1928079047368929634">"Thư viện"</string>
+    <string name="gadget_title" msgid="259405922673466798">"Khung ảnh"</string>
+    <string name="details_ms" msgid="940634969189855292">"%1$02d:%2$02d"</string>
+    <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
+    <string name="movie_view_label" msgid="3526526872644898229">"Trình phát video"</string>
+    <string name="loading_video" msgid="4013492720121891585">"Đang tải video..."</string>
+    <string name="loading_image" msgid="1200894415793838191">"Đang tải ảnh…"</string>
+    <string name="loading_account" msgid="928195413034552034">"Đang tải tài khoản???"</string>
+    <string name="resume_playing_title" msgid="8996677350649355013">"Tiếp tục video"</string>
+    <string name="resume_playing_message" msgid="5184414518126703481">"Tiếp tục phát từ %s ?"</string>
+    <string name="resume_playing_resume" msgid="3847915469173852416">"Tiếp tục phát"</string>
+    <string name="loading" msgid="7038208555304563571">"Đang tải…"</string>
+    <string name="fail_to_load" msgid="2710120770735315683">"Không thể tải"</string>
+    <string name="no_thumbnail" msgid="284723185546429750">"Không có hình thu nhỏ"</string>
+    <string name="resume_playing_restart" msgid="5471008499835769292">"Bắt đầu lại"</string>
+    <string name="crop_save_text" msgid="8821167985419282305">"Ok"</string>
+    <string name="multiface_crop_help" msgid="3127018992717032779">"Nhấn vào một khuôn mặt để bắt đầu"</string>
+    <string name="saving_image" msgid="7270334453636349407">"Đang lưu ảnh…"</string>
+    <string name="crop_label" msgid="521114301871349328">"Cắt ảnh"</string>
+    <string name="select_image" msgid="7841406150484742140">"Chọn ảnh"</string>
+    <string name="select_video" msgid="4859510992798615076">"Chọn video"</string>
+    <string name="select_item" msgid="2257529413100472599">"Chọn (các) mục"</string>
+    <string name="select_album" msgid="4632641262236697235">"Chọn (các) anbom"</string>
+    <string name="select_group" msgid="9090385962030340391">"Chọn (các) nhóm"</string>
+    <string name="set_image" msgid="2331476809308010401">"Đặt ảnh làm"</string>
+    <string name="wallpaper" msgid="9222901738515471972">"Đang đặt hình nền, vui lòng đợi…"</string>
+    <string name="camera_setas_wallpaper" msgid="797463183863414289">"Hình nền"</string>
+    <string name="delete" msgid="2839695998251824487">"Xoá"</string>
+    <string name="confirm_delete" msgid="5731757674837098707">"Xác nhận Xoá"</string>
+    <string name="cancel" msgid="3637516880917356226">"Hủy"</string>
+    <string name="share" msgid="3619042788254195341">"Chia sẻ"</string>
+    <string name="select_all" msgid="8623593677101437957">"Chọn Tất cả"</string>
+    <string name="deselect_all" msgid="7397531298370285581">"Bỏ chọn tất cả"</string>
+    <string name="slideshow" msgid="4355906903247112975">"Trình chiếu"</string>
+    <string name="details" msgid="8415120088556445230">"Chi tiết"</string>
+    <string name="switch_to_camera" msgid="7280111806675169992">"Chuyển sang máy ảnh"</string>
+  <plurals name="number_of_items_selected">
+    <item quantity="zero" msgid="2142579311530586258">"%1$d mục được chọn"</item>
+    <item quantity="one" msgid="2478365152745637768">"%1$d mục được chọn"</item>
+    <item quantity="other" msgid="754722656147810487">"%1$d mục được chọn"</item>
+  </plurals>
+  <plurals name="number_of_albums_selected">
+    <item quantity="zero" msgid="749292746814788132">"%1$d anbom được chọn"</item>
+    <item quantity="one" msgid="6184377003099987825">"%1$d anbom được chọn"</item>
+    <item quantity="other" msgid="53105607141906130">"%1$d anbom được chọn"</item>
+  </plurals>
+  <plurals name="number_of_groups_selected">
+    <item quantity="zero" msgid="3466388370310869238">"%1$d nhóm được chọn"</item>
+    <item quantity="one" msgid="5030162638216034260">"%1$d nhóm được chọn"</item>
+    <item quantity="other" msgid="3512041363942842738">"%1$d nhóm được chọn"</item>
+  </plurals>
+    <string name="show_on_map" msgid="6157544221201750980">"Hiển thị trên bản đồ"</string>
+    <string name="rotate_left" msgid="7412075232752726934">"Xoay Trái"</string>
+    <string name="rotate_right" msgid="7340681085011826618">"Xoay Phải"</string>
+    <string name="no_such_item" msgid="3161074758669642065">"Không tìm thấy mục nào"</string>
+    <string name="edit" msgid="1502273844748580847">"Chỉnh sửa"</string>
+    <string name="activity_not_found" msgid="3731390759313019518">"Không có ứng dụng nào sẵn có"</string>
+    <string name="process_caching_requests" msgid="1076938190997999614">"Xử lý yêu cầu bộ nhớ cache"</string>
+    <string name="caching_label" msgid="3244800874547101776">"Đang lưu vào bộ nhớ cache..."</string>
+    <string name="crop" msgid="7970750655414797277">"Cắt"</string>
+    <string name="set_as" msgid="3636764710790507868">"Đặt làm"</string>
+    <string name="video_err" msgid="7917736494827857757">"Không thể phát video"</string>
+    <string name="group_by_location" msgid="316641628989023253">"Theo vị trí"</string>
+    <string name="group_by_time" msgid="9046168567717963573">"Theo thời gian"</string>
+    <string name="group_by_tags" msgid="3568731317210676160">"Theo thẻ"</string>
+    <string name="group_by_faces" msgid="1566351636227274906">"Theo người"</string>
+    <string name="group_by_album" msgid="1532818636053818958">"Theo anbom"</string>
+    <string name="group_by_size" msgid="153766174950394155">"Theo kích thước"</string>
+    <string name="untagged" msgid="7281481064509590402">"Không được gắn thẻ"</string>
+    <string name="no_location" msgid="2036710947563713111">"Không có vị trí nào"</string>
+    <string name="show_images_only" msgid="7263218480867672653">"Chỉ hình ảnh"</string>
+    <string name="show_videos_only" msgid="3850394623678871697">"Chỉ video"</string>
+    <string name="show_all" msgid="4780647751652596980">"Hình ảnh và video"</string>
+    <string name="appwidget_title" msgid="6410561146863700411">"Thư viện ảnh"</string>
+    <string name="appwidget_empty_text" msgid="4123016777080388680">"Không có ảnh nào"</string>
+    <string name="crop_saved" msgid="4684933379430649946">"Ảnh bị cắt đã được lưu vào thư mục tải xuống"</string>
+    <string name="crop_not_saved" msgid="1438309290700431923">"Ảnh bị cắt chưa được lưu"</string>
+    <string name="no_albums_alert" msgid="3459550423604532470">"Không có anbom nào"</string>
+    <string name="empty_album" msgid="6307897398825514762">"Không có hình ảnh/video nào sẵn có"</string>
+    <string name="picasa_web_albums" msgid="5167008066827481663">"Anbom Web Picasa"</string>
+    <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"Làm cho sẵn có khi ngoại tuyến"</string>
+    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
+    <skip />
+    <string name="done" msgid="217672440064436595">"Xong"</string>
+    <string name="sequence_in_set" msgid="7235465319919457488">"%1$d/%2$d mục:"</string>
+    <string name="title" msgid="7622928349908052569">"Tiêu đề"</string>
+    <string name="description" msgid="3016729318096557520">"Mô tả"</string>
+    <string name="time" msgid="1367953006052876956">"Thời gian"</string>
+    <string name="location" msgid="3432705876921618314">"Vị trí"</string>
+    <string name="path" msgid="4725740395885105824">"Đường dẫn"</string>
+    <string name="width" msgid="9215847239714321097">"Chiều rộng"</string>
+    <string name="height" msgid="3648885449443787772">"Chiều cao"</string>
+    <string name="orientation" msgid="4958327983165245513">"Hướng"</string>
+    <string name="duration" msgid="8160058911218541616">"Thời lượng"</string>
+    <string name="mimetype" msgid="3518268469266183548">"Loại MIME"</string>
+    <string name="file_size" msgid="4670384449129762138">"Kích thước tệp"</string>
+    <string name="maker" msgid="7921835498034236197">"Trình tạo"</string>
+    <string name="model" msgid="8240207064064337366">"Mẫu"</string>
+    <string name="flash" msgid="2816779031261147723">"Flash"</string>
+    <string name="aperture" msgid="5920657630303915195">"Khẩu độ"</string>
+    <string name="focal_length" msgid="1291383769749877010">"Tiêu cự"</string>
+    <string name="white_balance" msgid="8122534414851280901">"Cân bằng trắng"</string>
+    <string name="exposure_time" msgid="3146642210127439553">"T/g phơi sáng"</string>
+    <string name="iso" msgid="5028296664327335940">"ISO"</string>
+    <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
+    <string name="manual" msgid="6608905477477607865">"Thủ công"</string>
+    <string name="auto" msgid="4296941368722892821">"Tự động"</string>
+    <string name="flash_on" msgid="7891556231891837284">"Sử dụng flash"</string>
+    <string name="flash_off" msgid="1445443413822680010">"Không có flash"</string>
+  <plurals name="make_albums_available_offline">
+    <item quantity="one" msgid="2955975726887896888">"Tải xuống anbom để xem ở chế độ ngoại tuyến"</item>
+    <item quantity="other" msgid="6929905722448632886">"Tải xuống anbom để xem ở chế độ ngoại tuyến"</item>
+  </plurals>
+    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Mục này được lưu cục bộ và khả dụng ngoại tuyến."</string>
+    <string name="set_label_all_albums" msgid="3507256844918130594">"Tất cả anbom"</string>
+    <string name="set_label_local_albums" msgid="5227548825039781">"Anbom cục bộ"</string>
+    <string name="set_label_mtp_devices" msgid="5779788799122828528">"Thiết bị MTP"</string>
+    <string name="set_label_picasa_albums" msgid="2736308697306982589">"Anbom Picasa"</string>
+    <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> trống"</string>
+    <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> trở xuống"</string>
+    <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> hoặc cao hơn"</string>
+    <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> tới <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
+    <string name="Import" msgid="3985447518557474672">"Nhập"</string>
+    <string name="import_complete" msgid="1098450310074640619">"Nhập xong"</string>
+    <string name="import_fail" msgid="5205927625132482529">"Nhập không thành công"</string>
+    <string name="camera_connected" msgid="6984353643349303075">"Đã kết nối máy ảnh"</string>
+    <string name="camera_disconnected" msgid="3683036560562699311">"Đã ngắt kết nối máy ảnh"</string>
+    <string name="click_import" msgid="6407959065464291972">"Chạm vào đây để nhập"</string>
+    <string name="widget_type_album" msgid="3245149644830731121">"Hình ảnh từ anbom"</string>
+    <string name="widget_type_shuffle" msgid="8594622705019763768">"Hiển thị ngẫu nhiên tất cả hình ảnh"</string>
+    <string name="widget_type_photo" msgid="8384174698965738770">"Chọn một hình ảnh"</string>
+    <string name="widget_type" msgid="7308564524449340985">"Loại tiện ích con"</string>
+    <string name="slideshow_dream_name" msgid="6915963319933437083">"Trình chiếu"</string>
+    <string name="cache_status_title" msgid="8414708919928621485">"Tìm nạp trước ảnh picasa:"</string>
+    <string name="cache_status" msgid="7690438435538533106">"Tải xuống <xliff:g id="NUMBER_0">%1$s</xliff:g> trong tổng số <xliff:g id="NUMBER_1">%2$s</xliff:g> ảnh"</string>
+    <string name="cache_done" msgid="9194449192869777483">"Tải xuống hoàn tất"</string>
+    <string name="albums" msgid="7320787705180057947">"Anbom"</string>
+    <string name="times" msgid="2023033894889499219">"Lần"</string>
+    <string name="locations" msgid="6649297994083130305">"Địa điểm"</string>
+    <string name="people" msgid="4114003823747292747">"Mọi người"</string>
+    <string name="tags" msgid="5539648765482935955">"Thẻ"</string>
+    <string name="group_by" msgid="4308299657902209357">"Nhóm theo"</string>
+    <!-- no translation found for settings (1534847740615665736) -->
+    <skip />
+    <string name="prefs_accounts" msgid="7942761992713671670">"Cài đặt tài khoản"</string>
+    <string name="prefs_data_usage" msgid="410592732727343215">"Cài đặt sử dụng dữ liệu"</string>
+    <string name="prefs_auto_upload" msgid="2467627128066665126">"Tự động tải lên"</string>
+    <string name="prefs_other_settings" msgid="6034181851440646681">"Cài đặt khác"</string>
+    <string name="about_gallery" msgid="8667445445883757255">"Giới thiệu về thư viện"</string>
+    <string name="sync_on_wifi_only" msgid="5795753226259399958">"Chỉ đồng bộ hóa trên WiFi"</string>
+    <string name="helptext_auto_upload" msgid="133741242503097377">"Tự động tải tất cả ảnh và video bạn chụp hoặc quay lên anbom web picasa riêng tư"</string>
+    <string name="enable_auto_upload" msgid="1586329406342131">"Bật tự động tải lên"</string>
+    <string name="photo_sync_is_on" msgid="1653898269297050634">"Đồng bộ hóa ảnh trên Google đã BẬT"</string>
+    <string name="photo_sync_is_off" msgid="6464193461664544289">"Đồng bộ hóa ảnh trên Google đã Tắt"</string>
+    <string name="helptext_photo_sync" msgid="8617245939103545623">"Thay đổi tùy chọn đồng bộ hóa hoặc xóa tài khoản này"</string>
+    <string name="view_photo_for_account" msgid="5608040380422337939">"Xem ảnh và video từ tài khoản này trong Thư viện"</string>
+    <string name="add_account" msgid="4271217504968243974">"Thêm tài khoản"</string>
+    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Chọn tài khoản tự động tải lên"</string>
+</resources>

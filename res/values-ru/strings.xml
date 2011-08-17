@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name" msgid="1928079047368929634">"Галерея"</string>
+    <string name="gadget_title" msgid="259405922673466798">"Рамка фотографии"</string>
+    <string name="details_ms" msgid="940634969189855292">"%1$02d:%2$02d"</string>
+    <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
+    <string name="movie_view_label" msgid="3526526872644898229">"Видеопроигрыватель"</string>
+    <string name="loading_video" msgid="4013492720121891585">"Загрузка видео…"</string>
+    <string name="loading_image" msgid="1200894415793838191">"Загрузка изображения..."</string>
+    <string name="loading_account" msgid="928195413034552034">"Загрузка аккаунта..."</string>
+    <string name="resume_playing_title" msgid="8996677350649355013">"Продолжение просмотра видео"</string>
+    <string name="resume_playing_message" msgid="5184414518126703481">"Продолжить воспроизведение с %s?"</string>
+    <string name="resume_playing_resume" msgid="3847915469173852416">"Продолжить воспроизведение"</string>
+    <string name="loading" msgid="7038208555304563571">"Идет загрузка…"</string>
+    <string name="fail_to_load" msgid="2710120770735315683">"Не удалось загрузить"</string>
+    <string name="no_thumbnail" msgid="284723185546429750">"Нет уменьшенного изображения"</string>
+    <string name="resume_playing_restart" msgid="5471008499835769292">"Начать с начала"</string>
+    <string name="crop_save_text" msgid="8821167985419282305">"ОК"</string>
+    <string name="multiface_crop_help" msgid="3127018992717032779">"Нажмите лицо, чтобы начать."</string>
+    <string name="saving_image" msgid="7270334453636349407">"Сохранение картинки..."</string>
+    <string name="crop_label" msgid="521114301871349328">"Обрезать фотографию"</string>
+    <string name="select_image" msgid="7841406150484742140">"Выберите фотографию"</string>
+    <string name="select_video" msgid="4859510992798615076">"Выберите видео"</string>
+    <string name="select_item" msgid="2257529413100472599">"Выберите объекты"</string>
+    <string name="select_album" msgid="4632641262236697235">"Выберите альбомы"</string>
+    <string name="select_group" msgid="9090385962030340391">"Выберите группы"</string>
+    <string name="set_image" msgid="2331476809308010401">"Установить картинку как"</string>
+    <string name="wallpaper" msgid="9222901738515471972">"Установка обоев, подождите..."</string>
+    <string name="camera_setas_wallpaper" msgid="797463183863414289">"Обои"</string>
+    <string name="delete" msgid="2839695998251824487">"Удалить"</string>
+    <string name="confirm_delete" msgid="5731757674837098707">"Подтвердить удаление"</string>
+    <string name="cancel" msgid="3637516880917356226">"Отмена"</string>
+    <string name="share" msgid="3619042788254195341">"Отправить"</string>
+    <string name="select_all" msgid="8623593677101437957">"Все"</string>
+    <string name="deselect_all" msgid="7397531298370285581">"Ни одного"</string>
+    <string name="slideshow" msgid="4355906903247112975">"Слайд-шоу"</string>
+    <string name="details" msgid="8415120088556445230">"Сведения"</string>
+    <string name="switch_to_camera" msgid="7280111806675169992">"Переключиться на камеру"</string>
+    <!-- no translation found for number_of_items_selected:zero (2142579311530586258) -->
+    <!-- no translation found for number_of_items_selected:one (2478365152745637768) -->
+    <!-- no translation found for number_of_items_selected:other (754722656147810487) -->
+    <!-- no translation found for number_of_albums_selected:zero (749292746814788132) -->
+    <!-- no translation found for number_of_albums_selected:one (6184377003099987825) -->
+    <!-- no translation found for number_of_albums_selected:other (53105607141906130) -->
+    <!-- no translation found for number_of_groups_selected:zero (3466388370310869238) -->
+    <!-- no translation found for number_of_groups_selected:one (5030162638216034260) -->
+    <!-- no translation found for number_of_groups_selected:other (3512041363942842738) -->
+    <string name="show_on_map" msgid="6157544221201750980">"Показать на карте"</string>
+    <string name="rotate_left" msgid="7412075232752726934">"Повернуть влево"</string>
+    <string name="rotate_right" msgid="7340681085011826618">"Повернуть вправо"</string>
+    <string name="no_such_item" msgid="3161074758669642065">"Файл не найден"</string>
+    <string name="edit" msgid="1502273844748580847">"Изменить"</string>
+    <string name="activity_not_found" msgid="3731390759313019518">"Нет доступных приложений"</string>
+    <string name="process_caching_requests" msgid="1076938190997999614">"Запросы на кэширование процессов"</string>
+    <string name="caching_label" msgid="3244800874547101776">"Кэширование..."</string>
+    <string name="crop" msgid="7970750655414797277">"Обрезать"</string>
+    <string name="set_as" msgid="3636764710790507868">"Установить как"</string>
+    <string name="video_err" msgid="7917736494827857757">"Не удается воспроизвести видео"</string>
+    <string name="group_by_location" msgid="316641628989023253">"По местоположению"</string>
+    <string name="group_by_time" msgid="9046168567717963573">"По времени"</string>
+    <string name="group_by_tags" msgid="3568731317210676160">"По тегам"</string>
+    <string name="group_by_faces" msgid="1566351636227274906">"По людям"</string>
+    <string name="group_by_album" msgid="1532818636053818958">"По альбомам"</string>
+    <string name="group_by_size" msgid="153766174950394155">"По размеру"</string>
+    <string name="untagged" msgid="7281481064509590402">"Без тегов"</string>
+    <string name="no_location" msgid="2036710947563713111">"Местоположение неизвестно"</string>
+    <string name="show_images_only" msgid="7263218480867672653">"Только изображения"</string>
+    <string name="show_videos_only" msgid="3850394623678871697">"Только видео"</string>
+    <string name="show_all" msgid="4780647751652596980">"Изображения и видео"</string>
+    <string name="appwidget_title" msgid="6410561146863700411">"Фотогалерея"</string>
+    <string name="appwidget_empty_text" msgid="4123016777080388680">"Нет фотографий"</string>
+    <string name="crop_saved" msgid="4684933379430649946">"Кадрированное изображение сохранено в \"Загрузки\""</string>
+    <string name="crop_not_saved" msgid="1438309290700431923">"Кадрированное изображение не сохранено"</string>
+    <string name="no_albums_alert" msgid="3459550423604532470">"Нет доступных альбомов"</string>
+    <string name="empty_album" msgid="6307897398825514762">"Нет доступных изображений и видео"</string>
+    <string name="picasa_web_albums" msgid="5167008066827481663">"Веб-альбомы Picasa"</string>
+    <string name="picasa_posts" msgid="1055151689217481993">"Живая лента Google"</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"Сделать доступным офлайн"</string>
+    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
+    <skip />
+    <string name="done" msgid="217672440064436595">"Готово"</string>
+    <string name="sequence_in_set" msgid="7235465319919457488">"%1$d из %2$d:"</string>
+    <string name="title" msgid="7622928349908052569">"Название"</string>
+    <string name="description" msgid="3016729318096557520">"Описание"</string>
+    <string name="time" msgid="1367953006052876956">"Время"</string>
+    <string name="location" msgid="3432705876921618314">"Местоположение"</string>
+    <string name="path" msgid="4725740395885105824">"Путь"</string>
+    <string name="width" msgid="9215847239714321097">"Ширина"</string>
+    <string name="height" msgid="3648885449443787772">"Высота"</string>
+    <string name="orientation" msgid="4958327983165245513">"Ориентация"</string>
+    <string name="duration" msgid="8160058911218541616">"Длительность"</string>
+    <string name="mimetype" msgid="3518268469266183548">"Тип MIME"</string>
+    <string name="file_size" msgid="4670384449129762138">"Размер файла"</string>
+    <string name="maker" msgid="7921835498034236197">"Автор:"</string>
+    <string name="model" msgid="8240207064064337366">"Модель"</string>
+    <string name="flash" msgid="2816779031261147723">"Вспышка"</string>
+    <string name="aperture" msgid="5920657630303915195">"Диафрагма"</string>
+    <string name="focal_length" msgid="1291383769749877010">"Фокус. расст."</string>
+    <string name="white_balance" msgid="8122534414851280901">"Баланс белого"</string>
+    <string name="exposure_time" msgid="3146642210127439553">"Выдержка"</string>
+    <string name="iso" msgid="5028296664327335940">"ISO"</string>
+    <string name="unit_mm" msgid="1125768433254329136">"мм"</string>
+    <string name="manual" msgid="6608905477477607865">"Вручную"</string>
+    <string name="auto" msgid="4296941368722892821">"Авто"</string>
+    <string name="flash_on" msgid="7891556231891837284">"Со вспышкой"</string>
+    <string name="flash_off" msgid="1445443413822680010">"Без вспышки"</string>
+  <plurals name="make_albums_available_offline">
+    <item quantity="one" msgid="2955975726887896888">"Загрузка автономного альбома"</item>
+    <item quantity="other" msgid="6929905722448632886">"Загрузка автономной коллекции альбомов"</item>
+  </plurals>
+    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Это содержание хранится на устройстве и доступно в автономном режиме."</string>
+    <string name="set_label_all_albums" msgid="3507256844918130594">"Все альбомы"</string>
+    <string name="set_label_local_albums" msgid="5227548825039781">"Офлайн-альбомы"</string>
+    <string name="set_label_mtp_devices" msgid="5779788799122828528">"MTP-устройства"</string>
+    <string name="set_label_picasa_albums" msgid="2736308697306982589">"Альбомы Picasa"</string>
+    <string name="free_space_format" msgid="8766337315709161215">"Свободно: <xliff:g id="BYTES">%s</xliff:g>"</string>
+    <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> или менее"</string>
+    <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> или более"</string>
+    <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> – <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
+    <string name="Import" msgid="3985447518557474672">"Импорт"</string>
+    <string name="import_complete" msgid="1098450310074640619">"Импорт завершен"</string>
+    <string name="import_fail" msgid="5205927625132482529">"Ошибка импорта"</string>
+    <string name="camera_connected" msgid="6984353643349303075">"Камера подключена"</string>
+    <string name="camera_disconnected" msgid="3683036560562699311">"Камера отключена"</string>
+    <string name="click_import" msgid="6407959065464291972">"Нажмите здесь, чтобы начать импорт"</string>
+    <string name="widget_type_album" msgid="3245149644830731121">"Изображения из альбома"</string>
+    <string name="widget_type_shuffle" msgid="8594622705019763768">"Перемешать все изображения"</string>
+    <string name="widget_type_photo" msgid="8384174698965738770">"Выбрать картинку"</string>
+    <string name="widget_type" msgid="7308564524449340985">"Тип виджета"</string>
+    <string name="slideshow_dream_name" msgid="6915963319933437083">"Слайд-шоу"</string>
+    <string name="cache_status_title" msgid="8414708919928621485">"Предвыборка фотографий Picasa:"</string>
+    <string name="cache_status" msgid="7690438435538533106">"Загружено фотографий: <xliff:g id="NUMBER_0">%1$s</xliff:g> из <xliff:g id="NUMBER_1">%2$s</xliff:g>"</string>
+    <string name="cache_done" msgid="9194449192869777483">"Загрузка завершена"</string>
+    <string name="albums" msgid="7320787705180057947">"Альбомы"</string>
+    <!-- no translation found for times (2023033894889499219) -->
+    <skip />
+    <string name="locations" msgid="6649297994083130305">"Места"</string>
+    <string name="people" msgid="4114003823747292747">"Люди"</string>
+    <string name="tags" msgid="5539648765482935955">"Теги"</string>
+    <string name="group_by" msgid="4308299657902209357">"Группировать по"</string>
+    <string name="settings" msgid="1534847740615665736">"Настройки"</string>
+    <string name="prefs_accounts" msgid="7942761992713671670">"Настройки аккаунта"</string>
+    <string name="prefs_data_usage" msgid="410592732727343215">"Настройки использования данных"</string>
+    <string name="prefs_auto_upload" msgid="2467627128066665126">"Автозагрузка"</string>
+    <string name="prefs_other_settings" msgid="6034181851440646681">"Другие настройки"</string>
+    <string name="about_gallery" msgid="8667445445883757255">"О галерее"</string>
+    <string name="sync_on_wifi_only" msgid="5795753226259399958">"Синхронизация только через Wi-Fi"</string>
+    <string name="helptext_auto_upload" msgid="133741242503097377">"Автозагрузка фотографий и видеороликов в личный веб-альбом Picasa"</string>
+    <string name="enable_auto_upload" msgid="1586329406342131">"Включить автозагрузку"</string>
+    <string name="photo_sync_is_on" msgid="1653898269297050634">"Синхронизация фото включена"</string>
+    <string name="photo_sync_is_off" msgid="6464193461664544289">"Синхронизация фото отключена"</string>
+    <string name="helptext_photo_sync" msgid="8617245939103545623">"Настройка синхр. или удаление аккаунта"</string>
+    <string name="view_photo_for_account" msgid="5608040380422337939">"Просмотр фотографий и видеороликов этого аккаунта в галерее"</string>
+    <string name="add_account" msgid="4271217504968243974">"Добавить аккаунт"</string>
+    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Аккаунт для автозагрузки"</string>
+</resources>

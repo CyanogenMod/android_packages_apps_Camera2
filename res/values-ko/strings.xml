@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name" msgid="1928079047368929634">"갤러리"</string>
+    <string name="gadget_title" msgid="259405922673466798">"사진 액자"</string>
+    <string name="details_ms" msgid="940634969189855292">"%1$02d:%2$02d"</string>
+    <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
+    <string name="movie_view_label" msgid="3526526872644898229">"동영상 플레이어"</string>
+    <string name="loading_video" msgid="4013492720121891585">"동영상 로드 중..."</string>
+    <string name="loading_image" msgid="1200894415793838191">"이미지 로드 중…"</string>
+    <string name="loading_account" msgid="928195413034552034">"계정 로드 중..."</string>
+    <string name="resume_playing_title" msgid="8996677350649355013">"동영상 다시 시작"</string>
+    <string name="resume_playing_message" msgid="5184414518126703481">"%s부터 이어서 보시겠습니까?"</string>
+    <string name="resume_playing_resume" msgid="3847915469173852416">"이어서 보기"</string>
+    <string name="loading" msgid="7038208555304563571">"로드 중..."</string>
+    <string name="fail_to_load" msgid="2710120770735315683">"로드 실패"</string>
+    <string name="no_thumbnail" msgid="284723185546429750">"미리보기 이미지 없음"</string>
+    <string name="resume_playing_restart" msgid="5471008499835769292">"처음부터 보기"</string>
+    <string name="crop_save_text" msgid="8821167985419282305">"확인"</string>
+    <string name="multiface_crop_help" msgid="3127018992717032779">"시작하려면 얼굴을 탭하세요."</string>
+    <string name="saving_image" msgid="7270334453636349407">"사진 저장 중..."</string>
+    <string name="crop_label" msgid="521114301871349328">"사진 자르기"</string>
+    <string name="select_image" msgid="7841406150484742140">"사진 선택"</string>
+    <string name="select_video" msgid="4859510992798615076">"동영상 선택"</string>
+    <string name="select_item" msgid="2257529413100472599">"항목 선택"</string>
+    <string name="select_album" msgid="4632641262236697235">"앨범 선택"</string>
+    <string name="select_group" msgid="9090385962030340391">"그룹 선택"</string>
+    <string name="set_image" msgid="2331476809308010401">"사진을 다음으로 설정"</string>
+    <string name="wallpaper" msgid="9222901738515471972">"배경화면을 설정하는 중입니다. 잠시 기다려 주세요..."</string>
+    <string name="camera_setas_wallpaper" msgid="797463183863414289">"배경화면"</string>
+    <string name="delete" msgid="2839695998251824487">"삭제"</string>
+    <string name="confirm_delete" msgid="5731757674837098707">"삭제 확인"</string>
+    <string name="cancel" msgid="3637516880917356226">"취소"</string>
+    <string name="share" msgid="3619042788254195341">"공유"</string>
+    <string name="select_all" msgid="8623593677101437957">"모두 선택"</string>
+    <string name="deselect_all" msgid="7397531298370285581">"모두 선택취소"</string>
+    <string name="slideshow" msgid="4355906903247112975">"슬라이드쇼"</string>
+    <string name="details" msgid="8415120088556445230">"세부정보"</string>
+    <string name="switch_to_camera" msgid="7280111806675169992">"카메라로 전환"</string>
+  <plurals name="number_of_items_selected">
+    <item quantity="zero" msgid="2142579311530586258">"%1$d개 선택됨"</item>
+    <item quantity="one" msgid="2478365152745637768">"%1$d개 선택됨"</item>
+    <item quantity="other" msgid="754722656147810487">"%1$d개 선택됨"</item>
+  </plurals>
+  <plurals name="number_of_albums_selected">
+    <item quantity="zero" msgid="749292746814788132">"%1$d개 선택됨"</item>
+    <item quantity="one" msgid="6184377003099987825">"%1$d개 선택됨"</item>
+    <item quantity="other" msgid="53105607141906130">"%1$d개 선택됨"</item>
+  </plurals>
+  <plurals name="number_of_groups_selected">
+    <item quantity="zero" msgid="3466388370310869238">"%1$d개 선택됨"</item>
+    <item quantity="one" msgid="5030162638216034260">"%1$d개 선택됨"</item>
+    <item quantity="other" msgid="3512041363942842738">"%1$d개 선택됨"</item>
+  </plurals>
+    <string name="show_on_map" msgid="6157544221201750980">"지도에 표시"</string>
+    <string name="rotate_left" msgid="7412075232752726934">"왼쪽으로 회전"</string>
+    <string name="rotate_right" msgid="7340681085011826618">"오른쪽으로 회전"</string>
+    <string name="no_such_item" msgid="3161074758669642065">"항목을 찾을 수 없습니다."</string>
+    <string name="edit" msgid="1502273844748580847">"수정"</string>
+    <string name="activity_not_found" msgid="3731390759313019518">"사용할 수 있는 애플리케이션이 없습니다."</string>
+    <string name="process_caching_requests" msgid="1076938190997999614">"캐시 요청 처리"</string>
+    <string name="caching_label" msgid="3244800874547101776">"캐시 중..."</string>
+    <string name="crop" msgid="7970750655414797277">"자르기"</string>
+    <string name="set_as" msgid="3636764710790507868">"다음으로 설정"</string>
+    <string name="video_err" msgid="7917736494827857757">"동영상을 재생할 수 없음"</string>
+    <string name="group_by_location" msgid="316641628989023253">"위치별"</string>
+    <string name="group_by_time" msgid="9046168567717963573">"시간별"</string>
+    <string name="group_by_tags" msgid="3568731317210676160">"태그별"</string>
+    <string name="group_by_faces" msgid="1566351636227274906">"인물 기준"</string>
+    <string name="group_by_album" msgid="1532818636053818958">"앨범별"</string>
+    <string name="group_by_size" msgid="153766174950394155">"크기별"</string>
+    <string name="untagged" msgid="7281481064509590402">"태그 지정 안함"</string>
+    <string name="no_location" msgid="2036710947563713111">"위치 정보 없음"</string>
+    <string name="show_images_only" msgid="7263218480867672653">"이미지"</string>
+    <string name="show_videos_only" msgid="3850394623678871697">"동영상"</string>
+    <string name="show_all" msgid="4780647751652596980">"이미지 및 동영상"</string>
+    <string name="appwidget_title" msgid="6410561146863700411">"사진 갤러리"</string>
+    <string name="appwidget_empty_text" msgid="4123016777080388680">"사진 없음"</string>
+    <string name="crop_saved" msgid="4684933379430649946">"잘린 이미지가 다운로드 폴더에 저장되었습니다."</string>
+    <string name="crop_not_saved" msgid="1438309290700431923">"잘린 이미지가 저장되지 않았습니다."</string>
+    <string name="no_albums_alert" msgid="3459550423604532470">"사용할 수 있는 앨범이 없습니다"</string>
+    <string name="empty_album" msgid="6307897398825514762">"사용할 수 있는 이미지/동영상이 없습니다."</string>
+    <string name="picasa_web_albums" msgid="5167008066827481663">"Picasa 웹앨범"</string>
+    <string name="picasa_posts" msgid="1055151689217481993">"버즈"</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"오프라인 사용 설정"</string>
+    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
+    <skip />
+    <string name="done" msgid="217672440064436595">"완료"</string>
+    <string name="sequence_in_set" msgid="7235465319919457488">"%2$d개 중 %1$d번째 항목:"</string>
+    <string name="title" msgid="7622928349908052569">"제목"</string>
+    <string name="description" msgid="3016729318096557520">"설명"</string>
+    <string name="time" msgid="1367953006052876956">"시간"</string>
+    <string name="location" msgid="3432705876921618314">"위치"</string>
+    <string name="path" msgid="4725740395885105824">"경로"</string>
+    <string name="width" msgid="9215847239714321097">"너비"</string>
+    <string name="height" msgid="3648885449443787772">"높이"</string>
+    <string name="orientation" msgid="4958327983165245513">"방향"</string>
+    <string name="duration" msgid="8160058911218541616">"길이"</string>
+    <string name="mimetype" msgid="3518268469266183548">"MIME 형식"</string>
+    <string name="file_size" msgid="4670384449129762138">"파일 크기"</string>
+    <string name="maker" msgid="7921835498034236197">"제조업체"</string>
+    <string name="model" msgid="8240207064064337366">"모델"</string>
+    <string name="flash" msgid="2816779031261147723">"플래시"</string>
+    <string name="aperture" msgid="5920657630303915195">"조리개"</string>
+    <string name="focal_length" msgid="1291383769749877010">"초점 거리"</string>
+    <string name="white_balance" msgid="8122534414851280901">"화이트 밸런스"</string>
+    <string name="exposure_time" msgid="3146642210127439553">"노출 시간"</string>
+    <string name="iso" msgid="5028296664327335940">"ISO"</string>
+    <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
+    <string name="manual" msgid="6608905477477607865">"수동"</string>
+    <string name="auto" msgid="4296941368722892821">"자동"</string>
+    <string name="flash_on" msgid="7891556231891837284">"플래시 터짐"</string>
+    <string name="flash_off" msgid="1445443413822680010">"플래시 없음"</string>
+  <plurals name="make_albums_available_offline">
+    <item quantity="one" msgid="2955975726887896888">"오프라인에서 앨범 사용 가능"</item>
+    <item quantity="other" msgid="6929905722448632886">"오프라인에서 앨범 사용 가능"</item>
+  </plurals>
+    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"이 항목은 로컬에 저장되어 있으며 오프라인에서 사용할 수 있습니다."</string>
+    <string name="set_label_all_albums" msgid="3507256844918130594">"모든 앨범"</string>
+    <string name="set_label_local_albums" msgid="5227548825039781">"로컬 앨범"</string>
+    <string name="set_label_mtp_devices" msgid="5779788799122828528">"MTP 기기"</string>
+    <string name="set_label_picasa_albums" msgid="2736308697306982589">"Picasa 앨범"</string>
+    <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> 사용 가능"</string>
+    <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> 이하"</string>
+    <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> 이상"</string>
+    <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> - <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
+    <string name="Import" msgid="3985447518557474672">"가져오기"</string>
+    <string name="import_complete" msgid="1098450310074640619">"가져오기 완료"</string>
+    <string name="import_fail" msgid="5205927625132482529">"가져오기 실패"</string>
+    <string name="camera_connected" msgid="6984353643349303075">"카메라 연결됨"</string>
+    <string name="camera_disconnected" msgid="3683036560562699311">"카메라 연결이 해제됨"</string>
+    <string name="click_import" msgid="6407959065464291972">"가져오려면 여기를 터치하세요."</string>
+    <string name="widget_type_album" msgid="3245149644830731121">"앨범의 이미지"</string>
+    <string name="widget_type_shuffle" msgid="8594622705019763768">"모든 이미지 셔플"</string>
+    <string name="widget_type_photo" msgid="8384174698965738770">"이미지 선택"</string>
+    <string name="widget_type" msgid="7308564524449340985">"위젯 유형"</string>
+    <string name="slideshow_dream_name" msgid="6915963319933437083">"슬라이드쇼"</string>
+    <string name="cache_status_title" msgid="8414708919928621485">"Picasa 사진 미리 가져오기:"</string>
+    <string name="cache_status" msgid="7690438435538533106">"사진 <xliff:g id="NUMBER_1">%2$s</xliff:g>개 중 <xliff:g id="NUMBER_0">%1$s</xliff:g>개 다운로드"</string>
+    <string name="cache_done" msgid="9194449192869777483">"다운로드 완료"</string>
+    <string name="albums" msgid="7320787705180057947">"앨범"</string>
+    <string name="times" msgid="2023033894889499219">"횟수"</string>
+    <string name="locations" msgid="6649297994083130305">"위치"</string>
+    <string name="people" msgid="4114003823747292747">"사용자"</string>
+    <string name="tags" msgid="5539648765482935955">"태그"</string>
+    <string name="group_by" msgid="4308299657902209357">"그룹화 기준"</string>
+    <string name="settings" msgid="1534847740615665736">"설정"</string>
+    <string name="prefs_accounts" msgid="7942761992713671670">"계정 설정"</string>
+    <string name="prefs_data_usage" msgid="410592732727343215">"데이터 사용 설정"</string>
+    <string name="prefs_auto_upload" msgid="2467627128066665126">"자동 업로드"</string>
+    <string name="prefs_other_settings" msgid="6034181851440646681">"기타 설정"</string>
+    <string name="about_gallery" msgid="8667445445883757255">"갤러리 정보"</string>
+    <string name="sync_on_wifi_only" msgid="5795753226259399958">"WiFi에서만 동기화"</string>
+    <string name="helptext_auto_upload" msgid="133741242503097377">"촬영한 모든 사진과 동영상을 비공개 Picasa 웹앨범에 자동으로 업로드합니다."</string>
+    <string name="enable_auto_upload" msgid="1586329406342131">"자동 업로드 사용"</string>
+    <string name="photo_sync_is_on" msgid="1653898269297050634">"Google 포토 동기화 사용 중"</string>
+    <string name="photo_sync_is_off" msgid="6464193461664544289">"Google 사진 동기화 사용 안함"</string>
+    <string name="helptext_photo_sync" msgid="8617245939103545623">"동기화 맞춤설정을 변경하거나 계정을 삭제합니다."</string>
+    <string name="view_photo_for_account" msgid="5608040380422337939">"갤러리에서 이 계정의 사진과 동영상 보기"</string>
+    <string name="add_account" msgid="4271217504968243974">"계정 추가"</string>
+    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"자동 업로드 계정 선택"</string>
+</resources>

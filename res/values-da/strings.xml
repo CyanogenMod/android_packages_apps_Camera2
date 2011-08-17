@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name" msgid="1928079047368929634">"Galleri"</string>
+    <string name="gadget_title" msgid="259405922673466798">"Billedramme"</string>
+    <string name="details_ms" msgid="940634969189855292">"%1$02d:%2$02d"</string>
+    <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
+    <string name="movie_view_label" msgid="3526526872644898229">"Videoafspiller"</string>
+    <string name="loading_video" msgid="4013492720121891585">"Indlæser video ..."</string>
+    <string name="loading_image" msgid="1200894415793838191">"Indlæser billede..."</string>
+    <string name="loading_account" msgid="928195413034552034">"Indlæser konto???"</string>
+    <string name="resume_playing_title" msgid="8996677350649355013">"Genoptag video"</string>
+    <string name="resume_playing_message" msgid="5184414518126703481">"Genoptag afspilning fra %s ?"</string>
+    <string name="resume_playing_resume" msgid="3847915469173852416">"Genoptag afspilning"</string>
+    <string name="loading" msgid="7038208555304563571">"Indlæser..."</string>
+    <string name="fail_to_load" msgid="2710120770735315683">"Blev ikke indlæst"</string>
+    <string name="no_thumbnail" msgid="284723185546429750">"Ingen miniature"</string>
+    <string name="resume_playing_restart" msgid="5471008499835769292">"Start igen"</string>
+    <string name="crop_save_text" msgid="8821167985419282305">"OK"</string>
+    <string name="multiface_crop_help" msgid="3127018992717032779">"Tryk på et ansigt for at begynde."</string>
+    <string name="saving_image" msgid="7270334453636349407">"Gemmer billede ..."</string>
+    <string name="crop_label" msgid="521114301871349328">"Beskær billede"</string>
+    <string name="select_image" msgid="7841406150484742140">"Vælg foto"</string>
+    <string name="select_video" msgid="4859510992798615076">"Vælg video"</string>
+    <string name="select_item" msgid="2257529413100472599">"Vælg element(er)"</string>
+    <string name="select_album" msgid="4632641262236697235">"Vælg album(mer)"</string>
+    <string name="select_group" msgid="9090385962030340391">"Vælg gruppe(r)"</string>
+    <string name="set_image" msgid="2331476809308010401">"Angiv billedet som"</string>
+    <string name="wallpaper" msgid="9222901738515471972">"Angiver tapet. Vent et øjeblik ..."</string>
+    <string name="camera_setas_wallpaper" msgid="797463183863414289">"Tapet"</string>
+    <string name="delete" msgid="2839695998251824487">"Slet"</string>
+    <string name="confirm_delete" msgid="5731757674837098707">"Bekræft sletning"</string>
+    <string name="cancel" msgid="3637516880917356226">"Annuller"</string>
+    <string name="share" msgid="3619042788254195341">"Del"</string>
+    <string name="select_all" msgid="8623593677101437957">"Vælg alle"</string>
+    <string name="deselect_all" msgid="7397531298370285581">"Fravælg alle"</string>
+    <string name="slideshow" msgid="4355906903247112975">"Diasshow"</string>
+    <string name="details" msgid="8415120088556445230">"Detaljer"</string>
+    <string name="switch_to_camera" msgid="7280111806675169992">"Skift til kamera"</string>
+    <!-- no translation found for number_of_items_selected:zero (2142579311530586258) -->
+    <!-- no translation found for number_of_items_selected:one (2478365152745637768) -->
+    <!-- no translation found for number_of_items_selected:other (754722656147810487) -->
+    <!-- no translation found for number_of_albums_selected:zero (749292746814788132) -->
+    <!-- no translation found for number_of_albums_selected:one (6184377003099987825) -->
+    <!-- no translation found for number_of_albums_selected:other (53105607141906130) -->
+    <!-- no translation found for number_of_groups_selected:zero (3466388370310869238) -->
+    <!-- no translation found for number_of_groups_selected:one (5030162638216034260) -->
+    <!-- no translation found for number_of_groups_selected:other (3512041363942842738) -->
+    <string name="show_on_map" msgid="6157544221201750980">"Vis på kort"</string>
+    <string name="rotate_left" msgid="7412075232752726934">"Roter til venstre"</string>
+    <string name="rotate_right" msgid="7340681085011826618">"Roter til højre"</string>
+    <string name="no_such_item" msgid="3161074758669642065">"Elementet blev ikke fundet"</string>
+    <string name="edit" msgid="1502273844748580847">"Rediger"</string>
+    <string name="activity_not_found" msgid="3731390759313019518">"Ingen tilgængelig applikation"</string>
+    <string name="process_caching_requests" msgid="1076938190997999614">"Håndter anmodning om cachelagring"</string>
+    <string name="caching_label" msgid="3244800874547101776">"Caching..."</string>
+    <string name="crop" msgid="7970750655414797277">"Beskær"</string>
+    <string name="set_as" msgid="3636764710790507868">"Indstil som"</string>
+    <string name="video_err" msgid="7917736494827857757">"Kan ikke afspille video"</string>
+    <string name="group_by_location" msgid="316641628989023253">"Efter placering"</string>
+    <string name="group_by_time" msgid="9046168567717963573">"Efter tid"</string>
+    <string name="group_by_tags" msgid="3568731317210676160">"Efter tags"</string>
+    <string name="group_by_faces" msgid="1566351636227274906">"Efter mennesker"</string>
+    <string name="group_by_album" msgid="1532818636053818958">"Efter album"</string>
+    <string name="group_by_size" msgid="153766174950394155">"Efter størrelse"</string>
+    <string name="untagged" msgid="7281481064509590402">"Utagget"</string>
+    <string name="no_location" msgid="2036710947563713111">"Ingen placering"</string>
+    <string name="show_images_only" msgid="7263218480867672653">"Kun billeder"</string>
+    <string name="show_videos_only" msgid="3850394623678871697">"Kun videoer"</string>
+    <string name="show_all" msgid="4780647751652596980">"Billeder og videoer"</string>
+    <string name="appwidget_title" msgid="6410561146863700411">"Billedgalleri"</string>
+    <string name="appwidget_empty_text" msgid="4123016777080388680">"Ingen fotos"</string>
+    <string name="crop_saved" msgid="4684933379430649946">"Det beskårne billede er gemt i download"</string>
+    <string name="crop_not_saved" msgid="1438309290700431923">"Det beskårne billede er ikke gemt"</string>
+    <string name="no_albums_alert" msgid="3459550423604532470">"Der er ingen tilgængelige albummer"</string>
+    <string name="empty_album" msgid="6307897398825514762">"Der er ingen tilgængelige billeder/videoer"</string>
+    <string name="picasa_web_albums" msgid="5167008066827481663">"Picasa Webalbum"</string>
+    <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"Gør tilgængelig offline"</string>
+    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
+    <skip />
+    <string name="done" msgid="217672440064436595">"Udført"</string>
+    <string name="sequence_in_set" msgid="7235465319919457488">"%1$d ud af %2$d enheder:"</string>
+    <string name="title" msgid="7622928349908052569">"Titel"</string>
+    <string name="description" msgid="3016729318096557520">"Beskrivelse"</string>
+    <string name="time" msgid="1367953006052876956">"Tid"</string>
+    <string name="location" msgid="3432705876921618314">"Placering"</string>
+    <string name="path" msgid="4725740395885105824">"Sti:"</string>
+    <string name="width" msgid="9215847239714321097">"Bredde"</string>
+    <string name="height" msgid="3648885449443787772">"Højde"</string>
+    <string name="orientation" msgid="4958327983165245513">"Retning"</string>
+    <string name="duration" msgid="8160058911218541616">"Varighed"</string>
+    <string name="mimetype" msgid="3518268469266183548">"MIME-type"</string>
+    <string name="file_size" msgid="4670384449129762138">"Filstørrelse"</string>
+    <string name="maker" msgid="7921835498034236197">"Fremstiller"</string>
+    <string name="model" msgid="8240207064064337366">"Model"</string>
+    <string name="flash" msgid="2816779031261147723">"Blitz"</string>
+    <string name="aperture" msgid="5920657630303915195">"Blænderåbning"</string>
+    <string name="focal_length" msgid="1291383769749877010">"Fokallængde"</string>
+    <string name="white_balance" msgid="8122534414851280901">"Hvidbalance"</string>
+    <string name="exposure_time" msgid="3146642210127439553">"Eksp. tid"</string>
+    <string name="iso" msgid="5028296664327335940">"ISO"</string>
+    <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
+    <string name="manual" msgid="6608905477477607865">"Manuel"</string>
+    <string name="auto" msgid="4296941368722892821">"Auto"</string>
+    <string name="flash_on" msgid="7891556231891837284">"Blitz affyret"</string>
+    <string name="flash_off" msgid="1445443413822680010">"Ingen blitz"</string>
+  <plurals name="make_albums_available_offline">
+    <item quantity="one" msgid="2955975726887896888">"Gør musikalbummer tilgængelige offline"</item>
+    <item quantity="other" msgid="6929905722448632886">"Gør musikalbummer tilgængelige offline"</item>
+  </plurals>
+    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Dette element er gemt lokalt og er tilgængeligt offline."</string>
+    <string name="set_label_all_albums" msgid="3507256844918130594">"Alle albummer"</string>
+    <string name="set_label_local_albums" msgid="5227548825039781">"Lokale albummer"</string>
+    <string name="set_label_mtp_devices" msgid="5779788799122828528">"MTP-enheder"</string>
+    <string name="set_label_picasa_albums" msgid="2736308697306982589">"Picasa-albummer"</string>
+    <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> ledig"</string>
+    <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> eller mindre"</string>
+    <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> eller over"</string>
+    <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> til <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
+    <string name="Import" msgid="3985447518557474672">"Importer"</string>
+    <string name="import_complete" msgid="1098450310074640619">"Importen er fuldført"</string>
+    <string name="import_fail" msgid="5205927625132482529">"Importen mislykkedes"</string>
+    <string name="camera_connected" msgid="6984353643349303075">"Kameraet er tilkoblet"</string>
+    <string name="camera_disconnected" msgid="3683036560562699311">"Kameraet er frakoblet"</string>
+    <string name="click_import" msgid="6407959065464291972">"Tryk her for at importere"</string>
+    <string name="widget_type_album" msgid="3245149644830731121">"Billeder fra et album"</string>
+    <string name="widget_type_shuffle" msgid="8594622705019763768">"Bland alle billeder"</string>
+    <string name="widget_type_photo" msgid="8384174698965738770">"Vælg et billede"</string>
+    <string name="widget_type" msgid="7308564524449340985">"Widgettype"</string>
+    <string name="slideshow_dream_name" msgid="6915963319933437083">"Diasshow"</string>
+    <string name="cache_status_title" msgid="8414708919928621485">"Henter Picasa-billeder på forhånd:"</string>
+    <string name="cache_status" msgid="7690438435538533106">"<xliff:g id="NUMBER_0">%1$s</xliff:g> downloadet ud af <xliff:g id="NUMBER_1">%2$s</xliff:g> fotos"</string>
+    <string name="cache_done" msgid="9194449192869777483">"Download er fuldført"</string>
+    <string name="albums" msgid="7320787705180057947">"Albummer"</string>
+    <!-- no translation found for times (2023033894889499219) -->
+    <skip />
+    <string name="locations" msgid="6649297994083130305">"Placering"</string>
+    <string name="people" msgid="4114003823747292747">"Personer"</string>
+    <string name="tags" msgid="5539648765482935955">"Tags"</string>
+    <string name="group_by" msgid="4308299657902209357">"Grupper efter"</string>
+    <string name="settings" msgid="1534847740615665736">"Indstillinger"</string>
+    <string name="prefs_accounts" msgid="7942761992713671670">"Kontoindstillinger"</string>
+    <string name="prefs_data_usage" msgid="410592732727343215">"Indstillinger til dataforbrug"</string>
+    <string name="prefs_auto_upload" msgid="2467627128066665126">"Auto-upload"</string>
+    <string name="prefs_other_settings" msgid="6034181851440646681">"Andre indstillinger"</string>
+    <string name="about_gallery" msgid="8667445445883757255">"Om galleri"</string>
+    <string name="sync_on_wifi_only" msgid="5795753226259399958">"Synkroniser kun på Wi-Fi"</string>
+    <string name="helptext_auto_upload" msgid="133741242503097377">"Upload automatisk alle de billeder og videoer, du tager, til et privat Picasa-webalbum"</string>
+    <string name="enable_auto_upload" msgid="1586329406342131">"Aktiver auto-upload"</string>
+    <string name="photo_sync_is_on" msgid="1653898269297050634">"Synk. af Google-fotos er tændt"</string>
+    <string name="photo_sync_is_off" msgid="6464193461664544289">"Synkr. af Google-fotos er FRA"</string>
+    <string name="helptext_photo_sync" msgid="8617245939103545623">"Skift præf. for synk., eller fjern kontoen"</string>
+    <string name="view_photo_for_account" msgid="5608040380422337939">"Se billeder og videoer fra denne konto i galleriet"</string>
+    <string name="add_account" msgid="4271217504968243974">"Tilføj konto"</string>
+    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Vælg konto til auto-upload"</string>
+</resources>

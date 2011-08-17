@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name" msgid="1928079047368929634">"圖片庫"</string>
+    <string name="gadget_title" msgid="259405922673466798">"相框"</string>
+    <string name="details_ms" msgid="940634969189855292">"%1$02d:%2$02d"</string>
+    <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
+    <string name="movie_view_label" msgid="3526526872644898229">"影片播放器"</string>
+    <string name="loading_video" msgid="4013492720121891585">"正在載入影片…"</string>
+    <string name="loading_image" msgid="1200894415793838191">"正在載入圖片..."</string>
+    <string name="loading_account" msgid="928195413034552034">"正在載入帳戶..."</string>
+    <string name="resume_playing_title" msgid="8996677350649355013">"繼續播放影片"</string>
+    <string name="resume_playing_message" msgid="5184414518126703481">"要從 %s 繼續播放嗎？"</string>
+    <string name="resume_playing_resume" msgid="3847915469173852416">"繼續播放"</string>
+    <string name="loading" msgid="7038208555304563571">"載入中..."</string>
+    <string name="fail_to_load" msgid="2710120770735315683">"無法載入"</string>
+    <string name="no_thumbnail" msgid="284723185546429750">"無縮圖"</string>
+    <string name="resume_playing_restart" msgid="5471008499835769292">"重新開始"</string>
+    <string name="crop_save_text" msgid="8821167985419282305">"確定"</string>
+    <string name="multiface_crop_help" msgid="3127018992717032779">"輕觸所需的臉孔開始裁剪。"</string>
+    <string name="saving_image" msgid="7270334453636349407">"正在儲存相片..."</string>
+    <string name="crop_label" msgid="521114301871349328">"裁剪相片"</string>
+    <string name="select_image" msgid="7841406150484742140">"選取相片"</string>
+    <string name="select_video" msgid="4859510992798615076">"選取影片"</string>
+    <string name="select_item" msgid="2257529413100472599">"選取項目"</string>
+    <string name="select_album" msgid="4632641262236697235">"選取相簿"</string>
+    <string name="select_group" msgid="9090385962030340391">"選取群組"</string>
+    <string name="set_image" msgid="2331476809308010401">"將相片設為"</string>
+    <string name="wallpaper" msgid="9222901738515471972">"設定桌布中，請稍候…"</string>
+    <string name="camera_setas_wallpaper" msgid="797463183863414289">"桌布"</string>
+    <string name="delete" msgid="2839695998251824487">"刪除"</string>
+    <string name="confirm_delete" msgid="5731757674837098707">"確認刪除"</string>
+    <string name="cancel" msgid="3637516880917356226">"取消"</string>
+    <string name="share" msgid="3619042788254195341">"分享"</string>
+    <string name="select_all" msgid="8623593677101437957">"全選"</string>
+    <string name="deselect_all" msgid="7397531298370285581">"取消選取全部"</string>
+    <string name="slideshow" msgid="4355906903247112975">"投影播放"</string>
+    <string name="details" msgid="8415120088556445230">"詳細資料"</string>
+    <string name="switch_to_camera" msgid="7280111806675169992">"切換至相機"</string>
+    <!-- no translation found for number_of_items_selected:zero (2142579311530586258) -->
+    <!-- no translation found for number_of_items_selected:one (2478365152745637768) -->
+    <!-- no translation found for number_of_items_selected:other (754722656147810487) -->
+    <!-- no translation found for number_of_albums_selected:zero (749292746814788132) -->
+    <!-- no translation found for number_of_albums_selected:one (6184377003099987825) -->
+    <!-- no translation found for number_of_albums_selected:other (53105607141906130) -->
+    <!-- no translation found for number_of_groups_selected:zero (3466388370310869238) -->
+    <!-- no translation found for number_of_groups_selected:one (5030162638216034260) -->
+    <!-- no translation found for number_of_groups_selected:other (3512041363942842738) -->
+    <string name="show_on_map" msgid="6157544221201750980">"在地圖上顯示"</string>
+    <string name="rotate_left" msgid="7412075232752726934">"向左旋轉"</string>
+    <string name="rotate_right" msgid="7340681085011826618">"向右旋轉"</string>
+    <string name="no_such_item" msgid="3161074758669642065">"找不到項目"</string>
+    <string name="edit" msgid="1502273844748580847">"編輯"</string>
+    <string name="activity_not_found" msgid="3731390759313019518">"沒有可用的應用程式"</string>
+    <string name="process_caching_requests" msgid="1076938190997999614">"處理快取要求"</string>
+    <string name="caching_label" msgid="3244800874547101776">"快取中..."</string>
+    <string name="crop" msgid="7970750655414797277">"裁剪"</string>
+    <string name="set_as" msgid="3636764710790507868">"設為"</string>
+    <string name="video_err" msgid="7917736494827857757">"無法播放影片"</string>
+    <string name="group_by_location" msgid="316641628989023253">"依位置"</string>
+    <string name="group_by_time" msgid="9046168567717963573">"依時間"</string>
+    <string name="group_by_tags" msgid="3568731317210676160">"依標記"</string>
+    <string name="group_by_faces" msgid="1566351636227274906">"依人物分組"</string>
+    <string name="group_by_album" msgid="1532818636053818958">"依專輯"</string>
+    <string name="group_by_size" msgid="153766174950394155">"依大小分類"</string>
+    <string name="untagged" msgid="7281481064509590402">"無標記"</string>
+    <string name="no_location" msgid="2036710947563713111">"無位置資訊"</string>
+    <string name="show_images_only" msgid="7263218480867672653">"僅顯示圖片"</string>
+    <string name="show_videos_only" msgid="3850394623678871697">"僅顯示影片"</string>
+    <string name="show_all" msgid="4780647751652596980">"圖片和影片"</string>
+    <string name="appwidget_title" msgid="6410561146863700411">"相片庫"</string>
+    <string name="appwidget_empty_text" msgid="4123016777080388680">"沒有任何相片"</string>
+    <string name="crop_saved" msgid="4684933379430649946">"裁剪圖片已儲存至下載資料夾"</string>
+    <string name="crop_not_saved" msgid="1438309290700431923">"未儲存裁剪圖片"</string>
+    <string name="no_albums_alert" msgid="3459550423604532470">"沒有可用的相簿"</string>
+    <string name="empty_album" msgid="6307897398825514762">"沒有可用的圖片/影片"</string>
+    <string name="picasa_web_albums" msgid="5167008066827481663">"Picasa 網路相簿"</string>
+    <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"可在離線時使用"</string>
+    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
+    <skip />
+    <string name="done" msgid="217672440064436595">"完成"</string>
+    <string name="sequence_in_set" msgid="7235465319919457488">"第 %1$d 個項目，共 %2$d 個項目："</string>
+    <string name="title" msgid="7622928349908052569">"標題"</string>
+    <string name="description" msgid="3016729318096557520">"說明"</string>
+    <string name="time" msgid="1367953006052876956">"時間"</string>
+    <string name="location" msgid="3432705876921618314">"地點"</string>
+    <string name="path" msgid="4725740395885105824">"路徑"</string>
+    <string name="width" msgid="9215847239714321097">"寬度"</string>
+    <string name="height" msgid="3648885449443787772">"高度"</string>
+    <string name="orientation" msgid="4958327983165245513">"瀏覽模式"</string>
+    <string name="duration" msgid="8160058911218541616">"影片長度"</string>
+    <string name="mimetype" msgid="3518268469266183548">"MIME 類型"</string>
+    <string name="file_size" msgid="4670384449129762138">"檔案大小"</string>
+    <string name="maker" msgid="7921835498034236197">"製造商"</string>
+    <string name="model" msgid="8240207064064337366">"型號"</string>
+    <string name="flash" msgid="2816779031261147723">"閃光燈"</string>
+    <string name="aperture" msgid="5920657630303915195">"光圈"</string>
+    <string name="focal_length" msgid="1291383769749877010">"焦距"</string>
+    <string name="white_balance" msgid="8122534414851280901">"白平衡"</string>
+    <string name="exposure_time" msgid="3146642210127439553">"曝光時間"</string>
+    <string name="iso" msgid="5028296664327335940">"ISO"</string>
+    <string name="unit_mm" msgid="1125768433254329136">"釐米"</string>
+    <string name="manual" msgid="6608905477477607865">"手動"</string>
+    <string name="auto" msgid="4296941368722892821">"自動"</string>
+    <string name="flash_on" msgid="7891556231891837284">"使用閃光燈"</string>
+    <string name="flash_off" msgid="1445443413822680010">"未使用閃光燈"</string>
+  <plurals name="make_albums_available_offline">
+    <item quantity="one" msgid="2955975726887896888">"正在將相簿設為可離線瀏覽"</item>
+    <item quantity="other" msgid="6929905722448632886">"正在將相簿設為可離線瀏覽"</item>
+  </plurals>
+    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"這個項目已儲存在本機上，並且可供離線使用。"</string>
+    <string name="set_label_all_albums" msgid="3507256844918130594">"所有相簿"</string>
+    <string name="set_label_local_albums" msgid="5227548825039781">"本機相簿"</string>
+    <string name="set_label_mtp_devices" msgid="5779788799122828528">"MTP 裝置"</string>
+    <string name="set_label_picasa_albums" msgid="2736308697306982589">"Picasa 相簿"</string>
+    <string name="free_space_format" msgid="8766337315709161215">"可用空間：<xliff:g id="BYTES">%s</xliff:g>"</string>
+    <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> 以下"</string>
+    <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> 以上"</string>
+    <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> 至 <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
+    <string name="Import" msgid="3985447518557474672">"匯入"</string>
+    <string name="import_complete" msgid="1098450310074640619">"匯入完成"</string>
+    <string name="import_fail" msgid="5205927625132482529">"匯入失敗"</string>
+    <string name="camera_connected" msgid="6984353643349303075">"相機已連線"</string>
+    <string name="camera_disconnected" msgid="3683036560562699311">"相機已中斷連線"</string>
+    <string name="click_import" msgid="6407959065464291972">"輕觸這裡即可匯入相簿"</string>
+    <string name="widget_type_album" msgid="3245149644830731121">"相簿中的圖片"</string>
+    <string name="widget_type_shuffle" msgid="8594622705019763768">"隨機播放所有圖片"</string>
+    <string name="widget_type_photo" msgid="8384174698965738770">"選擇圖片"</string>
+    <string name="widget_type" msgid="7308564524449340985">"小工具類型"</string>
+    <string name="slideshow_dream_name" msgid="6915963319933437083">"投影播放"</string>
+    <string name="cache_status_title" msgid="8414708919928621485">"正在預先擷取 Picasa 相片："</string>
+    <string name="cache_status" msgid="7690438435538533106">"下載 <xliff:g id="NUMBER_0">%1$s</xliff:g> 張相片 (共 <xliff:g id="NUMBER_1">%2$s</xliff:g> 張)"</string>
+    <string name="cache_done" msgid="9194449192869777483">"下載完成"</string>
+    <string name="albums" msgid="7320787705180057947">"相簿"</string>
+    <!-- no translation found for times (2023033894889499219) -->
+    <skip />
+    <string name="locations" msgid="6649297994083130305">"位置"</string>
+    <string name="people" msgid="4114003823747292747">"人物"</string>
+    <string name="tags" msgid="5539648765482935955">"標記"</string>
+    <string name="group_by" msgid="4308299657902209357">"分組依據"</string>
+    <string name="settings" msgid="1534847740615665736">"設定"</string>
+    <string name="prefs_accounts" msgid="7942761992713671670">"帳戶設定"</string>
+    <string name="prefs_data_usage" msgid="410592732727343215">"資料用量設定"</string>
+    <string name="prefs_auto_upload" msgid="2467627128066665126">"自動上傳"</string>
+    <string name="prefs_other_settings" msgid="6034181851440646681">"其他設定"</string>
+    <string name="about_gallery" msgid="8667445445883757255">"關於圖片庫"</string>
+    <string name="sync_on_wifi_only" msgid="5795753226259399958">"僅透過 Wi-Fi 進行同步處理"</string>
+    <string name="helptext_auto_upload" msgid="133741242503097377">"自動將您拍攝的所有相片和影片上傳至私人 Picasa 網路相簿"</string>
+    <string name="enable_auto_upload" msgid="1586329406342131">"啟用自動上傳"</string>
+    <string name="photo_sync_is_on" msgid="1653898269297050634">"Google 相片同步功能已開啟"</string>
+    <string name="photo_sync_is_off" msgid="6464193461664544289">"Google 相片同步功能已關閉"</string>
+    <string name="helptext_photo_sync" msgid="8617245939103545623">"變更同步偏好設定或移除這個帳戶"</string>
+    <string name="view_photo_for_account" msgid="5608040380422337939">"在「圖片庫」中查看這個帳戶的相片和影片"</string>
+    <string name="add_account" msgid="4271217504968243974">"新增帳戶"</string>
+    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"選擇自動上傳帳戶"</string>
+</resources>
