@@ -5,4 +5,4 @@
         android:updatePeriodMillis="86400000"
         android:previewImage="@drawable/preview"
         android:initialLayout="@layout/appwidget_main"
-        android:configure="com.android.gallery3d.widget.WidgetConfigure"/>
+        android:configure="com.android.gallery3d.gadget.WidgetConfigure"/>

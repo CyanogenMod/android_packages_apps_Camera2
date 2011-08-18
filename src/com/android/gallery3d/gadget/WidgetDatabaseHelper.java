@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.widget;
+package com.android.gallery3d.gadget;
 
 import com.android.gallery3d.common.Utils;
 
@@ -25,11 +25,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 
 public class WidgetDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "PhotoDatabaseHelper";
@@ -60,17 +60,18 @@ public class WidgetDatabaseHelper extends SQLiteOpenHelper {
     public static class Entry {
         public int widgetId;
         public int type;
-        public Uri imageUri;
-        public Bitmap image;
+        public String imageUri;
+        public byte imageData[];
         public String albumPath;
+
+        private Entry() {}
 
         private Entry(int id, Cursor cursor) {
             widgetId = id;
             type = cursor.getInt(INDEX_WIDGET_TYPE);
-
             if (type == TYPE_SINGLE_PHOTO) {
-                imageUri = Uri.parse(cursor.getString(INDEX_IMAGE_URI));
-                image = loadBitmap(cursor, INDEX_PHOTO_BLOB);
+                imageUri = cursor.getString(INDEX_IMAGE_URI);
+                imageData = cursor.getBlob(INDEX_PHOTO_BLOB);
             } else if (type == TYPE_ALBUM) {
                 albumPath = cursor.getString(INDEX_ALBUM_PATH);
             }
@@ -91,16 +92,79 @@ public class WidgetDatabaseHelper extends SQLiteOpenHelper {
                 + FIELD_PHOTO_BLOB + " BLOB)");
     }
 
+    private void saveData(SQLiteDatabase db, int oldVersion, ArrayList<Entry> data) {
+        if (oldVersion <= 2) {
+            Cursor cursor = db.query("photos",
+                    new String[] {FIELD_APPWIDGET_ID, FIELD_PHOTO_BLOB},
+                    null, null, null, null, null);
+            if (cursor == null) return;
+            try {
+                while (cursor.moveToNext()) {
+                    Entry entry = new Entry();
+                    entry.type = TYPE_SINGLE_PHOTO;
+                    entry.widgetId = cursor.getInt(0);
+                    entry.imageData = cursor.getBlob(1);
+                    data.add(entry);
+                }
+            } finally {
+                cursor.close();
+            }
+        } else if (oldVersion == 3) {
+            Utils.debug("saveData of version: %s", oldVersion);
+            Cursor cursor = db.query("photos",
+                    new String[] {FIELD_APPWIDGET_ID, FIELD_PHOTO_BLOB, FIELD_IMAGE_URI},
+                    null, null, null, null, null);
+            if (cursor == null) return;
+            try {
+                while (cursor.moveToNext()) {
+                    Entry entry = new Entry();
+                    entry.type = TYPE_SINGLE_PHOTO;
+                    entry.widgetId = cursor.getInt(0);
+                    entry.imageData = cursor.getBlob(1);
+                    entry.imageUri = cursor.getString(2);
+
+                    Utils.debug("store widget[%s] - %s", entry.widgetId, entry.imageUri);
+                    data.add(entry);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+    }
+
+    private void restoreData(SQLiteDatabase db, ArrayList<Entry> data) {
+        db.beginTransaction();
+        try {
+            for (Entry entry : data) {
+                ContentValues values = new ContentValues();
+                values.put(FIELD_APPWIDGET_ID, entry.widgetId);
+                values.put(FIELD_WIDGET_TYPE, entry.type);
+                values.put(FIELD_IMAGE_URI, entry.imageUri);
+                values.put(FIELD_PHOTO_BLOB, entry.imageData);
+                values.put(FIELD_ALBUM_PATH, entry.albumPath);
+                db.insert(TABLE_WIDGETS, null, values);
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         int version = oldVersion;
 
         if (version != DATABASE_VERSION) {
+            ArrayList<Entry> data = new ArrayList<Entry>();
+            saveData(db, oldVersion, data);
+
             Log.w(TAG, "destroying all old data.");
             // Table "photos" is renamed to "widget" in version 4
             db.execSQL("DROP TABLE IF EXISTS photos");
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_WIDGETS);
             onCreate(db);
+
+            restoreData(db, data);
         }
     }
 
@@ -144,12 +208,6 @@ public class WidgetDatabaseHelper extends SQLiteOpenHelper {
             Log.e(TAG, "set widget fail", e);
             return false;
         }
-    }
-
-    private static Bitmap loadBitmap(Cursor cursor, int columnIndex) {
-        byte[] data = cursor.getBlob(columnIndex);
-        if (data == null) return null;
-        return BitmapFactory.decodeByteArray(data, 0, data.length);
     }
 
     public Entry getEntry(int appWidgetId) {
