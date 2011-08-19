@@ -55,6 +55,13 @@ public class DecodeUtils {
                 BitmapFactory.decodeFile(filePath, options));
     }
 
+    public static Bitmap requestDecode(JobContext jc, FileDescriptor fd, Options options) {
+        if (options == null) options = new Options();
+        jc.setCancelListener(new DecodeCanceller(options));
+        return ensureGLCompatibleBitmap(
+                BitmapFactory.decodeFileDescriptor(fd, null, options));
+    }
+
     public static Bitmap requestDecode(JobContext jc, byte[] bytes,
             Options options) {
         return requestDecode(jc, bytes, 0, bytes.length, options);
