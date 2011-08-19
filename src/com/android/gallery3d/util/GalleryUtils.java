@@ -43,6 +43,7 @@ import android.view.WindowManager;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class GalleryUtils {
     private static final String TAG = "GalleryUtils";
@@ -206,13 +207,21 @@ public class GalleryUtils {
         // TODO: change || to && after we fix the default location issue
         return (latitude != MediaItem.INVALID_LATLNG || longitude != MediaItem.INVALID_LATLNG);
     }
+
+    public static String formatLatitudeLongitude(String format, double latitude,
+            double longitude) {
+        // We need to specify the locale otherwise it may go wrong in some language
+        // (e.g. Locale.FRENCH)
+        return String.format(Locale.ENGLISH, format, latitude, longitude);
+    }
+
     public static void showOnMap(Context context, double latitude, double longitude) {
         try {
             // We don't use "geo:latitude,longitude" because it only centers
             // the MapView to the specified location, but we need a marker
             // for further operations (routing to/from).
             // The q=(lat, lng) syntax is suggested by geo-team.
-            String uri = String.format("http://maps.google.com/maps?f=q&q=(%f,%f)",
+            String uri = formatLatitudeLongitude("http://maps.google.com/maps?f=q&q=(%f,%f)",
                     latitude, longitude);
             ComponentName compName = new ComponentName(MAPS_PACKAGE_NAME,
                     MAPS_CLASS_NAME);
@@ -222,7 +231,7 @@ public class GalleryUtils {
         } catch (ActivityNotFoundException e) {
             // Use the "geo intent" if no GMM is installed
             Log.e(TAG, "GMM activity not found!", e);
-            String url = String.format("geo:%f,%f", latitude, longitude);
+            String url = formatLatitudeLongitude("geo:%f,%f", latitude, longitude);
             Intent mapsIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             context.startActivity(mapsIntent);
         }
