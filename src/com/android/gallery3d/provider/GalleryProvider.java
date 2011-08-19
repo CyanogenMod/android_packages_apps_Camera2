@@ -46,6 +46,17 @@ import java.io.OutputStream;
 public class GalleryProvider extends ContentProvider {
     private static final String TAG = "GalleryProvider";
 
+    public static final String AUTHORITY = "com.android.gallery3d.provider";
+    public static final Uri BASE_URI = Uri.parse("content://" + AUTHORITY);
+    private static final String[] SUPPORTED_PICASA_COLUMNS = {
+            ImageColumns.DISPLAY_NAME,
+            ImageColumns.SIZE,
+            ImageColumns.MIME_TYPE,
+            ImageColumns.DATE_TAKEN,
+            ImageColumns.LATITUDE,
+            ImageColumns.LONGITUDE,
+            ImageColumns.ORIENTATION};
+
     private DataManager mDataManager;
     private DownloadCache mDownloadCache;
     private static Uri sBaseUri;
@@ -151,6 +162,7 @@ public class GalleryProvider extends ContentProvider {
 
     private Cursor queryPicasaItem(MediaObject image, String[] projection,
             String selection, String[] selectionArgs, String sortOrder) {
+        if (projection == null) projection = SUPPORTED_PICASA_COLUMNS;
         Object[] columnValues = new Object[projection.length];
         double latitude = PicasaSource.getLatitude(image);
         double longitude = PicasaSource.getLongitude(image);
