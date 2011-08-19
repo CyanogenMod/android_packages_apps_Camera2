@@ -28,6 +28,7 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
+import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.ReverseGeocoder;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
@@ -310,7 +311,7 @@ public class DetailsWindow extends GLView {
         }
 
         private String getLocationText(double[] latlng) {
-            String text = String.format("(%f, %f)", latlng[0], latlng[1]);
+            String text = GalleryUtils.formatLatitudeLongitude("(%f,%f)", latlng[0], latlng[1]);
             mAddressLookupJob = mContext.getThreadPool().submit(
                     new AddressLookupJob(latlng),
                     new FutureListener<Address>() {
