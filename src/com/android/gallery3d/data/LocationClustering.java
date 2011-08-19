@@ -21,6 +21,8 @@ import com.android.gallery3d.util.ReverseGeocoder;
 import com.android.gallery3d.util.GalleryUtils;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ class LocationClustering extends Clustering {
     private ArrayList<ArrayList<SmallItem>> mClusters;
     private ArrayList<String> mNames;
     private String mNoLocationString;
+    private Handler mHandler;
 
     private static class Point {
         public Point(double lat, double lng) {
@@ -56,6 +59,7 @@ class LocationClustering extends Clustering {
     public LocationClustering(Context context) {
         mContext = context;
         mNoLocationString = mContext.getResources().getString(R.string.no_location);
+        mHandler = new Handler(Looper.getMainLooper());
     }
 
     @Override
@@ -131,8 +135,12 @@ class LocationClustering extends Clustering {
         }
 
         if (hasUnresolvedAddress) {
-            Toast.makeText(mContext, R.string.no_connectivity,
-                    Toast.LENGTH_LONG).show();
+            mHandler.post(new Runnable() {
+                public void run() {
+                    Toast.makeText(mContext, R.string.no_connectivity,
+                            Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 
