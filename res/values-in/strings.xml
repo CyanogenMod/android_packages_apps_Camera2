@@ -86,6 +86,8 @@
     <string name="group_by_size" msgid="153766174950394155">"Menurut ukuran"</string>
     <string name="untagged" msgid="7281481064509590402">"Tidak di-tag"</string>
     <string name="no_location" msgid="2036710947563713111">"Tidak Ada Lokasi"</string>
+    <!-- no translation found for no_connectivity (4060082114738885149) -->
+    <skip />
     <string name="show_images_only" msgid="7263218480867672653">"Hanya gambar"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Hanya video"</string>
     <string name="show_all" msgid="4780647751652596980">"Gambar dan video"</string>
@@ -98,8 +100,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Album Web Picasa"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Jadikan agar tersedia luring"</string>
-    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
-    <skip />
+    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"Segarkan album picasa"</string>
     <string name="done" msgid="217672440064436595">"Selesai"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d dari %2$d item:"</string>
     <string name="title" msgid="7622928349908052569">"Judul"</string>

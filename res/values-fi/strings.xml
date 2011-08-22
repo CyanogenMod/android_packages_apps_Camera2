@@ -52,15 +52,21 @@
     <string name="slideshow" msgid="4355906903247112975">"Diaesitys"</string>
     <string name="details" msgid="8415120088556445230">"Tiedot"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"Vaihda kameraan"</string>
-    <!-- no translation found for number_of_items_selected:zero (2142579311530586258) -->
-    <!-- no translation found for number_of_items_selected:one (2478365152745637768) -->
-    <!-- no translation found for number_of_items_selected:other (754722656147810487) -->
-    <!-- no translation found for number_of_albums_selected:zero (749292746814788132) -->
-    <!-- no translation found for number_of_albums_selected:one (6184377003099987825) -->
-    <!-- no translation found for number_of_albums_selected:other (53105607141906130) -->
-    <!-- no translation found for number_of_groups_selected:zero (3466388370310869238) -->
-    <!-- no translation found for number_of_groups_selected:one (5030162638216034260) -->
-    <!-- no translation found for number_of_groups_selected:other (3512041363942842738) -->
+  <plurals name="number_of_items_selected">
+    <item quantity="zero" msgid="2142579311530586258">"%1$d valittu"</item>
+    <item quantity="one" msgid="2478365152745637768">"%1$d valittu"</item>
+    <item quantity="other" msgid="754722656147810487">"%1$d valittu"</item>
+  </plurals>
+  <plurals name="number_of_albums_selected">
+    <item quantity="zero" msgid="749292746814788132">"%1$d valittu"</item>
+    <item quantity="one" msgid="6184377003099987825">"%1$d valittu"</item>
+    <item quantity="other" msgid="53105607141906130">"%1$d valittu"</item>
+  </plurals>
+  <plurals name="number_of_groups_selected">
+    <item quantity="zero" msgid="3466388370310869238">"%1$d valittu"</item>
+    <item quantity="one" msgid="5030162638216034260">"%1$d valittu"</item>
+    <item quantity="other" msgid="3512041363942842738">"%1$d valittu"</item>
+  </plurals>
     <string name="show_on_map" msgid="6157544221201750980">"Näytä kartalla"</string>
     <string name="rotate_left" msgid="7412075232752726934">"Kierrä vastapäivään"</string>
     <string name="rotate_right" msgid="7340681085011826618">"Kierrä myötäpäivään"</string>
@@ -80,6 +86,8 @@
     <string name="group_by_size" msgid="153766174950394155">"Koon mukaan"</string>
     <string name="untagged" msgid="7281481064509590402">"Merkitsemättömät"</string>
     <string name="no_location" msgid="2036710947563713111">"Ei sijaintia"</string>
+    <!-- no translation found for no_connectivity (4060082114738885149) -->
+    <skip />
     <string name="show_images_only" msgid="7263218480867672653">"Vain kuvat"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Vain videot"</string>
     <string name="show_all" msgid="4780647751652596980">"Kuvat ja videot"</string>
@@ -92,8 +100,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Picasa-verkkoalbumit"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Aseta offline-käytettäväksi"</string>
-    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
-    <skip />
+    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"Päivitä Picasa-albumit"</string>
     <string name="done" msgid="217672440064436595">"Valmis"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d/%2$d kohdetta:"</string>
     <string name="title" msgid="7622928349908052569">"Nimi"</string>
@@ -148,25 +155,24 @@
     <string name="cache_status" msgid="7690438435538533106">"Ladataan <xliff:g id="NUMBER_0">%1$s</xliff:g> / <xliff:g id="NUMBER_1">%2$s</xliff:g> kuvaa"</string>
     <string name="cache_done" msgid="9194449192869777483">"Lataus valmis"</string>
     <string name="albums" msgid="7320787705180057947">"Albumit"</string>
-    <!-- no translation found for times (2023033894889499219) -->
-    <skip />
+    <string name="times" msgid="2023033894889499219">"Kerrat"</string>
     <string name="locations" msgid="6649297994083130305">"Sijainnit"</string>
     <string name="people" msgid="4114003823747292747">"Henkilöt"</string>
     <string name="tags" msgid="5539648765482935955">"Tunnisteet"</string>
     <string name="group_by" msgid="4308299657902209357">"Ryhmittely:"</string>
     <string name="settings" msgid="1534847740615665736">"Asetukset"</string>
     <string name="prefs_accounts" msgid="7942761992713671670">"Tilin asetukset"</string>
-    <string name="prefs_data_usage" msgid="410592732727343215">"Tietojen käyttöasetukset"</string>
-    <string name="prefs_auto_upload" msgid="2467627128066665126">"Automaattinen lähettäminen"</string>
+    <string name="prefs_data_usage" msgid="410592732727343215">"Tiedonsiirtoasetukset"</string>
+    <string name="prefs_auto_upload" msgid="2467627128066665126">"Automaattinen lataus"</string>
     <string name="prefs_other_settings" msgid="6034181851440646681">"Muut asetukset"</string>
     <string name="about_gallery" msgid="8667445445883757255">"Tietoja galleriasta"</string>
     <string name="sync_on_wifi_only" msgid="5795753226259399958">"Synkronoi vain wifi-yhteyden aikana"</string>
-    <string name="helptext_auto_upload" msgid="133741242503097377">"Lähetä automaattisesti kaikki yksityiseen Picasa-verkkoalbumiin vietävät valokuvat ja videot"</string>
-    <string name="enable_auto_upload" msgid="1586329406342131">"Ota automaattinen lähettäminen käyttöön"</string>
+    <string name="helptext_auto_upload" msgid="133741242503097377">"Lataa kaikki kuvatut valokuvat ja videot automaattisesti yksityiseen Picasa-verkkoalbumiin"</string>
+    <string name="enable_auto_upload" msgid="1586329406342131">"Ota automaattinen lataus käyttöön"</string>
     <string name="photo_sync_is_on" msgid="1653898269297050634">"Kuvasynkronointi on käytössä"</string>
-    <string name="photo_sync_is_off" msgid="6464193461664544289">"Kuvasynkronointi on pois käyt."</string>
-    <string name="helptext_photo_sync" msgid="8617245939103545623">"Vaihda synkronointiasetuksia tai poista tämä tili"</string>
+    <string name="photo_sync_is_off" msgid="6464193461664544289">"Kuvasynkronointi ei ole käyt."</string>
+    <string name="helptext_photo_sync" msgid="8617245939103545623">"Muuta synkr.asetuksia tai poista tämä tili"</string>
     <string name="view_photo_for_account" msgid="5608040380422337939">"Näytä tämän tilin kuvat ja videot galleriassa"</string>
     <string name="add_account" msgid="4271217504968243974">"Lisää tili"</string>
-    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Valitse automaattisen lähetyksen tili"</string>
+    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Valitse autom. latauksen tili"</string>
 </resources>

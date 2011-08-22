@@ -39,7 +39,7 @@
     <string name="select_video" msgid="4859510992798615076">"Välj ett videoklipp"</string>
     <string name="select_item" msgid="2257529413100472599">"Välj objekt"</string>
     <string name="select_album" msgid="4632641262236697235">"Välj album"</string>
-    <string name="select_group" msgid="9090385962030340391">"Välj grupp(er)"</string>
+    <string name="select_group" msgid="9090385962030340391">"Välj grupper"</string>
     <string name="set_image" msgid="2331476809308010401">"Använd bild som"</string>
     <string name="wallpaper" msgid="9222901738515471972">"Anger bakgrund, vänta…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Bakgrund"</string>
@@ -52,15 +52,21 @@
     <string name="slideshow" msgid="4355906903247112975">"Bildspel"</string>
     <string name="details" msgid="8415120088556445230">"Information"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"Byt till kamera"</string>
-    <!-- no translation found for number_of_items_selected:zero (2142579311530586258) -->
-    <!-- no translation found for number_of_items_selected:one (2478365152745637768) -->
-    <!-- no translation found for number_of_items_selected:other (754722656147810487) -->
-    <!-- no translation found for number_of_albums_selected:zero (749292746814788132) -->
-    <!-- no translation found for number_of_albums_selected:one (6184377003099987825) -->
-    <!-- no translation found for number_of_albums_selected:other (53105607141906130) -->
-    <!-- no translation found for number_of_groups_selected:zero (3466388370310869238) -->
-    <!-- no translation found for number_of_groups_selected:one (5030162638216034260) -->
-    <!-- no translation found for number_of_groups_selected:other (3512041363942842738) -->
+  <plurals name="number_of_items_selected">
+    <item quantity="zero" msgid="2142579311530586258">"%1$d har markerats"</item>
+    <item quantity="one" msgid="2478365152745637768">"%1$d har markerats"</item>
+    <item quantity="other" msgid="754722656147810487">"%1$d har markerats"</item>
+  </plurals>
+  <plurals name="number_of_albums_selected">
+    <item quantity="zero" msgid="749292746814788132">"%1$d har markerats"</item>
+    <item quantity="one" msgid="6184377003099987825">"%1$d har markerats"</item>
+    <item quantity="other" msgid="53105607141906130">"%1$d har markerats"</item>
+  </plurals>
+  <plurals name="number_of_groups_selected">
+    <item quantity="zero" msgid="3466388370310869238">"%1$d har markerats"</item>
+    <item quantity="one" msgid="5030162638216034260">"%1$d har markerats"</item>
+    <item quantity="other" msgid="3512041363942842738">"%1$d har markerats"</item>
+  </plurals>
     <string name="show_on_map" msgid="6157544221201750980">"Visa på karta"</string>
     <string name="rotate_left" msgid="7412075232752726934">"Rotera åt vänster"</string>
     <string name="rotate_right" msgid="7340681085011826618">"Rotera åt höger"</string>
@@ -80,6 +86,8 @@
     <string name="group_by_size" msgid="153766174950394155">"Efter storlek"</string>
     <string name="untagged" msgid="7281481064509590402">"Saknar etikett"</string>
     <string name="no_location" msgid="2036710947563713111">"Ingen plats"</string>
+    <!-- no translation found for no_connectivity (4060082114738885149) -->
+    <skip />
     <string name="show_images_only" msgid="7263218480867672653">"Endast bilder"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Endast video"</string>
     <string name="show_all" msgid="4780647751652596980">"Bilder och videor"</string>
@@ -92,8 +100,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Picasa webbalbum"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Gör tillgängliga offline"</string>
-    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
-    <skip />
+    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"Uppdatera albumen i Picasa"</string>
     <string name="done" msgid="217672440064436595">"Klar"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d av %2$d objekt:"</string>
     <string name="title" msgid="7622928349908052569">"Titel"</string>
@@ -148,8 +155,7 @@
     <string name="cache_status" msgid="7690438435538533106">"Hämta <xliff:g id="NUMBER_0">%1$s</xliff:g> av <xliff:g id="NUMBER_1">%2$s</xliff:g> bilder"</string>
     <string name="cache_done" msgid="9194449192869777483">"Hämtningen har slutförts"</string>
     <string name="albums" msgid="7320787705180057947">"Album"</string>
-    <!-- no translation found for times (2023033894889499219) -->
-    <skip />
+    <string name="times" msgid="2023033894889499219">"Tider"</string>
     <string name="locations" msgid="6649297994083130305">"Platser"</string>
     <string name="people" msgid="4114003823747292747">"Personer"</string>
     <string name="tags" msgid="5539648765482935955">"Taggar"</string>

@@ -52,15 +52,21 @@
     <string name="slideshow" msgid="4355906903247112975">"Слайд-шоу"</string>
     <string name="details" msgid="8415120088556445230">"Деталі"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"Перейти до програми Камера"</string>
-    <!-- no translation found for number_of_items_selected:zero (2142579311530586258) -->
-    <!-- no translation found for number_of_items_selected:one (2478365152745637768) -->
-    <!-- no translation found for number_of_items_selected:other (754722656147810487) -->
-    <!-- no translation found for number_of_albums_selected:zero (749292746814788132) -->
-    <!-- no translation found for number_of_albums_selected:one (6184377003099987825) -->
-    <!-- no translation found for number_of_albums_selected:other (53105607141906130) -->
-    <!-- no translation found for number_of_groups_selected:zero (3466388370310869238) -->
-    <!-- no translation found for number_of_groups_selected:one (5030162638216034260) -->
-    <!-- no translation found for number_of_groups_selected:other (3512041363942842738) -->
+  <plurals name="number_of_items_selected">
+    <item quantity="zero" msgid="2142579311530586258">"Вибрано %1$d"</item>
+    <item quantity="one" msgid="2478365152745637768">"Вибрано %1$d"</item>
+    <item quantity="other" msgid="754722656147810487">"Вибрано %1$d"</item>
+  </plurals>
+  <plurals name="number_of_albums_selected">
+    <item quantity="zero" msgid="749292746814788132">"Вибрано %1$d"</item>
+    <item quantity="one" msgid="6184377003099987825">"Вибрано %1$d"</item>
+    <item quantity="other" msgid="53105607141906130">"Вибрано %1$d"</item>
+  </plurals>
+  <plurals name="number_of_groups_selected">
+    <item quantity="zero" msgid="3466388370310869238">"Вибрано %1$d"</item>
+    <item quantity="one" msgid="5030162638216034260">"Вибрано %1$d"</item>
+    <item quantity="other" msgid="3512041363942842738">"Вибрано %1$d"</item>
+  </plurals>
     <string name="show_on_map" msgid="6157544221201750980">"Показ. на карті"</string>
     <string name="rotate_left" msgid="7412075232752726934">"Поверн. вліво"</string>
     <string name="rotate_right" msgid="7340681085011826618">"Поверн. вправо"</string>
@@ -80,6 +86,8 @@
     <string name="group_by_size" msgid="153766174950394155">"За розміром"</string>
     <string name="untagged" msgid="7281481064509590402">"Без тегів"</string>
     <string name="no_location" msgid="2036710947563713111">"Місцезн. не визнач."</string>
+    <!-- no translation found for no_connectivity (4060082114738885149) -->
+    <skip />
     <string name="show_images_only" msgid="7263218480867672653">"Лише зображення"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Лише відео"</string>
     <string name="show_all" msgid="4780647751652596980">"Зображення та відео"</string>
@@ -92,8 +100,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Веб-альбоми Picasa"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Зробити доступн. в реж. офлайн"</string>
-    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
-    <skip />
+    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"Оновити альбоми Picasa"</string>
     <string name="done" msgid="217672440064436595">"Готово"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d з %2$d елем.:"</string>
     <string name="title" msgid="7622928349908052569">"Назва"</string>
@@ -148,8 +155,7 @@
     <string name="cache_status" msgid="7690438435538533106">"Завантажити <xliff:g id="NUMBER_0">%1$s</xliff:g> з <xliff:g id="NUMBER_1">%2$s</xliff:g> фото"</string>
     <string name="cache_done" msgid="9194449192869777483">"Завантаження закінчено"</string>
     <string name="albums" msgid="7320787705180057947">"Альбоми"</string>
-    <!-- no translation found for times (2023033894889499219) -->
-    <skip />
+    <string name="times" msgid="2023033894889499219">"Час"</string>
     <string name="locations" msgid="6649297994083130305">"Місцезнах."</string>
     <string name="people" msgid="4114003823747292747">"Люди"</string>
     <string name="tags" msgid="5539648765482935955">"Теги"</string>

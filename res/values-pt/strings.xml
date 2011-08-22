@@ -37,9 +37,9 @@
     <string name="crop_label" msgid="521114301871349328">"Cortar imagem"</string>
     <string name="select_image" msgid="7841406150484742140">"Selecionar foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Selecionar vídeo"</string>
-    <string name="select_item" msgid="2257529413100472599">"Selecione os itens"</string>
-    <string name="select_album" msgid="4632641262236697235">"Selecione álbuns"</string>
-    <string name="select_group" msgid="9090385962030340391">"Selecionar grupos"</string>
+    <string name="select_item" msgid="2257529413100472599">"Selecione o(s) item (ns)"</string>
+    <string name="select_album" msgid="4632641262236697235">"Selecione o(s) álbum (ns)"</string>
+    <string name="select_group" msgid="9090385962030340391">"Selecionar grupo(s)"</string>
     <string name="set_image" msgid="2331476809308010401">"Definir imagem como"</string>
     <string name="wallpaper" msgid="9222901738515471972">"Configurando o plano de fundo, aguarde…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Plano de fundo"</string>
@@ -86,6 +86,8 @@
     <string name="group_by_size" msgid="153766174950394155">"Por tamanho"</string>
     <string name="untagged" msgid="7281481064509590402">"Sem tags"</string>
     <string name="no_location" msgid="2036710947563713111">"Nenhum local"</string>
+    <!-- no translation found for no_connectivity (4060082114738885149) -->
+    <skip />
     <string name="show_images_only" msgid="7263218480867672653">"Apenas imagens"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Somente vídeos"</string>
     <string name="show_all" msgid="4780647751652596980">"Imagens e vídeos"</string>
@@ -98,8 +100,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Álbuns do Picasa"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Tornar disponível off-line"</string>
-    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
-    <skip />
+    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"Atualizar álbuns do Picasa"</string>
     <string name="done" msgid="217672440064436595">"Concluído"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d de %2$d itens:"</string>
     <string name="title" msgid="7622928349908052569">"Título"</string>

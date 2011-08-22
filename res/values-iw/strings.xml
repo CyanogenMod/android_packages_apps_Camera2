@@ -21,13 +21,13 @@
     <string name="details_ms" msgid="940634969189855292">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
     <string name="movie_view_label" msgid="3526526872644898229">"Google Video Player"</string>
-    <string name="loading_video" msgid="4013492720121891585">"טוען סרטון וידאו…"</string>
+    <string name="loading_video" msgid="4013492720121891585">"טוען  וידאו…"</string>
     <string name="loading_image" msgid="1200894415793838191">"טוען תמונה…"</string>
     <string name="loading_account" msgid="928195413034552034">"טוען חשבון???"</string>
-    <string name="resume_playing_title" msgid="8996677350649355013">"המשך את הקרנת סרטון הווידאו"</string>
-    <string name="resume_playing_message" msgid="5184414518126703481">"להמשיך להפעיל מ-%s ?"</string>
+    <string name="resume_playing_title" msgid="8996677350649355013">"המשך את הקרנת הווידאו"</string>
+    <string name="resume_playing_message" msgid="5184414518126703481">"להמשיך להפעיל מ-%s?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"המשך את ההפעלה"</string>
-    <string name="loading" msgid="7038208555304563571">"טוען…"</string>
+    <string name="loading" msgid="7038208555304563571">"טוען..."</string>
     <string name="fail_to_load" msgid="2710120770735315683">"הטעינה נכשלה"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"ללא תמונה ממוזערת"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"התחל מחדש"</string>
@@ -41,26 +41,32 @@
     <string name="select_album" msgid="4632641262236697235">"בחר אלבומים"</string>
     <string name="select_group" msgid="9090385962030340391">"בחר קבוצות"</string>
     <string name="set_image" msgid="2331476809308010401">"הגדר תמונה בתור"</string>
-    <string name="wallpaper" msgid="9222901738515471972">"מגדיר טפט, נא המתן..."</string>
+    <string name="wallpaper" msgid="9222901738515471972">"מגדיר טפט, המתן..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"טפט"</string>
     <string name="delete" msgid="2839695998251824487">"מחק"</string>
     <string name="confirm_delete" msgid="5731757674837098707">"אשר מחיקה"</string>
     <string name="cancel" msgid="3637516880917356226">"ביטול"</string>
-    <string name="share" msgid="3619042788254195341">"שתף"</string>
+    <string name="share" msgid="3619042788254195341">"שיתוף"</string>
     <string name="select_all" msgid="8623593677101437957">"בחר הכל"</string>
-    <string name="deselect_all" msgid="7397531298370285581">"בטל את הבחירה של כולם"</string>
-    <string name="slideshow" msgid="4355906903247112975">"הצגת שקופיות"</string>
+    <string name="deselect_all" msgid="7397531298370285581">"בטל בחירה של הכל"</string>
+    <string name="slideshow" msgid="4355906903247112975">"מצגת"</string>
     <string name="details" msgid="8415120088556445230">"פרטים"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"עבור למצלמה"</string>
-    <!-- no translation found for number_of_items_selected:zero (2142579311530586258) -->
-    <!-- no translation found for number_of_items_selected:one (2478365152745637768) -->
-    <!-- no translation found for number_of_items_selected:other (754722656147810487) -->
-    <!-- no translation found for number_of_albums_selected:zero (749292746814788132) -->
-    <!-- no translation found for number_of_albums_selected:one (6184377003099987825) -->
-    <!-- no translation found for number_of_albums_selected:other (53105607141906130) -->
-    <!-- no translation found for number_of_groups_selected:zero (3466388370310869238) -->
-    <!-- no translation found for number_of_groups_selected:one (5030162638216034260) -->
-    <!-- no translation found for number_of_groups_selected:other (3512041363942842738) -->
+  <plurals name="number_of_items_selected">
+    <item quantity="zero" msgid="2142579311530586258">"%1$d נבחרו"</item>
+    <item quantity="one" msgid="2478365152745637768">"%1$d נבחר"</item>
+    <item quantity="other" msgid="754722656147810487">"%1$d נבחרו"</item>
+  </plurals>
+  <plurals name="number_of_albums_selected">
+    <item quantity="zero" msgid="749292746814788132">"%1$d נבחרו"</item>
+    <item quantity="one" msgid="6184377003099987825">"%1$d נבחר"</item>
+    <item quantity="other" msgid="53105607141906130">"%1$d נבחרו"</item>
+  </plurals>
+  <plurals name="number_of_groups_selected">
+    <item quantity="zero" msgid="3466388370310869238">"%1$d נבחרו"</item>
+    <item quantity="one" msgid="5030162638216034260">"%1$d נבחרו"</item>
+    <item quantity="other" msgid="3512041363942842738">"%1$d נבחרו"</item>
+  </plurals>
     <string name="show_on_map" msgid="6157544221201750980">"הצג במפה"</string>
     <string name="rotate_left" msgid="7412075232752726934">"סובב שמאלה"</string>
     <string name="rotate_right" msgid="7340681085011826618">"סובב ימינה"</string>
@@ -71,7 +77,7 @@
     <string name="caching_label" msgid="3244800874547101776">"שומר בקובץ..."</string>
     <string name="crop" msgid="7970750655414797277">"חתוך"</string>
     <string name="set_as" msgid="3636764710790507868">"הגדר בתור"</string>
-    <string name="video_err" msgid="7917736494827857757">"אין אפשרות להפעיל את סרטון הווידאו"</string>
+    <string name="video_err" msgid="7917736494827857757">"אין אפשרות להפעיל את הסרטון"</string>
     <string name="group_by_location" msgid="316641628989023253">"לפי מיקום"</string>
     <string name="group_by_time" msgid="9046168567717963573">"לפי זמן"</string>
     <string name="group_by_tags" msgid="3568731317210676160">"לפי תגים"</string>
@@ -80,6 +86,8 @@
     <string name="group_by_size" msgid="153766174950394155">"לפי גודל"</string>
     <string name="untagged" msgid="7281481064509590402">"ללא תג"</string>
     <string name="no_location" msgid="2036710947563713111">"ללא מיקום"</string>
+    <!-- no translation found for no_connectivity (4060082114738885149) -->
+    <skip />
     <string name="show_images_only" msgid="7263218480867672653">"תמונות בלבד"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"סרטוני וידאו בלבד"</string>
     <string name="show_all" msgid="4780647751652596980">"תמונות וסרטוני וידאו"</string>
@@ -92,8 +100,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"אלבומי Google"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"הפוך לזמין באופן לא מקוון"</string>
-    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
-    <skip />
+    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"רענן את אלבומי Picasa"</string>
     <string name="done" msgid="217672440064436595">"בוצע"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d מתוך %2$d פריטים:"</string>
     <string name="title" msgid="7622928349908052569">"כותרת"</string>
@@ -148,8 +155,7 @@
     <string name="cache_status" msgid="7690438435538533106">"הורד <xliff:g id="NUMBER_0">%1$s</xliff:g> מתוך <xliff:g id="NUMBER_1">%2$s</xliff:g> תמונות"</string>
     <string name="cache_done" msgid="9194449192869777483">"ההורדה הושלמה"</string>
     <string name="albums" msgid="7320787705180057947">"אלבומים"</string>
-    <!-- no translation found for times (2023033894889499219) -->
-    <skip />
+    <string name="times" msgid="2023033894889499219">"פעמים"</string>
     <string name="locations" msgid="6649297994083130305">"מיקומים"</string>
     <string name="people" msgid="4114003823747292747">"אנשים"</string>
     <string name="tags" msgid="5539648765482935955">"תגיות"</string>
