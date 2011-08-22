@@ -23,7 +23,7 @@
     <string name="movie_view_label" msgid="3526526872644898229">"Videoafspiller"</string>
     <string name="loading_video" msgid="4013492720121891585">"Indlæser video ..."</string>
     <string name="loading_image" msgid="1200894415793838191">"Indlæser billede..."</string>
-    <string name="loading_account" msgid="928195413034552034">"Indlæser konto???"</string>
+    <string name="loading_account" msgid="928195413034552034">"Indlæser konto..."</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"Genoptag video"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"Genoptag afspilning fra %s ?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Genoptag afspilning"</string>
@@ -52,15 +52,21 @@
     <string name="slideshow" msgid="4355906903247112975">"Diasshow"</string>
     <string name="details" msgid="8415120088556445230">"Detaljer"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"Skift til kamera"</string>
-    <!-- no translation found for number_of_items_selected:zero (2142579311530586258) -->
-    <!-- no translation found for number_of_items_selected:one (2478365152745637768) -->
-    <!-- no translation found for number_of_items_selected:other (754722656147810487) -->
-    <!-- no translation found for number_of_albums_selected:zero (749292746814788132) -->
-    <!-- no translation found for number_of_albums_selected:one (6184377003099987825) -->
-    <!-- no translation found for number_of_albums_selected:other (53105607141906130) -->
-    <!-- no translation found for number_of_groups_selected:zero (3466388370310869238) -->
-    <!-- no translation found for number_of_groups_selected:one (5030162638216034260) -->
-    <!-- no translation found for number_of_groups_selected:other (3512041363942842738) -->
+  <plurals name="number_of_items_selected">
+    <item quantity="zero" msgid="2142579311530586258">"%1$d valgt"</item>
+    <item quantity="one" msgid="2478365152745637768">"%1$d valgt"</item>
+    <item quantity="other" msgid="754722656147810487">"%1$d valgt"</item>
+  </plurals>
+  <plurals name="number_of_albums_selected">
+    <item quantity="zero" msgid="749292746814788132">"%1$d valgt"</item>
+    <item quantity="one" msgid="6184377003099987825">"%1$d valgt"</item>
+    <item quantity="other" msgid="53105607141906130">"%1$d valgt"</item>
+  </plurals>
+  <plurals name="number_of_groups_selected">
+    <item quantity="zero" msgid="3466388370310869238">"%1$d valgt"</item>
+    <item quantity="one" msgid="5030162638216034260">"%1$d valgt"</item>
+    <item quantity="other" msgid="3512041363942842738">"%1$d valgt"</item>
+  </plurals>
     <string name="show_on_map" msgid="6157544221201750980">"Vis på kort"</string>
     <string name="rotate_left" msgid="7412075232752726934">"Roter til venstre"</string>
     <string name="rotate_right" msgid="7340681085011826618">"Roter til højre"</string>
@@ -80,6 +86,8 @@
     <string name="group_by_size" msgid="153766174950394155">"Efter størrelse"</string>
     <string name="untagged" msgid="7281481064509590402">"Utagget"</string>
     <string name="no_location" msgid="2036710947563713111">"Ingen placering"</string>
+    <!-- no translation found for no_connectivity (4060082114738885149) -->
+    <skip />
     <string name="show_images_only" msgid="7263218480867672653">"Kun billeder"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Kun videoer"</string>
     <string name="show_all" msgid="4780647751652596980">"Billeder og videoer"</string>
@@ -92,8 +100,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Picasa Webalbum"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Gør tilgængelig offline"</string>
-    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
-    <skip />
+    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"Opdater picasa-albummer"</string>
     <string name="done" msgid="217672440064436595">"Udført"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d ud af %2$d enheder:"</string>
     <string name="title" msgid="7622928349908052569">"Titel"</string>
@@ -148,24 +155,23 @@
     <string name="cache_status" msgid="7690438435538533106">"<xliff:g id="NUMBER_0">%1$s</xliff:g> downloadet ud af <xliff:g id="NUMBER_1">%2$s</xliff:g> fotos"</string>
     <string name="cache_done" msgid="9194449192869777483">"Download er fuldført"</string>
     <string name="albums" msgid="7320787705180057947">"Albummer"</string>
-    <!-- no translation found for times (2023033894889499219) -->
-    <skip />
-    <string name="locations" msgid="6649297994083130305">"Placering"</string>
+    <string name="times" msgid="2023033894889499219">"Tidspunkter"</string>
+    <string name="locations" msgid="6649297994083130305">"Placeringer"</string>
     <string name="people" msgid="4114003823747292747">"Personer"</string>
     <string name="tags" msgid="5539648765482935955">"Tags"</string>
     <string name="group_by" msgid="4308299657902209357">"Grupper efter"</string>
     <string name="settings" msgid="1534847740615665736">"Indstillinger"</string>
     <string name="prefs_accounts" msgid="7942761992713671670">"Kontoindstillinger"</string>
-    <string name="prefs_data_usage" msgid="410592732727343215">"Indstillinger til dataforbrug"</string>
-    <string name="prefs_auto_upload" msgid="2467627128066665126">"Auto-upload"</string>
+    <string name="prefs_data_usage" msgid="410592732727343215">"Dataforbrugsindstillinger"</string>
+    <string name="prefs_auto_upload" msgid="2467627128066665126">"Automatisk upload"</string>
     <string name="prefs_other_settings" msgid="6034181851440646681">"Andre indstillinger"</string>
     <string name="about_gallery" msgid="8667445445883757255">"Om galleri"</string>
     <string name="sync_on_wifi_only" msgid="5795753226259399958">"Synkroniser kun på Wi-Fi"</string>
     <string name="helptext_auto_upload" msgid="133741242503097377">"Upload automatisk alle de billeder og videoer, du tager, til et privat Picasa-webalbum"</string>
-    <string name="enable_auto_upload" msgid="1586329406342131">"Aktiver auto-upload"</string>
-    <string name="photo_sync_is_on" msgid="1653898269297050634">"Synk. af Google-fotos er tændt"</string>
+    <string name="enable_auto_upload" msgid="1586329406342131">"Aktiver automatisk upload"</string>
+    <string name="photo_sync_is_on" msgid="1653898269297050634">"Synkr. af Google-fotos er TIL"</string>
     <string name="photo_sync_is_off" msgid="6464193461664544289">"Synkr. af Google-fotos er FRA"</string>
-    <string name="helptext_photo_sync" msgid="8617245939103545623">"Skift præf. for synk., eller fjern kontoen"</string>
+    <string name="helptext_photo_sync" msgid="8617245939103545623">"Skift præf. for synkr., eller fjern konto"</string>
     <string name="view_photo_for_account" msgid="5608040380422337939">"Se billeder og videoer fra denne konto i galleriet"</string>
     <string name="add_account" msgid="4271217504968243974">"Tilføj konto"</string>
     <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Vælg konto til auto-upload"</string>

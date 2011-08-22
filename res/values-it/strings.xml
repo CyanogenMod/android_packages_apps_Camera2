@@ -23,7 +23,7 @@
     <string name="movie_view_label" msgid="3526526872644898229">"Video player"</string>
     <string name="loading_video" msgid="4013492720121891585">"Caricamento video..."</string>
     <string name="loading_image" msgid="1200894415793838191">"Caricamento immagine in corso..."</string>
-    <string name="loading_account" msgid="928195413034552034">"Caricamento account???"</string>
+    <string name="loading_account" msgid="928195413034552034">"Caricamento account..."</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"Riprendi video"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"Riprendi riproduzione da %s ?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Riprendi riproduzione"</string>
@@ -86,6 +86,8 @@
     <string name="group_by_size" msgid="153766174950394155">"Per dimensioni"</string>
     <string name="untagged" msgid="7281481064509590402">"Senza tag"</string>
     <string name="no_location" msgid="2036710947563713111">"Nessun luogo"</string>
+    <!-- no translation found for no_connectivity (4060082114738885149) -->
+    <skip />
     <string name="show_images_only" msgid="7263218480867672653">"Solo immagini"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Solo video"</string>
     <string name="show_all" msgid="4780647751652596980">"Immagini e video"</string>
@@ -98,8 +100,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Picasa Web Album"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Rendi disponibili offline"</string>
-    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
-    <skip />
+    <string name="sync_picasa_albums" msgid="8522572542111169872">"Aggiorna"</string>
     <string name="done" msgid="217672440064436595">"Fine"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d su %2$d elementi :"</string>
     <string name="title" msgid="7622928349908052569">"Titolo"</string>

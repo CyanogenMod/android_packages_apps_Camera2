@@ -37,8 +37,8 @@
     <string name="crop_label" msgid="521114301871349328">"Recortar imagen"</string>
     <string name="select_image" msgid="7841406150484742140">"Seleccionar foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Seleccionar video"</string>
-    <string name="select_item" msgid="2257529413100472599">"Seleccionar artículo(s)"</string>
-    <string name="select_album" msgid="4632641262236697235">"Seleccionar álbum(es)"</string>
+    <string name="select_item" msgid="2257529413100472599">"Selecc. elemento(s)"</string>
+    <string name="select_album" msgid="4632641262236697235">"Seleccionar álbumes"</string>
     <string name="select_group" msgid="9090385962030340391">"Seleccionar grupo(s)"</string>
     <string name="set_image" msgid="2331476809308010401">"Establecer imagen como"</string>
     <string name="wallpaper" msgid="9222901738515471972">"Configurando papel tapiz. Espera, por favor..."</string>
@@ -86,6 +86,8 @@
     <string name="group_by_size" msgid="153766174950394155">"Por tamaño"</string>
     <string name="untagged" msgid="7281481064509590402">"No etiquetado"</string>
     <string name="no_location" msgid="2036710947563713111">"No hay ubicación"</string>
+    <!-- no translation found for no_connectivity (4060082114738885149) -->
+    <skip />
     <string name="show_images_only" msgid="7263218480867672653">"Sólo imágenes"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Sólo videos"</string>
     <string name="show_all" msgid="4780647751652596980">"Imágenes y videos"</string>
@@ -98,8 +100,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Álbumes web de Picasa"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Hacer disponible sin conexión"</string>
-    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
-    <skip />
+    <string name="sync_picasa_albums" msgid="8522572542111169872">"Actualizar"</string>
     <string name="done" msgid="217672440064436595">"Listo"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d de %2$d elementos:"</string>
     <string name="title" msgid="7622928349908052569">"Título"</string>
@@ -165,11 +166,11 @@
     <string name="prefs_auto_upload" msgid="2467627128066665126">"Carga automática"</string>
     <string name="prefs_other_settings" msgid="6034181851440646681">"Otros parámetros de configuración"</string>
     <string name="about_gallery" msgid="8667445445883757255">"Acerca de la Galería"</string>
-    <string name="sync_on_wifi_only" msgid="5795753226259399958">"Sincronización solo en WiFi"</string>
+    <string name="sync_on_wifi_only" msgid="5795753226259399958">"Sincronización solo en Wi-Fi"</string>
     <string name="helptext_auto_upload" msgid="133741242503097377">"Cargar automáticamente todas tus fotos y videos en un álbum web de Picasa privado"</string>
     <string name="enable_auto_upload" msgid="1586329406342131">"Habilitar carga automática"</string>
     <string name="photo_sync_is_on" msgid="1653898269297050634">"Sinc de Google Fotos ACTIVADA"</string>
-    <string name="photo_sync_is_off" msgid="6464193461664544289">"Sinc de Google Fotos DESACTIV"</string>
+    <string name="photo_sync_is_off" msgid="6464193461664544289">"Sincr de Google Fotos DESACTIV"</string>
     <string name="helptext_photo_sync" msgid="8617245939103545623">"Cambiar pref de sinc o eliminar cuenta"</string>
     <string name="view_photo_for_account" msgid="5608040380422337939">"Ver fotos y videos de esta cuenta en la Galería"</string>
     <string name="add_account" msgid="4271217504968243974">"Agregar cuenta"</string>

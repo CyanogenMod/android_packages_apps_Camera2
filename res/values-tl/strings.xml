@@ -86,6 +86,8 @@
     <string name="group_by_size" msgid="153766174950394155">"Ayon sa laki"</string>
     <string name="untagged" msgid="7281481064509590402">"Hindi naka-tag"</string>
     <string name="no_location" msgid="2036710947563713111">"Walang Lokasyon"</string>
+    <!-- no translation found for no_connectivity (4060082114738885149) -->
+    <skip />
     <string name="show_images_only" msgid="7263218480867672653">"Mga larawan lamang"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Mga video lamang"</string>
     <string name="show_all" msgid="4780647751652596980">"Mga larawan at mga video"</string>
@@ -98,8 +100,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Picasa Web Albums"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Gawing available sa offline"</string>
-    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
-    <skip />
+    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"I-refresh ang mga picasa album"</string>
     <string name="done" msgid="217672440064436595">"Tapos na"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d ng %2$d na item:"</string>
     <string name="title" msgid="7622928349908052569">"Pamagat"</string>

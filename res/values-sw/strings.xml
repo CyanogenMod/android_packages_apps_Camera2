@@ -62,21 +62,24 @@
     <skip />
     <!-- no translation found for switch_to_camera (7280111806675169992) -->
     <skip />
-  <plurals name="number_of_items_selected">
-    <item quantity="zero" msgid="2142579311530586258">"% 1 $ d imechaguliwa"</item>
-    <item quantity="one" msgid="2478365152745637768">"% 1 $ d imechaguliwa"</item>
-    <item quantity="other" msgid="754722656147810487">"% 1 $ d imechaguliwa"</item>
-  </plurals>
-  <plurals name="number_of_albums_selected">
-    <item quantity="zero" msgid="749292746814788132">"% 1 $ d imechaguliwa"</item>
-    <item quantity="one" msgid="6184377003099987825">"% 1 $ d imechaguliwa"</item>
-    <item quantity="other" msgid="53105607141906130">"% 1 $ d imechaguliwa"</item>
-  </plurals>
-  <plurals name="number_of_groups_selected">
-    <item quantity="zero" msgid="3466388370310869238">"% 1 $ d imechaguliwa"</item>
-    <item quantity="one" msgid="5030162638216034260">"% 1 $ d imechaguliwa"</item>
-    <item quantity="other" msgid="3512041363942842738">"% 1 $ d imechaguliwa"</item>
-  </plurals>
+    <!-- String.format failed for translation -->
+    <!-- no translation found for number_of_items_selected:zero (2142579311530586258) -->
+    <!-- String.format failed for translation -->
+    <!-- no translation found for number_of_items_selected:one (2478365152745637768) -->
+    <!-- String.format failed for translation -->
+    <!-- no translation found for number_of_items_selected:other (754722656147810487) -->
+    <!-- String.format failed for translation -->
+    <!-- no translation found for number_of_albums_selected:zero (749292746814788132) -->
+    <!-- String.format failed for translation -->
+    <!-- no translation found for number_of_albums_selected:one (6184377003099987825) -->
+    <!-- String.format failed for translation -->
+    <!-- no translation found for number_of_albums_selected:other (53105607141906130) -->
+    <!-- String.format failed for translation -->
+    <!-- no translation found for number_of_groups_selected:zero (3466388370310869238) -->
+    <!-- String.format failed for translation -->
+    <!-- no translation found for number_of_groups_selected:one (5030162638216034260) -->
+    <!-- String.format failed for translation -->
+    <!-- no translation found for number_of_groups_selected:other (3512041363942842738) -->
     <string name="show_on_map" msgid="6157544221201750980">"Onyesha kwenye ramani"</string>
     <string name="rotate_left" msgid="7412075232752726934">"Zungusha Kushoto"</string>
     <string name="rotate_right" msgid="7340681085011826618">"Zungusha Kulia"</string>
@@ -99,6 +102,8 @@
     <skip />
     <string name="untagged" msgid="7281481064509590402">"Ondoa lebo"</string>
     <string name="no_location" msgid="2036710947563713111">"Hakuna Mahali"</string>
+    <!-- no translation found for no_connectivity (4060082114738885149) -->
+    <skip />
     <string name="show_images_only" msgid="7263218480867672653">"Picha tu"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Video tu"</string>
     <string name="show_all" msgid="4780647751652596980">"Picha na video"</string>

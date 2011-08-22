@@ -52,15 +52,21 @@
     <string name="slideshow" msgid="4355906903247112975">"Слайд-шоу"</string>
     <string name="details" msgid="8415120088556445230">"Сведения"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"Переключиться на камеру"</string>
-    <!-- no translation found for number_of_items_selected:zero (2142579311530586258) -->
-    <!-- no translation found for number_of_items_selected:one (2478365152745637768) -->
-    <!-- no translation found for number_of_items_selected:other (754722656147810487) -->
-    <!-- no translation found for number_of_albums_selected:zero (749292746814788132) -->
-    <!-- no translation found for number_of_albums_selected:one (6184377003099987825) -->
-    <!-- no translation found for number_of_albums_selected:other (53105607141906130) -->
-    <!-- no translation found for number_of_groups_selected:zero (3466388370310869238) -->
-    <!-- no translation found for number_of_groups_selected:one (5030162638216034260) -->
-    <!-- no translation found for number_of_groups_selected:other (3512041363942842738) -->
+  <plurals name="number_of_items_selected">
+    <item quantity="zero" msgid="2142579311530586258">"Выбрано: %1$d"</item>
+    <item quantity="one" msgid="2478365152745637768">"Выбрано: %1$d"</item>
+    <item quantity="other" msgid="754722656147810487">"Выбрано: %1$d"</item>
+  </plurals>
+  <plurals name="number_of_albums_selected">
+    <item quantity="zero" msgid="749292746814788132">"Выбрано: %1$d"</item>
+    <item quantity="one" msgid="6184377003099987825">"Выбрано: %1$d"</item>
+    <item quantity="other" msgid="53105607141906130">"Выбрано: %1$d"</item>
+  </plurals>
+  <plurals name="number_of_groups_selected">
+    <item quantity="zero" msgid="3466388370310869238">"Выбрано: %1$d"</item>
+    <item quantity="one" msgid="5030162638216034260">"Выбрано: %1$d"</item>
+    <item quantity="other" msgid="3512041363942842738">"Выбрано: %1$d"</item>
+  </plurals>
     <string name="show_on_map" msgid="6157544221201750980">"Показать на карте"</string>
     <string name="rotate_left" msgid="7412075232752726934">"Повернуть влево"</string>
     <string name="rotate_right" msgid="7340681085011826618">"Повернуть вправо"</string>
@@ -80,6 +86,8 @@
     <string name="group_by_size" msgid="153766174950394155">"По размеру"</string>
     <string name="untagged" msgid="7281481064509590402">"Без тегов"</string>
     <string name="no_location" msgid="2036710947563713111">"Местоположение неизвестно"</string>
+    <!-- no translation found for no_connectivity (4060082114738885149) -->
+    <skip />
     <string name="show_images_only" msgid="7263218480867672653">"Только изображения"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Только видео"</string>
     <string name="show_all" msgid="4780647751652596980">"Изображения и видео"</string>
@@ -92,8 +100,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Веб-альбомы Picasa"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Живая лента Google"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Сделать доступным офлайн"</string>
-    <!-- no translation found for sync_picasa_albums (8522572542111169872) -->
-    <skip />
+    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"Обновить альбомы Picasa"</string>
     <string name="done" msgid="217672440064436595">"Готово"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d из %2$d:"</string>
     <string name="title" msgid="7622928349908052569">"Название"</string>
@@ -148,8 +155,7 @@
     <string name="cache_status" msgid="7690438435538533106">"Загружено фотографий: <xliff:g id="NUMBER_0">%1$s</xliff:g> из <xliff:g id="NUMBER_1">%2$s</xliff:g>"</string>
     <string name="cache_done" msgid="9194449192869777483">"Загрузка завершена"</string>
     <string name="albums" msgid="7320787705180057947">"Альбомы"</string>
-    <!-- no translation found for times (2023033894889499219) -->
-    <skip />
+    <string name="times" msgid="2023033894889499219">"По времени"</string>
     <string name="locations" msgid="6649297994083130305">"Места"</string>
     <string name="people" msgid="4114003823747292747">"Люди"</string>
     <string name="tags" msgid="5539648765482935955">"Теги"</string>
