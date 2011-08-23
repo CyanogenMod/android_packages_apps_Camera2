@@ -18,6 +18,7 @@ package com.android.gallery3d.ui;
 
 import com.android.gallery3d.app.GalleryContext;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.DecodeUtils;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.CancelListener;
@@ -600,8 +601,8 @@ public class TileImageView extends GLView {
             int tileLength = (TILE_SIZE + 2 * TILE_BORDER);
             int borderLength = TILE_BORDER << mTileLevel;
             try {
-                mDecodedTile = mModel.getTile(
-                        mTileLevel, mX - borderLength, mY - borderLength, tileLength);
+                mDecodedTile = DecodeUtils.ensureGLCompatibleBitmap(mModel.getTile(
+                        mTileLevel, mX - borderLength, mY - borderLength, tileLength));
                 return mDecodedTile != null;
             } catch (Throwable t) {
                 Log.w(TAG, "fail to decode tile", t);
