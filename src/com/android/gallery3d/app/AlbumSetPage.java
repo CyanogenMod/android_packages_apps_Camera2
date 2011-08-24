@@ -28,8 +28,8 @@ import com.android.gallery3d.settings.GallerySettings;
 import com.android.gallery3d.ui.ActionModeHandler;
 import com.android.gallery3d.ui.ActionModeHandler.ActionModeListener;
 import com.android.gallery3d.ui.AlbumSetView;
-import com.android.gallery3d.ui.DetailsWindow;
-import com.android.gallery3d.ui.DetailsWindow.CloseListener;
+import com.android.gallery3d.ui.DetailsHelper;
+import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.GridDrawer;
@@ -88,7 +88,8 @@ public class AlbumSetPage extends ActivityState implements
     private boolean mGetAlbum;
     private ActionMode mActionMode;
     private ActionModeHandler mActionModeHandler;
-    private DetailsWindow mDetailsWindow;
+    private DetailsHelper mDetailsHelper;
+    private MyDetailsSource mDetailsSource;
     private boolean mShowDetails;
     private EyePosition mEyePosition;
 
@@ -114,13 +115,7 @@ public class AlbumSetPage extends ActivityState implements
             int slotViewRight = right - left;
 
             if (mShowDetails) {
-                mDetailsWindow.measure(
-                        MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
-                int width = mDetailsWindow.getMeasuredWidth();
-                int detailLeft = right - left - width;
-                slotViewRight = detailLeft;
-                mDetailsWindow.layout(detailLeft, slotViewTop, detailLeft + width,
-                        bottom - top);
+                mDetailsHelper.layout(left, slotViewTop, right, bottom);
             } else {
                 mAlbumSetView.setSelectionDrawer(mGridDrawer);
             }
@@ -182,7 +177,7 @@ public class AlbumSetPage extends ActivityState implements
         if (mShowDetails) {
             Path path = targetSet.getPath();
             mHighlightDrawer.setHighlightItem(path);
-            mDetailsWindow.reloadDetails(slotIndex);
+            mDetailsHelper.reloadDetails(slotIndex);
         } else if (!mSelectionManager.inSelectionMode()) {
             Bundle data = new Bundle(getData());
             String mediaPath = targetSet.getPath().toString();
@@ -226,6 +221,7 @@ public class AlbumSetPage extends ActivityState implements
             if (set == null) return;
             mSelectionManager.setAutoLeaveSelectionMode(true);
             mSelectionManager.toggle(set.getPath());
+            mDetailsSource.findIndex(slotIndex);
             mAlbumSetView.invalidate();
         }
     }
@@ -274,6 +270,7 @@ public class AlbumSetPage extends ActivityState implements
         mTitle = data.getString(AlbumSetPage.KEY_SET_TITLE);
         mSubtitle = data.getString(AlbumSetPage.KEY_SET_SUBTITLE);
         mEyePosition = new EyePosition(mActivity.getAndroidContext(), this);
+        mDetailsSource = new MyDetailsSource();
 
         startTransition();
     }
@@ -286,9 +283,7 @@ public class AlbumSetPage extends ActivityState implements
         mAlbumSetDataAdapter.pause();
         mAlbumSetView.pause();
         mEyePosition.pause();
-        if (mDetailsWindow != null) {
-            mDetailsWindow.pause();
-        }
+        DetailsHelper.pause();
         GalleryActionBar actionBar = mActivity.getGalleryActionBar();
         if (actionBar != null) actionBar.hideClusterTabs();
     }
@@ -520,23 +515,22 @@ public class AlbumSetPage extends ActivityState implements
     private void hideDetails() {
         mShowDetails = false;
         mAlbumSetView.setSelectionDrawer(mGridDrawer);
-        mDetailsWindow.hide();
+        mDetailsHelper.hide();
     }
 
     private void showDetails() {
         mShowDetails = true;
-        if (mDetailsWindow == null) {
+        if (mDetailsHelper == null) {
             mHighlightDrawer = new HighlightDrawer(mActivity.getAndroidContext());
-            mDetailsWindow = new DetailsWindow(mActivity, new MyDetailsSource());
-            mDetailsWindow.setCloseListener(new CloseListener() {
+            mDetailsHelper = new DetailsHelper(mActivity, mRootPane, mDetailsSource);
+            mDetailsHelper.setCloseListener(new CloseListener() {
                 public void onClose() {
                     hideDetails();
                 }
             });
-            mRootPane.addComponent(mDetailsWindow);
         }
         mAlbumSetView.setSelectionDrawer(mHighlightDrawer);
-        mDetailsWindow.show();
+        mDetailsHelper.show();
     }
 
     private class MyLoadingListener implements LoadingListener {
@@ -557,10 +551,14 @@ public class AlbumSetPage extends ActivityState implements
         }
     }
 
-    private class MyDetailsSource implements DetailsWindow.DetailsSource {
+    private class MyDetailsSource implements DetailsHelper.DetailsSource {
         private int mIndex;
         public int size() {
             return mAlbumSetDataAdapter.size();
+        }
+
+        public int getIndex() {
+            return mIndex;
         }
 
         // If requested index is out of active window, suggest a valid index.

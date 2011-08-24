@@ -97,6 +97,8 @@
     <string name="slideshow">Slideshow</string>
 
     <string name="details">Details</string>
+    <string name="details_title">%1$d of %2$d items:</string>
+    <string name="close">Close</string>
 
     <!-- Title of a menu item to switch from Gallery to Camera app [CHAR LIMIT=30] -->
     <string name="switch_to_camera">Switch to Camera</string>
