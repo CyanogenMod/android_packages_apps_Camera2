@@ -27,9 +27,11 @@ import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ShareActionProvider;
+import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
 
 public class GalleryActionBar implements ActionBar.TabListener {
     private static final String TAG = "GalleryActionBar";
@@ -153,8 +155,6 @@ public class GalleryActionBar implements ActionBar.TabListener {
         ShareActionProvider shareActionProvider = null;
         if (item != null) {
             shareActionProvider = (ShareActionProvider) item.getActionProvider();
-            shareActionProvider.setShareHistoryFileName(
-                    ShareActionProvider.DEFAULT_SHARE_HISTORY_FILE_NAME);
         }
         return shareActionProvider;
     }
