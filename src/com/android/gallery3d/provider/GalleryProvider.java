@@ -29,6 +29,7 @@ import com.android.gallery3d.util.GalleryUtils;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
@@ -45,11 +46,22 @@ import java.io.OutputStream;
 public class GalleryProvider extends ContentProvider {
     private static final String TAG = "GalleryProvider";
 
-    public static final String AUTHORITY = "com.android.gallery3d.provider";
-    public static final Uri BASE_URI = Uri.parse("content://" + AUTHORITY);
-
     private DataManager mDataManager;
     private DownloadCache mDownloadCache;
+    private static Uri sBaseUri;
+
+    public static String getAuthority(Context context) {
+        return context.getPackageName() + ".provider";
+    }
+
+    public static Uri getUriFor(Context context, Path path) {
+        if (sBaseUri == null) {
+            sBaseUri = Uri.parse("content://" + context.getPackageName() + ".provider");
+        }
+        return sBaseUri.buildUpon()
+                .appendEncodedPath(path.toString().substring(1)) // ignore the leading '/'
+                .build();
+    }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {

@@ -22,6 +22,7 @@ import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
 import android.hardware.usb.UsbDevice;
@@ -45,10 +46,12 @@ public class MtpImage extends MediaItem {
     private final MtpObjectInfo mObjInfo;
     private final int mImageWidth;
     private final int mImageHeight;
+    private final Context mContext;
 
     MtpImage(Path path, GalleryApp application, int deviceId,
             MtpObjectInfo objInfo, MtpContext mtpContext) {
         super(path, nextVersionNumber());
+        mContext = application.getAndroidContext();
         mDeviceId = deviceId;
         mObjInfo = objInfo;
         mObjectId = objInfo.getObjectHandle();
@@ -146,9 +149,7 @@ public class MtpImage extends MediaItem {
 
     @Override
     public Uri getContentUri() {
-        return GalleryProvider.BASE_URI.buildUpon()
-                .appendEncodedPath(mPath.toString().substring(1))
-                .build();
+        return GalleryProvider.getUriFor(mContext, mPath);
     }
 
     @Override
