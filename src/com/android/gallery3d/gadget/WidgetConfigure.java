@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.widget;
+package com.android.gallery3d.gadget;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.AlbumPicker;
@@ -72,7 +72,7 @@ public class WidgetConfigure extends Activity {
 
     private void updateWidgetAndFinish(WidgetDatabaseHelper.Entry entry) {
         AppWidgetManager manager = AppWidgetManager.getInstance(this);
-        RemoteViews views = WidgetProvider.buildWidget(this, mAppWidgetId, entry);
+        RemoteViews views = PhotoAppWidgetProvider.buildWidget(this, mAppWidgetId, entry);
         manager.updateAppWidget(mAppWidgetId, views);
         setResult(RESULT_OK, new Intent().putExtra(
                 AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId));

@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.widget;
+package com.android.gallery3d.gadget;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.widget.WidgetDatabaseHelper.Entry;
+import com.android.gallery3d.gadget.WidgetDatabaseHelper.Entry;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-public class WidgetProvider extends AppWidgetProvider {
+public class PhotoAppWidgetProvider extends AppWidgetProvider {
 
     private static final String TAG = "WidgetProvider";
 
@@ -88,12 +90,26 @@ public class WidgetProvider extends AppWidgetProvider {
     static RemoteViews buildFrameWidget(Context context, int appWidgetId, Entry entry) {
         RemoteViews views = new RemoteViews(
                 context.getPackageName(), R.layout.photo_frame);
-        views.setImageViewBitmap(R.id.photo, entry.image);
-        Intent clickIntent = new Intent(context,
-                WidgetClickHandler.class).setData(entry.imageUri);
-        PendingIntent pendingClickIntent = PendingIntent.getActivity(context, 0,
-                clickIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-        views.setOnClickPendingIntent(R.id.photo, pendingClickIntent);
+        try {
+            byte[] data = entry.imageData;
+            Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+            views.setImageViewBitmap(R.id.photo, bitmap);
+        } catch (Throwable t) {
+            Log.w(TAG, "cannot load widget image: " + appWidgetId, t);
+        }
+
+        if (entry.imageUri != null) {
+            try {
+                Uri uri = Uri.parse(entry.imageUri);
+                Intent clickIntent = new Intent(context, WidgetClickHandler.class)
+                        .setData(uri);
+                PendingIntent pendingClickIntent = PendingIntent.getActivity(context, 0,
+                        clickIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                views.setOnClickPendingIntent(R.id.photo, pendingClickIntent);
+            } catch (Throwable t) {
+                Log.w(TAG, "cannot load widget uri: " + appWidgetId, t);
+            }
+        }
         return views;
     }
 
