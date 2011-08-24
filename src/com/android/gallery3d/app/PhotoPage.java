@@ -25,9 +25,9 @@ import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.MtpDevice;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.picasasource.PicasaSource;
-import com.android.gallery3d.ui.DetailsWindow;
-import com.android.gallery3d.ui.DetailsWindow.CloseListener;
-import com.android.gallery3d.ui.DetailsWindow.DetailsSource;
+import com.android.gallery3d.ui.DetailsHelper;
+import com.android.gallery3d.ui.DetailsHelper.CloseListener;
+import com.android.gallery3d.ui.DetailsHelper.DetailsSource;
 import com.android.gallery3d.ui.FilmStripView;
 import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLView;
@@ -82,7 +82,7 @@ public class PhotoPage extends ActivityState
     private PhotoView mPhotoView;
     private PhotoPage.Model mModel;
     private FilmStripView mFilmStripView;
-    private DetailsWindow mDetailsWindow;
+    private DetailsHelper mDetailsHelper;
     private boolean mShowDetails;
 
     // mMediaSet could be null if there is no KEY_MEDIA_SET_PATH supplied.
@@ -141,12 +141,8 @@ public class PhotoPage extends ActivityState
                         right - left, bottom - top);
             }
             if (mShowDetails) {
-                mDetailsWindow.measure(
-                        MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
-                int width = mDetailsWindow.getMeasuredWidth();
-                int viewTop = GalleryActionBar.getHeight((Activity) mActivity);
-                mDetailsWindow.layout(
-                        0, viewTop, width, bottom - top - filmStripHeight);
+                mDetailsHelper.layout(left, GalleryActionBar.getHeight((Activity) mActivity),
+                        right, bottom);
             }
         }
     };
@@ -257,7 +253,7 @@ public class PhotoPage extends ActivityState
         if (mCurrentPhoto == null) return;
         updateMenuOperations();
         if (mShowDetails) {
-            mDetailsWindow.reloadDetails(mModel.getCurrentIndex());
+            mDetailsHelper.reloadDetails(mModel.getCurrentIndex());
         }
         String title = photo.getName();
         if (title != null) mActionBar.setTitle(title);
@@ -441,22 +437,21 @@ public class PhotoPage extends ActivityState
 
     private void hideDetails() {
         mShowDetails = false;
-        mDetailsWindow.hide();
+        mDetailsHelper.hide();
     }
 
     private void showDetails(int index) {
         mShowDetails = true;
-        if (mDetailsWindow == null) {
-            mDetailsWindow = new DetailsWindow(mActivity, new MyDetailsSource());
-            mDetailsWindow.setCloseListener(new CloseListener() {
+        if (mDetailsHelper == null) {
+            mDetailsHelper = new DetailsHelper(mActivity, mRootPane, new MyDetailsSource());
+            mDetailsHelper.setCloseListener(new CloseListener() {
                 public void onClose() {
                     hideDetails();
                 }
             });
-            mRootPane.addComponent(mDetailsWindow);
         }
-        mDetailsWindow.reloadDetails(index);
-        mDetailsWindow.show();
+        mDetailsHelper.reloadDetails(index);
+        mDetailsHelper.show();
     }
 
     public void onSingleTapUp(int x, int y) {
@@ -541,9 +536,7 @@ public class PhotoPage extends ActivityState
         if (mFilmStripView != null) {
             mFilmStripView.pause();
         }
-        if (mDetailsWindow != null) {
-            mDetailsWindow.pause();
-        }
+        DetailsHelper.pause();
         mPhotoView.pause();
         mModel.pause();
         mHandler.removeMessages(MSG_HIDE_BARS);
@@ -568,6 +561,7 @@ public class PhotoPage extends ActivityState
     }
 
     private class MyDetailsSource implements DetailsSource {
+        private int mIndex;
         public MediaDetails getDetails() {
             return mModel.getCurrentMediaItem().getDetails();
         }
@@ -575,7 +569,12 @@ public class PhotoPage extends ActivityState
             return mMediaSet != null ? mMediaSet.getMediaItemCount() : 1;
         }
         public int findIndex(int indexHint) {
+            mIndex = indexHint;
             return indexHint;
+        }
+
+        public int getIndex() {
+            return mIndex;
         }
     }
 }

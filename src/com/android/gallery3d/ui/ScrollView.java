@@ -44,6 +44,18 @@ public class ScrollView extends GLView {
     }
 
     @Override
+    protected void onMeasure(int widthSpec, int heightSpec) {
+        GLView view = getContentView();
+        if (view != null) {
+            view.measure(widthSpec, heightSpec);
+            MeasureHelper.getInstance(this)
+                    .setPreferredContentSize(view.getMeasuredWidth(),
+                            view.getMeasuredHeight())
+                    .measure(widthSpec, heightSpec);
+        }
+    }
+
+    @Override
     public void onLayout(boolean sizeChange, int l, int t, int r, int b) {
         GLView content = getContentView();
         int width = getWidth();

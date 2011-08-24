@@ -26,19 +26,14 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaDetails;
-import com.android.gallery3d.util.Future;
-import com.android.gallery3d.util.FutureListener;
-import com.android.gallery3d.util.GalleryUtils;
-import com.android.gallery3d.util.ReverseGeocoder;
-import com.android.gallery3d.util.ThreadPool.Job;
-import com.android.gallery3d.util.ThreadPool.JobContext;
+import com.android.gallery3d.ui.DetailsAddressResolver.AddressResolvingListener;
+import com.android.gallery3d.ui.DetailsHelper.DetailsSource;
+import com.android.gallery3d.ui.DetailsHelper.DetailsViewContainer;
+import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.location.Address;
-import android.os.Handler;
-import android.os.Message;
 import android.text.format.Formatter;
 import android.view.MotionEvent;
 import android.view.View.MeasureSpec;
@@ -46,11 +41,9 @@ import android.view.View.MeasureSpec;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
-// TODO: Add scroll bar to this window.
-public class DetailsWindow extends GLView {
+public class GLDetailsView extends GLView implements DetailsViewContainer {
     @SuppressWarnings("unused")
-    private static final String TAG = "DetailsWindow";
-    private static final int MSG_REFRESH_LOCATION = 1;
+    private static final String TAG = "GLDetailsView";
     private static final int FONT_COLOR = Color.WHITE;
     private static final int CLOSE_BUTTON_SIZE = 32;
 
@@ -62,8 +55,6 @@ public class DetailsWindow extends GLView {
     private DetailsSource mSource;
     private int mIndex;
     private int mLocationIndex;
-    private Future<Address> mAddressLookupJob;
-    private Handler mHandler;
     private Icon mCloseButton;
     private int mMaxDetailLength;
     private CloseListener mListener;
@@ -71,32 +62,12 @@ public class DetailsWindow extends GLView {
     private ScrollView mScrollView;
     private DetailsPanel mDetailPanel = new DetailsPanel();
 
-    public interface DetailsSource {
-        public int size();
-        public int findIndex(int indexHint);
-        public MediaDetails getDetails();
-    }
-
-    public interface CloseListener {
-        public void onClose();
-    }
-
-    public DetailsWindow(GalleryActivity activity, DetailsSource source) {
+    public GLDetailsView(GalleryActivity activity, DetailsSource source) {
         mContext = activity;
         mSource = source;
-        mHandler = new SynchronizedHandler(activity.getGLRoot()) {
-            @Override
-            public void handleMessage(Message msg) {
-                switch(msg.what) {
-                    case MSG_REFRESH_LOCATION:
-                        mModel.updateLocation((Address) msg.obj);
-                        invalidate();
-                        break;
-                }
-            }
-        };
+
         Context context = activity.getAndroidContext();
-        ResourceTexture icon = new ResourceTexture(context, R.drawable.ic_menu_cancel_holo_light);
+        ResourceTexture icon = new ResourceTexture(context, R.drawable.ic_lockscreen_chevron_up);
         setBackground(new NinePatchTexture(context, R.drawable.popup_full_dark));
 
         mCloseButton = new Icon(context, icon, CLOSE_BUTTON_SIZE, CLOSE_BUTTON_SIZE) {
@@ -114,8 +85,6 @@ public class DetailsWindow extends GLView {
 
         super.addComponent(mScrollView);
         super.addComponent(mCloseButton);
-
-        reloadDetails(0);
     }
 
     public void setCloseListener(CloseListener listener) {
@@ -162,15 +131,16 @@ public class DetailsWindow extends GLView {
 
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
-        int height = MeasureSpec.getSize(heightSpec);
+        mScrollView.measure(widthSpec, heightSpec);
+        mCloseButton.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+        int height = mScrollView.getMeasuredHeight() + mCloseButton.getMeasuredHeight();
         MeasureHelper.getInstance(this)
-                .setPreferredContentSize(PREFERRED_WIDTH, height)
+                .setPreferredContentSize(mScrollView.getMeasuredWidth(), height)
                 .measure(widthSpec, heightSpec);
     }
 
     @Override
     protected void onLayout(boolean sizeChange, int l, int t, int r, int b) {
-        mCloseButton.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
         int bWidth = mCloseButton.getMeasuredWidth();
         int bHeight = mCloseButton.getMeasuredHeight();
         int width = getWidth();
@@ -184,6 +154,7 @@ public class DetailsWindow extends GLView {
     }
 
     public void show() {
+        reloadDetails(mSource.getIndex());
         setVisibility(GLView.VISIBLE);
         requestLayout();
     }
@@ -191,14 +162,6 @@ public class DetailsWindow extends GLView {
     public void hide() {
         setVisibility(GLView.INVISIBLE);
         requestLayout();
-    }
-
-    public void pause() {
-        Future<Address> lookupJob = mAddressLookupJob;
-        if (lookupJob != null) {
-            lookupJob.cancel();
-            lookupJob.waitDone();
-        }
     }
 
     public void reloadDetails(int indexHint) {
@@ -219,19 +182,7 @@ public class DetailsWindow extends GLView {
         invalidate();
     }
 
-    private class AddressLookupJob implements Job<Address> {
-        double[] mLatlng;
-        protected AddressLookupJob(double[] latlng) {
-            mLatlng = latlng;
-        }
-
-        public Address run(JobContext jc) {
-            ReverseGeocoder geocoder = new ReverseGeocoder(mContext.getAndroidContext());
-            return geocoder.lookupAddress(mLatlng[0], mLatlng[1], true);
-        }
-    }
-
-    private class MyDataModel {
+    private class MyDataModel implements AddressResolvingListener {
         ArrayList<Texture> mItems;
 
         public MyDataModel(MediaDetails details) {
@@ -248,7 +199,9 @@ public class DetailsWindow extends GLView {
                 String value;
                 switch (detail.getKey()) {
                     case MediaDetails.INDEX_LOCATION: {
-                        value = getLocationText((double[]) detail.getValue());
+                        double[] latlng = (double[]) detail.getValue();
+                        mLocationIndex = mItems.size();
+                        value = DetailsHelper.resolveAddress(mContext, latlng, this);
                         break;
                     }
                     case MediaDetails.INDEX_SIZE: {
@@ -293,68 +246,21 @@ public class DetailsWindow extends GLView {
                         Object valueObj = detail.getValue();
                         // This shouldn't happen, log its key to help us diagnose the problem.
                         Utils.assertTrue(valueObj != null, "%s's value is Null",
-                                getName(context, detail.getKey()));
+                                DetailsHelper.getDetailsName(context, detail.getKey()));
                         value = valueObj.toString();
                     }
                 }
                 int key = detail.getKey();
                 if (details.hasUnit(key)) {
-                    value = String.format("%s : %s %s", getName(context, key), value,
-                            context.getString(details.getUnit(key)));
+                    value = String.format("%s : %s %s", DetailsHelper.getDetailsName(
+                            context, key), value, context.getString(details.getUnit(key)));
                 } else {
-                    value = String.format("%s : %s", getName(context, key), value);
+                    value = String.format("%s : %s", DetailsHelper.getDetailsName(
+                            context, key), value);
                 }
                 Texture label = MultiLineTexture.newInstance(
                         value, mMaxDetailLength, FONT_SIZE, FONT_COLOR);
                 mItems.add(label);
-            }
-        }
-
-        private String getLocationText(double[] latlng) {
-            String text = GalleryUtils.formatLatitudeLongitude("(%f,%f)", latlng[0], latlng[1]);
-            mAddressLookupJob = mContext.getThreadPool().submit(
-                    new AddressLookupJob(latlng),
-                    new FutureListener<Address>() {
-                        public void onFutureDone(Future<Address> future) {
-                            mAddressLookupJob = null;
-                            if (!future.isCancelled()) {
-                                mHandler.sendMessage(mHandler.obtainMessage(
-                                        MSG_REFRESH_LOCATION, future.get()));
-                            }
-                        }
-                    });
-            mLocationIndex = mItems.size();
-            return text;
-        }
-
-        public void updateLocation(Address address) {
-            int index = mLocationIndex;
-            if (address != null && index >=0 && index < mItems.size()) {
-                Context context = mContext.getAndroidContext();
-                String parts[] = {
-                    address.getAdminArea(),
-                    address.getSubAdminArea(),
-                    address.getLocality(),
-                    address.getSubLocality(),
-                    address.getThoroughfare(),
-                    address.getSubThoroughfare(),
-                    address.getPremises(),
-                    address.getPostalCode(),
-                    address.getCountryName()
-                };
-
-                String addressText = "";
-                for (int i = 0; i < parts.length; i++) {
-                    if (parts[i] == null || parts[i].isEmpty()) continue;
-                    if (!addressText.isEmpty()) {
-                        addressText += ", ";
-                    }
-                    addressText += parts[i];
-                }
-                String text = String.format("%s : %s", getName(context,
-                        MediaDetails.INDEX_LOCATION), addressText);
-                mItems.set(index, MultiLineTexture.newInstance(
-                        text, mMaxDetailLength, FONT_SIZE, FONT_COLOR));
             }
         }
 
@@ -365,50 +271,11 @@ public class DetailsWindow extends GLView {
         public int size() {
             return mItems.size();
         }
-    }
 
-    private static String getName(Context context, int key) {
-        switch (key) {
-            case MediaDetails.INDEX_TITLE:
-                return context.getString(R.string.title);
-            case MediaDetails.INDEX_DESCRIPTION:
-                return context.getString(R.string.description);
-            case MediaDetails.INDEX_DATETIME:
-                return context.getString(R.string.time);
-            case MediaDetails.INDEX_LOCATION:
-                return context.getString(R.string.location);
-            case MediaDetails.INDEX_PATH:
-                return context.getString(R.string.path);
-            case MediaDetails.INDEX_WIDTH:
-                return context.getString(R.string.width);
-            case MediaDetails.INDEX_HEIGHT:
-                return context.getString(R.string.height);
-            case MediaDetails.INDEX_ORIENTATION:
-                return context.getString(R.string.orientation);
-            case MediaDetails.INDEX_DURATION:
-                return context.getString(R.string.duration);
-            case MediaDetails.INDEX_MIMETYPE:
-                return context.getString(R.string.mimetype);
-            case MediaDetails.INDEX_SIZE:
-                return context.getString(R.string.file_size);
-            case MediaDetails.INDEX_MAKE:
-                return context.getString(R.string.maker);
-            case MediaDetails.INDEX_MODEL:
-                return context.getString(R.string.model);
-            case MediaDetails.INDEX_FLASH:
-                return context.getString(R.string.flash);
-            case MediaDetails.INDEX_APERTURE:
-                return context.getString(R.string.aperture);
-            case MediaDetails.INDEX_FOCAL_LENGTH:
-                return context.getString(R.string.focal_length);
-            case MediaDetails.INDEX_WHITE_BALANCE:
-                return context.getString(R.string.white_balance);
-            case MediaDetails.INDEX_EXPOSURE_TIME:
-                return context.getString(R.string.exposure_time);
-            case MediaDetails.INDEX_ISO:
-                return context.getString(R.string.iso);
-            default:
-                return "Unknown key" + key;
+        public void onAddressAvailable(String address) {
+            mItems.set(mLocationIndex, MultiLineTexture.newInstance(
+                    address, mMaxDetailLength, FONT_SIZE, FONT_COLOR));
+            GLDetailsView.this.invalidate();
         }
     }
 
@@ -423,10 +290,12 @@ public class DetailsWindow extends GLView {
                 return;
             }
 
-            int h = getPaddings().top + LINE_SPACING;
+            Rect p = getPaddings();
+            int h = p.top + LINE_SPACING;
             for (int i = 0, n = mModel.size(); i < n; ++i) {
                 h += mModel.getView(i).getHeight() + LINE_SPACING;
             }
+            h += p.bottom;
 
             MeasureHelper.getInstance(this)
                     .setPreferredContentSize(PREFERRED_WIDTH, h)
@@ -448,5 +317,9 @@ public class DetailsWindow extends GLView {
                 y += t.getHeight() + LINE_SPACING;
             }
         }
+    }
+
+    public GLView getGLView() {
+        return this;
     }
 }
