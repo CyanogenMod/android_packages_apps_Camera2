@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.widget;
+package com.android.gallery3d.gadget;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ContentListener;

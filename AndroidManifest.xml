@@ -66,6 +66,17 @@
                 <data android:mimeType="application/x-mpegurl" />
              </intent-filter>
         </activity>
+
+        <!-- we add the activity-alias for shortcut backward compatibility -->
+        <activity-alias android:name="com.cooliris.media.Gallery"
+                android:targetActivity="com.android.gallery3d.app.Gallery"
+                android:configChanges="keyboardHidden|orientation|screenSize"
+                android:label="string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity-alias>
+
         <activity android:name="com.android.gallery3d.app.Gallery" android:label="@string/app_name"
                 android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
@@ -200,18 +211,18 @@
                 android:syncable="false"
                 android:grantUriPermissions="true"
                 android:authorities="com.android.gallery3d.provider" />
-        <activity android:name="com.android.gallery3d.widget.WidgetClickHandler" />
+        <activity android:name="com.android.gallery3d.gadget.WidgetClickHandler" />
         <activity android:name="com.android.gallery3d.app.DialogPicker"
                 android:configChanges="keyboardHidden|orientation|screenSize"
                 android:theme="@style/DialogPickerTheme"/>
         <activity android:name="com.android.gallery3d.app.AlbumPicker"
                 android:configChanges="keyboardHidden|orientation|screenSize"
                 android:theme="@style/DialogPickerTheme"/>
-        <activity android:name="com.android.gallery3d.widget.WidgetTypeChooser"
+        <activity android:name="com.android.gallery3d.gadget.WidgetTypeChooser"
                 android:configChanges="keyboardHidden|orientation|screenSize"
                 android:theme="@style/DialogPickerTheme"/>
 
-        <receiver android:name="com.android.gallery3d.widget.WidgetProvider"
+        <receiver android:name="com.android.gallery3d.gadget.PhotoAppWidgetProvider"
                 android:label="@string/appwidget_title">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -226,9 +237,9 @@
                 <data android:scheme="package"/>
             </intent-filter>
         </receiver>
-        <service android:name="com.android.gallery3d.widget.WidgetService"
+        <service android:name="com.android.gallery3d.gadget.WidgetService"
                 android:permission="android.permission.BIND_REMOTEVIEWS"/>
-        <activity android:name="com.android.gallery3d.widget.WidgetConfigure"
+        <activity android:name="com.android.gallery3d.gadget.WidgetConfigure"
                 android:configChanges="keyboardHidden|orientation|screenSize"
                 android:theme="@style/android:Theme.Translucent.NoTitleBar">
             <intent-filter>
