@@ -458,6 +458,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     @Override
     protected boolean onItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_cancel:
+                mActivity.getStateManager().finishState(this);
+                return true;
             case R.id.action_select:
                 mSelectionManager.setAutoLeaveSelectionMode(false);
                 mSelectionManager.enterSelectionMode();

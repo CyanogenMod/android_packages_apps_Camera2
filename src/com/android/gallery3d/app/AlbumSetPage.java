@@ -408,6 +408,10 @@ public class AlbumSetPage extends ActivityState implements
     protected boolean onItemSelected(MenuItem item) {
         Activity activity = (Activity) mActivity;
         switch (item.getItemId()) {
+            case R.id.action_cancel:
+                activity.setResult(Activity.RESULT_CANCELED);
+                activity.finish();
+                return true;
             case R.id.action_select:
                 mSelectionManager.setAutoLeaveSelectionMode(false);
                 mSelectionManager.enterSelectionMode();
