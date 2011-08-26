@@ -51,6 +51,10 @@
     <string name="deselect_all" msgid="7397531298370285581">"Selectie van alle items ongedaan maken"</string>
     <string name="slideshow" msgid="4355906903247112975">"Diavoorstelling"</string>
     <string name="details" msgid="8415120088556445230">"Details"</string>
+    <!-- no translation found for details_title (2611396603977441273) -->
+    <skip />
+    <!-- no translation found for close (5585646033158453043) -->
+    <skip />
     <string name="switch_to_camera" msgid="7280111806675169992">"Overschakelen naar Camera"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"%1$d geselecteerd"</item>
@@ -86,8 +90,7 @@
     <string name="group_by_size" msgid="153766174950394155">"Op grootte"</string>
     <string name="untagged" msgid="7281481064509590402">"Geen tags"</string>
     <string name="no_location" msgid="2036710947563713111">"Geen locatie"</string>
-    <!-- no translation found for no_connectivity (4060082114738885149) -->
-    <skip />
+    <string name="no_connectivity" msgid="4060082114738885149">"Sommige locaties kunnen wegens problemen met de netwerkverbinding niet worden geïdentificeerd"</string>
     <string name="show_images_only" msgid="7263218480867672653">"Alleen afbeeldingen"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Alleen video\'s"</string>
     <string name="show_all" msgid="4780647751652596980">"Afbeeldingen en video\'s"</string>
@@ -100,7 +103,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Picasa Webalbums"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Offline beschikbaar maken"</string>
-    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"Picasa Webalbums vernieuwen"</string>
+    <string name="sync_picasa_albums" msgid="8522572542111169872">"Vernieuwen"</string>
     <string name="done" msgid="217672440064436595">"Gereed"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d van %2$d items:"</string>
     <string name="title" msgid="7622928349908052569">"Titel"</string>
@@ -157,8 +160,8 @@
     <string name="albums" msgid="7320787705180057947">"Albums"</string>
     <string name="times" msgid="2023033894889499219">"Opnametijden"</string>
     <string name="locations" msgid="6649297994083130305">"Locaties"</string>
-    <string name="people" msgid="4114003823747292747">"Personen"</string>
-    <string name="tags" msgid="5539648765482935955">"Tags"</string>
+    <string name="people" msgid="4114003823747292747">"Mensen"</string>
+    <string name="tags" msgid="5539648765482935955">"Labels"</string>
     <string name="group_by" msgid="4308299657902209357">"Groeperen op"</string>
     <string name="settings" msgid="1534847740615665736">"Instellingen"</string>
     <string name="prefs_accounts" msgid="7942761992713671670">"Accountinstellingen"</string>
@@ -169,8 +172,8 @@
     <string name="sync_on_wifi_only" msgid="5795753226259399958">"Alleen synchroniseren met Wi-Fi"</string>
     <string name="helptext_auto_upload" msgid="133741242503097377">"Automatisch alle foto\'s en video\'s die u maakt, uploaden naar een persoonlijk Picasa-webalbum"</string>
     <string name="enable_auto_upload" msgid="1586329406342131">"Automatisch uploaden inschakelen"</string>
-    <string name="photo_sync_is_on" msgid="1653898269297050634">"Synchr. Google-foto\'s is AAN"</string>
-    <string name="photo_sync_is_off" msgid="6464193461664544289">"Synchr. Google-foto\'s is UIT"</string>
+    <string name="photo_sync_is_on" msgid="1653898269297050634">"Synchr. van Google-foto\'s is AAN"</string>
+    <string name="photo_sync_is_off" msgid="6464193461664544289">"Synchr. van Google-foto\'s is UIT"</string>
     <string name="helptext_photo_sync" msgid="8617245939103545623">"Synchron.voork. wijzigen of account verw."</string>
     <string name="view_photo_for_account" msgid="5608040380422337939">"Foto\'s en video\'s van dit account in Galerij bekijken"</string>
     <string name="add_account" msgid="4271217504968243974">"Account toevoegen"</string>

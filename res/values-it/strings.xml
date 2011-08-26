@@ -23,7 +23,7 @@
     <string name="movie_view_label" msgid="3526526872644898229">"Video player"</string>
     <string name="loading_video" msgid="4013492720121891585">"Caricamento video..."</string>
     <string name="loading_image" msgid="1200894415793838191">"Caricamento immagine in corso..."</string>
-    <string name="loading_account" msgid="928195413034552034">"Caricamento account..."</string>
+    <string name="loading_account" msgid="928195413034552034">"Caricamento account???"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"Riprendi video"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"Riprendi riproduzione da %s ?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Riprendi riproduzione"</string>
@@ -51,6 +51,10 @@
     <string name="deselect_all" msgid="7397531298370285581">"Deseleziona tutto"</string>
     <string name="slideshow" msgid="4355906903247112975">"Presentazione"</string>
     <string name="details" msgid="8415120088556445230">"Dettagli"</string>
+    <!-- no translation found for details_title (2611396603977441273) -->
+    <skip />
+    <!-- no translation found for close (5585646033158453043) -->
+    <skip />
     <string name="switch_to_camera" msgid="7280111806675169992">"Passa a Fotocamera"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"%1$d selezionati"</item>
@@ -86,8 +90,7 @@
     <string name="group_by_size" msgid="153766174950394155">"Per dimensioni"</string>
     <string name="untagged" msgid="7281481064509590402">"Senza tag"</string>
     <string name="no_location" msgid="2036710947563713111">"Nessun luogo"</string>
-    <!-- no translation found for no_connectivity (4060082114738885149) -->
-    <skip />
+    <string name="no_connectivity" msgid="4060082114738885149">"Alcune posizioni non sono state individuate a causa di problemi di connettività della rete"</string>
     <string name="show_images_only" msgid="7263218480867672653">"Solo immagini"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Solo video"</string>
     <string name="show_all" msgid="4780647751652596980">"Immagini e video"</string>

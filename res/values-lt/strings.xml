@@ -38,7 +38,7 @@
     <string name="select_image" msgid="7841406150484742140">"Pasirinkti nuotrauką"</string>
     <string name="select_video" msgid="4859510992798615076">"Pasir. vaizdo įrašą"</string>
     <string name="select_item" msgid="2257529413100472599">"Pasir. elem."</string>
-    <string name="select_album" msgid="4632641262236697235">"Pasir. alb."</string>
+    <string name="select_album" msgid="4632641262236697235">"Pasir. album."</string>
     <string name="select_group" msgid="9090385962030340391">"Pasir. gr."</string>
     <string name="set_image" msgid="2331476809308010401">"Nustatyti paveikslėlį kaip"</string>
     <string name="wallpaper" msgid="9222901738515471972">"Nustatomas darbalaukio fonas, palaukite..."</string>
@@ -51,6 +51,10 @@
     <string name="deselect_all" msgid="7397531298370285581">"Panaikinti visus žymėjimus"</string>
     <string name="slideshow" msgid="4355906903247112975">"Skaidrių demonstracija"</string>
     <string name="details" msgid="8415120088556445230">"Išsami informacija"</string>
+    <!-- no translation found for details_title (2611396603977441273) -->
+    <skip />
+    <!-- no translation found for close (5585646033158453043) -->
+    <skip />
     <string name="switch_to_camera" msgid="7280111806675169992">"Perjungti į fotoaparatą"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"Pasirinkta: %1$d"</item>
@@ -86,8 +90,7 @@
     <string name="group_by_size" msgid="153766174950394155">"Pagal dydį"</string>
     <string name="untagged" msgid="7281481064509590402">"Nepažymėta"</string>
     <string name="no_location" msgid="2036710947563713111">"Nėra vietos"</string>
-    <!-- no translation found for no_connectivity (4060082114738885149) -->
-    <skip />
+    <string name="no_connectivity" msgid="4060082114738885149">"Kai kurių vietų nepavyko nustatyti dėl tinklo ryšio problemų"</string>
     <string name="show_images_only" msgid="7263218480867672653">"Tik vaizdai"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Tik vaizdo įrašai"</string>
     <string name="show_all" msgid="4780647751652596980">"Vaizdai ir vaizdo įrašai"</string>
@@ -100,7 +103,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"„Picasa“ žiniatinklio albumai"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Padaryti pasiekiamą neprisij."</string>
-    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"Atnaujinti „Picasa“ albumus"</string>
+    <string name="sync_picasa_albums" msgid="8522572542111169872">"Atnaujinti"</string>
     <string name="done" msgid="217672440064436595">"Atlikta"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d iš %2$d element.:"</string>
     <string name="title" msgid="7622928349908052569">"Pareigos"</string>
@@ -170,7 +173,7 @@
     <string name="sync_on_wifi_only" msgid="5795753226259399958">"Sinchronizuoti tik naudojant „Wi-Fi“"</string>
     <string name="helptext_auto_upload" msgid="133741242503097377">"Automatiškai įkelti visas nuotraukas ir vaizdo įrašus, kuriuos kelsite į privatų „Picasa“ žiniatinklio albumą"</string>
     <string name="enable_auto_upload" msgid="1586329406342131">"Įgalinti automatinį įkėlimą"</string>
-    <string name="photo_sync_is_on" msgid="1653898269297050634">"„Google“ nuotrauk. sinchr. įj."</string>
+    <string name="photo_sync_is_on" msgid="1653898269297050634">"„Google“ nuotr. sinchr. įj."</string>
     <string name="photo_sync_is_off" msgid="6464193461664544289">"„Google“ nuotr. sinchron. išj."</string>
     <string name="helptext_photo_sync" msgid="8617245939103545623">"Keisti sin. nuost. arba pašal. šią pask."</string>
     <string name="view_photo_for_account" msgid="5608040380422337939">"Žiūrėti nuotraukas ir vaizdo įrašus šios paskyros galerijoje"</string>

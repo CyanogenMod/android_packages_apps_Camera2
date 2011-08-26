@@ -23,7 +23,7 @@
     <string name="movie_view_label" msgid="3526526872644898229">"视频播放器"</string>
     <string name="loading_video" msgid="4013492720121891585">"正在载入视频..."</string>
     <string name="loading_image" msgid="1200894415793838191">"正在载入图片..."</string>
-    <string name="loading_account" msgid="928195413034552034">"正在加载帐户???"</string>
+    <string name="loading_account" msgid="928195413034552034">"正在加载帐户…"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"继续播放视频"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"从 %s 开始继续播放？"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"继续播放"</string>
@@ -51,6 +51,10 @@
     <string name="deselect_all" msgid="7397531298370285581">"取消全选"</string>
     <string name="slideshow" msgid="4355906903247112975">"播放幻灯片"</string>
     <string name="details" msgid="8415120088556445230">"详细信息"</string>
+    <!-- no translation found for details_title (2611396603977441273) -->
+    <skip />
+    <!-- no translation found for close (5585646033158453043) -->
+    <skip />
     <string name="switch_to_camera" msgid="7280111806675169992">"切换到相机"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"选中了 %1$d 项"</item>
@@ -86,8 +90,7 @@
     <string name="group_by_size" msgid="153766174950394155">"按大小分组"</string>
     <string name="untagged" msgid="7281481064509590402">"未加标签"</string>
     <string name="no_location" msgid="2036710947563713111">"无地点"</string>
-    <!-- no translation found for no_connectivity (4060082114738885149) -->
-    <skip />
+    <string name="no_connectivity" msgid="4060082114738885149">"由于网络连接出现问题，系统无法识别某些位置。"</string>
     <string name="show_images_only" msgid="7263218480867672653">"仅限图片"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"仅限视频"</string>
     <string name="show_all" msgid="4780647751652596980">"图片和视频"</string>
@@ -100,7 +103,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Picasa 网络相册"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"允许离线状态下使用"</string>
-    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"刷新 Picasa 相册"</string>
+    <string name="sync_picasa_albums" msgid="8522572542111169872">"刷新"</string>
     <string name="done" msgid="217672440064436595">"完成"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"第 %1$d 个项（共 %2$d 个）："</string>
     <string name="title" msgid="7622928349908052569">"标题"</string>
