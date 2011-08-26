@@ -18,6 +18,7 @@ package com.android.gallery3d.common;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -227,6 +228,11 @@ public class BitmapUtils {
             if (Build.VERSION.SDK_INT <= 9) {
                 return (Bitmap) clazz.getMethod("captureFrame").invoke(instance);
             } else {
+                byte[] data = (byte[]) clazz.getMethod("getEmbeddedPicture").invoke(instance);
+                if (data != null) {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                    if (bitmap != null) return bitmap;
+                }
                 return (Bitmap) clazz.getMethod("getFrameAtTime").invoke(instance);
             }
         } catch (IllegalArgumentException ex) {
