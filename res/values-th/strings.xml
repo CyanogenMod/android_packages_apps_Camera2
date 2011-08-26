@@ -23,7 +23,7 @@
     <string name="movie_view_label" msgid="3526526872644898229">"โปรแกรมเล่นวิดีโอ"</string>
     <string name="loading_video" msgid="4013492720121891585">"กำลังโหลดวิดีโอ..."</string>
     <string name="loading_image" msgid="1200894415793838191">"กำลังโหลดภาพ..."</string>
-    <string name="loading_account" msgid="928195413034552034">"กำลังโหลดบัญชี…"</string>
+    <string name="loading_account" msgid="928195413034552034">"กำลังดาวน์โหลดบัญชี???"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"เล่นวิดีโอต่อ"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"ต้องการเล่นต่อจาก %s หรือไม่"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"เล่นต่อ"</string>
@@ -51,6 +51,10 @@
     <string name="deselect_all" msgid="7397531298370285581">"ยกเลิกการเลือกทั้งหมด"</string>
     <string name="slideshow" msgid="4355906903247112975">"การนำเสนอภาพนิ่ง"</string>
     <string name="details" msgid="8415120088556445230">"รายละเอียด"</string>
+    <!-- no translation found for details_title (2611396603977441273) -->
+    <skip />
+    <!-- no translation found for close (5585646033158453043) -->
+    <skip />
     <string name="switch_to_camera" msgid="7280111806675169992">"สลับเป็นกล้องถ่ายรูป"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"เลือกไว้ %1$d"</item>
@@ -86,8 +90,7 @@
     <string name="group_by_size" msgid="153766174950394155">"ตามขนาด"</string>
     <string name="untagged" msgid="7281481064509590402">"ยกเลิกการติดแท็ก"</string>
     <string name="no_location" msgid="2036710947563713111">"ไม่มีข้อมูลสถานที่"</string>
-    <!-- no translation found for no_connectivity (4060082114738885149) -->
-    <skip />
+    <string name="no_connectivity" msgid="4060082114738885149">"ไม่สามารถระบุบางตำแหน่งได้เนื่องจากปัญหาการเชื่อมต่อเครือข่าย"</string>
     <string name="show_images_only" msgid="7263218480867672653">"เฉพาะภาพ"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"เฉพาะวิดีโอ"</string>
     <string name="show_all" msgid="4780647751652596980">"ภาพและวิดีโอ"</string>
@@ -100,7 +103,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Picasa Web Albums"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"ทำให้ใช้งานได้แบบออฟไลน์"</string>
-    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"รีเฟรชอัลบั้ม Picasa"</string>
+    <string name="sync_picasa_albums" msgid="8522572542111169872">"รีเฟรช"</string>
     <string name="done" msgid="217672440064436595">"เสร็จสิ้น"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d จาก %2$d รายการ:"</string>
     <string name="title" msgid="7622928349908052569">"ชื่อ"</string>
@@ -156,8 +159,8 @@
     <string name="cache_done" msgid="9194449192869777483">"การดาวน์โหลดเสร็จสมบูรณ์"</string>
     <string name="albums" msgid="7320787705180057947">"อัลบั้ม"</string>
     <string name="times" msgid="2023033894889499219">"เวลา"</string>
-    <string name="locations" msgid="6649297994083130305">"ตำแหน่ง"</string>
-    <string name="people" msgid="4114003823747292747">"ผู้คน"</string>
+    <string name="locations" msgid="6649297994083130305">"สถานที่"</string>
+    <string name="people" msgid="4114003823747292747">"บุคคล"</string>
     <string name="tags" msgid="5539648765482935955">"แท็ก"</string>
     <string name="group_by" msgid="4308299657902209357">"จัดกลุ่มตาม"</string>
     <string name="settings" msgid="1534847740615665736">"การตั้งค่า"</string>
@@ -166,8 +169,8 @@
     <string name="prefs_auto_upload" msgid="2467627128066665126">"อัปโหลดอัตโนมัติ"</string>
     <string name="prefs_other_settings" msgid="6034181851440646681">"การตั้งค่าอื่นๆ"</string>
     <string name="about_gallery" msgid="8667445445883757255">"เกี่ยวกับแกลเลอรี"</string>
-    <string name="sync_on_wifi_only" msgid="5795753226259399958">"ซิงค์เมื่อใช้ Wi-Fi เท่านั้น"</string>
-    <string name="helptext_auto_upload" msgid="133741242503097377">"อัปโหลดรูปภาพและวิดีโอทั้งหมดที่คุณถ่ายไปยัง Picasa Web Albums โดยอัตโนมัติ"</string>
+    <string name="sync_on_wifi_only" msgid="5795753226259399958">"ซิงค์เมื่อใช้ WiFi เท่านั้น"</string>
+    <string name="helptext_auto_upload" msgid="133741242503097377">"อัปโหลดรูปภาพและวิดีโอทั้งหมดที่คุณถ่ายไปยัง Picasa Web Albums ส่วนตัวโดยอัตโนมัติ"</string>
     <string name="enable_auto_upload" msgid="1586329406342131">"เปิดใช้งานการอัปโหลดอัตโนมัติ"</string>
     <string name="photo_sync_is_on" msgid="1653898269297050634">"การซิงค์ Google Photos เปิด"</string>
     <string name="photo_sync_is_off" msgid="6464193461664544289">"การซิงค์ Google Photos ปิด"</string>

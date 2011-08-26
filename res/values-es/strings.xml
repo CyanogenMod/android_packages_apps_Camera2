@@ -51,6 +51,10 @@
     <string name="deselect_all" msgid="7397531298370285581">"Desmarcar todo"</string>
     <string name="slideshow" msgid="4355906903247112975">"Presentación"</string>
     <string name="details" msgid="8415120088556445230">"Detalles"</string>
+    <!-- no translation found for details_title (2611396603977441273) -->
+    <skip />
+    <!-- no translation found for close (5585646033158453043) -->
+    <skip />
     <string name="switch_to_camera" msgid="7280111806675169992">"Cambiar a la cámara"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"%1$d seleccionados"</item>
@@ -86,8 +90,7 @@
     <string name="group_by_size" msgid="153766174950394155">"Por tamaño"</string>
     <string name="untagged" msgid="7281481064509590402">"Sin etiquetas"</string>
     <string name="no_location" msgid="2036710947563713111">"Sin ubicación"</string>
-    <!-- no translation found for no_connectivity (4060082114738885149) -->
-    <skip />
+    <string name="no_connectivity" msgid="4060082114738885149">"No se ha podido identificar algunas ubicaciones por incidencias relacionadas con la conectividad de red."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Sólo imágenes"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Sólo vídeos"</string>
     <string name="show_all" msgid="4780647751652596980">"Imágenes y vídeos"</string>
@@ -100,7 +103,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Álbumes web de Picasa"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Google Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Disponible sin conexión"</string>
-    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"Actualizar álbumes de Picasa"</string>
+    <string name="sync_picasa_albums" msgid="8522572542111169872">"Actualizar"</string>
     <string name="done" msgid="217672440064436595">"Listo"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d de %2$d elementos:"</string>
     <string name="title" msgid="7622928349908052569">"Título"</string>

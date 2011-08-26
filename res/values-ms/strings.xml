@@ -51,6 +51,10 @@
     <string name="deselect_all" msgid="7397531298370285581">"Nyahpilih Semua"</string>
     <string name="slideshow" msgid="4355906903247112975">"Tayangan slaid"</string>
     <string name="details" msgid="8415120088556445230">"Butiran"</string>
+    <!-- no translation found for details_title (2611396603977441273) -->
+    <skip />
+    <!-- no translation found for close (5585646033158453043) -->
+    <skip />
     <string name="switch_to_camera" msgid="7280111806675169992">"Bertukar kepada kamera"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"%1$d dipilih"</item>
@@ -157,7 +161,7 @@
     <string name="times" msgid="2023033894889499219">"Masa"</string>
     <string name="locations" msgid="6649297994083130305">"Lokasi"</string>
     <string name="people" msgid="4114003823747292747">"Orang"</string>
-    <string name="tags" msgid="5539648765482935955">"Teg"</string>
+    <string name="tags" msgid="5539648765482935955">"Tanda nama"</string>
     <string name="group_by" msgid="4308299657902209357">"Kumpulkan mengikut"</string>
     <string name="settings" msgid="1534847740615665736">"Tetapan"</string>
     <string name="prefs_accounts" msgid="7942761992713671670">"Tetapan akaun"</string>

@@ -51,6 +51,10 @@
     <string name="deselect_all" msgid="7397531298370285581">"Prekliči celoten izbor"</string>
     <string name="slideshow" msgid="4355906903247112975">"Diaprojekcija"</string>
     <string name="details" msgid="8415120088556445230">"Podrobnosti"</string>
+    <!-- no translation found for details_title (2611396603977441273) -->
+    <skip />
+    <!-- no translation found for close (5585646033158453043) -->
+    <skip />
     <string name="switch_to_camera" msgid="7280111806675169992">"Preklopi na Fotoaparat"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"Št. izbranih: %1$d"</item>
@@ -86,8 +90,7 @@
     <string name="group_by_size" msgid="153766174950394155">"Glede na velikost"</string>
     <string name="untagged" msgid="7281481064509590402">"Neoznačeno"</string>
     <string name="no_location" msgid="2036710947563713111">"Ni lokacije"</string>
-    <!-- no translation found for no_connectivity (4060082114738885149) -->
-    <skip />
+    <string name="no_connectivity" msgid="4060082114738885149">"Nekaterih ​​lokacij ni bilo mogoče določiti zaradi težav s povezljivostjo omrežja"</string>
     <string name="show_images_only" msgid="7263218480867672653">"Samo slike"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Samo videoposnetki"</string>
     <string name="show_all" msgid="4780647751652596980">"Slike in videoposnetki"</string>
@@ -100,7 +103,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Spletni albumi Picasa"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Omogoči dostop brez povezave"</string>
-    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"Osveži albume Picasa"</string>
+    <string name="sync_picasa_albums" msgid="8522572542111169872">"Osveži"</string>
     <string name="done" msgid="217672440064436595">"Končano"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d od %2$d elementov:"</string>
     <string name="title" msgid="7622928349908052569">"Naslov"</string>
@@ -170,8 +173,8 @@
     <string name="sync_on_wifi_only" msgid="5795753226259399958">"SInhroniziraj samo v omrežju Wi-Fi"</string>
     <string name="helptext_auto_upload" msgid="133741242503097377">"Samodejni prenos fotografij in videoposnetkov v zasebni spletni album Picasa"</string>
     <string name="enable_auto_upload" msgid="1586329406342131">"Omogoči samodejni prenos"</string>
-    <string name="photo_sync_is_on" msgid="1653898269297050634">"Sinhr. Googlovih fot. je vkl."</string>
-    <string name="photo_sync_is_off" msgid="6464193461664544289">"Sinhroniziranje Googlovih fotografij je izklopljeno"</string>
+    <string name="photo_sync_is_on" msgid="1653898269297050634">"Sinhr. z Google Foto je vkl."</string>
+    <string name="photo_sync_is_off" msgid="6464193461664544289">"Sinhr. z Google Foto fotografij je izklopljena"</string>
     <string name="helptext_photo_sync" msgid="8617245939103545623">"Sprem. nast. sinhr. ali odstran. računa"</string>
     <string name="view_photo_for_account" msgid="5608040380422337939">"Ogled fotografij in videoposnetkov iz tega računa v galeriji"</string>
     <string name="add_account" msgid="4271217504968243974">"Dodaj račun"</string>

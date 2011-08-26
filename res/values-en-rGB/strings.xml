@@ -51,6 +51,10 @@
     <string name="deselect_all" msgid="7397531298370285581">"Deselect All"</string>
     <string name="slideshow" msgid="4355906903247112975">"Slideshow"</string>
     <string name="details" msgid="8415120088556445230">"Details"</string>
+    <!-- no translation found for details_title (2611396603977441273) -->
+    <skip />
+    <!-- no translation found for close (5585646033158453043) -->
+    <skip />
     <string name="switch_to_camera" msgid="7280111806675169992">"Switch to camera"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"%1$d selected"</item>

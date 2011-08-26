@@ -37,9 +37,9 @@
     <string name="crop_label" msgid="521114301871349328">"Obrezivanje slike"</string>
     <string name="select_image" msgid="7841406150484742140">"Odaberite fotog."</string>
     <string name="select_video" msgid="4859510992798615076">"Odaberite videoz."</string>
-    <string name="select_item" msgid="2257529413100472599">"Odaberite stavke"</string>
-    <string name="select_album" msgid="4632641262236697235">"Odaberite album(e)"</string>
-    <string name="select_group" msgid="9090385962030340391">"Odaberite grupe"</string>
+    <string name="select_item" msgid="2257529413100472599">"Odabir stavke(i)"</string>
+    <string name="select_album" msgid="4632641262236697235">"Odabir albuma"</string>
+    <string name="select_group" msgid="9090385962030340391">"Odabir grupe/grupa"</string>
     <string name="set_image" msgid="2331476809308010401">"Postavi sliku kao"</string>
     <string name="wallpaper" msgid="9222901738515471972">"Postavljanje pozadinske slike, pričekajte..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Pozadinska slika"</string>
@@ -51,6 +51,10 @@
     <string name="deselect_all" msgid="7397531298370285581">"Poništi odabir svih"</string>
     <string name="slideshow" msgid="4355906903247112975">"Dijaprojekcija"</string>
     <string name="details" msgid="8415120088556445230">"Pojedinosti"</string>
+    <!-- no translation found for details_title (2611396603977441273) -->
+    <skip />
+    <!-- no translation found for close (5585646033158453043) -->
+    <skip />
     <string name="switch_to_camera" msgid="7280111806675169992">"Prebacivanje na fotoaparat"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"Odabrano: %1$d"</item>
@@ -86,8 +90,7 @@
     <string name="group_by_size" msgid="153766174950394155">"Po veličini"</string>
     <string name="untagged" msgid="7281481064509590402">"Neoznačeno"</string>
     <string name="no_location" msgid="2036710947563713111">"Nema lokacije"</string>
-    <!-- no translation found for no_connectivity (4060082114738885149) -->
-    <skip />
+    <string name="no_connectivity" msgid="4060082114738885149">"Neke lokacije nisu se uspjele identificirati zbog poteškoća s mrežnim povezivanjem"</string>
     <string name="show_images_only" msgid="7263218480867672653">"Samo slike"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Samo videozapisi"</string>
     <string name="show_all" msgid="4780647751652596980">"Slike i videozapisi"</string>
@@ -100,7 +103,7 @@
     <string name="picasa_web_albums" msgid="5167008066827481663">"Picasa web-albumi"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Učini dostupnim van mreže"</string>
-    <!-- outdated translation 333655309327999220 -->     <string name="sync_picasa_albums" msgid="8522572542111169872">"Osvježi albume programa Picasa"</string>
+    <string name="sync_picasa_albums" msgid="8522572542111169872">"Osvježi"</string>
     <string name="done" msgid="217672440064436595">"Gotovo"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d od %2$d stavki:"</string>
     <string name="title" msgid="7622928349908052569">"Naslov"</string>
