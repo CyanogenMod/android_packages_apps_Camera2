@@ -43,6 +43,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupMenu.OnMenuItemClickListener;
+import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import android.widget.ShareActionProvider;
 
 import java.util.ArrayList;
@@ -139,7 +140,14 @@ public class ActionModeHandler implements ActionMode.Callback {
         inflater.inflate(R.menu.operation, menu);
 
         mShareActionProvider = GalleryActionBar.initializeShareActionProvider(menu);
+        OnShareTargetSelectedListener listener = new OnShareTargetSelectedListener() {
+            public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
+                mSelectionManager.leaveSelectionMode();
+                return false;
+            }
+        };
 
+        mShareActionProvider.setOnShareTargetSelectedListener(listener);
         mMenu = menu;
         return true;
     }
