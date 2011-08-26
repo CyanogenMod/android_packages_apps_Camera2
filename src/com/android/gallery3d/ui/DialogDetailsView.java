@@ -42,6 +42,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -72,6 +73,7 @@ public class DialogDetailsView implements DetailsViewContainer {
     private int mIndex;
     private Dialog mDialog;
     private int mLocationIndex;
+    private CloseListener mListener;
 
     public DialogDetailsView(GalleryActivity activity, DetailsSource source) {
         mContext = activity;
@@ -117,6 +119,14 @@ public class DialogDetailsView implements DetailsViewContainer {
                 }
             })
             .create();
+
+        mDialog.setOnDismissListener(new OnDismissListener() {
+            public void onDismiss(DialogInterface dialog) {
+                if (mListener != null) {
+                    mListener.onClose();
+                }
+            }
+        });
     }
 
     private class DetailsAdapter extends BaseAdapter implements AddressResolvingListener {
@@ -235,5 +245,6 @@ public class DialogDetailsView implements DetailsViewContainer {
     }
 
     public void setCloseListener(CloseListener listener) {
+        mListener = listener;
     }
 }

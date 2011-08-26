@@ -410,8 +410,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
     private void hideDetails() {
         mShowDetails = false;
-        mAlbumView.setSelectionDrawer(mGridDrawer);
         mDetailsHelper.hide();
+        mAlbumView.setSelectionDrawer(mGridDrawer);
+        mAlbumView.invalidate();
     }
 
     @Override
