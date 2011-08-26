@@ -25,7 +25,6 @@ import com.android.gallery3d.data.Path;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.util.GalleryUtils;
 
-import android.app.ActionBar;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
@@ -106,6 +105,7 @@ public final class Gallery extends AbstractGalleryActivity {
         data.putInt(KEY_TYPE_BITS, typeBits);
         data.putString(AlbumSetPage.KEY_MEDIA_PATH,
                 getDataManager().getTopSetPath(typeBits));
+        getStateManager().setLaunchGalleryOnTop(true);
         getStateManager().startState(AlbumSetPage.class, data);
     }
 
@@ -124,6 +124,7 @@ public final class Gallery extends AbstractGalleryActivity {
 
     private void startViewAction(Intent intent) {
         Boolean slideshow = intent.getBooleanExtra(EXTRA_SLIDESHOW, false);
+        getStateManager().setLaunchGalleryOnTop(true);
         if (slideshow) {
             getActionBar().hide();
             DataManager manager = getDataManager();
