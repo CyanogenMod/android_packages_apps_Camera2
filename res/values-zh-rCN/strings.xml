@@ -154,9 +154,6 @@
     <string name="widget_type_photo" msgid="8384174698965738770">"选择一张图片"</string>
     <string name="widget_type" msgid="7308564524449340985">"窗口小部件类型"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"幻灯片"</string>
-    <string name="cache_status_title" msgid="8414708919928621485">"预先抓取 Picasa 照片："</string>
-    <string name="cache_status" msgid="7690438435538533106">"已下载 <xliff:g id="NUMBER_0">%1$s</xliff:g> 张照片，共 <xliff:g id="NUMBER_1">%2$s</xliff:g> 张"</string>
-    <string name="cache_done" msgid="9194449192869777483">"下载完成"</string>
     <string name="albums" msgid="7320787705180057947">"相册"</string>
     <string name="times" msgid="2023033894889499219">"时间"</string>
     <string name="locations" msgid="6649297994083130305">"地点"</string>
