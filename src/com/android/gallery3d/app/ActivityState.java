@@ -97,6 +97,7 @@ abstract public class ActivityState {
             actionBar.setDisplayOptions(
                     stateCount == 1 ? 0 : ActionBar.DISPLAY_HOME_AS_UP,
                     ActionBar.DISPLAY_HOME_AS_UP);
+            actionBar.setHomeButtonEnabled(true);
         }
 
         activity.invalidateOptionsMenu();

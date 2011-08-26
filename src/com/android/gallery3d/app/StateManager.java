@@ -36,10 +36,12 @@ public class StateManager {
     private static final String KEY_DATA = "data";
     private static final String KEY_STATE = "bundle";
     private static final String KEY_CLASS = "class";
+    private static final String KEY_LAUNCH_GALLERY_ON_TOP = "launch-gallery-on-top";
 
     private GalleryActivity mContext;
     private Stack<StateEntry> mStack = new Stack<StateEntry>();
     private ActivityState.ResultEntry mResult;
+    private boolean mLaunchGalleryOnTop = false;
 
     public StateManager(GalleryActivity context) {
         mContext = context;
@@ -63,6 +65,10 @@ public class StateManager {
         mStack.push(new StateEntry(data, state));
         state.onCreate(data, null);
         if (mIsResumed) state.resume();
+    }
+
+    public void setLaunchGalleryOnTop(boolean enabled) {
+        mLaunchGalleryOnTop = enabled;
     }
 
     public void startStateForResult(Class<? extends ActivityState> klass,
@@ -122,8 +128,15 @@ public class StateManager {
 
     public boolean itemSelected(MenuItem item) {
         if (!mStack.isEmpty()) {
-            if (mStack.size() > 1 && item.getItemId() == android.R.id.home) {
-                getTopState().onBackPressed();
+            if (item.getItemId() == android.R.id.home) {
+                if (mStack.size() > 1) {
+                    getTopState().onBackPressed();
+                } else if (mLaunchGalleryOnTop) {
+                    Activity activity = (Activity) mContext;
+                    Intent intent = new Intent(activity, Gallery.class)
+                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    ((Activity) mContext).startActivity(intent);
+                }
                 return true;
             } else {
                 return getTopState().onItemSelected(item);
@@ -210,8 +223,8 @@ public class StateManager {
     @SuppressWarnings("unchecked")
     public void restoreFromState(Bundle inState) {
         Log.v(TAG, "restoreFromState");
+        mLaunchGalleryOnTop = inState.getBoolean(KEY_LAUNCH_GALLERY_ON_TOP, false);
         Parcelable list[] = inState.getParcelableArray(KEY_MAIN);
-
         for (Parcelable parcelable : list) {
             Bundle bundle = (Bundle) parcelable;
             Class<? extends ActivityState> klass =
@@ -235,8 +248,9 @@ public class StateManager {
 
     public void saveState(Bundle outState) {
         Log.v(TAG, "saveState");
-        Parcelable list[] = new Parcelable[mStack.size()];
 
+        outState.putBoolean(KEY_LAUNCH_GALLERY_ON_TOP, mLaunchGalleryOnTop);
+        Parcelable list[] = new Parcelable[mStack.size()];
         int i = 0;
         for (StateEntry entry : mStack) {
             Bundle bundle = new Bundle();
