@@ -514,8 +514,9 @@ public class AlbumSetPage extends ActivityState implements
 
     private void hideDetails() {
         mShowDetails = false;
-        mAlbumSetView.setSelectionDrawer(mGridDrawer);
         mDetailsHelper.hide();
+        mAlbumSetView.setSelectionDrawer(mGridDrawer);
+        mAlbumSetView.invalidate();
     }
 
     private void showDetails() {
