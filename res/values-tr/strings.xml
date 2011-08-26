@@ -154,9 +154,6 @@
     <string name="widget_type_photo" msgid="8384174698965738770">"Resim seçin"</string>
     <string name="widget_type" msgid="7308564524449340985">"Widget Türü"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Slayt gösterisi"</string>
-    <string name="cache_status_title" msgid="8414708919928621485">"Picasa fotoğrafları önceden getiriliyor:"</string>
-    <string name="cache_status" msgid="7690438435538533106">"<xliff:g id="NUMBER_1">%2$s</xliff:g> fotoğraftan <xliff:g id="NUMBER_0">%1$s</xliff:g> tanesi indirildi"</string>
-    <string name="cache_done" msgid="9194449192869777483">"İndirme tamamlandı"</string>
     <string name="albums" msgid="7320787705180057947">"Albümler"</string>
     <string name="times" msgid="2023033894889499219">"Saatler"</string>
     <string name="locations" msgid="6649297994083130305">"Konumlar"</string>
