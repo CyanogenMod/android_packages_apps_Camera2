@@ -345,7 +345,7 @@ public class MenuExecutor {
                 try {
                     activity.startActivity(Intent.createChooser(
                             new Intent(Intent.ACTION_EDIT)
-                                    .setData(item.getContentUri())
+                                    .setDataAndType(item.getContentUri(), item.getMimeType())
                                     .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION),
                             null));
                 } catch (Throwable t) {
