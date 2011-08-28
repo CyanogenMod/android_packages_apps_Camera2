@@ -66,6 +66,7 @@ public class PhotoPage extends ActivityState
     private static final String TAG = "PhotoPage";
 
     private static final int MSG_HIDE_BARS = 1;
+
     private static final int HIDE_BARS_TIMEOUT = 3500;
 
     private static final int REQUEST_SLIDESHOW = 1;
@@ -388,8 +389,7 @@ public class PhotoPage extends ActivityState
         switch (action) {
             case R.id.action_slideshow: {
                 Bundle data = new Bundle();
-                data.putString(SlideshowPage.KEY_SET_PATH,
-                        mMediaSet.getPath().toString());
+                data.putString(SlideshowPage.KEY_SET_PATH, mMediaSet.getPath().toString());
                 data.putInt(SlideshowPage.KEY_PHOTO_INDEX, currentIndex);
                 data.putBoolean(SlideshowPage.KEY_REPEAT, true);
                 mActivity.getStateManager().startStateForResult(
@@ -562,17 +562,24 @@ public class PhotoPage extends ActivityState
 
     private class MyDetailsSource implements DetailsSource {
         private int mIndex;
+
+        @Override
         public MediaDetails getDetails() {
             return mModel.getCurrentMediaItem().getDetails();
         }
+
+        @Override
         public int size() {
             return mMediaSet != null ? mMediaSet.getMediaItemCount() : 1;
         }
+
+        @Override
         public int findIndex(int indexHint) {
             mIndex = indexHint;
             return indexHint;
         }
 
+        @Override
         public int getIndex() {
             return mIndex;
         }

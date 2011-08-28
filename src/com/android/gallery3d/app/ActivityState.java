@@ -104,11 +104,11 @@ abstract public class ActivityState {
 
         if ((mFlags & FLAG_HIDE_STATUS_BAR) != 0) {
             WindowManager.LayoutParams params = ((Activity) mActivity).getWindow().getAttributes();
-            params.systemUiVisibility = View.STATUS_BAR_HIDDEN;
+            params.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE;
             ((Activity) mActivity).getWindow().setAttributes(params);
         } else {
             WindowManager.LayoutParams params = ((Activity) mActivity).getWindow().getAttributes();
-            params.systemUiVisibility = View.STATUS_BAR_VISIBLE;
+            params.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE;
             ((Activity) mActivity).getWindow().setAttributes(params);
         }
 
@@ -125,7 +125,9 @@ abstract public class ActivityState {
     }
 
     protected boolean onCreateActionBar(Menu menu) {
-        return false;
+        // TODO: we should return false if there is no menu to show
+        //       this is a workaround for a bug in system
+        return true;
     }
 
     protected boolean onItemSelected(MenuItem item) {
