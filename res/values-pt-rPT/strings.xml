@@ -154,6 +154,9 @@
     <string name="widget_type_photo" msgid="8384174698965738770">"Escolher imagem"</string>
     <string name="widget_type" msgid="7308564524449340985">"Tipo de Widget"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Apres. de diap."</string>
+    <string name="cache_status_title" msgid="8414708919928621485">"Pré-obtenção de fotografias do Picasa:"</string>
+    <string name="cache_status" msgid="7690438435538533106">"Transferir <xliff:g id="NUMBER_0">%1$s</xliff:g> de <xliff:g id="NUMBER_1">%2$s</xliff:g> fotografias"</string>
+    <string name="cache_done" msgid="9194449192869777483">"Transferência concluída"</string>
     <string name="albums" msgid="7320787705180057947">"Álbuns"</string>
     <string name="times" msgid="2023033894889499219">"Vezes"</string>
     <string name="locations" msgid="6649297994083130305">"localizações"</string>

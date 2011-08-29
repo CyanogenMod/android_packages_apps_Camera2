@@ -154,6 +154,9 @@
     <string name="widget_type_photo" msgid="8384174698965738770">"Valitse kuva"</string>
     <string name="widget_type" msgid="7308564524449340985">"Widgetin tyyppi"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Diaesitys"</string>
+    <string name="cache_status_title" msgid="8414708919928621485">"Esihaetaan Picasa-kuvia:"</string>
+    <string name="cache_status" msgid="7690438435538533106">"Ladataan <xliff:g id="NUMBER_0">%1$s</xliff:g> / <xliff:g id="NUMBER_1">%2$s</xliff:g> kuvaa"</string>
+    <string name="cache_done" msgid="9194449192869777483">"Lataus valmis"</string>
     <string name="albums" msgid="7320787705180057947">"Albumit"</string>
     <string name="times" msgid="2023033894889499219">"Kerrat"</string>
     <string name="locations" msgid="6649297994083130305">"Sijainnit"</string>
