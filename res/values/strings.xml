@@ -389,6 +389,15 @@
     <!-- Title of the Android Dreams slideshow screensaver. [CHAR LIMIT=20] -->
     <string name="slideshow_dream_name">Slideshow</string>
 
+    <!-- The title of the picasa's caching notification. [CHAR LIMIT=40] -->
+    <string name="cache_status_title">Prefetching picasa photos:</string>
+
+    <!-- The current download status in the caching notification. [CHAR LIMIT=40] -->
+    <string name="cache_status">Download <xliff:g id="number">%1$s</xliff:g> of <xliff:g id="number">%2$s</xliff:g> photos</string>
+
+    <!-- Indicate complete status, picasa's caching notification. [CHAR LIMIT=40] -->
+    <string name="cache_done">Download complete</string>
+
     <!-- Group by Albums tab on Action Bar. [CHAR LIMIT=12] -->
     <string name="albums">Albums</string>
 
