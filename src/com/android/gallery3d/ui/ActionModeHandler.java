@@ -188,16 +188,18 @@ public class ActionModeHandler implements ActionMode.Callback {
             operation &= SUPPORT_MULTIPLE_MASK;
         }
 
-
+        final int size = uris.size();
         Log.v(TAG, "Sharing intent MIME type=" + mimeType + ", uri size = "+ uris.size());
-        if (uris.size() > 1) {
-            intent.setAction(Intent.ACTION_SEND_MULTIPLE).setType(mimeType);
-            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-        } else {
-            intent.setAction(Intent.ACTION_SEND).setType(mimeType);
-            intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
+        if (size > 0) {
+            if (size > 1) {
+                intent.setAction(Intent.ACTION_SEND_MULTIPLE).setType(mimeType);
+                intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+            } else {
+                intent.setAction(Intent.ACTION_SEND).setType(mimeType);
+                intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
+            }
+            intent.setType(mimeType);
         }
-        intent.setType(mimeType);
 
         final int supportedOperation = operation;
 
@@ -207,7 +209,7 @@ public class ActionModeHandler implements ActionMode.Callback {
                 mMenuTask = null;
                 MenuExecutor.updateMenuOperation(mMenu, supportedOperation);
 
-                if (mShareActionProvider != null) {
+                if (mShareActionProvider != null && size > 0) {
                     Log.v(TAG, "Sharing intent is ready: action = " + intent.getAction());
                     mShareActionProvider.setShareIntent(intent);
                 }
