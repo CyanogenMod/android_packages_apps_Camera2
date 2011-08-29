@@ -78,8 +78,8 @@ public class MtpImage extends MediaItem {
     public Job<Bitmap> requestImage(int type) {
         return new Job<Bitmap>() {
             public Bitmap run(JobContext jc) {
-                GetThumbnailBytes job = new GetThumbnailBytes();
-                byte[] thumbnail = mThreadPool.submit(job).get();
+                byte[] thumbnail = mMtpContext.getMtpClient().getThumbnail(
+                        UsbDevice.getDeviceName(mDeviceId), mObjectId);
                 if (thumbnail == null) {
                     Log.w(TAG, "decoding thumbnail failed");
                     return null;
@@ -114,13 +114,6 @@ public class MtpImage extends MediaItem {
     @Override
     public int getSupportedOperations() {
         return SUPPORT_FULL_IMAGE | SUPPORT_IMPORT;
-    }
-
-    private class GetThumbnailBytes implements Job<byte[]> {
-        public byte[] run(JobContext jc) {
-            return mMtpContext.getMtpClient().getThumbnail(
-                    UsbDevice.getDeviceName(mDeviceId), mObjectId);
-        }
     }
 
     public void updateContent(MtpObjectInfo info) {
