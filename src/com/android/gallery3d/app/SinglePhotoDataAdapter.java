@@ -39,14 +39,12 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         implements PhotoPage.Model {
 
     private static final String TAG = "SinglePhotoDataAdapter";
-    private static final int SIZE_BACKUP = 640;
+    private static final int SIZE_BACKUP = 1024;
     private static final int MSG_UPDATE_IMAGE = 1;
 
     private MediaItem mItem;
     private boolean mHasFullImage;
     private Future<?> mTask;
-    private BitmapRegionDecoder mDecoder;
-    private Bitmap mBackup;
     private Handler mHandler;
 
     private PhotoView mPhotoView;
@@ -64,8 +62,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
             public void handleMessage(Message message) {
                 Utils.assertTrue(message.what == MSG_UPDATE_IMAGE);
                 if (mHasFullImage) {
-                    onDecodeLargeComplete((Future<BitmapRegionDecoder>)
-                            message.obj);
+                    onDecodeLargeComplete((ImageBundle) message.obj);
                 } else {
                     onDecodeThumbComplete((Future<Bitmap>) message.obj);
                 }
@@ -74,11 +71,29 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         mThreadPool = activity.getThreadPool();
     }
 
+    private static class ImageBundle {
+        public final BitmapRegionDecoder decoder;
+        public final Bitmap backupImage;
+
+        public ImageBundle(BitmapRegionDecoder decoder, Bitmap backupImage) {
+            this.decoder = decoder;
+            this.backupImage = backupImage;
+        }
+    }
+
     private FutureListener<BitmapRegionDecoder> mLargeListener =
             new FutureListener<BitmapRegionDecoder>() {
         public void onFutureDone(Future<BitmapRegionDecoder> future) {
-            mHandler.sendMessage(
-                    mHandler.obtainMessage(MSG_UPDATE_IMAGE, future));
+            BitmapRegionDecoder decoder = future.get();
+            if (decoder == null) return;
+            int width = decoder.getWidth();
+            int height = decoder.getHeight();
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = BitmapUtils.computeSampleSize(
+                    (float) SIZE_BACKUP / Math.max(width, height));
+            Bitmap bitmap = decoder.decodeRegion(new Rect(0, 0, width, height), options);
+            mHandler.sendMessage(mHandler.obtainMessage(
+                    MSG_UPDATE_IMAGE, new ImageBundle(decoder, bitmap)));
         }
     };
 
@@ -98,19 +113,11 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         return mItem.getRotation();
     }
 
-    private void onDecodeLargeComplete(Future<BitmapRegionDecoder> future) {
+    private void onDecodeLargeComplete(ImageBundle bundle) {
         try {
-            mDecoder = future.get();
-            if (mDecoder == null) return;
-            int width = mDecoder.getWidth();
-            int height = mDecoder.getHeight();
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = BitmapUtils.computeSampleSizeLarger(
-                    width, height, SIZE_BACKUP);
-            mBackup = mDecoder.decodeRegion(
-                    new Rect(0, 0, width, height), options);
-            setBackupImage(mBackup, width, height);
-            setRegionDecoder(mDecoder);
+            setBackupImage(bundle.backupImage,
+                    bundle.decoder.getWidth(), bundle.decoder.getHeight());
+            setRegionDecoder(bundle.decoder);
             mPhotoView.notifyImageInvalidated(0);
         } catch (Throwable t) {
             Log.w(TAG, "fail to decode large", t);
@@ -119,9 +126,9 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
 
     private void onDecodeThumbComplete(Future<Bitmap> future) {
         try {
-            mBackup = future.get();
-            if (mBackup == null) return;
-            setBackupImage(mBackup, mBackup.getWidth(), mBackup.getHeight());
+            Bitmap backup = future.get();
+            if (backup == null) return;
+            setBackupImage(backup, backup.getWidth(), backup.getHeight());
             mPhotoView.notifyOnNewImage();
             mPhotoView.notifyImageInvalidated(0); // the current image
         } catch (Throwable t) {
