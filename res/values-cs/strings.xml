@@ -154,6 +154,9 @@
     <string name="widget_type_photo" msgid="8384174698965738770">"Vybrat obrázek"</string>
     <string name="widget_type" msgid="7308564524449340985">"Typ widgetu"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Prezentace"</string>
+    <string name="cache_status_title" msgid="8414708919928621485">"Předběžné načítání fotografií Picasa:"</string>
+    <string name="cache_status" msgid="7690438435538533106">"Stáhnout <xliff:g id="NUMBER_0">%1$s</xliff:g> z <xliff:g id="NUMBER_1">%2$s</xliff:g> fotografií"</string>
+    <string name="cache_done" msgid="9194449192869777483">"Stahování bylo dokončeno"</string>
     <string name="albums" msgid="7320787705180057947">"Alba"</string>
     <string name="times" msgid="2023033894889499219">"Časy"</string>
     <string name="locations" msgid="6649297994083130305">"Lokality"</string>
