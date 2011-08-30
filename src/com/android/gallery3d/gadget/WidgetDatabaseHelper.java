@@ -110,7 +110,6 @@ public class WidgetDatabaseHelper extends SQLiteOpenHelper {
                 cursor.close();
             }
         } else if (oldVersion == 3) {
-            Utils.debug("saveData of version: %s", oldVersion);
             Cursor cursor = db.query("photos",
                     new String[] {FIELD_APPWIDGET_ID, FIELD_PHOTO_BLOB, FIELD_IMAGE_URI},
                     null, null, null, null, null);
@@ -122,8 +121,6 @@ public class WidgetDatabaseHelper extends SQLiteOpenHelper {
                     entry.widgetId = cursor.getInt(0);
                     entry.imageData = cursor.getBlob(1);
                     entry.imageUri = cursor.getString(2);
-
-                    Utils.debug("store widget[%s] - %s", entry.widgetId, entry.imageUri);
                     data.add(entry);
                 }
             } finally {
