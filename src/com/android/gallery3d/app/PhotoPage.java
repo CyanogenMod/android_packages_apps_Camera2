@@ -248,6 +248,16 @@ public class PhotoPage extends ActivityState
         mPhotoView.setOpenedItem(itemPath);
     }
 
+    private void setTitle(String title) {
+        if (title == null) return;
+        boolean showTitle = mActivity.getAndroidContext().getResources().getBoolean(
+                R.bool.show_action_bar_title);
+        if (showTitle)
+            mActionBar.setTitle(title);
+        else
+            mActionBar.setTitle("");
+    }
+
     private void updateCurrentPhoto(MediaItem photo) {
         if (mCurrentPhoto == photo) return;
         mCurrentPhoto = photo;
@@ -256,8 +266,7 @@ public class PhotoPage extends ActivityState
         if (mShowDetails) {
             mDetailsHelper.reloadDetails(mModel.getCurrentIndex());
         }
-        String title = photo.getName();
-        if (title != null) mActionBar.setTitle(title);
+        setTitle(photo.getName());
         mPhotoView.showVideoPlayIcon(photo.getMediaType()
                 == MediaObject.MEDIA_TYPE_VIDEO);
 
