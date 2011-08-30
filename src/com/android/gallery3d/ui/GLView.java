@@ -76,10 +76,11 @@ public class GLView {
     public void startAnimation(CanvasAnimation animation) {
         GLRoot root = getGLRoot();
         if (root == null) throw new IllegalStateException();
-
         mAnimation = animation;
-        mAnimation.start();
-        root.registerLaunchedAnimation(mAnimation);
+        if (mAnimation != null) {
+            mAnimation.start();
+            root.registerLaunchedAnimation(mAnimation);
+        }
         invalidate();
     }
 

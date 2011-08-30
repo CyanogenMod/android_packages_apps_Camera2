@@ -18,10 +18,10 @@ package com.android.gallery3d.data;
 
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.BitmapUtils;
-import com.android.gallery3d.util.UpdateHelper;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
+import com.android.gallery3d.util.UpdateHelper;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -33,6 +33,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -158,6 +159,25 @@ public class LocalImage extends LocalMediaItem {
         public Bitmap onDecodeOriginal(JobContext jc, int type) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+
+            // try to decode from JPEG EXIF
+            if (type == MediaItem.TYPE_MICROTHUMBNAIL) {
+                ExifInterface exif = null;
+                byte [] thumbData = null;
+                try {
+                    exif = new ExifInterface(mLocalFilePath);
+                    if (exif != null) {
+                        thumbData = exif.getThumbnail();
+                    }
+                } catch (Throwable t) {
+                    Log.w(TAG, "fail to get exif thumb", t);
+                }
+                if (thumbData != null) {
+                    Bitmap bitmap = DecodeUtils.requestDecodeIfBigEnough(
+                            jc, thumbData, options, getTargetSize(type));
+                    if (bitmap != null) return bitmap;
+                }
+            }
             return DecodeUtils.requestDecode(
                     jc, mLocalFilePath, options, getTargetSize(type));
         }

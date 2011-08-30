@@ -106,6 +106,31 @@ public class DecodeUtils {
                 BitmapFactory.decodeFileDescriptor(fd, null, options));
     }
 
+    /**
+     * Decodes the bitmap from the given byte array if the image size is larger than the given
+     * requirement.
+     *
+     * Note: The returned image may be resized down. However, both width and heigh must be
+     * larger than the <code>targetSize</code>.
+     */
+    public static Bitmap requestDecodeIfBigEnough(JobContext jc, byte[] data,
+            Options options, int targetSize) {
+        if (options == null) options = new Options();
+        jc.setCancelListener(new DecodeCanceller(options));
+
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        if (jc.isCancelled()) return null;
+        if (options.outWidth < targetSize || options.outHeight < targetSize) {
+            return null;
+        }
+        options.inSampleSize = BitmapUtils.computeSampleSizeLarger(
+                options.outWidth, options.outHeight, targetSize);
+        options.inJustDecodeBounds = false;
+        return ensureGLCompatibleBitmap(
+                BitmapFactory.decodeByteArray(data, 0, data.length, options));
+    }
+
     public static Bitmap requestDecode(JobContext jc,
             FileDescriptor fileDescriptor, Rect paddings, Options options) {
         if (options == null) options = new Options();
