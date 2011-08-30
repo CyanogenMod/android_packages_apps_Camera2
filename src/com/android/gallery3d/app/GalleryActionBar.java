@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.app;
 
+import java.util.ArrayList;
+
 import com.android.gallery3d.R;
 
 import android.app.ActionBar;
@@ -25,11 +27,11 @@ import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ShareActionProvider;
-
-import java.util.ArrayList;
+import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
 
 public class GalleryActionBar implements ActionBar.TabListener {
     private static final String TAG = "GalleryActionBar";
@@ -212,16 +214,5 @@ public class GalleryActionBar implements ActionBar.TabListener {
 
     @Override
     public void onTabReselected(Tab tab, FragmentTransaction ft) {
-    }
-
-    public boolean setSelectedTab(int type) {
-        for (int i = 0, n = sClusterItems.length; i < n; ++i) {
-            ActionItem item = sClusterItems[i];
-            if (item.visible && item.action == type) {
-                mActionBar.selectTab(mActionBar.getTabAt(i));
-                return true;
-            }
-        }
-        return false;
     }
 }

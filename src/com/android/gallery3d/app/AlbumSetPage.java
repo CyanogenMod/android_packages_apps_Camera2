@@ -40,6 +40,7 @@ import com.android.gallery3d.ui.PositionRepository.Position;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.ui.StaticBackground;
+import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.GalleryUtils;
 
 import android.app.Activity;
@@ -47,11 +48,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View.MeasureSpec;
 import android.widget.Toast;
 
 public class AlbumSetPage extends ActivityState implements
@@ -63,8 +66,6 @@ public class AlbumSetPage extends ActivityState implements
     public static final String KEY_MEDIA_PATH = "media-path";
     public static final String KEY_SET_TITLE = "set-title";
     public static final String KEY_SET_SUBTITLE = "set-subtitle";
-    public static final String KEY_SELECTED_TAB_TYPE = "selected-tab";
-
     private static final int DATA_CACHE_SIZE = 256;
     private static final int REQUEST_DO_ANIMATION = 1;
     private static final int MSG_GOTO_MANAGE_CACHE_PAGE = 1;
@@ -97,6 +98,8 @@ public class AlbumSetPage extends ActivityState implements
     private float mX;
     private float mY;
     private float mZ;
+
+    private SynchronizedHandler mHandler;
 
     private GLView mRootPane = new GLView() {
         private float mMatrix[] = new float[16];
@@ -228,7 +231,6 @@ public class AlbumSetPage extends ActivityState implements
         String newPath = FilterUtils.switchClusterPath(basePath, clusterType);
         Bundle data = new Bundle(getData());
         data.putString(AlbumSetPage.KEY_MEDIA_PATH, newPath);
-        data.putInt(KEY_SELECTED_TAB_TYPE, clusterType);
         mAlbumSetView.savePositions(PositionRepository.getInstance(mActivity));
         mActivity.getStateManager().switchState(this, AlbumSetPage.class, data);
     }
@@ -249,6 +251,18 @@ public class AlbumSetPage extends ActivityState implements
 
     @Override
     public void onCreate(Bundle data, Bundle restoreState) {
+        mHandler = new SynchronizedHandler(mActivity.getGLRoot()) {
+            @Override
+            public void handleMessage(Message message) {
+                Utils.assertTrue(message.what == MSG_GOTO_MANAGE_CACHE_PAGE);
+                Bundle data = new Bundle();
+                String mediaPath = mActivity.getDataManager().getTopSetPath(
+                    DataManager.INCLUDE_ALL);
+                data.putString(AlbumSetPage.KEY_MEDIA_PATH, mediaPath);
+                mActivity.getStateManager().startState(ManageCachePage.class, data);
+            }
+        };
+
         initializeViews();
         initializeData(data);
         mGetContent = data.getBoolean(Gallery.KEY_GET_CONTENT, false);
@@ -257,8 +271,7 @@ public class AlbumSetPage extends ActivityState implements
         mSubtitle = data.getString(AlbumSetPage.KEY_SET_SUBTITLE);
         mEyePosition = new EyePosition(mActivity.getAndroidContext(), this);
         mDetailsSource = new MyDetailsSource();
-        mActivity.getGalleryActionBar().setSelectedTab(data.getInt(
-                AlbumSetPage.KEY_SELECTED_TAB_TYPE, FilterUtils.CLUSTER_BY_ALBUM));
+
         startTransition();
     }
 
@@ -419,11 +432,7 @@ public class AlbumSetPage extends ActivityState implements
                 return true;
             }
             case R.id.action_manage_offline: {
-                Bundle data = new Bundle();
-                String mediaPath = mActivity.getDataManager().getTopSetPath(
-                    DataManager.INCLUDE_ALL);
-                data.putString(AlbumSetPage.KEY_MEDIA_PATH, mediaPath);
-                mActivity.getStateManager().startState(ManageCachePage.class, data);
+                mHandler.sendEmptyMessage(MSG_GOTO_MANAGE_CACHE_PAGE);
                 return true;
             }
             case R.id.action_sync_picasa_albums: {
