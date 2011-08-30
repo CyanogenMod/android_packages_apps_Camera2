@@ -298,8 +298,5 @@ public class BitmapUtils {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(65536);
         bitmap.compress(CompressFormat.JPEG, quality, baos);
         return baos.toByteArray();
-
     }
-
-
 }
