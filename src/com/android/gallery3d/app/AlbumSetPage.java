@@ -224,6 +224,7 @@ public class AlbumSetPage extends ActivityState implements
     }
 
     public void doCluster(int clusterType) {
+        Log.v(TAG, "doCluster: " + clusterType);
         String basePath = mMediaSet.getPath().toString();
         String newPath = FilterUtils.switchClusterPath(basePath, clusterType);
         Bundle data = new Bundle(getData());
@@ -268,6 +269,7 @@ public class AlbumSetPage extends ActivityState implements
     @Override
     public void onPause() {
         super.onPause();
+        Log.v(TAG, "onPause");
         mIsActive = false;
         mActionModeHandler.pause();
         mAlbumSetDataAdapter.pause();
@@ -281,6 +283,7 @@ public class AlbumSetPage extends ActivityState implements
     @Override
     public void onResume() {
         super.onResume();
+        Log.v(TAG, "onResume");
         mIsActive = true;
         setContentPane(mRootPane);
         mAlbumSetDataAdapter.resume();

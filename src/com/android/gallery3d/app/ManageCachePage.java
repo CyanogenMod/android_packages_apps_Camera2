@@ -151,6 +151,7 @@ public class ManageCachePage extends ActivityState implements
 
     @Override
     public void onCreate(Bundle data, Bundle restoreState) {
+        Log.v(TAG, "onCreate");
         initializeViews();
         initializeData(data);
         mEyePosition = new EyePosition(mActivity.getAndroidContext(), this);
@@ -159,6 +160,7 @@ public class ManageCachePage extends ActivityState implements
     @Override
     public void onPause() {
         super.onPause();
+        Log.v(TAG, "onPause");
         mAlbumSetDataAdapter.pause();
         mAlbumSetView.pause();
         mCacheBar.pause();
@@ -168,6 +170,7 @@ public class ManageCachePage extends ActivityState implements
     @Override
     public void onResume() {
         super.onResume();
+        Log.v(TAG, "onResume");
         setContentPane(mRootPane);
         mAlbumSetDataAdapter.resume();
         mAlbumSetView.resume();

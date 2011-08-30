@@ -158,6 +158,7 @@ public class GalleryActionBar implements ActionBar.TabListener {
     }
 
     public void showClusterTabs(ClusterRunner runner) {
+        Log.v(TAG, "showClusterTabs: runner=" + runner);
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         mClusterRunner = runner;
     }
@@ -165,6 +166,7 @@ public class GalleryActionBar implements ActionBar.TabListener {
     public void hideClusterTabs() {
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         mClusterRunner = null;
+        Log.v(TAG, "hideClusterTabs: runner=" + mClusterRunner);
     }
 
     public void showClusterDialog(final ClusterRunner clusterRunner) {
@@ -203,6 +205,7 @@ public class GalleryActionBar implements ActionBar.TabListener {
         if (mCurrentTab == tab) return;
         mCurrentTab = tab;
         ActionItem item = (ActionItem) tab.getTag();
+        Log.v(TAG, "onTabSelected: clusterrRunner=" + mClusterRunner);
         if (mClusterRunner != null) mClusterRunner.doCluster(item.action);
     }
 
