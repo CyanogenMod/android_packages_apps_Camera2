@@ -24,7 +24,7 @@ import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
-import com.android.gallery3d.util.ThreadPool;
+import com.android.gallery3d.util.JobLimiter;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
@@ -39,6 +39,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
     private static final int MSG_LOAD_BITMAP_DONE = 0;
     private static final int MSG_UPDATE_SLOT = 1;
     private static final int MIN_THUMB_SIZE = 100;
+    private static final int JOB_LIMIT = 2;
 
     public static interface Listener {
         public void onSizeChanged(int size);
@@ -64,7 +65,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
     private SelectionDrawer mSelectionDrawer;
 
     private SynchronizedHandler mHandler;
-    private ThreadPool mThreadPool;
+    private JobLimiter mThreadPool;
     private int mSlotWidth, mSlotHeight;
 
     private int mActiveRequestCount = 0;
@@ -103,7 +104,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
             }
         };
 
-        mThreadPool = activity.getThreadPool();
+        mThreadPool = new JobLimiter(activity.getThreadPool(), JOB_LIMIT);
     }
 
     public void setSelectionDrawer(SelectionDrawer drawer) {

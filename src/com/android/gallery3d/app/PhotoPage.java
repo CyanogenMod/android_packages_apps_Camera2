@@ -94,7 +94,7 @@ public class PhotoPage extends ActivityState
     private Intent mResultIntent = new Intent();
     private int mCurrentIndex = 0;
     private Handler mHandler;
-    private boolean mShowBars;
+    private boolean mShowBars = true;
     private ActionBar mActionBar;
     private MyMenuVisibilityListener mMenuVisibilityListener;
     private boolean mIsMenuVisible;
@@ -148,6 +148,22 @@ public class PhotoPage extends ActivityState
         }
     };
 
+    private void initFilmStripView() {
+        Config.PhotoPage config = Config.PhotoPage.get((Context) mActivity);
+        mFilmStripView = new FilmStripView(mActivity, mMediaSet,
+                config.filmstripTopMargin, config.filmstripMidMargin, config.filmstripBottomMargin,
+                config.filmstripContentSize, config.filmstripThumbSize, config.filmstripBarSize,
+                config.filmstripGripSize, config.filmstripGripWidth);
+        mRootPane.addComponent(mFilmStripView);
+        mFilmStripView.setListener(this);
+        mFilmStripView.setUserInteractionListener(this);
+        mFilmStripView.setFocusIndex(mCurrentIndex);
+        mFilmStripView.setStartIndex(mCurrentIndex);
+        mRootPane.requestLayout();
+        if (mIsActive) mFilmStripView.resume();
+        if (!mShowBars) mFilmStripView.setVisibility(GLView.INVISIBLE);
+    }
+
     @Override
     public void onCreate(Bundle data, Bundle restoreState) {
         mActionBar = ((Activity) mActivity).getActionBar();
@@ -175,25 +191,14 @@ public class PhotoPage extends ActivityState
             mModel = pda;
             mPhotoView.setModel(mModel);
 
-            Config.PhotoPage config = Config.PhotoPage.get((Context) mActivity);
-
-            mFilmStripView = new FilmStripView(mActivity, mMediaSet,
-                    config.filmstripTopMargin, config.filmstripMidMargin, config.filmstripBottomMargin,
-                    config.filmstripContentSize, config.filmstripThumbSize, config.filmstripBarSize,
-                    config.filmstripGripSize, config.filmstripGripWidth);
-            mRootPane.addComponent(mFilmStripView);
-            mFilmStripView.setListener(this);
-            mFilmStripView.setUserInteractionListener(this);
-            mFilmStripView.setFocusIndex(mCurrentIndex);
-            mFilmStripView.setStartIndex(mCurrentIndex);
-
             mResultIntent.putExtra(KEY_INDEX_HINT, mCurrentIndex);
             setStateResult(Activity.RESULT_OK, mResultIntent);
 
             pda.setDataListener(new PhotoDataAdapter.DataListener() {
 
+                @Override
                 public void onPhotoChanged(int index, Path item) {
-                    mFilmStripView.setFocusIndex(index);
+                    if (mFilmStripView != null) mFilmStripView.setFocusIndex(index);
                     mCurrentIndex = index;
                     mResultIntent.putExtra(KEY_INDEX_HINT, index);
                     if (item != null) {
@@ -217,10 +222,14 @@ public class PhotoPage extends ActivityState
                     }
                 }
 
-
                 @Override
                 public void onLoadingStarted() {
                     GalleryUtils.setSpinnerVisibility((Activity) mActivity, true);
+                }
+
+                @Override
+                public void onPhotoAvailable(long version, boolean fullImage) {
+                    if (mFilmStripView == null) initFilmStripView();
                 }
             });
         } else {

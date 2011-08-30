@@ -18,7 +18,6 @@ package com.android.gallery3d.ui;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.anim.AlphaAnimation;
-import com.android.gallery3d.anim.CanvasAnimation;
 import com.android.gallery3d.app.AlbumDataAdapter;
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.data.MediaSet;
@@ -46,8 +45,6 @@ public class FilmStripView extends GLView implements SlotView.Listener,
     private StripDrawer mStripDrawer;
     private Listener mListener;
     private UserInteractionListener mUIListener;
-    private boolean mFilmStripVisible;
-    private CanvasAnimation mFilmStripAnimation;
     private NinePatchTexture mBackgroundTexture;
 
     // The layout of FileStripView is
@@ -90,7 +87,6 @@ public class FilmStripView extends GLView implements SlotView.Listener,
         mAlbumView.setModel(mAlbumDataAdapter);
         mBackgroundTexture = new NinePatchTexture(activity.getAndroidContext(),
                 R.drawable.navstrip_translucent);
-        mFilmStripVisible = true;
     }
 
     public void setListener(Listener listener) {
@@ -101,25 +97,18 @@ public class FilmStripView extends GLView implements SlotView.Listener,
         mUIListener = listener;
     }
 
-    private void setFilmStripVisible(boolean visible) {
-        if (mFilmStripVisible == visible) return;
-        mFilmStripVisible = visible;
-        if (!visible) {
-            mFilmStripAnimation = new AlphaAnimation(1, 0);
-            mFilmStripAnimation.setDuration(HIDE_ANIMATION_DURATION);
-            mFilmStripAnimation.start();
-        } else {
-            mFilmStripAnimation = null;
-        }
-        invalidate();
-    }
-
     public void show() {
-        setFilmStripVisible(true);
+        if (getVisibility() == GLView.VISIBLE) return;
+        startAnimation(null);
+        setVisibility(GLView.VISIBLE);
     }
 
     public void hide() {
-        setFilmStripVisible(false);
+        if (getVisibility() == GLView.INVISIBLE) return;
+        AlphaAnimation animation = new AlphaAnimation(1, 0);
+        animation.setDuration(HIDE_ANIMATION_DURATION);
+        startAnimation(animation);
+        setVisibility(GLView.INVISIBLE);
     }
 
     @Override
@@ -159,10 +148,6 @@ public class FilmStripView extends GLView implements SlotView.Listener,
 
     @Override
     protected boolean dispatchTouchEvent(MotionEvent event) {
-        if (!mFilmStripVisible && mFilmStripAnimation == null) {
-            return false;
-        }
-
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
@@ -179,63 +164,49 @@ public class FilmStripView extends GLView implements SlotView.Listener,
 
     @Override
     protected void render(GLCanvas canvas) {
-        CanvasAnimation anim = mFilmStripAnimation;
-        if (anim == null && !mFilmStripVisible) return;
-
-        boolean needRestore = false;
-        if (anim != null) {
-            needRestore = true;
-            canvas.save(anim.getCanvasSaveFlags());
-            long now = canvas.currentAnimationTimeMillis();
-            boolean more = anim.calculate(now);
-            anim.apply(canvas);
-            if (more) {
-                invalidate();
-            } else {
-                mFilmStripAnimation = null;
-            }
-        }
-
         mBackgroundTexture.draw(canvas, 0, 0, getWidth(), getHeight());
         super.render(canvas);
-
-        if (needRestore) {
-            canvas.restore();
-        }
     }
 
     // Called by AlbumView
+    @Override
     public void onSingleTapUp(int slotIndex) {
         mAlbumView.setFocusIndex(slotIndex);
         mListener.onSlotSelected(slotIndex);
     }
 
     // Called by AlbumView
+    @Override
     public void onLongTap(int slotIndex) {
         onSingleTapUp(slotIndex);
     }
 
     // Called by AlbumView
+    @Override
     public void onUserInteractionBegin() {
         mUIListener.onUserInteractionBegin();
     }
 
     // Called by AlbumView
+    @Override
     public void onUserInteractionEnd() {
         mUIListener.onUserInteractionEnd();
     }
 
     // Called by AlbumView
+    @Override
     public void onUserInteraction() {
         mUIListener.onUserInteraction();
     }
 
     // Called by AlbumView
+    @Override
     public void onScrollPositionChanged(int position, int total) {
         mScrollBarView.setContentPosition(position, total);
     }
 
     // Called by ScrollBarView
+    @Override
     public void onScrollBarPositionChanged(int position) {
         mAlbumView.setScrollPosition(position);
     }

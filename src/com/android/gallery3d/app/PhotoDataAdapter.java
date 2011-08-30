@@ -142,6 +142,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     private boolean mIsActive;
 
     public interface DataListener extends LoadingListener {
+        public void onPhotoAvailable(long version, boolean fullImage);
         public void onPhotoChanged(int index, Path item);
     }
 
@@ -224,6 +225,9 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         if (entry.screenNail == null) {
             entry.failToLoad = true;
         } else {
+            if (mDataListener != null) {
+                mDataListener.onPhotoAvailable(version, false);
+            }
             for (int i = -1; i <=1; ++i) {
                 if (version == getVersion(mCurrentIndex + i)) {
                     if (i == 0) updateTileProvider(entry);
@@ -244,6 +248,9 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         entry.fullImageTask = null;
         entry.fullImage = future.get();
         if (entry.fullImage != null) {
+            if (mDataListener != null) {
+                mDataListener.onPhotoAvailable(version, true);
+            }
             if (version == getVersion(mCurrentIndex)) {
                 updateTileProvider(entry);
                 mPhotoView.notifyImageInvalidated(0);
@@ -644,6 +651,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
         @Override
         public UpdateInfo call() throws Exception {
+            // TODO: Try to load some data in first update
             UpdateInfo info = new UpdateInfo();
             info.version = mSourceVersion;
             info.reloadContent = needContentReload();
