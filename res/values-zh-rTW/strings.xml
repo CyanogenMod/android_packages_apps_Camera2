@@ -154,9 +154,6 @@
     <string name="widget_type_photo" msgid="8384174698965738770">"選擇圖片"</string>
     <string name="widget_type" msgid="7308564524449340985">"小工具類型"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"投影播放"</string>
-    <string name="cache_status_title" msgid="8414708919928621485">"正在預先擷取 Picasa 相片："</string>
-    <string name="cache_status" msgid="7690438435538533106">"下載 <xliff:g id="NUMBER_0">%1$s</xliff:g> 張相片 (共 <xliff:g id="NUMBER_1">%2$s</xliff:g> 張)"</string>
-    <string name="cache_done" msgid="9194449192869777483">"下載完成"</string>
     <string name="albums" msgid="7320787705180057947">"相簿"</string>
     <string name="times" msgid="2023033894889499219">"次數"</string>
     <string name="locations" msgid="6649297994083130305">"位置"</string>
