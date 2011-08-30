@@ -18,6 +18,7 @@ package com.android.gallery3d.app;
 
 import com.android.gallery3d.R;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -91,7 +92,8 @@ public class MovieActivity extends Activity {
                 if (cursor != null) cursor.close();
             }
         }
-        if (title != null) getActionBar().setTitle(title);
+        ActionBar actionBar = getActionBar();
+        if (title != null && actionBar != null) actionBar.setTitle(title);
     }
 
     @Override
