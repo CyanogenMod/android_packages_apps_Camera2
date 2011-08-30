@@ -257,8 +257,11 @@ public class AlbumSetPage extends ActivityState implements
         mSubtitle = data.getString(AlbumSetPage.KEY_SET_SUBTITLE);
         mEyePosition = new EyePosition(mActivity.getAndroidContext(), this);
         mDetailsSource = new MyDetailsSource();
-        mActivity.getGalleryActionBar().setSelectedTab(data.getInt(
-                AlbumSetPage.KEY_SELECTED_TAB_TYPE, FilterUtils.CLUSTER_BY_ALBUM));
+        GalleryActionBar actionBar = mActivity.getGalleryActionBar();
+        if (actionBar != null) {
+            actionBar.setSelectedTab(data.getInt(
+                    AlbumSetPage.KEY_SELECTED_TAB_TYPE, FilterUtils.CLUSTER_BY_ALBUM));
+        }
         startTransition();
     }
 
