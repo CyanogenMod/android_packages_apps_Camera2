@@ -154,9 +154,6 @@
     <string name="widget_type_photo" msgid="8384174698965738770">"Vælg et billede"</string>
     <string name="widget_type" msgid="7308564524449340985">"Widgettype"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Diasshow"</string>
-    <string name="cache_status_title" msgid="8414708919928621485">"Henter Picasa-billeder på forhånd:"</string>
-    <string name="cache_status" msgid="7690438435538533106">"<xliff:g id="NUMBER_0">%1$s</xliff:g> downloadet ud af <xliff:g id="NUMBER_1">%2$s</xliff:g> fotos"</string>
-    <string name="cache_done" msgid="9194449192869777483">"Download er fuldført"</string>
     <string name="albums" msgid="7320787705180057947">"Albummer"</string>
     <string name="times" msgid="2023033894889499219">"Tidspunkter"</string>
     <string name="locations" msgid="6649297994083130305">"Placering"</string>
