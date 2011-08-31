@@ -90,11 +90,7 @@ public class MenuExecutor {
             public void handleMessage(Message message) {
                 switch (message.what) {
                     case MSG_TASK_COMPLETE: {
-                        if (mDialog != null) {
-                            mDialog.dismiss();
-                            mDialog = null;
-                            mTask = null;
-                        }
+                        stopTaskAndDismissDialog();
                         if (message.obj != null) {
                             ProgressListener listener = (ProgressListener) message.obj;
                             listener.onProgressComplete(message.arg1);
@@ -119,7 +115,7 @@ public class MenuExecutor {
         };
     }
 
-    public void pause() {
+    private void stopTaskAndDismissDialog() {
         if (mTask != null) {
             mTask.cancel();
             mTask.waitDone();
@@ -129,6 +125,10 @@ public class MenuExecutor {
         }
     }
 
+    public void pause() {
+        stopTaskAndDismissDialog();
+    }
+
     private void onProgressUpdate(int index, ProgressListener listener) {
         mHandler.sendMessage(
                 mHandler.obtainMessage(MSG_TASK_UPDATE, index, 0, listener));
@@ -136,55 +136,6 @@ public class MenuExecutor {
 
     private void onProgressComplete(int result, ProgressListener listener) {
         mHandler.sendMessage(mHandler.obtainMessage(MSG_TASK_COMPLETE, result, 0, listener));
-    }
-
-    private int getShareType(SelectionManager selectionManager) {
-        ArrayList<Path> items = selectionManager.getSelected(false);
-        int type = 0;
-        DataManager dataManager = mActivity.getDataManager();
-        for (Path id : items) {
-            type |= dataManager.getMediaType(id);
-        }
-        return type;
-    }
-
-    private void onShareItemClicked(final SelectionManager selectionManager,
-            final String mimeType, final ComponentName component) {
-        Utils.assertTrue(mDialog == null);
-        final ArrayList<Path> items = selectionManager.getSelected(true);
-        mDialog = showProgressDialog((Activity) mActivity,
-                R.string.loading_image, items.size());
-
-        mTask = mActivity.getThreadPool().submit(new Job<Void>() {
-            @Override
-            public Void run(JobContext jc) {
-                DataManager manager = mActivity.getDataManager();
-                ArrayList<Uri> uris = new ArrayList<Uri>(items.size());
-                int index = 0;
-                for (Path path : items) {
-                    if ((manager.getSupportedOperations(path)
-                            & MediaObject.SUPPORT_SHARE) != 0) {
-                        uris.add(manager.getContentUri(path));
-                    }
-                    onProgressUpdate(++index, null);
-                }
-                if (jc.isCancelled()) return null;
-                Intent intent = new Intent()
-                        .setComponent(component).setType(mimeType);
-                if (uris.isEmpty()) {
-                    return null;
-                } else if (uris.size() == 1) {
-                    intent.setAction(Intent.ACTION_SEND);
-                    intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
-                } else {
-                    intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-                    intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-                }
-                onProgressComplete(EXECUTION_RESULT_SUCCESS, null);
-                mHandler.sendMessage(mHandler.obtainMessage(MSG_DO_SHARE, intent));
-                return null;
-            }
-        }, null);
     }
 
     private static void setMenuItemVisibility(
@@ -283,7 +234,7 @@ public class MenuExecutor {
 
     public void startAction(int action, int title, ProgressListener listener) {
         ArrayList<Path> ids = mSelectionManager.getSelected(false);
-        Utils.assertTrue(mDialog == null);
+        stopTaskAndDismissDialog();
 
         Activity activity = (Activity) mActivity;
         mDialog = showProgressDialog(activity, title, ids.size());
@@ -304,6 +255,9 @@ public class MenuExecutor {
     private boolean execute(
             DataManager manager, JobContext jc, int cmd, Path path) {
         boolean result = true;
+        Log.v(TAG, "Execute cmd: " + cmd + " for " + path);
+        long startTime = System.currentTimeMillis();
+
         switch (cmd) {
             case R.id.action_confirm_delete:
                 manager.delete(path);
@@ -359,6 +313,8 @@ public class MenuExecutor {
             default:
                 throw new AssertionError();
         }
+        Log.v(TAG, "It takes " + (System.currentTimeMillis() - startTime) +
+                " ms to execute cmd for " + path);
         return result;
     }
 
@@ -377,20 +333,23 @@ public class MenuExecutor {
             int index = 0;
             DataManager manager = mActivity.getDataManager();
             int result = EXECUTION_RESULT_SUCCESS;
-            for (Path id : mItems) {
-                if (jc.isCancelled()) {
-                    result = EXECUTION_RESULT_CANCEL;
-                    break;
+            try {
+                for (Path id : mItems) {
+                    if (jc.isCancelled()) {
+                        result = EXECUTION_RESULT_CANCEL;
+                        break;
+                    }
+                    if (!execute(manager, jc, mOperation, id)) {
+                        result = EXECUTION_RESULT_FAIL;
+                    }
+                    onProgressUpdate(index++, mListener);
                 }
-                try {
-                    if (!execute(manager, jc, mOperation, id)) result = EXECUTION_RESULT_FAIL;
-                } catch (Throwable th) {
-                    Log.e(TAG, "failed to execute operation " + mOperation
-                            + " for " + id, th);
-                }
-                onProgressUpdate(index++, mListener);
+            } catch (Throwable th) {
+                Log.e(TAG, "failed to execute operation " + mOperation
+                        + " : " + th);
+            } finally {
+               onProgressComplete(result, mListener);
             }
-            onProgressComplete(result, mListener);
             return null;
         }
     }

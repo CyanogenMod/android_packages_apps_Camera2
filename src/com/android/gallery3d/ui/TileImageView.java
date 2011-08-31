@@ -351,7 +351,7 @@ public class TileImageView extends GLView {
         if (mIsTextureFreed) {
             layoutTiles(mCenterX, mCenterY, mScale, mRotation);
             mIsTextureFreed = false;
-            updateBackupTexture(mModel.getBackupImage());
+            updateBackupTexture(mModel != null ? mModel.getBackupImage() : null);
         }
     }
 
