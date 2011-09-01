@@ -1,3 +1,6 @@
+# Disable the warnings of using dynamic method call in common library.
+-dontnote com.android.gallery3d.common.*
+
 # Keep all classes extended from com.android.gallery3d.common.Entry
 # Since we annotate on the fields and use reflection to create SQL
 # according to those field.
