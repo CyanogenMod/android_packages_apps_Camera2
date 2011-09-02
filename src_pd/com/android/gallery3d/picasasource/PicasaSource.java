@@ -24,6 +24,7 @@ import com.android.gallery3d.data.Path;
 import com.android.gallery3d.data.PathMatcher;
 
 import android.content.Context;
+import android.media.ExifInterface;
 import android.os.ParcelFileDescriptor;
 
 import java.io.FileNotFoundException;
@@ -122,4 +123,6 @@ public class PicasaSource extends MediaSource {
     public static void onPackageAdded(Context context, String packageName) {/*do nothing*/}
 
     public static void onPackageRemoved(Context context, String packageName) {/*do nothing*/}
+
+    public static void extractExifValues(MediaObject item, ExifInterface exif) {/*do nothing*/}
 }
