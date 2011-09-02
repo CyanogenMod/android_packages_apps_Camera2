@@ -100,7 +100,6 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"잘린 이미지가 저장되지 않았습니다."</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"사용할 수 있는 앨범이 없습니다"</string>
     <string name="empty_album" msgid="6307897398825514762">"사용할 수 있는 이미지/동영상이 없습니다."</string>
-    <string name="picasa_web_albums" msgid="5167008066827481663">"Picasa 웹앨범"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"버즈"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"오프라인 사용 설정"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"새로고침"</string>

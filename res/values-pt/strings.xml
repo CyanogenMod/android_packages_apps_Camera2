@@ -100,7 +100,6 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"A imagem cortada não foi salva"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Não há álbuns disponíveis"</string>
     <string name="empty_album" msgid="6307897398825514762">"Não há imagens/vídeos disponíveis"</string>
-    <string name="picasa_web_albums" msgid="5167008066827481663">"Álbuns do Picasa"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Tornar disponível off-line"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Atualizar"</string>
