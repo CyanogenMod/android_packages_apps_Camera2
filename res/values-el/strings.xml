@@ -100,7 +100,6 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"Η εικόνα αποκοπής δεν έχει αποθηκευτεί"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Δεν υπάρχουν διαθέσιμα λευκώματα"</string>
     <string name="empty_album" msgid="6307897398825514762">"Δεν υπάρχουν διαθέσιμες εικόνες/βίντεο"</string>
-    <string name="picasa_web_albums" msgid="5167008066827481663">"Λευκώματα Ιστού Picasa"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Διαθέσιμα εκτός σύνδεσης"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Ανανέωση"</string>

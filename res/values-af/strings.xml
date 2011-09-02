@@ -113,7 +113,6 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"Die gesnoeide prent is nie gestoor nie"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Daar is geen albums beskikbaar nie"</string>
     <string name="empty_album" msgid="6307897398825514762">"Daar is geen prente/video\'s beskikbaar nie"</string>
-    <string name="picasa_web_albums" msgid="5167008066827481663">"Picasa Web Albums"</string>
     <!-- no translation found for picasa_posts (1055151689217481993) -->
     <skip />
     <string name="make_available_offline" msgid="5157950985488297112">"Maak vanlyn beskikbaar"</string>

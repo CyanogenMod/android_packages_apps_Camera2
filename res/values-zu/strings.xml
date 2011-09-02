@@ -115,7 +115,6 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"Umfanekiso onqampuliwe awugciniwe"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Awekho ama-albhamu atholakalayo"</string>
     <string name="empty_album" msgid="6307897398825514762">"Azikho izithombe/amavidiyo atholakalayo"</string>
-    <string name="picasa_web_albums" msgid="5167008066827481663">"Ama-Albhamu Ewebhu ye-Picasa"</string>
     <!-- no translation found for picasa_posts (1055151689217481993) -->
     <skip />
     <string name="make_available_offline" msgid="5157950985488297112">"Yenza kutholakale ungaxhumekile kwi-inthanethi"</string>
