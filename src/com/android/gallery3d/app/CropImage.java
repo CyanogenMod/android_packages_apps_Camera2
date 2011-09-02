@@ -51,6 +51,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -347,6 +348,8 @@ public class CropImage extends AbstractGalleryActivity {
         File output = saveMedia(jc, cropped, DOWNLOAD_BUCKET, filename);
         if (output == null) return null;
 
+        copyExif(mMediaItem, output.getAbsolutePath(), cropped.getWidth(), cropped.getHeight());
+
         long now = System.currentTimeMillis() / 1000;
         ContentValues values = new ContentValues();
         values.put(Images.Media.TITLE, PicasaSource.getImageTitle(mMediaItem));
@@ -380,6 +383,9 @@ public class CropImage extends AbstractGalleryActivity {
         if (pos >= 0) filename = filename.substring(0, pos);
         File output = saveMedia(jc, cropped, directory, filename);
         if (output == null) return null;
+
+        copyExif(oldPath.getAbsolutePath(), output.getAbsolutePath(),
+                cropped.getWidth(), cropped.getHeight());
 
         long now = System.currentTimeMillis() / 1000;
         ContentValues values = new ContentValues();
@@ -845,6 +851,92 @@ public class CropImage extends AbstractGalleryActivity {
             return mItem == null
                     ? null
                     : mItem.requestImage(MediaItem.TYPE_THUMBNAIL).run(jc);
+        }
+    }
+
+    private static final String[] EXIF_TAGS = {
+            ExifInterface.TAG_DATETIME,
+            ExifInterface.TAG_MAKE,
+            ExifInterface.TAG_MODEL,
+            ExifInterface.TAG_FLASH,
+            ExifInterface.TAG_GPS_LATITUDE,
+            ExifInterface.TAG_GPS_LONGITUDE,
+            ExifInterface.TAG_GPS_LATITUDE_REF,
+            ExifInterface.TAG_GPS_LONGITUDE_REF,
+            ExifInterface.TAG_GPS_ALTITUDE,
+            ExifInterface.TAG_GPS_ALTITUDE_REF,
+            ExifInterface.TAG_GPS_TIMESTAMP,
+            ExifInterface.TAG_GPS_DATESTAMP,
+            ExifInterface.TAG_WHITE_BALANCE,
+            ExifInterface.TAG_FOCAL_LENGTH,
+            ExifInterface.TAG_GPS_PROCESSING_METHOD};
+
+    private static void copyExif(MediaItem item, String destination, int newWidth, int newHeight) {
+        try {
+            ExifInterface newExif = new ExifInterface(destination);
+            PicasaSource.extractExifValues(item, newExif);
+            newExif.setAttribute(ExifInterface.TAG_IMAGE_WIDTH, String.valueOf(newWidth));
+            newExif.setAttribute(ExifInterface.TAG_IMAGE_LENGTH, String.valueOf(newHeight));
+            newExif.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(0));
+            newExif.saveAttributes();
+        } catch (Throwable t) {
+            Log.w(TAG, "cannot copy exif: " + item, t);
+        }
+    }
+
+    private static void copyExif(String source, String destination, int newWidth, int newHeight) {
+        try {
+            ExifInterface oldExif = new ExifInterface(source);
+            ExifInterface newExif = new ExifInterface(destination);
+
+            newExif.setAttribute(ExifInterface.TAG_IMAGE_WIDTH, String.valueOf(newWidth));
+            newExif.setAttribute(ExifInterface.TAG_IMAGE_LENGTH, String.valueOf(newHeight));
+            newExif.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(0));
+
+            for (String tag : EXIF_TAGS) {
+                String value = oldExif.getAttribute(tag);
+                if (value != null) {
+                    newExif.setAttribute(tag, value);
+                }
+            }
+
+            // Handle some special values here
+            String value = oldExif.getAttribute(ExifInterface.TAG_APERTURE);
+            if (value != null) {
+                try {
+                    float aperture = Float.parseFloat(value);
+                    newExif.setAttribute(ExifInterface.TAG_APERTURE,
+                            String.valueOf((int) (aperture * 10 + 0.5f)) + "/10");
+                } catch (NumberFormatException e) {
+                    Log.w(TAG, "cannot parse aperture: " + value);
+                }
+            }
+
+            // TODO: The code is broken, need to fix the JHEAD lib
+            /*
+            value = oldExif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
+            if (value != null) {
+                try {
+                    double exposure = Double.parseDouble(value);
+                    testToRational("test exposure", exposure);
+                    newExif.setAttribute(ExifInterface.TAG_EXPOSURE_TIME, value);
+                } catch (NumberFormatException e) {
+                    Log.w(TAG, "cannot parse exposure time: " + value);
+                }
+            }
+
+            value = oldExif.getAttribute(ExifInterface.TAG_ISO);
+            if (value != null) {
+                try {
+                    int iso = Integer.parseInt(value);
+                    newExif.setAttribute(ExifInterface.TAG_ISO, String.valueOf(iso) + "/1");
+                } catch (NumberFormatException e) {
+                    Log.w(TAG, "cannot parse exposure time: " + value);
+                }
+            }*/
+            newExif.saveAttributes();
+        } catch (Throwable t) {
+            Log.w(TAG, "cannot copy exif: " + source, t);
         }
     }
 }
