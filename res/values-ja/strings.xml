@@ -100,7 +100,6 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"トリミングした画像は保存されていません"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"使用できるアルバムはありません"</string>
     <string name="empty_album" msgid="6307897398825514762">"使用できる画像/動画はありません"</string>
-    <string name="picasa_web_albums" msgid="5167008066827481663">"Picasaウェブアルバム"</string>
     <string name="picasa_posts" msgid="1055151689217481993">"バズ"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"オフラインで使用する"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"更新"</string>

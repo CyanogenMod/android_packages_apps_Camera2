@@ -231,11 +231,6 @@
             [CHAR LIMIT=50] -->
     <string name="empty_album">There are no images/videos available</string>
 
-    <!-- A label indicating that we will sync with Picasaweb by a corresponding
-         user account. The label is shown along with other Google services,
-         such as Gmail, Calendar, Contacts, Books, ... ,etc. [CHAR LIMIT=30] -->
-    <string name="picasa_web_albums">Picasa Web Albums</string>
-
     <!-- Album label used to indicate the collection of PWA Buzz/Post photos -->
     <string name="picasa_posts">Buzz</string>
 
