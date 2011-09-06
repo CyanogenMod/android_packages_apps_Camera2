@@ -114,8 +114,6 @@ public class BitmapUtils {
 
     public static Bitmap resizeDownToPixels(
             Bitmap bitmap, int targetPixels, boolean recycle) {
-        if (bitmap == null) return null;
-
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         float scale = (float) Math.sqrt(
@@ -140,7 +138,7 @@ public class BitmapUtils {
     }
 
     private static Bitmap.Config getConfig(Bitmap bitmap) {
-        Bitmap.Config config = (bitmap != null ? bitmap.getConfig() : null);
+        Bitmap.Config config = bitmap.getConfig();
         if (config == null) {
             config = Bitmap.Config.ARGB_8888;
         }
@@ -149,8 +147,6 @@ public class BitmapUtils {
 
     public static Bitmap resizeDownBySideLength(
             Bitmap bitmap, int maxLength, boolean recycle) {
-        if (bitmap == null) return null;
-
         int srcWidth = bitmap.getWidth();
         int srcHeight = bitmap.getHeight();
         float scale = Math.min(
@@ -161,8 +157,6 @@ public class BitmapUtils {
 
     // Crops a square from the center of the original image.
     public static Bitmap cropCenter(Bitmap bitmap, boolean recycle) {
-        if (bitmap == null) return null;
-
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         if (width == height) return bitmap;
@@ -179,8 +173,6 @@ public class BitmapUtils {
 
     public static Bitmap resizeDownAndCropCenter(Bitmap bitmap, int size,
             boolean recycle) {
-        if (bitmap == null) return null;
-
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
         int minSide = Math.min(w, h);
@@ -211,8 +203,6 @@ public class BitmapUtils {
     }
 
     public static Bitmap rotateBitmap(Bitmap source, int rotation, boolean recycle) {
-        if (source == null) return null;
-
         int w = source.getWidth();
         int h = source.getHeight();
         Matrix m = new Matrix();
@@ -271,8 +261,6 @@ public class BitmapUtils {
     }
 
     public static byte[] compressBitmap(Bitmap bitmap) {
-        if (bitmap == null) return null;
-
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG,
                 COMPRESS_JPEG_QUALITY, os);
@@ -293,8 +281,6 @@ public class BitmapUtils {
     }
 
     public static byte[] compressToBytes(Bitmap bitmap, int quality) {
-        if (bitmap == null) return null;
-
         ByteArrayOutputStream baos = new ByteArrayOutputStream(65536);
         bitmap.compress(CompressFormat.JPEG, quality, baos);
         return baos.toByteArray();
