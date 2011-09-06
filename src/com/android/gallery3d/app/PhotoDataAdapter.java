@@ -214,11 +214,12 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
     private void updateScreenNail(long version, Future<Bitmap> future) {
         ImageEntry entry = mImageCache.get(version);
-        if (entry == null || entry.screenNailTask == null) {
+        if (entry == null || entry.screenNailTask != future) {
             Bitmap screenNail = future.get();
             if (screenNail != null) screenNail.recycle();
             return;
         }
+
         entry.screenNailTask = null;
         entry.screenNail = future.get();
 
@@ -240,11 +241,12 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
     private void updateFullImage(long version, Future<BitmapRegionDecoder> future) {
         ImageEntry entry = mImageCache.get(version);
-        if (entry == null || entry.fullImageTask == null) {
+        if (entry == null || entry.fullImageTask != future) {
             BitmapRegionDecoder fullImage = future.get();
             if (fullImage != null) fullImage.recycle();
             return;
         }
+
         entry.fullImageTask = null;
         entry.fullImage = future.get();
         if (entry.fullImage != null) {
@@ -567,12 +569,14 @@ public class PhotoDataAdapter implements PhotoPage.Model {
             mVersion = version;
         }
 
+        @Override
         public void onFutureDone(Future<BitmapRegionDecoder> future) {
             mFuture = future;
             mMainHandler.sendMessage(
                     mMainHandler.obtainMessage(MSG_RUN_OBJECT, this));
         }
 
+        @Override
         public void run() {
             updateFullImage(mVersion, mFuture);
         }
@@ -587,12 +591,14 @@ public class PhotoDataAdapter implements PhotoPage.Model {
             mVersion = version;
         }
 
+        @Override
         public void onFutureDone(Future<Bitmap> future) {
             mFuture = future;
             mMainHandler.sendMessage(
                     mMainHandler.obtainMessage(MSG_RUN_OBJECT, this));
         }
 
+        @Override
         public void run() {
             updateScreenNail(mVersion, mFuture);
         }
