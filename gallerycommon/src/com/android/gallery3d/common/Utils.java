@@ -268,7 +268,6 @@ public class Utils {
         try {
             return Float.parseFloat(content);
         } catch (NumberFormatException e) {
-            Log.w(TAG, "invalid float: " + content, e);
             return defaultValue;
         }
     }
@@ -278,7 +277,6 @@ public class Utils {
         try {
             return Integer.parseInt(content);
         } catch (NumberFormatException e) {
-            Log.w(TAG, "invalid int: " + content, e);
             return defaultValue;
         }
     }
