@@ -401,4 +401,10 @@
 
     <!-- Group by menu item. [CHAR LIMIT=20] -->
     <string name="group_by">Group by</string>
+
+    <!-- The title of the menu item which enable the settings [CHAR LIMIT=20] -->
+    <string name="settings">Settings</string>
+
+    <!-- The title of menu item where user can add a new account -->
+    <string name="add_account">Add account</string>
 </resources>
