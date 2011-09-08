@@ -232,7 +232,7 @@
     <string name="empty_album">There are no images/videos available</string>
 
     <!-- Album label used to indicate the collection of PWA Buzz/Post photos -->
-    <string name="picasa_posts">Buzz</string>
+    <string name="picasa_posts">Posts</string>
 
     <!-- A label describing that the current screen is for the user to pick
          some albums to be viewable offline [CHAR LIMIT=30] -->
