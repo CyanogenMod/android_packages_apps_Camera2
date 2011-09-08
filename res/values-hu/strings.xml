@@ -51,10 +51,8 @@
     <string name="deselect_all" msgid="7397531298370285581">"Összes kijelölés törlése"</string>
     <string name="slideshow" msgid="4355906903247112975">"Diavetítés"</string>
     <string name="details" msgid="8415120088556445230">"Részletek"</string>
-    <!-- no translation found for details_title (2611396603977441273) -->
-    <skip />
-    <!-- no translation found for close (5585646033158453043) -->
-    <skip />
+    <string name="details_title" msgid="2611396603977441273">"%1$d/%2$d elem:"</string>
+    <string name="close" msgid="5585646033158453043">"Bezárás"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"Váltás kamerára"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"%1$d kiválasztva"</item>
@@ -100,7 +98,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"A levágott kép nincs elmentve"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Nincs rendelkezésre álló album"</string>
     <string name="empty_album" msgid="6307897398825514762">"Nincsenek elérhető képek/videók"</string>
-    <string name="picasa_posts" msgid="1055151689217481993">"Zümm"</string>
+    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"Zümm"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Offline elérhető albumok"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Frissítés"</string>
     <string name="done" msgid="217672440064436595">"Kész"</string>
@@ -160,18 +158,5 @@
     <string name="tags" msgid="5539648765482935955">"Címkék"</string>
     <string name="group_by" msgid="4308299657902209357">"Csoportosítás"</string>
     <string name="settings" msgid="1534847740615665736">"Beállítások"</string>
-    <string name="prefs_accounts" msgid="7942761992713671670">"Fiókbeállítások"</string>
-    <string name="prefs_data_usage" msgid="410592732727343215">"Adathasználati beállítások"</string>
-    <string name="prefs_auto_upload" msgid="2467627128066665126">"Automatikus feltöltés"</string>
-    <string name="prefs_other_settings" msgid="6034181851440646681">"Egyéb beállítások"</string>
-    <string name="about_gallery" msgid="8667445445883757255">"A galéria névjegye"</string>
-    <string name="sync_on_wifi_only" msgid="5795753226259399958">"Szinkronizálás csak Wi-Fin"</string>
-    <string name="helptext_auto_upload" msgid="133741242503097377">"A készített fotók és videók automatikus feltöltése egy személyes Picasa webalbumba"</string>
-    <string name="enable_auto_upload" msgid="1586329406342131">"Automatikus feltöltés engedélyezése"</string>
-    <string name="photo_sync_is_on" msgid="1653898269297050634">"Google fotók szinkr. BE"</string>
-    <string name="photo_sync_is_off" msgid="6464193461664544289">"Google fotók szinkr. KI"</string>
-    <string name="helptext_photo_sync" msgid="8617245939103545623">"Szinkronizálás módosítása/fiók törlése"</string>
-    <string name="view_photo_for_account" msgid="5608040380422337939">"A fiókban tárolt fotók és videók megtekintése a galériában"</string>
     <string name="add_account" msgid="4271217504968243974">"Fiók hozzáadása"</string>
-    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Feltöltési fiók kiválasztása"</string>
 </resources>
