@@ -51,10 +51,8 @@
     <string name="deselect_all" msgid="7397531298370285581">"Avmarkera alla"</string>
     <string name="slideshow" msgid="4355906903247112975">"Bildspel"</string>
     <string name="details" msgid="8415120088556445230">"Information"</string>
-    <!-- no translation found for details_title (2611396603977441273) -->
-    <skip />
-    <!-- no translation found for close (5585646033158453043) -->
-    <skip />
+    <string name="details_title" msgid="2611396603977441273">"%1$d av %2$d objekt:"</string>
+    <string name="close" msgid="5585646033158453043">"Stäng"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"Byt till kamera"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"%1$d har markerats"</item>
@@ -100,7 +98,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"Den beskurna bilden sparas inte"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Det finns inte några tillgängliga album"</string>
     <string name="empty_album" msgid="6307897398825514762">"Det finns inga tillgängliga bilder/videoklipp"</string>
-    <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
+    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Gör tillgängliga offline"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Uppdatera"</string>
     <string name="done" msgid="217672440064436595">"Klar"</string>
@@ -160,18 +158,5 @@
     <string name="tags" msgid="5539648765482935955">"Taggar"</string>
     <string name="group_by" msgid="4308299657902209357">"Ordna efter"</string>
     <string name="settings" msgid="1534847740615665736">"Inställningar"</string>
-    <string name="prefs_accounts" msgid="7942761992713671670">"Kontoinställningar"</string>
-    <string name="prefs_data_usage" msgid="410592732727343215">"Inställningar för dataanvändning"</string>
-    <string name="prefs_auto_upload" msgid="2467627128066665126">"Automatisk överföring"</string>
-    <string name="prefs_other_settings" msgid="6034181851440646681">"Andra inställningar"</string>
-    <string name="about_gallery" msgid="8667445445883757255">"Om galleriet"</string>
-    <string name="sync_on_wifi_only" msgid="5795753226259399958">"Synkronisera bara i Wi-Fi"</string>
-    <string name="helptext_auto_upload" msgid="133741242503097377">"Lägg automatiskt upp alla foton och videoklipp du spelar in i ett privat Picasa-webbalbum"</string>
-    <string name="enable_auto_upload" msgid="1586329406342131">"Aktivera automatisk överföring"</string>
-    <string name="photo_sync_is_on" msgid="1653898269297050634">"Google fotosynk är PÅ"</string>
-    <string name="photo_sync_is_off" msgid="6464193461664544289">"Google fotosynk är AV"</string>
-    <string name="helptext_photo_sync" msgid="8617245939103545623">"Ändra synkinst. eller ta bort kontot"</string>
-    <string name="view_photo_for_account" msgid="5608040380422337939">"Visa foton och videor från det här kontot i Galleriet"</string>
     <string name="add_account" msgid="4271217504968243974">"Lägg till konto"</string>
-    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Välj konto för autoöverföring"</string>
 </resources>

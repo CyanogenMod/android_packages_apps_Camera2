@@ -100,7 +100,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"Kırpılmış resim kaydedilmedi"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Kullanılabilir albüm yok"</string>
     <string name="empty_album" msgid="6307897398825514762">"Kullanılabilir resim/video yok"</string>
-    <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
+    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Çevrimdışı kullanılabilir yap"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Yenile"</string>
     <string name="done" msgid="217672440064436595">"Bitti"</string>
@@ -160,18 +160,5 @@
     <string name="tags" msgid="5539648765482935955">"Etiketler"</string>
     <string name="group_by" msgid="4308299657902209357">"Grupla:"</string>
     <string name="settings" msgid="1534847740615665736">"Ayarlar"</string>
-    <string name="prefs_accounts" msgid="7942761992713671670">"Hesap ayarları"</string>
-    <string name="prefs_data_usage" msgid="410592732727343215">"Veri kullanım ayarları"</string>
-    <string name="prefs_auto_upload" msgid="2467627128066665126">"Otomatik yükleme"</string>
-    <string name="prefs_other_settings" msgid="6034181851440646681">"Diğer ayarlar"</string>
-    <string name="about_gallery" msgid="8667445445883757255">"Galeri Hakkında"</string>
-    <string name="sync_on_wifi_only" msgid="5795753226259399958">"Sadece Kablosuz\'da senkronize et"</string>
-    <string name="helptext_auto_upload" msgid="133741242503097377">"Çektiğiniz tüm fotoğrafları ve videoları özel bir picasa web albümüne otomatik olarak yükleyin"</string>
-    <string name="enable_auto_upload" msgid="1586329406342131">"Otomatik yüklemeyi etkinleştir"</string>
-    <string name="photo_sync_is_on" msgid="1653898269297050634">"Google Foto senk AÇIK"</string>
-    <string name="photo_sync_is_off" msgid="6464193461664544289">"Google Foto senk KAPALI"</string>
-    <string name="helptext_photo_sync" msgid="8617245939103545623">"Senk tercihini değiştirin veya hesabı kaldırın"</string>
-    <string name="view_photo_for_account" msgid="5608040380422337939">"Bu hesaptaki fotoğrafları ve videoları Galeri\'de görüntüle"</string>
     <string name="add_account" msgid="4271217504968243974">"Hesap ekle"</string>
-    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Otomatk yükleme hesabını seçin"</string>
 </resources>

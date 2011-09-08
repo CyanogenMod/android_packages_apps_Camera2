@@ -51,10 +51,8 @@
     <string name="deselect_all" msgid="7397531298370285581">"Tout désélectionner"</string>
     <string name="slideshow" msgid="4355906903247112975">"Diaporama"</string>
     <string name="details" msgid="8415120088556445230">"Détails"</string>
-    <!-- no translation found for details_title (2611396603977441273) -->
-    <skip />
-    <!-- no translation found for close (5585646033158453043) -->
-    <skip />
+    <string name="details_title" msgid="2611396603977441273">"%1$d élément(s) sur %2$d :"</string>
+    <string name="close" msgid="5585646033158453043">"Fermer"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"Passer en mode Appareil photo"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"%1$d sélectionné"</item>
@@ -100,7 +98,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"L\'image rognée n\'a pas été enregistrée."</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Aucun album disponible"</string>
     <string name="empty_album" msgid="6307897398825514762">"Aucune image/vidéo disponible"</string>
-    <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
+    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Consulter hors connexion"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Actualiser"</string>
     <string name="done" msgid="217672440064436595">"OK"</string>
@@ -160,18 +158,5 @@
     <string name="tags" msgid="5539648765482935955">"Tags"</string>
     <string name="group_by" msgid="4308299657902209357">"Regrouper par"</string>
     <string name="settings" msgid="1534847740615665736">"Paramètres"</string>
-    <string name="prefs_accounts" msgid="7942761992713671670">"Paramètres du compte"</string>
-    <string name="prefs_data_usage" msgid="410592732727343215">"Paramètres d\'utilisation des données"</string>
-    <string name="prefs_auto_upload" msgid="2467627128066665126">"Transfert automatique"</string>
-    <string name="prefs_other_settings" msgid="6034181851440646681">"Autres paramètres"</string>
-    <string name="about_gallery" msgid="8667445445883757255">"À propos de la galerie"</string>
-    <string name="sync_on_wifi_only" msgid="5795753226259399958">"Synchronisation via Wi-Fi uniquement"</string>
-    <string name="helptext_auto_upload" msgid="133741242503097377">"Transférez automatiquement toutes vos photos et vos vidéos dans un album Web Picasa privé."</string>
-    <string name="enable_auto_upload" msgid="1586329406342131">"Activer le transfert automatique"</string>
-    <string name="photo_sync_is_on" msgid="1653898269297050634">"Synchro Google Photos ACTIVÉE"</string>
-    <string name="photo_sync_is_off" msgid="6464193461664544289">"Synchro Google Photos DÉSACTIVÉE"</string>
-    <string name="helptext_photo_sync" msgid="8617245939103545623">"Modifier préf. synchro ou supprimer compte"</string>
-    <string name="view_photo_for_account" msgid="5608040380422337939">"Afficher les photos et vidéos de ce compte dans la galerie"</string>
     <string name="add_account" msgid="4271217504968243974">"Ajouter un compte"</string>
-    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Sélect. compte transfert auto"</string>
 </resources>
