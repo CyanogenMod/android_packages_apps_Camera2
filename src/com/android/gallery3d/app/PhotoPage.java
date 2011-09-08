@@ -559,6 +559,7 @@ public class PhotoPage extends ActivityState
         mModel.pause();
         mHandler.removeMessages(MSG_HIDE_BARS);
         mActionBar.removeOnMenuVisibilityListener(mMenuVisibilityListener);
+        mMenuExecutor.pause();
     }
 
     @Override
