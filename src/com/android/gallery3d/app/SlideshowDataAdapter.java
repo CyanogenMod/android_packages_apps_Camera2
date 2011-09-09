@@ -68,7 +68,7 @@ public class SlideshowDataAdapter implements SlideshowPage.Model {
         mThreadPool = context.getThreadPool();
     }
 
-    public MediaItem loadItem() {
+    private MediaItem loadItem() {
         if (mNeedReload.compareAndSet(true, false)) {
             long v = mSource.reload();
             if (v != mDataVersion) {
