@@ -159,13 +159,16 @@ public class GalleryActionBar implements ActionBar.TabListener {
 
     public void showClusterTabs(ClusterRunner runner) {
         Log.v(TAG, "showClusterTabs: runner=" + runner);
+        // setNavigationMode will trigger onTabSelected, so we should avoid
+        // triggering any callback here
+        mClusterRunner = null;
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         mClusterRunner = runner;
     }
 
     public void hideClusterTabs() {
-        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         mClusterRunner = null;
+        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         Log.v(TAG, "hideClusterTabs: runner=" + mClusterRunner);
     }
 
