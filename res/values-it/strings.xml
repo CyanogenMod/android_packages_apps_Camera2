@@ -23,7 +23,7 @@
     <string name="movie_view_label" msgid="3526526872644898229">"Video player"</string>
     <string name="loading_video" msgid="4013492720121891585">"Caricamento video..."</string>
     <string name="loading_image" msgid="1200894415793838191">"Caricamento immagine in corso..."</string>
-    <string name="loading_account" msgid="928195413034552034">"Caricamento account???"</string>
+    <string name="loading_account" msgid="928195413034552034">"Caricamento account..."</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"Riprendi video"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"Riprendi riproduzione da %s ?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Riprendi riproduzione"</string>
@@ -51,10 +51,8 @@
     <string name="deselect_all" msgid="7397531298370285581">"Deseleziona tutto"</string>
     <string name="slideshow" msgid="4355906903247112975">"Presentazione"</string>
     <string name="details" msgid="8415120088556445230">"Dettagli"</string>
-    <!-- no translation found for details_title (2611396603977441273) -->
-    <skip />
-    <!-- no translation found for close (5585646033158453043) -->
-    <skip />
+    <string name="details_title" msgid="2611396603977441273">"%1$d elementi su %2$d:"</string>
+    <string name="close" msgid="5585646033158453043">"Chiudi"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"Passa a Fotocamera"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"%1$d selezionati"</item>
@@ -100,7 +98,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"L\'immagine ritagliata non è stata salvata"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Nessun album disponibile"</string>
     <string name="empty_album" msgid="6307897398825514762">"Non ci sono immagini/video disponibili"</string>
-    <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
+    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Rendi disponibili offline"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Aggiorna"</string>
     <string name="done" msgid="217672440064436595">"Fine"</string>
@@ -160,18 +158,5 @@
     <string name="tags" msgid="5539648765482935955">"Tag"</string>
     <string name="group_by" msgid="4308299657902209357">"Raggruppa per"</string>
     <string name="settings" msgid="1534847740615665736">"Impostazioni"</string>
-    <string name="prefs_accounts" msgid="7942761992713671670">"Impostazioni account"</string>
-    <string name="prefs_data_usage" msgid="410592732727343215">"Impostazioni utilizzo dati"</string>
-    <string name="prefs_auto_upload" msgid="2467627128066665126">"Caricamento automatico"</string>
-    <string name="prefs_other_settings" msgid="6034181851440646681">"Altre impostazioni"</string>
-    <string name="about_gallery" msgid="8667445445883757255">"Informazioni su Galleria"</string>
-    <string name="sync_on_wifi_only" msgid="5795753226259399958">"Sincronizza solo su Wi-Fi"</string>
-    <string name="helptext_auto_upload" msgid="133741242503097377">"Carica automaticamente tutte le foto e tutti i video realizzati in un album privato di Picasa Web Album"</string>
-    <string name="enable_auto_upload" msgid="1586329406342131">"Attiva caricamento automatico"</string>
-    <string name="photo_sync_is_on" msgid="1653898269297050634">"Sincronizz. foto Google attiva"</string>
-    <string name="photo_sync_is_off" msgid="6464193461664544289">"Sincron. foto Google non attiva"</string>
-    <string name="helptext_photo_sync" msgid="8617245939103545623">"Cambia prefer. sincron. o rimuovi account"</string>
-    <string name="view_photo_for_account" msgid="5608040380422337939">"Visualizza foto e video di questo account nella Galleria"</string>
     <string name="add_account" msgid="4271217504968243974">"Aggiungi account"</string>
-    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Scegli account caricam. autom."</string>
 </resources>
