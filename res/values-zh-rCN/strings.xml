@@ -23,7 +23,7 @@
     <string name="movie_view_label" msgid="3526526872644898229">"视频播放器"</string>
     <string name="loading_video" msgid="4013492720121891585">"正在载入视频..."</string>
     <string name="loading_image" msgid="1200894415793838191">"正在载入图片..."</string>
-    <string name="loading_account" msgid="928195413034552034">"正在加载帐户…"</string>
+    <string name="loading_account" msgid="928195413034552034">"正在加载帐户???"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"继续播放视频"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"从 %s 开始继续播放？"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"继续播放"</string>
@@ -37,7 +37,7 @@
     <string name="crop_label" msgid="521114301871349328">"修剪照片"</string>
     <string name="select_image" msgid="7841406150484742140">"选择照片"</string>
     <string name="select_video" msgid="4859510992798615076">"选择视频"</string>
-    <string name="select_item" msgid="2257529413100472599">"选择项目"</string>
+    <string name="select_item" msgid="2257529413100472599">"选择内容"</string>
     <string name="select_album" msgid="4632641262236697235">"选择相册"</string>
     <string name="select_group" msgid="9090385962030340391">"选择群组"</string>
     <string name="set_image" msgid="2331476809308010401">"将照片设置为"</string>
@@ -51,10 +51,8 @@
     <string name="deselect_all" msgid="7397531298370285581">"取消全选"</string>
     <string name="slideshow" msgid="4355906903247112975">"播放幻灯片"</string>
     <string name="details" msgid="8415120088556445230">"详细信息"</string>
-    <!-- no translation found for details_title (2611396603977441273) -->
-    <skip />
-    <!-- no translation found for close (5585646033158453043) -->
-    <skip />
+    <string name="details_title" msgid="2611396603977441273">"第 %1$d 项（共 %2$d 项）："</string>
+    <string name="close" msgid="5585646033158453043">"关闭"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"切换到相机"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"选中了 %1$d 项"</item>
@@ -100,7 +98,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"经过裁剪的照片尚未保存"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"没有可用的相册"</string>
     <string name="empty_album" msgid="6307897398825514762">"没有可用的图片/视频"</string>
-    <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
+    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"允许离线状态下使用"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"刷新"</string>
     <string name="done" msgid="217672440064436595">"完成"</string>
@@ -160,18 +158,5 @@
     <string name="tags" msgid="5539648765482935955">"标签"</string>
     <string name="group_by" msgid="4308299657902209357">"分组依据"</string>
     <string name="settings" msgid="1534847740615665736">"设置"</string>
-    <string name="prefs_accounts" msgid="7942761992713671670">"帐户设置"</string>
-    <string name="prefs_data_usage" msgid="410592732727343215">"数据使用设置"</string>
-    <string name="prefs_auto_upload" msgid="2467627128066665126">"自动上传"</string>
-    <string name="prefs_other_settings" msgid="6034181851440646681">"其他设置"</string>
-    <string name="about_gallery" msgid="8667445445883757255">"关于图库"</string>
-    <string name="sync_on_wifi_only" msgid="5795753226259399958">"仅通过 WiFi 同步"</string>
-    <string name="helptext_auto_upload" msgid="133741242503097377">"自动将您拍摄的所有照片和视频上传到私人 Picasa 网络相册"</string>
-    <string name="enable_auto_upload" msgid="1586329406342131">"启用自动上传"</string>
-    <string name="photo_sync_is_on" msgid="1653898269297050634">"Google 相册同步功能已开启"</string>
-    <string name="photo_sync_is_off" msgid="6464193461664544289">"Google 相册同步功能已关闭"</string>
-    <string name="helptext_photo_sync" msgid="8617245939103545623">"更改同步偏好设置或删除此帐户"</string>
-    <string name="view_photo_for_account" msgid="5608040380422337939">"在图库中查看此帐户的照片和视频"</string>
     <string name="add_account" msgid="4271217504968243974">"添加帐户"</string>
-    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"选择用于自动上传的帐户"</string>
 </resources>

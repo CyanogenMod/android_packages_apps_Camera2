@@ -100,7 +100,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"لم يتم حفظ الصورة التي تم اقتصاصها"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"لا تتوفر أية ألبومات"</string>
     <string name="empty_album" msgid="6307897398825514762">"لا تتوفر أية صور/مقاطع فيديو"</string>
-    <string name="picasa_posts" msgid="1055151689217481993">"نبضات Google"</string>
+    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"نبضات Google"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"جعلها متاحة في وضع عدم الاتصال"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"تحديث"</string>
     <string name="done" msgid="217672440064436595">"تم"</string>
@@ -160,18 +160,5 @@
     <string name="tags" msgid="5539648765482935955">"العلامات"</string>
     <string name="group_by" msgid="4308299657902209357">"تجميع بحسب"</string>
     <string name="settings" msgid="1534847740615665736">"الإعدادات"</string>
-    <string name="prefs_accounts" msgid="7942761992713671670">"إعدادات الحساب"</string>
-    <string name="prefs_data_usage" msgid="410592732727343215">"إعدادات استخدام البيانات"</string>
-    <string name="prefs_auto_upload" msgid="2467627128066665126">"تحميل تلقائي"</string>
-    <string name="prefs_other_settings" msgid="6034181851440646681">"إعدادات أخرى"</string>
-    <string name="about_gallery" msgid="8667445445883757255">"حول المعرض"</string>
-    <string name="sync_on_wifi_only" msgid="5795753226259399958">"مزامنة على شبكة WiFi فقط"</string>
-    <string name="helptext_auto_upload" msgid="133741242503097377">"تحميل جميع الصور ومقاطع الفيديو التي تلتقطها إلى ألبوم ويب بيكاسا خاص تلقائيًا"</string>
-    <string name="enable_auto_upload" msgid="1586329406342131">"تمكين التحميل التلقائي"</string>
-    <string name="photo_sync_is_on" msgid="1653898269297050634">"مزامنة صور Google قيد التشغيل"</string>
-    <string name="photo_sync_is_off" msgid="6464193461664544289">"مزامنة صور Google قيد الإيقاف"</string>
-    <string name="helptext_photo_sync" msgid="8617245939103545623">"تغيير تفضيلات المزامنة أو إزالة الحساب"</string>
-    <string name="view_photo_for_account" msgid="5608040380422337939">"عرض صور ومقاطع فيديو من هذا الحساب في المعرض"</string>
     <string name="add_account" msgid="4271217504968243974">"إضافة حساب"</string>
-    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"اختيار حساب تحميل تلقائي"</string>
 </resources>

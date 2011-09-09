@@ -51,10 +51,8 @@
     <string name="deselect_all" msgid="7397531298370285581">"모두 선택취소"</string>
     <string name="slideshow" msgid="4355906903247112975">"슬라이드쇼"</string>
     <string name="details" msgid="8415120088556445230">"세부정보"</string>
-    <!-- no translation found for details_title (2611396603977441273) -->
-    <skip />
-    <!-- no translation found for close (5585646033158453043) -->
-    <skip />
+    <string name="details_title" msgid="2611396603977441273">"%2$d개 중 %1$d번째 항목:"</string>
+    <string name="close" msgid="5585646033158453043">"닫기"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"카메라로 전환"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"%1$d개 선택됨"</item>
@@ -100,7 +98,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"잘린 이미지가 저장되지 않았습니다."</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"사용할 수 있는 앨범이 없습니다"</string>
     <string name="empty_album" msgid="6307897398825514762">"사용할 수 있는 이미지/동영상이 없습니다."</string>
-    <string name="picasa_posts" msgid="1055151689217481993">"버즈"</string>
+    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"버즈"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"오프라인 사용 설정"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"새로고침"</string>
     <string name="done" msgid="217672440064436595">"완료"</string>
@@ -160,18 +158,5 @@
     <string name="tags" msgid="5539648765482935955">"태그"</string>
     <string name="group_by" msgid="4308299657902209357">"그룹화 기준"</string>
     <string name="settings" msgid="1534847740615665736">"설정"</string>
-    <string name="prefs_accounts" msgid="7942761992713671670">"계정 설정"</string>
-    <string name="prefs_data_usage" msgid="410592732727343215">"데이터 사용 설정"</string>
-    <string name="prefs_auto_upload" msgid="2467627128066665126">"자동 업로드"</string>
-    <string name="prefs_other_settings" msgid="6034181851440646681">"기타 설정"</string>
-    <string name="about_gallery" msgid="8667445445883757255">"갤러리 정보"</string>
-    <string name="sync_on_wifi_only" msgid="5795753226259399958">"WiFi에서만 동기화"</string>
-    <string name="helptext_auto_upload" msgid="133741242503097377">"촬영한 모든 사진과 동영상을 비공개 Picasa 웹앨범에 자동으로 업로드합니다."</string>
-    <string name="enable_auto_upload" msgid="1586329406342131">"자동 업로드 사용"</string>
-    <string name="photo_sync_is_on" msgid="1653898269297050634">"Google 사진 동기화 사용 중"</string>
-    <string name="photo_sync_is_off" msgid="6464193461664544289">"Google 사진 동기화 사용 안함"</string>
-    <string name="helptext_photo_sync" msgid="8617245939103545623">"동기화 맞춤설정을 변경하거나 계정을 삭제합니다."</string>
-    <string name="view_photo_for_account" msgid="5608040380422337939">"갤러리에서 이 계정의 사진과 동영상 보기"</string>
     <string name="add_account" msgid="4271217504968243974">"계정 추가"</string>
-    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"자동 업로드 계정 선택"</string>
 </resources>

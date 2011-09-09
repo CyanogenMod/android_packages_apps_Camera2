@@ -60,10 +60,8 @@
     <string name="slideshow" msgid="4355906903247112975">"ስላይድ አሳይ"</string>
     <!-- no translation found for details (8415120088556445230) -->
     <skip />
-    <!-- no translation found for details_title (2611396603977441273) -->
-    <skip />
-    <!-- no translation found for close (5585646033158453043) -->
-    <skip />
+    <string name="details_title" msgid="2611396603977441273">"%1$d ከ%2$d ንጥሎች፤"</string>
+    <string name="close" msgid="5585646033158453043">"ዝጋ"</string>
     <!-- no translation found for switch_to_camera (7280111806675169992) -->
     <skip />
   <plurals name="number_of_items_selected">
@@ -115,7 +113,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"የተከረከመው ምስል አልተቀመጠም"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"ምንም አልበሞች የሉም።"</string>
     <string name="empty_album" msgid="6307897398825514762">"ምንም ምስሎች/ቪዲዮዎች የሉም"</string>
-    <!-- no translation found for picasa_posts (1055151689217481993) -->
+    <!-- no translation found for picasa_posts (1497721615718760613) -->
     <skip />
     <string name="make_available_offline" msgid="5157950985488297112">"ከመስመር ውጪ እንዲገኝአድርግ"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"አድስ"</string>
@@ -187,12 +185,6 @@
     <skip />
     <!-- no translation found for slideshow_dream_name (6915963319933437083) -->
     <skip />
-    <!-- no translation found for cache_status_title (8414708919928621485) -->
-    <skip />
-    <!-- no translation found for cache_status (7690438435538533106) -->
-    <skip />
-    <!-- no translation found for cache_done (9194449192869777483) -->
-    <skip />
     <!-- no translation found for albums (7320787705180057947) -->
     <skip />
     <string name="times" msgid="2023033894889499219">"ጊዜ"</string>
@@ -205,32 +197,6 @@
     <string name="group_by" msgid="4308299657902209357">"በቡድን አስቀምጥ"</string>
     <!-- no translation found for settings (1534847740615665736) -->
     <skip />
-    <!-- no translation found for prefs_accounts (7942761992713671670) -->
-    <skip />
-    <!-- no translation found for prefs_data_usage (410592732727343215) -->
-    <skip />
-    <!-- no translation found for prefs_auto_upload (2467627128066665126) -->
-    <skip />
-    <!-- no translation found for prefs_other_settings (6034181851440646681) -->
-    <skip />
-    <!-- no translation found for about_gallery (8667445445883757255) -->
-    <skip />
-    <!-- no translation found for sync_on_wifi_only (5795753226259399958) -->
-    <skip />
-    <!-- no translation found for helptext_auto_upload (133741242503097377) -->
-    <skip />
-    <!-- no translation found for enable_auto_upload (1586329406342131) -->
-    <skip />
-    <!-- no translation found for photo_sync_is_on (1653898269297050634) -->
-    <skip />
-    <!-- no translation found for photo_sync_is_off (6464193461664544289) -->
-    <skip />
-    <!-- no translation found for helptext_photo_sync (8617245939103545623) -->
-    <skip />
-    <!-- no translation found for view_photo_for_account (5608040380422337939) -->
-    <skip />
     <!-- no translation found for add_account (4271217504968243974) -->
-    <skip />
-    <!-- no translation found for auto_upload_chooser_title (1494524693870792948) -->
     <skip />
 </resources>

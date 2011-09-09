@@ -51,10 +51,8 @@
     <string name="deselect_all" msgid="7397531298370285581">"Anul·la la selecció de tot"</string>
     <string name="slideshow" msgid="4355906903247112975">"Presentació de diapositives"</string>
     <string name="details" msgid="8415120088556445230">"Detalls"</string>
-    <!-- no translation found for details_title (2611396603977441273) -->
-    <skip />
-    <!-- no translation found for close (5585646033158453043) -->
-    <skip />
+    <string name="details_title" msgid="2611396603977441273">"%1$d de %2$d elements:"</string>
+    <string name="close" msgid="5585646033158453043">"Tanca"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"Canvia a la càmera"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"%1$d seleccionats"</item>
@@ -100,7 +98,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"La imatge retallada no s\'ha desat"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"No hi ha cap àlbum disponible"</string>
     <string name="empty_album" msgid="6307897398825514762">"No hi ha imatges/vídeos disponibles"</string>
-    <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
+    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Disponible fora de línia"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Actualitza"</string>
     <string name="done" msgid="217672440064436595">"Fet"</string>
@@ -161,18 +159,5 @@
     <string name="group_by" msgid="4308299657902209357">"Agrupa per"</string>
     <!-- no translation found for settings (1534847740615665736) -->
     <skip />
-    <string name="prefs_accounts" msgid="7942761992713671670">"Configuració del compte"</string>
-    <string name="prefs_data_usage" msgid="410592732727343215">"Configuració de l\'ús de dades"</string>
-    <string name="prefs_auto_upload" msgid="2467627128066665126">"Càrrega automàtica"</string>
-    <string name="prefs_other_settings" msgid="6034181851440646681">"Altres paràmetres de configuració"</string>
-    <string name="about_gallery" msgid="8667445445883757255">"Quant a la Galeria"</string>
-    <string name="sync_on_wifi_only" msgid="5795753226259399958">"Sincronització només amb connexió Wi-Fi"</string>
-    <string name="helptext_auto_upload" msgid="133741242503097377">"Penja automàticament totes les fotos i els vídeos que facis a un àlbum privat d\'Àlbums web de Picasa"</string>
-    <string name="enable_auto_upload" msgid="1586329406342131">"Activa la càrrega automàtica"</string>
-    <string name="photo_sync_is_on" msgid="1653898269297050634">"Sincron. fotos Google ACTIVADA"</string>
-    <string name="photo_sync_is_off" msgid="6464193461664544289">"Sinc. fotos Google DESACTIVADA"</string>
-    <string name="helptext_photo_sync" msgid="8617245939103545623">"Canvia les pref. de sinc. o elimina aquest compte"</string>
-    <string name="view_photo_for_account" msgid="5608040380422337939">"Visualitza fotos i vídeos d\'aquest compte a la Galeria"</string>
     <string name="add_account" msgid="4271217504968243974">"Afegeix un compte"</string>
-    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Tria compte càrrega automàtica"</string>
 </resources>

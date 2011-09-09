@@ -51,10 +51,8 @@
     <string name="deselect_all" msgid="7397531298370285581">"Опозови све изборе"</string>
     <string name="slideshow" msgid="4355906903247112975">"Пројекција слајдова"</string>
     <string name="details" msgid="8415120088556445230">"Детаљи"</string>
-    <!-- no translation found for details_title (2611396603977441273) -->
-    <skip />
-    <!-- no translation found for close (5585646033158453043) -->
-    <skip />
+    <string name="details_title" msgid="2611396603977441273">"%1$d од %2$d ставке(и):"</string>
+    <string name="close" msgid="5585646033158453043">"Затвори"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"Пребацивање на Камеру"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"Изабранo je %1$d"</item>
@@ -100,7 +98,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"Исечена слика није сачувана"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Нема доступних албума"</string>
     <string name="empty_album" msgid="6307897398825514762">"Нема доступних слика/видео записа"</string>
-    <string name="picasa_posts" msgid="1055151689217481993">"Buzz"</string>
+    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"Buzz"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Учини доступним ван мреже"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Освежи"</string>
     <string name="done" msgid="217672440064436595">"Done"</string>
@@ -161,18 +159,5 @@
     <string name="group_by" msgid="4308299657902209357">"Групиши према"</string>
     <!-- no translation found for settings (1534847740615665736) -->
     <skip />
-    <string name="prefs_accounts" msgid="7942761992713671670">"Подешавања налога"</string>
-    <string name="prefs_data_usage" msgid="410592732727343215">"Подешавања коришћења података"</string>
-    <string name="prefs_auto_upload" msgid="2467627128066665126">"Аутоматско отпремање"</string>
-    <string name="prefs_other_settings" msgid="6034181851440646681">"Остала подешавања"</string>
-    <string name="about_gallery" msgid="8667445445883757255">"О Галерији"</string>
-    <string name="sync_on_wifi_only" msgid="5795753226259399958">"Синхронизација само на WiFi-ју"</string>
-    <string name="helptext_auto_upload" msgid="133741242503097377">"Аутоматско отпремање свих фотографија и видео снимака које снимите у приватни Picasa веб албум"</string>
-    <string name="enable_auto_upload" msgid="1586329406342131">"Омогућавање аутоматског отпремања"</string>
-    <string name="photo_sync_is_on" msgid="1653898269297050634">"Google фото синх. је УКЉУЧЕНА"</string>
-    <string name="photo_sync_is_off" msgid="6464193461664544289">"Google фото синх. је ИСКЉУЧЕНА"</string>
-    <string name="helptext_photo_sync" msgid="8617245939103545623">"Промена подешавања синх. или укл. налога"</string>
-    <string name="view_photo_for_account" msgid="5608040380422337939">"Преглед фотографија и видео снимака са налога у Галерији"</string>
     <string name="add_account" msgid="4271217504968243974">"Додавање налога"</string>
-    <string name="auto_upload_chooser_title" msgid="1494524693870792948">"Избор налога за аутом. отпр."</string>
 </resources>
