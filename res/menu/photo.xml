@@ -58,7 +58,7 @@
             android:title="@string/set_image"
             android:showAsAction="never" />
     <item android:id="@+id/action_crop"
-            android:title="@string/crop"
+            android:title="@string/crop_action"
             android:showAsAction="never" />
     <item android:id="@+id/action_edit"
             android:title="@string/edit"
