@@ -21,6 +21,7 @@ import com.android.gallery3d.ui.GLView;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -69,6 +70,9 @@ abstract public class ActivityState {
         if (mResult == null) return;
         mResult.resultCode = resultCode;
         mResult.resultData = data;
+    }
+
+    protected void onConfigurationChanged(Configuration config) {
     }
 
     protected void onSaveState(Bundle outState) {

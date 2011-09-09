@@ -17,11 +17,12 @@
 package com.android.gallery3d.app;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.ui.AlbumSetView;
-import com.android.gallery3d.ui.CacheBarView;
+import com.android.gallery3d.ui.CacheStorageUsageInfo;
 import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.ManageCacheDrawer;
@@ -30,24 +31,41 @@ import com.android.gallery3d.ui.SelectionDrawer;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.ui.StaticBackground;
+import com.android.gallery3d.ui.SynchronizedHandler;
+import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.ThreadPool.Job;
+import com.android.gallery3d.util.ThreadPool.JobContext;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.format.Formatter;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class ManageCachePage extends ActivityState implements
-        SelectionManager.SelectionListener, CacheBarView.Listener,
-        MenuExecutor.ProgressListener, EyePosition.EyePositionListener {
+        SelectionManager.SelectionListener, MenuExecutor.ProgressListener,
+        EyePosition.EyePositionListener, OnClickListener {
     public static final String KEY_MEDIA_PATH = "media-path";
+
     private static final String TAG = "ManageCachePage";
 
     private static final float USER_DISTANCE_METER = 0.3f;
     private static final int DATA_CACHE_SIZE = 256;
+    private static final int MSG_REFRESH_STORAGE_INFO = 1;
+    private static final int MSG_REQUEST_LAYOUT = 2;
+    private static final int PROGRESS_BAR_MAX = 10000;
 
     private StaticBackground mStaticBackground;
     private AlbumSetView mAlbumSetView;
@@ -59,8 +77,6 @@ public class ManageCachePage extends ActivityState implements
     private AlbumSetDataAdapter mAlbumSetDataAdapter;
     private float mUserDistance; // in pixel
 
-    private CacheBarView mCacheBar;
-
     private EyePosition mEyePosition;
 
     // The eyes' position of the user, the origin is at the center of the
@@ -70,6 +86,11 @@ public class ManageCachePage extends ActivityState implements
     private float mZ;
 
     private int mAlbumCountToMakeAvailableOffline;
+    private View mFooterContent;
+    private CacheStorageUsageInfo mCacheStorageInfo;
+    private Future<Void> mUpdateStorageInfo;
+    private Handler mHandler;
+    private boolean mLayoutReady = false;
 
     private GLView mRootPane = new GLView() {
         private float mMatrix[] = new float[16];
@@ -77,18 +98,29 @@ public class ManageCachePage extends ActivityState implements
         @Override
         protected void onLayout(
                 boolean changed, int left, int top, int right, int bottom) {
+            // Hack: our layout depends on other components on the screen.
+            // We assume the other components will complete before we get a change
+            // to run a message in main thread.
+            if (!mLayoutReady) {
+                mHandler.sendEmptyMessage(MSG_REQUEST_LAYOUT);
+                return;
+            }
+            mLayoutReady = false;
+
             mStaticBackground.layout(0, 0, right - left, bottom - top);
             mEyePosition.resetPosition();
+            Activity activity = (Activity) mActivity;
+            int slotViewTop = GalleryActionBar.getHeight(activity);
+            int slotViewBottom = bottom - top;
 
-            Config.ManageCachePage config = Config.ManageCachePage.get((Context) mActivity);
-
-            ActionBar actionBar = ((Activity) mActivity).getActionBar();
-            int slotViewTop = GalleryActionBar.getHeight((Activity) mActivity);
-            int slotViewBottom = bottom - top - config.cacheBarHeight;
+            View cacheBar = activity.findViewById(R.id.cache_bar);
+            if (cacheBar != null) {
+                int location[] = {0, 0};
+                cacheBar.getLocationOnScreen(location);
+                slotViewBottom = location[1];
+            }
 
             mAlbumSetView.layout(0, slotViewTop, right - left, slotViewBottom);
-            mCacheBar.layout(0, bottom - top - config.cacheBarHeight,
-                    right - left, bottom - top);
         }
 
         @Override
@@ -139,11 +171,9 @@ public class ManageCachePage extends ActivityState implements
         }
 
         long sizeOfTarget = targetSet.getCacheSize();
-        if (isFullyCached ^ isSelected) {
-            mCacheBar.increaseTargetCacheSize(-sizeOfTarget);
-        } else {
-            mCacheBar.increaseTargetCacheSize(sizeOfTarget);
-        }
+        mCacheStorageInfo.increaseTargetCacheSize(
+                (isFullyCached ^ isSelected) ? -sizeOfTarget : sizeOfTarget);
+        refreshCacheStorageInfo();
 
         mSelectionManager.toggle(path);
         mAlbumSetView.invalidate();
@@ -151,31 +181,79 @@ public class ManageCachePage extends ActivityState implements
 
     @Override
     public void onCreate(Bundle data, Bundle restoreState) {
-        Log.v(TAG, "onCreate");
+        mCacheStorageInfo = new CacheStorageUsageInfo(mActivity);
         initializeViews();
         initializeData(data);
         mEyePosition = new EyePosition(mActivity.getAndroidContext(), this);
+        mHandler = new SynchronizedHandler(mActivity.getGLRoot()) {
+            @Override
+            public void handleMessage(Message message) {
+                switch (message.what) {
+                    case MSG_REFRESH_STORAGE_INFO:
+                        refreshCacheStorageInfo();
+                        break;
+                    case MSG_REQUEST_LAYOUT: {
+                        mLayoutReady = true;
+                        removeMessages(MSG_REQUEST_LAYOUT);
+                        mRootPane.requestLayout();
+                        break;
+                    }
+                }
+            }
+        };
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration config) {
+        // We use different layout resources for different configs
+        initializeFooterViews();
+        FrameLayout layout = (FrameLayout) ((Activity) mActivity).findViewById(R.id.footer);
+        if (layout.getVisibility() == View.VISIBLE) {
+            layout.removeAllViews();
+            layout.addView(mFooterContent);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.v(TAG, "onPause");
         mAlbumSetDataAdapter.pause();
         mAlbumSetView.pause();
-        mCacheBar.pause();
         mEyePosition.pause();
+
+        if (mUpdateStorageInfo != null) {
+            mUpdateStorageInfo.cancel();
+            mUpdateStorageInfo = null;
+        }
+        mHandler.removeMessages(MSG_REFRESH_STORAGE_INFO);
+
+        FrameLayout layout = (FrameLayout) ((Activity) mActivity).findViewById(R.id.footer);
+        layout.removeAllViews();
+        layout.setVisibility(View.INVISIBLE);
     }
+
+    private Job<Void> mUpdateStorageInfoJob = new Job<Void>() {
+        @Override
+        public Void run(JobContext jc) {
+            mCacheStorageInfo.loadStorageInfo(jc);
+            if (!jc.isCancelled()) {
+                mHandler.sendEmptyMessage(MSG_REFRESH_STORAGE_INFO);
+            }
+            return null;
+        }
+    };
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.v(TAG, "onResume");
         setContentPane(mRootPane);
         mAlbumSetDataAdapter.resume();
         mAlbumSetView.resume();
-        mCacheBar.resume();
         mEyePosition.resume();
+        mUpdateStorageInfo = mActivity.getThreadPool().submit(mUpdateStorageInfoJob);
+        FrameLayout layout = (FrameLayout) ((Activity) mActivity).findViewById(R.id.footer);
+        layout.addView(mFooterContent);
+        layout.setVisibility(View.VISIBLE);
     }
 
     private void initializeData(Bundle data) {
@@ -194,14 +272,16 @@ public class ManageCachePage extends ActivityState implements
     }
 
     private void initializeViews() {
+        Activity activity = (Activity) mActivity;
+
         mSelectionManager = new SelectionManager(mActivity, true);
         mSelectionManager.setSelectionListener(this);
-        mStaticBackground = new StaticBackground(mActivity.getAndroidContext());
+        mStaticBackground = new StaticBackground(activity);
         mRootPane.addComponent(mStaticBackground);
 
         mSelectionDrawer = new ManageCacheDrawer(
                 (Context) mActivity, mSelectionManager);
-        Config.ManageCachePage config = Config.ManageCachePage.get((Context) mActivity);
+        Config.ManageCachePage config = Config.ManageCachePage.get(activity);
         mAlbumSetView = new AlbumSetView(mActivity, mSelectionDrawer,
                 config.slotWidth, config.slotHeight,
                 config.displayItemSize, config.labelFontSize,
@@ -213,22 +293,25 @@ public class ManageCachePage extends ActivityState implements
             }
         });
         mRootPane.addComponent(mAlbumSetView);
-
-        mCacheBar = new CacheBarView(mActivity, R.drawable.manage_bar,
-                config.cacheBarHeight,
-                config.cacheBarPinLeftMargin,
-                config.cacheBarPinRightMargin,
-                config.cacheBarButtonRightMargin,
-                config.cacheBarFontSize);
-
-        mCacheBar.setListener(this);
-        mRootPane.addComponent(mCacheBar);
-
-        mStaticBackground.setImage(R.drawable.background,
-                R.drawable.background_portrait);
+        initializeFooterViews();
     }
 
-    public void onDoneClicked() {
+    private void initializeFooterViews() {
+        Activity activity = (Activity) mActivity;
+
+        FrameLayout footer = (FrameLayout) activity.findViewById(R.id.footer);
+        LayoutInflater inflater = activity.getLayoutInflater();
+        mFooterContent = inflater.inflate(R.layout.manage_offline_bar, null);
+
+        mFooterContent.findViewById(R.id.done).setOnClickListener(this);
+        mStaticBackground.setImage(R.drawable.background, R.drawable.background_portrait);
+        refreshCacheStorageInfo();
+    }
+
+    @Override
+    public void onClick(View view) {
+        Utils.assertTrue(view.getId() == R.id.done);
+
         ArrayList<Path> ids = mSelectionManager.getSelected(false);
         if (ids.size() == 0) {
             onBackPressed();
@@ -236,8 +319,7 @@ public class ManageCachePage extends ActivityState implements
         }
         showToast();
 
-        MenuExecutor menuExecutor = new MenuExecutor(mActivity,
-                mSelectionManager);
+        MenuExecutor menuExecutor = new MenuExecutor(mActivity, mSelectionManager);
         menuExecutor.startAction(R.id.action_toggle_full_caching,
                 R.string.process_caching_requests, this);
     }
@@ -259,6 +341,33 @@ public class ManageCachePage extends ActivityState implements
             Toast.LENGTH_SHORT).show();
     }
 
+    private void refreshCacheStorageInfo() {
+        ProgressBar progressBar = (ProgressBar) mFooterContent.findViewById(R.id.progress);
+        TextView status = (TextView) mFooterContent.findViewById(R.id.status);
+        progressBar.setMax(PROGRESS_BAR_MAX);
+        long totalBytes = mCacheStorageInfo.getTotalBytes();
+        long usedBytes = mCacheStorageInfo.getUsedBytes();
+        long expectedBytes = mCacheStorageInfo.getExpectedUsedBytes();
+        long freeBytes = mCacheStorageInfo.getFreeBytes();
+
+        Activity activity = (Activity) mActivity;
+        if (totalBytes == 0) {
+            progressBar.setProgress(0);
+            progressBar.setSecondaryProgress(0);
+
+            // TODO: get the string translated
+            String label = activity.getString(R.string.free_space_format, "-");
+            status.setText(label);
+        } else {
+            progressBar.setProgress((int) (usedBytes * PROGRESS_BAR_MAX / totalBytes));
+            progressBar.setSecondaryProgress(
+                    (int) (expectedBytes * PROGRESS_BAR_MAX / totalBytes));
+            String label = activity.getString(R.string.free_space_format,
+                    Formatter.formatFileSize(activity, freeBytes));
+            status.setText(label);
+        }
+    }
+
     public void onProgressComplete(int result) {
         onBackPressed();
     }
@@ -271,4 +380,5 @@ public class ManageCachePage extends ActivityState implements
 
     public void onSelectionChange(Path path, boolean selected) {
     }
+
 }
