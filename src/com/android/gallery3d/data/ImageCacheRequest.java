@@ -75,16 +75,9 @@ abstract class ImageCacheRequest implements Job<Bitmap> {
                 bitmap = BitmapUtils.resizeDownBySideLength(bitmap,
                         mTargetSize, true);
             }
-            if (bitmap == null) {
-                return null;
-            }
             if (jc.isCancelled()) return null;
 
             byte[] array = BitmapUtils.compressBitmap(bitmap);
-            if (array == null) {
-                return null;
-            }
-
             if (jc.isCancelled()) return null;
 
             cacheService.putImageData(mPath, mType, array);
