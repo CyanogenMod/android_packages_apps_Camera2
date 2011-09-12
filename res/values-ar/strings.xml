@@ -51,10 +51,8 @@
     <string name="deselect_all" msgid="7397531298370285581">"إلغاء تحديد الكل"</string>
     <string name="slideshow" msgid="4355906903247112975">"عرض الشرائح"</string>
     <string name="details" msgid="8415120088556445230">"التفاصيل"</string>
-    <!-- no translation found for details_title (2611396603977441273) -->
-    <skip />
-    <!-- no translation found for close (5585646033158453043) -->
-    <skip />
+    <string name="details_title" msgid="2611396603977441273">"%1$d من %2$d من العناصر:"</string>
+    <string name="close" msgid="5585646033158453043">"إغلاق"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"تبديل إلى الكاميرا"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"تم تحديد %1$d"</item>
