@@ -38,7 +38,7 @@
     <string name="select_image" msgid="7841406150484742140">"Sélectionner photo"</string>
     <string name="select_video" msgid="4859510992798615076">"Sélectionner vidéo"</string>
     <string name="select_item" msgid="2257529413100472599">"Sélection élément(s)"</string>
-    <string name="select_album" msgid="4632641262236697235">"Sélection album(s)"</string>
+    <string name="select_album" msgid="4632641262236697235">"Sélection albums(s)"</string>
     <string name="select_group" msgid="9090385962030340391">"Sélection groupe(s)"</string>
     <string name="set_image" msgid="2331476809308010401">"Utiliser l\'image comme"</string>
     <string name="wallpaper" msgid="9222901738515471972">"Configuration du fond d\'écran en cours. Veuillez patienter..."</string>

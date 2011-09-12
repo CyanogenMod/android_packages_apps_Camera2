@@ -74,7 +74,7 @@
     <string name="rotate_right" msgid="7340681085011826618">"Nach rechts drehen"</string>
     <string name="no_such_item" msgid="3161074758669642065">"Element nicht gefunden"</string>
     <string name="edit" msgid="1502273844748580847">"Bearbeiten"</string>
-    <string name="activity_not_found" msgid="3731390759313019518">"Keine Anwendung verfügbar"</string>
+    <string name="activity_not_found" msgid="3731390759313019518">"Keine App verfügbar"</string>
     <string name="process_caching_requests" msgid="1076938190997999614">"Caching-Anfragen verarbeiten"</string>
     <string name="caching_label" msgid="3244800874547101776">"Zwischenspeicherung läuft..."</string>
     <string name="crop" msgid="7970750655414797277">"Zuschneiden"</string>
