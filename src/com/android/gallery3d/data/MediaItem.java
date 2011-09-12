@@ -63,6 +63,12 @@ public abstract class MediaItem extends MediaObject {
         return null;
     }
 
+    // The rotation of the full-resolution image. By default, it returns the value of
+    // getRotation().
+    public int getFullImageRotation() {
+        return getRotation();
+    }
+
     public int getRotation() {
         return 0;
     }
