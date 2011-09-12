@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (C) 2010 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- no translation found for photoeditor_name (4738587346771969697) -->
+    <skip />
+    <string name="loading_failure" msgid="5990741970574295950">"ፎቶ ሊሰቀል አይችልም"</string>
+    <string name="saving_failure" msgid="8596600582621364077">"ፎቶ ሊሰቀል አልተቻለም"</string>
+    <string name="photo_saved" msgid="3494363661299484657">"ፎቶ ወደ <xliff:g id="ALBUM_NAME">%s</xliff:g> አልበም ተቀምጧል"</string>
+    <!-- no translation found for edited_photo_bucket_name (3777746536831799890) -->
+    <skip />
+    <!-- no translation found for save_photo (3125109368779997862) -->
+    <skip />
+    <!-- no translation found for yes (5402582493291792293) -->
+    <skip />
+    <!-- no translation found for no (5595408018304861875) -->
+    <skip />
+    <string name="save" msgid="8933983016766252129">"አስቀምጥ"</string>
+    <string name="autofix" msgid="1663414996270538748">"በራስ-ጠግን"</string>
+    <!-- no translation found for crop (7598378507763334041) -->
+    <skip />
+    <!-- no translation found for crossprocess (4173724489001742342) -->
+    <skip />
+    <!-- no translation found for documentary (50396326708699797) -->
+    <skip />
+    <!-- no translation found for doodle (1686409894518940990) -->
+    <skip />
+    <!-- no translation found for duotone (8145893940788467106) -->
+    <skip />
+    <!-- no translation found for filllight (2644989991700022526) -->
+    <skip />
+    <!-- no translation found for fisheye (6037488646928998921) -->
+    <skip />
+    <!-- no translation found for flip (2357692401826287480) -->
+    <skip />
+    <!-- no translation found for grain (7487585304579789098) -->
+    <skip />
+    <string name="grayscale" msgid="7641563843060945228">"B&amp;W"</string>
+    <!-- no translation found for highlight (3902653944386623972) -->
+    <skip />
+    <string name="lomoish" msgid="1270032154357186736">"Lomo"</string>
+    <!-- no translation found for negative (1985508917342811252) -->
+    <skip />
+    <!-- no translation found for posterize (4139212359561383385) -->
+    <skip />
+    <!-- no translation found for redeye (4958448806369928239) -->
+    <skip />
+    <!-- no translation found for rotate (6607597269792373083) -->
+    <skip />
+    <!-- no translation found for saturation (8621322012271169931) -->
+    <skip />
+    <!-- no translation found for sepia (7978093531824705601) -->
+    <skip />
+    <!-- no translation found for shadow (8235188588101973090) -->
+    <skip />
+    <!-- no translation found for sharpen (8449662378104403230) -->
+    <skip />
+    <!-- no translation found for straighten (5217801513491493491) -->
+    <skip />
+    <string name="temperature" msgid="1607987938521534517">"አሟሙቅ"</string>
+    <!-- no translation found for tint (154435943863418434) -->
+    <skip />
+    <!-- no translation found for vignette (7648125924662648282) -->
+    <skip />
+    <string name="crop_tooltip" msgid="8794037869706891710">"ፎቶ ለመከርከም አመልካቾችን ጎትት"</string>
+    <!-- no translation found for doodle_tooltip (2902117272374362915) -->
+    <skip />
+    <!-- no translation found for flip_tooltip (2700943256714731737) -->
+    <skip />
+    <!-- no translation found for redeye_tooltip (9112774042113471358) -->
+    <skip />
+    <!-- no translation found for rotate_tooltip (7008602969130734229) -->
+    <skip />
+    <!-- no translation found for straighten_tooltip (4846317027139212339) -->
+    <skip />
+</resources>

@@ -77,7 +77,8 @@
     <string name="activity_not_found" msgid="3731390759313019518">"Sovellus ei käytettävissä"</string>
     <string name="process_caching_requests" msgid="1076938190997999614">"Käsittele välimuistipyynnöt"</string>
     <string name="caching_label" msgid="3244800874547101776">"Vie välimuistiin"</string>
-    <string name="crop" msgid="7970750655414797277">"Leikkaa"</string>
+    <!-- no translation found for crop_action (3427470284074377001) -->
+    <skip />
     <string name="set_as" msgid="3636764710790507868">"Aseta"</string>
     <string name="video_err" msgid="7917736494827857757">"Videon toisto ei onnistu"</string>
     <string name="group_by_location" msgid="316641628989023253">"Sijainnin mukaan"</string>

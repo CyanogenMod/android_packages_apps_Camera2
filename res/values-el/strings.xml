@@ -77,7 +77,8 @@
     <string name="activity_not_found" msgid="3731390759313019518">"Δεν υπάρχει διαθέσιμη εφαρμογή"</string>
     <string name="process_caching_requests" msgid="1076938190997999614">"Επεξεργασία αιτημάτων προσωρινής αποθήκευσης"</string>
     <string name="caching_label" msgid="3244800874547101776">"Προσωρ. αποθ..."</string>
-    <string name="crop" msgid="7970750655414797277">"Περικοπή"</string>
+    <!-- no translation found for crop_action (3427470284074377001) -->
+    <skip />
     <string name="set_as" msgid="3636764710790507868">"Ορισμός ως"</string>
     <string name="video_err" msgid="7917736494827857757">"Δεν είναι δυνατή η αναπαραγωγή του βίντεο"</string>
     <string name="group_by_location" msgid="316641628989023253">"Κατά τοποθεσία"</string>
