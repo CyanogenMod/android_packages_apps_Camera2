@@ -60,10 +60,8 @@
     <string name="slideshow" msgid="4355906903247112975">"Onyesho la slaidi"</string>
     <!-- no translation found for details (8415120088556445230) -->
     <skip />
-    <!-- no translation found for details_title (2611396603977441273) -->
-    <skip />
-    <!-- no translation found for close (5585646033158453043) -->
-    <skip />
+    <string name="details_title" msgid="2611396603977441273">"Vipengee %1$d kati ya %2$d:"</string>
+    <string name="close" msgid="5585646033158453043">"Funga"</string>
     <!-- no translation found for switch_to_camera (7280111806675169992) -->
     <skip />
     <!-- String.format failed for translation -->
