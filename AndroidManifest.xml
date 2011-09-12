@@ -192,6 +192,17 @@
                 <category android:name="android.intent.category.SELECTED_ALTERNATIVE" />
             </intent-filter>
         </activity>
+        <activity android:name="com.android.gallery3d.photoeditor.PhotoEditor"
+                android:label="@string/photoeditor_name"
+                android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"
+                android:configChanges="keyboardHidden|orientation|screenSize"
+                android:hardwareAccelerated="true">
+            <intent-filter>
+                <action android:name="android.intent.action.EDIT" />
+                <data android:mimeType="image/*" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <activity android:name="com.android.gallery3d.app.SlideshowDream"
             android:label="@string/slideshow_dream_name"
