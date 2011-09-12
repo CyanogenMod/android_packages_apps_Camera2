@@ -89,7 +89,8 @@
     <skip />
     <!-- no translation found for caching_label (3244800874547101776) -->
     <skip />
-    <string name="crop" msgid="7970750655414797277">"Retagliar"</string>
+    <!-- no translation found for crop_action (3427470284074377001) -->
+    <skip />
     <string name="set_as" msgid="3636764710790507868">"Definir sco"</string>
     <string name="video_err" msgid="7917736494827857757">"Impussibel da reproducir il video"</string>
     <!-- no translation found for group_by_location (316641628989023253) -->
