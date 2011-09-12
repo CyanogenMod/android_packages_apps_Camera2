@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.app;
 
+import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.DataManager;
@@ -30,6 +31,8 @@ import com.android.gallery3d.ui.TileImageViewAdapter;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.ThreadPool;
+import com.android.gallery3d.util.ThreadPool.Job;
+import com.android.gallery3d.util.ThreadPool.JobContext;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
@@ -487,6 +490,25 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         }
     }
 
+    private static class ScreenNailJob implements Job<Bitmap> {
+        private MediaItem mItem;
+
+        public ScreenNailJob(MediaItem item) {
+            mItem = item;
+        }
+
+        @Override
+        public Bitmap run(JobContext jc) {
+            Bitmap bitmap = mItem.requestImage(MediaItem.TYPE_THUMBNAIL).run(jc);
+            if (jc.isCancelled()) return null;
+            if (bitmap != null) {
+                bitmap = BitmapUtils.rotateBitmap(bitmap,
+                    mItem.getRotation() - mItem.getFullImageRotation(), true);
+            }
+            return bitmap;
+        }
+    }
+
     // Returns the task if we started the task or the task is already started.
     private Future<?> startTaskIfNeeded(int index, int which) {
         if (index < mActiveStart || index >= mActiveEnd) return null;
@@ -507,7 +529,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                 && (entry.requestedBits & BIT_SCREEN_NAIL) == 0) {
             entry.requestedBits |= BIT_SCREEN_NAIL;
             entry.screenNailTask = mThreadPool.submit(
-                    item.requestImage(MediaItem.TYPE_THUMBNAIL),
+                    new ScreenNailJob(item),
                     new ScreenNailListener(item.getDataVersion()));
             // request screen nail
             return entry.screenNailTask;
@@ -547,7 +569,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                 }
             } else {
                 entry = new ImageEntry();
-                entry.rotation = item.getRotation();
+                entry.rotation = item.getFullImageRotation();
                 mImageCache.put(version, entry);
             }
         }

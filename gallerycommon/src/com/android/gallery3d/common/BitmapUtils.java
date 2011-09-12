@@ -203,6 +203,7 @@ public class BitmapUtils {
     }
 
     public static Bitmap rotateBitmap(Bitmap source, int rotation, boolean recycle) {
+        if (rotation == 0) return source;
         int w = source.getWidth();
         int h = source.getHeight();
         Matrix m = new Matrix();
