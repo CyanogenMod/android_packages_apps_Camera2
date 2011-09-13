@@ -188,8 +188,12 @@ public class SlideshowPage extends ActivityState {
     }
 
     private void initializeData(Bundle data) {
-        String mediaPath = data.getString(KEY_SET_PATH);
         boolean random = data.getBoolean(KEY_RANDOM_ORDER, false);
+
+        // We only want to show slideshow for images only, not videos.
+        String mediaPath = data.getString(KEY_SET_PATH);
+        mediaPath = FilterUtils.newFilterPath(mediaPath,
+                FilterUtils.FILTER_IMAGE_ONLY);
         MediaSet mediaSet = mActivity.getDataManager().getMediaSet(mediaPath);
 
         if (random) {
@@ -243,6 +247,7 @@ public class SlideshowPage extends ActivityState {
 
         public MediaItem getMediaItem(int index) {
             if (!mRepeat && index >= mOrder.length) return null;
+            if (mOrder.length == 0) return null;
             mLastIndex = mOrder[index % mOrder.length];
             MediaItem item = findMediaItem(mMediaSet, mLastIndex);
             for (int i = 0; i < RETRY_COUNT && item == null; ++i) {
@@ -305,7 +310,9 @@ public class SlideshowPage extends ActivityState {
             int dataEnd = mDataStart + mData.size();
 
             if (mRepeat) {
-                index = index % mMediaSet.getMediaItemCount();
+                int count = mMediaSet.getMediaItemCount();
+                if (count == 0) return null;
+                index = index % count;
             }
             if (index < mDataStart || index >= dataEnd) {
                 mData = mMediaSet.getMediaItem(index, DATA_SIZE);
