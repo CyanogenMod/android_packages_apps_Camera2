@@ -48,6 +48,7 @@ public class WidgetConfigure extends Activity {
     // Note: There is also a limit on the size of data that can be
     // passed in Binder's transaction.
     private static float WIDGET_SCALE_FACTOR = 1.5f;
+    private static int MAX_WIDGET_SIDE = 360;
 
     private int mAppWidgetId = -1;
     private int mWidgetType = 0;
@@ -115,10 +116,18 @@ public class WidgetConfigure extends Activity {
 
     private void setChoosenPhoto(Intent data) {
         Resources res = getResources();
-        int widgetWidth = Math.round(WIDGET_SCALE_FACTOR
-                * res.getDimension(R.dimen.appwidget_width));
-        int widgetHeight = Math.round(WIDGET_SCALE_FACTOR
-                * res.getDimension(R.dimen.appwidget_height));
+
+        float width = res.getDimension(R.dimen.appwidget_width);
+        float height = res.getDimension(R.dimen.appwidget_height);
+
+        // We try to crop a larger image (by scale factor), but there is still
+        // a bound on the binder limit.
+        float scale = Math.min(WIDGET_SCALE_FACTOR,
+                MAX_WIDGET_SIDE / Math.max(width, height));
+
+        int widgetWidth = Math.round(width * scale);
+        int widgetHeight = Math.round(height * scale);
+
         mPickedItem = data.getData();
         Intent request = new Intent(CropImage.ACTION_CROP, mPickedItem)
                 .putExtra(CropImage.KEY_OUTPUT_X, widgetWidth)

@@ -14,10 +14,10 @@
      limitations under the License.
 -->
 <resources>
-    <dimen name="appwidget_width">146dp</dimen>
-    <dimen name="appwidget_height">146dp</dimen>
-    <dimen name="stack_photo_width">140dp</dimen>
-    <dimen name="stack_photo_height">110dp</dimen>
+    <dimen name="appwidget_width">180dp</dimen>
+    <dimen name="appwidget_height">180dp</dimen>
+    <dimen name="stack_photo_width">160dp</dimen>
+    <dimen name="stack_photo_height">120dp</dimen>
 
     <!-- configuration for album set page -->
     <integer name="albumset_rows_land">2</integer>

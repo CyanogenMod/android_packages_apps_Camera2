@@ -85,7 +85,7 @@ public class BitmapUtils {
     // minSideLength long. If that's not possible, return 1.
     public static int computeSampleSizeLarger(int w, int h,
             int minSideLength) {
-        int initialSize = Math.min(w / minSideLength, h / minSideLength);
+        int initialSize = Math.max(w / minSideLength, h / minSideLength);
         if (initialSize <= 1) return 1;
 
         return initialSize <= 8
