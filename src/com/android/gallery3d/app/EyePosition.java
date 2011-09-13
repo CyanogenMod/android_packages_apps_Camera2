@@ -76,6 +76,9 @@ public class EyePosition {
                 .getSystemService(Context.WINDOW_SERVICE);
         mDisplay = wManager.getDefaultDisplay();
 
+        // The 3D effect where the photo albums fan out in 3D based on angle
+        // of device tilt is currently disabled.
+/*
         SensorManager sManager = (SensorManager) mContext
                 .getSystemService(Context.SENSOR_SERVICE);
         mSensor = sManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -86,6 +89,7 @@ public class EyePosition {
         if (mSensor == null) {
             Log.w(TAG, "no sensor available");
         }
+*/
     }
 
     public void resetPosition() {
