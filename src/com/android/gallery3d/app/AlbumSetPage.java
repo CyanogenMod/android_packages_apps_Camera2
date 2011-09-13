@@ -63,7 +63,7 @@ public class AlbumSetPage extends ActivityState implements
     public static final String KEY_MEDIA_PATH = "media-path";
     public static final String KEY_SET_TITLE = "set-title";
     public static final String KEY_SET_SUBTITLE = "set-subtitle";
-    public static final String KEY_SELECTED_TAB_TYPE = "selected-tab";
+    public static final String KEY_SELECTED_CLUSTER_TYPE = "selected-cluster";
 
     private static final int DATA_CACHE_SIZE = 256;
     private static final int REQUEST_DO_ANIMATION = 1;
@@ -76,7 +76,8 @@ public class AlbumSetPage extends ActivityState implements
     private MediaSet mMediaSet;
     private String mTitle;
     private String mSubtitle;
-    private boolean mShowClusterTabs;
+    private boolean mShowClusterMenu;
+    private int mSelectedAction;
 
     protected SelectionManager mSelectionManager;
     private AlbumSetDataAdapter mAlbumSetDataAdapter;
@@ -229,7 +230,7 @@ public class AlbumSetPage extends ActivityState implements
         String newPath = FilterUtils.switchClusterPath(basePath, clusterType);
         Bundle data = new Bundle(getData());
         data.putString(AlbumSetPage.KEY_MEDIA_PATH, newPath);
-        data.putInt(KEY_SELECTED_TAB_TYPE, clusterType);
+        data.putInt(KEY_SELECTED_CLUSTER_TYPE, clusterType);
         mAlbumSetView.savePositions(PositionRepository.getInstance(mActivity));
         mActivity.getStateManager().switchState(this, AlbumSetPage.class, data);
     }
@@ -260,8 +261,8 @@ public class AlbumSetPage extends ActivityState implements
         mDetailsSource = new MyDetailsSource();
         GalleryActionBar actionBar = mActivity.getGalleryActionBar();
         if (actionBar != null) {
-            actionBar.setSelectedTab(data.getInt(
-                    AlbumSetPage.KEY_SELECTED_TAB_TYPE, FilterUtils.CLUSTER_BY_ALBUM));
+            mSelectedAction = data.getInt(
+                    AlbumSetPage.KEY_SELECTED_CLUSTER_TYPE, FilterUtils.CLUSTER_BY_ALBUM);
         }
         startTransition();
     }
@@ -277,7 +278,7 @@ public class AlbumSetPage extends ActivityState implements
         mEyePosition.pause();
         DetailsHelper.pause();
         GalleryActionBar actionBar = mActivity.getGalleryActionBar();
-        if (actionBar != null) actionBar.hideClusterTabs();
+        if (actionBar != null) actionBar.hideClusterMenu();
     }
 
     @Override
@@ -291,7 +292,7 @@ public class AlbumSetPage extends ActivityState implements
         mEyePosition.resume();
         mActionModeHandler.resume();
         GalleryActionBar actionBar = mActivity.getGalleryActionBar();
-        if (mShowClusterTabs && actionBar != null) actionBar.showClusterTabs(this);
+        if (mShowClusterMenu && actionBar != null) actionBar.showClusterMenu(mSelectedAction, this);
     }
 
     private void initializeData(Bundle data) {
@@ -361,7 +362,7 @@ public class AlbumSetPage extends ActivityState implements
             inflater.inflate(R.menu.pickup, menu);
             actionBar.setTitle(R.string.select_album);
         } else {
-            mShowClusterTabs = !inAlbum;
+            mShowClusterMenu = !inAlbum;
             inflater.inflate(R.menu.albumset, menu);
             if (mTitle != null) {
                 actionBar.setTitle(mTitle);
@@ -483,13 +484,13 @@ public class AlbumSetPage extends ActivityState implements
 
         switch (mode) {
             case SelectionManager.ENTER_SELECTION_MODE: {
-                mActivity.getGalleryActionBar().hideClusterTabs();
+                mActivity.getGalleryActionBar().hideClusterMenu();
                 mActionMode = mActionModeHandler.startActionMode();
                 break;
             }
             case SelectionManager.LEAVE_SELECTION_MODE: {
                 mActionMode.finish();
-                mActivity.getGalleryActionBar().showClusterTabs(this);
+                mActivity.getGalleryActionBar().showClusterMenu(mSelectedAction, this);
                 mRootPane.invalidate();
                 break;
             }

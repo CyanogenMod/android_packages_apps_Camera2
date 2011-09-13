@@ -19,19 +19,28 @@ package com.android.gallery3d.app;
 import com.android.gallery3d.R;
 
 import android.app.ActionBar;
-import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.TextUtils.TruncateAt;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.BaseAdapter;
 import android.widget.ShareActionProvider;
+import android.widget.SpinnerAdapter;
+import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
 import java.util.ArrayList;
 
-public class GalleryActionBar implements ActionBar.TabListener {
+public class GalleryActionBar implements ActionBar.OnNavigationListener {
     private static final String TAG = "GalleryActionBar";
 
     public interface ClusterRunner {
@@ -42,7 +51,7 @@ public class GalleryActionBar implements ActionBar.TabListener {
         public int action;
         public boolean enabled;
         public boolean visible;
-        public int tabTitle;
+        public int spinnerTitle;
         public int dialogTitle;
         public int clusterBy;
 
@@ -51,11 +60,11 @@ public class GalleryActionBar implements ActionBar.TabListener {
             this(action, applied, enabled, title, title, clusterBy);
         }
 
-        public ActionItem(int action, boolean applied, boolean enabled, int tabTitle,
+        public ActionItem(int action, boolean applied, boolean enabled, int spinnerTitle,
                 int dialogTitle, int clusterBy) {
             this.action = action;
             this.enabled = enabled;
-            this.tabTitle = tabTitle;
+            this.spinnerTitle = spinnerTitle;
             this.dialogTitle = dialogTitle;
             this.clusterBy = clusterBy;
             this.visible = true;
@@ -75,23 +84,45 @@ public class GalleryActionBar implements ActionBar.TabListener {
                 R.string.group_by_tags)
     };
 
+    private class ClusterAdapter extends BaseAdapter {
+
+        public int getCount() {
+            return sClusterItems.length;
+        }
+
+        public Object getItem(int position) {
+            return sClusterItems[position];
+        }
+
+        public long getItemId(int position) {
+            return sClusterItems[position].action;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = (TextView) mInflater.inflate(R.layout.action_bar_text,
+                        parent, false);
+            }
+            TextView view = (TextView) convertView;
+            view.setText(sClusterItems[position].spinnerTitle);
+            return convertView;
+        }
+    }
+
     private ClusterRunner mClusterRunner;
     private CharSequence[] mTitles;
     private ArrayList<Integer> mActions;
     private Context mContext;
+    private LayoutInflater mInflater;
     private ActionBar mActionBar;
-    // We need this because ActionBar.getSelectedTab() doesn't work when
-    // ActionBar is hidden.
-    private Tab mCurrentTab;
+    private int mCurrentIndex;
+    private ClusterAdapter mAdapter = new ClusterAdapter();
 
     public GalleryActionBar(Activity activity) {
         mActionBar = activity.getActionBar();
         mContext = activity;
-
-        for (ActionItem item : sClusterItems) {
-            mActionBar.addTab(mActionBar.newTab().setText(item.tabTitle).
-                    setTag(item).setTabListener(this));
-        }
+        mInflater = activity.getLayoutInflater();
+        mCurrentIndex = 0;
     }
 
     public static int getHeight(Activity activity) {
@@ -131,12 +162,7 @@ public class GalleryActionBar implements ActionBar.TabListener {
     }
 
     public int getClusterTypeAction() {
-        if (mCurrentTab != null) {
-            ActionItem item = (ActionItem) mCurrentTab.getTag();
-            return item.action;
-        }
-        // By default, it's group-by-album
-        return FilterUtils.CLUSTER_BY_ALBUM;
+        return sClusterItems[mCurrentIndex].action;
     }
 
     public static String getClusterByTypeString(Context context, int type) {
@@ -157,19 +183,19 @@ public class GalleryActionBar implements ActionBar.TabListener {
         return shareActionProvider;
     }
 
-    public void showClusterTabs(ClusterRunner runner) {
-        Log.v(TAG, "showClusterTabs: runner=" + runner);
-        // setNavigationMode will trigger onTabSelected, so we should avoid
-        // triggering any callback here
+    public void showClusterMenu(int action, ClusterRunner runner) {
+        Log.v(TAG, "showClusterMenu: runner=" + runner);
+        // Don't set cluster runner until action bar is ready.
         mClusterRunner = null;
-        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        mActionBar.setListNavigationCallbacks(mAdapter, this);
+        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        setSelectedAction(action);
         mClusterRunner = runner;
     }
 
-    public void hideClusterTabs() {
+    public void hideClusterMenu() {
         mClusterRunner = null;
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        Log.v(TAG, "hideClusterTabs: runner=" + mClusterRunner);
     }
 
     public void showClusterDialog(final ClusterRunner clusterRunner) {
@@ -203,31 +229,23 @@ public class GalleryActionBar implements ActionBar.TabListener {
         return mActionBar == null ? 0 : mActionBar.getHeight();
     }
 
-    @Override
-    public void onTabSelected(Tab tab, FragmentTransaction ft) {
-        if (mCurrentTab == tab) return;
-        mCurrentTab = tab;
-        ActionItem item = (ActionItem) tab.getTag();
-        Log.v(TAG, "onTabSelected: clusterrRunner=" + mClusterRunner);
-        if (mClusterRunner != null) mClusterRunner.doCluster(item.action);
-    }
-
-    @Override
-    public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-    }
-
-    @Override
-    public void onTabReselected(Tab tab, FragmentTransaction ft) {
-    }
-
-    public boolean setSelectedTab(int type) {
-        for (int i = 0, n = sClusterItems.length; i < n; ++i) {
+    public boolean setSelectedAction(int type) {
+        for (int i = 0, n = sClusterItems.length; i < n; i++) {
             ActionItem item = sClusterItems[i];
             if (item.visible && item.action == type) {
-                mActionBar.selectTab(mActionBar.getTabAt(i));
+                mActionBar.setSelectedNavigationItem(i);
+                mCurrentIndex = i;
                 return true;
             }
         }
+        return false;
+    }
+
+    public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+        if (itemPosition != mCurrentIndex && mClusterRunner != null) {
+            mClusterRunner.doCluster(sClusterItems[itemPosition].action);
+        }
+
         return false;
     }
 }
