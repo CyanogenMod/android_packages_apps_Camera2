@@ -217,6 +217,7 @@
         </activity>
 
         <activity android:name="com.android.gallery3d.settings.GallerySettings"
+                android:theme="@android:style/Theme.Holo"
                 android:configChanges="orientation|keyboardHidden|screenSize" />
 
         <provider android:name="com.android.gallery3d.provider.GalleryProvider"
