@@ -110,7 +110,7 @@ public class DecodeUtils {
      * Decodes the bitmap from the given byte array if the image size is larger than the given
      * requirement.
      *
-     * Note: The returned image may be resized down. However, both width and heigh must be
+     * Note: The returned image may be resized down. However, both width and height must be
      * larger than the <code>targetSize</code>.
      */
     public static Bitmap requestDecodeIfBigEnough(JobContext jc, byte[] data,
