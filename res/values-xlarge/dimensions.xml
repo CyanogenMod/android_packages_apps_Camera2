@@ -15,9 +15,9 @@
 -->
 <resources>
     <dimen name="appwidget_width">240dp</dimen>
-    <dimen name="appwidget_height">200dp</dimen>
-    <dimen name="stack_photo_width">230dp</dimen>
-    <dimen name="stack_photo_height">190dp</dimen>
+    <dimen name="appwidget_height">240dp</dimen>
+    <dimen name="stack_photo_width">220dp</dimen>
+    <dimen name="stack_photo_height">165dp</dimen>
 
     <!-- configuration for album set page -->
     <dimen name="albumset_display_item_size">144dp</dimen>
