@@ -63,7 +63,10 @@
                 <ImageView style="@style/ActionBarIcon"/>
             </LinearLayout>
 
-            <TextView android:id="@+id/action_bar_title" style="@style/ActionBarText"/>
+            <TextView
+                android:id="@+id/action_bar_title"
+                style="@style/ActionBarText"
+                android:text="@string/edit"/>
         </LinearLayout>
 
         <LinearLayout style="@style/ActionBarLinearLayout" android:layout_alignParentRight="true">
