@@ -313,9 +313,7 @@ public class AlbumSetPage extends ActivityState implements
         mGridDrawer = new GridDrawer((Context) mActivity, mSelectionManager);
         Config.AlbumSetPage config = Config.AlbumSetPage.get((Context) mActivity);
         mAlbumSetView = new AlbumSetView(mActivity, mGridDrawer,
-                config.slotWidth, config.slotHeight,
-                config.displayItemSize, config.labelFontSize,
-                config.labelOffsetY, config.labelMargin);
+                config.slotViewSpec, config.labelSpec);
         mAlbumSetView.setListener(new SlotView.SimpleListener() {
             @Override
             public void onSingleTapUp(int slotIndex) {

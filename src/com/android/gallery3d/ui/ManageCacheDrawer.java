@@ -25,7 +25,6 @@ import android.content.Context;
 public class ManageCacheDrawer extends IconDrawer {
     private static final int COLOR_CACHING_BACKGROUND = 0x7F000000;
     private static final int ICON_SIZE = 36;
-    private final NinePatchTexture mFrame;
     private final ResourceTexture mCheckedItem;
     private final ResourceTexture mUnCheckedItem;
     private final SelectionManager mSelectionManager;
@@ -35,7 +34,6 @@ public class ManageCacheDrawer extends IconDrawer {
 
     public ManageCacheDrawer(Context context, SelectionManager selectionManager) {
         super(context);
-        mFrame = new NinePatchTexture(context, R.drawable.manage_frame);
         mCheckedItem = new ResourceTexture(context, R.drawable.btn_make_offline_normal_on_holo_dark);
         mUnCheckedItem = new ResourceTexture(context, R.drawable.btn_make_offline_normal_off_holo_dark);
         mLocalAlbumIcon = new ResourceTexture(context, R.drawable.btn_make_offline_disabled_on_holo_dark);
@@ -55,7 +53,8 @@ public class ManageCacheDrawer extends IconDrawer {
     @Override
     public void draw(GLCanvas canvas, Texture content, int width, int height,
             int rotation, Path path, int topIndex, int dataSourceType,
-            int mediaType, boolean wantCache, boolean isCaching) {
+            int mediaType, int darkStripHeight, boolean wantCache,
+            boolean isCaching) {
 
         boolean selected = mSelectionManager.isItemSelected(path);
         boolean chooseToCache = wantCache ^ selected;
@@ -76,9 +75,8 @@ public class ManageCacheDrawer extends IconDrawer {
 
         drawVideoOverlay(canvas, mediaType, x, y, width, height, topIndex);
 
-        drawFrame(canvas, mFrame, x, y, width, height);
-
         if (topIndex == 0) {
+            drawDarkStrip(canvas, width, height, darkStripHeight);
             drawIcon(canvas, width, height, dataSourceType);
         }
 
@@ -94,8 +92,8 @@ public class ManageCacheDrawer extends IconDrawer {
 
             int w = ICON_SIZE;
             int h = ICON_SIZE;
-            x = width / 2 - w / 2;
-            y = -height / 2 - h / 2;
+            x = width / 2 - w;
+            y = -height / 2;
 
             icon.draw(canvas, x, y, w, h);
 

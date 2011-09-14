@@ -40,11 +40,7 @@ public class AlbumSetView extends SlotView {
 
     private AlbumSetSlidingWindow mDataWindow;
     private final GalleryActivity mActivity;
-    private final int mSlotWidth;
-    private final int mDisplayItemSize;
-    private final int mLabelFontSize;
-    private final int mLabelOffsetY;
-    private final int mLabelMargin;
+    private final LabelSpec mLabelSpec;
 
     private SelectionDrawer mSelectionDrawer;
 
@@ -67,18 +63,23 @@ public class AlbumSetView extends SlotView {
         public long setDataVersion;
     }
 
+    public static class LabelSpec {
+        public int darkStripHeight;
+        public int titleOffset;
+        public int numberOffset;
+        public int titleFontSize;
+        public int numberFontSize;
+        public int leftMargin;
+        public int iconSize;
+    }
+
     public AlbumSetView(GalleryActivity activity, SelectionDrawer drawer,
-            int slotWidth, int slotHeight, int displayItemSize,
-            int labelFontSize, int labelOffsetY, int labelMargin) {
+            SlotView.Spec slotViewSpec, LabelSpec labelSpec) {
         super(activity.getAndroidContext());
         mActivity = activity;
         setSelectionDrawer(drawer);
-        setSlotSize(slotWidth, slotHeight);
-        mSlotWidth = slotWidth;
-        mDisplayItemSize = displayItemSize;
-        mLabelFontSize = labelFontSize;
-        mLabelOffsetY = labelOffsetY;
-        mLabelMargin = labelMargin;
+        setSlotSpec(slotViewSpec);
+        mLabelSpec = labelSpec;
     }
 
     public void setSelectionDrawer(SelectionDrawer drawer) {
@@ -95,8 +96,7 @@ public class AlbumSetView extends SlotView {
             mDataWindow = null;
         }
         if (model != null) {
-            mDataWindow = new AlbumSetSlidingWindow(mActivity,
-                    mSlotWidth - mLabelMargin * 2, mDisplayItemSize, mLabelFontSize,
+            mDataWindow = new AlbumSetSlidingWindow(mActivity, mLabelSpec,
                     mSelectionDrawer, model, CACHE_SIZE);
             mDataWindow.setListener(new MyCacheListener());
             setSlotCount(mDataWindow.size());
@@ -119,8 +119,7 @@ public class AlbumSetView extends SlotView {
 
         // Put the cover items in reverse order, so that the first item is on
         // top of the rest.
-        int labelY = y + mLabelOffsetY - entry.labelItem.getHeight() / 2;
-        Position position = new Position(x, labelY, 0f);
+        Position position = new Position(x, y, 0f);
         putDisplayItem(position, position, entry.labelItem);
 
         for (int i = 0, n = items.length; i < n; ++i) {

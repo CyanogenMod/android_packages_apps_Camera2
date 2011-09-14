@@ -56,21 +56,14 @@ class StringTexture extends CanvasTexture {
     }
 
     public static StringTexture newInstance(
-            String text, String postfix, float textSize, int color,
+            String text, float textSize, int color,
             float lengthLimit, boolean isBold) {
         TextPaint paint = getDefaultPaint(textSize, color);
         if (isBold) {
             paint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
         }
-        if (postfix != null) {
-            lengthLimit = Math.max(0,
-                    lengthLimit - paint.measureText(postfix));
-            text = TextUtils.ellipsize(text, paint, lengthLimit,
-                    TextUtils.TruncateAt.END).toString() + postfix;
-        } else {
-            text = TextUtils.ellipsize(
-                    text, paint, lengthLimit, TextUtils.TruncateAt.END).toString();
-        }
+        text = TextUtils.ellipsize(
+                text, paint, lengthLimit, TextUtils.TruncateAt.END).toString();
         return newInstance(text, paint);
     }
 

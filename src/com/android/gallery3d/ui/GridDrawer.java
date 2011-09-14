@@ -21,28 +21,23 @@ import com.android.gallery3d.data.Path;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Layout;
 
 public class GridDrawer extends IconDrawer {
-    private final NinePatchTexture mFrame;
     private final NinePatchTexture mFrameSelected;
-    private final NinePatchTexture mFrameSelectedTop;
-    private final NinePatchTexture mImportBackground;
     private Texture mImportLabel;
     private int mGridWidth;
     private final SelectionManager mSelectionManager;
     private final Context mContext;
-    private final int FONT_SIZE = 14;
-    private final int FONT_COLOR = Color.WHITE;
-    private final int IMPORT_LABEL_PADDING = 10;
+    private final int IMPORT_FONT_SIZE = 14;
+    private final int IMPORT_FONT_COLOR = Color.WHITE;
+    private final int IMPORT_LABEL_MARGIN = 10;
     private boolean mSelectionMode;
 
     public GridDrawer(Context context, SelectionManager selectionManager) {
         super(context);
         mContext = context;
-        mFrame = new NinePatchTexture(context, R.drawable.album_frame);
         mFrameSelected = new NinePatchTexture(context, R.drawable.grid_selected);
-        mFrameSelectedTop = new NinePatchTexture(context, R.drawable.grid_selected_top);
-        mImportBackground = new NinePatchTexture(context, R.drawable.import_translucent);
         mSelectionManager = selectionManager;
     }
 
@@ -54,7 +49,8 @@ public class GridDrawer extends IconDrawer {
     @Override
     public void draw(GLCanvas canvas, Texture content, int width, int height,
             int rotation, Path path, int topIndex, int dataSourceType,
-            int mediaType, boolean wantCache, boolean isCaching) {
+            int mediaType, int darkStripHeight, boolean wantCache,
+            boolean isCaching) {
 
         int x = -width / 2;
         int y = -height / 2;
@@ -72,35 +68,32 @@ public class GridDrawer extends IconDrawer {
 
         drawVideoOverlay(canvas, mediaType, x, y, width, height, topIndex);
 
-        NinePatchTexture frame;
         if (mSelectionMode && mSelectionManager.isItemSelected(path)) {
-            frame = topIndex == 0 ? mFrameSelectedTop : mFrameSelected;
-        } else {
-            frame = mFrame;
+            drawFrame(canvas, mFrameSelected, x, y, width, height);
         }
-
-        drawFrame(canvas, frame, x, y, width, height);
 
         if (topIndex == 0) {
-            ResourceTexture icon = getIcon(dataSourceType);
-            if (icon != null) {
-                IconDimension id = getIconDimension(icon, width, height);
-                if (dataSourceType == DATASOURCE_TYPE_MTP) {
-                    if (mImportLabel == null || mGridWidth != width) {
-                        mGridWidth = width;
-                        mImportLabel = MultiLineTexture.newInstance(
-                                mContext.getString(R.string.click_import),
-                                width - id.width - IMPORT_LABEL_PADDING, FONT_SIZE, FONT_COLOR);
-                    }
-                    int bgHeight = Math.max(id.height, mImportLabel.getHeight());
-                    mImportBackground.setSize(width, bgHeight);
-                    mImportBackground.draw(canvas, x, -y - bgHeight);
-                    mImportLabel.draw(canvas, x + id.width + IMPORT_LABEL_PADDING,
-                            -y - bgHeight + Math.abs(bgHeight - mImportLabel.getHeight()) / 2);
-                }
-                icon.draw(canvas, id.x, id.y, id.width, id.height);
+            drawDarkStrip(canvas, width, height, darkStripHeight);
+            drawIcon(canvas, width, height, dataSourceType);
+            if (dataSourceType == DATASOURCE_TYPE_MTP) {
+                drawImportLabel(canvas, width, height);
             }
         }
+    }
+
+    // Draws the "click to import" label at the center of the frame
+    private void drawImportLabel(GLCanvas canvas, int width, int height) {
+        if (mImportLabel == null || mGridWidth != width) {
+            mGridWidth = width;
+            mImportLabel = MultiLineTexture.newInstance(
+                    mContext.getString(R.string.click_import),
+                    width - 2 * IMPORT_LABEL_MARGIN,
+                    IMPORT_FONT_SIZE, IMPORT_FONT_COLOR,
+                    Layout.Alignment.ALIGN_CENTER);
+        }
+        int w = mImportLabel.getWidth();
+        int h = mImportLabel.getHeight();
+        mImportLabel.draw(canvas, -w / 2, -h / 2);
     }
 
     @Override
