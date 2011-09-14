@@ -72,6 +72,18 @@ public class ActionBar extends RelativeLayout implements FilterStack.StackListen
         };
     }
 
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+
+        // Show action-bar title only when there's still room for it; otherwise, hide it.
+        int width = 0;
+        for (int i = 0; i < getChildCount(); i++) {
+            width += getChildAt(i).getWidth();
+        }
+        findViewById(R.id.action_bar_title).setVisibility(((width > r - l)) ? INVISIBLE: VISIBLE);
+    }
+
     /**
      * Initializes with a non-null ActionBarListener.
      */
