@@ -20,16 +20,14 @@
     <dimen name="stack_photo_height">190dp</dimen>
 
     <!-- configuration for album set page -->
-    <dimen name="albumset_display_item_size">144dp</dimen>
-    <dimen name="albumset_slot_width">220dp</dimen>
-    <dimen name="albumset_slot_height">220dp</dimen>
-    <dimen name="albumset_label_font_size">14dp</dimen>
-    <dimen name="albumset_label_offset_y">110dp</dimen>
+    <integer name="albumset_rows_land">3</integer>
+    <integer name="albumset_rows_port">5</integer>
+    <dimen name="albumset_slot_gap">1dp</dimen>
 
     <!-- configuration for album page -->
-    <dimen name="album_display_item_size">176dp</dimen>
-    <dimen name="album_slot_width">192dp</dimen>
-    <dimen name="album_slot_height">192dp</dimen>
+    <integer name="album_rows_land">3</integer>
+    <integer name="album_rows_port">5</integer>
+    <dimen name="album_slot_gap">1dp</dimen>
 
     <!-- configuration for manage page -->
     <dimen name="cache_bar_height">48dp</dimen>
