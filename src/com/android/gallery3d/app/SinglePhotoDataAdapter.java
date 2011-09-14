@@ -174,6 +174,10 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         throw new UnsupportedOperationException();
     }
 
+    public void jumpTo(int index) {
+        throw new UnsupportedOperationException();
+    }
+
     public MediaItem getCurrentMediaItem() {
         return mItem;
     }
