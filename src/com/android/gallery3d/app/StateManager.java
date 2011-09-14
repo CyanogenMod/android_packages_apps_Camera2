@@ -20,6 +20,7 @@ import com.android.gallery3d.common.Utils;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
@@ -103,6 +104,12 @@ public class StateManager {
             return getTopState().onCreateActionBar(menu);
         } else {
             return false;
+        }
+    }
+
+    public void onConfigurationChange(Configuration config) {
+        for (StateEntry entry : mStack) {
+            entry.activityState.onConfigurationChanged(config);
         }
     }
 

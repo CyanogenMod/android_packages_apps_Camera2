@@ -34,6 +34,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 public class AbstractGalleryActivity extends Activity implements GalleryActivity {
@@ -61,6 +62,12 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         } finally {
             mGLRootView.unlockRenderThread();
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration config) {
+        super.onConfigurationChanged(config);
+        mStateManager.onConfigurationChange(config);
     }
 
     public Context getAndroidContext() {
