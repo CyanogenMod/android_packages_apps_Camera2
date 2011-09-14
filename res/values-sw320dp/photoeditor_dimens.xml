@@ -16,7 +16,7 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <dimen name="effect_label_text_size">11sp</dimen>
-    <dimen name="effect_label_width">98sp</dimen>
+    <dimen name="effect_label_width">98dp</dimen>
     <dimen name="effect_icon_size">72dp</dimen>
     <dimen name="effect_padding_left_right">2dp</dimen>
     <dimen name="effects_container_padding">12dp</dimen>
