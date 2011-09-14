@@ -164,45 +164,31 @@ public class ActionModeHandler implements ActionMode.Callback {
         return true;
     }
 
-    private void updateMenuOptionsAndSharingIntent(JobContext jc) {
-        ArrayList<Path> paths = mSelectionManager.getSelected(true);
+    // Menu options are determined by selection set itself.
+    // We cannot expand it because MenuExecuter executes it based on
+    // the selection set instead of the expanded result.
+    // e.g. LocalImage can be rotated but collections of them (LocalAlbum) can't.
+    private void updateMenuOptions(JobContext jc) {
+        ArrayList<Path> paths = mSelectionManager.getSelected(false);
         if (paths.size() == 0) return;
 
         int operation = MediaObject.SUPPORT_ALL;
         DataManager manager = mActivity.getDataManager();
-        final ArrayList<Uri> uris = new ArrayList<Uri>();
         int type = 0;
         for (Path path : paths) {
             if (jc.isCancelled()) return;
             int support = manager.getSupportedOperations(path);
             type |= manager.getMediaType(path);
             operation &= support;
-            if ((support & MediaObject.SUPPORT_SHARE) != 0) {
-                uris.add(manager.getContentUri(path));
-            }
         }
-        final Intent intent = new Intent();
-        final String mimeType = MenuExecutor.getMimeType(type);
 
+        final String mimeType = MenuExecutor.getMimeType(type);
         if (paths.size() == 1) {
             if (!GalleryUtils.isEditorAvailable((Context) mActivity, mimeType)) {
                 operation &= ~MediaObject.SUPPORT_EDIT;
             }
         } else {
             operation &= SUPPORT_MULTIPLE_MASK;
-        }
-
-        final int size = uris.size();
-        Log.v(TAG, "Sharing intent MIME type=" + mimeType + ", uri size = "+ uris.size());
-        if (size > 0) {
-            if (size > 1) {
-                intent.setAction(Intent.ACTION_SEND_MULTIPLE).setType(mimeType);
-                intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-            } else {
-                intent.setAction(Intent.ACTION_SEND).setType(mimeType);
-                intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
-            }
-            intent.setType(mimeType);
         }
 
         final int supportedOperation = operation;
@@ -212,13 +198,52 @@ public class ActionModeHandler implements ActionMode.Callback {
             public void run() {
                 mMenuTask = null;
                 MenuExecutor.updateMenuOperation(mMenu, supportedOperation);
+            }
+        });
+    }
 
-                if (mShareActionProvider != null && size > 0) {
+    // Share intent needs to expand the selection set so we can get URI of
+    // each media item
+    private void updateSharingIntent(JobContext jc) {
+        if (mShareActionProvider == null) return;
+        ArrayList<Path> paths = mSelectionManager.getSelected(true);
+        if (paths.size() == 0) return;
+
+        final ArrayList<Uri> uris = new ArrayList<Uri>();
+
+        DataManager manager = mActivity.getDataManager();
+        int type = 0;
+
+        final Intent intent = new Intent();
+        for (Path path : paths) {
+            int support = manager.getSupportedOperations(path);
+            type |= manager.getMediaType(path);
+
+            if ((support & MediaObject.SUPPORT_SHARE) != 0) {
+                uris.add(manager.getContentUri(path));
+            }
+        }
+
+        final int size = uris.size();
+        if (size > 0) {
+            final String mimeType = MenuExecutor.getMimeType(type);
+            if (size > 1) {
+                intent.setAction(Intent.ACTION_SEND_MULTIPLE).setType(mimeType);
+                intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+            } else {
+                intent.setAction(Intent.ACTION_SEND).setType(mimeType);
+                intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
+            }
+            intent.setType(mimeType);
+
+            mMainHandler.post(new Runnable() {
+                @Override
+                public void run() {
                     Log.v(TAG, "Sharing intent is ready: action = " + intent.getAction());
                     mShareActionProvider.setShareIntent(intent);
                 }
-            }
-        });
+            });
+        }
     }
 
     public void updateSupportedOperation(Path path, boolean selected) {
@@ -240,7 +265,8 @@ public class ActionModeHandler implements ActionMode.Callback {
         // Generate sharing intent and update supported operations in the background
         mMenuTask = mActivity.getThreadPool().submit(new Job<Void>() {
             public Void run(JobContext jc) {
-                updateMenuOptionsAndSharingIntent(jc);
+                updateMenuOptions(jc);
+                updateSharingIntent(jc);
                 return null;
             }
         });
