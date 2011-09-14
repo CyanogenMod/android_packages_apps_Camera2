@@ -21,17 +21,13 @@ import com.android.gallery3d.data.Path;
 import android.content.Context;
 
 public class HighlightDrawer extends IconDrawer {
-    private final NinePatchTexture mFrame;
     private final NinePatchTexture mFrameSelected;
-    private final NinePatchTexture mFrameSelectedTop;
     private SelectionManager mSelectionManager;
     private Path mHighlightItem;
 
     public HighlightDrawer(Context context) {
         super(context);
-        mFrame = new NinePatchTexture(context, R.drawable.album_frame);
         mFrameSelected = new NinePatchTexture(context, R.drawable.grid_selected);
-        mFrameSelectedTop = new NinePatchTexture(context, R.drawable.grid_selected_top);
     }
 
     public void setHighlightItem(Path item) {
@@ -40,7 +36,8 @@ public class HighlightDrawer extends IconDrawer {
 
     public void draw(GLCanvas canvas, Texture content, int width, int height,
             int rotation, Path path, int topIndex, int dataSourceType,
-            int mediaType, boolean wantCache, boolean isCaching) {
+            int mediaType, int darkStripHeight, boolean wantCache,
+            boolean isCaching) {
         int x = -width / 2;
         int y = -height / 2;
 
@@ -57,16 +54,12 @@ public class HighlightDrawer extends IconDrawer {
 
         drawVideoOverlay(canvas, mediaType, x, y, width, height, topIndex);
 
-        NinePatchTexture frame;
         if (path == mHighlightItem) {
-            frame = topIndex == 0 ? mFrameSelectedTop : mFrameSelected;
-        } else {
-            frame = mFrame;
+            drawFrame(canvas, mFrameSelected, x, y, width, height);
         }
 
-        drawFrame(canvas, frame, x, y, width, height);
-
         if (topIndex == 0) {
+            drawDarkStrip(canvas, width, height, darkStripHeight);
             drawIcon(canvas, width, height, dataSourceType);
         }
     }
