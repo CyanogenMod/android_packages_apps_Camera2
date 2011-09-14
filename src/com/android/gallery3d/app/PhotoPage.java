@@ -510,9 +510,10 @@ public class PhotoPage extends ActivityState
         }
     }
 
-    // Called by FileStripView
-    public void onSlotSelected(int slotIndex) {
-        ((PhotoDataAdapter) mModel).jumpTo(slotIndex);
+    // Called by FileStripView.
+    // Returns false if it cannot jump to the specified index at this time.
+    public boolean onSlotSelected(int slotIndex) {
+        return mPhotoView.jumpTo(slotIndex);
     }
 
     @Override

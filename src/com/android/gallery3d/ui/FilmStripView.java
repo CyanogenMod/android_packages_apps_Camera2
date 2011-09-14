@@ -34,7 +34,8 @@ public class FilmStripView extends GLView implements SlotView.Listener,
     private static final int HIDE_ANIMATION_DURATION = 300;  // 0.3 sec
 
     public interface Listener {
-        void onSlotSelected(int slotIndex);
+        // Returns false if it cannot jump to the specified index at this time.
+        boolean onSlotSelected(int slotIndex);
     }
 
     private int mTopMargin, mMidMargin, mBottomMargin;
@@ -171,8 +172,9 @@ public class FilmStripView extends GLView implements SlotView.Listener,
     // Called by AlbumView
     @Override
     public void onSingleTapUp(int slotIndex) {
-        mAlbumView.setFocusIndex(slotIndex);
-        mListener.onSlotSelected(slotIndex);
+        if (mListener.onSlotSelected(slotIndex)) {
+            mAlbumView.setFocusIndex(slotIndex);
+        }
     }
 
     // Called by AlbumView

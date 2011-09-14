@@ -985,6 +985,12 @@ public class PhotoView extends GLView {
         }
     }
 
+    public boolean jumpTo(int index) {
+        if (mTransitionMode != TRANS_NONE) return false;
+        mModel.jumpTo(index);
+        return true;
+    }
+
     public void notifyOnNewImage() {
         mPositionController.setImageSize(0, 0);
     }
@@ -1065,6 +1071,7 @@ public class PhotoView extends GLView {
     public static interface Model extends TileImageView.Model {
         public void next();
         public void previous();
+        public void jumpTo(int index);
         public int getImageRotation();
 
         // Return null if the specified image is unavailable.
