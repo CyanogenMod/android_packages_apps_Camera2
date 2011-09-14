@@ -355,6 +355,14 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
                     if (info.version != version) {
                         info.version = version;
                         info.size = mSource.getSubMediaSetCount();
+
+                        // If the size becomes smaller after reload(), we may
+                        // receive from GetUpdateInfo an index which is too
+                        // big. Because the main thread is not aware of the size
+                        // change until we call UpdateContent.
+                        if (info.index >= info.size) {
+                            info.index = INDEX_NONE;
+                        }
                     }
                     if (info.index != INDEX_NONE) {
                         info.item = mSource.getSubMediaSet(info.index);
