@@ -21,22 +21,16 @@ import com.android.gallery3d.R;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.text.TextUtils.TruncateAt;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ShareActionProvider;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 import java.util.ArrayList;
 
@@ -100,7 +94,7 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
 
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = (TextView) mInflater.inflate(R.layout.action_bar_text,
+                convertView = mInflater.inflate(R.layout.action_bar_text,
                         parent, false);
             }
             TextView view = (TextView) convertView;
@@ -114,14 +108,16 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
     private ArrayList<Integer> mActions;
     private Context mContext;
     private LayoutInflater mInflater;
+    private GalleryActivity mActivity;
     private ActionBar mActionBar;
     private int mCurrentIndex;
     private ClusterAdapter mAdapter = new ClusterAdapter();
 
-    public GalleryActionBar(Activity activity) {
-        mActionBar = activity.getActionBar();
-        mContext = activity;
-        mInflater = activity.getLayoutInflater();
+    public GalleryActionBar(GalleryActivity activity) {
+        mActionBar = ((Activity) activity).getActionBar();
+        mContext = activity.getAndroidContext();
+        mActivity = activity;
+        mInflater = ((Activity) mActivity).getLayoutInflater();
         mCurrentIndex = 0;
     }
 
@@ -241,11 +237,16 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
         return false;
     }
 
+    @Override
     public boolean onNavigationItemSelected(int itemPosition, long itemId) {
         if (itemPosition != mCurrentIndex && mClusterRunner != null) {
-            mClusterRunner.doCluster(sClusterItems[itemPosition].action);
+            mActivity.getGLRoot().lockRenderThread();
+            try {
+                mClusterRunner.doCluster(sClusterItems[itemPosition].action);
+            } finally {
+                mActivity.getGLRoot().unlockRenderThread();
+            }
         }
-
         return false;
     }
 }
