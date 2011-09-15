@@ -82,7 +82,7 @@ public class DoodleFilter extends Filter {
         }
 
         Effect effect = getEffect(context, EffectFactory.EFFECT_BITMAPOVERLAY);
-        effect.setParameter("doodle", bitmap);
+        effect.setParameter("bitmap", bitmap);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
     }
 }

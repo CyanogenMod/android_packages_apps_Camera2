@@ -42,7 +42,7 @@ public class GrainFilter extends Filter {
     @Override
     public void process(EffectContext context, Photo src, Photo dst) {
         Effect effect = getEffect(context, EffectFactory.EFFECT_GRAIN);
-        effect.setParameter("scale", scale);
+        effect.setParameter("strength", scale);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
     }
 }

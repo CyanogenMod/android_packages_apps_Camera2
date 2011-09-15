@@ -42,7 +42,7 @@ public class FillLightFilter extends Filter {
     @Override
     public void process(EffectContext context, Photo src, Photo dst) {
         Effect effect = getEffect(context, EffectFactory.EFFECT_FILLLIGHT);
-        effect.setParameter("backlight", backlight);
+        effect.setParameter("strength", backlight);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
     }
 }
