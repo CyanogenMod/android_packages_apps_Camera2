@@ -27,7 +27,7 @@ import com.android.gallery3d.photoeditor.Photo;
  */
 public class VignetteFilter extends Filter {
 
-    private float range;
+    private float scale;
 
     /**
      * Sets the vignette range scale.
@@ -35,17 +35,14 @@ public class VignetteFilter extends Filter {
      * @param scale ranges from 0 to 1.
      */
     public void setScale(float scale) {
-        // The 'range' is between 1.3 to 0.6. When scale is zero then range is 1.3
-        // which means no vignette at all because the luminousity difference is
-        // less than 1/256 and will cause nothing.
-        range = 1.30f - (float) Math.sqrt(scale) * 0.7f;
+        this.scale = scale;
         validate();
     }
 
     @Override
     public void process(EffectContext context, Photo src, Photo dst) {
         Effect effect = getEffect(context, EffectFactory.EFFECT_VIGNETTE);
-        effect.setParameter("range", range);
+        effect.setParameter("scale", scale);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
     }
 }
