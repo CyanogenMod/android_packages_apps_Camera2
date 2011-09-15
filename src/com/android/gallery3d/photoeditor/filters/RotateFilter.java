@@ -40,7 +40,7 @@ public class RotateFilter extends Filter {
             dst.changeDimension(src.height(), src.width());
         }
         Effect effect = getEffect(context, EffectFactory.EFFECT_ROTATE);
-        effect.setParameter("degree", degrees);
+        effect.setParameter("angle", (int) degrees);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
     }
 }
