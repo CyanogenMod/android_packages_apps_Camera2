@@ -283,9 +283,7 @@ public class ManageCachePage extends ActivityState implements
                 (Context) mActivity, mSelectionManager);
         Config.ManageCachePage config = Config.ManageCachePage.get(activity);
         mAlbumSetView = new AlbumSetView(mActivity, mSelectionDrawer,
-                config.slotWidth, config.slotHeight,
-                config.displayItemSize, config.labelFontSize,
-                config.labelOffsetY, config.labelMargin);
+                config.slotViewSpec, config.labelSpec);
         mAlbumSetView.setListener(new SlotView.SimpleListener() {
             @Override
             public void onSingleTapUp(int slotIndex) {

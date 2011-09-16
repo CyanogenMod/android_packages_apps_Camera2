@@ -73,7 +73,10 @@ public class FilmStripView extends GLView implements SlotView.Listener,
         mGripSize = gripSize;
 
         mStripDrawer = new StripDrawer((Context) activity);
-        mAlbumView = new AlbumView(activity, thumbSize, thumbSize, thumbSize);
+        SlotView.Spec spec = new SlotView.Spec();
+        spec.slotWidth = thumbSize;
+        spec.slotHeight = thumbSize;
+        mAlbumView = new AlbumView(activity, spec, thumbSize);
         mAlbumView.setOverscrollEffect(SlotView.OVERSCROLL_SYSTEM);
         mAlbumView.setSelectionDrawer(mStripDrawer);
         mAlbumView.setListener(this);

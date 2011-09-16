@@ -18,26 +18,21 @@ package com.android.gallery3d.ui;
 
 public abstract class DisplayItem {
 
-    protected int mWidth;
-    protected int mHeight;
+    protected int mBoxWidth;
+    protected int mBoxHeight;
 
-    protected void setSize(int width, int height) {
-        mWidth = width;
-        mHeight = height;
+    // setBox() specifies the box that the DisplayItem should render into. It
+    // should be called before first render(). It may be called again between
+    // render() calls to change the size of the box.
+    public void setBox(int width, int height) {
+        mBoxWidth = width;
+        mBoxHeight = height;
     }
 
     // returns true if more pass is needed
     public abstract boolean render(GLCanvas canvas, int pass);
 
     public abstract long getIdentity();
-
-    public int getWidth() {
-        return mWidth;
-    }
-
-    public int getHeight() {
-        return mHeight;
-    }
 
     public int getRotation() {
         return 0;

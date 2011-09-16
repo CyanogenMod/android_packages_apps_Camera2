@@ -17,6 +17,8 @@
 package com.android.gallery3d.app;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.ui.SlotView;
+import com.android.gallery3d.ui.AlbumSetView;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -25,12 +27,8 @@ final class Config {
     public static class AlbumSetPage {
         private static AlbumSetPage sInstance;
 
-        public final int slotWidth;
-        public final int slotHeight;
-        public final int displayItemSize;
-        public final int labelFontSize;
-        public final int labelOffsetY;
-        public final int labelMargin;
+        public SlotView.Spec slotViewSpec;
+        public AlbumSetView.LabelSpec labelSpec;
 
         public static synchronized AlbumSetPage get(Context context) {
             if (sInstance == null) {
@@ -41,21 +39,34 @@ final class Config {
 
         private AlbumSetPage(Context context) {
             Resources r = context.getResources();
-            slotWidth = r.getDimensionPixelSize(R.dimen.albumset_slot_width);
-            slotHeight = r.getDimensionPixelSize(R.dimen.albumset_slot_height);
-            displayItemSize = r.getDimensionPixelSize(R.dimen.albumset_display_item_size);
-            labelFontSize = r.getDimensionPixelSize(R.dimen.albumset_label_font_size);
-            labelOffsetY = r.getDimensionPixelSize(R.dimen.albumset_label_offset_y);
-            labelMargin = r.getDimensionPixelSize(R.dimen.albumset_label_margin);
+
+            slotViewSpec = new SlotView.Spec();
+            slotViewSpec.rowsLand = r.getInteger(R.integer.albumset_rows_land);
+            slotViewSpec.rowsPort = r.getInteger(R.integer.albumset_rows_port);
+            slotViewSpec.slotGap = r.getDimensionPixelSize(R.dimen.albumset_slot_gap);
+
+            labelSpec = new AlbumSetView.LabelSpec();
+            labelSpec.darkStripHeight = r.getDimensionPixelSize(
+                    R.dimen.albumset_dark_strip_height);
+            labelSpec.titleOffset = r.getDimensionPixelSize(
+                    R.dimen.albumset_title_offset);
+            labelSpec.numberOffset = r.getDimensionPixelSize(
+                    R.dimen.albumset_number_offset);
+            labelSpec.titleFontSize = r.getDimensionPixelSize(
+                    R.dimen.albumset_title_font_size);
+            labelSpec.numberFontSize = r.getDimensionPixelSize(
+                    R.dimen.albumset_number_font_size);
+            labelSpec.leftMargin = r.getDimensionPixelSize(
+                    R.dimen.albumset_left_margin);
+            labelSpec.iconSize = r.getDimensionPixelSize(
+                    R.dimen.albumset_icon_size);
         }
     }
 
     public static class AlbumPage {
         private static AlbumPage sInstance;
 
-        public final int slotWidth;
-        public final int slotHeight;
-        public final int displayItemSize;
+        public SlotView.Spec slotViewSpec;
 
         public static synchronized AlbumPage get(Context context) {
             if (sInstance == null) {
@@ -66,9 +77,11 @@ final class Config {
 
         private AlbumPage(Context context) {
             Resources r = context.getResources();
-            slotWidth = r.getDimensionPixelSize(R.dimen.album_slot_width);
-            slotHeight = r.getDimensionPixelSize(R.dimen.album_slot_height);
-            displayItemSize = r.getDimensionPixelSize(R.dimen.album_display_item_size);
+
+            slotViewSpec = new SlotView.Spec();
+            slotViewSpec.rowsLand = r.getInteger(R.integer.album_rows_land);
+            slotViewSpec.rowsPort = r.getInteger(R.integer.album_rows_port);
+            slotViewSpec.slotGap = r.getDimensionPixelSize(R.dimen.album_slot_gap);
         }
     }
 

@@ -33,8 +33,7 @@ public class AlbumView extends SlotView {
     private AlbumSlidingWindow mDataWindow;
     private final GalleryActivity mActivity;
     private SelectionDrawer mSelectionDrawer;
-    private int mSlotWidth, mSlotHeight;
-    private int mDisplayItemSize;
+    private int mCacheThumbSize;
 
     private boolean mIsActive = false;
 
@@ -50,13 +49,11 @@ public class AlbumView extends SlotView {
         public void onSizeChanged(int size);
     }
 
-    public AlbumView(GalleryActivity activity,
-            int slotWidth, int slotHeight, int displayItemSize) {
+    public AlbumView(GalleryActivity activity, SlotView.Spec spec,
+            int cacheThumbSize) {
         super(activity.getAndroidContext());
-        mSlotWidth = slotWidth;
-        mSlotHeight = slotHeight;
-        mDisplayItemSize = displayItemSize;
-        setSlotSize(slotWidth, slotHeight);
+        mCacheThumbSize = cacheThumbSize;
+        setSlotSpec(spec);
         mActivity = activity;
     }
 
@@ -74,7 +71,7 @@ public class AlbumView extends SlotView {
         if (model != null) {
             mDataWindow = new AlbumSlidingWindow(
                     mActivity, model, CACHE_SIZE,
-                    mSlotWidth, mSlotHeight, mDisplayItemSize);
+                    mCacheThumbSize);
             mDataWindow.setSelectionDrawer(mSelectionDrawer);
             mDataWindow.setListener(new MyDataModelListener());
             setSlotCount(model.size());

@@ -21,13 +21,16 @@ import com.android.gallery3d.data.MediaObject;
 import android.content.Context;
 
 public abstract class IconDrawer extends SelectionDrawer {
-    private final String TAG = "IconDrawer";
+    private static final String TAG = "IconDrawer";
+    private static final int DARK_STRIP_COLOR = 0x99000000;  // 60% black
+
     private final ResourceTexture mLocalSetIcon;
     private final ResourceTexture mCameraIcon;
     private final ResourceTexture mPicasaIcon;
     private final ResourceTexture mMtpIcon;
     private final Texture mVideoOverlay;
     private final Texture mVideoPlayIcon;
+    private final int mIconSize;
 
     public static class IconDimension {
         int x;
@@ -37,14 +40,14 @@ public abstract class IconDrawer extends SelectionDrawer {
     }
 
     public IconDrawer(Context context) {
-        mLocalSetIcon = new ResourceTexture(context, R.drawable.ic_album_overlay_folder_holo);
-        mCameraIcon = new ResourceTexture(context, R.drawable.ic_album_overlay_camera_holo);
-        mPicasaIcon = new ResourceTexture(context, R.drawable.ic_album_overlay_picassa_holo);
+        mLocalSetIcon = new ResourceTexture(context, R.drawable.frame_overlay_gallery_folder);
+        mCameraIcon = new ResourceTexture(context, R.drawable.frame_overlay_gallery_camera);
+        mPicasaIcon = new ResourceTexture(context, R.drawable.frame_overlay_gallery_picasa);
         mMtpIcon = new ResourceTexture(context, R.drawable.ic_album_overlay_ptp_holo);
-        mVideoOverlay = new ResourceTexture(context,
-                R.drawable.thumbnail_album_video_overlay_holo);
-        mVideoPlayIcon = new ResourceTexture(context,
-                R.drawable.videooverlay);
+        mVideoOverlay = new ResourceTexture(context, R.drawable.ic_video_thumb);
+        mVideoPlayIcon = new ResourceTexture(context, R.drawable.ic_gallery_play);
+        mIconSize = context.getResources().getDimensionPixelSize(
+                R.dimen.albumset_icon_size);
     }
 
     @Override
@@ -88,9 +91,9 @@ public abstract class IconDrawer extends SelectionDrawer {
     protected IconDimension getIconDimension(ResourceTexture icon, int width,
             int height) {
         IconDimension id = new IconDimension();
-        float scale = 0.25f * width / icon.getWidth();
-        id.width = (int) (scale * icon.getWidth());
-        id.height = (int) (scale * icon.getHeight());
+        float scale = (float) mIconSize / icon.getWidth();
+        id.width = Math.round(scale * icon.getWidth());
+        id.height = Math.round(scale * icon.getHeight());
         id.x = -width / 2;
         id.y = height / 2 - id.height;
         return id;
@@ -99,11 +102,25 @@ public abstract class IconDrawer extends SelectionDrawer {
     protected void drawVideoOverlay(GLCanvas canvas, int mediaType,
             int x, int y, int width, int height, int topIndex) {
         if (mediaType != MediaObject.MEDIA_TYPE_VIDEO) return;
-        mVideoOverlay.draw(canvas, x, y, width, height);
+
+        // Scale the video overlay to the height of the thumbnail and put it
+        // on the left side.
+        float scale = (float) height / mVideoOverlay.getHeight();
+        int w = Math.round(scale * mVideoOverlay.getWidth());
+        int h = Math.round(scale * mVideoOverlay.getHeight());
+        mVideoOverlay.draw(canvas, x, y, w, h);
+
         if (topIndex == 0) {
             int side = Math.min(width, height) / 6;
             mVideoPlayIcon.draw(canvas, -side / 2, -side / 2, side, side);
         }
+    }
+
+    protected void drawDarkStrip(GLCanvas canvas, int width, int height,
+            int darkStripHeight) {
+        int x = -width / 2;
+        int y = (height + 1) / 2 - darkStripHeight;
+        canvas.fillRect(x, y, width, darkStripHeight, DARK_STRIP_COLOR);
     }
 
     @Override

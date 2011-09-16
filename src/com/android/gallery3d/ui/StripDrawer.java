@@ -38,7 +38,8 @@ public class StripDrawer extends SelectionDrawer {
     @Override
     public void draw(GLCanvas canvas, Texture content, int width, int height,
             int rotation, Path path, int topIndex, int dataSourceType,
-            int mediaType, boolean wantCache, boolean isCaching) {
+            int mediaType, int darkStripHeight, boolean wantCache,
+            boolean isCaching) {
 
         int x = -width / 2;
         int y = -height / 2;

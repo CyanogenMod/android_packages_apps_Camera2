@@ -126,8 +126,8 @@ public class SlotView extends GLView {
         updateScrollPosition(position, false);
     }
 
-    public void setSlotSize(int slotWidth, int slotHeight) {
-        mLayout.setSlotSize(slotWidth, slotHeight);
+    public void setSlotSpec(Spec spec) {
+        mLayout.setSlotSpec(spec);
     }
 
     @Override
@@ -191,6 +191,7 @@ public class SlotView extends GLView {
     }
 
     public void putDisplayItem(Position target, Position base, DisplayItem item) {
+        item.setBox(mLayout.getSlotWidth(), mLayout.getSlotHeight());
         ItemEntry entry = new ItemEntry(item, target, base);
         mItemList.insertLast(entry);
         mItems.put(item, entry);
@@ -350,6 +351,41 @@ public class SlotView extends GLView {
         }
     }
 
+    // This Spec class is used to specify the size of each slot in the SlotView.
+    // There are two ways to do it:
+    //
+    // (1) Specify slotWidth and slotHeight: they specify the width and height
+    //     of each slot. The number of rows and the gap between slots will be
+    //     determined automatically.
+    // (2) Specify rowsLand, rowsPort, and slotGap: they specify the number
+    //     of rows in landscape/portrait mode and the gap between slots. The
+    //     width and height of each slot is determined automatically.
+    //
+    // The initial value of -1 means they are not specified.
+    public static class Spec {
+        public int slotWidth = -1;
+        public int slotHeight = -1;
+
+        public int rowsLand = -1;
+        public int rowsPort = -1;
+        public int slotGap = -1;
+
+        static Spec newWithSize(int width, int height) {
+            Spec s = new Spec();
+            s.slotWidth = width;
+            s.slotHeight = height;
+            return s;
+        }
+
+        static Spec newWithRows(int rowsLand, int rowsPort, int slotGap) {
+            Spec s = new Spec();
+            s.rowsLand = rowsLand;
+            s.rowsPort = rowsPort;
+            s.slotGap = slotGap;
+            return s;
+        }
+    }
+
     public static class Layout {
 
         private int mVisibleStart;
@@ -358,6 +394,9 @@ public class SlotView extends GLView {
         private int mSlotCount;
         private int mSlotWidth;
         private int mSlotHeight;
+        private int mSlotGap;
+
+        private Spec mSpec;
 
         private int mWidth;
         private int mHeight;
@@ -369,9 +408,8 @@ public class SlotView extends GLView {
         private int mVerticalPadding;
         private int mHorizontalPadding;
 
-        public void setSlotSize(int slotWidth, int slotHeight) {
-            mSlotWidth = slotWidth;
-            mSlotHeight = slotHeight;
+        public void setSlotSpec(Spec spec) {
+            mSpec = spec;
         }
 
         public boolean setSlotCount(int slotCount) {
@@ -392,9 +430,17 @@ public class SlotView extends GLView {
                 col = index - row * mUnitCount;
             }
 
-            int x = mHorizontalPadding + col * mSlotWidth;
-            int y = mVerticalPadding + row * mSlotHeight;
+            int x = mHorizontalPadding + col * (mSlotWidth + mSlotGap);
+            int y = mVerticalPadding + row * (mSlotHeight + mSlotGap);
             return new Rect(x, y, x + mSlotWidth, y + mSlotHeight);
+        }
+
+        public int getSlotWidth() {
+            return mSlotWidth;
+        }
+
+        public int getSlotHeight() {
+            return mSlotHeight;
         }
 
         public int getContentLength() {
@@ -417,17 +463,19 @@ public class SlotView extends GLView {
                 int majorLength, int minorLength,  /* The view width and height */
                 int majorUnitSize, int minorUnitSize,  /* The slot width and height */
                 int[] padding) {
-            int unitCount = minorLength / minorUnitSize;
+            int unitCount = (minorLength + mSlotGap) / (minorUnitSize + mSlotGap);
             if (unitCount == 0) unitCount = 1;
             mUnitCount = unitCount;
 
             // We put extra padding above and below the column.
             int availableUnits = Math.min(mUnitCount, mSlotCount);
-            padding[0] = (minorLength - availableUnits * minorUnitSize) / 2;
+            int usedMinorLength = availableUnits * minorUnitSize +
+                    (availableUnits - 1) * mSlotGap;
+            padding[0] = (minorLength - usedMinorLength) / 2;
 
             // Then calculate how many columns we need for all slots.
             int count = ((mSlotCount + mUnitCount - 1) / mUnitCount);
-            mContentLength = count * majorUnitSize;
+            mContentLength = count * majorUnitSize + (count - 1) * mSlotGap;
 
             // If the content length is less then the screen width, put
             // extra padding in left and right.
@@ -435,6 +483,18 @@ public class SlotView extends GLView {
         }
 
         private void initLayoutParameters() {
+            // Initialize mSlotWidth and mSlotHeight from mSpec
+            if (mSpec.slotWidth != -1) {
+                mSlotGap = 0;
+                mSlotWidth = mSpec.slotWidth;
+                mSlotHeight = mSpec.slotHeight;
+            } else {
+                int rows = (mWidth > mHeight) ? mSpec.rowsLand : mSpec.rowsPort;
+                mSlotGap = mSpec.slotGap;
+                mSlotHeight = Math.max(1, (mHeight - (rows - 1) * mSlotGap) / rows);
+                mSlotWidth = mSlotHeight;
+            }
+
             int[] padding = new int[2];
             if (WIDE) {
                 initLayoutParameters(mWidth, mHeight, mSlotWidth, mSlotHeight, padding);
@@ -458,14 +518,18 @@ public class SlotView extends GLView {
             int position = mScrollPosition;
 
             if (WIDE) {
-                int start = Math.max(0, (position / mSlotWidth) * mUnitCount);
-                int end = Math.min(mSlotCount, mUnitCount
-                        * (position + mWidth + mSlotWidth - 1) / mSlotWidth);
+                int startCol = position / (mSlotWidth + mSlotGap);
+                int start = Math.max(0, mUnitCount * startCol);
+                int endCol = (position + mWidth + mSlotWidth + mSlotGap - 1) /
+                        (mSlotWidth + mSlotGap);
+                int end = Math.min(mSlotCount, mUnitCount * endCol);
                 setVisibleRange(start, end);
             } else {
-                int start = Math.max(0, mUnitCount * (position / mSlotHeight));
-                int end = Math.min(mSlotCount, mUnitCount
-                        * (position + mHeight + mSlotHeight - 1) / mSlotHeight);
+                int startRow = position / (mSlotHeight + mSlotGap);
+                int start = Math.max(0, mUnitCount * startRow);
+                int endRow = (position + mHeight + mSlotHeight + mSlotGap - 1) /
+                        (mSlotHeight + mSlotGap);
+                int end = Math.min(mSlotCount, mUnitCount * endRow);
                 setVisibleRange(start, end);
             }
         }
@@ -495,21 +559,31 @@ public class SlotView extends GLView {
         }
 
         public int getSlotIndexByPosition(float x, float y) {
-            float absoluteX = x + (WIDE ? mScrollPosition : 0);
+            int absoluteX = Math.round(x) + (WIDE ? mScrollPosition : 0);
+            int absoluteY = Math.round(y) + (WIDE ? 0 : mScrollPosition);
+
             absoluteX -= mHorizontalPadding;
-            int columnIdx = (int) (absoluteX + 0.5) / mSlotWidth;
-            if ((absoluteX - mSlotWidth * columnIdx) < 0
-                    || (!WIDE && columnIdx >= mUnitCount)) {
+            absoluteY -= mVerticalPadding;
+
+            int columnIdx = absoluteX / (mSlotWidth + mSlotGap);
+            int rowIdx = absoluteY / (mSlotHeight + mSlotGap);
+
+            if (columnIdx < 0 || (!WIDE && columnIdx >= mUnitCount)) {
                 return INDEX_NONE;
             }
 
-            float absoluteY = y + (WIDE ? 0 : mScrollPosition);
-            absoluteY -= mVerticalPadding;
-            int rowIdx = (int) (absoluteY + 0.5) / mSlotHeight;
-            if (((absoluteY - mSlotHeight * rowIdx) < 0)
-                    || (WIDE && rowIdx >= mUnitCount)) {
+            if (rowIdx < 0 || (WIDE && rowIdx >= mUnitCount)) {
                 return INDEX_NONE;
             }
+
+            if (absoluteX % (mSlotWidth + mSlotGap) >= mSlotWidth) {
+                return INDEX_NONE;
+            }
+
+            if (absoluteY % (mSlotHeight + mSlotGap) >= mSlotHeight) {
+                return INDEX_NONE;
+            }
+
             int index = WIDE
                     ? (columnIdx * mUnitCount + rowIdx)
                     : (rowIdx * mUnitCount + columnIdx);
