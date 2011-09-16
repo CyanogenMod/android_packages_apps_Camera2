@@ -20,50 +20,40 @@
     <string name="gadget_title" msgid="259405922673466798">"Uhlaka lwesithombe"</string>
     <string name="details_ms" msgid="940634969189855292">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
-    <!-- outdated translation 3697303290960009886 -->     <string name="movie_view_label" msgid="3526526872644898229">"Ama-movie"</string>
+    <string name="movie_view_label" msgid="3526526872644898229">"Isidlali sevidiyo"</string>
     <string name="loading_video" msgid="4013492720121891585">"Ilayisha ividiyo..."</string>
     <string name="loading_image" msgid="1200894415793838191">"Iyalayisha isithombe..."</string>
-    <!-- no translation found for loading_account (928195413034552034) -->
-    <skip />
+    <string name="loading_account" msgid="928195413034552034">"Ilayisha i-akhawunti"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"Qalisa ividiyo"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"Qalisa ukudlala kusuka %s?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Qalisa ukudlala"</string>
     <string name="loading" msgid="7038208555304563571">"Iyalayisha..."</string>
-    <!-- outdated translation 3355969119388837437 -->     <string name="fail_to_load" msgid="2710120770735315683">"Yehlulekile ukulayisha"</string>
-    <!-- no translation found for no_thumbnail (284723185546429750) -->
-    <skip />
+    <string name="fail_to_load" msgid="2710120770735315683">"Kwehlulekile ukuhlolhla"</string>
+    <string name="no_thumbnail" msgid="284723185546429750">"Asikho isithoombe esincane"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Qala phansi"</string>
     <string name="crop_save_text" msgid="8821167985419282305">"Kulungile"</string>
-    <!-- no translation found for multiface_crop_help (3127018992717032779) -->
-    <skip />
+    <string name="multiface_crop_help" msgid="3127018992717032779">"Thepha ubuso ukuze uqale:"</string>
     <string name="saving_image" msgid="7270334453636349407">"Ilondoloza isithombe..."</string>
-    <!-- no translation found for crop_label (521114301871349328) -->
-    <skip />
+    <string name="crop_label" msgid="521114301871349328">"Nqampuna isithombe"</string>
     <string name="select_image" msgid="7841406150484742140">"Khetha isithombe"</string>
     <string name="select_video" msgid="4859510992798615076">"Khetha ividiyo"</string>
     <string name="select_item" msgid="2257529413100472599">"Khetha intwana(izi)"</string>
     <string name="select_album" msgid="4632641262236697235">"Khetha i-albhamu(ama)"</string>
     <string name="select_group" msgid="9090385962030340391">"Khetha iqembu(ama)"</string>
     <string name="set_image" msgid="2331476809308010401">"Hlela isithombe njenge"</string>
-    <!-- no translation found for wallpaper (9222901738515471972) -->
-    <skip />
-    <!-- no translation found for camera_setas_wallpaper (797463183863414289) -->
-    <skip />
-    <!-- no translation found for delete (2839695998251824487) -->
-    <skip />
+    <string name="wallpaper" msgid="9222901738515471972">"Isetha iphephadonga, sicela ulinde..."</string>
+    <string name="camera_setas_wallpaper" msgid="797463183863414289">"Iphephadonga"</string>
+    <string name="delete" msgid="2839695998251824487">"Susa"</string>
     <string name="confirm_delete" msgid="5731757674837098707">"Qinisekisa Ukususa"</string>
-    <!-- no translation found for cancel (3637516880917356226) -->
-    <skip />
+    <string name="cancel" msgid="3637516880917356226">"Khansela"</string>
     <string name="share" msgid="3619042788254195341">"Yabelana"</string>
     <string name="select_all" msgid="8623593677101437957">"Khetha konke"</string>
     <string name="deselect_all" msgid="7397531298370285581">"Ungakhethi Konke"</string>
     <string name="slideshow" msgid="4355906903247112975">"Umbukiso weslaydi"</string>
-    <!-- no translation found for details (8415120088556445230) -->
-    <skip />
+    <string name="details" msgid="8415120088556445230">"Imininingwane"</string>
     <string name="details_title" msgid="2611396603977441273">"izintwana ezingu-%1$d kwezingu-%2$d:"</string>
     <string name="close" msgid="5585646033158453043">"Vala"</string>
-    <!-- no translation found for switch_to_camera (7280111806675169992) -->
-    <skip />
+    <string name="switch_to_camera" msgid="7280111806675169992">"Shintshela kwikhamera"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"%1$d khethiwe"</item>
     <item quantity="one" msgid="2478365152745637768">"%1$d khethiwe"</item>
@@ -83,39 +73,32 @@
     <string name="rotate_left" msgid="7412075232752726934">"Phendula ngakwesobunxele"</string>
     <string name="rotate_right" msgid="7340681085011826618">"Phendula ngakwesokudla"</string>
     <string name="no_such_item" msgid="3161074758669642065">"Intwana ayitholwanga"</string>
-    <!-- no translation found for edit (1502273844748580847) -->
-    <skip />
+    <string name="edit" msgid="1502273844748580847">"Hlela"</string>
     <string name="activity_not_found" msgid="3731390759313019518">"Alukho uhlelo lokusebenza olutholakalayo"</string>
     <string name="process_caching_requests" msgid="1076938190997999614">"Izicelo Zokulondoloza Okwesikhashana Inqubo"</string>
     <string name="caching_label" msgid="3244800874547101776">"Ukulondoloza isikhashana..."</string>
-    <!-- no translation found for crop_action (3427470284074377001) -->
-    <skip />
+    <string name="crop_action" msgid="3427470284074377001">"Khropha"</string>
     <string name="set_as" msgid="3636764710790507868">"Hlela njenge"</string>
     <string name="video_err" msgid="7917736494827857757">"Ayikwazi ukudlala ividiyo"</string>
     <string name="group_by_location" msgid="316641628989023253">"Ngendawo"</string>
     <string name="group_by_time" msgid="9046168567717963573">"Ngesikhathi"</string>
     <string name="group_by_tags" msgid="3568731317210676160">"Ngamamaki"</string>
-    <!-- no translation found for group_by_faces (1566351636227274906) -->
-    <skip />
+    <string name="group_by_faces" msgid="1566351636227274906">"Ngabantu"</string>
     <string name="group_by_album" msgid="1532818636053818958">"Nge-albhamu"</string>
-    <!-- no translation found for group_by_size (153766174950394155) -->
-    <skip />
+    <string name="group_by_size" msgid="153766174950394155">"Ngosayizi"</string>
     <string name="untagged" msgid="7281481064509590402">"Akunasilengiso"</string>
     <string name="no_location" msgid="2036710947563713111">"Ayikho Indawo"</string>
     <string name="no_connectivity" msgid="4060082114738885149">"Ezinye izindawo azikwazanga ukubonakala ngenxa yezinkinga zokuxhumeka kuhleloxhumano"</string>
     <string name="show_images_only" msgid="7263218480867672653">"Izithombe kuphela"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Amavidiyo kuphela"</string>
     <string name="show_all" msgid="4780647751652596980">"Izithombe namavidiyo"</string>
-    <!-- no translation found for appwidget_title (6410561146863700411) -->
-    <skip />
-    <!-- no translation found for appwidget_empty_text (4123016777080388680) -->
-    <skip />
+    <string name="appwidget_title" msgid="6410561146863700411">"Igalari Yesithombe"</string>
+    <string name="appwidget_empty_text" msgid="4123016777080388680">"Azikho Izithombe"</string>
     <string name="crop_saved" msgid="4684933379430649946">"Isithombe esinqampuliwe silondolozwe ekulandeni"</string>
     <string name="crop_not_saved" msgid="1438309290700431923">"Umfanekiso onqampuliwe awugciniwe"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Awekho ama-albhamu atholakalayo"</string>
     <string name="empty_album" msgid="6307897398825514762">"Azikho izithombe/amavidiyo atholakalayo"</string>
-    <!-- no translation found for picasa_posts (1497721615718760613) -->
-    <skip />
+    <string name="picasa_posts" msgid="1497721615718760613">"Okuposiwe"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Yenza kutholakale ungaxhumekile kwi-inthanethi"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Vuselela"</string>
     <string name="done" msgid="217672440064436595">"Kwenziwe"</string>
@@ -144,60 +127,36 @@
     <string name="auto" msgid="4296941368722892821">"Okuzenzakalelayo"</string>
     <string name="flash_on" msgid="7891556231891837284">"Ifuleshi iqhafaziwe"</string>
     <string name="flash_off" msgid="1445443413822680010">"Ayikho ifuleshi"</string>
-    <!-- no translation found for make_albums_available_offline:one (2955975726887896888) -->
-    <!-- no translation found for make_albums_available_offline:other (6929905722448632886) -->
-    <!-- no translation found for try_to_set_local_album_available_offline (2184754031896160755) -->
-    <skip />
-    <!-- no translation found for set_label_all_albums (3507256844918130594) -->
-    <skip />
-    <!-- no translation found for set_label_local_albums (5227548825039781) -->
-    <skip />
-    <!-- no translation found for set_label_mtp_devices (5779788799122828528) -->
-    <skip />
-    <!-- no translation found for set_label_picasa_albums (2736308697306982589) -->
-    <skip />
-    <!-- no translation found for free_space_format (8766337315709161215) -->
-    <skip />
-    <!-- no translation found for size_below (2074956730721942260) -->
-    <skip />
-    <!-- no translation found for size_above (5324398253474104087) -->
-    <skip />
-    <!-- no translation found for size_between (8779660840898917208) -->
-    <skip />
-    <!-- no translation found for Import (3985447518557474672) -->
-    <skip />
-    <!-- no translation found for import_complete (1098450310074640619) -->
-    <skip />
-    <!-- no translation found for import_fail (5205927625132482529) -->
-    <skip />
-    <!-- no translation found for camera_connected (6984353643349303075) -->
-    <skip />
-    <!-- no translation found for camera_disconnected (3683036560562699311) -->
-    <skip />
-    <!-- no translation found for click_import (6407959065464291972) -->
-    <skip />
-    <!-- no translation found for widget_type_album (3245149644830731121) -->
-    <skip />
-    <!-- no translation found for widget_type_shuffle (8594622705019763768) -->
-    <skip />
-    <!-- no translation found for widget_type_photo (8384174698965738770) -->
-    <skip />
-    <!-- no translation found for widget_type (7308564524449340985) -->
-    <skip />
-    <!-- no translation found for slideshow_dream_name (6915963319933437083) -->
-    <skip />
-    <!-- no translation found for albums (7320787705180057947) -->
-    <skip />
+  <plurals name="make_albums_available_offline">
+    <item quantity="one" msgid="2955975726887896888">"Yenza i-albhamu itholakale ungaxhumekile kwi-inthanethi"</item>
+    <item quantity="other" msgid="6929905722448632886">"Yenza ama-albhamu atholakale ungaxhumekile kwi-inthanethi"</item>
+  </plurals>
+    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Lentwana igcinwa endaweni bese itholakala ungaxhunyiwe kwi-intanethi."</string>
+    <string name="set_label_all_albums" msgid="3507256844918130594">"Wonke ama-albhamu"</string>
+    <string name="set_label_local_albums" msgid="5227548825039781">"Ama-albhamu Asendaweni"</string>
+    <string name="set_label_mtp_devices" msgid="5779788799122828528">"Amadivayisi e-MTP"</string>
+    <string name="set_label_picasa_albums" msgid="2736308697306982589">"Ama-albhamu e-Picasa"</string>
+    <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> vulekile"</string>
+    <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> noma ngezansi"</string>
+    <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> noma ngenhla"</string>
+    <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> kuya ku-<xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
+    <string name="Import" msgid="3985447518557474672">"Ngenisa"</string>
+    <string name="import_complete" msgid="1098450310074640619">"Ukungenisa Kuqedile"</string>
+    <string name="import_fail" msgid="5205927625132482529">"Ukungenisa Kuhlulekile"</string>
+    <string name="camera_connected" msgid="6984353643349303075">"Ikhamera ixhunyiwe"</string>
+    <string name="camera_disconnected" msgid="3683036560562699311">"Ikhamera ayixhunywanga"</string>
+    <string name="click_import" msgid="6407959065464291972">"Thinta lana ukuze uthumele"</string>
+    <string name="widget_type_album" msgid="3245149644830731121">"Izithombe kusuka ku-albhamu"</string>
+    <string name="widget_type_shuffle" msgid="8594622705019763768">"Shova zonke izithombe"</string>
+    <string name="widget_type_photo" msgid="8384174698965738770">"Khetha isithombe"</string>
+    <string name="widget_type" msgid="7308564524449340985">"Uhlobo Lwesinqunjwana"</string>
+    <string name="slideshow_dream_name" msgid="6915963319933437083">"Umbukiso weslaydi"</string>
+    <string name="albums" msgid="7320787705180057947">"Ama-albhamu"</string>
     <string name="times" msgid="2023033894889499219">"Izikhathi"</string>
-    <!-- no translation found for locations (6649297994083130305) -->
-    <skip />
-    <!-- no translation found for people (4114003823747292747) -->
-    <skip />
-    <!-- no translation found for tags (5539648765482935955) -->
-    <skip />
+    <string name="locations" msgid="6649297994083130305">"Izindawo"</string>
+    <string name="people" msgid="4114003823747292747">"Abantu"</string>
+    <string name="tags" msgid="5539648765482935955">"Amamaki"</string>
     <string name="group_by" msgid="4308299657902209357">"Qoqa nge-"</string>
-    <!-- no translation found for settings (1534847740615665736) -->
-    <skip />
-    <!-- no translation found for add_account (4271217504968243974) -->
-    <skip />
+    <string name="settings" msgid="1534847740615665736">"Izilungiselelo"</string>
+    <string name="add_account" msgid="4271217504968243974">"Yengeza i-akhawunti"</string>
 </resources>

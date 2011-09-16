@@ -77,8 +77,7 @@
     <string name="activity_not_found" msgid="3731390759313019518">"사용할 수 있는 애플리케이션이 없습니다."</string>
     <string name="process_caching_requests" msgid="1076938190997999614">"캐시 요청 처리"</string>
     <string name="caching_label" msgid="3244800874547101776">"캐시 중..."</string>
-    <!-- no translation found for crop_action (3427470284074377001) -->
-    <skip />
+    <string name="crop_action" msgid="3427470284074377001">"자르기"</string>
     <string name="set_as" msgid="3636764710790507868">"다음으로 설정"</string>
     <string name="video_err" msgid="7917736494827857757">"동영상을 재생할 수 없음"</string>
     <string name="group_by_location" msgid="316641628989023253">"위치별"</string>
@@ -99,7 +98,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"잘린 이미지가 저장되지 않았습니다."</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"사용할 수 있는 앨범이 없습니다"</string>
     <string name="empty_album" msgid="6307897398825514762">"사용할 수 있는 이미지/동영상이 없습니다."</string>
-    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"버즈"</string>
+    <string name="picasa_posts" msgid="1497721615718760613">"소식"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"오프라인 사용 설정"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"새로고침"</string>
     <string name="done" msgid="217672440064436595">"완료"</string>
