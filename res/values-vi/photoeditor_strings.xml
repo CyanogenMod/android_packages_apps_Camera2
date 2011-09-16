@@ -16,8 +16,7 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- no translation found for photoeditor_name (4738587346771969697) -->
-    <skip />
+    <string name="photoeditor_name" msgid="4738587346771969697">"Studio ảnh"</string>
     <string name="loading_failure" msgid="5990741970574295950">"Không thể tải ảnh"</string>
     <string name="saving_failure" msgid="8596600582621364077">"Không thể lưu ảnh"</string>
     <string name="photo_saved" msgid="3494363661299484657">"Ảnh đã được lưu vào anbom <xliff:g id="ALBUM_NAME">%s</xliff:g>"</string>
