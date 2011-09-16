@@ -34,6 +34,7 @@ import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.text.Layout;
 import android.text.format.Formatter;
 import android.view.MotionEvent;
 import android.view.View.MeasureSpec;
@@ -259,7 +260,8 @@ public class GLDetailsView extends GLView implements DetailsViewContainer {
                             context, key), value);
                 }
                 Texture label = MultiLineTexture.newInstance(
-                        value, mMaxDetailLength, FONT_SIZE, FONT_COLOR);
+                        value, mMaxDetailLength, FONT_SIZE, FONT_COLOR,
+                        Layout.Alignment.ALIGN_NORMAL);
                 mItems.add(label);
             }
         }
@@ -274,7 +276,8 @@ public class GLDetailsView extends GLView implements DetailsViewContainer {
 
         public void onAddressAvailable(String address) {
             mItems.set(mLocationIndex, MultiLineTexture.newInstance(
-                    address, mMaxDetailLength, FONT_SIZE, FONT_COLOR));
+                    address, mMaxDetailLength, FONT_SIZE, FONT_COLOR,
+                    Layout.Alignment.ALIGN_NORMAL));
             GLDetailsView.this.invalidate();
         }
     }

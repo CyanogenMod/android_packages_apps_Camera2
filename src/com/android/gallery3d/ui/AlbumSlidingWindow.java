@@ -38,7 +38,6 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
 
     private static final int MSG_LOAD_BITMAP_DONE = 0;
     private static final int MSG_UPDATE_SLOT = 1;
-    private static final int MIN_THUMB_SIZE = 100;
     private static final int JOB_LIMIT = 2;
 
     public static interface Listener {
@@ -66,24 +65,20 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
 
     private SynchronizedHandler mHandler;
     private JobLimiter mThreadPool;
-    private int mSlotWidth, mSlotHeight;
 
     private int mActiveRequestCount = 0;
     private boolean mIsActive = false;
 
-    private int mDisplayItemSize;  // 0: disabled
+    private int mCacheThumbSize;  // 0: Don't cache the thumbnails
     private LruCache<Path, Bitmap> mImageCache = new LruCache<Path, Bitmap>(1000);
 
     public AlbumSlidingWindow(GalleryActivity activity,
             AlbumView.Model source, int cacheSize,
-            int slotWidth, int slotHeight, int displayItemSize) {
+            int cacheThumbSize) {
         source.setModelListener(this);
         mSource = source;
         mData = new AlbumDisplayItem[cacheSize];
         mSize = source.size();
-        mSlotWidth = slotWidth;
-        mSlotHeight = slotHeight;
-        mDisplayItemSize = displayItemSize;
 
         mWaitLoadingTexture = new ColorTexture(Color.TRANSPARENT);
         mWaitLoadingTexture.setSize(1, 1);
@@ -317,37 +312,37 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
 
         private void updateContent(Texture content) {
             mContent = content;
+        }
 
+        @Override
+        public boolean render(GLCanvas canvas, int pass) {
+            // Fit the content into the box
             int width = mContent.getWidth();
             int height = mContent.getHeight();
 
-            float scalex = mDisplayItemSize / (float) width;
-            float scaley = mDisplayItemSize / (float) height;
+            float scalex = mBoxWidth / (float) width;
+            float scaley = mBoxHeight / (float) height;
             float scale = Math.min(scalex, scaley);
 
             width = (int) Math.floor(width * scale);
             height = (int) Math.floor(height * scale);
 
-            setSize(width, height);
-        }
-
-        @Override
-        public boolean render(GLCanvas canvas, int pass) {
+            // Now draw it
             if (pass == 0) {
                 Path path = null;
                 if (mMediaItem != null) path = mMediaItem.getPath();
-                mSelectionDrawer.draw(canvas, mContent, mWidth, mHeight,
+                mSelectionDrawer.draw(canvas, mContent, width, height,
                         getRotation(), path, mMediaType);
                 return (mFocusIndex == mSlotIndex);
             } else if (pass == 1) {
-                mSelectionDrawer.drawFocus(canvas, mWidth, mHeight);
+                mSelectionDrawer.drawFocus(canvas, width, height);
             }
             return false;
         }
 
         @Override
         public void startLoadBitmap() {
-            if (mDisplayItemSize < MIN_THUMB_SIZE) {
+            if (mCacheThumbSize > 0) {
                 Path path = mMediaItem.getPath();
                 if (mImageCache.containsKey(path)) {
                     Bitmap bitmap = mImageCache.get(path);
@@ -368,7 +363,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
             Bitmap bitmap = job.run(jc);
             if (bitmap != null) {
                 bitmap = BitmapUtils.resizeDownBySideLength(
-                        bitmap, mDisplayItemSize, true);
+                        bitmap, mCacheThumbSize, true);
             }
             return bitmap;
         }
@@ -390,7 +385,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
             mFuture = null;
             Bitmap bitmap = future.get();
             boolean isCancelled = future.isCancelled();
-            if (mDisplayItemSize < MIN_THUMB_SIZE && (bitmap != null || !isCancelled)) {
+            if (mCacheThumbSize > 0 && (bitmap != null || !isCancelled)) {
                 Path path = mMediaItem.getPath();
                 mImageCache.put(path, bitmap);
             }

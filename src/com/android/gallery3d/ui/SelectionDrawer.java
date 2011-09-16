@@ -35,14 +35,14 @@ public abstract class SelectionDrawer {
     public abstract void draw(GLCanvas canvas, Texture content,
             int width, int height, int rotation, Path path,
             int topIndex, int dataSourceType, int mediaType,
-            boolean wantCache, boolean isCaching);
+            int darkStripHeight, boolean wantCache, boolean isCaching);
     public abstract void drawFocus(GLCanvas canvas, int width, int height);
 
     public void draw(GLCanvas canvas, Texture content, int width, int height,
             int rotation, Path path, int mediaType) {
         draw(canvas, content, width, height, rotation, path, 0,
                 DATASOURCE_TYPE_NOT_CATEGORIZED, mediaType,
-                false, false);
+                0, false, false);
     }
 
     public static void drawWithRotation(GLCanvas canvas, Texture content,

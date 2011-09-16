@@ -41,7 +41,7 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
     private static final int INDEX_NONE = -1;
 
     private static final int MIN_LOAD_COUNT = 4;
-    private static final int MAX_COVER_COUNT = 4;
+    private static final int MAX_COVER_COUNT = 1;
 
     private static final int MSG_LOAD_START = 1;
     private static final int MSG_LOAD_FINISH = 2;

@@ -45,9 +45,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
 
     private final AlbumSetView.Model mSource;
     private int mSize;
-    private int mLabelWidth;
-    private int mDisplayItemSize;
-    private int mLabelFontSize;
+    private AlbumSetView.LabelSpec mLabelSpec;
 
     private int mContentStart = 0;
     private int mContentEnd = 0;
@@ -75,13 +73,11 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         public int cacheStatus;
     }
 
-    public AlbumSetSlidingWindow(GalleryActivity activity, int labelWidth,
-            int displayItemSize, int labelFontSize, SelectionDrawer drawer,
+    public AlbumSetSlidingWindow(GalleryActivity activity,
+            AlbumSetView.LabelSpec labelSpec, SelectionDrawer drawer,
             AlbumSetView.Model source, int cacheSize) {
         source.setModelListener(this);
-        mLabelWidth = labelWidth;
-        mDisplayItemSize = displayItemSize;
-        mLabelFontSize = labelFontSize;
+        mLabelSpec = labelSpec;
         mLoadingLabel = activity.getAndroidContext().getString(R.string.loading);
         mSource = source;
         mSelectionDrawer = drawer;
@@ -367,20 +363,22 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
 
         private void updateContent(Texture content) {
             mContent = content;
-
-            int width = content.getWidth();
-            int height = content.getHeight();
-
-            float scale = (float) mDisplayItemSize / Math.max(width, height);
-
-            width = (int) Math.floor(width * scale);
-            height = (int) Math.floor(height * scale);
-
-            setSize(width, height);
         }
 
         @Override
         public boolean render(GLCanvas canvas, int pass) {
+            // Fit the content into the box
+            int width = mContent.getWidth();
+            int height = mContent.getHeight();
+
+            float scalex = mBoxWidth / (float) width;
+            float scaley = mBoxHeight / (float) height;
+            float scale = Math.min(scalex, scaley);
+
+            width = (int) Math.floor(width * scale);
+            height = (int) Math.floor(height * scale);
+
+            // Now draw it
             int sourceType = SelectionDrawer.DATASOURCE_TYPE_NOT_CATEGORIZED;
             int cacheFlag = MediaSet.CACHE_FLAG_NO;
             int cacheStatus = MediaSet.CACHE_STATUS_NOT_CACHED;
@@ -392,8 +390,9 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
                 cacheStatus = set.cacheStatus;
             }
 
-            mSelectionDrawer.draw(canvas, mContent, mWidth, mHeight,
+            mSelectionDrawer.draw(canvas, mContent, width, height,
                     getRotation(), path, mCoverIndex, sourceType, mMediaType,
+                    mLabelSpec.darkStripHeight,
                     cacheFlag == MediaSet.CACHE_FLAG_FULL,
                     (cacheFlag == MediaSet.CACHE_FLAG_FULL)
                     && (cacheStatus != MediaSet.CACHE_STATUS_CACHED_FULL));
@@ -471,37 +470,61 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
     }
 
     private class LabelDisplayItem extends DisplayItem {
-        private static final int FONT_COLOR = Color.WHITE;
+        private static final int FONT_COLOR_TITLE = Color.WHITE;
+        private static final int FONT_COLOR_NUMBER = 0x80FFFFFF;  // 50% white
 
-        private StringTexture mTexture;
-        private String mLabel;
-        private String mPostfix;
+        private StringTexture mTextureTitle;
+        private StringTexture mTextureNumber;
+        private String mTitle;
+        private String mNumber;
+        private int mLastWidth;
         private final int mSlotIndex;
 
         public LabelDisplayItem(int slotIndex) {
             mSlotIndex = slotIndex;
-            updateContent();
         }
 
         public boolean updateContent() {
-            String label = mLoadingLabel;
-            String postfix = null;
+            String title = mLoadingLabel;
+            String number = "";
             MediaSet set = mSource.getMediaSet(mSlotIndex);
             if (set != null) {
-                label = Utils.ensureNotNull(set.getName());
-                postfix = " (" + set.getTotalMediaItemCount() + ")";
+                title = Utils.ensureNotNull(set.getName());
+                number = "" + set.getTotalMediaItemCount();
             }
-            if (Utils.equals(label, mLabel)
-                    && Utils.equals(postfix, mPostfix)) return false;
-            mTexture = StringTexture.newInstance(
-                    label, postfix, mLabelFontSize, FONT_COLOR, mLabelWidth, true);
-            setSize(mTexture.getWidth(), mTexture.getHeight());
+            if (Utils.equals(title, mTitle)
+                    && Utils.equals(number, mNumber)
+                    && Utils.equals(mBoxWidth, mLastWidth)) {
+                    return false;
+            }
+            mTitle = title;
+            mNumber = number;
+            mLastWidth = mBoxWidth;
+
+            AlbumSetView.LabelSpec s = mLabelSpec;
+            mTextureTitle = StringTexture.newInstance(
+                    title, s.titleFontSize, FONT_COLOR_TITLE,
+                    mBoxWidth - s.leftMargin, false);
+            mTextureNumber = StringTexture.newInstance(
+                    number, s.numberFontSize, FONT_COLOR_NUMBER,
+                    mBoxWidth - s.leftMargin, true);
+
             return true;
         }
 
         @Override
         public boolean render(GLCanvas canvas, int pass) {
-            mTexture.draw(canvas, -mWidth / 2, -mHeight / 2);
+            if (mBoxWidth != mLastWidth) {
+                updateContent();
+            }
+
+            AlbumSetView.LabelSpec s = mLabelSpec;
+            int x = -mBoxWidth / 2;
+            int y = (mBoxHeight + 1) / 2 - s.darkStripHeight;
+            y += s.titleOffset;
+            mTextureTitle.draw(canvas, x + s.leftMargin, y);
+            y += s.titleFontSize + s.numberOffset;
+            mTextureNumber.draw(canvas, x + s.iconSize, y);
             return false;
         }
 
