@@ -13,50 +13,44 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:background="@drawable/manage_bar">
-    <LinearLayout android:id="@+id/cache_bar"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        <LinearLayout android:orientation="vertical"
-                android:paddingLeft="10dp"
-                android:paddingRight="5dp"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-            <TextView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="bottom"
-                    android:drawablePadding="3dp"
-                    android:text="@string/make_available_offline"
-                    android:drawableRight="@drawable/ic_manage_pin_small"/>
-            <ProgressBar android:id="@+id/progress"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:max="100"
-                    android:progress="30"
-                    android:secondaryProgress="65"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="3dp"/>
-            <TextView android:id="@+id/status"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-        </LinearLayout>
-        <View android:layout_width="2dp"
-                android:layout_height="match_parent"
-                android:background="@android:drawable/divider_horizontal_dark" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="40dp">
+        <TextView android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+        <ProgressBar android:id="@+id/progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:max="100"
+            android:progress="30"
+            android:secondaryProgress="65"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_width="130dp"
+            android:layout_height="4dp"
+            android:layout_below="@id/status"
+            android:layout_centerHorizontal="true"/>
+    </RelativeLayout>
+    <RelativeLayout android:layout_width="fill_parent"
+                android:layout_height="@dimen/manage_cache_bottom_height"
+                android:background="#1f1f1f">
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/make_available_offline"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:drawableLeft="@drawable/ic_manage_pin_small"
+            android:drawablePadding="3dp"/>
         <Button android:id="@+id/done"
-                style="?android:attr/borderlessButtonStyle"
-                android:text="@string/done"
-                android:layout_weight="0"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"/>
-    </LinearLayout>
-</FrameLayout>
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/done"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+</LinearLayout>
