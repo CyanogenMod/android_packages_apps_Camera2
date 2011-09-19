@@ -60,6 +60,12 @@
     <!-- Name for the photo effect that makes photo only two color tones. [CHAR LIMIT=15] -->
     <string name="duotone">Duo-tone</string>
 
+    <!-- Name for the photo effect that smooths facial skins. [CHAR LIMIT=15] -->
+    <string name="facelift">Face Glow</string>
+
+    <!-- Name for the photo effect that tans facial skins. [CHAR LIMIT=15] -->
+    <string name="facetan">Face Tan</string>
+
     <!-- Name for the photo effect that fills back-light. [CHAR LIMIT=15] -->
     <string name="filllight">Fill Light</string>
 
