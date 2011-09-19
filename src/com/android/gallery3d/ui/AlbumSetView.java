@@ -64,11 +64,11 @@ public class AlbumSetView extends SlotView {
     }
 
     public static class LabelSpec {
-        public int darkStripHeight;
+        public int labelBackgroundHeight;
         public int titleOffset;
-        public int numberOffset;
+        public int countOffset;
         public int titleFontSize;
-        public int numberFontSize;
+        public int countFontSize;
         public int leftMargin;
         public int iconSize;
     }

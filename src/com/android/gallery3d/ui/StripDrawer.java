@@ -23,12 +23,23 @@ import android.content.Context;
 import android.graphics.Rect;
 
 public class StripDrawer extends SelectionDrawer {
+    private NinePatchTexture mFramePressed;
     private NinePatchTexture mFocusBox;
     private Rect mFocusBoxPadding;
+    private Path mPressedPath;
 
     public StripDrawer(Context context) {
+        mFramePressed = new NinePatchTexture(context, R.drawable.grid_pressed);
         mFocusBox = new NinePatchTexture(context, R.drawable.focus_box);
         mFocusBoxPadding = mFocusBox.getPaddings();
+    }
+
+    public void setPressedPath(Path path) {
+        mPressedPath = path;
+    }
+
+    private boolean isPressedPath(Path path) {
+        return path != null && path == mPressedPath;
     }
 
     @Override
@@ -36,15 +47,19 @@ public class StripDrawer extends SelectionDrawer {
     }
 
     @Override
-    public void draw(GLCanvas canvas, Texture content, int width, int height,
-            int rotation, Path path, int topIndex, int dataSourceType,
-            int mediaType, int darkStripHeight, boolean wantCache,
-            boolean isCaching) {
+    public void draw(GLCanvas canvas, Texture content,
+            int width, int height, int rotation, Path path, int topIndex,
+            int dataSourceType, int mediaType, boolean isPanorama,
+            int labelBackgroundHeight, boolean wantCache, boolean isCaching) {
 
         int x = -width / 2;
         int y = -height / 2;
 
         drawWithRotation(canvas, content, x, y, width, height, rotation);
+
+        if (isPressedPath(path)) {
+            drawFrame(canvas, mFramePressed, x, y, width, height);
+        }
     }
 
     @Override

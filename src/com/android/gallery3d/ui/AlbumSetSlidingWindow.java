@@ -25,6 +25,7 @@ import com.android.gallery3d.data.Path;
 import com.android.gallery3d.ui.AlbumSetView.AlbumSetItem;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
+import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.MediaSetUtils;
 import com.android.gallery3d.util.ThreadPool;
 
@@ -337,6 +338,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         private final int mMediaType;
         private Texture mContent;
         private final long mDataVersion;
+        private boolean mIsPanorama;
 
         public GalleryDisplayItem(int slotIndex, int coverIndex, MediaItem item) {
             super(item);
@@ -344,6 +346,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
             mCoverIndex = coverIndex;
             mMediaType = item.getMediaType();
             mDataVersion = item.getDataVersion();
+            mIsPanorama = GalleryUtils.isPanorama(item);
             updateContent(mWaitLoadingTexture);
         }
 
@@ -392,7 +395,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
 
             mSelectionDrawer.draw(canvas, mContent, width, height,
                     getRotation(), path, mCoverIndex, sourceType, mMediaType,
-                    mLabelSpec.darkStripHeight,
+                    mIsPanorama, mLabelSpec.labelBackgroundHeight,
                     cacheFlag == MediaSet.CACHE_FLAG_FULL,
                     (cacheFlag == MediaSet.CACHE_FLAG_FULL)
                     && (cacheStatus != MediaSet.CACHE_STATUS_CACHED_FULL));
@@ -471,14 +474,15 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
 
     private class LabelDisplayItem extends DisplayItem {
         private static final int FONT_COLOR_TITLE = Color.WHITE;
-        private static final int FONT_COLOR_NUMBER = 0x80FFFFFF;  // 50% white
+        private static final int FONT_COLOR_COUNT = 0x80FFFFFF;  // 50% white
 
         private StringTexture mTextureTitle;
-        private StringTexture mTextureNumber;
+        private StringTexture mTextureCount;
         private String mTitle;
-        private String mNumber;
+        private String mCount;
         private int mLastWidth;
         private final int mSlotIndex;
+        private boolean mHasIcon;
 
         public LabelDisplayItem(int slotIndex) {
             mSlotIndex = slotIndex;
@@ -486,27 +490,29 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
 
         public boolean updateContent() {
             String title = mLoadingLabel;
-            String number = "";
+            String count = "";
             MediaSet set = mSource.getMediaSet(mSlotIndex);
             if (set != null) {
                 title = Utils.ensureNotNull(set.getName());
-                number = "" + set.getTotalMediaItemCount();
+                count = "" + set.getTotalMediaItemCount();
             }
             if (Utils.equals(title, mTitle)
-                    && Utils.equals(number, mNumber)
+                    && Utils.equals(count, mCount)
                     && Utils.equals(mBoxWidth, mLastWidth)) {
                     return false;
             }
             mTitle = title;
-            mNumber = number;
+            mCount = count;
             mLastWidth = mBoxWidth;
+            mHasIcon = (identifySourceType(set) !=
+                    SelectionDrawer.DATASOURCE_TYPE_NOT_CATEGORIZED);
 
             AlbumSetView.LabelSpec s = mLabelSpec;
             mTextureTitle = StringTexture.newInstance(
                     title, s.titleFontSize, FONT_COLOR_TITLE,
                     mBoxWidth - s.leftMargin, false);
-            mTextureNumber = StringTexture.newInstance(
-                    number, s.numberFontSize, FONT_COLOR_NUMBER,
+            mTextureCount = StringTexture.newInstance(
+                    count, s.countFontSize, FONT_COLOR_COUNT,
                     mBoxWidth - s.leftMargin, true);
 
             return true;
@@ -520,11 +526,12 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
 
             AlbumSetView.LabelSpec s = mLabelSpec;
             int x = -mBoxWidth / 2;
-            int y = (mBoxHeight + 1) / 2 - s.darkStripHeight;
+            int y = (mBoxHeight + 1) / 2 - s.labelBackgroundHeight;
             y += s.titleOffset;
             mTextureTitle.draw(canvas, x + s.leftMargin, y);
-            y += s.titleFontSize + s.numberOffset;
-            mTextureNumber.draw(canvas, x + s.iconSize, y);
+            y += s.titleFontSize + s.countOffset;
+            x += mHasIcon ? s.iconSize : s.leftMargin;
+            mTextureCount.draw(canvas, x, y);
             return false;
         }
 

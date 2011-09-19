@@ -113,10 +113,10 @@ public class ManageCachePage extends ActivityState implements
             int slotViewTop = GalleryActionBar.getHeight(activity);
             int slotViewBottom = bottom - top;
 
-            View cacheBar = activity.findViewById(R.id.cache_bar);
-            if (cacheBar != null) {
+            View footer = activity.findViewById(R.id.footer);
+            if (footer != null) {
                 int location[] = {0, 0};
-                cacheBar.getLocationOnScreen(location);
+                footer.getLocationOnScreen(location);
                 slotViewBottom = location[1];
             }
 
@@ -141,6 +141,18 @@ public class ManageCachePage extends ActivityState implements
         mZ = z;
         mRootPane.unlockRendering();
         mRootPane.invalidate();
+    }
+
+    private void onDown(int index) {
+        MediaSet set = mAlbumSetDataAdapter.getMediaSet(index);
+        Path path = (set == null) ? null : set.getPath();
+        mSelectionManager.setPressedPath(path);
+        mAlbumSetView.invalidate();
+    }
+
+    private void onUp() {
+        mSelectionManager.setPressedPath(null);
+        mAlbumSetView.invalidate();
     }
 
     public void onSingleTapUp(int slotIndex) {
@@ -285,6 +297,16 @@ public class ManageCachePage extends ActivityState implements
         mAlbumSetView = new AlbumSetView(mActivity, mSelectionDrawer,
                 config.slotViewSpec, config.labelSpec);
         mAlbumSetView.setListener(new SlotView.SimpleListener() {
+            @Override
+            public void onDown(int index) {
+                ManageCachePage.this.onDown(index);
+            }
+
+            @Override
+            public void onUp() {
+                ManageCachePage.this.onUp();
+            }
+
             @Override
             public void onSingleTapUp(int slotIndex) {
                 ManageCachePage.this.onSingleTapUp(slotIndex);

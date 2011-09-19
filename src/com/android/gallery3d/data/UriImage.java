@@ -263,4 +263,14 @@ public class UriImage extends MediaItem {
             super.finalize();
         }
     }
+
+    @Override
+    public int getWidth() {
+        return 0;
+    }
+
+    @Override
+    public int getHeight() {
+        return 0;
+    }
 }

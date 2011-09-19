@@ -352,4 +352,11 @@ public class GalleryUtils {
             output[0] = number;
         }
     }
+
+    public static boolean isPanorama(MediaItem item) {
+        if (item == null) return false;
+        int w = item.getWidth();
+        int h = item.getHeight();
+        return (h > 0 && w / h >= 2);
+    }
 }
