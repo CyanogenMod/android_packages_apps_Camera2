@@ -521,10 +521,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 break;
             }
             case SelectionManager.SELECT_ALL_MODE: {
-                int count = mSelectionManager.getSelectedCount();
-                String format = mActivity.getResources().getQuantityString(
-                        R.plurals.number_of_items_selected, count);
-                mActionModeHandler.setTitle(String.format(format, count));
                 mActionModeHandler.updateSupportedOperation();
                 mRootPane.invalidate();
                 break;
