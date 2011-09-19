@@ -86,7 +86,7 @@ public class ActionModeHandler implements ActionMode.Callback {
         mSelectionMenu = customMenu.addDropDownMenu(
                 (Button) customView.findViewById(R.id.selection_menu),
                 R.menu.selection);
-        updateSelectAllTitle();
+        updateSelectionMenu();
         customMenu.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 return onActionItemClicked(actionMode, item);
@@ -119,12 +119,17 @@ public class ActionModeHandler implements ActionMode.Callback {
         result = mMenuExecutor.onMenuClicked(item, listener);
         if (item.getItemId() == R.id.action_select_all) {
             updateSupportedOperation();
-            updateSelectAllTitle();
+            updateSelectionMenu();
         }
         return result;
     }
 
-    private void updateSelectAllTitle() {
+    private void updateSelectionMenu() {
+        // update title
+        int count = mSelectionManager.getSelectedCount();
+        String format = mActivity.getResources().getQuantityString(
+                R.plurals.number_of_items_selected, count);
+        setTitle(String.format(format, count));
         // For clients who call SelectionManager.selectAll() directly, we need to ensure the
         // menu status is consistent with selection manager.
         MenuItem item = mSelectionMenu.findItem(R.id.action_select_all);
