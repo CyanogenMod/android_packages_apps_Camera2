@@ -155,6 +155,17 @@ public class BitmapUtils {
         return resizeBitmapByScale(bitmap, scale, recycle);
     }
 
+    // Resize the bitmap if each side is >= targetSize * 2
+    public static Bitmap resizeDownIfTooBig(
+            Bitmap bitmap, int targetSize, boolean recycle) {
+        int srcWidth = bitmap.getWidth();
+        int srcHeight = bitmap.getHeight();
+        float scale = Math.max(
+                (float) targetSize / srcWidth, (float) targetSize / srcHeight);
+        if (scale > 0.5f) return bitmap;
+        return resizeBitmapByScale(bitmap, scale, recycle);
+    }
+
     // Crops a square from the center of the original image.
     public static Bitmap cropCenter(Bitmap bitmap, boolean recycle) {
         int width = bitmap.getWidth();
