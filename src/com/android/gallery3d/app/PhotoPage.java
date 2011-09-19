@@ -85,6 +85,7 @@ public class PhotoPage extends ActivityState
     private FilmStripView mFilmStripView;
     private DetailsHelper mDetailsHelper;
     private boolean mShowDetails;
+    private Path mPendingSharePath;
 
     // mMediaSet could be null if there is no KEY_MEDIA_SET_PATH supplied.
     // E.g., viewing a photo in gmail attachment
@@ -240,6 +241,7 @@ public class PhotoPage extends ActivityState
             mPhotoView.setModel(mModel);
             updateCurrentPhoto(mediaItem);
         }
+
         mHandler = new SynchronizedHandler(mActivity.getGLRoot()) {
             @Override
             public void handleMessage(Message message) {
@@ -255,6 +257,21 @@ public class PhotoPage extends ActivityState
 
         // start the opening animation
         mPhotoView.setOpenedItem(itemPath);
+    }
+
+    private void updateShareURI(Path path) {
+        if (mShareActionProvider != null) {
+            DataManager manager = mActivity.getDataManager();
+            int type = manager.getMediaType(path);
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType(MenuExecutor.getMimeType(type));
+            intent.putExtra(Intent.EXTRA_STREAM, manager.getContentUri(path));
+            mShareActionProvider.setShareIntent(intent);
+            mPendingSharePath = null;
+        } else {
+            // This happens when ActionBar is not created yet.
+            mPendingSharePath = path;
+        }
     }
 
     private void setTitle(String title) {
@@ -276,19 +293,10 @@ public class PhotoPage extends ActivityState
             mDetailsHelper.reloadDetails(mModel.getCurrentIndex());
         }
         setTitle(photo.getName());
-        mPhotoView.showVideoPlayIcon(photo.getMediaType()
-                == MediaObject.MEDIA_TYPE_VIDEO);
+        mPhotoView.showVideoPlayIcon(
+                photo.getMediaType() == MediaObject.MEDIA_TYPE_VIDEO);
 
-        // If we have an ActionBar then we update the share intent
-        if (mShareActionProvider != null) {
-            Path path = photo.getPath();
-            DataManager manager = mActivity.getDataManager();
-            int type = manager.getMediaType(path);
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType(MenuExecutor.getMimeType(type));
-            intent.putExtra(Intent.EXTRA_STREAM, manager.getContentUri(path));
-            mShareActionProvider.setShareIntent(intent);
-        }
+        updateShareURI(photo.getPath());
     }
 
     private void updateMenuOperations() {
@@ -384,6 +392,7 @@ public class PhotoPage extends ActivityState
         menu.findItem(R.id.action_slideshow).setVisible(
                 mMediaSet != null && !(mMediaSet instanceof MtpDevice));
         mShareActionProvider = GalleryActionBar.initializeShareActionProvider(menu);
+        if (mPendingSharePath != null) updateShareURI(mPendingSharePath);
         mMenu = menu;
         mShowBars = true;
         updateMenuOperations();
