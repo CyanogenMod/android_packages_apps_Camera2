@@ -22,12 +22,14 @@ import android.content.Context;
 
 public abstract class IconDrawer extends SelectionDrawer {
     private static final String TAG = "IconDrawer";
-    private static final int DARK_STRIP_COLOR = 0x99000000;  // 60% black
+    private static final int LABEL_BACKGROUND_COLOR = 0x99000000;  // 60% black
 
     private final ResourceTexture mLocalSetIcon;
     private final ResourceTexture mCameraIcon;
     private final ResourceTexture mPicasaIcon;
     private final ResourceTexture mMtpIcon;
+    private final NinePatchTexture mFramePressed;
+    private final ResourceTexture mPanoramaBorder;
     private final Texture mVideoOverlay;
     private final Texture mVideoPlayIcon;
     private final int mIconSize;
@@ -43,9 +45,11 @@ public abstract class IconDrawer extends SelectionDrawer {
         mLocalSetIcon = new ResourceTexture(context, R.drawable.frame_overlay_gallery_folder);
         mCameraIcon = new ResourceTexture(context, R.drawable.frame_overlay_gallery_camera);
         mPicasaIcon = new ResourceTexture(context, R.drawable.frame_overlay_gallery_picasa);
-        mMtpIcon = new ResourceTexture(context, R.drawable.ic_album_overlay_ptp_holo);
+        mMtpIcon = new ResourceTexture(context, R.drawable.frame_overlay_gallery_ptp);
         mVideoOverlay = new ResourceTexture(context, R.drawable.ic_video_thumb);
         mVideoPlayIcon = new ResourceTexture(context, R.drawable.ic_gallery_play);
+        mPanoramaBorder = new ResourceTexture(context, R.drawable.ic_pan_thumb);
+        mFramePressed = new NinePatchTexture(context, R.drawable.grid_pressed);
         mIconSize = context.getResources().getDimensionPixelSize(
                 R.dimen.albumset_icon_size);
     }
@@ -95,14 +99,23 @@ public abstract class IconDrawer extends SelectionDrawer {
         id.width = Math.round(scale * icon.getWidth());
         id.height = Math.round(scale * icon.getHeight());
         id.x = -width / 2;
-        id.y = height / 2 - id.height;
+        id.y = (height + 1) / 2 - id.height;
         return id;
     }
 
-    protected void drawVideoOverlay(GLCanvas canvas, int mediaType,
-            int x, int y, int width, int height, int topIndex) {
-        if (mediaType != MediaObject.MEDIA_TYPE_VIDEO) return;
+    protected void drawMediaTypeOverlay(GLCanvas canvas, int mediaType,
+            boolean isPanorama, int x, int y, int width, int height,
+            int topIndex) {
+        if (mediaType == MediaObject.MEDIA_TYPE_VIDEO) {
+            drawVideoOverlay(canvas, x, y, width, height, topIndex);
+        }
+        if (isPanorama) {
+            drawPanoramaBorder(canvas, x, y, width, height);
+        }
+    }
 
+    protected void drawVideoOverlay(GLCanvas canvas, int x, int y,
+            int width, int height, int topIndex) {
         // Scale the video overlay to the height of the thumbnail and put it
         // on the left side.
         float scale = (float) height / mVideoOverlay.getHeight();
@@ -116,11 +129,27 @@ public abstract class IconDrawer extends SelectionDrawer {
         }
     }
 
-    protected void drawDarkStrip(GLCanvas canvas, int width, int height,
-            int darkStripHeight) {
+    protected void drawPanoramaBorder(GLCanvas canvas, int x, int y,
+            int width, int height) {
+        float scale = (float) width / mPanoramaBorder.getWidth();
+        int w = Math.round(scale * mPanoramaBorder.getWidth());
+        int h = Math.round(scale * mPanoramaBorder.getHeight());
+        // draw at the top
+        mPanoramaBorder.draw(canvas, x, y, w, h);
+        // draw at the bottom
+        mPanoramaBorder.draw(canvas, x, y + width - h, w, h);
+    }
+
+    protected void drawLabelBackground(GLCanvas canvas, int width, int height,
+            int drawLabelBackground) {
         int x = -width / 2;
-        int y = (height + 1) / 2 - darkStripHeight;
-        canvas.fillRect(x, y, width, darkStripHeight, DARK_STRIP_COLOR);
+        int y = (height + 1) / 2 - drawLabelBackground;
+        canvas.fillRect(x, y, width, drawLabelBackground, LABEL_BACKGROUND_COLOR);
+    }
+
+    protected void drawPressedFrame(GLCanvas canvas, int x, int y, int width,
+            int height) {
+        drawFrame(canvas, mFramePressed, x, y, width, height);
     }
 
     @Override

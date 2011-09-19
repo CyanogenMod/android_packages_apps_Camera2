@@ -40,4 +40,14 @@ public class MockItem extends MediaItem {
     public String getMimeType() {
         return null;
     }
+
+    @Override
+    public int getWidth() {
+        return 0;
+    }
+
+    @Override
+    public int getHeight() {
+        return 0;
+    }
 }

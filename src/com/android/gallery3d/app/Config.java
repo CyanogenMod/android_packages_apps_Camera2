@@ -46,16 +46,16 @@ final class Config {
             slotViewSpec.slotGap = r.getDimensionPixelSize(R.dimen.albumset_slot_gap);
 
             labelSpec = new AlbumSetView.LabelSpec();
-            labelSpec.darkStripHeight = r.getDimensionPixelSize(
-                    R.dimen.albumset_dark_strip_height);
+            labelSpec.labelBackgroundHeight = r.getDimensionPixelSize(
+                    R.dimen.albumset_label_background_height);
             labelSpec.titleOffset = r.getDimensionPixelSize(
                     R.dimen.albumset_title_offset);
-            labelSpec.numberOffset = r.getDimensionPixelSize(
-                    R.dimen.albumset_number_offset);
+            labelSpec.countOffset = r.getDimensionPixelSize(
+                    R.dimen.albumset_count_offset);
             labelSpec.titleFontSize = r.getDimensionPixelSize(
                     R.dimen.albumset_title_font_size);
-            labelSpec.numberFontSize = r.getDimensionPixelSize(
-                    R.dimen.albumset_number_font_size);
+            labelSpec.countFontSize = r.getDimensionPixelSize(
+                    R.dimen.albumset_count_font_size);
             labelSpec.leftMargin = r.getDimensionPixelSize(
                     R.dimen.albumset_left_margin);
             labelSpec.iconSize = r.getDimensionPixelSize(

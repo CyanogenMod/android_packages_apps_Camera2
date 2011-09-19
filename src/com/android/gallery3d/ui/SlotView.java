@@ -39,12 +39,16 @@ public class SlotView extends GLView {
     private static final int INDEX_NONE = -1;
 
     public interface Listener {
+        public void onDown(int index);
+        public void onUp();
         public void onSingleTapUp(int index);
         public void onLongTap(int index);
         public void onScrollPositionChanged(int position, int total);
     }
 
     public static class SimpleListener implements Listener {
+        public void onDown(int index) {}
+        public void onUp() {}
         public void onSingleTapUp(int index) {}
         public void onLongTap(int index) {}
         public void onScrollPositionChanged(int position, int total) {}
@@ -597,12 +601,37 @@ public class SlotView extends GLView {
         }
     }
 
-    private class MyGestureListener
-            extends GestureDetector.SimpleOnGestureListener {
+    private class MyGestureListener implements
+            GestureDetector.OnGestureListener {
+        private boolean isDown;
+
+        // We call the listener's onDown() when our onShowPress() is called and
+        // call the listener's onUp() when we receive any further event.
+        @Override
+        public void onShowPress(MotionEvent e) {
+            if (isDown) return;
+            int index = mLayout.getSlotIndexByPosition(e.getX(), e.getY());
+            if (index != INDEX_NONE) {
+                isDown = true;
+                mListener.onDown(index);
+            }
+        }
+
+        private void cancelDown() {
+            if (!isDown) return;
+            isDown = false;
+            mListener.onUp();
+        }
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return false;
+        }
 
         @Override
         public boolean onFling(MotionEvent e1,
                 MotionEvent e2, float velocityX, float velocityY) {
+            cancelDown();
             int scrollLimit = mLayout.getScrollLimit();
             if (scrollLimit == 0) return false;
             float velocity = WIDE ? velocityX : velocityY;
@@ -615,6 +644,7 @@ public class SlotView extends GLView {
         @Override
         public boolean onScroll(MotionEvent e1,
                 MotionEvent e2, float distanceX, float distanceY) {
+            cancelDown();
             float distance = WIDE ? distanceX : distanceY;
             boolean canMove = mScroller.startScroll(
                     Math.round(distance), 0, mLayout.getScrollLimit());
@@ -627,6 +657,7 @@ public class SlotView extends GLView {
 
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
+            cancelDown();
             if (mDownInScrolling) return true;
             int index = mLayout.getSlotIndexByPosition(e.getX(), e.getY());
             if (index != INDEX_NONE) mListener.onSingleTapUp(index);
@@ -635,6 +666,7 @@ public class SlotView extends GLView {
 
         @Override
         public void onLongPress(MotionEvent e) {
+            cancelDown();
             if (mDownInScrolling) return;
             lockRendering();
             try {

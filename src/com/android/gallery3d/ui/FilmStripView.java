@@ -20,14 +20,16 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.anim.AlphaAnimation;
 import com.android.gallery3d.app.AlbumDataAdapter;
 import com.android.gallery3d.app.GalleryActivity;
+import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaSet;
+import com.android.gallery3d.data.Path;
 
 import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View.MeasureSpec;
 
-public class FilmStripView extends GLView implements SlotView.Listener,
-        ScrollBarView.Listener, UserInteractionListener {
+public class FilmStripView extends GLView implements ScrollBarView.Listener,
+        UserInteractionListener {
     @SuppressWarnings("unused")
     private static final String TAG = "FilmStripView";
 
@@ -79,7 +81,28 @@ public class FilmStripView extends GLView implements SlotView.Listener,
         mAlbumView = new AlbumView(activity, spec, thumbSize);
         mAlbumView.setOverscrollEffect(SlotView.OVERSCROLL_SYSTEM);
         mAlbumView.setSelectionDrawer(mStripDrawer);
-        mAlbumView.setListener(this);
+        mAlbumView.setListener(new SlotView.SimpleListener() {
+            @Override
+            public void onDown(int index) {
+                FilmStripView.this.onDown(index);
+            }
+            @Override
+            public void onUp() {
+                FilmStripView.this.onUp();
+            }
+            @Override
+            public void onSingleTapUp(int slotIndex) {
+                FilmStripView.this.onSingleTapUp(slotIndex);
+            }
+            @Override
+            public void onLongTap(int slotIndex) {
+                FilmStripView.this.onLongTap(slotIndex);
+            }
+            @Override
+            public void onScrollPositionChanged(int position, int total) {
+                FilmStripView.this.onScrollPositionChanged(position, total);
+            }
+        });
         mAlbumView.setUserInteractionListener(this);
         mAlbumDataAdapter = new AlbumDataAdapter(activity, mediaSet);
         addComponent(mAlbumView);
@@ -172,18 +195,30 @@ public class FilmStripView extends GLView implements SlotView.Listener,
         super.render(canvas);
     }
 
-    // Called by AlbumView
-    @Override
-    public void onSingleTapUp(int slotIndex) {
+    private void onDown(int index) {
+        MediaItem item = mAlbumDataAdapter.get(index);
+        Path path = (item == null) ? null : item.getPath();
+        mStripDrawer.setPressedPath(path);
+        mAlbumView.invalidate();
+    }
+
+    private void onUp() {
+        mStripDrawer.setPressedPath(null);
+        mAlbumView.invalidate();
+    }
+
+    private void onSingleTapUp(int slotIndex) {
         if (mListener.onSlotSelected(slotIndex)) {
             mAlbumView.setFocusIndex(slotIndex);
         }
     }
 
-    // Called by AlbumView
-    @Override
-    public void onLongTap(int slotIndex) {
+    private void onLongTap(int slotIndex) {
         onSingleTapUp(slotIndex);
+    }
+
+    private void onScrollPositionChanged(int position, int total) {
+        mScrollBarView.setContentPosition(position, total);
     }
 
     // Called by AlbumView
@@ -202,12 +237,6 @@ public class FilmStripView extends GLView implements SlotView.Listener,
     @Override
     public void onUserInteraction() {
         mUIListener.onUserInteraction();
-    }
-
-    // Called by AlbumView
-    @Override
-    public void onScrollPositionChanged(int position, int total) {
-        mScrollBarView.setContentPosition(position, total);
     }
 
     // Called by ScrollBarView
