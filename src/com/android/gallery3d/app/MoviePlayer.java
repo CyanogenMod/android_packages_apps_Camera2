@@ -33,6 +33,7 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
@@ -49,10 +50,17 @@ public class MoviePlayer implements
     @SuppressWarnings("unused")
     private static final String TAG = "MoviePlayer";
 
+    private static final String KEY_VIDEO_POSITION = "video-position";
+    private static final String KEY_RESUMEABLE_TIME = "resumeable-timeout";
+
     // Copied from MediaPlaybackService in the Music Player app.
     private static final String SERVICECMD = "com.android.music.musicservicecommand";
     private static final String CMDNAME = "command";
     private static final String CMDPAUSE = "pause";
+
+    // If we resume the acitivty with in RESUMEABLE_TIMEOUT, we will keep playing.
+    // Otherwise, we pause the player.
+    private static final long RESUMEABLE_TIMEOUT = 3 * 60 * 1000; // 3 mins
 
     private Context mContext;
     private final VideoView mVideoView;
@@ -62,10 +70,14 @@ public class MoviePlayer implements
     private final Handler mHandler = new Handler();
     private final AudioBecomingNoisyReceiver mAudioBecomingNoisyReceiver;
     private final ActionBar mActionBar;
+    private final MediaController mMediaController;
 
-    private boolean mHasPaused;
+    private long mResumeableTime = Long.MAX_VALUE;
+    private int mVideoPosition = 0;
+    private boolean mHasPaused = false;
 
     private final Runnable mPlayingChecker = new Runnable() {
+        @Override
         public void run() {
             if (mVideoView.isPlaying()) {
                 mProgressView.setVisibility(View.GONE);
@@ -75,7 +87,8 @@ public class MoviePlayer implements
         }
     };
 
-    public MoviePlayer(View rootView, final MovieActivity movieActivity, Uri videoUri) {
+    public MoviePlayer(View rootView, final MovieActivity movieActivity, Uri videoUri,
+            Bundle savedInstance) {
         mContext = movieActivity.getApplicationContext();
         mVideoView = (VideoView) rootView.findViewById(R.id.surface_view);
         mProgressView = rootView.findViewById(R.id.progress_indicator);
@@ -96,7 +109,7 @@ public class MoviePlayer implements
         mVideoView.setOnCompletionListener(this);
         mVideoView.setVideoURI(mUri);
 
-        MediaController mediaController = new MediaController(movieActivity) {
+        mMediaController = new MediaController(movieActivity) {
             @Override
             public void show() {
                 super.show();
@@ -109,8 +122,8 @@ public class MoviePlayer implements
                 mActionBar.hide();
             }
         };
-        mVideoView.setMediaController(mediaController);
-        mediaController.setOnKeyListener(new View.OnKeyListener() {
+        mMediaController.setOnKeyListener(new View.OnKeyListener() {
+            @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     if (event.getAction() == KeyEvent.ACTION_UP) {
@@ -121,6 +134,7 @@ public class MoviePlayer implements
                 return false;
             }
         });
+        mVideoView.setMediaController(mMediaController);
 
         mAudioBecomingNoisyReceiver = new AudioBecomingNoisyReceiver();
         mAudioBecomingNoisyReceiver.register();
@@ -132,12 +146,25 @@ public class MoviePlayer implements
         i.putExtra(CMDNAME, CMDPAUSE);
         movieActivity.sendBroadcast(i);
 
-        final Integer bookmark = mBookmarker.getBookmark(mUri);
-        if (bookmark != null) {
-            showResumeDialog(movieActivity, bookmark);
-        } else {
+        if (savedInstance != null) { // this is a resumed activity
+            mVideoPosition = savedInstance.getInt(KEY_VIDEO_POSITION, 0);
+            mResumeableTime = savedInstance.getLong(KEY_RESUMEABLE_TIME, Long.MAX_VALUE);
             mVideoView.start();
+            mVideoView.suspend();
+            mHasPaused = true;
+        } else {
+            final Integer bookmark = mBookmarker.getBookmark(mUri);
+            if (bookmark != null) {
+                showResumeDialog(movieActivity, bookmark);
+            } else {
+                mVideoView.start();
+            }
         }
+    }
+
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(KEY_VIDEO_POSITION, mVideoPosition);
+        outState.putLong(KEY_RESUMEABLE_TIME, mResumeableTime);
     }
 
     private void showResumeDialog(Context context, final int bookmark) {
@@ -147,12 +174,14 @@ public class MoviePlayer implements
                 context.getString(R.string.resume_playing_message),
                 GalleryUtils.formatDuration(context, bookmark / 1000)));
         builder.setOnCancelListener(new OnCancelListener() {
+            @Override
             public void onCancel(DialogInterface dialog) {
                 onCompletion();
             }
         });
         builder.setPositiveButton(
                 R.string.resume_playing_resume, new OnClickListener() {
+            @Override
             public void onClick(DialogInterface dialog, int which) {
                 mVideoView.seekTo(bookmark);
                 mVideoView.start();
@@ -160,6 +189,7 @@ public class MoviePlayer implements
         });
         builder.setNegativeButton(
                 R.string.resume_playing_restart, new OnClickListener() {
+            @Override
             public void onClick(DialogInterface dialog, int which) {
                 mVideoView.start();
             }
@@ -168,21 +198,25 @@ public class MoviePlayer implements
     }
 
     public void onPause() {
-        mHandler.removeCallbacksAndMessages(null);
-        mBookmarker.setBookmark(mUri, mVideoView.getCurrentPosition(),
-                mVideoView.getDuration());
-        mVideoView.suspend();
         mHasPaused = true;
+        mHandler.removeCallbacksAndMessages(null);
+        mVideoPosition = mVideoView.getCurrentPosition();
+        mBookmarker.setBookmark(mUri, mVideoPosition, mVideoView.getDuration());
+        mVideoView.suspend();
+        mResumeableTime = System.currentTimeMillis() + RESUMEABLE_TIMEOUT;
     }
 
     public void onResume() {
         if (mHasPaused) {
-            Integer bookmark = mBookmarker.getBookmark(mUri);
-            if (bookmark != null) {
-                mVideoView.seekTo(bookmark);
+            mVideoView.seekTo(mVideoPosition);
+            mVideoView.resume();
+
+            // If we have slept for too long, pause the play
+            if (System.currentTimeMillis() > mResumeableTime) {
+                mMediaController.show();
+                mVideoView.pause();
             }
         }
-        mVideoView.resume();
     }
 
     public void onDestroy() {
