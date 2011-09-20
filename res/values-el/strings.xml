@@ -77,8 +77,7 @@
     <string name="activity_not_found" msgid="3731390759313019518">"Δεν υπάρχει διαθέσιμη εφαρμογή"</string>
     <string name="process_caching_requests" msgid="1076938190997999614">"Επεξεργασία αιτημάτων προσωρινής αποθήκευσης"</string>
     <string name="caching_label" msgid="3244800874547101776">"Προσωρ. αποθ..."</string>
-    <!-- no translation found for crop_action (3427470284074377001) -->
-    <skip />
+    <string name="crop_action" msgid="3427470284074377001">"Περικοπή"</string>
     <string name="set_as" msgid="3636764710790507868">"Ορισμός ως"</string>
     <string name="video_err" msgid="7917736494827857757">"Δεν είναι δυνατή η αναπαραγωγή του βίντεο"</string>
     <string name="group_by_location" msgid="316641628989023253">"Κατά τοποθεσία"</string>
@@ -99,7 +98,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"Η εικόνα αποκοπής δεν έχει αποθηκευτεί"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Δεν υπάρχουν διαθέσιμα λευκώματα"</string>
     <string name="empty_album" msgid="6307897398825514762">"Δεν υπάρχουν διαθέσιμες εικόνες/βίντεο"</string>
-    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"Buzz"</string>
+    <string name="picasa_posts" msgid="1497721615718760613">"Αναρτήσεις"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Διαθέσιμα εκτός σύνδεσης"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Ανανέωση"</string>
     <string name="done" msgid="217672440064436595">"Τέλος"</string>
