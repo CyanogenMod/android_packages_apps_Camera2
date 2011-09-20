@@ -16,75 +16,44 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- no translation found for photoeditor_name (4738587346771969697) -->
-    <skip />
+    <string name="photoeditor_name" msgid="4738587346771969697">"Photo Studio"</string>
     <string name="loading_failure" msgid="5990741970574295950">"ፎቶ ሊሰቀል አይችልም"</string>
     <string name="saving_failure" msgid="8596600582621364077">"ፎቶ ሊሰቀል አልተቻለም"</string>
     <string name="photo_saved" msgid="3494363661299484657">"ፎቶ ወደ <xliff:g id="ALBUM_NAME">%s</xliff:g> አልበም ተቀምጧል"</string>
-    <!-- no translation found for edited_photo_bucket_name (3777746536831799890) -->
-    <skip />
-    <!-- no translation found for save_photo (3125109368779997862) -->
-    <skip />
-    <!-- no translation found for yes (5402582493291792293) -->
-    <skip />
-    <!-- no translation found for no (5595408018304861875) -->
-    <skip />
+    <string name="edited_photo_bucket_name" msgid="3777746536831799890">"አርትእ ተደርጓል"</string>
+    <string name="save_photo" msgid="3125109368779997862">"ማስተካከያ የተደረገበት ፎቶ ይቀመጥ?"</string>
+    <string name="yes" msgid="5402582493291792293">"አዎ"</string>
+    <string name="no" msgid="5595408018304861875">"አይ"</string>
     <string name="save" msgid="8933983016766252129">"አስቀምጥ"</string>
     <string name="autofix" msgid="1663414996270538748">"በራስ-ጠግን"</string>
-    <!-- no translation found for crop (7598378507763334041) -->
-    <skip />
-    <!-- no translation found for crossprocess (4173724489001742342) -->
-    <skip />
-    <!-- no translation found for documentary (50396326708699797) -->
-    <skip />
-    <!-- no translation found for doodle (1686409894518940990) -->
-    <skip />
-    <!-- no translation found for duotone (8145893940788467106) -->
-    <skip />
-    <!-- no translation found for filllight (2644989991700022526) -->
-    <skip />
-    <!-- no translation found for fisheye (6037488646928998921) -->
-    <skip />
-    <!-- no translation found for flip (2357692401826287480) -->
-    <skip />
-    <!-- no translation found for grain (7487585304579789098) -->
-    <skip />
+    <string name="crop" msgid="7598378507763334041">"ክፈፍ"</string>
+    <string name="crossprocess" msgid="4173724489001742342">"ክሮስ ፕሮሰስ"</string>
+    <string name="documentary" msgid="50396326708699797">"ዘጋቢ ፊልም"</string>
+    <string name="doodle" msgid="1686409894518940990">"Doodle"</string>
+    <string name="duotone" msgid="8145893940788467106">"Duo-tone"</string>
+    <string name="filllight" msgid="2644989991700022526">"ብርሃን ሙላ"</string>
+    <string name="fisheye" msgid="6037488646928998921">"Fisheye"</string>
+    <string name="flip" msgid="2357692401826287480">"በፍጥነት ግለጥ"</string>
+    <string name="grain" msgid="7487585304579789098">"የፊልም ግሬይን"</string>
     <string name="grayscale" msgid="7641563843060945228">"B&amp;W"</string>
-    <!-- no translation found for highlight (3902653944386623972) -->
-    <skip />
+    <string name="highlight" msgid="3902653944386623972">"የተመረጡ"</string>
     <string name="lomoish" msgid="1270032154357186736">"Lomo"</string>
-    <!-- no translation found for negative (1985508917342811252) -->
-    <skip />
-    <!-- no translation found for posterize (4139212359561383385) -->
-    <skip />
-    <!-- no translation found for redeye (4958448806369928239) -->
-    <skip />
-    <!-- no translation found for rotate (6607597269792373083) -->
-    <skip />
-    <!-- no translation found for saturation (8621322012271169931) -->
-    <skip />
-    <!-- no translation found for sepia (7978093531824705601) -->
-    <skip />
-    <!-- no translation found for shadow (8235188588101973090) -->
-    <skip />
-    <!-- no translation found for sharpen (8449662378104403230) -->
-    <skip />
-    <!-- no translation found for straighten (5217801513491493491) -->
-    <skip />
+    <string name="negative" msgid="1985508917342811252">"ኔጌቲቭ"</string>
+    <string name="posterize" msgid="4139212359561383385">"ግራጫማ ፎቶ"</string>
+    <string name="redeye" msgid="4958448806369928239">"ቀይነጥብ"</string>
+    <string name="rotate" msgid="6607597269792373083">"አሽከርክር"</string>
+    <string name="saturation" msgid="8621322012271169931">"ደማቅ"</string>
+    <string name="sepia" msgid="7978093531824705601">"ፈዘዝ ያለ ቡኒ"</string>
+    <string name="shadow" msgid="8235188588101973090">"ጥላዎች"</string>
+    <string name="sharpen" msgid="8449662378104403230">"አሹል"</string>
+    <string name="straighten" msgid="5217801513491493491">"ቀጥ አርግ"</string>
     <string name="temperature" msgid="1607987938521534517">"አሟሙቅ"</string>
-    <!-- no translation found for tint (154435943863418434) -->
-    <skip />
-    <!-- no translation found for vignette (7648125924662648282) -->
-    <skip />
+    <string name="tint" msgid="154435943863418434">"ቅልም"</string>
+    <string name="vignette" msgid="7648125924662648282">"ቪጅኔት"</string>
     <string name="crop_tooltip" msgid="8794037869706891710">"ፎቶ ለመከርከም አመልካቾችን ጎትት"</string>
-    <!-- no translation found for doodle_tooltip (2902117272374362915) -->
-    <skip />
-    <!-- no translation found for flip_tooltip (2700943256714731737) -->
-    <skip />
-    <!-- no translation found for redeye_tooltip (9112774042113471358) -->
-    <skip />
-    <!-- no translation found for rotate_tooltip (7008602969130734229) -->
-    <skip />
-    <!-- no translation found for straighten_tooltip (4846317027139212339) -->
-    <skip />
+    <string name="doodle_tooltip" msgid="2902117272374362915">"ፎቶውን doodle ለማድረግ ሳል"</string>
+    <string name="flip_tooltip" msgid="2700943256714731737">"ፎቶውን በፍጥነት ለመግለጥ ጎትት"</string>
+    <string name="redeye_tooltip" msgid="9112774042113471358">"ቀይነጥብ ለማስወገድ ሁለቴ ንካ"</string>
+    <string name="rotate_tooltip" msgid="7008602969130734229">"ፎቶውንለማሽከርከር ጎትት"</string>
+    <string name="straighten_tooltip" msgid="4846317027139212339">"ፎቶውንቀጥ ለማደረግ ጎትት"</string>
 </resources>
