@@ -29,14 +29,14 @@ public final class EntrySchema {
     @SuppressWarnings("unused")
     private static final String TAG = "EntrySchema";
 
-    private static final int TYPE_STRING = 0;
-    private static final int TYPE_BOOLEAN = 1;
-    private static final int TYPE_SHORT = 2;
-    private static final int TYPE_INT = 3;
-    private static final int TYPE_LONG = 4;
-    private static final int TYPE_FLOAT = 5;
-    private static final int TYPE_DOUBLE = 6;
-    private static final int TYPE_BLOB = 7;
+    public static final int TYPE_STRING = 0;
+    public static final int TYPE_BOOLEAN = 1;
+    public static final int TYPE_SHORT = 2;
+    public static final int TYPE_INT = 3;
+    public static final int TYPE_LONG = 4;
+    public static final int TYPE_FLOAT = 5;
+    public static final int TYPE_DOUBLE = 6;
+    public static final int TYPE_BLOB = 7;
     private static final String SQLITE_TYPES[] = {
             "TEXT", "INTEGER", "INTEGER", "INTEGER", "INTEGER", "REAL", "REAL", "NONE" };
 
@@ -91,7 +91,7 @@ public final class EntrySchema {
         return -1;
     }
 
-    private ColumnInfo getColumn(String columnName) {
+    public ColumnInfo getColumn(String columnName) {
         int index = getColumnIndex(columnName);
         return (index < 0) ? null : mColumnInfo[index];
     }
