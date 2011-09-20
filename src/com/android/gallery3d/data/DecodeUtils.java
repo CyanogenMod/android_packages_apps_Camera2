@@ -102,8 +102,12 @@ public class DecodeUtils {
         options.inSampleSize = BitmapUtils.computeSampleSizeLarger(
                 options.outWidth, options.outHeight, targetSize);
         options.inJustDecodeBounds = false;
-        return ensureGLCompatibleBitmap(
-                BitmapFactory.decodeFileDescriptor(fd, null, options));
+
+        Bitmap result = BitmapFactory.decodeFileDescriptor(fd, null, options);
+        // We need to resize down if the decoder does not support inSampleSize.
+        // (For example, GIF images.)
+        result = BitmapUtils.resizeDownIfTooBig(result, targetSize, true);
+        return ensureGLCompatibleBitmap(result);
     }
 
     /**
