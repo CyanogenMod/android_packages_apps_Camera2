@@ -53,7 +53,7 @@
     <string name="details" msgid="8415120088556445230">"Maelezo"</string>
     <string name="details_title" msgid="2611396603977441273">"Vipengee %1$d kati ya %2$d:"</string>
     <string name="close" msgid="5585646033158453043">"Funga"</string>
-    <string name="switch_to_camera" msgid="7280111806675169992">"Swichi  kwa Kamera"</string>
+    <string name="switch_to_camera" msgid="7280111806675169992">"Badili  kwa Kamera"</string>
     <!-- String.format failed for translation -->
     <!-- no translation found for number_of_items_selected:zero (2142579311530586258) -->
     <!-- String.format failed for translation -->
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="6984353643349303075">"Kamera imeunganishwa"</string>
     <string name="camera_disconnected" msgid="3683036560562699311">"kamera imekatwa muunganisho"</string>
     <string name="click_import" msgid="6407959065464291972">"Gusa hapa kuleta"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Taswira kutoka kwenye albamu"</string>
+    <string name="widget_type_album" msgid="3245149644830731121">"Picha kutoka kwenye albamu"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Changanya picha zote"</string>
-    <string name="widget_type_photo" msgid="8384174698965738770">"Chukua taswira"</string>
-    <string name="widget_type" msgid="7308564524449340985">"Aina ya Kisogora"</string>
+    <string name="widget_type_photo" msgid="8384174698965738770">"Chagua picha"</string>
+    <string name="widget_type" msgid="7308564524449340985">"Aina ya Wijeti"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Onyesho la slaidi"</string>
     <string name="albums" msgid="7320787705180057947">"Albamu"</string>
     <string name="times" msgid="2023033894889499219">"Nyakati"</string>
