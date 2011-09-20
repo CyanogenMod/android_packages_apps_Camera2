@@ -20,50 +20,40 @@
     <string name="gadget_title" msgid="259405922673466798">"Prentraam"</string>
     <string name="details_ms" msgid="940634969189855292">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
-    <!-- outdated translation 3697303290960009886 -->     <string name="movie_view_label" msgid="3526526872644898229">"Flieks"</string>
+    <string name="movie_view_label" msgid="3526526872644898229">"Videospeler"</string>
     <string name="loading_video" msgid="4013492720121891585">"Laai tans video…"</string>
     <string name="loading_image" msgid="1200894415793838191">"Laai tans beeld…"</string>
-    <!-- no translation found for loading_account (928195413034552034) -->
-    <skip />
+    <string name="loading_account" msgid="928195413034552034">"Laai tans rekening…"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"Hervat video"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"Hervat speel vanaf %s ?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Speel verder"</string>
     <string name="loading" msgid="7038208555304563571">"Laai tans…"</string>
-    <!-- outdated translation 3355969119388837437 -->     <string name="fail_to_load" msgid="2710120770735315683">"Kon nie laai nie"</string>
-    <!-- no translation found for no_thumbnail (284723185546429750) -->
-    <skip />
+    <string name="fail_to_load" msgid="2710120770735315683">"Kon nie laai nie"</string>
+    <string name="no_thumbnail" msgid="284723185546429750">"Geen kleinkiekie nie"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Begin van voor af"</string>
     <string name="crop_save_text" msgid="8821167985419282305">"Ok"</string>
-    <!-- no translation found for multiface_crop_help (3127018992717032779) -->
-    <skip />
+    <string name="multiface_crop_help" msgid="3127018992717032779">"Tik \'n gesig om te begin."</string>
     <string name="saving_image" msgid="7270334453636349407">"Stoor tans prent…"</string>
-    <!-- no translation found for crop_label (521114301871349328) -->
-    <skip />
+    <string name="crop_label" msgid="521114301871349328">"Snoei prent"</string>
     <string name="select_image" msgid="7841406150484742140">"Kies foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Kies video"</string>
     <string name="select_item" msgid="2257529413100472599">"Kies item(s)"</string>
     <string name="select_album" msgid="4632641262236697235">"Kies album(s)"</string>
     <string name="select_group" msgid="9090385962030340391">"Kies groep(e)"</string>
     <string name="set_image" msgid="2331476809308010401">"Stel prent as"</string>
-    <!-- no translation found for wallpaper (9222901738515471972) -->
-    <skip />
-    <!-- no translation found for camera_setas_wallpaper (797463183863414289) -->
-    <skip />
-    <!-- no translation found for delete (2839695998251824487) -->
-    <skip />
+    <string name="wallpaper" msgid="9222901738515471972">"Stel tans muurpapier, wag asseblief…"</string>
+    <string name="camera_setas_wallpaper" msgid="797463183863414289">"Muurpapier"</string>
+    <string name="delete" msgid="2839695998251824487">"Vee uit"</string>
     <string name="confirm_delete" msgid="5731757674837098707">"Bevestig uitvee"</string>
-    <!-- no translation found for cancel (3637516880917356226) -->
-    <skip />
+    <string name="cancel" msgid="3637516880917356226">"Kanselleer"</string>
     <string name="share" msgid="3619042788254195341">"Deling"</string>
     <string name="select_all" msgid="8623593677101437957">"Kies almal"</string>
     <string name="deselect_all" msgid="7397531298370285581">"Ontmerk almal"</string>
     <string name="slideshow" msgid="4355906903247112975">"Skyfievertoning"</string>
-    <!-- no translation found for details (8415120088556445230) -->
-    <skip />
+    <string name="details" msgid="8415120088556445230">"Besonderhede"</string>
     <string name="details_title" msgid="2611396603977441273">"%1$d van %2$d items:"</string>
     <string name="close" msgid="5585646033158453043">"Maak toe"</string>
-    <!-- no translation found for switch_to_camera (7280111806675169992) -->
-    <skip />
+    <string name="switch_to_camera" msgid="7280111806675169992">"Skakel oor na kamera"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"%1$d gekies"</item>
     <item quantity="one" msgid="2478365152745637768">"%1$d gekies"</item>
@@ -83,23 +73,19 @@
     <string name="rotate_left" msgid="7412075232752726934">"Draai na links"</string>
     <string name="rotate_right" msgid="7340681085011826618">"Draai na regs"</string>
     <string name="no_such_item" msgid="3161074758669642065">"Item nie gevind nie"</string>
-    <!-- no translation found for edit (1502273844748580847) -->
-    <skip />
+    <string name="edit" msgid="1502273844748580847">"Redigeer"</string>
     <string name="activity_not_found" msgid="3731390759313019518">"Geen program beskikbaar nie"</string>
     <string name="process_caching_requests" msgid="1076938190997999614">"Verwerk kasversoeke"</string>
     <string name="caching_label" msgid="3244800874547101776">"Kas tans..."</string>
-    <!-- no translation found for crop_action (3427470284074377001) -->
-    <skip />
+    <string name="crop_action" msgid="3427470284074377001">"Snoei"</string>
     <string name="set_as" msgid="3636764710790507868">"Stel as"</string>
     <string name="video_err" msgid="7917736494827857757">"Kan nie video speel nie"</string>
     <string name="group_by_location" msgid="316641628989023253">"Volgens ligging"</string>
     <string name="group_by_time" msgid="9046168567717963573">"Volgens tyd"</string>
     <string name="group_by_tags" msgid="3568731317210676160">"Volgens merkers"</string>
-    <!-- no translation found for group_by_faces (1566351636227274906) -->
-    <skip />
+    <string name="group_by_faces" msgid="1566351636227274906">"Deur mense"</string>
     <string name="group_by_album" msgid="1532818636053818958">"Volgens album"</string>
-    <!-- no translation found for group_by_size (153766174950394155) -->
-    <skip />
+    <string name="group_by_size" msgid="153766174950394155">"Volgens grootte"</string>
     <string name="untagged" msgid="7281481064509590402">"Ongemerk"</string>
     <string name="no_location" msgid="2036710947563713111">"Geen ligging nie"</string>
     <string name="no_connectivity" msgid="4060082114738885149">"Sommige liggings kon nie geïdentifiseer word nie weens verbindingsprobleme"</string>
@@ -107,13 +93,12 @@
     <string name="show_videos_only" msgid="3850394623678871697">"Net video\'s"</string>
     <string name="show_all" msgid="4780647751652596980">"Prente en video\'s"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Fotogalery"</string>
-    <!-- outdated translation 9162928643614581527 -->     <string name="appwidget_empty_text" msgid="4123016777080388680">"Geen foto\'s in galery nie"</string>
+    <string name="appwidget_empty_text" msgid="4123016777080388680">"Geen foto\'s nie"</string>
     <string name="crop_saved" msgid="4684933379430649946">"Die gesnoeide prent is gestoor in aflaaisels"</string>
     <string name="crop_not_saved" msgid="1438309290700431923">"Die gesnoeide prent is nie gestoor nie"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Daar is geen albums beskikbaar nie"</string>
     <string name="empty_album" msgid="6307897398825514762">"Daar is geen prente/video\'s beskikbaar nie"</string>
-    <!-- no translation found for picasa_posts (1497721615718760613) -->
-    <skip />
+    <string name="picasa_posts" msgid="1497721615718760613">"Plasings"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Maak vanlyn beskikbaar"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Herlaai"</string>
     <string name="done" msgid="217672440064436595">"Klaar"</string>
@@ -142,60 +127,36 @@
     <string name="auto" msgid="4296941368722892821">"Outo"</string>
     <string name="flash_on" msgid="7891556231891837284">"Flits gevuur"</string>
     <string name="flash_off" msgid="1445443413822680010">"Geen flits"</string>
-    <!-- no translation found for make_albums_available_offline:one (2955975726887896888) -->
-    <!-- no translation found for make_albums_available_offline:other (6929905722448632886) -->
-    <!-- no translation found for try_to_set_local_album_available_offline (2184754031896160755) -->
-    <skip />
-    <!-- no translation found for set_label_all_albums (3507256844918130594) -->
-    <skip />
-    <!-- no translation found for set_label_local_albums (5227548825039781) -->
-    <skip />
-    <!-- no translation found for set_label_mtp_devices (5779788799122828528) -->
-    <skip />
-    <!-- no translation found for set_label_picasa_albums (2736308697306982589) -->
-    <skip />
-    <!-- no translation found for free_space_format (8766337315709161215) -->
-    <skip />
-    <!-- no translation found for size_below (2074956730721942260) -->
-    <skip />
-    <!-- no translation found for size_above (5324398253474104087) -->
-    <skip />
-    <!-- no translation found for size_between (8779660840898917208) -->
-    <skip />
-    <!-- no translation found for Import (3985447518557474672) -->
-    <skip />
-    <!-- no translation found for import_complete (1098450310074640619) -->
-    <skip />
-    <!-- no translation found for import_fail (5205927625132482529) -->
-    <skip />
-    <!-- no translation found for camera_connected (6984353643349303075) -->
-    <skip />
-    <!-- no translation found for camera_disconnected (3683036560562699311) -->
-    <skip />
-    <!-- no translation found for click_import (6407959065464291972) -->
-    <skip />
-    <!-- no translation found for widget_type_album (3245149644830731121) -->
-    <skip />
-    <!-- no translation found for widget_type_shuffle (8594622705019763768) -->
-    <skip />
-    <!-- no translation found for widget_type_photo (8384174698965738770) -->
-    <skip />
-    <!-- no translation found for widget_type (7308564524449340985) -->
-    <skip />
-    <!-- no translation found for slideshow_dream_name (6915963319933437083) -->
-    <skip />
-    <!-- no translation found for albums (7320787705180057947) -->
-    <skip />
+  <plurals name="make_albums_available_offline">
+    <item quantity="one" msgid="2955975726887896888">"Maak album vanlyn beskikbaar"</item>
+    <item quantity="other" msgid="6929905722448632886">"Maak albums vanlyn beskikbaar"</item>
+  </plurals>
+    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Hierdie item is plaaslik gestoor en vanlyn beskikbaar."</string>
+    <string name="set_label_all_albums" msgid="3507256844918130594">"Alle albums"</string>
+    <string name="set_label_local_albums" msgid="5227548825039781">"Plaaslike albums"</string>
+    <string name="set_label_mtp_devices" msgid="5779788799122828528">"MTP-toestelle"</string>
+    <string name="set_label_picasa_albums" msgid="2736308697306982589">"Picasa-albums"</string>
+    <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> gratis"</string>
+    <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> of minder"</string>
+    <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> of hoër"</string>
+    <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> tot <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
+    <string name="Import" msgid="3985447518557474672">"Voer in"</string>
+    <string name="import_complete" msgid="1098450310074640619">"Invoer klaar"</string>
+    <string name="import_fail" msgid="5205927625132482529">"Kon nie invoer nie"</string>
+    <string name="camera_connected" msgid="6984353643349303075">"Kamera gekoppel"</string>
+    <string name="camera_disconnected" msgid="3683036560562699311">"Kamera ontkoppel"</string>
+    <string name="click_import" msgid="6407959065464291972">"Raak hier om in te voer"</string>
+    <string name="widget_type_album" msgid="3245149644830731121">"Prente uit \'n album"</string>
+    <string name="widget_type_shuffle" msgid="8594622705019763768">"Skommel alle prente"</string>
+    <string name="widget_type_photo" msgid="8384174698965738770">"Kies \'n prent"</string>
+    <string name="widget_type" msgid="7308564524449340985">"Legstuktipe"</string>
+    <string name="slideshow_dream_name" msgid="6915963319933437083">"Skyfievertoning"</string>
+    <string name="albums" msgid="7320787705180057947">"Albums"</string>
     <string name="times" msgid="2023033894889499219">"Tye"</string>
-    <!-- no translation found for locations (6649297994083130305) -->
-    <skip />
-    <!-- no translation found for people (4114003823747292747) -->
-    <skip />
-    <!-- no translation found for tags (5539648765482935955) -->
-    <skip />
+    <string name="locations" msgid="6649297994083130305">"Liggings"</string>
+    <string name="people" msgid="4114003823747292747">"Mense"</string>
+    <string name="tags" msgid="5539648765482935955">"Merkers"</string>
     <string name="group_by" msgid="4308299657902209357">"Groepeer volgens"</string>
-    <!-- no translation found for settings (1534847740615665736) -->
-    <skip />
-    <!-- no translation found for add_account (4271217504968243974) -->
-    <skip />
+    <string name="settings" msgid="1534847740615665736">"Instellings"</string>
+    <string name="add_account" msgid="4271217504968243974">"Voeg rekening by"</string>
 </resources>
