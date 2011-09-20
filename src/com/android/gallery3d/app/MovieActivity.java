@@ -52,7 +52,7 @@ public class MovieActivity extends Activity {
         View rootView = findViewById(R.id.root);
         Intent intent = getIntent();
         setVideoTitle(intent);
-        mPlayer = new MoviePlayer(rootView, this, intent.getData()) {
+        mPlayer = new MoviePlayer(rootView, this, intent.getData(), savedInstanceState) {
             @Override
             public void onCompletion() {
                 if (mFinishOnCompletion) {
@@ -73,7 +73,6 @@ public class MovieActivity extends Activity {
         WindowManager.LayoutParams winParams = win.getAttributes();
         winParams.buttonBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF;
         win.setAttributes(winParams);
-
     }
 
     private void setVideoTitle(Intent intent) {
@@ -121,6 +120,12 @@ public class MovieActivity extends Activity {
     public void onResume() {
         mPlayer.onResume();
         super.onResume();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mPlayer.onSaveInstanceState(outState);
     }
 
     @Override
