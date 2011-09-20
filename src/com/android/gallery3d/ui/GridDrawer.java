@@ -47,10 +47,10 @@ public class GridDrawer extends IconDrawer {
     }
 
     @Override
-    public void draw(GLCanvas canvas, Texture content, int width, int height,
-            int rotation, Path path, int topIndex, int dataSourceType,
-            int mediaType, int darkStripHeight, boolean wantCache,
-            boolean isCaching) {
+    public void draw(GLCanvas canvas, Texture content, int width,
+            int height, int rotation, Path path, int topIndex,
+            int dataSourceType, int mediaType, boolean isPanorama,
+            int labelBackgroundHeight, boolean wantCache, boolean isCaching) {
 
         int x = -width / 2;
         int y = -height / 2;
@@ -66,18 +66,21 @@ public class GridDrawer extends IconDrawer {
             y = -height / 2;
         }
 
-        drawVideoOverlay(canvas, mediaType, x, y, width, height, topIndex);
-
-        if (mSelectionMode && mSelectionManager.isItemSelected(path)) {
-            drawFrame(canvas, mFrameSelected, x, y, width, height);
-        }
+        drawMediaTypeOverlay(canvas, mediaType, isPanorama, x, y, width, height,
+                topIndex);
 
         if (topIndex == 0) {
-            drawDarkStrip(canvas, width, height, darkStripHeight);
+            drawLabelBackground(canvas, width, height, labelBackgroundHeight);
             drawIcon(canvas, width, height, dataSourceType);
             if (dataSourceType == DATASOURCE_TYPE_MTP) {
                 drawImportLabel(canvas, width, height);
             }
+        }
+
+        if (mSelectionManager.isPressedPath(path)) {
+            drawPressedFrame(canvas, x, y, width, height);
+        } else if (mSelectionMode && mSelectionManager.isItemSelected(path)) {
+            drawFrame(canvas, mFrameSelected, x, y, width, height);
         }
     }
 

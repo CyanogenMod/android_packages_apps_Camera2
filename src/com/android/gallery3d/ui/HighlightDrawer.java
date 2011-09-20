@@ -25,19 +25,21 @@ public class HighlightDrawer extends IconDrawer {
     private SelectionManager mSelectionManager;
     private Path mHighlightItem;
 
-    public HighlightDrawer(Context context) {
+    public HighlightDrawer(Context context, SelectionManager selectionManager) {
         super(context);
         mFrameSelected = new NinePatchTexture(context, R.drawable.grid_selected);
+        mSelectionManager = selectionManager;
     }
 
     public void setHighlightItem(Path item) {
         mHighlightItem = item;
     }
 
-    public void draw(GLCanvas canvas, Texture content, int width, int height,
-            int rotation, Path path, int topIndex, int dataSourceType,
-            int mediaType, int darkStripHeight, boolean wantCache,
-            boolean isCaching) {
+    @Override
+    public void draw(GLCanvas canvas, Texture content, int width,
+            int height, int rotation, Path path, int topIndex,
+            int dataSourceType, int mediaType, boolean isPanorama,
+            int labelBackgroundHeight, boolean wantCache, boolean isCaching) {
         int x = -width / 2;
         int y = -height / 2;
 
@@ -52,15 +54,18 @@ public class HighlightDrawer extends IconDrawer {
             y = -height / 2;
         }
 
-        drawVideoOverlay(canvas, mediaType, x, y, width, height, topIndex);
-
-        if (path == mHighlightItem) {
-            drawFrame(canvas, mFrameSelected, x, y, width, height);
-        }
+        drawMediaTypeOverlay(canvas, mediaType, isPanorama, x, y, width, height,
+                topIndex);
 
         if (topIndex == 0) {
-            drawDarkStrip(canvas, width, height, darkStripHeight);
+            drawLabelBackground(canvas, width, height, labelBackgroundHeight);
             drawIcon(canvas, width, height, dataSourceType);
+        }
+
+        if (mSelectionManager.isPressedPath(path)) {
+            drawPressedFrame(canvas, x, y, width, height);
+        } else  if (path == mHighlightItem) {
+            drawFrame(canvas, mFrameSelected, x, y, width, height);
         }
     }
 }

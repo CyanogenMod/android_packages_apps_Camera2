@@ -306,4 +306,16 @@ public class LocalImage extends LocalMediaItem {
     public int getRotation() {
         return rotation;
     }
+
+    @Override
+    public int getWidth() {
+        // TODO
+        return 0;
+    }
+
+    @Override
+    public int getHeight() {
+        // TODO
+        return 0;
+    }
 }

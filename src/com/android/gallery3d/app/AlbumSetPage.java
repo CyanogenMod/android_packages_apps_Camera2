@@ -210,6 +210,18 @@ public class AlbumSetPage extends ActivityState implements
         }
     }
 
+    private void onDown(int index) {
+        MediaSet set = mAlbumSetDataAdapter.getMediaSet(index);
+        Path path = (set == null) ? null : set.getPath();
+        mSelectionManager.setPressedPath(path);
+        mAlbumSetView.invalidate();
+    }
+
+    private void onUp() {
+        mSelectionManager.setPressedPath(null);
+        mAlbumSetView.invalidate();
+    }
+
     public void onLongTap(int slotIndex) {
         if (mGetContent || mGetAlbum) return;
         if (mShowDetails) {
@@ -317,9 +329,20 @@ public class AlbumSetPage extends ActivityState implements
                 config.slotViewSpec, config.labelSpec);
         mAlbumSetView.setListener(new SlotView.SimpleListener() {
             @Override
+            public void onDown(int index) {
+                AlbumSetPage.this.onDown(index);
+            }
+
+            @Override
+            public void onUp() {
+                AlbumSetPage.this.onUp();
+            }
+
+            @Override
             public void onSingleTapUp(int slotIndex) {
                 AlbumSetPage.this.onSingleTapUp(slotIndex);
             }
+
             @Override
             public void onLongTap(int slotIndex) {
                 AlbumSetPage.this.onLongTap(slotIndex);
@@ -518,7 +541,8 @@ public class AlbumSetPage extends ActivityState implements
     private void showDetails() {
         mShowDetails = true;
         if (mDetailsHelper == null) {
-            mHighlightDrawer = new HighlightDrawer(mActivity.getAndroidContext());
+            mHighlightDrawer = new HighlightDrawer(mActivity.getAndroidContext(),
+                    mSelectionManager);
             mDetailsHelper = new DetailsHelper(mActivity, mRootPane, mDetailsSource);
             mDetailsHelper.setCloseListener(new CloseListener() {
                 public void onClose() {

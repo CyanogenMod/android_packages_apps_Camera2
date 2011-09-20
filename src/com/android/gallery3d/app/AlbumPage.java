@@ -148,6 +148,18 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         }
     }
 
+    private void onDown(int index) {
+        MediaItem item = mAlbumDataAdapter.get(index);
+        Path path = (item == null) ? null : item.getPath();
+        mSelectionManager.setPressedPath(path);
+        mAlbumView.invalidate();
+    }
+
+    private void onUp() {
+        mSelectionManager.setPressedPath(null);
+        mAlbumView.invalidate();
+    }
+
     public void onSingleTapUp(int slotIndex) {
         MediaItem item = mAlbumDataAdapter.get(slotIndex);
         if (item == null) {
@@ -363,9 +375,20 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mRootPane.addComponent(mAlbumView);
         mAlbumView.setListener(new SlotView.SimpleListener() {
             @Override
+            public void onDown(int index) {
+                AlbumPage.this.onDown(index);
+            }
+
+            @Override
+            public void onUp() {
+                AlbumPage.this.onUp();
+            }
+
+            @Override
             public void onSingleTapUp(int slotIndex) {
                 AlbumPage.this.onSingleTapUp(slotIndex);
             }
+
             @Override
             public void onLongTap(int slotIndex) {
                 AlbumPage.this.onLongTap(slotIndex);
@@ -395,7 +418,8 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private void showDetails() {
         mShowDetails = true;
         if (mDetailsHelper == null) {
-            mHighlightDrawer = new HighlightDrawer(mActivity.getAndroidContext());
+            mHighlightDrawer = new HighlightDrawer(mActivity.getAndroidContext(),
+                    mSelectionManager);
             mDetailsHelper = new DetailsHelper(mActivity, mRootPane, mDetailsSource);
             mDetailsHelper.setCloseListener(new CloseListener() {
                 public void onClose() {

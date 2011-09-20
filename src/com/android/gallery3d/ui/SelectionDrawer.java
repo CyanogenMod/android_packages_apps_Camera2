@@ -34,14 +34,14 @@ public abstract class SelectionDrawer {
     public abstract void prepareDrawing();
     public abstract void draw(GLCanvas canvas, Texture content,
             int width, int height, int rotation, Path path,
-            int topIndex, int dataSourceType, int mediaType,
-            int darkStripHeight, boolean wantCache, boolean isCaching);
+            int topIndex, int dataSourceType, int mediaType, boolean isPanorama,
+            int labelBackgroundHeight, boolean wantCache, boolean isCaching);
     public abstract void drawFocus(GLCanvas canvas, int width, int height);
 
     public void draw(GLCanvas canvas, Texture content, int width, int height,
-            int rotation, Path path, int mediaType) {
+            int rotation, Path path, int mediaType, boolean isPanorama) {
         draw(canvas, content, width, height, rotation, path, 0,
-                DATASOURCE_TYPE_NOT_CATEGORIZED, mediaType,
+                DATASOURCE_TYPE_NOT_CATEGORIZED, mediaType, isPanorama,
                 0, false, false);
     }
 

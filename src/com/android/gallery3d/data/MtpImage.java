@@ -157,4 +157,13 @@ public class MtpImage extends MediaItem {
         return details;
     }
 
+    @Override
+    public int getWidth() {
+        return mImageWidth;
+    }
+
+    @Override
+    public int getHeight() {
+        return mImageHeight;
+    }
 }

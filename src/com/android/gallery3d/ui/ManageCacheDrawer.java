@@ -23,14 +23,13 @@ import com.android.gallery3d.data.Path;
 import android.content.Context;
 
 public class ManageCacheDrawer extends IconDrawer {
-    private static final int COLOR_CACHING_BACKGROUND = 0x7F000000;
     private static final int ICON_SIZE = 36;
     private final ResourceTexture mCheckedItem;
     private final ResourceTexture mUnCheckedItem;
     private final SelectionManager mSelectionManager;
 
     private final ResourceTexture mLocalAlbumIcon;
-    private final StringTexture mCaching;
+    private final StringTexture mCachingText;
 
     public ManageCacheDrawer(Context context, SelectionManager selectionManager) {
         super(context);
@@ -38,7 +37,7 @@ public class ManageCacheDrawer extends IconDrawer {
         mUnCheckedItem = new ResourceTexture(context, R.drawable.btn_make_offline_normal_off_holo_dark);
         mLocalAlbumIcon = new ResourceTexture(context, R.drawable.btn_make_offline_disabled_on_holo_dark);
         String cachingLabel = context.getString(R.string.caching_label);
-        mCaching = StringTexture.newInstance(cachingLabel, 12, 0xffffffff);
+        mCachingText = StringTexture.newInstance(cachingLabel, 12, 0xffffffff);
         mSelectionManager = selectionManager;
     }
 
@@ -51,13 +50,11 @@ public class ManageCacheDrawer extends IconDrawer {
     }
 
     @Override
-    public void draw(GLCanvas canvas, Texture content, int width, int height,
-            int rotation, Path path, int topIndex, int dataSourceType,
-            int mediaType, int darkStripHeight, boolean wantCache,
-            boolean isCaching) {
+    public void draw(GLCanvas canvas, Texture content, int width,
+            int height, int rotation, Path path, int topIndex,
+            int dataSourceType, int mediaType, boolean isPanorama,
+            int labelBackgroundHeight, boolean wantCache, boolean isCaching) {
 
-        boolean selected = mSelectionManager.isItemSelected(path);
-        boolean chooseToCache = wantCache ^ selected;
 
         int x = -width / 2;
         int y = -height / 2;
@@ -73,48 +70,53 @@ public class ManageCacheDrawer extends IconDrawer {
             y = -height / 2;
         }
 
-        drawVideoOverlay(canvas, mediaType, x, y, width, height, topIndex);
+        drawMediaTypeOverlay(canvas, mediaType, isPanorama, x, y, width, height,
+                topIndex);
 
         if (topIndex == 0) {
-            drawDarkStrip(canvas, width, height, darkStripHeight);
+            drawLabelBackground(canvas, width, height, labelBackgroundHeight);
             drawIcon(canvas, width, height, dataSourceType);
         }
 
         if (topIndex == 0) {
-            ResourceTexture icon = null;
-            if (isLocal(dataSourceType)) {
-                icon = mLocalAlbumIcon;
-            } else if (chooseToCache) {
-                icon = mCheckedItem;
-            } else {
-                icon = mUnCheckedItem;
-            }
+            drawCachingIcon(canvas, path, dataSourceType, isCaching, wantCache,
+                    width, height);
+        }
 
-            int w = ICON_SIZE;
-            int h = ICON_SIZE;
-            x = width / 2 - w;
-            y = -height / 2;
+        if (mSelectionManager.isPressedPath(path)) {
+            drawPressedFrame(canvas, x, y, width, height);
+        }
+    }
 
-            icon.draw(canvas, x, y, w, h);
+    private void drawCachingIcon(GLCanvas canvas, Path path, int dataSourceType,
+            boolean isCaching, boolean wantCache, int width, int height) {
+        boolean selected = mSelectionManager.isItemSelected(path);
+        boolean chooseToCache = wantCache ^ selected;
 
-            if (isCaching) {
-                int textWidth = mCaching.getWidth();
-                int textHeight = mCaching.getHeight();
-                x = -textWidth / 2;
-                y = height / 2 - textHeight;
+        ResourceTexture icon = null;
+        if (isLocal(dataSourceType)) {
+            icon = mLocalAlbumIcon;
+        } else if (chooseToCache) {
+            icon = mCheckedItem;
+        } else {
+            icon = mUnCheckedItem;
+        }
 
-                // Leave a few pixels of margin in the background rect.
-                float sideMargin = Utils.clamp(textWidth * 0.1f, 2.0f,
-                        6.0f);
-                float clearance = Utils.clamp(textHeight * 0.1f, 2.0f,
-                        6.0f);
+        int w = ICON_SIZE;
+        int h = ICON_SIZE;
+        int right = (width + 1) / 2;
+        int bottom = (height + 1) / 2;
+        int x = right - w;
+        int y = bottom - h;
 
-                // Overlay the "Caching" wording at the bottom-center of the content.
-                canvas.fillRect(x - sideMargin, y - clearance,
-                        textWidth + sideMargin * 2, textHeight + clearance,
-                        COLOR_CACHING_BACKGROUND);
-                mCaching.draw(canvas, x, y);
-            }
+        icon.draw(canvas, x, y, w, h);
+
+        if (isCaching) {
+            int textWidth = mCachingText.getWidth();
+            int textHeight = mCachingText.getHeight();
+            x = right - ICON_SIZE - textWidth;
+            y = bottom - textHeight;
+            mCachingText.draw(canvas, x, y);
         }
     }
 

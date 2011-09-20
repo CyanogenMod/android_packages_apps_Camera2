@@ -210,4 +210,16 @@ public class LocalVideo extends LocalMediaItem {
         }
         return details;
     }
+
+    @Override
+    public int getWidth() {
+        // TODO
+        return 0;
+    }
+
+    @Override
+    public int getHeight() {
+        // TODO
+        return 0;
+    }
 }

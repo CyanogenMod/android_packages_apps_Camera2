@@ -24,6 +24,7 @@ import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
+import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.JobLimiter;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
@@ -283,6 +284,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
         private final int mSlotIndex;
         private final int mMediaType;
         private Texture mContent;
+        private boolean mIsPanorama;
 
         public AlbumDisplayItem(int slotIndex, MediaItem item) {
             super(item);
@@ -290,6 +292,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
                     ? MediaItem.MEDIA_TYPE_UNKNOWN
                     : item.getMediaType();
             mSlotIndex = slotIndex;
+            mIsPanorama = GalleryUtils.isPanorama(item);
             updateContent(mWaitLoadingTexture);
         }
 
@@ -332,7 +335,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
                 Path path = null;
                 if (mMediaItem != null) path = mMediaItem.getPath();
                 mSelectionDrawer.draw(canvas, mContent, width, height,
-                        getRotation(), path, mMediaType);
+                        getRotation(), path, mMediaType, mIsPanorama);
                 return (mFocusIndex == mSlotIndex);
             } else if (pass == 1) {
                 mSelectionDrawer.drawFocus(canvas, width, height);
