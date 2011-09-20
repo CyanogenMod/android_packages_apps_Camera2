@@ -61,6 +61,8 @@ public class LocalImage extends LocalMediaItem {
     private static final int INDEX_ORIENTATION = 9;
     private static final int INDEX_BUCKET_ID = 10;
     private static final int INDEX_SIZE_ID = 11;
+    private static final int INDEX_WIDTH = 12;
+    private static final int INDEX_HEIGHT = 13;
 
     static final String[] PROJECTION =  {
             ImageColumns._ID,           // 0
@@ -74,12 +76,17 @@ public class LocalImage extends LocalMediaItem {
             ImageColumns.DATA,          // 8
             ImageColumns.ORIENTATION,   // 9
             ImageColumns.BUCKET_ID,     // 10
-            ImageColumns.SIZE           // 11
+            ImageColumns.SIZE,          // 11
+            // These should be changed to proper names after they are made public.
+            "width", // ImageColumns.WIDTH,         // 12
+            "height", // ImageColumns.HEIGHT         // 13
     };
 
     private final GalleryApp mApplication;
 
     public int rotation;
+    public int width;
+    public int height;
 
     public LocalImage(Path path, GalleryApp application, Cursor cursor) {
         super(path, nextVersionNumber());
@@ -118,6 +125,8 @@ public class LocalImage extends LocalMediaItem {
         rotation = cursor.getInt(INDEX_ORIENTATION);
         bucketId = cursor.getInt(INDEX_BUCKET_ID);
         fileSize = cursor.getLong(INDEX_SIZE_ID);
+        width = cursor.getInt(INDEX_WIDTH);
+        height = cursor.getInt(INDEX_HEIGHT);
     }
 
     @Override
@@ -138,6 +147,8 @@ public class LocalImage extends LocalMediaItem {
         rotation = uh.update(rotation, cursor.getInt(INDEX_ORIENTATION));
         bucketId = uh.update(bucketId, cursor.getInt(INDEX_BUCKET_ID));
         fileSize = uh.update(fileSize, cursor.getLong(INDEX_SIZE_ID));
+        width = uh.update(width, cursor.getInt(INDEX_WIDTH));
+        height = uh.update(height, cursor.getInt(INDEX_HEIGHT));
         return uh.isUpdated();
     }
 
@@ -309,13 +320,11 @@ public class LocalImage extends LocalMediaItem {
 
     @Override
     public int getWidth() {
-        // TODO
-        return 0;
+        return width;
     }
 
     @Override
     public int getHeight() {
-        // TODO
-        return 0;
+        return height;
     }
 }
