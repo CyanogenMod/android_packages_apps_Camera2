@@ -28,11 +28,4 @@
     <integer name="album_rows_land">3</integer>
     <integer name="album_rows_port">5</integer>
     <dimen name="album_slot_gap">1dp</dimen>
-
-    <!-- configuration for manage page -->
-    <dimen name="cache_bar_height">48dp</dimen>
-    <dimen name="cache_bar_pin_left_margin">16dp</dimen>
-    <dimen name="cache_bar_pin_right_margin">8dp</dimen>
-    <dimen name="cache_bar_button_right_margin">8dp</dimen>
-    <dimen name="cache_bar_font_size">18dp</dimen>
 </resources>
