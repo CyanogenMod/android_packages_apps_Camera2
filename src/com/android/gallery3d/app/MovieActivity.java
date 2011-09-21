@@ -27,6 +27,7 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Video.VideoColumns;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -51,7 +52,7 @@ public class MovieActivity extends Activity {
         setContentView(R.layout.movie_view);
         View rootView = findViewById(R.id.root);
         Intent intent = getIntent();
-        setVideoTitle(intent);
+        initializeActionBar(intent);
         mPlayer = new MoviePlayer(rootView, this, intent.getData(), savedInstanceState) {
             @Override
             public void onCompletion() {
@@ -75,7 +76,10 @@ public class MovieActivity extends Activity {
         win.setAttributes(winParams);
     }
 
-    private void setVideoTitle(Intent intent) {
+    private void initializeActionBar(Intent intent) {
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
+                ActionBar.DISPLAY_HOME_AS_UP);
         String title = intent.getStringExtra(Intent.EXTRA_TITLE);
         if (title == null) {
             Cursor cursor = null;
@@ -91,8 +95,16 @@ public class MovieActivity extends Activity {
                 if (cursor != null) cursor.close();
             }
         }
-        ActionBar actionBar = getActionBar();
-        if (title != null && actionBar != null) actionBar.setTitle(title);
+        if (title != null) actionBar.setTitle(title);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return false;
     }
 
     @Override
