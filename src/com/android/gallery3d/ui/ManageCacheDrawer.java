@@ -23,7 +23,6 @@ import com.android.gallery3d.data.Path;
 import android.content.Context;
 
 public class ManageCacheDrawer extends IconDrawer {
-    private static final int ICON_SIZE = 36;
     private final ResourceTexture mCheckedItem;
     private final ResourceTexture mUnCheckedItem;
     private final SelectionManager mSelectionManager;
@@ -31,7 +30,11 @@ public class ManageCacheDrawer extends IconDrawer {
     private final ResourceTexture mLocalAlbumIcon;
     private final StringTexture mCachingText;
 
-    public ManageCacheDrawer(Context context, SelectionManager selectionManager) {
+    private final int mCachePinSize;
+    private final int mCachePinMargin;
+
+    public ManageCacheDrawer(Context context, SelectionManager selectionManager,
+            int cachePinSize, int cachePinMargin) {
         super(context);
         mCheckedItem = new ResourceTexture(context, R.drawable.btn_make_offline_normal_on_holo_dark);
         mUnCheckedItem = new ResourceTexture(context, R.drawable.btn_make_offline_normal_off_holo_dark);
@@ -39,6 +42,8 @@ public class ManageCacheDrawer extends IconDrawer {
         String cachingLabel = context.getString(R.string.caching_label);
         mCachingText = StringTexture.newInstance(cachingLabel, 12, 0xffffffff);
         mSelectionManager = selectionManager;
+        mCachePinSize = cachePinSize;
+        mCachePinMargin = cachePinMargin;
     }
 
     @Override
@@ -79,7 +84,7 @@ public class ManageCacheDrawer extends IconDrawer {
         }
 
         if (topIndex == 0) {
-            drawCachingIcon(canvas, path, dataSourceType, isCaching, wantCache,
+            drawCachingPin(canvas, path, dataSourceType, isCaching, wantCache,
                     width, height);
         }
 
@@ -88,7 +93,7 @@ public class ManageCacheDrawer extends IconDrawer {
         }
     }
 
-    private void drawCachingIcon(GLCanvas canvas, Path path, int dataSourceType,
+    private void drawCachingPin(GLCanvas canvas, Path path, int dataSourceType,
             boolean isCaching, boolean wantCache, int width, int height) {
         boolean selected = mSelectionManager.isItemSelected(path);
         boolean chooseToCache = wantCache ^ selected;
@@ -102,19 +107,20 @@ public class ManageCacheDrawer extends IconDrawer {
             icon = mUnCheckedItem;
         }
 
-        int w = ICON_SIZE;
-        int h = ICON_SIZE;
+        int w = mCachePinSize;
+        int h = mCachePinSize;
         int right = (width + 1) / 2;
         int bottom = (height + 1) / 2;
-        int x = right - w;
-        int y = bottom - h;
+        int x = right - w - mCachePinMargin;
+        int y = bottom - h - mCachePinMargin;
 
         icon.draw(canvas, x, y, w, h);
 
         if (isCaching) {
             int textWidth = mCachingText.getWidth();
             int textHeight = mCachingText.getHeight();
-            x = right - ICON_SIZE - textWidth;
+            // Align the center of the text to the center of the pin icon
+            x = right - mCachePinMargin - (textWidth + mCachePinSize) / 2;
             y = bottom - textHeight;
             mCachingText.draw(canvas, x, y);
         }
