@@ -146,7 +146,7 @@ public class DialogDetailsView implements DetailsViewContainer {
                     case MediaDetails.INDEX_LOCATION: {
                         double[] latlng = (double[]) detail.getValue();
                         mLocationIndex = mItems.size();
-                        value = DetailsHelper.resolveAddress(mContext, latlng, this);
+                        value = DetailsHelper.resolveAddress(mContext, latlng, mAdapter);
                         break;
                     }
                     case MediaDetails.INDEX_SIZE: {
