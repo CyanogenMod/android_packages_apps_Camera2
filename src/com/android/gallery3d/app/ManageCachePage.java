@@ -291,9 +291,9 @@ public class ManageCachePage extends ActivityState implements
         mStaticBackground = new StaticBackground(activity);
         mRootPane.addComponent(mStaticBackground);
 
-        mSelectionDrawer = new ManageCacheDrawer(
-                (Context) mActivity, mSelectionManager);
         Config.ManageCachePage config = Config.ManageCachePage.get(activity);
+        mSelectionDrawer = new ManageCacheDrawer((Context) mActivity,
+                mSelectionManager, config.cachePinSize, config.cachePinMargin);
         mAlbumSetView = new AlbumSetView(mActivity, mSelectionDrawer,
                 config.slotViewSpec, config.labelSpec);
         mAlbumSetView.setListener(new SlotView.SimpleListener() {

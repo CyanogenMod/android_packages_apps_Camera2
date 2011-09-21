@@ -88,11 +88,8 @@ final class Config {
     public static class ManageCachePage extends AlbumSetPage {
         private static ManageCachePage sInstance;
 
-        public final int cacheBarHeight;
-        public final int cacheBarPinLeftMargin;
-        public final int cacheBarPinRightMargin;
-        public final int cacheBarButtonRightMargin;
-        public final int cacheBarFontSize;
+        public final int cachePinSize;
+        public final int cachePinMargin;
 
         public static synchronized ManageCachePage get(Context context) {
             if (sInstance == null) {
@@ -104,13 +101,8 @@ final class Config {
         public ManageCachePage(Context context) {
             super(context);
             Resources r = context.getResources();
-            cacheBarHeight = r.getDimensionPixelSize(R.dimen.cache_bar_height);
-            cacheBarPinLeftMargin = r.getDimensionPixelSize(R.dimen.cache_bar_pin_left_margin);
-            cacheBarPinRightMargin = r.getDimensionPixelSize(
-                    R.dimen.cache_bar_pin_right_margin);
-            cacheBarButtonRightMargin = r.getDimensionPixelSize(
-                    R.dimen.cache_bar_button_right_margin);
-            cacheBarFontSize = r.getDimensionPixelSize(R.dimen.cache_bar_font_size);
+            cachePinSize = r.getDimensionPixelSize(R.dimen.cache_pin_size);
+            cachePinMargin = r.getDimensionPixelSize(R.dimen.cache_pin_margin);
         }
     }
 
