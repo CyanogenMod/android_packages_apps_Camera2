@@ -45,7 +45,7 @@
             android:text="@string/make_available_offline"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:drawableLeft="@drawable/ic_manage_pin_small"
+            android:drawableLeft="@drawable/ic_menu_make_offline"
             android:drawablePadding="3dp"/>
         <Button android:id="@+id/done"
             android:layout_width="wrap_content"
