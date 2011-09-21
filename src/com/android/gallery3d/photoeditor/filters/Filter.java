@@ -27,7 +27,7 @@ import com.android.gallery3d.photoeditor.Photo;
 public abstract class Filter {
 
     // TODO: This should be set in MFF instead.
-    private static final int DEFAULT_TILE_SIZE = 40;
+    private static final int DEFAULT_TILE_SIZE = 640;
 
     private boolean isValid;
     private EffectContext context;
