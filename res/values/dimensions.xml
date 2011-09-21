@@ -38,11 +38,8 @@
     <dimen name="album_slot_gap">1dp</dimen>
 
     <!-- configuration for manage page -->
-    <dimen name="cache_bar_height">32dp</dimen>
-    <dimen name="cache_bar_pin_left_margin">10dp</dimen>
-    <dimen name="cache_bar_pin_right_margin">6dp</dimen>
-    <dimen name="cache_bar_button_right_margin">6dp</dimen>
-    <dimen name="cache_bar_font_size">12dp</dimen>
+    <dimen name="cache_pin_size">24dp</dimen>
+    <dimen name="cache_pin_margin">8dp</dimen>
 
     <!-- configuration for film strip in photo page -->
     <dimen name="filmstrip_top_margin">12dp</dimen>
