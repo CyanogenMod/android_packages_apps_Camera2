@@ -24,7 +24,6 @@ import android.graphics.Color;
 import android.text.Layout;
 
 public class GridDrawer extends IconDrawer {
-    private final NinePatchTexture mFrameSelected;
     private Texture mImportLabel;
     private int mGridWidth;
     private final SelectionManager mSelectionManager;
@@ -37,7 +36,6 @@ public class GridDrawer extends IconDrawer {
     public GridDrawer(Context context, SelectionManager selectionManager) {
         super(context);
         mContext = context;
-        mFrameSelected = new NinePatchTexture(context, R.drawable.grid_selected);
         mSelectionManager = selectionManager;
     }
 
@@ -80,7 +78,7 @@ public class GridDrawer extends IconDrawer {
         if (mSelectionManager.isPressedPath(path)) {
             drawPressedFrame(canvas, x, y, width, height);
         } else if (mSelectionMode && mSelectionManager.isItemSelected(path)) {
-            drawFrame(canvas, mFrameSelected, x, y, width, height);
+            drawSelectedFrame(canvas, x, y, width, height);
         }
     }
 

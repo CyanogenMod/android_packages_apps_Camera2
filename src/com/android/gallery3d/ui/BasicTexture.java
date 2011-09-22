@@ -43,6 +43,8 @@ abstract class BasicTexture implements Texture {
     private int mTextureWidth;
     private int mTextureHeight;
 
+    private boolean mHasBorder;
+
     protected WeakReference<GLCanvas> mCanvasRef = null;
     private static WeakHashMap<BasicTexture, Object> sAllTextures
             = new WeakHashMap<BasicTexture, Object>();
@@ -98,6 +100,25 @@ abstract class BasicTexture implements Texture {
     // Returns the height rounded to the next power of 2.
     public int getTextureHeight() {
         return mTextureHeight;
+    }
+
+    // Returns true if the texture has one pixel transparent border around the
+    // actual content. This is used to avoid jigged edges.
+    //
+    // The jigged edges appear because we use GL_CLAMP_TO_EDGE for texture wrap
+    // mode (GL_CLAMP is not available in OpenGL ES), so a pixel partially
+    // covered by the texture will use the color of the edge texel. If we add
+    // the transparent border, the color of the edge texel will be mixed with
+    // appropriate amount of transparent.
+    //
+    // Currently our background is black, so we can draw the thumbnails without
+    // enabling blending.
+    public boolean hasBorder() {
+        return mHasBorder;
+    }
+
+    protected void setBorder(boolean hasBorder) {
+        mHasBorder = hasBorder;
     }
 
     public void draw(GLCanvas canvas, int x, int y) {

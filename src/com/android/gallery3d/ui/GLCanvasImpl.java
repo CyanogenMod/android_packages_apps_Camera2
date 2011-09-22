@@ -341,9 +341,17 @@ public class GLCanvasImpl implements GLCanvas {
         // Test whether it has been rotated or flipped, if so, glDrawTexiOES
         // won't work
         if (isMatrixRotatedOrFlipped(mMatrixValues)) {
-            setTextureCoords(0, 0,
-                    (float) texture.getWidth() / texture.getTextureWidth(),
-                    (float) texture.getHeight() / texture.getTextureHeight());
+            if (texture.hasBorder()) {
+                setTextureCoords(
+                        1.0f / texture.getTextureWidth(),
+                        1.0f / texture.getTextureHeight(),
+                        (texture.getWidth() - 1.0f) / texture.getTextureWidth(),
+                        (texture.getHeight() - 1.0f) / texture.getTextureHeight());
+            } else {
+                setTextureCoords(0, 0,
+                        (float) texture.getWidth() / texture.getTextureWidth(),
+                        (float) texture.getHeight() / texture.getTextureHeight());
+            }
             textureRect(x, y, width, height);
         } else {
             // draw the rect from bottom-left to top-right
