@@ -304,7 +304,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
                 if (mActiveRequestCount == 0) requestNonactiveImages();
             }
             if (bitmap != null) {
-                BitmapTexture texture = new BitmapTexture(bitmap);
+                BitmapTexture texture = new BitmapTexture(bitmap, true);
                 texture.setThrottled(true);
                 updateContent(texture);
                 if (mListener != null && isActiveSlot) {

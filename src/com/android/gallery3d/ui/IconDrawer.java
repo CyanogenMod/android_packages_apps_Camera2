@@ -29,6 +29,8 @@ public abstract class IconDrawer extends SelectionDrawer {
     private final ResourceTexture mPicasaIcon;
     private final ResourceTexture mMtpIcon;
     private final NinePatchTexture mFramePressed;
+    private final NinePatchTexture mFrameSelected;
+    private final NinePatchTexture mDarkStrip;
     private final ResourceTexture mPanoramaBorder;
     private final Texture mVideoOverlay;
     private final Texture mVideoPlayIcon;
@@ -50,6 +52,8 @@ public abstract class IconDrawer extends SelectionDrawer {
         mVideoPlayIcon = new ResourceTexture(context, R.drawable.ic_gallery_play);
         mPanoramaBorder = new ResourceTexture(context, R.drawable.ic_pan_thumb);
         mFramePressed = new NinePatchTexture(context, R.drawable.grid_pressed);
+        mFrameSelected = new NinePatchTexture(context, R.drawable.grid_selected);
+        mDarkStrip = new NinePatchTexture(context, R.drawable.dark_strip);
         mIconSize = context.getResources().getDimensionPixelSize(
                 R.dimen.albumset_icon_size);
     }
@@ -144,12 +148,17 @@ public abstract class IconDrawer extends SelectionDrawer {
             int drawLabelBackground) {
         int x = -width / 2;
         int y = (height + 1) / 2 - drawLabelBackground;
-        canvas.fillRect(x, y, width, drawLabelBackground, LABEL_BACKGROUND_COLOR);
+        drawFrame(canvas, mDarkStrip, x, y, width, drawLabelBackground);
     }
 
     protected void drawPressedFrame(GLCanvas canvas, int x, int y, int width,
             int height) {
         drawFrame(canvas, mFramePressed, x, y, width, height);
+    }
+
+    protected void drawSelectedFrame(GLCanvas canvas, int x, int y, int width,
+            int height) {
+        drawFrame(canvas, mFrameSelected, x, y, width, height);
     }
 
     @Override
