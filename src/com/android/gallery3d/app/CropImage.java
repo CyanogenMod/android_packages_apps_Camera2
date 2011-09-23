@@ -16,28 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.common.BitmapUtils;
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.DataManager;
-import com.android.gallery3d.data.LocalImage;
-import com.android.gallery3d.data.MediaItem;
-import com.android.gallery3d.data.MediaObject;
-import com.android.gallery3d.data.Path;
-import com.android.gallery3d.picasasource.PicasaSource;
-import com.android.gallery3d.ui.BitmapTileProvider;
-import com.android.gallery3d.ui.CropView;
-import com.android.gallery3d.ui.GLRoot;
-import com.android.gallery3d.ui.SynchronizedHandler;
-import com.android.gallery3d.ui.TileImageViewAdapter;
-import com.android.gallery3d.util.Future;
-import com.android.gallery3d.util.FutureListener;
-import com.android.gallery3d.util.GalleryUtils;
-import com.android.gallery3d.util.InterruptableOutputStream;
-import com.android.gallery3d.util.ThreadPool.CancelListener;
-import com.android.gallery3d.util.ThreadPool.Job;
-import com.android.gallery3d.util.ThreadPool.JobContext;
-
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
 import android.content.ContentValues;
@@ -64,6 +42,28 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.android.gallery3d.R;
+import com.android.gallery3d.common.BitmapUtils;
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.DataManager;
+import com.android.gallery3d.data.LocalImage;
+import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.data.MediaObject;
+import com.android.gallery3d.data.Path;
+import com.android.gallery3d.picasasource.PicasaSource;
+import com.android.gallery3d.ui.BitmapTileProvider;
+import com.android.gallery3d.ui.CropView;
+import com.android.gallery3d.ui.GLRoot;
+import com.android.gallery3d.ui.SynchronizedHandler;
+import com.android.gallery3d.ui.TileImageViewAdapter;
+import com.android.gallery3d.util.Future;
+import com.android.gallery3d.util.FutureListener;
+import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.InterruptableOutputStream;
+import com.android.gallery3d.util.ThreadPool.CancelListener;
+import com.android.gallery3d.util.ThreadPool.Job;
+import com.android.gallery3d.util.ThreadPool.JobContext;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -85,6 +85,7 @@ public class CropImage extends AbstractGalleryActivity {
     private static final int MSG_LARGE_BITMAP = 1;
     private static final int MSG_BITMAP = 2;
     private static final int MSG_SAVE_COMPLETE = 3;
+    private static final int MSG_SHOW_SAVE_ERROR = 4;
 
     private static final int MAX_BACKUP_IMAGE_SIZE = 320;
     private static final int DEFAULT_COMPRESS_QUALITY = 90;
@@ -165,6 +166,14 @@ public class CropImage extends AbstractGalleryActivity {
                         mProgressDialog.dismiss();
                         onBitmapAvailable((Bitmap) message.obj);
                         break;
+                    }
+                    case MSG_SHOW_SAVE_ERROR: {
+                        mProgressDialog.dismiss();
+                        setResult(RESULT_CANCELED);
+                        Toast.makeText(CropImage.this,
+                                CropImage.this.getString(R.string.save_error),
+                                Toast.LENGTH_LONG).show();
+                        finish();
                     }
                     case MSG_SAVE_COMPLETE: {
                         mProgressDialog.dismiss();
@@ -418,12 +427,11 @@ public class CropImage extends AbstractGalleryActivity {
             });
         try {
             bitmap.compress(format, DEFAULT_COMPRESS_QUALITY, os);
-            if (!jc.isCancelled()) return false;
+            return !jc.isCancelled();
         } finally {
             jc.setCancelListener(null);
             Utils.closeSilently(os);
         }
-        return false;
     }
 
     private boolean saveBitmapToUri(JobContext jc, Bitmap bitmap, Uri uri) {
@@ -469,9 +477,14 @@ public class CropImage extends AbstractGalleryActivity {
                 new FutureListener<Intent>() {
             public void onFutureDone(Future<Intent> future) {
                 mSaveTask = null;
-                if (future.get() == null) return;
-                mMainHandler.sendMessage(mMainHandler.obtainMessage(
-                        MSG_SAVE_COMPLETE, future.get()));
+                if (future.isCancelled()) return;
+                Intent intent = future.get();
+                if (intent != null) {
+                    mMainHandler.sendMessage(mMainHandler.obtainMessage(
+                            MSG_SAVE_COMPLETE, intent));
+                } else {
+                    mMainHandler.sendEmptyMessage(MSG_SHOW_SAVE_ERROR);
+                }
             }
         });
     }

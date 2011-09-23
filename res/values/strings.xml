@@ -63,6 +63,9 @@
     <string name="multiface_crop_help">Tap a face to begin.</string>
     <!-- Toast/alert that the image is being saved to the SD card -->
     <string name="saving_image">Saving picture\u2026</string>
+    <!-- Eorror toast message that the image cannot be saved [CHAR LIMIT=40]-->
+    <string name="save_error">Cannot save the cropped image</string>
+
     <!-- menu pick: crop the currently selected image -->
     <string name="crop_label">Crop picture</string>
     <!-- Toast/alert that the face detection is being run -->
