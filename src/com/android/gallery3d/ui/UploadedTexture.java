@@ -57,9 +57,18 @@ abstract class UploadedTexture extends BasicTexture {
     private static final int UPLOAD_LIMIT = 100;
 
     protected Bitmap mBitmap;
+    private int mBorder;
 
     protected UploadedTexture() {
+        this(false);
+    }
+
+    protected UploadedTexture(boolean hasBorder) {
         super(null, 0, STATE_UNLOADED);
+        if (hasBorder) {
+            setBorder(true);
+            mBorder = 1;
+        }
     }
 
     private static class BorderKey implements Cloneable {
@@ -114,14 +123,14 @@ abstract class UploadedTexture extends BasicTexture {
     private Bitmap getBitmap() {
         if (mBitmap == null) {
             mBitmap = onGetBitmap();
+            int w = mBitmap.getWidth() + mBorder * 2;
+            int h = mBitmap.getHeight() + mBorder * 2;
             if (mWidth == UNSPECIFIED) {
-                setSize(mBitmap.getWidth(), mBitmap.getHeight());
-            } else if (mWidth != mBitmap.getWidth()
-                    || mHeight != mBitmap.getHeight()) {
+                setSize(w, h);
+            } else if (mWidth != w || mHeight != h) {
                 throw new IllegalStateException(String.format(
                         "cannot change size: this = %s, orig = %sx%s, new = %sx%s",
-                        toString(), mWidth, mHeight, mBitmap.getWidth(),
-                        mBitmap.getHeight()));
+                        toString(), mWidth, mHeight, w, h));
             }
         }
         return mBitmap;
@@ -176,8 +185,8 @@ abstract class UploadedTexture extends BasicTexture {
             int format = GLUtils.getInternalFormat(bitmap);
             int type = GLUtils.getType(bitmap);
             canvas.getGLInstance().glBindTexture(GL11.GL_TEXTURE_2D, mId);
-            GLUtils.texSubImage2D(
-                    GL11.GL_TEXTURE_2D, 0, 0, 0, bitmap, format, type);
+            GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0, mBorder, mBorder,
+                    bitmap, format, type);
             freeBitmap();
             mContentValid = true;
         }
@@ -200,14 +209,20 @@ abstract class UploadedTexture extends BasicTexture {
         Bitmap bitmap = getBitmap();
         if (bitmap != null) {
             try {
+                int bWidth = bitmap.getWidth();
+                int bHeight = bitmap.getHeight();
+                int width = bWidth + mBorder * 2;
+                int height = bHeight + mBorder * 2;
+                int texWidth = getTextureWidth();
+                int texHeight = getTextureHeight();
                 // Define a vertically flipped crop rectangle for
                 // OES_draw_texture.
-                int width = bitmap.getWidth();
-                int height = bitmap.getHeight();
-                sCropRect[0] = 0;
-                sCropRect[1] = height;
-                sCropRect[2] = width;
-                sCropRect[3] = -height;
+                // The four values in sCropRect are: left, bottom, width, and
+                // height. Negative value of width or height means flip.
+                sCropRect[0] = mBorder;
+                sCropRect[1] = mBorder + bHeight;
+                sCropRect[2] = bWidth;
+                sCropRect[3] = -bHeight;
 
                 // Upload the bitmap to a new texture.
                 gl.glGenTextures(1, sTextureId, 0);
@@ -223,7 +238,7 @@ abstract class UploadedTexture extends BasicTexture {
                 gl.glTexParameterf(GL11.GL_TEXTURE_2D,
                         GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 
-                if (width == getTextureWidth() && height == getTextureHeight()) {
+                if (bWidth == texWidth && bHeight == texHeight) {
                     GLUtils.texImage2D(GL11.GL_TEXTURE_2D, 0, bitmap, 0);
                 } else {
                     int format = GLUtils.getInternalFormat(bitmap);
@@ -231,23 +246,35 @@ abstract class UploadedTexture extends BasicTexture {
                     Config config = bitmap.getConfig();
 
                     gl.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format,
-                            getTextureWidth(), getTextureHeight(),
-                            0, format, type, null);
-                    GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, bitmap,
-                            format, type);
+                            texWidth, texHeight, 0, format, type, null);
+                    GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0,
+                            mBorder, mBorder, bitmap, format, type);
 
-                    if (width != getTextureWidth()) {
-                        Bitmap line = getBorderLine(true, config, getTextureHeight());
-                        GLUtils.texSubImage2D(
-                                GL11.GL_TEXTURE_2D, 0, width, 0, line, format, type);
+                    if (mBorder > 0) {
+                        // Left border
+                        Bitmap line = getBorderLine(true, config, texHeight);
+                        GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0,
+                                0, 0, line, format, type);
+
+                        // Top border
+                        line = getBorderLine(false, config, texWidth);
+                        GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0,
+                                0, 0, line, format, type);
                     }
 
-                    if (height != getTextureHeight()) {
-                        Bitmap line = getBorderLine(false, config, getTextureWidth());
-                        GLUtils.texSubImage2D(
-                                GL11.GL_TEXTURE_2D, 0, 0, height, line, format, type);
+                    // Right border
+                    if (mBorder + bWidth < texWidth) {
+                        Bitmap line = getBorderLine(true, config, texHeight);
+                        GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0,
+                                mBorder + bWidth, 0, line, format, type);
                     }
 
+                    // Bottom border
+                    if (mBorder + bHeight < texHeight) {
+                        Bitmap line = getBorderLine(false, config, texWidth);
+                        GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0,
+                                0, mBorder + bHeight, line, format, type);
+                    }
                 }
             } finally {
                 freeBitmap();

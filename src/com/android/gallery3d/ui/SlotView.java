@@ -238,8 +238,6 @@ public class SlotView extends GLView {
 
     @Override
     protected void render(GLCanvas canvas) {
-        canvas.save(GLCanvas.SAVE_FLAG_CLIP);
-        canvas.clipRect(0, 0, getWidth(), getHeight());
         super.render(canvas);
 
         long currentTimeMillis = canvas.currentAnimationTimeMillis();
@@ -296,7 +294,6 @@ public class SlotView extends GLView {
             mUIListener.onUserInteractionEnd();
         }
         mMoreAnimation = more;
-        canvas.restore();
     }
 
     private boolean renderItem(GLCanvas canvas, ItemEntry entry,

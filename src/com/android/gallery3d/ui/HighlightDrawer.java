@@ -21,13 +21,11 @@ import com.android.gallery3d.data.Path;
 import android.content.Context;
 
 public class HighlightDrawer extends IconDrawer {
-    private final NinePatchTexture mFrameSelected;
     private SelectionManager mSelectionManager;
     private Path mHighlightItem;
 
     public HighlightDrawer(Context context, SelectionManager selectionManager) {
         super(context);
-        mFrameSelected = new NinePatchTexture(context, R.drawable.grid_selected);
         mSelectionManager = selectionManager;
     }
 
@@ -64,8 +62,8 @@ public class HighlightDrawer extends IconDrawer {
 
         if (mSelectionManager.isPressedPath(path)) {
             drawPressedFrame(canvas, x, y, width, height);
-        } else  if (path == mHighlightItem) {
-            drawFrame(canvas, mFrameSelected, x, y, width, height);
+        } else if (path == mHighlightItem) {
+            drawSelectedFrame(canvas, x, y, width, height);
         }
     }
 }
