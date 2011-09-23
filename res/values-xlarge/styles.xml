@@ -21,4 +21,7 @@
         <item name="android:colorBackground">@null</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
+    <style name="DialogPickerTheme" parent="android:Theme.Holo.Dialog">
+    </style>
+    <bool name="picker_is_dialog">true</bool>
 </resources>
