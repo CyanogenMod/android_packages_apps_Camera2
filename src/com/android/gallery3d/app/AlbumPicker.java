@@ -18,26 +18,17 @@ package com.android.gallery3d.app;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.data.DataManager;
-import com.android.gallery3d.ui.GLRoot;
-import com.android.gallery3d.ui.GLRootView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
 
-public class AlbumPicker extends AbstractGalleryActivity
-        implements OnClickListener {
+public class AlbumPicker extends PickerActivity {
 
     public static final String KEY_ALBUM_PATH = "album-path";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.dialog_picker);
-        ((GLRootView) findViewById(R.id.gl_root_view)).setZOrderOnTop(true);
-        findViewById(R.id.cancel).setOnClickListener(this);
         setTitle(R.string.select_album);
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -47,22 +38,5 @@ public class AlbumPicker extends AbstractGalleryActivity
         data.putString(AlbumSetPage.KEY_MEDIA_PATH,
                 getDataManager().getTopSetPath(DataManager.INCLUDE_IMAGE));
         getStateManager().startState(AlbumSetPage.class, data);
-    }
-
-    @Override
-    public void onBackPressed() {
-        // send the back event to the top sub-state
-        GLRoot root = getGLRoot();
-        root.lockRenderThread();
-        try {
-            getStateManager().getTopState().onBackPressed();
-        } finally {
-            root.unlockRenderThread();
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.cancel) finish();
     }
 }
