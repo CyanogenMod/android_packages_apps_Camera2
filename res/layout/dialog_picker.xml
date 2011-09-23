@@ -34,5 +34,6 @@
             android:layout_weight="0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@android:string/cancel" />
+            android:text="@android:string/cancel"
+            android:visibility="gone" />
 </LinearLayout>
