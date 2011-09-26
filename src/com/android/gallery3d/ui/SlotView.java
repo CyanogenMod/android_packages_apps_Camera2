@@ -147,7 +147,15 @@ public class SlotView extends GLView {
     @Override
     protected void onLayout(boolean changeSize, int l, int t, int r, int b) {
         if (!changeSize) return;
+
+        // Make sure we are still at a resonable scroll position after the size
+        // is changed (like orientation change). We choose to keep the center
+        // visible slot still visible. This is arbitrary but reasonable.
+        int visibleIndex =
+                (mLayout.getVisibleStart() + mLayout.getVisibleEnd()) / 2;
         mLayout.setSize(r - l, b - t);
+        makeSlotVisible(visibleIndex);
+
         onLayoutChanged(r - l, b - t);
         if (mOverscrollEffect == OVERSCROLL_3D) {
             mPaper.setSize(r - l, b - t);
@@ -219,6 +227,10 @@ public class SlotView extends GLView {
                 mDownInScrolling = !mScroller.isFinished();
                 mScroller.forceFinished();
                 break;
+            case MotionEvent.ACTION_UP:
+                mPaper.onRelease();
+                invalidate();
+                break;
         }
         return true;
     }
@@ -242,16 +254,29 @@ public class SlotView extends GLView {
 
         long currentTimeMillis = canvas.currentAnimationTimeMillis();
         boolean more = mScroller.advanceAnimation(currentTimeMillis);
-        boolean paperActive = (mOverscrollEffect == OVERSCROLL_3D)
-                && mPaper.advanceAnimation(currentTimeMillis);
+        int oldX = mScrollX;
         updateScrollPosition(mScroller.getPosition(), false);
+
+        boolean paperActive = false;
+        if (mOverscrollEffect == OVERSCROLL_3D) {
+            // Check if an edge is reached and notify mPaper if so.
+            int newX = mScrollX;
+            int limit = mLayout.getScrollLimit();
+            if (oldX > 0 && newX == 0 || oldX < limit && newX == limit) {
+                float v = mScroller.getCurrVelocity();
+                if (newX == limit) v = -v;
+                mPaper.edgeReached(v);
+            }
+            paperActive = mPaper.advanceAnimation();
+        }
+
+        more |= paperActive;
+
         float interpolate = 1f;
         if (mAnimation != null) {
             more |= mAnimation.calculate(currentTimeMillis);
             interpolate = mAnimation.value;
         }
-
-        more |= paperActive;
 
         if (WIDE) {
             canvas.translate(-mScrollX, 0, 0);
@@ -643,10 +668,10 @@ public class SlotView extends GLView {
                 MotionEvent e2, float distanceX, float distanceY) {
             cancelDown();
             float distance = WIDE ? distanceX : distanceY;
-            boolean canMove = mScroller.startScroll(
+            int overDistance = mScroller.startScroll(
                     Math.round(distance), 0, mLayout.getScrollLimit());
-            if (mOverscrollEffect == OVERSCROLL_3D && !canMove) {
-                mPaper.overScroll(distance);
+            if (mOverscrollEffect == OVERSCROLL_3D && overDistance != 0) {
+                mPaper.overScroll(overDistance);
             }
             invalidate();
             return true;
