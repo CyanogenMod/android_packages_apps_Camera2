@@ -58,6 +58,10 @@ public class ScrollerHelper {
         return mScroller.getCurrX();
     }
 
+    public float getCurrVelocity() {
+        return mScroller.getCurrVelocity();
+    }
+
     public void setPosition(int position) {
         mScroller.startScroll(
                 position, 0,    // startX, startY
@@ -77,7 +81,8 @@ public class ScrollerHelper {
                 mOverflingEnabled ? mOverflingDistance : 0, 0);
     }
 
-    public boolean startScroll(int distance, int min, int max) {
+    // Returns the distance that over the scroll limit.
+    public int startScroll(int distance, int min, int max) {
         int currPosition = mScroller.getCurrX();
         int finalPosition = mScroller.getFinalX();
         int newPosition = Utils.clamp(finalPosition + distance, min, max);
@@ -85,9 +90,7 @@ public class ScrollerHelper {
             mScroller.startScroll(
                 currPosition, 0,                    // startX, startY
                 newPosition - currPosition, 0, 0);  // dx, dy, duration
-            return true;
-        } else {
-            return false;
         }
+        return finalPosition + distance - newPosition;
     }
 }
