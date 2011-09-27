@@ -118,14 +118,16 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
         double longitude = 0f;
 
         ContentResolver contentResolver = context.getContentResolver();
-        Cursor cursor = contentResolver.query(
-                sourceUri, IMAGE_PROJECTION, null, null, null);
+        Cursor cursor = null;
         try {
+            cursor = contentResolver.query(sourceUri, IMAGE_PROJECTION, null, null, null);
             if ((cursor != null) && cursor.moveToNext()) {
                 dateTaken = cursor.getLong(INDEX_DATE_TAKEN);
                 latitude = cursor.getDouble(INDEX_LATITUDE);
                 longitude = cursor.getDouble(INDEX_LONGITUDE);
             }
+        } catch (Exception e) {
+            // Ignore error for lacking property columns from the source.
         } finally {
             if (cursor != null) {
                 cursor.close();
