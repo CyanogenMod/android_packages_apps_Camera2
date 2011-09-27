@@ -199,8 +199,6 @@
                 android:hardwareAccelerated="true">
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />
-                <data android:scheme="content" />
-                <data android:host="media" />
                 <data android:mimeType="image/*" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
