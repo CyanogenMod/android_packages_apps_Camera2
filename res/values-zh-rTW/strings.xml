@@ -98,7 +98,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"未儲存裁剪圖片"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"沒有可用的相簿"</string>
     <string name="empty_album" msgid="6307897398825514762">"沒有可用的圖片/影片"</string>
-    <string name="picasa_posts" msgid="1497721615718760613">"訊息中使用的相片"</string>
+    <string name="picasa_posts" msgid="1497721615718760613">"訊息中的相片"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"可在離線時使用"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"重新整理"</string>
     <string name="done" msgid="217672440064436595">"完成"</string>
