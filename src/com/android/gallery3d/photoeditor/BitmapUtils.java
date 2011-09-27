@@ -126,11 +126,14 @@ public class BitmapUtils {
 
     private int getOrientation(Uri uri) {
         int orientation = 0;
-        Cursor cursor = context.getContentResolver().query(uri, IMAGE_PROJECTION, null, null, null);
+        Cursor cursor = null;
         try {
+            cursor = context.getContentResolver().query(uri, IMAGE_PROJECTION, null, null, null);
             if ((cursor != null) && cursor.moveToNext()) {
                 orientation = cursor.getInt(INDEX_ORIENTATION);
             }
+        } catch (Exception e) {
+            // Ignore error for no orientation column; just use the default orientation value 0.
         } finally {
             if (cursor != null) {
                 cursor.close();
