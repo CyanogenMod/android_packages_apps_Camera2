@@ -34,13 +34,13 @@ public abstract class SelectionDrawer {
     public abstract void prepareDrawing();
     public abstract void draw(GLCanvas canvas, Texture content,
             int width, int height, int rotation, Path path,
-            int topIndex, int dataSourceType, int mediaType, boolean isPanorama,
+            int dataSourceType, int mediaType, boolean isPanorama,
             int labelBackgroundHeight, boolean wantCache, boolean isCaching);
     public abstract void drawFocus(GLCanvas canvas, int width, int height);
 
     public void draw(GLCanvas canvas, Texture content, int width, int height,
             int rotation, Path path, int mediaType, boolean isPanorama) {
-        draw(canvas, content, width, height, rotation, path, 0,
+        draw(canvas, content, width, height, rotation, path,
                 DATASOURCE_TYPE_NOT_CATEGORIZED, mediaType, isPanorama,
                 0, false, false);
     }
@@ -53,27 +53,6 @@ public abstract class SelectionDrawer {
         }
 
         content.draw(canvas, x, y, width, height);
-
-        if (rotation != 0) {
-            canvas.restore();
-        }
-    }
-
-    public static void drawWithRotationAndGray(GLCanvas canvas, Texture content,
-                int x, int y, int width, int height, int rotation,
-                int topIndex) {
-        if (rotation != 0) {
-            canvas.save(GLCanvas.SAVE_FLAG_MATRIX);
-            canvas.rotate(rotation, 0, 0, 1);
-        }
-
-        if (topIndex > 0 && (content instanceof BasicTexture)) {
-            float ratio = Utils.clamp(0.3f + 0.2f * topIndex, 0f, 1f);
-            canvas.drawMixed((BasicTexture) content, 0xFF222222, ratio,
-                    x, y, width, height);
-        } else {
-            content.draw(canvas, x, y, width, height);
-        }
 
         if (rotation != 0) {
             canvas.restore();
