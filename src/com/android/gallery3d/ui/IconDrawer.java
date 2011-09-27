@@ -31,7 +31,7 @@ public abstract class IconDrawer extends SelectionDrawer {
     private final NinePatchTexture mFramePressed;
     private final NinePatchTexture mFrameSelected;
     private final NinePatchTexture mDarkStrip;
-    private final ResourceTexture mPanoramaBorder;
+    private final NinePatchTexture mPanoramaBorder;
     private final Texture mVideoOverlay;
     private final Texture mVideoPlayIcon;
     private final int mIconSize;
@@ -50,7 +50,7 @@ public abstract class IconDrawer extends SelectionDrawer {
         mMtpIcon = new ResourceTexture(context, R.drawable.frame_overlay_gallery_ptp);
         mVideoOverlay = new ResourceTexture(context, R.drawable.ic_video_thumb);
         mVideoPlayIcon = new ResourceTexture(context, R.drawable.ic_gallery_play);
-        mPanoramaBorder = new ResourceTexture(context, R.drawable.ic_pan_thumb);
+        mPanoramaBorder = new NinePatchTexture(context, R.drawable.ic_pan_thumb);
         mFramePressed = new NinePatchTexture(context, R.drawable.grid_pressed);
         mFrameSelected = new NinePatchTexture(context, R.drawable.grid_selected);
         mDarkStrip = new NinePatchTexture(context, R.drawable.dark_strip);
