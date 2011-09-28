@@ -29,8 +29,13 @@ public abstract class DisplayItem {
         mBoxHeight = height;
     }
 
-    // returns true if more pass is needed
-    public abstract boolean render(GLCanvas canvas, int pass);
+    // Return values of render():
+    // RENDER_MORE_PASS: more pass is needed for this item
+    // RENDER_MORE_FRAME: need to render next frame (used for animation)
+    public static final int RENDER_MORE_PASS = 1;
+    public static final int RENDER_MORE_FRAME = 2;
+
+    public abstract int render(GLCanvas canvas, int pass);
 
     public abstract long getIdentity();
 

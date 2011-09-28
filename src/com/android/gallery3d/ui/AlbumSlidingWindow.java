@@ -40,6 +40,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
     private static final int MSG_LOAD_BITMAP_DONE = 0;
     private static final int MSG_UPDATE_SLOT = 1;
     private static final int JOB_LIMIT = 2;
+    private static final int PLACEHOLDER_COLOR = 0xFF222222;
 
     public static interface Listener {
         public void onSizeChanged(int size);
@@ -81,7 +82,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
         mData = new AlbumDisplayItem[cacheSize];
         mSize = source.size();
 
-        mWaitLoadingTexture = new ColorTexture(Color.TRANSPARENT);
+        mWaitLoadingTexture = new ColorTexture(PLACEHOLDER_COLOR);
         mWaitLoadingTexture.setSize(1, 1);
 
         mHandler = new SynchronizedHandler(activity.getGLRoot()) {
@@ -306,7 +307,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
             if (bitmap != null) {
                 BitmapTexture texture = new BitmapTexture(bitmap, true);
                 texture.setThrottled(true);
-                updateContent(texture);
+                updateContent(new FadeInTexture(PLACEHOLDER_COLOR, texture));
                 if (mListener != null && isActiveSlot) {
                     mListener.onContentInvalidated();
                 }
@@ -318,7 +319,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
         }
 
         @Override
-        public boolean render(GLCanvas canvas, int pass) {
+        public int render(GLCanvas canvas, int pass) {
             // Fit the content into the box
             int width = mContent.getWidth();
             int height = mContent.getHeight();
@@ -336,11 +337,19 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
                 if (mMediaItem != null) path = mMediaItem.getPath();
                 mSelectionDrawer.draw(canvas, mContent, width, height,
                         getRotation(), path, mMediaType, mIsPanorama);
-                return (mFocusIndex == mSlotIndex);
+                int result = 0;
+                if (mFocusIndex == mSlotIndex) {
+                    result |= RENDER_MORE_PASS;
+                }
+                if (mContent != mWaitLoadingTexture &&
+                        ((FadeInTexture) mContent).isAnimating()) {
+                    result |= RENDER_MORE_FRAME;
+                }
+                return result;
             } else if (pass == 1) {
                 mSelectionDrawer.drawFocus(canvas, width, height);
             }
-            return false;
+            return 0;
         }
 
         @Override

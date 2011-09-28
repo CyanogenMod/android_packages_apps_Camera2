@@ -36,6 +36,7 @@ import android.os.Message;
 public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
     private static final String TAG = "GallerySlidingWindow";
     private static final int MSG_LOAD_BITMAP_DONE = 0;
+    private static final int PLACEHOLDER_COLOR = 0xFF222222;
 
     public static interface Listener {
         public void onSizeChanged(int size);
@@ -85,7 +86,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         mData = new MyAlbumSetItem[cacheSize];
         mSize = source.size();
 
-        mWaitLoadingTexture = new ColorTexture(Color.TRANSPARENT);
+        mWaitLoadingTexture = new ColorTexture(PLACEHOLDER_COLOR);
         mWaitLoadingTexture.setSize(1, 1);
 
         mHandler = new SynchronizedHandler(activity.getGLRoot()) {
@@ -359,7 +360,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
             if (bitmap != null) {
                 BitmapTexture texture = new BitmapTexture(bitmap, true);
                 texture.setThrottled(true);
-                updateContent(texture);
+                updateContent(new FadeInTexture(PLACEHOLDER_COLOR, texture));
                 if (mListener != null) mListener.onContentInvalidated();
             }
         }
@@ -369,7 +370,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         }
 
         @Override
-        public boolean render(GLCanvas canvas, int pass) {
+        public int render(GLCanvas canvas, int pass) {
             // Fit the content into the box
             int width = mContent.getWidth();
             int height = mContent.getHeight();
@@ -394,12 +395,18 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
             }
 
             mSelectionDrawer.draw(canvas, mContent, width, height,
-                    getRotation(), path, mCoverIndex, sourceType, mMediaType,
+                    getRotation(), path, sourceType, mMediaType,
                     mIsPanorama, mLabelSpec.labelBackgroundHeight,
                     cacheFlag == MediaSet.CACHE_FLAG_FULL,
                     (cacheFlag == MediaSet.CACHE_FLAG_FULL)
                     && (cacheStatus != MediaSet.CACHE_STATUS_CACHED_FULL));
-            return false;
+
+            if (mContent != mWaitLoadingTexture &&
+                    ((FadeInTexture) mContent).isAnimating()) {
+                return RENDER_MORE_FRAME;
+            } else {
+                return 0;
+            }
         }
 
         @Override
@@ -519,7 +526,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         }
 
         @Override
-        public boolean render(GLCanvas canvas, int pass) {
+        public int render(GLCanvas canvas, int pass) {
             if (mBoxWidth != mLastWidth) {
                 updateContent();
             }
@@ -532,7 +539,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
             y += s.titleFontSize + s.countOffset;
             x += mHasIcon ? s.iconSize : s.leftMargin;
             mTextureCount.draw(canvas, x, y);
-            return false;
+            return 0;
         }
 
         @Override

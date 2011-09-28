@@ -265,7 +265,11 @@ public class SlotView extends GLView {
             if (oldX > 0 && newX == 0 || oldX < limit && newX == limit) {
                 float v = mScroller.getCurrVelocity();
                 if (newX == limit) v = -v;
-                mPaper.edgeReached(v);
+
+                // I don't know why, but getCurrVelocity() can return NaN.
+                if (!Float.isNaN(v)) {
+                    mPaper.edgeReached(v);
+                }
             }
             paperActive = mPaper.advanceAnimation();
         }
@@ -286,9 +290,11 @@ public class SlotView extends GLView {
 
         LinkedNode.List<ItemEntry> list = mItemList;
         for (ItemEntry entry = list.getLast(); entry != null;) {
-            if (renderItem(canvas, entry, interpolate, 0, paperActive)) {
+            int r = renderItem(canvas, entry, interpolate, 0, paperActive);
+            if ((r & DisplayItem.RENDER_MORE_PASS) != 0) {
                 mCurrentItems.add(entry);
             }
+            more |= ((r & DisplayItem.RENDER_MORE_FRAME) != 0);
             entry = list.previousOf(entry);
         }
 
@@ -296,9 +302,11 @@ public class SlotView extends GLView {
         while (!mCurrentItems.isEmpty()) {
             for (int i = 0, n = mCurrentItems.size(); i < n; i++) {
                 ItemEntry entry = mCurrentItems.get(i);
-                if (renderItem(canvas, entry, interpolate, pass, paperActive)) {
+                int r = renderItem(canvas, entry, interpolate, pass, paperActive);
+                if ((r & DisplayItem.RENDER_MORE_PASS) != 0) {
                     mNextItems.add(entry);
                 }
+                more |= ((r & DisplayItem.RENDER_MORE_FRAME) != 0);
             }
             mCurrentItems.clear();
             // swap mNextItems with mCurrentItems
@@ -321,7 +329,7 @@ public class SlotView extends GLView {
         mMoreAnimation = more;
     }
 
-    private boolean renderItem(GLCanvas canvas, ItemEntry entry,
+    private int renderItem(GLCanvas canvas, ItemEntry entry,
             float interpolate, int pass, boolean paperActive) {
         canvas.save(GLCanvas.SAVE_FLAG_ALPHA | GLCanvas.SAVE_FLAG_MATRIX);
         Position position = entry.target;
@@ -346,7 +354,7 @@ public class SlotView extends GLView {
             canvas.translate(position.x, position.y, position.z);
         }
         canvas.rotate(position.theta, 0, 0, 1);
-        boolean more = entry.item.render(canvas, pass);
+        int more = entry.item.render(canvas, pass);
         canvas.restore();
         return more;
     }

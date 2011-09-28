@@ -46,15 +46,14 @@ public class GridDrawer extends IconDrawer {
 
     @Override
     public void draw(GLCanvas canvas, Texture content, int width,
-            int height, int rotation, Path path, int topIndex,
+            int height, int rotation, Path path,
             int dataSourceType, int mediaType, boolean isPanorama,
             int labelBackgroundHeight, boolean wantCache, boolean isCaching) {
 
         int x = -width / 2;
         int y = -height / 2;
 
-        drawWithRotationAndGray(canvas, content, x, y, width, height, rotation,
-                topIndex);
+        drawWithRotation(canvas, content, x, y, width, height, rotation);
 
         if (((rotation / 90) & 0x01) == 1) {
             int temp = width;
@@ -64,15 +63,11 @@ public class GridDrawer extends IconDrawer {
             y = -height / 2;
         }
 
-        drawMediaTypeOverlay(canvas, mediaType, isPanorama, x, y, width, height,
-                topIndex);
-
-        if (topIndex == 0) {
-            drawLabelBackground(canvas, width, height, labelBackgroundHeight);
-            drawIcon(canvas, width, height, dataSourceType);
-            if (dataSourceType == DATASOURCE_TYPE_MTP) {
-                drawImportLabel(canvas, width, height);
-            }
+        drawMediaTypeOverlay(canvas, mediaType, isPanorama, x, y, width, height);
+        drawLabelBackground(canvas, width, height, labelBackgroundHeight);
+        drawIcon(canvas, width, height, dataSourceType);
+        if (dataSourceType == DATASOURCE_TYPE_MTP) {
+            drawImportLabel(canvas, width, height);
         }
 
         if (mSelectionManager.isPressedPath(path)) {

@@ -48,7 +48,7 @@ public class StripDrawer extends SelectionDrawer {
 
     @Override
     public void draw(GLCanvas canvas, Texture content,
-            int width, int height, int rotation, Path path, int topIndex,
+            int width, int height, int rotation, Path path,
             int dataSourceType, int mediaType, boolean isPanorama,
             int labelBackgroundHeight, boolean wantCache, boolean isCaching) {
 
