@@ -108,10 +108,9 @@ public abstract class IconDrawer extends SelectionDrawer {
     }
 
     protected void drawMediaTypeOverlay(GLCanvas canvas, int mediaType,
-            boolean isPanorama, int x, int y, int width, int height,
-            int topIndex) {
+            boolean isPanorama, int x, int y, int width, int height) {
         if (mediaType == MediaObject.MEDIA_TYPE_VIDEO) {
-            drawVideoOverlay(canvas, x, y, width, height, topIndex);
+            drawVideoOverlay(canvas, x, y, width, height);
         }
         if (isPanorama) {
             drawPanoramaBorder(canvas, x, y, width, height);
@@ -119,7 +118,7 @@ public abstract class IconDrawer extends SelectionDrawer {
     }
 
     protected void drawVideoOverlay(GLCanvas canvas, int x, int y,
-            int width, int height, int topIndex) {
+            int width, int height) {
         // Scale the video overlay to the height of the thumbnail and put it
         // on the left side.
         float scale = (float) height / mVideoOverlay.getHeight();
@@ -127,10 +126,8 @@ public abstract class IconDrawer extends SelectionDrawer {
         int h = Math.round(scale * mVideoOverlay.getHeight());
         mVideoOverlay.draw(canvas, x, y, w, h);
 
-        if (topIndex == 0) {
-            int side = Math.min(width, height) / 6;
-            mVideoPlayIcon.draw(canvas, -side / 2, -side / 2, side, side);
-        }
+        int side = Math.min(width, height) / 6;
+        mVideoPlayIcon.draw(canvas, -side / 2, -side / 2, side, side);
     }
 
     protected void drawPanoramaBorder(GLCanvas canvas, int x, int y,
