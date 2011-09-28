@@ -157,7 +157,6 @@
     <string name="people" msgid="4114003823747292747">"Mọi người"</string>
     <string name="tags" msgid="5539648765482935955">"Thẻ"</string>
     <string name="group_by" msgid="4308299657902209357">"Nhóm theo"</string>
-    <!-- no translation found for settings (1534847740615665736) -->
-    <skip />
+    <string name="settings" msgid="1534847740615665736">"Cài đặt"</string>
     <string name="add_account" msgid="4271217504968243974">"Thêm tài khoản"</string>
 </resources>
