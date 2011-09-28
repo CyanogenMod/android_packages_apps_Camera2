@@ -16,6 +16,19 @@
 
 package com.android.gallery3d.app;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Rect;
+import android.os.Bundle;
+import android.os.Vibrator;
+import android.provider.MediaStore;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
+
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
@@ -42,18 +55,6 @@ import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.ui.StaticBackground;
 import com.android.gallery3d.util.GalleryUtils;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Rect;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.view.ActionMode;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.widget.Toast;
-
 public class AlbumSetPage extends ActivityState implements
         SelectionManager.SelectionListener, GalleryActionBar.ClusterRunner,
         EyePosition.EyePositionListener {
@@ -78,6 +79,7 @@ public class AlbumSetPage extends ActivityState implements
     private String mSubtitle;
     private boolean mShowClusterMenu;
     private int mSelectedAction;
+    private Vibrator mVibrator;
 
     protected SelectionManager mSelectionManager;
     private AlbumSetDataAdapter mAlbumSetDataAdapter;
@@ -265,12 +267,14 @@ public class AlbumSetPage extends ActivityState implements
     public void onCreate(Bundle data, Bundle restoreState) {
         initializeViews();
         initializeData(data);
+        Context context = mActivity.getAndroidContext();
         mGetContent = data.getBoolean(Gallery.KEY_GET_CONTENT, false);
         mGetAlbum = data.getBoolean(Gallery.KEY_GET_ALBUM, false);
         mTitle = data.getString(AlbumSetPage.KEY_SET_TITLE);
         mSubtitle = data.getString(AlbumSetPage.KEY_SET_SUBTITLE);
-        mEyePosition = new EyePosition(mActivity.getAndroidContext(), this);
+        mEyePosition = new EyePosition(context, this);
         mDetailsSource = new MyDetailsSource();
+        mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         GalleryActionBar actionBar = mActivity.getGalleryActionBar();
         if (actionBar != null) {
             mSelectedAction = data.getInt(
@@ -509,6 +513,7 @@ public class AlbumSetPage extends ActivityState implements
             case SelectionManager.ENTER_SELECTION_MODE: {
                 mActivity.getGalleryActionBar().hideClusterMenu();
                 mActionMode = mActionModeHandler.startActionMode();
+                mVibrator.vibrate(100);
                 break;
             }
             case SelectionManager.LEAVE_SELECTION_MODE: {

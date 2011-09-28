@@ -22,9 +22,6 @@ import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
 
-import android.content.Context;
-import android.os.Vibrator;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,7 +36,6 @@ public class SelectionManager {
 
     private Set<Path> mClickedSet;
     private MediaSet mSourceMediaSet;
-    private final Vibrator mVibrator;
     private SelectionListener mListener;
     private DataManager mDataManager;
     private boolean mInverseSelection;
@@ -55,9 +51,7 @@ public class SelectionManager {
     }
 
     public SelectionManager(GalleryContext galleryContext, boolean isAlbumSet) {
-        Context context = galleryContext.getAndroidContext();
         mDataManager = galleryContext.getDataManager();
-        mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         mClickedSet = new HashSet<Path>();
         mIsAlbumSet = isAlbumSet;
         mTotal = -1;
@@ -98,7 +92,6 @@ public class SelectionManager {
         if (mInSelectionMode) return;
 
         mInSelectionMode = true;
-        mVibrator.vibrate(100);
         if (mListener != null) mListener.onSelectionModeChange(ENTER_SELECTION_MODE);
     }
 
