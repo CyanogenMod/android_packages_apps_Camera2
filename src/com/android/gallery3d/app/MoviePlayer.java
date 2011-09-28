@@ -123,6 +123,22 @@ public class MoviePlayer implements
                 mActionBar.hide();
                 showSystemUi(false);
             }
+
+            // We intercept the "back" key events here, so hide() won't be
+            // called for ACTION_DOWN events of the "back" key (The code is in
+            // MediaController). Otherwise after system bar is hidden, we
+            // will not receive the ACTION_UP events of the "back" key.
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent event) {
+                int keyCode = event.getKeyCode();
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (event.getAction() == KeyEvent.ACTION_UP) {
+                        movieActivity.onBackPressed();
+                    }
+                    return true;
+                }
+                return super.dispatchKeyEvent(event);
+            }
         };
 
         mMediaController.show();
@@ -139,18 +155,6 @@ public class MoviePlayer implements
             }
         });
 
-        mMediaController.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (event.getAction() == KeyEvent.ACTION_UP) {
-                        movieActivity.onBackPressed();
-                    }
-                    return true;
-                }
-                return false;
-            }
-        });
         mVideoView.setMediaController(mMediaController);
 
         mAudioBecomingNoisyReceiver = new AudioBecomingNoisyReceiver();
