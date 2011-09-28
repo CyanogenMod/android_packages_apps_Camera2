@@ -24,6 +24,7 @@ package com.android.gallery3d.ui;
 //
 // Texture
 // -- ColorTexture
+// -- FadeInTexture
 // -- BasicTexture
 //    -- RawTexture
 //    -- UploadedTexture
