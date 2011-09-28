@@ -112,16 +112,33 @@ public class MoviePlayer implements
         mMediaController = new MediaController(movieActivity) {
             @Override
             public void show() {
-                super.show();
+                showSystemUi(true);
                 mActionBar.show();
+                super.show();
             }
 
             @Override
             public void hide() {
                 super.hide();
                 mActionBar.hide();
+                showSystemUi(false);
             }
         };
+
+        mMediaController.show();
+
+        // When the user touches the screen or uses some hard key, the framework
+        // will change system ui visibility from invisible to visible. We show
+        // the media control at this point.
+        mVideoView.setOnSystemUiVisibilityChangeListener(
+                new View.OnSystemUiVisibilityChangeListener() {
+            public void onSystemUiVisibilityChange(int visibility) {
+                if ((visibility & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0) {
+                    mMediaController.show();
+                }
+            }
+        });
+
         mMediaController.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -160,6 +177,12 @@ public class MoviePlayer implements
                 mVideoView.start();
             }
         }
+    }
+
+    private void showSystemUi(boolean visible) {
+        int flag = visible ? 0 : View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        mVideoView.setSystemUiVisibility(flag);
+        mMediaController.setSystemUiVisibility(flag);
     }
 
     public void onSaveInstanceState(Bundle outState) {
