@@ -157,7 +157,6 @@
     <string name="people" msgid="4114003823747292747">"Personas"</string>
     <string name="tags" msgid="5539648765482935955">"Atzīmes"</string>
     <string name="group_by" msgid="4308299657902209357">"Grupēt pēc:"</string>
-    <!-- no translation found for settings (1534847740615665736) -->
-    <skip />
+    <string name="settings" msgid="1534847740615665736">"Iestatījumi"</string>
     <string name="add_account" msgid="4271217504968243974">"Konta pievienošana"</string>
 </resources>
