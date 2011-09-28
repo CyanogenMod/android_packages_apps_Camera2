@@ -16,6 +16,20 @@
 
 package com.android.gallery3d.app;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Vibrator;
+import android.provider.MediaStore;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
+
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
@@ -43,19 +57,6 @@ import com.android.gallery3d.ui.StaticBackground;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.view.ActionMode;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.widget.Toast;
-
 import java.util.Random;
 
 public class AlbumPage extends ActivityState implements GalleryActionBar.ClusterRunner,
@@ -82,6 +83,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private AlbumDataAdapter mAlbumDataAdapter;
 
     protected SelectionManager mSelectionManager;
+    private Vibrator mVibrator;
     private GridDrawer mGridDrawer;
     private HighlightDrawer mHighlightDrawer;
 
@@ -271,6 +273,8 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mGetContent = data.getBoolean(Gallery.KEY_GET_CONTENT, false);
         mShowClusterMenu = data.getBoolean(KEY_SHOW_CLUSTER_MENU, false);
         mDetailsSource = new MyDetailsSource();
+        Context context = mActivity.getAndroidContext();
+        mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
         startTransition(data);
 
@@ -537,6 +541,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         switch (mode) {
             case SelectionManager.ENTER_SELECTION_MODE: {
                 mActionMode = mActionModeHandler.startActionMode();
+                mVibrator.vibrate(100);
                 break;
             }
             case SelectionManager.LEAVE_SELECTION_MODE: {
