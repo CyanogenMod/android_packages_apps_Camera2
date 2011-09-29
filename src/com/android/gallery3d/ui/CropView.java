@@ -415,18 +415,15 @@ public class CropView extends GLView {
         private RectF mTempRect = new RectF();
         private PointF mTempPoint = new PointF();
 
-        private ResourceTexture mArrowX;
-        private ResourceTexture mArrowY;
+        private ResourceTexture mArrow;
 
         private int mMovingEdges = 0;
         private float mReferenceX;
         private float mReferenceY;
 
         public HighlightRectangle() {
-            mArrowX = new ResourceTexture(mActivity.getAndroidContext(),
-                    R.drawable.camera_crop_width_holo);
-            mArrowY = new ResourceTexture(mActivity.getAndroidContext(),
-                    R.drawable.camera_crop_height_holo);
+            mArrow = new ResourceTexture(mActivity.getAndroidContext(),
+                    R.drawable.camera_crop_holo);
         }
 
         public void setInitRectangle() {
@@ -598,25 +595,26 @@ public class CropView extends GLView {
 
             float centerY = (r.top + r.bottom) / 2;
             float centerX = (r.left + r.right) / 2;
-            if ((mMovingEdges & (MOVE_RIGHT | MOVE_BLOCK)) != 0) {
-                mArrowX.draw(canvas,
-                        Math.round(r.right - mArrowX.getWidth() / 2),
-                        Math.round(centerY - mArrowX.getHeight() / 2));
+            boolean notMoving = mMovingEdges == 0;
+            if ((mMovingEdges & MOVE_RIGHT) != 0 || notMoving) {
+                mArrow.draw(canvas,
+                        Math.round(r.right - mArrow.getWidth() / 2),
+                        Math.round(centerY - mArrow.getHeight() / 2));
             }
-            if ((mMovingEdges & (MOVE_LEFT | MOVE_BLOCK)) != 0) {
-                mArrowX.draw(canvas,
-                        Math.round(r.left - mArrowX.getWidth() / 2),
-                        Math.round(centerY - mArrowX.getHeight() / 2));
+            if ((mMovingEdges & MOVE_LEFT) != 0 || notMoving) {
+                mArrow.draw(canvas,
+                        Math.round(r.left - mArrow.getWidth() / 2),
+                        Math.round(centerY - mArrow.getHeight() / 2));
             }
-            if ((mMovingEdges & (MOVE_TOP | MOVE_BLOCK)) != 0) {
-                mArrowY.draw(canvas,
-                        Math.round(centerX - mArrowY.getWidth() / 2),
-                        Math.round(r.top - mArrowY.getHeight() / 2));
+            if ((mMovingEdges & MOVE_TOP) != 0 || notMoving) {
+                mArrow.draw(canvas,
+                        Math.round(centerX - mArrow.getWidth() / 2),
+                        Math.round(r.top - mArrow.getHeight() / 2));
             }
-            if ((mMovingEdges & (MOVE_BOTTOM | MOVE_BLOCK)) != 0) {
-                mArrowY.draw(canvas,
-                        Math.round(centerX - mArrowY.getWidth() / 2),
-                        Math.round(r.bottom - mArrowY.getHeight() / 2));
+            if ((mMovingEdges & MOVE_BOTTOM) != 0 || notMoving) {
+                mArrow.draw(canvas,
+                        Math.round(centerX - mArrow.getWidth() / 2),
+                        Math.round(r.bottom - mArrow.getHeight() / 2));
             }
         }
 
