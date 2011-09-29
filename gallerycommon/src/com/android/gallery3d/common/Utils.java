@@ -42,6 +42,11 @@ public class Utils {
 
     private static long[] sCrcTable = new long[256];
 
+    private static final boolean IS_DEBUG_BUILD =
+            Build.TYPE.equals("eng") || Build.TYPE.equals("userdebug");
+
+    private static final String MASK_STRING = "********************************";
+
     // Throws AssertionError if the input is false.
     public static void assertTrue(boolean cond) {
         if (!cond) {
@@ -401,5 +406,15 @@ public class Utils {
         } finally {
             if (parcel != null) parcel.recycle();
         }
+    }
+
+    // Mask information for debugging only. It returns <code>info.toString()</code> directly
+    // for debugging build (i.e., 'eng' and 'userdebug') and returns a mask ("****")
+    // in release build to protect the information (e.g. for privacy issue).
+    public static String maskDebugInfo(Object info) {
+        if (info == null) return null;
+        String s = info.toString();
+        int length = Math.min(s.length(), MASK_STRING.length());
+        return IS_DEBUG_BUILD ? s : MASK_STRING.substring(0, length);
     }
 }
