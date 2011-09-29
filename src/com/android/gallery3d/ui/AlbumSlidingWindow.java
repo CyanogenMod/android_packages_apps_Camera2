@@ -286,6 +286,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
         private final int mMediaType;
         private Texture mContent;
         private boolean mIsPanorama;
+        private boolean mWaitLoadingDisplayed;
 
         public AlbumDisplayItem(int slotIndex, MediaItem item) {
             super(item);
@@ -307,7 +308,11 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
             if (bitmap != null) {
                 BitmapTexture texture = new BitmapTexture(bitmap, true);
                 texture.setThrottled(true);
-                updateContent(new FadeInTexture(PLACEHOLDER_COLOR, texture));
+                if (mWaitLoadingDisplayed) {
+                    updateContent(new FadeInTexture(PLACEHOLDER_COLOR, texture));
+                } else {
+                    updateContent(texture);
+                }
                 if (mListener != null && isActiveSlot) {
                     mListener.onContentInvalidated();
                 }
@@ -337,11 +342,14 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
                 if (mMediaItem != null) path = mMediaItem.getPath();
                 mSelectionDrawer.draw(canvas, mContent, width, height,
                         getRotation(), path, mMediaType, mIsPanorama);
+                if (mContent == mWaitLoadingTexture) {
+                       mWaitLoadingDisplayed = true;
+                }
                 int result = 0;
                 if (mFocusIndex == mSlotIndex) {
                     result |= RENDER_MORE_PASS;
                 }
-                if (mContent != mWaitLoadingTexture &&
+                if ((mContent instanceof FadeInTexture) &&
                         ((FadeInTexture) mContent).isAnimating()) {
                     result |= RENDER_MORE_FRAME;
                 }
