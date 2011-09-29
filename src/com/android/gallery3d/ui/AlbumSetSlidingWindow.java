@@ -340,6 +340,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         private Texture mContent;
         private final long mDataVersion;
         private boolean mIsPanorama;
+        private boolean mWaitLoadingDisplayed;
 
         public GalleryDisplayItem(int slotIndex, int coverIndex, MediaItem item) {
             super(item);
@@ -360,7 +361,11 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
             if (bitmap != null) {
                 BitmapTexture texture = new BitmapTexture(bitmap, true);
                 texture.setThrottled(true);
-                updateContent(new FadeInTexture(PLACEHOLDER_COLOR, texture));
+                if (mWaitLoadingDisplayed) {
+                    updateContent(new FadeInTexture(PLACEHOLDER_COLOR, texture));
+                } else {
+                    updateContent(texture);
+                }
                 if (mListener != null) mListener.onContentInvalidated();
             }
         }
@@ -401,7 +406,11 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
                     (cacheFlag == MediaSet.CACHE_FLAG_FULL)
                     && (cacheStatus != MediaSet.CACHE_STATUS_CACHED_FULL));
 
-            if (mContent != mWaitLoadingTexture &&
+            if (mContent == mWaitLoadingTexture) {
+                mWaitLoadingDisplayed = true;
+            }
+
+            if ((mContent instanceof FadeInTexture) &&
                     ((FadeInTexture) mContent).isAnimating()) {
                 return RENDER_MORE_FRAME;
             } else {
