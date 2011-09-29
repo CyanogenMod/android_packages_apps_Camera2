@@ -53,8 +53,7 @@ class CropView extends FullscreenToolView {
     private static final float BORDER_WIDTH = 2.0f;
 
     private final Paint borderPaint;
-    private final Drawable heightIndicator;
-    private final Drawable widthIndicator;
+    private final Drawable cropIndicator;
     private final int indicatorSize;
     private final RectF cropBounds = new RectF(0, 0, 1, 1);
 
@@ -67,8 +66,7 @@ class CropView extends FullscreenToolView {
         super(context, attrs);
 
         Resources resources = context.getResources();
-        heightIndicator = resources.getDrawable(R.drawable.camera_crop_height_holo);
-        widthIndicator = resources.getDrawable(R.drawable.camera_crop_width_holo);
+        cropIndicator = resources.getDrawable(R.drawable.camera_crop_holo);
         indicatorSize = (int) resources.getDimension(R.dimen.crop_indicator_size);
 
         borderPaint = new Paint();
@@ -233,18 +231,18 @@ class CropView extends FullscreenToolView {
         drawShadow(canvas, cropped.left, cropped.bottom, cropped.right, displayBounds.bottom);
         canvas.drawRect(cropped, borderPaint);
 
-        boolean block = movingEdges == MOVE_BLOCK;
-        if (((movingEdges & MOVE_TOP) != 0) || block) {
-            drawIndicator(canvas, heightIndicator, cropped.centerX(), cropped.top);
+        boolean notMoving = movingEdges == 0;
+        if (((movingEdges & MOVE_TOP) != 0) || notMoving) {
+            drawIndicator(canvas, cropIndicator, cropped.centerX(), cropped.top);
         }
-        if (((movingEdges & MOVE_BOTTOM) != 0) || block) {
-            drawIndicator(canvas, heightIndicator, cropped.centerX(), cropped.bottom);
+        if (((movingEdges & MOVE_BOTTOM) != 0) || notMoving) {
+            drawIndicator(canvas, cropIndicator, cropped.centerX(), cropped.bottom);
         }
-        if (((movingEdges & MOVE_LEFT) != 0) || block) {
-            drawIndicator(canvas, widthIndicator, cropped.left, cropped.centerY());
+        if (((movingEdges & MOVE_LEFT) != 0) || notMoving) {
+            drawIndicator(canvas, cropIndicator, cropped.left, cropped.centerY());
         }
-        if (((movingEdges & MOVE_RIGHT) != 0) || block) {
-            drawIndicator(canvas, widthIndicator, cropped.right, cropped.centerY());
+        if (((movingEdges & MOVE_RIGHT) != 0) || notMoving) {
+            drawIndicator(canvas, cropIndicator, cropped.right, cropped.centerY());
         }
     }
 }
