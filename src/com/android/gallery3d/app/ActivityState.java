@@ -46,6 +46,8 @@ abstract public class ActivityState {
         ResultEntry next;
     }
 
+    private boolean mDestroyed = false;
+
     protected ActivityState() {
     }
 
@@ -139,5 +141,10 @@ abstract public class ActivityState {
     }
 
     protected void onDestroy() {
+        mDestroyed = true;
+    }
+
+    boolean isDestroyed() {
+        return mDestroyed;
     }
 }

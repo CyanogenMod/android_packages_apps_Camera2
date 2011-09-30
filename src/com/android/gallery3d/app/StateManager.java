@@ -161,9 +161,14 @@ public class StateManager {
     void finishState(ActivityState state) {
         Log.v(TAG, "finishState " + state.getClass());
         if (state != mStack.peek().activityState) {
-            throw new IllegalArgumentException("The stateview to be finished"
-                    + " is not at the top of the stack: " + state + ", "
-                    + mStack.peek().activityState);
+            if (state.isDestroyed()) {
+                Log.d(TAG, "The state is already destroyed");
+                return;
+            } else {
+                throw new IllegalArgumentException("The stateview to be finished"
+                        + " is not at the top of the stack: " + state + ", "
+                        + mStack.peek().activityState);
+            }
         }
 
         // Remove the top state.

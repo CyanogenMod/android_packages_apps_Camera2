@@ -54,10 +54,12 @@ import com.android.gallery3d.ui.PositionRepository.Position;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.ui.StaticBackground;
+import com.android.gallery3d.util.Future;
+import com.android.gallery3d.util.GalleryUtils;
 
 public class AlbumSetPage extends ActivityState implements
         SelectionManager.SelectionListener, GalleryActionBar.ClusterRunner,
-        EyePosition.EyePositionListener {
+        EyePosition.EyePositionListener, MediaSet.SyncListener {
     @SuppressWarnings("unused")
     private static final String TAG = "AlbumSetPage";
 
@@ -99,6 +101,8 @@ public class AlbumSetPage extends ActivityState implements
     private float mX;
     private float mY;
     private float mZ;
+
+    private Future<Integer> mSyncTask = null;
 
     private final GLView mRootPane = new GLView() {
         private final float mMatrix[] = new float[16];
@@ -291,6 +295,10 @@ public class AlbumSetPage extends ActivityState implements
         DetailsHelper.pause();
         GalleryActionBar actionBar = mActivity.getGalleryActionBar();
         if (actionBar != null) actionBar.hideClusterMenu();
+        if (mSyncTask != null) {
+            mSyncTask.cancel();
+            mSyncTask = null;
+        }
     }
 
     @Override
@@ -552,6 +560,26 @@ public class AlbumSetPage extends ActivityState implements
         mDetailsHelper.show();
     }
 
+    @Override
+    public void onSyncDone(final MediaSet mediaSet, final int resultCode) {
+        if (resultCode == MediaSet.SYNC_RESULT_ERROR) {
+            Log.d(TAG, "onSyncDone: " + Utils.maskDebugInfo(mediaSet.getName()) + " result="
+                    + resultCode);
+        }
+        ((Activity) mActivity).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!mIsActive) return;
+                mediaSet.notifyContentChanged(); // force reload to handle spinner
+
+                if (resultCode == MediaSet.SYNC_RESULT_ERROR) {
+                    Toast.makeText((Context) mActivity, R.string.sync_album_set_error,
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
     private class MyLoadingListener implements LoadingListener {
         public void onLoadingStarted() {
             GalleryUtils.setSpinnerVisibility((Activity) mActivity, true);
@@ -559,11 +587,21 @@ public class AlbumSetPage extends ActivityState implements
 
         public void onLoadingFinished() {
             if (!mIsActive) return;
-            GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
-            if (mAlbumSetDataAdapter.size() == 0) {
-                Toast.makeText((Context) mActivity,
-                        R.string.empty_album, Toast.LENGTH_LONG).show();
-                if (mActivity.getStateManager().getStateCount() > 1) {
+
+            if (mSyncTask == null) {
+                // Request sync in case the mediaSet hasn't been sync'ed before.
+                mSyncTask = mMediaSet.requestSync(AlbumSetPage.this);
+            }
+            if (mSyncTask.isDone()){
+                // The mediaSet is in sync. Turn off the loading indicator.
+                GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
+
+                // Only show toast when there's no album and we are going to finish
+                // the page. Toast is redundant if we are going to stay on this page.
+                if ((mAlbumSetDataAdapter.size() == 0)
+                        && (mActivity.getStateManager().getStateCount() > 1)) {
+                    Toast.makeText((Context) mActivity,
+                            R.string.empty_album, Toast.LENGTH_LONG).show();
                     mActivity.getStateManager().finishState(AlbumSetPage.this);
                 }
             }
