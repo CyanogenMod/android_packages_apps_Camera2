@@ -18,6 +18,7 @@ package com.android.gallery3d.data;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.util.Future;
 
 // ComboAlbumSet combines multiple media sets into one. It lists all sub
 // media sets from the input album sets.
@@ -76,5 +77,10 @@ public class ComboAlbumSet extends MediaSet implements ContentListener {
 
     public void onContentDirty() {
         notifyContentChanged();
+    }
+
+    @Override
+    public Future<Integer> requestSync(SyncListener listener) {
+        return requestSyncOnEmptySets(mSets, listener);
     }
 }
