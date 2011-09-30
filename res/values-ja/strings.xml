@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"OK"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"顔をタップして開始します。"</string>
     <string name="saving_image" msgid="7270334453636349407">"写真を保存中…"</string>
+    <string name="save_error" msgid="7025992996853207949">"トリミングした画像を保存できません"</string>
     <string name="crop_label" msgid="521114301871349328">"トリミング"</string>
     <string name="select_image" msgid="7841406150484742140">"写真を選択"</string>
     <string name="select_video" msgid="4859510992798615076">"動画を選択"</string>
@@ -77,8 +78,7 @@
     <string name="activity_not_found" msgid="3731390759313019518">"使用できるアプリケーションがありません"</string>
     <string name="process_caching_requests" msgid="1076938190997999614">"キャッシュリクエストの処理"</string>
     <string name="caching_label" msgid="3244800874547101776">"キャッシュ中..."</string>
-    <!-- no translation found for crop_action (3427470284074377001) -->
-    <skip />
+    <string name="crop_action" msgid="3427470284074377001">"トリミング"</string>
     <string name="set_as" msgid="3636764710790507868">"登録"</string>
     <string name="video_err" msgid="7917736494827857757">"動画を再生できません"</string>
     <string name="group_by_location" msgid="316641628989023253">"地域別"</string>
@@ -99,7 +99,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"トリミングした画像は保存されていません"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"使用できるアルバムはありません"</string>
     <string name="empty_album" msgid="6307897398825514762">"使用できる画像/動画はありません"</string>
-    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"バズ"</string>
+    <string name="picasa_posts" msgid="1497721615718760613">"投稿"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"オフラインで使用する"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"更新"</string>
     <string name="done" msgid="217672440064436595">"完了"</string>

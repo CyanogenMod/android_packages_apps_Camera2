@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"OK"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"Докоснете лице за начало."</string>
     <string name="saving_image" msgid="7270334453636349407">"Снимката се запазва..."</string>
+    <string name="save_error" msgid="7025992996853207949">"Подрязаното изобр. не може да се запази"</string>
     <string name="crop_label" msgid="521114301871349328">"Подрязване на снимка"</string>
     <string name="select_image" msgid="7841406150484742140">"Избиране на снимка"</string>
     <string name="select_video" msgid="4859510992798615076">"Избиране на видеоклип"</string>
@@ -77,8 +78,7 @@
     <string name="activity_not_found" msgid="3731390759313019518">"Няма налично приложение"</string>
     <string name="process_caching_requests" msgid="1076938190997999614">"Заявките за кеширане се обработват"</string>
     <string name="caching_label" msgid="3244800874547101776">"Кешират се..."</string>
-    <!-- no translation found for crop_action (3427470284074377001) -->
-    <skip />
+    <string name="crop_action" msgid="3427470284074377001">"Подрязване"</string>
     <string name="set_as" msgid="3636764710790507868">"Задаване като"</string>
     <string name="video_err" msgid="7917736494827857757">"Видеоклипът не може да бъде възпроизведен"</string>
     <string name="group_by_location" msgid="316641628989023253">"По местоположение"</string>
@@ -99,7 +99,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"Подрязаното изображение не е запазено"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Няма налични албуми"</string>
     <string name="empty_album" msgid="6307897398825514762">"Няма налични изображения/видеоклипове"</string>
-    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"Buzz"</string>
+    <string name="picasa_posts" msgid="1497721615718760613">"Публикации"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Налице офлайн"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Опресняване"</string>
     <string name="done" msgid="217672440064436595">"Готово"</string>
@@ -158,7 +158,6 @@
     <string name="people" msgid="4114003823747292747">"Хора"</string>
     <string name="tags" msgid="5539648765482935955">"Маркери"</string>
     <string name="group_by" msgid="4308299657902209357">"Групиране по"</string>
-    <!-- no translation found for settings (1534847740615665736) -->
-    <skip />
+    <string name="settings" msgid="1534847740615665736">"Настройки"</string>
     <string name="add_account" msgid="4271217504968243974">"Добавяне на профил"</string>
 </resources>

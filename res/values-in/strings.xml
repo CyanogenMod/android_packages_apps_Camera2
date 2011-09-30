@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"Ok"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"Ketuk wajah untuk memulai."</string>
     <string name="saving_image" msgid="7270334453636349407">"Menyimpan gambar…"</string>
+    <string name="save_error" msgid="7025992996853207949">"Tdk dpt menyimpan gambar yang dipangkas"</string>
     <string name="crop_label" msgid="521114301871349328">"Pangkas gambar"</string>
     <string name="select_image" msgid="7841406150484742140">"Pilih foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Pilih video"</string>
@@ -117,10 +118,10 @@
     <string name="maker" msgid="7921835498034236197">"Pembuat"</string>
     <string name="model" msgid="8240207064064337366">"Model"</string>
     <string name="flash" msgid="2816779031261147723">"Lampu Kilat"</string>
-    <string name="aperture" msgid="5920657630303915195">"Bukaan Diafragma"</string>
+    <string name="aperture" msgid="5920657630303915195">"Bukaan"</string>
     <string name="focal_length" msgid="1291383769749877010">"Jarak Fokus"</string>
     <string name="white_balance" msgid="8122534414851280901">"Keseimbangan Putih"</string>
-    <string name="exposure_time" msgid="3146642210127439553">"Waktu Pemaparan"</string>
+    <string name="exposure_time" msgid="3146642210127439553">"Wkt Pncahayaan"</string>
     <string name="iso" msgid="5028296664327335940">"ISO"</string>
     <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
     <string name="manual" msgid="6608905477477607865">"Manual"</string>
@@ -157,7 +158,6 @@
     <string name="people" msgid="4114003823747292747">"Orang"</string>
     <string name="tags" msgid="5539648765482935955">"Tag"</string>
     <string name="group_by" msgid="4308299657902209357">"Kelompokkan menurut"</string>
-    <!-- no translation found for settings (1534847740615665736) -->
-    <skip />
+    <string name="settings" msgid="1534847740615665736">"Setelan"</string>
     <string name="add_account" msgid="4271217504968243974">"Tambah akun"</string>
 </resources>

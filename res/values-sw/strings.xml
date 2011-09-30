@@ -28,20 +28,21 @@
     <string name="resume_playing_message" msgid="5184414518126703481">"Endelea kucheza kutoka %s?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Endelea kucheza"</string>
     <string name="loading" msgid="7038208555304563571">"Inapakia…"</string>
-    <string name="fail_to_load" msgid="2710120770735315683">"Imeshindwa kupakiza"</string>
+    <string name="fail_to_load" msgid="2710120770735315683">"Imeshindwa kupakia"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Hakuna kijipicha"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Anza tena"</string>
     <string name="crop_save_text" msgid="8821167985419282305">"Sawa"</string>
-    <string name="multiface_crop_help" msgid="3127018992717032779">"Gota uso ili kuanza"</string>
+    <string name="multiface_crop_help" msgid="3127018992717032779">"Gonga uso ili kuanza"</string>
     <string name="saving_image" msgid="7270334453636349407">"Inahifadhi picha…"</string>
-    <string name="crop_label" msgid="521114301871349328">"Kata  picha"</string>
+    <string name="save_error" msgid="7025992996853207949">"Haiwezi kuhifadhi picha iliyopogoa"</string>
+    <string name="crop_label" msgid="521114301871349328">"Kata picha"</string>
     <string name="select_image" msgid="7841406150484742140">"Chagua picha"</string>
     <string name="select_video" msgid="4859510992798615076">"Chagua video"</string>
     <string name="select_item" msgid="2257529413100472599">"Chagua vipengee"</string>
     <string name="select_album" msgid="4632641262236697235">"Chagua albamu"</string>
     <string name="select_group" msgid="9090385962030340391">"Chagua vikundi"</string>
     <string name="set_image" msgid="2331476809308010401">"Weka picha kama"</string>
-    <string name="wallpaper" msgid="9222901738515471972">"Kuweka pazia,tafadhali subiri"</string>
+    <string name="wallpaper" msgid="9222901738515471972">"Inaweka pazia,tafadhali subiri..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Pazia"</string>
     <string name="delete" msgid="2839695998251824487">"Futa"</string>
     <string name="confirm_delete" msgid="5731757674837098707">"Thibitisha Kufuta"</string>
@@ -53,7 +54,7 @@
     <string name="details" msgid="8415120088556445230">"Maelezo"</string>
     <string name="details_title" msgid="2611396603977441273">"Vipengee %1$d kati ya %2$d:"</string>
     <string name="close" msgid="5585646033158453043">"Funga"</string>
-    <string name="switch_to_camera" msgid="7280111806675169992">"Swichi  kwa Kamera"</string>
+    <string name="switch_to_camera" msgid="7280111806675169992">"Badili  kwa Kamera"</string>
     <!-- String.format failed for translation -->
     <!-- no translation found for number_of_items_selected:zero (2142579311530586258) -->
     <!-- String.format failed for translation -->
@@ -95,7 +96,7 @@
     <string name="show_images_only" msgid="7263218480867672653">"Picha tu"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Video tu"</string>
     <string name="show_all" msgid="4780647751652596980">"Picha na video"</string>
-    <string name="appwidget_title" msgid="6410561146863700411">"Matunzio picha"</string>
+    <string name="appwidget_title" msgid="6410561146863700411">"Matunzio ya picha"</string>
     <string name="appwidget_empty_text" msgid="4123016777080388680">"Hakuna Picha"</string>
     <string name="crop_saved" msgid="4684933379430649946">"Picha iliyopunguzwa imehifadhiwa katika vipakuzi"</string>
     <string name="crop_not_saved" msgid="1438309290700431923">"Picha iliyopunguzwa haijahifadhiwa"</string>
@@ -131,28 +132,28 @@
     <string name="flash_on" msgid="7891556231891837284">"Mmweko umeanzishwa"</string>
     <string name="flash_off" msgid="1445443413822680010">"Hakuna flash"</string>
   <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="2955975726887896888">"Kufanya albamu ipatikane nje ya mkondo"</item>
-    <item quantity="other" msgid="6929905722448632886">"Kufanya albamu ipatikane nje ya mkondo"</item>
+    <item quantity="one" msgid="2955975726887896888">"Albamu inafanywa ipatikane nje ya mtandao"</item>
+    <item quantity="other" msgid="6929905722448632886">"Albamu zinafanywa zipatikane nje ya mtandao"</item>
   </plurals>
-    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Imehifadhiwa kwenye kifaa hiki na inapatikana nje ya mkondo"</string>
+    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Imehifadhiwa kwenye kifaa hiki na inapatikana nje ya mtandao."</string>
     <string name="set_label_all_albums" msgid="3507256844918130594">"Albamu Zote"</string>
-    <string name="set_label_local_albums" msgid="5227548825039781">"Albamu za Karibu"</string>
+    <string name="set_label_local_albums" msgid="5227548825039781">"Albamu kwenye Kifaa"</string>
     <string name="set_label_mtp_devices" msgid="5779788799122828528">"Vifa vya MTP"</string>
-    <string name="set_label_picasa_albums" msgid="2736308697306982589">"Picasa Albums"</string>
+    <string name="set_label_picasa_albums" msgid="2736308697306982589">"Albumu za Picasa"</string>
     <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> hailipishwi"</string>
-    <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g>au chini"</string>
+    <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> au chini"</string>
     <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> au juu"</string>
     <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> kwa <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
     <string name="Import" msgid="3985447518557474672">"Leta"</string>
-    <string name="import_complete" msgid="1098450310074640619">"Kuleta Kumekamilika"</string>
-    <string name="import_fail" msgid="5205927625132482529">"Imeshindikana kuagiza"</string>
+    <string name="import_complete" msgid="1098450310074640619">"Uingizaji Umekamilika"</string>
+    <string name="import_fail" msgid="5205927625132482529">"Imeshindwa kuleta"</string>
     <string name="camera_connected" msgid="6984353643349303075">"Kamera imeunganishwa"</string>
-    <string name="camera_disconnected" msgid="3683036560562699311">"kamera imekatwa muunganisho"</string>
+    <string name="camera_disconnected" msgid="3683036560562699311">"Kamera haijaunganishwa tena"</string>
     <string name="click_import" msgid="6407959065464291972">"Gusa hapa kuleta"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Taswira kutoka kwenye albamu"</string>
+    <string name="widget_type_album" msgid="3245149644830731121">"Picha kutoka kwenye albamu"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Changanya picha zote"</string>
-    <string name="widget_type_photo" msgid="8384174698965738770">"Chukua taswira"</string>
-    <string name="widget_type" msgid="7308564524449340985">"Aina ya Kisogora"</string>
+    <string name="widget_type_photo" msgid="8384174698965738770">"Chagua picha"</string>
+    <string name="widget_type" msgid="7308564524449340985">"Aina ya Wijeti"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Onyesho la slaidi"</string>
     <string name="albums" msgid="7320787705180057947">"Albamu"</string>
     <string name="times" msgid="2023033894889499219">"Nyakati"</string>

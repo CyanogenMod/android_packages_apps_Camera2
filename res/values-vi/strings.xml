@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"Ok"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"Nhấn vào một khuôn mặt để bắt đầu"</string>
     <string name="saving_image" msgid="7270334453636349407">"Đang lưu ảnh…"</string>
+    <string name="save_error" msgid="7025992996853207949">"Không thể lưu hình ảnh đã cắt"</string>
     <string name="crop_label" msgid="521114301871349328">"Cắt ảnh"</string>
     <string name="select_image" msgid="7841406150484742140">"Chọn ảnh"</string>
     <string name="select_video" msgid="4859510992798615076">"Chọn video"</string>
@@ -157,7 +158,6 @@
     <string name="people" msgid="4114003823747292747">"Mọi người"</string>
     <string name="tags" msgid="5539648765482935955">"Thẻ"</string>
     <string name="group_by" msgid="4308299657902209357">"Nhóm theo"</string>
-    <!-- no translation found for settings (1534847740615665736) -->
-    <skip />
+    <string name="settings" msgid="1534847740615665736">"Cài đặt"</string>
     <string name="add_account" msgid="4271217504968243974">"Thêm tài khoản"</string>
 </resources>

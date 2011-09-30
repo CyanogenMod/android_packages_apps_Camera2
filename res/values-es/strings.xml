@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"Aceptar"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"Toca una cara para empezar."</string>
     <string name="saving_image" msgid="7270334453636349407">"Guardando imagen..."</string>
+    <string name="save_error" msgid="7025992996853207949">"No se puede guardar la imagen recortada."</string>
     <string name="crop_label" msgid="521114301871349328">"Recortar imagen"</string>
     <string name="select_image" msgid="7841406150484742140">"Seleccionar foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Seleccionar vídeo"</string>
