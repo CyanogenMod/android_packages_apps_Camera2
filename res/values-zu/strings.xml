@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"Kulungile"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"Thepha ubuso ukuze uqale:"</string>
     <string name="saving_image" msgid="7270334453636349407">"Ilondoloza isithombe..."</string>
+    <string name="save_error" msgid="7025992996853207949">"Ayikwazi ukulondoloza umfanekiso okhrophiwe"</string>
     <string name="crop_label" msgid="521114301871349328">"Nqampuna isithombe"</string>
     <string name="select_image" msgid="7841406150484742140">"Khetha isithombe"</string>
     <string name="select_video" msgid="4859510992798615076">"Khetha ividiyo"</string>
