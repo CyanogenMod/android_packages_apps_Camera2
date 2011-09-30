@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"تأیید"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"چهره ای را برای شروع ضربه بزنید."</string>
     <string name="saving_image" msgid="7270334453636349407">"در حال ذخیره عکس..."</string>
+    <string name="save_error" msgid="7025992996853207949">"امکان ذخیره تصویر برش‌خورده وجود ندارد"</string>
     <string name="crop_label" msgid="521114301871349328">"برش تصویر"</string>
     <string name="select_image" msgid="7841406150484742140">"انتخاب عکس"</string>
     <string name="select_video" msgid="4859510992798615076">"انتخاب ویدیو"</string>
@@ -157,7 +158,6 @@
     <string name="people" msgid="4114003823747292747">"افراد"</string>
     <string name="tags" msgid="5539648765482935955">"نشان‌ها"</string>
     <string name="group_by" msgid="4308299657902209357">"گروه بندی براساس"</string>
-    <!-- no translation found for settings (1534847740615665736) -->
-    <skip />
+    <string name="settings" msgid="1534847740615665736">"تنظیمات"</string>
     <string name="add_account" msgid="4271217504968243974">"افزودن حساب"</string>
 </resources>

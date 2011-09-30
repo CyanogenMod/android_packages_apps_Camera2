@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"OK"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"Začněte klepnutím na obličej."</string>
     <string name="saving_image" msgid="7270334453636349407">"Ukládání fotografie..."</string>
+    <string name="save_error" msgid="7025992996853207949">"Oříznutý obrázek nelze uložit"</string>
     <string name="crop_label" msgid="521114301871349328">"Oříznout fotografii"</string>
     <string name="select_image" msgid="7841406150484742140">"Vyberte fotografii"</string>
     <string name="select_video" msgid="4859510992798615076">"Vyberte video"</string>

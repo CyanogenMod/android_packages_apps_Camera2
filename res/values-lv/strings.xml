@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"Labi"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"Pieskarieties sejai, lai sāktu."</string>
     <string name="saving_image" msgid="7270334453636349407">"Notiek attēla saglabāšana..."</string>
+    <string name="save_error" msgid="7025992996853207949">"Nevar saglabāt apgrieztu attēlu."</string>
     <string name="crop_label" msgid="521114301871349328">"Apgriezt attēlu"</string>
     <string name="select_image" msgid="7841406150484742140">"Atlasiet fotoattēlu"</string>
     <string name="select_video" msgid="4859510992798615076">"Atlasiet videoklipu"</string>
@@ -157,7 +158,6 @@
     <string name="people" msgid="4114003823747292747">"Personas"</string>
     <string name="tags" msgid="5539648765482935955">"Atzīmes"</string>
     <string name="group_by" msgid="4308299657902209357">"Grupēt pēc:"</string>
-    <!-- no translation found for settings (1534847740615665736) -->
-    <skip />
+    <string name="settings" msgid="1534847740615665736">"Iestatījumi"</string>
     <string name="add_account" msgid="4271217504968243974">"Konta pievienošana"</string>
 </resources>

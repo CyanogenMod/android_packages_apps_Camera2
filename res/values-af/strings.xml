@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"Ok"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"Tik \'n gesig om te begin."</string>
     <string name="saving_image" msgid="7270334453636349407">"Stoor tans prent…"</string>
+    <string name="save_error" msgid="7025992996853207949">"Kan nie gesnoeite prent stoor nie"</string>
     <string name="crop_label" msgid="521114301871349328">"Snoei prent"</string>
     <string name="select_image" msgid="7841406150484742140">"Kies foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Kies video"</string>

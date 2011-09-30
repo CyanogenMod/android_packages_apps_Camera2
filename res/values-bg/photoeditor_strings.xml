@@ -16,8 +16,7 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- no translation found for photoeditor_name (4738587346771969697) -->
-    <skip />
+    <string name="photoeditor_name" msgid="4738587346771969697">"Photo Studio"</string>
     <string name="loading_failure" msgid="5990741970574295950">"Снимката не може да бъде заредена"</string>
     <string name="saving_failure" msgid="8596600582621364077">"Снимката не може да бъде запазена"</string>
     <string name="photo_saved" msgid="3494363661299484657">"Снимката е запазена в албума „<xliff:g id="ALBUM_NAME">%s</xliff:g>“"</string>

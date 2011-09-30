@@ -39,6 +39,8 @@
     <!-- outdated translation 8140440041190264400 -->     <string name="crop_save_text" msgid="8821167985419282305">"Memorisar"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"Smatgai sin ina fatscha per cumenzar."</string>
     <string name="saving_image" msgid="7270334453636349407">"Memorisar il maletg..."</string>
+    <!-- no translation found for save_error (7025992996853207949) -->
+    <skip />
     <string name="crop_label" msgid="521114301871349328">"Retagliar il maletg"</string>
     <!-- no translation found for select_image (7841406150484742140) -->
     <skip />

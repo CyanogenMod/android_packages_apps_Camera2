@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"확인"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"시작하려면 얼굴을 탭하세요."</string>
     <string name="saving_image" msgid="7270334453636349407">"사진 저장 중..."</string>
+    <string name="save_error" msgid="7025992996853207949">"잘린 이미지를 저장할 수 없습니다."</string>
     <string name="crop_label" msgid="521114301871349328">"사진 자르기"</string>
     <string name="select_image" msgid="7841406150484742140">"사진 선택"</string>
     <string name="select_video" msgid="4859510992798615076">"동영상 선택"</string>
