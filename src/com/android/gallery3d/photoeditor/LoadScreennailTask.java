@@ -35,7 +35,7 @@ public class LoadScreennailTask extends AsyncTask<Uri, Void, Bitmap> {
      */
     public interface Callback {
 
-        void onComplete(Bitmap bitmap);
+        void onComplete(Bitmap result);
     }
 
     private static final int SCREENNAIL_WIDTH = 1280;
@@ -61,12 +61,12 @@ public class LoadScreennailTask extends AsyncTask<Uri, Void, Bitmap> {
     }
 
     @Override
-    protected void onPostExecute(Bitmap bitmap) {
-        if (bitmap == null) {
+    protected void onPostExecute(Bitmap result) {
+        if (result == null) {
             Toast toast = Toast.makeText(context, R.string.loading_failure, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
         }
-        callback.onComplete(bitmap);
+        callback.onComplete(result);
     }
 }
