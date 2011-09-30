@@ -541,7 +541,7 @@ public class CropImage extends AbstractGalleryActivity {
             return result;
         }
 
-        int rotation = mMediaItem.getRotation();
+        int rotation = mMediaItem.getFullImageRotation();
         rotateRectangle(rect, mCropView.getImageWidth(),
                 mCropView.getImageHeight(), 360 - rotation);
         rotateRectangle(dest, outputX, outputY, 360 - rotation);
