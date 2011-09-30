@@ -40,7 +40,7 @@
     <string name="no">No</string>
 
     <!-- Text button in the action bar for the user to save edited photo. [CHAR LIMIT=8] -->
-    <string name="save">Save</string>
+    <string name="save">SAVE</string>
 
     <!-- Name for the photo effect that auto fixes exposure. [CHAR LIMIT=15] -->
     <string name="autofix">Auto-fix</string>

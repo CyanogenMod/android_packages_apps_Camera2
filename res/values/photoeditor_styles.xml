@@ -37,8 +37,8 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:paddingLeft">@dimen/effect_padding_left_right</item>
-        <item name="android:paddingRight">@dimen/effect_padding_left_right</item>
+        <item name="android:paddingLeft">@dimen/effect_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/effect_padding_horizontal</item>
         <item name="android:orientation">vertical</item>
     </style>
     <style name="EffectsContainer">
@@ -62,12 +62,11 @@
     </style>
     <style name="ActionBar">
         <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">@dimen/action_bar_height</item>
+        <item name="android:layout_height">?android:attr/actionBarSize</item>
     </style>
     <style name="ActionBarLinearLayout">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">fill_parent</item>
-        <item name="android:layout_centerVertical">true</item>
         <item name="android:orientation">horizontal</item>
     </style>
     <style name="ActionBarBackLinearLayout" parent="@style/ActionBarLinearLayout">
@@ -82,37 +81,39 @@
         <item name="android:scaleType">centerInside</item>
         <item name="android:adjustViewBounds">true</item>
     </style>
-    <style name="ActionBarArrow" parent="@style/ActionBarImageView">
-        <item name="android:paddingTop">@dimen/action_bar_arrow_padding_top</item>
-        <item name="android:paddingBottom">@dimen/action_bar_arrow_padding_bottom</item>
-        <item name="android:paddingLeft">@dimen/action_bar_arrow_padding_left</item>
-        <item name="android:paddingRight">@dimen/action_bar_arrow_padding_right</item>
-        <item name="android:src">@drawable/photoeditor_arrow_back</item>
+    <style name="ActionBarArrow">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginLeft">@dimen/action_bar_arrow_margin_left</item>
+        <item name="android:layout_marginRight">@dimen/action_bar_arrow_margin_right</item>
+        <item name="android:src">?android:attr/homeAsUpIndicator</item>
     </style>
     <style name="ActionBarIcon" parent="@style/ActionBarImageView">
-        <item name="android:paddingTop">@dimen/action_bar_icon_padding_top</item>
-        <item name="android:paddingBottom">@dimen/action_bar_icon_padding_bottom</item>
+        <item name="android:paddingTop">@dimen/action_bar_icon_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/action_bar_icon_padding_vertical</item>
         <item name="android:paddingLeft">@dimen/action_bar_icon_padding_left</item>
         <item name="android:paddingRight">@dimen/action_bar_icon_padding_right</item>
         <item name="android:src">@mipmap/ic_launcher_gallery</item>
     </style>
-    <style name="ActionBarText">
+    <style name="ActionBarTitle" parent="android:TextAppearance.Holo.Widget.ActionBar.Title">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:textSize">@dimen/action_bar_text_size</item>
-        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:gravity">center</item>
     </style>
     <style name="ImageActionButton" parent="@style/ActionBarImageView">
-        <item name="android:paddingTop">@dimen/action_button_padding_top</item>
-        <item name="android:paddingBottom">@dimen/action_button_padding_bottom</item>
-        <item name="android:paddingLeft">@dimen/action_button_padding_left</item>
-        <item name="android:paddingRight">@dimen/action_button_padding_right</item>
+        <item name="android:paddingTop">@dimen/action_button_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/action_button_padding_vertical</item>
+        <item name="android:paddingLeft">@dimen/action_button_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/action_button_padding_horizontal</item>
         <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
-    <style name="TextActionButton" parent="@style/ActionBarText">
-        <item name="android:paddingLeft">@dimen/action_button_padding_left</item>
-        <item name="android:paddingRight">@dimen/action_button_padding_right</item>
+    <style name="TextActionButton" parent="android:TextAppearance.Holo.Widget.ActionBar.Menu">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">@dimen/action_button_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/action_button_padding_horizontal</item>
         <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
     <style name="EffectsMenuActionButton" parent="@style/ImageActionButton">
