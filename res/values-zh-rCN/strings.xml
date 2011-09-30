@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"确定"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"轻点一张脸开始裁剪。"</string>
     <string name="saving_image" msgid="7270334453636349407">"正在保存照片..."</string>
+    <string name="save_error" msgid="7025992996853207949">"无法保存裁剪后的图片"</string>
     <string name="crop_label" msgid="521114301871349328">"修剪照片"</string>
     <string name="select_image" msgid="7841406150484742140">"选择照片"</string>
     <string name="select_video" msgid="4859510992798615076">"选择视频"</string>
@@ -77,8 +78,7 @@
     <string name="activity_not_found" msgid="3731390759313019518">"没有可用的应用程序"</string>
     <string name="process_caching_requests" msgid="1076938190997999614">"处理缓存请求"</string>
     <string name="caching_label" msgid="3244800874547101776">"正在缓存..."</string>
-    <!-- no translation found for crop_action (3427470284074377001) -->
-    <skip />
+    <string name="crop_action" msgid="3427470284074377001">"裁剪"</string>
     <string name="set_as" msgid="3636764710790507868">"设置为"</string>
     <string name="video_err" msgid="7917736494827857757">"无法播放视频"</string>
     <string name="group_by_location" msgid="316641628989023253">"按位置分组"</string>
@@ -99,7 +99,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"经过裁剪的照片尚未保存"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"没有可用的相册"</string>
     <string name="empty_album" msgid="6307897398825514762">"没有可用的图片/视频"</string>
-    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"Buzz"</string>
+    <string name="picasa_posts" msgid="1497721615718760613">"帖子"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"允许离线状态下使用"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"刷新"</string>
     <string name="done" msgid="217672440064436595">"完成"</string>

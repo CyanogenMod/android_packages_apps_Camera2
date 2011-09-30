@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"確定"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"輕觸所需的臉孔開始裁剪。"</string>
     <string name="saving_image" msgid="7270334453636349407">"正在儲存相片..."</string>
+    <string name="save_error" msgid="7025992996853207949">"無法儲存經過裁剪的圖片"</string>
     <string name="crop_label" msgid="521114301871349328">"裁剪相片"</string>
     <string name="select_image" msgid="7841406150484742140">"選取相片"</string>
     <string name="select_video" msgid="4859510992798615076">"選取影片"</string>
@@ -77,8 +78,7 @@
     <string name="activity_not_found" msgid="3731390759313019518">"沒有可用的應用程式"</string>
     <string name="process_caching_requests" msgid="1076938190997999614">"處理快取要求"</string>
     <string name="caching_label" msgid="3244800874547101776">"快取中..."</string>
-    <!-- no translation found for crop_action (3427470284074377001) -->
-    <skip />
+    <string name="crop_action" msgid="3427470284074377001">"裁剪"</string>
     <string name="set_as" msgid="3636764710790507868">"設為"</string>
     <string name="video_err" msgid="7917736494827857757">"無法播放影片"</string>
     <string name="group_by_location" msgid="316641628989023253">"依位置"</string>
@@ -99,7 +99,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"未儲存裁剪圖片"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"沒有可用的相簿"</string>
     <string name="empty_album" msgid="6307897398825514762">"沒有可用的圖片/影片"</string>
-    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"Buzz"</string>
+    <string name="picasa_posts" msgid="1497721615718760613">"訊息中的相片"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"可在離線時使用"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"重新整理"</string>
     <string name="done" msgid="217672440064436595">"完成"</string>
@@ -153,7 +153,7 @@
     <string name="widget_type" msgid="7308564524449340985">"小工具類型"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"投影播放"</string>
     <string name="albums" msgid="7320787705180057947">"相簿"</string>
-    <string name="times" msgid="2023033894889499219">"次數"</string>
+    <string name="times" msgid="2023033894889499219">"時間"</string>
     <string name="locations" msgid="6649297994083130305">"位置"</string>
     <string name="people" msgid="4114003823747292747">"人物"</string>
     <string name="tags" msgid="5539648765482935955">"標記"</string>

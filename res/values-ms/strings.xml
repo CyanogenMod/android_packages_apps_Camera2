@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"Ok"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"Ketik wajah untuk memulakan."</string>
     <string name="saving_image" msgid="7270334453636349407">"Menyimpan gambar..."</string>
+    <string name="save_error" msgid="7025992996853207949">"Tidak boleh menyimpan imej yang dipangkas"</string>
     <string name="crop_label" msgid="521114301871349328">"Pangkas gambar"</string>
     <string name="select_image" msgid="7841406150484742140">"Pilih foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Pilih video"</string>
@@ -77,8 +78,7 @@
     <string name="activity_not_found" msgid="3731390759313019518">"Tiada aplikasi tersedia"</string>
     <string name="process_caching_requests" msgid="1076938190997999614">"Memproses Permintaan Cache"</string>
     <string name="caching_label" msgid="3244800874547101776">"Mengcache..."</string>
-    <!-- no translation found for crop_action (3427470284074377001) -->
-    <skip />
+    <string name="crop_action" msgid="3427470284074377001">"Pangkas"</string>
     <string name="set_as" msgid="3636764710790507868">"Tetapkan sebagai"</string>
     <string name="video_err" msgid="7917736494827857757">"Tidak boleh memainkan video"</string>
     <string name="group_by_location" msgid="316641628989023253">"Mengikut lokasi"</string>
@@ -99,7 +99,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"Imej yang dipangkas belum disimpan"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Tiada album tersedia"</string>
     <string name="empty_album" msgid="6307897398825514762">"Tiada imej/video tersedia"</string>
-    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"Buzz"</string>
+    <string name="picasa_posts" msgid="1497721615718760613">"Siaran"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Jadikan tersedia luar talian"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Segar semula"</string>
     <string name="done" msgid="217672440064436595">"Selesai"</string>

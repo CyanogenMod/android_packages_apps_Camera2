@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"Ok"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"Apăsaţi pe un chip pentru a începe."</string>
     <string name="saving_image" msgid="7270334453636349407">"Se salvează fotografia..."</string>
+    <string name="save_error" msgid="7025992996853207949">"Nu se poate salva imaginea decupată"</string>
     <string name="crop_label" msgid="521114301871349328">"Decupaţi fotografia"</string>
     <string name="select_image" msgid="7841406150484742140">"Selectaţi fotografie"</string>
     <string name="select_video" msgid="4859510992798615076">"Selectaţi videoclip"</string>
@@ -77,8 +78,7 @@
     <string name="activity_not_found" msgid="3731390759313019518">"Nu există aplicaţii disponibile"</string>
     <string name="process_caching_requests" msgid="1076938190997999614">"Se procesează solic. de stocare în memoria cache"</string>
     <string name="caching_label" msgid="3244800874547101776">"Mem. cache..."</string>
-    <!-- no translation found for crop_action (3427470284074377001) -->
-    <skip />
+    <string name="crop_action" msgid="3427470284074377001">"Decupaţi"</string>
     <string name="set_as" msgid="3636764710790507868">"Setaţi ca"</string>
     <string name="video_err" msgid="7917736494827857757">"Videoclipul nu poate fi redat"</string>
     <string name="group_by_location" msgid="316641628989023253">"După locaţie"</string>
@@ -99,7 +99,7 @@
     <string name="crop_not_saved" msgid="1438309290700431923">"Imaginea decupată nu s-a salvat"</string>
     <string name="no_albums_alert" msgid="3459550423604532470">"Nu există albume disponibile"</string>
     <string name="empty_album" msgid="6307897398825514762">"Nu există imagini/videoclipuri disponibile"</string>
-    <!-- outdated translation 1055151689217481993 -->     <string name="picasa_posts" msgid="1497721615718760613">"Buzz"</string>
+    <string name="picasa_posts" msgid="1497721615718760613">"Postări"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Faceţi-le disponibile offline"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Actualizaţi"</string>
     <string name="done" msgid="217672440064436595">"Terminat"</string>
@@ -158,7 +158,6 @@
     <string name="people" msgid="4114003823747292747">"Persoane"</string>
     <string name="tags" msgid="5539648765482935955">"Etichete"</string>
     <string name="group_by" msgid="4308299657902209357">"Grupaţi după"</string>
-    <!-- no translation found for settings (1534847740615665736) -->
-    <skip />
+    <string name="settings" msgid="1534847740615665736">"Setări"</string>
     <string name="add_account" msgid="4271217504968243974">"Adăugaţi un cont"</string>
 </resources>
