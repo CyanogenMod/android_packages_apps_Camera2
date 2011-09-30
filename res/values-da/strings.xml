@@ -34,6 +34,7 @@
     <string name="crop_save_text" msgid="8821167985419282305">"OK"</string>
     <string name="multiface_crop_help" msgid="3127018992717032779">"Tryk på et ansigt for at begynde."</string>
     <string name="saving_image" msgid="7270334453636349407">"Gemmer billede ..."</string>
+    <string name="save_error" msgid="7025992996853207949">"Det beskårne billede kan ikke gemmes"</string>
     <string name="crop_label" msgid="521114301871349328">"Beskær billede"</string>
     <string name="select_image" msgid="7841406150484742140">"Vælg foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Vælg video"</string>
