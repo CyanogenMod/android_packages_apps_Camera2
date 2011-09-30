@@ -199,6 +199,11 @@
     <!-- This toast message is shown when network connection is lost while doing clustering -->
     <string name="no_connectivity">Some locations couldn\'t be identified due to network problems.</string>
 
+    <!-- This toast message is shown when failed to load the album data. [CHAR LIMIT=NONE] -->
+    <string name="sync_album_error">Failed to download the photos in this album. Please retry later.</string>
+    <!-- This toast message is shown when failed to load the album list data. [CHAR LIMIT=NONE] -->
+    <string name="sync_album_set_error">Failed to download the list of albums. Please retry later.</string>
+
     <!-- The title of the menu item to let user choose the which portion of
          the media items the user wants to see. When pressed, a submenu will
          appear and user can choose one of "show images only",
