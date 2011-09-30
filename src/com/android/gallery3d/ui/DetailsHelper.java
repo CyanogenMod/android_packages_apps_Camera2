@@ -46,14 +46,7 @@ public class DetailsHelper {
     }
 
     public DetailsHelper(GalleryActivity activity, GLView rootPane, DetailsSource source) {
-        boolean useDialog = activity.getAndroidContext().getResources().getBoolean(
-                R.bool.dialog_details_view);
-        if (useDialog) {
-            mContainer = new DialogDetailsView(activity, source);
-        } else {
-            mContainer = new GLDetailsView(activity, source);
-            rootPane.addComponent((GLView) mContainer);
-        }
+        mContainer = new DialogDetailsView(activity, source);
     }
 
     public void layout(int left, int top, int right, int bottom) {

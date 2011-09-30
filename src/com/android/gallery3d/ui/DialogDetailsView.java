@@ -57,6 +57,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.MeasureSpec;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -110,8 +111,11 @@ public class DialogDetailsView implements DetailsViewContainer {
         String title = String.format(
                 mContext.getAndroidContext().getString(R.string.details_title),
                 mIndex + 1, mSource.size());
+        ListView detailsList = (ListView) LayoutInflater.from(mContext.getAndroidContext()).inflate(
+                R.layout.details_list, null, false);
+        detailsList.setAdapter(mAdapter);
         mDialog = new AlertDialog.Builder((Activity) mContext)
-            .setAdapter(mAdapter, null)
+            .setView(detailsList)
             .setTitle(title)
             .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
