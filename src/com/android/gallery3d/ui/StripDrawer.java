@@ -30,7 +30,7 @@ public class StripDrawer extends SelectionDrawer {
 
     public StripDrawer(Context context) {
         mFramePressed = new NinePatchTexture(context, R.drawable.grid_pressed);
-        mFocusBox = new NinePatchTexture(context, R.drawable.focus_box);
+        mFocusBox = new NinePatchTexture(context, R.drawable.thumb_selected);
         mFocusBoxPadding = mFocusBox.getPaddings();
     }
 
