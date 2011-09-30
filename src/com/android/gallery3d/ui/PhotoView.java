@@ -694,7 +694,13 @@ public class PhotoView extends GLView {
 
             int width = mTexture.getWidth();
             int height = mTexture.getHeight();
-            float s = mPositionController.getMinimalScale(width, height, mRotation);
+
+            // Calculate the initial scale that will used by PositionController
+            // (usually fit-to-screen)
+            float s = ((mRotation / 90) & 0x01) == 0
+                    ? mPositionController.getMinimalScale(width, height)
+                    : mPositionController.getMinimalScale(height, width);
+
             mDrawWidth = Math.round(width * s);
             mDrawHeight = Math.round(height * s);
         }
@@ -744,7 +750,8 @@ public class PhotoView extends GLView {
         mShowVideoPlayIcon = show;
     }
 
-    public Position retrieveOldPosition() {
+    // Returns the position saved by the previous page.
+    public Position retrieveSavedPosition() {
         if (mOpenedItemPath != null) {
             Position position = PositionRepository
                     .getInstance(mActivity).get(Long.valueOf(
