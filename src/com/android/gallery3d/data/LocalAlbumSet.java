@@ -55,11 +55,39 @@ public class LocalAlbumSet extends MediaSet {
     private static final Uri mWatchUriImage = Images.Media.EXTERNAL_CONTENT_URI;
     private static final Uri mWatchUriVideo = Video.Media.EXTERNAL_CONTENT_URI;
 
-    // The order is import it must match to the index in MediaStore.
+    // BUCKET_DISPLAY_NAME is a string like "Camera" which is the directory
+    // name of where an image or video is in. BUCKET_ID is a hash of the path
+    // name of that directory (see computeBucketValues() in MediaProvider for
+    // details). MEDIA_TYPE is video, image, audio, etc.
+    //
+    // The "albums" are not explicitly recorded in the database, but each image
+    // or video has the two columns (BUCKET_ID, MEDIA_TYPE). We define an
+    // "album" to be the collection of images/videos which have the same value
+    // for the two columns.
+    //
+    // The goal of the query (used in loadSubMediaSets()) is to find all albums,
+    // that is, all unique values for (BUCKET_ID, MEDIA_TYPE). In the meantime
+    // sort them by the timestamp of the latest image/video in each of the album.
+    //
+    // The order of columns below is important: it must match to the index in
+    // MediaStore.
     private static final String[] PROJECTION_BUCKET = {
             ImageColumns.BUCKET_ID,
             FileColumns.MEDIA_TYPE,
             ImageColumns.BUCKET_DISPLAY_NAME };
+
+    // We want to order the albums by reverse chronological order. We abuse the
+    // "WHERE" parameter to insert a "GROUP BY" clause into the SQL statement.
+    // The template for "WHERE" parameter is like:
+    //    SELECT ... FROM ... WHERE (%s)
+    // and we make it look like:
+    //    SELECT ... FROM ... WHERE (1) GROUP BY 1,(2)
+    // The "(1)" means true. The "1,(2)" means the first two columns specified
+    // after SELECT. Note that because there is a ")" in the template, we use
+    // "(2" to match it.
+    private static final String BUCKET_GROUP_BY =
+            "1) GROUP BY 1,(2";
+    private static final String BUCKET_ORDER_BY = "MAX(datetaken) DESC";
 
     private final GalleryApp mApplication;
     private final int mType;
@@ -105,7 +133,7 @@ public class LocalAlbumSet extends MediaSet {
     }
 
     private BucketEntry[] loadBucketEntries(Cursor cursor) {
-        HashSet<BucketEntry> buffer = new HashSet<BucketEntry>();
+        ArrayList<BucketEntry> buffer = new ArrayList<BucketEntry>();
         int typeBits = 0;
         if ((mType & MEDIA_TYPE_IMAGE) != 0) {
             typeBits |= (1 << FileColumns.MEDIA_TYPE_IMAGE);
@@ -116,9 +144,12 @@ public class LocalAlbumSet extends MediaSet {
         try {
             while (cursor.moveToNext()) {
                 if ((typeBits & (1 << cursor.getInt(INDEX_MEDIA_TYPE))) != 0) {
-                    buffer.add(new BucketEntry(
+                    BucketEntry entry = new BucketEntry(
                             cursor.getInt(INDEX_BUCKET_ID),
-                            cursor.getString(INDEX_BUCKET_NAME)));
+                            cursor.getString(INDEX_BUCKET_NAME));
+                    if (!buffer.contains(entry)) {
+                        buffer.add(entry);
+                    }
                 }
             }
         } finally {
@@ -140,11 +171,10 @@ public class LocalAlbumSet extends MediaSet {
         // Note: it will be faster if we only select media_type and bucket_id.
         //       need to test the performance if that is worth
 
-        Uri uri = mBaseUri.buildUpon().
-                appendQueryParameter("distinct", "true").build();
+        Uri uri = mBaseUri;
         GalleryUtils.assertNotInRenderThread();
         Cursor cursor = mApplication.getContentResolver().query(
-                uri, PROJECTION_BUCKET, null, null, null);
+                uri, PROJECTION_BUCKET, BUCKET_GROUP_BY, null, BUCKET_ORDER_BY);
         if (cursor == null) {
             Log.w(TAG, "cannot open local database: " + uri);
             return new ArrayList<MediaSet>();
@@ -152,24 +182,17 @@ public class LocalAlbumSet extends MediaSet {
         BucketEntry[] entries = loadBucketEntries(cursor);
         int offset = 0;
 
+        // Move camera and download bucket to the front, while keeping the
+        // order of others.
         int index = findBucket(entries, MediaSetUtils.CAMERA_BUCKET_ID);
         if (index != -1) {
-            Utils.swap(entries, index, offset++);
+            circularShiftRight(entries, offset++, index);
         }
         index = findBucket(entries, MediaSetUtils.DOWNLOAD_BUCKET_ID);
         if (index != -1) {
-            Utils.swap(entries, index, offset++);
+            circularShiftRight(entries, offset++, index);
         }
 
-        Arrays.sort(entries, offset, entries.length, new Comparator<BucketEntry>() {
-            @Override
-            public int compare(BucketEntry a, BucketEntry b) {
-                int result = a.bucketName.compareTo(b.bucketName);
-                return result != 0
-                        ? result
-                        : Utils.compare(a.bucketId, b.bucketId);
-            }
-        });
         ArrayList<MediaSet> albums = new ArrayList<MediaSet>();
         DataManager dataManager = mApplication.getDataManager();
         for (BucketEntry entry : entries) {
@@ -259,5 +282,15 @@ public class LocalAlbumSet extends MediaSet {
             BucketEntry entry = (BucketEntry) object;
             return bucketId == entry.bucketId;
         }
+    }
+
+    // Circular shift the array range from a[i] to a[j] (inclusive). That is,
+    // a[i] -> a[i+1] -> a[i+2] -> ... -> a[j], and a[j] -> a[i]
+    private static <T> void circularShiftRight(T[] array, int i, int j) {
+        T temp = array[j];
+        for (int k = j; k > i; k--) {
+            array[k] = array[k - 1];
+        }
+        array[i] = temp;
     }
 }
