@@ -24,10 +24,12 @@
             android:title="@string/share"
             android:enabled="true"
             android:actionProviderClass="android.widget.ShareActionProvider"
+            android:visible="false"
             android:showAsAction="ifRoom" />
     <item android:id="@+id/action_delete"
             android:icon="@drawable/ic_menu_trash_holo_light"
             android:title="@string/delete"
+            android:visible="false"
             android:showAsAction="ifRoom">
         <menu>
             <item android:id="@+id/action_confirm_delete"
