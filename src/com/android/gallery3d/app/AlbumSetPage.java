@@ -75,7 +75,6 @@ public class AlbumSetPage extends ActivityState implements
     private AlbumSetView mAlbumSetView;
 
     private MediaSet mMediaSet;
-    private String mTitle;
     private String mSubtitle;
     private boolean mShowClusterMenu;
     private int mSelectedAction;
@@ -270,7 +269,6 @@ public class AlbumSetPage extends ActivityState implements
         Context context = mActivity.getAndroidContext();
         mGetContent = data.getBoolean(Gallery.KEY_GET_CONTENT, false);
         mGetAlbum = data.getBoolean(Gallery.KEY_GET_ALBUM, false);
-        mTitle = data.getString(AlbumSetPage.KEY_SET_TITLE);
         mSubtitle = data.getString(AlbumSetPage.KEY_SET_SUBTITLE);
         mEyePosition = new EyePosition(context, this);
         mDetailsSource = new MyDetailsSource();
@@ -391,11 +389,7 @@ public class AlbumSetPage extends ActivityState implements
         } else {
             mShowClusterMenu = !inAlbum;
             inflater.inflate(R.menu.albumset, menu);
-            if (mTitle != null) {
-                actionBar.setTitle(mTitle);
-            } else {
-                actionBar.setTitle(activity.getApplicationInfo().labelRes);
-            }
+            actionBar.setTitle(null);
             MenuItem selectItem = menu.findItem(R.id.action_select);
 
             if (selectItem != null) {
