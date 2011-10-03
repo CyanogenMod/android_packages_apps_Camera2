@@ -271,11 +271,7 @@ public class GalleryUtils {
 
     public static void setSpinnerVisibility(final Activity activity,
             final boolean visible) {
-        activity.runOnUiThread(new Runnable() {
-            public void run() {
-                activity.setProgressBarIndeterminateVisibility(visible);
-            }
-        });
+        SpinnerVisibilitySetter.getInstance(activity).setSpinnerVisibility(visible);
     }
 
     public static int determineTypeBits(Context context, Intent intent) {
