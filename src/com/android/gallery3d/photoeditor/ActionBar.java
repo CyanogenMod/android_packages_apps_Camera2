@@ -17,66 +17,36 @@
 package com.android.gallery3d.photoeditor;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.android.gallery3d.R;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+
 /**
- * Action bar that contains buttons such as undo, redo, save, etc. and listens to stack changes for
- * enabling/disabling buttons.
+ * Action bar that contains buttons such as undo, redo, save, etc.
  */
-public class ActionBar extends RelativeLayout implements FilterStack.StackListener {
+public class ActionBar extends RelativeLayout {
 
-    /**
-     * Listener of action button clicked.
-     */
-    public interface ActionBarListener {
-
-        void onUndo();
-
-        void onRedo();
-
-        void onSave();
-    }
-
-    private static final int ENABLE_BUTTON = 1;
     private static final float ENABLED_ALPHA = 1;
     private static final float DISABLED_ALPHA = 0.47f;
 
-    private final Handler handler;
-    private View undo;
-    private View redo;
-    private View save;
+    private final HashMap<Integer, Runnable> buttonRunnables = new HashMap<Integer, Runnable>();
+    private final HashSet<Integer> changedButtons = new HashSet<Integer>();
 
     public ActionBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        handler = new Handler() {
-
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case ENABLE_BUTTON:
-                        boolean canUndo = (msg.arg1 > 0);
-                        boolean canRedo = (msg.arg2 > 0);
-                        enableButton(undo, canUndo);
-                        enableButton(redo, canRedo);
-                        enableButton(save, canUndo);
-                        break;
-                }
-            }
-        };
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
 
-        // Show action-bar title only when there's still room for it; otherwise, hide it.
+        // Show the action-bar title only when there's still room for it; otherwise, hide it.
         int width = 0;
         for (int i = 0; i < getChildCount(); i++) {
             width += getChildAt(i).getWidth();
@@ -84,67 +54,58 @@ public class ActionBar extends RelativeLayout implements FilterStack.StackListen
         findViewById(R.id.action_bar_title).setVisibility(((width > r - l)) ? INVISIBLE: VISIBLE);
     }
 
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+
+        enableButton(R.id.undo_button, false);
+        enableButton(R.id.redo_button, false);
+        enableButton(R.id.save_button, false);
+    }
+
     /**
-     * Initializes with a non-null ActionBarListener.
+     * Restores the passed action-bar.
+     *
+     * @return the passed parameter.
      */
-    public void initialize(final ActionBarListener listener) {
-        undo = findViewById(R.id.undo_button);
-        undo.setOnClickListener(new OnClickListener() {
+    public ActionBar restore(ActionBar actionBar) {
+        // Restores by runnables and enabled status of buttons that have been changed.
+        for (Entry<Integer, Runnable> entry : buttonRunnables.entrySet()) {
+            actionBar.setRunnable(entry.getKey(), entry.getValue());
+        }
+        for (int buttonId : changedButtons) {
+            actionBar.enableButton(buttonId, isButtonEnabled(buttonId));
+        }
+        return actionBar;
+    }
+
+    public void setRunnable(int buttonId, final Runnable r) {
+        findViewById(buttonId).setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 if (isEnabled()) {
-                    listener.onUndo();
+                    r.run();
                 }
             }
         });
-
-        redo = findViewById(R.id.redo_button);
-        redo.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (isEnabled()) {
-                    listener.onRedo();
-                }
-            }
-        });
-
-        save = findViewById(R.id.save_button);
-        save.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (isEnabled()) {
-                    listener.onSave();
-                }
-            }
-        });
-
-        resetButtons();
+        buttonRunnables.put(buttonId, r);
     }
 
-    public void resetButtons() {
-        // Disable buttons immediately instead of waiting for ENABLE_BUTTON messages which may
-        // happen some time later after stack changes.
-        enableButton(undo, false);
-        enableButton(redo, false);
-        enableButton(save, false);
+    public void clickButton(int buttonId) {
+        findViewById(buttonId).performClick();
     }
 
-    public void disableSave() {
-        enableButton(save, false);
+    public boolean isButtonEnabled(int buttonId) {
+        return findViewById(buttonId).isEnabled();
     }
 
-    private void enableButton(View button, boolean enabled) {
+    public void enableButton(int buttonId, boolean enabled) {
+        View button = findViewById(buttonId);
         button.setEnabled(enabled);
         button.setAlpha(enabled ? ENABLED_ALPHA : DISABLED_ALPHA);
-    }
 
-    @Override
-    public void onStackChanged(boolean canUndo, boolean canRedo) {
-        // Listens to stack changes that may come from the worker thread; send messages to enable
-        // buttons only in the UI thread.
-        handler.sendMessage(handler.obtainMessage(ENABLE_BUTTON, canUndo ? 1 : 0, canRedo ? 1 : 0));
+        // Track buttons whose enabled status has been updated.
+        changedButtons.add(buttonId);
     }
 }

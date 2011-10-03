@@ -45,7 +45,7 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
      */
     public interface Callback {
 
-        void onComplete(Uri uri);
+        void onComplete(Uri result);
     }
 
     private static final String TIME_STAMP_NAME = "'IMG'_yyyyMMdd_HHmmss";

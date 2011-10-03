@@ -17,30 +17,33 @@
 package com.android.gallery3d.photoeditor;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 
 import com.android.gallery3d.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Toolbar that contains all tools and handles all operations for editing photo.
+ * Toolbar that contains all tools and controls their idle/awake behaviors from UI thread.
  */
 public class Toolbar extends RelativeLayout {
 
     private final ToolbarIdleHandler idleHandler;
-    private FilterStack filterStack;
-    private EffectsBar effectsBar;
-    private ActionBar actionBar;
-    private Uri sourceUri;
 
     public Toolbar(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         idleHandler = new ToolbarIdleHandler(context);
         setOnHierarchyChangeListener(idleHandler);
+        idleHandler.killIdle();
     }
 
     @Override
@@ -49,111 +52,61 @@ public class Toolbar extends RelativeLayout {
         return super.dispatchTouchEvent(ev);
     }
 
-    public void initialize(FilterStack filterStack) {
-        this.filterStack = filterStack;
-        effectsBar = (EffectsBar) findViewById(R.id.effects_bar);
-        effectsBar.initialize(filterStack);
-        actionBar = (ActionBar) findViewById(R.id.action_bar);
-        actionBar.initialize(createActionBarListener());
-        idleHandler.killIdle();
-    }
+    private static class ToolbarIdleHandler implements OnHierarchyChangeListener {
 
-    private ActionBar.ActionBarListener createActionBarListener() {
-        actionBar = (ActionBar) findViewById(R.id.action_bar);
-        return new ActionBar.ActionBarListener() {
+        private static final int MAKE_IDLE = 1;
+        private static final int TIMEOUT_IDLE = 8000;
 
-            @Override
-            public void onUndo() {
-                effectsBar.exit(new Runnable() {
+        private final List<View> childViews = new ArrayList<View>();
+        private final Handler mainHandler;
+        private final Animation fadeIn;
+        private final Animation fadeOut;
+        private boolean idle;
 
-                    @Override
-                    public void run() {
-                        final SpinnerProgressDialog progressDialog = SpinnerProgressDialog.show(
-                                Toolbar.this);
-                        filterStack.undo(new OnDoneCallback() {
+        public ToolbarIdleHandler(Context context) {
+            mainHandler = new Handler() {
 
-                            @Override
-                            public void onDone() {
-                                progressDialog.dismiss();
+                @Override
+                public void handleMessage(Message msg) {
+                    switch (msg.what) {
+                        case MAKE_IDLE:
+                            if (!idle) {
+                                idle = true;
+                                for (View view : childViews) {
+                                    view.startAnimation(fadeOut);
+                                }
                             }
-                        });
+                            break;
                     }
-                });
+                }
+            };
+
+            fadeIn = AnimationUtils.loadAnimation(context, R.anim.photoeditor_fade_in);
+            fadeOut = AnimationUtils.loadAnimation(context, R.anim.photoeditor_fade_out);
+        }
+
+        public void killIdle() {
+            mainHandler.removeMessages(MAKE_IDLE);
+            if (idle) {
+                idle = false;
+                for (View view : childViews) {
+                    view.startAnimation(fadeIn);
+                }
             }
+            mainHandler.sendEmptyMessageDelayed(MAKE_IDLE, TIMEOUT_IDLE);
+        }
 
-            @Override
-            public void onRedo() {
-                effectsBar.exit(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        final SpinnerProgressDialog progressDialog = SpinnerProgressDialog.show(
-                                Toolbar.this);
-                        filterStack.redo(new OnDoneCallback() {
-
-                            @Override
-                            public void onDone() {
-                                progressDialog.dismiss();
-                            }
-                        });
-                    }
-                });
+        @Override
+        public void onChildViewAdded(View parent, View child) {
+            // All child views, except photo-view, will fade out on inactivity timeout.
+            if (child.getId() != R.id.photo_view) {
+                childViews.add(child);
             }
+        }
 
-            @Override
-            public void onSave() {
-                effectsBar.exit(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        savePhoto(null);
-                    }
-                });
-            }
-        };
-    }
-
-    public void openPhoto(Uri uri) {
-        sourceUri = uri;
-
-        final SpinnerProgressDialog progressDialog = SpinnerProgressDialog.show(this);
-        new LoadScreennailTask(getContext(), new LoadScreennailTask.Callback() {
-
-            @Override
-            public void onComplete(final Bitmap bitmap) {
-                filterStack.setPhotoSource(bitmap, new OnDoneCallback() {
-
-                    @Override
-                    public void onDone() {
-                        progressDialog.dismiss();
-                    }
-                });
-            }
-        }).execute(sourceUri);
-    }
-
-    /**
-     * Saves photo and executes runnable (if provided) after saving done.
-     */
-    public void savePhoto(final Runnable runnable) {
-        final SpinnerProgressDialog progressDialog = SpinnerProgressDialog.show(this);
-        filterStack.saveBitmap(new OnDoneBitmapCallback() {
-
-            @Override
-            public void onDone(Bitmap bitmap) {
-                new SaveCopyTask(getContext(), sourceUri, new SaveCopyTask.Callback() {
-
-                    @Override
-                    public void onComplete(Uri uri) {
-                        // TODO: Handle saving failure.
-                        progressDialog.dismiss();
-                        actionBar.disableSave();
-                        if (runnable != null) {
-                            runnable.run();
-                        }
-                    }
-                }).execute(bitmap);
-            }
-        });
+        @Override
+        public void onChildViewRemoved(View parent, View child) {
+            childViews.remove(child);
+        }
     }
 }

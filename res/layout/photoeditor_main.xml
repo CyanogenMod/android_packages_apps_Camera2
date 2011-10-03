@@ -52,37 +52,6 @@
         </LinearLayout>
     </com.android.gallery3d.photoeditor.EffectsBar>
 
-    <com.android.gallery3d.photoeditor.ActionBar android:id="@+id/action_bar" style="@style/TopActionBar">
+    <include layout="@layout/photoeditor_actionbar"/>
 
-        <LinearLayout style="@style/ActionBarLinearLayout">
-
-            <LinearLayout
-                android:id="@+id/action_bar_back"
-                style="@style/ActionBarBackLinearLayout">
-                <ImageView style="@style/ActionBarArrow"/>
-                <ImageView style="@style/ActionBarIcon"/>
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/action_bar_title"
-                style="@style/ActionBarText"
-                android:text="@string/edit"/>
-        </LinearLayout>
-
-        <LinearLayout style="@style/ActionBarLinearLayout" android:layout_alignParentRight="true">
-
-            <ImageButton
-                android:id="@+id/undo_button"
-                style="@style/ImageActionButton"
-                android:src="@drawable/photoeditor_undo"/>
-            <ImageButton
-                android:id="@+id/redo_button"
-                style="@style/ImageActionButton"
-                android:src="@drawable/photoeditor_redo"/>
-            <Button
-                android:id="@+id/save_button"
-                style="@style/TextActionButton"
-                android:text="@string/save"/>
-        </LinearLayout>
-    </com.android.gallery3d.photoeditor.ActionBar>
 </com.android.gallery3d.photoeditor.Toolbar>

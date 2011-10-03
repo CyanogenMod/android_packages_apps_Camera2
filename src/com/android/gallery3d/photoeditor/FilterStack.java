@@ -113,7 +113,7 @@ public class FilterStack {
     }
 
     private void callbackDone(final OnDoneCallback callback) {
-        // Call back in UI thread to report done.
+        // GL thread calls back to report UI thread the task is done.
         photoView.post(new Runnable() {
 
             @Override
@@ -124,7 +124,16 @@ public class FilterStack {
     }
 
     private void stackChanged() {
-        stackListener.onStackChanged(!appliedStack.empty(), !redoStack.empty());
+        // GL thread calls back to report UI thread the stack is changed.
+        final boolean canUndo = !appliedStack.empty();
+        final boolean canRedo = !redoStack.empty();
+        photoView.post(new Runnable() {
+
+            @Override
+            public void run() {
+                stackListener.onStackChanged(canUndo, canRedo);
+            }
+        });
     }
 
     public void saveBitmap(final OnDoneBitmapCallback callback) {
