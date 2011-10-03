@@ -20,6 +20,7 @@ import com.android.gallery3d.R;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.util.TypedValue;
 
 public class ScrollBarView extends GLView {
     @SuppressWarnings("unused")
@@ -43,8 +44,11 @@ public class ScrollBarView extends GLView {
     private NinePatchTexture mScrollBarTexture;
 
     public ScrollBarView(Context context, int gripHeight, int gripWidth) {
+        TypedValue outValue = new TypedValue();
+        context.getTheme().resolveAttribute(
+                android.R.attr.scrollbarThumbHorizontal, outValue, true);
         mScrollBarTexture = new NinePatchTexture(
-                context, R.drawable.scrollbar_handle_holo_dark);
+                context, outValue.resourceId);
         mGripPosition = 0;
         mGripWidth = 0;
         mGivenGripWidth = gripWidth;
