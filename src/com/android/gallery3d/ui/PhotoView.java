@@ -145,7 +145,7 @@ public class PhotoView extends GLView {
             mScreenNails[i] = new ScreenNailEntry();
         }
 
-        mPositionController = new PositionController(this);
+        mPositionController = new PositionController(this, context);
         mVideoPlayIcon = new ResourceTexture(context, R.drawable.ic_control_play);
     }
 
@@ -437,7 +437,7 @@ public class PhotoView extends GLView {
         if (mTransitionMode != TRANS_NONE) return false;
 
         // Decide whether to swiping to the next/prev image in the zoom-in case
-        RectF bounds = mPositionController.getImageBounds();
+        RectF bounds = controller.getImageBounds();
         int left = Math.round(bounds.left);
         int right = Math.round(bounds.right);
         int threshold = SWITCH_THRESHOLD + gapToSide(right - left, width);
@@ -480,9 +480,12 @@ public class PhotoView extends GLView {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                 float velocityY) {
-            mIgnoreUpEvent = true;
-            if (!swipeImages(velocityX) && mTransitionMode == TRANS_NONE) {
-                mPositionController.up();
+            if (swipeImages(velocityX)) {
+                mIgnoreUpEvent = true;
+            } else if (mTransitionMode != TRANS_NONE) {
+                // do nothing
+            } else if (mPositionController.fling(velocityX, velocityY)) {
+                mIgnoreUpEvent = true;
             }
             return true;
         }
