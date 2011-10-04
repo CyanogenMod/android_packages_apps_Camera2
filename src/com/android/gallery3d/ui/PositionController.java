@@ -37,19 +37,21 @@ class PositionController {
     private static final long NO_ANIMATION = -1;
     private static final long LAST_ANIMATION = -2;
 
-    // Animation time in milliseconds.
-    private static final float ANIM_TIME_SCROLL = 0;
-    private static final float ANIM_TIME_SCALE = 50;
-    private static final float ANIM_TIME_SNAPBACK = 600;
-    private static final float ANIM_TIME_SLIDE = 400;
-    private static final float ANIM_TIME_ZOOM = 300;
-
     private int mAnimationKind;
     private final static int ANIM_KIND_SCROLL = 0;
     private final static int ANIM_KIND_SCALE = 1;
     private final static int ANIM_KIND_SNAPBACK = 2;
     private final static int ANIM_KIND_SLIDE = 3;
     private final static int ANIM_KIND_ZOOM = 4;
+
+    // Animation time in milliseconds. The order must match ANIM_KIND_* above.
+    private final static int ANIM_TIME[] = {
+        0,    // ANIM_KIND_SCROLL
+        50,   // ANIM_KIND_SCALE
+        600,  // ANIM_KIND_SNAPBACK
+        400,  // ANIM_KIND_SLIDE
+        300,  // ANIM_KIND_ZOOM
+    };
 
     // We try to scale up the image to fill the screen. But in order not to
     // scale too much for small icons, we limit the max up-scaling factor here.
@@ -60,26 +62,28 @@ class PositionController {
     private int mViewW, mViewH;
 
     // The X, Y are the coordinate on bitmap which shows on the center of
-    // the view. We always keep the mCurrent{X,Y,SCALE} sync with the actual
+    // the view. We always keep the mCurrent{X,Y,Scale} sync with the actual
     // values used currently.
     private int mCurrentX, mFromX, mToX;
     private int mCurrentY, mFromY, mToY;
     private float mCurrentScale, mFromScale, mToScale;
 
-    // The offsets from the center of the view to the user's focus point,
-    // converted to the bitmap domain.
-    private float mPrevOffsetX;
-    private float mPrevOffsetY;
+    // The focus point of the scaling gesture (in bitmap coordinates).
+    private float mFocusBitmapX;
+    private float mFocusBitmapY;
     private boolean mInScale;
-    private boolean mUseViewSize = true;
 
-    // The limits for position and scale.
-    private float mScaleMin, mScaleMax = 4f;
+    // The minimum and maximum scale we allow.
+    private float mScaleMin, mScaleMax = SCALE_LIMIT;
+
+    // Assume the image size is the same as view size before we know the actual
+    // size of image.
+    private boolean mUseViewSize = true;
 
     private RectF mTempRect = new RectF();
     private float[] mTempPoints = new float[8];
 
-    PositionController(PhotoView viewer) {
+    public PositionController(PhotoView viewer) {
         mViewer = viewer;
     }
 
@@ -103,6 +107,7 @@ class PositionController {
         float ratio = Math.min(
                 (float) mImageW / width, (float) mImageH / height);
 
+        // See the comment above translate() for details.
         mCurrentX = translate(mCurrentX, mImageW, width, ratio);
         mCurrentY = translate(mCurrentY, mImageH, height, ratio);
         mCurrentScale = mCurrentScale * ratio;
@@ -118,11 +123,13 @@ class PositionController {
         mImageW = width;
         mImageH = height;
 
-        mScaleMin = getMinimalScale(width, height, 0);
+        mScaleMin = getMinimalScale(mImageW, mImageH);
 
-        // Scale the new image to fit into the old one
-        Position position = mViewer.retrieveOldPosition();
+        // Start animation from the saved position if we have one.
+        Position position = mViewer.retrieveSavedPosition();
         if (position != null) {
+            // The animation starts from 240 pixels and centers at the image
+            // at the saved position.
             float scale = 240f / Math.min(width, height);
             mCurrentX = Math.round((mViewW / 2f - position.x) / scale) + mImageW / 2;
             mCurrentY = Math.round((mViewH / 2f - position.y) / scale) + mImageH / 2;
@@ -138,18 +145,23 @@ class PositionController {
     public void zoomIn(float tapX, float tapY, float targetScale) {
         if (targetScale > mScaleMax) targetScale = mScaleMax;
         float scale = mCurrentScale;
+
+        // Convert the tap position to image coordinate
         float tempX = (tapX - mViewW / 2) / mCurrentScale + mCurrentX;
         float tempY = (tapY - mViewH / 2) / mCurrentScale + mCurrentY;
 
-        // mCurrentX + (mViewW / 2) * (1 / targetScale) < mImageW
-        // mCurrentX - (mViewW / 2) * (1 / targetScale) > 0
+        // We want to make sure that after zoom-in, we don't see black regions
+        // because we zoom too close to the border. The conditions are:
+        //
+        //  (mViewW / 2) / targetScale + mCurrentX < mImageW
+        // -(mViewW / 2) / targetScale + mCurrentX > 0
         float min = mViewW / 2.0f / targetScale;
-        float max = mImageW  - mViewW / 2.0f / targetScale;
+        float max = mImageW - mViewW / 2.0f / targetScale;
         int targetX = (int) Utils.clamp(tempX, min, max);
 
         min = mViewH / 2.0f / targetScale;
-        max = mImageH  - mViewH / 2.0f / targetScale;
-        int targetY = (int) Utils.clamp(tempY,  min, max);
+        max = mImageH - mViewH / 2.0f / targetScale;
+        int targetY = (int) Utils.clamp(tempY, min, max);
 
         // If the width of the image is less then the view, center the image
         if (mImageW * targetScale < mViewW) targetX = mImageW / 2;
@@ -162,15 +174,44 @@ class PositionController {
         startAnimation(mImageW / 2, mImageH / 2, mScaleMin, ANIM_KIND_ZOOM);
     }
 
-    public float getMinimalScale(int w, int h, int rotation) {
-        return Math.min(SCALE_LIMIT, ((rotation / 90) & 0x01) == 0
-                ? Math.min((float) mViewW / w, (float) mViewH / h)
-                : Math.min((float) mViewW / h, (float) mViewH / w));
+    public float getMinimalScale(int w, int h) {
+        return Math.min(SCALE_LIMIT,
+                Math.min((float) mViewW / w, (float) mViewH / h));
     }
 
-    private static int translate(int value, int size, int updateSize, float ratio) {
-        return Math.round(
-                (value + (updateSize * ratio - size) / 2f) / ratio);
+    // Translate the coordinate if the aspect ratio of the image changes.
+    // When the user slides a image before it's loaded, we don't know the
+    // actual aspect ratio, so we will assume one. When we receive the actual
+    // aspect ratio, we need to translate the coordinate from the old (assumed)
+    // bitmap into the new (actual) bitmap.
+    //
+    // +-------------------------+  "o" is where center of the view
+    // |          +--------+     |  is. mCurrent{X,Y} is the coordinate of
+    // |          |        |     |  "o" relative to the old bitmap. Assume
+    // |          | o      |     |  the old bitmap size is (w, h).  The new
+    // |          +--------+     |  bitmap size is (w', h'). First we adjust
+    // |                         |  mCurrentScale by factor r = min(w/w',
+    // +-------------------------+  h/h'), so one of the sides matches the old
+    //              |               bitmap (w'*r == w or h'*r == h).
+    //              v
+    // +-------------------------+  Then we put the new scaled bitmap to the
+    // |  +--+    ..........     |  center of the original bitmap's bounding
+    // |  |  |    .        .     |  box. The center of the old bitmap and the
+    // |  |  |    . o      .     |  new bitmap must match in view coordinate:
+    // |  +--+    ..........     |
+    // |                         |  (w/2 - mCurrentX) * mCurrentScale =
+    // +-------------------------+  (w'/2 - mCurrentX') * mCurrentScale * r
+    //              |
+    //              v               Solve for mCurrentX' we have:
+    // +-------------------------+
+    // |          ...+--+...     |  mCurrentX' = w'/2 + (mCurrentX - w/2) / r
+    // |          .  |  |  .     |
+    // |          . o|  |  .     |
+    // |          ...+--+...     |
+    // |                         |
+    // +-------------------------+
+    private static int translate(int value, int size, int newSize, float ratio) {
+        return Math.round(newSize / 2f + (value - size / 2f) / ratio);
     }
 
     public void setViewSize(int viewW, int viewH) {
@@ -185,17 +226,24 @@ class PositionController {
             mCurrentX = mImageW / 2;
             mCurrentY = mImageH / 2;
             mCurrentScale = 1;
+            mScaleMin = 1;
             mViewer.setPosition(mCurrentX, mCurrentY, mCurrentScale);
-        } else {
-            boolean wasMinScale = (mCurrentScale == mScaleMin);
-            mScaleMin = Math.min(SCALE_LIMIT, Math.min(
-                    (float) viewW / mImageW, (float) viewH / mImageH));
-            if (needLayout || mCurrentScale < mScaleMin || wasMinScale) {
-                mCurrentX = mImageW / 2;
-                mCurrentY = mImageH / 2;
-                mCurrentScale = mScaleMin;
-                mViewer.setPosition(mCurrentX, mCurrentY, mCurrentScale);
-            }
+            return;
+        }
+
+        // In most cases we want to keep the scaling factor intact when the
+        // view size changes. The cases we want to reset the scaling factor
+        // (to fit the view if possible) are (1) the scaling factor is too
+        // small for the new view size (2) the scaling factor has not been
+        // changed by the user.
+        boolean wasMinScale = (mCurrentScale == mScaleMin);
+        mScaleMin = getMinimalScale(mImageW, mImageH);
+
+        if (needLayout || mCurrentScale < mScaleMin || wasMinScale) {
+            mCurrentX = mImageW / 2;
+            mCurrentY = mImageH / 2;
+            mCurrentScale = mScaleMin;
+            mViewer.setPosition(mCurrentX, mCurrentY, mCurrentScale);
         }
     }
 
@@ -211,31 +259,24 @@ class PositionController {
         mCurrentScale = mToScale;
     }
 
-    public void scrollBy(float dx, float dy, int type) {
-        startAnimation(getTargetX() + Math.round(dx / mCurrentScale),
-                getTargetY() + Math.round(dy / mCurrentScale),
-                mCurrentScale, type);
-    }
-
     public void beginScale(float focusX, float focusY) {
         mInScale = true;
-        mPrevOffsetX = (focusX - mViewW / 2f) / mCurrentScale;
-        mPrevOffsetY = (focusY - mViewH / 2f) / mCurrentScale;
+        mFocusBitmapX = mCurrentX + (focusX - mViewW / 2f) / mCurrentScale;
+        mFocusBitmapY = mCurrentY + (focusY - mViewH / 2f) / mCurrentScale;
     }
 
     public void scaleBy(float s, float focusX, float focusY) {
 
-        // The focus point should keep this position on the ImageView.
-        // So, mCurrentX + mPrevOffsetX = mCurrentX' + offsetX.
-        // mCurrentY + mPrevOffsetY = mCurrentY' + offsetY.
-        float offsetX = (focusX - mViewW / 2f) / mCurrentScale;
-        float offsetY = (focusY - mViewH / 2f) / mCurrentScale;
+        // We want to keep the focus point (on the bitmap) the same as when
+        // we begin the scale guesture, that is,
+        //
+        // mCurrentX' + (focusX - mViewW / 2f) / scale = mFocusBitmapX
+        //
+        s *= getTargetScale();
+        int x = Math.round(mFocusBitmapX - (focusX - mViewW / 2f) / s);
+        int y = Math.round(mFocusBitmapY - (focusY - mViewH / 2f) / s);
 
-        startAnimation(getTargetX() - Math.round(offsetX - mPrevOffsetX),
-                       getTargetY() - Math.round(offsetY - mPrevOffsetY),
-                       getTargetScale() * s, ANIM_KIND_SCALE);
-        mPrevOffsetX = offsetX;
-        mPrevOffsetY = offsetY;
+        startAnimation(x, y, s, ANIM_KIND_SCALE);
     }
 
     public void endScale() {
@@ -260,15 +301,26 @@ class PositionController {
         startSnapback();
     }
 
+    //             |<--| (1/2) * mImageW
+    // +-------+-------+-------+
+    // |       |       |       |
+    // |       |   o   |       |
+    // |       |       |       |
+    // +-------+-------+-------+
+    // |<----------| (3/2) * mImageW
+    // Slide in the image from left or right.
+    // Precondition: mCurrentScale = 1 (mView{W|H} == mImage{W|H}).
+    // Sliding from left:  mCurrentX = (1/2) * mImageW
+    //              right: mCurrentX = (3/2) * mImageW
     public void startSlideInAnimation(int direction) {
         int fromX = (direction == PhotoView.TRANS_SLIDE_IN_LEFT) ?
-                mViewW : -mViewW;
-        mFromX = Math.round(fromX + (mImageW - mViewW) / 2f);
+                mImageW / 2 : 3 * mImageW / 2;
+        mFromX = Math.round(fromX);
         mFromY = Math.round(mImageH / 2f);
         mCurrentX = mFromX;
         mCurrentY = mFromY;
-        startAnimation(mImageW / 2, mImageH / 2, mCurrentScale,
-                ANIM_KIND_SLIDE);
+        startAnimation(
+                mImageW / 2, mImageH / 2, mCurrentScale, ANIM_KIND_SLIDE);
     }
 
     public void startHorizontalSlide(int distance) {
@@ -277,6 +329,12 @@ class PositionController {
 
     public void startScroll(float dx, float dy) {
         scrollBy(dx, dy, ANIM_KIND_SCROLL);
+    }
+
+    private void scrollBy(float dx, float dy, int type) {
+        startAnimation(getTargetX() + Math.round(dx / mCurrentScale),
+                getTargetY() + Math.round(dy / mCurrentScale),
+                mCurrentScale, type);
     }
 
     private void startAnimation(
@@ -317,19 +375,7 @@ class PositionController {
             }
         }
 
-        float animationTime;
-        if (mAnimationKind == ANIM_KIND_SCROLL) {
-            animationTime = ANIM_TIME_SCROLL;
-        } else if (mAnimationKind == ANIM_KIND_SCALE) {
-            animationTime = ANIM_TIME_SCALE;
-        } else if (mAnimationKind == ANIM_KIND_SLIDE) {
-            animationTime = ANIM_TIME_SLIDE;
-        } else if (mAnimationKind == ANIM_KIND_ZOOM) {
-            animationTime = ANIM_TIME_ZOOM;
-        } else /* if (mAnimationKind == ANIM_KIND_SNAPBACK) */ {
-            animationTime = ANIM_TIME_SNAPBACK;
-        }
-
+        float animationTime = ANIM_TIME[mAnimationKind];
         float progress;
         if (animationTime == 0) {
             progress = 1;
@@ -346,13 +392,18 @@ class PositionController {
             mAnimationStartTime = LAST_ANIMATION;
         } else {
             float f = 1 - progress;
-            if (mAnimationKind == ANIM_KIND_SCROLL) {
-                progress = 1 - f;  // linear
-            } else if (mAnimationKind == ANIM_KIND_SCALE) {
-                progress = 1 - f * f;  // quadratic
-            } else /* if mAnimationKind is ANIM_KIND_SNAPBACK,
-                        ANIM_KIND_ZOOM or ANIM_KIND_SLIDE */ {
-                progress = 1 - f * f * f * f * f; // x^5
+            switch (mAnimationKind) {
+                case ANIM_KIND_SCROLL:
+                    progress = 1 - f;  // linear
+                    break;
+                case ANIM_KIND_SCALE:
+                    progress = 1 - f * f;  // quadratic
+                    break;
+                case ANIM_KIND_SNAPBACK:
+                case ANIM_KIND_ZOOM:
+                case ANIM_KIND_SLIDE:
+                    progress = 1 - f * f * f * f * f; // x^5
+                    break;
             }
             linearInterpolate(progress);
         }
@@ -360,23 +411,33 @@ class PositionController {
         return true;
     }
 
+    // Interpolates mCurrent{X,Y,Scale} given the progress in [0, 1].
     private void linearInterpolate(float progress) {
-        // To linearly interpolate the position, we have to translate the
-        // coordinates. The meaning of the translated point (x, y) is the
-        // coordinates of the center of the bitmap on the view component.
-        float fromX = mViewW / 2f + (mImageW / 2f - mFromX) * mFromScale;
-        float toX = mViewW / 2f + (mImageW / 2f - mToX) * mToScale;
+        // To linearly interpolate the position on view coordinates, we do the
+        // following steps:
+        // (1) convert a bitmap position (x, y) to view coordinates:
+        //     from: (x - mFromX) * mFromScale + mViewW / 2
+        //     to: (x - mToX) * mToScale + mViewW / 2
+        // (2) interpolate between the "from" and "to" coordinates:
+        //     (x - mFromX) * mFromScale * (1 - p) + (x - mToX) * mToScale * p
+        //     + mViewW / 2
+        //     should be equal to
+        //     (x - mCurrentX) * mCurrentScale + mViewW / 2
+        // (3) The x-related terms in the above equation can be removed because
+        //     mFromScale * (1 - p) + ToScale * p = mCurrentScale
+        // (4) Solve for mCurrentX, we have mCurrentX =
+        // (mFromX * mFromScale * (1 - p) + mToX * mToScale * p) / mCurrentScale
+        float fromX = mFromX * mFromScale;
+        float toX = mToX * mToScale;
         float currentX = fromX + progress * (toX - fromX);
 
-        float fromY = mViewH / 2f + (mImageH / 2f - mFromY) * mFromScale;
-        float toY = mViewH / 2f + (mImageH / 2f - mToY) * mToScale;
+        float fromY = mFromY * mFromScale;
+        float toY = mToY * mToScale;
         float currentY = fromY + progress * (toY - fromY);
 
         mCurrentScale = mFromScale + progress * (mToScale - mFromScale);
-        mCurrentX = Math.round(
-                mImageW / 2f + (mViewW / 2f - currentX) / mCurrentScale);
-        mCurrentY = Math.round(
-                mImageH / 2f + (mViewH / 2f - currentY) / mCurrentScale);
+        mCurrentX = Math.round(currentX / mCurrentScale);
+        mCurrentY = Math.round(currentY / mCurrentScale);
     }
 
     // Returns true if redraw is needed.
@@ -400,7 +461,8 @@ class PositionController {
             scale = Utils.clamp(mCurrentScale, mScaleMin, mScaleMax);
         }
 
-        // The number of pixels when the edge is aligned.
+        // The number of pixels between the center of the view
+        // and the edge when the edge is aligned.
         int left = (int) Math.ceil(mViewW / (2 * scale));
         int right = mImageW - left;
         int top = (int) Math.ceil(mViewH / (2 * scale));
