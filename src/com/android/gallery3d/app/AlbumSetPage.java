@@ -43,6 +43,7 @@ import com.android.gallery3d.ui.ActionModeHandler.ActionModeListener;
 import com.android.gallery3d.ui.AlbumSetView;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
+import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.GridDrawer;
@@ -53,7 +54,6 @@ import com.android.gallery3d.ui.PositionRepository.Position;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.ui.StaticBackground;
-import com.android.gallery3d.util.GalleryUtils;
 
 public class AlbumSetPage extends ActivityState implements
         SelectionManager.SelectionListener, GalleryActionBar.ClusterRunner,
@@ -100,8 +100,8 @@ public class AlbumSetPage extends ActivityState implements
     private float mY;
     private float mZ;
 
-    private GLView mRootPane = new GLView() {
-        private float mMatrix[] = new float[16];
+    private final GLView mRootPane = new GLView() {
+        private final float mMatrix[] = new float[16];
 
         @Override
         protected void onLayout(
@@ -238,7 +238,6 @@ public class AlbumSetPage extends ActivityState implements
     }
 
     public void doCluster(int clusterType) {
-        Log.v(TAG, "doCluster: " + clusterType);
         String basePath = mMediaSet.getPath().toString();
         String newPath = FilterUtils.switchClusterPath(basePath, clusterType);
         Bundle data = new Bundle(getData());
@@ -284,7 +283,6 @@ public class AlbumSetPage extends ActivityState implements
     @Override
     public void onPause() {
         super.onPause();
-        Log.v(TAG, "onPause");
         mIsActive = false;
         mActionModeHandler.pause();
         mAlbumSetDataAdapter.pause();
@@ -298,7 +296,6 @@ public class AlbumSetPage extends ActivityState implements
     @Override
     public void onResume() {
         super.onResume();
-        Log.v(TAG, "onResume");
         mIsActive = true;
         setContentPane(mRootPane);
         mAlbumSetDataAdapter.resume();
@@ -306,7 +303,9 @@ public class AlbumSetPage extends ActivityState implements
         mEyePosition.resume();
         mActionModeHandler.resume();
         GalleryActionBar actionBar = mActivity.getGalleryActionBar();
-        if (mShowClusterMenu && actionBar != null) actionBar.showClusterMenu(mSelectedAction, this);
+        if (mShowClusterMenu && actionBar != null) {
+            actionBar.showClusterMenu(mSelectedAction, this);
+        }
     }
 
     private void initializeData(Bundle data) {
@@ -478,7 +477,7 @@ public class AlbumSetPage extends ActivityState implements
         final PositionRepository repository =
                 PositionRepository.getInstance(mActivity);
         mAlbumSetView.startTransition(new PositionProvider() {
-            private Position mTempPosition = new Position();
+            private final Position mTempPosition = new Position();
             public Position getPosition(long identity, Position target) {
                 Position p = repository.get(identity);
                 if (p == null) {

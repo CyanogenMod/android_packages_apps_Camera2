@@ -16,16 +16,16 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.anim.Animation;
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.ui.PositionRepository.Position;
-import com.android.gallery3d.util.LinkedNode;
-
 import android.content.Context;
 import android.graphics.Rect;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.animation.DecelerateInterpolator;
+
+import com.android.gallery3d.anim.Animation;
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.ui.PositionRepository.Position;
+import com.android.gallery3d.util.LinkedNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +62,7 @@ public class SlotView extends GLView {
     private UserInteractionListener mUIListener;
 
     // Use linked hash map to keep the rendering order
-    private HashMap<DisplayItem, ItemEntry> mItems =
+    private final HashMap<DisplayItem, ItemEntry> mItems =
             new HashMap<DisplayItem, ItemEntry>();
 
     public LinkedNode.List<ItemEntry> mItemList = LinkedNode.newList();

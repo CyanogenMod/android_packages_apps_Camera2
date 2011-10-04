@@ -16,15 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.DataManager;
-import com.android.gallery3d.data.MediaItem;
-import com.android.gallery3d.data.MediaSet;
-import com.android.gallery3d.data.Path;
-import com.android.gallery3d.ui.GLRoot;
-import com.android.gallery3d.util.GalleryUtils;
-
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
@@ -33,6 +24,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.DataManager;
+import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.data.MediaSet;
+import com.android.gallery3d.data.Path;
+import com.android.gallery3d.picasasource.PicasaSource;
+import com.android.gallery3d.ui.GLRoot;
+import com.android.gallery3d.util.GalleryUtils;
 
 public final class Gallery extends AbstractGalleryActivity {
     public static final String EXTRA_SLIDESHOW = "slideshow";
@@ -90,6 +91,7 @@ public final class Gallery extends AbstractGalleryActivity {
     }
 
     public void startDefaultPage() {
+        PicasaSource.showSignInReminder(this);
         Bundle data = new Bundle();
         data.putString(AlbumSetPage.KEY_MEDIA_PATH,
                 getDataManager().getTopSetPath(DataManager.INCLUDE_ALL));
