@@ -44,9 +44,22 @@
             android:id="@+id/redo_button"
             style="@style/ImageActionButton"
             android:src="@drawable/photoeditor_redo"/>
-        <Button
-            android:id="@+id/save_button"
-            style="@style/TextActionButton"
-            android:text="@string/save"/>
+
+        <ViewSwitcher
+            android:id="@+id/save_share_buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/save_button"
+                style="@style/TextActionButton"
+                android:layout_width="fill_parent"
+                android:text="@string/save"/>
+            <ImageButton
+                android:id="@+id/share_button"
+                style="@style/ImageActionButton"
+                android:layout_width="fill_parent"
+                android:src="@drawable/ic_menu_share_holo_light"/>
+        </ViewSwitcher>
+
     </LinearLayout>
 </com.android.gallery3d.photoeditor.ActionBar>
