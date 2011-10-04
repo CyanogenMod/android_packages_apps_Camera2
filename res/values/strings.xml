@@ -46,7 +46,7 @@
 
     <!-- Displayed in the title of those pictures that fails to be loaded
          [CHAR LIMIT=50]-->
-    <string name="fail_to_load">Failed to load</string>
+    <string name="fail_to_load">Couldn\'t load</string>
 
     <!-- Displayed in place of the picture when we fail to get the thumbnail of it.
          [CHAR LIMIT=50]-->
@@ -57,14 +57,14 @@
 
     <!-- Title of a menu item to indicate performing the image crop operation
          [CHAR LIMIT=20] -->
-    <string name="crop_save_text">Ok</string>
+    <string name="crop_save_text">OK</string>
     <!-- Button indicating that the cropped image should be reverted back to the original -->
     <!-- Hint that appears when cropping an image with more than one face -->
-    <string name="multiface_crop_help">Tap a face to begin.</string>
+    <string name="multiface_crop_help">Touch a face to begin.</string>
     <!-- Toast/alert that the image is being saved to the SD card -->
     <string name="saving_image">Saving picture\u2026</string>
     <!-- Eorror toast message that the image cannot be saved [CHAR LIMIT=40]-->
-    <string name="save_error">Cannot save the cropped image</string>
+    <string name="save_error">Couldn\'t save cropped image.</string>
 
     <!-- menu pick: crop the currently selected image -->
     <string name="crop_label">Crop picture</string>
@@ -85,18 +85,18 @@
              that is to be "set as" (e.g. set as contact photo or set as wallpaper) -->
     <string name="set_image">Set picture as</string>
     <!-- Toast/alert after saving wallpaper -->
-    <string name="wallpaper">Setting wallpaper, please wait\u2026</string>
+    <string name="wallpaper">Setting wallpaper\u2026</string>
     <string name="camera_setas_wallpaper">Wallpaper</string>
 
     <!-- Details dialog "OK" button. Dismisses dialog. -->
     <string name="delete">Delete</string>
-    <string name="confirm_delete">Confirm Delete</string>
+    <string name="confirm_delete">Delete?</string>
     <string name="cancel">Cancel</string>
     <string name="share">Share</string>
 
     <!-- String indicating more actions are available -->
-    <string name="select_all">Select All</string>
-    <string name="deselect_all">Deselect All</string>
+    <string name="select_all">Select all</string>
+    <string name="deselect_all">Deselect all</string>
     <string name="slideshow">Slideshow</string>
 
     <string name="details">Details</string>
@@ -132,11 +132,11 @@
 
     <!-- String indicating timestamp of photo or video -->
     <string name="show_on_map">Show on map</string>
-    <string name="rotate_left">Rotate Left</string>
-    <string name="rotate_right">Rotate Right</string>
+    <string name="rotate_left">Rotate left</string>
+    <string name="rotate_right">Rotate right</string>
 
     <!-- Toast message prompted when the specified item is not found [CHAR LIMIT=40]-->
-    <string name="no_such_item">Item not found</string>
+    <string name="no_such_item">Couldn\'t find item.</string>
 
     <!-- String used as a menu label. The suer can choose to edit the image
          [CHAR_LIMIT=20]-->
@@ -144,25 +144,25 @@
 
     <!-- String used in a toast message indicating there is no application
          available to handle a request [CHAR LIMIT=50] -->
-    <string name="activity_not_found">No application available</string>
+    <string name="activity_not_found">No app is available to complete the action.</string>
 
     <!-- String used as a title of a progress dialog. The user can
          choose to cache some Picasa picture albums on device, so it can
          be viewed offline. This string is shown when the request is being
          processed. [CHAR LIMIT=50] -->
-    <string name="process_caching_requests">Process Caching Requests</string>
+    <string name="process_caching_requests">Processing caching requests</string>
 
     <!-- String used as a small notification label above a Picasa album.
          It means the pictures of the Picasa album is currently being
          transferred to local storage, so the pictures can later be viewed
          offline. [CHAR LIMIT=15] -->
-    <string name="caching_label">Caching...</string>
+    <string name="caching_label">Caching\u2026</string>
 
     <string name="crop_action">Crop</string>
     <string name="set_as">Set as</string>
 
     <!-- String indicating an approximate location eg. Around Palo Alto, CA -->
-    <string name="video_err">Unable to play video</string>
+    <string name="video_err">Can\'t play video.</string>
 
     <!-- Strings for grouping operations in the menu. The photos can be grouped
          by their location, taken time, or tags. -->
@@ -194,10 +194,10 @@
 
     <!-- When grouping photos by locations, the label used for photos that don't
          have location information in them [CHAR LIMIT=20]-->
-    <string name="no_location">No Location</string>
+    <string name="no_location">No location</string>
 
     <!-- This toast message is shown when network connection is lost while doing clustering -->
-    <string name="no_connectivity">Some locations could not be identified due to network connectivity issues</string>
+    <string name="no_connectivity">Some locations couldn\'t be identified due to network problems.</string>
 
     <!-- The title of the menu item to let user choose the which portion of
          the media items the user wants to see. When pressed, a submenu will
@@ -217,22 +217,22 @@
     <string name="appwidget_title">Photo Gallery</string>
 
     <!-- Text for the empty state of the StackView AppWidget [CHAR LIMIT=30] -->
-    <string name="appwidget_empty_text">No Photos</string>
+    <string name="appwidget_empty_text">No photos.</string>
 
     <!-- Toast message shown when the cropped image has been saved in the
          download folder [CHAR LIMIT=50]-->
-    <string name="crop_saved">The cropped image has been saved in download</string>
+    <string name="crop_saved">Cropped image saved to Downloads.</string>
 
     <!-- Toast message shown when the cropped image is not saved
          [CHAR LIMIT=50]-->
-    <string name="crop_not_saved">The cropped image is not saved</string>
+    <string name="crop_not_saved">Cropped image wasn\'t saved.</string>
 
     <!-- Toast message shown when there is no albums available [CHAR LIMIT=50]-->
-    <string name="no_albums_alert">There are no albums available</string>
+    <string name="no_albums_alert">No albums available.</string>
 
     <!-- Toast message shown when we close the AlbumPage because it is empty
             [CHAR LIMIT=50] -->
-    <string name="empty_album">There are no images/videos available</string>
+    <string name="empty_album">O images/videos available.</string>
 
     <!-- Album label used to indicate the collection of PWA Buzz/Post photos -->
     <string name="picasa_posts">Posts</string>
@@ -270,9 +270,9 @@
     <!-- Text indicating the duration of a video item in details window [CHAR LIMIT=14] -->
     <string name="duration">Duration</string>
     <!-- Text indicating the mime type of a media item in details window [CHAR LIMIT=14] -->
-    <string name="mimetype">MIME Type</string>
+    <string name="mimetype">MIME type</string>
     <!-- Text indicating the file size of a media item in details window [CHAR LIMIT=14] -->
-    <string name="file_size">File Size</string>
+    <string name="file_size">File size</string>
     <!-- Text indicating the maker of a media item in details window [CHAR LIMIT=14] -->
     <string name="maker">Maker</string>
     <!-- Text indicating the model of a media item in details window [CHAR LIMIT=14] -->
@@ -284,9 +284,9 @@
     <!-- Text indicating the focal length of a media item in details window [CHAR LIMIT=14] -->
     <string name="focal_length">Focal Length</string>
     <!-- Text indicating the white balance of a media item in details window [CHAR LIMIT=14] -->
-    <string name="white_balance">White Balance</string>
+    <string name="white_balance">White balance</string>
     <!-- Text indicating the exposure time of a media item in details window [CHAR LIMIT=14] -->
-    <string name="exposure_time">Exposure Time</string>
+    <string name="exposure_time">Exposure time</string>
     <!-- Text indicating the ISO speed rating of a media item in details window [CHAR LIMIT=14] -->
     <string name="iso">ISO</string>
     <!-- String indicating the time units in seconds. [CHAR LIMIT=8] -->
@@ -304,8 +304,8 @@
 
     <!-- Toast message shown after we make some album(s) available offline [CHAR LIMIT=50] -->
     <plurals name="make_albums_available_offline">
-        <item quantity="one">Making album available offline</item>
-        <item quantity="other">Making albums available offline</item>
+        <item quantity="one">Making album available offline.</item>
+        <item quantity="other">Making albums available offline.</item>
     </plurals>
 
     <!-- Toast message shown after we try to make a local album available offline
@@ -315,20 +315,20 @@
 
     <!-- A label shown on the action bar. It indicates that the user is
          viewing all available albums [CHAR LIMIT=20] -->
-    <string name="set_label_all_albums">All Albums</string>
+    <string name="set_label_all_albums">All albums</string>
 
     <!-- A label shown on the action bar. It indicates that the user is
          viewing albums stored locally on the device [CHAR LIMIT=20] -->
-    <string name="set_label_local_albums">Local Albums</string>
+    <string name="set_label_local_albums">Local albums</string>
 
     <!-- A label shown on the action bar. It indicates that the user is
          viewing MTP devices connected (like other digital cameras).
          [CHAR LIMIT=20] -->
-    <string name="set_label_mtp_devices">MTP Devices</string>
+    <string name="set_label_mtp_devices">MTP devices</string>
 
     <!-- A label shown on the action bar. It indicates that the user is
          viewing Picasa albums [CHAR LIMIT=20] -->
-    <string name="set_label_picasa_albums">Picasa Albums</string>
+    <string name="set_label_picasa_albums">Picasa albums</string>
 
     <!-- Label indicating the amount on free space on the device. The parameter
          is a string representation of the amount of free space, eg. "20MB".
@@ -363,13 +363,13 @@
 
     <!-- A label shown on the action bar. It indicates whether the import
          operation succeeds or fails. [CHAR LIMIT=20] -->
-    <string name="import_complete">Import Complete</string>
-    <string name="import_fail">Import Fail</string>
+    <string name="import_complete">Import complete</string>
+    <string name="import_fail">Import unsuccessful</string>
 
     <!-- A toast indicating a camera is connected to the device [CHAR LIMIT=30]-->
-    <string name="camera_connected">Camera connected</string>
+    <string name="camera_connected">Camera connected.</string>
     <!-- A toast indicating a camera is disconnected [CHAR LIMIT=30] -->
-    <string name="camera_disconnected">Camera disconnected</string>
+    <string name="camera_disconnected">Camera disconnected.</string>
     <!-- A label shown on MTP albums thumbnail to instruct users to import
         [CHAR LIMIT=40] -->
     <string name="click_import">Touch here to import</string>
@@ -379,10 +379,10 @@
     <!-- The label on the radio button for the widget type that shows the images in an album. [CHAR LIMIT=30]-->
     <string name="widget_type_shuffle">Shuffle all images</string>
     <!-- The label on the radio button for the widget type that shows only one image. [CHAR LIMIT=30]-->
-    <string name="widget_type_photo">Pick an image</string>
+    <string name="widget_type_photo">Choose an image</string>
 
     <!-- The title of the dialog for choosing the type of widget. [CHAR LIMIT=20] -->
-    <string name="widget_type">Widget Type</string>
+    <string name="widget_type">Widget type</string>
 
     <!-- Title of the Android Dreams slideshow screensaver. [CHAR LIMIT=20] -->
     <string name="slideshow_dream_name">Slideshow</string>
