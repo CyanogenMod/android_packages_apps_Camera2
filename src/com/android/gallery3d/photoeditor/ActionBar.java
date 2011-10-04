@@ -20,6 +20,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.ViewSwitcher;
 
 import com.android.gallery3d.R;
 
@@ -104,8 +105,19 @@ public class ActionBar extends RelativeLayout {
         View button = findViewById(buttonId);
         button.setEnabled(enabled);
         button.setAlpha(enabled ? ENABLED_ALPHA : DISABLED_ALPHA);
-
         // Track buttons whose enabled status has been updated.
         changedButtons.add(buttonId);
+
+        if (buttonId == R.id.save_button) {
+            // Show share-button only after photo is edited and saved; otherwise, show save-button.
+            // TODO: Fix the assumption of undo enabled status must be updated before reaching here.
+            boolean showShare = findViewById(R.id.undo_button).isEnabled() && !enabled;
+            ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.save_share_buttons);
+            int next = switcher.getNextView().getId();
+            if ((showShare && (next == R.id.share_button))
+                    || (!showShare && (next == R.id.save_button))) {
+                switcher.showNext();
+            }
+        }
     }
 }
