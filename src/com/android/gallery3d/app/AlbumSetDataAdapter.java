@@ -16,6 +16,9 @@
 
 package com.android.gallery3d.app;
 
+import android.os.Handler;
+import android.os.Message;
+
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.DataManager;
@@ -24,9 +27,6 @@ import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.ui.AlbumSetView;
 import com.android.gallery3d.ui.SynchronizedHandler;
-
-import android.os.Handler;
-import android.os.Message;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,7 +70,7 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
 
     private final Handler mMainHandler;
 
-    private MySourceListener mSourceListener = new MySourceListener();
+    private final MySourceListener mSourceListener = new MySourceListener();
 
     public AlbumSetDataAdapter(GalleryActivity activity, MediaSet albumSet, int cacheSize) {
         mSource = Utils.checkNotNull(albumSet);
@@ -260,8 +260,7 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
         @Override
         public UpdateInfo call() throws Exception {
             int index = getInvalidIndex(mVersion);
-            if (index == INDEX_NONE
-                    && mSourceVersion == mVersion) return null;
+            if (index == INDEX_NONE && mSourceVersion == mVersion) return null;
             UpdateInfo info = new UpdateInfo();
             info.version = mSourceVersion;
             info.index = index;
@@ -271,13 +270,16 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
     }
 
     private class UpdateContent implements Callable<Void> {
-        private UpdateInfo mUpdateInfo;
+        private final UpdateInfo mUpdateInfo;
 
         public UpdateContent(UpdateInfo info) {
             mUpdateInfo = info;
         }
 
         public Void call() {
+            // Avoid notifying listeners of status change after pause
+            // Otherwise gallery will be in inconsistent state after resume.
+            if (mReloadTask == null) return null;
             UpdateInfo info = mUpdateInfo;
             mSourceVersion = info.version;
             if (mSize != info.size) {
