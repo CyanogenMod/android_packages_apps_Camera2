@@ -18,7 +18,6 @@ package com.android.gallery3d.photoeditor.filters;
 
 import android.media.effect.Effect;
 import android.media.effect.EffectContext;
-import android.media.effect.EffectFactory;
 
 import com.android.gallery3d.photoeditor.Photo;
 
