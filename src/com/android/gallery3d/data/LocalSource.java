@@ -16,15 +16,15 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.app.Gallery;
-import com.android.gallery3d.app.GalleryApp;
-import com.android.gallery3d.data.MediaSet.ItemConsumer;
-
 import android.content.ContentProviderClient;
 import android.content.ContentUris;
 import android.content.UriMatcher;
 import android.net.Uri;
 import android.provider.MediaStore;
+
+import com.android.gallery3d.app.Gallery;
+import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.data.MediaSet.ItemConsumer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -143,8 +143,7 @@ class LocalSource extends MediaSource {
             case MEDIA_TYPE_VIDEO:
                 return Path.fromString("/local/video").getChild(id);
             default:
-                return Path.fromString("/merge/{/local/image,/local/video}")
-                        .getChild(id);
+                return Path.fromString("/local/all").getChild(id);
         }
     }
 
@@ -176,12 +175,9 @@ class LocalSource extends MediaSource {
     @Override
     public Path getDefaultSetOf(Path item) {
         MediaObject object = mApplication.getDataManager().getMediaObject(item);
-        if (object instanceof LocalImage) {
-            return Path.fromString("/local/image/").getChild(
-                    String.valueOf(((LocalImage) object).getBucketId()));
-        } else if (object instanceof LocalVideo) {
-            return Path.fromString("/local/video/").getChild(
-                    String.valueOf(((LocalVideo) object).getBucketId()));
+        if (object instanceof LocalMediaItem) {
+            return Path.fromString("/local/all").getChild(
+                    String.valueOf(((LocalMediaItem) object).getBucketId()));
         }
         return null;
     }
