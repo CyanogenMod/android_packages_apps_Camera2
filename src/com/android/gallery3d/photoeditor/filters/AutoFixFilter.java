@@ -17,7 +17,6 @@
 package com.android.gallery3d.photoeditor.filters;
 
 import android.media.effect.Effect;
-import android.media.effect.EffectContext;
 import android.media.effect.EffectFactory;
 
 import com.android.gallery3d.photoeditor.Photo;
@@ -40,8 +39,8 @@ public class AutoFixFilter extends Filter {
     }
 
     @Override
-    public void process(EffectContext context, Photo src, Photo dst) {
-        Effect effect = getEffect(context, EffectFactory.EFFECT_AUTOFIX);
+    public void process(Photo src, Photo dst) {
+        Effect effect = getEffect(EffectFactory.EFFECT_AUTOFIX);
         effect.setParameter("scale", scale);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
     }

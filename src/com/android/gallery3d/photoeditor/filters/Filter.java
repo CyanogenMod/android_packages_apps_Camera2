@@ -21,29 +21,57 @@ import android.media.effect.EffectContext;
 
 import com.android.gallery3d.photoeditor.Photo;
 
+import java.util.HashMap;
+
 /**
- * Image filter for photo editing.
+ * Image filter for photo editing; most of its methods must be called from a single GL thread except
+ * validate()/isValid() that are called from UI thread.
  */
 public abstract class Filter {
 
     // TODO: This should be set in MFF instead.
     private static final int DEFAULT_TILE_SIZE = 640;
 
+    private static final HashMap<Filter, Effect> effects = new HashMap<Filter, Effect>();
+    private static EffectContext context;
+
     private boolean isValid;
-    private EffectContext context;
-    private Effect effect;
+
+    public static void createContextWithCurrentGlContext() {
+        context = EffectContext.createWithCurrentGlContext();
+    }
+
+    public static void releaseContext() {
+        if (context != null) {
+            // Release all effects created with the releasing context.
+            for (Effect effect : effects.values()) {
+                effect.release();
+            }
+            effects.clear();
+            context.release();
+            context = null;
+        }
+    }
+
+    public void release() {
+        Effect effect = effects.remove(this);
+        if (effect != null) {
+            effect.release();
+        }
+    }
+
+    protected Effect getEffect(String name) {
+        Effect effect = effects.get(this);
+        if (effect == null) {
+            effect = context.getFactory().createEffect(name);
+            effect.setParameter("tile_size", DEFAULT_TILE_SIZE);
+            effects.put(this, effect);
+        }
+        return effect;
+    }
 
     protected void validate() {
         isValid = true;
-    }
-
-    protected Effect getEffect(EffectContext context, String name) {
-        if (this.context != context) {
-            effect = context.getFactory().createEffect(name);
-            effect.setParameter("tile_size", DEFAULT_TILE_SIZE);
-            this.context = context;
-        }
-        return effect;
     }
 
     /**
@@ -54,19 +82,11 @@ public abstract class Filter {
         return isValid;
     }
 
-    public void release() {
-        if (effect != null) {
-            effect.release();
-            effect = null;
-        }
-    }
-
     /**
      * Processes the source bitmap and matrix and output the destination bitmap and matrix.
      *
-     * @param context effect context bound to a GL context to create GL effect.
      * @param src source photo as the input.
      * @param dst destination photo having the same dimension as source photo as the output.
      */
-    public abstract void process(EffectContext context, Photo src, Photo dst);
+    public abstract void process(Photo src, Photo dst);
 }
