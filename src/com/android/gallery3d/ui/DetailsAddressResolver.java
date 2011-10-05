@@ -16,6 +16,11 @@
 
 package com.android.gallery3d.ui;
 
+import android.content.Context;
+import android.location.Address;
+import android.os.Handler;
+import android.os.Looper;
+
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.util.Future;
@@ -25,19 +30,14 @@ import com.android.gallery3d.util.ReverseGeocoder;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
-import android.content.Context;
-import android.location.Address;
-import android.os.Handler;
-import android.os.Looper;
-
 public class DetailsAddressResolver {
     private AddressResolvingListener mListener;
-    private double[] mLatlng;
-    private GalleryActivity mContext;
+    private final GalleryActivity mContext;
     private Future<Address> mAddressLookupJob;
-    private Handler mHandler;
+    private final Handler mHandler;
 
     private class AddressLookupJob implements Job<Address> {
+        private double[] mLatlng;
 
         protected AddressLookupJob(double[] latlng) {
             mLatlng = latlng;
@@ -59,7 +59,6 @@ public class DetailsAddressResolver {
     }
 
     public String resolveAddress(double[] latlng, AddressResolvingListener listener) {
-        mLatlng = latlng;
         mListener = listener;
         mAddressLookupJob = mContext.getThreadPool().submit(
                 new AddressLookupJob(latlng),
@@ -75,7 +74,7 @@ public class DetailsAddressResolver {
                         }
                     }
                 });
-        return GalleryUtils.formatLatitudeLongitude("(%f,%f)", mLatlng[0], mLatlng[1]);
+        return GalleryUtils.formatLatitudeLongitude("(%f,%f)", latlng[0], latlng[1]);
     }
 
     private void updateLocation(Address address) {
