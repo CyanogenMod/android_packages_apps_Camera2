@@ -33,7 +33,8 @@ import com.android.gallery3d.R;
  */
 public class PhotoEditor extends Activity {
 
-    private Uri uri;
+    private Uri sourceUri;
+    private Uri saveUri;
     private FilterStack filterStack;
     private ActionBar actionBar;
 
@@ -43,7 +44,9 @@ public class PhotoEditor extends Activity {
         setContentView(R.layout.photoeditor_main);
 
         Intent intent = getIntent();
-        uri = Intent.ACTION_EDIT.equalsIgnoreCase(intent.getAction()) ? intent.getData() : null;
+        if (Intent.ACTION_EDIT.equalsIgnoreCase(intent.getAction())) {
+            sourceUri = intent.getData();
+        }
 
         actionBar = (ActionBar) findViewById(R.id.action_bar);
         filterStack = new FilterStack((PhotoView) findViewById(R.id.photo_view),
@@ -63,6 +66,7 @@ public class PhotoEditor extends Activity {
         actionBar.setRunnable(R.id.undo_button, createUndoRedoRunnable(true, effectsBar));
         actionBar.setRunnable(R.id.redo_button, createUndoRedoRunnable(false, effectsBar));
         actionBar.setRunnable(R.id.save_button, createSaveRunnable(effectsBar));
+        actionBar.setRunnable(R.id.share_button, createShareRunnable(effectsBar));
         actionBar.setRunnable(R.id.action_bar_back, createBackRunnable(effectsBar));
     }
 
@@ -106,7 +110,7 @@ public class PhotoEditor extends Activity {
                 });
             }
         };
-        new LoadScreennailTask(this, callback).execute(uri);
+        new LoadScreennailTask(this, callback).execute(sourceUri);
     }
 
     private Runnable createUndoRedoRunnable(final boolean undo, final EffectsBar effectsBar) {
@@ -157,11 +161,34 @@ public class PhotoEditor extends Activity {
                                     public void onComplete(Uri result) {
                                         progressDialog.dismiss();
                                         actionBar.enableButton(R.id.save_button, (result == null));
+                                        saveUri = result;
                                     }
                                 };
-                                new SaveCopyTask(PhotoEditor.this, uri, callback).execute(bitmap);
+                                new SaveCopyTask(PhotoEditor.this, sourceUri, callback).execute(
+                                        bitmap);
                             }
                         });
+                    }
+                });
+            }
+        };
+    }
+
+    private Runnable createShareRunnable(final EffectsBar effectsBar) {
+        return new Runnable() {
+
+            @Override
+            public void run() {
+                effectsBar.exit(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (saveUri != null) {
+                            Intent intent = new Intent(Intent.ACTION_SEND);
+                            intent.putExtra(Intent.EXTRA_STREAM, saveUri);
+                            intent.setType("image/*");
+                            startActivity(intent);
+                        }
                     }
                 });
             }
