@@ -30,7 +30,7 @@
     <dimen name="action_button_padding_horizontal">28dp</dimen>
     <dimen name="effect_tool_panel_padding">15dp</dimen>
     <dimen name="seekbar_width">560dp</dimen>
-    <dimen name="seekbar_height">35dp</dimen>
+    <dimen name="seekbar_height">23dp</dimen>
     <dimen name="seekbar_margin_bottom">5dp</dimen>
     <dimen name="crop_indicator_size">48dp</dimen>
 </resources>

@@ -29,7 +29,7 @@ import com.android.gallery3d.photoeditor.PhotoView;
 public class EffectToolFactory {
 
     public enum ScalePickerType {
-        FILLLIGHT, HIGHLIGHT, SHADOW, COLOR, GENERIC
+        LIGHT, SHADOW, COLOR, GENERIC
     }
 
     private final ViewGroup effectToolPanel;
@@ -59,11 +59,8 @@ public class EffectToolFactory {
 
     private int getScalePickerBackground(ScalePickerType type) {
         switch (type) {
-            case FILLLIGHT:
-                return R.drawable.photoeditor_scale_seekbar_filllight;
-
-            case HIGHLIGHT:
-                return R.drawable.photoeditor_scale_seekbar_highlight;
+            case LIGHT:
+                return R.drawable.photoeditor_scale_seekbar_light;
 
             case SHADOW:
                 return R.drawable.photoeditor_scale_seekbar_shadow;
