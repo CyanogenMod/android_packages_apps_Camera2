@@ -17,7 +17,6 @@
 package com.android.gallery3d.photoeditor;
 
 import android.graphics.Bitmap;
-import android.media.effect.EffectContext;
 
 import com.android.gallery3d.photoeditor.filters.Filter;
 
@@ -44,7 +43,6 @@ public class FilterStack {
     private final PhotoView photoView;
     private final StackListener stackListener;
 
-    private EffectContext effectContext;
     private Photo source;
     private Runnable queuedTopFilterChange;
     private volatile boolean paused;
@@ -54,15 +52,6 @@ public class FilterStack {
         this.stackListener = stackListener;
     }
 
-    private void clearBuffers() {
-        for (int i = 0; i < buffers.length; i++) {
-            if (buffers[i] != null) {
-                buffers[i].clear();
-                buffers[i] = null;
-            }
-        }
-    }
-
     private void reallocateBuffer(int target) {
         int other = target ^ 1;
         buffers[target] = Photo.create(buffers[other].width(), buffers[other].height());
@@ -70,7 +59,12 @@ public class FilterStack {
 
     private void invalidate() {
         // In/out buffers need redrawn by re-applying filters on source photo.
-        clearBuffers();
+        for (int i = 0; i < buffers.length; i++) {
+            if (buffers[i] != null) {
+                buffers[i].clear();
+                buffers[i] = null;
+            }
+        }
         if (source != null) {
             buffers[0] = Photo.create(source.width(), source.height());
             reallocateBuffer(1);
@@ -98,7 +92,7 @@ public class FilterStack {
                 buffers[out].clear();
                 reallocateBuffer(out);
             }
-            appliedStack.get(filterIndex).process(effectContext, input, buffers[out]);
+            appliedStack.get(filterIndex).process(input, buffers[out]);
             return buffers[out];
         }
         return null;
@@ -229,19 +223,18 @@ public class FilterStack {
 
     public void onPause() {
         // Flush pending queued operations and release effect-context before GL context is lost.
-        // Use pause-flag to avoid lengthy runnable in GL thread blocking onPause().
+        // Use the flag to break from lengthy invalidate() in GL thread for not blocking onPause().
         paused = true;
         photoView.flush();
         photoView.queueEvent(new Runnable() {
 
             @Override
             public void run() {
-                if (effectContext != null) {
-                    effectContext.release();
-                    effectContext = null;
+                Filter.releaseContext();
+                for (int i = 0; i < buffers.length; i++) {
+                    // Textures will be automatically deleted when GL context is lost.
+                    buffers[i] = null;
                 }
-                photoView.setPhoto(null);
-                clearBuffers();
             }
         });
         photoView.onPause();
@@ -254,7 +247,7 @@ public class FilterStack {
             @Override
             public void run() {
                 // Create effect context after GL context is created or recreated.
-                effectContext = EffectContext.createWithCurrentGlContext();
+                Filter.createContextWithCurrentGlContext();
             }
         });
         paused = false;
