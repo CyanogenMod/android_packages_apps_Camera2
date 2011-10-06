@@ -104,8 +104,8 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
     private Future<Integer> mSyncTask = null;
 
-    private GLView mRootPane = new GLView() {
-        private float mMatrix[] = new float[16];
+    private final GLView mRootPane = new GLView() {
+        private final float mMatrix[] = new float[16];
 
         @Override
         protected void onLayout(
@@ -195,6 +195,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             }
         } else {
             mSelectionManager.toggle(item.getPath());
+            mDetailsSource.findIndex(slotIndex);
             mAlbumView.invalidate();
         }
     }
@@ -288,7 +289,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         final PositionRepository repository =
                 PositionRepository.getInstance(mActivity);
         mAlbumView.startTransition(new PositionProvider() {
-            private Position mTempPosition = new Position();
+            private final Position mTempPosition = new Position();
             public Position getPosition(long identity, Position target) {
                 Position p = repository.get(identity);
                 if (p != null) return p;
@@ -307,7 +308,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 : data.getIntArray(KEY_SET_CENTER);
         final Random random = new Random();
         mAlbumView.startTransition(new PositionProvider() {
-            private Position mTempPosition = new Position();
+            private final Position mTempPosition = new Position();
             public Position getPosition(long identity, Position target) {
                 Position p = repository.get(identity);
                 if (p != null) return p;
