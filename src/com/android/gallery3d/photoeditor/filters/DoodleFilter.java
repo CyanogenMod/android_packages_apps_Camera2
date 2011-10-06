@@ -23,7 +23,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.media.effect.Effect;
-import android.media.effect.EffectContext;
 import android.media.effect.EffectFactory;
 
 import com.android.gallery3d.photoeditor.Photo;
@@ -64,7 +63,7 @@ public class DoodleFilter extends Filter {
     }
 
     @Override
-    public void process(EffectContext context, Photo src, Photo dst) {
+    public void process(Photo src, Photo dst) {
         Bitmap bitmap = Bitmap.createBitmap(src.width(), src.height(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
 
@@ -81,7 +80,7 @@ public class DoodleFilter extends Filter {
             canvas.drawPath(drawingPath, paint);
         }
 
-        Effect effect = getEffect(context, EffectFactory.EFFECT_BITMAPOVERLAY);
+        Effect effect = getEffect(EffectFactory.EFFECT_BITMAPOVERLAY);
         effect.setParameter("bitmap", bitmap);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
     }

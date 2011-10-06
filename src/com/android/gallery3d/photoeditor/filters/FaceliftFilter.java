@@ -17,7 +17,6 @@
 package com.android.gallery3d.photoeditor.filters;
 
 import android.media.effect.Effect;
-import android.media.effect.EffectContext;
 
 import com.android.gallery3d.photoeditor.Photo;
 
@@ -39,9 +38,8 @@ public class FaceliftFilter extends Filter {
     }
 
     @Override
-    public void process(EffectContext context, Photo src, Photo dst) {
-        Effect effect = getEffect(context,
-                "com.google.android.media.effect.effects.FaceliftEffect");
+    public void process(Photo src, Photo dst) {
+        Effect effect = getEffect("com.google.android.media.effect.effects.FaceliftEffect");
         effect.setParameter("blend", scale);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
     }

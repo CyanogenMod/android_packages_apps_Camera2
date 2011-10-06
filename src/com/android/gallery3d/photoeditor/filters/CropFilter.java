@@ -18,7 +18,6 @@ package com.android.gallery3d.photoeditor.filters;
 
 import android.graphics.RectF;
 import android.media.effect.Effect;
-import android.media.effect.EffectContext;
 import android.media.effect.EffectFactory;
 
 import com.android.gallery3d.photoeditor.Photo;
@@ -39,11 +38,11 @@ public class CropFilter extends Filter {
     }
 
     @Override
-    public void process(EffectContext context, Photo src, Photo dst) {
+    public void process(Photo src, Photo dst) {
         dst.changeDimension(Math.round(bounds.width() * src.width()),
                 Math.round(bounds.height() * src.height()));
 
-        Effect effect = getEffect(context, EffectFactory.EFFECT_CROP);
+        Effect effect = getEffect(EffectFactory.EFFECT_CROP);
         effect.setParameter("xorigin", Math.round(bounds.left * src.width()));
         effect.setParameter("yorigin", Math.round(bounds.top * src.height()));
         effect.setParameter("width", dst.width());
