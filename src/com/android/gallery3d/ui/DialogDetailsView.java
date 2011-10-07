@@ -16,11 +16,19 @@
 
 package com.android.gallery3d.ui;
 
-import static com.android.gallery3d.ui.DetailsWindowConfig.FONT_SIZE;
-import static com.android.gallery3d.ui.DetailsWindowConfig.LEFT_RIGHT_EXTRA_PADDING;
-import static com.android.gallery3d.ui.DetailsWindowConfig.LINE_SPACING;
-import static com.android.gallery3d.ui.DetailsWindowConfig.PREFERRED_WIDTH;
-import static com.android.gallery3d.ui.DetailsWindowConfig.TOP_BOTTOM_EXTRA_PADDING;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
+import android.text.format.Formatter;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryActivity;
@@ -28,37 +36,8 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.ui.DetailsAddressResolver.AddressResolvingListener;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
-import com.android.gallery3d.ui.DetailsHelper.DetailsViewContainer;
 import com.android.gallery3d.ui.DetailsHelper.DetailsSource;
-import com.android.gallery3d.util.Future;
-import com.android.gallery3d.util.FutureListener;
-import com.android.gallery3d.util.GalleryUtils;
-import com.android.gallery3d.util.ReverseGeocoder;
-import com.android.gallery3d.util.ThreadPool.Job;
-import com.android.gallery3d.util.ThreadPool.JobContext;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
-import android.database.DataSetObserver;
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.location.Address;
-import android.os.Handler;
-import android.os.Message;
-import android.text.format.Formatter;
-import android.view.ContextThemeWrapper;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.MeasureSpec;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
+import com.android.gallery3d.ui.DetailsHelper.DetailsViewContainer;
 
 import java.util.ArrayList;
 import java.util.Map.Entry;
@@ -67,13 +46,12 @@ public class DialogDetailsView implements DetailsViewContainer {
     @SuppressWarnings("unused")
     private static final String TAG = "DialogDetailsView";
 
-    private GalleryActivity mContext;
+    private final GalleryActivity mContext;
     private DetailsAdapter mAdapter;
     private MediaDetails mDetails;
-    private DetailsSource mSource;
+    private final DetailsSource mSource;
     private int mIndex;
     private Dialog mDialog;
-    private int mLocationIndex;
     private CloseListener mListener;
 
     public DialogDetailsView(GalleryActivity activity, DetailsSource source) {
@@ -134,7 +112,8 @@ public class DialogDetailsView implements DetailsViewContainer {
     }
 
     private class DetailsAdapter extends BaseAdapter implements AddressResolvingListener {
-        private ArrayList<String> mItems;
+        private final ArrayList<String> mItems;
+        private int mLocationIndex;
 
         public DetailsAdapter(MediaDetails details) {
             Context context = mContext.getAndroidContext();
@@ -211,10 +190,12 @@ public class DialogDetailsView implements DetailsViewContainer {
             }
         }
 
+        @Override
         public boolean areAllItemsEnabled() {
             return false;
         }
 
+        @Override
         public boolean isEnabled(int position) {
             return false;
         }
@@ -245,6 +226,7 @@ public class DialogDetailsView implements DetailsViewContainer {
 
         public void onAddressAvailable(String address) {
             mItems.set(mLocationIndex, address);
+            notifyDataSetChanged();
         }
     }
 
