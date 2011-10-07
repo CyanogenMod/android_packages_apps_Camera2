@@ -28,13 +28,13 @@
     <string name="resume_playing_message" msgid="5184414518126703481">"Jatketaanko toistoa kohdasta %s?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Jatka toistoa"</string>
     <string name="loading" msgid="7038208555304563571">"Ladataan…"</string>
-    <string name="fail_to_load" msgid="2710120770735315683">"Lataus epäonnistui"</string>
+    <!-- outdated translation 2710120770735315683 -->     <string name="fail_to_load" msgid="8394392853646664505">"Lataus epäonnistui"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Ei pikkukuvaa"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Aloita alusta"</string>
-    <string name="crop_save_text" msgid="8821167985419282305">"Ok"</string>
-    <string name="multiface_crop_help" msgid="3127018992717032779">"Aloita napauttamalla kasvoja."</string>
+    <!-- outdated translation 8821167985419282305 -->     <string name="crop_save_text" msgid="152200178986698300">"Ok"</string>
+    <!-- outdated translation 3127018992717032779 -->     <string name="multiface_crop_help" msgid="2554690102655855657">"Aloita napauttamalla kasvoja."</string>
     <string name="saving_image" msgid="7270334453636349407">"Tallennetaan kuvaa…"</string>
-    <string name="save_error" msgid="7025992996853207949">"Rajattua kuvaa ei voida tallentaa"</string>
+    <!-- outdated translation 7025992996853207949 -->     <string name="save_error" msgid="6857408774183654970">"Rajattua kuvaa ei voida tallentaa"</string>
     <string name="crop_label" msgid="521114301871349328">"Leikkaa kuvaa"</string>
     <string name="select_image" msgid="7841406150484742140">"Valitse valokuva"</string>
     <string name="select_video" msgid="4859510992798615076">"Valitse video"</string>
@@ -42,14 +42,14 @@
     <string name="select_album" msgid="4632641262236697235">"Valitse albumi(t)"</string>
     <string name="select_group" msgid="9090385962030340391">"Valitse ryhmä(t)"</string>
     <string name="set_image" msgid="2331476809308010401">"Aseta kuva"</string>
-    <string name="wallpaper" msgid="9222901738515471972">"Asetetaan taustakuvaa, odota…"</string>
+    <!-- outdated translation 9222901738515471972 -->     <string name="wallpaper" msgid="140165383777262070">"Asetetaan taustakuvaa, odota…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"taustakuvaksi"</string>
     <string name="delete" msgid="2839695998251824487">"Poista"</string>
-    <string name="confirm_delete" msgid="5731757674837098707">"Vahvista poisto"</string>
+    <!-- outdated translation 5731757674837098707 -->     <string name="confirm_delete" msgid="7358770022173660511">"Vahvista poisto"</string>
     <string name="cancel" msgid="3637516880917356226">"Peruuta"</string>
     <string name="share" msgid="3619042788254195341">"Jaa"</string>
-    <string name="select_all" msgid="8623593677101437957">"Valitse kaikki"</string>
-    <string name="deselect_all" msgid="7397531298370285581">"Poista kaikki valinnat"</string>
+    <!-- outdated translation 8623593677101437957 -->     <string name="select_all" msgid="3403283025220282175">"Valitse kaikki"</string>
+    <!-- outdated translation 7397531298370285581 -->     <string name="deselect_all" msgid="5758897506061723684">"Poista kaikki valinnat"</string>
     <string name="slideshow" msgid="4355906903247112975">"Diaesitys"</string>
     <string name="details" msgid="8415120088556445230">"Tiedot"</string>
     <string name="details_title" msgid="2611396603977441273">"%1$d/%2$d kohdetta:"</string>
@@ -71,16 +71,16 @@
     <item quantity="other" msgid="3512041363942842738">"%1$d valittu"</item>
   </plurals>
     <string name="show_on_map" msgid="6157544221201750980">"Näytä kartalla"</string>
-    <string name="rotate_left" msgid="7412075232752726934">"Kierrä vastapäivään"</string>
-    <string name="rotate_right" msgid="7340681085011826618">"Kierrä myötäpäivään"</string>
-    <string name="no_such_item" msgid="3161074758669642065">"Kohdetta ei löydy"</string>
+    <string name="rotate_left" msgid="5888273317282539839">"Kierrä vastapäivään"</string>
+    <string name="rotate_right" msgid="6776325835923384839">"Kierrä myötäpäivään"</string>
+    <!-- outdated translation 3161074758669642065 -->     <string name="no_such_item" msgid="5315144556325243400">"Kohdetta ei löydy"</string>
     <string name="edit" msgid="1502273844748580847">"Muokkaa"</string>
-    <string name="activity_not_found" msgid="3731390759313019518">"Sovellus ei käytettävissä"</string>
-    <string name="process_caching_requests" msgid="1076938190997999614">"Käsittele välimuistipyynnöt"</string>
-    <string name="caching_label" msgid="3244800874547101776">"Vie välimuistiin"</string>
+    <!-- outdated translation 3731390759313019518 -->     <string name="activity_not_found" msgid="5619154886080878023">"Sovellus ei käytettävissä"</string>
+    <!-- outdated translation 1076938190997999614 -->     <string name="process_caching_requests" msgid="8722939570307386071">"Käsittele välimuistipyynnöt"</string>
+    <!-- outdated translation 3244800874547101776 -->     <string name="caching_label" msgid="4521059045896269095">"Vie välimuistiin"</string>
     <string name="crop_action" msgid="3427470284074377001">"Rajaa"</string>
     <string name="set_as" msgid="3636764710790507868">"Aseta"</string>
-    <string name="video_err" msgid="7917736494827857757">"Videon toisto ei onnistu"</string>
+    <!-- outdated translation 7917736494827857757 -->     <string name="video_err" msgid="7003051631792271009">"Videon toisto ei onnistu"</string>
     <string name="group_by_location" msgid="316641628989023253">"Sijainnin mukaan"</string>
     <string name="group_by_time" msgid="9046168567717963573">"Ajan mukaan"</string>
     <string name="group_by_tags" msgid="3568731317210676160">"Tunnisteiden mukaan"</string>
@@ -88,17 +88,21 @@
     <string name="group_by_album" msgid="1532818636053818958">"Albumin mukaan"</string>
     <string name="group_by_size" msgid="153766174950394155">"Koon mukaan"</string>
     <string name="untagged" msgid="7281481064509590402">"Merkitsemättömät"</string>
-    <string name="no_location" msgid="2036710947563713111">"Ei sijaintia"</string>
-    <string name="no_connectivity" msgid="4060082114738885149">"Verkkoyhteysongelma – joitakin paikkoja ei voi tunnistaa."</string>
+    <!-- outdated translation 2036710947563713111 -->     <string name="no_location" msgid="4043624857489331676">"Ei sijaintia"</string>
+    <!-- outdated translation 4060082114738885149 -->     <string name="no_connectivity" msgid="7164037617297293668">"Verkkoyhteysongelma – joitakin paikkoja ei voi tunnistaa."</string>
+    <!-- no translation found for sync_album_error (2218733298953719785) -->
+    <skip />
+    <!-- no translation found for sync_album_set_error (9016732535181154028) -->
+    <skip />
     <string name="show_images_only" msgid="7263218480867672653">"Vain kuvat"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Vain videot"</string>
     <string name="show_all" msgid="4780647751652596980">"Kuvat ja videot"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Kuvagalleria"</string>
-    <string name="appwidget_empty_text" msgid="4123016777080388680">"Ei valokuvia"</string>
-    <string name="crop_saved" msgid="4684933379430649946">"Rajattu kuva on tallennettu latauksiin"</string>
-    <string name="crop_not_saved" msgid="1438309290700431923">"Rajattua kuvaa ei tallennettu"</string>
-    <string name="no_albums_alert" msgid="3459550423604532470">"Ei albumeita käytettävissä"</string>
-    <string name="empty_album" msgid="6307897398825514762">"Ei kuvia/videoita saatavilla"</string>
+    <!-- outdated translation 4123016777080388680 -->     <string name="appwidget_empty_text" msgid="1228925628357366957">"Ei valokuvia"</string>
+    <!-- outdated translation 4684933379430649946 -->     <string name="crop_saved" msgid="1062612625032731770">"Rajattu kuva on tallennettu latauksiin"</string>
+    <!-- outdated translation 1438309290700431923 -->     <string name="crop_not_saved" msgid="3400773981839556">"Rajattua kuvaa ei tallennettu"</string>
+    <!-- outdated translation 3459550423604532470 -->     <string name="no_albums_alert" msgid="4111744447491690896">"Ei albumeita käytettävissä"</string>
+    <!-- outdated translation 6307897398825514762 -->     <string name="empty_album" msgid="4542880442593595494">"Ei kuvia/videoita saatavilla"</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Julkaisut"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Aseta offline-käytettäväksi"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Päivitä"</string>
@@ -113,15 +117,15 @@
     <string name="height" msgid="3648885449443787772">"Korkeus"</string>
     <string name="orientation" msgid="4958327983165245513">"Suunta"</string>
     <string name="duration" msgid="8160058911218541616">"Kesto"</string>
-    <string name="mimetype" msgid="3518268469266183548">"MIME-tyyppi"</string>
-    <string name="file_size" msgid="4670384449129762138">"Tiedoston koko"</string>
+    <!-- outdated translation 3518268469266183548 -->     <string name="mimetype" msgid="8024168704337990470">"MIME-tyyppi"</string>
+    <!-- outdated translation 4670384449129762138 -->     <string name="file_size" msgid="8486169301588318915">"Tiedoston koko"</string>
     <string name="maker" msgid="7921835498034236197">"Tekijä"</string>
     <string name="model" msgid="8240207064064337366">"Malli"</string>
     <string name="flash" msgid="2816779031261147723">"Salama"</string>
     <string name="aperture" msgid="5920657630303915195">"Aukko"</string>
     <string name="focal_length" msgid="1291383769749877010">"Polttoväli"</string>
-    <string name="white_balance" msgid="8122534414851280901">"Valkotasapaino"</string>
-    <string name="exposure_time" msgid="3146642210127439553">"Valotusaika"</string>
+    <!-- outdated translation 8122534414851280901 -->     <string name="white_balance" msgid="1582509289994216078">"Valkotasapaino"</string>
+    <!-- outdated translation 3146642210127439553 -->     <string name="exposure_time" msgid="3990163680281058826">"Valotusaika"</string>
     <string name="iso" msgid="5028296664327335940">"ISO"</string>
     <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
     <string name="manual" msgid="6608905477477607865">"Manuaalinen"</string>
@@ -129,28 +133,28 @@
     <string name="flash_on" msgid="7891556231891837284">"Salama käyt."</string>
     <string name="flash_off" msgid="1445443413822680010">"Ei salamaa"</string>
   <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="2955975726887896888">"Albumien asettaminen saataville offline-tilassa"</item>
-    <item quantity="other" msgid="6929905722448632886">"Albumien asettaminen saataville offline-tilassa"</item>
+    <!-- outdated translation 2955975726887896888 -->     <item quantity="one" msgid="2171596356101611086">"Albumien asettaminen saataville offline-tilassa"</item>
+    <!-- outdated translation 6929905722448632886 -->     <item quantity="other" msgid="4948604338155959389">"Albumien asettaminen saataville offline-tilassa"</item>
   </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Tämä kohde on tallennettu laitteelle ja käytettävissä offline-tilassa."</string>
-    <string name="set_label_all_albums" msgid="3507256844918130594">"Kaikki albumit"</string>
-    <string name="set_label_local_albums" msgid="5227548825039781">"Paikalliset albumit"</string>
-    <string name="set_label_mtp_devices" msgid="5779788799122828528">"MTP-laitteet"</string>
-    <string name="set_label_picasa_albums" msgid="2736308697306982589">"Picasa-albumit"</string>
+    <!-- outdated translation 3507256844918130594 -->     <string name="set_label_all_albums" msgid="4581863582996336783">"Kaikki albumit"</string>
+    <!-- outdated translation 5227548825039781 -->     <string name="set_label_local_albums" msgid="6698133661656266702">"Paikalliset albumit"</string>
+    <!-- outdated translation 5779788799122828528 -->     <string name="set_label_mtp_devices" msgid="1283513183744896368">"MTP-laitteet"</string>
+    <!-- outdated translation 2736308697306982589 -->     <string name="set_label_picasa_albums" msgid="5356258354953935895">"Picasa-albumit"</string>
     <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> vapaana"</string>
     <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> tai alle"</string>
     <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> tai yli"</string>
     <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> – <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
     <string name="Import" msgid="3985447518557474672">"Tuo"</string>
-    <string name="import_complete" msgid="1098450310074640619">"Tuonti valmis"</string>
-    <string name="import_fail" msgid="5205927625132482529">"Tuonti epäonnistui"</string>
-    <string name="camera_connected" msgid="6984353643349303075">"Kamera yhdistetty"</string>
-    <string name="camera_disconnected" msgid="3683036560562699311">"Kamera irrotettu"</string>
+    <string name="import_complete" msgid="3875040287486199999">"Tuonti valmis"</string>
+    <!-- outdated translation 5205927625132482529 -->     <string name="import_fail" msgid="8497942380703298808">"Tuonti epäonnistui"</string>
+    <!-- outdated translation 6984353643349303075 -->     <string name="camera_connected" msgid="916021826223448591">"Kamera yhdistetty"</string>
+    <!-- outdated translation 3683036560562699311 -->     <string name="camera_disconnected" msgid="2100559901676329496">"Kamera irrotettu"</string>
     <string name="click_import" msgid="6407959065464291972">"Tuo koskettamalla tätä"</string>
     <string name="widget_type_album" msgid="3245149644830731121">"Albumin kuvat"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Sekoita kaikki kuvat"</string>
-    <string name="widget_type_photo" msgid="8384174698965738770">"Valitse kuva"</string>
-    <string name="widget_type" msgid="7308564524449340985">"Widgetin tyyppi"</string>
+    <!-- outdated translation 8384174698965738770 -->     <string name="widget_type_photo" msgid="6267065337367795355">"Valitse kuva"</string>
+    <!-- outdated translation 7308564524449340985 -->     <string name="widget_type" msgid="2161028964992385809">"Widgetin tyyppi"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Diaesitys"</string>
     <string name="albums" msgid="7320787705180057947">"Albumit"</string>
     <string name="times" msgid="2023033894889499219">"Kerrat"</string>

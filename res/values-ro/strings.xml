@@ -28,13 +28,13 @@
     <string name="resume_playing_message" msgid="5184414518126703481">"Reluaţi redarea de la %s?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Reluaţi redarea"</string>
     <string name="loading" msgid="7038208555304563571">"Se încarcă..."</string>
-    <string name="fail_to_load" msgid="2710120770735315683">"Eroare la încărcare"</string>
+    <!-- outdated translation 2710120770735315683 -->     <string name="fail_to_load" msgid="8394392853646664505">"Eroare la încărcare"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Nu există o miniatură"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Începeţi din nou"</string>
-    <string name="crop_save_text" msgid="8821167985419282305">"Ok"</string>
-    <string name="multiface_crop_help" msgid="3127018992717032779">"Apăsaţi pe un chip pentru a începe."</string>
+    <!-- outdated translation 8821167985419282305 -->     <string name="crop_save_text" msgid="152200178986698300">"Ok"</string>
+    <!-- outdated translation 3127018992717032779 -->     <string name="multiface_crop_help" msgid="2554690102655855657">"Apăsaţi pe un chip pentru a începe."</string>
     <string name="saving_image" msgid="7270334453636349407">"Se salvează fotografia..."</string>
-    <string name="save_error" msgid="7025992996853207949">"Nu se poate salva imaginea decupată"</string>
+    <!-- outdated translation 7025992996853207949 -->     <string name="save_error" msgid="6857408774183654970">"Nu se poate salva imaginea decupată"</string>
     <string name="crop_label" msgid="521114301871349328">"Decupaţi fotografia"</string>
     <string name="select_image" msgid="7841406150484742140">"Selectaţi fotografie"</string>
     <string name="select_video" msgid="4859510992798615076">"Selectaţi videoclip"</string>
@@ -42,14 +42,14 @@
     <string name="select_album" msgid="4632641262236697235">"Selectaţi albume"</string>
     <string name="select_group" msgid="9090385962030340391">"Selectaţi grupuri"</string>
     <string name="set_image" msgid="2331476809308010401">"Setaţi fotografia ca"</string>
-    <string name="wallpaper" msgid="9222901738515471972">"Se setează imaginea de fundal. Aşteptaţi..."</string>
+    <!-- outdated translation 9222901738515471972 -->     <string name="wallpaper" msgid="140165383777262070">"Se setează imaginea de fundal. Aşteptaţi..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Imagine de fundal"</string>
     <string name="delete" msgid="2839695998251824487">"Ştergeţi"</string>
-    <string name="confirm_delete" msgid="5731757674837098707">"Confirmaţi ştergerea"</string>
+    <!-- outdated translation 5731757674837098707 -->     <string name="confirm_delete" msgid="7358770022173660511">"Confirmaţi ştergerea"</string>
     <string name="cancel" msgid="3637516880917356226">"Anulaţi"</string>
     <string name="share" msgid="3619042788254195341">"Distribuiţi"</string>
-    <string name="select_all" msgid="8623593677101437957">"Selectaţi-le pe toate"</string>
-    <string name="deselect_all" msgid="7397531298370285581">"Deselectaţi-le pe toate"</string>
+    <!-- outdated translation 8623593677101437957 -->     <string name="select_all" msgid="3403283025220282175">"Selectaţi-le pe toate"</string>
+    <!-- outdated translation 7397531298370285581 -->     <string name="deselect_all" msgid="5758897506061723684">"Deselectaţi-le pe toate"</string>
     <string name="slideshow" msgid="4355906903247112975">"Prezentare"</string>
     <string name="details" msgid="8415120088556445230">"Detalii"</string>
     <string name="details_title" msgid="2611396603977441273">"%1$d din %2$d (de) elemente:"</string>
@@ -71,16 +71,16 @@
     <item quantity="other" msgid="3512041363942842738">"%1$d selectate"</item>
   </plurals>
     <string name="show_on_map" msgid="6157544221201750980">"Afişaţi pe hartă"</string>
-    <string name="rotate_left" msgid="7412075232752726934">"Rotiţi spre stânga"</string>
-    <string name="rotate_right" msgid="7340681085011826618">"Rotiţi spre dreapta"</string>
-    <string name="no_such_item" msgid="3161074758669642065">"Elementul nu a fost găsit"</string>
+    <string name="rotate_left" msgid="5888273317282539839">"Rotiţi spre stânga"</string>
+    <string name="rotate_right" msgid="6776325835923384839">"Rotiţi spre dreapta"</string>
+    <!-- outdated translation 3161074758669642065 -->     <string name="no_such_item" msgid="5315144556325243400">"Elementul nu a fost găsit"</string>
     <string name="edit" msgid="1502273844748580847">"Editaţi"</string>
-    <string name="activity_not_found" msgid="3731390759313019518">"Nu există aplicaţii disponibile"</string>
-    <string name="process_caching_requests" msgid="1076938190997999614">"Se procesează solic. de stocare în memoria cache"</string>
-    <string name="caching_label" msgid="3244800874547101776">"Mem. cache..."</string>
+    <!-- outdated translation 3731390759313019518 -->     <string name="activity_not_found" msgid="5619154886080878023">"Nu există aplicaţii disponibile"</string>
+    <!-- outdated translation 1076938190997999614 -->     <string name="process_caching_requests" msgid="8722939570307386071">"Se procesează solic. de stocare în memoria cache"</string>
+    <!-- outdated translation 3244800874547101776 -->     <string name="caching_label" msgid="4521059045896269095">"Mem. cache..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Decupaţi"</string>
     <string name="set_as" msgid="3636764710790507868">"Setaţi ca"</string>
-    <string name="video_err" msgid="7917736494827857757">"Videoclipul nu poate fi redat"</string>
+    <!-- outdated translation 7917736494827857757 -->     <string name="video_err" msgid="7003051631792271009">"Videoclipul nu poate fi redat"</string>
     <string name="group_by_location" msgid="316641628989023253">"După locaţie"</string>
     <string name="group_by_time" msgid="9046168567717963573">"După dată"</string>
     <string name="group_by_tags" msgid="3568731317210676160">"După etichete"</string>
@@ -88,17 +88,21 @@
     <string name="group_by_album" msgid="1532818636053818958">"După album"</string>
     <string name="group_by_size" msgid="153766174950394155">"În funcţie de dimensiune"</string>
     <string name="untagged" msgid="7281481064509590402">"Neetichetate"</string>
-    <string name="no_location" msgid="2036710947563713111">"Fără locaţie"</string>
-    <string name="no_connectivity" msgid="4060082114738885149">"Unele locaţii nu au putut fi identificate din cauza unor probleme de conectivitate la reţea"</string>
+    <!-- outdated translation 2036710947563713111 -->     <string name="no_location" msgid="4043624857489331676">"Fără locaţie"</string>
+    <!-- outdated translation 4060082114738885149 -->     <string name="no_connectivity" msgid="7164037617297293668">"Unele locaţii nu au putut fi identificate din cauza unor probleme de conectivitate la reţea"</string>
+    <!-- no translation found for sync_album_error (2218733298953719785) -->
+    <skip />
+    <!-- no translation found for sync_album_set_error (9016732535181154028) -->
+    <skip />
     <string name="show_images_only" msgid="7263218480867672653">"Numai imagini"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Numai videoclipuri"</string>
     <string name="show_all" msgid="4780647751652596980">"Imagini şi videoclipuri"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Galerie foto"</string>
-    <string name="appwidget_empty_text" msgid="4123016777080388680">"Nu există fotografii"</string>
-    <string name="crop_saved" msgid="4684933379430649946">"Imaginea decupată s-a salvat în dosarul descărcare"</string>
-    <string name="crop_not_saved" msgid="1438309290700431923">"Imaginea decupată nu s-a salvat"</string>
-    <string name="no_albums_alert" msgid="3459550423604532470">"Nu există albume disponibile"</string>
-    <string name="empty_album" msgid="6307897398825514762">"Nu există imagini/videoclipuri disponibile"</string>
+    <!-- outdated translation 4123016777080388680 -->     <string name="appwidget_empty_text" msgid="1228925628357366957">"Nu există fotografii"</string>
+    <!-- outdated translation 4684933379430649946 -->     <string name="crop_saved" msgid="1062612625032731770">"Imaginea decupată s-a salvat în dosarul descărcare"</string>
+    <!-- outdated translation 1438309290700431923 -->     <string name="crop_not_saved" msgid="3400773981839556">"Imaginea decupată nu s-a salvat"</string>
+    <!-- outdated translation 3459550423604532470 -->     <string name="no_albums_alert" msgid="4111744447491690896">"Nu există albume disponibile"</string>
+    <!-- outdated translation 6307897398825514762 -->     <string name="empty_album" msgid="4542880442593595494">"Nu există imagini/videoclipuri disponibile"</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Postări"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Faceţi-le disponibile offline"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Actualizaţi"</string>
@@ -113,15 +117,15 @@
     <string name="height" msgid="3648885449443787772">"Înălţime"</string>
     <string name="orientation" msgid="4958327983165245513">"Orientare"</string>
     <string name="duration" msgid="8160058911218541616">"Durată"</string>
-    <string name="mimetype" msgid="3518268469266183548">"Tip MIME"</string>
-    <string name="file_size" msgid="4670384449129762138">"Dim. fişier"</string>
+    <!-- outdated translation 3518268469266183548 -->     <string name="mimetype" msgid="8024168704337990470">"Tip MIME"</string>
+    <!-- outdated translation 4670384449129762138 -->     <string name="file_size" msgid="8486169301588318915">"Dim. fişier"</string>
     <string name="maker" msgid="7921835498034236197">"Producător"</string>
     <string name="model" msgid="8240207064064337366">"Model"</string>
     <string name="flash" msgid="2816779031261147723">"Bliţ"</string>
     <string name="aperture" msgid="5920657630303915195">"Diafragmă"</string>
     <string name="focal_length" msgid="1291383769749877010">"Dist. focală"</string>
-    <string name="white_balance" msgid="8122534414851280901">"Balans de alb"</string>
-    <string name="exposure_time" msgid="3146642210127439553">"Timp expunere"</string>
+    <!-- outdated translation 8122534414851280901 -->     <string name="white_balance" msgid="1582509289994216078">"Balans de alb"</string>
+    <!-- outdated translation 3146642210127439553 -->     <string name="exposure_time" msgid="3990163680281058826">"Timp expunere"</string>
     <string name="iso" msgid="5028296664327335940">"ISO"</string>
     <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
     <string name="manual" msgid="6608905477477607865">"Manual"</string>
@@ -129,28 +133,28 @@
     <string name="flash_on" msgid="7891556231891837284">"Bliţ activat"</string>
     <string name="flash_off" msgid="1445443413822680010">"Fără bliţ"</string>
   <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="2955975726887896888">"Se face disponibil un album offline"</item>
-    <item quantity="other" msgid="6929905722448632886">"Se fac disponibile albume offline"</item>
+    <!-- outdated translation 2955975726887896888 -->     <item quantity="one" msgid="2171596356101611086">"Se face disponibil un album offline"</item>
+    <!-- outdated translation 6929905722448632886 -->     <item quantity="other" msgid="4948604338155959389">"Se fac disponibile albume offline"</item>
   </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Acest element este stocat local şi disponibil offline."</string>
-    <string name="set_label_all_albums" msgid="3507256844918130594">"Toate albumele"</string>
-    <string name="set_label_local_albums" msgid="5227548825039781">"Albume locale"</string>
-    <string name="set_label_mtp_devices" msgid="5779788799122828528">"Dispozitive MTP"</string>
-    <string name="set_label_picasa_albums" msgid="2736308697306982589">"Albume Picasa"</string>
+    <!-- outdated translation 3507256844918130594 -->     <string name="set_label_all_albums" msgid="4581863582996336783">"Toate albumele"</string>
+    <!-- outdated translation 5227548825039781 -->     <string name="set_label_local_albums" msgid="6698133661656266702">"Albume locale"</string>
+    <!-- outdated translation 5779788799122828528 -->     <string name="set_label_mtp_devices" msgid="1283513183744896368">"Dispozitive MTP"</string>
+    <!-- outdated translation 2736308697306982589 -->     <string name="set_label_picasa_albums" msgid="5356258354953935895">"Albume Picasa"</string>
     <string name="free_space_format" msgid="8766337315709161215">"Spaţiu liber: <xliff:g id="BYTES">%s</xliff:g>"</string>
     <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> sau mai puţin"</string>
     <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> sau mai mult"</string>
     <string name="size_between" msgid="8779660840898917208">"Între <xliff:g id="MIN_SIZE">%1$s</xliff:g> şi <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
     <string name="Import" msgid="3985447518557474672">"Importaţi"</string>
-    <string name="import_complete" msgid="1098450310074640619">"Import finalizat"</string>
-    <string name="import_fail" msgid="5205927625132482529">"Importul nu a reuşit"</string>
-    <string name="camera_connected" msgid="6984353643349303075">"Camera foto conectată"</string>
-    <string name="camera_disconnected" msgid="3683036560562699311">"Camera foto deconectată"</string>
+    <string name="import_complete" msgid="3875040287486199999">"Import finalizat"</string>
+    <!-- outdated translation 5205927625132482529 -->     <string name="import_fail" msgid="8497942380703298808">"Importul nu a reuşit"</string>
+    <!-- outdated translation 6984353643349303075 -->     <string name="camera_connected" msgid="916021826223448591">"Camera foto conectată"</string>
+    <!-- outdated translation 3683036560562699311 -->     <string name="camera_disconnected" msgid="2100559901676329496">"Camera foto deconectată"</string>
     <string name="click_import" msgid="6407959065464291972">"Atingeţi aici pentru import"</string>
     <string name="widget_type_album" msgid="3245149644830731121">"Imagini dintr-un album"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Redaţi aleatoriu toate imag."</string>
-    <string name="widget_type_photo" msgid="8384174698965738770">"Alegeţi o imagine"</string>
-    <string name="widget_type" msgid="7308564524449340985">"Tip de obiect widget"</string>
+    <!-- outdated translation 8384174698965738770 -->     <string name="widget_type_photo" msgid="6267065337367795355">"Alegeţi o imagine"</string>
+    <!-- outdated translation 7308564524449340985 -->     <string name="widget_type" msgid="2161028964992385809">"Tip de obiect widget"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Slideshow"</string>
     <string name="albums" msgid="7320787705180057947">"Albume"</string>
     <string name="times" msgid="2023033894889499219">"Ore"</string>
