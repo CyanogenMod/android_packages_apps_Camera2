@@ -147,7 +147,6 @@ public class AlbumDataAdapter implements AlbumView.Model {
             mContentStart = contentStart;
             mContentEnd = contentEnd;
         }
-        MediaItem[] data = mData;
         long[] itemVersion = mItemVersion;
         long[] setVersion = mSetVersion;
         if (contentStart >= end || start >= contentEnd) {
@@ -167,9 +166,6 @@ public class AlbumDataAdapter implements AlbumView.Model {
 
     public void setActiveWindow(int start, int end) {
         if (start == mActiveStart && end == mActiveEnd) return;
-
-        mActiveStart = start;
-        mActiveEnd = end;
 
         Utils.assertTrue(start <= end
                 && end - start <= mData.length && end <= mSize);

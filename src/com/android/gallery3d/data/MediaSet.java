@@ -16,9 +16,11 @@
 
 package com.android.gallery3d.data;
 
+import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.Future;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.WeakHashMap;
 
 // MediaSet is a directory-like data structure.
@@ -33,6 +35,22 @@ import java.util.WeakHashMap;
 public abstract class MediaSet extends MediaObject {
     public static final int MEDIAITEM_BATCH_FETCH_COUNT = 500;
     public static final int INDEX_NOT_FOUND = -1;
+
+    public static final int SYNC_RESULT_SUCCESS = 0;
+    public static final int SYNC_RESULT_CANCELLED = 1;
+    public static final int SYNC_RESULT_ERROR = 2;
+
+    /** Listener to be used with requestSync(SyncListener). */
+    public static interface SyncListener {
+        /**
+         * Called when the sync task completed. Completion may be due to normal termination,
+         * an exception, or cancellation.
+         *
+         * @param mediaSet the MediaSet that's done with sync
+         * @param resultCode one of the SYNC_RESULT_* constants
+         */
+        void onSyncDone(MediaSet mediaSet, int resultCode);
+    }
 
     public MediaSet(Path path, long version) {
         super(path, version);
@@ -190,11 +208,21 @@ public abstract class MediaSet extends MediaObject {
         return start;
     }
 
-    public Future<Void> requestSync() {
+    /**
+     * Requests sync on this MediaSet. It returns a Future object that can be used by the caller
+     * to query the status of the sync. The sync result code is one of the SYNC_RESULT_* constants
+     * defined in this class and can be obtained by Future.get().
+     *
+     * Subclasses should perform sync on a different thread.
+     *
+     * The default implementation here returns a Future stub that does nothing and returns
+     * SYNC_RESULT_SUCCESS by get().
+     */
+    public Future<Integer> requestSync(SyncListener listener) {
         return FUTURE_STUB;
     }
 
-    private static final Future<Void> FUTURE_STUB = new Future<Void>() {
+    private static final Future<Integer> FUTURE_STUB = new Future<Integer>() {
         @Override
         public void cancel() {}
 
@@ -209,11 +237,101 @@ public abstract class MediaSet extends MediaObject {
         }
 
         @Override
-        public Void get() {
-            return null;
+        public Integer get() {
+            return SYNC_RESULT_SUCCESS;
         }
 
         @Override
         public void waitDone() {}
     };
+
+    protected Future<Integer> requestSyncOnEmptySets(MediaSet[] sets, SyncListener listener) {
+        MultiSetSyncFuture future = new MultiSetSyncFuture(listener);
+        future.requestSyncOnEmptySets(sets);
+        return future;
+    }
+
+    private class MultiSetSyncFuture implements Future<Integer>, SyncListener {
+        private static final String TAG = "Gallery.MultiSetSync";
+
+        private final HashMap<MediaSet, Future<Integer>> mMediaSetMap =
+                new HashMap<MediaSet, Future<Integer>>();
+        private final SyncListener mListener;
+
+        private boolean mIsCancelled = false;
+        private int mResult = -1;
+
+        MultiSetSyncFuture(SyncListener listener) {
+            mListener = listener;
+        }
+
+        synchronized void requestSyncOnEmptySets(MediaSet[] sets) {
+            for (MediaSet set : sets) {
+                if ((set.getMediaItemCount() == 0) && !mMediaSetMap.containsKey(set)) {
+                    // Sync results are handled in this.onSyncDone().
+                    Future<Integer> future = set.requestSync(this);
+                    if (!future.isDone()) {
+                        mMediaSetMap.put(set, future);
+                        Log.d(TAG, "  request sync: " + Utils.maskDebugInfo(set.getName()));
+                    }
+                }
+            }
+            Log.d(TAG, "requestSyncOnEmptySets actual=" + mMediaSetMap.size());
+        }
+
+        @Override
+        public synchronized void cancel() {
+            if (mIsCancelled) return;
+            mIsCancelled = true;
+            for (Future<Integer> future : mMediaSetMap.values()) future.cancel();
+            mMediaSetMap.clear();
+            if (mResult < 0) mResult = SYNC_RESULT_CANCELLED;
+        }
+
+        @Override
+        public synchronized boolean isCancelled() {
+            return mIsCancelled;
+        }
+
+        @Override
+        public synchronized boolean isDone() {
+            return mMediaSetMap.isEmpty();
+        }
+
+        @Override
+        public synchronized Integer get() {
+            waitDone();
+            return mResult;
+        }
+
+        @Override
+        public synchronized void waitDone() {
+            try {
+                while (!isDone()) wait();
+            } catch (InterruptedException e) {
+                Log.d(TAG, "waitDone() interrupted");
+            }
+        }
+
+        // SyncListener callback
+        @Override
+        public void onSyncDone(MediaSet mediaSet, int resultCode) {
+            SyncListener listener = null;
+            synchronized (this) {
+                if (mMediaSetMap.remove(mediaSet) != null) {
+                    Log.d(TAG, "onSyncDone: " + Utils.maskDebugInfo(mediaSet.getName())
+                            + " #pending=" + mMediaSetMap.size());
+                    if (resultCode == SYNC_RESULT_ERROR) {
+                        mResult = SYNC_RESULT_ERROR;
+                    }
+                    if (mMediaSetMap.isEmpty()) {
+                        if (mResult < 0) mResult = SYNC_RESULT_SUCCESS;
+                        notifyAll();
+                        listener = mListener;
+                    }
+                }
+            }
+            if (listener != null) listener.onSyncDone(MediaSet.this, mResult);
+        }
+    }
 }

@@ -17,6 +17,7 @@
 package com.android.gallery3d.data;
 
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.util.Future;
 
 import java.util.ArrayList;
 
@@ -83,5 +84,10 @@ public class ComboAlbum extends MediaSet implements ContentListener {
 
     public void onContentDirty() {
         notifyContentChanged();
+    }
+
+    @Override
+    public Future<Integer> requestSync(SyncListener listener) {
+        return requestSyncOnEmptySets(mSets, listener);
     }
 }

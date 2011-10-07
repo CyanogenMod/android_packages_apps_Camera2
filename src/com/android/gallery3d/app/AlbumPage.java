@@ -60,7 +60,7 @@ import com.android.gallery3d.util.GalleryUtils;
 import java.util.Random;
 
 public class AlbumPage extends ActivityState implements GalleryActionBar.ClusterRunner,
-        SelectionManager.SelectionListener {
+        SelectionManager.SelectionListener, MediaSet.SyncListener {
     @SuppressWarnings("unused")
     private static final String TAG = "AlbumPage";
 
@@ -102,7 +102,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private ProgressDialog mProgressDialog;
     private Future<?> mPendingTask;
 
-    private Future<Void> mSyncTask = null;
+    private Future<Integer> mSyncTask = null;
 
     private GLView mRootPane = new GLView() {
         private float mMatrix[] = new float[16];
@@ -360,6 +360,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         if (mAlbumDataAdapter != null) {
             mAlbumDataAdapter.setLoadingListener(null);
         }
@@ -566,6 +567,24 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mActionModeHandler.updateSupportedOperation(path, selected);
     }
 
+    @Override
+    public void onSyncDone(final MediaSet mediaSet, final int resultCode) {
+        Log.d(TAG, "onSyncDone: " + Utils.maskDebugInfo(mediaSet.getName()) + " result="
+                + resultCode);
+        ((Activity) mActivity).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!mIsActive) return;
+                mediaSet.notifyContentChanged(); // force reload to handle spinner
+
+                if (resultCode == MediaSet.SYNC_RESULT_ERROR) {
+                    Toast.makeText((Context) mActivity, R.string.sync_album_error,
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
     private class MyLoadingListener implements LoadingListener {
         @Override
         public void onLoadingStarted() {
@@ -577,7 +596,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             if (!mIsActive) return;
             if (mAlbumDataAdapter.size() == 0) {
                 if (mSyncTask == null) {
-                    mSyncTask = mMediaSet.requestSync();
+                    mSyncTask = mMediaSet.requestSync(AlbumPage.this);
                 }
                 if (mSyncTask.isDone()){
                     Toast.makeText((Context) mActivity,
