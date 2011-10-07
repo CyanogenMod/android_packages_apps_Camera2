@@ -24,13 +24,15 @@
     <string name="save_photo" msgid="3125109368779997862">"Londoloza isithombe esihleliwe"</string>
     <string name="yes" msgid="5402582493291792293">"Yebo"</string>
     <string name="no" msgid="5595408018304861875">"Cha"</string>
-    <string name="save" msgid="8933983016766252129">"Londoloza"</string>
+    <string name="save" msgid="5516670392524294967">"Londoloza"</string>
     <string name="autofix" msgid="1663414996270538748">"Insiza Yokulungisa Okuzenzekelayo"</string>
     <string name="crop" msgid="7598378507763334041">"Nqampuna"</string>
     <string name="crossprocess" msgid="4173724489001742342">"inqubo-eshayisanayo"</string>
     <string name="documentary" msgid="50396326708699797">"Idokhumentari"</string>
     <string name="doodle" msgid="1686409894518940990">"Umdwebo oshintshayo"</string>
     <string name="duotone" msgid="8145893940788467106">"ithoni-engabili"</string>
+    <string name="facelift" msgid="6205748523156172637">"I-Face Glow"</string>
+    <string name="facetan" msgid="4412831806626044111">"I-Face Tan"</string>
     <string name="filllight" msgid="2644989991700022526">"Faka Ukukhanya"</string>
     <string name="fisheye" msgid="6037488646928998921">"Isolenhlanzi"</string>
     <string name="flip" msgid="2357692401826287480">"Phendula"</string>

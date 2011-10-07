@@ -24,13 +24,15 @@
     <string name="save_photo" msgid="3125109368779997862">"Salvare la foto modificata?"</string>
     <string name="yes" msgid="5402582493291792293">"Sì"</string>
     <string name="no" msgid="5595408018304861875">"No"</string>
-    <string name="save" msgid="8933983016766252129">"Salva"</string>
+    <string name="save" msgid="5516670392524294967">"SALVA"</string>
     <string name="autofix" msgid="1663414996270538748">"Correzione autom."</string>
     <string name="crop" msgid="7598378507763334041">"Ritaglia"</string>
     <string name="crossprocess" msgid="4173724489001742342">"Cross process"</string>
     <string name="documentary" msgid="50396326708699797">"Documentario"</string>
     <string name="doodle" msgid="1686409894518940990">"Scarabocchio"</string>
     <string name="duotone" msgid="8145893940788467106">"Bitonale"</string>
+    <string name="facelift" msgid="6205748523156172637">"Luminosità viso"</string>
+    <string name="facetan" msgid="4412831806626044111">"Colorito viso"</string>
     <string name="filllight" msgid="2644989991700022526">"Luce di riempimento"</string>
     <string name="fisheye" msgid="6037488646928998921">"Fisheye"</string>
     <string name="flip" msgid="2357692401826287480">"Capovolgi"</string>

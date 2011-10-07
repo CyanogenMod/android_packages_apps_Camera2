@@ -24,13 +24,15 @@
     <string name="save_photo" msgid="3125109368779997862">"عکس ویرایش شده ذخیره شود؟"</string>
     <string name="yes" msgid="5402582493291792293">"بله"</string>
     <string name="no" msgid="5595408018304861875">"خیر"</string>
-    <string name="save" msgid="8933983016766252129">"ذخیره"</string>
+    <string name="save" msgid="5516670392524294967">"ذخیره"</string>
     <string name="autofix" msgid="1663414996270538748">"تصحیح خودکار"</string>
     <string name="crop" msgid="7598378507763334041">"برش"</string>
     <string name="crossprocess" msgid="4173724489001742342">"فرآیند همگذاری"</string>
     <string name="documentary" msgid="50396326708699797">"مستند"</string>
     <string name="doodle" msgid="1686409894518940990">"Doodle"</string>
     <string name="duotone" msgid="8145893940788467106">"دو تنالیته رنگ"</string>
+    <string name="facelift" msgid="6205748523156172637">"صورت براق"</string>
+    <string name="facetan" msgid="4412831806626044111">"صورت برنزه"</string>
     <string name="filllight" msgid="2644989991700022526">"پر کردن نور"</string>
     <string name="fisheye" msgid="6037488646928998921">"فیش آی"</string>
     <string name="flip" msgid="2357692401826287480">"وارونه کردن"</string>

@@ -24,13 +24,15 @@
     <string name="save_photo" msgid="3125109368779997862">"A szerkesztett kép mentése?"</string>
     <string name="yes" msgid="5402582493291792293">"Igen"</string>
     <string name="no" msgid="5595408018304861875">"Nem"</string>
-    <string name="save" msgid="8933983016766252129">"Mentés"</string>
+    <string name="save" msgid="5516670392524294967">"MENTÉS"</string>
     <string name="autofix" msgid="1663414996270538748">"Autom. javítás"</string>
     <string name="crop" msgid="7598378507763334041">"Körbevágás"</string>
     <string name="crossprocess" msgid="4173724489001742342">"Áttűnés"</string>
     <string name="documentary" msgid="50396326708699797">"Dokumentumfilm"</string>
     <string name="doodle" msgid="1686409894518940990">"Doodle"</string>
     <string name="duotone" msgid="8145893940788467106">"Kéttónusú"</string>
+    <string name="facelift" msgid="6205748523156172637">"Arcfény"</string>
+    <string name="facetan" msgid="4412831806626044111">"Arcszín"</string>
     <string name="filllight" msgid="2644989991700022526">"Háttérfény"</string>
     <string name="fisheye" msgid="6037488646928998921">"Halszem"</string>
     <string name="flip" msgid="2357692401826287480">"Tükrözés"</string>
