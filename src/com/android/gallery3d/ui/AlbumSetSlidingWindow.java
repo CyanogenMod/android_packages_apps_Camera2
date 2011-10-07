@@ -16,6 +16,10 @@
 
 package com.android.gallery3d.ui;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.Message;
+
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
@@ -28,10 +32,6 @@ import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.MediaSetUtils;
 import com.android.gallery3d.util.ThreadPool;
-
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.os.Message;
 
 public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
     private static final String TAG = "GallerySlidingWindow";
@@ -47,7 +47,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
 
     private final AlbumSetView.Model mSource;
     private int mSize;
-    private AlbumSetView.LabelSpec mLabelSpec;
+    private final AlbumSetView.LabelSpec mLabelSpec;
 
     private int mContentStart = 0;
     private int mContentEnd = 0;
@@ -61,11 +61,11 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
     private SelectionDrawer mSelectionDrawer;
     private final ColorTexture mWaitLoadingTexture;
 
-    private SynchronizedHandler mHandler;
-    private ThreadPool mThreadPool;
+    private final SynchronizedHandler mHandler;
+    private final ThreadPool mThreadPool;
 
     private int mActiveRequestCount = 0;
-    private String mLoadingLabel;
+    private final String mLoadingLabel;
     private boolean mIsActive = false;
 
     private static class MyAlbumSetItem extends AlbumSetItem {
@@ -339,7 +339,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         private final int mMediaType;
         private Texture mContent;
         private final long mDataVersion;
-        private boolean mIsPanorama;
+        private final boolean mIsPanorama;
         private boolean mWaitLoadingDisplayed;
 
         public GalleryDisplayItem(int slotIndex, int coverIndex, MediaItem item) {
@@ -558,9 +558,9 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
     }
 
     public void onSizeChanged(int size) {
-        if (mSize != size) {
+        if (mIsActive && mSize != size) {
             mSize = size;
-            if (mListener != null && mIsActive) mListener.onSizeChanged(mSize);
+            if (mListener != null) mListener.onSizeChanged(mSize);
         }
     }
 
