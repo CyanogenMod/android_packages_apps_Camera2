@@ -23,6 +23,7 @@ import com.android.gallery3d.data.MediaSource;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.data.PathMatcher;
 
+import android.app.Activity;
 import android.content.Context;
 import android.media.ExifInterface;
 import android.os.ParcelFileDescriptor;
@@ -119,6 +120,8 @@ public class PicasaSource extends MediaSource {
     public static void initialize(Context context) {/*do nothing*/}
 
     public static void requestSync(Context context) {/*do nothing*/}
+
+    public static void showSignInReminder(Activity context) {/*do nothing*/}
 
     public static void onPackageAdded(Context context, String packageName) {/*do nothing*/}
 

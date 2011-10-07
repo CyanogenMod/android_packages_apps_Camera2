@@ -16,13 +16,13 @@
 
 package com.android.gallery3d.ui;
 
+import android.graphics.Rect;
+
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.ui.PositionRepository.Position;
-
-import android.graphics.Rect;
 
 import java.util.Random;
 
@@ -35,8 +35,8 @@ public class AlbumSetView extends SlotView {
     private int mVisibleStart;
     private int mVisibleEnd;
 
-    private Random mRandom = new Random();
-    private long mSeed = mRandom.nextLong();
+    private final Random mRandom = new Random();
+    private final long mSeed = mRandom.nextLong();
 
     private AlbumSetSlidingWindow mDataWindow;
     private final GalleryActivity mActivity;
