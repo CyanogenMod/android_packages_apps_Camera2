@@ -50,7 +50,7 @@ public class Photo {
     }
 
     public boolean matchDimension(Photo photo) {
-        return ((photo.width() == width()) && (photo.height() == height()));
+        return ((photo.width == width) && (photo.height == height));
     }
 
     public void changeDimension(int width, int height) {
