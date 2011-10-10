@@ -24,13 +24,15 @@
     <string name="save_photo" msgid="3125109368779997862">"編集した写真を保存しますか？"</string>
     <string name="yes" msgid="5402582493291792293">"はい"</string>
     <string name="no" msgid="5595408018304861875">"いいえ"</string>
-    <string name="save" msgid="8933983016766252129">"保存"</string>
+    <string name="save" msgid="5516670392524294967">"保存"</string>
     <string name="autofix" msgid="1663414996270538748">"自動修正"</string>
     <string name="crop" msgid="7598378507763334041">"トリミング"</string>
     <string name="crossprocess" msgid="4173724489001742342">"クロスプロセス"</string>
     <string name="documentary" msgid="50396326708699797">"ドキュメンタリー"</string>
     <string name="doodle" msgid="1686409894518940990">"落書き"</string>
     <string name="duotone" msgid="8145893940788467106">"デュオトーン"</string>
+    <string name="facelift" msgid="6205748523156172637">"明るい肌色"</string>
+    <string name="facetan" msgid="4412831806626044111">"日焼けした肌色"</string>
     <string name="filllight" msgid="2644989991700022526">"明るさ調整"</string>
     <string name="fisheye" msgid="6037488646928998921">"魚眼レンズ"</string>
     <string name="flip" msgid="2357692401826287480">"反転"</string>

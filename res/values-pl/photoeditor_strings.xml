@@ -24,13 +24,15 @@
     <string name="save_photo" msgid="3125109368779997862">"Czy zapisać edytowane zdjęcie?"</string>
     <string name="yes" msgid="5402582493291792293">"Tak"</string>
     <string name="no" msgid="5595408018304861875">"Nie"</string>
-    <string name="save" msgid="8933983016766252129">"Zapisz"</string>
+    <string name="save" msgid="5516670392524294967">"ZAPISZ"</string>
     <string name="autofix" msgid="1663414996270538748">"Autopoprawka"</string>
     <string name="crop" msgid="7598378507763334041">"Przytnij"</string>
     <string name="crossprocess" msgid="4173724489001742342">"Proces krosowy"</string>
     <string name="documentary" msgid="50396326708699797">"Dokument"</string>
     <string name="doodle" msgid="1686409894518940990">"Bazgroły"</string>
     <string name="duotone" msgid="8145893940788467106">"Dwuton"</string>
+    <string name="facelift" msgid="6205748523156172637">"Wygładzanie"</string>
+    <string name="facetan" msgid="4412831806626044111">"Opalenizna"</string>
     <string name="filllight" msgid="2644989991700022526">"Doświetlenie"</string>
     <string name="fisheye" msgid="6037488646928998921">"Rybie oko"</string>
     <string name="flip" msgid="2357692401826287480">"Odwrócenie"</string>

@@ -24,13 +24,15 @@
     <string name="save_photo" msgid="3125109368779997862">"Желите ли да сачувате измењену фотографију?"</string>
     <string name="yes" msgid="5402582493291792293">"Да"</string>
     <string name="no" msgid="5595408018304861875">"Не"</string>
-    <string name="save" msgid="8933983016766252129">"Сачувај"</string>
+    <string name="save" msgid="5516670392524294967">"САЧУВАЈ"</string>
     <string name="autofix" msgid="1663414996270538748">"Аутоподешавање"</string>
     <string name="crop" msgid="7598378507763334041">"Опсецање"</string>
     <string name="crossprocess" msgid="4173724489001742342">"Унакрсна обрада"</string>
     <string name="documentary" msgid="50396326708699797">"Документарно"</string>
     <string name="doodle" msgid="1686409894518940990">"Дудл логотип"</string>
     <string name="duotone" msgid="8145893940788467106">"Дуо-тон"</string>
+    <string name="facelift" msgid="6205748523156172637">"Сјај лица"</string>
+    <string name="facetan" msgid="4412831806626044111">"Преплануло лице"</string>
     <string name="filllight" msgid="2644989991700022526">"Светлина"</string>
     <string name="fisheye" msgid="6037488646928998921">"Рибље око"</string>
     <string name="flip" msgid="2357692401826287480">"Обрни"</string>
