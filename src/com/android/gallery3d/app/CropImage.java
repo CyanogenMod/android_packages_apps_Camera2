@@ -16,19 +16,20 @@
 
 package com.android.gallery3d.app;
 
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Bitmap.Config;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -153,6 +154,10 @@ public class CropImage extends AbstractGalleryActivity {
         mCropView = new CropView(this);
         getGLRoot().setContentPane(mCropView);
 
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
+                ActionBar.DISPLAY_HOME_AS_UP);
+
         mMainHandler = new SynchronizedHandler(getGLRoot()) {
             @Override
             public void handleMessage(Message message) {
@@ -203,6 +208,10 @@ public class CropImage extends AbstractGalleryActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home: {
+                finish();
+                break;
+            }
             case R.id.cancel: {
                 setResult(RESULT_CANCELED);
                 finish();
@@ -217,7 +226,7 @@ public class CropImage extends AbstractGalleryActivity {
     }
 
     private class SaveOutput implements Job<Intent> {
-        private RectF mCropRect;
+        private final RectF mCropRect;
 
         public SaveOutput(RectF cropRect) {
             mCropRect = cropRect;
