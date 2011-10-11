@@ -67,6 +67,11 @@ public class ComboAlbum extends MediaSet implements ContentListener {
     }
 
     @Override
+    public boolean isLeafAlbum() {
+        return true;
+    }
+
+    @Override
     public String getName() {
         return mName;
     }
