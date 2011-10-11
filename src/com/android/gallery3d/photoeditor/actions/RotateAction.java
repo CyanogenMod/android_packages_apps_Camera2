@@ -33,6 +33,7 @@ public class RotateAction extends EffectAction {
 
     private RotateFilter filter;
     private float rotateDegrees;
+    private Runnable queuedRotationChange;
     private RotateView rotateView;
 
     public RotateAction(Context context, AttributeSet attrs) {
@@ -75,18 +76,24 @@ public class RotateAction extends EffectAction {
             }
 
             private void transformPhotoView(final float degrees) {
-                photoView.queue(new Runnable() {
+                // Remove the outdated rotation change before queuing a new one.
+                if (queuedRotationChange != null) {
+                    photoView.remove(queuedRotationChange);
+                }
+                queuedRotationChange = new Runnable() {
 
                     @Override
                     public void run() {
                         photoView.rotatePhoto(degrees);
                     }
-                });
+                };
+                photoView.queue(queuedRotationChange);
             }
         });
         rotateView.setRotatedAngle(DEFAULT_ANGLE);
         rotateView.setRotateSpan(DEFAULT_ROTATE_SPAN);
         rotateDegrees = 0;
+        queuedRotationChange = null;
     }
 
     @Override
