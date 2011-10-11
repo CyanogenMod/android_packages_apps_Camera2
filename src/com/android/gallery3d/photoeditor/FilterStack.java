@@ -238,8 +238,10 @@ public class FilterStack {
             @Override
             public void run() {
                 Filter.releaseContext();
+                // Textures will be automatically deleted when GL context is lost.
+                photoView.setPhoto(null, false);
+                source = null;
                 for (int i = 0; i < buffers.length; i++) {
-                    // Textures will be automatically deleted when GL context is lost.
                     buffers[i] = null;
                 }
             }
@@ -249,14 +251,6 @@ public class FilterStack {
 
     public void onResume() {
         photoView.onResume();
-        photoView.queue(new Runnable() {
-
-            @Override
-            public void run() {
-                // Create effect context after GL context is created or recreated.
-                Filter.createContextWithCurrentGlContext();
-            }
-        });
         paused = false;
     }
 }
