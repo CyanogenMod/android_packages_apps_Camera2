@@ -45,6 +45,7 @@ public class FilterStack {
 
     private Photo source;
     private Runnable queuedTopFilterChange;
+    private boolean topFilterOutputted;
     private volatile boolean paused;
 
     public FilterStack(PhotoView photoView, StackListener stackListener) {
@@ -69,18 +70,20 @@ public class FilterStack {
             buffers[0] = Photo.create(source.width(), source.height());
             reallocateBuffer(1);
 
+            // Source photo will be displayed if there is no filter stacked.
             Photo photo = source;
-            for (int i = 0; i < appliedStack.size() && !paused; i++) {
+            int size = topFilterOutputted ? appliedStack.size() : appliedStack.size() - 1;
+            for (int i = 0; i < size && !paused; i++) {
                 photo = runFilter(i);
             }
-            // Source photo will be displayed if there is no filter stacked.
-            photoView.setPhoto(photo);
+            photoView.setPhoto(photo, topFilterOutputted);
         }
     }
 
     private void invalidateTopFilter() {
         if (!appliedStack.empty()) {
-            photoView.setPhoto(runFilter(appliedStack.size() - 1));
+            photoView.setPhoto(runFilter(appliedStack.size() - 1), true);
+            topFilterOutputted = true;
         }
     }
 
@@ -135,8 +138,8 @@ public class FilterStack {
 
             @Override
             public void run() {
-                Photo photo = appliedStack.empty() ?
-                        null : buffers[getOutBufferIndex(appliedStack.size() - 1)];
+                int filterIndex = appliedStack.size() - (topFilterOutputted ? 1 : 2);
+                Photo photo = (filterIndex < 0) ? source : buffers[getOutBufferIndex(filterIndex)];
                 final Bitmap bitmap = (photo != null) ? photo.save() : null;
                 photoView.post(new Runnable() {
 
@@ -161,6 +164,12 @@ public class FilterStack {
         });
     }
 
+    private void pushFilterInternal(Filter filter) {
+        appliedStack.push(filter);
+        topFilterOutputted = false;
+        stackChanged();
+    }
+
     public void pushFilter(final Filter filter) {
         photoView.queue(new Runnable() {
 
@@ -169,8 +178,7 @@ public class FilterStack {
                 while (!redoStack.empty()) {
                     redoStack.pop().release();
                 }
-                appliedStack.push(filter);
-                stackChanged();
+                pushFilterInternal(filter);
             }
         });
     }
@@ -196,8 +204,7 @@ public class FilterStack {
             @Override
             public void run() {
                 if (!redoStack.empty()) {
-                    appliedStack.push(redoStack.pop());
-                    stackChanged();
+                    pushFilterInternal(redoStack.pop());
                     invalidateTopFilter();
                 }
                 callbackDone(callback);
