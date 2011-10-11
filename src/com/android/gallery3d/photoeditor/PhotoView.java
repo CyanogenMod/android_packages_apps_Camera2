@@ -76,8 +76,8 @@ public class PhotoView extends GLSurfaceView {
     /**
      * Sets photo for display; this method must be queued for GL thread.
      */
-    public void setPhoto(Photo photo) {
-        renderer.setPhoto(photo);
+    public void setPhoto(Photo photo, boolean clearTransform) {
+        renderer.setPhoto(photo, clearTransform);
     }
 
     /**
@@ -98,21 +98,36 @@ public class PhotoView extends GLSurfaceView {
         Photo photo;
         int viewWidth;
         int viewHeight;
+        float rotatedDegrees;
 
-        void setPhoto(Photo photo) {
+        void setPhoto(Photo photo, boolean clearTransform) {
             int width = (photo != null) ? photo.width() : 0;
             int height = (photo != null) ? photo.height() : 0;
+            boolean changed;
             synchronized (photoBounds) {
-                photoBounds.set(0, 0, width, height);
+                changed = (photoBounds.width() != width) || (photoBounds.height() != height);
+                if (changed) {
+                    photoBounds.set(0, 0, width, height);
+                }
             }
             this.photo = photo;
-            fitPhotoToSurface();
+            updateSurface(clearTransform, changed);
         }
 
-        void fitPhotoToSurface() {
-            if (photo != null) {
-                RendererUtils.setRenderToFit(renderContext, photo.width(), photo.height(),
-                        viewWidth, viewHeight);
+        void updateSurface(boolean clearTransform, boolean sizeChanged) {
+            boolean transformed = (rotatedDegrees != 0);
+            if ((clearTransform && transformed) || (sizeChanged && !transformed)) {
+                // Fit photo when clearing existing transforms or changing surface/photo sizes.
+                if (photo != null) {
+                    RendererUtils.setRenderToFit(renderContext, photo.width(), photo.height(),
+                            viewWidth, viewHeight);
+                    rotatedDegrees = 0;
+                }
+            } else {
+                // Restore existing transformations for orientation changes or awaking from sleep.
+                if (rotatedDegrees != 0) {
+                    rotatePhoto(rotatedDegrees);
+                }
             }
         }
 
@@ -120,12 +135,7 @@ public class PhotoView extends GLSurfaceView {
             if (photo != null) {
                 RendererUtils.setRenderToRotate(renderContext, photo.width(), photo.height(),
                         viewWidth, viewHeight, degrees);
-            }
-        }
-
-        void renderPhoto() {
-            if (photo != null) {
-                RendererUtils.renderTexture(renderContext, photo.texture(), viewWidth, viewHeight);
+                rotatedDegrees = degrees;
             }
         }
 
@@ -143,14 +153,16 @@ public class PhotoView extends GLSurfaceView {
             if (!queue.isEmpty()) {
                 requestRender();
             }
-            renderPhoto();
+            if (photo != null) {
+                RendererUtils.renderTexture(renderContext, photo.texture(), viewWidth, viewHeight);
+            }
         }
 
         @Override
         public void onSurfaceChanged(GL10 gl, int width, int height) {
             viewWidth = width;
             viewHeight = height;
-            fitPhotoToSurface();
+            updateSurface(false, true);
         }
 
         @Override
