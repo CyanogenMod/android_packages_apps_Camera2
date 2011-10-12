@@ -85,6 +85,7 @@ public class PhotoView extends GLView {
     private StringTexture mNoThumbnailText;
     private int mTransitionMode = TRANS_NONE;
     private final TileImageView mTileView;
+    private EdgeView mEdgeView;
     private Texture mVideoPlayIcon;
 
     private boolean mShowVideoPlayIcon;
@@ -104,6 +105,8 @@ public class PhotoView extends GLView {
         mTileView = new TileImageView(activity);
         addComponent(mTileView);
         Context context = activity.getAndroidContext();
+        mEdgeView = new EdgeView(context);
+        addComponent(mEdgeView);
         mLoadingSpinner = new ProgressSpinner(context);
         mLoadingText = StringTexture.newInstance(
                 context.getString(R.string.loading),
@@ -145,7 +148,7 @@ public class PhotoView extends GLView {
             mScreenNails[i] = new ScreenNailEntry();
         }
 
-        mPositionController = new PositionController(this, context);
+        mPositionController = new PositionController(this, context, mEdgeView);
         mVideoPlayIcon = new ResourceTexture(context, R.drawable.ic_control_play);
     }
 
@@ -281,6 +284,7 @@ public class PhotoView extends GLView {
     protected void onLayout(
             boolean changeSize, int left, int top, int right, int bottom) {
         mTileView.layout(left, top, right, bottom);
+        mEdgeView.layout(left, top, right, bottom);
         if (changeSize) {
             mPositionController.setViewSize(getWidth(), getHeight());
             for (ScreenNailEntry entry : mScreenNails) {
@@ -410,33 +414,41 @@ public class PhotoView extends GLView {
 
         int width = getWidth();
 
-        // If the edge of the current photo is visible and the sweeping velocity
-        // exceed the threshold, switch to next / previous image
+        // If we are at the edge of the current photo and the sweeping velocity
+        // exceeds the threshold, switch to next / previous image.
         PositionController controller = mPositionController;
-        if (controller.isAtMinimalScale()) {
-            if (velocity < -SWIPE_THRESHOLD) {
-                stopCurrentSwipingIfNeeded();
-                if (next.isEnabled()) {
-                    mTransitionMode = TRANS_SWITCH_NEXT;
-                    controller.startHorizontalSlide(next.mOffsetX - width / 2);
-                    return true;
-                }
-                return false;
+        boolean isMinimal = controller.isAtMinimalScale();
+
+        if (velocity < -SWIPE_THRESHOLD &&
+                (isMinimal || controller.isAtRightEdge())) {
+            stopCurrentSwipingIfNeeded();
+            if (next.isEnabled()) {
+                mTransitionMode = TRANS_SWITCH_NEXT;
+                controller.startHorizontalSlide(next.mOffsetX - width / 2);
+                return true;
             }
-            if (velocity > SWIPE_THRESHOLD) {
-                stopCurrentSwipingIfNeeded();
-                if (prev.isEnabled()) {
-                    mTransitionMode = TRANS_SWITCH_PREVIOUS;
-                    controller.startHorizontalSlide(prev.mOffsetX - width / 2);
-                    return true;
-                }
-                return false;
+        } else if (velocity > SWIPE_THRESHOLD &&
+                (isMinimal || controller.isAtLeftEdge())) {
+            stopCurrentSwipingIfNeeded();
+            if (prev.isEnabled()) {
+                mTransitionMode = TRANS_SWITCH_PREVIOUS;
+                controller.startHorizontalSlide(prev.mOffsetX - width / 2);
+                return true;
             }
         }
 
+        return false;
+    }
+
+    public boolean snapToNeighborImage() {
         if (mTransitionMode != TRANS_NONE) return false;
 
-        // Decide whether to swiping to the next/prev image in the zoom-in case
+        ScreenNailEntry next = mScreenNails[ENTRY_NEXT];
+        ScreenNailEntry prev = mScreenNails[ENTRY_PREVIOUS];
+
+        int width = getWidth();
+        PositionController controller = mPositionController;
+
         RectF bounds = controller.getImageBounds();
         int left = Math.round(bounds.left);
         int right = Math.round(bounds.right);
@@ -465,7 +477,12 @@ public class PhotoView extends GLView {
         public boolean onScroll(
                 MotionEvent e1, MotionEvent e2, float dx, float dy) {
             if (mTransitionMode != TRANS_NONE) return true;
-            mPositionController.startScroll(dx, dy);
+
+            ScreenNailEntry next = mScreenNails[ENTRY_NEXT];
+            ScreenNailEntry prev = mScreenNails[ENTRY_PREVIOUS];
+
+            mPositionController.startScroll(dx, dy, next.isEnabled(),
+                    prev.isEnabled());
             return true;
         }
 
@@ -532,7 +549,7 @@ public class PhotoView extends GLView {
         @Override
         public void onScaleEnd(ScaleGestureDetector detector) {
             mPositionController.endScale();
-            swipeImages(0);
+            snapToNeighborImage();
         }
     }
 
@@ -565,11 +582,13 @@ public class PhotoView extends GLView {
         }
 
         public void onUp(MotionEvent e) {
+            mEdgeView.onRelease();
+
             if (mIgnoreUpEvent) {
                 mIgnoreUpEvent = false;
                 return;
             }
-            if (!swipeImages(0) && mTransitionMode == TRANS_NONE) {
+            if (!snapToNeighborImage() && mTransitionMode == TRANS_NONE) {
                 mPositionController.up();
             }
         }
