@@ -174,6 +174,11 @@ public class RendererUtils {
         context.posVertices = createVerticesBuffer(vertices);
     }
 
+    public static void renderBackground() {
+        GLES20.glClearColor(0, 0, 0, 1);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+    }
+
     public static void renderTexture(
             RenderContext context, int texture, int viewWidth, int viewHeight) {
         // Use our shader program
@@ -204,8 +209,6 @@ public class RendererUtils {
         GLES20.glUniform1i(context.texSamplerHandle, 0);
 
         // Draw!
-        GLES20.glClearColor(0, 0, 0, 1);
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
     }
 
