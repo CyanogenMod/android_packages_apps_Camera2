@@ -153,6 +153,7 @@ public class PhotoView extends GLSurfaceView {
             if (!queue.isEmpty()) {
                 requestRender();
             }
+            RendererUtils.renderBackground();
             if (photo != null) {
                 RendererUtils.renderTexture(renderContext, photo.texture(), viewWidth, viewHeight);
             }
