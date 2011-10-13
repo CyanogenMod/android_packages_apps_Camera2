@@ -79,7 +79,7 @@ public class FilmStripView extends GLView implements ScrollBarView.Listener,
         spec.slotWidth = thumbSize;
         spec.slotHeight = thumbSize;
         mAlbumView = new AlbumView(activity, spec, thumbSize);
-        mAlbumView.setOverscrollEffect(SlotView.OVERSCROLL_SYSTEM);
+        mAlbumView.setOverscrollEffect(SlotView.OVERSCROLL_NONE);
         mAlbumView.setSelectionDrawer(mStripDrawer);
         mAlbumView.setListener(new SlotView.SimpleListener() {
             @Override
