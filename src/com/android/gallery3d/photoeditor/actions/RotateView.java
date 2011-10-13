@@ -24,6 +24,8 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import com.android.gallery3d.R;
+
 /**
  * View that shows grids and handles touch-events to adjust angle of rotation.
  */
@@ -49,6 +51,8 @@ class RotateView extends FullscreenToolView {
     private final Paint dashStrokePaint;
     private final Path grids = new Path();
     private final Path referenceLine = new Path();
+    private final int gridsColor;
+    private final int referenceColor;
 
     private OnRotateChangeListener listener;
     private boolean drawGrids;
@@ -67,6 +71,9 @@ class RotateView extends FullscreenToolView {
         dashStrokePaint.setAntiAlias(true);
         dashStrokePaint.setStyle(Paint.Style.STROKE);
         dashStrokePaint.setPathEffect(new DashPathEffect(new float[] {15.0f, 5.0f}, 1.0f));
+        dashStrokePaint.setStrokeWidth(2f);
+        gridsColor = context.getResources().getColor(R.color.translucent_white);
+        referenceColor = context.getResources().getColor(R.color.translucent_cyan);
     }
 
     public void setRotatedAngle(float degrees) {
@@ -132,13 +139,11 @@ class RotateView extends FullscreenToolView {
         if (drawGrids) {
             canvas.save();
             canvas.clipRect(displayBounds);
-            dashStrokePaint.setStrokeWidth(2f);
-            dashStrokePaint.setColor(0x99CCCCCC);
+            dashStrokePaint.setColor(gridsColor);
             canvas.drawPath(grids, dashStrokePaint);
 
             canvas.rotate(-currentRotatedAngle * RADIAN_TO_DEGREE, centerX, centerY);
-            dashStrokePaint.setStrokeWidth(2f);
-            dashStrokePaint.setColor(0x99FFCC77);
+            dashStrokePaint.setColor(referenceColor);
             canvas.drawPath(referenceLine, dashStrokePaint);
             canvas.restore();
         }
