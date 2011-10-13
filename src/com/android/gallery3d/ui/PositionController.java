@@ -63,6 +63,7 @@ class PositionController {
     private static final float SCALE_LIMIT = 4;
 
     private PhotoView mViewer;
+    private EdgeView mEdgeView;
     private int mImageW, mImageH;
     private int mViewW, mViewH;
 
@@ -95,8 +96,10 @@ class PositionController {
     private RectF mTempRect = new RectF();
     private float[] mTempPoints = new float[8];
 
-    public PositionController(PhotoView viewer, Context context) {
+    public PositionController(PhotoView viewer, Context context,
+            EdgeView edgeView) {
         mViewer = viewer;
+        mEdgeView = edgeView;
         mScroller = new FlingScroller();
     }
 
@@ -325,14 +328,44 @@ class PositionController {
         scrollBy(distance, 0, ANIM_KIND_SLIDE);
     }
 
-    public void startScroll(float dx, float dy) {
-        scrollBy(dx, dy, ANIM_KIND_SCROLL);
-    }
-
     private void scrollBy(float dx, float dy, int type) {
         startAnimation(getTargetX() + Math.round(dx / mCurrentScale),
                 getTargetY() + Math.round(dy / mCurrentScale),
                 mCurrentScale, type);
+    }
+
+    public void startScroll(float dx, float dy, boolean hasNext,
+            boolean hasPrev) {
+        int x = getTargetX() + Math.round(dx / mCurrentScale);
+        int y = getTargetY() + Math.round(dy / mCurrentScale);
+
+        calculateStableBound(mCurrentScale);
+
+        // Vertical direction: If we have space to move in the vertical
+        // direction, we show the edge effect when scrolling reaches the edge.
+        if (mBoundTop != mBoundBottom) {
+            if (y < mBoundTop) {
+                mEdgeView.onPull(mBoundTop - y, EdgeView.TOP);
+            } else if (y > mBoundBottom) {
+                mEdgeView.onPull(y - mBoundBottom, EdgeView.BOTTOM);
+            }
+        }
+
+        y = Utils.clamp(y, mBoundTop, mBoundBottom);
+
+        // Horizontal direction: we show the edge effect when the scrolling
+        // tries to go left of the first image or go right of the last image.
+        if (!hasPrev && x < mBoundLeft) {
+            int pixels = Math.round((mBoundLeft - x) * mCurrentScale);
+            mEdgeView.onPull(pixels, EdgeView.LEFT);
+            x = mBoundLeft;
+        } else if (!hasNext && x > mBoundRight) {
+            int pixels = Math.round((x - mBoundRight) * mCurrentScale);
+            mEdgeView.onPull(pixels, EdgeView.RIGHT);
+            x = mBoundRight;
+        }
+
+        startAnimation(x, y, mCurrentScale, ANIM_KIND_SCROLL);
     }
 
     public boolean fling(float velocityX, float velocityY) {
@@ -439,9 +472,27 @@ class PositionController {
 
     private void flingInterpolate(float progress) {
         mScroller.computeScrollOffset(progress);
+        int oldX = mCurrentX;
+        int oldY = mCurrentY;
         mCurrentX = mScroller.getCurrX();
         mCurrentY = mScroller.getCurrY();
-        mViewer.setPosition(mCurrentX, mCurrentY, mCurrentScale);
+
+        // Check if we hit the edges; show edge effects if we do.
+        if (oldX > mBoundLeft && mCurrentX == mBoundLeft) {
+            int v = Math.round(-mScroller.getCurrVelocityX() * mCurrentScale);
+            mEdgeView.onAbsorb(v, EdgeView.LEFT);
+        } else if (oldX < mBoundRight && mCurrentX == mBoundRight) {
+            int v = Math.round(mScroller.getCurrVelocityX() * mCurrentScale);
+            mEdgeView.onAbsorb(v, EdgeView.RIGHT);
+        }
+
+        if (oldY > mBoundTop && mCurrentY == mBoundTop) {
+            int v = Math.round(-mScroller.getCurrVelocityY() * mCurrentScale);
+            mEdgeView.onAbsorb(v, EdgeView.TOP);
+        } else if (oldY < mBoundBottom && mCurrentY == mBoundBottom) {
+            int v = Math.round(mScroller.getCurrVelocityY() * mCurrentScale);
+            mEdgeView.onAbsorb(v, EdgeView.BOTTOM);
+        }
     }
 
     // Interpolates mCurrent{X,Y,Scale} given the progress in [0, 1].
@@ -595,5 +646,15 @@ class PositionController {
 
     public int getImageHeight() {
         return mImageH;
+    }
+
+    public boolean isAtLeftEdge() {
+        calculateStableBound(mCurrentScale);
+        return mCurrentX <= mBoundLeft;
+    }
+
+    public boolean isAtRightEdge() {
+        calculateStableBound(mCurrentScale);
+        return mCurrentX >= mBoundRight;
     }
 }
