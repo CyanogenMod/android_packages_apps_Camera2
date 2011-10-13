@@ -49,8 +49,6 @@ class CropView extends FullscreenToolView {
     private static final int MIN_CROP_WIDTH_HEIGHT = 2;
     private static final int TOUCH_TOLERANCE = 25;
     private static final int SHADOW_ALPHA = 160;
-    private static final int BORDER_COLOR = 0xFF008AFF;
-    private static final float BORDER_WIDTH = 2.0f;
 
     private final Paint borderPaint;
     private final Drawable cropIndicator;
@@ -68,11 +66,12 @@ class CropView extends FullscreenToolView {
         Resources resources = context.getResources();
         cropIndicator = resources.getDrawable(R.drawable.camera_crop_holo);
         indicatorSize = (int) resources.getDimension(R.dimen.crop_indicator_size);
+        int borderColor = resources.getColor(R.color.opaque_cyan);
 
         borderPaint = new Paint();
         borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setColor(BORDER_COLOR);
-        borderPaint.setStrokeWidth(BORDER_WIDTH);
+        borderPaint.setColor(borderColor);
+        borderPaint.setStrokeWidth(2f);
     }
 
     public void setOnCropChangeListener(OnCropChangeListener listener) {
