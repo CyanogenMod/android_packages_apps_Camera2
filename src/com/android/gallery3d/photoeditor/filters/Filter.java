@@ -37,10 +37,9 @@ public abstract class Filter {
 
     private boolean isValid;
 
-    public static void createContextWithCurrentGlContext() {
-        context = EffectContext.createWithCurrentGlContext();
-    }
-
+    /**
+     * Filter context should be released before the current GL context is lost.
+     */
     public static void releaseContext() {
         if (context != null) {
             // Release all effects created with the releasing context.
@@ -63,6 +62,9 @@ public abstract class Filter {
     protected Effect getEffect(String name) {
         Effect effect = effects.get(this);
         if (effect == null) {
+            if (context == null) {
+                context = EffectContext.createWithCurrentGlContext();
+            }
             effect = context.getFactory().createEffect(name);
             effect.setParameter("tile_size", DEFAULT_TILE_SIZE);
             effects.put(this, effect);
