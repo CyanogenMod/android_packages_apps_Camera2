@@ -231,7 +231,7 @@ public class GLCanvasImpl implements GLCanvas {
 
     public void multiplyMatrix(float matrix[], int offset) {
         float[] temp = mTempMatrix;
-        Matrix.multiplyMM(temp, 0, mMatrixValues , 0, matrix, 0);
+        Matrix.multiplyMM(temp, 0, mMatrixValues, 0, matrix, offset);
         System.arraycopy(temp, 0, mMatrixValues, 0, 16);
     }
 
