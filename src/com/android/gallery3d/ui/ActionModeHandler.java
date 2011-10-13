@@ -16,6 +16,22 @@
 
 package com.android.gallery3d.ui;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Handler;
+import android.view.ActionMode;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ShareActionProvider;
+import android.widget.PopupMenu.OnMenuItemClickListener;
+import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
+
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryActionBar;
 import com.android.gallery3d.app.GalleryActivity;
@@ -29,22 +45,6 @@ import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Handler;
-import android.view.ActionMode;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.PopupMenu.OnMenuItemClickListener;
-import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
-import android.widget.ShareActionProvider;
 
 import java.util.ArrayList;
 
@@ -65,7 +65,7 @@ public class ActionModeHandler implements ActionMode.Callback {
     private DropDownMenu mSelectionMenu;
     private ActionModeListener mListener;
     private Future<?> mMenuTask;
-    private Handler mMainHandler;
+    private final Handler mMainHandler;
     private ShareActionProvider mShareActionProvider;
 
     public ActionModeHandler(
@@ -175,7 +175,6 @@ public class ActionModeHandler implements ActionMode.Callback {
     // e.g. LocalImage can be rotated but collections of them (LocalAlbum) can't.
     private void updateMenuOptions(JobContext jc) {
         ArrayList<Path> paths = mSelectionManager.getSelected(false);
-        if (paths.size() == 0) return;
 
         int operation = MediaObject.SUPPORT_ALL;
         DataManager manager = mActivity.getDataManager();
@@ -188,7 +187,9 @@ public class ActionModeHandler implements ActionMode.Callback {
         }
 
         final String mimeType = MenuExecutor.getMimeType(type);
-        if (paths.size() == 1) {
+        if (paths.size() == 0) {
+            operation = 0;
+        } else if (paths.size() == 1) {
             if (!GalleryUtils.isEditorAvailable((Context) mActivity, mimeType)) {
                 operation &= ~MediaObject.SUPPORT_EDIT;
             }
@@ -286,6 +287,6 @@ public class ActionModeHandler implements ActionMode.Callback {
     }
 
     public void resume() {
-        updateSupportedOperation();
+        if (mSelectionManager.inSelectionMode()) updateSupportedOperation();
     }
 }
