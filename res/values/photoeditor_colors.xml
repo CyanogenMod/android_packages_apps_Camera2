@@ -16,6 +16,9 @@
 
 <resources>
     <color name="translucent_black">#67000000</color>
+    <color name="translucent_white">#99CCCCCC</color>
+    <color name="translucent_cyan">#99008AFF</color>
+    <color name="opaque_cyan">#FF008AFF</color>
     <color name="color_picker_preset_color1">#ddff1e00</color>
     <color name="color_picker_preset_color2">#ddff5b00</color>
     <color name="color_picker_preset_color3">#ddff9900</color>
