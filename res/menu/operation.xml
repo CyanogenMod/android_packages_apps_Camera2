@@ -22,12 +22,14 @@
     <item android:id="@+id/action_share"
             android:icon="@drawable/ic_menu_share_holo_light"
             android:title="@string/share"
+            android:visible="false"
             android:actionProviderClass="android.widget.ShareActionProvider"
             android:showAsAction="ifRoom">
     </item>
     <item android:id="@+id/action_delete"
             android:icon="@drawable/ic_menu_trash_holo_light"
             android:title="@string/delete"
+            android:visible="false"
             android:showAsAction="ifRoom">
         <menu>
             <item android:id="@+id/action_confirm_delete"
@@ -44,9 +46,11 @@
             android:visible="false" />
     <item android:id="@+id/action_rotate_ccw"
             android:showAsAction="never"
+            android:visible="false"
             android:title="@string/rotate_left" />
     <item android:id="@+id/action_rotate_cw"
             android:showAsAction="never"
+            android:visible="false"
             android:title="@string/rotate_right" />
     <item android:id="@+id/action_setas"
             android:title="@string/set_image"
@@ -59,6 +63,7 @@
     <item android:id="@+id/action_details"
             android:icon="@drawable/ic_menu_info_details"
             android:title="@string/details"
+            android:visible="false"
             android:showAsAction="never" />
     <item android:id="@+id/action_edit"
             android:title="@string/edit"
