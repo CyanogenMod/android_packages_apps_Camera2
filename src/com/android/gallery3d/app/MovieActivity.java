@@ -53,7 +53,10 @@ public class MovieActivity extends Activity {
         View rootView = findViewById(R.id.root);
         Intent intent = getIntent();
         initializeActionBar(intent);
-        mPlayer = new MoviePlayer(rootView, this, intent.getData(), savedInstanceState) {
+        mFinishOnCompletion = intent.getBooleanExtra(
+                MediaStore.EXTRA_FINISH_ON_COMPLETION, true);
+        mPlayer = new MoviePlayer(rootView, this, intent.getData(), savedInstanceState,
+                !mFinishOnCompletion) {
             @Override
             public void onCompletion() {
                 if (mFinishOnCompletion) {
@@ -69,7 +72,6 @@ public class MovieActivity extends Activity {
                 setRequestedOrientation(orientation);
             }
         }
-        mFinishOnCompletion = intent.getBooleanExtra(MediaStore.EXTRA_FINISH_ON_COMPLETION, true);
         Window win = getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
         winParams.buttonBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF;
