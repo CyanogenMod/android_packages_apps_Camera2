@@ -33,6 +33,7 @@ import android.os.ParcelFileDescriptor;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
+import java.io.InputStream;
 
 public class DecodeUtils {
     private static final String TAG = "DecodeService";
@@ -187,6 +188,18 @@ public class DecodeUtils {
             return BitmapRegionDecoder.newInstance(fd, shareable);
         } catch (Throwable t)  {
             Log.w(TAG, t);
+            return null;
+        }
+    }
+
+    public static BitmapRegionDecoder requestCreateBitmapRegionDecoder(
+            JobContext jc, InputStream is, boolean shareable) {
+        try {
+            return BitmapRegionDecoder.newInstance(is, shareable);
+        } catch (Throwable t)  {
+            // We often cancel the creating of bitmap region decoder,
+            // so just log one line.
+            Log.w(TAG, "requestCreateBitmapRegionDecoder: " + t);
             return null;
         }
     }
