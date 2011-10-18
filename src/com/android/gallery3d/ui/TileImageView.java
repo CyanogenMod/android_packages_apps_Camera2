@@ -16,6 +16,10 @@
 
 package com.android.gallery3d.ui;
 
+import android.graphics.Bitmap;
+import android.graphics.Rect;
+import android.graphics.RectF;
+
 import com.android.gallery3d.app.GalleryContext;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DecodeUtils;
@@ -23,10 +27,6 @@ import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.CancelListener;
 import com.android.gallery3d.util.ThreadPool.JobContext;
-
-import android.graphics.Bitmap;
-import android.graphics.Rect;
-import android.graphics.RectF;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,17 +55,20 @@ public class TileImageView extends GLView {
      *               --> RECYCLED - by recycleTile)
      *      DECODING --> RECYCLING - by recycleTile()
      *               --> DECODED  - by decodeTile()
+     *               --> DECODE_FAIL - by decodeTile()
      *      RECYCLING --> RECYCLED - by decodeTile()
      *      DECODED --> ACTIVATED - (after the decoded bitmap is uploaded)
      *      DECODED --> RECYCLED - by recycleTile()
+     *      DECODE_FAIL -> RECYCLED - by recycleTile()
      *      RECYCLED --> ACTIVATED - by obtainTile()
      */
     private static final int STATE_ACTIVATED = 0x01;
     private static final int STATE_IN_QUEUE = 0x02;
     private static final int STATE_DECODING = 0x04;
     private static final int STATE_DECODED = 0x08;
-    private static final int STATE_RECYCLING = 0x10;
-    private static final int STATE_RECYCLED = 0x20;
+    private static final int STATE_DECODE_FAIL = 0x10;
+    private static final int STATE_RECYCLING = 0x20;
+    private static final int STATE_RECYCLED = 0x40;
 
     private Model mModel;
     protected BitmapTexture mBackupImage;
@@ -435,7 +438,7 @@ public class TileImageView extends GLView {
                 mRecycledQueue.push(tile);
                 return false;
             }
-            tile.mTileState = STATE_DECODED;
+            tile.mTileState = decodeComplete ? STATE_DECODED : STATE_DECODE_FAIL;
             return decodeComplete;
         }
     }
@@ -526,7 +529,7 @@ public class TileImageView extends GLView {
                     } else {
                         mRenderComplete = false;
                     }
-                } else {
+                } else if (tile.mTileState != STATE_DECODE_FAIL){
                     mRenderComplete = false;
                     queueForDecode(tile);
                 }
@@ -603,11 +606,10 @@ public class TileImageView extends GLView {
             try {
                 mDecodedTile = DecodeUtils.ensureGLCompatibleBitmap(mModel.getTile(
                         mTileLevel, mX - borderLength, mY - borderLength, tileLength));
-                return mDecodedTile != null;
             } catch (Throwable t) {
                 Log.w(TAG, "fail to decode tile", t);
-                return false;
             }
+            return mDecodedTile != null;
         }
 
         @Override

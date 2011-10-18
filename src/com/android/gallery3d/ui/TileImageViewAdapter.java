@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.common.Utils;
-
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -25,7 +23,10 @@ import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
+import com.android.gallery3d.common.Utils;
+
 public class TileImageViewAdapter implements TileImageView.Model {
+    private static final String TAG = "TileImageViewAdapter";
     protected BitmapRegionDecoder mRegionDecoder;
     protected int mImageWidth;
     protected int mImageHeight;
@@ -80,6 +81,8 @@ public class TileImageViewAdapter implements TileImageView.Model {
 
     @Override
     public synchronized Bitmap getTile(int level, int x, int y, int length) {
+        if (mRegionDecoder == null) return null;
+
         Rect region = mRegionRect;
         Rect intersectRect = mIntersectRect;
         region.set(x, y, x + (length << level), y + (length << level));
@@ -103,6 +106,11 @@ public class TileImageViewAdapter implements TileImageView.Model {
         // The returned region may not match with the targetLength.
         // If so, we fill black pixels on it.
         if (intersectRect.equals(region)) return bitmap;
+
+        if (bitmap == null) {
+            Log.w(TAG, "fail in decoding region");
+            return null;
+        }
 
         Bitmap tile = Bitmap.createBitmap(length, length, Config.ARGB_8888);
         Canvas canvas = new Canvas(tile);
