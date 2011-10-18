@@ -25,7 +25,7 @@
     <string name="yes" msgid="5402582493291792293">"Да"</string>
     <string name="no" msgid="5595408018304861875">"Нет"</string>
     <string name="save" msgid="5516670392524294967">"ГОТОВО"</string>
-    <string name="autofix" msgid="1663414996270538748">"Автоэкспозиция"</string>
+    <string name="autofix" msgid="1663414996270538748">"Авто"</string>
     <string name="crop" msgid="7598378507763334041">"Кадрировать"</string>
     <string name="crossprocess" msgid="4173724489001742342">"Кроссобработка"</string>
     <string name="documentary" msgid="50396326708699797">"Документальные"</string>
@@ -37,7 +37,7 @@
     <string name="fisheye" msgid="6037488646928998921">"Рыбий глаз"</string>
     <string name="flip" msgid="2357692401826287480">"Отразить"</string>
     <string name="grain" msgid="7487585304579789098">"Зернистость"</string>
-    <string name="grayscale" msgid="7641563843060945228">"Черно-белый"</string>
+    <string name="grayscale" msgid="7641563843060945228">"Ч/Б"</string>
     <string name="highlight" msgid="3902653944386623972">"Блики"</string>
     <string name="lomoish" msgid="1270032154357186736">"Ломо"</string>
     <string name="negative" msgid="1985508917342811252">"Негатив"</string>
@@ -49,10 +49,10 @@
     <string name="shadow" msgid="8235188588101973090">"Затенение"</string>
     <string name="sharpen" msgid="8449662378104403230">"Резкость"</string>
     <string name="straighten" msgid="5217801513491493491">"Выравнивание"</string>
-    <string name="temperature" msgid="1607987938521534517">"Теплый"</string>
+    <string name="temperature" msgid="1607987938521534517">"Тепло"</string>
     <string name="tint" msgid="154435943863418434">"Оттенок"</string>
     <string name="vignette" msgid="7648125924662648282">"Виньетка"</string>
-    <string name="crop_tooltip" msgid="8794037869706891710">"Чтобы обрезать фотографию, перетащите маркеры"</string>
+    <string name="crop_tooltip" msgid="8794037869706891710">"Чтобы кадрировать фото, перетащите маркеры"</string>
     <string name="doodle_tooltip" msgid="2902117272374362915">"Рисуйте на фото пальцем"</string>
     <string name="flip_tooltip" msgid="2700943256714731737">"Чтобы отразить фото, перетащите его край"</string>
     <string name="redeye_tooltip" msgid="9112774042113471358">"Нажмите для устранения эффекта красных глаз"</string>

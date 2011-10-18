@@ -28,13 +28,13 @@
     <string name="resume_playing_message" msgid="5184414518126703481">"Nastaviti reprodukciju od %s?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Nastavak reprodukcije"</string>
     <string name="loading" msgid="7038208555304563571">"Učitavanje…"</string>
-    <!-- outdated translation 2710120770735315683 -->     <string name="fail_to_load" msgid="8394392853646664505">"Učitavanje nije uspjelo"</string>
+    <string name="fail_to_load" msgid="8394392853646664505">"Nije bilo moguće učitati"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Nema minijatura"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Počni ispočetka"</string>
-    <!-- outdated translation 8821167985419282305 -->     <string name="crop_save_text" msgid="152200178986698300">"U redu"</string>
-    <!-- outdated translation 3127018992717032779 -->     <string name="multiface_crop_help" msgid="2554690102655855657">"Dotaknite lice za početak."</string>
+    <string name="crop_save_text" msgid="152200178986698300">"U redu"</string>
+    <string name="multiface_crop_help" msgid="2554690102655855657">"Dodirnite lice za početak."</string>
     <string name="saving_image" msgid="7270334453636349407">"Spremanje slike..."</string>
-    <!-- outdated translation 7025992996853207949 -->     <string name="save_error" msgid="6857408774183654970">"Nije moguće spremiti obrezanu sliku"</string>
+    <string name="save_error" msgid="6857408774183654970">"Nije moguće spremiti obrezanu sliku."</string>
     <string name="crop_label" msgid="521114301871349328">"Obrezivanje slike"</string>
     <string name="select_image" msgid="7841406150484742140">"Odaberite fotog."</string>
     <string name="select_video" msgid="4859510992798615076">"Odaberite videoz."</string>
@@ -42,14 +42,14 @@
     <string name="select_album" msgid="4632641262236697235">"Odabir albuma"</string>
     <string name="select_group" msgid="9090385962030340391">"Odabir grupe/grupa"</string>
     <string name="set_image" msgid="2331476809308010401">"Postavi sliku kao"</string>
-    <!-- outdated translation 9222901738515471972 -->     <string name="wallpaper" msgid="140165383777262070">"Postavljanje pozadinske slike, pričekajte..."</string>
+    <string name="wallpaper" msgid="140165383777262070">"Postavljanje pozadinske slike…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Pozadinska slika"</string>
     <string name="delete" msgid="2839695998251824487">"Izbriši"</string>
-    <!-- outdated translation 5731757674837098707 -->     <string name="confirm_delete" msgid="7358770022173660511">"Potvrdite brisanje"</string>
+    <string name="confirm_delete" msgid="7358770022173660511">"Izbriši"</string>
     <string name="cancel" msgid="3637516880917356226">"Odustani"</string>
     <string name="share" msgid="3619042788254195341">"Podijeli"</string>
-    <!-- outdated translation 8623593677101437957 -->     <string name="select_all" msgid="3403283025220282175">"Odaberi sve"</string>
-    <!-- outdated translation 7397531298370285581 -->     <string name="deselect_all" msgid="5758897506061723684">"Poništi odabir svih"</string>
+    <string name="select_all" msgid="3403283025220282175">"Odaberi sve"</string>
+    <string name="deselect_all" msgid="5758897506061723684">"Poništi odabir za sve"</string>
     <string name="slideshow" msgid="4355906903247112975">"Dijaprojekcija"</string>
     <string name="details" msgid="8415120088556445230">"Pojedinosti"</string>
     <string name="details_title" msgid="2611396603977441273">"%1$d od ukupno stavki: %2$d"</string>
@@ -73,14 +73,14 @@
     <string name="show_on_map" msgid="6157544221201750980">"Pokaži na karti"</string>
     <string name="rotate_left" msgid="5888273317282539839">"Rotiraj ulijevo"</string>
     <string name="rotate_right" msgid="6776325835923384839">"Rotiraj udesno"</string>
-    <!-- outdated translation 3161074758669642065 -->     <string name="no_such_item" msgid="5315144556325243400">"Stavka nije pronađena"</string>
+    <string name="no_such_item" msgid="5315144556325243400">"Nije moguće pronaći stavku."</string>
     <string name="edit" msgid="1502273844748580847">"Uredi"</string>
-    <!-- outdated translation 3731390759313019518 -->     <string name="activity_not_found" msgid="5619154886080878023">"Nema dostupne aplikacije"</string>
-    <!-- outdated translation 1076938190997999614 -->     <string name="process_caching_requests" msgid="8722939570307386071">"Obrada zahtjeva za predmemoriju"</string>
-    <!-- outdated translation 3244800874547101776 -->     <string name="caching_label" msgid="4521059045896269095">"Spremanje u priv. memoriju..."</string>
+    <string name="activity_not_found" msgid="5619154886080878023">"Nema dostupnih aplikacija  za dovršavanje radnje."</string>
+    <string name="process_caching_requests" msgid="8722939570307386071">"Obrada zahtjeva za predmemoriju"</string>
+    <string name="caching_label" msgid="4521059045896269095">"U predmemoriju…"</string>
     <string name="crop_action" msgid="3427470284074377001">"Obreži"</string>
     <string name="set_as" msgid="3636764710790507868">"Postavi kao"</string>
-    <!-- outdated translation 7917736494827857757 -->     <string name="video_err" msgid="7003051631792271009">"Reprodukcija videozapisa nije moguća"</string>
+    <string name="video_err" msgid="7003051631792271009">"Nije moguće reproducirati videozapis."</string>
     <string name="group_by_location" msgid="316641628989023253">"Prema lokaciji"</string>
     <string name="group_by_time" msgid="9046168567717963573">"Po vremenu"</string>
     <string name="group_by_tags" msgid="3568731317210676160">"Po oznakama"</string>
@@ -88,21 +88,19 @@
     <string name="group_by_album" msgid="1532818636053818958">"Po albumu"</string>
     <string name="group_by_size" msgid="153766174950394155">"Po veličini"</string>
     <string name="untagged" msgid="7281481064509590402">"Neoznačeno"</string>
-    <!-- outdated translation 2036710947563713111 -->     <string name="no_location" msgid="4043624857489331676">"Nema lokacije"</string>
-    <!-- outdated translation 4060082114738885149 -->     <string name="no_connectivity" msgid="7164037617297293668">"Neke lokacije nisu se uspjele identificirati zbog poteškoća s mrežnim povezivanjem"</string>
-    <!-- no translation found for sync_album_error (2218733298953719785) -->
-    <skip />
-    <!-- no translation found for sync_album_set_error (9016732535181154028) -->
-    <skip />
+    <string name="no_location" msgid="4043624857489331676">"Nema lokacije"</string>
+    <string name="no_connectivity" msgid="7164037617297293668">"Neke lokacije nisu se mogle identificirati zbog poteškoća s mrežnom."</string>
+    <string name="sync_album_error" msgid="2218733298953719785">"Preuzimanje fotografija iz ovog albuma nije uspjelo. Pokušajte opet kasnije."</string>
+    <string name="sync_album_set_error" msgid="9016732535181154028">"Preuzimanje popisa albuma nije uspjelo. Pokušajte opet kasnije."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Samo slike"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Samo videozapisi"</string>
     <string name="show_all" msgid="4780647751652596980">"Slike i videozapisi"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Galerija fotografija"</string>
-    <!-- outdated translation 4123016777080388680 -->     <string name="appwidget_empty_text" msgid="1228925628357366957">"Nema fotografija"</string>
-    <!-- outdated translation 4684933379430649946 -->     <string name="crop_saved" msgid="1062612625032731770">"Izrezana slika spremljena je u preuzimanju"</string>
-    <!-- outdated translation 1438309290700431923 -->     <string name="crop_not_saved" msgid="3400773981839556">"Izrezana slika nije spremljena"</string>
-    <!-- outdated translation 3459550423604532470 -->     <string name="no_albums_alert" msgid="4111744447491690896">"Nema dostupnih albuma"</string>
-    <!-- outdated translation 6307897398825514762 -->     <string name="empty_album" msgid="4542880442593595494">"Nema dostupnih slika/videozapisa"</string>
+    <string name="appwidget_empty_text" msgid="1228925628357366957">"Nema fotografija."</string>
+    <string name="crop_saved" msgid="1062612625032731770">"Obrezana slika spremljena u Preuzimanja."</string>
+    <string name="crop_not_saved" msgid="3400773981839556">"Obrezana slika nije spremljena."</string>
+    <string name="no_albums_alert" msgid="4111744447491690896">"Nema dostupnih albuma."</string>
+    <string name="empty_album" msgid="4542880442593595494">"Dostupno je 0 slika/videozapisa."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Postovi"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Učini dostupnim van mreže"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Osvježi"</string>
@@ -117,15 +115,15 @@
     <string name="height" msgid="3648885449443787772">"Visina"</string>
     <string name="orientation" msgid="4958327983165245513">"Usmjerenje"</string>
     <string name="duration" msgid="8160058911218541616">"Trajanje"</string>
-    <!-- outdated translation 3518268469266183548 -->     <string name="mimetype" msgid="8024168704337990470">"Vrsta MIME"</string>
-    <!-- outdated translation 4670384449129762138 -->     <string name="file_size" msgid="8486169301588318915">"Vel. datoteke"</string>
+    <string name="mimetype" msgid="8024168704337990470">"Vrsta MIME-a"</string>
+    <string name="file_size" msgid="8486169301588318915">"Vel. datoteke"</string>
     <string name="maker" msgid="7921835498034236197">"Autor"</string>
     <string name="model" msgid="8240207064064337366">"Model"</string>
     <string name="flash" msgid="2816779031261147723">"Flash"</string>
     <string name="aperture" msgid="5920657630303915195">"Otvor blende"</string>
     <string name="focal_length" msgid="1291383769749877010">"Žariš. duljina"</string>
-    <!-- outdated translation 8122534414851280901 -->     <string name="white_balance" msgid="1582509289994216078">"Uravn. bijelog"</string>
-    <!-- outdated translation 3146642210127439553 -->     <string name="exposure_time" msgid="3990163680281058826">"Vrijeme izlag."</string>
+    <string name="white_balance" msgid="1582509289994216078">"Balans bijelog"</string>
+    <string name="exposure_time" msgid="3990163680281058826">"Vrijeme eksp."</string>
     <string name="iso" msgid="5028296664327335940">"ISO"</string>
     <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
     <string name="manual" msgid="6608905477477607865">"Ručno"</string>
@@ -133,28 +131,28 @@
     <string name="flash_on" msgid="7891556231891837284">"Bljes. okinuta"</string>
     <string name="flash_off" msgid="1445443413822680010">"Bez bljesk."</string>
   <plurals name="make_albums_available_offline">
-    <!-- outdated translation 2955975726887896888 -->     <item quantity="one" msgid="2171596356101611086">"Spremanje albuma za izvanmrežni rad"</item>
-    <!-- outdated translation 6929905722448632886 -->     <item quantity="other" msgid="4948604338155959389">"Spremanje albuma za izvanmrežni rad"</item>
+    <item quantity="one" msgid="2171596356101611086">"Spremanje albuma za izvanmrežni rad."</item>
+    <item quantity="other" msgid="4948604338155959389">"Spremanje albuma za izvanmrežni rad."</item>
   </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Ova stavka pohranjena je lokalno i dostupna je izvan mreže."</string>
-    <!-- outdated translation 3507256844918130594 -->     <string name="set_label_all_albums" msgid="4581863582996336783">"Svi albumi"</string>
-    <!-- outdated translation 5227548825039781 -->     <string name="set_label_local_albums" msgid="6698133661656266702">"Lokalni albumi"</string>
-    <!-- outdated translation 5779788799122828528 -->     <string name="set_label_mtp_devices" msgid="1283513183744896368">"MTP uređaji"</string>
-    <!-- outdated translation 2736308697306982589 -->     <string name="set_label_picasa_albums" msgid="5356258354953935895">"Picasa albumi"</string>
+    <string name="set_label_all_albums" msgid="4581863582996336783">"Svi albumi"</string>
+    <string name="set_label_local_albums" msgid="6698133661656266702">"Lokalni albumi"</string>
+    <string name="set_label_mtp_devices" msgid="1283513183744896368">"MTP uređaji"</string>
+    <string name="set_label_picasa_albums" msgid="5356258354953935895">"Picasa albumi"</string>
     <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> slobodno"</string>
     <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> ili niže"</string>
     <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> ili više"</string>
     <string name="size_between" msgid="8779660840898917208">"Od <xliff:g id="MIN_SIZE">%1$s</xliff:g> do <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
     <string name="Import" msgid="3985447518557474672">"Uvezi"</string>
     <string name="import_complete" msgid="3875040287486199999">"Uvoz je dovršen"</string>
-    <!-- outdated translation 5205927625132482529 -->     <string name="import_fail" msgid="8497942380703298808">"Uvoz nije uspio"</string>
-    <!-- outdated translation 6984353643349303075 -->     <string name="camera_connected" msgid="916021826223448591">"Fotoaparat je uključen"</string>
-    <!-- outdated translation 3683036560562699311 -->     <string name="camera_disconnected" msgid="2100559901676329496">"Fotoaparat je isključen"</string>
+    <string name="import_fail" msgid="8497942380703298808">"Uvoz neuspješan"</string>
+    <string name="camera_connected" msgid="916021826223448591">"Fotoaparat je uključen."</string>
+    <string name="camera_disconnected" msgid="2100559901676329496">"Fotoaparat je isključen."</string>
     <string name="click_import" msgid="6407959065464291972">"Dodirnite ovdje za uvoz"</string>
     <string name="widget_type_album" msgid="3245149644830731121">"Slike iz albuma"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Nasumično prikaži sve slike"</string>
-    <!-- outdated translation 8384174698965738770 -->     <string name="widget_type_photo" msgid="6267065337367795355">"Odaberi sliku"</string>
-    <!-- outdated translation 7308564524449340985 -->     <string name="widget_type" msgid="2161028964992385809">"Vrsta widgeta"</string>
+    <string name="widget_type_photo" msgid="6267065337367795355">"Odaberite sliku"</string>
+    <string name="widget_type" msgid="2161028964992385809">"Vrsta widgeta"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Dijaprojekcija"</string>
     <string name="albums" msgid="7320787705180057947">"Albumi"</string>
     <string name="times" msgid="2023033894889499219">"Vremena"</string>
