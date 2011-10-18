@@ -36,7 +36,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
@@ -46,7 +48,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
 public class MoviePlayer implements
-        MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
+        MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener,
+        ControllerOverlay.Listener {
     @SuppressWarnings("unused")
     private static final String TAG = "MoviePlayer";
 
@@ -64,84 +67,64 @@ public class MoviePlayer implements
 
     private Context mContext;
     private final VideoView mVideoView;
-    private final View mProgressView;
     private final Bookmarker mBookmarker;
     private final Uri mUri;
     private final Handler mHandler = new Handler();
     private final AudioBecomingNoisyReceiver mAudioBecomingNoisyReceiver;
     private final ActionBar mActionBar;
-    private final MediaController mMediaController;
+    private final ControllerOverlay mController;
 
     private long mResumeableTime = Long.MAX_VALUE;
     private int mVideoPosition = 0;
     private boolean mHasPaused = false;
 
+    // If the time bar is being dragged.
+    private boolean mDragging;
+
+    // If the time bar is visible.
+    private boolean mShowing;
+
     private final Runnable mPlayingChecker = new Runnable() {
         @Override
         public void run() {
             if (mVideoView.isPlaying()) {
-                mProgressView.setVisibility(View.GONE);
+                mController.showPlaying();
             } else {
                 mHandler.postDelayed(mPlayingChecker, 250);
             }
         }
     };
 
+    private final Runnable mProgressChecker = new Runnable() {
+        @Override
+        public void run() {
+            int pos = setProgress();
+            mHandler.postDelayed(mProgressChecker, 1000 - (pos % 1000));
+        }
+    };
+
     public MoviePlayer(View rootView, final MovieActivity movieActivity, Uri videoUri,
-            Bundle savedInstance) {
+            Bundle savedInstance, boolean canReplay) {
         mContext = movieActivity.getApplicationContext();
         mVideoView = (VideoView) rootView.findViewById(R.id.surface_view);
-        mProgressView = rootView.findViewById(R.id.progress_indicator);
         mBookmarker = new Bookmarker(movieActivity);
         mActionBar = movieActivity.getActionBar();
         mUri = videoUri;
 
-        // For streams that we expect to be slow to start up, show a
-        // progress spinner until playback starts.
-        String scheme = mUri.getScheme();
-        if ("http".equalsIgnoreCase(scheme) || "rtsp".equalsIgnoreCase(scheme)) {
-            mHandler.postDelayed(mPlayingChecker, 250);
-        } else {
-            mProgressView.setVisibility(View.GONE);
-        }
+        mController = new MovieControllerOverlay(mContext);
+        ((ViewGroup)rootView).addView(mController.getView());
+        mController.setListener(this);
+        mController.setCanReplay(canReplay);
 
         mVideoView.setOnErrorListener(this);
         mVideoView.setOnCompletionListener(this);
         mVideoView.setVideoURI(mUri);
-
-        mMediaController = new MediaController(movieActivity) {
-            @Override
-            public void show() {
-                showSystemUi(true);
-                mActionBar.show();
-                super.show();
+        mVideoView.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                mController.show();
+                return true;
             }
-
-            @Override
-            public void hide() {
-                super.hide();
-                mActionBar.hide();
-                showSystemUi(false);
-            }
-
-            // We intercept the "back" key events here, so hide() won't be
-            // called for ACTION_DOWN events of the "back" key (The code is in
-            // MediaController). Otherwise after system bar is hidden, we
-            // will not receive the ACTION_UP events of the "back" key.
-            @Override
-            public boolean dispatchKeyEvent(KeyEvent event) {
-                int keyCode = event.getKeyCode();
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (event.getAction() == KeyEvent.ACTION_UP) {
-                        movieActivity.onBackPressed();
-                    }
-                    return true;
-                }
-                return super.dispatchKeyEvent(event);
-            }
-        };
-
-        mMediaController.show();
+        });
 
         // When the user touches the screen or uses some hard key, the framework
         // will change system ui visibility from invisible to visible. We show
@@ -150,18 +133,13 @@ public class MoviePlayer implements
                 new View.OnSystemUiVisibilityChangeListener() {
             public void onSystemUiVisibilityChange(int visibility) {
                 if ((visibility & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0) {
-                    mMediaController.show();
+                    mController.show();
                 }
             }
         });
 
-        mVideoView.setMediaController(mMediaController);
-
         mAudioBecomingNoisyReceiver = new AudioBecomingNoisyReceiver();
         mAudioBecomingNoisyReceiver.register();
-
-        // make the video view handle keys for seeking and pausing
-        mVideoView.requestFocus();
 
         Intent i = new Intent(SERVICECMD);
         i.putExtra(CMDNAME, CMDPAUSE);
@@ -178,7 +156,7 @@ public class MoviePlayer implements
             if (bookmark != null) {
                 showResumeDialog(movieActivity, bookmark);
             } else {
-                mVideoView.start();
+                startVideo();
             }
         }
     }
@@ -186,7 +164,6 @@ public class MoviePlayer implements
     private void showSystemUi(boolean visible) {
         int flag = visible ? 0 : View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
         mVideoView.setSystemUiVisibility(flag);
-        mMediaController.setSystemUiVisibility(flag);
     }
 
     public void onSaveInstanceState(Bundle outState) {
@@ -211,14 +188,14 @@ public class MoviePlayer implements
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 mVideoView.seekTo(bookmark);
-                mVideoView.start();
+                startVideo();
             }
         });
         builder.setNegativeButton(
                 R.string.resume_playing_restart, new OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mVideoView.start();
+                startVideo();
             }
         });
         builder.show();
@@ -240,10 +217,10 @@ public class MoviePlayer implements
 
             // If we have slept for too long, pause the play
             if (System.currentTimeMillis() > mResumeableTime) {
-                mMediaController.show();
-                mVideoView.pause();
+                pauseVideo();
             }
         }
+        mHandler.post(mProgressChecker);
     }
 
     public void onDestroy() {
@@ -251,19 +228,113 @@ public class MoviePlayer implements
         mAudioBecomingNoisyReceiver.unregister();
     }
 
+    // This updates the time bar display (if necessary). It is called every
+    // second by mProgressChecker and also from places where the time bar needs
+    // to be updated immediately.
+    private int setProgress() {
+        if (mDragging || !mShowing) {
+            return 0;
+        }
+        int position = mVideoView.getCurrentPosition();
+        int duration = mVideoView.getDuration();
+        mController.setTimes(position, duration);
+        return position;
+    }
+
+    private void startVideo() {
+        // For streams that we expect to be slow to start up, show a
+        // progress spinner until playback starts.
+        String scheme = mUri.getScheme();
+        if ("http".equalsIgnoreCase(scheme) || "rtsp".equalsIgnoreCase(scheme)) {
+            mController.showLoading();
+            mHandler.removeCallbacks(mPlayingChecker);
+            mHandler.postDelayed(mPlayingChecker, 250);
+        } else {
+            mController.showPlaying();
+        }
+
+        mVideoView.start();
+        setProgress();
+    }
+
+    private void playVideo() {
+        mVideoView.start();
+        mController.showPlaying();
+        setProgress();
+    }
+
+    private void pauseVideo() {
+        mVideoView.pause();
+        mController.showPaused();
+    }
+
+    // Below are notifications from VideoView
+    @Override
     public boolean onError(MediaPlayer player, int arg1, int arg2) {
         mHandler.removeCallbacksAndMessages(null);
-        mProgressView.setVisibility(View.GONE);
+        // VideoView will show an error dialog if we return false, so no need
+        // to show more message.
+        mController.showErrorMessage("");
         return false;
     }
 
+    @Override
     public void onCompletion(MediaPlayer mp) {
+        mController.showEnded();
         onCompletion();
     }
 
     public void onCompletion() {
     }
 
+    // Below are notifications from ControllerOverlay
+    @Override
+    public void onPlayPause() {
+        if (mVideoView.isPlaying()) {
+            pauseVideo();
+        } else {
+            playVideo();
+        }
+    }
+
+    @Override
+    public void onSeekStart() {
+        mDragging = true;
+    }
+
+    @Override
+    public void onSeekMove(int time) {
+        mVideoView.seekTo(time);
+    }
+
+    @Override
+    public void onSeekEnd(int time) {
+        mDragging = false;
+        mVideoView.seekTo(time);
+        setProgress();
+    }
+
+    @Override
+    public void onShown() {
+        mShowing = true;
+        mActionBar.show();
+        showSystemUi(true);
+        setProgress();
+    }
+
+    @Override
+    public void onHidden() {
+        mShowing = false;
+        mActionBar.hide();
+        showSystemUi(false);
+    }
+
+    @Override
+    public void onReplay() {
+        startVideo();
+    }
+
+    // We want to pause when the headset is unplugged.
     private class AudioBecomingNoisyReceiver extends BroadcastReceiver {
 
         public void register() {

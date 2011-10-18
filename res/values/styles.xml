@@ -35,4 +35,5 @@
     <style name="DialogPickerTheme" parent="Theme.Gallery">
     </style>
     <bool name="picker_is_dialog">false</bool>
+    <color name="darker_transparent">#C1000000</color>
 </resources>
