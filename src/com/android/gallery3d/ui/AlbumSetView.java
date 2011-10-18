@@ -206,8 +206,15 @@ public class AlbumSetView extends SlotView {
     private class MyCacheListener implements AlbumSetSlidingWindow.Listener {
 
         public void onSizeChanged(int size) {
-            // If the layout parameters are changed, we need reput all items.
-            if (setSlotCount(size)) updateVisibleRange(0, 0);
+            if (setSlotCount(size)) {
+                // If the layout parameters are changed, we need reput all items.
+                // We keep the visible range at the same center but with size 0.
+                // So that we can:
+                //     1.) flush all visible items
+                //     2.) keep the cached data
+                int center = (getVisibleStart() + getVisibleEnd()) / 2;
+                updateVisibleRange(center, center);
+            }
             updateVisibleRange(getVisibleStart(), getVisibleEnd());
             invalidate();
         }
