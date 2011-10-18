@@ -17,30 +17,24 @@
 package com.android.gallery3d.photoeditor;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.ViewSwitcher;
 
 import com.android.gallery3d.R;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-
 /**
  * Action bar that contains buttons such as undo, redo, save, etc.
  */
-public class ActionBar extends RelativeLayout {
-
-    private static final float ENABLED_ALPHA = 1;
-    private static final float DISABLED_ALPHA = 0.47f;
-
-    private final HashMap<Integer, Runnable> buttonRunnables = new HashMap<Integer, Runnable>();
-    private final HashSet<Integer> changedButtons = new HashSet<Integer>();
+public class ActionBar extends RestorableView {
 
     public ActionBar(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    @Override
+    protected int childLayoutId() {
+        return R.layout.photoeditor_actionbar;
     }
 
     @Override
@@ -58,66 +52,51 @@ public class ActionBar extends RelativeLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        updateButtons(false, false);
+    }
 
-        enableButton(R.id.undo_button, false);
-        enableButton(R.id.redo_button, false);
-        enableButton(R.id.save_button, false);
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        showSaveOrShare();
     }
 
     /**
-     * Restores the passed action-bar.
-     *
-     * @return the passed parameter.
+     * Save/share button may need being switched when undo/save enabled status is changed/restored.
      */
-    public ActionBar restore(ActionBar actionBar) {
-        // Restores by runnables and enabled status of buttons that have been changed.
-        for (Entry<Integer, Runnable> entry : buttonRunnables.entrySet()) {
-            actionBar.setRunnable(entry.getKey(), entry.getValue());
+    private void showSaveOrShare() {
+        // Show share-button only after photo is edited and saved; otherwise, show save-button.
+        boolean showShare = findViewById(R.id.undo_button).isEnabled()
+                && !findViewById(R.id.save_button).isEnabled();
+        ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.save_share_buttons);
+        int next = switcher.getNextView().getId();
+        if ((showShare && (next == R.id.share_button))
+                || (!showShare && (next == R.id.save_button))) {
+            switcher.showNext();
         }
-        for (int buttonId : changedButtons) {
-            actionBar.enableButton(buttonId, isButtonEnabled(buttonId));
-        }
-        return actionBar;
     }
 
-    public void setRunnable(int buttonId, final Runnable r) {
-        findViewById(buttonId).setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (isEnabled()) {
-                    r.run();
-                }
-            }
-        });
-        buttonRunnables.put(buttonId, r);
+    public void updateButtons(boolean canUndo, boolean canRedo) {
+        setViewEnabled(R.id.undo_button, canUndo);
+        setViewEnabled(R.id.redo_button, canRedo);
+        setViewEnabled(R.id.save_button, canUndo);
+        showSaveOrShare();
     }
 
-    public void clickButton(int buttonId) {
-        findViewById(buttonId).performClick();
+    public void updateSave(boolean canSave) {
+        setViewEnabled(R.id.save_button, canSave);
+        showSaveOrShare();
     }
 
-    public boolean isButtonEnabled(int buttonId) {
-        return findViewById(buttonId).isEnabled();
+    public void clickBack() {
+        findViewById(R.id.action_bar_back).performClick();
     }
 
-    public void enableButton(int buttonId, boolean enabled) {
-        View button = findViewById(buttonId);
-        button.setEnabled(enabled);
-        button.setAlpha(enabled ? ENABLED_ALPHA : DISABLED_ALPHA);
-        // Track buttons whose enabled status has been updated.
-        changedButtons.add(buttonId);
+    public void clickSave() {
+        findViewById(R.id.save_button).performClick();
+    }
 
-        if (buttonId == R.id.save_button) {
-            // Show share-button only after photo is edited and saved; otherwise, show save-button.
-            // TODO: Fix the assumption of undo enabled status must be updated before reaching here.
-            boolean showShare = findViewById(R.id.undo_button).isEnabled() && !enabled;
-            ViewSwitcher switcher = (ViewSwitcher) findViewById(R.id.save_share_buttons);
-            int next = switcher.getNextView().getId();
-            if ((showShare && (next == R.id.share_button))
-                    || (!showShare && (next == R.id.save_button))) {
-                switcher.showNext();
-            }
-        }
+    public boolean canSave() {
+        return findViewById(R.id.save_button).isEnabled();
     }
 }
