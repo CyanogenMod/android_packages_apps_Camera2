@@ -33,46 +33,55 @@ import com.android.gallery3d.photoeditor.actions.EffectToolFactory;
  */
 public class EffectsBar extends LinearLayout {
 
+    private final LayoutInflater inflater;
     private FilterStack filterStack;
-    private LayoutInflater inflater;
+    private EffectsMenu effectsMenu;
     private View effectsGallery;
     private ViewGroup effectToolPanel;
     private EffectAction activeEffect;
 
     public EffectsBar(Context context, AttributeSet attrs) {
         super(context, attrs);
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public void initialize(FilterStack filterStack) {
         this.filterStack = filterStack;
-        inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        setupMenuToggle(R.id.exposure_button, R.layout.photoeditor_effects_exposure);
-        setupMenuToggle(R.id.artistic_button, R.layout.photoeditor_effects_artistic);
-        setupMenuToggle(R.id.color_button, R.layout.photoeditor_effects_color);
-        setupMenuToggle(R.id.fix_button, R.layout.photoeditor_effects_fix);
+        effectsMenu = (EffectsMenu) findViewById(R.id.effects_menu);
+        effectsMenu.setOnToggleListener(new EffectsMenu.OnToggleListener() {
+
+            @Override
+            public boolean onToggle(boolean isSelected, final int effectsId) {
+                // Create and show effects-gallery only if the clicked toggle isn't selected or it's
+                // selected but showing an active effect instead of effects-gallery. Set the clicked
+                // toggle selected only when its effects-gallery will be created and shown.
+                boolean select = !isSelected || (effectsGallery == null);
+                exit(select ? new Runnable() {
+
+                    @Override
+                    public void run() {
+                        createEffectsGallery(effectsId);
+                    }
+                } : null);
+                return select;
+            }
+        });
 
         setEnabled(false);
     }
 
-    private void setupMenuToggle(int toggleId, final int effectsId) {
-        final View toggle = findViewById(toggleId);
-        toggle.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // Toggle off to exit effects gallery that is showing. Or toggle on to show effects
-                // gallery after exiting an active effect if applicable.
-                exit((toggle.isSelected() && (effectsGallery != null)) ? null : new Runnable() {
-
-                    @Override
-                    public void run() {
-                        toggle.setSelected(true);
-                        showEffectsGallery(effectsId);
-                    }
-                });
-            }
-        });
+    private void createEffectsGallery(int effectsId) {
+        // Inflate scrollable effects-gallery and desired effects into effects-bar.
+        effectsGallery = inflater.inflate(R.layout.photoeditor_effects_gallery, this, false);
+        ViewGroup scrollView = (ViewGroup) effectsGallery.findViewById(R.id.scroll_view);
+        ViewGroup effects = (ViewGroup) inflater.inflate(effectsId, scrollView, false);
+        for (int i = 0; i < effects.getChildCount(); i++) {
+            setupEffectListener((EffectAction) effects.getChildAt(i));
+        }
+        scrollView.addView(effects);
+        scrollView.scrollTo(0, 0);
+        addView(effectsGallery, 0);
     }
 
     private void setupEffectListener(final EffectAction effect) {
@@ -86,8 +95,8 @@ public class EffectsBar extends LinearLayout {
                     exitEffectsGallery();
                     // Create effect tool panel first before the factory could create tools within.
                     createEffectToolPanel();
-                    activeEffect.begin(
-                            filterStack, new EffectToolFactory(effectToolPanel, inflater));
+                    activeEffect.begin(filterStack,
+                            new EffectToolFactory(effectToolPanel, inflater));
                 }
             }
 
@@ -105,23 +114,10 @@ public class EffectsBar extends LinearLayout {
         addView(effectToolPanel, 0);
     }
 
-    private void showEffectsGallery(int effectsId) {
-        // Inflate scrollable effects-gallery and desired effects into effects-bar.
-        effectsGallery = inflater.inflate(R.layout.photoeditor_effects_gallery, this, false);
-        ViewGroup scrollView = (ViewGroup) effectsGallery.findViewById(R.id.scroll_view);
-        ViewGroup effects = (ViewGroup) inflater.inflate(effectsId, scrollView, false);
-        for (int i = 0; i < effects.getChildCount(); i++) {
-            setupEffectListener((EffectAction) effects.getChildAt(i));
-        }
-        scrollView.addView(effects);
-        scrollView.scrollTo(0, 0);
-        addView(effectsGallery, 0);
-    }
-
     private boolean exitEffectsGallery() {
         if (effectsGallery != null) {
             if (activeEffect != null) {
-                // Detach the active effect from effects-gallery that could be recycled by gc.
+                // Detach the active effect to prevent it stopping effects-gallery from gc.
                 ViewGroup scrollView = (ViewGroup) effectsGallery.findViewById(R.id.scroll_view);
                 ((ViewGroup) scrollView.getChildAt(0)).removeView(activeEffect);
             }
@@ -165,13 +161,7 @@ public class EffectsBar extends LinearLayout {
      */
     public boolean exit(final Runnable runnableOnDone) {
         // Exit effects-menu selected states.
-        ViewGroup menu = (ViewGroup) findViewById(R.id.effects_menu);
-        for (int i = 0; i < menu.getChildCount(); i++) {
-            View toggle = menu.getChildAt(i);
-            if (toggle.isSelected()) {
-                toggle.setSelected(false);
-            }
-        }
+        effectsMenu.clearSelected();
 
         if (exitActiveEffect(runnableOnDone)) {
             return true;
