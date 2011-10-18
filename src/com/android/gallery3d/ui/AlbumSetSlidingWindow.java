@@ -165,9 +165,6 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         mActiveStart = start;
         mActiveEnd = end;
 
-        // If no data is visible, keep the cache content
-        if (start == end) return;
-
         int contentStart = Utils.clamp((start + end) / 2 - data.length / 2,
                 0, Math.max(0, mSize - data.length));
         int contentEnd = Math.min(contentStart + data.length, mSize);
