@@ -18,12 +18,9 @@ package com.android.gallery3d.photoeditor;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.gallery3d.R;
@@ -54,41 +51,18 @@ public class PhotoEditor extends Activity {
 
                     @Override
                     public void onStackChanged(boolean canUndo, boolean canRedo) {
-                        actionBar.enableButton(R.id.undo_button, canUndo);
-                        actionBar.enableButton(R.id.redo_button, canRedo);
-                        actionBar.enableButton(R.id.save_button, canUndo);
+                        actionBar.updateButtons(canUndo, canRedo);
                     }
         });
 
         EffectsBar effectsBar = (EffectsBar) findViewById(R.id.effects_bar);
         effectsBar.initialize(filterStack);
 
-        actionBar.setRunnable(R.id.undo_button, createUndoRedoRunnable(true, effectsBar));
-        actionBar.setRunnable(R.id.redo_button, createUndoRedoRunnable(false, effectsBar));
-        actionBar.setRunnable(R.id.save_button, createSaveRunnable(effectsBar));
-        actionBar.setRunnable(R.id.share_button, createShareRunnable(effectsBar));
-        actionBar.setRunnable(R.id.action_bar_back, createBackRunnable(effectsBar));
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        actionBar = actionBar.restore((ActionBar) recreateView(
-                actionBar, inflater, R.layout.photoeditor_actionbar));
-    }
-
-    /**
-     * Recreates the view by inflating the given layout id.
-     */
-    private View recreateView(View view, LayoutInflater inflater, int layoutId) {
-        ViewGroup parent = (ViewGroup) view.getParent();
-        int index = parent.indexOfChild(view);
-        parent.removeViewAt(index);
-
-        View recreated = inflater.inflate(layoutId, parent, false);
-        parent.addView(recreated, index);
-        return recreated;
+        actionBar.setClickRunnable(R.id.undo_button, createUndoRedoRunnable(true, effectsBar));
+        actionBar.setClickRunnable(R.id.redo_button, createUndoRedoRunnable(false, effectsBar));
+        actionBar.setClickRunnable(R.id.save_button, createSaveRunnable(effectsBar));
+        actionBar.setClickRunnable(R.id.share_button, createShareRunnable(effectsBar));
+        actionBar.setClickRunnable(R.id.action_bar_back, createBackRunnable(effectsBar));
     }
 
     private SpinnerProgressDialog createProgressDialog() {
@@ -160,7 +134,7 @@ public class PhotoEditor extends Activity {
                                     @Override
                                     public void onComplete(Uri result) {
                                         progressDialog.dismiss();
-                                        actionBar.enableButton(R.id.save_button, (result == null));
+                                        actionBar.updateSave(result == null);
                                         saveUri = result;
                                     }
                                 };
@@ -203,12 +177,12 @@ public class PhotoEditor extends Activity {
                 // Exit effects or go back to the previous activity on pressing back button.
                 if (!effectsBar.exit(null)) {
                     // Pop-up a dialog to save unsaved photo.
-                    if (actionBar.isButtonEnabled(R.id.save_button)) {
+                    if (actionBar.canSave()) {
                         new YesNoCancelDialogBuilder(PhotoEditor.this, new Runnable() {
 
                             @Override
                             public void run() {
-                                actionBar.clickButton(R.id.save_button);
+                                actionBar.clickSave();
                             }
                         }, new Runnable() {
 
@@ -227,7 +201,7 @@ public class PhotoEditor extends Activity {
 
     @Override
     public void onBackPressed() {
-        actionBar.clickButton(R.id.action_bar_back);
+        actionBar.clickBack();
     }
 
     @Override
