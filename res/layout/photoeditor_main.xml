@@ -25,33 +25,19 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
 
-    <com.android.gallery3d.photoeditor.EffectsBar android:id="@+id/effects_bar" style="@style/EffectsBar">
+    <com.android.gallery3d.photoeditor.EffectsBar
+        android:id="@+id/effects_bar"
+        style="@style/EffectsBar">
 
-        <LinearLayout style="@style/BottomActionBar" android:gravity="center_horizontal">
+        <com.android.gallery3d.photoeditor.EffectsMenu
+            android:id="@+id/effects_menu"
+            style="@style/ActionBarOuter"/>
 
-            <LinearLayout android:id="@+id/effects_menu" style="@style/ActionBarLinearLayout">
-
-                <ImageButton
-                    android:id="@+id/exposure_button"
-                    style="@style/EffectsMenuActionButton"
-                    android:src="@drawable/photoeditor_exposure"/>
-                <ImageButton
-                    android:id="@+id/artistic_button"
-                    style="@style/EffectsMenuActionButton"
-                    android:src="@drawable/photoeditor_artistic"/>
-                <ImageButton
-                    android:id="@+id/color_button"
-                    style="@style/EffectsMenuActionButton"
-                    android:src="@drawable/photoeditor_color"/>
-                <ImageButton
-                    android:id="@+id/fix_button"
-                    style="@style/EffectsMenuActionButton"
-                    android:src="@drawable/photoeditor_fix"/>
-            </LinearLayout>
-
-        </LinearLayout>
     </com.android.gallery3d.photoeditor.EffectsBar>
 
-    <include layout="@layout/photoeditor_actionbar"/>
+    <com.android.gallery3d.photoeditor.ActionBar
+        android:id="@+id/action_bar"
+        style="@style/ActionBarOuter"
+        android:layout_alignParentTop="true"/>
 
 </com.android.gallery3d.photoeditor.Toolbar>
