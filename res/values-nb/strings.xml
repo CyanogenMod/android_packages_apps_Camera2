@@ -28,13 +28,13 @@
     <string name="resume_playing_message" msgid="5184414518126703481">"Fortsett avspilling fra %s?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Fortsett avspilling"</string>
     <string name="loading" msgid="7038208555304563571">"Laster inn ..."</string>
-    <!-- outdated translation 2710120770735315683 -->     <string name="fail_to_load" msgid="8394392853646664505">"Kunne ikke laste inn"</string>
+    <string name="fail_to_load" msgid="8394392853646664505">"Kunne ikke laste"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Ingen miniatyrbilder"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Begynn på nytt"</string>
-    <!-- outdated translation 8821167985419282305 -->     <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
-    <!-- outdated translation 3127018992717032779 -->     <string name="multiface_crop_help" msgid="2554690102655855657">"Trykk på et ansikt for å begynne."</string>
+    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="multiface_crop_help" msgid="2554690102655855657">"Berør et ansikt for å begynne."</string>
     <string name="saving_image" msgid="7270334453636349407">"Lagrer bilde ..."</string>
-    <!-- outdated translation 7025992996853207949 -->     <string name="save_error" msgid="6857408774183654970">"Kan ikke lagre det beskjærte bildet"</string>
+    <string name="save_error" msgid="6857408774183654970">"Kan ikke lagre det beskårede bildet."</string>
     <string name="crop_label" msgid="521114301871349328">"Beskjær bilde"</string>
     <string name="select_image" msgid="7841406150484742140">"Velg bilde"</string>
     <string name="select_video" msgid="4859510992798615076">"Velg video"</string>
@@ -42,14 +42,14 @@
     <string name="select_album" msgid="4632641262236697235">"Velg album"</string>
     <string name="select_group" msgid="9090385962030340391">"Velg grupper"</string>
     <string name="set_image" msgid="2331476809308010401">"Angi bilde som"</string>
-    <!-- outdated translation 9222901738515471972 -->     <string name="wallpaper" msgid="140165383777262070">"Setter bakgrunnsbilde, vent litt…"</string>
+    <string name="wallpaper" msgid="140165383777262070">"Angir bakgrunn …"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Bakgrunnsbilde"</string>
     <string name="delete" msgid="2839695998251824487">"Slett"</string>
-    <!-- outdated translation 5731757674837098707 -->     <string name="confirm_delete" msgid="7358770022173660511">"Bekreft sletting"</string>
+    <string name="confirm_delete" msgid="7358770022173660511">"Slett"</string>
     <string name="cancel" msgid="3637516880917356226">"Avbryt"</string>
     <string name="share" msgid="3619042788254195341">"Del"</string>
-    <!-- outdated translation 8623593677101437957 -->     <string name="select_all" msgid="3403283025220282175">"Marker alle"</string>
-    <!-- outdated translation 7397531298370285581 -->     <string name="deselect_all" msgid="5758897506061723684">"Fjern alle markeringer"</string>
+    <string name="select_all" msgid="3403283025220282175">"Velg alle"</string>
+    <string name="deselect_all" msgid="5758897506061723684">"Opphev alle valg"</string>
     <string name="slideshow" msgid="4355906903247112975">"Lysbildevisning"</string>
     <string name="details" msgid="8415120088556445230">"Detaljer"</string>
     <string name="details_title" msgid="2611396603977441273">"%1$d av %2$d elementer:"</string>
@@ -73,14 +73,14 @@
     <string name="show_on_map" msgid="6157544221201750980">"Vis på kartet"</string>
     <string name="rotate_left" msgid="5888273317282539839">"Roter mot venstre"</string>
     <string name="rotate_right" msgid="6776325835923384839">"Roter mot høyre"</string>
-    <!-- outdated translation 3161074758669642065 -->     <string name="no_such_item" msgid="5315144556325243400">"Finner ikke artikkelen"</string>
+    <string name="no_such_item" msgid="5315144556325243400">"Finner ikke elementet."</string>
     <string name="edit" msgid="1502273844748580847">"Rediger"</string>
-    <!-- outdated translation 3731390759313019518 -->     <string name="activity_not_found" msgid="5619154886080878023">"Ingen applikasjon tilgjengelig"</string>
-    <!-- outdated translation 1076938190997999614 -->     <string name="process_caching_requests" msgid="8722939570307386071">"Behandle forespørsler om bufring"</string>
-    <!-- outdated translation 3244800874547101776 -->     <string name="caching_label" msgid="4521059045896269095">"Bufrer …"</string>
+    <string name="activity_not_found" msgid="5619154886080878023">"Ingen app er tilgjengelig for å fullføre handlingen."</string>
+    <string name="process_caching_requests" msgid="8722939570307386071">"Behandler forespørsler om bufring"</string>
+    <string name="caching_label" msgid="4521059045896269095">"Henter …"</string>
     <string name="crop_action" msgid="3427470284074377001">"Beskjær"</string>
     <string name="set_as" msgid="3636764710790507868">"Angi som"</string>
-    <!-- outdated translation 7917736494827857757 -->     <string name="video_err" msgid="7003051631792271009">"Kunne ikke spille av videoen"</string>
+    <string name="video_err" msgid="7003051631792271009">"Kan ikke spille av video."</string>
     <string name="group_by_location" msgid="316641628989023253">"Etter posisjon"</string>
     <string name="group_by_time" msgid="9046168567717963573">"Etter dato"</string>
     <string name="group_by_tags" msgid="3568731317210676160">"Etter etiketter"</string>
@@ -88,21 +88,19 @@
     <string name="group_by_album" msgid="1532818636053818958">"Etter album"</string>
     <string name="group_by_size" msgid="153766174950394155">"Etter størrelse"</string>
     <string name="untagged" msgid="7281481064509590402">"Uten etikett"</string>
-    <!-- outdated translation 2036710947563713111 -->     <string name="no_location" msgid="4043624857489331676">"Ingen posisjon"</string>
-    <!-- outdated translation 4060082114738885149 -->     <string name="no_connectivity" msgid="7164037617297293668">"Enkelte steder kan ikke identifiseres på grunn av problemer med tilkobling til nettverket."</string>
-    <!-- no translation found for sync_album_error (2218733298953719785) -->
-    <skip />
-    <!-- no translation found for sync_album_set_error (9016732535181154028) -->
-    <skip />
+    <string name="no_location" msgid="4043624857489331676">"Ingen posisjon"</string>
+    <string name="no_connectivity" msgid="7164037617297293668">"Noen steder kunne ikke identifiseres på grunn av nettverksproblemer."</string>
+    <string name="sync_album_error" msgid="2218733298953719785">"Kunne ikke laste ned bildene i dette albumet. Prøv på nytt senere."</string>
+    <string name="sync_album_set_error" msgid="9016732535181154028">"Kunne ikke laste ned listen over albumer. Prøv på nytt senere."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Kun bilder"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Kun videoer"</string>
     <string name="show_all" msgid="4780647751652596980">"Bilder og videoer"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Fotogalleri"</string>
-    <!-- outdated translation 4123016777080388680 -->     <string name="appwidget_empty_text" msgid="1228925628357366957">"Ingen bilder"</string>
-    <!-- outdated translation 4684933379430649946 -->     <string name="crop_saved" msgid="1062612625032731770">"Det beskårede bildet er lagret i nedlasting"</string>
-    <!-- outdated translation 1438309290700431923 -->     <string name="crop_not_saved" msgid="3400773981839556">"Det beskårede bildet er ikke lagret"</string>
-    <!-- outdated translation 3459550423604532470 -->     <string name="no_albums_alert" msgid="4111744447491690896">"Ingen albumer er tilgjengelige"</string>
-    <!-- outdated translation 6307897398825514762 -->     <string name="empty_album" msgid="4542880442593595494">"Ingen bilder eller videoer er tilgjengelige"</string>
+    <string name="appwidget_empty_text" msgid="1228925628357366957">"Ingen bilder."</string>
+    <string name="crop_saved" msgid="1062612625032731770">"Beskåret bilde lagret i Nedlastinger."</string>
+    <string name="crop_not_saved" msgid="3400773981839556">"Beskåret bilde ble ikke lagret."</string>
+    <string name="no_albums_alert" msgid="4111744447491690896">"Ingen album tilgjengelig."</string>
+    <string name="empty_album" msgid="4542880442593595494">"0 bilder/videoer tilgjengelig."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Innlegg"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Gjør tilgjengelig i frakoblet modus"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Last inn på nytt"</string>
@@ -117,15 +115,15 @@
     <string name="height" msgid="3648885449443787772">"Høyde"</string>
     <string name="orientation" msgid="4958327983165245513">"Retning"</string>
     <string name="duration" msgid="8160058911218541616">"Varighet"</string>
-    <!-- outdated translation 3518268469266183548 -->     <string name="mimetype" msgid="8024168704337990470">"MIME-type"</string>
-    <!-- outdated translation 4670384449129762138 -->     <string name="file_size" msgid="8486169301588318915">"Filstørrelse"</string>
+    <string name="mimetype" msgid="8024168704337990470">"MIME-type"</string>
+    <string name="file_size" msgid="8486169301588318915">"Filstørrelse"</string>
     <string name="maker" msgid="7921835498034236197">"Skaper"</string>
     <string name="model" msgid="8240207064064337366">"Modell"</string>
     <string name="flash" msgid="2816779031261147723">"Blits"</string>
     <string name="aperture" msgid="5920657630303915195">"Blender"</string>
     <string name="focal_length" msgid="1291383769749877010">"Brennvidde"</string>
-    <!-- outdated translation 8122534414851280901 -->     <string name="white_balance" msgid="1582509289994216078">"Hvitbalanse"</string>
-    <!-- outdated translation 3146642210127439553 -->     <string name="exposure_time" msgid="3990163680281058826">"Eksponer.tid"</string>
+    <string name="white_balance" msgid="1582509289994216078">"Hvitbalanse"</string>
+    <string name="exposure_time" msgid="3990163680281058826">"Eksponeringstid"</string>
     <string name="iso" msgid="5028296664327335940">"ISO"</string>
     <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
     <string name="manual" msgid="6608905477477607865">"Manuelt"</string>
@@ -133,28 +131,28 @@
     <string name="flash_on" msgid="7891556231891837284">"Blits brukes"</string>
     <string name="flash_off" msgid="1445443413822680010">"Uten blits"</string>
   <plurals name="make_albums_available_offline">
-    <!-- outdated translation 2955975726887896888 -->     <item quantity="one" msgid="2171596356101611086">"Gjør album tilgjengelig i frakoblet modus"</item>
-    <!-- outdated translation 6929905722448632886 -->     <item quantity="other" msgid="4948604338155959389">"Gjør albumer tilgjengelig i frakoblet modus"</item>
+    <item quantity="one" msgid="2171596356101611086">"Gjør album tilgjengelig i frakoblet modus."</item>
+    <item quantity="other" msgid="4948604338155959389">"Gjør album tilgjengelige i frakoblet modus."</item>
   </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Dette elementet lagres lokalt og er tilgjengelig i frakoblet modus."</string>
-    <!-- outdated translation 3507256844918130594 -->     <string name="set_label_all_albums" msgid="4581863582996336783">"Alle albumer"</string>
-    <!-- outdated translation 5227548825039781 -->     <string name="set_label_local_albums" msgid="6698133661656266702">"Lokale albumer"</string>
-    <!-- outdated translation 5779788799122828528 -->     <string name="set_label_mtp_devices" msgid="1283513183744896368">"MTP-enheter"</string>
-    <!-- outdated translation 2736308697306982589 -->     <string name="set_label_picasa_albums" msgid="5356258354953935895">"Picasa Nettalbum"</string>
+    <string name="set_label_all_albums" msgid="4581863582996336783">"Alle album"</string>
+    <string name="set_label_local_albums" msgid="6698133661656266702">"Lokale album"</string>
+    <string name="set_label_mtp_devices" msgid="1283513183744896368">"MTP-enheter"</string>
+    <string name="set_label_picasa_albums" msgid="5356258354953935895">"Picasa-album"</string>
     <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> tilgjengelig"</string>
     <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> eller mindre"</string>
     <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> eller mer"</string>
     <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> til <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
     <string name="Import" msgid="3985447518557474672">"Importér"</string>
     <string name="import_complete" msgid="3875040287486199999">"Importen er fullført"</string>
-    <!-- outdated translation 5205927625132482529 -->     <string name="import_fail" msgid="8497942380703298808">"Importen mislyktes"</string>
-    <!-- outdated translation 6984353643349303075 -->     <string name="camera_connected" msgid="916021826223448591">"Kamera tilkoblet"</string>
-    <!-- outdated translation 3683036560562699311 -->     <string name="camera_disconnected" msgid="2100559901676329496">"Kamera frakoblet"</string>
+    <string name="import_fail" msgid="8497942380703298808">"Import mislyktes"</string>
+    <string name="camera_connected" msgid="916021826223448591">"Kamera tilkoblet."</string>
+    <string name="camera_disconnected" msgid="2100559901676329496">"Kamera frakoblet."</string>
     <string name="click_import" msgid="6407959065464291972">"Trykk her for å importere"</string>
     <string name="widget_type_album" msgid="3245149644830731121">"Bilder fra et album"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Stokk om på bildene"</string>
-    <!-- outdated translation 8384174698965738770 -->     <string name="widget_type_photo" msgid="6267065337367795355">"Velg et bilde"</string>
-    <!-- outdated translation 7308564524449340985 -->     <string name="widget_type" msgid="2161028964992385809">"Modultype"</string>
+    <string name="widget_type_photo" msgid="6267065337367795355">"Velg et bilde"</string>
+    <string name="widget_type" msgid="2161028964992385809">"Modultype"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Lysbildefremvisning"</string>
     <string name="albums" msgid="7320787705180057947">"Album"</string>
     <string name="times" msgid="2023033894889499219">"Ganger"</string>

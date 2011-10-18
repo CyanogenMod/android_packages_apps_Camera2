@@ -28,13 +28,13 @@
     <string name="resume_playing_message" msgid="5184414518126703481">"Да продължи ли възпроизвеждането от %s ?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Продължаване"</string>
     <string name="loading" msgid="7038208555304563571">"Зарежда се…"</string>
-    <!-- outdated translation 2710120770735315683 -->     <string name="fail_to_load" msgid="8394392853646664505">"Зареждането не бе успешно"</string>
+    <string name="fail_to_load" msgid="8394392853646664505">"Не можаха да се заредят"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Няма миниизображение"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Стартиране отначало"</string>
-    <!-- outdated translation 8821167985419282305 -->     <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
-    <!-- outdated translation 3127018992717032779 -->     <string name="multiface_crop_help" msgid="2554690102655855657">"Докоснете лице за начало."</string>
+    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="multiface_crop_help" msgid="2554690102655855657">"Докоснете лице за начало."</string>
     <string name="saving_image" msgid="7270334453636349407">"Снимката се запазва..."</string>
-    <!-- outdated translation 7025992996853207949 -->     <string name="save_error" msgid="6857408774183654970">"Подрязаното изобр. не може да се запази"</string>
+    <string name="save_error" msgid="6857408774183654970">"Подрязаното изобр. не можа да се запази."</string>
     <string name="crop_label" msgid="521114301871349328">"Подрязване на снимка"</string>
     <string name="select_image" msgid="7841406150484742140">"Избиране на снимка"</string>
     <string name="select_video" msgid="4859510992798615076">"Избиране на видеоклип"</string>
@@ -42,14 +42,14 @@
     <string name="select_album" msgid="4632641262236697235">"Изберете албум/и"</string>
     <string name="select_group" msgid="9090385962030340391">"Изберете групи"</string>
     <string name="set_image" msgid="2331476809308010401">"Задаване на снимката като"</string>
-    <!-- outdated translation 9222901738515471972 -->     <string name="wallpaper" msgid="140165383777262070">"Тапетът се задава. Моля, изчакайте..."</string>
+    <string name="wallpaper" msgid="140165383777262070">"Тапетът се задава..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Тапет"</string>
     <string name="delete" msgid="2839695998251824487">"Изтриване"</string>
-    <!-- outdated translation 5731757674837098707 -->     <string name="confirm_delete" msgid="7358770022173660511">"Потвърждение на изтриване"</string>
+    <string name="confirm_delete" msgid="7358770022173660511">"Изтриване"</string>
     <string name="cancel" msgid="3637516880917356226">"Отказ"</string>
     <string name="share" msgid="3619042788254195341">"Споделяне"</string>
-    <!-- outdated translation 8623593677101437957 -->     <string name="select_all" msgid="3403283025220282175">"Избиране на всичко"</string>
-    <!-- outdated translation 7397531298370285581 -->     <string name="deselect_all" msgid="5758897506061723684">"Премахване на избора"</string>
+    <string name="select_all" msgid="3403283025220282175">"Избиране на всички"</string>
+    <string name="deselect_all" msgid="5758897506061723684">"Премахване на избора"</string>
     <string name="slideshow" msgid="4355906903247112975">"Слайдшоу"</string>
     <string name="details" msgid="8415120088556445230">"Подробности"</string>
     <string name="details_title" msgid="2611396603977441273">"%1$d от %2$d елемента:"</string>
@@ -73,14 +73,14 @@
     <string name="show_on_map" msgid="6157544221201750980">"Показване на карта"</string>
     <string name="rotate_left" msgid="5888273317282539839">"Завъртане наляво"</string>
     <string name="rotate_right" msgid="6776325835923384839">"Завъртане надясно"</string>
-    <!-- outdated translation 3161074758669642065 -->     <string name="no_such_item" msgid="5315144556325243400">"Елементът не е намерен"</string>
+    <string name="no_such_item" msgid="5315144556325243400">"Елементът не можа да бъде намерен."</string>
     <string name="edit" msgid="1502273844748580847">"Редактиране"</string>
-    <!-- outdated translation 3731390759313019518 -->     <string name="activity_not_found" msgid="5619154886080878023">"Няма налично приложение"</string>
-    <!-- outdated translation 1076938190997999614 -->     <string name="process_caching_requests" msgid="8722939570307386071">"Заявките за кеширане се обработват"</string>
-    <!-- outdated translation 3244800874547101776 -->     <string name="caching_label" msgid="4521059045896269095">"Кешират се..."</string>
+    <string name="activity_not_found" msgid="5619154886080878023">"Няма налични прилож. за завършване на действието."</string>
+    <string name="process_caching_requests" msgid="8722939570307386071">"Заявките за кеширане се обработват"</string>
+    <string name="caching_label" msgid="4521059045896269095">"Кешира се..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Подрязване"</string>
     <string name="set_as" msgid="3636764710790507868">"Задаване като"</string>
-    <!-- outdated translation 7917736494827857757 -->     <string name="video_err" msgid="7003051631792271009">"Видеоклипът не може да бъде възпроизведен"</string>
+    <string name="video_err" msgid="7003051631792271009">"Видеоклипът не може да се възпроизведе."</string>
     <string name="group_by_location" msgid="316641628989023253">"По местоположение"</string>
     <string name="group_by_time" msgid="9046168567717963573">"По време"</string>
     <string name="group_by_tags" msgid="3568731317210676160">"По маркери"</string>
@@ -88,21 +88,19 @@
     <string name="group_by_album" msgid="1532818636053818958">"По албум"</string>
     <string name="group_by_size" msgid="153766174950394155">"По размер"</string>
     <string name="untagged" msgid="7281481064509590402">"Немаркирани"</string>
-    <!-- outdated translation 2036710947563713111 -->     <string name="no_location" msgid="4043624857489331676">"Няма местоположение"</string>
-    <!-- outdated translation 4060082114738885149 -->     <string name="no_connectivity" msgid="7164037617297293668">"Някои местоположения не можаха да бъдат идентифицирани поради проблеми с връзката с мрежата"</string>
-    <!-- no translation found for sync_album_error (2218733298953719785) -->
-    <skip />
-    <!-- no translation found for sync_album_set_error (9016732535181154028) -->
-    <skip />
+    <string name="no_location" msgid="4043624857489331676">"Няма местоположение"</string>
+    <string name="no_connectivity" msgid="7164037617297293668">"Някои местоположения не можаха да бъдат идентифицирани поради проблеми с мрежата."</string>
+    <string name="sync_album_error" msgid="2218733298953719785">"Изтеглянето на снимките в този албум не бе успешно. Моля, опитайте отново по-късно."</string>
+    <string name="sync_album_set_error" msgid="9016732535181154028">"Изтеглянето на списъка с албуми не бе успешно. Моля, опитайте отново по-късно."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Само изображения"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Само видеоклипове"</string>
     <string name="show_all" msgid="4780647751652596980">"Изображения и видеоклипове"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Фотогалерия"</string>
-    <!-- outdated translation 4123016777080388680 -->     <string name="appwidget_empty_text" msgid="1228925628357366957">"Няма снимки"</string>
-    <!-- outdated translation 4684933379430649946 -->     <string name="crop_saved" msgid="1062612625032731770">"Подрязаното изображение бе запазено в „Изтегляния“"</string>
-    <!-- outdated translation 1438309290700431923 -->     <string name="crop_not_saved" msgid="3400773981839556">"Подрязаното изображение не е запазено"</string>
-    <!-- outdated translation 3459550423604532470 -->     <string name="no_albums_alert" msgid="4111744447491690896">"Няма налични албуми"</string>
-    <!-- outdated translation 6307897398825514762 -->     <string name="empty_album" msgid="4542880442593595494">"Няма налични изображения/видеоклипове"</string>
+    <string name="appwidget_empty_text" msgid="1228925628357366957">"Няма снимки."</string>
+    <string name="crop_saved" msgid="1062612625032731770">"Подрязаното изображение е запазено в „Изтегляния“."</string>
+    <string name="crop_not_saved" msgid="3400773981839556">"Подрязаното изображение не бе запазено."</string>
+    <string name="no_albums_alert" msgid="4111744447491690896">"Няма налични албуми."</string>
+    <string name="empty_album" msgid="4542880442593595494">"0 изображения/видеоклипове са налице."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Публикации"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Налице офлайн"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Опресняване"</string>
@@ -117,15 +115,15 @@
     <string name="height" msgid="3648885449443787772">"Височина"</string>
     <string name="orientation" msgid="4958327983165245513">"Ориентация"</string>
     <string name="duration" msgid="8160058911218541616">"Времетраене"</string>
-    <!-- outdated translation 3518268469266183548 -->     <string name="mimetype" msgid="8024168704337990470">"Тип MIME"</string>
-    <!-- outdated translation 4670384449129762138 -->     <string name="file_size" msgid="8486169301588318915">"Файлов размер"</string>
+    <string name="mimetype" msgid="8024168704337990470">"Тип MIME"</string>
+    <string name="file_size" msgid="8486169301588318915">"Файл: Размер"</string>
     <string name="maker" msgid="7921835498034236197">"Автор"</string>
     <string name="model" msgid="8240207064064337366">"Модел"</string>
     <string name="flash" msgid="2816779031261147723">"Светкавица"</string>
     <string name="aperture" msgid="5920657630303915195">"Бленда"</string>
     <string name="focal_length" msgid="1291383769749877010">"Дълж. на фокус"</string>
-    <!-- outdated translation 8122534414851280901 -->     <string name="white_balance" msgid="1582509289994216078">"Бал. на бялото"</string>
-    <!-- outdated translation 3146642210127439553 -->     <string name="exposure_time" msgid="3990163680281058826">"Експонация"</string>
+    <string name="white_balance" msgid="1582509289994216078">"Бяло: Баланс"</string>
+    <string name="exposure_time" msgid="3990163680281058826">"Експонация"</string>
     <string name="iso" msgid="5028296664327335940">"ISO"</string>
     <string name="unit_mm" msgid="1125768433254329136">"мм"</string>
     <string name="manual" msgid="6608905477477607865">"Ръчно"</string>
@@ -133,28 +131,28 @@
     <string name="flash_on" msgid="7891556231891837284">"Със светкавица"</string>
     <string name="flash_off" msgid="1445443413822680010">"Без светкавица"</string>
   <plurals name="make_albums_available_offline">
-    <!-- outdated translation 2955975726887896888 -->     <item quantity="one" msgid="2171596356101611086">"Албумът става достъпен офлайн"</item>
-    <!-- outdated translation 6929905722448632886 -->     <item quantity="other" msgid="4948604338155959389">"Албумите стават достъпни офлайн"</item>
+    <item quantity="one" msgid="2171596356101611086">"Албумът става достъпен офлайн."</item>
+    <item quantity="other" msgid="4948604338155959389">"Албумите стават достъпни офлайн."</item>
   </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Този елемент се съхранява локално и е налице офлайн."</string>
-    <!-- outdated translation 3507256844918130594 -->     <string name="set_label_all_albums" msgid="4581863582996336783">"Всички албуми"</string>
-    <!-- outdated translation 5227548825039781 -->     <string name="set_label_local_albums" msgid="6698133661656266702">"Местни албуми"</string>
-    <!-- outdated translation 5779788799122828528 -->     <string name="set_label_mtp_devices" msgid="1283513183744896368">"MTP устройства"</string>
-    <!-- outdated translation 2736308697306982589 -->     <string name="set_label_picasa_albums" msgid="5356258354953935895">"Албуми в Picasa"</string>
+    <string name="set_label_all_albums" msgid="4581863582996336783">"Всички албуми"</string>
+    <string name="set_label_local_albums" msgid="6698133661656266702">"Местни албуми"</string>
+    <string name="set_label_mtp_devices" msgid="1283513183744896368">"MTP устройства"</string>
+    <string name="set_label_picasa_albums" msgid="5356258354953935895">"Албуми в Picasa"</string>
     <string name="free_space_format" msgid="8766337315709161215">"Свободни: <xliff:g id="BYTES">%s</xliff:g>"</string>
     <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> или по-малко"</string>
     <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> или повече"</string>
     <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> до <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
     <string name="Import" msgid="3985447518557474672">"Импортиране"</string>
     <string name="import_complete" msgid="3875040287486199999">"Импорт. завърши"</string>
-    <!-- outdated translation 5205927625132482529 -->     <string name="import_fail" msgid="8497942380703298808">"Импортирането не бе успешно"</string>
-    <!-- outdated translation 6984353643349303075 -->     <string name="camera_connected" msgid="916021826223448591">"Камерата е включена"</string>
-    <!-- outdated translation 3683036560562699311 -->     <string name="camera_disconnected" msgid="2100559901676329496">"Камерата е изключена"</string>
+    <string name="import_fail" msgid="8497942380703298808">"Импортирането не бе успешно"</string>
+    <string name="camera_connected" msgid="916021826223448591">"Камерата е включена."</string>
+    <string name="camera_disconnected" msgid="2100559901676329496">"Камерата е изключена."</string>
     <string name="click_import" msgid="6407959065464291972">"Докоснете тук, за да импортирате"</string>
     <string name="widget_type_album" msgid="3245149644830731121">"Изображения от албум"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Разбъркване на всички"</string>
-    <!-- outdated translation 8384174698965738770 -->     <string name="widget_type_photo" msgid="6267065337367795355">"Избиране на изображение"</string>
-    <!-- outdated translation 7308564524449340985 -->     <string name="widget_type" msgid="2161028964992385809">"Тип приспособление"</string>
+    <string name="widget_type_photo" msgid="6267065337367795355">"Избор на изображение"</string>
+    <string name="widget_type" msgid="2161028964992385809">"Тип приспособление"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Слайдшоу"</string>
     <string name="albums" msgid="7320787705180057947">"Албуми"</string>
     <string name="times" msgid="2023033894889499219">"Час"</string>
