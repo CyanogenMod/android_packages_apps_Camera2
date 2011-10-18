@@ -54,16 +54,13 @@
         <item name="android:layout_alignParentBottom">true</item>
         <item name="android:orientation">vertical</item>
     </style>
-    <style name="TopActionBar" parent="@style/ActionBar">
-        <item name="android:layout_alignParentTop">true</item>
-        <item name="android:background">@drawable/photoeditor_actionbar_translucent</item>
-    </style>
-    <style name="BottomActionBar" parent="@style/ActionBar">
-        <item name="android:background">@drawable/photoeditor_actionbar_translucent_bottom</item>
-    </style>
-    <style name="ActionBar">
+    <style name="ActionBarInner">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">?android:attr/actionBarSize</item>
+    </style>
+    <style name="ActionBarOuter">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
     <style name="ActionBarLinearLayout">
         <item name="android:layout_width">wrap_content</item>
@@ -117,7 +114,12 @@
         <item name="android:paddingRight">@dimen/action_button_padding_horizontal</item>
         <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
+    <style name="EffectsMenuContainer" parent="@style/ActionBarLinearLayout">
+        <item name="android:layout_width">@dimen/effects_menu_container_width</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
     <style name="EffectsMenuActionButton" parent="@style/ImageActionButton">
+        <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/photoeditor_toggle_button_background</item>
     </style>
     <style name="FullscreenToolView">
