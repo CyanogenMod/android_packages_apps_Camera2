@@ -28,13 +28,13 @@
     <string name="resume_playing_message" msgid="5184414518126703481">"Retomar reprodução a partir de %s?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Retomar a reprodução"</string>
     <string name="loading" msgid="7038208555304563571">"A carregar..."</string>
-    <!-- outdated translation 2710120770735315683 -->     <string name="fail_to_load" msgid="8394392853646664505">"Não foi possível carregar"</string>
+    <string name="fail_to_load" msgid="8394392853646664505">"Não foi possível carregar"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Sem miniatura"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Recomeçar"</string>
-    <!-- outdated translation 8821167985419282305 -->     <string name="crop_save_text" msgid="152200178986698300">"Ok"</string>
-    <!-- outdated translation 3127018992717032779 -->     <string name="multiface_crop_help" msgid="2554690102655855657">"Toque num rosto para começar."</string>
+    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="multiface_crop_help" msgid="2554690102655855657">"Toque num rosto para começar."</string>
     <string name="saving_image" msgid="7270334453636349407">"A guardar imagem..."</string>
-    <!-- outdated translation 7025992996853207949 -->     <string name="save_error" msgid="6857408774183654970">"Não é possível guardar imagem recortada"</string>
+    <string name="save_error" msgid="6857408774183654970">"Impossível guardar imagem recortada."</string>
     <string name="crop_label" msgid="521114301871349328">"Recortar imagem"</string>
     <string name="select_image" msgid="7841406150484742140">"Seleccionar fotog."</string>
     <string name="select_video" msgid="4859510992798615076">"Seleccionar vídeo"</string>
@@ -42,14 +42,14 @@
     <string name="select_album" msgid="4632641262236697235">"Selecionar álbum(ns)"</string>
     <string name="select_group" msgid="9090385962030340391">"Selecionar grupo(s)"</string>
     <string name="set_image" msgid="2331476809308010401">"Definir imagem como"</string>
-    <!-- outdated translation 9222901738515471972 -->     <string name="wallpaper" msgid="140165383777262070">"A definir a imagem de fundo, aguarde..."</string>
+    <string name="wallpaper" msgid="140165383777262070">"A definir imagem de fundo…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Imagem de fundo"</string>
     <string name="delete" msgid="2839695998251824487">"Eliminar"</string>
-    <!-- outdated translation 5731757674837098707 -->     <string name="confirm_delete" msgid="7358770022173660511">"Confirmar eliminação"</string>
+    <string name="confirm_delete" msgid="7358770022173660511">"Eliminar"</string>
     <string name="cancel" msgid="3637516880917356226">"Cancelar"</string>
     <string name="share" msgid="3619042788254195341">"Partilhar"</string>
-    <!-- outdated translation 8623593677101437957 -->     <string name="select_all" msgid="3403283025220282175">"Seleccionar tudo"</string>
-    <!-- outdated translation 7397531298370285581 -->     <string name="deselect_all" msgid="5758897506061723684">"Desmarcar tudo"</string>
+    <string name="select_all" msgid="3403283025220282175">"Selecionar tudo"</string>
+    <string name="deselect_all" msgid="5758897506061723684">"Desmarcar tudo"</string>
     <string name="slideshow" msgid="4355906903247112975">"Apresentação de diapositivos"</string>
     <string name="details" msgid="8415120088556445230">"Detalhes"</string>
     <string name="details_title" msgid="2611396603977441273">"%1$d de %2$d itens:"</string>
@@ -73,14 +73,14 @@
     <string name="show_on_map" msgid="6157544221201750980">"Mostrar no mapa"</string>
     <string name="rotate_left" msgid="5888273317282539839">"Rodar para a esquerda"</string>
     <string name="rotate_right" msgid="6776325835923384839">"Rodar para a direita"</string>
-    <!-- outdated translation 3161074758669642065 -->     <string name="no_such_item" msgid="5315144556325243400">"Item não encontrado"</string>
+    <string name="no_such_item" msgid="5315144556325243400">"Não foi possível encontrar item."</string>
     <string name="edit" msgid="1502273844748580847">"Editar"</string>
-    <!-- outdated translation 3731390759313019518 -->     <string name="activity_not_found" msgid="5619154886080878023">"Não estão disponíveis aplicações"</string>
-    <!-- outdated translation 1076938190997999614 -->     <string name="process_caching_requests" msgid="8722939570307386071">"Processar pedidos de colocação em cache"</string>
-    <!-- outdated translation 3244800874547101776 -->     <string name="caching_label" msgid="4521059045896269095">"A col. cache..."</string>
+    <string name="activity_not_found" msgid="5619154886080878023">"Nenhuma aplicação disponível para concluir a ação."</string>
+    <string name="process_caching_requests" msgid="8722939570307386071">"A processar pedidos de colocação em cache"</string>
+    <string name="caching_label" msgid="4521059045896269095">"A col. cache..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Recortar"</string>
     <string name="set_as" msgid="3636764710790507868">"Definir como"</string>
-    <!-- outdated translation 7917736494827857757 -->     <string name="video_err" msgid="7003051631792271009">"Não é possível reproduzir vídeo"</string>
+    <string name="video_err" msgid="7003051631792271009">"Não é possível reproduzir vídeo."</string>
     <string name="group_by_location" msgid="316641628989023253">"Por localização"</string>
     <string name="group_by_time" msgid="9046168567717963573">"Por hora"</string>
     <string name="group_by_tags" msgid="3568731317210676160">"Por etiquetas"</string>
@@ -88,21 +88,19 @@
     <string name="group_by_album" msgid="1532818636053818958">"Por álbum"</string>
     <string name="group_by_size" msgid="153766174950394155">"Por tamanho"</string>
     <string name="untagged" msgid="7281481064509590402">"Sem etiqueta"</string>
-    <!-- outdated translation 2036710947563713111 -->     <string name="no_location" msgid="4043624857489331676">"Sem localização"</string>
-    <!-- outdated translation 4060082114738885149 -->     <string name="no_connectivity" msgid="7164037617297293668">"Não foi possível identificar alguns locais devido a problemas de ligação de rede"</string>
-    <!-- no translation found for sync_album_error (2218733298953719785) -->
-    <skip />
-    <!-- no translation found for sync_album_set_error (9016732535181154028) -->
-    <skip />
+    <string name="no_location" msgid="4043624857489331676">"Sem localização"</string>
+    <string name="no_connectivity" msgid="7164037617297293668">"Não foi possível identificar algumas localizações devido a problemas de rede."</string>
+    <string name="sync_album_error" msgid="2218733298953719785">"Falha ao transferir as fotografias deste álbum. Tente novamente mais tarde."</string>
+    <string name="sync_album_set_error" msgid="9016732535181154028">"Falha ao transferir a lista de álbuns. Tente novamente mais tarde."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Apenas imagens"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Apenas vídeos"</string>
     <string name="show_all" msgid="4780647751652596980">"Imagens e vídeos"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Galeria de fotografias"</string>
-    <!-- outdated translation 4123016777080388680 -->     <string name="appwidget_empty_text" msgid="1228925628357366957">"Não existem fotografias."</string>
-    <!-- outdated translation 4684933379430649946 -->     <string name="crop_saved" msgid="1062612625032731770">"A imagem recortada foi guardada nas transferências"</string>
-    <!-- outdated translation 1438309290700431923 -->     <string name="crop_not_saved" msgid="3400773981839556">"A imagem recortada não foi guardada"</string>
-    <!-- outdated translation 3459550423604532470 -->     <string name="no_albums_alert" msgid="4111744447491690896">"Não estão disponíveis álbuns"</string>
-    <!-- outdated translation 6307897398825514762 -->     <string name="empty_album" msgid="4542880442593595494">"Não estão disponíveis imagens/vídeos"</string>
+    <string name="appwidget_empty_text" msgid="1228925628357366957">"Não existem fotografias."</string>
+    <string name="crop_saved" msgid="1062612625032731770">"Imagem recortada guardada em Transferências."</string>
+    <string name="crop_not_saved" msgid="3400773981839556">"A imagem recortada não foi guardada."</string>
+    <string name="no_albums_alert" msgid="4111744447491690896">"Nenhum álbum disponível."</string>
+    <string name="empty_album" msgid="4542880442593595494">"0 imagens/vídeos disponíveis."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Mensagens"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Disponibilizar off-line"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Atualizar"</string>
@@ -117,15 +115,15 @@
     <string name="height" msgid="3648885449443787772">"Altura"</string>
     <string name="orientation" msgid="4958327983165245513">"Orientação"</string>
     <string name="duration" msgid="8160058911218541616">"Duração"</string>
-    <!-- outdated translation 3518268469266183548 -->     <string name="mimetype" msgid="8024168704337990470">"Tipo MIME"</string>
-    <!-- outdated translation 4670384449129762138 -->     <string name="file_size" msgid="8486169301588318915">"Tam. ficheiro"</string>
+    <string name="mimetype" msgid="8024168704337990470">"Tipo MIME"</string>
+    <string name="file_size" msgid="8486169301588318915">"Tam. ficheiro"</string>
     <string name="maker" msgid="7921835498034236197">"Fabricante"</string>
     <string name="model" msgid="8240207064064337366">"Modelo"</string>
     <string name="flash" msgid="2816779031261147723">"Flash"</string>
     <string name="aperture" msgid="5920657630303915195">"Abertura"</string>
     <string name="focal_length" msgid="1291383769749877010">"Dist. focal"</string>
-    <!-- outdated translation 8122534414851280901 -->     <string name="white_balance" msgid="1582509289994216078">"Equilíbrio dos brancos"</string>
-    <!-- outdated translation 3146642210127439553 -->     <string name="exposure_time" msgid="3990163680281058826">"Tempo expos."</string>
+    <string name="white_balance" msgid="1582509289994216078">"Eq. brancos"</string>
+    <string name="exposure_time" msgid="3990163680281058826">"Tempo expos."</string>
     <string name="iso" msgid="5028296664327335940">"ISO"</string>
     <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
     <string name="manual" msgid="6608905477477607865">"Manual"</string>
@@ -133,28 +131,28 @@
     <string name="flash_on" msgid="7891556231891837284">"Flash dispar."</string>
     <string name="flash_off" msgid="1445443413822680010">"Sem flash"</string>
   <plurals name="make_albums_available_offline">
-    <!-- outdated translation 2955975726887896888 -->     <item quantity="one" msgid="2171596356101611086">"Disponibilizar um álbum off-line"</item>
-    <!-- outdated translation 6929905722448632886 -->     <item quantity="other" msgid="4948604338155959389">"Disponibilizar álbuns off-line"</item>
+    <item quantity="one" msgid="2171596356101611086">"Disponibilizar álbum off-line."</item>
+    <item quantity="other" msgid="4948604338155959389">"Disponibilizar álbuns off-line."</item>
   </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Este artigo está armazenado localmente e está disponível off-line."</string>
-    <!-- outdated translation 3507256844918130594 -->     <string name="set_label_all_albums" msgid="4581863582996336783">"Todos os álbuns"</string>
-    <!-- outdated translation 5227548825039781 -->     <string name="set_label_local_albums" msgid="6698133661656266702">"Álbuns locais"</string>
-    <!-- outdated translation 5779788799122828528 -->     <string name="set_label_mtp_devices" msgid="1283513183744896368">"Dispositivos MTP"</string>
-    <!-- outdated translation 2736308697306982589 -->     <string name="set_label_picasa_albums" msgid="5356258354953935895">"Álbuns Picasa"</string>
+    <string name="set_label_all_albums" msgid="4581863582996336783">"Todos os álbuns"</string>
+    <string name="set_label_local_albums" msgid="6698133661656266702">"Álbuns locais"</string>
+    <string name="set_label_mtp_devices" msgid="1283513183744896368">"Aparelhos MTP"</string>
+    <string name="set_label_picasa_albums" msgid="5356258354953935895">"Álbuns Picasa"</string>
     <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> livres"</string>
     <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> ou abaixo"</string>
     <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> ou acima"</string>
     <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> para <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
     <string name="Import" msgid="3985447518557474672">"Importar"</string>
     <string name="import_complete" msgid="3875040287486199999">"Importação concluída"</string>
-    <!-- outdated translation 5205927625132482529 -->     <string name="import_fail" msgid="8497942380703298808">"Falha ao Importar"</string>
-    <!-- outdated translation 6984353643349303075 -->     <string name="camera_connected" msgid="916021826223448591">"Câmara ligada"</string>
-    <!-- outdated translation 3683036560562699311 -->     <string name="camera_disconnected" msgid="2100559901676329496">"Câmara desligada"</string>
+    <string name="import_fail" msgid="8497942380703298808">"Importação falhou"</string>
+    <string name="camera_connected" msgid="916021826223448591">"Câmara ligada."</string>
+    <string name="camera_disconnected" msgid="2100559901676329496">"Câmara desligada."</string>
     <string name="click_import" msgid="6407959065464291972">"Toque aqui para importar"</string>
     <string name="widget_type_album" msgid="3245149644830731121">"Imagens de um álbum"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Repr. aleat. todas as imagens"</string>
-    <!-- outdated translation 8384174698965738770 -->     <string name="widget_type_photo" msgid="6267065337367795355">"Escolher imagem"</string>
-    <!-- outdated translation 7308564524449340985 -->     <string name="widget_type" msgid="2161028964992385809">"Tipo de Widget"</string>
+    <string name="widget_type_photo" msgid="6267065337367795355">"Escolher uma imagem"</string>
+    <string name="widget_type" msgid="2161028964992385809">"Tipo de widget"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Apres. de diap."</string>
     <string name="albums" msgid="7320787705180057947">"Álbuns"</string>
     <string name="times" msgid="2023033894889499219">"Vezes"</string>
