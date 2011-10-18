@@ -14,10 +14,10 @@
      limitations under the License.
 -->
 
-<com.android.gallery3d.photoeditor.ActionBar
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/action_bar"
-    style="@style/TopActionBar">
+    style="@style/ActionBarInner"
+    android:background="@drawable/photoeditor_actionbar_translucent">
 
     <LinearLayout style="@style/ActionBarLinearLayout">
 
@@ -62,4 +62,4 @@
         </ViewSwitcher>
 
     </LinearLayout>
-</com.android.gallery3d.photoeditor.ActionBar>
+</RelativeLayout>
