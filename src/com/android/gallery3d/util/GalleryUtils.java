@@ -53,6 +53,8 @@ public class GalleryUtils {
     private static final String MIME_TYPE_IMAGE = "image/*";
     private static final String MIME_TYPE_VIDEO = "video/*";
     private static final String MIME_TYPE_ALL = "*/*";
+    private static final String DIR_TYPE_IMAGE = "vnd.android.cursor.dir/image";
+    private static final String DIR_TYPE_VIDEO = "vnd.android.cursor.dir/video";
 
     private static final String PREFIX_PHOTO_EDITOR_UPDATE = "editor-update-";
     private static final String PREFIX_HAS_PHOTO_EDITOR = "has-editor-";
@@ -277,24 +279,22 @@ public class GalleryUtils {
     public static int determineTypeBits(Context context, Intent intent) {
         int typeBits = 0;
         String type = intent.resolveType(context);
-        if (intent.getBooleanExtra(Intent.EXTRA_LOCAL_ONLY, false)) {
-            if (MIME_TYPE_ALL.equals(type)) {
-                typeBits = DataManager.INCLUDE_LOCAL_ALL_ONLY;
-            } else if (MIME_TYPE_IMAGE.equals(type)) {
-                typeBits = DataManager.INCLUDE_LOCAL_IMAGE_ONLY;
-            } else if (MIME_TYPE_VIDEO.equals(type)) {
-                typeBits = DataManager.INCLUDE_LOCAL_VIDEO_ONLY;
-            }
+
+        if (MIME_TYPE_ALL.equals(type)) {
+            typeBits = DataManager.INCLUDE_ALL;
+        } else if (MIME_TYPE_IMAGE.equals(type) ||
+                DIR_TYPE_IMAGE.equals(type)) {
+            typeBits = DataManager.INCLUDE_IMAGE;
+        } else if (MIME_TYPE_VIDEO.equals(type) ||
+                DIR_TYPE_VIDEO.equals(type)) {
+            typeBits = DataManager.INCLUDE_VIDEO;
         } else {
-            if (MIME_TYPE_ALL.equals(type)) {
-                typeBits = DataManager.INCLUDE_ALL;
-            } else if (MIME_TYPE_IMAGE.equals(type)) {
-                typeBits = DataManager.INCLUDE_IMAGE;
-            } else if (MIME_TYPE_VIDEO.equals(type)) {
-                typeBits = DataManager.INCLUDE_VIDEO;
-            }
+            typeBits = DataManager.INCLUDE_ALL;
         }
-        if (typeBits == 0) typeBits = DataManager.INCLUDE_ALL;
+
+        if (intent.getBooleanExtra(Intent.EXTRA_LOCAL_ONLY, false)) {
+            typeBits |= DataManager.INCLUDE_LOCAL_ONLY;
+        }
 
         return typeBits;
     }
