@@ -70,6 +70,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * The activity can crop specific region of interest from an image.
@@ -90,6 +92,11 @@ public class CropImage extends AbstractGalleryActivity {
 
     private static final int MAX_BACKUP_IMAGE_SIZE = 320;
     private static final int DEFAULT_COMPRESS_QUALITY = 90;
+    private static final String TIME_STAMP_NAME = "'IMG'_yyyyMMdd_HHmmss";
+
+    // Change these to Images.Media.WIDTH/HEIGHT after they are unhidden.
+    private static final String WIDTH = "width";
+    private static final String HEIGHT = "height";
 
     public static final String KEY_RETURN_DATA = "return-data";
     public static final String KEY_CROPPED_RECT = "cropped-rect";
@@ -350,8 +357,7 @@ public class CropImage extends AbstractGalleryActivity {
         } else if (mMediaItem instanceof LocalImage) {
             return saveLocalImage(jc, cropped);
         } else {
-            Log.w(TAG, "no output for crop image " + mMediaItem);
-            return null;
+            return saveGenericImage(jc, cropped);
         }
     }
 
@@ -375,10 +381,12 @@ public class CropImage extends AbstractGalleryActivity {
         values.put(Images.Media.DATE_TAKEN, PicasaSource.getDateTaken(mMediaItem));
         values.put(Images.Media.DATE_MODIFIED, now);
         values.put(Images.Media.DATE_ADDED, now);
-        values.put(Images.Media.MIME_TYPE, "image/jpeg");
+        values.put(Images.Media.MIME_TYPE, getOutputMimeType());
         values.put(Images.Media.ORIENTATION, 0);
         values.put(Images.Media.DATA, output.getAbsolutePath());
         values.put(Images.Media.SIZE, output.length());
+        values.put(WIDTH, cropped.getWidth());
+        values.put(HEIGHT, cropped.getHeight());
 
         double latitude = PicasaSource.getLatitude(mMediaItem);
         double longitude = PicasaSource.getLongitude(mMediaItem);
@@ -412,15 +420,46 @@ public class CropImage extends AbstractGalleryActivity {
         values.put(Images.Media.DATE_TAKEN, localImage.dateTakenInMs);
         values.put(Images.Media.DATE_MODIFIED, now);
         values.put(Images.Media.DATE_ADDED, now);
-        values.put(Images.Media.MIME_TYPE, "image/jpeg");
+        values.put(Images.Media.MIME_TYPE, getOutputMimeType());
         values.put(Images.Media.ORIENTATION, 0);
         values.put(Images.Media.DATA, output.getAbsolutePath());
         values.put(Images.Media.SIZE, output.length());
+        values.put(WIDTH, cropped.getWidth());
+        values.put(HEIGHT, cropped.getHeight());
 
         if (GalleryUtils.isValidLocation(localImage.latitude, localImage.longitude)) {
             values.put(Images.Media.LATITUDE, localImage.latitude);
             values.put(Images.Media.LONGITUDE, localImage.longitude);
         }
+        return getContentResolver().insert(
+                Images.Media.EXTERNAL_CONTENT_URI, values);
+    }
+
+    private Uri saveGenericImage(JobContext jc, Bitmap cropped) {
+        if (!DOWNLOAD_BUCKET.isDirectory() && !DOWNLOAD_BUCKET.mkdirs()) {
+            throw new RuntimeException("cannot create download folder");
+        }
+
+        long now = System.currentTimeMillis();
+        String filename = new SimpleDateFormat(TIME_STAMP_NAME).
+                format(new Date(now));
+
+        File output = saveMedia(jc, cropped, DOWNLOAD_BUCKET, filename);
+        if (output == null) return null;
+
+        ContentValues values = new ContentValues();
+        values.put(Images.Media.TITLE, filename);
+        values.put(Images.Media.DISPLAY_NAME, output.getName());
+        values.put(Images.Media.DATE_TAKEN, now);
+        values.put(Images.Media.DATE_MODIFIED, now / 1000);
+        values.put(Images.Media.DATE_ADDED, now / 1000);
+        values.put(Images.Media.MIME_TYPE, getOutputMimeType());
+        values.put(Images.Media.ORIENTATION, 0);
+        values.put(Images.Media.DATA, output.getAbsolutePath());
+        values.put(Images.Media.SIZE, output.length());
+        values.put(WIDTH, cropped.getWidth());
+        values.put(HEIGHT, cropped.getHeight());
+
         return getContentResolver().insert(
                 Images.Media.EXTERNAL_CONTENT_URI, values);
     }
@@ -458,6 +497,10 @@ public class CropImage extends AbstractGalleryActivity {
         return extension.equals("png")
                 ? CompressFormat.PNG
                 : CompressFormat.JPEG;
+    }
+
+    private String getOutputMimeType() {
+        return getFileExtension().equals("png") ? "image/png" : "image/jpeg";
     }
 
     private String getFileExtension() {
