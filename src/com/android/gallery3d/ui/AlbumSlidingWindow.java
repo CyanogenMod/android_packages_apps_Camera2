@@ -16,6 +16,9 @@
 
 package com.android.gallery3d.ui;
 
+import android.graphics.Bitmap;
+import android.os.Message;
+
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.LruCache;
@@ -28,10 +31,6 @@ import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.JobLimiter;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
-
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.os.Message;
 
 public class AlbumSlidingWindow implements AlbumView.ModelListener {
     @SuppressWarnings("unused")
@@ -177,9 +176,6 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
 
         mActiveStart = start;
         mActiveEnd = end;
-
-        // If no data is visible, keep the cache content
-        if (start == end) return;
 
         int contentStart = Utils.clamp((start + end) / 2 - data.length / 2,
                 0, Math.max(0, mSize - data.length));
