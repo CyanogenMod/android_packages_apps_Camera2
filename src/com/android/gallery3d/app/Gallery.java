@@ -152,7 +152,14 @@ public final class Gallery extends AbstractGalleryActivity {
                 finish();
                 return;
             }
-            if (contentType.startsWith(
+            if (uri == null) {
+                int typeBits = GalleryUtils.determineTypeBits(this, intent);
+                data.putInt(KEY_TYPE_BITS, typeBits);
+                data.putString(AlbumSetPage.KEY_MEDIA_PATH,
+                        getDataManager().getTopSetPath(typeBits));
+                getStateManager().setLaunchGalleryOnTop(true);
+                getStateManager().startState(AlbumSetPage.class, data);
+            } else if (contentType.startsWith(
                     ContentResolver.CURSOR_DIR_BASE_TYPE)) {
                 int mediaType = intent.getIntExtra(KEY_MEDIA_TYPES, 0);
                 if (mediaType != 0) {
@@ -160,11 +167,19 @@ public final class Gallery extends AbstractGalleryActivity {
                             KEY_MEDIA_TYPES, String.valueOf(mediaType))
                             .build();
                 }
-                Path albumPath = dm.findPathByUri(uri);
-                if (albumPath != null) {
-                    MediaSet mediaSet = (MediaSet) dm.getMediaObject(albumPath);
-                    data.putString(AlbumPage.KEY_MEDIA_PATH, albumPath.toString());
-                    getStateManager().startState(AlbumPage.class, data);
+                Path setPath = dm.findPathByUri(uri);
+                MediaSet mediaSet = null;
+                if (setPath != null) {
+                    mediaSet = (MediaSet) dm.getMediaObject(setPath);
+                }
+                if (mediaSet != null) {
+                    if (mediaSet.isLeafAlbum()) {
+                        data.putString(AlbumPage.KEY_MEDIA_PATH, setPath.toString());
+                        getStateManager().startState(AlbumPage.class, data);
+                    } else {
+                        data.putString(AlbumSetPage.KEY_MEDIA_PATH, setPath.toString());
+                        getStateManager().startState(AlbumSetPage.class, data);
+                    }
                 } else {
                     startDefaultPage();
                 }
