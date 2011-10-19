@@ -186,7 +186,9 @@ public final class Gallery extends AbstractGalleryActivity {
             } else {
                 Path itemPath = dm.findPathByUri(uri);
                 Path albumPath = dm.getDefaultSetOf(itemPath);
-                if (albumPath != null) {
+                // TODO: Make this parameter public so other activities can reference it.
+                boolean singleItemOnly = intent.getBooleanExtra("SingleItemOnly", false);
+                if (!singleItemOnly && albumPath != null) {
                     data.putString(PhotoPage.KEY_MEDIA_SET_PATH,
                             albumPath.toString());
                 }
