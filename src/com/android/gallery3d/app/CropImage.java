@@ -22,14 +22,14 @@ import android.app.WallpaperManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.Bitmap.Config;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -593,11 +593,12 @@ public class CropImage extends AbstractGalleryActivity {
             return result;
         }
 
-        int rotation = mMediaItem.getFullImageRotation();
-        rotateRectangle(rect, mCropView.getImageWidth(),
-                mCropView.getImageHeight(), 360 - rotation);
-        rotateRectangle(dest, outputX, outputY, 360 - rotation);
         if (mUseRegionDecoder) {
+            int rotation = mMediaItem.getFullImageRotation();
+            rotateRectangle(rect, mCropView.getImageWidth(),
+                    mCropView.getImageHeight(), 360 - rotation);
+            rotateRectangle(dest, outputX, outputY, 360 - rotation);
+
             BitmapFactory.Options options = new BitmapFactory.Options();
             int sample = BitmapUtils.computeSampleSizeLarger(
                     Math.max(scaleX, scaleY));
@@ -617,6 +618,10 @@ public class CropImage extends AbstractGalleryActivity {
             drawInTiles(canvas, mRegionDecoder, rect, dest, sample);
             return result;
         } else {
+            int rotation = mMediaItem.getRotation();
+            rotateRectangle(rect, mCropView.getImageWidth(),
+                    mCropView.getImageHeight(), 360 - rotation);
+            rotateRectangle(dest, outputX, outputY, 360 - rotation);
             Bitmap result = Bitmap.createBitmap(outputX, outputY, Config.ARGB_8888);
             Canvas canvas = new Canvas(result);
             rotateCanvas(canvas, outputX, outputY, rotation);
@@ -719,7 +724,7 @@ public class CropImage extends AbstractGalleryActivity {
         mBitmap = regionDecoder.decodeRegion(
                 new Rect(0, 0, width, height), options);
         mCropView.setDataModel(new TileImageViewAdapter(
-                mBitmap, regionDecoder), mMediaItem.getRotation());
+                mBitmap, regionDecoder), mMediaItem.getFullImageRotation());
         if (mDoFaceDetection) {
             mCropView.detectFaces(mBitmap);
         } else {
