@@ -121,13 +121,13 @@ public class RendererUtils {
         checkGlError("glDeleteTextures");
     }
 
-    public static void setRenderToFit(RenderContext context, int srcWidth, int srcHeight,
-            int dstWidth, int dstHeight) {
+    private static float[] getFitVertices(int srcWidth, int srcHeight, int dstWidth,
+            int dstHeight) {
         float srcAspectRatio = ((float) srcWidth) / srcHeight;
         float dstAspectRatio = ((float) dstWidth) / dstHeight;
         float relativeAspectRatio = dstAspectRatio / srcAspectRatio;
 
-        float vertices[] = new float[8];
+        float[] vertices = new float[8];
         System.arraycopy(POS_VERTICES, 0, vertices, 0, vertices.length);
         if (relativeAspectRatio > 1.0f) {
             // Screen is wider than the camera, scale down X
@@ -141,13 +141,20 @@ public class RendererUtils {
             vertices[5] *= relativeAspectRatio;
             vertices[7] *= relativeAspectRatio;
         }
-        context.posVertices = createVerticesBuffer(vertices);
+        return vertices;
+    }
+
+    public static void setRenderToFit(RenderContext context, int srcWidth, int srcHeight,
+            int dstWidth, int dstHeight) {
+        context.posVertices = createVerticesBuffer(
+                getFitVertices(srcWidth, srcHeight, dstWidth, dstHeight));
     }
 
     public static void setRenderToRotate(RenderContext context, int srcWidth, int srcHeight,
             int dstWidth, int dstHeight, float degrees) {
-        float cosTheta = (float) Math.cos(-degrees * DEGREE_TO_RADIAN);
-        float sinTheta = (float) Math.sin(-degrees * DEGREE_TO_RADIAN);
+        float radian = -degrees * DEGREE_TO_RADIAN;
+        float cosTheta = (float) Math.cos(radian);
+        float sinTheta = (float) Math.sin(radian);
         float cosWidth = cosTheta * srcWidth;
         float sinWidth = sinTheta * srcWidth;
         float cosHeight = cosTheta * srcHeight;
@@ -170,6 +177,66 @@ public class RendererUtils {
         for (int i = 0; i < 8; i += 2) {
             vertices[i] *= scale / dstWidth;
             vertices[i + 1] *= scale / dstHeight;
+        }
+        context.posVertices = createVerticesBuffer(vertices);
+    }
+
+    public static void setRenderToFlip(RenderContext context, int srcWidth, int srcHeight,
+            int dstWidth, int dstHeight, float horizontalDegrees, float verticalDegrees) {
+        // Calculate the base flip coordinates.
+        float[] base = getFitVertices(srcWidth, srcHeight, dstWidth, dstHeight);
+        int horizontalRounds = (int) horizontalDegrees / 180;
+        if (horizontalRounds % 2 != 0) {
+            base[0] = -base[0];
+            base[4] = base[0];
+            base[2] = -base[2];
+            base[6] = base[2];
+        }
+        int verticalRounds = (int) verticalDegrees / 180;
+        if (verticalRounds % 2 != 0) {
+            base[1] = -base[1];
+            base[3] = base[1];
+            base[5] = -base[5];
+            base[7] = base[5];
+        }
+
+        float length = 5;
+        float[] vertices = new float[8];
+        System.arraycopy(base, 0, vertices, 0, vertices.length);
+        if (horizontalDegrees % 180f != 0) {
+            float radian = (horizontalDegrees - horizontalRounds * 180) * DEGREE_TO_RADIAN;
+            float cosTheta = (float) Math.cos(radian);
+            float sinTheta = (float) Math.sin(radian);
+
+            float scale = length / (length + sinTheta * base[0]);
+            vertices[0] = cosTheta * base[0] * scale;
+            vertices[1] = base[1] * scale;
+            vertices[4] = vertices[0];
+            vertices[5] = base[5] * scale;
+
+            scale = length / (length + sinTheta * base[2]);
+            vertices[2] = cosTheta * base[2] * scale;
+            vertices[3] = base[3] * scale;
+            vertices[6] = vertices[2];
+            vertices[7] = base[7] * scale;
+        }
+
+        if (verticalDegrees % 180f != 0) {
+            float radian = (verticalDegrees - verticalRounds * 180) * DEGREE_TO_RADIAN;
+            float cosTheta = (float) Math.cos(radian);
+            float sinTheta = (float) Math.sin(radian);
+
+            float scale = length / (length + sinTheta * base[1]);
+            vertices[0] = base[0] * scale;
+            vertices[1] = cosTheta * base[1] * scale;
+            vertices[2] = base[2] * scale;
+            vertices[3] = vertices[1];
+
+            scale = length / (length + sinTheta * base[5]);
+            vertices[4] = base[4] * scale;
+            vertices[5] = cosTheta * base[5] * scale;
+            vertices[6] = base[6] * scale;
+            vertices[7] = vertices[5];
         }
         context.posVertices = createVerticesBuffer(vertices);
     }

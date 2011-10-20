@@ -45,9 +45,9 @@ public class RotateAction extends EffectAction {
         filter = new RotateFilter();
 
         rotateView = factory.createRotateView();
-        rotateView.setOnAngleChangeListener(new RotateView.OnRotateChangeListener() {
+        rotateView.setOnRotateChangeListener(new RotateView.OnRotateChangeListener() {
 
-            // Directly transform photo-view because running the rotation filter isn't fast enough.
+            // Directly transform photo-view because running the rotate filter isn't fast enough.
             PhotoView photoView = (PhotoView) rotateView.getRootView().findViewById(
                     R.id.photo_view);
 
@@ -55,8 +55,7 @@ public class RotateAction extends EffectAction {
             public void onAngleChanged(float degrees, boolean fromUser){
                 if (fromUser) {
                     rotateDegrees = degrees;
-                    filter.setAngle(degrees);
-                    notifyFilterChanged(filter, false);
+                    updateRotateFilter(false);
                     transformPhotoView(degrees);
                 }
             }
@@ -68,11 +67,10 @@ public class RotateAction extends EffectAction {
 
             @Override
             public void onStopTrackingTouch() {
-                if (roundFilterRotationDegrees()) {
-                    notifyFilterChanged(filter, false);
-                    transformPhotoView(rotateDegrees);
-                    rotateView.setRotatedAngle(rotateDegrees);
-                }
+                roundRotateDegrees();
+                updateRotateFilter(false);
+                transformPhotoView(rotateDegrees);
+                rotateView.setRotatedAngle(rotateDegrees);
             }
 
             private void transformPhotoView(final float degrees) {
@@ -98,23 +96,23 @@ public class RotateAction extends EffectAction {
 
     @Override
     public void doEnd() {
-        rotateView.setOnAngleChangeListener(null);
+        rotateView.setOnRotateChangeListener(null);
         // Round the current rotation degrees in case rotation tracking has not stopped yet.
-        roundFilterRotationDegrees();
-        notifyFilterChanged(filter, true);
+        roundRotateDegrees();
+        updateRotateFilter(true);
     }
 
     /**
-     * Rounds filter rotation degrees to multiples of 90 degrees.
-     *
-     * @return true if the rotation degrees has been changed.
+     * Rounds rotate degrees to multiples of 90 degrees.
      */
-    private boolean roundFilterRotationDegrees() {
+    private void roundRotateDegrees() {
         if (rotateDegrees % 90 != 0) {
             rotateDegrees = Math.round(rotateDegrees / 90) * 90;
-            filter.setAngle(rotateDegrees);
-            return true;
         }
-        return false;
+    }
+
+    private void updateRotateFilter(boolean outputFilter) {
+        filter.setAngle(rotateDegrees);
+        notifyFilterChanged(filter, outputFilter);
     }
 }
