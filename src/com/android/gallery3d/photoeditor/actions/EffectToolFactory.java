@@ -90,6 +90,10 @@ public class EffectToolFactory {
         return (TouchView) createFullscreenTool(R.layout.photoeditor_touch_view);
     }
 
+    public FlipView createFlipView() {
+        return (FlipView) createFullscreenTool(R.layout.photoeditor_flip_view);
+    }
+
     public RotateView createRotateView() {
         return (RotateView) createFullscreenTool(R.layout.photoeditor_rotate_view);
     }
