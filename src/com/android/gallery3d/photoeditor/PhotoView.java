@@ -88,6 +88,13 @@ public class PhotoView extends GLSurfaceView {
     }
 
     /**
+     * Flips displayed photo; this method must be queued for GL thread.
+     */
+    public void flipPhoto(float horizontalDegrees, float verticalDegrees) {
+        renderer.flipPhoto(horizontalDegrees, verticalDegrees);
+    }
+
+    /**
      * Renderer that renders the GL surface-view and only be called from the GL thread.
      */
     private class PhotoRenderer implements GLSurfaceView.Renderer {
@@ -99,6 +106,8 @@ public class PhotoView extends GLSurfaceView {
         int viewWidth;
         int viewHeight;
         float rotatedDegrees;
+        float flippedHorizontalDegrees;
+        float flippedVerticalDegrees;
 
         void setPhoto(Photo photo, boolean clearTransform) {
             int width = (photo != null) ? photo.width() : 0;
@@ -115,18 +124,23 @@ public class PhotoView extends GLSurfaceView {
         }
 
         void updateSurface(boolean clearTransform, boolean sizeChanged) {
-            boolean transformed = (rotatedDegrees != 0);
+            boolean flipped = (flippedHorizontalDegrees != 0) || (flippedVerticalDegrees != 0);
+            boolean transformed = (rotatedDegrees != 0) || flipped;
             if ((clearTransform && transformed) || (sizeChanged && !transformed)) {
                 // Fit photo when clearing existing transforms or changing surface/photo sizes.
                 if (photo != null) {
                     RendererUtils.setRenderToFit(renderContext, photo.width(), photo.height(),
                             viewWidth, viewHeight);
                     rotatedDegrees = 0;
+                    flippedHorizontalDegrees = 0;
+                    flippedVerticalDegrees = 0;
                 }
             } else {
                 // Restore existing transformations for orientation changes or awaking from sleep.
                 if (rotatedDegrees != 0) {
                     rotatePhoto(rotatedDegrees);
+                } else if (flipped) {
+                    flipPhoto(flippedHorizontalDegrees, flippedVerticalDegrees);
                 }
             }
         }
@@ -136,6 +150,15 @@ public class PhotoView extends GLSurfaceView {
                 RendererUtils.setRenderToRotate(renderContext, photo.width(), photo.height(),
                         viewWidth, viewHeight, degrees);
                 rotatedDegrees = degrees;
+            }
+        }
+
+        void flipPhoto(float horizontalDegrees, float verticalDegrees) {
+            if (photo != null) {
+                RendererUtils.setRenderToFlip(renderContext, photo.width(), photo.height(),
+                        viewWidth, viewHeight, horizontalDegrees, verticalDegrees);
+                flippedHorizontalDegrees = horizontalDegrees;
+                flippedVerticalDegrees = verticalDegrees;
             }
         }
 
