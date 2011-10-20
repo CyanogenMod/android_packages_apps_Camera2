@@ -92,7 +92,7 @@ class RotateView extends FullscreenToolView {
         minRotatedAngle = -maxRotatedAngle;
     }
 
-    public void setOnAngleChangeListener(OnRotateChangeListener listener) {
+    public void setOnRotateChangeListener(OnRotateChangeListener listener) {
         this.listener = listener;
     }
 
