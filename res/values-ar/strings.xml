@@ -77,7 +77,7 @@
     <string name="edit" msgid="1502273844748580847">"تعديل"</string>
     <string name="activity_not_found" msgid="5619154886080878023">"ليس هناك تطبيق متاح لإكمال الإجراء."</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"معالجة طلبات التخزين المؤقت"</string>
-    <string name="caching_label" msgid="4521059045896269095">"التخزين المؤقت..."</string>
+    <string name="caching_label" msgid="4521059045896269095">"تخزين مؤقت..."</string>
     <string name="crop_action" msgid="3427470284074377001">"اقتصاص"</string>
     <string name="set_as" msgid="3636764710790507868">"تعيين كـ"</string>
     <string name="video_err" msgid="7003051631792271009">"لا يمكن تشغيل الفيديو."</string>

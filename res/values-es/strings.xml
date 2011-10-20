@@ -35,7 +35,7 @@
     <string name="multiface_crop_help" msgid="2554690102655855657">"Toca una cara para comenzar."</string>
     <string name="saving_image" msgid="7270334453636349407">"Guardando imagen..."</string>
     <string name="save_error" msgid="6857408774183654970">"Error al guardar la imagen recortada"</string>
-    <string name="crop_label" msgid="521114301871349328">"Recortar imagen"</string>
+    <string name="crop_label" msgid="521114301871349328">"Recortar"</string>
     <string name="select_image" msgid="7841406150484742140">"Seleccionar foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Seleccionar vídeo"</string>
     <string name="select_item" msgid="2257529413100472599">"Seleccionar elementos"</string>
@@ -52,7 +52,7 @@
     <string name="deselect_all" msgid="5758897506061723684">"Desmarcar todo"</string>
     <string name="slideshow" msgid="4355906903247112975">"Presentación"</string>
     <string name="details" msgid="8415120088556445230">"Detalles"</string>
-    <string name="details_title" msgid="2611396603977441273">"%1$d de %2$d elementos:"</string>
+    <string name="details_title" msgid="2611396603977441273">"Elemento: %1$d de %2$d"</string>
     <string name="close" msgid="5585646033158453043">"Cerrar"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"Cambiar a la cámara"</string>
   <plurals name="number_of_items_selected">
@@ -105,7 +105,7 @@
     <string name="make_available_offline" msgid="5157950985488297112">"Disponible sin conexión"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Actualizar"</string>
     <string name="done" msgid="217672440064436595">"Listo"</string>
-    <string name="sequence_in_set" msgid="7235465319919457488">"%1$d de %2$d elementos:"</string>
+    <string name="sequence_in_set" msgid="7235465319919457488">"Elemento: %1$d de %2$d"</string>
     <string name="title" msgid="7622928349908052569">"Título"</string>
     <string name="description" msgid="3016729318096557520">"Descripción"</string>
     <string name="time" msgid="1367953006052876956">"Hora"</string>
@@ -121,7 +121,7 @@
     <string name="model" msgid="8240207064064337366">"Modelo"</string>
     <string name="flash" msgid="2816779031261147723">"Flash"</string>
     <string name="aperture" msgid="5920657630303915195">"Apertura"</string>
-    <string name="focal_length" msgid="1291383769749877010">"Long enfoque"</string>
+    <string name="focal_length" msgid="1291383769749877010">"Longitud focal"</string>
     <string name="white_balance" msgid="1582509289994216078">"Balance de blancos"</string>
     <string name="exposure_time" msgid="3990163680281058826">"Tiempo exposición"</string>
     <string name="iso" msgid="5028296664327335940">"ISO"</string>
