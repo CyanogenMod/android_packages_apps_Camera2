@@ -117,7 +117,7 @@
     <string name="duration" msgid="8160058911218541616">"Длительность"</string>
     <string name="mimetype" msgid="8024168704337990470">"Тип MIME"</string>
     <string name="file_size" msgid="8486169301588318915">"Размер файла"</string>
-    <string name="maker" msgid="7921835498034236197">"Автор:"</string>
+    <string name="maker" msgid="7921835498034236197">"Автор"</string>
     <string name="model" msgid="8240207064064337366">"Модель"</string>
     <string name="flash" msgid="2816779031261147723">"Вспышка"</string>
     <string name="aperture" msgid="5920657630303915195">"Диафрагма"</string>
