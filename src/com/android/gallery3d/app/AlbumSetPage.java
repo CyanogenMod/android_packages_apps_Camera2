@@ -596,12 +596,11 @@ public class AlbumSetPage extends ActivityState implements
                 // The mediaSet is in sync. Turn off the loading indicator.
                 GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
 
-                // Only show toast when there's no album and we are going to finish
-                // the page. Toast is redundant if we are going to stay on this page.
+                Toast.makeText((Context) mActivity,
+                            R.string.empty_album, Toast.LENGTH_LONG).show();
                 if ((mAlbumSetDataAdapter.size() == 0)
                         && (mActivity.getStateManager().getStateCount() > 1)) {
-                    Toast.makeText((Context) mActivity,
-                            R.string.empty_album, Toast.LENGTH_LONG).show();
+
                     mActivity.getStateManager().finishState(AlbumSetPage.this);
                 }
             }
