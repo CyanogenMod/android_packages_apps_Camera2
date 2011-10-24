@@ -34,6 +34,9 @@ public class MediaSetUtils {
     public static final int IMPORTED_BUCKET_ID = GalleryUtils.getBucketId(
             Environment.getExternalStorageDirectory().toString() + "/"
             + MtpContext.NAME_IMPORTED_FOLDER);
+    public static final int SNAPSHOT_BUCKET_ID = GalleryUtils.getBucketId(
+            Environment.getExternalStorageDirectory().toString() +
+            "/Pictures/Screenshots");
 
     private static final Path[] CAMERA_PATHS = {
             Path.fromString("/local/all/" + CAMERA_BUCKET_ID),
