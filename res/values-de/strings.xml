@@ -38,7 +38,7 @@
     <string name="crop_label" msgid="521114301871349328">"Bild zuschneiden"</string>
     <string name="select_image" msgid="7841406150484742140">"Foto auswählen"</string>
     <string name="select_video" msgid="4859510992798615076">"Video auswählen"</string>
-    <string name="select_item" msgid="2257529413100472599">"Element(e) auswählen"</string>
+    <string name="select_item" msgid="2257529413100472599">"Auswählen"</string>
     <string name="select_album" msgid="4632641262236697235">"Album/-en auswählen"</string>
     <string name="select_group" msgid="9090385962030340391">"Gruppe(n) auswählen"</string>
     <string name="set_image" msgid="2331476809308010401">"Bild festlegen als"</string>
