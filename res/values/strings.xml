@@ -415,4 +415,18 @@
 
     <!-- The title of menu item where user can add a new account -->
     <string name="add_account">Add account</string>
+
+    <!-- The label for the folder contains pictures taken by the camera. [CHAR LIMIT=20]-->
+    <string name="folder_camera">Camera</string>
+
+    <!-- The label for the folder contains downloaded pictures. [CHAR LIMIT=20]-->
+    <string name="folder_download">Download</string>
+
+    <!-- The label for the folder contains pictures that was imported from an
+         external camera. [CHAR LIMIT=20]-->
+    <string name="folder_imported">Imported</string>
+
+    <!-- The label for the folder contains screenshot images. [CHAR LIMIT=20]-->
+    <string name="folder_screenshot">Screenshot</string>
+
 </resources>
