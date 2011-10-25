@@ -33,12 +33,12 @@
     <string name="duotone" msgid="8145893940788467106">"Bitonale"</string>
     <string name="facelift" msgid="6205748523156172637">"Luminosità viso"</string>
     <string name="facetan" msgid="4412831806626044111">"Colorito viso"</string>
-    <string name="filllight" msgid="2644989991700022526">"Luce di riempimento"</string>
+    <string name="filllight" msgid="2644989991700022526">"Luce riempimento"</string>
     <string name="fisheye" msgid="6037488646928998921">"Fisheye"</string>
     <string name="flip" msgid="2357692401826287480">"Capovolgi"</string>
     <string name="grain" msgid="7487585304579789098">"Grana pellicola"</string>
     <string name="grayscale" msgid="7641563843060945228">"Bianco e nero"</string>
-    <string name="highlight" msgid="3902653944386623972">"Luci"</string>
+    <string name="highlight" msgid="3902653944386623972">"Alte luci"</string>
     <string name="lomoish" msgid="1270032154357186736">"Effetto Lomo"</string>
     <string name="negative" msgid="1985508917342811252">"Negativo"</string>
     <string name="posterize" msgid="4139212359561383385">"Posterizza"</string>
