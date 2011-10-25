@@ -34,7 +34,7 @@
     <string name="crop_save_text" msgid="152200178986698300">"確定"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"輕觸臉孔即可開始。"</string>
     <string name="saving_image" msgid="7270334453636349407">"正在儲存相片..."</string>
-    <string name="save_error" msgid="6857408774183654970">"無法儲存裁剪圖片。"</string>
+    <string name="save_error" msgid="6857408774183654970">"無法儲存裁剪的圖片。"</string>
     <string name="crop_label" msgid="521114301871349328">"裁剪相片"</string>
     <string name="select_image" msgid="7841406150484742140">"選取相片"</string>
     <string name="select_video" msgid="4859510992798615076">"選取影片"</string>
@@ -75,7 +75,7 @@
     <string name="rotate_right" msgid="6776325835923384839">"向右旋轉"</string>
     <string name="no_such_item" msgid="5315144556325243400">"找不到項目。"</string>
     <string name="edit" msgid="1502273844748580847">"編輯"</string>
-    <string name="activity_not_found" msgid="5619154886080878023">"沒有可以完成這個動作的應用程式。"</string>
+    <string name="activity_not_found" msgid="5619154886080878023">"沒有可完成這個動作的應用程式。"</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"正在處理快取要求"</string>
     <string name="caching_label" msgid="4521059045896269095">"快取中…"</string>
     <string name="crop_action" msgid="3427470284074377001">"裁剪"</string>
@@ -89,7 +89,7 @@
     <string name="group_by_size" msgid="153766174950394155">"依大小分類"</string>
     <string name="untagged" msgid="7281481064509590402">"無標記"</string>
     <string name="no_location" msgid="4043624857489331676">"無位置資訊"</string>
-    <string name="no_connectivity" msgid="7164037617297293668">"網路發生問題，因此部分位置無法辨識。"</string>
+    <string name="no_connectivity" msgid="7164037617297293668">"網路發生問題，因此無法辨識部分位置。"</string>
     <string name="sync_album_error" msgid="2218733298953719785">"無法下載這本相簿中的相片，請稍後再試。"</string>
     <string name="sync_album_set_error" msgid="9016732535181154028">"無法下載相簿清單，請稍後再試。"</string>
     <string name="show_images_only" msgid="7263218480867672653">"僅顯示圖片"</string>
@@ -97,8 +97,8 @@
     <string name="show_all" msgid="4780647751652596980">"圖片和影片"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"相片庫"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"沒有任何相片。"</string>
-    <string name="crop_saved" msgid="1062612625032731770">"裁剪圖片已儲存至下載資料夾。"</string>
-    <string name="crop_not_saved" msgid="3400773981839556">"未儲存裁剪圖片。"</string>
+    <string name="crop_saved" msgid="1062612625032731770">"裁剪的圖片已儲存至「下載」資料夾。"</string>
+    <string name="crop_not_saved" msgid="3400773981839556">"未儲存裁剪的圖片。"</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"沒有相簿。"</string>
     <string name="empty_album" msgid="4542880442593595494">"O 個可用的圖片/影片。"</string>
     <string name="picasa_posts" msgid="1497721615718760613">"訊息中的相片"</string>

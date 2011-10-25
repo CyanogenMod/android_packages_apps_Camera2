@@ -145,7 +145,7 @@
     <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g>–<xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
     <string name="Import" msgid="3985447518557474672">"Importuoti"</string>
     <string name="import_complete" msgid="3875040287486199999">"Importavimas baigtas"</string>
-    <string name="import_fail" msgid="8497942380703298808">"Sėkmingai importuota"</string>
+    <string name="import_fail" msgid="8497942380703298808">"Importuoti nepavyko"</string>
     <string name="camera_connected" msgid="916021826223448591">"Fotoaparatas prijungtas."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Fotoaparatas atjungtas."</string>
     <string name="click_import" msgid="6407959065464291972">"Jei norite importuoti, palieskite čia"</string>
