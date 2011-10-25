@@ -131,7 +131,7 @@
     <string name="flash_on" msgid="7891556231891837284">"Bliţ activat"</string>
     <string name="flash_off" msgid="1445443413822680010">"Fără bliţ"</string>
   <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="2171596356101611086">"Se face disponibil offline albumul"</item>
+    <item quantity="one" msgid="2171596356101611086">"Se face disponibil offline albumul."</item>
     <item quantity="other" msgid="4948604338155959389">"Se fac disponibile offline albumele"</item>
   </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Acest element este stocat local şi disponibil offline."</string>
