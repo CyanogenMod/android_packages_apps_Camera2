@@ -23,7 +23,7 @@
     <string name="movie_view_label" msgid="3526526872644898229">"โปรแกรมเล่นวิดีโอ"</string>
     <string name="loading_video" msgid="4013492720121891585">"กำลังโหลดวิดีโอ..."</string>
     <string name="loading_image" msgid="1200894415793838191">"กำลังโหลดภาพ..."</string>
-    <string name="loading_account" msgid="928195413034552034">"กำลังดาวน์โหลดบัญชี???"</string>
+    <string name="loading_account" msgid="928195413034552034">"กำลังดาวน์โหลดบัญชี…"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"เล่นวิดีโอต่อ"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"ต้องการเล่นต่อจาก %s หรือไม่"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"เล่นต่อ"</string>
