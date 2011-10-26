@@ -23,7 +23,7 @@
     <string name="movie_view_label" msgid="3526526872644898229">"Trình phát video"</string>
     <string name="loading_video" msgid="4013492720121891585">"Đang tải video..."</string>
     <string name="loading_image" msgid="1200894415793838191">"Đang tải ảnh…"</string>
-    <string name="loading_account" msgid="928195413034552034">"Đang tải tài khoản…"</string>
+    <string name="loading_account" msgid="928195413034552034">"Đang tải tài khoản???"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"Tiếp tục video"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"Tiếp tục phát từ %s ?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Tiếp tục phát"</string>

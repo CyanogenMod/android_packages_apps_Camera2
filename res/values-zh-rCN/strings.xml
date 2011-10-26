@@ -23,7 +23,7 @@
     <string name="movie_view_label" msgid="3526526872644898229">"视频播放器"</string>
     <string name="loading_video" msgid="4013492720121891585">"正在载入视频..."</string>
     <string name="loading_image" msgid="1200894415793838191">"正在载入图片..."</string>
-    <string name="loading_account" msgid="928195413034552034">"正在加载帐户…"</string>
+    <string name="loading_account" msgid="928195413034552034">"正在加载帐户???"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"继续播放视频"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"从 %s 开始继续播放？"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"继续播放"</string>
@@ -61,9 +61,9 @@
     <item quantity="other" msgid="754722656147810487">"选中了 %1$d 项"</item>
   </plurals>
   <plurals name="number_of_albums_selected">
-    <item quantity="zero" msgid="749292746814788132">"选中了 %1$d 本相册"</item>
-    <item quantity="one" msgid="6184377003099987825">"选中了 %1$d 本相册"</item>
-    <item quantity="other" msgid="53105607141906130">"选中了 %1$d 本相册"</item>
+    <item quantity="zero" msgid="749292746814788132">"选中了 %1$d 个相册"</item>
+    <item quantity="one" msgid="6184377003099987825">"选中了 %1$d 个相册"</item>
+    <item quantity="other" msgid="53105607141906130">"选中了 %1$d 个相册"</item>
   </plurals>
   <plurals name="number_of_groups_selected">
     <item quantity="zero" msgid="3466388370310869238">"选中了 %1$d 组"</item>
@@ -78,7 +78,7 @@
     <string name="activity_not_found" msgid="5619154886080878023">"没有可完成该操作的应用程序。"</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"正在处理缓存请求"</string>
     <string name="caching_label" msgid="4521059045896269095">"正在缓存..."</string>
-    <string name="crop_action" msgid="3427470284074377001">"修剪"</string>
+    <string name="crop_action" msgid="3427470284074377001">"裁剪"</string>
     <string name="set_as" msgid="3636764710790507868">"设置为"</string>
     <string name="video_err" msgid="7003051631792271009">"无法播放视频。"</string>
     <string name="group_by_location" msgid="316641628989023253">"按位置分组"</string>
