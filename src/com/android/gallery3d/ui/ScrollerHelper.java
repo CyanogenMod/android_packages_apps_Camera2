@@ -84,7 +84,8 @@ public class ScrollerHelper {
     // Returns the distance that over the scroll limit.
     public int startScroll(int distance, int min, int max) {
         int currPosition = mScroller.getCurrX();
-        int finalPosition = mScroller.getFinalX();
+        int finalPosition = mScroller.isFinished() ? currPosition :
+                mScroller.getFinalX();
         int newPosition = Utils.clamp(finalPosition + distance, min, max);
         if (newPosition != currPosition) {
             mScroller.startScroll(
