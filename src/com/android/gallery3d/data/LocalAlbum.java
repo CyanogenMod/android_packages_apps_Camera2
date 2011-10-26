@@ -16,11 +16,14 @@
 
 package com.android.gallery3d.data;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.MediaSetUtils;
 
 import android.content.ContentResolver;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore.Images;
@@ -45,7 +48,7 @@ public class LocalAlbum extends MediaSet {
     private final GalleryApp mApplication;
     private final ContentResolver mResolver;
     private final int mBucketId;
-    private final String mBucketName;
+    private final String mName;
     private final boolean mIsImage;
     private final ChangeNotifier mNotifier;
     private final Path mItemPath;
@@ -57,7 +60,7 @@ public class LocalAlbum extends MediaSet {
         mApplication = application;
         mResolver = application.getContentResolver();
         mBucketId = bucketId;
-        mBucketName = name;
+        mName = getLocalizedName(application.getResources(), bucketId, name);
         mIsImage = isImage;
 
         if (isImage) {
@@ -221,7 +224,7 @@ public class LocalAlbum extends MediaSet {
 
     @Override
     public String getName() {
-        return mBucketName;
+        return mName;
     }
 
     @Override
@@ -248,5 +251,20 @@ public class LocalAlbum extends MediaSet {
     @Override
     public boolean isLeafAlbum() {
         return true;
+    }
+
+    private static String getLocalizedName(Resources res, int bucketId,
+            String name) {
+        if (bucketId == MediaSetUtils.CAMERA_BUCKET_ID) {
+            return res.getString(R.string.folder_camera);
+        } else if (bucketId == MediaSetUtils.DOWNLOAD_BUCKET_ID) {
+            return res.getString(R.string.folder_download);
+        } else if (bucketId == MediaSetUtils.IMPORTED_BUCKET_ID) {
+            return res.getString(R.string.folder_imported);
+        } else if (bucketId == MediaSetUtils.SNAPSHOT_BUCKET_ID) {
+            return res.getString(R.string.folder_screenshot);
+        } else {
+            return name;
+        }
     }
 }
