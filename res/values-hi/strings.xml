@@ -23,7 +23,7 @@
     <string name="movie_view_label" msgid="3526526872644898229">"वीडियो प्‍लेयर"</string>
     <string name="loading_video" msgid="4013492720121891585">"वीडियो लोड हो रहा है..."</string>
     <string name="loading_image" msgid="1200894415793838191">"छवि लोड हो रही है…"</string>
-    <string name="loading_account" msgid="928195413034552034">"खाता लोड हो रहा है???"</string>
+    <string name="loading_account" msgid="928195413034552034">"खाता लोड हो रहा है…"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"वीडियो फिर से शुरू करें"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"%s से फिर से चलाना शुरू करें ?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"चलाना फिर से शुरू करें"</string>
