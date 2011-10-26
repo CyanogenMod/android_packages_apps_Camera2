@@ -87,7 +87,7 @@
     <string name="group_by_faces" msgid="1566351636227274906">"Nach Personen"</string>
     <string name="group_by_album" msgid="1532818636053818958">"Nach Album"</string>
     <string name="group_by_size" msgid="153766174950394155">"Nach Größe"</string>
-    <string name="untagged" msgid="7281481064509590402">"Ohne Tag"</string>
+    <string name="untagged" msgid="7281481064509590402">"Nicht getaggt"</string>
     <string name="no_location" msgid="4043624857489331676">"Kein Aufnahmeort"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Einige Standorte konnten aufgrund von Netzwerkproblemen nicht identifiziert werden."</string>
     <string name="sync_album_error" msgid="2218733298953719785">"Die Fotos aus diesem Album konnten nicht heruntergeladen werden. Versuchen Sie es später noch einmal."</string>

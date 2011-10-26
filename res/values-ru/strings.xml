@@ -28,15 +28,15 @@
     <string name="resume_playing_message" msgid="5184414518126703481">"Продолжить воспроизведение с %s?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Продолжить воспроизведение"</string>
     <string name="loading" msgid="7038208555304563571">"Идет загрузка…"</string>
-    <string name="fail_to_load" msgid="8394392853646664505">"Изображения не загружены"</string>
+    <string name="fail_to_load" msgid="8394392853646664505">"Не загружено"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Нет уменьшенного изображения"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Начать с начала"</string>
     <string name="crop_save_text" msgid="152200178986698300">"ОК"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Нажмите на лицо, чтобы начать."</string>
     <string name="saving_image" msgid="7270334453636349407">"Сохранение картинки..."</string>
-    <string name="save_error" msgid="6857408774183654970">"Вырезанное изображение не сохранено."</string>
+    <string name="save_error" msgid="6857408774183654970">"Изображение не сохранено."</string>
     <string name="crop_label" msgid="521114301871349328">"Обрезать фотографию"</string>
-    <string name="select_image" msgid="7841406150484742140">"Выберите фотографию"</string>
+    <string name="select_image" msgid="7841406150484742140">"Выберите фото"</string>
     <string name="select_video" msgid="4859510992798615076">"Выберите видео"</string>
     <string name="select_item" msgid="2257529413100472599">"Выберите объекты"</string>
     <string name="select_album" msgid="4632641262236697235">"Выберите альбомы"</string>
@@ -49,7 +49,7 @@
     <string name="cancel" msgid="3637516880917356226">"Отмена"</string>
     <string name="share" msgid="3619042788254195341">"Отправить"</string>
     <string name="select_all" msgid="3403283025220282175">"Выбрать все"</string>
-    <string name="deselect_all" msgid="5758897506061723684">"Снять выделение"</string>
+    <string name="deselect_all" msgid="5758897506061723684">"Отменить все"</string>
     <string name="slideshow" msgid="4355906903247112975">"Слайд-шоу"</string>
     <string name="details" msgid="8415120088556445230">"Сведения"</string>
     <string name="details_title" msgid="2611396603977441273">"Элементов %1$d из %2$d:"</string>
@@ -75,12 +75,12 @@
     <string name="rotate_right" msgid="6776325835923384839">"Повернуть вправо"</string>
     <string name="no_such_item" msgid="5315144556325243400">"Элемент не найден."</string>
     <string name="edit" msgid="1502273844748580847">"Изменить"</string>
-    <string name="activity_not_found" msgid="5619154886080878023">"Отсутствует приложение для выполнения действия."</string>
+    <string name="activity_not_found" msgid="5619154886080878023">"Действие не поддерживается ни в одном приложении."</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"Обработка запросов на кэширование"</string>
     <string name="caching_label" msgid="4521059045896269095">"Кэширование..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Кадрировать"</string>
     <string name="set_as" msgid="3636764710790507868">"Установить как"</string>
-    <string name="video_err" msgid="7003051631792271009">"Не удается воспроизвести видео."</string>
+    <string name="video_err" msgid="7003051631792271009">"Не удалось воспроизвести видео."</string>
     <string name="group_by_location" msgid="316641628989023253">"По местоположению"</string>
     <string name="group_by_time" msgid="9046168567717963573">"По времени"</string>
     <string name="group_by_tags" msgid="3568731317210676160">"По тегам"</string>
@@ -89,18 +89,18 @@
     <string name="group_by_size" msgid="153766174950394155">"По размеру"</string>
     <string name="untagged" msgid="7281481064509590402">"Без тегов"</string>
     <string name="no_location" msgid="4043624857489331676">"Место не указано"</string>
-    <string name="no_connectivity" msgid="7164037617297293668">"Не удалось определить некоторые места из-за проблем с подключением к сети."</string>
+    <string name="no_connectivity" msgid="7164037617297293668">"Не удалось найти все места из-за проблем с подключением."</string>
     <string name="sync_album_error" msgid="2218733298953719785">"Не удалось загрузить фотографии. Повторите попытку позже."</string>
     <string name="sync_album_set_error" msgid="9016732535181154028">"Не удалось загрузить альбомы. Повторите попытку позже."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Только изображения"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Только видео"</string>
     <string name="show_all" msgid="4780647751652596980">"Изображения и видео"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Фотогалерея"</string>
-    <string name="appwidget_empty_text" msgid="1228925628357366957">"Нет фотографий."</string>
-    <string name="crop_saved" msgid="1062612625032731770">"Кадрированное изобр. сохранено в папке \"Загрузки\"."</string>
-    <string name="crop_not_saved" msgid="3400773981839556">"Кадрированное изображение не сохранено."</string>
+    <string name="appwidget_empty_text" msgid="1228925628357366957">"Нет фотографий"</string>
+    <string name="crop_saved" msgid="1062612625032731770">"Изображение сохранено в папке \"Загрузки\"."</string>
+    <string name="crop_not_saved" msgid="3400773981839556">"Изображение не сохранено."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Нет доступных альбомов."</string>
-    <string name="empty_album" msgid="4542880442593595494">"Нет ни одного изображения или видео."</string>
+    <string name="empty_album" msgid="4542880442593595494">"Нет фото/видео"</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Записи"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Сделать доступным офлайн"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Обновить"</string>
@@ -117,7 +117,7 @@
     <string name="duration" msgid="8160058911218541616">"Длительность"</string>
     <string name="mimetype" msgid="8024168704337990470">"Тип MIME"</string>
     <string name="file_size" msgid="8486169301588318915">"Размер файла"</string>
-    <string name="maker" msgid="7921835498034236197">"Автор:"</string>
+    <string name="maker" msgid="7921835498034236197">"Автор"</string>
     <string name="model" msgid="8240207064064337366">"Модель"</string>
     <string name="flash" msgid="2816779031261147723">"Вспышка"</string>
     <string name="aperture" msgid="5920657630303915195">"Диафрагма"</string>
