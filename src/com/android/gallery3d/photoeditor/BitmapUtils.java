@@ -60,7 +60,7 @@ public class BitmapUtils {
     /**
      * Creates a mutable bitmap from subset of source bitmap, transformed by the optional matrix.
      */
-    public static Bitmap createBitmap(
+    private static Bitmap createBitmap(
             Bitmap source, int x, int y, int width, int height, Matrix m) {
         // Re-implement Bitmap createBitmap() to always return a mutable bitmap.
         Canvas canvas = new Canvas();
@@ -168,8 +168,15 @@ public class BitmapUtils {
             closeStream(is);
         }
 
-        // Scale down the sampled bitmap if it's still larger than the desired dimension.
+        // Ensure bitmap in 8888 format, good for editing as well as GL compatible.
+        if ((bitmap != null) && (bitmap.getConfig() != Bitmap.Config.ARGB_8888)) {
+            Bitmap copy = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+            bitmap.recycle();
+            bitmap = copy;
+        }
+
         if (bitmap != null) {
+            // Scale down the sampled bitmap if it's still larger than the desired dimension.
             float scale = Math.min((float) width / bitmap.getWidth(),
                     (float) height / bitmap.getHeight());
             scale = Math.max(scale, Math.min((float) height / bitmap.getWidth(),
