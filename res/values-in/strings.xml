@@ -23,7 +23,7 @@
     <string name="movie_view_label" msgid="3526526872644898229">"Pemutar video"</string>
     <string name="loading_video" msgid="4013492720121891585">"Memuat video..."</string>
     <string name="loading_image" msgid="1200894415793838191">"Memuat gambar…"</string>
-    <string name="loading_account" msgid="928195413034552034">"Memuat akun???"</string>
+    <string name="loading_account" msgid="928195413034552034">"Memuat akun…"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"Lanjutkan video"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"Lanjutkan pemutaran dari %s ?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Lanjutkan pemutaran"</string>
@@ -100,7 +100,7 @@
     <string name="crop_saved" msgid="1062612625032731770">"Gambar yang dipangkas disimpan ke Unduhan."</string>
     <string name="crop_not_saved" msgid="3400773981839556">"Gambar yang dipangkas tidak disimpan."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Tidak ada album yang tersedia."</string>
-    <string name="empty_album" msgid="4542880442593595494">"O gambar / video tersedia."</string>
+    <string name="empty_album" msgid="4542880442593595494">"O gambar/video tersedia."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Pos"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Jadikan agar tersedia luring"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Segarkan"</string>
@@ -123,7 +123,7 @@
     <string name="aperture" msgid="5920657630303915195">"Bukaan"</string>
     <string name="focal_length" msgid="1291383769749877010">"Jarak Fokus"</string>
     <string name="white_balance" msgid="1582509289994216078">"Kseimbangn pth"</string>
-    <string name="exposure_time" msgid="3990163680281058826">"Wkt pemaparan"</string>
+    <string name="exposure_time" msgid="3990163680281058826">"Lama pncahyaan"</string>
     <string name="iso" msgid="5028296664327335940">"ISO"</string>
     <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
     <string name="manual" msgid="6608905477477607865">"Manual"</string>
