@@ -38,7 +38,7 @@
     <string name="crop_label" msgid="521114301871349328">"修剪照片"</string>
     <string name="select_image" msgid="7841406150484742140">"选择照片"</string>
     <string name="select_video" msgid="4859510992798615076">"选择视频"</string>
-    <string name="select_item" msgid="2257529413100472599">"请选择"</string>
+    <string name="select_item" msgid="2257529413100472599">"所选项"</string>
     <string name="select_album" msgid="4632641262236697235">"选择相册"</string>
     <string name="select_group" msgid="9090385962030340391">"选择群组"</string>
     <string name="set_image" msgid="2331476809308010401">"将照片设置为"</string>
