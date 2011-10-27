@@ -200,9 +200,9 @@
     <string name="no_connectivity">Some locations couldn\'t be identified due to network problems.</string>
 
     <!-- This toast message is shown when failed to load the album data. [CHAR LIMIT=NONE] -->
-    <string name="sync_album_error">Failed to download the photos in this album. Please retry later.</string>
+    <string name="sync_album_error">Couldn\'t download the photos in this album. Retry later.</string>
     <!-- This toast message is shown when failed to load the album list data. [CHAR LIMIT=NONE] -->
-    <string name="sync_album_set_error">Failed to download the list of albums. Please retry later.</string>
+    <string name="sync_album_set_error">Couldn\'t download the list of albums. Retry later.</string>
 
     <!-- The title of the menu item to let user choose the which portion of
          the media items the user wants to see. When pressed, a submenu will
@@ -216,7 +216,7 @@
     <string name="show_videos_only">Videos only</string>
 
     <!-- Title of a menu item to show all (both images and videos) [CHAR LIMIT=30]-->
-    <string name="show_all">Images and videos</string>
+    <string name="show_all">Images &amp; videos</string>
 
     <!-- Title of the StackView AppWidget -->
     <string name="appwidget_title">Photo Gallery</string>
