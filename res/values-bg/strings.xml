@@ -23,7 +23,7 @@
     <string name="movie_view_label" msgid="3526526872644898229">"Видеоплейър"</string>
     <string name="loading_video" msgid="4013492720121891585">"Видеоклипът се зарежда..."</string>
     <string name="loading_image" msgid="1200894415793838191">"Изображението се зарежда..."</string>
-    <string name="loading_account" msgid="928195413034552034">"Профилът се зарежда???"</string>
+    <string name="loading_account" msgid="928195413034552034">"Профилът се зарежда…"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"Възобновяване на видеоклип"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"Да продължи ли възпроизвеждането от %s ?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Продължаване"</string>
@@ -162,4 +162,12 @@
     <string name="group_by" msgid="4308299657902209357">"Групиране по"</string>
     <string name="settings" msgid="1534847740615665736">"Настройки"</string>
     <string name="add_account" msgid="4271217504968243974">"Добавяне на профил"</string>
+    <!-- no translation found for folder_camera (4714658994809533480) -->
+    <skip />
+    <!-- no translation found for folder_download (7186215137642323932) -->
+    <skip />
+    <!-- no translation found for folder_imported (2773581395524747099) -->
+    <skip />
+    <!-- no translation found for folder_screenshot (7200396565864213450) -->
+    <skip />
 </resources>
