@@ -117,7 +117,7 @@
     <string name="duration" msgid="8160058911218541616">"長さ"</string>
     <string name="mimetype" msgid="8024168704337990470">"MIMEタイプ"</string>
     <string name="file_size" msgid="8486169301588318915">"ファイルサイズ"</string>
-    <string name="maker" msgid="7921835498034236197">"作成者"</string>
+    <string name="maker" msgid="7921835498034236197">"メーカー"</string>
     <string name="model" msgid="8240207064064337366">"モデル"</string>
     <string name="flash" msgid="2816779031261147723">"フラッシュ"</string>
     <string name="aperture" msgid="5920657630303915195">"絞り"</string>
