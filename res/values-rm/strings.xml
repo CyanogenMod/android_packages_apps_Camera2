@@ -248,4 +248,12 @@
     <string name="settings" msgid="1534847740615665736">"Parameters"</string>
     <!-- no translation found for add_account (4271217504968243974) -->
     <skip />
+    <!-- no translation found for folder_camera (4714658994809533480) -->
+    <skip />
+    <!-- no translation found for folder_download (7186215137642323932) -->
+    <skip />
+    <!-- no translation found for folder_imported (2773581395524747099) -->
+    <skip />
+    <!-- no translation found for folder_screenshot (7200396565864213450) -->
+    <skip />
 </resources>
