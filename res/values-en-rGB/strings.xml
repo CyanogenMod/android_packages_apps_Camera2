@@ -23,7 +23,7 @@
     <string name="movie_view_label" msgid="3526526872644898229">"Video player"</string>
     <string name="loading_video" msgid="4013492720121891585">"Loading video…"</string>
     <string name="loading_image" msgid="1200894415793838191">"Loading image…"</string>
-    <string name="loading_account" msgid="928195413034552034">"Loading account???"</string>
+    <string name="loading_account" msgid="928195413034552034">"Loading account…"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"Resume video"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"Resume playing from %s ?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Resume playing"</string>
@@ -162,4 +162,8 @@
     <string name="group_by" msgid="4308299657902209357">"Group by"</string>
     <string name="settings" msgid="1534847740615665736">"Settings"</string>
     <string name="add_account" msgid="4271217504968243974">"Add account"</string>
+    <string name="folder_camera" msgid="4714658994809533480">"Camera"</string>
+    <string name="folder_download" msgid="7186215137642323932">"Download"</string>
+    <string name="folder_imported" msgid="2773581395524747099">"Imported"</string>
+    <string name="folder_screenshot" msgid="7200396565864213450">"Screenshot"</string>
 </resources>

@@ -41,7 +41,7 @@
     <string name="select_item" msgid="2257529413100472599">"アイテムを選択"</string>
     <string name="select_album" msgid="4632641262236697235">"アルバムを選択"</string>
     <string name="select_group" msgid="9090385962030340391">"グループを選択"</string>
-    <string name="set_image" msgid="2331476809308010401">"写真を設定:"</string>
+    <string name="set_image" msgid="2331476809308010401">"登録"</string>
     <string name="wallpaper" msgid="140165383777262070">"壁紙を設定しています..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"壁紙"</string>
     <string name="delete" msgid="2839695998251824487">"削除"</string>
@@ -117,7 +117,7 @@
     <string name="duration" msgid="8160058911218541616">"長さ"</string>
     <string name="mimetype" msgid="8024168704337990470">"MIMEタイプ"</string>
     <string name="file_size" msgid="8486169301588318915">"ファイルサイズ"</string>
-    <string name="maker" msgid="7921835498034236197">"作成者"</string>
+    <string name="maker" msgid="7921835498034236197">"メーカー"</string>
     <string name="model" msgid="8240207064064337366">"モデル"</string>
     <string name="flash" msgid="2816779031261147723">"フラッシュ"</string>
     <string name="aperture" msgid="5920657630303915195">"絞り"</string>
@@ -162,4 +162,12 @@
     <string name="group_by" msgid="4308299657902209357">"グループ化"</string>
     <string name="settings" msgid="1534847740615665736">"設定"</string>
     <string name="add_account" msgid="4271217504968243974">"アカウントを追加"</string>
+    <!-- no translation found for folder_camera (4714658994809533480) -->
+    <skip />
+    <!-- no translation found for folder_download (7186215137642323932) -->
+    <skip />
+    <!-- no translation found for folder_imported (2773581395524747099) -->
+    <skip />
+    <!-- no translation found for folder_screenshot (7200396565864213450) -->
+    <skip />
 </resources>
