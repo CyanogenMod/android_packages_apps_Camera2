@@ -39,7 +39,7 @@
     <string name="select_image" msgid="7841406150484742140">"Sélectionner photo"</string>
     <string name="select_video" msgid="4859510992798615076">"Sélectionner vidéo"</string>
     <string name="select_item" msgid="2257529413100472599">"Sélectionner élément(s)"</string>
-    <string name="select_album" msgid="4632641262236697235">"Sélection albums(s)"</string>
+    <string name="select_album" msgid="4632641262236697235">"Sélectionner album(s)"</string>
     <string name="select_group" msgid="9090385962030340391">"Sélection groupe(s)"</string>
     <string name="set_image" msgid="2331476809308010401">"Utiliser l\'image comme"</string>
     <string name="wallpaper" msgid="140165383777262070">"Définition du fond d\'écran…"</string>
@@ -74,7 +74,7 @@
     <string name="rotate_left" msgid="5888273317282539839">"Faire pivoter à gauche"</string>
     <string name="rotate_right" msgid="6776325835923384839">"Faire pivoter à droite"</string>
     <string name="no_such_item" msgid="5315144556325243400">"Impossible de trouver l\'élément."</string>
-    <string name="edit" msgid="1502273844748580847">"Modifier"</string>
+    <string name="edit" msgid="1502273844748580847">"Retoucher"</string>
     <string name="activity_not_found" msgid="5619154886080878023">"Aucune appli disponible pour effectuer l\'action."</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"Demandes de mise en cache en cours de traitement"</string>
     <string name="caching_label" msgid="4521059045896269095">"Mise en cache…"</string>
@@ -162,4 +162,12 @@
     <string name="group_by" msgid="4308299657902209357">"Regrouper par"</string>
     <string name="settings" msgid="1534847740615665736">"Paramètres"</string>
     <string name="add_account" msgid="4271217504968243974">"Ajouter un compte"</string>
+    <!-- no translation found for folder_camera (4714658994809533480) -->
+    <skip />
+    <!-- no translation found for folder_download (7186215137642323932) -->
+    <skip />
+    <!-- no translation found for folder_imported (2773581395524747099) -->
+    <skip />
+    <!-- no translation found for folder_screenshot (7200396565864213450) -->
+    <skip />
 </resources>
