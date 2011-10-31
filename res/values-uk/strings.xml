@@ -102,7 +102,7 @@
     <string name="no_albums_alert" msgid="4111744447491690896">"Немає доступних альбомів."</string>
     <string name="empty_album" msgid="4542880442593595494">"Немає доступних зображень або відео."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Публікації"</string>
-    <string name="make_available_offline" msgid="5157950985488297112">"Зробити доступн. в реж. офлайн"</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"Завантажити для доступу офлайн"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Оновити"</string>
     <string name="done" msgid="217672440064436595">"Готово"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d з %2$d елем.:"</string>
