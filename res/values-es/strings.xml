@@ -92,8 +92,8 @@
     <string name="no_connectivity" msgid="7164037617297293668">"No se ha podido identificar algunas ubicaciones debido a errores en la red."</string>
     <string name="sync_album_error" msgid="2218733298953719785">"Error al descargar las fotos del álbum. Inténtalo de nuevo más tarde."</string>
     <string name="sync_album_set_error" msgid="9016732535181154028">"Error al descargar la lista de álbumes. Inténtalo de nuevo más tarde."</string>
-    <string name="show_images_only" msgid="7263218480867672653">"Sólo imágenes"</string>
-    <string name="show_videos_only" msgid="3850394623678871697">"Sólo vídeos"</string>
+    <string name="show_images_only" msgid="7263218480867672653">"Solo imágenes"</string>
+    <string name="show_videos_only" msgid="3850394623678871697">"Solo vídeos"</string>
     <string name="show_all" msgid="4780647751652596980">"Imágenes y vídeos"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Galería de fotos"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"No hay fotos."</string>
