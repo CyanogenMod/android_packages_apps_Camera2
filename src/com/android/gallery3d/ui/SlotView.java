@@ -599,14 +599,18 @@ public class SlotView extends GLView {
             absoluteX -= mHorizontalPadding;
             absoluteY -= mVerticalPadding;
 
-            int columnIdx = absoluteX / (mSlotWidth + mSlotGap);
-            int rowIdx = absoluteY / (mSlotHeight + mSlotGap);
-
-            if (columnIdx < 0 || (!WIDE && columnIdx >= mUnitCount)) {
+            if (absoluteX < 0 || absoluteY < 0) {
                 return INDEX_NONE;
             }
 
-            if (rowIdx < 0 || (WIDE && rowIdx >= mUnitCount)) {
+            int columnIdx = absoluteX / (mSlotWidth + mSlotGap);
+            int rowIdx = absoluteY / (mSlotHeight + mSlotGap);
+
+            if (!WIDE && columnIdx >= mUnitCount) {
+                return INDEX_NONE;
+            }
+
+            if (WIDE && rowIdx >= mUnitCount) {
                 return INDEX_NONE;
             }
 
