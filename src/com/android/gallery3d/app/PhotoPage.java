@@ -16,6 +16,25 @@
 
 package com.android.gallery3d.app;
 
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.ActionBar.OnMenuVisibilityListener;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
+import android.view.View.MeasureSpec;
+import android.widget.ShareActionProvider;
+import android.widget.Toast;
+
 import com.android.gallery3d.R;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaDetails;
@@ -40,25 +59,6 @@ import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.ui.UserInteractionListener;
 import com.android.gallery3d.util.GalleryUtils;
-
-import android.app.ActionBar;
-import android.app.ActionBar.OnMenuVisibilityListener;
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.MeasureSpec;
-import android.view.WindowManager;
-import android.widget.ShareActionProvider;
-import android.widget.Toast;
 
 public class PhotoPage extends ActivityState
         implements PhotoView.PhotoTapListener, FilmStripView.Listener,
@@ -92,7 +92,7 @@ public class PhotoPage extends ActivityState
     private MediaSet mMediaSet;
     private Menu mMenu;
 
-    private Intent mResultIntent = new Intent();
+    private final Intent mResultIntent = new Intent();
     private int mCurrentIndex = 0;
     private Handler mHandler;
     private boolean mShowBars = true;
@@ -121,7 +121,7 @@ public class PhotoPage extends ActivityState
         }
     }
 
-    private GLView mRootPane = new GLView() {
+    private final GLView mRootPane = new GLView() {
 
         @Override
         protected void renderBackground(GLCanvas view) {
@@ -305,6 +305,11 @@ public class PhotoPage extends ActivityState
         if (!GalleryUtils.isEditorAvailable((Context) mActivity, "image/*")) {
             supportedOperations &= ~MediaObject.SUPPORT_EDIT;
         }
+        MenuItem item = mMenu.findItem(R.id.action_slideshow);
+        if (item != null) {
+            item.setVisible(mCurrentPhoto.getMediaType() == MediaObject.MEDIA_TYPE_IMAGE);
+        }
+
         MenuExecutor.updateMenuOperation(mMenu, supportedOperations);
     }
 
@@ -417,6 +422,7 @@ public class PhotoPage extends ActivityState
             case R.id.action_slideshow: {
                 Bundle data = new Bundle();
                 data.putString(SlideshowPage.KEY_SET_PATH, mMediaSet.getPath().toString());
+                data.putString(SlideshowPage.KEY_ITEM_PATH, path.toString());
                 data.putInt(SlideshowPage.KEY_PHOTO_INDEX, currentIndex);
                 data.putBoolean(SlideshowPage.KEY_REPEAT, true);
                 mActivity.getStateManager().startStateForResult(
