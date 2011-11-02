@@ -90,11 +90,11 @@
     <string name="untagged" msgid="7281481064509590402">"Без тегів"</string>
     <string name="no_location" msgid="4043624857489331676">"Без місцезнаходження"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Не вдалося визначити деякі місцезнаходження через проблеми з мережею."</string>
-    <string name="sync_album_error" msgid="2218733298953719785">"Не вдалося завантажити фото цього альбому. Повторіть спробу пізніше."</string>
-    <string name="sync_album_set_error" msgid="9016732535181154028">"Не вдалося завантажити список альбомів. Повторіть спробу пізніше."</string>
+    <string name="sync_album_error" msgid="1020688062900977530">"Не вдалося завантажити фото цього альбому. Повторіть спробу пізніше."</string>
+    <string name="sync_album_set_error" msgid="3250258387046904444">"Не вдалося завантажити список альбомів. Повторіть спробу пізніше."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Лише зображення"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Лише відео"</string>
-    <string name="show_all" msgid="4780647751652596980">"Зображення та відео"</string>
+    <string name="show_all" msgid="6963292714584735149">"Зображення й відео"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Фотогалерея"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Фотографій немає."</string>
     <string name="crop_saved" msgid="1062612625032731770">"Обрізане зображення збережено в папці завантажень."</string>

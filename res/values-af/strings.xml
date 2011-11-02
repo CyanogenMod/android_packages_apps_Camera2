@@ -90,11 +90,11 @@
     <string name="untagged" msgid="7281481064509590402">"Ongemerk"</string>
     <string name="no_location" msgid="4043624857489331676">"Geen ligging nie"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Sommige liggings kon nie geïdentifiseer word nie weens netwerkprobleme."</string>
-    <string name="sync_album_error" msgid="2218733298953719785">"Kon nie die foto\'s in hierdie album aflaai nie. Probeer later weer."</string>
-    <string name="sync_album_set_error" msgid="9016732535181154028">"Kon nie die lys van albums aflaai nie. Probeer later weer."</string>
+    <string name="sync_album_error" msgid="1020688062900977530">"Kon nie die foto\'s in hierdie album aflaai nie. Probeer later weer."</string>
+    <string name="sync_album_set_error" msgid="3250258387046904444">"Kon nie die lys van albums aflaai nie. Probeer later weer."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Net prente"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Net video\'s"</string>
-    <string name="show_all" msgid="4780647751652596980">"Prente en video\'s"</string>
+    <string name="show_all" msgid="6963292714584735149">"Prente en video\'s"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Fotogalery"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Geen foto\'s nie."</string>
     <string name="crop_saved" msgid="1062612625032731770">"Gesnoeide prent gestoor in Aflaaisels."</string>

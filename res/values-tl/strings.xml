@@ -90,11 +90,11 @@
     <string name="untagged" msgid="7281481064509590402">"Hindi naka-tag"</string>
     <string name="no_location" msgid="4043624857489331676">"Walang lokasyon"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Hindi matukoy ang ilang mga lokasyon dahil sa mga problema sa network."</string>
-    <string name="sync_album_error" msgid="2218733298953719785">"Nabigong i-download ang mga larawan sa album na ito. Pakisubukang muli sa ibang pagkakataon."</string>
-    <string name="sync_album_set_error" msgid="9016732535181154028">"Nabigong i-download ang listahan ng mga album. Pakisubukang muli sa ibang pagkakataon."</string>
+    <string name="sync_album_error" msgid="1020688062900977530">"Hindi ma-download ang mga larawan sa album na ito. Pakisubukang muli sa ibang pagkakataon."</string>
+    <string name="sync_album_set_error" msgid="3250258387046904444">"Hindi ma-download ang listahan ng mga album. Pakisubukang muli sa ibang pagkakataon."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Mga larawan lamang"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Mga video lamang"</string>
-    <string name="show_all" msgid="4780647751652596980">"Mga larawan at mga video"</string>
+    <string name="show_all" msgid="6963292714584735149">"Mga larawan &amp; video"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Photo Gallery"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Walang mga larawan."</string>
     <string name="crop_saved" msgid="1062612625032731770">"Nai-save ang na-crop na larawan sa Mga Download."</string>

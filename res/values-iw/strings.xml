@@ -90,11 +90,11 @@
     <string name="untagged" msgid="7281481064509590402">"ללא תג"</string>
     <string name="no_location" msgid="4043624857489331676">"ללא מיקום"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"לא ניתן לזהות מיקומים מסוימים בשל בעיות ברשת."</string>
-    <string name="sync_album_error" msgid="2218733298953719785">"הורדת התמונות לאלבום זה נכשלה. נסה שוב מאוחר יותר."</string>
-    <string name="sync_album_set_error" msgid="9016732535181154028">"כשל בהורדת רשימת האלבומים. נסה שוב מאוחר יותר."</string>
+    <string name="sync_album_error" msgid="1020688062900977530">"לא ניתן להוריד את התמונות באלבום זה. נסה שוב מאוחר יותר."</string>
+    <string name="sync_album_set_error" msgid="3250258387046904444">"לא ניתן להוריד את רשימת האלבומים. נסה שוב מאוחר יותר."</string>
     <string name="show_images_only" msgid="7263218480867672653">"תמונות בלבד"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"סרטונים בלבד"</string>
-    <string name="show_all" msgid="4780647751652596980">"תמונות וסרטונים"</string>
+    <string name="show_all" msgid="6963292714584735149">"תמונות וסרטונים"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"גלריית תמונות"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"אין תמונות."</string>
     <string name="crop_saved" msgid="1062612625032731770">"התמונה החתוכה נשמרה ב\'הורדות\'."</string>
@@ -162,12 +162,8 @@
     <string name="group_by" msgid="4308299657902209357">"קבץ לפי"</string>
     <string name="settings" msgid="1534847740615665736">"הגדרות"</string>
     <string name="add_account" msgid="4271217504968243974">"הוסף חשבון"</string>
-    <!-- no translation found for folder_camera (4714658994809533480) -->
-    <skip />
-    <!-- no translation found for folder_download (7186215137642323932) -->
-    <skip />
-    <!-- no translation found for folder_imported (2773581395524747099) -->
-    <skip />
-    <!-- no translation found for folder_screenshot (7200396565864213450) -->
-    <skip />
+    <string name="folder_camera" msgid="4714658994809533480">"מצלמה"</string>
+    <string name="folder_download" msgid="7186215137642323932">"הורד"</string>
+    <string name="folder_imported" msgid="2773581395524747099">"מיובאות"</string>
+    <string name="folder_screenshot" msgid="7200396565864213450">"צילום מסך"</string>
 </resources>

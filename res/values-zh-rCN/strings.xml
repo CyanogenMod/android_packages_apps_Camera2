@@ -90,11 +90,11 @@
     <string name="untagged" msgid="7281481064509590402">"未加标签"</string>
     <string name="no_location" msgid="4043624857489331676">"无位置信息"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"出现网络问题，系统无法识别某些位置。"</string>
-    <string name="sync_album_error" msgid="2218733298953719785">"无法下载此相册中的照片，请稍后重试。"</string>
-    <string name="sync_album_set_error" msgid="9016732535181154028">"无法下载相册列表，请稍后重试。"</string>
+    <string name="sync_album_error" msgid="1020688062900977530">"无法下载此相册中的照片，请稍后重试。"</string>
+    <string name="sync_album_set_error" msgid="3250258387046904444">"无法下载相册列表，请稍后重试。"</string>
     <string name="show_images_only" msgid="7263218480867672653">"仅限图片"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"仅限视频"</string>
-    <string name="show_all" msgid="4780647751652596980">"图片和视频"</string>
+    <string name="show_all" msgid="6963292714584735149">"图片和视频"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"照片库"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"无照片。"</string>
     <string name="crop_saved" msgid="1062612625032731770">"经过裁剪的图片已保存至“下载内容”文件夹。"</string>
@@ -162,12 +162,8 @@
     <string name="group_by" msgid="4308299657902209357">"分组依据"</string>
     <string name="settings" msgid="1534847740615665736">"设置"</string>
     <string name="add_account" msgid="4271217504968243974">"添加帐户"</string>
-    <!-- no translation found for folder_camera (4714658994809533480) -->
-    <skip />
-    <!-- no translation found for folder_download (7186215137642323932) -->
-    <skip />
-    <!-- no translation found for folder_imported (2773581395524747099) -->
-    <skip />
-    <!-- no translation found for folder_screenshot (7200396565864213450) -->
-    <skip />
+    <string name="folder_camera" msgid="4714658994809533480">"相机"</string>
+    <string name="folder_download" msgid="7186215137642323932">"下载"</string>
+    <string name="folder_imported" msgid="2773581395524747099">"已导入"</string>
+    <string name="folder_screenshot" msgid="7200396565864213450">"屏幕截图"</string>
 </resources>

@@ -90,11 +90,11 @@
     <string name="untagged" msgid="7281481064509590402">"بدون برچسب گذاری"</string>
     <string name="no_location" msgid="4043624857489331676">"مکانی موجود نیست"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"شناسایی برخی از مکان‌ها به دلیل مشکلات شبکه امکان‌پذیر نیست."</string>
-    <string name="sync_album_error" msgid="2218733298953719785">"عکس‌ها در این آلبوم دانلود نشد. لطفاً بعداً دوباره امتحان کنید."</string>
-    <string name="sync_album_set_error" msgid="9016732535181154028">"لیست آلبوم‌ها دانلود نشد. لطفاً بعداً دوباره امتحان کنید."</string>
+    <!-- outdated translation 2218733298953719785 -->     <string name="sync_album_error" msgid="1020688062900977530">"عکس‌ها در این آلبوم دانلود نشد. لطفاً بعداً دوباره امتحان کنید."</string>
+    <!-- outdated translation 9016732535181154028 -->     <string name="sync_album_set_error" msgid="3250258387046904444">"لیست آلبوم‌ها دانلود نشد. لطفاً بعداً دوباره امتحان کنید."</string>
     <string name="show_images_only" msgid="7263218480867672653">"فقط تصاویر"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"فقط ویدیوها"</string>
-    <string name="show_all" msgid="4780647751652596980">"تصاویر و ویدیوها"</string>
+    <!-- outdated translation 4780647751652596980 -->     <string name="show_all" msgid="6963292714584735149">"تصاویر و ویدیوها"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"گالری عکس"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"عکسی موجود نیست."</string>
     <string name="crop_saved" msgid="1062612625032731770">"تصویر بریده شده در \"دانلودها\" ذخیره شد."</string>
