@@ -90,11 +90,11 @@
     <string name="untagged" msgid="7281481064509590402">"Merkitsemättömät"</string>
     <string name="no_location" msgid="4043624857489331676">"Ei sijaintia"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Verkkoyhteysongelma – joitakin paikkoja ei voi tunnistaa."</string>
-    <string name="sync_album_error" msgid="2218733298953719785">"Albumin valokuvien lataaminen epäonnistui. Yritä myöhemmin uudelleen."</string>
-    <string name="sync_album_set_error" msgid="9016732535181154028">"Albumiluettelon lataaminen epäonnistui. Yritä myöhemmin uudelleen."</string>
+    <string name="sync_album_error" msgid="1020688062900977530">"Albumin valokuvia ei voi ladata. Yritä myöhemmin uudelleen."</string>
+    <string name="sync_album_set_error" msgid="3250258387046904444">"Albumiluetteloa ei voi ladata. Yritä myöhemmin uudelleen."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Vain kuvat"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Vain videot"</string>
-    <string name="show_all" msgid="4780647751652596980">"Kuvat ja videot"</string>
+    <string name="show_all" msgid="6963292714584735149">"Kuvat ja videot"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Kuvagalleria"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Ei valokuvia."</string>
     <string name="crop_saved" msgid="1062612625032731770">"Rajattu kuva tallennetaan Lataukset-kansioon."</string>
@@ -162,12 +162,8 @@
     <string name="group_by" msgid="4308299657902209357">"Ryhmittely:"</string>
     <string name="settings" msgid="1534847740615665736">"Asetukset"</string>
     <string name="add_account" msgid="4271217504968243974">"Lisää tili"</string>
-    <!-- no translation found for folder_camera (4714658994809533480) -->
-    <skip />
-    <!-- no translation found for folder_download (7186215137642323932) -->
-    <skip />
-    <!-- no translation found for folder_imported (2773581395524747099) -->
-    <skip />
-    <!-- no translation found for folder_screenshot (7200396565864213450) -->
-    <skip />
+    <string name="folder_camera" msgid="4714658994809533480">"Kamera"</string>
+    <string name="folder_download" msgid="7186215137642323932">"Lataus"</string>
+    <string name="folder_imported" msgid="2773581395524747099">"Tuonti"</string>
+    <string name="folder_screenshot" msgid="7200396565864213450">"Kuvakaappaus"</string>
 </resources>
