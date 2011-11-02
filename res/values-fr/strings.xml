@@ -90,11 +90,11 @@
     <string name="untagged" msgid="7281481064509590402">"Aucun tag"</string>
     <string name="no_location" msgid="4043624857489331676">"Aucun lieu"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Certains lieux n\'ont pas pu être identifiés en raison de problèmes réseau."</string>
-    <string name="sync_album_error" msgid="2218733298953719785">"Impossible de télécharger les photos dans cet album. Veuillez réessayer ultérieurement."</string>
-    <string name="sync_album_set_error" msgid="9016732535181154028">"Impossible de télécharger la liste des albums. Veuillez réessayer ultérieurement."</string>
+    <string name="sync_album_error" msgid="1020688062900977530">"Impossible de télécharger les photos de cet album. Veuillez réessayer ultérieurement."</string>
+    <string name="sync_album_set_error" msgid="3250258387046904444">"Impossible de télécharger la liste des albums. Veuillez réessayer ultérieurement."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Images uniquement"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Vidéos uniquement"</string>
-    <string name="show_all" msgid="4780647751652596980">"Images et vidéos"</string>
+    <string name="show_all" msgid="6963292714584735149">"Images et vidéos"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Galerie photos"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Aucune photo"</string>
     <string name="crop_saved" msgid="1062612625032731770">"Image rognée enregistrée dans \"Téléchargements\"."</string>
