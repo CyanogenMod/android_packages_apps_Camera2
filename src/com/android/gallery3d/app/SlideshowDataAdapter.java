@@ -16,17 +16,18 @@
 
 package com.android.gallery3d.app;
 
+import android.graphics.Bitmap;
+
 import com.android.gallery3d.app.SlideshowPage.Slide;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
+import com.android.gallery3d.data.Path;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
-
-import android.graphics.Bitmap;
 
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -42,6 +43,7 @@ public class SlideshowDataAdapter implements SlideshowPage.Model {
         public void removeContentListener(ContentListener listener);
         public long reload();
         public MediaItem getMediaItem(int index);
+        public int findItemIndex(Path path, int hint);
     }
 
     private final SlideshowSource mSource;
@@ -51,6 +53,7 @@ public class SlideshowDataAdapter implements SlideshowPage.Model {
     private boolean mIsActive = false;
     private boolean mNeedReset;
     private boolean mDataReady;
+    private Path mInitialPath;
 
     private final LinkedList<Slide> mImageQueue = new LinkedList<Slide>();
 
@@ -61,8 +64,11 @@ public class SlideshowDataAdapter implements SlideshowPage.Model {
     private final AtomicBoolean mNeedReload = new AtomicBoolean(false);
     private final SourceListener mSourceListener = new SourceListener();
 
-    public SlideshowDataAdapter(GalleryContext context, SlideshowSource source, int index) {
+    // The index is just a hint if initialPath is set
+    public SlideshowDataAdapter(GalleryContext context, SlideshowSource source, int index,
+            Path initialPath) {
         mSource = source;
+        mInitialPath = initialPath;
         mLoadIndex = index;
         mNextOutput = index;
         mThreadPool = context.getThreadPool();
@@ -77,7 +83,12 @@ public class SlideshowDataAdapter implements SlideshowPage.Model {
                 return null;
             }
         }
-        return mSource.getMediaItem(mLoadIndex);
+        int index = mLoadIndex;
+        if (mInitialPath != null) {
+            index = mSource.findItemIndex(mInitialPath, index);
+            mInitialPath = null;
+        }
+        return mSource.getMediaItem(index);
     }
 
     private class ReloadTask implements Job<Void> {
