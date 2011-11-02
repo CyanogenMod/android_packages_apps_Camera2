@@ -90,11 +90,11 @@
     <string name="untagged" msgid="7281481064509590402">"Không được gắn thẻ"</string>
     <string name="no_location" msgid="4043624857489331676">"Không có vị trí nào"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Không thể xác định một số vị trí do sự cố mạng."</string>
-    <string name="sync_album_error" msgid="2218733298953719785">"Không thể tải xuống các ảnh trong anbom này. Vui lòng thử lại sau."</string>
-    <string name="sync_album_set_error" msgid="9016732535181154028">"Không thể tải xuống danh sách anbom. Vui lòng thử lại sau."</string>
+    <string name="sync_album_error" msgid="1020688062900977530">"Không thể tải xuống ảnh trong anbom này. Hãy thử lại sau."</string>
+    <string name="sync_album_set_error" msgid="3250258387046904444">"Không thể tải xuống danh sách anbom. Hãy thử lại sau."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Chỉ hình ảnh"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Chỉ video"</string>
-    <string name="show_all" msgid="4780647751652596980">"Hình ảnh và video"</string>
+    <string name="show_all" msgid="6963292714584735149">"Hình ảnh &amp; video"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Thư viện ảnh"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Không có ảnh."</string>
     <string name="crop_saved" msgid="1062612625032731770">"Đã lưu hình ảnh được cắt vào Tải xuống."</string>
@@ -162,12 +162,8 @@
     <string name="group_by" msgid="4308299657902209357">"Nhóm theo"</string>
     <string name="settings" msgid="1534847740615665736">"Cài đặt"</string>
     <string name="add_account" msgid="4271217504968243974">"Thêm tài khoản"</string>
-    <!-- no translation found for folder_camera (4714658994809533480) -->
-    <skip />
-    <!-- no translation found for folder_download (7186215137642323932) -->
-    <skip />
-    <!-- no translation found for folder_imported (2773581395524747099) -->
-    <skip />
-    <!-- no translation found for folder_screenshot (7200396565864213450) -->
-    <skip />
+    <string name="folder_camera" msgid="4714658994809533480">"Máy ảnh"</string>
+    <string name="folder_download" msgid="7186215137642323932">"Tải xuống"</string>
+    <string name="folder_imported" msgid="2773581395524747099">"Đã nhập"</string>
+    <string name="folder_screenshot" msgid="7200396565864213450">"Ảnh chụp màn hình"</string>
 </resources>

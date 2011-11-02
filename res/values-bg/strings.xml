@@ -90,11 +90,11 @@
     <string name="untagged" msgid="7281481064509590402">"Немаркирани"</string>
     <string name="no_location" msgid="4043624857489331676">"Няма местоположение"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Някои местоположения не можаха да бъдат идентифицирани поради проблеми с мрежата."</string>
-    <string name="sync_album_error" msgid="2218733298953719785">"Изтеглянето на снимките в този албум не бе успешно. Моля, опитайте отново по-късно."</string>
-    <string name="sync_album_set_error" msgid="9016732535181154028">"Изтеглянето на списъка с албуми не бе успешно. Моля, опитайте отново по-късно."</string>
+    <!-- outdated translation 2218733298953719785 -->     <string name="sync_album_error" msgid="1020688062900977530">"Изтеглянето на снимките в този албум не бе успешно. Моля, опитайте отново по-късно."</string>
+    <!-- outdated translation 9016732535181154028 -->     <string name="sync_album_set_error" msgid="3250258387046904444">"Изтеглянето на списъка с албуми не бе успешно. Моля, опитайте отново по-късно."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Само изображения"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Само видеоклипове"</string>
-    <string name="show_all" msgid="4780647751652596980">"Изображения и видеоклипове"</string>
+    <!-- outdated translation 4780647751652596980 -->     <string name="show_all" msgid="6963292714584735149">"Изображения и видеоклипове"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Фотогалерия"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Няма снимки."</string>
     <string name="crop_saved" msgid="1062612625032731770">"Подрязаното изображение е запазено в „Изтегляния“."</string>
