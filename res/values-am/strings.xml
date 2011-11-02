@@ -90,11 +90,11 @@
     <string name="untagged" msgid="7281481064509590402">"ያልተለጠፈ"</string>
     <string name="no_location" msgid="4043624857489331676">"ምንም ስፍራ የለም"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"አንዳንድ ስፍራዎች በአውታረ መረብ  ችግር ምክንያት ለየቶ ማወቅ አልተቻለም::"</string>
-    <string name="sync_album_error" msgid="2218733298953719785">"በዚህ አልበም ላይ ያሉ ፎቶዎችን ለማውረድ አልተሳካም:: እባክህ እንደገና ሞክር::"</string>
-    <string name="sync_album_set_error" msgid="9016732535181154028">"የአልበሞችን ዝርዝር ለማውረድ አልተሳካም:: እባክህ እንደገና ሞክር::"</string>
+    <string name="sync_album_error" msgid="1020688062900977530">"በዚህ አልበም ላይ ያሉ ፎቶዎችን ለማውረድ አልተቻለም፡፡ በኋላ  ደግመህ ሞክር፡፡"</string>
+    <string name="sync_album_set_error" msgid="3250258387046904444">"የአልበሞችን ዝርዝር ለማውረድ አልተቻለም፡፡ በኋላ  ደግመህ ሞክር፡፡"</string>
     <string name="show_images_only" msgid="7263218480867672653">"ምስሎች ብቻ"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"ቪዲዮዎች ብቻ"</string>
-    <string name="show_all" msgid="4780647751652596980">"ምስሎች እና ቪዲዮዎች"</string>
+    <string name="show_all" msgid="6963292714584735149">"ምስሎች &amp; ቪዲዮዎች"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"የፎቶ ሥነ ጥበብ ማዕከል"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"ምንም ፎቶዎች የሉም፡፡"</string>
     <string name="crop_saved" msgid="1062612625032731770">"የተከረከመ ምስል ወደ አውርዶች ተቀምጧል::"</string>
@@ -162,12 +162,8 @@
     <string name="group_by" msgid="4308299657902209357">"በቡድን አስቀምጥ"</string>
     <string name="settings" msgid="1534847740615665736">"ቅንጅቶች"</string>
     <string name="add_account" msgid="4271217504968243974">"መለያ አክል"</string>
-    <!-- no translation found for folder_camera (4714658994809533480) -->
-    <skip />
-    <!-- no translation found for folder_download (7186215137642323932) -->
-    <skip />
-    <!-- no translation found for folder_imported (2773581395524747099) -->
-    <skip />
-    <!-- no translation found for folder_screenshot (7200396565864213450) -->
-    <skip />
+    <string name="folder_camera" msgid="4714658994809533480">"ካሜራ"</string>
+    <string name="folder_download" msgid="7186215137642323932">"አውርድ"</string>
+    <string name="folder_imported" msgid="2773581395524747099">"ከውጭ የገባ"</string>
+    <string name="folder_screenshot" msgid="7200396565864213450">"ቅጽበታዊ ገጽ እይታ"</string>
 </resources>

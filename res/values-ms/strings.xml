@@ -90,11 +90,11 @@
     <string name="untagged" msgid="7281481064509590402">"Tidak ditanda namakan"</string>
     <string name="no_location" msgid="4043624857489331676">"Tiada lokasi"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Beberapa lokasi tidak dapat dikenal pasti kerana masalah rangkaian."</string>
-    <string name="sync_album_error" msgid="2218733298953719785">"Gagal untuk memuat turun foto dalam album ini. Sila cuba lagi nanti."</string>
-    <string name="sync_album_set_error" msgid="9016732535181154028">"Gagal untuk memuat turun senarai album. Sila cuba lagi nanti."</string>
+    <string name="sync_album_error" msgid="1020688062900977530">"Tidak dapat memuat turun foto dalam album ini. Cuba lagi nanti."</string>
+    <string name="sync_album_set_error" msgid="3250258387046904444">"Tidak dapat memuat turun senarai album. Cuba lagi nanti."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Imej sahaja"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Video sahaja"</string>
-    <string name="show_all" msgid="4780647751652596980">"Imej dan video"</string>
+    <string name="show_all" msgid="6963292714584735149">"Imej &amp; video"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Galeri Foto"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Tiada foto."</string>
     <string name="crop_saved" msgid="1062612625032731770">"Imej yang dipangkas disimpan ke Muat Turun."</string>
