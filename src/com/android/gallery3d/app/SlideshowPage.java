@@ -16,18 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.ContentListener;
-import com.android.gallery3d.data.MediaItem;
-import com.android.gallery3d.data.MediaObject;
-import com.android.gallery3d.data.MediaSet;
-import com.android.gallery3d.ui.GLCanvas;
-import com.android.gallery3d.ui.GLView;
-import com.android.gallery3d.ui.SlideshowView;
-import com.android.gallery3d.ui.SynchronizedHandler;
-import com.android.gallery3d.util.Future;
-import com.android.gallery3d.util.FutureListener;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +26,19 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.view.MotionEvent;
+
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.ContentListener;
+import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.data.MediaObject;
+import com.android.gallery3d.data.MediaSet;
+import com.android.gallery3d.data.Path;
+import com.android.gallery3d.ui.GLCanvas;
+import com.android.gallery3d.ui.GLView;
+import com.android.gallery3d.ui.SlideshowView;
+import com.android.gallery3d.ui.SynchronizedHandler;
+import com.android.gallery3d.util.Future;
+import com.android.gallery3d.util.FutureListener;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -58,7 +59,9 @@ public class SlideshowPage extends ActivityState {
 
     public static interface Model {
         public void pause();
+
         public void resume();
+
         public Future<Slide> nextSlide(FutureListener<Slide> listener);
     }
 
@@ -81,12 +84,11 @@ public class SlideshowPage extends ActivityState {
     private Slide mPendingSlide = null;
     private boolean mIsActive = false;
     private WakeLock mWakeLock;
-    private Intent mResultIntent = new Intent();
+    private final Intent mResultIntent = new Intent();
 
-    private GLView mRootPane = new GLView() {
+    private final GLView mRootPane = new GLView() {
         @Override
-        protected void onLayout(
-                boolean changed, int left, int top, int right, int bottom) {
+        protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
             mSlideshowView.layout(0, 0, right - left, bottom - top);
         }
 
@@ -108,8 +110,8 @@ public class SlideshowPage extends ActivityState {
     public void onCreate(Bundle data, Bundle restoreState) {
         mFlags |= (FLAG_HIDE_ACTION_BAR | FLAG_HIDE_STATUS_BAR);
 
-        PowerManager pm = (PowerManager) mActivity.getAndroidContext()
-                .getSystemService(Context.POWER_SERVICE);
+        PowerManager pm = (PowerManager) mActivity.getAndroidContext().getSystemService(
+                Context.POWER_SERVICE);
         mWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
                 | PowerManager.ON_AFTER_RELEASE, TAG);
 
@@ -142,8 +144,8 @@ public class SlideshowPage extends ActivityState {
 
     private void showPendingBitmap() {
         // mPendingBitmap could be null, if
-        //    1.) there is no more items
-        //    2.) mModel is paused
+        // 1.) there is no more items
+        // 2.) mModel is paused
         Slide slide = mPendingSlide;
         if (slide == null) {
             if (mIsActive) {
@@ -157,8 +159,7 @@ public class SlideshowPage extends ActivityState {
         setStateResult(Activity.RESULT_OK, mResultIntent
                 .putExtra(KEY_ITEM_PATH, slide.item.getPath().toString())
                 .putExtra(KEY_PHOTO_INDEX, slide.index));
-        mHandler.sendEmptyMessageDelayed(MSG_LOAD_NEXT_BITMAP,
-                SLIDESHOW_DELAY);
+        mHandler.sendEmptyMessageDelayed(MSG_LOAD_NEXT_BITMAP, SLIDESHOW_DELAY);
     }
 
     @Override
@@ -192,23 +193,21 @@ public class SlideshowPage extends ActivityState {
 
         // We only want to show slideshow for images only, not videos.
         String mediaPath = data.getString(KEY_SET_PATH);
-        mediaPath = FilterUtils.newFilterPath(mediaPath,
-                FilterUtils.FILTER_IMAGE_ONLY);
+        mediaPath = FilterUtils.newFilterPath(mediaPath, FilterUtils.FILTER_IMAGE_ONLY);
         MediaSet mediaSet = mActivity.getDataManager().getMediaSet(mediaPath);
 
         if (random) {
             boolean repeat = data.getBoolean(KEY_REPEAT);
-            mModel = new SlideshowDataAdapter(
-                    mActivity, new ShuffleSource(mediaSet, repeat), 0);
-            setStateResult(Activity.RESULT_OK,
-                    mResultIntent.putExtra(KEY_PHOTO_INDEX, 0));
+            mModel = new SlideshowDataAdapter(mActivity,
+                    new ShuffleSource(mediaSet, repeat), 0, null);
+            setStateResult(Activity.RESULT_OK, mResultIntent.putExtra(KEY_PHOTO_INDEX, 0));
         } else {
             int index = data.getInt(KEY_PHOTO_INDEX);
+            Path path = Path.fromString(data.getString(KEY_ITEM_PATH));
             boolean repeat = data.getBoolean(KEY_REPEAT);
-            mModel = new SlideshowDataAdapter(mActivity,
-                    new SequentialSource(mediaSet, repeat), index);
-            setStateResult(Activity.RESULT_OK,
-                    mResultIntent.putExtra(KEY_PHOTO_INDEX, index));
+            mModel = new SlideshowDataAdapter(mActivity, new SequentialSource(mediaSet, repeat),
+                    index, path);
+            setStateResult(Activity.RESULT_OK, mResultIntent.putExtra(KEY_PHOTO_INDEX, index));
         }
     }
 
@@ -236,13 +235,17 @@ public class SlideshowPage extends ActivityState {
         private final MediaSet mMediaSet;
         private final Random mRandom = new Random();
         private int mOrder[] = new int[0];
-        private boolean mRepeat;
+        private final boolean mRepeat;
         private long mSourceVersion = MediaSet.INVALID_DATA_VERSION;
         private int mLastIndex = -1;
 
         public ShuffleSource(MediaSet mediaSet, boolean repeat) {
             mMediaSet = Utils.checkNotNull(mediaSet);
             mRepeat = repeat;
+        }
+
+        public int findItemIndex(Path path, int hint) {
+            return hint;
         }
 
         public MediaItem getMediaItem(int index) {
@@ -306,6 +309,10 @@ public class SlideshowPage extends ActivityState {
             mRepeat = repeat;
         }
 
+        public int findItemIndex(Path path, int hint) {
+            return mMediaSet.getIndexOfItem(path, hint);
+        }
+
         public MediaItem getMediaItem(int index) {
             int dataEnd = mDataStart + mData.size();
 
@@ -320,9 +327,7 @@ public class SlideshowPage extends ActivityState {
                 dataEnd = index + mData.size();
             }
 
-            return (index < mDataStart || index >= dataEnd)
-                    ? null
-                    : mData.get(index - mDataStart);
+            return (index < mDataStart || index >= dataEnd) ? null : mData.get(index - mDataStart);
         }
 
         public long reload() {
