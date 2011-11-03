@@ -28,7 +28,6 @@ import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.ui.AlbumSetView;
 import com.android.gallery3d.ui.SynchronizedHandler;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -215,21 +214,6 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
         mLoadingListener = listener;
     }
 
-    private static void getRepresentativeItems(MediaSet set, int wanted,
-            ArrayList<MediaItem> result) {
-        if (set.getMediaItemCount() > 0) {
-            result.addAll(set.getMediaItem(0, wanted));
-        }
-
-        int n = set.getSubMediaSetCount();
-        for (int i = 0; i < n && wanted > result.size(); i++) {
-            MediaSet subset = set.getSubMediaSet(i);
-            double perSet = (double) (wanted - result.size()) / (n - i);
-            int m = (int) Math.ceil(perSet);
-            getRepresentativeItems(subset, m, result);
-        }
-    }
-
     private static class UpdateInfo {
         public long version;
         public int index;
@@ -369,9 +353,8 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
                     if (info.index != INDEX_NONE) {
                         info.item = mSource.getSubMediaSet(info.index);
                         if (info.item == null) continue;
-                        ArrayList<MediaItem> covers = new ArrayList<MediaItem>();
-                        getRepresentativeItems(info.item, MAX_COVER_COUNT, covers);
-                        info.covers = covers.toArray(new MediaItem[covers.size()]);
+                        MediaItem cover = info.item.getCoverMediaItem();
+                        info.covers = cover == null ? new MediaItem[0] : new MediaItem[] {cover};
                     }
                 }
                 executeAndWait(new UpdateContent(info));
