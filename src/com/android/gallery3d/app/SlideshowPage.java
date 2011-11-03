@@ -203,7 +203,8 @@ public class SlideshowPage extends ActivityState {
             setStateResult(Activity.RESULT_OK, mResultIntent.putExtra(KEY_PHOTO_INDEX, 0));
         } else {
             int index = data.getInt(KEY_PHOTO_INDEX);
-            Path path = Path.fromString(data.getString(KEY_ITEM_PATH));
+            String itemPath = data.getString(KEY_ITEM_PATH);
+            Path path = itemPath != null ? Path.fromString(itemPath) : null;
             boolean repeat = data.getBoolean(KEY_REPEAT);
             mModel = new SlideshowDataAdapter(mActivity, new SequentialSource(mediaSet, repeat),
                     index, path);
