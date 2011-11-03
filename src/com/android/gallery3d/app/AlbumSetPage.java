@@ -55,7 +55,6 @@ import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.ui.StaticBackground;
 import com.android.gallery3d.util.Future;
-import com.android.gallery3d.util.GalleryUtils;
 
 public class AlbumSetPage extends ActivityState implements
         SelectionManager.SelectionListener, GalleryActionBar.ClusterRunner,
@@ -70,13 +69,13 @@ public class AlbumSetPage extends ActivityState implements
 
     private static final int DATA_CACHE_SIZE = 256;
     private static final int REQUEST_DO_ANIMATION = 1;
-    private static final int MSG_GOTO_MANAGE_CACHE_PAGE = 1;
 
     private boolean mIsActive = false;
     private StaticBackground mStaticBackground;
     private AlbumSetView mAlbumSetView;
 
     private MediaSet mMediaSet;
+    private String mTitle;
     private String mSubtitle;
     private boolean mShowClusterMenu;
     private int mSelectedAction;
@@ -272,6 +271,7 @@ public class AlbumSetPage extends ActivityState implements
         Context context = mActivity.getAndroidContext();
         mGetContent = data.getBoolean(Gallery.KEY_GET_CONTENT, false);
         mGetAlbum = data.getBoolean(Gallery.KEY_GET_ALBUM, false);
+        mTitle = data.getString(AlbumSetPage.KEY_SET_TITLE);
         mSubtitle = data.getString(AlbumSetPage.KEY_SET_SUBTITLE);
         mEyePosition = new EyePosition(context, this);
         mDetailsSource = new MyDetailsSource();
@@ -396,7 +396,6 @@ public class AlbumSetPage extends ActivityState implements
         } else {
             mShowClusterMenu = !inAlbum;
             inflater.inflate(R.menu.albumset, menu);
-            actionBar.setTitle(null);
             MenuItem selectItem = menu.findItem(R.id.action_select);
 
             if (selectItem != null) {
@@ -414,6 +413,7 @@ public class AlbumSetPage extends ActivityState implements
                 switchCamera.setVisible(GalleryUtils.isCameraAvailable(activity));
             }
 
+            actionBar.setTitle(mTitle);
             actionBar.setSubtitle(mSubtitle);
         }
         return true;
@@ -519,7 +519,9 @@ public class AlbumSetPage extends ActivityState implements
             }
             case SelectionManager.LEAVE_SELECTION_MODE: {
                 mActionMode.finish();
-                mActivity.getGalleryActionBar().showClusterMenu(mSelectedAction, this);
+                if (mShowClusterMenu) {
+                    mActivity.getGalleryActionBar().showClusterMenu(mSelectedAction, this);
+                }
                 mRootPane.invalidate();
                 break;
             }
