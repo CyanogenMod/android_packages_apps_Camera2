@@ -75,11 +75,11 @@
     <!-- Title prompted for user to choose a video item [CHAR LIMIT=20] -->
     <string name="select_video">Select video</string>
     <!-- Title prompted for user to choose a media object [CHAR LIMIT=20] -->
-    <string name="select_item">Select item(s)</string>
+    <string name="select_item">Select item</string>
     <!-- Title prompted for user to choose an album [CHAR LIMIT=20] -->
-    <string name="select_album">Select album(s)</string>
+    <string name="select_album">Select album</string>
     <!-- Title prompted for user to choose a group [CHAR LIMIT=20] -->
-    <string name="select_group">Select group(s)</string>
+    <string name="select_group">Select group</string>
 
     <!-- Displayed in the title of the dialog for things to do with a picture
              that is to be "set as" (e.g. set as contact photo or set as wallpaper) -->
@@ -380,14 +380,14 @@
     <string name="click_import">Touch here to import</string>
 
     <!-- The label on the radio button for the widget type that shows the images randomly. [CHAR LIMIT=30]-->
-    <string name="widget_type_album">Images from an album</string>
+    <string name="widget_type_album">Choose an album</string>
     <!-- The label on the radio button for the widget type that shows the images in an album. [CHAR LIMIT=30]-->
     <string name="widget_type_shuffle">Shuffle all images</string>
     <!-- The label on the radio button for the widget type that shows only one image. [CHAR LIMIT=30]-->
     <string name="widget_type_photo">Choose an image</string>
 
     <!-- The title of the dialog for choosing the type of widget. [CHAR LIMIT=20] -->
-    <string name="widget_type">Widget type</string>
+    <string name="widget_type">Choose images</string>
 
     <!-- Title of the Android Dreams slideshow screensaver. [CHAR LIMIT=20] -->
     <string name="slideshow_dream_name">Slideshow</string>
