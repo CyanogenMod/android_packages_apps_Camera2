@@ -87,7 +87,7 @@ public class GLRootView extends GLSurfaceView
 
     private final ReentrantLock mRenderLock = new ReentrantLock();
 
-    private static final int TARGET_FRAME_TIME = 33;
+    private static final int TARGET_FRAME_TIME = 16;
     private long mLastDrawFinishTime;
     private boolean mInDownState = false;
 
