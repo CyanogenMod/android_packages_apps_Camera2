@@ -31,8 +31,8 @@ import java.lang.reflect.Method;
 
 public class BitmapUtils {
     private static final String TAG = "BitmapUtils";
-    public static final int UNCONSTRAINED = -1;
     private static final int COMPRESS_JPEG_QUALITY = 90;
+    public static final int UNCONSTRAINED = -1;
 
     private BitmapUtils(){}
 
