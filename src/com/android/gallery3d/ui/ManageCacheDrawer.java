@@ -60,10 +60,23 @@ public class ManageCacheDrawer extends IconDrawer {
             int dataSourceType, int mediaType, boolean isPanorama,
             int labelBackgroundHeight, boolean wantCache, boolean isCaching) {
 
+        boolean selected = mSelectionManager.isItemSelected(path);
+        boolean chooseToCache = wantCache ^ selected;
+        boolean available = isLocal(dataSourceType) || chooseToCache;
+
         int x = -width / 2;
         int y = -height / 2;
 
+        if (!available) {
+            canvas.save(GLCanvas.SAVE_FLAG_ALPHA);
+            canvas.multiplyAlpha(0.6f);
+        }
+
         drawWithRotation(canvas, content, x, y, width, height, rotation);
+
+        if (!available) {
+            canvas.restore();
+        }
 
         if (((rotation / 90) & 0x01) == 1) {
             int temp = width;
@@ -76,7 +89,7 @@ public class ManageCacheDrawer extends IconDrawer {
         drawMediaTypeOverlay(canvas, mediaType, isPanorama, x, y, width, height);
         drawLabelBackground(canvas, width, height, labelBackgroundHeight);
         drawIcon(canvas, width, height, dataSourceType);
-        drawCachingPin(canvas, path, dataSourceType, isCaching, wantCache,
+        drawCachingPin(canvas, path, dataSourceType, isCaching, chooseToCache,
                 width, height);
 
         if (mSelectionManager.isPressedPath(path)) {
@@ -85,9 +98,7 @@ public class ManageCacheDrawer extends IconDrawer {
     }
 
     private void drawCachingPin(GLCanvas canvas, Path path, int dataSourceType,
-            boolean isCaching, boolean wantCache, int width, int height) {
-        boolean selected = mSelectionManager.isItemSelected(path);
-        boolean chooseToCache = wantCache ^ selected;
+            boolean isCaching, boolean chooseToCache, int width, int height) {
 
         ResourceTexture icon = null;
         if (isLocal(dataSourceType)) {
