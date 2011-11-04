@@ -18,6 +18,8 @@ package com.android.gallery3d.photoeditor.filters;
 
 import android.media.effect.Effect;
 import android.media.effect.EffectContext;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.android.gallery3d.photoeditor.Photo;
 
@@ -27,7 +29,7 @@ import java.util.HashMap;
  * Image filter for photo editing; most of its methods must be called from a single GL thread except
  * validate()/isValid() that are called from UI thread.
  */
-public abstract class Filter {
+public abstract class Filter implements Parcelable {
 
     // TODO: This should be set in MFF instead.
     private static final int DEFAULT_TILE_SIZE = 640;
@@ -91,4 +93,33 @@ public abstract class Filter {
      * @param dst destination photo having the same dimension as source photo as the output.
      */
     public abstract void process(Photo src, Photo dst);
+
+    /**
+     * Instantiates CREATOR of subclasses for Parcelable implementations.
+     */
+    protected static <T extends Filter> Parcelable.Creator<T> creatorOf(Class<T> filterClass) {
+        return new FilterCreator<T>(filterClass);
+    }
+
+    /**
+     * Saves states for restoring filter later; subclasses can override this to persist states.
+     */
+    protected void writeToParcel(Parcel out) {
+    }
+
+    /**
+     * Restores filter from the saved states; subclasses can override this to persist states.
+     */
+    protected void readFromParcel(Parcel in) {
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        writeToParcel(dest);
+    }
 }

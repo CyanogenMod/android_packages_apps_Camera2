@@ -24,24 +24,14 @@ import com.android.gallery3d.photoeditor.Photo;
 /**
  * Saturation filter applied to the image.
  */
-public class SaturationFilter extends Filter {
+public class SaturationFilter extends AbstractScaleFilter {
 
-    private float scale;
-
-    /**
-     * Sets the saturation level.
-     *
-     * @param scale ranges from 0 to 1.
-     */
-    public void setSaturation(float scale) {
-        this.scale = (scale - 0.5f) * 2;
-        validate();
-    }
+    public static final Creator<SaturationFilter> CREATOR = creatorOf(SaturationFilter.class);
 
     @Override
     public void process(Photo src, Photo dst) {
         Effect effect = getEffect(EffectFactory.EFFECT_SATURATE);
-        effect.setParameter("scale", scale);
+        effect.setParameter("scale", (scale - 0.5f) * 2);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
     }
 }

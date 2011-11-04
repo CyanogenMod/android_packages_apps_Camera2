@@ -19,6 +19,7 @@ package com.android.gallery3d.photoeditor.filters;
 import android.graphics.RectF;
 import android.media.effect.Effect;
 import android.media.effect.EffectFactory;
+import android.os.Parcel;
 
 import com.android.gallery3d.photoeditor.Photo;
 
@@ -26,6 +27,8 @@ import com.android.gallery3d.photoeditor.Photo;
  * Crop filter applied to the image.
  */
 public class CropFilter extends Filter {
+
+    public static final Creator<CropFilter> CREATOR = creatorOf(CropFilter.class);
 
     private RectF bounds;
 
@@ -48,5 +51,15 @@ public class CropFilter extends Filter {
         effect.setParameter("width", dst.width());
         effect.setParameter("height", dst.height());
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
+    }
+
+    @Override
+    protected void writeToParcel(Parcel out) {
+        out.writeParcelable(bounds, 0);
+    }
+
+    @Override
+    protected void readFromParcel(Parcel in) {
+        bounds = in.readParcelable(null);
     }
 }

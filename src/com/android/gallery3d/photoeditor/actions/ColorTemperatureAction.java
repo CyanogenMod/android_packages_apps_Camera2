@@ -44,7 +44,7 @@ public class ColorTemperatureAction extends EffectAction {
             @Override
             public void onProgressChanged(float progress, boolean fromUser) {
                 if (fromUser) {
-                    filter.setColorTemperature(progress);
+                    filter.setScale(progress);
                     notifyFilterChanged(filter, true);
                 }
             }

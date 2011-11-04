@@ -18,6 +18,7 @@ package com.android.gallery3d.photoeditor.filters;
 
 import android.media.effect.Effect;
 import android.media.effect.EffectFactory;
+import android.os.Parcel;
 
 import com.android.gallery3d.photoeditor.Photo;
 
@@ -26,20 +27,31 @@ import com.android.gallery3d.photoeditor.Photo;
  */
 public class FlipFilter extends Filter {
 
-    private boolean flipHorizontal;
-    private boolean flipVertical;
+    public static final Creator<FlipFilter> CREATOR = creatorOf(FlipFilter.class);
+
+    private final boolean[] flips = new boolean[2];
 
     public void setFlip(boolean flipHorizontal, boolean flipVertical) {
-        this.flipHorizontal = flipHorizontal;
-        this.flipVertical = flipVertical;
+        flips[0] = flipHorizontal;
+        flips[1] = flipVertical;
         validate();
     }
 
     @Override
     public void process(Photo src, Photo dst) {
         Effect effect = getEffect(EffectFactory.EFFECT_FLIP);
-        effect.setParameter("horizontal", flipHorizontal);
-        effect.setParameter("vertical", flipVertical);
+        effect.setParameter("horizontal", flips[0]);
+        effect.setParameter("vertical", flips[1]);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
+    }
+
+    @Override
+    protected void writeToParcel(Parcel out) {
+        out.writeBooleanArray(flips);
+    }
+
+    @Override
+    protected void readFromParcel(Parcel in) {
+        in.readBooleanArray(flips);
     }
 }
