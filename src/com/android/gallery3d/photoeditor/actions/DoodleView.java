@@ -19,7 +19,6 @@ package com.android.gallery3d.photoeditor.actions;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -40,19 +39,20 @@ class DoodleView extends FullscreenToolView {
 
         void onDoodleInPhotoBounds();
 
-        void onDoodleFinished(Path path, int color);
+        void onDoodleFinished(Doodle doodle);
     }
 
-    private final Path normalizedPath = new Path();
-    private final Path drawingPath = new Path();
-    private final Paint doodlePaint = new DoodlePaint();
     private final Paint bitmapPaint = new Paint(Paint.DITHER_FLAG);
+    private final Paint doodlePaint = Doodle.createPaint();
     private final PointF lastPoint = new PointF();
-    private final Matrix pathMatrix = new Matrix();
+    private final Path drawingPath = new Path();
+    private final Matrix drawingMatrix = new Matrix();
     private final Matrix displayMatrix = new Matrix();
 
     private Bitmap bitmap;
     private Canvas bitmapCanvas;
+    private Doodle doodle;
+    private int color;
     private OnDoodleChangeListener listener;
 
     public DoodleView(Context context, AttributeSet attrs) {
@@ -71,50 +71,51 @@ class DoodleView extends FullscreenToolView {
         if ((bitmap == null) && !r.isEmpty()) {
             bitmap = Bitmap.createBitmap((int) r.width(), (int) r.height(),
                     Bitmap.Config.ARGB_8888);
-            bitmap.eraseColor(0x00000000);
             bitmapCanvas = new Canvas(bitmap);
 
             // Set up a matrix that maps back normalized paths to be drawn on the bitmap or canvas.
-            pathMatrix.setRectToRect(new RectF(0, 0, 1, 1), r, Matrix.ScaleToFit.FILL);
+            drawingMatrix.setRectToRect(new RectF(0, 0, 1, 1), r, Matrix.ScaleToFit.FILL);
         }
         displayMatrix.setRectToRect(r, displayBounds, Matrix.ScaleToFit.FILL);
     }
 
     private void drawDoodle(Canvas canvas) {
-        if ((canvas != null) && !normalizedPath.isEmpty()) {
-            drawingPath.set(normalizedPath);
-            drawingPath.transform(pathMatrix);
+        if ((canvas != null) && (doodle != null)) {
+            doodlePaint.setColor(doodle.getColor());
+            doodle.getDrawingPath(drawingMatrix, drawingPath);
             canvas.drawPath(drawingPath, doodlePaint);
         }
     }
 
     public void setColor(int color) {
-        // Reset path to draw in a new color.
-        finishCurrentPath();
-        normalizedPath.moveTo(lastPoint.x, lastPoint.y);
-        doodlePaint.setColor(Color.argb(192, Color.red(color), Color.green(color),
-                Color.blue(color)));
+        // Restart doodle to draw in a new color.
+        this.color = color;
+        finishDoodle();
+        startDoodle();
     }
 
-    private void finishCurrentPath() {
-        if (!normalizedPath.isEmpty()) {
-            // Update the finished path to the bitmap.
+    private void startDoodle() {
+        doodle = new Doodle(color, new PointF(lastPoint.x, lastPoint.y));
+    }
+
+    private void finishDoodle() {
+        if ((doodle != null) && !doodle.isEmpty()) {
+            // Update the finished non-empty doodle to the bitmap.
             drawDoodle(bitmapCanvas);
             if (listener != null) {
-                listener.onDoodleFinished(new Path(normalizedPath), doodlePaint.getColor());
+                listener.onDoodleFinished(doodle);
             }
-            normalizedPath.rewind();
             invalidate();
         }
+        doodle = null;
     }
 
-    private void checkCurrentPathInBounds() {
-        if ((listener != null) && !normalizedPath.isEmpty()) {
-            RectF r = new RectF();
-            normalizedPath.computeBounds(r, false);
-            if (r.intersects(0, 0, 1, 1)) {
+    private void addLastPointIntoDoodle() {
+        if ((doodle != null) && doodle.addControlPoint(new PointF(lastPoint.x, lastPoint.y))) {
+            if (listener != null) {
                 listener.onDoodleInPhotoBounds();
             }
+            invalidate();
         }
     }
 
@@ -129,26 +130,20 @@ class DoodleView extends FullscreenToolView {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     mapPhotoPoint(x, y, lastPoint);
-                    normalizedPath.moveTo(lastPoint.x, lastPoint.y);
+                    startDoodle();
                     break;
 
                 case MotionEvent.ACTION_MOVE:
-                    float lastX = lastPoint.x;
-                    float lastY = lastPoint.y;
                     mapPhotoPoint(x, y, lastPoint);
-                    normalizedPath.quadTo(lastX, lastY, (lastX + lastPoint.x) / 2,
-                            (lastY + lastPoint.y) / 2);
-                    checkCurrentPathInBounds();
-                    invalidate();
+                    addLastPointIntoDoodle();
                     break;
 
                 case MotionEvent.ACTION_CANCEL:
                 case MotionEvent.ACTION_UP:
                     // Line to last position with offset to draw at least dots for single clicks.
                     mapPhotoPoint(x + 1, y + 1, lastPoint);
-                    normalizedPath.lineTo(lastPoint.x, lastPoint.y);
-                    checkCurrentPathInBounds();
-                    finishCurrentPath();
+                    addLastPointIntoDoodle();
+                    finishDoodle();
                     break;
             }
         }

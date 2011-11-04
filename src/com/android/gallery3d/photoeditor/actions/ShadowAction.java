@@ -44,7 +44,7 @@ public class ShadowAction extends EffectAction {
             @Override
             public void onProgressChanged(float progress, boolean fromUser) {
                 if (fromUser) {
-                    filter.setShadow(progress);
+                    filter.setScale(progress);
                     notifyFilterChanged(filter, true);
                 }
             }

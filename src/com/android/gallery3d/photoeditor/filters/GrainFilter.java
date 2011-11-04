@@ -24,19 +24,9 @@ import com.android.gallery3d.photoeditor.Photo;
 /**
  * Film grain filter applied to the image.
  */
-public class GrainFilter extends Filter {
+public class GrainFilter extends AbstractScaleFilter {
 
-    private float scale;
-
-    /**
-     * Set the grain noise level.
-     *
-     * @param scale ranges from 0 to 1.
-     */
-    public void setScale(float scale) {
-        this.scale = scale;
-        validate();
-    }
+    public static final Creator<GrainFilter> CREATOR = creatorOf(GrainFilter.class);
 
     @Override
     public void process(Photo src, Photo dst) {

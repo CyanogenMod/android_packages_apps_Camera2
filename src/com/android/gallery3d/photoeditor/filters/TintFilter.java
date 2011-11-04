@@ -18,6 +18,7 @@ package com.android.gallery3d.photoeditor.filters;
 
 import android.media.effect.Effect;
 import android.media.effect.EffectFactory;
+import android.os.Parcel;
 
 import com.android.gallery3d.photoeditor.Photo;
 
@@ -26,17 +27,29 @@ import com.android.gallery3d.photoeditor.Photo;
  */
 public class TintFilter extends Filter {
 
-    private int tint;
+    public static final Creator<TintFilter> CREATOR = creatorOf(TintFilter.class);
+
+    private int color;
 
     public void setTint(int color) {
-        tint = color;
+        this.color = color;
         validate();
     }
 
     @Override
     public void process(Photo src, Photo dst) {
         Effect effect = getEffect(EffectFactory.EFFECT_TINT);
-        effect.setParameter("tint", tint);
+        effect.setParameter("tint", color);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
+    }
+
+    @Override
+    protected void writeToParcel(Parcel out) {
+        out.writeInt(color);
+   }
+
+    @Override
+    protected void readFromParcel(Parcel in) {
+        color = in.readInt();
     }
 }

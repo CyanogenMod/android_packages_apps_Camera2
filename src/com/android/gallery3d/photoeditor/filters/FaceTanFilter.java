@@ -23,19 +23,9 @@ import com.android.gallery3d.photoeditor.Photo;
 /**
  * Face tanning filter applied to the image.
  */
-public class FaceTanFilter extends Filter {
+public class FaceTanFilter extends AbstractScaleFilter {
 
-    private float scale;
-
-    /**
-     * Sets the face tanning level.
-     *
-     * @param scale ranges from 0 to 1.
-     */
-    public void setScale(float scale) {
-        this.scale = scale;
-        validate();
-    }
+    public static final Creator<FaceTanFilter> CREATOR = creatorOf(FaceTanFilter.class);
 
     @Override
     public void process(Photo src, Photo dst) {

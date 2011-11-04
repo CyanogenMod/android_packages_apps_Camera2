@@ -44,14 +44,14 @@ public class SharpenAction extends EffectAction {
             @Override
             public void onProgressChanged(float progress, boolean fromUser) {
                 if (fromUser) {
-                    filter.setSharpen(progress);
+                    filter.setScale(progress);
                     notifyFilterChanged(filter, true);
                 }
             }
         });
         scalePicker.setProgress(DEFAULT_SCALE);
 
-        filter.setSharpen(DEFAULT_SCALE);
+        filter.setScale(DEFAULT_SCALE);
         notifyFilterChanged(filter, true);
     }
 
