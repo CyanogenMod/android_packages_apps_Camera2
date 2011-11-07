@@ -46,11 +46,11 @@
     <skip />
     <!-- no translation found for select_video (4859510992798615076) -->
     <skip />
-    <!-- no translation found for select_item (2257529413100472599) -->
+    <!-- no translation found for select_item (2816923896202086390) -->
     <skip />
-    <!-- no translation found for select_album (4632641262236697235) -->
+    <!-- no translation found for select_album (1557063764849434077) -->
     <skip />
-    <!-- no translation found for select_group (9090385962030340391) -->
+    <!-- no translation found for select_group (6744208543323307114) -->
     <skip />
     <string name="set_image" msgid="2331476809308010401">"Definir il maletg sco"</string>
     <!-- outdated translation 9222901738515471972 -->     <string name="wallpaper" msgid="140165383777262070">"La culissa vegn configurada. Spetgai per plaschair..."</string>
@@ -223,13 +223,13 @@
     <skip />
     <!-- no translation found for click_import (6407959065464291972) -->
     <skip />
-    <!-- no translation found for widget_type_album (3245149644830731121) -->
+    <!-- no translation found for widget_type_album (6013045393140135468) -->
     <skip />
     <!-- no translation found for widget_type_shuffle (8594622705019763768) -->
     <skip />
     <!-- no translation found for widget_type_photo (6267065337367795355) -->
     <skip />
-    <!-- no translation found for widget_type (2161028964992385809) -->
+    <!-- no translation found for widget_type (1364653978966343448) -->
     <skip />
     <!-- no translation found for slideshow_dream_name (6915963319933437083) -->
     <skip />
