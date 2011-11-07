@@ -38,9 +38,9 @@
     <string name="crop_label" msgid="521114301871349328">"चित्र काटें"</string>
     <string name="select_image" msgid="7841406150484742140">"फ़ोटो का चयन करें"</string>
     <string name="select_video" msgid="4859510992798615076">"वीडियो का चयन करें"</string>
-    <string name="select_item" msgid="2257529413100472599">"आइटम चुनें"</string>
-    <string name="select_album" msgid="4632641262236697235">"एल्‍बम का चयन करें"</string>
-    <string name="select_group" msgid="9090385962030340391">"समूह का चयन करें"</string>
+    <string name="select_item" msgid="2816923896202086390">"आइटम का चयन करें"</string>
+    <string name="select_album" msgid="1557063764849434077">"एल्बम का चयन करें"</string>
+    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"समूह का चयन करें"</string>
     <string name="set_image" msgid="2331476809308010401">"चित्र इस रूप में सेट करें"</string>
     <string name="wallpaper" msgid="140165383777262070">"वॉलपेपर सेट कर रहा है..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"वॉलपेपर"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"कैमरा कनेक्‍ट किया गया."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"कैमरा डिस्‍कनेक्‍ट किया गया."</string>
     <string name="click_import" msgid="6407959065464291972">"आयात करने के लिए यहां स्पर्श करें"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"किसी एल्‍बम की छवियां"</string>
+    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"किसी एल्‍बम की छवियां"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"सभी छवियों का क्रम बदलें"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"कोई छवि चुनें"</string>
-    <string name="widget_type" msgid="2161028964992385809">"विजेट प्रकार"</string>
+    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"विजेट प्रकार"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"स्लाइडशो"</string>
     <string name="albums" msgid="7320787705180057947">"एल्बम"</string>
     <string name="times" msgid="2023033894889499219">"इतने बार"</string>

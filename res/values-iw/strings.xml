@@ -38,9 +38,9 @@
     <string name="crop_label" msgid="521114301871349328">"חתוך תמונה"</string>
     <string name="select_image" msgid="7841406150484742140">"בחר תמונה"</string>
     <string name="select_video" msgid="4859510992798615076">"בחר סרטון"</string>
-    <string name="select_item" msgid="2257529413100472599">"בחר פריטים"</string>
-    <string name="select_album" msgid="4632641262236697235">"בחר אלבומים"</string>
-    <string name="select_group" msgid="9090385962030340391">"בחר קבוצות"</string>
+    <string name="select_item" msgid="2816923896202086390">"בחר פריט"</string>
+    <string name="select_album" msgid="1557063764849434077">"בחר אלבום"</string>
+    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"בחר קבוצות"</string>
     <string name="set_image" msgid="2331476809308010401">"הגדר תמונה בתור"</string>
     <string name="wallpaper" msgid="140165383777262070">"מגדיר טפט..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"טפט"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"יש מצלמה מחוברת."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"המצלמה מנותקת."</string>
     <string name="click_import" msgid="6407959065464291972">"גע כאן כדי לייבא"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"תמונות מאלבום"</string>
+    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"תמונות מאלבום"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"ערבב את כל התמונות"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"בחר תמונה"</string>
-    <string name="widget_type" msgid="2161028964992385809">"סוג Widget"</string>
+    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"סוג Widget"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"מצגת"</string>
     <string name="albums" msgid="7320787705180057947">"אלבומים"</string>
     <string name="times" msgid="2023033894889499219">"פעמים"</string>
