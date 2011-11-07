@@ -32,7 +32,9 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.webkit.MimeTypeMap;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 
@@ -52,6 +54,7 @@ public class UriImage extends MediaItem {
     private int mState = STATE_INIT;
     private int mWidth;
     private int mHeight;
+    private int mRotation;
 
     private GalleryApp mApplication;
 
@@ -103,6 +106,12 @@ public class UriImage extends MediaItem {
                 || ContentResolver.SCHEME_ANDROID_RESOURCE.equals(scheme)
                 || ContentResolver.SCHEME_FILE.equals(scheme)) {
             try {
+                if (mContentType.equalsIgnoreCase("image/jpeg")) {
+                    InputStream is = mApplication.getContentResolver()
+                            .openInputStream(mUri);
+                    mRotation = Exif.getOrientation(is);
+                    Utils.closeSilently(is);
+                }
                 mFileDescriptor = mApplication.getContentResolver()
                         .openFileDescriptor(mUri, "r");
                 if (jc.isCancelled()) return STATE_INIT;
@@ -119,6 +128,11 @@ public class UriImage extends MediaItem {
                 if (mCacheEntry == null) {
                     Log.w(TAG, "download failed " + url);
                     return STATE_ERROR;
+                }
+                if (mContentType.equalsIgnoreCase("image/jpeg")) {
+                    InputStream is = new FileInputStream(mCacheEntry.cacheFile);
+                    mRotation = Exif.getOrientation(is);
+                    Utils.closeSilently(is);
                 }
                 mFileDescriptor = ParcelFileDescriptor.open(
                         mCacheEntry.cacheFile, ParcelFileDescriptor.MODE_READ_ONLY);
@@ -272,5 +286,10 @@ public class UriImage extends MediaItem {
     @Override
     public int getHeight() {
         return 0;
+    }
+
+    @Override
+    public int getRotation() {
+        return mRotation;
     }
 }

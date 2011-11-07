@@ -36,12 +36,10 @@ public abstract class AbstractDisplayItem extends DisplayItem {
     private Bitmap mBitmap;
 
     protected final MediaItem mMediaItem;
-    private int mRotation;
 
     public AbstractDisplayItem(MediaItem item) {
         mMediaItem = item;
         if (item == null) mState = STATE_ERROR;
-        if (item != null) mRotation = mMediaItem.getRotation();
     }
 
     protected void updateImage(Bitmap bitmap, boolean isCancelled) {
@@ -65,7 +63,8 @@ public abstract class AbstractDisplayItem extends DisplayItem {
 
     @Override
     public int getRotation() {
-        return mRotation;
+        if (mMediaItem != null) return mMediaItem.getRotation();
+        return 0;
     }
 
     @Override
