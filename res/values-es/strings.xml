@@ -38,9 +38,9 @@
     <string name="crop_label" msgid="521114301871349328">"Recortar"</string>
     <string name="select_image" msgid="7841406150484742140">"Seleccionar foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Seleccionar vídeo"</string>
-    <string name="select_item" msgid="2257529413100472599">"Seleccionar elementos"</string>
-    <string name="select_album" msgid="4632641262236697235">"Seleccionar álbumes"</string>
-    <string name="select_group" msgid="9090385962030340391">"Seleccionar grupos"</string>
+    <string name="select_item" msgid="2816923896202086390">"Seleccionar elemento"</string>
+    <string name="select_album" msgid="1557063764849434077">"Seleccionar álbum"</string>
+    <string name="select_group" msgid="6744208543323307114">"Seleccionar grupo"</string>
     <string name="set_image" msgid="2331476809308010401">"Establecer imagen como"</string>
     <string name="wallpaper" msgid="140165383777262070">"Estableciendo fondo de pantalla..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Fondo de pantalla"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Cámara conectada"</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Cámara desconectada"</string>
     <string name="click_import" msgid="6407959065464291972">"Toca aquí para realizar la importación."</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Imágenes de un álbum"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Seleccionar un álbum"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Mostrar imágenes aleatoriamente"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Seleccionar una imagen"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Tipo de widget"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Seleccionar imágenes"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Presentación"</string>
     <string name="albums" msgid="7320787705180057947">"Álbumes"</string>
     <string name="times" msgid="2023033894889499219">"Horas"</string>

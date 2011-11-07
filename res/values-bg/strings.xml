@@ -38,9 +38,9 @@
     <string name="crop_label" msgid="521114301871349328">"Подрязване на снимка"</string>
     <string name="select_image" msgid="7841406150484742140">"Избиране на снимка"</string>
     <string name="select_video" msgid="4859510992798615076">"Избиране на видеоклип"</string>
-    <string name="select_item" msgid="2257529413100472599">"Изберете елемент/и"</string>
-    <string name="select_album" msgid="4632641262236697235">"Изберете албум/и"</string>
-    <string name="select_group" msgid="9090385962030340391">"Изберете групи"</string>
+    <string name="select_item" msgid="2816923896202086390">"Избиране на елемент"</string>
+    <string name="select_album" msgid="1557063764849434077">"Изберете албум"</string>
+    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"Изберете групи"</string>
     <string name="set_image" msgid="2331476809308010401">"Задаване на снимката като"</string>
     <string name="wallpaper" msgid="140165383777262070">"Тапетът се задава..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Тапет"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Камерата е включена."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Камерата е изключена."</string>
     <string name="click_import" msgid="6407959065464291972">"Докоснете тук, за да импортирате"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Изображения от албум"</string>
+    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"Изображения от албум"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Разбъркване на всички"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Избор на изображение"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Тип приспособление"</string>
+    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"Тип приспособление"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Слайдшоу"</string>
     <string name="albums" msgid="7320787705180057947">"Албуми"</string>
     <string name="times" msgid="2023033894889499219">"Час"</string>

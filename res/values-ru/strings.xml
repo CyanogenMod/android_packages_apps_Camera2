@@ -38,9 +38,9 @@
     <string name="crop_label" msgid="521114301871349328">"Обрезать фотографию"</string>
     <string name="select_image" msgid="7841406150484742140">"Выберите фото"</string>
     <string name="select_video" msgid="4859510992798615076">"Выберите видео"</string>
-    <string name="select_item" msgid="2257529413100472599">"Выберите объекты"</string>
-    <string name="select_album" msgid="4632641262236697235">"Выберите альбомы"</string>
-    <string name="select_group" msgid="9090385962030340391">"Выберите группы"</string>
+    <string name="select_item" msgid="2816923896202086390">"Выберите файл"</string>
+    <string name="select_album" msgid="1557063764849434077">"Выберите альбом"</string>
+    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"Выберите группы"</string>
     <string name="set_image" msgid="2331476809308010401">"Установить картинку как"</string>
     <string name="wallpaper" msgid="140165383777262070">"Установка обоев..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Обои"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Камера подключена."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Камера отключена."</string>
     <string name="click_import" msgid="6407959065464291972">"Нажмите здесь, чтобы начать импорт"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Изображения из альбома"</string>
+    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"Изображения из альбома"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Перемешать все изображения"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Выберите изображение"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Тип виджета"</string>
+    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"Тип виджета"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Слайд-шоу"</string>
     <string name="albums" msgid="7320787705180057947">"Альбомы"</string>
     <string name="times" msgid="2023033894889499219">"По времени"</string>

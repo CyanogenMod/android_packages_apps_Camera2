@@ -38,9 +38,9 @@
     <string name="crop_label" msgid="521114301871349328">"Przytnij zdjęcie"</string>
     <string name="select_image" msgid="7841406150484742140">"Wybierz zdjęcie"</string>
     <string name="select_video" msgid="4859510992798615076">"Wybierz film"</string>
-    <string name="select_item" msgid="2257529413100472599">"Wybierz elementy"</string>
-    <string name="select_album" msgid="4632641262236697235">"Wybierz albumy"</string>
-    <string name="select_group" msgid="9090385962030340391">"Zaznacz grupę"</string>
+    <string name="select_item" msgid="2816923896202086390">"Wybierz element"</string>
+    <string name="select_album" msgid="1557063764849434077">"Wybierz album"</string>
+    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"Zaznacz grupę"</string>
     <string name="set_image" msgid="2331476809308010401">"Ustaw zdjęcie jako"</string>
     <string name="wallpaper" msgid="140165383777262070">"Ustawianie tapety…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Tapeta"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Aparat podłączony"</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Aparat odłączony"</string>
     <string name="click_import" msgid="6407959065464291972">"Dotknij tutaj, aby zaimportować"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Zdjęcia z albumu"</string>
+    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"Zdjęcia z albumu"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Wszystkie zdjęcia losowo"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Wybierz obraz"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Typ widżetu"</string>
+    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"Typ widżetu"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Pokaz slajdów"</string>
     <string name="albums" msgid="7320787705180057947">"Albumy"</string>
     <string name="times" msgid="2023033894889499219">"Czas"</string>
