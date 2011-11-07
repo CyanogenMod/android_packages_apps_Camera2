@@ -38,9 +38,9 @@
     <string name="crop_label" msgid="521114301871349328">"Абрэзаць малюнак"</string>
     <string name="select_image" msgid="7841406150484742140">"Абраць фота"</string>
     <string name="select_video" msgid="4859510992798615076">"Выберыце відэа"</string>
-    <string name="select_item" msgid="2257529413100472599">"Выб. элемент(ы)"</string>
-    <string name="select_album" msgid="4632641262236697235">"Выб. альбом(ы)"</string>
-    <string name="select_group" msgid="9090385962030340391">"Пазначце групы"</string>
+    <string name="select_item" msgid="2816923896202086390">"Выбраць элемент"</string>
+    <string name="select_album" msgid="1557063764849434077">"Выбраць альбом"</string>
+    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"Пазначце групы"</string>
     <string name="set_image" msgid="2331476809308010401">"Усталяваць малюнак як"</string>
     <string name="wallpaper" msgid="140165383777262070">"Усталяванне шпалер..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Шпалеры"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Камера падлучаная."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Камера адключаная."</string>
     <string name="click_import" msgid="6407959065464291972">"Націсніце тут, каб імпартаваць"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Выявы з альбома"</string>
+    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"Выявы з альбома"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Змяшаць усе малюнкі"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Выберыце выяву"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Тып віджэта"</string>
+    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"Тып віджэта"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Слайд-шоу"</string>
     <string name="albums" msgid="7320787705180057947">"Альбомы"</string>
     <string name="times" msgid="2023033894889499219">"Разы"</string>

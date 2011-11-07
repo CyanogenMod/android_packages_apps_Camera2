@@ -38,9 +38,9 @@
     <string name="crop_label" msgid="521114301871349328">"修剪照片"</string>
     <string name="select_image" msgid="7841406150484742140">"选择照片"</string>
     <string name="select_video" msgid="4859510992798615076">"选择视频"</string>
-    <string name="select_item" msgid="2257529413100472599">"所选项"</string>
-    <string name="select_album" msgid="4632641262236697235">"选择相册"</string>
-    <string name="select_group" msgid="9090385962030340391">"选择群组"</string>
+    <string name="select_item" msgid="2816923896202086390">"选择条目"</string>
+    <string name="select_album" msgid="1557063764849434077">"选择相册"</string>
+    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"选择群组"</string>
     <string name="set_image" msgid="2331476809308010401">"将照片设置为"</string>
     <string name="wallpaper" msgid="140165383777262070">"正在设置壁纸..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"壁纸"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"相机已连接。"</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"相机已断开连接。"</string>
     <string name="click_import" msgid="6407959065464291972">"触摸此处可导入"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"相册中的图片"</string>
+    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"相册中的图片"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"随机显示所有图片"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"选择图片"</string>
-    <string name="widget_type" msgid="2161028964992385809">"窗口小部件的类型"</string>
+    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"窗口小部件的类型"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"幻灯片"</string>
     <string name="albums" msgid="7320787705180057947">"相册"</string>
     <string name="times" msgid="2023033894889499219">"时间"</string>

@@ -38,9 +38,9 @@
     <string name="crop_label" msgid="521114301871349328">"사진 자르기"</string>
     <string name="select_image" msgid="7841406150484742140">"사진 선택"</string>
     <string name="select_video" msgid="4859510992798615076">"동영상 선택"</string>
-    <string name="select_item" msgid="2257529413100472599">"항목 선택"</string>
-    <string name="select_album" msgid="4632641262236697235">"앨범 선택"</string>
-    <string name="select_group" msgid="9090385962030340391">"그룹 선택"</string>
+    <string name="select_item" msgid="2816923896202086390">"항목 선택"</string>
+    <string name="select_album" msgid="1557063764849434077">"앨범 선택"</string>
+    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"그룹 선택"</string>
     <string name="set_image" msgid="2331476809308010401">"사진을 다음으로 설정"</string>
     <string name="wallpaper" msgid="140165383777262070">"배경화면을 설정하는 중..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"배경화면"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"카메라가 연결되었습니다."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"카메라 연결이 끊어졌습니다."</string>
     <string name="click_import" msgid="6407959065464291972">"가져오려면 여기를 터치하세요."</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"앨범의 이미지"</string>
+    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"앨범의 이미지"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"모든 이미지 셔플"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"이미지 선택"</string>
-    <string name="widget_type" msgid="2161028964992385809">"위젯 유형"</string>
+    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"위젯 유형"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"슬라이드쇼"</string>
     <string name="albums" msgid="7320787705180057947">"앨범"</string>
     <string name="times" msgid="2023033894889499219">"횟수"</string>
