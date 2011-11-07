@@ -57,7 +57,7 @@
 
     <!-- Title of a menu item to indicate performing the image crop operation
          [CHAR LIMIT=20] -->
-    <string name="crop_save_text">OK</string>
+    <string name="crop_save_text">Crop</string>
     <!-- Button indicating that the cropped image should be reverted back to the original -->
     <!-- Hint that appears when cropping an image with more than one face -->
     <string name="multiface_crop_help">Touch a face to begin.</string>
