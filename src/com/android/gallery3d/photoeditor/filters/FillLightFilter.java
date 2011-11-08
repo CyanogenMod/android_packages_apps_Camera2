@@ -24,24 +24,14 @@ import com.android.gallery3d.photoeditor.Photo;
 /**
  * Fill-light filter applied to the image.
  */
-public class FillLightFilter extends Filter {
+public class FillLightFilter extends AbstractScaleFilter {
 
-    private float backlight;
-
-    /**
-     * Sets the backlight level.
-     *
-     * @param backlight ranges from 0 to 1.
-     */
-    public void setBacklight(float backlight) {
-        this.backlight = backlight;
-        validate();
-    }
+    public static final Creator<FillLightFilter> CREATOR = creatorOf(FillLightFilter.class);
 
     @Override
     public void process(Photo src, Photo dst) {
         Effect effect = getEffect(EffectFactory.EFFECT_FILLLIGHT);
-        effect.setParameter("strength", backlight);
+        effect.setParameter("strength", scale);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
     }
 }

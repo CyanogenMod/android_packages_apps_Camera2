@@ -24,19 +24,10 @@ import com.android.gallery3d.photoeditor.Photo;
 /**
  * Color temperature filter applied to the image.
  */
-public class ColorTemperatureFilter extends Filter {
+public class ColorTemperatureFilter extends AbstractScaleFilter {
 
-    private float scale;
-
-    /**
-     * Sets the color temperature level.
-     *
-     * @param scale ranges from 0 to 1.
-     */
-    public void setColorTemperature(float scale) {
-        this.scale = scale;
-        validate();
-    }
+    public static final Creator<ColorTemperatureFilter> CREATOR = creatorOf(
+            ColorTemperatureFilter.class);
 
     @Override
     public void process(Photo src, Photo dst) {

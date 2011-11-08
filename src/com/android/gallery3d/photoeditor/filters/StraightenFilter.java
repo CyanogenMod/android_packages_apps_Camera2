@@ -18,6 +18,7 @@ package com.android.gallery3d.photoeditor.filters;
 
 import android.media.effect.Effect;
 import android.media.effect.EffectFactory;
+import android.os.Parcel;
 
 import com.android.gallery3d.photoeditor.Photo;
 
@@ -26,12 +27,13 @@ import com.android.gallery3d.photoeditor.Photo;
  */
 public class StraightenFilter extends Filter {
 
+    public static final Creator<StraightenFilter> CREATOR = creatorOf(StraightenFilter.class);
     public static final float MAX_DEGREES = 30.0f;
 
-    private float angle;
+    private float degrees;
 
     public void setAngle(float degrees) {
-        angle = -degrees;
+        this.degrees = degrees;
         validate();
     }
 
@@ -39,7 +41,17 @@ public class StraightenFilter extends Filter {
     public void process(Photo src, Photo dst) {
         Effect effect = getEffect(EffectFactory.EFFECT_STRAIGHTEN);
         effect.setParameter("maxAngle", MAX_DEGREES);
-        effect.setParameter("angle", angle);
+        effect.setParameter("angle", -degrees);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
+    }
+
+    @Override
+    protected void writeToParcel(Parcel out) {
+        out.writeFloat(degrees);
+    }
+
+    @Override
+    protected void readFromParcel(Parcel in) {
+        degrees = in.readFloat();
     }
 }

@@ -44,7 +44,7 @@ public class HighlightAction extends EffectAction {
             @Override
             public void onProgressChanged(float progress, boolean fromUser) {
                 if (fromUser) {
-                    filter.setHighlight(progress);
+                    filter.setScale(progress);
                     notifyFilterChanged(filter, true);
                 }
             }
