@@ -43,7 +43,6 @@ import com.android.gallery3d.ui.ActionModeHandler.ActionModeListener;
 import com.android.gallery3d.ui.AlbumSetView;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
-import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.GridDrawer;
@@ -55,6 +54,7 @@ import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.ui.StaticBackground;
 import com.android.gallery3d.util.Future;
+import com.android.gallery3d.util.GalleryUtils;
 
 public class AlbumSetPage extends ActivityState implements
         SelectionManager.SelectionListener, GalleryActionBar.ClusterRunner,
@@ -69,6 +69,9 @@ public class AlbumSetPage extends ActivityState implements
 
     private static final int DATA_CACHE_SIZE = 256;
     private static final int REQUEST_DO_ANIMATION = 1;
+
+    private static final int BIT_LOADING_RELOAD = 1;
+    private static final int BIT_LOADING_SYNC = 2;
 
     private boolean mIsActive = false;
     private StaticBackground mStaticBackground;
@@ -102,6 +105,9 @@ public class AlbumSetPage extends ActivityState implements
     private float mZ;
 
     private Future<Integer> mSyncTask = null;
+
+    private int mLoadingBits = 0;
+    private boolean mInitialSynced = false;
 
     private final GLView mRootPane = new GLView() {
         private final float mMatrix[] = new float[16];
@@ -284,6 +290,30 @@ public class AlbumSetPage extends ActivityState implements
         startTransition();
     }
 
+    private void clearLoadingBit(int loadingBit) {
+        mLoadingBits &= ~loadingBit;
+        if (mLoadingBits == 0) {
+            GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
+
+            // Only show toast when there's no album and we are going to finish
+            // the page. Toast is redundant if we are going to stay on this page.
+            if ((mAlbumSetDataAdapter.size() == 0)) {
+                Toast.makeText((Context) mActivity,
+                        R.string.empty_album, Toast.LENGTH_LONG).show();
+                if (mActivity.getStateManager().getStateCount() > 1) {
+                    mActivity.getStateManager().finishState(this);
+                }
+            }
+        }
+    }
+
+    private void setLoadingBit(int loadingBit) {
+        if (mLoadingBits == 0) {
+            GalleryUtils.setSpinnerVisibility((Activity) mActivity, true);
+        }
+        mLoadingBits |= loadingBit;
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -298,6 +328,7 @@ public class AlbumSetPage extends ActivityState implements
         if (mSyncTask != null) {
             mSyncTask.cancel();
             mSyncTask = null;
+            clearLoadingBit(BIT_LOADING_SYNC);
         }
     }
 
@@ -313,6 +344,10 @@ public class AlbumSetPage extends ActivityState implements
         GalleryActionBar actionBar = mActivity.getGalleryActionBar();
         if (mShowClusterMenu && actionBar != null) {
             actionBar.showClusterMenu(mSelectedAction, this);
+        }
+        if (!mInitialSynced) {
+            mSyncTask = mMediaSet.requestSync(AlbumSetPage.this);
+            setLoadingBit(BIT_LOADING_SYNC);
         }
     }
 
@@ -571,9 +606,11 @@ public class AlbumSetPage extends ActivityState implements
         ((Activity) mActivity).runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (resultCode == MediaSet.SYNC_RESULT_SUCCESS) {
+                    mInitialSynced = true;
+                }
                 if (!mIsActive) return;
-                mediaSet.notifyContentChanged(); // force reload to handle spinner
-
+                clearLoadingBit(BIT_LOADING_SYNC);
                 if (resultCode == MediaSet.SYNC_RESULT_ERROR) {
                     Toast.makeText((Context) mActivity, R.string.sync_album_set_error,
                             Toast.LENGTH_LONG).show();
@@ -584,29 +621,12 @@ public class AlbumSetPage extends ActivityState implements
 
     private class MyLoadingListener implements LoadingListener {
         public void onLoadingStarted() {
-            GalleryUtils.setSpinnerVisibility((Activity) mActivity, true);
+            setLoadingBit(BIT_LOADING_RELOAD);
         }
 
         public void onLoadingFinished() {
             if (!mIsActive) return;
-
-            if (mSyncTask == null) {
-                // Request sync in case the mediaSet hasn't been sync'ed before.
-                mSyncTask = mMediaSet.requestSync(AlbumSetPage.this);
-            }
-            if (mSyncTask.isDone()){
-                // The mediaSet is in sync. Turn off the loading indicator.
-                GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
-
-                // Only show toast when there's no album and we are going to finish
-                // the page. Toast is redundant if we are going to stay on this page.
-                if ((mAlbumSetDataAdapter.size() == 0)
-                        && (mActivity.getStateManager().getStateCount() > 1)) {
-                    Toast.makeText((Context) mActivity,
-                            R.string.empty_album, Toast.LENGTH_LONG).show();
-                    mActivity.getStateManager().finishState(AlbumSetPage.this);
-                }
-            }
+            clearLoadingBit(BIT_LOADING_RELOAD);
         }
     }
 
