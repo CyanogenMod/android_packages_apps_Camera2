@@ -25,6 +25,8 @@ import com.android.gallery3d.photoeditor.Photo;
  */
 public class NegativeFilter extends Filter {
 
+    public static final Creator<NegativeFilter> CREATOR = creatorOf(NegativeFilter.class);
+
     public NegativeFilter() {
         validate();
     }

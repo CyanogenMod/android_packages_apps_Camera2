@@ -25,6 +25,8 @@ import com.android.gallery3d.photoeditor.Photo;
  */
 public class SepiaFilter extends Filter {
 
+    public static final Creator<SepiaFilter> CREATOR = creatorOf(SepiaFilter.class);
+
     public SepiaFilter() {
         validate();
     }

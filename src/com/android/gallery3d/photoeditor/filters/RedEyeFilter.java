@@ -19,6 +19,7 @@ package com.android.gallery3d.photoeditor.filters;
 import android.graphics.PointF;
 import android.media.effect.Effect;
 import android.media.effect.EffectFactory;
+import android.os.Parcel;
 
 import com.android.gallery3d.photoeditor.Photo;
 
@@ -28,6 +29,8 @@ import java.util.Vector;
  * Red-eye removal filter applied to the image.
  */
 public class RedEyeFilter extends Filter {
+
+    public static final Creator<RedEyeFilter> CREATOR = creatorOf(RedEyeFilter.class);
 
     private final Vector<PointF> redeyes = new Vector<PointF>();
 
@@ -50,5 +53,21 @@ public class RedEyeFilter extends Filter {
         }
         effect.setParameter("centers", centers);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
+    }
+
+    @Override
+    protected void writeToParcel(Parcel out) {
+        out.writeInt(redeyes.size());
+        for (PointF eye : redeyes) {
+            out.writeParcelable(eye, 0);
+        }
+    }
+
+    @Override
+    protected void readFromParcel(Parcel in) {
+        int size = in.readInt();
+        for (int i = 0; i < size; i++) {
+            redeyes.add((PointF) in.readParcelable(null));
+        }
     }
 }
