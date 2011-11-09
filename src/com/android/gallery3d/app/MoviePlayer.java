@@ -162,7 +162,8 @@ public class MoviePlayer implements
     }
 
     private void showSystemUi(boolean visible) {
-        int flag = visible ? 0 : View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        int flag = visible ? 0 : View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_LOW_PROFILE;
         mVideoView.setSystemUiVisibility(flag);
     }
 
