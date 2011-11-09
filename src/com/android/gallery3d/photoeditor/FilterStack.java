@@ -60,7 +60,7 @@ public class FilterStack {
             appliedStack.addAll(getFilters(savedState, APPLIED_STACK_KEY));
             redoStack.addAll(getFilters(savedState, REDO_STACK_KEY));
             outputTopFilter = true;
-            stackChanged();
+            stackListener.onStackChanged(!appliedStack.empty(), !redoStack.empty());
        }
     }
 
