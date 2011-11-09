@@ -17,7 +17,6 @@
 package com.android.gallery3d.photoeditor.actions;
 
 import android.content.Context;
-import android.graphics.Path;
 import android.util.AttributeSet;
 
 import com.android.gallery3d.photoeditor.filters.DoodleFilter;
@@ -64,8 +63,8 @@ public class DoodleAction extends EffectAction {
             }
 
             @Override
-            public void onDoodleFinished(Path path, int color) {
-                filter.addPath(path, color);
+            public void onDoodleFinished(Doodle doodle) {
+                filter.addDoodle(doodle);
                 notifyFilterChanged(filter, false);
             }
         });

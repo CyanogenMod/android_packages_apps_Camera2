@@ -44,7 +44,7 @@ public class SaturationAction extends EffectAction {
             @Override
             public void onProgressChanged(float progress, boolean fromUser) {
                 if (fromUser) {
-                    filter.setSaturation(progress);
+                    filter.setScale(progress);
                     notifyFilterChanged(filter, true);
                 }
             }

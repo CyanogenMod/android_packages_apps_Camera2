@@ -24,19 +24,9 @@ import com.android.gallery3d.photoeditor.Photo;
 /**
  * Sharpen filter applied to the image.
  */
-public class SharpenFilter extends Filter {
+public class SharpenFilter extends AbstractScaleFilter {
 
-    private float scale;
-
-    /**
-     * Sets the sharpen level.
-     *
-     * @param scale ranges from 0 to 1.
-     */
-    public void setSharpen(float scale) {
-        this.scale = scale;
-        validate();
-    }
+    public static final Creator<SharpenFilter> CREATOR = creatorOf(SharpenFilter.class);
 
     @Override
     public void process(Photo src, Photo dst) {

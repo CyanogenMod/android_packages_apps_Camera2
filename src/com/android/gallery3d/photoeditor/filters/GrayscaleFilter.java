@@ -25,6 +25,8 @@ import com.android.gallery3d.photoeditor.Photo;
  */
 public class GrayscaleFilter extends Filter {
 
+    public static final Creator<GrayscaleFilter> CREATOR = creatorOf(GrayscaleFilter.class);
+
     public GrayscaleFilter() {
         validate();
     }

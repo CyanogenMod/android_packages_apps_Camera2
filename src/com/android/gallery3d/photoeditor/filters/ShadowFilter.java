@@ -24,24 +24,14 @@ import com.android.gallery3d.photoeditor.Photo;
 /**
  * Shadow filter applied to the image.
  */
-public class ShadowFilter extends Filter {
+public class ShadowFilter extends AbstractScaleFilter {
 
-    private float black;
-
-    /**
-     * Sets the shadow blackness level.
-     *
-     * @param shadow ranges from 0 to 1.
-     */
-    public void setShadow(float shadow) {
-        black = shadow * 0.5f;
-        validate();
-    }
+    public static final Creator<ShadowFilter> CREATOR = creatorOf(ShadowFilter.class);
 
     @Override
     public void process(Photo src, Photo dst) {
         Effect effect = getEffect(EffectFactory.EFFECT_BLACKWHITE);
-        effect.setParameter("black", black);
+        effect.setParameter("black", scale * 0.5f);
         effect.setParameter("white", 1f);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
     }
