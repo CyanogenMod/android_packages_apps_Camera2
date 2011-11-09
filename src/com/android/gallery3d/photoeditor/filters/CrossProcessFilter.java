@@ -25,6 +25,8 @@ import com.android.gallery3d.photoeditor.Photo;
  */
 public class CrossProcessFilter extends Filter {
 
+    public static final Creator<CrossProcessFilter> CREATOR = creatorOf(CrossProcessFilter.class);
+
     public CrossProcessFilter() {
         validate();
     }

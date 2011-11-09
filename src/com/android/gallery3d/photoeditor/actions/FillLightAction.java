@@ -44,7 +44,7 @@ public class FillLightAction extends EffectAction {
             @Override
             public void onProgressChanged(float progress, boolean fromUser) {
                 if (fromUser) {
-                    filter.setBacklight(progress);
+                    filter.setScale(progress);
                     notifyFilterChanged(filter, true);
                 }
             }

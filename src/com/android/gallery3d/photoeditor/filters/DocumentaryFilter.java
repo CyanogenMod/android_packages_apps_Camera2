@@ -25,6 +25,8 @@ import com.android.gallery3d.photoeditor.Photo;
  */
 public class DocumentaryFilter extends Filter {
 
+    public static final Creator<DocumentaryFilter> CREATOR = creatorOf(DocumentaryFilter.class);
+
     public DocumentaryFilter() {
         validate();
     }

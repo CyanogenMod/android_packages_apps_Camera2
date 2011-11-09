@@ -23,19 +23,9 @@ import com.android.gallery3d.photoeditor.Photo;
 /**
  * Facelift filter applied to the image.
  */
-public class FaceliftFilter extends Filter {
+public class FaceliftFilter extends AbstractScaleFilter {
 
-    private float scale;
-
-    /**
-     * Sets the facelift level.
-     *
-     * @param scale ranges from 0 to 1.
-     */
-    public void setScale(float scale) {
-        this.scale = scale;
-        validate();
-    }
+    public static final Creator<FaceliftFilter> CREATOR = creatorOf(FaceliftFilter.class);
 
     @Override
     public void process(Photo src, Photo dst) {

@@ -24,9 +24,10 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.media.effect.Effect;
 import android.media.effect.EffectFactory;
+import android.os.Parcel;
 
 import com.android.gallery3d.photoeditor.Photo;
-import com.android.gallery3d.photoeditor.actions.DoodlePaint;
+import com.android.gallery3d.photoeditor.actions.Doodle;
 
 import java.util.Vector;
 
@@ -35,17 +36,9 @@ import java.util.Vector;
  */
 public class DoodleFilter extends Filter {
 
-    private static class ColorPath {
-        private final int color;
-        private final Path path;
+    public static final Creator<DoodleFilter> CREATOR = creatorOf(DoodleFilter.class);
 
-        ColorPath(int color, Path path) {
-            this.color = color;
-            this.path = path;
-        }
-    }
-
-    private final Vector<ColorPath> doodles = new Vector<ColorPath>();
+    private final Vector<Doodle> doodles = new Vector<Doodle>();
 
     /**
      * Signals once at least a doodle drawn within photo bounds; this filter is regarded as invalid
@@ -55,11 +48,8 @@ public class DoodleFilter extends Filter {
         validate();
     }
 
-    /**
-     * The path coordinates used here should range from 0 to 1.
-     */
-    public void addPath(Path path, int color) {
-        doodles.add(new ColorPath(color, path));
+    public void addDoodle(Doodle doodle) {
+        doodles.add(doodle);
     }
 
     @Override
@@ -72,16 +62,31 @@ public class DoodleFilter extends Filter {
                 new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight()), Matrix.ScaleToFit.FILL);
 
         Path drawingPath = new Path();
-        Paint paint = new DoodlePaint();
-        for (ColorPath doodle : doodles) {
-            paint.setColor(doodle.color);
-            drawingPath.set(doodle.path);
-            drawingPath.transform(matrix);
+        Paint paint = Doodle.createPaint();
+        for (Doodle doodle : doodles) {
+            paint.setColor(doodle.getColor());
+            doodle.getDrawingPath(matrix, drawingPath);
             canvas.drawPath(drawingPath, paint);
         }
 
         Effect effect = getEffect(EffectFactory.EFFECT_BITMAPOVERLAY);
         effect.setParameter("bitmap", bitmap);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
+    }
+
+    @Override
+    protected void writeToParcel(Parcel out) {
+        out.writeInt(doodles.size());
+        for (Doodle doodle : doodles) {
+            out.writeParcelable(doodle, 0);
+        }
+    }
+
+    @Override
+    protected void readFromParcel(Parcel in) {
+        int size = in.readInt();
+        for (int i = 0; i < size; i++) {
+            doodles.add((Doodle) in.readParcelable(Doodle.class.getClassLoader()));
+        }
     }
 }

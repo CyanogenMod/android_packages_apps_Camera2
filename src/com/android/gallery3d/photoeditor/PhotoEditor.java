@@ -53,7 +53,7 @@ public class PhotoEditor extends Activity {
                     public void onStackChanged(boolean canUndo, boolean canRedo) {
                         actionBar.updateButtons(canUndo, canRedo);
                     }
-        });
+        }, savedInstanceState);
 
         EffectsBar effectsBar = (EffectsBar) findViewById(R.id.effects_bar);
         effectsBar.initialize(filterStack);
@@ -125,7 +125,7 @@ public class PhotoEditor extends Activity {
                     @Override
                     public void run() {
                         final SpinnerProgressDialog progressDialog = createProgressDialog();
-                        filterStack.saveBitmap(new OnDoneBitmapCallback() {
+                        filterStack.getOutputBitmap(new OnDoneBitmapCallback() {
 
                             @Override
                             public void onDone(Bitmap bitmap) {
@@ -197,6 +197,12 @@ public class PhotoEditor extends Activity {
                 }
             }
         };
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        filterStack.saveStacks(outState);
     }
 
     @Override

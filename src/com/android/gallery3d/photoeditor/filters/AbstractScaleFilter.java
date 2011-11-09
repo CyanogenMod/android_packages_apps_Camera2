@@ -14,21 +14,32 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.photoeditor.actions;
+package com.android.gallery3d.photoeditor.filters;
 
-import android.graphics.Paint;
+import android.os.Parcel;
 
 /**
- * A paint class for doodle effect.
+ * Filter base that has a scale value ranging from 0 to 1 for adjustments and can persist states.
  */
-public class DoodlePaint extends Paint {
+public abstract class AbstractScaleFilter extends Filter {
 
-    public DoodlePaint() {
-        super(Paint.DITHER_FLAG | Paint.ANTI_ALIAS_FLAG);
+    protected float scale;
 
-        setStyle(Paint.Style.STROKE);
-        setStrokeJoin(Paint.Join.ROUND);
-        setStrokeCap(Paint.Cap.ROUND);
-        setStrokeWidth(15);
+    /**
+     * Sets the scale from 0 to 1.
+     */
+    public void setScale(float scale) {
+        this.scale = scale;
+        validate();
+    }
+
+    @Override
+    protected void writeToParcel(Parcel out) {
+        out.writeFloat(scale);
+    }
+
+    @Override
+    protected void readFromParcel(Parcel in) {
+        scale = in.readFloat();
     }
 }

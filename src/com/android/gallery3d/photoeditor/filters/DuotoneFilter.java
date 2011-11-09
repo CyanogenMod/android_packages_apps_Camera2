@@ -18,6 +18,7 @@ package com.android.gallery3d.photoeditor.filters;
 
 import android.media.effect.Effect;
 import android.media.effect.EffectFactory;
+import android.os.Parcel;
 
 import com.android.gallery3d.photoeditor.Photo;
 
@@ -25,6 +26,8 @@ import com.android.gallery3d.photoeditor.Photo;
  * Duotone filter applied to the image.
  */
 public class DuotoneFilter extends Filter {
+
+    public static final Creator<DuotoneFilter> CREATOR = creatorOf(DuotoneFilter.class);
 
     private int firstColor;
     private int secondColor;
@@ -41,5 +44,17 @@ public class DuotoneFilter extends Filter {
         effect.setParameter("first_color", firstColor);
         effect.setParameter("second_color", secondColor);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
+    }
+
+    @Override
+    protected void writeToParcel(Parcel out) {
+        out.writeInt(firstColor);
+        out.writeInt(secondColor);
+    }
+
+    @Override
+    protected void readFromParcel(Parcel in) {
+        firstColor = in.readInt();
+        secondColor = in.readInt();
     }
 }

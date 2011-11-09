@@ -17,9 +17,11 @@
 package com.android.gallery3d.photoeditor;
 
 import android.graphics.Bitmap;
+import android.os.Bundle;
 
 import com.android.gallery3d.photoeditor.filters.Filter;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 /**
@@ -35,6 +37,9 @@ public class FilterStack {
         void onStackChanged(boolean canUndo, boolean canRedo);
     }
 
+    private static final String APPLIED_STACK_KEY = "applied_stack";
+    private static final String REDO_STACK_KEY = "redo_stack";
+
     private final Stack<Filter> appliedStack = new Stack<Filter>();
     private final Stack<Filter> redoStack = new Stack<Filter>();
 
@@ -45,12 +50,28 @@ public class FilterStack {
 
     private Photo source;
     private Runnable queuedTopFilterChange;
-    private boolean topFilterOutputted;
+    private boolean outputTopFilter;
     private volatile boolean paused;
 
-    public FilterStack(PhotoView photoView, StackListener stackListener) {
+    public FilterStack(PhotoView photoView, StackListener stackListener, Bundle savedState) {
         this.photoView = photoView;
         this.stackListener = stackListener;
+        if (savedState != null) {
+            appliedStack.addAll(getFilters(savedState, APPLIED_STACK_KEY));
+            redoStack.addAll(getFilters(savedState, REDO_STACK_KEY));
+            outputTopFilter = true;
+            stackChanged();
+       }
+    }
+
+    private ArrayList<Filter> getFilters(Bundle savedState, String key) {
+        // Infer Filter array-list from the Parcelable array-list by the specified returned type.
+        return savedState.getParcelableArrayList(key);
+    }
+
+    public void saveStacks(Bundle outState) {
+        outState.putParcelableArrayList(APPLIED_STACK_KEY, new ArrayList<Filter>(appliedStack));
+        outState.putParcelableArrayList(REDO_STACK_KEY, new ArrayList<Filter>(redoStack));
     }
 
     private void reallocateBuffer(int target) {
@@ -72,18 +93,19 @@ public class FilterStack {
 
             // Source photo will be displayed if there is no filter stacked.
             Photo photo = source;
-            int size = topFilterOutputted ? appliedStack.size() : appliedStack.size() - 1;
+            int size = outputTopFilter ? appliedStack.size() : appliedStack.size() - 1;
             for (int i = 0; i < size && !paused; i++) {
                 photo = runFilter(i);
             }
-            photoView.setPhoto(photo, topFilterOutputted);
+            // Clear photo-view transformation when the top filter will be outputted.
+            photoView.setPhoto(photo, outputTopFilter);
         }
     }
 
     private void invalidateTopFilter() {
         if (!appliedStack.empty()) {
+            outputTopFilter = true;
             photoView.setPhoto(runFilter(appliedStack.size() - 1), true);
-            topFilterOutputted = true;
         }
     }
 
@@ -133,12 +155,12 @@ public class FilterStack {
         });
     }
 
-    public void saveBitmap(final OnDoneBitmapCallback callback) {
+    public void getOutputBitmap(final OnDoneBitmapCallback callback) {
         photoView.queue(new Runnable() {
 
             @Override
             public void run() {
-                int filterIndex = appliedStack.size() - (topFilterOutputted ? 1 : 2);
+                int filterIndex = appliedStack.size() - (outputTopFilter ? 1 : 2);
                 Photo photo = (filterIndex < 0) ? source : buffers[getOutBufferIndex(filterIndex)];
                 final Bitmap bitmap = (photo != null) ? photo.save() : null;
                 photoView.post(new Runnable() {
@@ -166,7 +188,7 @@ public class FilterStack {
 
     private void pushFilterInternal(Filter filter) {
         appliedStack.push(filter);
-        topFilterOutputted = false;
+        outputTopFilter = false;
         stackChanged();
     }
 

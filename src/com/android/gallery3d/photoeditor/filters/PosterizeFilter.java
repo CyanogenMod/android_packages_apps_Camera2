@@ -25,6 +25,8 @@ import com.android.gallery3d.photoeditor.Photo;
  */
 public class PosterizeFilter extends Filter {
 
+    public static final Creator<PosterizeFilter> CREATOR = creatorOf(PosterizeFilter.class);
+
     public PosterizeFilter() {
         validate();
     }
