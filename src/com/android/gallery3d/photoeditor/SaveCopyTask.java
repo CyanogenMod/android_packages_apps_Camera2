@@ -136,7 +136,7 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
 
         ContentValues values = new ContentValues();
         values.put(Images.Media.TITLE, saveFileName);
-        values.put(Images.Media.DISPLAY_NAME, saveFileName);
+        values.put(Images.Media.DISPLAY_NAME, file.getName());
         values.put(Images.Media.MIME_TYPE, "image/jpeg");
         values.put(Images.Media.DATE_TAKEN, dateTaken);
         values.put(Images.Media.DATE_MODIFIED, now);
