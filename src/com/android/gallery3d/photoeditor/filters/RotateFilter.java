@@ -18,6 +18,7 @@ package com.android.gallery3d.photoeditor.filters;
 
 import android.media.effect.Effect;
 import android.media.effect.EffectFactory;
+import android.os.Parcel;
 
 import com.android.gallery3d.photoeditor.Photo;
 
@@ -25,6 +26,8 @@ import com.android.gallery3d.photoeditor.Photo;
  * Rotate filter applied to the image.
  */
 public class RotateFilter extends Filter {
+
+    public static final Creator<RotateFilter> CREATOR = creatorOf(RotateFilter.class);
 
     private float degrees;
 
@@ -41,5 +44,15 @@ public class RotateFilter extends Filter {
         Effect effect = getEffect(EffectFactory.EFFECT_ROTATE);
         effect.setParameter("angle", (int) degrees);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
+    }
+
+    @Override
+    protected void writeToParcel(Parcel out) {
+        out.writeFloat(degrees);
+    }
+
+    @Override
+    protected void readFromParcel(Parcel in) {
+        degrees = in.readFloat();
     }
 }

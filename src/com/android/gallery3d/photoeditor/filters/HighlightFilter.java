@@ -24,25 +24,15 @@ import com.android.gallery3d.photoeditor.Photo;
 /**
  * Highlight filter applied to the image.
  */
-public class HighlightFilter extends Filter {
+public class HighlightFilter extends AbstractScaleFilter {
 
-    private float white;
-
-    /**
-     * Sets the highlight level.
-     *
-     * @param highlight ranges from 0 to 1.
-     */
-    public void setHighlight(float highlight) {
-        white = 1f - highlight * 0.5f;
-        validate();
-    }
+    public static final Creator<HighlightFilter> CREATOR = creatorOf(HighlightFilter.class);
 
     @Override
     public void process(Photo src, Photo dst) {
         Effect effect = getEffect(EffectFactory.EFFECT_BLACKWHITE);
         effect.setParameter("black", 0f);
-        effect.setParameter("white", white);
+        effect.setParameter("white", 1f - scale * 0.5f);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
     }
 }

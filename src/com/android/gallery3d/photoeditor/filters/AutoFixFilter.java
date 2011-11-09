@@ -24,19 +24,9 @@ import com.android.gallery3d.photoeditor.Photo;
 /**
  * Auto-fix filter applied to the image.
  */
-public class AutoFixFilter extends Filter {
+public class AutoFixFilter extends AbstractScaleFilter {
 
-    private float scale;
-
-    /**
-     * Sets the auto-fix level.
-     *
-     * @param scale ranges from 0 to 1.
-     */
-    public void setScale(float scale) {
-        this.scale = scale;
-        validate();
-    }
+    public static final Creator<AutoFixFilter> CREATOR = creatorOf(AutoFixFilter.class);
 
     @Override
     public void process(Photo src, Photo dst) {

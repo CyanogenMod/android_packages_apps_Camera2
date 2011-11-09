@@ -24,19 +24,9 @@ import com.android.gallery3d.photoeditor.Photo;
 /**
  * Fisheye filter applied to the image.
  */
-public class FisheyeFilter extends Filter {
+public class FisheyeFilter extends AbstractScaleFilter {
 
-    private float scale;
-
-    /**
-     * Sets the fisheye distortion level.
-     *
-     * @param scale ranges from 0 to 1.
-     */
-    public void setScale(float scale) {
-        this.scale = scale;
-        validate();
-    }
+    public static final Creator<FisheyeFilter> CREATOR = creatorOf(FisheyeFilter.class);
 
     @Override
     public void process(Photo src, Photo dst) {

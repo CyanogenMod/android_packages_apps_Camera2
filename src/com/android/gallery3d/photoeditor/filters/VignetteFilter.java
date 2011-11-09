@@ -24,19 +24,9 @@ import com.android.gallery3d.photoeditor.Photo;
 /**
  * Vignette filter applied to the image.
  */
-public class VignetteFilter extends Filter {
+public class VignetteFilter extends AbstractScaleFilter {
 
-    private float scale;
-
-    /**
-     * Sets the vignette range scale.
-     *
-     * @param scale ranges from 0 to 1.
-     */
-    public void setScale(float scale) {
-        this.scale = scale;
-        validate();
-    }
+    public static final Creator<VignetteFilter> CREATOR = creatorOf(VignetteFilter.class);
 
     @Override
     public void process(Photo src, Photo dst) {
