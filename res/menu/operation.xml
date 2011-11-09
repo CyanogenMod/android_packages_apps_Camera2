@@ -30,7 +30,7 @@
             android:icon="@drawable/ic_menu_trash_holo_light"
             android:title="@string/delete"
             android:visible="false"
-            android:showAsAction="never">
+            android:showAsAction="ifRoom">
         <menu>
             <item android:id="@+id/action_confirm_delete"
                     android:icon="@drawable/ic_menu_trash_holo_light"
