@@ -68,6 +68,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
         mStateManager.onConfigurationChange(config);
+        invalidateOptionsMenu();
     }
 
     public Context getAndroidContext() {
