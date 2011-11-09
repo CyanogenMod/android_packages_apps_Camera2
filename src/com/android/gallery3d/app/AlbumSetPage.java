@@ -597,13 +597,12 @@ public class AlbumSetPage extends ActivityState implements
             if (mSyncTask.isDone()){
                 // The mediaSet is in sync. Turn off the loading indicator.
                 GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
-
-                Toast.makeText((Context) mActivity,
+                if (mAlbumSetDataAdapter.size() == 0) {
+                    Toast.makeText((Context) mActivity,
                             R.string.empty_album, Toast.LENGTH_LONG).show();
-                if ((mAlbumSetDataAdapter.size() == 0)
-                        && (mActivity.getStateManager().getStateCount() > 1)) {
-
-                    mActivity.getStateManager().finishState(AlbumSetPage.this);
+                    if (mActivity.getStateManager().getStateCount() > 1) {
+                        mActivity.getStateManager().finishState(AlbumSetPage.this);
+                    }
                 }
             }
         }
