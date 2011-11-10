@@ -30,6 +30,8 @@ import com.android.gallery3d.R;
  */
 public class PhotoEditor extends Activity {
 
+    private static final String SAVE_URI_KEY = "save_uri";
+
     private Uri sourceUri;
     private Uri saveUri;
     private FilterStack filterStack;
@@ -54,6 +56,10 @@ public class PhotoEditor extends Activity {
                         actionBar.updateButtons(canUndo, canRedo);
                     }
         }, savedInstanceState);
+        if (savedInstanceState != null) {
+            saveUri = savedInstanceState.getParcelable(SAVE_URI_KEY);
+            actionBar.updateSave(saveUri == null);
+        }
 
         EffectsBar effectsBar = (EffectsBar) findViewById(R.id.effects_bar);
         effectsBar.initialize(filterStack);
@@ -134,8 +140,8 @@ public class PhotoEditor extends Activity {
                                     @Override
                                     public void onComplete(Uri result) {
                                         progressDialog.dismiss();
-                                        actionBar.updateSave(result == null);
                                         saveUri = result;
+                                        actionBar.updateSave(saveUri == null);
                                     }
                                 };
                                 new SaveCopyTask(PhotoEditor.this, sourceUri, callback).execute(
@@ -203,6 +209,7 @@ public class PhotoEditor extends Activity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         filterStack.saveStacks(outState);
+        outState.putParcelable(SAVE_URI_KEY, saveUri);
     }
 
     @Override
