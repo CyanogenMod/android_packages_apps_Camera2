@@ -175,23 +175,16 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             if (mGetContent) {
                 onGetContent(item);
             } else {
-                boolean playVideo =
-                    (item.getSupportedOperations() & MediaItem.SUPPORT_PLAY) != 0;
-                if (playVideo) {
-                    // Play the video.
-                    PhotoPage.playVideo((Activity) mActivity, item.getPlayUri(), item.getName());
-                } else {
-                    // Get into the PhotoPage.
-                    Bundle data = new Bundle();
-                    mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
-                    data.putInt(PhotoPage.KEY_INDEX_HINT, slotIndex);
-                    data.putString(PhotoPage.KEY_MEDIA_SET_PATH,
-                            mMediaSetPath.toString());
-                    data.putString(PhotoPage.KEY_MEDIA_ITEM_PATH,
-                            item.getPath().toString());
-                    mActivity.getStateManager().startStateForResult(
-                            PhotoPage.class, REQUEST_PHOTO, data);
-                }
+                // Get into the PhotoPage.
+                Bundle data = new Bundle();
+                mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
+                data.putInt(PhotoPage.KEY_INDEX_HINT, slotIndex);
+                data.putString(PhotoPage.KEY_MEDIA_SET_PATH,
+                        mMediaSetPath.toString());
+                data.putString(PhotoPage.KEY_MEDIA_ITEM_PATH,
+                        item.getPath().toString());
+                mActivity.getStateManager().startStateForResult(
+                        PhotoPage.class, REQUEST_PHOTO, data);
             }
         } else {
             mSelectionManager.toggle(item.getPath());
