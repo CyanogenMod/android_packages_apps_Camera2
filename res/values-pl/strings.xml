@@ -31,16 +31,16 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Nie można wczytać"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Brak miniatury"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Rozpocznij"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <!-- outdated translation 152200178986698300 -->     <string name="crop_save_text" msgid="4972430481677741184">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Dotknij twarzy, aby rozpocząć."</string>
     <string name="saving_image" msgid="7270334453636349407">"Zapisywanie zdjęcia…"</string>
     <string name="save_error" msgid="6857408774183654970">"Nie można zapisać przyciętego obrazu."</string>
     <string name="crop_label" msgid="521114301871349328">"Przytnij zdjęcie"</string>
     <string name="select_image" msgid="7841406150484742140">"Wybierz zdjęcie"</string>
     <string name="select_video" msgid="4859510992798615076">"Wybierz film"</string>
-    <string name="select_item" msgid="2257529413100472599">"Wybierz elementy"</string>
-    <string name="select_album" msgid="4632641262236697235">"Wybierz albumy"</string>
-    <string name="select_group" msgid="9090385962030340391">"Zaznacz grupę"</string>
+    <string name="select_item" msgid="2816923896202086390">"Wybierz element"</string>
+    <string name="select_album" msgid="1557063764849434077">"Wybierz album"</string>
+    <string name="select_group" msgid="6744208543323307114">"Wybierz grupę"</string>
     <string name="set_image" msgid="2331476809308010401">"Ustaw zdjęcie jako"</string>
     <string name="wallpaper" msgid="140165383777262070">"Ustawianie tapety…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Tapeta"</string>
@@ -90,11 +90,11 @@
     <string name="untagged" msgid="7281481064509590402">"Nieoznaczone tagami"</string>
     <string name="no_location" msgid="4043624857489331676">"Brak lokalizacji"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Niektórych lokalizacji nie można zidentyfikować z powodu problemów z siecią."</string>
-    <!-- outdated translation 2218733298953719785 -->     <string name="sync_album_error" msgid="1020688062900977530">"Nie udało się pobrać zdjęć z tego albumu. Spróbuj ponownie później."</string>
-    <!-- outdated translation 9016732535181154028 -->     <string name="sync_album_set_error" msgid="3250258387046904444">"Nie udało się pobrać listy albumów. Spróbuj ponownie później."</string>
+    <string name="sync_album_error" msgid="1020688062900977530">"Nie można pobrać zdjęć z tego albumu. Spróbuj ponownie później."</string>
+    <string name="sync_album_set_error" msgid="3250258387046904444">"Nie można pobrać listy albumów. Spróbuj ponownie później."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Tylko obrazy"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Tylko filmy"</string>
-    <!-- outdated translation 4780647751652596980 -->     <string name="show_all" msgid="6963292714584735149">"Obrazy i filmy"</string>
+    <string name="show_all" msgid="6963292714584735149">"Obrazy i filmy"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Galeria zdjęć"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Brak zdjęć"</string>
     <string name="crop_saved" msgid="1062612625032731770">"Przycięty obraz zapisano w Pobranych plikach."</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Aparat podłączony"</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Aparat odłączony"</string>
     <string name="click_import" msgid="6407959065464291972">"Dotknij tutaj, aby zaimportować"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Zdjęcia z albumu"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Wybierz album"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Wszystkie zdjęcia losowo"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Wybierz obraz"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Typ widżetu"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Wybierz obrazy"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Pokaz slajdów"</string>
     <string name="albums" msgid="7320787705180057947">"Albumy"</string>
     <string name="times" msgid="2023033894889499219">"Czas"</string>
@@ -162,12 +162,8 @@
     <string name="group_by" msgid="4308299657902209357">"Grupuj według"</string>
     <string name="settings" msgid="1534847740615665736">"Ustawienia"</string>
     <string name="add_account" msgid="4271217504968243974">"Dodaj konto"</string>
-    <!-- no translation found for folder_camera (4714658994809533480) -->
-    <skip />
-    <!-- no translation found for folder_download (7186215137642323932) -->
-    <skip />
-    <!-- no translation found for folder_imported (2773581395524747099) -->
-    <skip />
-    <!-- no translation found for folder_screenshot (7200396565864213450) -->
-    <skip />
+    <string name="folder_camera" msgid="4714658994809533480">"Aparat"</string>
+    <string name="folder_download" msgid="7186215137642323932">"Pobrane"</string>
+    <string name="folder_imported" msgid="2773581395524747099">"Zaimportowane"</string>
+    <string name="folder_screenshot" msgid="7200396565864213450">"Zrzuty ekranu"</string>
 </resources>

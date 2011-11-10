@@ -31,16 +31,16 @@
     <string name="fail_to_load" msgid="8394392853646664505">"መስቀል አልተቻለም"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"ምንም ጥፍርአከል የለም"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"እንደገና ጀምር"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"እሺ"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"ከርክም"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"ለመጀመር ፊት ንካ::"</string>
     <string name="saving_image" msgid="7270334453636349407">"ምስል በማስቀመጥ ላይ..."</string>
     <string name="save_error" msgid="6857408774183654970">"የተቀመቀመውን ምስል ማስቀመጥ አልተቻለም::"</string>
     <string name="crop_label" msgid="521114301871349328">"ፎቶ ክፈፍ"</string>
     <string name="select_image" msgid="7841406150484742140">"ፎቶዎች ምረጥ"</string>
     <string name="select_video" msgid="4859510992798615076">"ቪዲዮ ምረጥ"</string>
-    <string name="select_item" msgid="2257529413100472599">"ዓይነት(ኦች) ምረጥ"</string>
-    <string name="select_album" msgid="4632641262236697235">"አልበም(ኦች) ምረጥ"</string>
-    <string name="select_group" msgid="9090385962030340391">"ቡድን(ኦች) ምረጥ"</string>
+    <string name="select_item" msgid="2816923896202086390">"አይነት ምረጥ"</string>
+    <string name="select_album" msgid="1557063764849434077">"አልበም ምረጥ"</string>
+    <string name="select_group" msgid="6744208543323307114">"ቡድን ምረጥ"</string>
     <string name="set_image" msgid="2331476809308010401">"ምስል እንደ አዘጋጅ"</string>
     <string name="wallpaper" msgid="140165383777262070">"ልጣፍ በማቀናበር ላይ...."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"ልጣፍ"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"ካሜራ ተገናኝቷል::"</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"ካሜራ አልተገናኘም::"</string>
     <string name="click_import" msgid="6407959065464291972">"ለማስገባት እዚህ ንካ"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"ምስሎችን ከአልበም  ላይ"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"አልበም ምረጥ"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"ሁሉንም  ምስሎች  በውዝ"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"ምስል ምረጥ"</string>
-    <string name="widget_type" msgid="2161028964992385809">"የመግብር ዓይነት"</string>
+    <string name="widget_type" msgid="1364653978966343448">"ምስሎችን ምረጥ"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"ስላይድ ትዕይንት"</string>
     <string name="albums" msgid="7320787705180057947">"አልበሞች"</string>
     <string name="times" msgid="2023033894889499219">"ጊዜ"</string>
