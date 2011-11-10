@@ -31,16 +31,16 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Nem sikerült betölteni"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Nincs indexkép"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Újrakezdés"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"Körülvágás"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Érintsen meg egy arcot a kezdéshez."</string>
     <string name="saving_image" msgid="7270334453636349407">"Kép mentése..."</string>
     <string name="save_error" msgid="6857408774183654970">"Nem lehet menteni a vágott képet."</string>
     <string name="crop_label" msgid="521114301871349328">"Kép levágása"</string>
     <string name="select_image" msgid="7841406150484742140">"Fénykép kiválasztása"</string>
     <string name="select_video" msgid="4859510992798615076">"Videó kiválasztása"</string>
-    <string name="select_item" msgid="2257529413100472599">"Elem(ek) választása"</string>
-    <string name="select_album" msgid="4632641262236697235">"Album(ok) választása"</string>
-    <string name="select_group" msgid="9090385962030340391">"Csoport kiválasztása"</string>
+    <string name="select_item" msgid="2816923896202086390">"Elem kiválasztása"</string>
+    <string name="select_album" msgid="1557063764849434077">"Album kiválasztása"</string>
+    <string name="select_group" msgid="6744208543323307114">"Csoport kiválasztása"</string>
     <string name="set_image" msgid="2331476809308010401">"Kép beállítása, mint"</string>
     <string name="wallpaper" msgid="140165383777262070">"Háttérkép beállítása..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Háttérkép"</string>
@@ -94,7 +94,7 @@
     <string name="sync_album_set_error" msgid="3250258387046904444">"Nem sikerült letölteni az albumok listáját. Próbálja újra később."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Csak képek"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Csak videók"</string>
-    <string name="show_all" msgid="6963292714584735149">"Képek és videoklipek"</string>
+    <string name="show_all" msgid="6963292714584735149">"Képek és videók"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Fotógaléria"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Nincsenek fényképek."</string>
     <string name="crop_saved" msgid="1062612625032731770">"A vágott kép a Letöltések közé került."</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Kamera csatlakoztatva."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Kamera leválasztva."</string>
     <string name="click_import" msgid="6407959065464291972">"Importáláshoz érintse meg itt"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Képek egy albumból"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Album kiválasztása"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Az összes kép váltása"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Válasszon egy képet"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Modul típusa"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Képek kiválasztása"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Diavetítés"</string>
     <string name="albums" msgid="7320787705180057947">"Albumok"</string>
     <string name="times" msgid="2023033894889499219">"Alkalom"</string>

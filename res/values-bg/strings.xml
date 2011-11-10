@@ -31,16 +31,16 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Не можаха да се заредят"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Няма миниизображение"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Стартиране отначало"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <!-- outdated translation 152200178986698300 -->     <string name="crop_save_text" msgid="4972430481677741184">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Докоснете лице за начало."</string>
     <string name="saving_image" msgid="7270334453636349407">"Снимката се запазва..."</string>
     <string name="save_error" msgid="6857408774183654970">"Подрязаното изобр. не можа да се запази."</string>
     <string name="crop_label" msgid="521114301871349328">"Подрязване на снимка"</string>
     <string name="select_image" msgid="7841406150484742140">"Избиране на снимка"</string>
     <string name="select_video" msgid="4859510992798615076">"Избиране на видеоклип"</string>
-    <string name="select_item" msgid="2257529413100472599">"Изберете елемент/и"</string>
-    <string name="select_album" msgid="4632641262236697235">"Изберете албум/и"</string>
-    <string name="select_group" msgid="9090385962030340391">"Изберете групи"</string>
+    <string name="select_item" msgid="2816923896202086390">"Избиране на елемент"</string>
+    <string name="select_album" msgid="1557063764849434077">"Изберете албум"</string>
+    <string name="select_group" msgid="6744208543323307114">"Изберете група"</string>
     <string name="set_image" msgid="2331476809308010401">"Задаване на снимката като"</string>
     <string name="wallpaper" msgid="140165383777262070">"Тапетът се задава..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Тапет"</string>
@@ -90,11 +90,11 @@
     <string name="untagged" msgid="7281481064509590402">"Немаркирани"</string>
     <string name="no_location" msgid="4043624857489331676">"Няма местоположение"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Някои местоположения не можаха да бъдат идентифицирани поради проблеми с мрежата."</string>
-    <!-- outdated translation 2218733298953719785 -->     <string name="sync_album_error" msgid="1020688062900977530">"Изтеглянето на снимките в този албум не бе успешно. Моля, опитайте отново по-късно."</string>
-    <!-- outdated translation 9016732535181154028 -->     <string name="sync_album_set_error" msgid="3250258387046904444">"Изтеглянето на списъка с албуми не бе успешно. Моля, опитайте отново по-късно."</string>
+    <string name="sync_album_error" msgid="1020688062900977530">"Снимките в този албум не можаха да се изтеглят. Опитайте отново по-късно."</string>
+    <string name="sync_album_set_error" msgid="3250258387046904444">"Списъкът с албуми не можа да се изтегли. Опитайте отново по-късно."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Само изображения"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Само видеоклипове"</string>
-    <!-- outdated translation 4780647751652596980 -->     <string name="show_all" msgid="6963292714584735149">"Изображения и видеоклипове"</string>
+    <string name="show_all" msgid="6963292714584735149">"Изображения и видеоклипове"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Фотогалерия"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Няма снимки."</string>
     <string name="crop_saved" msgid="1062612625032731770">"Подрязаното изображение е запазено в „Изтегляния“."</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Камерата е включена."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Камерата е изключена."</string>
     <string name="click_import" msgid="6407959065464291972">"Докоснете тук, за да импортирате"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Изображения от албум"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Избор на албум"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Разбъркване на всички"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Избор на изображение"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Тип приспособление"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Избор на изображения"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Слайдшоу"</string>
     <string name="albums" msgid="7320787705180057947">"Албуми"</string>
     <string name="times" msgid="2023033894889499219">"Час"</string>
@@ -162,12 +162,8 @@
     <string name="group_by" msgid="4308299657902209357">"Групиране по"</string>
     <string name="settings" msgid="1534847740615665736">"Настройки"</string>
     <string name="add_account" msgid="4271217504968243974">"Добавяне на профил"</string>
-    <!-- no translation found for folder_camera (4714658994809533480) -->
-    <skip />
-    <!-- no translation found for folder_download (7186215137642323932) -->
-    <skip />
-    <!-- no translation found for folder_imported (2773581395524747099) -->
-    <skip />
-    <!-- no translation found for folder_screenshot (7200396565864213450) -->
-    <skip />
+    <string name="folder_camera" msgid="4714658994809533480">"Камера"</string>
+    <string name="folder_download" msgid="7186215137642323932">"Изтегляне"</string>
+    <string name="folder_imported" msgid="2773581395524747099">"Импортирани"</string>
+    <string name="folder_screenshot" msgid="7200396565864213450">"Екранна снимка"</string>
 </resources>
