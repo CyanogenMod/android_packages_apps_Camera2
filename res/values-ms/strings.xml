@@ -31,16 +31,16 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Tidak dapat memuatkan"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Tiada lakaran kenit"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Mainkan semula dari mula"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <!-- outdated translation 152200178986698300 -->     <string name="crop_save_text" msgid="4972430481677741184">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Sentuh muka untuk bermula."</string>
     <string name="saving_image" msgid="7270334453636349407">"Menyimpan gambar..."</string>
     <string name="save_error" msgid="6857408774183654970">"Tidak dapat menyimpan imej yang dipangkas."</string>
     <string name="crop_label" msgid="521114301871349328">"Pangkas gambar"</string>
     <string name="select_image" msgid="7841406150484742140">"Pilih foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Pilih video"</string>
-    <string name="select_item" msgid="2257529413100472599">"Pilih item"</string>
-    <string name="select_album" msgid="4632641262236697235">"Pilih album"</string>
-    <string name="select_group" msgid="9090385962030340391">"Pilih kumpulan"</string>
+    <string name="select_item" msgid="2816923896202086390">"Pilih item"</string>
+    <string name="select_album" msgid="1557063764849434077">"Pilih album"</string>
+    <string name="select_group" msgid="6744208543323307114">"Pilih kumpulan"</string>
     <string name="set_image" msgid="2331476809308010401">"Tetapkan gambar sebagai"</string>
     <string name="wallpaper" msgid="140165383777262070">"Menetapkan kertas dinding…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Kertas dinding"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Kamera disambungkan."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Kamera diputuskan sambungan."</string>
     <string name="click_import" msgid="6407959065464291972">"Sentuh di sini untuk mengimport"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Imej dari album"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Pilih album"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Rombak semua imej"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Pilih imej"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Jenis widget"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Pilih imej"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Tayangan slaid"</string>
     <string name="albums" msgid="7320787705180057947">"Album"</string>
     <string name="times" msgid="2023033894889499219">"Masa"</string>
@@ -162,12 +162,8 @@
     <string name="group_by" msgid="4308299657902209357">"Kumpulkan mengikut"</string>
     <string name="settings" msgid="1534847740615665736">"Tetapan"</string>
     <string name="add_account" msgid="4271217504968243974">"Tambah akaun"</string>
-    <!-- no translation found for folder_camera (4714658994809533480) -->
-    <skip />
-    <!-- no translation found for folder_download (7186215137642323932) -->
-    <skip />
-    <!-- no translation found for folder_imported (2773581395524747099) -->
-    <skip />
-    <!-- no translation found for folder_screenshot (7200396565864213450) -->
-    <skip />
+    <string name="folder_camera" msgid="4714658994809533480">"Kamera"</string>
+    <string name="folder_download" msgid="7186215137642323932">"Muat Turun"</string>
+    <string name="folder_imported" msgid="2773581395524747099">"Diimport"</string>
+    <string name="folder_screenshot" msgid="7200396565864213450">"Tangkapan skrin"</string>
 </resources>

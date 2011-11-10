@@ -31,16 +31,16 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Couldn\'t load"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"No thumbnail"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Start again"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"Crop"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Touch a face to begin."</string>
     <string name="saving_image" msgid="7270334453636349407">"Saving picture…"</string>
     <string name="save_error" msgid="6857408774183654970">"Couldn\'t save cropped image."</string>
     <string name="crop_label" msgid="521114301871349328">"Crop picture"</string>
     <string name="select_image" msgid="7841406150484742140">"Select photo"</string>
     <string name="select_video" msgid="4859510992798615076">"Select video"</string>
-    <string name="select_item" msgid="2257529413100472599">"Select item(s)"</string>
-    <string name="select_album" msgid="4632641262236697235">"Select album(s)"</string>
-    <string name="select_group" msgid="9090385962030340391">"Select group(s)"</string>
+    <string name="select_item" msgid="2816923896202086390">"Select item"</string>
+    <string name="select_album" msgid="1557063764849434077">"Select album"</string>
+    <string name="select_group" msgid="6744208543323307114">"Select group"</string>
     <string name="set_image" msgid="2331476809308010401">"Set picture as"</string>
     <string name="wallpaper" msgid="140165383777262070">"Setting wallpaper..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Wallpaper"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Camera connected"</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Camera disconnected"</string>
     <string name="click_import" msgid="6407959065464291972">"Touch here to import"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Images from an album"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Choose an album"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Shuffle all images"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Choose an image:"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Widget Type"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Choose images"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Slide show"</string>
     <string name="albums" msgid="7320787705180057947">"Albums"</string>
     <string name="times" msgid="2023033894889499219">"Times"</string>

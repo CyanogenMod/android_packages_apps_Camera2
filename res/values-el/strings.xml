@@ -31,16 +31,16 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Δεν ήταν δυνατή η φόρτωση"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Δεν υπάρχει μικρογραφία"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Έναρξη από την αρχή"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"Περικοπή"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Αγγίξτε κάποιο πρόσωπο για να ξεκινήσετε."</string>
     <string name="saving_image" msgid="7270334453636349407">"Αποθήκευση εικόνας..."</string>
     <string name="save_error" msgid="6857408774183654970">"Αδυναμία αποθήκευσης αποκομμένης εικόνας"</string>
     <string name="crop_label" msgid="521114301871349328">"Περικοπή εικόνας"</string>
     <string name="select_image" msgid="7841406150484742140">"Επιλογή φωτογραφίας"</string>
     <string name="select_video" msgid="4859510992798615076">"Επιλογή βίντεο"</string>
-    <string name="select_item" msgid="2257529413100472599">"Επιλογή αντικειμένων"</string>
-    <string name="select_album" msgid="4632641262236697235">"Επιλογή λευκώματος"</string>
-    <string name="select_group" msgid="9090385962030340391">"Επιλέξτε ομάδες"</string>
+    <string name="select_item" msgid="2816923896202086390">"Επιλεγμένο αντικείμ."</string>
+    <string name="select_album" msgid="1557063764849434077">"Επιλογή λευκώματος"</string>
+    <string name="select_group" msgid="6744208543323307114">"Επιλογή ομάδας"</string>
     <string name="set_image" msgid="2331476809308010401">"Ορισμός εικόνας ως"</string>
     <string name="wallpaper" msgid="140165383777262070">"Ορισμός ταπετσαρίας..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Ταπετσαρία"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Φωτογραφική μηχανή συνδεδεμένη."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Φωτογρ. μηχανή αποσυνδεδεμένη"</string>
     <string name="click_import" msgid="6407959065464291972">"Αγγίξτε εδώ για να κάνετε εισαγωγή"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Εικόνες από ένα λεύκωμα"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Επιλογή λευκώματος"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Τυχαία αναπ. όλων των εικόνων"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Επιλέξτε μια εικόνα"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Τύπος γραφ. στοιχ."</string>
+    <string name="widget_type" msgid="1364653978966343448">"Επιλογή εικόνων"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Προβολή διαφανειών"</string>
     <string name="albums" msgid="7320787705180057947">"Λευκώματα"</string>
     <string name="times" msgid="2023033894889499219">"Φορές"</string>
