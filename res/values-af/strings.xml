@@ -31,16 +31,16 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Kon nie laai nie"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Geen kleinkiekie nie"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Begin van voor af"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <!-- outdated translation 152200178986698300 -->     <string name="crop_save_text" msgid="4972430481677741184">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Raak aan \'n gesig om te begin."</string>
     <string name="saving_image" msgid="7270334453636349407">"Stoor tans prent…"</string>
     <string name="save_error" msgid="6857408774183654970">"Kon nie gesnoeide prent stoor nie."</string>
     <string name="crop_label" msgid="521114301871349328">"Snoei prent"</string>
     <string name="select_image" msgid="7841406150484742140">"Kies foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Kies video"</string>
-    <string name="select_item" msgid="2257529413100472599">"Kies item(s)"</string>
-    <string name="select_album" msgid="4632641262236697235">"Kies album(s)"</string>
-    <string name="select_group" msgid="9090385962030340391">"Kies groep(e)"</string>
+    <string name="select_item" msgid="2816923896202086390">"Kies item"</string>
+    <string name="select_album" msgid="1557063764849434077">"Kies album"</string>
+    <string name="select_group" msgid="6744208543323307114">"Kies groep"</string>
     <string name="set_image" msgid="2331476809308010401">"Stel prent as"</string>
     <string name="wallpaper" msgid="140165383777262070">"Stel tans muurpapier in..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Muurpapier"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Kamera gekoppel."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Kamera ontkoppel."</string>
     <string name="click_import" msgid="6407959065464291972">"Raak hier om in te voer"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Prente uit \'n album"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Kies \'n album"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Skommel alle prente"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Kies \'n prent"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Legstuktipe"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Kies prente"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Skyfievertoning"</string>
     <string name="albums" msgid="7320787705180057947">"Albums"</string>
     <string name="times" msgid="2023033894889499219">"Tye"</string>
@@ -162,12 +162,8 @@
     <string name="group_by" msgid="4308299657902209357">"Groepeer volgens"</string>
     <string name="settings" msgid="1534847740615665736">"Instellings"</string>
     <string name="add_account" msgid="4271217504968243974">"Voeg rekening by"</string>
-    <!-- no translation found for folder_camera (4714658994809533480) -->
-    <skip />
-    <!-- no translation found for folder_download (7186215137642323932) -->
-    <skip />
-    <!-- no translation found for folder_imported (2773581395524747099) -->
-    <skip />
-    <!-- no translation found for folder_screenshot (7200396565864213450) -->
-    <skip />
+    <string name="folder_camera" msgid="4714658994809533480">"Kamera"</string>
+    <string name="folder_download" msgid="7186215137642323932">"Laai af"</string>
+    <string name="folder_imported" msgid="2773581395524747099">"Ingevoer"</string>
+    <string name="folder_screenshot" msgid="7200396565864213450">"Skermkiekie"</string>
 </resources>

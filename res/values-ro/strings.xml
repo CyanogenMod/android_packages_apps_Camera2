@@ -31,16 +31,16 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Nu s-au putut încărca"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Nu există o miniatură"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Începeţi din nou"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"Decupaţi"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Atingeţi o faţă pentru a începe."</string>
     <string name="saving_image" msgid="7270334453636349407">"Se salvează fotografia..."</string>
     <string name="save_error" msgid="6857408774183654970">"Imaginea decupată nu s-a putut salva."</string>
     <string name="crop_label" msgid="521114301871349328">"Decupaţi fotografia"</string>
     <string name="select_image" msgid="7841406150484742140">"Selectaţi fotografie"</string>
     <string name="select_video" msgid="4859510992798615076">"Selectaţi videoclip"</string>
-    <string name="select_item" msgid="2257529413100472599">"Selectaţi elemente"</string>
-    <string name="select_album" msgid="4632641262236697235">"Selectaţi albume"</string>
-    <string name="select_group" msgid="9090385962030340391">"Selectaţi grupuri"</string>
+    <string name="select_item" msgid="2816923896202086390">"Selectaţi un element"</string>
+    <string name="select_album" msgid="1557063764849434077">"Selectaţi un album"</string>
+    <string name="select_group" msgid="6744208543323307114">"Selectaţi un grup"</string>
     <string name="set_image" msgid="2331476809308010401">"Setaţi fotografia ca"</string>
     <string name="wallpaper" msgid="140165383777262070">"Se setează imaginea de fundal..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Imagine de fundal"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Camera foto conectată."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Camera foto deconectată."</string>
     <string name="click_import" msgid="6407959065464291972">"Atingeţi aici pentru import"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Imagini dintr-un album"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Alegeţi un album"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Redaţi aleatoriu toate imag."</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Alegeţi o imagine"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Tip de widget"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Alegeţi imagini"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Slideshow"</string>
     <string name="albums" msgid="7320787705180057947">"Albume"</string>
     <string name="times" msgid="2023033894889499219">"Ore"</string>

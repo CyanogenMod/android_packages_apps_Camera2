@@ -31,16 +31,16 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Kunde inte läsas in"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Ingen miniatyrbild"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Börja om"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"Beskär"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Tryck på ett ansikte när du vill börja."</string>
     <string name="saving_image" msgid="7270334453636349407">"Sparar bild…"</string>
     <string name="save_error" msgid="6857408774183654970">"Det gick inte att spara den beskurna bilden."</string>
     <string name="crop_label" msgid="521114301871349328">"Beskär bild"</string>
     <string name="select_image" msgid="7841406150484742140">"Välj en bild"</string>
     <string name="select_video" msgid="4859510992798615076">"Välj ett videoklipp"</string>
-    <string name="select_item" msgid="2257529413100472599">"Välj objekt"</string>
-    <string name="select_album" msgid="4632641262236697235">"Välj album"</string>
-    <string name="select_group" msgid="9090385962030340391">"Välj grupp(er)"</string>
+    <string name="select_item" msgid="2816923896202086390">"Välj ett objekt"</string>
+    <string name="select_album" msgid="1557063764849434077">"Välj ett album"</string>
+    <string name="select_group" msgid="6744208543323307114">"Välj en grupp"</string>
     <string name="set_image" msgid="2331476809308010401">"Använd bild som"</string>
     <string name="wallpaper" msgid="140165383777262070">"Bakgrund ställs in ..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Bakgrund"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Kameran är ansluten."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Kameran är inte ansluten."</string>
     <string name="click_import" msgid="6407959065464291972">"Tryck här om du vill importera"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Bilder från ett album"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Välj ett album"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Blanda alla bilder"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Välj en bild"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Widgettyp"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Välj bilder"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Bildspel"</string>
     <string name="albums" msgid="7320787705180057947">"Album"</string>
     <string name="times" msgid="2023033894889499219">"Tider"</string>

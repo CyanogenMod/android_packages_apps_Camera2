@@ -31,16 +31,16 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Ni bilo mogoče naložiti"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Ni sličice"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Začni znova"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"V redu"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"Obreži"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Dotaknite se obraza, če želite začeti."</string>
     <string name="saving_image" msgid="7270334453636349407">"Shranjevanje slike ..."</string>
     <string name="save_error" msgid="6857408774183654970">"Obrezane slike ni bilo mogoče shraniti."</string>
     <string name="crop_label" msgid="521114301871349328">"Obreži sliko"</string>
     <string name="select_image" msgid="7841406150484742140">"Izberite fotogr."</string>
     <string name="select_video" msgid="4859510992798615076">"Izberite videoposn."</string>
-    <string name="select_item" msgid="2257529413100472599">"Izberite elemente"</string>
-    <string name="select_album" msgid="4632641262236697235">"Izberite albume"</string>
-    <string name="select_group" msgid="9090385962030340391">"Izberite skupine"</string>
+    <string name="select_item" msgid="2816923896202086390">"Izberite element"</string>
+    <string name="select_album" msgid="1557063764849434077">"Izberite album"</string>
+    <string name="select_group" msgid="6744208543323307114">"Izberite skupino"</string>
     <string name="set_image" msgid="2331476809308010401">"Nastavi sliko kot"</string>
     <string name="wallpaper" msgid="140165383777262070">"Nastavljanje slike za ozadje ..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Slika za ozadje"</string>
@@ -90,11 +90,11 @@
     <string name="untagged" msgid="7281481064509590402">"Neoznačeno"</string>
     <string name="no_location" msgid="4043624857489331676">"Ni lokacije"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Nekaterih ​​lokacij ni bilo mogoče določiti zaradi težav v omrežju."</string>
-    <!-- outdated translation 2218733298953719785 -->     <string name="sync_album_error" msgid="1020688062900977530">"Napaka pri prenosu slik v tem albumu. Poskusite pozneje."</string>
-    <!-- outdated translation 9016732535181154028 -->     <string name="sync_album_set_error" msgid="3250258387046904444">"Napaka pri prenosu seznama albumov. Poskusite pozneje."</string>
+    <string name="sync_album_error" msgid="1020688062900977530">"Slik v tem albumu ni mogoče prenesti. Poskusite znova pozneje."</string>
+    <string name="sync_album_set_error" msgid="3250258387046904444">"Seznama albumov ni mogoče prenesti. Poskusite znova pozneje."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Samo slike"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Samo videoposnetki"</string>
-    <!-- outdated translation 4780647751652596980 -->     <string name="show_all" msgid="6963292714584735149">"Slike in videoposnetki"</string>
+    <string name="show_all" msgid="6963292714584735149">"Slike in videoposnetki"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Fotogalerija"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Ni fotografij."</string>
     <string name="crop_saved" msgid="1062612625032731770">"Obrezana slika je shranjena v prenose."</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Kamera je priključena."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Kamera je izklopljena"</string>
     <string name="click_import" msgid="6407959065464291972">"Tapnite tukaj, če želite uvoziti"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Slike iz albuma"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Izberite album"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Naključno razporedi vse slike"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Izbira slike"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Vrsta pripomočka"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Izberite slike"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Diaprojekcija"</string>
     <string name="albums" msgid="7320787705180057947">"Albumi"</string>
     <string name="times" msgid="2023033894889499219">"Časi"</string>

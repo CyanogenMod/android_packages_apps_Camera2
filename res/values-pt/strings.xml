@@ -31,16 +31,16 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Não foi possível carregar"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Sem miniatura"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Reiniciar"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"Cortar"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Toque em um rosto para começar."</string>
     <string name="saving_image" msgid="7270334453636349407">"Salvando imagem…"</string>
     <string name="save_error" msgid="6857408774183654970">"Não é possível salvar a imagem cortada."</string>
     <string name="crop_label" msgid="521114301871349328">"Cortar imagem"</string>
     <string name="select_image" msgid="7841406150484742140">"Selecionar foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Selecionar vídeo"</string>
-    <string name="select_item" msgid="2257529413100472599">"Selecione os itens"</string>
-    <string name="select_album" msgid="4632641262236697235">"Selecione álbuns"</string>
-    <string name="select_group" msgid="9090385962030340391">"Selecionar grupos"</string>
+    <string name="select_item" msgid="2816923896202086390">"Selecionar item"</string>
+    <string name="select_album" msgid="1557063764849434077">"Selecionar álbum"</string>
+    <string name="select_group" msgid="6744208543323307114">"Selecionar grupo"</string>
     <string name="set_image" msgid="2331476809308010401">"Definir imagem como"</string>
     <string name="wallpaper" msgid="140165383777262070">"Definindo plano de fundo..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Plano de fundo"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Câmera conectada."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Câmera desconectada."</string>
     <string name="click_import" msgid="6407959065464291972">"Toque aqui para importar"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Imagens de um álbum"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Escolher um álbum"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Reprod. aleator. as imagens"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Selecionar uma imagem"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Tipo de widget"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Escolher imagens"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Apresent. de slides"</string>
     <string name="albums" msgid="7320787705180057947">"Álbuns"</string>
     <string name="times" msgid="2023033894889499219">"Vezes"</string>
