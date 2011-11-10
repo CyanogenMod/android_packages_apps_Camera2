@@ -31,16 +31,16 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Tidak dapat memuat"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Tidak ada gambar mini"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Memulai"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <!-- outdated translation 152200178986698300 -->     <string name="crop_save_text" msgid="4972430481677741184">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Sentuh wajah untuk memulai."</string>
     <string name="saving_image" msgid="7270334453636349407">"Menyimpan gambar…"</string>
     <string name="save_error" msgid="6857408774183654970">"Tak dapat menyimpan gambar yg dipangkas."</string>
     <string name="crop_label" msgid="521114301871349328">"Pangkas gambar"</string>
     <string name="select_image" msgid="7841406150484742140">"Pilih foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Pilih video"</string>
-    <string name="select_item" msgid="2257529413100472599">"Pilih item"</string>
-    <string name="select_album" msgid="4632641262236697235">"Pilih album"</string>
-    <string name="select_group" msgid="9090385962030340391">"Pilih grup"</string>
+    <string name="select_item" msgid="2816923896202086390">"Pilih item"</string>
+    <string name="select_album" msgid="1557063764849434077">"Pilih album"</string>
+    <string name="select_group" msgid="6744208543323307114">"Pilih grup"</string>
     <string name="set_image" msgid="2331476809308010401">"Setel gambar sebagai"</string>
     <string name="wallpaper" msgid="140165383777262070">"Menyetel wallpaper..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Wallpaper"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Kamera tersambung."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Kamera terputus."</string>
     <string name="click_import" msgid="6407959065464291972">"Sentuh di sini untuk mengimpor"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Gambar dari album"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Pilih album"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Kocok semua gambar"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Pilih gambar"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Jenis gawit"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Pilih gambar"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Rangkai salindia"</string>
     <string name="albums" msgid="7320787705180057947">"Album"</string>
     <string name="times" msgid="2023033894889499219">"Waktu"</string>

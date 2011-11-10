@@ -31,16 +31,16 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Kunne ikke laste"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Ingen miniatyrbilder"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Begynn på nytt"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"Beskjæring"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Berør et ansikt for å begynne."</string>
     <string name="saving_image" msgid="7270334453636349407">"Lagrer bilde ..."</string>
     <string name="save_error" msgid="6857408774183654970">"Kan ikke lagre det beskårede bildet."</string>
     <string name="crop_label" msgid="521114301871349328">"Beskjær bilde"</string>
     <string name="select_image" msgid="7841406150484742140">"Velg bilde"</string>
     <string name="select_video" msgid="4859510992798615076">"Velg video"</string>
-    <string name="select_item" msgid="2257529413100472599">"Velg varer"</string>
-    <string name="select_album" msgid="4632641262236697235">"Velg album"</string>
-    <string name="select_group" msgid="9090385962030340391">"Velg grupper"</string>
+    <string name="select_item" msgid="2816923896202086390">"Velg element"</string>
+    <string name="select_album" msgid="1557063764849434077">"Velg album"</string>
+    <string name="select_group" msgid="6744208543323307114">"Valg av gruppe"</string>
     <string name="set_image" msgid="2331476809308010401">"Angi bilde som"</string>
     <string name="wallpaper" msgid="140165383777262070">"Angir bakgrunn …"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Bakgrunnsbilde"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Kamera tilkoblet."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Kamera frakoblet."</string>
     <string name="click_import" msgid="6407959065464291972">"Trykk her for å importere"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Bilder fra et album"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Velg et album"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Stokk om på bildene"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Velg et bilde"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Modultype"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Valg av bilder"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Lysbildefremvisning"</string>
     <string name="albums" msgid="7320787705180057947">"Album"</string>
     <string name="times" msgid="2023033894889499219">"Ganger"</string>

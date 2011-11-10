@@ -31,16 +31,16 @@
     <string name="fail_to_load" msgid="8394392853646664505">"No s\'ha pogut carregar"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"No hi ha cap miniatura"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Torna a començar"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"D\'acord"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"Retalla"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Toca una cara per començar."</string>
     <string name="saving_image" msgid="7270334453636349407">"S\'està desant la imatge..."</string>
     <string name="save_error" msgid="6857408774183654970">"No s\'ha pogut desar la imatge retallada."</string>
     <string name="crop_label" msgid="521114301871349328">"Escapça la imatge"</string>
     <string name="select_image" msgid="7841406150484742140">"Selecciona una foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Selecciona un vídeo"</string>
-    <string name="select_item" msgid="2257529413100472599">"Selecciona elements"</string>
-    <string name="select_album" msgid="4632641262236697235">"Selecciona àlbums"</string>
-    <string name="select_group" msgid="9090385962030340391">"Selecciona grups"</string>
+    <string name="select_item" msgid="2816923896202086390">"Tria un element"</string>
+    <string name="select_album" msgid="1557063764849434077">"Selecciona un àlbum"</string>
+    <string name="select_group" msgid="6744208543323307114">"Selecciona un grup"</string>
     <string name="set_image" msgid="2331476809308010401">"Defineix la imatge com a"</string>
     <string name="wallpaper" msgid="140165383777262070">"S\'està establint el fons de pantalla..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Fons de pantalla"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"S\'ha connectat la càmera."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"S\'ha desconnectat la càmera."</string>
     <string name="click_import" msgid="6407959065464291972">"Toca aquí per importar"</string>
-    <string name="widget_type_album" msgid="3245149644830731121">"Imatges d\'un àlbum"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Tria un àlbum"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Barreja totes les imatges"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Selecciona una imatge"</string>
-    <string name="widget_type" msgid="2161028964992385809">"Tipus de widget"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Selecció d\'imatges"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Pres. diapositives"</string>
     <string name="albums" msgid="7320787705180057947">"Àlbums"</string>
     <string name="times" msgid="2023033894889499219">"Vegades"</string>
