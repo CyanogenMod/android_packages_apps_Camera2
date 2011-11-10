@@ -36,6 +36,7 @@ public class PhotoEditor extends Activity {
     private Uri saveUri;
     private FilterStack filterStack;
     private ActionBar actionBar;
+    private EffectsBar effectsBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,14 +62,16 @@ public class PhotoEditor extends Activity {
             actionBar.updateSave(saveUri == null);
         }
 
-        EffectsBar effectsBar = (EffectsBar) findViewById(R.id.effects_bar);
+        // Effects-bar is initially disabled until photo is successfully loaded.
+        effectsBar = (EffectsBar) findViewById(R.id.effects_bar);
         effectsBar.initialize(filterStack);
+        effectsBar.setEnabled(false);
 
-        actionBar.setClickRunnable(R.id.undo_button, createUndoRedoRunnable(true, effectsBar));
-        actionBar.setClickRunnable(R.id.redo_button, createUndoRedoRunnable(false, effectsBar));
-        actionBar.setClickRunnable(R.id.save_button, createSaveRunnable(effectsBar));
-        actionBar.setClickRunnable(R.id.share_button, createShareRunnable(effectsBar));
-        actionBar.setClickRunnable(R.id.action_bar_back, createBackRunnable(effectsBar));
+        actionBar.setClickRunnable(R.id.undo_button, createUndoRedoRunnable(true));
+        actionBar.setClickRunnable(R.id.redo_button, createUndoRedoRunnable(false));
+        actionBar.setClickRunnable(R.id.save_button, createSaveRunnable());
+        actionBar.setClickRunnable(R.id.share_button, createShareRunnable());
+        actionBar.setClickRunnable(R.id.action_bar_back, createBackRunnable());
     }
 
     private SpinnerProgressDialog createProgressDialog() {
@@ -86,6 +89,7 @@ public class PhotoEditor extends Activity {
                     @Override
                     public void onDone() {
                         progressDialog.dismiss();
+                        effectsBar.setEnabled(result != null);
                     }
                 });
             }
@@ -93,7 +97,7 @@ public class PhotoEditor extends Activity {
         new LoadScreennailTask(this, callback).execute(sourceUri);
     }
 
-    private Runnable createUndoRedoRunnable(final boolean undo, final EffectsBar effectsBar) {
+    private Runnable createUndoRedoRunnable(final boolean undo) {
         return new Runnable() {
 
             @Override
@@ -121,7 +125,7 @@ public class PhotoEditor extends Activity {
         };
     }
 
-    private Runnable createSaveRunnable(final EffectsBar effectsBar) {
+    private Runnable createSaveRunnable() {
         return new Runnable() {
 
             @Override
@@ -154,7 +158,7 @@ public class PhotoEditor extends Activity {
         };
     }
 
-    private Runnable createShareRunnable(final EffectsBar effectsBar) {
+    private Runnable createShareRunnable() {
         return new Runnable() {
 
             @Override
@@ -175,7 +179,7 @@ public class PhotoEditor extends Activity {
         };
     }
 
-    private Runnable createBackRunnable(final EffectsBar effectsBar) {
+    private Runnable createBackRunnable() {
         return new Runnable() {
 
             @Override
