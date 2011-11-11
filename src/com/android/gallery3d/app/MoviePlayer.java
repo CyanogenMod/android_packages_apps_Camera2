@@ -16,11 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.common.BlobCache;
-import com.android.gallery3d.util.CacheManager;
-import com.android.gallery3d.util.GalleryUtils;
-
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -35,12 +30,15 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.MediaController;
 import android.widget.VideoView;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.common.BlobCache;
+import com.android.gallery3d.util.CacheManager;
+import com.android.gallery3d.util.GalleryUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -349,9 +347,7 @@ public class MoviePlayer implements
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mVideoView.isPlaying()) {
-                mVideoView.pause();
-          }
+            if (mVideoView.isPlaying()) pauseVideo();
         }
     }
 }
