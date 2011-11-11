@@ -67,8 +67,6 @@ public class EffectsBar extends LinearLayout {
                 return select;
             }
         });
-
-        setEnabled(false);
     }
 
     private void createEffectsGallery(int effectsId) {
