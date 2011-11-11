@@ -17,7 +17,6 @@
 package com.android.gallery3d.app;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -73,6 +72,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private static final int REQUEST_PHOTO = 2;
     private static final int REQUEST_DO_ANIMATION = 3;
 
+    private static final int BIT_LOADING_RELOAD = 1;
+    private static final int BIT_LOADING_SYNC = 2;
+
     private static final float USER_DISTANCE_METER = 0.3f;
 
     private boolean mIsActive = false;
@@ -99,10 +101,10 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private boolean mShowDetails;
     private float mUserDistance; // in pixel
 
-    private ProgressDialog mProgressDialog;
-    private Future<?> mPendingTask;
-
     private Future<Integer> mSyncTask = null;
+
+    private int mLoadingBits = 0;
+    private boolean mInitialSynced = false;
 
     private final GLView mRootPane = new GLView() {
         private final float mMatrix[] = new float[16];
@@ -326,6 +328,10 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mAlbumDataAdapter.resume();
         mAlbumView.resume();
         mActionModeHandler.resume();
+        if (!mInitialSynced) {
+            mSyncTask = mMediaSet.requestSync(this);
+            setLoadingBit(BIT_LOADING_SYNC);
+        }
     }
 
     @Override
@@ -335,16 +341,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mAlbumDataAdapter.pause();
         mAlbumView.pause();
         DetailsHelper.pause();
-        Future<?> task = mPendingTask;
-        if (task != null) {
-            // cancel on going task
-            task.cancel();
-            task.waitDone();
-            if (mProgressDialog != null) {
-                mProgressDialog.dismiss();
-                mProgressDialog = null;
-            }
-        }
+
         if (mSyncTask != null) {
             mSyncTask.cancel();
             mSyncTask = null;
@@ -568,9 +565,11 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         ((Activity) mActivity).runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (resultCode == MediaSet.SYNC_RESULT_SUCCESS) {
+                    mInitialSynced = true;
+                }
                 if (!mIsActive) return;
-                mediaSet.notifyContentChanged(); // force reload to handle spinner
-
+                clearLoadingBit(BIT_LOADING_SYNC);
                 if (resultCode == MediaSet.SYNC_RESULT_ERROR) {
                     Toast.makeText((Context) mActivity, R.string.sync_album_error,
                             Toast.LENGTH_LONG).show();
@@ -579,33 +578,42 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         });
     }
 
+    private void setLoadingBit(int loadTaskBit) {
+        if (mLoadingBits == 0) {
+            GalleryUtils.setSpinnerVisibility((Activity) mActivity, true);
+        }
+        mLoadingBits |= loadTaskBit;
+    }
+
+    private void clearLoadingBit(int loadTaskBit) {
+        mLoadingBits &= ~loadTaskBit;
+        if (mLoadingBits == 0) {
+            GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
+
+            if (mAlbumDataAdapter.size() == 0) {
+                Toast.makeText((Context) mActivity,
+                        R.string.empty_album, Toast.LENGTH_LONG).show();
+                mActivity.getStateManager().finishState(AlbumPage.this);
+            }
+        }
+    }
+
     private class MyLoadingListener implements LoadingListener {
         @Override
         public void onLoadingStarted() {
-            GalleryUtils.setSpinnerVisibility((Activity) mActivity, true);
+            setLoadingBit(BIT_LOADING_RELOAD);
         }
 
         @Override
         public void onLoadingFinished() {
             if (!mIsActive) return;
-            if (mAlbumDataAdapter.size() == 0) {
-                if (mSyncTask == null) {
-                    mSyncTask = mMediaSet.requestSync(AlbumPage.this);
-                }
-                if (mSyncTask.isDone()){
-                    Toast.makeText((Context) mActivity,
-                            R.string.empty_album, Toast.LENGTH_LONG).show();
-                    mActivity.getStateManager().finishState(AlbumPage.this);
-                }
-            }
-            if (mSyncTask == null || mSyncTask.isDone()) {
-                GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
-            }
+            clearLoadingBit(BIT_LOADING_RELOAD);
         }
     }
 
     private class MyDetailsSource implements DetailsHelper.DetailsSource {
         private int mIndex;
+
         public int size() {
             return mAlbumDataAdapter.size();
         }
