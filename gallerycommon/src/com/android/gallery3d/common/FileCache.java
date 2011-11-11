@@ -16,14 +16,14 @@
 
 package com.android.gallery3d.common;
 
-import com.android.gallery3d.common.Entry.Table;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.android.gallery3d.common.Entry.Table;
 
 import java.io.File;
 import java.io.IOException;
