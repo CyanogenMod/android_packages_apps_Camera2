@@ -30,7 +30,7 @@
             android:icon="@drawable/ic_menu_trash_holo_light"
             android:title="@string/delete"
             android:visible="false"
-            android:showAsAction="never">
+            android:showAsAction="ifRoom">
         <menu>
             <item android:id="@+id/action_confirm_delete"
                     android:icon="@drawable/ic_menu_trash_holo_light"
@@ -57,11 +57,11 @@
     <item android:id="@+id/action_crop"
             android:title="@string/crop_action"
             android:showAsAction="never" />
-    <item android:id="@+id/action_details"
-            android:title="@string/details"
-            android:showAsAction="never" />
     <item android:id="@+id/action_setas"
             android:title="@string/set_image"
+            android:showAsAction="never" />
+    <item android:id="@+id/action_details"
+            android:title="@string/details"
             android:showAsAction="never" />
     <item android:id="@+id/action_show_on_map"
             android:title="@string/show_on_map"
