@@ -128,13 +128,12 @@ public class EffectsBar extends LinearLayout {
 
     private boolean exitActiveEffect(final Runnable runnableOnDone) {
         if (activeEffect != null) {
-            final SpinnerProgressDialog progressDialog = SpinnerProgressDialog.show(
-                    (ViewGroup) getRootView().findViewById(R.id.toolbar));
+            SpinnerProgressDialog.showDialog();
             activeEffect.end(new Runnable() {
 
                 @Override
                 public void run() {
-                    progressDialog.dismiss();
+                    SpinnerProgressDialog.dismissDialog();
                     View fullscreenTool = getRootView().findViewById(R.id.fullscreen_effect_tool);
                     if (fullscreenTool != null) {
                         ((ViewGroup) fullscreenTool.getParent()).removeView(fullscreenTool);
