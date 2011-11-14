@@ -21,8 +21,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * This class manages the visibility of the progress spinner in the action bar for an
@@ -33,10 +32,8 @@ import java.util.Map;
  */
 public class SpinnerVisibilitySetter {
 
-    private static final int SHOW_SPINNER_REQUESTED = 0;
-    private static final int HIDE_SPINNER_REQUESTED = 1;
-    private static final int SHOW_SPINNER_DELAY_REACHED = 2;
-    private static final int HIDE_SPINNER_DELAY_REACHED = 3;
+    private static final int MSG_SHOW_SPINNER = 1;
+    private static final int MSG_HIDE_SPINNER = 2;
 
     // Amount of time after a show request that the progress spinner is actually made visible.
     // This means that any show/hide requests that happen subsequently within this period
@@ -46,88 +43,64 @@ public class SpinnerVisibilitySetter {
     // The minimum amount of time the progress spinner must be visible before it can be hidden.
     private static final long MIN_SPINNER_DISPLAY_TIME = 2000;
 
-    private boolean mPendingVisibilityRequest = false;
-    private boolean mActiveVisibilityRequest = false;
-    private long mSpinnerVisibilityStartTime;
+    static final WeakHashMap<Activity, SpinnerVisibilitySetter> sInstanceMap =
+            new WeakHashMap<Activity, SpinnerVisibilitySetter>();
 
-    Handler mHandler = new Handler() {
+    private long mSpinnerVisibilityStartTime = -1;
+    private Activity mActivity;
 
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch(msg.what) {
-                case SHOW_SPINNER_REQUESTED:
-                    mPendingVisibilityRequest = true;
-                    sendEmptyMessageDelayed(SHOW_SPINNER_DELAY_REACHED, SPINNER_DISPLAY_DELAY);
+                case MSG_SHOW_SPINNER:
+                    removeMessages(MSG_SHOW_SPINNER);
+                    if (mSpinnerVisibilityStartTime >= 0) break;
+                    mSpinnerVisibilityStartTime = SystemClock.elapsedRealtime();
+                    mActivity.setProgressBarIndeterminateVisibility(true);
                     break;
-                case HIDE_SPINNER_REQUESTED:
-                    mPendingVisibilityRequest = false;
-                    if (!mActiveVisibilityRequest) {
-                        // We haven't requested to show the spinner so no need to decide
-                        // when to hide it.
-                        break;
-                    }
-
-                    long currTime = SystemClock.uptimeMillis();
-                    if (currTime - mSpinnerVisibilityStartTime > MIN_SPINNER_DISPLAY_TIME) {
-                        // The spinner has already been visible longer than the requisite min
-                        // display time. Send the hide message immediately.
-                        sendEmptyMessage(HIDE_SPINNER_DELAY_REACHED);
+                case MSG_HIDE_SPINNER:
+                    removeMessages(MSG_HIDE_SPINNER);
+                    if (mSpinnerVisibilityStartTime < 0) break;
+                    long t = SystemClock.elapsedRealtime() - mSpinnerVisibilityStartTime;
+                    if (t >= MIN_SPINNER_DISPLAY_TIME) {
+                        mSpinnerVisibilityStartTime = -1;
+                        mActivity.setProgressBarIndeterminateVisibility(false);
                     } else {
-                        // The spinner is visible but hasn't been visible for long enough yet.
-                        // Send a delayed hide message.
-                        sendEmptyMessageAtTime(HIDE_SPINNER_DELAY_REACHED,
-                                mSpinnerVisibilityStartTime + MIN_SPINNER_DISPLAY_TIME);
+                        sendEmptyMessageDelayed(MSG_HIDE_SPINNER, MIN_SPINNER_DISPLAY_TIME - t);
                     }
-                    break;
-                case SHOW_SPINNER_DELAY_REACHED:
-                    if (mPendingVisibilityRequest) {
-                        mPendingVisibilityRequest = false;
-                        mActiveVisibilityRequest = true;
-
-                        // Even though the spinner isn't visible quite yet, lets set this
-                        // here to avoid possible cross-thread synchronization issues.
-                        mSpinnerVisibilityStartTime = SystemClock.uptimeMillis();
-                        mActivity.runOnUiThread(new SetProgressVisibilityRunnable(true));
-                    }
-                    break;
-                case HIDE_SPINNER_DELAY_REACHED:
-                    mActiveVisibilityRequest = false;
-                    mActivity.runOnUiThread(new SetProgressVisibilityRunnable(false));
                     break;
             }
         }
     };
-    static final Map<Activity, SpinnerVisibilitySetter> sInstanceMap =
-            new HashMap<Activity, SpinnerVisibilitySetter>();
-    private Activity mActivity;
+
+    /**
+     *  Gets the <code>SpinnerVisibilitySetter</code> for the given <code>activity</code>.
+     *
+     *  This method must be called from the main thread.
+     */
+    public static SpinnerVisibilitySetter getInstance(Activity activity) {
+        synchronized(sInstanceMap) {
+            SpinnerVisibilitySetter setter = sInstanceMap.get(activity);
+            if (setter == null) {
+                setter = new SpinnerVisibilitySetter(activity);
+                sInstanceMap.put(activity, setter);
+            }
+            return setter;
+        }
+    }
 
     private SpinnerVisibilitySetter(Activity activity) {
         mActivity = activity;
     }
 
-    public static SpinnerVisibilitySetter getInstance(Activity activity) {
-        synchronized(sInstanceMap) {
-            if (sInstanceMap.get(activity) == null) {
-                sInstanceMap.put(activity, new SpinnerVisibilitySetter(activity));
-            }
-            return sInstanceMap.get(activity);
-        }
-    }
-
     public void setSpinnerVisibility(boolean visible) {
-        mHandler.sendEmptyMessage(visible ? SHOW_SPINNER_REQUESTED : HIDE_SPINNER_REQUESTED);
-    }
-
-    private class SetProgressVisibilityRunnable implements Runnable {
-        boolean mVisible;
-
-        public SetProgressVisibilityRunnable(boolean visible) {
-            mVisible = visible;
-        }
-
-        @Override
-        public void run() {
-            mActivity.setProgressBarIndeterminateVisibility(mVisible);
+        if (visible) {
+            mHandler.removeMessages(MSG_HIDE_SPINNER);
+            mHandler.sendEmptyMessageDelayed(MSG_SHOW_SPINNER, SPINNER_DISPLAY_DELAY);
+        } else {
+            mHandler.removeMessages(MSG_SHOW_SPINNER);
+            mHandler.sendEmptyMessage(MSG_HIDE_SPINNER);
         }
     }
 }
