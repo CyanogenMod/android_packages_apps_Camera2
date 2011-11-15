@@ -29,44 +29,51 @@ import java.util.ArrayList;
 
 /**
  * Spinner model progress dialog that disables all tools for user interaction after it shows up and
- * and re-enables them after it dismisses.
+ * and re-enables them after it dismisses; this class along with all its methods should be accessed
+ * in only UI thread and allows only one instance at a time.
  */
 public class SpinnerProgressDialog extends Dialog {
 
-    private final ViewGroup toolbar;
+    private static ViewGroup toolbar;
+    private static SpinnerProgressDialog dialog;
     private final ArrayList<View> enabledTools = new ArrayList<View>();
 
-    public static SpinnerProgressDialog show(ViewGroup toolbar) {
-        SpinnerProgressDialog dialog = new SpinnerProgressDialog(toolbar);
-        dialog.setCancelable(false);
-        dialog.show();
-        return dialog;
+    public static void initialize(ViewGroup toolbar) {
+        SpinnerProgressDialog.toolbar = toolbar;
     }
 
-    private SpinnerProgressDialog(ViewGroup toolbar) {
-        super(toolbar.getContext(), R.style.SpinnerProgressDialog);
-
-        addContentView(new ProgressBar(toolbar.getContext()), new LayoutParams(
-                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-
-        // Disable enabled tools when showing spinner progress dialog.
-        for (int i = 0; i < toolbar.getChildCount(); i++) {
-            View view = toolbar.getChildAt(i);
-            if (view.isEnabled()) {
-                enabledTools.add(view);
-                view.setEnabled(false);
+    public static void showDialog() {
+        // There should be only one progress dialog running at a time.
+        if (dialog == null) {
+            dialog = new SpinnerProgressDialog();
+            dialog.setCancelable(false);
+            dialog.show();
+            // Disable enabled tools when showing spinner progress dialog.
+            for (int i = 0; i < toolbar.getChildCount(); i++) {
+                View view = toolbar.getChildAt(i);
+                if (view.isEnabled()) {
+                    dialog.enabledTools.add(view);
+                    view.setEnabled(false);
+                }
             }
         }
-        this.toolbar = toolbar;
     }
 
-    @Override
-    public void dismiss() {
-        super.dismiss();
-        // Enable tools that were disabled by this spinner progress dialog.
-        for (View view : enabledTools) {
-            view.setEnabled(true);
+    public static void dismissDialog() {
+        if (dialog != null) {
+            dialog.dismiss();
+            // Enable tools that were disabled by this spinner progress dialog.
+            for (View view : dialog.enabledTools) {
+                view.setEnabled(true);
+            }
+            dialog = null;
         }
+    }
+
+    private SpinnerProgressDialog() {
+        super(toolbar.getContext(), R.style.SpinnerProgressDialog);
+        addContentView(new ProgressBar(toolbar.getContext()), new LayoutParams(
+                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     }
 
     @Override
