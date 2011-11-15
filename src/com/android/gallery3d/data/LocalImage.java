@@ -40,9 +40,6 @@ import java.io.IOException;
 
 // LocalImage represents an image in the local storage.
 public class LocalImage extends LocalMediaItem {
-    private static final int THUMBNAIL_TARGET_SIZE = 640;
-    private static final int MICROTHUMBNAIL_TARGET_SIZE = 200;
-
     private static final String TAG = "LocalImage";
 
     static final Path ITEM_PATH = Path.fromString("/local/image/item");
