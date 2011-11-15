@@ -28,6 +28,10 @@ public abstract class MediaItem extends MediaObject {
     public static final int TYPE_THUMBNAIL = 1;
     public static final int TYPE_MICROTHUMBNAIL = 2;
 
+    public static final int THUMBNAIL_TARGET_SIZE = 640;
+    public static final int MICROTHUMBNAIL_TARGET_SIZE = 200;
+    public static final int CACHED_IMAGE_QUALITY = 95;
+
     public static final int IMAGE_READY = 0;
     public static final int IMAGE_WAIT = 1;
     public static final int IMAGE_ERROR = -1;

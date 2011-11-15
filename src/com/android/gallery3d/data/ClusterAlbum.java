@@ -24,6 +24,7 @@ public class ClusterAlbum extends MediaSet implements ContentListener {
     private String mName = "";
     private DataManager mDataManager;
     private MediaSet mClusterAlbumSet;
+    private MediaItem mCover;
 
     public ClusterAlbum(Path path, DataManager dataManager,
             MediaSet clusterAlbumSet) {
@@ -31,6 +32,15 @@ public class ClusterAlbum extends MediaSet implements ContentListener {
         mDataManager = dataManager;
         mClusterAlbumSet = clusterAlbumSet;
         mClusterAlbumSet.addContentListener(this);
+    }
+
+    public void setCoverMediaItem(MediaItem cover) {
+        mCover = cover;
+    }
+
+    @Override
+    public MediaItem getCoverMediaItem() {
+        return mCover != null ? mCover : super.getCoverMediaItem();
     }
 
     void setMediaItems(ArrayList<Path> paths) {

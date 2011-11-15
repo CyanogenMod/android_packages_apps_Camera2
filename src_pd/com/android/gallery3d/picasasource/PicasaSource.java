@@ -17,6 +17,7 @@
 package com.android.gallery3d.picasasource;
 
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.MediaSource;
@@ -78,6 +79,10 @@ public class PicasaSource extends MediaSource {
             default:
                 throw new RuntimeException("bad path: " + path);
         }
+    }
+
+    public static MediaItem getFaceItem(Context context, MediaItem item, int faceIndex) {
+        throw new UnsupportedOperationException();
     }
 
     public static boolean isPicasaImage(MediaObject object) {

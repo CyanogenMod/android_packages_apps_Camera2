@@ -16,79 +16,126 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.R;
-
 import android.content.Context;
+import android.graphics.Rect;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.picasasource.PicasaSource;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.TreeMap;
 
 public class FaceClustering extends Clustering {
     @SuppressWarnings("unused")
     private static final String TAG = "FaceClustering";
 
-    private ArrayList<ArrayList<Path>> mClusters;
-    private String[] mNames;
+    private FaceCluster[] mClusters;
     private String mUntaggedString;
+    private Context mContext;
+
+    private class FaceCluster {
+        ArrayList<Path> mPaths = new ArrayList<Path>();
+        String mName;
+        MediaItem mCoverItem;
+        Rect mCoverRegion;
+        int mCoverFaceIndex;
+
+        public FaceCluster(String name) {
+            mName = name;
+        }
+
+        public void add(MediaItem item, int faceIndex) {
+            Path path = item.getPath();
+            mPaths.add(path);
+            Face[] faces = item.getFaces();
+            if (faces != null) {
+                Face face = faces[faceIndex];
+                if (mCoverItem == null) {
+                    mCoverItem = item;
+                    mCoverRegion = face.getPosition();
+                    mCoverFaceIndex = faceIndex;
+                } else {
+                    Rect region = face.getPosition();
+                    if (mCoverRegion.width() < region.width() &&
+                            mCoverRegion.height() < region.height()) {
+                        mCoverItem = item;
+                        mCoverRegion = face.getPosition();
+                        mCoverFaceIndex = faceIndex;
+                    }
+                }
+            }
+        }
+
+        public int size() {
+            return mPaths.size();
+        }
+
+        public MediaItem getCover() {
+            if (mCoverItem != null) {
+                if (PicasaSource.isPicasaImage(mCoverItem)) {
+                    return PicasaSource.getFaceItem(mContext, mCoverItem, mCoverFaceIndex);
+                } else {
+                    return mCoverItem;
+                }
+            }
+            return null;
+        }
+    }
 
     public FaceClustering(Context context) {
         mUntaggedString = context.getResources().getString(R.string.untagged);
+        mContext = context;
     }
 
     @Override
     public void run(MediaSet baseSet) {
-        final TreeMap<Face, ArrayList<Path>> map =
-                new TreeMap<Face, ArrayList<Path>>();
-        final ArrayList<Path> untagged = new ArrayList<Path>();
+        final TreeMap<Face, FaceCluster> map =
+                new TreeMap<Face, FaceCluster>();
+        final FaceCluster untagged = new FaceCluster(mUntaggedString);
 
         baseSet.enumerateTotalMediaItems(new MediaSet.ItemConsumer() {
             public void consume(int index, MediaItem item) {
-                Path path = item.getPath();
-
                 Face[] faces = item.getFaces();
                 if (faces == null || faces.length == 0) {
-                    untagged.add(path);
+                    untagged.add(item, -1);
                     return;
                 }
                 for (int j = 0; j < faces.length; j++) {
-                    Face key = faces[j];
-                    ArrayList<Path> list = map.get(key);
-                    if (list == null) {
-                        list = new ArrayList<Path>();
-                        map.put(key, list);
+                    Face face = faces[j];
+                    FaceCluster cluster = map.get(face);
+                    if (cluster == null) {
+                        cluster = new FaceCluster(face.getName());
+                        map.put(face, cluster);
                     }
-                    list.add(path);
+                    cluster.add(item, j);
                 }
             }
         });
 
         int m = map.size();
-        mClusters = new ArrayList<ArrayList<Path>>();
-        mNames = new String[m + ((untagged.size() > 0) ? 1 : 0)];
-        int i = 0;
-        for (Map.Entry<Face, ArrayList<Path>> entry : map.entrySet()) {
-            mNames[i++] = entry.getKey().getName();
-            mClusters.add(entry.getValue());
-        }
+        mClusters = map.values().toArray(new FaceCluster[m + ((untagged.size() > 0) ? 1 : 0)]);
         if (untagged.size() > 0) {
-            mNames[i++] = mUntaggedString;
-            mClusters.add(untagged);
+            mClusters[m] = untagged;
         }
     }
 
     @Override
     public int getNumberOfClusters() {
-        return mClusters.size();
+        return mClusters.length;
     }
 
     @Override
     public ArrayList<Path> getCluster(int index) {
-        return mClusters.get(index);
+        return mClusters[index].mPaths;
     }
 
     @Override
     public String getClusterName(int index) {
-        return mNames[index];
+        return mClusters[index].mName;
+    }
+
+    @Override
+    public MediaItem getClusterCover(int index) {
+        return mClusters[index].getCover();
     }
 }
