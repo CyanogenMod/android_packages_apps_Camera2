@@ -117,6 +117,7 @@ public class ClusterAlbumSet extends MediaSet implements ContentListener {
             }
             album.setMediaItems(clustering.getCluster(i));
             album.setName(childName);
+            album.setCoverMediaItem(clustering.getClusterCover(i));
             mAlbums.add(album);
         }
     }
