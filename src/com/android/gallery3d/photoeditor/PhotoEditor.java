@@ -42,6 +42,7 @@ public class PhotoEditor extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photoeditor_main);
+        SpinnerProgressDialog.initialize((ViewGroup) findViewById(R.id.toolbar));
 
         Intent intent = getIntent();
         if (Intent.ACTION_EDIT.equalsIgnoreCase(intent.getAction())) {
@@ -74,12 +75,8 @@ public class PhotoEditor extends Activity {
         actionBar.setClickRunnable(R.id.action_bar_back, createBackRunnable());
     }
 
-    private SpinnerProgressDialog createProgressDialog() {
-        return SpinnerProgressDialog.show((ViewGroup) findViewById(R.id.toolbar));
-    }
-
     private void openPhoto() {
-        final SpinnerProgressDialog progressDialog = createProgressDialog();
+        SpinnerProgressDialog.showDialog();
         LoadScreennailTask.Callback callback = new LoadScreennailTask.Callback() {
 
             @Override
@@ -88,7 +85,7 @@ public class PhotoEditor extends Activity {
 
                     @Override
                     public void onDone() {
-                        progressDialog.dismiss();
+                        SpinnerProgressDialog.dismissDialog();
                         effectsBar.setEnabled(result != null);
                     }
                 });
@@ -106,12 +103,12 @@ public class PhotoEditor extends Activity {
 
                     @Override
                     public void run() {
-                        final SpinnerProgressDialog progressDialog = createProgressDialog();
+                        SpinnerProgressDialog.showDialog();
                         OnDoneCallback callback = new OnDoneCallback() {
 
                             @Override
                             public void onDone() {
-                                progressDialog.dismiss();
+                                SpinnerProgressDialog.dismissDialog();
                             }
                         };
                         if (undo) {
@@ -134,7 +131,7 @@ public class PhotoEditor extends Activity {
 
                     @Override
                     public void run() {
-                        final SpinnerProgressDialog progressDialog = createProgressDialog();
+                        SpinnerProgressDialog.showDialog();
                         filterStack.getOutputBitmap(new OnDoneBitmapCallback() {
 
                             @Override
@@ -143,7 +140,7 @@ public class PhotoEditor extends Activity {
 
                                     @Override
                                     public void onComplete(Uri result) {
-                                        progressDialog.dismiss();
+                                        SpinnerProgressDialog.dismissDialog();
                                         saveUri = result;
                                         actionBar.updateSave(saveUri == null);
                                     }
@@ -223,9 +220,10 @@ public class PhotoEditor extends Activity {
 
     @Override
     protected void onPause() {
-        // TODO: Close running progress dialogs as all pending operations will be paused.
         super.onPause();
         filterStack.onPause();
+        // Dismiss any running progress dialog as all operations are paused.
+        SpinnerProgressDialog.dismissDialog();
     }
 
     @Override
