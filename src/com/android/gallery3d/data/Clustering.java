@@ -23,4 +23,7 @@ public abstract class Clustering {
     public abstract int getNumberOfClusters();
     public abstract ArrayList<Path> getCluster(int index);
     public abstract String getClusterName(int index);
+    public MediaItem getClusterCover(int index) {
+        return null;
+    }
 }
