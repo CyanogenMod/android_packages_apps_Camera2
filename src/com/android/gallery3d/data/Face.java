@@ -16,16 +16,41 @@
 
 package com.android.gallery3d.data;
 
+import android.graphics.Rect;
+
 import com.android.gallery3d.common.Utils;
+
+import java.util.StringTokenizer;
 
 public class Face implements Comparable<Face> {
     private String mName;
     private String mPersonId;
+    private Rect mPosition;
 
-    public Face(String name, String personId) {
+    public Face(String name, String personId, String rect) {
         mName = name;
         mPersonId = personId;
-        Utils.assertTrue(mName != null && mPersonId != null);
+        Utils.assertTrue(mName != null && mPersonId != null && rect != null);
+        StringTokenizer tokenizer = new StringTokenizer(rect);
+        mPosition = new Rect();
+        while (tokenizer.hasMoreElements()) {
+            mPosition.left = Integer.parseInt(tokenizer.nextToken());
+            mPosition.top = Integer.parseInt(tokenizer.nextToken());
+            mPosition.right = Integer.parseInt(tokenizer.nextToken());
+            mPosition.bottom = Integer.parseInt(tokenizer.nextToken());
+        }
+    }
+
+    public Rect getPosition() {
+        return mPosition;
+    }
+
+    public int getWidth() {
+        return mPosition.right - mPosition.left;
+    }
+
+    public int getHeight() {
+        return mPosition.bottom - mPosition.top;
     }
 
     public String getName() {
@@ -45,12 +70,7 @@ public class Face implements Comparable<Face> {
         return false;
     }
 
-    @Override
-    public int hashCode() {
-        return mPersonId.hashCode();
-    }
-
     public int compareTo(Face another) {
-        return mPersonId.compareTo(another.mPersonId);
+        return mName.compareTo(another.mName);
     }
 }
