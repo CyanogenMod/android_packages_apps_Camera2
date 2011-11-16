@@ -36,6 +36,8 @@ public abstract class MediaItem extends MediaObject {
     public static final int IMAGE_WAIT = 1;
     public static final int IMAGE_ERROR = -1;
 
+    public static final String MIME_TYPE_JPEG = "image/jpeg";
+
     // TODO: fix default value for latlng and change this.
     public static final double INVALID_LATLNG = 0f;
 
