@@ -31,7 +31,7 @@
     <string name="fail_to_load" msgid="8394392853646664505">"लोड नहीं कर सका"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"कोई थंबनेल नहीं"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"पुन: प्रारंभ करें"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"ठीक"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"काट-छांट करें"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"शुरू करने के लिए कोई चेहरा स्‍पर्श करें."</string>
     <string name="saving_image" msgid="7270334453636349407">"चित्र सहेज रहा है…"</string>
     <string name="save_error" msgid="6857408774183654970">"काट-छांट की गई छवि को नहीं सहेज सका."</string>
@@ -40,7 +40,7 @@
     <string name="select_video" msgid="4859510992798615076">"वीडियो का चयन करें"</string>
     <string name="select_item" msgid="2816923896202086390">"आइटम का चयन करें"</string>
     <string name="select_album" msgid="1557063764849434077">"एल्बम का चयन करें"</string>
-    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"समूह का चयन करें"</string>
+    <string name="select_group" msgid="6744208543323307114">"समूह का चयन करें"</string>
     <string name="set_image" msgid="2331476809308010401">"चित्र इस रूप में सेट करें"</string>
     <string name="wallpaper" msgid="140165383777262070">"वॉलपेपर सेट कर रहा है..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"वॉलपेपर"</string>
@@ -95,7 +95,7 @@
     <string name="show_images_only" msgid="7263218480867672653">"केवल छवियां"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"केवल वीडियो"</string>
     <string name="show_all" msgid="4780647751652596980">"छवियां और वीडियो"</string>
-    <string name="appwidget_title" msgid="6410561146863700411">"फ़ोटो गैलरी"</string>
+    <string name="appwidget_title" msgid="6410561146863700411">"फ़ोटो गैलरी"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"कोई फ़ोटो नहीं."</string>
     <string name="crop_saved" msgid="1062612625032731770">"काट-छांट की गई छवि को डाउनलोड में सहेजा गया."</string>
     <string name="crop_not_saved" msgid="3400773981839556">"काट-छांट की गई छवि को नहीं सहेजा गया."</string>
@@ -119,7 +119,7 @@
     <string name="file_size" msgid="8486169301588318915">"फ़ाइल का आकार"</string>
     <string name="maker" msgid="7921835498034236197">"निर्माता"</string>
     <string name="model" msgid="8240207064064337366">"मॉडल"</string>
-    <string name="flash" msgid="2816779031261147723">"फ़्लैश"</string>
+    <string name="flash" msgid="2816779031261147723">"फ़्लैश"</string>
     <string name="aperture" msgid="5920657630303915195">"एपर्चर"</string>
     <string name="focal_length" msgid="1291383769749877010">"फ़ोकल लंबाई"</string>
     <string name="white_balance" msgid="1582509289994216078">"श्वेत संतुलन"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"कैमरा कनेक्‍ट किया गया."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"कैमरा डिस्‍कनेक्‍ट किया गया."</string>
     <string name="click_import" msgid="6407959065464291972">"आयात करने के लिए यहां स्पर्श करें"</string>
-    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"किसी एल्‍बम की छवियां"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"कोई एल्बम चुनें"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"सभी छवियों का क्रम बदलें"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"कोई छवि चुनें"</string>
-    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"विजेट प्रकार"</string>
+    <string name="widget_type" msgid="1364653978966343448">"छवियां चुनें"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"स्लाइडशो"</string>
     <string name="albums" msgid="7320787705180057947">"एल्बम"</string>
     <string name="times" msgid="2023033894889499219">"इतने बार"</string>

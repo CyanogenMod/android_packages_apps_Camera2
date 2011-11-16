@@ -31,7 +31,7 @@
     <string name="fail_to_load" msgid="8394392853646664505">"بارگیری نشد"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"تصویر کوچکی وجود ندارد"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"شروع مجدد"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"تائید"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"برش"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"برای شروع یک چهره را لمس کنید."</string>
     <string name="saving_image" msgid="7270334453636349407">"در حال ذخیره عکس..."</string>
     <string name="save_error" msgid="6857408774183654970">"ذخیره تصویر برش‌خورده امکان‌پذیر نیست."</string>
@@ -40,7 +40,7 @@
     <string name="select_video" msgid="4859510992798615076">"انتخاب ویدیو"</string>
     <string name="select_item" msgid="2816923896202086390">"انتخاب مورد"</string>
     <string name="select_album" msgid="1557063764849434077">"آلبوم را انتخاب کنید"</string>
-    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"انتخاب گروه(ها)"</string>
+    <string name="select_group" msgid="6744208543323307114">"انتخاب گروه"</string>
     <string name="set_image" msgid="2331476809308010401">"تنظیم تصویر بعنوان"</string>
     <string name="wallpaper" msgid="140165383777262070">"تنظیم تصویر زمینه..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"تصویر زمینه"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"دوربین متصل شد."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"اتصال دوربین قطع شد."</string>
     <string name="click_import" msgid="6407959065464291972">"برای وارد کردن اینجا را لمس کنید"</string>
-    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"عکس هایی از یک آلبوم"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"انتخاب یک آلبوم"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"نمایش تصادفی همه تصاویر"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"انتخاب یک تصویر"</string>
-    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"نوع ابزارک"</string>
+    <string name="widget_type" msgid="1364653978966343448">"انتخاب تصاویر"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"نمایش اسلاید"</string>
     <string name="albums" msgid="7320787705180057947">"آلبوم‌ها"</string>
     <string name="times" msgid="2023033894889499219">"دفعات"</string>

@@ -22,7 +22,7 @@
     <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
     <string name="movie_view_label" msgid="3526526872644898229">"Videospeler"</string>
     <string name="loading_video" msgid="4013492720121891585">"Laai tans video…"</string>
-    <string name="loading_image" msgid="1200894415793838191">"Laai tans beeld…"</string>
+    <string name="loading_image" msgid="1200894415793838191">"Laai tans prent…"</string>
     <string name="loading_account" msgid="928195413034552034">"Laai tans rekening…"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"Hervat video"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"Hervat speel vanaf %s ?"</string>
@@ -31,7 +31,7 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Kon nie laai nie"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Geen kleinkiekie nie"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Begin van voor af"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"Snoei"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Raak aan \'n gesig om te begin."</string>
     <string name="saving_image" msgid="7270334453636349407">"Stoor tans prent…"</string>
     <string name="save_error" msgid="6857408774183654970">"Kon nie gesnoeide prent stoor nie."</string>
@@ -139,7 +139,7 @@
     <string name="set_label_local_albums" msgid="6698133661656266702">"Plaaslike albums"</string>
     <string name="set_label_mtp_devices" msgid="1283513183744896368">"MTP-toestelle"</string>
     <string name="set_label_picasa_albums" msgid="5356258354953935895">"Picasa-albums"</string>
-    <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> gratis"</string>
+    <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> beskikbaar"</string>
     <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> of minder"</string>
     <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> of hoër"</string>
     <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> tot <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
