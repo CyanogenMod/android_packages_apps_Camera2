@@ -31,7 +31,7 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Yüklenemedi"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Küçük resim yok"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Başlat"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"Tamam"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"Kırp"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Başlamak için bir yüze dokunun."</string>
     <string name="saving_image" msgid="7270334453636349407">"Resim kaydediliyor..."</string>
     <string name="save_error" msgid="6857408774183654970">"Kırpılmış resim kaydedilemedi."</string>
@@ -40,7 +40,7 @@
     <string name="select_video" msgid="4859510992798615076">"Video seçin"</string>
     <string name="select_item" msgid="2816923896202086390">"Öğe seçin"</string>
     <string name="select_album" msgid="1557063764849434077">"Albüm seçin"</string>
-    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"Grupları seçin"</string>
+    <string name="select_group" msgid="6744208543323307114">"Grup seçin"</string>
     <string name="set_image" msgid="2331476809308010401">"Resmi şu şekilde ayarla:"</string>
     <string name="wallpaper" msgid="140165383777262070">"Duvar kağıdı ayarlanıyor..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Duvar Kağıdı"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Kamera bağlı."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Kamera bağlantısı kesildi."</string>
     <string name="click_import" msgid="6407959065464291972">"İçe aktarmak için buraya dokunun"</string>
-    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"Albümden resimler"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Albüm seçin"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Tüm resimleri karıştır"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Bir resim seç"</string>
-    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"Widget türü"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Resimleri seçin"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Slayt gösterisi"</string>
     <string name="albums" msgid="7320787705180057947">"Albümler"</string>
     <string name="times" msgid="2023033894889499219">"Saatler"</string>

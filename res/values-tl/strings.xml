@@ -31,7 +31,7 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Hindi mai-load"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Walang thumbnail"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Magsimula na"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"I-crop"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Pumindot ng mukha upang magsimula."</string>
     <string name="saving_image" msgid="7270334453636349407">"Nagse-save ng larawan..."</string>
     <string name="save_error" msgid="6857408774183654970">"Hindi mai-save ang na-crop na larawan."</string>
@@ -40,7 +40,7 @@
     <string name="select_video" msgid="4859510992798615076">"Pumili ng video"</string>
     <string name="select_item" msgid="2816923896202086390">"Pumili ng item"</string>
     <string name="select_album" msgid="1557063764849434077">"Pumili ng album"</string>
-    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"Pumili ng (mga) pangkat"</string>
+    <string name="select_group" msgid="6744208543323307114">"Pumili ng pangkat"</string>
     <string name="set_image" msgid="2331476809308010401">"Itakda ang larawan bilang"</string>
     <string name="wallpaper" msgid="140165383777262070">"Itinatakda ang wallpaper…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Wallpaper"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Nakakonekta ang camera."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Nadiskonekta ang camera."</string>
     <string name="click_import" msgid="6407959065464291972">"Tumapik dito upang mag-import"</string>
-    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"Mga larawan mula sa isa album"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Pumili ng album"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"I-shuffle ang lahat ng larawan"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Pumili ng larawan"</string>
-    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"Uri ng widget"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Pumili mga larawan"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Slideshow"</string>
     <string name="albums" msgid="7320787705180057947">"Mga Album"</string>
     <string name="times" msgid="2023033894889499219">"Beses"</string>

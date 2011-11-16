@@ -31,7 +31,7 @@
     <string name="fail_to_load" msgid="8394392853646664505">"無法載入"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"無縮圖"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"重新開始"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"確定"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"裁剪"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"輕觸臉孔即可開始。"</string>
     <string name="saving_image" msgid="7270334453636349407">"正在儲存相片..."</string>
     <string name="save_error" msgid="6857408774183654970">"無法儲存裁剪的圖片。"</string>
@@ -40,7 +40,7 @@
     <string name="select_video" msgid="4859510992798615076">"選取影片"</string>
     <string name="select_item" msgid="2816923896202086390">"選取項目"</string>
     <string name="select_album" msgid="1557063764849434077">"選取相簿"</string>
-    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"選取群組"</string>
+    <string name="select_group" msgid="6744208543323307114">"選取群組"</string>
     <string name="set_image" msgid="2331476809308010401">"將相片設為"</string>
     <string name="wallpaper" msgid="140165383777262070">"正在設定桌布..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"桌布"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"相機已連線。"</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"相機已中斷連線。"</string>
     <string name="click_import" msgid="6407959065464291972">"輕觸這裡即可匯入相簿"</string>
-    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"相簿中的圖片"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"選擇相簿"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"隨機播放所有圖片"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"選擇圖片"</string>
-    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"小工具類型"</string>
+    <string name="widget_type" msgid="1364653978966343448">"選擇圖片"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"投影播放"</string>
     <string name="albums" msgid="7320787705180057947">"相簿"</string>
     <string name="times" msgid="2023033894889499219">"時間"</string>
