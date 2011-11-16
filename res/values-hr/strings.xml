@@ -31,7 +31,7 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Nije bilo moguće učitati"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Nema minijatura"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Počni ispočetka"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"U redu"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"Obreži"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Dodirnite lice za početak."</string>
     <string name="saving_image" msgid="7270334453636349407">"Spremanje slike..."</string>
     <string name="save_error" msgid="6857408774183654970">"Nije moguće spremiti obrezanu sliku."</string>
@@ -40,7 +40,7 @@
     <string name="select_video" msgid="4859510992798615076">"Odaberite videoz."</string>
     <string name="select_item" msgid="2816923896202086390">"Odaberite stavku"</string>
     <string name="select_album" msgid="1557063764849434077">"Odaberi album"</string>
-    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"Odabir grupe/grupa"</string>
+    <string name="select_group" msgid="6744208543323307114">"Odabir grupe"</string>
     <string name="set_image" msgid="2331476809308010401">"Postavi sliku kao"</string>
     <string name="wallpaper" msgid="140165383777262070">"Postavljanje pozadinske slike…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Pozadinska slika"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Fotoaparat je uključen."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Fotoaparat je isključen."</string>
     <string name="click_import" msgid="6407959065464291972">"Dodirnite ovdje za uvoz"</string>
-    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"Slike iz albuma"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Odaberi album"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Nasumično prikaži sve slike"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Odaberite sliku"</string>
-    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"Vrsta widgeta"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Odabir slika"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Dijaprojekcija"</string>
     <string name="albums" msgid="7320787705180057947">"Albumi"</string>
     <string name="times" msgid="2023033894889499219">"Vremena"</string>

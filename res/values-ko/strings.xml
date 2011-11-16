@@ -31,7 +31,7 @@
     <string name="fail_to_load" msgid="8394392853646664505">"로드하지 못했습니다."</string>
     <string name="no_thumbnail" msgid="284723185546429750">"미리보기 이미지 없음"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"처음부터 보기"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"확인"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"자르기"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"시작하려면 얼굴을 터치하세요."</string>
     <string name="saving_image" msgid="7270334453636349407">"사진 저장 중..."</string>
     <string name="save_error" msgid="6857408774183654970">"잘린 이미지를 저장하지 못했습니다."</string>
@@ -40,7 +40,7 @@
     <string name="select_video" msgid="4859510992798615076">"동영상 선택"</string>
     <string name="select_item" msgid="2816923896202086390">"항목 선택"</string>
     <string name="select_album" msgid="1557063764849434077">"앨범 선택"</string>
-    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"그룹 선택"</string>
+    <string name="select_group" msgid="6744208543323307114">"그룹 선택"</string>
     <string name="set_image" msgid="2331476809308010401">"사진을 다음으로 설정"</string>
     <string name="wallpaper" msgid="140165383777262070">"배경화면을 설정하는 중..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"배경화면"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"카메라가 연결되었습니다."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"카메라 연결이 끊어졌습니다."</string>
     <string name="click_import" msgid="6407959065464291972">"가져오려면 여기를 터치하세요."</string>
-    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"앨범의 이미지"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"앨범 선택"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"모든 이미지 셔플"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"이미지 선택"</string>
-    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"위젯 유형"</string>
+    <string name="widget_type" msgid="1364653978966343448">"이미지 선택"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"슬라이드쇼"</string>
     <string name="albums" msgid="7320787705180057947">"앨범"</string>
     <string name="times" msgid="2023033894889499219">"횟수"</string>

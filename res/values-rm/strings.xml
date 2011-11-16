@@ -36,7 +36,7 @@
     <!-- no translation found for no_thumbnail (284723185546429750) -->
     <skip />
     <string name="resume_playing_restart" msgid="5471008499835769292">"Cumenzar"</string>
-    <!-- outdated translation 8140440041190264400 -->     <string name="crop_save_text" msgid="152200178986698300">"Memorisar"</string>
+    <!-- outdated translation 8140440041190264400 -->     <string name="crop_save_text" msgid="4972430481677741184">"Memorisar"</string>
     <!-- outdated translation 3127018992717032779 -->     <string name="multiface_crop_help" msgid="2554690102655855657">"Smatgai sin ina fatscha per cumenzar."</string>
     <string name="saving_image" msgid="7270334453636349407">"Memorisar il maletg..."</string>
     <!-- no translation found for save_error (6857408774183654970) -->

@@ -31,7 +31,7 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Не атрымалася загрузiць"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Няма паменшанай выявы"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Пачаць зноў"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"ОК"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"Абрэзаць"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Дакранiцеся да твару, каб пачаць."</string>
     <string name="saving_image" msgid="7270334453636349407">"Захаванне выявы..."</string>
     <string name="save_error" msgid="6857408774183654970">"Немагчыма захаваць абрэзаную выяву."</string>
@@ -40,7 +40,7 @@
     <string name="select_video" msgid="4859510992798615076">"Выберыце відэа"</string>
     <string name="select_item" msgid="2816923896202086390">"Выбраць элемент"</string>
     <string name="select_album" msgid="1557063764849434077">"Выбраць альбом"</string>
-    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"Пазначце групы"</string>
+    <string name="select_group" msgid="6744208543323307114">"Выбар групы"</string>
     <string name="set_image" msgid="2331476809308010401">"Усталяваць малюнак як"</string>
     <string name="wallpaper" msgid="140165383777262070">"Усталяванне шпалер..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Шпалеры"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"Камера падлучаная."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Камера адключаная."</string>
     <string name="click_import" msgid="6407959065464291972">"Націсніце тут, каб імпартаваць"</string>
-    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"Выявы з альбома"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Выбраць альбом"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Змяшаць усе малюнкі"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Выберыце выяву"</string>
-    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"Тып віджэта"</string>
+    <string name="widget_type" msgid="1364653978966343448">"Выбар выяў"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Слайд-шоу"</string>
     <string name="albums" msgid="7320787705180057947">"Альбомы"</string>
     <string name="times" msgid="2023033894889499219">"Разы"</string>

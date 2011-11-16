@@ -31,7 +31,7 @@
     <string name="fail_to_load" msgid="8394392853646664505">"読み込めませんでした"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"サムネイルなし"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"最初から再生"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"トリミング"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"始めるには顔をタップします。"</string>
     <string name="saving_image" msgid="7270334453636349407">"写真を保存中…"</string>
     <string name="save_error" msgid="6857408774183654970">"トリミングした画像を保存できません。"</string>
@@ -40,7 +40,7 @@
     <string name="select_video" msgid="4859510992798615076">"動画を選択"</string>
     <string name="select_item" msgid="2816923896202086390">"項目を選択"</string>
     <string name="select_album" msgid="1557063764849434077">"アルバムを選択"</string>
-    <!-- outdated translation 9090385962030340391 -->     <string name="select_group" msgid="6744208543323307114">"グループを選択"</string>
+    <string name="select_group" msgid="6744208543323307114">"グループの選択"</string>
     <string name="set_image" msgid="2331476809308010401">"登録"</string>
     <string name="wallpaper" msgid="140165383777262070">"壁紙を設定しています..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"壁紙"</string>
@@ -149,10 +149,10 @@
     <string name="camera_connected" msgid="916021826223448591">"カメラが接続されました。"</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"カメラの接続が解除されました。"</string>
     <string name="click_import" msgid="6407959065464291972">"インポートするにはここをタップします"</string>
-    <!-- outdated translation 3245149644830731121 -->     <string name="widget_type_album" msgid="6013045393140135468">"アルバムの画像"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"アルバムを選択"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"すべての画像をシャッフル"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"画像を選択"</string>
-    <!-- outdated translation 2161028964992385809 -->     <string name="widget_type" msgid="1364653978966343448">"ウィジェットタイプ"</string>
+    <string name="widget_type" msgid="1364653978966343448">"画像の選択"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"スライドショー"</string>
     <string name="albums" msgid="7320787705180057947">"アルバム"</string>
     <string name="times" msgid="2023033894889499219">"時間"</string>
