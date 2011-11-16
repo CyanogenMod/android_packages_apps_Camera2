@@ -31,7 +31,7 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Couldn\'t load"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"No thumbnail"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Start again"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"Crop"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Touch a face to begin."</string>
     <string name="saving_image" msgid="7270334453636349407">"Saving picture…"</string>
     <string name="save_error" msgid="6857408774183654970">"Couldn\'t save cropped image."</string>
