@@ -70,7 +70,7 @@ public class UriImage extends MediaItem {
             String extension =
                     MimeTypeMap.getFileExtensionFromUrl(uri.toString());
             String type = MimeTypeMap.getSingleton()
-                    .getMimeTypeFromExtension(extension);
+                    .getMimeTypeFromExtension(extension.toLowerCase());
             if (type != null) return type;
         }
         return mApplication.getContentResolver().getType(uri);
@@ -106,7 +106,7 @@ public class UriImage extends MediaItem {
                 || ContentResolver.SCHEME_ANDROID_RESOURCE.equals(scheme)
                 || ContentResolver.SCHEME_FILE.equals(scheme)) {
             try {
-                if (mContentType.equalsIgnoreCase("image/jpeg")) {
+                if (MIME_TYPE_JPEG.equalsIgnoreCase(mContentType)) {
                     InputStream is = mApplication.getContentResolver()
                             .openInputStream(mUri);
                     mRotation = Exif.getOrientation(is);
@@ -129,7 +129,7 @@ public class UriImage extends MediaItem {
                     Log.w(TAG, "download failed " + url);
                     return STATE_ERROR;
                 }
-                if (mContentType.equalsIgnoreCase("image/jpeg")) {
+                if (MIME_TYPE_JPEG.equalsIgnoreCase(mContentType)) {
                     InputStream is = new FileInputStream(mCacheEntry.cacheFile);
                     mRotation = Exif.getOrientation(is);
                     Utils.closeSilently(is);
@@ -253,7 +253,9 @@ public class UriImage extends MediaItem {
             details.addDetail(MediaDetails.INDEX_WIDTH, mWidth);
             details.addDetail(MediaDetails.INDEX_HEIGHT, mHeight);
         }
-        details.addDetail(MediaDetails.INDEX_MIMETYPE, mContentType);
+        if (mContentType != null) {
+            details.addDetail(MediaDetails.INDEX_MIMETYPE, mContentType);
+        }
         if (ContentResolver.SCHEME_FILE.equals(mUri.getScheme())) {
             String filePath = mUri.getPath();
             details.addDetail(MediaDetails.INDEX_PATH, filePath);
