@@ -17,8 +17,8 @@
 package com.android.gallery3d.app;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.ActionBar.OnMenuVisibilityListener;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -30,8 +30,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.MeasureSpec;
+import android.view.WindowManager;
 import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
@@ -344,6 +344,7 @@ public class PhotoPage extends ActivityState
         }
     }
 
+    @Override
     public void onUserInteraction() {
         showBars();
         refreshHidingMessage();
@@ -359,15 +360,21 @@ public class PhotoPage extends ActivityState
         }
     }
 
+    @Override
     public void onUserInteractionBegin() {
         showBars();
         mIsInteracting = true;
         refreshHidingMessage();
     }
 
+    @Override
     public void onUserInteractionEnd() {
         mIsInteracting = false;
-        refreshHidingMessage();
+
+        // This function could be called from GL thread (in SlotView.render)
+        // and post to the main thread. So, it could be executed while the
+        // activity is paused.
+        if (mIsActive) refreshHidingMessage();
     }
 
     @Override
