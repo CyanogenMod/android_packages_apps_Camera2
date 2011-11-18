@@ -228,7 +228,7 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
     public boolean setSelectedAction(int type) {
         for (int i = 0, n = sClusterItems.length; i < n; i++) {
             ActionItem item = sClusterItems[i];
-            if (item.visible && item.action == type) {
+            if (item.action == type) {
                 mActionBar.setSelectedNavigationItem(i);
                 mCurrentIndex = i;
                 return true;
