@@ -18,6 +18,7 @@ package com.android.gallery3d.ui;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Handler;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.animation.DecelerateInterpolator;
@@ -81,6 +82,7 @@ public class SlotView extends GLView {
     // whether the down action happened while the view is scrolling.
     private boolean mDownInScrolling;
     private int mOverscrollEffect = OVERSCROLL_3D;
+    private final Handler mHandler;
 
     public static final int OVERSCROLL_3D = 0;
     public static final int OVERSCROLL_SYSTEM = 1;
@@ -90,6 +92,7 @@ public class SlotView extends GLView {
         mGestureDetector =
                 new GestureDetector(context, new MyGestureListener());
         mScroller = new ScrollerHelper(context);
+        mHandler = new Handler(context.getMainLooper());
     }
 
     public void setCenterIndex(int index) {
@@ -323,8 +326,15 @@ public class SlotView extends GLView {
         }
 
         if (more) invalidate();
-        if (mMoreAnimation && !more && mUIListener != null) {
-            mUIListener.onUserInteractionEnd();
+
+        final UserInteractionListener listener = mUIListener;
+        if (mMoreAnimation && !more && listener != null) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    listener.onUserInteractionEnd();
+                }
+            });
         }
         mMoreAnimation = more;
     }
