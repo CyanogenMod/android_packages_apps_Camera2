@@ -443,6 +443,7 @@ public class AlbumSetPage extends ActivityState implements
                 }
             }
 
+            FilterUtils.setupMenuItems(actionBar, mMediaSet.getPath(), false);
             MenuItem switchCamera = menu.findItem(R.id.action_camera);
             if (switchCamera != null) {
                 switchCamera.setVisible(GalleryUtils.isCameraAvailable(activity));
