@@ -300,17 +300,31 @@ public class PhotoPage extends ActivityState
     }
 
     private void updateMenuOperations() {
-        if (mCurrentPhoto == null || mMenu == null) return;
+        if (mMenu == null) return;
+        MenuItem item = mMenu.findItem(R.id.action_slideshow);
+        if (item != null) {
+            item.setVisible(canDoSlideShow());
+        }
+        if (mCurrentPhoto == null) return;
         int supportedOperations = mCurrentPhoto.getSupportedOperations();
         if (!GalleryUtils.isEditorAvailable((Context) mActivity, "image/*")) {
             supportedOperations &= ~MediaObject.SUPPORT_EDIT;
         }
-        MenuItem item = mMenu.findItem(R.id.action_slideshow);
-        if (item != null) {
-            item.setVisible(mCurrentPhoto.getMediaType() == MediaObject.MEDIA_TYPE_IMAGE);
-        }
 
         MenuExecutor.updateMenuOperation(mMenu, supportedOperations);
+    }
+
+    private boolean canDoSlideShow() {
+        if (mMediaSet == null || mCurrentPhoto == null) {
+            return false;
+        }
+        if (mCurrentPhoto.getMediaType() != MediaObject.MEDIA_TYPE_IMAGE) {
+            return false;
+        }
+        if (mMediaSet instanceof MtpDevice) {
+            return false;
+        }
+        return true;
     }
 
     private void showBars() {
@@ -401,8 +415,6 @@ public class PhotoPage extends ActivityState
     protected boolean onCreateActionBar(Menu menu) {
         MenuInflater inflater = ((Activity) mActivity).getMenuInflater();
         inflater.inflate(R.menu.photo, menu);
-        menu.findItem(R.id.action_slideshow).setVisible(
-                mMediaSet != null && !(mMediaSet instanceof MtpDevice));
         mShareActionProvider = GalleryActionBar.initializeShareActionProvider(menu);
         if (mPendingSharePath != null) updateShareURI(mPendingSharePath);
         mMenu = menu;
