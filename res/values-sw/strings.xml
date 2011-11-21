@@ -43,7 +43,7 @@
     <string name="select_group" msgid="6744208543323307114">"Chagua kikundi"</string>
     <string name="set_image" msgid="2331476809308010401">"Weka picha kama"</string>
     <string name="wallpaper" msgid="140165383777262070">"Inaweka karatasi ya ukuta..."</string>
-    <string name="camera_setas_wallpaper" msgid="797463183863414289">"Pazia"</string>
+    <string name="camera_setas_wallpaper" msgid="797463183863414289">"Mandhari"</string>
     <string name="delete" msgid="2839695998251824487">"Futa"</string>
     <string name="confirm_delete" msgid="7358770022173660511">"Futa"</string>
     <string name="cancel" msgid="3637516880917356226">"Ghairi"</string>
@@ -78,7 +78,7 @@
     <string name="rotate_right" msgid="6776325835923384839">"Zungusha kulia"</string>
     <string name="no_such_item" msgid="5315144556325243400">"Hakuweza kupata kipengee."</string>
     <string name="edit" msgid="1502273844748580847">"Hariri"</string>
-    <string name="activity_not_found" msgid="5619154886080878023">"Hakuna prog inayopatikana ili kukamilisha tendo hilo."</string>
+    <string name="activity_not_found" msgid="5619154886080878023">"Hakuna programu inayopatikana ili kukamilisha tendo hilo."</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"Maombi ya kuakibisha michakato"</string>
     <string name="caching_label" msgid="4521059045896269095">"Inaakibisha..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Puna"</string>
