@@ -16,6 +16,9 @@
 
 package com.android.gallery3d.app;
 
+import android.os.Handler;
+import android.os.Message;
+
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.DataManager;
@@ -24,9 +27,6 @@ import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.ui.AlbumView;
 import com.android.gallery3d.ui.SynchronizedHandler;
-
-import android.os.Handler;
-import android.os.Message;
 
 import java.util.ArrayList;
 import java.util.Arrays;
