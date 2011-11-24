@@ -81,6 +81,6 @@ public class ComboAlbumSet extends MediaSet implements ContentListener {
 
     @Override
     public Future<Integer> requestSync(SyncListener listener) {
-        return requestSyncOnEmptySets(mSets, listener);
+        return requestSyncOnMultipleSets(mSets, listener);
     }
 }

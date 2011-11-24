@@ -337,7 +337,11 @@ public class AlbumSetPage extends ActivityState implements
         super.onResume();
         mIsActive = true;
         setContentPane(mRootPane);
+
+        // Set the reload bit here to prevent it exit this page in clearLoadingBit().
+        setLoadingBit(BIT_LOADING_RELOAD);
         mAlbumSetDataAdapter.resume();
+
         mAlbumSetView.resume();
         mEyePosition.resume();
         mActionModeHandler.resume();
@@ -346,8 +350,8 @@ public class AlbumSetPage extends ActivityState implements
             actionBar.showClusterMenu(mSelectedAction, this);
         }
         if (!mInitialSynced) {
-            mSyncTask = mMediaSet.requestSync(AlbumSetPage.this);
             setLoadingBit(BIT_LOADING_SYNC);
+            mSyncTask = mMediaSet.requestSync(AlbumSetPage.this);
         }
     }
 
