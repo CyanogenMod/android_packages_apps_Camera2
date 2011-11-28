@@ -26,8 +26,7 @@ import com.android.gallery3d.photoeditor.Photo;
 import java.util.HashMap;
 
 /**
- * Image filter for photo editing; most of its methods must be called from a single GL thread except
- * validate()/isValid() that are called from UI thread.
+ * Image filter for photo editing; all of its methods must be called from a single GL thread.
  */
 public abstract class Filter implements Parcelable {
 
@@ -36,8 +35,6 @@ public abstract class Filter implements Parcelable {
 
     private static final HashMap<Filter, Effect> effects = new HashMap<Filter, Effect>();
     private static EffectContext context;
-
-    private boolean isValid;
 
     /**
      * Filter context should be released before the current GL context is lost.
@@ -72,18 +69,6 @@ public abstract class Filter implements Parcelable {
             effects.put(this, effect);
         }
         return effect;
-    }
-
-    protected void validate() {
-        isValid = true;
-    }
-
-    /**
-     * Some filters, e.g. lighting filters, are initially invalid until set up with parameters while
-     * others, e.g. Sepia or Posterize filters, are initially valid without parameters.
-     */
-    public boolean isValid() {
-        return isValid;
     }
 
     /**

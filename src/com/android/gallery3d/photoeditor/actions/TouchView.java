@@ -28,20 +28,6 @@ import android.view.MotionEvent;
 class TouchView extends FullscreenToolView {
 
     /**
-     * Listener of swipes.
-     */
-    public interface SwipeListener {
-
-        void onSwipeLeft();
-
-        void onSwipeRight();
-
-        void onSwipeUp();
-
-        void onSwipeDown();
-    }
-
-    /**
      * Listener of single tap on a point (relative to photo coordinates).
      */
     public interface SingleTapListener {
@@ -50,21 +36,18 @@ class TouchView extends FullscreenToolView {
     }
 
     private final GestureDetector gestureDetector;
-
-    private SwipeListener swipeListener;
     private SingleTapListener singleTapListener;
 
     public TouchView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        final int swipeThreshold = (int) (500 * getResources().getDisplayMetrics().density);
         gestureDetector = new GestureDetector(
                 context, new GestureDetector.SimpleOnGestureListener() {
 
             @Override
             public boolean onDown(MotionEvent e) {
-                // GestureDetector onTouchEvent returns true for fling events only when their
-                // preceding down events are consumed.
+                // GestureDetector onTouchEvent returns true only for events whose preceding
+                // down-events have been consumed.
                 return true;
             }
 
@@ -77,35 +60,8 @@ class TouchView extends FullscreenToolView {
                 }
                 return true;
             }
-
-            @Override
-            public boolean onFling(
-                    MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
-                if (swipeListener != null) {
-                    float absX = Math.abs(velocityX);
-                    float absY = Math.abs(velocityY);
-                    float deltaX = me2.getX() - me1.getX();
-                    float deltaY = me2.getY() - me1.getY();
-                    int travelX = getWidth() / 4;
-                    int travelY = getHeight() / 4;
-                    if (velocityX > swipeThreshold && absY < absX && deltaX > travelX) {
-                        swipeListener.onSwipeRight();
-                    } else if (velocityX < -swipeThreshold && absY < absX && deltaX < -travelX) {
-                        swipeListener.onSwipeLeft();
-                    } else if (velocityY < -swipeThreshold && absX < absY && deltaY < -travelY) {
-                        swipeListener.onSwipeUp();
-                    } else if (velocityY > swipeThreshold && absX < absY / 2 && deltaY > travelY) {
-                        swipeListener.onSwipeDown();
-                    }
-                }
-                return true;
-            }
         });
         gestureDetector.setIsLongpressEnabled(false);
-    }
-
-    public void setSwipeListener(SwipeListener listener) {
-        swipeListener = listener;
     }
 
     public void setSingleTapListener(SingleTapListener listener) {

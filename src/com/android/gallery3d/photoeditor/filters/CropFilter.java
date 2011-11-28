@@ -37,7 +37,6 @@ public class CropFilter extends Filter {
      */
     public void setCropBounds(RectF bounds) {
         this.bounds = bounds;
-        validate();
     }
 
     @Override

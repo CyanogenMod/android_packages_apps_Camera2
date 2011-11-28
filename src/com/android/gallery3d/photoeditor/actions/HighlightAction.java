@@ -28,32 +28,25 @@ public class HighlightAction extends EffectAction {
 
     private static final float DEFAULT_SCALE = 0f;
 
-    private ScaleSeekBar scalePicker;
-
     public HighlightAction(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public void doBegin() {
+    public void prepare() {
         final HighlightFilter filter = new HighlightFilter();
 
-        scalePicker = factory.createScalePicker(EffectToolFactory.ScalePickerType.LIGHT);
+        ScaleSeekBar scalePicker = factory.createScalePicker(EffectToolFactory.ScaleType.LIGHT);
         scalePicker.setOnScaleChangeListener(new ScaleSeekBar.OnScaleChangeListener() {
 
             @Override
             public void onProgressChanged(float progress, boolean fromUser) {
                 if (fromUser) {
                     filter.setScale(progress);
-                    notifyFilterChanged(filter, true);
+                    notifyChanged(filter);
                 }
             }
         });
         scalePicker.setProgress(DEFAULT_SCALE);
-    }
-
-    @Override
-    public void doEnd() {
-        scalePicker.setOnScaleChangeListener(null);
     }
 }

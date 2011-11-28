@@ -27,10 +27,6 @@ public class PosterizeFilter extends Filter {
 
     public static final Creator<PosterizeFilter> CREATOR = creatorOf(PosterizeFilter.class);
 
-    public PosterizeFilter() {
-        validate();
-    }
-
     @Override
     public void process(Photo src, Photo dst) {
         getEffect(EffectFactory.EFFECT_POSTERIZE).apply(

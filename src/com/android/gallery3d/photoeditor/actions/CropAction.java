@@ -29,25 +29,24 @@ public class CropAction extends EffectAction {
 
     private static final float DEFAULT_CROP = 0.2f;
 
-    private CropFilter filter;
-    private CropView cropView;
-
     public CropAction(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public void doBegin() {
-        filter = new CropFilter();
+    public void prepare() {
+        // Cropped results wouldn't be previewed for changed crop bounds.
+        final CropFilter filter = new CropFilter();
+        disableFilterOutput();
 
-        cropView = factory.createCropView();
+        CropView cropView = factory.createCropView();
         cropView.setOnCropChangeListener(new CropView.OnCropChangeListener() {
 
             @Override
             public void onCropChanged(RectF cropBounds, boolean fromUser) {
                 if (fromUser) {
                     filter.setCropBounds(cropBounds);
-                    notifyFilterChanged(filter, false);
+                    notifyChanged(filter);
                 }
             }
         });
@@ -55,12 +54,6 @@ public class CropAction extends EffectAction {
         RectF bounds = new RectF(DEFAULT_CROP, DEFAULT_CROP, 1 - DEFAULT_CROP, 1 - DEFAULT_CROP);
         cropView.setCropBounds(bounds);
         filter.setCropBounds(bounds);
-        notifyFilterChanged(filter, false);
-    }
-
-    @Override
-    public void doEnd() {
-        cropView.setOnCropChangeListener(null);
-        notifyFilterChanged(filter, true);
+        notifyChanged(filter);
     }
 }

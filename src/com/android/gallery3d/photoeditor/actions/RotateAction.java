@@ -19,7 +19,6 @@ package com.android.gallery3d.photoeditor.actions;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import com.android.gallery3d.R;
 import com.android.gallery3d.photoeditor.PhotoView;
 import com.android.gallery3d.photoeditor.filters.RotateFilter;
 
@@ -31,32 +30,29 @@ public class RotateAction extends EffectAction {
     private static final float DEFAULT_ANGLE = 0.0f;
     private static final float DEFAULT_ROTATE_SPAN = 360.0f;
 
-    private RotateFilter filter;
-    private float rotateDegrees;
-    private Runnable queuedRotationChange;
-    private RotateView rotateView;
-
     public RotateAction(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public void doBegin() {
-        filter = new RotateFilter();
+    public void prepare() {
+        // Disable outputting rotated results and directly rotate photo-view for animations.
+        final RotateFilter filter = new RotateFilter();
+        disableFilterOutput();
 
-        rotateView = factory.createRotateView();
+        final RotateView rotateView = factory.createRotateView();
         rotateView.setOnRotateChangeListener(new RotateView.OnRotateChangeListener() {
 
-            // Directly transform photo-view because running the rotate filter isn't fast enough.
-            PhotoView photoView = (PhotoView) rotateView.getRootView().findViewById(
-                    R.id.photo_view);
+            float rotateDegrees;
+            Runnable queuedTransform;
+            PhotoView photoView = factory.getPhotoView();
 
             @Override
-            public void onAngleChanged(float degrees, boolean fromUser){
+            public void onAngleChanged(float degrees, boolean fromUser) {
                 if (fromUser) {
                     rotateDegrees = degrees;
-                    updateRotateFilter(false);
-                    transformPhotoView(degrees);
+                    transformPhotoView(rotateDegrees);
+                    notifyChanged(filter);
                 }
             }
 
@@ -67,52 +63,32 @@ public class RotateAction extends EffectAction {
 
             @Override
             public void onStopTrackingTouch() {
-                roundRotateDegrees();
-                updateRotateFilter(false);
+                // Round rotate degrees to multiples of 90 degrees.
+                if (rotateDegrees % 90 != 0) {
+                    rotateDegrees = Math.round(rotateDegrees / 90) * 90;
+                }
                 transformPhotoView(rotateDegrees);
                 rotateView.setRotatedAngle(rotateDegrees);
+                filter.setAngle(rotateDegrees);
+                notifyChanged(filter);
             }
 
             private void transformPhotoView(final float degrees) {
                 // Remove the outdated rotation change before queuing a new one.
-                if (queuedRotationChange != null) {
-                    photoView.remove(queuedRotationChange);
+                if (queuedTransform != null) {
+                    photoView.remove(queuedTransform);
                 }
-                queuedRotationChange = new Runnable() {
+                queuedTransform = new Runnable() {
 
                     @Override
                     public void run() {
                         photoView.rotatePhoto(degrees);
                     }
                 };
-                photoView.queue(queuedRotationChange);
+                photoView.queue(queuedTransform);
             }
         });
         rotateView.setRotatedAngle(DEFAULT_ANGLE);
         rotateView.setRotateSpan(DEFAULT_ROTATE_SPAN);
-        rotateDegrees = 0;
-        queuedRotationChange = null;
-    }
-
-    @Override
-    public void doEnd() {
-        rotateView.setOnRotateChangeListener(null);
-        // Round the current rotation degrees in case rotation tracking has not stopped yet.
-        roundRotateDegrees();
-        updateRotateFilter(true);
-    }
-
-    /**
-     * Rounds rotate degrees to multiples of 90 degrees.
-     */
-    private void roundRotateDegrees() {
-        if (rotateDegrees % 90 != 0) {
-            rotateDegrees = Math.round(rotateDegrees / 90) * 90;
-        }
-    }
-
-    private void updateRotateFilter(boolean outputFilter) {
-        filter.setAngle(rotateDegrees);
-        notifyFilterChanged(filter, outputFilter);
     }
 }

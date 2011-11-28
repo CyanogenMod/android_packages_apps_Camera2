@@ -28,19 +28,37 @@ public class DoodleAction extends EffectAction {
 
     private static final int DEFAULT_COLOR_INDEX = 4;
 
-    private DoodleFilter filter;
-    private ColorSeekBar colorPicker;
-    private DoodleView doodleView;
-
     public DoodleAction(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public void doBegin() {
-        filter = new DoodleFilter();
+    public void prepare() {
+        // Directly draw on doodle-view because running the doodle filter isn't fast enough.
+        final DoodleFilter filter = new DoodleFilter();
+        disableFilterOutput();
 
-        colorPicker = factory.createColorPicker();
+        final DoodleView doodleView = factory.createDoodleView();
+        doodleView.setOnDoodleChangeListener(new DoodleView.OnDoodleChangeListener() {
+
+            @Override
+            public void onDoodleChanged(Doodle doodle) {
+                // Check if the user draws within photo bounds and makes visible changes on photo.
+                if (doodle.inBounds()) {
+                    notifyChanged(filter);
+                }
+            }
+
+            @Override
+            public void onDoodleFinished(Doodle doodle) {
+                if (doodle.inBounds()) {
+                    filter.addDoodle(doodle);
+                    notifyChanged(filter);
+                }
+            }
+        });
+
+        ColorSeekBar colorPicker = factory.createColorPicker();
         colorPicker.setOnColorChangeListener(new ColorSeekBar.OnColorChangeListener() {
 
             @Override
@@ -51,30 +69,6 @@ public class DoodleAction extends EffectAction {
             }
         });
         colorPicker.setColorIndex(DEFAULT_COLOR_INDEX);
-
-        doodleView = factory.createDoodleView();
-        doodleView.setOnDoodleChangeListener(new DoodleView.OnDoodleChangeListener() {
-
-            @Override
-            public void onDoodleInPhotoBounds() {
-                // Notify the user has drawn within photo bounds and made visible changes on photo.
-                filter.setDoodledInPhotoBounds();
-                notifyFilterChanged(filter, false);
-            }
-
-            @Override
-            public void onDoodleFinished(Doodle doodle) {
-                filter.addDoodle(doodle);
-                notifyFilterChanged(filter, false);
-            }
-        });
         doodleView.setColor(colorPicker.getColor());
-    }
-
-    @Override
-    public void doEnd() {
-        colorPicker.setOnColorChangeListener(null);
-        doodleView.setOnDoodleChangeListener(null);
-        notifyFilterChanged(filter, true);
     }
 }
