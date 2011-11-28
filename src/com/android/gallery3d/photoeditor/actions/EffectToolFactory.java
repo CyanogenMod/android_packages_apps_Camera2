@@ -28,36 +28,54 @@ import com.android.gallery3d.photoeditor.PhotoView;
  */
 public class EffectToolFactory {
 
-    public enum ScalePickerType {
+    public enum ScaleType {
         LIGHT, SHADOW, COLOR, GENERIC
     }
 
     private final ViewGroup effectToolPanel;
     private final LayoutInflater inflater;
+    private ViewGroup effectToolFullscreen;
 
     public EffectToolFactory(ViewGroup effectToolPanel, LayoutInflater inflater) {
         this.effectToolPanel = effectToolPanel;
         this.inflater = inflater;
     }
 
+    public PhotoView getPhotoView() {
+        return (PhotoView) effectToolPanel.getRootView().findViewById(R.id.photo_view);
+    }
+
+    public void removeTools() {
+        // Remove all created tools.
+        if (effectToolFullscreen != null) {
+            ((ViewGroup) effectToolFullscreen.getParent()).removeView(effectToolFullscreen);
+            effectToolFullscreen = null;
+        }
+        ((ViewGroup) effectToolPanel.getParent()).removeView(effectToolPanel);
+    }
+
     private View createFullscreenTool(int toolId) {
         // Create full screen effect tool on top of photo-view and place it within the same
         // view group that contains photo-view.
-        View photoView = effectToolPanel.getRootView().findViewById(R.id.photo_view);
+        PhotoView photoView = getPhotoView();
         ViewGroup parent = (ViewGroup) photoView.getParent();
-        FullscreenToolView view = (FullscreenToolView) inflater.inflate(toolId, parent, false);
-        view.setPhotoBounds(((PhotoView) photoView).getPhotoBounds());
-        parent.addView(view, parent.indexOfChild(photoView) + 1);
-        return view;
+        effectToolFullscreen = (ViewGroup) inflater.inflate(
+                R.layout.photoeditor_effect_tool_fullscreen, parent, false);
+        parent.addView(effectToolFullscreen, parent.indexOfChild(photoView) + 1);
+        FullscreenToolView tool = (FullscreenToolView) inflater.inflate(
+                toolId, effectToolFullscreen, false);
+        tool.setPhotoBounds(photoView.getPhotoBounds());
+        effectToolFullscreen.addView(tool);
+        return tool;
     }
 
     private View createPanelTool(int toolId) {
-        View view = inflater.inflate(toolId, effectToolPanel, false);
-        effectToolPanel.addView(view, 0);
-        return view;
+        View tool = inflater.inflate(toolId, effectToolPanel, false);
+        effectToolPanel.addView(tool);
+        return tool;
     }
 
-    private int getScalePickerBackground(ScalePickerType type) {
+    private int getScalePickerBackground(ScaleType type) {
         switch (type) {
             case LIGHT:
                 return R.drawable.photoeditor_scale_seekbar_light;
@@ -71,7 +89,7 @@ public class EffectToolFactory {
         return R.drawable.photoeditor_scale_seekbar_generic;
     }
 
-    public ScaleSeekBar createScalePicker(ScalePickerType type) {
+    public ScaleSeekBar createScalePicker(ScaleType type) {
         ScaleSeekBar scalePicker = (ScaleSeekBar) createPanelTool(
                 R.layout.photoeditor_scale_seekbar);
         scalePicker.setBackgroundResource(getScalePickerBackground(type));

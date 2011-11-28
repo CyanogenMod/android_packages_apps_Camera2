@@ -28,35 +28,28 @@ public class FisheyeAction extends EffectAction {
 
     private static final float DEFAULT_SCALE = 0.5f;
 
-    private ScaleSeekBar scalePicker;
-
     public FisheyeAction(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public void doBegin() {
+    public void prepare() {
         final FisheyeFilter filter = new FisheyeFilter();
 
-        scalePicker = factory.createScalePicker(EffectToolFactory.ScalePickerType.GENERIC);
+        ScaleSeekBar scalePicker = factory.createScalePicker(EffectToolFactory.ScaleType.GENERIC);
         scalePicker.setOnScaleChangeListener(new ScaleSeekBar.OnScaleChangeListener() {
 
             @Override
             public void onProgressChanged(float progress, boolean fromUser) {
                 if (fromUser) {
                     filter.setScale(progress);
-                    notifyFilterChanged(filter, true);
+                    notifyChanged(filter);
                 }
             }
         });
         scalePicker.setProgress(DEFAULT_SCALE);
 
         filter.setScale(DEFAULT_SCALE);
-        notifyFilterChanged(filter, true);
-    }
-
-    @Override
-    public void doEnd() {
-        scalePicker.setOnScaleChangeListener(null);
+        notifyChanged(filter);
     }
 }

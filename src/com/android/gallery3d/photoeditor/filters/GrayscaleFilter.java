@@ -27,10 +27,6 @@ public class GrayscaleFilter extends Filter {
 
     public static final Creator<GrayscaleFilter> CREATOR = creatorOf(GrayscaleFilter.class);
 
-    public GrayscaleFilter() {
-        validate();
-    }
-
     @Override
     public void process(Photo src, Photo dst) {
         getEffect(EffectFactory.EFFECT_GRAYSCALE).apply(

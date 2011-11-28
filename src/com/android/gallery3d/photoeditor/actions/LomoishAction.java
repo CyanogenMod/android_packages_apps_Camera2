@@ -31,12 +31,8 @@ public class LomoishAction extends EffectAction {
     }
 
     @Override
-    public void doBegin() {
-        notifyFilterChanged(new LomoishFilter(), true);
+    public void prepare() {
+        notifyChanged(new LomoishFilter());
         notifyDone();
-    }
-
-    @Override
-    public void doEnd() {
     }
 }

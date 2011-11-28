@@ -34,15 +34,11 @@ public class DuotoneAction extends EffectAction {
     }
 
     @Override
-    public void doBegin() {
+    public void prepare() {
         // TODO: Add several sets of duo-tone colors to select from.
         DuotoneFilter filter = new DuotoneFilter();
         filter.setDuotone(DEFAULT_FIRST_COLOR, DEFAULT_SECOND_COLOR);
-        notifyFilterChanged(filter, true);
+        notifyChanged(filter);
         notifyDone();
-    }
-
-    @Override
-    public void doEnd() {
     }
 }

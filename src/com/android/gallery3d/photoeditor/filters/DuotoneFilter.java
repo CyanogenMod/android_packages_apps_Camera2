@@ -35,7 +35,6 @@ public class DuotoneFilter extends Filter {
     public void setDuotone(int firstColor, int secondColor) {
         this.firstColor = firstColor;
         this.secondColor = secondColor;
-        validate();
     }
 
     @Override
