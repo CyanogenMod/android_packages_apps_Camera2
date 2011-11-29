@@ -30,6 +30,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -331,6 +332,55 @@ public class MoviePlayer implements
     @Override
     public void onReplay() {
         startVideo();
+    }
+
+    // Below are key events passed from MovieActivity.
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        // Some headsets will fire off 7-10 events on a single click
+        if (event.getRepeatCount() > 0) {
+            return isMediaKey(keyCode);
+        }
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_HEADSETHOOK:
+            case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+                if (mVideoView.isPlaying()) {
+                    pauseVideo();
+                } else {
+                    playVideo();
+                }
+                return true;
+            case KeyEvent.KEYCODE_MEDIA_PAUSE:
+                if (mVideoView.isPlaying()) {
+                    pauseVideo();
+                }
+                return true;
+            case KeyEvent.KEYCODE_MEDIA_PLAY:
+                if (!mVideoView.isPlaying()) {
+                    playVideo();
+                }
+                return true;
+            case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
+            case KeyEvent.KEYCODE_MEDIA_NEXT:
+                // TODO: Handle next / previous accordingly, for now we're
+                // just consuming the events.
+                return true;
+        }
+        return false;
+    }
+
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return isMediaKey(keyCode);
+    }
+
+    private static boolean isMediaKey(int keyCode) {
+        return keyCode == KeyEvent.KEYCODE_HEADSETHOOK
+                || keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS
+                || keyCode == KeyEvent.KEYCODE_MEDIA_NEXT
+                || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE
+                || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY
+                || keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE;
     }
 
     // We want to pause when the headset is unplugged.
