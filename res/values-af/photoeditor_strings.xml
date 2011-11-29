@@ -38,13 +38,13 @@
     <string name="flip" msgid="2357692401826287480">"Keer om"</string>
     <string name="grain" msgid="7487585304579789098">"Filmgrein"</string>
     <string name="grayscale" msgid="7641563843060945228">"S &amp; W"</string>
-    <string name="highlight" msgid="3902653944386623972">"Ligstrepe"</string>
+    <string name="highlight" msgid="3902653944386623972">"Helder lig"</string>
     <string name="lomoish" msgid="1270032154357186736">"Lomo"</string>
     <string name="negative" msgid="1985508917342811252">"Negatief"</string>
     <string name="posterize" msgid="4139212359561383385">"Plakkateer"</string>
     <string name="redeye" msgid="4958448806369928239">"Rooi oog"</string>
     <string name="rotate" msgid="6607597269792373083">"Draai"</string>
-    <string name="saturation" msgid="8621322012271169931">"Versadiging"</string>
+    <string name="saturation" msgid="8621322012271169931">"Kleurdiepte"</string>
     <string name="sepia" msgid="7978093531824705601">"Sepia"</string>
     <string name="shadow" msgid="8235188588101973090">"Skadu\'s"</string>
     <string name="sharpen" msgid="8449662378104403230">"Maak skerper"</string>

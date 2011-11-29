@@ -31,7 +31,7 @@
     <string name="fail_to_load" msgid="8394392853646664505">"Не вдалося завантажити"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Немає ескізу"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Почати знову"</string>
-    <!-- outdated translation 152200178986698300 -->     <string name="crop_save_text" msgid="4972430481677741184">"OK"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"Обрізати"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Торкніться обличчя, щоб почати."</string>
     <string name="saving_image" msgid="7270334453636349407">"Зберіг-ня фото…"</string>
     <string name="save_error" msgid="6857408774183654970">"Не вдалося зберегти обрізане зображення."</string>
