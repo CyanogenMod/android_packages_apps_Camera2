@@ -325,12 +325,16 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         super.onResume();
         mIsActive = true;
         setContentPane(mRootPane);
+
+        // Set the reload bit here to prevent it exit this page in clearLoadingBit().
+        setLoadingBit(BIT_LOADING_RELOAD);
         mAlbumDataAdapter.resume();
+
         mAlbumView.resume();
         mActionModeHandler.resume();
         if (!mInitialSynced) {
-            mSyncTask = mMediaSet.requestSync(this);
             setLoadingBit(BIT_LOADING_SYNC);
+            mSyncTask = mMediaSet.requestSync(this);
         }
     }
 
