@@ -16,7 +16,10 @@
 
 package com.android.gallery3d.app;
 
+import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,7 +38,7 @@ import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.util.GalleryUtils;
 
-public final class Gallery extends AbstractGalleryActivity {
+public final class Gallery extends AbstractGalleryActivity implements OnCancelListener {
     public static final String EXTRA_SLIDESHOW = "slideshow";
     public static final String EXTRA_CROP = "crop";
 
@@ -47,6 +50,7 @@ public final class Gallery extends AbstractGalleryActivity {
 
     private static final String TAG = "Gallery";
     private GalleryActionBar mActionBar;
+    private Dialog mVersionCheckDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +100,10 @@ public final class Gallery extends AbstractGalleryActivity {
         data.putString(AlbumSetPage.KEY_MEDIA_PATH,
                 getDataManager().getTopSetPath(DataManager.INCLUDE_ALL));
         getStateManager().startState(AlbumSetPage.class, data);
+        mVersionCheckDialog = PicasaSource.getVersionCheckDialog(this);
+        if (mVersionCheckDialog != null) {
+            mVersionCheckDialog.setOnCancelListener(this);
+        }
     }
 
     private void startGetContent(Intent intent) {
@@ -243,10 +251,28 @@ public final class Gallery extends AbstractGalleryActivity {
     protected void onResume() {
         Utils.assertTrue(getStateManager().getStateCount() > 0);
         super.onResume();
+        if (mVersionCheckDialog != null) {
+            mVersionCheckDialog.show();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mVersionCheckDialog != null) {
+            mVersionCheckDialog.dismiss();
+        }
     }
 
     @Override
     public GalleryActionBar getGalleryActionBar() {
         return mActionBar;
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        if (dialog == mVersionCheckDialog) {
+            mVersionCheckDialog = null;
+        }
     }
 }
