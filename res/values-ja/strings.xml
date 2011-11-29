@@ -31,7 +31,7 @@
     <string name="fail_to_load" msgid="8394392853646664505">"読み込めませんでした"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"サムネイルなし"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"最初から再生"</string>
-    <!-- outdated translation 152200178986698300 -->     <string name="crop_save_text" msgid="4972430481677741184">"OK"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"トリミング"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"始めるには顔をタップします。"</string>
     <string name="saving_image" msgid="7270334453636349407">"写真を保存中…"</string>
     <string name="save_error" msgid="6857408774183654970">"トリミングした画像を保存できません。"</string>

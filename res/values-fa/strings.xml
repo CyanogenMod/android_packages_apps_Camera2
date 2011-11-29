@@ -31,7 +31,7 @@
     <string name="fail_to_load" msgid="8394392853646664505">"بارگیری نشد"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"تصویر کوچکی وجود ندارد"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"شروع مجدد"</string>
-    <!-- outdated translation 152200178986698300 -->     <string name="crop_save_text" msgid="4972430481677741184">"تائید"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"برش"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"برای شروع یک چهره را لمس کنید."</string>
     <string name="saving_image" msgid="7270334453636349407">"در حال ذخیره عکس..."</string>
     <string name="save_error" msgid="6857408774183654970">"ذخیره تصویر برش‌خورده امکان‌پذیر نیست."</string>
