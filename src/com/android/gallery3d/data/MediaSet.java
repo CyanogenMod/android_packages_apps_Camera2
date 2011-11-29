@@ -20,7 +20,6 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.Future;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.WeakHashMap;
 
 // MediaSet is a directory-like data structure.
@@ -33,6 +32,8 @@ import java.util.WeakHashMap;
 // getTotalMediaItemCount() returns the number of all MediaItems, including
 // those in sub-MediaSets.
 public abstract class MediaSet extends MediaObject {
+    private static final String TAG = "MediaSet";
+
     public static final int MEDIAITEM_BATCH_FETCH_COUNT = 500;
     public static final int INDEX_NOT_FOUND = -1;
 
@@ -229,6 +230,7 @@ public abstract class MediaSet extends MediaObject {
      * SYNC_RESULT_SUCCESS by get().
      */
     public Future<Integer> requestSync(SyncListener listener) {
+        listener.onSyncDone(this, SYNC_RESULT_SUCCESS);
         return FUTURE_STUB;
     }
 
@@ -255,46 +257,39 @@ public abstract class MediaSet extends MediaObject {
         public void waitDone() {}
     };
 
-    protected Future<Integer> requestSyncOnEmptySets(MediaSet[] sets, SyncListener listener) {
-        MultiSetSyncFuture future = new MultiSetSyncFuture(listener);
-        future.requestSyncOnEmptySets(sets);
-        return future;
+    protected Future<Integer> requestSyncOnMultipleSets(MediaSet[] sets, SyncListener listener) {
+        return new MultiSetSyncFuture(sets, listener);
     }
 
     private class MultiSetSyncFuture implements Future<Integer>, SyncListener {
         private static final String TAG = "Gallery.MultiSetSync";
 
-        private final HashMap<MediaSet, Future<Integer>> mMediaSetMap =
-                new HashMap<MediaSet, Future<Integer>>();
         private final SyncListener mListener;
+        private final Future<Integer> mFutures[];
 
         private boolean mIsCancelled = false;
         private int mResult = -1;
+        private int mPendingCount;
 
-        MultiSetSyncFuture(SyncListener listener) {
+        @SuppressWarnings("unchecked")
+        MultiSetSyncFuture(MediaSet[] sets, SyncListener listener) {
             mListener = listener;
-        }
+            mPendingCount = sets.length;
+            mFutures = new Future[sets.length];
 
-        synchronized void requestSyncOnEmptySets(MediaSet[] sets) {
-            for (MediaSet set : sets) {
-                if ((set.getMediaItemCount() == 0) && !mMediaSetMap.containsKey(set)) {
-                    // Sync results are handled in this.onSyncDone().
-                    Future<Integer> future = set.requestSync(this);
-                    if (!future.isDone()) {
-                        mMediaSetMap.put(set, future);
-                        Log.d(TAG, "  request sync: " + Utils.maskDebugInfo(set.getName()));
-                    }
+            synchronized (this) {
+                for (int i = 0, n = sets.length; i < n; ++i) {
+                    mFutures[i] = sets[i].requestSync(this);
+                    Log.d(TAG, "  request sync: " + Utils.maskDebugInfo(sets[i].getName()));
                 }
             }
-            Log.d(TAG, "requestSyncOnEmptySets actual=" + mMediaSetMap.size());
         }
 
         @Override
         public synchronized void cancel() {
             if (mIsCancelled) return;
             mIsCancelled = true;
-            for (Future<Integer> future : mMediaSetMap.values()) future.cancel();
-            mMediaSetMap.clear();
+            for (Future<Integer> future : mFutures) future.cancel();
             if (mResult < 0) mResult = SYNC_RESULT_CANCELLED;
         }
 
@@ -305,7 +300,7 @@ public abstract class MediaSet extends MediaObject {
 
         @Override
         public synchronized boolean isDone() {
-            return mMediaSetMap.isEmpty();
+            return mPendingCount == 0;
         }
 
         @Override
@@ -328,18 +323,14 @@ public abstract class MediaSet extends MediaObject {
         public void onSyncDone(MediaSet mediaSet, int resultCode) {
             SyncListener listener = null;
             synchronized (this) {
-                if (mMediaSetMap.remove(mediaSet) != null) {
-                    Log.d(TAG, "onSyncDone: " + Utils.maskDebugInfo(mediaSet.getName())
-                            + " #pending=" + mMediaSetMap.size());
-                    if (resultCode == SYNC_RESULT_ERROR) {
-                        mResult = SYNC_RESULT_ERROR;
-                    }
-                    if (mMediaSetMap.isEmpty()) {
-                        if (mResult < 0) mResult = SYNC_RESULT_SUCCESS;
-                        notifyAll();
-                        listener = mListener;
-                    }
+                if (resultCode == SYNC_RESULT_ERROR) mResult = SYNC_RESULT_ERROR;
+                --mPendingCount;
+                if (mPendingCount == 0) {
+                    listener = mListener;
+                    notifyAll();
                 }
+                Log.d(TAG, "onSyncDone: " + Utils.maskDebugInfo(mediaSet.getName())
+                        + " #pending=" + mPendingCount);
             }
             if (listener != null) listener.onSyncDone(MediaSet.this, mResult);
         }
