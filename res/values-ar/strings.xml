@@ -31,7 +31,7 @@
     <string name="fail_to_load" msgid="8394392853646664505">"تعذر التحميل"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"بلا صورة مصغرة"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"البدء من جديد"</string>
-    <!-- outdated translation 152200178986698300 -->     <string name="crop_save_text" msgid="4972430481677741184">"موافق"</string>
+    <string name="crop_save_text" msgid="4972430481677741184">"اقتصاص"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"المس وجهًا للبدء."</string>
     <string name="saving_image" msgid="7270334453636349407">"جارٍ حفظ الصورة..."</string>
     <string name="save_error" msgid="6857408774183654970">"تعذر حفظ الصورة التي تم اقتصاصها."</string>
