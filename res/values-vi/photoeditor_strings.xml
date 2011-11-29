@@ -31,12 +31,12 @@
     <string name="documentary" msgid="50396326708699797">"Phim tài liệu"</string>
     <string name="doodle" msgid="1686409894518940990">"Hình vẽ nguệch ngoạc"</string>
     <string name="duotone" msgid="8145893940788467106">"Có hai màu"</string>
-    <string name="facelift" msgid="6205748523156172637">"Hiệu ứng làm bừng sáng khuôn mặt"</string>
+    <string name="facelift" msgid="6205748523156172637">"Làm sáng mặt"</string>
     <string name="facetan" msgid="4412831806626044111">"Hiệu ứng làm rám nắng khuôn mặt"</string>
     <string name="filllight" msgid="2644989991700022526">"Tô sáng"</string>
     <string name="fisheye" msgid="6037488646928998921">"Mắt cá"</string>
     <string name="flip" msgid="2357692401826287480">"Lật"</string>
-    <string name="grain" msgid="7487585304579789098">"Hiệu ứng hạt mỏng"</string>
+    <string name="grain" msgid="7487585304579789098">"Hạt mỏng"</string>
     <string name="grayscale" msgid="7641563843060945228">"Đen&amp;Trắng"</string>
     <string name="highlight" msgid="3902653944386623972">"Thêm điểm sáng"</string>
     <string name="lomoish" msgid="1270032154357186736">"Lomo"</string>
