@@ -36,11 +36,11 @@
     <string name="saving_image" msgid="7270334453636349407">"Сохранение картинки..."</string>
     <string name="save_error" msgid="6857408774183654970">"Изображение не сохранено."</string>
     <string name="crop_label" msgid="521114301871349328">"Обрезать фотографию"</string>
-    <string name="select_image" msgid="7841406150484742140">"Выберите фото"</string>
-    <string name="select_video" msgid="4859510992798615076">"Выберите видео"</string>
-    <string name="select_item" msgid="2816923896202086390">"Выберите файл"</string>
-    <string name="select_album" msgid="1557063764849434077">"Выберите альбом"</string>
-    <string name="select_group" msgid="6744208543323307114">"Выберите группу"</string>
+    <string name="select_image" msgid="7841406150484742140">"Выбрать фото"</string>
+    <string name="select_video" msgid="4859510992798615076">"Выбрать видео"</string>
+    <string name="select_item" msgid="2816923896202086390">"Выбрать файлы"</string>
+    <string name="select_album" msgid="1557063764849434077">"Выбрать альбомы"</string>
+    <string name="select_group" msgid="6744208543323307114">"Выбрать группы"</string>
     <string name="set_image" msgid="2331476809308010401">"Установить картинку как"</string>
     <string name="wallpaper" msgid="140165383777262070">"Установка обоев..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Обои"</string>
@@ -81,10 +81,10 @@
     <string name="crop_action" msgid="3427470284074377001">"Кадрировать"</string>
     <string name="set_as" msgid="3636764710790507868">"Установить как"</string>
     <string name="video_err" msgid="7003051631792271009">"Не удалось воспроизвести видео."</string>
-    <string name="group_by_location" msgid="316641628989023253">"По местоположению"</string>
-    <string name="group_by_time" msgid="9046168567717963573">"По времени"</string>
+    <string name="group_by_location" msgid="316641628989023253">"По месту съемки"</string>
+    <string name="group_by_time" msgid="9046168567717963573">"По времени создания"</string>
     <string name="group_by_tags" msgid="3568731317210676160">"По тегам"</string>
-    <string name="group_by_faces" msgid="1566351636227274906">"По людям"</string>
+    <string name="group_by_faces" msgid="1566351636227274906">"По именам"</string>
     <string name="group_by_album" msgid="1532818636053818958">"По альбомам"</string>
     <string name="group_by_size" msgid="153766174950394155">"По размеру"</string>
     <string name="untagged" msgid="7281481064509590402">"Без тегов"</string>
@@ -102,14 +102,14 @@
     <string name="no_albums_alert" msgid="4111744447491690896">"Нет доступных альбомов."</string>
     <string name="empty_album" msgid="4542880442593595494">"Нет фото/видео"</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Записи"</string>
-    <string name="make_available_offline" msgid="5157950985488297112">"Сделать доступным офлайн"</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"Офлайн-доступ"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Обновить"</string>
     <string name="done" msgid="217672440064436595">"Готово"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d из %2$d:"</string>
     <string name="title" msgid="7622928349908052569">"Название"</string>
     <string name="description" msgid="3016729318096557520">"Описание"</string>
     <string name="time" msgid="1367953006052876956">"Время"</string>
-    <string name="location" msgid="3432705876921618314">"Местоположение"</string>
+    <string name="location" msgid="3432705876921618314">"Место съемки"</string>
     <string name="path" msgid="4725740395885105824">"Путь"</string>
     <string name="width" msgid="9215847239714321097">"Ширина"</string>
     <string name="height" msgid="3648885449443787772">"Высота"</string>
@@ -155,11 +155,11 @@
     <string name="widget_type" msgid="1364653978966343448">"Выбор изображений"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Слайд-шоу"</string>
     <string name="albums" msgid="7320787705180057947">"Альбомы"</string>
-    <string name="times" msgid="2023033894889499219">"По времени"</string>
+    <string name="times" msgid="2023033894889499219">"Даты"</string>
     <string name="locations" msgid="6649297994083130305">"Места"</string>
     <string name="people" msgid="4114003823747292747">"Люди"</string>
     <string name="tags" msgid="5539648765482935955">"Теги"</string>
-    <string name="group_by" msgid="4308299657902209357">"Группировать по"</string>
+    <string name="group_by" msgid="4308299657902209357">"Сгруппировать"</string>
     <string name="settings" msgid="1534847740615665736">"Настройки"</string>
     <string name="add_account" msgid="4271217504968243974">"Добавить аккаунт"</string>
 </resources>
