@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Video.VideoColumns;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -169,5 +170,17 @@ public class MovieActivity extends Activity {
     public void onDestroy() {
         mPlayer.onDestroy();
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return mPlayer.onKeyDown(keyCode, event)
+                || super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return mPlayer.onKeyUp(keyCode, event)
+                || super.onKeyUp(keyCode, event);
     }
 }
