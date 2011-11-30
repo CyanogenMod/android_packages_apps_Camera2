@@ -45,6 +45,8 @@ public class PackagesMonitor extends BroadcastReceiver {
             PicasaSource.onPackageAdded(context, packageName);
         } else if (Intent.ACTION_PACKAGE_REMOVED.equals(action)) {
             PicasaSource.onPackageRemoved(context, packageName);
+        } else if (Intent.ACTION_PACKAGE_CHANGED.equals(action)) {
+            PicasaSource.onPackageChanged(context, packageName);
         }
     }
 }
