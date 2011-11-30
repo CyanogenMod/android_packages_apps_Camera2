@@ -133,6 +133,8 @@ public class PicasaSource extends MediaSource {
 
     public static void onPackageRemoved(Context context, String packageName) {/*do nothing*/}
 
+    public static void onPackageChanged(Context context, String packageName) {/*do nothing*/}
+
     public static void extractExifValues(MediaObject item, ExifInterface exif) {/*do nothing*/}
 
     public static Dialog getVersionCheckDialog(Activity activity){
