@@ -20,17 +20,30 @@ import com.android.gallery3d.ui.GLView;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 
 abstract public class ActivityState {
     public static final int FLAG_HIDE_ACTION_BAR = 1;
     public static final int FLAG_HIDE_STATUS_BAR = 2;
+    public static final int FLAG_SCREEN_ON = 3;
+
+    private static final int SCREEN_ON_FLAGS = (
+              WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+            | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+            | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+        );
 
     protected GalleryActivity mActivity;
     protected Bundle mData;
@@ -47,6 +60,7 @@ abstract public class ActivityState {
     }
 
     private boolean mDestroyed = false;
+    private boolean mPlugged = false;
 
     protected ActivityState() {
     }
@@ -86,7 +100,34 @@ abstract public class ActivityState {
     protected void onCreate(Bundle data, Bundle storedState) {
     }
 
+    BroadcastReceiver mPowerIntentReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
+                boolean plugged = (0 != intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0));
+
+                if (plugged != mPlugged) {
+                    mPlugged = plugged;
+                    final Window win = ((Activity) mActivity).getWindow();
+                    final WindowManager.LayoutParams params = win.getAttributes();
+                    setScreenOnFlags(params);
+                    win.setAttributes(params);
+                }
+            }
+        }
+    };
+
+    void setScreenOnFlags(WindowManager.LayoutParams params) {
+        if (mPlugged && 0 != (mFlags & FLAG_SCREEN_ON)) {
+            params.flags |= SCREEN_ON_FLAGS;
+        } else {
+            params.flags &= ~SCREEN_ON_FLAGS;
+        }
+    }
+
     protected void onPause() {
+        ((Activity) mActivity).unregisterReceiver(mPowerIntentReceiver);
     }
 
     // should only be called by StateManager
@@ -108,20 +149,29 @@ abstract public class ActivityState {
 
         activity.invalidateOptionsMenu();
 
+        final Window win = activity.getWindow();
+        final WindowManager.LayoutParams params = win.getAttributes();
+
         if ((mFlags & FLAG_HIDE_STATUS_BAR) != 0) {
-            WindowManager.LayoutParams params = ((Activity) mActivity).getWindow().getAttributes();
             params.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE;
-            ((Activity) mActivity).getWindow().setAttributes(params);
         } else {
-            WindowManager.LayoutParams params = ((Activity) mActivity).getWindow().getAttributes();
             params.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE;
-            ((Activity) mActivity).getWindow().setAttributes(params);
         }
+
+        setScreenOnFlags(params);
+        win.setAttributes(params);
 
         ResultEntry entry = mReceivedResults;
         if (entry != null) {
             mReceivedResults = null;
             onStateResult(entry.requestCode, entry.resultCode, entry.resultData);
+        }
+
+        if (0 != (mFlags & FLAG_SCREEN_ON)) {
+            // we need to know whether the device is plugged in to do this correctly
+            final IntentFilter filter = new IntentFilter();
+            filter.addAction(Intent.ACTION_BATTERY_CHANGED);
+            activity.registerReceiver(mPowerIntentReceiver, filter);
         }
         onResume();
     }
