@@ -127,7 +127,9 @@ abstract public class ActivityState {
     }
 
     protected void onPause() {
-        ((Activity) mActivity).unregisterReceiver(mPowerIntentReceiver);
+        if (0 != (mFlags & FLAG_SCREEN_ON)) {
+            ((Activity) mActivity).unregisterReceiver(mPowerIntentReceiver);
+        }
     }
 
     // should only be called by StateManager
