@@ -76,7 +76,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.zip.Adler32;
 
-public class BlobCache {
+public class BlobCache implements Closeable {
     private static final String TAG = "BlobCache";
 
     private static final int MAGIC_INDEX_FILE = 0xB3273030;
@@ -171,6 +171,7 @@ public class BlobCache {
 
     // Close the cache. All resources are released. No other method should be
     // called after this is called.
+    @Override
     public void close() {
         syncAll();
         closeAll();
