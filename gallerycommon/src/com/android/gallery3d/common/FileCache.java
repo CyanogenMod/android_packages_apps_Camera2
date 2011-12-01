@@ -25,10 +25,11 @@ import android.util.Log;
 
 import com.android.gallery3d.common.Entry.Table;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 
-public class FileCache {
+public class FileCache implements Closeable {
     private static final int LRU_CAPACITY = 4;
     private static final int MAX_DELETE_COUNT = 16;
 
@@ -89,6 +90,10 @@ public class FileCache {
         mRootDir = Utils.checkNotNull(rootDir);
         mCapacity = capacity;
         mDbHelper = new DatabaseHelper(context, dbName);
+    }
+
+    public void close() {
+        mDbHelper.close();
     }
 
     public void store(String downloadUrl, File file) {
