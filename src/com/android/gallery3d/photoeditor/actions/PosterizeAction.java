@@ -33,6 +33,6 @@ public class PosterizeAction extends EffectAction {
     @Override
     public void prepare() {
         notifyChanged(new PosterizeFilter());
-        notifyDone();
+        notifyOk();
     }
 }

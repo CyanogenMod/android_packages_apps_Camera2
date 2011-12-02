@@ -33,6 +33,6 @@ public class SepiaAction  extends EffectAction {
     @Override
     public void prepare() {
         notifyChanged(new SepiaFilter());
-        notifyDone();
+        notifyOk();
     }
 }

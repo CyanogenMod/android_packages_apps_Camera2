@@ -39,6 +39,6 @@ public class DuotoneAction extends EffectAction {
         DuotoneFilter filter = new DuotoneFilter();
         filter.setDuotone(DEFAULT_FIRST_COLOR, DEFAULT_SECOND_COLOR);
         notifyChanged(filter);
-        notifyDone();
+        notifyOk();
     }
 }

@@ -47,8 +47,8 @@ public class TintAction extends EffectAction {
                 }
             }
         });
-        // Tint photo with the default color.
         colorPicker.setColorIndex(DEFAULT_COLOR_INDEX);
+
         filter.setTint(colorPicker.getColor());
         notifyChanged(filter);
     }

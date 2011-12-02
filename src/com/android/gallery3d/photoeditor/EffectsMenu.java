@@ -51,13 +51,13 @@ public class EffectsMenu extends RestorableView {
     }
 
     public void setOnToggleListener(OnToggleListener listener) {
-        setToggleRunnalbe(listener, R.id.exposure_button, R.layout.photoeditor_effects_exposure);
-        setToggleRunnalbe(listener, R.id.artistic_button, R.layout.photoeditor_effects_artistic);
-        setToggleRunnalbe(listener, R.id.color_button, R.layout.photoeditor_effects_color);
-        setToggleRunnalbe(listener, R.id.fix_button, R.layout.photoeditor_effects_fix);
+        setToggleRunnable(listener, R.id.exposure_button, R.layout.photoeditor_effects_exposure);
+        setToggleRunnable(listener, R.id.artistic_button, R.layout.photoeditor_effects_artistic);
+        setToggleRunnable(listener, R.id.color_button, R.layout.photoeditor_effects_color);
+        setToggleRunnable(listener, R.id.fix_button, R.layout.photoeditor_effects_fix);
     }
 
-    private void setToggleRunnalbe(final OnToggleListener listener, final int toggleId,
+    private void setToggleRunnable(final OnToggleListener listener, final int toggleId,
             final int effectsId) {
         setClickRunnable(toggleId, new Runnable() {
 
