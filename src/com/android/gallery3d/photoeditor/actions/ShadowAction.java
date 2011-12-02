@@ -36,7 +36,7 @@ public class ShadowAction extends EffectAction {
     public void prepare() {
         final ShadowFilter filter = new ShadowFilter();
 
-        ScaleSeekBar scalePicker = factory.createScalePicker(EffectToolFactory.ScaleType.SHADOW);
+        ScaleSeekBar scalePicker = toolKit.addScalePicker(EffectToolKit.ScaleType.SHADOW);
         scalePicker.setOnScaleChangeListener(new ScaleSeekBar.OnScaleChangeListener() {
 
             @Override

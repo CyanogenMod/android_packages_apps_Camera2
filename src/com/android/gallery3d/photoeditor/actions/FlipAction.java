@@ -40,13 +40,13 @@ public class FlipAction extends EffectAction {
         final FlipFilter filter = new FlipFilter();
         disableFilterOutput();
 
-        final FlipView flipView = factory.createFlipView();
+        final FlipView flipView = toolKit.addFlipView();
         flipView.setOnFlipChangeListener(new FlipView.OnFlipChangeListener() {
 
             float horizontalDegrees;
             float verticalDegrees;
             Runnable queuedTransform;
-            PhotoView photoView = factory.getPhotoView();
+            PhotoView photoView = toolKit.getPhotoView();
 
             @Override
             public void onAngleChanged(float horizontalDegrees, float verticalDegrees,

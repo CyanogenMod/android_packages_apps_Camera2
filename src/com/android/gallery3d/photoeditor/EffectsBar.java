@@ -22,11 +22,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.photoeditor.actions.EffectAction;
-import com.android.gallery3d.photoeditor.actions.EffectToolFactory;
 
 /**
  * Effects bar that contains all effects and shows them in categorized views.
@@ -37,7 +35,6 @@ public class EffectsBar extends LinearLayout {
     private FilterStack filterStack;
     private EffectsMenu effectsMenu;
     private View effectsGallery;
-    private ViewGroup effectToolPanel;
     private EffectAction activeEffect;
 
     public EffectsBar(Context context, AttributeSet attrs) {
@@ -91,9 +88,6 @@ public class EffectsBar extends LinearLayout {
                     // Set the clicked effect active before exiting effects-gallery.
                     activeEffect = effect;
                     exitEffectsGallery();
-                    // Create effect tool panel first before the factory could create tools within.
-                    // TODO: Refactor to encapsulate effect-tool panel in effect-tool factory.
-                    createEffectToolPanel();
                     EffectAction.ActionListener listener = new EffectAction.ActionListener() {
 
                         @Override
@@ -101,18 +95,10 @@ public class EffectsBar extends LinearLayout {
                             exit(null);
                         }
                     };
-                    activeEffect.begin(filterStack, new EffectToolFactory(
-                            effectToolPanel, inflater), listener);
+                    activeEffect.begin(getRootView(), filterStack, listener);
                 }
             }
         });
-    }
-
-    private void createEffectToolPanel() {
-        effectToolPanel = (ViewGroup) inflater.inflate(
-                R.layout.photoeditor_effect_tool_panel, this, false);
-        ((TextView) effectToolPanel.findViewById(R.id.effect_label)).setText(activeEffect.name());
-        addView(effectToolPanel, 0);
     }
 
     private boolean exitEffectsGallery() {
@@ -136,7 +122,6 @@ public class EffectsBar extends LinearLayout {
                 @Override
                 public void run() {
                     SpinnerProgressDialog.dismissDialog();
-                    effectToolPanel = null;
                     activeEffect = null;
                     if (runnableOnDone != null) {
                         runnableOnDone.run();

@@ -36,7 +36,7 @@ public class SharpenAction extends EffectAction {
     public void prepare() {
         final SharpenFilter filter = new SharpenFilter();
 
-        ScaleSeekBar scalePicker = factory.createScalePicker(EffectToolFactory.ScaleType.GENERIC);
+        ScaleSeekBar scalePicker = toolKit.addScalePicker(EffectToolKit.ScaleType.GENERIC);
         scalePicker.setOnScaleChangeListener(new ScaleSeekBar.OnScaleChangeListener() {
 
             @Override

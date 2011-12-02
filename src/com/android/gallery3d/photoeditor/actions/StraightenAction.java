@@ -37,7 +37,7 @@ public class StraightenAction extends EffectAction {
     public void prepare() {
         final StraightenFilter filter = new StraightenFilter();
 
-        RotateView rotateView = factory.createRotateView();
+        RotateView rotateView = toolKit.addRotateView();
         rotateView.setOnRotateChangeListener(new RotateView.OnRotateChangeListener() {
 
             @Override
