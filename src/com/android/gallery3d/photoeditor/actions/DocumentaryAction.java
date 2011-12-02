@@ -33,6 +33,6 @@ public class DocumentaryAction extends EffectAction {
     @Override
     public void prepare() {
         notifyChanged(new DocumentaryFilter());
-        notifyDone();
+        notifyOk();
     }
 }
