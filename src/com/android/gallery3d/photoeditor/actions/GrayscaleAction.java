@@ -33,6 +33,6 @@ public class GrayscaleAction extends EffectAction {
     @Override
     public void prepare() {
         notifyChanged(new GrayscaleFilter());
-        notifyDone();
+        notifyOk();
     }
 }

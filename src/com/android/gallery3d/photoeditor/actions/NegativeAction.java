@@ -33,6 +33,6 @@ public class NegativeAction extends EffectAction {
     @Override
     public void prepare() {
         notifyChanged(new NegativeFilter());
-        notifyDone();
+        notifyOk();
     }
 }
