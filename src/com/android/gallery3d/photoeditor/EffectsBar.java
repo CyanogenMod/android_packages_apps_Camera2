@@ -75,18 +75,18 @@ public class EffectsBar extends LinearLayout {
         ViewGroup scrollView = (ViewGroup) effectsGallery.findViewById(R.id.scroll_view);
         ViewGroup effects = (ViewGroup) inflater.inflate(effectsId, scrollView, false);
         for (int i = 0; i < effects.getChildCount(); i++) {
-            setupEffectListener((EffectAction) effects.getChildAt(i));
+            setupEffect((EffectAction) effects.getChildAt(i));
         }
         scrollView.addView(effects);
         scrollView.scrollTo(0, 0);
         addView(effectsGallery, 0);
     }
 
-    private void setupEffectListener(final EffectAction effect) {
-        effect.setListener(new EffectAction.Listener() {
+    private void setupEffect(final EffectAction effect) {
+        effect.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick() {
+            public void onClick(View v) {
                 if (isEnabled()) {
                     // Set the clicked effect active before exiting effects-gallery.
                     activeEffect = effect;
@@ -94,14 +94,16 @@ public class EffectsBar extends LinearLayout {
                     // Create effect tool panel first before the factory could create tools within.
                     // TODO: Refactor to encapsulate effect-tool panel in effect-tool factory.
                     createEffectToolPanel();
-                    activeEffect.begin(filterStack,
-                            new EffectToolFactory(effectToolPanel, inflater));
-                }
-            }
+                    EffectAction.ActionListener listener = new EffectAction.ActionListener() {
 
-            @Override
-            public void onDone() {
-                exit(null);
+                        @Override
+                        public void onOk() {
+                            exit(null);
+                        }
+                    };
+                    activeEffect.begin(filterStack, new EffectToolFactory(
+                            effectToolPanel, inflater), listener);
+                }
             }
         });
     }
@@ -117,8 +119,7 @@ public class EffectsBar extends LinearLayout {
         if (effectsGallery != null) {
             if (activeEffect != null) {
                 // Detach the active effect to prevent it stopping effects-gallery from gc.
-                ViewGroup scrollView = (ViewGroup) effectsGallery.findViewById(R.id.scroll_view);
-                ((ViewGroup) scrollView.getChildAt(0)).removeView(activeEffect);
+                ((ViewGroup) activeEffect.getParent()).removeView(activeEffect);
             }
             removeView(effectsGallery);
             effectsGallery = null;

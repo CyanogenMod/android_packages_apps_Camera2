@@ -19,8 +19,7 @@
     style="@style/EffectsContainer">
 
     <com.android.gallery3d.photoeditor.actions.CrossProcessAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_crossprocess"/>
         <TextView
@@ -29,8 +28,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.CrossProcessAction>
     <com.android.gallery3d.photoeditor.actions.PosterizeAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_posterize"/>
         <TextView
@@ -39,8 +37,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.PosterizeAction>
     <com.android.gallery3d.photoeditor.actions.LomoishAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_lomoish"/>
         <TextView
@@ -49,8 +46,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.LomoishAction>
     <com.android.gallery3d.photoeditor.actions.DocumentaryAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_documentary"/>
         <TextView
@@ -59,8 +55,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.DocumentaryAction>
     <com.android.gallery3d.photoeditor.actions.VignetteAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_vignette"/>
         <TextView
@@ -69,8 +64,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.VignetteAction>
     <com.android.gallery3d.photoeditor.actions.GrainAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_grain"/>
         <TextView
@@ -79,8 +73,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.GrainAction>
     <com.android.gallery3d.photoeditor.actions.FisheyeAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_fisheye"/>
         <TextView

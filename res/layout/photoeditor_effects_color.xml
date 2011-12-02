@@ -19,8 +19,7 @@
     style="@style/EffectsContainer">
 
     <com.android.gallery3d.photoeditor.actions.ColorTemperatureAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_temperature"/>
         <TextView
@@ -29,8 +28,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.ColorTemperatureAction>
     <com.android.gallery3d.photoeditor.actions.SaturationAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_saturation"/>
         <TextView
@@ -39,8 +37,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.SaturationAction>
     <com.android.gallery3d.photoeditor.actions.GrayscaleAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_grayscale"/>
         <TextView
@@ -49,8 +46,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.GrayscaleAction>
     <com.android.gallery3d.photoeditor.actions.SepiaAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_sepia"/>
         <TextView
@@ -59,8 +55,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.SepiaAction>
     <com.android.gallery3d.photoeditor.actions.NegativeAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_negative"/>
         <TextView
@@ -69,8 +64,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.NegativeAction>
     <com.android.gallery3d.photoeditor.actions.TintAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_tint"/>
         <TextView
@@ -79,8 +73,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.TintAction>
     <com.android.gallery3d.photoeditor.actions.DuotoneAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_duotone"/>
         <TextView
@@ -90,8 +83,7 @@
     </com.android.gallery3d.photoeditor.actions.DuotoneAction>
     <com.android.gallery3d.photoeditor.actions.DoodleAction style="@style/Effect"
         android:tag="@string/doodle_tooltip">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_doodle"/>
         <TextView

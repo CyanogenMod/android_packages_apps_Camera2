@@ -20,8 +20,7 @@
 
     <com.android.gallery3d.photoeditor.actions.CropAction style="@style/Effect"
         android:tag="@string/crop_tooltip">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_crop"/>
         <TextView
@@ -31,8 +30,7 @@
     </com.android.gallery3d.photoeditor.actions.CropAction>
     <com.android.gallery3d.photoeditor.actions.RedEyeAction style="@style/Effect"
         android:tag="@string/redeye_tooltip">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_redeye"/>
         <TextView
@@ -41,8 +39,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.RedEyeAction>
     <com.android.gallery3d.photoeditor.actions.FaceliftAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_facelift"/>
         <TextView
@@ -51,8 +48,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.FaceliftAction>
     <com.android.gallery3d.photoeditor.actions.FaceTanAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_facetan"/>
         <TextView
@@ -62,8 +58,7 @@
     </com.android.gallery3d.photoeditor.actions.FaceTanAction>
     <com.android.gallery3d.photoeditor.actions.StraightenAction style="@style/Effect"
         android:tag="@string/straighten_tooltip">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_straighten"/>
         <TextView
@@ -73,8 +68,7 @@
     </com.android.gallery3d.photoeditor.actions.StraightenAction>
     <com.android.gallery3d.photoeditor.actions.RotateAction style="@style/Effect"
         android:tag="@string/rotate_tooltip">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_rotate"/>
         <TextView
@@ -84,8 +78,7 @@
     </com.android.gallery3d.photoeditor.actions.RotateAction>
     <com.android.gallery3d.photoeditor.actions.FlipAction style="@style/Effect"
         android:tag="@string/flip_tooltip">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_flip"/>
         <TextView
@@ -94,8 +87,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.FlipAction>
     <com.android.gallery3d.photoeditor.actions.SharpenAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_sharpen"/>
         <TextView

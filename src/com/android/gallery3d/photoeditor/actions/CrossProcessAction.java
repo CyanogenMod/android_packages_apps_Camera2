@@ -33,6 +33,6 @@ public class CrossProcessAction extends EffectAction {
     @Override
     public void prepare() {
         notifyChanged(new CrossProcessFilter());
-        notifyDone();
+        notifyOk();
     }
 }

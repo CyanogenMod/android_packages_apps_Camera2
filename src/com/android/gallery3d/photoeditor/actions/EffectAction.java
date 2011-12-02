@@ -19,7 +19,6 @@ package com.android.gallery3d.photoeditor.actions;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,46 +36,36 @@ public abstract class EffectAction extends LinearLayout {
     /**
      * Listener of effect action.
      */
-    public interface Listener {
+    public interface ActionListener {
 
-        void onClick();
-
-        void onDone();
+        /**
+         * Invoked when the action is okayed (effect is applied and completed).
+         */
+        void onOk();
     }
 
     protected EffectToolFactory factory;
-    private Listener listener;
     private Toast tooltip;
     private FilterStack filterStack;
     private boolean pushedFilter;
     private boolean disableFilterOutput;
     private FilterChangedCallback lastFilterChangedCallback;
+    private ActionListener listener;
 
     public EffectAction(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    public void setListener(Listener l) {
-        listener = l;
-        findViewById(R.id.effect_button).setOnClickListener(
-                (listener == null) ? null : new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                listener.onClick();
-            }
-        });
     }
 
     public CharSequence name() {
         return ((TextView) findViewById(R.id.effect_label)).getText();
     }
 
-    public void begin(FilterStack filterStack, EffectToolFactory factory) {
+    public void begin(FilterStack filterStack, EffectToolFactory factory, ActionListener listener) {
         // This view is already detached from UI view hierarchy by reaching here; findViewById()
         // could only access its own child views from here.
         this.filterStack = filterStack;
         this.factory = factory;
+        this.listener = listener;
 
         // Shows the tooltip if it's available.
         if (getTag() != null) {
@@ -151,10 +140,8 @@ public abstract class EffectAction extends LinearLayout {
         }
     }
 
-    protected void notifyDone() {
-        if (listener != null) {
-            listener.onDone();
-        }
+    protected void notifyOk() {
+        listener.onOk();
     }
 
     /**

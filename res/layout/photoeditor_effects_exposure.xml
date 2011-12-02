@@ -19,8 +19,7 @@
     style="@style/EffectsContainer">
 
     <com.android.gallery3d.photoeditor.actions.FillLightAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_filllight"/>
         <TextView
@@ -29,8 +28,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.FillLightAction>
     <com.android.gallery3d.photoeditor.actions.HighlightAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_highlight"/>
         <TextView
@@ -39,8 +37,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.HighlightAction>
     <com.android.gallery3d.photoeditor.actions.ShadowAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_shadow"/>
         <TextView
@@ -49,8 +46,7 @@
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.ShadowAction>
     <com.android.gallery3d.photoeditor.actions.AutoFixAction style="@style/Effect">
-        <ImageButton
-            android:id="@+id/effect_button"
+        <ImageView
             style="@style/EffectIcon"
             android:src="@drawable/photoeditor_effect_autofix"/>
         <TextView
