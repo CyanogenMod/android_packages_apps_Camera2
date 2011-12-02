@@ -36,7 +36,7 @@ public class GrainAction extends EffectAction {
     public void prepare() {
         final GrainFilter filter = new GrainFilter();
 
-        ScaleSeekBar scalePicker = factory.createScalePicker(EffectToolFactory.ScaleType.GENERIC);
+        ScaleSeekBar scalePicker = toolKit.addScalePicker(EffectToolKit.ScaleType.GENERIC);
         scalePicker.setOnScaleChangeListener(new ScaleSeekBar.OnScaleChangeListener() {
 
             @Override

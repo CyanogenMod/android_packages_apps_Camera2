@@ -38,7 +38,7 @@ public class DoodleAction extends EffectAction {
         final DoodleFilter filter = new DoodleFilter();
         disableFilterOutput();
 
-        final DoodleView doodleView = factory.createDoodleView();
+        final DoodleView doodleView = toolKit.addDoodleView();
         doodleView.setOnDoodleChangeListener(new DoodleView.OnDoodleChangeListener() {
 
             @Override
@@ -58,7 +58,7 @@ public class DoodleAction extends EffectAction {
             }
         });
 
-        ColorSeekBar colorPicker = factory.createColorPicker();
+        ColorSeekBar colorPicker = toolKit.addColorPicker();
         colorPicker.setOnColorChangeListener(new ColorSeekBar.OnColorChangeListener() {
 
             @Override

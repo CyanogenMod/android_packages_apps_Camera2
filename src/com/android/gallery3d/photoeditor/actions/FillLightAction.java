@@ -36,7 +36,7 @@ public class FillLightAction extends EffectAction {
     public void prepare() {
         final FillLightFilter filter = new FillLightFilter();
 
-        ScaleSeekBar scalePicker = factory.createScalePicker(EffectToolFactory.ScaleType.LIGHT);
+        ScaleSeekBar scalePicker = toolKit.addScalePicker(EffectToolKit.ScaleType.LIGHT);
         scalePicker.setOnScaleChangeListener(new ScaleSeekBar.OnScaleChangeListener() {
 
             @Override

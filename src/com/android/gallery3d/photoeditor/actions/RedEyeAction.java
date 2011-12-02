@@ -36,7 +36,7 @@ public class RedEyeAction extends EffectAction {
     public void prepare() {
         final RedEyeFilter filter = new RedEyeFilter();
 
-        TouchView touchView = factory.createTouchView();
+        TouchView touchView = toolKit.addTouchView();
         touchView.setSingleTapListener(new TouchView.SingleTapListener() {
 
             final RectF bounds = new RectF(0, 0, 1, 1);

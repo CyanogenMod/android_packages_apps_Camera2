@@ -36,7 +36,7 @@ public class SaturationAction extends EffectAction {
     public void prepare() {
         final SaturationFilter filter = new SaturationFilter();
 
-        ScaleSeekBar scalePicker = factory.createScalePicker(EffectToolFactory.ScaleType.COLOR);
+        ScaleSeekBar scalePicker = toolKit.addScalePicker(EffectToolKit.ScaleType.COLOR);
         scalePicker.setOnScaleChangeListener(new ScaleSeekBar.OnScaleChangeListener() {
 
             @Override

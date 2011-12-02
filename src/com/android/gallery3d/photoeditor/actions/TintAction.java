@@ -36,7 +36,7 @@ public class TintAction extends EffectAction {
     public void prepare() {
         final TintFilter filter = new TintFilter();
 
-        ColorSeekBar colorPicker = factory.createColorPicker();
+        ColorSeekBar colorPicker = toolKit.addColorPicker();
         colorPicker.setOnColorChangeListener(new ColorSeekBar.OnColorChangeListener() {
 
             @Override

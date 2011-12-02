@@ -39,7 +39,7 @@ public class CropAction extends EffectAction {
         final CropFilter filter = new CropFilter();
         disableFilterOutput();
 
-        CropView cropView = factory.createCropView();
+        CropView cropView = toolKit.addCropView();
         cropView.setOnCropChangeListener(new CropView.OnCropChangeListener() {
 
             @Override

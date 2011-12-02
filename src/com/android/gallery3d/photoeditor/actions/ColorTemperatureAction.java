@@ -36,7 +36,7 @@ public class ColorTemperatureAction extends EffectAction {
     public void prepare() {
         final ColorTemperatureFilter filter = new ColorTemperatureFilter();
 
-        ScaleSeekBar scalePicker = factory.createScalePicker(EffectToolFactory.ScaleType.COLOR);
+        ScaleSeekBar scalePicker = toolKit.addScalePicker(EffectToolKit.ScaleType.COLOR);
         scalePicker.setOnScaleChangeListener(new ScaleSeekBar.OnScaleChangeListener() {
 
             @Override

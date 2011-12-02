@@ -36,7 +36,7 @@ public class FisheyeAction extends EffectAction {
     public void prepare() {
         final FisheyeFilter filter = new FisheyeFilter();
 
-        ScaleSeekBar scalePicker = factory.createScalePicker(EffectToolFactory.ScaleType.GENERIC);
+        ScaleSeekBar scalePicker = toolKit.addScalePicker(EffectToolKit.ScaleType.GENERIC);
         scalePicker.setOnScaleChangeListener(new ScaleSeekBar.OnScaleChangeListener() {
 
             @Override
