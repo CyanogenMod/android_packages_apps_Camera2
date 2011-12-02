@@ -34,7 +34,6 @@ public class StraightenFilter extends Filter {
 
     public void setAngle(float degrees) {
         this.degrees = degrees;
-        validate();
     }
 
     @Override

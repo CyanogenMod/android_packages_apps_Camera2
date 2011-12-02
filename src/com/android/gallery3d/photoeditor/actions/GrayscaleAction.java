@@ -31,12 +31,8 @@ public class GrayscaleAction extends EffectAction {
     }
 
     @Override
-    public void doBegin() {
-        notifyFilterChanged(new GrayscaleFilter(), true);
+    public void prepare() {
+        notifyChanged(new GrayscaleFilter());
         notifyDone();
-    }
-
-    @Override
-    public void doEnd() {
     }
 }

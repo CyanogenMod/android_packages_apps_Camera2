@@ -31,12 +31,8 @@ public class SepiaAction  extends EffectAction {
     }
 
     @Override
-    public void doBegin() {
-        notifyFilterChanged(new SepiaFilter(), true);
+    public void prepare() {
+        notifyChanged(new SepiaFilter());
         notifyDone();
-    }
-
-    @Override
-    public void doEnd() {
     }
 }

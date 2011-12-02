@@ -28,35 +28,28 @@ public class TintAction extends EffectAction {
 
     private static final int DEFAULT_COLOR_INDEX = 13;
 
-    private ColorSeekBar colorPicker;
-
     public TintAction(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public void doBegin() {
+    public void prepare() {
         final TintFilter filter = new TintFilter();
 
-        colorPicker = factory.createColorPicker();
+        ColorSeekBar colorPicker = factory.createColorPicker();
         colorPicker.setOnColorChangeListener(new ColorSeekBar.OnColorChangeListener() {
 
             @Override
             public void onColorChanged(int color, boolean fromUser) {
                 if (fromUser) {
                     filter.setTint(color);
-                    notifyFilterChanged(filter, true);
+                    notifyChanged(filter);
                 }
             }
         });
         // Tint photo with the default color.
         colorPicker.setColorIndex(DEFAULT_COLOR_INDEX);
         filter.setTint(colorPicker.getColor());
-        notifyFilterChanged(filter, true);
-    }
-
-    @Override
-    public void doEnd() {
-        colorPicker.setOnColorChangeListener(null);
+        notifyChanged(filter);
     }
 }

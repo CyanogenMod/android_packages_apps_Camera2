@@ -28,32 +28,25 @@ public class SaturationAction extends EffectAction {
 
     private static final float DEFAULT_SCALE = 0.5f;
 
-    private ScaleSeekBar scalePicker;
-
     public SaturationAction(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public void doBegin() {
+    public void prepare() {
         final SaturationFilter filter = new SaturationFilter();
 
-        scalePicker = factory.createScalePicker(EffectToolFactory.ScalePickerType.COLOR);
+        ScaleSeekBar scalePicker = factory.createScalePicker(EffectToolFactory.ScaleType.COLOR);
         scalePicker.setOnScaleChangeListener(new ScaleSeekBar.OnScaleChangeListener() {
 
             @Override
             public void onProgressChanged(float progress, boolean fromUser) {
                 if (fromUser) {
                     filter.setScale(progress);
-                    notifyFilterChanged(filter, true);
+                    notifyChanged(filter);
                 }
             }
         });
         scalePicker.setProgress(DEFAULT_SCALE);
-    }
-
-    @Override
-    public void doEnd() {
-        scalePicker.setOnScaleChangeListener(null);
     }
 }

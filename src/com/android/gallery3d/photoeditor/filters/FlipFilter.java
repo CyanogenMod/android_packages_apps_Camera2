@@ -34,7 +34,6 @@ public class FlipFilter extends Filter {
     public void setFlip(boolean flipHorizontal, boolean flipVertical) {
         flips[0] = flipHorizontal;
         flips[1] = flipVertical;
-        validate();
     }
 
     @Override

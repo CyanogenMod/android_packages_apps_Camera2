@@ -92,6 +92,7 @@ public class EffectsBar extends LinearLayout {
                     activeEffect = effect;
                     exitEffectsGallery();
                     // Create effect tool panel first before the factory could create tools within.
+                    // TODO: Refactor to encapsulate effect-tool panel in effect-tool factory.
                     createEffectToolPanel();
                     activeEffect.begin(filterStack,
                             new EffectToolFactory(effectToolPanel, inflater));
@@ -134,11 +135,6 @@ public class EffectsBar extends LinearLayout {
                 @Override
                 public void run() {
                     SpinnerProgressDialog.dismissDialog();
-                    View fullscreenTool = getRootView().findViewById(R.id.fullscreen_effect_tool);
-                    if (fullscreenTool != null) {
-                        ((ViewGroup) fullscreenTool.getParent()).removeView(fullscreenTool);
-                    }
-                    removeView(effectToolPanel);
                     effectToolPanel = null;
                     activeEffect = null;
                     if (runnableOnDone != null) {

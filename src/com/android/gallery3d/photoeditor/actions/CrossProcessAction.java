@@ -31,12 +31,8 @@ public class CrossProcessAction extends EffectAction {
     }
 
     @Override
-    public void doBegin() {
-        notifyFilterChanged(new CrossProcessFilter(), true);
+    public void prepare() {
+        notifyChanged(new CrossProcessFilter());
         notifyDone();
-    }
-
-    @Override
-    public void doEnd() {
     }
 }

@@ -29,24 +29,22 @@ public class StraightenAction extends EffectAction {
     private static final float DEFAULT_ANGLE = 0.0f;
     private static final float DEFAULT_ROTATE_SPAN = StraightenFilter.MAX_DEGREES * 2;
 
-    private RotateView rotateView;
-
     public StraightenAction(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public void doBegin() {
+    public void prepare() {
         final StraightenFilter filter = new StraightenFilter();
 
-        rotateView = factory.createRotateView();
+        RotateView rotateView = factory.createRotateView();
         rotateView.setOnRotateChangeListener(new RotateView.OnRotateChangeListener() {
 
             @Override
             public void onAngleChanged(float degrees, boolean fromUser){
                 if (fromUser) {
                     filter.setAngle(degrees);
-                    notifyFilterChanged(filter, true);
+                    notifyChanged(filter);
                 }
             }
 
@@ -63,10 +61,5 @@ public class StraightenAction extends EffectAction {
         rotateView.setDrawGrids(true);
         rotateView.setRotatedAngle(DEFAULT_ANGLE);
         rotateView.setRotateSpan(DEFAULT_ROTATE_SPAN);
-    }
-
-    @Override
-    public void doEnd() {
-        rotateView.setOnRotateChangeListener(null);
     }
 }

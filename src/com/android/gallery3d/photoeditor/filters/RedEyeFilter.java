@@ -39,7 +39,6 @@ public class RedEyeFilter extends Filter {
      */
     public void addRedEyePosition(PointF point) {
         redeyes.add(point);
-        validate();
     }
 
     @Override

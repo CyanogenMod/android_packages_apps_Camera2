@@ -27,10 +27,6 @@ public class NegativeFilter extends Filter {
 
     public static final Creator<NegativeFilter> CREATOR = creatorOf(NegativeFilter.class);
 
-    public NegativeFilter() {
-        validate();
-    }
-
     @Override
     public void process(Photo src, Photo dst) {
         getEffect(EffectFactory.EFFECT_NEGATIVE).apply(

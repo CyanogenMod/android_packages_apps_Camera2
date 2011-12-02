@@ -33,7 +33,6 @@ public class TintFilter extends Filter {
 
     public void setTint(int color) {
         this.color = color;
-        validate();
     }
 
     @Override
