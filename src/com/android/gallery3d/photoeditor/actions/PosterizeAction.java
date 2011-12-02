@@ -31,12 +31,8 @@ public class PosterizeAction extends EffectAction {
     }
 
     @Override
-    public void doBegin() {
-        notifyFilterChanged(new PosterizeFilter(), true);
+    public void prepare() {
+        notifyChanged(new PosterizeFilter());
         notifyDone();
-    }
-
-    @Override
-    public void doEnd() {
     }
 }

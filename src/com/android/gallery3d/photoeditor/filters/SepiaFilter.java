@@ -27,10 +27,6 @@ public class SepiaFilter extends Filter {
 
     public static final Creator<SepiaFilter> CREATOR = creatorOf(SepiaFilter.class);
 
-    public SepiaFilter() {
-        validate();
-    }
-
     @Override
     public void process(Photo src, Photo dst) {
         getEffect(EffectFactory.EFFECT_SEPIA).apply(

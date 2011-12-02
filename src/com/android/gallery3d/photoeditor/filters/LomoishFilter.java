@@ -27,10 +27,6 @@ public class LomoishFilter extends Filter {
 
     public static final Creator<LomoishFilter> CREATOR = creatorOf(LomoishFilter.class);
 
-    public LomoishFilter() {
-        validate();
-    }
-
     @Override
     public void process(Photo src, Photo dst) {
         getEffect(EffectFactory.EFFECT_LOMOISH).apply(

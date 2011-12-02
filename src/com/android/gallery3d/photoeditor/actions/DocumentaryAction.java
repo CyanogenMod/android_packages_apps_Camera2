@@ -31,12 +31,8 @@ public class DocumentaryAction extends EffectAction {
     }
 
     @Override
-    public void doBegin() {
-        notifyFilterChanged(new DocumentaryFilter(), true);
+    public void prepare() {
+        notifyChanged(new DocumentaryFilter());
         notifyDone();
-    }
-
-    @Override
-    public void doEnd() {
     }
 }

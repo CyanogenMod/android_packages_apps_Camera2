@@ -31,12 +31,8 @@ public class NegativeAction extends EffectAction {
     }
 
     @Override
-    public void doBegin() {
-        notifyFilterChanged(new NegativeFilter(), true);
+    public void prepare() {
+        notifyChanged(new NegativeFilter());
         notifyDone();
-    }
-
-    @Override
-    public void doEnd() {
     }
 }

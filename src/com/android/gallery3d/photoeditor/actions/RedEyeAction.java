@@ -18,6 +18,7 @@ package com.android.gallery3d.photoeditor.actions;
 
 import android.content.Context;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 
 import com.android.gallery3d.photoeditor.filters.RedEyeFilter;
@@ -27,29 +28,27 @@ import com.android.gallery3d.photoeditor.filters.RedEyeFilter;
  */
 public class RedEyeAction extends EffectAction {
 
-    private TouchView touchView;
-
     public RedEyeAction(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public void doBegin() {
+    public void prepare() {
         final RedEyeFilter filter = new RedEyeFilter();
 
-        touchView = factory.createTouchView();
+        TouchView touchView = factory.createTouchView();
         touchView.setSingleTapListener(new TouchView.SingleTapListener() {
+
+            final RectF bounds = new RectF(0, 0, 1, 1);
 
             @Override
             public void onSingleTap(PointF point) {
-                filter.addRedEyePosition(point);
-                notifyFilterChanged(filter, true);
+                // Check if the user taps within photo bounds to remove red eye on photo.
+                if (bounds.contains(point.x, point.y)) {
+                    filter.addRedEyePosition(point);
+                    notifyChanged(filter);
+                }
             }
         });
-    }
-
-    @Override
-    public void doEnd() {
-        touchView.setSingleTapListener(null);
     }
 }

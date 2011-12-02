@@ -27,10 +27,6 @@ public class CrossProcessFilter extends Filter {
 
     public static final Creator<CrossProcessFilter> CREATOR = creatorOf(CrossProcessFilter.class);
 
-    public CrossProcessFilter() {
-        validate();
-    }
-
     @Override
     public void process(Photo src, Photo dst) {
         getEffect(EffectFactory.EFFECT_CROSSPROCESS).apply(

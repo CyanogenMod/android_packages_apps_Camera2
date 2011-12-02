@@ -40,14 +40,6 @@ public class DoodleFilter extends Filter {
 
     private final Vector<Doodle> doodles = new Vector<Doodle>();
 
-    /**
-     * Signals once at least a doodle drawn within photo bounds; this filter is regarded as invalid
-     * (no-op on the photo) until not all its doodling is out of bounds.
-     */
-    public void setDoodledInPhotoBounds() {
-        validate();
-    }
-
     public void addDoodle(Doodle doodle) {
         doodles.add(doodle);
     }

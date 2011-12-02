@@ -37,7 +37,7 @@ class DoodleView extends FullscreenToolView {
      */
     public interface OnDoodleChangeListener {
 
-        void onDoodleInPhotoBounds();
+        void onDoodleChanged(Doodle doodle);
 
         void onDoodleFinished(Doodle doodle);
     }
@@ -111,9 +111,10 @@ class DoodleView extends FullscreenToolView {
     }
 
     private void addLastPointIntoDoodle() {
-        if ((doodle != null) && doodle.addControlPoint(new PointF(lastPoint.x, lastPoint.y))) {
+        if (doodle != null) {
+            doodle.addControlPoint(new PointF(lastPoint.x, lastPoint.y));
             if (listener != null) {
-                listener.onDoodleInPhotoBounds();
+                listener.onDoodleChanged(doodle);
             }
             invalidate();
         }
