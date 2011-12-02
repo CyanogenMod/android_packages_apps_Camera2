@@ -21,11 +21,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.net.Uri;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Log;
@@ -57,40 +54,8 @@ public class BitmapUtils {
         this.context = context;
     }
 
-    /**
-     * Creates a mutable bitmap from subset of source bitmap, transformed by the optional matrix.
-     */
-    private static Bitmap createBitmap(
-            Bitmap source, int x, int y, int width, int height, Matrix m) {
-        // Re-implement Bitmap createBitmap() to always return a mutable bitmap.
-        Canvas canvas = new Canvas();
-
-        Bitmap bitmap;
-        Paint paint;
-        if ((m == null) || m.isIdentity()) {
-            bitmap = Bitmap.createBitmap(width, height, source.getConfig());
-            paint = null;
-        } else {
-            RectF rect = new RectF(0, 0, width, height);
-            m.mapRect(rect);
-            bitmap = Bitmap.createBitmap(
-                    Math.round(rect.width()), Math.round(rect.height()), source.getConfig());
-
-            canvas.translate(-rect.left, -rect.top);
-            canvas.concat(m);
-
-            paint = new Paint(Paint.FILTER_BITMAP_FLAG);
-            if (!m.rectStaysRect()) {
-                paint.setAntiAlias(true);
-            }
-        }
-        bitmap.setDensity(source.getDensity());
-        canvas.setBitmap(bitmap);
-
-        Rect srcBounds = new Rect(x, y, x + width, y + height);
-        RectF dstBounds = new RectF(0, 0, width, height);
-        canvas.drawBitmap(source, srcBounds, dstBounds, paint);
-        return bitmap;
+    private static Bitmap createBitmap(Bitmap source, Matrix m) {
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), m, true);
     }
 
     private void closeStream(Closeable stream) {
@@ -143,7 +108,7 @@ public class BitmapUtils {
     }
 
     /**
-     * Decodes bitmap (maybe immutable) that keeps aspect-ratio and spans most within the bounds.
+     * Decodes bitmap that keeps aspect-ratio and spans most within the bounds.
      */
     private Bitmap decodeBitmap(Uri uri, int width, int height) {
         InputStream is = null;
@@ -184,8 +149,7 @@ public class BitmapUtils {
             if (scale < 1) {
                 Matrix m = new Matrix();
                 m.setScale(scale, scale);
-                Bitmap transformed = createBitmap(
-                        bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m);
+                Bitmap transformed = createBitmap(bitmap, m);
                 bitmap.recycle();
                 return transformed;
             }
@@ -194,7 +158,7 @@ public class BitmapUtils {
     }
 
     /**
-     * Gets decoded bitmap that keeps orientation as well.
+     * Gets decoded bitmap (maybe immutable) that keeps orientation as well.
      */
     public Bitmap getBitmap(Uri uri, int width, int height) {
         Bitmap bitmap = decodeBitmap(uri, width, height);
@@ -205,8 +169,7 @@ public class BitmapUtils {
             if (orientation != 0) {
                 Matrix m = new Matrix();
                 m.setRotate(orientation);
-                Bitmap transformed = createBitmap(
-                        bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m);
+                Bitmap transformed = createBitmap(bitmap, m);
                 bitmap.recycle();
                 return transformed;
             }
