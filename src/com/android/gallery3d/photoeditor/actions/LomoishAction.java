@@ -33,6 +33,6 @@ public class LomoishAction extends EffectAction {
     @Override
     public void prepare() {
         notifyChanged(new LomoishFilter());
-        notifyDone();
+        notifyOk();
     }
 }

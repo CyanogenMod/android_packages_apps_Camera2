@@ -37,6 +37,6 @@ public class AutoFixAction extends EffectAction {
         AutoFixFilter filter = new AutoFixFilter();
         filter.setScale(DEFAULT_SCALE);
         notifyChanged(filter);
-        notifyDone();
+        notifyOk();
     }
 }
