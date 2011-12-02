@@ -45,11 +45,11 @@ public abstract class EffectAction extends LinearLayout {
     }
 
     protected EffectToolFactory factory;
-
     private Listener listener;
     private Toast tooltip;
     private FilterStack filterStack;
     private boolean pushedFilter;
+    private boolean disableFilterOutput;
     private FilterChangedCallback lastFilterChangedCallback;
 
     public EffectAction(Context context, AttributeSet attrs) {
@@ -84,14 +84,24 @@ public abstract class EffectAction extends LinearLayout {
             tooltip.setGravity(Gravity.CENTER, 0, 0);
             tooltip.show();
         }
-        doBegin();
+        prepare();
     }
+
+    /**
+     * Subclasses should create a specific filter and bind the filter to necessary UI controls here
+     * when the action is about to begin.
+     */
+    protected abstract void prepare();
 
     /**
      * Ends the effect and then executes the runnable after the effect is finished.
      */
     public void end(final Runnable runnableOnODone) {
-        doEnd();
+        // Remove created tools before ending and output the pushed filter if it wasn't outputted.
+        factory.removeTools();
+        if (pushedFilter && disableFilterOutput) {
+            outputFilter();
+        }
 
         // Wait till last output callback is done before finishing.
         if ((lastFilterChangedCallback == null) || lastFilterChangedCallback.done) {
@@ -114,9 +124,31 @@ public abstract class EffectAction extends LinearLayout {
             tooltip = null;
         }
         pushedFilter = false;
+        disableFilterOutput = false;
         lastFilterChangedCallback = null;
 
         runnableOnDone.run();
+    }
+
+    protected void disableFilterOutput() {
+        // Filter output won't be outputted until this effect has done editing its filter.
+        disableFilterOutput = true;
+    }
+
+    protected void outputFilter() {
+        // Notify the stack to execute the changed top filter and output the results.
+        lastFilterChangedCallback = new FilterChangedCallback();
+        filterStack.topFilterChanged(lastFilterChangedCallback);
+    }
+
+    protected void notifyChanged(Filter filter) {
+        if (!pushedFilter) {
+            filterStack.pushFilter(filter);
+            pushedFilter = true;
+        }
+        if (pushedFilter && !disableFilterOutput) {
+            outputFilter();
+        }
     }
 
     protected void notifyDone() {
@@ -124,29 +156,6 @@ public abstract class EffectAction extends LinearLayout {
             listener.onDone();
         }
     }
-
-    protected void notifyFilterChanged(Filter filter, boolean output) {
-        if (!pushedFilter && filter.isValid()) {
-            filterStack.pushFilter(filter);
-            pushedFilter = true;
-        }
-        if (pushedFilter && output) {
-            // Notify the stack to execute the changed top filter and output the results.
-            lastFilterChangedCallback = new FilterChangedCallback();
-            filterStack.topFilterChanged(lastFilterChangedCallback);
-        }
-    }
-
-    /**
-     * Subclasses should creates a specific filter and binds the filter to necessary UI controls
-     * here when the action is about to begin.
-     */
-    protected abstract void doBegin();
-
-    /**
-     * Subclasses could do specific ending operations here when the action is about to end.
-     */
-    protected abstract void doEnd();
 
     /**
      * Done callback for executing top filter changes.

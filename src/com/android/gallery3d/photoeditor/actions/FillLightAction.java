@@ -28,32 +28,25 @@ public class FillLightAction extends EffectAction {
 
     private static final float DEFAULT_SCALE = 0f;
 
-    private ScaleSeekBar scalePicker;
-
     public FillLightAction(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public void doBegin() {
+    public void prepare() {
         final FillLightFilter filter = new FillLightFilter();
 
-        scalePicker = factory.createScalePicker(EffectToolFactory.ScalePickerType.LIGHT);
+        ScaleSeekBar scalePicker = factory.createScalePicker(EffectToolFactory.ScaleType.LIGHT);
         scalePicker.setOnScaleChangeListener(new ScaleSeekBar.OnScaleChangeListener() {
 
             @Override
             public void onProgressChanged(float progress, boolean fromUser) {
                 if (fromUser) {
                     filter.setScale(progress);
-                    notifyFilterChanged(filter, true);
+                    notifyChanged(filter);
                 }
             }
         });
         scalePicker.setProgress(DEFAULT_SCALE);
-    }
-
-    @Override
-    public void doEnd() {
-        scalePicker.setOnScaleChangeListener(null);
     }
 }

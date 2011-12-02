@@ -16,5 +16,4 @@
 
 <com.android.gallery3d.photoeditor.actions.FlipView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fullscreen_effect_tool"
     style="@style/FullscreenToolView"/>

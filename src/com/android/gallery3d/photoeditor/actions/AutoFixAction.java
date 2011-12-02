@@ -33,14 +33,10 @@ public class AutoFixAction extends EffectAction {
     }
 
     @Override
-    public void doBegin() {
+    public void prepare() {
         AutoFixFilter filter = new AutoFixFilter();
         filter.setScale(DEFAULT_SCALE);
-        notifyFilterChanged(filter, true);
+        notifyChanged(filter);
         notifyDone();
-    }
-
-    @Override
-    public void doEnd() {
     }
 }

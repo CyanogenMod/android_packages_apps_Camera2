@@ -27,10 +27,6 @@ public class DocumentaryFilter extends Filter {
 
     public static final Creator<DocumentaryFilter> CREATOR = creatorOf(DocumentaryFilter.class);
 
-    public DocumentaryFilter() {
-        validate();
-    }
-
     @Override
     public void process(Photo src, Photo dst) {
         getEffect(EffectFactory.EFFECT_DOCUMENTARY).apply(

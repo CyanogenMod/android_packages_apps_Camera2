@@ -30,7 +30,6 @@ public abstract class AbstractScaleFilter extends Filter {
      */
     public void setScale(float scale) {
         this.scale = scale;
-        validate();
     }
 
     @Override

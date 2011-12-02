@@ -31,9 +31,11 @@ public class RotateFilter extends Filter {
 
     private float degrees;
 
+    /**
+     * Sets rotation angle which must be multiples of 90 degrees.
+     */
     public void setAngle(float degrees) {
         this.degrees = degrees;
-        validate();
     }
 
     @Override

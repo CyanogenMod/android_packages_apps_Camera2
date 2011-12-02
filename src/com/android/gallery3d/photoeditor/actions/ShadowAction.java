@@ -28,32 +28,25 @@ public class ShadowAction extends EffectAction {
 
     private static final float DEFAULT_SCALE = 0f;
 
-    private ScaleSeekBar scalePicker;
-
     public ShadowAction(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public void doBegin() {
+    public void prepare() {
         final ShadowFilter filter = new ShadowFilter();
 
-        scalePicker = factory.createScalePicker(EffectToolFactory.ScalePickerType.SHADOW);
+        ScaleSeekBar scalePicker = factory.createScalePicker(EffectToolFactory.ScaleType.SHADOW);
         scalePicker.setOnScaleChangeListener(new ScaleSeekBar.OnScaleChangeListener() {
 
             @Override
             public void onProgressChanged(float progress, boolean fromUser) {
                 if (fromUser) {
                     filter.setScale(progress);
-                    notifyFilterChanged(filter, true);
+                    notifyChanged(filter);
                 }
             }
         });
         scalePicker.setProgress(DEFAULT_SCALE);
-    }
-
-    @Override
-    public void doEnd() {
-        scalePicker.setOnScaleChangeListener(null);
     }
 }

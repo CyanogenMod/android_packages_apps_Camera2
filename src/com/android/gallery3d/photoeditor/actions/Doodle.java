@@ -55,18 +55,21 @@ public class Doodle implements Parcelable {
     }
 
     /**
-     * Adds control points whose coordinates range from 0 to 1 to construct the doodle path.
-     *
-     * @return true if the constructed path is in (0, 0, 1, 1) bounds; otherwise, false.
+     * Checks if the constructed doodle path is in (0, 0, 1, 1) bounds.
      */
-    public boolean addControlPoint(PointF point) {
-        PointF last = points.lastElement();
-        normalizedPath.quadTo(last.x, last.y, (last.x + point.x) / 2, (last.y + point.y) / 2);
-        points.add(point);
-
+    public boolean inBounds() {
         RectF r = new RectF();
         normalizedPath.computeBounds(r, false);
         return r.intersects(0, 0, 1, 1);
+    }
+
+    /**
+     * Adds control points whose coordinates range from 0 to 1 to construct the doodle path.
+     */
+    public void addControlPoint(PointF point) {
+        PointF last = points.lastElement();
+        normalizedPath.quadTo(last.x, last.y, (last.x + point.x) / 2, (last.y + point.y) / 2);
+        points.add(point);
     }
 
     public int getColor() {
