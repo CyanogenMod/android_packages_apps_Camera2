@@ -36,7 +36,7 @@ public class FaceliftAction extends EffectAction {
     public void prepare() {
         final FaceliftFilter filter = new FaceliftFilter();
 
-        ScaleSeekBar scalePicker = factory.createScalePicker(EffectToolFactory.ScaleType.GENERIC);
+        ScaleSeekBar scalePicker = toolKit.addScalePicker(EffectToolKit.ScaleType.GENERIC);
         scalePicker.setOnScaleChangeListener(new ScaleSeekBar.OnScaleChangeListener() {
 
             @Override

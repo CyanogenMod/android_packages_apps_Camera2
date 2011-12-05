@@ -40,12 +40,12 @@ public class RotateAction extends EffectAction {
         final RotateFilter filter = new RotateFilter();
         disableFilterOutput();
 
-        final RotateView rotateView = factory.createRotateView();
+        final RotateView rotateView = toolKit.addRotateView();
         rotateView.setOnRotateChangeListener(new RotateView.OnRotateChangeListener() {
 
             float rotateDegrees;
             Runnable queuedTransform;
-            PhotoView photoView = factory.getPhotoView();
+            PhotoView photoView = toolKit.getPhotoView();
 
             @Override
             public void onAngleChanged(float degrees, boolean fromUser) {

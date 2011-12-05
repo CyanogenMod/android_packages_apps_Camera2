@@ -36,7 +36,7 @@ public class HighlightAction extends EffectAction {
     public void prepare() {
         final HighlightFilter filter = new HighlightFilter();
 
-        ScaleSeekBar scalePicker = factory.createScalePicker(EffectToolFactory.ScaleType.LIGHT);
+        ScaleSeekBar scalePicker = toolKit.addScalePicker(EffectToolKit.ScaleType.LIGHT);
         scalePicker.setOnScaleChangeListener(new ScaleSeekBar.OnScaleChangeListener() {
 
             @Override

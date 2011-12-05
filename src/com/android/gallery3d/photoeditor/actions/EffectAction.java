@@ -19,6 +19,7 @@ package com.android.gallery3d.photoeditor.actions;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,7 +45,7 @@ public abstract class EffectAction extends LinearLayout {
         void onOk();
     }
 
-    protected EffectToolFactory factory;
+    protected EffectToolKit toolKit;
     private Toast tooltip;
     private FilterStack filterStack;
     private boolean pushedFilter;
@@ -56,15 +57,11 @@ public abstract class EffectAction extends LinearLayout {
         super(context, attrs);
     }
 
-    public CharSequence name() {
-        return ((TextView) findViewById(R.id.effect_label)).getText();
-    }
-
-    public void begin(FilterStack filterStack, EffectToolFactory factory, ActionListener listener) {
+    public void begin(View root, FilterStack filterStack, ActionListener listener) {
         // This view is already detached from UI view hierarchy by reaching here; findViewById()
         // could only access its own child views from here.
+        toolKit = new EffectToolKit(root, ((TextView) findViewById(R.id.effect_label)).getText());
         this.filterStack = filterStack;
-        this.factory = factory;
         this.listener = listener;
 
         // Shows the tooltip if it's available.
@@ -87,7 +84,7 @@ public abstract class EffectAction extends LinearLayout {
      */
     public void end(final Runnable runnableOnODone) {
         // Remove created tools before ending and output the pushed filter if it wasn't outputted.
-        factory.removeTools();
+        toolKit.close();
         if (pushedFilter && disableFilterOutput) {
             outputFilter();
         }
