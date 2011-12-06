@@ -83,8 +83,14 @@ public abstract class EffectAction extends LinearLayout {
      * Ends the effect and then executes the runnable after the effect is finished.
      */
     public void end(final Runnable runnableOnODone) {
-        // Remove created tools before ending and output the pushed filter if it wasn't outputted.
-        toolKit.close();
+        // Cancel the tooltip if it's still showing.
+        if ((tooltip != null) && (tooltip.getView().getParent() != null)) {
+            tooltip.cancel();
+            tooltip = null;
+        }
+        // End tool editing by canceling unfinished touch events.
+        toolKit.cancel();
+        // Output the pushed filter if it wasn't outputted.
         if (pushedFilter && disableFilterOutput) {
             outputFilter();
         }
@@ -104,11 +110,7 @@ public abstract class EffectAction extends LinearLayout {
     }
 
     private void finish(Runnable runnableOnDone) {
-        // Close the tooltip if it's still showing.
-        if ((tooltip != null) && (tooltip.getView().getParent() != null)) {
-            tooltip.cancel();
-            tooltip = null;
-        }
+        toolKit.close();
         pushedFilter = false;
         disableFilterOutput = false;
         lastFilterChangedCallback = null;

@@ -17,7 +17,9 @@
 package com.android.gallery3d.photoeditor.actions;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -61,6 +63,27 @@ public class EffectToolKit {
 
     public PhotoView getPhotoView() {
         return photoView;
+    }
+
+    /**
+     * Cancel pending touch events and stop dispatching further touch events to tools.
+     */
+    public void cancel() {
+        long now = SystemClock.uptimeMillis();
+        MotionEvent cancelEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_CANCEL, 0, 0, 0);
+        toolFullscreen.dispatchTouchEvent(cancelEvent);
+        toolPanel.dispatchTouchEvent(cancelEvent);
+        cancelEvent.recycle();
+        View.OnTouchListener listener = new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Consume all further touch events and don't dispatch them.
+                return true;
+            }
+        };
+        toolFullscreen.setOnTouchListener(listener);
+        toolPanel.setOnTouchListener(listener);
     }
 
     /**
