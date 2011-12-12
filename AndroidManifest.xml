@@ -31,6 +31,7 @@
             android:theme="@style/Theme.Gallery">
         <activity android:name="com.android.gallery3d.app.MovieActivity"
                 android:label="@string/movie_view_label"
+                android:theme="@style/Theme.MovieActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
