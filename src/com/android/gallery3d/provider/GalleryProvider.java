@@ -16,17 +16,6 @@
 
 package com.android.gallery3d.provider;
 
-import com.android.gallery3d.app.GalleryApp;
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.DataManager;
-import com.android.gallery3d.data.DownloadCache;
-import com.android.gallery3d.data.MediaItem;
-import com.android.gallery3d.data.MediaObject;
-import com.android.gallery3d.data.MtpImage;
-import com.android.gallery3d.data.Path;
-import com.android.gallery3d.picasasource.PicasaSource;
-import com.android.gallery3d.util.GalleryUtils;
-
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
@@ -39,6 +28,17 @@ import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Log;
 
+import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.DataManager;
+import com.android.gallery3d.data.DownloadCache;
+import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.data.MediaObject;
+import com.android.gallery3d.data.MtpImage;
+import com.android.gallery3d.data.Path;
+import com.android.gallery3d.picasasource.PicasaSource;
+import com.android.gallery3d.util.GalleryUtils;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -48,7 +48,15 @@ public class GalleryProvider extends ContentProvider {
 
     public static final String AUTHORITY = "com.android.gallery3d.provider";
     public static final Uri BASE_URI = Uri.parse("content://" + AUTHORITY);
+
+    public static interface PicasaColumns {
+        public static final String USER_ACCOUNT = "user_account";
+        public static final String PICASA_ID = "picasa_id";
+    }
+
     private static final String[] SUPPORTED_PICASA_COLUMNS = {
+            PicasaColumns.USER_ACCOUNT,
+            PicasaColumns.PICASA_ID,
             ImageColumns.DISPLAY_NAME,
             ImageColumns.SIZE,
             ImageColumns.MIME_TYPE,
@@ -170,7 +178,11 @@ public class GalleryProvider extends ContentProvider {
 
         for (int i = 0, n = projection.length; i < n; ++i) {
             String column = projection[i];
-            if (ImageColumns.DISPLAY_NAME.equals(column)) {
+            if (PicasaColumns.USER_ACCOUNT.equals(column)) {
+                columnValues[i] = PicasaSource.getUserAccount(getContext(), image);
+            } else if (PicasaColumns.PICASA_ID.equals(column)) {
+                columnValues[i] = PicasaSource.getPicasaId(image);
+            } else if (ImageColumns.DISPLAY_NAME.equals(column)) {
                 columnValues[i] = PicasaSource.getImageTitle(image);
             } else if (ImageColumns.SIZE.equals(column)){
                 columnValues[i] = PicasaSource.getImageSize(image);

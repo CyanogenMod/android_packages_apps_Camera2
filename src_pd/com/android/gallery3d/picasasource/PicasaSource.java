@@ -118,6 +118,14 @@ public class PicasaSource extends MediaSource {
         throw new UnsupportedOperationException();
     }
 
+    public static long getPicasaId(MediaObject image) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static String getUserAccount(Context context, MediaObject image) {
+        throw new UnsupportedOperationException();
+    }
+
     public static ParcelFileDescriptor openFile(Context context, MediaObject image, String mode)
             throws FileNotFoundException {
         throw new UnsupportedOperationException();
