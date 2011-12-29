@@ -54,7 +54,7 @@
     <string name="details" msgid="8415120088556445230">"Сведения"</string>
     <string name="details_title" msgid="2611396603977441273">"Элементов %1$d из %2$d:"</string>
     <string name="close" msgid="5585646033158453043">"Закрыть"</string>
-    <string name="switch_to_camera" msgid="7280111806675169992">"Переключиться на камеру"</string>
+    <string name="switch_to_camera" msgid="7280111806675169992">"Режим \"Фото\""</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"Выбрано: %1$d"</item>
     <item quantity="one" msgid="2478365152745637768">"Выбрано: %1$d"</item>
