@@ -292,7 +292,7 @@ public class AlbumSetPage extends ActivityState implements
 
     private void clearLoadingBit(int loadingBit) {
         mLoadingBits &= ~loadingBit;
-        if (mLoadingBits == 0) {
+        if (mLoadingBits == 0 && mIsActive) {
             GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
 
             // Only show toast when there's no album and we are going to finish
@@ -308,7 +308,7 @@ public class AlbumSetPage extends ActivityState implements
     }
 
     private void setLoadingBit(int loadingBit) {
-        if (mLoadingBits == 0) {
+        if (mLoadingBits == 0 && mIsActive) {
             GalleryUtils.setSpinnerVisibility((Activity) mActivity, true);
         }
         mLoadingBits |= loadingBit;
@@ -330,6 +330,7 @@ public class AlbumSetPage extends ActivityState implements
             mSyncTask = null;
             clearLoadingBit(BIT_LOADING_SYNC);
         }
+        GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
     }
 
     @Override
@@ -614,9 +615,8 @@ public class AlbumSetPage extends ActivityState implements
                 if (resultCode == MediaSet.SYNC_RESULT_SUCCESS) {
                     mInitialSynced = true;
                 }
-                if (!mIsActive) return;
                 clearLoadingBit(BIT_LOADING_SYNC);
-                if (resultCode == MediaSet.SYNC_RESULT_ERROR) {
+                if (resultCode == MediaSet.SYNC_RESULT_ERROR && mIsActive) {
                     Toast.makeText((Context) mActivity, R.string.sync_album_set_error,
                             Toast.LENGTH_LONG).show();
                 }
@@ -630,7 +630,6 @@ public class AlbumSetPage extends ActivityState implements
         }
 
         public void onLoadingFinished() {
-            if (!mIsActive) return;
             clearLoadingBit(BIT_LOADING_RELOAD);
         }
     }
