@@ -349,8 +349,10 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         if (mSyncTask != null) {
             mSyncTask.cancel();
             mSyncTask = null;
+            clearLoadingBit(BIT_LOADING_SYNC);
         }
         mActionModeHandler.pause();
+        GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
     }
 
     @Override
@@ -572,9 +574,8 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 if (resultCode == MediaSet.SYNC_RESULT_SUCCESS) {
                     mInitialSynced = true;
                 }
-                if (!mIsActive) return;
                 clearLoadingBit(BIT_LOADING_SYNC);
-                if (resultCode == MediaSet.SYNC_RESULT_ERROR) {
+                if (resultCode == MediaSet.SYNC_RESULT_ERROR && mIsActive) {
                     Toast.makeText((Context) mActivity, R.string.sync_album_error,
                             Toast.LENGTH_LONG).show();
                 }
@@ -583,7 +584,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     }
 
     private void setLoadingBit(int loadTaskBit) {
-        if (mLoadingBits == 0) {
+        if (mLoadingBits == 0 && mIsActive) {
             GalleryUtils.setSpinnerVisibility((Activity) mActivity, true);
         }
         mLoadingBits |= loadTaskBit;
@@ -591,7 +592,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
     private void clearLoadingBit(int loadTaskBit) {
         mLoadingBits &= ~loadTaskBit;
-        if (mLoadingBits == 0) {
+        if (mLoadingBits == 0 && mIsActive) {
             GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
 
             if (mAlbumDataAdapter.size() == 0) {
@@ -610,7 +611,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
         @Override
         public void onLoadingFinished() {
-            if (!mIsActive) return;
             clearLoadingBit(BIT_LOADING_RELOAD);
         }
     }

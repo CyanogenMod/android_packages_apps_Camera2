@@ -159,7 +159,7 @@ public class StateManager {
     }
 
     void finishState(ActivityState state) {
-        Log.v(TAG, "finishState " + state.getClass());
+        Log.v(TAG, "finishState " + state);
         if (state != mStack.peek().activityState) {
             if (state.isDestroyed()) {
                 Log.d(TAG, "The state is already destroyed");
