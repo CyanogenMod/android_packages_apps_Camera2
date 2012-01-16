@@ -159,11 +159,16 @@ public class DataManager {
             return null;
         }
 
-        MediaObject object = source.createMediaObject(path);
-        if (object == null) {
-            Log.w(TAG, "cannot create media object: " + path);
+        try {
+            MediaObject object = source.createMediaObject(path);
+            if (object == null) {
+                Log.w(TAG, "cannot create media object: " + path);
+            }
+            return object;
+        } catch (Throwable t) {
+            Log.w(TAG, "exception in creating media object: " + path, t);
+            return null;
         }
-        return object;
     }
 
     public MediaObject getMediaObject(String s) {
