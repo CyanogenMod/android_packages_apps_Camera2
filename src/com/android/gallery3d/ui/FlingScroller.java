@@ -114,13 +114,23 @@ class FlingScroller {
     }
 
     private int getX(float f) {
-        return (int) Utils.clamp(
-                Math.round(mStartX + f * mDistance * mCosAngle), mMinX, mMaxX);
+        int r = (int) Math.round(mStartX + f * mDistance * mCosAngle);
+        if (mCosAngle > 0 && mStartX <= mMaxX) {
+            r = Math.min(r, mMaxX);
+        } else if (mCosAngle < 0 && mStartX >= mMinX) {
+            r = Math.max(r, mMinX);
+        }
+        return r;
     }
 
     private int getY(float f) {
-        return (int) Utils.clamp(
-                Math.round(mStartY + f * mDistance * mSinAngle), mMinY, mMaxY);
+        int r = (int) Math.round(mStartY + f * mDistance * mSinAngle);
+        if (mSinAngle > 0 && mStartY <= mMaxY) {
+            r = Math.min(r, mMaxY);
+        } else if (mSinAngle < 0 && mStartY >= mMinY) {
+            r = Math.max(r, mMinY);
+        }
+        return r;
     }
 
     private double getV(float progress) {
