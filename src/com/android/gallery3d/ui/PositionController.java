@@ -21,6 +21,7 @@ import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.ui.PositionRepository.Position;
+import com.android.gallery3d.util.GalleryUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -61,6 +62,7 @@ class PositionController {
     // We try to scale up the image to fill the screen. But in order not to
     // scale too much for small icons, we limit the max up-scaling factor here.
     private static final float SCALE_LIMIT = 4;
+    private static final int sHorizontalSlack = GalleryUtils.dpToPixel(12);
 
     private PhotoView mViewer;
     private EdgeView mEdgeView;
@@ -543,7 +545,7 @@ class PositionController {
             scale = Utils.clamp(mCurrentScale, mScaleMin, mScaleMax);
         }
 
-        calculateStableBound(scale);
+        calculateStableBound(scale, sHorizontalSlack);
         int x = Utils.clamp(mCurrentX, mBoundLeft, mBoundRight);
         int y = Utils.clamp(mCurrentY, mBoundTop, mBoundBottom);
 
@@ -570,10 +572,17 @@ class PositionController {
     //
     // The results are stored in mBound{Left/Right/Top/Bottom}.
     //
+    // An extra parameter "horizontalSlack" (which has the value of 0 usually)
+    // is used to extend the stable region by some pixels on each side
+    // horizontally.
     private void calculateStableBound(float scale) {
+        calculateStableBound(scale, 0f);
+    }
+
+    private void calculateStableBound(float scale, float horizontalSlack) {
         // The number of pixels between the center of the view
         // and the edge when the edge is aligned.
-        mBoundLeft = (int) Math.ceil(mViewW / (2 * scale));
+        mBoundLeft = (int) Math.ceil((mViewW - horizontalSlack) / (2 * scale));
         mBoundRight = mImageW - mBoundLeft;
         mBoundTop = (int) Math.ceil(mViewH / (2 * scale));
         mBoundBottom = mImageH - mBoundTop;
