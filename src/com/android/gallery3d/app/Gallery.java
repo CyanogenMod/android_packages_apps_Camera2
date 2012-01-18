@@ -201,6 +201,14 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
                             albumPath.toString());
                 }
                 data.putString(PhotoPage.KEY_MEDIA_ITEM_PATH, itemPath.toString());
+
+                // Displays the filename as title, which is passed through intent from other apps.
+                // If other apps don't set this value, just display empty string.
+                // TODO: modify the javadoc of android.content.Intent.EXTRA_TITLE to include this
+                // usage
+                final String title = intent.getStringExtra(Intent.EXTRA_TITLE);
+                setTitle((title != null) ? title : "");
+
                 getStateManager().startState(PhotoPage.class, data);
             }
         }
