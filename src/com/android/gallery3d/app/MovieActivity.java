@@ -85,26 +85,15 @@ public class MovieActivity extends Activity {
     }
 
     private void initializeActionBar(Intent intent) {
+        mUri = intent.getData();
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
                 ActionBar.DISPLAY_HOME_AS_UP);
-        String title = intent.getStringExtra(Intent.EXTRA_TITLE);
-        mUri = intent.getData();
-        if (title == null) {
-            Cursor cursor = null;
-            try {
-                cursor = getContentResolver().query(mUri,
-                        new String[] {VideoColumns.TITLE}, null, null, null);
-                if (cursor != null && cursor.moveToNext()) {
-                    title = cursor.getString(0);
-                }
-            } catch (Throwable t) {
-                Log.w(TAG, "cannot get title from: " + intent.getDataString(), t);
-            } finally {
-                if (cursor != null) cursor.close();
-            }
-        }
-        if (title != null) actionBar.setTitle(title);
+
+        // Displays the filename as title, which is passed through intent from other apps.
+        // If other apps don't set this value, just display empty string.
+        final String title = intent.getStringExtra(Intent.EXTRA_TITLE);
+        actionBar.setTitle((title != null) ? title : "");
     }
 
     @Override
