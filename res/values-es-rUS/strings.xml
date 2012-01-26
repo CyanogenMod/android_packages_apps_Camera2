@@ -53,7 +53,7 @@
     <string name="slideshow" msgid="4355906903247112975">"Presentación de diapositivas"</string>
     <string name="details" msgid="8415120088556445230">"Detalles"</string>
     <string name="details_title" msgid="2611396603977441273">"%1$d de %2$d elementos:"</string>
-    <string name="close" msgid="5585646033158453043">"Cerca"</string>
+    <string name="close" msgid="5585646033158453043">"Cerrar"</string>
     <string name="switch_to_camera" msgid="7280111806675169992">"Cambiar a cámara"</string>
   <plurals name="number_of_items_selected">
     <item quantity="zero" msgid="2142579311530586258">"%1$d seleccionado(s)"</item>
@@ -155,8 +155,8 @@
     <string name="widget_type" msgid="1364653978966343448">"Elegir imágenes"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Presentación de diapositivas"</string>
     <string name="albums" msgid="7320787705180057947">"Álbumes"</string>
-    <string name="times" msgid="2023033894889499219">"Horarios"</string>
-    <string name="locations" msgid="6649297994083130305">"Ubicaciones"</string>
+    <string name="times" msgid="2023033894889499219">"Fecha"</string>
+    <string name="locations" msgid="6649297994083130305">"Ubicación"</string>
     <string name="people" msgid="4114003823747292747">"Personas"</string>
     <string name="tags" msgid="5539648765482935955">"Etiquetas"</string>
     <string name="group_by" msgid="4308299657902209357">"Agrupar por"</string>
