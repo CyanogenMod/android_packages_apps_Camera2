@@ -165,5 +165,5 @@
     <string name="folder_camera" msgid="4714658994809533480">"Kaamera"</string>
     <string name="folder_download" msgid="7186215137642323932">"Alla laaditud"</string>
     <string name="folder_imported" msgid="2773581395524747099">"Imporditud"</string>
-    <string name="folder_screenshot" msgid="7200396565864213450">"Kuvatõmmis"</string>
+    <string name="folder_screenshot" msgid="7200396565864213450">"Ekraanipilt"</string>
 </resources>
