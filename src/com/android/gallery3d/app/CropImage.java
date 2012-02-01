@@ -708,7 +708,7 @@ public class CropImage extends AbstractGalleryActivity {
             BitmapRegionDecoder regionDecoder) {
 
         if (regionDecoder == null) {
-            Toast.makeText(this, "fail to load image", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.fail_to_load_image, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -734,7 +734,7 @@ public class CropImage extends AbstractGalleryActivity {
 
     private void onBitmapAvailable(Bitmap bitmap) {
         if (bitmap == null) {
-            Toast.makeText(this, "fail to load image", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.fail_to_load_image, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
