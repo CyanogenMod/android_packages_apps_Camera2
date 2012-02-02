@@ -29,6 +29,8 @@
     <string name="resume_playing_resume" msgid="3847915469173852416">"Nadaljuj predvajanje"</string>
     <string name="loading" msgid="7038208555304563571">"Prenos …"</string>
     <string name="fail_to_load" msgid="8394392853646664505">"Ni bilo mogoče naložiti"</string>
+    <!-- no translation found for fail_to_load_image (6155388718549782425) -->
+    <skip />
     <string name="no_thumbnail" msgid="284723185546429750">"Ni sličice"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Začni znova"</string>
     <string name="crop_save_text" msgid="4972430481677741184">"Obreži"</string>
