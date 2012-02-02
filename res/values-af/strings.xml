@@ -29,6 +29,8 @@
     <string name="resume_playing_resume" msgid="3847915469173852416">"Speel verder"</string>
     <string name="loading" msgid="7038208555304563571">"Laai tans…"</string>
     <string name="fail_to_load" msgid="8394392853646664505">"Kon nie laai nie"</string>
+    <!-- no translation found for fail_to_load_image (6155388718549782425) -->
+    <skip />
     <string name="no_thumbnail" msgid="284723185546429750">"Geen kleinkiekie nie"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Begin van voor af"</string>
     <string name="crop_save_text" msgid="4972430481677741184">"Snoei"</string>
