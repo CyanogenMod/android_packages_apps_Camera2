@@ -34,6 +34,8 @@
     <skip />
     <!-- no translation found for fail_to_load (8394392853646664505) -->
     <skip />
+    <!-- no translation found for fail_to_load_image (6155388718549782425) -->
+    <skip />
     <!-- no translation found for no_thumbnail (284723185546429750) -->
     <skip />
     <string name="resume_playing_restart" msgid="5471008499835769292">"Cumenzar"</string>
