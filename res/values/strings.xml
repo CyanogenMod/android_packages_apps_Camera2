@@ -48,6 +48,10 @@
          [CHAR LIMIT=50]-->
     <string name="fail_to_load">Couldn\'t load</string>
 
+    <!-- Used in a toast message when an image fails to be loaded
+         [CHAR LIMIT=50]-->
+    <string name="fail_to_load_image">Couldn\'t load the image</string>
+
     <!-- Displayed in place of the picture when we fail to get the thumbnail of it.
          [CHAR LIMIT=50]-->
     <string name="no_thumbnail">No thumbnail</string>
