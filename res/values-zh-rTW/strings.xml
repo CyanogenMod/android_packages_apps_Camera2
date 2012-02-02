@@ -29,6 +29,8 @@
     <string name="resume_playing_resume" msgid="3847915469173852416">"繼續播放"</string>
     <string name="loading" msgid="7038208555304563571">"載入中..."</string>
     <string name="fail_to_load" msgid="8394392853646664505">"無法載入"</string>
+    <!-- no translation found for fail_to_load_image (6155388718549782425) -->
+    <skip />
     <string name="no_thumbnail" msgid="284723185546429750">"無縮圖"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"重新開始"</string>
     <string name="crop_save_text" msgid="4972430481677741184">"裁剪"</string>
