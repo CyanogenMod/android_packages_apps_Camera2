@@ -33,7 +33,7 @@
     <skip />
     <string name="no_thumbnail" msgid="284723185546429750">"Geen miniatuur"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Opnieuw starten"</string>
-    <string name="crop_save_text" msgid="4972430481677741184">"Bijsnijden"</string>
+    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Raak een gezicht aan om te beginnen."</string>
     <string name="saving_image" msgid="7270334453636349407">"Foto opslaan..."</string>
     <string name="save_error" msgid="6857408774183654970">"Kan bijgesneden afbeelding niet opslaan."</string>

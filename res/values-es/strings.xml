@@ -33,7 +33,7 @@
     <skip />
     <string name="no_thumbnail" msgid="284723185546429750">"No hay miniaturas."</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Volver a reproducir"</string>
-    <string name="crop_save_text" msgid="4972430481677741184">"Recortar"</string>
+    <string name="crop_save_text" msgid="152200178986698300">"Aceptar"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Toca una cara para comenzar."</string>
     <string name="saving_image" msgid="7270334453636349407">"Guardando imagen..."</string>
     <string name="save_error" msgid="6857408774183654970">"Error al guardar la imagen recortada"</string>

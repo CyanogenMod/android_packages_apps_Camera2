@@ -33,7 +33,7 @@
     <skip />
     <string name="no_thumbnail" msgid="284723185546429750">"कोई थंबनेल नहीं"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"पुन: प्रारंभ करें"</string>
-    <string name="crop_save_text" msgid="4972430481677741184">"काट-छांट करें"</string>
+    <string name="crop_save_text" msgid="152200178986698300">"ठीक"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"शुरू करने के लिए कोई चेहरा स्‍पर्श करें."</string>
     <string name="saving_image" msgid="7270334453636349407">"चित्र सहेज रहा है…"</string>
     <string name="save_error" msgid="6857408774183654970">"काट-छांट की गई छवि को नहीं सहेज सका."</string>

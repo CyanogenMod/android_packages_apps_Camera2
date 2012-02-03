@@ -33,7 +33,7 @@
     <skip />
     <string name="no_thumbnail" msgid="284723185546429750">"ምንም ጥፍርአከል የለም"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"እንደገና ጀምር"</string>
-    <string name="crop_save_text" msgid="4972430481677741184">"ከርክም"</string>
+    <string name="crop_save_text" msgid="152200178986698300">"እሺ"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"ለመጀመር ፊት ንካ::"</string>
     <string name="saving_image" msgid="7270334453636349407">"ምስል በማስቀመጥ ላይ..."</string>
     <string name="save_error" msgid="6857408774183654970">"የተቀመቀመውን ምስል ማስቀመጥ አልተቻለም::"</string>
