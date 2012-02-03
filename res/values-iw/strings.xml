@@ -33,7 +33,7 @@
     <skip />
     <string name="no_thumbnail" msgid="284723185546429750">"ללא תמונה ממוזערת"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"התחל מחדש"</string>
-    <string name="crop_save_text" msgid="4972430481677741184">"חתוך"</string>
+    <string name="crop_save_text" msgid="152200178986698300">"אישור"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"גע בפנים כלשהם כדי להתחיל."</string>
     <string name="saving_image" msgid="7270334453636349407">"שומר תמונה..."</string>
     <string name="save_error" msgid="6857408774183654970">"לא ניתן לשמור את התמונה החתוכה."</string>

@@ -33,7 +33,7 @@
     <skip />
     <string name="no_thumbnail" msgid="284723185546429750">"Không có hình thu nhỏ"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Bắt đầu lại"</string>
-    <string name="crop_save_text" msgid="4972430481677741184">"Cắt"</string>
+    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Chạm vào một khuôn  mặt để bắt đầu."</string>
     <string name="saving_image" msgid="7270334453636349407">"Đang lưu ảnh…"</string>
     <string name="save_error" msgid="6857408774183654970">"Không thể lưu hình ảnh được cắt."</string>

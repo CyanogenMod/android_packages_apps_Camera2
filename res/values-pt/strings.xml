@@ -33,7 +33,7 @@
     <skip />
     <string name="no_thumbnail" msgid="284723185546429750">"Sem miniatura"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Reiniciar"</string>
-    <string name="crop_save_text" msgid="4972430481677741184">"Cortar"</string>
+    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Toque em um rosto para começar."</string>
     <string name="saving_image" msgid="7270334453636349407">"Salvando imagem…"</string>
     <string name="save_error" msgid="6857408774183654970">"Não é possível salvar a imagem cortada."</string>

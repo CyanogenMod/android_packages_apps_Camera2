@@ -33,7 +33,7 @@
     <skip />
     <string name="no_thumbnail" msgid="284723185546429750">"ไม่มีภาพขนาดย่อ"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"เริ่มต้นใหม่"</string>
-    <string name="crop_save_text" msgid="4972430481677741184">"ครอบตัด"</string>
+    <string name="crop_save_text" msgid="152200178986698300">"ตกลง"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"แตะใบหน้าเพื่อเริ่มต้น"</string>
     <string name="saving_image" msgid="7270334453636349407">"กำลังบันทึกภาพ..."</string>
     <string name="save_error" msgid="6857408774183654970">"ไม่สามารถบันทึกภาพที่ตัดได้"</string>
