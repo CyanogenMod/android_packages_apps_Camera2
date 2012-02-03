@@ -29,11 +29,10 @@
     <string name="resume_playing_resume" msgid="3847915469173852416">"Συνέχιση αναπαραγωγής"</string>
     <string name="loading" msgid="7038208555304563571">"Φόρτωση..."</string>
     <string name="fail_to_load" msgid="8394392853646664505">"Δεν ήταν δυνατή η φόρτωση"</string>
-    <!-- no translation found for fail_to_load_image (6155388718549782425) -->
-    <skip />
+    <string name="fail_to_load_image" msgid="6155388718549782425">"Δεν ήταν δυνατή η φόρτωση της εικόνας"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Δεν υπάρχει μικρογραφία"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Έναρξη από την αρχή"</string>
-    <string name="crop_save_text" msgid="4972430481677741184">"Περικοπή"</string>
+    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Αγγίξτε κάποιο πρόσωπο για να ξεκινήσετε."</string>
     <string name="saving_image" msgid="7270334453636349407">"Αποθήκευση εικόνας..."</string>
     <string name="save_error" msgid="6857408774183654970">"Αδυναμία αποθήκευσης αποκομμένης εικόνας"</string>

@@ -33,7 +33,7 @@
     <skip />
     <string name="no_thumbnail" msgid="284723185546429750">"미리보기 이미지 없음"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"처음부터 보기"</string>
-    <string name="crop_save_text" msgid="4972430481677741184">"자르기"</string>
+    <string name="crop_save_text" msgid="152200178986698300">"확인"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"시작하려면 얼굴을 터치하세요."</string>
     <string name="saving_image" msgid="7270334453636349407">"사진 저장 중..."</string>
     <string name="save_error" msgid="6857408774183654970">"잘린 이미지를 저장하지 못했습니다."</string>
