@@ -10,7 +10,6 @@ LOCAL_JAVA_LIBRARIES := android.test.runner
 LOCAL_SRC_FILES := $(call all-java-files-under, src)
 
 LOCAL_PACKAGE_NAME := Gallery2Tests
-LOCAL_CERTIFICATE := media
 
 LOCAL_INSTRUMENTATION_FOR := Gallery2
 
