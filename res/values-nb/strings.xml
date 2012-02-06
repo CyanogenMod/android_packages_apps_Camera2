@@ -29,8 +29,7 @@
     <string name="resume_playing_resume" msgid="3847915469173852416">"Fortsett avspilling"</string>
     <string name="loading" msgid="7038208555304563571">"Laster inn ..."</string>
     <string name="fail_to_load" msgid="8394392853646664505">"Kunne ikke laste"</string>
-    <!-- no translation found for fail_to_load_image (6155388718549782425) -->
-    <skip />
+    <string name="fail_to_load_image" msgid="6155388718549782425">"Kunne ikke laste inn bildet"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Ingen miniatyrbilder"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Begynn på nytt"</string>
     <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
