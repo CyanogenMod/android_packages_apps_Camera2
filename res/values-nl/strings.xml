@@ -29,8 +29,7 @@
     <string name="resume_playing_resume" msgid="3847915469173852416">"Afspelen hervatten"</string>
     <string name="loading" msgid="7038208555304563571">"Laden..."</string>
     <string name="fail_to_load" msgid="8394392853646664505">"Kan niet laden"</string>
-    <!-- no translation found for fail_to_load_image (6155388718549782425) -->
-    <skip />
+    <string name="fail_to_load_image" msgid="6155388718549782425">"Kan de afbeelding niet laden"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Geen miniatuur"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Opnieuw starten"</string>
     <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
