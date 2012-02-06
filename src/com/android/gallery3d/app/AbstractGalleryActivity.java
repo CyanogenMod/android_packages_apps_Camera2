@@ -36,6 +36,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
 
 public class AbstractGalleryActivity extends Activity implements GalleryActivity {
     @SuppressWarnings("unused")
@@ -54,6 +56,12 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
     private IntentFilter mMountFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        toggleStatusBarByOrientation();
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         mGLRootView.lockRenderThread();
         try {
@@ -69,6 +77,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         super.onConfigurationChanged(config);
         mStateManager.onConfigurationChange(config);
         invalidateOptionsMenu();
+        toggleStatusBarByOrientation();
     }
 
     public Context getAndroidContext() {
@@ -202,5 +211,15 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
     @Override
     public GalleryActionBar getGalleryActionBar() {
         return null;
+    }
+
+    // Shows status bar in portrait view, hide in landscape view
+    private void toggleStatusBarByOrientation() {
+      Window win = getWindow();
+      if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+          win.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+      } else {
+          win.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+      }
     }
 }
