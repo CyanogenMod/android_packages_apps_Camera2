@@ -17,12 +17,15 @@
 package com.android.gallery3d.app;
 
 import android.app.Dialog;
+import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -196,18 +199,32 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
                 Path albumPath = dm.getDefaultSetOf(itemPath);
                 // TODO: Make this parameter public so other activities can reference it.
                 boolean singleItemOnly = intent.getBooleanExtra("SingleItemOnly", false);
-                if (!singleItemOnly && albumPath != null) {
-                    data.putString(PhotoPage.KEY_MEDIA_SET_PATH,
-                            albumPath.toString());
+                if (!singleItemOnly && (albumPath != null)) {
+                    data.putString(PhotoPage.KEY_MEDIA_SET_PATH, albumPath.toString());
                 }
                 data.putString(PhotoPage.KEY_MEDIA_ITEM_PATH, itemPath.toString());
 
-                // Displays the filename as title, which is passed through intent from other apps.
-                // If other apps don't set this value, just display empty string.
-                // TODO: modify the javadoc of android.content.Intent.EXTRA_TITLE to include this
-                // usage
-                final String title = intent.getStringExtra(Intent.EXTRA_TITLE);
-                setTitle((title != null) ? title : "");
+                // Displays the filename as title, reading the filename from the interface:
+                // {@link android.provider.OpenableColumns#DISPLAY_NAME}.
+                AsyncQueryHandler queryHandler = new AsyncQueryHandler(getContentResolver()) {
+                    @Override
+                    protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
+                        try {
+                            if ((cursor != null) && cursor.moveToFirst()) {
+                                String displayName = cursor.getString(0);
+
+                                // Just show empty title if other apps don't set DISPLAY_NAME
+                                setTitle((displayName == null) ? "" : displayName);
+                            } else {
+                                Log.i(TAG, "The caller app doesn't set DISPLAY_NAME.");
+                            }
+                        } finally {
+                            Utils.closeSilently(cursor);
+                        }
+                    }
+                };
+                queryHandler.startQuery(0, null, uri, new String[] {OpenableColumns.DISPLAY_NAME},
+                        null, null, null);
 
                 getStateManager().startState(PhotoPage.class, data);
             }
