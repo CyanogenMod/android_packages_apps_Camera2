@@ -18,7 +18,6 @@ package com.android.gallery3d.ui;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryActivity;
-import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.ui.PositionRepository.Position;
 
@@ -27,7 +26,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.os.Message;
-import android.os.SystemClock;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -244,6 +242,8 @@ public class PhotoView extends GLView {
         } else if (mModel.isFailedToLoad()) {
             mHandler.removeMessages(MSG_SHOW_LOADING);
             mLoadingState = LOADING_FAIL;
+            // We don't want the opening animation after loading failure
+            mOpenedItemPath = null;
         } else if (mLoadingState != LOADING_INIT) {
             mLoadingState = LOADING_INIT;
             mHandler.removeMessages(MSG_SHOW_LOADING);
