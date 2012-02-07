@@ -29,7 +29,7 @@
     <string name="resume_playing_resume" msgid="3847915469173852416">"Qalisa ukudlala"</string>
     <string name="loading" msgid="7038208555304563571">"Iyalayisha..."</string>
     <string name="fail_to_load" msgid="8394392853646664505">"Ayikwazanga ukulayisha."</string>
-    <string name="fail_to_load_image" msgid="6155388718549782425">"Iyehluleka ukulayisha umfanekiso"</string>
+    <string name="fail_to_load_image" msgid="6155388718549782425">"Ayikwazanga ukulayisha umfanekiso"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Asikho isithoombe esincane"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Qala phansi"</string>
     <string name="crop_save_text" msgid="152200178986698300">"Kulungile"</string>
