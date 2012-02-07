@@ -228,15 +228,14 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
         if (entry.screenNail == null) {
             entry.failToLoad = true;
-        } else {
-            if (mDataListener != null) {
-                mDataListener.onPhotoAvailable(version, false);
-            }
-            for (int i = -1; i <=1; ++i) {
-                if (version == getVersion(mCurrentIndex + i)) {
-                    if (i == 0) updateTileProvider(entry);
-                    mPhotoView.notifyImageInvalidated(i);
-                }
+        }
+        if (mDataListener != null) {
+            mDataListener.onPhotoAvailable(version, false);
+        }
+        for (int i = -1; i <= 1; ++i) {
+            if (version == getVersion(mCurrentIndex + i)) {
+                if (i == 0) updateTileProvider(entry);
+                mPhotoView.notifyImageInvalidated(i);
             }
         }
         updateImageRequests();
