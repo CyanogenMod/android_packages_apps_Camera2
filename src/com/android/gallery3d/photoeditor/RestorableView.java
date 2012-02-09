@@ -32,9 +32,6 @@ import java.util.Map.Entry;
  */
 public abstract class RestorableView extends FrameLayout {
 
-    private static final float ENABLED_ALPHA = 1;
-    private static final float DISABLED_ALPHA = 0.47f;
-
     private final HashMap<Integer, Runnable> clickRunnables = new HashMap<Integer, Runnable>();
     private final HashSet<Integer> changedViews = new HashSet<Integer>();
     private final LayoutInflater inflater;
@@ -92,9 +89,7 @@ public abstract class RestorableView extends FrameLayout {
     }
 
     public void setViewEnabled(int id, boolean enabled) {
-        View view = findViewById(id);
-        view.setEnabled(enabled);
-        view.setAlpha(enabled ? ENABLED_ALPHA : DISABLED_ALPHA);
+        findViewById(id).setEnabled(enabled);
         // Track views whose enabled status has been updated.
         changedViews.add(id);
     }
