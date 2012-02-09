@@ -23,19 +23,19 @@
         android:id="@+id/toggles"
         style="@style/EffectsMenuContainer">
 
-        <ImageButton
+        <com.android.gallery3d.photoeditor.ImageActionButton
             android:id="@+id/exposure_button"
             style="@style/EffectsMenuActionButton"
             android:src="@drawable/photoeditor_exposure"/>
-        <ImageButton
+        <com.android.gallery3d.photoeditor.ImageActionButton
             android:id="@+id/artistic_button"
             style="@style/EffectsMenuActionButton"
             android:src="@drawable/photoeditor_artistic"/>
-        <ImageButton
+        <com.android.gallery3d.photoeditor.ImageActionButton
             android:id="@+id/color_button"
             style="@style/EffectsMenuActionButton"
             android:src="@drawable/photoeditor_color"/>
-        <ImageButton
+        <com.android.gallery3d.photoeditor.ImageActionButton
             android:id="@+id/fix_button"
             style="@style/EffectsMenuActionButton"
             android:src="@drawable/photoeditor_fix"/>
