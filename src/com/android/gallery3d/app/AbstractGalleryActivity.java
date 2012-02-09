@@ -215,11 +215,11 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
 
     // Shows status bar in portrait view, hide in landscape view
     private void toggleStatusBarByOrientation() {
-      Window win = getWindow();
-      if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-          win.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-      } else {
-          win.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-      }
+        Window win = getWindow();
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            win.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        } else {
+            win.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
     }
 }
