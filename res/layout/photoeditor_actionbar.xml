@@ -36,11 +36,11 @@
 
     <LinearLayout style="@style/ActionBarLinearLayout" android:layout_alignParentRight="true">
 
-        <ImageButton
+        <com.android.gallery3d.photoeditor.ImageActionButton
             android:id="@+id/undo_button"
             style="@style/ImageActionButton"
             android:src="@drawable/photoeditor_undo"/>
-        <ImageButton
+        <com.android.gallery3d.photoeditor.ImageActionButton
             android:id="@+id/redo_button"
             style="@style/ImageActionButton"
             android:src="@drawable/photoeditor_redo"/>
@@ -54,7 +54,7 @@
                 style="@style/TextActionButton"
                 android:layout_width="fill_parent"
                 android:text="@string/save"/>
-            <ImageButton
+            <com.android.gallery3d.photoeditor.ImageActionButton
                 android:id="@+id/share_button"
                 style="@style/ImageActionButton"
                 android:layout_width="fill_parent"
