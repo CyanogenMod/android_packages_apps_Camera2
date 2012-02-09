@@ -28,7 +28,7 @@ import com.android.gallery3d.photoeditor.Photo;
 public class StraightenFilter extends Filter {
 
     public static final Creator<StraightenFilter> CREATOR = creatorOf(StraightenFilter.class);
-    public static final float MAX_DEGREES = 30.0f;
+    public static final float MAX_DEGREES = 45.0f;
 
     private float degrees;
 
