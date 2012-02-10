@@ -19,7 +19,7 @@
     <string name="photoeditor_name" msgid="4738587346771969697">"Studio ảnh"</string>
     <string name="loading_failure" msgid="5990741970574295950">"Không thể tải ảnh"</string>
     <string name="saving_failure" msgid="8596600582621364077">"Không thể lưu ảnh"</string>
-    <string name="photo_saved" msgid="3494363661299484657">"Ảnh đã được lưu vào anbom <xliff:g id="ALBUM_NAME">%s</xliff:g>"</string>
+    <string name="photo_saved" msgid="3494363661299484657">"Ảnh đã được lưu vào album <xliff:g id="ALBUM_NAME">%s</xliff:g>"</string>
     <string name="edited_photo_bucket_name" msgid="3777746536831799890">"Đã chỉnh sửa"</string>
     <string name="save_photo" msgid="3125109368779997862">"Lưu ảnh đã chỉnh sửa?"</string>
     <string name="yes" msgid="5402582493291792293">"Có"</string>
