@@ -25,7 +25,7 @@
     <string name="yes" msgid="5402582493291792293">"是"</string>
     <string name="no" msgid="5595408018304861875">"否"</string>
     <string name="save" msgid="5516670392524294967">"保存"</string>
-    <string name="autofix" msgid="1663414996270538748">"自动调整"</string>
+    <string name="autofix" msgid="1663414996270538748">"自动修正"</string>
     <string name="crop" msgid="7598378507763334041">"修剪"</string>
     <string name="crossprocess" msgid="4173724489001742342">"交叉冲印"</string>
     <string name="documentary" msgid="50396326708699797">"纪实"</string>
