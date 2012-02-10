@@ -39,7 +39,7 @@
     <string name="select_image" msgid="7841406150484742140">"Chọn ảnh"</string>
     <string name="select_video" msgid="4859510992798615076">"Chọn video"</string>
     <string name="select_item" msgid="2816923896202086390">"Chọn mục"</string>
-    <string name="select_album" msgid="1557063764849434077">"Chọn anbom"</string>
+    <string name="select_album" msgid="1557063764849434077">"Chọn album"</string>
     <string name="select_group" msgid="6744208543323307114">"Chọn nhóm"</string>
     <string name="set_image" msgid="2331476809308010401">"Đặt ảnh làm"</string>
     <string name="wallpaper" msgid="140165383777262070">"Đang đặt hình nền..."</string>
@@ -61,9 +61,9 @@
     <item quantity="other" msgid="754722656147810487">"%1$d mục được chọn"</item>
   </plurals>
   <plurals name="number_of_albums_selected">
-    <item quantity="zero" msgid="749292746814788132">"%1$d anbom được chọn"</item>
-    <item quantity="one" msgid="6184377003099987825">"%1$d anbom được chọn"</item>
-    <item quantity="other" msgid="53105607141906130">"%1$d anbom được chọn"</item>
+    <item quantity="zero" msgid="749292746814788132">"%1$d album được chọn"</item>
+    <item quantity="one" msgid="6184377003099987825">"%1$d album được chọn"</item>
+    <item quantity="other" msgid="53105607141906130">"%1$d album được chọn"</item>
   </plurals>
   <plurals name="number_of_groups_selected">
     <item quantity="zero" msgid="3466388370310869238">"%1$d nhóm được chọn"</item>
@@ -85,13 +85,13 @@
     <string name="group_by_time" msgid="9046168567717963573">"Theo thời gian"</string>
     <string name="group_by_tags" msgid="3568731317210676160">"Theo thẻ"</string>
     <string name="group_by_faces" msgid="1566351636227274906">"Theo người"</string>
-    <string name="group_by_album" msgid="1532818636053818958">"Theo anbom"</string>
+    <string name="group_by_album" msgid="1532818636053818958">"Theo album"</string>
     <string name="group_by_size" msgid="153766174950394155">"Theo kích thước"</string>
     <string name="untagged" msgid="7281481064509590402">"Không được gắn thẻ"</string>
     <string name="no_location" msgid="4043624857489331676">"Không có vị trí nào"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Không thể xác định một số vị trí do sự cố mạng."</string>
-    <string name="sync_album_error" msgid="2218733298953719785">"Không thể tải xuống các ảnh trong anbom này. Vui lòng thử lại sau."</string>
-    <string name="sync_album_set_error" msgid="9016732535181154028">"Không thể tải xuống danh sách anbom. Vui lòng thử lại sau."</string>
+    <string name="sync_album_error" msgid="2218733298953719785">"Không thể tải xuống các ảnh trong album này. Vui lòng thử lại sau."</string>
+    <string name="sync_album_set_error" msgid="9016732535181154028">"Không thể tải xuống danh sách album. Vui lòng thử lại sau."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Chỉ hình ảnh"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Chỉ video"</string>
     <string name="show_all" msgid="4780647751652596980">"Hình ảnh và video"</string>
@@ -99,7 +99,7 @@
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Không có ảnh."</string>
     <string name="crop_saved" msgid="1062612625032731770">"Đã lưu hình ảnh được cắt vào Tải xuống."</string>
     <string name="crop_not_saved" msgid="3400773981839556">"Hình ảnh được cắt chưa được lưu."</string>
-    <string name="no_albums_alert" msgid="4111744447491690896">"Không có anbom nào."</string>
+    <string name="no_albums_alert" msgid="4111744447491690896">"Không có album nào."</string>
     <string name="empty_album" msgid="4542880442593595494">"O có hình ảnh/video nào."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Bài đăng"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Làm cho sẵn có khi ngoại tuyến"</string>
@@ -131,14 +131,14 @@
     <string name="flash_on" msgid="7891556231891837284">"Sử dụng flash"</string>
     <string name="flash_off" msgid="1445443413822680010">"Không có flash"</string>
   <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="2171596356101611086">"Đặt anbom khả dụng ở chế độ ngoại tuyến."</item>
-    <item quantity="other" msgid="4948604338155959389">"Đặt anbom khả dụng ở chế độ ngoại tuyến."</item>
+    <item quantity="one" msgid="2171596356101611086">"Đặt album khả dụng ở chế độ ngoại tuyến."</item>
+    <item quantity="other" msgid="4948604338155959389">"Đặt album khả dụng ở chế độ ngoại tuyến."</item>
   </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Mục này được lưu cục bộ và khả dụng ngoại tuyến."</string>
-    <string name="set_label_all_albums" msgid="4581863582996336783">"Tất cả anbom"</string>
-    <string name="set_label_local_albums" msgid="6698133661656266702">"Anbom cục bộ"</string>
+    <string name="set_label_all_albums" msgid="4581863582996336783">"Tất cả album"</string>
+    <string name="set_label_local_albums" msgid="6698133661656266702">"Album cục bộ"</string>
     <string name="set_label_mtp_devices" msgid="1283513183744896368">"Thiết bị MTP"</string>
-    <string name="set_label_picasa_albums" msgid="5356258354953935895">"Anbom Picasa"</string>
+    <string name="set_label_picasa_albums" msgid="5356258354953935895">"Album Picasa"</string>
     <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> trống"</string>
     <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> trở xuống"</string>
     <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> hoặc cao hơn"</string>
@@ -149,12 +149,12 @@
     <string name="camera_connected" msgid="916021826223448591">"Đã kết nối máy ảnh."</string>
     <string name="camera_disconnected" msgid="2100559901676329496">"Đã ngắt kết nối máy ảnh."</string>
     <string name="click_import" msgid="6407959065464291972">"Chạm vào đây để nhập"</string>
-    <string name="widget_type_album" msgid="6013045393140135468">"Chọn anbom"</string>
+    <string name="widget_type_album" msgid="6013045393140135468">"Chọn album"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Hiển thị ngẫu nhiên tất cả hình ảnh"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Chọn ảnh"</string>
     <string name="widget_type" msgid="1364653978966343448">"Chọn hình ảnh"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Trình chiếu"</string>
-    <string name="albums" msgid="7320787705180057947">"Anbom"</string>
+    <string name="albums" msgid="7320787705180057947">"Album"</string>
     <string name="times" msgid="2023033894889499219">"Lần"</string>
     <string name="locations" msgid="6649297994083130305">"Vị trí"</string>
     <string name="people" msgid="4114003823747292747">"Mọi người"</string>
