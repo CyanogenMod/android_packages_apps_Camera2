@@ -20,7 +20,8 @@
     <string name="gadget_title" msgid="259405922673466798">"Rom da maletgs"</string>
     <string name="details_ms" msgid="940634969189855292">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
-    <!-- outdated translation 3697303290960009886 -->     <string name="movie_view_label" msgid="3526526872644898229">"Films"</string>
+    <!-- no translation found for movie_view_label (3526526872644898229) -->
+    <skip />
     <string name="loading_video" msgid="4013492720121891585">"Chargiar il video…"</string>
     <!-- no translation found for loading_image (1200894415793838191) -->
     <skip />
@@ -36,8 +37,10 @@
     <!-- no translation found for no_thumbnail (284723185546429750) -->
     <skip />
     <string name="resume_playing_restart" msgid="5471008499835769292">"Cumenzar"</string>
-    <!-- outdated translation 8140440041190264400 -->     <string name="crop_save_text" msgid="4972430481677741184">"Memorisar"</string>
-    <!-- outdated translation 3127018992717032779 -->     <string name="multiface_crop_help" msgid="2554690102655855657">"Smatgai sin ina fatscha per cumenzar."</string>
+    <!-- no translation found for crop_save_text (4972430481677741184) -->
+    <skip />
+    <!-- no translation found for multiface_crop_help (2554690102655855657) -->
+    <skip />
     <string name="saving_image" msgid="7270334453636349407">"Memorisar il maletg..."</string>
     <!-- no translation found for save_error (6857408774183654970) -->
     <skip />
@@ -53,14 +56,18 @@
     <!-- no translation found for select_group (6744208543323307114) -->
     <skip />
     <string name="set_image" msgid="2331476809308010401">"Definir il maletg sco"</string>
-    <!-- outdated translation 9222901738515471972 -->     <string name="wallpaper" msgid="140165383777262070">"La culissa vegn configurada. Spetgai per plaschair..."</string>
+    <!-- no translation found for wallpaper (140165383777262070) -->
+    <skip />
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Culissa"</string>
     <string name="delete" msgid="2839695998251824487">"Stizzar"</string>
-    <!-- outdated translation 5731757674837098707 -->     <string name="confirm_delete" msgid="7358770022173660511">"Confermar il stizzar"</string>
+    <!-- no translation found for confirm_delete (7358770022173660511) -->
+    <skip />
     <string name="cancel" msgid="3637516880917356226">"Interrumper"</string>
     <string name="share" msgid="3619042788254195341">"Cundivider"</string>
-    <!-- outdated translation 8623593677101437957 -->     <string name="select_all" msgid="3403283025220282175">"Selecziunar tut"</string>
-    <!-- outdated translation 7397531298370285581 -->     <string name="deselect_all" msgid="5758897506061723684">"Deselecziunar tut"</string>
+    <!-- no translation found for select_all (3403283025220282175) -->
+    <skip />
+    <!-- no translation found for deselect_all (5758897506061723684) -->
+    <skip />
     <string name="slideshow" msgid="4355906903247112975">"Preschentaziun da dia"</string>
     <string name="details" msgid="8415120088556445230">"Detagls"</string>
     <!-- no translation found for details_title (2611396603977441273) -->
@@ -94,7 +101,8 @@
     <!-- no translation found for crop_action (3427470284074377001) -->
     <skip />
     <string name="set_as" msgid="3636764710790507868">"Definir sco"</string>
-    <!-- outdated translation 7917736494827857757 -->     <string name="video_err" msgid="7003051631792271009">"Impussibel da reproducir il video"</string>
+    <!-- no translation found for video_err (7003051631792271009) -->
+    <skip />
     <!-- no translation found for group_by_location (316641628989023253) -->
     <skip />
     <!-- no translation found for group_by_time (9046168567717963573) -->

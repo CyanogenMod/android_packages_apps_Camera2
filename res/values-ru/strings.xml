@@ -54,21 +54,21 @@
     <string name="details" msgid="8415120088556445230">"Сведения"</string>
     <string name="details_title" msgid="2611396603977441273">"Элементов %1$d из %2$d:"</string>
     <string name="close" msgid="5585646033158453043">"Закрыть"</string>
-    <string name="switch_to_camera" msgid="7280111806675169992">"Переключиться на камеру"</string>
+    <string name="switch_to_camera" msgid="7280111806675169992">"Режим \"Фото\""</string>
   <plurals name="number_of_items_selected">
-    <item quantity="zero" msgid="2142579311530586258">"Выбрано: %1$d"</item>
-    <item quantity="one" msgid="2478365152745637768">"Выбрано: %1$d"</item>
-    <item quantity="other" msgid="754722656147810487">"Выбрано: %1$d"</item>
+    <item quantity="zero" msgid="2142579311530586258">"%1$d"</item>
+    <item quantity="one" msgid="2478365152745637768">"%1$d"</item>
+    <item quantity="other" msgid="754722656147810487">"%1$d"</item>
   </plurals>
   <plurals name="number_of_albums_selected">
-    <item quantity="zero" msgid="749292746814788132">"Выбрано: %1$d"</item>
-    <item quantity="one" msgid="6184377003099987825">"Выбрано: %1$d"</item>
-    <item quantity="other" msgid="53105607141906130">"Выбрано: %1$d"</item>
+    <item quantity="zero" msgid="749292746814788132">"%1$d"</item>
+    <item quantity="one" msgid="6184377003099987825">"%1$d"</item>
+    <item quantity="other" msgid="53105607141906130">"%1$d"</item>
   </plurals>
   <plurals name="number_of_groups_selected">
-    <item quantity="zero" msgid="3466388370310869238">"Выбрано: %1$d"</item>
-    <item quantity="one" msgid="5030162638216034260">"Выбрано: %1$d"</item>
-    <item quantity="other" msgid="3512041363942842738">"Выбрано: %1$d"</item>
+    <item quantity="zero" msgid="3466388370310869238">"%1$d"</item>
+    <item quantity="one" msgid="5030162638216034260">"%1$d"</item>
+    <item quantity="other" msgid="3512041363942842738">"%1$d"</item>
   </plurals>
     <string name="show_on_map" msgid="6157544221201750980">"Показать на карте"</string>
     <string name="rotate_left" msgid="5888273317282539839">"Повернуть влево"</string>
