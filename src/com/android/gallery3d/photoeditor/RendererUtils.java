@@ -19,6 +19,7 @@ package com.android.gallery3d.photoeditor;
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
+import android.util.FloatMath;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -153,8 +154,8 @@ public class RendererUtils {
     public static void setRenderToRotate(RenderContext context, int srcWidth, int srcHeight,
             int dstWidth, int dstHeight, float degrees) {
         float radian = -degrees * DEGREE_TO_RADIAN;
-        float cosTheta = (float) Math.cos(radian);
-        float sinTheta = (float) Math.sin(radian);
+        float cosTheta = FloatMath.cos(radian);
+        float sinTheta = FloatMath.sin(radian);
         float cosWidth = cosTheta * srcWidth;
         float sinWidth = sinTheta * srcWidth;
         float cosHeight = cosTheta * srcHeight;
@@ -205,8 +206,8 @@ public class RendererUtils {
         System.arraycopy(base, 0, vertices, 0, vertices.length);
         if (horizontalDegrees % 180f != 0) {
             float radian = (horizontalDegrees - horizontalRounds * 180) * DEGREE_TO_RADIAN;
-            float cosTheta = (float) Math.cos(radian);
-            float sinTheta = (float) Math.sin(radian);
+            float cosTheta = FloatMath.cos(radian);
+            float sinTheta = FloatMath.sin(radian);
 
             float scale = length / (length + sinTheta * base[0]);
             vertices[0] = cosTheta * base[0] * scale;
@@ -223,8 +224,8 @@ public class RendererUtils {
 
         if (verticalDegrees % 180f != 0) {
             float radian = (verticalDegrees - verticalRounds * 180) * DEGREE_TO_RADIAN;
-            float cosTheta = (float) Math.cos(radian);
-            float sinTheta = (float) Math.sin(radian);
+            float cosTheta = FloatMath.cos(radian);
+            float sinTheta = FloatMath.sin(radian);
 
             float scale = length / (length + sinTheta * base[1]);
             vertices[0] = base[0] * scale;

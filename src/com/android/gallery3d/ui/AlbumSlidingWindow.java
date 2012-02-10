@@ -18,6 +18,7 @@ package com.android.gallery3d.ui;
 
 import android.graphics.Bitmap;
 import android.os.Message;
+import android.util.FloatMath;
 
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.BitmapUtils;
@@ -329,8 +330,8 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
             float scaley = mBoxHeight / (float) height;
             float scale = Math.min(scalex, scaley);
 
-            width = (int) Math.floor(width * scale);
-            height = (int) Math.floor(height * scale);
+            width = (int) FloatMath.floor(width * scale);
+            height = (int) FloatMath.floor(height * scale);
 
             // Now draw it
             if (pass == 0) {
