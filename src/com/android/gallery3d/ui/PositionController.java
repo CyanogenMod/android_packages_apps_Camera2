@@ -29,6 +29,7 @@ import android.graphics.Color;
 import android.graphics.RectF;
 import android.os.Message;
 import android.os.SystemClock;
+import android.util.FloatMath;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -406,7 +407,7 @@ class PositionController {
         // force it to be in the center.
         // (We do for height only, not width, because the user may
         // want to scroll to the previous/next image.)
-        if (Math.floor(mImageH * mToScale) <= mViewH) {
+        if (FloatMath.floor(mImageH * mToScale) <= mViewH) {
             mToY = mImageH / 2;
         }
 
@@ -582,19 +583,19 @@ class PositionController {
     private void calculateStableBound(float scale, float horizontalSlack) {
         // The number of pixels between the center of the view
         // and the edge when the edge is aligned.
-        mBoundLeft = (int) Math.ceil((mViewW - horizontalSlack) / (2 * scale));
+        mBoundLeft = (int) FloatMath.ceil((mViewW - horizontalSlack) / (2 * scale));
         mBoundRight = mImageW - mBoundLeft;
-        mBoundTop = (int) Math.ceil(mViewH / (2 * scale));
+        mBoundTop = (int) FloatMath.ceil(mViewH / (2 * scale));
         mBoundBottom = mImageH - mBoundTop;
 
         // If the scaled height is smaller than the view height,
         // force it to be in the center.
-        if (Math.floor(mImageH * scale) <= mViewH) {
+        if (FloatMath.floor(mImageH * scale) <= mViewH) {
             mBoundTop = mBoundBottom = mImageH / 2;
         }
 
         // Same for width
-        if (Math.floor(mImageW * scale) <= mViewW) {
+        if (FloatMath.floor(mImageW * scale) <= mViewW) {
             mBoundLeft = mBoundRight = mImageW / 2;
         }
     }
