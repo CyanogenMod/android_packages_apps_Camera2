@@ -215,8 +215,6 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
 
                                 // Just show empty title if other apps don't set DISPLAY_NAME
                                 setTitle((displayName == null) ? "" : displayName);
-                            } else {
-                                Log.i(TAG, "The caller app doesn't set DISPLAY_NAME.");
                             }
                         } finally {
                             Utils.closeSilently(cursor);
