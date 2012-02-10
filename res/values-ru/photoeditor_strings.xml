@@ -51,7 +51,7 @@
     <string name="straighten" msgid="5217801513491493491">"Выравнивание"</string>
     <string name="temperature" msgid="1607987938521534517">"Тепло"</string>
     <string name="tint" msgid="154435943863418434">"Оттенок"</string>
-    <string name="vignette" msgid="7648125924662648282">"Виньетка"</string>
+    <string name="vignette" msgid="7648125924662648282">"Виньетирование"</string>
     <string name="crop_tooltip" msgid="8794037869706891710">"Чтобы кадрировать фото, перетащите маркеры"</string>
     <string name="doodle_tooltip" msgid="2902117272374362915">"Рисуйте на фото пальцем"</string>
     <string name="flip_tooltip" msgid="2700943256714731737">"Чтобы отразить фото, перетащите его край"</string>
