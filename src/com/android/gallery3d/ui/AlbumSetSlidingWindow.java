@@ -19,7 +19,6 @@ package com.android.gallery3d.ui;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Message;
-import android.util.FloatMath;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryActivity;
@@ -382,8 +381,8 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
             float scaley = mBoxHeight / (float) height;
             float scale = Math.min(scalex, scaley);
 
-            width = (int) FloatMath.floor(width * scale);
-            height = (int) FloatMath.floor(height * scale);
+            width = (int) Math.floor(width * scale);
+            height = (int) Math.floor(height * scale);
 
             // Now draw it
             int sourceType = SelectionDrawer.DATASOURCE_TYPE_NOT_CATEGORIZED;

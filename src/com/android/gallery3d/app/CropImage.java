@@ -38,7 +38,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
-import android.util.FloatMath;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -555,7 +554,8 @@ public class CropImage extends AbstractGalleryActivity {
         }
 
         if (outputX * outputY > MAX_PIXEL_COUNT) {
-            float scale = FloatMath.sqrt((float) MAX_PIXEL_COUNT / outputX / outputY);
+            float scale = (float) Math.sqrt(
+                    (double) MAX_PIXEL_COUNT / outputX / outputY);
             Log.w(TAG, "scale down the cropped image: " + scale);
             outputX = Math.round(scale * outputX);
             outputY = Math.round(scale * outputY);
