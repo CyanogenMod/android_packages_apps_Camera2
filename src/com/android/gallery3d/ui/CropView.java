@@ -31,7 +31,6 @@ import android.graphics.RectF;
 import android.media.FaceDetector;
 import android.os.Handler;
 import android.os.Message;
-import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
@@ -757,7 +756,8 @@ public class CropView extends GLView {
         int rotation = mImageRotation;
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
-        float scale = FloatMath.sqrt((float) FACE_PIXEL_COUNT / (width * height));
+        float scale = (float) Math.sqrt(
+                (double) FACE_PIXEL_COUNT / (width * height));
 
         // faceBitmap is a correctly rotated bitmap, as viewed by a user.
         Bitmap faceBitmap;
