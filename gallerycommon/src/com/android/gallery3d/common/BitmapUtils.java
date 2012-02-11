@@ -23,6 +23,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Build;
+import android.util.FloatMath;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
@@ -71,7 +72,7 @@ public class BitmapUtils {
                 && minSideLength == UNCONSTRAINED) return 1;
 
         int lowerBound = (maxNumOfPixels == UNCONSTRAINED) ? 1 :
-                (int) Math.ceil(Math.sqrt((double) (w * h) / maxNumOfPixels));
+                (int) FloatMath.ceil(FloatMath.sqrt((float) (w * h) / maxNumOfPixels));
 
         if (minSideLength == UNCONSTRAINED) {
             return lowerBound;
@@ -95,7 +96,7 @@ public class BitmapUtils {
 
     // Fin the min x that 1 / x <= scale
     public static int computeSampleSizeLarger(float scale) {
-        int initialSize = (int) Math.floor(1f / scale);
+        int initialSize = (int) FloatMath.floor(1f / scale);
         if (initialSize <= 1) return 1;
 
         return initialSize <= 8
@@ -106,7 +107,7 @@ public class BitmapUtils {
     // Find the max x that 1 / x >= scale.
     public static int computeSampleSize(float scale) {
         Utils.assertTrue(scale > 0);
-        int initialSize = Math.max(1, (int) Math.ceil(1 / scale));
+        int initialSize = Math.max(1, (int) FloatMath.ceil(1 / scale));
         return initialSize <= 8
                 ? Utils.nextPowerOf2(initialSize)
                 : (initialSize + 7) / 8 * 8;
@@ -116,8 +117,7 @@ public class BitmapUtils {
             Bitmap bitmap, int targetPixels, boolean recycle) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
-        float scale = (float) Math.sqrt(
-                (double) targetPixels / (width * height));
+        float scale = FloatMath.sqrt((float) targetPixels / (width * height));
         if (scale >= 1.0f) return bitmap;
         return resizeBitmapByScale(bitmap, scale, recycle);
     }
