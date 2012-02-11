@@ -18,6 +18,7 @@ package com.android.gallery3d.app;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.AsyncQueryHandler;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
@@ -25,7 +26,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Video.VideoColumns;
+import android.provider.OpenableColumns;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +36,7 @@ import android.view.WindowManager;
 import android.widget.ShareActionProvider;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.common.Utils;
 
 /**
  * This activity plays a video from a specified URI.
@@ -86,14 +88,39 @@ public class MovieActivity extends Activity {
 
     private void initializeActionBar(Intent intent) {
         mUri = intent.getData();
-        ActionBar actionBar = getActionBar();
+        final ActionBar actionBar = getActionBar();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
                 ActionBar.DISPLAY_HOME_AS_UP);
 
-        // Displays the filename as title, which is passed through intent from other apps.
-        // If other apps don't set this value, just display empty string.
-        final String title = intent.getStringExtra(Intent.EXTRA_TITLE);
-        actionBar.setTitle((title != null) ? title : "");
+        String title = intent.getStringExtra(Intent.EXTRA_TITLE);
+        if (title != null) {
+            actionBar.setTitle(title);
+        } else {
+            // Displays the filename as title, reading the filename from the
+            // interface: {@link android.provider.OpenableColumns#DISPLAY_NAME}.
+            AsyncQueryHandler queryHandler =
+                    new AsyncQueryHandler(getContentResolver()) {
+                @Override
+                protected void onQueryComplete(int token, Object cookie,
+                        Cursor cursor) {
+                    try {
+                        if ((cursor != null) && cursor.moveToFirst()) {
+                            String displayName = cursor.getString(0);
+
+                            // Just show empty title if other apps don't set
+                            // DISPLAY_NAME
+                            actionBar.setTitle((displayName == null) ? "" :
+                                    displayName);
+                        }
+                    } finally {
+                        Utils.closeSilently(cursor);
+                    }
+                }
+            };
+            queryHandler.startQuery(0, null, mUri,
+                    new String[] {OpenableColumns.DISPLAY_NAME}, null, null,
+                    null);
+        }
     }
 
     @Override
