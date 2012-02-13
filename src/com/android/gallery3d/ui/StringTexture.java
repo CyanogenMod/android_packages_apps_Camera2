@@ -21,6 +21,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Typeface;
+import android.util.FloatMath;
 import android.text.TextPaint;
 import android.text.TextUtils;
 
@@ -69,7 +70,7 @@ class StringTexture extends CanvasTexture {
 
     private static StringTexture newInstance(String text, TextPaint paint) {
         FontMetricsInt metrics = paint.getFontMetricsInt();
-        int width = (int) Math.ceil(paint.measureText(text));
+        int width = (int) FloatMath.ceil(paint.measureText(text));
         int height = metrics.bottom - metrics.top;
         // The texture size needs to be at least 1x1.
         if (width <= 0) width = 1;
