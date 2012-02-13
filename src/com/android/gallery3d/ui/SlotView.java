@@ -735,7 +735,8 @@ public class SlotView extends GLView {
             setCenterIndex(mStartIndex);
             mStartIndex = INDEX_NONE;
         }
-        updateScrollPosition(WIDE ? mScrollX : mScrollY, true);
+        // Reset the scroll position to avoid scrolling over the updated limit.
+        setScrollPosition(WIDE ? mScrollX : mScrollY);
         return changed;
     }
 
