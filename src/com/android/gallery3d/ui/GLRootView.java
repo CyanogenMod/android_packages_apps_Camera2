@@ -19,6 +19,7 @@ package com.android.gallery3d.ui;
 import com.android.gallery3d.anim.CanvasAnimation;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.Profile;
 
 import android.app.Activity;
 import android.content.Context;
@@ -59,6 +60,8 @@ public class GLRootView extends GLSurfaceView
 
     private static final boolean DEBUG_DRAWING_STAT = false;
 
+    private static final boolean DEBUG_PROFILE = false;
+
     private static final int FLAG_INITIALIZED = 1;
     private static final int FLAG_NEED_LAYOUT = 2;
 
@@ -87,7 +90,6 @@ public class GLRootView extends GLSurfaceView
 
     private final ReentrantLock mRenderLock = new ReentrantLock();
 
-    private static final int TARGET_FRAME_TIME = 16;
     private long mLastDrawFinishTime;
     private boolean mInDownState = false;
 
@@ -219,10 +221,10 @@ public class GLRootView extends GLSurfaceView
         }
         mGL = gl;
         mCanvas = new GLCanvasImpl(gl);
-        if (!DEBUG_FPS) {
-            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        } else {
+        if (DEBUG_FPS || DEBUG_PROFILE) {
             setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        } else {
+            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         }
     }
 
@@ -237,6 +239,10 @@ public class GLRootView extends GLSurfaceView
                 + ", gl10: " + gl1.toString());
         Process.setThreadPriority(Process.THREAD_PRIORITY_DISPLAY);
         GalleryUtils.setRenderThread();
+        if (DEBUG_PROFILE) {
+            Log.d(TAG, "Start profiling");
+            Profile.enable(20);  // take a sample every 20ms
+        }
         GL11 gl = (GL11) gl1;
         Utils.assertTrue(mGL == gl);
 
@@ -261,21 +267,31 @@ public class GLRootView extends GLSurfaceView
 
     @Override
     public void onDrawFrame(GL10 gl) {
+        long t0;
+        if (DEBUG_PROFILE) {
+            Profile.hold();
+            t0 = System.nanoTime();
+        }
         mRenderLock.lock();
         try {
             onDrawFrameLocked(gl);
         } finally {
             mRenderLock.unlock();
         }
-        long end = SystemClock.uptimeMillis();
+        if (DEBUG_PROFILE) {
+            long t = System.nanoTime();
+            long durationInMs = (t - mLastDrawFinishTime) / 1000000;
+            long durationDrawInMs = (t - t0) / 1000000;
+            mLastDrawFinishTime = t;
 
-        if (mLastDrawFinishTime != 0) {
-            long wait = mLastDrawFinishTime + TARGET_FRAME_TIME - end;
-            if (wait > 0) {
-                SystemClock.sleep(wait);
+            if (durationInMs > 34) {  // 34ms -> we skipped at least 2 frames
+                Log.v(TAG, "----- SLOW (" + durationDrawInMs + "/" +
+                        durationInMs + ") -----");
+                Profile.commit();
+            } else {
+                Profile.drop();
             }
         }
-        mLastDrawFinishTime = SystemClock.uptimeMillis();
     }
 
     private void onDrawFrameLocked(GL10 gl) {
@@ -410,5 +426,16 @@ public class GLRootView extends GLSurfaceView
     @Override
     public void unlockRenderThread() {
         mRenderLock.unlock();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (DEBUG_PROFILE) {
+            Log.d(TAG, "Stop profiling");
+            Profile.disableAll();
+            Profile.dumpToFile("/sdcard/gallery.prof");
+            Profile.reset();
+        }
     }
 }
