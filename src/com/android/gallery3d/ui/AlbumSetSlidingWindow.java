@@ -550,7 +550,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         }
 
         @Override
-        public long getIdentity() {
+        public int getIdentity() {
             return System.identityHashCode(this);
         }
     }

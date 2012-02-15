@@ -776,8 +776,8 @@ public class PhotoView extends GLView {
     public Position retrieveSavedPosition() {
         if (mOpenedItemPath != null) {
             Position position = PositionRepository
-                    .getInstance(mActivity).get(Long.valueOf(
-                    System.identityHashCode(mOpenedItemPath)));
+                    .getInstance(mActivity).get(
+                    System.identityHashCode(mOpenedItemPath));
             mOpenedItemPath = null;
             return position;
         }

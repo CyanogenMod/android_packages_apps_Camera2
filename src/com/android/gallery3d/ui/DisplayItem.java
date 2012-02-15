@@ -37,7 +37,7 @@ public abstract class DisplayItem {
 
     public abstract int render(GLCanvas canvas, int pass);
 
-    public abstract long getIdentity();
+    public abstract int getIdentity();
 
     public int getRotation() {
         return 0;
