@@ -68,7 +68,7 @@ public class ProgressSpinner {
 
         canvas.save(GLCanvas.SAVE_FLAG_MATRIX);
 
-        canvas.translate(x + mWidth / 2, y + mHeight / 2, 0);
+        canvas.translate(x + mWidth / 2, y + mHeight / 2);
         canvas.rotate(mInnerDegree, 0, 0, 1);
         mOuter.draw(canvas, -mOuter.getWidth() / 2, -mOuter.getHeight() / 2);
         canvas.rotate(mOuterDegree - mInnerDegree, 0, 0, 1);
