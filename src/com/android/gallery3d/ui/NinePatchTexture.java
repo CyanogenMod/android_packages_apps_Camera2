@@ -26,8 +26,6 @@ import android.graphics.Rect;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import javax.microedition.khronos.opengles.GL11;
 
 // NinePatchTexture is a texture backed by a NinePatch resource.
@@ -39,8 +37,8 @@ public class NinePatchTexture extends ResourceTexture {
     @SuppressWarnings("unused")
     private static final String TAG = "NinePatchTexture";
     private NinePatchChunk mChunk;
-    private MyCacheMap<Long, NinePatchInstance> mInstanceCache =
-            new MyCacheMap<Long, NinePatchInstance>();
+    private SmallCache<NinePatchInstance> mInstanceCache
+            = new SmallCache<NinePatchInstance>();
 
     public NinePatchTexture(Context context, int resId) {
         super(context, resId);
@@ -77,39 +75,77 @@ public class NinePatchTexture extends ResourceTexture {
         return mChunk;
     }
 
-    private static class MyCacheMap<K, V> extends LinkedHashMap<K, V> {
-        private int CACHE_SIZE = 16;
-        private V mJustRemoved;
+    // This is a simple cache for a small number of things. Linear search
+    // is used because the cache is small. It also tries to remove less used
+    // item when the cache is full by moving the often-used items to the front.
+    private static class SmallCache<V> {
+        private static final int CACHE_SIZE = 16;
+        private static final int CACHE_SIZE_START_MOVE = CACHE_SIZE / 2;
+        private int[] mKey = new int[CACHE_SIZE];
+        private V[] mValue = (V[]) new Object[CACHE_SIZE];
+        private int mCount;  // number of items in this cache
 
-        public MyCacheMap() {
-            super(4, 0.75f, true);
-        }
-
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-            if (size() > CACHE_SIZE) {
-                mJustRemoved = eldest.getValue();
-                return true;
+        // Puts a value into the cache. If the cache is full, also returns
+        // a less used item, otherwise returns null.
+        public V put(int key, V value) {
+            if (mCount == CACHE_SIZE) {
+                V old = mValue[CACHE_SIZE - 1];  // remove the last item
+                mKey[CACHE_SIZE - 1] = key;
+                mValue[CACHE_SIZE - 1] = value;
+                return old;
+            } else {
+                mKey[mCount] = key;
+                mValue[mCount] = value;
+                mCount++;
+                return null;
             }
-            return false;
         }
 
-        public V getJustRemoved() {
-            V result = mJustRemoved;
-            mJustRemoved = null;
-            return result;
+        public V get(int key) {
+            for (int i = 0; i < mCount; i++) {
+                if (mKey[i] == key) {
+                    // Move the accessed item one position to the front, so it
+                    // will less likely to be removed when cache is full. Only
+                    // do this if the cache is starting to get full.
+                    if (mCount > CACHE_SIZE_START_MOVE && i > 0) {
+                        int tmpKey = mKey[i];
+                        mKey[i] = mKey[i - 1];
+                        mKey[i - 1] = tmpKey;
+
+                        V tmpValue = mValue[i];
+                        mValue[i] = mValue[i - 1];
+                        mValue[i - 1] = tmpValue;
+                    }
+                    return mValue[i];
+                }
+            }
+            return null;
+        }
+
+        public void clear() {
+            for (int i = 0; i < mCount; i++) {
+                mValue[i] = null;  // make sure it's can be garbage-collected.
+            }
+            mCount = 0;
+        }
+
+        public int size() {
+            return mCount;
+        }
+
+        public V valueAt(int i) {
+            return mValue[i];
         }
     }
 
     private NinePatchInstance findInstance(GLCanvas canvas, int w, int h) {
-        long key = w;
-        key = (key << 32) | h;
+        int key = w;
+        key = (key << 16) | h;
         NinePatchInstance instance = mInstanceCache.get(key);
 
         if (instance == null) {
             instance = new NinePatchInstance(this, w, h);
-            mInstanceCache.put(key, instance);
-            NinePatchInstance removed = mInstanceCache.getJustRemoved();
+            NinePatchInstance removed = mInstanceCache.put(key, instance);
             if (removed != null) {
                 removed.recycle(canvas);
             }
@@ -134,7 +170,9 @@ public class NinePatchTexture extends ResourceTexture {
         super.recycle();
         GLCanvas canvas = mCanvasRef == null ? null : mCanvasRef.get();
         if (canvas == null) return;
-        for (NinePatchInstance instance : mInstanceCache.values()) {
+        int n = mInstanceCache.size();
+        for (int i = 0; i < n; i++) {
+            NinePatchInstance instance = mInstanceCache.valueAt(i);
             instance.recycle(canvas);
         }
         mInstanceCache.clear();

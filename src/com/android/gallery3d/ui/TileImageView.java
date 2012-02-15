@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.FloatMath;
+import android.util.LongSparseArray;
 
 import com.android.gallery3d.app.GalleryContext;
 import com.android.gallery3d.common.Utils;
@@ -29,7 +30,6 @@ import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.CancelListener;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -94,7 +94,7 @@ public class TileImageView extends GLView {
     private final RectF mSourceRect = new RectF();
     private final RectF mTargetRect = new RectF();
 
-    private final HashMap<Long, Tile> mActiveTiles = new HashMap<Long, Tile>();
+    private final LongSparseArray<Tile> mActiveTiles = new LongSparseArray<Tile>();
 
     // The following three queue is guarded by TileImageView.this
     private TileQueue mRecycledQueue = new TileQueue();
@@ -236,14 +236,15 @@ public class TileImageView extends GLView {
 
         // Recycle unused tiles: if the level of the active tile is outside the
         // range [fromLevel, endLevel) or not in the visible range.
-        Iterator<Map.Entry<Long, Tile>>
-                iter = mActiveTiles.entrySet().iterator();
-        while (iter.hasNext()) {
-            Tile tile = iter.next().getValue();
+        int n = mActiveTiles.size();
+        for (int i = 0; i < n; i++) {
+            Tile tile = mActiveTiles.valueAt(i);
             int level = tile.mTileLevel;
             if (level < fromLevel || level >= endLevel
                     || !range[level - fromLevel].contains(tile.mX, tile.mY)) {
-                iter.remove();
+                mActiveTiles.removeAt(i);
+                i--;
+                n--;
                 recycleTile(tile);
             }
         }
@@ -264,7 +265,9 @@ public class TileImageView extends GLView {
         mDecodeQueue.clean();
         mUploadQueue.clean();
         // TODO disable decoder
-        for (Tile tile : mActiveTiles.values()) {
+        int n = mActiveTiles.size();
+        for (int i = 0; i < n; i++) {
+            Tile tile = mActiveTiles.valueAt(i);
             recycleTile(tile);
         }
         mActiveTiles.clear();
@@ -330,11 +333,13 @@ public class TileImageView extends GLView {
             mTileDecoder = null;
         }
 
-        for (Tile texture : mActiveTiles.values()) {
+        int n = mActiveTiles.size();
+        for (int i = 0; i < n; i++) {
+            Tile texture = mActiveTiles.valueAt(i);
             texture.recycle();
         }
-        mTileRange.set(0, 0, 0, 0);
         mActiveTiles.clear();
+        mTileRange.set(0, 0, 0, 0);
 
         synchronized (this) {
             mUploadQueue.clean();
@@ -405,7 +410,9 @@ public class TileImageView extends GLView {
 
     private void uploadBackgroundTiles(GLCanvas canvas) {
         mBackgroundTileUploaded = true;
-        for (Tile tile : mActiveTiles.values()) {
+        int n = mActiveTiles.size();
+        for (int i = 0; i < n; i++) {
+            Tile tile = mActiveTiles.valueAt(i);
             if (!tile.isContentValid(canvas)) queueForDecode(tile);
         }
     }
@@ -465,7 +472,7 @@ public class TileImageView extends GLView {
     }
 
     private void activateTile(int x, int y, int level) {
-        Long key = makeTileKey(x, y, level);
+        long key = makeTileKey(x, y, level);
         Tile tile = mActiveTiles.get(key);
         if (tile != null) {
             if (tile.mTileState == STATE_IN_QUEUE) {
@@ -481,11 +488,11 @@ public class TileImageView extends GLView {
         return mActiveTiles.get(makeTileKey(x, y, level));
     }
 
-    private static Long makeTileKey(int x, int y, int level) {
+    private static long makeTileKey(int x, int y, int level) {
         long result = x;
         result = (result << 16) | y;
         result = (result << 16) | level;
-        return Long.valueOf(result);
+        return result;
     }
 
     private class TileUploader implements GLRoot.OnGLIdleListener {

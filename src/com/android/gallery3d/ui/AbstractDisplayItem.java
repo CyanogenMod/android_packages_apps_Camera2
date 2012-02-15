@@ -68,7 +68,7 @@ public abstract class AbstractDisplayItem extends DisplayItem {
     }
 
     @Override
-    public long getIdentity() {
+    public int getIdentity() {
         return mMediaItem != null
                 ? System.identityHashCode(mMediaItem.getPath())
                 : System.identityHashCode(this);

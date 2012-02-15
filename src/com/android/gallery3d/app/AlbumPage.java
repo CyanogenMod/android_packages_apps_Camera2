@@ -285,7 +285,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 PositionRepository.getInstance(mActivity);
         mAlbumView.startTransition(new PositionProvider() {
             private final Position mTempPosition = new Position();
-            public Position getPosition(long identity, Position target) {
+            public Position getPosition(int identity, Position target) {
                 Position p = repository.get(identity);
                 if (p != null) return p;
                 mTempPosition.set(target);
@@ -304,7 +304,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         final Random random = new Random();
         mAlbumView.startTransition(new PositionProvider() {
             private final Position mTempPosition = new Position();
-            public Position getPosition(long identity, Position target) {
+            public Position getPosition(int identity, Position target) {
                 Position p = repository.get(identity);
                 if (p != null) return p;
                 if (center != null) {

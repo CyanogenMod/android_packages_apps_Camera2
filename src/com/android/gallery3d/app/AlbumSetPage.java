@@ -527,7 +527,7 @@ public class AlbumSetPage extends ActivityState implements
                 PositionRepository.getInstance(mActivity);
         mAlbumSetView.startTransition(new PositionProvider() {
             private final Position mTempPosition = new Position();
-            public Position getPosition(long identity, Position target) {
+            public Position getPosition(int identity, Position target) {
                 Position p = repository.get(identity);
                 if (p == null) {
                     p = mTempPosition;
