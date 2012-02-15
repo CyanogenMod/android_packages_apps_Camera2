@@ -229,7 +229,7 @@ public class GLView {
         int xoffset = component.mBounds.left - mScrollX;
         int yoffset = component.mBounds.top - mScrollY;
 
-        canvas.translate(xoffset, yoffset, 0);
+        canvas.translate(xoffset, yoffset);
 
         CanvasAnimation anim = component.mAnimation;
         if (anim != null) {
@@ -243,7 +243,7 @@ public class GLView {
         }
         component.render(canvas);
         if (anim != null) canvas.restore();
-        canvas.translate(-xoffset, -yoffset, 0);
+        canvas.translate(-xoffset, -yoffset);
     }
 
     protected boolean onTouch(MotionEvent event) {

@@ -33,6 +33,7 @@ public class GLCanvasStub implements GLCanvas {
     }
     public void multiplyAlpha(float alpha) {}
     public void translate(float x, float y, float z) {}
+    public void translate(float x, float y) {}
     public void scale(float sx, float sy, float sz) {}
     public void rotate(float angle, float x, float y, float z) {}
     public boolean clipRect(int left, int top, int right, int bottom) {

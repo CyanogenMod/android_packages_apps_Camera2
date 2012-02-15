@@ -375,9 +375,9 @@ public class TileImageView extends GLView {
         if (rotation != 0) {
             canvas.save(GLCanvas.SAVE_FLAG_MATRIX);
             int centerX = getWidth() / 2, centerY = getHeight() / 2;
-            canvas.translate(centerX, centerY, 0);
+            canvas.translate(centerX, centerY);
             canvas.rotate(rotation, 0, 0, 1);
-            canvas.translate(-centerX, -centerY, 0);
+            canvas.translate(-centerX, -centerY);
         }
         try {
             if (level != mLevelCount) {

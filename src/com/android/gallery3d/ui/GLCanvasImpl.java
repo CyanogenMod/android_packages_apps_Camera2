@@ -51,8 +51,9 @@ public class GLCanvasImpl implements GLCanvas {
     private final float mMatrixValues[] = new float[16];
     private final float mTextureMatrixValues[] = new float[16];
 
-    // mapPoints needs 10 input and output numbers.
-    private final float mMapPointsBuffer[] = new float[10];
+    // The results of mapPoints are stored in this buffer, and the order is
+    // x1, y1, x2, y2.
+    private final float mMapPointsBuffer[] = new float[4];
 
     private final float mTextureColor[] = new float[4];
 
@@ -171,7 +172,7 @@ public class GLCanvasImpl implements GLCanvas {
         mGLState.setLineSmooth(paint.getAntiAlias());
 
         saveTransform();
-        translate(x, y, 0);
+        translate(x, y);
         scale(width, height, 1);
 
         gl.glLoadMatrixf(mMatrixValues, 0);
@@ -189,7 +190,7 @@ public class GLCanvasImpl implements GLCanvas {
         mGLState.setLineSmooth(paint.getAntiAlias());
 
         saveTransform();
-        translate(x1, y1, 0);
+        translate(x1, y1);
         scale(x2 - x1, y2 - y1, 1);
 
         gl.glLoadMatrixf(mMatrixValues, 0);
@@ -204,7 +205,7 @@ public class GLCanvasImpl implements GLCanvas {
         GL11 gl = mGL;
 
         saveTransform();
-        translate(x, y, 0);
+        translate(x, y);
         scale(width, height, 1);
 
         gl.glLoadMatrixf(mMatrixValues, 0);
@@ -216,6 +217,17 @@ public class GLCanvasImpl implements GLCanvas {
 
     public void translate(float x, float y, float z) {
         Matrix.translateM(mMatrixValues, 0, x, y, z);
+    }
+
+    // This is a faster version of translate(x, y, z) because
+    // (1) we knows z = 0, (2) we inline the Matrix.translateM call,
+    // (3) we unroll the loop
+    public void translate(float x, float y) {
+        float[] m = mMatrixValues;
+        m[12] += m[0] * x + m[4] * y;
+        m[13] += m[1] * x + m[5] * y;
+        m[14] += m[2] * x + m[6] * y;
+        m[15] += m[3] * x + m[7] * y;
     }
 
     public void scale(float sx, float sy, float sz) {
@@ -239,7 +251,7 @@ public class GLCanvasImpl implements GLCanvas {
         GL11 gl = mGL;
 
         saveTransform();
-        translate(x, y, 0);
+        translate(x, y);
         scale(width, height, 1);
 
         gl.glLoadMatrixf(mMatrixValues, 0);
@@ -263,7 +275,7 @@ public class GLCanvasImpl implements GLCanvas {
         setTextureCoords(0, 0, 1, 1);
 
         saveTransform();
-        translate(x, y, 0);
+        translate(x, y);
 
         mGL.glLoadMatrixf(mMatrixValues, 0);
 
@@ -285,28 +297,26 @@ public class GLCanvasImpl implements GLCanvas {
         mCountDrawMesh++;
     }
 
-    private float[] mapPoints(float matrix[], int x1, int y1, int x2, int y2) {
-        float[] point = mMapPointsBuffer;
-        int srcOffset = 6;
-        point[srcOffset] = x1;
-        point[srcOffset + 1] = y1;
-        point[srcOffset + 2] = 0;
-        point[srcOffset + 3] = 1;
+    // Transforms two points by the given matrix m. The result
+    // {x1', y1', x2', y2'} are stored in mMapPointsBuffer and also returned.
+    private float[] mapPoints(float m[], int x1, int y1, int x2, int y2) {
+        float[] r = mMapPointsBuffer;
 
-        int resultOffset = 0;
-        Matrix.multiplyMV(point, resultOffset, matrix, 0, point, srcOffset);
-        point[resultOffset] /= point[resultOffset + 3];
-        point[resultOffset + 1] /= point[resultOffset + 3];
+        // Multiply m and (x1 y1 0 1) to produce (x3 y3 z3 w3). z3 is unused.
+        float x3 = m[0] * x1 + m[4] * y1 + m[12];
+        float y3 = m[1] * x1 + m[5] * y1 + m[13];
+        float w3 = m[3] * x1 + m[7] * y1 + m[15];
+        r[0] = x3 / w3;
+        r[1] = y3 / w3;
 
-        // map the second point
-        point[srcOffset] = x2;
-        point[srcOffset + 1] = y2;
-        resultOffset = 2;
-        Matrix.multiplyMV(point, resultOffset, matrix, 0, point, srcOffset);
-        point[resultOffset] /= point[resultOffset + 3];
-        point[resultOffset + 1] /= point[resultOffset + 3];
+        // Same for x2 y2.
+        float x4 = m[0] * x2 + m[4] * y2 + m[12];
+        float y4 = m[1] * x2 + m[5] * y2 + m[13];
+        float w4 = m[3] * x2 + m[7] * y2 + m[15];
+        r[2] = x4 / w4;
+        r[3] = y4 / w4;
 
-        return point;
+        return r;
     }
 
     public boolean clipRect(int left, int top, int right, int bottom) {
