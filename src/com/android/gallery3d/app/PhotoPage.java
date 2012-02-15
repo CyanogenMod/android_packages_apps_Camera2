@@ -404,7 +404,7 @@ public class PhotoPage extends ActivityState
                 position.y = mRootPane.getHeight() / 2;
                 position.z = -1000;
                 repository.putPosition(
-                        Long.valueOf(System.identityHashCode(mCurrentPhoto.getPath())),
+                        System.identityHashCode(mCurrentPhoto.getPath()),
                         position);
             }
             super.onBackPressed();

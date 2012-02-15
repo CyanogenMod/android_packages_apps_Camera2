@@ -19,8 +19,9 @@ package com.android.gallery3d.ui;
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
 
-import java.util.HashMap;
 import java.util.WeakHashMap;
+
+import android.util.SparseArray;
 
 public class PositionRepository {
     private static final WeakHashMap<GalleryActivity, PositionRepository>
@@ -106,12 +107,12 @@ public class PositionRepository {
         return repository;
     }
 
-    private HashMap<Long, Position> mData = new HashMap<Long, Position>();
+    private SparseArray<Position> mData = new SparseArray<Position>();
     private int mOffsetX;
     private int mOffsetY;
     private Position mTempPosition = new Position();
 
-    public Position get(Long identity) {
+    public Position get(int identity) {
         Position position = mData.get(identity);
         if (position == null) return null;
         mTempPosition.set(position);
@@ -126,7 +127,7 @@ public class PositionRepository {
         mOffsetY = offsetY;
     }
 
-    public void putPosition(Long identity, Position position) {
+    public void putPosition(int identity, Position position) {
         Position clone = position.clone();
         clone.x += mOffsetX;
         clone.y += mOffsetY;
