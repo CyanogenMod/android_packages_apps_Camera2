@@ -738,9 +738,9 @@ public class PhotoView extends GLView {
             if (mTexture != null) {
                 if (mRotation != 0) {
                     canvas.save(GLCanvas.SAVE_FLAG_MATRIX);
-                    canvas.translate(x, y, 0);
+                    canvas.translate(x, y);
                     canvas.rotate(mRotation, 0, 0, 1); //mRotation
-                    canvas.translate(-x, -y, 0);
+                    canvas.translate(-x, -y);
                 }
                 mTexture.draw(canvas, x - mDrawWidth / 2, y - mDrawHeight / 2,
                         mDrawWidth, mDrawHeight);

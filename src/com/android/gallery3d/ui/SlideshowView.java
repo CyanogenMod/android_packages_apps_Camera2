@@ -148,7 +148,7 @@ public class SlideshowView extends GLView {
             float centerX = viewWidth / 2 + mMovingVector.x * mProgress;
             float centerY = viewHeight / 2 + mMovingVector.y * mProgress;
 
-            canvas.translate(centerX, centerY, 0);
+            canvas.translate(centerX, centerY);
             canvas.scale(scale, scale, 0);
         }
 

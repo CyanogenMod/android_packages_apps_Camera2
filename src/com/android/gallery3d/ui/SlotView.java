@@ -286,9 +286,9 @@ public class SlotView extends GLView {
         }
 
         if (WIDE) {
-            canvas.translate(-mScrollX, 0, 0);
+            canvas.translate(-mScrollX, 0);
         } else {
-            canvas.translate(0, -mScrollY, 0);
+            canvas.translate(0, -mScrollY);
         }
 
         LinkedNode.List<ItemEntry> list = mItemList;
@@ -320,9 +320,9 @@ public class SlotView extends GLView {
         }
 
         if (WIDE) {
-            canvas.translate(mScrollX, 0, 0);
+            canvas.translate(mScrollX, 0);
         } else {
-            canvas.translate(0, mScrollY, 0);
+            canvas.translate(0, mScrollY);
         }
 
         if (more) invalidate();
@@ -363,7 +363,9 @@ public class SlotView extends GLView {
         } else {
             canvas.translate(position.x, position.y, position.z);
         }
-        canvas.rotate(position.theta, 0, 0, 1);
+        if (position.theta != 0) {
+            canvas.rotate(position.theta, 0, 0, 1);
+        }
         int more = entry.item.render(canvas, pass);
         canvas.restore();
         return more;
