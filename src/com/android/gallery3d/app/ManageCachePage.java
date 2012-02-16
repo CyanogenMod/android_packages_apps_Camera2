@@ -30,7 +30,6 @@ import com.android.gallery3d.ui.MenuExecutor;
 import com.android.gallery3d.ui.SelectionDrawer;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
-import com.android.gallery3d.ui.StaticBackground;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
@@ -67,7 +66,6 @@ public class ManageCachePage extends ActivityState implements
     private static final int MSG_REQUEST_LAYOUT = 2;
     private static final int PROGRESS_BAR_MAX = 10000;
 
-    private StaticBackground mStaticBackground;
     private AlbumSetView mAlbumSetView;
 
     private MediaSet mMediaSet;
@@ -96,6 +94,11 @@ public class ManageCachePage extends ActivityState implements
         private float mMatrix[] = new float[16];
 
         @Override
+        protected void renderBackground(GLCanvas view) {
+            view.clearBuffer();
+        }
+
+        @Override
         protected void onLayout(
                 boolean changed, int left, int top, int right, int bottom) {
             // Hack: our layout depends on other components on the screen.
@@ -107,7 +110,6 @@ public class ManageCachePage extends ActivityState implements
             }
             mLayoutReady = false;
 
-            mStaticBackground.layout(0, 0, right - left, bottom - top);
             mEyePosition.resetPosition();
             Activity activity = (Activity) mActivity;
             int slotViewTop = GalleryActionBar.getHeight(activity);
@@ -288,8 +290,6 @@ public class ManageCachePage extends ActivityState implements
 
         mSelectionManager = new SelectionManager(mActivity, true);
         mSelectionManager.setSelectionListener(this);
-        mStaticBackground = new StaticBackground(activity);
-        mRootPane.addComponent(mStaticBackground);
 
         Config.ManageCachePage config = Config.ManageCachePage.get(activity);
         mSelectionDrawer = new ManageCacheDrawer((Context) mActivity,
@@ -324,7 +324,6 @@ public class ManageCachePage extends ActivityState implements
         mFooterContent = inflater.inflate(R.layout.manage_offline_bar, null);
 
         mFooterContent.findViewById(R.id.done).setOnClickListener(this);
-        mStaticBackground.setImage(R.drawable.background, R.drawable.background_portrait);
         refreshCacheStorageInfo();
     }
 

@@ -56,7 +56,6 @@ public class StaticBackground extends GLView {
 
     @Override
     protected void render(GLCanvas canvas) {
-        //mBackground.draw(canvas, 0, 0, getWidth(), getHeight());
-        canvas.fillRect(0, 0, getWidth(), getHeight(), 0xFF000000);
+        mBackground.draw(canvas, 0, 0, getWidth(), getHeight());
     }
 }

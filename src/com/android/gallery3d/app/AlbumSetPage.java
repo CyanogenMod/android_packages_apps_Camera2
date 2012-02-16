@@ -52,7 +52,6 @@ import com.android.gallery3d.ui.PositionRepository;
 import com.android.gallery3d.ui.PositionRepository.Position;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
-import com.android.gallery3d.ui.StaticBackground;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
 
@@ -74,7 +73,6 @@ public class AlbumSetPage extends ActivityState implements
     private static final int BIT_LOADING_SYNC = 2;
 
     private boolean mIsActive = false;
-    private StaticBackground mStaticBackground;
     private AlbumSetView mAlbumSetView;
 
     private MediaSet mMediaSet;
@@ -113,9 +111,13 @@ public class AlbumSetPage extends ActivityState implements
         private final float mMatrix[] = new float[16];
 
         @Override
+        protected void renderBackground(GLCanvas view) {
+            view.clearBuffer();
+        }
+
+        @Override
         protected void onLayout(
                 boolean changed, int left, int top, int right, int bottom) {
-            mStaticBackground.layout(0, 0, right - left, bottom - top);
             mEyePosition.resetPosition();
 
             int slotViewTop = GalleryActionBar.getHeight((Activity) mActivity);
@@ -369,8 +371,6 @@ public class AlbumSetPage extends ActivityState implements
     private void initializeViews() {
         mSelectionManager = new SelectionManager(mActivity, true);
         mSelectionManager.setSelectionListener(this);
-        mStaticBackground = new StaticBackground(mActivity.getAndroidContext());
-        mRootPane.addComponent(mStaticBackground);
 
         mGridDrawer = new GridDrawer((Context) mActivity, mSelectionManager);
         Config.AlbumSetPage config = Config.AlbumSetPage.get((Context) mActivity);
@@ -405,9 +405,6 @@ public class AlbumSetPage extends ActivityState implements
             }
         });
         mRootPane.addComponent(mAlbumSetView);
-
-        mStaticBackground.setImage(R.drawable.background,
-                R.drawable.background_portrait);
     }
 
     @Override
