@@ -18,7 +18,6 @@ package com.android.gallery3d.ui;
 
 import com.android.gallery3d.common.Utils;
 
-import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
 
 // BasicTexture is a Texture corresponds to a real GL texture.
@@ -45,7 +44,7 @@ abstract class BasicTexture implements Texture {
 
     private boolean mHasBorder;
 
-    protected WeakReference<GLCanvas> mCanvasRef = null;
+    protected GLCanvas mCanvasRef = null;
     private static WeakHashMap<BasicTexture, Object> sAllTextures
             = new WeakHashMap<BasicTexture, Object>();
     private static ThreadLocal sInFinalizer = new ThreadLocal();
@@ -64,9 +63,7 @@ abstract class BasicTexture implements Texture {
     }
 
     protected void setAssociatedCanvas(GLCanvas canvas) {
-        mCanvasRef = canvas == null
-                ? null
-                : new WeakReference<GLCanvas>(canvas);
+        mCanvasRef = canvas;
     }
 
     /**
@@ -134,7 +131,7 @@ abstract class BasicTexture implements Texture {
     abstract protected boolean onBind(GLCanvas canvas);
 
     public boolean isLoaded(GLCanvas canvas) {
-        return mState == STATE_LOADED && mCanvasRef.get() == canvas;
+        return mState == STATE_LOADED;
     }
 
     // recycle() is called when the texture will never be used again,
@@ -153,7 +150,7 @@ abstract class BasicTexture implements Texture {
     }
 
     private void freeResource() {
-        GLCanvas canvas = mCanvasRef == null ? null : mCanvasRef.get();
+        GLCanvas canvas = mCanvasRef;
         if (canvas != null && isLoaded(canvas)) {
             canvas.unloadTexture(this);
         }
@@ -179,6 +176,15 @@ abstract class BasicTexture implements Texture {
         synchronized (sAllTextures) {
             for (BasicTexture t : sAllTextures.keySet()) {
                 t.yield();
+            }
+        }
+    }
+
+    public static void invalidateAllTextures() {
+        synchronized (sAllTextures) {
+            for (BasicTexture t : sAllTextures.keySet()) {
+                t.mState = STATE_UNLOADED;
+                t.setAssociatedCanvas(null);
             }
         }
     }
