@@ -52,7 +52,6 @@ import com.android.gallery3d.ui.PositionRepository;
 import com.android.gallery3d.ui.PositionRepository.Position;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
-import com.android.gallery3d.ui.StaticBackground;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
 
@@ -78,7 +77,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private static final float USER_DISTANCE_METER = 0.3f;
 
     private boolean mIsActive = false;
-    private StaticBackground mStaticBackground;
     private AlbumView mAlbumView;
     private Path mMediaSetPath;
 
@@ -110,9 +108,13 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         private final float mMatrix[] = new float[16];
 
         @Override
+        protected void renderBackground(GLCanvas view) {
+            view.clearBuffer();
+        }
+
+        @Override
         protected void onLayout(
                 boolean changed, int left, int top, int right, int bottom) {
-            mStaticBackground.layout(0, 0, right - left, bottom - top);
 
             int slotViewTop = GalleryActionBar.getHeight((Activity) mActivity);
             int slotViewBottom = bottom - top;
@@ -364,9 +366,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     }
 
     private void initializeViews() {
-        mStaticBackground = new StaticBackground((Context) mActivity);
-        mRootPane.addComponent(mStaticBackground);
-
         mSelectionManager = new SelectionManager(mActivity, false);
         mSelectionManager.setSelectionListener(this);
         mGridDrawer = new GridDrawer((Context) mActivity, mSelectionManager);
@@ -402,8 +401,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 return onItemSelected(item);
             }
         });
-        mStaticBackground.setImage(R.drawable.background,
-                R.drawable.background_portrait);
     }
 
     private void initializeData(Bundle data) {
