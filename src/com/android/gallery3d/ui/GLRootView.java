@@ -239,6 +239,7 @@ public class GLRootView extends GLSurfaceView
                 + ", gl10: " + gl1.toString());
         Process.setThreadPriority(Process.THREAD_PRIORITY_DISPLAY);
         GalleryUtils.setRenderThread();
+        BasicTexture.invalidateAllTextures();
         if (DEBUG_PROFILE) {
             Log.d(TAG, "Start profiling");
             Profile.enable(20);  // take a sample every 20ms

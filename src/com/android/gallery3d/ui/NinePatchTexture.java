@@ -168,7 +168,7 @@ public class NinePatchTexture extends ResourceTexture {
     @Override
     public void recycle() {
         super.recycle();
-        GLCanvas canvas = mCanvasRef == null ? null : mCanvasRef.get();
+        GLCanvas canvas = mCanvasRef;
         if (canvas == null) return;
         int n = mInstanceCache.size();
         for (int i = 0; i < n; i++) {

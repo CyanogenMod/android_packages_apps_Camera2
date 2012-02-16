@@ -37,7 +37,7 @@ class RawTexture extends BasicTexture {
 
     @Override
     protected boolean onBind(GLCanvas canvas) {
-        if (mCanvasRef.get() != canvas) {
+        if (mCanvasRef != canvas) {
             throw new RuntimeException("cannot bind to different canvas");
         }
         return true;
