@@ -61,8 +61,6 @@ public class GLCanvasImpl implements GLCanvas {
 
     private final GLState mGLState;
 
-    private long mAnimationTime;
-
     private float mAlpha;
     private final Rect mClipRect = new Rect();
     private final Stack<ConfigState> mRestoreStack =
@@ -110,10 +108,6 @@ public class GLCanvasImpl implements GLCanvas {
 
         mClipRect.set(0, 0, width, height);
         gl.glScissor(0, 0, width, height);
-    }
-
-    public long currentAnimationTimeMillis() {
-        return mAnimationTime;
     }
 
     public void setAlpha(float alpha) {
@@ -778,11 +772,6 @@ public class GLCanvasImpl implements GLCanvas {
 
     public GL11 getGLInstance() {
         return mGL;
-    }
-
-    public void setCurrentAnimationTimeMillis(long time) {
-        Utils.assertTrue(time >= 0);
-        mAnimationTime = time;
     }
 
     public void clearBuffer() {

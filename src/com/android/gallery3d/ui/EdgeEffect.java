@@ -20,7 +20,6 @@ import com.android.gallery3d.R;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
@@ -179,7 +178,7 @@ public class EdgeEffect {
      *                      back toward the edge reached to initiate the effect.
      */
     public void onPull(float deltaDistance) {
-        final long now = AnimationUtils.currentAnimationTimeMillis();
+        final long now = AnimationTime.get();
         if (mState == STATE_PULL_DECAY && now - mStartTime < mDuration) {
             return;
         }
@@ -244,7 +243,7 @@ public class EdgeEffect {
         mGlowAlphaFinish = 0.f;
         mGlowScaleYFinish = 0.f;
 
-        mStartTime = AnimationUtils.currentAnimationTimeMillis();
+        mStartTime = AnimationTime.get();
         mDuration = RECEDE_TIME;
     }
 
@@ -262,7 +261,7 @@ public class EdgeEffect {
         mState = STATE_ABSORB;
         velocity = Math.max(MIN_VELOCITY, Math.abs(velocity));
 
-        mStartTime = AnimationUtils.currentAnimationTimeMillis();
+        mStartTime = AnimationTime.get();
         mDuration = 0.1f + (velocity * 0.03f);
 
         // The edge should always be at least partially visible, regardless
@@ -343,7 +342,7 @@ public class EdgeEffect {
     }
 
     private void update() {
-        final long time = AnimationUtils.currentAnimationTimeMillis();
+        final long time = AnimationTime.get();
         final float t = Math.min((time - mStartTime) / mDuration, 1.f);
 
         final float interp = mInterpolator.getInterpolation(t);
@@ -357,7 +356,7 @@ public class EdgeEffect {
             switch (mState) {
                 case STATE_ABSORB:
                     mState = STATE_RECEDE;
-                    mStartTime = AnimationUtils.currentAnimationTimeMillis();
+                    mStartTime = AnimationTime.get();
                     mDuration = RECEDE_TIME;
 
                     mEdgeAlphaStart = mEdgeAlpha;
@@ -373,7 +372,7 @@ public class EdgeEffect {
                     break;
                 case STATE_PULL:
                     mState = STATE_PULL_DECAY;
-                    mStartTime = AnimationUtils.currentAnimationTimeMillis();
+                    mStartTime = AnimationTime.get();
                     mDuration = PULL_DECAY_TIME;
 
                     mEdgeAlphaStart = mEdgeAlpha;

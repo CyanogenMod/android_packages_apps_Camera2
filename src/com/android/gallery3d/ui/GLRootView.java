@@ -61,6 +61,7 @@ public class GLRootView extends GLSurfaceView
     private static final boolean DEBUG_DRAWING_STAT = false;
 
     private static final boolean DEBUG_PROFILE = false;
+    private static final boolean DEBUG_PROFILE_SLOW_ONLY = false;
 
     private static final int FLAG_INITIALIZED = 1;
     private static final int FLAG_NEED_LAYOUT = 2;
@@ -104,6 +105,7 @@ public class GLRootView extends GLSurfaceView
         setEGLConfigChooser(mEglConfigChooser);
         setRenderer(this);
         getHolder().setFormat(PixelFormat.RGB_565);
+        AnimationTime.setNow();
 
         // Uncomment this to enable gl error check.
         //setDebugFlags(DEBUG_CHECK_GL_ERROR);
@@ -269,7 +271,7 @@ public class GLRootView extends GLSurfaceView
     @Override
     public void onDrawFrame(GL10 gl) {
         long t0;
-        if (DEBUG_PROFILE) {
+        if (DEBUG_PROFILE_SLOW_ONLY) {
             Profile.hold();
             t0 = System.nanoTime();
         }
@@ -279,7 +281,7 @@ public class GLRootView extends GLSurfaceView
         } finally {
             mRenderLock.unlock();
         }
-        if (DEBUG_PROFILE) {
+        if (DEBUG_PROFILE_SLOW_ONLY) {
             long t = System.nanoTime();
             long durationInMs = (t - mLastDrawFinishTime) / 1000000;
             long durationDrawInMs = (t - t0) / 1000000;
@@ -317,13 +319,13 @@ public class GLRootView extends GLSurfaceView
             gl.glScissor(clip.left, clip.top, clip.width(), clip.height());
         }
 
-        mCanvas.setCurrentAnimationTimeMillis(SystemClock.uptimeMillis());
+        AnimationTime.setNow();
         if (mContentView != null) {
            mContentView.render(mCanvas);
         }
 
         if (!mAnimations.isEmpty()) {
-            long now = SystemClock.uptimeMillis();
+            long now = AnimationTime.get();
             for (int i = 0, n = mAnimations.size(); i < n; i++) {
                 mAnimations.get(i).setStartTime(now);
             }

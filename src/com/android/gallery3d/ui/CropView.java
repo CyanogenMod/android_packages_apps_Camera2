@@ -167,7 +167,7 @@ public class CropView extends GLView {
     @Override
     public void render(GLCanvas canvas) {
         AnimationController a = mAnimation;
-        if (a.calculate(canvas.currentAnimationTimeMillis())) invalidate();
+        if (a.calculate(AnimationTime.get())) invalidate();
         setImageViewPosition(a.getCenterX(), a.getCenterY(), a.getScale());
         super.render(canvas);
     }

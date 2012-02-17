@@ -90,14 +90,14 @@ public class SlideshowView extends GLView {
 
     @Override
     protected void render(GLCanvas canvas) {
-        long currentTimeMillis = canvas.currentAnimationTimeMillis();
-        boolean requestRender = mTransitionAnimation.calculate(currentTimeMillis);
+        long animTime = AnimationTime.get();
+        boolean requestRender = mTransitionAnimation.calculate(animTime);
         GL11 gl = canvas.getGLInstance();
         gl.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
         float alpha = mPrevTexture == null ? 1f : mTransitionAnimation.get();
 
         if (mPrevTexture != null && alpha != 1f) {
-            requestRender |= mPrevAnimation.calculate(currentTimeMillis);
+            requestRender |= mPrevAnimation.calculate(animTime);
             canvas.save(GLCanvas.SAVE_FLAG_ALPHA | GLCanvas.SAVE_FLAG_MATRIX);
             canvas.setAlpha(1f - alpha);
             mPrevAnimation.apply(canvas);
@@ -107,7 +107,7 @@ public class SlideshowView extends GLView {
             canvas.restore();
         }
         if (mCurrentTexture != null) {
-            requestRender |= mCurrentAnimation.calculate(currentTimeMillis);
+            requestRender |= mCurrentAnimation.calculate(animTime);
             canvas.save(GLCanvas.SAVE_FLAG_ALPHA | GLCanvas.SAVE_FLAG_MATRIX);
             canvas.setAlpha(alpha);
             mCurrentAnimation.apply(canvas);

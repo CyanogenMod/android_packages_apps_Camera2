@@ -234,7 +234,7 @@ public class GLView {
         CanvasAnimation anim = component.mAnimation;
         if (anim != null) {
             canvas.save(anim.getCanvasSaveFlags());
-            if (anim.calculate(canvas.currentAnimationTimeMillis())) {
+            if (anim.calculate(AnimationTime.get())) {
                 invalidate();
             } else {
                 component.mAnimation = null;
