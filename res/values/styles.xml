@@ -27,6 +27,7 @@
         <item name="android:windowBackground">@android:color/black</item>
     </style>
     <style name="Holo.ActionBar" parent="android:Widget.Holo.ActionBar">
+        <item name="android:displayOptions">useLogo|showHome</item>
         <item name="android:background">@drawable/actionbar_translucent</item>
         <item name="android:backgroundStacked">@null</item>
     </style>
