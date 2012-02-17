@@ -179,7 +179,7 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
         return shareActionProvider;
     }
 
-    public void showClusterMenu(int action, ClusterRunner runner) {
+    public void enableClusterMenu(int action, ClusterRunner runner) {
         Log.v(TAG, "showClusterMenu: runner=" + runner);
         // Don't set cluster runner until action bar is ready.
         mClusterRunner = null;
@@ -189,9 +189,14 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
         mClusterRunner = runner;
     }
 
-    public void hideClusterMenu() {
+    // The only use case not to hideMenu in this method is to ensure
+    // all elements disappear at the same time when exiting gallery.
+    // hideMenu should always be true in all other cases.
+    public void disableClusterMenu(boolean hideMenu) {
         mClusterRunner = null;
-        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        if (hideMenu) {
+            mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        }
     }
 
     public void showClusterDialog(final ClusterRunner clusterRunner) {
