@@ -55,7 +55,7 @@ public class ProgressSpinner {
     }
 
     public void draw(GLCanvas canvas, int x, int y) {
-        long now = canvas.currentAnimationTimeMillis();
+        long now = AnimationTime.get();
         if (mAnimationTimestamp == -1) mAnimationTimestamp = now;
         mOuterDegree += (now - mAnimationTimestamp) * ROTATE_SPEED_OUTER;
         mInnerDegree += (now - mAnimationTimestamp) * ROTATE_SPEED_INNER;
