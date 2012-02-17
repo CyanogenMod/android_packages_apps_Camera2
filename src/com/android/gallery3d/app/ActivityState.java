@@ -16,15 +16,12 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.ui.GLView;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -33,6 +30,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+
+import com.android.gallery3d.ui.GLView;
 
 abstract public class ActivityState {
     public static final int FLAG_HIDE_ACTION_BAR = 1;
@@ -147,6 +146,7 @@ abstract public class ActivityState {
                     ActionBar.DISPLAY_HOME_AS_UP);
             actionBar.setHomeButtonEnabled(
                     (actionBar.getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP) != 0);
+            actionBar.setDisplayShowTitleEnabled(true);
         }
 
         activity.invalidateOptionsMenu();
