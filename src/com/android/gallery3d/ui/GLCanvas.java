@@ -60,10 +60,10 @@ public interface GLCanvas {
 
     // Pushes the configuration state (matrix, alpha, and clip) onto
     // a private stack.
-    public int save();
+    public void save();
 
     // Same as save(), but only save those specified in saveFlags.
-    public int save(int saveFlags);
+    public void save(int saveFlags);
 
     public static final int SAVE_FLAG_ALL = 0xFFFFFFFF;
     public static final int SAVE_FLAG_CLIP = 0x01;
