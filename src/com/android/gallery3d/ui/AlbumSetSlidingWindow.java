@@ -110,9 +110,10 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
     }
 
     public AlbumSetItem get(int slotIndex) {
-        Utils.assertTrue(isActiveSlot(slotIndex),
-                "invalid slot: %s outsides (%s, %s)",
-                slotIndex, mActiveStart, mActiveEnd);
+        if (!isActiveSlot(slotIndex)) {
+            Utils.fail("invalid slot: %s outsides (%s, %s)",
+                    slotIndex, mActiveStart, mActiveEnd);
+        }
         return mData[slotIndex % mData.length];
     }
 
@@ -156,10 +157,10 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
     }
 
     public void setActiveWindow(int start, int end) {
-        Utils.assertTrue(
-                start <= end && end - start <= mData.length && end <= mSize,
-                "start = %s, end = %s, length = %s, size = %s",
-                start, end, mData.length, mSize);
+        if (!(start <= end && end - start <= mData.length && end <= mSize)) {
+            Utils.fail("start = %s, end = %s, length = %s, size = %s",
+                    start, end, mData.length, mSize);
+        }
 
         AlbumSetItem data[] = mData;
 

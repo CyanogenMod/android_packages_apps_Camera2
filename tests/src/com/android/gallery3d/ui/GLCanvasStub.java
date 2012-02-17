@@ -39,10 +39,10 @@ public class GLCanvasStub implements GLCanvas {
     public boolean clipRect(int left, int top, int right, int bottom) {
         throw new UnsupportedOperationException();
     }
-    public int save() {
+    public void save() {
         throw new UnsupportedOperationException();
     }
-    public int save(int saveFlags) {
+    public void save(int saveFlags) {
         throw new UnsupportedOperationException();
     }
     public void setBlendEnabled(boolean enabled) {}

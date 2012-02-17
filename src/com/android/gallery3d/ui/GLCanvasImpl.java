@@ -27,7 +27,7 @@ import android.opengl.Matrix;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.Stack;
+import java.util.ArrayList;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
@@ -63,8 +63,8 @@ public class GLCanvasImpl implements GLCanvas {
 
     private float mAlpha;
     private final Rect mClipRect = new Rect();
-    private final Stack<ConfigState> mRestoreStack =
-            new Stack<ConfigState>();
+    private final ArrayList<ConfigState> mRestoreStack =
+            new ArrayList<ConfigState>();
     private ConfigState mRecycledRestoreAction;
 
     private final RectF mDrawTextureSourceRect = new RectF();
@@ -229,6 +229,7 @@ public class GLCanvasImpl implements GLCanvas {
     }
 
     public void rotate(float angle, float x, float y, float z) {
+        if (angle == 0) return;
         float[] temp = mTempMatrix;
         Matrix.setRotateM(temp, 0, angle, x, y, z);
         Matrix.multiplyMM(temp, 16, mMatrixValues, 0, temp, 0);
@@ -361,10 +362,10 @@ public class GLCanvasImpl implements GLCanvas {
             // draw the rect from bottom-left to top-right
             float points[] = mapPoints(
                     mMatrixValues, x, y + height, x + width, y);
-            x = Math.round(points[0]);
-            y = Math.round(points[1]);
-            width = Math.round(points[2]) - x;
-            height = Math.round(points[3]) - y;
+            x = (int) (points[0] + 0.5f);
+            y = (int) (points[1] + 0.5f);
+            width = (int) (points[2] + 0.5f) - x;
+            height = (int) (points[3] + 0.5f) - y;
             if (width > 0 && height > 0) {
                 ((GL11Ext) mGL).glDrawTexiOES(x, y, 0, width, height);
                 mCountTextureOES++;
@@ -827,11 +828,11 @@ public class GLCanvasImpl implements GLCanvas {
         }
     }
 
-    public int save() {
-        return save(SAVE_FLAG_ALL);
+    public void save() {
+        save(SAVE_FLAG_ALL);
     }
 
-    public int save(int saveFlags) {
+    public void save(int saveFlags) {
         ConfigState config = obtainRestoreConfig();
 
         if ((saveFlags & SAVE_FLAG_ALPHA) != 0) {
@@ -852,13 +853,12 @@ public class GLCanvasImpl implements GLCanvas {
             config.mMatrix[0] = Float.NEGATIVE_INFINITY;
         }
 
-        mRestoreStack.push(config);
-        return mRestoreStack.size() - 1;
+        mRestoreStack.add(config);
     }
 
     public void restore() {
         if (mRestoreStack.isEmpty()) throw new IllegalStateException();
-        ConfigState config = mRestoreStack.pop();
+        ConfigState config = mRestoreStack.remove(mRestoreStack.size() - 1);
         config.restore(this);
         freeRestoreConfig(config);
     }

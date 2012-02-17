@@ -406,8 +406,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private void initializeData(Bundle data) {
         mMediaSetPath = Path.fromString(data.getString(KEY_MEDIA_PATH));
         mMediaSet = mActivity.getDataManager().getMediaSet(mMediaSetPath);
-        Utils.assertTrue(mMediaSet != null,
-                "MediaSet is null. Path = %s", mMediaSetPath);
+        if (mMediaSet == null) {
+            Utils.fail("MediaSet is null. Path = %s", mMediaSetPath);
+        }
         mSelectionManager.setSourceMediaSet(mMediaSet);
         mAlbumDataAdapter = new AlbumDataAdapter(mActivity, mMediaSet);
         mAlbumDataAdapter.setLoadingListener(new MyLoadingListener());

@@ -173,8 +173,10 @@ public class DialogDetailsView implements DetailsViewContainer {
                     default: {
                         Object valueObj = detail.getValue();
                         // This shouldn't happen, log its key to help us diagnose the problem.
-                        Utils.assertTrue(valueObj != null, "%s's value is Null",
-                                DetailsHelper.getDetailsName(context, detail.getKey()));
+                        if (valueObj == null) {
+                            Utils.fail("%s's value is Null",
+                                    DetailsHelper.getDetailsName(context, detail.getKey()));
+                        }
                         value = valueObj.toString();
                     }
                 }
