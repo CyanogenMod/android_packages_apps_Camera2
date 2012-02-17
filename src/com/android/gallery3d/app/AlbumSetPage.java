@@ -312,7 +312,10 @@ public class AlbumSetPage extends ActivityState implements
         mEyePosition.pause();
         DetailsHelper.pause();
         GalleryActionBar actionBar = mActivity.getGalleryActionBar();
-        if (actionBar != null) actionBar.hideClusterMenu();
+        // Call disableClusterMenu to avoid receiving callback after paused.
+        // Don't hide menu here otherwise the list menu will disappear earlier than
+        // the action bar, which is janky and unwanted behavior.
+        if (actionBar != null) actionBar.disableClusterMenu(false);
         if (mSyncTask != null) {
             mSyncTask.cancel();
             mSyncTask = null;
@@ -336,7 +339,7 @@ public class AlbumSetPage extends ActivityState implements
         mActionModeHandler.resume();
         GalleryActionBar actionBar = mActivity.getGalleryActionBar();
         if (mShowClusterMenu && actionBar != null) {
-            actionBar.showClusterMenu(mSelectedAction, this);
+            actionBar.enableClusterMenu(mSelectedAction, this);
         }
         if (!mInitialSynced) {
             setLoadingBit(BIT_LOADING_SYNC);
@@ -536,7 +539,7 @@ public class AlbumSetPage extends ActivityState implements
 
         switch (mode) {
             case SelectionManager.ENTER_SELECTION_MODE: {
-                mActivity.getGalleryActionBar().hideClusterMenu();
+                mActivity.getGalleryActionBar().disableClusterMenu(true);
                 mActionMode = mActionModeHandler.startActionMode();
                 mVibrator.vibrate(100);
                 break;
@@ -544,7 +547,7 @@ public class AlbumSetPage extends ActivityState implements
             case SelectionManager.LEAVE_SELECTION_MODE: {
                 mActionMode.finish();
                 if (mShowClusterMenu) {
-                    mActivity.getGalleryActionBar().showClusterMenu(mSelectedAction, this);
+                    mActivity.getGalleryActionBar().enableClusterMenu(mSelectedAction, this);
                 }
                 mRootPane.invalidate();
                 break;

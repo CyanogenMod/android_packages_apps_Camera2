@@ -147,6 +147,8 @@ abstract public class ActivityState {
             actionBar.setHomeButtonEnabled(
                     (actionBar.getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP) != 0);
             actionBar.setDisplayShowTitleEnabled(true);
+            // Default behavior, this can be overridden in ActivityState's onResume.
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         }
 
         activity.invalidateOptionsMenu();
