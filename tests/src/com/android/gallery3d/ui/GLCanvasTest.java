@@ -66,26 +66,6 @@ public class GLCanvasTest extends TestCase {
     }
 
     @SmallTest
-    public void testAnimationTime() {
-        GL11 glStub = new GLStub();
-        GLCanvas canvas = new GLCanvasImpl(glStub);
-
-        long[] testData = {0, 1, 2, 1000, 10000, Long.MAX_VALUE};
-
-        for (long v : testData) {
-            canvas.setCurrentAnimationTimeMillis(v);
-            assertEquals(v, canvas.currentAnimationTimeMillis());
-        }
-
-        try {
-            canvas.setCurrentAnimationTimeMillis(-1);
-            fail();
-        } catch (Throwable ex) {
-            // expected.
-        }
-    }
-
-    @SmallTest
     public void testSetColor() {
         new SetColorTest().run();
     }

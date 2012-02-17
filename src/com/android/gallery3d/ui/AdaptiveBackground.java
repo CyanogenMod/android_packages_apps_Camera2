@@ -110,8 +110,7 @@ public class AdaptiveBackground extends GLView {
                 mBackground.draw(canvas, i - scroll, 0, width, height);
             }
         } else {
-            boolean moreAnimation =
-                    mAnimation.calculate(canvas.currentAnimationTimeMillis());
+            boolean moreAnimation = mAnimation.calculate(AnimationTime.get());
             float ratio = mAnimation.get();
             for (int i = start, n = scroll + getWidth(); i < n; i += width) {
                 canvas.drawMixed(mOldBackground,

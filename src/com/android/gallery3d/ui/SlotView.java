@@ -255,8 +255,8 @@ public class SlotView extends GLView {
     protected void render(GLCanvas canvas) {
         super.render(canvas);
 
-        long currentTimeMillis = canvas.currentAnimationTimeMillis();
-        boolean more = mScroller.advanceAnimation(currentTimeMillis);
+        long animTime = AnimationTime.get();
+        boolean more = mScroller.advanceAnimation(animTime);
         int oldX = mScrollX;
         updateScrollPosition(mScroller.getPosition(), false);
 
@@ -281,7 +281,7 @@ public class SlotView extends GLView {
 
         float interpolate = 1f;
         if (mAnimation != null) {
-            more |= mAnimation.calculate(currentTimeMillis);
+            more |= mAnimation.calculate(animTime);
             interpolate = mAnimation.value;
         }
 

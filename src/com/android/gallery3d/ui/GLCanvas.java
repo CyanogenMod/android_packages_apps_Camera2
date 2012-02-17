@@ -37,12 +37,6 @@ public interface GLCanvas {
     // Clear the drawing buffers. This should only be used by GLRoot.
     public void clearBuffer();
 
-    // This is the time value used to calculate the animation in the current
-    // frame. The "set" function should only called by GLRoot, and the
-    // "time" parameter must be nonnegative.
-    public void setCurrentAnimationTimeMillis(long time);
-    public long currentAnimationTimeMillis();
-
     public void setBlendEnabled(boolean enabled);
 
     // Sets and gets the current alpha, alpha must be in [0, 1].
