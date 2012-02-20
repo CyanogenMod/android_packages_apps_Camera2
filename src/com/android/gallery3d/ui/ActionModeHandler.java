@@ -173,55 +173,48 @@ public class ActionModeHandler implements ActionMode.Callback {
     // We cannot expand it because MenuExecuter executes it based on
     // the selection set instead of the expanded result.
     // e.g. LocalImage can be rotated but collections of them (LocalAlbum) can't.
-    private void updateMenuOptions(JobContext jc) {
-        ArrayList<Path> paths = mSelectionManager.getSelected(false);
-
+    private int computeMenuOptions(JobContext jc) {
+        ArrayList<Path> unexpandedPaths = mSelectionManager.getSelected(false);
+        if (unexpandedPaths.isEmpty()) {
+            // This happens when starting selection mode from overflow menu
+            // (instead of long press a media object)
+            return 0;
+        }
         int operation = MediaObject.SUPPORT_ALL;
         DataManager manager = mActivity.getDataManager();
         int type = 0;
-        for (Path path : paths) {
-            if (jc.isCancelled()) return;
+        for (Path path : unexpandedPaths) {
+            if (jc.isCancelled()) return 0;
             int support = manager.getSupportedOperations(path);
             type |= manager.getMediaType(path);
             operation &= support;
         }
 
-        final String mimeType = MenuExecutor.getMimeType(type);
-        if (paths.size() == 0) {
-            operation = 0;
-        } else if (paths.size() == 1) {
-            if (!GalleryUtils.isEditorAvailable((Context) mActivity, mimeType)) {
-                operation &= ~MediaObject.SUPPORT_EDIT;
-            }
-        } else {
-            operation &= SUPPORT_MULTIPLE_MASK;
+        switch (unexpandedPaths.size()) {
+            case 1:
+                final String mimeType = MenuExecutor.getMimeType(type);
+                if (!GalleryUtils.isEditorAvailable((Context) mActivity, mimeType)) {
+                    operation &= ~MediaObject.SUPPORT_EDIT;
+                }
+                break;
+            default:
+                operation &= SUPPORT_MULTIPLE_MASK;
         }
 
-        final int supportedOperation = operation;
-
-        mMainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                mMenuTask = null;
-                MenuExecutor.updateMenuOperation(mMenu, supportedOperation);
-            }
-        });
+        return operation;
     }
 
     // Share intent needs to expand the selection set so we can get URI of
     // each media item
-    private void updateSharingIntent(JobContext jc) {
-        if (mShareActionProvider == null) return;
-        ArrayList<Path> paths = mSelectionManager.getSelected(true);
-        if (paths.size() == 0) return;
-
+    private Intent computeSharingIntent(JobContext jc) {
+        ArrayList<Path> expandedPaths = mSelectionManager.getSelected(true);
+        if (expandedPaths.size() == 0) return null;
         final ArrayList<Uri> uris = new ArrayList<Uri>();
-
         DataManager manager = mActivity.getDataManager();
         int type = 0;
-
         final Intent intent = new Intent();
-        for (Path path : paths) {
+        for (Path path : expandedPaths) {
+            if (jc.isCancelled()) return null;
             int support = manager.getSupportedOperations(path);
             type |= manager.getMediaType(path);
 
@@ -241,15 +234,9 @@ public class ActionModeHandler implements ActionMode.Callback {
                 intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
             }
             intent.setType(mimeType);
-
-            mMainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Log.v(TAG, "Sharing intent is ready: action = " + intent.getAction());
-                    mShareActionProvider.setShareIntent(intent);
-                }
-            });
         }
+
+        return intent;
     }
 
     public void updateSupportedOperation(Path path, boolean selected) {
@@ -258,21 +245,38 @@ public class ActionModeHandler implements ActionMode.Callback {
     }
 
     public void updateSupportedOperation() {
+        // Interrupt previous unfinished task, mMenuTask is only accessed in main thread
         if (mMenuTask != null) {
             mMenuTask.cancel();
         }
 
         // Disable share action until share intent is in good shape
-        if (mShareActionProvider != null) {
-            Log.v(TAG, "Disable sharing until intent is ready");
-            mShareActionProvider.setShareIntent(null);
-        }
+        final MenuItem item = mShareActionProvider != null ?
+                mMenu.findItem(R.id.action_share) : null;
+        final boolean supportShare = item != null;
+        if (supportShare) item.setEnabled(false);
 
         // Generate sharing intent and update supported operations in the background
+        // The task can take a long time and be canceled in the mean time.
         mMenuTask = mActivity.getThreadPool().submit(new Job<Void>() {
-            public Void run(JobContext jc) {
-                updateMenuOptions(jc);
-                updateSharingIntent(jc);
+            public Void run(final JobContext jc) {
+                // Pass1: Deal with unexpanded media object list for menu operation.
+                final int operation = computeMenuOptions(jc);
+
+                // Pass2: Deal with expanded media object list for sharing operation.
+                final Intent intent = supportShare ? computeSharingIntent(jc) : null;
+                mMainHandler.post(new Runnable() {
+                    public void run() {
+                        mMenuTask = null;
+                        if (!jc.isCancelled()) {
+                            MenuExecutor.updateMenuOperation(mMenu, operation);
+                            if (supportShare) {
+                                item.setEnabled(true);
+                                mShareActionProvider.setShareIntent(intent);
+                            }
+                        }
+                    }
+                });
                 return null;
             }
         });
