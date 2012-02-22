@@ -76,13 +76,6 @@ public class Utils {
         return (a == b) || (a == null ? false : a.equals(b));
     }
 
-    // Returns true if the input is power of 2.
-    // Throws IllegalArgumentException if the input is <= 0.
-    public static boolean isPowerOf2(int n) {
-        if (n <= 0) throw new IllegalArgumentException();
-        return (n & -n) == n;
-    }
-
     // Returns the next power of two.
     // Returns the input if it is already power of 2.
     // Throws IllegalArgumentException if the input is <= 0 or
@@ -104,13 +97,6 @@ public class Utils {
     public static int prevPowerOf2(int n) {
         if (n <= 0) throw new IllegalArgumentException();
         return Integer.highestOneBit(n);
-    }
-
-    // Returns the euclidean distance between (x, y) and (sx, sy).
-    public static float distance(float x, float y, float sx, float sy) {
-        float dx = x - sx;
-        float dy = y - sy;
-        return (float) Math.hypot(dx, dy);
     }
 
     // Returns the input value x clamped to the range [min, max].
@@ -136,12 +122,6 @@ public class Utils {
 
     public static boolean isOpaque(int color) {
         return color >>> 24 == 0xFF;
-    }
-
-    public static <T> void swap(T[] array, int i, int j) {
-        T temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
     }
 
     public static void swap(int[] array, int i, int j) {
@@ -261,15 +241,6 @@ public class Utils {
         return value == null ? "" : value;
     }
 
-    // Used for debugging. Should be removed before submitting.
-    public static void debug(String format, Object ... args) {
-        if (args.length == 0) {
-            Log.d(DEBUG_TAG, format);
-        } else {
-            Log.d(DEBUG_TAG, String.format(format, args));
-        }
-    }
-
     public static float parseFloatSafely(String content, float defaultValue) {
         if (content == null) return defaultValue;
         try {
@@ -292,37 +263,11 @@ public class Utils {
         return TextUtils.isEmpty(exifMake);
     }
 
-    public static boolean hasSpaceForSize(long size) {
-        String state = Environment.getExternalStorageState();
-        if (!Environment.MEDIA_MOUNTED.equals(state)) {
-            return false;
-        }
-
-        String path = Environment.getExternalStorageDirectory().getPath();
-        try {
-            StatFs stat = new StatFs(path);
-            return stat.getAvailableBlocks() * (long) stat.getBlockSize() > size;
-        } catch (Exception e) {
-            Log.i(TAG, "Fail to access external storage", e);
-        }
-        return false;
-    }
-
     public static void waitWithoutInterrupt(Object object) {
         try {
             object.wait();
         } catch (InterruptedException e) {
             Log.w(TAG, "unexpected interrupt: " + object);
-        }
-    }
-
-    public static void shuffle(int array[], Random random) {
-        for (int i = array.length; i > 0; --i) {
-            int t = random.nextInt(i);
-            if (t == i - 1) continue;
-            int tmp = array[i - 1];
-            array[i - 1] = array[t];
-            array[t] = tmp;
         }
     }
 
@@ -380,34 +325,6 @@ public class Utils {
         newSize = Math.min(source.length, newSize);
         System.arraycopy(source, 0, result, 0, newSize);
         return result;
-    }
-
-    public static PendingIntent deserializePendingIntent(byte[] rawPendingIntent) {
-        Parcel parcel = null;
-        try {
-            if (rawPendingIntent != null) {
-                parcel = Parcel.obtain();
-                parcel.unmarshall(rawPendingIntent, 0, rawPendingIntent.length);
-                return PendingIntent.readPendingIntentOrNullFromParcel(parcel);
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            throw new IllegalArgumentException("error parsing PendingIntent");
-        } finally {
-            if (parcel != null) parcel.recycle();
-        }
-    }
-
-    public static byte[] serializePendingIntent(PendingIntent pendingIntent) {
-        Parcel parcel = null;
-        try {
-            parcel = Parcel.obtain();
-            PendingIntent.writePendingIntentOrNullToParcel(pendingIntent, parcel);
-            return parcel.marshall();
-        } finally {
-            if (parcel != null) parcel.recycle();
-        }
     }
 
     // Mask information for debugging only. It returns <code>info.toString()</code> directly
