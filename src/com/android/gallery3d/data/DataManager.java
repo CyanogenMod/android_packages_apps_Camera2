@@ -145,10 +145,6 @@ public class DataManager {
         return path.getObject();
     }
 
-    public MediaSet peekMediaSet(Path path) {
-        return (MediaSet) path.getObject();
-    }
-
     public MediaObject getMediaObject(Path path) {
         MediaObject obj = path.getObject();
         if (obj != null) return obj;
@@ -243,14 +239,6 @@ public class DataManager {
 
     public int getMediaType(Path path) {
         return getMediaObject(path).getMediaType();
-    }
-
-    public MediaDetails getDetails(Path path) {
-        return getMediaObject(path).getDetails();
-    }
-
-    public void cache(Path path, int flag) {
-        getMediaObject(path).cache(flag);
     }
 
     public Path findPathByUri(Uri uri) {

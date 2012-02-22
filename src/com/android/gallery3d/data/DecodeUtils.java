@@ -48,14 +48,6 @@ public class DecodeUtils {
         }
     }
 
-    public static Bitmap requestDecode(JobContext jc, final String filePath,
-            Options options) {
-        if (options == null) options = new Options();
-        jc.setCancelListener(new DecodeCanceller(options));
-        return ensureGLCompatibleBitmap(
-                BitmapFactory.decodeFile(filePath, options));
-    }
-
     public static Bitmap requestDecode(JobContext jc, FileDescriptor fd, Options options) {
         if (options == null) options = new Options();
         jc.setCancelListener(new DecodeCanceller(options));
@@ -136,14 +128,6 @@ public class DecodeUtils {
                 BitmapFactory.decodeByteArray(data, 0, data.length, options));
     }
 
-    public static Bitmap requestDecode(JobContext jc,
-            FileDescriptor fileDescriptor, Rect paddings, Options options) {
-        if (options == null) options = new Options();
-        jc.setCancelListener(new DecodeCanceller(options));
-        return ensureGLCompatibleBitmap(BitmapFactory.decodeFileDescriptor
-                (fileDescriptor, paddings, options));
-    }
-
     // TODO: This function should not be called directly from
     // DecodeUtils.requestDecode(...), since we don't have the knowledge
     // if the bitmap will be uploaded to GL.
@@ -201,22 +185,6 @@ public class DecodeUtils {
             // so just log one line.
             Log.w(TAG, "requestCreateBitmapRegionDecoder: " + t);
             return null;
-        }
-    }
-
-    public static BitmapRegionDecoder requestCreateBitmapRegionDecoder(
-            JobContext jc, Uri uri, ContentResolver resolver,
-            boolean shareable) {
-        ParcelFileDescriptor pfd = null;
-        try {
-            pfd = resolver.openFileDescriptor(uri, "r");
-            return BitmapRegionDecoder.newInstance(
-                    pfd.getFileDescriptor(), shareable);
-        } catch (Throwable t) {
-            Log.w(TAG, t);
-            return null;
-        } finally {
-            Utils.closeSilently(pfd);
         }
     }
 }

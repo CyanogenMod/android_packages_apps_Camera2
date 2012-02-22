@@ -303,14 +303,6 @@ public class GLView {
         return mPaddings;
     }
 
-    public void setPaddings(Rect paddings) {
-        mPaddings.set(paddings);
-    }
-
-    public void setPaddings(int left, int top, int right, int bottom) {
-        mPaddings.set(left, top, right, bottom);
-    }
-
     public void layout(int left, int top, int right, int bottom) {
         boolean sizeChanged = setBounds(left, top, right, bottom);
         if (sizeChanged) {

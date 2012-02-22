@@ -143,11 +143,6 @@ public class SlotView extends GLView {
     }
 
     @Override
-    public boolean removeComponent(GLView view) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     protected void onLayout(boolean changeSize, int l, int t, int r, int b) {
         if (!changeSize) return;
 
@@ -415,21 +410,6 @@ public class SlotView extends GLView {
         public int rowsLand = -1;
         public int rowsPort = -1;
         public int slotGap = -1;
-
-        static Spec newWithSize(int width, int height) {
-            Spec s = new Spec();
-            s.slotWidth = width;
-            s.slotHeight = height;
-            return s;
-        }
-
-        static Spec newWithRows(int rowsLand, int rowsPort, int slotGap) {
-            Spec s = new Spec();
-            s.rowsLand = rowsLand;
-            s.rowsPort = rowsPort;
-            s.slotGap = slotGap;
-            return s;
-        }
     }
 
     public static class Layout {
@@ -487,10 +467,6 @@ public class SlotView extends GLView {
 
         public int getSlotHeight() {
             return mSlotHeight;
-        }
-
-        public int getContentLength() {
-            return mContentLength;
         }
 
         // Calculate

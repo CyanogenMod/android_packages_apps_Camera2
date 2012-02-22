@@ -37,8 +37,6 @@ public interface GLCanvas {
     // Clear the drawing buffers. This should only be used by GLRoot.
     public void clearBuffer();
 
-    public void setBlendEnabled(boolean enabled);
-
     // Sets and gets the current alpha, alpha must be in [0, 1].
     public void setAlpha(float alpha);
     public float getAlpha();
@@ -53,12 +51,7 @@ public interface GLCanvas {
     public void rotate(float angle, float x, float y, float z);
     public void multiplyMatrix(float[] mMatrix, int offset);
 
-    // Modifies the current clip with the specified rectangle.
-    // (current clip) = (current clip) intersect (specified rectangle).
-    // Returns true if the result clip is non-empty.
-    public boolean clipRect(int left, int top, int right, int bottom);
-
-    // Pushes the configuration state (matrix, alpha, and clip) onto
+    // Pushes the configuration state (matrix, and alpha) onto
     // a private stack.
     public void save();
 
@@ -66,9 +59,8 @@ public interface GLCanvas {
     public void save(int saveFlags);
 
     public static final int SAVE_FLAG_ALL = 0xFFFFFFFF;
-    public static final int SAVE_FLAG_CLIP = 0x01;
-    public static final int SAVE_FLAG_ALPHA = 0x02;
-    public static final int SAVE_FLAG_MATRIX = 0x04;
+    public static final int SAVE_FLAG_ALPHA = 0x01;
+    public static final int SAVE_FLAG_MATRIX = 0x02;
 
     // Pops from the top of the stack as current configuration state (matrix,
     // alpha, and clip). This call balances a previous call to save(), and is
@@ -93,25 +85,14 @@ public interface GLCanvas {
     public void drawMesh(BasicTexture tex, int x, int y, int xyBuffer,
             int uvBuffer, int indexBuffer, int indexCount);
 
-    // Draws a texture to the specified rectangle. The "alpha" parameter
-    // overrides the current drawing alpha value.
-    public void drawTexture(BasicTexture texture,
-            int x, int y, int width, int height, float alpha);
-
     // Draws a the source rectangle part of the texture to the target rectangle.
     public void drawTexture(BasicTexture texture, RectF source, RectF target);
 
     // Draw two textures to the specified rectangle. The actual texture used is
     // from * (1 - ratio) + to * ratio
     // The two textures must have the same size.
-    public void drawMixed(BasicTexture from, BasicTexture to,
-            float ratio, int x, int y, int w, int h);
-
     public void drawMixed(BasicTexture from, int toColor,
             float ratio, int x, int y, int w, int h);
-
-    // Return a texture copied from the specified rectangle.
-    public BasicTexture copyTexture(int x, int y, int width, int height);
 
     // Gets the underlying GL instance. This is used only when direct access to
     // GL is needed.
@@ -130,4 +111,6 @@ public interface GLCanvas {
     // called in the GL thread.
     public void deleteRecycledResources();
 
+    // Dump statistics information and clear the counters. For debug only.
+    public void dumpStatisticsAndClear();
 }

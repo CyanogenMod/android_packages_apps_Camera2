@@ -73,22 +73,6 @@ public class MediaDetails implements Iterable<Entry<Integer, Object>> {
         public boolean isFlashFired() {
             return (mState & FLASH_FIRED_MASK) != 0;
         }
-
-        public int getFlashReturn() {
-            return (mState & FLASH_RETURN_MASK) >> 1;
-        }
-
-        public int getFlashMode() {
-            return (mState & FLASH_MODE_MASK) >> 3;
-        }
-
-        public boolean isFlashPresent() {
-            return (mState & FLASH_FUNCTION_MASK) != 0;
-        }
-
-        public boolean isRedEyeModePresent() {
-            return (mState & FLASH_RED_EYE_MASK) != 0;
-        }
     }
 
     public void addDetail(int index, Object value) {

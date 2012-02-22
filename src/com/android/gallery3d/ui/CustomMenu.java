@@ -85,38 +85,6 @@ public class CustomMenu implements OnMenuItemClickListener {
         mListener = listener;
     }
 
-    public MenuItem findMenuItem(int id) {
-        MenuItem item = null;
-        for (DropDownMenu menu : mMenus) {
-            item = menu.findItem(id);
-            if (item != null) return item;
-        }
-        return item;
-    }
-
-    public void setMenuItemAppliedEnabled(int id, boolean applied, boolean enabled,
-            boolean updateTitle) {
-        MenuItem item = null;
-        for (DropDownMenu menu : mMenus) {
-            item = menu.findItem(id);
-            if (item != null) {
-                item.setCheckable(true);
-                item.setChecked(applied);
-                item.setEnabled(enabled);
-                if (updateTitle) {
-                    menu.setTitle(item.getTitle());
-                }
-            }
-        }
-    }
-
-    public void setMenuItemVisibility(int id, boolean visibility) {
-        MenuItem item = findMenuItem(id);
-        if (item != null) {
-            item.setVisible(visibility);
-        }
-    }
-
     public boolean onMenuItemClick(MenuItem item) {
         if (mListener != null) {
             return mListener.onMenuItemClick(item);

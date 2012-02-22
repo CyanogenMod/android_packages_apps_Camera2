@@ -124,10 +124,6 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
         return mData[slotIndex % mData.length];
     }
 
-    public int size() {
-        return mSize;
-    }
-
     public boolean isActiveSlot(int slotIndex) {
         return slotIndex >= mActiveStart && slotIndex < mActiveEnd;
     }

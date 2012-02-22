@@ -249,20 +249,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 AlbumSetPage.class, REQUEST_DO_ANIMATION, data);
     }
 
-    public void doFilter(int filterType) {
-        String basePath = mMediaSet.getPath().toString();
-        String newPath = FilterUtils.switchFilterPath(basePath, filterType);
-        Bundle data = new Bundle(getData());
-        data.putString(AlbumPage.KEY_MEDIA_PATH, newPath);
-        mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
-        mActivity.getStateManager().switchState(this, AlbumPage.class, data);
-    }
-
-    public void onOperationComplete() {
-        mAlbumView.invalidate();
-        // TODO: enable animation
-    }
-
     @Override
     protected void onCreate(Bundle data, Bundle restoreState) {
         mUserDistance = GalleryUtils.meterToPixel(USER_DISTANCE_METER);

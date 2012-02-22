@@ -90,24 +90,6 @@ public class TextureTest extends TestCase {
     }
 
     @SmallTest
-    public void testRawTexture() {
-        GL11 glStub = new GLStub();
-        GLCanvas canvas = new GLCanvasImpl(glStub);
-        RawTexture texture = RawTexture.newInstance(canvas);
-        texture.onBind(canvas);
-
-        GLCanvas canvas2 = new GLCanvasImpl(new GLStub());
-        try {
-            texture.onBind(canvas2);
-            fail();
-        } catch (RuntimeException ex) {
-            // expected.
-        }
-
-        assertTrue(texture.isOpaque());
-    }
-
-    @SmallTest
     public void testColorTexture() {
         GLCanvasMock canvas = new GLCanvasMock();
         ColorTexture texture = new ColorTexture(0x12345678);

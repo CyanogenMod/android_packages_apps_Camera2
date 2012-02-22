@@ -56,7 +56,6 @@ abstract public class ActivityState {
         public int requestCode;
         public int resultCode = Activity.RESULT_CANCELED;
         public Intent resultData;
-        ResultEntry next;
     }
 
     private boolean mDestroyed = false;

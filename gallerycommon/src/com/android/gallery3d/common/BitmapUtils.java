@@ -113,15 +113,6 @@ public class BitmapUtils {
                 : (initialSize + 7) / 8 * 8;
     }
 
-    public static Bitmap resizeDownToPixels(
-            Bitmap bitmap, int targetPixels, boolean recycle) {
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        float scale = FloatMath.sqrt((float) targetPixels / (width * height));
-        if (scale >= 1.0f) return bitmap;
-        return resizeBitmapByScale(bitmap, scale, recycle);
-    }
-
     public static Bitmap resizeBitmapByScale(
             Bitmap bitmap, float scale, boolean recycle) {
         int width = Math.round(bitmap.getWidth() * scale);
@@ -164,22 +155,6 @@ public class BitmapUtils {
                 (float) targetSize / srcWidth, (float) targetSize / srcHeight);
         if (scale > 0.5f) return bitmap;
         return resizeBitmapByScale(bitmap, scale, recycle);
-    }
-
-    // Crops a square from the center of the original image.
-    public static Bitmap cropCenter(Bitmap bitmap, boolean recycle) {
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-        if (width == height) return bitmap;
-        int size = Math.min(width, height);
-
-        Bitmap target = Bitmap.createBitmap(size, size, getConfig(bitmap));
-        Canvas canvas = new Canvas(target);
-        canvas.translate((size - width) / 2, (size - height) / 2);
-        Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
-        canvas.drawBitmap(bitmap, 0, 0, paint);
-        if (recycle) bitmap.recycle();
-        return target;
     }
 
     public static Bitmap resizeDownAndCropCenter(Bitmap bitmap, int size,

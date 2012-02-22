@@ -324,31 +324,6 @@ public class GalleryUtils {
         return false;
     }
 
-    public static void assertInMainThread() {
-        if (Thread.currentThread() == sContext.getMainLooper().getThread()) {
-            throw new AssertionError();
-        }
-    }
-
-    public static void doubleToRational(double value, long[] output) {
-        // error is a magic number to control the tollerance of error
-        doubleToRational(value, output, 0.00001);
-    }
-
-    private static void doubleToRational(double value, long[] output, double error) {
-        long number = (long) value;
-        value -= number;
-        if (value < 0.000001 || error > 1) {
-            output[0] = (int) (number + value + 0.5);
-            output[1] = 1;
-        } else {
-            doubleToRational(1.0 / value, output, error / value);
-            number = number * output[0] + output[1];
-            output[1] = output[0];
-            output[0] = number;
-        }
-    }
-
     public static boolean isPanorama(MediaItem item) {
         if (item == null) return false;
         int w = item.getWidth();

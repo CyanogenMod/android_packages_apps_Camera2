@@ -78,7 +78,6 @@ public class DownloadCache {
 
     private long mTotalBytes = 0;
     private boolean mInitialized = false;
-    private WeakHashMap<Object, Entry> mAssociateMap = new WeakHashMap<Object, Entry>();
 
     public DownloadCache(GalleryApp application, File root, long capacity) {
         mRoot = Utils.checkNotNull(root);
@@ -109,31 +108,6 @@ public class DownloadCache {
             }
         } finally {
             cursor.close();
-        }
-        return null;
-    }
-
-    public Entry lookup(URL url) {
-        if (!mInitialized) initialize();
-        String stringUrl = url.toString();
-
-        // First find in the entry-pool
-        synchronized (mEntryMap) {
-            Entry entry = mEntryMap.get(stringUrl);
-            if (entry != null) {
-                updateLastAccess(entry.mId);
-                return entry;
-            }
-        }
-
-        // Then, find it in database
-        TaskProxy proxy = new TaskProxy();
-        synchronized (mTaskMap) {
-            Entry entry = findEntryInDatabase(stringUrl);
-            if (entry != null) {
-                updateLastAccess(entry.mId);
-                return entry;
-            }
         }
         return null;
     }
@@ -281,10 +255,6 @@ public class DownloadCache {
         Entry(long id, File cacheFile) {
             mId = id;
             this.cacheFile = Utils.checkNotNull(cacheFile);
-        }
-
-        public void associateWith(Object object) {
-            mAssociateMap.put(Utils.checkNotNull(object), this);
         }
     }
 

@@ -26,14 +26,12 @@ package com.android.gallery3d.ui;
 // -- ColorTexture
 // -- FadeInTexture
 // -- BasicTexture
-//    -- RawTexture
 //    -- UploadedTexture
 //       -- BitmapTexture
 //       -- Tile
 //       -- ResourceTexture
 //          -- NinePatchTexture
 //       -- CanvasTexture
-//          -- DrawableTexture
 //          -- StringTexture
 //
 public interface Texture {

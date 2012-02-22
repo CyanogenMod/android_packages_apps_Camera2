@@ -45,14 +45,6 @@ public class UpdateHelper {
         return original;
     }
 
-    public double update(float original, float update) {
-        if (original != update) {
-            mUpdated = true;
-            original = update;
-        }
-        return original;
-    }
-
     public <T> T update(T original, T update) {
         if (!Utils.equals(original, update)) {
             mUpdated = true;

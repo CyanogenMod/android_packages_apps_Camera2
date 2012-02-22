@@ -30,7 +30,6 @@ import javax.microedition.khronos.egl.EGLDisplay;
 class GalleryEGLConfigChooser implements EGLConfigChooser {
 
     private static final String TAG = "GalleryEGLConfigChooser";
-    private int mStencilBits;
 
     private final int mConfigSpec[] = new int[] {
             EGL10.EGL_RED_SIZE, 5,
@@ -39,10 +38,6 @@ class GalleryEGLConfigChooser implements EGLConfigChooser {
             EGL10.EGL_ALPHA_SIZE, 0,
             EGL10.EGL_NONE
     };
-
-    public int getStencilBits() {
-        return mStencilBits;
-    }
 
     public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
         int[] numConfig = new int[1];
@@ -94,7 +89,6 @@ class GalleryEGLConfigChooser implements EGLConfigChooser {
         if (result == null) result = configs[0];
         egl.eglGetConfigAttrib(
                 display, result, EGL10.EGL_STENCIL_SIZE, value);
-        mStencilBits = value[0];
         logConfig(egl, display, result);
         return result;
     }

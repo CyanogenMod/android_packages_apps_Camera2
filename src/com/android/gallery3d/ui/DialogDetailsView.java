@@ -80,10 +80,6 @@ public class DialogDetailsView implements DetailsViewContainer {
         }
     }
 
-    public boolean isVisible() {
-        return mDialog.isShowing();
-    }
-
     private void setDetails(MediaDetails details) {
         mAdapter = new DetailsAdapter(details);
         String title = String.format(

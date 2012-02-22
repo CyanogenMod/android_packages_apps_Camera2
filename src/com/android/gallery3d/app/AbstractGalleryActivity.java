@@ -44,7 +44,6 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
     private static final String TAG = "AbstractGalleryActivity";
     private GLRootView mGLRootView;
     private StateManager mStateManager;
-    private PositionRepository mPositionRepository = new PositionRepository();
 
     private AlertDialog mAlertDialog = null;
     private BroadcastReceiver mMountReceiver = new BroadcastReceiver() {
@@ -84,20 +83,12 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         return this;
     }
 
-    public ImageCacheService getImageCacheService() {
-        return ((GalleryApp) getApplication()).getImageCacheService();
-    }
-
     public DataManager getDataManager() {
         return ((GalleryApp) getApplication()).getDataManager();
     }
 
     public ThreadPool getThreadPool() {
         return ((GalleryApp) getApplication()).getThreadPool();
-    }
-
-    public GalleryApp getGalleryApplication() {
-        return (GalleryApp) getApplication();
     }
 
     public synchronized StateManager getStateManager() {
@@ -111,19 +102,10 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         return mGLRootView;
     }
 
-    public PositionRepository getPositionRepository() {
-        return mPositionRepository;
-    }
-
     @Override
     public void setContentView(int resId) {
         super.setContentView(resId);
         mGLRootView = (GLRootView) findViewById(R.id.gl_root_view);
-    }
-
-    public int getActionBarHeight() {
-        ActionBar actionBar = getActionBar();
-        return actionBar != null ? actionBar.getHeight() : 0;
     }
 
     protected void onStorageReady() {

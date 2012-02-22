@@ -217,14 +217,6 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
         if (mActionBar != null) mActionBar.setSubtitle(title);
     }
 
-    public void setNavigationMode(int mode) {
-        if (mActionBar != null) mActionBar.setNavigationMode(mode);
-    }
-
-    public int getHeight() {
-        return mActionBar == null ? 0 : mActionBar.getHeight();
-    }
-
     public boolean setSelectedAction(int type) {
         for (int i = 0, n = sClusterItems.length; i < n; i++) {
             ActionItem item = sClusterItems[i];

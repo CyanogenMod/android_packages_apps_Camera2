@@ -62,7 +62,6 @@ public class GLCanvasImpl implements GLCanvas {
     private final GLState mGLState;
 
     private float mAlpha;
-    private final Rect mClipRect = new Rect();
     private final ArrayList<ConfigState> mRestoreStack =
             new ArrayList<ConfigState>();
     private ConfigState mRecycledRestoreAction;
@@ -106,7 +105,6 @@ public class GLCanvasImpl implements GLCanvas {
         Matrix.translateM(matrix, 0, 0, mHeight, 0);
         Matrix.scaleM(matrix, 0, 1, -1, 1);
 
-        mClipRect.set(0, 0, width, height);
         gl.glScissor(0, 0, width, height);
     }
 
@@ -115,13 +113,13 @@ public class GLCanvasImpl implements GLCanvas {
         mAlpha = alpha;
     }
 
+    public float getAlpha() {
+        return mAlpha;
+    }
+
     public void multiplyAlpha(float alpha) {
         Utils.assertTrue(alpha >= 0 && alpha <= 1);
         mAlpha *= alpha;
-    }
-
-    public float getAlpha() {
-        return mAlpha;
     }
 
     private static ByteBuffer allocateDirectNativeOrderBuffer(int size) {
@@ -163,7 +161,6 @@ public class GLCanvasImpl implements GLCanvas {
 
         mGLState.setColorMode(paint.getColor(), mAlpha);
         mGLState.setLineWidth(paint.getLineWidth());
-        mGLState.setLineSmooth(paint.getAntiAlias());
 
         saveTransform();
         translate(x, y);
@@ -181,7 +178,6 @@ public class GLCanvasImpl implements GLCanvas {
 
         mGLState.setColorMode(paint.getColor(), mAlpha);
         mGLState.setLineWidth(paint.getLineWidth());
-        mGLState.setLineSmooth(paint.getAntiAlias());
 
         saveTransform();
         translate(x1, y1);
@@ -314,33 +310,6 @@ public class GLCanvasImpl implements GLCanvas {
         return r;
     }
 
-    public boolean clipRect(int left, int top, int right, int bottom) {
-        float point[] = mapPoints(mMatrixValues, left, top, right, bottom);
-
-        // mMatrix could be a rotation matrix. In this case, we need to find
-        // the boundaries after rotation. (only handle 90 * n degrees)
-        if (point[0] > point[2]) {
-            left = (int) point[2];
-            right = (int) point[0];
-        } else {
-            left = (int) point[0];
-            right = (int) point[2];
-        }
-        if (point[1] > point[3]) {
-            top = (int) point[3];
-            bottom = (int) point[1];
-        } else {
-            top = (int) point[1];
-            bottom = (int) point[3];
-        }
-        Rect clip = mClipRect;
-
-        boolean intersect = clip.intersect(left, top, right, bottom);
-        if (!intersect) clip.set(0, 0, 0, 0);
-        mGL.glScissor(clip.left, clip.top, clip.width(), clip.height());
-        return intersect;
-    }
-
     private void drawBoundTexture(
             BasicTexture texture, int x, int y, int width, int height) {
         // Test whether it has been rotated or flipped, if so, glDrawTexiOES
@@ -378,11 +347,7 @@ public class GLCanvasImpl implements GLCanvas {
         drawTexture(texture, x, y, width, height, mAlpha);
     }
 
-    public void setBlendEnabled(boolean enabled) {
-        mBlendEnabled = enabled;
-    }
-
-    public void drawTexture(BasicTexture texture,
+    private void drawTexture(BasicTexture texture,
             int x, int y, int width, int height, float alpha) {
         if (width <= 0 || height <= 0) return;
 
@@ -445,11 +410,6 @@ public class GLCanvasImpl implements GLCanvas {
     public void drawMixed(BasicTexture from,
             int toColor, float ratio, int x, int y, int w, int h) {
         drawMixed(from, toColor, ratio, x, y, w, h, mAlpha);
-    }
-
-    public void drawMixed(BasicTexture from, BasicTexture to,
-            float ratio, int x, int y, int w, int h) {
-        drawMixed(from, to, ratio, x, y, w, h, mAlpha);
     }
 
     private boolean bindTexture(BasicTexture texture) {
@@ -532,84 +492,6 @@ public class GLCanvasImpl implements GLCanvas {
         mGLState.setTexEnvMode(GL11.GL_REPLACE);
     }
 
-    private void drawMixed(BasicTexture from, BasicTexture to,
-            float ratio, int x, int y, int width, int height, float alpha) {
-
-        if (ratio <= 0) {
-            drawTexture(from, x, y, width, height, alpha);
-            return;
-        } else if (ratio >= 1) {
-            drawTexture(to, x, y, width, height, alpha);
-            return;
-        }
-
-        // In the current implementation the two textures must have the
-        // same size.
-        Utils.assertTrue(from.getWidth() == to.getWidth()
-                && from.getHeight() == to.getHeight());
-
-        mGLState.setBlendEnabled(mBlendEnabled && (!from.isOpaque()
-                || !to.isOpaque() || alpha < OPAQUE_ALPHA));
-
-        final GL11 gl = mGL;
-        if (!bindTexture(from)) return;
-
-        //
-        // The formula we want:
-        //     alpha * ((1 - ratio) * from + ratio * to)
-        // The formula that GL supports is in the form of:
-        //     combo * (modulate * from) + (1 - combo) * to
-        //
-        // So, we have combo = 1 - alpha * ratio
-        //     and     modulate = alpha * (1f - ratio) / combo
-        //
-        float comboRatio = 1 - alpha * ratio;
-
-        // handle the case that (1 - comboRatio) == 0
-        if (alpha < OPAQUE_ALPHA) {
-            mGLState.setTextureAlpha(alpha * (1f - ratio) / comboRatio);
-        } else {
-            mGLState.setTextureAlpha(1f);
-        }
-
-        gl.glActiveTexture(GL11.GL_TEXTURE1);
-        if (!bindTexture(to)) {
-            // Disable TEXTURE1.
-            gl.glDisable(GL11.GL_TEXTURE_2D);
-            // Switch back to the default texture unit.
-            gl.glActiveTexture(GL11.GL_TEXTURE0);
-            return;
-        }
-        gl.glEnable(GL11.GL_TEXTURE_2D);
-
-        // Interpolate the RGB and alpha values between both textures.
-        mGLState.setTexEnvMode(GL11.GL_COMBINE);
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_INTERPOLATE);
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_INTERPOLATE);
-
-        // Specify the interpolation factor via the alpha component of
-        // GL_TEXTURE_ENV_COLORs.
-        // We don't use the RGB color, so just give them 0s.
-        setTextureColor(0, 0, 0, comboRatio);
-        gl.glTexEnvfv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_COLOR, mTextureColor, 0);
-
-        // Wire up the interpolation factor for RGB.
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_SRC2_RGB, GL11.GL_CONSTANT);
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_RGB, GL11.GL_SRC_ALPHA);
-
-        // Wire up the interpolation factor for alpha.
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_SRC2_ALPHA, GL11.GL_CONSTANT);
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_ALPHA, GL11.GL_SRC_ALPHA);
-
-        // Draw the combined texture.
-        drawBoundTexture(to, x, y, width, height);
-
-        // Disable TEXTURE1.
-        gl.glDisable(GL11.GL_TEXTURE_2D);
-        // Switch back to the default texture unit.
-        gl.glActiveTexture(GL11.GL_TEXTURE0);
-    }
-
     // TODO: the code only work for 2D should get fixed for 3D or removed
     private static final int MSKEW_X = 4;
     private static final int MSKEW_Y = 1;
@@ -622,41 +504,6 @@ public class GLCanvasImpl implements GLCanvas {
                 || Math.abs(matrix[MSKEW_Y]) > eps
                 || matrix[MSCALE_X] < -eps
                 || matrix[MSCALE_Y] > eps;
-    }
-
-    public BasicTexture copyTexture(int x, int y, int width, int height) {
-
-        if (isMatrixRotatedOrFlipped(mMatrixValues)) {
-            throw new IllegalArgumentException("cannot support rotated matrix");
-        }
-        float points[] = mapPoints(mMatrixValues, x, y + height, x + width, y);
-        x = (int) points[0];
-        y = (int) points[1];
-        width = (int) points[2] - x;
-        height = (int) points[3] - y;
-
-        GL11 gl = mGL;
-
-        RawTexture texture = RawTexture.newInstance(this);
-        gl.glBindTexture(GL11.GL_TEXTURE_2D, texture.getId());
-        texture.setSize(width, height);
-
-        int[] cropRect = {0,  0, width, height};
-        gl.glTexParameteriv(GL11.GL_TEXTURE_2D,
-                GL11Ext.GL_TEXTURE_CROP_RECT_OES, cropRect, 0);
-        gl.glTexParameteri(GL11.GL_TEXTURE_2D,
-                GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP_TO_EDGE);
-        gl.glTexParameteri(GL11.GL_TEXTURE_2D,
-                GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP_TO_EDGE);
-        gl.glTexParameterf(GL11.GL_TEXTURE_2D,
-                GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-        gl.glTexParameterf(GL11.GL_TEXTURE_2D,
-                GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        gl.glCopyTexImage2D(GL11.GL_TEXTURE_2D, 0,
-                GL11.GL_RGB, x, y, texture.getTextureWidth(),
-                texture.getTextureHeight(), 0);
-
-        return texture;
     }
 
     private static class GLState {
@@ -708,16 +555,6 @@ public class GLCanvasImpl implements GLCanvas {
             if (mLineWidth == width) return;
             mLineWidth = width;
             mGL.glLineWidth(width);
-        }
-
-        public void setLineSmooth(boolean enabled) {
-            if (mLineSmooth == enabled) return;
-            mLineSmooth = enabled;
-            if (enabled) {
-                mGL.glEnable(GL11.GL_LINE_SMOOTH);
-            } else {
-                mGL.glDisable(GL11.GL_LINE_SMOOTH);
-            }
         }
 
         public void setTextureAlpha(float alpha) {
@@ -841,11 +678,6 @@ public class GLCanvasImpl implements GLCanvas {
             config.mAlpha = -1;
         }
 
-        if ((saveFlags & SAVE_FLAG_CLIP) != 0) {
-            config.mRect.set(mClipRect);
-        } else {
-            config.mRect.left = Integer.MAX_VALUE;
-        }
 
         if ((saveFlags & SAVE_FLAG_MATRIX) != 0) {
             System.arraycopy(mMatrixValues, 0, config.mMatrix, 0, 16);
@@ -885,12 +717,6 @@ public class GLCanvasImpl implements GLCanvas {
 
         public void restore(GLCanvasImpl canvas) {
             if (mAlpha >= 0) canvas.setAlpha(mAlpha);
-            if (mRect.left != Integer.MAX_VALUE) {
-                Rect rect = mRect;
-                canvas.mClipRect.set(rect);
-                canvas.mGL.glScissor(
-                        rect.left, rect.top, rect.width(), rect.height());
-            }
             if (mMatrix[0] != Float.NEGATIVE_INFINITY) {
                 System.arraycopy(mMatrix, 0, canvas.mMatrixValues, 0, 16);
             }

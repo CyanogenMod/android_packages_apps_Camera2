@@ -26,10 +26,6 @@ public class ScrollBarView extends GLView {
     @SuppressWarnings("unused")
     private static final String TAG = "ScrollBarView";
 
-    public interface Listener {
-        void onScrollBarPositionChanged(int position);
-    }
-
     private int mBarHeight;
 
     private int mGripHeight;
@@ -40,7 +36,6 @@ public class ScrollBarView extends GLView {
     private int mContentPosition;
     private int mContentTotal;
 
-    private Listener mListener;
     private NinePatchTexture mScrollBarTexture;
 
     public ScrollBarView(Context context, int gripHeight, int gripWidth) {
@@ -53,10 +48,6 @@ public class ScrollBarView extends GLView {
         mGripWidth = 0;
         mGivenGripWidth = gripWidth;
         mGripHeight = gripHeight;
-    }
-
-    public void setListener(Listener listener) {
-        mListener = listener;
     }
 
     @Override
@@ -94,13 +85,6 @@ public class ScrollBarView extends GLView {
         mGripPosition = Math.round(r * mContentPosition);
     }
 
-    private void notifyContentPositionFromGrip() {
-        if (mContentTotal <= 0) return;
-        float r = (getWidth() - mGripWidth) / (float) mContentTotal;
-        int newContentPosition = Math.round(mGripPosition / r);
-        mListener.onScrollBarPositionChanged(newContentPosition);
-    }
-
     @Override
     protected void render(GLCanvas canvas) {
         super.render(canvas);
@@ -109,31 +93,4 @@ public class ScrollBarView extends GLView {
         int y = (mBarHeight - mGripHeight) / 2;
         mScrollBarTexture.draw(canvas, mGripPosition, y, mGripWidth, mGripHeight);
     }
-
-    // The onTouch() handler is disabled because now we don't want the user
-    // to drag the bar (it's an indicator only).
-    /*
-    @Override
-    protected boolean onTouch(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN: {
-                int x = (int) event.getX();
-                return (x >= mGripPosition && x < mGripPosition + mGripWidth);
-            }
-            case MotionEvent.ACTION_MOVE: {
-                // Adjust x by mGripWidth / 2 so the center of the grip
-                // matches the touch position.
-                int x = (int) event.getX() - mGripWidth / 2;
-                x = Utils.clamp(x, 0, getWidth() - mGripWidth);
-                if (mGripPosition != x) {
-                    mGripPosition = x;
-                    notifyContentPositionFromGrip();
-                    invalidate();
-                }
-                break;
-            }
-        }
-        return true;
-    }
-    */
 }

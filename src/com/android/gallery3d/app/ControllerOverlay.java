@@ -51,10 +51,5 @@ public interface ControllerOverlay {
 
   void showErrorMessage(String message);
 
-  void hide();
-
   void setTimes(int currentTime, int totalTime);
-
-  void resetTime();
-
 }

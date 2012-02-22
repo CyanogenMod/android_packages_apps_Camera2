@@ -140,10 +140,6 @@ public class JobLimiter implements FutureListener {
         return future;
     }
 
-    public <T> Future<T> submit(Job<T> job) {
-        return submit(job, null);
-    }
-
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void submitTasksIfAllowed() {
         while (mLimit > 0 && !mJobs.isEmpty()) {

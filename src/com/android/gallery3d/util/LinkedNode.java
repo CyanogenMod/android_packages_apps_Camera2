@@ -43,10 +43,6 @@ public class LinkedNode {
     public static class List<T extends LinkedNode> {
         private LinkedNode mHead = new LinkedNode();
 
-        public void insertFirst(T node) {
-            mHead.insert(node);
-        }
-
         public void insertLast(T node) {
             mHead.mPrev.insert(node);
         }

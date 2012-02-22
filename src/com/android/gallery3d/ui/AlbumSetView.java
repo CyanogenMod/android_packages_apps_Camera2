@@ -146,10 +146,6 @@ public class AlbumSetView extends SlotView {
         removeDisplayItem(entry.labelItem);
     }
 
-    public int size() {
-        return mDataWindow.size();
-    }
-
     @Override
     public void onLayoutChanged(int width, int height) {
         updateVisibleRange(0, 0);

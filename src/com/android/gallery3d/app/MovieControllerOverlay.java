@@ -176,10 +176,6 @@ public class MovieControllerOverlay extends FrameLayout implements
     showMainView(errorView);
   }
 
-  public void resetTime() {
-    timeBar.resetTime();
-  }
-
   public void setTimes(int currentTime, int totalTime) {
     timeBar.setTime(currentTime, totalTime);
   }

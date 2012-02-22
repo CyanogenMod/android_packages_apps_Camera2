@@ -45,20 +45,8 @@ public class Face implements Comparable<Face> {
         return mPosition;
     }
 
-    public int getWidth() {
-        return mPosition.right - mPosition.left;
-    }
-
-    public int getHeight() {
-        return mPosition.bottom - mPosition.top;
-    }
-
     public String getName() {
         return mName;
-    }
-
-    public String getPersonId() {
-        return mPersonId;
     }
 
     @Override
