@@ -66,7 +66,6 @@ public class GalleryProvider extends ContentProvider {
             ImageColumns.ORIENTATION};
 
     private DataManager mDataManager;
-    private DownloadCache mDownloadCache;
     private static Uri sBaseUri;
 
     public static String getAuthority(Context context) {
@@ -110,14 +109,6 @@ public class GalleryProvider extends ContentProvider {
         GalleryApp app = (GalleryApp) getContext().getApplicationContext();
         mDataManager = app.getDataManager();
         return true;
-    }
-
-    private DownloadCache getDownloadCache() {
-        if (mDownloadCache == null) {
-            GalleryApp app = (GalleryApp) getContext().getApplicationContext();
-            mDownloadCache = app.getDownloadCache();
-        }
-        return mDownloadCache;
     }
 
     // TODO: consider concurrent access

@@ -38,12 +38,9 @@ public class ChangeNotifier {
         return mContentDirty.compareAndSet(true, false);
     }
 
+    // For debugging only.
     public void fakeChange() {
         onChange(false);
-    }
-
-    public void clearDirty() {
-        mContentDirty.set(false);
     }
 
     protected void onChange(boolean selfChange) {

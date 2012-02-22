@@ -44,22 +44,6 @@ public class DownloadUtils {
         }
     }
 
-    public static byte[] requestDownload(JobContext jc, URL url) {
-        ByteArrayOutputStream baos = null;
-        try {
-            baos = new ByteArrayOutputStream();
-            if (!download(jc, url, baos)) {
-                return null;
-            }
-            return baos.toByteArray();
-        } catch (Throwable t) {
-            Log.w(TAG, t);
-            return null;
-        } finally {
-            Utils.closeSilently(baos);
-        }
-    }
-
     public static void dump(JobContext jc, InputStream is, OutputStream os)
             throws IOException {
         byte buffer[] = new byte[4096];

@@ -151,30 +151,6 @@ public class UtilsTest extends AndroidTestCase {
         assertFalse(Utils.equals(a, b));
     }
 
-    public void testIsPowerOf2() {
-        for (int i = 0; i < 31; i++) {
-            int v = (1 << i);
-            assertTrue(Utils.isPowerOf2(v));
-        }
-
-        int[] f = new int[] {3, 5, 6, 7, 9, 10, 65535, Integer.MAX_VALUE - 1,
-                Integer.MAX_VALUE };
-        for (int v : f) {
-            assertFalse(Utils.isPowerOf2(v));
-        }
-
-        int[] e = new int[] {0, -1, -2, -4, -65536, Integer.MIN_VALUE + 1,
-                Integer.MIN_VALUE };
-        for (int v : e) {
-            try {
-                Utils.isPowerOf2(v);
-                fail();
-            } catch (IllegalArgumentException ex) {
-                // expected.
-            }
-        }
-    }
-
     public void testNextPowerOf2() {
         int[] q = new int[] {1, 2, 3, 4, 5, 6, 10, 65535, (1 << 30) - 1, (1 << 30)};
         int[] a = new int[] {1, 2, 4, 4, 8, 8, 16, 65536, (1 << 30)    , (1 << 30)};
@@ -193,16 +169,6 @@ public class UtilsTest extends AndroidTestCase {
                 // expected.
             }
         }
-    }
-
-    public void testDistance() {
-        assertFloatEq(0f, Utils.distance(0, 0, 0, 0));
-        assertFloatEq(1f, Utils.distance(0, 1, 0, 0));
-        assertFloatEq(1f, Utils.distance(0, 0, 0, 1));
-        assertFloatEq(2f, Utils.distance(1, 2, 3, 2));
-        assertFloatEq(5f, Utils.distance(1, 2, 1 + 3, 2 + 4));
-        assertFloatEq(5f, Utils.distance(1, 2, 1 + 3, 2 + 4));
-        assertFloatEq(Float.MAX_VALUE, Utils.distance(Float.MAX_VALUE, 0, 0, 0));
     }
 
     public void testClamp() {
@@ -225,14 +191,6 @@ public class UtilsTest extends AndroidTestCase {
         assertFalse(Utils.isOpaque(0x00FF0000));
         assertFalse(Utils.isOpaque(0x5500FF00));
         assertFalse(Utils.isOpaque(0xAA0000FF));
-    }
-
-    public static void testSwap() {
-        Integer[] a = {1, 2, 3};
-        Utils.swap(a, 0, 2);
-        assertEquals(a[0].intValue(), 3);
-        assertEquals(a[1].intValue(), 2);
-        assertEquals(a[2].intValue(), 1);
     }
 
     public static void assertFloatEq(float expected, float actual) {

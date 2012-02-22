@@ -35,6 +35,7 @@ public class IntArray {
         return mSize;
     }
 
+    // For testing only
     public int[] toArray(int[] result) {
         if (result == null || result.length < mSize) {
             result = new int[mSize];

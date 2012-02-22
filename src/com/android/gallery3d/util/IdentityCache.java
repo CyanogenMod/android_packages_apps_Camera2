@@ -61,11 +61,15 @@ public class IdentityCache<K, V> {
         return entry == null ? null : entry.get();
     }
 
+    // This is currently unused.
+    /*
     public synchronized void clear() {
         mWeakMap.clear();
         mQueue = new ReferenceQueue<V>();
     }
+    */
 
+    // This is for debugging only
     public synchronized ArrayList<K> keys() {
         Set<K> set = mWeakMap.keySet();
         ArrayList<K> result = new ArrayList<K>(set);

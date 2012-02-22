@@ -67,10 +67,9 @@ public class GLRootView extends GLSurfaceView
     private static final int FLAG_NEED_LAYOUT = 2;
 
     private GL11 mGL;
-    private GLCanvasImpl mCanvas;
+    private GLCanvas mCanvas;
 
     private GLView mContentView;
-    private DisplayMetrics mDisplayMetrics;
 
     private int mFlags = FLAG_NEED_LAYOUT;
     private volatile boolean mRenderRequested = false;
@@ -111,15 +110,6 @@ public class GLRootView extends GLSurfaceView
         //setDebugFlags(DEBUG_CHECK_GL_ERROR);
     }
 
-    public GalleryEGLConfigChooser getEGLConfigChooser() {
-        return mEglConfigChooser;
-    }
-
-    @Override
-    public boolean hasStencil() {
-        return getEGLConfigChooser().getStencilBits() > 0;
-    }
-
     @Override
     public void registerLaunchedAnimation(CanvasAnimation animation) {
         // Register the newly launched animation so that we can set the start
@@ -157,10 +147,6 @@ public class GLRootView extends GLSurfaceView
             content.attachToRoot(this);
             requestLayoutContentPane();
         }
-    }
-
-    public GLView getContentPane() {
-        return mContentView;
     }
 
     @Override
@@ -373,19 +359,6 @@ public class GLRootView extends GLSurfaceView
         } finally {
             mRenderLock.unlock();
         }
-    }
-
-    public DisplayMetrics getDisplayMetrics() {
-        if (mDisplayMetrics == null) {
-            mDisplayMetrics = new DisplayMetrics();
-            ((Activity) getContext()).getWindowManager()
-                    .getDefaultDisplay().getMetrics(mDisplayMetrics);
-        }
-        return mDisplayMetrics;
-    }
-
-    public GLCanvas getCanvas() {
-        return mCanvas;
     }
 
     private class IdleRunner implements Runnable {

@@ -26,13 +26,11 @@ import android.content.res.Resources;
 import android.os.Looper;
 
 public interface GalleryContext {
-    public ImageCacheService getImageCacheService();
     public DataManager getDataManager();
 
     public Context getAndroidContext();
 
     public Looper getMainLooper();
     public Resources getResources();
-    public ContentResolver getContentResolver();
     public ThreadPool getThreadPool();
 }

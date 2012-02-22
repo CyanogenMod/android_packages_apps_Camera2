@@ -73,7 +73,6 @@ public class LocalVideo extends LocalMediaItem {
     };
 
     private final GalleryApp mApplication;
-    private static Bitmap sOverlay;
 
     public int durationInSec;
 

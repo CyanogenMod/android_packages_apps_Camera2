@@ -258,20 +258,6 @@ public class AlbumSetPage extends ActivityState implements
         mActivity.getStateManager().switchState(this, AlbumSetPage.class, data);
     }
 
-    public void doFilter(int filterType) {
-        String basePath = mMediaSet.getPath().toString();
-        String newPath = FilterUtils.switchFilterPath(basePath, filterType);
-        Bundle data = new Bundle(getData());
-        data.putString(AlbumSetPage.KEY_MEDIA_PATH, newPath);
-        mAlbumSetView.savePositions(PositionRepository.getInstance(mActivity));
-        mActivity.getStateManager().switchState(this, AlbumSetPage.class, data);
-    }
-
-    public void onOperationComplete() {
-        mAlbumSetView.invalidate();
-        // TODO: enable animation
-    }
-
     @Override
     public void onCreate(Bundle data, Bundle restoreState) {
         initializeViews();

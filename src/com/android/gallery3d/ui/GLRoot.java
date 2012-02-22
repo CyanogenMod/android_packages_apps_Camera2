@@ -28,7 +28,6 @@ public interface GLRoot {
     public void registerLaunchedAnimation(CanvasAnimation animation);
     public void requestRender();
     public void requestLayoutContentPane();
-    public boolean hasStencil();
 
     public void lockRenderThread();
     public void unlockRenderThread();

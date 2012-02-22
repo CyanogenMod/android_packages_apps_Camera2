@@ -28,8 +28,7 @@ import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View.MeasureSpec;
 
-public class FilmStripView extends GLView implements ScrollBarView.Listener,
-        UserInteractionListener {
+public class FilmStripView extends GLView implements UserInteractionListener {
     @SuppressWarnings("unused")
     private static final String TAG = "FilmStripView";
 
@@ -108,7 +107,6 @@ public class FilmStripView extends GLView implements ScrollBarView.Listener,
         addComponent(mAlbumView);
         mScrollBarView = new ScrollBarView(activity.getAndroidContext(),
                 mGripSize, gripWidth);
-        mScrollBarView.setListener(this);
         addComponent(mScrollBarView);
 
         mAlbumView.setModel(mAlbumDataAdapter);
@@ -237,12 +235,6 @@ public class FilmStripView extends GLView implements ScrollBarView.Listener,
     @Override
     public void onUserInteraction() {
         mUIListener.onUserInteraction();
-    }
-
-    // Called by ScrollBarView
-    @Override
-    public void onScrollBarPositionChanged(int position) {
-        mAlbumView.setScrollPosition(position);
     }
 
     public void setFocusIndex(int slotIndex) {

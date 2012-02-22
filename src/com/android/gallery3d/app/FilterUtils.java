@@ -214,11 +214,6 @@ public class FilterUtils {
         return "/cluster/{" + base + "}/" + kind;
     }
 
-    // Change the topmost filter to the specified type.
-    public static String switchFilterPath(String base, int filterType) {
-        return newFilterPath(removeOneFilterFromPath(base), filterType);
-    }
-
     // Change the topmost clustering to the specified type.
     public static String switchClusterPath(String base, int clusterType) {
         return newClusterPath(removeOneClusterFromPath(base), clusterType);
@@ -250,41 +245,6 @@ public class FilterUtils {
                         sb.append(",");
                     }
                     sb.append(removeOneClusterFromPath(sets[j], done));
-                }
-                sb.append("}");
-            } else {
-                sb.append(segments[i]);
-            }
-        }
-        return sb.toString();
-    }
-
-    // Remove the topmost filter (if any) from the path.
-    private static String removeOneFilterFromPath(String base) {
-        boolean[] done = new boolean[1];
-        return removeOneFilterFromPath(base, done);
-    }
-
-    private static String removeOneFilterFromPath(String base, boolean[] done) {
-        if (done[0]) return base;
-
-        String[] segments = Path.split(base);
-        if (segments[0].equals("filter") && segments[1].equals("mediatype")) {
-            done[0] = true;
-            return Path.splitSequence(segments[3])[0];
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < segments.length; i++) {
-            sb.append("/");
-            if (segments[i].startsWith("{")) {
-                sb.append("{");
-                String[] sets = Path.splitSequence(segments[i]);
-                for (int j = 0; j < sets.length; j++) {
-                    if (j > 0) {
-                        sb.append(",");
-                    }
-                    sb.append(removeOneFilterFromPath(sets[j], done));
                 }
                 sb.append("}");
             } else {

@@ -102,32 +102,6 @@ public class GLViewTest extends TestCase {
     }
 
     @SmallTest
-    public void testPaddings() {
-        GLView view = new GLView();
-
-        Rect p = view.getPaddings();
-        assertEquals(0, p.left);
-        assertEquals(0, p.top);
-        assertEquals(0, p.right);
-        assertEquals(0, p.bottom);
-
-        view.setPaddings(10, 20, 30, 100);
-        p = view.getPaddings();
-        assertEquals(10, p.left);
-        assertEquals(20, p.top);
-        assertEquals(30, p.right);
-        assertEquals(100, p.bottom);
-
-        p = new Rect(11, 22, 33, 104);
-        view.setPaddings(p);
-        p = view.getPaddings();
-        assertEquals(11, p.left);
-        assertEquals(22, p.top);
-        assertEquals(33, p.right);
-        assertEquals(104, p.bottom);
-    }
-
-    @SmallTest
     public void testParent() {
         GLView a = new GLView();
         GLView b = new GLView();

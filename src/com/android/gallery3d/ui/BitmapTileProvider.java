@@ -81,10 +81,6 @@ public class BitmapTileProvider implements TileImageView.Model {
         BitmapUtils.recycleSilently(mBackup);
     }
 
-    public int getRotation() {
-        return 0;
-    }
-
     public boolean isFailedToLoad() {
         return false;
     }

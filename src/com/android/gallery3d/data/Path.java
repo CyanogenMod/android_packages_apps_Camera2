@@ -190,15 +190,6 @@ public class Path {
         return mSegment;
     }
 
-    public String getSuffix(int level) {
-        // We don't need lock because mSegment and mParent are final.
-        Path p = this;
-        while (level-- != 0) {
-            p = p.mParent;
-        }
-        return p.mSegment;
-    }
-
     // Below are for testing/debugging only
     static void clearAll() {
         synchronized (Path.class) {

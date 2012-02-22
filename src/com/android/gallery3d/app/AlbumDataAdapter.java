@@ -119,10 +119,6 @@ public class AlbumDataAdapter implements AlbumView.Model {
         return mActiveStart;
     }
 
-    public int getActiveEnd() {
-        return mActiveEnd;
-    }
-
     public boolean isActive(int index) {
         return index >= mActiveStart && index < mActiveEnd;
     }

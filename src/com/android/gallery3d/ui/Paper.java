@@ -113,7 +113,6 @@ class EdgeAnimation {
     private final Interpolator mInterpolator;
 
     private int mState;
-    private long mAnimationStartTime;
     private float mValue;
 
     private float mValueStart;
