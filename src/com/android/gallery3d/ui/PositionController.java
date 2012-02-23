@@ -16,27 +16,21 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.Path;
 import com.android.gallery3d.ui.PositionRepository.Position;
 import com.android.gallery3d.util.GalleryUtils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.RectF;
-import android.os.Message;
 import android.os.SystemClock;
 import android.util.FloatMath;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
-import android.widget.Scroller;
 
 class PositionController {
-    private static final String TAG = "PositionController";
+    public static final int IMAGE_AT_LEFT_EDGE = 1;
+    public static final int IMAGE_AT_RIGHT_EDGE = 2;
+    public static final int IMAGE_AT_TOP_EDGE = 4;
+    public static final int IMAGE_AT_BOTTOM_EDGE = 8;
+
     private long mAnimationStartTime = NO_ANIMATION;
     private static final long NO_ANIMATION = -1;
     private static final long LAST_ANIMATION = -2;
@@ -373,12 +367,26 @@ class PositionController {
 
     public boolean fling(float velocityX, float velocityY) {
         // We only want to do fling when the picture is zoomed-in.
-        if (mImageW * mCurrentScale <= mViewW &&
-            mImageH * mCurrentScale <= mViewH) {
+        if (viewWiderThanScaledImage(mCurrentScale) &&
+            viewHigherThanScaledImage(mCurrentScale)) {
             return false;
         }
 
-        calculateStableBound(mCurrentScale);
+        // We only allow flinging in the directions where it won't go over the
+        // picture.
+        int edges = getImageAtEdges();
+        if ((velocityX > 0 && (edges & IMAGE_AT_LEFT_EDGE) != 0) ||
+            (velocityX < 0 && (edges & IMAGE_AT_RIGHT_EDGE) != 0)) {
+            velocityX = 0;
+        }
+        if ((velocityY > 0 && (edges & IMAGE_AT_TOP_EDGE) != 0) ||
+            (velocityY < 0 && (edges & IMAGE_AT_BOTTOM_EDGE) != 0)) {
+            velocityY = 0;
+        }
+        if (isAlmostEquals(velocityX, 0) && isAlmostEquals(velocityY, 0)) {
+            return false;
+        }
+
         mScroller.fling(mCurrentX, mCurrentY,
                 Math.round(-velocityX / mCurrentScale),
                 Math.round(-velocityY / mCurrentScale),
@@ -407,7 +415,7 @@ class PositionController {
         // force it to be in the center.
         // (We do for height only, not width, because the user may
         // want to scroll to the previous/next image.)
-        if (FloatMath.floor(mImageH * mToScale) <= mViewH) {
+        if (viewHigherThanScaledImage(mToScale)) {
             mToY = mImageH / 2;
         }
 
@@ -590,14 +598,22 @@ class PositionController {
 
         // If the scaled height is smaller than the view height,
         // force it to be in the center.
-        if (FloatMath.floor(mImageH * scale) <= mViewH) {
+        if (viewHigherThanScaledImage(scale)) {
             mBoundTop = mBoundBottom = mImageH / 2;
         }
 
         // Same for width
-        if (FloatMath.floor(mImageW * scale) <= mViewW) {
+        if (viewWiderThanScaledImage(scale)) {
             mBoundLeft = mBoundRight = mImageW / 2;
         }
+    }
+
+    private boolean viewHigherThanScaledImage(float scale) {
+        return FloatMath.floor(mImageH * scale) <= mViewH;
+    }
+
+    private boolean viewWiderThanScaledImage(float scale) {
+        return FloatMath.floor(mImageW * scale) <= mViewW;
     }
 
     private boolean useCurrentValueAsTarget() {
@@ -658,13 +674,21 @@ class PositionController {
         return mImageH;
     }
 
-    public boolean isAtLeftEdge() {
+    public int getImageAtEdges() {
         calculateStableBound(mCurrentScale);
-        return mCurrentX <= mBoundLeft;
-    }
-
-    public boolean isAtRightEdge() {
-        calculateStableBound(mCurrentScale);
-        return mCurrentX >= mBoundRight;
+        int edges = 0;
+        if (mCurrentX <= mBoundLeft) {
+            edges |= IMAGE_AT_LEFT_EDGE;
+        }
+        if (mCurrentX >= mBoundRight) {
+            edges |= IMAGE_AT_RIGHT_EDGE;
+        }
+        if (mCurrentY <= mBoundTop) {
+            edges |= IMAGE_AT_TOP_EDGE;
+        }
+        if (mCurrentY >= mBoundBottom) {
+            edges |= IMAGE_AT_BOTTOM_EDGE;
+        }
+        return edges;
     }
 }

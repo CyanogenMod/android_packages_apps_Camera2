@@ -404,35 +404,40 @@ public class PhotoView extends GLView {
         }
     }
 
-    private boolean swipeImages(float velocity) {
+    private boolean swipeImages(float velocityX, float velocityY) {
         if (mTransitionMode != TRANS_NONE
                 && mTransitionMode != TRANS_SWITCH_NEXT
                 && mTransitionMode != TRANS_SWITCH_PREVIOUS) return false;
 
-        ScreenNailEntry next = mScreenNails[ENTRY_NEXT];
-        ScreenNailEntry prev = mScreenNails[ENTRY_PREVIOUS];
-
-        int width = getWidth();
+        // Avoid swiping images if we're possibly flinging to view the
+        // zoomed in picture vertically.
+        PositionController controller = mPositionController;
+        boolean isMinimal = controller.isAtMinimalScale();
+        int edges = controller.getImageAtEdges();
+        if (!isMinimal && Math.abs(velocityY) > Math.abs(velocityX))
+            if ((edges & PositionController.IMAGE_AT_TOP_EDGE) == 0
+                    || (edges & PositionController.IMAGE_AT_BOTTOM_EDGE) == 0)
+                return false;
 
         // If we are at the edge of the current photo and the sweeping velocity
         // exceeds the threshold, switch to next / previous image.
-        PositionController controller = mPositionController;
-        boolean isMinimal = controller.isAtMinimalScale();
-
-        if (velocity < -SWIPE_THRESHOLD &&
-                (isMinimal || controller.isAtRightEdge())) {
+        int halfWidth = getWidth() / 2;
+        if (velocityX < -SWIPE_THRESHOLD && (isMinimal
+                || (edges & PositionController.IMAGE_AT_RIGHT_EDGE) != 0)) {
             stopCurrentSwipingIfNeeded();
+            ScreenNailEntry next = mScreenNails[ENTRY_NEXT];
             if (next.isEnabled()) {
                 mTransitionMode = TRANS_SWITCH_NEXT;
-                controller.startHorizontalSlide(next.mOffsetX - width / 2);
+                controller.startHorizontalSlide(next.mOffsetX - halfWidth);
                 return true;
             }
-        } else if (velocity > SWIPE_THRESHOLD &&
-                (isMinimal || controller.isAtLeftEdge())) {
+        } else if (velocityX > SWIPE_THRESHOLD && (isMinimal
+                || (edges & PositionController.IMAGE_AT_LEFT_EDGE) != 0)) {
             stopCurrentSwipingIfNeeded();
+            ScreenNailEntry prev = mScreenNails[ENTRY_PREVIOUS];
             if (prev.isEnabled()) {
                 mTransitionMode = TRANS_SWITCH_PREVIOUS;
-                controller.startHorizontalSlide(prev.mOffsetX - width / 2);
+                controller.startHorizontalSlide(prev.mOffsetX - halfWidth);
                 return true;
             }
         }
@@ -440,26 +445,24 @@ public class PhotoView extends GLView {
         return false;
     }
 
-    public boolean snapToNeighborImage() {
+    private boolean snapToNeighborImage() {
         if (mTransitionMode != TRANS_NONE) return false;
 
-        ScreenNailEntry next = mScreenNails[ENTRY_NEXT];
-        ScreenNailEntry prev = mScreenNails[ENTRY_PREVIOUS];
-
-        int width = getWidth();
         PositionController controller = mPositionController;
-
         RectF bounds = controller.getImageBounds();
         int left = Math.round(bounds.left);
         int right = Math.round(bounds.right);
+        int width = getWidth();
         int threshold = SWITCH_THRESHOLD + gapToSide(right - left, width);
 
         // If we have moved the picture a lot, switching.
+        ScreenNailEntry next = mScreenNails[ENTRY_NEXT];
         if (next.isEnabled() && threshold < width - right) {
             mTransitionMode = TRANS_SWITCH_NEXT;
             controller.startHorizontalSlide(next.mOffsetX - width / 2);
             return true;
         }
+        ScreenNailEntry prev = mScreenNails[ENTRY_PREVIOUS];
         if (prev.isEnabled() && threshold < left) {
             mTransitionMode = TRANS_SWITCH_PREVIOUS;
             controller.startHorizontalSlide(prev.mOffsetX - width / 2);
@@ -497,7 +500,7 @@ public class PhotoView extends GLView {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                 float velocityY) {
-            if (swipeImages(velocityX)) {
+            if (swipeImages(velocityX, velocityY)) {
                 mIgnoreUpEvent = true;
             } else if (mTransitionMode != TRANS_NONE) {
                 // do nothing
