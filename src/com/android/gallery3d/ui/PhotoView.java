@@ -388,7 +388,7 @@ public class PhotoView extends GLView {
             mVideoPlayIcon.draw(canvas, x - s / 2, y - s / 2, s, s);
         }
 
-        if (mPositionController.advanceAnimation()) invalidate();
+        mPositionController.advanceAnimation();
     }
 
     private void stopCurrentSwipingIfNeeded() {
