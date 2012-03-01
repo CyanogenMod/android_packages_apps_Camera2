@@ -34,9 +34,9 @@ import android.view.WindowManager;
 import com.android.gallery3d.ui.GLView;
 
 abstract public class ActivityState {
-    public static final int FLAG_HIDE_ACTION_BAR = 1;
-    public static final int FLAG_HIDE_STATUS_BAR = 2;
-    public static final int FLAG_SCREEN_ON = 3;
+    protected static final int FLAG_HIDE_ACTION_BAR = 1;
+    protected static final int FLAG_HIDE_STATUS_BAR = 2;
+    protected static final int FLAG_SCREEN_ON = 4;
 
     private static final int SCREEN_ON_FLAGS = (
               WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
