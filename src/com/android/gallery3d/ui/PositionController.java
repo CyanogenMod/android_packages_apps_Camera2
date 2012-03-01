@@ -400,8 +400,12 @@ class PositionController {
 
     private void startAnimation(
             int targetX, int targetY, float scale, int kind) {
+        mAnimationKind = kind;
         if (targetX == mCurrentX && targetY == mCurrentY
-                && scale == mCurrentScale) return;
+                && scale == mCurrentScale) {
+            onAnimationComplete();
+            return;
+        }
 
         mFromX = mCurrentX;
         mFromY = mCurrentY;
@@ -420,25 +424,18 @@ class PositionController {
         }
 
         mAnimationStartTime = SystemClock.uptimeMillis();
-        mAnimationKind = kind;
         if (mAnimationKind != ANIM_KIND_FLING) {
             mAnimationDuration = ANIM_TIME[mAnimationKind];
         }
-        if (advanceAnimation()) mViewer.invalidate();
+        advanceAnimation();
     }
 
-    // Returns true if redraw is needed.
-    public boolean advanceAnimation() {
+    public void advanceAnimation() {
         if (mAnimationStartTime == NO_ANIMATION) {
-            return false;
+            return;
         } else if (mAnimationStartTime == LAST_ANIMATION) {
-            mAnimationStartTime = NO_ANIMATION;
-            if (mViewer.isInTransition()) {
-                mViewer.notifyTransitionComplete();
-                return false;
-            } else {
-                return startSnapbackIfNeeded();
-            }
+            onAnimationComplete();
+            return;
         }
 
         long now = SystemClock.uptimeMillis();
@@ -478,7 +475,16 @@ class PositionController {
             }
         }
         mViewer.setPosition(mCurrentX, mCurrentY, mCurrentScale);
-        return true;
+        mViewer.invalidate();
+    }
+
+    private void onAnimationComplete() {
+        mAnimationStartTime = NO_ANIMATION;
+        if (mViewer.isInTransition()) {
+            mViewer.notifyTransitionComplete();
+        } else {
+            if (startSnapbackIfNeeded()) mViewer.invalidate();
+        }
     }
 
     private void flingInterpolate(float progress) {
@@ -545,7 +551,7 @@ class PositionController {
         return startSnapback();
     }
 
-    public boolean startSnapback() {
+    private boolean startSnapback() {
         boolean needAnimation = false;
         float scale = mCurrentScale;
 
