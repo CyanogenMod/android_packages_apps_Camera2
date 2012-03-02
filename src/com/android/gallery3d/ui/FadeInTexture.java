@@ -85,6 +85,6 @@ public class FadeInTexture implements Texture {
     }
 
     private long now() {
-        return SystemClock.uptimeMillis();
+        return AnimationTime.get();
     }
 }

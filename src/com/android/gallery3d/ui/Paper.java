@@ -184,6 +184,6 @@ class EdgeAnimation {
     }
 
     private long now() {
-        return SystemClock.uptimeMillis();
+        return AnimationTime.get();
     }
 }
