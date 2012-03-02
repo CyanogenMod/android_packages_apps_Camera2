@@ -104,7 +104,7 @@ public class GLRootView extends GLSurfaceView
         setEGLConfigChooser(mEglConfigChooser);
         setRenderer(this);
         getHolder().setFormat(PixelFormat.RGB_565);
-        AnimationTime.setNow();
+        AnimationTime.update();
 
         // Uncomment this to enable gl error check.
         //setDebugFlags(DEBUG_CHECK_GL_ERROR);
@@ -256,6 +256,7 @@ public class GLRootView extends GLSurfaceView
 
     @Override
     public void onDrawFrame(GL10 gl) {
+        AnimationTime.update();
         long t0;
         if (DEBUG_PROFILE_SLOW_ONLY) {
             Profile.hold();
@@ -305,7 +306,7 @@ public class GLRootView extends GLSurfaceView
             gl.glScissor(clip.left, clip.top, clip.width(), clip.height());
         }
 
-        AnimationTime.setNow();
+
         if (mContentView != null) {
            mContentView.render(mCanvas);
         }

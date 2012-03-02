@@ -423,7 +423,7 @@ class PositionController {
             mToY = mImageH / 2;
         }
 
-        mAnimationStartTime = SystemClock.uptimeMillis();
+        mAnimationStartTime = AnimationTime.get();
         if (mAnimationKind != ANIM_KIND_FLING) {
             mAnimationDuration = ANIM_TIME[mAnimationKind];
         }
@@ -438,7 +438,7 @@ class PositionController {
             return;
         }
 
-        long now = SystemClock.uptimeMillis();
+        long now = AnimationTime.get();
         float progress;
         if (mAnimationDuration == 0) {
             progress = 1;

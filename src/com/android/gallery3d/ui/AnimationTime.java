@@ -18,11 +18,17 @@ package com.android.gallery3d.ui;
 
 import android.os.SystemClock;
 
+//
+// The animation time should ideally be the vsync time the frame will be
+// displayed, but that is an unknown time in the future. So we use the system
+// time just after eglSwapBuffers (when GLSurfaceView.onDrawFrame is called)
+// as a approximation.
+//
 public class AnimationTime {
     private static volatile long sTime;
 
     // Sets current time as the animation time.
-    public static void setNow() {
+    public static void update() {
         sTime = SystemClock.uptimeMillis();
     }
 
