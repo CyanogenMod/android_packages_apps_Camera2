@@ -20,6 +20,7 @@ import android.content.ContentResolver;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.Video;
@@ -87,6 +88,19 @@ public class LocalAlbum extends MediaSet {
         this(path, application, bucketId, isImage,
                 LocalAlbumSet.getBucketName(application.getContentResolver(),
                 bucketId));
+    }
+
+    @Override
+    public Uri getContentUri() {
+        if (mIsImage) {
+            return MediaStore.Images.Media.EXTERNAL_CONTENT_URI.buildUpon()
+                    .appendQueryParameter(LocalSource.KEY_BUCKET_ID,
+                            String.valueOf(mBucketId)).build();
+        } else {
+            return MediaStore.Video.Media.EXTERNAL_CONTENT_URI.buildUpon()
+                    .appendQueryParameter(LocalSource.KEY_BUCKET_ID,
+                            String.valueOf(mBucketId)).build();
+        }
     }
 
     @Override

@@ -210,6 +210,17 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
         }).create().show();
     }
 
+    public void setDisplayOptions(boolean displayHomeAsUp, boolean showTitle) {
+        if (mActionBar != null) {
+            int options = (displayHomeAsUp ? ActionBar.DISPLAY_HOME_AS_UP : 0) |
+                    (showTitle ? ActionBar.DISPLAY_SHOW_TITLE : 0);
+            mActionBar.setDisplayOptions(
+                    options,
+                    ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
+            mActionBar.setHomeButtonEnabled(displayHomeAsUp);
+        }
+    }
+
     public void setTitle(String title) {
         if (mActionBar != null) mActionBar.setTitle(title);
     }

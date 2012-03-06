@@ -16,6 +16,9 @@
 
 package com.android.gallery3d.data;
 
+import android.net.Uri;
+import android.provider.MediaStore;
+
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -38,16 +41,18 @@ public class LocalMergeAlbum extends MediaSet implements ContentListener {
     private String mName;
     private FetchCache[] mFetcher;
     private int mSupportedOperation;
+    private int mBucketId;
 
     // mIndex maps global position to the position of each underlying media sets.
     private TreeMap<Integer, int[]> mIndex = new TreeMap<Integer, int[]>();
 
     public LocalMergeAlbum(
-            Path path, Comparator<MediaItem> comparator, MediaSet[] sources) {
+            Path path, Comparator<MediaItem> comparator, MediaSet[] sources, int bucketId) {
         super(path, INVALID_DATA_VERSION);
         mComparator = comparator;
         mSources = sources;
         mName = sources.length == 0 ? "" : sources[0].getName();
+        mBucketId = bucketId;
         for (MediaSet set : mSources) {
             set.addContentListener(this);
         }
@@ -73,6 +78,12 @@ public class LocalMergeAlbum extends MediaSet implements ContentListener {
         }
         mIndex.clear();
         mIndex.put(0, new int[mSources.length]);
+    }
+
+    @Override
+    public Uri getContentUri() {
+        return MediaStore.Files.getContentUri("external").buildUpon().appendQueryParameter(
+                LocalSource.KEY_BUCKET_ID, String.valueOf(mBucketId)).build();
     }
 
     @Override

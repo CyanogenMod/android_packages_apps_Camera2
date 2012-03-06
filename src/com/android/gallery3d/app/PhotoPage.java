@@ -20,6 +20,7 @@ import android.app.ActionBar;
 import android.app.ActionBar.OnMenuVisibilityListener;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -104,6 +105,7 @@ public class PhotoPage extends ActivityState
     private MenuExecutor mMenuExecutor;
     private boolean mIsActive;
     private ShareActionProvider mShareActionProvider;
+    private String mSetPathString;
 
     public static interface Model extends PhotoView.Model {
         public void resume();
@@ -176,16 +178,16 @@ public class PhotoPage extends ActivityState
         mRootPane.addComponent(mPhotoView);
         mApplication = (GalleryApp)((Activity) mActivity).getApplication();
 
-        String setPathString = data.getString(KEY_MEDIA_SET_PATH);
+        mSetPathString = data.getString(KEY_MEDIA_SET_PATH);
         Path itemPath = Path.fromString(data.getString(KEY_MEDIA_ITEM_PATH));
 
-        if (setPathString != null) {
-            mMediaSet = mActivity.getDataManager().getMediaSet(setPathString);
+        if (mSetPathString != null) {
+            mMediaSet = mActivity.getDataManager().getMediaSet(mSetPathString);
             mCurrentIndex = data.getInt(KEY_INDEX_HINT, 0);
             mMediaSet = (MediaSet)
-                    mActivity.getDataManager().getMediaObject(setPathString);
+                    mActivity.getDataManager().getMediaObject(mSetPathString);
             if (mMediaSet == null) {
-                Log.w(TAG, "failed to restore " + setPathString);
+                Log.w(TAG, "failed to restore " + mSetPathString);
             }
             PhotoDataAdapter pda = new PhotoDataAdapter(
                     mActivity, mPhotoView, mMediaSet, itemPath, mCurrentIndex);
@@ -438,6 +440,24 @@ public class PhotoPage extends ActivityState
         DataManager manager = mActivity.getDataManager();
         int action = item.getItemId();
         switch (action) {
+            case android.R.id.home: {
+                if (mSetPathString != null) {
+                    if (mActivity.getStateManager().getStateCount() > 1) {
+                        onBackPressed();
+                    } else {
+                        Activity a = (Activity) mActivity;
+                        Uri uri = mActivity.getDataManager().getContentUri(
+                                Path.fromString(mSetPathString));
+                        Intent intent = new Intent(Intent.ACTION_VIEW)
+                                .setClass(a, Gallery.class)
+                                .setDataAndType(uri, ContentResolver.CURSOR_DIR_BASE_TYPE)
+                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                        Intent.FLAG_ACTIVITY_NEW_TASK);
+                        a.startActivity(intent);
+                    }
+                }
+                return true;
+            }
             case R.id.action_slideshow: {
                 Bundle data = new Bundle();
                 data.putString(SlideshowPage.KEY_SET_PATH, mMediaSet.getPath().toString());
@@ -610,6 +630,8 @@ public class PhotoPage extends ActivityState
         if (mMenuVisibilityListener == null) {
             mMenuVisibilityListener = new MyMenuVisibilityListener();
         }
+        mActivity.getGalleryActionBar().setDisplayOptions(mSetPathString != null, true);
+
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
         onUserInteraction();
     }

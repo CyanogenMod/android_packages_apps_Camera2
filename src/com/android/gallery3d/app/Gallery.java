@@ -118,7 +118,6 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
         data.putInt(KEY_TYPE_BITS, typeBits);
         data.putString(AlbumSetPage.KEY_MEDIA_PATH,
                 getDataManager().getTopSetPath(typeBits));
-        getStateManager().setLaunchGalleryOnTop(true);
         getStateManager().startState(AlbumSetPage.class, data);
     }
 
@@ -137,7 +136,6 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
 
     private void startViewAction(Intent intent) {
         Boolean slideshow = intent.getBooleanExtra(EXTRA_SLIDESHOW, false);
-        getStateManager().setLaunchGalleryOnTop(true);
         if (slideshow) {
             getActionBar().hide();
             DataManager manager = getDataManager();
@@ -168,7 +166,6 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
                 data.putInt(KEY_TYPE_BITS, typeBits);
                 data.putString(AlbumSetPage.KEY_MEDIA_PATH,
                         getDataManager().getTopSetPath(typeBits));
-                getStateManager().setLaunchGalleryOnTop(true);
                 getStateManager().startState(AlbumSetPage.class, data);
             } else if (contentType.startsWith(
                     ContentResolver.CURSOR_DIR_BASE_TYPE)) {
@@ -186,6 +183,8 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
                 if (mediaSet != null) {
                     if (mediaSet.isLeafAlbum()) {
                         data.putString(AlbumPage.KEY_MEDIA_PATH, setPath.toString());
+                        data.putString(AlbumPage.KEY_PARENT_MEDIA_PATH,
+                                dm.getTopSetPath(DataManager.INCLUDE_ALL));
                         getStateManager().startState(AlbumPage.class, data);
                     } else {
                         data.putString(AlbumSetPage.KEY_MEDIA_PATH, setPath.toString());

@@ -75,6 +75,8 @@ class LocalSource extends MediaSource {
                 "external/images/media", LOCAL_IMAGE_ALBUM);
         mUriMatcher.addURI(MediaStore.AUTHORITY,
                 "external/video/media", LOCAL_VIDEO_ALBUM);
+        mUriMatcher.addURI(MediaStore.AUTHORITY,
+                "external/file", LOCAL_ALL_ALBUM);
     }
 
     @Override
@@ -98,7 +100,7 @@ class LocalSource extends MediaSource {
                         LocalAlbumSet.PATH_VIDEO.getChild(bucketId));
                 Comparator<MediaItem> comp = DataManager.sDateTakenComparator;
                 return new LocalMergeAlbum(
-                        path, comp, new MediaSet[] {imageSet, videoSet});
+                        path, comp, new MediaSet[] {imageSet, videoSet}, bucketId);
             }
             case LOCAL_IMAGE_ITEM:
                 return new LocalImage(path, mApplication, mMatcher.getIntVar(0));
@@ -122,6 +124,7 @@ class LocalSource extends MediaSource {
     }
 
     // The media type bit passed by the intent
+    private static final int MEDIA_TYPE_ALL = 0;
     private static final int MEDIA_TYPE_IMAGE = 1;
     private static final int MEDIA_TYPE_VIDEO = 4;
 
@@ -164,6 +167,9 @@ class LocalSource extends MediaSource {
                 }
                 case LOCAL_VIDEO_ALBUM: {
                     return getAlbumPath(uri, MEDIA_TYPE_VIDEO);
+                }
+                case LOCAL_ALL_ALBUM: {
+                    return getAlbumPath(uri, MEDIA_TYPE_ALL);
                 }
             }
         } catch (NumberFormatException e) {
