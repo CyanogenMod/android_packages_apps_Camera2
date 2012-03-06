@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.ViewGroup;
 
 import com.android.gallery3d.R;
 
@@ -37,18 +36,19 @@ public class PhotoEditor extends Activity {
     private FilterStack filterStack;
     private ActionBar actionBar;
     private EffectsBar effectsBar;
+    private Toolbar toolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photoeditor_main);
-        SpinnerProgressDialog.initialize((ViewGroup) findViewById(R.id.toolbar));
 
         Intent intent = getIntent();
         if (Intent.ACTION_EDIT.equalsIgnoreCase(intent.getAction())) {
             sourceUri = intent.getData();
         }
 
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         actionBar = (ActionBar) findViewById(R.id.action_bar);
         filterStack = new FilterStack((PhotoView) findViewById(R.id.photo_view),
                 new FilterStack.StackListener() {
@@ -76,7 +76,7 @@ public class PhotoEditor extends Activity {
     }
 
     private void openPhoto() {
-        SpinnerProgressDialog.showDialog();
+        SpinnerProgressDialog.showDialog(toolbar);
         LoadScreennailTask.Callback callback = new LoadScreennailTask.Callback() {
 
             @Override
@@ -103,7 +103,7 @@ public class PhotoEditor extends Activity {
 
                     @Override
                     public void run() {
-                        SpinnerProgressDialog.showDialog();
+                        SpinnerProgressDialog.showDialog(toolbar);
                         OnDoneCallback callback = new OnDoneCallback() {
 
                             @Override
@@ -131,7 +131,7 @@ public class PhotoEditor extends Activity {
 
                     @Override
                     public void run() {
-                        SpinnerProgressDialog.showDialog();
+                        SpinnerProgressDialog.showDialog(toolbar);
                         filterStack.getOutputBitmap(new OnDoneBitmapCallback() {
 
                             @Override

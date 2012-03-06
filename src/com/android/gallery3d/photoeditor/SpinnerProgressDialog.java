@@ -19,7 +19,6 @@ package com.android.gallery3d.photoeditor;
 import android.app.Dialog;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ProgressBar;
 
@@ -34,46 +33,52 @@ import java.util.ArrayList;
  */
 public class SpinnerProgressDialog extends Dialog {
 
-    private static ViewGroup toolbar;
     private static SpinnerProgressDialog dialog;
+    private final Toolbar toolbar;
     private final ArrayList<View> enabledTools = new ArrayList<View>();
 
-    public static void initialize(ViewGroup toolbar) {
-        SpinnerProgressDialog.toolbar = toolbar;
-    }
-
-    public static void showDialog() {
+    public static void showDialog(Toolbar toolbar) {
         // There should be only one progress dialog running at a time.
         if (dialog == null) {
-            dialog = new SpinnerProgressDialog();
-            dialog.setCancelable(false);
+            dialog = new SpinnerProgressDialog(toolbar);
             dialog.show();
-            // Disable enabled tools when showing spinner progress dialog.
-            for (int i = 0; i < toolbar.getChildCount(); i++) {
-                View view = toolbar.getChildAt(i);
-                if (view.isEnabled()) {
-                    dialog.enabledTools.add(view);
-                    view.setEnabled(false);
-                }
-            }
         }
     }
 
     public static void dismissDialog() {
         if (dialog != null) {
             dialog.dismiss();
-            // Enable tools that were disabled by this spinner progress dialog.
-            for (View view : dialog.enabledTools) {
-                view.setEnabled(true);
-            }
             dialog = null;
         }
     }
 
-    private SpinnerProgressDialog() {
+    private SpinnerProgressDialog(Toolbar toolbar) {
         super(toolbar.getContext(), R.style.SpinnerProgressDialog);
         addContentView(new ProgressBar(toolbar.getContext()), new LayoutParams(
                 LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        setCancelable(false);
+        this.toolbar = toolbar;
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        // Disable enabled tools when showing spinner progress dialog.
+        for (View view : toolbar.getTools()) {
+            if (view.isEnabled()) {
+                enabledTools.add(view);
+                view.setEnabled(false);
+            }
+        }
+    }
+
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        // Enable tools that were disabled by this spinner progress dialog.
+        for (View view : enabledTools) {
+            view.setEnabled(true);
+        }
     }
 
     @Override
