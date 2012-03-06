@@ -22,6 +22,7 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup.OnHierarchyChangeListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
@@ -34,16 +35,34 @@ import java.util.List;
 /**
  * Toolbar that contains all tools and controls their idle/awake behaviors from UI thread.
  */
-public class Toolbar extends RelativeLayout {
+public class Toolbar extends RelativeLayout implements OnHierarchyChangeListener {
 
     private final ToolbarIdleHandler idleHandler;
+    private final List<View> tools = new ArrayList<View>();
 
     public Toolbar(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        idleHandler = new ToolbarIdleHandler(context);
-        setOnHierarchyChangeListener(idleHandler);
+        setOnHierarchyChangeListener(this);
+        idleHandler = new ToolbarIdleHandler(this);
         idleHandler.killIdle();
+    }
+
+    @Override
+    public void onChildViewAdded(View parent, View child) {
+        // Photo-view isn't treated as a tool that responds to user events.
+        if (child.getId() != R.id.photo_view) {
+            tools.add(child);
+        }
+    }
+
+    @Override
+    public void onChildViewRemoved(View parent, View child) {
+        tools.remove(child);
+    }
+
+    public List<View> getTools() {
+        return tools;
     }
 
     @Override
@@ -52,18 +71,19 @@ public class Toolbar extends RelativeLayout {
         return super.dispatchTouchEvent(ev);
     }
 
-    private static class ToolbarIdleHandler implements OnHierarchyChangeListener {
+    private static class ToolbarIdleHandler {
 
         private static final int MAKE_IDLE = 1;
         private static final int TIMEOUT_IDLE = 8000;
 
-        private final List<View> childViews = new ArrayList<View>();
+        private final List<View> tools;
         private final Handler mainHandler;
         private final Animation fadeIn;
         private final Animation fadeOut;
         private boolean idle;
 
-        public ToolbarIdleHandler(Context context) {
+        public ToolbarIdleHandler(Toolbar toolbar) {
+            tools = toolbar.getTools();
             mainHandler = new Handler() {
 
                 @Override
@@ -72,7 +92,7 @@ public class Toolbar extends RelativeLayout {
                         case MAKE_IDLE:
                             if (!idle) {
                                 idle = true;
-                                for (View view : childViews) {
+                                for (View view : tools) {
                                     view.startAnimation(fadeOut);
                                 }
                             }
@@ -81,6 +101,7 @@ public class Toolbar extends RelativeLayout {
                 }
             };
 
+            Context context = toolbar.getContext();
             fadeIn = AnimationUtils.loadAnimation(context, R.anim.photoeditor_fade_in);
             fadeOut = AnimationUtils.loadAnimation(context, R.anim.photoeditor_fade_out);
         }
@@ -89,24 +110,11 @@ public class Toolbar extends RelativeLayout {
             mainHandler.removeMessages(MAKE_IDLE);
             if (idle) {
                 idle = false;
-                for (View view : childViews) {
+                for (View view : tools) {
                     view.startAnimation(fadeIn);
                 }
             }
             mainHandler.sendEmptyMessageDelayed(MAKE_IDLE, TIMEOUT_IDLE);
-        }
-
-        @Override
-        public void onChildViewAdded(View parent, View child) {
-            // All child views, except photo-view, will fade out on inactivity timeout.
-            if (child.getId() != R.id.photo_view) {
-                childViews.add(child);
-            }
-        }
-
-        @Override
-        public void onChildViewRemoved(View parent, View child) {
-            childViews.remove(child);
         }
     }
 }
