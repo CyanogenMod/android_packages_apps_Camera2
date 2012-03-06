@@ -63,6 +63,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private static final String TAG = "AlbumPage";
 
     public static final String KEY_MEDIA_PATH = "media-path";
+    public static final String KEY_PARENT_MEDIA_PATH = "parent-media-path";
     public static final String KEY_SET_CENTER = "set-center";
     public static final String KEY_AUTO_SELECT_ALL = "auto-select-all";
     public static final String KEY_SHOW_CLUSTER_MENU = "cluster-menu";
@@ -79,6 +80,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private boolean mIsActive = false;
     private AlbumView mAlbumView;
     private Path mMediaSetPath;
+    private String mParentMediaSetString;
 
     private AlbumDataAdapter mAlbumDataAdapter;
 
@@ -314,6 +316,11 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mIsActive = true;
         setContentPane(mRootPane);
 
+        Path path = mMediaSet.getPath();
+        boolean enableHomeButton = (mActivity.getStateManager().getStateCount() > 1) |
+                mParentMediaSetString != null;
+        mActivity.getGalleryActionBar().setDisplayOptions(enableHomeButton, true);
+
         // Set the reload bit here to prevent it exit this page in clearLoadingBit().
         setLoadingBit(BIT_LOADING_RELOAD);
         mAlbumDataAdapter.resume();
@@ -391,6 +398,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
     private void initializeData(Bundle data) {
         mMediaSetPath = Path.fromString(data.getString(KEY_MEDIA_PATH));
+        mParentMediaSetString = data.getString(KEY_PARENT_MEDIA_PATH);
         mMediaSet = mActivity.getDataManager().getMediaSet(mMediaSetPath);
         if (mMediaSet == null) {
             Utils.fail("MediaSet is null. Path = %s", mMediaSetPath);
@@ -462,6 +470,19 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     @Override
     protected boolean onItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home: {
+                if (mActivity.getStateManager().getStateCount() > 1) {
+                    onBackPressed();
+                } else if (mParentMediaSetString != null) {
+                    Activity a = (Activity) mActivity;
+                    int flags = Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK;
+                    Intent intent = new Intent()
+                            .setClass(a, Gallery.class)
+                            .setFlags(flags);
+                    a.startActivity(intent);
+                }
+                return true;
+            }
             case R.id.action_cancel:
                 mActivity.getStateManager().finishState(this);
                 return true;
