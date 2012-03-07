@@ -32,7 +32,7 @@ import java.lang.reflect.Method;
 
 public class BitmapUtils {
     private static final String TAG = "BitmapUtils";
-    private static final int COMPRESS_JPEG_QUALITY = 90;
+    private static final int DEFAULT_JPEG_QUALITY = 90;
     public static final int UNCONSTRAINED = -1;
 
     private BitmapUtils(){}
@@ -94,7 +94,7 @@ public class BitmapUtils {
                 : initialSize / 8 * 8;
     }
 
-    // Fin the min x that 1 / x <= scale
+    // Find the min x that 1 / x >= scale
     public static int computeSampleSizeLarger(float scale) {
         int initialSize = (int) FloatMath.floor(1f / scale);
         if (initialSize <= 1) return 1;
@@ -104,7 +104,7 @@ public class BitmapUtils {
                 : initialSize / 8 * 8;
     }
 
-    // Find the max x that 1 / x >= scale.
+    // Find the max x that 1 / x <= scale.
     public static int computeSampleSize(float scale) {
         Utils.assertTrue(scale > 0);
         int initialSize = Math.max(1, (int) FloatMath.ceil(1 / scale));
@@ -146,27 +146,15 @@ public class BitmapUtils {
         return resizeBitmapByScale(bitmap, scale, recycle);
     }
 
-    // Resize the bitmap if each side is >= targetSize * 2
-    public static Bitmap resizeDownIfTooBig(
-            Bitmap bitmap, int targetSize, boolean recycle) {
-        int srcWidth = bitmap.getWidth();
-        int srcHeight = bitmap.getHeight();
-        float scale = Math.max(
-                (float) targetSize / srcWidth, (float) targetSize / srcHeight);
-        if (scale > 0.5f) return bitmap;
-        return resizeBitmapByScale(bitmap, scale, recycle);
-    }
-
-    public static Bitmap resizeDownAndCropCenter(Bitmap bitmap, int size,
-            boolean recycle) {
+    public static Bitmap resizeAndCropCenter(Bitmap bitmap, int size, boolean recycle) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        int minSide = Math.min(w, h);
-        if (w == h && minSide <= size) return bitmap;
-        size = Math.min(size, minSide);
+        if (w == size && h == size) return bitmap;
 
-        float scale = Math.max((float) size / bitmap.getWidth(),
-                (float) size / bitmap.getHeight());
+        // scale the image so that the shorter side equals to the target;
+        // the longer side will be center-cropped.
+        float scale = (float) size / Math.min(w,  h);
+
         Bitmap target = Bitmap.createBitmap(size, size, getConfig(bitmap));
         int width = Math.round(scale * bitmap.getWidth());
         int height = Math.round(scale * bitmap.getHeight());
@@ -247,11 +235,14 @@ public class BitmapUtils {
         return null;
     }
 
-    public static byte[] compressBitmap(Bitmap bitmap) {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG,
-                COMPRESS_JPEG_QUALITY, os);
-        return os.toByteArray();
+    public static byte[] compressToBytes(Bitmap bitmap) {
+        return compressToBytes(bitmap, DEFAULT_JPEG_QUALITY);
+    }
+
+    public static byte[] compressToBytes(Bitmap bitmap, int quality) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(65536);
+        bitmap.compress(CompressFormat.JPEG, quality, baos);
+        return baos.toByteArray();
     }
 
     public static boolean isSupportedByRegionDecoder(String mimeType) {
@@ -265,11 +256,5 @@ public class BitmapUtils {
         if (mimeType == null) return false;
         mimeType = mimeType.toLowerCase();
         return mimeType.equals("image/jpeg");
-    }
-
-    public static byte[] compressToBytes(Bitmap bitmap, int quality) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(65536);
-        bitmap.compress(CompressFormat.JPEG, quality, baos);
-        return baos.toByteArray();
     }
 }
