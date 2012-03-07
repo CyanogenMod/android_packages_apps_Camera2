@@ -22,6 +22,8 @@ import android.content.AsyncQueryHandler;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,10 +42,15 @@ import com.android.gallery3d.common.Utils;
 
 /**
  * This activity plays a video from a specified URI.
+ *
+ * The client of this activity can pass a logo bitmap in the intent (KEY_LOGO_BITMAP)
+ * to set the action bar logo so the playback process looks more seamlessly integrated with
+ * the original activity.
  */
 public class MovieActivity extends Activity {
     @SuppressWarnings("unused")
     private static final String TAG = "MovieActivity";
+    private static final String KEY_LOGO_BITMAP = "logo-bitmap";
 
     private MoviePlayer mPlayer;
     private boolean mFinishOnCompletion;
@@ -89,6 +96,10 @@ public class MovieActivity extends Activity {
     private void initializeActionBar(Intent intent) {
         mUri = intent.getData();
         final ActionBar actionBar = getActionBar();
+        Bitmap logo = intent.getParcelableExtra(KEY_LOGO_BITMAP);
+        if (logo != null) {
+            actionBar.setLogo(new BitmapDrawable(getResources(), logo));
+        }
         actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
                 ActionBar.DISPLAY_HOME_AS_UP);
 
