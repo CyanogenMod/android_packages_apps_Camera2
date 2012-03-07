@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.R;
 
 import android.content.Context;
@@ -31,7 +30,6 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
@@ -103,6 +101,9 @@ public class MovieControllerOverlay extends FrameLayout implements
     ProgressBar spinner = new ProgressBar(context);
     spinner.setIndeterminate(true);
     loadingView.addView(spinner, wrapContent);
+    TextView loadingText = createOverlayTextView(context);
+    loadingText.setText(R.string.loading_video);
+    loadingView.addView(loadingText, wrapContent);
     addView(loadingView, wrapContent);
 
     playPauseReplayView = new ImageView(context);
@@ -114,10 +115,7 @@ public class MovieControllerOverlay extends FrameLayout implements
     playPauseReplayView.setOnClickListener(this);
     addView(playPauseReplayView, wrapContent);
 
-    errorView = new TextView(context);
-    errorView.setGravity(Gravity.CENTER);
-    errorView.setBackgroundColor(0xCC000000);
-    errorView.setTextColor(0xFFFFFFFF);
+    errorView = createOverlayTextView(context);
     addView(errorView, matchParent);
 
     handler = new Handler();
@@ -134,6 +132,14 @@ public class MovieControllerOverlay extends FrameLayout implements
         new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     setLayoutParams(params);
     hide();
+  }
+
+  private TextView createOverlayTextView(Context context) {
+    TextView view = new TextView(context);
+    view.setGravity(Gravity.CENTER);
+    view.setTextColor(0xFFFFFFFF);
+    view.setPadding(0, 15, 0, 15);
+    return view;
   }
 
   public void setListener(Listener listener) {
@@ -171,7 +177,7 @@ public class MovieControllerOverlay extends FrameLayout implements
   public void showErrorMessage(String message) {
     state = State.ERROR;
     int padding = (int) (getMeasuredWidth() * ERROR_MESSAGE_RELATIVE_PADDING);
-    errorView.setPadding(padding, 10, padding, 10);
+    errorView.setPadding(padding, errorView.getPaddingTop(), padding, errorView.getPaddingBottom());
     errorView.setText(message);
     showMainView(errorView);
   }
@@ -327,9 +333,6 @@ public class MovieControllerOverlay extends FrameLayout implements
         cx - bw / 2, playbackButtonsCenterline - bh / 2, cx + bw / 2,
         playbackButtonsCenterline + bh / 2);
 
-    // Space available on each side of the error message for the next and previous buttons
-    int errorMessagePadding = (int) (w * ERROR_MESSAGE_RELATIVE_PADDING);
-
     if (mainView != null) {
       layoutCenteredView(mainView, l, t, r, b);
     }
@@ -382,5 +385,4 @@ public class MovieControllerOverlay extends FrameLayout implements
     maybeStartHiding();
     listener.onSeekEnd(time);
   }
-
 }
