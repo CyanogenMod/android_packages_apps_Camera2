@@ -16,15 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.data.DataManager;
-import com.android.gallery3d.data.ImageCacheService;
-import com.android.gallery3d.ui.GLRoot;
-import com.android.gallery3d.ui.GLRootView;
-import com.android.gallery3d.ui.PositionRepository;
-import com.android.gallery3d.util.ThreadPool;
-
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -38,6 +29,13 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.data.DataManager;
+import com.android.gallery3d.ui.BitmapPool;
+import com.android.gallery3d.ui.GLRoot;
+import com.android.gallery3d.ui.GLRootView;
+import com.android.gallery3d.util.ThreadPool;
 
 public class AbstractGalleryActivity extends Activity implements GalleryActivity {
     @SuppressWarnings("unused")
@@ -177,6 +175,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         } finally {
             mGLRootView.unlockRenderThread();
         }
+        BitmapPool.clear();
     }
 
     @Override

@@ -16,12 +16,12 @@
 
 package com.android.gallery3d.data;
 
+import android.content.Context;
+
 import com.android.gallery3d.common.BlobCache;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.CacheManager;
 import com.android.gallery3d.util.GalleryUtils;
-
-import android.content.Context;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -33,7 +33,7 @@ public class ImageCacheService {
     private static final String IMAGE_CACHE_FILE = "imgcache";
     private static final int IMAGE_CACHE_MAX_ENTRIES = 5000;
     private static final int IMAGE_CACHE_MAX_BYTES = 200 * 1024 * 1024;
-    private static final int IMAGE_CACHE_VERSION = 3;
+    private static final int IMAGE_CACHE_VERSION = 4;
 
     private BlobCache mCache;
 

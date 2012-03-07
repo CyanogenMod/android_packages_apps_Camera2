@@ -293,6 +293,15 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
         }
 
         @Override
+        protected void recycleBitmap(Bitmap bitmap) {
+            // if mCacheThumbSize > 0, we will keep images in cache so that
+            // we cannot recycle the bitmap
+            if (mCacheThumbSize == 0) {
+                BitmapPool.recycle(BitmapPool.TYPE_MICRO_THUMB, bitmap);
+            }
+        }
+
+        @Override
         protected void onBitmapAvailable(Bitmap bitmap) {
             boolean isActiveSlot = isActiveSlot(mSlotIndex);
             if (isActiveSlot) {
