@@ -16,9 +16,9 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.data.MediaItem;
-
 import android.graphics.Bitmap;
+
+import com.android.gallery3d.data.MediaItem;
 
 public abstract class AbstractDisplayItem extends DisplayItem {
 
@@ -44,6 +44,7 @@ public abstract class AbstractDisplayItem extends DisplayItem {
 
     protected void updateImage(Bitmap bitmap, boolean isCancelled) {
         if (mRecycling) {
+            recycleBitmap(bitmap);
             return;
         }
 
@@ -96,7 +97,10 @@ public abstract class AbstractDisplayItem extends DisplayItem {
 
     public void recycle() {
         if (!inState(STATE_UPDATING | STATE_CANCELING)) {
-            if (mBitmap != null) mBitmap = null;
+            if (mBitmap != null) {
+                recycleBitmap(mBitmap);
+                mBitmap = null;
+            }
         } else {
             mRecycling = true;
             cancelImageRequest();
@@ -110,4 +114,5 @@ public abstract class AbstractDisplayItem extends DisplayItem {
     abstract protected void startLoadBitmap();
     abstract protected void cancelLoadBitmap();
     abstract protected void onBitmapAvailable(Bitmap bitmap);
+    abstract protected void recycleBitmap(Bitmap bitmap);
 }

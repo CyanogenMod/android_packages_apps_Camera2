@@ -84,7 +84,7 @@ public class MtpImage extends MediaItem {
                     Log.w(TAG, "decoding thumbnail failed");
                     return null;
                 }
-                return DecodeUtils.requestDecode(jc, thumbnail, null);
+                return DecodeUtils.decode(jc, thumbnail, null);
             }
         };
     }
@@ -95,7 +95,7 @@ public class MtpImage extends MediaItem {
             public BitmapRegionDecoder run(JobContext jc) {
                 byte[] bytes = mMtpContext.getMtpClient().getObject(
                         UsbDevice.getDeviceName(mDeviceId), mObjectId, mObjectSize);
-                return DecodeUtils.requestCreateBitmapRegionDecoder(
+                return DecodeUtils.createBitmapRegionDecoder(
                         jc, bytes, 0, bytes.length, false);
             }
         };

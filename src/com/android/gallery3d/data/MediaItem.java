@@ -16,10 +16,10 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.util.ThreadPool.Job;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
+
+import com.android.gallery3d.util.ThreadPool.Job;
 
 // MediaItem represents an image or a video item.
 public abstract class MediaItem extends MediaObject {
@@ -89,4 +89,16 @@ public abstract class MediaItem extends MediaObject {
     // Returns 0, 0 if the information is not available.
     public abstract int getWidth();
     public abstract int getHeight();
+
+    public static int getTargetSize(int type) {
+        switch (type) {
+            case TYPE_THUMBNAIL:
+                return THUMBNAIL_TARGET_SIZE;
+            case TYPE_MICROTHUMBNAIL:
+                return MICROTHUMBNAIL_TARGET_SIZE;
+            default:
+                throw new RuntimeException(
+                    "should only request thumb/microthumb from cache");
+        }
+    }
 }

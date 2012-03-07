@@ -16,22 +16,17 @@
 
 package com.android.gallery3d.common;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.os.Build;
-import android.os.Environment;
-import android.os.Parcel;
 import android.os.ParcelFileDescriptor;
-import android.os.StatFs;
 import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.Closeable;
 import java.io.InterruptedIOException;
-import java.util.Random;
 
 public class Utils {
     private static final String TAG = "Utils";
@@ -335,5 +330,10 @@ public class Utils {
         String s = info.toString();
         int length = Math.min(s.length(), MASK_STRING.length());
         return IS_DEBUG_BUILD ? s : MASK_STRING.substring(0, length);
+    }
+
+    // This method should be ONLY used for debugging.
+    public static void debug(String message, Object ... args) {
+        Log.v(DEBUG_TAG, String.format(message, args));
     }
 }
