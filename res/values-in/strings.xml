@@ -51,7 +51,7 @@
     <string name="share" msgid="3619042788254195341">"Bagikan"</string>
     <string name="select_all" msgid="3403283025220282175">"Pilih semua"</string>
     <string name="deselect_all" msgid="5758897506061723684">"Batalkan semua pilihan"</string>
-    <string name="slideshow" msgid="4355906903247112975">"Rangkai salindia"</string>
+    <string name="slideshow" msgid="4355906903247112975">"Rangkai slide"</string>
     <string name="details" msgid="8415120088556445230">"Detail"</string>
     <string name="details_title" msgid="2611396603977441273">"%1$d dari %2$d item:"</string>
     <string name="close" msgid="5585646033158453043">"Tutup"</string>
@@ -103,7 +103,7 @@
     <string name="no_albums_alert" msgid="4111744447491690896">"Tidak ada album yang tersedia."</string>
     <string name="empty_album" msgid="4542880442593595494">"O gambar/video tersedia."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Pos"</string>
-    <string name="make_available_offline" msgid="5157950985488297112">"Jadikan agar tersedia luring"</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"Jadikan agar tersedia offline"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Segarkan"</string>
     <string name="done" msgid="217672440064436595">"Selesai"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d dari %2$d item:"</string>
@@ -117,7 +117,7 @@
     <string name="orientation" msgid="4958327983165245513">"Orientasi"</string>
     <string name="duration" msgid="8160058911218541616">"Durasi"</string>
     <string name="mimetype" msgid="8024168704337990470">"Jenis MIME"</string>
-    <string name="file_size" msgid="8486169301588318915">"Ukuran berkas"</string>
+    <string name="file_size" msgid="8486169301588318915">"Ukuran file"</string>
     <string name="maker" msgid="7921835498034236197">"Pembuat"</string>
     <string name="model" msgid="8240207064064337366">"Model"</string>
     <string name="flash" msgid="2816779031261147723">"Lampu Kilat"</string>
@@ -132,10 +132,10 @@
     <string name="flash_on" msgid="7891556231891837284">"Lampu kilat aktif"</string>
     <string name="flash_off" msgid="1445443413822680010">"Tanpa lampu kilat"</string>
   <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="2171596356101611086">"Menjadikan album tersedia secara luring."</item>
-    <item quantity="other" msgid="4948604338155959389">"Menjadikan album tersedia secara luring."</item>
+    <item quantity="one" msgid="2171596356101611086">"Menjadikan album tersedia secara offline."</item>
+    <item quantity="other" msgid="4948604338155959389">"Menjadikan album tersedia secara offline."</item>
   </plurals>
-    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Item ini tersimpan secara lokal dan tersedia secara luring."</string>
+    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Item ini tersimpan secara lokal dan tersedia secara offline."</string>
     <string name="set_label_all_albums" msgid="4581863582996336783">"Semua album"</string>
     <string name="set_label_local_albums" msgid="6698133661656266702">"Album lokal"</string>
     <string name="set_label_mtp_devices" msgid="1283513183744896368">"Perangkat MTP"</string>
@@ -154,14 +154,14 @@
     <string name="widget_type_shuffle" msgid="8594622705019763768">"Kocok semua gambar"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"Pilih gambar"</string>
     <string name="widget_type" msgid="1364653978966343448">"Pilih gambar"</string>
-    <string name="slideshow_dream_name" msgid="6915963319933437083">"Rangkai salindia"</string>
+    <string name="slideshow_dream_name" msgid="6915963319933437083">"Rangkai slide"</string>
     <string name="albums" msgid="7320787705180057947">"Album"</string>
     <string name="times" msgid="2023033894889499219">"Waktu"</string>
     <string name="locations" msgid="6649297994083130305">"Lokasi"</string>
     <string name="people" msgid="4114003823747292747">"Orang"</string>
     <string name="tags" msgid="5539648765482935955">"Tag"</string>
     <string name="group_by" msgid="4308299657902209357">"Kelompokkan menurut"</string>
-    <string name="settings" msgid="1534847740615665736">"Setelan"</string>
+    <string name="settings" msgid="1534847740615665736">"Pengaturan"</string>
     <string name="add_account" msgid="4271217504968243974">"Tambah akun"</string>
     <string name="folder_camera" msgid="4714658994809533480">"Kamera"</string>
     <string name="folder_download" msgid="7186215137642323932">"Unduhan"</string>
