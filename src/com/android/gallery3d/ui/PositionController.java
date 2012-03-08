@@ -419,7 +419,7 @@ class PositionController {
         // force it to be in the center.
         // (We do for height only, not width, because the user may
         // want to scroll to the previous/next image.)
-        if (viewHigherThanScaledImage(mToScale)) {
+        if (!mInScale && viewHigherThanScaledImage(mToScale)) {
             mToY = mImageH / 2;
         }
 
