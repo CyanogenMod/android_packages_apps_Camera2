@@ -1,26 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<manifest android:versionCode="30682"
-        android:versionName="1.1.30682"
+<manifest android:versionCode="40000"
+        android:versionName="1.1.40000"
         xmlns:android="http://schemas.android.com/apk/res/android"
         package="com.android.gallery3d">
 
     <original-package android:name="com.android.gallery3d" />
 
+    <uses-sdk android:minSdkVersion="14" />
+
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
 
     <supports-screens android:smallScreens="false"
             android:normalScreens="true" android:largeScreens="true"
@@ -28,7 +33,9 @@
 
     <application android:icon="@mipmap/ic_launcher_gallery" android:label="@string/app_name"
             android:name="com.android.gallery3d.app.GalleryAppImpl"
-            android:theme="@style/Theme.Gallery">
+            android:theme="@style/Theme.Gallery"
+            android:hardwareAccelerated="true">
+        <uses-library android:name="com.google.android.media.effects" android:required="false" />
         <activity android:name="com.android.gallery3d.app.MovieActivity"
                 android:label="@string/movie_view_label"
                 android:theme="@style/Theme.MovieActivity"
@@ -240,8 +247,60 @@
                 android:theme="@style/DialogPickerTheme"/>
         <activity android:name="com.android.gallery3d.gadget.WidgetTypeChooser"
                 android:configChanges="keyboardHidden|orientation|screenSize"
-                android:theme="@style/DialogPickerTheme"/>
+                android:theme="@android:style/Theme.Holo.Dialog"/>
 
+        <activity android:name="com.android.camera.Camera"
+                android:label="@string/camera_label"
+                android:theme="@style/ThemeCamera"
+                android:icon="@mipmap/ic_launcher_camera"
+                android:configChanges="orientation|screenSize|keyboardHidden"
+                android:clearTaskOnLaunch="true"
+                android:screenOrientation="behind"
+                android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.media.action.IMAGE_CAPTURE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.media.action.STILL_IMAGE_CAMERA" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.android.camera.VideoCamera"
+                android:label="@string/video_camera_label"
+                android:theme="@style/ThemeCamera"
+                android:configChanges="orientation|screenSize|keyboardHidden"
+                android:icon="@mipmap/ic_launcher_video_camera"
+                android:clearTaskOnLaunch="true"
+                android:screenOrientation="behind"
+                android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+            <intent-filter>
+                <action android:name="android.media.action.VIDEO_CAMERA" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.media.action.VIDEO_CAPTURE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <!-- Suppose users enter panorama from launcher, turn off the screen,
+             turn on the screen, and enter the camera from the lock screen.
+             They can switch to panorama from there. Use singleTask so there
+             will be only one panorama activity. -->
+        <activity android:name="com.android.camera.panorama.PanoramaActivity"
+                android:label="@string/pano_dialog_title"
+                android:theme="@style/ThemeCamera"
+                android:configChanges="orientation|screenSize|keyboardHidden"
+                android:clearTaskOnLaunch="true"
+                android:screenOrientation="behind"
+                android:windowSoftInputMode="stateAlwaysHidden|adjustPan"
+                android:launchMode="singleTask">
+        </activity>
         <receiver android:name="com.android.gallery3d.gadget.PhotoAppWidgetProvider"
                 android:label="@string/appwidget_title">
             <intent-filter>
@@ -256,6 +315,11 @@
                 <action android:name="android.intent.action.PACKAGE_REMOVED"/>
                 <action android:name="android.intent.action.PACKAGE_CHANGED"/>
                 <data android:scheme="package"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.android.camera.CameraButtonIntentReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.CAMERA_BUTTON"/>
             </intent-filter>
         </receiver>
         <service android:name="com.android.gallery3d.gadget.WidgetService"
