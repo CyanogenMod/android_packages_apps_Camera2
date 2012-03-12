@@ -116,12 +116,13 @@ public class EffectsBar extends LinearLayout {
 
     private boolean exitActiveEffect(final Runnable runnableOnDone) {
         if (activeEffect != null) {
-            SpinnerProgressDialog.showDialog((Toolbar) getRootView().findViewById(R.id.toolbar));
+            final Toolbar toolbar = (Toolbar) getRootView().findViewById(R.id.toolbar);
+            toolbar.showSpinner();
             activeEffect.end(new Runnable() {
 
                 @Override
                 public void run() {
-                    SpinnerProgressDialog.dismissDialog();
+                    toolbar.dismissSpinner();
                     activeEffect = null;
                     if (runnableOnDone != null) {
                         runnableOnDone.run();

@@ -17,12 +17,12 @@
 package com.android.gallery3d.photoeditor;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup.OnHierarchyChangeListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
@@ -35,34 +35,57 @@ import java.util.List;
 /**
  * Toolbar that contains all tools and controls their idle/awake behaviors from UI thread.
  */
-public class Toolbar extends RelativeLayout implements OnHierarchyChangeListener {
+public class Toolbar extends RelativeLayout {
 
     private final ToolbarIdleHandler idleHandler;
     private final List<View> tools = new ArrayList<View>();
+    private SpinnerProgressDialog spinner;
 
     public Toolbar(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        setOnHierarchyChangeListener(this);
-        idleHandler = new ToolbarIdleHandler(this);
+        setOnHierarchyChangeListener(new OnHierarchyChangeListener() {
+
+            @Override
+            public void onChildViewAdded(View parent, View child) {
+                // Photo-view isn't treated as a tool that responds to user events.
+                if (child.getId() != R.id.photo_view) {
+                    tools.add(child);
+                }
+            }
+
+            @Override
+            public void onChildViewRemoved(View parent, View child) {
+                tools.remove(child);
+            }
+        });
+
+        idleHandler = new ToolbarIdleHandler(context, tools);
         idleHandler.killIdle();
     }
 
-    @Override
-    public void onChildViewAdded(View parent, View child) {
-        // Photo-view isn't treated as a tool that responds to user events.
-        if (child.getId() != R.id.photo_view) {
-            tools.add(child);
+    public void showSpinner() {
+        // There should be only one progress spinner running at a time.
+        if (spinner == null) {
+            spinner = new SpinnerProgressDialog(getContext(), tools,
+                    new SpinnerProgressDialog.OnTouchListener() {
+
+                @Override
+                public boolean onTouch(DialogInterface dialog, MotionEvent event) {
+                    // Kill idle even when the progress dialog is shown.
+                    idleHandler.killIdle();
+                    return true;
+                }
+            });
+            spinner.show();
         }
     }
 
-    @Override
-    public void onChildViewRemoved(View parent, View child) {
-        tools.remove(child);
-    }
-
-    public List<View> getTools() {
-        return tools;
+    public void dismissSpinner() {
+        if (spinner != null) {
+            spinner.dismiss();
+            spinner = null;
+        }
     }
 
     @Override
@@ -82,8 +105,8 @@ public class Toolbar extends RelativeLayout implements OnHierarchyChangeListener
         private final Animation fadeOut;
         private boolean idle;
 
-        public ToolbarIdleHandler(Toolbar toolbar) {
-            tools = toolbar.getTools();
+        public ToolbarIdleHandler(Context context, final List<View> tools) {
+            this.tools = tools;
             mainHandler = new Handler() {
 
                 @Override
@@ -101,7 +124,6 @@ public class Toolbar extends RelativeLayout implements OnHierarchyChangeListener
                 }
             };
 
-            Context context = toolbar.getContext();
             fadeIn = AnimationUtils.loadAnimation(context, R.anim.photoeditor_fade_in);
             fadeOut = AnimationUtils.loadAnimation(context, R.anim.photoeditor_fade_out);
         }

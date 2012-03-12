@@ -76,7 +76,7 @@ public class PhotoEditor extends Activity {
     }
 
     private void openPhoto() {
-        SpinnerProgressDialog.showDialog(toolbar);
+        toolbar.showSpinner();
         LoadScreennailTask.Callback callback = new LoadScreennailTask.Callback() {
 
             @Override
@@ -85,7 +85,7 @@ public class PhotoEditor extends Activity {
 
                     @Override
                     public void onDone() {
-                        SpinnerProgressDialog.dismissDialog();
+                        toolbar.dismissSpinner();
                         effectsBar.setEnabled(result != null);
                     }
                 });
@@ -103,12 +103,12 @@ public class PhotoEditor extends Activity {
 
                     @Override
                     public void run() {
-                        SpinnerProgressDialog.showDialog(toolbar);
+                        toolbar.showSpinner();
                         OnDoneCallback callback = new OnDoneCallback() {
 
                             @Override
                             public void onDone() {
-                                SpinnerProgressDialog.dismissDialog();
+                                toolbar.dismissSpinner();
                             }
                         };
                         if (undo) {
@@ -131,7 +131,7 @@ public class PhotoEditor extends Activity {
 
                     @Override
                     public void run() {
-                        SpinnerProgressDialog.showDialog(toolbar);
+                        toolbar.showSpinner();
                         filterStack.getOutputBitmap(new OnDoneBitmapCallback() {
 
                             @Override
@@ -140,7 +140,7 @@ public class PhotoEditor extends Activity {
 
                                     @Override
                                     public void onComplete(Uri result) {
-                                        SpinnerProgressDialog.dismissDialog();
+                                        toolbar.dismissSpinner();
                                         saveUri = result;
                                         actionBar.updateSave(saveUri == null);
                                     }
@@ -223,7 +223,7 @@ public class PhotoEditor extends Activity {
         super.onPause();
         filterStack.onPause();
         // Dismiss any running progress dialog as all operations are paused.
-        SpinnerProgressDialog.dismissDialog();
+        toolbar.dismissSpinner();
     }
 
     @Override
