@@ -57,7 +57,7 @@ public class MovieActivity extends Activity {
         requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
         setContentView(R.layout.movie_view);
-        View rootView = findViewById(R.id.root);
+        View rootView = findViewById(R.id.movie_view_root);
         Intent intent = getIntent();
         initializeActionBar(intent);
         mFinishOnCompletion = intent.getBooleanExtra(
