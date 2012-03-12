@@ -17,6 +17,8 @@
 package com.android.gallery3d.photoeditor;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -25,50 +27,45 @@ import android.widget.ProgressBar;
 import com.android.gallery3d.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Spinner model progress dialog that disables all tools for user interaction after it shows up and
- * and re-enables them after it dismisses; this class along with all its methods should be accessed
- * in only UI thread and allows only one instance at a time.
+ * and re-enables them after it dismisses.
  */
 public class SpinnerProgressDialog extends Dialog {
 
-    private static SpinnerProgressDialog dialog;
-    private final Toolbar toolbar;
-    private final ArrayList<View> enabledTools = new ArrayList<View>();
+    /**
+     * Listener of touch events.
+     */
+    public interface OnTouchListener {
 
-    public static void showDialog(Toolbar toolbar) {
-        // There should be only one progress dialog running at a time.
-        if (dialog == null) {
-            dialog = new SpinnerProgressDialog(toolbar);
-            dialog.show();
-        }
+        public boolean onTouch(DialogInterface dialog, MotionEvent event);
     }
 
-    public static void dismissDialog() {
-        if (dialog != null) {
-            dialog.dismiss();
-            dialog = null;
-        }
-    }
+    private final List<View> enabledTools = new ArrayList<View>();
+    private final OnTouchListener listener;
 
-    private SpinnerProgressDialog(Toolbar toolbar) {
-        super(toolbar.getContext(), R.style.SpinnerProgressDialog);
-        addContentView(new ProgressBar(toolbar.getContext()), new LayoutParams(
+    public SpinnerProgressDialog(Context context, List<View> tools, OnTouchListener listener) {
+        super(context, R.style.SpinnerProgressDialog);
+        addContentView(new ProgressBar(context), new LayoutParams(
                 LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         setCancelable(false);
-        this.toolbar = toolbar;
+
+        for (View view : tools) {
+            if (view.isEnabled()) {
+                enabledTools.add(view);
+            }
+        }
+        this.listener = listener;
     }
 
     @Override
     public void show() {
         super.show();
         // Disable enabled tools when showing spinner progress dialog.
-        for (View view : toolbar.getTools()) {
-            if (view.isEnabled()) {
-                enabledTools.add(view);
-                view.setEnabled(false);
-            }
+        for (View view : enabledTools) {
+            view.setEnabled(false);
         }
     }
 
@@ -83,8 +80,6 @@ public class SpinnerProgressDialog extends Dialog {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
-        // Pass touch events to tools for killing idle even when the progress dialog is shown.
-        return toolbar.dispatchTouchEvent(event);
+        return listener.onTouch(this, event);
     }
 }
