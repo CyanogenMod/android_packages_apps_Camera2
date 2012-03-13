@@ -24,6 +24,7 @@ import android.provider.MediaStore.Files.FileColumns;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.Video;
+import android.util.Log;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryApp;
@@ -130,7 +131,17 @@ public class LocalAlbumSet extends MediaSet {
         return mName;
     }
 
-    private BucketEntry[] loadBucketEntries(Cursor cursor) {
+    private BucketEntry[] loadBucketEntries() {
+        Uri uri = mBaseUri;
+
+        Log.v("DebugLoadingTime", "start quering media provider");
+        Cursor cursor = mApplication.getContentResolver().query(
+                uri, PROJECTION_BUCKET, BUCKET_GROUP_BY, null, BUCKET_ORDER_BY);
+        if (cursor == null) {
+            Log.w(TAG, "cannot open local database: " + uri);
+            return new BucketEntry[0];
+        }
+
         ArrayList<BucketEntry> buffer = new ArrayList<BucketEntry>();
         int typeBits = 0;
         if ((mType & MEDIA_TYPE_IMAGE) != 0) {
@@ -150,6 +161,7 @@ public class LocalAlbumSet extends MediaSet {
                     }
                 }
             }
+            Log.v("DebugLoadingTime", "got " + buffer.size() + " buckets");
         } finally {
             cursor.close();
         }
@@ -169,15 +181,8 @@ public class LocalAlbumSet extends MediaSet {
         // Note: it will be faster if we only select media_type and bucket_id.
         //       need to test the performance if that is worth
 
-        Uri uri = mBaseUri;
         GalleryUtils.assertNotInRenderThread();
-        Cursor cursor = mApplication.getContentResolver().query(
-                uri, PROJECTION_BUCKET, BUCKET_GROUP_BY, null, BUCKET_ORDER_BY);
-        if (cursor == null) {
-            Log.w(TAG, "cannot open local database: " + uri);
-            return new ArrayList<MediaSet>();
-        }
-        BucketEntry[] entries = loadBucketEntries(cursor);
+        BucketEntry[] entries = loadBucketEntries();
         int offset = 0;
 
         // Move camera and download bucket to the front, while keeping the
