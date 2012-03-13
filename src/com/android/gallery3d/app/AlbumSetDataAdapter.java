@@ -18,6 +18,7 @@ package com.android.gallery3d.app;
 
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ContentListener;
@@ -327,7 +328,12 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
 
                 long version;
                 synchronized (DataManager.LOCK) {
+                    long start = SystemClock.uptimeMillis();
                     version = mSource.reload();
+                    long duration = SystemClock.uptimeMillis() - start;
+                    if (duration > 20) {
+                        Log.v("DebugLoadingTime", "finish reload - " + duration);
+                    }
                 }
                 UpdateInfo info = executeAndWait(new GetUpdateInfo(version));
                 updateComplete = info == null;
