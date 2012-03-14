@@ -27,13 +27,10 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.mtp.MtpDevice;
-import android.mtp.MtpDeviceInfo;
 import android.mtp.MtpObjectInfo;
 import android.mtp.MtpStorageInfo;
-import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

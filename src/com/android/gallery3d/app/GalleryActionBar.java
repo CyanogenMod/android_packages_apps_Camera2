@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.R;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,6 +29,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
+
+import com.android.gallery3d.R;
 
 import java.util.ArrayList;
 

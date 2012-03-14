@@ -16,6 +16,9 @@
 
 package com.android.gallery3d.app;
 
+import android.app.Application;
+import android.content.Context;
+
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.DownloadCache;
 import com.android.gallery3d.data.ImageCacheService;
@@ -23,9 +26,6 @@ import com.android.gallery3d.gadget.WidgetUtils;
 import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.ThreadPool;
-
-import android.app.Application;
-import android.content.Context;
 
 import java.io.File;
 

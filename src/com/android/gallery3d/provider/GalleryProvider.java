@@ -31,7 +31,6 @@ import android.util.Log;
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
-import com.android.gallery3d.data.DownloadCache;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MtpImage;

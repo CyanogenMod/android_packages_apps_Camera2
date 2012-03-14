@@ -16,11 +16,11 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.app.GalleryActivity;
-import com.android.gallery3d.util.ThreadPool.JobContext;
-
 import android.content.Context;
 import android.os.StatFs;
+
+import com.android.gallery3d.app.GalleryActivity;
+import com.android.gallery3d.util.ThreadPool.JobContext;
 
 import java.io.File;
 

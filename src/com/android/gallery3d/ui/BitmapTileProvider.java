@@ -16,11 +16,11 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.common.BitmapUtils;
-
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+
+import com.android.gallery3d.common.BitmapUtils;
 
 import java.util.ArrayList;
 

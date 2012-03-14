@@ -16,14 +16,13 @@
 
 package com.android.gallery3d.ui;
 
+import android.content.Context;
+import android.graphics.RectF;
+import android.util.FloatMath;
+
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.ui.PositionRepository.Position;
 import com.android.gallery3d.util.GalleryUtils;
-
-import android.content.Context;
-import android.graphics.RectF;
-import android.os.SystemClock;
-import android.util.FloatMath;
 
 class PositionController {
     public static final int IMAGE_AT_LEFT_EDGE = 1;

@@ -16,12 +16,6 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.app.GalleryApp;
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.util.GalleryUtils;
-import com.android.gallery3d.util.MediaSetUtils;
-
 import android.content.ContentResolver;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -30,6 +24,12 @@ import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.MediaSetUtils;
 
 import java.util.ArrayList;
 

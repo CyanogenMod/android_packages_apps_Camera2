@@ -17,8 +17,8 @@
 package com.android.gallery3d.ui;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
 
 // CanvasTexture is a texture whose content is the drawing on a Canvas.
 // The subclasses should override onDraw() to draw on the bitmap.

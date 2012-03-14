@@ -16,6 +16,11 @@
 
 package com.android.gallery3d.app;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapRegionDecoder;
+import android.os.Handler;
+import android.os.Message;
+
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ContentListener;
@@ -33,11 +38,6 @@ import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapRegionDecoder;
-import android.os.Handler;
-import android.os.Message;
 
 import java.util.ArrayList;
 import java.util.Arrays;

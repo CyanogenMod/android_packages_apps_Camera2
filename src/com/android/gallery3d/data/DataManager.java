@@ -16,15 +16,15 @@
 
 package com.android.gallery3d.data;
 
+import android.database.ContentObserver;
+import android.net.Uri;
+import android.os.Handler;
+
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaSet.ItemConsumer;
 import com.android.gallery3d.data.MediaSource.PathId;
 import com.android.gallery3d.picasasource.PicasaSource;
-
-import android.database.ContentObserver;
-import android.net.Uri;
-import android.os.Handler;
 
 import java.util.ArrayList;
 import java.util.Comparator;

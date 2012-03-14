@@ -1,15 +1,8 @@
 package com.android.gallery3d.app;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.support.v13.dreams.BasicDream;
-import android.graphics.Canvas;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.ViewFlipper;
+import android.support.v13.dreams.BasicDream;
 
 public class SlideshowDream extends BasicDream {
     @Override

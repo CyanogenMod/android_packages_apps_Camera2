@@ -16,10 +16,9 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.Path;
-
 import android.graphics.Rect;
+
+import com.android.gallery3d.data.Path;
 
 /**
  * Drawer class responsible for drawing selectable frame.

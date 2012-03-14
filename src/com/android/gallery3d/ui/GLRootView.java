@@ -16,12 +16,6 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.anim.CanvasAnimation;
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.util.GalleryUtils;
-import com.android.gallery3d.util.Profile;
-
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
@@ -29,12 +23,17 @@ import android.opengl.GLSurfaceView;
 import android.os.Process;
 import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.view.MotionEvent;
+
+import com.android.gallery3d.anim.CanvasAnimation;
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.Profile;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.locks.ReentrantLock;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;

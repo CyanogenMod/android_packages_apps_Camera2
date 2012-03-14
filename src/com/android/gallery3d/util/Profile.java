@@ -16,12 +16,9 @@
 
 package com.android.gallery3d.util;
 
-import com.android.gallery3d.common.Utils;
-
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Process;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Random;

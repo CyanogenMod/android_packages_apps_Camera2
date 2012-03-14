@@ -16,6 +16,12 @@
 
 package com.android.gallery3d.data;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.LruCache;
 import com.android.gallery3d.common.Utils;
@@ -27,17 +33,10 @@ import com.android.gallery3d.util.ThreadPool.CancelListener;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-
 import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.WeakHashMap;
 
 public class DownloadCache {
     private static final String TAG = "DownloadCache";

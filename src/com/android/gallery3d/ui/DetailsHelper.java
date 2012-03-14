@@ -15,13 +15,13 @@
  */
 package com.android.gallery3d.ui;
 
+import android.content.Context;
+import android.view.View.MeasureSpec;
+
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.ui.DetailsAddressResolver.AddressResolvingListener;
-
-import android.content.Context;
-import android.view.View.MeasureSpec;
 
 public class DetailsHelper {
     private static DetailsAddressResolver sAddressResolver;

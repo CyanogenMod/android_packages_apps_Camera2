@@ -16,14 +16,14 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.app.GalleryApp;
-
 import android.hardware.usb.UsbDevice;
 import android.mtp.MtpConstants;
 import android.mtp.MtpObjectInfo;
 import android.mtp.MtpStorageInfo;
 import android.net.Uri;
 import android.util.Log;
+
+import com.android.gallery3d.app.GalleryApp;
 
 import java.util.ArrayList;
 import java.util.List;

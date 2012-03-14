@@ -15,10 +15,9 @@
  */
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.data.Path;
-
 import android.content.Context;
+
+import com.android.gallery3d.data.Path;
 
 public class HighlightDrawer extends IconDrawer {
     private SelectionManager mSelectionManager;

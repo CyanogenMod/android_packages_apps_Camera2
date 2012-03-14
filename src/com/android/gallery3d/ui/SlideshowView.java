@@ -16,13 +16,14 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.anim.CanvasAnimation;
-import com.android.gallery3d.anim.FloatAnimation;
-
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 
+import com.android.gallery3d.anim.CanvasAnimation;
+import com.android.gallery3d.anim.FloatAnimation;
+
 import java.util.Random;
+
 import javax.microedition.khronos.opengles.GL11;
 
 public class SlideshowView extends GLView {

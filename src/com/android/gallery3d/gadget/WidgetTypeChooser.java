@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.gadget;
 
-import com.android.gallery3d.R;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +24,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+
+import com.android.gallery3d.R;
 
 public class WidgetTypeChooser extends Activity {
 

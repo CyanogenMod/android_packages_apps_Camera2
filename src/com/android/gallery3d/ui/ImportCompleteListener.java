@@ -16,15 +16,13 @@
 
 package com.android.gallery3d.ui;
 
+import android.os.Bundle;
+import android.widget.Toast;
+
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.AlbumPage;
 import com.android.gallery3d.app.GalleryActivity;
-import com.android.gallery3d.data.Path;
 import com.android.gallery3d.util.MediaSetUtils;
-
-import android.content.Context;
-import android.os.Bundle;
-import android.widget.Toast;
 
 public class ImportCompleteListener implements MenuExecutor.ProgressListener {
     private GalleryActivity mActivity;

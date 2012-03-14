@@ -16,12 +16,6 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.app.GalleryApp;
-import com.android.gallery3d.provider.GalleryProvider;
-import com.android.gallery3d.util.ThreadPool;
-import com.android.gallery3d.util.ThreadPool.Job;
-import com.android.gallery3d.util.ThreadPool.JobContext;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
@@ -29,6 +23,12 @@ import android.hardware.usb.UsbDevice;
 import android.mtp.MtpObjectInfo;
 import android.net.Uri;
 import android.util.Log;
+
+import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.provider.GalleryProvider;
+import com.android.gallery3d.util.ThreadPool;
+import com.android.gallery3d.util.ThreadPool.Job;
+import com.android.gallery3d.util.ThreadPool.JobContext;
 
 import java.text.DateFormat;
 import java.util.Date;

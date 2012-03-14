@@ -16,11 +16,11 @@
 
 package com.android.gallery3d.util;
 
-import com.android.gallery3d.common.BlobCache;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
+import com.android.gallery3d.common.BlobCache;
 
 import java.io.File;
 import java.io.IOException;

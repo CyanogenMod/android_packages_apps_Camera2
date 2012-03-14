@@ -16,14 +16,6 @@
 
 package com.android.gallery3d.gadget;
 
-import com.android.gallery3d.app.GalleryApp;
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.ContentListener;
-import com.android.gallery3d.data.DataManager;
-import com.android.gallery3d.data.MediaItem;
-import com.android.gallery3d.data.Path;
-import com.android.gallery3d.util.GalleryUtils;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
@@ -33,6 +25,14 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore.Images.Media;
+
+import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.ContentListener;
+import com.android.gallery3d.data.DataManager;
+import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.data.Path;
+import com.android.gallery3d.util.GalleryUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -16,12 +16,12 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.anim.CanvasAnimation;
-import com.android.gallery3d.common.Utils;
-
 import android.graphics.Rect;
 import android.os.SystemClock;
 import android.view.MotionEvent;
+
+import com.android.gallery3d.anim.CanvasAnimation;
+import com.android.gallery3d.common.Utils;
 
 import java.util.ArrayList;
 

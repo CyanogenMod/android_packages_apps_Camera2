@@ -16,12 +16,12 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.data.Path;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.text.Layout;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.data.Path;
 
 public class GridDrawer extends IconDrawer {
     private Texture mImportLabel;

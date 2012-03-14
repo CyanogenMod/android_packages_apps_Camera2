@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.util;
 
-import com.android.gallery3d.common.BlobCache;
-
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
@@ -25,6 +23,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+
+import com.android.gallery3d.common.BlobCache;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -16,9 +16,9 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.R;
-
 import android.content.Context;
+
+import com.android.gallery3d.R;
 
 import java.util.ArrayList;
 import java.util.Map;

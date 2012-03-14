@@ -16,17 +16,12 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.ui.PositionRepository.Position;
-import com.android.gallery3d.util.GalleryUtils;
-
 import android.opengl.Matrix;
-import android.os.SystemClock;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
-import javax.microedition.khronos.opengles.GL11;
-import javax.microedition.khronos.opengles.GL11ExtensionPack;
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.ui.PositionRepository.Position;
 
 // This class does the overscroll effect.
 class Paper {

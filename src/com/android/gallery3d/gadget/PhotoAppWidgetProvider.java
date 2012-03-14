@@ -16,9 +16,6 @@
 
 package com.android.gallery3d.gadget;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.gadget.WidgetDatabaseHelper.Entry;
-
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -29,6 +26,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.RemoteViews;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.gadget.WidgetDatabaseHelper.Entry;
 
 public class PhotoAppWidgetProvider extends AppWidgetProvider {
 

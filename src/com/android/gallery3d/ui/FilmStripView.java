@@ -16,6 +16,10 @@
 
 package com.android.gallery3d.ui;
 
+import android.content.Context;
+import android.view.MotionEvent;
+import android.view.View.MeasureSpec;
+
 import com.android.gallery3d.R;
 import com.android.gallery3d.anim.AlphaAnimation;
 import com.android.gallery3d.app.AlbumDataAdapter;
@@ -23,10 +27,6 @@ import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
-
-import android.content.Context;
-import android.view.MotionEvent;
-import android.view.View.MeasureSpec;
 
 public class FilmStripView extends GLView implements UserInteractionListener {
     @SuppressWarnings("unused")

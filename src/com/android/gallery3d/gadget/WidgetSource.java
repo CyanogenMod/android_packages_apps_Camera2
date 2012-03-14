@@ -16,10 +16,10 @@
 
 package com.android.gallery3d.gadget;
 
-import com.android.gallery3d.data.ContentListener;
-
 import android.graphics.Bitmap;
 import android.net.Uri;
+
+import com.android.gallery3d.data.ContentListener;
 
 public interface WidgetSource {
     public int size();

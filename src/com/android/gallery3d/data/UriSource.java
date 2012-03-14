@@ -16,9 +16,9 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.app.GalleryApp;
-
 import android.net.Uri;
+
+import com.android.gallery3d.app.GalleryApp;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;

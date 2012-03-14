@@ -21,9 +21,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Typeface;
-import android.util.FloatMath;
 import android.text.TextPaint;
 import android.text.TextUtils;
+import android.util.FloatMath;
 
 // StringTexture is a texture shows the content of a specified String.
 //

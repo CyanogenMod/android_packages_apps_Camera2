@@ -18,8 +18,8 @@ package com.android.gallery3d.data;
 
 import android.util.Log;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class Exif {
     private static final String TAG = "CameraExif";

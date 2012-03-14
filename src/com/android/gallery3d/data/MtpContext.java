@@ -1,10 +1,6 @@
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.util.GalleryUtils;
-
 import android.content.Context;
-import android.hardware.usb.UsbDevice;
 import android.media.MediaScannerConnection;
 import android.media.MediaScannerConnection.MediaScannerConnectionClient;
 import android.mtp.MtpObjectInfo;
@@ -12,6 +8,9 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.util.GalleryUtils;
 
 import java.io.File;
 import java.util.ArrayList;

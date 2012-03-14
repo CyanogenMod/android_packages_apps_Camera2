@@ -16,9 +16,9 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.common.Utils;
-
 import android.graphics.Bitmap;
+
+import com.android.gallery3d.common.Utils;
 
 // BitmapTexture is a texture whose content is specified by a fixed Bitmap.
 //

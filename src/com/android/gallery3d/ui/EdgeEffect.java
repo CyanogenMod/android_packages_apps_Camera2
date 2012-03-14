@@ -16,12 +16,13 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.R;
-
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+
+import com.android.gallery3d.R;
 
 // This is copied from android.widget.EdgeEffect with some small modifications:
 // (1) Copy the images (overscroll_{edge|glow}.png) to local resources.

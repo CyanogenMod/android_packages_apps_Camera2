@@ -15,10 +15,10 @@
  */
 package com.android.gallery3d.ui;
 
+import android.content.Context;
+
 import com.android.gallery3d.R;
 import com.android.gallery3d.data.MediaObject;
-
-import android.content.Context;
 
 public abstract class IconDrawer extends SelectionDrawer {
     private static final String TAG = "IconDrawer";
