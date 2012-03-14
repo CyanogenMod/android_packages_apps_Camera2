@@ -21,9 +21,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.os.Message;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryActivity;
@@ -70,9 +68,7 @@ public class PhotoView extends GLView {
     // the previous/next image entries
     private final ScreenNailEntry mScreenNails[] = new ScreenNailEntry[2];
 
-    private final ScaleGestureDetector mScaleDetector;
-    private final GestureDetector mGestureDetector;
-    private final DownUpDetector mDownUpDetector;
+    private final GestureRecognizer mGestureRecognizer;
 
     private PhotoTapListener mPhotoTapListener;
 
@@ -137,10 +133,8 @@ public class PhotoView extends GLView {
             }
         };
 
-        mGestureDetector = new GestureDetector(context,
-                new MyGestureListener(), null, true /* ignoreMultitouch */);
-        mScaleDetector = new ScaleGestureDetector(context, new MyScaleListener());
-        mDownUpDetector = new DownUpDetector(new MyDownUpListener());
+        mGestureRecognizer = new GestureRecognizer(
+                context, new MyGestureListener());
 
         for (int i = 0, n = mScreenNails.length; i < n; ++i) {
             mScreenNails[i] = new ScreenNailEntry();
@@ -274,9 +268,7 @@ public class PhotoView extends GLView {
 
     @Override
     protected boolean onTouch(MotionEvent event) {
-        mGestureDetector.onTouchEvent(event);
-        mScaleDetector.onTouchEvent(event);
-        mDownUpDetector.onTouchEvent(event);
+        mGestureRecognizer.onTouchEvent(event);
         return true;
     }
 
@@ -340,8 +332,6 @@ public class PhotoView extends GLView {
 
     @Override
     protected void render(GLCanvas canvas) {
-        PositionController p = mPositionController;
-
         // Draw the current photo
         if (mLoadingState == LOADING_COMPLETE) {
             super.render(canvas);
@@ -392,7 +382,7 @@ public class PhotoView extends GLView {
     }
 
     private void stopCurrentSwipingIfNeeded() {
-        // Enable fast sweeping
+        // Enable fast swiping
         if (mTransitionMode == TRANS_SWITCH_NEXT) {
             mTransitionMode = TRANS_NONE;
             mPositionController.stopAnimation();
@@ -472,13 +462,35 @@ public class PhotoView extends GLView {
         return false;
     }
 
-    private boolean mIgnoreUpEvent = false;
+    private class MyGestureListener implements GestureRecognizer.Listener {
+        private boolean mIgnoreUpEvent = false;
 
-    private class MyGestureListener
-            extends GestureDetector.SimpleOnGestureListener {
         @Override
-        public boolean onScroll(
-                MotionEvent e1, MotionEvent e2, float dx, float dy) {
+        public boolean onSingleTapUp(float x, float y) {
+            if (mPhotoTapListener != null) {
+                mPhotoTapListener.onSingleTapUp((int) x, (int) y);
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onDoubleTap(float x, float y) {
+            if (mTransitionMode != TRANS_NONE) return true;
+            PositionController controller = mPositionController;
+            float scale = controller.getCurrentScale();
+            // onDoubleTap happened on the second ACTION_DOWN.
+            // We need to ignore the next UP event.
+            mIgnoreUpEvent = true;
+            if (scale <= 1.0f || controller.isAtMinimalScale()) {
+                controller.zoomIn(x, y, Math.max(1.5f, scale * 1.5f));
+            } else {
+                controller.resetToFullView();
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onScroll(float dx, float dy) {
             if (mTransitionMode != TRANS_NONE) return true;
 
             ScreenNailEntry next = mScreenNails[ENTRY_NEXT];
@@ -490,16 +502,7 @@ public class PhotoView extends GLView {
         }
 
         @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            if (mPhotoTapListener != null) {
-                mPhotoTapListener.onSingleTapUp((int) e.getX(), (int) e.getY());
-            }
-            return true;
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-                float velocityY) {
+        public boolean onFling(float velocityX, float velocityY) {
             if (swipeImages(velocityX, velocityY)) {
                 mIgnoreUpEvent = true;
             } else if (mTransitionMode != TRANS_NONE) {
@@ -511,48 +514,41 @@ public class PhotoView extends GLView {
         }
 
         @Override
-        public boolean onDoubleTap(MotionEvent e) {
-            if (mTransitionMode != TRANS_NONE) return true;
-            PositionController controller = mPositionController;
-            float scale = controller.getCurrentScale();
-            // onDoubleTap happened on the second ACTION_DOWN.
-            // We need to ignore the next UP event.
-            mIgnoreUpEvent = true;
-            if (scale <= 1.0f || controller.isAtMinimalScale()) {
-                controller.zoomIn(
-                        e.getX(), e.getY(), Math.max(1.5f, scale * 1.5f));
-            } else {
-                controller.resetToFullView();
-            }
+        public boolean onScaleBegin(float focusX, float focusY) {
+            if (mTransitionMode != TRANS_NONE) return false;
+            mPositionController.beginScale(focusX, focusY);
             return true;
         }
-    }
-
-    private class MyScaleListener
-            extends ScaleGestureDetector.SimpleOnScaleGestureListener {
 
         @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            float scale = detector.getScaleFactor();
+        public boolean onScale(float focusX, float focusY, float scale) {
             if (Float.isNaN(scale) || Float.isInfinite(scale)
                     || mTransitionMode != TRANS_NONE) return true;
-            mPositionController.scaleBy(scale,
-                    detector.getFocusX(), detector.getFocusY());
+            mPositionController.scaleBy(scale, focusX, focusY);
             return true;
         }
 
         @Override
-        public boolean onScaleBegin(ScaleGestureDetector detector) {
-            if (mTransitionMode != TRANS_NONE) return false;
-            mPositionController.beginScale(
-                detector.getFocusX(), detector.getFocusY());
-            return true;
-        }
-
-        @Override
-        public void onScaleEnd(ScaleGestureDetector detector) {
+        public void onScaleEnd() {
             mPositionController.endScale();
             snapToNeighborImage();
+        }
+
+        @Override
+        public void onDown() {
+        }
+
+        @Override
+        public void onUp() {
+            mEdgeView.onRelease();
+
+            if (mIgnoreUpEvent) {
+                mIgnoreUpEvent = false;
+                return;
+            }
+            if (!snapToNeighborImage() && mTransitionMode == TRANS_NONE) {
+                mPositionController.up();
+            }
         }
     }
 
@@ -577,23 +573,6 @@ public class PhotoView extends GLView {
                 break;
             }
             default: throw new IllegalArgumentException(String.valueOf(direction));
-        }
-    }
-
-    private class MyDownUpListener implements DownUpDetector.DownUpListener {
-        public void onDown(MotionEvent e) {
-        }
-
-        public void onUp(MotionEvent e) {
-            mEdgeView.onRelease();
-
-            if (mIgnoreUpEvent) {
-                mIgnoreUpEvent = false;
-                return;
-            }
-            if (!snapToNeighborImage() && mTransitionMode == TRANS_NONE) {
-                mPositionController.up();
-            }
         }
     }
 
@@ -638,7 +617,7 @@ public class PhotoView extends GLView {
     }
 
     public boolean isDown() {
-        return mDownUpDetector.isDown();
+        return mGestureRecognizer.isDown();
     }
 
     public static interface Model extends TileImageView.Model {
