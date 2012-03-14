@@ -16,13 +16,6 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.app.GalleryApp;
-import com.android.gallery3d.common.BitmapUtils;
-import com.android.gallery3d.util.GalleryUtils;
-import com.android.gallery3d.util.ThreadPool.Job;
-import com.android.gallery3d.util.ThreadPool.JobContext;
-import com.android.gallery3d.util.UpdateHelper;
-
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -34,6 +27,13 @@ import android.net.Uri;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Log;
+
+import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.common.BitmapUtils;
+import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.ThreadPool.Job;
+import com.android.gallery3d.util.ThreadPool.JobContext;
+import com.android.gallery3d.util.UpdateHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -159,14 +159,15 @@ public class LocalImage extends LocalMediaItem {
 
         LocalImageRequest(GalleryApp application, Path path, int type,
                 String localFilePath) {
-            super(application, path, type, getTargetSize(type));
+            super(application, path, type, MediaItem.getTargetSize(type));
             mLocalFilePath = localFilePath;
         }
 
         @Override
-        public Bitmap onDecodeOriginal(JobContext jc, int type) {
+        public Bitmap onDecodeOriginal(JobContext jc, final int type) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            int targetSize = MediaItem.getTargetSize(type);
 
             // try to decode from JPEG EXIF
             if (type == MediaItem.TYPE_MICROTHUMBNAIL) {
@@ -181,25 +182,13 @@ public class LocalImage extends LocalMediaItem {
                     Log.w(TAG, "fail to get exif thumb", t);
                 }
                 if (thumbData != null) {
-                    Bitmap bitmap = DecodeUtils.requestDecodeIfBigEnough(
-                            jc, thumbData, options, getTargetSize(type));
+                    Bitmap bitmap = DecodeUtils.decodeIfBigEnough(
+                            jc, thumbData, options, targetSize);
                     if (bitmap != null) return bitmap;
                 }
             }
-            return DecodeUtils.requestDecode(
-                    jc, mLocalFilePath, options, getTargetSize(type));
-        }
-    }
 
-    static int getTargetSize(int type) {
-        switch (type) {
-            case TYPE_THUMBNAIL:
-                return THUMBNAIL_TARGET_SIZE;
-            case TYPE_MICROTHUMBNAIL:
-                return MICROTHUMBNAIL_TARGET_SIZE;
-            default:
-                throw new RuntimeException(
-                    "should only request thumb/microthumb from cache");
+            return DecodeUtils.decodeThumbnail(jc, mLocalFilePath, options, targetSize, type);
         }
     }
 
@@ -217,8 +206,7 @@ public class LocalImage extends LocalMediaItem {
         }
 
         public BitmapRegionDecoder run(JobContext jc) {
-            return DecodeUtils.requestCreateBitmapRegionDecoder(
-                    jc, mLocalFilePath, false);
+            return DecodeUtils.createBitmapRegionDecoder(jc, mLocalFilePath, false);
         }
     }
 

@@ -352,6 +352,11 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         }
 
         @Override
+        protected void recycleBitmap(Bitmap bitmap) {
+            BitmapPool.recycle(BitmapPool.TYPE_MICRO_THUMB, bitmap);
+        }
+
+        @Override
         protected void onBitmapAvailable(Bitmap bitmap) {
             if (isActiveSlot(mSlotIndex)) {
                 --mActiveRequestCount;

@@ -147,7 +147,7 @@ public class LocalVideo extends LocalMediaItem {
 
         LocalVideoRequest(GalleryApp application, Path path, int type,
                 String localFilePath) {
-            super(application, path, type, LocalImage.getTargetSize(type));
+            super(application, path, type, MediaItem.getTargetSize(type));
             mLocalFilePath = localFilePath;
         }
 
