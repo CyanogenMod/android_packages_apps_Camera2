@@ -16,14 +16,15 @@
 
 package com.android.gallery3d.data;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.data.ImageCacheService.ImageData;
+import com.android.gallery3d.ui.BitmapPool;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 abstract class ImageCacheRequest implements Job<Bitmap> {
     private static final String TAG = "ImageCacheRequest";
@@ -53,8 +54,14 @@ abstract class ImageCacheRequest implements Job<Bitmap> {
         if (data != null) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            Bitmap bitmap = DecodeUtils.requestDecode(jc, data.mData,
-                    data.mOffset, data.mData.length - data.mOffset, options);
+            Bitmap bitmap;
+            if (mType == MediaItem.TYPE_MICROTHUMBNAIL) {
+                bitmap = BitmapPool.decode(jc, BitmapPool.TYPE_MICRO_THUMB,
+                        data.mData, data.mOffset, data.mData.length - data.mOffset, options);
+            } else {
+                bitmap = DecodeUtils.decode(jc,
+                        data.mData, data.mOffset, data.mData.length - data.mOffset, options);
+            }
             if (bitmap == null && !jc.isCancelled()) {
                 Log.w(TAG, "decode cached failed " + debugTag);
             }
@@ -69,15 +76,13 @@ abstract class ImageCacheRequest implements Job<Bitmap> {
             }
 
             if (mType == MediaItem.TYPE_MICROTHUMBNAIL) {
-                bitmap = BitmapUtils.resizeDownAndCropCenter(bitmap,
-                        mTargetSize, true);
+                bitmap = BitmapUtils.resizeAndCropCenter(bitmap, mTargetSize, true);
             } else {
-                bitmap = BitmapUtils.resizeDownBySideLength(bitmap,
-                        mTargetSize, true);
+                bitmap = BitmapUtils.resizeDownBySideLength(bitmap, mTargetSize, true);
             }
             if (jc.isCancelled()) return null;
 
-            byte[] array = BitmapUtils.compressBitmap(bitmap);
+            byte[] array = BitmapUtils.compressToBytes(bitmap);
             if (jc.isCancelled()) return null;
 
             cacheService.putImageData(mPath, mType, array);
