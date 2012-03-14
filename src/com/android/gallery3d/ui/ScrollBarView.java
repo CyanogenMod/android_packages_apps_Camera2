@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.R;
-
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.TypedValue;

@@ -16,9 +16,9 @@
 
 package com.android.gallery3d.util;
 
-import com.android.gallery3d.common.Utils;
-
 import android.util.Log;
+
+import com.android.gallery3d.common.Utils;
 
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;

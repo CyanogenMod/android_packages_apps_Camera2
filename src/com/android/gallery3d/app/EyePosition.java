@@ -16,9 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.util.GalleryUtils;
-
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -29,6 +26,9 @@ import android.util.FloatMath;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
+
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.util.GalleryUtils;
 
 public class EyePosition {
     private static final String TAG = "EyePosition";

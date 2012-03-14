@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.R;
-
 import android.content.Context;
 import android.os.Handler;
 import android.view.Gravity;
@@ -36,6 +34,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.android.gallery3d.R;
 
 /**
  * The playback controller for the Movie Player.

@@ -16,11 +16,11 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.common.Utils;
-
 import android.content.Context;
 import android.view.ViewConfiguration;
 import android.widget.OverScroller;
+
+import com.android.gallery3d.common.Utils;
 
 public class ScrollerHelper {
     private OverScroller mScroller;

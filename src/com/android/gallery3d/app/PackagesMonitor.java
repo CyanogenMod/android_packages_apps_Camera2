@@ -16,13 +16,13 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.picasasource.PicasaSource;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
+import com.android.gallery3d.picasasource.PicasaSource;
 
 public class PackagesMonitor extends BroadcastReceiver {
     public static final String KEY_PACKAGES_VERSION  = "packages-version";

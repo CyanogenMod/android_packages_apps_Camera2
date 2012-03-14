@@ -16,11 +16,11 @@
 
 package com.android.gallery3d.util;
 
+import android.os.Environment;
+
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.MtpContext;
 import com.android.gallery3d.data.Path;
-
-import android.os.Environment;
 
 import java.util.Comparator;
 

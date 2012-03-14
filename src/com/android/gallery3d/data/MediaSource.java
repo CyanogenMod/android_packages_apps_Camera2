@@ -16,9 +16,9 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.data.MediaSet.ItemConsumer;
-
 import android.net.Uri;
+
+import com.android.gallery3d.data.MediaSet.ItemConsumer;
 
 import java.util.ArrayList;
 

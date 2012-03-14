@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.common.Utils;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -25,6 +23,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.android.gallery3d.common.Utils;
 
 import java.util.Stack;
 

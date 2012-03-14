@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.common.Utils;
 
 // This is a customized version of Scroller, with a interface similar to
 // android.widget.Scroller. It does fling only, not scroll.

@@ -16,10 +16,10 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.common.Utils;
-
 import android.os.Handler;
 import android.os.Message;
+
+import com.android.gallery3d.common.Utils;
 
 public class SynchronizedHandler extends Handler {
 

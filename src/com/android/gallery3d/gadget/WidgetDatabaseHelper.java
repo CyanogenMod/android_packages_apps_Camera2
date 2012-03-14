@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.gadget;
 
-import com.android.gallery3d.common.Utils;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -27,6 +25,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
+
+import com.android.gallery3d.common.Utils;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;

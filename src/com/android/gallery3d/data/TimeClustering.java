@@ -16,12 +16,12 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.util.GalleryUtils;
-
 import android.content.Context;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.util.GalleryUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;

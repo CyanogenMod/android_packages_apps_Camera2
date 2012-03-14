@@ -16,6 +16,13 @@
 
 package com.android.gallery3d.app;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapRegionDecoder;
+import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Message;
+
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
@@ -27,13 +34,6 @@ import com.android.gallery3d.ui.TileImageViewAdapter;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.ThreadPool;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapRegionDecoder;
-import android.graphics.Rect;
-import android.os.Handler;
-import android.os.Message;
 
 public class SinglePhotoDataAdapter extends TileImageViewAdapter
         implements PhotoPage.Model {

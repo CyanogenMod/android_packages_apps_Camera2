@@ -16,11 +16,6 @@
 
 package com.android.gallery3d.gadget;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.app.AlbumPicker;
-import com.android.gallery3d.app.CropImage;
-import com.android.gallery3d.app.DialogPicker;
-
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
@@ -29,6 +24,11 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.RemoteViews;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.app.AlbumPicker;
+import com.android.gallery3d.app.CropImage;
+import com.android.gallery3d.app.DialogPicker;
 
 public class WidgetConfigure extends Activity {
     @SuppressWarnings("unused")

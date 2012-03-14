@@ -16,15 +16,15 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.R;
-
 import android.media.ExifInterface;
+
+import com.android.gallery3d.R;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 public class MediaDetails implements Iterable<Entry<Integer, Object>> {
     @SuppressWarnings("unused")

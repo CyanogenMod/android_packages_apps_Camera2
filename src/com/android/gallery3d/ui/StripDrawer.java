@@ -16,11 +16,11 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.data.Path;
-
 import android.content.Context;
 import android.graphics.Rect;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.data.Path;
 
 public class StripDrawer extends SelectionDrawer {
     private NinePatchTexture mFramePressed;

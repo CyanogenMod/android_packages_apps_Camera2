@@ -16,18 +16,19 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.util.IntArray;
-
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.opengl.GLU;
 import android.opengl.Matrix;
 
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.util.IntArray;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;

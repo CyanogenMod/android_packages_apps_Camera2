@@ -16,11 +16,10 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.util.GalleryUtils;
-
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.android.gallery3d.util.GalleryUtils;
 
 public class DialogPicker extends PickerActivity {
 

@@ -16,11 +16,10 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.Path;
-
 import android.content.Context;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.data.Path;
 
 public class ManageCacheDrawer extends IconDrawer {
     private final ResourceTexture mCheckedItem;

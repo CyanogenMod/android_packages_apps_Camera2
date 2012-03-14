@@ -16,11 +16,11 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.data.DataManager;
-
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.data.DataManager;
 
 public class AlbumPicker extends PickerActivity {
 

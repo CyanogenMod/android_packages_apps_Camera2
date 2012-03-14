@@ -18,8 +18,6 @@ package com.android.gallery3d.ui;
 
 import com.android.gallery3d.common.Utils;
 
-import android.os.SystemClock;
-
 // FadeInTexture is a texture which begins with a color, then gradually animates
 // into a given texture.
 public class FadeInTexture implements Texture {

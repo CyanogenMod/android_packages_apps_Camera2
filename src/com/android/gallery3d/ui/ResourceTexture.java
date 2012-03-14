@@ -16,11 +16,11 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.common.Utils;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+import com.android.gallery3d.common.Utils;
 
 // ResourceTexture is a texture whose Bitmap is decoded from a resource.
 // By default ResourceTexture is not opaque.

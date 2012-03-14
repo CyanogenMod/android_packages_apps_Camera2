@@ -16,15 +16,15 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.util.ReverseGeocoder;
-import com.android.gallery3d.util.GalleryUtils;
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.FloatMath;
 import android.widget.Toast;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.ReverseGeocoder;
 
 import java.util.ArrayList;
 

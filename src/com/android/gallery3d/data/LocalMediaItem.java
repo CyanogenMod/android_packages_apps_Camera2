@@ -16,9 +16,9 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.util.GalleryUtils;
-
 import android.database.Cursor;
+
+import com.android.gallery3d.util.GalleryUtils;
 
 import java.text.DateFormat;
 import java.util.Date;

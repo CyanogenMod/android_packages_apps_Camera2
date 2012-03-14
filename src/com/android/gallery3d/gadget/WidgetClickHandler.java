@@ -16,9 +16,6 @@
 
 package com.android.gallery3d.gadget;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.app.Gallery;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
@@ -26,6 +23,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.app.Gallery;
 
 public class WidgetClickHandler extends Activity {
     private static final String TAG = "PhotoAppWidgetClickHandler";

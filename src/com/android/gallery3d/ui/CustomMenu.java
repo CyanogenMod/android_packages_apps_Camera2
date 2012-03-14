@@ -16,9 +16,6 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.R;
-
-import android.app.ActionBar;
 import android.content.Context;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +24,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
+
+import com.android.gallery3d.R;
 
 import java.util.ArrayList;
 

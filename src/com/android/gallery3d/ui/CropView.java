@@ -16,11 +16,6 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.anim.Animation;
-import com.android.gallery3d.app.GalleryActivity;
-import com.android.gallery3d.common.Utils;
-
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -36,7 +31,13 @@ import android.view.MotionEvent;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
 
+import com.android.gallery3d.R;
+import com.android.gallery3d.anim.Animation;
+import com.android.gallery3d.app.GalleryActivity;
+import com.android.gallery3d.common.Utils;
+
 import java.util.ArrayList;
+
 import javax.microedition.khronos.opengles.GL11;
 
 /**

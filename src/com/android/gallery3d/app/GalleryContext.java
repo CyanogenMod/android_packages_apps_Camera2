@@ -16,14 +16,12 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.data.DataManager;
-import com.android.gallery3d.data.ImageCacheService;
-import com.android.gallery3d.util.ThreadPool;
-
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Looper;
+
+import com.android.gallery3d.data.DataManager;
+import com.android.gallery3d.util.ThreadPool;
 
 public interface GalleryContext {
     public DataManager getDataManager();

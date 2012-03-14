@@ -18,8 +18,8 @@ package com.android.gallery3d.util;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 
 public class IdentityCache<K, V> {

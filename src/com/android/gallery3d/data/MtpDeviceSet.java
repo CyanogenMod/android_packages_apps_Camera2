@@ -16,13 +16,13 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.app.GalleryApp;
-import com.android.gallery3d.util.MediaSetUtils;
-
 import android.mtp.MtpDeviceInfo;
 import android.net.Uri;
 import android.util.Log;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.util.MediaSetUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;

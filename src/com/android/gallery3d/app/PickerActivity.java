@@ -16,10 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.ui.GLRoot;
-import com.android.gallery3d.ui.GLRootView;
-
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +23,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.ui.GLRoot;
+import com.android.gallery3d.ui.GLRootView;
 
 public class PickerActivity extends AbstractGalleryActivity
         implements OnClickListener {

@@ -16,9 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.R;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -28,6 +25,9 @@ import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.common.Utils;
 
 /**
  * The time bar view, which includes the current and total time, the progress bar,

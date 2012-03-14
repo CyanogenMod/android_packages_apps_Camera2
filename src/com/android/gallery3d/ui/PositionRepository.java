@@ -16,12 +16,12 @@
 
 package com.android.gallery3d.ui;
 
+import android.util.SparseArray;
+
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
 
 import java.util.WeakHashMap;
-
-import android.util.SparseArray;
 
 public class PositionRepository {
     private static final WeakHashMap<GalleryActivity, PositionRepository>

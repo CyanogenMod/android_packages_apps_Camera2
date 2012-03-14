@@ -16,10 +16,10 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.app.GalleryApp;
-
 import android.content.Context;
 import android.net.Uri;
+
+import com.android.gallery3d.app.GalleryApp;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -16,17 +16,17 @@
 
 package com.android.gallery3d.gadget;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.data.MediaItem;
-import com.android.gallery3d.util.ThreadPool;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Bitmap.Config;
 import android.util.Log;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.util.ThreadPool;
 
 public class WidgetUtils {
 

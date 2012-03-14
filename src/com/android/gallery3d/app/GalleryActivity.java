@@ -17,7 +17,6 @@
 package com.android.gallery3d.app;
 
 import com.android.gallery3d.ui.GLRoot;
-import com.android.gallery3d.ui.PositionRepository;
 
 public interface GalleryActivity extends GalleryContext {
     public StateManager getStateManager();

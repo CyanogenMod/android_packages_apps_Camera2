@@ -16,15 +16,15 @@
 
 package com.android.gallery3d.gadget;
 
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Binder;
+
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
-
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Binder;
 
 import java.util.ArrayList;
 import java.util.Arrays;

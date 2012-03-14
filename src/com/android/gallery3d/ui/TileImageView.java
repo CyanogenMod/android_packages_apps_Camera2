@@ -30,8 +30,6 @@ import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.CancelListener;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
-import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TileImageView extends GLView {
