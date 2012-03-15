@@ -70,7 +70,7 @@ public class TileImageView extends GLView {
     private static final int STATE_RECYCLED = 0x40;
 
     private Model mModel;
-    protected BitmapTexture mBackupImage;
+    protected ScreenNail mScreenNail;
     protected int mLevelCount;  // cache the value of mScaledBitmaps.length
 
     // The mLevel variable indicates which level of bitmap we should use.
@@ -78,7 +78,7 @@ public class TileImageView extends GLView {
     // a smaller scaled bitmap (The width and height of each scaled bitmap is
     // half size of the previous one). If the value is in [0, mLevelCount), we
     // use the bitmap in mScaledBitmaps[mLevel] for display, otherwise the value
-    // is mLevelCount, and that means we use mBackupTexture for display.
+    // is mLevelCount, and that means we use mScreenNail for display.
     private int mLevel = 0;
 
     // The offsets of the (left, top) of the upper-left tile to the (left, top)
@@ -120,7 +120,7 @@ public class TileImageView extends GLView {
 
     public static interface Model {
         public int getLevelCount();
-        public Bitmap getBackupImage();
+        public ScreenNail getScreenNail();
         public int getImageWidth();
         public int getImageHeight();
 
@@ -139,31 +139,21 @@ public class TileImageView extends GLView {
         if (model != null) notifyModelInvalidated();
     }
 
-    private void updateBackupTexture(Bitmap backup) {
-        if (backup == null) {
-            if (mBackupImage != null) mBackupImage.recycle();
-            mBackupImage = null;
-        } else {
-            if (mBackupImage != null) {
-                if (mBackupImage.getBitmap() != backup) {
-                    mBackupImage.recycle();
-                    mBackupImage = new BitmapTexture(backup);
-                }
-            } else {
-                mBackupImage = new BitmapTexture(backup);
-            }
-        }
+    public void updateScreenNail(ScreenNail s) {
+        if (mScreenNail == s) return;
+        if (mScreenNail != null) mScreenNail.recycle();
+        mScreenNail = s;
     }
 
     public void notifyModelInvalidated() {
         invalidateTiles();
         if (mModel == null) {
-            mBackupImage = null;
+            mScreenNail = null;
             mImageWidth = 0;
             mImageHeight = 0;
             mLevelCount = 0;
         } else {
-            updateBackupTexture(mModel.getBackupImage());
+            updateScreenNail(mModel.getScreenNail());
             mImageWidth = mModel.getImageWidth();
             mImageHeight = mModel.getImageHeight();
             mLevelCount = mModel.getLevelCount();
@@ -348,7 +338,7 @@ public class TileImageView extends GLView {
                 tile = mRecycledQueue.pop();
             }
         }
-        updateBackupTexture(null);
+        updateScreenNail(null);
     }
 
     public void prepareTextures() {
@@ -358,7 +348,7 @@ public class TileImageView extends GLView {
         if (mIsTextureFreed) {
             layoutTiles(mCenterX, mCenterY, mScale, mRotation);
             mIsTextureFreed = false;
-            updateBackupTexture(mModel != null ? mModel.getBackupImage() : null);
+            updateScreenNail(mModel != null ? mModel.getScreenNail() : null);
         }
     }
 
@@ -379,6 +369,10 @@ public class TileImageView extends GLView {
         }
         try {
             if (level != mLevelCount) {
+                if (mScreenNail != null) {
+                    mScreenNail.disableDraw();
+                }
+
                 int size = (TILE_SIZE << level);
                 float length = size * mScale;
                 Rect r = mTileRange;
@@ -390,8 +384,8 @@ public class TileImageView extends GLView {
                         drawTile(canvas, tx, ty, level, x, y, length);
                     }
                 }
-            } else if (mBackupImage != null) {
-                mBackupImage.draw(canvas, mOffsetX, mOffsetY,
+            } else if (mScreenNail != null) {
+                mScreenNail.draw(canvas, mOffsetX, mOffsetY,
                         Math.round(mImageWidth * mScale),
                         Math.round(mImageHeight * mScale));
             }
@@ -542,14 +536,13 @@ public class TileImageView extends GLView {
             }
             if (drawTile(tile, canvas, source, target)) return;
         }
-        if (mBackupImage != null) {
-            BasicTexture backup = mBackupImage;
+        if (mScreenNail != null) {
             int size = TILE_SIZE << level;
-            float scaleX = (float) backup.getWidth() / mImageWidth;
-            float scaleY = (float) backup.getHeight() / mImageHeight;
+            float scaleX = (float) mScreenNail.getWidth() / mImageWidth;
+            float scaleY = (float) mScreenNail.getHeight() / mImageHeight;
             source.set(tx * scaleX, ty * scaleY, (tx + size) * scaleX,
                     (ty + size) * scaleY);
-            canvas.drawTexture(backup, source, target);
+            mScreenNail.draw(canvas, source, target);
         }
     }
 

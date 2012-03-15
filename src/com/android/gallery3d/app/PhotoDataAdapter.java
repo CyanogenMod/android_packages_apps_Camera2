@@ -29,8 +29,9 @@ import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
+import com.android.gallery3d.ui.BitmapScreenNail;
 import com.android.gallery3d.ui.PhotoView;
-import com.android.gallery3d.ui.PhotoView.ImageData;
+import com.android.gallery3d.ui.ScreenNail;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.ui.TileImageViewAdapter;
 import com.android.gallery3d.util.Future;
@@ -215,20 +216,22 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         mDataListener = listener;
     }
 
-    private void updateScreenNail(long version, Future<Bitmap> future) {
+    private void updateScreenNail(long version, Future<ScreenNail> future) {
         ImageEntry entry = mImageCache.get(version);
+        ScreenNail screenNail = future.get();
+
         if (entry == null || entry.screenNailTask != future) {
-            Bitmap screenNail = future.get();
             if (screenNail != null) screenNail.recycle();
             return;
         }
 
         entry.screenNailTask = null;
-        entry.screenNail = future.get();
+        entry.screenNail = screenNail;
 
-        if (entry.screenNail == null) {
+        if (screenNail == null) {
             entry.failToLoad = true;
         }
+
         if (mDataListener != null) {
             mDataListener.onPhotoAvailable(version, false);
         }
@@ -291,24 +294,19 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         mTileProvider.clear();
     }
 
-    private ImageData getImage(int index) {
+    private ScreenNail getImage(int index) {
         if (index < 0 || index >= mSize || !mIsActive) return null;
         Utils.assertTrue(index >= mActiveStart && index < mActiveEnd);
 
         ImageEntry entry = mImageCache.get(getVersion(index));
-        Bitmap screennail = entry == null ? null : entry.screenNail;
-        if (screennail != null) {
-            return new ImageData(screennail, entry.rotation);
-        } else {
-            return new ImageData(null, 0);
-        }
+        return entry == null ? null : entry.screenNail;
     }
 
-    public ImageData getPreviousImage() {
+    public ScreenNail getPrevScreenNail() {
         return getImage(mCurrentIndex - 1);
     }
 
-    public ImageData getNextImage() {
+    public ScreenNail getNextScreenNail() {
         return getImage(mCurrentIndex + 1);
     }
 
@@ -343,8 +341,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         updateCurrentIndex(index);
     }
 
-    public Bitmap getBackupImage() {
-        return mTileProvider.getBackupImage();
+    public ScreenNail getScreenNail() {
+        return mTileProvider.getScreenNail();
     }
 
     public int getImageHeight() {
@@ -409,17 +407,17 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     }
 
     private void updateTileProvider(ImageEntry entry) {
-        Bitmap screenNail = entry.screenNail;
+        ScreenNail screenNail = entry.screenNail;
         BitmapRegionDecoder fullImage = entry.fullImage;
         if (screenNail != null) {
             if (fullImage != null) {
-                mTileProvider.setBackupImage(screenNail,
+                mTileProvider.setScreenNail(screenNail,
                         fullImage.getWidth(), fullImage.getHeight());
                 mTileProvider.setRegionDecoder(fullImage);
             } else {
                 int width = screenNail.getWidth();
                 int height = screenNail.getHeight();
-                mTileProvider.setBackupImage(screenNail, width, height);
+                mTileProvider.setScreenNail(screenNail, width, height);
             }
         } else {
             mTileProvider.clear();
@@ -489,7 +487,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         }
     }
 
-    private static class ScreenNailJob implements Job<Bitmap> {
+    private static class ScreenNailJob implements Job<ScreenNail> {
         private MediaItem mItem;
 
         public ScreenNailJob(MediaItem item) {
@@ -497,14 +495,19 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         }
 
         @Override
-        public Bitmap run(JobContext jc) {
+        public ScreenNail run(JobContext jc) {
+            // We try to get a ScreenNail first, if it fails, we fallback to get
+            // a Bitmap and then wrap it in a BitmapScreenNail instead.
+            ScreenNail s = mItem.getScreenNail();
+            if (s != null) return s;
+
             Bitmap bitmap = mItem.requestImage(MediaItem.TYPE_THUMBNAIL).run(jc);
             if (jc.isCancelled()) return null;
             if (bitmap != null) {
                 bitmap = BitmapUtils.rotateBitmap(bitmap,
                     mItem.getRotation() - mItem.getFullImageRotation(), true);
             }
-            return bitmap;
+            return new BitmapScreenNail(bitmap, mItem.getFullImageRotation());
         }
     }
 
@@ -604,16 +607,16 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     }
 
     private class ScreenNailListener
-            implements Runnable, FutureListener<Bitmap> {
+            implements Runnable, FutureListener<ScreenNail> {
         private final long mVersion;
-        private Future<Bitmap> mFuture;
+        private Future<ScreenNail> mFuture;
 
         public ScreenNailListener(long version) {
             mVersion = version;
         }
 
         @Override
-        public void onFutureDone(Future<Bitmap> future) {
+        public void onFutureDone(Future<ScreenNail> future) {
             mFuture = future;
             mMainHandler.sendMessage(
                     mMainHandler.obtainMessage(MSG_RUN_OBJECT, this));
@@ -629,8 +632,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         public int requestedBits = 0;
         public int rotation;
         public BitmapRegionDecoder fullImage;
-        public Bitmap screenNail;
-        public Future<Bitmap> screenNailTask;
+        public ScreenNail screenNail;
+        public Future<ScreenNail> screenNailTask;
         public Future<BitmapRegionDecoder> fullImageTask;
         public boolean failToLoad = false;
     }

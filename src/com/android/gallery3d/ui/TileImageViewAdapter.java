@@ -27,10 +27,10 @@ import com.android.gallery3d.common.Utils;
 
 public class TileImageViewAdapter implements TileImageView.Model {
     private static final String TAG = "TileImageViewAdapter";
+    protected ScreenNail mScreenNail;
     protected BitmapRegionDecoder mRegionDecoder;
     protected int mImageWidth;
     protected int mImageHeight;
-    protected Bitmap mBackupImage;
     protected int mLevelCount;
     protected boolean mFailedToLoad;
 
@@ -40,8 +40,8 @@ public class TileImageViewAdapter implements TileImageView.Model {
     public TileImageViewAdapter() {
     }
 
-    public TileImageViewAdapter(Bitmap backup, BitmapRegionDecoder regionDecoder) {
-        mBackupImage = Utils.checkNotNull(backup);
+    public TileImageViewAdapter(Bitmap bitmap, BitmapRegionDecoder regionDecoder) {
+        mScreenNail = new BitmapScreenNail(Utils.checkNotNull(bitmap), 0);
         mRegionDecoder = regionDecoder;
         mImageWidth = regionDecoder.getWidth();
         mImageHeight = regionDecoder.getHeight();
@@ -49,7 +49,7 @@ public class TileImageViewAdapter implements TileImageView.Model {
     }
 
     public synchronized void clear() {
-        mBackupImage = null;
+        mScreenNail = null;
         mImageWidth = 0;
         mImageHeight = 0;
         mLevelCount = 0;
@@ -57,8 +57,18 @@ public class TileImageViewAdapter implements TileImageView.Model {
         mFailedToLoad = false;
     }
 
-    public synchronized void setBackupImage(Bitmap backup, int width, int height) {
-        mBackupImage = Utils.checkNotNull(backup);
+    public synchronized void setScreenNail(Bitmap bitmap, int width, int height) {
+        mScreenNail = new BitmapScreenNail(Utils.checkNotNull(bitmap), 0);
+        mImageWidth = width;
+        mImageHeight = height;
+        mRegionDecoder = null;
+        mLevelCount = 0;
+        mFailedToLoad = false;
+    }
+
+    public synchronized void setScreenNail(
+            ScreenNail screenNail, int width, int height) {
+        mScreenNail = Utils.checkNotNull(screenNail);
         mImageWidth = width;
         mImageHeight = height;
         mRegionDecoder = null;
@@ -76,7 +86,7 @@ public class TileImageViewAdapter implements TileImageView.Model {
 
     private int calculateLevelCount() {
         return Math.max(0, Utils.ceilLog2(
-                (float) mImageWidth / mBackupImage.getWidth()));
+                (float) mImageWidth / mScreenNail.getWidth()));
     }
 
     @Override
@@ -122,8 +132,8 @@ public class TileImageViewAdapter implements TileImageView.Model {
     }
 
     @Override
-    public Bitmap getBackupImage() {
-        return mBackupImage;
+    public ScreenNail getScreenNail() {
+        return mScreenNail;
     }
 
     @Override
