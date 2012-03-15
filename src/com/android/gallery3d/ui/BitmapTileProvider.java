@@ -25,7 +25,7 @@ import com.android.gallery3d.common.BitmapUtils;
 import java.util.ArrayList;
 
 public class BitmapTileProvider implements TileImageView.Model {
-    private final Bitmap mBackup;
+    private final ScreenNail mScreenNail;
     private final Bitmap[] mMipmaps;
     private final Config mConfig;
     private final int mImageWidth;
@@ -44,13 +44,13 @@ public class BitmapTileProvider implements TileImageView.Model {
             list.add(bitmap);
         }
 
-        mBackup = list.remove(list.size() - 1);
+        mScreenNail = new BitmapScreenNail(list.remove(list.size() - 1), 0);
         mMipmaps = list.toArray(new Bitmap[list.size()]);
         mConfig = Config.ARGB_8888;
     }
 
-    public Bitmap getBackupImage() {
-        return mBackup;
+    public ScreenNail getScreenNail() {
+        return mScreenNail;
     }
 
     public int getImageHeight() {
@@ -78,7 +78,9 @@ public class BitmapTileProvider implements TileImageView.Model {
         for (Bitmap bitmap : mMipmaps) {
             BitmapUtils.recycleSilently(bitmap);
         }
-        BitmapUtils.recycleSilently(mBackup);
+        if (mScreenNail != null) {
+            mScreenNail.recycle();
+        }
     }
 
     public boolean isFailedToLoad() {

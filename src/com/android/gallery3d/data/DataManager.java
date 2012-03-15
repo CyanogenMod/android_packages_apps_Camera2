@@ -115,6 +115,7 @@ public class DataManager {
         addSource(new ClusterSource(mApplication));
         addSource(new FilterSource(mApplication));
         addSource(new UriSource(mApplication));
+        addSource(new SnailSource(mApplication));
 
         if (mActiveCount > 0) {
             for (MediaSource source : mSourceMap.values()) {

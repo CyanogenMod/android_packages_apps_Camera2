@@ -30,6 +30,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.MeasureSpec;
 import android.view.WindowManager;
 import android.widget.ShareActionProvider;
@@ -43,6 +44,7 @@ import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.MtpDevice;
 import com.android.gallery3d.data.Path;
+import com.android.gallery3d.data.SnailSource;
 import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
@@ -105,6 +107,11 @@ public class PhotoPage extends ActivityState
     private boolean mIsActive;
     private ShareActionProvider mShareActionProvider;
     private String mSetPathString;
+
+    // This is for testing only. It should be removed once we have the real
+    // Camera view.
+    private CameraView mCameraView;
+    private ScreenNailBridge mScreenNail;
 
     public static interface Model extends PhotoView.Model {
         public void resume();
@@ -180,6 +187,14 @@ public class PhotoPage extends ActivityState
         Path itemPath = Path.fromString(data.getString(KEY_MEDIA_ITEM_PATH));
 
         if (mSetPathString != null) {
+            // Uncomment the block below to test camera screennail.
+            /*
+            Path cameraScreenNailSetPath = addCameraScreenNail();
+
+            // Combine the original MediaSet with the one for camera ScreenNail.
+            mSetPathString = "/combo/item/{" + cameraScreenNailSetPath + "," +
+                    mSetPathString + "}";
+            */
             mMediaSet = mActivity.getDataManager().getMediaSet(mSetPathString);
             mCurrentIndex = data.getInt(KEY_INDEX_HINT, 0);
             mMediaSet = (MediaSet)
@@ -259,6 +274,34 @@ public class PhotoPage extends ActivityState
         mPhotoView.setOpenedItem(itemPath);
     }
 
+    // We create a Camera View and a ScreenNail. The two work together
+    // to present the view together with other pictures. Returns the
+    // Path of the MediaItem hosting the ScreenNail.
+    private Path addCameraScreenNail() {
+        // Create a camera view and add it to the root.
+        Activity activity = (Activity) mActivity;
+        mCameraView = new CameraView(activity);
+        ViewGroup galleryRoot = (ViewGroup) activity.findViewById(R.id.gallery_root);
+        galleryRoot.addView(mCameraView);
+
+        // Create a ScreenNail and register it.
+        mScreenNail = new ScreenNailBridge(mCameraView);
+        mCameraView.setScreenNailBridge(mScreenNail);
+        return SnailSource.registerScreenNail(mScreenNail);
+    }
+
+    private void removeCameraScreenNail() {
+        if (mCameraView == null) return;
+
+        // Remove the camera view.
+        ((ViewGroup) mCameraView.getParent()).removeView(mCameraView);
+        mCameraView = null;
+
+        // Unregister the ScreenNail.
+        SnailSource.unregisterScreenNail(mScreenNail);
+        mScreenNail = null;
+    }
+
     private void updateShareURI(Path path) {
         if (mShareActionProvider != null) {
             DataManager manager = mActivity.getDataManager();
@@ -296,7 +339,9 @@ public class PhotoPage extends ActivityState
         mPhotoView.showVideoPlayIcon(
                 photo.getMediaType() == MediaObject.MEDIA_TYPE_VIDEO);
 
-        updateShareURI(photo.getPath());
+        if ((photo.getSupportedOperations() & MediaItem.SUPPORT_SHARE) != 0) {
+            updateShareURI(photo.getPath());
+        }
     }
 
     private void updateMenuOperations() {
@@ -631,6 +676,12 @@ public class PhotoPage extends ActivityState
         mActionBar.setDisplayOptions(mSetPathString != null, true);
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
         onUserInteraction();
+    }
+
+    @Override
+    protected void onDestroy() {
+        removeCameraScreenNail();
+        super.onDestroy();
     }
 
     private class MyDetailsSource implements DetailsSource {

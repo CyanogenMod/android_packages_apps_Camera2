@@ -28,7 +28,7 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.ui.PhotoView;
-import com.android.gallery3d.ui.PhotoView.ImageData;
+import com.android.gallery3d.ui.ScreenNail;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.ui.TileImageViewAdapter;
 import com.android.gallery3d.util.Future;
@@ -115,7 +115,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
 
     private void onDecodeLargeComplete(ImageBundle bundle) {
         try {
-            setBackupImage(bundle.backupImage,
+            setScreenNail(bundle.backupImage,
                     bundle.decoder.getWidth(), bundle.decoder.getHeight());
             setRegionDecoder(bundle.decoder);
             mPhotoView.notifyImageInvalidated(0);
@@ -128,7 +128,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         try {
             Bitmap backup = future.get();
             if (backup == null) return;
-            setBackupImage(backup, backup.getWidth(), backup.getHeight());
+            setScreenNail(backup, backup.getWidth(), backup.getHeight());
             mPhotoView.notifyOnNewImage();
             mPhotoView.notifyImageInvalidated(0); // the current image
         } catch (Throwable t) {
@@ -158,11 +158,11 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         }
     }
 
-    public ImageData getNextImage() {
+    public ScreenNail getNextScreenNail() {
         return null;
     }
 
-    public ImageData getPreviousImage() {
+    public ScreenNail getPrevScreenNail() {
         return null;
     }
 
