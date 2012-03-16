@@ -29,15 +29,19 @@ import android.util.Log;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.Future;
+import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.MediaSetUtils;
+import com.android.gallery3d.util.ThreadPool;
+import com.android.gallery3d.util.ThreadPool.JobContext;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 
 // LocalAlbumSet lists all image or video albums in the local storage.
 // The path should be "/local/image", "local/video" or "/local/all"
-public class LocalAlbumSet extends MediaSet {
+public class LocalAlbumSet extends MediaSet
+        implements FutureListener<ArrayList<MediaSet>> {
     public static final Path PATH_ALL = Path.fromString("/local/all");
     public static final Path PATH_IMAGE = Path.fromString("/local/image");
     public static final Path PATH_VIDEO = Path.fromString("/local/video");
@@ -94,6 +98,8 @@ public class LocalAlbumSet extends MediaSet {
     private final ChangeNotifier mNotifierImage;
     private final ChangeNotifier mNotifierVideo;
     private final String mName;
+    private Future<ArrayList<MediaSet>> mLoadTask;
+    private ArrayList<MediaSet> mLoadBuffer;
 
     public LocalAlbumSet(Path path, GalleryApp application) {
         super(path, nextVersionNumber());
@@ -131,7 +137,7 @@ public class LocalAlbumSet extends MediaSet {
         return mName;
     }
 
-    private BucketEntry[] loadBucketEntries() {
+    private BucketEntry[] loadBucketEntries(JobContext jc) {
         Uri uri = mBaseUri;
 
         Log.v("DebugLoadingTime", "start quering media provider");
@@ -141,7 +147,6 @@ public class LocalAlbumSet extends MediaSet {
             Log.w(TAG, "cannot open local database: " + uri);
             return new BucketEntry[0];
         }
-
         ArrayList<BucketEntry> buffer = new ArrayList<BucketEntry>();
         int typeBits = 0;
         if ((mType & MEDIA_TYPE_IMAGE) != 0) {
@@ -160,6 +165,7 @@ public class LocalAlbumSet extends MediaSet {
                         buffer.add(entry);
                     }
                 }
+                if (jc.isCancelled()) return null;
             }
             Log.v("DebugLoadingTime", "got " + buffer.size() + " buckets");
         } finally {
@@ -176,55 +182,60 @@ public class LocalAlbumSet extends MediaSet {
         return -1;
     }
 
-    @SuppressWarnings("unchecked")
-    protected ArrayList<MediaSet> loadSubMediaSets() {
-        // Note: it will be faster if we only select media_type and bucket_id.
-        //       need to test the performance if that is worth
+    private class AlbumsLoader implements ThreadPool.Job<ArrayList<MediaSet>> {
 
-        GalleryUtils.assertNotInRenderThread();
-        BucketEntry[] entries = loadBucketEntries();
-        int offset = 0;
+        @Override
+        @SuppressWarnings("unchecked")
+        public ArrayList<MediaSet> run(JobContext jc) {
+            // Note: it will be faster if we only select media_type and bucket_id.
+            //       need to test the performance if that is worth
+            BucketEntry[] entries = loadBucketEntries(jc);
 
-        // Move camera and download bucket to the front, while keeping the
-        // order of others.
-        int index = findBucket(entries, MediaSetUtils.CAMERA_BUCKET_ID);
-        if (index != -1) {
-            circularShiftRight(entries, offset++, index);
-        }
-        index = findBucket(entries, MediaSetUtils.DOWNLOAD_BUCKET_ID);
-        if (index != -1) {
-            circularShiftRight(entries, offset++, index);
-        }
+            if (jc.isCancelled()) return null;
 
-        ArrayList<MediaSet> albums = new ArrayList<MediaSet>();
-        DataManager dataManager = mApplication.getDataManager();
-        for (BucketEntry entry : entries) {
-            albums.add(getLocalAlbum(dataManager,
-                    mType, mPath, entry.bucketId, entry.bucketName));
+            int offset = 0;
+            // Move camera and download bucket to the front, while keeping the
+            // order of others.
+            int index = findBucket(entries, MediaSetUtils.CAMERA_BUCKET_ID);
+            if (index != -1) {
+                circularShiftRight(entries, offset++, index);
+            }
+            index = findBucket(entries, MediaSetUtils.DOWNLOAD_BUCKET_ID);
+            if (index != -1) {
+                circularShiftRight(entries, offset++, index);
+            }
+
+            ArrayList<MediaSet> albums = new ArrayList<MediaSet>();
+            DataManager dataManager = mApplication.getDataManager();
+            for (BucketEntry entry : entries) {
+                MediaSet album = getLocalAlbum(dataManager,
+                        mType, mPath, entry.bucketId, entry.bucketName);
+                album.reload();
+                albums.add(album);
+            }
+            return albums;
         }
-        for (int i = 0, n = albums.size(); i < n; ++i) {
-            albums.get(i).reload();
-        }
-        return albums;
     }
 
     private MediaSet getLocalAlbum(
             DataManager manager, int type, Path parent, int id, String name) {
-        Path path = parent.getChild(id);
-        MediaObject object = manager.peekMediaObject(path);
-        if (object != null) return (MediaSet) object;
-        switch (type) {
-            case MEDIA_TYPE_IMAGE:
-                return new LocalAlbum(path, mApplication, id, true, name);
-            case MEDIA_TYPE_VIDEO:
-                return new LocalAlbum(path, mApplication, id, false, name);
-            case MEDIA_TYPE_ALL:
-                Comparator<MediaItem> comp = DataManager.sDateTakenComparator;
-                return new LocalMergeAlbum(path, comp, new MediaSet[] {
-                        getLocalAlbum(manager, MEDIA_TYPE_IMAGE, PATH_IMAGE, id, name),
-                        getLocalAlbum(manager, MEDIA_TYPE_VIDEO, PATH_VIDEO, id, name)}, id);
+        synchronized (DataManager.LOCK) {
+            Path path = parent.getChild(id);
+            MediaObject object = manager.peekMediaObject(path);
+            if (object != null) return (MediaSet) object;
+            switch (type) {
+                case MEDIA_TYPE_IMAGE:
+                    return new LocalAlbum(path, mApplication, id, true, name);
+                case MEDIA_TYPE_VIDEO:
+                    return new LocalAlbum(path, mApplication, id, false, name);
+                case MEDIA_TYPE_ALL:
+                    Comparator<MediaItem> comp = DataManager.sDateTakenComparator;
+                    return new LocalMergeAlbum(path, comp, new MediaSet[] {
+                            getLocalAlbum(manager, MEDIA_TYPE_IMAGE, PATH_IMAGE, id, name),
+                            getLocalAlbum(manager, MEDIA_TYPE_VIDEO, PATH_VIDEO, id, name)}, id);
+            }
+            throw new IllegalArgumentException(String.valueOf(type));
         }
-        throw new IllegalArgumentException(String.valueOf(type));
     }
 
     public static String getBucketName(ContentResolver resolver, int bucketId) {
@@ -250,13 +261,29 @@ public class LocalAlbumSet extends MediaSet {
     }
 
     @Override
-    public long reload() {
+    // synchronized on this function for
+    //   1. Prevent calling reload() concurrently.
+    //   2. Prevent calling onFutureDone() and reload() concurrently
+    public synchronized long reload() {
         // "|" is used instead of "||" because we want to clear both flags.
         if (mNotifierImage.isDirty() | mNotifierVideo.isDirty()) {
+            if (mLoadTask != null) mLoadTask.cancel();
+            mLoadTask = mApplication.getThreadPool().submit(new AlbumsLoader(), this);
+        }
+        if (mLoadBuffer != null) {
+            mAlbums = mLoadBuffer;
+            mLoadBuffer = null;
             mDataVersion = nextVersionNumber();
-            mAlbums = loadSubMediaSets();
         }
         return mDataVersion;
+    }
+
+    @Override
+    public synchronized void onFutureDone(Future<ArrayList<MediaSet>> future) {
+        if (mLoadTask != future) return; // ignore, wait for the latest task
+        mLoadBuffer = future.get();
+        if (mLoadBuffer == null) mLoadBuffer = new ArrayList<MediaSet>();
+        notifyContentChanged();
     }
 
     // For debug only. Fake there is a ContentObserver.onChange() event.
