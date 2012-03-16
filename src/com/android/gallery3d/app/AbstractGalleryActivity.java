@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -192,6 +193,17 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
     @Override
     public GalleryActionBar getGalleryActionBar() {
         return null;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        GLRoot root = getGLRoot();
+        root.lockRenderThread();
+        try {
+            return getStateManager().itemSelected(item);
+        } finally {
+            root.unlockRenderThread();
+        }
     }
 
     // Shows status bar in portrait view, hide in landscape view

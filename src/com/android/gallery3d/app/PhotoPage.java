@@ -630,10 +630,8 @@ public class PhotoPage extends ActivityState
         if (mMenuVisibilityListener == null) {
             mMenuVisibilityListener = new MyMenuVisibilityListener();
         }
-        GalleryActionBar galleryActionBar = mActivity.getGalleryActionBar();
-        if (galleryActionBar != null) {
-            galleryActionBar.setDisplayOptions(mSetPathString != null, true);
-        }
+        mActivity.getGalleryActionBar().setDisplayOptions(mSetPathString != null, true);
+
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
         onUserInteraction();
     }

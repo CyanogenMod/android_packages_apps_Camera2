@@ -141,10 +141,7 @@ abstract public class ActivityState {
                 actionBar.show();
             }
             int stateCount = mActivity.getStateManager().getStateCount();
-            GalleryActionBar galleryActionbar = mActivity.getGalleryActionBar();
-            if (galleryActionbar != null) {
-                galleryActionbar.setDisplayOptions(stateCount > 1, true);
-            }
+            mActivity.getGalleryActionBar().setDisplayOptions(stateCount > 1, true);
             // Default behavior, this can be overridden in ActivityState's onResume.
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         }
