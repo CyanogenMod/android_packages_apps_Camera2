@@ -319,10 +319,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         Path path = mMediaSet.getPath();
         boolean enableHomeButton = (mActivity.getStateManager().getStateCount() > 1) |
                 mParentMediaSetString != null;
-        GalleryActionBar galleryActionBar = mActivity.getGalleryActionBar();
-        if (galleryActionBar != null) {
-            galleryActionBar.setDisplayOptions(enableHomeButton, true);
-        }
+        mActivity.getGalleryActionBar().setDisplayOptions(enableHomeButton, true);
 
         // Set the reload bit here to prevent it exit this page in clearLoadingBit().
         setLoadingBit(BIT_LOADING_RELOAD);

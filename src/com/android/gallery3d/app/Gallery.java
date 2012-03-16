@@ -235,17 +235,6 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        GLRoot root = getGLRoot();
-        root.lockRenderThread();
-        try {
-            return getStateManager().itemSelected(item);
-        } finally {
-            root.unlockRenderThread();
-        }
-    }
-
-    @Override
     public void onBackPressed() {
         // send the back event to the top sub-state
         GLRoot root = getGLRoot();
