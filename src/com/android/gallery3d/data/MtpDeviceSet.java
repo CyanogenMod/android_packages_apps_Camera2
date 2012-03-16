@@ -22,21 +22,29 @@ import android.util.Log;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.util.Future;
+import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.MediaSetUtils;
+import com.android.gallery3d.util.ThreadPool.Job;
+import com.android.gallery3d.util.ThreadPool.JobContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 // MtpDeviceSet -- MtpDevice -- MtpImage
-public class MtpDeviceSet extends MediaSet {
+public class MtpDeviceSet extends MediaSet
+        implements FutureListener<ArrayList<MediaSet>> {
     private static final String TAG = "MtpDeviceSet";
 
     private GalleryApp mApplication;
-    private final ArrayList<MediaSet> mDeviceSet = new ArrayList<MediaSet>();
     private final ChangeNotifier mNotifier;
     private final MtpContext mMtpContext;
     private final String mName;
+
+    private Future<ArrayList<MediaSet>> mLoadTask;
+    private ArrayList<MediaSet> mDeviceSet = new ArrayList<MediaSet>();
+    private ArrayList<MediaSet> mLoadBuffer;
 
     public MtpDeviceSet(Path path, GalleryApp application, MtpContext mtpContext) {
         super(path, nextVersionNumber());
@@ -46,26 +54,33 @@ public class MtpDeviceSet extends MediaSet {
         mName = application.getResources().getString(R.string.set_label_mtp_devices);
     }
 
-    private void loadDevices() {
-        DataManager dataManager = mApplication.getDataManager();
-        // Enumerate all devices
-        mDeviceSet.clear();
-        List<android.mtp.MtpDevice> devices = mMtpContext.getMtpClient().getDeviceList();
-        Log.v(TAG, "loadDevices: " + devices + ", size=" + devices.size());
-        for (android.mtp.MtpDevice mtpDevice : devices) {
-            int deviceId = mtpDevice.getDeviceId();
-            Path childPath = mPath.getChild(deviceId);
-            MtpDevice device = (MtpDevice) dataManager.peekMediaObject(childPath);
-            if (device == null) {
-                device = new MtpDevice(childPath, mApplication, deviceId, mMtpContext);
-            }
-            Log.d(TAG, "add device " + device);
-            mDeviceSet.add(device);
-        }
+    private class DevicesLoader implements Job<ArrayList<MediaSet>> {
+        @Override
+        public ArrayList<MediaSet> run(JobContext jc) {
+            DataManager dataManager = mApplication.getDataManager();
+            ArrayList<MediaSet> result = new ArrayList<MediaSet>();
 
-        Collections.sort(mDeviceSet, MediaSetUtils.NAME_COMPARATOR);
-        for (int i = 0, n = mDeviceSet.size(); i < n; i++) {
-            mDeviceSet.get(i).reload();
+            // Enumerate all devices
+            List<android.mtp.MtpDevice> devices = mMtpContext.getMtpClient().getDeviceList();
+            Log.v(TAG, "loadDevices: " + devices + ", size=" + devices.size());
+            for (android.mtp.MtpDevice mtpDevice : devices) {
+                synchronized (DataManager.LOCK) {
+                    int deviceId = mtpDevice.getDeviceId();
+                    Path childPath = mPath.getChild(deviceId);
+                    MtpDevice device = (MtpDevice) dataManager.peekMediaObject(childPath);
+                    if (device == null) {
+                        device = new MtpDevice(childPath, mApplication, deviceId, mMtpContext);
+                    }
+                    Log.d(TAG, "add device " + device);
+                    result.add(device);
+                }
+            }
+            Collections.sort(result, MediaSetUtils.NAME_COMPARATOR);
+
+            for (int i = 0, n = result.size(); i < n; ++i) {
+                result.get(i).reload();
+            }
+            return result;
         }
     }
 
@@ -99,11 +114,24 @@ public class MtpDeviceSet extends MediaSet {
     }
 
     @Override
-    public long reload() {
+    public synchronized long reload() {
         if (mNotifier.isDirty()) {
+            if (mLoadTask != null) mLoadTask.cancel();
+            mLoadTask = mApplication.getThreadPool().submit(new DevicesLoader(), this);
+        }
+        if (mLoadBuffer != null) {
+            mDeviceSet = mLoadBuffer;
+            mLoadBuffer = null;
             mDataVersion = nextVersionNumber();
-            loadDevices();
         }
         return mDataVersion;
+    }
+
+    @Override
+    public synchronized void onFutureDone(Future<ArrayList<MediaSet>> future) {
+        if (future != mLoadTask) return;
+        mLoadBuffer = future.get();
+        if (mLoadBuffer == null) mLoadBuffer = new ArrayList<MediaSet>();
+        notifyContentChanged();
     }
 }
