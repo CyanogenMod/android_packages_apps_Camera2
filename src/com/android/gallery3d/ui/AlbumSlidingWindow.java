@@ -84,6 +84,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
 
         mWaitLoadingTexture = new ColorTexture(PLACEHOLDER_COLOR);
         mWaitLoadingTexture.setSize(1, 1);
+        mCacheThumbSize = cacheThumbSize;
 
         mHandler = new SynchronizedHandler(activity.getGLRoot()) {
             @Override
