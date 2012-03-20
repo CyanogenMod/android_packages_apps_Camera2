@@ -161,6 +161,8 @@ abstract class UploadedTexture extends BasicTexture {
     protected void invalidateContent() {
         if (mBitmap != null) freeBitmap();
         mContentValid = false;
+        mWidth = UNSPECIFIED;
+        mHeight = UNSPECIFIED;
     }
 
     /**

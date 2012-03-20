@@ -17,6 +17,7 @@
 package com.android.gallery3d.ui;
 
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
@@ -108,6 +109,7 @@ public class TileImageView extends GLView {
     protected int mCenterY;
     protected float mScale;
     protected int mRotation;
+    protected float mAlpha = 1.0f;
 
     // Temp variables to avoid memory allocation
     private final Rect mTileRange = new Rect();
@@ -125,8 +127,20 @@ public class TileImageView extends GLView {
         public int getImageWidth();
         public int getImageHeight();
 
-        // The method would be called in another thread
-        public Bitmap getTile(int level, int x, int y, int tileSize);
+        // The tile returned by this method can be specified this way: Assuming
+        // the image size is (width, height), first take the intersection of (0,
+        // 0) - (width, height) and (x, y) - (x + tileSize, y + tileSize). Then
+        // extend this intersection region by borderSize pixels on each side. If
+        // in extending the region, we found some part of the region are outside
+        // the image, those pixels are filled with black.
+        //
+        // If level > 0, it does the same operation on a down-scaled version of
+        // the original image (down-scaled by a factor of 2^level), but (x, y)
+        // still refers to the coordinate on the original image.
+        //
+        // The method would be called in another thread.
+        public Bitmap getTile(int level, int x, int y, int tileSize,
+                int borderSize);
         public boolean isFailedToLoad();
     }
 
@@ -308,6 +322,30 @@ public class TileImageView extends GLView {
         out.set(left, top, right, bottom);
     }
 
+    // Calculate where the center of the image is, in the view coordinates.
+    public void getImageCenter(Point center) {
+        // The width and height of this view.
+        int viewW = getWidth();
+        int viewH = getHeight();
+
+        // The distance between the center of the view to the center of the
+        // bitmap, in bitmap units. (mCenterX and mCenterY are the bitmap
+        // coordinates correspond to the center of view)
+        int distW, distH;
+        if (mRotation % 180 == 0) {
+            distW = mImageWidth / 2 - mCenterX;
+            distH = mImageHeight / 2 - mCenterY;
+        } else {
+            distW = mImageHeight / 2 - mCenterY;
+            distH = mImageWidth / 2 - mCenterX;
+        }
+
+        // Convert to view coordinates. mScale translates from bitmap units to
+        // view units.
+        center.x = Math.round(viewW / 2f + distW * mScale);
+        center.y = Math.round(viewH / 2f + distH * mScale);
+    }
+
     public boolean setPosition(int centerX, int centerY, float scale, int rotation) {
         if (mCenterX == centerX
                 && mCenterY == centerY && mScale == scale) return false;
@@ -316,6 +354,13 @@ public class TileImageView extends GLView {
         mScale = scale;
         mRotation = rotation;
         layoutTiles(centerX, centerY, scale, rotation);
+        invalidate();
+        return true;
+    }
+
+    public boolean setAlpha(float alpha) {
+        if (mAlpha == alpha) return false;
+        mAlpha = alpha;
         invalidate();
         return true;
     }
@@ -365,13 +410,19 @@ public class TileImageView extends GLView {
 
         int level = mLevel;
         int rotation = mRotation;
+        int flags = 0;
+        if (rotation != 0) flags |= GLCanvas.SAVE_FLAG_MATRIX;
+        if (mAlpha != 1.0f) flags |= GLCanvas.SAVE_FLAG_ALPHA;
 
-        if (rotation != 0) {
-            canvas.save(GLCanvas.SAVE_FLAG_MATRIX);
-            int centerX = getWidth() / 2, centerY = getHeight() / 2;
-            canvas.translate(centerX, centerY, 0);
-            canvas.rotate(rotation, 0, 0, 1);
-            canvas.translate(-centerX, -centerY, 0);
+        if (flags != 0) {
+            canvas.save(flags);
+            if (rotation != 0) {
+                int centerX = getWidth() / 2, centerY = getHeight() / 2;
+                canvas.translate(centerX, centerY, 0);
+                canvas.rotate(rotation, 0, 0, 1);
+                canvas.translate(-centerX, -centerY, 0);
+            }
+            if (mAlpha != 1.0f) canvas.multiplyAlpha(mAlpha);
         }
         try {
             if (level != mLevelCount) {
@@ -392,7 +443,7 @@ public class TileImageView extends GLView {
                         Math.round(mImageHeight * mScale));
             }
         } finally {
-            if (rotation != 0) canvas.restore();
+            if (flags != 0) canvas.restore();
         }
 
         if (mRenderComplete) {
@@ -601,11 +652,9 @@ public class TileImageView extends GLView {
         boolean decode() {
             // Get a tile from the original image. The tile is down-scaled
             // by (1 << mTilelevel) from a region in the original image.
-            int tileLength = (TILE_SIZE + 2 * TILE_BORDER);
-            int borderLength = TILE_BORDER << mTileLevel;
             try {
                 mDecodedTile = DecodeUtils.ensureGLCompatibleBitmap(mModel.getTile(
-                        mTileLevel, mX - borderLength, mY - borderLength, tileLength));
+                        mTileLevel, mX, mY, TILE_SIZE, TILE_BORDER));
             } catch (Throwable t) {
                 Log.w(TAG, "fail to decode tile", t);
             }
@@ -619,6 +668,20 @@ public class TileImageView extends GLView {
             mDecodedTile = null;
             mTileState = STATE_ACTIVATED;
             return bitmap;
+        }
+
+        // We override getTextureWidth() and getTextureHeight() here, so the
+        // texture can be re-used for different tiles regardless of the actual
+        // size of the tile (which may be small because it is a tile at the
+        // boundary).
+        @Override
+        public int getTextureWidth() {
+            return TILE_SIZE + TILE_BORDER * 2;
+        }
+
+        @Override
+        public int getTextureHeight() {
+            return TILE_SIZE + TILE_BORDER * 2;
         }
 
         public void update(int x, int y, int level) {
