@@ -79,7 +79,6 @@ public class AlbumSetPage extends ActivityState implements
     private String mTitle;
     private String mSubtitle;
     private boolean mShowClusterMenu;
-    private GalleryActionBar mActionBar;
     private int mSelectedAction;
     private Vibrator mVibrator;
 
@@ -121,7 +120,7 @@ public class AlbumSetPage extends ActivityState implements
                 boolean changed, int left, int top, int right, int bottom) {
             mEyePosition.resetPosition();
 
-            int slotViewTop = mActionBar.getHeight();
+            int slotViewTop = GalleryActionBar.getHeight((Activity) mActivity);
             int slotViewBottom = bottom - top;
             int slotViewRight = right - left;
 
@@ -271,9 +270,11 @@ public class AlbumSetPage extends ActivityState implements
         mEyePosition = new EyePosition(context, this);
         mDetailsSource = new MyDetailsSource();
         mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        mActionBar = mActivity.getGalleryActionBar();
-        mSelectedAction = data.getInt(AlbumSetPage.KEY_SELECTED_CLUSTER_TYPE,
-                FilterUtils.CLUSTER_BY_ALBUM);
+        GalleryActionBar actionBar = mActivity.getGalleryActionBar();
+        if (actionBar != null) {
+            mSelectedAction = data.getInt(
+                    AlbumSetPage.KEY_SELECTED_CLUSTER_TYPE, FilterUtils.CLUSTER_BY_ALBUM);
+        }
         startTransition();
     }
 
@@ -310,10 +311,11 @@ public class AlbumSetPage extends ActivityState implements
         mAlbumSetView.pause();
         mEyePosition.pause();
         DetailsHelper.pause();
+        GalleryActionBar actionBar = mActivity.getGalleryActionBar();
         // Call disableClusterMenu to avoid receiving callback after paused.
         // Don't hide menu here otherwise the list menu will disappear earlier than
         // the action bar, which is janky and unwanted behavior.
-        mActionBar.disableClusterMenu(false);
+        if (actionBar != null) actionBar.disableClusterMenu(false);
         if (mSyncTask != null) {
             mSyncTask.cancel();
             mSyncTask = null;
@@ -335,8 +337,9 @@ public class AlbumSetPage extends ActivityState implements
         mAlbumSetView.resume();
         mEyePosition.resume();
         mActionModeHandler.resume();
-        if (mShowClusterMenu) {
-            mActionBar.enableClusterMenu(mSelectedAction, this);
+        GalleryActionBar actionBar = mActivity.getGalleryActionBar();
+        if (mShowClusterMenu && actionBar != null) {
+            actionBar.enableClusterMenu(mSelectedAction, this);
         }
         if (!mInitialSynced) {
             setLoadingBit(BIT_LOADING_SYNC);
@@ -396,6 +399,7 @@ public class AlbumSetPage extends ActivityState implements
     @Override
     protected boolean onCreateActionBar(Menu menu) {
         Activity activity = (Activity) mActivity;
+        GalleryActionBar actionBar = mActivity.getGalleryActionBar();
         MenuInflater inflater = activity.getMenuInflater();
 
         final boolean inAlbum = mActivity.getStateManager().hasStateClass(
@@ -411,10 +415,10 @@ public class AlbumSetPage extends ActivityState implements
                         ? R.string.select_video
                         : R.string.select_item;
             }
-            mActionBar.setTitle(id);
+            actionBar.setTitle(id);
         } else  if (mGetAlbum) {
             inflater.inflate(R.menu.pickup, menu);
-            mActionBar.setTitle(R.string.select_album);
+            actionBar.setTitle(R.string.select_album);
         } else {
             mShowClusterMenu = !inAlbum;
             inflater.inflate(R.menu.albumset, menu);
@@ -422,7 +426,7 @@ public class AlbumSetPage extends ActivityState implements
 
             if (selectItem != null) {
                 boolean selectAlbums = !inAlbum &&
-                        mActionBar.getClusterTypeAction() == FilterUtils.CLUSTER_BY_ALBUM;
+                        actionBar.getClusterTypeAction() == FilterUtils.CLUSTER_BY_ALBUM;
                 if (selectAlbums) {
                     selectItem.setTitle(R.string.select_album);
                 } else {
@@ -430,14 +434,14 @@ public class AlbumSetPage extends ActivityState implements
                 }
             }
 
-            FilterUtils.setupMenuItems(mActionBar, mMediaSet.getPath(), false);
+            FilterUtils.setupMenuItems(actionBar, mMediaSet.getPath(), false);
             MenuItem switchCamera = menu.findItem(R.id.action_camera);
             if (switchCamera != null) {
                 switchCamera.setVisible(GalleryUtils.isCameraAvailable(activity));
             }
 
-            mActionBar.setTitle(mTitle);
-            mActionBar.setSubtitle(mSubtitle);
+            actionBar.setTitle(mTitle);
+            actionBar.setSubtitle(mSubtitle);
         }
         return true;
     }
@@ -521,8 +525,9 @@ public class AlbumSetPage extends ActivityState implements
     }
 
     private String getSelectedString() {
+        GalleryActionBar actionBar = mActivity.getGalleryActionBar();
         int count = mSelectionManager.getSelectedCount();
-        int action = mActionBar.getClusterTypeAction();
+        int action = actionBar.getClusterTypeAction();
         int string = action == FilterUtils.CLUSTER_BY_ALBUM
                 ? R.plurals.number_of_albums_selected
                 : R.plurals.number_of_groups_selected;
@@ -534,7 +539,7 @@ public class AlbumSetPage extends ActivityState implements
 
         switch (mode) {
             case SelectionManager.ENTER_SELECTION_MODE: {
-                mActionBar.disableClusterMenu(true);
+                mActivity.getGalleryActionBar().disableClusterMenu(true);
                 mActionMode = mActionModeHandler.startActionMode();
                 mVibrator.vibrate(100);
                 break;
@@ -542,7 +547,7 @@ public class AlbumSetPage extends ActivityState implements
             case SelectionManager.LEAVE_SELECTION_MODE: {
                 mActionMode.finish();
                 if (mShowClusterMenu) {
-                    mActionBar.enableClusterMenu(mSelectedAction, this);
+                    mActivity.getGalleryActionBar().enableClusterMenu(mSelectedAction, this);
                 }
                 mRootPane.invalidate();
                 break;
