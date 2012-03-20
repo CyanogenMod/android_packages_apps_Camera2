@@ -118,7 +118,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         protected void onLayout(
                 boolean changed, int left, int top, int right, int bottom) {
 
-            int slotViewTop = GalleryActionBar.getHeight((Activity) mActivity);
+            int slotViewTop = mActivity.getGalleryActionBar().getHeight();
             int slotViewBottom = bottom - top;
             int slotViewRight = right - left;
 
