@@ -52,7 +52,6 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
     public static final String KEY_MEDIA_TYPES = "mediaTypes";
 
     private static final String TAG = "Gallery";
-    private GalleryActionBar mActionBar;
     private Dialog mVersionCheckDialog;
 
     @Override
@@ -63,7 +62,6 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         setContentView(R.layout.main);
-        mActionBar = new GalleryActionBar(this);
 
         if (savedInstanceState != null) {
             getStateManager().restoreFromState(savedInstanceState);
@@ -273,11 +271,6 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
         if (mVersionCheckDialog != null) {
             mVersionCheckDialog.dismiss();
         }
-    }
-
-    @Override
-    public GalleryActionBar getGalleryActionBar() {
-        return mActionBar;
     }
 
     @Override

@@ -19,6 +19,7 @@ package com.android.gallery3d.app;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ActionBar.OnMenuVisibilityListener;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
@@ -36,6 +37,16 @@ import java.util.ArrayList;
 
 public class GalleryActionBar implements ActionBar.OnNavigationListener {
     private static final String TAG = "GalleryActionBar";
+
+    private ClusterRunner mClusterRunner;
+    private CharSequence[] mTitles;
+    private ArrayList<Integer> mActions;
+    private Context mContext;
+    private LayoutInflater mInflater;
+    private GalleryActivity mActivity;
+    private ActionBar mActionBar;
+    private int mCurrentIndex;
+    private ClusterAdapter mAdapter = new ClusterAdapter();
 
     public interface ClusterRunner {
         public void doCluster(int id);
@@ -103,15 +114,23 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
         }
     }
 
-    private ClusterRunner mClusterRunner;
-    private CharSequence[] mTitles;
-    private ArrayList<Integer> mActions;
-    private Context mContext;
-    private LayoutInflater mInflater;
-    private GalleryActivity mActivity;
-    private ActionBar mActionBar;
-    private int mCurrentIndex;
-    private ClusterAdapter mAdapter = new ClusterAdapter();
+    public static String getClusterByTypeString(Context context, int type) {
+        for (ActionItem item : sClusterItems) {
+            if (item.action == type) {
+                return context.getString(item.clusterBy);
+            }
+        }
+        return null;
+    }
+
+    public static ShareActionProvider initializeShareActionProvider(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_share);
+        ShareActionProvider shareActionProvider = null;
+        if (item != null) {
+            shareActionProvider = (ShareActionProvider) item.getActionProvider();
+        }
+        return shareActionProvider;
+    }
 
     public GalleryActionBar(GalleryActivity activity) {
         mActionBar = ((Activity) activity).getActionBar();
@@ -119,11 +138,6 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
         mActivity = activity;
         mInflater = ((Activity) mActivity).getLayoutInflater();
         mCurrentIndex = 0;
-    }
-
-    public static int getHeight(Activity activity) {
-        ActionBar actionBar = activity.getActionBar();
-        return actionBar != null ? actionBar.getHeight() : 0;
     }
 
     private void createDialogData() {
@@ -137,6 +151,10 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
         }
         mTitles = new CharSequence[titles.size()];
         titles.toArray(mTitles);
+    }
+
+    public int getHeight() {
+        return mActionBar != null ? mActionBar.getHeight() : 0;
     }
 
     public void setClusterItemEnabled(int id, boolean enabled) {
@@ -161,41 +179,26 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
         return sClusterItems[mCurrentIndex].action;
     }
 
-    public static String getClusterByTypeString(Context context, int type) {
-        for (ActionItem item : sClusterItems) {
-            if (item.action == type) {
-                return context.getString(item.clusterBy);
-            }
-        }
-        return null;
-    }
-
-    public static ShareActionProvider initializeShareActionProvider(Menu menu) {
-        MenuItem item = menu.findItem(R.id.action_share);
-        ShareActionProvider shareActionProvider = null;
-        if (item != null) {
-            shareActionProvider = (ShareActionProvider) item.getActionProvider();
-        }
-        return shareActionProvider;
-    }
-
     public void enableClusterMenu(int action, ClusterRunner runner) {
-        Log.v(TAG, "showClusterMenu: runner=" + runner);
-        // Don't set cluster runner until action bar is ready.
-        mClusterRunner = null;
-        mActionBar.setListNavigationCallbacks(mAdapter, this);
-        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        setSelectedAction(action);
-        mClusterRunner = runner;
+        if (mActionBar != null) {
+            // Don't set cluster runner until action bar is ready.
+            mClusterRunner = null;
+            mActionBar.setListNavigationCallbacks(mAdapter, this);
+            mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+            setSelectedAction(action);
+            mClusterRunner = runner;
+        }
     }
 
     // The only use case not to hideMenu in this method is to ensure
     // all elements disappear at the same time when exiting gallery.
     // hideMenu should always be true in all other cases.
     public void disableClusterMenu(boolean hideMenu) {
-        mClusterRunner = null;
-        if (hideMenu) {
-            mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        if (mActionBar != null) {
+            mClusterRunner = null;
+            if (hideMenu) {
+                mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+            }
         }
     }
 
@@ -214,8 +217,7 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
         if (mActionBar != null) {
             int options = (displayHomeAsUp ? ActionBar.DISPLAY_HOME_AS_UP : 0) |
                     (showTitle ? ActionBar.DISPLAY_SHOW_TITLE : 0);
-            mActionBar.setDisplayOptions(
-                    options,
+            mActionBar.setDisplayOptions(options,
                     ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
             mActionBar.setHomeButtonEnabled(displayHomeAsUp);
         }
@@ -233,7 +235,25 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
         if (mActionBar != null) mActionBar.setSubtitle(title);
     }
 
+    public void show() {
+        if (mActionBar != null) mActionBar.show();
+    }
+
+    public void hide() {
+        if (mActionBar != null) mActionBar.hide();
+    }
+
+    public void addOnMenuVisibilityListener(OnMenuVisibilityListener listener) {
+        if (mActionBar != null) mActionBar.addOnMenuVisibilityListener(listener);
+    }
+
+    public void removeOnMenuVisibilityListener(OnMenuVisibilityListener listener) {
+        if (mActionBar != null) mActionBar.removeOnMenuVisibilityListener(listener);
+    }
+
     public boolean setSelectedAction(int type) {
+        if (mActionBar == null) return false;
+
         for (int i = 0, n = sClusterItems.length; i < n; i++) {
             ActionItem item = sClusterItems[i];
             if (item.action == type) {

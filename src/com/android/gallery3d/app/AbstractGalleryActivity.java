@@ -43,6 +43,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
     private static final String TAG = "AbstractGalleryActivity";
     private GLRootView mGLRootView;
     private StateManager mStateManager;
+    private GalleryActionBar mActionBar;
 
     private AlertDialog mAlertDialog = null;
     private BroadcastReceiver mMountReceiver = new BroadcastReceiver() {
@@ -192,7 +193,10 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
 
     @Override
     public GalleryActionBar getGalleryActionBar() {
-        return null;
+        if (mActionBar == null) {
+            mActionBar = new GalleryActionBar(this);
+        }
+        return mActionBar;
     }
 
     @Override

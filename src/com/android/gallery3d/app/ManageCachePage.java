@@ -112,7 +112,7 @@ public class ManageCachePage extends ActivityState implements
 
             mEyePosition.resetPosition();
             Activity activity = (Activity) mActivity;
-            int slotViewTop = GalleryActionBar.getHeight(activity);
+            int slotViewTop = mActivity.getGalleryActionBar().getHeight();
             int slotViewBottom = bottom - top;
 
             View footer = activity.findViewById(R.id.footer);

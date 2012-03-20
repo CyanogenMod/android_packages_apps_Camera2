@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import android.app.ActionBar;
 import android.app.ActionBar.OnMenuVisibilityListener;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -97,7 +96,7 @@ public class PhotoPage extends ActivityState
     private int mCurrentIndex = 0;
     private Handler mHandler;
     private boolean mShowBars = true;
-    private ActionBar mActionBar;
+    private GalleryActionBar mActionBar;
     private MyMenuVisibilityListener mMenuVisibilityListener;
     private boolean mIsMenuVisible;
     private boolean mIsInteracting;
@@ -145,8 +144,7 @@ public class PhotoPage extends ActivityState
                         right - left, bottom - top);
             }
             if (mShowDetails) {
-                mDetailsHelper.layout(left, GalleryActionBar.getHeight((Activity) mActivity),
-                        right, bottom);
+                mDetailsHelper.layout(left, mActionBar.getHeight(), right, bottom);
             }
         }
     };
@@ -169,7 +167,7 @@ public class PhotoPage extends ActivityState
 
     @Override
     public void onCreate(Bundle data, Bundle restoreState) {
-        mActionBar = ((Activity) mActivity).getActionBar();
+        mActionBar = mActivity.getGalleryActionBar();
         mSelectionManager = new SelectionManager(mActivity, false);
         mMenuExecutor = new MenuExecutor(mActivity, mSelectionManager);
 
@@ -630,8 +628,7 @@ public class PhotoPage extends ActivityState
         if (mMenuVisibilityListener == null) {
             mMenuVisibilityListener = new MyMenuVisibilityListener();
         }
-        mActivity.getGalleryActionBar().setDisplayOptions(mSetPathString != null, true);
-
+        mActionBar.setDisplayOptions(mSetPathString != null, true);
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
         onUserInteraction();
     }

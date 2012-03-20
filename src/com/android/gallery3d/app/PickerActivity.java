@@ -33,8 +33,6 @@ public class PickerActivity extends AbstractGalleryActivity
 
     public static final String KEY_ALBUM_PATH = "album-path";
 
-    private GalleryActionBar mActionBar;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +44,6 @@ public class PickerActivity extends AbstractGalleryActivity
         if (!isDialog) {
             requestWindowFeature(Window.FEATURE_ACTION_BAR);
             requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-            mActionBar = new GalleryActionBar(this);
         }
 
         setContentView(R.layout.dialog_picker);
@@ -95,10 +92,5 @@ public class PickerActivity extends AbstractGalleryActivity
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.cancel) finish();
-    }
-
-    @Override
-    public GalleryActionBar getGalleryActionBar() {
-        return mActionBar;
     }
 }
