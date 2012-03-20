@@ -17,11 +17,12 @@
 package com.android.gallery3d.ui;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.FloatMath;
 
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.ui.PositionRepository.Position;
+import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.util.GalleryUtils;
 
 class PositionController {
@@ -140,14 +141,20 @@ class PositionController {
 
         mScaleMin = getMinimalScale(mImageW, mImageH);
 
-        // Start animation from the saved position if we have one.
-        Position position = mViewer.retrieveSavedPosition();
-        if (position != null) {
-            // The animation starts from 240 pixels and centers at the image
-            // at the saved position.
-            float scale = 240f / Math.min(width, height);
-            mCurrentX = Math.round((mViewW / 2f - position.x) / scale) + mImageW / 2;
-            mCurrentY = Math.round((mViewH / 2f - position.y) / scale) + mImageH / 2;
+        // Start animation from the saved rectangle if we have one.
+        Rect r = mViewer.retrieveOpenAnimationRect();
+        if (r != null) {
+            // The animation starts from the specified rectangle; the image
+            // should be scaled and centered as the thumbnail shown in the
+            // rectangle to minimize janky opening animation. Note: The below
+            // implementation depends on how thumbnails are drawn and placed.
+            float size = MediaItem.getTargetSize(
+                    MediaItem.TYPE_MICROTHUMBNAIL);
+            float scale = (size / Math.min(width, height)) * Math.min(
+                    r.width() / size, r.height() / size);
+
+            mCurrentX = Math.round((mViewW / 2f - r.centerX()) / scale) + mImageW / 2;
+            mCurrentY = Math.round((mViewH / 2f - r.centerY()) / scale) + mImageH / 2;
             mCurrentScale = scale;
             mViewer.openAnimationStarted();
             startSnapback();

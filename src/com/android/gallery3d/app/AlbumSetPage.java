@@ -132,6 +132,7 @@ public class AlbumSetPage extends ActivityState implements
             }
 
             mAlbumSetView.layout(0, slotViewTop, slotViewRight, slotViewBottom);
+            // Reset position offset after the layout is changed.
             PositionRepository.getInstance(mActivity).setOffset(
                     0, slotViewTop);
         }
@@ -327,6 +328,9 @@ public class AlbumSetPage extends ActivityState implements
         super.onResume();
         mIsActive = true;
         setContentPane(mRootPane);
+        // Reset position offset for resuming.
+        PositionRepository.getInstance(mActivity).setOffset(
+                mAlbumSetView.bounds().left, mAlbumSetView.bounds().top);
 
         // Set the reload bit here to prevent it exit this page in clearLoadingBit().
         setLoadingBit(BIT_LOADING_RELOAD);
