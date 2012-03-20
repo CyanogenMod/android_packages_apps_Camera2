@@ -22,6 +22,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -78,6 +79,7 @@ public class PhotoPage extends ActivityState
     public static final String KEY_MEDIA_SET_PATH = "media-set-path";
     public static final String KEY_MEDIA_ITEM_PATH = "media-item-path";
     public static final String KEY_INDEX_HINT = "index-hint";
+    public static final String KEY_OPEN_ANIMATION_RECT = "open-animation-rect";
 
     private GalleryApp mApplication;
     private SelectionManager mSelectionManager;
@@ -140,6 +142,7 @@ public class PhotoPage extends ActivityState
         protected void onLayout(
                 boolean changed, int left, int top, int right, int bottom) {
             mPhotoView.layout(0, 0, right - left, bottom - top);
+            // Reset position offset after the layout is changed.
             PositionRepository.getInstance(mActivity).setOffset(0, 0);
             int filmStripHeight = 0;
             if (mFilmStripView != null) {
@@ -270,8 +273,10 @@ public class PhotoPage extends ActivityState
             }
         };
 
-        // start the opening animation
-        mPhotoView.setOpenedItem(itemPath);
+        // start the opening animation only if it's not restored.
+        if (restoreState == null) {
+            mPhotoView.setOpenAnimationRect((Rect) data.getParcelable(KEY_OPEN_ANIMATION_RECT));
+        }
     }
 
     // We create a Camera View and a ScreenNail. The two work together
@@ -665,6 +670,10 @@ public class PhotoPage extends ActivityState
         super.onResume();
         mIsActive = true;
         setContentPane(mRootPane);
+        // Reset position offset for resuming.
+        PositionRepository.getInstance(mActivity).setOffset(
+                mPhotoView.bounds().left, mPhotoView.bounds().top);
+
         mModel.resume();
         mPhotoView.resume();
         if (mFilmStripView != null) {

@@ -19,14 +19,13 @@ package com.android.gallery3d.ui;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Message;
 import android.view.MotionEvent;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryActivity;
-import com.android.gallery3d.data.Path;
-import com.android.gallery3d.ui.PositionRepository.Position;
 
 public class PhotoView extends GLView {
     @SuppressWarnings("unused")
@@ -91,11 +90,9 @@ public class PhotoView extends GLView {
 
     private int mImageRotation;
 
-    private Path mOpenedItemPath;
-    private GalleryActivity mActivity;
+    private Rect mOpenAnimationRect;
 
     public PhotoView(GalleryActivity activity) {
-        mActivity = activity;
         mTileView = new TileImageView(activity);
         addComponent(mTileView);
         Context context = activity.getAndroidContext();
@@ -120,7 +117,7 @@ public class PhotoView extends GLView {
                     case MSG_SHOW_LOADING: {
                         if (mLoadingState == LOADING_INIT) {
                             // We don't need the opening animation
-                            mOpenedItemPath = null;
+                            mOpenAnimationRect = null;
 
                             mLoadingSpinner.startAnimation();
                             mLoadingState = LOADING_TIMEOUT;
@@ -233,7 +230,7 @@ public class PhotoView extends GLView {
             mHandler.removeMessages(MSG_SHOW_LOADING);
             mLoadingState = LOADING_FAIL;
             // We don't want the opening animation after loading failure
-            mOpenedItemPath = null;
+            mOpenAnimationRect = null;
         } else if (mLoadingState != LOADING_INIT) {
             mLoadingState = LOADING_INIT;
             mHandler.removeMessages(MSG_SHOW_LOADING);
@@ -730,24 +727,19 @@ public class PhotoView extends GLView {
         mTileView.prepareTextures();
     }
 
-    public void setOpenedItem(Path itemPath) {
-        mOpenedItemPath = itemPath;
+    public void setOpenAnimationRect(Rect rect) {
+        mOpenAnimationRect = rect;
     }
 
     public void showVideoPlayIcon(boolean show) {
         mShowVideoPlayIcon = show;
     }
 
-    // Returns the position saved by the previous page.
-    public Position retrieveSavedPosition() {
-        if (mOpenedItemPath != null) {
-            Position position = PositionRepository
-                    .getInstance(mActivity).get(
-                    System.identityHashCode(mOpenedItemPath));
-            mOpenedItemPath = null;
-            return position;
-        }
-        return null;
+    // Returns the opening animation rectangle saved by the previous page.
+    public Rect retrieveOpenAnimationRect() {
+        Rect r = mOpenAnimationRect;
+        mOpenAnimationRect = null;
+        return r;
     }
 
     public void openAnimationStarted() {

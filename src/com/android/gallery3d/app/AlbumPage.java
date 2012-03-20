@@ -19,6 +19,7 @@ package com.android.gallery3d.app;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -131,6 +132,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             mAlbumView.layout(0, slotViewTop, slotViewRight, slotViewBottom);
             GalleryUtils.setViewPointMatrix(mMatrix,
                     (right - left) / 2, (bottom - top) / 2, -mUserDistance);
+            // Reset position offset after the layout is changed.
             PositionRepository.getInstance(mActivity).setOffset(
                     0, slotViewTop);
         }
@@ -168,7 +170,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mAlbumView.invalidate();
     }
 
-    public void onSingleTapUp(int slotIndex) {
+    private void onSingleTapUp(int slotIndex) {
         MediaItem item = mAlbumDataAdapter.get(slotIndex);
         if (item == null) {
             Log.w(TAG, "item not ready yet, ignore the click");
@@ -185,6 +187,8 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 Bundle data = new Bundle();
                 mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
                 data.putInt(PhotoPage.KEY_INDEX_HINT, slotIndex);
+                data.putParcelable(PhotoPage.KEY_OPEN_ANIMATION_RECT,
+                        getSlotRect(slotIndex));
                 data.putString(PhotoPage.KEY_MEDIA_SET_PATH,
                         mMediaSetPath.toString());
                 data.putString(PhotoPage.KEY_MEDIA_ITEM_PATH,
@@ -197,6 +201,16 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             mDetailsSource.findIndex(slotIndex);
             mAlbumView.invalidate();
         }
+    }
+
+    private Rect getSlotRect(int slotIndex) {
+        // Get slot rectangle relative to this root pane.
+        Rect offset = new Rect();
+        mRootPane.getBoundsOf(mAlbumView, offset);
+        Rect r = mAlbumView.getSlotRect(slotIndex);
+        r.offset(offset.left - mAlbumView.getScrollX(),
+                offset.top - mAlbumView.getScrollY());
+        return r;
     }
 
     private void onGetContent(final MediaItem item) {
@@ -315,6 +329,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         super.onResume();
         mIsActive = true;
         setContentPane(mRootPane);
+        // Reset position offset for resuming.
+        PositionRepository.getInstance(mActivity).setOffset(
+                mAlbumView.bounds().left, mAlbumView.bounds().top);
 
         Path path = mMediaSet.getPath();
         boolean enableHomeButton = (mActivity.getStateManager().getStateCount() > 1) |
