@@ -17,6 +17,7 @@
 package com.android.gallery3d.ui;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -60,6 +61,14 @@ public class GestureRecognizer {
 
     public boolean isDown() {
         return mDownUpDetector.isDown();
+    }
+
+    public void cancelScale() {
+        long now = SystemClock.uptimeMillis();
+        MotionEvent cancelEvent = MotionEvent.obtain(
+                now, now, MotionEvent.ACTION_CANCEL, 0, 0, 0);
+        mScaleDetector.onTouchEvent(cancelEvent);
+        cancelEvent.recycle();
     }
 
     private class MyGestureListener
