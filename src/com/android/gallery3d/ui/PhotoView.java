@@ -38,6 +38,7 @@ public class PhotoView extends GLView {
 
     private static final int MSG_TRANSITION_COMPLETE = 1;
     private static final int MSG_SHOW_LOADING = 2;
+    private static final int MSG_CANCEL_EXTRA_SCALING = 3;
 
     private static final long DELAY_SHOW_LOADING = 250; // 250ms;
 
@@ -103,6 +104,7 @@ public class PhotoView extends GLView {
 
     private Rect mOpenAnimationRect;
     private Point mImageCenter = new Point();
+    private boolean mCancelExtraScalingPending;
 
     public PhotoView(GalleryActivity activity) {
         mTileView = new TileImageView(activity);
@@ -135,6 +137,12 @@ public class PhotoView extends GLView {
                             mLoadingState = LOADING_TIMEOUT;
                             invalidate();
                         }
+                        break;
+                    }
+                    case MSG_CANCEL_EXTRA_SCALING: {
+                        mGestureRecognizer.cancelScale();
+                        mPositionController.setExtraScalingRange(false);
+                        mCancelExtraScalingPending = false;
                         break;
                     }
                     default: throw new AssertionError(message.what);
@@ -570,7 +578,22 @@ public class PhotoView extends GLView {
         public boolean onScale(float focusX, float focusY, float scale) {
             if (Float.isNaN(scale) || Float.isInfinite(scale)
                     || mTransitionMode != TRANS_NONE) return true;
-            mPositionController.scaleBy(scale, focusX, focusY);
+            boolean outOfRange = mPositionController.scaleBy(
+                    scale, focusX, focusY);
+            if (outOfRange) {
+                if (!mCancelExtraScalingPending) {
+                    mHandler.sendEmptyMessageDelayed(
+                            MSG_CANCEL_EXTRA_SCALING, 700);
+                    mPositionController.setExtraScalingRange(true);
+                    mCancelExtraScalingPending = true;
+                }
+            } else {
+                if (mCancelExtraScalingPending) {
+                    mHandler.removeMessages(MSG_CANCEL_EXTRA_SCALING);
+                    mPositionController.setExtraScalingRange(false);
+                    mCancelExtraScalingPending = false;
+                }
+            }
             return true;
         }
 
