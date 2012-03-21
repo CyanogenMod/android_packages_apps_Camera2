@@ -43,6 +43,7 @@ public class PhotoView extends GLView {
 
     private static final int MSG_TRANSITION_COMPLETE = 1;
     private static final int MSG_SHOW_LOADING = 2;
+    private static final int MSG_CANCEL_EXTRA_SCALING = 3;
 
     private static final long DELAY_SHOW_LOADING = 250; // 250ms;
 
@@ -111,6 +112,7 @@ public class PhotoView extends GLView {
     private Path mOpenedItemPath;
     private GalleryActivity mActivity;
     private Point mImageCenter = new Point();
+    private boolean mCancelExtraScalingPending;
 
     public PhotoView(GalleryActivity activity) {
         mActivity = activity;
@@ -144,6 +146,12 @@ public class PhotoView extends GLView {
                             mLoadingState = LOADING_TIMEOUT;
                             invalidate();
                         }
+                        break;
+                    }
+                    case MSG_CANCEL_EXTRA_SCALING: {
+                        cancelScaleGesture();
+                        mPositionController.setExtraScalingRange(false);
+                        mCancelExtraScalingPending = false;
                         break;
                     }
                     default: throw new AssertionError(message.what);
@@ -585,8 +593,22 @@ public class PhotoView extends GLView {
             float scale = detector.getScaleFactor();
             if (Float.isNaN(scale) || Float.isInfinite(scale)
                     || mTransitionMode != TRANS_NONE) return true;
-            mPositionController.scaleBy(scale,
+            boolean outOfRange = mPositionController.scaleBy(scale,
                     detector.getFocusX(), detector.getFocusY());
+            if (outOfRange) {
+                if (!mCancelExtraScalingPending) {
+                    mHandler.sendEmptyMessageDelayed(
+                            MSG_CANCEL_EXTRA_SCALING, 700);
+                    mPositionController.setExtraScalingRange(true);
+                    mCancelExtraScalingPending = true;
+                }
+            } else {
+                if (mCancelExtraScalingPending) {
+                    mHandler.removeMessages(MSG_CANCEL_EXTRA_SCALING);
+                    mPositionController.setExtraScalingRange(false);
+                    mCancelExtraScalingPending = false;
+                }
+            }
             return true;
         }
 
@@ -603,6 +625,14 @@ public class PhotoView extends GLView {
             mPositionController.endScale();
             snapToNeighborImage();
         }
+    }
+
+    private void cancelScaleGesture() {
+        long now = SystemClock.uptimeMillis();
+        MotionEvent cancelEvent = MotionEvent.obtain(
+                now, now, MotionEvent.ACTION_CANCEL, 0, 0, 0);
+        mScaleDetector.onTouchEvent(cancelEvent);
+        cancelEvent.recycle();
     }
 
     public boolean jumpTo(int index) {
