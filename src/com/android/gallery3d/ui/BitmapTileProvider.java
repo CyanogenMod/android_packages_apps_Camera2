@@ -65,11 +65,28 @@ public class BitmapTileProvider implements TileImageView.Model {
         return mMipmaps.length;
     }
 
-    public Bitmap getTile(int level, int x, int y, int tileSize) {
-        Bitmap result = Bitmap.createBitmap(tileSize, tileSize, mConfig);
+    public Bitmap getTile(int level, int x, int y, int tileSize,
+            int borderSize) {
+        x >>= level;
+        y >>= level;
+        int size = tileSize + 2 * borderSize;
+        Bitmap result = Bitmap.createBitmap(size, size, mConfig);
+        Bitmap mipmap = mMipmaps[level];
         Canvas canvas = new Canvas(result);
-        canvas.drawBitmap(mMipmaps[level], -(x >> level), -(y >> level), null);
-        return result;
+        int offsetX = -x + borderSize;
+        int offsetY = -y + borderSize;
+        canvas.drawBitmap(mipmap, offsetX, offsetY, null);
+
+        // If the valid region (covered by mipmap or border) is smaller than the
+        // result bitmap, subset it.
+        int endX = offsetX + mipmap.getWidth() + borderSize;
+        int endY = offsetY + mipmap.getHeight() + borderSize;
+        if (endX < size || endY < size) {
+            return Bitmap.createBitmap(result, 0, 0, Math.min(size, endX),
+                    Math.min(size, endY));
+        } else {
+            return result;
+        }
     }
 
     public void recycle() {
