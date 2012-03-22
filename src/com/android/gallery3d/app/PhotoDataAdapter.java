@@ -362,8 +362,9 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         return mTileProvider.getLevelCount();
     }
 
-    public Bitmap getTile(int level, int x, int y, int tileSize) {
-        return mTileProvider.getTile(level, x, y, tileSize);
+    public Bitmap getTile(int level, int x, int y, int tileSize,
+            int borderSize) {
+        return mTileProvider.getTile(level, x, y, tileSize, borderSize);
     }
 
     public boolean isFailedToLoad() {
