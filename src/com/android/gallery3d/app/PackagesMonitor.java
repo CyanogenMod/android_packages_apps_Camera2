@@ -33,7 +33,24 @@ public class PackagesMonitor extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, final Intent intent) {
+        final PendingResult result = goAsync();
+        new Thread("GalleryPackagesMonitorAsync") {
+            @Override
+            public void run() {
+                try {
+                    onReceiveAsync(context, intent);
+                } catch (Throwable t) {
+                    Log.e("PackagesMonitor", "onReceiveAsync", t);
+                } finally {
+                    result.finish();
+                }
+            }
+        }.start();
+    }
+
+    // Runs in a background thread.
+    private void onReceiveAsync(Context context, Intent intent) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         int version = prefs.getInt(KEY_PACKAGES_VERSION, 1);
