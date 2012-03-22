@@ -66,6 +66,7 @@ public class ManageCachePage extends ActivityState implements
     private static final int MSG_REQUEST_LAYOUT = 2;
     private static final int PROGRESS_BAR_MAX = 10000;
 
+    private SlotView mSlotView;
     private AlbumSetView mAlbumSetView;
 
     private MediaSet mMediaSet;
@@ -122,7 +123,7 @@ public class ManageCachePage extends ActivityState implements
                 slotViewBottom = location[1];
             }
 
-            mAlbumSetView.layout(0, slotViewTop, right - left, slotViewBottom);
+            mSlotView.layout(0, slotViewTop, right - left, slotViewBottom);
         }
 
         @Override
@@ -149,12 +150,12 @@ public class ManageCachePage extends ActivityState implements
         MediaSet set = mAlbumSetDataAdapter.getMediaSet(index);
         Path path = (set == null) ? null : set.getPath();
         mSelectionManager.setPressedPath(path);
-        mAlbumSetView.invalidate();
+        mSlotView.invalidate();
     }
 
     private void onUp() {
         mSelectionManager.setPressedPath(null);
-        mAlbumSetView.invalidate();
+        mSlotView.invalidate();
     }
 
     public void onSingleTapUp(int slotIndex) {
@@ -190,7 +191,7 @@ public class ManageCachePage extends ActivityState implements
         refreshCacheStorageInfo();
 
         mSelectionManager.toggle(path);
-        mAlbumSetView.invalidate();
+        mSlotView.invalidate();
     }
 
     @Override
@@ -294,9 +295,11 @@ public class ManageCachePage extends ActivityState implements
         Config.ManageCachePage config = Config.ManageCachePage.get(activity);
         mSelectionDrawer = new ManageCacheDrawer((Context) mActivity,
                 mSelectionManager, config.cachePinSize, config.cachePinMargin);
+        mSlotView = new SlotView((Context) mActivity, config.slotViewSpec);
         mAlbumSetView = new AlbumSetView(mActivity, mSelectionDrawer,
-                config.slotViewSpec, config.labelSpec);
-        mAlbumSetView.setListener(new SlotView.SimpleListener() {
+                mSlotView, config.labelSpec);
+        mSlotView.setSlotRenderer(mAlbumSetView);
+        mSlotView.setListener(new SlotView.SimpleListener() {
             @Override
             public void onDown(int index) {
                 ManageCachePage.this.onDown(index);
@@ -312,7 +315,7 @@ public class ManageCachePage extends ActivityState implements
                 ManageCachePage.this.onSingleTapUp(slotIndex);
             }
         });
-        mRootPane.addComponent(mAlbumSetView);
+        mRootPane.addComponent(mSlotView);
         initializeFooterViews();
     }
 
