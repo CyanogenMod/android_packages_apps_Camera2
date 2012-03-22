@@ -130,6 +130,9 @@ abstract class BasicTexture implements Texture {
     // It should make sure the data is uploaded to GL memory.
     abstract protected boolean onBind(GLCanvas canvas);
 
+    // Returns the GL texture target for this texture (e.g. GL_TEXTURE_2D).
+    abstract protected int getTarget();
+
     public boolean isLoaded(GLCanvas canvas) {
         return mState == STATE_LOADED;
     }

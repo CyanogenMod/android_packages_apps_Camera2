@@ -228,7 +228,7 @@ abstract class UploadedTexture extends BasicTexture {
                 sCropRect[3] = -bHeight;
 
                 // Upload the bitmap to a new texture.
-                gl.glGenTextures(1, sTextureId, 0);
+                GLId.glGenTextures(1, sTextureId, 0);
                 gl.glBindTexture(GL11.GL_TEXTURE_2D, sTextureId[0]);
                 gl.glTexParameterfv(GL11.GL_TEXTURE_2D,
                         GL11Ext.GL_TEXTURE_CROP_RECT_OES, sCropRect, 0);
@@ -297,6 +297,11 @@ abstract class UploadedTexture extends BasicTexture {
     protected boolean onBind(GLCanvas canvas) {
         updateContent(canvas);
         return isContentValid(canvas);
+    }
+
+    @Override
+    protected int getTarget() {
+        return GL11.GL_TEXTURE_2D;
     }
 
     public void setOpaque(boolean isOpaque) {

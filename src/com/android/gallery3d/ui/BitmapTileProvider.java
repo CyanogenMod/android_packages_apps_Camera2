@@ -96,7 +96,7 @@ public class BitmapTileProvider implements TileImageView.Model {
             BitmapUtils.recycleSilently(bitmap);
         }
         if (mScreenNail != null) {
-            mScreenNail.recycle();
+            mScreenNail.pauseDraw();
         }
     }
 

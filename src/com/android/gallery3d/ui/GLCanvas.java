@@ -85,8 +85,12 @@ public interface GLCanvas {
     public void drawMesh(BasicTexture tex, int x, int y, int xyBuffer,
             int uvBuffer, int indexBuffer, int indexCount);
 
-    // Draws a the source rectangle part of the texture to the target rectangle.
+    // Draws the source rectangle part of the texture to the target rectangle.
     public void drawTexture(BasicTexture texture, RectF source, RectF target);
+
+    // Draw a texture with a specified texture transform.
+    public void drawTexture(BasicTexture texture, float[] mTextureTransform,
+                int x, int y, int w, int h);
 
     // Draw two textures to the specified rectangle. The actual texture used is
     // from * (1 - ratio) + to * ratio

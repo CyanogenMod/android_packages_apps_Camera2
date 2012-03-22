@@ -136,7 +136,7 @@ public class GLCanvasImpl implements GLCanvas {
         xyBuffer.put(BOX_COORDINATES, 0, BOX_COORDINATES.length).position(0);
 
         int[] name = new int[1];
-        gl.glGenBuffers(1, name, 0);
+        GLId.glGenBuffers(1, name, 0);
         mBoxCoords = name[0];
 
         gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, mBoxCoords);
@@ -377,6 +377,16 @@ public class GLCanvasImpl implements GLCanvas {
         textureRect(target.left, target.top, target.width(), target.height());
     }
 
+    public void drawTexture(BasicTexture texture, float[] mTextureTransform,
+            int x, int y, int w, int h) {
+        mGLState.setBlendEnabled(mBlendEnabled
+                && (!texture.isOpaque() || mAlpha < OPAQUE_ALPHA));
+        if (!bindTexture(texture)) return;
+        setTextureCoords(mTextureTransform);
+        mGLState.setTextureAlpha(mAlpha);
+        textureRect(x, y, w, h);
+    }
+
     // This function changes the source coordinate to the texture coordinates.
     // It also clips the source and target coordinates if it is beyond the
     // bound of the texture.
@@ -415,8 +425,9 @@ public class GLCanvasImpl implements GLCanvas {
 
     private boolean bindTexture(BasicTexture texture) {
         if (!texture.onBind(this)) return false;
-        mGLState.setTexture2DEnabled(true);
-        mGL.glBindTexture(GL11.GL_TEXTURE_2D, texture.getId());
+        int target = texture.getTarget();
+        mGLState.setTextureTarget(target);
+        mGL.glBindTexture(target, texture.getId());
         return true;
     }
 
@@ -513,7 +524,7 @@ public class GLCanvasImpl implements GLCanvas {
 
         private int mTexEnvMode = GL11.GL_REPLACE;
         private float mTextureAlpha = 1.0f;
-        private boolean mTexture2DEnabled = true;
+        private int mTextureTarget = 0;
         private boolean mBlendEnabled = true;
         private float mLineWidth = 1.0f;
         private boolean mLineSmooth = false;
@@ -578,7 +589,7 @@ public class GLCanvasImpl implements GLCanvas {
             // again in setTextureAlpha(float) later.
             mTextureAlpha = -1.0f;
 
-            setTexture2DEnabled(false);
+            setTextureTarget(0);
 
             float prealpha = (color >>> 24) * alpha * 65535f / 255f / 255f;
             mGL.glColor4x(
@@ -588,13 +599,15 @@ public class GLCanvasImpl implements GLCanvas {
                     Math.round(255 * prealpha));
         }
 
-        public void setTexture2DEnabled(boolean enabled) {
-            if (mTexture2DEnabled == enabled) return;
-            mTexture2DEnabled = enabled;
-            if (enabled) {
-                mGL.glEnable(GL11.GL_TEXTURE_2D);
-            } else {
-                mGL.glDisable(GL11.GL_TEXTURE_2D);
+        // target is a value like GL_TEXTURE_2D. If target = 0, texturing is disabled.
+        public void setTextureTarget(int target) {
+            if (mTextureTarget == target) return;
+            if (mTextureTarget != 0) {
+                mGL.glDisable(mTextureTarget);
+            }
+            mTextureTarget = target;
+            if (mTextureTarget != 0) {
+                mGL.glEnable(mTextureTarget);
             }
         }
 
@@ -634,6 +647,12 @@ public class GLCanvasImpl implements GLCanvas {
         mGL.glMatrixMode(GL11.GL_MODELVIEW);
     }
 
+    private void setTextureCoords(float[] mTextureTransform) {
+        mGL.glMatrixMode(GL11.GL_TEXTURE);
+        mGL.glLoadMatrixf(mTextureTransform, 0);
+        mGL.glMatrixMode(GL11.GL_MODELVIEW);
+    }
+
     // unloadTexture and deleteBuffer can be called from the finalizer thread,
     // so we synchronized on the mUnboundTextures object.
     public boolean unloadTexture(BasicTexture t) {
@@ -654,13 +673,13 @@ public class GLCanvasImpl implements GLCanvas {
         synchronized (mUnboundTextures) {
             IntArray ids = mUnboundTextures;
             if (ids.size() > 0) {
-                mGL.glDeleteTextures(ids.size(), ids.getInternalArray(), 0);
+                GLId.glDeleteTextures(ids.size(), ids.getInternalArray(), 0);
                 ids.clear();
             }
 
             ids = mDeleteBuffers;
             if (ids.size() > 0) {
-                mGL.glDeleteBuffers(ids.size(), ids.getInternalArray(), 0);
+                GLId.glDeleteBuffers(ids.size(), ids.getInternalArray(), 0);
                 ids.clear();
             }
         }

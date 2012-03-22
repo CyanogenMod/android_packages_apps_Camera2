@@ -51,6 +51,7 @@ import com.android.gallery3d.ui.HighlightDrawer;
 import com.android.gallery3d.ui.PositionProvider;
 import com.android.gallery3d.ui.PositionRepository;
 import com.android.gallery3d.ui.PositionRepository.Position;
+import com.android.gallery3d.ui.ScreenNailHolder;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.util.Future;
@@ -77,6 +78,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private static final int BIT_LOADING_SYNC = 2;
 
     private static final float USER_DISTANCE_METER = 0.3f;
+    private static final boolean TEST_CAMERA_PREVIEW = false;
 
     private boolean mIsActive = false;
     private AlbumView mAlbumView;
@@ -196,6 +198,10 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                         mMediaSetPath.toString());
                 data.putString(PhotoPage.KEY_MEDIA_ITEM_PATH,
                         item.getPath().toString());
+                if (TEST_CAMERA_PREVIEW) {
+                    ScreenNailHolder holder = new CameraScreenNailHolder(mActivity);
+                    data.putParcelable(PhotoPage.KEY_SCREENNAIL_HOLDER, holder);
+                }
                 mActivity.getStateManager().startStateForResult(
                         PhotoPage.class, REQUEST_PHOTO, data);
             }

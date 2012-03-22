@@ -398,7 +398,7 @@ class NinePatchInstance {
     private void prepareBuffers(GLCanvas canvas) {
         mBufferNames = new int[3];
         GL11 gl = canvas.getGLInstance();
-        gl.glGenBuffers(3, mBufferNames, 0);
+        GLId.glGenBuffers(3, mBufferNames, 0);
 
         gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, mBufferNames[0]);
         gl.glBufferData(GL11.GL_ARRAY_BUFFER,

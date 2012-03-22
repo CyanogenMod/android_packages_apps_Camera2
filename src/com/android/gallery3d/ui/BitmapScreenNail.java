@@ -56,7 +56,11 @@ public class BitmapScreenNail implements ScreenNail {
     }
 
     @Override
-    public void recycle() {
+    public void noDraw() {
+    }
+
+    @Override
+    public void pauseDraw() {
         if (mTexture != null) {
             mTexture.recycle();
         }
@@ -68,10 +72,6 @@ public class BitmapScreenNail implements ScreenNail {
             mTexture = new BitmapTexture(mBitmap);
         }
         mTexture.draw(canvas, x, y, width, height);
-    }
-
-    @Override
-    public void disableDraw() {
     }
 
     @Override

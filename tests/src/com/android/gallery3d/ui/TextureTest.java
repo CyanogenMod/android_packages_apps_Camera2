@@ -43,6 +43,11 @@ public class TextureTest extends TestCase {
             return true;
         }
 
+        @Override
+        protected int getTarget() {
+            return GL11.GL_TEXTURE_2D;
+        }
+
         public boolean isOpaque() {
             mOpaqueCalled++;
             return true;
@@ -169,6 +174,11 @@ public class TextureTest extends TestCase {
         @Override
         protected boolean onBind(GLCanvas canvas) {
             return true;
+        }
+
+        @Override
+        protected int getTarget() {
+            return GL11.GL_TEXTURE_2D;
         }
 
         public boolean isOpaque() {

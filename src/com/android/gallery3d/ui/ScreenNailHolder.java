@@ -15,16 +15,17 @@
  */
 package com.android.gallery3d.ui;
 
-import android.graphics.RectF;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public interface ScreenNail {
-    public int getWidth();
-    public int getHeight();
-    public int getRotation();
-    public void draw(GLCanvas canvas, int x, int y, int width, int height);
-    public void noDraw();  // we do not need to draw this ScreenNail in this frame.
-    public void pauseDraw();  // we do not expect to draw this ScreenNail for some time.
+public abstract class ScreenNailHolder implements Parcelable {
+    public int describeContents() {
+        return 0;
+    }
 
-    // This is only used by TileImageView to back up the tiles not yet loaded.
-    public void draw(GLCanvas canvas, RectF source, RectF dest);
+    public void writeToParcel(Parcel dest, int flags) {
+    }
+
+    public abstract ScreenNail attach();
+    public abstract void detach();
 }

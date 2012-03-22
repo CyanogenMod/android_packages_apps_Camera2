@@ -57,6 +57,8 @@ public class GLCanvasStub implements GLCanvas {
     public void drawTexture(BasicTexture texture,
             int x, int y, int width, int height, float alpha) {}
     public void drawTexture(BasicTexture texture, RectF source, RectF target) {}
+    public void drawTexture(BasicTexture texture, float[] mTextureTransform,
+            int x, int y, int w, int h) {}
     public void drawMixed(BasicTexture from, BasicTexture to,
             float ratio, int x, int y, int w, int h) {}
     public void drawMixed(BasicTexture from, int to,
