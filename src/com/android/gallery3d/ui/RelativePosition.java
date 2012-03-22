@@ -16,24 +16,27 @@
 
 package com.android.gallery3d.ui;
 
-public abstract class DisplayItem {
+public class RelativePosition {
+    private float mAbsoluteX;
+    private float mAbsoluteY;
+    private float mReferenceX;
+    private float mReferenceY;
 
-    protected int mBoxWidth;
-    protected int mBoxHeight;
-
-    // setBox() specifies the box that the DisplayItem should render into. It
-    // should be called before first render(). It may be called again between
-    // render() calls to change the size of the box.
-    public void setBox(int width, int height) {
-        mBoxWidth = width;
-        mBoxHeight = height;
+    public void setAbsolute(int absoluteX, int absoluteY) {
+        mAbsoluteX = absoluteX;
+        mAbsoluteY = absoluteY;
     }
 
-    public abstract int render(GLCanvas canvas, int pass);
+    public void setReference(int x, int y) {
+        mReferenceX = x;
+        mReferenceY = y;
+    }
 
-    public abstract int getIdentity();
+    public float getX() {
+        return mAbsoluteX - mReferenceX;
+    }
 
-    public int getRotation() {
-        return 0;
+    public float getY() {
+        return mAbsoluteY - mReferenceY;
     }
 }

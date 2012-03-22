@@ -42,6 +42,7 @@ public class FilmStripView extends GLView implements UserInteractionListener {
     private int mTopMargin, mMidMargin, mBottomMargin;
     private int mContentSize, mBarSize, mGripSize;
     private AlbumView mAlbumView;
+    private SlotView mSlotView;
     private ScrollBarView mScrollBarView;
     private AlbumDataAdapter mAlbumDataAdapter;
     private StripDrawer mStripDrawer;
@@ -77,10 +78,12 @@ public class FilmStripView extends GLView implements UserInteractionListener {
         SlotView.Spec spec = new SlotView.Spec();
         spec.slotWidth = thumbSize;
         spec.slotHeight = thumbSize;
-        mAlbumView = new AlbumView(activity, spec, thumbSize);
-        mAlbumView.setOverscrollEffect(SlotView.OVERSCROLL_NONE);
+        mSlotView = new SlotView((Context) activity, spec);
+        mAlbumView = new AlbumView(activity, mSlotView, thumbSize);
+        mSlotView.setSlotRenderer(mAlbumView);
+        mSlotView.setOverscrollEffect(SlotView.OVERSCROLL_NONE);
         mAlbumView.setSelectionDrawer(mStripDrawer);
-        mAlbumView.setListener(new SlotView.SimpleListener() {
+        mSlotView.setListener(new SlotView.SimpleListener() {
             @Override
             public void onDown(int index) {
                 FilmStripView.this.onDown(index);
@@ -102,9 +105,9 @@ public class FilmStripView extends GLView implements UserInteractionListener {
                 FilmStripView.this.onScrollPositionChanged(position, total);
             }
         });
-        mAlbumView.setUserInteractionListener(this);
+        mSlotView.setUserInteractionListener(this);
         mAlbumDataAdapter = new AlbumDataAdapter(activity, mediaSet);
-        addComponent(mAlbumView);
+        addComponent(mSlotView);
         mScrollBarView = new ScrollBarView(activity.getAndroidContext(),
                 mGripSize, gripWidth);
         addComponent(mScrollBarView);
@@ -156,7 +159,7 @@ public class FilmStripView extends GLView implements UserInteractionListener {
     protected void onLayout(
             boolean changed, int left, int top, int right, int bottom) {
         if (!changed) return;
-        mAlbumView.layout(0, mTopMargin, right - left, mTopMargin + mContentSize);
+        mSlotView.layout(0, mTopMargin, right - left, mTopMargin + mContentSize);
         int barStart = mTopMargin + mContentSize + mMidMargin;
         mScrollBarView.layout(0, barStart, right - left, barStart + mBarSize);
         int width = right - left;
@@ -197,12 +200,12 @@ public class FilmStripView extends GLView implements UserInteractionListener {
         MediaItem item = mAlbumDataAdapter.get(index);
         Path path = (item == null) ? null : item.getPath();
         mStripDrawer.setPressedPath(path);
-        mAlbumView.invalidate();
+        mSlotView.invalidate();
     }
 
     private void onUp() {
         mStripDrawer.setPressedPath(null);
-        mAlbumView.invalidate();
+        mSlotView.invalidate();
     }
 
     private void onSingleTapUp(int slotIndex) {
@@ -239,11 +242,11 @@ public class FilmStripView extends GLView implements UserInteractionListener {
 
     public void setFocusIndex(int slotIndex) {
         mAlbumView.setFocusIndex(slotIndex);
-        mAlbumView.makeSlotVisible(slotIndex);
+        mSlotView.makeSlotVisible(slotIndex);
     }
 
     public void setStartIndex(int slotIndex) {
-        mAlbumView.setStartIndex(slotIndex);
+        mSlotView.setStartIndex(slotIndex);
     }
 
     public void pause() {

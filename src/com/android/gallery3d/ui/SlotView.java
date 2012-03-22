@@ -25,19 +25,16 @@ import android.view.animation.DecelerateInterpolator;
 
 import com.android.gallery3d.anim.Animation;
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.ui.PositionRepository.Position;
-import com.android.gallery3d.util.LinkedNode;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class SlotView extends GLView {
     @SuppressWarnings("unused")
     private static final String TAG = "SlotView";
 
     private static final boolean WIDE = true;
-
     private static final int INDEX_NONE = -1;
+
+    public static final int RENDER_MORE_PASS = 1;
+    public static final int RENDER_MORE_FRAME = 2;
 
     public interface Listener {
         public void onDown(int index);
@@ -48,11 +45,17 @@ public class SlotView extends GLView {
     }
 
     public static class SimpleListener implements Listener {
-        public void onDown(int index) {}
-        public void onUp() {}
-        public void onSingleTapUp(int index) {}
-        public void onLongTap(int index) {}
-        public void onScrollPositionChanged(int position, int total) {}
+        @Override public void onDown(int index) {}
+        @Override public void onUp() {}
+        @Override public void onSingleTapUp(int index) {}
+        @Override public void onLongTap(int index) {}
+        @Override public void onScrollPositionChanged(int position, int total) {}
+    }
+
+    public static interface SlotRenderer {
+        public void prepareDrawing();
+        public void onVisibleRangeChanged(int visibleStart, int visibleEnd);
+        public int renderSlot(GLCanvas canvas, int index, int pass, int width, int height);
     }
 
     private final GestureDetector mGestureDetector;
@@ -62,21 +65,9 @@ public class SlotView extends GLView {
     private Listener mListener;
     private UserInteractionListener mUIListener;
 
-    // Use linked hash map to keep the rendering order
-    private final HashMap<DisplayItem, ItemEntry> mItems =
-            new HashMap<DisplayItem, ItemEntry>();
-
-    public LinkedNode.List<ItemEntry> mItemList = LinkedNode.newList();
-
-    // This is used for multipass rendering
-    private ArrayList<ItemEntry> mCurrentItems = new ArrayList<ItemEntry>();
-    private ArrayList<ItemEntry> mNextItems = new ArrayList<ItemEntry>();
-
     private boolean mMoreAnimation = false;
     private MyAnimation mAnimation = null;
-    private final Position mTempPosition = new Position();
     private final Layout mLayout = new Layout();
-    private PositionProvider mPositions;
     private int mStartIndex = INDEX_NONE;
 
     // whether the down action happened while the view is scrolling.
@@ -84,15 +75,27 @@ public class SlotView extends GLView {
     private int mOverscrollEffect = OVERSCROLL_3D;
     private final Handler mHandler;
 
+    private SlotRenderer mRenderer;
+
+    private int[] mRequestRenderSlots = new int[16];
+
     public static final int OVERSCROLL_3D = 0;
     public static final int OVERSCROLL_SYSTEM = 1;
     public static final int OVERSCROLL_NONE = 2;
 
-    public SlotView(Context context) {
+    public SlotView(Context context, Spec spec) {
         mGestureDetector =
                 new GestureDetector(context, new MyGestureListener());
         mScroller = new ScrollerHelper(context);
         mHandler = new Handler(context.getMainLooper());
+        setSlotSpec(spec);
+    }
+
+    public void setSlotRenderer(SlotRenderer slotDrawer) {
+        mRenderer = slotDrawer;
+        if (mRenderer != null) {
+            mRenderer.onVisibleRangeChanged(getVisibleStart(), getVisibleEnd());
+        }
     }
 
     public void setCenterIndex(int index) {
@@ -163,25 +166,11 @@ public class SlotView extends GLView {
     protected void onLayoutChanged(int width, int height) {
     }
 
+    // TODO: Fix this regression. Transition is disabled in this change
     public void startTransition(PositionProvider position) {
-        mPositions = position;
         mAnimation = new MyAnimation();
         mAnimation.start();
-        if (mItems.size() != 0) invalidate();
-    }
-
-    public void savePositions(PositionRepository repository) {
-        repository.clear();
-        LinkedNode.List<ItemEntry> list = mItemList;
-        ItemEntry entry = list.getFirst();
-        Position position = new Position();
-        while (entry != null) {
-            position.set(entry.target);
-            position.x -= mScrollX;
-            position.y -= mScrollY;
-            repository.putPosition(entry.item.getIdentity(), position);
-            entry = list.nextOf(entry);
-        }
+        if (mLayout.mSlotCount != 0) invalidate();
     }
 
     private void updateScrollPosition(int position, boolean force) {
@@ -198,18 +187,6 @@ public class SlotView extends GLView {
     protected void onScrollPositionChanged(int newPosition) {
         int limit = mLayout.getScrollLimit();
         mListener.onScrollPositionChanged(newPosition, limit);
-    }
-
-    public void putDisplayItem(Position target, Position base, DisplayItem item) {
-        item.setBox(mLayout.getSlotWidth(), mLayout.getSlotHeight());
-        ItemEntry entry = new ItemEntry(item, target, base);
-        mItemList.insertLast(entry);
-        mItems.put(item, entry);
-    }
-
-    public void removeDisplayItem(DisplayItem item) {
-        ItemEntry entry = mItems.remove(item);
-        if (entry != null) entry.remove();
     }
 
     public Rect getSlotRect(int slotIndex) {
@@ -246,9 +223,19 @@ public class SlotView extends GLView {
         mScroller.setOverfling(kind == OVERSCROLL_SYSTEM);
     }
 
+    private static int[] expandIntArray(int array[], int capacity) {
+        while (array.length < capacity) {
+            array = new int[array.length * 2];
+        }
+        return array;
+    }
+
     @Override
     protected void render(GLCanvas canvas) {
         super.render(canvas);
+
+        if (mRenderer == null) return;
+        mRenderer.prepareDrawing();
 
         long animTime = AnimationTime.get();
         boolean more = mScroller.advanceAnimation(animTime);
@@ -280,45 +267,30 @@ public class SlotView extends GLView {
             interpolate = mAnimation.value;
         }
 
-        if (WIDE) {
-            canvas.translate(-mScrollX, 0);
-        } else {
-            canvas.translate(0, -mScrollY);
+        canvas.translate(-mScrollX, -mScrollY);
+
+        int requestCount = 0;
+        int requestedSlot[] = expandIntArray(mRequestRenderSlots,
+                mLayout.mVisibleEnd - mLayout.mVisibleStart);
+
+        for (int i = mLayout.mVisibleStart; i < mLayout.mVisibleEnd; ++i) {
+            int r = renderItem(canvas, i, 0, interpolate, paperActive);
+            if ((r & RENDER_MORE_FRAME) != 0) more = true;
+            if ((r & RENDER_MORE_PASS) != 0) requestedSlot[requestCount++] = i;
         }
 
-        LinkedNode.List<ItemEntry> list = mItemList;
-        for (ItemEntry entry = list.getLast(); entry != null;) {
-            int r = renderItem(canvas, entry, interpolate, 0, paperActive);
-            if ((r & DisplayItem.RENDER_MORE_PASS) != 0) {
-                mCurrentItems.add(entry);
+        for (int pass = 1; requestCount != 0; ++pass) {
+            int newCount = 0;
+            for (int i = 0; i < requestCount; ++i) {
+                int r = renderItem(canvas,
+                        requestedSlot[i], pass, interpolate, paperActive);
+                if ((r & RENDER_MORE_FRAME) != 0) more = true;
+                if ((r & RENDER_MORE_PASS) != 0) requestedSlot[newCount++] = i;
             }
-            more |= ((r & DisplayItem.RENDER_MORE_FRAME) != 0);
-            entry = list.previousOf(entry);
+            requestCount = newCount;
         }
 
-        int pass = 1;
-        while (!mCurrentItems.isEmpty()) {
-            for (int i = 0, n = mCurrentItems.size(); i < n; i++) {
-                ItemEntry entry = mCurrentItems.get(i);
-                int r = renderItem(canvas, entry, interpolate, pass, paperActive);
-                if ((r & DisplayItem.RENDER_MORE_PASS) != 0) {
-                    mNextItems.add(entry);
-                }
-                more |= ((r & DisplayItem.RENDER_MORE_FRAME) != 0);
-            }
-            mCurrentItems.clear();
-            // swap mNextItems with mCurrentItems
-            ArrayList<ItemEntry> tmp = mNextItems;
-            mNextItems = mCurrentItems;
-            mCurrentItems = tmp;
-            pass += 1;
-        }
-
-        if (WIDE) {
-            canvas.translate(mScrollX, 0);
-        } else {
-            canvas.translate(0, mScrollY);
-        }
+        canvas.translate(mScrollX, mScrollY);
 
         if (more) invalidate();
 
@@ -334,36 +306,19 @@ public class SlotView extends GLView {
         mMoreAnimation = more;
     }
 
-    private int renderItem(GLCanvas canvas, ItemEntry entry,
-            float interpolate, int pass, boolean paperActive) {
+    private int renderItem(GLCanvas canvas,
+            int index, int pass, float interpolate, boolean paperActive) {
         canvas.save(GLCanvas.SAVE_FLAG_ALPHA | GLCanvas.SAVE_FLAG_MATRIX);
-        Position position = entry.target;
-        if (mPositions != null) {
-            position = mTempPosition;
-            position.set(entry.target);
-            position.x -= mScrollX;
-            position.y -= mScrollY;
-            Position source = mPositions
-                    .getPosition(entry.item.getIdentity(), position);
-            source.x += mScrollX;
-            source.y += mScrollY;
-            position = mTempPosition;
-            Position.interpolate(
-                    source, entry.target, position, interpolate);
-        }
-        canvas.multiplyAlpha(position.alpha);
+        Rect rect = getSlotRect(index);
         if (paperActive) {
-            canvas.multiplyMatrix(mPaper.getTransform(
-                    position, entry.base, mScrollX, mScrollY), 0);
+            canvas.multiplyMatrix(mPaper.getTransform(rect, mScrollX), 0);
         } else {
-            canvas.translate(position.x, position.y, position.z);
+            canvas.translate(rect.left, rect.top, 0);
         }
-        if (position.theta != 0) {
-            canvas.rotate(position.theta, 0, 0, 1);
-        }
-        int more = entry.item.render(canvas, pass);
+        int result = mRenderer.renderSlot(
+                canvas, index, pass, rect.right - rect.left, rect.bottom - rect.top);
         canvas.restore();
-        return more;
+        return result;
     }
 
     public static class MyAnimation extends Animation {
@@ -377,18 +332,6 @@ public class SlotView extends GLView {
         @Override
         protected void onCalculate(float progress) {
             value = progress;
-        }
-    }
-
-    private static class ItemEntry extends LinkedNode {
-        public DisplayItem item;
-        public Position target;
-        public Position base;
-
-        public ItemEntry(DisplayItem item, Position target, Position base) {
-            this.item = item;
-            this.target = target;
-            this.base = base;
         }
     }
 
@@ -412,7 +355,7 @@ public class SlotView extends GLView {
         public int slotGap = -1;
     }
 
-    public static class Layout {
+    public class Layout {
 
         private int mVisibleStart;
         private int mVisibleEnd;
@@ -569,6 +512,9 @@ public class SlotView extends GLView {
                 mVisibleEnd = end;
             } else {
                 mVisibleStart = mVisibleEnd = 0;
+            }
+            if (mRenderer != null) {
+                mRenderer.onVisibleRangeChanged(mVisibleStart, mVisibleEnd);
             }
         }
 

@@ -44,9 +44,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
 
     public static interface Listener {
         public void onSizeChanged(int size);
-        public void onContentInvalidated();
-        public void onWindowContentChanged(
-                int slot, DisplayItem old, DisplayItem update);
+        public void onContentChanged();
     }
 
     private final AlbumView.Model mSource;
@@ -242,7 +240,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
         data[index] = update;
         boolean isActive = isActiveSlot(slotIndex);
         if (mListener != null && isActive) {
-            mListener.onWindowContentChanged(slotIndex, original, update);
+            mListener.onContentChanged();
         }
         if (original != null) {
             if (isActive && original.isRequestInProgress()) {
@@ -318,7 +316,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
                     updateContent(texture);
                 }
                 if (mListener != null && isActiveSlot) {
-                    mListener.onContentInvalidated();
+                    mListener.onContentChanged();
                 }
             }
         }
@@ -351,11 +349,11 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
                 }
                 int result = 0;
                 if (mFocusIndex == mSlotIndex) {
-                    result |= RENDER_MORE_PASS;
+                    result |= SlotView.RENDER_MORE_PASS;
                 }
                 if ((mContent instanceof FadeInTexture) &&
                         ((FadeInTexture) mContent).isAnimating()) {
-                    result |= RENDER_MORE_FRAME;
+                    result |= SlotView.RENDER_MORE_FRAME;
                 }
                 return result;
             } else if (pass == 1) {
