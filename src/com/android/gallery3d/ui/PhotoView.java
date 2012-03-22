@@ -225,7 +225,7 @@ public class PhotoView extends GLView {
             return;
         }
         ScreenNailEntry entry = mScreenNails[which];
-        entry.set(screenNail);
+        entry.updateScreenNail(screenNail);
     }
 
     // -1 previous, 0 current, 1 next
@@ -650,10 +650,8 @@ public class PhotoView extends GLView {
         ScreenNailEntry prevNail = mScreenNails[ENTRY_PREVIOUS];
         ScreenNailEntry nextNail = mScreenNails[ENTRY_NEXT];
         mTileView.invalidateTiles();
-        if (prevNail.mScreenNail != null) prevNail.mScreenNail.recycle();
-        prevNail.set(mTileView.mScreenNail);
-        mTileView.updateScreenNail(nextNail.mScreenNail);
-        nextNail.set(null);
+        prevNail.updateScreenNail(mTileView.releaseScreenNail());
+        mTileView.updateScreenNail(nextNail.releaseScreenNail());
         mModel.next();
     }
 
@@ -662,10 +660,8 @@ public class PhotoView extends GLView {
         ScreenNailEntry prevNail = mScreenNails[ENTRY_PREVIOUS];
         ScreenNailEntry nextNail = mScreenNails[ENTRY_NEXT];
         mTileView.invalidateTiles();
-        if (nextNail.mScreenNail != null) nextNail.mScreenNail.recycle();
-        nextNail.set(mTileView.mScreenNail);
-        mTileView.updateScreenNail(prevNail.mScreenNail);
-        nextNail.set(null);
+        nextNail.updateScreenNail(mTileView.releaseScreenNail());
+        mTileView.updateScreenNail(prevNail.releaseScreenNail());
         mModel.previous();
     }
 
@@ -715,15 +711,22 @@ public class PhotoView extends GLView {
 
         private ScreenNail mScreenNail;
 
-        public void set(ScreenNail screenNail) {
+        public void updateScreenNail(ScreenNail screenNail) {
             mEnabled = (screenNail != null);
             if (mScreenNail == screenNail) return;
-            if (mScreenNail != null) mScreenNail.recycle();
+            if (mScreenNail != null) mScreenNail.pauseDraw();
             mScreenNail = screenNail;
             if (mScreenNail != null) {
                 mRotation = mScreenNail.getRotation();
                 updateDrawingSize();
             }
+        }
+
+        // Release the ownership of the ScreenNail from this entry.
+        public ScreenNail releaseScreenNail() {
+            ScreenNail s = mScreenNail;
+            mScreenNail = null;
+            return s;
         }
 
         public void layoutRightEdgeAt(int x) {
@@ -767,7 +770,7 @@ public class PhotoView extends GLView {
         public void draw(GLCanvas canvas, boolean applyFadingAnimation) {
             if (mScreenNail == null) return;
             if (!mVisible) {
-                mScreenNail.disableDraw();
+                mScreenNail.noDraw();
                 return;
             }
 
@@ -877,7 +880,7 @@ public class PhotoView extends GLView {
         mTransitionMode = TRANS_NONE;
         mTileView.freeTextures();
         for (ScreenNailEntry entry : mScreenNails) {
-            entry.set(null);
+            entry.updateScreenNail(null);
         }
     }
 

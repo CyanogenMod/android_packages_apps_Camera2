@@ -55,12 +55,21 @@ public class SnailSource extends MediaSource {
         return null;
     }
 
-    // Register a ScreenNail. Returns the Path of the MediaSet
-    // containing the MediaItem associated with the ScreenNail.
-    public static synchronized Path registerScreenNail(ScreenNail s) {
+    // Registers a ScreenNail and returns the id of it. You can obtain the Path
+    // of the MediaItem associated with the ScreenNail by getItemPath(), and the
+    // Path of the MediaSet containing that MediaItem by getSetPath().
+    public static synchronized int registerScreenNail(ScreenNail s) {
         int id = sNextId++;
         sRegistry.put(id, s);
+        return id;
+    }
+
+    public static Path getSetPath(int id) {
         return Path.fromString("/snail/set").getChild(id);
+    }
+
+    public static Path getItemPath(int id) {
+        return Path.fromString("/snail/item").getChild(id);
     }
 
     public static synchronized void unregisterScreenNail(ScreenNail s) {

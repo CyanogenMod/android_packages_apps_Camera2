@@ -221,7 +221,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         ScreenNail screenNail = future.get();
 
         if (entry == null || entry.screenNailTask != future) {
-            if (screenNail != null) screenNail.recycle();
+            if (screenNail != null) screenNail.pauseDraw();
             return;
         }
 

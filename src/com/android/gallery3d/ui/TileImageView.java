@@ -71,7 +71,7 @@ public class TileImageView extends GLView {
     private static final int STATE_RECYCLED = 0x40;
 
     private Model mModel;
-    protected ScreenNail mScreenNail;
+    private ScreenNail mScreenNail;
     protected int mLevelCount;  // cache the value of mScaledBitmaps.length
 
     // The mLevel variable indicates which level of bitmap we should use.
@@ -155,8 +155,14 @@ public class TileImageView extends GLView {
 
     public void updateScreenNail(ScreenNail s) {
         if (mScreenNail == s) return;
-        if (mScreenNail != null) mScreenNail.recycle();
+        if (mScreenNail != null) mScreenNail.pauseDraw();
         mScreenNail = s;
+    }
+
+    public ScreenNail releaseScreenNail() {
+        ScreenNail s = mScreenNail;
+        mScreenNail = null;
+        return s;
     }
 
     public void notifyModelInvalidated() {
@@ -421,7 +427,7 @@ public class TileImageView extends GLView {
         try {
             if (level != mLevelCount) {
                 if (mScreenNail != null) {
-                    mScreenNail.disableDraw();
+                    mScreenNail.noDraw();
                 }
 
                 int size = (TILE_SIZE << level);

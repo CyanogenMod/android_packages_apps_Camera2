@@ -13,18 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.android.gallery3d.ui;
 
-import android.graphics.RectF;
+// This mimics corresponding GL functions.
+public class GLId {
+    static int sNextId = 1;
 
-public interface ScreenNail {
-    public int getWidth();
-    public int getHeight();
-    public int getRotation();
-    public void draw(GLCanvas canvas, int x, int y, int width, int height);
-    public void noDraw();  // we do not need to draw this ScreenNail in this frame.
-    public void pauseDraw();  // we do not expect to draw this ScreenNail for some time.
+    public synchronized static void glGenTextures(int n, int[] textures, int offset) {
+        while (n-- > 0) {
+            textures[offset + n] = sNextId++;
+        }
+    }
 
-    // This is only used by TileImageView to back up the tiles not yet loaded.
-    public void draw(GLCanvas canvas, RectF source, RectF dest);
+    public synchronized static void glGenBuffers(int n, int[] buffers, int offset) {
+        while (n-- > 0) {
+            buffers[offset + n] = sNextId++;
+        }
+    }
+
+    public synchronized static void glDeleteTextures(int n, int[] textures, int offset) {
+    }
+
+    public synchronized static void glDeleteBuffers(int n, int[] buffers, int offset) {
+    }
 }

@@ -55,6 +55,8 @@ import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.ImportCompleteListener;
 import com.android.gallery3d.ui.MenuExecutor;
+import com.android.gallery3d.ui.ScreenNail;
+import com.android.gallery3d.ui.ScreenNailHolder;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.PositionRepository;
 import com.android.gallery3d.ui.PositionRepository.Position;
@@ -80,6 +82,7 @@ public class PhotoPage extends ActivityState
     public static final String KEY_MEDIA_ITEM_PATH = "media-item-path";
     public static final String KEY_INDEX_HINT = "index-hint";
     public static final String KEY_OPEN_ANIMATION_RECT = "open-animation-rect";
+    public static final String KEY_SCREENNAIL_HOLDER = "screennail-holder";
 
     private GalleryApp mApplication;
     private SelectionManager mSelectionManager;
@@ -109,11 +112,8 @@ public class PhotoPage extends ActivityState
     private boolean mIsActive;
     private ShareActionProvider mShareActionProvider;
     private String mSetPathString;
-
-    // This is for testing only. It should be removed once we have the real
-    // Camera view.
-    private CameraView mCameraView;
-    private ScreenNailBridge mScreenNail;
+    private ScreenNailHolder mScreenNailHolder;
+    private ScreenNail mScreenNail;
 
     public static interface Model extends PhotoView.Model {
         public void resume();
@@ -190,14 +190,24 @@ public class PhotoPage extends ActivityState
         Path itemPath = Path.fromString(data.getString(KEY_MEDIA_ITEM_PATH));
 
         if (mSetPathString != null) {
-            // Uncomment the block below to test camera screennail.
-            /*
-            Path cameraScreenNailSetPath = addCameraScreenNail();
+            mScreenNailHolder =
+                (ScreenNailHolder) data.getParcelable(KEY_SCREENNAIL_HOLDER);
+            if (mScreenNailHolder != null) {
+                mScreenNail = mScreenNailHolder.attach();
 
-            // Combine the original MediaSet with the one for camera ScreenNail.
-            mSetPathString = "/combo/item/{" + cameraScreenNailSetPath + "," +
-                    mSetPathString + "}";
-            */
+                // Get the ScreenNail from ScreenNailHolder and register it.
+                int id = SnailSource.registerScreenNail(mScreenNail);
+                Path screenNailSetPath = SnailSource.getSetPath(id);
+                Path screenNailItemPath = SnailSource.getItemPath(id);
+
+                // Combine the original MediaSet with the one for CameraScreenNail.
+                mSetPathString = "/combo/item/{" + screenNailSetPath +
+                        "," + mSetPathString + "}";
+
+                // Start from the screen nail.
+                itemPath = screenNailItemPath;
+            }
+
             mMediaSet = mActivity.getDataManager().getMediaSet(mSetPathString);
             mCurrentIndex = data.getInt(KEY_INDEX_HINT, 0);
             mMediaSet = (MediaSet)
@@ -277,34 +287,6 @@ public class PhotoPage extends ActivityState
         if (restoreState == null) {
             mPhotoView.setOpenAnimationRect((Rect) data.getParcelable(KEY_OPEN_ANIMATION_RECT));
         }
-    }
-
-    // We create a Camera View and a ScreenNail. The two work together
-    // to present the view together with other pictures. Returns the
-    // Path of the MediaItem hosting the ScreenNail.
-    private Path addCameraScreenNail() {
-        // Create a camera view and add it to the root.
-        Activity activity = (Activity) mActivity;
-        mCameraView = new CameraView(activity);
-        ViewGroup galleryRoot = (ViewGroup) activity.findViewById(R.id.gallery_root);
-        galleryRoot.addView(mCameraView);
-
-        // Create a ScreenNail and register it.
-        mScreenNail = new ScreenNailBridge(mCameraView);
-        mCameraView.setScreenNailBridge(mScreenNail);
-        return SnailSource.registerScreenNail(mScreenNail);
-    }
-
-    private void removeCameraScreenNail() {
-        if (mCameraView == null) return;
-
-        // Remove the camera view.
-        ((ViewGroup) mCameraView.getParent()).removeView(mCameraView);
-        mCameraView = null;
-
-        // Unregister the ScreenNail.
-        SnailSource.unregisterScreenNail(mScreenNail);
-        mScreenNail = null;
     }
 
     private void updateShareURI(Path path) {
@@ -690,7 +672,13 @@ public class PhotoPage extends ActivityState
 
     @Override
     protected void onDestroy() {
-        removeCameraScreenNail();
+        if (mScreenNailHolder != null) {
+            // Unregister the ScreenNail and notify mScreenNailHolder.
+            SnailSource.unregisterScreenNail(mScreenNail);
+            mScreenNailHolder.detach();
+            mScreenNailHolder = null;
+            mScreenNail = null;
+        }
         super.onDestroy();
     }
 
