@@ -76,7 +76,7 @@
     <string name="rotate_right" msgid="6776325835923384839">"向右旋转"</string>
     <string name="no_such_item" msgid="5315144556325243400">"找不到指定的项。"</string>
     <string name="edit" msgid="1502273844748580847">"编辑"</string>
-    <string name="activity_not_found" msgid="5619154886080878023">"没有可完成该操作的应用程序。"</string>
+    <string name="activity_not_found" msgid="5619154886080878023">"没有可完成该操作的应用。"</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"正在处理缓存请求"</string>
     <string name="caching_label" msgid="4521059045896269095">"正在缓存..."</string>
     <string name="crop_action" msgid="3427470284074377001">"修剪"</string>
