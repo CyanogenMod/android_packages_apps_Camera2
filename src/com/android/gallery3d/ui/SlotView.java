@@ -66,7 +66,7 @@ public class SlotView extends GLView {
     private UserInteractionListener mUIListener;
 
     private boolean mMoreAnimation = false;
-    private MyAnimation mAnimation = null;
+    private SlotAnimation mAnimation = null;
     private final Layout mLayout = new Layout();
     private int mStartIndex = INDEX_NONE;
 
@@ -156,19 +156,25 @@ public class SlotView extends GLView {
                 (mLayout.getVisibleStart() + mLayout.getVisibleEnd()) / 2;
         mLayout.setSize(r - l, b - t);
         makeSlotVisible(visibleIndex);
-
-        onLayoutChanged(r - l, b - t);
         if (mOverscrollEffect == OVERSCROLL_3D) {
             mPaper.setSize(r - l, b - t);
         }
     }
 
-    protected void onLayoutChanged(int width, int height) {
+    public void startScatteringAnimation(RelativePosition position) {
+        mAnimation = new ScatteringAnimation(position);
+        mAnimation.start();
+        if (mLayout.mSlotCount != 0) invalidate();
     }
 
-    // TODO: Fix this regression. Transition is disabled in this change
-    public void startTransition(PositionProvider position) {
-        mAnimation = new MyAnimation();
+    public void startRisingAnimation() {
+        mAnimation = new RisingAnimation();
+        mAnimation.start();
+        if (mLayout.mSlotCount != 0) invalidate();
+    }
+
+    public void startRestoringAnimation(int targetIndex) {
+        mAnimation = new RestoringAnimation(targetIndex);
         mAnimation.start();
         if (mLayout.mSlotCount != 0) invalidate();
     }
@@ -261,10 +267,8 @@ public class SlotView extends GLView {
 
         more |= paperActive;
 
-        float interpolate = 1f;
         if (mAnimation != null) {
             more |= mAnimation.calculate(animTime);
-            interpolate = mAnimation.value;
         }
 
         canvas.translate(-mScrollX, -mScrollY);
@@ -273,8 +277,8 @@ public class SlotView extends GLView {
         int requestedSlot[] = expandIntArray(mRequestRenderSlots,
                 mLayout.mVisibleEnd - mLayout.mVisibleStart);
 
-        for (int i = mLayout.mVisibleStart; i < mLayout.mVisibleEnd; ++i) {
-            int r = renderItem(canvas, i, 0, interpolate, paperActive);
+        for (int i = mLayout.mVisibleEnd - 1; i >= mLayout.mVisibleStart; --i) {
+            int r = renderItem(canvas, i, 0, paperActive);
             if ((r & RENDER_MORE_FRAME) != 0) more = true;
             if ((r & RENDER_MORE_PASS) != 0) requestedSlot[requestCount++] = i;
         }
@@ -283,7 +287,7 @@ public class SlotView extends GLView {
             int newCount = 0;
             for (int i = 0; i < requestCount; ++i) {
                 int r = renderItem(canvas,
-                        requestedSlot[i], pass, interpolate, paperActive);
+                        requestedSlot[i], pass, paperActive);
                 if ((r & RENDER_MORE_FRAME) != 0) more = true;
                 if ((r & RENDER_MORE_PASS) != 0) requestedSlot[newCount++] = i;
             }
@@ -306,8 +310,8 @@ public class SlotView extends GLView {
         mMoreAnimation = more;
     }
 
-    private int renderItem(GLCanvas canvas,
-            int index, int pass, float interpolate, boolean paperActive) {
+    private int renderItem(
+            GLCanvas canvas, int index, int pass, boolean paperActive) {
         canvas.save(GLCanvas.SAVE_FLAG_ALPHA | GLCanvas.SAVE_FLAG_MATRIX);
         Rect rect = getSlotRect(index);
         if (paperActive) {
@@ -315,23 +319,71 @@ public class SlotView extends GLView {
         } else {
             canvas.translate(rect.left, rect.top, 0);
         }
+        if (mAnimation != null && mAnimation.isActive()) {
+            mAnimation.apply(canvas, index, rect);
+        }
         int result = mRenderer.renderSlot(
                 canvas, index, pass, rect.right - rect.left, rect.bottom - rect.top);
         canvas.restore();
         return result;
     }
 
-    public static class MyAnimation extends Animation {
-        public float value;
+    public static abstract class SlotAnimation extends Animation {
+        protected float mProgress = 0;
 
-        public MyAnimation() {
+        public SlotAnimation() {
             setInterpolator(new DecelerateInterpolator(4));
             setDuration(1500);
         }
 
         @Override
         protected void onCalculate(float progress) {
-            value = progress;
+            mProgress = progress;
+        }
+
+        abstract public void apply(GLCanvas canvas, int slotIndex, Rect target);
+    }
+
+    public static class RisingAnimation extends SlotAnimation {
+        private static final int RISING_DISTANCE = 128;
+
+        @Override
+        public void apply(GLCanvas canvas, int slotIndex, Rect target) {
+            canvas.translate(0, 0, RISING_DISTANCE * (1 - mProgress));
+        }
+    }
+
+    public static class ScatteringAnimation extends SlotAnimation {
+        private int PHOTO_DISTANCE = 1000;
+        private RelativePosition mCenter;
+
+        public ScatteringAnimation(RelativePosition center) {
+            mCenter = center;
+        }
+
+        @Override
+        public void apply(GLCanvas canvas, int slotIndex, Rect target) {
+            canvas.translate(
+                    (mCenter.getX() - target.centerX()) * (1 - mProgress),
+                    (mCenter.getY() - target.centerY()) * (1 - mProgress),
+                    slotIndex * PHOTO_DISTANCE * (1 - mProgress));
+            canvas.setAlpha(mProgress);
+        }
+    }
+
+    public static class RestoringAnimation extends SlotAnimation {
+        private static final int DISTANCE = 1000;
+        private int mTargetIndex;
+
+        public RestoringAnimation(int targetIndex) {
+            mTargetIndex = targetIndex;
+        }
+
+        @Override
+        public void apply(GLCanvas canvas, int slotIndex, Rect target) {
+            if (slotIndex == mTargetIndex) {
+                canvas.translate(0, 0, -DISTANCE * (1 - mProgress));
+            }
         }
     }
 

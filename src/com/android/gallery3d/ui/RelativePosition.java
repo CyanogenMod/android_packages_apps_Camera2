@@ -22,12 +22,12 @@ public class RelativePosition {
     private float mReferenceX;
     private float mReferenceY;
 
-    public void setAbsolute(int absoluteX, int absoluteY) {
+    public void setAbsolutePosition(int absoluteX, int absoluteY) {
         mAbsoluteX = absoluteX;
         mAbsoluteY = absoluteY;
     }
 
-    public void setReference(int x, int y) {
+    public void setReferencePosition(int x, int y) {
         mReferenceX = x;
         mReferenceY = y;
     }

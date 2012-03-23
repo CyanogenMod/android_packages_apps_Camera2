@@ -31,8 +31,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.MeasureSpec;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ShareActionProvider;
 import android.widget.Toast;
@@ -58,8 +58,6 @@ import com.android.gallery3d.ui.MenuExecutor;
 import com.android.gallery3d.ui.ScreenNail;
 import com.android.gallery3d.ui.ScreenNailHolder;
 import com.android.gallery3d.ui.PhotoView;
-import com.android.gallery3d.ui.PositionRepository;
-import com.android.gallery3d.ui.PositionRepository.Position;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.ui.UserInteractionListener;
@@ -142,8 +140,6 @@ public class PhotoPage extends ActivityState
         protected void onLayout(
                 boolean changed, int left, int top, int right, int bottom) {
             mPhotoView.layout(0, 0, right - left, bottom - top);
-            // Reset position offset after the layout is changed.
-            PositionRepository.getInstance(mActivity).setOffset(0, 0);
             int filmStripHeight = 0;
             if (mFilmStripView != null) {
                 mFilmStripView.measure(
@@ -428,17 +424,6 @@ public class PhotoPage extends ActivityState
         if (mShowDetails) {
             hideDetails();
         } else {
-            PositionRepository repository = PositionRepository.getInstance(mActivity);
-            repository.clear();
-            if (mCurrentPhoto != null) {
-                Position position = new Position();
-                position.x = mRootPane.getWidth() / 2;
-                position.y = mRootPane.getHeight() / 2;
-                position.z = -1000;
-                repository.putPosition(
-                        System.identityHashCode(mCurrentPhoto.getPath()),
-                        position);
-            }
             super.onBackPressed();
         }
     }
@@ -653,9 +638,6 @@ public class PhotoPage extends ActivityState
         super.onResume();
         mIsActive = true;
         setContentPane(mRootPane);
-        // Reset position offset for resuming.
-        PositionRepository.getInstance(mActivity).setOffset(
-                mPhotoView.bounds().left, mPhotoView.bounds().top);
 
         mModel.resume();
         mPhotoView.resume();

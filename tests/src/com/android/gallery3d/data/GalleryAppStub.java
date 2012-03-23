@@ -19,7 +19,6 @@ package com.android.gallery3d.data;
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.app.StateManager;
 import com.android.gallery3d.ui.GLRoot;
-import com.android.gallery3d.ui.PositionRepository;
 import com.android.gallery3d.util.ThreadPool;
 
 import android.content.ContentResolver;
@@ -35,7 +34,6 @@ class GalleryAppStub implements GalleryApp {
     public DecodeUtils getDecodeService() { return null; }
 
     public GLRoot getGLRoot() { return null; }
-    public PositionRepository getPositionRepository() { return null; }
 
     public Context getAndroidContext() { return null; }
 

@@ -48,16 +48,12 @@ import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.GridDrawer;
 import com.android.gallery3d.ui.HighlightDrawer;
-import com.android.gallery3d.ui.PositionProvider;
-import com.android.gallery3d.ui.PositionRepository;
-import com.android.gallery3d.ui.PositionRepository.Position;
+import com.android.gallery3d.ui.RelativePosition;
 import com.android.gallery3d.ui.ScreenNailHolder;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
-
-import java.util.Random;
 
 public class AlbumPage extends ActivityState implements GalleryActionBar.ClusterRunner,
         SelectionManager.SelectionListener, MediaSet.SyncListener {
@@ -109,6 +105,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
     private int mLoadingBits = 0;
     private boolean mInitialSynced = false;
+    private RelativePosition mOpenCenter = new RelativePosition();
 
     private final GLView mRootPane = new GLView() {
         private final float mMatrix[] = new float[16];
@@ -132,12 +129,11 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 mAlbumView.setSelectionDrawer(mGridDrawer);
             }
 
+            // Set the mSlotView as a reference point to the open animation
+            mOpenCenter.setReferencePosition(0, slotViewTop);
             mSlotView.layout(0, slotViewTop, slotViewRight, slotViewBottom);
             GalleryUtils.setViewPointMatrix(mMatrix,
                     (right - left) / 2, (bottom - top) / 2, -mUserDistance);
-            // Reset position offset after the layout is changed.
-            PositionRepository.getInstance(mActivity).setOffset(
-                    0, slotViewTop);
         }
 
         @Override
@@ -257,6 +253,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         }
     }
 
+    @Override
     public void doCluster(int clusterType) {
         String basePath = mMediaSet.getPath().toString();
         String newPath = FilterUtils.newClusterPath(basePath, clusterType);
@@ -285,52 +282,19 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         Context context = mActivity.getAndroidContext();
         mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
-        startTransition(data);
-
         // Enable auto-select-all for mtp album
         if (data.getBoolean(KEY_AUTO_SELECT_ALL)) {
             mSelectionManager.selectAll();
         }
-    }
 
-    private void startTransition() {
-        final PositionRepository repository =
-                PositionRepository.getInstance(mActivity);
-        mSlotView.startTransition(new PositionProvider() {
-            private final Position mTempPosition = new Position();
-            public Position getPosition(int identity, Position target) {
-                Position p = repository.get(identity);
-                if (p != null) return p;
-                mTempPosition.set(target);
-                mTempPosition.z = 128;
-                return mTempPosition;
+        // Don't show animation if it is restored
+        if (restoreState == null && data != null) {
+            int[] center = data.getIntArray(KEY_SET_CENTER);
+            if (center != null) {
+                mOpenCenter.setAbsolutePosition(center[0], center[1]);
+                mSlotView.startScatteringAnimation(mOpenCenter);
             }
-        });
-    }
-
-    private void startTransition(Bundle data) {
-        final PositionRepository repository =
-                PositionRepository.getInstance(mActivity);
-        final int[] center = data == null
-                ? null
-                : data.getIntArray(KEY_SET_CENTER);
-        final Random random = new Random();
-        mSlotView.startTransition(new PositionProvider() {
-            private final Position mTempPosition = new Position();
-            public Position getPosition(int identity, Position target) {
-                Position p = repository.get(identity);
-                if (p != null) return p;
-                if (center != null) {
-                    random.setSeed(identity);
-                    mTempPosition.set(center[0], center[1],
-                            0, random.nextInt(60) - 30, 0);
-                } else {
-                    mTempPosition.set(target);
-                    mTempPosition.z = 128;
-                }
-                return mTempPosition;
-            }
-        });
+        }
     }
 
     @Override
@@ -338,9 +302,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         super.onResume();
         mIsActive = true;
         setContentPane(mRootPane);
-        // Reset position offset for resuming.
-        PositionRepository.getInstance(mActivity).setOffset(
-                mSlotView.bounds().left, mSlotView.bounds().top);
 
         Path path = mMediaSet.getPath();
         boolean enableHomeButton = (mActivity.getStateManager().getStateCount() > 1) |
@@ -558,11 +519,11 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 if (data == null) return;
                 mFocusIndex = data.getIntExtra(PhotoPage.KEY_INDEX_HINT, 0);
                 mSlotView.setCenterIndex(mFocusIndex);
-                startTransition();
+                mSlotView.startRestoringAnimation(mFocusIndex);
                 break;
             }
             case REQUEST_DO_ANIMATION: {
-                startTransition(null);
+                mSlotView.startRisingAnimation();
                 break;
             }
         }
