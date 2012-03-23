@@ -47,9 +47,6 @@ import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.GridDrawer;
 import com.android.gallery3d.ui.HighlightDrawer;
-import com.android.gallery3d.ui.PositionProvider;
-import com.android.gallery3d.ui.PositionRepository;
-import com.android.gallery3d.ui.PositionRepository.Position;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.util.Future;
@@ -133,10 +130,6 @@ public class AlbumSetPage extends ActivityState implements
             }
 
             mSlotView.layout(0, slotViewTop, slotViewRight, slotViewBottom);
-
-            // Reset position offset after the layout is changed.
-            PositionRepository.getInstance(mActivity).setOffset(
-                    0, slotViewTop);
         }
 
         @Override
@@ -167,18 +160,13 @@ public class AlbumSetPage extends ActivityState implements
         } else if (mSelectionManager.inSelectionMode()) {
             mSelectionManager.leaveSelectionMode();
         } else {
-            // TODO: fix this regression during refactoring
-            // mSlotView.savePositions(
-            //        PositionRepository.getInstance(mActivity));
             super.onBackPressed();
         }
     }
 
-    private void savePositions(int slotIndex, int center[]) {
+    private void getSlotCenter(int slotIndex, int center[]) {
         Rect offset = new Rect();
         mRootPane.getBoundsOf(mSlotView, offset);
-        // TODO: fix this regression during refactoring
-        // mSlotView.savePositions(PositionRepository.getInstance(mActivity));
         Rect r = mSlotView.getSlotRect(slotIndex);
         int scrollX = mSlotView.getScrollX();
         int scrollY = mSlotView.getScrollY();
@@ -198,7 +186,7 @@ public class AlbumSetPage extends ActivityState implements
             Bundle data = new Bundle(getData());
             String mediaPath = targetSet.getPath().toString();
             int[] center = new int[2];
-            savePositions(slotIndex, center);
+            getSlotCenter(slotIndex, center);
             data.putIntArray(AlbumPage.KEY_SET_CENTER, center);
             if (mGetAlbum && targetSet.isLeafAlbum()) {
                 Activity activity = (Activity) mActivity;
@@ -254,6 +242,7 @@ public class AlbumSetPage extends ActivityState implements
         }
     }
 
+    @Override
     public void doCluster(int clusterType) {
         String basePath = mMediaSet.getPath().toString();
         String newPath = FilterUtils.switchClusterPath(basePath, clusterType);
@@ -278,7 +267,6 @@ public class AlbumSetPage extends ActivityState implements
         mActionBar = mActivity.getGalleryActionBar();
         mSelectedAction = data.getInt(AlbumSetPage.KEY_SELECTED_CLUSTER_TYPE,
                 FilterUtils.CLUSTER_BY_ALBUM);
-        startTransition();
     }
 
     private void clearLoadingBit(int loadingBit) {
@@ -331,9 +319,6 @@ public class AlbumSetPage extends ActivityState implements
         super.onResume();
         mIsActive = true;
         setContentPane(mRootPane);
-        // Reset position offset for resuming.
-        PositionRepository.getInstance(mActivity).setOffset(
-                mSlotView.bounds().left, mSlotView.bounds().top);
 
         // Set the reload bit here to prevent it exit this page in clearLoadingBit().
         setLoadingBit(BIT_LOADING_RELOAD);
@@ -395,6 +380,7 @@ public class AlbumSetPage extends ActivityState implements
 
         mActionModeHandler = new ActionModeHandler(mActivity, mSelectionManager);
         mActionModeHandler.setActionModeListener(new ActionModeListener() {
+            @Override
             public boolean onActionItemClicked(MenuItem item) {
                 return onItemSelected(item);
             }
@@ -508,25 +494,9 @@ public class AlbumSetPage extends ActivityState implements
     protected void onStateResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_DO_ANIMATION: {
-                startTransition();
+                mSlotView.startRisingAnimation();
             }
         }
-    }
-
-    private void startTransition() {
-        final PositionRepository repository =
-                PositionRepository.getInstance(mActivity);
-        mSlotView.startTransition(new PositionProvider() {
-            private final Position mTempPosition = new Position();
-            public Position getPosition(int identity, Position target) {
-                Position p = repository.get(identity);
-                if (p == null) {
-                    p = mTempPosition;
-                    p.set(target.x, target.y, 128, target.theta, 1);
-                }
-                return p;
-            }
-        });
     }
 
     private String getSelectedString() {
@@ -539,8 +509,8 @@ public class AlbumSetPage extends ActivityState implements
         return String.format(format, count);
     }
 
+    @Override
     public void onSelectionModeChange(int mode) {
-
         switch (mode) {
             case SelectionManager.ENTER_SELECTION_MODE: {
                 mActionBar.disableClusterMenu(true);
@@ -564,6 +534,7 @@ public class AlbumSetPage extends ActivityState implements
         }
     }
 
+    @Override
     public void onSelectionChange(Path path, boolean selected) {
         Utils.assertTrue(mActionMode != null);
         mActionModeHandler.setTitle(getSelectedString());
@@ -584,6 +555,7 @@ public class AlbumSetPage extends ActivityState implements
                     mSelectionManager);
             mDetailsHelper = new DetailsHelper(mActivity, mRootPane, mDetailsSource);
             mDetailsHelper.setCloseListener(new CloseListener() {
+                @Override
                 public void onClose() {
                     hideDetails();
                 }
@@ -615,10 +587,12 @@ public class AlbumSetPage extends ActivityState implements
     }
 
     private class MyLoadingListener implements LoadingListener {
+        @Override
         public void onLoadingStarted() {
             setLoadingBit(BIT_LOADING_RELOAD);
         }
 
+        @Override
         public void onLoadingFinished() {
             clearLoadingBit(BIT_LOADING_RELOAD);
         }
@@ -626,16 +600,20 @@ public class AlbumSetPage extends ActivityState implements
 
     private class MyDetailsSource implements DetailsHelper.DetailsSource {
         private int mIndex;
+
+        @Override
         public int size() {
             return mAlbumSetDataAdapter.size();
         }
 
+        @Override
         public int getIndex() {
             return mIndex;
         }
 
         // If requested index is out of active window, suggest a valid index.
         // If there is no valid index available, return -1.
+        @Override
         public int findIndex(int indexHint) {
             if (mAlbumSetDataAdapter.isActive(indexHint)) {
                 mIndex = indexHint;
@@ -648,6 +626,7 @@ public class AlbumSetPage extends ActivityState implements
             return mIndex;
         }
 
+        @Override
         public MediaDetails getDetails() {
             MediaObject item = mAlbumSetDataAdapter.getMediaSet(mIndex);
             if (item != null) {
