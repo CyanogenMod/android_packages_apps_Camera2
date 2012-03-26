@@ -51,8 +51,6 @@ public class HighlightDrawer extends IconDrawer {
         }
 
         drawMediaTypeOverlay(canvas, mediaType, isPanorama, x, y, width, height);
-        drawLabelBackground(canvas, width, height, labelBackgroundHeight);
-        drawIcon(canvas, width, height, dataSourceType);
 
         if (mSelectionManager.isPressedPath(path)) {
             drawPressedFrame(canvas, x, y, width, height);

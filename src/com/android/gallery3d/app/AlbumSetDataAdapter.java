@@ -41,16 +41,13 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
     private static final int INDEX_NONE = -1;
 
     private static final int MIN_LOAD_COUNT = 4;
-    private static final int MAX_COVER_COUNT = 1;
 
     private static final int MSG_LOAD_START = 1;
     private static final int MSG_LOAD_FINISH = 2;
     private static final int MSG_RUN_OBJECT = 3;
 
-    private static final MediaItem[] EMPTY_MEDIA_ITEMS = new MediaItem[0];
-
     private final MediaSet[] mData;
-    private final MediaItem[][] mCoverData;
+    private final MediaItem[] mCoverItem;
     private final long[] mItemVersion;
     private final long[] mSetVersion;
 
@@ -74,7 +71,7 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
 
     public AlbumSetDataAdapter(GalleryActivity activity, MediaSet albumSet, int cacheSize) {
         mSource = Utils.checkNotNull(albumSet);
-        mCoverData = new MediaItem[cacheSize][];
+        mCoverItem = new MediaItem[cacheSize];
         mData = new MediaSet[cacheSize];
         mItemVersion = new long[cacheSize];
         mSetVersion = new long[cacheSize];
@@ -119,15 +116,12 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
         return mData[index % mData.length];
     }
 
-    public MediaItem[] getCoverItems(int index) {
+    public MediaItem getCoverItem(int index) {
         if (index < mActiveStart && index >= mActiveEnd) {
             throw new IllegalArgumentException(String.format(
                     "%s not in (%s, %s)", index, mActiveStart, mActiveEnd));
         }
-        MediaItem[] result = mCoverData[index % mCoverData.length];
-
-        // If the result is not ready yet, return an empty array
-        return result == null ? EMPTY_MEDIA_ITEMS : result;
+        return mCoverItem[index % mCoverItem.length];
     }
 
     public int getActiveStart() {
@@ -144,15 +138,14 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
 
     private void clearSlot(int slotIndex) {
         mData[slotIndex] = null;
-        mCoverData[slotIndex] = null;
+        mCoverItem[slotIndex] = null;
         mItemVersion[slotIndex] = MediaObject.INVALID_DATA_VERSION;
         mSetVersion[slotIndex] = MediaObject.INVALID_DATA_VERSION;
     }
 
     private void setContentWindow(int contentStart, int contentEnd) {
         if (contentStart == mContentStart && contentEnd == mContentEnd) return;
-        MediaItem[][] data = mCoverData;
-        int length = data.length;
+        int length = mCoverItem.length;
 
         int start = this.mContentStart;
         int end = this.mContentEnd;
@@ -179,12 +172,12 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
         if (start == mActiveStart && end == mActiveEnd) return;
 
         Utils.assertTrue(start <= end
-                && end - start <= mCoverData.length && end <= mSize);
+                && end - start <= mCoverItem.length && end <= mSize);
 
         mActiveStart = start;
         mActiveEnd = end;
 
-        int length = mCoverData.length;
+        int length = mCoverItem.length;
         // If no data is visible, keep the cache content
         if (start == end) return;
 
@@ -217,7 +210,7 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
 
         public int size;
         public MediaSet item;
-        public MediaItem covers[];
+        public MediaItem cover;
     }
 
     private class GetUpdateInfo implements Callable<UpdateInfo> {
@@ -271,13 +264,13 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
             }
             // Note: info.index could be INDEX_NONE, i.e., -1
             if (info.index >= mContentStart && info.index < mContentEnd) {
-                int pos = info.index % mCoverData.length;
+                int pos = info.index % mCoverItem.length;
                 mSetVersion[pos] = info.version;
                 long itemVersion = info.item.getDataVersion();
                 if (mItemVersion[pos] == itemVersion) return null;
                 mItemVersion[pos] = itemVersion;
                 mData[pos] = info.item;
-                mCoverData[pos] = info.covers;
+                mCoverItem[pos] = info.cover;
                 if (mModelListener != null
                         && info.index >= mActiveStart && info.index < mActiveEnd) {
                     mModelListener.onWindowContentChanged(info.index);
@@ -355,8 +348,7 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
                     if (info.index != INDEX_NONE) {
                         info.item = mSource.getSubMediaSet(info.index);
                         if (info.item == null) continue;
-                        MediaItem cover = info.item.getCoverMediaItem();
-                        info.covers = cover == null ? new MediaItem[0] : new MediaItem[] {cover};
+                        info.cover = info.item.getCoverMediaItem();
                     }
                 }
                 executeAndWait(new UpdateContent(info));
