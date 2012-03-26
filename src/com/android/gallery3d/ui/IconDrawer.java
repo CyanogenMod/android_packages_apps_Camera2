@@ -22,19 +22,13 @@ import com.android.gallery3d.data.MediaObject;
 
 public abstract class IconDrawer extends SelectionDrawer {
     private static final String TAG = "IconDrawer";
-    private static final int LABEL_BACKGROUND_COLOR = 0x99000000;  // 60% black
 
-    private final ResourceTexture mLocalSetIcon;
-    private final ResourceTexture mCameraIcon;
-    private final ResourceTexture mPicasaIcon;
-    private final ResourceTexture mMtpIcon;
     private final NinePatchTexture mFramePressed;
     private final NinePatchTexture mFrameSelected;
     private final NinePatchTexture mDarkStrip;
     private final NinePatchTexture mPanoramaBorder;
     private final Texture mVideoOverlay;
     private final Texture mVideoPlayIcon;
-    private final int mIconSize;
 
     public static class IconDimension {
         int x;
@@ -44,67 +38,16 @@ public abstract class IconDrawer extends SelectionDrawer {
     }
 
     public IconDrawer(Context context) {
-        mLocalSetIcon = new ResourceTexture(context, R.drawable.frame_overlay_gallery_folder);
-        mCameraIcon = new ResourceTexture(context, R.drawable.frame_overlay_gallery_camera);
-        mPicasaIcon = new ResourceTexture(context, R.drawable.frame_overlay_gallery_picasa);
-        mMtpIcon = new ResourceTexture(context, R.drawable.frame_overlay_gallery_ptp);
         mVideoOverlay = new ResourceTexture(context, R.drawable.ic_video_thumb);
         mVideoPlayIcon = new ResourceTexture(context, R.drawable.ic_gallery_play);
         mPanoramaBorder = new NinePatchTexture(context, R.drawable.ic_pan_thumb);
         mFramePressed = new NinePatchTexture(context, R.drawable.grid_pressed);
         mFrameSelected = new NinePatchTexture(context, R.drawable.grid_selected);
         mDarkStrip = new NinePatchTexture(context, R.drawable.dark_strip);
-        mIconSize = context.getResources().getDimensionPixelSize(
-                R.dimen.albumset_icon_size);
     }
 
     @Override
     public void prepareDrawing() {
-    }
-
-    protected IconDimension drawIcon(GLCanvas canvas, int width, int height,
-            int dataSourceType) {
-        ResourceTexture icon = getIcon(dataSourceType);
-
-        if (icon != null) {
-            IconDimension id = getIconDimension(icon, width, height);
-            icon.draw(canvas, id.x, id.y, id.width, id.height);
-            return id;
-        }
-        return null;
-    }
-
-    protected ResourceTexture getIcon(int dataSourceType) {
-        ResourceTexture icon = null;
-        switch (dataSourceType) {
-            case DATASOURCE_TYPE_LOCAL:
-                icon = mLocalSetIcon;
-                break;
-            case DATASOURCE_TYPE_PICASA:
-                icon = mPicasaIcon;
-                break;
-            case DATASOURCE_TYPE_CAMERA:
-                icon = mCameraIcon;
-                break;
-            case DATASOURCE_TYPE_MTP:
-                icon = mMtpIcon;
-                break;
-            default:
-                break;
-        }
-
-        return icon;
-    }
-
-    protected IconDimension getIconDimension(ResourceTexture icon, int width,
-            int height) {
-        IconDimension id = new IconDimension();
-        float scale = (float) mIconSize / icon.getWidth();
-        id.width = Math.round(scale * icon.getWidth());
-        id.height = Math.round(scale * icon.getHeight());
-        id.x = -width / 2;
-        id.y = (height + 1) / 2 - id.height;
-        return id;
     }
 
     protected void drawMediaTypeOverlay(GLCanvas canvas, int mediaType,
