@@ -24,6 +24,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -110,6 +113,8 @@ public class PhotoPage extends ActivityState
     private ScreenNailHolder mScreenNailHolder;
     private ScreenNail mScreenNail;
 
+    private NfcAdapter mNfcAdapter;
+
     public static interface Model extends PhotoView.Model {
         public void resume();
         public void pause();
@@ -155,6 +160,7 @@ public class PhotoPage extends ActivityState
         mApplication = (GalleryApp)((Activity) mActivity).getApplication();
 
         mSetPathString = data.getString(KEY_MEDIA_SET_PATH);
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(mActivity.getAndroidContext());
         Path itemPath = Path.fromString(data.getString(KEY_MEDIA_ITEM_PATH));
 
         if (mSetPathString != null) {
@@ -263,6 +269,10 @@ public class PhotoPage extends ActivityState
             intent.setType(MenuExecutor.getMimeType(type));
             intent.putExtra(Intent.EXTRA_STREAM, manager.getContentUri(path));
             mShareActionProvider.setShareIntent(intent);
+            if (mNfcAdapter != null) {
+                mNfcAdapter.setBeamPushUri(MenuExecutor.getMimeType(type),
+                        manager.getContentUri(path), (Activity)mActivity);
+            }
             mPendingSharePath = null;
         } else {
             // This happens when ActionBar is not created yet.
@@ -583,6 +593,7 @@ public class PhotoPage extends ActivityState
         mModel.pause();
         mHandler.removeMessages(MSG_HIDE_BARS);
         mActionBar.removeOnMenuVisibilityListener(mMenuVisibilityListener);
+
         mMenuExecutor.pause();
     }
 
@@ -599,6 +610,7 @@ public class PhotoPage extends ActivityState
         }
         mActionBar.setDisplayOptions(mSetPathString != null, true);
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
+
         onUserInteraction();
     }
 
@@ -638,4 +650,5 @@ public class PhotoPage extends ActivityState
             return mIndex;
         }
     }
+
 }
