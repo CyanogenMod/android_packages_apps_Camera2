@@ -322,31 +322,31 @@ public class PhotoPage extends ActivityState
         }
     }
 
-    private void setTitle(String title) {
-        if (title == null) return;
-        boolean showTitle = mActivity.getAndroidContext().getResources().getBoolean(
-                R.bool.show_action_bar_title);
-        if (showTitle)
-            mActionBar.setTitle(title);
-        else
-            mActionBar.setTitle("");
-    }
-
     private void updateCurrentPhoto(MediaItem photo) {
         if (mCurrentPhoto == photo) return;
         mCurrentPhoto = photo;
         if (mCurrentPhoto == null) return;
         updateMenuOperations();
+        updateTitle();
         if (mShowDetails) {
             mDetailsHelper.reloadDetails(mModel.getCurrentIndex());
         }
-        setTitle(photo.getName());
         mPhotoView.showVideoPlayIcon(
                 photo.getMediaType() == MediaObject.MEDIA_TYPE_VIDEO);
 
         if ((photo.getSupportedOperations() & MediaItem.SUPPORT_SHARE) != 0) {
             updateShareURI(photo.getPath());
         }
+    }
+
+    private void updateTitle() {
+        if (mCurrentPhoto == null) return;
+        boolean showTitle = mActivity.getAndroidContext().getResources().getBoolean(
+                R.bool.show_action_bar_title);
+        if (showTitle && mCurrentPhoto.getName() != null)
+            mActionBar.setTitle(mCurrentPhoto.getName());
+        else
+            mActionBar.setTitle("");
     }
 
     private void updateMenuOperations() {
@@ -470,6 +470,7 @@ public class PhotoPage extends ActivityState
         mMenu = menu;
         mShowBars = true;
         updateMenuOperations();
+        updateTitle();
         return true;
     }
 
