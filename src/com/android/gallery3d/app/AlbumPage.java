@@ -82,6 +82,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private AlbumView mAlbumView;
     private Path mMediaSetPath;
     private String mParentMediaSetString;
+    private SlotView mSlotView;
 
     private AlbumDataAdapter mAlbumDataAdapter;
 
@@ -129,7 +130,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 mAlbumView.setSelectionDrawer(mGridDrawer);
             }
 
-            mAlbumView.layout(0, slotViewTop, slotViewRight, slotViewBottom);
+            mSlotView.layout(0, slotViewTop, slotViewRight, slotViewBottom);
             GalleryUtils.setViewPointMatrix(mMatrix,
                     (right - left) / 2, (bottom - top) / 2, -mUserDistance);
             // Reset position offset after the layout is changed.
@@ -153,7 +154,8 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         } else if (mSelectionManager.inSelectionMode()) {
             mSelectionManager.leaveSelectionMode();
         } else {
-            mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
+            // TODO: fix this regression
+            // mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
             super.onBackPressed();
         }
     }
@@ -162,12 +164,12 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         MediaItem item = mAlbumDataAdapter.get(index);
         Path path = (item == null) ? null : item.getPath();
         mSelectionManager.setPressedPath(path);
-        mAlbumView.invalidate();
+        mSlotView.invalidate();
     }
 
     private void onUp() {
         mSelectionManager.setPressedPath(null);
-        mAlbumView.invalidate();
+        mSlotView.invalidate();
     }
 
     private void onSingleTapUp(int slotIndex) {
@@ -185,7 +187,8 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             } else {
                 // Get into the PhotoPage.
                 Bundle data = new Bundle();
-                mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
+
+                // mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
                 data.putInt(PhotoPage.KEY_INDEX_HINT, slotIndex);
                 data.putParcelable(PhotoPage.KEY_OPEN_ANIMATION_RECT,
                         getSlotRect(slotIndex));
@@ -199,17 +202,17 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         } else {
             mSelectionManager.toggle(item.getPath());
             mDetailsSource.findIndex(slotIndex);
-            mAlbumView.invalidate();
+            mSlotView.invalidate();
         }
     }
 
     private Rect getSlotRect(int slotIndex) {
         // Get slot rectangle relative to this root pane.
         Rect offset = new Rect();
-        mRootPane.getBoundsOf(mAlbumView, offset);
-        Rect r = mAlbumView.getSlotRect(slotIndex);
-        r.offset(offset.left - mAlbumView.getScrollX(),
-                offset.top - mAlbumView.getScrollY());
+        mRootPane.getBoundsOf(mSlotView, offset);
+        Rect r = mSlotView.getSlotRect(slotIndex);
+        r.offset(offset.left - mSlotView.getScrollX(),
+                offset.top - mSlotView.getScrollY());
         return r;
     }
 
@@ -244,7 +247,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             mSelectionManager.setAutoLeaveSelectionMode(true);
             mSelectionManager.toggle(item.getPath());
             mDetailsSource.findIndex(slotIndex);
-            mAlbumView.invalidate();
+            mSlotView.invalidate();
         }
     }
 
@@ -260,7 +263,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                     GalleryActionBar.getClusterByTypeString(context, clusterType));
         }
 
-        mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
+        // mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
         mActivity.getStateManager().startStateForResult(
                 AlbumSetPage.class, REQUEST_DO_ANIMATION, data);
     }
@@ -287,7 +290,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private void startTransition() {
         final PositionRepository repository =
                 PositionRepository.getInstance(mActivity);
-        mAlbumView.startTransition(new PositionProvider() {
+        mSlotView.startTransition(new PositionProvider() {
             private final Position mTempPosition = new Position();
             public Position getPosition(int identity, Position target) {
                 Position p = repository.get(identity);
@@ -306,7 +309,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 ? null
                 : data.getIntArray(KEY_SET_CENTER);
         final Random random = new Random();
-        mAlbumView.startTransition(new PositionProvider() {
+        mSlotView.startTransition(new PositionProvider() {
             private final Position mTempPosition = new Position();
             public Position getPosition(int identity, Position target) {
                 Position p = repository.get(identity);
@@ -331,7 +334,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         setContentPane(mRootPane);
         // Reset position offset for resuming.
         PositionRepository.getInstance(mActivity).setOffset(
-                mAlbumView.bounds().left, mAlbumView.bounds().top);
+                mSlotView.bounds().left, mSlotView.bounds().top);
 
         Path path = mMediaSet.getPath();
         boolean enableHomeButton = (mActivity.getStateManager().getStateCount() > 1) |
@@ -380,11 +383,13 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mSelectionManager.setSelectionListener(this);
         mGridDrawer = new GridDrawer((Context) mActivity, mSelectionManager);
         Config.AlbumPage config = Config.AlbumPage.get((Context) mActivity);
-        mAlbumView = new AlbumView(mActivity, config.slotViewSpec,
-                0 /* don't cache thumbnail */);
+        mSlotView = new SlotView((Context) mActivity, config.slotViewSpec);
+        mAlbumView = new AlbumView(
+                mActivity, mSlotView, 0/* don't cache thumbnail */);
+        mSlotView.setSlotRenderer(mAlbumView);
         mAlbumView.setSelectionDrawer(mGridDrawer);
-        mRootPane.addComponent(mAlbumView);
-        mAlbumView.setListener(new SlotView.SimpleListener() {
+        mRootPane.addComponent(mSlotView);
+        mSlotView.setListener(new SlotView.SimpleListener() {
             @Override
             public void onDown(int index) {
                 AlbumPage.this.onDown(index);
@@ -446,7 +451,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mShowDetails = false;
         mDetailsHelper.hide();
         mAlbumView.setSelectionDrawer(mGridDrawer);
-        mAlbumView.invalidate();
+        mSlotView.invalidate();
     }
 
     @Override
@@ -540,13 +545,13 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 // data could be null, if there is no images in the album
                 if (data == null) return;
                 mFocusIndex = data.getIntExtra(SlideshowPage.KEY_PHOTO_INDEX, 0);
-                mAlbumView.setCenterIndex(mFocusIndex);
+                mSlotView.setCenterIndex(mFocusIndex);
                 break;
             }
             case REQUEST_PHOTO: {
                 if (data == null) return;
                 mFocusIndex = data.getIntExtra(PhotoPage.KEY_INDEX_HINT, 0);
-                mAlbumView.setCenterIndex(mFocusIndex);
+                mSlotView.setCenterIndex(mFocusIndex);
                 startTransition();
                 break;
             }

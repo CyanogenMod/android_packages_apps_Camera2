@@ -16,26 +16,20 @@
 
 package com.android.gallery3d.ui;
 
-import android.graphics.Rect;
-
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.data.MediaItem;
-import com.android.gallery3d.ui.PositionRepository.Position;
 
-public class AlbumView extends SlotView {
+public class AlbumView implements SlotView.SlotRenderer {
     @SuppressWarnings("unused")
     private static final String TAG = "AlbumView";
     private static final int CACHE_SIZE = 64;
-
-    private int mVisibleStart = 0;
-    private int mVisibleEnd = 0;
 
     private AlbumSlidingWindow mDataWindow;
     private final GalleryActivity mActivity;
     private SelectionDrawer mSelectionDrawer;
     private int mCacheThumbSize;
 
-    private boolean mIsActive = false;
+    private final SlotView mSlotView;
 
     public static interface Model {
         public int size();
@@ -49,11 +43,10 @@ public class AlbumView extends SlotView {
         public void onSizeChanged(int size);
     }
 
-    public AlbumView(GalleryActivity activity, SlotView.Spec spec,
+    public AlbumView(GalleryActivity activity, SlotView  slotView,
             int cacheThumbSize) {
-        super(activity.getAndroidContext());
         mCacheThumbSize = cacheThumbSize;
-        setSlotSpec(spec);
+        mSlotView = slotView;
         mActivity = activity;
     }
 
@@ -65,7 +58,7 @@ public class AlbumView extends SlotView {
     public void setModel(Model model) {
         if (mDataWindow != null) {
             mDataWindow.setListener(null);
-            setSlotCount(0);
+            mSlotView.setSlotCount(0);
             mDataWindow = null;
         }
         if (model != null) {
@@ -74,8 +67,7 @@ public class AlbumView extends SlotView {
                     mCacheThumbSize);
             mDataWindow.setSelectionDrawer(mSelectionDrawer);
             mDataWindow.setListener(new MyDataModelListener());
-            setSlotCount(model.size());
-            updateVisibleRange(getVisibleStart(), getVisibleEnd());
+            mSlotView.setSlotCount(model.size());
         }
     }
 
@@ -85,117 +77,48 @@ public class AlbumView extends SlotView {
         }
     }
 
-    private void putSlotContent(int slotIndex, DisplayItem item) {
-        Rect rect = getSlotRect(slotIndex);
-        Position position = new Position(
-                (rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2, 0);
-        putDisplayItem(position, position, item);
-    }
-
-    private void updateVisibleRange(int start, int end) {
-        if (start == mVisibleStart && end == mVisibleEnd) {
-            // we need to set the mDataWindow active range in any case.
-            mDataWindow.setActiveWindow(start, end);
-            return;
-        }
-
-        if (!mIsActive) {
-            mVisibleStart = start;
-            mVisibleEnd = end;
-            mDataWindow.setActiveWindow(start, end);
-            return;
-        }
-
-        if (start >= mVisibleEnd || mVisibleStart >= end) {
-            for (int i = mVisibleStart, n = mVisibleEnd; i < n; ++i) {
-                DisplayItem item = mDataWindow.get(i);
-                if (item != null) removeDisplayItem(item);
-            }
-            mDataWindow.setActiveWindow(start, end);
-            for (int i = start; i < end; ++i) {
-                putSlotContent(i, mDataWindow.get(i));
-            }
-        } else {
-            for (int i = mVisibleStart; i < start; ++i) {
-                DisplayItem item = mDataWindow.get(i);
-                if (item != null) removeDisplayItem(item);
-            }
-            for (int i = end, n = mVisibleEnd; i < n; ++i) {
-                DisplayItem item = mDataWindow.get(i);
-                if (item != null) removeDisplayItem(item);
-            }
-            mDataWindow.setActiveWindow(start, end);
-            for (int i = start, n = mVisibleStart; i < n; ++i) {
-                putSlotContent(i, mDataWindow.get(i));
-            }
-            for (int i = mVisibleEnd; i < end; ++i) {
-                putSlotContent(i, mDataWindow.get(i));
-            }
-        }
-
-        mVisibleStart = start;
-        mVisibleEnd = end;
-    }
-
     @Override
-    protected void onLayoutChanged(int width, int height) {
-        // Reput all the items
-        updateVisibleRange(0, 0);
-        updateVisibleRange(getVisibleStart(), getVisibleEnd());
-    }
-
-    @Override
-    protected void onScrollPositionChanged(int position) {
-        super.onScrollPositionChanged(position);
-        updateVisibleRange(getVisibleStart(), getVisibleEnd());
-    }
-
-    @Override
-    protected void render(GLCanvas canvas) {
-        mSelectionDrawer.prepareDrawing();
-        super.render(canvas);
+    public int renderSlot(GLCanvas canvas, int index, int pass, int width, int height) {
+        DisplayItem item = mDataWindow.get(index);
+        if (item != null) {
+            canvas.translate(width / 2, height / 2);
+            item.setBox(width, height);
+            int r = item.render(canvas, pass);
+            canvas.translate(-width / 2, -height / 2);
+            return r;
+        }
+        return 0;
     }
 
     private class MyDataModelListener implements AlbumSlidingWindow.Listener {
-
-        public void onContentInvalidated() {
-            invalidate();
+        @Override
+        public void onContentChanged() {
+            mSlotView.invalidate();
         }
 
+        @Override
         public void onSizeChanged(int size) {
-            if (setSlotCount(size)) {
-                // If the layout parameters are changed, we need reput all items.
-                // We keep the visible range at the same center but with size 0.
-                // So that we can:
-                //     1.) flush all visible items
-                //     2.) keep the cached data
-                int center = (getVisibleStart() + getVisibleEnd()) / 2;
-                updateVisibleRange(center, center);
-            }
-            updateVisibleRange(getVisibleStart(), getVisibleEnd());
-            invalidate();
-        }
-
-        public void onWindowContentChanged(
-                int slotIndex, DisplayItem old, DisplayItem update) {
-            removeDisplayItem(old);
-            putSlotContent(slotIndex, update);
+            mSlotView.setSlotCount(size);
         }
     }
 
     public void resume() {
-        mIsActive = true;
         mDataWindow.resume();
-        for (int i = mVisibleStart, n = mVisibleEnd; i < n; ++i) {
-            putSlotContent(i, mDataWindow.get(i));
-        }
     }
 
     public void pause() {
-        mIsActive = false;
-        for (int i = mVisibleStart, n = mVisibleEnd; i < n; ++i) {
-            removeDisplayItem(mDataWindow.get(i));
-        }
         mDataWindow.pause();
+    }
+
+    @Override
+    public void prepareDrawing() {
+        mSelectionDrawer.prepareDrawing();
+    }
+
+    @Override
+    public void onVisibleRangeChanged(int visibleStart, int visibleEnd) {
+        if (mDataWindow != null) {
+            mDataWindow.setActiveWindow(visibleStart, visibleEnd);
+        }
     }
 }
