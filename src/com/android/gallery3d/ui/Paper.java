@@ -16,12 +16,12 @@
 
 package com.android.gallery3d.ui;
 
+import android.graphics.Rect;
 import android.opengl.Matrix;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.ui.PositionRepository.Position;
 
 // This class does the overscroll effect.
 class Paper {
@@ -65,11 +65,10 @@ class Paper {
         mHeight = height;
     }
 
-    public float[] getTransform(Position target, Position base,
-            float scrollX, float scrollY) {
+    public float[] getTransform(Rect rect, float scrollX) {
         float left = mAnimationLeft.getValue();
         float right = mAnimationRight.getValue();
-        float screenX = target.x - scrollX;
+        float screenX = rect.centerX() - scrollX;
         // We linearly interpolate the value [left, right] for the screenX
         // range int [-1/4, 5/4]*mWidth. So if part of the thumbnail is outside
         // the screen, we still get some transform.
@@ -82,10 +81,9 @@ class Paper {
         float degrees =
                 (1 / (1 + (float) Math.exp(-t * ROTATE_FACTOR)) - 0.5f) * 2 * -45;
         Matrix.setIdentityM(mMatrix, 0);
-        Matrix.translateM(mMatrix, 0, mMatrix, 0, base.x, base.y, base.z);
+        Matrix.translateM(mMatrix, 0, mMatrix, 0, rect.centerX(), rect.centerY(), 0);
         Matrix.rotateM(mMatrix, 0, degrees, 0, 1, 0);
-        Matrix.translateM(mMatrix, 0, mMatrix, 0,
-                target.x - base.x, target.y - base.y, target.z - base.z);
+        Matrix.translateM(mMatrix, 0, mMatrix, 0, -rect.width() / 2, -rect.height() / 2, 0);
         return mMatrix;
     }
 }

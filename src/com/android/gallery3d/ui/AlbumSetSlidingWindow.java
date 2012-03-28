@@ -41,9 +41,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
 
     public static interface Listener {
         public void onSizeChanged(int size);
-        public void onContentInvalidated();
-        public void onWindowContentChanged(
-                int slot, AlbumSetItem old, AlbumSetItem update);
+        public void onContentChanged();
     }
 
     private final AlbumSetView.Model mSource;
@@ -276,7 +274,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
             original.cacheStatus = identifyCacheStatus(set);
             original.setPath = set == null ? null : set.getPath();
             ((LabelDisplayItem) original.labelItem).updateContent();
-            if (mListener != null) mListener.onContentInvalidated();
+            if (mListener != null) mListener.onContentChanged();
             return;
         }
 
@@ -284,7 +282,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         AlbumSetItem update = data[pos];
 
         if (mListener != null && isActiveSlot(slotIndex)) {
-            mListener.onWindowContentChanged(slotIndex, original, update);
+            mListener.onContentChanged();
         }
         if (original != null) {
             for (DisplayItem item : original.covers) {
@@ -370,7 +368,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
                 } else {
                     updateContent(texture);
                 }
-                if (mListener != null) mListener.onContentInvalidated();
+                if (mListener != null) mListener.onContentChanged();
             }
         }
 
@@ -416,7 +414,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
 
             if ((mContent instanceof FadeInTexture) &&
                     ((FadeInTexture) mContent).isAnimating()) {
-                return RENDER_MORE_FRAME;
+                return SlotView.RENDER_MORE_FRAME;
             } else {
                 return 0;
             }
@@ -561,6 +559,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         }
     }
 
+    @Override
     public void onSizeChanged(int size) {
         if (mIsActive && mSize != size) {
             mSize = size;
@@ -568,6 +567,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         }
     }
 
+    @Override
     public void onWindowContentChanged(int index) {
         if (!mIsActive) {
             // paused, ignore slot changed event

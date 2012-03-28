@@ -73,6 +73,7 @@ public class AlbumSetPage extends ActivityState implements
     private static final int BIT_LOADING_SYNC = 2;
 
     private boolean mIsActive = false;
+    private SlotView mSlotView;
     private AlbumSetView mAlbumSetView;
 
     private MediaSet mMediaSet;
@@ -131,7 +132,8 @@ public class AlbumSetPage extends ActivityState implements
                 mAlbumSetView.setSelectionDrawer(mGridDrawer);
             }
 
-            mAlbumSetView.layout(0, slotViewTop, slotViewRight, slotViewBottom);
+            mSlotView.layout(0, slotViewTop, slotViewRight, slotViewBottom);
+
             // Reset position offset after the layout is changed.
             PositionRepository.getInstance(mActivity).setOffset(
                     0, slotViewTop);
@@ -165,19 +167,21 @@ public class AlbumSetPage extends ActivityState implements
         } else if (mSelectionManager.inSelectionMode()) {
             mSelectionManager.leaveSelectionMode();
         } else {
-            mAlbumSetView.savePositions(
-                    PositionRepository.getInstance(mActivity));
+            // TODO: fix this regression during refactoring
+            // mSlotView.savePositions(
+            //        PositionRepository.getInstance(mActivity));
             super.onBackPressed();
         }
     }
 
     private void savePositions(int slotIndex, int center[]) {
         Rect offset = new Rect();
-        mRootPane.getBoundsOf(mAlbumSetView, offset);
-        mAlbumSetView.savePositions(PositionRepository.getInstance(mActivity));
-        Rect r = mAlbumSetView.getSlotRect(slotIndex);
-        int scrollX = mAlbumSetView.getScrollX();
-        int scrollY = mAlbumSetView.getScrollY();
+        mRootPane.getBoundsOf(mSlotView, offset);
+        // TODO: fix this regression during refactoring
+        // mSlotView.savePositions(PositionRepository.getInstance(mActivity));
+        Rect r = mSlotView.getSlotRect(slotIndex);
+        int scrollX = mSlotView.getScrollX();
+        int scrollY = mSlotView.getScrollY();
         center[0] = offset.left + (r.left + r.right) / 2 - scrollX;
         center[1] = offset.top + (r.top + r.bottom) / 2 - scrollY;
     }
@@ -220,7 +224,7 @@ public class AlbumSetPage extends ActivityState implements
             }
         } else {
             mSelectionManager.toggle(targetSet.getPath());
-            mAlbumSetView.invalidate();
+            mSlotView.invalidate();
         }
     }
 
@@ -228,12 +232,12 @@ public class AlbumSetPage extends ActivityState implements
         MediaSet set = mAlbumSetDataAdapter.getMediaSet(index);
         Path path = (set == null) ? null : set.getPath();
         mSelectionManager.setPressedPath(path);
-        mAlbumSetView.invalidate();
+        mSlotView.invalidate();
     }
 
     private void onUp() {
         mSelectionManager.setPressedPath(null);
-        mAlbumSetView.invalidate();
+        mSlotView.invalidate();
     }
 
     public void onLongTap(int slotIndex) {
@@ -246,7 +250,7 @@ public class AlbumSetPage extends ActivityState implements
             mSelectionManager.setAutoLeaveSelectionMode(true);
             mSelectionManager.toggle(set.getPath());
             mDetailsSource.findIndex(slotIndex);
-            mAlbumSetView.invalidate();
+            mSlotView.invalidate();
         }
     }
 
@@ -256,7 +260,6 @@ public class AlbumSetPage extends ActivityState implements
         Bundle data = new Bundle(getData());
         data.putString(AlbumSetPage.KEY_MEDIA_PATH, newPath);
         data.putInt(KEY_SELECTED_CLUSTER_TYPE, clusterType);
-        mAlbumSetView.savePositions(PositionRepository.getInstance(mActivity));
         mActivity.getStateManager().switchState(this, AlbumSetPage.class, data);
     }
 
@@ -330,7 +333,7 @@ public class AlbumSetPage extends ActivityState implements
         setContentPane(mRootPane);
         // Reset position offset for resuming.
         PositionRepository.getInstance(mActivity).setOffset(
-                mAlbumSetView.bounds().left, mAlbumSetView.bounds().top);
+                mSlotView.bounds().left, mSlotView.bounds().top);
 
         // Set the reload bit here to prevent it exit this page in clearLoadingBit().
         setLoadingBit(BIT_LOADING_RELOAD);
@@ -364,9 +367,11 @@ public class AlbumSetPage extends ActivityState implements
 
         mGridDrawer = new GridDrawer((Context) mActivity, mSelectionManager);
         Config.AlbumSetPage config = Config.AlbumSetPage.get((Context) mActivity);
-        mAlbumSetView = new AlbumSetView(mActivity, mGridDrawer,
-                config.slotViewSpec, config.labelSpec);
-        mAlbumSetView.setListener(new SlotView.SimpleListener() {
+        mSlotView = new SlotView((Context) mActivity, config.slotViewSpec);
+        mAlbumSetView = new AlbumSetView(
+                mActivity, mGridDrawer, mSlotView, config.labelSpec);
+        mSlotView.setSlotRenderer(mAlbumSetView);
+        mSlotView.setListener(new SlotView.SimpleListener() {
             @Override
             public void onDown(int index) {
                 AlbumSetPage.this.onDown(index);
@@ -394,7 +399,7 @@ public class AlbumSetPage extends ActivityState implements
                 return onItemSelected(item);
             }
         });
-        mRootPane.addComponent(mAlbumSetView);
+        mRootPane.addComponent(mSlotView);
     }
 
     @Override
@@ -511,7 +516,7 @@ public class AlbumSetPage extends ActivityState implements
     private void startTransition() {
         final PositionRepository repository =
                 PositionRepository.getInstance(mActivity);
-        mAlbumSetView.startTransition(new PositionProvider() {
+        mSlotView.startTransition(new PositionProvider() {
             private final Position mTempPosition = new Position();
             public Position getPosition(int identity, Position target) {
                 Position p = repository.get(identity);
@@ -569,7 +574,7 @@ public class AlbumSetPage extends ActivityState implements
         mShowDetails = false;
         mDetailsHelper.hide();
         mAlbumSetView.setSelectionDrawer(mGridDrawer);
-        mAlbumSetView.invalidate();
+        mSlotView.invalidate();
     }
 
     private void showDetails() {
