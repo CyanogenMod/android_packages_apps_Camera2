@@ -98,6 +98,13 @@ public class AlbumSetView implements SlotView.SlotRenderer {
         }
     }
 
+    private static Texture checkTexture(GLCanvas canvas, Texture texture) {
+        return ((texture == null) || ((texture instanceof UploadedTexture)
+                && !((UploadedTexture) texture).isContentValid(canvas)))
+                ? null
+                : texture;
+    }
+
     @Override
     public int renderSlot(GLCanvas canvas, int index, int pass, int width, int height) {
         AlbumSetEntry entry = mDataWindow.get(index);
@@ -107,8 +114,7 @@ public class AlbumSetView implements SlotView.SlotRenderer {
 
     private int renderContent(GLCanvas canvas,
             int pass, AlbumSetEntry entry, int width, int height) {
-        // Fit the content into the box
-        Texture content = entry.content;
+        Texture content = checkTexture(canvas, entry.content);
 
         if (content == null) {
             content = mWaitLoadingTexture;
@@ -120,6 +126,7 @@ public class AlbumSetView implements SlotView.SlotRenderer {
             content = entry.content;
         }
 
+        // Fit the content into the box
         int w = content.getWidth();
         int h = content.getHeight();
 
@@ -150,7 +157,7 @@ public class AlbumSetView implements SlotView.SlotRenderer {
 
         // We show the loading message only when the album is still loading
         // (Not when we are still preparing the label)
-        Texture content = entry.label;
+        Texture content = checkTexture(canvas, entry.label);
         if (entry.album == null) {
             content = mDataWindow.getLoadingTexture();
         }

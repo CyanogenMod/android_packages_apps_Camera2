@@ -548,7 +548,8 @@ public class TileImageView extends GLView {
         AtomicBoolean mActive = new AtomicBoolean(false);
 
         @Override
-        public boolean onGLIdle(GLRoot root, GLCanvas canvas) {
+        public boolean onGLIdle(GLCanvas canvas, boolean renderRequested) {
+            if (renderRequested) return false;
             int quota = UPLOAD_LIMIT;
             Tile tile;
             while (true) {
