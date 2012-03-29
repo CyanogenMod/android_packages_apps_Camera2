@@ -57,6 +57,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
     private final ThreadPool mThreadPool;
     private final AlbumLabelMaker mLabelMaker;
     private final String mLoadingText;
+    private final TextureUploader mTextureUploader;
 
     private int mActiveRequestCount = 0;
     private boolean mIsActive = false;
@@ -94,6 +95,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
 
         mLabelMaker = new AlbumLabelMaker(activity.getAndroidContext(), labelSpec);
         mLoadingText = activity.getAndroidContext().getString(R.string.loading);
+        mTextureUploader = new TextureUploader(activity.getGLRoot());
 
         mHandler = new SynchronizedHandler(activity.getGLRoot()) {
             @Override
@@ -168,7 +170,11 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
                 0, Math.max(0, mSize - data.length));
         int contentEnd = Math.min(contentStart + data.length, mSize);
         setContentWindow(contentStart, contentEnd);
-        if (mIsActive) updateAllImageRequests();
+
+        if (mIsActive) {
+            updateTextureUploadQueue();
+            updateAllImageRequests();
+        }
     }
 
     // We would like to request non active slots in the following order:
@@ -236,8 +242,8 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
             entry.label = null;
         }
         if (album != null) {
-            entry.labelLoader = new AlbumLabelLoader(
-                    slotIndex, album, entry.sourceType, mSlotWidth);
+            entry.labelLoader =
+                    new AlbumLabelLoader(slotIndex, album, entry.sourceType);
         }
 
         entry.coverItem = cover;
@@ -271,22 +277,23 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         return loader.isRequestInProgress();
     }
 
-    private void notifySlotChanged(int slotIndex) {
-        // If the updated content is not cached, ignore it
-        if (slotIndex < mContentStart || slotIndex >= mContentEnd) {
-            Log.w(TAG, String.format(
-                    "invalid update: %s is outside (%s, %s)",
-                    slotIndex, mContentStart, mContentEnd) );
-            return;
+    private void queueTextureForUpload(boolean isActive, Texture texture) {
+        if ((texture == null) || !(texture instanceof BitmapTexture)) return;
+        if (isActive) {
+            mTextureUploader.addFgTexture((BitmapTexture) texture);
+        } else {
+            mTextureUploader.addBgTexture((BitmapTexture) texture);
         }
+    }
 
-        AlbumSetEntry entry = mData[slotIndex % mData.length];
-        MediaSet set = mSource.getMediaSet(slotIndex);
-        MediaItem coverItem = mSource.getCoverItem(slotIndex);
-        updateAlbumSetEntry(entry, slotIndex, set, coverItem);
-        updateAllImageRequests();
-        if (mListener != null && isActiveSlot(slotIndex)) {
-            mListener.onContentChanged();
+    private void updateTextureUploadQueue() {
+        if (!mIsActive) return;
+        mTextureUploader.clear();
+        for (int i = mContentStart, n = mContentEnd; i < n; ++i) {
+            AlbumSetEntry entry = mData[i % mData.length];
+            boolean isActive = isActiveSlot(i);
+            queueTextureForUpload(isActive, entry.label);
+            queueTextureForUpload(isActive, entry.content);
         }
     }
 
@@ -318,13 +325,30 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
             // paused, ignore slot changed event
             return;
         }
-        notifySlotChanged(index);
+
+        // If the updated content is not cached, ignore it
+        if (index < mContentStart || index >= mContentEnd) {
+            Log.w(TAG, String.format(
+                    "invalid update: %s is outside (%s, %s)",
+                    index, mContentStart, mContentEnd) );
+            return;
+        }
+
+        AlbumSetEntry entry = mData[index % mData.length];
+        MediaSet set = mSource.getMediaSet(index);
+        MediaItem coverItem = mSource.getCoverItem(index);
+        updateAlbumSetEntry(entry, index, set, coverItem);
+        updateAllImageRequests();
+        updateTextureUploadQueue();
+        if (mListener != null && isActiveSlot(index)) {
+            mListener.onContentChanged();
+        }
     }
 
     public BitmapTexture getLoadingTexture() {
         if (mLoadingLabel == null) {
             Bitmap bitmap = mLabelMaker.requestLabel(mLoadingText, null,
-                    SelectionDrawer.DATASOURCE_TYPE_NOT_CATEGORIZED, mSlotWidth)
+                    SelectionDrawer.DATASOURCE_TYPE_NOT_CATEGORIZED)
                     .run(ThreadPool.JOB_CONTEXT_STUB);
             mLoadingLabel = new BitmapTexture(bitmap);
             mLoadingLabel.setOpaque(false);
@@ -337,6 +361,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         for (int i = mContentStart, n = mContentEnd; i < n; ++i) {
             freeSlotContent(i);
         }
+        mLabelMaker.clearRecycledLabels();
     }
 
     public void resume() {
@@ -362,7 +387,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
 
         @Override
         protected void recycleBitmap(Bitmap bitmap) {
-            BitmapPool.recycle(BitmapPool.TYPE_MICRO_THUMB, bitmap);
+            MediaItem.getMicroThumbPool().recycle(bitmap);
         }
 
         @Override
@@ -379,16 +404,19 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         @Override
         public void updateEntry() {
             Bitmap bitmap = getBitmap();
-            if (bitmap == null) return;
+            if (bitmap == null) return; // error or recycled
 
             AlbumSetEntry entry = mData[mSlotIndex % mData.length];
-            BitmapTexture content = new BitmapTexture(bitmap);
-            entry.content = content;
+            BitmapTexture texture = new BitmapTexture(bitmap);
+            entry.content = texture;
 
             if (isActiveSlot(mSlotIndex)) {
+                mTextureUploader.addFgTexture(texture);
                 --mActiveRequestCount;
                 if (mActiveRequestCount == 0) requestNonactiveImages();
                 if (mListener != null) mListener.onContentChanged();
+            } else {
+                mTextureUploader.addBgTexture(texture);
             }
         }
     }
@@ -439,24 +467,23 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         private final MediaSet mMediaSet;
         private final int mSlotIndex;
         private final int mSourceType;
-        private final int mLabelWidth;
 
-        public AlbumLabelLoader(int slotIndex,
-                MediaSet mediaSet, int sourceType, int labelWidth) {
+        public AlbumLabelLoader(
+                int slotIndex, MediaSet mediaSet, int sourceType) {
             mSlotIndex = slotIndex;
             mMediaSet = mediaSet;
             mSourceType = sourceType;
-            mLabelWidth = labelWidth;
         }
 
         @Override
         protected Future<Bitmap> submitBitmapTask(FutureListener<Bitmap> l) {
             return mThreadPool.submit(mLabelMaker.requestLabel(
-                    mMediaSet, mSourceType, mLabelWidth), l);
+                    mMediaSet, mSourceType), l);
         }
 
         @Override
         protected void recycleBitmap(Bitmap bitmap) {
+            mLabelMaker.reycleLabel(bitmap);
         }
 
         @Override
@@ -466,28 +493,33 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
 
         @Override
         public void updateEntry() {
-            if (isRecycled()) return;
-
             Bitmap bitmap = getBitmap();
-            if (bitmap == null) return;
+            if (bitmap == null) return; // Error or recycled
 
             AlbumSetEntry entry = mData[mSlotIndex % mData.length];
-            BitmapTexture content = new BitmapTexture(bitmap);
-            content.setOpaque(false);
-            entry.label = content;
+            BitmapTexture texture = new BitmapTexture(bitmap);
+            texture.setOpaque(false);
+            entry.label = texture;
 
             if (isActiveSlot(mSlotIndex)) {
+                mTextureUploader.addFgTexture(texture);
                 --mActiveRequestCount;
                 if (mActiveRequestCount == 0) requestNonactiveImages();
                 if (mListener != null) mListener.onContentChanged();
+            } else {
+                mTextureUploader.addBgTexture(texture);
             }
         }
     }
 
     public void onSlotSizeChanged(int width, int height) {
         if (mSlotWidth == width) return;
+
         mSlotWidth = width;
         mLoadingLabel = null;
+        mLabelMaker.setLabelWidth(mSlotWidth);
+
+        if (!mIsActive) return;
 
         for (int i = mContentStart, n = mContentEnd; i < n; ++i) {
             AlbumSetEntry entry = mData[i % mData.length];
@@ -498,8 +530,9 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
             }
             entry.labelLoader = (entry.album == null)
                     ? null
-                    : new AlbumLabelLoader(i, entry.album, entry.sourceType, width);
+                    : new AlbumLabelLoader(i, entry.album, entry.sourceType);
         }
         updateAllImageRequests();
+        updateTextureUploadQueue();
     }
 }

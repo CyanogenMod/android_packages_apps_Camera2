@@ -33,7 +33,7 @@ import android.view.WindowManager;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.data.DataManager;
-import com.android.gallery3d.ui.BitmapPool;
+import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLRootView;
 import com.android.gallery3d.util.ThreadPool;
@@ -177,7 +177,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         } finally {
             mGLRootView.unlockRenderThread();
         }
-        BitmapPool.clear();
+        MediaItem.getMicroThumbPool().clear();
     }
 
     @Override

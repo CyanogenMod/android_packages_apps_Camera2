@@ -8,6 +8,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -26,6 +27,9 @@ public class AlbumLabelMaker {
     private final TextPaint mTitlePaint;
     private final TextPaint mCountPaint;
     private final Context mContext;
+
+    private int mLabelWidth;
+    private BitmapPool mBitmapPool;
 
     private final LazyLoadedBitmap mLocalSetIcon;
     private final LazyLoadedBitmap mPicasaIcon;
@@ -89,14 +93,20 @@ public class AlbumLabelMaker {
         }
     }
 
-    public ThreadPool.Job<Bitmap> requestLabel(
-            String title, String count, int sourceType, int slotWidth) {
-        return new AlbumLabelJob(null, title, count, sourceType, slotWidth);
+    public synchronized void setLabelWidth(int width) {
+        if (mLabelWidth == width) return;
+        mLabelWidth = width;
+        mBitmapPool = new BitmapPool(mLabelWidth, mSpec.labelBackgroundHeight);
     }
 
     public ThreadPool.Job<Bitmap> requestLabel(
-            MediaSet album, int sourceType, int slotWidth) {
-        return new AlbumLabelJob(album, null, null, sourceType, slotWidth);
+            String title, String count, int sourceType) {
+        return new AlbumLabelJob(null, title, count, sourceType);
+    }
+
+    public ThreadPool.Job<Bitmap> requestLabel(
+            MediaSet album, int sourceType) {
+        return new AlbumLabelJob(album, null, null, sourceType);
     }
 
     private static void drawText(Canvas canvas,
@@ -114,15 +124,13 @@ public class AlbumLabelMaker {
         private final String mTitle;
         private final String mCount;
         private final int mSourceType;
-        private final int mSlotWidth;
 
         public AlbumLabelJob(MediaSet album,
-                String title, String count, int sourceType, int slotWidth) {
+                String title, String count, int sourceType) {
             mAlbum = album;
             mTitle = title;
             mCount = count;
             mSourceType = sourceType;
-            mSlotWidth = slotWidth;
         }
 
         @Override
@@ -136,22 +144,36 @@ public class AlbumLabelMaker {
                     ? Utils.ensureNotNull(mCount)
                     : String.valueOf(album.getTotalMediaItemCount());
             Bitmap icon = getOverlayAlbumIcon(mSourceType);
-            Bitmap bitmap = Bitmap.createBitmap(mSlotWidth,
-                    s.labelBackgroundHeight, Config.ARGB_8888);
-            Canvas canvas = new Canvas(bitmap);
+
+            Bitmap bitmap = null;
+            Canvas canvas;
+            int labelWidth;
+
+            synchronized (this) {
+                labelWidth = mLabelWidth;
+                bitmap = mBitmapPool.getBitmap();
+            }
+            if (bitmap == null) {
+                bitmap = Bitmap.createBitmap(labelWidth,
+                        s.labelBackgroundHeight, Config.ARGB_8888);
+                canvas = new Canvas(bitmap);
+            } else {
+                canvas = new Canvas(bitmap);
+                canvas.drawColor(0, PorterDuff.Mode.SRC);
+            }
 
             // draw title
             if (jc.isCancelled()) return null;
             int x = s.leftMargin;
             int y = s.titleOffset;
-            drawText(canvas, x, y, title, mSlotWidth - s.leftMargin, mTitlePaint);
+            drawText(canvas, x, y, title, labelWidth - s.leftMargin, mTitlePaint);
 
             // draw the count
             if (jc.isCancelled()) return null;
             if (icon != null) x = s.iconSize;
             y += s.titleFontSize + s.countOffset;
             drawText(canvas, x, y, count,
-                    mSlotWidth - s.leftMargin - s.iconSize, mCountPaint);
+                    labelWidth - s.leftMargin - s.iconSize, mCountPaint);
 
             // draw the icon
             if (icon != null) {
@@ -165,5 +187,13 @@ public class AlbumLabelMaker {
 
             return bitmap;
         }
+    }
+
+    public void reycleLabel(Bitmap label) {
+        mBitmapPool.recycle(label);
+    }
+
+    public void clearRecycledLabels() {
+        mBitmapPool.clear();
     }
 }

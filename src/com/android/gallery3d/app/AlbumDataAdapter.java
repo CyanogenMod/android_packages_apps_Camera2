@@ -18,6 +18,7 @@ package com.android.gallery3d.app;
 
 import android.os.Handler;
 import android.os.Message;
+import android.os.Process;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ContentListener;
@@ -314,6 +315,8 @@ public class AlbumDataAdapter implements AlbumView.Model {
 
         @Override
         public void run() {
+            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+
             boolean updateComplete = false;
             while (mActive) {
                 synchronized (this) {

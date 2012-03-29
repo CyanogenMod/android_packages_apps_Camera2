@@ -20,8 +20,11 @@ import com.android.gallery3d.anim.CanvasAnimation;
 
 public interface GLRoot {
 
+    // Listener will be called when GL is idle AND before each frame.
+    // Mainly used for uploading textures.
     public static interface OnGLIdleListener {
-        public boolean onGLIdle(GLRoot root, GLCanvas canvas);
+        public boolean onGLIdle(
+                GLCanvas canvas, boolean renderRequested);
     }
 
     public void addOnGLIdleListener(OnGLIdleListener listener);

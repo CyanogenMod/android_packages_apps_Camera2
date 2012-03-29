@@ -79,10 +79,17 @@ public class AlbumView implements SlotView.SlotRenderer {
         mSlotView.invalidate();
     }
 
+    private static Texture checkTexture(GLCanvas canvas, Texture texture) {
+        return ((texture == null) || ((texture instanceof UploadedTexture)
+                && !((UploadedTexture) texture).isContentValid(canvas)))
+                ? null
+                : texture;
+    }
+
     @Override
     public int renderSlot(GLCanvas canvas, int index, int pass, int width, int height) {
         AlbumSlidingWindow.AlbumEntry entry = mDataWindow.get(index);
-        Texture content = entry.content;
+        Texture content = checkTexture(canvas, entry.content);
 
         if (content == null) {
             content = mWaitLoadingTexture;

@@ -22,7 +22,6 @@ import android.graphics.BitmapFactory;
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.data.ImageCacheService.ImageData;
-import com.android.gallery3d.ui.BitmapPool;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
@@ -56,7 +55,7 @@ abstract class ImageCacheRequest implements Job<Bitmap> {
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             Bitmap bitmap;
             if (mType == MediaItem.TYPE_MICROTHUMBNAIL) {
-                bitmap = BitmapPool.decode(jc, BitmapPool.TYPE_MICRO_THUMB,
+                bitmap = MediaItem.getMicroThumbPool().decode(jc,
                         data.mData, data.mOffset, data.mData.length - data.mOffset, options);
             } else {
                 bitmap = DecodeUtils.decode(jc,

@@ -30,8 +30,8 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.Profile;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -82,8 +82,8 @@ public class GLRootView extends GLSurfaceView
     private final ArrayList<CanvasAnimation> mAnimations =
             new ArrayList<CanvasAnimation>();
 
-    private final LinkedList<OnGLIdleListener> mIdleListeners =
-            new LinkedList<OnGLIdleListener>();
+    private final ArrayDeque<OnGLIdleListener> mIdleListeners =
+            new ArrayDeque<OnGLIdleListener>();
 
     private final IdleRunner mIdleRunner = new IdleRunner();
 
@@ -267,6 +267,7 @@ public class GLRootView extends GLSurfaceView
         } finally {
             mRenderLock.unlock();
         }
+
         if (DEBUG_PROFILE_SLOW_ONLY) {
             long t = System.nanoTime();
             long durationInMs = (t - mLastDrawFinishTime) / 1000000;
@@ -305,7 +306,6 @@ public class GLRootView extends GLSurfaceView
             gl.glScissor(clip.left, clip.top, clip.width(), clip.height());
         }
 
-
         if (mContentView != null) {
            mContentView.render(mCanvas);
         }
@@ -323,9 +323,7 @@ public class GLRootView extends GLSurfaceView
         }
 
         synchronized (mIdleListeners) {
-            if (!mRenderRequested && !mIdleListeners.isEmpty()) {
-                mIdleRunner.enable();
-            }
+            if (!mIdleListeners.isEmpty()) mIdleRunner.enable();
         }
 
         if (DEBUG_INVALIDATE) {
@@ -370,19 +368,18 @@ public class GLRootView extends GLSurfaceView
             OnGLIdleListener listener;
             synchronized (mIdleListeners) {
                 mActive = false;
-                if (mRenderRequested) return;
                 if (mIdleListeners.isEmpty()) return;
                 listener = mIdleListeners.removeFirst();
             }
             mRenderLock.lock();
             try {
-                if (!listener.onGLIdle(GLRootView.this, mCanvas)) return;
+                if (!listener.onGLIdle(mCanvas, mRenderRequested)) return;
             } finally {
                 mRenderLock.unlock();
             }
             synchronized (mIdleListeners) {
                 mIdleListeners.addLast(listener);
-                enable();
+                if (!mRenderRequested) enable();
             }
         }
 

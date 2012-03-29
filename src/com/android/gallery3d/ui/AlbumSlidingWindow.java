@@ -53,6 +53,11 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
     }
 
     private final AlbumView.Model mSource;
+    private final AlbumEntry mData[];
+    private final SynchronizedHandler mHandler;
+    private final JobLimiter mThreadPool;
+    private final TextureUploader mTextureUploader;
+
     private int mSize;
 
     private int mContentStart = 0;
@@ -62,11 +67,6 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
     private int mActiveEnd = 0;
 
     private Listener mListener;
-
-    private final AlbumEntry mData[];
-
-    private SynchronizedHandler mHandler;
-    private JobLimiter mThreadPool;
 
     private int mActiveRequestCount = 0;
     private boolean mIsActive = false;
@@ -87,6 +87,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
         };
 
         mThreadPool = new JobLimiter(activity.getThreadPool(), JOB_LIMIT);
+        mTextureUploader = new TextureUploader(activity.getGLRoot());
     }
 
     public void setListener(Listener listener) {
@@ -156,7 +157,27 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
                 0, Math.max(0, mSize - data.length));
         int contentEnd = Math.min(contentStart + data.length, mSize);
         setContentWindow(contentStart, contentEnd);
+        updateUploadedTextures();
         if (mIsActive) updateAllImageRequests();
+    }
+
+    private void uploadTexture(boolean isActive, Texture texture) {
+        if ((texture == null) || !(texture instanceof BitmapTexture)) return;
+        if (isActive) {
+            mTextureUploader.addFgTexture((BitmapTexture) texture);
+        } else {
+            mTextureUploader.addBgTexture((BitmapTexture) texture);
+        }
+    }
+
+    private void updateUploadedTextures() {
+        if (!mIsActive) return;
+        mTextureUploader.clear();
+        for (int i = mContentStart, n = mContentEnd; i < n; ++i) {
+            AlbumEntry entry = mData[i % mData.length];
+            boolean isActive = isActiveSlot(i);
+            uploadTexture(isActive, entry.content);
+        }
     }
 
     // We would like to request non active slots in the following order:
@@ -244,8 +265,8 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
     }
 
     private class ThumbnailLoader extends BitmapLoader  {
-        final int mSlotIndex;
-        final MediaItem mItem;
+        private final int mSlotIndex;
+        private final MediaItem mItem;
 
         public ThumbnailLoader(int slotIndex, MediaItem item) {
             mSlotIndex = slotIndex;
@@ -254,7 +275,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
 
         @Override
         protected void recycleBitmap(Bitmap bitmap) {
-            BitmapPool.recycle(BitmapPool.TYPE_MICRO_THUMB, bitmap);
+            MediaItem.getMicroThumbPool().recycle(bitmap);
         }
 
         @Override
@@ -269,16 +290,19 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
         }
 
         public void updateEntry() {
-            if (isRecycled()) return;
+            Bitmap bitmap = getBitmap();
+            if (bitmap == null) return; // error or recycled
 
             AlbumEntry entry = mData[mSlotIndex % mData.length];
-            Bitmap bitmap = entry.contentLoader.getBitmap();
-            if (bitmap != null) entry.content = new BitmapTexture(bitmap);
+            entry.content = new BitmapTexture(bitmap);
 
             if (isActiveSlot(mSlotIndex)) {
+                mTextureUploader.addFgTexture((BitmapTexture) entry.content);
                 --mActiveRequestCount;
                 if (mActiveRequestCount == 0) requestNonactiveImages();
                 if (mListener != null) mListener.onContentChanged();
+            } else {
+                mTextureUploader.addBgTexture((BitmapTexture) entry.content);
             }
         }
     }

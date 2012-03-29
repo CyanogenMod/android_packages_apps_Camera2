@@ -84,6 +84,9 @@ public class SlotView extends GLView {
     public static final int OVERSCROLL_SYSTEM = 1;
     public static final int OVERSCROLL_NONE = 2;
 
+    // to prevent allocating memory
+    private final Rect mTempRect = new Rect();
+
     public SlotView(Context context, Spec spec) {
         mGestureDetector =
                 new GestureDetector(context, new MyGestureListener());
@@ -105,7 +108,7 @@ public class SlotView extends GLView {
         if (index < 0 || index >= slotCount) {
             return;
         }
-        Rect rect = mLayout.getSlotRect(index);
+        Rect rect = mLayout.getSlotRect(index, mTempRect);
         int position = WIDE
                 ? (rect.left + rect.right - getWidth()) / 2
                 : (rect.top + rect.bottom - getHeight()) / 2;
@@ -113,7 +116,7 @@ public class SlotView extends GLView {
     }
 
     public void makeSlotVisible(int index) {
-        Rect rect = mLayout.getSlotRect(index);
+        Rect rect = mLayout.getSlotRect(index, mTempRect);
         int visibleBegin = WIDE ? mScrollX : mScrollY;
         int visibleLength = WIDE ? getWidth() : getHeight();
         int visibleEnd = visibleBegin + visibleLength;
@@ -198,7 +201,7 @@ public class SlotView extends GLView {
     }
 
     public Rect getSlotRect(int slotIndex) {
-        return mLayout.getSlotRect(slotIndex);
+        return mLayout.getSlotRect(slotIndex, new Rect());
     }
 
     @Override
@@ -315,7 +318,7 @@ public class SlotView extends GLView {
     private int renderItem(
             GLCanvas canvas, int index, int pass, boolean paperActive) {
         canvas.save(GLCanvas.SAVE_FLAG_ALPHA | GLCanvas.SAVE_FLAG_MATRIX);
-        Rect rect = getSlotRect(index);
+        Rect rect = mLayout.getSlotRect(index, mTempRect);
         if (paperActive) {
             canvas.multiplyMatrix(mPaper.getTransform(rect, mScrollX), 0);
         } else {
@@ -443,7 +446,7 @@ public class SlotView extends GLView {
             return vPadding != mVerticalPadding || hPadding != mHorizontalPadding;
         }
 
-        public Rect getSlotRect(int index) {
+        public Rect getSlotRect(int index, Rect rect) {
             int col, row;
             if (WIDE) {
                 col = index / mUnitCount;
@@ -455,7 +458,8 @@ public class SlotView extends GLView {
 
             int x = mHorizontalPadding + col * (mSlotWidth + mSlotGap);
             int y = mVerticalPadding + row * (mSlotHeight + mSlotGap);
-            return new Rect(x, y, x + mSlotWidth, y + mSlotHeight);
+            rect.set(x, y, x + mSlotWidth, y + mSlotHeight);
+            return rect;
         }
 
         public int getSlotWidth() {
