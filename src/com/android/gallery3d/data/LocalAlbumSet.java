@@ -116,10 +116,7 @@ public class LocalAlbumSet extends MediaSet
         if (name.length < 2) {
             throw new IllegalArgumentException(path.toString());
         }
-        if ("all".equals(name[1])) return MEDIA_TYPE_ALL;
-        if ("image".equals(name[1])) return MEDIA_TYPE_IMAGE;
-        if ("video".equals(name[1])) return MEDIA_TYPE_VIDEO;
-        throw new IllegalArgumentException(path.toString());
+        return getTypeFromString(name[1]);
     }
 
     @Override

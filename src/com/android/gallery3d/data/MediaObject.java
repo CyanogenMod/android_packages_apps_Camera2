@@ -44,6 +44,10 @@ public abstract class MediaObject {
     public static final int MEDIA_TYPE_VIDEO = 4;
     public static final int MEDIA_TYPE_ALL = MEDIA_TYPE_IMAGE | MEDIA_TYPE_VIDEO;
 
+    public static final String MEDIA_TYPE_IMAGE_STRING = "image";
+    public static final String MEDIA_TYPE_VIDEO_STRING = "video";
+    public static final String MEDIA_TYPE_ALL_STRING = "all";
+
     // These are flags for cache() and return values for getCacheFlag():
     public static final int CACHE_FLAG_NO = 0;
     public static final int CACHE_FLAG_SCREENNAIL = 1;
@@ -126,5 +130,21 @@ public abstract class MediaObject {
 
     public static synchronized long nextVersionNumber() {
         return ++MediaObject.sVersionSerial;
+    }
+
+    public static int getTypeFromString(String s) {
+        if (MEDIA_TYPE_ALL_STRING.equals(s)) return MediaObject.MEDIA_TYPE_ALL;
+        if (MEDIA_TYPE_IMAGE_STRING.equals(s)) return MediaObject.MEDIA_TYPE_IMAGE;
+        if (MEDIA_TYPE_VIDEO_STRING.equals(s)) return MediaObject.MEDIA_TYPE_VIDEO;
+        throw new IllegalArgumentException(s);
+    }
+
+    public static String getTypeString(int type) {
+        switch (type) {
+            case MEDIA_TYPE_IMAGE: return MEDIA_TYPE_IMAGE_STRING;
+            case MEDIA_TYPE_VIDEO: return MEDIA_TYPE_VIDEO_STRING;
+            case MEDIA_TYPE_ALL: return MEDIA_TYPE_ALL_STRING;
+        }
+        throw new IllegalArgumentException();
     }
 }
