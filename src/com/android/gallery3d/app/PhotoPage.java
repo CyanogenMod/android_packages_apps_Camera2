@@ -50,7 +50,6 @@ import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.DetailsHelper.DetailsSource;
-import com.android.gallery3d.ui.FilmStripView;
 import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.ImportCompleteListener;
@@ -64,8 +63,7 @@ import com.android.gallery3d.ui.UserInteractionListener;
 import com.android.gallery3d.util.GalleryUtils;
 
 public class PhotoPage extends ActivityState
-        implements PhotoView.PhotoTapListener, FilmStripView.Listener,
-        UserInteractionListener {
+        implements PhotoView.PhotoTapListener, UserInteractionListener {
     private static final String TAG = "PhotoPage";
 
     private static final int MSG_HIDE_BARS = 1;
@@ -87,7 +85,6 @@ public class PhotoPage extends ActivityState
 
     private PhotoView mPhotoView;
     private PhotoPage.Model mModel;
-    private FilmStripView mFilmStripView;
     private DetailsHelper mDetailsHelper;
     private boolean mShowDetails;
     private Path mPendingSharePath;
@@ -140,36 +137,11 @@ public class PhotoPage extends ActivityState
         protected void onLayout(
                 boolean changed, int left, int top, int right, int bottom) {
             mPhotoView.layout(0, 0, right - left, bottom - top);
-            int filmStripHeight = 0;
-            if (mFilmStripView != null) {
-                mFilmStripView.measure(
-                        MeasureSpec.makeMeasureSpec(right - left, MeasureSpec.EXACTLY),
-                        MeasureSpec.UNSPECIFIED);
-                filmStripHeight = mFilmStripView.getMeasuredHeight();
-                mFilmStripView.layout(0, bottom - top - filmStripHeight,
-                        right - left, bottom - top);
-            }
             if (mShowDetails) {
                 mDetailsHelper.layout(left, mActionBar.getHeight(), right, bottom);
             }
         }
     };
-
-    private void initFilmStripView() {
-        Config.PhotoPage config = Config.PhotoPage.get((Context) mActivity);
-        mFilmStripView = new FilmStripView(mActivity, mMediaSet,
-                config.filmstripTopMargin, config.filmstripMidMargin, config.filmstripBottomMargin,
-                config.filmstripContentSize, config.filmstripThumbSize, config.filmstripBarSize,
-                config.filmstripGripSize, config.filmstripGripWidth);
-        mRootPane.addComponent(mFilmStripView);
-        mFilmStripView.setListener(this);
-        mFilmStripView.setUserInteractionListener(this);
-        mFilmStripView.setFocusIndex(mCurrentIndex);
-        mFilmStripView.setStartIndex(mCurrentIndex);
-        mRootPane.requestLayout();
-        if (mIsActive) mFilmStripView.resume();
-        if (!mShowBars) mFilmStripView.setVisibility(GLView.INVISIBLE);
-    }
 
     @Override
     public void onCreate(Bundle data, Bundle restoreState) {
@@ -223,7 +195,6 @@ public class PhotoPage extends ActivityState
 
                 @Override
                 public void onPhotoChanged(int index, Path item) {
-                    if (mFilmStripView != null) mFilmStripView.setFocusIndex(index);
                     mCurrentIndex = index;
                     mResultIntent.putExtra(KEY_INDEX_HINT, index);
                     if (item != null) {
@@ -254,7 +225,6 @@ public class PhotoPage extends ActivityState
 
                 @Override
                 public void onPhotoAvailable(long version, boolean fullImage) {
-                    if (mFilmStripView == null) initFilmStripView();
                 }
             });
         } else {
@@ -362,9 +332,6 @@ public class PhotoPage extends ActivityState
         WindowManager.LayoutParams params = ((Activity) mActivity).getWindow().getAttributes();
         params.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE;
         ((Activity) mActivity).getWindow().setAttributes(params);
-        if (mFilmStripView != null) {
-            mFilmStripView.show();
-        }
     }
 
     private void hideBars() {
@@ -374,9 +341,6 @@ public class PhotoPage extends ActivityState
         WindowManager.LayoutParams params = ((Activity) mActivity).getWindow().getAttributes();
         params.systemUiVisibility = View. SYSTEM_UI_FLAG_LOW_PROFILE;
         ((Activity) mActivity).getWindow().setAttributes(params);
-        if (mFilmStripView != null) {
-            mFilmStripView.hide();
-        }
     }
 
     private void refreshHidingMessage() {
@@ -580,12 +544,6 @@ public class PhotoPage extends ActivityState
         }
     }
 
-    // Called by FileStripView.
-    // Returns false if it cannot jump to the specified index at this time.
-    public boolean onSlotSelected(int slotIndex) {
-        return mPhotoView.jumpTo(slotIndex);
-    }
-
     @Override
     protected void onStateResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -622,9 +580,6 @@ public class PhotoPage extends ActivityState
     public void onPause() {
         super.onPause();
         mIsActive = false;
-        if (mFilmStripView != null) {
-            mFilmStripView.pause();
-        }
         DetailsHelper.pause();
         mPhotoView.pause();
         mModel.pause();
@@ -641,9 +596,6 @@ public class PhotoPage extends ActivityState
 
         mModel.resume();
         mPhotoView.resume();
-        if (mFilmStripView != null) {
-            mFilmStripView.resume();
-        }
         if (mMenuVisibilityListener == null) {
             mMenuVisibilityListener = new MyMenuVisibilityListener();
         }

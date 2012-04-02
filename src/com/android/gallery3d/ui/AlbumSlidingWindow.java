@@ -22,7 +22,6 @@ import android.util.FloatMath;
 
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.BitmapUtils;
-import com.android.gallery3d.common.LruCache;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.Path;
@@ -69,12 +68,8 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
     private int mActiveRequestCount = 0;
     private boolean mIsActive = false;
 
-    private int mCacheThumbSize;  // 0: Don't cache the thumbnails
-    private LruCache<Path, Bitmap> mImageCache = new LruCache<Path, Bitmap>(1000);
-
     public AlbumSlidingWindow(GalleryActivity activity,
-            AlbumView.Model source, int cacheSize,
-            int cacheThumbSize) {
+            AlbumView.Model source, int cacheSize) {
         source.setModelListener(this);
         mSource = source;
         mData = new AlbumDisplayItem[cacheSize];
@@ -82,7 +77,6 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
 
         mWaitLoadingTexture = new ColorTexture(PLACEHOLDER_COLOR);
         mWaitLoadingTexture.setSize(1, 1);
-        mCacheThumbSize = cacheThumbSize;
 
         mHandler = new SynchronizedHandler(activity.getGLRoot()) {
             @Override
@@ -273,7 +267,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
     }
 
     private class AlbumDisplayItem extends AbstractDisplayItem
-            implements FutureListener<Bitmap>, Job<Bitmap> {
+            implements FutureListener<Bitmap> {
         private Future<Bitmap> mFuture;
         private final int mSlotIndex;
         private final int mMediaType;
@@ -293,11 +287,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
 
         @Override
         protected void recycleBitmap(Bitmap bitmap) {
-            // if mCacheThumbSize > 0, we will keep images in cache so that
-            // we cannot recycle the bitmap
-            if (mCacheThumbSize == 0) {
-                BitmapPool.recycle(BitmapPool.TYPE_MICRO_THUMB, bitmap);
-            }
+            BitmapPool.recycle(BitmapPool.TYPE_MICRO_THUMB, bitmap);
         }
 
         @Override
@@ -364,30 +354,8 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
 
         @Override
         public void startLoadBitmap() {
-            if (mCacheThumbSize > 0) {
-                Path path = mMediaItem.getPath();
-                if (mImageCache.containsKey(path)) {
-                    Bitmap bitmap = mImageCache.get(path);
-                    updateImage(bitmap, false);
-                    return;
-                }
-                mFuture = mThreadPool.submit(this, this);
-            } else {
-                mFuture = mThreadPool.submit(mMediaItem.requestImage(
-                        MediaItem.TYPE_MICROTHUMBNAIL), this);
-            }
-        }
-
-        // This gets the bitmap and scale it down.
-        public Bitmap run(JobContext jc) {
-            Job<Bitmap> job = mMediaItem.requestImage(
-                    MediaItem.TYPE_MICROTHUMBNAIL);
-            Bitmap bitmap = job.run(jc);
-            if (bitmap != null) {
-                bitmap = BitmapUtils.resizeDownBySideLength(
-                        bitmap, mCacheThumbSize, true);
-            }
-            return bitmap;
+            mFuture = mThreadPool.submit(mMediaItem.requestImage(
+                    MediaItem.TYPE_MICROTHUMBNAIL), this);
         }
 
         @Override
@@ -407,10 +375,6 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
             mFuture = null;
             Bitmap bitmap = future.get();
             boolean isCancelled = future.isCancelled();
-            if (mCacheThumbSize > 0 && (bitmap != null || !isCancelled)) {
-                Path path = mMediaItem.getPath();
-                mImageCache.put(path, bitmap);
-            }
             updateImage(bitmap, isCancelled);
         }
 
@@ -446,6 +410,5 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
         for (int i = mContentStart, n = mContentEnd; i < n; ++i) {
             freeSlotContent(i);
         }
-        mImageCache.clear();
     }
 }
