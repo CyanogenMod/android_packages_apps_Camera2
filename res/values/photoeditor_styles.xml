@@ -54,6 +54,20 @@
         <item name="android:layout_alignParentBottom">true</item>
         <item name="android:orientation">vertical</item>
     </style>
+    <style name="EffectLabelInToolPanel" parent="@style/EffectLabel">
+        <item name="android:layout_marginTop">0dp</item>
+    </style>
+    <style name="SeekBar">
+        <item name="android:layout_width">@dimen/seekbar_width</item>
+        <item name="android:layout_height">@dimen/seekbar_height</item>
+        <item name="android:paddingTop">@dimen/seekbar_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/seekbar_padding_vertical</item>
+        <item name="android:paddingLeft">@dimen/seekbar_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/seekbar_padding_horizontal</item>
+        <item name="android:minHeight">@dimen/seekbar_height</item>
+        <item name="android:maxHeight">@dimen/seekbar_height</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
     <style name="ActionBarInner">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">?android:attr/actionBarSize</item>
