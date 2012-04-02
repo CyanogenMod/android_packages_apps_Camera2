@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.ui;
 
+import javax.microedition.khronos.opengles.GL11;
+
 // This mimics corresponding GL functions.
 public class GLId {
     static int sNextId = 1;
@@ -32,9 +34,11 @@ public class GLId {
         }
     }
 
-    public synchronized static void glDeleteTextures(int n, int[] textures, int offset) {
+    public synchronized static void glDeleteTextures(GL11 gl, int n, int[] textures, int offset) {
+        gl.glDeleteTextures(n, textures, offset);
     }
 
-    public synchronized static void glDeleteBuffers(int n, int[] buffers, int offset) {
+    public synchronized static void glDeleteBuffers(GL11 gl, int n, int[] buffers, int offset) {
+        gl.glDeleteBuffers(n, buffers, offset);
     }
 }
