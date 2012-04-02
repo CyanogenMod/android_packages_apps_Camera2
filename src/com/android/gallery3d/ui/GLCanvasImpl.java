@@ -673,13 +673,13 @@ public class GLCanvasImpl implements GLCanvas {
         synchronized (mUnboundTextures) {
             IntArray ids = mUnboundTextures;
             if (ids.size() > 0) {
-                GLId.glDeleteTextures(ids.size(), ids.getInternalArray(), 0);
+                GLId.glDeleteTextures(mGL, ids.size(), ids.getInternalArray(), 0);
                 ids.clear();
             }
 
             ids = mDeleteBuffers;
             if (ids.size() > 0) {
-                GLId.glDeleteBuffers(ids.size(), ids.getInternalArray(), 0);
+                GLId.glDeleteBuffers(mGL, ids.size(), ids.getInternalArray(), 0);
                 ids.clear();
             }
         }
