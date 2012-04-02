@@ -336,11 +336,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         updateCurrentIndex(mCurrentIndex - 1);
     }
 
-    public void jumpTo(int index) {
-        if (mCurrentIndex == index) return;
-        updateCurrentIndex(index);
-    }
-
     public ScreenNail getScreenNail() {
         return mTileProvider.getScreenNail();
     }

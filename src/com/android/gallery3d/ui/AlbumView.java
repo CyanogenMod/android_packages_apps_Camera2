@@ -27,7 +27,6 @@ public class AlbumView implements SlotView.SlotRenderer {
     private AlbumSlidingWindow mDataWindow;
     private final GalleryActivity mActivity;
     private SelectionDrawer mSelectionDrawer;
-    private int mCacheThumbSize;
 
     private final SlotView mSlotView;
 
@@ -43,9 +42,7 @@ public class AlbumView implements SlotView.SlotRenderer {
         public void onSizeChanged(int size);
     }
 
-    public AlbumView(GalleryActivity activity, SlotView  slotView,
-            int cacheThumbSize) {
-        mCacheThumbSize = cacheThumbSize;
+    public AlbumView(GalleryActivity activity, SlotView slotView) {
         mSlotView = slotView;
         mActivity = activity;
     }
@@ -63,8 +60,7 @@ public class AlbumView implements SlotView.SlotRenderer {
         }
         if (model != null) {
             mDataWindow = new AlbumSlidingWindow(
-                    mActivity, model, CACHE_SIZE,
-                    mCacheThumbSize);
+                    mActivity, model, CACHE_SIZE);
             mDataWindow.setSelectionDrawer(mSelectionDrawer);
             mDataWindow.setListener(new MyDataModelListener());
             mSlotView.setSlotCount(model.size());
