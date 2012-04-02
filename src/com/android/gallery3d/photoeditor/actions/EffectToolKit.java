@@ -17,6 +17,8 @@
 package com.android.gallery3d.photoeditor.actions;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -109,24 +111,25 @@ public class EffectToolKit {
         return tool;
     }
 
-    private int getScalePickerBackground(ScaleType type) {
+    private Drawable getScalePickerProgressDrawable(Resources res, ScaleType type) {
         switch (type) {
             case LIGHT:
-                return R.drawable.photoeditor_scale_seekbar_light;
+                return res.getDrawable(R.drawable.photoeditor_scale_seekbar_light);
 
             case SHADOW:
-                return R.drawable.photoeditor_scale_seekbar_shadow;
+                return res.getDrawable(R.drawable.photoeditor_scale_seekbar_shadow);
 
             case COLOR:
-                return R.drawable.photoeditor_scale_seekbar_color;
+                return res.getDrawable(R.drawable.photoeditor_scale_seekbar_color);
         }
-        return R.drawable.photoeditor_scale_seekbar_generic;
+        return res.getDrawable(R.drawable.photoeditor_scale_seekbar_generic);
     }
 
     public ScaleSeekBar addScalePicker(ScaleType type) {
         ScaleSeekBar scalePicker = (ScaleSeekBar) addPanelTool(
                 R.layout.photoeditor_scale_seekbar);
-        scalePicker.setBackgroundResource(getScalePickerBackground(type));
+        scalePicker.setProgressDrawable(getScalePickerProgressDrawable(
+                toolPanel.getResources(), type));
         return scalePicker;
     }
 
