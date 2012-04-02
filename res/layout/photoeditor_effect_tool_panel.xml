@@ -18,12 +18,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/effect_tool_panel_padding"
+    android:paddingTop="@dimen/effect_tool_panel_padding_top"
+    android:paddingBottom="@dimen/effect_tool_panel_padding_bottom"
     android:background="@color/translucent_black"
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/effect_label"
-        style="@style/EffectLabel"/>
+        style="@style/EffectLabelInToolPanel"/>
 </LinearLayout>

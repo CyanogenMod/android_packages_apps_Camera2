@@ -42,7 +42,7 @@ class ColorSeekBar extends AbstractSeekBar {
     }
 
     private final int[] colors;
-    private Bitmap background;
+    private Bitmap progressDrawable;
 
     public ColorSeekBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -61,46 +61,47 @@ class ColorSeekBar extends AbstractSeekBar {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        if (background != null) {
-            background.recycle();
+        if (progressDrawable != null) {
+            progressDrawable.recycle();
         }
-        background = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(background);
+        int width = w - getPaddingLeft() - getPaddingRight();
+        int height = h - getPaddingTop() - getPaddingBottom();
+        progressDrawable = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(progressDrawable);
 
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStyle(Paint.Style.FILL);
 
-        // Draw two half circles in the first and last colors at seek-bar left/right ends.
-        int radius = getThumbOffset();
+        // Draw two half circles in the first and last colors at the left/right ends.
+        int radius = height / 2;
         float left = radius;
-        float right = w - radius;
-        float cy = h / 2;
+        float right = width - radius;
 
         canvas.save();
-        canvas.clipRect(left, 0, right, h, Op.DIFFERENCE);
+        canvas.clipRect(left, 0, right, height, Op.DIFFERENCE);
         paint.setColor(colors[0]);
-        canvas.drawCircle(left, cy, radius, paint);
+        canvas.drawCircle(left, radius, radius, paint);
         paint.setColor(colors[colors.length - 1]);
-        canvas.drawCircle(right, cy, radius, paint);
+        canvas.drawCircle(right, radius, radius, paint);
         canvas.restore();
 
         // Draw color strips that make the thumb stop at every strip's center during seeking.
         float strip = (right - left) / (colors.length - 1);
         right = left + strip / 2;
         paint.setColor(colors[0]);
-        canvas.drawRect(left, 0, right, h, paint);
+        canvas.drawRect(left, 0, right, height, paint);
         left = right;
         for (int i = 1; i < colors.length - 1; i++) {
             right = left + strip;
             paint.setColor(colors[i]);
-            canvas.drawRect(left, 0, right, h, paint);
+            canvas.drawRect(left, 0, right, height, paint);
             left = right;
         }
         right = left + strip / 2;
         paint.setColor(colors[colors.length - 1]);
-        canvas.drawRect(left, 0, right, h, paint);
+        canvas.drawRect(left, 0, right, height, paint);
 
-        setBackgroundDrawable(new BitmapDrawable(getResources(), background));
+        setProgressDrawable(new BitmapDrawable(getResources(), progressDrawable));
     }
 
     public void setOnColorChangeListener(final OnColorChangeListener listener) {

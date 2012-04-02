@@ -28,7 +28,7 @@ import android.widget.SeekBar;
 import com.android.gallery3d.R;
 
 /**
- * Seek-bar base that implements a draggable thumb that fits seek-bar height.
+ * Seek-bar base that implements a draggable thumb that fits seek-bar's track height.
  */
 abstract class AbstractSeekBar extends SeekBar {
 
@@ -38,22 +38,22 @@ abstract class AbstractSeekBar extends SeekBar {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-
-        // Scale the thumb to fit seek-bar height.
+        // Scale the thumb to fit seek-bar's track height.
         Resources res = getResources();
         Drawable thumb = res.getDrawable(R.drawable.photoeditor_seekbar_thumb);
+        int height = h - getPaddingTop() - getPaddingBottom();
+        int scaledWidth = thumb.getIntrinsicWidth() * height / thumb.getIntrinsicHeight();
 
-        // Set the left/right padding to half width of the thumb drawn.
-        int scaledWidth = thumb.getIntrinsicWidth() * h / thumb.getIntrinsicHeight();
-        int padding = (scaledWidth + 1) / 2;
-        setPadding(padding, 0, padding, 0);
-
-        Bitmap bitmap = Bitmap.createBitmap(scaledWidth, h, Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(scaledWidth, height, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         thumb.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
         thumb.draw(canvas);
 
+        // The thumb should not extend out of the track per UX design.
         setThumb(new BitmapDrawable(res, bitmap));
+        setThumbOffset(0);
+
+        // The thumb position is updated here after the thumb is changed.
+        super.onSizeChanged(w, h, oldw, oldh);
     }
 }
