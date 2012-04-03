@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 
+import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
 
 /**
@@ -47,25 +48,29 @@ public class SpinnerVisibilitySetter {
             new WeakHashMap<Activity, SpinnerVisibilitySetter>();
 
     private long mSpinnerVisibilityStartTime = -1;
-    private Activity mActivity;
+    private WeakReference<Activity> mActivityRef;
 
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            Activity activity = mActivityRef.get();
+
             switch(msg.what) {
                 case MSG_SHOW_SPINNER:
                     removeMessages(MSG_SHOW_SPINNER);
+                    if (activity == null) break;
                     if (mSpinnerVisibilityStartTime >= 0) break;
                     mSpinnerVisibilityStartTime = SystemClock.elapsedRealtime();
-                    mActivity.setProgressBarIndeterminateVisibility(true);
+                    activity.setProgressBarIndeterminateVisibility(true);
                     break;
                 case MSG_HIDE_SPINNER:
                     removeMessages(MSG_HIDE_SPINNER);
+                    if (activity == null) break;
                     if (mSpinnerVisibilityStartTime < 0) break;
                     long t = SystemClock.elapsedRealtime() - mSpinnerVisibilityStartTime;
                     if (t >= MIN_SPINNER_DISPLAY_TIME) {
                         mSpinnerVisibilityStartTime = -1;
-                        mActivity.setProgressBarIndeterminateVisibility(false);
+                        activity.setProgressBarIndeterminateVisibility(false);
                     } else {
                         sendEmptyMessageDelayed(MSG_HIDE_SPINNER, MIN_SPINNER_DISPLAY_TIME - t);
                     }
@@ -91,7 +96,8 @@ public class SpinnerVisibilitySetter {
     }
 
     private SpinnerVisibilitySetter(Activity activity) {
-        mActivity = activity;
+        // Activity are keys. Value objects should not strongly refer to keys.
+        mActivityRef = new WeakReference<Activity>(activity);
     }
 
     public void setSpinnerVisibility(boolean visible) {

@@ -181,6 +181,17 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mGLRootView.lockRenderThread();
+        try {
+            getStateManager().destroy();
+        } finally {
+            mGLRootView.unlockRenderThread();
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         mGLRootView.lockRenderThread();
         try {

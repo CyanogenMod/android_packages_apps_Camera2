@@ -245,18 +245,6 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        GLRoot root = getGLRoot();
-        root.lockRenderThread();
-        try {
-            getStateManager().destroy();
-        } finally {
-            root.unlockRenderThread();
-        }
-    }
-
-    @Override
     protected void onResume() {
         Utils.assertTrue(getStateManager().getStateCount() > 0);
         super.onResume();
