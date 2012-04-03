@@ -462,12 +462,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 if (mActivity.getStateManager().getStateCount() > 1) {
                     onBackPressed();
                 } else if (mParentMediaSetString != null) {
-                    Activity a = (Activity) mActivity;
-                    int flags = Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK;
-                    Intent intent = new Intent()
-                            .setClass(a, Gallery.class)
-                            .setFlags(flags);
-                    a.startActivity(intent);
+                    Bundle data = new Bundle(getData());
+                    data.putString(AlbumSetPage.KEY_MEDIA_PATH, mParentMediaSetString);
+                    mActivity.getStateManager().switchState(this, AlbumSetPage.class, data);
                 }
                 return true;
             }

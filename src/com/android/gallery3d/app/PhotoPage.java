@@ -425,15 +425,13 @@ public class PhotoPage extends ActivityState
                     if (mActivity.getStateManager().getStateCount() > 1) {
                         onBackPressed();
                     } else {
-                        Activity a = (Activity) mActivity;
-                        Uri uri = mActivity.getDataManager().getContentUri(
-                                Path.fromString(mSetPathString));
-                        Intent intent = new Intent(Intent.ACTION_VIEW)
-                                .setClass(a, Gallery.class)
-                                .setDataAndType(uri, ContentResolver.CURSOR_DIR_BASE_TYPE)
-                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                                        Intent.FLAG_ACTIVITY_NEW_TASK);
-                        a.startActivity(intent);
+                        // We're in view mode so set up the stacks on our own.
+                        Bundle data = new Bundle(getData());
+                        data.putString(AlbumPage.KEY_MEDIA_PATH, mSetPathString);
+                        data.putString(AlbumPage.KEY_PARENT_MEDIA_PATH,
+                                mActivity.getDataManager().getTopSetPath(
+                                        DataManager.INCLUDE_ALL));
+                        mActivity.getStateManager().switchState(this, AlbumPage.class, data);
                     }
                 }
                 return true;
