@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2012 The Android Open Source Project
  *
@@ -34,6 +35,11 @@ public class AnimationTime {
 
     // Returns the animation time.
     public static long get() {
+        return sTime;
+    }
+
+    public static long startTime() {
+        sTime = SystemClock.uptimeMillis();
         return sTime;
     }
 }

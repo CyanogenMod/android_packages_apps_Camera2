@@ -29,41 +29,52 @@ import android.view.animation.AccelerateInterpolator;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.MediaObject;
+import com.android.gallery3d.util.RangeArray;
+import com.android.gallery3d.util.RangeBoolArray;
+
+import java.util.Arrays;
 
 public class PhotoView extends GLView {
     @SuppressWarnings("unused")
     private static final String TAG = "PhotoView";
 
     public static final int INVALID_SIZE = -1;
+    public static final long INVALID_DATA_VERSION =
+            MediaObject.INVALID_DATA_VERSION;
 
-    private static final int MSG_TRANSITION_COMPLETE = 1;
-    private static final int MSG_SHOW_LOADING = 2;
-    private static final int MSG_CANCEL_EXTRA_SCALING = 3;
+    public static interface Model extends TileImageView.Model {
+        public void next();
+        public void previous();
+        public int getImageRotation();
+
+        // This amends the getScreenNail() method of TileImageView.Model to get
+        // ScreenNail at previous (negative offset) or next (positive offset)
+        // positions. Returns null if the specified ScreenNail is unavailable.
+        public ScreenNail getScreenNail(int offset);
+    }
+
+    public interface PhotoTapListener {
+        public void onSingleTapUp(int x, int y);
+    }
+
+    private static final int MSG_SHOW_LOADING = 1;
+    private static final int MSG_CANCEL_EXTRA_SCALING = 2;
+    private static final int MSG_SWITCH_FOCUS = 3;
 
     private static final long DELAY_SHOW_LOADING = 250; // 250ms;
-
-    private static final int TRANS_NONE = 0;
-    private static final int TRANS_SWITCH_NEXT = 3;
-    private static final int TRANS_SWITCH_PREVIOUS = 4;
-
-    public static final int TRANS_SLIDE_IN_RIGHT = 1;
-    public static final int TRANS_SLIDE_IN_LEFT = 2;
-    public static final int TRANS_OPEN_ANIMATION = 5;
 
     private static final int LOADING_INIT = 0;
     private static final int LOADING_TIMEOUT = 1;
     private static final int LOADING_COMPLETE = 2;
     private static final int LOADING_FAIL = 3;
 
-    private static final int ENTRY_PREVIOUS = 0;
-    private static final int ENTRY_NEXT = 1;
-
-    private static final int IMAGE_GAP = 96;
-    private static final int SWITCH_THRESHOLD = 256;
+    private static final int MOVE_THRESHOLD = 256;
     private static final float SWIPE_THRESHOLD = 300f;
 
     private static final float DEFAULT_TEXT_SIZE = 20;
     private static float TRANSITION_SCALE_FACTOR = 0.74f;
+    private static final boolean CARD_EFFECT = true;
 
     // Used to calculate the scaling factor for the fading animation.
     private ZInterpolator mScaleInterpolator = new ZInterpolator(0.5f);
@@ -72,12 +83,20 @@ public class PhotoView extends GLView {
     private AccelerateInterpolator mAlphaInterpolator =
             new AccelerateInterpolator(0.9f);
 
-    public interface PhotoTapListener {
-        public void onSingleTapUp(int x, int y);
-    }
+    // We keep this many previous ScreenNails. (also this many next ScreenNails)
+    public static final int SCREEN_NAIL_MAX = 3;
 
-    // the previous/next image entries
-    private final ScreenNailEntry mScreenNails[] = new ScreenNailEntry[2];
+    // The picture entries, the valid index is from -SCREEN_NAIL_MAX to
+    // SCREEN_NAIL_MAX.
+    private final RangeArray<Picture> mPictures =
+            new RangeArray<Picture>(-SCREEN_NAIL_MAX, SCREEN_NAIL_MAX);
+    private final RangeBoolArray mReused =
+            new RangeBoolArray(-SCREEN_NAIL_MAX, SCREEN_NAIL_MAX);
+    private final RangeArray<ScreenNail> mTempScreenNail =
+            new RangeArray<ScreenNail>(-SCREEN_NAIL_MAX, SCREEN_NAIL_MAX);
+
+    private final long mDataVersion[] = new long[2 * SCREEN_NAIL_MAX + 1];
+    private final int mFromIndex[] = new int[2 * SCREEN_NAIL_MAX + 1];
 
     private final GestureRecognizer mGestureRecognizer;
 
@@ -88,8 +107,7 @@ public class PhotoView extends GLView {
     private Model mModel;
     private StringTexture mLoadingText;
     private StringTexture mNoThumbnailText;
-    private int mTransitionMode = TRANS_NONE;
-    private final TileImageView mTileView;
+    private TileImageView mTileView;
     private EdgeView mEdgeView;
     private Texture mVideoPlayIcon;
 
@@ -100,11 +118,9 @@ public class PhotoView extends GLView {
 
     private int mLoadingState = LOADING_COMPLETE;
 
-    private int mImageRotation;
-
-    private Rect mOpenAnimationRect;
     private Point mImageCenter = new Point();
     private boolean mCancelExtraScalingPending;
+    private boolean mFilmMode = false;
 
     public PhotoView(GalleryActivity activity) {
         mTileView = new TileImageView(activity);
@@ -120,148 +136,78 @@ public class PhotoView extends GLView {
                 context.getString(R.string.no_thumbnail),
                 DEFAULT_TEXT_SIZE, Color.WHITE);
 
-        mHandler = new SynchronizedHandler(activity.getGLRoot()) {
-            @Override
-            public void handleMessage(Message message) {
-                switch (message.what) {
-                    case MSG_TRANSITION_COMPLETE: {
-                        onTransitionComplete();
-                        break;
-                    }
-                    case MSG_SHOW_LOADING: {
-                        if (mLoadingState == LOADING_INIT) {
-                            // We don't need the opening animation
-                            mOpenAnimationRect = null;
-
-                            mLoadingSpinner.startAnimation();
-                            mLoadingState = LOADING_TIMEOUT;
-                            invalidate();
-                        }
-                        break;
-                    }
-                    case MSG_CANCEL_EXTRA_SCALING: {
-                        mGestureRecognizer.cancelScale();
-                        mPositionController.setExtraScalingRange(false);
-                        mCancelExtraScalingPending = false;
-                        break;
-                    }
-                    default: throw new AssertionError(message.what);
-                }
-            }
-        };
+        mHandler = new MyHandler(activity.getGLRoot());
 
         mGestureRecognizer = new GestureRecognizer(
                 context, new MyGestureListener());
 
-        for (int i = 0, n = mScreenNails.length; i < n; ++i) {
-            mScreenNails[i] = new ScreenNailEntry();
-        }
-
-        mPositionController = new PositionController(this, context, mEdgeView);
+        mPositionController = new PositionController(context,
+                new PositionController.Listener() {
+                    public void invalidate() {
+                        PhotoView.this.invalidate();
+                    }
+                    public boolean isDown() {
+                        return mGestureRecognizer.isDown();
+                    }
+                    public void onPull(int offset, int direction) {
+                        mEdgeView.onPull(offset, direction);
+                    }
+                    public void onRelease() {
+                        mEdgeView.onRelease();
+                    }
+                    public void onAbsorb(int velocity, int direction) {
+                        mEdgeView.onAbsorb(velocity, direction);
+                    }
+                });
         mVideoPlayIcon = new ResourceTexture(context, R.drawable.ic_control_play);
+        Arrays.fill(mDataVersion, INVALID_DATA_VERSION);
+        for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
+            if (i == 0) {
+                mPictures.put(i, new FullPicture());
+            } else {
+                mPictures.put(i, new ScreenNailPicture(i));
+            }
+        }
     }
-
 
     public void setModel(Model model) {
-        if (mModel == model) return;
         mModel = model;
-        mTileView.setModel(model);
-        if (model != null) notifyOnNewImage();
+        mTileView.setModel(mModel);
     }
 
-    public void setPhotoTapListener(PhotoTapListener listener) {
-        mPhotoTapListener = listener;
-    }
-
-    private void setTileViewPosition(int centerX, int centerY, float scale) {
-        TileImageView t = mTileView;
-
-        // Calculate the move-out progress value.
-        RectF bounds = mPositionController.getImageBounds();
-        int left = Math.round(bounds.left);
-        int right = Math.round(bounds.right);
-        int width = getWidth();
-        float progress = calculateMoveOutProgress(left, right, width);
-        progress = Utils.clamp(progress, -1f, 1f);
-
-        // We only want to apply the fading animation if the scrolling movement
-        // is to the right.
-        if (progress < 0) {
-            if (right - left < width) {
-                // If the picture is narrower than the view, keep it at the center
-                // of the view.
-                centerX = mPositionController.getImageWidth() / 2;
-            } else {
-                // If the picture is wider than the view (it's zoomed-in), keep
-                // the left edge of the object align the the left edge of the view.
-                centerX = Math.round(width / 2f / scale);
-            }
-            scale *= getScrollScale(progress);
-            t.setAlpha(getScrollAlpha(progress));
+    class MyHandler extends SynchronizedHandler {
+        public MyHandler(GLRoot root) {
+            super(root);
         }
 
-        // set the position of the tile view
-        int inverseX = mPositionController.getImageWidth() - centerX;
-        int inverseY = mPositionController.getImageHeight() - centerY;
-        int rotation = mImageRotation;
-        switch (rotation) {
-            case 0: t.setPosition(centerX, centerY, scale, 0); break;
-            case 90: t.setPosition(centerY, inverseX, scale, 90); break;
-            case 180: t.setPosition(inverseX, inverseY, scale, 180); break;
-            case 270: t.setPosition(inverseY, centerX, scale, 270); break;
-            default: throw new IllegalArgumentException(String.valueOf(rotation));
-        }
-    }
+        @Override
+        public void handleMessage(Message message) {
+            switch (message.what) {
+                case MSG_SHOW_LOADING: {
+                    if (mLoadingState == LOADING_INIT) {
+                        // We don't need the opening animation
+                        mPositionController.setOpenAnimationRect(null);
 
-    public void setPosition(int centerX, int centerY, float scale) {
-        setTileViewPosition(centerX, centerY, scale);
-        layoutScreenNails();
-    }
-
-    private void updateScreenNailEntry(int which, ScreenNail screenNail) {
-        if (mTransitionMode == TRANS_SWITCH_NEXT
-                || mTransitionMode == TRANS_SWITCH_PREVIOUS) {
-            // ignore screen nail updating during switching
-            return;
-        }
-        ScreenNailEntry entry = mScreenNails[which];
-        entry.updateScreenNail(screenNail);
-    }
-
-    // -1 previous, 0 current, 1 next
-    public void notifyImageInvalidated(int which) {
-        switch (which) {
-            case -1: {
-                updateScreenNailEntry(
-                        ENTRY_PREVIOUS, mModel.getPrevScreenNail());
-                layoutScreenNails();
-                invalidate();
-                break;
-            }
-            case 1: {
-                updateScreenNailEntry(ENTRY_NEXT, mModel.getNextScreenNail());
-                layoutScreenNails();
-                invalidate();
-                break;
-            }
-            case 0: {
-                // mImageWidth and mImageHeight will get updated
-                mTileView.notifyModelInvalidated();
-                mTileView.setAlpha(1.0f);
-
-                mImageRotation = mModel.getImageRotation();
-                if (((mImageRotation / 90) & 1) == 0) {
-                    mPositionController.setImageSize(
-                            mTileView.mImageWidth, mTileView.mImageHeight);
-                } else {
-                    mPositionController.setImageSize(
-                            mTileView.mImageHeight, mTileView.mImageWidth);
+                        mLoadingSpinner.startAnimation();
+                        mLoadingState = LOADING_TIMEOUT;
+                        invalidate();
+                    }
+                    break;
                 }
-                updateLoadingState();
-                break;
+                case MSG_CANCEL_EXTRA_SCALING: {
+                    mGestureRecognizer.cancelScale();
+                    mPositionController.setExtraScalingRange(false);
+                    mCancelExtraScalingPending = false;
+                    break;
+                }
+                case MSG_SWITCH_FOCUS: {
+                    switchFocus();
+                    break;
+                }
+                default: throw new AssertionError(message.what);
             }
         }
-    }
+    };
 
     private void updateLoadingState() {
         // Possible transitions of mLoadingState:
@@ -276,7 +222,7 @@ public class PhotoView extends GLView {
             mHandler.removeMessages(MSG_SHOW_LOADING);
             mLoadingState = LOADING_FAIL;
             // We don't want the opening animation after loading failure
-            mOpenAnimationRect = null;
+            mPositionController.setOpenAnimationRect(null);
         } else if (mLoadingState != LOADING_INIT) {
             mLoadingState = LOADING_INIT;
             mHandler.removeMessages(MSG_SHOW_LOADING);
@@ -285,26 +231,347 @@ public class PhotoView extends GLView {
         }
     }
 
-    public void notifyModelInvalidated() {
-        if (mModel == null) {
-            updateScreenNailEntry(ENTRY_PREVIOUS, null);
-            updateScreenNailEntry(ENTRY_NEXT, null);
-        } else {
-            updateScreenNailEntry(ENTRY_PREVIOUS, mModel.getPrevScreenNail());
-            updateScreenNailEntry(ENTRY_NEXT, mModel.getNextScreenNail());
-        }
-        layoutScreenNails();
+    ////////////////////////////////////////////////////////////////////////////
+    //  Data/Image change notifications
+    ////////////////////////////////////////////////////////////////////////////
 
-        if (mModel == null) {
+    public void notifyDataChange(long[] versions) {
+        // Check if the data version actually changed.
+        boolean changed = false;
+        int N = 2 * SCREEN_NAIL_MAX + 1;
+        for (int i = 0; i < N; i++) {
+            if (versions[i] != mDataVersion[i]) {
+                changed = true;
+                break;
+            }
+        }
+        if (!changed) return;
+
+        // Remembers those ScreenNail which are reused.
+        for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
+            mReused.put(i, false);
+        }
+
+        // Create the mFromIndex array, which records the index where the picture
+        // come from. The value Integer.MAX_VALUE means it's a new picture.
+        for (int i = 0; i < N; i++) {
+            long v = versions[i];
+            if (v == INVALID_DATA_VERSION) {
+                mFromIndex[i] = Integer.MAX_VALUE;
+                continue;
+            }
+
+            // Try to find the same version number in the old array
+            int j;
+            for (j = 0; j < N; j++) {
+                if (mDataVersion[j] == v) {
+                    mReused.put(j - SCREEN_NAIL_MAX, true);
+                    break;
+                }
+            }
+            mFromIndex[i] = (j < N) ? j - SCREEN_NAIL_MAX : Integer.MAX_VALUE;
+        }
+
+        // Copy the new data version
+        for (int i = 0; i < N; i++) {
+            mDataVersion[i] = versions[i];
+        }
+
+        // Move the boxes
+        mPositionController.moveBox(mFromIndex);
+
+        // Free those ScreenNails that are not reused.
+        for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
+            if (!mReused.get(i)) mPictures.get(i).updateScreenNail(null);
+        }
+
+        // Collect the reused ScreenNails, so we don't need to re-upload the
+        // textures.
+        for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
+            mTempScreenNail.put(i, mPictures.get(i).releaseScreenNail());
+        }
+
+        // Put back the reused ScreenNails.
+        for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
+            int j = mFromIndex[i + SCREEN_NAIL_MAX];
+            if (j != Integer.MAX_VALUE) {
+                ScreenNail s = mTempScreenNail.get(j);
+                mTempScreenNail.put(j, null);
+                mPictures.get(i).updateScreenNail(s);
+            }
+            mPictures.get(i).reload();
+        }
+
+        invalidate();
+    }
+
+    public void notifyImageChange(int index) {
+        mPictures.get(index).reload();
+        invalidate();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //  Pictures
+    ////////////////////////////////////////////////////////////////////////////
+
+    private interface Picture {
+        void reload();
+        void draw(GLCanvas canvas, Rect r);
+
+        void updateScreenNail(ScreenNail s);
+        // Release the ownership of the ScreenNail from this entry.
+        ScreenNail releaseScreenNail();
+
+        boolean isEnabled();
+    };
+
+    class FullPicture implements Picture {
+        private int mRotation;
+
+        // This is a temporary hack to switch mode when entering/leaving camera.
+        private volatile boolean mIsNonBitmap;
+
+        public void FullPicture(TileImageView tileView) {
+            mTileView = tileView;
+        }
+
+        @Override
+        public void reload() {
+            // mImageWidth and mImageHeight will get updated
             mTileView.notifyModelInvalidated();
-            mTileView.setAlpha(1.0f);
-            mImageRotation = 0;
-            mPositionController.setImageSize(0, 0);
+            if (CARD_EFFECT) mTileView.setAlpha(1.0f);
+
+            if (mModel == null) {
+                mRotation = 0;
+                mPositionController.setImageSize(0, 0, 0);
+            } else {
+                mRotation = mModel.getImageRotation();
+                int w = mTileView.mImageWidth;
+                int h = mTileView.mImageHeight;
+                mPositionController.setImageSize(0,
+                        getRotated(mRotation, w, h),
+                        getRotated(mRotation, h, w));
+            }
+            updateScreenNail(mModel == null
+                    ? null : mModel.getScreenNail(0));
             updateLoadingState();
-        } else {
-            notifyImageInvalidated(0);
+        }
+
+        @Override
+        public void draw(GLCanvas canvas, Rect r) {
+            if (mLoadingState == LOADING_COMPLETE) {
+                setTileViewPosition(r);
+                PhotoView.super.render(canvas);
+            }
+            renderMessage(canvas, r.centerX(), r.centerY());
+
+            boolean isCenter = r.centerX() == getWidth() / 2;
+            if (mIsNonBitmap && !isCenter && !mFilmMode) {
+                setFilmMode(true);
+            } else if (mIsNonBitmap && isCenter && mFilmMode) {
+                setFilmMode(false);
+            }
+        }
+
+        @Override
+        public void updateScreenNail(ScreenNail s) {
+            mIsNonBitmap = (s != null && !(s instanceof BitmapScreenNail));
+            mTileView.updateScreenNail(s);
+        }
+
+        @Override
+        public ScreenNail releaseScreenNail() {
+            return mTileView.releaseScreenNail();
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return true;
+        }
+
+        private void setTileViewPosition(Rect r) {
+            TileImageView t = mTileView;
+
+            // Find out the bitmap coordinates of the center of the view
+            int imageW = mPositionController.getImageWidth();
+            int imageH = mPositionController.getImageHeight();
+            float scale = mPositionController.getImageScale();
+            int viewW = getWidth();
+            int viewH = getHeight();
+            int centerX = (int) (imageW / 2f +
+                    (viewW / 2f - r.exactCenterX()) / scale + 0.5f);
+            int centerY = (int) (imageH / 2f +
+                    (viewH / 2f - r.exactCenterY()) / scale + 0.5f);
+
+            if (CARD_EFFECT && !mFilmMode) {
+                // Calculate the move-out progress value.
+                int left = r.left;
+                int right = r.right;
+                float progress = calculateMoveOutProgress(left, right, viewW);
+                progress = Utils.clamp(progress, -1f, 1f);
+
+                // We only want to apply the fading animation if the scrolling
+                // movement is to the right.
+                if (progress < 0) {
+                    if (right - left < viewW) {
+                        // If the picture is narrower than the view, keep it at
+                        // the center of the view.
+                        centerX = imageW / 2;
+                    } else {
+                        // If the picture is wider than the view (it's
+                        // zoomed-in), keep the left edge of the object align
+                        // the the left edge of the view.
+                        centerX = Math.round(viewW / 2f / scale);
+                    }
+                    scale *= getScrollScale(progress);
+                    t.setAlpha(getScrollAlpha(progress));
+                }
+            }
+
+            // set the position of the tile view
+            int inverseX = imageW - centerX;
+            int inverseY = imageH - centerY;
+            int rotation = mRotation;
+            switch (rotation) {
+                case 0: t.setPosition(centerX, centerY, scale, 0); break;
+                case 90: t.setPosition(centerY, inverseX, scale, 90); break;
+                case 180: t.setPosition(inverseX, inverseY, scale, 180); break;
+                case 270: t.setPosition(inverseY, centerX, scale, 270); break;
+                default:
+                    throw new IllegalArgumentException(String.valueOf(rotation));
+            }
+        }
+
+        private void renderMessage(GLCanvas canvas, int x, int y) {
+            // Draw the progress spinner and the text below it
+            //
+            // (x, y) is where we put the center of the spinner.
+            // s is the size of the video play icon, and we use s to layout text
+            // because we want to keep the text at the same place when the video
+            // play icon is shown instead of the spinner.
+            int w = getWidth();
+            int h = getHeight();
+            int s = Math.min(getWidth(), getHeight()) / 6;
+
+            if (mLoadingState == LOADING_TIMEOUT) {
+                StringTexture m = mLoadingText;
+                ProgressSpinner p = mLoadingSpinner;
+                p.draw(canvas, x - p.getWidth() / 2, y - p.getHeight() / 2);
+                m.draw(canvas, x - m.getWidth() / 2, y + s / 2 + 5);
+                invalidate(); // we need to keep the spinner rotating
+            } else if (mLoadingState == LOADING_FAIL) {
+                StringTexture m = mNoThumbnailText;
+                m.draw(canvas, x - m.getWidth() / 2, y + s / 2 + 5);
+            }
+
+            // Draw a debug indicator showing which picture has focus (index ==
+            // 0).
+            // canvas.fillRect(x - 10, y - 10, 20, 20, 0x80FF00FF);
+
+            // Draw the video play icon (in the place where the spinner was)
+            if (mShowVideoPlayIcon
+                    && mLoadingState != LOADING_INIT
+                    && mLoadingState != LOADING_TIMEOUT) {
+                mVideoPlayIcon.draw(canvas, x - s / 2, y - s / 2, s, s);
+            }
         }
     }
+
+    private class ScreenNailPicture implements Picture {
+        private int mIndex;
+        private boolean mEnabled;
+        private int mRotation;
+        private ScreenNail mScreenNail;
+
+        public ScreenNailPicture(int index) {
+            mIndex = index;
+        }
+
+        @Override
+        public void reload() {
+            updateScreenNail(mModel == null ? null
+                    : mModel.getScreenNail(mIndex));
+        }
+
+        @Override
+        public void draw(GLCanvas canvas, Rect r) {
+            if (mScreenNail == null) {
+                return;
+            }
+            if (r.left >= getWidth() || r.right <= 0 ||
+                    r.top >= getHeight() || r.bottom <= 0) {
+                mScreenNail.noDraw();
+                return;
+            }
+
+            boolean applyFadingAnimation =
+                CARD_EFFECT && mIndex > 0 && !mFilmMode;
+
+            int w = getWidth();
+            int drawW = getRotated(mRotation, r.width(), r.height());
+            int drawH = getRotated(mRotation, r.height(), r.width());
+            int cx = applyFadingAnimation ? w / 2 : r.centerX();
+            int cy = r.centerY();
+            int flags = GLCanvas.SAVE_FLAG_MATRIX;
+
+            if (applyFadingAnimation) flags |= GLCanvas.SAVE_FLAG_ALPHA;
+            canvas.save(flags);
+            canvas.translate(cx, cy);
+            if (applyFadingAnimation) {
+                float progress = (float) (w / 2 - r.centerX()) / w;
+                progress = Utils.clamp(progress, -1, 1);
+                float alpha = getScrollAlpha(progress);
+                float scale = getScrollScale(progress);
+                canvas.multiplyAlpha(alpha);
+                canvas.scale(scale, scale, 1);
+            }
+            if (mRotation != 0) {
+                canvas.rotate(mRotation, 0, 0, 1);
+            }
+            mScreenNail.draw(canvas, -drawW / 2, -drawH / 2, drawW, drawH);
+            canvas.restore();
+        }
+
+        @Override
+        public void updateScreenNail(ScreenNail s) {
+            mEnabled = (s != null);
+            if (mScreenNail == s) return;
+            if (mScreenNail != null) {
+                mScreenNail.pauseDraw();
+            }
+            mScreenNail = s;
+            if (mScreenNail != null) {
+                mRotation = mScreenNail.getRotation();
+            }
+            if (mScreenNail != null) {
+                int w = s.getWidth();
+                int h = s.getHeight();
+                mPositionController.setImageSize(mIndex,
+                        getRotated(mRotation, w, h),
+                        getRotated(mRotation, h, w));
+            }
+        }
+
+        @Override
+        public ScreenNail releaseScreenNail() {
+            ScreenNail s = mScreenNail;
+            mScreenNail = null;
+            return s;
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return mEnabled;
+        }
+    }
+
+    private static int getRotated(int degree, int original, int theother) {
+        return (degree % 180 == 0) ? original : theother;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //  Gestures Handling
+    ////////////////////////////////////////////////////////////////////////////
 
     @Override
     protected boolean onTouch(MotionEvent event) {
@@ -312,215 +579,19 @@ public class PhotoView extends GLView {
         return true;
     }
 
-    @Override
-    protected void onLayout(
-            boolean changeSize, int left, int top, int right, int bottom) {
-        mTileView.layout(left, top, right, bottom);
-        mEdgeView.layout(left, top, right, bottom);
-        if (changeSize) {
-            mPositionController.setViewSize(getWidth(), getHeight());
-            for (ScreenNailEntry entry : mScreenNails) {
-                entry.updateDrawingSize();
-            }
-        }
-    }
-
-    private static int gapToSide(int imageWidth, int viewWidth) {
-        return Math.max(0, (viewWidth - imageWidth) / 2);
-    }
-
-    /*
-     * Here is how we layout the screen nails
-     *
-     *  previous            current           next
-     *  ___________       ________________     __________
-     * |  _______  |     |   __________   |   |  ______  |
-     * | |       | |     |  |   right->|  |   | |      | |
-     * | |       |<-------->|<--left   |  |   | |      | |
-     * | |_______| |  |  |  |__________|  |   | |______| |
-     * |___________|  |  |________________|   |__________|
-     *                |  <--> gapToSide()
-     *                |
-     * IMAGE_GAP + Max(previous.gapToSide(), current.gapToSide)
-     */
-    private void layoutScreenNails() {
-        int width = getWidth();
-        int height = getHeight();
-
-        // Use the image width in AC, since we may fake the size if the
-        // image is unavailable
-        RectF bounds = mPositionController.getImageBounds();
-        int left = Math.round(bounds.left);
-        int right = Math.round(bounds.right);
-        int gap = gapToSide(right - left, width);
-
-        // layout the previous image
-        ScreenNailEntry entry = mScreenNails[ENTRY_PREVIOUS];
-
-        if (entry.isEnabled()) {
-            entry.layoutRightEdgeAt(left - (
-                    IMAGE_GAP + Math.max(gap, entry.gapToSide())));
-        }
-
-        // layout the next image
-        entry = mScreenNails[ENTRY_NEXT];
-        if (entry.isEnabled()) {
-            entry.layoutLeftEdgeAt(right + (
-                    IMAGE_GAP + Math.max(gap, entry.gapToSide())));
-        }
-    }
-
-    @Override
-    protected void render(GLCanvas canvas) {
-        boolean drawScreenNail = (mTransitionMode != TRANS_SLIDE_IN_LEFT
-                && mTransitionMode != TRANS_SLIDE_IN_RIGHT
-                && mTransitionMode != TRANS_OPEN_ANIMATION);
-
-        // Draw the next photo
-        if (drawScreenNail) {
-            ScreenNailEntry nextNail = mScreenNails[ENTRY_NEXT];
-            nextNail.draw(canvas, true);
-        }
-
-        // Draw the current photo
-        if (mLoadingState == LOADING_COMPLETE) {
-            super.render(canvas);
-        }
-
-        // If the photo is loaded, draw the message/icon at the center of it,
-        // otherwise draw the message/icon at the center of the view.
-        if (mLoadingState == LOADING_COMPLETE) {
-            mTileView.getImageCenter(mImageCenter);
-            renderMessage(canvas, mImageCenter.x, mImageCenter.y);
-        } else {
-            renderMessage(canvas, getWidth() / 2, getHeight() / 2);
-        }
-
-        // Draw the previous photo
-        if (drawScreenNail) {
-            ScreenNailEntry prevNail = mScreenNails[ENTRY_PREVIOUS];
-            prevNail.draw(canvas, false);
-        }
-    }
-
-    private void renderMessage(GLCanvas canvas, int x, int y) {
-        // Draw the progress spinner and the text below it
-        //
-        // (x, y) is where we put the center of the spinner.
-        // s is the size of the video play icon, and we use s to layout text
-        // because we want to keep the text at the same place when the video
-        // play icon is shown instead of the spinner.
-        int w = getWidth();
-        int h = getHeight();
-        int s = Math.min(getWidth(), getHeight()) / 6;
-
-        if (mLoadingState == LOADING_TIMEOUT) {
-            StringTexture m = mLoadingText;
-            ProgressSpinner r = mLoadingSpinner;
-            r.draw(canvas, x - r.getWidth() / 2, y - r.getHeight() / 2);
-            m.draw(canvas, x - m.getWidth() / 2, y + s / 2 + 5);
-            invalidate(); // we need to keep the spinner rotating
-        } else if (mLoadingState == LOADING_FAIL) {
-            StringTexture m = mNoThumbnailText;
-            m.draw(canvas, x - m.getWidth() / 2, y + s / 2 + 5);
-        }
-
-        // Draw the video play icon (in the place where the spinner was)
-        if (mShowVideoPlayIcon
-                && mLoadingState != LOADING_INIT
-                && mLoadingState != LOADING_TIMEOUT) {
-            mVideoPlayIcon.draw(canvas, x - s / 2, y - s / 2, s, s);
-        }
-
-        mPositionController.advanceAnimation();
-    }
-
-    private void stopCurrentSwipingIfNeeded() {
-        // Enable fast swiping
-        if (mTransitionMode == TRANS_SWITCH_NEXT) {
-            mTransitionMode = TRANS_NONE;
-            mPositionController.stopAnimation();
-            switchToNextImage();
-        } else if (mTransitionMode == TRANS_SWITCH_PREVIOUS) {
-            mTransitionMode = TRANS_NONE;
-            mPositionController.stopAnimation();
-            switchToPreviousImage();
-        }
-    }
-
-    private boolean swipeImages(float velocityX, float velocityY) {
-        if (mTransitionMode != TRANS_NONE
-                && mTransitionMode != TRANS_SWITCH_NEXT
-                && mTransitionMode != TRANS_SWITCH_PREVIOUS) return false;
-
-        // Avoid swiping images if we're possibly flinging to view the
-        // zoomed in picture vertically.
-        PositionController controller = mPositionController;
-        boolean isMinimal = controller.isAtMinimalScale();
-        int edges = controller.getImageAtEdges();
-        if (!isMinimal && Math.abs(velocityY) > Math.abs(velocityX))
-            if ((edges & PositionController.IMAGE_AT_TOP_EDGE) == 0
-                    || (edges & PositionController.IMAGE_AT_BOTTOM_EDGE) == 0)
-                return false;
-
-        // If we are at the edge of the current photo and the sweeping velocity
-        // exceeds the threshold, switch to next / previous image.
-        int halfWidth = getWidth() / 2;
-        if (velocityX < -SWIPE_THRESHOLD && (isMinimal
-                || (edges & PositionController.IMAGE_AT_RIGHT_EDGE) != 0)) {
-            stopCurrentSwipingIfNeeded();
-            ScreenNailEntry next = mScreenNails[ENTRY_NEXT];
-            if (next.isEnabled()) {
-                mTransitionMode = TRANS_SWITCH_NEXT;
-                controller.startHorizontalSlide(next.mOffsetX - halfWidth);
-                return true;
-            }
-        } else if (velocityX > SWIPE_THRESHOLD && (isMinimal
-                || (edges & PositionController.IMAGE_AT_LEFT_EDGE) != 0)) {
-            stopCurrentSwipingIfNeeded();
-            ScreenNailEntry prev = mScreenNails[ENTRY_PREVIOUS];
-            if (prev.isEnabled()) {
-                mTransitionMode = TRANS_SWITCH_PREVIOUS;
-                controller.startHorizontalSlide(prev.mOffsetX - halfWidth);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean snapToNeighborImage() {
-        if (mTransitionMode != TRANS_NONE) return false;
-
-        PositionController controller = mPositionController;
-        RectF bounds = controller.getImageBounds();
-        int left = Math.round(bounds.left);
-        int right = Math.round(bounds.right);
-        int width = getWidth();
-        int threshold = SWITCH_THRESHOLD + gapToSide(right - left, width);
-
-        // If we have moved the picture a lot, switching.
-        ScreenNailEntry next = mScreenNails[ENTRY_NEXT];
-        if (next.isEnabled() && threshold < width - right) {
-            mTransitionMode = TRANS_SWITCH_NEXT;
-            controller.startHorizontalSlide(next.mOffsetX - width / 2);
-            return true;
-        }
-        ScreenNailEntry prev = mScreenNails[ENTRY_PREVIOUS];
-        if (prev.isEnabled() && threshold < left) {
-            mTransitionMode = TRANS_SWITCH_PREVIOUS;
-            controller.startHorizontalSlide(prev.mOffsetX - width / 2);
-            return true;
-        }
-
-        return false;
-    }
-
     private class MyGestureListener implements GestureRecognizer.Listener {
         private boolean mIgnoreUpEvent = false;
 
+        // If we have changed the mode in this scaling gesture.
+        private boolean mModeChanged;
+
         @Override
         public boolean onSingleTapUp(float x, float y) {
+            if (mFilmMode) {
+                setFilmMode(false);
+                return true;
+            }
+
             if (mPhotoTapListener != null) {
                 mPhotoTapListener.onSingleTapUp((int) x, (int) y);
             }
@@ -529,9 +600,8 @@ public class PhotoView extends GLView {
 
         @Override
         public boolean onDoubleTap(float x, float y) {
-            if (mTransitionMode != TRANS_NONE) return true;
             PositionController controller = mPositionController;
-            float scale = controller.getCurrentScale();
+            float scale = controller.getImageScale();
             // onDoubleTap happened on the second ACTION_DOWN.
             // We need to ignore the next UP event.
             mIgnoreUpEvent = true;
@@ -545,13 +615,7 @@ public class PhotoView extends GLView {
 
         @Override
         public boolean onScroll(float dx, float dy) {
-            if (mTransitionMode != TRANS_NONE) return true;
-
-            ScreenNailEntry next = mScreenNails[ENTRY_NEXT];
-            ScreenNailEntry prev = mScreenNails[ENTRY_PREVIOUS];
-
-            mPositionController.startScroll(dx, dy, next.isEnabled(),
-                    prev.isEnabled());
+            mPositionController.startScroll(-dx, -dy);
             return true;
         }
 
@@ -559,8 +623,6 @@ public class PhotoView extends GLView {
         public boolean onFling(float velocityX, float velocityY) {
             if (swipeImages(velocityX, velocityY)) {
                 mIgnoreUpEvent = true;
-            } else if (mTransitionMode != TRANS_NONE) {
-                // do nothing
             } else if (mPositionController.fling(velocityX, velocityY)) {
                 mIgnoreUpEvent = true;
             }
@@ -569,38 +631,54 @@ public class PhotoView extends GLView {
 
         @Override
         public boolean onScaleBegin(float focusX, float focusY) {
-            if (mTransitionMode != TRANS_NONE) return false;
             mPositionController.beginScale(focusX, focusY);
+            mModeChanged = false;
             return true;
         }
 
         @Override
         public boolean onScale(float focusX, float focusY, float scale) {
-            if (Float.isNaN(scale) || Float.isInfinite(scale)
-                    || mTransitionMode != TRANS_NONE) return true;
-            boolean outOfRange = mPositionController.scaleBy(
-                    scale, focusX, focusY);
-            if (outOfRange) {
-                if (!mCancelExtraScalingPending) {
-                    mHandler.sendEmptyMessageDelayed(
-                            MSG_CANCEL_EXTRA_SCALING, 700);
-                    mPositionController.setExtraScalingRange(true);
-                    mCancelExtraScalingPending = true;
+            if (Float.isNaN(scale) || Float.isInfinite(scale)) return false;
+            int outOfRange = mPositionController.scaleBy(scale, focusX, focusY);
+
+            // We allow only one mode change in a scaling gesture.
+            if (!mModeChanged) {
+                if ((outOfRange < 0 && !mFilmMode) ||
+                        (outOfRange > 0 && mFilmMode)) {
+                    setFilmMode(!mFilmMode);
+                    mModeChanged = true;
+                    return true;
                 }
+           }
+
+            if (outOfRange != 0 && !mModeChanged) {
+                startExtraScalingIfNeeded();
             } else {
-                if (mCancelExtraScalingPending) {
-                    mHandler.removeMessages(MSG_CANCEL_EXTRA_SCALING);
-                    mPositionController.setExtraScalingRange(false);
-                    mCancelExtraScalingPending = false;
-                }
+                stopExtraScalingIfNeeded();
             }
             return true;
+        }
+
+        private void startExtraScalingIfNeeded() {
+            if (!mCancelExtraScalingPending) {
+                mHandler.sendEmptyMessageDelayed(
+                        MSG_CANCEL_EXTRA_SCALING, 700);
+                mPositionController.setExtraScalingRange(true);
+                mCancelExtraScalingPending = true;
+            }
+        }
+
+        private void stopExtraScalingIfNeeded() {
+            if (mCancelExtraScalingPending) {
+                mHandler.removeMessages(MSG_CANCEL_EXTRA_SCALING);
+                mPositionController.setExtraScalingRange(false);
+                mCancelExtraScalingPending = false;
+            }
         }
 
         @Override
         public void onScaleEnd() {
             mPositionController.endScale();
-            snapToNeighborImage();
         }
 
         @Override
@@ -615,182 +693,223 @@ public class PhotoView extends GLView {
                 mIgnoreUpEvent = false;
                 return;
             }
-            if (!snapToNeighborImage() && mTransitionMode == TRANS_NONE) {
+
+            if (!snapToNeighborImage()) {
                 mPositionController.up();
             }
         }
     }
 
-    public void notifyOnNewImage() {
-        mPositionController.setImageSize(0, 0);
+    private void setFilmMode(boolean enabled) {
+        if (mFilmMode == enabled) return;
+        mFilmMode = enabled;
+        mPositionController.setFilmMode(mFilmMode);
     }
 
-    public void startSlideInAnimation(int direction) {
-        PositionController a = mPositionController;
-        a.stopAnimation();
-        switch (direction) {
-            case TRANS_SLIDE_IN_LEFT:
-            case TRANS_SLIDE_IN_RIGHT: {
-                mTransitionMode = direction;
-                a.startSlideInAnimation(direction);
-                break;
-            }
-            default: throw new IllegalArgumentException(String.valueOf(direction));
+    ////////////////////////////////////////////////////////////////////////////
+    //  Framework events
+    ////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    protected void onLayout(
+            boolean changeSize, int left, int top, int right, int bottom) {
+        mTileView.layout(left, top, right, bottom);
+        mEdgeView.layout(left, top, right, bottom);
+        if (changeSize) {
+            mPositionController.setViewSize(getWidth(), getHeight());
         }
     }
 
+    public void pause() {
+        mPositionController.skipAnimation();
+        mTileView.freeTextures();
+        for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
+            mPictures.get(i).updateScreenNail(null);
+        }
+    }
+
+    public void resume() {
+        mTileView.prepareTextures();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //  Rendering
+    ////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    protected void render(GLCanvas canvas) {
+        // Draw next photos
+        for (int i = 1; i <= SCREEN_NAIL_MAX; i++) {
+            Rect r = mPositionController.getPosition(i);
+            mPictures.get(i).draw(canvas, r);
+            // In page mode, we draw only one next photo.
+            if (!mFilmMode) break;
+        }
+
+        // Draw current photo
+        mPictures.get(0).draw(canvas, mPositionController.getPosition(0));
+
+        // Draw previous photos
+        for (int i = -1; i >= -SCREEN_NAIL_MAX; i--) {
+            Rect r = mPositionController.getPosition(i);
+            mPictures.get(i).draw(canvas, r);
+            // In page mode, we draw only one previous photo.
+            if (!mFilmMode) break;
+        }
+
+        mPositionController.advanceAnimation();
+        checkFocusSwitching();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //  Film mode focus switching
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Runs in GL thread.
+    private void checkFocusSwitching() {
+        if (!mFilmMode) return;
+        if (mHandler.hasMessages(MSG_SWITCH_FOCUS)) return;
+        if (switchPosition() != 0) {
+            mHandler.sendEmptyMessage(MSG_SWITCH_FOCUS);
+        }
+    }
+
+    // Runs in main thread.
+    private void switchFocus() {
+        if (mGestureRecognizer.isDown()) return;
+        switch (switchPosition()) {
+            case -1:
+                switchToPrevImage();
+                break;
+            case 1:
+                switchToNextImage();
+                break;
+        }
+    }
+
+    // Returns -1 if we should switch focus to the previous picture, +1 if we
+    // should switch to the next, 0 otherwise.
+    private int switchPosition() {
+        Rect curr = mPositionController.getPosition(0);
+        int center = getWidth() / 2;
+
+        if (curr.left > center && mPictures.get(-1).isEnabled()) {
+            Rect prev = mPositionController.getPosition(-1);
+            int currDist = curr.left - center;
+            int prevDist = center - prev.right;
+            if (prevDist < currDist) {
+                return -1;
+            }
+        } else if (curr.right < center && mPictures.get(1).isEnabled()) {
+            Rect next = mPositionController.getPosition(1);
+            int currDist = center - curr.right;
+            int nextDist = next.left - center;
+            if (nextDist < currDist) {
+                return 1;
+            }
+        }
+
+        return 0;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //  Page mode focus switching
+    //
+    //  We slide image to the next one or the previous one in two cases: 1: If
+    //  the user did a fling gesture with enough velocity.  2 If the user has
+    //  moved the picture a lot.
+    ////////////////////////////////////////////////////////////////////////////
+
+    private boolean swipeImages(float velocityX, float velocityY) {
+        if (mFilmMode) return false;
+
+        // Avoid swiping images if we're possibly flinging to view the
+        // zoomed in picture vertically.
+        PositionController controller = mPositionController;
+        boolean isMinimal = controller.isAtMinimalScale();
+        int edges = controller.getImageAtEdges();
+        if (!isMinimal && Math.abs(velocityY) > Math.abs(velocityX))
+            if ((edges & PositionController.IMAGE_AT_TOP_EDGE) == 0
+                    || (edges & PositionController.IMAGE_AT_BOTTOM_EDGE) == 0)
+                return false;
+
+        // If we are at the edge of the current photo and the sweeping velocity
+        // exceeds the threshold, slide to the next / previous image.
+        if (velocityX < -SWIPE_THRESHOLD && (isMinimal
+                || (edges & PositionController.IMAGE_AT_RIGHT_EDGE) != 0)) {
+            return slideToNextPicture();
+        } else if (velocityX > SWIPE_THRESHOLD && (isMinimal
+                || (edges & PositionController.IMAGE_AT_LEFT_EDGE) != 0)) {
+            return slideToPrevPicture();
+        }
+
+        return false;
+    }
+
+    private boolean snapToNeighborImage() {
+        if (mFilmMode) return false;
+
+        Rect r = mPositionController.getPosition(0);
+        int viewW = getWidth();
+        int threshold = MOVE_THRESHOLD + gapToSide(r.width(), viewW);
+
+        // If we have moved the picture a lot, switching.
+        if (viewW - r.right > threshold) {
+            return slideToNextPicture();
+        } else if (r.left > threshold) {
+            return slideToPrevPicture();
+        }
+
+        return false;
+    }
+
+    private boolean slideToNextPicture() {
+        Picture next = mPictures.get(1);
+        if (!next.isEnabled()) return false;
+        int currentX = mPositionController.getPosition(1).centerX();
+        int targetX = getWidth() / 2;
+        mPositionController.startHorizontalSlide(targetX - currentX);
+        switchToNextImage();
+        return true;
+    }
+
+    private boolean slideToPrevPicture() {
+        Picture prev = mPictures.get(-1);
+        if (!prev.isEnabled()) return false;
+        int currentX = mPositionController.getPosition(-1).centerX();
+        int targetX = getWidth() / 2;
+        mPositionController.startHorizontalSlide(targetX - currentX);
+        switchToPrevImage();
+        return true;
+    }
+
+    private static int gapToSide(int imageWidth, int viewWidth) {
+        return Math.max(0, (viewWidth - imageWidth) / 2);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //  Focus switching
+    ////////////////////////////////////////////////////////////////////////////
+
     private void switchToNextImage() {
-        // We update the texture here directly to prevent texture uploading.
-        ScreenNailEntry prevNail = mScreenNails[ENTRY_PREVIOUS];
-        ScreenNailEntry nextNail = mScreenNails[ENTRY_NEXT];
-        mTileView.invalidateTiles();
-        prevNail.updateScreenNail(mTileView.releaseScreenNail());
-        mTileView.updateScreenNail(nextNail.releaseScreenNail());
         mModel.next();
     }
 
-    private void switchToPreviousImage() {
-        // We update the texture here directly to prevent texture uploading.
-        ScreenNailEntry prevNail = mScreenNails[ENTRY_PREVIOUS];
-        ScreenNailEntry nextNail = mScreenNails[ENTRY_NEXT];
-        mTileView.invalidateTiles();
-        nextNail.updateScreenNail(mTileView.releaseScreenNail());
-        mTileView.updateScreenNail(prevNail.releaseScreenNail());
+    private void switchToPrevImage() {
         mModel.previous();
     }
 
-    public void notifyTransitionComplete() {
-        mHandler.sendEmptyMessage(MSG_TRANSITION_COMPLETE);
+    ////////////////////////////////////////////////////////////////////////////
+    //  Opening Animation
+    ////////////////////////////////////////////////////////////////////////////
+
+    public void setOpenAnimationRect(Rect rect) {
+        mPositionController.setOpenAnimationRect(rect);
     }
 
-    private void onTransitionComplete() {
-        int mode = mTransitionMode;
-        mTransitionMode = TRANS_NONE;
-
-        if (mModel == null) return;
-        if (mode == TRANS_SWITCH_NEXT) {
-            switchToNextImage();
-        } else if (mode == TRANS_SWITCH_PREVIOUS) {
-            switchToPreviousImage();
-        }
-    }
-
-    public boolean isDown() {
-        return mGestureRecognizer.isDown();
-    }
-
-    public static interface Model extends TileImageView.Model {
-        public void next();
-        public void previous();
-        public int getImageRotation();
-
-        // Return null if the specified image is unavailable.
-        public ScreenNail getNextScreenNail();
-        public ScreenNail getPrevScreenNail();
-    }
-
-    private static int getRotated(int degree, int original, int theother) {
-        return ((degree / 90) & 1) == 0 ? original : theother;
-    }
-
-    private class ScreenNailEntry {
-        private boolean mVisible;
-        private boolean mEnabled;
-
-        private int mDrawWidth;
-        private int mDrawHeight;
-        private int mOffsetX;
-        private int mRotation;
-
-        private ScreenNail mScreenNail;
-
-        public void updateScreenNail(ScreenNail screenNail) {
-            mEnabled = (screenNail != null);
-            if (mScreenNail == screenNail) return;
-            if (mScreenNail != null) mScreenNail.pauseDraw();
-            mScreenNail = screenNail;
-            if (mScreenNail != null) {
-                mRotation = mScreenNail.getRotation();
-                updateDrawingSize();
-            }
-        }
-
-        // Release the ownership of the ScreenNail from this entry.
-        public ScreenNail releaseScreenNail() {
-            ScreenNail s = mScreenNail;
-            mScreenNail = null;
-            return s;
-        }
-
-        public void layoutRightEdgeAt(int x) {
-            mVisible = x > 0;
-            mOffsetX = x - getRotated(
-                    mRotation, mDrawWidth, mDrawHeight) / 2;
-        }
-
-        public void layoutLeftEdgeAt(int x) {
-            mVisible = x < getWidth();
-            mOffsetX = x + getRotated(
-                    mRotation, mDrawWidth, mDrawHeight) / 2;
-        }
-
-        public int gapToSide() {
-            return ((mRotation / 90) & 1) != 0
-                ? PhotoView.gapToSide(mDrawHeight, getWidth())
-                : PhotoView.gapToSide(mDrawWidth, getWidth());
-        }
-
-        public void updateDrawingSize() {
-            if (mScreenNail == null) return;
-
-            int width = mScreenNail.getWidth();
-            int height = mScreenNail.getHeight();
-
-            // Calculate the initial scale that will used by PositionController
-            // (usually fit-to-screen)
-            float s = ((mRotation / 90) & 0x01) == 0
-                    ? mPositionController.getMinimalScale(width, height)
-                    : mPositionController.getMinimalScale(height, width);
-
-            mDrawWidth = Math.round(width * s);
-            mDrawHeight = Math.round(height * s);
-        }
-
-        public boolean isEnabled() {
-            return mEnabled;
-        }
-
-        public void draw(GLCanvas canvas, boolean applyFadingAnimation) {
-            if (mScreenNail == null) return;
-            if (!mVisible) {
-                mScreenNail.noDraw();
-                return;
-            }
-
-            int w = getWidth();
-            int x = applyFadingAnimation ? w / 2 : mOffsetX;
-            int y = getHeight() / 2;
-            int flags = GLCanvas.SAVE_FLAG_MATRIX;
-
-            if (applyFadingAnimation) flags |= GLCanvas.SAVE_FLAG_ALPHA;
-            canvas.save(flags);
-            canvas.translate(x, y);
-            if (applyFadingAnimation) {
-                float progress = (float) (x - mOffsetX) / w;
-                float alpha = getScrollAlpha(progress);
-                float scale = getScrollScale(progress);
-                canvas.multiplyAlpha(alpha);
-                canvas.scale(scale, scale, 1);
-            }
-            if (mRotation != 0) {
-                canvas.rotate(mRotation, 0, 0, 1);
-            }
-            canvas.translate(-x, -y);
-            mScreenNail.draw(canvas, x - mDrawWidth / 2, y - mDrawHeight / 2,
-                    mDrawWidth, mDrawHeight);
-            canvas.restore();
-        }
-    }
+    ////////////////////////////////////////////////////////////////////////////
+    //  Card deck effect calculation
+    ////////////////////////////////////////////////////////////////////////////
 
     // Returns the scrolling progress value for an object moving out of a
     // view. The progress value measures how much the object has moving out of
@@ -868,39 +987,15 @@ public class PhotoView extends GLView {
         }
     }
 
-    public void pause() {
-        mPositionController.skipAnimation();
-        mTransitionMode = TRANS_NONE;
-        mTileView.freeTextures();
-        for (ScreenNailEntry entry : mScreenNails) {
-            entry.updateScreenNail(null);
-        }
-    }
+    ////////////////////////////////////////////////////////////////////////////
+    //  Simple public utilities
+    ////////////////////////////////////////////////////////////////////////////
 
-    public void resume() {
-        mTileView.prepareTextures();
-    }
-
-    public void setOpenAnimationRect(Rect rect) {
-        mOpenAnimationRect = rect;
+    public void setPhotoTapListener(PhotoTapListener listener) {
+        mPhotoTapListener = listener;
     }
 
     public void showVideoPlayIcon(boolean show) {
         mShowVideoPlayIcon = show;
-    }
-
-    // Returns the opening animation rectangle saved by the previous page.
-    public Rect retrieveOpenAnimationRect() {
-        Rect r = mOpenAnimationRect;
-        mOpenAnimationRect = null;
-        return r;
-    }
-
-    public void openAnimationStarted() {
-        mTransitionMode = TRANS_OPEN_ANIMATION;
-    }
-
-    public boolean isInTransition() {
-        return mTransitionMode != TRANS_NONE;
     }
 }
