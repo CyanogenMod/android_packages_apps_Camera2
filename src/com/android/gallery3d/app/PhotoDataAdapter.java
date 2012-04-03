@@ -58,12 +58,11 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
     private static final int MIN_LOAD_COUNT = 8;
     private static final int DATA_CACHE_SIZE = 32;
-    private static final int IMAGE_CACHE_SIZE = 5;
+    private static final int SCREEN_NAIL_MAX = PhotoView.SCREEN_NAIL_MAX;
+    private static final int IMAGE_CACHE_SIZE = 2 * SCREEN_NAIL_MAX + 1;
 
     private static final int BIT_SCREEN_NAIL = 1;
     private static final int BIT_FULL_IMAGE = 2;
-
-    private static final long VERSION_OUT_OF_RANGE = MediaObject.nextVersionNumber();
 
     // sImageFetchSeq is the fetching sequence for images.
     // We want to fetch the current screennail first (offset = 0), the next
@@ -129,9 +128,9 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     private int mCurrentIndex;
 
     // mChanges keeps the version number (of MediaItem) about the previous,
-    // current, and next image. If the version number changes, we invalidate
-    // the model. This is used after a database reload or mCurrentIndex changes.
-    private final long mChanges[] = new long[3];
+    // current, and next image. If the version number changes, we notify the
+    // view. This is used after a database reload or mCurrentIndex changes.
+    private final long mChanges[] = new long[IMAGE_CACHE_SIZE];
 
     private final Handler mMainHandler;
     private final ThreadPool mThreadPool;
@@ -193,7 +192,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     }
 
     private long getVersion(int index) {
-        if (index < 0 || index >= mSize) return VERSION_OUT_OF_RANGE;
+        if (index < 0 || index >= mSize) return MediaObject.INVALID_DATA_VERSION;
         if (index >= mContentStart && index < mContentEnd) {
             MediaItem item = mData[index % DATA_CACHE_SIZE];
             if (item != null) return item.getDataVersion();
@@ -201,15 +200,11 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         return MediaObject.INVALID_DATA_VERSION;
     }
 
-    private void fireModelInvalidated() {
-        for (int i = -1; i <= 1; ++i) {
-            long current = getVersion(mCurrentIndex + i);
-            long change = mChanges[i + 1];
-            if (current != change) {
-                mPhotoView.notifyImageInvalidated(i);
-                mChanges[i + 1] = current;
-            }
+    private void fireDataChange() {
+        for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
+            mChanges[i + SCREEN_NAIL_MAX] = getVersion(mCurrentIndex + i);
         }
+        mPhotoView.notifyDataChange(mChanges);
     }
 
     public void setDataListener(DataListener listener) {
@@ -235,10 +230,12 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         if (mDataListener != null) {
             mDataListener.onPhotoAvailable(version, false);
         }
-        for (int i = -1; i <= 1; ++i) {
+
+        for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
             if (version == getVersion(mCurrentIndex + i)) {
                 if (i == 0) updateTileProvider(entry);
-                mPhotoView.notifyImageInvalidated(i);
+                mPhotoView.notifyImageChange(i);
+                break;
             }
         }
         updateImageRequests();
@@ -260,7 +257,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
             }
             if (version == getVersion(mCurrentIndex)) {
                 updateTileProvider(entry);
-                mPhotoView.notifyImageInvalidated(0);
+                mPhotoView.notifyImageChange(0);
             }
         }
         updateImageRequests();
@@ -275,7 +272,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         mReloadTask = new ReloadTask();
         mReloadTask.start();
 
-        mPhotoView.notifyModelInvalidated();
+        fireDataChange();
     }
 
     public void pause() {
@@ -302,12 +299,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         return entry == null ? null : entry.screenNail;
     }
 
-    public ScreenNail getPrevScreenNail() {
-        return getImage(mCurrentIndex - 1);
-    }
-
-    public ScreenNail getNextScreenNail() {
-        return getImage(mCurrentIndex + 1);
+    public ScreenNail getScreenNail(int offset) {
+        return getImage(mCurrentIndex + offset);
     }
 
     private void updateCurrentIndex(int index) {
@@ -320,12 +313,12 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         updateImageCache();
         updateImageRequests();
         updateTileProvider();
-        mPhotoView.notifyOnNewImage();
 
         if (mDataListener != null) {
             mDataListener.onPhotoChanged(index, mItemPath);
         }
-        fireModelInvalidated();
+
+        fireDataChange();
     }
 
     public void next() {
@@ -384,7 +377,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         mCurrentIndex = indexHint;
         updateSlidingWindow();
         updateImageCache();
-        fireModelInvalidated();
+        fireDataChange();
 
         // We need to reload content if the path doesn't match.
         MediaItem item = getCurrentMediaItem();
@@ -735,7 +728,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
             updateImageCache();
             updateTileProvider();
             updateImageRequests();
-            fireModelInvalidated();
+            fireDataChange();
             return null;
         }
 
@@ -743,12 +736,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
             if (mSize == 0) return;
             if (mCurrentIndex >= mSize) {
                 mCurrentIndex = mSize - 1;
-                mPhotoView.notifyOnNewImage();
-                mPhotoView.startSlideInAnimation(PhotoView.TRANS_SLIDE_IN_LEFT);
-            } else {
-                mPhotoView.notifyOnNewImage();
-                mPhotoView.startSlideInAnimation(PhotoView.TRANS_SLIDE_IN_RIGHT);
             }
+            fireDataChange();
         }
     }
 

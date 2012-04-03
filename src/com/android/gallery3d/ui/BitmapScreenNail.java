@@ -63,6 +63,7 @@ public class BitmapScreenNail implements ScreenNail {
     public void pauseDraw() {
         if (mTexture != null) {
             mTexture.recycle();
+            mTexture = null;
         }
     }
 

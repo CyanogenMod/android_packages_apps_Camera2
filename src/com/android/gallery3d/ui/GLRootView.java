@@ -103,7 +103,6 @@ public class GLRootView extends GLSurfaceView
         setEGLConfigChooser(mEglConfigChooser);
         setRenderer(this);
         getHolder().setFormat(PixelFormat.RGB_565);
-        AnimationTime.update();
 
         // Uncomment this to enable gl error check.
         //setDebugFlags(DEBUG_CHECK_GL_ERROR);
@@ -338,6 +337,7 @@ public class GLRootView extends GLSurfaceView
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
+        AnimationTime.update();
         int action = event.getAction();
         if (action == MotionEvent.ACTION_CANCEL
                 || action == MotionEvent.ACTION_UP) {
