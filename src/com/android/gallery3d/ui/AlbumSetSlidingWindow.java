@@ -22,6 +22,7 @@ import android.os.Message;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.DataSourceType;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
@@ -29,7 +30,6 @@ import com.android.gallery3d.data.Path;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.GalleryUtils;
-import com.android.gallery3d.util.MediaSetUtils;
 import com.android.gallery3d.util.ThreadPool;
 
 public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
@@ -85,8 +85,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
     }
 
     public AlbumSetSlidingWindow(GalleryActivity activity,
-            AlbumSetView.LabelSpec labelSpec, SelectionDrawer drawer,
-            AlbumSetView.Model source, int cacheSize) {
+            AlbumSetView.Model source, AlbumSetView.LabelSpec labelSpec, int cacheSize) {
         source.setModelListener(this);
         mSource = source;
         mData = new AlbumSetEntry[cacheSize];
@@ -231,7 +230,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
             int slotIndex, MediaSet album, MediaItem cover) {
         entry.album = album;
         entry.setDataVersion = getDataVersion(album);
-        entry.sourceType = identifySourceType(album);
+        entry.sourceType = DataSourceType.identifySourceType(album);
         entry.cacheFlag = identifyCacheFlag(album);
         entry.cacheStatus = identifyCacheStatus(album);
         entry.setPath = (album == null) ? null : album.getPath();
@@ -348,7 +347,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
     public BitmapTexture getLoadingTexture() {
         if (mLoadingLabel == null) {
             Bitmap bitmap = mLabelMaker.requestLabel(mLoadingText, null,
-                    SelectionDrawer.DATASOURCE_TYPE_NOT_CATEGORIZED)
+                    DataSourceType.TYPE_NOT_CATEGORIZED)
                     .run(ThreadPool.JOB_CONTEXT_STUB);
             mLoadingLabel = new BitmapTexture(bitmap);
             mLoadingLabel.setOpaque(false);
@@ -419,30 +418,6 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
                 mTextureUploader.addBgTexture(texture);
             }
         }
-    }
-
-    private static int identifySourceType(MediaSet set) {
-        if (set == null) {
-            return SelectionDrawer.DATASOURCE_TYPE_NOT_CATEGORIZED;
-        }
-
-        Path path = set.getPath();
-        if (MediaSetUtils.isCameraSource(path)) {
-            return SelectionDrawer.DATASOURCE_TYPE_CAMERA;
-        }
-
-        int type = SelectionDrawer.DATASOURCE_TYPE_NOT_CATEGORIZED;
-        String prefix = path.getPrefix();
-
-        if (prefix.equals("picasa")) {
-            type = SelectionDrawer.DATASOURCE_TYPE_PICASA;
-        } else if (prefix.equals("local") || prefix.equals("merge")) {
-            type = SelectionDrawer.DATASOURCE_TYPE_LOCAL;
-        } else if (prefix.equals("mtp")) {
-            type = SelectionDrawer.DATASOURCE_TYPE_MTP;
-        }
-
-        return type;
     }
 
     private static int identifyCacheFlag(MediaSet set) {

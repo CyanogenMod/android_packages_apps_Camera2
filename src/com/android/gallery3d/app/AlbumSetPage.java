@@ -46,8 +46,6 @@ import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLView;
-import com.android.gallery3d.ui.GridDrawer;
-import com.android.gallery3d.ui.HighlightDrawer;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.util.Future;
@@ -84,8 +82,6 @@ public class AlbumSetPage extends ActivityState implements
 
     protected SelectionManager mSelectionManager;
     private AlbumSetDataAdapter mAlbumSetDataAdapter;
-    private GridDrawer mGridDrawer;
-    private HighlightDrawer mHighlightDrawer;
 
     private boolean mGetContent;
     private boolean mGetAlbum;
@@ -127,7 +123,7 @@ public class AlbumSetPage extends ActivityState implements
             if (mShowDetails) {
                 mDetailsHelper.layout(left, slotViewTop, right, bottom);
             } else {
-                mAlbumSetView.setSelectionDrawer(mGridDrawer);
+                mAlbumSetView.setHighlightItemPath(null);
             }
 
             mSlotView.layout(0, slotViewTop, slotViewRight, slotViewBottom);
@@ -180,8 +176,7 @@ public class AlbumSetPage extends ActivityState implements
         if (targetSet == null) return; // Content is dirty, we shall reload soon
 
         if (mShowDetails) {
-            Path path = targetSet.getPath();
-            mHighlightDrawer.setHighlightItem(path);
+            mAlbumSetView.setHighlightItemPath(targetSet.getPath());
             mDetailsHelper.reloadDetails(slotIndex);
         } else if (!mSelectionManager.inSelectionMode()) {
             Bundle data = new Bundle(getData());
@@ -218,15 +213,11 @@ public class AlbumSetPage extends ActivityState implements
     }
 
     private void onDown(int index) {
-        MediaSet set = mAlbumSetDataAdapter.getMediaSet(index);
-        Path path = (set == null) ? null : set.getPath();
-        mSelectionManager.setPressedPath(path);
-        mSlotView.invalidate();
+        mAlbumSetView.setPressedIndex(index);
     }
 
     private void onUp() {
-        mSelectionManager.setPressedPath(null);
-        mSlotView.invalidate();
+        mAlbumSetView.setPressedIndex(-1);
     }
 
     public void onLongTap(int slotIndex) {
@@ -351,11 +342,10 @@ public class AlbumSetPage extends ActivityState implements
         mSelectionManager = new SelectionManager(mActivity, true);
         mSelectionManager.setSelectionListener(this);
 
-        mGridDrawer = new GridDrawer((Context) mActivity, mSelectionManager);
         Config.AlbumSetPage config = Config.AlbumSetPage.get((Context) mActivity);
         mSlotView = new SlotView((Context) mActivity, config.slotViewSpec);
         mAlbumSetView = new AlbumSetView(
-                mActivity, mGridDrawer, mSlotView, config.labelSpec);
+                mActivity, mSelectionManager, mSlotView, config.labelSpec);
         mSlotView.setSlotRenderer(mAlbumSetView);
         mSlotView.setListener(new SlotView.SimpleListener() {
             @Override
@@ -545,15 +535,13 @@ public class AlbumSetPage extends ActivityState implements
     private void hideDetails() {
         mShowDetails = false;
         mDetailsHelper.hide();
-        mAlbumSetView.setSelectionDrawer(mGridDrawer);
+        mAlbumSetView.setHighlightItemPath(null);
         mSlotView.invalidate();
     }
 
     private void showDetails() {
         mShowDetails = true;
         if (mDetailsHelper == null) {
-            mHighlightDrawer = new HighlightDrawer(mActivity.getAndroidContext(),
-                    mSelectionManager);
             mDetailsHelper = new DetailsHelper(mActivity, mRootPane, mDetailsSource);
             mDetailsHelper.setCloseListener(new CloseListener() {
                 @Override
@@ -562,7 +550,6 @@ public class AlbumSetPage extends ActivityState implements
                 }
             });
         }
-        mAlbumSetView.setSelectionDrawer(mHighlightDrawer);
         mDetailsHelper.show();
     }
 
@@ -637,7 +624,7 @@ public class AlbumSetPage extends ActivityState implements
         public MediaDetails getDetails() {
             MediaObject item = mAlbumSetDataAdapter.getMediaSet(mIndex);
             if (item != null) {
-                mHighlightDrawer.setHighlightItem(item.getPath());
+                mAlbumSetView.setHighlightItemPath(item.getPath());
                 return item.getDetails();
             } else {
                 return null;

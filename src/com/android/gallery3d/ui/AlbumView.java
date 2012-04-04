@@ -16,12 +16,14 @@
 
 package com.android.gallery3d.ui;
 
-import android.util.FloatMath;
+import android.content.Context;
 
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.data.MediaObject;
+import com.android.gallery3d.data.Path;
 
-public class AlbumView implements SlotView.SlotRenderer {
+public class AlbumView extends AbstractSlotRenderer {
     private static final int PLACEHOLDER_COLOR = 0xFF222222;
 
     @SuppressWarnings("unused")
@@ -32,9 +34,11 @@ public class AlbumView implements SlotView.SlotRenderer {
     private final GalleryActivity mActivity;
     private final ColorTexture mWaitLoadingTexture;
     private final SlotView mSlotView;
+    private final SelectionManager mSelectionManager;
 
-    private SelectionDrawer mSelectionDrawer;
-    private int mFocusIndex = -1;
+    private int mPressedIndex = -1;
+    private Path mHighlightItemPath = null;
+    private boolean mInSelectionMode;
 
     public static interface Model {
         public int size();
@@ -48,16 +52,27 @@ public class AlbumView implements SlotView.SlotRenderer {
         public void onSizeChanged(int size);
     }
 
-    public AlbumView(GalleryActivity activity, SlotView slotView) {
-        mSlotView = slotView;
+    public AlbumView(GalleryActivity activity, SlotView slotView,
+            SelectionManager selectionManager) {
+        super((Context) activity);
         mActivity = activity;
+        mSlotView = slotView;
+        mSelectionManager = selectionManager;
 
         mWaitLoadingTexture = new ColorTexture(PLACEHOLDER_COLOR);
         mWaitLoadingTexture.setSize(1, 1);
     }
 
-    public void setSelectionDrawer(SelectionDrawer drawer) {
-        mSelectionDrawer = drawer;
+    public void setPressedIndex(int index) {
+        if (mPressedIndex == index) return;
+        mPressedIndex = index;
+        mSlotView.invalidate();
+    }
+
+    public void setHighlightItemPath(Path path) {
+        if (mHighlightItemPath == path) return;
+        mHighlightItemPath = path;
+        mSlotView.invalidate();
     }
 
     public void setModel(Model model) {
@@ -73,12 +88,6 @@ public class AlbumView implements SlotView.SlotRenderer {
         }
     }
 
-    public void setFocusIndex(int slotIndex) {
-        if (mFocusIndex == slotIndex) return;
-        mFocusIndex = slotIndex;
-        mSlotView.invalidate();
-    }
-
     private static Texture checkTexture(GLCanvas canvas, Texture texture) {
         return ((texture == null) || ((texture instanceof UploadedTexture)
                 && !((UploadedTexture) texture).isContentValid(canvas)))
@@ -89,8 +98,10 @@ public class AlbumView implements SlotView.SlotRenderer {
     @Override
     public int renderSlot(GLCanvas canvas, int index, int pass, int width, int height) {
         AlbumSlidingWindow.AlbumEntry entry = mDataWindow.get(index);
-        Texture content = checkTexture(canvas, entry.content);
 
+        int renderRequestFlags = 0;
+
+        Texture content = checkTexture(canvas, entry.content);
         if (content == null) {
             content = mWaitLoadingTexture;
             entry.isWaitDisplayed = true;
@@ -100,37 +111,29 @@ public class AlbumView implements SlotView.SlotRenderer {
                     PLACEHOLDER_COLOR, (BitmapTexture) entry.content);
             content = entry.content;
         }
-
-        // Fit the content into the box
-        int w = content.getWidth();
-        int h = content.getHeight();
-
-        float scale = Math.min((float) width / w, (float) height / h);
-
-        w = (int) FloatMath.floor(w * scale);
-        h = (int) FloatMath.floor(h * scale);
-
-        // Now draw it
-        if (pass == 0) {
-            canvas.translate(width / 2, height / 2);
-            mSelectionDrawer.draw(canvas, content, w, h,
-                    entry.rotation, entry.path, entry.mediaType, entry.isPanorama);
-            canvas.translate(-width / 2, -height / 2);
-            int result = 0;
-            if (mFocusIndex == index) {
-                result |= SlotView.RENDER_MORE_PASS;
-            }
-            if ((content instanceof FadeInTexture) &&
-                    ((FadeInTexture) content).isAnimating()) {
-                result |= SlotView.RENDER_MORE_FRAME;
-            }
-            return result;
-        } else if (pass == 1) {
-            canvas.translate(width / 2, height / 2);
-            mSelectionDrawer.drawFocus(canvas, width, height);
-            canvas.translate(-width / 2, -height / 2);
+        drawContent(canvas, content, width, height, entry.rotation);
+        if ((content instanceof FadeInTexture) &&
+                ((FadeInTexture) content).isAnimating()) {
+            renderRequestFlags |= SlotView.RENDER_MORE_FRAME;
         }
-        return 0;
+
+        if (entry.mediaType == MediaObject.MEDIA_TYPE_VIDEO) {
+            drawVideoOverlay(canvas, width, height);
+        }
+
+        if (entry.isPanorama) {
+            drawPanoramaBorder(canvas, width, height);
+        }
+
+        if (mPressedIndex == index) {
+            drawPressedFrame(canvas, width, height);
+        } else if ((entry.path != null) && (mHighlightItemPath == entry.path)) {
+            drawSelectedFrame(canvas, width, height);
+        } else if (mInSelectionMode && mSelectionManager.isItemSelected(entry.path)) {
+            drawSelectedFrame(canvas, width, height);
+        }
+
+        return renderRequestFlags;
     }
 
     private class MyDataModelListener implements AlbumSlidingWindow.Listener {
@@ -155,7 +158,7 @@ public class AlbumView implements SlotView.SlotRenderer {
 
     @Override
     public void prepareDrawing() {
-        mSelectionDrawer.prepareDrawing();
+        mInSelectionMode = mSelectionManager.inSelectionMode();
     }
 
     @Override

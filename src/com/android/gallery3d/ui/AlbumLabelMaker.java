@@ -15,6 +15,7 @@ import android.text.TextUtils;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.DataSourceType;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.JobContext;
@@ -50,13 +51,13 @@ public class AlbumLabelMaker {
 
     private Bitmap getOverlayAlbumIcon(int sourceType) {
         switch (sourceType) {
-            case SelectionDrawer.DATASOURCE_TYPE_CAMERA:
+            case DataSourceType.TYPE_CAMERA:
                 return mCameraIcon.get();
-            case SelectionDrawer.DATASOURCE_TYPE_LOCAL:
+            case DataSourceType.TYPE_LOCAL:
                 return mLocalSetIcon.get();
-            case SelectionDrawer.DATASOURCE_TYPE_MTP:
+            case DataSourceType.TYPE_MTP:
                 return mMtpIcon.get();
-            case SelectionDrawer.DATASOURCE_TYPE_PICASA:
+            case DataSourceType.TYPE_PICASA:
                 return mPicasaIcon.get();
         }
         return null;

@@ -19,9 +19,13 @@ package com.android.gallery3d.ui;
 import android.content.Context;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.app.GalleryActivity;
+import com.android.gallery3d.data.DataSourceType;
+import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
+import com.android.gallery3d.ui.AlbumSetSlidingWindow.AlbumSetEntry;
 
-public class ManageCacheDrawer extends IconDrawer {
+public class ManageCacheDrawer extends AlbumSetView {
     private final ResourceTexture mCheckedItem;
     private final ResourceTexture mUnCheckedItem;
     private final SelectionManager mSelectionManager;
@@ -32,12 +36,16 @@ public class ManageCacheDrawer extends IconDrawer {
     private final int mCachePinSize;
     private final int mCachePinMargin;
 
-    public ManageCacheDrawer(Context context, SelectionManager selectionManager,
-            int cachePinSize, int cachePinMargin) {
-        super(context);
-        mCheckedItem = new ResourceTexture(context, R.drawable.btn_make_offline_normal_on_holo_dark);
-        mUnCheckedItem = new ResourceTexture(context, R.drawable.btn_make_offline_normal_off_holo_dark);
-        mLocalAlbumIcon = new ResourceTexture(context, R.drawable.btn_make_offline_disabled_on_holo_dark);
+    public ManageCacheDrawer(GalleryActivity activity, SelectionManager selectionManager,
+            SlotView slotView, LabelSpec labelSpec, int cachePinSize, int cachePinMargin) {
+        super(activity, selectionManager, slotView, labelSpec);
+        Context context = (Context) activity;
+        mCheckedItem = new ResourceTexture(
+                context, R.drawable.btn_make_offline_normal_on_holo_dark);
+        mUnCheckedItem = new ResourceTexture(
+                context, R.drawable.btn_make_offline_normal_off_holo_dark);
+        mLocalAlbumIcon = new ResourceTexture(
+                context, R.drawable.btn_make_offline_disabled_on_holo_dark);
         String cachingLabel = context.getString(R.string.caching_label);
         mCachingText = StringTexture.newInstance(cachingLabel, 12, 0xffffffff);
         mSelectionManager = selectionManager;
@@ -45,59 +53,42 @@ public class ManageCacheDrawer extends IconDrawer {
         mCachePinMargin = cachePinMargin;
     }
 
-    @Override
-    public void prepareDrawing() {
-    }
-
     private static boolean isLocal(int dataSourceType) {
-        return dataSourceType != DATASOURCE_TYPE_PICASA;
+        return dataSourceType != DataSourceType.TYPE_PICASA;
     }
 
     @Override
-    public void draw(GLCanvas canvas, Texture content, int width,
-            int height, int rotation, Path path,
-            int dataSourceType, int mediaType, boolean isPanorama,
-            int labelBackgroundHeight, boolean wantCache, boolean isCaching) {
+    public int renderSlot(GLCanvas canvas, int index, int pass, int width, int height) {
+        AlbumSetEntry entry = mDataWindow.get(index);
 
-        boolean selected = mSelectionManager.isItemSelected(path);
+        boolean wantCache = entry.cacheFlag == MediaSet.CACHE_FLAG_FULL;
+        boolean isCaching = wantCache && (
+                entry.cacheStatus != MediaSet.CACHE_STATUS_CACHED_FULL);
+        boolean selected = mSelectionManager.isItemSelected(entry.setPath);
         boolean chooseToCache = wantCache ^ selected;
-        boolean available = isLocal(dataSourceType) || chooseToCache;
+        boolean available = isLocal(entry.sourceType) || chooseToCache;
 
-        int x = -width / 2;
-        int y = -height / 2;
+        int renderRequestFlags = 0;
 
         if (!available) {
             canvas.save(GLCanvas.SAVE_FLAG_ALPHA);
             canvas.multiplyAlpha(0.6f);
         }
+        renderRequestFlags |= renderContent(canvas, entry, width, height);
+        if (!available) canvas.restore();
 
-        drawWithRotation(canvas, content, x, y, width, height, rotation);
+        renderRequestFlags |= renderLabel(canvas, entry, width, height);
 
-        if (!available) {
-            canvas.restore();
-        }
+        drawCachingPin(canvas, entry.setPath,
+                entry.sourceType, isCaching, chooseToCache, width, height);
 
-        if (((rotation / 90) & 0x01) == 1) {
-            int temp = width;
-            width = height;
-            height = temp;
-            x = -width / 2;
-            y = -height / 2;
-        }
-
-        drawMediaTypeOverlay(canvas, mediaType, isPanorama, x, y, width, height);
-        drawCachingPin(canvas, path, dataSourceType, isCaching, chooseToCache,
-                width, height);
-
-        if (mSelectionManager.isPressedPath(path)) {
-            drawPressedFrame(canvas, x, y, width, height);
-        }
+        renderRequestFlags |= renderOverlay(canvas, index, entry, width, height);
+        return renderRequestFlags;
     }
 
     private void drawCachingPin(GLCanvas canvas, Path path, int dataSourceType,
             boolean isCaching, boolean chooseToCache, int width, int height) {
-
-        ResourceTexture icon = null;
+        ResourceTexture icon;
         if (isLocal(dataSourceType)) {
             icon = mLocalAlbumIcon;
         } else if (chooseToCache) {
@@ -106,26 +97,16 @@ public class ManageCacheDrawer extends IconDrawer {
             icon = mUnCheckedItem;
         }
 
-        int w = mCachePinSize;
-        int h = mCachePinSize;
-        int right = (width + 1) / 2;
-        int bottom = (height + 1) / 2;
-        int x = right - w - mCachePinMargin;
-        int y = bottom - h - mCachePinMargin;
-
-        icon.draw(canvas, x, y, w, h);
+        // show the icon in right bottom
+        int s = mCachePinSize;
+        int m = mCachePinMargin;
+        icon.draw(canvas, width - m - s, height - s, s, s);
 
         if (isCaching) {
-            int textWidth = mCachingText.getWidth();
-            int textHeight = mCachingText.getHeight();
-            // Align the center of the text to the center of the pin icon
-            x = right - mCachePinMargin - (textWidth + mCachePinSize) / 2;
-            y = bottom - textHeight;
-            mCachingText.draw(canvas, x, y);
+            int w = mCachingText.getWidth();
+            int h = mCachingText.getHeight();
+            // Show the caching text in bottom center
+            mCachingText.draw(canvas, (width - w) / 2, height - h);
         }
-    }
-
-    @Override
-    public void drawFocus(GLCanvas canvas, int width, int height) {
     }
 }
