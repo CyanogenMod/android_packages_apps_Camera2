@@ -17,29 +17,34 @@
 package com.android.gallery3d.ui;
 
 import android.content.Context;
-import android.util.FloatMath;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
+import com.android.gallery3d.data.Path;
 import com.android.gallery3d.ui.AlbumSetSlidingWindow.AlbumSetEntry;
 
 // TODO: rename to AlbumSetRenderer
-public class AlbumSetView implements SlotView.SlotRenderer {
+public class AlbumSetView extends AbstractSlotRenderer {
     @SuppressWarnings("unused")
     private static final String TAG = "AlbumSetView";
     private static final int CACHE_SIZE = 64;
     private static final int PLACEHOLDER_COLOR = 0xFF222222;
 
     private final ColorTexture mWaitLoadingTexture;
-    private AlbumSetSlidingWindow mDataWindow;
     private final GalleryActivity mActivity;
-    private final LabelSpec mLabelSpec;
+    private final SelectionManager mSelectionManager;
+    protected final LabelSpec mLabelSpec;
 
-    private SelectionDrawer mSelectionDrawer;
+    protected AlbumSetSlidingWindow mDataWindow;
     private SlotView mSlotView;
     private NinePatchTexture mDarkStrip;
+
+    private int mPressedIndex = -1;
+    private Path mHighlightItemPath = null;
+    private boolean mInSelectionMode;
 
     public static interface Model {
         public MediaItem getCoverItem(int index);
@@ -64,23 +69,30 @@ public class AlbumSetView implements SlotView.SlotRenderer {
         public int iconSize;
     }
 
-    public AlbumSetView(GalleryActivity activity, SelectionDrawer drawer,
+    public AlbumSetView(GalleryActivity activity, SelectionManager selectionManager,
             SlotView slotView, LabelSpec labelSpec) {
+        super ((Context) activity);
         mActivity = activity;
-        mLabelSpec = labelSpec;
+        mSelectionManager = selectionManager;
         mSlotView = slotView;
+        mLabelSpec = labelSpec;
 
         mWaitLoadingTexture = new ColorTexture(PLACEHOLDER_COLOR);
         mWaitLoadingTexture.setSize(1, 1);
 
         Context context = activity.getAndroidContext();
         mDarkStrip = new NinePatchTexture(context, R.drawable.dark_strip);
-
-        setSelectionDrawer(drawer);
     }
 
-    public void setSelectionDrawer(SelectionDrawer drawer) {
-        mSelectionDrawer = drawer;
+    public void setPressedIndex(int index) {
+        if (mPressedIndex == index) return;
+        mPressedIndex = index;
+        mSlotView.invalidate();
+    }
+
+    public void setHighlightItemPath(Path path) {
+        if (mHighlightItemPath == path) return;
+        mHighlightItemPath = path;
         mSlotView.invalidate();
     }
 
@@ -91,8 +103,8 @@ public class AlbumSetView implements SlotView.SlotRenderer {
             mSlotView.setSlotCount(0);
         }
         if (model != null) {
-            mDataWindow = new AlbumSetSlidingWindow(mActivity, mLabelSpec,
-                    mSelectionDrawer, model, CACHE_SIZE);
+            mDataWindow = new AlbumSetSlidingWindow(
+                    mActivity, model, mLabelSpec, CACHE_SIZE);
             mDataWindow.setListener(new MyCacheListener());
             mSlotView.setSlotCount(mDataWindow.size());
         }
@@ -108,53 +120,59 @@ public class AlbumSetView implements SlotView.SlotRenderer {
     @Override
     public int renderSlot(GLCanvas canvas, int index, int pass, int width, int height) {
         AlbumSetEntry entry = mDataWindow.get(index);
-        return renderContent(canvas, pass, entry, width, height)
-                | renderLabel(canvas, pass, entry, width, height);
+        int renderRequestFlags = 0;
+        renderRequestFlags |= renderContent(canvas, entry, width, height);
+        renderRequestFlags |= renderLabel(canvas, entry, width, height);
+        renderRequestFlags |= renderOverlay(canvas, index, entry, width, height);
+        return renderRequestFlags;
     }
 
-    private int renderContent(GLCanvas canvas,
-            int pass, AlbumSetEntry entry, int width, int height) {
-        Texture content = checkTexture(canvas, entry.content);
+    protected int renderOverlay(
+            GLCanvas canvas, int index, AlbumSetEntry entry, int width, int height) {
+        Path path = entry.setPath;
+        if (mPressedIndex == index) {
+            drawPressedFrame(canvas, width, height);
+        } else if ((path != null) && (mHighlightItemPath == path)) {
+            drawSelectedFrame(canvas, width, height);
+        } else if (mInSelectionMode && mSelectionManager.isItemSelected(path)) {
+            drawSelectedFrame(canvas, width, height);
+        }
+        return 0;
+    }
 
+    protected int renderContent(
+            GLCanvas canvas, AlbumSetEntry entry, int width, int height) {
+        int renderRequestFlags = 0;
+
+        Texture content = checkTexture(canvas, entry.content);
         if (content == null) {
             content = mWaitLoadingTexture;
             entry.isWaitLoadingDisplayed = true;
         } else if (entry.isWaitLoadingDisplayed) {
             entry.isWaitLoadingDisplayed = false;
             entry.content = new FadeInTexture(
-                    PLACEHOLDER_COLOR, (BitmapTexture) content);
+                    PLACEHOLDER_COLOR, (BitmapTexture) entry.content);
             content = entry.content;
         }
-
-        // Fit the content into the box
-        int w = content.getWidth();
-        int h = content.getHeight();
-
-        float scale = Math.min(width / (float) w, height / (float) h);
-
-        w = (int) FloatMath.floor(w * scale);
-        h = (int) FloatMath.floor(h * scale);
-
-        canvas.translate(width / 2, height / 2);
-        // Now draw it
-        mSelectionDrawer.draw(canvas, content, width, height,
-                entry.rotation, entry.setPath, entry.sourceType, entry.mediaType,
-                entry.isPanorama, mLabelSpec.labelBackgroundHeight,
-                entry.cacheFlag == MediaSet.CACHE_FLAG_FULL,
-                (entry.cacheFlag == MediaSet.CACHE_FLAG_FULL)
-                && (entry.cacheStatus != MediaSet.CACHE_STATUS_CACHED_FULL));
-        canvas.translate(-width / 2, -height / 2);
-
+        drawContent(canvas, content, width, height, entry.rotation);
         if ((content instanceof FadeInTexture) &&
                 ((FadeInTexture) content).isAnimating()) {
-            return SlotView.RENDER_MORE_FRAME;
+            renderRequestFlags |= SlotView.RENDER_MORE_FRAME;
         }
-        return 0;
+
+        if (entry.mediaType == MediaObject.MEDIA_TYPE_VIDEO) {
+            drawVideoOverlay(canvas, width, height);
+        }
+
+        if (entry.isPanorama) {
+            drawPanoramaBorder(canvas, width, height);
+        }
+
+        return renderRequestFlags;
     }
 
-    private int renderLabel(GLCanvas canvas,
-            int pass, AlbumSetEntry entry, int width, int height) {
-
+    protected int renderLabel(
+            GLCanvas canvas, AlbumSetEntry entry, int width, int height) {
         // We show the loading message only when the album is still loading
         // (Not when we are still preparing the label)
         Texture content = checkTexture(canvas, entry.label);
@@ -163,7 +181,7 @@ public class AlbumSetView implements SlotView.SlotRenderer {
         }
         if (content != null) {
             int h = mLabelSpec.labelBackgroundHeight;
-            SelectionDrawer.drawFrame(canvas, mDarkStrip, 0, height - h, width, h);
+            drawFrame(canvas, mDarkStrip, 0, height - h, width, h);
             content.draw(canvas, 0, height - h, width, h);
         }
         return 0;
@@ -171,7 +189,7 @@ public class AlbumSetView implements SlotView.SlotRenderer {
 
     @Override
     public void prepareDrawing() {
-        mSelectionDrawer.prepareDrawing();
+        mInSelectionMode = mSelectionManager.inSelectionMode();
     }
 
     private class MyCacheListener implements AlbumSetSlidingWindow.Listener {

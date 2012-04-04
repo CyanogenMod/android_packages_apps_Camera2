@@ -43,7 +43,6 @@ public class SelectionManager {
     private boolean mInSelectionMode;
     private boolean mAutoLeave = true;
     private int mTotal;
-    private Path mPressedPath;
 
     public interface SelectionListener {
         public void onSelectionModeChange(int mode);
@@ -133,14 +132,6 @@ public class SelectionManager {
         if (getSelectedCount() == 0 && mAutoLeave) {
             leaveSelectionMode();
         }
-    }
-
-    public void setPressedPath(Path path) {
-        mPressedPath = path;
-    }
-
-    public boolean isPressedPath(Path path) {
-        return path != null && path == mPressedPath;
     }
 
     private static void expandMediaSet(ArrayList<Path> items, MediaSet set) {

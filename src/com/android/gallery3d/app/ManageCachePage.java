@@ -36,13 +36,11 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
-import com.android.gallery3d.ui.AlbumSetView;
 import com.android.gallery3d.ui.CacheStorageUsageInfo;
 import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.ManageCacheDrawer;
 import com.android.gallery3d.ui.MenuExecutor;
-import com.android.gallery3d.ui.SelectionDrawer;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.ui.SynchronizedHandler;
@@ -67,12 +65,10 @@ public class ManageCachePage extends ActivityState implements
     private static final int PROGRESS_BAR_MAX = 10000;
 
     private SlotView mSlotView;
-    private AlbumSetView mAlbumSetView;
-
     private MediaSet mMediaSet;
 
     protected SelectionManager mSelectionManager;
-    protected SelectionDrawer mSelectionDrawer;
+    protected ManageCacheDrawer mSelectionDrawer;
     private AlbumSetDataAdapter mAlbumSetDataAdapter;
     private float mUserDistance; // in pixel
 
@@ -137,6 +133,7 @@ public class ManageCachePage extends ActivityState implements
         }
     };
 
+    @Override
     public void onEyePositionChanged(float x, float y, float z) {
         mRootPane.lockRendering();
         mX = x;
@@ -147,15 +144,11 @@ public class ManageCachePage extends ActivityState implements
     }
 
     private void onDown(int index) {
-        MediaSet set = mAlbumSetDataAdapter.getMediaSet(index);
-        Path path = (set == null) ? null : set.getPath();
-        mSelectionManager.setPressedPath(path);
-        mSlotView.invalidate();
+        mSelectionDrawer.setPressedIndex(index);
     }
 
     private void onUp() {
-        mSelectionManager.setPressedPath(null);
-        mSlotView.invalidate();
+        mSelectionDrawer.setPressedIndex(-1);
     }
 
     public void onSingleTapUp(int slotIndex) {
@@ -233,7 +226,7 @@ public class ManageCachePage extends ActivityState implements
     public void onPause() {
         super.onPause();
         mAlbumSetDataAdapter.pause();
-        mAlbumSetView.pause();
+        mSelectionDrawer.pause();
         mEyePosition.pause();
 
         if (mUpdateStorageInfo != null) {
@@ -263,7 +256,7 @@ public class ManageCachePage extends ActivityState implements
         super.onResume();
         setContentPane(mRootPane);
         mAlbumSetDataAdapter.resume();
-        mAlbumSetView.resume();
+        mSelectionDrawer.resume();
         mEyePosition.resume();
         mUpdateStorageInfo = mActivity.getThreadPool().submit(mUpdateStorageInfoJob);
         FrameLayout layout = (FrameLayout) ((Activity) mActivity).findViewById(R.id.footer);
@@ -283,7 +276,7 @@ public class ManageCachePage extends ActivityState implements
 
         mAlbumSetDataAdapter = new AlbumSetDataAdapter(
                 mActivity, mMediaSet, DATA_CACHE_SIZE);
-        mAlbumSetView.setModel(mAlbumSetDataAdapter);
+        mSelectionDrawer.setModel(mAlbumSetDataAdapter);
     }
 
     private void initializeViews() {
@@ -293,12 +286,10 @@ public class ManageCachePage extends ActivityState implements
         mSelectionManager.setSelectionListener(this);
 
         Config.ManageCachePage config = Config.ManageCachePage.get(activity);
-        mSelectionDrawer = new ManageCacheDrawer((Context) mActivity,
-                mSelectionManager, config.cachePinSize, config.cachePinMargin);
         mSlotView = new SlotView((Context) mActivity, config.slotViewSpec);
-        mAlbumSetView = new AlbumSetView(mActivity, mSelectionDrawer,
-                mSlotView, config.labelSpec);
-        mSlotView.setSlotRenderer(mAlbumSetView);
+        mSelectionDrawer = new ManageCacheDrawer(mActivity, mSelectionManager, mSlotView,
+                config.labelSpec, config.cachePinSize, config.cachePinMargin);
+        mSlotView.setSlotRenderer(mSelectionDrawer);
         mSlotView.setListener(new SlotView.SimpleListener() {
             @Override
             public void onDown(int index) {
@@ -390,17 +381,20 @@ public class ManageCachePage extends ActivityState implements
         }
     }
 
+    @Override
     public void onProgressComplete(int result) {
         onBackPressed();
     }
 
+    @Override
     public void onProgressUpdate(int index) {
     }
 
+    @Override
     public void onSelectionModeChange(int mode) {
     }
 
+    @Override
     public void onSelectionChange(Path path, boolean selected) {
     }
-
 }

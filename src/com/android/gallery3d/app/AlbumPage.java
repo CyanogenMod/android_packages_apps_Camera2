@@ -47,8 +47,6 @@ import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLView;
-import com.android.gallery3d.ui.GridDrawer;
-import com.android.gallery3d.ui.HighlightDrawer;
 import com.android.gallery3d.ui.RelativePosition;
 import com.android.gallery3d.ui.ScreenNailHolder;
 import com.android.gallery3d.ui.SelectionManager;
@@ -87,8 +85,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
     protected SelectionManager mSelectionManager;
     private Vibrator mVibrator;
-    private GridDrawer mGridDrawer;
-    private HighlightDrawer mHighlightDrawer;
 
     private boolean mGetContent;
     private boolean mShowClusterMenu;
@@ -127,7 +123,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             if (mShowDetails) {
                 mDetailsHelper.layout(left, slotViewTop, right, bottom);
             } else {
-                mAlbumView.setSelectionDrawer(mGridDrawer);
+                mAlbumView.setHighlightItemPath(null);
             }
 
             // Set the mSlotView as a reference point to the open animation
@@ -160,15 +156,11 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     }
 
     private void onDown(int index) {
-        MediaItem item = mAlbumDataAdapter.get(index);
-        Path path = (item == null) ? null : item.getPath();
-        mSelectionManager.setPressedPath(path);
-        mSlotView.invalidate();
+        mAlbumView.setPressedIndex(index);
     }
 
     private void onUp() {
-        mSelectionManager.setPressedPath(null);
-        mSlotView.invalidate();
+        mAlbumView.setPressedIndex(-1);
     }
 
     private void onSingleTapUp(int slotIndex) {
@@ -178,7 +170,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             return;
         }
         if (mShowDetails) {
-            mHighlightDrawer.setHighlightItem(item.getPath());
+            mAlbumView.setHighlightItemPath(item.getPath());
             mDetailsHelper.reloadDetails(slotIndex);
         } else if (!mSelectionManager.inSelectionMode()) {
             if (mGetContent) {
@@ -349,12 +341,10 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private void initializeViews() {
         mSelectionManager = new SelectionManager(mActivity, false);
         mSelectionManager.setSelectionListener(this);
-        mGridDrawer = new GridDrawer((Context) mActivity, mSelectionManager);
         Config.AlbumPage config = Config.AlbumPage.get((Context) mActivity);
         mSlotView = new SlotView((Context) mActivity, config.slotViewSpec);
-        mAlbumView = new AlbumView(mActivity, mSlotView);
+        mAlbumView = new AlbumView(mActivity, mSlotView, mSelectionManager);
         mSlotView.setSlotRenderer(mAlbumView);
-        mAlbumView.setSelectionDrawer(mGridDrawer);
         mRootPane.addComponent(mSlotView);
         mSlotView.setListener(new SlotView.SimpleListener() {
             @Override
@@ -401,8 +391,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private void showDetails() {
         mShowDetails = true;
         if (mDetailsHelper == null) {
-            mHighlightDrawer = new HighlightDrawer(mActivity.getAndroidContext(),
-                    mSelectionManager);
             mDetailsHelper = new DetailsHelper(mActivity, mRootPane, mDetailsSource);
             mDetailsHelper.setCloseListener(new CloseListener() {
                 public void onClose() {
@@ -410,14 +398,13 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 }
             });
         }
-        mAlbumView.setSelectionDrawer(mHighlightDrawer);
         mDetailsHelper.show();
     }
 
     private void hideDetails() {
         mShowDetails = false;
         mDetailsHelper.hide();
-        mAlbumView.setSelectionDrawer(mGridDrawer);
+        mAlbumView.setHighlightItemPath(null);
         mSlotView.invalidate();
     }
 
@@ -640,7 +627,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         public MediaDetails getDetails() {
             MediaObject item = mAlbumDataAdapter.get(mIndex);
             if (item != null) {
-                mHighlightDrawer.setHighlightItem(item.getPath());
+                mAlbumView.setHighlightItemPath(item.getPath());
                 return item.getDetails();
             } else {
                 return null;

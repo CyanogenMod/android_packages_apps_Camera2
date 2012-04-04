@@ -175,13 +175,20 @@ public class Path {
     }
 
     public String getPrefix() {
+        if (this == sRoot) return "";
+        return getPrefixPath().mSegment;
+    }
+
+    public Path getPrefixPath() {
         synchronized (Path.class) {
             Path current = this;
-            if (current == sRoot) return "";
+            if (current == sRoot) {
+                throw new IllegalStateException();
+            }
             while (current.mParent != sRoot) {
                 current = current.mParent;
             }
-            return current.mSegment;
+            return current;
         }
     }
 
