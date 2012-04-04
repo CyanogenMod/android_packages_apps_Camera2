@@ -21,6 +21,7 @@ import com.android.gallery3d.common.Utils;
 // FadeInTexture is a texture which begins with a color, then gradually animates
 // into a given texture.
 public class FadeInTexture implements Texture {
+    @SuppressWarnings("unused")
     private static final String TAG = "FadeInTexture";
 
     // The duration of the animation in milliseconds

@@ -441,8 +441,8 @@ public class GLCanvasImpl implements GLCanvas {
 
     private void drawMixed(BasicTexture from, int toColor,
             float ratio, int x, int y, int width, int height, float alpha) {
-
-        if (ratio <= 0) {
+        // change from 0 to 0.01f to prevent getting divided by zero below
+        if (ratio <= 0.01f) {
             drawTexture(from, x, y, width, height, alpha);
             return;
         } else if (ratio >= 1) {
@@ -459,30 +459,26 @@ public class GLCanvasImpl implements GLCanvas {
         //
         // The formula we want:
         //     alpha * ((1 - ratio) * from + ratio * to)
+        //
         // The formula that GL supports is in the form of:
-        //     combo * (modulate * from) + (1 - combo) * to
+        //     combo * from + (1 - combo) * to * scale
         //
-        // So, we have combo = 1 - alpha * ratio
-        //     and     modulate = alpha * (1f - ratio) / combo
+        // So, we have combo = alpha * (1 - ratio)
+        //     and     scale = alpha * ratio / (1 - combo)
         //
-        float comboRatio = 1 - alpha * ratio;
-
-        // handle the case that (1 - comboRatio) == 0
-        if (alpha < OPAQUE_ALPHA) {
-            mGLState.setTextureAlpha(alpha * (1f - ratio) / comboRatio);
-        } else {
-            mGLState.setTextureAlpha(1f);
-        }
+        float combo = alpha * (1 - ratio);
+        float scale = alpha * ratio / (1 - combo);
 
         // Interpolate the RGB and alpha values between both textures.
         mGLState.setTexEnvMode(GL11.GL_COMBINE);
+
         // Specify the interpolation factor via the alpha component of
         // GL_TEXTURE_ENV_COLORs.
         // RGB component are get from toColor and will used as SRC1
-        float colorAlpha = (float) (toColor >>> 24) / (0xff * 0xff);
-        setTextureColor(((toColor >>> 16) & 0xff) * colorAlpha,
-                ((toColor >>> 8) & 0xff) * colorAlpha,
-                (toColor & 0xff) * colorAlpha, comboRatio);
+        float colorScale = scale * (toColor >>> 24) / (0xff * 0xff);
+        setTextureColor(((toColor >>> 16) & 0xff) * colorScale,
+                ((toColor >>> 8) & 0xff) * colorScale,
+                (toColor & 0xff) * colorScale, combo);
         gl.glTexEnvfv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_COLOR, mTextureColor, 0);
 
         gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_INTERPOLATE);
