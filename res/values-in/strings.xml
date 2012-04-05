@@ -108,7 +108,7 @@
     <string name="done" msgid="217672440064436595">"Selesai"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d dari %2$d item:"</string>
     <string name="title" msgid="7622928349908052569">"Judul"</string>
-    <string name="description" msgid="3016729318096557520">"Uraian"</string>
+    <string name="description" msgid="3016729318096557520">"Deskripsi"</string>
     <string name="time" msgid="1367953006052876956">"Waktu"</string>
     <string name="location" msgid="3432705876921618314">"Lokasi"</string>
     <string name="path" msgid="4725740395885105824">"Jalur"</string>
