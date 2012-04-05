@@ -30,13 +30,7 @@
             android:icon="@drawable/ic_menu_trash_holo_light"
             android:title="@string/delete"
             android:visible="false"
-            android:showAsAction="never">
-        <menu>
-            <item android:id="@+id/action_confirm_delete"
-                    android:icon="@drawable/ic_menu_trash_holo_light"
-                    android:title="@string/confirm_delete" />
-        </menu>
-    </item>
+            android:showAsAction="never" />
     <item android:id="@+id/action_slideshow"
             android:icon="@drawable/ic_menu_slideshow_holo_light"
             android:title="@string/slideshow"

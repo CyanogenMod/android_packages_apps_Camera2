@@ -110,6 +110,10 @@ public class ActionModeHandler implements ActionMode.Callback {
         root.lockRenderThread();
         try {
             boolean result;
+            // Give listener a chance to process this command before it's routed to
+            // ActionModeHandler, which handles command only based on the action id.
+            // Sometimes the listener may have more background information to handle
+            // an action command.
             if (mListener != null) {
                 result = mListener.onActionItemClicked(item);
                 if (result) {
@@ -118,18 +122,22 @@ public class ActionModeHandler implements ActionMode.Callback {
                 }
             }
             ProgressListener listener = null;
-            if (item.getItemId() == R.id.action_import) {
+            boolean needsConfirm = false;
+            int action = item.getItemId();
+            if (action == R.id.action_import) {
                 listener = new ImportCompleteListener(mActivity);
+            } else if (item.getItemId() == R.id.action_delete) {
+                needsConfirm = true;
             }
-            result = mMenuExecutor.onMenuClicked(item, listener);
-            if (item.getItemId() == R.id.action_select_all) {
+            mMenuExecutor.onMenuClicked(item, needsConfirm, listener);
+            if (action == R.id.action_select_all) {
                 updateSupportedOperation();
                 updateSelectionMenu();
             }
-            return result;
         } finally {
             root.unlockRenderThread();
         }
+        return true;
     }
 
     private void updateSelectionMenu() {
