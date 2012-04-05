@@ -55,6 +55,7 @@ public class SlotView extends GLView {
     public static interface SlotRenderer {
         public void prepareDrawing();
         public void onVisibleRangeChanged(int visibleStart, int visibleEnd);
+        public void onSlotSizeChanged(int width, int height);
         public int renderSlot(GLCanvas canvas, int index, int pass, int width, int height);
     }
 
@@ -94,6 +95,7 @@ public class SlotView extends GLView {
     public void setSlotRenderer(SlotRenderer slotDrawer) {
         mRenderer = slotDrawer;
         if (mRenderer != null) {
+            mRenderer.onSlotSizeChanged(mLayout.mSlotWidth, mLayout.mSlotHeight);
             mRenderer.onVisibleRangeChanged(getVisibleStart(), getVisibleEnd());
         }
     }
@@ -510,6 +512,10 @@ public class SlotView extends GLView {
                 mSlotGap = mSpec.slotGap;
                 mSlotHeight = Math.max(1, (mHeight - (rows - 1) * mSlotGap) / rows);
                 mSlotWidth = mSlotHeight;
+            }
+
+            if (mRenderer != null) {
+                mRenderer.onSlotSizeChanged(mSlotWidth, mSlotHeight);
             }
 
             int[] padding = new int[2];
