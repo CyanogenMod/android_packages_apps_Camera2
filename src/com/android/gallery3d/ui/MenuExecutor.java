@@ -17,8 +17,11 @@
 package com.android.gallery3d.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -172,10 +175,9 @@ public class MenuExecutor {
         return ids.get(0);
     }
 
-    public boolean onMenuClicked(MenuItem menuItem, ProgressListener listener) {
+    private void onMenuClicked(int action, ProgressListener listener) {
         int title;
         DataManager manager = mActivity.getDataManager();
-        int action = menuItem.getItemId();
         switch (action) {
             case R.id.action_select_all:
                 if (mSelectionManager.inSelectAllMode()) {
@@ -183,14 +185,12 @@ public class MenuExecutor {
                 } else {
                     mSelectionManager.selectAll();
                 }
-                return true;
             case R.id.action_crop: {
                 Path path = getSingleSelectedPath();
                 String mimeType = getMimeType(manager.getMediaType(path));
                 Intent intent = new Intent(CropImage.ACTION_CROP)
                         .setDataAndType(manager.getContentUri(path), mimeType);
                 ((Activity) mActivity).startActivity(intent);
-                return true;
             }
             case R.id.action_setas: {
                 Path path = getSingleSelectedPath();
@@ -203,9 +203,8 @@ public class MenuExecutor {
                 Activity activity = (Activity) mActivity;
                 activity.startActivity(Intent.createChooser(
                         intent, activity.getString(R.string.set_as)));
-                return true;
             }
-            case R.id.action_confirm_delete:
+            case R.id.action_delete:
                 title = R.string.delete;
                 break;
             case R.id.action_rotate_cw:
@@ -224,10 +223,27 @@ public class MenuExecutor {
                 title = R.string.Import;
                 break;
             default:
-                return false;
+                return;
         }
         startAction(action, title, listener);
-        return true;
+    }
+
+    public void onMenuClicked(MenuItem menuItem, boolean needsConfirm,
+            final ProgressListener listener) {
+        final int action = menuItem.getItemId();
+
+        if (needsConfirm) {
+            new AlertDialog.Builder(mActivity.getAndroidContext())
+                    .setMessage(R.string.confirm_action)
+                    .setPositiveButton(R.string.confirm, new OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                onMenuClicked(action, listener);
+                            }
+                        })
+                    .setNegativeButton(R.string.cancel, null).create().show();
+        } else {
+            onMenuClicked(action, listener);
+        }
     }
 
     public void startAction(int action, int title, ProgressListener listener) {
@@ -257,7 +273,7 @@ public class MenuExecutor {
         long startTime = System.currentTimeMillis();
 
         switch (cmd) {
-            case R.id.action_confirm_delete:
+            case R.id.action_delete:
                 manager.delete(path);
                 break;
             case R.id.action_rotate_cw:
