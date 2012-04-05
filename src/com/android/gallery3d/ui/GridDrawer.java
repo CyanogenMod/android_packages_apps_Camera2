@@ -64,8 +64,7 @@ public class GridDrawer extends IconDrawer {
         }
 
         drawMediaTypeOverlay(canvas, mediaType, isPanorama, x, y, width, height);
-        drawLabelBackground(canvas, width, height, labelBackgroundHeight);
-        drawIcon(canvas, width, height, dataSourceType);
+
         if (dataSourceType == DATASOURCE_TYPE_MTP) {
             drawImportLabel(canvas, width, height);
         }
