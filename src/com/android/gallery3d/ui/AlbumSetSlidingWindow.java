@@ -276,23 +276,38 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         return loader.isRequestInProgress();
     }
 
-    private void queueTextureForUpload(boolean isActive, Texture texture) {
-        if ((texture == null) || !(texture instanceof BitmapTexture)) return;
-        if (isActive) {
-            mTextureUploader.addFgTexture((BitmapTexture) texture);
-        } else {
-            mTextureUploader.addBgTexture((BitmapTexture) texture);
+    private void uploadBackgroundTextureInSlot(int index) {
+        if (index < mContentStart || index >= mContentEnd) return;
+        AlbumSetEntry entry = mData[index % mData.length];
+        if (entry.content instanceof BitmapTexture) {
+            mTextureUploader.addBgTexture((BitmapTexture) entry.content);
+        }
+        if (entry.label instanceof BitmapTexture) {
+            mTextureUploader.addBgTexture((BitmapTexture) entry.label);
         }
     }
 
     private void updateTextureUploadQueue() {
         if (!mIsActive) return;
         mTextureUploader.clear();
-        for (int i = mContentStart, n = mContentEnd; i < n; ++i) {
+
+        // Upload foreground texture
+        for (int i = mActiveStart, n = mActiveEnd; i < n; ++i) {
             AlbumSetEntry entry = mData[i % mData.length];
-            boolean isActive = isActiveSlot(i);
-            queueTextureForUpload(isActive, entry.label);
-            queueTextureForUpload(isActive, entry.content);
+            if (entry.content instanceof BitmapTexture) {
+                mTextureUploader.addFgTexture((BitmapTexture) entry.content);
+            }
+            if (entry.label instanceof BitmapTexture) {
+                mTextureUploader.addFgTexture((BitmapTexture) entry.label);
+            }
+        }
+
+        // add background textures
+        int range = Math.max(
+                (mContentEnd - mActiveEnd), (mActiveStart - mContentStart));
+        for (int i = 0; i < range; ++i) {
+            uploadBackgroundTextureInSlot(mActiveEnd + i);
+            uploadBackgroundTextureInSlot(mActiveStart - i - 1);
         }
     }
 

@@ -24,6 +24,10 @@ public class AlbumLabelMaker {
     private static final int FONT_COLOR_TITLE = Color.WHITE;
     private static final int FONT_COLOR_COUNT = 0x80FFFFFF;  // 50% white
 
+    // We keep a border around the album label to prevent aliasing
+    private static final int BORDER_SIZE = 1;
+    private static final int BACKGROUND_COLOR = 0x60000000; // 36% Dark
+
     private final AlbumSetView.LabelSpec mSpec;
     private final TextPaint mTitlePaint;
     private final TextPaint mCountPaint;
@@ -47,6 +51,10 @@ public class AlbumLabelMaker {
         mPicasaIcon = new LazyLoadedBitmap(R.drawable.frame_overlay_gallery_picasa);
         mCameraIcon = new LazyLoadedBitmap(R.drawable.frame_overlay_gallery_camera);
         mMtpIcon = new LazyLoadedBitmap(R.drawable.frame_overlay_gallery_ptp);
+    }
+
+    public static int getBorderSize() {
+        return BORDER_SIZE;
     }
 
     private Bitmap getOverlayAlbumIcon(int sourceType) {
@@ -97,7 +105,9 @@ public class AlbumLabelMaker {
     public synchronized void setLabelWidth(int width) {
         if (mLabelWidth == width) return;
         mLabelWidth = width;
-        mBitmapPool = new BitmapPool(mLabelWidth, mSpec.labelBackgroundHeight);
+        int borders = 2 * BORDER_SIZE;
+        mBitmapPool = new BitmapPool(
+                width + borders, mSpec.labelBackgroundHeight + borders);
     }
 
     public ThreadPool.Job<Bitmap> requestLabel(
@@ -146,22 +156,27 @@ public class AlbumLabelMaker {
                     : String.valueOf(album.getTotalMediaItemCount());
             Bitmap icon = getOverlayAlbumIcon(mSourceType);
 
-            Bitmap bitmap = null;
-            Canvas canvas;
+            Bitmap bitmap;
             int labelWidth;
 
             synchronized (this) {
                 labelWidth = mLabelWidth;
                 bitmap = mBitmapPool.getBitmap();
             }
+
             if (bitmap == null) {
-                bitmap = Bitmap.createBitmap(labelWidth,
-                        s.labelBackgroundHeight, Config.ARGB_8888);
-                canvas = new Canvas(bitmap);
-            } else {
-                canvas = new Canvas(bitmap);
-                canvas.drawColor(0, PorterDuff.Mode.SRC);
+                int borders = 2 * BORDER_SIZE;
+                bitmap = Bitmap.createBitmap(labelWidth + borders,
+                        s.labelBackgroundHeight + borders, Config.ARGB_8888);
             }
+
+            Canvas canvas = new Canvas(bitmap);
+            canvas.clipRect(BORDER_SIZE, BORDER_SIZE,
+                    bitmap.getWidth() - BORDER_SIZE,
+                    bitmap.getHeight() - BORDER_SIZE);
+            canvas.drawColor(BACKGROUND_COLOR, PorterDuff.Mode.SRC);
+
+            canvas.translate(BORDER_SIZE, BORDER_SIZE);
 
             // draw title
             if (jc.isCancelled()) return null;

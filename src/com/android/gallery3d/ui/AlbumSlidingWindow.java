@@ -20,7 +20,6 @@ import android.graphics.Bitmap;
 import android.os.Message;
 
 import com.android.gallery3d.app.GalleryActivity;
-import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.Path;
@@ -157,26 +156,37 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
                 0, Math.max(0, mSize - data.length));
         int contentEnd = Math.min(contentStart + data.length, mSize);
         setContentWindow(contentStart, contentEnd);
-        updateUploadedTextures();
+        updateTextureUploadQueue();
         if (mIsActive) updateAllImageRequests();
     }
 
-    private void uploadTexture(boolean isActive, Texture texture) {
-        if ((texture == null) || !(texture instanceof BitmapTexture)) return;
-        if (isActive) {
-            mTextureUploader.addFgTexture((BitmapTexture) texture);
-        } else {
-            mTextureUploader.addBgTexture((BitmapTexture) texture);
+    private void uploadBgTextureInSlot(int index) {
+        if (index < mContentEnd && index >= mContentStart) {
+            AlbumEntry entry = mData[index % mData.length];
+            if (entry.content instanceof BitmapTexture) {
+                mTextureUploader.addBgTexture((BitmapTexture) entry.content);
+            }
         }
     }
 
-    private void updateUploadedTextures() {
+    private void updateTextureUploadQueue() {
         if (!mIsActive) return;
         mTextureUploader.clear();
-        for (int i = mContentStart, n = mContentEnd; i < n; ++i) {
+
+        // add foreground textures
+        for (int i = mActiveStart, n = mActiveEnd; i < n; ++i) {
             AlbumEntry entry = mData[i % mData.length];
-            boolean isActive = isActiveSlot(i);
-            uploadTexture(isActive, entry.content);
+            if (entry.content instanceof BitmapTexture) {
+                mTextureUploader.addFgTexture((BitmapTexture) entry.content);
+            }
+        }
+
+        // add background textures
+        int range = Math.max(
+                (mContentEnd - mActiveEnd), (mActiveStart - mContentStart));
+        for (int i = 0; i < range; ++i) {
+            uploadBgTextureInSlot(mActiveEnd + i);
+            uploadBgTextureInSlot(mActiveStart - i - 1);
         }
     }
 
