@@ -45,6 +45,7 @@ import com.android.gallery3d.ui.AlbumView;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.GLCanvas;
+import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.GridDrawer;
 import com.android.gallery3d.ui.HighlightDrawer;
@@ -561,13 +562,19 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         ((Activity) mActivity).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (resultCode == MediaSet.SYNC_RESULT_SUCCESS) {
-                    mInitialSynced = true;
-                }
-                clearLoadingBit(BIT_LOADING_SYNC);
-                if (resultCode == MediaSet.SYNC_RESULT_ERROR && mIsActive) {
-                    Toast.makeText((Context) mActivity, R.string.sync_album_error,
-                            Toast.LENGTH_LONG).show();
+                GLRoot root = mActivity.getGLRoot();
+                root.lockRenderThread();
+                try {
+                    if (resultCode == MediaSet.SYNC_RESULT_SUCCESS) {
+                        mInitialSynced = true;
+                    }
+                    clearLoadingBit(BIT_LOADING_SYNC);
+                    if (resultCode == MediaSet.SYNC_RESULT_ERROR && mIsActive) {
+                        Toast.makeText((Context) mActivity, R.string.sync_album_error,
+                                Toast.LENGTH_LONG).show();
+                    }
+                } finally {
+                    root.unlockRenderThread();
                 }
             }
         });
