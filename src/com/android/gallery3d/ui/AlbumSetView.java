@@ -18,7 +18,6 @@ package com.android.gallery3d.ui;
 
 import android.content.Context;
 
-import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
@@ -30,7 +29,7 @@ import com.android.gallery3d.ui.AlbumSetSlidingWindow.AlbumSetEntry;
 public class AlbumSetView extends AbstractSlotRenderer {
     @SuppressWarnings("unused")
     private static final String TAG = "AlbumSetView";
-    private static final int CACHE_SIZE = 64;
+    private static final int CACHE_SIZE = 96;
     private static final int PLACEHOLDER_COLOR = 0xFF222222;
 
     private final ColorTexture mWaitLoadingTexture;
@@ -40,7 +39,6 @@ public class AlbumSetView extends AbstractSlotRenderer {
 
     protected AlbumSetSlidingWindow mDataWindow;
     private SlotView mSlotView;
-    private NinePatchTexture mDarkStrip;
 
     private int mPressedIndex = -1;
     private Path mHighlightItemPath = null;
@@ -81,7 +79,6 @@ public class AlbumSetView extends AbstractSlotRenderer {
         mWaitLoadingTexture.setSize(1, 1);
 
         Context context = activity.getAndroidContext();
-        mDarkStrip = new NinePatchTexture(context, R.drawable.dark_strip);
     }
 
     public void setPressedIndex(int index) {
@@ -180,9 +177,9 @@ public class AlbumSetView extends AbstractSlotRenderer {
             content = mDataWindow.getLoadingTexture();
         }
         if (content != null) {
-            int h = mLabelSpec.labelBackgroundHeight;
-            drawFrame(canvas, mDarkStrip, 0, height - h, width, h);
-            content.draw(canvas, 0, height - h, width, h);
+            int b = AlbumLabelMaker.getBorderSize();
+            int h = content.getHeight();
+            content.draw(canvas, -b, height - h + b, width + b + b, h);
         }
         return 0;
     }

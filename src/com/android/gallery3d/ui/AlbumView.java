@@ -28,7 +28,7 @@ public class AlbumView extends AbstractSlotRenderer {
 
     @SuppressWarnings("unused")
     private static final String TAG = "AlbumView";
-    private static final int CACHE_SIZE = 64;
+    private static final int CACHE_SIZE = 96;
 
     private AlbumSlidingWindow mDataWindow;
     private final GalleryActivity mActivity;
