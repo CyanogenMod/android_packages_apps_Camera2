@@ -94,7 +94,8 @@
 
     <!-- Details dialog "OK" button. Dismisses dialog. -->
     <string name="delete">Delete</string>
-    <string name="confirm_delete">Delete</string>
+    <string name="confirm_action">Confirm deletion?</string>
+    <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="share">Share</string>
 
