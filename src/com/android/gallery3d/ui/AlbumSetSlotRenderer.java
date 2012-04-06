@@ -18,15 +18,13 @@ package com.android.gallery3d.ui;
 
 import android.content.Context;
 
+import com.android.gallery3d.app.AlbumSetDataLoader;
 import com.android.gallery3d.app.GalleryActivity;
-import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
-import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.ui.AlbumSetSlidingWindow.AlbumSetEntry;
 
-// TODO: rename to AlbumSetRenderer
-public class AlbumSetView extends AbstractSlotRenderer {
+public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
     @SuppressWarnings("unused")
     private static final String TAG = "AlbumSetView";
     private static final int CACHE_SIZE = 96;
@@ -44,19 +42,6 @@ public class AlbumSetView extends AbstractSlotRenderer {
     private Path mHighlightItemPath = null;
     private boolean mInSelectionMode;
 
-    public static interface Model {
-        public MediaItem getCoverItem(int index);
-        public MediaSet getMediaSet(int index);
-        public int size();
-        public void setActiveWindow(int start, int end);
-        public void setModelListener(ModelListener listener);
-    }
-
-    public static interface ModelListener {
-        public void onWindowContentChanged(int index);
-        public void onSizeChanged(int size);
-    }
-
     public static class LabelSpec {
         public int labelBackgroundHeight;
         public int titleOffset;
@@ -67,7 +52,7 @@ public class AlbumSetView extends AbstractSlotRenderer {
         public int iconSize;
     }
 
-    public AlbumSetView(GalleryActivity activity, SelectionManager selectionManager,
+    public AlbumSetSlotRenderer(GalleryActivity activity, SelectionManager selectionManager,
             SlotView slotView, LabelSpec labelSpec) {
         super ((Context) activity);
         mActivity = activity;
@@ -93,7 +78,7 @@ public class AlbumSetView extends AbstractSlotRenderer {
         mSlotView.invalidate();
     }
 
-    public void setModel(AlbumSetView.Model model) {
+    public void setModel(AlbumSetDataLoader model) {
         if (mDataWindow != null) {
             mDataWindow.setListener(null);
             mDataWindow = null;

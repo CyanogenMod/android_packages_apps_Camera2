@@ -28,7 +28,7 @@ public class AlbumLabelMaker {
     private static final int BORDER_SIZE = 1;
     private static final int BACKGROUND_COLOR = 0x60000000; // 36% Dark
 
-    private final AlbumSetView.LabelSpec mSpec;
+    private final AlbumSetSlotRenderer.LabelSpec mSpec;
     private final TextPaint mTitlePaint;
     private final TextPaint mCountPaint;
     private final Context mContext;
@@ -41,7 +41,7 @@ public class AlbumLabelMaker {
     private final LazyLoadedBitmap mCameraIcon;
     private final LazyLoadedBitmap mMtpIcon;
 
-    public AlbumLabelMaker(Context context, AlbumSetView.LabelSpec spec) {
+    public AlbumLabelMaker(Context context, AlbumSetSlotRenderer.LabelSpec spec) {
         mContext = context;
         mSpec = spec;
         mTitlePaint = getTextPaint(spec.titleFontSize, FONT_COLOR_TITLE, false);
@@ -147,7 +147,7 @@ public class AlbumLabelMaker {
         @Override
         public Bitmap run(JobContext jc) {
             MediaSet album = mAlbum;
-            AlbumSetView.LabelSpec s = mSpec;
+            AlbumSetSlotRenderer.LabelSpec s = mSpec;
 
             String title = Utils.ensureNotNull(
                     (album == null) ? mTitle : album.getName());

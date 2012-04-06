@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.os.Message;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.app.AlbumSetDataLoader;
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataSourceType;
@@ -32,7 +33,7 @@ import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.ThreadPool;
 
-public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
+public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
     private static final String TAG = "AlbumSetSlidingWindow";
     private static final int MSG_UPDATE_ALBUM_ENTRY = 1;
 
@@ -41,7 +42,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
         public void onContentChanged();
     }
 
-    private final AlbumSetView.Model mSource;
+    private final AlbumSetDataLoader mSource;
     private int mSize;
 
     private int mContentStart = 0;
@@ -85,7 +86,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
     }
 
     public AlbumSetSlidingWindow(GalleryActivity activity,
-            AlbumSetView.Model source, AlbumSetView.LabelSpec labelSpec, int cacheSize) {
+            AlbumSetDataLoader source, AlbumSetSlotRenderer.LabelSpec labelSpec, int cacheSize) {
         source.setModelListener(this);
         mSource = source;
         mData = new AlbumSetEntry[cacheSize];
@@ -334,7 +335,7 @@ public class AlbumSetSlidingWindow implements AlbumSetView.ModelListener {
     }
 
     @Override
-    public void onWindowContentChanged(int index) {
+    public void onContentChanged(int index) {
         if (!mIsActive) {
             // paused, ignore slot changed event
             return;

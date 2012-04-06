@@ -41,7 +41,7 @@ import com.android.gallery3d.data.MtpDevice;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.ui.ActionModeHandler;
 import com.android.gallery3d.ui.ActionModeHandler.ActionModeListener;
-import com.android.gallery3d.ui.AlbumView;
+import com.android.gallery3d.ui.AlbumSlotRenderer;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.GLCanvas;
@@ -76,12 +76,12 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private static final boolean TEST_CAMERA_PREVIEW = false;
 
     private boolean mIsActive = false;
-    private AlbumView mAlbumView;
+    private AlbumSlotRenderer mAlbumView;
     private Path mMediaSetPath;
     private String mParentMediaSetString;
     private SlotView mSlotView;
 
-    private AlbumDataAdapter mAlbumDataAdapter;
+    private AlbumDataLoader mAlbumDataAdapter;
 
     protected SelectionManager mSelectionManager;
     private Vibrator mVibrator;
@@ -343,7 +343,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mSelectionManager.setSelectionListener(this);
         Config.AlbumPage config = Config.AlbumPage.get((Context) mActivity);
         mSlotView = new SlotView((Context) mActivity, config.slotViewSpec);
-        mAlbumView = new AlbumView(mActivity, mSlotView, mSelectionManager);
+        mAlbumView = new AlbumSlotRenderer(mActivity, mSlotView, mSelectionManager);
         mSlotView.setSlotRenderer(mAlbumView);
         mRootPane.addComponent(mSlotView);
         mSlotView.setListener(new SlotView.SimpleListener() {
@@ -383,7 +383,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             Utils.fail("MediaSet is null. Path = %s", mMediaSetPath);
         }
         mSelectionManager.setSourceMediaSet(mMediaSet);
-        mAlbumDataAdapter = new AlbumDataAdapter(mActivity, mMediaSet);
+        mAlbumDataAdapter = new AlbumDataLoader(mActivity, mMediaSet);
         mAlbumDataAdapter.setLoadingListener(new MyLoadingListener());
         mAlbumView.setModel(mAlbumDataAdapter);
     }

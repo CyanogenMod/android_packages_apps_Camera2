@@ -18,12 +18,12 @@ package com.android.gallery3d.ui;
 
 import android.content.Context;
 
+import com.android.gallery3d.app.AlbumDataLoader;
 import com.android.gallery3d.app.GalleryActivity;
-import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.Path;
 
-public class AlbumView extends AbstractSlotRenderer {
+public class AlbumSlotRenderer extends AbstractSlotRenderer {
     private static final int PLACEHOLDER_COLOR = 0xFF222222;
 
     @SuppressWarnings("unused")
@@ -40,19 +40,7 @@ public class AlbumView extends AbstractSlotRenderer {
     private Path mHighlightItemPath = null;
     private boolean mInSelectionMode;
 
-    public static interface Model {
-        public int size();
-        public MediaItem get(int index);
-        public void setActiveWindow(int start, int end);
-        public void setModelListener(ModelListener listener);
-    }
-
-    public static interface ModelListener {
-        public void onWindowContentChanged(int index);
-        public void onSizeChanged(int size);
-    }
-
-    public AlbumView(GalleryActivity activity, SlotView slotView,
+    public AlbumSlotRenderer(GalleryActivity activity, SlotView slotView,
             SelectionManager selectionManager) {
         super((Context) activity);
         mActivity = activity;
@@ -75,7 +63,7 @@ public class AlbumView extends AbstractSlotRenderer {
         mSlotView.invalidate();
     }
 
-    public void setModel(Model model) {
+    public void setModel(AlbumDataLoader model) {
         if (mDataWindow != null) {
             mDataWindow.setListener(null);
             mSlotView.setSlotCount(0);
