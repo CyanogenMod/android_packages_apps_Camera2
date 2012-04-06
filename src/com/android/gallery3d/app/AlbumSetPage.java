@@ -40,7 +40,7 @@ import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.settings.GallerySettings;
 import com.android.gallery3d.ui.ActionModeHandler;
 import com.android.gallery3d.ui.ActionModeHandler.ActionModeListener;
-import com.android.gallery3d.ui.AlbumSetView;
+import com.android.gallery3d.ui.AlbumSetSlotRenderer;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.GLCanvas;
@@ -70,7 +70,7 @@ public class AlbumSetPage extends ActivityState implements
 
     private boolean mIsActive = false;
     private SlotView mSlotView;
-    private AlbumSetView mAlbumSetView;
+    private AlbumSetSlotRenderer mAlbumSetView;
 
     private MediaSet mMediaSet;
     private String mTitle;
@@ -81,7 +81,7 @@ public class AlbumSetPage extends ActivityState implements
     private Vibrator mVibrator;
 
     protected SelectionManager mSelectionManager;
-    private AlbumSetDataAdapter mAlbumSetDataAdapter;
+    private AlbumSetDataLoader mAlbumSetDataAdapter;
 
     private boolean mGetContent;
     private boolean mGetAlbum;
@@ -332,7 +332,7 @@ public class AlbumSetPage extends ActivityState implements
         String mediaPath = data.getString(AlbumSetPage.KEY_MEDIA_PATH);
         mMediaSet = mActivity.getDataManager().getMediaSet(mediaPath);
         mSelectionManager.setSourceMediaSet(mMediaSet);
-        mAlbumSetDataAdapter = new AlbumSetDataAdapter(
+        mAlbumSetDataAdapter = new AlbumSetDataLoader(
                 mActivity, mMediaSet, DATA_CACHE_SIZE);
         mAlbumSetDataAdapter.setLoadingListener(new MyLoadingListener());
         mAlbumSetView.setModel(mAlbumSetDataAdapter);
@@ -344,7 +344,7 @@ public class AlbumSetPage extends ActivityState implements
 
         Config.AlbumSetPage config = Config.AlbumSetPage.get((Context) mActivity);
         mSlotView = new SlotView((Context) mActivity, config.slotViewSpec);
-        mAlbumSetView = new AlbumSetView(
+        mAlbumSetView = new AlbumSetSlotRenderer(
                 mActivity, mSelectionManager, mSlotView, config.labelSpec);
         mSlotView.setSlotRenderer(mAlbumSetView);
         mSlotView.setListener(new SlotView.SimpleListener() {

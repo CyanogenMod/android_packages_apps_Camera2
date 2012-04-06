@@ -69,7 +69,7 @@ public class ManageCachePage extends ActivityState implements
 
     protected SelectionManager mSelectionManager;
     protected ManageCacheDrawer mSelectionDrawer;
-    private AlbumSetDataAdapter mAlbumSetDataAdapter;
+    private AlbumSetDataLoader mAlbumSetDataAdapter;
     private float mUserDistance; // in pixel
 
     private EyePosition mEyePosition;
@@ -274,7 +274,7 @@ public class ManageCachePage extends ActivityState implements
         mSelectionManager.setAutoLeaveSelectionMode(false);
         mSelectionManager.enterSelectionMode();
 
-        mAlbumSetDataAdapter = new AlbumSetDataAdapter(
+        mAlbumSetDataAdapter = new AlbumSetDataLoader(
                 mActivity, mMediaSet, DATA_CACHE_SIZE);
         mSelectionDrawer.setModel(mAlbumSetDataAdapter);
     }

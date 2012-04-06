@@ -25,7 +25,7 @@ import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.ui.AlbumSetSlidingWindow.AlbumSetEntry;
 
-public class ManageCacheDrawer extends AlbumSetView {
+public class ManageCacheDrawer extends AlbumSetSlotRenderer {
     private final ResourceTexture mCheckedItem;
     private final ResourceTexture mUnCheckedItem;
     private final SelectionManager mSelectionManager;

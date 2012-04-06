@@ -19,7 +19,6 @@ package com.android.gallery3d.app;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
-import android.os.SystemClock;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ContentListener;
@@ -27,30 +26,35 @@ import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
-import com.android.gallery3d.ui.AlbumSetView;
+import com.android.gallery3d.ui.AlbumSlotRenderer;
 import com.android.gallery3d.ui.SynchronizedHandler;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-public class AlbumSetDataAdapter implements AlbumSetView.Model {
+public class AlbumDataLoader {
     @SuppressWarnings("unused")
-    private static final String TAG = "AlbumSetDataAdapter";
-
-    private static final int INDEX_NONE = -1;
-
-    private static final int MIN_LOAD_COUNT = 4;
+    private static final String TAG = "AlbumDataAdapter";
+    private static final int DATA_CACHE_SIZE = 1000;
 
     private static final int MSG_LOAD_START = 1;
     private static final int MSG_LOAD_FINISH = 2;
     private static final int MSG_RUN_OBJECT = 3;
 
-    private final MediaSet[] mData;
-    private final MediaItem[] mCoverItem;
+    private static final int MIN_LOAD_COUNT = 32;
+    private static final int MAX_LOAD_COUNT = 64;
+
+    private final MediaItem[] mData;
     private final long[] mItemVersion;
     private final long[] mSetVersion;
+
+    public static interface DataListener {
+        public void onContentChanged(int index);
+        public void onSizeChanged(int size);
+    }
 
     private int mActiveStart = 0;
     private int mActiveEnd = 0;
@@ -60,26 +64,26 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
 
     private final MediaSet mSource;
     private long mSourceVersion = MediaObject.INVALID_DATA_VERSION;
-    private int mSize;
-
-    private AlbumSetView.ModelListener mModelListener;
-    private LoadingListener mLoadingListener;
-    private ReloadTask mReloadTask;
 
     private final Handler mMainHandler;
+    private int mSize = 0;
 
-    private final MySourceListener mSourceListener = new MySourceListener();
+    private DataListener mDataListener;
+    private MySourceListener mSourceListener = new MySourceListener();
+    private LoadingListener mLoadingListener;
 
-    public AlbumSetDataAdapter(GalleryActivity activity, MediaSet albumSet, int cacheSize) {
-        mSource = Utils.checkNotNull(albumSet);
-        mCoverItem = new MediaItem[cacheSize];
-        mData = new MediaSet[cacheSize];
-        mItemVersion = new long[cacheSize];
-        mSetVersion = new long[cacheSize];
+    private ReloadTask mReloadTask;
+
+    public AlbumDataLoader(GalleryActivity context, MediaSet mediaSet) {
+        mSource = mediaSet;
+
+        mData = new MediaItem[DATA_CACHE_SIZE];
+        mItemVersion = new long[DATA_CACHE_SIZE];
+        mSetVersion = new long[DATA_CACHE_SIZE];
         Arrays.fill(mItemVersion, MediaObject.INVALID_DATA_VERSION);
         Arrays.fill(mSetVersion, MediaObject.INVALID_DATA_VERSION);
 
-        mMainHandler = new SynchronizedHandler(activity.getGLRoot()) {
+        mMainHandler = new SynchronizedHandler(context.getGLRoot()) {
             @Override
             public void handleMessage(Message message) {
                 switch (message.what) {
@@ -97,32 +101,24 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
         };
     }
 
-    public void pause() {
-        mReloadTask.terminate();
-        mReloadTask = null;
-        mSource.removeContentListener(mSourceListener);
-    }
-
     public void resume() {
         mSource.addContentListener(mSourceListener);
         mReloadTask = new ReloadTask();
         mReloadTask.start();
     }
 
-    public MediaSet getMediaSet(int index) {
-        if (index < mActiveStart && index >= mActiveEnd) {
+    public void pause() {
+        mReloadTask.terminate();
+        mReloadTask = null;
+        mSource.removeContentListener(mSourceListener);
+    }
+
+    public MediaItem get(int index) {
+        if (!isActive(index)) {
             throw new IllegalArgumentException(String.format(
                     "%s not in (%s, %s)", index, mActiveStart, mActiveEnd));
         }
         return mData[index % mData.length];
-    }
-
-    public MediaItem getCoverItem(int index) {
-        if (index < mActiveStart && index >= mActiveEnd) {
-            throw new IllegalArgumentException(String.format(
-                    "%s not in (%s, %s)", index, mActiveStart, mActiveEnd));
-        }
-        return mCoverItem[index % mCoverItem.length];
     }
 
     public int getActiveStart() {
@@ -139,46 +135,47 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
 
     private void clearSlot(int slotIndex) {
         mData[slotIndex] = null;
-        mCoverItem[slotIndex] = null;
         mItemVersion[slotIndex] = MediaObject.INVALID_DATA_VERSION;
         mSetVersion[slotIndex] = MediaObject.INVALID_DATA_VERSION;
     }
 
     private void setContentWindow(int contentStart, int contentEnd) {
         if (contentStart == mContentStart && contentEnd == mContentEnd) return;
-        int length = mCoverItem.length;
+        int end = mContentEnd;
+        int start = mContentStart;
 
-        int start = this.mContentStart;
-        int end = this.mContentEnd;
-
-        mContentStart = contentStart;
-        mContentEnd = contentEnd;
-
+        // We need change the content window before calling reloadData(...)
+        synchronized (this) {
+            mContentStart = contentStart;
+            mContentEnd = contentEnd;
+        }
+        long[] itemVersion = mItemVersion;
+        long[] setVersion = mSetVersion;
         if (contentStart >= end || start >= contentEnd) {
             for (int i = start, n = end; i < n; ++i) {
-                clearSlot(i % length);
+                clearSlot(i % DATA_CACHE_SIZE);
             }
         } else {
             for (int i = start; i < contentStart; ++i) {
-                clearSlot(i % length);
+                clearSlot(i % DATA_CACHE_SIZE);
             }
             for (int i = contentEnd, n = end; i < n; ++i) {
-                clearSlot(i % length);
+                clearSlot(i % DATA_CACHE_SIZE);
             }
         }
-        mReloadTask.notifyDirty();
+        if (mReloadTask != null) mReloadTask.notifyDirty();
     }
 
     public void setActiveWindow(int start, int end) {
         if (start == mActiveStart && end == mActiveEnd) return;
 
         Utils.assertTrue(start <= end
-                && end - start <= mCoverItem.length && end <= mSize);
+                && end - start <= mData.length && end <= mSize);
 
+        int length = mData.length;
         mActiveStart = start;
         mActiveEnd = end;
 
-        int length = mCoverItem.length;
         // If no data is visible, keep the cache content
         if (start == end) return;
 
@@ -193,92 +190,16 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
 
     private class MySourceListener implements ContentListener {
         public void onContentDirty() {
-            mReloadTask.notifyDirty();
+            if (mReloadTask != null) mReloadTask.notifyDirty();
         }
     }
 
-    public void setModelListener(AlbumSetView.ModelListener listener) {
-        mModelListener = listener;
+    public void setDataListener(DataListener listener) {
+        mDataListener = listener;
     }
 
     public void setLoadingListener(LoadingListener listener) {
         mLoadingListener = listener;
-    }
-
-    private static class UpdateInfo {
-        public long version;
-        public int index;
-
-        public int size;
-        public MediaSet item;
-        public MediaItem cover;
-    }
-
-    private class GetUpdateInfo implements Callable<UpdateInfo> {
-
-        private final long mVersion;
-
-        public GetUpdateInfo(long version) {
-            mVersion = version;
-        }
-
-        private int getInvalidIndex(long version) {
-            long setVersion[] = mSetVersion;
-            int length = setVersion.length;
-            for (int i = mContentStart, n = mContentEnd; i < n; ++i) {
-                int index = i % length;
-                if (setVersion[i % length] != version) return i;
-            }
-            return INDEX_NONE;
-        }
-
-        @Override
-        public UpdateInfo call() throws Exception {
-            int index = getInvalidIndex(mVersion);
-            if (index == INDEX_NONE && mSourceVersion == mVersion) return null;
-            UpdateInfo info = new UpdateInfo();
-            info.version = mSourceVersion;
-            info.index = index;
-            info.size = mSize;
-            return info;
-        }
-    }
-
-    private class UpdateContent implements Callable<Void> {
-        private final UpdateInfo mUpdateInfo;
-
-        public UpdateContent(UpdateInfo info) {
-            mUpdateInfo = info;
-        }
-
-        public Void call() {
-            // Avoid notifying listeners of status change after pause
-            // Otherwise gallery will be in inconsistent state after resume.
-            if (mReloadTask == null) return null;
-            UpdateInfo info = mUpdateInfo;
-            mSourceVersion = info.version;
-            if (mSize != info.size) {
-                mSize = info.size;
-                if (mModelListener != null) mModelListener.onSizeChanged(mSize);
-                if (mContentEnd > mSize) mContentEnd = mSize;
-                if (mActiveEnd > mSize) mActiveEnd = mSize;
-            }
-            // Note: info.index could be INDEX_NONE, i.e., -1
-            if (info.index >= mContentStart && info.index < mContentEnd) {
-                int pos = info.index % mCoverItem.length;
-                mSetVersion[pos] = info.version;
-                long itemVersion = info.item.getDataVersion();
-                if (mItemVersion[pos] == itemVersion) return null;
-                mItemVersion[pos] = itemVersion;
-                mData[pos] = info.item;
-                mCoverItem[pos] = info.cover;
-                if (mModelListener != null
-                        && info.index >= mActiveStart && info.index < mActiveEnd) {
-                    mModelListener.onWindowContentChanged(info.index);
-                }
-            }
-            return null;
-        }
     }
 
     private <T> T executeAndWait(Callable<T> callable) {
@@ -294,11 +215,102 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
         }
     }
 
-    // TODO: load active range first
+    private static class UpdateInfo {
+        public long version;
+        public int reloadStart;
+        public int reloadCount;
+
+        public int size;
+        public ArrayList<MediaItem> items;
+    }
+
+    private class GetUpdateInfo implements Callable<UpdateInfo> {
+        private final long mVersion;
+
+        public GetUpdateInfo(long version) {
+            mVersion = version;
+        }
+
+        public UpdateInfo call() throws Exception {
+            UpdateInfo info = new UpdateInfo();
+            long version = mVersion;
+            info.version = mSourceVersion;
+            info.size = mSize;
+            long setVersion[] = mSetVersion;
+            for (int i = mContentStart, n = mContentEnd; i < n; ++i) {
+                int index = i % DATA_CACHE_SIZE;
+                if (setVersion[index] != version) {
+                    info.reloadStart = i;
+                    info.reloadCount = Math.min(MAX_LOAD_COUNT, n - i);
+                    return info;
+                }
+            }
+            return mSourceVersion == mVersion ? null : info;
+        }
+    }
+
+    private class UpdateContent implements Callable<Void> {
+
+        private UpdateInfo mUpdateInfo;
+
+        public UpdateContent(UpdateInfo info) {
+            mUpdateInfo = info;
+        }
+
+        @Override
+        public Void call() throws Exception {
+            UpdateInfo info = mUpdateInfo;
+            mSourceVersion = info.version;
+            if (mSize != info.size) {
+                mSize = info.size;
+                if (mDataListener != null) mDataListener.onSizeChanged(mSize);
+                if (mContentEnd > mSize) mContentEnd = mSize;
+                if (mActiveEnd > mSize) mActiveEnd = mSize;
+            }
+
+            ArrayList<MediaItem> items = info.items;
+
+            if (items == null) return null;
+            int start = Math.max(info.reloadStart, mContentStart);
+            int end = Math.min(info.reloadStart + items.size(), mContentEnd);
+
+            for (int i = start; i < end; ++i) {
+                int index = i % DATA_CACHE_SIZE;
+                mSetVersion[index] = info.version;
+                MediaItem updateItem = items.get(i - info.reloadStart);
+                long itemVersion = updateItem.getDataVersion();
+                if (mItemVersion[index] != itemVersion) {
+                    mItemVersion[index] = itemVersion;
+                    mData[index] = updateItem;
+                    if (mDataListener != null && i >= mActiveStart && i < mActiveEnd) {
+                        mDataListener.onContentChanged(i);
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    /*
+     * The thread model of ReloadTask
+     *      *
+     * [Reload Task]       [Main Thread]
+     *       |                   |
+     * getUpdateInfo() -->       |           (synchronous call)
+     *     (wait) <----    getUpdateInfo()
+     *       |                   |
+     *   Load Data               |
+     *       |                   |
+     * updateContent() -->       |           (synchronous call)
+     *     (wait)          updateContent()
+     *       |                   |
+     *       |                   |
+     */
     private class ReloadTask extends Thread {
+
         private volatile boolean mActive = true;
         private volatile boolean mDirty = true;
-        private volatile boolean mIsLoading = false;
+        private boolean mIsLoading = false;
 
         private void updateLoading(boolean loading) {
             if (mIsLoading == loading) return;
@@ -321,37 +333,20 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
                 }
                 mDirty = false;
                 updateLoading(true);
-
                 long version;
                 synchronized (DataManager.LOCK) {
-                    long start = SystemClock.uptimeMillis();
                     version = mSource.reload();
-                    long duration = SystemClock.uptimeMillis() - start;
-                    if (duration > 20) {
-                        Log.v("DebugLoadingTime", "finish reload - " + duration);
-                    }
                 }
                 UpdateInfo info = executeAndWait(new GetUpdateInfo(version));
                 updateComplete = info == null;
                 if (updateComplete) continue;
-
                 synchronized (DataManager.LOCK) {
                     if (info.version != version) {
+                        info.size = mSource.getMediaItemCount();
                         info.version = version;
-                        info.size = mSource.getSubMediaSetCount();
-
-                        // If the size becomes smaller after reload(), we may
-                        // receive from GetUpdateInfo an index which is too
-                        // big. Because the main thread is not aware of the size
-                        // change until we call UpdateContent.
-                        if (info.index >= info.size) {
-                            info.index = INDEX_NONE;
-                        }
                     }
-                    if (info.index != INDEX_NONE) {
-                        info.item = mSource.getSubMediaSet(info.index);
-                        if (info.item == null) continue;
-                        info.cover = info.item.getCoverMediaItem();
+                    if (info.reloadCount > 0) {
+                        info.items = mSource.getMediaItem(info.reloadStart, info.reloadCount);
                     }
                 }
                 executeAndWait(new UpdateContent(info));
@@ -370,5 +365,3 @@ public class AlbumSetDataAdapter implements AlbumSetView.Model {
         }
     }
 }
-
-

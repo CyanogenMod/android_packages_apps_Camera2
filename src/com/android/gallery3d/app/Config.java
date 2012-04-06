@@ -20,7 +20,7 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.ui.AlbumSetView;
+import com.android.gallery3d.ui.AlbumSetSlotRenderer;
 import com.android.gallery3d.ui.SlotView;
 
 final class Config {
@@ -28,7 +28,7 @@ final class Config {
         private static AlbumSetPage sInstance;
 
         public SlotView.Spec slotViewSpec;
-        public AlbumSetView.LabelSpec labelSpec;
+        public AlbumSetSlotRenderer.LabelSpec labelSpec;
 
         public static synchronized AlbumSetPage get(Context context) {
             if (sInstance == null) {
@@ -45,7 +45,7 @@ final class Config {
             slotViewSpec.rowsPort = r.getInteger(R.integer.albumset_rows_port);
             slotViewSpec.slotGap = r.getDimensionPixelSize(R.dimen.albumset_slot_gap);
 
-            labelSpec = new AlbumSetView.LabelSpec();
+            labelSpec = new AlbumSetSlotRenderer.LabelSpec();
             labelSpec.labelBackgroundHeight = r.getDimensionPixelSize(
                     R.dimen.albumset_label_background_height);
             labelSpec.titleOffset = r.getDimensionPixelSize(

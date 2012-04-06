@@ -19,6 +19,7 @@ package com.android.gallery3d.ui;
 import android.graphics.Bitmap;
 import android.os.Message;
 
+import com.android.gallery3d.app.AlbumDataLoader;
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
@@ -28,7 +29,7 @@ import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.JobLimiter;
 
-public class AlbumSlidingWindow implements AlbumView.ModelListener {
+public class AlbumSlidingWindow implements AlbumDataLoader.DataListener {
     @SuppressWarnings("unused")
     private static final String TAG = "AlbumSlidingWindow";
 
@@ -51,7 +52,7 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
         private BitmapLoader contentLoader;
     }
 
-    private final AlbumView.Model mSource;
+    private final AlbumDataLoader mSource;
     private final AlbumEntry mData[];
     private final SynchronizedHandler mHandler;
     private final JobLimiter mThreadPool;
@@ -71,8 +72,8 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
     private boolean mIsActive = false;
 
     public AlbumSlidingWindow(GalleryActivity activity,
-            AlbumView.Model source, int cacheSize) {
-        source.setModelListener(this);
+            AlbumDataLoader source, int cacheSize) {
+        source.setDataListener(this);
         mSource = source;
         mData = new AlbumEntry[cacheSize];
         mSize = source.size();
@@ -253,15 +254,6 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
         mData[slotIndex % mData.length] = entry;
     }
 
-    private void updateSlotContent(int slotIndex) {
-        freeSlotContent(slotIndex);
-        prepareSlotContent(slotIndex);
-        updateAllImageRequests();
-        if (mListener != null && isActiveSlot(slotIndex)) {
-            mListener.onContentChanged();
-        }
-    }
-
     private void updateAllImageRequests() {
         mActiveRequestCount = 0;
         for (int i = mActiveStart, n = mActiveEnd; i < n; ++i) {
@@ -326,9 +318,14 @@ public class AlbumSlidingWindow implements AlbumView.ModelListener {
     }
 
     @Override
-    public void onWindowContentChanged(int index) {
+    public void onContentChanged(int index) {
         if (index >= mContentStart && index < mContentEnd && mIsActive) {
-            updateSlotContent(index);
+            freeSlotContent(index);
+            prepareSlotContent(index);
+            updateAllImageRequests();
+            if (mListener != null && isActiveSlot(index)) {
+                mListener.onContentChanged();
+            }
         }
     }
 
