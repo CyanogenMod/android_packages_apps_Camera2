@@ -14,9 +14,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataSourceType;
-import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
@@ -112,15 +110,10 @@ public class AlbumLabelMaker {
 
     public ThreadPool.Job<Bitmap> requestLabel(
             String title, String count, int sourceType) {
-        return new AlbumLabelJob(null, title, count, sourceType);
+        return new AlbumLabelJob(title, count, sourceType);
     }
 
-    public ThreadPool.Job<Bitmap> requestLabel(
-            MediaSet album, int sourceType) {
-        return new AlbumLabelJob(album, null, null, sourceType);
-    }
-
-    private static void drawText(Canvas canvas,
+    static void drawText(Canvas canvas,
             int x, int y, String text, int lengthLimit, TextPaint p) {
         // The TextPaint cannot be used concurrently
         synchronized (p) {
@@ -131,14 +124,11 @@ public class AlbumLabelMaker {
     }
 
     private class AlbumLabelJob implements ThreadPool.Job<Bitmap> {
-        private final MediaSet mAlbum;
         private final String mTitle;
         private final String mCount;
         private final int mSourceType;
 
-        public AlbumLabelJob(MediaSet album,
-                String title, String count, int sourceType) {
-            mAlbum = album;
+        public AlbumLabelJob(String title, String count, int sourceType) {
             mTitle = title;
             mCount = count;
             mSourceType = sourceType;
@@ -146,14 +136,10 @@ public class AlbumLabelMaker {
 
         @Override
         public Bitmap run(JobContext jc) {
-            MediaSet album = mAlbum;
             AlbumSetSlotRenderer.LabelSpec s = mSpec;
 
-            String title = Utils.ensureNotNull(
-                    (album == null) ? mTitle : album.getName());
-            String count = album == null
-                    ? Utils.ensureNotNull(mCount)
-                    : String.valueOf(album.getTotalMediaItemCount());
+            String title = mTitle;
+            String count = mCount;
             Bitmap icon = getOverlayAlbumIcon(mSourceType);
 
             Bitmap bitmap;
