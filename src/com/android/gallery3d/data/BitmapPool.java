@@ -1,12 +1,12 @@
 // Copyright 2012 Google Inc. All Rights Reserved.
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.data;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 
-import com.android.gallery3d.data.DecodeUtils;
+import com.android.gallery3d.ui.Log;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
 import java.io.FileDescriptor;

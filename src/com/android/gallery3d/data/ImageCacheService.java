@@ -19,7 +19,9 @@ package com.android.gallery3d.data;
 import android.content.Context;
 
 import com.android.gallery3d.common.BlobCache;
+import com.android.gallery3d.common.BlobCache.LookupRequest;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.BytesBufferPool.BytesBuffer;
 import com.android.gallery3d.util.CacheManager;
 import com.android.gallery3d.util.GalleryUtils;
 
@@ -43,32 +45,35 @@ public class ImageCacheService {
                 IMAGE_CACHE_VERSION);
     }
 
-    public static class ImageData {
-        public ImageData(byte[] data, int offset) {
-            mData = data;
-            mOffset = offset;
-        }
-        public byte[] mData;
-        public int mOffset;
-    }
-
-    public ImageData getImageData(Path path, int type) {
+    /**
+     * Gets the cached image data for the given <code>path</code> and <code>type</code>.
+     *
+     * The image data will be stored in <code>buffer.data</code>, started from
+     * <code>buffer.offset</code> for <code>buffer.length</code> bytes. If the
+     * buffer.data is not big enough, a new byte array will be allocated and returned.
+     *
+     * @return true if the image data is found; false if not found.
+     */
+    public boolean getImageData(Path path, int type, BytesBuffer buffer) {
         byte[] key = makeKey(path, type);
         long cacheKey = Utils.crc64Long(key);
         try {
-            byte[] value = null;
+            LookupRequest request = new LookupRequest();
+            request.key = cacheKey;
+            request.buffer = buffer.data;
             synchronized (mCache) {
-                value = mCache.lookup(cacheKey);
+                if (!mCache.lookup(request)) return false;
             }
-            if (value == null) return null;
-            if (isSameKey(key, value)) {
-                int offset = key.length;
-                return new ImageData(value, offset);
+            if (isSameKey(key, request.buffer)) {
+                buffer.data = request.buffer;
+                buffer.offset = key.length;
+                buffer.length = request.length - buffer.offset;
+                return true;
             }
         } catch (IOException ex) {
             // ignore.
         }
-        return null;
+        return false;
     }
 
     public void putImageData(Path path, int type, byte[] value) {

@@ -21,7 +21,7 @@ import android.graphics.BitmapFactory;
 
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.BitmapUtils;
-import com.android.gallery3d.data.ImageCacheService.ImageData;
+import com.android.gallery3d.data.BytesBufferPool.BytesBuffer;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
@@ -41,52 +41,56 @@ abstract class ImageCacheRequest implements Job<Bitmap> {
         mTargetSize = targetSize;
     }
 
+    @Override
     public Bitmap run(JobContext jc) {
         String debugTag = mPath + "," +
                  ((mType == MediaItem.TYPE_THUMBNAIL) ? "THUMB" :
                  (mType == MediaItem.TYPE_MICROTHUMBNAIL) ? "MICROTHUMB" : "?");
         ImageCacheService cacheService = mApplication.getImageCacheService();
 
-        ImageData data = cacheService.getImageData(mPath, mType);
+        BytesBuffer buffer = MediaItem.getBytesBufferPool().get();
+        try {
+            boolean found = cacheService.getImageData(mPath, mType, buffer);
+            if (jc.isCancelled()) return null;
+            if (found) {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                Bitmap bitmap;
+                if (mType == MediaItem.TYPE_MICROTHUMBNAIL) {
+                    bitmap = MediaItem.getMicroThumbPool().decode(jc,
+                            buffer.data, buffer.offset, buffer.length, options);
+                } else {
+                    bitmap = DecodeUtils.decode(jc,
+                            buffer.data, buffer.offset, buffer.length, options);
+                }
+                if (bitmap == null && !jc.isCancelled()) {
+                    Log.w(TAG, "decode cached failed " + debugTag);
+                }
+                return bitmap;
+            }
+        } finally {
+            MediaItem.getBytesBufferPool().recycle(buffer);
+        }
+        Bitmap bitmap = onDecodeOriginal(jc, mType);
         if (jc.isCancelled()) return null;
 
-        if (data != null) {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            Bitmap bitmap;
-            if (mType == MediaItem.TYPE_MICROTHUMBNAIL) {
-                bitmap = MediaItem.getMicroThumbPool().decode(jc,
-                        data.mData, data.mOffset, data.mData.length - data.mOffset, options);
-            } else {
-                bitmap = DecodeUtils.decode(jc,
-                        data.mData, data.mOffset, data.mData.length - data.mOffset, options);
-            }
-            if (bitmap == null && !jc.isCancelled()) {
-                Log.w(TAG, "decode cached failed " + debugTag);
-            }
-            return bitmap;
-        } else {
-            Bitmap bitmap = onDecodeOriginal(jc, mType);
-            if (jc.isCancelled()) return null;
-
-            if (bitmap == null) {
-                Log.w(TAG, "decode orig failed " + debugTag);
-                return null;
-            }
-
-            if (mType == MediaItem.TYPE_MICROTHUMBNAIL) {
-                bitmap = BitmapUtils.resizeAndCropCenter(bitmap, mTargetSize, true);
-            } else {
-                bitmap = BitmapUtils.resizeDownBySideLength(bitmap, mTargetSize, true);
-            }
-            if (jc.isCancelled()) return null;
-
-            byte[] array = BitmapUtils.compressToBytes(bitmap);
-            if (jc.isCancelled()) return null;
-
-            cacheService.putImageData(mPath, mType, array);
-            return bitmap;
+        if (bitmap == null) {
+            Log.w(TAG, "decode orig failed " + debugTag);
+            return null;
         }
+
+        if (mType == MediaItem.TYPE_MICROTHUMBNAIL) {
+            bitmap = BitmapUtils.resizeAndCropCenter(bitmap, mTargetSize, true);
+        } else {
+            bitmap = BitmapUtils.resizeDownBySideLength(bitmap, mTargetSize, true);
+        }
+        if (jc.isCancelled()) return null;
+
+        byte[] array = BitmapUtils.compressToBytes(bitmap);
+        if (jc.isCancelled()) return null;
+
+        cacheService.putImageData(mPath, mType, array);
+        return bitmap;
     }
 
     public abstract Bitmap onDecodeOriginal(JobContext jc, int targetSize);

@@ -19,7 +19,6 @@ package com.android.gallery3d.data;
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
 
-import com.android.gallery3d.ui.BitmapPool;
 import com.android.gallery3d.ui.ScreenNail;
 import com.android.gallery3d.util.ThreadPool.Job;
 
@@ -40,8 +39,14 @@ public abstract class MediaItem extends MediaObject {
 
     public static final String MIME_TYPE_JPEG = "image/jpeg";
 
+    private static final int BYTESBUFFE_POOL_SIZE = 4;
+    private static final int BYTESBUFFER_SIZE = 200 * 1024;
+
     private static final BitmapPool sMicroThumbPool =
             new BitmapPool(MICROTHUMBNAIL_TARGET_SIZE, MICROTHUMBNAIL_TARGET_SIZE);
+
+    private static final BytesBufferPool sMicroThumbBufferPool =
+            new BytesBufferPool(BYTESBUFFE_POOL_SIZE, BYTESBUFFER_SIZE);
 
     // TODO: fix default value for latlng and change this.
     public static final double INVALID_LATLNG = 0f;
@@ -115,5 +120,9 @@ public abstract class MediaItem extends MediaObject {
 
     public static BitmapPool getMicroThumbPool() {
         return sMicroThumbPool;
+    }
+
+    public static BytesBufferPool getBytesBufferPool() {
+        return sMicroThumbBufferPool;
     }
 }
