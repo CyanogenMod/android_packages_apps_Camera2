@@ -53,6 +53,7 @@ public class AlbumSetDataLoader {
 
     private final MediaSet[] mData;
     private final MediaItem[] mCoverItem;
+    private final int[] mTotalCount;
     private final long[] mItemVersion;
     private final long[] mSetVersion;
 
@@ -78,6 +79,7 @@ public class AlbumSetDataLoader {
         mSource = Utils.checkNotNull(albumSet);
         mCoverItem = new MediaItem[cacheSize];
         mData = new MediaSet[cacheSize];
+        mTotalCount = new int[cacheSize];
         mItemVersion = new long[cacheSize];
         mSetVersion = new long[cacheSize];
         Arrays.fill(mItemVersion, MediaObject.INVALID_DATA_VERSION);
@@ -113,20 +115,26 @@ public class AlbumSetDataLoader {
         mReloadTask.start();
     }
 
-    public MediaSet getMediaSet(int index) {
+    private void assertIsActive(int index) {
         if (index < mActiveStart && index >= mActiveEnd) {
             throw new IllegalArgumentException(String.format(
                     "%s not in (%s, %s)", index, mActiveStart, mActiveEnd));
         }
+    }
+
+    public MediaSet getMediaSet(int index) {
+        assertIsActive(index);
         return mData[index % mData.length];
     }
 
     public MediaItem getCoverItem(int index) {
-        if (index < mActiveStart && index >= mActiveEnd) {
-            throw new IllegalArgumentException(String.format(
-                    "%s not in (%s, %s)", index, mActiveStart, mActiveEnd));
-        }
+        assertIsActive(index);
         return mCoverItem[index % mCoverItem.length];
+    }
+
+    public int getTotalCount(int index) {
+        assertIsActive(index);
+        return mTotalCount[index % mTotalCount.length];
     }
 
     public int getActiveStart() {
@@ -144,6 +152,7 @@ public class AlbumSetDataLoader {
     private void clearSlot(int slotIndex) {
         mData[slotIndex] = null;
         mCoverItem[slotIndex] = null;
+        mTotalCount[slotIndex] = 0;
         mItemVersion[slotIndex] = MediaObject.INVALID_DATA_VERSION;
         mSetVersion[slotIndex] = MediaObject.INVALID_DATA_VERSION;
     }
@@ -216,6 +225,7 @@ public class AlbumSetDataLoader {
         public int size;
         public MediaSet item;
         public MediaItem cover;
+        public int totalCount;
     }
 
     private class GetUpdateInfo implements Callable<UpdateInfo> {
@@ -276,6 +286,7 @@ public class AlbumSetDataLoader {
                 mItemVersion[pos] = itemVersion;
                 mData[pos] = info.item;
                 mCoverItem[pos] = info.cover;
+                mTotalCount[pos] = info.totalCount;
                 if (mDataListener != null
                         && info.index >= mActiveStart && info.index < mActiveEnd) {
                     mDataListener.onContentChanged(info.index);
@@ -356,6 +367,7 @@ public class AlbumSetDataLoader {
                         info.item = mSource.getSubMediaSet(info.index);
                         if (info.item == null) continue;
                         info.cover = info.item.getCoverMediaItem();
+                        info.totalCount = info.item.getTotalMediaItemCount();
                     }
                 }
                 executeAndWait(new UpdateContent(info));

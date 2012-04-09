@@ -1,4 +1,4 @@
-/*
+/*T
  * Copyright (C) 2010 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -72,6 +72,8 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
         public Texture content;
         public Texture label;
         public Path setPath;
+        public String title;
+        public int totalCount;
         public int sourceType;
         public int cacheFlag;
         public int cacheStatus;
@@ -227,23 +229,39 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
         mData[slotIndex % mData.length] = null;
     }
 
-    private void updateAlbumSetEntry(AlbumSetEntry entry,
-            int slotIndex, MediaSet album, MediaItem cover) {
+    private boolean isLabelChanged(
+            AlbumSetEntry entry, String title, int totalCount, int sourceType) {
+        return !Utils.equals(entry.title, title)
+                || entry.totalCount != totalCount
+                || entry.sourceType != sourceType;
+    }
+
+    private void updateAlbumSetEntry(AlbumSetEntry entry, int slotIndex) {
+        MediaSet album = mSource.getMediaSet(slotIndex);
+        MediaItem cover = mSource.getCoverItem(slotIndex);
+        int totalCount = mSource.getTotalCount(slotIndex);
+
         entry.album = album;
         entry.setDataVersion = getDataVersion(album);
-        entry.sourceType = DataSourceType.identifySourceType(album);
         entry.cacheFlag = identifyCacheFlag(album);
         entry.cacheStatus = identifyCacheStatus(album);
         entry.setPath = (album == null) ? null : album.getPath();
 
-        if (entry.labelLoader != null) {
-            entry.labelLoader.recycle();
-            entry.labelLoader = null;
-            entry.label = null;
-        }
-        if (album != null) {
-            entry.labelLoader =
-                    new AlbumLabelLoader(slotIndex, album, entry.sourceType);
+        String title = (album == null) ? "" : Utils.ensureNotNull(album.getName());
+        int sourceType = DataSourceType.identifySourceType(album);
+        if (isLabelChanged(entry, title, totalCount, sourceType)) {
+            entry.title = title;
+            entry.totalCount = totalCount;
+            entry.sourceType = sourceType;
+            if (entry.labelLoader != null) {
+                entry.labelLoader.recycle();
+                entry.labelLoader = null;
+                entry.label = null;
+            }
+            if (album != null) {
+                entry.labelLoader = new AlbumLabelLoader(
+                        slotIndex, title, totalCount, sourceType);
+            }
         }
 
         entry.coverItem = cover;
@@ -264,10 +282,8 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
     }
 
     private void prepareSlotContent(int slotIndex) {
-        MediaSet set = mSource.getMediaSet(slotIndex);
-        MediaItem coverItem = mSource.getCoverItem(slotIndex);
         AlbumSetEntry entry = new AlbumSetEntry();
-        updateAlbumSetEntry(entry, slotIndex, set, coverItem);
+        updateAlbumSetEntry(entry, slotIndex);
         mData[slotIndex % mData.length] = entry;
     }
 
@@ -350,9 +366,7 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
         }
 
         AlbumSetEntry entry = mData[index % mData.length];
-        MediaSet set = mSource.getMediaSet(index);
-        MediaItem coverItem = mSource.getCoverItem(index);
-        updateAlbumSetEntry(entry, index, set, coverItem);
+        updateAlbumSetEntry(entry, index);
         updateAllImageRequests();
         updateTextureUploadQueue();
         if (mListener != null && isActiveSlot(index)) {
@@ -362,8 +376,8 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
 
     public BitmapTexture getLoadingTexture() {
         if (mLoadingLabel == null) {
-            Bitmap bitmap = mLabelMaker.requestLabel(mLoadingText, null,
-                    DataSourceType.TYPE_NOT_CATEGORIZED)
+            Bitmap bitmap = mLabelMaker.requestLabel(
+                    mLoadingText, "", DataSourceType.TYPE_NOT_CATEGORIZED)
                     .run(ThreadPool.JOB_CONTEXT_STUB);
             mLoadingLabel = new BitmapTexture(bitmap);
             mLoadingLabel.setOpaque(false);
@@ -455,21 +469,23 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
     }
 
     private class AlbumLabelLoader extends BitmapLoader implements EntryUpdater {
-        private final MediaSet mMediaSet;
         private final int mSlotIndex;
+        private final String mTitle;
+        private final int mTotalCount;
         private final int mSourceType;
 
         public AlbumLabelLoader(
-                int slotIndex, MediaSet mediaSet, int sourceType) {
+                int slotIndex, String title, int totalCount, int sourceType) {
             mSlotIndex = slotIndex;
-            mMediaSet = mediaSet;
+            mTitle = title;
+            mTotalCount = totalCount;
             mSourceType = sourceType;
         }
 
         @Override
         protected Future<Bitmap> submitBitmapTask(FutureListener<Bitmap> l) {
             return mThreadPool.submit(mLabelMaker.requestLabel(
-                    mMediaSet, mSourceType), l);
+                    mTitle, String.valueOf(mTotalCount), mSourceType), l);
         }
 
         @Override
@@ -519,9 +535,10 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
                 entry.labelLoader = null;
                 entry.label = null;
             }
-            entry.labelLoader = (entry.album == null)
-                    ? null
-                    : new AlbumLabelLoader(i, entry.album, entry.sourceType);
+            if (entry.album != null) {
+                entry.labelLoader = new AlbumLabelLoader(i,
+                        entry.title, entry.totalCount, entry.sourceType);
+            }
         }
         updateAllImageRequests();
         updateTextureUploadQueue();
