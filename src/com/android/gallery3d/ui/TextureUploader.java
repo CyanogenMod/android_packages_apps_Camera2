@@ -84,11 +84,7 @@ public class TextureUploader implements OnGLIdleListener {
         int uploadQuota = QUOTA_PER_FRAME;
         uploadQuota = upload(canvas, mFgTextures, uploadQuota, false);
         if (uploadQuota < QUOTA_PER_FRAME) mGLRoot.requestRender();
-
-        // don't upload background texture if there is pending render request
-        if (!renderRequested) {
-            upload(canvas, mBgTextures, uploadQuota, true);
-        }
+        upload(canvas, mBgTextures, uploadQuota, true);
         synchronized (this) {
             mIsQueued = !mFgTextures.isEmpty() || !mBgTextures.isEmpty();
             return mIsQueued;

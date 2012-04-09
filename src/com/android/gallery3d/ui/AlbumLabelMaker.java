@@ -14,6 +14,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.DataSourceType;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.JobContext;

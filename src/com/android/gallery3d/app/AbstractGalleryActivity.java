@@ -178,6 +178,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
             mGLRootView.unlockRenderThread();
         }
         MediaItem.getMicroThumbPool().clear();
+        MediaItem.getBytesBufferPool().clear();
     }
 
     @Override
