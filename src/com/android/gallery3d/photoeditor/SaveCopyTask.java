@@ -48,29 +48,24 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
         void onComplete(Uri result);
     }
 
-    private static final String TIME_STAMP_NAME = "'IMG'_yyyyMMdd_HHmmss";
-    private static final int INDEX_DATE_TAKEN = 0;
-    private static final int INDEX_LATITUDE = 1;
-    private static final int INDEX_LONGITUDE = 2;
+    private interface ContentResolverQueryCallback {
 
-    private static final String[] IMAGE_PROJECTION = new String[] {
-        ImageColumns.DATE_TAKEN,
-        ImageColumns.LATITUDE,
-        ImageColumns.LONGITUDE,
-    };
+        void onCursorResult(Cursor cursor);
+    }
+
+    private static final String TIME_STAMP_NAME = "'IMG'_yyyyMMdd_HHmmss";
 
     private final Context context;
     private final Uri sourceUri;
     private final Callback callback;
-    private final String albumName;
     private final String saveFileName;
+    private File saveDirectory;
 
     public SaveCopyTask(Context context, Uri sourceUri, Callback callback) {
         this.context = context;
         this.sourceUri = sourceUri;
         this.callback = callback;
 
-        albumName = context.getString(R.string.edited_photo_bucket_name);
         saveFileName = new SimpleDateFormat(TIME_STAMP_NAME).format(
                 new Date(System.currentTimeMillis()));
     }
@@ -85,7 +80,9 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
             return null;
         }
         Bitmap bitmap = params[0];
-        File file = save(bitmap);
+        getSaveDirectory();
+        File file = new BitmapUtils(context).saveBitmap(
+                bitmap, saveDirectory, saveFileName, Bitmap.CompressFormat.JPEG);
         Uri uri = (file != null) ? insertContent(file) : null;
         bitmap.recycle();
         return uri;
@@ -94,7 +91,7 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
     @Override
     protected void onPostExecute(Uri result) {
         String message = (result == null) ? context.getString(R.string.saving_failure)
-                : context.getString(R.string.photo_saved, albumName);
+                : context.getString(R.string.photo_saved, saveDirectory.getName());
         Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
@@ -102,10 +99,36 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
         callback.onComplete(result);
     }
 
-    private File save(Bitmap bitmap) {
-        String directory = Environment.getExternalStorageDirectory().toString() + "/" + albumName;
-        return new BitmapUtils(context).saveBitmap(
-                bitmap, directory, saveFileName, Bitmap.CompressFormat.JPEG);
+    private void querySource(String[] projection, ContentResolverQueryCallback callback) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Cursor cursor = null;
+        try {
+            cursor = contentResolver.query(sourceUri, projection, null, null, null);
+            if ((cursor != null) && cursor.moveToNext()) {
+                callback.onCursorResult(cursor);
+            }
+        } catch (Exception e) {
+            // Ignore error for lacking the data column from the source.
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    private void getSaveDirectory() {
+        querySource(new String[] { ImageColumns.DATA }, new ContentResolverQueryCallback () {
+
+            @Override
+            public void onCursorResult(Cursor cursor) {
+                saveDirectory = new File(cursor.getString(0)).getParentFile();
+            }
+        });
+        // Use the default save directory if the source directory cannot be saved.
+        if ((saveDirectory == null) || !saveDirectory.canWrite()) {
+            saveDirectory = new File(Environment.getExternalStorageDirectory(),
+                    context.getString(R.string.edited_photo_bucket_name));
+        }
     }
 
     /**
@@ -113,43 +136,39 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
      */
     private Uri insertContent(File file) {
         long now = System.currentTimeMillis() / 1000;
-        long dateTaken = now;
-        double latitude = 0f;
-        double longitude = 0f;
 
-        ContentResolver contentResolver = context.getContentResolver();
-        Cursor cursor = null;
-        try {
-            cursor = contentResolver.query(sourceUri, IMAGE_PROJECTION, null, null, null);
-            if ((cursor != null) && cursor.moveToNext()) {
-                dateTaken = cursor.getLong(INDEX_DATE_TAKEN);
-                latitude = cursor.getDouble(INDEX_LATITUDE);
-                longitude = cursor.getDouble(INDEX_LONGITUDE);
-            }
-        } catch (Exception e) {
-            // Ignore error for lacking property columns from the source.
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-
-        ContentValues values = new ContentValues();
+        final ContentValues values = new ContentValues();
         values.put(Images.Media.TITLE, saveFileName);
         values.put(Images.Media.DISPLAY_NAME, file.getName());
         values.put(Images.Media.MIME_TYPE, "image/jpeg");
-        values.put(Images.Media.DATE_TAKEN, dateTaken);
+        values.put(Images.Media.DATE_TAKEN, now);
         values.put(Images.Media.DATE_MODIFIED, now);
         values.put(Images.Media.DATE_ADDED, now);
         values.put(Images.Media.ORIENTATION, 0);
         values.put(Images.Media.DATA, file.getAbsolutePath());
         values.put(Images.Media.SIZE, file.length());
 
-        // TODO: Change || to && after the default location issue is fixed.
-        if ((latitude != 0f) || (longitude != 0f)) {
-            values.put(Images.Media.LATITUDE, latitude);
-            values.put(Images.Media.LONGITUDE, longitude);
-        }
-        return contentResolver.insert(Images.Media.EXTERNAL_CONTENT_URI, values);
+        String[] projection = new String[] {
+            ImageColumns.DATE_TAKEN,
+            ImageColumns.LATITUDE,
+            ImageColumns.LONGITUDE,
+        };
+        querySource(projection, new ContentResolverQueryCallback() {
+
+            @Override
+            public void onCursorResult(Cursor cursor) {
+                values.put(Images.Media.DATE_TAKEN, cursor.getLong(0));
+
+                double latitude = cursor.getDouble(1);
+                double longitude = cursor.getDouble(2);
+                // TODO: Change || to && after the default location issue is fixed.
+                if ((latitude != 0f) || (longitude != 0f)) {
+                    values.put(Images.Media.LATITUDE, latitude);
+                    values.put(Images.Media.LONGITUDE, longitude);
+                }
+            }
+        });
+
+        return context.getContentResolver().insert(Images.Media.EXTERNAL_CONTENT_URI, values);
     }
 }
