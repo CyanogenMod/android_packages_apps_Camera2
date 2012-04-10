@@ -181,15 +181,13 @@ public class BitmapUtils {
      * Saves the bitmap by given directory, filename, and format; if the directory is given null,
      * then saves it under the cache directory.
      */
-    public File saveBitmap(
-            Bitmap bitmap, String directory, String filename, CompressFormat format) {
+    public File saveBitmap(Bitmap bitmap, File directory, String filename, CompressFormat format) {
 
         if (directory == null) {
-            directory = context.getCacheDir().getAbsolutePath();
+            directory = context.getCacheDir();
         } else {
             // Check if the given directory exists or try to create it.
-            File file = new File(directory);
-            if (!file.isDirectory() && !file.mkdirs()) {
+            if (!directory.isDirectory() && !directory.mkdirs()) {
                 return null;
             }
         }
