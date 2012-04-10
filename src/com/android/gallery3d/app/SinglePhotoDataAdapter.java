@@ -118,7 +118,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
             setScreenNail(bundle.backupImage,
                     bundle.decoder.getWidth(), bundle.decoder.getHeight());
             setRegionDecoder(bundle.decoder);
-            mPhotoView.notifyImageInvalidated(0);
+            mPhotoView.notifyImageChange(0);
         } catch (Throwable t) {
             Log.w(TAG, "fail to decode large", t);
         }
@@ -129,8 +129,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
             Bitmap backup = future.get();
             if (backup == null) return;
             setScreenNail(backup, backup.getWidth(), backup.getHeight());
-            mPhotoView.notifyOnNewImage();
-            mPhotoView.notifyImageInvalidated(0); // the current image
+            mPhotoView.notifyImageChange(0);
         } catch (Throwable t) {
             Log.w(TAG, "fail to decode thumb", t);
         }
@@ -158,11 +157,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         }
     }
 
-    public ScreenNail getNextScreenNail() {
-        return null;
-    }
-
-    public ScreenNail getPrevScreenNail() {
+    public ScreenNail getScreenNail(int offset) {
         return null;
     }
 
