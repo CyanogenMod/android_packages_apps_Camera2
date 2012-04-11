@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.ui;
 
-import android.graphics.SurfaceTexture;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
