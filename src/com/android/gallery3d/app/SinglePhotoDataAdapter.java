@@ -158,7 +158,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
     }
 
     public ScreenNail getScreenNail(int offset) {
-        return null;
+        return (offset == 0) ? getScreenNail() : null;
     }
 
     public void next() {
