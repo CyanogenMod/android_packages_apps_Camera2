@@ -270,8 +270,8 @@ public class PhotoPage extends ActivityState
             intent.putExtra(Intent.EXTRA_STREAM, manager.getContentUri(path));
             mShareActionProvider.setShareIntent(intent);
             if (mNfcAdapter != null) {
-                mNfcAdapter.setBeamPushUri(MenuExecutor.getMimeType(type),
-                        manager.getContentUri(path), (Activity)mActivity);
+                mNfcAdapter.setBeamPushUris(new Uri[]{manager.getContentUri(path)},
+                        (Activity)mActivity);
             }
             mPendingSharePath = null;
         } else {
