@@ -172,6 +172,7 @@ public class AlbumSetPage extends ActivityState implements
     }
 
     public void onSingleTapUp(int slotIndex) {
+        if (!mIsActive) return;
         MediaSet targetSet = mAlbumSetDataAdapter.getMediaSet(slotIndex);
         if (targetSet == null) return; // Content is dirty, we shall reload soon
 
