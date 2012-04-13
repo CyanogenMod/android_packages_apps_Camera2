@@ -164,6 +164,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     }
 
     private void onSingleTapUp(int slotIndex) {
+        if (!mIsActive) return;
         MediaItem item = mAlbumDataAdapter.get(slotIndex);
         if (item == null) {
             Log.w(TAG, "item not ready yet, ignore the click");
