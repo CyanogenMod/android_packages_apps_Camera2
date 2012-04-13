@@ -32,7 +32,7 @@
     <string name="fail_to_load_image" msgid="6155388718549782425">"Tidak dapat memuat gambar"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Tidak ada gambar mini"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Memulai"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="crop_save_text" msgid="152200178986698300">"Oke"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Sentuh wajah untuk memulai."</string>
     <string name="saving_image" msgid="7270334453636349407">"Menyimpan gambar…"</string>
     <string name="save_error" msgid="6857408774183654970">"Tak dapat menyimpan gambar yg dipangkas."</string>
