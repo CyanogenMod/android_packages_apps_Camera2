@@ -25,12 +25,15 @@ import com.android.gallery3d.ui.PositionRepository.Position;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Message;
 import android.os.SystemClock;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.view.animation.AccelerateInterpolator;
 
 public class PhotoView extends GLView {
     @SuppressWarnings("unused")
@@ -64,6 +67,14 @@ public class PhotoView extends GLView {
     private static final float SWIPE_THRESHOLD = 300f;
 
     private static final float DEFAULT_TEXT_SIZE = 20;
+    private static float TRANSITION_SCALE_FACTOR = 0.74f;
+
+    // Used to calculate the scaling factor for the fading animation.
+    private ZInterpolator mScaleInterpolator = new ZInterpolator(0.5f);
+
+    // Used to calculate the alpha factor for the fading animation.
+    private AccelerateInterpolator mAlphaInterpolator =
+            new AccelerateInterpolator(0.9f);
 
     public interface PhotoTapListener {
         public void onSingleTapUp(int x, int y);
@@ -99,6 +110,7 @@ public class PhotoView extends GLView {
 
     private Path mOpenedItemPath;
     private GalleryActivity mActivity;
+    private Point mImageCenter = new Point();
 
     public PhotoView(GalleryActivity activity) {
         mActivity = activity;
@@ -164,24 +176,49 @@ public class PhotoView extends GLView {
         mPhotoTapListener = listener;
     }
 
-    private boolean setTileViewPosition(int centerX, int centerY, float scale) {
+    private void setTileViewPosition(int centerX, int centerY, float scale) {
+        TileImageView t = mTileView;
+
+        // Calculate the move-out progress value.
+        RectF bounds = mPositionController.getImageBounds();
+        int left = Math.round(bounds.left);
+        int right = Math.round(bounds.right);
+        int width = getWidth();
+        float progress = calculateMoveOutProgress(left, right, width);
+        progress = Utils.clamp(progress, -1f, 1f);
+
+        // We only want to apply the fading animation if the scrolling movement
+        // is to the right.
+        if (progress < 0) {
+            if (right - left < width) {
+                // If the picture is narrower than the view, keep it at the center
+                // of the view.
+                centerX = mPositionController.getImageWidth() / 2;
+            } else {
+                // If the picture is wider than the view (it's zoomed-in), keep
+                // the left edge of the object align the the left edge of the view.
+                centerX = Math.round(width / 2f / scale);
+            }
+            scale *= getScrollScale(progress);
+            t.setAlpha(getScrollAlpha(progress));
+        }
+
+        // set the position of the tile view
         int inverseX = mPositionController.getImageWidth() - centerX;
         int inverseY = mPositionController.getImageHeight() - centerY;
-        TileImageView t = mTileView;
         int rotation = mImageRotation;
         switch (rotation) {
-            case 0: return t.setPosition(centerX, centerY, scale, 0);
-            case 90: return t.setPosition(centerY, inverseX, scale, 90);
-            case 180: return t.setPosition(inverseX, inverseY, scale, 180);
-            case 270: return t.setPosition(inverseY, centerX, scale, 270);
+            case 0: t.setPosition(centerX, centerY, scale, 0); break;
+            case 90: t.setPosition(centerY, inverseX, scale, 90); break;
+            case 180: t.setPosition(inverseX, inverseY, scale, 180); break;
+            case 270: t.setPosition(inverseY, centerX, scale, 270); break;
             default: throw new IllegalArgumentException(String.valueOf(rotation));
         }
     }
 
     public void setPosition(int centerX, int centerY, float scale) {
-        if (setTileViewPosition(centerX, centerY, scale)) {
-            layoutScreenNails();
-        }
+        setTileViewPosition(centerX, centerY, scale);
+        layoutScreenNails();
     }
 
     private void updateScreenNailEntry(int which, ImageData data) {
@@ -217,6 +254,7 @@ public class PhotoView extends GLView {
             case 0: {
                 // mImageWidth and mImageHeight will get updated
                 mTileView.notifyModelInvalidated();
+                mTileView.setAlpha(1.0f);
 
                 mImageRotation = mModel.getImageRotation();
                 if (((mImageRotation / 90) & 1) == 0) {
@@ -264,6 +302,7 @@ public class PhotoView extends GLView {
 
         if (mModel == null) {
             mTileView.notifyModelInvalidated();
+            mTileView.setAlpha(1.0f);
             mImageRotation = 0;
             mPositionController.setImageSize(0, 0);
             updateLoadingState();
@@ -341,23 +380,40 @@ public class PhotoView extends GLView {
     @Override
     protected void render(GLCanvas canvas) {
         PositionController p = mPositionController;
+        boolean drawScreenNail = (mTransitionMode != TRANS_SLIDE_IN_LEFT
+                && mTransitionMode != TRANS_SLIDE_IN_RIGHT
+                && mTransitionMode != TRANS_OPEN_ANIMATION);
+
+        // Draw the next photo
+        if (drawScreenNail) {
+            ScreenNailEntry nextNail = mScreenNails[ENTRY_NEXT];
+            if (nextNail.mVisible) nextNail.draw(canvas, true);
+        }
 
         // Draw the current photo
         if (mLoadingState == LOADING_COMPLETE) {
             super.render(canvas);
         }
 
-        // Draw the previous and the next photo
-        if (mTransitionMode != TRANS_SLIDE_IN_LEFT
-                && mTransitionMode != TRANS_SLIDE_IN_RIGHT
-                && mTransitionMode != TRANS_OPEN_ANIMATION) {
-            ScreenNailEntry prevNail = mScreenNails[ENTRY_PREVIOUS];
-            ScreenNailEntry nextNail = mScreenNails[ENTRY_NEXT];
-
-            if (prevNail.mVisible) prevNail.draw(canvas);
-            if (nextNail.mVisible) nextNail.draw(canvas);
+        // If the photo is loaded, draw the message/icon at the center of it,
+        // otherwise draw the message/icon at the center of the view.
+        if (mLoadingState == LOADING_COMPLETE) {
+            mTileView.getImageCenter(mImageCenter);
+            renderMessage(canvas, mImageCenter.x, mImageCenter.y);
+        } else {
+            renderMessage(canvas, getWidth() / 2, getHeight() / 2);
         }
 
+        // Draw the previous photo
+        if (drawScreenNail) {
+            ScreenNailEntry prevNail = mScreenNails[ENTRY_PREVIOUS];
+            if (prevNail.mVisible) prevNail.draw(canvas, false);
+        }
+
+        if (mPositionController.advanceAnimation()) invalidate();
+    }
+
+    private void renderMessage(GLCanvas canvas, int x, int y) {
         // Draw the progress spinner and the text below it
         //
         // (x, y) is where we put the center of the spinner.
@@ -366,8 +422,6 @@ public class PhotoView extends GLView {
         // play icon is shown instead of the spinner.
         int w = getWidth();
         int h = getHeight();
-        int x = Math.round(mPositionController.getImageBounds().centerX());
-        int y = h / 2;
         int s = Math.min(getWidth(), getHeight()) / 6;
 
         if (mLoadingState == LOADING_TIMEOUT) {
@@ -387,8 +441,6 @@ public class PhotoView extends GLView {
                 && mLoadingState != LOADING_TIMEOUT) {
             mVideoPlayIcon.draw(canvas, x - s / 2, y - s / 2, s, s);
         }
-
-        if (mPositionController.advanceAnimation()) invalidate();
     }
 
     private void stopCurrentSwipingIfNeeded() {
@@ -731,23 +783,107 @@ public class PhotoView extends GLView {
             return mEnabled;
         }
 
-        public void draw(GLCanvas canvas) {
-            int x = mOffsetX;
-            int y = getHeight() / 2;
+        public void draw(GLCanvas canvas, boolean applyFadingAnimation) {
+            if (mTexture == null) return;
 
-            if (mTexture != null) {
-                if (mRotation != 0) {
-                    canvas.save(GLCanvas.SAVE_FLAG_MATRIX);
-                    canvas.translate(x, y, 0);
-                    canvas.rotate(mRotation, 0, 0, 1); //mRotation
-                    canvas.translate(-x, -y, 0);
-                }
-                mTexture.draw(canvas, x - mDrawWidth / 2, y - mDrawHeight / 2,
-                        mDrawWidth, mDrawHeight);
-                if (mRotation != 0) {
-                    canvas.restore();
-                }
+            int w = getWidth();
+            int x = applyFadingAnimation ? w / 2 : mOffsetX;
+            int y = getHeight() / 2;
+            int flags = GLCanvas.SAVE_FLAG_MATRIX;
+
+            if (applyFadingAnimation) flags |= GLCanvas.SAVE_FLAG_ALPHA;
+            canvas.save(flags);
+            canvas.translate(x, y, 0);
+            if (applyFadingAnimation) {
+                float progress = (float) (x - mOffsetX) / w;
+                float alpha = getScrollAlpha(progress);
+                float scale = getScrollScale(progress);
+                canvas.multiplyAlpha(alpha);
+                canvas.scale(scale, scale, 1);
             }
+            if (mRotation != 0) {
+                canvas.rotate(mRotation, 0, 0, 1);
+            }
+            canvas.translate(-x, -y, 0);
+            mTexture.draw(canvas, x - mDrawWidth / 2, y - mDrawHeight / 2,
+                    mDrawWidth, mDrawHeight);
+            canvas.restore();
+        }
+    }
+
+    // Returns the scrolling progress value for an object moving out of a
+    // view. The progress value measures how much the object has moving out of
+    // the view. The object currently displays in [left, right), and the view is
+    // at [0, viewWidth].
+    //
+    // The returned value is negative when the object is moving right, and
+    // positive when the object is moving left. The value goes to -1 or 1 when
+    // the object just moves out of the view completely. The value is 0 if the
+    // object currently fills the view.
+    private static float calculateMoveOutProgress(int left, int right,
+            int viewWidth) {
+        // w = object width
+        // viewWidth = view width
+        int w = right - left;
+
+        // If the object width is smaller than the view width,
+        //      |....view....|
+        //                   |<-->|      progress = -1 when left = viewWidth
+        // |<-->|                        progress = 1 when left = -w
+        // So progress = 1 - 2 * (left + w) / (viewWidth + w)
+        if (w < viewWidth) {
+            return 1f - 2f * (left + w) / (viewWidth + w);
+        }
+
+        // If the object width is larger than the view width,
+        //             |..view..|
+        //                      |<--------->| progress = -1 when left = viewWidth
+        //             |<--------->|          progress = 0 between left = 0
+        //          |<--------->|                          and right = viewWidth
+        // |<--------->|                      progress = 1 when right = 0
+        if (left > 0) {
+            return -left / (float) viewWidth;
+        }
+
+        if (right < viewWidth) {
+            return (viewWidth - right) / (float) viewWidth;
+        }
+
+        return 0;
+    }
+
+    // Maps a scrolling progress value to the alpha factor in the fading
+    // animation.
+    private float getScrollAlpha(float scrollProgress) {
+        return scrollProgress < 0 ? mAlphaInterpolator.getInterpolation(
+                     1 - Math.abs(scrollProgress)) : 1.0f;
+    }
+
+    // Maps a scrolling progress value to the scaling factor in the fading
+    // animation.
+    private float getScrollScale(float scrollProgress) {
+        float interpolatedProgress = mScaleInterpolator.getInterpolation(
+                Math.abs(scrollProgress));
+        float scale = (1 - interpolatedProgress) +
+                interpolatedProgress * TRANSITION_SCALE_FACTOR;
+        return scale;
+    }
+
+
+    // This interpolator emulates the rate at which the perceived scale of an
+    // object changes as its distance from a camera increases. When this
+    // interpolator is applied to a scale animation on a view, it evokes the
+    // sense that the object is shrinking due to moving away from the camera.
+    private static class ZInterpolator {
+        private float focalLength;
+
+        public ZInterpolator(float foc) {
+            focalLength = foc;
+        }
+
+        public float getInterpolation(float input) {
+            return (1.0f - focalLength / (focalLength + input)) /
+                (1.0f - focalLength / (focalLength + 1.0f));
         }
     }
 

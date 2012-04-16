@@ -34,9 +34,6 @@ public class TileImageViewAdapter implements TileImageView.Model {
     protected int mLevelCount;
     protected boolean mFailedToLoad;
 
-    private final Rect mIntersectRect = new Rect();
-    private final Rect mRegionRect = new Rect();
-
     public TileImageViewAdapter() {
     }
 
@@ -80,16 +77,24 @@ public class TileImageViewAdapter implements TileImageView.Model {
     }
 
     @Override
-    public synchronized Bitmap getTile(int level, int x, int y, int length) {
+    public synchronized Bitmap getTile(int level, int x, int y, int tileSize,
+            int borderSize) {
         if (mRegionDecoder == null) return null;
 
-        Rect region = mRegionRect;
-        Rect intersectRect = mIntersectRect;
-        region.set(x, y, x + (length << level), y + (length << level));
-        intersectRect.set(0, 0, mImageWidth, mImageHeight);
+        // wantRegion is the rectangle on the original image we want. askRegion
+        // is the rectangle on the original image that we will ask from
+        // mRegionDecoder. Both are in the coordinates of the original image,
+        // not the coordinates of the scaled-down images.
+        Rect wantRegion = new Rect();
+        Rect askRegion = new Rect();
 
-        // Get the intersected rect of the requested region and the image.
-        Utils.assertTrue(intersectRect.intersect(region));
+        int b = borderSize << level;
+        wantRegion.set(x - b, y - b, x + (tileSize << level) + b,
+                y + (tileSize << level) + b);
+
+        // askRegion is the intersection of wantRegion and the original image.
+        askRegion.set(0, 0, mImageWidth, mImageHeight);
+        Utils.assertTrue(askRegion.intersect(wantRegion));
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Config.ARGB_8888;
@@ -100,25 +105,37 @@ public class TileImageViewAdapter implements TileImageView.Model {
 
         // In CropImage, we may call the decodeRegion() concurrently.
         synchronized (mRegionDecoder) {
-            bitmap = mRegionDecoder.decodeRegion(intersectRect, options);
+            bitmap = mRegionDecoder.decodeRegion(askRegion, options);
         }
-
-        // The returned region may not match with the targetLength.
-        // If so, we fill black pixels on it.
-        if (intersectRect.equals(region)) return bitmap;
 
         if (bitmap == null) {
             Log.w(TAG, "fail in decoding region");
             return null;
         }
 
-        Bitmap tile = Bitmap.createBitmap(length, length, Config.ARGB_8888);
-        Canvas canvas = new Canvas(tile);
-        canvas.drawBitmap(bitmap,
-                (intersectRect.left - region.left) >> level,
-                (intersectRect.top - region.top) >> level, null);
+        if (wantRegion.equals(askRegion)) return bitmap;
+
+        // Now the wantRegion does not match the askRegion. This means we are at
+        // a boundary tile, and we need to add paddings. Create a new Bitmap
+        // and copy over.
+        int size = tileSize + 2 * borderSize;
+        Bitmap result = Bitmap.createBitmap(size, size, Config.ARGB_8888);
+        Canvas canvas = new Canvas(result);
+        int offsetX = (askRegion.left - wantRegion.left) >> level;
+        int offsetY = (askRegion.top - wantRegion.top) >> level;
+        canvas.drawBitmap(bitmap, offsetX, offsetY, null);
+
+        // If the valid region (covered by bitmap or border) is smaller than the
+        // result bitmap, subset it.
+        int endX = offsetX + bitmap.getWidth() + borderSize;
+        int endY = offsetY + bitmap.getHeight() + borderSize;
         bitmap.recycle();
-        return tile;
+        if (endX < size || endY < size) {
+            return Bitmap.createBitmap(result, 0, 0, Math.min(size, endX),
+                    Math.min(size, endY));
+        } else {
+            return result;
+        }
     }
 
     @Override
