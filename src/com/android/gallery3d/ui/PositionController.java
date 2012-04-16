@@ -72,10 +72,12 @@ class PositionController {
 
     // Film Mode v.s. Page Mode: in film mode we show smaller pictures.
     private boolean mFilmMode = false;
-    private static final float FILM_MODE_SCALE_FACTOR = 0.7f;
 
-    // The scaling factor in current mode.
-    private float mScaleFactor = mFilmMode ? FILM_MODE_SCALE_FACTOR : 1.0f;
+    // These are the limits for width / height of the picture in film mode.
+    private static final float FILM_MODE_PORTRAIT_HEIGHT = 0.48f;
+    private static final float FILM_MODE_PORTRAIT_WIDTH = 0.7f;
+    private static final float FILM_MODE_LANDSCAPE_HEIGHT = 0.7f;
+    private static final float FILM_MODE_LANDSCAPE_WIDTH = 0.7f;
 
     // In addition to the focused box (index == 0). We also keep information
     // about this many boxes on each side.
@@ -236,7 +238,6 @@ class PositionController {
     public void setFilmMode(boolean enabled) {
         if (enabled == mFilmMode) return;
         mFilmMode = enabled;
-        mScaleFactor = enabled ? FILM_MODE_SCALE_FACTOR : 1.0f;
 
         updateScaleAndGapLimit();
         stopAnimation();
@@ -866,8 +867,21 @@ class PositionController {
     ////////////////////////////////////////////////////////////////////////////
 
     public float getMinimalScale(int imageW, int imageH) {
-        float s = Math.min(mScaleFactor * mViewW / imageW,
-                mScaleFactor * mViewH / imageH);
+        float wFactor = 1.0f;
+        float hFactor = 1.0f;
+
+        if (mFilmMode) {
+            if (mViewH > mViewW) {  // portrait
+                wFactor = FILM_MODE_PORTRAIT_WIDTH;
+                hFactor = FILM_MODE_PORTRAIT_HEIGHT;
+            } else {  // landscape
+                wFactor = FILM_MODE_LANDSCAPE_WIDTH;
+                hFactor = FILM_MODE_LANDSCAPE_HEIGHT;
+            }
+        }
+
+        float s = Math.min(wFactor * mViewW / imageW,
+                hFactor * mViewH / imageH);
         return Math.min(SCALE_LIMIT, s);
     }
 
