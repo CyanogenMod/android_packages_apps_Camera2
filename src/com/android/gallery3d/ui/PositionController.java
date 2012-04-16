@@ -64,6 +64,9 @@ class PositionController {
     private static final float SCALE_LIMIT = 4;
     private static final int sHorizontalSlack = GalleryUtils.dpToPixel(12);
 
+    private static final float SCALE_MIN_EXTRA = 0.6f;
+    private static final float SCALE_MAX_EXTRA = 1.4f;
+
     private PhotoView mViewer;
     private EdgeView mEdgeView;
     private int mImageW, mImageH;
@@ -83,6 +86,7 @@ class PositionController {
 
     // The minimum and maximum scale we allow.
     private float mScaleMin, mScaleMax = SCALE_LIMIT;
+    private boolean mExtraScalingRange = false;
 
     // This is used by the fling animation
     private FlingScroller mScroller;
@@ -268,7 +272,8 @@ class PositionController {
                 (focusY - mViewH / 2f) / mCurrentScale);
     }
 
-    public void scaleBy(float s, float focusX, float focusY) {
+    // Returns true if the result scale is outside the stable range.
+    public boolean scaleBy(float s, float focusX, float focusY) {
 
         // We want to keep the focus point (on the bitmap) the same as when
         // we begin the scale guesture, that is,
@@ -280,11 +285,19 @@ class PositionController {
         int y = Math.round(mFocusBitmapY - (focusY - mViewH / 2f) / s);
 
         startAnimation(x, y, s, ANIM_KIND_SCALE);
+        return (s < mScaleMin || s > mScaleMax);
     }
 
     public void endScale() {
         mInScale = false;
         startSnapbackIfNeeded();
+    }
+
+    public void setExtraScalingRange(boolean enabled) {
+        mExtraScalingRange = enabled;
+        if (!enabled) {
+            startSnapbackIfNeeded();
+        }
     }
 
     public float getCurrentScale() {
@@ -400,7 +413,8 @@ class PositionController {
 
         mToX = targetX;
         mToY = targetY;
-        mToScale = Utils.clamp(scale, 0.6f * mScaleMin, 1.4f * mScaleMax);
+        mToScale = Utils.clamp(scale, SCALE_MIN_EXTRA * mScaleMin,
+                SCALE_MAX_EXTRA * mScaleMax);
 
         // If the scaled height is smaller than the view height,
         // force it to be in the center.
@@ -540,9 +554,14 @@ class PositionController {
         boolean needAnimation = false;
         float scale = mCurrentScale;
 
-        if (mCurrentScale < mScaleMin || mCurrentScale > mScaleMax) {
+        float scaleMin = mExtraScalingRange ?
+                mScaleMin * SCALE_MIN_EXTRA : mScaleMin;
+        float scaleMax = mExtraScalingRange ?
+                mScaleMax * SCALE_MAX_EXTRA : mScaleMax;
+
+        if (mCurrentScale < scaleMin || mCurrentScale > scaleMax) {
             needAnimation = true;
-            scale = Utils.clamp(mCurrentScale, mScaleMin, mScaleMax);
+            scale = Utils.clamp(mCurrentScale, scaleMin, scaleMax);
         }
 
         calculateStableBound(scale, sHorizontalSlack);
