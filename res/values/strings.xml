@@ -433,4 +433,9 @@
     <!-- The label for the folder contains screenshot images. [CHAR LIMIT=20]-->
     <string name="folder_screenshot">Screenshot</string>
 
+    <!-- The title of the menu item which display online help in browser. [CHAR LIMIT=20]-->
+    <string name="help">Help</string>
+
+    <!-- Web address for gallery help.  DO NOT TRANSLATE -->
+    <string name="general_help_link" translatable="false">http://support.google.com/mobile/?p=gallery_top</string>
 </resources>
