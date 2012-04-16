@@ -477,6 +477,11 @@ public class AlbumSetPage extends ActivityState implements
                 activity.startActivity(new Intent(activity, GallerySettings.class));
                 return true;
             }
+            case R.id.action_general_help: {
+                activity.startActivity(
+                        GalleryUtils.getHelpIntent(R.string.general_help_link, activity));
+                return true;
+            }
             default:
                 return false;
         }

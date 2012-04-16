@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.ConditionVariable;
 import android.os.Environment;
@@ -329,5 +330,18 @@ public class GalleryUtils {
         int w = item.getWidth();
         int h = item.getHeight();
         return (h > 0 && w / h >= 2);
+    }
+
+    public static Intent getHelpIntent(int helpUrlResId, Context context) {
+        Resources res = context.getResources();
+        String url = res.getString(helpUrlResId)
+                + "&hl=" + res.getConfiguration().locale.getLanguage();
+
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        return i;
     }
 }
