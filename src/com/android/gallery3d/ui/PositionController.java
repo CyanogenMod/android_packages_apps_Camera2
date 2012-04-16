@@ -81,7 +81,7 @@ class PositionController {
     // about this many boxes on each side.
     private static final int BOX_MAX = PhotoView.SCREEN_NAIL_MAX;
 
-    public static final int IMAGE_GAP = 96;
+    public static final int IMAGE_GAP = GalleryUtils.dpToPixel(16);
     private static final int HORIZONTAL_SLACK = GalleryUtils.dpToPixel(12);
 
     private Listener mListener;
