@@ -88,6 +88,7 @@ public class ActionModeHandler implements ActionMode.Callback {
                 R.menu.selection);
         updateSelectionMenu();
         customMenu.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            @Override
             public boolean onMenuItemClick(MenuItem item) {
                 return onActionItemClicked(actionMode, item);
             }
@@ -103,25 +104,32 @@ public class ActionModeHandler implements ActionMode.Callback {
         mListener = listener;
     }
 
+    @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        boolean result;
-        if (mListener != null) {
-            result = mListener.onActionItemClicked(item);
-            if (result) {
-                mSelectionManager.leaveSelectionMode();
-                return result;
+        GLRoot root = mActivity.getGLRoot();
+        root.lockRenderThread();
+        try {
+            boolean result;
+            if (mListener != null) {
+                result = mListener.onActionItemClicked(item);
+                if (result) {
+                    mSelectionManager.leaveSelectionMode();
+                    return result;
+                }
             }
+            ProgressListener listener = null;
+            if (item.getItemId() == R.id.action_import) {
+                listener = new ImportCompleteListener(mActivity);
+            }
+            result = mMenuExecutor.onMenuClicked(item, listener);
+            if (item.getItemId() == R.id.action_select_all) {
+                updateSupportedOperation();
+                updateSelectionMenu();
+            }
+            return result;
+        } finally {
+            root.unlockRenderThread();
         }
-        ProgressListener listener = null;
-        if (item.getItemId() == R.id.action_import) {
-            listener = new ImportCompleteListener(mActivity);
-        }
-        result = mMenuExecutor.onMenuClicked(item, listener);
-        if (item.getItemId() == R.id.action_select_all) {
-            updateSupportedOperation();
-            updateSelectionMenu();
-        }
-        return result;
     }
 
     private void updateSelectionMenu() {

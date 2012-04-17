@@ -343,7 +343,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mSelectionManager = new SelectionManager(mActivity, false);
         mSelectionManager.setSelectionListener(this);
         Config.AlbumPage config = Config.AlbumPage.get((Context) mActivity);
-        mSlotView = new SlotView((Context) mActivity, config.slotViewSpec);
+        mSlotView = new SlotView(mActivity, config.slotViewSpec);
         mAlbumView = new AlbumSlotRenderer(mActivity, mSlotView, mSelectionManager);
         mSlotView.setSlotRenderer(mAlbumView);
         mRootPane.addComponent(mSlotView);

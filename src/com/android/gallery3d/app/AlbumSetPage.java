@@ -344,7 +344,7 @@ public class AlbumSetPage extends ActivityState implements
         mSelectionManager.setSelectionListener(this);
 
         Config.AlbumSetPage config = Config.AlbumSetPage.get((Context) mActivity);
-        mSlotView = new SlotView((Context) mActivity, config.slotViewSpec);
+        mSlotView = new SlotView(mActivity, config.slotViewSpec);
         mAlbumSetView = new AlbumSetSlotRenderer(
                 mActivity, mSelectionManager, mSlotView, config.labelSpec);
         mSlotView.setSlotRenderer(mAlbumSetView);
