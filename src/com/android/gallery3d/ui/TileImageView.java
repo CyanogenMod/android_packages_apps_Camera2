@@ -153,16 +153,8 @@ public class TileImageView extends GLView {
         if (model != null) notifyModelInvalidated();
     }
 
-    public void updateScreenNail(ScreenNail s) {
-        if (mScreenNail == s) return;
-        if (mScreenNail != null) mScreenNail.pauseDraw();
+    public void setScreenNail(ScreenNail s) {
         mScreenNail = s;
-    }
-
-    public ScreenNail releaseScreenNail() {
-        ScreenNail s = mScreenNail;
-        mScreenNail = null;
-        return s;
     }
 
     public void notifyModelInvalidated() {
@@ -173,7 +165,7 @@ public class TileImageView extends GLView {
             mImageHeight = 0;
             mLevelCount = 0;
         } else {
-            updateScreenNail(mModel.getScreenNail());
+            setScreenNail(mModel.getScreenNail());
             mImageWidth = mModel.getImageWidth();
             mImageHeight = mModel.getImageHeight();
             mLevelCount = mModel.getLevelCount();
@@ -389,7 +381,7 @@ public class TileImageView extends GLView {
                 tile = mRecycledQueue.pop();
             }
         }
-        updateScreenNail(null);
+        setScreenNail(null);
     }
 
     public void prepareTextures() {
@@ -399,7 +391,7 @@ public class TileImageView extends GLView {
         if (mIsTextureFreed) {
             layoutTiles(mCenterX, mCenterY, mScale, mRotation);
             mIsTextureFreed = false;
-            updateScreenNail(mModel != null ? mModel.getScreenNail() : null);
+            setScreenNail(mModel == null ? null : mModel.getScreenNail());
         }
     }
 

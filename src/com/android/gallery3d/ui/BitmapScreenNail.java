@@ -20,6 +20,8 @@ import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.util.Log;
 
+import com.android.gallery3d.data.MediaItem;
+
 // This is a ScreenNail wraps a Bitmap. It also includes the rotation
 // information. The getWidth() and getHeight() methods return the width/height
 // before rotation.
@@ -28,7 +30,7 @@ public class BitmapScreenNail implements ScreenNail {
     private final int mWidth;
     private final int mHeight;
     private final int mRotation;
-    private final Bitmap mBitmap;
+    private Bitmap mBitmap;
     private BitmapTexture mTexture;
 
     public BitmapScreenNail(Bitmap bitmap, int rotation) {
@@ -60,10 +62,14 @@ public class BitmapScreenNail implements ScreenNail {
     }
 
     @Override
-    public void pauseDraw() {
+    public void recycle() {
         if (mTexture != null) {
             mTexture.recycle();
             mTexture = null;
+        }
+        if (mBitmap != null) {
+            MediaItem.getThumbPool().recycle(mBitmap);
+            mBitmap = null;
         }
     }
 

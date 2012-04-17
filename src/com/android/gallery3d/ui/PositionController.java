@@ -578,7 +578,7 @@ class PositionController {
         if (changed) redraw();
     }
 
-    public boolean advanceAnimation() {
+    public void advanceAnimation() {
         boolean changed = false;
         changed |= mPlatform.advanceAnimation();
         for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
@@ -588,7 +588,6 @@ class PositionController {
             changed |= mGaps.get(i).advanceAnimation();
         }
         if (changed) redraw();
-        return changed;
     }
 
     ////////////////////////////////////////////////////////////////////////////

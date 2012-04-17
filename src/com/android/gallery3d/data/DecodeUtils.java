@@ -55,6 +55,15 @@ public class DecodeUtils {
                 BitmapFactory.decodeFileDescriptor(fd, null, options));
     }
 
+    public static void decodeBounds(JobContext jc, FileDescriptor fd,
+            Options options) {
+        Utils.assertTrue(options != null);
+        options.inJustDecodeBounds = true;
+        jc.setCancelListener(new DecodeCanceller(options));
+        BitmapFactory.decodeFileDescriptor(fd, null, options);
+        options.inJustDecodeBounds = false;
+    }
+
     public static Bitmap decode(JobContext jc, byte[] bytes, Options options) {
         return decode(jc, bytes, 0, bytes.length, options);
     }
@@ -65,6 +74,15 @@ public class DecodeUtils {
         jc.setCancelListener(new DecodeCanceller(options));
         return ensureGLCompatibleBitmap(
                 BitmapFactory.decodeByteArray(bytes, offset, length, options));
+    }
+
+    public static void decodeBounds(JobContext jc, byte[] bytes, int offset,
+            int length, Options options) {
+        Utils.assertTrue(options != null);
+        options.inJustDecodeBounds = true;
+        jc.setCancelListener(new DecodeCanceller(options));
+        BitmapFactory.decodeByteArray(bytes, offset, length, options);
+        options.inJustDecodeBounds = false;
     }
 
     public static Bitmap decodeThumbnail(

@@ -52,6 +52,7 @@ public class PhotoView extends GLView {
         // ScreenNail at previous (negative offset) or next (positive offset)
         // positions. Returns null if the specified ScreenNail is unavailable.
         public ScreenNail getScreenNail(int offset);
+        public void setNeedFullImage(boolean enabled);
     }
 
     public interface PhotoTapListener {
@@ -90,10 +91,6 @@ public class PhotoView extends GLView {
     // SCREEN_NAIL_MAX.
     private final RangeArray<Picture> mPictures =
             new RangeArray<Picture>(-SCREEN_NAIL_MAX, SCREEN_NAIL_MAX);
-    private final RangeBoolArray mReused =
-            new RangeBoolArray(-SCREEN_NAIL_MAX, SCREEN_NAIL_MAX);
-    private final RangeArray<ScreenNail> mTempScreenNail =
-            new RangeArray<ScreenNail>(-SCREEN_NAIL_MAX, SCREEN_NAIL_MAX);
 
     private final long mDataVersion[] = new long[2 * SCREEN_NAIL_MAX + 1];
     private final int mFromIndex[] = new int[2 * SCREEN_NAIL_MAX + 1];
@@ -247,11 +244,6 @@ public class PhotoView extends GLView {
         }
         if (!changed) return;
 
-        // Remembers those ScreenNail which are reused.
-        for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
-            mReused.put(i, false);
-        }
-
         // Create the mFromIndex array, which records the index where the picture
         // come from. The value Integer.MAX_VALUE means it's a new picture.
         for (int i = 0; i < N; i++) {
@@ -265,7 +257,6 @@ public class PhotoView extends GLView {
             int j;
             for (j = 0; j < N; j++) {
                 if (mDataVersion[j] == v) {
-                    mReused.put(j - SCREEN_NAIL_MAX, true);
                     break;
                 }
             }
@@ -280,25 +271,8 @@ public class PhotoView extends GLView {
         // Move the boxes
         mPositionController.moveBox(mFromIndex);
 
-        // Free those ScreenNails that are not reused.
+        // Update the ScreenNails.
         for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
-            if (!mReused.get(i)) mPictures.get(i).updateScreenNail(null);
-        }
-
-        // Collect the reused ScreenNails, so we don't need to re-upload the
-        // textures.
-        for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
-            mTempScreenNail.put(i, mPictures.get(i).releaseScreenNail());
-        }
-
-        // Put back the reused ScreenNails.
-        for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
-            int j = mFromIndex[i + SCREEN_NAIL_MAX];
-            if (j != Integer.MAX_VALUE) {
-                ScreenNail s = mTempScreenNail.get(j);
-                mTempScreenNail.put(j, null);
-                mPictures.get(i).updateScreenNail(s);
-            }
             mPictures.get(i).reload();
         }
 
@@ -317,11 +291,7 @@ public class PhotoView extends GLView {
     private interface Picture {
         void reload();
         void draw(GLCanvas canvas, Rect r);
-
-        void updateScreenNail(ScreenNail s);
-        // Release the ownership of the ScreenNail from this entry.
-        ScreenNail releaseScreenNail();
-
+        void setScreenNail(ScreenNail s);
         boolean isEnabled();
     };
 
@@ -352,8 +322,7 @@ public class PhotoView extends GLView {
                         getRotated(mRotation, w, h),
                         getRotated(mRotation, h, w));
             }
-            updateScreenNail(mModel == null
-                    ? null : mModel.getScreenNail(0));
+            setScreenNail(mModel == null ? null : mModel.getScreenNail(0));
             updateLoadingState();
         }
 
@@ -374,14 +343,9 @@ public class PhotoView extends GLView {
         }
 
         @Override
-        public void updateScreenNail(ScreenNail s) {
+        public void setScreenNail(ScreenNail s) {
             mIsNonBitmap = (s != null && !(s instanceof BitmapScreenNail));
-            mTileView.updateScreenNail(s);
-        }
-
-        @Override
-        public ScreenNail releaseScreenNail() {
-            return mTileView.releaseScreenNail();
+            mTileView.setScreenNail(s);
         }
 
         @Override
@@ -489,8 +453,7 @@ public class PhotoView extends GLView {
 
         @Override
         public void reload() {
-            updateScreenNail(mModel == null ? null
-                    : mModel.getScreenNail(mIndex));
+            setScreenNail(mModel == null ? null : mModel.getScreenNail(mIndex));
         }
 
         @Override
@@ -533,12 +496,9 @@ public class PhotoView extends GLView {
         }
 
         @Override
-        public void updateScreenNail(ScreenNail s) {
+        public void setScreenNail(ScreenNail s) {
             mEnabled = (s != null);
             if (mScreenNail == s) return;
-            if (mScreenNail != null) {
-                mScreenNail.pauseDraw();
-            }
             mScreenNail = s;
             if (mScreenNail != null) {
                 mRotation = mScreenNail.getRotation();
@@ -550,13 +510,6 @@ public class PhotoView extends GLView {
                         getRotated(mRotation, w, h),
                         getRotated(mRotation, h, w));
             }
-        }
-
-        @Override
-        public ScreenNail releaseScreenNail() {
-            ScreenNail s = mScreenNail;
-            mScreenNail = null;
-            return s;
         }
 
         @Override
@@ -704,6 +657,7 @@ public class PhotoView extends GLView {
         if (mFilmMode == enabled) return;
         mFilmMode = enabled;
         mPositionController.setFilmMode(mFilmMode);
+        mModel.setNeedFullImage(!enabled);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -724,7 +678,7 @@ public class PhotoView extends GLView {
         mPositionController.skipAnimation();
         mTileView.freeTextures();
         for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
-            mPictures.get(i).updateScreenNail(null);
+            mPictures.get(i).setScreenNail(null);
         }
     }
 

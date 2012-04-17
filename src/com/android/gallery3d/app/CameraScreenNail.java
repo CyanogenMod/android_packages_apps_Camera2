@@ -128,7 +128,7 @@ class CameraScreenNail extends SurfaceTextureScreenNail {
     }
 
     @Override
-    public void pauseDraw() {
+    public void recycle() {
         mVisible = false;
     }
 

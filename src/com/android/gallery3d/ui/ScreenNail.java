@@ -22,8 +22,12 @@ public interface ScreenNail {
     public int getHeight();
     public int getRotation();
     public void draw(GLCanvas canvas, int x, int y, int width, int height);
-    public void noDraw();  // we do not need to draw this ScreenNail in this frame.
-    public void pauseDraw();  // we do not expect to draw this ScreenNail for some time.
+
+    // We do not need to draw this ScreenNail in this frame.
+    public void noDraw();
+
+    // This ScreenNail will not be used anymore. Release related resources.
+    public void recycle();
 
     // This is only used by TileImageView to back up the tiles not yet loaded.
     public void draw(GLCanvas canvas, RectF source, RectF dest);

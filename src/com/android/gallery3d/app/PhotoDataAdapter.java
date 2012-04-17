@@ -55,6 +55,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     private static final int MSG_LOAD_START = 1;
     private static final int MSG_LOAD_FINISH = 2;
     private static final int MSG_RUN_OBJECT = 3;
+    private static final int MSG_UPDATE_IMAGE_REQUESTS = 4;
 
     private static final int MIN_LOAD_COUNT = 8;
     private static final int DATA_CACHE_SIZE = 32;
@@ -143,9 +144,9 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     private int mSize = 0;
     private Path mItemPath;
     private boolean mIsActive;
+    private boolean mNeedFullImage;
 
     public interface DataListener extends LoadingListener {
-        public void onPhotoAvailable(long version, boolean fullImage);
         public void onPhotoChanged(int index, Path item);
     }
 
@@ -164,6 +165,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         mItemPath = Utils.checkNotNull(itemPath);
         mCurrentIndex = indexHint;
         mThreadPool = activity.getThreadPool();
+        mNeedFullImage = true;
 
         Arrays.fill(mChanges, MediaObject.INVALID_DATA_VERSION);
 
@@ -181,6 +183,10 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                     }
                     case MSG_LOAD_FINISH: {
                         if (mDataListener != null) mDataListener.onLoadingFinished();
+                        return;
+                    }
+                    case MSG_UPDATE_IMAGE_REQUESTS: {
+                        updateImageRequests();
                         return;
                     }
                     default: throw new AssertionError();
@@ -211,24 +217,27 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         mDataListener = listener;
     }
 
+    @Override
+    public void setNeedFullImage(boolean enabled) {
+        mNeedFullImage = enabled;
+        mMainHandler.sendEmptyMessage(MSG_UPDATE_IMAGE_REQUESTS);
+    }
+
     private void updateScreenNail(long version, Future<ScreenNail> future) {
         ImageEntry entry = mImageCache.get(version);
         ScreenNail screenNail = future.get();
 
         if (entry == null || entry.screenNailTask != future) {
-            if (screenNail != null) screenNail.pauseDraw();
+            if (screenNail != null) screenNail.recycle();
             return;
         }
 
         entry.screenNailTask = null;
+        Utils.assertTrue(entry.screenNail == null);
         entry.screenNail = screenNail;
 
         if (screenNail == null) {
             entry.failToLoad = true;
-        }
-
-        if (mDataListener != null) {
-            mDataListener.onPhotoAvailable(version, false);
         }
 
         for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
@@ -252,9 +261,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         entry.fullImageTask = null;
         entry.fullImage = future.get();
         if (entry.fullImage != null) {
-            if (mDataListener != null) {
-                mDataListener.onPhotoAvailable(version, true);
-            }
             if (version == getVersion(mCurrentIndex)) {
                 updateTileProvider(entry);
                 mPhotoView.notifyImageChange(0);
@@ -286,6 +292,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         for (ImageEntry entry : mImageCache.values()) {
             if (entry.fullImageTask != null) entry.fullImageTask.cancel();
             if (entry.screenNailTask != null) entry.screenNailTask.cancel();
+            if (entry.screenNail != null) entry.screenNail.recycle();
         }
         mImageCache.clear();
         mTileProvider.clear();
@@ -457,6 +464,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         for (int i = 0; i < sImageFetchSeq.length; i++) {
             int offset = sImageFetchSeq[i].indexOffset;
             int bit = sImageFetchSeq[i].imageBit;
+            if (bit == BIT_FULL_IMAGE && !mNeedFullImage) continue;
             task = startTaskIfNeeded(currentIndex + offset, bit);
             if (task != null) break;
         }
@@ -570,6 +578,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
             ImageEntry entry = mImageCache.remove(version);
             if (entry.fullImageTask != null) entry.fullImageTask.cancel();
             if (entry.screenNailTask != null) entry.screenNailTask.cancel();
+            if (entry.screenNail != null) entry.screenNail.recycle();
         }
     }
 

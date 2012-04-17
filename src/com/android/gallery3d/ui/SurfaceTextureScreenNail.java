@@ -109,7 +109,7 @@ public abstract class SurfaceTextureScreenNail implements ScreenNail,
     abstract public void noDraw();
 
     @Override
-    abstract public void pauseDraw();
+    abstract public void recycle();
 
     @Override
     abstract public void onFrameAvailable(SurfaceTexture surfaceTexture);
