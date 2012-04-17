@@ -167,4 +167,6 @@
     <string name="folder_download" msgid="7186215137642323932">"下载"</string>
     <string name="folder_imported" msgid="2773581395524747099">"已导入"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"屏幕截图"</string>
+    <!-- no translation found for help (7368960711153618354) -->
+    <skip />
 </resources>
