@@ -156,7 +156,7 @@
     <string name="widget_type" msgid="1364653978966343448">"اختيار صور"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"عرض الشرائح"</string>
     <string name="albums" msgid="7320787705180057947">"ألبومات"</string>
-    <string name="times" msgid="2023033894889499219">"المرات"</string>
+    <string name="times" msgid="2023033894889499219">"التواريخ"</string>
     <string name="locations" msgid="6649297994083130305">"المواقع"</string>
     <string name="people" msgid="4114003823747292747">"الأشخاص"</string>
     <string name="tags" msgid="5539648765482935955">"العلامات"</string>
@@ -167,4 +167,6 @@
     <string name="folder_download" msgid="7186215137642323932">"التنزيل"</string>
     <string name="folder_imported" msgid="2773581395524747099">"المستوردة"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"لقطة شاشة"</string>
+    <!-- no translation found for help (7368960711153618354) -->
+    <skip />
 </resources>
