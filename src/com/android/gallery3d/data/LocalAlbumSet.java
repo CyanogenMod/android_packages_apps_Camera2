@@ -207,7 +207,6 @@ public class LocalAlbumSet extends MediaSet
             for (BucketEntry entry : entries) {
                 MediaSet album = getLocalAlbum(dataManager,
                         mType, mPath, entry.bucketId, entry.bucketName);
-                album.reload();
                 albums.add(album);
             }
             return albums;
@@ -270,6 +269,9 @@ public class LocalAlbumSet extends MediaSet
         if (mLoadBuffer != null) {
             mAlbums = mLoadBuffer;
             mLoadBuffer = null;
+            for (MediaSet album : mAlbums) {
+                album.reload();
+            }
             mDataVersion = nextVersionNumber();
         }
         return mDataVersion;

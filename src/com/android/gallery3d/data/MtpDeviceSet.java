@@ -76,10 +76,6 @@ public class MtpDeviceSet extends MediaSet
                 }
             }
             Collections.sort(result, MediaSetUtils.NAME_COMPARATOR);
-
-            for (int i = 0, n = result.size(); i < n; ++i) {
-                result.get(i).reload();
-            }
             return result;
         }
     }
@@ -122,6 +118,9 @@ public class MtpDeviceSet extends MediaSet
         if (mLoadBuffer != null) {
             mDeviceSet = mLoadBuffer;
             mLoadBuffer = null;
+            for (MediaSet device : mDeviceSet) {
+                device.reload();
+            }
             mDataVersion = nextVersionNumber();
         }
         return mDataVersion;
