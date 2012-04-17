@@ -24,6 +24,7 @@ import android.view.MotionEvent;
 import android.view.animation.DecelerateInterpolator;
 
 import com.android.gallery3d.anim.Animation;
+import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
 
 public class SlotView extends GLView {
@@ -87,11 +88,11 @@ public class SlotView extends GLView {
     // to prevent allocating memory
     private final Rect mTempRect = new Rect();
 
-    public SlotView(Context context, Spec spec) {
-        mGestureDetector =
-                new GestureDetector(context, new MyGestureListener());
-        mScroller = new ScrollerHelper(context);
-        mHandler = new Handler(context.getMainLooper());
+    public SlotView(GalleryActivity activity, Spec spec) {
+        mGestureDetector = new GestureDetector(
+                (Context) activity, new MyGestureListener());
+        mScroller = new ScrollerHelper((Context) activity);
+        mHandler = new SynchronizedHandler(activity.getGLRoot());
         setSlotSpec(spec);
     }
 
@@ -631,19 +632,24 @@ public class SlotView extends GLView {
         }
     }
 
-    private class MyGestureListener implements
-            GestureDetector.OnGestureListener {
+    private class MyGestureListener implements GestureDetector.OnGestureListener {
         private boolean isDown;
 
         // We call the listener's onDown() when our onShowPress() is called and
         // call the listener's onUp() when we receive any further event.
         @Override
         public void onShowPress(MotionEvent e) {
-            if (isDown) return;
-            int index = mLayout.getSlotIndexByPosition(e.getX(), e.getY());
-            if (index != INDEX_NONE) {
-                isDown = true;
-                mListener.onDown(index);
+            GLRoot root = getGLRoot();
+            root.lockRenderThread();
+            try {
+                if (isDown) return;
+                int index = mLayout.getSlotIndexByPosition(e.getX(), e.getY());
+                if (index != INDEX_NONE) {
+                    isDown = true;
+                    mListener.onDown(index);
+                }
+            } finally {
+                root.unlockRenderThread();
             }
         }
 

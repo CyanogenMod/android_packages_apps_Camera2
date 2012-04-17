@@ -17,7 +17,6 @@
 package com.android.gallery3d.app;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,6 +37,7 @@ import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.ui.CacheStorageUsageInfo;
 import com.android.gallery3d.ui.GLCanvas;
+import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.ManageCacheDrawer;
 import com.android.gallery3d.ui.MenuExecutor;
@@ -286,7 +286,7 @@ public class ManageCachePage extends ActivityState implements
         mSelectionManager.setSelectionListener(this);
 
         Config.ManageCachePage config = Config.ManageCachePage.get(activity);
-        mSlotView = new SlotView((Context) mActivity, config.slotViewSpec);
+        mSlotView = new SlotView(mActivity, config.slotViewSpec);
         mSelectionDrawer = new ManageCacheDrawer(mActivity, mSelectionManager, mSlotView,
                 config.labelSpec, config.cachePinSize, config.cachePinMargin);
         mSlotView.setSlotRenderer(mSelectionDrawer);
@@ -324,17 +324,22 @@ public class ManageCachePage extends ActivityState implements
     @Override
     public void onClick(View view) {
         Utils.assertTrue(view.getId() == R.id.done);
+        GLRoot root = mActivity.getGLRoot();
+        root.lockRenderThread();
+        try {
+            ArrayList<Path> ids = mSelectionManager.getSelected(false);
+            if (ids.size() == 0) {
+                onBackPressed();
+                return;
+            }
+            showToast();
 
-        ArrayList<Path> ids = mSelectionManager.getSelected(false);
-        if (ids.size() == 0) {
-            onBackPressed();
-            return;
+            MenuExecutor menuExecutor = new MenuExecutor(mActivity, mSelectionManager);
+            menuExecutor.startAction(R.id.action_toggle_full_caching,
+                    R.string.process_caching_requests, this);
+        } finally {
+            root.unlockRenderThread();
         }
-        showToast();
-
-        MenuExecutor menuExecutor = new MenuExecutor(mActivity, mSelectionManager);
-        menuExecutor.startAction(R.id.action_toggle_full_caching,
-                R.string.process_caching_requests, this);
     }
 
     private void showToast() {
