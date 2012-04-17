@@ -347,6 +347,8 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
         if (mIsActive && mSize != size) {
             mSize = size;
             if (mListener != null) mListener.onSizeChanged(mSize);
+            if (mContentEnd > mSize) mContentEnd = mSize;
+            if (mActiveEnd > mSize) mActiveEnd = mSize;
         }
     }
 

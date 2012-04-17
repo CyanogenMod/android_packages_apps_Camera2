@@ -314,6 +314,8 @@ public class AlbumSlidingWindow implements AlbumDataLoader.DataListener {
         if (mSize != size) {
             mSize = size;
             if (mListener != null) mListener.onSizeChanged(mSize);
+            if (mContentEnd > mSize) mContentEnd = mSize;
+            if (mActiveEnd > mSize) mActiveEnd = mSize;
         }
     }
 
