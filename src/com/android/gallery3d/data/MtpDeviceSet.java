@@ -18,6 +18,7 @@ package com.android.gallery3d.data;
 
 import android.mtp.MtpDeviceInfo;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
 
 import com.android.gallery3d.R;
@@ -41,6 +42,7 @@ public class MtpDeviceSet extends MediaSet
     private final ChangeNotifier mNotifier;
     private final MtpContext mMtpContext;
     private final String mName;
+    private final Handler mHandler;
 
     private Future<ArrayList<MediaSet>> mLoadTask;
     private ArrayList<MediaSet> mDeviceSet = new ArrayList<MediaSet>();
@@ -52,6 +54,7 @@ public class MtpDeviceSet extends MediaSet
         mNotifier = new ChangeNotifier(this, Uri.parse("mtp://"), application);
         mMtpContext = mtpContext;
         mName = application.getResources().getString(R.string.set_label_mtp_devices);
+        mHandler = new Handler(mApplication.getMainLooper());
     }
 
     private class DevicesLoader implements Job<ArrayList<MediaSet>> {
@@ -131,6 +134,12 @@ public class MtpDeviceSet extends MediaSet
         if (future != mLoadTask) return;
         mLoadBuffer = future.get();
         if (mLoadBuffer == null) mLoadBuffer = new ArrayList<MediaSet>();
-        notifyContentChanged();
+
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                notifyContentChanged();
+            }
+        });
     }
 }

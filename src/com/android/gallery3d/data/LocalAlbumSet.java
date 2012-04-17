@@ -19,6 +19,7 @@ package com.android.gallery3d.data;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.MediaStore.Files;
 import android.provider.MediaStore.Files.FileColumns;
 import android.provider.MediaStore.Images;
@@ -98,12 +99,15 @@ public class LocalAlbumSet extends MediaSet
     private final ChangeNotifier mNotifierImage;
     private final ChangeNotifier mNotifierVideo;
     private final String mName;
+    private final Handler mHandler;
+
     private Future<ArrayList<MediaSet>> mLoadTask;
     private ArrayList<MediaSet> mLoadBuffer;
 
     public LocalAlbumSet(Path path, GalleryApp application) {
         super(path, nextVersionNumber());
         mApplication = application;
+        mHandler = new Handler(application.getMainLooper());
         mType = getTypeFromPath(path);
         mNotifierImage = new ChangeNotifier(this, mWatchUriImage, application);
         mNotifierVideo = new ChangeNotifier(this, mWatchUriVideo, application);
@@ -282,7 +286,12 @@ public class LocalAlbumSet extends MediaSet
         if (mLoadTask != future) return; // ignore, wait for the latest task
         mLoadBuffer = future.get();
         if (mLoadBuffer == null) mLoadBuffer = new ArrayList<MediaSet>();
-        notifyContentChanged();
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                notifyContentChanged();
+            }
+        });
     }
 
     // For debug only. Fake there is a ContentObserver.onChange() event.
