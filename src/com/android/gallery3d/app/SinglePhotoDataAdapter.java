@@ -113,6 +113,11 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         return mItem.getRotation();
     }
 
+    @Override
+    public void setNeedFullImage(boolean enabled) {
+        // currently not necessary.
+    }
+
     private void onDecodeLargeComplete(ImageBundle bundle) {
         try {
             setScreenNail(bundle.backupImage,

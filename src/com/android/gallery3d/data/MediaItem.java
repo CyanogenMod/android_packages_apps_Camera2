@@ -42,9 +42,9 @@ public abstract class MediaItem extends MediaObject {
     private static final int BYTESBUFFE_POOL_SIZE = 4;
     private static final int BYTESBUFFER_SIZE = 200 * 1024;
 
-    private static final BitmapPool sMicroThumbPool =
-            new BitmapPool(MICROTHUMBNAIL_TARGET_SIZE, MICROTHUMBNAIL_TARGET_SIZE);
-
+    private static final BitmapPool sMicroThumbPool = new BitmapPool(
+            MICROTHUMBNAIL_TARGET_SIZE, MICROTHUMBNAIL_TARGET_SIZE, 16);
+    private static final BitmapPool sThumbPool = new BitmapPool(4);
     private static final BytesBufferPool sMicroThumbBufferPool =
             new BytesBufferPool(BYTESBUFFE_POOL_SIZE, BYTESBUFFER_SIZE);
 
@@ -120,6 +120,10 @@ public abstract class MediaItem extends MediaObject {
 
     public static BitmapPool getMicroThumbPool() {
         return sMicroThumbPool;
+    }
+
+    public static BitmapPool getThumbPool() {
+        return sThumbPool;
     }
 
     public static BytesBufferPool getBytesBufferPool() {

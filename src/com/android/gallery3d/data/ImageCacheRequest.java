@@ -60,7 +60,7 @@ abstract class ImageCacheRequest implements Job<Bitmap> {
                     bitmap = MediaItem.getMicroThumbPool().decode(jc,
                             buffer.data, buffer.offset, buffer.length, options);
                 } else {
-                    bitmap = DecodeUtils.decode(jc,
+                    bitmap = MediaItem.getThumbPool().decode(jc,
                             buffer.data, buffer.offset, buffer.length, options);
                 }
                 if (bitmap == null && !jc.isCancelled()) {

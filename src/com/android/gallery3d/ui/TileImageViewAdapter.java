@@ -28,6 +28,7 @@ import com.android.gallery3d.common.Utils;
 public class TileImageViewAdapter implements TileImageView.Model {
     private static final String TAG = "TileImageViewAdapter";
     protected ScreenNail mScreenNail;
+    protected boolean mOwnScreenNail;
     protected BitmapRegionDecoder mRegionDecoder;
     protected int mImageWidth;
     protected int mImageHeight;
@@ -37,8 +38,10 @@ public class TileImageViewAdapter implements TileImageView.Model {
     public TileImageViewAdapter() {
     }
 
-    public TileImageViewAdapter(Bitmap bitmap, BitmapRegionDecoder regionDecoder) {
-        mScreenNail = new BitmapScreenNail(Utils.checkNotNull(bitmap), 0);
+    public TileImageViewAdapter(
+            Bitmap bitmap, BitmapRegionDecoder regionDecoder) {
+        Utils.checkNotNull(bitmap);
+        updateScreenNail(new BitmapScreenNail(bitmap, 0), true);
         mRegionDecoder = regionDecoder;
         mImageWidth = regionDecoder.getWidth();
         mImageHeight = regionDecoder.getHeight();
@@ -46,7 +49,7 @@ public class TileImageViewAdapter implements TileImageView.Model {
     }
 
     public synchronized void clear() {
-        mScreenNail = null;
+        updateScreenNail(null, false);
         mImageWidth = 0;
         mImageHeight = 0;
         mLevelCount = 0;
@@ -55,7 +58,8 @@ public class TileImageViewAdapter implements TileImageView.Model {
     }
 
     public synchronized void setScreenNail(Bitmap bitmap, int width, int height) {
-        mScreenNail = new BitmapScreenNail(Utils.checkNotNull(bitmap), 0);
+        Utils.checkNotNull(bitmap);
+        updateScreenNail(new BitmapScreenNail(bitmap, 0), true);
         mImageWidth = width;
         mImageHeight = height;
         mRegionDecoder = null;
@@ -65,12 +69,21 @@ public class TileImageViewAdapter implements TileImageView.Model {
 
     public synchronized void setScreenNail(
             ScreenNail screenNail, int width, int height) {
-        mScreenNail = Utils.checkNotNull(screenNail);
+        Utils.checkNotNull(screenNail);
+        updateScreenNail(screenNail, false);
         mImageWidth = width;
         mImageHeight = height;
         mRegionDecoder = null;
         mLevelCount = 0;
         mFailedToLoad = false;
+    }
+
+    private void updateScreenNail(ScreenNail screenNail, boolean own) {
+        if (mScreenNail != null && mOwnScreenNail) {
+            mScreenNail.recycle();
+        }
+        mScreenNail = screenNail;
+        mOwnScreenNail = own;
     }
 
     public synchronized void setRegionDecoder(BitmapRegionDecoder decoder) {

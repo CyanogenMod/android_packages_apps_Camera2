@@ -492,7 +492,7 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
 
         @Override
         protected void recycleBitmap(Bitmap bitmap) {
-            mLabelMaker.reycleLabel(bitmap);
+            mLabelMaker.recycleLabel(bitmap);
         }
 
         @Override

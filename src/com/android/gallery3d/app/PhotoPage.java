@@ -238,10 +238,6 @@ public class PhotoPage extends ActivityState
                 public void onLoadingStarted() {
                     GalleryUtils.setSpinnerVisibility((Activity) mActivity, true);
                 }
-
-                @Override
-                public void onPhotoAvailable(long version, boolean fullImage) {
-                }
             });
         } else {
             // Get default media set by the URI
