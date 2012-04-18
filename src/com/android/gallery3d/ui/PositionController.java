@@ -19,7 +19,7 @@ package com.android.gallery3d.ui;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.Log;
-import android.widget.Scroller;
+import android.widget.OverScroller;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.GalleryUtils;
@@ -101,7 +101,7 @@ class PositionController {
     private FlingScroller mPageScroller;
 
     // This is used by the fling animation (film mode).
-    private Scroller mFilmScroller;
+    private OverScroller mFilmScroller;
 
     // The bound of the stable region that the focused box can stay, see the
     // comments above calculateStableBound() for details.
@@ -146,7 +146,7 @@ class PositionController {
     public PositionController(Context context, Listener listener) {
         mListener = listener;
         mPageScroller = new FlingScroller();
-        mFilmScroller = new Scroller(context);
+        mFilmScroller = new OverScroller(context);
 
         // Initialize the areas.
         initPlatform();
@@ -194,9 +194,11 @@ class PositionController {
 
     private void setBoxSize(int i, int width, int height, boolean isViewSize) {
         Box b = mBoxes.get(i);
+        boolean wasViewSize = b.mUseViewSize;
 
-        // If we already have image size, we don't want to use the view size.
-        if (isViewSize && !b.mUseViewSize) return;
+        // If we already have an image size, we don't want to use the view size.
+        if (!wasViewSize && isViewSize) return;
+
         b.mUseViewSize = isViewSize;
 
         if (width == b.mImageW && height == b.mImageH) {
@@ -207,9 +209,17 @@ class PositionController {
         float ratio = Math.min(
                 (float) b.mImageW / width, (float) b.mImageH / height);
 
-        b.mCurrentScale *= ratio;
-        b.mFromScale *= ratio;
-        b.mToScale *= ratio;
+        // If this is the first time we receive an image size, we change the
+        // scale directly. Otherwise adjust the scales by a ratio, and snapback
+        // will animate the scale into the min/max bounds if necessary.
+        if (wasViewSize && !isViewSize) {
+            b.mCurrentScale = getMinimalScale(width, height);
+            b.mAnimationStartTime = NO_ANIMATION;
+        } else {
+            b.mCurrentScale *= ratio;
+            b.mFromScale *= ratio;
+            b.mToScale *= ratio;
+        }
 
         b.mImageW = width;
         b.mImageH = height;
