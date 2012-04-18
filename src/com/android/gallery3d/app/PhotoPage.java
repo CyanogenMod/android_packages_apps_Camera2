@@ -103,6 +103,7 @@ public class PhotoPage extends ActivityState
     private boolean mShowBars = true;
     private GalleryActionBar mActionBar;
     private MyMenuVisibilityListener mMenuVisibilityListener;
+    private PageTapListener mPageTapListener;
     private boolean mIsMenuVisible;
     private boolean mIsInteracting;
     private MediaItem mCurrentPhoto = null;
@@ -129,6 +130,15 @@ public class PhotoPage extends ActivityState
             mIsMenuVisible = isVisible;
             refreshHidingMessage();
         }
+    }
+
+    public interface PageTapListener {
+        // Return true if the tap is consumed.
+        public boolean onSingleTapUp(int x, int y);
+    }
+
+    public void setPageTapListener(PageTapListener listener) {
+        mPageTapListener = listener;
     }
 
     private final GLView mRootPane = new GLView() {
@@ -515,6 +525,10 @@ public class PhotoPage extends ActivityState
     }
 
     public void onSingleTapUp(int x, int y) {
+        if (mPageTapListener != null) {
+            if (mPageTapListener.onSingleTapUp(x, y)) return;
+        }
+
         MediaItem item = mModel.getCurrentMediaItem();
         if (item == null) {
             // item is not ready, ignore
