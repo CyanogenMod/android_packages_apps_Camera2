@@ -534,7 +534,8 @@ public class PhotoView extends GLView {
 
     private class MyGestureListener implements GestureRecognizer.Listener {
         private boolean mIgnoreUpEvent = false;
-
+        // If we can change mode for this scale gesture.
+        private boolean mCanChangeMode;
         // If we have changed the mode in this scaling gesture.
         private boolean mModeChanged;
 
@@ -585,6 +586,10 @@ public class PhotoView extends GLView {
         @Override
         public boolean onScaleBegin(float focusX, float focusY) {
             mPositionController.beginScale(focusX, focusY);
+            // We can change mode if we are in film mode, or we are in page
+            // mode and at minimal scale.
+            mCanChangeMode = mFilmMode
+                    || mPositionController.isAtMinimalScale();
             mModeChanged = false;
             return true;
         }
@@ -595,7 +600,7 @@ public class PhotoView extends GLView {
             int outOfRange = mPositionController.scaleBy(scale, focusX, focusY);
 
             // We allow only one mode change in a scaling gesture.
-            if (!mModeChanged) {
+            if (mCanChangeMode && !mModeChanged) {
                 if ((outOfRange < 0 && !mFilmMode) ||
                         (outOfRange > 0 && mFilmMode)) {
                     setFilmMode(!mFilmMode);
