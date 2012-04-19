@@ -83,7 +83,7 @@ class PositionController {
     // about this many boxes on each side.
     private static final int BOX_MAX = PhotoView.SCREEN_NAIL_MAX;
 
-    public static final int IMAGE_GAP = GalleryUtils.dpToPixel(16);
+    private static final int IMAGE_GAP = GalleryUtils.dpToPixel(16);
     private static final int HORIZONTAL_SLACK = GalleryUtils.dpToPixel(12);
 
     private Listener mListener;
@@ -96,6 +96,9 @@ class PositionController {
     // The focus point of the scaling gesture, relative to the center of the
     // picture in bitmap pixels.
     private float mFocusX, mFocusY;
+
+    // whether there is a previous/next picture.
+    private boolean mHasPrev, mHasNext;
 
     // This is used by the fling animation (page mode).
     private FlingScroller mPageScroller;
@@ -128,7 +131,8 @@ class PositionController {
 
     // These are only used during moveBox().
     private RangeArray<Box> mTempBoxes = new RangeArray<Box>(-BOX_MAX, BOX_MAX);
-    private RangeArray<Gap> mTempGaps = new RangeArray<Gap>(-BOX_MAX, BOX_MAX - 1);
+    private RangeArray<Gap> mTempGaps =
+        new RangeArray<Gap>(-BOX_MAX, BOX_MAX - 1);
 
     // The output of the PositionController. Available throught getPosition().
     private RangeArray<Rect> mRects = new RangeArray<Rect>(-BOX_MAX, BOX_MAX);
@@ -410,9 +414,6 @@ class PositionController {
     }
 
     public void startScroll(float dx, float dy) {
-        boolean hasPrev = hasPrevImages();
-        boolean hasNext = hasNextImages();
-
         Box b = mBoxes.get(0);
         Platform p = mPlatform;
 
@@ -420,13 +421,13 @@ class PositionController {
         int y = getTargetY(b) + (int) (dy + 0.5f);
 
         if (mFilmMode) {
-            scrollToFilm(x, y, hasPrev, hasNext);
+            scrollToFilm(x, y);
         } else {
-            scrollToPage(x, y, hasPrev, hasNext);
+            scrollToPage(x, y);
         }
     }
 
-    private void scrollToPage(int x, int y, boolean hasPrev, boolean hasNext) {
+    private void scrollToPage(int x, int y) {
         Box b = mBoxes.get(0);
 
         calculateStableBound(b.mCurrentScale);
@@ -445,11 +446,11 @@ class PositionController {
 
         // Horizontal direction: we show the edge effect when the scrolling
         // tries to go left of the first image or go right of the last image.
-        if (!hasPrev && x > mBoundRight) {
+        if (!mHasPrev && x > mBoundRight) {
             int pixels = x - mBoundRight;
             mListener.onPull(pixels, EdgeView.LEFT);
             x = mBoundRight;
-        } else if (!hasNext && x < mBoundLeft) {
+        } else if (!mHasNext && x < mBoundLeft) {
             int pixels = mBoundLeft - x;
             mListener.onPull(pixels, EdgeView.RIGHT);
             x = mBoundLeft;
@@ -458,17 +459,17 @@ class PositionController {
         startAnimation(x, y, b.mCurrentScale, ANIM_KIND_SCROLL);
     }
 
-    private void scrollToFilm(int x, int y, boolean hasPrev, boolean hasNext) {
+    private void scrollToFilm(int x, int y) {
         Box b = mBoxes.get(0);
 
         // Horizontal direction: we show the edge effect when the scrolling
         // tries to go left of the first image or go right of the last image.
         int cx = mViewW / 2;
-        if (!hasPrev && x > cx) {
+        if (!mHasPrev && x > cx) {
             int pixels = x - cx;
             mListener.onPull(pixels, EdgeView.LEFT);
             x = cx;
-        } else if (!hasNext && x < cx) {
+        } else if (!mHasNext && x < cx) {
             int pixels = cx - x;
             mListener.onPull(pixels, EdgeView.RIGHT);
             x = cx;
@@ -517,15 +518,13 @@ class PositionController {
     }
 
     private boolean flingFilm(int velocityX, int velocityY) {
-        boolean hasPrev = hasPrevImages();
-        boolean hasNext = hasNextImages();
-
         Box b = mBoxes.get(0);
         Platform p = mPlatform;
 
         // If we are already at the edge, don't start the fling.
         int cx = mViewW / 2;
-        if ((!hasPrev && p.mCurrentX >= cx) || (!hasNext && p.mCurrentX <= cx)) {
+        if ((!mHasPrev && p.mCurrentX >= cx)
+                || (!mHasNext && p.mCurrentX <= cx)) {
             return false;
         }
 
@@ -762,8 +761,10 @@ class PositionController {
     // -2 -1 0 1 2 3 N -- focus goes to the next box
     // N-3 -2 -1 0 1 2 -- focuse goes to the previous box
     // -3 -2 -1 1 2 3 N -- the focused box was deleted.
-    public void moveBox(int fromIndex[]) {
+    public void moveBox(int fromIndex[], boolean hasPrev, boolean hasNext) {
         //debugMoveBox(fromIndex);
+        mHasPrev = hasPrev;
+        mHasNext = hasNext;
         RangeIntArray from = new RangeIntArray(fromIndex, -BOX_MAX, BOX_MAX);
 
         // 1. Get the absolute X coordiates for the boxes.
@@ -999,20 +1000,6 @@ class PositionController {
         calculateStableBound(scale, 0);
     }
 
-    private boolean hasNextImages() {
-        for (int i = 1; i <= BOX_MAX; i++) {
-            if (!mBoxes.get(i).mUseViewSize) return true;
-        }
-        return false;
-    }
-
-    private boolean hasPrevImages() {
-        for (int i = -1; i >= -BOX_MAX; i--) {
-            if (!mBoxes.get(i).mUseViewSize) return true;
-        }
-        return false;
-    }
-
     private boolean viewTallerThanScaledImage(float scale) {
         return mViewH >= heightOf(mBoxes.get(0), scale);
     }
@@ -1136,8 +1123,8 @@ class PositionController {
             float scale = Utils.clamp(b.mCurrentScale, scaleMin, scaleMax);
             int x = mCurrentX;
             if (mFilmMode) {
-                if (!hasNextImages()) x = Math.max(x, mViewW / 2);
-                if (!hasPrevImages()) x = Math.min(x, mViewW / 2);
+                if (mHasNext) x = Math.max(x, mViewW / 2);
+                if (mHasPrev) x = Math.min(x, mViewW / 2);
             } else {
                 calculateStableBound(scale, HORIZONTAL_SLACK);
                 x = Utils.clamp(x, mBoundLeft, mBoundRight);
@@ -1178,11 +1165,11 @@ class PositionController {
 
             int dir = EdgeView.INVALID_DIRECTION;
             if (mCurrentX < mViewW / 2) {
-                if (!hasNextImages()) {
+                if (!mHasNext) {
                     dir = EdgeView.RIGHT;
                 }
             } else if (mCurrentX > mViewW / 2) {
-                if (!hasPrevImages()) {
+                if (!mHasPrev) {
                     dir = EdgeView.LEFT;
                 }
             }
