@@ -210,7 +210,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
             mChanges[i + SCREEN_NAIL_MAX] = getVersion(mCurrentIndex + i);
         }
-        mPhotoView.notifyDataChange(mChanges);
+        mPhotoView.notifyDataChange(mChanges, mCurrentIndex > 0,
+                mCurrentIndex < mSize - 1);
     }
 
     public void setDataListener(DataListener listener) {
