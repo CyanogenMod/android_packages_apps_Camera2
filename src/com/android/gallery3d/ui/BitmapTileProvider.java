@@ -44,7 +44,7 @@ public class BitmapTileProvider implements TileImageView.Model {
             list.add(bitmap);
         }
 
-        mScreenNail = new BitmapScreenNail(list.remove(list.size() - 1), 0);
+        mScreenNail = new BitmapScreenNail(list.remove(list.size() - 1));
         mMipmaps = list.toArray(new Bitmap[list.size()]);
         mConfig = Config.ARGB_8888;
     }

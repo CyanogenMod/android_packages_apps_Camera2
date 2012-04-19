@@ -109,15 +109,6 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         return false;
     }
 
-    public int getImageRotation() {
-        return mItem.getRotation();
-    }
-
-    @Override
-    public void setNeedFullImage(boolean enabled) {
-        // currently not necessary.
-    }
-
     private void onDecodeLargeComplete(ImageBundle bundle) {
         try {
             setScreenNail(bundle.backupImage,
@@ -162,17 +153,42 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         }
     }
 
-    public ScreenNail getScreenNail(int offset) {
-        return (offset == 0) ? getScreenNail() : null;
-    }
-
+    @Override
     public void next() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void previous() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void getImageSize(int offset, PhotoView.Size size) {
+        if (offset == 0) {
+            size.width = mItem.getWidth();
+            size.height = mItem.getHeight();
+        } else {
+            size.width = 0;
+            size.height = 0;
+        }
+    }
+
+    @Override
+    public int getImageRotation(int offset) {
+        return (offset == 0) ? mItem.getFullImageRotation() : 0;
+    }
+
+    @Override
+    public ScreenNail getScreenNail(int offset) {
+        return (offset == 0) ? getScreenNail() : null;
+    }
+
+    @Override
+    public void setNeedFullImage(boolean enabled) {
+        // currently not necessary.
+    }
+
 
     public MediaItem getCurrentMediaItem() {
         return mItem;

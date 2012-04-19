@@ -20,7 +20,6 @@ import android.graphics.RectF;
 public interface ScreenNail {
     public int getWidth();
     public int getHeight();
-    public int getRotation();
     public void draw(GLCanvas canvas, int x, int y, int width, int height);
 
     // We do not need to draw this ScreenNail in this frame.
