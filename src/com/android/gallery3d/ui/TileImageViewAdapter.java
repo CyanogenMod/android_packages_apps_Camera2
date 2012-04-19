@@ -41,7 +41,7 @@ public class TileImageViewAdapter implements TileImageView.Model {
     public TileImageViewAdapter(
             Bitmap bitmap, BitmapRegionDecoder regionDecoder) {
         Utils.checkNotNull(bitmap);
-        updateScreenNail(new BitmapScreenNail(bitmap, 0), true);
+        updateScreenNail(new BitmapScreenNail(bitmap), true);
         mRegionDecoder = regionDecoder;
         mImageWidth = regionDecoder.getWidth();
         mImageHeight = regionDecoder.getHeight();
@@ -59,7 +59,7 @@ public class TileImageViewAdapter implements TileImageView.Model {
 
     public synchronized void setScreenNail(Bitmap bitmap, int width, int height) {
         Utils.checkNotNull(bitmap);
-        updateScreenNail(new BitmapScreenNail(bitmap, 0), true);
+        updateScreenNail(new BitmapScreenNail(bitmap), true);
         mImageWidth = width;
         mImageHeight = height;
         mRegionDecoder = null;
