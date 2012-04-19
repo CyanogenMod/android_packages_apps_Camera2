@@ -210,18 +210,12 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
             mChanges[i + SCREEN_NAIL_MAX] = getVersion(mCurrentIndex + i);
         }
-        mPhotoView.notifyDataChange(mChanges, mCurrentIndex > 0,
-                mCurrentIndex < mSize - 1);
+        mPhotoView.notifyDataChange(mChanges, -mCurrentIndex,
+                mSize - 1 - mCurrentIndex);
     }
 
     public void setDataListener(DataListener listener) {
         mDataListener = listener;
-    }
-
-    @Override
-    public void setNeedFullImage(boolean enabled) {
-        mNeedFullImage = enabled;
-        mMainHandler.sendEmptyMessage(MSG_UPDATE_IMAGE_REQUESTS);
     }
 
     private void updateScreenNail(long version, Future<ScreenNail> future) {
@@ -307,8 +301,14 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         return entry == null ? null : entry.screenNail;
     }
 
-    public ScreenNail getScreenNail(int offset) {
-        return getImage(mCurrentIndex + offset);
+    private MediaItem getItem(int index) {
+        if (index < 0 || index >= mSize || !mIsActive) return null;
+        Utils.assertTrue(index >= mActiveStart && index < mActiveEnd);
+
+        if (index >= mContentStart && index < mContentEnd) {
+            return mData[index % DATA_CACHE_SIZE];
+        }
+        return null;
     }
 
     private void updateCurrentIndex(int index) {
@@ -329,12 +329,43 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         fireDataChange();
     }
 
+    @Override
     public void next() {
         updateCurrentIndex(mCurrentIndex + 1);
     }
 
+    @Override
     public void previous() {
         updateCurrentIndex(mCurrentIndex - 1);
+    }
+
+    @Override
+    public ScreenNail getScreenNail(int offset) {
+        return getImage(mCurrentIndex + offset);
+    }
+
+    @Override
+    public void getImageSize(int offset, PhotoView.Size size) {
+        MediaItem item = getItem(mCurrentIndex + offset);
+        if (item == null) {
+            size.width = 0;
+            size.height = 0;
+        } else {
+            size.width = item.getWidth();
+            size.height = item.getHeight();
+        }
+    }
+
+    @Override
+    public int getImageRotation(int offset) {
+        MediaItem item = getItem(mCurrentIndex + offset);
+        return (item == null) ? 0 : item.getFullImageRotation();
+    }
+
+    @Override
+    public void setNeedFullImage(boolean enabled) {
+        mNeedFullImage = enabled;
+        mMainHandler.sendEmptyMessage(MSG_UPDATE_IMAGE_REQUESTS);
     }
 
     public ScreenNail getScreenNail() {
@@ -347,11 +378,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
     public int getImageWidth() {
         return mTileProvider.getImageWidth();
-    }
-
-    public int getImageRotation() {
-        ImageEntry entry = mImageCache.get(getVersion(mCurrentIndex));
-        return entry == null ? 0 : entry.rotation;
     }
 
     public int getLevelCount() {
@@ -505,7 +531,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                 bitmap = BitmapUtils.rotateBitmap(bitmap,
                     mItem.getRotation() - mItem.getFullImageRotation(), true);
             }
-            return new BitmapScreenNail(bitmap, mItem.getFullImageRotation());
+            return new BitmapScreenNail(bitmap);
         }
     }
 

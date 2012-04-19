@@ -38,20 +38,34 @@ import java.util.Arrays;
 public class PhotoView extends GLView {
     @SuppressWarnings("unused")
     private static final String TAG = "PhotoView";
+    private static final int PLACEHOLDER_COLOR = 0xFF222222;
 
     public static final int INVALID_SIZE = -1;
     public static final long INVALID_DATA_VERSION =
             MediaObject.INVALID_DATA_VERSION;
 
-    public static interface Model extends TileImageView.Model {
+    public static class Size {
+        public int width;
+        public int height;
+    }
+
+    public interface Model extends TileImageView.Model {
         public void next();
         public void previous();
-        public int getImageRotation();
+
+        // Returns the size for the specified picture. If the size information is
+        // not avaiable, width = height = 0.
+        public void getImageSize(int offset, Size size);
+
+        // Returns the rotation for the specified picture.
+        public int getImageRotation(int offset);
 
         // This amends the getScreenNail() method of TileImageView.Model to get
         // ScreenNail at previous (negative offset) or next (positive offset)
         // positions. Returns null if the specified ScreenNail is unavailable.
         public ScreenNail getScreenNail(int offset);
+
+        // Set this to true if we need the model to provide full images.
         public void setNeedFullImage(boolean enabled);
     }
 
@@ -118,6 +132,13 @@ public class PhotoView extends GLView {
     private Point mImageCenter = new Point();
     private boolean mCancelExtraScalingPending;
     private boolean mFilmMode = false;
+
+    // [mPrevBound, mNextBound] is the range of index for all pictures in the
+    // model, if we assume the index of current focused picture is 0.  So if
+    // there are some previous pictures, mPrevBound < 0, and if there are some
+    // next pictures, mNextBound > 0.
+    private int mPrevBound;
+    private int mNextBound;
 
     public PhotoView(GalleryActivity activity) {
         mTileView = new TileImageView(activity);
@@ -232,8 +253,10 @@ public class PhotoView extends GLView {
     //  Data/Image change notifications
     ////////////////////////////////////////////////////////////////////////////
 
-    public void notifyDataChange(long[] versions, boolean hasPrev,
-            boolean hasNext) {
+    public void notifyDataChange(long[] versions, int prevBound, int nextBound) {
+        mPrevBound = prevBound;
+        mNextBound = nextBound;
+
         // Check if the data version actually changed.
         boolean changed = false;
         int N = 2 * SCREEN_NAIL_MAX + 1;
@@ -270,7 +293,7 @@ public class PhotoView extends GLView {
         }
 
         // Move the boxes
-        mPositionController.moveBox(mFromIndex, hasPrev, hasNext);
+        mPositionController.moveBox(mFromIndex, mPrevBound < 0, mNextBound > 0);
 
         // Update the ScreenNails.
         for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
@@ -312,18 +335,14 @@ public class PhotoView extends GLView {
             mTileView.notifyModelInvalidated();
             if (CARD_EFFECT) mTileView.setAlpha(1.0f);
 
-            if (mModel == null) {
-                mRotation = 0;
-                mPositionController.setImageSize(0, 0, 0);
-            } else {
-                mRotation = mModel.getImageRotation();
-                int w = mTileView.mImageWidth;
-                int h = mTileView.mImageHeight;
-                mPositionController.setImageSize(0,
-                        getRotated(mRotation, w, h),
-                        getRotated(mRotation, h, w));
-            }
-            setScreenNail(mModel == null ? null : mModel.getScreenNail(0));
+            mRotation = mModel.getImageRotation(0);
+            int w = mTileView.mImageWidth;
+            int h = mTileView.mImageHeight;
+            mPositionController.setImageSize(0,
+                    getRotated(mRotation, w, h),
+                    getRotated(mRotation, h, w));
+
+            setScreenNail(mModel.getScreenNail(0));
             updateLoadingState();
         }
 
@@ -447,6 +466,7 @@ public class PhotoView extends GLView {
         private boolean mEnabled;
         private int mRotation;
         private ScreenNail mScreenNail;
+        private Size mSize = new Size();
 
         public ScreenNailPicture(int index) {
             mIndex = index;
@@ -454,12 +474,18 @@ public class PhotoView extends GLView {
 
         @Override
         public void reload() {
-            setScreenNail(mModel == null ? null : mModel.getScreenNail(mIndex));
+            setScreenNail(mModel.getScreenNail(mIndex));
         }
 
         @Override
         public void draw(GLCanvas canvas, Rect r) {
             if (mScreenNail == null) {
+                // Draw a placeholder rectange if there will be a picture in
+                // this position.
+                if (mIndex >= mPrevBound && mIndex <= mNextBound) {
+                    canvas.fillRect(r.left, r.top, r.width(), r.height(),
+                            PLACEHOLDER_COLOR);
+                }
                 return;
             }
             if (r.left >= getWidth() || r.right <= 0 ||
@@ -501,12 +527,21 @@ public class PhotoView extends GLView {
             mEnabled = (s != null);
             if (mScreenNail == s) return;
             mScreenNail = s;
+            mRotation = mModel.getImageRotation(mIndex);
+
+            int w = 0, h = 0;
             if (mScreenNail != null) {
-                mRotation = mScreenNail.getRotation();
+                w = s.getWidth();
+                h = s.getHeight();
+            } else if (mModel != null) {
+                // If we don't have ScreenNail available, we can still try to
+                // get the size information of it.
+                mModel.getImageSize(mIndex, mSize);
+                w = mSize.width;
+                h = mSize.height;
             }
-            if (mScreenNail != null) {
-                int w = s.getWidth();
-                int h = s.getHeight();
+
+            if (w != 0 && h != 0)  {
                 mPositionController.setImageSize(mIndex,
                         getRotated(mRotation, w, h),
                         getRotated(mRotation, h, w));
