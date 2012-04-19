@@ -161,12 +161,11 @@
     <string name="people" msgid="4114003823747292747">"ሰዎች"</string>
     <string name="tags" msgid="5539648765482935955">"መለያዎች"</string>
     <string name="group_by" msgid="4308299657902209357">"በቡድን አስቀምጥ"</string>
-    <string name="settings" msgid="1534847740615665736">"ቅንጅቶች"</string>
+    <string name="settings" msgid="1534847740615665736">"ቅንብሮች"</string>
     <string name="add_account" msgid="4271217504968243974">"መለያ አክል"</string>
     <string name="folder_camera" msgid="4714658994809533480">"ካሜራ"</string>
     <string name="folder_download" msgid="7186215137642323932">"አውርድ"</string>
     <string name="folder_imported" msgid="2773581395524747099">"ከውጭ የገባ"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"ቅጽበታዊ ገጽ እይታ"</string>
-    <!-- no translation found for help (7368960711153618354) -->
-    <skip />
+    <string name="help" msgid="7368960711153618354">"እገዛ"</string>
 </resources>
