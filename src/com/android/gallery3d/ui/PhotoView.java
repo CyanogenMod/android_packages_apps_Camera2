@@ -232,7 +232,8 @@ public class PhotoView extends GLView {
     //  Data/Image change notifications
     ////////////////////////////////////////////////////////////////////////////
 
-    public void notifyDataChange(long[] versions) {
+    public void notifyDataChange(long[] versions, boolean hasPrev,
+            boolean hasNext) {
         // Check if the data version actually changed.
         boolean changed = false;
         int N = 2 * SCREEN_NAIL_MAX + 1;
@@ -269,7 +270,7 @@ public class PhotoView extends GLView {
         }
 
         // Move the boxes
-        mPositionController.moveBox(mFromIndex);
+        mPositionController.moveBox(mFromIndex, hasPrev, hasNext);
 
         // Update the ScreenNails.
         for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
