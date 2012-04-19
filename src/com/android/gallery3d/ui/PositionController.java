@@ -533,7 +533,10 @@ class PositionController {
         mFilmScroller.fling(p.mCurrentX, 0, velocityX, 0,
                 Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0);
         int targetX = mFilmScroller.getFinalX();
-        ANIM_TIME[ANIM_KIND_FLING] = mFilmScroller.getDuration();
+        // This value doesn't matter because we use mFilmScroller.isFinished()
+        // to decide when to stop. We set this to 0 so it's faster for
+        // Animatable.advanceAnimation() to calculate the progress (always 1).
+        ANIM_TIME[ANIM_KIND_FLING] = 0;
         startAnimation(targetX, b.mCurrentY, b.mCurrentScale, ANIM_KIND_FLING);
         return true;
     }
@@ -1123,8 +1126,8 @@ class PositionController {
             float scale = Utils.clamp(b.mCurrentScale, scaleMin, scaleMax);
             int x = mCurrentX;
             if (mFilmMode) {
-                if (mHasNext) x = Math.max(x, mViewW / 2);
-                if (mHasPrev) x = Math.min(x, mViewW / 2);
+                if (!mHasNext) x = Math.max(x, mViewW / 2);
+                if (!mHasPrev) x = Math.min(x, mViewW / 2);
             } else {
                 calculateStableBound(scale, HORIZONTAL_SLACK);
                 x = Utils.clamp(x, mBoundLeft, mBoundRight);

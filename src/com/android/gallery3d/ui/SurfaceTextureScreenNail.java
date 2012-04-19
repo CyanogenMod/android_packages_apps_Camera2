@@ -77,11 +77,6 @@ public abstract class SurfaceTextureScreenNail implements ScreenNail,
     }
 
     @Override
-    public int getRotation() {
-        return 0;
-    }
-
-    @Override
     public void draw(GLCanvas canvas, int x, int y, int width, int height) {
         synchronized (this) {
             if (!mHasTexture) return;

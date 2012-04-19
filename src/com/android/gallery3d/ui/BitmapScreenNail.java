@@ -29,14 +29,12 @@ public class BitmapScreenNail implements ScreenNail {
     private static final String TAG = "BitmapScreenNail";
     private final int mWidth;
     private final int mHeight;
-    private final int mRotation;
     private Bitmap mBitmap;
     private BitmapTexture mTexture;
 
-    public BitmapScreenNail(Bitmap bitmap, int rotation) {
+    public BitmapScreenNail(Bitmap bitmap) {
         mWidth = bitmap.getWidth();
         mHeight = bitmap.getHeight();
-        mRotation = rotation;
         mBitmap = bitmap;
         // We create mTexture lazily, so we don't incur the cost if we don't
         // actually need it.
@@ -50,11 +48,6 @@ public class BitmapScreenNail implements ScreenNail {
     @Override
     public int getHeight() {
         return mHeight;
-    }
-
-    @Override
-    public int getRotation() {
-        return mRotation;
     }
 
     @Override
