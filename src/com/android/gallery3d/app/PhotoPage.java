@@ -19,13 +19,10 @@ package com.android.gallery3d.app;
 import android.app.ActionBar.OnMenuVisibilityListener;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,8 +31,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.MeasureSpec;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ShareActionProvider;
 import android.widget.Toast;
@@ -57,9 +52,9 @@ import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.ImportCompleteListener;
 import com.android.gallery3d.ui.MenuExecutor;
+import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.ScreenNail;
 import com.android.gallery3d.ui.ScreenNailHolder;
-import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.ui.UserInteractionListener;
@@ -578,8 +573,8 @@ public class PhotoPage extends ActivityState
             case REQUEST_CROP:
                 if (resultCode == Activity.RESULT_OK) {
                     if (data == null) break;
-                    Path path = mApplication
-                            .getDataManager().findPathByUri(data.getData());
+                    Path path = mApplication.getDataManager()
+                            .findPathByUri(data.getData(), data.getType());
                     if (path != null) {
                         mModel.setCurrentPhoto(path, mCurrentIndex);
                     }

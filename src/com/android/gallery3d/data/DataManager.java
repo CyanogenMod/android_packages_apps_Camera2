@@ -242,10 +242,10 @@ public class DataManager {
         return getMediaObject(path).getMediaType();
     }
 
-    public Path findPathByUri(Uri uri) {
+    public Path findPathByUri(Uri uri, String type) {
         if (uri == null) return null;
         for (MediaSource source : mSourceMap.values()) {
-            Path path = source.findPathByUri(uri);
+            Path path = source.findPathByUri(uri, type);
             if (path != null) return path;
         }
         return null;

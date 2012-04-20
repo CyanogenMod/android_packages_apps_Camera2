@@ -16,7 +16,9 @@
 
 package com.android.gallery3d.data;
 
+import android.content.ContentResolver;
 import android.net.Uri;
+import android.webkit.MimeTypeMap;
 
 import com.android.gallery3d.app.GalleryApp;
 
@@ -37,21 +39,35 @@ class UriSource extends MediaSource {
     @Override
     public MediaObject createMediaObject(Path path) {
         String segment[] = path.split();
-        if (segment.length != 2) {
+        if (segment.length != 3) {
             throw new RuntimeException("bad path: " + path);
         }
+        String uri = URLDecoder.decode(segment[1]);
+        String type = URLDecoder.decode(segment[2]);
+        return new UriImage(mApplication, path, Uri.parse(uri), type);
+    }
 
-        String decoded = URLDecoder.decode(segment[1]);
-        return new UriImage(mApplication, path, Uri.parse(decoded));
+    private String getMimeType(Uri uri) {
+        if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
+            String extension =
+                    MimeTypeMap.getFileExtensionFromUrl(uri.toString());
+            String type = MimeTypeMap.getSingleton()
+                    .getMimeTypeFromExtension(extension.toLowerCase());
+            if (type != null) return type;
+        }
+        // Assume the type is image if the type cannot be resolved
+        // This could happen for "http" URI.
+        String type = mApplication.getContentResolver().getType(uri);
+        if (type == null) type = "image/*";
+        return type;
     }
 
     @Override
-    public Path findPathByUri(Uri uri) {
-        String type = mApplication.getContentResolver().getType(uri);
-        // Assume the type is image if the type cannot be resolved
-        // This could happen for "http" URI.
-        if (type == null || type.startsWith("image/")) {
-            return Path.fromString("/uri/" + URLEncoder.encode(uri.toString()));
+    public Path findPathByUri(Uri uri, String type) {
+        if (type == null) type = getMimeType(uri);
+        if (type.startsWith("image/")) {
+            return Path.fromString("/uri/" + URLEncoder.encode(uri.toString())
+                    + "/" +URLEncoder.encode(type));
         }
         return null;
     }

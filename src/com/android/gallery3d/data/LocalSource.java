@@ -151,7 +151,7 @@ class LocalSource extends MediaSource {
     }
 
     @Override
-    public Path findPathByUri(Uri uri) {
+    public Path findPathByUri(Uri uri, String type) {
         try {
             switch (mUriMatcher.match(uri)) {
                 case LOCAL_IMAGE_ITEM: {
