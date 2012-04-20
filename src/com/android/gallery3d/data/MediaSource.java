@@ -34,7 +34,7 @@ public abstract class MediaSource {
         return mPrefix;
     }
 
-    public Path findPathByUri(Uri uri) {
+    public Path findPathByUri(Uri uri, String type) {
         return null;
     }
 

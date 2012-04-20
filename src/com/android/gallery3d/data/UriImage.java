@@ -23,7 +23,6 @@ import android.graphics.BitmapFactory.Options;
 import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import android.webkit.MimeTypeMap;
 
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.BitmapUtils;
@@ -58,22 +57,11 @@ public class UriImage extends MediaItem {
 
     private GalleryApp mApplication;
 
-    public UriImage(GalleryApp application, Path path, Uri uri) {
+    public UriImage(GalleryApp application, Path path, Uri uri, String contentType) {
         super(path, nextVersionNumber());
         mUri = uri;
         mApplication = Utils.checkNotNull(application);
-        mContentType = getMimeType(uri);
-    }
-
-    private String getMimeType(Uri uri) {
-        if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
-            String extension =
-                    MimeTypeMap.getFileExtensionFromUrl(uri.toString());
-            String type = MimeTypeMap.getSingleton()
-                    .getMimeTypeFromExtension(extension.toLowerCase());
-            if (type != null) return type;
-        }
-        return mApplication.getContentResolver().getType(uri);
+        mContentType = contentType;
     }
 
     @Override

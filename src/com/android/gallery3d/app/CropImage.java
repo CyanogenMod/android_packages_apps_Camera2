@@ -887,13 +887,9 @@ public class CropImage extends AbstractGalleryActivity {
     private MediaItem getMediaItemFromIntentData() {
         Uri uri = getIntent().getData();
         DataManager manager = getDataManager();
-        if (uri == null) {
-            Log.w(TAG, "no data given");
-            return null;
-        }
-        Path path = manager.findPathByUri(uri);
+        Path path = manager.findPathByUri(uri, getIntent().getType());
         if (path == null) {
-            Log.w(TAG, "cannot get path for: " + uri);
+            Log.w(TAG, "cannot get path for: " + uri + ", or no data given");
             return null;
         }
         return (MediaItem) manager.getMediaObject(path);

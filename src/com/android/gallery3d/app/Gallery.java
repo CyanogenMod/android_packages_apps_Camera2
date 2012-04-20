@@ -27,7 +27,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -137,7 +136,7 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
         if (slideshow) {
             getActionBar().hide();
             DataManager manager = getDataManager();
-            Path path = manager.findPathByUri(intent.getData());
+            Path path = manager.findPathByUri(intent.getData(), intent.getType());
             if (path == null || manager.getMediaObject(path)
                     instanceof MediaItem) {
                 path = Path.fromString(
@@ -173,7 +172,7 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
                             KEY_MEDIA_TYPES, String.valueOf(mediaType))
                             .build();
                 }
-                Path setPath = dm.findPathByUri(uri);
+                Path setPath = dm.findPathByUri(uri, null);
                 MediaSet mediaSet = null;
                 if (setPath != null) {
                     mediaSet = (MediaSet) dm.getMediaObject(setPath);
@@ -192,7 +191,7 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
                     startDefaultPage();
                 }
             } else {
-                Path itemPath = dm.findPathByUri(uri);
+                Path itemPath = dm.findPathByUri(uri, intent.getType());
                 Path albumPath = dm.getDefaultSetOf(itemPath);
                 // TODO: Make this parameter public so other activities can reference it.
                 boolean singleItemOnly = intent.getBooleanExtra("SingleItemOnly", false);
