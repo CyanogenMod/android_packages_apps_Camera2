@@ -76,6 +76,7 @@ public class PhotoView extends GLView {
     private static final int MSG_SHOW_LOADING = 1;
     private static final int MSG_CANCEL_EXTRA_SCALING = 2;
     private static final int MSG_SWITCH_FOCUS = 3;
+    private static final int MSG_CAPTURE_ANIMATION_DONE = 4;
 
     private static final long DELAY_SHOW_LOADING = 250; // 250ms;
 
@@ -89,6 +90,8 @@ public class PhotoView extends GLView {
 
     private static final float DEFAULT_TEXT_SIZE = 20;
     private static float TRANSITION_SCALE_FACTOR = 0.74f;
+
+    // whether we want to apply card deck effect in page mode.
     private static final boolean CARD_EFFECT = true;
 
     // Used to calculate the scaling factor for the fading animation.
@@ -140,6 +143,16 @@ public class PhotoView extends GLView {
     private int mPrevBound;
     private int mNextBound;
 
+    // This variable prevents us doing snapback until its values goes to 0. This
+    // happens if the user gesture is still in progress or we are in a capture
+    // animation.
+    // HOLD_TOUCH_DOWN_FROM_CAMERA is an extra flag set together with
+    // HOLD_TOUCH_DOWN if the touch down starts from camera preview.
+    private int mHolding;
+    private static final int HOLD_TOUCH_DOWN = 1;
+    private static final int HOLD_TOUCH_DOWN_FROM_CAMERA = 2;
+    private static final int HOLD_CAPTURE_ANIMATION = 4;
+
     public PhotoView(GalleryActivity activity) {
         mTileView = new TileImageView(activity);
         addComponent(mTileView);
@@ -164,8 +177,14 @@ public class PhotoView extends GLView {
                     public void invalidate() {
                         PhotoView.this.invalidate();
                     }
-                    public boolean isDown() {
-                        return mGestureRecognizer.isDown();
+                    public boolean isHolding() {
+                        // We want the film mode change happen as soon as
+                        // possible even if the touch is still down.
+                        if ((mHolding & HOLD_TOUCH_DOWN_FROM_CAMERA) != 0) {
+                            return false;
+                        } else {
+                            return mHolding != 0;
+                        }
                     }
                     public void onPull(int offset, int direction) {
                         mEdgeView.onPull(offset, direction);
@@ -220,6 +239,10 @@ public class PhotoView extends GLView {
                 }
                 case MSG_SWITCH_FOCUS: {
                     switchFocus();
+                    break;
+                }
+                case MSG_CAPTURE_ANIMATION_DONE: {
+                    captureAnimationDone();
                     break;
                 }
                 default: throw new AssertionError(message.what);
@@ -316,14 +339,17 @@ public class PhotoView extends GLView {
         void reload();
         void draw(GLCanvas canvas, Rect r);
         void setScreenNail(ScreenNail s);
-        boolean isEnabled();
+        boolean isCamera();  // whether the picture is a camera preview
     };
+
+    private boolean isCameraScreenNail(ScreenNail s) {
+        return s != null && !(s instanceof BitmapScreenNail);
+    }
 
     class FullPicture implements Picture {
         private int mRotation;
-
-        // This is a temporary hack to switch mode when entering/leaving camera.
-        private volatile boolean mIsNonBitmap;
+        private boolean mIsCamera;
+        private boolean mWasCenter;
 
         public void FullPicture(TileImageView tileView) {
             mTileView = tileView;
@@ -333,7 +359,7 @@ public class PhotoView extends GLView {
         public void reload() {
             // mImageWidth and mImageHeight will get updated
             mTileView.notifyModelInvalidated();
-            if (CARD_EFFECT) mTileView.setAlpha(1.0f);
+            mTileView.setAlpha(1.0f);
 
             mRotation = mModel.getImageRotation(0);
             int w = mTileView.mImageWidth;
@@ -355,22 +381,31 @@ public class PhotoView extends GLView {
             renderMessage(canvas, r.centerX(), r.centerY());
 
             boolean isCenter = r.centerX() == getWidth() / 2;
-            if (mIsNonBitmap && !isCenter && !mFilmMode) {
-                setFilmMode(true);
-            } else if (mIsNonBitmap && isCenter && mFilmMode) {
-                setFilmMode(false);
+
+            // We want to have following transitions:
+            // (1) Move camera preview out of its place: switch to film mode
+            // (2) Move camera preview into its place: switch to page mode
+            // The extra mWasCenter check makes sure (1) does not apply if in
+            // page mode, we move _to_ the camera preview from another picture.
+            if ((mHolding & ~(HOLD_TOUCH_DOWN | HOLD_TOUCH_DOWN_FROM_CAMERA)) == 0) {
+                if (mWasCenter && !isCenter && mIsCamera && !mFilmMode) {
+                    setFilmMode(true);
+                } else if (mIsCamera && isCenter && mFilmMode) {
+                    setFilmMode(false);
+                }
             }
+            mWasCenter = isCenter;
         }
 
         @Override
         public void setScreenNail(ScreenNail s) {
-            mIsNonBitmap = (s != null && !(s instanceof BitmapScreenNail));
+            mIsCamera = isCameraScreenNail(s);
             mTileView.setScreenNail(s);
         }
 
         @Override
-        public boolean isEnabled() {
-            return true;
+        public boolean isCamera() {
+            return mIsCamera;
         }
 
         private void setTileViewPosition(Rect r) {
@@ -387,7 +422,9 @@ public class PhotoView extends GLView {
             int centerY = (int) (imageH / 2f +
                     (viewH / 2f - r.exactCenterY()) / scale + 0.5f);
 
-            if (CARD_EFFECT && !mFilmMode) {
+            boolean wantsCardEffect = CARD_EFFECT && !mFilmMode
+                && !mPictures.get(-1).isCamera();
+            if (wantsCardEffect) {
                 // Calculate the move-out progress value.
                 int left = r.left;
                 int right = r.right;
@@ -463,10 +500,10 @@ public class PhotoView extends GLView {
 
     private class ScreenNailPicture implements Picture {
         private int mIndex;
-        private boolean mEnabled;
         private int mRotation;
         private ScreenNail mScreenNail;
         private Size mSize = new Size();
+        private boolean mIsCamera;
 
         public ScreenNailPicture(int index) {
             mIndex = index;
@@ -494,20 +531,20 @@ public class PhotoView extends GLView {
                 return;
             }
 
-            boolean applyFadingAnimation =
-                CARD_EFFECT && mIndex > 0 && !mFilmMode;
+            boolean wantsCardEffect = CARD_EFFECT && !mFilmMode
+                && (mIndex > 0) && !mPictures.get(0).isCamera();
 
             int w = getWidth();
             int drawW = getRotated(mRotation, r.width(), r.height());
             int drawH = getRotated(mRotation, r.height(), r.width());
-            int cx = applyFadingAnimation ? w / 2 : r.centerX();
+            int cx = wantsCardEffect ? w / 2 : r.centerX();
             int cy = r.centerY();
             int flags = GLCanvas.SAVE_FLAG_MATRIX;
 
-            if (applyFadingAnimation) flags |= GLCanvas.SAVE_FLAG_ALPHA;
+            if (wantsCardEffect) flags |= GLCanvas.SAVE_FLAG_ALPHA;
             canvas.save(flags);
             canvas.translate(cx, cy);
-            if (applyFadingAnimation) {
+            if (wantsCardEffect) {
                 float progress = (float) (w / 2 - r.centerX()) / w;
                 progress = Utils.clamp(progress, -1, 1);
                 float alpha = getScrollAlpha(progress);
@@ -524,9 +561,9 @@ public class PhotoView extends GLView {
 
         @Override
         public void setScreenNail(ScreenNail s) {
-            mEnabled = (s != null);
             if (mScreenNail == s) return;
             mScreenNail = s;
+            mIsCamera = isCameraScreenNail(s);
             mRotation = mModel.getImageRotation(mIndex);
 
             int w = 0, h = 0;
@@ -549,8 +586,8 @@ public class PhotoView extends GLView {
         }
 
         @Override
-        public boolean isEnabled() {
-            return mEnabled;
+        public boolean isCamera() {
+            return mIsCamera;
         }
     }
 
@@ -677,10 +714,15 @@ public class PhotoView extends GLView {
 
         @Override
         public void onDown() {
+            mHolding |= HOLD_TOUCH_DOWN;
+            if (mPictures.get(0).isCamera()) {
+                mHolding |= HOLD_TOUCH_DOWN_FROM_CAMERA;
+            }
         }
 
         @Override
         public void onUp() {
+            mHolding &= ~(HOLD_TOUCH_DOWN | HOLD_TOUCH_DOWN_FROM_CAMERA);
             mEdgeView.onRelease();
 
             if (mIgnoreUpEvent) {
@@ -688,9 +730,7 @@ public class PhotoView extends GLView {
                 return;
             }
 
-            if (!snapToNeighborImage()) {
-                mPositionController.up();
-            }
+            snapback();
         }
     }
 
@@ -771,7 +811,7 @@ public class PhotoView extends GLView {
 
     // Runs in main thread.
     private void switchFocus() {
-        if (mGestureRecognizer.isDown()) return;
+        if (mHolding != 0) return;
         switch (switchPosition()) {
             case -1:
                 switchToPrevImage();
@@ -788,14 +828,14 @@ public class PhotoView extends GLView {
         Rect curr = mPositionController.getPosition(0);
         int center = getWidth() / 2;
 
-        if (curr.left > center && mPictures.get(-1).isEnabled()) {
+        if (curr.left > center && mPrevBound < 0) {
             Rect prev = mPositionController.getPosition(-1);
             int currDist = curr.left - center;
             int prevDist = center - prev.right;
             if (prevDist < currDist) {
                 return -1;
             }
-        } else if (curr.right < center && mPictures.get(1).isEnabled()) {
+        } else if (curr.right < center && mNextBound > 0) {
             Rect next = mPositionController.getPosition(1);
             int currDist = center - curr.right;
             int nextDist = next.left - center;
@@ -841,6 +881,13 @@ public class PhotoView extends GLView {
         return false;
     }
 
+    private void snapback() {
+        if (mHolding != 0) return;
+        if (!snapToNeighborImage()) {
+            mPositionController.snapback();
+        }
+    }
+
     private boolean snapToNeighborImage() {
         if (mFilmMode) return false;
 
@@ -859,22 +906,16 @@ public class PhotoView extends GLView {
     }
 
     private boolean slideToNextPicture() {
-        Picture next = mPictures.get(1);
-        if (!next.isEnabled()) return false;
-        int currentX = mPositionController.getPosition(1).centerX();
-        int targetX = getWidth() / 2;
-        mPositionController.startHorizontalSlide(targetX - currentX);
+        if (mNextBound <= 0) return false;
         switchToNextImage();
+        mPositionController.startHorizontalSlide();
         return true;
     }
 
     private boolean slideToPrevPicture() {
-        Picture prev = mPictures.get(-1);
-        if (!prev.isEnabled()) return false;
-        int currentX = mPositionController.getPosition(-1).centerX();
-        int targetX = getWidth() / 2;
-        mPositionController.startHorizontalSlide(targetX - currentX);
+        if (mPrevBound >= 0) return false;
         switchToPrevImage();
+        mPositionController.startHorizontalSlide();
         return true;
     }
 
@@ -900,6 +941,44 @@ public class PhotoView extends GLView {
 
     public void setOpenAnimationRect(Rect rect) {
         mPositionController.setOpenAnimationRect(rect);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //  Capture Animation
+    ////////////////////////////////////////////////////////////////////////////
+
+    public boolean switchWithCaptureAnimation(int offset) {
+        GLRoot root = getGLRoot();
+        root.lockRenderThread();
+        try {
+            return switchWithCaptureAnimationLocked(offset);
+        } finally {
+            root.unlockRenderThread();
+        }
+    }
+
+    private boolean switchWithCaptureAnimationLocked(int offset) {
+        if (mFilmMode) return false;
+        if (mHolding != 0) return true;
+        if (offset == 1) {
+            if (mNextBound <= 0) return false;
+            switchToNextImage();
+            mPositionController.startCaptureAnimationSlide(-1);
+        } else if (offset == -1) {
+            if (mPrevBound >= 0) return false;
+            switchToPrevImage();
+            mPositionController.startCaptureAnimationSlide(1);
+        } else {
+            return false;
+        }
+        mHolding |= HOLD_CAPTURE_ANIMATION;
+        mHandler.sendEmptyMessageDelayed(MSG_CAPTURE_ANIMATION_DONE, 800);
+        return true;
+    }
+
+    private void captureAnimationDone() {
+        mHolding &= ~HOLD_CAPTURE_ANIMATION;
+        snapback();
     }
 
     ////////////////////////////////////////////////////////////////////////////

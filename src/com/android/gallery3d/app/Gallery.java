@@ -233,18 +233,6 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
     }
 
     @Override
-    public void onBackPressed() {
-        // send the back event to the top sub-state
-        GLRoot root = getGLRoot();
-        root.lockRenderThread();
-        try {
-            getStateManager().onBackPressed();
-        } finally {
-            root.unlockRenderThread();
-        }
-    }
-
-    @Override
     protected void onResume() {
         Utils.assertTrue(getStateManager().getStateCount() > 0);
         super.onResume();

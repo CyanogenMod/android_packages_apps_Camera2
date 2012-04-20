@@ -45,6 +45,7 @@ class PositionController {
     private static final int ANIM_KIND_ZOOM = 4;
     private static final int ANIM_KIND_OPENING = 5;
     private static final int ANIM_KIND_FLING = 6;
+    private static final int ANIM_KIND_CAPTURE = 7;
 
     // Animation time in milliseconds. The order must match ANIM_KIND_* above.
     private static final int ANIM_TIME[] = {
@@ -55,6 +56,7 @@ class PositionController {
         300,  // ANIM_KIND_ZOOM
         600,  // ANIM_KIND_OPENING
         0,    // ANIM_KIND_FLING (the duration is calculated dynamically)
+        800,  // ANIM_KIND_CAPTURE
     };
 
     // We try to scale up the image to fill the screen. But in order not to
@@ -139,7 +141,7 @@ class PositionController {
 
     public interface Listener {
         void invalidate();
-        boolean isDown();
+        boolean isHolding();
 
         // EdgeView
         void onPull(int offset, int direction);
@@ -187,8 +189,8 @@ class PositionController {
     public void setImageSize(int index, int width, int height) {
         if (width == 0 || height == 0) {
             initBox(index);
-        } else {
-            setBoxSize(index, width, height, false);
+        } else if (!setBoxSize(index, width, height, false)) {
+            return;
         }
 
         updateScaleAndGapLimit();
@@ -196,17 +198,18 @@ class PositionController {
         snapAndRedraw();
     }
 
-    private void setBoxSize(int i, int width, int height, boolean isViewSize) {
+    // Returns false if the box size doesn't change.
+    private boolean setBoxSize(int i, int width, int height, boolean isViewSize) {
         Box b = mBoxes.get(i);
         boolean wasViewSize = b.mUseViewSize;
 
         // If we already have an image size, we don't want to use the view size.
-        if (!wasViewSize && isViewSize) return;
+        if (!wasViewSize && isViewSize) return false;
 
         b.mUseViewSize = isViewSize;
 
         if (width == b.mImageW && height == b.mImageH) {
-            return;
+            return false;
         }
 
         // The ratio of the old size and the new size.
@@ -232,6 +235,8 @@ class PositionController {
             mFocusX /= ratio;
             mFocusY /= ratio;
         }
+
+        return true;
     }
 
     private void startOpeningAnimationIfNeeded() {
@@ -339,7 +344,7 @@ class PositionController {
         redraw();
     }
 
-    public void up() {
+    public void snapback() {
         snapAndRedraw();
     }
 
@@ -406,11 +411,26 @@ class PositionController {
         snapAndRedraw();
     }
 
-    public void startHorizontalSlide(int distance) {
+    // Slide the focused box to the center of the view.
+    public void startHorizontalSlide() {
         Box b = mBoxes.get(0);
-        Platform p = mPlatform;
-        startAnimation(getTargetX(p) + distance, getTargetY(b),
-                b.mCurrentScale, ANIM_KIND_SLIDE);
+        startAnimation(mViewW / 2, mViewH / 2, b.mScaleMin, ANIM_KIND_SLIDE);
+    }
+
+    // Slide the focused box to the center of the view with the capture
+    // animation. In addition to the sliding, the animation will also scale the
+    // the focused box, the specified neighbor box, and the gap between the
+    // two. The specified offset should be 1 or -1.
+    public void startCaptureAnimationSlide(int offset) {
+        Box b = mBoxes.get(0);
+        Box n = mBoxes.get(offset);  // the neighbor box
+        Gap g = mGaps.get(offset);  // the gap between the two boxes
+
+        mPlatform.doAnimation(mViewW / 2, ANIM_KIND_CAPTURE);
+        b.doAnimation(mViewH / 2, b.mScaleMin, ANIM_KIND_CAPTURE);
+        n.doAnimation(mViewH / 2, n.mScaleMin, ANIM_KIND_CAPTURE);
+        g.doAnimation(g.mDefaultSize, ANIM_KIND_CAPTURE);
+        redraw();
     }
 
     public void startScroll(float dx, float dy) {
@@ -762,7 +782,7 @@ class PositionController {
     // N N N N N N N -- all new boxes
     // -3 -2 -1 0 1 2 3 -- nothing changed
     // -2 -1 0 1 2 3 N -- focus goes to the next box
-    // N-3 -2 -1 0 1 2 -- focuse goes to the previous box
+    // N -3 -2 -1 0 1 2 -- focuse goes to the previous box
     // -3 -2 -1 1 2 3 N -- the focused box was deleted.
     public void moveBox(int fromIndex[], boolean hasPrev, boolean hasNext) {
         //debugMoveBox(fromIndex);
@@ -837,12 +857,12 @@ class PositionController {
             first = last = 0;
         }
         // Now for those boxes between first and last, just assign the same
-        // position as the previous box. (We can do better, but this should be
+        // position as the next box. (We can do better, but this should be
         // rare). For the boxes before first or after last, we will use a new
         // default gap size below.
-        for (int i = first + 1; i < last; i++) {
+        for (int i = last - 1; i > first; i--) {
             if (from.get(i) != Integer.MAX_VALUE) continue;
-            mBoxes.get(i).mAbsoluteX = mBoxes.get(i - 1).mAbsoluteX;
+            mBoxes.get(i).mAbsoluteX = mBoxes.get(i + 1).mAbsoluteX;
         }
 
         // 7. recycle the gaps that are not used in the new array.
@@ -1089,6 +1109,7 @@ class PositionController {
             switch (kind) {
                 case ANIM_KIND_SCROLL:
                 case ANIM_KIND_FLING:
+                case ANIM_KIND_CAPTURE:
                     progress = 1 - f;  // linear
                     break;
                 case ANIM_KIND_SCALE:
@@ -1116,7 +1137,7 @@ class PositionController {
         public boolean startSnapback() {
             if (mAnimationStartTime != NO_ANIMATION) return false;
             if (mAnimationKind == ANIM_KIND_SCROLL
-                    && mListener.isDown()) return false;
+                    && mListener.isHolding()) return false;
 
             Box b = mBoxes.get(0);
             float scaleMin = mExtraScalingRange ?
@@ -1211,8 +1232,14 @@ class PositionController {
                 mCurrentX = mToX;
                 return true;
             } else {
-                mCurrentX = (int) (mFromX + progress * (mToX - mFromX));
-                return (mCurrentX == mToX);
+                if (mAnimationKind == ANIM_KIND_CAPTURE) {
+                    progress = CaptureAnimation.calculateSlide(progress);
+                    mCurrentX = (int) (mFromX + progress * (mToX - mFromX));
+                    return false;
+                } else {
+                    mCurrentX = (int) (mFromX + progress * (mToX - mFromX));
+                    return (mCurrentX == mToX);
+                }
             }
         }
     }
@@ -1247,7 +1274,7 @@ class PositionController {
         public boolean startSnapback() {
             if (mAnimationStartTime != NO_ANIMATION) return false;
             if (mAnimationKind == ANIM_KIND_SCROLL
-                    && mListener.isDown()) return false;
+                    && mListener.isHolding()) return false;
             if (mInScale && this == mBoxes.get(0)) return false;
 
             int y;
@@ -1288,7 +1315,8 @@ class PositionController {
                 targetY = mViewH / 2;
             }
 
-            if (mCurrentY == targetY && mCurrentScale == targetScale) {
+            if (mCurrentY == targetY && mCurrentScale == targetScale
+                    && kind != ANIM_KIND_CAPTURE) {
                 return false;
             }
 
@@ -1341,7 +1369,13 @@ class PositionController {
             } else {
                 mCurrentY = (int) (mFromY + progress * (mToY - mFromY));
                 mCurrentScale = mFromScale + progress * (mToScale - mFromScale);
-                return (mCurrentY == mToY && mCurrentScale == mToScale);
+                if (mAnimationKind == ANIM_KIND_CAPTURE) {
+                    float f = CaptureAnimation.calculateScale(progress);
+                    mCurrentScale *= f;
+                    return false;
+                } else {
+                    return (mCurrentY == mToY && mCurrentScale == mToScale);
+                }
             }
         }
     }
@@ -1361,13 +1395,15 @@ class PositionController {
         @Override
         public boolean startSnapback() {
             if (mAnimationStartTime != NO_ANIMATION) return false;
-            return doAnimation(mDefaultSize);
+            return doAnimation(mDefaultSize, ANIM_KIND_SNAPBACK);
         }
 
         // Starts an animation for a gap.
-        public boolean doAnimation(int targetSize) {
-            if (mCurrentGap == targetSize) return false;
-            mAnimationKind = ANIM_KIND_SNAPBACK;
+        public boolean doAnimation(int targetSize, int kind) {
+            if (mCurrentGap == targetSize && kind != ANIM_KIND_CAPTURE) {
+                return false;
+            }
+            mAnimationKind = kind;
             mFromGap = mCurrentGap;
             mToGap = targetSize;
             mAnimationStartTime = AnimationTime.startTime();
@@ -1383,7 +1419,13 @@ class PositionController {
                 return true;
             } else {
                 mCurrentGap = (int) (mFromGap + progress * (mToGap - mFromGap));
-                return (mCurrentGap == mToGap);
+                if (mAnimationKind == ANIM_KIND_CAPTURE) {
+                    float f = CaptureAnimation.calculateScale(progress);
+                    mCurrentGap = (int) (mCurrentGap * f);
+                    return false;
+                } else {
+                    return (mCurrentGap == mToGap);
+                }
             }
         }
     }
