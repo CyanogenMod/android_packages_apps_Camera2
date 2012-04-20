@@ -35,6 +35,7 @@ public class GalleryAppImpl extends Application implements GalleryApp {
     private static final long DOWNLOAD_CAPACITY = 64 * 1024 * 1024; // 64M
 
     private ImageCacheService mImageCacheService;
+    private Object mLock = new Object();
     private DataManager mDataManager;
     private ThreadPool mThreadPool;
     private DownloadCache mDownloadCache;
@@ -60,11 +61,14 @@ public class GalleryAppImpl extends Application implements GalleryApp {
         return mDataManager;
     }
 
-    public synchronized ImageCacheService getImageCacheService() {
-        if (mImageCacheService == null) {
-            mImageCacheService = new ImageCacheService(getAndroidContext());
+    public ImageCacheService getImageCacheService() {
+        // This method may block on file I/O so a dedicated lock is needed here.
+        synchronized (mLock) {
+            if (mImageCacheService == null) {
+                mImageCacheService = new ImageCacheService(getAndroidContext());
+            }
+            return mImageCacheService;
         }
-        return mImageCacheService;
     }
 
     public synchronized ThreadPool getThreadPool() {
