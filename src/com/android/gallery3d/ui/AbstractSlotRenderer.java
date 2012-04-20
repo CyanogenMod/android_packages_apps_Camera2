@@ -42,7 +42,9 @@ public abstract class AbstractSlotRenderer implements SlotView.SlotRenderer {
         canvas.save(GLCanvas.SAVE_FLAG_MATRIX);
 
         if (rotation != 0) {
+            canvas.translate(width / 2, height / 2);
             canvas.rotate(rotation, 0, 0, 1);
+            canvas.translate(-width / 2, -height / 2);
             if (((rotation % 90) & 1) != 0) {
                 int temp = height;
                 height = width;
