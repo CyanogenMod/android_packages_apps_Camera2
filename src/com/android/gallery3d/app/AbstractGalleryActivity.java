@@ -206,6 +206,18 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
     }
 
     @Override
+    public void onBackPressed() {
+        // send the back event to the top sub-state
+        GLRoot root = getGLRoot();
+        root.lockRenderThread();
+        try {
+            getStateManager().onBackPressed();
+        } finally {
+            root.unlockRenderThread();
+        }
+    }
+
+    @Override
     public GalleryActionBar getGalleryActionBar() {
         if (mActionBar == null) {
             mActionBar = new GalleryActionBar(this);

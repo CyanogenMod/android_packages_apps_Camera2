@@ -78,18 +78,6 @@ public class PickerActivity extends AbstractGalleryActivity
     }
 
     @Override
-    public void onBackPressed() {
-        // send the back event to the top sub-state
-        GLRoot root = getGLRoot();
-        root.lockRenderThread();
-        try {
-            getStateManager().getTopState().onBackPressed();
-        } finally {
-            root.unlockRenderThread();
-        }
-    }
-
-    @Override
     public void onClick(View v) {
         if (v.getId() == R.id.cancel) finish();
     }

@@ -403,9 +403,16 @@ public class PhotoPage extends ActivityState
     protected void onBackPressed() {
         if (mShowDetails) {
             hideDetails();
-        } else {
+        } else if (!switchWithCaptureAnimation(-1)) {
             super.onBackPressed();
         }
+    }
+
+    // Switch to the previous or next picture using the capture animation.
+    // The offset is -1 to switch to the previous picture, 1 to switch to
+    // the next picture.
+    public boolean switchWithCaptureAnimation(int offset) {
+        return mPhotoView.switchWithCaptureAnimation(offset);
     }
 
     @Override
