@@ -117,4 +117,8 @@ public interface GLCanvas {
 
     // Dump statistics information and clear the counters. For debug only.
     public void dumpStatisticsAndClear();
+
+    public void beginRenderTarget(RawTexture texture);
+
+    public void endRenderTarget();
 }
