@@ -39,6 +39,7 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
     private SlotView mSlotView;
 
     private int mPressedIndex = -1;
+    private boolean mAnimatePressedUp;
     private Path mHighlightItemPath = null;
     private boolean mInSelectionMode;
 
@@ -69,6 +70,12 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
     public void setPressedIndex(int index) {
         if (mPressedIndex == index) return;
         mPressedIndex = index;
+        mSlotView.invalidate();
+    }
+
+    public void setPressedUp() {
+        if (mPressedIndex == -1) return;
+        mAnimatePressedUp = true;
         mSlotView.invalidate();
     }
 
@@ -111,15 +118,24 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
 
     protected int renderOverlay(
             GLCanvas canvas, int index, AlbumSetEntry entry, int width, int height) {
-        Path path = entry.setPath;
+        int renderRequestFlags = 0;
         if (mPressedIndex == index) {
-            drawPressedFrame(canvas, width, height);
-        } else if ((path != null) && (mHighlightItemPath == path)) {
+            if (mAnimatePressedUp) {
+                drawPressedUpFrame(canvas, width, height);
+                renderRequestFlags |= SlotView.RENDER_MORE_FRAME;
+                if (isPressedUpFrameFinished()) {
+                    mAnimatePressedUp = false;
+                    mPressedIndex = -1;
+                }
+            } else {
+                drawPressedFrame(canvas, width, height);
+            }
+        } else if ((mHighlightItemPath != null) && (mHighlightItemPath == entry.setPath)) {
             drawSelectedFrame(canvas, width, height);
-        } else if (mInSelectionMode && mSelectionManager.isItemSelected(path)) {
+        } else if (mInSelectionMode && mSelectionManager.isItemSelected(entry.setPath)) {
             drawSelectedFrame(canvas, width, height);
         }
-        return 0;
+        return renderRequestFlags;
     }
 
     protected int renderContent(
