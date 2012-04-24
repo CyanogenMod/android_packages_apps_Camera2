@@ -16,25 +16,23 @@
 
 package com.android.gallery3d.ui;
 
-// FadeInTexture is a texture which begins with a color, then gradually animates
-// into a given texture.
-public class FadeInTexture extends FadeTexture implements Texture {
+// FadeOutTexture is a texture which begins with a given texture, then gradually animates
+// into fading out totally.
+public class FadeOutTexture extends FadeTexture implements Texture {
     @SuppressWarnings("unused")
-    private static final String TAG = "FadeInTexture";
+    private static final String TAG = "FadeOutTexture";
 
-    private final int mColor;
-
-    public FadeInTexture(int color, BasicTexture texture) {
+    public FadeOutTexture(BasicTexture texture) {
         super(texture);
-        mColor = color;
     }
 
     @Override
     public void draw(GLCanvas canvas, int x, int y, int w, int h) {
         if (isAnimating()) {
-            canvas.drawMixed(mTexture, mColor, getRatio(), x, y, w, h);
-        } else {
+            canvas.save(GLCanvas.SAVE_FLAG_ALPHA);
+            canvas.setAlpha(getRatio());
             mTexture.draw(canvas, x, y, w, h);
+            canvas.restore();
         }
     }
 }

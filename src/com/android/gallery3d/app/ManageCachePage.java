@@ -58,7 +58,6 @@ public class ManageCachePage extends ActivityState implements
 
     private static final String TAG = "ManageCachePage";
 
-    private static final float USER_DISTANCE_METER = 0.3f;
     private static final int DATA_CACHE_SIZE = 256;
     private static final int MSG_REFRESH_STORAGE_INFO = 1;
     private static final int MSG_REQUEST_LAYOUT = 2;
@@ -70,7 +69,6 @@ public class ManageCachePage extends ActivityState implements
     protected SelectionManager mSelectionManager;
     protected ManageCacheDrawer mSelectionDrawer;
     private AlbumSetDataLoader mAlbumSetDataAdapter;
-    private float mUserDistance; // in pixel
 
     private EyePosition mEyePosition;
 
@@ -265,7 +263,6 @@ public class ManageCachePage extends ActivityState implements
     }
 
     private void initializeData(Bundle data) {
-        mUserDistance = GalleryUtils.meterToPixel(USER_DISTANCE_METER);
         String mediaPath = data.getString(ManageCachePage.KEY_MEDIA_PATH);
         mMediaSet = mActivity.getDataManager().getMediaSet(mediaPath);
         mSelectionManager.setSourceMediaSet(mMediaSet);
@@ -297,7 +294,7 @@ public class ManageCachePage extends ActivityState implements
             }
 
             @Override
-            public void onUp() {
+            public void onUp(boolean followedByLongPress) {
                 ManageCachePage.this.onUp();
             }
 
