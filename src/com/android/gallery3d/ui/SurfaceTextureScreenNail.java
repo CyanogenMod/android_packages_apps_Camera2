@@ -19,16 +19,11 @@ package com.android.gallery3d.ui;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
-import android.util.Log;
-
-import com.android.gallery3d.ui.GLCanvas;
-import com.android.gallery3d.ui.ScreenNail;
-import com.android.gallery3d.ui.ExtTexture;
 
 public abstract class SurfaceTextureScreenNail implements ScreenNail,
         SurfaceTexture.OnFrameAvailableListener {
     private static final String TAG = "SurfaceTextureScreenNail";
-    private ExtTexture mExtTexture;
+    protected ExtTexture mExtTexture;
     private SurfaceTexture mSurfaceTexture;
     private int mWidth, mHeight;
     private float[] mTransform = new float[16];
