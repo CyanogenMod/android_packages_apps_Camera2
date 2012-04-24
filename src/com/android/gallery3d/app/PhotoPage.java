@@ -86,6 +86,7 @@ public class PhotoPage extends ActivityState
     private DetailsHelper mDetailsHelper;
     private boolean mShowDetails;
     private Path mPendingSharePath;
+    private Path mScreenNailItemPath;
 
     // mMediaSet could be null if there is no KEY_MEDIA_SET_PATH supplied.
     // E.g., viewing a photo in gmail attachment
@@ -177,14 +178,14 @@ public class PhotoPage extends ActivityState
                 // Get the ScreenNail from ScreenNailHolder and register it.
                 int id = SnailSource.registerScreenNail(mScreenNail);
                 Path screenNailSetPath = SnailSource.getSetPath(id);
-                Path screenNailItemPath = SnailSource.getItemPath(id);
+                mScreenNailItemPath = SnailSource.getItemPath(id);
 
                 // Combine the original MediaSet with the one for CameraScreenNail.
                 mSetPathString = "/combo/item/{" + screenNailSetPath +
                         "," + mSetPathString + "}";
 
                 // Start from the screen nail.
-                itemPath = screenNailItemPath;
+                itemPath = mScreenNailItemPath;
             }
 
             mMediaSet = mActivity.getDataManager().getMediaSet(mSetPathString);
@@ -286,6 +287,8 @@ public class PhotoPage extends ActivityState
         mCurrentPhoto = photo;
         if (mCurrentPhoto == null) return;
         updateMenuOperations();
+        // Hide the action bar when going back to camera preview.
+        if (photo.getPath() == mScreenNailItemPath) hideBars();
         updateTitle();
         if (mShowDetails) {
             mDetailsHelper.reloadDetails(mModel.getCurrentIndex());
