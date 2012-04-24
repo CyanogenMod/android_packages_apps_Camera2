@@ -37,6 +37,7 @@ public class AlbumSlotRenderer extends AbstractSlotRenderer {
     private final SelectionManager mSelectionManager;
 
     private int mPressedIndex = -1;
+    private boolean mAnimatePressedUp;
     private Path mHighlightItemPath = null;
     private boolean mInSelectionMode;
 
@@ -54,6 +55,12 @@ public class AlbumSlotRenderer extends AbstractSlotRenderer {
     public void setPressedIndex(int index) {
         if (mPressedIndex == index) return;
         mPressedIndex = index;
+        mSlotView.invalidate();
+    }
+
+    public void setPressedUp() {
+        if (mPressedIndex == -1) return;
+        mAnimatePressedUp = true;
         mSlotView.invalidate();
     }
 
@@ -113,14 +120,30 @@ public class AlbumSlotRenderer extends AbstractSlotRenderer {
             drawPanoramaBorder(canvas, width, height);
         }
 
+        renderRequestFlags |= renderOverlay(canvas, index, entry, width, height);
+
+        return renderRequestFlags;
+    }
+
+    private int renderOverlay(GLCanvas canvas, int index,
+            AlbumSlidingWindow.AlbumEntry entry, int width, int height) {
+        int renderRequestFlags = 0;
         if (mPressedIndex == index) {
-            drawPressedFrame(canvas, width, height);
+            if (mAnimatePressedUp) {
+                drawPressedUpFrame(canvas, width, height);
+                renderRequestFlags |= SlotView.RENDER_MORE_FRAME;
+                if (isPressedUpFrameFinished()) {
+                    mAnimatePressedUp = false;
+                    mPressedIndex = -1;
+                }
+            } else {
+                drawPressedFrame(canvas, width, height);
+            }
         } else if ((entry.path != null) && (mHighlightItemPath == entry.path)) {
             drawSelectedFrame(canvas, width, height);
         } else if (mInSelectionMode && mSelectionManager.isItemSelected(entry.path)) {
             drawSelectedFrame(canvas, width, height);
         }
-
         return renderRequestFlags;
     }
 

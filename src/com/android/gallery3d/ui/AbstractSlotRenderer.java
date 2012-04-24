@@ -28,6 +28,7 @@ public abstract class AbstractSlotRenderer implements SlotView.SlotRenderer {
     private final NinePatchTexture mPanoramaBorder;
     private final NinePatchTexture mFramePressed;
     private final NinePatchTexture mFrameSelected;
+    private FadeOutTexture mFramePressedUp;
 
     protected AbstractSlotRenderer(Context context) {
         mVideoOverlay = new ResourceTexture(context, R.drawable.ic_video_thumb);
@@ -85,18 +86,35 @@ public abstract class AbstractSlotRenderer implements SlotView.SlotRenderer {
         mPanoramaBorder.draw(canvas, 0, height - h, w, h);
     }
 
+    protected boolean isPressedUpFrameFinished() {
+        if (mFramePressedUp != null) {
+            if (mFramePressedUp.isAnimating()) {
+                return false;
+            } else {
+                mFramePressedUp = null;
+            }
+        }
+        return true;
+    }
+
+    protected void drawPressedUpFrame(GLCanvas canvas, int width, int height) {
+        if (mFramePressedUp == null) {
+            mFramePressedUp = new FadeOutTexture(mFramePressed);
+        }
+        drawFrame(canvas, mFramePressed.getPaddings(), mFramePressedUp, 0, 0, width, height);
+    }
+
     protected void drawPressedFrame(GLCanvas canvas, int width, int height) {
-        drawFrame(canvas, mFramePressed, 0, 0, width, height);
+        drawFrame(canvas, mFramePressed.getPaddings(), mFramePressed, 0, 0, width, height);
     }
 
     protected void drawSelectedFrame(GLCanvas canvas, int width, int height) {
-        drawFrame(canvas, mFrameSelected, 0, 0, width, height);
+        drawFrame(canvas, mFrameSelected.getPaddings(), mFrameSelected, 0, 0, width, height);
     }
 
-    protected static void drawFrame(GLCanvas canvas, NinePatchTexture frame,
+    protected static void drawFrame(GLCanvas canvas, Rect padding, Texture frame,
             int x, int y, int width, int height) {
-        Rect p = frame.getPaddings();
-        frame.draw(canvas, x - p.left, y - p.top, width + p.left + p.right,
-                 height + p.top + p.bottom);
+        frame.draw(canvas, x - padding.left, y - padding.top, width + padding.left + padding.right,
+                 height + padding.top + padding.bottom);
     }
 }
