@@ -80,4 +80,6 @@ public class GLCanvasStub implements GLCanvas {
     public void deleteRecycledResources() {}
     public void multiplyMatrix(float[] mMatrix, int offset) {}
     public void dumpStatisticsAndClear() {}
+    public void beginRenderTarget(RawTexture texture) {}
+    public void endRenderTarget() {}
 }
