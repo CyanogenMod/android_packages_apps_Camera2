@@ -46,7 +46,10 @@
     <string name="wallpaper" msgid="140165383777262070">"Ορισμός ταπετσαρίας..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Ταπετσαρία"</string>
     <string name="delete" msgid="2839695998251824487">"Διαγραφή"</string>
-    <string name="confirm_delete" msgid="7358770022173660511">"Διαγραφή"</string>
+    <!-- no translation found for confirm_action (1642211585193899041) -->
+    <skip />
+    <!-- no translation found for confirm (8646870096527848520) -->
+    <skip />
     <string name="cancel" msgid="3637516880917356226">"Ακύρωση"</string>
     <string name="share" msgid="3619042788254195341">"Κοινή χρήση"</string>
     <string name="select_all" msgid="3403283025220282175">"Επιλογή όλων"</string>

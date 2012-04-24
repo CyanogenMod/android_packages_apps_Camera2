@@ -46,7 +46,10 @@
     <string name="wallpaper" msgid="140165383777262070">"Menetapkan kertas dinding…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Kertas dinding"</string>
     <string name="delete" msgid="2839695998251824487">"Padam"</string>
-    <string name="confirm_delete" msgid="7358770022173660511">"Padam"</string>
+    <!-- no translation found for confirm_action (1642211585193899041) -->
+    <skip />
+    <!-- no translation found for confirm (8646870096527848520) -->
+    <skip />
     <string name="cancel" msgid="3637516880917356226">"Batal"</string>
     <string name="share" msgid="3619042788254195341">"Kongsi"</string>
     <string name="select_all" msgid="3403283025220282175">"Pilih semua"</string>
