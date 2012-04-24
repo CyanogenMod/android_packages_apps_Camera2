@@ -44,6 +44,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
     private GLRootView mGLRootView;
     private StateManager mStateManager;
     private GalleryActionBar mActionBar;
+    private boolean mDisableToggleStatusBar;
 
     private AlertDialog mAlertDialog = null;
     private BroadcastReceiver mMountReceiver = new BroadcastReceiver() {
@@ -223,8 +224,14 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         }
     }
 
+    protected void disableToggleStatusBar() {
+        mDisableToggleStatusBar = true;
+    }
+
     // Shows status bar in portrait view, hide in landscape view
     private void toggleStatusBarByOrientation() {
+        if (mDisableToggleStatusBar) return;
+
         Window win = getWindow();
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             win.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
