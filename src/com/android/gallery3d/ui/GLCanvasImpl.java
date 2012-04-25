@@ -105,8 +105,6 @@ public class GLCanvasImpl implements GLCanvas {
         Matrix.setIdentityM(matrix, 0);
         Matrix.translateM(matrix, 0, 0, mHeight, 0);
         Matrix.scaleM(matrix, 0, 1, -1, 1);
-
-        gl.glScissor(0, 0, width, height);
     }
 
     public void setAlpha(float alpha) {
@@ -533,7 +531,6 @@ public class GLCanvasImpl implements GLCanvas {
 
             // Enable used features
             gl.glEnable(GL11.GL_DITHER);
-            gl.glEnable(GL11.GL_SCISSOR_TEST);
 
             gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
             gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
