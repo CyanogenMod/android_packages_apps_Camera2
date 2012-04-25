@@ -52,6 +52,7 @@ public class PhotoView extends GLView {
     public interface Model extends TileImageView.Model {
         public void next();
         public void previous();
+        public void moveToFirst();
 
         // Returns the size for the specified picture. If the size information is
         // not avaiable, width = height = 0.
@@ -935,6 +936,10 @@ public class PhotoView extends GLView {
         mModel.previous();
     }
 
+    private void switchToFirstImage() {
+        mModel.moveToFirst();
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     //  Opening Animation
     ////////////////////////////////////////////////////////////////////////////
@@ -958,7 +963,6 @@ public class PhotoView extends GLView {
     }
 
     private boolean switchWithCaptureAnimationLocked(int offset) {
-        if (mFilmMode) return false;
         if (mHolding != 0) return true;
         if (offset == 1) {
             if (mNextBound <= 0) return false;
@@ -966,7 +970,7 @@ public class PhotoView extends GLView {
             mPositionController.startCaptureAnimationSlide(-1);
         } else if (offset == -1) {
             if (mPrevBound >= 0) return false;
-            switchToPrevImage();
+            switchToFirstImage();
             mPositionController.startCaptureAnimationSlide(1);
         } else {
             return false;
