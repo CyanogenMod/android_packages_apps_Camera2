@@ -340,6 +340,11 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     }
 
     @Override
+    public void moveToFirst() {
+        updateCurrentIndex(0);
+    }
+
+    @Override
     public ScreenNail getScreenNail(int offset) {
         return getImage(mCurrentIndex + offset);
     }

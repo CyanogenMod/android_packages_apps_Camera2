@@ -403,7 +403,8 @@ public class PhotoPage extends ActivityState
     protected void onBackPressed() {
         if (mShowDetails) {
             hideDetails();
-        } else if (!switchWithCaptureAnimation(-1)) {
+        } else if (mScreenNail == null
+                || !switchWithCaptureAnimation(-1)) {
             super.onBackPressed();
         }
     }
