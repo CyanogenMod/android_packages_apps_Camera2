@@ -164,6 +164,11 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
     }
 
     @Override
+    public void moveToFirst() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void getImageSize(int offset, PhotoView.Size size) {
         if (offset == 0) {
             size.width = mItem.getWidth();
