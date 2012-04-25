@@ -61,8 +61,6 @@ public class Raw2DTexture extends BasicTexture {
         gl11.glBindTexture(src.getTarget(), src.getId());
         boolean targetEnabled = gl11.glIsEnabled(src.getTarget());
         gl11.glEnable(src.getTarget());
-        boolean scissorEnabled = gl11.glIsEnabled(GL11.GL_SCISSOR_TEST);
-        gl11.glDisable(GL11.GL_SCISSOR_TEST);
 
         // Set the texture matrix.
         gl11.glMatrixMode(GL11.GL_TEXTURE);
@@ -89,7 +87,6 @@ public class Raw2DTexture extends BasicTexture {
 
         // Clear.
         if (!targetEnabled) gl11.glDisable(src.getTarget());
-        if (scissorEnabled) gl11.glEnable(GL11.GL_SCISSOR_TEST);
         gl11ep.glBindFramebufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, 0);
         gl11.glBindTexture(src.getTarget(), 0);
         gl11.glViewport(viewPort[0], viewPort[1], viewPort[2], viewPort[3]);
