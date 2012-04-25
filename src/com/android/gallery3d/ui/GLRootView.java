@@ -73,9 +73,6 @@ public class GLRootView extends GLSurfaceView
     private int mFlags = FLAG_NEED_LAYOUT;
     private volatile boolean mRenderRequested = false;
 
-    private Rect mClipRect = new Rect();
-    private int mClipRetryCount = 0;
-
     private final GalleryEGLConfigChooser mEglConfigChooser =
             new GalleryEGLConfigChooser();
 
@@ -234,9 +231,6 @@ public class GLRootView extends GLSurfaceView
         Utils.assertTrue(mGL == gl);
 
         mCanvas.setSize(width, height);
-
-        mClipRect.set(0, 0, width, height);
-        mClipRetryCount = 2;
     }
 
     private void outputFps() {
@@ -295,15 +289,6 @@ public class GLRootView extends GLSurfaceView
         mRenderRequested = false;
 
         if ((mFlags & FLAG_NEED_LAYOUT) != 0) layoutContentPane();
-
-        // OpenGL seems having a bug causing us not being able to reset the
-        // scissor box in "onSurfaceChanged()". We have to do it in the second
-        // onDrawFrame().
-        if (mClipRetryCount > 0) {
-            --mClipRetryCount;
-            Rect clip = mClipRect;
-            gl.glScissor(clip.left, clip.top, clip.width(), clip.height());
-        }
 
         if (mContentView != null) {
            mContentView.render(mCanvas);
