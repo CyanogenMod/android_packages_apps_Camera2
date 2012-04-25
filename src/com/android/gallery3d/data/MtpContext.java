@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.util.BucketNames;
 import com.android.gallery3d.util.GalleryUtils;
 
 import java.io.File;
@@ -18,8 +19,6 @@ import java.util.List;
 
 public class MtpContext implements MtpClient.Listener {
     private static final String TAG = "MtpContext";
-
-    public static final String NAME_IMPORTED_FOLDER = "Imported";
 
     private ScannerClient mScannerClient;
     private Context mContext;
@@ -104,7 +103,7 @@ public class MtpContext implements MtpClient.Listener {
     public boolean copyFile(String deviceName, MtpObjectInfo objInfo) {
         if (GalleryUtils.hasSpaceForSize(objInfo.getCompressedSize())) {
             File dest = Environment.getExternalStorageDirectory();
-            dest = new File(dest, NAME_IMPORTED_FOLDER);
+            dest = new File(dest, BucketNames.IMPORTED);
             dest.mkdirs();
             String destPath = new File(dest, objInfo.getName()).getAbsolutePath();
             int objectId = objInfo.getObjectHandle();
