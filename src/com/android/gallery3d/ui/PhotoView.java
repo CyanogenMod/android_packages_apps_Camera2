@@ -17,11 +17,9 @@
 package com.android.gallery3d.ui;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.os.Message;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateInterpolator;
@@ -31,7 +29,6 @@ import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.util.RangeArray;
-import com.android.gallery3d.util.RangeBoolArray;
 
 import java.util.Arrays;
 
@@ -434,7 +431,7 @@ public class PhotoView extends GLView {
 
                 // We only want to apply the fading animation if the scrolling
                 // movement is to the right.
-                if (progress < 0) {
+                if (progress <= 0) {
                     if (right - left < viewW) {
                         // If the picture is narrower than the view, keep it at
                         // the center of the view.
@@ -473,7 +470,7 @@ public class PhotoView extends GLView {
             // play icon is shown instead of the spinner.
             int w = getWidth();
             int h = getHeight();
-            int s = Math.min(getWidth(), getHeight()) / 6;
+            int s = Math.min(w, h) / 6;
 
             if (mLoadingState == LOADING_TIMEOUT) {
                 StringTexture m = mLoadingText;
