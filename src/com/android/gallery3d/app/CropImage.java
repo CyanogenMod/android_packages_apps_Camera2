@@ -58,6 +58,7 @@ import com.android.gallery3d.ui.CropView;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.ui.TileImageViewAdapter;
+import com.android.gallery3d.util.BucketNames;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.GalleryUtils;
@@ -120,9 +121,8 @@ public class CropImage extends AbstractGalleryActivity {
     private static final int STATE_LOADED = 1;
     private static final int STATE_SAVING = 2;
 
-    public static final String DOWNLOAD_STRING = "download";
     public static final File DOWNLOAD_BUCKET = new File(
-            Environment.getExternalStorageDirectory(), DOWNLOAD_STRING);
+            Environment.getExternalStorageDirectory(), BucketNames.DOWNLOAD);
 
     public static final String CROP_ACTION = "com.android.camera.action.CROP";
 

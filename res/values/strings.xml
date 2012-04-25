@@ -230,8 +230,9 @@
     <string name="appwidget_empty_text">No photos.</string>
 
     <!-- Toast message shown when the cropped image has been saved in the
-         download folder [CHAR LIMIT=50]-->
-    <string name="crop_saved">Cropped image saved to Downloads.</string>
+         %s folder (string: folder_download) [CHAR LIMIT=50]-->
+    <string name="crop_saved">
+        Cropped image saved to <xliff:g id="folder_name">%s</xliff:g>.</string>
 
     <!-- Toast message shown when the cropped image is not saved
          [CHAR LIMIT=50]-->
