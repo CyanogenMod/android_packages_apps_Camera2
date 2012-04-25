@@ -19,7 +19,6 @@ package com.android.gallery3d.util;
 import android.os.Environment;
 
 import com.android.gallery3d.data.MediaSet;
-import com.android.gallery3d.data.MtpContext;
 import com.android.gallery3d.data.Path;
 
 import java.util.Comparator;
@@ -30,10 +29,11 @@ public class MediaSetUtils {
     public static final int CAMERA_BUCKET_ID = GalleryUtils.getBucketId(
             Environment.getExternalStorageDirectory().toString() + "/DCIM/Camera");
     public static final int DOWNLOAD_BUCKET_ID = GalleryUtils.getBucketId(
-            Environment.getExternalStorageDirectory().toString() + "/download");
+            Environment.getExternalStorageDirectory().toString() + "/"
+            + BucketNames.DOWNLOAD);
     public static final int IMPORTED_BUCKET_ID = GalleryUtils.getBucketId(
             Environment.getExternalStorageDirectory().toString() + "/"
-            + MtpContext.NAME_IMPORTED_FOLDER);
+            + BucketNames.IMPORTED);
     public static final int SNAPSHOT_BUCKET_ID = GalleryUtils.getBucketId(
             Environment.getExternalStorageDirectory().toString() +
             "/Pictures/Screenshots");

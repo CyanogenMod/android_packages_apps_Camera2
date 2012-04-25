@@ -30,6 +30,7 @@ import android.view.Gravity;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.util.BucketNames;
 
 import java.io.File;
 import java.sql.Date;
@@ -59,7 +60,7 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
     private final Uri sourceUri;
     private final Callback callback;
     private final String saveFileName;
-    private File saveDirectory;
+    private String saveFolderName;
 
     public SaveCopyTask(Context context, Uri sourceUri, Callback callback) {
         this.context = context;
@@ -79,8 +80,17 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
         if (params[0] == null) {
             return null;
         }
+        // Use the default save directory if the source directory cannot be saved.
+        File saveDirectory = getSaveDirectory();
+        if ((saveDirectory == null) || !saveDirectory.canWrite()) {
+            saveDirectory = new File(Environment.getExternalStorageDirectory(),
+                    BucketNames.DOWNLOAD);
+            saveFolderName = context.getString(R.string.folder_download);
+        } else {
+            saveFolderName = saveDirectory.getName();
+        }
+
         Bitmap bitmap = params[0];
-        getSaveDirectory();
         File file = new BitmapUtils(context).saveBitmap(
                 bitmap, saveDirectory, saveFileName, Bitmap.CompressFormat.JPEG);
         Uri uri = (file != null) ? insertContent(file) : null;
@@ -91,7 +101,7 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
     @Override
     protected void onPostExecute(Uri result) {
         String message = (result == null) ? context.getString(R.string.saving_failure)
-                : context.getString(R.string.photo_saved, saveDirectory.getName());
+                : context.getString(R.string.photo_saved, saveFolderName);
         Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
@@ -116,19 +126,16 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
         }
     }
 
-    private void getSaveDirectory() {
+    private File getSaveDirectory() {
+        final File[] dir = new File[1];
         querySource(new String[] { ImageColumns.DATA }, new ContentResolverQueryCallback () {
 
             @Override
             public void onCursorResult(Cursor cursor) {
-                saveDirectory = new File(cursor.getString(0)).getParentFile();
+                dir[0] = new File(cursor.getString(0)).getParentFile();
             }
         });
-        // Use the default save directory if the source directory cannot be saved.
-        if ((saveDirectory == null) || !saveDirectory.canWrite()) {
-            saveDirectory = new File(Environment.getExternalStorageDirectory(),
-                    context.getString(R.string.edited_photo_bucket_name));
-        }
+        return dir[0];
     }
 
     /**
