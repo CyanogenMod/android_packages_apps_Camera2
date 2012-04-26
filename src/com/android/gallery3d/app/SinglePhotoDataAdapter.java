@@ -154,17 +154,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
     }
 
     @Override
-    public void next() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void previous() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void moveToFirst() {
+    public void moveTo(int index) {
         throw new UnsupportedOperationException();
     }
 
@@ -194,6 +184,10 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         // currently not necessary.
     }
 
+    @Override
+    public boolean isCamera(int offset) {
+        return false;
+    }
 
     public MediaItem getCurrentMediaItem() {
         return mItem;
