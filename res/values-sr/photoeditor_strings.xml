@@ -17,10 +17,12 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="photoeditor_name" msgid="4738587346771969697">"Фото-студио"</string>
-    <string name="loading_failure" msgid="5990741970574295950">"Фотографија не може да се учита"</string>
-    <string name="saving_failure" msgid="8596600582621364077">"Фотографија не може да се сачува"</string>
-    <string name="photo_saved" msgid="3494363661299484657">"Фотографија је сачувана у албум <xliff:g id="ALBUM_NAME">%s</xliff:g>"</string>
-    <string name="edited_photo_bucket_name" msgid="3777746536831799890">"Измењено"</string>
+    <!-- no translation found for loading_failure (7890360277163832130) -->
+    <skip />
+    <!-- no translation found for saving_failure (8229491575433743974) -->
+    <skip />
+    <!-- no translation found for photo_saved (6163006724627682202) -->
+    <skip />
     <string name="save_photo" msgid="3125109368779997862">"Желите ли да сачувате измењену фотографију?"</string>
     <string name="yes" msgid="5402582493291792293">"Да"</string>
     <string name="no" msgid="5595408018304861875">"Не"</string>
@@ -55,7 +57,8 @@
     <string name="crop_tooltip" msgid="8794037869706891710">"Превуците означиваче да бисте опсекли фотографију"</string>
     <string name="doodle_tooltip" msgid="2902117272374362915">"Превуците слику на дудл логотип"</string>
     <string name="flip_tooltip" msgid="2700943256714731737">"Превуците фотографију да бисте је окренули"</string>
-    <string name="redeye_tooltip" msgid="9112774042113471358">"Додирните да бисте уклонили ефекат црвених очију"</string>
+    <!-- no translation found for redeye_tooltip (4183695928490874014) -->
+    <skip />
     <string name="rotate_tooltip" msgid="7008602969130734229">"Превуците фотографију да бисте је ротирали"</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"Превуците фотографију да бисте је исправили"</string>
 </resources>
