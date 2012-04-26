@@ -43,6 +43,7 @@ import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.MtpDevice;
 import com.android.gallery3d.data.Path;
+import com.android.gallery3d.data.SnailItem;
 import com.android.gallery3d.data.SnailSource;
 import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.ui.DetailsHelper;
@@ -54,17 +55,20 @@ import com.android.gallery3d.ui.ImportCompleteListener;
 import com.android.gallery3d.ui.MenuExecutor;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.ScreenNail;
-import com.android.gallery3d.ui.ScreenNailHolder;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.ui.UserInteractionListener;
 import com.android.gallery3d.util.GalleryUtils;
 
-public class PhotoPage extends ActivityState
-        implements PhotoView.PhotoTapListener, UserInteractionListener {
+public class PhotoPage extends ActivityState implements
+        PhotoView.Listener, UserInteractionListener,
+        OrientationManager.Listener, AppBridge.Server {
     private static final String TAG = "PhotoPage";
 
     private static final int MSG_HIDE_BARS = 1;
+    private static final int MSG_LOCK_ORIENTATION = 2;
+    private static final int MSG_UNLOCK_ORIENTATION = 3;
+    private static final int MSG_ON_FULL_SCREEN_CHANGED = 4;
 
     private static final int HIDE_BARS_TIMEOUT = 3500;
 
@@ -76,7 +80,9 @@ public class PhotoPage extends ActivityState
     public static final String KEY_MEDIA_ITEM_PATH = "media-item-path";
     public static final String KEY_INDEX_HINT = "index-hint";
     public static final String KEY_OPEN_ANIMATION_RECT = "open-animation-rect";
-    public static final String KEY_SCREENNAIL_HOLDER = "screennail-holder";
+    public static final String KEY_APP_BRIDGE = "app-bridge";
+
+    public static final String KEY_RETURN_INDEX_HINT = "return-index-hint";
 
     private GalleryApp mApplication;
     private SelectionManager mSelectionManager;
@@ -86,20 +92,17 @@ public class PhotoPage extends ActivityState
     private DetailsHelper mDetailsHelper;
     private boolean mShowDetails;
     private Path mPendingSharePath;
-    private Path mScreenNailItemPath;
 
     // mMediaSet could be null if there is no KEY_MEDIA_SET_PATH supplied.
     // E.g., viewing a photo in gmail attachment
     private MediaSet mMediaSet;
     private Menu mMenu;
 
-    private final Intent mResultIntent = new Intent();
     private int mCurrentIndex = 0;
     private Handler mHandler;
     private boolean mShowBars = true;
     private GalleryActionBar mActionBar;
     private MyMenuVisibilityListener mMenuVisibilityListener;
-    private PageTapListener mPageTapListener;
     private boolean mIsMenuVisible;
     private boolean mIsInteracting;
     private MediaItem mCurrentPhoto = null;
@@ -107,8 +110,10 @@ public class PhotoPage extends ActivityState
     private boolean mIsActive;
     private ShareActionProvider mShareActionProvider;
     private String mSetPathString;
-    private ScreenNailHolder mScreenNailHolder;
+    private AppBridge mAppBridge;
     private ScreenNail mScreenNail;
+    private MediaItem mScreenNailItem;
+    private OrientationManager mOrientationManager;
 
     private NfcAdapter mNfcAdapter;
 
@@ -117,7 +122,6 @@ public class PhotoPage extends ActivityState
         public void pause();
         public boolean isEmpty();
         public MediaItem getCurrentMediaItem();
-        public int getCurrentIndex();
         public void setCurrentPhoto(Path path, int indexHint);
     }
 
@@ -126,15 +130,6 @@ public class PhotoPage extends ActivityState
             mIsMenuVisible = isVisible;
             refreshHidingMessage();
         }
-    }
-
-    public interface PageTapListener {
-        // Return true if the tap is consumed.
-        public boolean onSingleTapUp(int x, int y);
-    }
-
-    public void setPageTapListener(PageTapListener listener) {
-        mPageTapListener = listener;
     }
 
     private final GLView mRootPane = new GLView() {
@@ -152,6 +147,14 @@ public class PhotoPage extends ActivityState
                 mDetailsHelper.layout(left, mActionBar.getHeight(), right, bottom);
             }
         }
+
+        @Override
+        protected void orient(int displayRotation, int compensation) {
+            displayRotation = mOrientationManager.getDisplayRotation();
+            Log.d(TAG, "orient -- display rotation " + displayRotation
+                    + ", compensation = " + compensation);
+            super.orient(displayRotation, compensation);
+        }
     };
 
     @Override
@@ -161,31 +164,35 @@ public class PhotoPage extends ActivityState
         mMenuExecutor = new MenuExecutor(mActivity, mSelectionManager);
 
         mPhotoView = new PhotoView(mActivity);
-        mPhotoView.setPhotoTapListener(this);
+        mPhotoView.setListener(this);
         mRootPane.addComponent(mPhotoView);
         mApplication = (GalleryApp)((Activity) mActivity).getApplication();
+        mOrientationManager = mActivity.getOrientationManager();
+        mOrientationManager.addListener(this);
 
         mSetPathString = data.getString(KEY_MEDIA_SET_PATH);
         mNfcAdapter = NfcAdapter.getDefaultAdapter(mActivity.getAndroidContext());
         Path itemPath = Path.fromString(data.getString(KEY_MEDIA_ITEM_PATH));
 
         if (mSetPathString != null) {
-            mScreenNailHolder =
-                (ScreenNailHolder) data.getParcelable(KEY_SCREENNAIL_HOLDER);
-            if (mScreenNailHolder != null) {
-                mScreenNail = mScreenNailHolder.attach();
+            mAppBridge = (AppBridge) data.getParcelable(KEY_APP_BRIDGE);
+            if (mAppBridge != null) {
+                mOrientationManager.lockOrientation();
 
-                // Get the ScreenNail from ScreenNailHolder and register it.
+                // Get the ScreenNail from AppBridge and register it.
+                mScreenNail = mAppBridge.attachScreenNail();
                 int id = SnailSource.registerScreenNail(mScreenNail);
                 Path screenNailSetPath = SnailSource.getSetPath(id);
-                mScreenNailItemPath = SnailSource.getItemPath(id);
+                Path screenNailItemPath = SnailSource.getItemPath(id);
+                mScreenNailItem = (MediaItem) mActivity.getDataManager()
+                        .getMediaObject(screenNailItemPath);
 
                 // Combine the original MediaSet with the one for CameraScreenNail.
                 mSetPathString = "/combo/item/{" + screenNailSetPath +
                         "," + mSetPathString + "}";
 
                 // Start from the screen nail.
-                itemPath = mScreenNailItemPath;
+                itemPath = screenNailItemPath;
 
                 // Action bar should not be displayed when camera starts.
                 mFlags |= FLAG_HIDE_ACTION_BAR;
@@ -193,33 +200,24 @@ public class PhotoPage extends ActivityState
 
             mMediaSet = mActivity.getDataManager().getMediaSet(mSetPathString);
             mCurrentIndex = data.getInt(KEY_INDEX_HINT, 0);
-            mMediaSet = (MediaSet)
-                    mActivity.getDataManager().getMediaObject(mSetPathString);
             if (mMediaSet == null) {
                 Log.w(TAG, "failed to restore " + mSetPathString);
             }
             PhotoDataAdapter pda = new PhotoDataAdapter(
-                    mActivity, mPhotoView, mMediaSet, itemPath, mCurrentIndex);
+                    mActivity, mPhotoView, mMediaSet, itemPath, mCurrentIndex,
+                    mAppBridge == null ? -1 : 0);
             mModel = pda;
             mPhotoView.setModel(mModel);
-
-            mResultIntent.putExtra(KEY_INDEX_HINT, mCurrentIndex);
-            setStateResult(Activity.RESULT_OK, mResultIntent);
 
             pda.setDataListener(new PhotoDataAdapter.DataListener() {
 
                 @Override
                 public void onPhotoChanged(int index, Path item) {
                     mCurrentIndex = index;
-                    mResultIntent.putExtra(KEY_INDEX_HINT, index);
                     if (item != null) {
-                        mResultIntent.putExtra(KEY_MEDIA_ITEM_PATH, item.toString());
                         MediaItem photo = mModel.getCurrentMediaItem();
                         if (photo != null) updateCurrentPhoto(photo);
-                    } else {
-                        mResultIntent.removeExtra(KEY_MEDIA_ITEM_PATH);
                     }
-                    setStateResult(Activity.RESULT_OK, mResultIntent);
                 }
 
                 @Override
@@ -253,6 +251,18 @@ public class PhotoPage extends ActivityState
                 switch (message.what) {
                     case MSG_HIDE_BARS: {
                         hideBars();
+                        break;
+                    }
+                    case MSG_LOCK_ORIENTATION: {
+                        mOrientationManager.lockOrientation();
+                        break;
+                    }
+                    case MSG_UNLOCK_ORIENTATION: {
+                        mOrientationManager.unlockOrientation();
+                        break;
+                    }
+                    case MSG_ON_FULL_SCREEN_CHANGED: {
+                        mAppBridge.onFullScreenChanged(message.arg1 == 1);
                         break;
                     }
                     default: throw new AssertionError(message.what);
@@ -291,7 +301,7 @@ public class PhotoPage extends ActivityState
         if (mCurrentPhoto == null) return;
         updateMenuOperations();
         // Hide the action bar when going back to camera preview.
-        if (photo.getPath() == mScreenNailItemPath) hideBars();
+        if (photo == mScreenNailItem) hideBars();
         updateTitle();
         if (mShowDetails) {
             mDetailsHelper.reloadDetails(mModel.getCurrentIndex());
@@ -401,18 +411,41 @@ public class PhotoPage extends ActivityState
     }
 
     @Override
+    public void onOrientationCompensationChanged(int degrees) {
+        mActivity.getGLRoot().setOrientationCompensation(degrees);
+    }
+
+    @Override
     protected void onBackPressed() {
         if (mShowDetails) {
             hideDetails();
         } else if (mScreenNail == null
                 || !switchWithCaptureAnimation(-1)) {
+            // We are leaving this page. Set the result now.
+            setResult();
             super.onBackPressed();
         }
     }
 
-    // Switch to the previous or next picture using the capture animation.
-    // The offset is -1 to switch to the previous picture, 1 to switch to
-    // the next picture.
+    private void setResult() {
+        Intent result = null;
+        if (!mPhotoView.getFilmMode()) {
+            result = new Intent();
+            result.putExtra(KEY_RETURN_INDEX_HINT, mCurrentIndex);
+        }
+        setStateResult(Activity.RESULT_OK, result);
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    //  AppBridge.Server interface
+    //////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void setCameraNaturalFrame(Rect frame) {
+        mPhotoView.setCameraNaturalFrame(frame);
+    }
+
+    @Override
     public boolean switchWithCaptureAnimation(int offset) {
         return mPhotoView.switchWithCaptureAnimation(offset);
     }
@@ -531,9 +564,13 @@ public class PhotoPage extends ActivityState
         mDetailsHelper.show();
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    //  Callbacks from PhotoView
+    ////////////////////////////////////////////////////////////////////////////
+    @Override
     public void onSingleTapUp(int x, int y) {
-        if (mPageTapListener != null) {
-            if (mPageTapListener.onSingleTapUp(x, y)) return;
+        if (mAppBridge != null) {
+            if (mAppBridge.onSingleTapUp(x, y)) return;
         }
 
         MediaItem item = mModel.getCurrentMediaItem();
@@ -559,6 +596,24 @@ public class PhotoPage extends ActivityState
         } else {
             onUserInteractionTap();
         }
+    }
+
+    @Override
+    public void lockOrientation() {
+        mHandler.sendEmptyMessage(MSG_LOCK_ORIENTATION);
+    }
+
+    @Override
+    public void unlockOrientation() {
+        // Temporarily disabled until Camera UI can switch orientation.
+        // mHandler.sendEmptyMessage(MSG_UNLOCK_ORIENTATION);
+    }
+
+    @Override
+    public void onFullScreenChanged(boolean full) {
+        Message m = mHandler.obtainMessage(
+                MSG_ON_FULL_SCREEN_CHANGED, full ? 1 : 0, 0);
+        m.sendToTarget();
     }
 
     public static void playVideo(Activity activity, Uri uri, String title) {
@@ -610,6 +665,7 @@ public class PhotoPage extends ActivityState
     public void onPause() {
         super.onPause();
         mIsActive = false;
+        if (mAppBridge != null) mAppBridge.setServer(null);
         DetailsHelper.pause();
         mPhotoView.pause();
         mModel.pause();
@@ -634,17 +690,22 @@ public class PhotoPage extends ActivityState
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
 
         onUserInteraction();
+        if (mAppBridge != null) {
+            mAppBridge.setServer(this);
+            mModel.moveTo(0);  // move to the camera preview after resume
+        }
     }
 
     @Override
     protected void onDestroy() {
-        if (mScreenNailHolder != null) {
-            // Unregister the ScreenNail and notify mScreenNailHolder.
+        if (mAppBridge != null) {
+            // Unregister the ScreenNail and notify mAppBridge.
             SnailSource.unregisterScreenNail(mScreenNail);
-            mScreenNailHolder.detach();
-            mScreenNailHolder = null;
+            mAppBridge.detachScreenNail();
+            mAppBridge = null;
             mScreenNail = null;
         }
+        mOrientationManager.removeListener(this);
         super.onDestroy();
     }
 
@@ -672,5 +733,4 @@ public class PhotoPage extends ActivityState
             return mIndex;
         }
     }
-
 }

@@ -359,6 +359,16 @@ public class GLView {
             boolean changeSize, int left, int top, int right, int bottom) {
     }
 
+    protected void orient(int displayRotation, int compensation) {
+        onOrient(displayRotation, compensation);
+        for (int i = 0, n = getComponentCount(); i < n; ++i) {
+            getComponent(i).orient(displayRotation, compensation);
+        }
+    }
+
+    protected void onOrient(int displayRotation, int compensation) {
+    }
+
     /**
      * Gets the bounds of the given descendant that relative to this view.
      */
