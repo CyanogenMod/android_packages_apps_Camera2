@@ -46,10 +46,8 @@
     <string name="wallpaper" msgid="140165383777262070">"Angiver baggrund..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Tapet"</string>
     <string name="delete" msgid="2839695998251824487">"Slet"</string>
-    <!-- no translation found for confirm_action (1642211585193899041) -->
-    <skip />
-    <!-- no translation found for confirm (8646870096527848520) -->
-    <skip />
+    <string name="confirm_action" msgid="1642211585193899041">"Vil du bekræfte sletningen?"</string>
+    <string name="confirm" msgid="8646870096527848520">"Bekræft"</string>
     <string name="cancel" msgid="3637516880917356226">"Annuller"</string>
     <string name="share" msgid="3619042788254195341">"Del"</string>
     <string name="select_all" msgid="3403283025220282175">"Markér alle"</string>
@@ -101,7 +99,8 @@
     <string name="show_all" msgid="6963292714584735149">"Billeder og videoer"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Billedgalleri"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Ingen billeder."</string>
-    <string name="crop_saved" msgid="1062612625032731770">"Beskåret billede gemmes i Downloads."</string>
+    <!-- no translation found for crop_saved (1595985909779105158) -->
+    <skip />
     <string name="crop_not_saved" msgid="3400773981839556">"Det beskårne billede blev ikke gemt."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Ingen tilgængelige albummer."</string>
     <string name="empty_album" msgid="4542880442593595494">"O tilgængelige billeder/videoer."</string>
