@@ -421,7 +421,7 @@ public class PhotoView extends GLView {
                     (viewH / 2f - r.exactCenterY()) / scale + 0.5f);
 
             boolean wantsCardEffect = CARD_EFFECT && !mFilmMode
-                && !mPictures.get(-1).isCamera();
+                && !mPictures.get(-1).isCamera() && !mIsCamera;
             if (wantsCardEffect) {
                 // Calculate the move-out progress value.
                 int left = r.left;
