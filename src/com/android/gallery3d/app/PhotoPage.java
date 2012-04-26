@@ -186,6 +186,9 @@ public class PhotoPage extends ActivityState
 
                 // Start from the screen nail.
                 itemPath = mScreenNailItemPath;
+
+                // Action bar should not be displayed when camera starts.
+                mFlags |= FLAG_HIDE_ACTION_BAR;
             }
 
             mMediaSet = mActivity.getDataManager().getMediaSet(mSetPathString);
