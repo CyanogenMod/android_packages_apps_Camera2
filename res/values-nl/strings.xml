@@ -46,10 +46,8 @@
     <string name="wallpaper" msgid="140165383777262070">"Achtergrond instellen..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Achtergrond"</string>
     <string name="delete" msgid="2839695998251824487">"Verwijderen"</string>
-    <!-- no translation found for confirm_action (1642211585193899041) -->
-    <skip />
-    <!-- no translation found for confirm (8646870096527848520) -->
-    <skip />
+    <string name="confirm_action" msgid="1642211585193899041">"Verwijdering bevestigen?"</string>
+    <string name="confirm" msgid="8646870096527848520">"Bevestigen"</string>
     <string name="cancel" msgid="3637516880917356226">"Annuleren"</string>
     <string name="share" msgid="3619042788254195341">"Delen"</string>
     <string name="select_all" msgid="3403283025220282175">"Alles selecteren"</string>
@@ -101,7 +99,8 @@
     <string name="show_all" msgid="6963292714584735149">"Afbeeldingen en video\'s"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Fotogalerij"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Geen foto\'s."</string>
-    <string name="crop_saved" msgid="1062612625032731770">"Bijgesneden afbeelding opgeslagen in Downloads."</string>
+    <!-- no translation found for crop_saved (1595985909779105158) -->
+    <skip />
     <string name="crop_not_saved" msgid="3400773981839556">"Bijgesneden afbeelding is niet opgeslagen."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Geen albums beschikbaar."</string>
     <string name="empty_album" msgid="4542880442593595494">"0 afbeeldingen/video\'s beschikbaar."</string>

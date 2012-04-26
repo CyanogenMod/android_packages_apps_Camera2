@@ -101,7 +101,8 @@
     <string name="show_all" msgid="6963292714584735149">"图片和视频"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"照片库"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"无照片。"</string>
-    <string name="crop_saved" msgid="1062612625032731770">"经过裁剪的图片已保存至“下载内容”文件夹。"</string>
+    <!-- no translation found for crop_saved (1595985909779105158) -->
+    <skip />
     <string name="crop_not_saved" msgid="3400773981839556">"经过裁剪的图片尚未保存。"</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"没有可用的相册。"</string>
     <string name="empty_album" msgid="4542880442593595494">"没有可用的图片/视频。"</string>

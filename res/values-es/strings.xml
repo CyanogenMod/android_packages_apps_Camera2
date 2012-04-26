@@ -46,10 +46,8 @@
     <string name="wallpaper" msgid="140165383777262070">"Estableciendo fondo de pantalla..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Fondo de pantalla"</string>
     <string name="delete" msgid="2839695998251824487">"Borrar"</string>
-    <!-- no translation found for confirm_action (1642211585193899041) -->
-    <skip />
-    <!-- no translation found for confirm (8646870096527848520) -->
-    <skip />
+    <string name="confirm_action" msgid="1642211585193899041">"¿Confirmar eliminación?"</string>
+    <string name="confirm" msgid="8646870096527848520">"Confirmar"</string>
     <string name="cancel" msgid="3637516880917356226">"Cancelar"</string>
     <string name="share" msgid="3619042788254195341">"Compartir"</string>
     <string name="select_all" msgid="3403283025220282175">"Seleccionar todo"</string>
@@ -101,7 +99,8 @@
     <string name="show_all" msgid="6963292714584735149">"Imágenes y vídeos"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Galería de fotos"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"No hay fotos."</string>
-    <string name="crop_saved" msgid="1062612625032731770">"La imagen recortada se ha guardado en Descargas."</string>
+    <!-- no translation found for crop_saved (1595985909779105158) -->
+    <skip />
     <string name="crop_not_saved" msgid="3400773981839556">"No se ha guardado la imagen recortada."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"No hay álbumes disponibles."</string>
     <string name="empty_album" msgid="4542880442593595494">"No hay imágenes ni vídeos disponibles."</string>
