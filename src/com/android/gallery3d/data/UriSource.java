@@ -28,6 +28,8 @@ import java.net.URLEncoder;
 class UriSource extends MediaSource {
     @SuppressWarnings("unused")
     private static final String TAG = "UriSource";
+    private static final String IMAGE_TYPE_PREFIX = "image/";
+    private static final String IMAGE_TYPE_ANY = "image/*";
 
     private GalleryApp mApplication;
 
@@ -64,11 +66,19 @@ class UriSource extends MediaSource {
 
     @Override
     public Path findPathByUri(Uri uri, String type) {
-        if (type == null) type = getMimeType(uri);
-        if (type.startsWith("image/")) {
+        String mimeType = getMimeType(uri);
+
+        // Try to find a most specific type but it has to be started with "image/"
+        if ((type == null) || (IMAGE_TYPE_ANY.equals(type)
+                && mimeType.startsWith(IMAGE_TYPE_PREFIX))) {
+            type = mimeType;
+        }
+
+        if (type.startsWith(IMAGE_TYPE_PREFIX)) {
             return Path.fromString("/uri/" + URLEncoder.encode(uri.toString())
                     + "/" +URLEncoder.encode(type));
         }
+        // We have no clues that it is an image
         return null;
     }
 }
