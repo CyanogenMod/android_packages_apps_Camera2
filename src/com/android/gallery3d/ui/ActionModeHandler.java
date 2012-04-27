@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
 import android.os.Handler;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -61,6 +62,7 @@ public class ActionModeHandler implements ActionMode.Callback {
     private final GalleryActivity mActivity;
     private final MenuExecutor mMenuExecutor;
     private final SelectionManager mSelectionManager;
+    private final NfcAdapter mNfcAdapter;
     private Menu mMenu;
     private DropDownMenu mSelectionMenu;
     private ActionModeListener mListener;
@@ -74,6 +76,7 @@ public class ActionModeHandler implements ActionMode.Callback {
         mSelectionManager = Utils.checkNotNull(selectionManager);
         mMenuExecutor = new MenuExecutor(activity, selectionManager);
         mMainHandler = new Handler(activity.getMainLooper());
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(mActivity.getAndroidContext());
     }
 
     public ActionMode startActionMode() {
@@ -224,7 +227,12 @@ public class ActionModeHandler implements ActionMode.Callback {
     // each media item
     private Intent computeSharingIntent(JobContext jc) {
         ArrayList<Path> expandedPaths = mSelectionManager.getSelected(true);
-        if (expandedPaths.size() == 0) return null;
+        if (expandedPaths.size() == 0) {
+            if (mNfcAdapter != null) {
+                mNfcAdapter.setBeamPushUris(null, (Activity)mActivity);
+            }
+            return null;
+        }
         final ArrayList<Uri> uris = new ArrayList<Uri>();
         DataManager manager = mActivity.getDataManager();
         int type = 0;
@@ -250,6 +258,14 @@ public class ActionModeHandler implements ActionMode.Callback {
                 intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
             }
             intent.setType(mimeType);
+            if (mNfcAdapter != null) {
+                mNfcAdapter.setBeamPushUris(uris.toArray(new Uri[uris.size()]),
+                        (Activity)mActivity);
+            }
+        } else {
+            if (mNfcAdapter != null) {
+                mNfcAdapter.setBeamPushUris(null, (Activity)mActivity);
+            }
         }
 
         return intent;
