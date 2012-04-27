@@ -232,20 +232,20 @@ public class TileImageView extends GLView {
             mDecodeQueue.clean();
             mUploadQueue.clean();
             mBackgroundTileUploaded = false;
-        }
 
-        // Recycle unused tiles: if the level of the active tile is outside the
-        // range [fromLevel, endLevel) or not in the visible range.
-        int n = mActiveTiles.size();
-        for (int i = 0; i < n; i++) {
-            Tile tile = mActiveTiles.valueAt(i);
-            int level = tile.mTileLevel;
-            if (level < fromLevel || level >= endLevel
-                    || !range[level - fromLevel].contains(tile.mX, tile.mY)) {
-                mActiveTiles.removeAt(i);
-                i--;
-                n--;
-                recycleTile(tile);
+            // Recycle unused tiles: if the level of the active tile is outside the
+            // range [fromLevel, endLevel) or not in the visible range.
+            int n = mActiveTiles.size();
+            for (int i = 0; i < n; i++) {
+                Tile tile = mActiveTiles.valueAt(i);
+                int level = tile.mTileLevel;
+                if (level < fromLevel || level >= endLevel
+                        || !range[level - fromLevel].contains(tile.mX, tile.mY)) {
+                    mActiveTiles.removeAt(i);
+                    i--;
+                    n--;
+                    recycleTile(tile);
+                }
             }
         }
 
