@@ -99,8 +99,7 @@
     <string name="show_all" msgid="6963292714584735149">"Слике и видео снимци"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Фото-галерија"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Нема фотографија."</string>
-    <!-- no translation found for crop_saved (1595985909779105158) -->
-    <skip />
+    <string name="crop_saved" msgid="1595985909779105158">"Опсечена слика је сачувана у директоријуму <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
     <string name="crop_not_saved" msgid="3400773981839556">"Опсечена слика није сачувана."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Ниједан албум није доступан."</string>
     <string name="empty_album" msgid="4542880442593595494">"Доступно је 0 слика/видео снимака."</string>
