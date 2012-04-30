@@ -17,10 +17,9 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="photoeditor_name" msgid="4738587346771969697">"Fotoğraf Stüdyosu"</string>
-    <string name="loading_failure" msgid="5990741970574295950">"Fotoğraf yüklenemiyor"</string>
-    <string name="saving_failure" msgid="8596600582621364077">"Fotoğraf kaydedilemiyor"</string>
-    <string name="photo_saved" msgid="3494363661299484657">"Fotoğraf <xliff:g id="ALBUM_NAME">%s</xliff:g> albümüne kaydedildi"</string>
-    <string name="edited_photo_bucket_name" msgid="3777746536831799890">"Düzenlendi"</string>
+    <string name="loading_failure" msgid="7890360277163832130">"Fotoğraf yüklenemedi"</string>
+    <string name="saving_failure" msgid="8229491575433743974">"Düzenlenen fotoğraf kaydedilemedi"</string>
+    <string name="photo_saved" msgid="6163006724627682202">"Düzenlenen fotoğraf <xliff:g id="FOLDER_NAME">%s</xliff:g> içine kaydedildi"</string>
     <string name="save_photo" msgid="3125109368779997862">"Düzenlenmiş fotoğraf kaydedilsin mi?"</string>
     <string name="yes" msgid="5402582493291792293">"Evet"</string>
     <string name="no" msgid="5595408018304861875">"Hayır"</string>
@@ -55,7 +54,7 @@
     <string name="crop_tooltip" msgid="8794037869706891710">"Fotoğrafı kırpmak içni işaretçileri sürükleyin"</string>
     <string name="doodle_tooltip" msgid="2902117272374362915">"Doodle için fotoğrafın üzerinde çizin"</string>
     <string name="flip_tooltip" msgid="2700943256714731737">"Çevirmek için fotoğrafı sürükleyin"</string>
-    <string name="redeye_tooltip" msgid="9112774042113471358">"Kırmızı gözleri kaldırmak için hafifçe vurun"</string>
+    <string name="redeye_tooltip" msgid="4183695928490874014">"Kaldırmak için kırmızı gözlere dokunun"</string>
     <string name="rotate_tooltip" msgid="7008602969130734229">"Döndürmek için fotoğrafı sürükleyin"</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"Düzleştirmek için fotoğrafı sürükleyin"</string>
 </resources>
