@@ -574,8 +574,8 @@ public class PhotoPage extends ActivityState implements
         }
 
         MediaItem item = mModel.getCurrentMediaItem();
-        if (item == null) {
-            // item is not ready, ignore
+        if (item == null || item == mScreenNailItem) {
+            // item is not ready or it is camera preview, ignore
             return;
         }
 
