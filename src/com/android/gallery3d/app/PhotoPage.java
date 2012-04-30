@@ -587,11 +587,12 @@ public class PhotoPage extends ActivityState
                 }
                 break;
             case REQUEST_CROP_PICASA: {
-                int message = resultCode == Activity.RESULT_OK
-                        ? R.string.crop_saved
-                        : R.string.crop_not_saved;
-                Toast.makeText(mActivity.getAndroidContext(),
-                        message, Toast.LENGTH_SHORT).show();
+                Context context = mActivity.getAndroidContext();
+                // TODO: Use crop_saved instead of photo_saved after its new translation is done.
+                String message = resultCode == Activity.RESULT_OK ? context.getString(
+                        R.string.photo_saved, context.getString(R.string.folder_download))
+                        : context.getString(R.string.crop_not_saved);
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                 break;
             }
             case REQUEST_SLIDESHOW: {
