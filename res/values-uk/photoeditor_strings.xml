@@ -17,12 +17,9 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="photoeditor_name" msgid="4738587346771969697">"Photo Studio"</string>
-    <!-- no translation found for loading_failure (7890360277163832130) -->
-    <skip />
-    <!-- no translation found for saving_failure (8229491575433743974) -->
-    <skip />
-    <!-- no translation found for photo_saved (6163006724627682202) -->
-    <skip />
+    <string name="loading_failure" msgid="7890360277163832130">"Не вдалося завантажити фотографію"</string>
+    <string name="saving_failure" msgid="8229491575433743974">"Не вдалося зберегти відредаговане фото"</string>
+    <string name="photo_saved" msgid="6163006724627682202">"Відредаговане фото збережено в папці <xliff:g id="FOLDER_NAME">%s</xliff:g>"</string>
     <string name="save_photo" msgid="3125109368779997862">"Зберегти відредаговану фотографію?"</string>
     <string name="yes" msgid="5402582493291792293">"Так"</string>
     <string name="no" msgid="5595408018304861875">"Ні"</string>
@@ -57,8 +54,7 @@
     <string name="crop_tooltip" msgid="8794037869706891710">"Перетягніть маркери, щоб обрізати фото"</string>
     <string name="doodle_tooltip" msgid="2902117272374362915">"Малюйте на фото, щоб створити doodle"</string>
     <string name="flip_tooltip" msgid="2700943256714731737">"Потягніть за фото, щоб перевернути його"</string>
-    <!-- no translation found for redeye_tooltip (4183695928490874014) -->
-    <skip />
+    <string name="redeye_tooltip" msgid="4183695928490874014">"Швидко торкн. черв.очей, щоб усун. ефект"</string>
     <string name="rotate_tooltip" msgid="7008602969130734229">"Потягніть за фото, щоб обертати його"</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"Перетягніть фото, щоб вирівняти його"</string>
 </resources>
