@@ -337,8 +337,8 @@ public class TileImageView extends GLView {
     }
 
     public boolean setPosition(int centerX, int centerY, float scale, int rotation) {
-        if (mCenterX == centerX
-                && mCenterY == centerY && mScale == scale) return false;
+        if (mCenterX == centerX && mCenterY == centerY
+                && mScale == scale && mRotation == rotation) return false;
         mCenterX = centerX;
         mCenterY = centerY;
         mScale = scale;

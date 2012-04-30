@@ -143,6 +143,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     private long mSourceVersion = MediaObject.INVALID_DATA_VERSION;
     private int mSize = 0;
     private Path mItemPath;
+    private int mCameraIndex;
     private boolean mIsActive;
     private boolean mNeedFullImage;
 
@@ -158,12 +159,13 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     // If mItemPath is not null, mCurrentIndex is only a hint for where we
     // can find the item. If mItemPath is null, then we use the mCurrentIndex to
     // find the image being viewed.
-    public PhotoDataAdapter(GalleryActivity activity,
-            PhotoView view, MediaSet mediaSet, Path itemPath, int indexHint) {
+    public PhotoDataAdapter(GalleryActivity activity, PhotoView view,
+            MediaSet mediaSet, Path itemPath, int indexHint, int cameraIndex) {
         mSource = Utils.checkNotNull(mediaSet);
         mPhotoView = Utils.checkNotNull(view);
         mItemPath = Utils.checkNotNull(itemPath);
         mCurrentIndex = indexHint;
+        mCameraIndex = cameraIndex;
         mThreadPool = activity.getThreadPool();
         mNeedFullImage = true;
 
@@ -312,6 +314,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     }
 
     private void updateCurrentIndex(int index) {
+        if (mCurrentIndex == index) return;
         mCurrentIndex = index;
         updateSlidingWindow();
 
@@ -330,18 +333,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     }
 
     @Override
-    public void next() {
-        updateCurrentIndex(mCurrentIndex + 1);
-    }
-
-    @Override
-    public void previous() {
-        updateCurrentIndex(mCurrentIndex - 1);
-    }
-
-    @Override
-    public void moveToFirst() {
-        updateCurrentIndex(0);
+    public void moveTo(int index) {
+        updateCurrentIndex(index);
     }
 
     @Override
@@ -371,6 +364,11 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     public void setNeedFullImage(boolean enabled) {
         mNeedFullImage = enabled;
         mMainHandler.sendEmptyMessage(MSG_UPDATE_IMAGE_REQUESTS);
+    }
+
+    @Override
+    public boolean isCamera(int offset) {
+        return mCurrentIndex + offset == mCameraIndex;
     }
 
     public ScreenNail getScreenNail() {

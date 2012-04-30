@@ -51,7 +51,6 @@ import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.RelativePosition;
-import com.android.gallery3d.ui.ScreenNailHolder;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.ui.SynchronizedHandler;
@@ -79,7 +78,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private static final int BIT_LOADING_SYNC = 2;
 
     private static final float USER_DISTANCE_METER = 0.3f;
-    private static final boolean TEST_CAMERA_PREVIEW = false;
 
     private boolean mIsActive = false;
     private AlbumSlotRenderer mAlbumView;
@@ -210,10 +208,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                     mMediaSetPath.toString());
             data.putString(PhotoPage.KEY_MEDIA_ITEM_PATH,
                     item.getPath().toString());
-            if (TEST_CAMERA_PREVIEW) {
-                ScreenNailHolder holder = new CameraScreenNailHolder(mActivity);
-                data.putParcelable(PhotoPage.KEY_SCREENNAIL_HOLDER, holder);
-            }
             mActivity.getStateManager().startStateForResult(
                     PhotoPage.class, REQUEST_PHOTO, data);
         }
@@ -527,7 +521,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             }
             case REQUEST_PHOTO: {
                 if (data == null) return;
-                mFocusIndex = data.getIntExtra(PhotoPage.KEY_INDEX_HINT, 0);
+                mFocusIndex = data.getIntExtra(PhotoPage.KEY_RETURN_INDEX_HINT, 0);
                 mSlotView.setCenterIndex(mFocusIndex);
                 mSlotView.startRestoringAnimation(mFocusIndex);
                 break;
