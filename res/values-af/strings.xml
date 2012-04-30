@@ -99,8 +99,7 @@
     <string name="show_all" msgid="6963292714584735149">"Prente en video\'s"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Fotogalery"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Geen foto\'s nie."</string>
-    <!-- no translation found for crop_saved (1595985909779105158) -->
-    <skip />
+    <string name="crop_saved" msgid="1595985909779105158">"Gesnoeide prent gestoor in <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
     <string name="crop_not_saved" msgid="3400773981839556">"Gesnoeide prent is nie gestoor nie."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Geen albums beskikbaar nie."</string>
     <string name="empty_album" msgid="4542880442593595494">"O prente/video\'s beskikbaar."</string>

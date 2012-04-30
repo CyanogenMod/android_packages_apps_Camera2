@@ -99,8 +99,7 @@
     <string name="show_all" msgid="6963292714584735149">"Billeder og videoer"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Billedgalleri"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Ingen billeder."</string>
-    <!-- no translation found for crop_saved (1595985909779105158) -->
-    <skip />
+    <string name="crop_saved" msgid="1595985909779105158">"Det beskårne billede er gemt i <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
     <string name="crop_not_saved" msgid="3400773981839556">"Det beskårne billede blev ikke gemt."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Ingen tilgængelige albummer."</string>
     <string name="empty_album" msgid="4542880442593595494">"O tilgængelige billeder/videoer."</string>
