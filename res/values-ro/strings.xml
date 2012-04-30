@@ -99,7 +99,7 @@
     <string name="show_all" msgid="6963292714584735149">"Imagini şi videoclipuri"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Galerie foto"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Nicio fotografie."</string>
-    <string name="crop_saved" msgid="1062612625032731770">"Imaginea decupată a fost salvată la Descărcări."</string>
+    <string name="crop_saved" msgid="1595985909779105158">"Imaginea decupată a fost salvată în <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
     <string name="crop_not_saved" msgid="3400773981839556">"Imaginea decupată nu a fost salvată."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Nu există albume disponibile."</string>
     <string name="empty_album" msgid="4542880442593595494">"Nu există imagini/videoclipuri disponibile."</string>

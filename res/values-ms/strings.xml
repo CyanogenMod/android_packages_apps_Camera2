@@ -99,7 +99,8 @@
     <string name="show_all" msgid="6963292714584735149">"Imej &amp; video"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Galeri Foto"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Tiada foto."</string>
-    <string name="crop_saved" msgid="1062612625032731770">"Imej yang dipangkas disimpan ke Muat Turun."</string>
+    <!-- no translation found for crop_saved (1595985909779105158) -->
+    <skip />
     <string name="crop_not_saved" msgid="3400773981839556">"Imej yang dipangkas tidak disimpan."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Tiada album tersedia."</string>
     <string name="empty_album" msgid="4542880442593595494">"O imej/video yang tersedia."</string>
