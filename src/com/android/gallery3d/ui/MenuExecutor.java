@@ -185,12 +185,14 @@ public class MenuExecutor {
                 } else {
                     mSelectionManager.selectAll();
                 }
+                return;
             case R.id.action_crop: {
                 Path path = getSingleSelectedPath();
                 String mimeType = getMimeType(manager.getMediaType(path));
                 Intent intent = new Intent(CropImage.ACTION_CROP)
                         .setDataAndType(manager.getContentUri(path), mimeType);
                 ((Activity) mActivity).startActivity(intent);
+                return;
             }
             case R.id.action_setas: {
                 Path path = getSingleSelectedPath();
@@ -203,6 +205,7 @@ public class MenuExecutor {
                 Activity activity = (Activity) mActivity;
                 activity.startActivity(Intent.createChooser(
                         intent, activity.getString(R.string.set_as)));
+                return;
             }
             case R.id.action_delete:
                 title = R.string.delete;
@@ -368,4 +371,3 @@ public class MenuExecutor {
         }
     }
 }
-
