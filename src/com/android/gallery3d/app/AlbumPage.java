@@ -147,6 +147,16 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         }
     };
 
+    // This are the transitions we want:
+    //
+    // +--------+           +------------+    +-------+    +----------+
+    // | Camera |---------->| Fullscreen |--->| Album |--->| AlbumSet |
+    // |  View  | thumbnail |   Photo    | up | Page  | up |   Page   |
+    // +--------+           +------------+    +-------+    +----------+
+    //     ^                      |               |            ^  |
+    //     |                      |               |            |  |         close
+    //     +----------back--------+               +----back----+  +--back->  app
+    //
     @Override
     protected void onBackPressed() {
         if (mShowDetails) {
@@ -156,7 +166,18 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         } else {
             // TODO: fix this regression
             // mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
+            onUpPressed();
+        }
+    }
+
+    private void onUpPressed() {
+        if (mActivity.getStateManager().getStateCount() > 1) {
             super.onBackPressed();
+        } else if (mParentMediaSetString != null) {
+            Bundle data = new Bundle(getData());
+            data.putString(AlbumSetPage.KEY_MEDIA_PATH, mParentMediaSetString);
+            mActivity.getStateManager().switchState(
+                    this, AlbumSetPage.class, data);
         }
     }
 
@@ -467,13 +488,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     protected boolean onItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home: {
-                if (mActivity.getStateManager().getStateCount() > 1) {
-                    onBackPressed();
-                } else if (mParentMediaSetString != null) {
-                    Bundle data = new Bundle(getData());
-                    data.putString(AlbumSetPage.KEY_MEDIA_PATH, mParentMediaSetString);
-                    mActivity.getStateManager().switchState(this, AlbumSetPage.class, data);
-                }
+                onUpPressed();
                 return true;
             }
             case R.id.action_cancel:
