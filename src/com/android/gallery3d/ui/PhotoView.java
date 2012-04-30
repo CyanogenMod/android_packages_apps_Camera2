@@ -176,12 +176,9 @@ public class PhotoView extends GLView {
     // This variable prevents us doing snapback until its values goes to 0. This
     // happens if the user gesture is still in progress or we are in a capture
     // animation.
-    // HOLD_TOUCH_DOWN_FROM_CAMERA is an extra flag set together with
-    // HOLD_TOUCH_DOWN if the touch down starts from camera preview.
     private int mHolding;
     private static final int HOLD_TOUCH_DOWN = 1;
-    private static final int HOLD_TOUCH_DOWN_FROM_CAMERA = 2;
-    private static final int HOLD_CAPTURE_ANIMATION = 4;
+    private static final int HOLD_CAPTURE_ANIMATION = 2;
 
     public PhotoView(GalleryActivity activity) {
         mTileView = new TileImageView(activity);
@@ -208,13 +205,7 @@ public class PhotoView extends GLView {
                         PhotoView.this.invalidate();
                     }
                     public boolean isHolding() {
-                        // We want the film mode change happen as soon as
-                        // possible even if the touch is still down.
-                        if ((mHolding & HOLD_TOUCH_DOWN_FROM_CAMERA) != 0) {
-                            return false;
-                        } else {
-                            return mHolding != 0;
-                        }
+                        return mHolding != 0;
                     }
                     public void onPull(int offset, int direction) {
                         mEdgeView.onPull(offset, direction);
@@ -501,15 +492,14 @@ public class PhotoView extends GLView {
             // page mode, we move _to_ the camera preview from another picture.
 
             // Holdings except touch-down prevent the transitions.
-            if ((mHolding & ~(HOLD_TOUCH_DOWN | HOLD_TOUCH_DOWN_FROM_CAMERA)) != 0) {
-                return;
-            }
+            if ((mHolding & ~HOLD_TOUCH_DOWN) != 0) return;
 
             boolean isCameraCenter = mIsCamera && isCenter;
 
             if (mWasCameraCenter && mIsCamera && !isCenter && !mFilmMode) {
-                setFilmMode(true);
-            } else if (isCameraCenter && mFilmMode) {
+                // Temporary disabled to de-emphasize filmstrip.
+                // setFilmMode(true);
+            } else if (!mWasCameraCenter && isCameraCenter && mFilmMode) {
                 setFilmMode(false);
             } else if (isCameraCenter && !mFilmMode) {
                 // move into camera, lock
@@ -745,7 +735,7 @@ public class PhotoView extends GLView {
         private boolean mIgnoreUpEvent = false;
         // If we can change mode for this scale gesture.
         private boolean mCanChangeMode;
-        // If we have changed the mode in this scaling gesture.
+        // If we have changed the film mode in this scaling gesture.
         private boolean mModeChanged;
 
         @Override
@@ -805,20 +795,31 @@ public class PhotoView extends GLView {
 
         @Override
         public boolean onScale(float focusX, float focusY, float scale) {
+            if (mModeChanged) return true;
             if (Float.isNaN(scale) || Float.isInfinite(scale)) return false;
+            if (scale > 0.99f && scale < 1.01f) return false;
             int outOfRange = mPositionController.scaleBy(scale, focusX, focusY);
 
-            // We allow only one mode change in a scaling gesture.
-            if (mCanChangeMode && !mModeChanged) {
+            // If mode changes, we treat this scaling gesture has ended.
+            if (mCanChangeMode) {
                 if ((outOfRange < 0 && !mFilmMode) ||
                         (outOfRange > 0 && mFilmMode)) {
+                    stopExtraScalingIfNeeded();
+
+                    // Removing the touch down flag allows snapback to happen
+                    // for file mode change.
+                    mHolding &= ~HOLD_TOUCH_DOWN;
                     setFilmMode(!mFilmMode);
+
+                    // We need to call onScaleEnd() before setting mModeChanged
+                    // to true.
+                    onScaleEnd();
                     mModeChanged = true;
                     return true;
                 }
            }
 
-            if (outOfRange != 0 && !mModeChanged) {
+            if (outOfRange != 0) {
                 startExtraScalingIfNeeded();
             } else {
                 stopExtraScalingIfNeeded();
@@ -845,20 +846,18 @@ public class PhotoView extends GLView {
 
         @Override
         public void onScaleEnd() {
+            if (mModeChanged) return;
             mPositionController.endScale();
         }
 
         @Override
         public void onDown() {
             mHolding |= HOLD_TOUCH_DOWN;
-            if (mPictures.get(0).isCamera()) {
-                mHolding |= HOLD_TOUCH_DOWN_FROM_CAMERA;
-            }
         }
 
         @Override
         public void onUp() {
-            mHolding &= ~(HOLD_TOUCH_DOWN | HOLD_TOUCH_DOWN_FROM_CAMERA);
+            mHolding &= ~HOLD_TOUCH_DOWN;
             mEdgeView.onRelease();
 
             if (mIgnoreUpEvent) {
