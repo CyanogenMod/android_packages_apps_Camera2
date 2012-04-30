@@ -44,6 +44,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
     private GLRootView mGLRootView;
     private StateManager mStateManager;
     private GalleryActionBar mActionBar;
+    private OrientationManager mOrientationManager;
     private boolean mDisableToggleStatusBar;
 
     private AlertDialog mAlertDialog = null;
@@ -58,6 +59,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mOrientationManager = new OrientationManager(this);
         toggleStatusBarByOrientation();
     }
 
@@ -101,6 +103,10 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
 
     public GLRoot getGLRoot() {
         return mGLRootView;
+    }
+
+    public OrientationManager getOrientationManager() {
+        return mOrientationManager;
     }
 
     @Override
@@ -165,11 +171,13 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
             mGLRootView.unlockRenderThread();
         }
         mGLRootView.onResume();
+        mOrientationManager.resume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        mOrientationManager.pause();
         mGLRootView.onPause();
         mGLRootView.lockRenderThread();
         try {

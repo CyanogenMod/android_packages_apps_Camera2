@@ -22,4 +22,5 @@ public interface GalleryActivity extends GalleryContext {
     public StateManager getStateManager();
     public GLRoot getGLRoot();
     public GalleryActionBar getGalleryActionBar();
+    public OrientationManager getOrientationManager();
 }

@@ -17,6 +17,7 @@
 package com.android.gallery3d.ui;
 
 import android.content.Context;
+import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.opengl.GLSurfaceView;
@@ -67,8 +68,16 @@ public class GLRootView extends GLSurfaceView
 
     private GL11 mGL;
     private GLCanvas mCanvas;
-
     private GLView mContentView;
+
+    // mCompensation is the difference between the UI orientation on GLCanvas
+    // and the framework orientation. See OrientationManager for details.
+    private int mCompensation;
+    // mCompensationMatrix maps the coordinates of touch events. It is kept sync
+    // with mCompensation.
+    private Matrix mCompensationMatrix = new Matrix();
+    // The value which will become mCompensation in next layout.
+    private int mPendingCompensation;
 
     private int mFlags = FLAG_NEED_LAYOUT;
     private volatile boolean mRenderRequested = false;
@@ -175,11 +184,43 @@ public class GLRootView extends GLSurfaceView
 
     private void layoutContentPane() {
         mFlags &= ~FLAG_NEED_LAYOUT;
-        int width = getWidth();
-        int height = getHeight();
-        Log.i(TAG, "layout content pane " + width + "x" + height);
-        if (mContentView != null && width != 0 && height != 0) {
-            mContentView.layout(0, 0, width, height);
+
+        int w = getWidth();
+        int h = getHeight();
+
+        // Before doing layout, if there is a compensation change pending, update
+        // mCompensation and mCompensationMatrix.
+        if (mCompensation != mPendingCompensation) {
+            mCompensation = mPendingCompensation;
+            if (mCompensation % 180 != 0) {
+                mCompensationMatrix.setRotate(mCompensation);
+                // move center to origin before rotation
+                mCompensationMatrix.preTranslate(-w / 2, -h / 2);
+                // align with the new origin after rotation
+                mCompensationMatrix.postTranslate(h / 2, w / 2);
+            } else {
+                mCompensationMatrix.setRotate(mCompensation, w / 2, h / 2);
+            }
+        }
+
+        // Tell the views about current display rotation and compensation value.
+        if (mContentView != null) {
+            // This is a hack: note the 0 should be the display rotation, but we
+            // don't know the display rotation here. The PhotoPage will inject
+            // the correct value in its mRootPane.orient() method.
+            mContentView.orient(0, mCompensation);
+        }
+
+        // Do the actual layout.
+        if (mCompensation % 180 != 0) {
+            int tmp = w;
+            w = h;
+            h = tmp;
+        }
+        Log.i(TAG, "layout content pane " + w + "x" + h
+                + " (compensation " + mCompensation + ")");
+        if (mContentView != null && w != 0 && h != 0) {
+            mContentView.layout(0, 0, w, h);
         }
         // Uncomment this to dump the view hierarchy.
         //mContentView.dumpTree("");
@@ -290,9 +331,12 @@ public class GLRootView extends GLSurfaceView
 
         if ((mFlags & FLAG_NEED_LAYOUT) != 0) layoutContentPane();
 
+        mCanvas.save(GLCanvas.SAVE_FLAG_ALL);
+        rotateCanvas(-mCompensation);
         if (mContentView != null) {
            mContentView.render(mCanvas);
         }
+        mCanvas.restore();
 
         if (!mAnimations.isEmpty()) {
             long now = AnimationTime.get();
@@ -320,9 +364,25 @@ public class GLRootView extends GLSurfaceView
         }
     }
 
+    private void rotateCanvas(int degrees) {
+        if (degrees == 0) return;
+        int w = getWidth();
+        int h = getHeight();
+        int cx = w / 2;
+        int cy = h / 2;
+        mCanvas.translate(cx, cy);
+        mCanvas.rotate(degrees, 0, 0, 1);
+        if (degrees % 180 != 0) {
+            mCanvas.translate(-cy, -cx);
+        } else {
+            mCanvas.translate(-cx, -cy);
+        }
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        AnimationTime.update();
+        if (!isEnabled()) return false;
+
         int action = event.getAction();
         if (action == MotionEvent.ACTION_CANCEL
                 || action == MotionEvent.ACTION_UP) {
@@ -330,6 +390,11 @@ public class GLRootView extends GLSurfaceView
         } else if (!mInDownState && action != MotionEvent.ACTION_DOWN) {
             return false;
         }
+
+        if (mCompensation != 0) {
+            event.transform(mCompensationMatrix);
+        }
+
         mRenderLock.lock();
         try {
             // If this has been detached from root, we don't need to handle event
@@ -395,5 +460,12 @@ public class GLRootView extends GLSurfaceView
             Profile.dumpToFile("/sdcard/gallery.prof");
             Profile.reset();
         }
+    }
+
+    @Override
+    public void setOrientationCompensation(int degrees) {
+        if (mPendingCompensation == degrees) return;
+        mPendingCompensation = degrees;
+        requestLayoutContentPane();
     }
 }

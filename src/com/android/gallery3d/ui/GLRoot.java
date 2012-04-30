@@ -36,4 +36,5 @@ public interface GLRoot {
     public void unlockRenderThread();
 
     public void setContentPane(GLView content);
+    public void setOrientationCompensation(int degrees);
 }

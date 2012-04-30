@@ -27,4 +27,5 @@ public class GLRootStub implements GLRoot {
     public void lockRenderThread() {}
     public void unlockRenderThread() {}
     public void setContentPane(GLView content) {}
+    public void setOrientationCompensation(int degrees) {}
 }
