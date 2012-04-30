@@ -110,6 +110,8 @@ public class PhotoPage extends ActivityState implements
     private boolean mIsActive;
     private ShareActionProvider mShareActionProvider;
     private String mSetPathString;
+    // This is the original mSetPathString before adding the camera preview item.
+    private String mOriginalSetPathString;
     private AppBridge mAppBridge;
     private ScreenNail mScreenNail;
     private MediaItem mScreenNailItem;
@@ -171,6 +173,7 @@ public class PhotoPage extends ActivityState implements
         mOrientationManager.addListener(this);
 
         mSetPathString = data.getString(KEY_MEDIA_SET_PATH);
+        mOriginalSetPathString = mSetPathString;
         mNfcAdapter = NfcAdapter.getDefaultAdapter(mActivity.getAndroidContext());
         Path itemPath = Path.fromString(data.getString(KEY_MEDIA_ITEM_PATH));
 
@@ -427,6 +430,20 @@ public class PhotoPage extends ActivityState implements
         }
     }
 
+    private void onUpPressed() {
+        if (mActivity.getStateManager().getStateCount() > 1) {
+            super.onBackPressed();
+        } else if (mOriginalSetPathString != null) {
+            // We're in view mode so set up the stacks on our own.
+            Bundle data = new Bundle(getData());
+            data.putString(AlbumPage.KEY_MEDIA_PATH, mOriginalSetPathString);
+            data.putString(AlbumPage.KEY_PARENT_MEDIA_PATH,
+                    mActivity.getDataManager().getTopSetPath(
+                            DataManager.INCLUDE_ALL));
+            mActivity.getStateManager().switchState(this, AlbumPage.class, data);
+        }
+    }
+
     private void setResult() {
         Intent result = null;
         if (!mPhotoView.getFilmMode()) {
@@ -480,19 +497,7 @@ public class PhotoPage extends ActivityState implements
         boolean needsConfirm = false;
         switch (action) {
             case android.R.id.home: {
-                if (mSetPathString != null) {
-                    if (mActivity.getStateManager().getStateCount() > 1) {
-                        onBackPressed();
-                    } else {
-                        // We're in view mode so set up the stacks on our own.
-                        Bundle data = new Bundle(getData());
-                        data.putString(AlbumPage.KEY_MEDIA_PATH, mSetPathString);
-                        data.putString(AlbumPage.KEY_PARENT_MEDIA_PATH,
-                                mActivity.getDataManager().getTopSetPath(
-                                        DataManager.INCLUDE_ALL));
-                        mActivity.getStateManager().switchState(this, AlbumPage.class, data);
-                    }
-                }
+                onUpPressed();
                 return true;
             }
             case R.id.action_slideshow: {
