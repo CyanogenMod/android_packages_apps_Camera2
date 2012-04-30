@@ -17,10 +17,9 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="photoeditor_name" msgid="4738587346771969697">"Estudi de fotografia"</string>
-    <string name="loading_failure" msgid="5990741970574295950">"La foto no es pot carregar"</string>
-    <string name="saving_failure" msgid="8596600582621364077">"La foto no es pot desar"</string>
-    <string name="photo_saved" msgid="3494363661299484657">"S\'ha desat la foto a l\'àlbum <xliff:g id="ALBUM_NAME">%s</xliff:g>"</string>
-    <string name="edited_photo_bucket_name" msgid="3777746536831799890">"Editades"</string>
+    <string name="loading_failure" msgid="7890360277163832130">"No s\'ha pogut carregar la foto"</string>
+    <string name="saving_failure" msgid="8229491575433743974">"No s\'ha pogut desar la foto editada"</string>
+    <string name="photo_saved" msgid="6163006724627682202">"S\'ha desat la foto editada a <xliff:g id="FOLDER_NAME">%s</xliff:g>"</string>
     <string name="save_photo" msgid="3125109368779997862">"Vols desar la foto editada?"</string>
     <string name="yes" msgid="5402582493291792293">"Sí"</string>
     <string name="no" msgid="5595408018304861875">"No"</string>
@@ -55,7 +54,7 @@
     <string name="crop_tooltip" msgid="8794037869706891710">"Arrossega els marcadors per retallar la foto"</string>
     <string name="doodle_tooltip" msgid="2902117272374362915">"Arrossega el cursor sobre la foto per dibuixar"</string>
     <string name="flip_tooltip" msgid="2700943256714731737">"Arrossega la foto per invertir-la"</string>
-    <string name="redeye_tooltip" msgid="9112774042113471358">"Toca per eliminar els ulls vermells"</string>
+    <string name="redeye_tooltip" msgid="4183695928490874014">"Toca els ulls vermells per eliminar-los"</string>
     <string name="rotate_tooltip" msgid="7008602969130734229">"Arrossega la foto per girar-la"</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"Arrossega la foto per redreçar-la"</string>
 </resources>
