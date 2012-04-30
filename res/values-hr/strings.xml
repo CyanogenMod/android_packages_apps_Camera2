@@ -46,7 +46,7 @@
     <string name="wallpaper" msgid="140165383777262070">"Postavljanje pozadinske slike…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Pozadinska slika"</string>
     <string name="delete" msgid="2839695998251824487">"Izbriši"</string>
-    <string name="confirm_action" msgid="1642211585193899041">"Potvrdi brisanje?"</string>
+    <string name="confirm_action" msgid="1642211585193899041">"Potvrditi brisanje?"</string>
     <string name="confirm" msgid="8646870096527848520">"Potvrdi"</string>
     <string name="cancel" msgid="3637516880917356226">"Odustani"</string>
     <string name="share" msgid="3619042788254195341">"Podijeli"</string>
@@ -99,8 +99,7 @@
     <string name="show_all" msgid="6963292714584735149">"Slike i videozapisi"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Galerija fotografija"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Nema fotografija."</string>
-    <!-- no translation found for crop_saved (1595985909779105158) -->
-    <skip />
+    <string name="crop_saved" msgid="1595985909779105158">"Obrezana slika spremljena u mapu <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
     <string name="crop_not_saved" msgid="3400773981839556">"Obrezana slika nije spremljena."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Nema dostupnih albuma."</string>
     <string name="empty_album" msgid="4542880442593595494">"Dostupno je 0 slika/videozapisa."</string>
