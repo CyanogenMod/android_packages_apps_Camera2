@@ -1012,7 +1012,8 @@ class PositionController {
         float hFactor = 1.0f;
         int viewW, viewH;
 
-        if (!mFilmMode && mConstrained && b == mBoxes.get(0)) {
+        if (!mFilmMode && mConstrained && !mConstrainedFrame.isEmpty()
+                && b == mBoxes.get(0)) {
             viewW = mConstrainedFrame.width();
             viewH = mConstrainedFrame.height();
         } else {
