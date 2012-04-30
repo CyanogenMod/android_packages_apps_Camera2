@@ -99,7 +99,7 @@
     <string name="show_all" msgid="6963292714584735149">"ภาพและวิดีโอ"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"แกลเลอรีรูปภาพ"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"ไม่มีรูปภาพ"</string>
-    <string name="crop_saved" msgid="1062612625032731770">"ภาพที่ตัดจะได้รับการบันทึกไว้ในโฟลเดอร์ดาวน์โหลด"</string>
+    <string name="crop_saved" msgid="1595985909779105158">"บันทึกภาพที่ครอบตัดไว้ที่ <xliff:g id="FOLDER_NAME">%s</xliff:g>"</string>
     <string name="crop_not_saved" msgid="3400773981839556">"ภาพที่ตัดไม่ได้รับการบันทึก"</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"ไม่มีอัลบั้ม"</string>
     <string name="empty_album" msgid="4542880442593595494">"O ภาพ/วิดีโอ"</string>

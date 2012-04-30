@@ -99,7 +99,7 @@
     <string name="show_all" msgid="6963292714584735149">"छवियां और वीडियो"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"फ़ोटो गैलरी"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"कोई फ़ोटो नहीं."</string>
-    <string name="crop_saved" msgid="1062612625032731770">"काट-छांट की गई छवि को डाउनलोड में सहेजा गया."</string>
+    <string name="crop_saved" msgid="1595985909779105158">"काट-छांट की गई छवि को <xliff:g id="FOLDER_NAME">%s</xliff:g> में सहेजा गया."</string>
     <string name="crop_not_saved" msgid="3400773981839556">"काट-छांट की गई छवि को नहीं सहेजा गया."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"कोई एल्‍बम उपलब्‍ध नहीं."</string>
     <string name="empty_album" msgid="4542880442593595494">"O छवियां/वीडियो उपलब्‍ध."</string>

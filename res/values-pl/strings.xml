@@ -46,10 +46,8 @@
     <string name="wallpaper" msgid="140165383777262070">"Ustawianie tapety…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Tapeta"</string>
     <string name="delete" msgid="2839695998251824487">"Usuń"</string>
-    <!-- no translation found for confirm_action (1642211585193899041) -->
-    <skip />
-    <!-- no translation found for confirm (8646870096527848520) -->
-    <skip />
+    <string name="confirm_action" msgid="1642211585193899041">"Potwierdzasz usunięcie?"</string>
+    <string name="confirm" msgid="8646870096527848520">"Potwierdź"</string>
     <string name="cancel" msgid="3637516880917356226">"Anuluj"</string>
     <string name="share" msgid="3619042788254195341">"Udostępnij"</string>
     <string name="select_all" msgid="3403283025220282175">"Zaznacz wszystkie"</string>
@@ -101,7 +99,7 @@
     <string name="show_all" msgid="6963292714584735149">"Obrazy i filmy"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Galeria zdjęć"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Brak zdjęć"</string>
-    <string name="crop_saved" msgid="1062612625032731770">"Przycięty obraz zapisano w Pobranych plikach."</string>
+    <string name="crop_saved" msgid="1595985909779105158">"Przycięty obraz zapisano w <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
     <string name="crop_not_saved" msgid="3400773981839556">"Przycięty obraz nie został zapisany."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Brak dostępnych albumów"</string>
     <string name="empty_album" msgid="4542880442593595494">"O dostępnych obrazów/filmów"</string>

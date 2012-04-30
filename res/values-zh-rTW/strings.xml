@@ -99,7 +99,7 @@
     <string name="show_all" msgid="6963292714584735149">"圖片和影片"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"相片庫"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"沒有任何相片。"</string>
-    <string name="crop_saved" msgid="1062612625032731770">"裁剪的圖片已儲存至「下載」資料夾。"</string>
+    <string name="crop_saved" msgid="1595985909779105158">"裁剪的圖片已儲存至「<xliff:g id="FOLDER_NAME">%s</xliff:g>」。"</string>
     <string name="crop_not_saved" msgid="3400773981839556">"未儲存裁剪的圖片。"</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"沒有相簿。"</string>
     <string name="empty_album" msgid="4542880442593595494">"O 個可用的圖片/影片。"</string>

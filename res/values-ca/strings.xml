@@ -99,7 +99,7 @@
     <string name="show_all" msgid="6963292714584735149">"Imatges i vídeos"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"Galeria de fotos"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Sense fotos."</string>
-    <string name="crop_saved" msgid="1062612625032731770">"S\'ha desat la imatge retallada a Baixades."</string>
+    <string name="crop_saved" msgid="1595985909779105158">"S\'ha desat la imatge retallada a <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
     <string name="crop_not_saved" msgid="3400773981839556">"La imatge retallada no s\'ha desat."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"No hi ha àlbums disponibles."</string>
     <string name="empty_album" msgid="4542880442593595494">"O imatges/vídeos disponibles."</string>
