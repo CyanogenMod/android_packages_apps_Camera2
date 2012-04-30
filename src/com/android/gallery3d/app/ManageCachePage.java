@@ -310,7 +310,6 @@ public class ManageCachePage extends ActivityState implements
     private void initializeFooterViews() {
         Activity activity = (Activity) mActivity;
 
-        FrameLayout footer = (FrameLayout) activity.findViewById(R.id.footer);
         LayoutInflater inflater = activity.getLayoutInflater();
         mFooterContent = inflater.inflate(R.layout.manage_offline_bar, null);
 
