@@ -21,7 +21,7 @@
     <!-- Toast shown when selected photo could not be loaded. [CHAR LIMIT=40] -->
     <string name="loading_failure">Couldn\'t load the photo</string>
 
-    <!-- Toast shown when edited photo could not be saved. [CHAR LIMIT=40] -->
+    <!-- Toast shown when edited photo could not be saved. [CHAR LIMIT=48] -->
     <string name="saving_failure">Couldn\'t save edited photo</string>
 
     <!-- Toast shown when edited photo is successfully saved under %s folder [CHAR LIMIT=40] -->
