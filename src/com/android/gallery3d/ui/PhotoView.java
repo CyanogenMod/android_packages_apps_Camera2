@@ -737,6 +737,8 @@ public class PhotoView extends GLView {
         private boolean mCanChangeMode;
         // If we have changed the film mode in this scaling gesture.
         private boolean mModeChanged;
+        // If this scaling gesture should be ignored.
+        private boolean mIgnoreScalingGesture;
 
         @Override
         public boolean onSingleTapUp(float x, float y) {
@@ -784,6 +786,11 @@ public class PhotoView extends GLView {
 
         @Override
         public boolean onScaleBegin(float focusX, float focusY) {
+            // We ignore the scaling gesture if it is a camera preview.
+            mIgnoreScalingGesture = mPictures.get(0).isCamera();
+            if (mIgnoreScalingGesture) {
+                return true;
+            }
             mPositionController.beginScale(focusX, focusY);
             // We can change mode if we are in film mode, or we are in page
             // mode and at minimal scale.
@@ -795,9 +802,17 @@ public class PhotoView extends GLView {
 
         @Override
         public boolean onScale(float focusX, float focusY, float scale) {
+            if (mIgnoreScalingGesture) {
+                return true;
+            }
             if (mModeChanged) return true;
             if (Float.isNaN(scale) || Float.isInfinite(scale)) return false;
+
+            // We wait for the scale change accumulated to a large enough change
+            // before reacting to it. Otherwise we may mistakenly treat a
+            // zoom-in gesture as zoom-out or vice versa.
             if (scale > 0.99f && scale < 1.01f) return false;
+
             int outOfRange = mPositionController.scaleBy(scale, focusX, focusY);
 
             // If mode changes, we treat this scaling gesture has ended.
@@ -807,7 +822,7 @@ public class PhotoView extends GLView {
                     stopExtraScalingIfNeeded();
 
                     // Removing the touch down flag allows snapback to happen
-                    // for file mode change.
+                    // for film mode change.
                     mHolding &= ~HOLD_TOUCH_DOWN;
                     setFilmMode(!mFilmMode);
 
@@ -827,6 +842,15 @@ public class PhotoView extends GLView {
             return true;
         }
 
+        @Override
+        public void onScaleEnd() {
+            if (mIgnoreScalingGesture) {
+                return;
+            }
+            if (mModeChanged) return;
+            mPositionController.endScale();
+        }
+
         private void startExtraScalingIfNeeded() {
             if (!mCancelExtraScalingPending) {
                 mHandler.sendEmptyMessageDelayed(
@@ -842,12 +866,6 @@ public class PhotoView extends GLView {
                 mPositionController.setExtraScalingRange(false);
                 mCancelExtraScalingPending = false;
             }
-        }
-
-        @Override
-        public void onScaleEnd() {
-            if (mModeChanged) return;
-            mPositionController.endScale();
         }
 
         @Override
@@ -903,6 +921,12 @@ public class PhotoView extends GLView {
 
     public void resume() {
         mTileView.prepareTextures();
+    }
+
+    // move to the camera preview and show controls after resume
+    public void resetToFirstPicture() {
+        mModel.moveTo(0);
+        setFilmMode(false);
     }
 
     ////////////////////////////////////////////////////////////////////////////
