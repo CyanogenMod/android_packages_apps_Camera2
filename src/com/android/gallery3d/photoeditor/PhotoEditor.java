@@ -195,10 +195,12 @@ public class PhotoEditor extends Activity {
 
                             @Override
                             public void run() {
+                                // Discard unsaved photo for the result.
                                 finish();
                             }
                         }, R.string.save_photo).show();
                     } else {
+                        setResult(RESULT_OK, new Intent().setData(saveUri));
                         finish();
                     }
                 }
