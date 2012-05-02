@@ -56,18 +56,17 @@ import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.ScreenNail;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
-import com.android.gallery3d.ui.UserInteractionListener;
 import com.android.gallery3d.util.GalleryUtils;
 
 public class PhotoPage extends ActivityState implements
-        PhotoView.Listener, UserInteractionListener,
-        OrientationManager.Listener, AppBridge.Server {
+        PhotoView.Listener, OrientationManager.Listener, AppBridge.Server {
     private static final String TAG = "PhotoPage";
 
     private static final int MSG_HIDE_BARS = 1;
     private static final int MSG_LOCK_ORIENTATION = 2;
     private static final int MSG_UNLOCK_ORIENTATION = 3;
     private static final int MSG_ON_FULL_SCREEN_CHANGED = 4;
+    private static final int MSG_UPDATE_ACTION_BAR = 5;
 
     private static final int HIDE_BARS_TIMEOUT = 3500;
 
@@ -101,10 +100,10 @@ public class PhotoPage extends ActivityState implements
     private int mCurrentIndex = 0;
     private Handler mHandler;
     private boolean mShowBars = true;
+    private volatile boolean mActionBarAllowed = true;
     private GalleryActionBar mActionBar;
     private MyMenuVisibilityListener mMenuVisibilityListener;
     private boolean mIsMenuVisible;
-    private boolean mIsInteracting;
     private MediaItem mCurrentPhoto = null;
     private MenuExecutor mMenuExecutor;
     private boolean mIsActive;
@@ -200,6 +199,7 @@ public class PhotoPage extends ActivityState implements
 
                 // Action bar should not be displayed when camera starts.
                 mFlags |= FLAG_HIDE_ACTION_BAR;
+                mShowBars = false;
             }
 
             mMediaSet = mActivity.getDataManager().getMediaSet(mSetPathString);
@@ -222,6 +222,7 @@ public class PhotoPage extends ActivityState implements
                         MediaItem photo = mModel.getCurrentMediaItem();
                         if (photo != null) updateCurrentPhoto(photo);
                     }
+                    updateBars();
                 }
 
                 @Override
@@ -269,6 +270,10 @@ public class PhotoPage extends ActivityState implements
                         mAppBridge.onFullScreenChanged(message.arg1 == 1);
                         break;
                     }
+                    case MSG_UPDATE_ACTION_BAR: {
+                        updateBars();
+                        break;
+                    }
                     default: throw new AssertionError(message.what);
                 }
             }
@@ -304,8 +309,6 @@ public class PhotoPage extends ActivityState implements
         mCurrentPhoto = photo;
         if (mCurrentPhoto == null) return;
         updateMenuOperations();
-        // Hide the action bar when going back to camera preview.
-        if (photo == mScreenNailItem) hideBars();
         updateTitle();
         if (mShowDetails) {
             mDetailsHelper.reloadDetails(mModel.getCurrentIndex());
@@ -356,62 +359,58 @@ public class PhotoPage extends ActivityState implements
         return true;
     }
 
+    //////////////////////////////////////////////////////////////////////////
+    //  Action Bar show/hide management
+    //////////////////////////////////////////////////////////////////////////
+
     private void showBars() {
         if (mShowBars) return;
         mShowBars = true;
         mActionBar.show();
-        WindowManager.LayoutParams params = ((Activity) mActivity).getWindow().getAttributes();
+        WindowManager.LayoutParams params =
+                ((Activity) mActivity).getWindow().getAttributes();
         params.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE;
         ((Activity) mActivity).getWindow().setAttributes(params);
+        refreshHidingMessage();
     }
 
     private void hideBars() {
         if (!mShowBars) return;
         mShowBars = false;
         mActionBar.hide();
-        WindowManager.LayoutParams params = ((Activity) mActivity).getWindow().getAttributes();
+        WindowManager.LayoutParams params =
+                ((Activity) mActivity).getWindow().getAttributes();
         params.systemUiVisibility = View. SYSTEM_UI_FLAG_LOW_PROFILE;
         ((Activity) mActivity).getWindow().setAttributes(params);
+        mHandler.removeMessages(MSG_HIDE_BARS);
     }
 
     private void refreshHidingMessage() {
         mHandler.removeMessages(MSG_HIDE_BARS);
-        if (!mIsMenuVisible && !mIsInteracting) {
+        if (!mIsMenuVisible) {
             mHandler.sendEmptyMessageDelayed(MSG_HIDE_BARS, HIDE_BARS_TIMEOUT);
         }
     }
 
-    @Override
-    public void onUserInteraction() {
-        showBars();
-        refreshHidingMessage();
-    }
-
-    public void onUserInteractionTap() {
+    private void toggleBars() {
         if (mShowBars) {
             hideBars();
-            mHandler.removeMessages(MSG_HIDE_BARS);
-        } else {
+        } else if (canShowBars()) {
             showBars();
-            refreshHidingMessage();
         }
     }
 
-    @Override
-    public void onUserInteractionBegin() {
-        showBars();
-        mIsInteracting = true;
-        refreshHidingMessage();
+    private void updateBars() {
+        if (canShowBars()) {
+            showBars();
+        } else {
+            hideBars();
+        }
     }
 
-    @Override
-    public void onUserInteractionEnd() {
-        mIsInteracting = false;
-
-        // This function could be called from GL thread (in SlotView.render)
-        // and post to the main thread. So, it could be executed while the
-        // activity is paused.
-        if (mIsActive) refreshHidingMessage();
+    private boolean canShowBars() {
+        boolean atCamera = mAppBridge != null && mCurrentIndex == 0;
+        return mActionBarAllowed && !atCamera;
     }
 
     @Override
@@ -475,7 +474,6 @@ public class PhotoPage extends ActivityState implements
         mShareActionProvider = GalleryActionBar.initializeShareActionProvider(menu);
         if (mPendingSharePath != null) updateShareURI(mPendingSharePath);
         mMenu = menu;
-        mShowBars = true;
         updateMenuOperations();
         updateTitle();
         return true;
@@ -608,7 +606,7 @@ public class PhotoPage extends ActivityState implements
         if (playVideo) {
             playVideo((Activity) mActivity, item.getPlayUri(), item.getName());
         } else {
-            onUserInteractionTap();
+            toggleBars();
         }
     }
 
@@ -620,6 +618,12 @@ public class PhotoPage extends ActivityState implements
     @Override
     public void unlockOrientation() {
         mHandler.sendEmptyMessage(MSG_UNLOCK_ORIENTATION);
+    }
+
+    @Override
+    public void onActionBarAllowed(boolean allowed) {
+        mActionBarAllowed = allowed;
+        mHandler.sendEmptyMessage(MSG_UPDATE_ACTION_BAR);
     }
 
     @Override
@@ -710,7 +714,6 @@ public class PhotoPage extends ActivityState implements
         mActionBar.setDisplayOptions(mSetPathString != null, true);
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
 
-        onUserInteraction();
         if (mAppBridge != null) {
             mAppBridge.setServer(this);
             mPhotoView.resetToFirstPicture();
