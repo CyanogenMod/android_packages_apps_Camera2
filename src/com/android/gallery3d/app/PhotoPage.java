@@ -43,7 +43,6 @@ import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.MtpDevice;
 import com.android.gallery3d.data.Path;
-import com.android.gallery3d.data.SnailItem;
 import com.android.gallery3d.data.SnailSource;
 import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.ui.DetailsHelper;
@@ -75,6 +74,7 @@ public class PhotoPage extends ActivityState implements
     private static final int REQUEST_SLIDESHOW = 1;
     private static final int REQUEST_CROP = 2;
     private static final int REQUEST_CROP_PICASA = 3;
+    private static final int REQUEST_EDIT = 4;
 
     public static final String KEY_MEDIA_SET_PATH = "media-set-path";
     public static final String KEY_MEDIA_ITEM_PATH = "media-item-path";
@@ -520,6 +520,14 @@ public class PhotoPage extends ActivityState implements
                         : REQUEST_CROP);
                 return true;
             }
+            case R.id.action_edit: {
+                Intent intent = new Intent(Intent.ACTION_EDIT)
+                        .setData(manager.getContentUri(path))
+                        .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                ((Activity) mActivity).startActivityForResult(Intent.createChooser(intent, null),
+                        REQUEST_EDIT);
+                return true;
+            }
             case R.id.action_details: {
                 if (mShowDetails) {
                     hideDetails();
@@ -534,7 +542,6 @@ public class PhotoPage extends ActivityState implements
             case R.id.action_rotate_ccw:
             case R.id.action_rotate_cw:
             case R.id.action_show_on_map:
-            case R.id.action_edit:
                 mSelectionManager.deSelectAll();
                 mSelectionManager.toggle(path);
                 mMenuExecutor.onMenuClicked(item, needsConfirm, null);
@@ -633,26 +640,34 @@ public class PhotoPage extends ActivityState implements
         }
     }
 
+    private void setCurrentPhotoByIntent(Intent intent) {
+        if (intent == null) return;
+        Path path = mApplication.getDataManager()
+                .findPathByUri(intent.getData(), intent.getType());
+        if (path != null) {
+            mModel.setCurrentPhoto(path, mCurrentIndex);
+        }
+    }
+
     @Override
     protected void onStateResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
+            case REQUEST_EDIT:
+                setCurrentPhotoByIntent(data);
+                break;
             case REQUEST_CROP:
                 if (resultCode == Activity.RESULT_OK) {
-                    if (data == null) break;
-                    Path path = mApplication.getDataManager()
-                            .findPathByUri(data.getData(), data.getType());
-                    if (path != null) {
-                        mModel.setCurrentPhoto(path, mCurrentIndex);
-                    }
+                    setCurrentPhotoByIntent(data);
                 }
                 break;
             case REQUEST_CROP_PICASA: {
-                Context context = mActivity.getAndroidContext();
-                // TODO: Use crop_saved instead of photo_saved after its new translation is done.
-                String message = resultCode == Activity.RESULT_OK ? context.getString(
-                        R.string.photo_saved, context.getString(R.string.folder_download))
-                        : context.getString(R.string.crop_not_saved);
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                if (resultCode == Activity.RESULT_OK) {
+                    Context context = mActivity.getAndroidContext();
+                    // TODO: Use crop_saved instead of photo_saved after its new translation is done.
+                    String message = context.getString(R.string.photo_saved,
+                            context.getString(R.string.folder_download));
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                }
                 break;
             }
             case REQUEST_SLIDESHOW: {

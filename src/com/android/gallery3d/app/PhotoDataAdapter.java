@@ -598,7 +598,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                 }
             } else {
                 entry = new ImageEntry();
-                entry.rotation = item.getFullImageRotation();
                 mImageCache.put(version, entry);
             }
         }
@@ -658,7 +657,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
     private static class ImageEntry {
         public int requestedBits = 0;
-        public int rotation;
         public BitmapRegionDecoder fullImage;
         public ScreenNail screenNail;
         public Future<ScreenNail> screenNailTask;
