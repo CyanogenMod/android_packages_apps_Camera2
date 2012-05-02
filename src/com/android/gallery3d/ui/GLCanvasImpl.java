@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.ui;
 
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.opengl.GLU;
 import android.opengl.Matrix;
@@ -32,6 +31,7 @@ import java.util.ArrayList;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
+import javax.microedition.khronos.opengles.GL11ExtensionPack;
 
 public class GLCanvasImpl implements GLCanvas {
     @SuppressWarnings("unused")
@@ -61,10 +61,10 @@ public class GLCanvasImpl implements GLCanvas {
     private int mBoxCoords;
 
     private final GLState mGLState;
+    private final ArrayList<RawTexture> mTargetStack = new ArrayList<RawTexture>();
 
     private float mAlpha;
-    private final ArrayList<ConfigState> mRestoreStack =
-            new ArrayList<ConfigState>();
+    private final ArrayList<ConfigState> mRestoreStack = new ArrayList<ConfigState>();
     private ConfigState mRecycledRestoreAction;
 
     private final RectF mDrawTextureSourceRect = new RectF();
@@ -72,8 +72,12 @@ public class GLCanvasImpl implements GLCanvas {
     private final float[] mTempMatrix = new float[32];
     private final IntArray mUnboundTextures = new IntArray();
     private final IntArray mDeleteBuffers = new IntArray();
-    private int mHeight;
+    private int mScreenWidth;
+    private int mScreenHeight;
     private boolean mBlendEnabled = true;
+    private int mFrameBuffer[] = new int[1];
+
+    private RawTexture mTargetTexture;
 
     // Drawing statistics
     int mCountDrawLine;
@@ -90,7 +94,12 @@ public class GLCanvasImpl implements GLCanvas {
 
     public void setSize(int width, int height) {
         Utils.assertTrue(width >= 0 && height >= 0);
-        mHeight = height;
+
+        if (mTargetTexture == null) {
+            mScreenWidth = width;
+            mScreenHeight = height;
+        }
+        mAlpha = 1.0f;
 
         GL11 gl = mGL;
         gl.glViewport(0, 0, width, height);
@@ -100,11 +109,14 @@ public class GLCanvasImpl implements GLCanvas {
 
         gl.glMatrixMode(GL11.GL_MODELVIEW);
         gl.glLoadIdentity();
-        float matrix[] = mMatrixValues;
 
+        float matrix[] = mMatrixValues;
         Matrix.setIdentityM(matrix, 0);
-        Matrix.translateM(matrix, 0, 0, mHeight, 0);
-        Matrix.scaleM(matrix, 0, 1, -1, 1);
+        // to match the graphic coordinate system in android, we flip it vertically.
+        if (mTargetTexture == null) {
+            Matrix.translateM(matrix, 0, 0, height, 0);
+            Matrix.scaleM(matrix, 0, 1, -1, 1);
+        }
     }
 
     public void setAlpha(float alpha) {
@@ -151,8 +163,7 @@ public class GLCanvasImpl implements GLCanvas {
         gl.glClientActiveTexture(GL11.GL_TEXTURE0);
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 
-        // mMatrixValues will be initialized in setSize()
-        mAlpha = 1.0f;
+        // mMatrixValues and mAlpha will be initialized in setSize()
     }
 
     public void drawRect(float x, float y, float width, float height, GLPaint paint) {
@@ -724,7 +735,6 @@ public class GLCanvasImpl implements GLCanvas {
 
     private static class ConfigState {
         float mAlpha;
-        Rect mRect = new Rect();
         float mMatrix[] = new float[16];
         ConfigState mNextFree;
 
@@ -755,5 +765,80 @@ public class GLCanvasImpl implements GLCanvas {
 
     private void restoreTransform() {
         System.arraycopy(mTempMatrix, 0, mMatrixValues, 0, 16);
+    }
+
+    private void setRenderTarget(RawTexture texture) {
+        GL11ExtensionPack gl11ep = (GL11ExtensionPack) mGL;
+
+        if (mTargetTexture == null && texture != null) {
+            GLId.glGenBuffers(1, mFrameBuffer, 0);
+            gl11ep.glBindFramebufferOES(
+                    GL11ExtensionPack.GL_FRAMEBUFFER_OES, mFrameBuffer[0]);
+        }
+        if (mTargetTexture != null && texture  == null) {
+            gl11ep.glBindFramebufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, 0);
+            gl11ep.glDeleteFramebuffersOES(1, mFrameBuffer, 0);
+        }
+
+        mTargetTexture = texture;
+        if (texture == null) {
+            setSize(mScreenWidth, mScreenHeight);
+        } else {
+            setSize(texture.getWidth(), texture.getHeight());
+
+            if (!texture.isLoaded(this)) texture.prepare(this);
+
+            gl11ep.glFramebufferTexture2DOES(
+                    GL11ExtensionPack.GL_FRAMEBUFFER_OES,
+                    GL11ExtensionPack.GL_COLOR_ATTACHMENT0_OES,
+                    GL11.GL_TEXTURE_2D, texture.getId(), 0);
+
+            checkFramebufferStatus(gl11ep);
+        }
+    }
+
+    @Override
+    public void endRenderTarget() {
+        RawTexture texture = mTargetStack.remove(mTargetStack.size() - 1);
+        setRenderTarget(texture);
+        restore(); // restore matrix and alpha
+    }
+
+    @Override
+    public void beginRenderTarget(RawTexture texture) {
+        save(); // save matrix and alpha
+        mTargetStack.add(mTargetTexture);
+        setRenderTarget(texture);
+    }
+
+    private static void checkFramebufferStatus(GL11ExtensionPack gl11ep) {
+        int status = gl11ep.glCheckFramebufferStatusOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES);
+        if (status != GL11ExtensionPack.GL_FRAMEBUFFER_COMPLETE_OES) {
+            String msg = "";
+            switch (status) {
+                case GL11ExtensionPack.GL_FRAMEBUFFER_INCOMPLETE_FORMATS_OES:
+                    msg = "FRAMEBUFFER_FORMATS";
+                    break;
+                case GL11ExtensionPack.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_OES:
+                    msg = "FRAMEBUFFER_ATTACHMENT";
+                    break;
+                case GL11ExtensionPack.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_OES:
+                    msg = "FRAMEBUFFER_MISSING_ATTACHMENT";
+                    break;
+                case GL11ExtensionPack.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_OES:
+                    msg = "FRAMEBUFFER_DRAW_BUFFER";
+                    break;
+                case GL11ExtensionPack.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_OES:
+                    msg = "FRAMEBUFFER_READ_BUFFER";
+                    break;
+                case GL11ExtensionPack.GL_FRAMEBUFFER_UNSUPPORTED_OES:
+                    msg = "FRAMEBUFFER_UNSUPPORTED";
+                    break;
+                case GL11ExtensionPack.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_OES:
+                    msg = "FRAMEBUFFER_INCOMPLETE_DIMENSIONS";
+                    break;
+            }
+            throw new RuntimeException(msg + ":" + Integer.toHexString(status));
+        }
     }
 }
