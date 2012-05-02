@@ -77,7 +77,6 @@
     <string name="rotate_right" msgid="6776325835923384839">"Xoay phải"</string>
     <string name="no_such_item" msgid="5315144556325243400">"Không thể tìm thấy mục."</string>
     <string name="edit" msgid="1502273844748580847">"Chỉnh sửa"</string>
-    <string name="activity_not_found" msgid="5619154886080878023">"Không có ứng dụng nào để hoàn tất tác vụ."</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"Đang xử lý yêu cầu lưu vào bộ nhớ cache"</string>
     <string name="caching_label" msgid="4521059045896269095">"Lưu cache..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Cắt"</string>
@@ -100,7 +99,6 @@
     <string name="appwidget_title" msgid="6410561146863700411">"Thư viện ảnh"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Không có ảnh."</string>
     <string name="crop_saved" msgid="1595985909779105158">"Đã lưu hình ảnh được cắt vào <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="crop_not_saved" msgid="3400773981839556">"Hình ảnh được cắt chưa được lưu."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Không có album nào."</string>
     <string name="empty_album" msgid="4542880442593595494">"O có hình ảnh/video nào."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Bài đăng"</string>
