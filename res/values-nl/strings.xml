@@ -77,7 +77,6 @@
     <string name="rotate_right" msgid="6776325835923384839">"Rechtsom draaien"</string>
     <string name="no_such_item" msgid="5315144556325243400">"Kan item niet vinden."</string>
     <string name="edit" msgid="1502273844748580847">"Bewerken"</string>
-    <string name="activity_not_found" msgid="5619154886080878023">"Geen app beschikbaar om de actie te voltooien."</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"Cacheverzoeken verwerken"</string>
     <string name="caching_label" msgid="4521059045896269095">"In cache opslaan..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Bijsnijden"</string>
@@ -100,7 +99,6 @@
     <string name="appwidget_title" msgid="6410561146863700411">"Fotogalerij"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Geen foto\'s."</string>
     <string name="crop_saved" msgid="1595985909779105158">"Bijgesneden afbeelding is opgeslagen in <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="crop_not_saved" msgid="3400773981839556">"Bijgesneden afbeelding is niet opgeslagen."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Geen albums beschikbaar."</string>
     <string name="empty_album" msgid="4542880442593595494">"0 afbeeldingen/video\'s beschikbaar."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Berichten"</string>

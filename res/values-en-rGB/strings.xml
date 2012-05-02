@@ -77,7 +77,6 @@
     <string name="rotate_right" msgid="6776325835923384839">"Rotate right"</string>
     <string name="no_such_item" msgid="5315144556325243400">"Couldn\'t find item."</string>
     <string name="edit" msgid="1502273844748580847">"Edit"</string>
-    <string name="activity_not_found" msgid="5619154886080878023">"No app is available to complete the action."</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"Process Caching Requests"</string>
     <string name="caching_label" msgid="4521059045896269095">"Caching..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Crop"</string>
@@ -100,7 +99,6 @@
     <string name="appwidget_title" msgid="6410561146863700411">"Photo Gallery"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"No photos."</string>
     <string name="crop_saved" msgid="1595985909779105158">"Cropped image saved to <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="crop_not_saved" msgid="3400773981839556">"Cropped image wasn\'t saved."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"No albums available."</string>
     <string name="empty_album" msgid="4542880442593595494">"O images/videos available."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Posts"</string>
