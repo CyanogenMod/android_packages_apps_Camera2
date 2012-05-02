@@ -77,7 +77,6 @@
     <string name="rotate_right" msgid="6776325835923384839">"向右旋转"</string>
     <string name="no_such_item" msgid="5315144556325243400">"找不到指定的项。"</string>
     <string name="edit" msgid="1502273844748580847">"编辑"</string>
-    <string name="activity_not_found" msgid="5619154886080878023">"没有可完成该操作的应用。"</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"正在处理缓存请求"</string>
     <string name="caching_label" msgid="4521059045896269095">"正在缓存..."</string>
     <string name="crop_action" msgid="3427470284074377001">"修剪"</string>
@@ -100,7 +99,6 @@
     <string name="appwidget_title" msgid="6410561146863700411">"照片库"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"无照片。"</string>
     <string name="crop_saved" msgid="1595985909779105158">"经过裁剪的图片已保存至“<xliff:g id="FOLDER_NAME">%s</xliff:g>”。"</string>
-    <string name="crop_not_saved" msgid="3400773981839556">"经过裁剪的图片尚未保存。"</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"没有可用的相册。"</string>
     <string name="empty_album" msgid="4542880442593595494">"没有可用的图片/视频。"</string>
     <string name="picasa_posts" msgid="1497721615718760613">"帖子"</string>
