@@ -77,7 +77,6 @@
     <string name="rotate_right" msgid="6776325835923384839">"Поверн. вправо"</string>
     <string name="no_such_item" msgid="5315144556325243400">"Не вдалося знайти елемент."</string>
     <string name="edit" msgid="1502273844748580847">"Редагувати"</string>
-    <string name="activity_not_found" msgid="5619154886080878023">"Немає доступної програми, щоб виконати цю дію."</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"Виконується обробка запитів кешування"</string>
     <string name="caching_label" msgid="4521059045896269095">"Кешування..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Обрізати"</string>
@@ -100,7 +99,6 @@
     <string name="appwidget_title" msgid="6410561146863700411">"Фотогалерея"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Фотографій немає."</string>
     <string name="crop_saved" msgid="1595985909779105158">"Обрізане зображення збережено в папці <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="crop_not_saved" msgid="3400773981839556">"Обрізане зображення не збережено."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Немає доступних альбомів."</string>
     <string name="empty_album" msgid="4542880442593595494">"Немає доступних зображень або відео."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Публікації"</string>
