@@ -27,7 +27,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.CropImage;
@@ -175,9 +174,15 @@ public class MenuExecutor {
         return ids.get(0);
     }
 
+    private Intent getIntentBySingleSelectedPath(String action) {
+        DataManager manager = mActivity.getDataManager();
+        Path path = getSingleSelectedPath();
+        String mimeType = getMimeType(manager.getMediaType(path));
+        return new Intent(action).setDataAndType(manager.getContentUri(path), mimeType);
+    }
+
     private void onMenuClicked(int action, ProgressListener listener) {
         int title;
-        DataManager manager = mActivity.getDataManager();
         switch (action) {
             case R.id.action_select_all:
                 if (mSelectionManager.inSelectAllMode()) {
@@ -187,21 +192,20 @@ public class MenuExecutor {
                 }
                 return;
             case R.id.action_crop: {
-                Path path = getSingleSelectedPath();
-                String mimeType = getMimeType(manager.getMediaType(path));
-                Intent intent = new Intent(CropImage.ACTION_CROP)
-                        .setDataAndType(manager.getContentUri(path), mimeType);
+                Intent intent = getIntentBySingleSelectedPath(CropImage.ACTION_CROP);
                 ((Activity) mActivity).startActivity(intent);
                 return;
             }
+            case R.id.action_edit: {
+                Intent intent = getIntentBySingleSelectedPath(Intent.ACTION_EDIT)
+                        .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                ((Activity) mActivity).startActivity(Intent.createChooser(intent, null));
+                return;
+            }
             case R.id.action_setas: {
-                Path path = getSingleSelectedPath();
-                int type = manager.getMediaType(path);
-                Intent intent = new Intent(Intent.ACTION_ATTACH_DATA);
-                String mimeType = getMimeType(type);
-                intent.setDataAndType(manager.getContentUri(path), mimeType);
-                intent.putExtra("mimeType", mimeType);
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Intent intent = getIntentBySingleSelectedPath(Intent.ACTION_ATTACH_DATA)
+                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.putExtra("mimeType", intent.getType());
                 Activity activity = (Activity) mActivity;
                 activity.startActivity(Intent.createChooser(
                         intent, activity.getString(R.string.set_as)));
@@ -218,9 +222,6 @@ public class MenuExecutor {
                 break;
             case R.id.action_show_on_map:
                 title = R.string.show_on_map;
-                break;
-            case R.id.action_edit:
-                title = R.string.edit;
                 break;
             case R.id.action_import:
                 title = R.string.Import;
@@ -308,23 +309,6 @@ public class MenuExecutor {
             case R.id.action_import: {
                 MediaObject obj = manager.getMediaObject(path);
                 result = obj.Import();
-                break;
-            }
-            case R.id.action_edit: {
-                Activity activity = (Activity) mActivity;
-                MediaItem item = (MediaItem) manager.getMediaObject(path);
-                try {
-                    activity.startActivity(Intent.createChooser(
-                            new Intent(Intent.ACTION_EDIT)
-                                    .setDataAndType(item.getContentUri(), item.getMimeType())
-                                    .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION),
-                            null));
-                } catch (Throwable t) {
-                    Log.w(TAG, "failed to start edit activity: ", t);
-                    Toast.makeText(activity,
-                            activity.getString(R.string.activity_not_found),
-                            Toast.LENGTH_SHORT).show();
-                }
                 break;
             }
             default:

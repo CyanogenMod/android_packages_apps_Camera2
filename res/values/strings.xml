@@ -147,10 +147,6 @@
          [CHAR_LIMIT=20]-->
     <string name="edit">Edit</string>
 
-    <!-- String used in a toast message indicating there is no application
-         available to handle a request [CHAR LIMIT=50] -->
-    <string name="activity_not_found">No app is available to complete the action.</string>
-
     <!-- String used as a title of a progress dialog. The user can
          choose to cache some Picasa picture albums on device, so it can
          be viewed offline. This string is shown when the request is being
@@ -233,10 +229,6 @@
          %s folder (string: folder_download) [CHAR LIMIT=50]-->
     <string name="crop_saved">
         Cropped image saved to <xliff:g id="folder_name">%s</xliff:g>.</string>
-
-    <!-- Toast message shown when the cropped image is not saved
-         [CHAR LIMIT=50]-->
-    <string name="crop_not_saved">Cropped image wasn\'t saved.</string>
 
     <!-- Toast message shown when there is no albums available [CHAR LIMIT=50]-->
     <string name="no_albums_alert">No albums available.</string>
