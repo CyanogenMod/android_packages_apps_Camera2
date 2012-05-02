@@ -77,7 +77,6 @@
     <string name="rotate_right" msgid="6776325835923384839">"Gira a la dreta"</string>
     <string name="no_such_item" msgid="5315144556325243400">"No s\'ha trobat l\'element."</string>
     <string name="edit" msgid="1502273844748580847">"Edita"</string>
-    <string name="activity_not_found" msgid="5619154886080878023">"No hi ha cap aplicació disponible per completar l\'acció."</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"S\'estan processant les sol·licituds de memòria cau"</string>
     <string name="caching_label" msgid="4521059045896269095">"S\'està desant a la memòria cau..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Retalla"</string>
@@ -100,7 +99,6 @@
     <string name="appwidget_title" msgid="6410561146863700411">"Galeria de fotos"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Sense fotos."</string>
     <string name="crop_saved" msgid="1595985909779105158">"S\'ha desat la imatge retallada a <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="crop_not_saved" msgid="3400773981839556">"La imatge retallada no s\'ha desat."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"No hi ha àlbums disponibles."</string>
     <string name="empty_album" msgid="4542880442593595494">"O imatges/vídeos disponibles."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Publicacions"</string>

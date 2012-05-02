@@ -77,7 +77,6 @@
     <string name="rotate_right" msgid="6776325835923384839">"Rotera åt höger"</string>
     <string name="no_such_item" msgid="5315144556325243400">"Det gick inte att hitta objektet."</string>
     <string name="edit" msgid="1502273844748580847">"Redigera"</string>
-    <string name="activity_not_found" msgid="5619154886080878023">"Det finns ingen app för att slutföra åtgärden."</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"Begäran om cachelagring bearbetas"</string>
     <string name="caching_label" msgid="4521059045896269095">"Cachelagrar ..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Beskär"</string>
@@ -100,7 +99,6 @@
     <string name="appwidget_title" msgid="6410561146863700411">"Fotogalleri"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Inga foton."</string>
     <string name="crop_saved" msgid="1595985909779105158">"Den beskurna bilden har sparats i <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="crop_not_saved" msgid="3400773981839556">"Den beskurna bilden sparades inte."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Det finns inga album."</string>
     <string name="empty_album" msgid="4542880442593595494">"Det finns inga bilder/videor."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Inlägg"</string>
