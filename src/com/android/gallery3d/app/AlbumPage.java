@@ -537,7 +537,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             case REQUEST_PHOTO: {
                 if (data == null) return;
                 mFocusIndex = data.getIntExtra(PhotoPage.KEY_RETURN_INDEX_HINT, 0);
-                mSlotView.setCenterIndex(mFocusIndex);
+                mSlotView.makeSlotVisible(mFocusIndex);
                 mSlotView.startRestoringAnimation(mFocusIndex);
                 break;
             }
