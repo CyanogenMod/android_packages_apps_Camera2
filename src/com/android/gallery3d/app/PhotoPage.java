@@ -712,7 +712,7 @@ public class PhotoPage extends ActivityState implements
         onUserInteraction();
         if (mAppBridge != null) {
             mAppBridge.setServer(this);
-            mModel.moveTo(0);  // move to the camera preview after resume
+            mPhotoView.resetToFirstPicture();
         }
     }
 
