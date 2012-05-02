@@ -77,7 +77,6 @@
     <string name="rotate_right" msgid="6776325835923384839">"Forgatás jobbra"</string>
     <string name="no_such_item" msgid="5315144556325243400">"Nem található az elem."</string>
     <string name="edit" msgid="1502273844748580847">"Szerkesztés"</string>
-    <string name="activity_not_found" msgid="5619154886080878023">"Nincs elérhető alkalmazás a művelet befejezéséhez."</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"Tárolási kérelmek feldolgozása"</string>
     <string name="caching_label" msgid="4521059045896269095">"Gyorsítótárazás..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Körbevágás"</string>
@@ -100,7 +99,6 @@
     <string name="appwidget_title" msgid="6410561146863700411">"Fotógaléria"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"Nincsenek fényképek."</string>
     <string name="crop_saved" msgid="1595985909779105158">"A vágott képet a(z) <xliff:g id="FOLDER_NAME">%s</xliff:g> mappába mentettük."</string>
-    <string name="crop_not_saved" msgid="3400773981839556">"A vágott kép nincs elmentve."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"Nincs elérhető album."</string>
     <string name="empty_album" msgid="4542880442593595494">"Nincs elérhető kép/videó."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Bejegyzések"</string>
