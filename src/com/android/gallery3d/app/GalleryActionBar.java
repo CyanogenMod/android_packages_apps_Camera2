@@ -208,7 +208,14 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
         new AlertDialog.Builder(mContext).setTitle(R.string.group_by).setItems(
                 mTitles, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                clusterRunner.doCluster(actions.get(which).intValue());
+                // Need to lock rendering when operations invoked by system UI (main thread) are
+                // modifying slot data used in GL thread for rendering.
+                mActivity.getGLRoot().lockRenderThread();
+                try {
+                    clusterRunner.doCluster(actions.get(which).intValue());
+                } finally {
+                    mActivity.getGLRoot().unlockRenderThread();
+                }
             }
         }).create().show();
     }
@@ -268,6 +275,8 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
     @Override
     public boolean onNavigationItemSelected(int itemPosition, long itemId) {
         if (itemPosition != mCurrentIndex && mClusterRunner != null) {
+            // Need to lock rendering when operations invoked by system UI (main thread) are
+            // modifying slot data used in GL thread for rendering.
             mActivity.getGLRoot().lockRenderThread();
             try {
                 mClusterRunner.doCluster(sClusterItems[itemPosition].action);
