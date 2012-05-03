@@ -19,10 +19,10 @@
     <string name="photoeditor_name" msgid="4738587346771969697">"Estudio de fotografía"</string>
     <string name="loading_failure" msgid="7890360277163832130">"No se puede cargar la foto"</string>
     <string name="saving_failure" msgid="8229491575433743974">"No se pudo guardar la foto editada"</string>
-    <string name="photo_saved" msgid="6163006724627682202">"La foto editada se ha guardado en <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="save_photo" msgid="3125109368779997862">"¿Guardar foto editada?"</string>
+    <string name="photo_saved" msgid="6163006724627682202">"La foto editada se guardó en <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
+    <!-- no translation found for discard_unsaved_photo (2353274490633681946) -->
+    <skip />
     <string name="yes" msgid="5402582493291792293">"Sí"</string>
-    <string name="no" msgid="5595408018304861875">"No"</string>
     <string name="save" msgid="5516670392524294967">"GUARDAR"</string>
     <string name="autofix" msgid="1663414996270538748">"Autocorrección"</string>
     <string name="crop" msgid="7598378507763334041">"Recortar"</string>
@@ -54,7 +54,7 @@
     <string name="crop_tooltip" msgid="8794037869706891710">"Arrastrar los marcadores para recortar la foto"</string>
     <string name="doodle_tooltip" msgid="2902117272374362915">"Dibuja en la foto para hacer garabatos"</string>
     <string name="flip_tooltip" msgid="2700943256714731737">"Arrastra la foto para darla vuelta"</string>
-    <string name="redeye_tooltip" msgid="4183695928490874014">"Pulsa sobre los ojos rojos para eliminarlos"</string>
+    <string name="redeye_tooltip" msgid="4183695928490874014">"Elimina los ojos rojos tocando el icono"</string>
     <string name="rotate_tooltip" msgid="7008602969130734229">"Arrastra la foto para hacerla girar"</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"Arrastra la foto para enderezarla"</string>
 </resources>
