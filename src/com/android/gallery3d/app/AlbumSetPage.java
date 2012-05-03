@@ -485,10 +485,7 @@ public class AlbumSetPage extends ActivityState implements
                 }
                 return true;
             case R.id.action_camera: {
-                Intent intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
-                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        | Intent.FLAG_ACTIVITY_NEW_TASK);
-                activity.startActivity(intent);
+                GalleryUtils.startCameraActivity(activity);
                 return true;
             }
             case R.id.action_manage_offline: {
