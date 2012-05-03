@@ -74,6 +74,7 @@ public class PhotoView extends GLView {
         public void lockOrientation();
         public void unlockOrientation();
         public void onFullScreenChanged(boolean full);
+        public void onActionBarAllowed(boolean allowed);
     }
 
     // Here is a graph showing the places we need to lock/unlock device
@@ -755,6 +756,7 @@ public class PhotoView extends GLView {
 
         @Override
         public boolean onDoubleTap(float x, float y) {
+            if (mPictures.get(0).isCamera()) return false;
             PositionController controller = mPositionController;
             float scale = controller.getImageScale();
             // onDoubleTap happened on the second ACTION_DOWN.
@@ -892,6 +894,7 @@ public class PhotoView extends GLView {
         mFilmMode = enabled;
         mPositionController.setFilmMode(mFilmMode);
         mModel.setNeedFullImage(!enabled);
+        mListener.onActionBarAllowed(!enabled);
 
         // If we leave filmstrip mode, we should lock/unlock
         if (!enabled) {
@@ -1127,6 +1130,8 @@ public class PhotoView extends GLView {
         if (mHolding != 0) return true;
         if (offset == 1) {
             if (mNextBound <= 0) return false;
+            // Temporary disable action bar until the capture animation is done.
+            if (!mFilmMode) mListener.onActionBarAllowed(false);
             switchToNextImage();
             mPositionController.startCaptureAnimationSlide(-1);
         } else if (offset == -1) {
@@ -1146,7 +1151,11 @@ public class PhotoView extends GLView {
         mHolding &= ~HOLD_CAPTURE_ANIMATION;
         if (offset == 1) {
             // move out of camera, unlock
-            if (!mFilmMode) mListener.unlockOrientation();  // Transition B
+            if (!mFilmMode) {
+                mListener.unlockOrientation();  // Transition B
+                // Now the capture animation is done, enable the action bar.
+                mListener.onActionBarAllowed(true);
+            }
         }
         snapback();
     }
