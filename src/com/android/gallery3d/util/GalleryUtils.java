@@ -206,6 +206,13 @@ public class GalleryUtils {
         return prefs.getBoolean(KEY_HAS_CAMERA, true);
     }
 
+    public static void startCameraActivity(Context context) {
+        Intent intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
     public static boolean isValidLocation(double latitude, double longitude) {
         // TODO: change || to && after we fix the default location issue
         return (latitude != MediaItem.INVALID_LATLNG || longitude != MediaItem.INVALID_LATLNG);
