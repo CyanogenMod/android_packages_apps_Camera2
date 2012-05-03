@@ -295,8 +295,6 @@ public class AlbumSetPage extends ActivityState implements
     private void clearLoadingBit(int loadingBit) {
         mLoadingBits &= ~loadingBit;
         if (mLoadingBits == 0 && mIsActive) {
-            GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
-
             // Only show toast when there's no album and we are going to finish
             // the page. Toast is redundant if we are going to stay on this page.
             if ((mAlbumSetDataAdapter.size() == 0)) {
@@ -310,9 +308,6 @@ public class AlbumSetPage extends ActivityState implements
     }
 
     private void setLoadingBit(int loadingBit) {
-        if (mLoadingBits == 0 && mIsActive) {
-            GalleryUtils.setSpinnerVisibility((Activity) mActivity, true);
-        }
         mLoadingBits |= loadingBit;
     }
 
@@ -334,7 +329,6 @@ public class AlbumSetPage extends ActivityState implements
             mSyncTask = null;
             clearLoadingBit(BIT_LOADING_SYNC);
         }
-        GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
     }
 
     @Override
