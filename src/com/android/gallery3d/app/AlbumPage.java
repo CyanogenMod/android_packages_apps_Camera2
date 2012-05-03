@@ -56,6 +56,7 @@ import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.MediaSetUtils;
 
 public class AlbumPage extends ActivityState implements GalleryActionBar.ClusterRunner,
         SelectionManager.SelectionListener, MediaSet.SyncListener {
@@ -470,11 +471,18 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 menu.findItem(R.id.action_slideshow).setVisible(true);
             }
 
-            MenuItem groupBy = menu.findItem(R.id.action_group_by);
             FilterUtils.setupMenuItems(actionBar, mMediaSetPath, true);
 
+            MenuItem groupBy = menu.findItem(R.id.action_group_by);
             if (groupBy != null) {
                 groupBy.setVisible(mShowClusterMenu);
+            }
+
+            MenuItem switchCamera = menu.findItem(R.id.action_camera);
+            if (switchCamera != null) {
+                switchCamera.setVisible(
+                        MediaSetUtils.isCameraSource(mMediaSetPath)
+                        && GalleryUtils.isCameraAvailable(activity));
             }
 
             actionBar.setTitle(mMediaSet.getName());
@@ -517,6 +525,10 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 } else {
                     showDetails();
                 }
+                return true;
+            }
+            case R.id.action_camera: {
+                GalleryUtils.startCameraActivity((Activity) mActivity);
                 return true;
             }
             default:
