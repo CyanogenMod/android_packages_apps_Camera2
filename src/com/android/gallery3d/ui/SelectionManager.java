@@ -107,15 +107,21 @@ public class SelectionManager {
         return mInverseSelection ^ mClickedSet.contains(itemId);
     }
 
+    private int getTotalCount() {
+        if (mSourceMediaSet == null) return -1;
+
+        if (mTotal < 0) {
+            mTotal = mIsAlbumSet
+                    ? mSourceMediaSet.getSubMediaSetCount()
+                    : mSourceMediaSet.getMediaItemCount();
+        }
+        return mTotal;
+    }
+
     public int getSelectedCount() {
         int count = mClickedSet.size();
         if (mInverseSelection) {
-            if (mTotal < 0) {
-                mTotal = mIsAlbumSet
-                        ? mSourceMediaSet.getSubMediaSetCount()
-                        : mSourceMediaSet.getMediaItemCount();
-            }
-            count = mTotal - count;
+            count = getTotalCount() - count;
         }
         return count;
     }
@@ -128,8 +134,14 @@ public class SelectionManager {
             mClickedSet.add(path);
         }
 
+        // Convert to inverse selection mode if everything is selected.
+        int count = getSelectedCount();
+        if (count == getTotalCount()) {
+            selectAll();
+        }
+
         if (mListener != null) mListener.onSelectionChange(path, isItemSelected(path));
-        if (getSelectedCount() == 0 && mAutoLeave) {
+        if (count == 0 && mAutoLeave) {
             leaveSelectionMode();
         }
     }
@@ -159,8 +171,8 @@ public class SelectionManager {
         ArrayList<Path> selected = new ArrayList<Path>();
         if (mIsAlbumSet) {
             if (mInverseSelection) {
-                int max = mSourceMediaSet.getSubMediaSetCount();
-                for (int i = 0; i < max; i++) {
+                int total = getTotalCount();
+                for (int i = 0; i < total; i++) {
                     MediaSet set = mSourceMediaSet.getSubMediaSet(i);
                     Path id = set.getPath();
                     if (!mClickedSet.contains(id)) {
@@ -182,8 +194,7 @@ public class SelectionManager {
             }
         } else {
             if (mInverseSelection) {
-
-                int total = mSourceMediaSet.getMediaItemCount();
+                int total = getTotalCount();
                 int index = 0;
                 while (index < total) {
                     int count = Math.min(total - index, MediaSet.MEDIAITEM_BATCH_FETCH_COUNT);
