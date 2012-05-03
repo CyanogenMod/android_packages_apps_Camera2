@@ -92,10 +92,6 @@ public class ActionBar extends RestorableView {
         findViewById(R.id.action_bar_back).performClick();
     }
 
-    public void clickSave() {
-        findViewById(R.id.save_button).performClick();
-    }
-
     public boolean canSave() {
         return findViewById(R.id.save_button).isEnabled();
     }

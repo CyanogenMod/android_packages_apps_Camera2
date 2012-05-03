@@ -27,14 +27,11 @@
     <!-- Toast shown when edited photo is successfully saved under %s folder [CHAR LIMIT=40] -->
     <string name="photo_saved">Edited photo saved to <xliff:g id="folder_name">%s</xliff:g></string>
 
-    <!-- Dialog message prompted when the user is abandoning unsaved changes. [CHAR LIMIT=40] -->
-    <string name="save_photo">Save edited photo?</string>
+    <!-- Dialog message prompted to confirm the user is abandoning unsaved changes. [CHAR LIMIT=40] -->
+    <string name="discard_unsaved_photo">Discard unsaved changes?</string>
 
     <!-- Dialog yes button for the user to accept text presented in a dialog. [CHAR LIMIT=12] -->
     <string name="yes">Yes</string>
-
-    <!-- Dialog no button for the user to decline text presented in a dialog. [CHAR LIMIT=12] -->
-    <string name="no">No</string>
 
     <!-- Text button in the action bar for the user to save edited photo. [CHAR LIMIT=8] -->
     <string name="save">SAVE</string>
