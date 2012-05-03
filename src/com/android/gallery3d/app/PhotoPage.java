@@ -128,6 +128,7 @@ public class PhotoPage extends ActivityState implements
     }
 
     private class MyMenuVisibilityListener implements OnMenuVisibilityListener {
+        @Override
         public void onMenuVisibilityChanged(boolean isVisible) {
             mIsMenuVisible = isVisible;
             refreshHidingMessage();
@@ -567,6 +568,7 @@ public class PhotoPage extends ActivityState implements
         if (mDetailsHelper == null) {
             mDetailsHelper = new DetailsHelper(mActivity, mRootPane, new MyDetailsSource());
             mDetailsHelper.setCloseListener(new CloseListener() {
+                @Override
                 public void onClose() {
                     hideDetails();
                 }
@@ -617,8 +619,7 @@ public class PhotoPage extends ActivityState implements
 
     @Override
     public void unlockOrientation() {
-        // Temporarily disabled until Camera UI can switch orientation.
-        // mHandler.sendEmptyMessage(MSG_UNLOCK_ORIENTATION);
+        mHandler.sendEmptyMessage(MSG_UNLOCK_ORIENTATION);
     }
 
     @Override
