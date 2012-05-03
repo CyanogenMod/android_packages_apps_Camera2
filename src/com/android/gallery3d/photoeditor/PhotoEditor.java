@@ -183,22 +183,16 @@ public class PhotoEditor extends Activity {
             public void run() {
                 // Exit effects or go back to the previous activity on pressing back button.
                 if (!effectsBar.exit(null)) {
-                    // Pop-up a dialog to save unsaved photo.
+                    // Pop-up a dialog if there are unsaved changes.
                     if (actionBar.canSave()) {
-                        new YesNoCancelDialogBuilder(PhotoEditor.this, new Runnable() {
-
-                            @Override
-                            public void run() {
-                                actionBar.clickSave();
-                            }
-                        }, new Runnable() {
+                        new YesCancelDialogBuilder(PhotoEditor.this, new Runnable() {
 
                             @Override
                             public void run() {
                                 // Discard unsaved photo for the result.
                                 finish();
                             }
-                        }, R.string.save_photo).show();
+                        }, R.string.discard_unsaved_photo).show();
                     } else {
                         setResult(RESULT_OK, new Intent().setData(saveUri));
                         finish();
