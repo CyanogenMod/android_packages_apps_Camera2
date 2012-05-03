@@ -109,6 +109,10 @@ public class OrientationManager {
         disableCompensation();
     }
 
+    public boolean isOrientationLocked() {
+        return mOrientationLocked;
+    }
+
     // Calculate the compensation value and send it to listeners.
     private void updateCompensation() {
         if (mOrientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
