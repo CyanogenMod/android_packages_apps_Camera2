@@ -7,25 +7,17 @@ import android.content.DialogInterface;
 import com.android.gallery3d.R;
 
 /**
- * Alert dialog builder that builds a simple Yes/No/Cancel dialog.
+ * Alert dialog builder that builds a simple Yes/Cancel dialog.
  */
-public class YesNoCancelDialogBuilder extends AlertDialog.Builder {
+public class YesCancelDialogBuilder extends AlertDialog.Builder {
 
-    public YesNoCancelDialogBuilder(Context context, final Runnable yes, final Runnable no,
-            int messageId) {
+    public YesCancelDialogBuilder(Context context, final Runnable yes, int messageId) {
         super(context);
         setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 yes.run();
-            }
-        })
-        .setNeutralButton(R.string.no, new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                no.run();
             }
         })
         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
