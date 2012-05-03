@@ -20,9 +20,9 @@
     <string name="loading_failure" msgid="7890360277163832130">"Couldn\'t load the photo"</string>
     <string name="saving_failure" msgid="8229491575433743974">"Couldn\'t save edited photo"</string>
     <string name="photo_saved" msgid="6163006724627682202">"Edited photo saved to <xliff:g id="FOLDER_NAME">%s</xliff:g>"</string>
-    <string name="save_photo" msgid="3125109368779997862">"Save edited photo?"</string>
+    <!-- no translation found for discard_unsaved_photo (2353274490633681946) -->
+    <skip />
     <string name="yes" msgid="5402582493291792293">"Yes"</string>
-    <string name="no" msgid="5595408018304861875">"No"</string>
     <string name="save" msgid="5516670392524294967">"SAVE"</string>
     <string name="autofix" msgid="1663414996270538748">"Auto-fix"</string>
     <string name="crop" msgid="7598378507763334041">"Crop"</string>
