@@ -14,6 +14,10 @@
      limitations under the License.
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_camera"
+            android:icon="@drawable/ic_menu_camera_holo_light"
+            android:title="@string/switch_to_camera"
+            android:showAsAction="ifRoom" />
     <item android:id="@+id/action_slideshow"
             android:icon="@drawable/ic_menu_slideshow_holo_light"
             android:title="@string/slideshow"
