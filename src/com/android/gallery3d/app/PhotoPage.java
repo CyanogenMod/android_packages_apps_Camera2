@@ -100,6 +100,8 @@ public class PhotoPage extends ActivityState implements
     private int mCurrentIndex = 0;
     private Handler mHandler;
     private boolean mShowBars = true;
+    // The value of canShowBars() last time the bar updates state.
+    private boolean mCanShowBars = false;
     private volatile boolean mActionBarAllowed = true;
     private GalleryActionBar mActionBar;
     private MyMenuVisibilityListener mMenuVisibilityListener;
@@ -260,10 +262,12 @@ public class PhotoPage extends ActivityState implements
                     }
                     case MSG_LOCK_ORIENTATION: {
                         mOrientationManager.lockOrientation();
+                        updateBars();
                         break;
                     }
                     case MSG_UNLOCK_ORIENTATION: {
                         mOrientationManager.unlockOrientation();
+                        updateBars();
                         break;
                     }
                     case MSG_ON_FULL_SCREEN_CHANGED: {
@@ -380,7 +384,7 @@ public class PhotoPage extends ActivityState implements
         mActionBar.hide();
         WindowManager.LayoutParams params =
                 ((Activity) mActivity).getWindow().getAttributes();
-        params.systemUiVisibility = View. SYSTEM_UI_FLAG_LOW_PROFILE;
+        params.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE;
         ((Activity) mActivity).getWindow().setAttributes(params);
         mHandler.removeMessages(MSG_HIDE_BARS);
     }
@@ -392,25 +396,36 @@ public class PhotoPage extends ActivityState implements
         }
     }
 
+    private boolean canShowBars() {
+        // No bars if we are showing camera preview.
+        if (mAppBridge != null && mCurrentIndex == 0) return false;
+        // No bars if it's not allowed.
+        if (!mActionBarAllowed) return false;
+        // No bars if the orientation is locked.
+        if (mOrientationManager.isOrientationLocked()) return false;
+
+        return true;
+    }
+
     private void toggleBars() {
+        mCanShowBars = canShowBars();
         if (mShowBars) {
             hideBars();
-        } else if (canShowBars()) {
-            showBars();
+        } else {
+            if (mCanShowBars) showBars();
         }
     }
 
     private void updateBars() {
-        if (canShowBars()) {
+        boolean v = canShowBars();
+        if (mCanShowBars == v) return;
+        mCanShowBars = v;
+
+        if (mCanShowBars) {
             showBars();
         } else {
             hideBars();
         }
-    }
-
-    private boolean canShowBars() {
-        boolean atCamera = mAppBridge != null && mCurrentIndex == 0;
-        return mActionBarAllowed && !atCamera;
     }
 
     @Override
@@ -730,6 +745,9 @@ public class PhotoPage extends ActivityState implements
             mScreenNail = null;
         }
         mOrientationManager.removeListener(this);
+
+        // Remove all pending messages.
+        mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
 

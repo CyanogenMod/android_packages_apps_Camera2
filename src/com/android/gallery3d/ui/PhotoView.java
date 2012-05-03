@@ -473,18 +473,19 @@ public class PhotoView extends GLView {
             boolean isCenter = mPositionController.isCenter();
 
             if (mLoadingState == LOADING_COMPLETE) {
-                if (mIsCamera) {
-                    boolean full = !mFilmMode && isCenter
-                        && mPositionController.isAtMinimalScale();
-                    if (full != mFullScreen) {
-                        mFullScreen = full;
-                        mListener.onFullScreenChanged(full);
-                    }
-                }
                 setTileViewPosition(r);
                 PhotoView.super.render(canvas);
             }
             renderMessage(canvas, r.centerX(), r.centerY());
+
+            if (mIsCamera) {
+                boolean full = !mFilmMode && isCenter
+                        && mPositionController.isAtMinimalScale();
+                if (full != mFullScreen) {
+                    mFullScreen = full;
+                    mListener.onFullScreenChanged(full);
+                }
+            }
 
             // We want to have the following transitions:
             // (1) Move camera preview out of its place: switch to film mode
@@ -502,9 +503,16 @@ public class PhotoView extends GLView {
                 // setFilmMode(true);
             } else if (!mWasCameraCenter && isCameraCenter && mFilmMode) {
                 setFilmMode(false);
-            } else if (isCameraCenter && !mFilmMode) {
-                // move into camera, lock
-                mListener.lockOrientation();  // Transition A
+            }
+
+            if (isCenter && !mFilmMode) {
+                if (mIsCamera) {
+                    // move into camera, lock
+                    mListener.lockOrientation();  // Transition A
+                } else {
+                    // move out of camera, unlock
+                    mListener.unlockOrientation();  // Transition B
+                }
             }
 
             mWasCameraCenter = isCameraCenter;
@@ -1152,7 +1160,6 @@ public class PhotoView extends GLView {
         if (offset == 1) {
             // move out of camera, unlock
             if (!mFilmMode) {
-                mListener.unlockOrientation();  // Transition B
                 // Now the capture animation is done, enable the action bar.
                 mListener.onActionBarAllowed(true);
             }
