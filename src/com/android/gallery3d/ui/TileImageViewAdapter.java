@@ -100,10 +100,8 @@ public class TileImageViewAdapter implements TileImageView.Model {
     }
 
     @Override
-    public synchronized Bitmap getTile(int level, int x, int y, int tileSize,
+    public Bitmap getTile(int level, int x, int y, int tileSize,
             int borderSize) {
-        if (mRegionDecoder == null) return null;
-
         // wantRegion is the rectangle on the original image we want. askRegion
         // is the rectangle on the original image that we will ask from
         // mRegionDecoder. Both are in the coordinates of the original image,
@@ -115,8 +113,14 @@ public class TileImageViewAdapter implements TileImageView.Model {
         wantRegion.set(x - b, y - b, x + (tileSize << level) + b,
                 y + (tileSize << level) + b);
 
-        // askRegion is the intersection of wantRegion and the original image.
-        askRegion.set(0, 0, mImageWidth, mImageHeight);
+        BitmapRegionDecoder regionDecoder = null;
+        synchronized (this) {
+            regionDecoder = mRegionDecoder;
+            if (regionDecoder == null) return null;
+            // askRegion is the intersection of wantRegion and the original image.
+            askRegion.set(0, 0, mImageWidth, mImageHeight);
+        }
+
         Utils.assertTrue(askRegion.intersect(wantRegion));
 
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -127,8 +131,8 @@ public class TileImageViewAdapter implements TileImageView.Model {
         Bitmap bitmap;
 
         // In CropImage, we may call the decodeRegion() concurrently.
-        synchronized (mRegionDecoder) {
-            bitmap = mRegionDecoder.decodeRegion(askRegion, options);
+        synchronized (regionDecoder) {
+            bitmap = regionDecoder.decodeRegion(askRegion, options);
         }
 
         if (bitmap == null) {
