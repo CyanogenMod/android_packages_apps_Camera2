@@ -54,7 +54,7 @@
     <string name="crop_tooltip" msgid="8794037869706891710">"Превуците означиваче да бисте опсекли фотографију"</string>
     <string name="doodle_tooltip" msgid="2902117272374362915">"Превуците слику на дудл логотип"</string>
     <string name="flip_tooltip" msgid="2700943256714731737">"Превуците фотографију да бисте је окренули"</string>
-    <string name="redeye_tooltip" msgid="4183695928490874014">"Додирните црвене очи да бисте их уклонили"</string>
+    <string name="redeye_tooltip" msgid="4183695928490874014">"Додирните црвене очи да бисте их поправили"</string>
     <string name="rotate_tooltip" msgid="7008602969130734229">"Превуците фотографију да бисте је ротирали"</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"Превуците фотографију да бисте је исправили"</string>
 </resources>
