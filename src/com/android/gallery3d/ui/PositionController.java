@@ -1003,6 +1003,16 @@ class PositionController {
         return edges;
     }
 
+    public boolean isScrolling() {
+        return mPlatform.mAnimationStartTime != NO_ANIMATION
+                && mPlatform.mCurrentX != mPlatform.mToX;
+    }
+
+    public void stopScrolling() {
+        if (mPlatform.mAnimationStartTime == NO_ANIMATION) return;
+        mPlatform.mFromX = mPlatform.mToX = mPlatform.mCurrentX;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     //  Private utilities
     ////////////////////////////////////////////////////////////////////////////
