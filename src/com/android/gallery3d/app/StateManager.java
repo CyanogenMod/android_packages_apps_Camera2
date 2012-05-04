@@ -146,6 +146,21 @@ public class StateManager {
     }
 
     void finishState(ActivityState state) {
+        // The finish() request could be rejected (only happens under Monkey),
+        // If it is rejected, we won't close the last page.
+        if (mStack.size() == 1) {
+            Activity activity = (Activity) mContext.getAndroidContext();
+            if (mResult != null) {
+                activity.setResult(mResult.resultCode, mResult.resultData);
+            }
+            activity.finish();
+            if (!activity.isFinishing()) {
+                Log.w(TAG, "finish is rejected, keep the last state");
+                return;
+            }
+            Log.v(TAG, "no more state, finish activity");
+        }
+
         Log.v(TAG, "finishState " + state);
         if (state != mStack.peek().activityState) {
             if (state.isDestroyed()) {
@@ -164,21 +179,7 @@ public class StateManager {
         mContext.getGLRoot().setContentPane(null);
         state.onDestroy();
 
-        if (mStack.isEmpty()) {
-            Log.v(TAG, "no more state, finish activity");
-            Activity activity = (Activity) mContext.getAndroidContext();
-            if (mResult != null) {
-                activity.setResult(mResult.resultCode, mResult.resultData);
-            }
-            activity.finish();
-
-            // The finish() request is rejected (only happens under Monkey),
-            // so we start the default page instead.
-            if (!activity.isFinishing()) {
-                Log.v(TAG, "finish() failed, start default page");
-                ((Gallery) mContext).startDefaultPage();
-            }
-        } else {
+        if (!mStack.isEmpty()) {
             // Restore the immediately previous state
             ActivityState top = mStack.peek().activityState;
             if (mIsResumed) top.resume();
