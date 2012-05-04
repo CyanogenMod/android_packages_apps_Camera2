@@ -748,11 +748,15 @@ public class PhotoView extends GLView {
         private boolean mModeChanged;
         // If this scaling gesture should be ignored.
         private boolean mIgnoreScalingGesture;
+        // whether the down action happened while the view is scrolling.
+        private boolean mDownInScrolling;
 
         @Override
         public boolean onSingleTapUp(float x, float y) {
-            if (mFilmMode) {
+            if (mFilmMode && !mDownInScrolling) {
+                switchToHitPicture((int) (x + 0.5f), (int) (y + 0.5f));
                 setFilmMode(false);
+                mIgnoreUpEvent = true;
                 return true;
             }
 
@@ -881,6 +885,13 @@ public class PhotoView extends GLView {
         @Override
         public void onDown() {
             mHolding |= HOLD_TOUCH_DOWN;
+
+            if (mFilmMode && mPositionController.isScrolling()) {
+                mDownInScrolling = true;
+                mPositionController.stopScrolling();
+            } else {
+                mDownInScrolling = false;
+            }
         }
 
         @Override
@@ -1018,6 +1029,26 @@ public class PhotoView extends GLView {
         }
 
         return 0;
+    }
+
+    // Switch to the previous or next picture if the hit position is inside
+    // one of their boxes. This runs in main thread.
+    private void switchToHitPicture(int x, int y) {
+        if (mPrevBound < 0) {
+            Rect r = mPositionController.getPosition(-1);
+            if (r.right >= x) {
+                slideToPrevPicture();
+                return;
+            }
+        }
+
+        if (mNextBound > 0) {
+            Rect r = mPositionController.getPosition(1);
+            if (r.left <= x) {
+                slideToNextPicture();
+                return;
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
