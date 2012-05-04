@@ -54,7 +54,7 @@
     <string name="crop_tooltip" msgid="8794037869706891710">"Fotoğrafı kırpmak içni işaretçileri sürükleyin"</string>
     <string name="doodle_tooltip" msgid="2902117272374362915">"Doodle için fotoğrafın üzerinde çizin"</string>
     <string name="flip_tooltip" msgid="2700943256714731737">"Çevirmek için fotoğrafı sürükleyin"</string>
-    <string name="redeye_tooltip" msgid="4183695928490874014">"Kaldırmak için kırmızı gözlere dokunun"</string>
+    <string name="redeye_tooltip" msgid="4183695928490874014">"Kırmızı gözleri hafifçe vurarak düzeltin"</string>
     <string name="rotate_tooltip" msgid="7008602969130734229">"Döndürmek için fotoğrafı sürükleyin"</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"Düzleştirmek için fotoğrafı sürükleyin"</string>
 </resources>
