@@ -144,6 +144,7 @@ public class PhotoView extends GLView {
     private final long mDataVersion[] = new long[2 * SCREEN_NAIL_MAX + 1];
     private final int mFromIndex[] = new int[2 * SCREEN_NAIL_MAX + 1];
 
+    private final MyGestureListener mGestureListener;
     private final GestureRecognizer mGestureRecognizer;
     private final PositionController mPositionController;
 
@@ -200,8 +201,8 @@ public class PhotoView extends GLView {
 
         mHandler = new MyHandler(activity.getGLRoot());
 
-        mGestureRecognizer = new GestureRecognizer(
-                context, new MyGestureListener());
+        mGestureListener = new MyGestureListener();
+        mGestureRecognizer = new GestureRecognizer(context, mGestureListener);
 
         mPositionController = new PositionController(context,
                 new PositionController.Listener() {
@@ -777,6 +778,8 @@ public class PhotoView extends GLView {
         private boolean mIgnoreScalingGesture;
         // whether the down action happened while the view is scrolling.
         private boolean mDownInScrolling;
+        // If we should ignore all gestures other than onSingleTapUp.
+        private boolean mIgnoreSwipingGesture;
 
         @Override
         public boolean onSingleTapUp(float x, float y) {
@@ -795,6 +798,7 @@ public class PhotoView extends GLView {
 
         @Override
         public boolean onDoubleTap(float x, float y) {
+            if (mIgnoreSwipingGesture) return true;
             if (mPictures.get(0).isCamera()) return false;
             PositionController controller = mPositionController;
             float scale = controller.getImageScale();
@@ -811,12 +815,14 @@ public class PhotoView extends GLView {
 
         @Override
         public boolean onScroll(float dx, float dy) {
+            if (mIgnoreSwipingGesture) return true;
             mPositionController.startScroll(-dx, -dy);
             return true;
         }
 
         @Override
         public boolean onFling(float velocityX, float velocityY) {
+            if (mIgnoreSwipingGesture) return true;
             if (swipeImages(velocityX, velocityY)) {
                 mIgnoreUpEvent = true;
             } else if (mPositionController.fling(velocityX, velocityY)) {
@@ -827,6 +833,7 @@ public class PhotoView extends GLView {
 
         @Override
         public boolean onScaleBegin(float focusX, float focusY) {
+            if (mIgnoreSwipingGesture) return true;
             // We ignore the scaling gesture if it is a camera preview.
             mIgnoreScalingGesture = mPictures.get(0).isCamera();
             if (mIgnoreScalingGesture) {
@@ -843,9 +850,8 @@ public class PhotoView extends GLView {
 
         @Override
         public boolean onScale(float focusX, float focusY, float scale) {
-            if (mIgnoreScalingGesture) {
-                return true;
-            }
+            if (mIgnoreSwipingGesture) return true;
+            if (mIgnoreScalingGesture) return true;
             if (mModeChanged) return true;
             if (Float.isNaN(scale) || Float.isInfinite(scale)) return false;
 
@@ -885,9 +891,8 @@ public class PhotoView extends GLView {
 
         @Override
         public void onScaleEnd() {
-            if (mIgnoreScalingGesture) {
-                return;
-            }
+            if (mIgnoreSwipingGesture) return;
+            if (mIgnoreScalingGesture) return;
             if (mModeChanged) return;
             mPositionController.endScale();
         }
@@ -911,6 +916,8 @@ public class PhotoView extends GLView {
 
         @Override
         public void onDown() {
+            if (mIgnoreSwipingGesture) return;
+
             mHolding |= HOLD_TOUCH_DOWN;
 
             if (mFilmMode && mPositionController.isScrolling()) {
@@ -923,6 +930,8 @@ public class PhotoView extends GLView {
 
         @Override
         public void onUp() {
+            if (mIgnoreSwipingGesture) return;
+
             mHolding &= ~HOLD_TOUCH_DOWN;
             mEdgeView.onRelease();
 
@@ -933,6 +942,14 @@ public class PhotoView extends GLView {
 
             snapback();
         }
+
+        public void setSwipingEnabled(boolean enabled) {
+            mIgnoreSwipingGesture = !enabled;
+        }
+    }
+
+    public void setSwipingEnabled(boolean enabled) {
+        mGestureListener.setSwipingEnabled(enabled);
     }
 
     private void setFilmMode(boolean enabled) {
