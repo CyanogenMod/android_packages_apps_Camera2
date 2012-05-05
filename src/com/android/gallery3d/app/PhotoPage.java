@@ -683,8 +683,7 @@ public class PhotoPage extends ActivityState implements
             case REQUEST_CROP_PICASA: {
                 if (resultCode == Activity.RESULT_OK) {
                     Context context = mActivity.getAndroidContext();
-                    // TODO: Use crop_saved instead of photo_saved after its new translation is done.
-                    String message = context.getString(R.string.photo_saved,
+                    String message = context.getString(R.string.crop_saved,
                             context.getString(R.string.folder_download));
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                 }
