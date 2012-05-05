@@ -371,6 +371,14 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         return mCurrentIndex + offset == mCameraIndex;
     }
 
+    @Override
+    public boolean isVideo(int offset) {
+        MediaItem item = getItem(mCurrentIndex + offset);
+        return (item == null)
+                ? false
+                : item.getMediaType() == MediaItem.MEDIA_TYPE_VIDEO;
+    }
+
     public ScreenNail getScreenNail() {
         return mTileProvider.getScreenNail();
     }
