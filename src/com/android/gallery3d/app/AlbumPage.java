@@ -369,7 +369,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             clearLoadingBit(BIT_LOADING_SYNC);
         }
         mActionModeHandler.pause();
-        GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
     }
 
     @Override
@@ -615,17 +614,12 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     }
 
     private void setLoadingBit(int loadTaskBit) {
-        if (mLoadingBits == 0 && mIsActive) {
-            GalleryUtils.setSpinnerVisibility((Activity) mActivity, true);
-        }
         mLoadingBits |= loadTaskBit;
     }
 
     private void clearLoadingBit(int loadTaskBit) {
         mLoadingBits &= ~loadTaskBit;
         if (mLoadingBits == 0 && mIsActive) {
-            GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
-
             if (mAlbumDataAdapter.size() == 0) {
                 Toast.makeText((Context) mActivity,
                         R.string.empty_album, Toast.LENGTH_LONG).show();
