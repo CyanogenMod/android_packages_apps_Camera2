@@ -67,6 +67,9 @@ public class PhotoView extends GLView {
 
         // Returns true if the item is the Camera preview.
         public boolean isCamera(int offset);
+
+        // Returns true if the item is a Video.
+        public boolean isVideo(int offset);
     }
 
     public interface Listener {
@@ -118,6 +121,7 @@ public class PhotoView extends GLView {
 
     private static final float DEFAULT_TEXT_SIZE = 20;
     private static float TRANSITION_SCALE_FACTOR = 0.74f;
+    private static final int ICON_RATIO = 6;
 
     // whether we want to apply card deck effect in page mode.
     private static final boolean CARD_EFFECT = true;
@@ -151,7 +155,6 @@ public class PhotoView extends GLView {
     private EdgeView mEdgeView;
     private Texture mVideoPlayIcon;
 
-    private boolean mShowVideoPlayIcon;
     private ProgressSpinner mLoadingSpinner;
 
     private SynchronizedHandler mHandler;
@@ -434,6 +437,7 @@ public class PhotoView extends GLView {
     class FullPicture implements Picture {
         private int mRotation;
         private boolean mIsCamera;
+        private boolean mIsVideo;
         private boolean mWasCameraCenter;
 
         public void FullPicture(TileImageView tileView) {
@@ -444,9 +448,9 @@ public class PhotoView extends GLView {
         public void reload() {
             // mImageWidth and mImageHeight will get updated
             mTileView.notifyModelInvalidated();
-            mTileView.setAlpha(1.0f);
 
             mIsCamera = mModel.isCamera(0);
+            mIsVideo = mModel.isVideo(0);
             setScreenNail(mModel.getScreenNail(0));
             updateSize(false);
             updateLoadingState();
@@ -473,8 +477,7 @@ public class PhotoView extends GLView {
             boolean isCenter = mPositionController.isCenter();
 
             if (mLoadingState == LOADING_COMPLETE) {
-                setTileViewPosition(r);
-                PhotoView.super.render(canvas);
+                drawTileView(canvas, r);
             }
             renderMessage(canvas, r.centerX(), r.centerY());
 
@@ -528,20 +531,15 @@ public class PhotoView extends GLView {
             return mIsCamera;
         }
 
-        private void setTileViewPosition(Rect r) {
-            TileImageView t = mTileView;
-
-            // Find out the bitmap coordinates of the center of the view
-            int imageW = mPositionController.getImageWidth();
-            int imageH = mPositionController.getImageHeight();
+        private void drawTileView(GLCanvas canvas, Rect r) {
             float scale = mPositionController.getImageScale();
             int viewW = getWidth();
             int viewH = getHeight();
-            int centerX = (int) (imageW / 2f +
-                    (viewW / 2f - r.exactCenterX()) / scale + 0.5f);
-            int centerY = (int) (imageH / 2f +
-                    (viewH / 2f - r.exactCenterY()) / scale + 0.5f);
+            float cx = r.exactCenterX();
+            float cy = r.exactCenterY();
+            float extraScale = 1f;  // extra scaling due to card effect
 
+            canvas.save(GLCanvas.SAVE_FLAG_MATRIX | GLCanvas.SAVE_FLAG_ALPHA);
             boolean wantsCardEffect = CARD_EFFECT && !mFilmMode
                     && !mIsCamera && !mPictures.get(-1).isCamera();
             if (wantsCardEffect) {
@@ -554,33 +552,59 @@ public class PhotoView extends GLView {
                 // We only want to apply the fading animation if the scrolling
                 // movement is to the right.
                 if (progress < 0) {
-                    if (right - left < viewW) {
+                    extraScale = getScrollScale(progress);
+                    scale *= extraScale;
+                    canvas.multiplyAlpha(getScrollAlpha(progress));
+
+                    if (right - left <= viewW) {
                         // If the picture is narrower than the view, keep it at
                         // the center of the view.
-                        centerX = imageW / 2;
+                        cx = viewW / 2f;
                     } else {
                         // If the picture is wider than the view (it's
                         // zoomed-in), keep the left edge of the object align
                         // the the left edge of the view.
-                        centerX = Math.round(viewW / 2f / scale);
+                        cx = (right - left) * extraScale / 2f;
                     }
-                    scale *= getScrollScale(progress);
-                    t.setAlpha(getScrollAlpha(progress));
                 }
             }
 
-            // set the position of the tile view
+            // Draw the tile view.
+            setTileViewPosition(cx, cy, viewW, viewH, scale);
+            PhotoView.super.render(canvas);
+
+            // Draw the play video icon.
+            if (mIsVideo) {
+                canvas.translate((int) (cx + 0.5f), (int) (cy + 0.5f));
+                int s = (int) (extraScale *
+                        Math.min(r.width(), r.height()) + 0.5f);
+                drawVideoPlayIcon(canvas, s);
+            }
+
+            canvas.restore();
+        }
+
+        // Set the position of the tile view
+        private void setTileViewPosition(float cx, float cy,
+                int viewW, int viewH, float scale) {
+            // Find out the bitmap coordinates of the center of the view
+            int imageW = mPositionController.getImageWidth();
+            int imageH = mPositionController.getImageHeight();
+            int centerX = (int) (imageW / 2f + (viewW / 2f - cx) / scale + 0.5f);
+            int centerY = (int) (imageH / 2f + (viewH / 2f - cy) / scale + 0.5f);
+
             int inverseX = imageW - centerX;
             int inverseY = imageH - centerY;
-            int rotation = mRotation;
-            switch (rotation) {
-                case 0: t.setPosition(centerX, centerY, scale, 0); break;
-                case 90: t.setPosition(centerY, inverseX, scale, 90); break;
-                case 180: t.setPosition(inverseX, inverseY, scale, 180); break;
-                case 270: t.setPosition(inverseY, centerX, scale, 270); break;
+            int x, y;
+            switch (mRotation) {
+                case 0: x = centerX; y = centerY; break;
+                case 90: x = centerY; y = inverseX; break;
+                case 180: x = inverseX; y = inverseY; break;
+                case 270: x = inverseY; y = centerX; break;
                 default:
-                    throw new IllegalArgumentException(String.valueOf(rotation));
+                    throw new RuntimeException(String.valueOf(mRotation));
             }
+            mTileView.setPosition(x, y, scale, mRotation);
         }
 
         private void renderMessage(GLCanvas canvas, int x, int y) {
@@ -592,7 +616,7 @@ public class PhotoView extends GLView {
             // play icon is shown instead of the spinner.
             int w = getWidth();
             int h = getHeight();
-            int s = Math.min(w, h) / 6;
+            int s = Math.min(w, h) / ICON_RATIO;
 
             if (mLoadingState == LOADING_TIMEOUT) {
                 StringTexture m = mLoadingText;
@@ -608,13 +632,6 @@ public class PhotoView extends GLView {
             // Draw a debug indicator showing which picture has focus (index ==
             // 0).
             // canvas.fillRect(x - 10, y - 10, 20, 20, 0x80FF00FF);
-
-            // Draw the video play icon (in the place where the spinner was)
-            if (mShowVideoPlayIcon
-                    && mLoadingState != LOADING_INIT
-                    && mLoadingState != LOADING_TIMEOUT) {
-                mVideoPlayIcon.draw(canvas, x - s / 2, y - s / 2, s, s);
-            }
         }
     }
 
@@ -624,6 +641,7 @@ public class PhotoView extends GLView {
         private ScreenNail mScreenNail;
         private Size mSize = new Size();
         private boolean mIsCamera;
+        private boolean mIsVideo;
 
         public ScreenNailPicture(int index) {
             mIndex = index;
@@ -632,6 +650,7 @@ public class PhotoView extends GLView {
         @Override
         public void reload() {
             mIsCamera = mModel.isCamera(mIndex);
+            mIsVideo = mModel.isVideo(mIndex);
             setScreenNail(mModel.getScreenNail(mIndex));
         }
 
@@ -682,6 +701,7 @@ public class PhotoView extends GLView {
                 canvas.rotate(mRotation, 0, 0, 1);
             }
             mScreenNail.draw(canvas, -drawW / 2, -drawH / 2, drawW, drawH);
+            if (mIsVideo) drawVideoPlayIcon(canvas, Math.min(drawW, drawH));
             canvas.restore();
         }
 
@@ -724,6 +744,13 @@ public class PhotoView extends GLView {
         public boolean isCamera() {
             return mIsCamera;
         }
+    }
+
+    // Draw the video play icon (in the place where the spinner was)
+    private void drawVideoPlayIcon(GLCanvas canvas, int side) {
+        int s = side / ICON_RATIO;
+        // Draw the video play icon at the center
+        mVideoPlayIcon.draw(canvas, -s / 2, -s / 2, s, s);
     }
 
     private static int getRotated(int degree, int original, int theother) {
@@ -1289,9 +1316,5 @@ public class PhotoView extends GLView {
 
     public void setListener(Listener listener) {
         mListener = listener;
-    }
-
-    public void showVideoPlayIcon(boolean show) {
-        mShowVideoPlayIcon = show;
     }
 }

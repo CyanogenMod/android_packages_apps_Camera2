@@ -108,7 +108,6 @@ public class TileImageView extends GLView {
     protected int mCenterY;
     protected float mScale;
     protected int mRotation;
-    protected float mAlpha = 1.0f;
 
     // Temp variables to avoid memory allocation
     private final Rect mTileRange = new Rect();
@@ -348,13 +347,6 @@ public class TileImageView extends GLView {
         return true;
     }
 
-    public boolean setAlpha(float alpha) {
-        if (mAlpha == alpha) return false;
-        mAlpha = alpha;
-        invalidate();
-        return true;
-    }
-
     public void freeTextures() {
         mIsTextureFreed = true;
 
@@ -404,7 +396,6 @@ public class TileImageView extends GLView {
         int rotation = mRotation;
         int flags = 0;
         if (rotation != 0) flags |= GLCanvas.SAVE_FLAG_MATRIX;
-        if (mAlpha != 1.0f) flags |= GLCanvas.SAVE_FLAG_ALPHA;
 
         if (flags != 0) {
             canvas.save(flags);
@@ -414,7 +405,6 @@ public class TileImageView extends GLView {
                 canvas.rotate(rotation, 0, 0, 1);
                 canvas.translate(-centerX, -centerY);
             }
-            if (mAlpha != 1.0f) canvas.multiplyAlpha(mAlpha);
         }
         try {
             if (level != mLevelCount) {
