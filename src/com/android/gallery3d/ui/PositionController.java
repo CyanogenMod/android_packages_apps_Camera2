@@ -90,8 +90,10 @@ class PositionController {
 
     private Listener mListener;
     private volatile Rect mOpenAnimationRect;
-    private int mViewW = 640;
-    private int mViewH = 480;;
+
+    // Use a large enough value, so we won't see the gray shadown in the beginning.
+    private int mViewW = 1200;
+    private int mViewH = 1200;
 
     // A scaling guesture is in progress.
     private boolean mInScale;
@@ -150,6 +152,7 @@ class PositionController {
     // The gap at the right of a Box i is at index i. The gap at the left of a
     // Box i is at index i - 1.
     private RangeArray<Gap> mGaps = new RangeArray<Gap>(-BOX_MAX, BOX_MAX - 1);
+    private FilmRatio mFilmRatio = new FilmRatio();
 
     // These are only used during moveBox().
     private RangeArray<Box> mTempBoxes = new RangeArray<Box>(-BOX_MAX, BOX_MAX);
@@ -633,6 +636,7 @@ class PositionController {
         for (int i = -BOX_MAX; i < BOX_MAX; i++) {
             mGaps.get(i).startSnapback();
         }
+        mFilmRatio.startSnapback();
         redraw();
     }
 
@@ -653,6 +657,7 @@ class PositionController {
         for (int i = -BOX_MAX; i < BOX_MAX; i++) {
             changed |= mGaps.get(i).advanceAnimation();
         }
+        changed |= mFilmRatio.advanceAnimation();
         if (changed) redraw();
     }
 
@@ -1013,6 +1018,10 @@ class PositionController {
         mPlatform.mFromX = mPlatform.mToX = mPlatform.mCurrentX;
     }
 
+    public float getFilmRatio() {
+        return mFilmRatio.mCurrentRatio;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     //  Private utilities
     ////////////////////////////////////////////////////////////////////////////
@@ -1047,7 +1056,9 @@ class PositionController {
     }
 
     private float getMaximalScale(Box b) {
-        return mFilmMode ? getMinimalScale(b) : SCALE_LIMIT;
+        if (mFilmMode) return getMinimalScale(b);
+        if (mConstrained && !mConstrainedFrame.isEmpty()) return getMinimalScale(b);
+        return SCALE_LIMIT;
     }
 
     private static boolean isAlmostEqual(float a, float b) {
@@ -1522,6 +1533,44 @@ class PositionController {
                 } else {
                     return (mCurrentGap == mToGap);
                 }
+            }
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //  FilmRatio: represents the progress of film mode change.
+    ////////////////////////////////////////////////////////////////////////////
+    private class FilmRatio extends Animatable {
+        // The film ratio: 1 means switching to film mode is complete, 0 means
+        // switching to page mode is complete.
+        public float mCurrentRatio, mFromRatio, mToRatio;
+
+        @Override
+        public boolean startSnapback() {
+            float target = mFilmMode ? 1f : 0f;
+            if (target == mToRatio) return false;
+            return doAnimation(target, ANIM_KIND_SNAPBACK);
+        }
+
+        // Starts an animation for the film ratio.
+        private boolean doAnimation(float targetRatio, int kind) {
+            mAnimationKind = kind;
+            mFromRatio = mCurrentRatio;
+            mToRatio = targetRatio;
+            mAnimationStartTime = AnimationTime.startTime();
+            mAnimationDuration = ANIM_TIME[mAnimationKind];
+            advanceAnimation();
+            return true;
+        }
+
+        @Override
+        protected boolean interpolate(float progress) {
+            if (progress >= 1) {
+                mCurrentRatio = mToRatio;
+                return true;
+            } else {
+                mCurrentRatio = mFromRatio + progress * (mToRatio - mFromRatio);
+                return (mCurrentRatio == mToRatio);
             }
         }
     }
