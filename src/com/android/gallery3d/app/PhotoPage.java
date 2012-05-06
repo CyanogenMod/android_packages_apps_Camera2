@@ -447,6 +447,7 @@ public class PhotoPage extends ActivityState implements
     private void onUpPressed() {
         if (mActivity.getStateManager().getStateCount() > 1) {
             super.onBackPressed();
+            return;
         }
 
         if (mOriginalSetPathString == null) return;
