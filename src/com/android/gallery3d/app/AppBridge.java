@@ -55,6 +55,8 @@ public abstract class AppBridge implements Parcelable {
         // The offset is -1 to switch to the previous picture, 1 to switch to
         // the next picture.
         public boolean switchWithCaptureAnimation(int offset);
+        // Enable or disable the swiping gestures (the default is enabled).
+        public void setSwipingEnabled(boolean enabled);
     }
 
     // If server is null, the services are not available.
