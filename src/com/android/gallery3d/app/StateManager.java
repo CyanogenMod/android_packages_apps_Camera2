@@ -93,11 +93,10 @@ public class StateManager {
     }
 
     public boolean createOptionsMenu(Menu menu) {
-        if (!mStack.isEmpty()) {
-            ((Activity) mContext).setProgressBarIndeterminateVisibility(false);
-            return getTopState().onCreateActionBar(menu);
-        } else {
+        if (mStack.isEmpty()) {
             return false;
+        } else {
+            return getTopState().onCreateActionBar(menu);
         }
     }
 
