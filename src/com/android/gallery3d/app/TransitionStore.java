@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,21 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.ui.GLRoot;
+import java.util.HashMap;
 
-public interface GalleryActivity extends GalleryContext {
-    public StateManager getStateManager();
-    public GLRoot getGLRoot();
-    public GalleryActionBar getGalleryActionBar();
-    public OrientationManager getOrientationManager();
-    public TransitionStore getTransitionStore();
+public class TransitionStore {
+    private HashMap<Object, Object> mStorage = new HashMap<Object, Object>();
+
+    public void put(Object key, Object value) {
+        mStorage.put(key, value);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T get(Object key) {
+        return (T) mStorage.get(key);
+    }
+
+    public void clear() {
+        mStorage.clear();
+    }
 }
