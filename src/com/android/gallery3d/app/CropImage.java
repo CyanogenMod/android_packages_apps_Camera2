@@ -233,6 +233,11 @@ public class CropImage extends AbstractGalleryActivity {
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
     private class SaveOutput implements Job<Intent> {
         private final RectF mCropRect;
 
