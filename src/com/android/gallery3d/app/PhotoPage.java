@@ -231,7 +231,6 @@ public class PhotoPage extends ActivityState implements
 
                 @Override
                 public void onLoadingFinished() {
-                    GalleryUtils.setSpinnerVisibility((Activity) mActivity, false);
                     if (!mModel.isEmpty()) {
                         MediaItem photo = mModel.getCurrentMediaItem();
                         if (photo != null) updateCurrentPhoto(photo);
@@ -242,7 +241,6 @@ public class PhotoPage extends ActivityState implements
 
                 @Override
                 public void onLoadingStarted() {
-                    GalleryUtils.setSpinnerVisibility((Activity) mActivity, true);
                 }
             });
         } else {

@@ -63,13 +63,9 @@ public class GalleryUtils {
     private static final String KEY_CAMERA_UPDATE = "camera-update";
     private static final String KEY_HAS_CAMERA = "has-camera";
 
-    private static Context sContext;
-
-
     static float sPixelDensity = -1f;
 
     public static void initialize(Context context) {
-        sContext = context;
         if (sPixelDensity < 0) {
             DisplayMetrics metrics = new DisplayMetrics();
             WindowManager wm = (WindowManager)
@@ -277,11 +273,6 @@ public class GalleryUtils {
             durationValue = String.format(context.getString(R.string.details_hms), h, m, s);
         }
         return durationValue;
-    }
-
-    public static void setSpinnerVisibility(final Activity activity,
-            final boolean visible) {
-        SpinnerVisibilitySetter.getInstance(activity).setSpinnerVisibility(visible);
     }
 
     public static int determineTypeBits(Context context, Intent intent) {
