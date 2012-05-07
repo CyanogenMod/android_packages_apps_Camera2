@@ -300,6 +300,7 @@ public final class EntrySchema {
         StringBuilder sql = new StringBuilder("CREATE TABLE ");
         sql.append(tableName);
         sql.append(" (_id INTEGER PRIMARY KEY AUTOINCREMENT");
+        StringBuilder unique = new StringBuilder();
         for (ColumnInfo column : mColumnInfo) {
             if (!column.isId()) {
                 sql.append(',');
@@ -310,7 +311,17 @@ public final class EntrySchema {
                     sql.append(" DEFAULT ");
                     sql.append(column.defaultValue);
                 }
+                if (column.unique) {
+                    if (unique.length() == 0) {
+                        unique.append(column.name);
+                    } else {
+                        unique.append(',').append(column.name);
+                    }
+                }
             }
+        }
+        if (unique.length() > 0) {
+            sql.append(",UNIQUE(").append(unique).append(')');
         }
         sql.append(");");
         logExecSql(db, sql.toString());
@@ -493,7 +504,7 @@ public final class EntrySchema {
 
             // Add the column to the array.
             int index = columns.size();
-            columns.add(new ColumnInfo(info.value(), type, info.indexed(),
+            columns.add(new ColumnInfo(info.value(), type, info.indexed(), info.unique(),
                     info.fullText(), info.defaultValue(), field, index));
         }
     }
@@ -504,16 +515,18 @@ public final class EntrySchema {
         public final String name;
         public final int type;
         public final boolean indexed;
+        public final boolean unique;
         public final boolean fullText;
         public final String defaultValue;
         public final Field field;
         public final int projectionIndex;
 
-        public ColumnInfo(String name, int type, boolean indexed,
+        public ColumnInfo(String name, int type, boolean indexed, boolean unique,
                 boolean fullText, String defaultValue, Field field, int projectionIndex) {
             this.name = name.toLowerCase();
             this.type = type;
             this.indexed = indexed;
+            this.unique = unique;
             this.fullText = fullText;
             this.defaultValue = defaultValue;
             this.field = field;
