@@ -20,8 +20,7 @@
     <string name="loading_failure" msgid="7890360277163832130">"Foto konnte nicht geladen werden."</string>
     <string name="saving_failure" msgid="8229491575433743974">"Speichern des bearbeiteten Fotos nicht möglich"</string>
     <string name="photo_saved" msgid="6163006724627682202">"Das bearbeitete Foto wurde in <xliff:g id="FOLDER_NAME">%s</xliff:g> gespeichert."</string>
-    <!-- no translation found for discard_unsaved_photo (2353274490633681946) -->
-    <skip />
+    <string name="discard_unsaved_photo" msgid="2353274490633681946">"Nicht gespeicherte Änderungen verwerfen?"</string>
     <string name="yes" msgid="5402582493291792293">"Ja"</string>
     <string name="save" msgid="5516670392524294967">"Speichern"</string>
     <string name="autofix" msgid="1663414996270538748">"Auto-Fix"</string>
