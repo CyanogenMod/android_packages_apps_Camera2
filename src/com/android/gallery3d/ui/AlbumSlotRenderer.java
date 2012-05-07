@@ -24,10 +24,14 @@ import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.Path;
 
 public class AlbumSlotRenderer extends AbstractSlotRenderer {
-    private static final int PLACEHOLDER_COLOR = 0xFF222222;
-
     @SuppressWarnings("unused")
     private static final String TAG = "AlbumView";
+
+    public interface SlotFilter {
+        public boolean acceptSlot(int index);
+    }
+
+    private static final int PLACEHOLDER_COLOR = 0xFF222222;
     private static final int CACHE_SIZE = 96;
 
     private AlbumSlidingWindow mDataWindow;
@@ -40,6 +44,8 @@ public class AlbumSlotRenderer extends AbstractSlotRenderer {
     private boolean mAnimatePressedUp;
     private Path mHighlightItemPath = null;
     private boolean mInSelectionMode;
+
+    private SlotFilter mSlotFilter;
 
     public AlbumSlotRenderer(GalleryActivity activity, SlotView slotView,
             SelectionManager selectionManager) {
@@ -92,6 +98,8 @@ public class AlbumSlotRenderer extends AbstractSlotRenderer {
 
     @Override
     public int renderSlot(GLCanvas canvas, int index, int pass, int width, int height) {
+        if (mSlotFilter != null && !mSlotFilter.acceptSlot(index)) return 0;
+
         AlbumSlidingWindow.AlbumEntry entry = mDataWindow.get(index);
 
         int renderRequestFlags = 0;
@@ -182,5 +190,9 @@ public class AlbumSlotRenderer extends AbstractSlotRenderer {
     @Override
     public void onSlotSizeChanged(int width, int height) {
         // Do nothing
+    }
+
+    public void setSlotFilter(SlotFilter slotFilter) {
+        mSlotFilter = slotFilter;
     }
 }

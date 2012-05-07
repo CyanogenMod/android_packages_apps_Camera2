@@ -37,6 +37,7 @@ import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.data.MediaItem;
@@ -52,9 +53,12 @@ import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.DetailsHelper.DetailsSource;
 import com.android.gallery3d.ui.GLCanvas;
+import com.android.gallery3d.ui.GLRoot;
+import com.android.gallery3d.ui.GLRoot.OnGLIdleListener;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.ImportCompleteListener;
 import com.android.gallery3d.ui.MenuExecutor;
+import com.android.gallery3d.ui.PhotoFallbackEffect;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
@@ -129,7 +133,6 @@ public class PhotoPage extends ActivityState implements
         public void resume();
         public void pause();
         public boolean isEmpty();
-        public MediaItem getCurrentMediaItem();
         public void setCurrentPhoto(Path path, int indexHint);
     }
 
@@ -223,7 +226,7 @@ public class PhotoPage extends ActivityState implements
                 public void onPhotoChanged(int index, Path item) {
                     mCurrentIndex = index;
                     if (item != null) {
-                        MediaItem photo = mModel.getCurrentMediaItem();
+                        MediaItem photo = mModel.getMediaItem(0);
                         if (photo != null) updateCurrentPhoto(photo);
                     }
                     updateBars();
@@ -232,7 +235,7 @@ public class PhotoPage extends ActivityState implements
                 @Override
                 public void onLoadingFinished() {
                     if (!mModel.isEmpty()) {
-                        MediaItem photo = mModel.getCurrentMediaItem();
+                        MediaItem photo = mModel.getMediaItem(0);
                         if (photo != null) updateCurrentPhoto(photo);
                     } else if (mIsActive) {
                         mActivity.getStateManager().finishState(PhotoPage.this);
@@ -519,7 +522,7 @@ public class PhotoPage extends ActivityState implements
 
     @Override
     protected boolean onItemSelected(MenuItem item) {
-        MediaItem current = mModel.getCurrentMediaItem();
+        MediaItem current = mModel.getMediaItem(0);
 
         if (current == null) {
             // item is not ready, ignore
@@ -624,7 +627,7 @@ public class PhotoPage extends ActivityState implements
             if (mAppBridge.onSingleTapUp(x, y)) return;
         }
 
-        MediaItem item = mModel.getCurrentMediaItem();
+        MediaItem item = mModel.getMediaItem(0);
         if (item == null || item == mScreenNailItem) {
             // item is not ready or it is camera preview, ignore
             return;
@@ -724,11 +727,49 @@ public class PhotoPage extends ActivityState implements
         }
     }
 
+    private class PreparePhotoFallback implements OnGLIdleListener {
+        private PhotoFallbackEffect mPhotoFallback = new PhotoFallbackEffect();
+        private boolean mResultReady = false;
+
+        public synchronized PhotoFallbackEffect get() {
+            while (!mResultReady) {
+                Utils.waitWithoutInterrupt(this);
+            }
+            return mPhotoFallback;
+        }
+
+        @Override
+        public boolean onGLIdle(GLCanvas canvas, boolean renderRequested) {
+            mPhotoFallback = mPhotoView.buildFallbackEffect(mRootPane, canvas);
+            synchronized (this) {
+                mResultReady = true;
+                notifyAll();
+            }
+            return false;
+        }
+    }
+
+    private void preparePhotoFallbackView() {
+        GLRoot root = mActivity.getGLRoot();
+        PreparePhotoFallback task = new PreparePhotoFallback();
+        root.unlockRenderThread();
+        PhotoFallbackEffect anim;
+        try {
+            root.addOnGLIdleListener(task);
+            anim = task.get();
+        } finally {
+            root.lockRenderThread();
+        }
+        mActivity.getTransitionStore().put(
+                AlbumPage.KEY_RESUME_ANIMATION, anim);
+    }
+
     @Override
     public void onPause() {
         mActivity.getGLRoot().unfreeze();
         mHandler.removeMessages(MSG_UNFREEZE_GLROOT);
         super.onPause();
+        if (isFinishing()) preparePhotoFallbackView();
         mIsActive = false;
 
         DetailsHelper.pause();
@@ -789,7 +830,7 @@ public class PhotoPage extends ActivityState implements
 
         @Override
         public MediaDetails getDetails() {
-            return mModel.getCurrentMediaItem().getDetails();
+            return mModel.getMediaItem(0).getDetails();
         }
 
         @Override

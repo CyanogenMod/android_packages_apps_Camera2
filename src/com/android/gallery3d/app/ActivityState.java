@@ -59,6 +59,7 @@ abstract public class ActivityState {
 
     private boolean mDestroyed = false;
     private boolean mPlugged = false;
+    boolean mIsFinishing = false;
 
     protected ActivityState() {
     }
@@ -173,6 +174,9 @@ abstract public class ActivityState {
             activity.registerReceiver(mPowerIntentReceiver, filter);
         }
         onResume();
+
+        // the transition store should be cleared after resume;
+        mActivity.getTransitionStore().clear();
     }
 
     // a subclass of ActivityState should override the method to resume itself
@@ -195,5 +199,9 @@ abstract public class ActivityState {
 
     boolean isDestroyed() {
         return mDestroyed;
+    }
+
+    public boolean isFinishing() {
+        return mIsFinishing;
     }
 }

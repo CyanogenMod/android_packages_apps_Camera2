@@ -194,8 +194,8 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         return mItem.getMediaType() == MediaItem.MEDIA_TYPE_VIDEO;
     }
 
-    public MediaItem getCurrentMediaItem() {
-        return mItem;
+    public MediaItem getMediaItem(int offset) {
+        return offset == 0 ? mItem : null;
     }
 
     public int getCurrentIndex() {

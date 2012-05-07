@@ -175,6 +175,7 @@ public class StateManager {
 
         // Remove the top state.
         mStack.pop();
+        state.mIsFinishing = true;
         if (mIsResumed) state.onPause();
         mContext.getGLRoot().setContentPane(null);
         state.onDestroy();
