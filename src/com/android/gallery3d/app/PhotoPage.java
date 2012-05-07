@@ -319,9 +319,6 @@ public class PhotoPage extends ActivityState implements
         if (mShowDetails) {
             mDetailsHelper.reloadDetails(mModel.getCurrentIndex());
         }
-        mPhotoView.showVideoPlayIcon(
-                photo.getMediaType() == MediaObject.MEDIA_TYPE_VIDEO);
-
         if ((photo.getSupportedOperations() & MediaItem.SUPPORT_SHARE) != 0) {
             updateShareURI(photo.getPath());
         }
