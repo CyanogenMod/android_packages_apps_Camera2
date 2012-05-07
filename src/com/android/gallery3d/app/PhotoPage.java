@@ -19,6 +19,7 @@ package com.android.gallery3d.app;
 import android.app.ActionBar.OnMenuVisibilityListener;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
@@ -57,6 +58,7 @@ import com.android.gallery3d.ui.ScreenNail;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.MediaSetUtils;
 
 public class PhotoPage extends ActivityState implements
         PhotoView.Listener, OrientationManager.Listener, AppBridge.Server {
@@ -448,7 +450,11 @@ public class PhotoPage extends ActivityState implements
     private void onUpPressed() {
         if (mActivity.getStateManager().getStateCount() > 1) {
             super.onBackPressed();
-        } else if (mOriginalSetPathString != null) {
+        }
+
+        if (mOriginalSetPathString == null) return;
+
+        if (mAppBridge == null) {
             // We're in view mode so set up the stacks on our own.
             Bundle data = new Bundle(getData());
             data.putString(AlbumPage.KEY_MEDIA_PATH, mOriginalSetPathString);
@@ -456,6 +462,13 @@ public class PhotoPage extends ActivityState implements
                     mActivity.getDataManager().getTopSetPath(
                             DataManager.INCLUDE_ALL));
             mActivity.getStateManager().switchState(this, AlbumPage.class, data);
+        } else {
+            // Start the real gallery activity to view the camera roll.
+            Uri uri = Uri.parse("content://media/external/file?bucketId="
+                    + MediaSetUtils.CAMERA_BUCKET_ID);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(uri, ContentResolver.CURSOR_DIR_BASE_TYPE + "/image");
+            ((Activity) mActivity).startActivity(intent);
         }
     }
 
