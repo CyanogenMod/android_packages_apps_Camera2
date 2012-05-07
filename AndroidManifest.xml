@@ -212,7 +212,8 @@
                 android:label="@string/photoeditor_name"
                 android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"
                 android:configChanges="keyboardHidden|orientation|screenSize"
-                android:hardwareAccelerated="true">
+                android:hardwareAccelerated="true"
+                android:process=":edit">
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />
                 <data android:mimeType="image/*" />
