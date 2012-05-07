@@ -533,16 +533,17 @@ public class PhotoView extends GLView {
         }
 
         private void drawTileView(GLCanvas canvas, Rect r) {
-            float scale = mPositionController.getImageScale();
+            float imageScale = mPositionController.getImageScale();
             int viewW = getWidth();
             int viewH = getHeight();
             float cx = r.exactCenterX();
             float cy = r.exactCenterY();
-            float extraScale = 1f;  // extra scaling due to card effect
+            float scale = 1f;  // the scaling factor due to card effect
 
             canvas.save(GLCanvas.SAVE_FLAG_MATRIX | GLCanvas.SAVE_FLAG_ALPHA);
-            boolean wantsCardEffect = CARD_EFFECT && !mFilmMode
-                    && !mIsCamera && !mPictures.get(-1).isCamera();
+            float filmRatio = mPositionController.getFilmRatio();
+            boolean wantsCardEffect = CARD_EFFECT && !mIsCamera
+                    && filmRatio != 1f && !mPictures.get(-1).isCamera();
             if (wantsCardEffect) {
                 // Calculate the move-out progress value.
                 int left = r.left;
@@ -553,32 +554,37 @@ public class PhotoView extends GLView {
                 // We only want to apply the fading animation if the scrolling
                 // movement is to the right.
                 if (progress < 0) {
-                    extraScale = getScrollScale(progress);
-                    scale *= extraScale;
-                    canvas.multiplyAlpha(getScrollAlpha(progress));
+                    scale = getScrollScale(progress);
+                    float alpha = getScrollAlpha(progress);
+                    scale = interpolate(filmRatio, scale, 1f);
+                    alpha = interpolate(filmRatio, alpha, 1f);
 
+                    imageScale *= scale;
+                    canvas.multiplyAlpha(alpha);
+
+                    float cxPage;  // the cx value in page mode
                     if (right - left <= viewW) {
                         // If the picture is narrower than the view, keep it at
                         // the center of the view.
-                        cx = viewW / 2f;
+                        cxPage = viewW / 2f;
                     } else {
                         // If the picture is wider than the view (it's
                         // zoomed-in), keep the left edge of the object align
                         // the the left edge of the view.
-                        cx = (right - left) * extraScale / 2f;
+                        cxPage = (right - left) * scale / 2f;
                     }
+                    cx = interpolate(filmRatio, cxPage, cx);
                 }
             }
 
             // Draw the tile view.
-            setTileViewPosition(cx, cy, viewW, viewH, scale);
+            setTileViewPosition(cx, cy, viewW, viewH, imageScale);
             PhotoView.super.render(canvas);
 
             // Draw the play video icon.
             if (mIsVideo) {
                 canvas.translate((int) (cx + 0.5f), (int) (cy + 0.5f));
-                int s = (int) (extraScale *
-                        Math.min(r.width(), r.height()) + 0.5f);
+                int s = (int) (scale * Math.min(r.width(), r.height()) + 0.5f);
                 drawVideoPlayIcon(canvas, s);
             }
 
@@ -677,30 +683,31 @@ public class PhotoView extends GLView {
                 mListener.onFullScreenChanged(false);
             }
 
-            boolean wantsCardEffect = CARD_EFFECT && !mFilmMode
-                && (mIndex > 0) && !mPictures.get(0).isCamera();
-
+            float filmRatio = mPositionController.getFilmRatio();
+            boolean wantsCardEffect = CARD_EFFECT && mIndex > 0
+                    && filmRatio != 1f && !mPictures.get(0).isCamera();
             int w = getWidth();
-            int drawW = getRotated(mRotation, r.width(), r.height());
-            int drawH = getRotated(mRotation, r.height(), r.width());
-            int cx = wantsCardEffect ? w / 2 : r.centerX();
+            int cx = wantsCardEffect
+                    ? (int) (interpolate(filmRatio, w / 2, r.centerX()) + 0.5f)
+                    : r.centerX();
             int cy = r.centerY();
-            int flags = GLCanvas.SAVE_FLAG_MATRIX;
-
-            if (wantsCardEffect) flags |= GLCanvas.SAVE_FLAG_ALPHA;
-            canvas.save(flags);
+            canvas.save(GLCanvas.SAVE_FLAG_MATRIX | GLCanvas.SAVE_FLAG_ALPHA);
             canvas.translate(cx, cy);
             if (wantsCardEffect) {
                 float progress = (float) (w / 2 - r.centerX()) / w;
                 progress = Utils.clamp(progress, -1, 1);
                 float alpha = getScrollAlpha(progress);
                 float scale = getScrollScale(progress);
+                alpha = interpolate(filmRatio, alpha, 1f);
+                scale = interpolate(filmRatio, scale, 1f);
                 canvas.multiplyAlpha(alpha);
                 canvas.scale(scale, scale, 1);
             }
             if (mRotation != 0) {
                 canvas.rotate(mRotation, 0, 0, 1);
             }
+            int drawW = getRotated(mRotation, r.width(), r.height());
+            int drawH = getRotated(mRotation, r.height(), r.width());
             mScreenNail.draw(canvas, -drawW / 2, -drawH / 2, drawW, drawH);
             if (mIsVideo) drawVideoPlayIcon(canvas, Math.min(drawW, drawH));
             canvas.restore();
@@ -783,6 +790,10 @@ public class PhotoView extends GLView {
 
         @Override
         public boolean onSingleTapUp(float x, float y) {
+            // We do this in addition to onUp() because we want the snapback of
+            // setFilmMode to happen.
+            mHolding &= ~HOLD_TOUCH_DOWN;
+
             if (mFilmMode && !mDownInScrolling) {
                 switchToHitPicture((int) (x + 0.5f), (int) (y + 0.5f));
                 setFilmMode(false);
@@ -1001,23 +1012,23 @@ public class PhotoView extends GLView {
 
     @Override
     protected void render(GLCanvas canvas) {
-        // Draw next photos
-        for (int i = 1; i <= SCREEN_NAIL_MAX; i++) {
+        float filmRatio = mPositionController.getFilmRatio();
+
+        // Draw next photos. In page mode, we draw only one next photo.
+        int lastPhoto = (filmRatio == 0f) ? 1 : SCREEN_NAIL_MAX;
+        for (int i = lastPhoto; i > 0; i--) {
             Rect r = mPositionController.getPosition(i);
             mPictures.get(i).draw(canvas, r);
-            // In page mode, we draw only one next photo.
-            if (!mFilmMode) break;
         }
 
         // Draw current photo
         mPictures.get(0).draw(canvas, mPositionController.getPosition(0));
 
-        // Draw previous photos
-        for (int i = -1; i >= -SCREEN_NAIL_MAX; i--) {
+        // Draw previous photos. In page mode, we draw only one previous photo.
+        lastPhoto = (filmRatio == 0f) ? -1: -SCREEN_NAIL_MAX;
+        for (int i = -1; i >= lastPhoto; i--) {
             Rect r = mPositionController.getPosition(i);
             mPictures.get(i).draw(canvas, r);
-            // In page mode, we draw only one previous photo.
-            if (!mFilmMode) break;
         }
 
         mPositionController.advanceAnimation();
@@ -1325,6 +1336,13 @@ public class PhotoView extends GLView {
             return (1.0f - focalLength / (focalLength + input)) /
                 (1.0f - focalLength / (focalLength + 1.0f));
         }
+    }
+
+    // Returns an interpolated value for the page/film transition.
+    // When ratio = 0, the result is from.
+    // When ratio = 1, the result is to.
+    private static float interpolate(float ratio, float from, float to) {
+        return from + (to - from) * ratio * ratio;
     }
 
     ////////////////////////////////////////////////////////////////////////////
