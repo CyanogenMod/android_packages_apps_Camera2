@@ -493,6 +493,11 @@ public class PhotoPage extends ActivityState implements
     }
 
     @Override
+    public void setSwipingEnabled(boolean enabled) {
+        mPhotoView.setSwipingEnabled(enabled);
+    }
+
+    @Override
     protected boolean onCreateActionBar(Menu menu) {
         MenuInflater inflater = ((Activity) mActivity).getMenuInflater();
         inflater.inflate(R.menu.photo, menu);
