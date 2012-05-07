@@ -48,6 +48,8 @@ public abstract class Entry {
         boolean fullText() default false;
 
         String defaultValue() default "";
+
+        boolean unique() default false;
     }
 
     public void clear() {
