@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.ui;
 
+import android.graphics.Matrix;
 import com.android.gallery3d.anim.CanvasAnimation;
 
 public interface GLRoot {
@@ -36,5 +37,8 @@ public interface GLRoot {
     public void unlockRenderThread();
 
     public void setContentPane(GLView content);
-    public void setOrientationCompensation(int degrees);
+    public void setOrientationSource(OrientationSource source);
+    public int getDisplayRotation();
+    public int getCompensation();
+    public Matrix getCompensationMatrix();
 }

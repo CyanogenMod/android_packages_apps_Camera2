@@ -50,7 +50,7 @@ public abstract class AppBridge implements Parcelable {
 
     public interface Server {
         // Set the camera frame relative to GLRootView.
-        public void setCameraNaturalFrame(Rect frame);
+        public void setCameraRelativeFrame(Rect frame);
         // Switch to the previous or next picture using the capture animation.
         // The offset is -1 to switch to the previous picture, 1 to switch to
         // the next picture.
