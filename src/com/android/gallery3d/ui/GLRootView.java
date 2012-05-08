@@ -70,12 +70,15 @@ public class GLRootView extends GLSurfaceView
     private GLCanvas mCanvas;
     private GLView mContentView;
 
+    private OrientationSource mOrientationSource;
     // mCompensation is the difference between the UI orientation on GLCanvas
     // and the framework orientation. See OrientationManager for details.
     private int mCompensation;
     // mCompensationMatrix maps the coordinates of touch events. It is kept sync
     // with mCompensation.
     private Matrix mCompensationMatrix = new Matrix();
+    private int mDisplayRotation;
+
     // The value which will become mCompensation in next layout.
     private int mPendingCompensation;
 
@@ -187,11 +190,20 @@ public class GLRootView extends GLSurfaceView
 
         int w = getWidth();
         int h = getHeight();
+        int displayRotation = 0;
+        int compensation = 0;
 
-        // Before doing layout, if there is a compensation change pending, update
-        // mCompensation and mCompensationMatrix.
-        if (mCompensation != mPendingCompensation) {
-            mCompensation = mPendingCompensation;
+        // Get the new orientation values
+        if (mOrientationSource != null) {
+            displayRotation = mOrientationSource.getDisplayRotation();
+            compensation = mOrientationSource.getCompensation();
+        } else {
+            displayRotation = 0;
+            compensation = 0;
+        }
+
+        if (mCompensation != compensation) {
+            mCompensation = compensation;
             if (mCompensation % 180 != 0) {
                 mCompensationMatrix.setRotate(mCompensation);
                 // move center to origin before rotation
@@ -202,14 +214,7 @@ public class GLRootView extends GLSurfaceView
                 mCompensationMatrix.setRotate(mCompensation, w / 2, h / 2);
             }
         }
-
-        // Tell the views about current display rotation and compensation value.
-        if (mContentView != null) {
-            // This is a hack: note the 0 should be the display rotation, but we
-            // don't know the display rotation here. The PhotoPage will inject
-            // the correct value in its mRootPane.orient() method.
-            mContentView.orient(0, mCompensation);
-        }
+        mDisplayRotation = displayRotation;
 
         // Do the actual layout.
         if (mCompensation % 180 != 0) {
@@ -463,9 +468,22 @@ public class GLRootView extends GLSurfaceView
     }
 
     @Override
-    public void setOrientationCompensation(int degrees) {
-        if (mPendingCompensation == degrees) return;
-        mPendingCompensation = degrees;
-        requestLayoutContentPane();
+    public void setOrientationSource(OrientationSource source) {
+        mOrientationSource = source;
+    }
+
+    @Override
+    public int getDisplayRotation() {
+        return mDisplayRotation;
+    }
+
+    @Override
+    public int getCompensation() {
+        return mCompensation;
+    }
+
+    @Override
+    public Matrix getCompensationMatrix() {
+        return mCompensationMatrix;
     }
 }

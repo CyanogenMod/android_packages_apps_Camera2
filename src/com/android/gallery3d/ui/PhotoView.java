@@ -18,6 +18,7 @@ package com.android.gallery3d.ui;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Message;
@@ -168,7 +169,7 @@ public class PhotoView extends GLView {
     private int mDisplayRotation = 0;
     private int mCompensation = 0;
     private boolean mFullScreen = true;
-    private Rect mCameraNaturalFrame = new Rect();
+    private Rect mCameraRelativeFrame = new Rect();
     private Rect mCameraRect = new Rect();
 
     // [mPrevBound, mNextBound] is the range of index for all pictures in the
@@ -361,25 +362,32 @@ public class PhotoView extends GLView {
     }
 
     @Override
-    protected void onOrient(int displayRotation, int compensation) {
-        // onLayout will be called soon. We need to change the size and rotation
-        // of the Camera ScreenNail, but we don't want it start moving because
-        // the view size will be changed soon.
-        mDisplayRotation = displayRotation;
-        mCompensation = compensation;
-        for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
-            Picture p = mPictures.get(i);
-            if (p.isCamera()) {
-                p.updateSize(true);
-            }
-        }
-    }
-
-    @Override
     protected void onLayout(
             boolean changeSize, int left, int top, int right, int bottom) {
-        mTileView.layout(left, top, right, bottom);
-        mEdgeView.layout(left, top, right, bottom);
+        int w = right - left;
+        int h = bottom - top;
+        mTileView.layout(0, 0, w, h);
+        mEdgeView.layout(0, 0, w, h);
+
+        GLRoot root = getGLRoot();
+        int displayRotation = root.getDisplayRotation();
+        int compensation = root.getCompensation();
+        if (mDisplayRotation != displayRotation
+                || mCompensation != compensation) {
+            mDisplayRotation = displayRotation;
+            mCompensation = compensation;
+
+            // We need to change the size and rotation of the Camera ScreenNail, but
+            // we don't want it to animate because the size doen't actually
+            // change in the eye of the user.
+            for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
+                Picture p = mPictures.get(i);
+                if (p.isCamera()) {
+                    p.updateSize(true);
+                }
+            }
+        }
+
         updateConstrainedFrame();
         if (changeSize) {
             mPositionController.setViewSize(getWidth(), getHeight());
@@ -388,32 +396,37 @@ public class PhotoView extends GLView {
 
     // Update the constrained frame due to layout change.
     private void updateConstrainedFrame() {
+        // Get the width and height in framework orientation because the given
+        // mCameraRelativeFrame is in that coordinates.
         int w = getWidth();
         int h = getHeight();
-        int rotation = getCameraRotation();
-        if (rotation % 180 != 0) {
+        if (mCompensation % 180 != 0) {
             int tmp = w;
             w = h;
             h = tmp;
         }
+        int l = mCameraRelativeFrame.left;
+        int t = mCameraRelativeFrame.top;
+        int r = mCameraRelativeFrame.right;
+        int b = mCameraRelativeFrame.bottom;
 
-        int l = mCameraNaturalFrame.left;
-        int t = mCameraNaturalFrame.top;
-        int r = mCameraNaturalFrame.right;
-        int b = mCameraNaturalFrame.bottom;
-
-        switch (rotation) {
+        // Now convert it to the coordinates we are using.
+        switch (mCompensation) {
             case 0: mCameraRect.set(l, t, r, b); break;
             case 90: mCameraRect.set(h - b, l, h - t, r); break;
             case 180: mCameraRect.set(w - r, h - b, w - l, h - t); break;
             case 270: mCameraRect.set(t, w - r, b, w - l); break;
         }
 
+        Log.d(TAG, "compensation = " + mCompensation
+                + ", CameraRelativeFrame = " + mCameraRelativeFrame
+                + ", mCameraRect = " + mCameraRect);
         mPositionController.setConstrainedFrame(mCameraRect);
     }
 
-    public void setCameraNaturalFrame(Rect frame) {
-        mCameraNaturalFrame.set(frame);
+    public void setCameraRelativeFrame(Rect frame) {
+        mCameraRelativeFrame.set(frame);
+        updateConstrainedFrame();
     }
 
     // Returns the rotation we need to do to the camera texture before drawing
@@ -802,7 +815,13 @@ public class PhotoView extends GLView {
             }
 
             if (mListener != null) {
-                mListener.onSingleTapUp((int) x, (int) y);
+                // Do the inverse transform of the touch coordinates.
+                Matrix m = getGLRoot().getCompensationMatrix();
+                Matrix inv = new Matrix();
+                m.invert(inv);
+                float[] pts = new float[] {x, y};
+                inv.mapPoints(pts);
+                mListener.onSingleTapUp((int) (pts[0] + 0.5f), (int) (pts[1] + 0.5f));
             }
             return true;
         }
