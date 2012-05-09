@@ -133,10 +133,6 @@ public class ActionModeHandler implements ActionMode.Callback {
                 needsConfirm = true;
             }
             mMenuExecutor.onMenuClicked(item, needsConfirm, listener);
-            if (action == R.id.action_select_all) {
-                updateSupportedOperation();
-                updateSelectionMenu();
-            }
         } finally {
             root.unlockRenderThread();
         }
@@ -281,6 +277,8 @@ public class ActionModeHandler implements ActionMode.Callback {
         if (mMenuTask != null) {
             mMenuTask.cancel();
         }
+
+        updateSelectionMenu();
 
         // Disable share action until share intent is in good shape
         final MenuItem item = mShareActionProvider != null ?
