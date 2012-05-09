@@ -545,7 +545,7 @@ public class AlbumSetPage extends ActivityState implements
                 break;
             }
             case SelectionManager.SELECT_ALL_MODE: {
-                mActionModeHandler.updateSupportedOperation();
+                mActionModeHandler.setTitle(getSelectedString());
                 mRootPane.invalidate();
                 break;
             }
