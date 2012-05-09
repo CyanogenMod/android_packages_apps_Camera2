@@ -153,14 +153,6 @@ public class PhotoPage extends ActivityState implements
                 mDetailsHelper.layout(left, mActionBar.getHeight(), right, bottom);
             }
         }
-
-        @Override
-        protected void orient(int displayRotation, int compensation) {
-            displayRotation = mOrientationManager.getDisplayRotation();
-            Log.d(TAG, "orient -- display rotation " + displayRotation
-                    + ", compensation = " + compensation);
-            super.orient(displayRotation, compensation);
-        }
     };
 
     @Override
@@ -175,6 +167,7 @@ public class PhotoPage extends ActivityState implements
         mApplication = (GalleryApp)((Activity) mActivity).getApplication();
         mOrientationManager = mActivity.getOrientationManager();
         mOrientationManager.addListener(this);
+        mActivity.getGLRoot().setOrientationSource(mOrientationManager);
 
         mSetPathString = data.getString(KEY_MEDIA_SET_PATH);
         mOriginalSetPathString = mSetPathString;
@@ -426,8 +419,8 @@ public class PhotoPage extends ActivityState implements
     }
 
     @Override
-    public void onOrientationCompensationChanged(int degrees) {
-        mActivity.getGLRoot().setOrientationCompensation(degrees);
+    public void onOrientationCompensationChanged() {
+        mActivity.getGLRoot().requestLayoutContentPane();
     }
 
     @Override
@@ -482,8 +475,8 @@ public class PhotoPage extends ActivityState implements
     //////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void setCameraNaturalFrame(Rect frame) {
-        mPhotoView.setCameraNaturalFrame(frame);
+    public void setCameraRelativeFrame(Rect frame) {
+        mPhotoView.setCameraRelativeFrame(frame);
     }
 
     @Override
@@ -758,6 +751,7 @@ public class PhotoPage extends ActivityState implements
             mScreenNail = null;
         }
         mOrientationManager.removeListener(this);
+        mActivity.getGLRoot().setOrientationSource(null);
 
         // Remove all pending messages.
         mHandler.removeCallbacksAndMessages(null);

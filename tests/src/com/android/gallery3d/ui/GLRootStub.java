@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.ui;
 
+import android.graphics.Matrix;
 import com.android.gallery3d.anim.CanvasAnimation;
 
 public class GLRootStub implements GLRoot {
@@ -27,5 +28,8 @@ public class GLRootStub implements GLRoot {
     public void lockRenderThread() {}
     public void unlockRenderThread() {}
     public void setContentPane(GLView content) {}
-    public void setOrientationCompensation(int degrees) {}
+    public void setOrientationSource(OrientationSource source) {}
+    public int getDisplayRotation() { return 0; }
+    public int getCompensation() { return 0; }
+    public Matrix getCompensationMatrix() { return null; }
 }

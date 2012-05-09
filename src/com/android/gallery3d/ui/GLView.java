@@ -305,13 +305,12 @@ public class GLView {
 
     public void layout(int left, int top, int right, int bottom) {
         boolean sizeChanged = setBounds(left, top, right, bottom);
-        if (sizeChanged) {
-            mViewFlags &= ~FLAG_LAYOUT_REQUESTED;
-            onLayout(true, left, top, right, bottom);
-        } else if ((mViewFlags & FLAG_LAYOUT_REQUESTED)!= 0) {
-            mViewFlags &= ~FLAG_LAYOUT_REQUESTED;
-            onLayout(false, left, top, right, bottom);
-        }
+        mViewFlags &= ~FLAG_LAYOUT_REQUESTED;
+        // We call onLayout no matter sizeChanged is true or not because the
+        // orientation may change without changing the size of the View (for
+        // example, rotate the device by 180 degrees), and we want to handle
+        // orientation change in onLayout.
+        onLayout(sizeChanged, left, top, right, bottom);
     }
 
     private boolean setBounds(int left, int top, int right, int bottom) {
@@ -357,16 +356,6 @@ public class GLView {
 
     protected void onLayout(
             boolean changeSize, int left, int top, int right, int bottom) {
-    }
-
-    protected void orient(int displayRotation, int compensation) {
-        onOrient(displayRotation, compensation);
-        for (int i = 0, n = getComponentCount(); i < n; ++i) {
-            getComponent(i).orient(displayRotation, compensation);
-        }
-    }
-
-    protected void onOrient(int displayRotation, int compensation) {
     }
 
     /**
