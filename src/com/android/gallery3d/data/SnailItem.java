@@ -27,11 +27,11 @@ import com.android.gallery3d.util.ThreadPool.JobContext;
 // used so we can show an foreign component (like an
 // android.view.View) instead of a Bitmap.
 public class SnailItem extends MediaItem {
+    private static final String TAG = "SnailItem";
     private ScreenNail mScreenNail;
 
-    public SnailItem(Path path, ScreenNail screenNail) {
+    public SnailItem(Path path) {
         super(path, nextVersionNumber());
-        mScreenNail = screenNail;
     }
 
     @Override
@@ -76,5 +76,17 @@ public class SnailItem extends MediaItem {
     @Override
     public int getHeight() {
         return 0;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    //  Extra methods for SnailItem
+    //////////////////////////////////////////////////////////////////////////
+
+    public void setScreenNail(ScreenNail screenNail) {
+        mScreenNail = screenNail;
+    }
+
+    public void updateVersion() {
+        mDataVersion = nextVersionNumber();
     }
 }

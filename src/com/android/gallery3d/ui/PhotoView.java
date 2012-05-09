@@ -377,8 +377,8 @@ public class PhotoView extends GLView {
             mDisplayRotation = displayRotation;
             mCompensation = compensation;
 
-            // We need to change the size and rotation of the Camera ScreenNail, but
-            // we don't want it to animate because the size doen't actually
+            // We need to change the size and rotation of the Camera ScreenNail,
+            // but we don't want it to animate because the size doen't actually
             // change in the eye of the user.
             for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
                 Picture p = mPictures.get(i);
