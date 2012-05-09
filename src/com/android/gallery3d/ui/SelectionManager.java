@@ -107,15 +107,19 @@ public class SelectionManager {
         return mInverseSelection ^ mClickedSet.contains(itemId);
     }
 
+    private int getTotalCount() {
+        if (mTotal < 0) {
+            mTotal = mIsAlbumSet
+                    ? mSourceMediaSet.getSubMediaSetCount()
+                    : mSourceMediaSet.getMediaItemCount();
+        }
+        return mTotal;
+    }
+
     public int getSelectedCount() {
         int count = mClickedSet.size();
         if (mInverseSelection) {
-            if (mTotal < 0) {
-                mTotal = mIsAlbumSet
-                        ? mSourceMediaSet.getSubMediaSetCount()
-                        : mSourceMediaSet.getMediaItemCount();
-            }
-            count = mTotal - count;
+            count = getTotalCount() - count;
         }
         return count;
     }
@@ -128,8 +132,14 @@ public class SelectionManager {
             mClickedSet.add(path);
         }
 
+        // Convert to inverse selection mode if everything is selected.
+        int count = getSelectedCount();
+        if (count == getTotalCount()) {
+            selectAll();
+        }
+
         if (mListener != null) mListener.onSelectionChange(path, isItemSelected(path));
-        if (getSelectedCount() == 0 && mAutoLeave) {
+        if (count == 0 && mAutoLeave) {
             leaveSelectionMode();
         }
     }
