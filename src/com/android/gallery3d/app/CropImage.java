@@ -163,8 +163,8 @@ public class CropImage extends AbstractGalleryActivity {
         getGLRoot().setContentPane(mCropView);
 
         ActionBar actionBar = getActionBar();
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
-                ActionBar.DISPLAY_HOME_AS_UP);
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE,
+                ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
 
         mMainHandler = new SynchronizedHandler(getGLRoot()) {
             @Override
