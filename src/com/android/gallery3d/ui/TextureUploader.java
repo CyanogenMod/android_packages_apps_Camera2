@@ -64,17 +64,18 @@ public class TextureUploader implements OnGLIdleListener {
             synchronized (this) {
                 if (deque.isEmpty()) break;
                 t = deque.removeFirst();
-            }
-            if (!t.isContentValid(canvas)) {
+                if (t.isContentValid(canvas)) continue;
+                // this has to be protected by the synchronized block
+                // to prevent the inner bitmap get recycled
                 t.updateContent(canvas);
-
-                // It will took some more time for a texture to be drawn for
-                // the first time.
-                // Thus, when scrolling, if a new column appears on screen,
-                // it may cause a UI jank even these textures are uploaded.
-                if (isBackground) t.draw(canvas, 0, 0);
-                --uploadQuota;
             }
+
+            // It will took some more time for a texture to be drawn for
+            // the first time.
+            // Thus, when scrolling, if a new column appears on screen,
+            // it may cause a UI jank even these textures are uploaded.
+            if (isBackground) t.draw(canvas, 0, 0);
+            --uploadQuota;
         }
         return uploadQuota;
     }
