@@ -191,7 +191,6 @@ public class FileCache implements Closeable {
 
     private synchronized void initialize() {
         if (mInitialized) return;
-        mInitialized = true;
 
         if (!mRootDir.isDirectory()) {
             mRootDir.mkdirs();
@@ -209,6 +208,10 @@ public class FileCache implements Closeable {
             cursor.close();
         }
         if (mTotalBytes > mCapacity) freeSomeSpaceIfNeed(MAX_DELETE_COUNT);
+
+        // Mark initialized when everything above went through. If an exception was thrown,
+        // initialize() will be retried later.
+        mInitialized = true;
     }
 
     private void freeSomeSpaceIfNeed(int maxDeleteFileCount) {
