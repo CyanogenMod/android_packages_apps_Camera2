@@ -24,13 +24,15 @@ import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.ViewConfiguration;
 
+import com.android.gallery3d.ui.OrientationSource;
+
 import java.util.ArrayList;
 
-public class OrientationManager {
+public class OrientationManager implements OrientationSource {
     private static final String TAG = "OrientationManager";
 
     public interface Listener {
-        public void onOrientationCompensationChanged(int degrees);
+        public void onOrientationCompensationChanged();
     }
 
     // Orientation hysteresis amount used in rounding, in degrees
@@ -139,8 +141,7 @@ public class OrientationManager {
     private void notifyListeners() {
         synchronized (mListeners) {
             for (int i = 0, n = mListeners.size(); i < n; i++) {
-                mListeners.get(i).onOrientationCompensationChanged(
-                        mOrientationCompensation);
+                mListeners.get(i).onOrientationCompensationChanged();
             }
         }
     }
@@ -164,8 +165,14 @@ public class OrientationManager {
         }
     }
 
+    @Override
     public int getDisplayRotation() {
         return getDisplayRotation(mActivity);
+    }
+
+    @Override
+    public int getCompensation() {
+        return mOrientationCompensation;
     }
 
     private static int roundOrientation(int orientation, int orientationHistory) {
