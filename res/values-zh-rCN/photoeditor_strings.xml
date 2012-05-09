@@ -20,8 +20,7 @@
     <string name="loading_failure" msgid="7890360277163832130">"无法加载该照片"</string>
     <string name="saving_failure" msgid="8229491575433743974">"无法保存经过编辑的照片"</string>
     <string name="photo_saved" msgid="6163006724627682202">"经过编辑的照片已保存至“<xliff:g id="FOLDER_NAME">%s</xliff:g>”"</string>
-    <!-- no translation found for discard_unsaved_photo (2353274490633681946) -->
-    <skip />
+    <string name="discard_unsaved_photo" msgid="2353274490633681946">"要舍弃未保存的更改吗？"</string>
     <string name="yes" msgid="5402582493291792293">"是"</string>
     <string name="save" msgid="5516670392524294967">"保存"</string>
     <string name="autofix" msgid="1663414996270538748">"自动修正"</string>
