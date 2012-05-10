@@ -41,4 +41,6 @@ public interface GLRoot {
     public int getDisplayRotation();
     public int getCompensation();
     public Matrix getCompensationMatrix();
+    public void freeze();
+    public void unfreeze();
 }
