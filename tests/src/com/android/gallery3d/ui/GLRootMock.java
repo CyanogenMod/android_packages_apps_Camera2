@@ -39,4 +39,6 @@ public class GLRootMock implements GLRoot {
     public int getDisplayRotation() { return 0; }
     public int getCompensation() { return 0; }
     public Matrix getCompensationMatrix() { return null; }
+    public void freeze() {}
+    public void unfreeze() {}
 }
