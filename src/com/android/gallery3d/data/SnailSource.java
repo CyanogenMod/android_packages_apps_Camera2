@@ -15,9 +15,7 @@
  */
 package com.android.gallery3d.data;
 
-import android.util.SparseArray;
 import com.android.gallery3d.app.GalleryApp;
-import com.android.gallery3d.ui.ScreenNail;
 
 public class SnailSource extends MediaSource {
     private static final String TAG = "SnailSource";
@@ -27,7 +25,6 @@ public class SnailSource extends MediaSource {
     private GalleryApp mApplication;
     private PathMatcher mMatcher;
     private static int sNextId;
-    private static SparseArray<ScreenNail> sRegistry = new SparseArray<ScreenNail>();
 
     public SnailSource(GalleryApp application) {
         super("snail");
@@ -49,19 +46,17 @@ public class SnailSource extends MediaSource {
                 return new SnailAlbum(path, item);
             case SNAIL_ITEM: {
                 int id = mMatcher.getIntVar(0);
-                return new SnailItem(path, lookupScreenNail(id));
+                return new SnailItem(path);
             }
         }
         return null;
     }
 
-    // Registers a ScreenNail and returns the id of it. You can obtain the Path
-    // of the MediaItem associated with the ScreenNail by getItemPath(), and the
-    // Path of the MediaSet containing that MediaItem by getSetPath().
-    public static synchronized int registerScreenNail(ScreenNail s) {
-        int id = sNextId++;
-        sRegistry.put(id, s);
-        return id;
+    // Registers a new SnailAlbum containing a SnailItem and returns the id of
+    // them. You can obtain the Path of the SnailAlbum and SnailItem associated
+    // with the id by getSetPath and getItemPath().
+    public static synchronized int newId() {
+        return sNextId++;
     }
 
     public static Path getSetPath(int id) {
@@ -70,14 +65,5 @@ public class SnailSource extends MediaSource {
 
     public static Path getItemPath(int id) {
         return Path.fromString("/snail/item").getChild(id);
-    }
-
-    public static synchronized void unregisterScreenNail(ScreenNail s) {
-        int index = sRegistry.indexOfValue(s);
-        sRegistry.removeAt(index);
-    }
-
-    private static synchronized ScreenNail lookupScreenNail(int id) {
-        return sRegistry.get(id);
     }
 }
