@@ -57,6 +57,8 @@ public abstract class AppBridge implements Parcelable {
         public boolean switchWithCaptureAnimation(int offset);
         // Enable or disable the swiping gestures (the default is enabled).
         public void setSwipingEnabled(boolean enabled);
+        // Notify that the ScreenNail is changed.
+        public void notifyScreenNailChanged();
     }
 
     // If server is null, the services are not available.
