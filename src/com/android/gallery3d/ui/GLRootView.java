@@ -33,6 +33,7 @@ import com.android.gallery3d.util.Profile;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -97,6 +98,9 @@ public class GLRootView extends GLSurfaceView
     private final IdleRunner mIdleRunner = new IdleRunner();
 
     private final ReentrantLock mRenderLock = new ReentrantLock();
+    private final Condition mFreezeCondition =
+            mRenderLock.newCondition();
+    private boolean mFreeze;
 
     private long mLastDrawFinishTime;
     private boolean mInDownState = false;
@@ -301,6 +305,11 @@ public class GLRootView extends GLSurfaceView
             t0 = System.nanoTime();
         }
         mRenderLock.lock();
+
+        while (mFreeze) {
+            mFreezeCondition.awaitUninterruptibly();
+        }
+
         try {
             onDrawFrameLocked(gl);
         } finally {
@@ -485,5 +494,20 @@ public class GLRootView extends GLSurfaceView
     @Override
     public Matrix getCompensationMatrix() {
         return mCompensationMatrix;
+    }
+
+    @Override
+    public void freeze() {
+        mRenderLock.lock();
+        mFreeze = true;
+        mRenderLock.unlock();
+    }
+
+    @Override
+    public void unfreeze() {
+        mRenderLock.lock();
+        mFreeze = false;
+        mFreezeCondition.signalAll();
+        mRenderLock.unlock();
     }
 }
