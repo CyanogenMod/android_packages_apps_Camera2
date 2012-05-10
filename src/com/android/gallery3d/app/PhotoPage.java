@@ -44,6 +44,8 @@ import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.MtpDevice;
 import com.android.gallery3d.data.Path;
+import com.android.gallery3d.data.SnailAlbum;
+import com.android.gallery3d.data.SnailItem;
 import com.android.gallery3d.data.SnailSource;
 import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.ui.DetailsHelper;
@@ -116,8 +118,8 @@ public class PhotoPage extends ActivityState implements
     // This is the original mSetPathString before adding the camera preview item.
     private String mOriginalSetPathString;
     private AppBridge mAppBridge;
-    private ScreenNail mScreenNail;
-    private MediaItem mScreenNailItem;
+    private SnailItem mScreenNailItem;
+    private SnailAlbum mScreenNailSet;
     private OrientationManager mOrientationManager;
 
     private NfcAdapter mNfcAdapter;
@@ -180,14 +182,17 @@ public class PhotoPage extends ActivityState implements
                 mOrientationManager.lockOrientation();
 
                 // Get the ScreenNail from AppBridge and register it.
-                mScreenNail = mAppBridge.attachScreenNail();
-                int id = SnailSource.registerScreenNail(mScreenNail);
+                int id = SnailSource.newId();
                 Path screenNailSetPath = SnailSource.getSetPath(id);
                 Path screenNailItemPath = SnailSource.getItemPath(id);
-                mScreenNailItem = (MediaItem) mActivity.getDataManager()
+                mScreenNailSet = (SnailAlbum) mActivity.getDataManager()
+                        .getMediaObject(screenNailSetPath);
+                mScreenNailItem = (SnailItem) mActivity.getDataManager()
                         .getMediaObject(screenNailItemPath);
+                mScreenNailItem.setScreenNail(mAppBridge.attachScreenNail());
 
-                // Combine the original MediaSet with the one for CameraScreenNail.
+                // Combine the original MediaSet with the one for ScreenNail
+                // from AppBridge.
                 mSetPathString = "/combo/item/{" + screenNailSetPath +
                         "," + mSetPathString + "}";
 
@@ -427,8 +432,7 @@ public class PhotoPage extends ActivityState implements
     protected void onBackPressed() {
         if (mShowDetails) {
             hideDetails();
-        } else if (mScreenNail == null
-                || !switchWithCaptureAnimation(-1)) {
+        } else if (mAppBridge == null || !switchWithCaptureAnimation(-1)) {
             // We are leaving this page. Set the result now.
             setResult();
             super.onBackPressed();
@@ -487,6 +491,12 @@ public class PhotoPage extends ActivityState implements
     @Override
     public void setSwipingEnabled(boolean enabled) {
         mPhotoView.setSwipingEnabled(enabled);
+    }
+
+    @Override
+    public void notifyScreenNailChanged() {
+        mScreenNailItem.setScreenNail(mAppBridge.attachScreenNail());
+        mScreenNailSet.notifyChange();
     }
 
     @Override
@@ -744,11 +754,11 @@ public class PhotoPage extends ActivityState implements
     @Override
     protected void onDestroy() {
         if (mAppBridge != null) {
-            // Unregister the ScreenNail and notify mAppBridge.
-            SnailSource.unregisterScreenNail(mScreenNail);
+            mScreenNailItem.setScreenNail(null);
             mAppBridge.detachScreenNail();
             mAppBridge = null;
-            mScreenNail = null;
+            mScreenNailSet = null;
+            mScreenNailItem = null;
         }
         mOrientationManager.removeListener(this);
         mActivity.getGLRoot().setOrientationSource(null);
