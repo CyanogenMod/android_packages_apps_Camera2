@@ -33,7 +33,7 @@ import com.android.gallery3d.util.UpdateHelper;
 
 // LocalVideo represents a video in the local storage.
 public class LocalVideo extends LocalMediaItem {
-
+    private static final String TAG = "LocalVideo";
     static final Path ITEM_PATH = Path.fromString("/local/video/item");
 
     // Must preserve order between these indices and the order of the terms in
@@ -49,7 +49,8 @@ public class LocalVideo extends LocalMediaItem {
     private static final int INDEX_DATA = 8;
     private static final int INDEX_DURATION = 9;
     private static final int INDEX_BUCKET_ID = 10;
-    private static final int INDEX_SIZE_ID = 11;
+    private static final int INDEX_SIZE = 11;
+    private static final int INDEX_RESOLUTION = 12;
 
     static final String[] PROJECTION = new String[] {
             VideoColumns._ID,
@@ -63,7 +64,8 @@ public class LocalVideo extends LocalMediaItem {
             VideoColumns.DATA,
             VideoColumns.DURATION,
             VideoColumns.BUCKET_ID,
-            VideoColumns.SIZE
+            VideoColumns.SIZE,
+            VideoColumns.RESOLUTION,
     };
 
     private final GalleryApp mApplication;
@@ -106,7 +108,21 @@ public class LocalVideo extends LocalMediaItem {
         filePath = cursor.getString(INDEX_DATA);
         durationInSec = cursor.getInt(INDEX_DURATION) / 1000;
         bucketId = cursor.getInt(INDEX_BUCKET_ID);
-        fileSize = cursor.getLong(INDEX_SIZE_ID);
+        fileSize = cursor.getLong(INDEX_SIZE);
+        parseResolution(cursor.getString(INDEX_RESOLUTION));
+    }
+
+    private void parseResolution(String resolution) {
+        int m = resolution.indexOf('x');
+        if (m == -1) return;
+        try {
+            int w = Integer.parseInt(resolution.substring(0, m));
+            int h = Integer.parseInt(resolution.substring(m + 1));
+            width = w;
+            height = h;
+        } catch (Throwable t) {
+            Log.w(TAG, t);
+        }
     }
 
     @Override
@@ -127,7 +143,7 @@ public class LocalVideo extends LocalMediaItem {
         durationInSec = uh.update(
                 durationInSec, cursor.getInt(INDEX_DURATION) / 1000);
         bucketId = uh.update(bucketId, cursor.getInt(INDEX_BUCKET_ID));
-        fileSize = uh.update(fileSize, cursor.getLong(INDEX_SIZE_ID));
+        fileSize = uh.update(fileSize, cursor.getLong(INDEX_SIZE));
         return uh.isUpdated();
     }
 
@@ -206,11 +222,11 @@ public class LocalVideo extends LocalMediaItem {
 
     @Override
     public int getWidth() {
-        return 0;
+        return width;
     }
 
     @Override
     public int getHeight() {
-        return 0;
+        return height;
     }
 }
