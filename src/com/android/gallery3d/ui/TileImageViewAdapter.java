@@ -33,7 +33,6 @@ public class TileImageViewAdapter implements TileImageView.Model {
     protected int mImageWidth;
     protected int mImageHeight;
     protected int mLevelCount;
-    protected boolean mFailedToLoad;
 
     public TileImageViewAdapter() {
     }
@@ -54,7 +53,6 @@ public class TileImageViewAdapter implements TileImageView.Model {
         mImageHeight = 0;
         mLevelCount = 0;
         mRegionDecoder = null;
-        mFailedToLoad = false;
     }
 
     public synchronized void setScreenNail(Bitmap bitmap, int width, int height) {
@@ -64,7 +62,6 @@ public class TileImageViewAdapter implements TileImageView.Model {
         mImageHeight = height;
         mRegionDecoder = null;
         mLevelCount = 0;
-        mFailedToLoad = false;
     }
 
     public synchronized void setScreenNail(
@@ -75,7 +72,6 @@ public class TileImageViewAdapter implements TileImageView.Model {
         mImageHeight = height;
         mRegionDecoder = null;
         mLevelCount = 0;
-        mFailedToLoad = false;
     }
 
     private void updateScreenNail(ScreenNail screenNail, boolean own) {
@@ -91,7 +87,6 @@ public class TileImageViewAdapter implements TileImageView.Model {
         mImageWidth = decoder.getWidth();
         mImageHeight = decoder.getHeight();
         mLevelCount = calculateLevelCount();
-        mFailedToLoad = false;
     }
 
     private int calculateLevelCount() {
@@ -183,14 +178,5 @@ public class TileImageViewAdapter implements TileImageView.Model {
     @Override
     public int getLevelCount() {
         return mLevelCount;
-    }
-
-    public void setFailedToLoad() {
-        mFailedToLoad = true;
-    }
-
-    @Override
-    public boolean isFailedToLoad() {
-        return mFailedToLoad;
     }
 }

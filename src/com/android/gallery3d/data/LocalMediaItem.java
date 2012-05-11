@@ -44,6 +44,8 @@ public abstract class LocalMediaItem extends MediaItem {
     public long dateModifiedInSec;
     public String filePath;
     public int bucketId;
+    public int width;
+    public int height;
 
     public LocalMediaItem(Path path, long version) {
         super(path, version);

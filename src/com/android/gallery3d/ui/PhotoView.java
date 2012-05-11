@@ -76,6 +76,12 @@ public class PhotoView extends GLView {
 
         // Returns true if the item is a Video.
         public boolean isVideo(int offset);
+
+        public static final int LOADING_INIT = 0;
+        public static final int LOADING_COMPLETE = 1;
+        public static final int LOADING_FAIL = 2;
+
+        public int getLoadingState(int offset);
     }
 
     public interface Listener {
@@ -111,17 +117,9 @@ public class PhotoView extends GLView {
     // There are four transitions we need to check if we need to
     // lock/unlock. Marked as A to D above and in the code.
 
-    private static final int MSG_SHOW_LOADING = 1;
     private static final int MSG_CANCEL_EXTRA_SCALING = 2;
     private static final int MSG_SWITCH_FOCUS = 3;
     private static final int MSG_CAPTURE_ANIMATION_DONE = 4;
-
-    private static final long DELAY_SHOW_LOADING = 250; // 250ms;
-
-    private static final int LOADING_INIT = 0;
-    private static final int LOADING_TIMEOUT = 1;
-    private static final int LOADING_COMPLETE = 2;
-    private static final int LOADING_FAIL = 3;
 
     private static final int MOVE_THRESHOLD = 256;
     private static final float SWIPE_THRESHOLD = 300f;
@@ -160,11 +158,7 @@ public class PhotoView extends GLView {
     private EdgeView mEdgeView;
     private Texture mVideoPlayIcon;
 
-    private ProgressSpinner mLoadingSpinner;
-
     private SynchronizedHandler mHandler;
-
-    private int mLoadingState = LOADING_COMPLETE;
 
     private Point mImageCenter = new Point();
     private boolean mCancelExtraScalingPending;
@@ -195,7 +189,6 @@ public class PhotoView extends GLView {
         Context context = activity.getAndroidContext();
         mEdgeView = new EdgeView(context);
         addComponent(mEdgeView);
-        mLoadingSpinner = new ProgressSpinner(context);
         mLoadingText = StringTexture.newInstance(
                 context.getString(R.string.loading),
                 DEFAULT_TEXT_SIZE, Color.WHITE);
@@ -249,17 +242,6 @@ public class PhotoView extends GLView {
         @Override
         public void handleMessage(Message message) {
             switch (message.what) {
-                case MSG_SHOW_LOADING: {
-                    if (mLoadingState == LOADING_INIT) {
-                        // We don't need the opening animation
-                        mPositionController.setOpenAnimationRect(null);
-
-                        mLoadingSpinner.startAnimation();
-                        mLoadingState = LOADING_TIMEOUT;
-                        invalidate();
-                    }
-                    break;
-                }
                 case MSG_CANCEL_EXTRA_SCALING: {
                     mGestureRecognizer.cancelScale();
                     mPositionController.setExtraScalingRange(false);
@@ -280,28 +262,6 @@ public class PhotoView extends GLView {
             }
         }
     };
-
-    private void updateLoadingState() {
-        // Possible transitions of mLoadingState:
-        //        INIT --> TIMEOUT, COMPLETE, FAIL
-        //     TIMEOUT --> COMPLETE, FAIL, INIT
-        //    COMPLETE --> INIT
-        //        FAIL --> INIT
-        if (mModel.getLevelCount() != 0 || mModel.getScreenNail() != null) {
-            mHandler.removeMessages(MSG_SHOW_LOADING);
-            mLoadingState = LOADING_COMPLETE;
-        } else if (mModel.isFailedToLoad()) {
-            mHandler.removeMessages(MSG_SHOW_LOADING);
-            mLoadingState = LOADING_FAIL;
-            // We don't want the opening animation after loading failure
-            mPositionController.setOpenAnimationRect(null);
-        } else if (mLoadingState != LOADING_INIT) {
-            mLoadingState = LOADING_INIT;
-            mHandler.removeMessages(MSG_SHOW_LOADING);
-            mHandler.sendEmptyMessageDelayed(
-                    MSG_SHOW_LOADING, DELAY_SHOW_LOADING);
-        }
-    }
 
     ////////////////////////////////////////////////////////////////////////////
     //  Data/Image change notifications
@@ -427,6 +387,7 @@ public class PhotoView extends GLView {
         private boolean mIsCamera;
         private boolean mIsPanorama;
         private boolean mIsVideo;
+        private int mLoadingState = Model.LOADING_INIT;
         private boolean mWasCameraCenter;
 
         public void FullPicture(TileImageView tileView) {
@@ -441,9 +402,9 @@ public class PhotoView extends GLView {
             mIsCamera = mModel.isCamera(0);
             mIsPanorama = mModel.isPanorama(0);
             mIsVideo = mModel.isVideo(0);
+            mLoadingState = mModel.getLoadingState(0);
             setScreenNail(mModel.getScreenNail(0));
             updateSize(false);
-            updateLoadingState();
         }
 
         @Override
@@ -466,13 +427,9 @@ public class PhotoView extends GLView {
 
         @Override
         public void draw(GLCanvas canvas, Rect r) {
+            drawTileView(canvas, r);
+
             boolean isCenter = mPositionController.isCenter();
-
-            if (mLoadingState == LOADING_COMPLETE) {
-                drawTileView(canvas, r);
-            }
-            renderMessage(canvas, r.centerX(), r.centerY());
-
             if (mIsCamera) {
                 boolean full = !mFilmMode && isCenter
                         && mPositionController.isAtMinimalScale();
@@ -573,12 +530,17 @@ public class PhotoView extends GLView {
             setTileViewPosition(cx, cy, viewW, viewH, imageScale);
             PhotoView.super.render(canvas);
 
-            // Draw the play video icon.
-            if (mIsVideo) {
-                canvas.translate((int) (cx + 0.5f), (int) (cy + 0.5f));
-                int s = (int) (scale * Math.min(r.width(), r.height()) + 0.5f);
-                drawVideoPlayIcon(canvas, s);
+            // Draw the play video icon and the message.
+            canvas.translate((int) (cx + 0.5f), (int) (cy + 0.5f));
+            int s = (int) (scale * Math.min(r.width(), r.height()) + 0.5f);
+            if (mIsVideo) drawVideoPlayIcon(canvas, s);
+            if (mLoadingState == Model.LOADING_FAIL) {
+                drawLoadingFailMessage(canvas);
             }
+
+            // Draw a debug indicator showing which picture has focus (index ==
+            // 0).
+            //canvas.fillRect(-10, -10, 20, 20, 0x80FF00FF);
 
             canvas.restore();
         }
@@ -605,33 +567,6 @@ public class PhotoView extends GLView {
             }
             mTileView.setPosition(x, y, scale, mRotation);
         }
-
-        private void renderMessage(GLCanvas canvas, int x, int y) {
-            // Draw the progress spinner and the text below it
-            //
-            // (x, y) is where we put the center of the spinner.
-            // s is the size of the video play icon, and we use s to layout text
-            // because we want to keep the text at the same place when the video
-            // play icon is shown instead of the spinner.
-            int w = getWidth();
-            int h = getHeight();
-            int s = Math.min(w, h) / ICON_RATIO;
-
-            if (mLoadingState == LOADING_TIMEOUT) {
-                StringTexture m = mLoadingText;
-                ProgressSpinner p = mLoadingSpinner;
-                p.draw(canvas, x - p.getWidth() / 2, y - p.getHeight() / 2);
-                m.draw(canvas, x - m.getWidth() / 2, y + s / 2 + 5);
-                invalidate(); // we need to keep the spinner rotating
-            } else if (mLoadingState == LOADING_FAIL) {
-                StringTexture m = mNoThumbnailText;
-                m.draw(canvas, x - m.getWidth() / 2, y + s / 2 + 5);
-            }
-
-            // Draw a debug indicator showing which picture has focus (index ==
-            // 0).
-            // canvas.fillRect(x - 10, y - 10, 20, 20, 0x80FF00FF);
-        }
     }
 
     private class ScreenNailPicture implements Picture {
@@ -642,6 +577,7 @@ public class PhotoView extends GLView {
         private boolean mIsCamera;
         private boolean mIsPanorama;
         private boolean mIsVideo;
+        private int mLoadingState = Model.LOADING_INIT;
 
         public ScreenNailPicture(int index) {
             mIndex = index;
@@ -652,17 +588,17 @@ public class PhotoView extends GLView {
             mIsCamera = mModel.isCamera(mIndex);
             mIsPanorama = mModel.isPanorama(mIndex);
             mIsVideo = mModel.isVideo(mIndex);
+            mLoadingState = mModel.getLoadingState(mIndex);
             setScreenNail(mModel.getScreenNail(mIndex));
         }
 
         @Override
         public void draw(GLCanvas canvas, Rect r) {
             if (mScreenNail == null) {
-                // Draw a placeholder rectange if there will be a picture in
-                // this position.
+                // Draw a placeholder rectange if there should be a picture in
+                // this position (but somehow there isn't).
                 if (mIndex >= mPrevBound && mIndex <= mNextBound) {
-                    canvas.fillRect(r.left, r.top, r.width(), r.height(),
-                            PLACEHOLDER_COLOR);
+                    drawPlaceHolder(canvas, r);
                 }
                 return;
             }
@@ -703,8 +639,20 @@ public class PhotoView extends GLView {
             int drawW = getRotated(mRotation, r.width(), r.height());
             int drawH = getRotated(mRotation, r.height(), r.width());
             mScreenNail.draw(canvas, -drawW / 2, -drawH / 2, drawW, drawH);
-            if (mIsVideo) drawVideoPlayIcon(canvas, Math.min(drawW, drawH));
+            if (isScreenNailAnimating()) {
+                invalidate();
+            }
+            int s = Math.min(drawW, drawH);
+            if (mIsVideo) drawVideoPlayIcon(canvas, s);
+            if (mLoadingState == Model.LOADING_FAIL) {
+                drawLoadingFailMessage(canvas);
+            }
             canvas.restore();
+        }
+
+        private boolean isScreenNailAnimating() {
+            return (mScreenNail instanceof BitmapScreenNail)
+                    && ((BitmapScreenNail) mScreenNail).isAnimating();
         }
 
         @Override
@@ -750,11 +698,22 @@ public class PhotoView extends GLView {
         }
     }
 
+    // Draw a gray placeholder in the specified rectangle.
+    private void drawPlaceHolder(GLCanvas canvas, Rect r) {
+        canvas.fillRect(r.left, r.top, r.width(), r.height(), PLACEHOLDER_COLOR);
+    }
+
     // Draw the video play icon (in the place where the spinner was)
     private void drawVideoPlayIcon(GLCanvas canvas, int side) {
         int s = side / ICON_RATIO;
         // Draw the video play icon at the center
         mVideoPlayIcon.draw(canvas, -s / 2, -s / 2, s, s);
+    }
+
+    // Draw the "no thumbnail" message
+    private void drawLoadingFailMessage(GLCanvas canvas) {
+        StringTexture m = mNoThumbnailText;
+        m.draw(canvas, -m.getWidth() / 2, -m.getHeight() / 2);
     }
 
     private static int getRotated(int degree, int original, int theother) {
@@ -1239,7 +1198,7 @@ public class PhotoView extends GLView {
         }
         mHolding |= HOLD_CAPTURE_ANIMATION;
         Message m = mHandler.obtainMessage(MSG_CAPTURE_ANIMATION_DONE, offset, 0);
-        mHandler.sendMessageDelayed(m, 800);
+        mHandler.sendMessageDelayed(m, PositionController.CAPTURE_ANIMATION_TIME);
         return true;
     }
 
