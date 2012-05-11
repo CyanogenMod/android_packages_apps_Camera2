@@ -57,7 +57,7 @@ public class LocalImage extends LocalMediaItem {
     private static final int INDEX_DATA = 8;
     private static final int INDEX_ORIENTATION = 9;
     private static final int INDEX_BUCKET_ID = 10;
-    private static final int INDEX_SIZE_ID = 11;
+    private static final int INDEX_SIZE = 11;
     private static final int INDEX_WIDTH = 12;
     private static final int INDEX_HEIGHT = 13;
 
@@ -74,9 +74,8 @@ public class LocalImage extends LocalMediaItem {
             ImageColumns.ORIENTATION,   // 9
             ImageColumns.BUCKET_ID,     // 10
             ImageColumns.SIZE,          // 11
-            // These should be changed to proper names after they are made public.
-            "width", // ImageColumns.WIDTH,         // 12
-            "height", // ImageColumns.HEIGHT         // 13
+            ImageColumns.WIDTH,         // 12
+            ImageColumns.HEIGHT         // 13
     };
 
     private final GalleryApp mApplication;
@@ -121,7 +120,7 @@ public class LocalImage extends LocalMediaItem {
         filePath = cursor.getString(INDEX_DATA);
         rotation = cursor.getInt(INDEX_ORIENTATION);
         bucketId = cursor.getInt(INDEX_BUCKET_ID);
-        fileSize = cursor.getLong(INDEX_SIZE_ID);
+        fileSize = cursor.getLong(INDEX_SIZE);
         width = cursor.getInt(INDEX_WIDTH);
         height = cursor.getInt(INDEX_HEIGHT);
     }
@@ -143,7 +142,7 @@ public class LocalImage extends LocalMediaItem {
         filePath = uh.update(filePath, cursor.getString(INDEX_DATA));
         rotation = uh.update(rotation, cursor.getInt(INDEX_ORIENTATION));
         bucketId = uh.update(bucketId, cursor.getInt(INDEX_BUCKET_ID));
-        fileSize = uh.update(fileSize, cursor.getLong(INDEX_SIZE_ID));
+        fileSize = uh.update(fileSize, cursor.getLong(INDEX_SIZE));
         width = uh.update(width, cursor.getInt(INDEX_WIDTH));
         height = uh.update(height, cursor.getInt(INDEX_HEIGHT));
         return uh.isUpdated();
