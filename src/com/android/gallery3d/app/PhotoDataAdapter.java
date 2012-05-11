@@ -128,10 +128,13 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     // mCurrentIndex triggers the data loading and image loading.
     private int mCurrentIndex;
 
-    // mChanges keeps the version number (of MediaItem) about the previous,
-    // current, and next image. If the version number changes, we notify the
-    // view. This is used after a database reload or mCurrentIndex changes.
+    // mChanges keeps the version number (of MediaItem) about the images. If any
+    // of the version number changes, we notify the view. This is used after a
+    // database reload or mCurrentIndex changes.
     private final long mChanges[] = new long[IMAGE_CACHE_SIZE];
+    // mPaths keeps the corresponding Path (of MediaItem) for the images. This
+    // is used to determine the item movement.
+    private final Path mPaths[] = new Path[IMAGE_CACHE_SIZE];
 
     private final Handler mMainHandler;
     private final ThreadPool mThreadPool;
@@ -158,7 +161,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     // The path of the current viewing item will be stored in mItemPath.
     // If mItemPath is not null, mCurrentIndex is only a hint for where we
     // can find the item. If mItemPath is null, then we use the mCurrentIndex to
-    // find the image being viewed.
+    // find the image being viewed. cameraIndex is the index of the camera
+    // preview. If cameraIndex < 0, there is no camera preview.
     public PhotoDataAdapter(GalleryActivity activity, PhotoView view,
             MediaSet mediaSet, Path itemPath, int indexHint, int cameraIndex) {
         mSource = Utils.checkNotNull(mediaSet);
@@ -199,20 +203,73 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         updateSlidingWindow();
     }
 
-    private long getVersion(int index) {
-        if (index < 0 || index >= mSize) return MediaObject.INVALID_DATA_VERSION;
+    private MediaItem getItemInternal(int index) {
+        if (index < 0 || index >= mSize) return null;
         if (index >= mContentStart && index < mContentEnd) {
-            MediaItem item = mData[index % DATA_CACHE_SIZE];
-            if (item != null) return item.getDataVersion();
+            return mData[index % DATA_CACHE_SIZE];
         }
-        return MediaObject.INVALID_DATA_VERSION;
+        return null;
+    }
+
+    private long getVersion(int index) {
+        MediaItem item = getItemInternal(index);
+        if (item == null) return MediaObject.INVALID_DATA_VERSION;
+        return item.getDataVersion();
+    }
+
+    private Path getPath(int index) {
+        MediaItem item = getItemInternal(index);
+        if (item == null) return null;
+        return item.getPath();
     }
 
     private void fireDataChange() {
+        // First check if data actually changed.
+        boolean changed = false;
         for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
-            mChanges[i + SCREEN_NAIL_MAX] = getVersion(mCurrentIndex + i);
+            long newVersion = getVersion(mCurrentIndex + i);
+            if (mChanges[i + SCREEN_NAIL_MAX] != newVersion) {
+                mChanges[i + SCREEN_NAIL_MAX] = newVersion;
+                changed = true;
+            }
         }
-        mPhotoView.notifyDataChange(mChanges, -mCurrentIndex,
+
+        if (!changed) return;
+
+        // Now calculate the fromIndex array. fromIndex represents the item
+        // movement. It records the index where the picture come from. The
+        // special value Integer.MAX_VALUE means it's a new picture.
+        final int N = IMAGE_CACHE_SIZE;
+        int fromIndex[] = new int[N];
+
+        // Remember the old path array.
+        Path oldPaths[] = new Path[N];
+        System.arraycopy(mPaths, 0, oldPaths, 0, N);
+
+        // Update the mPaths array.
+        for (int i = 0; i < N; ++i) {
+            mPaths[i] = getPath(mCurrentIndex + i - SCREEN_NAIL_MAX);
+        }
+
+        // Calculate the fromIndex array.
+        for (int i = 0; i < N; i++) {
+            Path p = mPaths[i];
+            if (p == null) {
+                fromIndex[i] = Integer.MAX_VALUE;
+                continue;
+            }
+
+            // Try to find the same path in the old array
+            int j;
+            for (j = 0; j < N; j++) {
+                if (oldPaths[j] == p) {
+                    break;
+                }
+            }
+            fromIndex[i] = (j < N) ? j - SCREEN_NAIL_MAX : Integer.MAX_VALUE;
+        }
+
+        mPhotoView.notifyDataChange(fromIndex, -mCurrentIndex,
                 mSize - 1 - mCurrentIndex);
     }
 
@@ -542,7 +599,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                 bitmap = BitmapUtils.rotateBitmap(bitmap,
                     mItem.getRotation() - mItem.getFullImageRotation(), true);
             }
-            return new BitmapScreenNail(bitmap);
+            return bitmap == null ? null : new BitmapScreenNail(bitmap);
         }
     }
 
