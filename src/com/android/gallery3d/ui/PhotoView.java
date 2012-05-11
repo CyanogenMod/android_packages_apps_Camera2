@@ -142,9 +142,6 @@ public class PhotoView extends GLView {
     private final RangeArray<Picture> mPictures =
             new RangeArray<Picture>(-SCREEN_NAIL_MAX, SCREEN_NAIL_MAX);
 
-    private final long mDataVersion[] = new long[2 * SCREEN_NAIL_MAX + 1];
-    private final int mFromIndex[] = new int[2 * SCREEN_NAIL_MAX + 1];
-
     private final MyGestureListener mGestureListener;
     private final GestureRecognizer mGestureRecognizer;
     private final PositionController mPositionController;
@@ -224,7 +221,6 @@ public class PhotoView extends GLView {
                     }
                 });
         mVideoPlayIcon = new ResourceTexture(context, R.drawable.ic_control_play);
-        Arrays.fill(mDataVersion, INVALID_DATA_VERSION);
         for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
             if (i == 0) {
                 mPictures.put(i, new FullPicture());
@@ -305,47 +301,12 @@ public class PhotoView extends GLView {
     //  Data/Image change notifications
     ////////////////////////////////////////////////////////////////////////////
 
-    public void notifyDataChange(long[] versions, int prevBound, int nextBound) {
+    public void notifyDataChange(int[] fromIndex, int prevBound, int nextBound) {
         mPrevBound = prevBound;
         mNextBound = nextBound;
 
-        // Check if the data version actually changed.
-        boolean changed = false;
-        int N = 2 * SCREEN_NAIL_MAX + 1;
-        for (int i = 0; i < N; i++) {
-            if (versions[i] != mDataVersion[i]) {
-                changed = true;
-                break;
-            }
-        }
-        if (!changed) return;
-
-        // Create the mFromIndex array, which records the index where the picture
-        // come from. The value Integer.MAX_VALUE means it's a new picture.
-        for (int i = 0; i < N; i++) {
-            long v = versions[i];
-            if (v == INVALID_DATA_VERSION) {
-                mFromIndex[i] = Integer.MAX_VALUE;
-                continue;
-            }
-
-            // Try to find the same version number in the old array
-            int j;
-            for (j = 0; j < N; j++) {
-                if (mDataVersion[j] == v) {
-                    break;
-                }
-            }
-            mFromIndex[i] = (j < N) ? j - SCREEN_NAIL_MAX : Integer.MAX_VALUE;
-        }
-
-        // Copy the new data version
-        for (int i = 0; i < N; i++) {
-            mDataVersion[i] = versions[i];
-        }
-
         // Move the boxes
-        mPositionController.moveBox(mFromIndex, mPrevBound < 0, mNextBound > 0,
+        mPositionController.moveBox(fromIndex, mPrevBound < 0, mNextBound > 0,
                 mModel.isCamera(0));
 
         // Update the ScreenNails.
