@@ -260,7 +260,6 @@
                 android:icon="@mipmap/ic_launcher_camera"
                 android:configChanges="orientation|screenSize|keyboardHidden"
                 android:clearTaskOnLaunch="true"
-                android:screenOrientation="behind"
                 android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.media.action.IMAGE_CAPTURE" />
@@ -290,7 +289,6 @@
                 android:configChanges="orientation|screenSize|keyboardHidden"
                 android:icon="@mipmap/ic_launcher_video_camera"
                 android:clearTaskOnLaunch="true"
-                android:screenOrientation="behind"
                 android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.media.action.VIDEO_CAMERA" />
@@ -307,7 +305,6 @@
                 android:theme="@style/ThemeCamera"
                 android:configChanges="orientation|screenSize|keyboardHidden"
                 android:clearTaskOnLaunch="true"
-                android:screenOrientation="behind"
                 android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
         </activity>
         <receiver android:name="com.android.gallery3d.gadget.PhotoAppWidgetProvider"
