@@ -389,6 +389,7 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
 
     public void pause() {
         mIsActive = false;
+        mTextureUploader.clear();
         for (int i = mContentStart, n = mContentEnd; i < n; ++i) {
             freeSlotContent(i);
         }
