@@ -71,8 +71,10 @@ public class PhotoPage extends ActivityState implements
     private static final int MSG_UNLOCK_ORIENTATION = 3;
     private static final int MSG_ON_FULL_SCREEN_CHANGED = 4;
     private static final int MSG_UPDATE_ACTION_BAR = 5;
+    private static final int MSG_UNFREEZE_GLROOT = 6;
 
     private static final int HIDE_BARS_TIMEOUT = 3500;
+    private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
 
     private static final int REQUEST_SLIDESHOW = 1;
     private static final int REQUEST_CROP = 2;
@@ -274,6 +276,10 @@ public class PhotoPage extends ActivityState implements
                     }
                     case MSG_UPDATE_ACTION_BAR: {
                         updateBars();
+                        break;
+                    }
+                    case MSG_UNFREEZE_GLROOT: {
+                        mActivity.getGLRoot().unfreeze();
                         break;
                     }
                     default: throw new AssertionError(message.what);
@@ -720,6 +726,8 @@ public class PhotoPage extends ActivityState implements
 
     @Override
     public void onPause() {
+        mActivity.getGLRoot().unfreeze();
+        mHandler.removeMessages(MSG_UNFREEZE_GLROOT);
         super.onPause();
         mIsActive = false;
         if (mAppBridge != null) mAppBridge.setServer(null);
@@ -733,7 +741,13 @@ public class PhotoPage extends ActivityState implements
     }
 
     @Override
+    public void onCurrentImageUpdated() {
+        mActivity.getGLRoot().unfreeze();
+    }
+
+    @Override
     protected void onResume() {
+        mActivity.getGLRoot().freeze();
         super.onResume();
         mIsActive = true;
         setContentPane(mRootPane);
@@ -750,6 +764,7 @@ public class PhotoPage extends ActivityState implements
             mAppBridge.setServer(this);
             mPhotoView.resetToFirstPicture();
         }
+        mHandler.sendEmptyMessageDelayed(MSG_UNFREEZE_GLROOT, UNFREEZE_GLROOT_TIMEOUT);
     }
 
     @Override

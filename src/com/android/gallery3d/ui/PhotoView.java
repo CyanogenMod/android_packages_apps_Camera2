@@ -79,6 +79,7 @@ public class PhotoView extends GLView {
         public void unlockOrientation();
         public void onFullScreenChanged(boolean full);
         public void onActionBarAllowed(boolean allowed);
+        public void onCurrentImageUpdated();
     }
 
     // Here is a graph showing the places we need to lock/unlock device
@@ -318,6 +319,9 @@ public class PhotoView extends GLView {
     }
 
     public void notifyImageChange(int index) {
+        if (index == 0) {
+            mListener.onCurrentImageUpdated();
+        }
         mPictures.get(index).reload();
         invalidate();
     }
