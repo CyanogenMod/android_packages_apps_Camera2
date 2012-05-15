@@ -19,6 +19,7 @@ package com.android.gallery3d.app;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
@@ -142,7 +143,10 @@ public class MovieActivity extends Activity {
         getMenuInflater().inflate(R.menu.movie, menu);
         ShareActionProvider provider = GalleryActionBar.initializeShareActionProvider(menu);
 
-        if (provider != null) {
+        // Document says EXTRA_STREAM should be a content: Uri
+        // So, we only share the video if it's "content:".
+        if (provider != null && ContentResolver.SCHEME_CONTENT
+                .equals(mUri.getScheme())) {
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("video/*");
             intent.putExtra(Intent.EXTRA_STREAM, mUri);
