@@ -103,7 +103,7 @@
     <string name="empty_album" msgid="4542880442593595494">"Žádné obrázky ani videa nejsou k dispozici."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Příspěvky"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"Zpřístupnit offline"</string>
-    <string name="sync_picasa_albums" msgid="8522572542111169872">"Obnovit"</string>
+    <string name="sync_picasa_albums" msgid="8522572542111169872">"Aktualizovat"</string>
     <string name="done" msgid="217672440064436595">"Hotovo"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d z %2$d položek:"</string>
     <string name="title" msgid="7622928349908052569">"Název"</string>
