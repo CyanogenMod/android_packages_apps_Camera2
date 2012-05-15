@@ -155,7 +155,7 @@
     <string name="widget_type" msgid="1364653978966343448">"이미지 선택"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"슬라이드쇼"</string>
     <string name="albums" msgid="7320787705180057947">"앨범"</string>
-    <string name="times" msgid="2023033894889499219">"횟수"</string>
+    <string name="times" msgid="2023033894889499219">"시간"</string>
     <string name="locations" msgid="6649297994083130305">"위치"</string>
     <string name="people" msgid="4114003823747292747">"사용자"</string>
     <string name="tags" msgid="5539648765482935955">"태그"</string>
