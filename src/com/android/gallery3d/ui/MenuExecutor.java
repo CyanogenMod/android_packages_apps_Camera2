@@ -232,14 +232,14 @@ public class MenuExecutor {
         startAction(action, title, listener);
     }
 
-    public void onMenuClicked(MenuItem menuItem, boolean needsConfirm,
+    public void onMenuClicked(MenuItem menuItem, String confirmMsg,
             final ProgressListener listener) {
         final int action = menuItem.getItemId();
 
-        if (needsConfirm) {
+        if (confirmMsg != null) {
             new AlertDialog.Builder(mActivity.getAndroidContext())
-                    .setMessage(R.string.confirm_action)
-                    .setPositiveButton(R.string.confirm, new OnClickListener() {
+                    .setMessage(confirmMsg)
+                    .setPositiveButton(R.string.ok, new OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 onMenuClicked(action, listener);
                             }
