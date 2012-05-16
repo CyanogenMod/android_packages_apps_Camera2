@@ -32,7 +32,8 @@
     <string name="fail_to_load_image" msgid="6155388718549782425">"Nije moguće učitati sliku"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Nema minijatura"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Počni ispočetka"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"U redu"</string>
+    <!-- no translation found for ok (5296833083983263293) -->
+    <skip />
     <string name="multiface_crop_help" msgid="2554690102655855657">"Dodirnite lice za početak."</string>
     <string name="saving_image" msgid="7270334453636349407">"Spremanje slike..."</string>
     <string name="save_error" msgid="6857408774183654970">"Nije moguće spremiti obrezanu sliku."</string>
@@ -46,7 +47,8 @@
     <string name="wallpaper" msgid="140165383777262070">"Postavljanje pozadinske slike…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Pozadinska slika"</string>
     <string name="delete" msgid="2839695998251824487">"Izbriši"</string>
-    <string name="confirm_action" msgid="1642211585193899041">"Potvrditi brisanje?"</string>
+    <!-- no translation found for delete_selection:one (6453379735401083732) -->
+    <!-- no translation found for delete_selection:other (5874316486520635333) -->
     <string name="confirm" msgid="8646870096527848520">"Potvrdi"</string>
     <string name="cancel" msgid="3637516880917356226">"Odustani"</string>
     <string name="share" msgid="3619042788254195341">"Podijeli"</string>
