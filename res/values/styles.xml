@@ -19,7 +19,7 @@
         <item name="android:displayOptions"></item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:actionBarStyle">@style/Holo.ActionBar</item>
-        <item name="android:windowBackground">@null</item>
+        <item name="android:windowBackground">@android:color/black</item>
         <item name="android:colorBackground">@null</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
