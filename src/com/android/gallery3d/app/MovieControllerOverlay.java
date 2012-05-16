@@ -20,7 +20,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -85,8 +84,6 @@ public class MovieControllerOverlay extends FrameLayout implements
         new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     LayoutParams matchParent =
         new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-
-    LayoutInflater inflater = LayoutInflater.from(context);
 
     background = new View(context);
     background.setBackgroundColor(context.getResources().getColor(R.color.darker_transparent));
