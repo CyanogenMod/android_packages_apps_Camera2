@@ -125,14 +125,15 @@ public class ActionModeHandler implements ActionMode.Callback {
                 }
             }
             ProgressListener listener = null;
-            boolean needsConfirm = false;
+            String confirmMsg = null;
             int action = item.getItemId();
             if (action == R.id.action_import) {
                 listener = new ImportCompleteListener(mActivity);
             } else if (item.getItemId() == R.id.action_delete) {
-                needsConfirm = true;
+                confirmMsg = mActivity.getResources().getQuantityString(
+                        R.plurals.delete_selection, mSelectionManager.getSelectedCount());
             }
-            mMenuExecutor.onMenuClicked(item, needsConfirm, listener);
+            mMenuExecutor.onMenuClicked(item, confirmMsg, listener);
             if (action == R.id.action_select_all) {
                 updateSupportedOperation();
                 updateSelectionMenu();
