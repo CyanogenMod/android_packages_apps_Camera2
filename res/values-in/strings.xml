@@ -32,7 +32,8 @@
     <string name="fail_to_load_image" msgid="6155388718549782425">"Tidak dapat memuat gambar"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Tidak ada gambar mini"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Memulai"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"Oke"</string>
+    <!-- no translation found for ok (5296833083983263293) -->
+    <skip />
     <string name="multiface_crop_help" msgid="2554690102655855657">"Sentuh wajah untuk memulai."</string>
     <string name="saving_image" msgid="7270334453636349407">"Menyimpan gambar…"</string>
     <string name="save_error" msgid="6857408774183654970">"Tak dapat menyimpan gambar yg dipangkas."</string>
@@ -46,7 +47,8 @@
     <string name="wallpaper" msgid="140165383777262070">"Menyetel wallpaper..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Wallpaper"</string>
     <string name="delete" msgid="2839695998251824487">"Hapus"</string>
-    <string name="confirm_action" msgid="1642211585193899041">"Konfirmasi penghapusan?"</string>
+    <!-- no translation found for delete_selection:one (6453379735401083732) -->
+    <!-- no translation found for delete_selection:other (5874316486520635333) -->
     <string name="confirm" msgid="8646870096527848520">"Konfirmasi"</string>
     <string name="cancel" msgid="3637516880917356226">"Batal"</string>
     <string name="share" msgid="3619042788254195341">"Bagikan"</string>
