@@ -251,6 +251,7 @@ public class SlotView extends GLView {
 
         long animTime = AnimationTime.get();
         boolean more = mScroller.advanceAnimation(animTime);
+        more |= mLayout.advanceAnimation(animTime);
         int oldX = mScrollX;
         updateScrollPosition(mScroller.getPosition(), false);
 
@@ -432,19 +433,25 @@ public class SlotView extends GLView {
         private int mContentLength;
         private int mScrollPosition;
 
-        private int mVerticalPadding;
-        private int mHorizontalPadding;
+        private IntegerAnimation mVerticalPadding = new IntegerAnimation();
+        private IntegerAnimation mHorizontalPadding = new IntegerAnimation();
 
         public void setSlotSpec(Spec spec) {
             mSpec = spec;
         }
 
         public boolean setSlotCount(int slotCount) {
+            if (slotCount == mSlotCount) return false;
+            if (mSlotCount != 0) {
+                mHorizontalPadding.setEnabled(true);
+                mVerticalPadding.setEnabled(true);
+            }
             mSlotCount = slotCount;
-            int hPadding = mHorizontalPadding;
-            int vPadding = mVerticalPadding;
+            int hPadding = mHorizontalPadding.getTarget();
+            int vPadding = mVerticalPadding.getTarget();
             initLayoutParameters();
-            return vPadding != mVerticalPadding || hPadding != mHorizontalPadding;
+            return vPadding != mVerticalPadding.getTarget()
+                    || hPadding != mHorizontalPadding.getTarget();
         }
 
         public Rect getSlotRect(int index, Rect rect) {
@@ -457,8 +464,8 @@ public class SlotView extends GLView {
                 col = index - row * mUnitCount;
             }
 
-            int x = mHorizontalPadding + col * (mSlotWidth + mSlotGap);
-            int y = mVerticalPadding + row * (mSlotHeight + mSlotGap);
+            int x = mHorizontalPadding.get() + col * (mSlotWidth + mSlotGap);
+            int y = mVerticalPadding.get() + row * (mSlotHeight + mSlotGap);
             rect.set(x, y, x + mSlotWidth, y + mSlotHeight);
             return rect;
         }
@@ -526,12 +533,12 @@ public class SlotView extends GLView {
             int[] padding = new int[2];
             if (WIDE) {
                 initLayoutParameters(mWidth, mHeight, mSlotWidth, mSlotHeight, padding);
-                mVerticalPadding = padding[0];
-                mHorizontalPadding = padding[1];
+                mVerticalPadding.startAnimateTo(padding[0]);
+                mHorizontalPadding.startAnimateTo(padding[1]);
             } else {
                 initLayoutParameters(mHeight, mWidth, mSlotHeight, mSlotWidth, padding);
-                mVerticalPadding = padding[1];
-                mHorizontalPadding = padding[0];
+                mVerticalPadding.startAnimateTo(padding[1]);
+                mHorizontalPadding.startAnimateTo(padding[0]);
             }
             updateVisibleSlotRange();
         }
@@ -593,8 +600,8 @@ public class SlotView extends GLView {
             int absoluteX = Math.round(x) + (WIDE ? mScrollPosition : 0);
             int absoluteY = Math.round(y) + (WIDE ? 0 : mScrollPosition);
 
-            absoluteX -= mHorizontalPadding;
-            absoluteY -= mVerticalPadding;
+            absoluteX -= mHorizontalPadding.get();
+            absoluteY -= mVerticalPadding.get();
 
             if (absoluteX < 0 || absoluteY < 0) {
                 return INDEX_NONE;
@@ -629,6 +636,11 @@ public class SlotView extends GLView {
         public int getScrollLimit() {
             int limit = WIDE ? mContentLength - mWidth : mContentLength - mHeight;
             return limit <= 0 ? 0 : limit;
+        }
+
+        public boolean advanceAnimation(long animTime) {
+            // use '|' to make sure both sides will be executed
+            return mVerticalPadding.calculate(animTime) | mHorizontalPadding.calculate(animTime);
         }
     }
 
@@ -746,5 +758,43 @@ public class SlotView extends GLView {
 
     public int getScrollY() {
         return mScrollY;
+    }
+
+    private static class IntegerAnimation extends Animation {
+        private int mTarget;
+        private int mCurrent = 0;
+        private int mFrom = 0;
+        private boolean mEnabled = false;
+
+        public void setEnabled(boolean enabled) {
+            mEnabled = enabled;
+        }
+
+        public void startAnimateTo(int target) {
+            if (!mEnabled) {
+                mTarget = mCurrent = target;
+                return;
+            }
+            if (target == mTarget) return;
+
+            mFrom = mCurrent;
+            mTarget = target;
+            setDuration(180);
+            start();
+        }
+
+        public int get() {
+            return mCurrent;
+        }
+
+        public int getTarget() {
+            return mTarget;
+        }
+
+        @Override
+        protected void onCalculate(float progress) {
+            mCurrent = Math.round(mFrom + progress * (mTarget - mFrom));
+            if (progress == 1f) mEnabled = false;
+        }
     }
 }
