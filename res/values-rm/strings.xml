@@ -39,7 +39,7 @@
     <!-- no translation found for no_thumbnail (284723185546429750) -->
     <skip />
     <string name="resume_playing_restart" msgid="5471008499835769292">"Cumenzar"</string>
-    <!-- no translation found for crop_save_text (152200178986698300) -->
+    <!-- no translation found for ok (5296833083983263293) -->
     <skip />
     <!-- no translation found for multiface_crop_help (2554690102655855657) -->
     <skip />
@@ -62,8 +62,8 @@
     <skip />
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Culissa"</string>
     <string name="delete" msgid="2839695998251824487">"Stizzar"</string>
-    <!-- no translation found for confirm_action (1642211585193899041) -->
-    <skip />
+    <!-- no translation found for delete_selection:one (6453379735401083732) -->
+    <!-- no translation found for delete_selection:other (5874316486520635333) -->
     <!-- no translation found for confirm (8646870096527848520) -->
     <skip />
     <string name="cancel" msgid="3637516880917356226">"Interrumper"</string>
