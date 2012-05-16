@@ -207,6 +207,7 @@ class PositionController {
         }
 
         updateScaleAndGapLimit();
+        startOpeningAnimationIfNeeded();
         snapAndRedraw();
     }
 
@@ -233,7 +234,6 @@ class PositionController {
         }
 
         updateScaleAndGapLimit();
-        startOpeningAnimationIfNeeded();
         snapAndRedraw();
     }
 
