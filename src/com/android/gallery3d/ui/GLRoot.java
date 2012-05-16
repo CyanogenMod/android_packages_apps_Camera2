@@ -17,6 +17,7 @@
 package com.android.gallery3d.ui;
 
 import android.graphics.Matrix;
+
 import com.android.gallery3d.anim.CanvasAnimation;
 
 public interface GLRoot {
