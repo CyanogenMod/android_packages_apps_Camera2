@@ -398,4 +398,12 @@ public class ManageCachePage extends ActivityState implements
     @Override
     public void onSelectionChange(Path path, boolean selected) {
     }
+
+    @Override
+    public void onConfirmDialogDismissed(boolean confirmed) {
+    }
+
+    @Override
+    public void onConfirmDialogShown() {
+    }
 }

@@ -521,8 +521,28 @@ public class PhotoPage extends ActivityState implements
         return true;
     }
 
+    private MenuExecutor.ProgressListener mConfirmDialogListener =
+            new MenuExecutor.ProgressListener() {
+        @Override
+        public void onProgressUpdate(int index) {}
+
+        @Override
+        public void onProgressComplete(int result) {}
+
+        @Override
+        public void onConfirmDialogShown() {
+            mHandler.removeMessages(MSG_HIDE_BARS);
+        }
+
+        @Override
+        public void onConfirmDialogDismissed(boolean confirmed) {
+            refreshHidingMessage();
+        }
+    };
+
     @Override
     protected boolean onItemSelected(MenuItem item) {
+        refreshHidingMessage();
         MediaItem current = mModel.getMediaItem(0);
 
         if (current == null) {
@@ -586,7 +606,7 @@ public class PhotoPage extends ActivityState implements
             case R.id.action_show_on_map:
                 mSelectionManager.deSelectAll();
                 mSelectionManager.toggle(path);
-                mMenuExecutor.onMenuClicked(item, confirmMsg, null);
+                mMenuExecutor.onMenuClicked(item, confirmMsg, mConfirmDialogListener);
                 return true;
             case R.id.action_import:
                 mSelectionManager.deSelectAll();
@@ -767,11 +787,12 @@ public class PhotoPage extends ActivityState implements
 
     @Override
     public void onPause() {
+        super.onPause();
+        mIsActive = false;
+
         mActivity.getGLRoot().unfreeze();
         mHandler.removeMessages(MSG_UNFREEZE_GLROOT);
-        super.onPause();
         if (isFinishing()) preparePhotoFallbackView();
-        mIsActive = false;
 
         DetailsHelper.pause();
         mPhotoView.pause();
@@ -789,8 +810,8 @@ public class PhotoPage extends ActivityState implements
 
     @Override
     protected void onResume() {
-        mActivity.getGLRoot().freeze();
         super.onResume();
+        mActivity.getGLRoot().freeze();
         mIsActive = true;
         setContentPane(mRootPane);
 
