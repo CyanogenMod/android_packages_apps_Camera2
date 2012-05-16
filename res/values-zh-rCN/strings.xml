@@ -32,7 +32,8 @@
     <string name="fail_to_load_image" msgid="6155388718549782425">"无法加载此图片"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"无缩略图"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"重新开始"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"确定"</string>
+    <!-- no translation found for ok (5296833083983263293) -->
+    <skip />
     <string name="multiface_crop_help" msgid="2554690102655855657">"触摸一张脸开始裁剪。"</string>
     <string name="saving_image" msgid="7270334453636349407">"正在保存照片..."</string>
     <string name="save_error" msgid="6857408774183654970">"无法保存经过裁剪的图片。"</string>
@@ -46,7 +47,8 @@
     <string name="wallpaper" msgid="140165383777262070">"正在设置壁纸..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"壁纸"</string>
     <string name="delete" msgid="2839695998251824487">"删除"</string>
-    <string name="confirm_action" msgid="1642211585193899041">"确认删除？"</string>
+    <!-- no translation found for delete_selection:one (6453379735401083732) -->
+    <!-- no translation found for delete_selection:other (5874316486520635333) -->
     <string name="confirm" msgid="8646870096527848520">"确认"</string>
     <string name="cancel" msgid="3637516880917356226">"取消"</string>
     <string name="share" msgid="3619042788254195341">"分享"</string>
