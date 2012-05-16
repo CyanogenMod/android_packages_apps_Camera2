@@ -525,7 +525,7 @@ public class PhotoPage extends ActivityState implements
 
         DataManager manager = mActivity.getDataManager();
         int action = item.getItemId();
-        boolean needsConfirm = false;
+        String confirmMsg = null;
         switch (action) {
             case android.R.id.home: {
                 onUpPressed();
@@ -568,19 +568,20 @@ public class PhotoPage extends ActivityState implements
                 return true;
             }
             case R.id.action_delete:
-                needsConfirm = true;
+                confirmMsg = mActivity.getResources().getQuantityString(
+                        R.plurals.delete_selection, 1);
             case R.id.action_setas:
             case R.id.action_rotate_ccw:
             case R.id.action_rotate_cw:
             case R.id.action_show_on_map:
                 mSelectionManager.deSelectAll();
                 mSelectionManager.toggle(path);
-                mMenuExecutor.onMenuClicked(item, needsConfirm, null);
+                mMenuExecutor.onMenuClicked(item, confirmMsg, null);
                 return true;
             case R.id.action_import:
                 mSelectionManager.deSelectAll();
                 mSelectionManager.toggle(path);
-                mMenuExecutor.onMenuClicked(item, needsConfirm,
+                mMenuExecutor.onMenuClicked(item, confirmMsg,
                         new ImportCompleteListener(mActivity));
                 return true;
             default :
