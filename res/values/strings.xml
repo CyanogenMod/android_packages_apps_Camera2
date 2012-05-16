@@ -61,7 +61,7 @@
 
     <!-- Title of a menu item to indicate performing the image crop operation
          [CHAR LIMIT=20] -->
-    <string name="crop_save_text">OK</string>
+    <string name="ok">OK</string>
     <!-- Button indicating that the cropped image should be reverted back to the original -->
     <!-- Hint that appears when cropping an image with more than one face -->
     <string name="multiface_crop_help">Touch a face to begin.</string>
@@ -94,7 +94,11 @@
 
     <!-- Details dialog "OK" button. Dismisses dialog. -->
     <string name="delete">Delete</string>
-    <string name="confirm_action">Confirm deletion?</string>
+    <!-- String Delete the selected media item(s) [CHAR LIMIT=30] -->
+    <plurals name="delete_selection">
+        <item quantity="one">Delete selected item?</item>
+        <item quantity="other">Delete selected items?</item>
+    </plurals>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="share">Share</string>
