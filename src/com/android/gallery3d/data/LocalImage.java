@@ -81,8 +81,6 @@ public class LocalImage extends LocalMediaItem {
     private final GalleryApp mApplication;
 
     public int rotation;
-    public int width;
-    public int height;
 
     public LocalImage(Path path, GalleryApp application, Cursor cursor) {
         super(path, nextVersionNumber());
