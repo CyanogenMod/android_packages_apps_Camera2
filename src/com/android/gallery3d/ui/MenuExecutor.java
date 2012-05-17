@@ -21,6 +21,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Handler;
@@ -77,6 +78,8 @@ public class MenuExecutor {
     }
 
     public interface ProgressListener {
+        public void onConfirmDialogShown();
+        public void onConfirmDialogDismissed(boolean confirmed);
         public void onProgressUpdate(int index);
         public void onProgressComplete(int result);
     }
@@ -232,19 +235,50 @@ public class MenuExecutor {
         startAction(action, title, listener);
     }
 
+    private class ConfirmDialogListener implements OnClickListener, OnCancelListener {
+        private final int mActionId;
+        private final ProgressListener mListener;
+
+        public ConfirmDialogListener(int actionId, ProgressListener listener) {
+            mActionId = actionId;
+            mListener = listener;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+                if (mListener != null) {
+                    mListener.onConfirmDialogDismissed(true);
+                }
+                onMenuClicked(mActionId, mListener);
+            } else {
+                if (mListener != null) {
+                    mListener.onConfirmDialogDismissed(false);
+                }
+            }
+        }
+
+        @Override
+        public void onCancel(DialogInterface dialog) {
+            if (mListener != null) {
+                mListener.onConfirmDialogDismissed(false);
+            }
+        }
+    }
+
     public void onMenuClicked(MenuItem menuItem, String confirmMsg,
             final ProgressListener listener) {
         final int action = menuItem.getItemId();
 
         if (confirmMsg != null) {
+            if (listener != null) listener.onConfirmDialogShown();
+            ConfirmDialogListener cdl = new ConfirmDialogListener(action, listener);
             new AlertDialog.Builder(mActivity.getAndroidContext())
                     .setMessage(confirmMsg)
-                    .setPositiveButton(R.string.ok, new OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                onMenuClicked(action, listener);
-                            }
-                        })
-                    .setNegativeButton(R.string.cancel, null).create().show();
+                    .setOnCancelListener(cdl)
+                    .setPositiveButton(R.string.ok, cdl)
+                    .setNegativeButton(R.string.cancel, cdl)
+                    .create().show();
         } else {
             onMenuClicked(action, listener);
         }
