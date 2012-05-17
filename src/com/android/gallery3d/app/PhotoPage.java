@@ -213,7 +213,8 @@ public class PhotoPage extends ActivityState implements
             }
             PhotoDataAdapter pda = new PhotoDataAdapter(
                     mActivity, mPhotoView, mMediaSet, itemPath, mCurrentIndex,
-                    mAppBridge == null ? -1 : 0);
+                    mAppBridge == null ? -1 : 0,
+                    mAppBridge == null ? false : mAppBridge.isPanorama());
             mModel = pda;
             mPhotoView.setModel(mModel);
 
