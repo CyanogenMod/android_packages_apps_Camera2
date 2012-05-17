@@ -34,7 +34,6 @@ public abstract class AppBridge implements Parcelable {
     //  These are requests sent from PhotoPage to the app
     //////////////////////////////////////////////////////////////////////////
 
-    public abstract boolean isPanorama();
     public abstract ScreenNail attachScreenNail();
     public abstract void detachScreenNail();
 
