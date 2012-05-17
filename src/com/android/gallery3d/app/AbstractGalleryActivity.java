@@ -61,6 +61,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         super.onCreate(savedInstanceState);
         mOrientationManager = new OrientationManager(this);
         toggleStatusBarByOrientation();
+        getWindow().setBackgroundDrawable(null);
     }
 
     @Override
