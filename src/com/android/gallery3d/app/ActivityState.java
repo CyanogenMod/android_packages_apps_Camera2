@@ -108,21 +108,21 @@ abstract public class ActivityState {
 
                 if (plugged != mPlugged) {
                     mPlugged = plugged;
-                    final Window win = ((Activity) mActivity).getWindow();
-                    final WindowManager.LayoutParams params = win.getAttributes();
-                    setScreenOnFlags(params);
-                    win.setAttributes(params);
+                    setScreenOnFlags();
                 }
             }
         }
     };
 
-    void setScreenOnFlags(WindowManager.LayoutParams params) {
+    void setScreenOnFlags() {
+        final Window win = ((Activity) mActivity).getWindow();
+        final WindowManager.LayoutParams params = win.getAttributes();
         if (mPlugged && 0 != (mFlags & FLAG_SCREEN_ON)) {
             params.flags |= SCREEN_ON_FLAGS;
         } else {
             params.flags &= ~SCREEN_ON_FLAGS;
         }
+        win.setAttributes(params);
     }
 
     protected void onPause() {
@@ -149,17 +149,10 @@ abstract public class ActivityState {
 
         activity.invalidateOptionsMenu();
 
-        final Window win = activity.getWindow();
-        final WindowManager.LayoutParams params = win.getAttributes();
+        setScreenOnFlags();
 
-        if ((mFlags & FLAG_HIDE_STATUS_BAR) != 0) {
-            params.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE;
-        } else {
-            params.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE;
-        }
-
-        setScreenOnFlags(params);
-        win.setAttributes(params);
+        boolean lightsOut = ((mFlags & FLAG_HIDE_STATUS_BAR) != 0);
+        mActivity.getGLRoot().setLightsOutMode(lightsOut);
 
         ResultEntry entry = mReceivedResults;
         if (entry != null) {

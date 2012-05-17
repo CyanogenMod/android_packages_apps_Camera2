@@ -512,6 +512,12 @@ public class GLRootView extends GLSurfaceView
         mRenderLock.unlock();
     }
 
+    @Override
+    public void setLightsOutMode(boolean enabled) {
+        int flags = enabled ? SYSTEM_UI_FLAG_LOW_PROFILE : 0;
+        setSystemUiVisibility(flags);
+    }
+
     // We need to unfreeze in the following methods and in onPause().
     // These methods will wait on GLThread. If we have freezed the GLRootView,
     // the GLThread will wait on main thread to call unfreeze and cause dead
