@@ -99,8 +99,4 @@ public class BitmapTileProvider implements TileImageView.Model {
             mScreenNail.recycle();
         }
     }
-
-    public boolean isFailedToLoad() {
-        return false;
-    }
 }

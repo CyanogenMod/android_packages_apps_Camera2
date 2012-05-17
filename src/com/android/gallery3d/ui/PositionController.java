@@ -34,6 +34,8 @@ class PositionController {
     public static final int IMAGE_AT_TOP_EDGE = 4;
     public static final int IMAGE_AT_BOTTOM_EDGE = 8;
 
+    public static final int CAPTURE_ANIMATION_TIME = 600;
+
     // Special values for animation time.
     private static final long NO_ANIMATION = -1;
     private static final long LAST_ANIMATION = -2;
@@ -56,7 +58,7 @@ class PositionController {
         300,  // ANIM_KIND_ZOOM
         400,  // ANIM_KIND_OPENING
         0,    // ANIM_KIND_FLING (the duration is calculated dynamically)
-        800,  // ANIM_KIND_CAPTURE
+        CAPTURE_ANIMATION_TIME,  // ANIM_KIND_CAPTURE
     };
 
     // We try to scale up the image to fill the screen. But in order not to
