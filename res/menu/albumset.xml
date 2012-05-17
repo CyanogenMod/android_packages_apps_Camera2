@@ -32,5 +32,6 @@
             android:showAsAction="never" />
     <item android:id="@+id/action_general_help"
             android:title="@string/help"
+            android:visible="false"
             android:showAsAction="never" />
 </menu>
