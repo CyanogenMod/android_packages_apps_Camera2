@@ -211,6 +211,6 @@ public class AlbumLabelMaker {
     }
 
     public void clearRecycledLabels() {
-        mBitmapPool.clear();
+        if (mBitmapPool != null) mBitmapPool.clear();
     }
 }
