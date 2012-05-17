@@ -54,7 +54,7 @@ class PositionController {
         600,  // ANIM_KIND_SNAPBACK
         400,  // ANIM_KIND_SLIDE
         300,  // ANIM_KIND_ZOOM
-        600,  // ANIM_KIND_OPENING
+        400,  // ANIM_KIND_OPENING
         0,    // ANIM_KIND_FLING (the duration is calculated dynamically)
         800,  // ANIM_KIND_CAPTURE
     };
@@ -1212,10 +1212,12 @@ class PositionController {
                 case ANIM_KIND_SCALE:
                     progress = 1 - f * f;  // quadratic
                     break;
+                case ANIM_KIND_OPENING:
+                    progress = 1 - f * f * f;  // x^3
+                    break;
                 case ANIM_KIND_SNAPBACK:
                 case ANIM_KIND_ZOOM:
                 case ANIM_KIND_SLIDE:
-                case ANIM_KIND_OPENING:
                     progress = 1 - f * f * f * f * f; // x^5
                     break;
             }
