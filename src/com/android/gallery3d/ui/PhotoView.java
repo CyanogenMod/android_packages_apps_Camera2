@@ -69,6 +69,9 @@ public class PhotoView extends GLView {
         // Returns true if the item is the Camera preview.
         public boolean isCamera(int offset);
 
+        // Returns true if the item is the Panorama.
+        public boolean isPanorama(int offset);
+
         // Returns true if the item is a Video.
         public boolean isVideo(int offset);
     }
@@ -401,6 +404,10 @@ public class PhotoView extends GLView {
         return (mCompensation - mDisplayRotation + 360) % 360;
     }
 
+    private int getPanoramaRotation() {
+        return mCompensation;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     //  Pictures
     ////////////////////////////////////////////////////////////////////////////
@@ -416,6 +423,7 @@ public class PhotoView extends GLView {
     class FullPicture implements Picture {
         private int mRotation;
         private boolean mIsCamera;
+        private boolean mIsPanorama;
         private boolean mIsVideo;
         private boolean mWasCameraCenter;
 
@@ -429,6 +437,7 @@ public class PhotoView extends GLView {
             mTileView.notifyModelInvalidated();
 
             mIsCamera = mModel.isCamera(0);
+            mIsPanorama = mModel.isPanorama(0);
             mIsVideo = mModel.isVideo(0);
             setScreenNail(mModel.getScreenNail(0));
             updateSize(false);
@@ -437,7 +446,9 @@ public class PhotoView extends GLView {
 
         @Override
         public void updateSize(boolean force) {
-            if (mIsCamera) {
+            if (mIsPanorama) {
+                mRotation = getPanoramaRotation();
+            } else if (mIsCamera) {
                 mRotation = getCameraRotation();
             } else {
                 mRotation = mModel.getImageRotation(0);
@@ -627,6 +638,7 @@ public class PhotoView extends GLView {
         private ScreenNail mScreenNail;
         private Size mSize = new Size();
         private boolean mIsCamera;
+        private boolean mIsPanorama;
         private boolean mIsVideo;
 
         public ScreenNailPicture(int index) {
@@ -636,6 +648,7 @@ public class PhotoView extends GLView {
         @Override
         public void reload() {
             mIsCamera = mModel.isCamera(mIndex);
+            mIsPanorama = mModel.isPanorama(mIndex);
             mIsVideo = mModel.isVideo(mIndex);
             setScreenNail(mModel.getScreenNail(mIndex));
         }
@@ -701,7 +714,9 @@ public class PhotoView extends GLView {
 
         @Override
         public void updateSize(boolean force) {
-            if (mIsCamera) {
+            if (mIsPanorama) {
+                mRotation = getPanoramaRotation();
+            } else if (mIsCamera) {
                 mRotation = getCameraRotation();
             } else {
                 mRotation = mModel.getImageRotation(mIndex);
