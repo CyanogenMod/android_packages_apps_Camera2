@@ -147,6 +147,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     private int mSize = 0;
     private Path mItemPath;
     private int mCameraIndex;
+    private boolean mIsPanorama;
     private boolean mIsActive;
     private boolean mNeedFullImage;
 
@@ -164,12 +165,14 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     // find the image being viewed. cameraIndex is the index of the camera
     // preview. If cameraIndex < 0, there is no camera preview.
     public PhotoDataAdapter(GalleryActivity activity, PhotoView view,
-            MediaSet mediaSet, Path itemPath, int indexHint, int cameraIndex) {
+            MediaSet mediaSet, Path itemPath, int indexHint, int cameraIndex,
+            boolean isPanorama) {
         mSource = Utils.checkNotNull(mediaSet);
         mPhotoView = Utils.checkNotNull(view);
         mItemPath = Utils.checkNotNull(itemPath);
         mCurrentIndex = indexHint;
         mCameraIndex = cameraIndex;
+        mIsPanorama = isPanorama;
         mThreadPool = activity.getThreadPool();
         mNeedFullImage = true;
 
@@ -426,6 +429,11 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     @Override
     public boolean isCamera(int offset) {
         return mCurrentIndex + offset == mCameraIndex;
+    }
+
+    @Override
+    public boolean isPanorama(int offset) {
+        return isCamera(offset) && mIsPanorama;
     }
 
     @Override
