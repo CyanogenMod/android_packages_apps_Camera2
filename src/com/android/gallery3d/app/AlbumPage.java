@@ -652,7 +652,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                         mInitialSynced = true;
                     }
                     clearLoadingBit(BIT_LOADING_SYNC);
-                    if (resultCode == MediaSet.SYNC_RESULT_ERROR && mIsActive) {
+                    if (resultCode == MediaSet.SYNC_RESULT_ERROR && mIsActive
+                            && (mAlbumDataAdapter.size() == 0)) {
+                        // show error toast only if the album is empty
                         Toast.makeText((Context) mActivity, R.string.sync_album_error,
                                 Toast.LENGTH_LONG).show();
                     }

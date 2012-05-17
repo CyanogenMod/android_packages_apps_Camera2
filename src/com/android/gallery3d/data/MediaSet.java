@@ -94,6 +94,14 @@ public abstract class MediaSet extends MediaObject {
         return false;
     }
 
+    /**
+     * Method {@link #reload()} may process the loading task in background, this method tells
+     * its client whether the loading is still in process or not.
+     */
+    public boolean isLoading() {
+        return false;
+    }
+
     public int getTotalMediaItemCount() {
         int total = getMediaItemCount();
         for (int i = 0, n = getSubMediaSetCount(); i < n; i++) {
