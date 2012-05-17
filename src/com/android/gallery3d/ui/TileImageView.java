@@ -25,6 +25,7 @@ import android.util.LongSparseArray;
 
 import com.android.gallery3d.app.GalleryContext;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.DecodeUtils;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.ThreadPool;
@@ -43,7 +44,11 @@ public class TileImageView extends GLView {
     // texture to avoid seams between tiles.
     private static final int TILE_SIZE = 254;
     private static final int TILE_BORDER = 1;
+    private static final int BITMAP_SIZE = TILE_SIZE + TILE_BORDER * 2;
     private static final int UPLOAD_LIMIT = 1;
+
+    private static final BitmapPool sTilePool =
+            new BitmapPool(BITMAP_SIZE, BITMAP_SIZE, 128);
 
     /*
      *  This is the tile state in the CPU side.
@@ -96,9 +101,9 @@ public class TileImageView extends GLView {
     private final LongSparseArray<Tile> mActiveTiles = new LongSparseArray<Tile>();
 
     // The following three queue is guarded by TileImageView.this
-    private TileQueue mRecycledQueue = new TileQueue();
-    private TileQueue mUploadQueue = new TileQueue();
-    private TileQueue mDecodeQueue = new TileQueue();
+    private final TileQueue mRecycledQueue = new TileQueue();
+    private final TileQueue mUploadQueue = new TileQueue();
+    private final TileQueue mDecodeQueue = new TileQueue();
 
     // The width and height of the full-sized bitmap
     protected int mImageWidth = SIZE_UNKNOWN;
@@ -116,7 +121,7 @@ public class TileImageView extends GLView {
     private final TileUploader mTileUploader = new TileUploader();
     private boolean mIsTextureFreed;
     private Future<Void> mTileDecoder;
-    private ThreadPool mThreadPool;
+    private final ThreadPool mThreadPool;
     private boolean mBackgroundTileUploaded;
 
     public static interface Model {
@@ -138,7 +143,7 @@ public class TileImageView extends GLView {
         //
         // The method would be called in another thread.
         public Bitmap getTile(int level, int x, int y, int tileSize,
-                int borderSize);
+                int borderSize, BitmapPool pool);
     }
 
     public TileImageView(GalleryContext context) {
@@ -373,6 +378,7 @@ public class TileImageView extends GLView {
             }
         }
         setScreenNail(null);
+        sTilePool.clear();
     }
 
     public void prepareTextures() {
@@ -480,7 +486,10 @@ public class TileImageView extends GLView {
         synchronized (this) {
             if (tile.mTileState == STATE_RECYCLING) {
                 tile.mTileState = STATE_RECYCLED;
-                tile.mDecodedTile = null;
+                if (tile.mDecodedTile != null) {
+                    sTilePool.recycle(tile.mDecodedTile);
+                    tile.mDecodedTile = null;
+                }
                 mRecycledQueue.push(tile);
                 return false;
             }
@@ -505,7 +514,10 @@ public class TileImageView extends GLView {
             return;
         }
         tile.mTileState = STATE_RECYCLED;
-        tile.mDecodedTile = null;
+        if (tile.mDecodedTile != null) {
+            sTilePool.recycle(tile.mDecodedTile);
+            tile.mDecodedTile = null;
+        }
         mRecycledQueue.push(tile);
     }
 
@@ -626,12 +638,12 @@ public class TileImageView extends GLView {
     }
 
     private class Tile extends UploadedTexture {
-        int mX;
-        int mY;
-        int mTileLevel;
-        Tile mNext;
-        Bitmap mDecodedTile;
-        volatile int mTileState = STATE_ACTIVATED;
+        public int mX;
+        public int mY;
+        public int mTileLevel;
+        public Tile mNext;
+        public Bitmap mDecodedTile;
+        public volatile int mTileState = STATE_ACTIVATED;
 
         public Tile(int x, int y, int level) {
             mX = x;
@@ -641,7 +653,7 @@ public class TileImageView extends GLView {
 
         @Override
         protected void onFreeBitmap(Bitmap bitmap) {
-            bitmap.recycle();
+            sTilePool.recycle(bitmap);
         }
 
         boolean decode() {
@@ -649,7 +661,7 @@ public class TileImageView extends GLView {
             // by (1 << mTilelevel) from a region in the original image.
             try {
                 mDecodedTile = DecodeUtils.ensureGLCompatibleBitmap(mModel.getTile(
-                        mTileLevel, mX, mY, TILE_SIZE, TILE_BORDER));
+                        mTileLevel, mX, mY, TILE_SIZE, TILE_BORDER, sTilePool));
             } catch (Throwable t) {
                 Log.w(TAG, "fail to decode tile", t);
             }
@@ -659,6 +671,13 @@ public class TileImageView extends GLView {
         @Override
         protected Bitmap onGetBitmap() {
             Utils.assertTrue(mTileState == STATE_DECODED);
+
+            // We need to override the width and height, so that we won't
+            // draw beyond the boundaries.
+            int rightEdge = ((mImageWidth - mX) >> mTileLevel) + TILE_BORDER;
+            int bottomEdge = ((mImageHeight - mY) >> mTileLevel) + TILE_BORDER;
+            setSize(Math.min(BITMAP_SIZE, rightEdge), Math.min(BITMAP_SIZE, bottomEdge));
+
             Bitmap bitmap = mDecodedTile;
             mDecodedTile = null;
             mTileState = STATE_ACTIVATED;
