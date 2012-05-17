@@ -45,6 +45,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
     private StateManager mStateManager;
     private GalleryActionBar mActionBar;
     private OrientationManager mOrientationManager;
+    private TransitionStore mTransitionStore = new TransitionStore();
     private boolean mDisableToggleStatusBar;
 
     private AlertDialog mAlertDialog = null;
@@ -259,5 +260,10 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         } else {
             win.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
+    }
+
+    @Override
+    public TransitionStore getTransitionStore() {
+        return mTransitionStore;
     }
 }

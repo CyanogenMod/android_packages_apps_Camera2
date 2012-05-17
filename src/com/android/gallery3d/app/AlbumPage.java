@@ -50,6 +50,7 @@ import com.android.gallery3d.ui.FadeTexture;
 import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLView;
+import com.android.gallery3d.ui.PhotoFallbackEffect;
 import com.android.gallery3d.ui.RelativePosition;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
@@ -70,6 +71,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     public static final String KEY_SET_CENTER = "set-center";
     public static final String KEY_AUTO_SELECT_ALL = "auto-select-all";
     public static final String KEY_SHOW_CLUSTER_MENU = "cluster-menu";
+    public static final String KEY_RESUME_ANIMATION = "resume_animation";
 
     private static final int REQUEST_SLIDESHOW = 1;
     private static final int REQUEST_PHOTO = 2;
@@ -110,6 +112,30 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private boolean mInitialSynced = false;
     private RelativePosition mOpenCenter = new RelativePosition();
 
+    private PhotoFallbackEffect mResumeEffect;
+    private PhotoFallbackEffect.PositionProvider mPositionProvider =
+            new PhotoFallbackEffect.PositionProvider() {
+        @Override
+        public Rect getPosition(int index) {
+            Rect rect = mSlotView.getSlotRect(index);
+            Rect bounds = mSlotView.bounds();
+            rect.offset(bounds.left - mSlotView.getScrollX(),
+                    bounds.top - mSlotView.getScrollY());
+            return rect;
+        }
+
+        @Override
+        public int getItemIndex(Path path) {
+            int start = mSlotView.getVisibleStart();
+            int end = mSlotView.getVisibleEnd();
+            for (int i = start; i < end; ++i) {
+                MediaItem item = mAlbumDataAdapter.get(i);
+                if (item != null && item.getPath() == path) return i;
+            }
+            return -1;
+        }
+    };
+
     private final GLView mRootPane = new GLView() {
         private final float mMatrix[] = new float[16];
 
@@ -144,6 +170,16 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             canvas.save(GLCanvas.SAVE_FLAG_MATRIX);
             canvas.multiplyMatrix(mMatrix, 0);
             super.render(canvas);
+
+            if (mResumeEffect != null) {
+                boolean more = mResumeEffect.draw(canvas);
+                if (!more) {
+                    mResumeEffect = null;
+                    mAlbumView.setSlotFilter(null);
+                } else {
+                    invalidate();
+                }
+            }
             canvas.restore();
         }
     };
@@ -336,6 +372,14 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     protected void onResume() {
         super.onResume();
         mIsActive = true;
+
+        mResumeEffect = mActivity.getTransitionStore().get(KEY_RESUME_ANIMATION);
+        if (mResumeEffect != null) {
+            mAlbumView.setSlotFilter(mResumeEffect);
+            mResumeEffect.setPositionProvider(mPositionProvider);
+            mResumeEffect.start();
+        }
+
         setContentPane(mRootPane);
 
         Path path = mMediaSet.getPath();
@@ -359,6 +403,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     protected void onPause() {
         super.onPause();
         mIsActive = false;
+
+        mAlbumView.setSlotFilter(null);
+
         mAlbumDataAdapter.pause();
         mAlbumView.pause();
         DetailsHelper.pause();
@@ -549,7 +596,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 if (data == null) return;
                 mFocusIndex = data.getIntExtra(PhotoPage.KEY_RETURN_INDEX_HINT, 0);
                 mSlotView.makeSlotVisible(mFocusIndex);
-                mSlotView.startRestoringAnimation(mFocusIndex);
                 break;
             }
             case REQUEST_DO_ANIMATION: {
