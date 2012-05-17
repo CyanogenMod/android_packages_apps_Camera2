@@ -54,6 +54,7 @@ import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.HelpUtils;
 
 public class AlbumSetPage extends ActivityState implements
         SelectionManager.SelectionListener, GalleryActionBar.ClusterRunner,
@@ -446,6 +447,9 @@ public class AlbumSetPage extends ActivityState implements
             if (switchCamera != null) {
                 switchCamera.setVisible(GalleryUtils.isCameraAvailable(activity));
             }
+            final MenuItem helpMenu = menu.findItem(R.id.action_general_help);
+            HelpUtils.prepareHelpMenuItem(mActivity.getAndroidContext(),
+                    helpMenu, R.string.help_url_gallery_main);
 
             mActionBar.setTitle(mTitle);
             mActionBar.setSubtitle(mSubtitle);
@@ -496,11 +500,6 @@ public class AlbumSetPage extends ActivityState implements
             }
             case R.id.action_settings: {
                 activity.startActivity(new Intent(activity, GallerySettings.class));
-                return true;
-            }
-            case R.id.action_general_help: {
-                activity.startActivity(
-                        GalleryUtils.getHelpIntent(R.string.general_help_link, activity));
                 return true;
             }
             default:
