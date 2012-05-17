@@ -521,7 +521,8 @@ public class PhotoView extends GLView {
             canvas.save(GLCanvas.SAVE_FLAG_MATRIX | GLCanvas.SAVE_FLAG_ALPHA);
             float filmRatio = mPositionController.getFilmRatio();
             boolean wantsCardEffect = CARD_EFFECT && !mIsCamera
-                    && filmRatio != 1f && !mPictures.get(-1).isCamera();
+                    && filmRatio != 1f && !mPictures.get(-1).isCamera()
+                    && !mPositionController.inOpeningAnimation();
             if (wantsCardEffect) {
                 // Calculate the move-out progress value.
                 int left = r.left;
