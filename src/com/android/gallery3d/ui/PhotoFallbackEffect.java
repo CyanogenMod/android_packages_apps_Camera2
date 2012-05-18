@@ -87,7 +87,7 @@ public class PhotoFallbackEffect extends Animation implements SlotFilter {
     }
 
     private void drawEntry(GLCanvas canvas, Entry entry) {
-        if (!entry.texture.isLoaded(canvas)) return;
+        if (!entry.texture.isLoaded()) return;
 
         int w = entry.texture.getWidth();
         int h = entry.texture.getHeight();

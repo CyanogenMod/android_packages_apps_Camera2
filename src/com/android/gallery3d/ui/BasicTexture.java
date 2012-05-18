@@ -139,7 +139,7 @@ abstract class BasicTexture implements Texture {
     // Returns the GL texture target for this texture (e.g. GL_TEXTURE_2D).
     abstract protected int getTarget();
 
-    public boolean isLoaded(GLCanvas canvas) {
+    public boolean isLoaded() {
         return mState == STATE_LOADED;
     }
 
@@ -160,10 +160,10 @@ abstract class BasicTexture implements Texture {
 
     private void freeResource() {
         GLCanvas canvas = mCanvasRef;
-        if (canvas != null && isLoaded(canvas)) {
+        if (canvas != null && isLoaded()) {
             canvas.unloadTexture(this);
         }
-        mState = BasicTexture.STATE_UNLOADED;
+        mState = STATE_UNLOADED;
         setAssociatedCanvas(null);
     }
 
