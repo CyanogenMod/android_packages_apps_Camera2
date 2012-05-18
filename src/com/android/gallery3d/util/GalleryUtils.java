@@ -50,6 +50,7 @@ public class GalleryUtils {
     private static final String TAG = "GalleryUtils";
     private static final String MAPS_PACKAGE_NAME = "com.google.android.apps.maps";
     private static final String MAPS_CLASS_NAME = "com.google.android.maps.MapsActivity";
+    private static final String CAMERA_LAUNCHER_NAME = "com.android.camera.CameraLauncher";
 
     private static final String MIME_TYPE_IMAGE = "image/*";
     private static final String MIME_TYPE_VIDEO = "video/*";
@@ -63,7 +64,9 @@ public class GalleryUtils {
     private static final String KEY_CAMERA_UPDATE = "camera-update";
     private static final String KEY_HAS_CAMERA = "has-camera";
 
-    static float sPixelDensity = -1f;
+    private static float sPixelDensity = -1f;
+    private static boolean sCameraAvailableInitialized = false;
+    private static boolean sCameraAvailable;
 
     public static void initialize(Context context) {
         if (sPixelDensity < 0) {
@@ -188,7 +191,7 @@ public class GalleryUtils {
         return prefs.getBoolean(hasKey, true);
     }
 
-    public static boolean isCameraAvailable(Context context) {
+    public static boolean isAnyCameraAvailable(Context context) {
         int version = PackagesMonitor.getPackagesVersion(context);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (prefs.getInt(KEY_CAMERA_UPDATE, 0) != version) {
@@ -200,6 +203,18 @@ public class GalleryUtils {
                         .commit();
         }
         return prefs.getBoolean(KEY_HAS_CAMERA, true);
+    }
+
+    public static boolean isCameraAvailable(Context context) {
+        if (sCameraAvailableInitialized) return sCameraAvailable;
+        PackageManager pm = context.getPackageManager();
+        ComponentName name = new ComponentName(context, CAMERA_LAUNCHER_NAME);
+        int state = pm.getComponentEnabledSetting(name);
+        sCameraAvailableInitialized = true;
+        sCameraAvailable =
+            (state == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT)
+             || (state == PackageManager.COMPONENT_ENABLED_STATE_ENABLED);
+        return sCameraAvailable;
     }
 
     public static void startCameraActivity(Context context) {
