@@ -99,7 +99,7 @@
 
     <!-- Details dialog "OK" button. Dismisses dialog. -->
     <string name="delete">Delete</string>
-    <!-- String Delete the selected media item(s) [CHAR LIMIT=30] -->
+    <!-- String Delete the selected media item(s) [CHAR LIMIT=50] -->
     <plurals name="delete_selection">
         <item quantity="one">Delete selected item?</item>
         <item quantity="other">Delete selected items?</item>
