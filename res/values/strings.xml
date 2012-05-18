@@ -91,6 +91,8 @@
     <!-- Displayed in the title of the dialog for things to do with a picture
              that is to be "set as" (e.g. set as contact photo or set as wallpaper) -->
     <string name="set_image">Set picture as</string>
+    <!-- Activity title for cropping picture and setting it as wallpaper [CHAR LIMIT=20] -->
+    <string name="set_wallpaper">Set wallpaper</string>
     <!-- Toast/alert after saving wallpaper -->
     <string name="wallpaper">Setting wallpaper\u2026</string>
     <string name="camera_setas_wallpaper">Wallpaper</string>
