@@ -180,6 +180,7 @@ public class PhotoPage extends ActivityState implements
         if (mSetPathString != null) {
             mAppBridge = (AppBridge) data.getParcelable(KEY_APP_BRIDGE);
             if (mAppBridge != null) {
+                mAppBridge.setServer(this);
                 mOrientationManager.lockOrientation();
 
                 // Get the ScreenNail from AppBridge and register it.
@@ -729,7 +730,7 @@ public class PhotoPage extends ActivityState implements
         mHandler.removeMessages(MSG_UNFREEZE_GLROOT);
         super.onPause();
         mIsActive = false;
-        if (mAppBridge != null) mAppBridge.setServer(null);
+
         DetailsHelper.pause();
         mPhotoView.pause();
         mModel.pause();
@@ -760,7 +761,6 @@ public class PhotoPage extends ActivityState implements
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
 
         if (mAppBridge != null) {
-            mAppBridge.setServer(this);
             mPhotoView.resetToFirstPicture();
         }
         mHandler.sendEmptyMessageDelayed(MSG_UNFREEZE_GLROOT, UNFREEZE_GLROOT_TIMEOUT);
@@ -769,6 +769,7 @@ public class PhotoPage extends ActivityState implements
     @Override
     protected void onDestroy() {
         if (mAppBridge != null) {
+            mAppBridge.setServer(null);
             mScreenNailItem.setScreenNail(null);
             mAppBridge.detachScreenNail();
             mAppBridge = null;
