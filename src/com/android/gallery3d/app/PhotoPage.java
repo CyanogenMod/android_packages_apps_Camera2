@@ -83,6 +83,7 @@ public class PhotoPage extends ActivityState implements
     private static final int REQUEST_CROP = 2;
     private static final int REQUEST_CROP_PICASA = 3;
     private static final int REQUEST_EDIT = 4;
+    private static final int REQUEST_PLAY_VIDEO = 5;
 
     public static final String KEY_MEDIA_SET_PATH = "media-set-path";
     public static final String KEY_MEDIA_ITEM_PATH = "media-item-path";
@@ -126,6 +127,7 @@ public class PhotoPage extends ActivityState implements
     private SnailItem mScreenNailItem;
     private SnailAlbum mScreenNailSet;
     private OrientationManager mOrientationManager;
+    private boolean mHasActivityResult;
 
     private NfcAdapter mNfcAdapter;
 
@@ -695,7 +697,7 @@ public class PhotoPage extends ActivityState implements
             Intent intent = new Intent(Intent.ACTION_VIEW)
                     .setDataAndType(uri, "video/*");
             intent.putExtra(Intent.EXTRA_TITLE, title);
-            activity.startActivity(intent);
+            activity.startActivityForResult(intent, REQUEST_PLAY_VIDEO);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(activity, activity.getString(R.string.video_err),
                     Toast.LENGTH_SHORT).show();
@@ -713,6 +715,7 @@ public class PhotoPage extends ActivityState implements
 
     @Override
     protected void onStateResult(int requestCode, int resultCode, Intent data) {
+        mHasActivityResult = true;
         switch (requestCode) {
             case REQUEST_EDIT:
                 setCurrentPhotoByIntent(data);
@@ -817,9 +820,10 @@ public class PhotoPage extends ActivityState implements
         mActionBar.setDisplayOptions(mSetPathString != null, true);
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
 
-        if (mAppBridge != null) {
+        if (mAppBridge != null && !mHasActivityResult) {
             mPhotoView.resetToFirstPicture();
         }
+        mHasActivityResult = false;
         mHandler.sendEmptyMessageDelayed(MSG_UNFREEZE_GLROOT, UNFREEZE_GLROOT_TIMEOUT);
     }
 
