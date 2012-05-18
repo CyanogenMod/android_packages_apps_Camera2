@@ -113,6 +113,7 @@ public class LocalVideo extends LocalMediaItem {
     }
 
     private void parseResolution(String resolution) {
+        if (resolution == null) return;
         int m = resolution.indexOf('x');
         if (m == -1) return;
         try {
