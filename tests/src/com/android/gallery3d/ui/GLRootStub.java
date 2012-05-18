@@ -34,4 +34,5 @@ public class GLRootStub implements GLRoot {
     public Matrix getCompensationMatrix() { return null; }
     public void freeze() {}
     public void unfreeze() {}
+    public void setLightsOutMode(boolean enabled) {}
 }
