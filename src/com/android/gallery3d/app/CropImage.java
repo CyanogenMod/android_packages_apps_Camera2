@@ -165,6 +165,10 @@ public class CropImage extends AbstractGalleryActivity {
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE,
                 ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
+        Bundle extra = getIntent().getExtras();
+        if (extra != null && extra.getBoolean(KEY_SET_AS_WALLPAPER, false)) {
+            actionBar.setTitle(R.string.set_wallpaper);
+        }
 
         mMainHandler = new SynchronizedHandler(getGLRoot()) {
             @Override
