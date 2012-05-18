@@ -60,12 +60,12 @@ public class ExtTexture extends BasicTexture {
                 GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 
         setAssociatedCanvas(canvas);
-        mState = UploadedTexture.STATE_LOADED;
+        mState = STATE_LOADED;
     }
 
     @Override
     protected boolean onBind(GLCanvas canvas) {
-        if (!isLoaded(canvas)) {
+        if (!isLoaded()) {
             uploadToCanvas(canvas);
         }
 

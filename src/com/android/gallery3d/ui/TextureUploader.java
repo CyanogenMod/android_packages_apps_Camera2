@@ -36,8 +36,12 @@ public class TextureUploader implements OnGLIdleListener {
     }
 
     public synchronized void clear() {
-        mFgTextures.clear();
-        mBgTextures.clear();
+        while (!mFgTextures.isEmpty()) {
+            mFgTextures.pop().setIsUploading(false);
+        }
+        while (!mBgTextures.isEmpty()) {
+            mBgTextures.pop().setIsUploading(false);
+        }
     }
 
     // caller should hold synchronized on "this"
@@ -48,12 +52,16 @@ public class TextureUploader implements OnGLIdleListener {
     }
 
     public synchronized void addBgTexture(UploadedTexture t) {
+        if (t.isContentValid()) return;
         mBgTextures.addLast(t);
+        t.setIsUploading(true);
         queueSelfIfNeed();
     }
 
     public synchronized void addFgTexture(UploadedTexture t) {
+        if (t.isContentValid()) return;
         mFgTextures.addLast(t);
+        t.setIsUploading(true);
         queueSelfIfNeed();
     }
 
@@ -64,7 +72,9 @@ public class TextureUploader implements OnGLIdleListener {
             synchronized (this) {
                 if (deque.isEmpty()) break;
                 t = deque.removeFirst();
-                if (t.isContentValid(canvas)) continue;
+                t.setIsUploading(false);
+                if (t.isContentValid()) continue;
+
                 // this has to be protected by the synchronized block
                 // to prevent the inner bitmap get recycled
                 t.updateContent(canvas);

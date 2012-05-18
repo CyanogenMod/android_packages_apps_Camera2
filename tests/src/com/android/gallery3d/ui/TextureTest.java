@@ -20,9 +20,9 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.test.suitebuilder.annotation.SmallTest;
 
-import javax.microedition.khronos.opengles.GL11;
-
 import junit.framework.TestCase;
+
+import javax.microedition.khronos.opengles.GL11;
 
 @SmallTest
 public class TextureTest extends TestCase {
@@ -34,7 +34,7 @@ public class TextureTest extends TestCase {
         int mOpaqueCalled;
 
         MyBasicTexture(GLCanvas canvas, int id) {
-            super(canvas, id, BasicTexture.STATE_UNLOADED);
+            super(canvas, id, 0);
         }
 
         @Override
@@ -54,7 +54,7 @@ public class TextureTest extends TestCase {
         }
 
         void upload() {
-            mState = STATE_LOADED;
+            mState |= STATE_BIT_LOADED;
         }
     }
 
@@ -76,13 +76,13 @@ public class TextureTest extends TestCase {
         assertEquals(4, texture.getTextureWidth());
         assertEquals(8, texture.getTextureHeight());
 
-        assertFalse(texture.isLoaded(canvas));
+        assertFalse(texture.isLoaded());
         texture.upload();
-        assertTrue(texture.isLoaded(canvas));
+        assertTrue(texture.isLoaded());
 
         // For a different GL, it's not loaded.
         GLCanvas canvas2 = new GLCanvasImpl(new GLStub());
-        assertFalse(texture.isLoaded(canvas2));
+        assertFalse(texture.isLoaded());
 
         assertEquals(0, texture.mOnBindCalled);
         assertEquals(0, texture.mOpaqueCalled);
@@ -143,20 +143,20 @@ public class TextureTest extends TestCase {
         assertEquals(0, texture.mGetCalled);
         texture.draw(canvas, 0, 0);
         assertEquals(1, texture.mGetCalled);
-        assertTrue(texture.isLoaded(canvas));
-        assertTrue(texture.isContentValid(canvas));
+        assertTrue(texture.isLoaded());
+        assertTrue(texture.isContentValid());
 
         // invalidate content and it should be freed.
         texture.invalidateContent();
-        assertFalse(texture.isContentValid(canvas));
+        assertFalse(texture.isContentValid());
         assertEquals(1, texture.mFreeCalled);
-        assertTrue(texture.isLoaded(canvas));  // But it's still loaded
+        assertTrue(texture.isLoaded());  // But it's still loaded
 
         // draw it again and the bitmap should be fetched again.
         texture.draw(canvas, 0, 0);
         assertEquals(2, texture.mGetCalled);
-        assertTrue(texture.isLoaded(canvas));
-        assertTrue(texture.isContentValid(canvas));
+        assertTrue(texture.isLoaded());
+        assertTrue(texture.isContentValid());
 
         // recycle the texture and it should be freed again.
         texture.recycle();
@@ -168,7 +168,7 @@ public class TextureTest extends TestCase {
 
     class MyTextureForMixed extends BasicTexture {
         MyTextureForMixed(GLCanvas canvas, int id) {
-            super(canvas, id, BasicTexture.STATE_UNLOADED);
+            super(canvas, id, 0);
         }
 
         @Override
