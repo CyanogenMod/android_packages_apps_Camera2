@@ -286,12 +286,21 @@ class PositionController {
         // Start animation from the saved rectangle if we have one.
         Rect r = mOpenAnimationRect;
         mOpenAnimationRect = null;
+
         mPlatform.mCurrentX = r.centerX() - mViewW / 2;
         b.mCurrentY = r.centerY() - mViewH / 2;
         b.mCurrentScale = Math.max(r.width() / (float) b.mImageW,
                 r.height() / (float) b.mImageH);
         startAnimation(mPlatform.mDefaultX, 0, b.mScaleMin,
                 ANIM_KIND_OPENING);
+
+        // Animate from large gaps for neighbor boxes to avoid them
+        // shown on the screen during opening animation.
+        for (int i = -1; i < 1; i++) {
+            Gap g = mGaps.get(i);
+            g.mCurrentGap = mViewW;
+            g.doAnimation(g.mDefaultSize, ANIM_KIND_OPENING);
+        }
     }
 
     public void setFilmMode(boolean enabled) {
@@ -659,6 +668,13 @@ class PositionController {
         }
         changed |= mFilmRatio.advanceAnimation();
         if (changed) redraw();
+    }
+
+    public boolean inOpeningAnimation() {
+        return (mPlatform.mAnimationKind == ANIM_KIND_OPENING &&
+                mPlatform.mAnimationStartTime != NO_ANIMATION) ||
+               (mBoxes.get(0).mAnimationKind == ANIM_KIND_OPENING &&
+                mBoxes.get(0).mAnimationStartTime != NO_ANIMATION);
     }
 
     ////////////////////////////////////////////////////////////////////////////
