@@ -973,21 +973,15 @@ public class PhotoView extends GLView {
 
     @Override
     protected void render(GLCanvas canvas) {
-        float filmRatio = mPositionController.getFilmRatio();
+        // In page mode, we draw only one previous/next photo. But if we are
+        // doing capture animation, we want to draw all photos.
+        boolean inPageMode = (mPositionController.getFilmRatio() == 0f);
+        boolean inCaptureAnimation = ((mHolding & HOLD_CAPTURE_ANIMATION) != 0);
+        boolean drawOneNeighborOnly = inPageMode && !inCaptureAnimation;
+        int neighbors = drawOneNeighborOnly ? 1 : SCREEN_NAIL_MAX;
 
-        // Draw next photos. In page mode, we draw only one next photo.
-        int lastPhoto = (filmRatio == 0f) ? 1 : SCREEN_NAIL_MAX;
-        for (int i = lastPhoto; i > 0; i--) {
-            Rect r = mPositionController.getPosition(i);
-            mPictures.get(i).draw(canvas, r);
-        }
-
-        // Draw current photo
-        mPictures.get(0).draw(canvas, mPositionController.getPosition(0));
-
-        // Draw previous photos. In page mode, we draw only one previous photo.
-        lastPhoto = (filmRatio == 0f) ? -1: -SCREEN_NAIL_MAX;
-        for (int i = -1; i >= lastPhoto; i--) {
+        // Draw photos from back to front
+        for (int i = neighbors; i >= -neighbors; i--) {
             Rect r = mPositionController.getPosition(i);
             mPictures.get(i).draw(canvas, r);
         }
@@ -1191,6 +1185,17 @@ public class PhotoView extends GLView {
             mPositionController.startCaptureAnimationSlide(-1);
         } else if (offset == -1) {
             if (mPrevBound >= 0) return false;
+            if (mFilmMode) setFilmMode(false);
+
+            // If we are too far away from the first image (so that we don't
+            // have all the ScreenNails in-between), we go directly without
+            // animation.
+            if (mModel.getCurrentIndex() > SCREEN_NAIL_MAX) {
+                switchToFirstImage();
+                mPositionController.skipAnimation();
+                return true;
+            }
+
             switchToFirstImage();
             mPositionController.startCaptureAnimationSlide(1);
         } else {
