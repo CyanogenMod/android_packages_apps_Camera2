@@ -695,8 +695,9 @@ public class PhotoPage extends ActivityState implements
     public static void playVideo(Activity activity, Uri uri, String title) {
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW)
-                    .setDataAndType(uri, "video/*");
-            intent.putExtra(Intent.EXTRA_TITLE, title);
+                    .setDataAndType(uri, "video/*")
+                    .putExtra(Intent.EXTRA_TITLE, title)
+                    .putExtra(MovieActivity.KEY_TREAT_UP_AS_BACK, true);
             activity.startActivityForResult(intent, REQUEST_PLAY_VIDEO);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(activity, activity.getString(R.string.video_err),
