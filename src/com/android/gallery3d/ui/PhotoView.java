@@ -1334,7 +1334,10 @@ public class PhotoView extends GLView {
             MediaItem item = mModel.getMediaItem(i);
             if (item == null) continue;
             ScreenNail sc = mModel.getScreenNail(i);
-            if (sc == null) continue;
+            if (!(sc instanceof BitmapScreenNail)
+                    || ((BitmapScreenNail) sc).isShowingPlaceholder()) continue;
+
+            // Now, sc is BitmapScreenNail and is not showing placeholder
             Rect rect = new Rect(getPhotoRect(i));
             if (!Rect.intersects(fullRect, rect)) continue;
             rect.offset(location.left, location.top);
