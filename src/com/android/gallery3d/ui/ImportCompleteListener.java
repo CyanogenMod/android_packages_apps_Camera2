@@ -31,6 +31,7 @@ public class ImportCompleteListener implements MenuExecutor.ProgressListener {
         mActivity = galleryActivity;
     }
 
+    @Override
     public void onProgressComplete(int result) {
         int message;
         if (result == MenuExecutor.EXECUTION_RESULT_SUCCESS) {
@@ -42,6 +43,7 @@ public class ImportCompleteListener implements MenuExecutor.ProgressListener {
         Toast.makeText(mActivity.getAndroidContext(), message, Toast.LENGTH_LONG).show();
     }
 
+    @Override
     public void onProgressUpdate(int index) {
     }
 
@@ -52,4 +54,11 @@ public class ImportCompleteListener implements MenuExecutor.ProgressListener {
         mActivity.getStateManager().startState(AlbumPage.class, data);
     }
 
+    @Override
+    public void onConfirmDialogDismissed(boolean confirmed) {
+    }
+
+    @Override
+    public void onConfirmDialogShown() {
+    }
 }
