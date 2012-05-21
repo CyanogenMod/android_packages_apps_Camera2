@@ -83,6 +83,9 @@ public class MoviePlayer implements
     // If the time bar is visible.
     private boolean mShowing;
 
+    // Control when system UI can be shown
+    private boolean mAllowShowingSystemUI;
+
     private final Runnable mPlayingChecker = new Runnable() {
         @Override
         public void run() {
@@ -127,15 +130,19 @@ public class MoviePlayer implements
 
         // When the user touches the screen or uses some hard key, the framework
         // will change system ui visibility from invisible to visible. We show
-        // the media control at this point.
+        // the media control and enable system UI (e.g. ActionBar) to be visible at this point
         mVideoView.setOnSystemUiVisibilityChangeListener(
                 new View.OnSystemUiVisibilityChangeListener() {
             public void onSystemUiVisibilityChange(int visibility) {
                 if ((visibility & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0) {
+                    mAllowShowingSystemUI = true;
                     mController.show();
                 }
             }
         });
+
+        // Hide system UI by default
+        showSystemUi(false);
 
         mAudioBecomingNoisyReceiver = new AudioBecomingNoisyReceiver();
         mAudioBecomingNoisyReceiver.register();
@@ -164,6 +171,11 @@ public class MoviePlayer implements
         int flag = visible ? 0 : View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
                 View.SYSTEM_UI_FLAG_LOW_PROFILE;
         mVideoView.setSystemUiVisibility(flag);
+        if (visible) {
+            mActionBar.show();
+        } else {
+            mActionBar.hide();
+        }
     }
 
     public void onSaveInstanceState(Bundle outState) {
@@ -317,15 +329,18 @@ public class MoviePlayer implements
     @Override
     public void onShown() {
         mShowing = true;
-        mActionBar.show();
-        showSystemUi(true);
         setProgress();
+
+        // System UI is invisible by default until the flag is set by user interaction
+        // See VideoView's onSystemUiVisibilityChange listener for details.
+        if (mAllowShowingSystemUI) {
+            showSystemUi(true);
+        }
     }
 
     @Override
     public void onHidden() {
         mShowing = false;
-        mActionBar.hide();
         showSystemUi(false);
     }
 
