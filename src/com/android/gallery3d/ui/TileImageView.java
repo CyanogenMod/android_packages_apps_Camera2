@@ -139,7 +139,6 @@ public class TileImageView extends GLView {
         // The method would be called in another thread.
         public Bitmap getTile(int level, int x, int y, int tileSize,
                 int borderSize);
-        public boolean isFailedToLoad();
     }
 
     public TileImageView(GalleryContext context) {
@@ -407,7 +406,7 @@ public class TileImageView extends GLView {
             }
         }
         try {
-            if (level != mLevelCount) {
+            if (level != mLevelCount && !isScreenNailAnimating()) {
                 if (mScreenNail != null) {
                     mScreenNail.noDraw();
                 }
@@ -427,6 +426,9 @@ public class TileImageView extends GLView {
                 mScreenNail.draw(canvas, mOffsetX, mOffsetY,
                         Math.round(mImageWidth * mScale),
                         Math.round(mImageHeight * mScale));
+                if (isScreenNailAnimating()) {
+                    invalidate();
+                }
             }
         } finally {
             if (flags != 0) canvas.restore();
@@ -437,6 +439,11 @@ public class TileImageView extends GLView {
         } else {
             invalidate();
         }
+    }
+
+    private boolean isScreenNailAnimating() {
+        return (mScreenNail instanceof BitmapScreenNail)
+                && ((BitmapScreenNail) mScreenNail).isAnimating();
     }
 
     private void uploadBackgroundTiles(GLCanvas canvas) {

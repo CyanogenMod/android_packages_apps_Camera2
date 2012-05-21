@@ -49,6 +49,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
 
     private PhotoView mPhotoView;
     private ThreadPool mThreadPool;
+    private int mLoadingState = LOADING_INIT;
 
     public SinglePhotoDataAdapter(
             GalleryActivity activity, PhotoView view, MediaItem item) {
@@ -123,7 +124,12 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
     private void onDecodeThumbComplete(Future<Bitmap> future) {
         try {
             Bitmap backup = future.get();
-            if (backup == null) return;
+            if (backup == null) {
+                mLoadingState = LOADING_FAIL;
+                return;
+            } else {
+                mLoadingState = LOADING_COMPLETE;
+            }
             setScreenNail(backup, backup.getWidth(), backup.getHeight());
             mPhotoView.notifyImageChange(0);
         } catch (Throwable t) {
@@ -199,15 +205,23 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         return mItem.getMediaType() == MediaItem.MEDIA_TYPE_VIDEO;
     }
 
+    @Override
     public MediaItem getMediaItem(int offset) {
         return offset == 0 ? mItem : null;
     }
 
+    @Override
     public int getCurrentIndex() {
         return 0;
     }
 
+    @Override
     public void setCurrentPhoto(Path path, int indexHint) {
         // ignore
+    }
+
+    @Override
+    public int getLoadingState(int offset) {
+        return mLoadingState;
     }
 }
