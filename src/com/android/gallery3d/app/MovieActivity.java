@@ -51,11 +51,13 @@ import com.android.gallery3d.common.Utils;
 public class MovieActivity extends Activity {
     @SuppressWarnings("unused")
     private static final String TAG = "MovieActivity";
-    private static final String KEY_LOGO_BITMAP = "logo-bitmap";
+    public static final String KEY_LOGO_BITMAP = "logo-bitmap";
+    public static final String KEY_TREAT_UP_AS_BACK = "treat-up-as-back";
 
     private MoviePlayer mPlayer;
     private boolean mFinishOnCompletion;
     private Uri mUri;
+    private boolean mTreatUpAsBack;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,7 @@ public class MovieActivity extends Activity {
         initializeActionBar(intent);
         mFinishOnCompletion = intent.getBooleanExtra(
                 MediaStore.EXTRA_FINISH_ON_COMPLETION, true);
+        mTreatUpAsBack = intent.getBooleanExtra(KEY_TREAT_UP_AS_BACK, false);
         mPlayer = new MoviePlayer(rootView, this, intent.getData(), savedInstanceState,
                 !mFinishOnCompletion) {
             @Override
@@ -159,7 +162,12 @@ public class MovieActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            if (mTreatUpAsBack) {
+                finish();
+            } else {
+                startActivity(new Intent(this, Gallery.class));
+                finish();
+            }
             return true;
         }
         return false;
