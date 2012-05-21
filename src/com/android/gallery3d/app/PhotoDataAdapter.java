@@ -469,8 +469,12 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         return mCurrentIndex;
     }
 
-    public MediaItem getCurrentMediaItem() {
-        return mData[mCurrentIndex % DATA_CACHE_SIZE];
+    public MediaItem getMediaItem(int offset) {
+        int index = mCurrentIndex + offset;
+        if (index >= mContentStart && index < mContentEnd) {
+            return mData[index % DATA_CACHE_SIZE];
+        }
+        return null;
     }
 
     public void setCurrentPhoto(Path path, int indexHint) {
@@ -482,7 +486,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         fireDataChange();
 
         // We need to reload content if the path doesn't match.
-        MediaItem item = getCurrentMediaItem();
+        MediaItem item = getMediaItem(0);
         if (item != null && item.getPath() != path) {
             if (mReloadTask != null) mReloadTask.notifyDirty();
         }

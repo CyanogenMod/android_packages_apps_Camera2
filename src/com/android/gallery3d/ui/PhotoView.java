@@ -28,10 +28,9 @@ import android.view.animation.AccelerateInterpolator;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.util.RangeArray;
-
-import java.util.Arrays;
 
 public class PhotoView extends GLView {
     @SuppressWarnings("unused")
@@ -54,6 +53,9 @@ public class PhotoView extends GLView {
         // Returns the size for the specified picture. If the size information is
         // not avaiable, width = height = 0.
         public void getImageSize(int offset, Size size);
+
+        // Returns the media item for the specified picture.
+        public MediaItem getMediaItem(int offset);
 
         // Returns the rotation for the specified picture.
         public int getImageRotation(int offset);
@@ -1336,5 +1338,34 @@ public class PhotoView extends GLView {
 
     public void setListener(Listener listener) {
         mListener = listener;
+    }
+
+    public Rect getPhotoRect(int index) {
+        return mPositionController.getPosition(index);
+    }
+
+
+    public PhotoFallbackEffect buildFallbackEffect(GLView root, GLCanvas canvas) {
+        Rect location = new Rect();
+        Utils.assertTrue(root.getBoundsOf(this, location));
+
+        Rect fullRect = bounds();
+        PhotoFallbackEffect effect = new PhotoFallbackEffect();
+        for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
+            MediaItem item = mModel.getMediaItem(i);
+            if (item == null) continue;
+            ScreenNail sc = mModel.getScreenNail(i);
+            if (sc == null) continue;
+            Rect rect = new Rect(getPhotoRect(i));
+            if (!Rect.intersects(fullRect, rect)) continue;
+            rect.offset(location.left, location.top);
+
+            RawTexture texture = new RawTexture(sc.getWidth(), sc.getHeight(), true);
+            canvas.beginRenderTarget(texture);
+            sc.draw(canvas, 0, 0, sc.getWidth(), sc.getHeight());
+            canvas.endRenderTarget();
+            effect.addEntry(item.getPath(), rect, texture);
+        }
+        return effect;
     }
 }
