@@ -205,7 +205,7 @@ public class PhotoPage extends ActivityState implements
                 itemPath = screenNailItemPath;
 
                 // Action bar should not be displayed when camera starts.
-                mFlags |= FLAG_HIDE_ACTION_BAR;
+                mFlags |= FLAG_HIDE_ACTION_BAR | FLAG_HIDE_STATUS_BAR;
                 mShowBars = false;
             }
 
@@ -376,10 +376,7 @@ public class PhotoPage extends ActivityState implements
         if (mShowBars) return;
         mShowBars = true;
         mActionBar.show();
-        WindowManager.LayoutParams params =
-                ((Activity) mActivity).getWindow().getAttributes();
-        params.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE;
-        ((Activity) mActivity).getWindow().setAttributes(params);
+        mActivity.getGLRoot().setLightsOutMode(false);
         refreshHidingMessage();
     }
 
@@ -387,10 +384,7 @@ public class PhotoPage extends ActivityState implements
         if (!mShowBars) return;
         mShowBars = false;
         mActionBar.hide();
-        WindowManager.LayoutParams params =
-                ((Activity) mActivity).getWindow().getAttributes();
-        params.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE;
-        ((Activity) mActivity).getWindow().setAttributes(params);
+        mActivity.getGLRoot().setLightsOutMode(true);
         mHandler.removeMessages(MSG_HIDE_BARS);
     }
 
