@@ -18,7 +18,6 @@ package com.android.gallery3d.ui;
 
 import android.graphics.Bitmap;
 import android.graphics.RectF;
-import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
@@ -35,6 +34,9 @@ public class BitmapScreenNail implements ScreenNail {
     private static final int PLACEHOLDER_COLOR = 0xFF222222;
     // The duration of the fading animation in milliseconds
     private static final int DURATION = 180;
+
+    private static final int MAX_SIDE = 640;
+
     // These are special values for mAnimationStartTime
     private static final long ANIMATION_NOT_NEEDED = -1;
     private static final long ANIMATION_NEEDED = -2;
@@ -44,7 +46,6 @@ public class BitmapScreenNail implements ScreenNail {
     private int mHeight;
     private Bitmap mBitmap;
     private BitmapTexture mTexture;
-    private FadeInTexture mFadeInTexture;
     private long mAnimationStartTime = ANIMATION_NOT_NEEDED;
 
     public BitmapScreenNail(Bitmap bitmap) {
@@ -56,12 +57,17 @@ public class BitmapScreenNail implements ScreenNail {
     }
 
     public BitmapScreenNail(int width, int height) {
+        setSize(width, height);
+    }
+
+    private void setSize(int width, int height) {
         if (width == 0 || height == 0) {
             width = 640;
             height = 480;
         }
-        mWidth = width;
-        mHeight = height;
+        float scale = Math.min(1, (float) MAX_SIDE / Math.max(width, height));
+        mWidth = Math.round(scale * width);
+        mHeight = Math.round(scale * height);
     }
 
     // Combines the two ScreenNails.
@@ -101,8 +107,7 @@ public class BitmapScreenNail implements ScreenNail {
     public void updatePlaceholderSize(int width, int height) {
         if (mBitmap != null) return;
         if (width == 0 || height == 0) return;
-        mWidth = width;
-        mHeight = height;
+        setSize(width, height);
     }
 
     @Override
@@ -188,5 +193,9 @@ public class BitmapScreenNail implements ScreenNail {
     private float getRatio() {
         float r = (float)(now() - mAnimationStartTime) / DURATION;
         return Utils.clamp(1.0f - r, 0.0f, 1.0f);
+    }
+
+    public boolean isShowingPlaceholder() {
+        return (mBitmap == null) || isAnimating();
     }
 }
