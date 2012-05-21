@@ -238,6 +238,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             MediaItem item = mAlbumDataAdapter.get(slotIndex);
             if (item == null) return; // Item not ready yet, ignore the click
             mSelectionManager.toggle(item.getPath());
+            mDetailsSource.findIndex(slotIndex);
             mSlotView.invalidate();
         } else {
             // Show pressed-up animation for the single-tap.
@@ -308,6 +309,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         if (item == null) return;
         mSelectionManager.setAutoLeaveSelectionMode(true);
         mSelectionManager.toggle(item.getPath());
+        mDetailsSource.findIndex(slotIndex);
         mSlotView.invalidate();
     }
 
