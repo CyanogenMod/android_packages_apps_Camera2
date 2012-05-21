@@ -250,6 +250,7 @@ public class AlbumSetPage extends ActivityState implements
         if (set == null) return;
         mSelectionManager.setAutoLeaveSelectionMode(true);
         mSelectionManager.toggle(set.getPath());
+        mDetailsSource.findIndex(slotIndex);
         mSlotView.invalidate();
     }
 
