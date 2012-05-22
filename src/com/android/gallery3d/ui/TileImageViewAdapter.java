@@ -20,10 +20,10 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
-import android.graphics.Canvas;
 import android.graphics.Rect;
 
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.BitmapPool;
 
 public class TileImageViewAdapter implements TileImageView.Model {
     private static final String TAG = "TileImageViewAdapter";
@@ -94,70 +94,68 @@ public class TileImageViewAdapter implements TileImageView.Model {
                 (float) mImageWidth / mScreenNail.getWidth()));
     }
 
+    // Gets a sub image on a rectangle of the current photo. For example,
+    // getTile(1, 50, 50, 100, 3, pool) means to get the region located
+    // at (50, 50) with sample level 1 (ie, down sampled by 2^1) and the
+    // target tile size (after sampling) 100 with border 3.
+    //
+    // From this spec, we can infer the actual tile size to be
+    // 100 + 3x2 = 106, and the size of the region to be extracted from the
+    // photo to be 200 with border 6.
+    //
+    // As a result, we should decode region (50-6, 50-6, 250+6, 250+6) or
+    // (44, 44, 256, 256) from the original photo and down sample it to 106.
     @Override
     public Bitmap getTile(int level, int x, int y, int tileSize,
-            int borderSize) {
-        // wantRegion is the rectangle on the original image we want. askRegion
-        // is the rectangle on the original image that we will ask from
-        // mRegionDecoder. Both are in the coordinates of the original image,
-        // not the coordinates of the scaled-down images.
-        Rect wantRegion = new Rect();
-        Rect askRegion = new Rect();
-
+            int borderSize, BitmapPool pool) {
         int b = borderSize << level;
-        wantRegion.set(x - b, y - b, x + (tileSize << level) + b,
-                y + (tileSize << level) + b);
+        int t = tileSize << level;
 
+        Rect wantRegion = new Rect(x - b, y - b, x + t + b, y + t + b);
+
+        boolean needClear;
         BitmapRegionDecoder regionDecoder = null;
+
         synchronized (this) {
             regionDecoder = mRegionDecoder;
             if (regionDecoder == null) return null;
-            // askRegion is the intersection of wantRegion and the original image.
-            askRegion.set(0, 0, mImageWidth, mImageHeight);
+
+            // We need to clear a reused bitmap, if wantRegion is not fully
+            // within the image.
+            needClear = !new Rect(0, 0, mImageWidth, mImageHeight)
+                    .contains(wantRegion);
         }
 
-        Utils.assertTrue(askRegion.intersect(wantRegion));
+        Bitmap bitmap = pool == null ? null : pool.getBitmap();
+        if (bitmap != null) {
+            if (needClear) bitmap.eraseColor(0);
+        } else {
+            int s = tileSize + 2 * borderSize;
+            bitmap = Bitmap.createBitmap(s, s, Config.ARGB_8888);
+        }
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Config.ARGB_8888;
         options.inPreferQualityOverSpeed = true;
         options.inSampleSize =  (1 << level);
+        options.inBitmap = bitmap;
 
-        Bitmap bitmap;
-
-        // In CropImage, we may call the decodeRegion() concurrently.
-        synchronized (regionDecoder) {
-            bitmap = regionDecoder.decodeRegion(askRegion, options);
+        try {
+            // In CropImage, we may call the decodeRegion() concurrently.
+            synchronized (regionDecoder) {
+                bitmap = regionDecoder.decodeRegion(wantRegion, options);
+            }
+        } finally {
+            if (options.inBitmap != bitmap && options.inBitmap != null) {
+                if (pool != null) pool.recycle(options.inBitmap);
+                options.inBitmap = null;
+            }
         }
 
         if (bitmap == null) {
             Log.w(TAG, "fail in decoding region");
-            return null;
         }
-
-        if (wantRegion.equals(askRegion)) return bitmap;
-
-        // Now the wantRegion does not match the askRegion. This means we are at
-        // a boundary tile, and we need to add paddings. Create a new Bitmap
-        // and copy over.
-        int size = tileSize + 2 * borderSize;
-        Bitmap result = Bitmap.createBitmap(size, size, Config.ARGB_8888);
-        Canvas canvas = new Canvas(result);
-        int offsetX = (askRegion.left - wantRegion.left) >> level;
-        int offsetY = (askRegion.top - wantRegion.top) >> level;
-        canvas.drawBitmap(bitmap, offsetX, offsetY, null);
-
-        // If the valid region (covered by bitmap or border) is smaller than the
-        // result bitmap, subset it.
-        int endX = offsetX + bitmap.getWidth() + borderSize;
-        int endY = offsetY + bitmap.getHeight() + borderSize;
-        bitmap.recycle();
-        if (endX < size || endY < size) {
-            return Bitmap.createBitmap(result, 0, 0, Math.min(size, endX),
-                    Math.min(size, endY));
-        } else {
-            return result;
-        }
+        return bitmap;
     }
 
     @Override
