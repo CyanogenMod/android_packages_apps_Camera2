@@ -21,6 +21,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 
 import com.android.gallery3d.common.BitmapUtils;
+import com.android.gallery3d.data.BitmapPool;
 
 import java.util.ArrayList;
 
@@ -49,44 +50,46 @@ public class BitmapTileProvider implements TileImageView.Model {
         mConfig = Config.ARGB_8888;
     }
 
+    @Override
     public ScreenNail getScreenNail() {
         return mScreenNail;
     }
 
+    @Override
     public int getImageHeight() {
         return mImageHeight;
     }
 
+    @Override
     public int getImageWidth() {
         return mImageWidth;
     }
 
+    @Override
     public int getLevelCount() {
         return mMipmaps.length;
     }
 
+    @Override
     public Bitmap getTile(int level, int x, int y, int tileSize,
-            int borderSize) {
+            int borderSize, BitmapPool pool) {
         x >>= level;
         y >>= level;
         int size = tileSize + 2 * borderSize;
-        Bitmap result = Bitmap.createBitmap(size, size, mConfig);
+
+        Bitmap result = pool == null ? null : pool.getBitmap();
+        if (result == null) {
+            result = Bitmap.createBitmap(size, size, mConfig);
+        } else {
+            result.eraseColor(0);
+        }
+
         Bitmap mipmap = mMipmaps[level];
         Canvas canvas = new Canvas(result);
         int offsetX = -x + borderSize;
         int offsetY = -y + borderSize;
         canvas.drawBitmap(mipmap, offsetX, offsetY, null);
-
-        // If the valid region (covered by mipmap or border) is smaller than the
-        // result bitmap, subset it.
-        int endX = offsetX + mipmap.getWidth() + borderSize;
-        int endY = offsetY + mipmap.getHeight() + borderSize;
-        if (endX < size || endY < size) {
-            return Bitmap.createBitmap(result, 0, 0, Math.min(size, endX),
-                    Math.min(size, endY));
-        } else {
-            return result;
-        }
+        return result;
     }
 
     public void recycle() {
