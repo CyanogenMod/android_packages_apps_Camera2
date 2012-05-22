@@ -70,7 +70,8 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
         public MediaSet album;
         public MediaItem coverItem;
         public Texture content;
-        public Texture label;
+        public BitmapTexture labelTexture;
+        public BitmapTexture bitmapTexture;
         public Path setPath;
         public String title;
         public int totalCount;
@@ -226,6 +227,8 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
         AlbumSetEntry entry = mData[slotIndex % mData.length];
         if (entry.coverLoader != null) entry.coverLoader.recycle();
         if (entry.labelLoader != null) entry.labelLoader.recycle();
+        if (entry.labelTexture != null) entry.labelTexture.recycle();
+        if (entry.bitmapTexture != null) entry.bitmapTexture.recycle();
         mData[slotIndex % mData.length] = null;
     }
 
@@ -256,7 +259,7 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
             if (entry.labelLoader != null) {
                 entry.labelLoader.recycle();
                 entry.labelLoader = null;
-                entry.label = null;
+                entry.labelTexture = null;
             }
             if (album != null) {
                 entry.labelLoader = new AlbumLabelLoader(
@@ -273,6 +276,7 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
             if (entry.coverLoader != null) {
                 entry.coverLoader.recycle();
                 entry.coverLoader = null;
+                entry.bitmapTexture = null;
                 entry.content = null;
             }
             if (cover != null) {
@@ -296,11 +300,11 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
     private void uploadBackgroundTextureInSlot(int index) {
         if (index < mContentStart || index >= mContentEnd) return;
         AlbumSetEntry entry = mData[index % mData.length];
-        if (entry.content instanceof BitmapTexture) {
-            mTextureUploader.addBgTexture((BitmapTexture) entry.content);
+        if (entry.bitmapTexture != null) {
+            mTextureUploader.addBgTexture(entry.bitmapTexture);
         }
-        if (entry.label instanceof BitmapTexture) {
-            mTextureUploader.addBgTexture((BitmapTexture) entry.label);
+        if (entry.labelTexture != null) {
+            mTextureUploader.addBgTexture(entry.labelTexture);
         }
     }
 
@@ -311,11 +315,11 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
         // Upload foreground texture
         for (int i = mActiveStart, n = mActiveEnd; i < n; ++i) {
             AlbumSetEntry entry = mData[i % mData.length];
-            if (entry.content instanceof BitmapTexture) {
-                mTextureUploader.addFgTexture((BitmapTexture) entry.content);
+            if (entry.bitmapTexture != null) {
+                mTextureUploader.addFgTexture(entry.bitmapTexture);
             }
-            if (entry.label instanceof BitmapTexture) {
-                mTextureUploader.addFgTexture((BitmapTexture) entry.label);
+            if (entry.labelTexture != null) {
+                mTextureUploader.addFgTexture(entry.labelTexture);
             }
         }
 
@@ -440,6 +444,7 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
 
             AlbumSetEntry entry = mData[mSlotIndex % mData.length];
             BitmapTexture texture = new BitmapTexture(bitmap);
+            entry.bitmapTexture = texture;
             entry.content = texture;
 
             if (isActiveSlot(mSlotIndex)) {
@@ -509,7 +514,7 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
             AlbumSetEntry entry = mData[mSlotIndex % mData.length];
             BitmapTexture texture = new BitmapTexture(bitmap);
             texture.setOpaque(false);
-            entry.label = texture;
+            entry.labelTexture = texture;
 
             if (isActiveSlot(mSlotIndex)) {
                 mTextureUploader.addFgTexture(texture);
@@ -536,7 +541,7 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
             if (entry.labelLoader != null) {
                 entry.labelLoader.recycle();
                 entry.labelLoader = null;
-                entry.label = null;
+                entry.labelTexture = null;
             }
             if (entry.album != null) {
                 entry.labelLoader = new AlbumLabelLoader(i,
