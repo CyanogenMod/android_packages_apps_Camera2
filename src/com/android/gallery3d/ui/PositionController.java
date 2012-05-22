@@ -209,8 +209,13 @@ class PositionController {
         }
 
         updateScaleAndGapLimit();
-        startOpeningAnimationIfNeeded();
-        snapAndRedraw();
+
+        // If we have the opening animation, do it. Otherwise go directly to the
+        // right position.
+        if (!startOpeningAnimationIfNeeded()) {
+            snapAndRedraw();
+            skipAnimation();
+        }
     }
 
     public void setConstrainedFrame(Rect f) {
@@ -280,10 +285,10 @@ class PositionController {
         return true;
     }
 
-    private void startOpeningAnimationIfNeeded() {
-        if (mOpenAnimationRect == null) return;
+    private boolean startOpeningAnimationIfNeeded() {
+        if (mOpenAnimationRect == null) return false;
         Box b = mBoxes.get(0);
-        if (b.mUseViewSize) return;
+        if (b.mUseViewSize) return false;
 
         // Start animation from the saved rectangle if we have one.
         Rect r = mOpenAnimationRect;
@@ -303,6 +308,8 @@ class PositionController {
             g.mCurrentGap = mViewW;
             g.doAnimation(g.mDefaultSize, ANIM_KIND_OPENING);
         }
+
+        return true;
     }
 
     public void setFilmMode(boolean enabled) {
