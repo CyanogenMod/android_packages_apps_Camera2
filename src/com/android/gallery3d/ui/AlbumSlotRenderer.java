@@ -110,9 +110,8 @@ public class AlbumSlotRenderer extends AbstractSlotRenderer {
             entry.isWaitDisplayed = true;
         } else if (entry.isWaitDisplayed) {
             entry.isWaitDisplayed = false;
-            entry.content = new FadeInTexture(
-                    PLACEHOLDER_COLOR, (BitmapTexture) entry.content);
-            content = entry.content;
+            content = new FadeInTexture(PLACEHOLDER_COLOR, entry.bitmapTexture);
+            entry.content = content;
         }
         drawContent(canvas, content, width, height, entry.rotation);
         if ((content instanceof FadeInTexture) &&

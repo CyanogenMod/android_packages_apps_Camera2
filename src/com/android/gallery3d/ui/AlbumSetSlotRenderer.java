@@ -148,9 +148,8 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
             entry.isWaitLoadingDisplayed = true;
         } else if (entry.isWaitLoadingDisplayed) {
             entry.isWaitLoadingDisplayed = false;
-            entry.content = new FadeInTexture(
-                    PLACEHOLDER_COLOR, (BitmapTexture) entry.content);
-            content = entry.content;
+            content = new FadeInTexture(PLACEHOLDER_COLOR, entry.bitmapTexture);
+            entry.content = content;
         }
         drawContent(canvas, content, width, height, entry.rotation);
         if ((content instanceof FadeInTexture) &&
@@ -173,7 +172,7 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
             GLCanvas canvas, AlbumSetEntry entry, int width, int height) {
         // We show the loading message only when the album is still loading
         // (Not when we are still preparing the label)
-        Texture content = checkTexture(entry.label);
+        Texture content = checkTexture(entry.labelTexture);
         if (entry.album == null) {
             content = mDataWindow.getLoadingTexture();
         }
