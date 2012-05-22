@@ -33,6 +33,8 @@ abstract class BasicTexture implements Texture {
     protected static final int STATE_LOADED = 1;
     protected static final int STATE_ERROR = -1;
 
+    private static final int MAX_TEXTURE_SIZE = 2048;
+
     protected int mId;
     protected int mState;
 
@@ -75,6 +77,10 @@ abstract class BasicTexture implements Texture {
         mHeight = height;
         mTextureWidth = Utils.nextPowerOf2(width);
         mTextureHeight = Utils.nextPowerOf2(height);
+        if (mTextureWidth > MAX_TEXTURE_SIZE || mTextureHeight > MAX_TEXTURE_SIZE) {
+            Log.w(TAG, String.format("texture is too large: %d x %d",
+                    mTextureWidth, mTextureHeight), new Exception());
+        }
     }
 
     public int getId() {

@@ -118,7 +118,7 @@ public class GLRootView extends GLSurfaceView
         getHolder().setFormat(PixelFormat.RGB_565);
 
         // Uncomment this to enable gl error check.
-        //setDebugFlags(DEBUG_CHECK_GL_ERROR);
+        // setDebugFlags(DEBUG_CHECK_GL_ERROR);
     }
 
     @Override
