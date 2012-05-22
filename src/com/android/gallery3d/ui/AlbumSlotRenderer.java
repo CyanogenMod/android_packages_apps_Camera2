@@ -89,9 +89,9 @@ public class AlbumSlotRenderer extends AbstractSlotRenderer {
         }
     }
 
-    private static Texture checkTexture(GLCanvas canvas, Texture texture) {
-        return ((texture == null) || ((texture instanceof UploadedTexture)
-                && !((UploadedTexture) texture).isContentValid(canvas)))
+    private static Texture checkTexture(Texture texture) {
+        return (texture instanceof UploadedTexture)
+                && ((UploadedTexture) texture).isUploading()
                 ? null
                 : texture;
     }
@@ -104,7 +104,7 @@ public class AlbumSlotRenderer extends AbstractSlotRenderer {
 
         int renderRequestFlags = 0;
 
-        Texture content = checkTexture(canvas, entry.content);
+        Texture content = checkTexture(entry.content);
         if (content == null) {
             content = mWaitLoadingTexture;
             entry.isWaitDisplayed = true;

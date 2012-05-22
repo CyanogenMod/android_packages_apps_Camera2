@@ -1323,7 +1323,6 @@ public class PhotoView extends GLView {
         return mPositionController.getPosition(index);
     }
 
-
     public PhotoFallbackEffect buildFallbackEffect(GLView root, GLCanvas canvas) {
         Rect location = new Rect();
         Utils.assertTrue(root.getBoundsOf(this, location));

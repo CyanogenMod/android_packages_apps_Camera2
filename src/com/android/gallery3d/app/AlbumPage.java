@@ -176,9 +176,11 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 if (!more) {
                     mResumeEffect = null;
                     mAlbumView.setSlotFilter(null);
-                } else {
-                    invalidate();
                 }
+                // We want to render one more time even when no more effect
+                // required. So that the animated thumbnails could be draw
+                // with declarations in super.render().
+                invalidate();
             }
             canvas.restore();
         }
