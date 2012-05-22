@@ -212,6 +212,7 @@ public class PhotoPage extends ActivityState implements
             }
 
             mMediaSet = mActivity.getDataManager().getMediaSet(mSetPathString);
+            mSelectionManager.setSourceMediaSet(mMediaSet);
             mCurrentIndex = data.getInt(KEY_INDEX_HINT, 0);
             if (mMediaSet == null) {
                 Log.w(TAG, "failed to restore " + mSetPathString);
