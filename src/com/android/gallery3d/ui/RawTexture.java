@@ -68,13 +68,13 @@ public class RawTexture extends BasicTexture {
                 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, null);
 
         mId = sTextureId[0];
-        mState = UploadedTexture.STATE_LOADED;
+        mState = STATE_LOADED;
         setAssociatedCanvas(canvas);
     }
 
     @Override
     protected boolean onBind(GLCanvas canvas) {
-        if (isLoaded(canvas)) return true;
+        if (isLoaded()) return true;
         Log.w(TAG, "lost the content due to context change");
         return false;
     }

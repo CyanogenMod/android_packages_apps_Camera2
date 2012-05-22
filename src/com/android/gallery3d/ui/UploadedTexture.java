@@ -52,6 +52,9 @@ abstract class UploadedTexture extends BasicTexture {
     @SuppressWarnings("unused")
     private static final String TAG = "Texture";
     private boolean mContentValid = true;
+
+    // indicate this textures is being uploaded in background
+    private boolean mIsUploading = false;
     private boolean mOpaque = true;
     private boolean mThrottled = false;
     private static int sUploadedCount;
@@ -70,6 +73,14 @@ abstract class UploadedTexture extends BasicTexture {
             setBorder(true);
             mBorder = 1;
         }
+    }
+
+    protected void setIsUploading(boolean uploading) {
+        mIsUploading = uploading;
+    }
+
+    public boolean isUploading() {
+        return mIsUploading;
     }
 
     private static class BorderKey implements Cloneable {
@@ -165,8 +176,8 @@ abstract class UploadedTexture extends BasicTexture {
     /**
      * Whether the content on GPU is valid.
      */
-    public boolean isContentValid(GLCanvas canvas) {
-        return isLoaded(canvas) && mContentValid;
+    public boolean isContentValid() {
+        return isLoaded() && mContentValid;
     }
 
     /**
@@ -174,7 +185,7 @@ abstract class UploadedTexture extends BasicTexture {
      * @param canvas
      */
     public void updateContent(GLCanvas canvas) {
-        if (!isLoaded(canvas)) {
+        if (!isLoaded()) {
             if (mThrottled && ++sUploadedCount > UPLOAD_LIMIT) {
                 return;
             }
@@ -284,7 +295,7 @@ abstract class UploadedTexture extends BasicTexture {
             // Update texture state.
             setAssociatedCanvas(canvas);
             mId = sTextureId[0];
-            mState = UploadedTexture.STATE_LOADED;
+            mState = STATE_LOADED;
             mContentValid = true;
         } else {
             mState = STATE_ERROR;
@@ -295,7 +306,7 @@ abstract class UploadedTexture extends BasicTexture {
     @Override
     protected boolean onBind(GLCanvas canvas) {
         updateContent(canvas);
-        return isContentValid(canvas);
+        return isContentValid();
     }
 
     @Override
