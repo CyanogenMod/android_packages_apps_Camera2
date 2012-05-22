@@ -54,7 +54,7 @@ public class TextureTest extends TestCase {
         }
 
         void upload() {
-            mState |= STATE_BIT_LOADED;
+            mState = STATE_LOADED;
         }
     }
 
