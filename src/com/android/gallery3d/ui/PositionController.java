@@ -34,7 +34,7 @@ class PositionController {
     public static final int IMAGE_AT_TOP_EDGE = 4;
     public static final int IMAGE_AT_BOTTOM_EDGE = 8;
 
-    public static final int CAPTURE_ANIMATION_TIME = 600;
+    public static final int CAPTURE_ANIMATION_TIME = 700;
 
     // Special values for animation time.
     private static final long NO_ANIMATION = -1;
@@ -960,7 +960,27 @@ class PositionController {
             }
         }
 
-        // 8. offset the Platform position
+        // 8. calculate the new absolute X coordinates for those box before
+        // first or after last.
+        for (int i = first - 1; i >= -BOX_MAX; i--) {
+            Box a = mBoxes.get(i + 1);
+            Box b = mBoxes.get(i);
+            int wa = widthOf(a);
+            int wb = widthOf(b);
+            Gap g = mGaps.get(i);
+            b.mAbsoluteX = a.mAbsoluteX - wa / 2 - (wb - wb / 2) - g.mCurrentGap;
+        }
+
+        for (int i = last + 1; i <= BOX_MAX; i++) {
+            Box a = mBoxes.get(i - 1);
+            Box b = mBoxes.get(i);
+            int wa = widthOf(a);
+            int wb = widthOf(b);
+            Gap g = mGaps.get(i - 1);
+            b.mAbsoluteX = a.mAbsoluteX + (wa - wa / 2) + wb / 2 + g.mCurrentGap;
+        }
+
+        // 9. offset the Platform position
         int dx = mBoxes.get(0).mAbsoluteX - mPlatform.mCurrentX;
         mPlatform.mCurrentX += dx;
         mPlatform.mFromX += dx;
