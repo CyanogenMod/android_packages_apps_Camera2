@@ -514,7 +514,11 @@ public class GLRootView extends GLSurfaceView
 
     @Override
     public void setLightsOutMode(boolean enabled) {
-        int flags = enabled ? SYSTEM_UI_FLAG_LOW_PROFILE : 0;
+        int flags = enabled
+                ? SYSTEM_UI_FLAG_LOW_PROFILE
+                | SYSTEM_UI_FLAG_FULLSCREEN
+                | SYSTEM_UI_FLAG_LAYOUT_STABLE
+                : 0;
         setSystemUiVisibility(flags);
     }
 
