@@ -157,7 +157,7 @@ public class NinePatchTexture extends ResourceTexture {
 
     @Override
     public void draw(GLCanvas canvas, int x, int y, int w, int h) {
-        if (!isLoaded(canvas)) {
+        if (!isLoaded()) {
             mInstanceCache.clear();
         }
 

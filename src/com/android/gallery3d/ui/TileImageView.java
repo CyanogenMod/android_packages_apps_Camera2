@@ -457,7 +457,7 @@ public class TileImageView extends GLView {
         int n = mActiveTiles.size();
         for (int i = 0; i < n; i++) {
             Tile tile = mActiveTiles.valueAt(i);
-            if (!tile.isContentValid(canvas)) queueForDecode(tile);
+            if (!tile.isContentValid()) queueForDecode(tile);
         }
     }
 
@@ -558,7 +558,7 @@ public class TileImageView extends GLView {
                     tile = mUploadQueue.pop();
                 }
                 if (tile == null || quota <= 0) break;
-                if (!tile.isContentValid(canvas)) {
+                if (!tile.isContentValid()) {
                     Utils.assertTrue(tile.mTileState == STATE_DECODED);
                     tile.updateContent(canvas);
                     --quota;
@@ -580,7 +580,7 @@ public class TileImageView extends GLView {
 
         Tile tile = getTile(tx, ty, level);
         if (tile != null) {
-            if (!tile.isContentValid(canvas)) {
+            if (!tile.isContentValid()) {
                 if (tile.mTileState == STATE_DECODED) {
                     if (mUploadQuota > 0) {
                         --mUploadQuota;
@@ -609,7 +609,7 @@ public class TileImageView extends GLView {
     static boolean drawTile(
             Tile tile, GLCanvas canvas, RectF source, RectF target) {
         while (true) {
-            if (tile.isContentValid(canvas)) {
+            if (tile.isContentValid()) {
                 // offset source rectangle for the texture border.
                 source.offset(TILE_BORDER, TILE_BORDER);
                 canvas.drawTexture(tile, source, target);

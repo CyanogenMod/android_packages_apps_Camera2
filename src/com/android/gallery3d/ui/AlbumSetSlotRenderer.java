@@ -99,9 +99,9 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
         }
     }
 
-    private static Texture checkTexture(GLCanvas canvas, Texture texture) {
-        return ((texture == null) || ((texture instanceof UploadedTexture)
-                && !((UploadedTexture) texture).isContentValid(canvas)))
+    private static Texture checkTexture(Texture texture) {
+        return ((texture instanceof UploadedTexture)
+                && ((UploadedTexture) texture).isUploading())
                 ? null
                 : texture;
     }
@@ -142,7 +142,7 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
             GLCanvas canvas, AlbumSetEntry entry, int width, int height) {
         int renderRequestFlags = 0;
 
-        Texture content = checkTexture(canvas, entry.content);
+        Texture content = checkTexture(entry.content);
         if (content == null) {
             content = mWaitLoadingTexture;
             entry.isWaitLoadingDisplayed = true;
@@ -173,7 +173,7 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
             GLCanvas canvas, AlbumSetEntry entry, int width, int height) {
         // We show the loading message only when the album is still loading
         // (Not when we are still preparing the label)
-        Texture content = checkTexture(canvas, entry.label);
+        Texture content = checkTexture(entry.label);
         if (entry.album == null) {
             content = mDataWindow.getLoadingTexture();
         }

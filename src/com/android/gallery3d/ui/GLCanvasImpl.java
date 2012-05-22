@@ -661,7 +661,7 @@ public class GLCanvasImpl implements GLCanvas {
     // so we synchronized on the mUnboundTextures object.
     public boolean unloadTexture(BasicTexture t) {
         synchronized (mUnboundTextures) {
-            if (!t.isLoaded(this)) return false;
+            if (!t.isLoaded()) return false;
             mUnboundTextures.add(t.mId);
             return true;
         }
@@ -786,7 +786,7 @@ public class GLCanvasImpl implements GLCanvas {
         } else {
             setSize(texture.getWidth(), texture.getHeight());
 
-            if (!texture.isLoaded(this)) texture.prepare(this);
+            if (!texture.isLoaded()) texture.prepare(this);
 
             gl11ep.glFramebufferTexture2DOES(
                     GL11ExtensionPack.GL_FRAMEBUFFER_OES,
