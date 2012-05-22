@@ -283,6 +283,8 @@ public class ActionModeHandler implements ActionMode.Callback {
             mMenuTask.cancel();
         }
 
+        updateSelectionMenu();
+
         // Disable share action until share intent is in good shape
         final MenuItem item = mShareActionProvider != null ?
                 mMenu.findItem(R.id.action_share) : null;
