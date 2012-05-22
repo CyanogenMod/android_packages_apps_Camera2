@@ -415,7 +415,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
         // Create a default ScreenNail if the real one is not available yet.
         if (entry.screenNail == null) {
-            entry.screenNail = newDefaultScreenNail(item);
+            entry.screenNail = newPlaceholderScreenNail(item);
             if (offset == 0) updateTileProvider(entry);
         }
 
@@ -632,7 +632,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
             // If this is a temporary item, don't try to get its bitmap because
             // it won't be available. We will get its bitmap after a data reload.
             if (isTemporaryItem(mItem)) {
-                return newDefaultScreenNail(mItem);
+                return newPlaceholderScreenNail(mItem);
             }
 
             Bitmap bitmap = mItem.requestImage(MediaItem.TYPE_THUMBNAIL).run(jc);
@@ -687,7 +687,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     // Create a default ScreenNail when a ScreenNail is needed, but we don't yet
     // have one available (because the image data is still being saved, or the
     // Bitmap is still being loaded.
-    private ScreenNail newDefaultScreenNail(MediaItem item) {
+    private ScreenNail newPlaceholderScreenNail(MediaItem item) {
         int width = item.getWidth();
         int height = item.getHeight();
         return new BitmapScreenNail(width, height);
