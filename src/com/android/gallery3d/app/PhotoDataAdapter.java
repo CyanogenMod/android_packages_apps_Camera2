@@ -23,6 +23,7 @@ import android.os.Message;
 
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.LocalMediaItem;
@@ -490,8 +491,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     }
 
     public Bitmap getTile(int level, int x, int y, int tileSize,
-            int borderSize) {
-        return mTileProvider.getTile(level, x, y, tileSize, borderSize);
+            int borderSize, BitmapPool pool) {
+        return mTileProvider.getTile(level, x, y, tileSize, borderSize, pool);
     }
 
     public boolean isEmpty() {

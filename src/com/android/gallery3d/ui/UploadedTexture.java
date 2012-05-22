@@ -128,10 +128,6 @@ abstract class UploadedTexture extends BasicTexture {
             int h = mBitmap.getHeight() + mBorder * 2;
             if (mWidth == UNSPECIFIED) {
                 setSize(w, h);
-            } else if (mWidth != w || mHeight != h) {
-                throw new IllegalStateException(String.format(
-                        "cannot change size: this = %s, orig = %sx%s, new = %sx%s",
-                        toString(), mWidth, mHeight, w, h));
             }
         }
         return mBitmap;
@@ -218,6 +214,9 @@ abstract class UploadedTexture extends BasicTexture {
                 int height = bHeight + mBorder * 2;
                 int texWidth = getTextureWidth();
                 int texHeight = getTextureHeight();
+
+                Utils.assertTrue(bWidth <= texWidth && bHeight <= texHeight);
+
                 // Define a vertically flipped crop rectangle for
                 // OES_draw_texture.
                 // The four values in sCropRect are: left, bottom, width, and
