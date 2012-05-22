@@ -937,7 +937,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
             if (mCurrentIndex >= mSize) {
                 mCurrentIndex = mSize - 1;
             }
-            fireDataChange();
         }
     }
 
