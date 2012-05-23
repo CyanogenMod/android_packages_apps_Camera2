@@ -75,6 +75,7 @@ public class PhotoPage extends ActivityState implements
     private static final int MSG_ON_FULL_SCREEN_CHANGED = 4;
     private static final int MSG_UPDATE_ACTION_BAR = 5;
     private static final int MSG_UNFREEZE_GLROOT = 6;
+    private static final int MSG_WANT_BARS = 7;
 
     private static final int HIDE_BARS_TIMEOUT = 3500;
     private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
@@ -110,8 +111,6 @@ public class PhotoPage extends ActivityState implements
     private int mCurrentIndex = 0;
     private Handler mHandler;
     private boolean mShowBars = true;
-    // The value of canShowBars() last time the bar updates state.
-    private boolean mCanShowBars = false;
     private volatile boolean mActionBarAllowed = true;
     private GalleryActionBar mActionBar;
     private MyMenuVisibilityListener mMenuVisibilityListener;
@@ -269,12 +268,10 @@ public class PhotoPage extends ActivityState implements
                     }
                     case MSG_LOCK_ORIENTATION: {
                         mOrientationManager.lockOrientation();
-                        updateBars();
                         break;
                     }
                     case MSG_UNLOCK_ORIENTATION: {
                         mOrientationManager.unlockOrientation();
-                        updateBars();
                         break;
                     }
                     case MSG_ON_FULL_SCREEN_CHANGED: {
@@ -283,6 +280,10 @@ public class PhotoPage extends ActivityState implements
                     }
                     case MSG_UPDATE_ACTION_BAR: {
                         updateBars();
+                        break;
+                    }
+                    case MSG_WANT_BARS: {
+                        wantBars();
                         break;
                     }
                     case MSG_UNFREEZE_GLROOT: {
@@ -378,6 +379,7 @@ public class PhotoPage extends ActivityState implements
     private void showBars() {
         if (mShowBars) return;
         mShowBars = true;
+        mOrientationManager.unlockOrientation();
         mActionBar.show();
         mActivity.getGLRoot().setLightsOutMode(false);
         refreshHidingMessage();
@@ -403,29 +405,24 @@ public class PhotoPage extends ActivityState implements
         if (mAppBridge != null && mCurrentIndex == 0) return false;
         // No bars if it's not allowed.
         if (!mActionBarAllowed) return false;
-        // No bars if the orientation is locked.
-        if (mOrientationManager.isOrientationLocked()) return false;
 
         return true;
     }
 
+    private void wantBars() {
+        if (canShowBars()) showBars();
+    }
+
     private void toggleBars() {
-        mCanShowBars = canShowBars();
         if (mShowBars) {
             hideBars();
         } else {
-            if (mCanShowBars) showBars();
+            if (canShowBars()) showBars();
         }
     }
 
     private void updateBars() {
-        boolean v = canShowBars();
-        if (mCanShowBars == v) return;
-        mCanShowBars = v;
-
-        if (mCanShowBars) {
-            showBars();
-        } else {
+        if (!canShowBars()) {
             hideBars();
         }
     }
@@ -684,6 +681,11 @@ public class PhotoPage extends ActivityState implements
     public void onActionBarAllowed(boolean allowed) {
         mActionBarAllowed = allowed;
         mHandler.sendEmptyMessage(MSG_UPDATE_ACTION_BAR);
+    }
+
+    @Override
+    public void onActionBarWanted() {
+        mHandler.sendEmptyMessage(MSG_WANT_BARS);
     }
 
     @Override
