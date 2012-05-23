@@ -76,6 +76,7 @@ public class MoviePlayer implements
     private long mResumeableTime = Long.MAX_VALUE;
     private int mVideoPosition = 0;
     private boolean mHasPaused = false;
+    private int mLastSystemUiVis = 0;
 
     // If the time bar is being dragged.
     private boolean mDragging;
@@ -134,7 +135,10 @@ public class MoviePlayer implements
         mVideoView.setOnSystemUiVisibilityChangeListener(
                 new View.OnSystemUiVisibilityChangeListener() {
             public void onSystemUiVisibilityChange(int visibility) {
-                if ((visibility & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0) {
+                int diff = mLastSystemUiVis ^ visibility;
+                mLastSystemUiVis = visibility;
+                if ((diff & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) != 0
+                        && (visibility & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0) {
                     mAllowShowingSystemUI = true;
                     mController.show();
                 }
@@ -168,14 +172,14 @@ public class MoviePlayer implements
     }
 
     private void showSystemUi(boolean visible) {
-        int flag = visible ? 0 : View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_LOW_PROFILE;
-        mVideoView.setSystemUiVisibility(flag);
-        if (visible) {
-            mActionBar.show();
-        } else {
-            mActionBar.hide();
+        int flag = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+        if (!visible) {
+            flag |= View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
         }
+        mVideoView.setSystemUiVisibility(flag);
     }
 
     public void onSaveInstanceState(Bundle outState) {
