@@ -65,6 +65,14 @@ public class ComboAlbumSet extends MediaSet implements ContentListener {
     }
 
     @Override
+    public boolean isLoading() {
+        for (int i = 0, n = mSets.length; i < n; ++i) {
+            if (mSets[i].isLoading()) return true;
+        }
+        return false;
+    }
+
+    @Override
     public long reload() {
         boolean changed = false;
         for (int i = 0, n = mSets.length; i < n; ++i) {

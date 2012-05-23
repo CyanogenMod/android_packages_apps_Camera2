@@ -47,6 +47,7 @@ public class MtpDeviceSet extends MediaSet
     private Future<ArrayList<MediaSet>> mLoadTask;
     private ArrayList<MediaSet> mDeviceSet = new ArrayList<MediaSet>();
     private ArrayList<MediaSet> mLoadBuffer;
+    private boolean mIsLoading;
 
     public MtpDeviceSet(Path path, GalleryApp application, MtpContext mtpContext) {
         super(path, nextVersionNumber());
@@ -113,9 +114,15 @@ public class MtpDeviceSet extends MediaSet
     }
 
     @Override
+    public synchronized boolean isLoading() {
+        return mIsLoading;
+    }
+
+    @Override
     public synchronized long reload() {
         if (mNotifier.isDirty()) {
             if (mLoadTask != null) mLoadTask.cancel();
+            mIsLoading = true;
             mLoadTask = mApplication.getThreadPool().submit(new DevicesLoader(), this);
         }
         if (mLoadBuffer != null) {
@@ -133,6 +140,7 @@ public class MtpDeviceSet extends MediaSet
     public synchronized void onFutureDone(Future<ArrayList<MediaSet>> future) {
         if (future != mLoadTask) return;
         mLoadBuffer = future.get();
+        mIsLoading = false;
         if (mLoadBuffer == null) mLoadBuffer = new ArrayList<MediaSet>();
 
         mHandler.post(new Runnable() {
