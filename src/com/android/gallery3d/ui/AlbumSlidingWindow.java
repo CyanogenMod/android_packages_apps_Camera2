@@ -48,6 +48,7 @@ public class AlbumSlidingWindow implements AlbumDataLoader.DataListener {
         public int rotation;
         public int mediaType;
         public boolean isWaitDisplayed;
+        public BitmapTexture bitmapTexture;
         public Texture content;
         private BitmapLoader contentLoader;
     }
@@ -164,8 +165,8 @@ public class AlbumSlidingWindow implements AlbumDataLoader.DataListener {
     private void uploadBgTextureInSlot(int index) {
         if (index < mContentEnd && index >= mContentStart) {
             AlbumEntry entry = mData[index % mData.length];
-            if (entry.content instanceof BitmapTexture) {
-                mTextureUploader.addBgTexture((BitmapTexture) entry.content);
+            if (entry.bitmapTexture != null) {
+                mTextureUploader.addBgTexture(entry.bitmapTexture);
             }
         }
     }
@@ -177,8 +178,8 @@ public class AlbumSlidingWindow implements AlbumDataLoader.DataListener {
         // add foreground textures
         for (int i = mActiveStart, n = mActiveEnd; i < n; ++i) {
             AlbumEntry entry = mData[i % mData.length];
-            if (entry.content instanceof BitmapTexture) {
-                mTextureUploader.addFgTexture((BitmapTexture) entry.content);
+            if (entry.bitmapTexture != null) {
+                mTextureUploader.addFgTexture(entry.bitmapTexture);
             }
         }
 
@@ -234,9 +235,8 @@ public class AlbumSlidingWindow implements AlbumDataLoader.DataListener {
         AlbumEntry data[] = mData;
         int index = slotIndex % data.length;
         AlbumEntry entry = data[index];
-        if (entry.contentLoader != null) {
-            entry.contentLoader.recycle();
-        }
+        if (entry.contentLoader != null) entry.contentLoader.recycle();
+        if (entry.bitmapTexture != null) entry.bitmapTexture.recycle();
         data[index] = null;
     }
 
@@ -296,15 +296,16 @@ public class AlbumSlidingWindow implements AlbumDataLoader.DataListener {
             if (bitmap == null) return; // error or recycled
 
             AlbumEntry entry = mData[mSlotIndex % mData.length];
-            entry.content = new BitmapTexture(bitmap);
+            entry.bitmapTexture = new BitmapTexture(bitmap);
+            entry.content = entry.bitmapTexture;
 
             if (isActiveSlot(mSlotIndex)) {
-                mTextureUploader.addFgTexture((BitmapTexture) entry.content);
+                mTextureUploader.addFgTexture(entry.bitmapTexture);
                 --mActiveRequestCount;
                 if (mActiveRequestCount == 0) requestNonactiveImages();
                 if (mListener != null) mListener.onContentChanged();
             } else {
-                mTextureUploader.addBgTexture((BitmapTexture) entry.content);
+                mTextureUploader.addBgTexture(entry.bitmapTexture);
             }
         }
     }
