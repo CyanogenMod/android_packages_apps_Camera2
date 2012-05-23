@@ -198,6 +198,9 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
                     data.putString(PhotoPage.KEY_MEDIA_SET_PATH, albumPath.toString());
                 }
                 data.putString(PhotoPage.KEY_MEDIA_ITEM_PATH, itemPath.toString());
+                if (intent.getBooleanExtra(PhotoPage.KEY_TREAT_BACK_AS_UP, false)) {
+                    data.putBoolean(PhotoPage.KEY_TREAT_BACK_AS_UP, true);
+                }
 
                 // Displays the filename as title, reading the filename from the interface:
                 // {@link android.provider.OpenableColumns#DISPLAY_NAME}.
