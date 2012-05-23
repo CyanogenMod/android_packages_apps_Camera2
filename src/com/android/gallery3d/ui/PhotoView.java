@@ -90,33 +90,25 @@ public class PhotoView extends GLView {
         public void unlockOrientation();
         public void onFullScreenChanged(boolean full);
         public void onActionBarAllowed(boolean allowed);
+        public void onActionBarWanted();
         public void onCurrentImageUpdated();
     }
 
-    // Here is a graph showing the places we need to lock/unlock device
-    // orientation:
+    // The rules about orientation locking:
     //
-    //           +------------+ A  +------------+
-    // Page mode |   Camera   |<---|   Photo    |
-    //           |  [locked]  |--->| [unlocked] |
-    //           +------------+  B +------------+
-    //                ^                  ^
-    //                | C                | D
-    //           +------------+    +------------+
-    //           |   Camera   |    |   Photo    |
-    // Film mode |    [*]     |    |    [*]     |
-    //           +------------+    +------------+
+    // (1) We need to lock the orientation if we are in page mode camera
+    // preview, so there is no (unwanted) rotation animation when the user
+    // rotates the device.
     //
-    // In Page mode, we want to lock in Camera because we don't want the system
-    // rotation animation. We also want to unlock in Photo because we want to
-    // show the system action bar in the right place.
+    // (2) We need to unlock the orientation if we want to show the action bar
+    // because the action bar follows the system orientation.
     //
-    // We don't show action bar in Film mode, so it's fine for it to be locked
-    // or unlocked in Film mode.
+    // The rules about action bar:
     //
-    // There are four transitions we need to check if we need to
-    // lock/unlock. Marked as A to D above and in the code.
-
+    // (1) If we are in film mode, we don't show action bar.
+    //
+    // (2) If we go from camera to gallery with capture animation, we show
+    // action bar.
     private static final int MSG_CANCEL_EXTRA_SCALING = 2;
     private static final int MSG_SWITCH_FOCUS = 3;
     private static final int MSG_CAPTURE_ANIMATION_DONE = 4;
@@ -457,14 +449,9 @@ public class PhotoView extends GLView {
                 setFilmMode(false);
             }
 
-            if (isCenter && !mFilmMode) {
-                if (mIsCamera) {
-                    // move into camera, lock
-                    mListener.lockOrientation();  // Transition A
-                } else {
-                    // move out of camera, unlock
-                    mListener.unlockOrientation();  // Transition B
-                }
+            if (isCenter && !mFilmMode && mIsCamera) {
+                // Move into camera in page mode, lock
+                mListener.lockOrientation();
             }
 
             mWasCameraCenter = isCameraCenter;
@@ -931,13 +918,9 @@ public class PhotoView extends GLView {
         mModel.setNeedFullImage(!enabled);
         mListener.onActionBarAllowed(!enabled);
 
-        // If we leave filmstrip mode, we should lock/unlock
-        if (!enabled) {
-            if (mPictures.get(0).isCamera()) {
-                mListener.lockOrientation();  // Transition C
-            } else {
-                mListener.unlockOrientation();  // Transition D
-            }
+        // Move into camera in page mode, lock
+        if (!enabled && mPictures.get(0).isCamera()) {
+            mListener.lockOrientation();
         }
     }
 
@@ -1209,12 +1192,10 @@ public class PhotoView extends GLView {
 
     private void captureAnimationDone(int offset) {
         mHolding &= ~HOLD_CAPTURE_ANIMATION;
-        if (offset == 1) {
-            // move out of camera, unlock
-            if (!mFilmMode) {
-                // Now the capture animation is done, enable the action bar.
-                mListener.onActionBarAllowed(true);
-            }
+        if (offset == 1 && !mFilmMode) {
+            // Now the capture animation is done, enable the action bar.
+            mListener.onActionBarAllowed(true);
+            mListener.onActionBarWanted();
         }
         snapback();
     }
