@@ -329,7 +329,7 @@ public class AlbumSetDataLoader {
             while (mActive) {
                 synchronized (this) {
                     if (mActive && !mDirty && updateComplete) {
-                        updateLoading(false);
+                        if (!mSource.isLoading()) updateLoading(false);
                         Utils.waitWithoutInterrupt(this);
                         continue;
                     }
