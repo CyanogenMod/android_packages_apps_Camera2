@@ -18,7 +18,7 @@ package com.android.gallery3d.ui;
 
 // FadeOutTexture is a texture which begins with a given texture, then gradually animates
 // into fading out totally.
-public class FadeOutTexture extends FadeTexture implements Texture {
+public class FadeOutTexture extends FadeTexture {
     @SuppressWarnings("unused")
     private static final String TAG = "FadeOutTexture";
 
