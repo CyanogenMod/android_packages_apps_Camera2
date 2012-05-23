@@ -25,7 +25,9 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.View;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.anim.CanvasAnimation;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.GalleryUtils;
@@ -104,6 +106,7 @@ public class GLRootView extends GLSurfaceView
 
     private long mLastDrawFinishTime;
     private boolean mInDownState = false;
+    private boolean mFirstDraw = true;
 
     public GLRootView(Context context) {
         this(context, null);
@@ -320,6 +323,20 @@ public class GLRootView extends GLSurfaceView
             onDrawFrameLocked(gl);
         } finally {
             mRenderLock.unlock();
+        }
+
+        // We put a black cover View in front of the SurfaceView and hide it
+        // after the first draw. This prevents the SurfaceView being transparent
+        // before the first draw.
+        if (mFirstDraw) {
+            mFirstDraw = false;
+            post(new Runnable() {
+                    public void run() {
+                        View root = getRootView();
+                        View cover = root.findViewById(R.id.gl_root_cover);
+                        cover.setVisibility(GONE);
+                    }
+                });
         }
 
         if (DEBUG_PROFILE_SLOW_ONLY) {
