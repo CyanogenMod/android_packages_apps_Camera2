@@ -4,14 +4,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <com.android.gallery3d.ui.GLRootView
-            android:id="@+id/gl_root_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"/>
+    <include layout="@layout/gl_root_group"/>
     <FrameLayout android:id="@+id/footer"
             android:visibility="gone"
             android:layout_alignParentBottom="true"
