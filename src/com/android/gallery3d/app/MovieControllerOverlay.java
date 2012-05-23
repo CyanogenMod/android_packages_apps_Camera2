@@ -17,6 +17,7 @@
 package com.android.gallery3d.app;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -227,6 +228,7 @@ public class MovieControllerOverlay extends FrameLayout implements
   }
 
   private void startHiding() {
+    startHideAnimation(background);
     startHideAnimation(timeBar);
     startHideAnimation(playPauseReplayView);
   }
@@ -302,36 +304,54 @@ public class MovieControllerOverlay extends FrameLayout implements
     return true;
   }
 
+  // The paddings of 4 sides which covered by system components. E.g.
+  //    +-----------------+\
+  //    |   Action Bar    | insets.top
+  //    +-----------------+/
+  //    |                 |
+  //    |  Content Area   |  insets.right = insets.left = 0
+  //    |                 |
+  //    +-----------------+\
+  //    | Navigation Bar  | insets.bottom
+  //    +-----------------+/
+  // Please see View.fitSystemWindows() for more details.
+  private final Rect mWindowInsets = new Rect();
+
   @Override
-  protected void onLayout(boolean changed, int l, int t, int r, int b) {
-    int bw;
-    int bh;
-    int y;
-    int h = b - t;
-    int w = r - l;
+  protected boolean fitSystemWindows(Rect insets) {
+    // We don't set the paddings of this View, otherwise,
+    // the content will get cropped outside window
+    mWindowInsets.set(insets);
+    return true;
+  }
+
+  @Override
+  protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+    Rect insets = mWindowInsets;
+    int pl = insets.left; // the left paddings
+    int pr = insets.right;
+    int pt = insets.top;
+    int pb = insets.bottom;
+
+    int h = bottom - top;
+    int w = right - left;
     boolean error = errorView.getVisibility() == View.VISIBLE;
 
-    bw = timeBar.getBarHeight();
-    bh = bw;
-    y = b - bh;
+    int y = h - pb;
+    // Put both TimeBar and Background just above the bottom system component.
+    // But extend the background to the width of the screen, since we don't
+    // care if it will be covered by a system component and it looks better.
+    background.layout(0, y - timeBar.getBarHeight(), w, y);
+    timeBar.layout(pl, y - timeBar.getPreferredHeight(), w - pr, y);
 
-    background.layout(l, y, r, b);
-
-    timeBar.layout(l, b - timeBar.getPreferredHeight(), r, b);
     // Needed, otherwise the framework will not re-layout in case only the padding is changed
     timeBar.requestLayout();
 
-    // play pause / next / previous buttons
-    int cx = l + w / 2; // center x
-    int playbackButtonsCenterline = t + h / 2;
-    bw = playPauseReplayView.getMeasuredWidth();
-    bh = playPauseReplayView.getMeasuredHeight();
-    playPauseReplayView.layout(
-        cx - bw / 2, playbackButtonsCenterline - bh / 2, cx + bw / 2,
-        playbackButtonsCenterline + bh / 2);
+    // Put the play/pause/next/ previous button in the center of the screen
+    layoutCenteredView(playPauseReplayView, 0, 0, w, h);
 
     if (mainView != null) {
-      layoutCenteredView(mainView, l, t, r, b);
+      layoutCenteredView(mainView, 0, 0, w, h);
     }
   }
 
