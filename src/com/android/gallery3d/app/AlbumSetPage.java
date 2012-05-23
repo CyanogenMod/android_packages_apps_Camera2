@@ -300,9 +300,9 @@ public class AlbumSetPage extends ActivityState implements
             // Only show toast when there's no album and we are going to finish
             // the page. Toast is redundant if we are going to stay on this page.
             if ((mAlbumSetDataAdapter.size() == 0)) {
-                Toast.makeText((Context) mActivity,
-                        R.string.empty_album, Toast.LENGTH_LONG).show();
                 if (mActivity.getStateManager().getStateCount() > 1) {
+                    Toast.makeText((Context) mActivity,
+                            R.string.empty_album, Toast.LENGTH_LONG).show();
                     mActivity.getStateManager().finishState(this);
                 }
             }
@@ -597,8 +597,7 @@ public class AlbumSetPage extends ActivityState implements
                     }
                     clearLoadingBit(BIT_LOADING_SYNC);
                     if (resultCode == MediaSet.SYNC_RESULT_ERROR && mIsActive) {
-                        Toast.makeText((Context) mActivity, R.string.sync_album_set_error,
-                                Toast.LENGTH_LONG).show();
+                        Log.w(TAG, "failed to load album set");
                     }
                 } finally {
                     root.unlockRenderThread();
