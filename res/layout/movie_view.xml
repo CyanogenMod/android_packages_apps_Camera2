@@ -15,13 +15,13 @@
 -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/movie_view_root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+        android:id="@+id/movie_view_root"
+        android:background="@android:color/black"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <VideoView android:id="@+id/surface_view"
+            android:visibility="invisible"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true" />
-
 </RelativeLayout>
