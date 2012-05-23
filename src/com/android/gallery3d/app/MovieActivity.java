@@ -96,6 +96,10 @@ public class MovieActivity extends Activity {
         winParams.buttonBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF;
         winParams.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
         win.setAttributes(winParams);
+
+        // We set the background in the theme to have the launching animation.
+        // But for the performance (and battery), we remove the background here.
+        win.setBackgroundDrawable(null);
     }
 
     private void initializeActionBar(Intent intent) {
