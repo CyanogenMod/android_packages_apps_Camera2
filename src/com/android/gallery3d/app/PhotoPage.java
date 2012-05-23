@@ -91,6 +91,7 @@ public class PhotoPage extends ActivityState implements
     public static final String KEY_INDEX_HINT = "index-hint";
     public static final String KEY_OPEN_ANIMATION_RECT = "open-animation-rect";
     public static final String KEY_APP_BRIDGE = "app-bridge";
+    public static final String KEY_TREAT_BACK_AS_UP = "treat-back-as-up";
 
     public static final String KEY_RETURN_INDEX_HINT = "return-index-hint";
 
@@ -127,6 +128,7 @@ public class PhotoPage extends ActivityState implements
     private SnailAlbum mScreenNailSet;
     private OrientationManager mOrientationManager;
     private boolean mHasActivityResult;
+    private boolean mTreatBackAsUp;
 
     private NfcAdapter mNfcAdapter;
 
@@ -180,6 +182,7 @@ public class PhotoPage extends ActivityState implements
         mOriginalSetPathString = mSetPathString;
         mNfcAdapter = NfcAdapter.getDefaultAdapter(mActivity.getAndroidContext());
         Path itemPath = Path.fromString(data.getString(KEY_MEDIA_ITEM_PATH));
+        mTreatBackAsUp = data.getBoolean(KEY_TREAT_BACK_AS_UP, false);
 
         if (mSetPathString != null) {
             mAppBridge = (AppBridge) data.getParcelable(KEY_APP_BRIDGE);
@@ -439,7 +442,11 @@ public class PhotoPage extends ActivityState implements
         } else if (mAppBridge == null || !switchWithCaptureAnimation(-1)) {
             // We are leaving this page. Set the result now.
             setResult();
-            super.onBackPressed();
+            if (mTreatBackAsUp) {
+                onUpPressed();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
