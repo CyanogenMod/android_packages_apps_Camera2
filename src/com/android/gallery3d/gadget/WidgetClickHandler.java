@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.Gallery;
+import com.android.gallery3d.app.PhotoPage;
 
 public class WidgetClickHandler extends Activity {
     private static final String TAG = "PhotoAppWidgetClickHandler";
@@ -46,14 +47,19 @@ public class WidgetClickHandler extends Activity {
     @Override
     protected void onCreate(Bundle savedState) {
         super.onCreate(savedState);
-        Intent intent = getIntent();
-        if (isValidDataUri(intent.getData())) {
-            startActivity(new Intent(Intent.ACTION_VIEW, intent.getData()));
+        Uri uri = getIntent().getData();
+        Intent intent;
+        if (isValidDataUri(uri)) {
+            intent = new Intent(Intent.ACTION_VIEW, uri);
+            intent.putExtra(PhotoPage.KEY_TREAT_BACK_AS_UP, true);
         } else {
             Toast.makeText(this,
                     R.string.no_such_item, Toast.LENGTH_LONG).show();
-            startActivity(new Intent(this, Gallery.class));
+            intent = new Intent(this, Gallery.class);
         }
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+        startActivity(intent);
         finish();
     }
 }
