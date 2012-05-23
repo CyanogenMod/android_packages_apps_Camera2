@@ -42,23 +42,22 @@ public abstract class FadeTexture implements Texture {
         mIsAnimating = true;
     }
 
+    @Override
     public void draw(GLCanvas canvas, int x, int y) {
         draw(canvas, x, y, mWidth, mHeight);
     }
 
-    /**
-     * Subclasses should implement how to fade the texture.
-     */
-    public abstract void draw(GLCanvas canvas, int x, int y, int w, int h);
-
+    @Override
     public boolean isOpaque() {
         return mIsOpaque;
     }
 
+    @Override
     public int getWidth() {
         return mWidth;
     }
 
+    @Override
     public int getHeight() {
         return mHeight;
     }
