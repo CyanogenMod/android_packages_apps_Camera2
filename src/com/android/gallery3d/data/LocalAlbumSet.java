@@ -100,6 +100,7 @@ public class LocalAlbumSet extends MediaSet
     private final ChangeNotifier mNotifierVideo;
     private final String mName;
     private final Handler mHandler;
+    private boolean mIsLoading;
 
     private Future<ArrayList<MediaSet>> mLoadTask;
     private ArrayList<MediaSet> mLoadBuffer;
@@ -261,6 +262,11 @@ public class LocalAlbumSet extends MediaSet
     }
 
     @Override
+    public synchronized boolean isLoading() {
+        return mIsLoading;
+    }
+
+    @Override
     // synchronized on this function for
     //   1. Prevent calling reload() concurrently.
     //   2. Prevent calling onFutureDone() and reload() concurrently
@@ -268,6 +274,7 @@ public class LocalAlbumSet extends MediaSet
         // "|" is used instead of "||" because we want to clear both flags.
         if (mNotifierImage.isDirty() | mNotifierVideo.isDirty()) {
             if (mLoadTask != null) mLoadTask.cancel();
+            mIsLoading = true;
             mLoadTask = mApplication.getThreadPool().submit(new AlbumsLoader(), this);
         }
         if (mLoadBuffer != null) {
@@ -285,6 +292,7 @@ public class LocalAlbumSet extends MediaSet
     public synchronized void onFutureDone(Future<ArrayList<MediaSet>> future) {
         if (mLoadTask != future) return; // ignore, wait for the latest task
         mLoadBuffer = future.get();
+        mIsLoading = false;
         if (mLoadBuffer == null) mLoadBuffer = new ArrayList<MediaSet>();
         mHandler.post(new Runnable() {
             @Override
