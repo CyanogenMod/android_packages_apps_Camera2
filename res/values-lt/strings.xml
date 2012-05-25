@@ -32,8 +32,8 @@
     <string name="fail_to_load_image" msgid="6155388718549782425">"Nepavyko įkelti vaizdo"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Nėra miniatiūros"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Pradėti iš naujo"</string>
-    <!-- no translation found for ok (5296833083983263293) -->
-    <skip />
+    <string name="crop_save_text" msgid="152200178986698300">"Gerai"</string>
+    <string name="ok" msgid="5296833083983263293">"Gerai"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Jei norite pradėti, palieskite veidą."</string>
     <string name="saving_image" msgid="7270334453636349407">"Išsaugomas paveikslėlis..."</string>
     <string name="save_error" msgid="6857408774183654970">"Nepavyko išsaugoti apkarpyto vaizdo."</string>
@@ -44,11 +44,15 @@
     <string name="select_album" msgid="1557063764849434077">"Pasirinkti albumą"</string>
     <string name="select_group" msgid="6744208543323307114">"Pasirinkti grupę"</string>
     <string name="set_image" msgid="2331476809308010401">"Nustatyti paveikslėlį kaip"</string>
+    <!-- no translation found for set_wallpaper (8491121226190175017) -->
+    <skip />
     <string name="wallpaper" msgid="140165383777262070">"Nustatomas darbalaukio fonas…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Darbalaukio fonas"</string>
     <string name="delete" msgid="2839695998251824487">"Ištrinti"</string>
-    <!-- no translation found for delete_selection:one (6453379735401083732) -->
-    <!-- no translation found for delete_selection:other (5874316486520635333) -->
+  <plurals name="delete_selection">
+    <item quantity="one" msgid="6453379735401083732">"Ištrinti pasirinktą elementą?"</item>
+    <item quantity="other" msgid="5874316486520635333">"Ištrinti pasirink. elementus?"</item>
+  </plurals>
     <string name="confirm" msgid="8646870096527848520">"Patvirtinti"</string>
     <string name="cancel" msgid="3637516880917356226">"Atšaukti"</string>
     <string name="share" msgid="3619042788254195341">"Bendrinti"</string>
@@ -94,7 +98,6 @@
     <string name="no_location" msgid="4043624857489331676">"Nėra vietos"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Kai kurių vietų nepavyko nustatyti dėl tinklo problemų."</string>
     <string name="sync_album_error" msgid="1020688062900977530">"Šio albumo nuotraukų atsisiųsti nepavyko. Bandykite dar kartą vėliau."</string>
-    <string name="sync_album_set_error" msgid="3250258387046904444">"Albumų sąrašo atsisiųsti nepavyko. Bandykite dar kartą vėliau."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Tik vaizdai"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Tik vaizdo įrašai"</string>
     <string name="show_all" msgid="6963292714584735149">"Vaizdai ir vaizdo įrašai"</string>
