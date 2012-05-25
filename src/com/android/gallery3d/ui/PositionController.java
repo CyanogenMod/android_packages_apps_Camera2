@@ -1060,6 +1060,7 @@ class PositionController {
 
     public void stopScrolling() {
         if (mPlatform.mAnimationStartTime == NO_ANIMATION) return;
+        if (mFilmMode) mFilmScroller.forceFinished(true);
         mPlatform.mFromX = mPlatform.mToX = mPlatform.mCurrentX;
     }
 
