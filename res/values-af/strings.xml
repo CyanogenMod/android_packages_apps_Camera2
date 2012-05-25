@@ -32,8 +32,8 @@
     <string name="fail_to_load_image" msgid="6155388718549782425">"Kon nie die prent laai nie"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Geen kleinkiekie nie"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Begin van voor af"</string>
-    <!-- no translation found for ok (5296833083983263293) -->
-    <skip />
+    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="ok" msgid="5296833083983263293">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Raak aan \'n gesig om te begin."</string>
     <string name="saving_image" msgid="7270334453636349407">"Stoor tans prent…"</string>
     <string name="save_error" msgid="6857408774183654970">"Kon nie gesnoeide prent stoor nie."</string>
@@ -44,11 +44,15 @@
     <string name="select_album" msgid="1557063764849434077">"Kies album"</string>
     <string name="select_group" msgid="6744208543323307114">"Kies groep"</string>
     <string name="set_image" msgid="2331476809308010401">"Stel prent as"</string>
+    <!-- no translation found for set_wallpaper (8491121226190175017) -->
+    <skip />
     <string name="wallpaper" msgid="140165383777262070">"Stel tans muurpapier in..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Muurpapier"</string>
     <string name="delete" msgid="2839695998251824487">"Vee uit"</string>
-    <!-- no translation found for delete_selection:one (6453379735401083732) -->
-    <!-- no translation found for delete_selection:other (5874316486520635333) -->
+  <plurals name="delete_selection">
+    <item quantity="one" msgid="6453379735401083732">"Vee gekose item uit?"</item>
+    <item quantity="other" msgid="5874316486520635333">"Vee gekose items uit?"</item>
+  </plurals>
     <string name="confirm" msgid="8646870096527848520">"Bevestig"</string>
     <string name="cancel" msgid="3637516880917356226">"Kanselleer"</string>
     <string name="share" msgid="3619042788254195341">"Deling"</string>
@@ -94,7 +98,6 @@
     <string name="no_location" msgid="4043624857489331676">"Geen ligging nie"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Sommige liggings kon nie geïdentifiseer word nie weens netwerkprobleme."</string>
     <string name="sync_album_error" msgid="1020688062900977530">"Kon nie die foto\'s in hierdie album aflaai nie. Probeer later weer."</string>
-    <string name="sync_album_set_error" msgid="3250258387046904444">"Kon nie die lys van albums aflaai nie. Probeer later weer."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Net prente"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Net video\'s"</string>
     <string name="show_all" msgid="6963292714584735149">"Prente en video\'s"</string>

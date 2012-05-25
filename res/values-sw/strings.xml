@@ -32,8 +32,8 @@
     <string name="fail_to_load_image" msgid="6155388718549782425">"Haikuweza kupakia picha"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Hakuna kijipicha"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Anza tena"</string>
-    <!-- no translation found for ok (5296833083983263293) -->
-    <skip />
+    <string name="crop_save_text" msgid="152200178986698300">"Sawa"</string>
+    <string name="ok" msgid="5296833083983263293">"Sawa"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Gusa sura ili kuanza."</string>
     <string name="saving_image" msgid="7270334453636349407">"Inahifadhi picha…"</string>
     <string name="save_error" msgid="6857408774183654970">"Haiwezi kuhifadhi picha iliyopogolewa."</string>
@@ -44,11 +44,15 @@
     <string name="select_album" msgid="1557063764849434077">"Chagua albamu"</string>
     <string name="select_group" msgid="6744208543323307114">"Chagua kikundi"</string>
     <string name="set_image" msgid="2331476809308010401">"Weka picha kama"</string>
+    <!-- no translation found for set_wallpaper (8491121226190175017) -->
+    <skip />
     <string name="wallpaper" msgid="140165383777262070">"Inaweka karatasi ya ukuta..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Mandhari"</string>
     <string name="delete" msgid="2839695998251824487">"Futa"</string>
-    <!-- no translation found for delete_selection:one (6453379735401083732) -->
-    <!-- no translation found for delete_selection:other (5874316486520635333) -->
+  <plurals name="delete_selection">
+    <item quantity="one" msgid="6453379735401083732">"Futa kipengee kilichoteuliwa?"</item>
+    <item quantity="other" msgid="5874316486520635333">"Futa vipengee vilivyoteuliwa?"</item>
+  </plurals>
     <string name="confirm" msgid="8646870096527848520">"Thibitisha"</string>
     <string name="cancel" msgid="3637516880917356226">"Ghairi"</string>
     <string name="share" msgid="3619042788254195341">"Shiriki"</string>
@@ -97,7 +101,6 @@
     <string name="no_location" msgid="4043624857489331676">"Hakuna Mahali"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Baadhi ya maeneo haikuweza kutambuliwa kutokana na matatizo ya mtandao."</string>
     <string name="sync_album_error" msgid="1020688062900977530">"Haikuwezi kupakua picha zilizo kwenye albamu hii. Jaribu tena baadaye."</string>
-    <string name="sync_album_set_error" msgid="3250258387046904444">"Haikuweza kupakua orodha ya albamu. Jaribu tena baadaye."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Picha tu"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Video tu"</string>
     <string name="show_all" msgid="6963292714584735149">"Picha &amp; video"</string>

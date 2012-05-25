@@ -32,8 +32,8 @@
     <string name="fail_to_load_image" msgid="6155388718549782425">"छवि लोड नहीं हो सकी"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"कोई थंबनेल नहीं"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"पुन: प्रारंभ करें"</string>
-    <!-- no translation found for ok (5296833083983263293) -->
-    <skip />
+    <string name="crop_save_text" msgid="152200178986698300">"ठीक"</string>
+    <string name="ok" msgid="5296833083983263293">"ठीक"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"शुरू करने के लिए कोई चेहरा स्‍पर्श करें."</string>
     <string name="saving_image" msgid="7270334453636349407">"चित्र सहेज रहा है…"</string>
     <string name="save_error" msgid="6857408774183654970">"काट-छांट की गई छवि को नहीं सहेज सका."</string>
@@ -44,11 +44,15 @@
     <string name="select_album" msgid="1557063764849434077">"एल्बम का चयन करें"</string>
     <string name="select_group" msgid="6744208543323307114">"समूह का चयन करें"</string>
     <string name="set_image" msgid="2331476809308010401">"चित्र इस रूप में सेट करें"</string>
+    <!-- no translation found for set_wallpaper (8491121226190175017) -->
+    <skip />
     <string name="wallpaper" msgid="140165383777262070">"वॉलपेपर सेट कर रहा है..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"वॉलपेपर"</string>
     <string name="delete" msgid="2839695998251824487">"हटाएं"</string>
-    <!-- no translation found for delete_selection:one (6453379735401083732) -->
-    <!-- no translation found for delete_selection:other (5874316486520635333) -->
+  <plurals name="delete_selection">
+    <item quantity="one" msgid="6453379735401083732">"चयनित आइटम हटाएं?"</item>
+    <item quantity="other" msgid="5874316486520635333">"चयनित आइटम हटाएं?"</item>
+  </plurals>
     <string name="confirm" msgid="8646870096527848520">"पुष्टि करें"</string>
     <string name="cancel" msgid="3637516880917356226">"रद्द करें"</string>
     <string name="share" msgid="3619042788254195341">"शेयर करें"</string>
@@ -94,7 +98,6 @@
     <string name="no_location" msgid="4043624857489331676">"कोई स्थान नहीं"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"नेटवर्क समस्‍याओं के कारण कुछ स्‍थानों को पहचाना नहीं जा सका."</string>
     <string name="sync_album_error" msgid="1020688062900977530">"इस एल्बम के फ़ोटो डाउनलोड नहीं किए जा सके. बाद में पुन: प्रयास करें."</string>
-    <string name="sync_album_set_error" msgid="3250258387046904444">"एल्बम की सूची डाउनलोड नहीं की जा सकी. बाद में पुन: प्रयास करें."</string>
     <string name="show_images_only" msgid="7263218480867672653">"केवल छवियां"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"केवल वीडियो"</string>
     <string name="show_all" msgid="6963292714584735149">"छवियां और वीडियो"</string>
