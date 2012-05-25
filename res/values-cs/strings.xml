@@ -32,23 +32,27 @@
     <string name="fail_to_load_image" msgid="6155388718549782425">"Obrázek nelze načíst"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Miniatura není dostupná"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Začít znovu"</string>
-    <!-- no translation found for ok (5296833083983263293) -->
-    <skip />
+    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="ok" msgid="5296833083983263293">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Začněte klepnutím na obličej."</string>
     <string name="saving_image" msgid="7270334453636349407">"Ukládání fotografie..."</string>
     <string name="save_error" msgid="6857408774183654970">"Oříznutý obrázek nelze uložit."</string>
     <string name="crop_label" msgid="521114301871349328">"Oříznout fotografii"</string>
-    <string name="select_image" msgid="7841406150484742140">"Vyberte fotografii"</string>
-    <string name="select_video" msgid="4859510992798615076">"Vyberte video"</string>
-    <string name="select_item" msgid="2816923896202086390">"Vyberte položku"</string>
-    <string name="select_album" msgid="1557063764849434077">"Vyberte album"</string>
-    <string name="select_group" msgid="6744208543323307114">"Vyberte skupinu"</string>
-    <string name="set_image" msgid="2331476809308010401">"Fotografie bude použita jako"</string>
+    <string name="select_image" msgid="7841406150484742140">"Vybrat fotografii"</string>
+    <string name="select_video" msgid="4859510992798615076">"Vybrat video"</string>
+    <string name="select_item" msgid="2816923896202086390">"Vybrat položku"</string>
+    <string name="select_album" msgid="1557063764849434077">"Vybrat album"</string>
+    <string name="select_group" msgid="6744208543323307114">"Vybrat skupinu"</string>
+    <string name="set_image" msgid="2331476809308010401">"Nastavit fotografii jako"</string>
+    <!-- no translation found for set_wallpaper (8491121226190175017) -->
+    <skip />
     <string name="wallpaper" msgid="140165383777262070">"Nastavování tapety..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Tapeta"</string>
     <string name="delete" msgid="2839695998251824487">"Smazat"</string>
-    <!-- no translation found for delete_selection:one (6453379735401083732) -->
-    <!-- no translation found for delete_selection:other (5874316486520635333) -->
+  <plurals name="delete_selection">
+    <item quantity="one" msgid="6453379735401083732">"Smazat vybranou položku?"</item>
+    <item quantity="other" msgid="5874316486520635333">"Smazat vybrané položky?"</item>
+  </plurals>
     <string name="confirm" msgid="8646870096527848520">"Potvrdit"</string>
     <string name="cancel" msgid="3637516880917356226">"Zrušit"</string>
     <string name="share" msgid="3619042788254195341">"Sdílet"</string>
@@ -87,14 +91,13 @@
     <string name="group_by_location" msgid="316641628989023253">"Podle místa"</string>
     <string name="group_by_time" msgid="9046168567717963573">"Podle času"</string>
     <string name="group_by_tags" msgid="3568731317210676160">"Podle tagů"</string>
-    <string name="group_by_faces" msgid="1566351636227274906">"Podle osob"</string>
+    <string name="group_by_faces" msgid="1566351636227274906">"Podle lidí"</string>
     <string name="group_by_album" msgid="1532818636053818958">"Podle alba"</string>
     <string name="group_by_size" msgid="153766174950394155">"Podle velikosti"</string>
     <string name="untagged" msgid="7281481064509590402">"Neoznačeno"</string>
     <string name="no_location" msgid="4043624857489331676">"Neznámá poloha"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Některá umístění se nepodařilo identifikovat kvůli problémům se sítí."</string>
     <string name="sync_album_error" msgid="1020688062900977530">"Fotografie v tomto albu nelze stáhnout. Zkuste to znovu později."</string>
-    <string name="sync_album_set_error" msgid="3250258387046904444">"Seznam alb nelze stáhnout. Zkuste to znovu později."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Pouze obrázky"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Pouze videa"</string>
     <string name="show_all" msgid="6963292714584735149">"Obrázky a videa"</string>
@@ -161,12 +164,12 @@
     <string name="locations" msgid="6649297994083130305">"Lokality"</string>
     <string name="people" msgid="4114003823747292747">"Lidé"</string>
     <string name="tags" msgid="5539648765482935955">"Tagy"</string>
-    <string name="group_by" msgid="4308299657902209357">"Seskupit podle"</string>
+    <string name="group_by" msgid="4308299657902209357">"Seskupit podle..."</string>
     <string name="settings" msgid="1534847740615665736">"Nastavení"</string>
     <string name="add_account" msgid="4271217504968243974">"Přidat účet"</string>
     <string name="folder_camera" msgid="4714658994809533480">"Fotoaparát"</string>
     <string name="folder_download" msgid="7186215137642323932">"Stahování"</string>
     <string name="folder_imported" msgid="2773581395524747099">"Importováno"</string>
-    <string name="folder_screenshot" msgid="7200396565864213450">"Snímek obrazovky"</string>
+    <string name="folder_screenshot" msgid="7200396565864213450">"Snímky obrazovky"</string>
     <string name="help" msgid="7368960711153618354">"Nápověda"</string>
 </resources>

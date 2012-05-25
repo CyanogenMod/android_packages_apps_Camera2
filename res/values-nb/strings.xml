@@ -32,8 +32,8 @@
     <string name="fail_to_load_image" msgid="6155388718549782425">"Kunne ikke laste inn bildet"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Ingen miniatyrbilder"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Begynn på nytt"</string>
-    <!-- no translation found for ok (5296833083983263293) -->
-    <skip />
+    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="ok" msgid="5296833083983263293">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Berør et ansikt for å begynne."</string>
     <string name="saving_image" msgid="7270334453636349407">"Lagrer bilde ..."</string>
     <string name="save_error" msgid="6857408774183654970">"Kan ikke lagre det beskårede bildet."</string>
@@ -44,11 +44,15 @@
     <string name="select_album" msgid="1557063764849434077">"Velg album"</string>
     <string name="select_group" msgid="6744208543323307114">"Valg av gruppe"</string>
     <string name="set_image" msgid="2331476809308010401">"Angi bilde som"</string>
+    <!-- no translation found for set_wallpaper (8491121226190175017) -->
+    <skip />
     <string name="wallpaper" msgid="140165383777262070">"Angir bakgrunn …"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Bakgrunnsbilde"</string>
     <string name="delete" msgid="2839695998251824487">"Slett"</string>
-    <!-- no translation found for delete_selection:one (6453379735401083732) -->
-    <!-- no translation found for delete_selection:other (5874316486520635333) -->
+  <plurals name="delete_selection">
+    <item quantity="one" msgid="6453379735401083732">"Vil du slette det valgte medieelementet?"</item>
+    <item quantity="other" msgid="5874316486520635333">"Vil du slette de valgte medieelementene?"</item>
+  </plurals>
     <string name="confirm" msgid="8646870096527848520">"Bekreft"</string>
     <string name="cancel" msgid="3637516880917356226">"Avbryt"</string>
     <string name="share" msgid="3619042788254195341">"Del"</string>
@@ -94,7 +98,6 @@
     <string name="no_location" msgid="4043624857489331676">"Ingen posisjon"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Noen steder kunne ikke identifiseres på grunn av nettverksproblemer."</string>
     <string name="sync_album_error" msgid="1020688062900977530">"Kunne ikke laste ned bildene i dette albumet. Prøv på nytt senere."</string>
-    <string name="sync_album_set_error" msgid="3250258387046904444">"Kunne ikke laste ned albumlisten. Prøv på nytt senere."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Kun bilder"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Kun videoer"</string>
     <string name="show_all" msgid="6963292714584735149">"Bilder og videoer"</string>
@@ -157,7 +160,7 @@
     <string name="widget_type" msgid="1364653978966343448">"Valg av bilder"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Lysbildefremvisning"</string>
     <string name="albums" msgid="7320787705180057947">"Album"</string>
-    <string name="times" msgid="2023033894889499219">"Ganger"</string>
+    <string name="times" msgid="2023033894889499219">"Tidspunkt"</string>
     <string name="locations" msgid="6649297994083130305">"Steder"</string>
     <string name="people" msgid="4114003823747292747">"Folk"</string>
     <string name="tags" msgid="5539648765482935955">"Etiketter"</string>
