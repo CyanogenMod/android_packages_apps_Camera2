@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -25,6 +24,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -60,18 +60,20 @@ public class MoviePlayer implements
     private static final String CMDNAME = "command";
     private static final String CMDPAUSE = "pause";
 
+    private static final long BLACK_TIMEOUT = 500;
+
     // If we resume the acitivty with in RESUMEABLE_TIMEOUT, we will keep playing.
     // Otherwise, we pause the player.
     private static final long RESUMEABLE_TIMEOUT = 3 * 60 * 1000; // 3 mins
 
     private Context mContext;
     private final VideoView mVideoView;
+    private final View mRootView;
     private final Bookmarker mBookmarker;
     private final Uri mUri;
     private final Handler mHandler = new Handler();
     private final AudioBecomingNoisyReceiver mAudioBecomingNoisyReceiver;
-    private final ActionBar mActionBar;
-    private final ControllerOverlay mController;
+    private final MovieControllerOverlay mController;
 
     private long mResumeableTime = Long.MAX_VALUE;
     private int mVideoPosition = 0;
@@ -98,6 +100,13 @@ public class MoviePlayer implements
         }
     };
 
+    private final Runnable mRemoveBackground = new Runnable() {
+        @Override
+        public void run() {
+            mRootView.setBackground(null);
+        }
+    };
+
     private final Runnable mProgressChecker = new Runnable() {
         @Override
         public void run() {
@@ -106,12 +115,12 @@ public class MoviePlayer implements
         }
     };
 
-    public MoviePlayer(View rootView, final MovieActivity movieActivity, Uri videoUri,
-            Bundle savedInstance, boolean canReplay) {
+    public MoviePlayer(View rootView, final MovieActivity movieActivity,
+            Uri videoUri, Bundle savedInstance, boolean canReplay) {
         mContext = movieActivity.getApplicationContext();
+        mRootView = rootView;
         mVideoView = (VideoView) rootView.findViewById(R.id.surface_view);
         mBookmarker = new Bookmarker(movieActivity);
-        mActionBar = movieActivity.getActionBar();
         mUri = videoUri;
 
         mController = new MovieControllerOverlay(mContext);
@@ -123,17 +132,31 @@ public class MoviePlayer implements
         mVideoView.setOnCompletionListener(this);
         mVideoView.setVideoURI(mUri);
         mVideoView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
             public boolean onTouch(View v, MotionEvent event) {
                 mController.show();
                 return true;
             }
         });
 
+        // The SurfaceView is transparent before drawing the first frame.
+        // This makes the UI flashing when open a video. (black -> old screen
+        // -> video) However, we have no way to know the timing of the first
+        // frame. So, we hide the VideoView for a while to make sure the
+        // video has been drawn on it.
+        mVideoView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mVideoView.setVisibility(View.VISIBLE);
+            }
+        }, BLACK_TIMEOUT);
+
         // When the user touches the screen or uses some hard key, the framework
         // will change system ui visibility from invisible to visible. We show
         // the media control and enable system UI (e.g. ActionBar) to be visible at this point
         mVideoView.setOnSystemUiVisibilityChangeListener(
                 new View.OnSystemUiVisibilityChangeListener() {
+            @Override
             public void onSystemUiVisibilityChange(int visibility) {
                 int diff = mLastSystemUiVis ^ visibility;
                 mLastSystemUiVis = visibility;
@@ -141,6 +164,19 @@ public class MoviePlayer implements
                         && (visibility & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0) {
                     mAllowShowingSystemUI = true;
                     mController.show();
+
+                    // We need to set the background to clear ghosting images
+                    // when ActionBar slides in. However, if we keep the background,
+                    // there will be one additional layer in HW composer, which is bad
+                    // to battery. As a solution, we remove the background when we
+                    // hide the action bar
+                    mHandler.removeCallbacks(mRemoveBackground);
+                    mRootView.setBackgroundColor(Color.BLACK);
+                } else {
+                    mHandler.removeCallbacks(mRemoveBackground);
+
+                    // Wait for the slide out animation, one second should be enough
+                    mHandler.postDelayed(mRemoveBackground, 1000);
                 }
             }
         });
@@ -267,6 +303,7 @@ public class MoviePlayer implements
             mHandler.postDelayed(mPlayingChecker, 250);
         } else {
             mController.showPlaying();
+            mController.hide();
         }
 
         mVideoView.start();
