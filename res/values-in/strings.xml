@@ -32,8 +32,8 @@
     <string name="fail_to_load_image" msgid="6155388718549782425">"Tidak dapat memuat gambar"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Tidak ada gambar mini"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Memulai"</string>
-    <!-- no translation found for ok (5296833083983263293) -->
-    <skip />
+    <string name="crop_save_text" msgid="152200178986698300">"Oke"</string>
+    <string name="ok" msgid="5296833083983263293">"Oke"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Sentuh wajah untuk memulai."</string>
     <string name="saving_image" msgid="7270334453636349407">"Menyimpan gambar…"</string>
     <string name="save_error" msgid="6857408774183654970">"Tak dapat menyimpan gambar yg dipangkas."</string>
@@ -44,11 +44,15 @@
     <string name="select_album" msgid="1557063764849434077">"Pilih album"</string>
     <string name="select_group" msgid="6744208543323307114">"Pilih grup"</string>
     <string name="set_image" msgid="2331476809308010401">"Setel gambar sebagai"</string>
+    <!-- no translation found for set_wallpaper (8491121226190175017) -->
+    <skip />
     <string name="wallpaper" msgid="140165383777262070">"Menyetel wallpaper..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Wallpaper"</string>
     <string name="delete" msgid="2839695998251824487">"Hapus"</string>
-    <!-- no translation found for delete_selection:one (6453379735401083732) -->
-    <!-- no translation found for delete_selection:other (5874316486520635333) -->
+  <plurals name="delete_selection">
+    <item quantity="one" msgid="6453379735401083732">"Hapus item yang dipilih?"</item>
+    <item quantity="other" msgid="5874316486520635333">"Hapus item yang dipilih?"</item>
+  </plurals>
     <string name="confirm" msgid="8646870096527848520">"Konfirmasi"</string>
     <string name="cancel" msgid="3637516880917356226">"Batal"</string>
     <string name="share" msgid="3619042788254195341">"Bagikan"</string>
@@ -94,7 +98,6 @@
     <string name="no_location" msgid="4043624857489331676">"Tidak ada lokasi"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Beberapa lokasi tidak dapat diidentifikasi karena masalah jaringan."</string>
     <string name="sync_album_error" msgid="1020688062900977530">"Tidak dapat mengunduh foto di album ini. Coba lagi nanti."</string>
-    <string name="sync_album_set_error" msgid="3250258387046904444">"Tidak dapat mengunduh daftar album. Coba lagi nanti."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Hanya gambar"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Hanya video"</string>
     <string name="show_all" msgid="6963292714584735149">"Gambar &amp; video"</string>

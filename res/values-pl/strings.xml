@@ -32,8 +32,8 @@
     <string name="fail_to_load_image" msgid="6155388718549782425">"Nie można wczytać zdjęcia"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Brak miniatury"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"Rozpocznij"</string>
-    <!-- no translation found for ok (5296833083983263293) -->
-    <skip />
+    <string name="crop_save_text" msgid="152200178986698300">"OK"</string>
+    <string name="ok" msgid="5296833083983263293">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Dotknij twarzy, aby rozpocząć."</string>
     <string name="saving_image" msgid="7270334453636349407">"Zapisywanie zdjęcia…"</string>
     <string name="save_error" msgid="6857408774183654970">"Nie można zapisać przyciętego obrazu."</string>
@@ -44,11 +44,15 @@
     <string name="select_album" msgid="1557063764849434077">"Wybierz album"</string>
     <string name="select_group" msgid="6744208543323307114">"Wybierz grupę"</string>
     <string name="set_image" msgid="2331476809308010401">"Ustaw zdjęcie jako"</string>
+    <!-- no translation found for set_wallpaper (8491121226190175017) -->
+    <skip />
     <string name="wallpaper" msgid="140165383777262070">"Ustawianie tapety…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Tapeta"</string>
     <string name="delete" msgid="2839695998251824487">"Usuń"</string>
-    <!-- no translation found for delete_selection:one (6453379735401083732) -->
-    <!-- no translation found for delete_selection:other (5874316486520635333) -->
+  <plurals name="delete_selection">
+    <item quantity="one" msgid="6453379735401083732">"Usunąć wybrany element?"</item>
+    <item quantity="other" msgid="5874316486520635333">"Usunąć wybrane elementy?"</item>
+  </plurals>
     <string name="confirm" msgid="8646870096527848520">"Potwierdź"</string>
     <string name="cancel" msgid="3637516880917356226">"Anuluj"</string>
     <string name="share" msgid="3619042788254195341">"Udostępnij"</string>
@@ -94,7 +98,6 @@
     <string name="no_location" msgid="4043624857489331676">"Brak lokalizacji"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"Niektórych lokalizacji nie można zidentyfikować z powodu problemów z siecią."</string>
     <string name="sync_album_error" msgid="1020688062900977530">"Nie można pobrać zdjęć z tego albumu. Spróbuj ponownie później."</string>
-    <string name="sync_album_set_error" msgid="3250258387046904444">"Nie można pobrać listy albumów. Spróbuj ponownie później."</string>
     <string name="show_images_only" msgid="7263218480867672653">"Tylko obrazy"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"Tylko filmy"</string>
     <string name="show_all" msgid="6963292714584735149">"Obrazy i filmy"</string>
@@ -141,7 +144,7 @@
     <string name="set_label_local_albums" msgid="6698133661656266702">"Albumy lokalne"</string>
     <string name="set_label_mtp_devices" msgid="1283513183744896368">"Urządzenia MTP"</string>
     <string name="set_label_picasa_albums" msgid="5356258354953935895">"Albumy Picasa"</string>
-    <string name="free_space_format" msgid="8766337315709161215">"Wolne: <xliff:g id="BYTES">%s</xliff:g>"</string>
+    <string name="free_space_format" msgid="8766337315709161215">"<xliff:g id="BYTES">%s</xliff:g> wolne"</string>
     <string name="size_below" msgid="2074956730721942260">"<xliff:g id="SIZE">%1$s</xliff:g> lub mniej"</string>
     <string name="size_above" msgid="5324398253474104087">"<xliff:g id="SIZE">%1$s</xliff:g> lub więcej"</string>
     <string name="size_between" msgid="8779660840898917208">"<xliff:g id="MIN_SIZE">%1$s</xliff:g> do <xliff:g id="MAX_SIZE">%2$s</xliff:g>"</string>
