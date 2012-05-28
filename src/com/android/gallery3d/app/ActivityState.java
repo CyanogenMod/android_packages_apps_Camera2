@@ -36,7 +36,8 @@ import com.android.gallery3d.ui.GLView;
 abstract public class ActivityState {
     protected static final int FLAG_HIDE_ACTION_BAR = 1;
     protected static final int FLAG_HIDE_STATUS_BAR = 2;
-    protected static final int FLAG_SCREEN_ON = 4;
+    protected static final int FLAG_SCREEN_ON_WHEN_PLUGGED = 4;
+    protected static final int FLAG_SCREEN_ON_ALWAYS = 8;
 
     private static final int SCREEN_ON_FLAGS = (
               WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
@@ -117,7 +118,8 @@ abstract public class ActivityState {
     void setScreenOnFlags() {
         final Window win = ((Activity) mActivity).getWindow();
         final WindowManager.LayoutParams params = win.getAttributes();
-        if (mPlugged && 0 != (mFlags & FLAG_SCREEN_ON)) {
+        if ((0 != (mFlags & FLAG_SCREEN_ON_ALWAYS)) ||
+                (mPlugged && 0 != (mFlags & FLAG_SCREEN_ON_WHEN_PLUGGED))) {
             params.flags |= SCREEN_ON_FLAGS;
         } else {
             params.flags &= ~SCREEN_ON_FLAGS;
@@ -126,7 +128,7 @@ abstract public class ActivityState {
     }
 
     protected void onPause() {
-        if (0 != (mFlags & FLAG_SCREEN_ON)) {
+        if (0 != (mFlags & FLAG_SCREEN_ON_WHEN_PLUGGED)) {
             ((Activity) mActivity).unregisterReceiver(mPowerIntentReceiver);
         }
     }
@@ -160,7 +162,7 @@ abstract public class ActivityState {
             onStateResult(entry.requestCode, entry.resultCode, entry.resultData);
         }
 
-        if (0 != (mFlags & FLAG_SCREEN_ON)) {
+        if (0 != (mFlags & FLAG_SCREEN_ON_WHEN_PLUGGED)) {
             // we need to know whether the device is plugged in to do this correctly
             final IntentFilter filter = new IntentFilter();
             filter.addAction(Intent.ACTION_BATTERY_CHANGED);
