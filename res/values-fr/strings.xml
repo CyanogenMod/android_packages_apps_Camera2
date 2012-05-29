@@ -51,7 +51,7 @@
     <string name="delete" msgid="2839695998251824487">"Supprimer"</string>
   <plurals name="delete_selection">
     <item quantity="one" msgid="6453379735401083732">"Supprimer élément sélectionné ?"</item>
-    <item quantity="other" msgid="5874316486520635333">"Supprimer éléments sélectionnés ?"</item>
+    <item quantity="other" msgid="5874316486520635333">"Suppr. éléments sélectionnés ?"</item>
   </plurals>
     <string name="confirm" msgid="8646870096527848520">"Confirmer"</string>
     <string name="cancel" msgid="3637516880917356226">"Annuler"</string>
