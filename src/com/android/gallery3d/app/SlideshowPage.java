@@ -48,6 +48,7 @@ public class SlideshowPage extends ActivityState {
     public static final String KEY_PHOTO_INDEX = "photo-index";
     public static final String KEY_RANDOM_ORDER = "random-order";
     public static final String KEY_REPEAT = "repeat";
+    public static final String KEY_DREAM = "dream";
 
     private static final long SLIDESHOW_DELAY = 3000; // 3 seconds
 
@@ -104,7 +105,14 @@ public class SlideshowPage extends ActivityState {
 
     @Override
     public void onCreate(Bundle data, Bundle restoreState) {
-        mFlags |= (FLAG_HIDE_ACTION_BAR | FLAG_HIDE_STATUS_BAR | FLAG_SCREEN_ON);
+        mFlags |= (FLAG_HIDE_ACTION_BAR | FLAG_HIDE_STATUS_BAR);
+        if (data.getBoolean(KEY_DREAM)) {
+            // Dream screensaver only keeps screen on for plugged devices.
+            mFlags |= FLAG_SCREEN_ON_WHEN_PLUGGED;
+        } else {
+            // User-initiated slideshow would always keep screen on.
+            mFlags |= FLAG_SCREEN_ON_ALWAYS;
+        }
 
         mHandler = new SynchronizedHandler(mActivity.getGLRoot()) {
             @Override
