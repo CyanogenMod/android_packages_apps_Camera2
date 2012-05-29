@@ -14,6 +14,7 @@ public class SlideshowDream extends BasicDream {
 //            Uri.fromFile(Environment.getExternalStoragePublicDirectory(
 //                        Environment.DIRECTORY_PICTURES)))
                 .putExtra(Gallery.EXTRA_SLIDESHOW, true)
+                .putExtra(Gallery.EXTRA_DREAM, true)
                 .setFlags(getIntent().getFlags());
         startActivity(i);
         finish();
