@@ -42,6 +42,7 @@ import com.android.gallery3d.util.GalleryUtils;
 
 public final class Gallery extends AbstractGalleryActivity implements OnCancelListener {
     public static final String EXTRA_SLIDESHOW = "slideshow";
+    public static final String EXTRA_DREAM = "dream";
     public static final String EXTRA_CROP = "crop";
 
     public static final String ACTION_REVIEW = "com.android.camera.action.REVIEW";
@@ -145,6 +146,9 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
             data.putString(SlideshowPage.KEY_SET_PATH, path.toString());
             data.putBoolean(SlideshowPage.KEY_RANDOM_ORDER, true);
             data.putBoolean(SlideshowPage.KEY_REPEAT, true);
+            if (intent.getBooleanExtra(EXTRA_DREAM, false)) {
+                data.putBoolean(SlideshowPage.KEY_DREAM, true);
+            }
             getStateManager().startState(SlideshowPage.class, data);
         } else {
             Bundle data = new Bundle();
