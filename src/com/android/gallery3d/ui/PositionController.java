@@ -218,28 +218,34 @@ class PositionController {
         }
     }
 
-    public void setConstrainedFrame(Rect f) {
-        if (mConstrainedFrame.equals(f)) return;
-        mConstrainedFrame.set(f);
+    public void setConstrainedFrame(Rect cFrame) {
+        if (mConstrainedFrame.equals(cFrame)) return;
+        mConstrainedFrame.set(cFrame);
         mPlatform.updateDefaultXY();
         updateScaleAndGapLimit();
         snapAndRedraw();
     }
 
-    public void setImageSize(int index, int width, int height, boolean force) {
-        if (force) {
-            Box b = mBoxes.get(index);
-            b.mImageW = width;
-            b.mImageH = height;
-            return;
-        }
+    public void forceImageSize(int index, int width, int height) {
+        if (width == 0 || height == 0) return;
+        Box b = mBoxes.get(index);
+        b.mImageW = width;
+        b.mImageH = height;
+        return;
+    }
 
-        if (width == 0 || height == 0) {
-            initBox(index);
-        } else if (!setBoxSize(index, width, height, false)) {
-            return;
-        }
+    public void setImageSize(int index, int width, int height, Rect cFrame) {
+        if (width == 0 || height == 0) return;
 
+        boolean needUpdate = false;
+        if (cFrame != null && !mConstrainedFrame.equals(cFrame)) {
+            mConstrainedFrame.set(cFrame);
+            mPlatform.updateDefaultXY();
+            needUpdate = true;
+        }
+        needUpdate |= setBoxSize(index, width, height, false);
+
+        if (!needUpdate) return;
         updateScaleAndGapLimit();
         snapAndRedraw();
     }
@@ -259,8 +265,15 @@ class PositionController {
         }
 
         // The ratio of the old size and the new size.
-        float ratio = Math.min(
-                (float) b.mImageW / width, (float) b.mImageH / height);
+        //
+        // If the aspect ratio changes, we don't know if it is because one side
+        // grows or the other side shrinks. Currently we just assume the view
+        // angle of the longer side doesn't change (so the aspect ratio change
+        // is because the view angle of the shorter side changes). This matches
+        // what camera preview does.
+        float ratio = (width > height)
+                ? (float) b.mImageW / width
+                : (float) b.mImageH / height;
 
         b.mImageW = width;
         b.mImageH = height;

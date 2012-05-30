@@ -157,7 +157,7 @@ public class PhotoView extends GLView {
     private boolean mFilmMode = false;
     private int mDisplayRotation = 0;
     private int mCompensation = 0;
-    private boolean mFullScreen = true;
+    private boolean mFullScreenCamera;
     private Rect mCameraRelativeFrame = new Rect();
     private Rect mCameraRect = new Rect();
 
@@ -305,19 +305,21 @@ public class PhotoView extends GLView {
             for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
                 Picture p = mPictures.get(i);
                 if (p.isCamera()) {
-                    p.updateSize(true);
+                    p.forceSize();
                 }
             }
         }
 
-        updateConstrainedFrame();
+        updateCameraRect();
+        mPositionController.setConstrainedFrame(mCameraRect);
         if (changeSize) {
             mPositionController.setViewSize(getWidth(), getHeight());
         }
     }
 
-    // Update the constrained frame due to layout change.
-    private void updateConstrainedFrame() {
+    // Update the camera rectangle due to layout change or camera relative frame
+    // change.
+    private void updateCameraRect() {
         // Get the width and height in framework orientation because the given
         // mCameraRelativeFrame is in that coordinates.
         int w = getWidth();
@@ -343,12 +345,15 @@ public class PhotoView extends GLView {
         Log.d(TAG, "compensation = " + mCompensation
                 + ", CameraRelativeFrame = " + mCameraRelativeFrame
                 + ", mCameraRect = " + mCameraRect);
-        mPositionController.setConstrainedFrame(mCameraRect);
     }
 
     public void setCameraRelativeFrame(Rect frame) {
         mCameraRelativeFrame.set(frame);
-        updateConstrainedFrame();
+        updateCameraRect();
+        // Originally we do
+        //     mPositionController.setConstrainedFrame(mCameraRect);
+        // here, but it is moved to a parameter of the setImageSize() call, so
+        // it can be updated atomically with the CameraScreenNail's size change.
     }
 
     // Returns the rotation we need to do to the camera texture before drawing
@@ -371,7 +376,7 @@ public class PhotoView extends GLView {
         void draw(GLCanvas canvas, Rect r);
         void setScreenNail(ScreenNail s);
         boolean isCamera();  // whether the picture is a camera preview
-        void updateSize(boolean force);  // called when mCompensation changes
+        void forceSize();  // called when mCompensation changes
     };
 
     class FullPicture implements Picture {
@@ -381,6 +386,7 @@ public class PhotoView extends GLView {
         private boolean mIsVideo;
         private int mLoadingState = Model.LOADING_INIT;
         private boolean mWasCameraCenter;
+        private int mWidth, mHeight;
 
         public void FullPicture(TileImageView tileView) {
             mTileView = tileView;
@@ -396,11 +402,22 @@ public class PhotoView extends GLView {
             mIsVideo = mModel.isVideo(0);
             mLoadingState = mModel.getLoadingState(0);
             setScreenNail(mModel.getScreenNail(0));
-            updateSize(false);
+            setSize();
+        }
+
+        private void setSize() {
+            updateSize();
+            mPositionController.setImageSize(0, mWidth, mHeight,
+                    mIsCamera ? mCameraRect : null);
         }
 
         @Override
-        public void updateSize(boolean force) {
+        public void forceSize() {
+            updateSize();
+            mPositionController.forceImageSize(0, mWidth, mHeight);
+        }
+
+        private void updateSize() {
             if (mIsPanorama) {
                 mRotation = getPanoramaRotation();
             } else if (mIsCamera) {
@@ -411,25 +428,13 @@ public class PhotoView extends GLView {
 
             int w = mTileView.mImageWidth;
             int h = mTileView.mImageHeight;
-            mPositionController.setImageSize(0,
-                    getRotated(mRotation, w, h),
-                    getRotated(mRotation, h, w),
-                    force);
+            mWidth = getRotated(mRotation, w, h);
+            mHeight = getRotated(mRotation, h, w);
         }
 
         @Override
         public void draw(GLCanvas canvas, Rect r) {
             drawTileView(canvas, r);
-
-            boolean isCenter = mPositionController.isCenter();
-            if (mIsCamera) {
-                boolean full = !mFilmMode && isCenter
-                        && mPositionController.isAtMinimalScale();
-                if (full != mFullScreen) {
-                    mFullScreen = full;
-                    mListener.onFullScreenChanged(full);
-                }
-            }
 
             // We want to have the following transitions:
             // (1) Move camera preview out of its place: switch to film mode
@@ -440,6 +445,7 @@ public class PhotoView extends GLView {
             // Holdings except touch-down prevent the transitions.
             if ((mHolding & ~HOLD_TOUCH_DOWN) != 0) return;
 
+            boolean isCenter = mPositionController.isCenter();
             boolean isCameraCenter = mIsCamera && isCenter;
 
             if (mWasCameraCenter && mIsCamera && !isCenter && !mFilmMode) {
@@ -449,7 +455,7 @@ public class PhotoView extends GLView {
                 setFilmMode(false);
             }
 
-            if (isCenter && !mFilmMode && mIsCamera) {
+            if (isCameraCenter && !mFilmMode) {
                 // Move into camera in page mode, lock
                 mListener.lockOrientation();
             }
@@ -565,6 +571,7 @@ public class PhotoView extends GLView {
         private boolean mIsPanorama;
         private boolean mIsVideo;
         private int mLoadingState = Model.LOADING_INIT;
+        private int mWidth, mHeight;
 
         public ScreenNailPicture(int index) {
             mIndex = index;
@@ -593,11 +600,6 @@ public class PhotoView extends GLView {
                     r.top >= getHeight() || r.bottom <= 0) {
                 mScreenNail.noDraw();
                 return;
-            }
-
-            if (mIsCamera && mFullScreen != false) {
-                mFullScreen = false;
-                mListener.onFullScreenChanged(false);
             }
 
             float filmRatio = mPositionController.getFilmRatio();
@@ -646,11 +648,21 @@ public class PhotoView extends GLView {
         public void setScreenNail(ScreenNail s) {
             if (mScreenNail == s) return;
             mScreenNail = s;
-            updateSize(false);
+            setSize();
+        }
+
+        private void setSize() {
+            updateSize();
+            mPositionController.setImageSize(mIndex, mWidth, mHeight, null);
         }
 
         @Override
-        public void updateSize(boolean force) {
+        public void forceSize() {
+            updateSize();
+            mPositionController.forceImageSize(mIndex, mWidth, mHeight);
+        }
+
+        private void updateSize() {
             if (mIsPanorama) {
                 mRotation = getPanoramaRotation();
             } else if (mIsCamera) {
@@ -671,12 +683,8 @@ public class PhotoView extends GLView {
                 h = mSize.height;
             }
 
-            if (w != 0 && h != 0)  {
-                mPositionController.setImageSize(mIndex,
-                        getRotated(mRotation, w, h),
-                        getRotated(mRotation, h, w),
-                        force);
-            }
+            mWidth = getRotated(mRotation, w, h);
+            mHeight = getRotated(mRotation, h, w);
         }
 
         @Override
@@ -956,12 +964,32 @@ public class PhotoView extends GLView {
 
     @Override
     protected void render(GLCanvas canvas) {
-        // In page mode, we draw only one previous/next photo. But if we are
-        // doing capture animation, we want to draw all photos.
-        boolean inPageMode = (mPositionController.getFilmRatio() == 0f);
-        boolean inCaptureAnimation = ((mHolding & HOLD_CAPTURE_ANIMATION) != 0);
-        boolean drawOneNeighborOnly = inPageMode && !inCaptureAnimation;
-        int neighbors = drawOneNeighborOnly ? 1 : SCREEN_NAIL_MAX;
+        // Check if the camera preview occupies the full screen.
+        boolean full = !mFilmMode && mPictures.get(0).isCamera()
+                && mPositionController.isCenter()
+                && mPositionController.isAtMinimalScale();
+        if (full != mFullScreenCamera) {
+            mFullScreenCamera = full;
+            mListener.onFullScreenChanged(full);
+        }
+
+        // Determine how many photos we need to draw in addition to the center
+        // one.
+        int neighbors;
+        if (mFullScreenCamera) {
+            neighbors = 0;
+        } else {
+            // In page mode, we draw only one previous/next photo. But if we are
+            // doing capture animation, we want to draw all photos.
+            boolean inPageMode = (mPositionController.getFilmRatio() == 0f);
+            boolean inCaptureAnimation =
+                    ((mHolding & HOLD_CAPTURE_ANIMATION) != 0);
+            if (inPageMode && !inCaptureAnimation) {
+                neighbors = 1;
+            } else {
+                neighbors = SCREEN_NAIL_MAX;
+            }
+        }
 
         // Draw photos from back to front
         for (int i = neighbors; i >= -neighbors; i--) {
