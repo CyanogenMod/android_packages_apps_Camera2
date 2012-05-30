@@ -213,8 +213,7 @@ class PositionController {
         // If we have the opening animation, do it. Otherwise go directly to the
         // right position.
         if (!startOpeningAnimationIfNeeded()) {
-            snapAndRedraw();
-            skipAnimation();
+            skipToFinalPosition();
         }
     }
 
@@ -419,6 +418,12 @@ class PositionController {
 
     public void snapback() {
         snapAndRedraw();
+    }
+
+    public void skipToFinalPosition() {
+        stopAnimation();
+        snapAndRedraw();
+        skipAnimation();
     }
 
     ////////////////////////////////////////////////////////////////////////////
