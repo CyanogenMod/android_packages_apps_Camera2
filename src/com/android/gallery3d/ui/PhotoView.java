@@ -1203,7 +1203,7 @@ public class PhotoView extends GLView {
             // animation.
             if (mModel.getCurrentIndex() > SCREEN_NAIL_MAX) {
                 switchToFirstImage();
-                mPositionController.skipAnimation();
+                mPositionController.skipToFinalPosition();
                 return true;
             }
 
