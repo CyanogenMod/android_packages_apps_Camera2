@@ -200,6 +200,8 @@ class PositionController {
     public void setViewSize(int viewW, int viewH) {
         if (viewW == mViewW && viewH == mViewH) return;
 
+        boolean wasMinimal = isAtMinimalScale();
+
         mViewW = viewW;
         mViewH = viewH;
         initPlatform();
@@ -209,6 +211,13 @@ class PositionController {
         }
 
         updateScaleAndGapLimit();
+
+        // If the focused box was at minimal scale, we try to make it the
+        // minimal scale under the new view size.
+        if (wasMinimal) {
+            Box b = mBoxes.get(0);
+            b.mCurrentScale = b.mScaleMin;
+        }
 
         // If we have the opening animation, do it. Otherwise go directly to the
         // right position.
