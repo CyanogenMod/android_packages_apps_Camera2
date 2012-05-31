@@ -490,7 +490,7 @@ class PositionController {
         //
         // (focusX' - currentX') / scale' = (focusX - currentX) / scale
         //
-        s *= getTargetScale(b);
+        s = b.clampScale(s * getTargetScale(b));
         int x = mFilmMode ? p.mCurrentX : (int) (focusX - s * mFocusX + 0.5f);
         int y = mFilmMode ? b.mCurrentY : (int) (focusY - s * mFocusY + 0.5f);
         startAnimation(x, y, s, ANIM_KIND_SCALE);
@@ -531,8 +531,20 @@ class PositionController {
         Box b = mBoxes.get(0);
         Platform p = mPlatform;
 
-        int x = getTargetX(p) + (int) (dx + 0.5f);
-        int y = getTargetY(b) + (int) (dy + 0.5f);
+        // Only allow scrolling when we are not currently in an animation or we
+        // are in some animation with can be interrupted.
+        if (b.mAnimationStartTime != NO_ANIMATION) {
+            switch (b.mAnimationKind) {
+                case ANIM_KIND_SCROLL:
+                case ANIM_KIND_FLING:
+                    break;
+                default:
+                    return;
+            }
+        }
+
+        int x = p.mCurrentX + (int) (dx + 0.5f);
+        int y = b.mCurrentY + (int) (dy + 0.5f);
 
         if (mFilmMode) {
             scrollToFilm(x, y);
@@ -1193,21 +1205,8 @@ class PositionController {
     }
 
     private float getTargetScale(Box b) {
-        return useCurrentValueAsTarget(b) ? b.mCurrentScale : b.mToScale;
-    }
-
-    private int getTargetX(Platform p) {
-        return useCurrentValueAsTarget(p) ? p.mCurrentX : p.mToX;
-    }
-
-    private int getTargetY(Box b) {
-        return useCurrentValueAsTarget(b) ? b.mCurrentY : b.mToY;
-    }
-
-    private boolean useCurrentValueAsTarget(Animatable a) {
-        return a.mAnimationStartTime == NO_ANIMATION ||
-                a.mAnimationKind == ANIM_KIND_SNAPBACK ||
-                a.mAnimationKind == ANIM_KIND_FLING;
+        return b.mAnimationStartTime == NO_ANIMATION
+                ? b.mCurrentScale : b.mToScale;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -1295,6 +1294,7 @@ class PositionController {
             if (mAnimationStartTime != NO_ANIMATION) return false;
             if (mAnimationKind == ANIM_KIND_SCROLL
                     && mListener.isHolding()) return false;
+            if (mInScale) return false;
 
             Box b = mBoxes.get(0);
             float scaleMin = mExtraScalingRange ?
@@ -1310,6 +1310,19 @@ class PositionController {
                 if (!mHasPrev) x = Math.min(x, defaultX);
             } else {
                 calculateStableBound(scale, HORIZONTAL_SLACK);
+                // If the picture is zoomed-in, we want to keep the focus point
+                // stay in the same position on screen, so we need to adjust
+                // target mCurrentX (which is the center of the focused
+                // box). The position of the focus point on screen (relative the
+                // the center of the view) is:
+                //
+                // mCurrentX + scale * mFocusX = mCurrentX' + scale' * mFocusX
+                // => mCurrentX' = mCurrentX + (scale - scale') * mFocusX
+                //
+                if (!viewWiderThanScaledImage(scale)) {
+                    float scaleDiff = b.mCurrentScale - scale;
+                    x += (int) (mFocusX * scaleDiff + 0.5f);
+                }
                 x = Utils.clamp(x, mBoundLeft, mBoundRight);
             }
             if (mCurrentX != x || mCurrentY != y) {
@@ -1459,7 +1472,7 @@ class PositionController {
                     && mListener.isHolding()) return false;
             if (mInScale && this == mBoxes.get(0)) return false;
 
-            int y;
+            int y = mCurrentY;
             float scale;
 
             if (this == mBoxes.get(0)) {
@@ -1472,7 +1485,14 @@ class PositionController {
                     y = 0;
                 } else {
                     calculateStableBound(scale, HORIZONTAL_SLACK);
-                    y = Utils.clamp(mCurrentY, mBoundTop, mBoundBottom);
+                    // If the picture is zoomed-in, we want to keep the focus
+                    // point stay in the same position on screen. See the
+                    // comment in Platform.startSnapback for details.
+                    if (!viewTallerThanScaledImage(scale)) {
+                        float scaleDiff = mCurrentScale - scale;
+                        y += (int) (mFocusY * scaleDiff + 0.5f);
+                    }
+                    y = Utils.clamp(y, mBoundTop, mBoundBottom);
                 }
             } else {
                 y = 0;
@@ -1486,9 +1506,7 @@ class PositionController {
         }
 
         private boolean doAnimation(int targetY, float targetScale, int kind) {
-            targetScale = Utils.clamp(targetScale,
-                    SCALE_MIN_EXTRA * mScaleMin,
-                    SCALE_MAX_EXTRA * mScaleMax);
+            targetScale = clampScale(targetScale);
 
             // If the scaled height is smaller than the view height, force it to be
             // in the center.  (We do this for height only, not width, because the
@@ -1512,6 +1530,13 @@ class PositionController {
             mAnimationDuration = ANIM_TIME[kind];
             advanceAnimation();
             return true;
+        }
+
+        // Clamps the input scale to the range that doAnimation() can reach.
+        public float clampScale(float s) {
+            return Utils.clamp(s,
+                    SCALE_MIN_EXTRA * mScaleMin,
+                    SCALE_MAX_EXTRA * mScaleMax);
         }
 
         @Override
