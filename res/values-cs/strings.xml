@@ -44,8 +44,7 @@
     <string name="select_album" msgid="1557063764849434077">"Vybrat album"</string>
     <string name="select_group" msgid="6744208543323307114">"Vybrat skupinu"</string>
     <string name="set_image" msgid="2331476809308010401">"Nastavit fotografii jako"</string>
-    <!-- no translation found for set_wallpaper (8491121226190175017) -->
-    <skip />
+    <string name="set_wallpaper" msgid="8491121226190175017">"Nastavit tapetu"</string>
     <string name="wallpaper" msgid="140165383777262070">"Nastavování tapety..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Tapeta"</string>
     <string name="delete" msgid="2839695998251824487">"Smazat"</string>
@@ -126,9 +125,9 @@
     <string name="model" msgid="8240207064064337366">"Model"</string>
     <string name="flash" msgid="2816779031261147723">"Blesk"</string>
     <string name="aperture" msgid="5920657630303915195">"Clona"</string>
-    <string name="focal_length" msgid="1291383769749877010">"Ohnisk. vzdál."</string>
+    <string name="focal_length" msgid="1291383769749877010">"Ohnisk. vzdálenost"</string>
     <string name="white_balance" msgid="1582509289994216078">"Vyvážení bílé"</string>
-    <string name="exposure_time" msgid="3990163680281058826">"Doba expozice"</string>
+    <string name="exposure_time" msgid="3990163680281058826">"Expoziční čas"</string>
     <string name="iso" msgid="5028296664327335940">"ISO"</string>
     <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
     <string name="manual" msgid="6608905477477607865">"Ručně"</string>
