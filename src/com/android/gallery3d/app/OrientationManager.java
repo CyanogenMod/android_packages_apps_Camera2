@@ -17,9 +17,11 @@
 package com.android.gallery3d.app;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.provider.Settings;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.ViewConfiguration;
@@ -51,6 +53,10 @@ public class OrientationManager implements OrientationSource {
     // components should be rotated 90 degrees counter-clockwise.
     private int mOrientationCompensation = 0;
 
+    // This is true if "Settings -> Display -> Rotation Lock" is checked. We
+    // don't allow the orientation to be unlocked if the value is true.
+    private boolean mRotationLockedSetting = false;
+
     public OrientationManager(Activity activity) {
         mActivity = activity;
         mListeners = new ArrayList<Listener>();
@@ -58,6 +64,9 @@ public class OrientationManager implements OrientationSource {
     }
 
     public void resume() {
+        ContentResolver resolver = mActivity.getContentResolver();
+        mRotationLockedSetting = Settings.System.getInt(
+                resolver, Settings.System.ACCELEROMETER_ROTATION, 0) != 1;
         mOrientationListener.enable();
     }
 
@@ -105,14 +114,11 @@ public class OrientationManager implements OrientationSource {
     // rotates.
     public void unlockOrientation() {
         if (!mOrientationLocked) return;
+        if (mRotationLockedSetting) return;
         mOrientationLocked = false;
         Log.d(TAG, "unlock orientation");
         mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         disableCompensation();
-    }
-
-    public boolean isOrientationLocked() {
-        return mOrientationLocked;
     }
 
     // Calculate the compensation value and send it to listeners.
