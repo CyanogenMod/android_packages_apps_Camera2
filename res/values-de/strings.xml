@@ -44,8 +44,7 @@
     <string name="select_album" msgid="1557063764849434077">"Album auswählen"</string>
     <string name="select_group" msgid="6744208543323307114">"Gruppe auswählen"</string>
     <string name="set_image" msgid="2331476809308010401">"Bild festlegen als"</string>
-    <!-- no translation found for set_wallpaper (8491121226190175017) -->
-    <skip />
+    <string name="set_wallpaper" msgid="8491121226190175017">"Hintergrund wählen"</string>
     <string name="wallpaper" msgid="140165383777262070">"Hintergrund wird festgelegt..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Hintergrund"</string>
     <string name="delete" msgid="2839695998251824487">"Löschen"</string>
