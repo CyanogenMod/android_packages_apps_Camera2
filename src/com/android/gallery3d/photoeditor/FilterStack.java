@@ -118,6 +118,7 @@ public class FilterStack {
                 reallocateBuffer(out);
             }
             appliedStack.get(filterIndex).process(input, buffers[out]);
+            nativeEglSetFenceAndWait();
             return buffers[out];
         }
         return null;
@@ -275,4 +276,10 @@ public class FilterStack {
         photoView.onResume();
         paused = false;
     }
+
+    static {
+        System.loadLibrary("jni_eglfence");
+    }
+
+    private native void nativeEglSetFenceAndWait();
 }
