@@ -135,7 +135,7 @@
     <string name="flash_on" msgid="7891556231891837284">"S bleskem"</string>
     <string name="flash_off" msgid="1445443413822680010">"Bez blesku"</string>
   <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="2171596356101611086">"Zpřístupnění alba offline."</item>
+    <item quantity="one" msgid="2171596356101611086">"Zpřístupňování alba offline"</item>
     <item quantity="other" msgid="4948604338155959389">"Zpřístupnění alb offline"</item>
   </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Tato položka je uložena v místním úložišti a je k dispozici offline."</string>
