@@ -584,6 +584,7 @@ public class PhotoView extends GLView {
             mIsVideo = mModel.isVideo(mIndex);
             mLoadingState = mModel.getLoadingState(mIndex);
             setScreenNail(mModel.getScreenNail(mIndex));
+            setSize();
         }
 
         @Override
@@ -646,9 +647,7 @@ public class PhotoView extends GLView {
 
         @Override
         public void setScreenNail(ScreenNail s) {
-            if (mScreenNail == s) return;
             mScreenNail = s;
-            setSize();
         }
 
         private void setSize() {
