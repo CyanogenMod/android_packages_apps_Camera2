@@ -18,9 +18,9 @@ package com.android.gallery3d.app;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Display;
 
 /**
  * Wallpaper picker for the gallery application. This just redirects to the
@@ -78,9 +78,10 @@ public class Wallpaper extends Activity {
             case STATE_PHOTO_PICKED: {
                 int width = getWallpaperDesiredMinimumWidth();
                 int height = getWallpaperDesiredMinimumHeight();
-                Display display = getWindowManager().getDefaultDisplay();
-                float spotlightX = (float) display.getWidth() / width;
-                float spotlightY = (float) display.getHeight() / height;
+                Point size = new Point();
+                getWindowManager().getDefaultDisplay().getSize(size);
+                float spotlightX = (float) size.x / width;
+                float spotlightY = (float) size.y / height;
                 Intent request = new Intent(CropImage.ACTION_CROP)
                         .setDataAndType(mPickedItem, IMAGE_TYPE)
                         .addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT)
@@ -91,6 +92,7 @@ public class Wallpaper extends Activity {
                         .putExtra(CropImage.KEY_SPOTLIGHT_X, spotlightX)
                         .putExtra(CropImage.KEY_SPOTLIGHT_Y, spotlightY)
                         .putExtra(CropImage.KEY_SCALE, true)
+                        .putExtra(CropImage.KEY_SCALE_UP_IF_NEEDED, true)
                         .putExtra(CropImage.KEY_NO_FACE_DETECTION, true)
                         .putExtra(CropImage.KEY_SET_AS_WALLPAPER, true);
                 startActivity(request);
