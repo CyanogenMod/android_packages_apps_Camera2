@@ -612,8 +612,14 @@ public class CropImage extends AbstractGalleryActivity {
             int sample = BitmapUtils.computeSampleSizeLarger(
                     Math.max(scaleX, scaleY));
             options.inSampleSize = sample;
+
+            // The decoding result is what we want if
+            //   1. The size of the decoded bitmap match the destination's size
+            //   2. The destination covers the whole output bitmap
+            //   3. No rotation
             if ((rect.width() / sample) == dest.width()
                     && (rect.height() / sample) == dest.height()
+                    && (outputX == dest.width()) && (outputY == dest.height())
                     && rotation == 0) {
                 // To prevent concurrent access in GLThread
                 synchronized (mRegionDecoder) {
