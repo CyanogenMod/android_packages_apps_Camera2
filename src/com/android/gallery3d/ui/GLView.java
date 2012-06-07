@@ -50,6 +50,10 @@ public class GLView {
     private static final int FLAG_SET_MEASURED_SIZE = 2;
     private static final int FLAG_LAYOUT_REQUESTED = 4;
 
+    public interface OnClickListener {
+        void onClick(GLView v);
+    }
+
     protected final Rect mBounds = new Rect();
     protected final Rect mPaddings = new Rect();
 

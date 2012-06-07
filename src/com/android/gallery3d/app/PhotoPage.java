@@ -39,11 +39,12 @@ import android.widget.Toast;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
+import com.android.gallery3d.data.FilterDeleteSet;
 import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
-import com.android.gallery3d.data.MtpDevice;
+import com.android.gallery3d.data.MtpSource;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.data.SnailAlbum;
 import com.android.gallery3d.data.SnailItem;
@@ -106,7 +107,7 @@ public class PhotoPage extends ActivityState implements
 
     // mMediaSet could be null if there is no KEY_MEDIA_SET_PATH supplied.
     // E.g., viewing a photo in gmail attachment
-    private MediaSet mMediaSet;
+    private FilterDeleteSet mMediaSet;
     private Menu mMenu;
 
     private int mCurrentIndex = 0;
@@ -129,6 +130,10 @@ public class PhotoPage extends ActivityState implements
     private OrientationManager mOrientationManager;
     private boolean mHasActivityResult;
     private boolean mTreatBackAsUp;
+
+    // The item that is deleted (but it can still be undeleted before commiting)
+    private Path mDeletePath;
+    private boolean mDeleteIsFocus;  // whether the deleted item was in focus
 
     private NfcAdapter mNfcAdapter;
 
@@ -213,7 +218,9 @@ public class PhotoPage extends ActivityState implements
                 mShowBars = false;
             }
 
-            mMediaSet = mActivity.getDataManager().getMediaSet(mSetPathString);
+            mSetPathString = "/filter/delete/{" + mSetPathString + "}";
+            mMediaSet = (FilterDeleteSet) mActivity.getDataManager()
+                    .getMediaSet(mSetPathString);
             mSelectionManager.setSourceMediaSet(mMediaSet);
             mCurrentIndex = data.getInt(KEY_INDEX_HINT, 0);
             if (mMediaSet == null) {
@@ -369,7 +376,7 @@ public class PhotoPage extends ActivityState implements
         if (mCurrentPhoto.getMediaType() != MediaObject.MEDIA_TYPE_IMAGE) {
             return false;
         }
-        if (mMediaSet instanceof MtpDevice) {
+        if (MtpSource.isMtpPath(mOriginalSetPathString)) {
             return false;
         }
         return true;
@@ -702,6 +709,46 @@ public class PhotoPage extends ActivityState implements
         m.sendToTarget();
     }
 
+    // How we do delete/undo:
+    //
+    // When the user choose to delete a media item, we just tell the
+    // FilterDeleteSet to hide that item. If the user choose to undo it, we
+    // again tell FilterDeleteSet not to hide it. If the user choose to commit
+    // the deletion, we then actually delete the media item.
+    @Override
+    public void onDeleteImage(Path path, int offset) {
+        commitDeletion();  // commit the previous deletion
+        mDeletePath = path;
+        mDeleteIsFocus = (offset == 0);
+        mMediaSet.setDeletion(path, mCurrentIndex + offset);
+        mPhotoView.showUndoButton(true);
+    }
+
+    @Override
+    public void onUndoDeleteImage() {
+        // If the deletion was done on the focused item, we want the model to
+        // focus on it when it is undeleted.
+        if (mDeleteIsFocus) mModel.setFocusHintPath(mDeletePath);
+        mMediaSet.setDeletion(null, 0);
+        mDeletePath = null;
+        mPhotoView.showUndoButton(false);
+    }
+
+    @Override
+    public void onCommitDeleteImage() {
+        if (mDeletePath == null) return;
+        commitDeletion();
+        mPhotoView.showUndoButton(false);
+    }
+
+    private void commitDeletion() {
+        if (mDeletePath == null) return;
+        mSelectionManager.deSelectAll();
+        mSelectionManager.toggle(mDeletePath);
+        mMenuExecutor.onMenuClicked(R.id.action_delete, null, true, false);
+        mDeletePath = null;
+    }
+
     public static void playVideo(Activity activity, Uri uri, String title) {
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW)
@@ -808,6 +855,7 @@ public class PhotoPage extends ActivityState implements
         mHandler.removeMessages(MSG_HIDE_BARS);
         mActionBar.removeOnMenuVisibilityListener(mMenuVisibilityListener);
 
+        onCommitDeleteImage();
         mMenuExecutor.pause();
     }
 
