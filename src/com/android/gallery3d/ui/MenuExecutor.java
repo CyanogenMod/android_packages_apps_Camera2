@@ -58,12 +58,14 @@ public class MenuExecutor {
 
     private ProgressDialog mDialog;
     private Future<?> mTask;
+    // wait the operation to finish when we want to stop it.
+    private boolean mWaitOnStop;
 
     private final GalleryActivity mActivity;
     private final SelectionManager mSelectionManager;
     private final Handler mHandler;
 
-    private static ProgressDialog showProgressDialog(
+    private static ProgressDialog createProgressDialog(
             Context context, int titleId, int progressMax) {
         ProgressDialog dialog = new ProgressDialog(context);
         dialog.setTitle(titleId);
@@ -73,7 +75,6 @@ public class MenuExecutor {
         if (progressMax > 1) {
             dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         }
-        dialog.show();
         return dialog;
     }
 
@@ -120,7 +121,7 @@ public class MenuExecutor {
 
     private void stopTaskAndDismissDialog() {
         if (mTask != null) {
-            mTask.cancel();
+            if (!mWaitOnStop) mTask.cancel();
             mTask.waitDone();
             mDialog.dismiss();
             mDialog = null;
@@ -185,6 +186,11 @@ public class MenuExecutor {
     }
 
     private void onMenuClicked(int action, ProgressListener listener) {
+        onMenuClicked(action, listener, false, true);
+    }
+
+    public void onMenuClicked(int action, ProgressListener listener,
+            boolean waitOnStop, boolean showDialog) {
         int title;
         switch (action) {
             case R.id.action_select_all:
@@ -232,7 +238,7 @@ public class MenuExecutor {
             default:
                 return;
         }
-        startAction(action, title, listener);
+        startAction(action, title, listener, waitOnStop, showDialog);
     }
 
     private class ConfirmDialogListener implements OnClickListener, OnCancelListener {
@@ -285,13 +291,22 @@ public class MenuExecutor {
     }
 
     public void startAction(int action, int title, ProgressListener listener) {
+        startAction(action, title, listener, false, true);
+    }
+
+    public void startAction(int action, int title, ProgressListener listener,
+            boolean waitOnStop, boolean showDialog) {
         ArrayList<Path> ids = mSelectionManager.getSelected(false);
         stopTaskAndDismissDialog();
 
         Activity activity = (Activity) mActivity;
-        mDialog = showProgressDialog(activity, title, ids.size());
+        mDialog = createProgressDialog(activity, title, ids.size());
+        if (showDialog) {
+            mDialog.show();
+        }
         MediaOperation operation = new MediaOperation(action, ids, listener);
         mTask = mActivity.getThreadPool().submit(operation, null);
+        mWaitOnStop = waitOnStop;
     }
 
     public static String getMimeType(int type) {
@@ -358,7 +373,8 @@ public class MenuExecutor {
         private final int mOperation;
         private final ProgressListener mListener;
 
-        public MediaOperation(int operation, ArrayList<Path> items, ProgressListener listener) {
+        public MediaOperation(int operation, ArrayList<Path> items,
+                ProgressListener listener) {
             mOperation = operation;
             mItems = items;
             mListener = listener;
