@@ -142,7 +142,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
                 }
             };
             mAlertDialog = new AlertDialog.Builder(this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setIconAttribute(android.R.attr.alertDialogIcon)
                     .setTitle("No Storage")
                     .setMessage("No external storage available.")
                     .setNegativeButton(android.R.string.cancel, onClick)
