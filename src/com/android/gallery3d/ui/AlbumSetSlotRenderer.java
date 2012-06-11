@@ -170,12 +170,7 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
 
     protected int renderLabel(
             GLCanvas canvas, AlbumSetEntry entry, int width, int height) {
-        // We show the loading message only when the album is still loading
-        // (Not when we are still preparing the label)
         Texture content = checkTexture(entry.labelTexture);
-        if (entry.album == null) {
-            content = mDataWindow.getLoadingTexture();
-        }
         if (content != null) {
             int b = AlbumLabelMaker.getBorderSize();
             int h = content.getHeight();
