@@ -17,6 +17,7 @@
 package com.android.gallery3d.photoeditor.filters;
 
 import android.media.effect.Effect;
+import android.media.effect.EffectFactory;
 
 import com.android.gallery3d.photoeditor.Photo;
 
@@ -27,10 +28,21 @@ public class FaceliftFilter extends AbstractScaleFilter {
 
     public static final Creator<FaceliftFilter> CREATOR = creatorOf(FaceliftFilter.class);
 
+    private static final String EFFECT_FACELIFT = "com.google.android.media.effect.effects.FaceliftEffect";
+
     @Override
     public void process(Photo src, Photo dst) {
-        Effect effect = getEffect("com.google.android.media.effect.effects.FaceliftEffect");
+        Effect effect = getEffect(EFFECT_FACELIFT);
         effect.setParameter("blend", scale);
         effect.apply(src.texture(), src.width(), src.height(), dst.texture());
+    }
+
+    /**
+     * Checks if the effect is present in the system.
+     *
+     * @return boolean true if an effect is present in the system and can be loaded
+     */
+    public static boolean isPresent() {
+        return EffectFactory.isEffectSupported(EFFECT_FACELIFT);
     }
 }
