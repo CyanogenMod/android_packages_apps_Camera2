@@ -105,7 +105,7 @@
     <string name="crop_saved" msgid="1595985909779105158">"የተከረከመ ምስል <xliff:g id="FOLDER_NAME">%s</xliff:g> ላይ ተቀምጧል።"</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"ምንም አልበሞች አልተገኙም::"</string>
     <string name="empty_album" msgid="4542880442593595494">"O ምስሎች/ ቪዲዮዎች ማግኘት ይቻላል::"</string>
-    <string name="picasa_posts" msgid="1497721615718760613">"ልኡክ ጽሁፎች"</string>
+    <string name="picasa_posts" msgid="1497721615718760613">"ልጥፎች"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"ከመስመር ውጪ እንዲገኝአድርግ"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"አድስ"</string>
     <string name="done" msgid="217672440064436595">"ተከናውኗል"</string>
