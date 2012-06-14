@@ -52,4 +52,9 @@ public class FaceTanAction extends EffectAction {
         filter.setScale(DEFAULT_SCALE);
         notifyChanged(filter);
     }
+
+    @Override
+    public boolean isPresent() {
+        return FaceTanFilter.isPresent();
+    }
 }
