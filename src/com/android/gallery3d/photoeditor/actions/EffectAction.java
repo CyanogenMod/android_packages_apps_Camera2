@@ -149,6 +149,15 @@ public abstract class EffectAction extends LinearLayout {
     protected abstract void doEnd();
 
     /**
+     * Checks if the action effect is present in the system.
+     *
+     * @return boolean true if an action effect is present in the system and can be loaded
+     */
+    public boolean isPresent() {
+        return true;
+    }
+
+    /**
      * Done callback for executing top filter changes.
      */
     private class FilterChangedCallback implements OnDoneCallback {
