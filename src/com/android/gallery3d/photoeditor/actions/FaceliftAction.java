@@ -52,4 +52,9 @@ public class FaceliftAction extends EffectAction {
         filter.setScale(DEFAULT_SCALE);
         notifyChanged(filter);
     }
+
+    @Override
+    public boolean isPresent() {
+        return FaceliftFilter.isPresent();
+    }
 }
