@@ -71,8 +71,13 @@ public class EffectsBar extends LinearLayout {
         effectsGallery = inflater.inflate(R.layout.photoeditor_effects_gallery, this, false);
         ViewGroup scrollView = (ViewGroup) effectsGallery.findViewById(R.id.scroll_view);
         ViewGroup effects = (ViewGroup) inflater.inflate(effectsId, scrollView, false);
-        for (int i = 0; i < effects.getChildCount(); i++) {
-            setupEffect((EffectAction) effects.getChildAt(i));
+        for (int i = effects.getChildCount()-1; i >= 0; i--) {
+            EffectAction effect = (EffectAction) effects.getChildAt(i);
+            if( !effect.isPresent() ){
+                effects.removeViewAt(i);
+                continue;
+            }
+            setupEffect(effect);
         }
         scrollView.addView(effects);
         scrollView.scrollTo(0, 0);
