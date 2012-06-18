@@ -62,7 +62,7 @@ class PositionController {
     // (always 1).
     private static final int ANIM_TIME[] = {
         0,    // ANIM_KIND_SCROLL
-        50,   // ANIM_KIND_SCALE
+        0,    // ANIM_KIND_SCALE
         SNAPBACK_ANIMATION_TIME,  // ANIM_KIND_SNAPBACK
         400,  // ANIM_KIND_SLIDE
         300,  // ANIM_KIND_ZOOM
