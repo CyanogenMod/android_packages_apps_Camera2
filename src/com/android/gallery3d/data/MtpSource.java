@@ -18,7 +18,7 @@ package com.android.gallery3d.data;
 
 import com.android.gallery3d.app.GalleryApp;
 
-class MtpSource extends MediaSource {
+public class MtpSource extends MediaSource {
     private static final String TAG = "MtpSource";
 
     private static final int MTP_DEVICESET = 0;
@@ -67,5 +67,9 @@ class MtpSource extends MediaSource {
     @Override
     public void resume() {
         mMtpContext.resume();
+    }
+
+    public static boolean isMtpPath(String s) {
+        return s != null && Path.fromString(s).getPrefix().equals("mtp");
     }
 }
