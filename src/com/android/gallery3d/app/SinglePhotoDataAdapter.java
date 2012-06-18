@@ -206,6 +206,11 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
     }
 
     @Override
+    public boolean isDeletable(int offset) {
+        return (mItem.getSupportedOperations() & MediaItem.SUPPORT_DELETE) != 0;
+    }
+
+    @Override
     public MediaItem getMediaItem(int offset) {
         return offset == 0 ? mItem : null;
     }
@@ -217,6 +222,16 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
 
     @Override
     public void setCurrentPhoto(Path path, int indexHint) {
+        // ignore
+    }
+
+    @Override
+    public void setFocusHintDirection(int direction) {
+        // ignore
+    }
+
+    @Override
+    public void setFocusHintPath(Path path) {
         // ignore
     }
 

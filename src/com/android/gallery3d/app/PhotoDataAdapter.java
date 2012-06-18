@@ -152,6 +152,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     private boolean mIsPanorama;
     private boolean mIsActive;
     private boolean mNeedFullImage;
+    private int mFocusHintDirection = FOCUS_HINT_NEXT;
+    private Path mFocusHintPath = null;
 
     public interface DataListener extends LoadingListener {
         public void onPhotoChanged(int index, Path item);
@@ -414,8 +416,9 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         ImageEntry entry = mImageCache.get(item.getPath());
         if (entry == null) return null;
 
-        // Create a default ScreenNail if the real one is not available yet.
-        if (entry.screenNail == null) {
+        // Create a default ScreenNail if the real one is not available yet,
+        // except for camera that a black screen is better than a gray tile.
+        if (entry.screenNail == null && !isCamera(offset)) {
             entry.screenNail = newPlaceholderScreenNail(item);
             if (offset == 0) updateTileProvider(entry);
         }
@@ -466,6 +469,14 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     }
 
     @Override
+    public boolean isDeletable(int offset) {
+        MediaItem item = getItem(mCurrentIndex + offset);
+        return (item == null)
+                ? false
+                : (item.getSupportedOperations() & MediaItem.SUPPORT_DELETE) != 0;
+    }
+
+    @Override
     public int getLoadingState(int offset) {
         ImageEntry entry = mImageCache.get(getPath(mCurrentIndex + offset));
         if (entry == null) return LOADING_INIT;
@@ -475,7 +486,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     }
 
     public ScreenNail getScreenNail() {
-        return mTileProvider.getScreenNail();
+        return getScreenNail(0);
     }
 
     public int getImageHeight() {
@@ -524,6 +535,14 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         if (item != null && item.getPath() != path) {
             if (mReloadTask != null) mReloadTask.notifyDirty();
         }
+    }
+
+    public void setFocusHintDirection(int direction) {
+        mFocusHintDirection = direction;
+    }
+
+    public void setFocusHintPath(Path path) {
+        mFocusHintPath = path;
     }
 
     private void updateTileProvider() {
@@ -902,15 +921,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                 if (mActiveEnd > mSize) mActiveEnd = mSize;
             }
 
-            if (info.indexHint == MediaSet.INDEX_NOT_FOUND) {
-                // The image has been deleted, clear mItemPath, the
-                // mCurrentIndex will be updated in the updateCurrentItem().
-                mItemPath = null;
-                updateCurrentItem();
-            } else {
-                mCurrentIndex = info.indexHint;
-            }
-
+            mCurrentIndex = info.indexHint;
             updateSlidingWindow();
 
             if (info.items != null) {
@@ -922,22 +933,16 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                     if (++dataIndex == DATA_CACHE_SIZE) dataIndex = 0;
                 }
             }
-            if (mItemPath == null) {
-                MediaItem current = mData[mCurrentIndex % DATA_CACHE_SIZE];
-                mItemPath = current == null ? null : current.getPath();
-            }
+
+            // update mItemPath
+            MediaItem current = mData[mCurrentIndex % DATA_CACHE_SIZE];
+            mItemPath = current == null ? null : current.getPath();
+
             updateImageCache();
             updateTileProvider();
             updateImageRequests();
             fireDataChange();
             return null;
-        }
-
-        private void updateCurrentItem() {
-            if (mSize == 0) return;
-            if (mCurrentIndex >= mSize) {
-                mCurrentIndex = mSize - 1;
-            }
         }
     }
 
@@ -973,12 +978,49 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                         info.size = mSource.getMediaItemCount();
                     }
                     if (!info.reloadContent) continue;
-                    info.items =  mSource.getMediaItem(info.contentStart, info.contentEnd);
-                    MediaItem item = findCurrentMediaItem(info);
-                    if (item == null || item.getPath() != info.target) {
-                        info.indexHint = findIndexOfTarget(info);
+                    info.items = mSource.getMediaItem(
+                            info.contentStart, info.contentEnd);
+
+                    int index = MediaSet.INDEX_NOT_FOUND;
+
+                    // First try to focus on the given hint path if there is one.
+                    if (mFocusHintPath != null) {
+                        index = findIndexOfPathInCache(info, mFocusHintPath);
+                        mFocusHintPath = null;
+                    }
+
+                    // Otherwise try to see if the currently focused item can be found.
+                    if (index == MediaSet.INDEX_NOT_FOUND) {
+                        MediaItem item = findCurrentMediaItem(info);
+                        if (item != null && item.getPath() == info.target) {
+                            index = info.indexHint;
+                        } else {
+                            index = findIndexOfTarget(info);
+                        }
+                    }
+
+                    // The image has been deleted. Focus on the next image (keep
+                    // mCurrentIndex unchanged) or the previous image (decrease
+                    // mCurrentIndex by 1). In page mode we want to see the next
+                    // image, so we focus on the next one. In film mode we want the
+                    // later images to shift left to fill the empty space, so we
+                    // focus on the previous image (so it will not move). In any
+                    // case the index needs to be limited to [0, mSize).
+                    if (index == MediaSet.INDEX_NOT_FOUND) {
+                        index = info.indexHint;
+                        if (mFocusHintDirection == FOCUS_HINT_PREVIOUS
+                            && index > 0) {
+                            index--;
+                        }
+                    }
+
+                    // Don't change index if mSize == 0
+                    if (mSize > 0) {
+                        if (index >= mSize) index = mSize - 1;
+                        info.indexHint = index;
                     }
                 }
+
                 executeAndWait(new UpdateContent(info));
             }
         }
@@ -1005,13 +1047,22 @@ public class PhotoDataAdapter implements PhotoPage.Model {
 
             // First, try to find the item in the data just loaded
             if (items != null) {
-                for (int i = 0, n = items.size(); i < n; ++i) {
-                    if (items.get(i).getPath() == info.target) return i + info.contentStart;
-                }
+                int i = findIndexOfPathInCache(info, info.target);
+                if (i != MediaSet.INDEX_NOT_FOUND) return i;
             }
 
             // Not found, find it in mSource.
             return mSource.getIndexOfItem(info.target, info.indexHint);
+        }
+
+        private int findIndexOfPathInCache(UpdateInfo info, Path path) {
+            ArrayList<MediaItem> items = info.items;
+            for (int i = 0, n = items.size(); i < n; ++i) {
+                if (items.get(i).getPath() == path) {
+                    return i + info.contentStart;
+                }
+            }
+            return MediaSet.INDEX_NOT_FOUND;
         }
     }
 }
