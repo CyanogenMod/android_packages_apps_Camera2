@@ -63,8 +63,10 @@ class StringTexture extends CanvasTexture {
         if (isBold) {
             paint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
         }
-        text = TextUtils.ellipsize(
-                text, paint, lengthLimit, TextUtils.TruncateAt.END).toString();
+        if (lengthLimit > 0) {
+            text = TextUtils.ellipsize(
+                    text, paint, lengthLimit, TextUtils.TruncateAt.END).toString();
+        }
         return newInstance(text, paint);
     }
 

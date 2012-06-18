@@ -18,12 +18,10 @@ package com.android.gallery3d.data;
 
 import java.util.ArrayList;
 
-// FilterSet filters a base MediaSet according to a condition. Currently the
-// condition is a matching media type. It can be extended to other conditions
-// if needed.
-public class FilterSet extends MediaSet implements ContentListener {
+// FilterTypeSet filters a base MediaSet according to a matching media type.
+public class FilterTypeSet extends MediaSet implements ContentListener {
     @SuppressWarnings("unused")
-    private static final String TAG = "FilterSet";
+    private static final String TAG = "FilterTypeSet";
 
     private final DataManager mDataManager;
     private final MediaSet mBaseSet;
@@ -31,7 +29,7 @@ public class FilterSet extends MediaSet implements ContentListener {
     private final ArrayList<Path> mPaths = new ArrayList<Path>();
     private final ArrayList<MediaSet> mAlbums = new ArrayList<MediaSet>();
 
-    public FilterSet(Path path, DataManager dataManager, MediaSet baseSet,
+    public FilterTypeSet(Path path, DataManager dataManager, MediaSet baseSet,
             int mediaType) {
         super(path, INVALID_DATA_VERSION);
         mDataManager = dataManager;
