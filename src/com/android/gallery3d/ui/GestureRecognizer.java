@@ -30,12 +30,12 @@ public class GestureRecognizer {
     public interface Listener {
         boolean onSingleTapUp(float x, float y);
         boolean onDoubleTap(float x, float y);
-        boolean onScroll(float dx, float dy);
+        boolean onScroll(float dx, float dy, float totalX, float totalY);
         boolean onFling(float velocityX, float velocityY);
         boolean onScaleBegin(float focusX, float focusY);
         boolean onScale(float focusX, float focusY, float scale);
         void onScaleEnd();
-        void onDown();
+        void onDown(float x, float y);
         void onUp();
     }
 
@@ -86,7 +86,8 @@ public class GestureRecognizer {
         @Override
         public boolean onScroll(
                 MotionEvent e1, MotionEvent e2, float dx, float dy) {
-            return mListener.onScroll(dx, dy);
+            return mListener.onScroll(
+                    dx, dy, e2.getX() - e1.getX(), e2.getY() - e1.getY());
         }
 
         @Override
@@ -119,7 +120,7 @@ public class GestureRecognizer {
     private class MyDownUpListener implements DownUpDetector.DownUpListener {
         @Override
         public void onDown(MotionEvent e) {
-            mListener.onDown();
+            mListener.onDown(e.getX(), e.getY());
         }
 
         @Override

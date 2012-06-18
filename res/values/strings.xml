@@ -108,6 +108,12 @@
     <string name="cancel">Cancel</string>
     <string name="share">Share</string>
 
+    <!-- The label shown after an image is deleted [CHAR LIMIT=16] -->
+    <string name="deleted">Deleted</string>
+
+    <!-- The label on the button which when clicked will undo a deletion of image [CHAR LIMIT=16]-->
+    <string name="undo">UNDO</string>
+
     <!-- String indicating more actions are available -->
     <string name="select_all">Select all</string>
     <string name="deselect_all">Deselect all</string>

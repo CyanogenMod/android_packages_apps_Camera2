@@ -21,6 +21,7 @@ import com.android.gallery3d.app.GalleryApp;
 class FilterSource extends MediaSource {
     private static final String TAG = "FilterSource";
     private static final int FILTER_BY_MEDIATYPE = 0;
+    private static final int FILTER_BY_DELETE = 1;
 
     private GalleryApp mApplication;
     private PathMatcher mMatcher;
@@ -30,21 +31,28 @@ class FilterSource extends MediaSource {
         mApplication = application;
         mMatcher = new PathMatcher();
         mMatcher.add("/filter/mediatype/*/*", FILTER_BY_MEDIATYPE);
+        mMatcher.add("/filter/delete/*", FILTER_BY_DELETE);
     }
 
-    // The name we accept is:
-    // /filter/mediatype/k/{set}
-    // where k is the media type we want.
+    // The name we accept are:
+    // /filter/mediatype/k/{set}    where k is the media type we want.
+    // /filter/delete/{set}
     @Override
     public MediaObject createMediaObject(Path path) {
         int matchType = mMatcher.match(path);
-        int mediaType = mMatcher.getIntVar(0);
-        String setsName = mMatcher.getVar(1);
         DataManager dataManager = mApplication.getDataManager();
-        MediaSet[] sets = dataManager.getMediaSetsFromString(setsName);
         switch (matchType) {
-            case FILTER_BY_MEDIATYPE:
-                return new FilterSet(path, dataManager, sets[0], mediaType);
+            case FILTER_BY_MEDIATYPE: {
+                int mediaType = mMatcher.getIntVar(0);
+                String setsName = mMatcher.getVar(1);
+                MediaSet[] sets = dataManager.getMediaSetsFromString(setsName);
+                return new FilterTypeSet(path, dataManager, sets[0], mediaType);
+            }
+            case FILTER_BY_DELETE: {
+                String setsName = mMatcher.getVar(0);
+                MediaSet[] sets = dataManager.getMediaSetsFromString(setsName);
+                return new FilterDeleteSet(path, sets[0]);
+            }
             default:
                 throw new RuntimeException("bad path: " + path);
         }
