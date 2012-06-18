@@ -885,6 +885,8 @@ public class PhotoView extends GLView {
         private boolean mModeChanged;
         // If this scaling gesture should be ignored.
         private boolean mIgnoreScalingGesture;
+        // If we have seen a scaling gesture.
+        private boolean mSeenScaling;
         // whether the down action happened while the view is scrolling.
         private boolean mDownInScrolling;
         // If we should ignore all gestures other than onSingleTapUp.
@@ -897,6 +899,8 @@ public class PhotoView extends GLView {
         private boolean mFirstScrollX;
         // The accumulated Y delta that has been sent to mPositionController.
         private int mDeltaY;
+        // The accumulated scaling change from a scaling gesture.
+        private float mAccScale;
 
         @Override
         public boolean onSingleTapUp(float x, float y) {
@@ -987,6 +991,7 @@ public class PhotoView extends GLView {
         @Override
         public boolean onFling(float velocityX, float velocityY) {
             if (mIgnoreSwipingGesture) return true;
+            if (mSeenScaling) return true;
             if (swipeImages(velocityX, velocityY)) {
                 mIgnoreUpEvent = true;
             } else {
@@ -1057,6 +1062,8 @@ public class PhotoView extends GLView {
             mCanChangeMode = mFilmMode
                     || mPositionController.isAtMinimalScale();
             mModeChanged = false;
+            mSeenScaling = true;
+            mAccScale = 1f;
             return true;
         }
 
@@ -1067,15 +1074,16 @@ public class PhotoView extends GLView {
             if (mModeChanged) return true;
             if (Float.isNaN(scale) || Float.isInfinite(scale)) return false;
 
-            // We wait for the scale change accumulated to a large enough change
-            // before reacting to it. Otherwise we may mistakenly treat a
-            // zoom-in gesture as zoom-out or vice versa.
-            if (scale > 0.99f && scale < 1.01f) return false;
-
             int outOfRange = mPositionController.scaleBy(scale, focusX, focusY);
 
+            // We wait for a large enough scale change before changing mode.
+            // Otherwise we may mistakenly treat a zoom-in gesture as zoom-out
+            // or vice versa.
+            mAccScale *= scale;
+            boolean largeEnough = (mAccScale < 0.97f || mAccScale > 1.03f);
+
             // If mode changes, we treat this scaling gesture has ended.
-            if (mCanChangeMode) {
+            if (mCanChangeMode && largeEnough) {
                 if ((outOfRange < 0 && !mFilmMode) ||
                         (outOfRange > 0 && mFilmMode)) {
                     stopExtraScalingIfNeeded();
@@ -1129,6 +1137,7 @@ public class PhotoView extends GLView {
         @Override
         public void onDown(float x, float y) {
             mDeltaY = 0;
+            mSeenScaling = false;
             mListener.onCommitDeleteImage();
 
             if (mIgnoreSwipingGesture) return;
