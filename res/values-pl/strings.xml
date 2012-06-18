@@ -55,6 +55,10 @@
     <string name="confirm" msgid="8646870096527848520">"Potwierdź"</string>
     <string name="cancel" msgid="3637516880917356226">"Anuluj"</string>
     <string name="share" msgid="3619042788254195341">"Udostępnij"</string>
+    <!-- no translation found for deleted (6795433049119073871) -->
+    <skip />
+    <!-- no translation found for undo (2930873956446586313) -->
+    <skip />
     <string name="select_all" msgid="3403283025220282175">"Zaznacz wszystkie"</string>
     <string name="deselect_all" msgid="5758897506061723684">"Usuń zaznaczenie wszystkich"</string>
     <string name="slideshow" msgid="4355906903247112975">"Pokaz slajdów"</string>

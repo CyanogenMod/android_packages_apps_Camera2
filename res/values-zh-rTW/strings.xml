@@ -55,6 +55,10 @@
     <string name="confirm" msgid="8646870096527848520">"確認"</string>
     <string name="cancel" msgid="3637516880917356226">"取消"</string>
     <string name="share" msgid="3619042788254195341">"分享"</string>
+    <!-- no translation found for deleted (6795433049119073871) -->
+    <skip />
+    <!-- no translation found for undo (2930873956446586313) -->
+    <skip />
     <string name="select_all" msgid="3403283025220282175">"全選"</string>
     <string name="deselect_all" msgid="5758897506061723684">"取消全選"</string>
     <string name="slideshow" msgid="4355906903247112975">"投影播放"</string>
