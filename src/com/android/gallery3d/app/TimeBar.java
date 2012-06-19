@@ -255,6 +255,7 @@ public class TimeBar extends View {
             return true;
           }
           break;
+        case MotionEvent.ACTION_CANCEL:
         case MotionEvent.ACTION_UP:
           if (scrubbing) {
             listener.onScrubbingEnd(getScrubberTime());
