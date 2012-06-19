@@ -529,7 +529,7 @@ public class GLCanvasImpl implements GLCanvas {
 
         private int mTexEnvMode = GL11.GL_REPLACE;
         private float mTextureAlpha = 1.0f;
-        private int mTextureTarget = 0;
+        private int mTextureTarget = GL11.GL_TEXTURE_2D;
         private boolean mBlendEnabled = true;
         private float mLineWidth = 1.0f;
         private boolean mLineSmooth = false;
