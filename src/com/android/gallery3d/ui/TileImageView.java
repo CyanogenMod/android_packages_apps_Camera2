@@ -21,9 +21,9 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.FloatMath;
-import android.util.LongSparseArray;
 
 import com.android.gallery3d.app.GalleryContext;
+import com.android.gallery3d.common.LongSparseArray;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.DecodeUtils;
