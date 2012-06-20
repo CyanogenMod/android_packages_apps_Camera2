@@ -20,6 +20,7 @@ import android.content.Context;
 import android.view.MotionEvent;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.GalleryUtils;
 
 public class UndoBarView extends GLView {
@@ -89,6 +90,11 @@ public class UndoBarView extends GLView {
     @Override
     protected void render(GLCanvas canvas) {
         super.render(canvas);
+        advanceAnimation();
+
+        canvas.save(GLCanvas.SAVE_FLAG_ALPHA);
+        canvas.multiplyAlpha(mAlpha);
+
         int w = getWidth();
         int h = getHeight();
         mPanel.draw(canvas, mBarMargin, 0, w - mBarMargin * 2, mBarHeight);
@@ -112,6 +118,8 @@ public class UndoBarView extends GLView {
         x = mBarMargin + mDeletedTextMargin;
         y = (mBarHeight - mDeletedText.getHeight()) / 2;
         mDeletedText.draw(canvas, x, y);
+
+        canvas.restore();
     }
 
     @Override
@@ -142,5 +150,56 @@ public class UndoBarView extends GLView {
         int w = getWidth();
         int h = getHeight();
         return (x >= w - mClickRegion && x < w && y >= 0 && y < h);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //  Alpha Animation
+    ////////////////////////////////////////////////////////////////////////////
+
+    private static final long NO_ANIMATION = -1;
+    private static long ANIM_TIME = 200;
+    private long mAnimationStartTime = NO_ANIMATION;
+    private float mFromAlpha, mToAlpha;
+    private float mAlpha;
+
+    private static float getTargetAlpha(int visibility) {
+        return (visibility == VISIBLE) ? 1f : 0f;
+    }
+
+    public void setVisibility(int visibility) {
+        mAlpha = getTargetAlpha(visibility);
+        mAnimationStartTime = NO_ANIMATION;
+        super.setVisibility(visibility);
+        invalidate();
+    }
+
+    public void animateVisibility(int visibility) {
+        float target = getTargetAlpha(visibility);
+        if (mAnimationStartTime == NO_ANIMATION && mAlpha == target) return;
+        if (mAnimationStartTime != NO_ANIMATION && mToAlpha == target) return;
+
+        mFromAlpha = mAlpha;
+        mToAlpha = target;
+        mAnimationStartTime = AnimationTime.startTime();
+
+        super.setVisibility(VISIBLE);
+        invalidate();
+    }
+
+    private void advanceAnimation() {
+        if (mAnimationStartTime == NO_ANIMATION) return;
+
+        float delta = (float) (AnimationTime.get() - mAnimationStartTime) /
+                ANIM_TIME;
+        mAlpha = mFromAlpha + ((mToAlpha > mFromAlpha) ? delta : -delta);
+        mAlpha = Utils.clamp(mAlpha, 0f, 1f);
+
+        if (mAlpha == mToAlpha) {
+            mAnimationStartTime = NO_ANIMATION;
+            if (mAlpha == 0) {
+                super.setVisibility(INVISIBLE);
+            }
+        }
+        invalidate();
     }
 }
