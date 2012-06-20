@@ -141,6 +141,7 @@ public class PhotoView extends GLView {
     private static final int MSG_CAPTURE_ANIMATION_DONE = 4;
     private static final int MSG_DELETE_ANIMATION_DONE = 5;
     private static final int MSG_DELETE_DONE = 6;
+    private static final int MSG_HIDE_UNDO_BAR = 7;
 
     private static final int MOVE_THRESHOLD = 256;
     private static final float SWIPE_THRESHOLD = 300f;
@@ -221,6 +222,10 @@ public class PhotoView extends GLView {
     // Whether the box indicated by mTouchBoxIndex is deletable. Only meaningful
     // if mTouchBoxIndex is not Integer.MAX_VALUE.
     private boolean mTouchBoxDeletable;
+    // This is the index of the last deleted item. This is only used as a hint
+    // to hide the undo button when we are too far away from the deleted
+    // item. The value Integer.MAX_VALUE means there is no such hint.
+    private int mUndoIndexHint = Integer.MAX_VALUE;
 
     public PhotoView(GalleryActivity activity) {
         mTileView = new TileImageView(activity);
@@ -334,6 +339,10 @@ public class PhotoView extends GLView {
                     }
                     break;
                 }
+                case MSG_HIDE_UNDO_BAR: {
+                    checkHideUndoBar(UNDO_BAR_TIMEOUT);
+                    break;
+                }
                 default: throw new AssertionError(message.what);
             }
         }
@@ -356,6 +365,13 @@ public class PhotoView extends GLView {
                     mTouchBoxIndex = i - SCREEN_NAIL_MAX;
                     break;
                 }
+            }
+        }
+
+        // Hide undo button if we are too far away
+        if (mUndoIndexHint != Integer.MAX_VALUE) {
+            if (Math.abs(mUndoIndexHint - mModel.getCurrentIndex()) >= 3) {
+                hideUndoBar();
             }
         }
 
@@ -1041,6 +1057,8 @@ public class PhotoView extends GLView {
         private void deleteAfterAnimation(int duration) {
             MediaItem item = mModel.getMediaItem(mTouchBoxIndex);
             if (item == null) return;
+            mListener.onCommitDeleteImage();
+            mUndoIndexHint = mModel.getCurrentIndex() + mTouchBoxIndex;
             mHolding |= HOLD_DELETE;
             Message m = mHandler.obtainMessage(MSG_DELETE_ANIMATION_DONE);
             m.obj = item.getPath();
@@ -1136,9 +1154,10 @@ public class PhotoView extends GLView {
 
         @Override
         public void onDown(float x, float y) {
+            checkHideUndoBar(UNDO_BAR_TOUCHED);
+
             mDeltaY = 0;
             mSeenScaling = false;
-            mListener.onCommitDeleteImage();
 
             if (mIgnoreSwipingGesture) return;
 
@@ -1248,8 +1267,39 @@ public class PhotoView extends GLView {
         setFilmMode(false);
     }
 
-    public void showUndoButton(boolean show) {
-        mUndoBar.setVisibility(show ? GLView.VISIBLE : GLView.INVISIBLE);
+    ////////////////////////////////////////////////////////////////////////////
+    //  Undo Bar
+    ////////////////////////////////////////////////////////////////////////////
+
+    private int mUndoBarState;
+    private static final int UNDO_BAR_SHOW = 1;
+    private static final int UNDO_BAR_TIMEOUT = 2;
+    private static final int UNDO_BAR_TOUCHED = 4;
+
+    public void showUndoBar() {
+        mHandler.removeMessages(MSG_HIDE_UNDO_BAR);
+        mUndoBarState = UNDO_BAR_SHOW;
+        mUndoBar.animateVisibility(GLView.VISIBLE);
+        mHandler.sendEmptyMessageDelayed(MSG_HIDE_UNDO_BAR, 3000);
+    }
+
+    public void hideUndoBar() {
+        mHandler.removeMessages(MSG_HIDE_UNDO_BAR);
+        mListener.onCommitDeleteImage();
+        mUndoBar.animateVisibility(GLView.INVISIBLE);
+        mUndoBarState = 0;
+        mUndoIndexHint = Integer.MAX_VALUE;
+    }
+
+    // Check if the all conditions for hiding the undo bar have been met. The
+    // conditions are: it has been three seconds since last showing, and the
+    // user has touched.
+    private void checkHideUndoBar(int addition) {
+        mUndoBarState |= addition;
+        if (mUndoBarState ==
+                (UNDO_BAR_SHOW | UNDO_BAR_TIMEOUT | UNDO_BAR_TOUCHED)) {
+            hideUndoBar();
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
