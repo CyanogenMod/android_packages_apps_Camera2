@@ -721,7 +721,7 @@ public class PhotoPage extends ActivityState implements
         mDeletePath = path;
         mDeleteIsFocus = (offset == 0);
         mMediaSet.setDeletion(path, mCurrentIndex + offset);
-        mPhotoView.showUndoButton(true);
+        mPhotoView.showUndoBar();
     }
 
     @Override
@@ -731,14 +731,14 @@ public class PhotoPage extends ActivityState implements
         if (mDeleteIsFocus) mModel.setFocusHintPath(mDeletePath);
         mMediaSet.setDeletion(null, 0);
         mDeletePath = null;
-        mPhotoView.showUndoButton(false);
+        mPhotoView.hideUndoBar();
     }
 
     @Override
     public void onCommitDeleteImage() {
         if (mDeletePath == null) return;
         commitDeletion();
-        mPhotoView.showUndoButton(false);
+        mPhotoView.hideUndoBar();
     }
 
     private void commitDeletion() {
