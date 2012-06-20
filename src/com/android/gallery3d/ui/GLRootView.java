@@ -16,10 +16,12 @@
 
 package com.android.gallery3d.ui;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
+import android.os.Build;
 import android.os.Process;
 import android.os.SystemClock;
 import android.util.AttributeSet;
@@ -29,6 +31,7 @@ import android.view.View;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.anim.CanvasAnimation;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.Profile;
@@ -536,12 +539,15 @@ public class GLRootView extends GLSurfaceView
     }
 
     @Override
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void setLightsOutMode(boolean enabled) {
-        int flags = enabled
-                ? SYSTEM_UI_FLAG_LOW_PROFILE
-                | SYSTEM_UI_FLAG_FULLSCREEN
-                | SYSTEM_UI_FLAG_LAYOUT_STABLE
-                : 0;
+        int flags = 0;
+        if (enabled) {
+            flags = SYSTEM_UI_FLAG_LOW_PROFILE;
+            if (ApiHelper.HAS_VIEW_SYSTEM_UI_FLAG_LAYOUT_STABLE) {
+                flags |= (SYSTEM_UI_FLAG_FULLSCREEN | SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            }
+        }
         setSystemUiVisibility(flags);
     }
 

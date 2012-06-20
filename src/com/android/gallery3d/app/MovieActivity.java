@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.app;
 
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.AsyncQueryHandler;
@@ -27,6 +28,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
@@ -39,6 +41,7 @@ import android.view.WindowManager;
 import android.widget.ShareActionProvider;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 
 /**
@@ -59,6 +62,15 @@ public class MovieActivity extends Activity {
     private Uri mUri;
     private boolean mTreatUpAsBack;
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private void setSystemUiVisibility(View rootView) {
+        if (ApiHelper.HAS_VIEW_SYSTEM_UI_FLAG_LAYOUT_STABLE) {
+            rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,9 +80,9 @@ public class MovieActivity extends Activity {
 
         setContentView(R.layout.movie_view);
         View rootView = findViewById(R.id.movie_view_root);
-        rootView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+
+        setSystemUiVisibility(rootView);
+
         Intent intent = getIntent();
         initializeActionBar(intent);
         mFinishOnCompletion = intent.getBooleanExtra(

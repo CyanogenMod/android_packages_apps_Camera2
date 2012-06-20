@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.app;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,6 +29,7 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -37,6 +39,7 @@ import android.view.ViewGroup;
 import android.widget.VideoView;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.BlobCache;
 import com.android.gallery3d.util.CacheManager;
 import com.android.gallery3d.util.GalleryUtils;
@@ -149,6 +152,37 @@ public class MoviePlayer implements
             }
         }, BLACK_TIMEOUT);
 
+        setOnSystemUiVisibilityChangeListener();
+        // Hide system UI by default
+        showSystemUi(false);
+
+        mAudioBecomingNoisyReceiver = new AudioBecomingNoisyReceiver();
+        mAudioBecomingNoisyReceiver.register();
+
+        Intent i = new Intent(SERVICECMD);
+        i.putExtra(CMDNAME, CMDPAUSE);
+        movieActivity.sendBroadcast(i);
+
+        if (savedInstance != null) { // this is a resumed activity
+            mVideoPosition = savedInstance.getInt(KEY_VIDEO_POSITION, 0);
+            mResumeableTime = savedInstance.getLong(KEY_RESUMEABLE_TIME, Long.MAX_VALUE);
+            mVideoView.start();
+            mVideoView.suspend();
+            mHasPaused = true;
+        } else {
+            final Integer bookmark = mBookmarker.getBookmark(mUri);
+            if (bookmark != null) {
+                showResumeDialog(movieActivity, bookmark);
+            } else {
+                startVideo();
+            }
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private void setOnSystemUiVisibilityChangeListener() {
+        if (!ApiHelper.HAS_VIEW_SYSTEM_UI_FLAG_HIDE_NAVIGATION) return;
+
         // When the user touches the screen or uses some hard key, the framework
         // will change system ui visibility from invisible to visible. We show
         // the media control and enable system UI (e.g. ActionBar) to be visible at this point
@@ -177,37 +211,15 @@ public class MoviePlayer implements
                 }
             }
         });
-
-        // Hide system UI by default
-        showSystemUi(false);
-
-        mAudioBecomingNoisyReceiver = new AudioBecomingNoisyReceiver();
-        mAudioBecomingNoisyReceiver.register();
-
-        Intent i = new Intent(SERVICECMD);
-        i.putExtra(CMDNAME, CMDPAUSE);
-        movieActivity.sendBroadcast(i);
-
-        if (savedInstance != null) { // this is a resumed activity
-            mVideoPosition = savedInstance.getInt(KEY_VIDEO_POSITION, 0);
-            mResumeableTime = savedInstance.getLong(KEY_RESUMEABLE_TIME, Long.MAX_VALUE);
-            mVideoView.start();
-            mVideoView.suspend();
-            mHasPaused = true;
-        } else {
-            final Integer bookmark = mBookmarker.getBookmark(mUri);
-            if (bookmark != null) {
-                showResumeDialog(movieActivity, bookmark);
-            } else {
-                startVideo();
-            }
-        }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void showSystemUi(boolean visible) {
+        if (!ApiHelper.HAS_VIEW_SYSTEM_UI_FLAG_LAYOUT_STABLE) return;
+
         int flag = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
         if (!visible) {
             flag |= View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
@@ -497,7 +509,7 @@ class Bookmarker {
             DataInputStream dis = new DataInputStream(
                     new ByteArrayInputStream(data));
 
-            String uriString = dis.readUTF(dis);
+            String uriString = DataInputStream.readUTF(dis);
             int bookmark = dis.readInt();
             int duration = dis.readInt();
 
