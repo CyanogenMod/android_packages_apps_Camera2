@@ -98,9 +98,10 @@ public class MoviePlayer implements
     };
 
     private final Runnable mRemoveBackground = new Runnable() {
+        @SuppressWarnings("deprecation")
         @Override
         public void run() {
-            mRootView.setBackground(null);
+            mRootView.setBackgroundDrawable(null);
         }
     };
 
