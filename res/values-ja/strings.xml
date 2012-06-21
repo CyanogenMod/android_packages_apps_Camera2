@@ -55,10 +55,8 @@
     <string name="confirm" msgid="8646870096527848520">"確認"</string>
     <string name="cancel" msgid="3637516880917356226">"キャンセル"</string>
     <string name="share" msgid="3619042788254195341">"共有"</string>
-    <!-- no translation found for deleted (6795433049119073871) -->
-    <skip />
-    <!-- no translation found for undo (2930873956446586313) -->
-    <skip />
+    <string name="deleted" msgid="6795433049119073871">"削除済み"</string>
+    <string name="undo" msgid="2930873956446586313">"元に戻す"</string>
     <string name="select_all" msgid="3403283025220282175">"すべて選択"</string>
     <string name="deselect_all" msgid="5758897506061723684">"選択をすべて解除"</string>
     <string name="slideshow" msgid="4355906903247112975">"スライドショー"</string>
