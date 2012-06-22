@@ -141,7 +141,8 @@ public class PhotoView extends GLView {
     private static final int MSG_CAPTURE_ANIMATION_DONE = 4;
     private static final int MSG_DELETE_ANIMATION_DONE = 5;
     private static final int MSG_DELETE_DONE = 6;
-    private static final int MSG_HIDE_UNDO_BAR = 7;
+    private static final int MSG_UNDO_BAR_TIMEOUT = 7;
+    private static final int MSG_UNDO_BAR_FULL_CAMERA = 8;
 
     private static final int MOVE_THRESHOLD = 256;
     private static final float SWIPE_THRESHOLD = 300f;
@@ -240,6 +241,7 @@ public class PhotoView extends GLView {
                 @Override
                 public void onClick(GLView v) {
                     mListener.onUndoDeleteImage();
+                    hideUndoBar();
                 }
             });
         mLoadingText = StringTexture.newInstance(
@@ -330,6 +332,15 @@ public class PhotoView extends GLView {
                     mHandler.removeMessages(MSG_DELETE_DONE);
                     Message m = mHandler.obtainMessage(MSG_DELETE_DONE);
                     mHandler.sendMessageDelayed(m, 2000);
+
+                    int numberOfPictures = mNextBound - mPrevBound + 1;
+                    if (numberOfPictures == 2) {
+                        if (mModel.isCamera(mNextBound)
+                                || mModel.isCamera(mPrevBound)) {
+                            numberOfPictures--;
+                        }
+                    }
+                    showUndoBar(numberOfPictures <= 1);
                     break;
                 }
                 case MSG_DELETE_DONE: {
@@ -339,8 +350,12 @@ public class PhotoView extends GLView {
                     }
                     break;
                 }
-                case MSG_HIDE_UNDO_BAR: {
+                case MSG_UNDO_BAR_TIMEOUT: {
                     checkHideUndoBar(UNDO_BAR_TIMEOUT);
+                    break;
+                }
+                case MSG_UNDO_BAR_FULL_CAMERA: {
+                    checkHideUndoBar(UNDO_BAR_FULL_CAMERA);
                     break;
                 }
                 default: throw new AssertionError(message.what);
@@ -593,7 +608,7 @@ public class PhotoView extends GLView {
             if ((mHolding & ~HOLD_TOUCH_DOWN) != 0) return;
 
             boolean isCenter = mPositionController.isCenter();
-            boolean isCameraCenter = mIsCamera && isCenter;
+            boolean isCameraCenter = mIsCamera && isCenter && !canUndoLastPicture();
 
             if (mWasCameraCenter && mIsCamera && !isCenter && !mFilmMode) {
                 // Temporary disabled to de-emphasize filmstrip.
@@ -1255,6 +1270,7 @@ public class PhotoView extends GLView {
         for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
             mPictures.get(i).setScreenNail(null);
         }
+        hideUndoBar();
     }
 
     public void resume() {
@@ -1275,31 +1291,54 @@ public class PhotoView extends GLView {
     private static final int UNDO_BAR_SHOW = 1;
     private static final int UNDO_BAR_TIMEOUT = 2;
     private static final int UNDO_BAR_TOUCHED = 4;
+    private static final int UNDO_BAR_FULL_CAMERA = 8;
+    private static final int UNDO_BAR_DELETE_LAST = 16;
 
-    public void showUndoBar() {
-        mHandler.removeMessages(MSG_HIDE_UNDO_BAR);
+    // "deleteLast" means if the deletion is on the last remaining picture in
+    // the album.
+    private void showUndoBar(boolean deleteLast) {
+        mHandler.removeMessages(MSG_UNDO_BAR_TIMEOUT);
         mUndoBarState = UNDO_BAR_SHOW;
+        if(deleteLast) mUndoBarState |= UNDO_BAR_DELETE_LAST;
         mUndoBar.animateVisibility(GLView.VISIBLE);
-        mHandler.sendEmptyMessageDelayed(MSG_HIDE_UNDO_BAR, 3000);
+        mHandler.sendEmptyMessageDelayed(MSG_UNDO_BAR_TIMEOUT, 3000);
     }
 
-    public void hideUndoBar() {
-        mHandler.removeMessages(MSG_HIDE_UNDO_BAR);
+    private void hideUndoBar() {
+        mHandler.removeMessages(MSG_UNDO_BAR_TIMEOUT);
         mListener.onCommitDeleteImage();
         mUndoBar.animateVisibility(GLView.INVISIBLE);
         mUndoBarState = 0;
         mUndoIndexHint = Integer.MAX_VALUE;
     }
 
-    // Check if the all conditions for hiding the undo bar have been met. The
-    // conditions are: it has been three seconds since last showing, and the
-    // user has touched.
+    // Check if the one of the conditions for hiding the undo bar has been
+    // met. The conditions are:
+    //
+    // 1. It has been three seconds since last showing, and (a) the user has
+    // touched, or (b) the deleted picture is the last remaining picture in the
+    // album.
+    //
+    // 2. The camera is shown in full screen.
     private void checkHideUndoBar(int addition) {
         mUndoBarState |= addition;
-        if (mUndoBarState ==
-                (UNDO_BAR_SHOW | UNDO_BAR_TIMEOUT | UNDO_BAR_TOUCHED)) {
+        if ((mUndoBarState & UNDO_BAR_SHOW) == 0) return;
+        boolean timeout = (mUndoBarState & UNDO_BAR_TIMEOUT) != 0;
+        boolean touched = (mUndoBarState & UNDO_BAR_TOUCHED) != 0;
+        boolean fullCamera = (mUndoBarState & UNDO_BAR_FULL_CAMERA) != 0;
+        boolean deleteLast = (mUndoBarState & UNDO_BAR_DELETE_LAST) != 0;
+        if ((timeout && (touched || deleteLast)) || fullCamera) {
             hideUndoBar();
         }
+    }
+
+    // Returns true if the user can still undo the deletion of the last
+    // remaining picture in the album. We need to check this and delay making
+    // the camera preview full screen, otherwise the user won't have a chance to
+    // undo it.
+    private boolean canUndoLastPicture() {
+        if ((mUndoBarState & UNDO_BAR_SHOW) == 0) return false;
+        return (mUndoBarState & UNDO_BAR_DELETE_LAST) != 0;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -1315,6 +1354,7 @@ public class PhotoView extends GLView {
         if (full != mFullScreenCamera) {
             mFullScreenCamera = full;
             mListener.onFullScreenChanged(full);
+            if (full) mHandler.sendEmptyMessage(MSG_UNDO_BAR_FULL_CAMERA);
         }
 
         // Determine how many photos we need to draw in addition to the center
