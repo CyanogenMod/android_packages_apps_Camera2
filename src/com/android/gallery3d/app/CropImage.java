@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.app;
 
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
@@ -32,6 +33,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -45,6 +47,7 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
@@ -95,10 +98,6 @@ public class CropImage extends AbstractGalleryActivity {
     private static final int MAX_BACKUP_IMAGE_SIZE = 320;
     private static final int DEFAULT_COMPRESS_QUALITY = 90;
     private static final String TIME_STAMP_NAME = "'IMG'_yyyyMMdd_HHmmss";
-
-    // Change these to Images.Media.WIDTH/HEIGHT after they are unhidden.
-    private static final String WIDTH = "width";
-    private static final String HEIGHT = "height";
 
     public static final String KEY_RETURN_DATA = "return-data";
     public static final String KEY_CROPPED_RECT = "cropped-rect";
@@ -371,6 +370,15 @@ public class CropImage extends AbstractGalleryActivity {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private static void setImageSize(ContentValues values, int width, int height) {
+        // The two fields are available since ICS but got published in JB
+        if (ApiHelper.HAS_MEDIA_COLUMNS_WIDTH_AND_HEIGHT) {
+            values.put(Images.Media.WIDTH, width);
+            values.put(Images.Media.HEIGHT, height);
+        }
+    }
+
     private Uri savePicasaImage(JobContext jc, Bitmap cropped) {
         if (!DOWNLOAD_BUCKET.isDirectory() && !DOWNLOAD_BUCKET.mkdirs()) {
             throw new RuntimeException("cannot create download folder");
@@ -395,8 +403,7 @@ public class CropImage extends AbstractGalleryActivity {
         values.put(Images.Media.ORIENTATION, 0);
         values.put(Images.Media.DATA, output.getAbsolutePath());
         values.put(Images.Media.SIZE, output.length());
-        values.put(WIDTH, cropped.getWidth());
-        values.put(HEIGHT, cropped.getHeight());
+        setImageSize(values, cropped.getWidth(), cropped.getHeight());
 
         double latitude = PicasaSource.getLatitude(mMediaItem);
         double longitude = PicasaSource.getLongitude(mMediaItem);
@@ -434,8 +441,8 @@ public class CropImage extends AbstractGalleryActivity {
         values.put(Images.Media.ORIENTATION, 0);
         values.put(Images.Media.DATA, output.getAbsolutePath());
         values.put(Images.Media.SIZE, output.length());
-        values.put(WIDTH, cropped.getWidth());
-        values.put(HEIGHT, cropped.getHeight());
+
+        setImageSize(values, cropped.getWidth(), cropped.getHeight());
 
         if (GalleryUtils.isValidLocation(localImage.latitude, localImage.longitude)) {
             values.put(Images.Media.LATITUDE, localImage.latitude);
@@ -467,8 +474,8 @@ public class CropImage extends AbstractGalleryActivity {
         values.put(Images.Media.ORIENTATION, 0);
         values.put(Images.Media.DATA, output.getAbsolutePath());
         values.put(Images.Media.SIZE, output.length());
-        values.put(WIDTH, cropped.getWidth());
-        values.put(HEIGHT, cropped.getHeight());
+
+        setImageSize(values, cropped.getWidth(), cropped.getHeight());
 
         return getContentResolver().insert(
                 Images.Media.EXTERNAL_CONTENT_URI, values);
