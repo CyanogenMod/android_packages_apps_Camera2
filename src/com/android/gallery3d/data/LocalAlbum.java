@@ -260,6 +260,7 @@ public class LocalAlbum extends MediaSet {
         GalleryUtils.assertNotInRenderThread();
         mResolver.delete(mBaseUri, mWhereClause,
                 new String[]{String.valueOf(mBucketId)});
+        mApplication.getDataManager().broadcastLocalDeletion();
     }
 
     @Override
