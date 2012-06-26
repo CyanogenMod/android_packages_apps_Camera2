@@ -16,9 +16,11 @@
 
 package com.android.gallery3d.data;
 
+import android.content.Intent;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.Utils;
@@ -77,6 +79,9 @@ public class DataManager {
             "/local/image";
     private static final String TOP_LOCAL_VIDEO_SET_PATH =
             "/local/video";
+
+    private static final String ACTION_DELETE_PICTURE =
+            "com.android.gallery3d.action.DELETE_PICTURE";
 
     public static final Comparator<MediaItem> sDateTakenComparator =
             new DateTakenComparator();
@@ -303,6 +308,15 @@ public class DataManager {
                 source.pause();
             }
         }
+    }
+
+    // Sends a local broadcast if a local image or video is deleted. This is
+    // used to update the thumbnail shown in the camera app.
+    public void broadcastLocalDeletion() {
+        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(
+                mApplication.getAndroidContext());
+        Intent intent = new Intent(ACTION_DELETE_PICTURE);
+        manager.sendBroadcast(intent);
     }
 
     private static class NotifyBroker extends ContentObserver {
