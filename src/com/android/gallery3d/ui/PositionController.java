@@ -110,11 +110,11 @@ class PositionController {
     private Listener mListener;
     private volatile Rect mOpenAnimationRect;
 
-    // Use a large enough value, so we won't see the gray shadown in the beginning.
+    // Use a large enough value, so we won't see the gray shadow in the beginning.
     private int mViewW = 1200;
     private int mViewH = 1200;
 
-    // A scaling guesture is in progress.
+    // A scaling gesture is in progress.
     private boolean mInScale;
     // The focus point of the scaling gesture, relative to the center of the
     // picture in bitmap pixels.
@@ -178,7 +178,7 @@ class PositionController {
     private RangeArray<Gap> mTempGaps =
         new RangeArray<Gap>(-BOX_MAX, BOX_MAX - 1);
 
-    // The output of the PositionController. Available throught getPosition().
+    // The output of the PositionController. Available through getPosition().
     private RangeArray<Rect> mRects = new RangeArray<Rect>(-BOX_MAX, BOX_MAX);
 
     // The direction of a new picture should appear. New pictures pop from top
@@ -211,7 +211,7 @@ class PositionController {
         mListener = listener;
         mPageScroller = new FlingScroller();
         mFilmScroller = new OverScroller(context,
-                null /* default interpolator */, false /* no flywheel */);
+                null /* default interpolator */, 0, 0, false /* no flywheel */);
 
         // Initialize the areas.
         initPlatform();
@@ -519,7 +519,7 @@ class PositionController {
         Platform p = mPlatform;
 
         // We want to keep the focus point (on the bitmap) the same as when we
-        // begin the scale guesture, that is,
+        // begin the scale gesture, that is,
         //
         // (focusX' - currentX') / scale' = (focusX - currentX) / scale
         //
@@ -1005,7 +1005,7 @@ class PositionController {
     // N N N N N N N -- all new boxes
     // -3 -2 -1 0 1 2 3 -- nothing changed
     // -2 -1 0 1 2 3 N -- focus goes to the next box
-    // N -3 -2 -1 0 1 2 -- focuse goes to the previous box
+    // N -3 -2 -1 0 1 2 -- focus goes to the previous box
     // -3 -2 -1 1 2 3 N -- the focused box was deleted.
     //
     // hasPrev/hasNext indicates if there are previous/next boxes for the
@@ -1019,7 +1019,7 @@ class PositionController {
 
         RangeIntArray from = new RangeIntArray(fromIndex, -BOX_MAX, BOX_MAX);
 
-        // 1. Get the absolute X coordiates for the boxes.
+        // 1. Get the absolute X coordinates for the boxes.
         layoutAndSetPosition();
         for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
             Box b = mBoxes.get(i);
@@ -1366,7 +1366,7 @@ class PositionController {
         public int mAnimationKind;
         public int mAnimationDuration;
 
-        // This should be overidden in subclass to change the animation values
+        // This should be overridden in subclass to change the animation values
         // give the progress value in [0, 1].
         protected abstract boolean interpolate(float progress);
         public abstract boolean startSnapback();
