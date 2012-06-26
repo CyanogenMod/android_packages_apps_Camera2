@@ -66,6 +66,7 @@ public class PhotoAppWidgetProvider extends AppWidgetProvider {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
+    @SuppressWarnings("deprecation")
     private static RemoteViews buildStackWidget(Context context, int widgetId, Entry entry) {
         RemoteViews views = new RemoteViews(
                 context.getPackageName(), R.layout.appwidget_main);
@@ -76,7 +77,10 @@ public class PhotoAppWidgetProvider extends AppWidgetProvider {
         intent.putExtra(WidgetService.EXTRA_ALBUM_PATH, entry.albumPath);
         intent.setData(Uri.parse("widget://gallery/" + widgetId));
 
-        views.setRemoteAdapter(R.id.appwidget_stack_view, intent);
+        // We use the deprecated API for backward compatibility
+        // The new API is available in ICE_CREAM_SANDWICH (15)
+        views.setRemoteAdapter(widgetId, R.id.appwidget_stack_view, intent);
+
         views.setEmptyView(R.id.appwidget_stack_view, R.id.appwidget_empty_view);
 
         Intent clickIntent = new Intent(context, WidgetClickHandler.class);
