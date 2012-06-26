@@ -218,10 +218,12 @@ public class PhotoPage extends ActivityState implements
                 mShowBars = false;
             }
 
+            MediaSet originalSet = mActivity.getDataManager()
+                    .getMediaSet(mSetPathString);
+            mSelectionManager.setSourceMediaSet(originalSet);
             mSetPathString = "/filter/delete/{" + mSetPathString + "}";
             mMediaSet = (FilterDeleteSet) mActivity.getDataManager()
                     .getMediaSet(mSetPathString);
-            mSelectionManager.setSourceMediaSet(mMediaSet);
             mCurrentIndex = data.getInt(KEY_INDEX_HINT, 0);
             if (mMediaSet == null) {
                 Log.w(TAG, "failed to restore " + mSetPathString);
@@ -717,31 +719,24 @@ public class PhotoPage extends ActivityState implements
     // the deletion, we then actually delete the media item.
     @Override
     public void onDeleteImage(Path path, int offset) {
-        commitDeletion();  // commit the previous deletion
+        onCommitDeleteImage();  // commit the previous deletion
         mDeletePath = path;
         mDeleteIsFocus = (offset == 0);
-        mMediaSet.setDeletion(path, mCurrentIndex + offset);
-        mPhotoView.showUndoBar();
+        mMediaSet.addDeletion(path, mCurrentIndex + offset);
     }
 
     @Override
     public void onUndoDeleteImage() {
+        if (mDeletePath == null) return;
         // If the deletion was done on the focused item, we want the model to
         // focus on it when it is undeleted.
         if (mDeleteIsFocus) mModel.setFocusHintPath(mDeletePath);
-        mMediaSet.setDeletion(null, 0);
+        mMediaSet.removeDeletion(mDeletePath);
         mDeletePath = null;
-        mPhotoView.hideUndoBar();
     }
 
     @Override
     public void onCommitDeleteImage() {
-        if (mDeletePath == null) return;
-        commitDeletion();
-        mPhotoView.hideUndoBar();
-    }
-
-    private void commitDeletion() {
         if (mDeletePath == null) return;
         mSelectionManager.deSelectAll();
         mSelectionManager.toggle(mDeletePath);
@@ -857,6 +852,7 @@ public class PhotoPage extends ActivityState implements
 
         onCommitDeleteImage();
         mMenuExecutor.pause();
+        if (mMediaSet != null) mMediaSet.clearDeletion();
     }
 
     @Override
