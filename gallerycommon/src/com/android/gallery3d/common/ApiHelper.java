@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.common;
 
+import android.provider.MediaStore.MediaColumns;
 import android.view.View;
 
 public class ApiHelper {
@@ -25,6 +26,9 @@ public class ApiHelper {
 
     public static final boolean HAS_VIEW_SYSTEM_UI_FLAG_HIDE_NAVIGATION =
             hasField(View.class, "SYSTEM_UI_FLAG_HIDE_NAVIGATION");
+
+    public static final boolean HAS_MEDIA_COLUMNS_WIDTH_AND_HEIGHT =
+            hasField(MediaColumns.class, "WIDTH");
 
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {

@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.data;
 
+import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -24,11 +25,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
+import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.ThreadPool.Job;
@@ -74,9 +78,21 @@ public class LocalImage extends LocalMediaItem {
             ImageColumns.ORIENTATION,   // 9
             ImageColumns.BUCKET_ID,     // 10
             ImageColumns.SIZE,          // 11
-            ImageColumns.WIDTH,         // 12
-            ImageColumns.HEIGHT         // 13
+            "0",                        // 12
+            "0"                         // 13
     };
+
+    static {
+        updateWidthAndHeightProjection();
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private static void updateWidthAndHeightProjection() {
+        if (ApiHelper.HAS_MEDIA_COLUMNS_WIDTH_AND_HEIGHT) {
+            PROJECTION[INDEX_WIDTH] = MediaColumns.WIDTH;
+            PROJECTION[INDEX_HEIGHT] = MediaColumns.HEIGHT;
+        }
+    }
 
     private final GalleryApp mApplication;
 
