@@ -253,7 +253,12 @@ public class PhotoPage extends ActivityState implements
                         MediaItem photo = mModel.getMediaItem(0);
                         if (photo != null) updateCurrentPhoto(photo);
                     } else if (mIsActive) {
-                        mActivity.getStateManager().finishState(PhotoPage.this);
+                        // We only want to finish the PhotoPage if there is no
+                        // deletion that the user can undo.
+                        if (mMediaSet.getNumberOfDeletions() == 0) {
+                            mActivity.getStateManager().finishState(
+                                    PhotoPage.this);
+                        }
                     }
                 }
 
