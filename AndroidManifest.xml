@@ -322,6 +322,7 @@
                 <data android:scheme="package"/>
             </intent-filter>
         </receiver>
+        <service android:name="com.android.gallery3d.app.PackagesMonitor$AsyncService"/>
         <receiver android:name="com.android.camera.CameraButtonIntentReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.CAMERA_BUTTON"/>
