@@ -23,6 +23,7 @@ import android.graphics.RectF;
 import android.util.FloatMath;
 
 import com.android.gallery3d.app.GalleryContext;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.LongSparseArray;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.BitmapPool;
@@ -48,7 +49,9 @@ public class TileImageView extends GLView {
     private static final int UPLOAD_LIMIT = 1;
 
     private static final BitmapPool sTilePool =
-            new BitmapPool(BITMAP_SIZE, BITMAP_SIZE, 128);
+            ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER
+            ? new BitmapPool(BITMAP_SIZE, BITMAP_SIZE, 128)
+            : null;
 
     /*
      *  This is the tile state in the CPU side.
@@ -378,7 +381,7 @@ public class TileImageView extends GLView {
             }
         }
         setScreenNail(null);
-        sTilePool.clear();
+        if (sTilePool != null) sTilePool.clear();
     }
 
     public void prepareTextures() {
@@ -487,7 +490,7 @@ public class TileImageView extends GLView {
             if (tile.mTileState == STATE_RECYCLING) {
                 tile.mTileState = STATE_RECYCLED;
                 if (tile.mDecodedTile != null) {
-                    sTilePool.recycle(tile.mDecodedTile);
+                    if (sTilePool != null) sTilePool.recycle(tile.mDecodedTile);
                     tile.mDecodedTile = null;
                 }
                 mRecycledQueue.push(tile);
@@ -515,7 +518,7 @@ public class TileImageView extends GLView {
         }
         tile.mTileState = STATE_RECYCLED;
         if (tile.mDecodedTile != null) {
-            sTilePool.recycle(tile.mDecodedTile);
+            if (sTilePool != null) sTilePool.recycle(tile.mDecodedTile);
             tile.mDecodedTile = null;
         }
         mRecycledQueue.push(tile);
@@ -653,7 +656,7 @@ public class TileImageView extends GLView {
 
         @Override
         protected void onFreeBitmap(Bitmap bitmap) {
-            sTilePool.recycle(bitmap);
+            if (sTilePool != null) sTilePool.recycle(bitmap);
         }
 
         boolean decode() {
