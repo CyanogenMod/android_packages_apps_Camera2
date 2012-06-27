@@ -16,9 +16,12 @@
 
 package com.android.gallery3d.common;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.provider.MediaStore.MediaColumns;
 import android.view.View;
 
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class ApiHelper {
 
     public static final boolean HAS_VIEW_SYSTEM_UI_FLAG_LAYOUT_STABLE =
@@ -29,6 +32,9 @@ public class ApiHelper {
 
     public static final boolean HAS_MEDIA_COLUMNS_WIDTH_AND_HEIGHT =
             hasField(MediaColumns.class, "WIDTH");
+
+    public static final boolean HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
 
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
