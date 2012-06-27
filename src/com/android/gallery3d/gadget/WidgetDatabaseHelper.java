@@ -30,6 +30,7 @@ import com.android.gallery3d.common.Utils;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class WidgetDatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "PhotoDatabaseHelper";
@@ -50,12 +51,15 @@ public class WidgetDatabaseHelper extends SQLiteOpenHelper {
     public static final int TYPE_ALBUM = 2;
 
     private static final String[] PROJECTION = {
-            FIELD_WIDGET_TYPE, FIELD_IMAGE_URI, FIELD_PHOTO_BLOB, FIELD_ALBUM_PATH};
+            FIELD_WIDGET_TYPE, FIELD_IMAGE_URI, FIELD_PHOTO_BLOB, FIELD_ALBUM_PATH,
+            FIELD_APPWIDGET_ID};
     private static final int INDEX_WIDGET_TYPE = 0;
     private static final int INDEX_IMAGE_URI = 1;
     private static final int INDEX_PHOTO_BLOB = 2;
     private static final int INDEX_ALBUM_PATH = 3;
-    private static final String WHERE_CLAUSE = FIELD_APPWIDGET_ID + " = ?";
+    private static final int INDEX_APPWIDGET_ID = 4;
+    private static final String WHERE_APPWIDGET_ID = FIELD_APPWIDGET_ID + " = ?";
+    private static final String WHERE_WIDGET_TYPE = FIELD_WIDGET_TYPE + " = ?";
 
     public static class Entry {
         public int widgetId;
@@ -75,6 +79,10 @@ public class WidgetDatabaseHelper extends SQLiteOpenHelper {
             } else if (type == TYPE_ALBUM) {
                 albumPath = cursor.getString(INDEX_ALBUM_PATH);
             }
+        }
+
+        private Entry(Cursor cursor) {
+            this(cursor.getInt(INDEX_APPWIDGET_ID), cursor);
         }
     }
 
@@ -212,7 +220,7 @@ public class WidgetDatabaseHelper extends SQLiteOpenHelper {
         try {
             SQLiteDatabase db = getReadableDatabase();
             cursor = db.query(TABLE_WIDGETS, PROJECTION,
-                    WHERE_CLAUSE, new String[] {String.valueOf(appWidgetId)},
+                    WHERE_APPWIDGET_ID, new String[] {String.valueOf(appWidgetId)},
                     null, null, null);
             if (cursor == null || !cursor.moveToNext()) {
                 Log.e(TAG, "query fail: empty cursor: " + cursor);
@@ -227,13 +235,55 @@ public class WidgetDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public List<Entry> getEntries(int type) {
+        Cursor cursor = null;
+        try {
+            SQLiteDatabase db = getReadableDatabase();
+            cursor = db.query(TABLE_WIDGETS, PROJECTION,
+                    WHERE_WIDGET_TYPE, new String[] {String.valueOf(type)},
+                    null, null, null);
+            if (cursor == null) {
+                Log.e(TAG, "query fail: null cursor: " + cursor);
+                return null;
+            }
+            ArrayList<Entry> result = new ArrayList<Entry>(cursor.getCount());
+            while (cursor.moveToNext()) {
+                result.add(new Entry(cursor));
+            }
+            return result;
+        } catch (Throwable e) {
+            Log.e(TAG, "Could not load widget from database", e);
+            return null;
+        } finally {
+            Utils.closeSilently(cursor);
+        }
+    }
+
+    /**
+     * Updates the entry in the widget database.
+     */
+    public void updateEntry(Entry entry) {
+        deleteEntry(entry.widgetId);
+        try {
+            ContentValues values = new ContentValues();
+            values.put(FIELD_APPWIDGET_ID, entry.widgetId);
+            values.put(FIELD_WIDGET_TYPE, entry.type);
+            values.put(FIELD_ALBUM_PATH, entry.albumPath);
+            values.put(FIELD_IMAGE_URI, entry.imageUri);
+            values.put(FIELD_PHOTO_BLOB, entry.imageData);
+            getWritableDatabase().insert(TABLE_WIDGETS, null, values);
+        } catch (Throwable e) {
+            Log.e(TAG, "set widget fail", e);
+        }
+    }
+
     /**
      * Remove any bitmap associated with the given appWidgetId.
      */
     public void deleteEntry(int appWidgetId) {
         try {
             SQLiteDatabase db = getWritableDatabase();
-            db.delete(TABLE_WIDGETS, WHERE_CLAUSE,
+            db.delete(TABLE_WIDGETS, WHERE_APPWIDGET_ID,
                     new String[] {String.valueOf(appWidgetId)});
         } catch (SQLiteException e) {
             Log.e(TAG, "Could not delete photo from database", e);
