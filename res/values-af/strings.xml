@@ -55,7 +55,7 @@
     <string name="confirm" msgid="8646870096527848520">"Bevestig"</string>
     <string name="cancel" msgid="3637516880917356226">"Kanselleer"</string>
     <string name="share" msgid="3619042788254195341">"Deling"</string>
-    <string name="deleted" msgid="6795433049119073871">"geskrap"</string>
+    <string name="deleted" msgid="6795433049119073871">"Uitgevee"</string>
     <string name="undo" msgid="2930873956446586313">"ONTDOEN"</string>
     <string name="select_all" msgid="3403283025220282175">"Kies almal"</string>
     <string name="deselect_all" msgid="5758897506061723684">"Ontkies almal"</string>
