@@ -23,6 +23,7 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.app.AlbumSetDataLoader;
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.DataSourceType;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
@@ -423,7 +424,8 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
 
         @Override
         protected void recycleBitmap(Bitmap bitmap) {
-            MediaItem.getMicroThumbPool().recycle(bitmap);
+            BitmapPool pool = MediaItem.getMicroThumbPool();
+            if (pool != null) pool.recycle(bitmap);
         }
 
         @Override

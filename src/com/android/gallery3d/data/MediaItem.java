@@ -19,6 +19,7 @@ package com.android.gallery3d.data;
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
 
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.ui.ScreenNail;
 import com.android.gallery3d.util.ThreadPool.Job;
 
@@ -42,9 +43,16 @@ public abstract class MediaItem extends MediaObject {
     private static final int BYTESBUFFE_POOL_SIZE = 4;
     private static final int BYTESBUFFER_SIZE = 200 * 1024;
 
-    private static final BitmapPool sMicroThumbPool = new BitmapPool(
-            MICROTHUMBNAIL_TARGET_SIZE, MICROTHUMBNAIL_TARGET_SIZE, 16);
-    private static final BitmapPool sThumbPool = new BitmapPool(4);
+    private static final BitmapPool sMicroThumbPool =
+            ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_FACTORY
+            ? new BitmapPool(MICROTHUMBNAIL_TARGET_SIZE, MICROTHUMBNAIL_TARGET_SIZE, 16)
+            : null;
+
+    private static final BitmapPool sThumbPool =
+            ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_FACTORY
+            ? new BitmapPool(4)
+            : null;
+
     private static final BytesBufferPool sMicroThumbBufferPool =
             new BytesBufferPool(BYTESBUFFE_POOL_SIZE, BYTESBUFFER_SIZE);
 

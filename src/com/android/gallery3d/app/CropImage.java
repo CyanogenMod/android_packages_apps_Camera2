@@ -33,6 +33,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -369,7 +370,7 @@ public class CropImage extends AbstractGalleryActivity {
         }
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private static void setImageSize(ContentValues values, int width, int height) {
         // The two fields are available since ICS but got published in JB
         if (ApiHelper.HAS_MEDIA_COLUMNS_WIDTH_AND_HEIGHT) {

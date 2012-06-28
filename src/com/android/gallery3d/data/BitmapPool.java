@@ -17,14 +17,9 @@
 package com.android.gallery3d.data;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapFactory.Options;
 
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.ui.Log;
-import com.android.gallery3d.util.ThreadPool.JobContext;
 
-import java.io.FileDescriptor;
 import java.util.ArrayList;
 
 public class BitmapPool {
@@ -94,67 +89,7 @@ public class BitmapPool {
         mPool.clear();
     }
 
-    private Bitmap findCachedBitmap(JobContext jc,
-            byte[] data, int offset, int length, Options options) {
-        if (mOneSize) return getBitmap();
-        DecodeUtils.decodeBounds(jc, data, offset, length, options);
-        return getBitmap(options.outWidth, options.outHeight);
-    }
-
-    private Bitmap findCachedBitmap(JobContext jc,
-            FileDescriptor fileDescriptor, Options options) {
-        if (mOneSize) return getBitmap();
-        DecodeUtils.decodeBounds(jc, fileDescriptor, options);
-        return getBitmap(options.outWidth, options.outHeight);
-    }
-
-    public Bitmap decode(JobContext jc,
-            byte[] data, int offset, int length, BitmapFactory.Options options) {
-        if (options == null) options = new BitmapFactory.Options();
-        if (options.inSampleSize < 1) options.inSampleSize = 1;
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        options.inBitmap = (options.inSampleSize == 1)
-                ? findCachedBitmap(jc, data, offset, length, options) : null;
-        try {
-            Bitmap bitmap = DecodeUtils.decode(jc, data, offset, length, options);
-            if (options.inBitmap != null && options.inBitmap != bitmap) {
-                recycle(options.inBitmap);
-                options.inBitmap = null;
-            }
-            return bitmap;
-        } catch (IllegalArgumentException e) {
-            if (options.inBitmap == null) throw e;
-
-            Log.w(TAG, "decode fail with a given bitmap, try decode to a new bitmap");
-            recycle(options.inBitmap);
-            options.inBitmap = null;
-            return DecodeUtils.decode(jc, data, offset, length, options);
-        }
-    }
-
-    // This is the same as the method above except the source data comes
-    // from a file descriptor instead of a byte array.
-    public Bitmap decode(JobContext jc,
-            FileDescriptor fileDescriptor, Options options) {
-        if (options == null) options = new BitmapFactory.Options();
-        if (options.inSampleSize < 1) options.inSampleSize = 1;
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        options.inBitmap = (options.inSampleSize == 1)
-                ? findCachedBitmap(jc, fileDescriptor, options) : null;
-        try {
-            Bitmap bitmap = DecodeUtils.decode(jc, fileDescriptor, options);
-            if (options.inBitmap != null&& options.inBitmap != bitmap) {
-                recycle(options.inBitmap);
-                options.inBitmap = null;
-            }
-            return bitmap;
-        } catch (IllegalArgumentException e) {
-            if (options.inBitmap == null) throw e;
-
-            Log.w(TAG, "decode fail with a given bitmap, try decode to a new bitmap");
-            recycle(options.inBitmap);
-            options.inBitmap = null;
-            return DecodeUtils.decode(jc, fileDescriptor, options);
-        }
+    public boolean isOneSize() {
+        return mOneSize;
     }
 }
