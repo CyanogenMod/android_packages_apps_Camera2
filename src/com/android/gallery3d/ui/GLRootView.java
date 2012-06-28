@@ -21,6 +21,7 @@ import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
+import android.os.Build;
 import android.os.Process;
 import android.os.SystemClock;
 import android.util.AttributeSet;
@@ -536,7 +537,7 @@ public class GLRootView extends GLSurfaceView
     }
 
     @Override
-    @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void setLightsOutMode(boolean enabled) {
         int flags = 0;
         if (enabled) {

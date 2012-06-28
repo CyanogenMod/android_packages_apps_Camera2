@@ -44,6 +44,9 @@ public class ApiHelper {
     public static final boolean HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER =
             Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
 
+    public static final boolean HAS_REUSING_BITMAP_IN_BITMAP_FACTORY =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
             klass.getDeclaredField(fieldName);

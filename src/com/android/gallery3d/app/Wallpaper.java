@@ -63,7 +63,7 @@ public class Wallpaper extends Activity {
     }
 
     @SuppressWarnings("deprecation")
-    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB_MR2)
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private Point getDefaultDisplaySize(Point size) {
         Display d = getWindowManager().getDefaultDisplay();
         if (Build.VERSION.SDK_INT >= ApiHelper.VERSION_CODES.HONEYCOMB_MR2) {
