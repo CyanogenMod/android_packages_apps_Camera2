@@ -16,13 +16,21 @@
 
 package com.android.gallery3d.common;
 
-import android.annotation.TargetApi;
 import android.os.Build;
 import android.provider.MediaStore.MediaColumns;
 import android.view.View;
 
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class ApiHelper {
+    public static interface VERSION_CODES {
+        // These value are copied from Build.VERSION_CODES
+        public static final int GINGERBREAD_MR1 = 10;
+        public static final int HONEYCOMB = 11;
+        public static final int HONEYCOMB_MR1 = 12;
+        public static final int HONEYCOMB_MR2 = 13;
+        public static final int ICE_CREAM_SANDWICH = 14;
+        public static final int ICE_CREAM_SANDWICH_MR1 = 15;
+        public static final int JELLY_BEAN = 16;
+    }
 
     public static final boolean HAS_VIEW_SYSTEM_UI_FLAG_LAYOUT_STABLE =
             hasField(View.class, "SYSTEM_UI_FLAG_LAYOUT_STABLE");
@@ -34,7 +42,7 @@ public class ApiHelper {
             hasField(MediaColumns.class, "WIDTH");
 
     public static final boolean HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER =
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
 
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
