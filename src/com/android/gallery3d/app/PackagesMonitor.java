@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.app;
 
+import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -34,23 +35,22 @@ public class PackagesMonitor extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        final PendingResult result = goAsync();
-        new Thread("GalleryPackagesMonitorAsync") {
-            @Override
-            public void run() {
-                try {
-                    onReceiveAsync(context, intent);
-                } catch (Throwable t) {
-                    Log.e("PackagesMonitor", "onReceiveAsync", t);
-                } finally {
-                    result.finish();
-                }
-            }
-        }.start();
+        context.startService(new Intent(context, AsyncService.class));
+    }
+
+    public static class AsyncService extends IntentService {
+        public AsyncService() {
+            super("GalleryPackagesMonitorAsync");
+        }
+
+        @Override
+        protected void onHandleIntent(Intent intent) {
+            onReceiveAsync(this, intent);
+        }
     }
 
     // Runs in a background thread.
-    private void onReceiveAsync(Context context, Intent intent) {
+    private static void onReceiveAsync(Context context, Intent intent) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         int version = prefs.getInt(KEY_PACKAGES_VERSION, 1);
