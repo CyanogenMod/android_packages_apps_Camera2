@@ -16,11 +16,13 @@
 
 package com.android.gallery3d.ui;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
+import android.os.Build;
 import android.os.Handler;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -36,6 +38,7 @@ import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryActionBar;
 import com.android.gallery3d.app.GalleryActivity;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaObject;
@@ -224,14 +227,20 @@ public class ActionModeHandler implements ActionMode.Callback {
         return operation;
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private void setNfcBeamPushUris(Uri[] uris) {
+        if (mNfcAdapter != null &&
+                Build.VERSION.SDK_INT >= ApiHelper.VERSION_CODES.JELLY_BEAN) {
+            mNfcAdapter.setBeamPushUris(uris, (Activity)mActivity);
+        }
+    }
+
     // Share intent needs to expand the selection set so we can get URI of
     // each media item
     private Intent computeSharingIntent(JobContext jc) {
         ArrayList<Path> expandedPaths = mSelectionManager.getSelected(true);
         if (expandedPaths.size() == 0) {
-            if (mNfcAdapter != null) {
-                mNfcAdapter.setBeamPushUris(null, (Activity)mActivity);
-            }
+            setNfcBeamPushUris(null);
             return null;
         }
         final ArrayList<Uri> uris = new ArrayList<Uri>();
@@ -259,14 +268,9 @@ public class ActionModeHandler implements ActionMode.Callback {
                 intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
             }
             intent.setType(mimeType);
-            if (mNfcAdapter != null) {
-                mNfcAdapter.setBeamPushUris(uris.toArray(new Uri[uris.size()]),
-                        (Activity)mActivity);
-            }
+            setNfcBeamPushUris(uris.toArray(new Uri[uris.size()]));
         } else {
-            if (mNfcAdapter != null) {
-                mNfcAdapter.setBeamPushUris(null, (Activity)mActivity);
-            }
+            setNfcBeamPushUris(null);
         }
 
         return intent;

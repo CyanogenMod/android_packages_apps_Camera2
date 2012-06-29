@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.app;
 
+import android.annotation.TargetApi;
 import android.app.ActionBar.OnMenuVisibilityListener;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -25,6 +26,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -37,6 +39,7 @@ import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.FilterDeleteSet;
@@ -318,18 +321,24 @@ public class PhotoPage extends ActivityState implements
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private void setNfcBeamPushUris(Uri[] uris) {
+        if (mNfcAdapter != null &&
+                Build.VERSION.SDK_INT >= ApiHelper.VERSION_CODES.JELLY_BEAN) {
+            mNfcAdapter.setBeamPushUris(uris, (Activity)mActivity);
+        }
+    }
+
     private void updateShareURI(Path path) {
         if (mShareActionProvider != null) {
             DataManager manager = mActivity.getDataManager();
             int type = manager.getMediaType(path);
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType(MenuExecutor.getMimeType(type));
-            intent.putExtra(Intent.EXTRA_STREAM, manager.getContentUri(path));
+            Uri uri = manager.getContentUri(path);
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
             mShareActionProvider.setShareIntent(intent);
-            if (mNfcAdapter != null) {
-                mNfcAdapter.setBeamPushUris(new Uri[]{manager.getContentUri(path)},
-                        (Activity)mActivity);
-            }
+            setNfcBeamPushUris(new Uri[]{uri});
             mPendingSharePath = null;
         } else {
             // This happens when ActionBar is not created yet.
