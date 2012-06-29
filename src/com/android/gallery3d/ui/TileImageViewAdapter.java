@@ -20,8 +20,10 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.BitmapPool;
 
@@ -108,6 +110,11 @@ public class TileImageViewAdapter implements TileImageView.Model {
     @Override
     public Bitmap getTile(int level, int x, int y, int tileSize,
             int borderSize, BitmapPool pool) {
+
+        if (!ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER) {
+            return getTileWithoutReusingBitmap(level, x, y, tileSize, borderSize);
+        }
+
         int b = borderSize << level;
         int t = tileSize << level;
 
@@ -157,6 +164,49 @@ public class TileImageViewAdapter implements TileImageView.Model {
         }
         return bitmap;
     }
+
+    private Bitmap getTileWithoutReusingBitmap(
+            int level, int x, int y, int tileSize, int borderSize) {
+        int b = borderSize << level;
+        int t = tileSize << level;
+        Rect wantRegion = new Rect(x - b, y - b, x + t + b, y + t + b);
+
+        BitmapRegionDecoder regionDecoder;
+        Rect overlapRegion;
+
+        synchronized (this) {
+            regionDecoder = mRegionDecoder;
+            if (regionDecoder == null) return null;
+            overlapRegion = new Rect(0, 0, mImageWidth, mImageHeight);
+            Utils.assertTrue(overlapRegion.intersect(wantRegion));
+        }
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Config.ARGB_8888;
+        options.inPreferQualityOverSpeed = true;
+        options.inSampleSize =  (1 << level);
+        Bitmap bitmap = null;
+
+        // In CropImage, we may call the decodeRegion() concurrently.
+        synchronized (regionDecoder) {
+            bitmap = regionDecoder.decodeRegion(overlapRegion, options);
+        }
+
+        if (bitmap == null) {
+            Log.w(TAG, "fail in decoding region");
+        }
+
+        if (wantRegion.equals(overlapRegion)) return bitmap;
+
+        int s = tileSize + 2 * borderSize;
+        Bitmap result = Bitmap.createBitmap(s, s, Config.ARGB_8888);
+        Canvas canvas = new Canvas(result);
+        canvas.drawBitmap(bitmap,
+                (overlapRegion.left - wantRegion.left) >> level,
+                (overlapRegion.top - wantRegion.top) >> level, null);
+        return result;
+    }
+
 
     @Override
     public ScreenNail getScreenNail() {
