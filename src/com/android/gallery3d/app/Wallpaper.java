@@ -25,6 +25,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Display;
 
+import com.android.gallery3d.common.ApiHelper;
+
 /**
  * Wallpaper picker for the gallery application. This just redirects to the
  * standard pick action.
@@ -61,10 +63,10 @@ public class Wallpaper extends Activity {
     }
 
     @SuppressWarnings("deprecation")
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB_MR2)
     private Point getDefaultDisplaySize(Point size) {
         Display d = getWindowManager().getDefaultDisplay();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+        if (Build.VERSION.SDK_INT >= ApiHelper.VERSION_CODES.HONEYCOMB_MR2) {
             d.getSize(size);
         } else {
             size.set(d.getWidth(), d.getHeight());
