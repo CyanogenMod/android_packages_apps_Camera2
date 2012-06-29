@@ -35,7 +35,8 @@ public class PackagesMonitor extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        context.startService(new Intent(context, AsyncService.class));
+        intent.setClass(context, AsyncService.class);
+        context.startService(intent);
     }
 
     public static class AsyncService extends IntentService {
