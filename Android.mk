@@ -18,7 +18,7 @@ LOCAL_PACKAGE_NAME := Gallery2
 
 LOCAL_OVERRIDES_PACKAGES := Gallery Gallery3D GalleryNew3D
 
-#LOCAL_SDK_VERSION := current
+LOCAL_SDK_VERSION := current
 
 LOCAL_JNI_SHARED_LIBRARIES := libjni_mosaic libjni_eglfence
 
