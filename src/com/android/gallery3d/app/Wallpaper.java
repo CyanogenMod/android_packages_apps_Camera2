@@ -16,11 +16,14 @@
 
 package com.android.gallery3d.app;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.Display;
 
 /**
  * Wallpaper picker for the gallery application. This just redirects to the
@@ -57,6 +60,18 @@ public class Wallpaper extends Activity {
         }
     }
 
+    @SuppressWarnings("deprecation")
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private Point getDefaultDisplaySize(Point size) {
+        Display d = getWindowManager().getDefaultDisplay();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            d.getSize(size);
+        } else {
+            size.set(d.getWidth(), d.getHeight());
+        }
+        return size;
+    }
+
     @SuppressWarnings("fallthrough")
     @Override
     protected void onResume() {
@@ -78,8 +93,7 @@ public class Wallpaper extends Activity {
             case STATE_PHOTO_PICKED: {
                 int width = getWallpaperDesiredMinimumWidth();
                 int height = getWallpaperDesiredMinimumHeight();
-                Point size = new Point();
-                getWindowManager().getDefaultDisplay().getSize(size);
+                Point size = getDefaultDisplaySize(new Point());
                 float spotlightX = (float) size.x / width;
                 float spotlightY = (float) size.y / height;
                 Intent request = new Intent(CropImage.ACTION_CROP)
