@@ -84,9 +84,6 @@ public class GLRootView extends GLSurfaceView
     private Matrix mCompensationMatrix = new Matrix();
     private int mDisplayRotation;
 
-    // The value which will become mCompensation in next layout.
-    private int mPendingCompensation;
-
     private int mFlags = FLAG_NEED_LAYOUT;
     private volatile boolean mRenderRequested = false;
 
@@ -333,6 +330,7 @@ public class GLRootView extends GLSurfaceView
         if (mFirstDraw) {
             mFirstDraw = false;
             post(new Runnable() {
+                    @Override
                     public void run() {
                         View root = getRootView();
                         View cover = root.findViewById(R.id.gl_root_cover);
@@ -542,7 +540,7 @@ public class GLRootView extends GLSurfaceView
     public void setLightsOutMode(boolean enabled) {
         int flags = 0;
         if (enabled) {
-            flags = SYSTEM_UI_FLAG_LOW_PROFILE;
+            flags = STATUS_BAR_HIDDEN;
             if (ApiHelper.HAS_VIEW_SYSTEM_UI_FLAG_LAYOUT_STABLE) {
                 flags |= (SYSTEM_UI_FLAG_FULLSCREEN | SYSTEM_UI_FLAG_LAYOUT_STABLE);
             }
