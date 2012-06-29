@@ -445,4 +445,10 @@
 
     <!-- Web address for gallery help.  DO NOT TRANSLATE -->
     <string name="help_url_gallery_main" translatable="false"></string>
+
+    <!-- The tilte of a dialog showing there is no external storage. [CHAR LIMIT=20] -->
+    <string name="no_external_storage_title">No Storage</string>
+
+    <!-- The message of a dialog showing there is no external storage. [CHAR LIMIT=none] -->
+    <string name="no_external_storage">No external storage available</string>
 </resources>
