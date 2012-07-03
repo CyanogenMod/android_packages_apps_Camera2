@@ -54,6 +54,9 @@ public class ApiHelper {
             "android.graphics.SurfaceTexture", "setDefaultBufferSize",
             int.class, int.class);
 
+    public static final boolean HAS_MTP =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB_MR1;
+
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
             klass.getDeclaredField(fieldName);
