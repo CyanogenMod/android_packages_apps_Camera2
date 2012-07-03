@@ -19,6 +19,7 @@ package com.android.gallery3d.data;
 import android.media.ExifInterface;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.common.ExifTags;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -126,11 +127,11 @@ public class MediaDetails implements Iterable<Entry<Integer, Object>> {
                     MediaDetails.INDEX_HEIGHT);
             setExifData(details, exif, ExifInterface.TAG_MAKE, MediaDetails.INDEX_MAKE);
             setExifData(details, exif, ExifInterface.TAG_MODEL, MediaDetails.INDEX_MODEL);
-            setExifData(details, exif, ExifInterface.TAG_APERTURE, MediaDetails.INDEX_APERTURE);
-            setExifData(details, exif, ExifInterface.TAG_ISO, MediaDetails.INDEX_ISO);
+            setExifData(details, exif, ExifTags.TAG_APERTURE, MediaDetails.INDEX_APERTURE);
+            setExifData(details, exif, ExifTags.TAG_ISO, MediaDetails.INDEX_ISO);
             setExifData(details, exif, ExifInterface.TAG_WHITE_BALANCE,
                     MediaDetails.INDEX_WHITE_BALANCE);
-            setExifData(details, exif, ExifInterface.TAG_EXPOSURE_TIME,
+            setExifData(details, exif, ExifTags.TAG_EXPOSURE_TIME,
                     MediaDetails.INDEX_EXPOSURE_TIME);
 
             double data = exif.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH, 0);
