@@ -47,11 +47,29 @@ public class ApiHelper {
     public static final boolean HAS_REUSING_BITMAP_IN_BITMAP_FACTORY =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
+    public static final boolean HAS_SET_BEAM_PUSH_URIS =
+            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
+
+    public static final boolean HAS_SET_DEFALT_BUFFER_SIZE = hasMethod(
+            "android.graphics.SurfaceTexture", "setDefaultBufferSize",
+            int.class, int.class);
+
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
             klass.getDeclaredField(fieldName);
             return true;
         } catch (NoSuchFieldException e) {
+            return false;
+        }
+    }
+
+    private static boolean hasMethod(String className, String methodName,
+            Class<?>... parameterTypes) {
+        try {
+            Class klass = Class.forName(className);
+            klass.getDeclaredMethod(methodName, parameterTypes);
+            return true;
+        } catch (Throwable th) {
             return false;
         }
     }
