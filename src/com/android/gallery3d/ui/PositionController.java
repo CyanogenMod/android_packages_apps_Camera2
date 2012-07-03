@@ -19,8 +19,8 @@ package com.android.gallery3d.ui;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.Log;
-import android.widget.OverScroller;
 
+import com.android.gallery3d.common.OverScroller;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.RangeArray;
