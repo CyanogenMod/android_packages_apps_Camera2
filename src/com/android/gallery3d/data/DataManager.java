@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaSet.ItemConsumer;
 import com.android.gallery3d.data.MediaSource.PathId;
@@ -115,7 +116,9 @@ public class DataManager {
         // the order matters, the UriSource must come last
         addSource(new LocalSource(mApplication));
         addSource(new PicasaSource(mApplication));
-        addSource(new MtpSource(mApplication));
+        if (ApiHelper.HAS_MTP) {
+            addSource(new MtpSource(mApplication));
+        }
         addSource(new ComboSource(mApplication));
         addSource(new ClusterSource(mApplication));
         addSource(new FilterSource(mApplication));
