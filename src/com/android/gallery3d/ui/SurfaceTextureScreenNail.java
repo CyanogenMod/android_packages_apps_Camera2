@@ -16,13 +16,20 @@
 
 package com.android.gallery3d.ui;
 
+import android.annotation.TargetApi;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 
+import com.android.gallery3d.common.ApiHelper;
+
 public abstract class SurfaceTextureScreenNail implements ScreenNail,
         SurfaceTexture.OnFrameAvailableListener {
     private static final String TAG = "SurfaceTextureScreenNail";
+    // This constant is not available in API level before 15, but it was just an
+    // oversight.
+    private static final int GL_TEXTURE_EXTERNAL_OES = 0x8D65;
+
     protected ExtTexture mExtTexture;
     private SurfaceTexture mSurfaceTexture;
     private int mWidth, mHeight;
@@ -33,13 +40,20 @@ public abstract class SurfaceTextureScreenNail implements ScreenNail,
     }
 
     public void acquireSurfaceTexture() {
-        mExtTexture = new ExtTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES);
+        mExtTexture = new ExtTexture(GL_TEXTURE_EXTERNAL_OES);
         mExtTexture.setSize(mWidth, mHeight);
         mSurfaceTexture = new SurfaceTexture(mExtTexture.getId());
-        mSurfaceTexture.setDefaultBufferSize(mWidth, mHeight);
+        setDefaultBufferSize(mSurfaceTexture, mWidth, mHeight);
         mSurfaceTexture.setOnFrameAvailableListener(this);
         synchronized (this) {
             mHasTexture = true;
+        }
+    }
+
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+    private static void setDefaultBufferSize(SurfaceTexture st, int width, int height) {
+        if (ApiHelper.HAS_SET_DEFALT_BUFFER_SIZE) {
+            st.setDefaultBufferSize(width, height);
         }
     }
 

@@ -58,6 +58,10 @@ public class MoviePlayer implements
     private static final String KEY_VIDEO_POSITION = "video-position";
     private static final String KEY_RESUMEABLE_TIME = "resumeable-timeout";
 
+    // These are constants in KeyEvent, appearing on API level 11.
+    private static final int KEYCODE_MEDIA_PLAY = 126;
+    private static final int KEYCODE_MEDIA_PAUSE = 127;
+
     // Copied from MediaPlaybackService in the Music Player app.
     private static final String SERVICECMD = "com.android.music.musicservicecommand";
     private static final String CMDNAME = "command";
@@ -411,12 +415,12 @@ public class MoviePlayer implements
                     playVideo();
                 }
                 return true;
-            case KeyEvent.KEYCODE_MEDIA_PAUSE:
+            case KEYCODE_MEDIA_PAUSE:
                 if (mVideoView.isPlaying()) {
                     pauseVideo();
                 }
                 return true;
-            case KeyEvent.KEYCODE_MEDIA_PLAY:
+            case KEYCODE_MEDIA_PLAY:
                 if (!mVideoView.isPlaying()) {
                     playVideo();
                 }
