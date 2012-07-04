@@ -26,7 +26,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
-import android.view.Menu;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -37,7 +36,6 @@ import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.picasasource.PicasaSource;
-import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.util.GalleryUtils;
 
 public final class Gallery extends AbstractGalleryActivity implements OnCancelListener {
@@ -229,12 +227,6 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
                 getStateManager().startState(PhotoPage.class, data);
             }
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        return getStateManager().createOptionsMenu(menu);
     }
 
     @Override
