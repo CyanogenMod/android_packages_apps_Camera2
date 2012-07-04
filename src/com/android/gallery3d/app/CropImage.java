@@ -49,6 +49,7 @@ import android.widget.Toast;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.BitmapUtils;
+import com.android.gallery3d.common.ExifTags;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.LocalImage;
@@ -989,11 +990,11 @@ public class CropImage extends AbstractGalleryActivity {
             }
 
             // Handle some special values here
-            String value = oldExif.getAttribute(ExifInterface.TAG_APERTURE);
+            String value = oldExif.getAttribute(ExifTags.TAG_APERTURE);
             if (value != null) {
                 try {
                     float aperture = Float.parseFloat(value);
-                    newExif.setAttribute(ExifInterface.TAG_APERTURE,
+                    newExif.setAttribute(ExifTags.TAG_APERTURE,
                             String.valueOf((int) (aperture * 10 + 0.5f)) + "/10");
                 } catch (NumberFormatException e) {
                     Log.w(TAG, "cannot parse aperture: " + value);
@@ -1002,22 +1003,22 @@ public class CropImage extends AbstractGalleryActivity {
 
             // TODO: The code is broken, need to fix the JHEAD lib
             /*
-            value = oldExif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
+            value = oldExif.getAttribute(ExifTags.TAG_EXPOSURE_TIME);
             if (value != null) {
                 try {
                     double exposure = Double.parseDouble(value);
                     testToRational("test exposure", exposure);
-                    newExif.setAttribute(ExifInterface.TAG_EXPOSURE_TIME, value);
+                    newExif.setAttribute(ExifTags.TAG_EXPOSURE_TIME, value);
                 } catch (NumberFormatException e) {
                     Log.w(TAG, "cannot parse exposure time: " + value);
                 }
             }
 
-            value = oldExif.getAttribute(ExifInterface.TAG_ISO);
+            value = oldExif.getAttribute(ExifTags.TAG_ISO);
             if (value != null) {
                 try {
                     int iso = Integer.parseInt(value);
-                    newExif.setAttribute(ExifInterface.TAG_ISO, String.valueOf(iso) + "/1");
+                    newExif.setAttribute(ExifTags.TAG_ISO, String.valueOf(iso) + "/1");
                 } catch (NumberFormatException e) {
                     Log.w(TAG, "cannot parse exposure time: " + value);
                 }
