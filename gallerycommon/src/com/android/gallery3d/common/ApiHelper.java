@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.common;
 
+import android.app.Activity;
 import android.os.Build;
 import android.provider.MediaStore.MediaColumns;
 import android.view.View;
@@ -60,6 +61,9 @@ public class ApiHelper {
     public static final boolean HAS_AUTO_FOCUS_MOVE_CALLBACK =
             Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
 
+    public static final boolean HAS_ACTIVITY_INVALIDATE_OPTIONS_MENU =
+            hasMethod(Activity.class, "invalidateOptionsMenu");
+
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
             klass.getDeclaredField(fieldName);
@@ -72,10 +76,20 @@ public class ApiHelper {
     private static boolean hasMethod(String className, String methodName,
             Class<?>... parameterTypes) {
         try {
-            Class klass = Class.forName(className);
+            Class<?> klass = Class.forName(className);
             klass.getDeclaredMethod(methodName, parameterTypes);
             return true;
         } catch (Throwable th) {
+            return false;
+        }
+    }
+
+    private static boolean hasMethod(
+            Class<?> klass, String methodName, Class<?> ... paramTypes) {
+        try {
+            klass.getDeclaredMethod(methodName, paramTypes);
+            return true;
+        } catch (NoSuchMethodException e) {
             return false;
         }
     }
