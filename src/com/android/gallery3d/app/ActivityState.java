@@ -27,7 +27,6 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -135,7 +134,7 @@ abstract public class ActivityState {
 
     // should only be called by StateManager
     void resume() {
-        Activity activity = (Activity) mActivity;
+        AbstractGalleryActivity activity = (AbstractGalleryActivity) mActivity;
         ActionBar actionBar = activity.getActionBar();
         if (actionBar != null) {
             if ((mFlags & FLAG_HIDE_ACTION_BAR) != 0) {
