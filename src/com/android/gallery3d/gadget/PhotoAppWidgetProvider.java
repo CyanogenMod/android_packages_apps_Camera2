@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.gadget;
 
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -28,6 +29,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.gadget.WidgetDatabaseHelper.Entry;
 import com.android.gallery3d.onetimeinitializer.GalleryWidgetMigrator;
 
@@ -50,8 +52,11 @@ public class PhotoAppWidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context,
             AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        // migrate gallery widgets from pre-JB releases to JB due to bucket ID change
-        GalleryWidgetMigrator.migrateGalleryWidgets(context);
+
+        if (ApiHelper.HAS_REMOTE_VIEWS_SERVICE) {
+            // migrate gallery widgets from pre-JB releases to JB due to bucket ID change
+            GalleryWidgetMigrator.migrateGalleryWidgets(context);
+        }
 
         WidgetDatabaseHelper helper = new WidgetDatabaseHelper(context);
         try {
@@ -71,6 +76,7 @@ public class PhotoAppWidgetProvider extends AppWidgetProvider {
     }
 
     @SuppressWarnings("deprecation")
+    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
     private static RemoteViews buildStackWidget(Context context, int widgetId, Entry entry) {
         RemoteViews views = new RemoteViews(
                 context.getPackageName(), R.layout.appwidget_main);

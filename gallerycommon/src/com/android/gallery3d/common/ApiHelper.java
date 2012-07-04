@@ -64,6 +64,9 @@ public class ApiHelper {
     public static final boolean HAS_ACTIVITY_INVALIDATE_OPTIONS_MENU =
             hasMethod(Activity.class, "invalidateOptionsMenu");
 
+    public static final boolean HAS_REMOTE_VIEWS_SERVICE =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
             klass.getDeclaredField(fieldName);
