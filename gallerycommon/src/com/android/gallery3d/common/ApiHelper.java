@@ -57,6 +57,9 @@ public class ApiHelper {
     public static final boolean HAS_MTP =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB_MR1;
 
+    public static final boolean HAS_AUTO_FOCUS_MOVE_CALLBACK =
+            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
+
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
             klass.getDeclaredField(fieldName);
