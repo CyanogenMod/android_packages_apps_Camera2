@@ -29,12 +29,14 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.app.AlbumPicker;
 import com.android.gallery3d.app.CropImage;
 import com.android.gallery3d.app.DialogPicker;
+import com.android.gallery3d.common.ApiHelper;
 
 public class WidgetConfigure extends Activity {
     @SuppressWarnings("unused")
     private static final String TAG = "WidgetConfigure";
 
     public static final String KEY_WIDGET_TYPE = "widget-type";
+    private static final String KEY_PICKED_ITEM = "picked-item";
 
     private static final int REQUEST_WIDGET_TYPE = 1;
     private static final int REQUEST_CHOOSE_ALBUM = 2;
@@ -51,12 +53,11 @@ public class WidgetConfigure extends Activity {
     private static int MAX_WIDGET_SIDE = 360;
 
     private int mAppWidgetId = -1;
-    private int mWidgetType = 0;
     private Uri mPickedItem;
 
     @Override
-    protected void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
+    protected void onCreate(Bundle savedState) {
+        super.onCreate(savedState);
         mAppWidgetId = getIntent().getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
 
         if (mAppWidgetId == -1) {
@@ -65,10 +66,22 @@ public class WidgetConfigure extends Activity {
             return;
         }
 
-        if (mWidgetType == 0) {
-            Intent intent = new Intent(this, WidgetTypeChooser.class);
-            startActivityForResult(intent, REQUEST_WIDGET_TYPE);
+        if (savedState == null) {
+            if (ApiHelper.HAS_REMOTE_VIEWS_SERVICE) {
+                Intent intent = new Intent(this, WidgetTypeChooser.class);
+                startActivityForResult(intent, REQUEST_WIDGET_TYPE);
+            } else { // Choose the photo type widget
+                setWidgetType(new Intent()
+                        .putExtra(KEY_WIDGET_TYPE, R.id.widget_type_photo));
+            }
+        } else {
+            mPickedItem = savedState.getParcelable(KEY_PICKED_ITEM);
         }
+    }
+
+    protected void onSaveInstanceStates(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(KEY_PICKED_ITEM, mPickedItem);
     }
 
     private void updateWidgetAndFinish(WidgetDatabaseHelper.Entry entry) {
@@ -153,11 +166,11 @@ public class WidgetConfigure extends Activity {
     }
 
     private void setWidgetType(Intent data) {
-        mWidgetType = data.getIntExtra(KEY_WIDGET_TYPE, R.id.widget_type_shuffle);
-        if (mWidgetType == R.id.widget_type_album) {
+        int widgetType = data.getIntExtra(KEY_WIDGET_TYPE, R.id.widget_type_shuffle);
+        if (widgetType == R.id.widget_type_album) {
             Intent intent = new Intent(this, AlbumPicker.class);
             startActivityForResult(intent, REQUEST_CHOOSE_ALBUM);
-        } else if (mWidgetType == R.id.widget_type_shuffle) {
+        } else if (widgetType == R.id.widget_type_shuffle) {
             WidgetDatabaseHelper helper = new WidgetDatabaseHelper(this);
             try {
                 helper.setWidget(mAppWidgetId, WidgetDatabaseHelper.TYPE_SHUFFLE, null);
