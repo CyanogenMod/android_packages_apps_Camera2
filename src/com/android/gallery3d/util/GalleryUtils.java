@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.util;
 
+import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -35,6 +36,7 @@ import android.view.WindowManager;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.PackagesMonitor;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.util.ThreadPool.CancelListener;
@@ -288,6 +290,7 @@ public class GalleryUtils {
         return durationValue;
     }
 
+    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
     public static int determineTypeBits(Context context, Intent intent) {
         int typeBits = 0;
         String type = intent.resolveType(context);
@@ -304,8 +307,10 @@ public class GalleryUtils {
             typeBits = DataManager.INCLUDE_ALL;
         }
 
-        if (intent.getBooleanExtra(Intent.EXTRA_LOCAL_ONLY, false)) {
-            typeBits |= DataManager.INCLUDE_LOCAL_ONLY;
+        if (ApiHelper.HAS_INTENT_EXTRA_LOCAL_ONLY) {
+            if (intent.getBooleanExtra(Intent.EXTRA_LOCAL_ONLY, false)) {
+                typeBits |= DataManager.INCLUDE_LOCAL_ONLY;
+            }
         }
 
         return typeBits;
