@@ -67,6 +67,9 @@ public class ApiHelper {
     public static final boolean HAS_REMOTE_VIEWS_SERVICE =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
+    public static final boolean HAS_INTENT_EXTRA_LOCAL_ONLY =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
             klass.getDeclaredField(fieldName);
