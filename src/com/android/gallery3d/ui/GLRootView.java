@@ -539,6 +539,8 @@ public class GLRootView extends GLSurfaceView
     @Override
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void setLightsOutMode(boolean enabled) {
+        if (!ApiHelper.HAS_SET_SYSTEM_UI_VISIBILITY) return;
+
         int flags = 0;
         if (enabled) {
             flags = STATUS_BAR_HIDDEN;
