@@ -17,6 +17,8 @@
 package com.android.gallery3d.common;
 
 import android.app.Activity;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.os.Build;
 import android.provider.MediaStore.MediaColumns;
 import android.view.View;
@@ -72,6 +74,9 @@ public class ApiHelper {
 
     public static final boolean HAS_SET_SYSTEM_UI_VISIBILITY =
             hasMethod(View.class, "setSystemUiVisibility", int.class);
+
+    public static final boolean HAS_GET_CAMERA_DISABLED =
+            hasMethod(DevicePolicyManager.class, "getCameraDisabled", ComponentName.class);
 
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
