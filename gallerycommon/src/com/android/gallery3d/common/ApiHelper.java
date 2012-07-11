@@ -19,6 +19,8 @@ package com.android.gallery3d.common;
 import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
+import android.hardware.Camera;
+import android.hardware.Camera.FaceDetectionListener;
 import android.os.Build;
 import android.provider.MediaStore.MediaColumns;
 import android.view.View;
@@ -75,6 +77,13 @@ public class ApiHelper {
     public static final boolean HAS_SET_SYSTEM_UI_VISIBILITY =
             hasMethod(View.class, "setSystemUiVisibility", int.class);
 
+    public static final boolean HAS_FACE_DETECTION =
+            hasClass(Camera.class, "android.hardware.Camera$FaceDetectionListener") &&
+            hasMethod(Camera.class, "setFaceDetectionListener", FaceDetectionListener.class) &&
+            hasMethod(Camera.class, "startFaceDetection") &&
+            hasMethod(Camera.class, "stopFaceDetection") &&
+            hasMethod(Camera.Parameters.class, "getMaxNumDetectedFaces");
+
     public static final boolean HAS_GET_CAMERA_DISABLED =
             hasMethod(DevicePolicyManager.class, "getCameraDisabled", ComponentName.class);
 
@@ -107,4 +116,15 @@ public class ApiHelper {
             return false;
         }
     }
+
+    private static boolean hasClass(Class<?> klass, String className) {
+        Class<?>[] klasses = klass.getClasses();
+        for (int i = 0; i < klasses.length; ++i) {
+            if (klasses[i].getName().equals(className)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
