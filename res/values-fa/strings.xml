@@ -20,11 +20,11 @@
     <string name="gadget_title" msgid="259405922673466798">"قاب عکس"</string>
     <string name="details_ms" msgid="940634969189855292">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
-    <string name="movie_view_label" msgid="3526526872644898229">"پخش کننده ویدیو"</string>
-    <string name="loading_video" msgid="4013492720121891585">"در حال بارگیری ویدیو..."</string>
+    <string name="movie_view_label" msgid="3526526872644898229">"پخش کننده ویدئو"</string>
+    <string name="loading_video" msgid="4013492720121891585">"در حال بارگیری ویدئو..."</string>
     <string name="loading_image" msgid="1200894415793838191">"در حال بارگیری تصویر …"</string>
     <string name="loading_account" msgid="928195413034552034">"بارگیری حساب؟؟؟"</string>
-    <string name="resume_playing_title" msgid="8996677350649355013">"از سرگیری ویدیو"</string>
+    <string name="resume_playing_title" msgid="8996677350649355013">"از سرگیری ویدئو"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"ادامه پخش از %s ؟"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"از سرگیری پخش"</string>
     <string name="loading" msgid="7038208555304563571">"در حال بارگیری…"</string>
@@ -39,11 +39,11 @@
     <string name="save_error" msgid="6857408774183654970">"ذخیره تصویر برش‌خورده امکان‌پذیر نیست."</string>
     <string name="crop_label" msgid="521114301871349328">"برش تصویر"</string>
     <string name="select_image" msgid="7841406150484742140">"انتخاب عکس"</string>
-    <string name="select_video" msgid="4859510992798615076">"انتخاب ویدیو"</string>
+    <string name="select_video" msgid="4859510992798615076">"انتخاب ویدئو"</string>
     <string name="select_item" msgid="2816923896202086390">"انتخاب مورد"</string>
     <string name="select_album" msgid="1557063764849434077">"آلبوم را انتخاب کنید"</string>
     <string name="select_group" msgid="6744208543323307114">"انتخاب گروه"</string>
-    <string name="set_image" msgid="2331476809308010401">"تنظیم تصویر بعنوان"</string>
+    <string name="set_image" msgid="2331476809308010401">"تنظیم تصویر به‌عنوان"</string>
     <string name="set_wallpaper" msgid="8491121226190175017">"تنظیم تصویر زمینه"</string>
     <string name="wallpaper" msgid="140165383777262070">"تنظیم تصویر زمینه..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"تصویر زمینه"</string>
@@ -87,8 +87,8 @@
     <string name="process_caching_requests" msgid="8722939570307386071">"پردازش درخواست‌های ذخیره در حافظه پنهان"</string>
     <string name="caching_label" msgid="4521059045896269095">"در حال ذخیره در حافظه پنهان..."</string>
     <string name="crop_action" msgid="3427470284074377001">"برش"</string>
-    <string name="set_as" msgid="3636764710790507868">"تنظیم بعنوان"</string>
-    <string name="video_err" msgid="7003051631792271009">"ویدیو پخش نمی‌شود."</string>
+    <string name="set_as" msgid="3636764710790507868">"تنظیم به‌عنوان"</string>
+    <string name="video_err" msgid="7003051631792271009">"ویدئو پخش نمی‌شود."</string>
     <string name="group_by_location" msgid="316641628989023253">"بر اساس محل"</string>
     <string name="group_by_time" msgid="9046168567717963573">"بر اساس زمان"</string>
     <string name="group_by_tags" msgid="3568731317210676160">"بر اساس برچسب ها"</string>
@@ -100,13 +100,13 @@
     <string name="no_connectivity" msgid="7164037617297293668">"شناسایی برخی از مکان‌ها به دلیل مشکلات شبکه امکان‌پذیر نیست."</string>
     <string name="sync_album_error" msgid="1020688062900977530">"عکس‌های این آلبوم را نمی‌توان دانلود کرد. بعداً دوباره امتحان کنید."</string>
     <string name="show_images_only" msgid="7263218480867672653">"فقط تصاویر"</string>
-    <string name="show_videos_only" msgid="3850394623678871697">"فقط ویدیوها"</string>
-    <string name="show_all" msgid="6963292714584735149">"تصاویر و ویدیوها"</string>
+    <string name="show_videos_only" msgid="3850394623678871697">"فقط ویدئوها"</string>
+    <string name="show_all" msgid="6963292714584735149">"تصاویر و ویدئوها"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"گالری عکس"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"عکسی موجود نیست."</string>
     <string name="crop_saved" msgid="1595985909779105158">"تصویر بریده شده در <xliff:g id="FOLDER_NAME">%s</xliff:g> ذخیره شد."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"آلبومی موجود نیست."</string>
-    <string name="empty_album" msgid="4542880442593595494">"O تصویر/ویدیو موجود است."</string>
+    <string name="empty_album" msgid="4542880442593595494">"O تصویر/ویدئو موجود است."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"پست‌ها"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"در دسترس بودن در هنگام آفلاین"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"بازخوانی"</string>
@@ -140,7 +140,7 @@
     <item quantity="one" msgid="2171596356101611086">"آلبوم را به صورت آفلاین در دسترس قرار دهید."</item>
     <item quantity="other" msgid="4948604338155959389">"آلبوم‌ها را به صورت آفلاین در دسترس قرار دهید."</item>
   </plurals>
-    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"این مورد به صورت محلی ذخیره می شود و به طور آفلاین در دسترس است."</string>
+    <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"این مورد به صورت محلی ذخیره می‌شود و به طور آفلاین در دسترس است."</string>
     <string name="set_label_all_albums" msgid="4581863582996336783">"همه آلبوم‌ها"</string>
     <string name="set_label_local_albums" msgid="6698133661656266702">"آلبوم‌های محلی"</string>
     <string name="set_label_mtp_devices" msgid="1283513183744896368">"دستگاه‌های MTP"</string>
