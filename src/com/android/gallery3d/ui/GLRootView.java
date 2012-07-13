@@ -21,6 +21,7 @@ import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
+import android.os.Build;
 import android.os.Process;
 import android.os.SystemClock;
 import android.util.AttributeSet;
@@ -83,9 +84,6 @@ public class GLRootView extends GLSurfaceView
     // with mCompensation.
     private Matrix mCompensationMatrix = new Matrix();
     private int mDisplayRotation;
-
-    // The value which will become mCompensation in next layout.
-    private int mPendingCompensation;
 
     private int mFlags = FLAG_NEED_LAYOUT;
     private volatile boolean mRenderRequested = false;
@@ -333,6 +331,7 @@ public class GLRootView extends GLSurfaceView
         if (mFirstDraw) {
             mFirstDraw = false;
             post(new Runnable() {
+                    @Override
                     public void run() {
                         View root = getRootView();
                         View cover = root.findViewById(R.id.gl_root_cover);
@@ -538,11 +537,13 @@ public class GLRootView extends GLSurfaceView
     }
 
     @Override
-    @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void setLightsOutMode(boolean enabled) {
+        if (!ApiHelper.HAS_SET_SYSTEM_UI_VISIBILITY) return;
+
         int flags = 0;
         if (enabled) {
-            flags = SYSTEM_UI_FLAG_LOW_PROFILE;
+            flags = STATUS_BAR_HIDDEN;
             if (ApiHelper.HAS_VIEW_SYSTEM_UI_FLAG_LAYOUT_STABLE) {
                 flags |= (SYSTEM_UI_FLAG_FULLSCREEN | SYSTEM_UI_FLAG_LAYOUT_STABLE);
             }

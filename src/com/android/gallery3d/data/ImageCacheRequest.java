@@ -57,11 +57,13 @@ abstract class ImageCacheRequest implements Job<Bitmap> {
                 options.inPreferredConfig = Bitmap.Config.ARGB_8888;
                 Bitmap bitmap;
                 if (mType == MediaItem.TYPE_MICROTHUMBNAIL) {
-                    bitmap = MediaItem.getMicroThumbPool().decode(jc,
-                            buffer.data, buffer.offset, buffer.length, options);
+                    bitmap = DecodeUtils.decode(jc,
+                            buffer.data, buffer.offset, buffer.length, options,
+                            MediaItem.getMicroThumbPool());
                 } else {
-                    bitmap = MediaItem.getThumbPool().decode(jc,
-                            buffer.data, buffer.offset, buffer.length, options);
+                    bitmap = DecodeUtils.decode(jc,
+                            buffer.data, buffer.offset, buffer.length, options,
+                            MediaItem.getThumbPool());
                 }
                 if (bitmap == null && !jc.isCancelled()) {
                     Log.w(TAG, "decode cached failed " + debugTag);

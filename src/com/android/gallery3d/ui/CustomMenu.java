@@ -25,8 +25,6 @@ import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 
-import com.android.gallery3d.R;
-
 import java.util.ArrayList;
 
 public class CustomMenu implements OnMenuItemClickListener {
@@ -46,6 +44,7 @@ public class CustomMenu implements OnMenuItemClickListener {
             mPopupMenu.getMenuInflater().inflate(menuId, mMenu);
             mPopupMenu.setOnMenuItemClickListener(listener);
             mButton.setOnClickListener(new OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     mPopupMenu.show();
                 }
@@ -60,8 +59,6 @@ public class CustomMenu implements OnMenuItemClickListener {
             mButton.setText(title);
         }
     }
-
-
 
     private Context mContext;
     private ArrayList<DropDownMenu> mMenus;
@@ -82,6 +79,7 @@ public class CustomMenu implements OnMenuItemClickListener {
         mListener = listener;
     }
 
+    @Override
     public boolean onMenuItemClick(MenuItem item) {
         if (mListener != null) {
             return mListener.onMenuItemClick(item);

@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.app;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -27,11 +28,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.common.ApiHelper;
+import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.ui.GLRoot;
@@ -84,18 +88,42 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         toggleStatusBarByOrientation();
     }
 
+    private Menu mOptionsMenu;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        mOptionsMenu = menu;
+        super.onCreateOptionsMenu(menu);
+        return getStateManager().createOptionsMenu(menu);
+    }
+
+    @Override
+    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
+    public void invalidateOptionsMenu() {
+        if (ApiHelper.HAS_ACTIVITY_INVALIDATE_OPTIONS_MENU) {
+            super.invalidateOptionsMenu();
+        } else if (mOptionsMenu != null) {
+            mOptionsMenu.clear();
+            getStateManager().createOptionsMenu(mOptionsMenu);
+        }
+    }
+
+    @Override
     public Context getAndroidContext() {
         return this;
     }
 
+    @Override
     public DataManager getDataManager() {
         return ((GalleryApp) getApplication()).getDataManager();
     }
 
+    @Override
     public ThreadPool getThreadPool() {
         return ((GalleryApp) getApplication()).getThreadPool();
     }
 
+    @Override
     public synchronized StateManager getStateManager() {
         if (mStateManager == null) {
             mStateManager = new StateManager(this);
@@ -103,10 +131,12 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         return mStateManager;
     }
 
+    @Override
     public GLRoot getGLRoot() {
         return mGLRootView;
     }
 
+    @Override
     public OrientationManager getOrientationManager() {
         return mOrientationManager;
     }
@@ -141,15 +171,25 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
                     dialog.cancel();
                 }
             };
-            mAlertDialog = new AlertDialog.Builder(this)
-                    .setIconAttribute(android.R.attr.alertDialogIcon)
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
                     .setTitle(R.string.no_external_storage_title)
                     .setMessage(R.string.no_external_storage)
                     .setNegativeButton(android.R.string.cancel, onClick)
-                    .setOnCancelListener(onCancel)
-                    .show();
+                    .setOnCancelListener(onCancel);
+            if (ApiHelper.HAS_SET_ICON_ATTRIBUTE) {
+                setAlertDialogIconAttribute(builder);
+            } else {
+                builder.setIcon(android.R.drawable.ic_dialog_alert);
+            }
+            mAlertDialog = builder.show();
             registerReceiver(mMountReceiver, mMountFilter);
         }
+    }
+
+    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
+    private static void setAlertDialogIconAttribute(
+            AlertDialog.Builder builder) {
+        builder.setIconAttribute(android.R.attr.alertDialogIcon);
     }
 
     @Override
@@ -188,9 +228,14 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         } finally {
             mGLRootView.unlockRenderThread();
         }
-        MediaItem.getMicroThumbPool().clear();
-        MediaItem.getThumbPool().clear();
+        clearBitmapPool(MediaItem.getMicroThumbPool());
+        clearBitmapPool(MediaItem.getThumbPool());
+
         MediaItem.getBytesBufferPool().clear();
+    }
+
+    private static void clearBitmapPool(BitmapPool pool) {
+        if (pool != null) pool.clear();
     }
 
     @Override

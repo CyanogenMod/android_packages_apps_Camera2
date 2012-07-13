@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.gadget;
 
+import android.annotation.TargetApi;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,11 +26,13 @@ import android.widget.RemoteViewsService;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
 
+@TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
 public class WidgetService extends RemoteViewsService {
 
     @SuppressWarnings("unused")

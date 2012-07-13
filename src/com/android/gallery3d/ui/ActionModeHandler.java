@@ -227,10 +227,9 @@ public class ActionModeHandler implements ActionMode.Callback {
         return operation;
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
     private void setNfcBeamPushUris(Uri[] uris) {
-        if (mNfcAdapter != null &&
-                Build.VERSION.SDK_INT >= ApiHelper.VERSION_CODES.JELLY_BEAN) {
+        if (mNfcAdapter != null && ApiHelper.HAS_SET_BEAM_PUSH_URIS) {
             mNfcAdapter.setBeamPushUris(uris, (Activity)mActivity);
         }
     }

@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.RectF;
 
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.MediaItem;
 
 // This is a ScreenNail wraps a Bitmap. There are some extra functions:
@@ -70,6 +71,11 @@ public class BitmapScreenNail implements ScreenNail {
         mHeight = Math.round(scale * height);
     }
 
+    private static void recycleBitmap(BitmapPool pool, Bitmap bitmap) {
+        if (pool == null || bitmap == null) return;
+        pool.recycle(bitmap);
+    }
+
     // Combines the two ScreenNails.
     // Returns the used one and recycle the unused one.
     public ScreenNail combine(ScreenNail other) {
@@ -88,9 +94,7 @@ public class BitmapScreenNail implements ScreenNail {
         mWidth = newer.mWidth;
         mHeight = newer.mHeight;
         if (newer.mBitmap != null) {
-            if (mBitmap != null) {
-                MediaItem.getThumbPool().recycle(mBitmap);
-            }
+            recycleBitmap(MediaItem.getThumbPool(), mBitmap);
             mBitmap = newer.mBitmap;
             newer.mBitmap = null;
 
@@ -130,10 +134,8 @@ public class BitmapScreenNail implements ScreenNail {
             mTexture.recycle();
             mTexture = null;
         }
-        if (mBitmap != null) {
-            MediaItem.getThumbPool().recycle(mBitmap);
-            mBitmap = null;
-        }
+        recycleBitmap(MediaItem.getThumbPool(), mBitmap);
+        mBitmap = null;
     }
 
     @Override

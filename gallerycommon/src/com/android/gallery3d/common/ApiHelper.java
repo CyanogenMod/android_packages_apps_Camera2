@@ -16,9 +16,16 @@
 
 package com.android.gallery3d.common;
 
+import android.app.Activity;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
+import android.hardware.Camera;
+import android.hardware.Camera.FaceDetectionListener;
 import android.os.Build;
 import android.provider.MediaStore.MediaColumns;
 import android.view.View;
+
+import java.lang.reflect.Field;
 
 public class ApiHelper {
     public static interface VERSION_CODES {
@@ -44,6 +51,63 @@ public class ApiHelper {
     public static final boolean HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER =
             Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
 
+    public static final boolean HAS_REUSING_BITMAP_IN_BITMAP_FACTORY =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
+    public static final boolean HAS_SET_BEAM_PUSH_URIS =
+            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
+
+    public static final boolean HAS_SET_DEFALT_BUFFER_SIZE = hasMethod(
+            "android.graphics.SurfaceTexture", "setDefaultBufferSize",
+            int.class, int.class);
+
+    public static final boolean HAS_RELEASE_SURFACE_TEXTURE = hasMethod(
+            "android.graphics.SurfaceTexture", "release");
+
+    public static final boolean HAS_MTP =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB_MR1;
+
+    public static final boolean HAS_AUTO_FOCUS_MOVE_CALLBACK =
+            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
+
+    public static final boolean HAS_ACTIVITY_INVALIDATE_OPTIONS_MENU =
+            hasMethod(Activity.class, "invalidateOptionsMenu");
+
+    public static final boolean HAS_REMOTE_VIEWS_SERVICE =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
+    public static final boolean HAS_INTENT_EXTRA_LOCAL_ONLY =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
+    public static final boolean HAS_SET_SYSTEM_UI_VISIBILITY =
+            hasMethod(View.class, "setSystemUiVisibility", int.class);
+
+    public static final boolean HAS_FACE_DETECTION =
+            hasClass(Camera.class, "android.hardware.Camera$FaceDetectionListener") &&
+            hasMethod(Camera.class, "setFaceDetectionListener", FaceDetectionListener.class) &&
+            hasMethod(Camera.class, "startFaceDetection") &&
+            hasMethod(Camera.class, "stopFaceDetection") &&
+            hasMethod(Camera.Parameters.class, "getMaxNumDetectedFaces");
+
+    public static final boolean HAS_GET_CAMERA_DISABLED =
+            hasMethod(DevicePolicyManager.class, "getCameraDisabled", ComponentName.class);
+
+    public static final boolean HAS_MEDIA_ACTION_SOUND =
+            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
+
+    public static int getIntFieldIfExists(Class<?> klass, String fieldName,
+            Class<?> obj, int defaultVal) {
+        try {
+            Field f = klass.getDeclaredField(fieldName);
+            return f.getInt(obj);
+        } catch (Exception e) {
+            return defaultVal;
+        }
+    }
+
+    public static final boolean HAS_SET_ICON_ATTRIBUTE =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
             klass.getDeclaredField(fieldName);
@@ -52,4 +116,36 @@ public class ApiHelper {
             return false;
         }
     }
+
+    private static boolean hasMethod(String className, String methodName,
+            Class<?>... parameterTypes) {
+        try {
+            Class<?> klass = Class.forName(className);
+            klass.getDeclaredMethod(methodName, parameterTypes);
+            return true;
+        } catch (Throwable th) {
+            return false;
+        }
+    }
+
+    private static boolean hasMethod(
+            Class<?> klass, String methodName, Class<?> ... paramTypes) {
+        try {
+            klass.getDeclaredMethod(methodName, paramTypes);
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
+
+    private static boolean hasClass(Class<?> klass, String className) {
+        Class<?>[] klasses = klass.getClasses();
+        for (int i = 0; i < klasses.length; ++i) {
+            if (klasses[i].getName().equals(className)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

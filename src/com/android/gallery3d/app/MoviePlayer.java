@@ -29,6 +29,7 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -56,6 +57,10 @@ public class MoviePlayer implements
 
     private static final String KEY_VIDEO_POSITION = "video-position";
     private static final String KEY_RESUMEABLE_TIME = "resumeable-timeout";
+
+    // These are constants in KeyEvent, appearing on API level 11.
+    private static final int KEYCODE_MEDIA_PLAY = 126;
+    private static final int KEYCODE_MEDIA_PAUSE = 127;
 
     // Copied from MediaPlaybackService in the Music Player app.
     private static final String SERVICECMD = "com.android.music.musicservicecommand";
@@ -178,7 +183,7 @@ public class MoviePlayer implements
         }
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void setOnSystemUiVisibilityChangeListener() {
         if (!ApiHelper.HAS_VIEW_SYSTEM_UI_FLAG_HIDE_NAVIGATION) return;
 
@@ -212,7 +217,7 @@ public class MoviePlayer implements
         });
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void showSystemUi(boolean visible) {
         if (!ApiHelper.HAS_VIEW_SYSTEM_UI_FLAG_LAYOUT_STABLE) return;
 
@@ -220,7 +225,7 @@ public class MoviePlayer implements
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
         if (!visible) {
-            flag |= View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN
+            flag |= View.STATUS_BAR_HIDDEN | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
         }
         mVideoView.setSystemUiVisibility(flag);
@@ -410,12 +415,12 @@ public class MoviePlayer implements
                     playVideo();
                 }
                 return true;
-            case KeyEvent.KEYCODE_MEDIA_PAUSE:
+            case KEYCODE_MEDIA_PAUSE:
                 if (mVideoView.isPlaying()) {
                     pauseVideo();
                 }
                 return true;
-            case KeyEvent.KEYCODE_MEDIA_PLAY:
+            case KEYCODE_MEDIA_PLAY:
                 if (!mVideoView.isPlaying()) {
                     playVideo();
                 }
