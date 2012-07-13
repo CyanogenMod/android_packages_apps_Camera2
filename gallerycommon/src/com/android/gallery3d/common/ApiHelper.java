@@ -25,6 +25,8 @@ import android.os.Build;
 import android.provider.MediaStore.MediaColumns;
 import android.view.View;
 
+import java.lang.reflect.Field;
+
 public class ApiHelper {
     public static interface VERSION_CODES {
         // These value are copied from Build.VERSION_CODES
@@ -86,6 +88,19 @@ public class ApiHelper {
 
     public static final boolean HAS_GET_CAMERA_DISABLED =
             hasMethod(DevicePolicyManager.class, "getCameraDisabled", ComponentName.class);
+
+    public static final boolean HAS_MEDIA_ACTION_SOUND =
+            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
+
+    public static int getIntFieldIfExists(Class<?> klass, String fieldName,
+            Class<?> obj, int defaultVal) {
+        try {
+            Field f = klass.getDeclaredField(fieldName);
+            return f.getInt(obj);
+        } catch (Exception e) {
+            return defaultVal;
+        }
+    }
 
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
