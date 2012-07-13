@@ -57,6 +57,13 @@ public abstract class SurfaceTextureScreenNail implements ScreenNail,
         }
     }
 
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private static void releaseSurfaceTexture(SurfaceTexture st) {
+        if (ApiHelper.HAS_RELEASE_SURFACE_TEXTURE) {
+            st.release();
+        }
+    }
+
     public SurfaceTexture getSurfaceTexture() {
         return mSurfaceTexture;
     }
@@ -67,7 +74,7 @@ public abstract class SurfaceTextureScreenNail implements ScreenNail,
         }
         mExtTexture.recycle();
         mExtTexture = null;
-        mSurfaceTexture.release();
+        releaseSurfaceTexture(mSurfaceTexture);
         mSurfaceTexture = null;
     }
 

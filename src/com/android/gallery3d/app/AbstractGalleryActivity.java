@@ -171,15 +171,25 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
                     dialog.cancel();
                 }
             };
-            mAlertDialog = new AlertDialog.Builder(this)
-                    .setIconAttribute(android.R.attr.alertDialogIcon)
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
                     .setTitle(R.string.no_external_storage_title)
                     .setMessage(R.string.no_external_storage)
                     .setNegativeButton(android.R.string.cancel, onClick)
-                    .setOnCancelListener(onCancel)
-                    .show();
+                    .setOnCancelListener(onCancel);
+            if (ApiHelper.HAS_SET_ICON_ATTRIBUTE) {
+                setAlertDialogIconAttribute(builder);
+            } else {
+                builder.setIcon(android.R.drawable.ic_dialog_alert);
+            }
+            mAlertDialog = builder.show();
             registerReceiver(mMountReceiver, mMountFilter);
         }
+    }
+
+    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
+    private static void setAlertDialogIconAttribute(
+            AlertDialog.Builder builder) {
+        builder.setIconAttribute(android.R.attr.alertDialogIcon);
     }
 
     @Override
