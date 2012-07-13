@@ -61,6 +61,9 @@ public class ApiHelper {
             "android.graphics.SurfaceTexture", "setDefaultBufferSize",
             int.class, int.class);
 
+    public static final boolean HAS_RELEASE_SURFACE_TEXTURE = hasMethod(
+            "android.graphics.SurfaceTexture", "release");
+
     public static final boolean HAS_MTP =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB_MR1;
 
@@ -101,6 +104,9 @@ public class ApiHelper {
             return defaultVal;
         }
     }
+
+    public static final boolean HAS_SET_ICON_ATTRIBUTE =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
