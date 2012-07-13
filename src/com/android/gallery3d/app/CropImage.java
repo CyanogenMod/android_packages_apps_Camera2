@@ -17,7 +17,6 @@
 package com.android.gallery3d.app;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
 import android.content.ContentValues;
@@ -47,6 +46,8 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.actionbar.ActionBarUtils;
+import com.android.gallery3d.actionbar.ActionBarInterface;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.ExifTags;
@@ -162,12 +163,14 @@ public class CropImage extends AbstractGalleryActivity {
         mCropView = new CropView(this);
         getGLRoot().setContentPane(mCropView);
 
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE,
-                ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
+        ActionBarInterface actionBar = ActionBarUtils.getActionBar(this);
+        int displayOptions = ActionBarInterface.DISPLAY_HOME_AS_UP
+                | ActionBarInterface.DISPLAY_SHOW_TITLE;
+        actionBar.setDisplayOptions(displayOptions, displayOptions);
+
         Bundle extra = getIntent().getExtras();
         if (extra != null && extra.getBoolean(KEY_SET_AS_WALLPAPER, false)) {
-            actionBar.setTitle(R.string.set_wallpaper);
+            actionBar.setTitle(getString(R.string.set_wallpaper));
         }
 
         mMainHandler = new SynchronizedHandler(getGLRoot()) {

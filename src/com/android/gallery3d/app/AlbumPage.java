@@ -26,9 +26,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.provider.MediaStore;
-import android.view.ActionMode;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -96,7 +94,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private boolean mGetContent;
     private boolean mShowClusterMenu;
 
-    private ActionMode mActionMode;
     private ActionModeHandler mActionModeHandler;
     private int mFocusIndex = 0;
     private DetailsHelper mDetailsHelper;
@@ -502,44 +499,31 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
     @Override
     protected boolean onCreateActionBar(Menu menu) {
-        Activity activity = (Activity) mActivity;
         GalleryActionBar actionBar = mActivity.getGalleryActionBar();
-        MenuInflater inflater = activity.getMenuInflater();
-
+        boolean result;
         if (mGetContent) {
-            inflater.inflate(R.menu.pickup, menu);
+            result = actionBar.createActionMenu(menu, R.menu.pickup);
             int typeBits = mData.getInt(Gallery.KEY_TYPE_BITS,
                     DataManager.INCLUDE_IMAGE);
 
             actionBar.setTitle(GalleryUtils.getSelectionModePrompt(typeBits));
         } else {
-            inflater.inflate(R.menu.album, menu);
+            result = actionBar.createActionMenu(menu, R.menu.album);
             actionBar.setTitle(mMediaSet.getName());
-            if (mMediaSet instanceof MtpDevice) {
-                menu.findItem(R.id.action_slideshow).setVisible(false);
-            } else {
-                menu.findItem(R.id.action_slideshow).setVisible(true);
-            }
+            actionBar.setMenuItemVisible(
+                    R.id.action_slideshow, !(mMediaSet instanceof MtpDevice));
 
             FilterUtils.setupMenuItems(actionBar, mMediaSetPath, true);
-
-            MenuItem groupBy = menu.findItem(R.id.action_group_by);
-            if (groupBy != null) {
-                groupBy.setVisible(mShowClusterMenu);
-            }
-
-            MenuItem switchCamera = menu.findItem(R.id.action_camera);
-            if (switchCamera != null) {
-                switchCamera.setVisible(
-                        MediaSetUtils.isCameraSource(mMediaSetPath)
-                        && GalleryUtils.isCameraAvailable(activity));
-            }
+            actionBar.setMenuItemVisible(R.id.action_group_by, mShowClusterMenu);
+            actionBar.setMenuItemVisible(R.id.action_camera,
+                    MediaSetUtils.isCameraSource(mMediaSetPath)
+                    && GalleryUtils.isCameraAvailable((Activity) mActivity));
 
             actionBar.setTitle(mMediaSet.getName());
         }
         actionBar.setSubtitle(null);
 
-        return true;
+        return result;
     }
 
     @Override
@@ -613,12 +597,12 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     public void onSelectionModeChange(int mode) {
         switch (mode) {
             case SelectionManager.ENTER_SELECTION_MODE: {
-                mActionMode = mActionModeHandler.startActionMode();
-                if(mHapticsEnabled) mVibrator.vibrate(100);
+                mActionModeHandler.startActionMode();
+                if (mHapticsEnabled) mVibrator.vibrate(100);
                 break;
             }
             case SelectionManager.LEAVE_SELECTION_MODE: {
-                mActionMode.finish();
+                mActionModeHandler.finishActionMode();
                 mRootPane.invalidate();
                 break;
             }
@@ -632,7 +616,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
     @Override
     public void onSelectionChange(Path path, boolean selected) {
-        Utils.assertTrue(mActionMode != null);
         int count = mSelectionManager.getSelectedCount();
         String format = mActivity.getResources().getQuantityString(
                 R.plurals.number_of_items_selected, count);
