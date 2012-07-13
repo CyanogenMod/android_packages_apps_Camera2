@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.util;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -24,9 +23,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.MenuItem;
-
-import com.android.gallery3d.common.ApiHelper;
 
 import java.util.Locale;
 
@@ -53,39 +49,13 @@ public class HelpUtils {
     private static String sCachedVersionCode = null;
 
     /** Static helper that is not instantiable*/
-    private HelpUtils() { }
+    private HelpUtils() {}
 
-    /**
-     * Prepares the help menu item by doing the following.
-     * - If the string corresponding to the helpUrlResourceId is empty or null, then the help menu
-     *   item is made invisible.
-     * - Otherwise, this makes the help menu item visible and sets the intent for the help menu
-     *   item to view the URL.
-     *
-     * @return returns whether the help menu item has been made visible.
-     */
-    public static boolean prepareHelpMenuItem(Context context, MenuItem helpMenuItem,
-            int helpUrlResourceId) {
-        String helpUrlString = context.getResources().getString(helpUrlResourceId);
-        return prepareHelpMenuItem(context, helpMenuItem, helpUrlString);
-    }
+    public static Intent getHelpIntent(Context context, int helpUrlResId) {
+        String helpUrlString = context.getString(helpUrlResId);
 
-    /**
-     * Prepares the help menu item by doing the following.
-     * - If the helpUrlString is empty or null, the help menu item is made invisible.
-     * - Otherwise, this makes the help menu item visible and sets the intent for the help menu
-     *   item to view the URL.
-     *
-     * @return returns whether the help menu item has been made visible.
-     */
-    public static boolean prepareHelpMenuItem(Context context, MenuItem helpMenuItem,
-            String helpUrlString) {
         if (TextUtils.isEmpty(helpUrlString)) {
-            // The help url string is empty or null, so set the help menu item to be invisible.
-            helpMenuItem.setVisible(false);
-
-            // return that the help menu item is not visible (i.e. false)
-            return false;
+            return null;
         } else {
             // The help url string exists, so first add in some extra query parameters.
             final Uri fullUri = uriWithAddedParameters(context, Uri.parse(helpUrlString));
@@ -95,22 +65,7 @@ public class HelpUtils {
             Intent intent = new Intent(Intent.ACTION_VIEW, fullUri);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                     | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-
-            // Set the intent to the help menu item, show the help menu item in the overflow
-            // menu, and make it visible.
-            helpMenuItem.setIntent(intent);
-            setMenuItemShowAsAction(helpMenuItem);
-            helpMenuItem.setVisible(true);
-
-            // return that the help menu item is visible (i.e., true)
-            return true;
-        }
-    }
-
-    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
-    private static void setMenuItemShowAsAction(MenuItem menuItem) {
-        if (ApiHelper.HAS_MENU_ITEM_SHOW_AS_ACTION) {
-            menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            return intent;
         }
     }
 

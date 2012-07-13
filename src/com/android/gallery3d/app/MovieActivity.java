@@ -17,7 +17,6 @@
 package com.android.gallery3d.app;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
@@ -38,9 +37,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ShareActionProvider;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.actionbar.ActionBarInterface;
+import com.android.gallery3d.actionbar.ActionBarUtils;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 
@@ -128,10 +128,10 @@ public class MovieActivity extends Activity {
 
     private void initializeActionBar(Intent intent) {
         mUri = intent.getData();
-        final ActionBar actionBar = getActionBar();
+        final ActionBarInterface actionBar = ActionBarUtils.getActionBar(this);
         setActionBarLogoFromIntent(intent);
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
-                ActionBar.DISPLAY_HOME_AS_UP);
+        actionBar.setDisplayOptions(ActionBarInterface.DISPLAY_HOME_AS_UP,
+                ActionBarInterface.DISPLAY_HOME_AS_UP);
 
         String title = intent.getStringExtra(Intent.EXTRA_TITLE);
         if (title != null) {
@@ -167,25 +167,18 @@ public class MovieActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.movie, menu);
-
+        ActionBarInterface actionBar = ActionBarUtils.getActionBar(this);
+        boolean result = actionBar.createActionMenu(menu, R.menu.movie);
         // Document says EXTRA_STREAM should be a content: Uri
         // So, we only share the video if it's "content:".
         if (ContentResolver.SCHEME_CONTENT.equals(mUri.getScheme())) {
-            initializeShareActionProvider(menu);
+            if (actionBar.hasShareMenuItem()) {
+                actionBar.setShareIntent(createShareIntent());
+            }
         } else {
             menu.findItem(R.id.action_share).setVisible(false);
         }
-        return true;
-    }
-
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private void initializeShareActionProvider(Menu menu) {
-        if (!ApiHelper.HAS_SHARE_ACTION_PROVIDER) return;
-
-        ShareActionProvider provider = GalleryActionBar.initializeShareActionProvider(
-                menu, this);
-        provider.setShareIntent(createShareIntent());
+        return result;
     }
 
     private Intent createShareIntent() {
