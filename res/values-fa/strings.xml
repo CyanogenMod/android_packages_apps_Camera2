@@ -32,7 +32,7 @@
     <string name="fail_to_load_image" msgid="6155388718549782425">"تصویر بارگیری نمی‌شود"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"تصویر کوچکی وجود ندارد"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"شروع مجدد"</string>
-    <string name="crop_save_text" msgid="152200178986698300">"تائید"</string>
+    <string name="crop_save_text" msgid="152200178986698300">"تأیید"</string>
     <string name="ok" msgid="5296833083983263293">"تأیید"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"برای شروع یک چهره را لمس کنید."</string>
     <string name="saving_image" msgid="7270334453636349407">"در حال ذخیره عکس..."</string>
@@ -91,7 +91,7 @@
     <string name="video_err" msgid="7003051631792271009">"ویدئو پخش نمی‌شود."</string>
     <string name="group_by_location" msgid="316641628989023253">"بر اساس محل"</string>
     <string name="group_by_time" msgid="9046168567717963573">"بر اساس زمان"</string>
-    <string name="group_by_tags" msgid="3568731317210676160">"بر اساس برچسب ها"</string>
+    <string name="group_by_tags" msgid="3568731317210676160">"بر اساس برچسب‌ها"</string>
     <string name="group_by_faces" msgid="1566351636227274906">"براساس افراد"</string>
     <string name="group_by_album" msgid="1532818636053818958">"بر اساس آلبوم"</string>
     <string name="group_by_size" msgid="153766174950394155">"بر اساس اندازه"</string>
