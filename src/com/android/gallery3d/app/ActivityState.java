@@ -33,6 +33,8 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.android.gallery3d.actionbar.ActionBarInterface;
+import com.android.gallery3d.actionbar.ActionBarUtils;
 import com.android.gallery3d.ui.GLView;
 
 abstract public class ActivityState {
@@ -142,7 +144,7 @@ abstract public class ActivityState {
     // should only be called by StateManager
     void resume() {
         AbstractGalleryActivity activity = (AbstractGalleryActivity) mActivity;
-        ActionBar actionBar = activity.getActionBar();
+        ActionBarInterface actionBar = ActionBarUtils.getActionBar(activity);
         if (actionBar != null) {
             if ((mFlags & FLAG_HIDE_ACTION_BAR) != 0) {
                 actionBar.hide();
