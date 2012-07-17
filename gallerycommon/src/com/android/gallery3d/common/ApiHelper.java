@@ -95,6 +95,9 @@ public class ApiHelper {
     public static final boolean HAS_MEDIA_ACTION_SOUND =
             Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
 
+    public static final boolean HAS_PANORAMA =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
         try {
