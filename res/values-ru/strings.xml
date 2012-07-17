@@ -27,7 +27,7 @@
     <string name="resume_playing_title" msgid="8996677350649355013">"Продолжение просмотра видео"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"Продолжить воспроизведение с %s?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"Продолжить воспроизведение"</string>
-    <string name="loading" msgid="7038208555304563571">"Идет загрузка…"</string>
+    <string name="loading" msgid="7038208555304563571">"Загрузка…"</string>
     <string name="fail_to_load" msgid="8394392853646664505">"Не загружено"</string>
     <string name="fail_to_load_image" msgid="6155388718549782425">"Не удалось загрузить изображение"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"Нет уменьшенного изображения"</string>
