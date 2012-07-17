@@ -18,14 +18,20 @@ package com.android.gallery3d.actionbar;
 
 import android.app.Activity;
 
+import com.android.gallery3d.common.ApiHelper;
+
 public class ActionBarUtils {
 
     public static ActionBarInterface getActionBar(Activity activity) {
-        return new SystemActionBarWrapper(activity);
+        return ApiHelper.HAS_ACTION_BAR
+                ? new SystemActionBarWrapper(activity)
+                : new SimpleActionBar(activity);
     }
 
     public static ActionModeInterface startActionMode(
             Activity activity, ActionModeInterface.Callback callback) {
-        return new SystemActionModeWrapper(activity, callback);
+        return ApiHelper.HAS_ACTION_BAR
+                ? new SystemActionModeWrapper(activity, callback)
+                : new SimpleActionMode();
     }
 }
