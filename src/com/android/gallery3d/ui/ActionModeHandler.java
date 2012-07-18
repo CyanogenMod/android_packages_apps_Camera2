@@ -22,7 +22,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
-import android.os.Build;
 import android.os.Handler;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -31,7 +30,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.ShareActionProvider;
 import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
 
@@ -43,7 +41,6 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.Path;
-import com.android.gallery3d.ui.CustomMenu.DropDownMenu;
 import com.android.gallery3d.ui.MenuExecutor.ProgressListener;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
@@ -52,7 +49,8 @@ import com.android.gallery3d.util.ThreadPool.JobContext;
 
 import java.util.ArrayList;
 
-public class ActionModeHandler implements ActionMode.Callback {
+public class ActionModeHandler implements
+        ActionMode.Callback, PopupList.OnPopupItemClickListener {
     private static final String TAG = "ActionModeHandler";
     private static final int SUPPORT_MULTIPLE_MASK = MediaObject.SUPPORT_DELETE
             | MediaObject.SUPPORT_ROTATE | MediaObject.SUPPORT_SHARE
@@ -67,7 +65,7 @@ public class ActionModeHandler implements ActionMode.Callback {
     private final SelectionManager mSelectionManager;
     private final NfcAdapter mNfcAdapter;
     private Menu mMenu;
-    private DropDownMenu mSelectionMenu;
+    private SelectionMenu mSelectionMenu;
     private ActionModeListener mListener;
     private Future<?> mMenuTask;
     private final Handler mMainHandler;
@@ -85,20 +83,13 @@ public class ActionModeHandler implements ActionMode.Callback {
     public ActionMode startActionMode() {
         Activity a = (Activity) mActivity;
         final ActionMode actionMode = a.startActionMode(this);
-        CustomMenu customMenu = new CustomMenu(a);
         View customView = LayoutInflater.from(a).inflate(
                 R.layout.action_mode, null);
         actionMode.setCustomView(customView);
-        mSelectionMenu = customMenu.addDropDownMenu(
-                (Button) customView.findViewById(R.id.selection_menu),
-                R.menu.selection);
+        mSelectionMenu = new SelectionMenu(a,
+                (Button) customView.findViewById(R.id.selection_menu), this);
         updateSelectionMenu();
-        customMenu.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return onActionItemClicked(actionMode, item);
-            }
-        });
+
         return actionMode;
     }
 
@@ -137,14 +128,25 @@ public class ActionModeHandler implements ActionMode.Callback {
                         R.plurals.delete_selection, mSelectionManager.getSelectedCount());
             }
             mMenuExecutor.onMenuClicked(item, confirmMsg, listener);
-            if (action == R.id.action_select_all) {
-                updateSupportedOperation();
-                updateSelectionMenu();
-            }
         } finally {
             root.unlockRenderThread();
         }
         return true;
+    }
+
+    @Override
+    public boolean onPopupItemClick(int itemId) {
+        GLRoot root = mActivity.getGLRoot();
+        root.lockRenderThread();
+        try {
+            if (itemId == R.id.action_select_all) {
+                updateSupportedOperation();
+                mMenuExecutor.onMenuClicked(itemId, null, false, true);
+            }
+            return true;
+        } finally {
+            root.unlockRenderThread();
+        }
     }
 
     private void updateSelectionMenu() {
@@ -153,18 +155,10 @@ public class ActionModeHandler implements ActionMode.Callback {
         String format = mActivity.getResources().getQuantityString(
                 R.plurals.number_of_items_selected, count);
         setTitle(String.format(format, count));
+
         // For clients who call SelectionManager.selectAll() directly, we need to ensure the
         // menu status is consistent with selection manager.
-        MenuItem item = mSelectionMenu.findItem(R.id.action_select_all);
-        if (item != null) {
-            if (mSelectionManager.inSelectAllMode()) {
-                item.setChecked(true);
-                item.setTitle(R.string.deselect_all);
-            } else {
-                item.setChecked(false);
-                item.setTitle(R.string.select_all);
-            }
-        }
+        mSelectionMenu.updateSelectAllMode(mSelectionManager.inSelectAllMode());
     }
 
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
