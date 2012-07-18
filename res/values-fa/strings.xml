@@ -54,7 +54,7 @@
   </plurals>
     <string name="confirm" msgid="8646870096527848520">"تأیید"</string>
     <string name="cancel" msgid="3637516880917356226">"لغو"</string>
-    <string name="share" msgid="3619042788254195341">"اشتراک گذاری"</string>
+    <string name="share" msgid="3619042788254195341">"اشتراک‌گذاری"</string>
     <string name="deleted" msgid="6795433049119073871">"پاک شد"</string>
     <string name="undo" msgid="2930873956446586313">"واگرد"</string>
     <string name="select_all" msgid="3403283025220282175">"انتخاب همه"</string>
