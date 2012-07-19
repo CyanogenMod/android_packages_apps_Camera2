@@ -167,32 +167,48 @@ public class MovieActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-
         getMenuInflater().inflate(R.menu.movie, menu);
-        ShareActionProvider provider = GalleryActionBar.initializeShareActionProvider(menu);
 
         // Document says EXTRA_STREAM should be a content: Uri
         // So, we only share the video if it's "content:".
-        if (provider != null && ContentResolver.SCHEME_CONTENT
-                .equals(mUri.getScheme())) {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("video/*");
-            intent.putExtra(Intent.EXTRA_STREAM, mUri);
-            provider.setShareIntent(intent);
+        if (ContentResolver.SCHEME_CONTENT.equals(mUri.getScheme())) {
+            initializeShareActionProvider(menu);
+        } else {
+            menu.findItem(R.id.action_share).setVisible(false);
         }
-
         return true;
+    }
+
+    @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+    private void initializeShareActionProvider(Menu menu) {
+        if (!ApiHelper.HAS_SHARE_ACTION_PROVIDER) return;
+
+        ShareActionProvider provider = GalleryActionBar.initializeShareActionProvider(
+                menu, this);
+        provider.setShareIntent(createShareIntent());
+    }
+
+    private Intent createShareIntent() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("video/*");
+        intent.putExtra(Intent.EXTRA_STREAM, mUri);
+        return intent;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
             if (mTreatUpAsBack) {
                 finish();
             } else {
                 startActivity(new Intent(this, Gallery.class));
                 finish();
             }
+            return true;
+        } else if (id == R.id.action_share) {
+            startActivity(Intent.createChooser(createShareIntent(),
+                    getString(R.string.share)));
             return true;
         }
         return false;

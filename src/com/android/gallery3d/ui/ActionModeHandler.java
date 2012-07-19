@@ -70,7 +70,7 @@ public class ActionModeHandler implements
     private ActionModeListener mListener;
     private Future<?> mMenuTask;
     private final Handler mMainHandler;
-    private ShareActionProvider mShareActionProvider;
+    private Object mShareActionProvider; // class ShareActionProvider
 
     public ActionModeHandler(
             GalleryActivity activity, SelectionManager selectionManager) {
@@ -166,19 +166,30 @@ public class ActionModeHandler implements
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         MenuInflater inflater = mode.getMenuInflater();
         inflater.inflate(R.menu.operation, menu);
-
-        mShareActionProvider = GalleryActionBar.initializeShareActionProvider(menu);
-        OnShareTargetSelectedListener listener = new OnShareTargetSelectedListener() {
-            @Override
-            public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
-                mSelectionManager.leaveSelectionMode();
-                return false;
-            }
-        };
-
-        mShareActionProvider.setOnShareTargetSelectedListener(listener);
+        initializeShareActionProvider(menu);
         mMenu = menu;
         return true;
+    }
+
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private void initializeShareActionProvider(Menu menu) {
+        if (ApiHelper.HAS_SHARE_ACTION_PROVIDER) {
+            mShareActionProvider = GalleryActionBar.initializeShareActionProvider(menu,
+                    mActivity.getAndroidContext());
+            OnShareTargetSelectedListener listener = new OnShareTargetSelectedListener() {
+                @Override
+                public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
+                    mSelectionManager.leaveSelectionMode();
+                    return false;
+                }
+            };
+            ((ShareActionProvider) mShareActionProvider).setOnShareTargetSelectedListener(listener);
+        }
+    }
+
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private void setShareActionProviderIntent(Intent intent) {
+        ((ShareActionProvider) mShareActionProvider).setShareIntent(intent);
     }
 
     @Override
@@ -288,8 +299,9 @@ public class ActionModeHandler implements
         updateSelectionMenu();
 
         // Disable share action until share intent is in good shape
-        final MenuItem item = mShareActionProvider != null ?
-                mMenu.findItem(R.id.action_share) : null;
+        final MenuItem item = (!ApiHelper.HAS_SHARE_ACTION_PROVIDER
+                || (mShareActionProvider != null))
+                ? mMenu.findItem(R.id.action_share) : null;
         final boolean supportShare = item != null;
         if (supportShare) item.setEnabled(false);
 
@@ -311,7 +323,11 @@ public class ActionModeHandler implements
                             MenuExecutor.updateMenuOperation(mMenu, operation);
                             if (supportShare) {
                                 item.setEnabled(true);
-                                mShareActionProvider.setShareIntent(intent);
+                                if (ApiHelper.HAS_SHARE_ACTION_PROVIDER) {
+                                    setShareActionProviderIntent(intent);
+                                } else {
+                                    mMenuExecutor.setShareIntent(intent);
+                                }
                             }
                         }
                     }

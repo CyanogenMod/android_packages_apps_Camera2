@@ -124,6 +124,9 @@ public class ApiHelper {
     public static final boolean HAS_MOTION_EVENT_TRANSFORM =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
+    public static final boolean HAS_SHARE_ACTION_PROVIDER =
+            Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
+
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
         try {
