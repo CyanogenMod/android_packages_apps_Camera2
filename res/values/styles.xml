@@ -15,7 +15,10 @@
 -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <style name="Theme.Gallery" parent="android:Theme.Holo">
+    <style name="Theme.GalleryBase" parent="android:Theme.Holo">
+        <item name="listPreferredItemHeightSmall">48dp</item>
+    </style>
+    <style name="Theme.Gallery" parent="Theme.GalleryBase">
         <item name="android:displayOptions"></item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:actionBarStyle">@style/Holo.ActionBar</item>
