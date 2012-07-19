@@ -32,6 +32,7 @@ import android.view.MenuItem;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.CropImage;
 import com.android.gallery3d.app.GalleryActivity;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
@@ -60,6 +61,7 @@ public class MenuExecutor {
     private Future<?> mTask;
     // wait the operation to finish when we want to stop it.
     private boolean mWaitOnStop;
+    private Intent mShareIntent;
 
     private final GalleryActivity mActivity;
     private final SelectionManager mSelectionManager;
@@ -235,6 +237,14 @@ public class MenuExecutor {
             case R.id.action_import:
                 title = R.string.Import;
                 break;
+            case R.id.action_share: {
+                if (!ApiHelper.HAS_SHARE_ACTION_PROVIDER) {
+                    Activity activity = (Activity) mActivity;
+                    activity.startActivity(Intent.createChooser(
+                            mShareIntent, activity.getString(R.string.share)));
+                }
+                return;
+            }
             default:
                 return;
         }
@@ -307,6 +317,10 @@ public class MenuExecutor {
         MediaOperation operation = new MediaOperation(action, ids, listener);
         mTask = mActivity.getThreadPool().submit(operation, null);
         mWaitOnStop = waitOnStop;
+    }
+
+    public void setShareIntent(Intent intent) {
+        mShareIntent = intent;
     }
 
     public static String getMimeType(int type) {

@@ -130,12 +130,12 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
         return null;
     }
 
-    public static ShareActionProvider initializeShareActionProvider(Menu menu) {
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static ShareActionProvider initializeShareActionProvider(Menu menu,
+            Context context) {
         MenuItem item = menu.findItem(R.id.action_share);
-        ShareActionProvider shareActionProvider = null;
-        if (item != null) {
-            shareActionProvider = (ShareActionProvider) item.getActionProvider();
-        }
+        ShareActionProvider shareActionProvider = new ShareActionProvider(context);
+        item.setActionProvider(shareActionProvider);
         return shareActionProvider;
     }
 

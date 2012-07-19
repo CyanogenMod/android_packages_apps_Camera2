@@ -120,7 +120,7 @@ public class PhotoPage extends ActivityState implements
     private MediaItem mCurrentPhoto = null;
     private MenuExecutor mMenuExecutor;
     private boolean mIsActive;
-    private ShareActionProvider mShareActionProvider;
+    private Object mShareActionProvider; // class ShareActionProvider
     private String mSetPathString;
     // This is the original mSetPathString before adding the camera preview item.
     private String mOriginalSetPathString;
@@ -325,20 +325,34 @@ public class PhotoPage extends ActivityState implements
         }
     }
 
+    private Intent createShareIntent(Path path) {
+        DataManager manager = mActivity.getDataManager();
+        Uri uri = manager.getContentUri(path);
+        int type = manager.getMediaType(path);
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType(MenuExecutor.getMimeType(type));
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        return intent;
+    }
+
     private void updateShareURI(Path path) {
-        if (mShareActionProvider != null) {
-            DataManager manager = mActivity.getDataManager();
-            int type = manager.getMediaType(path);
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType(MenuExecutor.getMimeType(type));
-            Uri uri = manager.getContentUri(path);
-            intent.putExtra(Intent.EXTRA_STREAM, uri);
-            mShareActionProvider.setShareIntent(intent);
-            setNfcBeamPushUris(new Uri[]{uri});
-            mPendingSharePath = null;
-        } else {
-            // This happens when ActionBar is not created yet.
-            mPendingSharePath = path;
+        DataManager manager = mActivity.getDataManager();
+        Uri uri = manager.getContentUri(path);
+        setNfcBeamPushUris(new Uri[]{uri});
+        setShareActionProviderIntent(path);
+    }
+
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private void setShareActionProviderIntent(Path path) {
+        if (ApiHelper.HAS_SHARE_ACTION_PROVIDER) {
+            if (mShareActionProvider != null) {
+                Intent intent = createShareIntent(path);
+                ((ShareActionProvider) mShareActionProvider).setShareIntent(intent);
+                mPendingSharePath = null;
+            } else {
+                // This happens when ActionBar is not created yet.
+                mPendingSharePath = path;
+            }
         }
     }
 
@@ -533,7 +547,11 @@ public class PhotoPage extends ActivityState implements
     protected boolean onCreateActionBar(Menu menu) {
         MenuInflater inflater = ((Activity) mActivity).getMenuInflater();
         inflater.inflate(R.menu.photo, menu);
-        mShareActionProvider = GalleryActionBar.initializeShareActionProvider(menu);
+
+        if (ApiHelper.HAS_SHARE_ACTION_PROVIDER) {
+            mShareActionProvider = GalleryActionBar.initializeShareActionProvider(
+                    menu, mActivity.getAndroidContext());
+        }
         if (mPendingSharePath != null) updateShareURI(mPendingSharePath);
         mMenu = menu;
         updateMenuOperations();
@@ -633,6 +651,12 @@ public class PhotoPage extends ActivityState implements
                 mSelectionManager.toggle(path);
                 mMenuExecutor.onMenuClicked(item, confirmMsg,
                         new ImportCompleteListener(mActivity));
+                return true;
+            case R.id.action_share:
+                Activity activity = (Activity) mActivity;
+                Intent intent = createShareIntent(mCurrentPhoto.getPath());
+                activity.startActivity(Intent.createChooser(intent,
+                        activity.getString(R.string.share)));
                 return true;
             default :
                 return false;
