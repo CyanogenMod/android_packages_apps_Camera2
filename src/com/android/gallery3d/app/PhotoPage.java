@@ -352,7 +352,7 @@ public class PhotoPage extends ActivityState implements
         updateMenuOperations();
         updateTitle();
         if (mShowDetails) {
-            mDetailsHelper.reloadDetails(mModel.getCurrentIndex());
+            mDetailsHelper.reloadDetails();
         }
         if ((photo.getSupportedOperations() & MediaItem.SUPPORT_SHARE) != 0) {
             updateShareURI(photo.getPath());
@@ -616,7 +616,7 @@ public class PhotoPage extends ActivityState implements
                 if (mShowDetails) {
                     hideDetails();
                 } else {
-                    showDetails(currentIndex);
+                    showDetails();
                 }
                 return true;
             }
@@ -647,7 +647,7 @@ public class PhotoPage extends ActivityState implements
         mDetailsHelper.hide();
     }
 
-    private void showDetails(int index) {
+    private void showDetails() {
         mShowDetails = true;
         if (mDetailsHelper == null) {
             mDetailsHelper = new DetailsHelper(mActivity, mRootPane, new MyDetailsSource());
@@ -658,7 +658,6 @@ public class PhotoPage extends ActivityState implements
                 }
             });
         }
-        mDetailsHelper.reloadDetails(index);
         mDetailsHelper.show();
     }
 
@@ -914,7 +913,6 @@ public class PhotoPage extends ActivityState implements
     }
 
     private class MyDetailsSource implements DetailsSource {
-        private int mIndex;
 
         @Override
         public MediaDetails getDetails() {
@@ -927,14 +925,8 @@ public class PhotoPage extends ActivityState implements
         }
 
         @Override
-        public int findIndex(int indexHint) {
-            mIndex = indexHint;
-            return indexHint;
-        }
-
-        @Override
-        public int getIndex() {
-            return mIndex;
+        public int setIndex() {
+            return mModel.getCurrentIndex();
         }
     }
 }

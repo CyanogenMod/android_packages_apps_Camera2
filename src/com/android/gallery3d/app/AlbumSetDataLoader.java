@@ -27,6 +27,7 @@ import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
+import com.android.gallery3d.data.Path;
 import com.android.gallery3d.ui.SynchronizedHandler;
 
 import java.util.Arrays;
@@ -147,6 +148,19 @@ public class AlbumSetDataLoader {
 
     public int size() {
         return mSize;
+    }
+
+    // Returns the index of the MediaSet with the given path or
+    // -1 if the path is not cached
+    public int findSet(Path id) {
+        int length = mData.length;
+        for (int i = mContentStart; i < mContentEnd; i++) {
+            MediaSet set = mData[i % length];
+            if (set != null && id == set.getPath()) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private void clearSlot(int slotIndex) {
