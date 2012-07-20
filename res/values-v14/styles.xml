@@ -14,14 +14,8 @@
      limitations under the License.
 -->
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/text1"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:textAppearance="?android:attr/textAppearanceListItemSmall"
-    android:gravity="center_vertical"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:minHeight="?attr/listPreferredItemHeightSmall"
-    android:minWidth="196dp"
-/>
+<resources>
+    <style name="Theme.GalleryBase" parent="android:Theme.Holo">
+        <item name="listPreferredItemHeightSmall">?android:attr/listPreferredItemHeightSmall</item>
+    </style>
+</resources>
