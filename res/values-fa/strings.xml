@@ -84,8 +84,8 @@
     <string name="rotate_right" msgid="6776325835923384839">"چرخش به راست"</string>
     <string name="no_such_item" msgid="5315144556325243400">"مورد یافت نشد."</string>
     <string name="edit" msgid="1502273844748580847">"ویرایش"</string>
-    <string name="process_caching_requests" msgid="8722939570307386071">"پردازش درخواست‌های ذخیره در حافظه پنهان"</string>
-    <string name="caching_label" msgid="4521059045896269095">"در حال ذخیره در حافظه پنهان..."</string>
+    <string name="process_caching_requests" msgid="8722939570307386071">"پردازش درخواست‌های ذخیره در حافظهٔ پنهان"</string>
+    <string name="caching_label" msgid="4521059045896269095">"در حال ذخیره در حافظهٔ پنهان..."</string>
     <string name="crop_action" msgid="3427470284074377001">"برش"</string>
     <string name="set_as" msgid="3636764710790507868">"تنظیم به‌عنوان"</string>
     <string name="video_err" msgid="7003051631792271009">"ویدئو پخش نمی‌شود."</string>
@@ -95,7 +95,7 @@
     <string name="group_by_faces" msgid="1566351636227274906">"براساس افراد"</string>
     <string name="group_by_album" msgid="1532818636053818958">"بر اساس آلبوم"</string>
     <string name="group_by_size" msgid="153766174950394155">"بر اساس اندازه"</string>
-    <string name="untagged" msgid="7281481064509590402">"بدون برچسب گذاری"</string>
+    <string name="untagged" msgid="7281481064509590402">"بدون برچسب‌گذاری"</string>
     <string name="no_location" msgid="4043624857489331676">"مکانی موجود نیست"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"شناسایی برخی از مکان‌ها به دلیل مشکلات شبکه امکان‌پذیر نیست."</string>
     <string name="sync_album_error" msgid="1020688062900977530">"عکس‌های این آلبوم را نمی‌توان دانلود کرد. بعداً دوباره امتحان کنید."</string>
