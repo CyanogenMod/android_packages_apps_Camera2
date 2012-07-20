@@ -24,7 +24,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
-import android.provider.MediaStore;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,6 +34,7 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaDetails;
+import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
@@ -250,7 +250,6 @@ public class AlbumSetPage extends ActivityState implements
         if (set == null) return;
         mSelectionManager.setAutoLeaveSelectionMode(true);
         mSelectionManager.toggle(set.getPath());
-        mDetailsSource.findIndex(slotIndex);
         mSlotView.invalidate();
     }
 
@@ -627,22 +626,9 @@ public class AlbumSetPage extends ActivityState implements
         }
 
         @Override
-        public int getIndex() {
-            return mIndex;
-        }
-
-        // If requested index is out of active window, suggest a valid index.
-        // If there is no valid index available, return -1.
-        @Override
-        public int findIndex(int indexHint) {
-            if (mAlbumSetDataAdapter.isActive(indexHint)) {
-                mIndex = indexHint;
-            } else {
-                mIndex = mAlbumSetDataAdapter.getActiveStart();
-                if (!mAlbumSetDataAdapter.isActive(mIndex)) {
-                    return -1;
-                }
-            }
+        public int setIndex() {
+            Path id = mSelectionManager.getSelected(false).get(0);
+            mIndex = mAlbumSetDataAdapter.findSet(id);
             return mIndex;
         }
 

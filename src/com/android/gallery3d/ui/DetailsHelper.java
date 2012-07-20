@@ -29,8 +29,7 @@ public class DetailsHelper {
 
     public interface DetailsSource {
         public int size();
-        public int getIndex();
-        public int findIndex(int indexHint);
+        public int setIndex();
         public MediaDetails getDetails();
     }
 
@@ -39,7 +38,7 @@ public class DetailsHelper {
     }
 
     public interface DetailsViewContainer {
-        public void reloadDetails(int indexHint);
+        public void reloadDetails();
         public void setCloseListener(CloseListener listener);
         public void show();
         public void hide();
@@ -58,8 +57,8 @@ public class DetailsHelper {
         }
     }
 
-    public void reloadDetails(int indexHint) {
-        mContainer.reloadDetails(indexHint);
+    public void reloadDetails() {
+        mContainer.reloadDetails();
     }
 
     public void setCloseListener(CloseListener listener) {

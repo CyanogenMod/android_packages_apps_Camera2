@@ -60,7 +60,7 @@ public class DialogDetailsView implements DetailsViewContainer {
     }
 
     public void show() {
-        reloadDetails(mSource.getIndex());
+        reloadDetails();
         mDialog.show();
     }
 
@@ -68,8 +68,8 @@ public class DialogDetailsView implements DetailsViewContainer {
         mDialog.hide();
     }
 
-    public void reloadDetails(int indexHint) {
-        int index = mSource.findIndex(indexHint);
+    public void reloadDetails() {
+        int index = mSource.setIndex();
         if (index == -1) return;
         MediaDetails details = mSource.getDetails();
         if (details != null) {

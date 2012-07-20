@@ -240,7 +240,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             MediaItem item = mAlbumDataAdapter.get(slotIndex);
             if (item == null) return; // Item not ready yet, ignore the click
             mSelectionManager.toggle(item.getPath());
-            mDetailsSource.findIndex(slotIndex);
             mSlotView.invalidate();
         } else {
             // Show pressed-up animation for the single-tap.
@@ -311,7 +310,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         if (item == null) return;
         mSelectionManager.setAutoLeaveSelectionMode(true);
         mSelectionManager.toggle(item.getPath());
-        mDetailsSource.findIndex(slotIndex);
         mSlotView.invalidate();
     }
 
@@ -699,25 +697,14 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             return mAlbumDataAdapter.size();
         }
 
-        public int getIndex() {
-            return mIndex;
-        }
-
-        // If requested index is out of active window, suggest a valid index.
-        // If there is no valid index available, return -1.
-        public int findIndex(int indexHint) {
-            if (mAlbumDataAdapter.isActive(indexHint)) {
-                mIndex = indexHint;
-            } else {
-                mIndex = mAlbumDataAdapter.getActiveStart();
-                if (!mAlbumDataAdapter.isActive(mIndex)) {
-                    return -1;
-                }
-            }
+        public int setIndex() {
+            Path id = mSelectionManager.getSelected(false).get(0);
+            mIndex = mAlbumDataAdapter.findItem(id);
             return mIndex;
         }
 
         public MediaDetails getDetails() {
+            // this relies on setIndex() being called beforehand
             MediaObject item = mAlbumDataAdapter.get(mIndex);
             if (item != null) {
                 mAlbumView.setHighlightItemPath(item.getPath());
