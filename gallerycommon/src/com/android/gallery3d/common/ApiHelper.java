@@ -101,6 +101,9 @@ public class ApiHelper {
     public static final boolean HAS_TIME_LAPSE_RECORDING =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
+    public static final boolean HAS_CAMCORDER_ZOOM =
+            Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
+
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
         try {
