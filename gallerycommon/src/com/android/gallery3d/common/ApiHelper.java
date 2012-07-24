@@ -112,6 +112,9 @@ public class ApiHelper {
     public static final boolean HAS_ZOOM_WHEN_RECORDING =
             Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
 
+    public static final boolean HAS_CAMERA_FOCUS_AREA =
+            Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
+
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
         try {
