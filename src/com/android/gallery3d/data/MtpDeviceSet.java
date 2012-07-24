@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.data;
 
+import android.annotation.TargetApi;
 import android.mtp.MtpDeviceInfo;
 import android.net.Uri;
 import android.os.Handler;
@@ -23,6 +24,7 @@ import android.util.Log;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.MediaSetUtils;
@@ -34,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 
 // MtpDeviceSet -- MtpDevice -- MtpImage
+@TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB_MR1)
 public class MtpDeviceSet extends MediaSet
         implements FutureListener<ArrayList<MediaSet>> {
     private static final String TAG = "MtpDeviceSet";
