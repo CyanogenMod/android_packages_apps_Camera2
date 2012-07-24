@@ -533,7 +533,7 @@ public class AlbumSetPage extends ActivityState implements
             case SelectionManager.ENTER_SELECTION_MODE: {
                 mActionBar.disableClusterMenu(true);
                 mActionMode = mActionModeHandler.startActionMode();
-                mVibrator.vibrate(100);
+                if(mHapticsEnabled) mVibrator.vibrate(100);
                 break;
             }
             case SelectionManager.LEAVE_SELECTION_MODE: {
