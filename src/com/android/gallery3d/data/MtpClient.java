@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.data;
 
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -31,6 +32,8 @@ import android.mtp.MtpObjectInfo;
 import android.mtp.MtpStorageInfo;
 import android.util.Log;
 
+import com.android.gallery3d.common.ApiHelper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +43,7 @@ import java.util.List;
  * It listens for MTP devices being attached and removed from the USB host bus
  * and notifies the application when the MTP device list changes.
  */
+@TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB_MR1)
 public class MtpClient {
 
     private static final String TAG = "MtpClient";
