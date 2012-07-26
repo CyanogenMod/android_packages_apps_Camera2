@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.data;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
@@ -25,6 +26,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.provider.GalleryProvider;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.Job;
@@ -33,6 +35,7 @@ import com.android.gallery3d.util.ThreadPool.JobContext;
 import java.text.DateFormat;
 import java.util.Date;
 
+@TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB_MR1)
 public class MtpImage extends MediaItem {
     private static final String TAG = "MtpImage";
 
