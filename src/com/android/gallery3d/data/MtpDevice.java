@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.data;
 
+import android.annotation.TargetApi;
 import android.hardware.usb.UsbDevice;
 import android.mtp.MtpConstants;
 import android.mtp.MtpObjectInfo;
@@ -24,10 +25,12 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.common.ApiHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB_MR1)
 public class MtpDevice extends MediaSet {
     private static final String TAG = "MtpDevice";
 
