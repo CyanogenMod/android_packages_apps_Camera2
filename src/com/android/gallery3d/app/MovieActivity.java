@@ -116,13 +116,20 @@ public class MovieActivity extends Activity {
         win.setBackgroundDrawable(null);
     }
 
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private void setActionBarLogoFromIntent(Intent intent) {
+        if (ApiHelper.HAS_ACTION_BAR_SET_LOGO) {
+            Bitmap logo = intent.getParcelableExtra(KEY_LOGO_BITMAP);
+            if (logo != null) {
+                getActionBar().setLogo(new BitmapDrawable(getResources(), logo));
+            }
+        }
+    }
+
     private void initializeActionBar(Intent intent) {
         mUri = intent.getData();
         final ActionBar actionBar = getActionBar();
-        Bitmap logo = intent.getParcelableExtra(KEY_LOGO_BITMAP);
-        if (logo != null) {
-            actionBar.setLogo(new BitmapDrawable(getResources(), logo));
-        }
+        setActionBarLogoFromIntent(intent);
         actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
                 ActionBar.DISPLAY_HOME_AS_UP);
 
