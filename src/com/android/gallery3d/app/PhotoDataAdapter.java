@@ -1036,8 +1036,9 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                     // Don't change index if mSize == 0
                     if (mSize > 0) {
                         if (index >= mSize) index = mSize - 1;
-                        info.indexHint = index;
                     }
+
+                    info.indexHint = index;
                 }
 
                 executeAndWait(new UpdateContent(info));
