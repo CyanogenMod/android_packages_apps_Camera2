@@ -219,6 +219,7 @@ public class AlbumSetDataLoader {
     }
 
     private class MySourceListener implements ContentListener {
+        @Override
         public void onContentDirty() {
             mReloadTask.notifyDirty();
         }
@@ -279,6 +280,7 @@ public class AlbumSetDataLoader {
             mUpdateInfo = info;
         }
 
+        @Override
         public Void call() {
             // Avoid notifying listeners of status change after pause
             // Otherwise gallery will be in inconsistent state after resume.

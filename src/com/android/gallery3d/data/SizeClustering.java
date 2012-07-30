@@ -53,6 +53,7 @@ public class SizeClustering extends Clustering {
         final ArrayList<Path>[] group =
                 (ArrayList<Path>[]) new ArrayList[SIZE_LEVELS.length];
         baseSet.enumerateTotalMediaItems(new MediaSet.ItemConsumer() {
+            @Override
             public void consume(int index, MediaItem item) {
                 // Find the cluster this item belongs to.
                 long size = item.getSize();

@@ -39,6 +39,7 @@ class GalleryEGLConfigChooser implements EGLConfigChooser {
             EGL10.EGL_NONE
     };
 
+    @Override
     public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
         int[] numConfig = new int[1];
         if (!egl.eglChooseConfig(display, mConfigSpec, null, 0, numConfig)) {

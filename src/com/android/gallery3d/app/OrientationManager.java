@@ -24,7 +24,6 @@ import android.content.res.Configuration;
 import android.provider.Settings;
 import android.view.OrientationEventListener;
 import android.view.Surface;
-import android.view.ViewConfiguration;
 
 import com.android.gallery3d.ui.OrientationSource;
 

@@ -77,6 +77,7 @@ public class ExtTexture extends BasicTexture {
         return mTarget;
     }
 
+    @Override
     public boolean isOpaque() {
         return true;
     }

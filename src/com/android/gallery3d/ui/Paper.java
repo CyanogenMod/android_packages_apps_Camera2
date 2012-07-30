@@ -25,6 +25,7 @@ import com.android.gallery3d.common.Utils;
 
 // This class does the overscroll effect.
 class Paper {
+    @SuppressWarnings("unused")
     private static final String TAG = "Paper";
     private static final int ROTATE_FACTOR = 4;
     private EdgeAnimation mAnimationLeft = new EdgeAnimation();
@@ -90,6 +91,7 @@ class Paper {
 
 // This class follows the structure of frameworks's EdgeEffect class.
 class EdgeAnimation {
+    @SuppressWarnings("unused")
     private static final String TAG = "EdgeAnimation";
 
     private static final int STATE_IDLE = 0;

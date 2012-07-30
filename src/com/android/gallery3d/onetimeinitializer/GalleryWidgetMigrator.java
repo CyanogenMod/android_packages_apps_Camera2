@@ -23,7 +23,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.android.gallery3d.app.GalleryApp;
-import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.LocalAlbum;
 import com.android.gallery3d.data.MediaSet;

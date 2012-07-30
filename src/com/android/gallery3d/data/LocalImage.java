@@ -218,6 +218,7 @@ public class LocalImage extends LocalMediaItem {
             mLocalFilePath = localFilePath;
         }
 
+        @Override
         public BitmapRegionDecoder run(JobContext jc) {
             return DecodeUtils.createBitmapRegionDecoder(jc, mLocalFilePath, false);
         }

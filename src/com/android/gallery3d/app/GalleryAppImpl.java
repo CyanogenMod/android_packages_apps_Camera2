@@ -49,10 +49,12 @@ public class GalleryAppImpl extends Application implements GalleryApp {
         PicasaSource.initialize(this);
     }
 
+    @Override
     public Context getAndroidContext() {
         return this;
     }
 
+    @Override
     public synchronized DataManager getDataManager() {
         if (mDataManager == null) {
             mDataManager = new DataManager(this);
@@ -61,6 +63,7 @@ public class GalleryAppImpl extends Application implements GalleryApp {
         return mDataManager;
     }
 
+    @Override
     public ImageCacheService getImageCacheService() {
         // This method may block on file I/O so a dedicated lock is needed here.
         synchronized (mLock) {
@@ -71,6 +74,7 @@ public class GalleryAppImpl extends Application implements GalleryApp {
         }
     }
 
+    @Override
     public synchronized ThreadPool getThreadPool() {
         if (mThreadPool == null) {
             mThreadPool = new ThreadPool();
@@ -78,6 +82,7 @@ public class GalleryAppImpl extends Application implements GalleryApp {
         return mThreadPool;
     }
 
+    @Override
     public synchronized DownloadCache getDownloadCache() {
         if (mDownloadCache == null) {
             File cacheDir = new File(getExternalCacheDir(), DOWNLOAD_FOLDER);

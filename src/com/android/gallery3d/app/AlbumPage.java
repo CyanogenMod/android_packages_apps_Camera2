@@ -459,6 +459,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         });
         mActionModeHandler = new ActionModeHandler(mActivity, mSelectionManager);
         mActionModeHandler.setActionModeListener(new ActionModeListener() {
+            @Override
             public boolean onActionItemClicked(MenuItem item) {
                 return onItemSelected(item);
             }
@@ -483,6 +484,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         if (mDetailsHelper == null) {
             mDetailsHelper = new DetailsHelper(mActivity, mRootPane, mDetailsSource);
             mDetailsHelper.setCloseListener(new CloseListener() {
+                @Override
                 public void onClose() {
                     hideDetails();
                 }
@@ -607,6 +609,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         }
     }
 
+    @Override
     public void onSelectionModeChange(int mode) {
         switch (mode) {
             case SelectionManager.ENTER_SELECTION_MODE: {
@@ -627,6 +630,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         }
     }
 
+    @Override
     public void onSelectionChange(Path path, boolean selected) {
         Utils.assertTrue(mActionMode != null);
         int count = mSelectionManager.getSelectedCount();
@@ -693,16 +697,19 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private class MyDetailsSource implements DetailsHelper.DetailsSource {
         private int mIndex;
 
+        @Override
         public int size() {
             return mAlbumDataAdapter.size();
         }
 
+        @Override
         public int setIndex() {
             Path id = mSelectionManager.getSelected(false).get(0);
             mIndex = mAlbumDataAdapter.findItem(id);
             return mIndex;
         }
 
+        @Override
         public MediaDetails getDetails() {
             // this relies on setIndex() being called beforehand
             MediaObject item = mAlbumDataAdapter.get(mIndex);

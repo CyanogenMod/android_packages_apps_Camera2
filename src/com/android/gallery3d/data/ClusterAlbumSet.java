@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class ClusterAlbumSet extends MediaSet implements ContentListener {
+    @SuppressWarnings("unused")
     private static final String TAG = "ClusterAlbumSet";
     private GalleryApp mApplication;
     private MediaSet mBaseSet;
@@ -70,6 +71,7 @@ public class ClusterAlbumSet extends MediaSet implements ContentListener {
         return mDataVersion;
     }
 
+    @Override
     public void onContentDirty() {
         notifyContentChanged();
     }
@@ -125,6 +127,7 @@ public class ClusterAlbumSet extends MediaSet implements ContentListener {
     private void updateClustersContents() {
         final HashSet<Path> existing = new HashSet<Path>();
         mBaseSet.enumerateTotalMediaItems(new MediaSet.ItemConsumer() {
+            @Override
             public void consume(int index, MediaItem item) {
                 existing.add(item.getPath());
             }

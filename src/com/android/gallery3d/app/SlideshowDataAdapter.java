@@ -92,6 +92,7 @@ public class SlideshowDataAdapter implements SlideshowPage.Model {
     }
 
     private class ReloadTask implements Job<Void> {
+        @Override
         public Void run(JobContext jc) {
             while (true) {
                 synchronized (SlideshowDataAdapter.this) {
@@ -145,6 +146,7 @@ public class SlideshowDataAdapter implements SlideshowPage.Model {
     }
 
     private class SourceListener implements ContentListener {
+        @Override
         public void onContentDirty() {
             synchronized (SlideshowDataAdapter.this) {
                 mNeedReload.set(true);
@@ -168,8 +170,10 @@ public class SlideshowDataAdapter implements SlideshowPage.Model {
         return mImageQueue.removeFirst();
     }
 
+    @Override
     public Future<Slide> nextSlide(FutureListener<Slide> listener) {
         return mThreadPool.submit(new Job<Slide>() {
+            @Override
             public Slide run(JobContext jc) {
                 jc.setMode(ThreadPool.MODE_NONE);
                 return innerNextBitmap();
@@ -177,6 +181,7 @@ public class SlideshowDataAdapter implements SlideshowPage.Model {
         }, listener);
     }
 
+    @Override
     public void pause() {
         synchronized (this) {
             mIsActive = false;
@@ -188,6 +193,7 @@ public class SlideshowDataAdapter implements SlideshowPage.Model {
         mReloadTask = null;
     }
 
+    @Override
     public synchronized void resume() {
         mIsActive = true;
         mSource.addContentListener(mSourceListener);

@@ -164,6 +164,7 @@ public class GalleryUtils {
     public static void fakeBusy(JobContext jc, int timeout) {
         final ConditionVariable cv = new ConditionVariable();
         jc.setCancelListener(new CancelListener() {
+            @Override
             public void onCancel() {
                 cv.open();
             }

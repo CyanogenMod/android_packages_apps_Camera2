@@ -24,8 +24,6 @@ import com.android.gallery3d.data.DataManager;
 
 public class AlbumPicker extends PickerActivity {
 
-    public static final String KEY_ALBUM_PATH = "album-path";
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

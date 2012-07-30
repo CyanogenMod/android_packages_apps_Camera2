@@ -318,6 +318,7 @@ abstract class UploadedTexture extends BasicTexture {
         mOpaque = isOpaque;
     }
 
+    @Override
     public boolean isOpaque() {
         return mOpaque;
     }

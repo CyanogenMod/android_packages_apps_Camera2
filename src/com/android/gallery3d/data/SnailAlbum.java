@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 // This is a simple MediaSet which contains only one MediaItem -- a SnailItem.
 public class SnailAlbum extends MediaSet {
+    @SuppressWarnings("unused")
     private static final String TAG = "SnailAlbum";
     private SnailItem mItem;
     private AtomicBoolean mDirty = new AtomicBoolean(false);

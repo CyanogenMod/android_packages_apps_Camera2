@@ -99,6 +99,7 @@ public abstract class LocalMediaItem extends MediaItem {
         return mimeType;
     }
 
+    @Override
     public long getSize() {
         return fileSize;
     }

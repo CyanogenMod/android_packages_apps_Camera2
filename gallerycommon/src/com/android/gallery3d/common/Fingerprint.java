@@ -16,10 +16,6 @@
 
 package com.android.gallery3d.common;
 
-import android.content.ContentResolver;
-import android.net.Uri;
-
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;

@@ -94,6 +94,7 @@ public class FaceClustering extends Clustering {
         final FaceCluster untagged = new FaceCluster(mUntaggedString);
 
         baseSet.enumerateTotalMediaItems(new MediaSet.ItemConsumer() {
+            @Override
             public void consume(int index, MediaItem item) {
                 Face[] faces = item.getFaces();
                 if (faces == null || faces.length == 0) {
