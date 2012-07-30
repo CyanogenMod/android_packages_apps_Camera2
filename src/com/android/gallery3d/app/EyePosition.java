@@ -31,6 +31,7 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.GalleryUtils;
 
 public class EyePosition {
+    @SuppressWarnings("unused")
     private static final String TAG = "EyePosition";
 
     public interface EyePositionListener {
@@ -180,9 +181,11 @@ public class EyePosition {
     }
 
     private class PositionListener implements SensorEventListener {
+        @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
 
+        @Override
         public void onSensorChanged(SensorEvent event) {
             switch (event.sensor.getType()) {
                 case Sensor.TYPE_GYROSCOPE: {

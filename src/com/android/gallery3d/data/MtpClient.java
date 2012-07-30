@@ -179,7 +179,7 @@ public class MtpClient {
      * Opens the {@link android.hardware.usb.UsbDevice} for an MTP or PTP
      * device and return an {@link android.mtp.MtpDevice} for it.
      *
-     * @param device the device to open
+     * @param usbDevice the device to open
      * @return an MtpDevice for the device.
      */
     private MtpDevice openDeviceLocked(UsbDevice usbDevice) {
@@ -220,7 +220,7 @@ public class MtpClient {
     }
 
     /**
-     * Registers a {@link android.mtp.MtpClient.Listener} interface to receive
+     * Registers a {@link com.android.gallery3d.data.MtpClient.Listener} interface to receive
      * notifications when MTP or PTP devices are added or removed.
      *
      * @param listener the listener to register
@@ -234,7 +234,7 @@ public class MtpClient {
     }
 
     /**
-     * Unregisters a {@link android.mtp.MtpClient.Listener} interface.
+     * Unregisters a {@link com.android.gallery3d.data.MtpClient.Listener} interface.
      *
      * @param listener the listener to unregister
      */

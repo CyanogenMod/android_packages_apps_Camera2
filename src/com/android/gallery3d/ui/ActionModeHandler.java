@@ -51,6 +51,7 @@ import java.util.ArrayList;
 
 public class ActionModeHandler implements
         ActionMode.Callback, PopupList.OnPopupItemClickListener {
+    @SuppressWarnings("unused")
     private static final String TAG = "ActionModeHandler";
     private static final int SUPPORT_MULTIPLE_MASK = MediaObject.SUPPORT_DELETE
             | MediaObject.SUPPORT_ROTATE | MediaObject.SUPPORT_SHARE
@@ -161,12 +162,14 @@ public class ActionModeHandler implements
         mSelectionMenu.updateSelectAllMode(mSelectionManager.inSelectAllMode());
     }
 
+    @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         MenuInflater inflater = mode.getMenuInflater();
         inflater.inflate(R.menu.operation, menu);
 
         mShareActionProvider = GalleryActionBar.initializeShareActionProvider(menu);
         OnShareTargetSelectedListener listener = new OnShareTargetSelectedListener() {
+            @Override
             public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
                 mSelectionManager.leaveSelectionMode();
                 return false;
@@ -178,10 +181,12 @@ public class ActionModeHandler implements
         return true;
     }
 
+    @Override
     public void onDestroyActionMode(ActionMode mode) {
         mSelectionManager.leaveSelectionMode();
     }
 
+    @Override
     public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
         return true;
     }
@@ -291,6 +296,7 @@ public class ActionModeHandler implements
         // Generate sharing intent and update supported operations in the background
         // The task can take a long time and be canceled in the mean time.
         mMenuTask = mActivity.getThreadPool().submit(new Job<Void>() {
+            @Override
             public Void run(final JobContext jc) {
                 // Pass1: Deal with unexpanded media object list for menu operation.
                 final int operation = computeMenuOptions(jc);
@@ -298,6 +304,7 @@ public class ActionModeHandler implements
                 // Pass2: Deal with expanded media object list for sharing operation.
                 final Intent intent = supportShare ? computeSharingIntent(jc) : null;
                 mMainHandler.post(new Runnable() {
+                    @Override
                     public void run() {
                         mMenuTask = null;
                         if (!jc.isCancelled()) {

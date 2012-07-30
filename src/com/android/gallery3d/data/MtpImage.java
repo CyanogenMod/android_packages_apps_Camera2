@@ -80,6 +80,7 @@ public class MtpImage extends MediaItem {
     @Override
     public Job<Bitmap> requestImage(int type) {
         return new Job<Bitmap>() {
+            @Override
             public Bitmap run(JobContext jc) {
                 byte[] thumbnail = mMtpContext.getMtpClient().getThumbnail(
                         UsbDevice.getDeviceName(mDeviceId), mObjectId);
@@ -95,6 +96,7 @@ public class MtpImage extends MediaItem {
     @Override
     public Job<BitmapRegionDecoder> requestLargeImage() {
         return new Job<BitmapRegionDecoder>() {
+            @Override
             public BitmapRegionDecoder run(JobContext jc) {
                 byte[] bytes = mMtpContext.getMtpClient().getObject(
                         UsbDevice.getDeviceName(mDeviceId), mObjectId, mObjectSize);

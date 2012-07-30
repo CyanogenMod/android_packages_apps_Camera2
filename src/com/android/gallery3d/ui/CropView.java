@@ -44,6 +44,7 @@ import javax.microedition.khronos.opengles.GL11;
  * The activity can crop specific region of interest from an image.
  */
 public class CropView extends GLView {
+    @SuppressWarnings("unused")
     private static final String TAG = "CropView";
 
     private static final int FACE_PIXEL_COUNT = 120000; // around 400x300

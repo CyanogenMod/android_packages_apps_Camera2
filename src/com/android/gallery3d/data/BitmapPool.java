@@ -23,6 +23,7 @@ import com.android.gallery3d.common.Utils;
 import java.util.ArrayList;
 
 public class BitmapPool {
+    @SuppressWarnings("unused")
     private static final String TAG = "BitmapPool";
 
     private final ArrayList<Bitmap> mPool;

@@ -341,6 +341,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         updateImageRequests();
     }
 
+    @Override
     public void resume() {
         mIsActive = true;
         mSource.addContentListener(mSourceListener);
@@ -353,6 +354,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         fireDataChange();
     }
 
+    @Override
     public void pause() {
         mIsActive = false;
 
@@ -485,35 +487,43 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         return LOADING_INIT;
     }
 
+    @Override
     public ScreenNail getScreenNail() {
         return getScreenNail(0);
     }
 
+    @Override
     public int getImageHeight() {
         return mTileProvider.getImageHeight();
     }
 
+    @Override
     public int getImageWidth() {
         return mTileProvider.getImageWidth();
     }
 
+    @Override
     public int getLevelCount() {
         return mTileProvider.getLevelCount();
     }
 
+    @Override
     public Bitmap getTile(int level, int x, int y, int tileSize,
             int borderSize, BitmapPool pool) {
         return mTileProvider.getTile(level, x, y, tileSize, borderSize, pool);
     }
 
+    @Override
     public boolean isEmpty() {
         return mSize == 0;
     }
 
+    @Override
     public int getCurrentIndex() {
         return mCurrentIndex;
     }
 
+    @Override
     public MediaItem getMediaItem(int offset) {
         int index = mCurrentIndex + offset;
         if (index >= mContentStart && index < mContentEnd) {
@@ -522,6 +532,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         return null;
     }
 
+    @Override
     public void setCurrentPhoto(Path path, int indexHint) {
         if (mItemPath == path) return;
         mItemPath = path;
@@ -537,10 +548,12 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         }
     }
 
+    @Override
     public void setFocusHintDirection(int direction) {
         mFocusHintDirection = direction;
     }
 
+    @Override
     public void setFocusHintPath(Path path) {
         mFocusHintPath = path;
     }
@@ -848,6 +861,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     }
 
     private class SourceListener implements ContentListener {
+        @Override
         public void onContentDirty() {
             if (mReloadTask != null) mReloadTask.notifyDirty();
         }

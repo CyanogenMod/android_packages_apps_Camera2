@@ -28,6 +28,7 @@ import java.util.ArrayList;
 // int getNumberOfDeletions();
 //
 public class FilterDeleteSet extends MediaSet implements ContentListener {
+    @SuppressWarnings("unused")
     private static final String TAG = "FilterDeleteSet";
 
     private static final int REQUEST_ADD = 1;

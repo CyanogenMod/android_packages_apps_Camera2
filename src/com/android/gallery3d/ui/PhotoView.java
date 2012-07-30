@@ -539,7 +539,7 @@ public class PhotoView extends GLView {
         boolean isDeletable();  // whether the picture can be deleted
         void forceSize();  // called when mCompensation changes
         Size getSize();
-    };
+    }
 
     class FullPicture implements Picture {
         private int mRotation;
@@ -1046,9 +1046,8 @@ public class PhotoView extends GLView {
                     || !mTouchBoxDeletable) {
                 return false;
             }
-            int maxVelocity = (int) GalleryUtils.dpToPixel(MAX_DISMISS_VELOCITY);
-            int escapeVelocity =
-                    (int) GalleryUtils.dpToPixel(SWIPE_ESCAPE_VELOCITY);
+            int maxVelocity = GalleryUtils.dpToPixel(MAX_DISMISS_VELOCITY);
+            int escapeVelocity = GalleryUtils.dpToPixel(SWIPE_ESCAPE_VELOCITY);
             int centerY = mPositionController.getPosition(mTouchBoxIndex)
                     .centerY();
             boolean fastEnough = (Math.abs(vy) > escapeVelocity)

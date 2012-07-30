@@ -84,6 +84,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
 
     private FutureListener<BitmapRegionDecoder> mLargeListener =
             new FutureListener<BitmapRegionDecoder>() {
+        @Override
         public void onFutureDone(Future<BitmapRegionDecoder> future) {
             BitmapRegionDecoder decoder = future.get();
             if (decoder == null) return;
@@ -100,12 +101,14 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
 
     private FutureListener<Bitmap> mThumbListener =
             new FutureListener<Bitmap>() {
+        @Override
         public void onFutureDone(Future<Bitmap> future) {
             mHandler.sendMessage(
                     mHandler.obtainMessage(MSG_UPDATE_IMAGE, future));
         }
     };
 
+    @Override
     public boolean isEmpty() {
         return false;
     }
@@ -137,6 +140,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         }
     }
 
+    @Override
     public void resume() {
         if (mTask == null) {
             if (mHasFullImage) {
@@ -150,6 +154,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         }
     }
 
+    @Override
     public void pause() {
         Future<?> task = mTask;
         task.cancel();

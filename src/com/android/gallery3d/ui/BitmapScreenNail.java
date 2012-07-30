@@ -31,6 +31,7 @@ import com.android.gallery3d.data.MediaItem;
 // - When the the bitmap is available, and we have drawn the placeholder color
 // before, we will do a fade-in animation.
 public class BitmapScreenNail implements ScreenNail {
+    @SuppressWarnings("unused")
     private static final String TAG = "BitmapScreenNail";
     private static final int PLACEHOLDER_COLOR = 0xFF222222;
     // The duration of the fading animation in milliseconds

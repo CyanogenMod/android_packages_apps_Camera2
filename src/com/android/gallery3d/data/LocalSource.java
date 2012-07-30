@@ -245,6 +245,7 @@ class LocalSource extends MediaSource {
 
     // This is a comparator which compares the suffix number in two Paths.
     private static class IdComparator implements Comparator<PathId> {
+        @Override
         public int compare(PathId p1, PathId p2) {
             String s1 = p1.path.getSuffix();
             String s2 = p2.path.getSuffix();

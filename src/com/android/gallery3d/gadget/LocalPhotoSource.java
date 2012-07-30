@@ -41,6 +41,7 @@ import java.util.Random;
 
 public class LocalPhotoSource implements WidgetSource {
 
+    @SuppressWarnings("unused")
     private static final String TAG = "LocalPhotoSource";
 
     private static final int MAX_PHOTO_COUNT = 128;
@@ -77,6 +78,7 @@ public class LocalPhotoSource implements WidgetSource {
                 .registerContentObserver(CONTENT_URI, true, mContentObserver);
     }
 
+    @Override
     public void close() {
         mContext.getContentResolver().unregisterContentObserver(mContentObserver);
     }
@@ -152,6 +154,7 @@ public class LocalPhotoSource implements WidgetSource {
         }
     }
 
+    @Override
     public void reload() {
         if (!mContentDirty) return;
         mContentDirty = false;

@@ -23,10 +23,12 @@ import com.android.gallery3d.ui.ScreenNail;
 
 // This is the bridge to connect a PhotoPage to the external environment.
 public abstract class AppBridge implements Parcelable {
+    @Override
     public int describeContents() {
         return 0;
     }
 
+    @Override
     public void writeToParcel(Parcel dest, int flags) {
     }
 

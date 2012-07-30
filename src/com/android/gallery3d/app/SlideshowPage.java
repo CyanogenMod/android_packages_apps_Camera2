@@ -134,6 +134,7 @@ public class SlideshowPage extends ActivityState {
 
     private void loadNextBitmap() {
         mModel.nextSlide(new FutureListener<Slide>() {
+            @Override
             public void onFutureDone(Future<Slide> future) {
                 mPendingSlide = future.get();
                 mHandler.sendEmptyMessage(MSG_SHOW_PENDING_BITMAP);
@@ -242,10 +243,12 @@ public class SlideshowPage extends ActivityState {
             mRepeat = repeat;
         }
 
+        @Override
         public int findItemIndex(Path path, int hint) {
             return hint;
         }
 
+        @Override
         public MediaItem getMediaItem(int index) {
             if (!mRepeat && index >= mOrder.length) return null;
             if (mOrder.length == 0) return null;
@@ -259,6 +262,7 @@ public class SlideshowPage extends ActivityState {
             return item;
         }
 
+        @Override
         public long reload() {
             long version = mMediaSet.reload();
             if (version != mSourceVersion) {
@@ -284,10 +288,12 @@ public class SlideshowPage extends ActivityState {
             }
         }
 
+        @Override
         public void addContentListener(ContentListener listener) {
             mMediaSet.addContentListener(listener);
         }
 
+        @Override
         public void removeContentListener(ContentListener listener) {
             mMediaSet.removeContentListener(listener);
         }
@@ -307,10 +313,12 @@ public class SlideshowPage extends ActivityState {
             mRepeat = repeat;
         }
 
+        @Override
         public int findItemIndex(Path path, int hint) {
             return mMediaSet.getIndexOfItem(path, hint);
         }
 
+        @Override
         public MediaItem getMediaItem(int index) {
             int dataEnd = mDataStart + mData.size();
 
@@ -328,6 +336,7 @@ public class SlideshowPage extends ActivityState {
             return (index < mDataStart || index >= dataEnd) ? null : mData.get(index - mDataStart);
         }
 
+        @Override
         public long reload() {
             long version = mMediaSet.reload();
             if (version != mDataVersion) {
@@ -337,10 +346,12 @@ public class SlideshowPage extends ActivityState {
             return mDataVersion;
         }
 
+        @Override
         public void addContentListener(ContentListener listener) {
             mMediaSet.addContentListener(listener);
         }
 
+        @Override
         public void removeContentListener(ContentListener listener) {
             mMediaSet.removeContentListener(listener);
         }

@@ -88,6 +88,7 @@ public class DataManager {
             new DateTakenComparator();
 
     private static class DateTakenComparator implements Comparator<MediaItem> {
+        @Override
         public int compare(MediaItem item1, MediaItem item2) {
             return -Utils.compare(item1.getDateInMs(), item2.getDateInMs());
         }

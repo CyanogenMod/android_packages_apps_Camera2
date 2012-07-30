@@ -25,6 +25,7 @@ import com.android.gallery3d.util.ThreadPool.JobContext;
 import java.io.File;
 
 public class CacheStorageUsageInfo {
+    @SuppressWarnings("unused")
     private static final String TAG = "CacheStorageUsageInfo";
 
     // number of bytes the storage has.

@@ -29,6 +29,7 @@ import com.android.gallery3d.util.ReverseGeocoder;
 import java.util.ArrayList;
 
 class LocationClustering extends Clustering {
+    @SuppressWarnings("unused")
     private static final String TAG = "LocationClustering";
 
     private static final int MIN_GROUPS = 1;
@@ -70,6 +71,7 @@ class LocationClustering extends Clustering {
         // Separate items to two sets: with or without lat-long.
         final double[] latLong = new double[2];
         baseSet.enumerateTotalMediaItems(new MediaSet.ItemConsumer() {
+            @Override
             public void consume(int index, MediaItem item) {
                 if (index < 0 || index >= total) return;
                 SmallItem s = new SmallItem();
@@ -137,6 +139,7 @@ class LocationClustering extends Clustering {
 
         if (hasUnresolvedAddress) {
             mHandler.post(new Runnable() {
+                @Override
                 public void run() {
                     Toast.makeText(mContext, R.string.no_connectivity,
                             Toast.LENGTH_LONG).show();
