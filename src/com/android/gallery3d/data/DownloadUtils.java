@@ -49,6 +49,7 @@ public class DownloadUtils {
         int rc = is.read(buffer, 0, buffer.length);
         final Thread thread = Thread.currentThread();
         jc.setCancelListener(new CancelListener() {
+            @Override
             public void onCancel() {
                 thread.interrupt();
             }

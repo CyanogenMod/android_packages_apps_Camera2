@@ -134,6 +134,7 @@ public class UriImage extends MediaItem {
 
     private boolean prepareInputFile(JobContext jc) {
         jc.setCancelListener(new CancelListener() {
+            @Override
             public void onCancel() {
                 synchronized (this) {
                     notifyAll();
@@ -166,6 +167,7 @@ public class UriImage extends MediaItem {
     }
 
     private class RegionDecoderJob implements Job<BitmapRegionDecoder> {
+        @Override
         public BitmapRegionDecoder run(JobContext jc) {
             if (!prepareInputFile(jc)) return null;
             BitmapRegionDecoder decoder = DecodeUtils.createBitmapRegionDecoder(

@@ -51,6 +51,7 @@ import com.android.gallery3d.R;
  * {@link #draw(Canvas)} method.</p>
  */
 public class EdgeEffect {
+    @SuppressWarnings("unused")
     private static final String TAG = "EdgeEffect";
 
     // Time it will take the effect to fully recede in ms

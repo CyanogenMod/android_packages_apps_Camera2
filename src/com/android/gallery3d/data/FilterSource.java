@@ -19,6 +19,7 @@ package com.android.gallery3d.data;
 import com.android.gallery3d.app.GalleryApp;
 
 class FilterSource extends MediaSource {
+    @SuppressWarnings("unused")
     private static final String TAG = "FilterSource";
     private static final int FILTER_BY_MEDIATYPE = 0;
     private static final int FILTER_BY_DELETE = 1;

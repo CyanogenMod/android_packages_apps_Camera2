@@ -59,15 +59,18 @@ public class DialogDetailsView implements DetailsViewContainer {
         mSource = source;
     }
 
+    @Override
     public void show() {
         reloadDetails();
         mDialog.show();
     }
 
+    @Override
     public void hide() {
         mDialog.hide();
     }
 
+    @Override
     public void reloadDetails() {
         int index = mSource.setIndex();
         if (index == -1) return;
@@ -92,6 +95,7 @@ public class DialogDetailsView implements DetailsViewContainer {
             .setView(detailsList)
             .setTitle(title)
             .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
+                @Override
                 public void onClick(DialogInterface dialog, int whichButton) {
                     mDialog.dismiss();
                 }
@@ -99,6 +103,7 @@ public class DialogDetailsView implements DetailsViewContainer {
             .create();
 
         mDialog.setOnDismissListener(new OnDismissListener() {
+            @Override
             public void onDismiss(DialogInterface dialog) {
                 if (mListener != null) {
                     mListener.onClose();
@@ -198,18 +203,22 @@ public class DialogDetailsView implements DetailsViewContainer {
             return false;
         }
 
+        @Override
         public int getCount() {
             return mItems.size();
         }
 
+        @Override
         public Object getItem(int position) {
             return mDetails.getDetail(position);
         }
 
+        @Override
         public long getItemId(int position) {
             return position;
         }
 
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             TextView tv;
             if (convertView == null) {
@@ -222,12 +231,14 @@ public class DialogDetailsView implements DetailsViewContainer {
             return tv;
         }
 
+        @Override
         public void onAddressAvailable(String address) {
             mItems.set(mLocationIndex, address);
             notifyDataSetChanged();
         }
     }
 
+    @Override
     public void setCloseListener(CloseListener listener) {
         mListener = listener;
     }

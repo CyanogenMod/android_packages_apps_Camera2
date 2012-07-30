@@ -32,6 +32,7 @@ import java.util.WeakHashMap;
 // getTotalMediaItemCount() returns the number of all MediaItems, including
 // those in sub-MediaSets.
 public abstract class MediaSet extends MediaObject {
+    @SuppressWarnings("unused")
     private static final String TAG = "MediaSet";
 
     public static final int MEDIAITEM_BATCH_FETCH_COUNT = 500;
@@ -270,6 +271,7 @@ public abstract class MediaSet extends MediaObject {
     }
 
     private class MultiSetSyncFuture implements Future<Integer>, SyncListener {
+        @SuppressWarnings("hiding")
         private static final String TAG = "Gallery.MultiSetSync";
 
         private final SyncListener mListener;

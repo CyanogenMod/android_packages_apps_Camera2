@@ -25,6 +25,7 @@ import android.view.ScaleGestureDetector;
 // This class aggregates three gesture detectors: GestureDetector,
 // ScaleGestureDetector, and DownUpDetector.
 public class GestureRecognizer {
+    @SuppressWarnings("unused")
     private static final String TAG = "GestureRecognizer";
 
     public interface Listener {

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 // from the input albums.
 // This only handles SubMediaSets, not MediaItems. (That's all we need now)
 public class ComboAlbum extends MediaSet implements ContentListener {
+    @SuppressWarnings("unused")
     private static final String TAG = "ComboAlbum";
     private final MediaSet[] mSets;
     private final String mName;
@@ -86,6 +87,7 @@ public class ComboAlbum extends MediaSet implements ContentListener {
         return mDataVersion;
     }
 
+    @Override
     public void onContentDirty() {
         notifyContentChanged();
     }

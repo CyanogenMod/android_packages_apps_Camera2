@@ -31,14 +31,17 @@ public class ColorTexture implements Texture {
         mHeight = 1;
     }
 
+    @Override
     public void draw(GLCanvas canvas, int x, int y) {
         draw(canvas, x, y, mWidth, mHeight);
     }
 
+    @Override
     public void draw(GLCanvas canvas, int x, int y, int w, int h) {
         canvas.fillRect(x, y, w, h, mColor);
     }
 
+    @Override
     public boolean isOpaque() {
         return Utils.isOpaque(mColor);
     }
@@ -48,10 +51,12 @@ public class ColorTexture implements Texture {
         mHeight = height;
     }
 
+    @Override
     public int getWidth() {
         return mWidth;
     }
 
+    @Override
     public int getHeight() {
         return mHeight;
     }

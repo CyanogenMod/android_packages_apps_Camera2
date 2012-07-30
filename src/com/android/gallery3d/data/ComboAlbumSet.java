@@ -24,6 +24,7 @@ import com.android.gallery3d.util.Future;
 // media sets from the input album sets.
 // This only handles SubMediaSets, not MediaItems. (That's all we need now)
 public class ComboAlbumSet extends MediaSet implements ContentListener {
+    @SuppressWarnings("unused")
     private static final String TAG = "ComboAlbumSet";
     private final MediaSet[] mSets;
     private final String mName;
@@ -83,6 +84,7 @@ public class ComboAlbumSet extends MediaSet implements ContentListener {
         return mDataVersion;
     }
 
+    @Override
     public void onContentDirty() {
         notifyContentChanged();
     }

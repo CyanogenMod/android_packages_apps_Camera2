@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class ReverseGeocoder {
+    @SuppressWarnings("unused")
     private static final String TAG = "ReverseGeocoder";
     public static final int EARTH_RADIUS_METERS = 6378137;
     public static final int LAT_MIN = -90;

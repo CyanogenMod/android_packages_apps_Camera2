@@ -32,6 +32,7 @@ import java.util.Random;
 // can be called in onPause() to ensure all profiling is disabled when an
 // activity is paused.
 public class Profile {
+    @SuppressWarnings("unused")
     private static final String TAG = "Profile";
     private static final int NS_PER_MS = 1000000;
 
@@ -56,6 +57,7 @@ public class Profile {
         private HandlerThread mHandlerThread;
         private Handler mHandler;
         private Runnable mProcessRunnable = new Runnable() {
+            @Override
             public void run() {
                 synchronized (Watchdog.this) {
                     processList();

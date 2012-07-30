@@ -35,6 +35,7 @@ public class PriorityThreadFactory implements ThreadFactory {
         mPriority = priority;
     }
 
+    @Override
     public Thread newThread(Runnable r) {
         return new Thread(r, mName + '-' + mNumber.getAndIncrement()) {
             @Override

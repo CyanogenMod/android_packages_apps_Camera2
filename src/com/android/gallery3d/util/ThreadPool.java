@@ -22,6 +22,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class ThreadPool {
+    @SuppressWarnings("unused")
     private static final String TAG = "ThreadPool";
     private static final int CORE_POOL_SIZE = 4;
     private static final int MAX_POOL_SIZE = 8;
@@ -98,6 +99,7 @@ public class ThreadPool {
     }
 
     private class Worker<T> implements Runnable, Future<T>, JobContext {
+        @SuppressWarnings("hiding")
         private static final String TAG = "Worker";
         private Job<T> mJob;
         private FutureListener<T> mListener;
@@ -114,6 +116,7 @@ public class ThreadPool {
         }
 
         // This is called by a thread in the thread pool.
+        @Override
         public void run() {
             T result = null;
 
@@ -137,6 +140,7 @@ public class ThreadPool {
         }
 
         // Below are the methods for Future.
+        @Override
         public synchronized void cancel() {
             if (mIsCancelled) return;
             mIsCancelled = true;
@@ -150,14 +154,17 @@ public class ThreadPool {
             }
         }
 
+        @Override
         public boolean isCancelled() {
             return mIsCancelled;
         }
 
+        @Override
         public synchronized boolean isDone() {
             return mIsDone;
         }
 
+        @Override
         public synchronized T get() {
             while (!mIsDone) {
                 try {
@@ -170,12 +177,14 @@ public class ThreadPool {
             return mResult;
         }
 
+        @Override
         public void waitDone() {
             get();
         }
 
         // Below are the methods for JobContext (only called from the
         // thread running the job)
+        @Override
         public synchronized void setCancelListener(CancelListener listener) {
             mCancelListener = listener;
             if (mIsCancelled && mCancelListener != null) {
@@ -183,6 +192,7 @@ public class ThreadPool {
             }
         }
 
+        @Override
         public boolean setMode(int mode) {
             // Release old resource
             ResourceCounter rc = modeToCounter(mMode);

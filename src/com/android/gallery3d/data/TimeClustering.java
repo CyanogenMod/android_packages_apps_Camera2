@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class TimeClustering extends Clustering {
+    @SuppressWarnings("unused")
     private static final String TAG = "TimeClustering";
 
     // If 2 items are greater than 25 miles apart, they will be in different
@@ -83,6 +84,7 @@ public class TimeClustering extends Clustering {
             new DateComparator();
 
     private static class DateComparator implements Comparator<SmallItem> {
+        @Override
         public int compare(SmallItem item1, SmallItem item2) {
             return -Utils.compare(item1.dateInMs, item2.dateInMs);
         }
@@ -101,6 +103,7 @@ public class TimeClustering extends Clustering {
         final double[] latLng = new double[2];
 
         baseSet.enumerateTotalMediaItems(new MediaSet.ItemConsumer() {
+            @Override
             public void consume(int index, MediaItem item) {
                 if (index < 0 || index >= total) return;
                 SmallItem s = new SmallItem();

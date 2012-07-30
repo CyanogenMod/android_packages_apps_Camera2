@@ -249,6 +249,7 @@ public class CropImage extends AbstractGalleryActivity {
             mCropRect = cropRect;
         }
 
+        @Override
         public Intent run(JobContext jc) {
             RectF cropRect = mCropRect;
             Bundle extra = getIntent().getExtras();
@@ -487,6 +488,7 @@ public class CropImage extends AbstractGalleryActivity {
         // We wrap the OutputStream so that it can be interrupted.
         final InterruptableOutputStream ios = new InterruptableOutputStream(os);
         jc.setCancelListener(new CancelListener() {
+                @Override
                 public void onCancel() {
                     ios.interrupt();
                 }
@@ -545,6 +547,7 @@ public class CropImage extends AbstractGalleryActivity {
                 this, null, getString(messageId), true, false);
         mSaveTask = getThreadPool().submit(new SaveOutput(cropRect),
                 new FutureListener<Intent>() {
+            @Override
             public void onFutureDone(Future<Intent> future) {
                 mSaveTask = null;
                 if (future.isCancelled()) return;
@@ -827,6 +830,7 @@ public class CropImage extends AbstractGalleryActivity {
         if (supportedByBitmapRegionDecoder) {
             mLoadTask = getThreadPool().submit(new LoadDataTask(mMediaItem),
                     new FutureListener<BitmapRegionDecoder>() {
+                @Override
                 public void onFutureDone(Future<BitmapRegionDecoder> future) {
                     mLoadTask = null;
                     BitmapRegionDecoder decoder = future.get();
@@ -841,6 +845,7 @@ public class CropImage extends AbstractGalleryActivity {
         } else {
             mLoadBitmapTask = getThreadPool().submit(new LoadBitmapDataTask(mMediaItem),
                     new FutureListener<Bitmap>() {
+                @Override
                 public void onFutureDone(Future<Bitmap> future) {
                     mLoadBitmapTask = null;
                     Bitmap bitmap = future.get();
@@ -925,6 +930,7 @@ public class CropImage extends AbstractGalleryActivity {
             mItem = item;
         }
 
+        @Override
         public BitmapRegionDecoder run(JobContext jc) {
             return mItem == null ? null : mItem.requestLargeImage().run(jc);
         }
@@ -936,6 +942,7 @@ public class CropImage extends AbstractGalleryActivity {
         public LoadBitmapDataTask(MediaItem item) {
             mItem = item;
         }
+        @Override
         public Bitmap run(JobContext jc) {
             return mItem == null
                     ? null
