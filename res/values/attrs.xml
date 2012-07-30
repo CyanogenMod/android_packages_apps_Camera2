@@ -16,5 +16,6 @@
 <resources>
     <declare-styleable name="Theme.GalleryBase">
         <attr name="listPreferredItemHeightSmall" format="dimension" />
+        <attr name="switchStyle" format="reference" />
     </declare-styleable>
 </resources>
