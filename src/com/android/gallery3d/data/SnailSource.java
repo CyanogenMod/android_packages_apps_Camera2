@@ -18,6 +18,7 @@ package com.android.gallery3d.data;
 import com.android.gallery3d.app.GalleryApp;
 
 public class SnailSource extends MediaSource {
+    @SuppressWarnings("unused")
     private static final String TAG = "SnailSource";
     private static final int SNAIL_ALBUM = 0;
     private static final int SNAIL_ITEM = 1;

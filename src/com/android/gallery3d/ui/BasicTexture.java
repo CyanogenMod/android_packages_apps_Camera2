@@ -87,10 +87,12 @@ abstract class BasicTexture implements Texture {
         return mId;
     }
 
+    @Override
     public int getWidth() {
         return mWidth;
     }
 
+    @Override
     public int getHeight() {
         return mHeight;
     }
@@ -124,10 +126,12 @@ abstract class BasicTexture implements Texture {
         mHasBorder = hasBorder;
     }
 
+    @Override
     public void draw(GLCanvas canvas, int x, int y) {
         canvas.drawTexture(this, x, y, getWidth(), getHeight());
     }
 
+    @Override
     public void draw(GLCanvas canvas, int x, int y, int w, int h) {
         canvas.drawTexture(this, x, y, w, h);
     }

@@ -26,6 +26,7 @@ package com.android.gallery3d.ui;
 // (2) The duration is different.
 // (3) The deceleration curve is different.
 class FlingScroller {
+    @SuppressWarnings("unused")
     private static final String TAG = "FlingController";
 
     // The fling duration (in milliseconds) when velocity is 1 pixel/second

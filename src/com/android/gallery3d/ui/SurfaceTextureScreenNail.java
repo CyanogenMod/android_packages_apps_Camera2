@@ -19,12 +19,12 @@ package com.android.gallery3d.ui;
 import android.annotation.TargetApi;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
-import android.opengl.GLES11Ext;
 
 import com.android.gallery3d.common.ApiHelper;
 
 public abstract class SurfaceTextureScreenNail implements ScreenNail,
         SurfaceTexture.OnFrameAvailableListener {
+    @SuppressWarnings("unused")
     private static final String TAG = "SurfaceTextureScreenNail";
     // This constant is not available in API level before 15, but it was just an
     // oversight.

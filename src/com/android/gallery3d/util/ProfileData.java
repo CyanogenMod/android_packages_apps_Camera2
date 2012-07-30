@@ -31,6 +31,7 @@ import java.util.Map.Entry;
 // The addSample() method adds a sample. The dumpToFile() method saves the data
 // to a file. The reset() method clears all samples.
 public class ProfileData {
+    @SuppressWarnings("unused")
     private static final String TAG = "ProfileData";
 
     private static class Node {

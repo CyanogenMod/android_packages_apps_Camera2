@@ -81,11 +81,13 @@ public class MtpContext implements MtpClient.Listener {
         notifyDirty();
     }
 
+    @Override
     public void deviceAdded(android.mtp.MtpDevice device) {
         notifyDirty();
         showToast(R.string.camera_connected);
     }
 
+    @Override
     public void deviceRemoved(android.mtp.MtpDevice device) {
         notifyDirty();
         showToast(R.string.camera_disconnected);

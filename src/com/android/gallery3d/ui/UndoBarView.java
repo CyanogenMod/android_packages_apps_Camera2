@@ -24,6 +24,7 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.GalleryUtils;
 
 public class UndoBarView extends GLView {
+    @SuppressWarnings("unused")
     private static final String TAG = "UndoBarView";
 
     private static final int WHITE = 0xFFFFFFFF;
@@ -55,16 +56,16 @@ public class UndoBarView extends GLView {
     //    +-+----+----------------+-+--+----+-+------+--+-+
     //     4  16                   1 12  32  8        16 4
     public UndoBarView(Context context) {
-        mBarHeight = (int) GalleryUtils.dpToPixel(48);
-        mBarMargin = (int) GalleryUtils.dpToPixel(4);
-        mUndoTextMargin = (int) GalleryUtils.dpToPixel(16);
-        mIconMargin = (int) GalleryUtils.dpToPixel(8);
-        mIconSize = (int) GalleryUtils.dpToPixel(32);
-        mSeparatorRightMargin = (int) GalleryUtils.dpToPixel(12);
-        mSeparatorTopMargin = (int) GalleryUtils.dpToPixel(10);
-        mSeparatorBottomMargin = (int) GalleryUtils.dpToPixel(10);
-        mSeparatorWidth = (int) GalleryUtils.dpToPixel(1);
-        mDeletedTextMargin = (int) GalleryUtils.dpToPixel(16);
+        mBarHeight = GalleryUtils.dpToPixel(48);
+        mBarMargin = GalleryUtils.dpToPixel(4);
+        mUndoTextMargin = GalleryUtils.dpToPixel(16);
+        mIconMargin = GalleryUtils.dpToPixel(8);
+        mIconSize = GalleryUtils.dpToPixel(32);
+        mSeparatorRightMargin = GalleryUtils.dpToPixel(12);
+        mSeparatorTopMargin = GalleryUtils.dpToPixel(10);
+        mSeparatorBottomMargin = GalleryUtils.dpToPixel(10);
+        mSeparatorWidth = GalleryUtils.dpToPixel(1);
+        mDeletedTextMargin = GalleryUtils.dpToPixel(16);
 
         mPanel = new NinePatchTexture(context, R.drawable.panel_undo_holo);
         mUndoText = StringTexture.newInstance(context.getString(R.string.undo),
@@ -166,6 +167,7 @@ public class UndoBarView extends GLView {
         return (visibility == VISIBLE) ? 1f : 0f;
     }
 
+    @Override
     public void setVisibility(int visibility) {
         mAlpha = getTargetAlpha(visibility);
         mAnimationStartTime = NO_ANIMATION;

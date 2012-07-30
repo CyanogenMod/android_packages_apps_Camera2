@@ -50,6 +50,7 @@ public class MediaSetUtils {
 
     // Sort MediaSets by name
     public static class NameComparator implements Comparator<MediaSet> {
+        @Override
         public int compare(MediaSet set1, MediaSet set2) {
             int result = set1.getName().compareToIgnoreCase(set2.getName());
             if (result != 0) return result;

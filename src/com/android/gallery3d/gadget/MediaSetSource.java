@@ -32,6 +32,7 @@ import java.util.Arrays;
 public class MediaSetSource implements WidgetSource, ContentListener {
     private static final int CACHE_SIZE = 32;
 
+    @SuppressWarnings("unused")
     private static final String TAG = "MediaSetSource";
 
     private MediaSet mSource;

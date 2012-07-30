@@ -100,6 +100,7 @@ public class FilterTypeSet extends MediaSet implements ContentListener {
         final Path[] buf = new Path[total];
 
         mBaseSet.enumerateMediaItems(new MediaSet.ItemConsumer() {
+            @Override
             public void consume(int index, MediaItem item) {
                 if (item.getMediaType() == mMediaType) {
                     if (index < 0 || index >= total) return;
@@ -124,6 +125,7 @@ public class FilterTypeSet extends MediaSet implements ContentListener {
     @Override
     public void delete() {
         ItemConsumer consumer = new ItemConsumer() {
+            @Override
             public void consume(int index, MediaItem item) {
                 if ((item.getSupportedOperations() & SUPPORT_DELETE) != 0) {
                     item.delete();

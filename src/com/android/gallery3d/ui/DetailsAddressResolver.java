@@ -43,6 +43,7 @@ public class DetailsAddressResolver {
             mLatlng = latlng;
         }
 
+        @Override
         public Address run(JobContext jc) {
             ReverseGeocoder geocoder = new ReverseGeocoder(mContext.getAndroidContext());
             return geocoder.lookupAddress(mLatlng[0], mLatlng[1], true);
@@ -63,10 +64,12 @@ public class DetailsAddressResolver {
         mAddressLookupJob = mContext.getThreadPool().submit(
                 new AddressLookupJob(latlng),
                 new FutureListener<Address>() {
+                    @Override
                     public void onFutureDone(final Future<Address> future) {
                         mAddressLookupJob = null;
                         if (!future.isCancelled()) {
                             mHandler.post(new Runnable() {
+                                @Override
                                 public void run() {
                                     updateLocation(future.get());
                                 }

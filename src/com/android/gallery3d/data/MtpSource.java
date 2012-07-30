@@ -19,6 +19,7 @@ package com.android.gallery3d.data;
 import com.android.gallery3d.app.GalleryApp;
 
 public class MtpSource extends MediaSource {
+    @SuppressWarnings("unused")
     private static final String TAG = "MtpSource";
 
     private static final int MTP_DEVICESET = 0;

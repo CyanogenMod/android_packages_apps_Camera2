@@ -88,6 +88,7 @@ public class MediaDetails implements Iterable<Entry<Integer, Object>> {
         return mDetails.size();
     }
 
+    @Override
     public Iterator<Entry<Integer, Object>> iterator() {
         return mDetails.entrySet().iterator();
     }

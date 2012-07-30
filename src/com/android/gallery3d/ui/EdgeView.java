@@ -21,6 +21,7 @@ import android.opengl.Matrix;
 
 // EdgeView draws EdgeEffect (blue glow) at four sides of the view.
 public class EdgeView extends GLView {
+    @SuppressWarnings("unused")
     private static final String TAG = "EdgeView";
 
     public static final int INVALID_DIRECTION = -1;

@@ -120,22 +120,27 @@ public class WidgetService extends RemoteViewsService {
             mSource = null;
         }
 
+        @Override
         public int getCount() {
             return mSource.size();
         }
 
+        @Override
         public long getItemId(int position) {
             return position;
         }
 
+        @Override
         public int getViewTypeCount() {
             return 1;
         }
 
+        @Override
         public boolean hasStableIds() {
             return true;
         }
 
+        @Override
         public RemoteViews getLoadingView() {
             RemoteViews rv = new RemoteViews(
                     mApp.getAndroidContext().getPackageName(),
@@ -144,6 +149,7 @@ public class WidgetService extends RemoteViewsService {
             return rv;
         }
 
+        @Override
         public RemoteViews getViewAt(int position) {
             Bitmap bitmap = mSource.getImage(position);
             if (bitmap == null) return getLoadingView();

@@ -56,6 +56,7 @@ public class ManageCachePage extends ActivityState implements
         EyePosition.EyePositionListener, OnClickListener {
     public static final String KEY_MEDIA_PATH = "media-path";
 
+    @SuppressWarnings("unused")
     private static final String TAG = "ManageCachePage";
 
     private static final int DATA_CACHE_SIZE = 256;

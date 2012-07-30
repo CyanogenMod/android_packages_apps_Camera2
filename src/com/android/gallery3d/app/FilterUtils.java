@@ -54,6 +54,7 @@ import com.android.gallery3d.data.Path;
 // functions. setupMenuItems() makes sure those types cannot be selected.
 //
 public class FilterUtils {
+    @SuppressWarnings("unused")
     private static final String TAG = "FilterUtils";
 
     public static final int CLUSTER_BY_ALBUM = 1;

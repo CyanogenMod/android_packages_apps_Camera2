@@ -92,6 +92,7 @@ public class FileCache implements Closeable {
         mDbHelper = new DatabaseHelper(context, dbName);
     }
 
+    @Override
     public void close() {
         mDbHelper.close();
     }

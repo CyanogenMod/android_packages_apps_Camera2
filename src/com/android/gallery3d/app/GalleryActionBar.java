@@ -36,6 +36,7 @@ import com.android.gallery3d.R;
 import java.util.ArrayList;
 
 public class GalleryActionBar implements ActionBar.OnNavigationListener {
+    @SuppressWarnings("unused")
     private static final String TAG = "GalleryActionBar";
 
     private ClusterRunner mClusterRunner;
@@ -91,18 +92,22 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
 
     private class ClusterAdapter extends BaseAdapter {
 
+        @Override
         public int getCount() {
             return sClusterItems.length;
         }
 
+        @Override
         public Object getItem(int position) {
             return sClusterItems[position];
         }
 
+        @Override
         public long getItemId(int position) {
             return sClusterItems[position].action;
         }
 
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.action_bar_text,
@@ -207,6 +212,7 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
         final ArrayList<Integer> actions = mActions;
         new AlertDialog.Builder(mContext).setTitle(R.string.group_by).setItems(
                 mTitles, new DialogInterface.OnClickListener() {
+            @Override
             public void onClick(DialogInterface dialog, int which) {
                 // Need to lock rendering when operations invoked by system UI (main thread) are
                 // modifying slot data used in GL thread for rendering.

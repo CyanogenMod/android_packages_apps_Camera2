@@ -58,6 +58,7 @@ public class Face implements Comparable<Face> {
         return false;
     }
 
+    @Override
     public int compareTo(Face another) {
         return mName.compareTo(another.mName);
     }

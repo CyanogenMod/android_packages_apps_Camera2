@@ -43,6 +43,7 @@ public class TagClustering extends Clustering {
         final ArrayList<Path> untagged = new ArrayList<Path>();
 
         baseSet.enumerateTotalMediaItems(new MediaSet.ItemConsumer() {
+            @Override
             public void consume(int index, MediaItem item) {
                 Path path = item.getPath();
 

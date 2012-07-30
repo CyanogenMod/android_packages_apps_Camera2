@@ -27,6 +27,7 @@ import com.android.gallery3d.util.ThreadPool.JobContext;
 // used so we can show an foreign component (like an
 // android.view.View) instead of a Bitmap.
 public class SnailItem extends MediaItem {
+    @SuppressWarnings("unused")
     private static final String TAG = "SnailItem";
     private ScreenNail mScreenNail;
 
@@ -38,6 +39,7 @@ public class SnailItem extends MediaItem {
     public Job<Bitmap> requestImage(int type) {
         // nothing to return
         return new Job<Bitmap>() {
+            @Override
             public Bitmap run(JobContext jc) {
                 return null;
             }
@@ -48,6 +50,7 @@ public class SnailItem extends MediaItem {
     public Job<BitmapRegionDecoder> requestLargeImage() {
         // nothing to return
         return new Job<BitmapRegionDecoder>() {
+            @Override
             public BitmapRegionDecoder run(JobContext jc) {
                 return null;
             }

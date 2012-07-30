@@ -282,6 +282,7 @@ public class DownloadCache {
             mProxySet.add(proxy);
         }
 
+        @Override
         public void onFutureDone(Future<File> future) {
             File file = future.get();
             long id = 0;
@@ -310,6 +311,7 @@ public class DownloadCache {
             }
         }
 
+        @Override
         public File run(JobContext jc) {
             // TODO: utilize etag
             jc.setMode(ThreadPool.MODE_NETWORK);
@@ -345,6 +347,7 @@ public class DownloadCache {
 
         public synchronized Entry get(JobContext jc) {
             jc.setCancelListener(new CancelListener() {
+                @Override
                 public void onCancel() {
                     mTask.removeProxy(TaskProxy.this);
                     synchronized (TaskProxy.this) {

@@ -201,6 +201,7 @@ public class AlbumDataLoader {
     }
 
     private class MySourceListener implements ContentListener {
+        @Override
         public void onContentDirty() {
             if (mReloadTask != null) mReloadTask.notifyDirty();
         }
@@ -243,6 +244,7 @@ public class AlbumDataLoader {
             mVersion = version;
         }
 
+        @Override
         public UpdateInfo call() throws Exception {
             UpdateInfo info = new UpdateInfo();
             long version = mVersion;
