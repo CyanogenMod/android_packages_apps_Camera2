@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.ui;
 
+import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -107,6 +108,7 @@ public class TileImageViewAdapter implements TileImageView.Model {
     //
     // As a result, we should decode region (50-6, 50-6, 250+6, 250+6) or
     // (44, 44, 256, 256) from the original photo and down sample it to 106.
+    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
     @Override
     public Bitmap getTile(int level, int x, int y, int tileSize,
             int borderSize, BitmapPool pool) {
