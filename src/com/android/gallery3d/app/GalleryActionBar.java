@@ -230,7 +230,9 @@ public class GalleryActionBar implements ActionBar.OnNavigationListener {
 
     @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void setHomeButtonEnabled(boolean enabled) {
-        mActionBar.setHomeButtonEnabled(enabled);
+        if (ApiHelper.HAS_ACTION_BAR_SET_HOME_BUTTON_ENABLED) {
+            mActionBar.setHomeButtonEnabled(enabled);
+        }
     }
 
     public void setDisplayOptions(boolean displayHomeAsUp, boolean showTitle) {
