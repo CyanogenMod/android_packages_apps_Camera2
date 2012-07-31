@@ -86,8 +86,8 @@ public class LocalAlbum extends MediaSet {
     public LocalAlbum(Path path, GalleryApp application, int bucketId,
             boolean isImage) {
         this(path, application, bucketId, isImage,
-                LocalAlbumSet.getBucketName(application.getContentResolver(),
-                bucketId));
+                BucketHelper.getBucketName(
+                application.getContentResolver(), bucketId));
     }
 
     @Override
