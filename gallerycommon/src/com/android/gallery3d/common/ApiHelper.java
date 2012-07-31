@@ -121,6 +121,9 @@ public class ApiHelper {
     public static final boolean HAS_FINE_RESOLUTION_QUALITY_LEVELS =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
+    public static final boolean HAS_MOTION_EVENT_TRANSFORM =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
         try {
