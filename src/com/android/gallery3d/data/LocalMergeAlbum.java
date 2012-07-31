@@ -19,6 +19,8 @@ package com.android.gallery3d.data;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import com.android.gallery3d.common.ApiHelper;
+
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -82,8 +84,18 @@ public class LocalMergeAlbum extends MediaSet implements ContentListener {
 
     @Override
     public Uri getContentUri() {
-        return MediaStore.Files.getContentUri("external").buildUpon().appendQueryParameter(
-                LocalSource.KEY_BUCKET_ID, String.valueOf(mBucketId)).build();
+        String bucketId = String.valueOf(mBucketId);
+        if (ApiHelper.HAS_MEDIA_PROVIDER_FILES_TABLE) {
+            return MediaStore.Files.getContentUri("external").buildUpon()
+                    .appendQueryParameter(LocalSource.KEY_BUCKET_ID, bucketId)
+                    .build();
+        } else {
+            // We don't have a single URL for a merged image before ICS
+            // So we used the image's URL as a substitute.
+            return MediaStore.Images.Media.EXTERNAL_CONTENT_URI.buildUpon()
+                    .appendQueryParameter(LocalSource.KEY_BUCKET_ID, bucketId)
+                    .build();
+        }
     }
 
     @Override

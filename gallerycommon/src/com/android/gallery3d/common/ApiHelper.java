@@ -146,6 +146,9 @@ public class ApiHelper {
     public static final boolean HAS_ACTION_BAR_SET_HOME_BUTTON_ENABLED =
             Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
 
+    public static final boolean HAS_MEDIA_PROVIDER_FILES_TABLE =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
             klass.getDeclaredField(fieldName);
