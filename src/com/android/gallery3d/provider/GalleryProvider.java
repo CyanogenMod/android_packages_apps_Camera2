@@ -22,13 +22,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Log;
 
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.common.AsyncTaskUtil;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
@@ -211,7 +212,7 @@ public class GalleryProvider extends ContentProvider {
             if (PicasaSource.isPicasaImage(object)) {
                 return PicasaSource.openFile(getContext(), object, mode);
             } else if (object instanceof MtpImage) {
-                return openPipeHelper(uri, null, null, null,
+                return openPipeHelper(null,
                         new MtpPipeDataWriter((MtpImage) object));
             } else {
                 throw new FileNotFoundException("unspported type: " + object);
@@ -226,6 +227,34 @@ public class GalleryProvider extends ContentProvider {
         throw new UnsupportedOperationException();
     }
 
+    private static interface PipeDataWriter<T> {
+        void writeDataToPipe(ParcelFileDescriptor output, T args);
+    }
+
+    // Modified from ContentProvider.openPipeHelper. We are target at API LEVEL 10.
+    // But openPipeHelper is available in API LEVEL 11.
+    private static <T> ParcelFileDescriptor openPipeHelper(
+            final T args, final PipeDataWriter<T> func) throws FileNotFoundException {
+        try {
+            final ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
+            AsyncTask<Object, Object, Object> task = new AsyncTask<Object, Object, Object>() {
+                @Override
+                protected Object doInBackground(Object... params) {
+                    try {
+                        func.writeDataToPipe(pipe[1], args);
+                        return null;
+                    } finally {
+                        Utils.closeSilently(pipe[1]);
+                    }
+                }
+            };
+            AsyncTaskUtil.executeInParallel(task, (Object[]) null);
+            return pipe[0];
+        } catch (IOException e) {
+            throw new FileNotFoundException("failure making pipe");
+        }
+    }
+
     private final class MtpPipeDataWriter implements PipeDataWriter<Object> {
         private final MtpImage mImage;
 
@@ -234,14 +263,13 @@ public class GalleryProvider extends ContentProvider {
         }
 
         @Override
-        public void writeDataToPipe(ParcelFileDescriptor output,
-                Uri uri, String mimeType, Bundle opts, Object args) {
+        public void writeDataToPipe(ParcelFileDescriptor output, Object args) {
             OutputStream os = null;
             try {
                 os = new ParcelFileDescriptor.AutoCloseOutputStream(output);
                 os.write(mImage.getImageData());
             } catch (IOException e) {
-                Log.w(TAG, "fail to download: " + uri, e);
+                Log.w(TAG, "fail to download: " + mImage.toString(), e);
             } finally {
                 Utils.closeSilently(os);
             }
