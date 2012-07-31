@@ -20,7 +20,6 @@ import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.hardware.Camera;
-import android.hardware.Camera.FaceDetectionListener;
 import android.os.Build;
 import android.provider.MediaStore.MediaColumns;
 import android.view.View;
@@ -82,18 +81,39 @@ public class ApiHelper {
     public static final boolean HAS_SET_SYSTEM_UI_VISIBILITY =
             hasMethod(View.class, "setSystemUiVisibility", int.class);
 
-    public static final boolean HAS_FACE_DETECTION =
-            hasClass(Camera.class, "android.hardware.Camera$FaceDetectionListener") &&
-            hasMethod(Camera.class, "setFaceDetectionListener", FaceDetectionListener.class) &&
-            hasMethod(Camera.class, "startFaceDetection") &&
-            hasMethod(Camera.class, "stopFaceDetection") &&
-            hasMethod(Camera.Parameters.class, "getMaxNumDetectedFaces");
+    public static final boolean HAS_FACE_DETECTION;
+    static {
+        boolean hasFaceDetection = false;
+        try {
+            Class<?> listenerClass = Class.forName(
+                    "android.hardware.Camera$FaceDetectionListener");
+            hasFaceDetection =
+                    hasMethod(Camera.class, "setFaceDetectionListener", listenerClass) &&
+                    hasMethod(Camera.class, "startFaceDetection") &&
+                    hasMethod(Camera.class, "stopFaceDetection") &&
+                    hasMethod(Camera.Parameters.class, "getMaxNumDetectedFaces");
+        } catch (Throwable t) {
+        }
+        HAS_FACE_DETECTION = hasFaceDetection;
+    }
 
     public static final boolean HAS_GET_CAMERA_DISABLED =
             hasMethod(DevicePolicyManager.class, "getCameraDisabled", ComponentName.class);
 
     public static final boolean HAS_MEDIA_ACTION_SOUND =
             Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
+
+    public static final boolean HAS_PANORAMA =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
+    public static final boolean HAS_TIME_LAPSE_RECORDING =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
+    public static final boolean HAS_ZOOM_WHEN_RECORDING =
+            Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
+
+    public static final boolean HAS_CAMERA_FOCUS_AREA =
+            Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
 
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
@@ -137,15 +157,4 @@ public class ApiHelper {
             return false;
         }
     }
-
-    private static boolean hasClass(Class<?> klass, String className) {
-        Class<?>[] klasses = klass.getClasses();
-        for (int i = 0; i < klasses.length; ++i) {
-            if (klasses[i].getName().equals(className)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

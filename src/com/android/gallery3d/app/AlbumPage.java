@@ -613,7 +613,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         switch (mode) {
             case SelectionManager.ENTER_SELECTION_MODE: {
                 mActionMode = mActionModeHandler.startActionMode();
-                mVibrator.vibrate(100);
+                if(mHapticsEnabled) mVibrator.vibrate(100);
                 break;
             }
             case SelectionManager.LEAVE_SELECTION_MODE: {

@@ -1565,6 +1565,7 @@ public class PhotoView extends GLView {
 
     public boolean switchWithCaptureAnimation(int offset) {
         GLRoot root = getGLRoot();
+        if(root == null) return false;
         root.lockRenderThread();
         try {
             return switchWithCaptureAnimationLocked(offset);

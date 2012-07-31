@@ -19,12 +19,15 @@ package com.android.gallery3d.app;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.provider.Settings.SettingNotFoundException;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -57,6 +60,9 @@ abstract public class ActivityState {
         public Intent resultData;
     }
 
+    protected boolean mHapticsEnabled;
+    private ContentResolver mContentResolver;
+
     private boolean mDestroyed = false;
     private boolean mPlugged = false;
     boolean mIsFinishing = false;
@@ -71,6 +77,7 @@ abstract public class ActivityState {
     void initialize(GalleryActivity activity, Bundle data) {
         mActivity = activity;
         mData = data;
+        mContentResolver = activity.getAndroidContext().getContentResolver();
     }
 
     public Bundle getData() {
@@ -167,6 +174,14 @@ abstract public class ActivityState {
             filter.addAction(Intent.ACTION_BATTERY_CHANGED);
             activity.registerReceiver(mPowerIntentReceiver, filter);
         }
+
+        try {
+            mHapticsEnabled = Settings.System.getInt(mContentResolver,
+                    Settings.System.HAPTIC_FEEDBACK_ENABLED) != 0;
+        } catch (SettingNotFoundException e) {
+            mHapticsEnabled = false;
+        }
+
         onResume();
 
         // the transition store should be cleared after resume;

@@ -1,5 +1,6 @@
 package com.android.gallery3d.data;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.media.MediaScannerConnection.MediaScannerConnectionClient;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.util.BucketNames;
 import com.android.gallery3d.util.GalleryUtils;
 
@@ -17,6 +19,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+@TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB_MR1)
 public class MtpContext implements MtpClient.Listener {
     private static final String TAG = "MtpContext";
 
