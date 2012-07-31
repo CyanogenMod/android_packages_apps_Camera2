@@ -955,6 +955,11 @@ public class PhotoDataAdapter implements PhotoPage.Model {
             updateImageCache();
             updateTileProvider();
             updateImageRequests();
+
+            if (mDataListener != null) {
+                mDataListener.onPhotoChanged(mCurrentIndex, mItemPath);
+            }
+
             fireDataChange();
             return null;
         }
