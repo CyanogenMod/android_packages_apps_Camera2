@@ -1077,7 +1077,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         private int findIndexOfPathInCache(UpdateInfo info, Path path) {
             ArrayList<MediaItem> items = info.items;
             for (int i = 0, n = items.size(); i < n; ++i) {
-                if (items.get(i).getPath() == path) {
+                MediaItem item = items.get(i);
+                if (item != null && item.getPath() == path) {
                     return i + info.contentStart;
                 }
             }
