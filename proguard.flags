@@ -32,3 +32,6 @@
 -keep class com.android.camera.CameraHolder {
   public static void injectMockCamera(...);
 }
+
+# Disable the warnings of using dynamic method calls in EffectsRecorder
+-dontnote com.android.camera.EffectsRecorder
