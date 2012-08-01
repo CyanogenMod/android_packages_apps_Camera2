@@ -85,6 +85,8 @@ public class IfdParser {
         } else {
             if (offset <= mOffsetToNextIfd) {
                 skipTo(mOffsetToNextIfd);
+                // Reset mOffsetToNextIfd to 0 so next call to next() will point to the end
+                mOffsetToNextIfd = 0;
                 return TYPE_NEXT_IFD;
             } else {
                 return TYPE_END;
