@@ -64,8 +64,10 @@ public class IfdParser {
 
         if (offset < mEndOfTagOffset) {
             skipTo(mNextOffset);
-            mNextOffset += TAG_SIZE;
-            return TYPE_NEW_TAG;
+            if(mNextOffset < mEndOfTagOffset) {
+                mNextOffset += TAG_SIZE;
+                return TYPE_NEW_TAG;
+            }
         }
 
         if (offset == mEndOfTagOffset) {
