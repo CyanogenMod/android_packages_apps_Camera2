@@ -260,6 +260,31 @@ public class ExifParserTest extends ActivityTestCase {
         return sbuilder.toString();
     }
 
+    public void testSkipToNextIfd() throws ExifInvalidFormatException, IOException {
+        ExifParser exifParser = new ExifParser();
+        IfdParser ifdParser = exifParser.parse(mImageInputStream);
+        int type = ifdParser.next();
+        while (type != IfdParser.TYPE_END) {
+            switch (type) {
+                case IfdParser.TYPE_NEW_TAG:
+                    // Do nothing, we don't care
+                    break;
+                case IfdParser.TYPE_NEXT_IFD:
+                    parseIfd1(ifdParser.parseIfdBlock());
+                    break;
+                case IfdParser.TYPE_SUB_IFD:
+                    // We won't get this since to skip everything
+                    assertTrue(false);
+                    break;
+                case IfdParser.TYPE_VALUE_OF_PREV_TAG:
+                    // We won't get this since to skip everything
+                    assertTrue(false);
+                    break;
+            }
+            type = ifdParser.next();
+        }
+    }
+
     @Override
     protected void tearDown() throws IOException {
         mImageInputStream.close();
