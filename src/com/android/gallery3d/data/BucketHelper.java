@@ -75,7 +75,7 @@ class BucketHelper {
     // already know the media type from the table we query from.
     private static final String[] PROJECTION_BUCKET_IN_ONE_TABLE = {
             ImageColumns.BUCKET_ID,
-            "MAX(date_taken)",
+            "MAX(datetaken)",
             ImageColumns.BUCKET_DISPLAY_NAME};
 
     // We keep the INDEX_BUCKET_ID and INDEX_BUCKET_NAME the same as
