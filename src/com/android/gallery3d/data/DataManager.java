@@ -68,18 +68,22 @@ public class DataManager {
     private static final String TAG = "DataManager";
 
     // This is the path for the media set seen by the user at top level.
-    private static final String TOP_SET_PATH =
-            "/combo/{/mtp,/local/all,/picasa/all}";
-    private static final String TOP_IMAGE_SET_PATH =
-            "/combo/{/mtp,/local/image,/picasa/image}";
+    private static final String TOP_SET_PATH = ApiHelper.HAS_MTP
+            ? "/combo/{/mtp,/local/all,/picasa/all}"
+            : "/combo/{/local/all,/picasa/all}";
+
+    private static final String TOP_IMAGE_SET_PATH = ApiHelper.HAS_MTP
+            ? "/combo/{/mtp,/local/image,/picasa/image}"
+            : "/combo/{/local/image,/picasa/image}";
+
     private static final String TOP_VIDEO_SET_PATH =
             "/combo/{/local/video,/picasa/video}";
-    private static final String TOP_LOCAL_SET_PATH =
-            "/local/all";
-    private static final String TOP_LOCAL_IMAGE_SET_PATH =
-            "/local/image";
-    private static final String TOP_LOCAL_VIDEO_SET_PATH =
-            "/local/video";
+
+    private static final String TOP_LOCAL_SET_PATH = "/local/all";
+
+    private static final String TOP_LOCAL_IMAGE_SET_PATH = "/local/image";
+
+    private static final String TOP_LOCAL_VIDEO_SET_PATH = "/local/video";
 
     private static final String ACTION_DELETE_PICTURE =
             "com.android.gallery3d.action.DELETE_PICTURE";
