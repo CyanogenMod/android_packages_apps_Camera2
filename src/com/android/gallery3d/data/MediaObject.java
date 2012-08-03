@@ -88,7 +88,8 @@ public abstract class MediaObject {
     }
 
     public Uri getContentUri() {
-        throw new UnsupportedOperationException();
+        String className = getClass().getName();
+        throw new UnsupportedOperationException(className);
     }
 
     public Uri getPlayUri() {
