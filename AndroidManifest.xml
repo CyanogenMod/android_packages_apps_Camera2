@@ -240,6 +240,7 @@
         <provider android:name="com.android.gallery3d.provider.GalleryProvider"
                 android:syncable="false"
                 android:grantUriPermissions="true"
+                android:exported="true"
                 android:authorities="com.android.gallery3d.provider" />
         <activity android:name="com.android.gallery3d.gadget.WidgetClickHandler" />
         <activity android:name="com.android.gallery3d.app.DialogPicker"
