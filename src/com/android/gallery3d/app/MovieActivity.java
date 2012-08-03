@@ -179,7 +179,7 @@ public class MovieActivity extends Activity {
         return true;
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void initializeShareActionProvider(Menu menu) {
         if (!ApiHelper.HAS_SHARE_ACTION_PROVIDER) return;
 
