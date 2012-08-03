@@ -115,6 +115,7 @@ public class ExifParserTest extends ActivityTestCase {
     private void parseIfd0(IfdParser ifdParser) throws IOException,
             ExifInvalidFormatException {
         int type = ifdParser.next();
+        int tagNumber=0;
         while (type != IfdParser.TYPE_END) {
             switch (type) {
                 case IfdParser.TYPE_NEW_TAG:
@@ -123,6 +124,7 @@ public class ExifParserTest extends ActivityTestCase {
                         ifdParser.waitValueOfTag(tag);
                     } else {
                         checkTag(tag, ifdParser, IFD0_VALUE);
+                        tagNumber++;
                     }
                     break;
                 case IfdParser.TYPE_NEXT_IFD:
@@ -135,15 +137,18 @@ public class ExifParserTest extends ActivityTestCase {
                     break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
                     checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, IFD0_VALUE);
+                    tagNumber++;
                     break;
             }
             type = ifdParser.next();
         }
+        assertEquals(IFD0_VALUE.size(), tagNumber);
     }
 
     private void parseIfd1(IfdParser ifdParser) throws IOException,
             ExifInvalidFormatException {
         int type = ifdParser.next();
+        int tagNumber = 0;
         while (type != IfdParser.TYPE_END) {
             switch (type) {
                 case IfdParser.TYPE_NEW_TAG:
@@ -152,6 +157,7 @@ public class ExifParserTest extends ActivityTestCase {
                         ifdParser.waitValueOfTag(tag);
                     } else {
                         checkTag(tag, ifdParser, IFD1_VALUE);
+                        tagNumber++;
                     }
                     break;
                 case IfdParser.TYPE_NEXT_IFD:
@@ -162,15 +168,18 @@ public class ExifParserTest extends ActivityTestCase {
                     break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
                     checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, IFD1_VALUE);
+                    tagNumber++;
                     break;
             }
             type = ifdParser.next();
         }
+        assertEquals(IFD1_VALUE.size(), tagNumber);
     }
 
     private void parseExifIfd(IfdParser ifdParser) throws IOException,
             ExifInvalidFormatException {
         int type = ifdParser.next();
+        int tagNumber = 0;
         while (type != IfdParser.TYPE_END) {
             switch (type) {
                 case IfdParser.TYPE_NEW_TAG:
@@ -179,6 +188,7 @@ public class ExifParserTest extends ActivityTestCase {
                         ifdParser.waitValueOfTag(tag);
                     } else {
                         checkTag(tag, ifdParser, EXIF_IFD_VALUE);
+                        tagNumber++;
                     }
                     break;
                 case IfdParser.TYPE_NEXT_IFD:
@@ -189,10 +199,12 @@ public class ExifParserTest extends ActivityTestCase {
                     break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
                     checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, EXIF_IFD_VALUE);
+                    tagNumber++;
                     break;
             }
             type = ifdParser.next();
         }
+        assertEquals(EXIF_IFD_VALUE.size(), tagNumber);
     }
 
     private void checkTag(ExifTag tag, IfdParser ifdParser, HashMap<Short, String> truth)
