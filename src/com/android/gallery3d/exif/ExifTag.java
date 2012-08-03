@@ -160,24 +160,11 @@ public class ExifTag {
     private final short mTagId;
     private final short mDataType;
     private final int mDataCount;
-    private final int mOffset;
 
     ExifTag(short tagId, short type, int dataCount) {
         mTagId = tagId;
         mDataType = type;
         mDataCount = dataCount;
-        mOffset = -1;
-    }
-
-    ExifTag(short tagId, short type, int dataCount, int offset) {
-        mTagId = tagId;
-        mDataType = type;
-        mDataCount = dataCount;
-        mOffset = offset;
-    }
-
-    public int getOffset() {
-        return mOffset;
     }
 
     public short getTagId() {
@@ -186,6 +173,10 @@ public class ExifTag {
 
     public short getDataType() {
         return mDataType;
+    }
+
+    public int getDataSize() {
+        return getComponentCount() * getElementSize(getDataType());
     }
 
     public int getComponentCount() {

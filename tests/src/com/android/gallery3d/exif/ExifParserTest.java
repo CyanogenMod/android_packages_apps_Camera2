@@ -120,8 +120,10 @@ public class ExifParserTest extends ActivityTestCase {
             switch (type) {
                 case IfdParser.TYPE_NEW_TAG:
                     ExifTag tag = ifdParser.readTag();
-                    if (tag.getOffset() > 0) {
-                        ifdParser.waitValueOfTag(tag);
+                    if (tag.getDataSize() > 4 || tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
+                        long offset = ifdParser.readUnsignedInt();
+                        assertTrue(offset <= Integer.MAX_VALUE);
+                        ifdParser.waitValueOfTag(tag, offset);
                     } else {
                         checkTag(tag, ifdParser, IFD0_VALUE);
                         tagNumber++;
@@ -130,14 +132,14 @@ public class ExifParserTest extends ActivityTestCase {
                 case IfdParser.TYPE_NEXT_IFD:
                     parseIfd1(ifdParser.parseIfdBlock());
                     break;
-                case IfdParser.TYPE_SUB_IFD:
-                    assertEquals(ExifTag.TIFF_TAG.TAG_EXIF_IFD,
-                            ifdParser.getCorrespodingExifTag().getTagId());
-                    parseExifIfd(ifdParser.parseIfdBlock());
-                    break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
-                    checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, IFD0_VALUE);
-                    tagNumber++;
+                    tag = ifdParser.getCorrespodingExifTag();
+                    if(tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
+                        parseExifIfd(ifdParser.parseIfdBlock());
+                    } else {
+                        checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, IFD0_VALUE);
+                        tagNumber++;
+                    }
                     break;
             }
             type = ifdParser.next();
@@ -153,8 +155,10 @@ public class ExifParserTest extends ActivityTestCase {
             switch (type) {
                 case IfdParser.TYPE_NEW_TAG:
                     ExifTag tag = ifdParser.readTag();
-                    if (tag.getOffset() > 0) {
-                        ifdParser.waitValueOfTag(tag);
+                    if (tag.getDataSize() > 4) {
+                        long offset = ifdParser.readUnsignedInt();
+                        assertTrue(offset <= Integer.MAX_VALUE);
+                        ifdParser.waitValueOfTag(tag, offset);
                     } else {
                         checkTag(tag, ifdParser, IFD1_VALUE);
                         tagNumber++;
@@ -162,9 +166,6 @@ public class ExifParserTest extends ActivityTestCase {
                     break;
                 case IfdParser.TYPE_NEXT_IFD:
                     fail("Find a ifd after ifd1");
-                    break;
-                case IfdParser.TYPE_SUB_IFD:
-                    fail("Find a sub ifd in ifd1");
                     break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
                     checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, IFD1_VALUE);
@@ -184,8 +185,10 @@ public class ExifParserTest extends ActivityTestCase {
             switch (type) {
                 case IfdParser.TYPE_NEW_TAG:
                     ExifTag tag = ifdParser.readTag();
-                    if (tag.getOffset() > 0) {
-                        ifdParser.waitValueOfTag(tag);
+                    if (tag.getDataSize() > 4) {
+                        long offset = ifdParser.readUnsignedInt();
+                        assertTrue(offset <= Integer.MAX_VALUE);
+                        ifdParser.waitValueOfTag(tag, offset);
                     } else {
                         checkTag(tag, ifdParser, EXIF_IFD_VALUE);
                         tagNumber++;
@@ -193,9 +196,6 @@ public class ExifParserTest extends ActivityTestCase {
                     break;
                 case IfdParser.TYPE_NEXT_IFD:
                     fail("Find a ifd after exif ifd");
-                    break;
-                case IfdParser.TYPE_SUB_IFD:
-                    fail("Find a sub ifd in exif ifd");
                     break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
                     checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, EXIF_IFD_VALUE);
@@ -282,10 +282,6 @@ public class ExifParserTest extends ActivityTestCase {
                 case IfdParser.TYPE_NEXT_IFD:
                     parseIfd1(ifdParser.parseIfdBlock());
                     break;
-                case IfdParser.TYPE_SUB_IFD:
-                    // We won't get this since to skip everything
-                    fail("Get sub ifd but we've skip everything");
-                    break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
                     // We won't get this since to skip everything
                     fail("Get value of previous tag but we've skip everything");
@@ -304,23 +300,25 @@ public class ExifParserTest extends ActivityTestCase {
                 case IfdParser.TYPE_NEW_TAG:
                     ExifTag tag = ifdParser.readTag();
                     // only interested in these two tags
-                    if (tag.getOffset() > 0) {
+                    if (tag.getDataSize() > 4 || tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
                         if(tag.getTagId() == ExifTag.TIFF_TAG.TAG_MODEL
                                 || tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
-                            ifdParser.waitValueOfTag(tag);
+                            long offset = ifdParser.readUnsignedInt();
+                            assertTrue(offset <= Integer.MAX_VALUE);
+                            ifdParser.waitValueOfTag(tag, offset);
                         }
                     }
                     break;
                 case IfdParser.TYPE_NEXT_IFD:
                     parseIfd1(ifdParser.parseIfdBlock());
                     break;
-                case IfdParser.TYPE_SUB_IFD:
-                    assertEquals(ExifTag.TIFF_TAG.TAG_EXIF_IFD,
-                            ifdParser.getCorrespodingExifTag().getTagId());
-                    parseExifIfd(ifdParser.parseIfdBlock());
-                    break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
-                    checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, IFD0_VALUE);
+                    tag = ifdParser.getCorrespodingExifTag();
+                    if(tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
+                        parseExifIfd(ifdParser.parseIfdBlock());
+                    } else {
+                        checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, IFD0_VALUE);
+                    }
                     break;
             }
             type = ifdParser.next();
