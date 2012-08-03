@@ -61,9 +61,10 @@ public class IfdParser {
 
     public int next() throws IOException {
         int offset = mTiffStream.getReadByteCount();
-
         if (offset < mEndOfTagOffset) {
+            offset = mNextOffset;
             skipTo(mNextOffset);
+
             if(mNextOffset < mEndOfTagOffset) {
                 mNextOffset += TAG_SIZE;
                 return TYPE_NEW_TAG;
