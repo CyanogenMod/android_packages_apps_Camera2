@@ -38,6 +38,9 @@ public class ApiHelper {
         public static final int JELLY_BEAN = 16;
     }
 
+    public static final boolean ENABLE_PHOTO_EDITOR =
+            Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
+
     public static final boolean HAS_VIEW_SYSTEM_UI_FLAG_LAYOUT_STABLE =
             hasField(View.class, "SYSTEM_UI_FLAG_LAYOUT_STABLE");
 
