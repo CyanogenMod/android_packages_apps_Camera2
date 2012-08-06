@@ -24,4 +24,8 @@
     <instrumentation android:name="android.test.InstrumentationTestRunner"
              android:targetPackage="com.android.gallery3d"
              android:label="Tests for GalleryNew3D application."/>
+
+    <instrumentation android:name="com.android.gallery3d.exif.ExifTestRunner"
+            android:targetPackage="com.android.gallery3d"
+            android:label="Tests for ExifParser."/>
 </manifest>

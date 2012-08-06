@@ -1,0 +1,47 @@
+<exif>
+    <ifd name="ifd0">
+        <tag id="0x100" name="ImageWidth">2560</tag>
+        <tag id="0x101" name="ImageHeight">1920</tag>
+        <tag id="0x10f" name="Make">google</tag>
+        <tag id="0x110" name="Model">Nexus S</tag>
+        <tag id="0x112" name="Orientation">1</tag>
+        <tag id="0x131" name="Software">MASTER</tag>
+        <tag id="0x132" name="DateTime">2012:07:30 16:28:42</tag>
+        <tag id="0x213" name="YCbCrPositioning">1</tag>
+    </ifd>
+    <ifd name="exif-ifd">
+        <tag id="0x829A" name="ExposureTime">1/40</tag>
+        <tag id="0x829D" name="FNumber">26/10</tag>
+        <tag id="0x8822" name="ExposureProgram">3</tag>
+        <tag id="0x8827" name="IsoSpeedRatings">100</tag>
+        <tag id="0x9000" name="ExifVersion">48 50 50 48</tag>
+        <tag id="0x9003" name="DateTimeTimeOriginal">2012:07:30 16:28:42</tag>
+        <tag id="0x9004" name="DateTimeTimeDigitized">2012:07:30 16:28:42</tag>
+        <tag id="0x9201" name="ShutterSpeed">50/10</tag>
+        <tag id="0x9202" name="ApertureValue">30/10</tag>
+        <tag id="0x9203" name="BrightnessValue">30/10</tag>
+        <tag id="0x9204" name="ExposureBiasValue">0/0</tag>
+        <tag id="0x9205" name="MaxApertureValue">30/10</tag>
+        <tag id="0x9207" name="MeteringMode">2</tag>
+        <tag id="0x9209" name="Flash">0</tag>
+        <tag id="0x920A" name="FocalLength">343/100</tag>
+        <tag id="0x9286" name="UserComment">0 0 0 73 73 67 83 65 85 115 101 114 32 99 111 109 109 101 110 116 115 0</tag>
+        <tag id="0xA001" name="ColoSpace">1</tag>
+        <tag id="0xA002" name="PixelXDimension">2560</tag>
+        <tag id="0xA003" name="PixelYDimension">1920</tag>
+        <tag id="0xA402" name="ExposureMode">0</tag>
+        <tag id="0xA403" name="WhithBalance">0</tag>
+        <tag id="0xA406" name="SceneCaptureType">0</tag>
+    </ifd>
+    <ifd name="ifd1">
+        <tag id="0x103" name="Compression">6</tag>
+        <tag id="0x11A" name="XResolution">72/1</tag>
+        <tag id="0x11B" name="YResolution">72/1</tag>
+        <tag id="0x128" name="ResolutionUnit">2</tag>
+        <tag id="0x100" name="ImageWidth">320</tag>
+        <tag id="0x101" name="ImageHeight">240</tag>
+        <tag id="0x112" name="Orientation">1</tag>
+        <tag id="0x201" name="JpegInterchangeFormat">690</tag>
+        <tag id="0x202" name="JpegInterchangeFormatLength">10447</tag>
+    </ifd>
+</exif>
