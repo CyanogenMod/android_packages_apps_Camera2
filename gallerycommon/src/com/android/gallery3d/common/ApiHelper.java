@@ -155,6 +155,9 @@ public class ApiHelper {
     public static final boolean HAS_MEDIA_PROVIDER_FILES_TABLE =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
+    public static final boolean HAS_SURFACE_TEXTURE_RECORDING =
+            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
+
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
             klass.getDeclaredField(fieldName);
