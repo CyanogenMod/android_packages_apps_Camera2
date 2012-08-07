@@ -18,7 +18,7 @@ package com.android.gallery3d.exif;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.test.ActivityTestCase;
+import android.test.InstrumentationTestCase;
 
 import com.android.gallery3d.tests.R;
 
@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-public class ExifParserTest extends ActivityTestCase {
+public class ExifParserTest extends InstrumentationTestCase {
     private static final String TAG = "ExifParserTest";
     // The test image
     private static final int IMG_RESOURCE_ID = R.raw.test_galaxy_nexus;
