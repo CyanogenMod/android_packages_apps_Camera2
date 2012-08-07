@@ -18,15 +18,10 @@ package com.android.gallery3d.exif;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Comparator;
-import java.util.TreeSet;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 public class IfdParser {
-
-    // special sub IDF tags
-    private static final short EXIF_IDF = (short) 0x8769;
-    private static final short GPS_IDF = (short) 0x8825;
-    private static final short INTEROPERABILITY_IDF = (short) 0xA005;
 
     private static final int TAG_SIZE = 12;
 
@@ -36,20 +31,15 @@ public class IfdParser {
     private int mNextOffset;
     private int mOffsetToNextIfd = 0;
 
-    private TreeSet<ExifTag> mCorrespondingTag = new TreeSet<ExifTag>(
-            new Comparator<ExifTag>() {
-        @Override
-        public int compare(ExifTag lhs, ExifTag rhs) {
-            return lhs.getOffset() - rhs.getOffset();
-        }
-    });
+    private TreeMap<Integer, ExifTag> mCorrespondingTag = new TreeMap<Integer, ExifTag>();
+
     private ExifTag mCurrTag;
+    private int mCurrTagOffset;
 
     public static final int TYPE_NEW_TAG = 0;
     public static final int TYPE_VALUE_OF_PREV_TAG = 1;
     public static final int TYPE_NEXT_IFD = 2;
     public static final int TYPE_END = 3;
-    public static final int TYPE_SUB_IFD = 4;
 
     IfdParser(TiffInputStream tiffStream, int offset) throws IOException {
         mTiffStream = tiffStream;
@@ -76,13 +66,11 @@ public class IfdParser {
         }
 
         if (!mCorrespondingTag.isEmpty()) {
-            mCurrTag = mCorrespondingTag.pollFirst();
-            skipTo(mCurrTag.getOffset());
-            if (isSubIfdTag(mCurrTag.getTagId())) {
-                return TYPE_SUB_IFD;
-            } else {
-                return TYPE_VALUE_OF_PREV_TAG;
-            }
+            Entry<Integer, ExifTag> entry = mCorrespondingTag.pollFirstEntry();
+            mCurrTag = entry.getValue();
+            mCurrTagOffset = entry.getKey();
+            skipTo(entry.getKey());
+            return TYPE_VALUE_OF_PREV_TAG;
         } else {
             if (offset <= mOffsetToNextIfd) {
                 skipTo(mOffsetToNextIfd);
@@ -103,28 +91,24 @@ public class IfdParser {
             throw new ExifInvalidFormatException(
                     "Number of component is larger then Integer.MAX_VALUE");
         }
-
-        if (ExifTag.getElementSize(dataFormat) * numOfComp > 4
-                || isSubIfdTag(tagId)) {
-            int offset = mTiffStream.readInt();
-            return new ExifTag(tagId, dataFormat, (int) numOfComp, offset);
-        } else {
-            return new ExifTag(tagId, dataFormat, (int) numOfComp);
-        }
+        return new ExifTag(tagId, dataFormat, (int) numOfComp);
     }
 
     public ExifTag getCorrespodingExifTag() {
-        return mCurrTag.getOffset() != mTiffStream.getReadByteCount() ? null : mCurrTag;
+        return mCurrTagOffset != mTiffStream.getReadByteCount() ? null : mCurrTag;
     }
 
-    public void waitValueOfTag(ExifTag tag) {
-        mCorrespondingTag.add(tag);
+    public void waitValueOfTag(ExifTag tag, long offset) {
+        if (offset > Integer.MAX_VALUE || offset < 0) {
+            throw new IllegalArgumentException(offset + " must be in 0 ~ " + Integer.MAX_VALUE);
+        }
+        mCorrespondingTag.put((int) offset, tag);
     }
 
     public void skipTo(int offset) throws IOException {
         mTiffStream.skipTo(offset);
-        while (!mCorrespondingTag.isEmpty() && mCorrespondingTag.first().getOffset() < offset) {
-            mCorrespondingTag.pollFirst();
+        while (!mCorrespondingTag.isEmpty() && mCorrespondingTag.firstKey() < offset) {
+            mCorrespondingTag.pollFirstEntry();
         }
     }
 
@@ -178,9 +162,5 @@ public class IfdParser {
         int nomi = readInt();
         int denomi = readInt();
         return new Rational(nomi, denomi);
-    }
-
-    private static boolean isSubIfdTag(short tagId) {
-        return tagId == EXIF_IDF || tagId == GPS_IDF || tagId == INTEROPERABILITY_IDF;
     }
 }
