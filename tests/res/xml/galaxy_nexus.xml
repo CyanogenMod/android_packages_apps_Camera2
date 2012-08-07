@@ -14,7 +14,7 @@
         <tag id="0x829D" name="FNumber">26/10</tag>
         <tag id="0x8822" name="ExposureProgram">3</tag>
         <tag id="0x8827" name="IsoSpeedRatings">100</tag>
-        <tag id="0x9000" name="ExifVersion">48 50 50 48</tag>
+        <tag id="0x9000" name="ExifVersion">30 32 32 30</tag>
         <tag id="0x9003" name="DateTimeTimeOriginal">2012:07:30 16:28:42</tag>
         <tag id="0x9004" name="DateTimeTimeDigitized">2012:07:30 16:28:42</tag>
         <tag id="0x9201" name="ShutterSpeed">50/10</tag>
@@ -25,7 +25,7 @@
         <tag id="0x9207" name="MeteringMode">2</tag>
         <tag id="0x9209" name="Flash">0</tag>
         <tag id="0x920A" name="FocalLength">343/100</tag>
-        <tag id="0x9286" name="UserComment">0 0 0 73 73 67 83 65 85 115 101 114 32 99 111 109 109 101 110 116 115 0</tag>
+        <tag id="0x9286" name="UserComment">00 00 00 49 49 43 53 41 55 73 65 72 20 63 6f 6d 6d 65 6e 74 73 00</tag>
         <tag id="0xA001" name="ColoSpace">1</tag>
         <tag id="0xA002" name="PixelXDimension">2560</tag>
         <tag id="0xA003" name="PixelYDimension">1920</tag>
