@@ -230,11 +230,16 @@ public class ExifParserTest extends InstrumentationTestCase {
                 parser.read(buf);
                 for(int i = 0; i < tag.getComponentCount(); i++) {
                     if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(buf[i]);
+                    sbuilder.append(String.format("%02x", buf[i]));
                 }
                 break;
             case ExifTag.TYPE_ASCII:
-                sbuilder.append(parser.readString(tag.getComponentCount()));
+                buf = new byte[tag.getComponentCount()];
+                parser.read(buf);
+                int length = 0;
+                while (buf[length] != 0 && length < buf.length) length++;
+                // trim the string to fit the answer from xml
+                sbuilder.append(new String(buf, 0, length).trim());
                 break;
             case ExifTag.TYPE_INT:
                 for(int i = 0; i < tag.getComponentCount(); i++) {
@@ -273,7 +278,7 @@ public class ExifParserTest extends InstrumentationTestCase {
                 parser.read(buffer);
                 for(int i = 0; i < tag.getComponentCount(); i++) {
                     if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(buffer[i]);
+                    sbuilder.append(String.format("%02x", buffer[i]));
                 }
                 break;
         }
