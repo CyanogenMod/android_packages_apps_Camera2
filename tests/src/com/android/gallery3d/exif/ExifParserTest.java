@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.exif;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.test.ActivityTestCase;
 
 import com.android.gallery3d.tests.R;
@@ -153,12 +155,10 @@ public class ExifParserTest extends ActivityTestCase {
                     }
                     break;
                 case IfdParser.TYPE_NEXT_IFD:
-                    // There is no next ifd after ifd1;
-                    assertTrue(false);
+                    fail("Find a ifd after ifd1");
                     break;
                 case IfdParser.TYPE_SUB_IFD:
-                    // There is no sub ifd in ifd1;
-                    assertTrue(false);
+                    fail("Find a sub ifd in ifd1");
                     break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
                     checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, IFD1_VALUE);
@@ -182,12 +182,10 @@ public class ExifParserTest extends ActivityTestCase {
                     }
                     break;
                 case IfdParser.TYPE_NEXT_IFD:
-                    // There is no next ifd after exif ifd;
-                    assertTrue(false);
+                    fail("Find a ifd after exif ifd");
                     break;
                 case IfdParser.TYPE_SUB_IFD:
-                    // There is no sub ifd in exif ifd;
-                    assertTrue(false);
+                    fail("Find a sub ifd in exif ifd");
                     break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
                     checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, EXIF_IFD_VALUE);
@@ -274,11 +272,11 @@ public class ExifParserTest extends ActivityTestCase {
                     break;
                 case IfdParser.TYPE_SUB_IFD:
                     // We won't get this since to skip everything
-                    assertTrue(false);
+                    fail("Get sub ifd but we've skip everything");
                     break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
                     // We won't get this since to skip everything
-                    assertTrue(false);
+                    fail("Get value of previous tag but we've skip everything");
                     break;
             }
             type = ifdParser.next();
@@ -315,6 +313,66 @@ public class ExifParserTest extends ActivityTestCase {
             }
             type = ifdParser.next();
         }
+    }
+
+    public void testReadThumbnail() throws ExifInvalidFormatException, IOException {
+        ExifParser exifParser = new ExifParser();
+        IfdParser ifdParser = exifParser.parse(mImageInputStream);
+        int type = ifdParser.next();
+        while (type != IfdParser.TYPE_END && type != IfdParser.TYPE_NEXT_IFD) {
+            type = ifdParser.next();
+        }
+        // We should meet next_ifd before end
+        assertTrue(type != IfdParser.TYPE_END);
+
+        IfdParser ifd1Parser = ifdParser.parseIfdBlock();
+        int thumbOffset = 0;
+        int thumbSize = 0;
+        int width = 0;
+        int height = 0;
+        boolean isFinishRead = false;
+        while (!isFinishRead) {
+            switch (ifd1Parser.next()) {
+                case IfdParser.TYPE_NEW_TAG:
+                    ExifTag tag = ifd1Parser.readTag();
+                    if (tag.getTagId() == ExifTag.TIFF_TAG.TAG_JPEG_INTERCHANGE_FORMAT) {
+                        long unsignedInt = ifdParser.readUnsignedInt();
+                        assertTrue(unsignedInt <= Integer.MAX_VALUE);
+                        thumbOffset = (int) unsignedInt;
+                    } else if (tag.getTagId() ==
+                            ExifTag.TIFF_TAG.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH) {
+                        long unsignedInt = ifdParser.readUnsignedInt();
+                        assertTrue(unsignedInt <= Integer.MAX_VALUE);
+                        thumbSize = (int) unsignedInt;
+                    } else if (tag.getTagId() == ExifTag.TIFF_TAG.TAG_IMAGE_WIDTH) {
+                        long unsigned = tag.getDataType() == ExifTag.TYPE_INT ?
+                                ifd1Parser.readUnsignedInt() : ifd1Parser.readUnsignedShort();
+                        assertTrue(unsigned <= (tag.getDataType() == ExifTag.TYPE_INT ?
+                                Integer.MAX_VALUE: Short.MAX_VALUE));
+                        width = (int) unsigned;
+                    } else if (tag.getTagId() == ExifTag.TIFF_TAG.TAG_IMAGE_HEIGHT) {
+                        long unsigned = tag.getDataType() == ExifTag.TYPE_INT ?
+                                ifd1Parser.readUnsignedInt() : ifd1Parser.readUnsignedShort();
+                        assertTrue(unsigned <= (tag.getDataType() == ExifTag.TYPE_INT ?
+                                Integer.MAX_VALUE: Short.MAX_VALUE));
+                        height = (int) unsigned;
+                    }
+                    isFinishRead = thumbOffset != 0 && thumbSize != 0 && width != 0 && height != 0;
+                    break;
+                case IfdParser.TYPE_END:
+                    fail("No thumbnail information found");
+                    break;
+            }
+        }
+
+        byte buf[] = new byte[thumbSize];
+        ifd1Parser.skipTo(thumbOffset);
+        ifd1Parser.read(buf);
+        Bitmap bmp = BitmapFactory.decodeByteArray(buf, 0, thumbSize);
+        // Check correctly decoded
+        assertTrue(bmp != null);
+        assertEquals(width, bmp.getWidth());
+        assertEquals(height, bmp.getHeight());
     }
 
     @Override
