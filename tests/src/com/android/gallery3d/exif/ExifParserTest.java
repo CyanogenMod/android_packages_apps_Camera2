@@ -285,6 +285,38 @@ public class ExifParserTest extends ActivityTestCase {
         }
     }
 
+    public void testOnlySaveSomeValue() throws ExifInvalidFormatException, IOException {
+        ExifParser exifParser = new ExifParser();
+        IfdParser ifdParser = exifParser.parse(mImageInputStream);
+        int type = ifdParser.next();
+        while (type != IfdParser.TYPE_END) {
+            switch (type) {
+                case IfdParser.TYPE_NEW_TAG:
+                    ExifTag tag = ifdParser.readTag();
+                    // only interested in these two tags
+                    if (tag.getOffset() > 0) {
+                        if(tag.getTagId() == ExifTag.TIFF_TAG.TAG_MODEL
+                                || tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
+                            ifdParser.waitValueOfTag(tag);
+                        }
+                    }
+                    break;
+                case IfdParser.TYPE_NEXT_IFD:
+                    parseIfd1(ifdParser.parseIfdBlock());
+                    break;
+                case IfdParser.TYPE_SUB_IFD:
+                    assertEquals(ExifTag.TIFF_TAG.TAG_EXIF_IFD,
+                            ifdParser.getCorrespodingExifTag().getTagId());
+                    parseExifIfd(ifdParser.parseIfdBlock());
+                    break;
+                case IfdParser.TYPE_VALUE_OF_PREV_TAG:
+                    checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, IFD0_VALUE);
+                    break;
+            }
+            type = ifdParser.next();
+        }
+    }
+
     @Override
     protected void tearDown() throws IOException {
         mImageInputStream.close();
