@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.util;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -24,6 +25,8 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+
+import com.android.gallery3d.common.ApiHelper;
 
 import java.util.Locale;
 
@@ -96,11 +99,18 @@ public class HelpUtils {
             // Set the intent to the help menu item, show the help menu item in the overflow
             // menu, and make it visible.
             helpMenuItem.setIntent(intent);
-            helpMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            setMenuItemShowAsAction(helpMenuItem);
             helpMenuItem.setVisible(true);
 
             // return that the help menu item is visible (i.e., true)
             return true;
+        }
+    }
+
+    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
+    private static void setMenuItemShowAsAction(MenuItem menuItem) {
+        if (ApiHelper.HAS_MENU_ITEM_SHOW_AS_ACTION) {
+            menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
         }
     }
 
