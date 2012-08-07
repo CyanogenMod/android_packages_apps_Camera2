@@ -38,6 +38,7 @@ public class ExifParserTest extends InstrumentationTestCase {
     private HashMap<Short, String> mIfd0Value = new HashMap<Short, String>();
     private HashMap<Short, String> mIfd1Value = new HashMap<Short, String>();
     private HashMap<Short, String> mExifIfdValue = new HashMap<Short, String>();
+    private HashMap<Short, String> mInteroperabilityIfdValue = new HashMap<Short, String>();
 
     private InputStream mImageInputStream;
 
@@ -48,6 +49,7 @@ public class ExifParserTest extends InstrumentationTestCase {
     private static final String XML_IFD0 = "ifd0";
     private static final String XML_IFD1 = "ifd1";
     private static final String XML_EXIF_IFD = "exif-ifd";
+    private static final String XML_INTEROPERABILITY_IFD = "interoperability-ifd";
     private static final String XML_TAG_ID = "id";
 
     public ExifParserTest(int imageResourceId, int xmlResourceId) {
@@ -94,6 +96,8 @@ public class ExifParserTest extends InstrumentationTestCase {
             ifdData = mIfd1Value;
         } else if (XML_EXIF_IFD.equals(name)) {
             ifdData = mExifIfdValue;
+        } else if (XML_INTEROPERABILITY_IFD.equals(name)) {
+            ifdData = mInteroperabilityIfdValue;
         } else {
             throw new RuntimeException("Unknown IFD name in xml file: " + name);
         }
@@ -196,7 +200,8 @@ public class ExifParserTest extends InstrumentationTestCase {
             switch (type) {
                 case IfdParser.TYPE_NEW_TAG:
                     ExifTag tag = ifdParser.readTag();
-                    if (tag.getDataSize() > 4) {
+                    if (tag.getDataSize() > 4
+                            || tag.getTagId() == ExifTag.EXIF_TAG.TAG_INTEROPERABILITY_IFD) {
                         long offset = ifdParser.readUnsignedInt();
                         assertTrue(offset <= Integer.MAX_VALUE);
                         ifdParser.waitValueOfTag(tag, offset);
@@ -209,18 +214,61 @@ public class ExifParserTest extends InstrumentationTestCase {
                     fail("Find a ifd after exif ifd");
                     break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
-                    checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mExifIfdValue);
-                    tagNumber++;
+                    tag = ifdParser.getCorrespodingExifTag();
+                    if (tag.getTagId() == ExifTag.EXIF_TAG.TAG_INTEROPERABILITY_IFD) {
+                        parseInteroperabilityIfd(ifdParser.parseIfdBlock());
+                    } else {
+                        checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mExifIfdValue);
+                        tagNumber++;
+                    }
                     break;
             }
             type = ifdParser.next();
         }
         assertEquals(mExifIfdValue.size(), tagNumber);
     }
+    private void parseInteroperabilityIfd(IfdParser ifdParser) throws IOException,
+            ExifInvalidFormatException {
+        int type = ifdParser.next();
+        int tagNumber = 0;
+        while (type != IfdParser.TYPE_END) {
+            switch (type) {
+                case IfdParser.TYPE_NEW_TAG:
+                    ExifTag tag = ifdParser.readTag();
+                    if (tag.getDataSize() > 4) {
+                        long offset = ifdParser.readUnsignedInt();
+                        assertTrue(offset <= Integer.MAX_VALUE);
+                        ifdParser.waitValueOfTag(tag, offset);
+                    } else {
+                        checkTag(tag, ifdParser, mInteroperabilityIfdValue);
+                        tagNumber++;
+                    }
+                    break;
+                case IfdParser.TYPE_NEXT_IFD:
+                    fail("Find a ifd after exif ifd");
+                    break;
+                case IfdParser.TYPE_VALUE_OF_PREV_TAG:
+                    checkTag(ifdParser.getCorrespodingExifTag(), ifdParser
+                            , mInteroperabilityIfdValue);
+                    tagNumber++;
+                    break;
+            }
+            type = ifdParser.next();
+        }
+        assertEquals(mInteroperabilityIfdValue.size(), tagNumber);
+    }
 
     private void checkTag(ExifTag tag, IfdParser ifdParser, HashMap<Short, String> truth)
             throws IOException {
-        assertEquals(truth.get(tag.getTagId()), readValueToString(tag, ifdParser));
+        String truthString = truth.get(tag.getTagId());
+        if (truthString == null) {
+            fail(String.format("Unknown Tag %02x", tag.getTagId()));
+        }
+        String dataString = readValueToString(tag, ifdParser);
+        if (!truthString.equals(dataString)) {
+            fail(String.format("Tag %02x: expect %s but %s",
+                    tag.getTagId(), truthString, dataString));
+        }
     }
 
     private String readValueToString(ExifTag tag, IfdParser parser) throws IOException {
