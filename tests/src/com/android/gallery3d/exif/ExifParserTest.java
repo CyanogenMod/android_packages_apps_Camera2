@@ -16,11 +16,13 @@
 
 package com.android.gallery3d.exif;
 
+import android.content.res.XmlResourceParser;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.test.InstrumentationTestCase;
 
-import com.android.gallery3d.tests.R;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,83 +30,91 @@ import java.util.HashMap;
 
 public class ExifParserTest extends InstrumentationTestCase {
     private static final String TAG = "ExifParserTest";
-    // The test image
-    private static final int IMG_RESOURCE_ID = R.raw.test_galaxy_nexus;
 
-    // IDF0 ground truth
-    private static final HashMap<Short, String> IFD0_VALUE = new HashMap<Short, String>();
-    static {
-        IFD0_VALUE.put(ExifTag.TIFF_TAG.TAG_IMAGE_WIDTH, String.valueOf(2560));
-        IFD0_VALUE.put(ExifTag.TIFF_TAG.TAG_IMAGE_HEIGHT, String.valueOf(1920));
-        IFD0_VALUE.put(ExifTag.TIFF_TAG.TAG_MAKE, "google");
-        IFD0_VALUE.put(ExifTag.TIFF_TAG.TAG_MODEL, "Nexus S");
-        IFD0_VALUE.put(ExifTag.TIFF_TAG.TAG_ORIENTATION,
-                String.valueOf(ExifTag.TIFF_TAG.ORIENTATION_TOP_LEFT));
-        IFD0_VALUE.put(ExifTag.TIFF_TAG.TAG_SOFTWARE, "MASTER");
-        IFD0_VALUE.put(ExifTag.TIFF_TAG.TAG_DATE_TIME, "2012:07:30 16:28:42");
-        IFD0_VALUE.put(ExifTag.TIFF_TAG.TAG_Y_CB_CR_POSITIONING,
-                String.valueOf(ExifTag.TIFF_TAG.Y_CB_CR_POSITIONING_CENTERED));
-    }
+    private final int mImageResourceId;
+    private final int mXmlResourceId;
 
-    // IDF1 ground truth
-    private static final HashMap<Short, String> IFD1_VALUE = new HashMap<Short, String>();
-    static {
-        IFD1_VALUE.put(ExifTag.TIFF_TAG.TAG_COMPRESSION,
-                String.valueOf(ExifTag.TIFF_TAG.COMPRESSION_JPEG));
-        IFD1_VALUE.put(ExifTag.TIFF_TAG.TAG_X_RESOLUTION, "72/1");
-        IFD1_VALUE.put(ExifTag.TIFF_TAG.TAG_Y_RESOLUTION, "72/1");
-        IFD1_VALUE.put(ExifTag.TIFF_TAG.TAG_RESOLUTION_UNIT,
-                String.valueOf(ExifTag.TIFF_TAG.RESOLUTION_UNIT_INCHES));
-        IFD1_VALUE.put(ExifTag.TIFF_TAG.TAG_IMAGE_WIDTH, String.valueOf(320));
-        IFD1_VALUE.put(ExifTag.TIFF_TAG.TAG_IMAGE_HEIGHT, String.valueOf(240));
-        IFD1_VALUE.put(ExifTag.TIFF_TAG.TAG_ORIENTATION,
-                String.valueOf(ExifTag.TIFF_TAG.ORIENTATION_TOP_LEFT));
-        IFD1_VALUE.put(ExifTag.TIFF_TAG.TAG_JPEG_INTERCHANGE_FORMAT, String.valueOf(690));
-        IFD1_VALUE.put(ExifTag.TIFF_TAG.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH, String.valueOf(10447));
-    }
-
-    // Exif-idf ground truth
-    private static final HashMap<Short, String> EXIF_IFD_VALUE = new HashMap<Short, String>();
-    static {
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_EXPOSURE_TIME, "1/40");
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_F_NUMBER, "26/10");
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_EXPOSURE_PROGRAM,
-                String.valueOf(ExifTag.EXIF_TAG.EXPOSURE_PROGRAM_APERTURE_PRIORITY));
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_ISO_SPEED_RATINGS, "100");
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_EXIF_VERSION, "48 50 50 48"); // 0220
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_DATE_TIME_ORIGINAL, "2012:07:30 16:28:42");
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_DATE_TIME_DIGITIZED, "2012:07:30 16:28:42");
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_SHUTTER_SPEED, "50/10");
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_APERTURE_VALUE, "30/10");
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_BRIGHTNESS_VALUE, "30/10");
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_EXPOSURE_BIAS_VALUE, "0/0");
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_MAX_APERTURE_VALUE, "30/10");
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_METERING_MODE,
-                String.valueOf(ExifTag.EXIF_TAG.METERING_MODE_CENTER_WEIGHTED_AVERAGE));
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_FLASH,
-                String.valueOf(ExifTag.EXIF_TAG.FLASH_DID_NOT_FIRED));
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_FOCAL_LENGTH, "343/100");
-        // User command is strange in test_galaxy_nexus, so a binary representation is used here
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_USER_COMMENT,
-                "0 0 0 73 73 67 83 65 85 115 101 114 32 99 111 109 109 101 110 116 115 0");
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_COLOR_SPACE,
-                String.valueOf(ExifTag.EXIF_TAG.COLOR_SPACE_SRGB));
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_PIXEL_X_DIMENSION, "2560");
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_PIXEL_Y_DIMENSION, "1920");
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_EXPOSURE_MODE,
-                String.valueOf(ExifTag.EXIF_TAG.EXPOSURE_MODE_AUTO_EXPOSURE));
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_WHITH_BALANCE,
-                String.valueOf(ExifTag.EXIF_TAG.WHITE_BALACE_MODE_AUTO));
-        EXIF_IFD_VALUE.put(ExifTag.EXIF_TAG.TAG_SCENE_CAPTURE_TYPE,
-                String.valueOf(ExifTag.EXIF_TAG.SCENE_CAPTURE_TYPE_STANDARD));
-    }
+    private HashMap<Short, String> mIfd0Value = new HashMap<Short, String>();
+    private HashMap<Short, String> mIfd1Value = new HashMap<Short, String>();
+    private HashMap<Short, String> mExifIfdValue = new HashMap<Short, String>();
 
     private InputStream mImageInputStream;
 
+    private static final String XML_EXIF_TAG = "exif";
+    private static final String XML_IFD_TAG = "ifd";
+    private static final String XML_IFD_NAME = "name";
+    private static final String XML_TAG = "tag";
+    private static final String XML_IFD0 = "ifd0";
+    private static final String XML_IFD1 = "ifd1";
+    private static final String XML_EXIF_IFD = "exif-ifd";
+    private static final String XML_TAG_ID = "id";
+
+    public ExifParserTest(int imageResourceId, int xmlResourceId) {
+        mImageResourceId = imageResourceId;
+        mXmlResourceId = xmlResourceId;
+    }
+
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         mImageInputStream = getInstrumentation()
-                .getContext().getResources().openRawResource(IMG_RESOURCE_ID);
+                .getContext().getResources().openRawResource(mImageResourceId);
+
+        XmlResourceParser parser =
+                getInstrumentation().getContext().getResources().getXml(mXmlResourceId);
+
+        while (parser.next() != XmlPullParser.END_DOCUMENT) {
+            if (parser.getEventType() == XmlPullParser.START_TAG) {
+                assert(parser.getName().equals(XML_EXIF_TAG));
+                readXml(parser);
+                break;
+            }
+        }
+        parser.close();
+    }
+
+    private void readXml(XmlPullParser parser) throws XmlPullParserException,
+            IOException {
+        parser.require(XmlPullParser.START_TAG, null, XML_EXIF_TAG);
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() == XmlPullParser.START_TAG) {
+                readXmlIfd(parser);
+            }
+        }
+        parser.require(XmlPullParser.END_TAG, null, XML_EXIF_TAG);
+    }
+
+    private void readXmlIfd(XmlPullParser parser) throws XmlPullParserException, IOException {
+        parser.require(XmlPullParser.START_TAG, null, XML_IFD_TAG);
+        String name = parser.getAttributeValue(null, XML_IFD_NAME);
+        HashMap<Short, String> ifdData = null;
+        if (XML_IFD0.equals(name)) {
+            ifdData = mIfd0Value;
+        } else if (XML_IFD1.equals(name)) {
+            ifdData = mIfd1Value;
+        } else if (XML_EXIF_IFD.equals(name)) {
+            ifdData = mExifIfdValue;
+        } else {
+            throw new RuntimeException("Unknown IFD name in xml file: " + name);
+        }
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() == XmlPullParser.START_TAG) {
+                readXmlTag(parser, ifdData);
+            }
+        }
+        parser.require(XmlPullParser.END_TAG, null, XML_IFD_TAG);
+    }
+
+    private void readXmlTag(XmlPullParser parser, HashMap<Short, String> data)
+            throws XmlPullParserException, IOException {
+        parser.require(XmlPullParser.START_TAG, null, XML_TAG);
+        short id = Integer.decode(parser.getAttributeValue(null, XML_TAG_ID)).shortValue();
+        String value = "";
+        if (parser.next() == XmlPullParser.TEXT) {
+            value = parser.getText();
+            parser.next();
+        }
+        data.put(id, value);
+        parser.require(XmlPullParser.END_TAG, null, XML_TAG);
     }
 
     public void testParse() throws IOException, ExifInvalidFormatException {
@@ -125,7 +135,7 @@ public class ExifParserTest extends InstrumentationTestCase {
                         assertTrue(offset <= Integer.MAX_VALUE);
                         ifdParser.waitValueOfTag(tag, offset);
                     } else {
-                        checkTag(tag, ifdParser, IFD0_VALUE);
+                        checkTag(tag, ifdParser, mIfd0Value);
                         tagNumber++;
                     }
                     break;
@@ -137,14 +147,14 @@ public class ExifParserTest extends InstrumentationTestCase {
                     if(tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
                         parseExifIfd(ifdParser.parseIfdBlock());
                     } else {
-                        checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, IFD0_VALUE);
+                        checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mIfd0Value);
                         tagNumber++;
                     }
                     break;
             }
             type = ifdParser.next();
         }
-        assertEquals(IFD0_VALUE.size(), tagNumber);
+        assertEquals(mIfd0Value.size(), tagNumber);
     }
 
     private void parseIfd1(IfdParser ifdParser) throws IOException,
@@ -160,7 +170,7 @@ public class ExifParserTest extends InstrumentationTestCase {
                         assertTrue(offset <= Integer.MAX_VALUE);
                         ifdParser.waitValueOfTag(tag, offset);
                     } else {
-                        checkTag(tag, ifdParser, IFD1_VALUE);
+                        checkTag(tag, ifdParser, mIfd1Value);
                         tagNumber++;
                     }
                     break;
@@ -168,13 +178,13 @@ public class ExifParserTest extends InstrumentationTestCase {
                     fail("Find a ifd after ifd1");
                     break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
-                    checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, IFD1_VALUE);
+                    checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mIfd1Value);
                     tagNumber++;
                     break;
             }
             type = ifdParser.next();
         }
-        assertEquals(IFD1_VALUE.size(), tagNumber);
+        assertEquals(mIfd1Value.size(), tagNumber);
     }
 
     private void parseExifIfd(IfdParser ifdParser) throws IOException,
@@ -190,7 +200,7 @@ public class ExifParserTest extends InstrumentationTestCase {
                         assertTrue(offset <= Integer.MAX_VALUE);
                         ifdParser.waitValueOfTag(tag, offset);
                     } else {
-                        checkTag(tag, ifdParser, EXIF_IFD_VALUE);
+                        checkTag(tag, ifdParser, mExifIfdValue);
                         tagNumber++;
                     }
                     break;
@@ -198,13 +208,13 @@ public class ExifParserTest extends InstrumentationTestCase {
                     fail("Find a ifd after exif ifd");
                     break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
-                    checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, EXIF_IFD_VALUE);
+                    checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mExifIfdValue);
                     tagNumber++;
                     break;
             }
             type = ifdParser.next();
         }
-        assertEquals(EXIF_IFD_VALUE.size(), tagNumber);
+        assertEquals(mExifIfdValue.size(), tagNumber);
     }
 
     private void checkTag(ExifTag tag, IfdParser ifdParser, HashMap<Short, String> truth)
@@ -317,7 +327,7 @@ public class ExifParserTest extends InstrumentationTestCase {
                     if(tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
                         parseExifIfd(ifdParser.parseIfdBlock());
                     } else {
-                        checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, IFD0_VALUE);
+                        checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mIfd0Value);
                     }
                     break;
             }
@@ -388,5 +398,8 @@ public class ExifParserTest extends InstrumentationTestCase {
     @Override
     protected void tearDown() throws IOException {
         mImageInputStream.close();
+        mIfd0Value.clear();
+        mIfd1Value.clear();
+        mExifIfdValue.clear();
     }
 }
