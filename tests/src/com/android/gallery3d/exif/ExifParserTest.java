@@ -131,6 +131,8 @@ public class ExifParserTest extends InstrumentationTestCase {
             ExifInvalidFormatException {
         int type = ifdParser.next();
         int tagNumber=0;
+        boolean isEnterNextIfd = false;
+        boolean isEnterExifIfd = false;
         while (type != IfdParser.TYPE_END) {
             switch (type) {
                 case IfdParser.TYPE_NEW_TAG:
@@ -146,11 +148,13 @@ public class ExifParserTest extends InstrumentationTestCase {
                     break;
                 case IfdParser.TYPE_NEXT_IFD:
                     parseIfd1(ifdParser.parseIfdBlock());
+                    isEnterNextIfd = true;
                     break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
                     tag = ifdParser.getCorrespodingExifTag();
                     if(tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
                         parseExifIfd(ifdParser.parseIfdBlock());
+                        isEnterExifIfd = true;
                     } else {
                         checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mIfd0Value);
                         tagNumber++;
@@ -160,6 +164,8 @@ public class ExifParserTest extends InstrumentationTestCase {
             type = ifdParser.next();
         }
         assertEquals(mIfd0Value.size(), tagNumber);
+        assertTrue(isEnterNextIfd);
+        assertTrue(isEnterExifIfd);
     }
 
     private void parseIfd1(IfdParser ifdParser) throws IOException,
@@ -196,15 +202,21 @@ public class ExifParserTest extends InstrumentationTestCase {
             ExifInvalidFormatException {
         int type = ifdParser.next();
         int tagNumber = 0;
+        boolean isHasInterIfd = false;
+        boolean isEnterInterIfd = false;
         while (type != IfdParser.TYPE_END) {
             switch (type) {
                 case IfdParser.TYPE_NEW_TAG:
                     ExifTag tag = ifdParser.readTag();
-                    if (tag.getDataSize() > 4
-                            || tag.getTagId() == ExifTag.EXIF_TAG.TAG_INTEROPERABILITY_IFD) {
+                    if (tag.getDataSize() > 4) {
                         long offset = ifdParser.readUnsignedInt();
                         assertTrue(offset <= Integer.MAX_VALUE);
                         ifdParser.waitValueOfTag(tag, offset);
+                    } else if (tag.getTagId() == ExifTag.EXIF_TAG.TAG_INTEROPERABILITY_IFD) {
+                        long offset = ifdParser.readUnsignedInt();
+                        assertTrue(offset <= Integer.MAX_VALUE);
+                        ifdParser.waitValueOfTag(tag, offset);
+                        isHasInterIfd = true;
                     } else {
                         checkTag(tag, ifdParser, mExifIfdValue);
                         tagNumber++;
@@ -217,6 +229,7 @@ public class ExifParserTest extends InstrumentationTestCase {
                     tag = ifdParser.getCorrespodingExifTag();
                     if (tag.getTagId() == ExifTag.EXIF_TAG.TAG_INTEROPERABILITY_IFD) {
                         parseInteroperabilityIfd(ifdParser.parseIfdBlock());
+                        isEnterInterIfd = true;
                     } else {
                         checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mExifIfdValue);
                         tagNumber++;
@@ -226,6 +239,9 @@ public class ExifParserTest extends InstrumentationTestCase {
             type = ifdParser.next();
         }
         assertEquals(mExifIfdValue.size(), tagNumber);
+        if (isHasInterIfd) {
+            assertTrue(isEnterInterIfd);
+        }
     }
     private void parseInteroperabilityIfd(IfdParser ifdParser) throws IOException,
             ExifInvalidFormatException {
@@ -334,6 +350,7 @@ public class ExifParserTest extends InstrumentationTestCase {
         ExifParser exifParser = new ExifParser();
         IfdParser ifdParser = exifParser.parse(mImageInputStream);
         int type = ifdParser.next();
+        boolean isEnterNextIfd = false;
         while (type != IfdParser.TYPE_END) {
             switch (type) {
                 case IfdParser.TYPE_NEW_TAG:
@@ -341,6 +358,7 @@ public class ExifParserTest extends InstrumentationTestCase {
                     break;
                 case IfdParser.TYPE_NEXT_IFD:
                     parseIfd1(ifdParser.parseIfdBlock());
+                    isEnterNextIfd = true;
                     break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
                     // We won't get this since to skip everything
@@ -349,11 +367,14 @@ public class ExifParserTest extends InstrumentationTestCase {
             }
             type = ifdParser.next();
         }
+        assertTrue(isEnterNextIfd);
     }
 
     public void testOnlySaveSomeValue() throws ExifInvalidFormatException, IOException {
         ExifParser exifParser = new ExifParser();
         IfdParser ifdParser = exifParser.parse(mImageInputStream);
+        boolean isEnterNextIfd = false;
+        boolean isEnterExifIfd = false;
         int type = ifdParser.next();
         while (type != IfdParser.TYPE_END) {
             switch (type) {
@@ -371,11 +392,13 @@ public class ExifParserTest extends InstrumentationTestCase {
                     break;
                 case IfdParser.TYPE_NEXT_IFD:
                     parseIfd1(ifdParser.parseIfdBlock());
+                    isEnterNextIfd = true;
                     break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
                     tag = ifdParser.getCorrespodingExifTag();
                     if(tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
                         parseExifIfd(ifdParser.parseIfdBlock());
+                        isEnterExifIfd = true;
                     } else {
                         checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mIfd0Value);
                     }
@@ -383,6 +406,8 @@ public class ExifParserTest extends InstrumentationTestCase {
             }
             type = ifdParser.next();
         }
+        assertTrue(isEnterNextIfd);
+        assertTrue(isEnterExifIfd);
     }
 
     public void testReadThumbnail() throws ExifInvalidFormatException, IOException {
