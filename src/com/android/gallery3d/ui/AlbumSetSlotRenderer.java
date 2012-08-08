@@ -28,7 +28,7 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
     @SuppressWarnings("unused")
     private static final String TAG = "AlbumSetView";
     private static final int CACHE_SIZE = 96;
-    private static final int PLACEHOLDER_COLOR = 0xFF222222;
+    private static final int PLACEHOLDER_COLOR = 0xFFDDDDDD;
 
     private final ColorTexture mWaitLoadingTexture;
     private final GalleryActivity mActivity;
