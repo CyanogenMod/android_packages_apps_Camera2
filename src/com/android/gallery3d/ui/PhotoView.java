@@ -1745,9 +1745,24 @@ public class PhotoView extends GLView {
             if (!Rect.intersects(fullRect, rect)) continue;
             rect.offset(location.left, location.top);
 
-            RawTexture texture = new RawTexture(sc.getWidth(), sc.getHeight(), true);
-            canvas.beginRenderTarget(texture);
-            sc.draw(canvas, 0, 0, sc.getWidth(), sc.getHeight());
+            int width = sc.getWidth();
+            int height = sc.getHeight();
+
+            int rotation = mModel.getImageRotation(i);
+            RawTexture texture;
+            if ((rotation % 180) == 0) {
+                texture = new RawTexture(width, height, true);
+                canvas.beginRenderTarget(texture);
+                canvas.translate(width / 2f, height / 2f);
+            } else {
+                texture = new RawTexture(height, width, true);
+                canvas.beginRenderTarget(texture);
+                canvas.translate(height / 2f, width / 2f);
+            }
+
+            canvas.rotate(rotation, 0, 0, 1);
+            canvas.translate(-width / 2f, -height / 2f);
+            sc.draw(canvas, 0, 0, width, height);
             canvas.endRenderTarget();
             effect.addEntry(item.getPath(), rect, texture);
         }
