@@ -20,22 +20,22 @@
     <dimen name="stack_photo_height">120dp</dimen>
 
     <!-- configuration for album set page -->
-    <integer name="albumset_rows_land">2</integer>
-    <integer name="albumset_rows_port">4</integer>
-    <dimen name="albumset_slot_gap">1dp</dimen>
+    <integer name="albumset_rows_land">1</integer>
+    <integer name="albumset_rows_port">2</integer>
+    <dimen name="albumset_slot_gap">12dp</dimen>
 
-    <dimen name="albumset_label_background_height">40dp</dimen>
-    <dimen name="albumset_title_offset">3dp</dimen>
-    <dimen name="albumset_count_offset">4dp</dimen>
-    <dimen name="albumset_title_font_size">14sp</dimen>
+    <dimen name="albumset_label_background_height">45dp</dimen>
+    <dimen name="albumset_title_offset">10dp</dimen>
+    <dimen name="albumset_count_offset">10dp</dimen>
+    <dimen name="albumset_title_font_size">20sp</dimen>
     <dimen name="albumset_count_font_size">12sp</dimen>
     <dimen name="albumset_left_margin">6dp</dimen>
-    <dimen name="albumset_icon_size">25dp</dimen>
+    <dimen name="albumset_icon_size">20dp</dimen>
 
     <!-- configuration for album page -->
     <integer name="album_rows_land">2</integer>
     <integer name="album_rows_port">4</integer>
-    <dimen name="album_slot_gap">1dp</dimen>
+    <dimen name="album_slot_gap">4dp</dimen>
 
     <!-- configuration for manage page -->
     <dimen name="cache_pin_size">24dp</dimen>

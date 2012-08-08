@@ -20,12 +20,10 @@
     <dimen name="stack_photo_height">165dp</dimen>
 
     <!-- configuration for album set page -->
-    <integer name="albumset_rows_land">3</integer>
-    <integer name="albumset_rows_port">5</integer>
-    <dimen name="albumset_slot_gap">1dp</dimen>
+    <integer name="albumset_rows_land">2</integer>
+    <integer name="albumset_rows_port">4</integer>
 
     <!-- configuration for album page -->
     <integer name="album_rows_land">3</integer>
     <integer name="album_rows_port">5</integer>
-    <dimen name="album_slot_gap">1dp</dimen>
 </resources>

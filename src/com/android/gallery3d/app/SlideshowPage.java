@@ -99,7 +99,7 @@ public class SlideshowPage extends ActivityState {
 
         @Override
         protected void renderBackground(GLCanvas canvas) {
-            canvas.clearBuffer();
+            canvas.clearBuffer(0f, 0f, 0f, 0f);
         }
     };
 

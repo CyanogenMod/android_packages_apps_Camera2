@@ -34,12 +34,11 @@ import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
 public class AlbumLabelMaker {
-    private static final int FONT_COLOR_TITLE = Color.WHITE;
-    private static final int FONT_COLOR_COUNT = 0x80FFFFFF;  // 50% white
+    private static final int FONT_COLOR_TITLE = Color.BLACK;
+    private static final int FONT_COLOR_COUNT = 0x80000000;
 
-    // We keep a border around the album label to prevent aliasing
-    private static final int BORDER_SIZE = 1;
-    private static final int BACKGROUND_COLOR = 0x60000000; // 36% Dark
+    private static final int BORDER_SIZE = 0;
+    private static final int BACKGROUND_COLOR = 0xFFFFFFFF;
 
     private final AlbumSetSlotRenderer.LabelSpec mSpec;
     private final TextPaint mTitlePaint;
@@ -58,7 +57,7 @@ public class AlbumLabelMaker {
         mContext = context;
         mSpec = spec;
         mTitlePaint = getTextPaint(spec.titleFontSize, FONT_COLOR_TITLE, false);
-        mCountPaint = getTextPaint(spec.countFontSize, FONT_COLOR_COUNT, true);
+        mCountPaint = getTextPaint(spec.countFontSize, FONT_COLOR_COUNT, false);
 
         mLocalSetIcon = new LazyLoadedBitmap(R.drawable.frame_overlay_gallery_folder);
         mPicasaIcon = new LazyLoadedBitmap(R.drawable.frame_overlay_gallery_picasa);
@@ -89,7 +88,7 @@ public class AlbumLabelMaker {
         paint.setTextSize(textSize);
         paint.setAntiAlias(true);
         paint.setColor(color);
-        paint.setShadowLayer(2f, 0f, 0f, Color.BLACK);
+        //paint.setShadowLayer(2f, 0f, 0f, Color.LTGRAY);
         if (isBold) {
             paint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
         }
@@ -181,23 +180,25 @@ public class AlbumLabelMaker {
 
             // draw title
             if (jc.isCancelled()) return null;
-            int x = s.leftMargin;
+            int x = s.leftMargin + s.iconSize;
             int y = s.titleOffset;
             drawText(canvas, x, y, title, labelWidth - s.leftMargin, mTitlePaint);
 
-            // draw the count
+            // TODO: draw the count once visual designers finalize where
+            /*
             if (jc.isCancelled()) return null;
             if (icon != null) x = s.iconSize;
             y += s.titleFontSize + s.countOffset;
             drawText(canvas, x, y, count,
                     labelWidth - s.leftMargin - s.iconSize, mCountPaint);
+            */
 
             // draw the icon
             if (icon != null) {
                 if (jc.isCancelled()) return null;
                 float scale = (float) s.iconSize / icon.getWidth();
-                canvas.translate(0, bitmap.getHeight()
-                        - Math.round(scale * icon.getHeight()));
+                canvas.translate(s.leftMargin, (s.labelBackgroundHeight -
+                        Math.round(scale * icon.getHeight()))/2f);
                 canvas.scale(scale, scale);
                 canvas.drawBitmap(icon, 0, 0, null);
             }
