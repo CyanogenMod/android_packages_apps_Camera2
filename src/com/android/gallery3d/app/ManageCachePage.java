@@ -407,4 +407,8 @@ public class ManageCachePage extends ActivityState implements
     @Override
     public void onConfirmDialogShown() {
     }
+
+    @Override
+    public void onProgressStart() {
+    }
 }

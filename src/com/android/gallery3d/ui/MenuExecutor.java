@@ -51,7 +51,8 @@ public class MenuExecutor {
 
     private static final int MSG_TASK_COMPLETE = 1;
     private static final int MSG_TASK_UPDATE = 2;
-    private static final int MSG_DO_SHARE = 3;
+    private static final int MSG_TASK_START = 3;
+    private static final int MSG_DO_SHARE = 4;
 
     public static final int EXECUTION_RESULT_SUCCESS = 1;
     public static final int EXECUTION_RESULT_FAIL = 2;
@@ -83,6 +84,7 @@ public class MenuExecutor {
     public interface ProgressListener {
         public void onConfirmDialogShown();
         public void onConfirmDialogDismissed(boolean confirmed);
+        public void onProgressStart();
         public void onProgressUpdate(int index);
         public void onProgressComplete(int result);
     }
@@ -95,6 +97,13 @@ public class MenuExecutor {
             @Override
             public void handleMessage(Message message) {
                 switch (message.what) {
+                    case MSG_TASK_START: {
+                        if (message.obj != null) {
+                            ProgressListener listener = (ProgressListener) message.obj;
+                            listener.onProgressStart();
+                        }
+                        break;
+                    }
                     case MSG_TASK_COMPLETE: {
                         stopTaskAndDismissDialog();
                         if (message.obj != null) {
@@ -138,6 +147,10 @@ public class MenuExecutor {
     private void onProgressUpdate(int index, ProgressListener listener) {
         mHandler.sendMessage(
                 mHandler.obtainMessage(MSG_TASK_UPDATE, index, 0, listener));
+    }
+
+    private void onProgressStart(ProgressListener listener) {
+        mHandler.sendMessage(mHandler.obtainMessage(MSG_TASK_START, listener));
     }
 
     private void onProgressComplete(int result, ProgressListener listener) {
@@ -400,6 +413,7 @@ public class MenuExecutor {
             DataManager manager = mActivity.getDataManager();
             int result = EXECUTION_RESULT_SUCCESS;
             try {
+                onProgressStart(mListener);
                 for (Path id : mItems) {
                     if (jc.isCancelled()) {
                         result = EXECUTION_RESULT_CANCEL;

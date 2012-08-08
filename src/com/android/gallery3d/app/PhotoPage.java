@@ -576,6 +576,9 @@ public class PhotoPage extends ActivityState implements
         public void onConfirmDialogDismissed(boolean confirmed) {
             refreshHidingMessage();
         }
+
+        @Override
+        public void onProgressStart() {}
     };
 
     @Override

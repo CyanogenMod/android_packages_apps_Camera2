@@ -16,7 +16,10 @@
 
 package com.android.gallery3d.ui;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
@@ -26,9 +29,13 @@ import com.android.gallery3d.util.MediaSetUtils;
 
 public class ImportCompleteListener implements MenuExecutor.ProgressListener {
     private GalleryActivity mActivity;
+    private PowerManager.WakeLock mWakeLock;
 
     public ImportCompleteListener(GalleryActivity galleryActivity) {
         mActivity = galleryActivity;
+        PowerManager pm =
+                (PowerManager) ((Activity) mActivity).getSystemService(Context.POWER_SERVICE);
+        mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Gallery Album Import");
     }
 
     @Override
@@ -41,10 +48,16 @@ public class ImportCompleteListener implements MenuExecutor.ProgressListener {
             message = R.string.import_fail;
         }
         Toast.makeText(mActivity.getAndroidContext(), message, Toast.LENGTH_LONG).show();
+        mWakeLock.release();
     }
 
     @Override
     public void onProgressUpdate(int index) {
+    }
+
+    @Override
+    public void onProgressStart() {
+        mWakeLock.acquire();
     }
 
     private void goToImportedAlbum() {
