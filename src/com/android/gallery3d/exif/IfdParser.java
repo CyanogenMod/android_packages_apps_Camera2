@@ -125,9 +125,13 @@ public class IfdParser {
     }
 
     public String readString(int n) throws IOException {
-        byte[] buf = new byte[n];
-        mTiffStream.readOrThrow(buf);
-        return new String(buf, 0, n - 1, "UTF8");
+        if (n > 0) {
+            byte[] buf = new byte[n];
+            mTiffStream.readOrThrow(buf);
+            return new String(buf, 0, n - 1, "UTF8");
+        } else {
+            return "";
+        }
     }
 
     public String readString(int n, Charset charset) throws IOException {
