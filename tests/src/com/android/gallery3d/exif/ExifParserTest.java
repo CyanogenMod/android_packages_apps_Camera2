@@ -413,6 +413,12 @@ public class ExifParserTest extends InstrumentationTestCase {
                         long unsignedInt = ifdParser.readUnsignedInt();
                         assertTrue(unsignedInt <= Integer.MAX_VALUE);
                         thumbSize = (int) unsignedInt;
+                    } else if (tag.getTagId() == ExifTag.TIFF_TAG.TAG_COMPRESSION) {
+                        if (ifdParser.readUnsignedShort() ==
+                                ExifTag.TIFF_TAG.COMPRESSION_UNCOMPRESSION) {
+                            // This test doesn't apply to uncompression thumbnail.
+                            return;
+                        }
                     }
                     isFinishRead = thumbOffset != 0 && thumbSize != 0;
                     break;
