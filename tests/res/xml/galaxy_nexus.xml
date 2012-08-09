@@ -8,6 +8,7 @@
         <tag id="0x131" name="Software">MASTER</tag>
         <tag id="0x132" name="DateTime">2012:07:30 16:28:42</tag>
         <tag id="0x213" name="YCbCrPositioning">1</tag>
+        <tag id="0x8769" name="ExifOffset">164</tag>
     </ifd>
     <ifd name="exif-ifd">
         <tag id="0x829A" name="ExposureTime">1/40</tag>
