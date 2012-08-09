@@ -309,7 +309,11 @@ public class LocalImage extends LocalMediaItem {
     public MediaDetails getDetails() {
         MediaDetails details = super.getDetails();
         details.addDetail(MediaDetails.INDEX_ORIENTATION, Integer.valueOf(rotation));
-        MediaDetails.extractExifInfo(details, filePath);
+        if (MIME_TYPE_JPEG.equals(mimeType)) {
+            // ExifInterface returns incorrect values for photos in other format.
+            // For example, the width and height of an webp images is always '0'.
+            MediaDetails.extractExifInfo(details, filePath);
+        }
         return details;
     }
 
