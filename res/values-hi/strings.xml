@@ -38,11 +38,11 @@
     <string name="saving_image" msgid="7270334453636349407">"चित्र सहेज रहा है…"</string>
     <string name="save_error" msgid="6857408774183654970">"काट-छांट की गई छवि को नहीं सहेज सका."</string>
     <string name="crop_label" msgid="521114301871349328">"चित्र काटें"</string>
-    <string name="select_image" msgid="7841406150484742140">"फ़ोटो का चयन करें"</string>
-    <string name="select_video" msgid="4859510992798615076">"वीडियो का चयन करें"</string>
-    <string name="select_item" msgid="2816923896202086390">"आइटम का चयन करें"</string>
-    <string name="select_album" msgid="1557063764849434077">"एल्बम का चयन करें"</string>
-    <string name="select_group" msgid="6744208543323307114">"समूह का चयन करें"</string>
+    <string name="select_image" msgid="7841406150484742140">"फ़ोटो को चुनें"</string>
+    <string name="select_video" msgid="4859510992798615076">"वीडियो को चुनें"</string>
+    <string name="select_item" msgid="2816923896202086390">"आइटम को चुनें"</string>
+    <string name="select_album" msgid="1557063764849434077">"एल्बम को चुनें"</string>
+    <string name="select_group" msgid="6744208543323307114">"समूह को चुनें"</string>
     <string name="set_image" msgid="2331476809308010401">"चित्र इस रूप में सेट करें"</string>
     <string name="set_wallpaper" msgid="8491121226190175017">"वॉलपेपर सेट करें"</string>
     <string name="wallpaper" msgid="140165383777262070">"वॉलपेपर सेट कर रहा है..."</string>
@@ -57,7 +57,7 @@
     <string name="share" msgid="3619042788254195341">"शेयर करें"</string>
     <string name="deleted" msgid="6795433049119073871">"हटाई गई"</string>
     <string name="undo" msgid="2930873956446586313">"पूर्ववत करें"</string>
-    <string name="select_all" msgid="3403283025220282175">"सभी का चयन करें"</string>
+    <string name="select_all" msgid="3403283025220282175">"सभी को चुनें"</string>
     <string name="deselect_all" msgid="5758897506061723684">"सभी का चयन रद्द करें"</string>
     <string name="slideshow" msgid="4355906903247112975">"स्लाइडशो"</string>
     <string name="details" msgid="8415120088556445230">"विवरण"</string>
