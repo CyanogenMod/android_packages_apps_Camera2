@@ -16,8 +16,10 @@
 
 package com.android.gallery3d.photoeditor.filters;
 
+import android.annotation.TargetApi;
 import android.media.effect.EffectFactory;
 
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.photoeditor.Photo;
 
 /**
@@ -28,6 +30,7 @@ public class CrossProcessFilter extends Filter {
     public static final Creator<CrossProcessFilter> CREATOR = creatorOf(CrossProcessFilter.class);
 
     @Override
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void process(Photo src, Photo dst) {
         getEffect(EffectFactory.EFFECT_CROSSPROCESS).apply(
                 src.texture(), src.width(), src.height(), dst.texture());

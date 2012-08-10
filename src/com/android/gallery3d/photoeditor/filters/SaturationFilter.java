@@ -16,9 +16,11 @@
 
 package com.android.gallery3d.photoeditor.filters;
 
+import android.annotation.TargetApi;
 import android.media.effect.Effect;
 import android.media.effect.EffectFactory;
 
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.photoeditor.Photo;
 
 /**
@@ -29,6 +31,7 @@ public class SaturationFilter extends AbstractScaleFilter {
     public static final Creator<SaturationFilter> CREATOR = creatorOf(SaturationFilter.class);
 
     @Override
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void process(Photo src, Photo dst) {
         Effect effect = getEffect(EffectFactory.EFFECT_SATURATE);
         effect.setParameter("scale", (scale - 0.5f) * 2);

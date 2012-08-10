@@ -16,10 +16,12 @@
 
 package com.android.gallery3d.photoeditor.filters;
 
+import android.annotation.TargetApi;
 import android.media.effect.Effect;
 import android.media.effect.EffectFactory;
 import android.os.Parcel;
 
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.photoeditor.Photo;
 
 /**
@@ -37,6 +39,7 @@ public class FlipFilter extends Filter {
     }
 
     @Override
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void process(Photo src, Photo dst) {
         Effect effect = getEffect(EffectFactory.EFFECT_FLIP);
         effect.setParameter("horizontal", flips[0]);
