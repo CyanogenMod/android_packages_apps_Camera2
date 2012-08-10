@@ -22,6 +22,7 @@ import android.graphics.SurfaceTexture;
 
 import com.android.gallery3d.common.ApiHelper;
 
+@TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
 public abstract class SurfaceTextureScreenNail implements ScreenNail,
         SurfaceTexture.OnFrameAvailableListener {
     @SuppressWarnings("unused")
