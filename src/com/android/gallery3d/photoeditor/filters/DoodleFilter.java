@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.photoeditor.filters;
 
+import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -26,6 +27,7 @@ import android.media.effect.Effect;
 import android.media.effect.EffectFactory;
 import android.os.Parcel;
 
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.photoeditor.Photo;
 import com.android.gallery3d.photoeditor.actions.Doodle;
 
@@ -45,6 +47,7 @@ public class DoodleFilter extends Filter {
     }
 
     @Override
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void process(Photo src, Photo dst) {
         Bitmap bitmap = Bitmap.createBitmap(src.width(), src.height(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
