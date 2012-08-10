@@ -156,7 +156,7 @@ public class PhotoPage extends ActivityState implements
 
         @Override
         protected void renderBackground(GLCanvas view) {
-            view.clearBuffer();
+            view.clearBuffer(0f, 0f, 0f, 1f);
         }
 
         @Override
