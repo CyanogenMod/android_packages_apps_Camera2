@@ -17,6 +17,7 @@
 package com.android.gallery3d.exif;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
@@ -27,6 +28,7 @@ public class ExifParser {
 
     private static final short SOI =  (short) 0xFFD8; // SOI marker of JPEG
     private static final short APP1 = (short) 0xFFE1; // APP1 marker of JPEG
+    private static final short APP0 = (short) 0xFFE0; // APP0 marder of JPEG
 
     private static final int EXIF_HEADER = 0x45786966; // EXIF header "Exif"
     private static final short EXIF_HEADER_TAIL = (short) 0x0000; // EXIF header in APP1
@@ -79,7 +81,16 @@ public class ExifParser {
             throw new ExifInvalidFormatException("Invalid JPEG format");
         }
 
-        if (dataStream.readShort() != APP1) {
+        short tag = dataStream.readShort();
+        if (tag == APP0) {
+            int length = dataStream.readUnsignedShort();
+            if ((length - 2) != dataStream.skip(length - 2)) {
+                throw new EOFException();
+            }
+            tag = dataStream.readShort();
+        }
+
+        if (tag != APP1) {
             return false;
         }
 
