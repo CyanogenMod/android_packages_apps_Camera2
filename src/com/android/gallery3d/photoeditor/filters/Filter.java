@@ -16,11 +16,13 @@
 
 package com.android.gallery3d.photoeditor.filters;
 
+import android.annotation.TargetApi;
 import android.media.effect.Effect;
 import android.media.effect.EffectContext;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.photoeditor.Photo;
 
 import java.util.HashMap;
@@ -28,6 +30,7 @@ import java.util.HashMap;
 /**
  * Image filter for photo editing; all of its methods must be called from a single GL thread.
  */
+@TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
 public abstract class Filter implements Parcelable {
 
     // TODO: This should be set in MFF instead.
