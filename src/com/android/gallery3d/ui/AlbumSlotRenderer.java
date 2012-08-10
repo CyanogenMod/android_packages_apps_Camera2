@@ -31,7 +31,7 @@ public class AlbumSlotRenderer extends AbstractSlotRenderer {
         public boolean acceptSlot(int index);
     }
 
-    private static final int PLACEHOLDER_COLOR = 0xFF222222;
+    private static final int PLACEHOLDER_COLOR = 0xFFDDDDDD;
     private static final int CACHE_SIZE = 96;
 
     private AlbumSlidingWindow mDataWindow;

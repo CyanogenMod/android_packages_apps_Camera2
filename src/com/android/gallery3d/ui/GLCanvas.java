@@ -121,4 +121,6 @@ public interface GLCanvas {
     public void beginRenderTarget(RawTexture texture);
 
     public void endRenderTarget();
+
+    public void clearBuffer(float r, float g, float b, float a);
 }
