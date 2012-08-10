@@ -283,12 +283,8 @@ public class ExifParserTest extends InstrumentationTestCase {
                 }
                 break;
             case ExifTag.TYPE_ASCII:
-                buf = new byte[tag.getComponentCount()];
-                parser.read(buf);
-                int length = 0;
-                while (buf[length] != 0 && length < buf.length) length++;
-                // trim the string to fit the answer from xml
-                sbuilder.append(new String(buf, 0, length).trim());
+                // trim the string for comparison between xml
+                sbuilder.append(parser.readString(tag.getComponentCount()).trim());
                 break;
             case ExifTag.TYPE_INT:
                 for(int i = 0; i < tag.getComponentCount(); i++) {
