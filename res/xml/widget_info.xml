@@ -3,6 +3,5 @@
         android:minWidth="@dimen/appwidget_width"
         android:minHeight="@dimen/appwidget_height"
         android:updatePeriodMillis="86400000"
-        android:previewImage="@drawable/preview"
         android:initialLayout="@layout/appwidget_main"
         android:configure="com.android.gallery3d.gadget.WidgetConfigure"/>
