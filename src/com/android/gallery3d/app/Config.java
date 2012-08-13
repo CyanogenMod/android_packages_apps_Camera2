@@ -58,6 +58,8 @@ final class Config {
                     R.dimen.albumset_count_font_size);
             labelSpec.leftMargin = r.getDimensionPixelSize(
                     R.dimen.albumset_left_margin);
+            labelSpec.titleRightMargin = r.getDimensionPixelSize(
+                    R.dimen.albumset_title_right_margin);
             labelSpec.iconSize = r.getDimensionPixelSize(
                     R.dimen.albumset_icon_size);
         }
