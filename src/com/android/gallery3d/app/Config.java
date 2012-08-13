@@ -29,6 +29,8 @@ final class Config {
 
         public SlotView.Spec slotViewSpec;
         public AlbumSetSlotRenderer.LabelSpec labelSpec;
+        public int paddingTop;
+        public int paddingBottom;
 
         public static synchronized AlbumSetPage get(Context context) {
             if (sInstance == null) {
@@ -44,6 +46,9 @@ final class Config {
             slotViewSpec.rowsLand = r.getInteger(R.integer.albumset_rows_land);
             slotViewSpec.rowsPort = r.getInteger(R.integer.albumset_rows_port);
             slotViewSpec.slotGap = r.getDimensionPixelSize(R.dimen.albumset_slot_gap);
+
+            paddingTop = r.getDimensionPixelSize(R.dimen.albumset_padding_top);
+            paddingBottom = r.getDimensionPixelSize(R.dimen.albumset_padding_bottom);
 
             labelSpec = new AlbumSetSlotRenderer.LabelSpec();
             labelSpec.labelBackgroundHeight = r.getDimensionPixelSize(

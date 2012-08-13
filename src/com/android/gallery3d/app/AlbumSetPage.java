@@ -78,6 +78,7 @@ public class AlbumSetPage extends ActivityState implements
     private boolean mIsActive = false;
     private SlotView mSlotView;
     private AlbumSetSlotRenderer mAlbumSetView;
+    private Config.AlbumSetPage mConfig;
 
     private MediaSet mMediaSet;
     private String mTitle;
@@ -124,8 +125,8 @@ public class AlbumSetPage extends ActivityState implements
                 boolean changed, int left, int top, int right, int bottom) {
             mEyePosition.resetPosition();
 
-            int slotViewTop = mActionBar.getHeight();
-            int slotViewBottom = bottom - top;
+            int slotViewTop = mActionBar.getHeight() + mConfig.paddingTop;
+            int slotViewBottom = bottom - top - mConfig.paddingBottom;
             int slotViewRight = right - left;
 
             if (mShowDetails) {
@@ -368,10 +369,10 @@ public class AlbumSetPage extends ActivityState implements
         mSelectionManager = new SelectionManager(mActivity, true);
         mSelectionManager.setSelectionListener(this);
 
-        Config.AlbumSetPage config = Config.AlbumSetPage.get((Context) mActivity);
-        mSlotView = new SlotView(mActivity, config.slotViewSpec);
+        mConfig = Config.AlbumSetPage.get((Context) mActivity);
+        mSlotView = new SlotView(mActivity, mConfig.slotViewSpec);
         mAlbumSetView = new AlbumSetSlotRenderer(
-                mActivity, mSelectionManager, mSlotView, config.labelSpec);
+                mActivity, mSelectionManager, mSlotView, mConfig.labelSpec);
         mSlotView.setSlotRenderer(mAlbumSetView);
         mSlotView.setListener(new SlotView.SimpleListener() {
             @Override
