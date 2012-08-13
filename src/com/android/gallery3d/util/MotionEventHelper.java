@@ -38,8 +38,9 @@ public final class MotionEventHelper {
 
     @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
     private static MotionEvent transformEventNew(MotionEvent e, Matrix m) {
-        e.transform(m);
-        return e;
+        MotionEvent newEvent = MotionEvent.obtain(e);
+        newEvent.transform(m);
+        return newEvent;
     }
 
     // This is copied from Input.cpp in the android framework.
