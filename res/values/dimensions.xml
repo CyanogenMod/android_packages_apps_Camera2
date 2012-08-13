@@ -22,6 +22,8 @@
     <!-- configuration for album set page -->
     <integer name="albumset_rows_land">1</integer>
     <integer name="albumset_rows_port">2</integer>
+    <dimen name="albumset_padding_top">15dp</dimen>
+    <dimen name="albumset_padding_bottom">15dp</dimen>
     <dimen name="albumset_slot_gap">12dp</dimen>
 
     <dimen name="albumset_label_background_height">45dp</dimen>
