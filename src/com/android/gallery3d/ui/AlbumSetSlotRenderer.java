@@ -51,6 +51,7 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
         public int countFontSize;
         public int leftMargin;
         public int iconSize;
+        public int titleRightMargin;
     }
 
     public AlbumSetSlotRenderer(GalleryActivity activity, SelectionManager selectionManager,

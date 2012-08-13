@@ -30,6 +30,7 @@
     <dimen name="albumset_title_font_size">20sp</dimen>
     <dimen name="albumset_count_font_size">12sp</dimen>
     <dimen name="albumset_left_margin">6dp</dimen>
+    <dimen name="albumset_title_right_margin">30dp</dimen>
     <dimen name="albumset_icon_size">20dp</dimen>
 
     <!-- configuration for album page -->

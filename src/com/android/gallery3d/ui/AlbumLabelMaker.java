@@ -181,17 +181,18 @@ public class AlbumLabelMaker {
             // draw title
             if (jc.isCancelled()) return null;
             int x = s.leftMargin + s.iconSize;
-            int y = s.titleOffset;
-            drawText(canvas, x, y, title, labelWidth - s.leftMargin, mTitlePaint);
+            // TODO: is the offset relevant in new reskin?
+            // int y = s.titleOffset;
+            int y = (s.labelBackgroundHeight - s.titleFontSize) / 2;
+            drawText(canvas, x, y, title, labelWidth - s.leftMargin - x - 
+                    s.titleRightMargin, mTitlePaint);
 
-            // TODO: draw the count once visual designers finalize where
-            /*
+            // draw count
             if (jc.isCancelled()) return null;
-            if (icon != null) x = s.iconSize;
-            y += s.titleFontSize + s.countOffset;
+            x = labelWidth - s.titleRightMargin;
+            y = (s.labelBackgroundHeight - s.countFontSize) / 2;
             drawText(canvas, x, y, count,
-                    labelWidth - s.leftMargin - s.iconSize, mCountPaint);
-            */
+                    labelWidth - x , mCountPaint);
 
             // draw the icon
             if (icon != null) {
