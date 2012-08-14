@@ -18,7 +18,6 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.common.Utils;
 
 import java.util.ArrayList;
 
@@ -86,7 +85,6 @@ public class PopupList {
             new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Utils.debug("onItemClick: %s, %s", position, id);
             if (mPopupWindow == null) return;
             mPopupWindow.dismiss();
             if (mOnPopupItemClickListener != null) {
