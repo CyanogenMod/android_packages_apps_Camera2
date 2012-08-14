@@ -16,6 +16,15 @@
 
 package com.android.gallery3d.exif;
 
+import java.lang.reflect.Array;
+
+/**
+ * This class stores information of an EXIF tag.
+ * @see ExifParser
+ * @see ExifReader
+ * @see IfdData
+ * @see ExifData
+ */
 public class ExifTag {
     public static interface TIFF_TAG {
         public static final short TAG_IMAGE_WIDTH = 0x100;
@@ -315,54 +324,259 @@ public class ExifTag {
         public static final short INTEROPERABILITY_INDEX = 1;
     }
 
-    public static final short TYPE_BYTE = 1;
+    public static final short TYPE_UNSIGNED_BYTE = 1;
     public static final short TYPE_ASCII = 2;
-    public static final short TYPE_SHORT = 3;
-    public static final short TYPE_INT = 4;
-    public static final short TYPE_RATIONAL = 5;
+    public static final short TYPE_UNSIGNED_SHORT = 3;
+    public static final short TYPE_UNSIGNED_INT = 4;
+    public static final short TYPE_UNSIGNED_RATIONAL = 5;
     public static final short TYPE_UNDEFINED = 7;
-    public static final short TYPE_SINT = 9;
-    public static final short TYPE_SRATIONAL = 10;
+    public static final short TYPE_INT = 9;
+    public static final short TYPE_RATIONAL = 10;
 
     private static final int TYPE_TO_SIZE_MAP[] = new int[11];
     static {
-        TYPE_TO_SIZE_MAP[TYPE_BYTE] = 1;
+        TYPE_TO_SIZE_MAP[TYPE_UNSIGNED_BYTE] = 1;
         TYPE_TO_SIZE_MAP[TYPE_ASCII] = 1;
-        TYPE_TO_SIZE_MAP[TYPE_SHORT] = 2;
+        TYPE_TO_SIZE_MAP[TYPE_UNSIGNED_SHORT] = 2;
+        TYPE_TO_SIZE_MAP[TYPE_UNSIGNED_INT] = 4;
+        TYPE_TO_SIZE_MAP[TYPE_UNSIGNED_RATIONAL] = 8;
+        TYPE_TO_SIZE_MAP[TYPE_UNDEFINED] = 1;
         TYPE_TO_SIZE_MAP[TYPE_INT] = 4;
         TYPE_TO_SIZE_MAP[TYPE_RATIONAL] = 8;
-        TYPE_TO_SIZE_MAP[TYPE_UNDEFINED] = 1;
-        TYPE_TO_SIZE_MAP[TYPE_SINT] = 4;
-        TYPE_TO_SIZE_MAP[TYPE_SRATIONAL] = 8;
     }
 
+    /**
+     * Gets the element size of the given data type.
+     *
+     * @see #TYPE_ASCII
+     * @see #TYPE_INT
+     * @see #TYPE_RATIONAL
+     * @see #TYPE_UNDEFINED
+     * @see #TYPE_UNSIGNED_BYTE
+     * @see #TYPE_UNSIGNED_INT
+     * @see #TYPE_UNSIGNED_RATIONAL
+     * @see #TYPE_UNSIGNED_SHORT
+     */
     public static int getElementSize(short type) {
         return TYPE_TO_SIZE_MAP[type];
     }
 
     private final short mTagId;
     private final short mDataType;
-    private final int mDataCount;
+    private final int mComponentCount;
+    private final int mIfd;
+    private Object mValue;
+    private int mOffset;
 
-    ExifTag(short tagId, short type, int dataCount) {
+    ExifTag(short tagId, short type, int componentCount, int ifd) {
         mTagId = tagId;
         mDataType = type;
-        mDataCount = dataCount;
+        mComponentCount = componentCount;
+        mIfd = ifd;
     }
 
+    /**
+     * Returns the ID of the IFD this tag belongs to.
+     *
+     * @see IfdId#TYPE_IFD_0
+     * @see IfdId#TYPE_IFD_1
+     * @see IfdId#TYPE_IFD_EXIF
+     * @see IfdId#TYPE_IFD_GPS
+     * @see IfdId#TYPE_IFD_INTEROPERABILITY
+     */
+    public int getIfd() {
+        return mIfd;
+    }
+
+    /**
+     * Gets the ID of this tag.
+     */
     public short getTagId() {
         return mTagId;
     }
 
+    /**
+     * Gets the data type of this tag
+     *
+     * @see #TYPE_ASCII
+     * @see #TYPE_INT
+     * @see #TYPE_RATIONAL
+     * @see #TYPE_UNDEFINED
+     * @see #TYPE_UNSIGNED_BYTE
+     * @see #TYPE_UNSIGNED_INT
+     * @see #TYPE_UNSIGNED_RATIONAL
+     * @see #TYPE_UNSIGNED_SHORT
+     */
     public short getDataType() {
         return mDataType;
     }
 
+    /**
+     * Gets the total data size in bytes of the value of this tag.
+     */
     public int getDataSize() {
         return getComponentCount() * getElementSize(getDataType());
     }
 
+    /**
+     * Gets the component count of this tag.
+     */
     public int getComponentCount() {
-        return mDataCount;
+        return mComponentCount;
+    }
+
+    /**
+     * Returns true if this ExifTag contains value; otherwise, this tag will contain an offset value
+     * that links to the area where the actual value is located.
+     *
+     * @see #getOffset()
+     */
+    public boolean hasValue() {
+        return mValue != null;
+    }
+
+    /**
+     * Gets the offset of this tag. This is only valid if this data size > 4 and contains an offset
+     * to the location of the actual value.
+     */
+    public int getOffset() {
+        return mOffset;
+    }
+
+    /**
+     * Sets the offset of this tag.
+     */
+    void setOffset(int offset) {
+        mOffset = offset;
+    }
+
+    /**
+     * Sets the value of this tag. This is useful when we want to modify the tags and write it back
+     * to the JPEG file
+     */
+    public void setValue(Object object) {
+        if (object.getClass().isArray()) {
+            assert(mComponentCount == Array.getLength(object));
+            mValue = object;
+        } else if (object instanceof String) {
+            assert(mComponentCount == ((String) object).length() + 1);
+            mValue = object;
+        } else {
+            // Wrap object with an array because user may try to get object by get method with
+            // index 0 when size = 1
+            // e.g. getShort(0)
+            assert(mComponentCount == 1);
+            Object array = Array.newInstance(object.getClass(), 1);
+            Array.set(array, 0, object);
+            mValue = array;
+        }
+    }
+
+    public short getShort(int index) {
+        return (Short) Array.get(mValue, index);
+    }
+
+    public short getShort() {
+        return (Short) Array.get(mValue, 0);
+    }
+
+    public int getUnsignedShort(int index) {
+        return (Integer) Array.get(mValue, index);
+    }
+
+    public int getUnsignedShort() {
+        return (Integer) Array.get(mValue, 0);
+    }
+
+    public int getInt(int index) {
+        return (Integer) Array.get(mValue, index);
+    }
+
+    public int getInt() {
+        return (Integer) Array.get(mValue, 0);
+    }
+
+    public long getUnsignedInt(int index) {
+        return (Long) Array.get(mValue, index);
+    }
+
+    public long getUnsignedInt() {
+        return (Long) Array.get(mValue, 0);
+    }
+
+    public String getString() {
+        return (String) mValue;
+    }
+
+    public Rational getRational(int index) {
+        return ((Rational[]) mValue)[index];
+    }
+
+    public Rational getRational() {
+        return ((Rational[]) mValue)[0];
+    }
+
+    public int getBytes(byte[] buf) {
+        return getBytes(buf, 0, buf.length);
+    }
+
+    public int getBytes(byte[] buf, int offset, int length) {
+        byte[] data = (byte[]) mValue;
+        if (data.length < length + offset) {
+            System.arraycopy(data, offset, buf, 0, data.length - offset);
+            return data.length - offset;
+        } else {
+            System.arraycopy(data, offset, buf, 0, length);
+            return length;
+        }
+    }
+
+    /**
+     * Returns a string representation of the value of this tag.
+     */
+    public String valueToString() {
+        StringBuilder sbuilder = new StringBuilder();
+        switch(getDataType()) {
+            case ExifTag.TYPE_UNDEFINED:
+            case ExifTag.TYPE_UNSIGNED_BYTE:
+                byte buf[] = new byte[getComponentCount()];
+                getBytes(buf);
+                for(int i = 0; i < getComponentCount(); i++) {
+                    if(i != 0) sbuilder.append(" ");
+                    sbuilder.append(String.format("%02x", buf[i]));
+                }
+                break;
+            case ExifTag.TYPE_ASCII:
+                // trim the string for comparison between xml
+                sbuilder.append(getString().trim());
+                break;
+            case ExifTag.TYPE_UNSIGNED_INT:
+                for(int i = 0; i < getComponentCount(); i++) {
+                    if(i != 0) sbuilder.append(" ");
+                    sbuilder.append(getUnsignedInt(i));
+                }
+                break;
+            case ExifTag.TYPE_RATIONAL:
+            case ExifTag.TYPE_UNSIGNED_RATIONAL:
+                for(int i = 0; i < getComponentCount(); i++) {
+                    Rational r = getRational(i);
+                    if(i != 0) sbuilder.append(" ");
+                    sbuilder.append(r.getNominator()).append("/").append(r.getDenominator());
+                }
+                break;
+            case ExifTag.TYPE_UNSIGNED_SHORT:
+                for(int i = 0; i < getComponentCount(); i++) {
+                    if(i != 0) sbuilder.append(" ");
+                    sbuilder.append(getUnsignedShort(i));
+                }
+                break;
+            case ExifTag.TYPE_INT:
+                for(int i = 0; i < getComponentCount(); i++) {
+                    if(i != 0) sbuilder.append(" ");
+                    sbuilder.append(getInt(i));
+                }
+                break;
+        }
+        return sbuilder.toString();
     }
 }

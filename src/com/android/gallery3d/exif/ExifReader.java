@@ -19,132 +19,46 @@ package com.android.gallery3d.exif;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * This class reads the EXIF header of a JPEG file and stores it in {@link ExifData}.
+ */
 public class ExifReader {
-
+    /**
+     * Parse the inputStream and return all Exif data.
+     * @throws ExifInvalidFormatException
+     * @throws IOException
+     */
     public ExifData getExifData(InputStream inputStream) throws ExifInvalidFormatException,
             IOException {
-        ExifParser parser = new ExifParser();
-        IfdParser ifdParser = parser.parse(inputStream);
+        ExifParser parser = ExifParser.parse(inputStream);
         ExifData exifData = new ExifData();
-        IfdData ifdData = new IfdData(ExifData.TYPE_IFD_0);
-        parseIfd(ifdParser, ifdData, exifData);
-        exifData.addIfdData(ifdData);
+
+        int event = parser.next();
+        while (event != ExifParser.EVENT_END) {
+            switch (event) {
+                case ExifParser.EVENT_START_OF_IFD:
+                    exifData.addIfdData(new IfdData(parser.getCurrentIfd()));
+                    break;
+                case ExifParser.EVENT_NEW_TAG:
+                    ExifTag tag = parser.getTag();
+                    if (!tag.hasValue()) {
+                        parser.registerForTagValue(tag);
+                    } else {
+                        exifData.getIfdData(tag.getIfd()).setTag(tag);
+                    }
+                    break;
+                case ExifParser.EVENT_VALUE_OF_REGISTERED_TAG:
+                    tag = parser.getTag();
+                    if (tag.getDataType() == ExifTag.TYPE_UNDEFINED) {
+                        byte[] buf = new byte[tag.getComponentCount()];
+                        parser.read(buf);
+                        tag.setValue(buf);
+                    }
+                    exifData.getIfdData(tag.getIfd()).setTag(tag);
+                    break;
+            }
+            event = parser.next();
+        }
         return exifData;
-    }
-
-    public void parseIfd(IfdParser ifdParser, IfdData ifdData, ExifData exifData)
-            throws IOException, ExifInvalidFormatException {
-        int type = ifdParser.next();
-        while (type != IfdParser.TYPE_END) {
-            switch (type) {
-                case IfdParser.TYPE_NEW_TAG:
-                    ExifTag tag = ifdParser.readTag();
-                    if (tag.getDataSize() > 4) {
-                        long offset = ifdParser.readUnsignedInt();
-                        ifdParser.waitValueOfTag(tag, offset);
-                    } else if (tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD
-                            || tag.getTagId() == ExifTag.TIFF_TAG.TAG_GPS_IFD
-                            || tag.getTagId() == ExifTag.EXIF_TAG.TAG_INTEROPERABILITY_IFD) {
-                        long offset = ifdParser.readUnsignedInt();
-                        ifdParser.waitValueOfTag(tag, offset);
-                        ifdData.addTag(tag, offset);
-                    } else {
-                        readAndSaveTag(tag, ifdParser, ifdData);
-                    }
-                    break;
-                case IfdParser.TYPE_NEXT_IFD:
-                    IfdData ifd1 = new IfdData(ExifData.TYPE_IFD_1);
-                    parseIfd(ifdParser.parseIfdBlock(), ifd1, exifData);
-                    exifData.addIfdData(ifd1);
-                    break;
-                case IfdParser.TYPE_VALUE_OF_PREV_TAG:
-                    tag = ifdParser.getCorrespodingExifTag();
-                    if(tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
-                        IfdData ifd = new IfdData(ExifData.TYPE_IFD_EXIF);
-                        parseIfd(ifdParser.parseIfdBlock(), ifd, exifData);
-                        exifData.addIfdData(ifd);
-                    } else if(tag.getTagId() == ExifTag.TIFF_TAG.TAG_GPS_IFD) {
-                        IfdData ifd = new IfdData(ExifData.TYPE_IFD_GPS);
-                        parseIfd(ifdParser.parseIfdBlock(), ifd, exifData);
-                        exifData.addIfdData(ifd);
-                    } else if(tag.getTagId() == ExifTag.EXIF_TAG.TAG_INTEROPERABILITY_IFD) {
-                        IfdData ifd = new IfdData(ExifData.TYPE_IFD_INTEROPERABILITY);
-                        parseIfd(ifdParser.parseIfdBlock(), ifd, exifData);
-                        exifData.addIfdData(ifd);
-                    } else {
-                        readAndSaveTag(tag, ifdParser, ifdData);
-                    }
-                    break;
-            }
-            type = ifdParser.next();
-        }
-    }
-
-    public void readAndSaveTag(ExifTag tag, IfdParser parser, IfdData ifdData)
-            throws IOException {
-        switch(tag.getDataType()) {
-            case ExifTag.TYPE_BYTE:
-            {
-                byte buf[] = new byte[tag.getComponentCount()];
-                parser.read(buf);
-                ifdData.addTag(tag, buf);
-                break;
-            }
-            case ExifTag.TYPE_ASCII:
-                ifdData.addTag(tag, parser.readString(tag.getComponentCount()));
-                break;
-            case ExifTag.TYPE_INT:
-            {
-                long value[] = new long[tag.getComponentCount()];
-                for (int i = 0, n = value.length; i < n; i++) {
-                    value[i] = parser.readUnsignedInt();
-                }
-                ifdData.addTag(tag, value);
-                break;
-            }
-            case ExifTag.TYPE_RATIONAL:
-            {
-                Rational value[] = new Rational[tag.getComponentCount()];
-                for (int i = 0, n = value.length; i < n; i++) {
-                    value[i] = parser.readUnsignedRational();
-                }
-                ifdData.addTag(tag, value);
-                break;
-            }
-            case ExifTag.TYPE_SHORT:
-            {
-                int value[] = new int[tag.getComponentCount()];
-                for (int i = 0, n = value.length; i < n; i++) {
-                    value[i] = parser.readUnsignedShort();
-                }
-                ifdData.addTag(tag, value);
-                break;
-            }
-            case ExifTag.TYPE_SINT:
-            {
-                int value[] = new int[tag.getComponentCount()];
-                for (int i = 0, n = value.length; i < n; i++) {
-                    value[i] = parser.readInt();
-                }
-                ifdData.addTag(tag, value);
-                break;
-            }
-            case ExifTag.TYPE_SRATIONAL:
-            {
-                Rational value[] = new Rational[tag.getComponentCount()];
-                for (int i = 0, n = value.length; i < n; i++) {
-                    value[i] = parser.readRational();
-                }
-                ifdData.addTag(tag, value);
-                break;
-            }
-            case ExifTag.TYPE_UNDEFINED:
-            {
-                byte buf[] = new byte[tag.getComponentCount()];
-                parser.read(buf);
-                ifdData.addTag(tag, buf);
-                break;
-            }
-        }
     }
 }
