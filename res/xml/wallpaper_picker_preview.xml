@@ -14,4 +14,6 @@
      limitations under the License.
 -->
 
-<wallpaper-preview xmlns:android="http://schemas.android.com/apk/res/android" />
+<wallpaper-preview xmlns:android="http://schemas.android.com/apk/res/android"
+    android:staticWallpaperPreview="@drawable/wallpaper_picker_preview">
+</wallpaper-preview>
