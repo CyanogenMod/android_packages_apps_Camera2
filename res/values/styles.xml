@@ -27,10 +27,8 @@
         <item name="android:colorBackground">@null</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
-    <style name="Holo.ActionBar" parent="android:Widget.Holo.ActionBar">
+    <style name="Holo.ActionBar" parent="android:Widget.Holo.ActionBar.Solid">
         <item name="android:displayOptions">useLogo|showHome</item>
-        <item name="android:background">@drawable/actionbar_translucent</item>
-        <item name="android:backgroundStacked">@null</item>
     </style>
     <style name="MediaButton.Play" parent="@android:style/MediaButton.Play">
         <item name="android:background">@null</item>
