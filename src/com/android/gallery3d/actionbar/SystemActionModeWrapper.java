@@ -34,10 +34,11 @@ public class SystemActionModeWrapper implements ActionModeInterface {
     private ActionMode mActionMode;
     private Menu mMenu;
     private MenuItem mShareMenuItem;
-    private ShareActionProvider mShareActionProvider;
+    private final ShareActionProvider mShareActionProvider;
 
     public SystemActionModeWrapper(Activity activity, ActionModeInterface.Callback callback) {
         // mActionMode will be set in callback.onCreateActionMode
+        mShareActionProvider = new ShareActionProvider(activity);
         activity.startActionMode(new CallbackWrapper(callback));
     }
 
@@ -86,10 +87,9 @@ public class SystemActionModeWrapper implements ActionModeInterface {
     public void inflateMenu(int menuRes) {
         Utils.assertTrue(mMenu != null);
         mActionMode.getMenuInflater().inflate(menuRes, mMenu);
-        mShareActionProvider = null;
         mShareMenuItem = mMenu.findItem(R.id.action_share);
         if (mShareMenuItem != null) {
-            mShareActionProvider = (ShareActionProvider) mShareMenuItem.getActionProvider();
+            mShareMenuItem.setActionProvider(mShareActionProvider);
         }
     }
 
