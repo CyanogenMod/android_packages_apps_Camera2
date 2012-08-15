@@ -22,9 +22,6 @@ import android.graphics.BitmapFactory;
 import android.test.InstrumentationTestCase;
 import android.util.Log;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -42,16 +39,6 @@ public class ExifParserTest extends InstrumentationTestCase {
 
     private InputStream mImageInputStream;
 
-    private static final String XML_EXIF_TAG = "exif";
-    private static final String XML_IFD_TAG = "ifd";
-    private static final String XML_IFD_NAME = "name";
-    private static final String XML_TAG = "tag";
-    private static final String XML_IFD0 = "ifd0";
-    private static final String XML_IFD1 = "ifd1";
-    private static final String XML_EXIF_IFD = "exif-ifd";
-    private static final String XML_INTEROPERABILITY_IFD = "interoperability-ifd";
-    private static final String XML_TAG_ID = "id";
-
     public ExifParserTest(int imageResourceId, int xmlResourceId) {
         mImageResourceId = imageResourceId;
         mXmlResourceId = xmlResourceId;
@@ -65,61 +52,9 @@ public class ExifParserTest extends InstrumentationTestCase {
         XmlResourceParser parser =
                 getInstrumentation().getContext().getResources().getXml(mXmlResourceId);
 
-        while (parser.next() != XmlPullParser.END_DOCUMENT) {
-            if (parser.getEventType() == XmlPullParser.START_TAG) {
-                assert(parser.getName().equals(XML_EXIF_TAG));
-                readXml(parser);
-                break;
-            }
-        }
+        ExifXmlReader.readXml(parser, mIfd0Value, mIfd1Value, mExifIfdValue
+                , mInteroperabilityIfdValue);
         parser.close();
-    }
-
-    private void readXml(XmlPullParser parser) throws XmlPullParserException,
-            IOException {
-        parser.require(XmlPullParser.START_TAG, null, XML_EXIF_TAG);
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() == XmlPullParser.START_TAG) {
-                readXmlIfd(parser);
-            }
-        }
-        parser.require(XmlPullParser.END_TAG, null, XML_EXIF_TAG);
-    }
-
-    private void readXmlIfd(XmlPullParser parser) throws XmlPullParserException, IOException {
-        parser.require(XmlPullParser.START_TAG, null, XML_IFD_TAG);
-        String name = parser.getAttributeValue(null, XML_IFD_NAME);
-        HashMap<Short, String> ifdData = null;
-        if (XML_IFD0.equals(name)) {
-            ifdData = mIfd0Value;
-        } else if (XML_IFD1.equals(name)) {
-            ifdData = mIfd1Value;
-        } else if (XML_EXIF_IFD.equals(name)) {
-            ifdData = mExifIfdValue;
-        } else if (XML_INTEROPERABILITY_IFD.equals(name)) {
-            ifdData = mInteroperabilityIfdValue;
-        } else {
-            throw new RuntimeException("Unknown IFD name in xml file: " + name);
-        }
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() == XmlPullParser.START_TAG) {
-                readXmlTag(parser, ifdData);
-            }
-        }
-        parser.require(XmlPullParser.END_TAG, null, XML_IFD_TAG);
-    }
-
-    private void readXmlTag(XmlPullParser parser, HashMap<Short, String> data)
-            throws XmlPullParserException, IOException {
-        parser.require(XmlPullParser.START_TAG, null, XML_TAG);
-        short id = Integer.decode(parser.getAttributeValue(null, XML_TAG_ID)).shortValue();
-        String value = "";
-        if (parser.next() == XmlPullParser.TEXT) {
-            value = parser.getText();
-            parser.next();
-        }
-        data.put(id, value);
-        parser.require(XmlPullParser.END_TAG, null, XML_TAG);
     }
 
     public void testParse() throws IOException, ExifInvalidFormatException {
@@ -143,8 +78,8 @@ public class ExifParserTest extends InstrumentationTestCase {
                         ifdParser.waitValueOfTag(tag, offset);
                     } else {
                         checkTag(tag, ifdParser, mIfd0Value);
-                        tagNumber++;
                     }
+                    tagNumber++;
                     break;
                 case IfdParser.TYPE_NEXT_IFD:
                     parseIfd1(ifdParser.parseIfdBlock());
@@ -157,7 +92,6 @@ public class ExifParserTest extends InstrumentationTestCase {
                         isEnterExifIfd = true;
                     } else {
                         checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mIfd0Value);
-                        tagNumber++;
                     }
                     break;
             }
@@ -182,15 +116,14 @@ public class ExifParserTest extends InstrumentationTestCase {
                         ifdParser.waitValueOfTag(tag, offset);
                     } else {
                         checkTag(tag, ifdParser, mIfd1Value);
-                        tagNumber++;
                     }
+                    tagNumber++;
                     break;
                 case IfdParser.TYPE_NEXT_IFD:
                     fail("Find a ifd after ifd1");
                     break;
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
                     checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mIfd1Value);
-                    tagNumber++;
                     break;
             }
             type = ifdParser.next();
@@ -219,8 +152,8 @@ public class ExifParserTest extends InstrumentationTestCase {
                         isHasInterIfd = true;
                     } else {
                         checkTag(tag, ifdParser, mExifIfdValue);
-                        tagNumber++;
                     }
+                    tagNumber++;
                     break;
                 case IfdParser.TYPE_NEXT_IFD:
                     fail("Find a ifd after exif ifd");
@@ -232,7 +165,6 @@ public class ExifParserTest extends InstrumentationTestCase {
                         isEnterInterIfd = true;
                     } else {
                         checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mExifIfdValue);
-                        tagNumber++;
                     }
                     break;
             }
@@ -257,8 +189,8 @@ public class ExifParserTest extends InstrumentationTestCase {
                         ifdParser.waitValueOfTag(tag, offset);
                     } else {
                         checkTag(tag, ifdParser, mInteroperabilityIfdValue);
-                        tagNumber++;
                     }
+                    tagNumber++;
                     break;
                 case IfdParser.TYPE_NEXT_IFD:
                     fail("Find a ifd after exif ifd");
@@ -266,7 +198,6 @@ public class ExifParserTest extends InstrumentationTestCase {
                 case IfdParser.TYPE_VALUE_OF_PREV_TAG:
                     checkTag(ifdParser.getCorrespodingExifTag(), ifdParser
                             , mInteroperabilityIfdValue);
-                    tagNumber++;
                     break;
             }
             type = ifdParser.next();

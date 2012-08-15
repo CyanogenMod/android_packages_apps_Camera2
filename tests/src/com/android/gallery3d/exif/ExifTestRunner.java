@@ -16,17 +16,22 @@
 
 package com.android.gallery3d.exif;
 
+import android.test.InstrumentationTestCase;
 import android.test.InstrumentationTestRunner;
 import android.test.InstrumentationTestSuite;
+import android.util.Log;
 
 import com.android.gallery3d.tests.R;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class ExifTestRunner extends InstrumentationTestRunner {
+    private static final String TAG = "ExifTestRunner";
+
     private static final int[] IMG_RESOURCE = {
         R.raw.galaxy_nexus
     };
@@ -37,16 +42,36 @@ public class ExifTestRunner extends InstrumentationTestRunner {
     @Override
     public TestSuite getAllTests() {
         TestSuite suite = new InstrumentationTestSuite(this);
-        for (Method method : ExifParserTest.class.getDeclaredMethods()) {
+        getAllTestFromTestCase(ExifParserTest.class, suite);
+        getAllTestFromTestCase(ExifReaderTest.class, suite);
+        return suite;
+    }
+
+    private void getAllTestFromTestCase(Class<? extends InstrumentationTestCase> testClass,
+            TestSuite suite) {
+        for (Method method : testClass.getDeclaredMethods()) {
             if (method.getName().startsWith("test") && method.getParameterTypes().length == 0) {
                 for (int i = 0; i < IMG_RESOURCE.length; i++) {
-                    TestCase test = new ExifParserTest(IMG_RESOURCE[i], EXIF_DATA_RESOURCE[i]);
-                    test.setName(method.getName());
-                    suite.addTest(test);
+                    TestCase test;
+                    try {
+                        test = testClass.getDeclaredConstructor(int.class, int.class).
+                                newInstance(IMG_RESOURCE[i], EXIF_DATA_RESOURCE[i]);
+                        test.setName(method.getName());
+                        suite.addTest(test);
+                    } catch (IllegalArgumentException e) {
+                        Log.e(TAG, "Failed to create test case", e);
+                    } catch (InstantiationException e) {
+                        Log.e(TAG, "Failed to create test case", e);
+                    } catch (IllegalAccessException e) {
+                        Log.e(TAG, "Failed to create test case", e);
+                    } catch (InvocationTargetException e) {
+                        Log.e(TAG, "Failed to create test case", e);
+                    } catch (NoSuchMethodException e) {
+                        Log.e(TAG, "Failed to create test case", e);
+                    }
                 }
             }
         }
-        return suite;
     }
 
     @Override
