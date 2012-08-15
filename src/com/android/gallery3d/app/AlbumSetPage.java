@@ -24,9 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
-import android.view.ActionMode;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -93,7 +91,6 @@ public class AlbumSetPage extends ActivityState implements
 
     private boolean mGetContent;
     private boolean mGetAlbum;
-    private ActionMode mActionMode;
     private ActionModeHandler mActionModeHandler;
     private DetailsHelper mDetailsHelper;
     private MyDetailsSource mDetailsSource;
@@ -409,13 +406,10 @@ public class AlbumSetPage extends ActivityState implements
     @Override
     protected boolean onCreateActionBar(Menu menu) {
         Activity activity = (Activity) mActivity;
-        MenuInflater inflater = activity.getMenuInflater();
-
-        final boolean inAlbum = mActivity.getStateManager().hasStateClass(
-                AlbumPage.class);
-
+        final boolean inAlbum = mActivity.getStateManager().hasStateClass(AlbumPage.class);
+        boolean result;
         if (mGetContent) {
-            inflater.inflate(R.menu.pickup, menu);
+            result = mActionBar.createActionMenu(menu, R.menu.pickup);
             int typeBits = mData.getInt(
                     Gallery.KEY_TYPE_BITS, DataManager.INCLUDE_IMAGE);
             int id = R.string.select_image;
@@ -426,36 +420,32 @@ public class AlbumSetPage extends ActivityState implements
             }
             mActionBar.setTitle(id);
         } else  if (mGetAlbum) {
-            inflater.inflate(R.menu.pickup, menu);
+            result = mActionBar.createActionMenu(menu, R.menu.pickup);
             mActionBar.setTitle(R.string.select_album);
         } else {
+            result = mActionBar.createActionMenu(menu, R.menu.albumset);
             mShowClusterMenu = !inAlbum;
-            inflater.inflate(R.menu.albumset, menu);
-            MenuItem selectItem = menu.findItem(R.id.action_select);
-
-            if (selectItem != null) {
-                boolean selectAlbums = !inAlbum &&
-                        mActionBar.getClusterTypeAction() == FilterUtils.CLUSTER_BY_ALBUM;
-                if (selectAlbums) {
-                    selectItem.setTitle(R.string.select_album);
-                } else {
-                    selectItem.setTitle(R.string.select_group);
-                }
-            }
+            boolean selectAlbums = !inAlbum &&
+                    mActionBar.getClusterTypeAction() == FilterUtils.CLUSTER_BY_ALBUM;
+            mActionBar.setMenuItemTitle(R.id.action_select, activity.getString(
+                    selectAlbums ? R.string.select_album : R.string.select_group));
 
             FilterUtils.setupMenuItems(mActionBar, mMediaSet.getPath(), false);
-            MenuItem switchCamera = menu.findItem(R.id.action_camera);
-            if (switchCamera != null) {
-                switchCamera.setVisible(GalleryUtils.isCameraAvailable(activity));
-            }
-            final MenuItem helpMenu = menu.findItem(R.id.action_general_help);
-            HelpUtils.prepareHelpMenuItem(mActivity.getAndroidContext(),
-                    helpMenu, R.string.help_url_gallery_main);
 
+            mActionBar.setMenuItemVisible(
+                    R.id.action_camera, GalleryUtils.isCameraAvailable(activity));
+
+            Intent helpIntent = HelpUtils.getHelpIntent(activity, R.string.help_url_gallery_main);
+            if (helpIntent == null) {
+                mActionBar.setMenuItemVisible(R.id.action_general_help, false);
+            } else {
+                mActionBar.setMenuItemVisible(R.id.action_general_help, true);
+                mActionBar.setMenuItemIntent(R.id.action_general_help, helpIntent);
+            }
             mActionBar.setTitle(mTitle);
             mActionBar.setSubtitle(mSubtitle);
         }
-        return true;
+        return result;
     }
 
     @Override
@@ -532,12 +522,12 @@ public class AlbumSetPage extends ActivityState implements
         switch (mode) {
             case SelectionManager.ENTER_SELECTION_MODE: {
                 mActionBar.disableClusterMenu(true);
-                mActionMode = mActionModeHandler.startActionMode();
-                if(mHapticsEnabled) mVibrator.vibrate(100);
+                mActionModeHandler.startActionMode();
+                if (mHapticsEnabled) mVibrator.vibrate(100);
                 break;
             }
             case SelectionManager.LEAVE_SELECTION_MODE: {
-                mActionMode.finish();
+                mActionModeHandler.finishActionMode();
                 if (mShowClusterMenu) {
                     mActionBar.enableClusterMenu(mSelectedAction, this);
                 }
@@ -554,7 +544,6 @@ public class AlbumSetPage extends ActivityState implements
 
     @Override
     public void onSelectionChange(Path path, boolean selected) {
-        Utils.assertTrue(mActionMode != null);
         mActionModeHandler.setTitle(getSelectedString());
         mActionModeHandler.updateSupportedOperation(path, selected);
     }
