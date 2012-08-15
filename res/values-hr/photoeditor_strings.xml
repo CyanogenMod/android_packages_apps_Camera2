@@ -36,6 +36,8 @@
     <string name="flip" msgid="2357692401826287480">"Okreni"</string>
     <string name="grain" msgid="7487585304579789098">"Zrnatost filma"</string>
     <string name="grayscale" msgid="7641563843060945228">"Crno-bijelo"</string>
+    <!-- no translation found for accessibility_black_and_white (1156382046161392389) -->
+    <skip />
     <string name="highlight" msgid="3902653944386623972">"Isticanja"</string>
     <string name="lomoish" msgid="1270032154357186736">"Lomo"</string>
     <string name="negative" msgid="1985508917342811252">"Negativan"</string>
@@ -56,4 +58,16 @@
     <string name="redeye_tooltip" msgid="4183695928490874014">"Dotaknite oči da biste uklonili crvenilo"</string>
     <string name="rotate_tooltip" msgid="7008602969130734229">"Povucite fotografiju da biste je rotirali"</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"Povucite fotografiju da biste je izravnali"</string>
+    <!-- no translation found for photoeditor_exposure (891329941452028741) -->
+    <skip />
+    <!-- no translation found for photoeditor_color (2843634522157736892) -->
+    <skip />
+    <!-- no translation found for photoeditor_artistic (742372810907514187) -->
+    <skip />
+    <!-- no translation found for photoeditor_fix (6441595584425037477) -->
+    <skip />
+    <!-- no translation found for photoeditor_undo (4831462549862253564) -->
+    <skip />
+    <!-- no translation found for photoeditor_redo (5999984591376273768) -->
+    <skip />
 </resources>
