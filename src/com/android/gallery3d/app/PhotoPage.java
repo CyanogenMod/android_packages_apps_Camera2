@@ -17,7 +17,6 @@
 package com.android.gallery3d.app;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar.OnMenuVisibilityListener;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
@@ -30,12 +29,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.actionbar.ActionBarInterface.OnMenuVisibilityListener;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
@@ -108,19 +106,16 @@ public class PhotoPage extends ActivityState implements
     // mMediaSet could be null if there is no KEY_MEDIA_SET_PATH supplied.
     // E.g., viewing a photo in gmail attachment
     private FilterDeleteSet mMediaSet;
-    private Menu mMenu;
 
     private int mCurrentIndex = 0;
     private Handler mHandler;
     private boolean mShowBars = true;
     private volatile boolean mActionBarAllowed = true;
     private GalleryActionBar mActionBar;
-    private MyMenuVisibilityListener mMenuVisibilityListener;
     private boolean mIsMenuVisible;
     private MediaItem mCurrentPhoto = null;
     private MenuExecutor mMenuExecutor;
     private boolean mIsActive;
-    private Object mShareActionProvider; // class ShareActionProvider
     private String mSetPathString;
     // This is the original mSetPathString before adding the camera preview item.
     private String mOriginalSetPathString;
@@ -136,6 +131,9 @@ public class PhotoPage extends ActivityState implements
     private boolean mDeleteIsFocus;  // whether the deleted item was in focus
 
     private NfcAdapter mNfcAdapter;
+
+    private final MyMenuVisibilityListener mMenuVisibilityListener =
+            new MyMenuVisibilityListener();
 
     public static interface Model extends PhotoView.Model {
         public void resume();
@@ -327,32 +325,25 @@ public class PhotoPage extends ActivityState implements
 
     private Intent createShareIntent(Path path) {
         DataManager manager = mActivity.getDataManager();
-        Uri uri = manager.getContentUri(path);
         int type = manager.getMediaType(path);
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType(MenuExecutor.getMimeType(type));
+        Uri uri = manager.getContentUri(path);
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         return intent;
+
     }
 
     private void updateShareURI(Path path) {
-        DataManager manager = mActivity.getDataManager();
-        Uri uri = manager.getContentUri(path);
-        setNfcBeamPushUris(new Uri[]{uri});
-        setShareActionProviderIntent(path);
-    }
-
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private void setShareActionProviderIntent(Path path) {
-        if (ApiHelper.HAS_SHARE_ACTION_PROVIDER) {
-            if (mShareActionProvider != null) {
-                Intent intent = createShareIntent(path);
-                ((ShareActionProvider) mShareActionProvider).setShareIntent(intent);
-                mPendingSharePath = null;
-            } else {
-                // This happens when ActionBar is not created yet.
-                mPendingSharePath = path;
-            }
+        if (mActionBar.hasShareMenuItem()) {
+            DataManager manager = mActivity.getDataManager();
+            Uri uri = manager.getContentUri(path);
+            mActionBar.setShareIntent(createShareIntent(path));
+            setNfcBeamPushUris(new Uri[]{uri});
+            mPendingSharePath = null;
+        } else {
+            // This happens when ActionBar is not created yet.
+            mPendingSharePath = path;
         }
     }
 
@@ -374,25 +365,21 @@ public class PhotoPage extends ActivityState implements
         if (mCurrentPhoto == null) return;
         boolean showTitle = mActivity.getAndroidContext().getResources().getBoolean(
                 R.bool.show_action_bar_title);
-        if (showTitle && mCurrentPhoto.getName() != null)
+        if (showTitle && mCurrentPhoto.getName() != null) {
             mActionBar.setTitle(mCurrentPhoto.getName());
-        else
+        } else {
             mActionBar.setTitle("");
+        }
     }
 
     private void updateMenuOperations() {
-        if (mMenu == null) return;
-        MenuItem item = mMenu.findItem(R.id.action_slideshow);
-        if (item != null) {
-            item.setVisible(canDoSlideShow());
-        }
+        mActionBar.setMenuItemVisible(R.id.action_slideshow, canDoSlideShow());
         if (mCurrentPhoto == null) return;
         int supportedOperations = mCurrentPhoto.getSupportedOperations();
         if (!GalleryUtils.isEditorAvailable((Context) mActivity, "image/*")) {
             supportedOperations &= ~MediaObject.SUPPORT_EDIT;
         }
-
-        MenuExecutor.updateMenuOperation(mMenu, supportedOperations);
+        MenuExecutor.updateMenuOperation(mActionBar, supportedOperations);
     }
 
     private boolean canDoSlideShow() {
@@ -545,18 +532,12 @@ public class PhotoPage extends ActivityState implements
 
     @Override
     protected boolean onCreateActionBar(Menu menu) {
-        MenuInflater inflater = ((Activity) mActivity).getMenuInflater();
-        inflater.inflate(R.menu.photo, menu);
-
-        if (ApiHelper.HAS_SHARE_ACTION_PROVIDER) {
-            mShareActionProvider = GalleryActionBar.initializeShareActionProvider(
-                    menu, mActivity.getAndroidContext());
-        }
+        GalleryActionBar actionBar = mActionBar;
+        boolean result = actionBar.createActionMenu(menu, R.menu.photo);
         if (mPendingSharePath != null) updateShareURI(mPendingSharePath);
-        mMenu = menu;
         updateMenuOperations();
         updateTitle();
-        return true;
+        return result;
     }
 
     private MenuExecutor.ProgressListener mConfirmDialogListener =
@@ -905,9 +886,6 @@ public class PhotoPage extends ActivityState implements
 
         mModel.resume();
         mPhotoView.resume();
-        if (mMenuVisibilityListener == null) {
-            mMenuVisibilityListener = new MyMenuVisibilityListener();
-        }
         mActionBar.setDisplayOptions(mSetPathString != null, true);
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
 

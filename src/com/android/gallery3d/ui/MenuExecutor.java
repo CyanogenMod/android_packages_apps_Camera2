@@ -26,10 +26,10 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.actionbar.MenuHolder;
 import com.android.gallery3d.app.CropImage;
 import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.ApiHelper;
@@ -157,13 +157,7 @@ public class MenuExecutor {
         mHandler.sendMessage(mHandler.obtainMessage(MSG_TASK_COMPLETE, result, 0, listener));
     }
 
-    private static void setMenuItemVisibility(
-            Menu menu, int id, boolean visibility) {
-        MenuItem item = menu.findItem(id);
-        if (item != null) item.setVisible(visibility);
-    }
-
-    public static void updateMenuOperation(Menu menu, int supported) {
+    public static void updateMenuOperation(MenuHolder menu, int supported) {
         boolean supportDelete = (supported & MediaObject.SUPPORT_DELETE) != 0;
         boolean supportRotate = (supported & MediaObject.SUPPORT_ROTATE) != 0;
         boolean supportCrop = (supported & MediaObject.SUPPORT_CROP) != 0;
@@ -175,16 +169,16 @@ public class MenuExecutor {
         boolean supportInfo = (supported & MediaObject.SUPPORT_INFO) != 0;
         boolean supportImport = (supported & MediaObject.SUPPORT_IMPORT) != 0;
 
-        setMenuItemVisibility(menu, R.id.action_delete, supportDelete);
-        setMenuItemVisibility(menu, R.id.action_rotate_ccw, supportRotate);
-        setMenuItemVisibility(menu, R.id.action_rotate_cw, supportRotate);
-        setMenuItemVisibility(menu, R.id.action_crop, supportCrop);
-        setMenuItemVisibility(menu, R.id.action_share, supportShare);
-        setMenuItemVisibility(menu, R.id.action_setas, supportSetAs);
-        setMenuItemVisibility(menu, R.id.action_show_on_map, supportShowOnMap);
-        setMenuItemVisibility(menu, R.id.action_edit, supportEdit);
-        setMenuItemVisibility(menu, R.id.action_details, supportInfo);
-        setMenuItemVisibility(menu, R.id.action_import, supportImport);
+        menu.setMenuItemVisible(R.id.action_delete, supportDelete);
+        menu.setMenuItemVisible(R.id.action_rotate_ccw, supportRotate);
+        menu.setMenuItemVisible(R.id.action_rotate_cw, supportRotate);
+        menu.setMenuItemVisible(R.id.action_crop, supportCrop);
+        menu.setMenuItemVisible(R.id.action_share, supportShare);
+        menu.setMenuItemVisible(R.id.action_setas, supportSetAs);
+        menu.setMenuItemVisible(R.id.action_show_on_map, supportShowOnMap);
+        menu.setMenuItemVisible(R.id.action_edit, supportEdit);
+        menu.setMenuItemVisible(R.id.action_details, supportInfo);
+        menu.setMenuItemVisible(R.id.action_import, supportImport);
     }
 
     private Path getSingleSelectedPath() {
