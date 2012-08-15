@@ -43,6 +43,7 @@
         <TextView
             android:id="@+id/effect_label"
             android:text="@string/grayscale"
+            android:contentDescription="@string/accessibility_black_and_white"
             style="@style/EffectLabel"/>
     </com.android.gallery3d.photoeditor.actions.GrayscaleAction>
     <com.android.gallery3d.photoeditor.actions.SepiaAction style="@style/Effect">

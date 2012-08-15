@@ -39,11 +39,13 @@
         <com.android.gallery3d.photoeditor.ImageActionButton
             android:id="@+id/undo_button"
             style="@style/ImageActionButton"
-            android:src="@drawable/photoeditor_undo"/>
+            android:src="@drawable/photoeditor_undo"
+            android:contentDescription="@string/photoeditor_undo"/>
         <com.android.gallery3d.photoeditor.ImageActionButton
             android:id="@+id/redo_button"
             style="@style/ImageActionButton"
-            android:src="@drawable/photoeditor_redo"/>
+            android:src="@drawable/photoeditor_redo"
+            android:contentDescription="@string/photoeditor_redo"/>
 
         <ViewSwitcher
             android:id="@+id/save_share_buttons"

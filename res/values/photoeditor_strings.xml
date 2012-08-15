@@ -75,6 +75,9 @@
     <!-- Name for the photo effect that converts colors to black-and-white, abbreviated B&W. [CHAR LIMIT=15] -->
     <string name="grayscale">B&amp;W</string>
 
+    <!-- Name for the photo effect that converts colors to black-and-white in accessibility mode [CHAR LIMIT=15] -->
+    <string name="accessibility_black_and_white">Black and white</string>
+
     <!-- Name for the photo effect that adds highlights. [CHAR LIMIT=15] -->
     <string name="highlight">Highlights</string>
 
@@ -134,4 +137,23 @@
 
     <!-- Tool-tip toast shown when the user chooses to straighten photo. [CHAR LIMIT=40] -->
     <string name="straighten_tooltip">Drag photo to straighten it</string>
+
+    <!-- Name for the exposure adjustment button in photo effects editor menu. [CHAR LIMIT=40] -->
+    <string name="photoeditor_exposure">Exposure</string>
+
+    <!-- Name for the color adjustment button in photo effects editor menu. [CHAR LIMIT=40] -->
+    <string name="photoeditor_color">Color editing</string>
+
+    <!-- Name for the artistic effect button in photo effects editor menu. [CHAR LIMIT=40] -->
+    <string name="photoeditor_artistic">Artistic effect</string>
+
+    <!-- Name for the fix up button in photo effects editor menu. [CHAR LIMIT=40] -->
+    <string name="photoeditor_fix">Fix up</string>
+
+    <!-- Name for the undo button in photo editor action bar. [CHAR LIMIT=40] -->
+    <string name="photoeditor_undo">Undo</string>
+
+    <!-- Name for the redo button in photo editor action bar. [CHAR LIMIT=40] -->
+    <string name="photoeditor_redo">Redo</string>
+
 </resources>
