@@ -23,9 +23,12 @@ import com.android.gallery3d.common.ApiHelper;
 public class ActionBarUtils {
 
     public static ActionBarInterface getActionBar(Activity activity) {
-        return ApiHelper.HAS_ACTION_BAR
-                ? new SystemActionBarWrapper(activity)
-                : new SimpleActionBar(activity);
+        if (ApiHelper.HAS_ACTION_BAR) {
+            if (activity.getActionBar() == null) return null;
+            return new SystemActionBarWrapper(activity);
+        } else {
+            return new SimpleActionBar(activity);
+        }
     }
 
     public static ActionModeInterface startActionMode(
