@@ -303,6 +303,7 @@ public class ActionModeHandler implements
                             MenuExecutor.updateMenuOperation(mActionMode, operation);
                             if (hasShareButton) {
                                 mActionMode.setShareIntent(intent);
+                                mMenuExecutor.setShareIntent(intent);
                             }
                         }
                     }

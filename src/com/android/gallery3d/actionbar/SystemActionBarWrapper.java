@@ -29,6 +29,7 @@ import android.widget.SpinnerAdapter;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.util.Holder;
 
 import java.util.HashMap;
 
@@ -40,11 +41,15 @@ public class SystemActionBarWrapper implements ActionBarInterface {
 
     private Menu mMenu;
     private MenuItem mShareMenuItem;
-    private ShareActionProvider mShareActionProvider;
+    private Holder<ShareActionProvider> mShareActionProvider = new Holder<ShareActionProvider>();
 
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     public SystemActionBarWrapper(Activity activity) {
         mActivity = activity;
         mActionBar = activity.getActionBar();
+        if (ApiHelper.HAS_SHARE_ACTION_PROVIDER) {
+            mShareActionProvider.set(new ShareActionProvider(activity));
+        }
     }
 
     @Override
@@ -99,8 +104,11 @@ public class SystemActionBarWrapper implements ActionBarInterface {
     }
 
     @Override
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void setHomeButtonEnabled(boolean enabled) {
-        mActionBar.setHomeButtonEnabled(enabled);
+        if (ApiHelper.HAS_ACTION_BAR_SET_HOME_BUTTON_ENABLED) {
+            mActionBar.setHomeButtonEnabled(enabled);
+        }
     }
 
     @Override
@@ -109,8 +117,11 @@ public class SystemActionBarWrapper implements ActionBarInterface {
     }
 
     @Override
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void setLogo(Drawable logo) {
-        mActionBar.setLogo(logo);
+        if (ApiHelper.HAS_ACTION_BAR_SET_LOGO) {
+            mActionBar.setLogo(logo);
+        }
     }
 
     @Override
@@ -129,23 +140,24 @@ public class SystemActionBarWrapper implements ActionBarInterface {
     }
 
     @Override
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void setShareIntent(Intent intent) {
         if (mShareMenuItem != null) {
             mShareMenuItem.setEnabled(intent != null);
-        }
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(intent);
+            if (ApiHelper.HAS_SHARE_ACTION_PROVIDER) {
+                mShareActionProvider.get().setShareIntent(intent);
+            }
         }
     }
 
     @Override
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     public boolean createActionMenu(Menu menu, int menuRes) {
         mActivity.getMenuInflater().inflate(menuRes, menu);
         mMenu = menu;
         mShareMenuItem = menu.findItem(R.id.action_share);
-        if (mShareMenuItem != null) {
-            mShareActionProvider = new ShareActionProvider(mActivity);
-            mShareMenuItem.setActionProvider(mShareActionProvider);
+        if (mShareMenuItem != null && ApiHelper.HAS_SHARE_ACTION_PROVIDER) {
+            mShareMenuItem.setActionProvider(mShareActionProvider.get());
         }
         return true;
     }

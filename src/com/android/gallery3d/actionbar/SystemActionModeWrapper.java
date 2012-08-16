@@ -28,17 +28,21 @@ import android.widget.ShareActionProvider;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.util.Holder;
 
 @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
 public class SystemActionModeWrapper implements ActionModeInterface {
     private ActionMode mActionMode;
     private Menu mMenu;
     private MenuItem mShareMenuItem;
-    private final ShareActionProvider mShareActionProvider;
+    private Holder<ShareActionProvider> mShareActionProvider = new Holder<ShareActionProvider>();
 
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     public SystemActionModeWrapper(Activity activity, ActionModeInterface.Callback callback) {
+        if (ApiHelper.HAS_SHARE_ACTION_PROVIDER) {
+            mShareActionProvider.set(new ShareActionProvider(activity));
+        }
         // mActionMode will be set in callback.onCreateActionMode
-        mShareActionProvider = new ShareActionProvider(activity);
         activity.startActionMode(new CallbackWrapper(callback));
     }
 
@@ -84,20 +88,24 @@ public class SystemActionModeWrapper implements ActionModeInterface {
     }
 
     @Override
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void inflateMenu(int menuRes) {
         Utils.assertTrue(mMenu != null);
         mActionMode.getMenuInflater().inflate(menuRes, mMenu);
         mShareMenuItem = mMenu.findItem(R.id.action_share);
-        if (mShareMenuItem != null) {
-            mShareMenuItem.setActionProvider(mShareActionProvider);
+        if (mShareMenuItem != null && ApiHelper.HAS_SHARE_ACTION_PROVIDER) {
+            mShareMenuItem.setActionProvider(mShareActionProvider.get());
         }
     }
 
     @Override
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void setShareIntent(Intent shareIntent) {
         if (mShareMenuItem != null) {
             mShareMenuItem.setEnabled(shareIntent != null);
-            mShareActionProvider.setShareIntent(shareIntent);
+            if (ApiHelper.HAS_SHARE_ACTION_PROVIDER) {
+                mShareActionProvider.get().setShareIntent(shareIntent);
+            }
         }
     }
 
@@ -107,8 +115,11 @@ public class SystemActionModeWrapper implements ActionModeInterface {
     }
 
     @Override
+    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void setOnShareTargetSelectedListener(final OnShareTargetSelectedListener listener) {
-        mShareActionProvider.setOnShareTargetSelectedListener(
+        if (mShareActionProvider.get() == null) return;
+
+        mShareActionProvider.get().setOnShareTargetSelectedListener(
                 new ShareActionProvider.OnShareTargetSelectedListener() {
             @Override
             public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
