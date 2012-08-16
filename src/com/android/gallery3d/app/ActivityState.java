@@ -108,6 +108,9 @@ abstract public class ActivityState {
     protected void onCreate(Bundle data, Bundle storedState) {
     }
 
+    protected void clearStateResult() {
+    }
+
     BroadcastReceiver mPowerIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

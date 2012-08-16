@@ -122,6 +122,12 @@ public class StateManager {
         getTopState().onStateResult(requestCode, resultCode, data);
     }
 
+    public void clearActivityResult() {
+        if (!mStack.isEmpty()) {
+            getTopState().clearStateResult();
+        }
+    }
+
     public int getStateCount() {
         return mStack.size();
     }
