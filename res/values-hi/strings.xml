@@ -22,21 +22,21 @@
     <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
     <string name="movie_view_label" msgid="3526526872644898229">"वीडियो प्‍लेयर"</string>
     <string name="loading_video" msgid="4013492720121891585">"वीडियो लोड हो रहा है..."</string>
-    <string name="loading_image" msgid="1200894415793838191">"छवि लोड हो रही है…"</string>
+    <string name="loading_image" msgid="1200894415793838191">"चित्र लोड हो रही है…"</string>
     <string name="loading_account" msgid="928195413034552034">"खाता लोड हो रहा है…"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"वीडियो फिर से शुरू करें"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"%s से फिर से चलाना शुरू करें ?"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"चलाना फिर से शुरू करें"</string>
     <string name="loading" msgid="7038208555304563571">"लोड हो रहा है..."</string>
     <string name="fail_to_load" msgid="8394392853646664505">"लोड नहीं कर सका"</string>
-    <string name="fail_to_load_image" msgid="6155388718549782425">"छवि लोड नहीं हो सकी"</string>
+    <string name="fail_to_load_image" msgid="6155388718549782425">"चित्र लोड नहीं हो सकी"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"कोई थंबनेल नहीं"</string>
     <string name="resume_playing_restart" msgid="5471008499835769292">"पुन: प्रारंभ करें"</string>
     <string name="crop_save_text" msgid="152200178986698300">"ठीक"</string>
     <string name="ok" msgid="5296833083983263293">"ठीक"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"शुरू करने के लिए कोई चेहरा स्‍पर्श करें."</string>
     <string name="saving_image" msgid="7270334453636349407">"चित्र सहेज रहा है…"</string>
-    <string name="save_error" msgid="6857408774183654970">"काट-छांट की गई छवि को नहीं सहेज सका."</string>
+    <string name="save_error" msgid="6857408774183654970">"काट-छांट की गई चित्र को नहीं सहेज सका."</string>
     <string name="crop_label" msgid="521114301871349328">"चित्र काटें"</string>
     <string name="select_image" msgid="7841406150484742140">"फ़ोटो को चुनें"</string>
     <string name="select_video" msgid="4859510992798615076">"वीडियो को चुनें"</string>
@@ -104,7 +104,7 @@
     <string name="show_all" msgid="6963292714584735149">"छवियां और वीडियो"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"फ़ोटो गैलरी"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"कोई फ़ोटो नहीं."</string>
-    <string name="crop_saved" msgid="1595985909779105158">"काट-छांट की गई छवि को <xliff:g id="FOLDER_NAME">%s</xliff:g> में सहेजा गया."</string>
+    <string name="crop_saved" msgid="1595985909779105158">"काट-छांट की गई चित्र को <xliff:g id="FOLDER_NAME">%s</xliff:g> में सहेजा गया."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"कोई एल्‍बम उपलब्‍ध नहीं."</string>
     <string name="empty_album" msgid="4542880442593595494">"O छवियां/वीडियो उपलब्‍ध."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"पोस्ट"</string>
@@ -157,7 +157,7 @@
     <string name="click_import" msgid="6407959065464291972">"आयात करने के लिए यहां स्पर्श करें"</string>
     <string name="widget_type_album" msgid="6013045393140135468">"कोई एल्बम चुनें"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"सभी छवियों का क्रम बदलें"</string>
-    <string name="widget_type_photo" msgid="6267065337367795355">"कोई छवि चुनें"</string>
+    <string name="widget_type_photo" msgid="6267065337367795355">"कोई चित्र चुनें"</string>
     <string name="widget_type" msgid="1364653978966343448">"छवियां चुनें"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"स्लाइडशो"</string>
     <string name="albums" msgid="7320787705180057947">"एल्बम"</string>
