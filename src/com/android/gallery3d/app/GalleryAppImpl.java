@@ -20,6 +20,7 @@ import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.data.DataManager;
@@ -48,6 +49,7 @@ public class GalleryAppImpl extends Application implements GalleryApp {
     public void onCreate() {
         super.onCreate();
         com.android.camera.Util.initialize(this);
+        initializeAsyncTask();
         GalleryUtils.initialize(this);
         WidgetUtils.initialize(this);
         PicasaSource.initialize(this);
@@ -106,5 +108,14 @@ public class GalleryAppImpl extends Application implements GalleryApp {
             mDownloadCache = new DownloadCache(this, cacheDir, DOWNLOAD_CAPACITY);
         }
         return mDownloadCache;
+    }
+
+    private void initializeAsyncTask() {
+        // AsyncTask class needs to be loaded in UI thread.
+        // So we load it here to comply the rule.
+        try {
+            Class.forName(AsyncTask.class.getName());
+        } catch (ClassNotFoundException e) {
+        }
     }
 }
