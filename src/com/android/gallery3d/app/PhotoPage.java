@@ -815,6 +815,11 @@ public class PhotoPage extends ActivityState implements
         }
     }
 
+    @Override
+    protected void clearStateResult() {
+        mHasActivityResult = false;
+    }
+
     private class PreparePhotoFallback implements OnGLIdleListener {
         private PhotoFallbackEffect mPhotoFallback = new PhotoFallbackEffect();
         private boolean mResultReady = false;
