@@ -169,18 +169,21 @@ public class SystemActionBarWrapper implements ActionBarInterface {
 
     @Override
     public void setMenuItemVisible(int menuItemId, boolean visible) {
+        if (mMenu == null) return;
         MenuItem item = mMenu.findItem(menuItemId);
         if (item != null) item.setVisible(visible);
     }
 
     @Override
     public void setMenuItemTitle(int menuItemId, String title) {
+        if (mMenu == null) return;
         MenuItem item = mMenu.findItem(menuItemId);
         if (item != null) item.setTitle(title);
     }
 
     @Override
     public void setMenuItemIntent(int menuItemId, Intent intent) {
+        if (mMenu == null) return;
         MenuItem item = mMenu.findItem(menuItemId);
         if (item != null) item.setIntent(intent);
     }
