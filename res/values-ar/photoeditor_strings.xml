@@ -36,8 +36,7 @@
     <string name="flip" msgid="2357692401826287480">"عكس"</string>
     <string name="grain" msgid="7487585304579789098">"تحبب الفيلم"</string>
     <string name="grayscale" msgid="7641563843060945228">"أبيض وأسود"</string>
-    <!-- no translation found for accessibility_black_and_white (1156382046161392389) -->
-    <skip />
+    <string name="accessibility_black_and_white" msgid="1156382046161392389">"أبيض وأسود"</string>
     <string name="highlight" msgid="3902653944386623972">"لمحات"</string>
     <string name="lomoish" msgid="1270032154357186736">"Lomo"</string>
     <string name="negative" msgid="1985508917342811252">"سلبي"</string>
@@ -64,10 +63,7 @@
     <skip />
     <!-- no translation found for photoeditor_artistic (2810641816416597464) -->
     <skip />
-    <!-- no translation found for photoeditor_fix (6441595584425037477) -->
-    <skip />
-    <!-- no translation found for photoeditor_undo (4831462549862253564) -->
-    <skip />
-    <!-- no translation found for photoeditor_redo (5999984591376273768) -->
-    <skip />
+    <string name="photoeditor_fix" msgid="6441595584425037477">"إصلاح"</string>
+    <string name="photoeditor_undo" msgid="4831462549862253564">"تراجع"</string>
+    <string name="photoeditor_redo" msgid="5999984591376273768">"إعادة"</string>
 </resources>
