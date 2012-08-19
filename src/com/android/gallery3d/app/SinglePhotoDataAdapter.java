@@ -206,6 +206,11 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
     }
 
     @Override
+    public boolean isStaticCamera(int offset) {
+        return false;
+    }
+
+    @Override
     public boolean isVideo(int offset) {
         return mItem.getMediaType() == MediaItem.MEDIA_TYPE_VIDEO;
     }

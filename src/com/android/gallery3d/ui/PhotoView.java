@@ -78,6 +78,10 @@ public class PhotoView extends GLView {
         // Returns true if the item is the Panorama.
         public boolean isPanorama(int offset);
 
+        // Returns true if the item is a static image that represents camera
+        // preview.
+        public boolean isStaticCamera(int offset);
+
         // Returns true if the item is a Video.
         public boolean isVideo(int offset);
 
@@ -545,6 +549,7 @@ public class PhotoView extends GLView {
         private int mRotation;
         private boolean mIsCamera;
         private boolean mIsPanorama;
+        private boolean mIsStaticCamera;
         private boolean mIsVideo;
         private boolean mIsDeletable;
         private int mLoadingState = Model.LOADING_INIT;
@@ -561,6 +566,7 @@ public class PhotoView extends GLView {
 
             mIsCamera = mModel.isCamera(0);
             mIsPanorama = mModel.isPanorama(0);
+            mIsStaticCamera = mModel.isStaticCamera(0);
             mIsVideo = mModel.isVideo(0);
             mIsDeletable = mModel.isDeletable(0);
             mLoadingState = mModel.getLoadingState(0);
@@ -582,7 +588,7 @@ public class PhotoView extends GLView {
         private void updateSize() {
             if (mIsPanorama) {
                 mRotation = getPanoramaRotation();
-            } else if (mIsCamera) {
+            } else if (mIsCamera && !mIsStaticCamera) {
                 mRotation = getCameraRotation();
             } else {
                 mRotation = mModel.getImageRotation(0);
@@ -741,6 +747,7 @@ public class PhotoView extends GLView {
         private ScreenNail mScreenNail;
         private boolean mIsCamera;
         private boolean mIsPanorama;
+        private boolean mIsStaticCamera;
         private boolean mIsVideo;
         private boolean mIsDeletable;
         private int mLoadingState = Model.LOADING_INIT;
@@ -754,6 +761,7 @@ public class PhotoView extends GLView {
         public void reload() {
             mIsCamera = mModel.isCamera(mIndex);
             mIsPanorama = mModel.isPanorama(mIndex);
+            mIsStaticCamera = mModel.isStaticCamera(mIndex);
             mIsVideo = mModel.isVideo(mIndex);
             mIsDeletable = mModel.isDeletable(mIndex);
             mLoadingState = mModel.getLoadingState(mIndex);
@@ -844,7 +852,7 @@ public class PhotoView extends GLView {
         private void updateSize() {
             if (mIsPanorama) {
                 mRotation = getPanoramaRotation();
-            } else if (mIsCamera) {
+            } else if (mIsCamera && !mIsStaticCamera) {
                 mRotation = getCameraRotation();
             } else {
                 mRotation = mModel.getImageRotation(mIndex);

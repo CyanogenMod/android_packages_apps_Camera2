@@ -37,6 +37,7 @@ public abstract class AppBridge implements Parcelable {
     //////////////////////////////////////////////////////////////////////////
 
     public abstract boolean isPanorama();
+    public abstract boolean isStaticCamera();
     public abstract ScreenNail attachScreenNail();
     public abstract void detachScreenNail();
 
