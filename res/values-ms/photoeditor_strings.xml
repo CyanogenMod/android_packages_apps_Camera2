@@ -58,12 +58,9 @@
     <string name="redeye_tooltip" msgid="4183695928490874014">"Ketik pada mata merah untuk mengalih keluar"</string>
     <string name="rotate_tooltip" msgid="7008602969130734229">"Seret foto untuk memutarnya"</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"Seret foto untuk meluruskannya"</string>
-    <!-- no translation found for photoeditor_exposure (560535856805042987) -->
-    <skip />
-    <!-- no translation found for photoeditor_color (834210916165605468) -->
-    <skip />
-    <!-- no translation found for photoeditor_artistic (2810641816416597464) -->
-    <skip />
+    <string name="photoeditor_exposure" msgid="560535856805042987">"Kesan dedahan"</string>
+    <string name="photoeditor_color" msgid="834210916165605468">"Kesan warna"</string>
+    <string name="photoeditor_artistic" msgid="2810641816416597464">"Kesan artistik"</string>
     <!-- no translation found for photoeditor_fix (6441595584425037477) -->
     <skip />
     <!-- no translation found for photoeditor_undo (4831462549862253564) -->
