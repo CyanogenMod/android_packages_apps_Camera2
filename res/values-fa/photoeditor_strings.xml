@@ -57,12 +57,9 @@
     <string name="redeye_tooltip" msgid="4183695928490874014">"روی قرمزی چشم برای رفع آن ضربه بزنید"</string>
     <string name="rotate_tooltip" msgid="7008602969130734229">"برای چرخاندن عکس آن را بکشید"</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"برای صاف کردن عکس آن را بکشید"</string>
-    <!-- no translation found for photoeditor_exposure (560535856805042987) -->
-    <skip />
-    <!-- no translation found for photoeditor_color (834210916165605468) -->
-    <skip />
-    <!-- no translation found for photoeditor_artistic (2810641816416597464) -->
-    <skip />
+    <string name="photoeditor_exposure" msgid="560535856805042987">"جلوه‌های نوردهی"</string>
+    <string name="photoeditor_color" msgid="834210916165605468">"جلوه‌های رنگی"</string>
+    <string name="photoeditor_artistic" msgid="2810641816416597464">"جلوه‌های هنری"</string>
     <string name="photoeditor_fix" msgid="6441595584425037477">"تصحیح"</string>
     <string name="photoeditor_undo" msgid="4831462549862253564">"لغو"</string>
     <string name="photoeditor_redo" msgid="5999984591376273768">"انجام مجدد"</string>
