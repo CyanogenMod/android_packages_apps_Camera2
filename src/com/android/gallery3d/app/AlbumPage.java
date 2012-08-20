@@ -49,6 +49,8 @@ import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.PhotoFallbackEffect;
+import com.android.gallery3d.ui.PreparePageFadeoutTexture;
+import com.android.gallery3d.ui.RawTexture;
 import com.android.gallery3d.ui.RelativePosition;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
@@ -70,6 +72,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     public static final String KEY_AUTO_SELECT_ALL = "auto-select-all";
     public static final String KEY_SHOW_CLUSTER_MENU = "cluster-menu";
     public static final String KEY_RESUME_ANIMATION = "resume_animation";
+    public static final String KEY_FADE_TEXTURE = "fade_texture";
 
     private static final int REQUEST_SLIDESHOW = 1;
     private static final int REQUEST_PHOTO = 2;
@@ -230,6 +233,27 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         }
     }
 
+    private PreparePageFadeoutTexture mPrepareFadeoutTask;
+
+    private void startPrepareFadeOutTexture() {
+        GLRoot root = mActivity.getGLRoot();
+        mPrepareFadeoutTask = new PreparePageFadeoutTexture(
+                mSlotView.getWidth(), mSlotView.getHeight() +
+                mActivity.getGalleryActionBar().getHeight(), mRootPane);
+        root.unlockRenderThread();
+        try {
+            root.addOnGLIdleListener(mPrepareFadeoutTask);
+        } finally {
+            root.lockRenderThread();
+        }
+    }
+
+    private void finishPrepareFadeOutTexture() {
+        mActivity.getTransitionStore().put(KEY_FADE_TEXTURE,
+                mPrepareFadeoutTask.get());
+        mPrepareFadeoutTask = null;
+    }
+
     private void onSingleTapUp(int slotIndex) {
         if (!mIsActive) return;
 
@@ -242,6 +266,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             // Show pressed-up animation for the single-tap.
             mAlbumView.setPressedIndex(slotIndex);
             mAlbumView.setPressedUp();
+            startPrepareFadeOutTexture();
             mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_PICK_PHOTO, slotIndex, 0),
                     FadeTexture.DURATION);
         }
@@ -257,6 +282,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         } else {
             // Get into the PhotoPage.
             // mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
+            finishPrepareFadeOutTexture();
             Bundle data = new Bundle();
             data.putInt(PhotoPage.KEY_INDEX_HINT, slotIndex);
             data.putParcelable(PhotoPage.KEY_OPEN_ANIMATION_RECT,

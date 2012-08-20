@@ -36,6 +36,7 @@ public class BitmapScreenNail implements ScreenNail {
     private static final int PLACEHOLDER_COLOR = 0xFF222222;
     // The duration of the fading animation in milliseconds
     private static final int DURATION = 180;
+    private static boolean mDrawPlaceholder = true;
 
     private static final int MAX_SIDE = 640;
 
@@ -139,13 +140,23 @@ public class BitmapScreenNail implements ScreenNail {
         mBitmap = null;
     }
 
+    public static void disableDrawPlaceholder() {
+        mDrawPlaceholder = false;
+    }
+
+    public static void enableDrawPlaceholder() {
+        mDrawPlaceholder = true;
+    }
+
     @Override
     public void draw(GLCanvas canvas, int x, int y, int width, int height) {
         if (mBitmap == null) {
             if (mAnimationStartTime == ANIMATION_NOT_NEEDED) {
                 mAnimationStartTime = ANIMATION_NEEDED;
             }
-            canvas.fillRect(x, y, width, height, PLACEHOLDER_COLOR);
+            if(mDrawPlaceholder) {
+                canvas.fillRect(x, y, width, height, PLACEHOLDER_COLOR);
+            }
             return;
         }
 
