@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:background="?android:attr/dividerHorizontal" />
+            android:background="@drawable/list_divider_holo_dark" />
     <Button style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/cancel"
             android:layout_width="match_parent"
