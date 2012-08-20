@@ -30,10 +30,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.actionbar.ActionBarInterface.OnMenuVisibilityListener;
+import com.android.gallery3d.anim.FloatAnimation;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
@@ -48,17 +50,20 @@ import com.android.gallery3d.data.SnailAlbum;
 import com.android.gallery3d.data.SnailItem;
 import com.android.gallery3d.data.SnailSource;
 import com.android.gallery3d.picasasource.PicasaSource;
+import com.android.gallery3d.ui.AnimationTime;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.DetailsHelper.DetailsSource;
 import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLRoot.OnGLIdleListener;
+import com.android.gallery3d.ui.BitmapScreenNail;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.ImportCompleteListener;
 import com.android.gallery3d.ui.MenuExecutor;
 import com.android.gallery3d.ui.PhotoFallbackEffect;
 import com.android.gallery3d.ui.PhotoView;
+import com.android.gallery3d.ui.RawTexture;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.GalleryUtils;
@@ -126,6 +131,10 @@ public class PhotoPage extends ActivityState implements
     private boolean mHasActivityResult;
     private boolean mTreatBackAsUp;
 
+    private RawTexture mFadeOutTexture;
+    private Rect mOpenAnimationRect;
+    public static final int ANIM_TIME_OPENING = 300;
+
     // The item that is deleted (but it can still be undeleted before commiting)
     private Path mDeletePath;
     private boolean mDeleteIsFocus;  // whether the deleted item was in focus
@@ -150,10 +159,35 @@ public class PhotoPage extends ActivityState implements
         }
     }
 
-    private final GLView mRootPane = new GLView() {
+    private static class BackgroundFadeOut extends FloatAnimation {
+        public BackgroundFadeOut() {
+            super(1f, 0f, ANIM_TIME_OPENING);
+            setInterpolator(new AccelerateInterpolator(2f));
+        }
+    }
 
+    private final FloatAnimation mBackgroundFade = new BackgroundFadeOut();
+
+    private final GLView mRootPane = new GLView() {
         @Override
         protected void renderBackground(GLCanvas view) {
+            if(mFadeOutTexture != null) {
+                if(mBackgroundFade.calculate(AnimationTime.get())) invalidate();
+                if(!mBackgroundFade.isActive()) {
+                    mFadeOutTexture = null;
+                    mOpenAnimationRect = null;
+                    BitmapScreenNail.enableDrawPlaceholder();
+                } else {
+                    float fadeAlpha = mBackgroundFade.get();
+                    if(fadeAlpha < 1f) {
+                        view.clearBuffer(0f, 0f, 0f, 1f);
+                        view.setAlpha(fadeAlpha);
+                    }
+                    mFadeOutTexture.draw(view, 0, 0);
+                    view.setAlpha(1f);
+                    return;
+                }
+            }
             view.clearBuffer(0f, 0f, 0f, 1f);
         }
 
@@ -313,7 +347,13 @@ public class PhotoPage extends ActivityState implements
 
         // start the opening animation only if it's not restored.
         if (restoreState == null) {
-            mPhotoView.setOpenAnimationRect((Rect) data.getParcelable(KEY_OPEN_ANIMATION_RECT));
+            mFadeOutTexture = mActivity.getTransitionStore().get(AlbumPage.KEY_FADE_TEXTURE);
+            if(mFadeOutTexture != null) {
+                mBackgroundFade.start();
+                BitmapScreenNail.disableDrawPlaceholder();
+                mOpenAnimationRect = (Rect) data.getParcelable(KEY_OPEN_ANIMATION_RECT);
+                mPhotoView.setOpenAnimationRect(mOpenAnimationRect);
+            }
         }
     }
 
