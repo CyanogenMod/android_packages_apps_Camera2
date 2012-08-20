@@ -18,19 +18,19 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <include layout="@layout/gl_root_group"
+    <FrameLayout
             android:layout_weight="1"
-            android:layout_height="0dp"
-            android:layout_width="match_parent"/>
-    <View android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_weight="0"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+        <include layout="@layout/gl_root_group" />
+    </FrameLayout>
+    <ImageView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:background="?android:attr/dividerHorizontal" />
     <Button style="?android:attr/buttonBarButtonStyle"
             android:id="@+id/cancel"
-            android:layout_weight="0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@android:string/cancel"
