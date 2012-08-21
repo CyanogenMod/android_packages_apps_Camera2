@@ -57,12 +57,9 @@
     <string name="redeye_tooltip" msgid="4183695928490874014">"Tryk på røde øjne for at fjerne dem"</string>
     <string name="rotate_tooltip" msgid="7008602969130734229">"Træk billedet for at rotere det"</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"Træk i billedet for at rette det op"</string>
-    <!-- no translation found for photoeditor_exposure (560535856805042987) -->
-    <skip />
-    <!-- no translation found for photoeditor_color (834210916165605468) -->
-    <skip />
-    <!-- no translation found for photoeditor_artistic (2810641816416597464) -->
-    <skip />
+    <string name="photoeditor_exposure" msgid="560535856805042987">"Eksponeringseffekter"</string>
+    <string name="photoeditor_color" msgid="834210916165605468">"Farveeffekter"</string>
+    <string name="photoeditor_artistic" msgid="2810641816416597464">"Kunstneriske effekter"</string>
     <string name="photoeditor_fix" msgid="6441595584425037477">"Rediger"</string>
     <string name="photoeditor_undo" msgid="4831462549862253564">"Fortryd"</string>
     <string name="photoeditor_redo" msgid="5999984591376273768">"Annuller fortryd"</string>
