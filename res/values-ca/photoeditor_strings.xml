@@ -36,8 +36,7 @@
     <string name="flip" msgid="2357692401826287480">"Inversió"</string>
     <string name="grain" msgid="7487585304579789098">"Gra pel·lícula"</string>
     <string name="grayscale" msgid="7641563843060945228">"B/N"</string>
-    <!-- no translation found for accessibility_black_and_white (1156382046161392389) -->
-    <skip />
+    <string name="accessibility_black_and_white" msgid="1156382046161392389">"Blanc i negre"</string>
     <string name="highlight" msgid="3902653944386623972">"Realçaments"</string>
     <string name="lomoish" msgid="1270032154357186736">"Lomo"</string>
     <string name="negative" msgid="1985508917342811252">"Negatiu"</string>
@@ -58,16 +57,10 @@
     <string name="redeye_tooltip" msgid="4183695928490874014">"Toca els ulls vermells per eliminar-los"</string>
     <string name="rotate_tooltip" msgid="7008602969130734229">"Arrossega la foto per girar-la"</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"Arrossega la foto per redreçar-la"</string>
-    <!-- no translation found for photoeditor_exposure (560535856805042987) -->
-    <skip />
-    <!-- no translation found for photoeditor_color (834210916165605468) -->
-    <skip />
-    <!-- no translation found for photoeditor_artistic (2810641816416597464) -->
-    <skip />
-    <!-- no translation found for photoeditor_fix (6441595584425037477) -->
-    <skip />
-    <!-- no translation found for photoeditor_undo (4831462549862253564) -->
-    <skip />
-    <!-- no translation found for photoeditor_redo (5999984591376273768) -->
-    <skip />
+    <string name="photoeditor_exposure" msgid="560535856805042987">"Efectes d\'exposició"</string>
+    <string name="photoeditor_color" msgid="834210916165605468">"Efectes de color"</string>
+    <string name="photoeditor_artistic" msgid="2810641816416597464">"Efectes artístics"</string>
+    <string name="photoeditor_fix" msgid="6441595584425037477">"Repara"</string>
+    <string name="photoeditor_undo" msgid="4831462549862253564">"Desfés"</string>
+    <string name="photoeditor_redo" msgid="5999984591376273768">"Refés"</string>
 </resources>

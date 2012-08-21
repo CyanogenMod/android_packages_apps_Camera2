@@ -57,12 +57,9 @@
     <string name="redeye_tooltip" msgid="4183695928490874014">"Toque nos olhos vermelhos p/ os remover"</string>
     <string name="rotate_tooltip" msgid="7008602969130734229">"Arraste a fotografia para rodá-la"</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"Arraste a fotografia para endireitá-la"</string>
-    <!-- no translation found for photoeditor_exposure (560535856805042987) -->
-    <skip />
-    <!-- no translation found for photoeditor_color (834210916165605468) -->
-    <skip />
-    <!-- no translation found for photoeditor_artistic (2810641816416597464) -->
-    <skip />
+    <string name="photoeditor_exposure" msgid="560535856805042987">"Os efeitos da exposição"</string>
+    <string name="photoeditor_color" msgid="834210916165605468">"Efeitos de cor"</string>
+    <string name="photoeditor_artistic" msgid="2810641816416597464">"Efeitos artísticos"</string>
     <string name="photoeditor_fix" msgid="6441595584425037477">"Corrigir"</string>
     <string name="photoeditor_undo" msgid="4831462549862253564">"Anular"</string>
     <string name="photoeditor_redo" msgid="5999984591376273768">"Refazer"</string>

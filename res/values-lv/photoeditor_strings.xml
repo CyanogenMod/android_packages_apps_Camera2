@@ -36,8 +36,7 @@
     <string name="flip" msgid="2357692401826287480">"Apvērst"</string>
     <string name="grain" msgid="7487585304579789098">"Graudaina filma"</string>
     <string name="grayscale" msgid="7641563843060945228">"Melnbalts"</string>
-    <!-- no translation found for accessibility_black_and_white (1156382046161392389) -->
-    <skip />
+    <string name="accessibility_black_and_white" msgid="1156382046161392389">"Melnbalts"</string>
     <string name="highlight" msgid="3902653944386623972">"Gaismas efekti"</string>
     <string name="lomoish" msgid="1270032154357186736">"Lomogrāfija"</string>
     <string name="negative" msgid="1985508917342811252">"Negatīvs"</string>
@@ -58,16 +57,10 @@
     <string name="redeye_tooltip" msgid="4183695928490874014">"Piesk. sark. acīm, lai noņ. šo efektu."</string>
     <string name="rotate_tooltip" msgid="7008602969130734229">"Velciet fotoattēlu, lai to pagrieztu."</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"Velciet fotoattēlu, lai to iztaisnotu."</string>
-    <!-- no translation found for photoeditor_exposure (560535856805042987) -->
-    <skip />
-    <!-- no translation found for photoeditor_color (834210916165605468) -->
-    <skip />
-    <!-- no translation found for photoeditor_artistic (2810641816416597464) -->
-    <skip />
-    <!-- no translation found for photoeditor_fix (6441595584425037477) -->
-    <skip />
-    <!-- no translation found for photoeditor_undo (4831462549862253564) -->
-    <skip />
-    <!-- no translation found for photoeditor_redo (5999984591376273768) -->
-    <skip />
+    <string name="photoeditor_exposure" msgid="560535856805042987">"Ekspozīcijas efekti"</string>
+    <string name="photoeditor_color" msgid="834210916165605468">"Krāsu efekti"</string>
+    <string name="photoeditor_artistic" msgid="2810641816416597464">"Mākslinieciski efekti"</string>
+    <string name="photoeditor_fix" msgid="6441595584425037477">"Uzlabošana"</string>
+    <string name="photoeditor_undo" msgid="4831462549862253564">"Atsaukt"</string>
+    <string name="photoeditor_redo" msgid="5999984591376273768">"Atcelt atsaukšanu"</string>
 </resources>
