@@ -139,16 +139,6 @@ public class ApiHelper {
     public static final boolean HAS_GET_SUPPORTED_VIDEO_SIZE =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
-    public static int getIntFieldIfExists(Class<?> klass, String fieldName,
-            Class<?> obj, int defaultVal) {
-        try {
-            Field f = klass.getDeclaredField(fieldName);
-            return f.getInt(obj);
-        } catch (Exception e) {
-            return defaultVal;
-        }
-    }
-
     public static final boolean HAS_SET_ICON_ATTRIBUTE =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
@@ -169,6 +159,19 @@ public class ApiHelper {
 
     public static final boolean HAS_ACTION_BAR =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
+    public static final boolean CAN_START_PREVIEW_IN_JPEG_CALLBACK =
+            Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
+
+    public static int getIntFieldIfExists(Class<?> klass, String fieldName,
+            Class<?> obj, int defaultVal) {
+        try {
+            Field f = klass.getDeclaredField(fieldName);
+            return f.getInt(obj);
+        } catch (Exception e) {
+            return defaultVal;
+        }
+    }
 
     private static boolean hasField(Class<?> klass, String fieldName) {
         try {
