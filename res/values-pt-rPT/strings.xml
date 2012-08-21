@@ -108,7 +108,7 @@
     <string name="no_albums_alert" msgid="4111744447491690896">"Nenhum álbum disponível."</string>
     <string name="empty_album" msgid="4542880442593595494">"0 imagens/vídeos disponíveis."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Mensagens"</string>
-    <string name="make_available_offline" msgid="5157950985488297112">"Disponibilizar off-line"</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"Disponibilizar offline"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Atualizar"</string>
     <string name="done" msgid="217672440064436595">"Concluído"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"%1$d de %2$d itens:"</string>
@@ -137,8 +137,8 @@
     <string name="flash_on" msgid="7891556231891837284">"Flash dispar."</string>
     <string name="flash_off" msgid="1445443413822680010">"Sem flash"</string>
   <plurals name="make_albums_available_offline">
-    <item quantity="one" msgid="2171596356101611086">"Disponibilizar álbum off-line."</item>
-    <item quantity="other" msgid="4948604338155959389">"Disponibilizar álbuns off-line."</item>
+    <item quantity="one" msgid="2171596356101611086">"Disponibilizar álbum offline."</item>
+    <item quantity="other" msgid="4948604338155959389">"Disponibilizar álbuns offline."</item>
   </plurals>
     <string name="try_to_set_local_album_available_offline" msgid="2184754031896160755">"Este artigo está armazenado localmente e está disponível off-line."</string>
     <string name="set_label_all_albums" msgid="4581863582996336783">"Todos os álbuns"</string>
