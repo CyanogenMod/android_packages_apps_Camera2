@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.util;
 
+import android.util.Log;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
