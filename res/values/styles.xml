@@ -15,10 +15,11 @@
 -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <style name="Theme.GalleryBase" parent="android:Theme.Holo">
+    <style name="Theme.GalleryBase" parent="android:Theme.Black">
         <item name="listPreferredItemHeightSmall">48dp</item>
         <item name="switchStyle">@android:style/Widget.CompoundButton</item>
     </style>
+    <style name="Theme.Gallery.Dialog" parent="android:Theme.Dialog"/>
     <style name="Theme.Gallery" parent="Theme.GalleryBase">
         <item name="android:displayOptions"></item>
         <item name="android:windowContentOverlay">@null</item>
