@@ -160,6 +160,10 @@ public class ApiHelper {
     public static final boolean HAS_ACTION_BAR =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
+    // Ex: View.setTranslationX.
+    public static final boolean HAS_VIEW_TRANSFORM_PROPERTIES =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
     public static final boolean CAN_START_PREVIEW_IN_JPEG_CALLBACK =
             Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
 
