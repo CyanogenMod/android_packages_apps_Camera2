@@ -46,6 +46,8 @@ import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.MtpSource;
 import com.android.gallery3d.data.Path;
+import com.android.gallery3d.data.SecureAlbum;
+import com.android.gallery3d.data.SecureSource;
 import com.android.gallery3d.data.SnailAlbum;
 import com.android.gallery3d.data.SnailItem;
 import com.android.gallery3d.data.SnailSource;
@@ -111,6 +113,9 @@ public class PhotoPage extends ActivityState implements
     // mMediaSet could be null if there is no KEY_MEDIA_SET_PATH supplied.
     // E.g., viewing a photo in gmail attachment
     private FilterDeleteSet mMediaSet;
+
+    // The mediaset used by camera launched from secure lock screen.
+    private SecureAlbum mSecureAlbum;
 
     private int mCurrentIndex = 0;
     private Handler mHandler;
@@ -243,6 +248,12 @@ public class PhotoPage extends ActivityState implements
                 mScreenNailItem = (SnailItem) mActivity.getDataManager()
                         .getMediaObject(screenNailItemPath);
                 mScreenNailItem.setScreenNail(mAppBridge.attachScreenNail());
+
+                // Check if the path is a secure album.
+                if (SecureSource.isSecurePath(mSetPathString)) {
+                    mSecureAlbum = (SecureAlbum) mActivity.getDataManager()
+                            .getMediaSet(mSetPathString);
+                }
 
                 // Combine the original MediaSet with the one for ScreenNail
                 // from AppBridge.
@@ -577,6 +588,11 @@ public class PhotoPage extends ActivityState implements
     public void notifyScreenNailChanged() {
         mScreenNailItem.setScreenNail(mAppBridge.attachScreenNail());
         mScreenNailSet.notifyChange();
+    }
+
+    @Override
+    public void addSecureAlbumItem(boolean isVideo, int id) {
+        mSecureAlbum.addMediaItem(isVideo, id);
     }
 
     @Override
