@@ -33,12 +33,18 @@ public class ChangeNotifier {
         application.getDataManager().registerChangeNotifier(uri, this);
     }
 
+    public ChangeNotifier(MediaSet set, Uri[] uris, GalleryApp application) {
+        mMediaSet = set;
+        for (int i = 0; i < uris.length; i++) {
+            application.getDataManager().registerChangeNotifier(uris[i], this);
+        }
+    }
+
     // Returns the dirty flag and clear it.
     public boolean isDirty() {
         return mContentDirty.compareAndSet(true, false);
     }
 
-    // For debugging only.
     public void fakeChange() {
         onChange(false);
     }
