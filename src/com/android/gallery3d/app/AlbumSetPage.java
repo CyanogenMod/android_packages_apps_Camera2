@@ -412,13 +412,7 @@ public class AlbumSetPage extends ActivityState implements
             result = mActionBar.createActionMenu(menu, R.menu.pickup);
             int typeBits = mData.getInt(
                     Gallery.KEY_TYPE_BITS, DataManager.INCLUDE_IMAGE);
-            int id = R.string.select_image;
-            if ((typeBits & DataManager.INCLUDE_VIDEO) != 0) {
-                id = (typeBits & DataManager.INCLUDE_IMAGE) == 0
-                        ? R.string.select_video
-                        : R.string.select_item;
-            }
-            mActionBar.setTitle(id);
+            mActionBar.setTitle(GalleryUtils.getSelectionModePrompt(typeBits));
         } else  if (mGetAlbum) {
             result = mActionBar.createActionMenu(menu, R.menu.pickup);
             mActionBar.setTitle(R.string.select_album);
