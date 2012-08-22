@@ -235,7 +235,7 @@
         </activity>
 
         <activity android:name="com.android.gallery3d.settings.GallerySettings"
-                android:theme="@android:style/Theme.Holo"
+                android:theme="@style/Theme.Gallery"
                 android:configChanges="orientation|keyboardHidden|screenSize" />
 
         <provider android:name="com.android.gallery3d.provider.GalleryProvider"
@@ -252,7 +252,7 @@
                 android:theme="@style/DialogPickerTheme"/>
         <activity android:name="com.android.gallery3d.gadget.WidgetTypeChooser"
                 android:configChanges="keyboardHidden|orientation|screenSize"
-                android:theme="@android:style/Theme.Holo.Dialog"/>
+                android:theme="@style/Theme.Gallery.Dialog"/>
 
         <activity android:name="com.android.camera.Camera"
                 android:taskAffinity="com.android.camera"
