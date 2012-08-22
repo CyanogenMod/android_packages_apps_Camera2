@@ -57,12 +57,9 @@
     <string name="redeye_tooltip" msgid="4183695928490874014">"Tik op rooi oë om hulle te verwyder"</string>
     <string name="rotate_tooltip" msgid="7008602969130734229">"Trek foto om dit te draai"</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"Trek foto om dit reguit te trek"</string>
-    <!-- no translation found for photoeditor_exposure (560535856805042987) -->
-    <skip />
-    <!-- no translation found for photoeditor_color (834210916165605468) -->
-    <skip />
-    <!-- no translation found for photoeditor_artistic (2810641816416597464) -->
-    <skip />
+    <string name="photoeditor_exposure" msgid="560535856805042987">"Beligtingeffekte"</string>
+    <string name="photoeditor_color" msgid="834210916165605468">"Kleureffekte"</string>
+    <string name="photoeditor_artistic" msgid="2810641816416597464">"Artistieke effekte"</string>
     <string name="photoeditor_fix" msgid="6441595584425037477">"Maak reg"</string>
     <string name="photoeditor_undo" msgid="4831462549862253564">"Ontdoen"</string>
     <string name="photoeditor_redo" msgid="5999984591376273768">"Herdoen"</string>

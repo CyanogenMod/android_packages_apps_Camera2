@@ -62,5 +62,5 @@
     <string name="photoeditor_artistic" msgid="2810641816416597464">"Sanatsal efektler"</string>
     <string name="photoeditor_fix" msgid="6441595584425037477">"Düzelt"</string>
     <string name="photoeditor_undo" msgid="4831462549862253564">"Geri al"</string>
-    <string name="photoeditor_redo" msgid="5999984591376273768">"Yinele"</string>
+    <string name="photoeditor_redo" msgid="5999984591376273768">"Yeniden Yap"</string>
 </resources>
