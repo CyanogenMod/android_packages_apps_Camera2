@@ -178,17 +178,17 @@ public class CropImage extends AbstractGalleryActivity {
             public void handleMessage(Message message) {
                 switch (message.what) {
                     case MSG_LARGE_BITMAP: {
-                        mProgressDialog.dismiss();
+                        dismissProgressDialogIfShown();
                         onBitmapRegionDecoderAvailable((BitmapRegionDecoder) message.obj);
                         break;
                     }
                     case MSG_BITMAP: {
-                        mProgressDialog.dismiss();
+                        dismissProgressDialogIfShown();
                         onBitmapAvailable((Bitmap) message.obj);
                         break;
                     }
                     case MSG_SHOW_SAVE_ERROR: {
-                        mProgressDialog.dismiss();
+                        dismissProgressDialogIfShown();
                         setResult(RESULT_CANCELED);
                         Toast.makeText(CropImage.this,
                                 CropImage.this.getString(R.string.save_error),
@@ -196,7 +196,7 @@ public class CropImage extends AbstractGalleryActivity {
                         finish();
                     }
                     case MSG_SAVE_COMPLETE: {
-                        mProgressDialog.dismiss();
+                        dismissProgressDialogIfShown();
                         setResult(RESULT_OK, (Intent) message.obj);
                         finish();
                         break;
@@ -882,13 +882,13 @@ public class CropImage extends AbstractGalleryActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        dismissProgressDialogIfShown();
 
         Future<BitmapRegionDecoder> loadTask = mLoadTask;
         if (loadTask != null && !loadTask.isDone()) {
             // load in progress, try to cancel it
             loadTask.cancel();
             loadTask.waitDone();
-            mProgressDialog.dismiss();
         }
 
         Future<Bitmap> loadBitmapTask = mLoadBitmapTask;
@@ -896,7 +896,6 @@ public class CropImage extends AbstractGalleryActivity {
             // load in progress, try to cancel it
             loadBitmapTask.cancel();
             loadBitmapTask.waitDone();
-            mProgressDialog.dismiss();
         }
 
         Future<Intent> saveTask = mSaveTask;
@@ -904,7 +903,6 @@ public class CropImage extends AbstractGalleryActivity {
             // save in progress, try to cancel it
             saveTask.cancel();
             saveTask.waitDone();
-            mProgressDialog.dismiss();
         }
         GLRoot root = getGLRoot();
         root.lockRenderThread();
@@ -912,6 +910,13 @@ public class CropImage extends AbstractGalleryActivity {
             mCropView.pause();
         } finally {
             root.unlockRenderThread();
+        }
+    }
+
+    private void dismissProgressDialogIfShown() {
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
         }
     }
 
