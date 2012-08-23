@@ -38,7 +38,8 @@ public class ManageCacheDrawer extends AlbumSetSlotRenderer {
 
     public ManageCacheDrawer(GalleryActivity activity, SelectionManager selectionManager,
             SlotView slotView, LabelSpec labelSpec, int cachePinSize, int cachePinMargin) {
-        super(activity, selectionManager, slotView, labelSpec);
+        super(activity, selectionManager, slotView, labelSpec,
+                activity.getResources().getColor(R.color.cache_placeholder));
         Context context = (Context) activity;
         mCheckedItem = new ResourceTexture(
                 context, R.drawable.btn_make_offline_normal_on_holo_dark);

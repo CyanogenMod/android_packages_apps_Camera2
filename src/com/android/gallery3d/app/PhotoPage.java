@@ -168,6 +168,11 @@ public class PhotoPage extends ActivityState implements
 
     private final FloatAnimation mBackgroundFade = new BackgroundFadeOut();
 
+    @Override
+    protected int getBackgroundColorId() {
+        return R.color.photo_background;
+    }
+
     private final GLView mRootPane = new GLView() {
         @Override
         protected void renderBackground(GLCanvas view) {
@@ -180,7 +185,7 @@ public class PhotoPage extends ActivityState implements
                 } else {
                     float fadeAlpha = mBackgroundFade.get();
                     if(fadeAlpha < 1f) {
-                        view.clearBuffer(0f, 0f, 0f, 1f);
+                        view.clearBuffer(getBackgroundColor());
                         view.setAlpha(fadeAlpha);
                     }
                     mFadeOutTexture.draw(view, 0, 0);
@@ -188,7 +193,7 @@ public class PhotoPage extends ActivityState implements
                     return;
                 }
             }
-            view.clearBuffer(0f, 0f, 0f, 1f);
+            view.clearBuffer(getBackgroundColor());
         }
 
         @Override

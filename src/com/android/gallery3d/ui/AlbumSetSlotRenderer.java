@@ -28,7 +28,7 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
     @SuppressWarnings("unused")
     private static final String TAG = "AlbumSetView";
     private static final int CACHE_SIZE = 96;
-    private static final int PLACEHOLDER_COLOR = 0xFFDDDDDD;
+    private final int mPlaceholderColor;
 
     private final ColorTexture mWaitLoadingTexture;
     private final GalleryActivity mActivity;
@@ -52,20 +52,23 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
         public int leftMargin;
         public int iconSize;
         public int titleRightMargin;
+        public int backgroundColor;
+        public int titleColor;
+        public int countColor;
+        public int borderSize;
     }
 
     public AlbumSetSlotRenderer(GalleryActivity activity, SelectionManager selectionManager,
-            SlotView slotView, LabelSpec labelSpec) {
+            SlotView slotView, LabelSpec labelSpec, int placeholderColor) {
         super ((Context) activity);
         mActivity = activity;
         mSelectionManager = selectionManager;
         mSlotView = slotView;
         mLabelSpec = labelSpec;
+        mPlaceholderColor = placeholderColor;
 
-        mWaitLoadingTexture = new ColorTexture(PLACEHOLDER_COLOR);
+        mWaitLoadingTexture = new ColorTexture(mPlaceholderColor);
         mWaitLoadingTexture.setSize(1, 1);
-
-        Context context = activity.getAndroidContext();
     }
 
     public void setPressedIndex(int index) {
@@ -149,7 +152,7 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
             entry.isWaitLoadingDisplayed = true;
         } else if (entry.isWaitLoadingDisplayed) {
             entry.isWaitLoadingDisplayed = false;
-            content = new FadeInTexture(PLACEHOLDER_COLOR, entry.bitmapTexture);
+            content = new FadeInTexture(mPlaceholderColor, entry.bitmapTexture);
             entry.content = content;
         }
         drawContent(canvas, content, width, height, entry.rotation);

@@ -39,7 +39,7 @@ import com.android.gallery3d.util.RangeArray;
 public class PhotoView extends GLView {
     @SuppressWarnings("unused")
     private static final String TAG = "PhotoView";
-    private static final int PLACEHOLDER_COLOR = 0xFF222222;
+    private final int mPlaceholderColor;
 
     public static final int INVALID_SIZE = -1;
     public static final long INVALID_DATA_VERSION =
@@ -236,6 +236,8 @@ public class PhotoView extends GLView {
         mTileView = new TileImageView(activity);
         addComponent(mTileView);
         Context context = activity.getAndroidContext();
+        mPlaceholderColor = context.getResources().getColor(
+                R.color.photo_placeholder);
         mEdgeView = new EdgeView(context);
         addComponent(mEdgeView);
         mUndoBar = new UndoBarView(context);
@@ -886,7 +888,7 @@ public class PhotoView extends GLView {
 
     // Draw a gray placeholder in the specified rectangle.
     private void drawPlaceHolder(GLCanvas canvas, Rect r) {
-        canvas.fillRect(r.left, r.top, r.width(), r.height(), PLACEHOLDER_COLOR);
+        canvas.fillRect(r.left, r.top, r.width(), r.height(), mPlaceholderColor);
     }
 
     // Draw the video play icon (in the place where the spinner was)

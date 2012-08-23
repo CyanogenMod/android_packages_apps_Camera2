@@ -31,7 +31,7 @@ public class AlbumSlotRenderer extends AbstractSlotRenderer {
         public boolean acceptSlot(int index);
     }
 
-    private static final int PLACEHOLDER_COLOR = 0xFFDDDDDD;
+    private final int mPlaceholderColor;
     private static final int CACHE_SIZE = 96;
 
     private AlbumSlidingWindow mDataWindow;
@@ -48,13 +48,14 @@ public class AlbumSlotRenderer extends AbstractSlotRenderer {
     private SlotFilter mSlotFilter;
 
     public AlbumSlotRenderer(GalleryActivity activity, SlotView slotView,
-            SelectionManager selectionManager) {
+            SelectionManager selectionManager, int placeholderColor) {
         super((Context) activity);
         mActivity = activity;
         mSlotView = slotView;
         mSelectionManager = selectionManager;
+        mPlaceholderColor = placeholderColor;
 
-        mWaitLoadingTexture = new ColorTexture(PLACEHOLDER_COLOR);
+        mWaitLoadingTexture = new ColorTexture(mPlaceholderColor);
         mWaitLoadingTexture.setSize(1, 1);
     }
 
@@ -110,7 +111,7 @@ public class AlbumSlotRenderer extends AbstractSlotRenderer {
             entry.isWaitDisplayed = true;
         } else if (entry.isWaitDisplayed) {
             entry.isWaitDisplayed = false;
-            content = new FadeInTexture(PLACEHOLDER_COLOR, entry.bitmapTexture);
+            content = new FadeInTexture(mPlaceholderColor, entry.bitmapTexture);
             entry.content = content;
         }
         drawContent(canvas, content, width, height, entry.rotation);

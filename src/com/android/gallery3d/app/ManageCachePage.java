@@ -86,12 +86,17 @@ public class ManageCachePage extends ActivityState implements
     private Handler mHandler;
     private boolean mLayoutReady = false;
 
+    @Override
+    protected int getBackgroundColorId() {
+        return R.color.cache_background;
+    }
+
     private GLView mRootPane = new GLView() {
         private float mMatrix[] = new float[16];
 
         @Override
         protected void renderBackground(GLCanvas view) {
-            view.clearBuffer();
+            view.clearBuffer(getBackgroundColor());
         }
 
         @Override

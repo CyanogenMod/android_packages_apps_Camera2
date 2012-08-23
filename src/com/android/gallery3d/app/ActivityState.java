@@ -33,9 +33,11 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.actionbar.ActionBarInterface;
 import com.android.gallery3d.actionbar.ActionBarUtils;
 import com.android.gallery3d.ui.GLView;
+import com.android.gallery3d.util.GalleryUtils;
 
 abstract public class ActivityState {
     protected static final int FLAG_HIDE_ACTION_BAR = 1;
@@ -105,7 +107,19 @@ abstract public class ActivityState {
     protected void onStateResult(int requestCode, int resultCode, Intent data) {
     }
 
+    protected float[] mBackgroundColor;
+
+    protected int getBackgroundColorId() {
+        return R.color.default_background;
+    }
+
+    protected float[] getBackgroundColor() {
+        return mBackgroundColor;
+    }
+
     protected void onCreate(Bundle data, Bundle storedState) {
+        mBackgroundColor = GalleryUtils.intColorToFloatARGBArray(
+                mActivity.getResources().getColor(getBackgroundColorId()));
     }
 
     protected void clearStateResult() {

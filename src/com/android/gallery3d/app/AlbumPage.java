@@ -136,12 +136,17 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         }
     };
 
+    @Override
+    protected int getBackgroundColorId() {
+        return R.color.album_background;
+    }
+
     private final GLView mRootPane = new GLView() {
         private final float mMatrix[] = new float[16];
 
         @Override
         protected void renderBackground(GLCanvas view) {
-            view.clearBuffer();
+            view.clearBuffer(getBackgroundColor());
         }
 
         @Override
@@ -453,7 +458,8 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mSelectionManager.setSelectionListener(this);
         Config.AlbumPage config = Config.AlbumPage.get((Context) mActivity);
         mSlotView = new SlotView(mActivity, config.slotViewSpec);
-        mAlbumView = new AlbumSlotRenderer(mActivity, mSlotView, mSelectionManager);
+        mAlbumView = new AlbumSlotRenderer(mActivity, mSlotView,
+                mSelectionManager, config.placeholderColor);
         mSlotView.setSlotRenderer(mAlbumView);
         mRootPane.addComponent(mSlotView);
         mSlotView.setListener(new SlotView.SimpleListener() {

@@ -24,6 +24,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.MotionEvent;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.MediaItem;
@@ -83,6 +84,11 @@ public class SlideshowPage extends ActivityState {
     private boolean mIsActive = false;
     private final Intent mResultIntent = new Intent();
 
+    @Override
+    protected int getBackgroundColorId() {
+        return R.color.slideshow_background;
+    }
+
     private final GLView mRootPane = new GLView() {
         @Override
         protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
@@ -99,7 +105,7 @@ public class SlideshowPage extends ActivityState {
 
         @Override
         protected void renderBackground(GLCanvas canvas) {
-            canvas.clearBuffer(0f, 0f, 0f, 0f);
+            canvas.clearBuffer(getBackgroundColor());
         }
     };
 

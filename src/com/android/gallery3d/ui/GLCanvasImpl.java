@@ -649,15 +649,18 @@ public class GLCanvasImpl implements GLCanvas {
     }
 
     @Override
-    public void clearBuffer(float r, float g, float b, float a) {
-        mGL.glClearColor(r, g, b, a);
+    public void clearBuffer(float[] argb) {
+        if(argb != null && argb.length == 4) {
+            mGL.glClearColor(argb[1], argb[2], argb[3], argb[0]);
+        } else {
+            mGL.glClearColor(0, 0, 0, 1);
+        }
         mGL.glClear(GL10.GL_COLOR_BUFFER_BIT);
     }
 
     @Override
     public void clearBuffer() {
-        // TODO: Make this grey background color constant
-        clearBuffer(0.93f, 0.93f, 0.93f, 1);
+        clearBuffer(null);
     }
 
     private void setTextureCoords(RectF source) {
