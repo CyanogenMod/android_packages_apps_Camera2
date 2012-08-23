@@ -133,8 +133,7 @@ public class ApiHelper {
     public static final boolean HAS_SHARE_ACTION_PROVIDER =
             Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
 
-    public static final boolean HAS_EFFECTS_RECORDING =
-            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
+    public static final boolean HAS_EFFECTS_RECORDING = false;
 
     public static final boolean HAS_GET_SUPPORTED_VIDEO_SIZE =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
