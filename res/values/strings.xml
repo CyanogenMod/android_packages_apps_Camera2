@@ -175,6 +175,7 @@
     <string name="caching_label">Caching\u2026</string>
 
     <string name="crop_action">Crop</string>
+    <string name="trim_action">Trim</string>
     <string name="set_as">Set as</string>
 
     <!-- String indicating an approximate location eg. Around Palo Alto, CA -->
