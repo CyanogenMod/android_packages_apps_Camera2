@@ -17,8 +17,12 @@
 package com.android.gallery3d.app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnClickListener;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -299,16 +303,50 @@ public class AlbumSetPage extends ActivityState implements
     private void clearLoadingBit(int loadingBit) {
         mLoadingBits &= ~loadingBit;
         if (mLoadingBits == 0 && mIsActive) {
-            // Only show toast when there's no album and we are going to finish
-            // the page. Toast is redundant if we are going to stay on this page.
             if ((mAlbumSetDataAdapter.size() == 0)) {
+                // Only show toast when there's no album and we are going to
+                // finish, otherwise prompt user to add some pictures
                 if (mActivity.getStateManager().getStateCount() > 1) {
                     Toast.makeText(mActivity,
                             R.string.empty_album, Toast.LENGTH_LONG).show();
                     mActivity.getStateManager().finishState(this);
+                } else {
+                    emptyGalleryPrompt((Activity) mActivity);
                 }
+            } else if (mEmptyGalleryPrompt != null) {
+                mEmptyGalleryPrompt = null;
             }
         }
+    }
+
+    private AlertDialog mEmptyGalleryPrompt;
+
+    private void emptyGalleryPrompt(final Context c) {
+        if (mEmptyGalleryPrompt != null) {
+            mEmptyGalleryPrompt.show();
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        builder.setTitle(R.string.empty_album);
+        builder.setNegativeButton(android.R.string.ok, new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        if(GalleryUtils.isCameraAvailable(c)) {
+            builder.setPositiveButton(R.string.switch_to_camera,
+                    new OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            GalleryUtils.startCameraActivity(c);
+                        }
+                    });
+        }
+        mEmptyGalleryPrompt = builder.create();
+        mEmptyGalleryPrompt.show();
     }
 
     private void setLoadingBit(int loadingBit) {
@@ -317,6 +355,7 @@ public class AlbumSetPage extends ActivityState implements
 
     @Override
     public void onPause() {
+        if (mEmptyGalleryPrompt != null) mEmptyGalleryPrompt.dismiss();
         super.onPause();
         mIsActive = false;
         mActionModeHandler.pause();
