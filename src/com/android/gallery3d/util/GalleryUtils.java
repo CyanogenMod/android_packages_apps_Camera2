@@ -24,6 +24,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.ConditionVariable;
 import android.os.Environment;
@@ -39,6 +41,7 @@ import com.android.gallery3d.app.PackagesMonitor;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.ui.BitmapScreenNail;
 import com.android.gallery3d.util.ThreadPool.CancelListener;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
@@ -76,6 +79,18 @@ public class GalleryUtils {
             wm.getDefaultDisplay().getMetrics(metrics);
             sPixelDensity = metrics.density;
         }
+        Resources r = context.getResources();
+        BitmapScreenNail.setPlaceholderColor(r.getColor(
+                R.color.bitmap_screennail_placeholder));
+    }
+
+    public static float[] intColorToFloatARGBArray(int from) {
+        return new float[] {
+            (float) Color.alpha(from) / 255f,
+            (float) Color.red(from) / 255f,
+            (float) Color.green(from) / 255f,
+            (float) Color.blue(from) / 255f
+        };
     }
 
     public static float dpToPixel(float dp) {

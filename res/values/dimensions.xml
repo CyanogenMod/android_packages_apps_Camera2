@@ -20,20 +20,20 @@
     <dimen name="stack_photo_height">120dp</dimen>
 
     <!-- configuration for album set page -->
-    <integer name="albumset_rows_land">1</integer>
-    <integer name="albumset_rows_port">2</integer>
-    <dimen name="albumset_padding_top">15dp</dimen>
-    <dimen name="albumset_padding_bottom">15dp</dimen>
-    <dimen name="albumset_slot_gap">12dp</dimen>
+    <integer name="albumset_rows_land">2</integer>
+    <integer name="albumset_rows_port">3</integer>
+    <dimen name="albumset_padding_top">7dp</dimen>
+    <dimen name="albumset_padding_bottom">7dp</dimen>
+    <dimen name="albumset_slot_gap">7dp</dimen>
 
-    <dimen name="albumset_label_background_height">45dp</dimen>
+    <dimen name="albumset_label_background_height">25dp</dimen>
     <dimen name="albumset_title_offset">10dp</dimen>
     <dimen name="albumset_count_offset">10dp</dimen>
-    <dimen name="albumset_title_font_size">20sp</dimen>
-    <dimen name="albumset_count_font_size">12sp</dimen>
+    <dimen name="albumset_title_font_size">12sp</dimen>
+    <dimen name="albumset_count_font_size">9sp</dimen>
     <dimen name="albumset_left_margin">6dp</dimen>
-    <dimen name="albumset_title_right_margin">30dp</dimen>
-    <dimen name="albumset_icon_size">20dp</dimen>
+    <dimen name="albumset_title_right_margin">20dp</dimen>
+    <dimen name="albumset_icon_size">15dp</dimen>
 
     <!-- configuration for album page -->
     <integer name="album_rows_land">2</integer>

@@ -386,6 +386,7 @@ public class SlotView extends GLView {
     public static class Spec {
         public int slotWidth = -1;
         public int slotHeight = -1;
+        public int slotHeightAdditional = 0;
 
         public int rowsLand = -1;
         public int rowsPort = -1;
@@ -501,7 +502,7 @@ public class SlotView extends GLView {
                 int rows = (mWidth > mHeight) ? mSpec.rowsLand : mSpec.rowsPort;
                 mSlotGap = mSpec.slotGap;
                 mSlotHeight = Math.max(1, (mHeight - (rows - 1) * mSlotGap) / rows);
-                mSlotWidth = mSlotHeight;
+                mSlotWidth = mSlotHeight - mSpec.slotHeightAdditional;
             }
 
             if (mRenderer != null) {

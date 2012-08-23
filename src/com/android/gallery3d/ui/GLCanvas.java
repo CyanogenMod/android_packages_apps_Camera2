@@ -36,6 +36,7 @@ public interface GLCanvas {
 
     // Clear the drawing buffers. This should only be used by GLRoot.
     public void clearBuffer();
+    public void clearBuffer(float[] argb);
 
     // Sets and gets the current alpha, alpha must be in [0, 1].
     public void setAlpha(float alpha);
@@ -121,6 +122,4 @@ public interface GLCanvas {
     public void beginRenderTarget(RawTexture texture);
 
     public void endRenderTarget();
-
-    public void clearBuffer(float r, float g, float b, float a);
 }

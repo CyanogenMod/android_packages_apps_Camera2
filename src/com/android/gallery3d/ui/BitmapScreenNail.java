@@ -33,10 +33,9 @@ import com.android.gallery3d.data.MediaItem;
 public class BitmapScreenNail implements ScreenNail {
     @SuppressWarnings("unused")
     private static final String TAG = "BitmapScreenNail";
-    private static final int PLACEHOLDER_COLOR = 0xFF222222;
+
     // The duration of the fading animation in milliseconds
     private static final int DURATION = 180;
-    private static boolean mDrawPlaceholder = true;
 
     private static final int MAX_SIDE = 640;
 
@@ -61,6 +60,15 @@ public class BitmapScreenNail implements ScreenNail {
 
     public BitmapScreenNail(int width, int height) {
         setSize(width, height);
+    }
+
+    // This gets overridden by bitmap_screennail_placeholder
+    // in GalleryUtils.initialize
+    private static int mPlaceholderColor = 0xFF222222;
+    private static boolean mDrawPlaceholder = true;
+
+    public static void setPlaceholderColor(int color) {
+        mPlaceholderColor = color;
     }
 
     private void setSize(int width, int height) {
@@ -155,7 +163,7 @@ public class BitmapScreenNail implements ScreenNail {
                 mAnimationStartTime = ANIMATION_NEEDED;
             }
             if(mDrawPlaceholder) {
-                canvas.fillRect(x, y, width, height, PLACEHOLDER_COLOR);
+                canvas.fillRect(x, y, width, height, mPlaceholderColor);
             }
             return;
         }
@@ -169,7 +177,7 @@ public class BitmapScreenNail implements ScreenNail {
         }
 
         if (isAnimating()) {
-            canvas.drawMixed(mTexture, PLACEHOLDER_COLOR, getRatio(), x, y,
+            canvas.drawMixed(mTexture, mPlaceholderColor, getRatio(), x, y,
                     width, height);
         } else {
             mTexture.draw(canvas, x, y, width, height);
@@ -180,7 +188,7 @@ public class BitmapScreenNail implements ScreenNail {
     public void draw(GLCanvas canvas, RectF source, RectF dest) {
         if (mBitmap == null) {
             canvas.fillRect(dest.left, dest.top, dest.width(), dest.height(),
-                    PLACEHOLDER_COLOR);
+                    mPlaceholderColor);
             return;
         }
 

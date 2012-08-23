@@ -21,7 +21,6 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.text.TextPaint;
@@ -34,11 +33,7 @@ import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
 public class AlbumLabelMaker {
-    private static final int FONT_COLOR_TITLE = Color.BLACK;
-    private static final int FONT_COLOR_COUNT = 0x80000000;
-
     private static final int BORDER_SIZE = 0;
-    private static final int BACKGROUND_COLOR = 0xFFFFFFFF;
 
     private final AlbumSetSlotRenderer.LabelSpec mSpec;
     private final TextPaint mTitlePaint;
@@ -56,8 +51,8 @@ public class AlbumLabelMaker {
     public AlbumLabelMaker(Context context, AlbumSetSlotRenderer.LabelSpec spec) {
         mContext = context;
         mSpec = spec;
-        mTitlePaint = getTextPaint(spec.titleFontSize, FONT_COLOR_TITLE, false);
-        mCountPaint = getTextPaint(spec.countFontSize, FONT_COLOR_COUNT, false);
+        mTitlePaint = getTextPaint(spec.titleFontSize, spec.titleColor, false);
+        mCountPaint = getTextPaint(spec.countFontSize, spec.countColor, false);
 
         mLocalSetIcon = new LazyLoadedBitmap(R.drawable.frame_overlay_gallery_folder);
         mPicasaIcon = new LazyLoadedBitmap(R.drawable.frame_overlay_gallery_picasa);
@@ -174,7 +169,7 @@ public class AlbumLabelMaker {
             canvas.clipRect(BORDER_SIZE, BORDER_SIZE,
                     bitmap.getWidth() - BORDER_SIZE,
                     bitmap.getHeight() - BORDER_SIZE);
-            canvas.drawColor(BACKGROUND_COLOR, PorterDuff.Mode.SRC);
+            canvas.drawColor(mSpec.backgroundColor, PorterDuff.Mode.SRC);
 
             canvas.translate(BORDER_SIZE, BORDER_SIZE);
 

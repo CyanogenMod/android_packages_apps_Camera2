@@ -109,12 +109,17 @@ public class AlbumSetPage extends ActivityState implements
     private int mLoadingBits = 0;
     private boolean mInitialSynced = false;
 
+    @Override
+    protected int getBackgroundColorId() {
+        return R.color.albumset_background;
+    }
+
     private final GLView mRootPane = new GLView() {
         private final float mMatrix[] = new float[16];
 
         @Override
         protected void renderBackground(GLCanvas view) {
-            view.clearBuffer();
+            view.clearBuffer(getBackgroundColor());
         }
 
         @Override
@@ -369,7 +374,8 @@ public class AlbumSetPage extends ActivityState implements
         mConfig = Config.AlbumSetPage.get((Context) mActivity);
         mSlotView = new SlotView(mActivity, mConfig.slotViewSpec);
         mAlbumSetView = new AlbumSetSlotRenderer(
-                mActivity, mSelectionManager, mSlotView, mConfig.labelSpec);
+                mActivity, mSelectionManager, mSlotView, mConfig.labelSpec,
+                mConfig.placeholderColor);
         mSlotView.setSlotRenderer(mAlbumSetView);
         mSlotView.setListener(new SlotView.SimpleListener() {
             @Override
