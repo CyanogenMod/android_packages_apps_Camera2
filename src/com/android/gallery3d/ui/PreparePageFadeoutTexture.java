@@ -1,10 +1,13 @@
 package com.android.gallery3d.ui;
 
+import android.os.ConditionVariable;
+
 import com.android.gallery3d.ui.GLRoot.OnGLIdleListener;
 
 public class PreparePageFadeoutTexture implements OnGLIdleListener {
+    private static final long TIMEOUT = FadeTexture.DURATION;
     private RawTexture mTexture;
-    private boolean mResultReady = false;
+    private ConditionVariable mResultReady = new ConditionVariable(false);
     private GLView mRootPane;
 
     public PreparePageFadeoutTexture(int w, int h,  GLView rootPane) {
@@ -13,14 +16,11 @@ public class PreparePageFadeoutTexture implements OnGLIdleListener {
     }
 
     public synchronized RawTexture get() {
-        try {
-            while (!mResultReady) {
-                wait();
-            }
-        } catch (InterruptedException e) {
-            // Since this is just used for a transition, not that important
+        if (mResultReady.block(TIMEOUT)) {
+            return mTexture;
+        } else {
+            return null;
         }
-        return mTexture;
     }
 
     @Override
@@ -28,10 +28,7 @@ public class PreparePageFadeoutTexture implements OnGLIdleListener {
             canvas.beginRenderTarget(mTexture);
             mRootPane.render(canvas);
             canvas.endRenderTarget();
-            synchronized (this) {
-                mResultReady = true;
-                notifyAll();
-            }
+            mResultReady.open();
             return false;
     }
 }
