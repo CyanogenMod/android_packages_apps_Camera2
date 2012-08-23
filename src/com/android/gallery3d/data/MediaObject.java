@@ -36,6 +36,7 @@ public abstract class MediaObject {
     public static final int SUPPORT_EDIT = 1 << 9;
     public static final int SUPPORT_INFO = 1 << 10;
     public static final int SUPPORT_IMPORT = 1 << 11;
+    public static final int SUPPORT_TRIM = 1 << 12;
     public static final int SUPPORT_ALL = 0xffffffff;
 
     // These are the bits returned from getMediaType():

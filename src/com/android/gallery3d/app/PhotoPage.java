@@ -668,6 +668,10 @@ public class PhotoPage extends ActivityState implements
                         : REQUEST_CROP);
                 return true;
             }
+            case R.id.action_trim: {
+                // TODO: Add trimming activity here.
+                return true;
+            }
             case R.id.action_edit: {
                 Intent intent = new Intent(Intent.ACTION_EDIT)
                         .setData(manager.getContentUri(path))
