@@ -233,25 +233,23 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         }
     }
 
-    private PreparePageFadeoutTexture mPrepareFadeoutTask;
-
-    private void startPrepareFadeOutTexture() {
+    private void prepareFadeOutTexture() {
         GLRoot root = mActivity.getGLRoot();
-        mPrepareFadeoutTask = new PreparePageFadeoutTexture(
+        PreparePageFadeoutTexture task = new PreparePageFadeoutTexture(
                 mSlotView.getWidth(), mSlotView.getHeight() +
                 mActivity.getGalleryActionBar().getHeight(), mRootPane);
+        RawTexture texture = null;
         root.unlockRenderThread();
         try {
-            root.addOnGLIdleListener(mPrepareFadeoutTask);
+            root.addOnGLIdleListener(task);
+            texture = task.get();
         } finally {
             root.lockRenderThread();
         }
-    }
 
-    private void finishPrepareFadeOutTexture() {
-        mActivity.getTransitionStore().put(KEY_FADE_TEXTURE,
-                mPrepareFadeoutTask.get());
-        mPrepareFadeoutTask = null;
+        if (texture != null) {
+            mActivity.getTransitionStore().put(KEY_FADE_TEXTURE, texture);
+        }
     }
 
     private void onSingleTapUp(int slotIndex) {
@@ -266,9 +264,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             // Show pressed-up animation for the single-tap.
             mAlbumView.setPressedIndex(slotIndex);
             mAlbumView.setPressedUp();
-            startPrepareFadeOutTexture();
             mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_PICK_PHOTO, slotIndex, 0),
                     FadeTexture.DURATION);
+            prepareFadeOutTexture();
         }
     }
 
@@ -282,7 +280,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         } else {
             // Get into the PhotoPage.
             // mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
-            finishPrepareFadeOutTexture();
             Bundle data = new Bundle();
             data.putInt(PhotoPage.KEY_INDEX_HINT, slotIndex);
             data.putParcelable(PhotoPage.KEY_OPEN_ANIMATION_RECT,

@@ -8,6 +8,7 @@ public class PreparePageFadeoutTexture implements OnGLIdleListener {
     private static final long TIMEOUT = FadeTexture.DURATION;
     private RawTexture mTexture;
     private ConditionVariable mResultReady = new ConditionVariable(false);
+    private boolean mCancelled = false;
     private GLView mRootPane;
 
     public PreparePageFadeoutTexture(int w, int h,  GLView rootPane) {
@@ -16,18 +17,25 @@ public class PreparePageFadeoutTexture implements OnGLIdleListener {
     }
 
     public synchronized RawTexture get() {
-        if (mResultReady.block(TIMEOUT)) {
+        if (mCancelled) {
+            return null;
+        } else if (mResultReady.block(TIMEOUT)) {
             return mTexture;
         } else {
+            mCancelled = true;
             return null;
         }
     }
 
     @Override
     public boolean onGLIdle(GLCanvas canvas, boolean renderRequested) {
-            canvas.beginRenderTarget(mTexture);
-            mRootPane.render(canvas);
-            canvas.endRenderTarget();
+            if(!mCancelled) {
+                canvas.beginRenderTarget(mTexture);
+                mRootPane.render(canvas);
+                canvas.endRenderTarget();
+            } else {
+                mTexture = null;
+            }
             mResultReady.open();
             return false;
     }
