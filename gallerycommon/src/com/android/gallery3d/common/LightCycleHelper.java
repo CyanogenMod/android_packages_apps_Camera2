@@ -16,18 +16,21 @@
 
 package com.android.gallery3d.common;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 
 public class LightCycleHelper {
+    public static final String EXTRA_OUTPUT_DIR = "output_dir";
+    private static final String PANORAMA_FILENAME_PREFIX = "panorama_";
     public static final String LIGHTCYCLE_PACKAGE =
             "com.google.android.apps.lightcycle";
     public static final String LIGHTCYCLE_CAPTURE_CLASS =
             "com.google.android.apps.lightcycle.PanoramaCaptureActivity";
-    public static final String LIGHTCYCLE_VIEW_CLASS =
+    private static final String LIGHTCYCLE_VIEW_CLASS =
             "com.google.android.apps.lightcycle.PanoramaViewActivity";
-    public static final String EXTRA_OUTPUT_DIR = "output_dir";
 
     private static boolean sUpdated;
     private static boolean sHasViewActivity;
@@ -45,35 +48,50 @@ public class LightCycleHelper {
         sHasCaptureActivity = hasLightCycleActivity(pm, LIGHTCYCLE_CAPTURE_CLASS);
     }
 
-    public synchronized static boolean hasLightCycleView(PackageManager pm) {
+    public static synchronized boolean hasLightCycleView(PackageManager pm) {
         if (!sUpdated) {
             update(pm);
         }
         return sHasViewActivity;
     }
 
-    public synchronized static boolean hasLightCycleCapture(PackageManager pm) {
+    public static synchronized boolean hasLightCycleCapture(PackageManager pm) {
         if (!sUpdated) {
             update(pm);
         }
         return sHasCaptureActivity;
     }
 
-    public synchronized static void onPackageAdded(Context context, String packageName) {
+    public static synchronized void onPackageAdded(Context context, String packageName) {
         if (LIGHTCYCLE_PACKAGE.equals(packageName)) {
             update(context.getPackageManager());
         }
     }
 
-    public synchronized static void onPackageRemoved(Context context, String packageName) {
+    public static synchronized void onPackageRemoved(Context context, String packageName) {
         if (LIGHTCYCLE_PACKAGE.equals(packageName)) {
             update(context.getPackageManager());
         }
     }
 
-    public synchronized static void onPackageChanged(Context context, String packageName) {
+    public static synchronized void onPackageChanged(Context context, String packageName) {
         if (LIGHTCYCLE_PACKAGE.equals(packageName)) {
             update(context.getPackageManager());
         }
+    }
+
+    public static void viewPanorama(Activity activity, Uri uri, String type) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW)
+                    .setDataAndType(uri, type)
+                    .setClassName(LIGHTCYCLE_PACKAGE, LIGHTCYCLE_VIEW_CLASS);
+            activity.startActivity(intent);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean isPanorama(String filename) {
+        return filename.startsWith(PANORAMA_FILENAME_PREFIX);
     }
 }
