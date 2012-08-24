@@ -304,7 +304,7 @@ public class MoviePlayer implements
         }
         int position = mVideoView.getCurrentPosition();
         int duration = mVideoView.getDuration();
-        mController.setTimes(position, duration);
+        mController.setTimes(position, duration, 0, 0);
         return position;
     }
 
@@ -376,7 +376,7 @@ public class MoviePlayer implements
     }
 
     @Override
-    public void onSeekEnd(int time) {
+    public void onSeekEnd(int time, int start, int end) {
         mDragging = false;
         mVideoView.seekTo(time);
         setProgress();

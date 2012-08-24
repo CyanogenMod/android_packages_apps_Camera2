@@ -24,7 +24,7 @@ public interface ControllerOverlay {
     void onPlayPause();
     void onSeekStart();
     void onSeekMove(int time);
-    void onSeekEnd(int time);
+    void onSeekEnd(int time, int trimStartTime, int trimEndTime);
     void onShown();
     void onHidden();
     void onReplay();
@@ -51,5 +51,6 @@ public interface ControllerOverlay {
 
   void showErrorMessage(String message);
 
-  void setTimes(int currentTime, int totalTime);
+  void setTimes(int currentTime, int totalTime,
+          int trimStartTime, int trimEndTime);
 }

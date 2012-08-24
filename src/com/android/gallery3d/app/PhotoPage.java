@@ -94,6 +94,7 @@ public class PhotoPage extends ActivityState implements
     private static final int REQUEST_CROP_PICASA = 3;
     private static final int REQUEST_EDIT = 4;
     private static final int REQUEST_PLAY_VIDEO = 5;
+    private static final int REQUEST_TRIM = 6;
 
     public static final String KEY_MEDIA_SET_PATH = "media-set-path";
     public static final String KEY_MEDIA_ITEM_PATH = "media-item-path";
@@ -711,7 +712,9 @@ public class PhotoPage extends ActivityState implements
                 return true;
             }
             case R.id.action_trim: {
-                // TODO: Add trimming activity here.
+                Intent intent = new Intent(mActivity, TrimVideo.class);
+                intent.setData(manager.getContentUri(path));
+                mActivity.startActivityForResult(intent, REQUEST_TRIM);
                 return true;
             }
             case R.id.action_edit: {
