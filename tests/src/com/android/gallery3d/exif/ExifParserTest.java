@@ -20,7 +20,6 @@ import android.content.res.XmlResourceParser;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.test.InstrumentationTestCase;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,338 +57,176 @@ public class ExifParserTest extends InstrumentationTestCase {
     }
 
     public void testParse() throws IOException, ExifInvalidFormatException {
-        ExifParser parser = new ExifParser();
-        parseIfd0(parser.parse(mImageInputStream));
-    }
-
-    private void parseIfd0(IfdParser ifdParser) throws IOException,
-            ExifInvalidFormatException {
-        int type = ifdParser.next();
-        int tagNumber=0;
-        boolean isEnterNextIfd = false;
-        boolean isEnterExifIfd = false;
-        while (type != IfdParser.TYPE_END) {
-            switch (type) {
-                case IfdParser.TYPE_NEW_TAG:
-                    ExifTag tag = ifdParser.readTag();
-                    if (tag.getDataSize() > 4 || tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
-                        long offset = ifdParser.readUnsignedInt();
-                        assertTrue(offset <= Integer.MAX_VALUE);
-                        ifdParser.waitValueOfTag(tag, offset);
-                    } else {
-                        checkTag(tag, ifdParser, mIfd0Value);
-                    }
-                    tagNumber++;
+        ExifParser parser = ExifParser.parse(mImageInputStream);
+        int event = parser.next();
+        while (event != ExifParser.EVENT_END) {
+            switch (event) {
+                case ExifParser.EVENT_START_OF_IFD:
                     break;
-                case IfdParser.TYPE_NEXT_IFD:
-                    parseIfd1(ifdParser.parseIfdBlock());
-                    isEnterNextIfd = true;
-                    break;
-                case IfdParser.TYPE_VALUE_OF_PREV_TAG:
-                    tag = ifdParser.getCorrespodingExifTag();
-                    if(tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
-                        parseExifIfd(ifdParser.parseIfdBlock());
-                        isEnterExifIfd = true;
+                case ExifParser.EVENT_NEW_TAG:
+                    ExifTag tag = parser.getTag();
+                    if (!tag.hasValue()) {
+                        parser.registerForTagValue(tag);
                     } else {
-                        checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mIfd0Value);
+                        checkTag(tag);
                     }
+                    break;
+                case ExifParser.EVENT_VALUE_OF_REGISTERED_TAG:
+                    tag = parser.getTag();
+                    if (tag.getDataType() == ExifTag.TYPE_UNDEFINED) {
+                        byte[] buf = new byte[tag.getComponentCount()];
+                        parser.read(buf);
+                        tag.setValue(buf);
+                    }
+                    checkTag(tag);
                     break;
             }
-            type = ifdParser.next();
+            event = parser.next();
         }
-        assertEquals(mIfd0Value.size(), tagNumber);
-        assertTrue(isEnterNextIfd);
-        assertTrue(isEnterExifIfd);
     }
 
-    private void parseIfd1(IfdParser ifdParser) throws IOException,
-            ExifInvalidFormatException {
-        int type = ifdParser.next();
-        int tagNumber = 0;
-        while (type != IfdParser.TYPE_END) {
-            switch (type) {
-                case IfdParser.TYPE_NEW_TAG:
-                    ExifTag tag = ifdParser.readTag();
-                    if (tag.getDataSize() > 4) {
-                        long offset = ifdParser.readUnsignedInt();
-                        assertTrue(offset <= Integer.MAX_VALUE);
-                        ifdParser.waitValueOfTag(tag, offset);
-                    } else {
-                        checkTag(tag, ifdParser, mIfd1Value);
-                    }
-                    tagNumber++;
-                    break;
-                case IfdParser.TYPE_NEXT_IFD:
-                    fail("Find a ifd after ifd1");
-                    break;
-                case IfdParser.TYPE_VALUE_OF_PREV_TAG:
-                    checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mIfd1Value);
-                    break;
-            }
-            type = ifdParser.next();
+    private void checkTag(ExifTag tag) {
+        HashMap<Short, String> truth = null;
+        switch (tag.getIfd()) {
+            case IfdId.TYPE_IFD_0:
+                truth = mIfd0Value;
+                break;
+            case IfdId.TYPE_IFD_1:
+                truth = mIfd1Value;
+                break;
+            case IfdId.TYPE_IFD_EXIF:
+                truth = mExifIfdValue;
+                break;
+            case IfdId.TYPE_IFD_INTEROPERABILITY:
+                truth = mInteroperabilityIfdValue;
+                break;
         }
-        assertEquals(mIfd1Value.size(), tagNumber);
-    }
 
-    private void parseExifIfd(IfdParser ifdParser) throws IOException,
-            ExifInvalidFormatException {
-        int type = ifdParser.next();
-        int tagNumber = 0;
-        boolean isHasInterIfd = false;
-        boolean isEnterInterIfd = false;
-        while (type != IfdParser.TYPE_END) {
-            switch (type) {
-                case IfdParser.TYPE_NEW_TAG:
-                    ExifTag tag = ifdParser.readTag();
-                    if (tag.getDataSize() > 4) {
-                        long offset = ifdParser.readUnsignedInt();
-                        assertTrue(offset <= Integer.MAX_VALUE);
-                        ifdParser.waitValueOfTag(tag, offset);
-                    } else if (tag.getTagId() == ExifTag.EXIF_TAG.TAG_INTEROPERABILITY_IFD) {
-                        long offset = ifdParser.readUnsignedInt();
-                        assertTrue(offset <= Integer.MAX_VALUE);
-                        ifdParser.waitValueOfTag(tag, offset);
-                        isHasInterIfd = true;
-                    } else {
-                        checkTag(tag, ifdParser, mExifIfdValue);
-                    }
-                    tagNumber++;
-                    break;
-                case IfdParser.TYPE_NEXT_IFD:
-                    fail("Find a ifd after exif ifd");
-                    break;
-                case IfdParser.TYPE_VALUE_OF_PREV_TAG:
-                    tag = ifdParser.getCorrespodingExifTag();
-                    if (tag.getTagId() == ExifTag.EXIF_TAG.TAG_INTEROPERABILITY_IFD) {
-                        parseInteroperabilityIfd(ifdParser.parseIfdBlock());
-                        isEnterInterIfd = true;
-                    } else {
-                        checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mExifIfdValue);
-                    }
-                    break;
-            }
-            type = ifdParser.next();
-        }
-        assertEquals(mExifIfdValue.size(), tagNumber);
-        if (isHasInterIfd) {
-            assertTrue(isEnterInterIfd);
-        }
-    }
-    private void parseInteroperabilityIfd(IfdParser ifdParser) throws IOException,
-            ExifInvalidFormatException {
-        int type = ifdParser.next();
-        int tagNumber = 0;
-        while (type != IfdParser.TYPE_END) {
-            switch (type) {
-                case IfdParser.TYPE_NEW_TAG:
-                    ExifTag tag = ifdParser.readTag();
-                    if (tag.getDataSize() > 4) {
-                        long offset = ifdParser.readUnsignedInt();
-                        assertTrue(offset <= Integer.MAX_VALUE);
-                        ifdParser.waitValueOfTag(tag, offset);
-                    } else {
-                        checkTag(tag, ifdParser, mInteroperabilityIfdValue);
-                    }
-                    tagNumber++;
-                    break;
-                case IfdParser.TYPE_NEXT_IFD:
-                    fail("Find a ifd after exif ifd");
-                    break;
-                case IfdParser.TYPE_VALUE_OF_PREV_TAG:
-                    checkTag(ifdParser.getCorrespodingExifTag(), ifdParser
-                            , mInteroperabilityIfdValue);
-                    break;
-            }
-            type = ifdParser.next();
-        }
-        assertEquals(mInteroperabilityIfdValue.size(), tagNumber);
-    }
-
-    private void checkTag(ExifTag tag, IfdParser ifdParser, HashMap<Short, String> truth)
-            throws IOException {
         String truthString = truth.get(tag.getTagId());
+        String dataString = tag.valueToString();
         if (truthString == null) {
             fail(String.format("Unknown Tag %02x", tag.getTagId()));
         }
-        String dataString = readValueToString(tag, ifdParser);
-        if (!truthString.equals(dataString)) {
-            fail(String.format("Tag %02x: expect %s but %s",
-                    tag.getTagId(), truthString, dataString));
-        }
+        assertEquals(String.format("Tag %02x", tag.getTagId()), truthString, dataString);
     }
 
-    private String readValueToString(ExifTag tag, IfdParser parser) throws IOException {
-        StringBuilder sbuilder = new StringBuilder();
-        switch(tag.getDataType()) {
-            case ExifTag.TYPE_BYTE:
-                byte buf[] = new byte[tag.getComponentCount()];
-                parser.read(buf);
-                for(int i = 0; i < tag.getComponentCount(); i++) {
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(String.format("%02x", buf[i]));
-                }
-                break;
-            case ExifTag.TYPE_ASCII:
-                // trim the string for comparison between xml
-                sbuilder.append(parser.readString(tag.getComponentCount()).trim());
-                break;
-            case ExifTag.TYPE_INT:
-                for(int i = 0; i < tag.getComponentCount(); i++) {
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(parser.readUnsignedInt());
-                }
-                break;
-            case ExifTag.TYPE_RATIONAL:
-                for(int i = 0; i < tag.getComponentCount(); i++) {
-                    Rational r = parser.readUnsignedRational();
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(r.getNominator()).append("/").append(r.getDenominator());
-                }
-                break;
-            case ExifTag.TYPE_SHORT:
-                for(int i = 0; i < tag.getComponentCount(); i++) {
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(parser.readUnsignedShort());
-                }
-                break;
-            case ExifTag.TYPE_SINT:
-                for(int i = 0; i < tag.getComponentCount(); i++) {
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(parser.readInt());
-                }
-                break;
-            case ExifTag.TYPE_SRATIONAL:
-                for(int i = 0; i < tag.getComponentCount(); i++) {
-                    Rational r = parser.readRational();
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(r.getNominator()).append("/").append(r.getDenominator());
-                }
-                break;
-            case ExifTag.TYPE_UNDEFINED:
-                byte buffer[] = new byte[tag.getComponentCount()];
-                parser.read(buffer);
-                for(int i = 0; i < tag.getComponentCount(); i++) {
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(String.format("%02x", buffer[i]));
-                }
-                break;
-        }
-        return sbuilder.toString();
-    }
-
-    public void testSkipToNextIfd() throws ExifInvalidFormatException, IOException {
-        ExifParser exifParser = new ExifParser();
-        IfdParser ifdParser = exifParser.parse(mImageInputStream);
-        int type = ifdParser.next();
-        boolean isEnterNextIfd = false;
-        while (type != IfdParser.TYPE_END) {
-            switch (type) {
-                case IfdParser.TYPE_NEW_TAG:
-                    // Do nothing, we don't care
+    private void parseOneIfd(int ifd, int options, HashMap<Short, String> expectedResult)
+            throws IOException, ExifInvalidFormatException {
+        int numOfTag = 0;
+        ExifParser parser = ExifParser.parse(mImageInputStream, options);
+        int event = parser.next();
+        while(event != ExifParser.EVENT_END) {
+            switch (event) {
+                case ExifParser.EVENT_START_OF_IFD:
+                    assertEquals(ifd, parser.getCurrentIfd());
                     break;
-                case IfdParser.TYPE_NEXT_IFD:
-                    parseIfd1(ifdParser.parseIfdBlock());
-                    isEnterNextIfd = true;
-                    break;
-                case IfdParser.TYPE_VALUE_OF_PREV_TAG:
-                    // We won't get this since to skip everything
-                    fail("Get value of previous tag but we've skip everything");
-                    break;
-            }
-            type = ifdParser.next();
-        }
-        assertTrue(isEnterNextIfd);
-    }
-
-    public void testOnlySaveSomeValue() throws ExifInvalidFormatException, IOException {
-        ExifParser exifParser = new ExifParser();
-        IfdParser ifdParser = exifParser.parse(mImageInputStream);
-        boolean isEnterNextIfd = false;
-        boolean isEnterExifIfd = false;
-        int type = ifdParser.next();
-        while (type != IfdParser.TYPE_END) {
-            switch (type) {
-                case IfdParser.TYPE_NEW_TAG:
-                    ExifTag tag = ifdParser.readTag();
-                    // only interested in these two tags
-                    if (tag.getDataSize() > 4 || tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
-                        if(tag.getTagId() == ExifTag.TIFF_TAG.TAG_MODEL
-                                || tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
-                            long offset = ifdParser.readUnsignedInt();
-                            assertTrue(offset <= Integer.MAX_VALUE);
-                            ifdParser.waitValueOfTag(tag, offset);
-                        }
-                    }
-                    break;
-                case IfdParser.TYPE_NEXT_IFD:
-                    parseIfd1(ifdParser.parseIfdBlock());
-                    isEnterNextIfd = true;
-                    break;
-                case IfdParser.TYPE_VALUE_OF_PREV_TAG:
-                    tag = ifdParser.getCorrespodingExifTag();
-                    if(tag.getTagId() == ExifTag.TIFF_TAG.TAG_EXIF_IFD) {
-                        parseExifIfd(ifdParser.parseIfdBlock());
-                        isEnterExifIfd = true;
+                case ExifParser.EVENT_NEW_TAG:
+                    numOfTag++;
+                    ExifTag tag = parser.getTag();
+                    if (tag.hasValue()) {
+                        checkTag(tag);
                     } else {
-                        checkTag(ifdParser.getCorrespodingExifTag(), ifdParser, mIfd0Value);
+                        parser.registerForTagValue(tag);
                     }
                     break;
+                case ExifParser.EVENT_VALUE_OF_REGISTERED_TAG:
+                    tag = parser.getTag();
+                    if (tag.getDataType() == ExifTag.TYPE_UNDEFINED) {
+                        byte[] buf = new byte[tag.getComponentCount()];
+                        parser.read(buf);
+                        tag.setValue(buf);
+                    }
+                    checkTag(tag);
+                    break;
+                case ExifParser.EVENT_COMPRESSED_IMAGE:
+                case ExifParser.EVENT_UNCOMPRESSED_STRIP:
+                    fail("Invalid Event type: " + event);
+                    break;
             }
-            type = ifdParser.next();
+            event = parser.next();
         }
-        assertTrue(isEnterNextIfd);
-        assertTrue(isEnterExifIfd);
+        assertEquals(expectedResult.size(), numOfTag);
+    }
+
+    public void testOnlyExifIfd() throws IOException, ExifInvalidFormatException {
+        parseOneIfd(IfdId.TYPE_IFD_EXIF, ExifParser.OPTION_IFD_EXIF, mExifIfdValue);
+    }
+
+    public void testOnlyIfd0() throws IOException, ExifInvalidFormatException {
+        parseOneIfd(IfdId.TYPE_IFD_0, ExifParser.OPTION_IFD_0, mIfd0Value);
+    }
+
+    public void testOnlyIfd1() throws IOException, ExifInvalidFormatException {
+        parseOneIfd(IfdId.TYPE_IFD_1, ExifParser.OPTION_IFD_1, mIfd1Value);
+    }
+
+    public void testOnlyInteroperabilityIfd() throws IOException, ExifInvalidFormatException {
+        parseOneIfd(IfdId.TYPE_IFD_INTEROPERABILITY, ExifParser.OPTION_IFD_INTEROPERABILITY
+                , mInteroperabilityIfdValue);
+    }
+
+    public void testOnlyReadSomeTag() throws IOException, ExifInvalidFormatException {
+        ExifParser parser = ExifParser.parse(mImageInputStream, ExifParser.OPTION_IFD_0);
+        int event = parser.next();
+        boolean isTagFound = false;
+        while (event != ExifParser.EVENT_END) {
+            switch (event) {
+                case ExifParser.EVENT_START_OF_IFD:
+                    assertEquals(IfdId.TYPE_IFD_0, parser.getCurrentIfd());
+                    break;
+                case ExifParser.EVENT_NEW_TAG:
+                    ExifTag tag = parser.getTag();
+                    if (tag.getTagId() == ExifTag.TIFF_TAG.TAG_MODEL) {
+                        if (tag.hasValue()) {
+                            isTagFound = true;
+                            checkTag(tag);
+                        } else {
+                            parser.registerForTagValue(tag);
+                        }
+                        parser.skipRemainingTagsInCurrentIfd();
+                    }
+                    break;
+                case ExifParser.EVENT_VALUE_OF_REGISTERED_TAG:
+                    tag = parser.getTag();
+                    assertEquals(ExifTag.TIFF_TAG.TAG_MODEL, tag.getTagId());
+                    checkTag(tag);
+                    isTagFound = true;
+                    break;
+            }
+            event = parser.next();
+        }
+        assertTrue(isTagFound);
     }
 
     public void testReadThumbnail() throws ExifInvalidFormatException, IOException {
-        ExifParser exifParser = new ExifParser();
-        IfdParser ifdParser = exifParser.parse(mImageInputStream);
-        int type = ifdParser.next();
-        while (type != IfdParser.TYPE_END && type != IfdParser.TYPE_NEXT_IFD) {
-            type = ifdParser.next();
-        }
-        if (type == IfdParser.TYPE_END) {
-            Log.i(TAG, "No Thumbnail");
-            return;
-        }
-        IfdParser ifd1Parser = ifdParser.parseIfdBlock();
-        int thumbOffset = 0;
-        int thumbSize = 0;
-        boolean isFinishRead = false;
-        while (!isFinishRead) {
-            switch (ifd1Parser.next()) {
-                case IfdParser.TYPE_NEW_TAG:
-                    ExifTag tag = ifd1Parser.readTag();
-                    if (tag.getTagId() == ExifTag.TIFF_TAG.TAG_JPEG_INTERCHANGE_FORMAT) {
-                        long unsignedInt = ifdParser.readUnsignedInt();
-                        assertTrue(unsignedInt <= Integer.MAX_VALUE);
-                        thumbOffset = (int) unsignedInt;
-                    } else if (tag.getTagId() ==
-                            ExifTag.TIFF_TAG.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH) {
-                        long unsignedInt = ifdParser.readUnsignedInt();
-                        assertTrue(unsignedInt <= Integer.MAX_VALUE);
-                        thumbSize = (int) unsignedInt;
-                    } else if (tag.getTagId() == ExifTag.TIFF_TAG.TAG_COMPRESSION) {
-                        if (ifdParser.readUnsignedShort() ==
-                                ExifTag.TIFF_TAG.COMPRESSION_UNCOMPRESSION) {
-                            // This test doesn't apply to uncompression thumbnail.
-                            return;
+        ExifParser parser = ExifParser.parse(mImageInputStream,
+                ExifParser.OPTION_IFD_1 | ExifParser.OPTION_THUMBNAIL);
+
+        int event = parser.next();
+        Bitmap bmp = null;
+        boolean mIsContainCompressedImage = false;
+        while (event != ExifParser.EVENT_END) {
+            switch (event) {
+                case ExifParser.EVENT_NEW_TAG:
+                    ExifTag tag = parser.getTag();
+                    if (tag.getTagId() == ExifTag.TIFF_TAG.TAG_COMPRESSION) {
+                        if (tag.getUnsignedShort() == ExifTag.TIFF_TAG.COMPRESSION_JPEG) {
+                            mIsContainCompressedImage = true;
                         }
                     }
-                    isFinishRead = thumbOffset != 0 && thumbSize != 0;
                     break;
-                case IfdParser.TYPE_END:
-                    fail("No thumbnail information found");
+                case ExifParser.EVENT_COMPRESSED_IMAGE:
+                    int imageSize = parser.getCompressedImageSize();
+                    byte buf[] = new byte[imageSize];
+                    parser.read(buf);
+                    bmp = BitmapFactory.decodeByteArray(buf, 0, imageSize);
                     break;
             }
+            event = parser.next();
         }
-
-        byte buf[] = new byte[thumbSize];
-        ifd1Parser.skipTo(thumbOffset);
-        ifd1Parser.read(buf);
-        Bitmap bmp = BitmapFactory.decodeByteArray(buf, 0, thumbSize);
-        // Check correctly decoded
-        assertTrue(bmp != null);
+        if (mIsContainCompressedImage) {
+            assertNotNull(bmp);
+        }
     }
 
     @Override
