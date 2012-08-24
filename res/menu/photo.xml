@@ -24,6 +24,7 @@
             android:title="@string/share"
             android:enabled="true"
             android:visible="false"
+            android:actionProviderClass="com.actionbarsherlock.widget.ShareActionProvider"
             android:showAsAction="ifRoom" />
     <item android:id="@+id/action_delete"
             android:icon="@drawable/ic_menu_trash_holo_light"
