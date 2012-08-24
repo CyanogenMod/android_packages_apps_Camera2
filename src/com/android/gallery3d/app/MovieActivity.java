@@ -17,7 +17,6 @@
 package com.android.gallery3d.app;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -32,12 +31,14 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.R;
 import com.android.gallery3d.actionbar.ActionBarInterface;
 import com.android.gallery3d.actionbar.ActionBarUtils;
@@ -51,7 +52,7 @@ import com.android.gallery3d.common.Utils;
  * to set the action bar logo so the playback process looks more seamlessly integrated with
  * the original activity.
  */
-public class MovieActivity extends Activity {
+public class MovieActivity extends SherlockActivity {
     @SuppressWarnings("unused")
     private static final String TAG = "MovieActivity";
     public static final String KEY_LOGO_BITMAP = "logo-bitmap";
@@ -116,19 +117,17 @@ public class MovieActivity extends Activity {
         win.setBackgroundDrawable(null);
     }
 
-    @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void setActionBarLogoFromIntent(Intent intent) {
-        if (ApiHelper.HAS_ACTION_BAR_SET_LOGO) {
-            Bitmap logo = intent.getParcelableExtra(KEY_LOGO_BITMAP);
-            if (logo != null) {
-                getActionBar().setLogo(new BitmapDrawable(getResources(), logo));
-            }
+        Bitmap logo = intent.getParcelableExtra(KEY_LOGO_BITMAP);
+        if (logo != null) {
+            getSupportActionBar().setLogo(
+                    new BitmapDrawable(getResources(), logo));
         }
     }
 
     private void initializeActionBar(Intent intent) {
         mUri = intent.getData();
-        final ActionBarInterface actionBar = ActionBarUtils.getActionBar(this);
+        final ActionBar actionBar = getSupportActionBar();
         setActionBarLogoFromIntent(intent);
         actionBar.setDisplayOptions(ActionBarInterface.DISPLAY_HOME_AS_UP,
                 ActionBarInterface.DISPLAY_HOME_AS_UP);
@@ -168,7 +167,8 @@ public class MovieActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         ActionBarInterface actionBar = ActionBarUtils.getActionBar(this);
-        boolean result = actionBar.createActionMenu(menu, R.menu.movie);
+        getSupportMenuInflater().inflate(R.menu.movie, menu);
+
         // Document says EXTRA_STREAM should be a content: Uri
         // So, we only share the video if it's "content:".
         if (ContentResolver.SCHEME_CONTENT.equals(mUri.getScheme())) {
@@ -178,7 +178,7 @@ public class MovieActivity extends Activity {
         } else {
             menu.findItem(R.id.action_share).setVisible(false);
         }
-        return result;
+        return true;
     }
 
     private Intent createShareIntent() {
