@@ -19,7 +19,7 @@ package com.android.gallery3d.ui;
 import android.content.Context;
 import android.os.StatFs;
 
-import com.android.gallery3d.app.GalleryActivity;
+import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
 import java.io.File;
@@ -40,11 +40,11 @@ public class CacheStorageUsageInfo {
     // number of bytes used for the cache if all pending downloads (and removals) are completed.
     private long mTargetCacheBytes;
 
-    private GalleryActivity mActivity;
+    private AbstractGalleryActivity mActivity;
     private Context mContext;
     private long mUserChangeDelta;
 
-    public CacheStorageUsageInfo(GalleryActivity activity) {
+    public CacheStorageUsageInfo(AbstractGalleryActivity activity) {
         mActivity = activity;
         mContext = activity.getAndroidContext();
     }

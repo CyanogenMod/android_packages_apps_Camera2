@@ -17,7 +17,6 @@
 package com.android.gallery3d.app;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,11 +27,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.data.BitmapPool;
@@ -42,7 +42,7 @@ import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLRootView;
 import com.android.gallery3d.util.ThreadPool;
 
-public class AbstractGalleryActivity extends Activity implements GalleryActivity {
+public class AbstractGalleryActivity extends SherlockActivity implements GalleryContext {
     @SuppressWarnings("unused")
     private static final String TAG = "AbstractGalleryActivity";
     private GLRootView mGLRootView;
@@ -88,24 +88,10 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         toggleStatusBarByOrientation();
     }
 
-    private Menu mOptionsMenu;
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        mOptionsMenu = menu;
         super.onCreateOptionsMenu(menu);
         return getStateManager().createOptionsMenu(menu);
-    }
-
-    @Override
-    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
-    public void invalidateOptionsMenu() {
-        if (ApiHelper.HAS_ACTIVITY_INVALIDATE_OPTIONS_MENU) {
-            super.invalidateOptionsMenu();
-        } else if (mOptionsMenu != null) {
-            mOptionsMenu.clear();
-            getStateManager().createOptionsMenu(mOptionsMenu);
-        }
     }
 
     @Override
@@ -123,7 +109,6 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         return ((GalleryApp) getApplication()).getThreadPool();
     }
 
-    @Override
     public synchronized StateManager getStateManager() {
         if (mStateManager == null) {
             mStateManager = new StateManager(this);
@@ -131,12 +116,10 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         return mStateManager;
     }
 
-    @Override
     public GLRoot getGLRoot() {
         return mGLRootView;
     }
 
-    @Override
     public OrientationManager getOrientationManager() {
         return mOrientationManager;
     }
@@ -272,7 +255,6 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         }
     }
 
-    @Override
     public GalleryActionBar getGalleryActionBar() {
         if (mActionBar == null) {
             mActionBar = new GalleryActionBar(this);
@@ -307,7 +289,6 @@ public class AbstractGalleryActivity extends Activity implements GalleryActivity
         }
     }
 
-    @Override
     public TransitionStore getTransitionStore() {
         return mTransitionStore;
     }

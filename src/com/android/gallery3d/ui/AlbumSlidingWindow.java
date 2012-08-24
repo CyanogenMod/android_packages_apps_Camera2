@@ -19,8 +19,8 @@ package com.android.gallery3d.ui;
 import android.graphics.Bitmap;
 import android.os.Message;
 
+import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.app.AlbumDataLoader;
-import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.MediaItem;
@@ -73,7 +73,7 @@ public class AlbumSlidingWindow implements AlbumDataLoader.DataListener {
     private int mActiveRequestCount = 0;
     private boolean mIsActive = false;
 
-    public AlbumSlidingWindow(GalleryActivity activity,
+    public AlbumSlidingWindow(AbstractGalleryActivity activity,
             AlbumDataLoader source, int cacheSize) {
         source.setDataListener(this);
         mSource = source;

@@ -23,22 +23,23 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.OnMenuVisibilityListener;
+import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.ShareActionProvider;
 import com.android.gallery3d.R;
-import com.android.gallery3d.actionbar.ActionBarInterface;
-import com.android.gallery3d.actionbar.ActionBarInterface.OnMenuVisibilityListener;
-import com.android.gallery3d.actionbar.ActionBarUtils;
-import com.android.gallery3d.actionbar.MenuHolder;
 import com.android.gallery3d.common.ApiHelper;
 
 import java.util.ArrayList;
 
-public class GalleryActionBar implements ActionBarInterface.OnNavigationListener, MenuHolder {
+public class GalleryActionBar implements OnNavigationListener {
     @SuppressWarnings("unused")
     private static final String TAG = "GalleryActionBar";
 
@@ -47,8 +48,8 @@ public class GalleryActionBar implements ActionBarInterface.OnNavigationListener
     private ArrayList<Integer> mActions;
     private Context mContext;
     private LayoutInflater mInflater;
-    private GalleryActivity mActivity;
-    private ActionBarInterface mActionBar;
+    private AbstractGalleryActivity mActivity;
+    private ActionBar mActionBar;
     private int mCurrentIndex;
     private ClusterAdapter mAdapter = new ClusterAdapter();
 
@@ -131,8 +132,8 @@ public class GalleryActionBar implements ActionBarInterface.OnNavigationListener
         return null;
     }
 
-    public GalleryActionBar(GalleryActivity activity) {
-        mActionBar = ActionBarUtils.getActionBar((Activity) activity);
+    public GalleryActionBar(AbstractGalleryActivity activity) {
+        mActionBar = activity.getSupportActionBar();
         mContext = activity.getAndroidContext();
         mActivity = activity;
         mInflater = ((Activity) mActivity).getLayoutInflater();
@@ -183,7 +184,7 @@ public class GalleryActionBar implements ActionBarInterface.OnNavigationListener
             // Don't set cluster runner until action bar is ready.
             mClusterRunner = null;
             mActionBar.setListNavigationCallbacks(mAdapter, this);
-            mActionBar.setNavigationMode(ActionBarInterface.NAVIGATION_MODE_LIST);
+            mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
             setSelectedAction(action);
             mClusterRunner = runner;
         }
@@ -196,7 +197,7 @@ public class GalleryActionBar implements ActionBarInterface.OnNavigationListener
         if (mActionBar != null) {
             mClusterRunner = null;
             if (hideMenu) {
-                mActionBar.setNavigationMode(ActionBarInterface.NAVIGATION_MODE_STANDARD);
+                mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
             }
         }
     }
@@ -222,19 +223,17 @@ public class GalleryActionBar implements ActionBarInterface.OnNavigationListener
 
     @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void setHomeButtonEnabled(boolean enabled) {
-        if (ApiHelper.HAS_ACTION_BAR_SET_HOME_BUTTON_ENABLED) {
-            mActionBar.setHomeButtonEnabled(enabled);
-        }
+        if (mActionBar != null) mActionBar.setHomeButtonEnabled(enabled);
     }
 
     public void setDisplayOptions(boolean displayHomeAsUp, boolean showTitle) {
         if (mActionBar == null) return;
         int options = 0;
-        if (displayHomeAsUp) options |= ActionBarInterface.DISPLAY_HOME_AS_UP;
-        if (showTitle) options |= ActionBarInterface.DISPLAY_SHOW_TITLE;
+        if (displayHomeAsUp) options |= ActionBar.DISPLAY_HOME_AS_UP;
+        if (showTitle) options |= ActionBar.DISPLAY_SHOW_TITLE;
 
         mActionBar.setDisplayOptions(options,
-                ActionBarInterface.DISPLAY_HOME_AS_UP | ActionBarInterface.DISPLAY_SHOW_TITLE);
+                ActionBar.DISPLAY_HOME_AS_UP | ActionBar.DISPLAY_SHOW_TITLE);
         mActionBar.setHomeButtonEnabled(displayHomeAsUp);
     }
 
@@ -297,29 +296,29 @@ public class GalleryActionBar implements ActionBarInterface.OnNavigationListener
         return false;
     }
 
+    private Menu mActionBarMenu;
+    private MenuItem mShareMenuItem;
+
+    public void createActionBarMenu(int menuRes, Menu menu) {
+        mActivity.getSupportMenuInflater().inflate(menuRes, menu);
+        mActionBarMenu = menu;
+        mShareMenuItem = menu.findItem(R.id.action_share);
+    }
+
+    public Menu getMenu() {
+        return mActionBarMenu;
+    }
+
     public boolean hasShareMenuItem() {
-        return mActionBar == null ? false : mActionBar.hasShareMenuItem();
+        return mShareMenuItem != null;
     }
 
-    public void setShareIntent(Intent intent) {
-        mActionBar.setShareIntent(intent);
+    public void setShareIntent(Intent shareIntent) {
+        ((ShareActionProvider) mShareMenuItem.getActionProvider())
+                .setShareIntent(shareIntent);
     }
 
-    public boolean createActionMenu(Menu menu, int menuRes) {
-        return mActionBar.createActionMenu(menu, menuRes);
-    }
-
-    @Override
-    public void setMenuItemVisible(int menuItemId, boolean visible) {
-        mActionBar.setMenuItemVisible(menuItemId, visible);
-    }
-
-    @Override
-    public void setMenuItemTitle(int menuItemId, String title) {
-        mActionBar.setMenuItemTitle(menuItemId, title);
-    }
-
-    public void setMenuItemIntent(int menuItemId, Intent intent) {
-        mActionBar.setMenuItemIntent(menuItemId, intent);
+    public MenuItem findMenuItem(int itemId) {
+        return mActionBarMenu.findItem(itemId);
     }
 }

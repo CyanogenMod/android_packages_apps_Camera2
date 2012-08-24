@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.ui;
 
-import android.content.Context;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.view.GestureDetector;
@@ -24,7 +23,7 @@ import android.view.MotionEvent;
 import android.view.animation.DecelerateInterpolator;
 
 import com.android.gallery3d.anim.Animation;
-import com.android.gallery3d.app.GalleryActivity;
+import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.common.Utils;
 
 public class SlotView extends GLView {
@@ -88,10 +87,9 @@ public class SlotView extends GLView {
     // to prevent allocating memory
     private final Rect mTempRect = new Rect();
 
-    public SlotView(GalleryActivity activity, Spec spec) {
-        mGestureDetector = new GestureDetector(
-                (Context) activity, new MyGestureListener());
-        mScroller = new ScrollerHelper((Context) activity);
+    public SlotView(AbstractGalleryActivity activity, Spec spec) {
+        mGestureDetector = new GestureDetector(activity, new MyGestureListener());
+        mScroller = new ScrollerHelper(activity);
         mHandler = new SynchronizedHandler(activity.getGLRoot());
         setSlotSpec(spec);
     }

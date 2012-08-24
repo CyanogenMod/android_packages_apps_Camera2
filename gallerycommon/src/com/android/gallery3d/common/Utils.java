@@ -310,7 +310,7 @@ public class Utils {
                 Build.DEVICE,
                 Build.MODEL,
                 Build.ID,
-                Build.VERSION.SDK,
+                Build.VERSION.SDK_INT,
                 Build.VERSION.RELEASE,
                 Build.VERSION.INCREMENTAL);
     }

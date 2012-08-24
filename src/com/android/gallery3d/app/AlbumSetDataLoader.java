@@ -76,7 +76,7 @@ public class AlbumSetDataLoader {
 
     private final MySourceListener mSourceListener = new MySourceListener();
 
-    public AlbumSetDataLoader(GalleryActivity activity, MediaSet albumSet, int cacheSize) {
+    public AlbumSetDataLoader(AbstractGalleryActivity activity, MediaSet albumSet, int cacheSize) {
         mSource = Utils.checkNotNull(albumSet);
         mCoverItem = new MediaItem[cacheSize];
         mData = new MediaSet[cacheSize];

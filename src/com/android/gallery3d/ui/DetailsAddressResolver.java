@@ -21,7 +21,7 @@ import android.location.Address;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.android.gallery3d.app.GalleryActivity;
+import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
@@ -32,7 +32,7 @@ import com.android.gallery3d.util.ThreadPool.JobContext;
 
 public class DetailsAddressResolver {
     private AddressResolvingListener mListener;
-    private final GalleryActivity mContext;
+    private final AbstractGalleryActivity mContext;
     private Future<Address> mAddressLookupJob;
     private final Handler mHandler;
 
@@ -54,7 +54,7 @@ public class DetailsAddressResolver {
         public void onAddressAvailable(String address);
     }
 
-    public DetailsAddressResolver(GalleryActivity context) {
+    public DetailsAddressResolver(AbstractGalleryActivity context) {
         mContext = context;
         mHandler = new Handler(Looper.getMainLooper());
     }

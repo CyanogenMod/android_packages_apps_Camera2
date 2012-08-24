@@ -26,13 +26,12 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.view.MenuItem;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.R;
-import com.android.gallery3d.actionbar.MenuHolder;
+import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.app.CropImage;
-import com.android.gallery3d.app.GalleryActivity;
-import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
@@ -64,7 +63,7 @@ public class MenuExecutor {
     private boolean mWaitOnStop;
     private Intent mShareIntent;
 
-    private final GalleryActivity mActivity;
+    private final AbstractGalleryActivity mActivity;
     private final SelectionManager mSelectionManager;
     private final Handler mHandler;
 
@@ -90,7 +89,7 @@ public class MenuExecutor {
     }
 
     public MenuExecutor(
-            GalleryActivity activity, SelectionManager selectionManager) {
+            AbstractGalleryActivity activity, SelectionManager selectionManager) {
         mActivity = Utils.checkNotNull(activity);
         mSelectionManager = Utils.checkNotNull(selectionManager);
         mHandler = new SynchronizedHandler(mActivity.getGLRoot()) {
@@ -157,7 +156,7 @@ public class MenuExecutor {
         mHandler.sendMessage(mHandler.obtainMessage(MSG_TASK_COMPLETE, result, 0, listener));
     }
 
-    public static void updateMenuOperation(MenuHolder menu, int supported) {
+    public static void updateMenuOperation(Menu menu, int supported) {
         boolean supportDelete = (supported & MediaObject.SUPPORT_DELETE) != 0;
         boolean supportRotate = (supported & MediaObject.SUPPORT_ROTATE) != 0;
         boolean supportCrop = (supported & MediaObject.SUPPORT_CROP) != 0;
@@ -169,16 +168,21 @@ public class MenuExecutor {
         boolean supportInfo = (supported & MediaObject.SUPPORT_INFO) != 0;
         boolean supportImport = (supported & MediaObject.SUPPORT_IMPORT) != 0;
 
-        menu.setMenuItemVisible(R.id.action_delete, supportDelete);
-        menu.setMenuItemVisible(R.id.action_rotate_ccw, supportRotate);
-        menu.setMenuItemVisible(R.id.action_rotate_cw, supportRotate);
-        menu.setMenuItemVisible(R.id.action_crop, supportCrop);
-        menu.setMenuItemVisible(R.id.action_share, supportShare);
-        menu.setMenuItemVisible(R.id.action_setas, supportSetAs);
-        menu.setMenuItemVisible(R.id.action_show_on_map, supportShowOnMap);
-        menu.setMenuItemVisible(R.id.action_edit, supportEdit);
-        menu.setMenuItemVisible(R.id.action_details, supportInfo);
-        menu.setMenuItemVisible(R.id.action_import, supportImport);
+        setMenuItemVisible(menu, R.id.action_delete, supportDelete);
+        setMenuItemVisible(menu, R.id.action_rotate_ccw, supportRotate);
+        setMenuItemVisible(menu, R.id.action_rotate_cw, supportRotate);
+        setMenuItemVisible(menu, R.id.action_crop, supportCrop);
+        setMenuItemVisible(menu, R.id.action_share, supportShare);
+        setMenuItemVisible(menu, R.id.action_setas, supportSetAs);
+        setMenuItemVisible(menu, R.id.action_show_on_map, supportShowOnMap);
+        setMenuItemVisible(menu, R.id.action_edit, supportEdit);
+        setMenuItemVisible(menu, R.id.action_details, supportInfo);
+        setMenuItemVisible(menu, R.id.action_import, supportImport);
+    }
+
+    private static void setMenuItemVisible(Menu menu, int itemId, boolean visible) {
+        MenuItem item = menu.findItem(itemId);
+        if (item != null) item.setVisible(visible);
     }
 
     private Path getSingleSelectedPath() {
@@ -244,14 +248,6 @@ public class MenuExecutor {
             case R.id.action_import:
                 title = R.string.Import;
                 break;
-            case R.id.action_share: {
-                if (!ApiHelper.HAS_SHARE_ACTION_PROVIDER) {
-                    Activity activity = (Activity) mActivity;
-                    activity.startActivity(Intent.createChooser(
-                            mShareIntent, activity.getString(R.string.share)));
-                }
-                return;
-            }
             default:
                 return;
         }
@@ -324,10 +320,6 @@ public class MenuExecutor {
         MediaOperation operation = new MediaOperation(action, ids, listener);
         mTask = mActivity.getThreadPool().submit(operation, null);
         mWaitOnStop = waitOnStop;
-    }
-
-    public void setShareIntent(Intent intent) {
-        mShareIntent = intent;
     }
 
     public static String getMimeType(int type) {
