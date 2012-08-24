@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.common;
 
-import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.hardware.Camera;
@@ -75,9 +74,6 @@ public class ApiHelper {
     public static final boolean HAS_AUTO_FOCUS_MOVE_CALLBACK =
             Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
 
-    public static final boolean HAS_ACTIVITY_INVALIDATE_OPTIONS_MENU =
-            hasMethod(Activity.class, "invalidateOptionsMenu");
-
     public static final boolean HAS_REMOTE_VIEWS_SERVICE =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
@@ -130,9 +126,6 @@ public class ApiHelper {
     public static final boolean HAS_MOTION_EVENT_TRANSFORM =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
-    public static final boolean HAS_SHARE_ACTION_PROVIDER =
-            Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
-
     public static final boolean HAS_EFFECTS_RECORDING = false;
 
     public static final boolean HAS_GET_SUPPORTED_VIDEO_SIZE =
@@ -141,20 +134,11 @@ public class ApiHelper {
     public static final boolean HAS_SET_ICON_ATTRIBUTE =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
-    public static final boolean HAS_ACTION_BAR_SET_LOGO =
-            Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
-
-    public static final boolean HAS_ACTION_BAR_SET_HOME_BUTTON_ENABLED =
-            Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
-
     public static final boolean HAS_MEDIA_PROVIDER_FILES_TABLE =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
     public static final boolean HAS_SURFACE_TEXTURE_RECORDING =
             Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
-
-    public static final boolean HAS_MENU_ITEM_SHOW_AS_ACTION =
-            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
     public static final boolean HAS_ACTION_BAR =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
