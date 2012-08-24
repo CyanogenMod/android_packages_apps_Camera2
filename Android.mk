@@ -9,15 +9,10 @@ LOCAL_STATIC_JAVA_LIBRARIES += com.android.gallery3d.common2
 
 LOCAL_SRC_FILES := $(call all-java-files-under, src)
 LOCAL_SRC_FILES += $(call all-java-files-under, src_pd)
-LOCAL_SRC_FILES += $(call all-java-files-under, actionbarsherlock/src)
 LOCAL_SRC_FILES += $(call all-java-files-under, ../Camera/src)
 
-LOCAL_RESOURCE_DIR += $(LOCAL_PATH)/res 
-LOCAL_RESOURCE_DIR += packages/apps/Camera/res
-LOCAL_RESOURCE_DIR += $(LOCAL_PATH)/actionbarsherlock/res
-
-LOCAL_AAPT_FLAGS := --auto-add-overlay \
-    --extra-packages com.android.camera:com.actionbarsherlock
+LOCAL_RESOURCE_DIR += $(LOCAL_PATH)/res packages/apps/Camera/res
+LOCAL_AAPT_FLAGS := --auto-add-overlay --extra-packages com.android.camera
 
 LOCAL_PACKAGE_NAME := Gallery2
 
