@@ -208,6 +208,9 @@
                 <category android:name="android.intent.category.SELECTED_ALTERNATIVE" />
             </intent-filter>
         </activity>
+        <activity android:name="com.android.gallery3d.app.TrimVideo"
+                android:label="@string/trim_label">
+        </activity>
         <activity android:name="com.android.gallery3d.photoeditor.PhotoEditor"
                 android:label="@string/app_name"
                 android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"
