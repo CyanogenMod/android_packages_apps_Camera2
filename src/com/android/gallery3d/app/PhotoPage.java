@@ -37,9 +37,11 @@ import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.R;
 import com.android.gallery3d.anim.FloatAnimation;
 import com.android.gallery3d.common.ApiHelper;
+import com.android.gallery3d.common.LightCycleHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.FilterDeleteSet;
+import com.android.gallery3d.data.LocalImage;
 import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
@@ -182,15 +184,15 @@ public class PhotoPage extends ActivityState implements
     private final GLView mRootPane = new GLView() {
         @Override
         protected void renderBackground(GLCanvas view) {
-            if(mFadeOutTexture != null) {
-                if(mBackgroundFade.calculate(AnimationTime.get())) invalidate();
-                if(!mBackgroundFade.isActive()) {
+            if (mFadeOutTexture != null) {
+                if (mBackgroundFade.calculate(AnimationTime.get())) invalidate();
+                if (!mBackgroundFade.isActive()) {
                     mFadeOutTexture = null;
                     mOpenAnimationRect = null;
                     BitmapScreenNail.enableDrawPlaceholder();
                 } else {
                     float fadeAlpha = mBackgroundFade.get();
-                    if(fadeAlpha < 1f) {
+                    if (fadeAlpha < 1f) {
                         view.clearBuffer(getBackgroundColor());
                         view.setAlpha(fadeAlpha);
                     }
@@ -224,7 +226,7 @@ public class PhotoPage extends ActivityState implements
         mPhotoView = new PhotoView(mActivity);
         mPhotoView.setListener(this);
         mRootPane.addComponent(mPhotoView);
-        mApplication = (GalleryApp)((Activity) mActivity).getApplication();
+        mApplication = (GalleryApp) ((Activity) mActivity).getApplication();
         mOrientationManager = mActivity.getOrientationManager();
         mOrientationManager.addListener(this);
         mActivity.getGLRoot().setOrientationSource(mOrientationManager);
@@ -364,7 +366,7 @@ public class PhotoPage extends ActivityState implements
         // start the opening animation only if it's not restored.
         if (restoreState == null) {
             mFadeOutTexture = mActivity.getTransitionStore().get(AlbumPage.KEY_FADE_TEXTURE);
-            if(mFadeOutTexture != null) {
+            if (mFadeOutTexture != null) {
                 mBackgroundFade.start();
                 BitmapScreenNail.disableDrawPlaceholder();
                 mOpenAnimationRect = (Rect) data.getParcelable(KEY_OPEN_ANIMATION_RECT);
@@ -751,6 +753,8 @@ public class PhotoPage extends ActivityState implements
 
         boolean playVideo = (mSecureAlbum == null) &&
                 ((item.getSupportedOperations() & MediaItem.SUPPORT_PLAY) != 0);
+        boolean viewPanorama =
+                (item.getSupportedOperations() & MediaItem.SUPPORT_VIEW_PANORAMA) != 0;
 
         if (playVideo) {
             // determine if the point is at center (1/6) of the photo view.
@@ -763,6 +767,10 @@ public class PhotoPage extends ActivityState implements
 
         if (playVideo) {
             playVideo(mActivity, item.getPlayUri(), item.getName());
+        } else if (viewPanorama) {
+            LocalImage img = (LocalImage) item;
+            LightCycleHelper.viewPanorama(
+                    mActivity, img.getContentUri(), img.getMimeType());
         } else {
             toggleBars();
         }
