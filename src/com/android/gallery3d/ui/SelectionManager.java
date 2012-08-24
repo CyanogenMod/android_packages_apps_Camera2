@@ -16,7 +16,7 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.app.GalleryContext;
+import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaSet;
@@ -49,8 +49,8 @@ public class SelectionManager {
         public void onSelectionChange(Path path, boolean selected);
     }
 
-    public SelectionManager(GalleryContext galleryContext, boolean isAlbumSet) {
-        mDataManager = galleryContext.getDataManager();
+    public SelectionManager(AbstractGalleryActivity activity, boolean isAlbumSet) {
+        mDataManager = activity.getDataManager();
         mClickedSet = new HashSet<Path>();
         mIsAlbumSet = isAlbumSet;
         mTotal = -1;

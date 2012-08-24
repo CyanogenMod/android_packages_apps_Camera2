@@ -39,9 +39,8 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.ShareActionProvider;
 import com.android.gallery3d.R;
-import com.android.gallery3d.actionbar.ActionBarInterface;
-import com.android.gallery3d.actionbar.ActionBarUtils;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 
@@ -129,8 +128,9 @@ public class MovieActivity extends SherlockActivity {
         mUri = intent.getData();
         final ActionBar actionBar = getSupportActionBar();
         setActionBarLogoFromIntent(intent);
-        actionBar.setDisplayOptions(ActionBarInterface.DISPLAY_HOME_AS_UP,
-                ActionBarInterface.DISPLAY_HOME_AS_UP);
+        actionBar.setDisplayOptions(
+                ActionBar.DISPLAY_HOME_AS_UP,
+                ActionBar.DISPLAY_HOME_AS_UP);
 
         String title = intent.getStringExtra(Intent.EXTRA_TITLE);
         if (title != null) {
@@ -166,17 +166,17 @@ public class MovieActivity extends SherlockActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        ActionBarInterface actionBar = ActionBarUtils.getActionBar(this);
         getSupportMenuInflater().inflate(R.menu.movie, menu);
 
         // Document says EXTRA_STREAM should be a content: Uri
         // So, we only share the video if it's "content:".
+        MenuItem shareItem = menu.findItem(R.id.action_share);
         if (ContentResolver.SCHEME_CONTENT.equals(mUri.getScheme())) {
-            if (actionBar.hasShareMenuItem()) {
-                actionBar.setShareIntent(createShareIntent());
-            }
+            shareItem.setVisible(true);
+            ((ShareActionProvider) shareItem.getActionProvider())
+                    .setShareIntent(createShareIntent());
         } else {
-            menu.findItem(R.id.action_share).setVisible(false);
+            shareItem.setVisible(false);
         }
         return true;
     }

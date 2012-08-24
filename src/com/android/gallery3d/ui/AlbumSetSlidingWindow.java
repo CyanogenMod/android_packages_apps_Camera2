@@ -20,8 +20,8 @@ import android.graphics.Bitmap;
 import android.os.Message;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.app.AlbumSetDataLoader;
-import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.DataSourceType;
@@ -89,7 +89,7 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
         private BitmapLoader coverLoader;
     }
 
-    public AlbumSetSlidingWindow(GalleryActivity activity,
+    public AlbumSetSlidingWindow(AbstractGalleryActivity activity,
             AlbumSetDataLoader source, AlbumSetSlotRenderer.LabelSpec labelSpec, int cacheSize) {
         source.setModelListener(this);
         mSource = source;

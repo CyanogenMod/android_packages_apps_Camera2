@@ -28,7 +28,7 @@ import android.view.View.MeasureSpec;
 import android.view.animation.AccelerateInterpolator;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.app.GalleryActivity;
+import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
@@ -232,7 +232,7 @@ public class PhotoView extends GLView {
     // item. The value Integer.MAX_VALUE means there is no such hint.
     private int mUndoIndexHint = Integer.MAX_VALUE;
 
-    public PhotoView(GalleryActivity activity) {
+    public PhotoView(AbstractGalleryActivity activity) {
         mTileView = new TileImageView(activity);
         addComponent(mTileView);
         Context context = activity.getAndroidContext();

@@ -16,10 +16,8 @@
 
 package com.android.gallery3d.ui;
 
-import android.content.Context;
-
+import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.app.AlbumSetDataLoader;
-import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.ui.AlbumSetSlidingWindow.AlbumSetEntry;
@@ -31,7 +29,7 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
     private final int mPlaceholderColor;
 
     private final ColorTexture mWaitLoadingTexture;
-    private final GalleryActivity mActivity;
+    private final AbstractGalleryActivity mActivity;
     private final SelectionManager mSelectionManager;
     protected final LabelSpec mLabelSpec;
 
@@ -58,9 +56,10 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
         public int borderSize;
     }
 
-    public AlbumSetSlotRenderer(GalleryActivity activity, SelectionManager selectionManager,
+    public AlbumSetSlotRenderer(AbstractGalleryActivity activity,
+            SelectionManager selectionManager,
             SlotView slotView, LabelSpec labelSpec, int placeholderColor) {
-        super ((Context) activity);
+        super (activity);
         mActivity = activity;
         mSelectionManager = selectionManager;
         mSlotView = slotView;
