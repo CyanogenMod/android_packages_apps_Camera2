@@ -57,70 +57,23 @@ public class ExifReaderTest extends InstrumentationTestCase {
     public void testRead() throws ExifInvalidFormatException, IOException {
         ExifReader reader = new ExifReader();
         ExifData exifData = reader.getExifData(mImageInputStream);
-        checkIfd(exifData, ExifData.TYPE_IFD_0, mIfd0Value);
-        checkIfd(exifData, ExifData.TYPE_IFD_1, mIfd1Value);
-        checkIfd(exifData, ExifData.TYPE_IFD_EXIF, mExifIfdValue);
-        checkIfd(exifData, ExifData.TYPE_IFD_INTEROPERABILITY, mInteroperabilityIfdValue);
+        checkIfd(exifData.getIfdData(IfdId.TYPE_IFD_0), mIfd0Value);
+        checkIfd(exifData.getIfdData(IfdId.TYPE_IFD_1), mIfd1Value);
+        checkIfd(exifData.getIfdData(IfdId.TYPE_IFD_EXIF), mExifIfdValue);
+        checkIfd(exifData.getIfdData(IfdId.TYPE_IFD_INTEROPERABILITY),
+                mInteroperabilityIfdValue);
     }
 
-    private void checkIfd(ExifData exifData, int ifdType, HashMap<Short, String> ifdValue)
-            throws IOException {
-        IfdData ifd = exifData.getIfdData(ifdType);
+    private void checkIfd(IfdData ifd, HashMap<Short, String> ifdValue) {
         if (ifd == null) {
             assertEquals(0 ,ifdValue.size());
             return;
         }
         ExifTag[] tags = ifd.getAllTags(new ExifTag[0]);
         for (ExifTag tag : tags) {
-            assertEquals(ifdValue.get(tag.getTagId()), readValueToString(tag, ifd));
+            assertEquals(ifdValue.get(tag.getTagId()), tag.valueToString());
         }
         assertEquals(ifdValue.size(), tags.length);
-    }
-
-    private String readValueToString(ExifTag tag, IfdData ifdData) throws IOException {
-        StringBuilder sbuilder = new StringBuilder();
-        switch(tag.getDataType()) {
-            case ExifTag.TYPE_UNDEFINED:
-            case ExifTag.TYPE_BYTE:
-                byte buf[] = new byte[tag.getComponentCount()];
-                ifdData.getBytes(tag.getTagId(), buf);
-                for(int i = 0; i < tag.getComponentCount(); i++) {
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(String.format("%02x", buf[i]));
-                }
-                break;
-            case ExifTag.TYPE_ASCII:
-                // trim the string for comparison between xml
-                sbuilder.append(ifdData.getString(tag.getTagId()).trim());
-                break;
-            case ExifTag.TYPE_INT:
-                for(int i = 0; i < tag.getComponentCount(); i++) {
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(ifdData.getUnsignedInt(tag.getTagId(), i));
-                }
-                break;
-            case ExifTag.TYPE_SRATIONAL:
-            case ExifTag.TYPE_RATIONAL:
-                for(int i = 0; i < tag.getComponentCount(); i++) {
-                    Rational r = ifdData.getRational(tag.getTagId(), i);
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(r.getNominator()).append("/").append(r.getDenominator());
-                }
-                break;
-            case ExifTag.TYPE_SHORT:
-                for(int i = 0; i < tag.getComponentCount(); i++) {
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(ifdData.getUnsignedShort(tag.getTagId(), i));
-                }
-                break;
-            case ExifTag.TYPE_SINT:
-                for(int i = 0; i < tag.getComponentCount(); i++) {
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(ifdData.getInt(tag.getTagId(), i));
-                }
-                break;
-        }
-        return sbuilder.toString();
     }
 
     @Override

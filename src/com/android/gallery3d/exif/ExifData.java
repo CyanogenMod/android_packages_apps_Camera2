@@ -15,22 +15,33 @@
  */
 
 package com.android.gallery3d.exif;
-
-
+/**
+ *  This class stores the EXIF header in IFDs according to the JPEG specification.
+ *  It is the result produced by {@link ExifReader}.
+ *  @see ExifReader
+ *  @see IfdData
+ */
 public class ExifData {
-    public static final int TYPE_IFD_0 = 0;
-    public static final int TYPE_IFD_EXIF = 1;
-    public static final int TYPE_IFD_1 = 2;
-    public static final int TYPE_IFD_GPS = 3;
-    public static final int TYPE_IFD_INTEROPERABILITY = 4;
+    private final IfdData[] mIfdDatas = new IfdData[IfdId.TYPE_IFD_COUNT];
 
-    private final IfdData[] mIfdDatas = new IfdData[5];
-
-    public IfdData getIfdData(int ifdType) {
-        return mIfdDatas[ifdType];
+    /**
+     * Gets the IFD data of the specified IFD.
+     *
+     * @see IfdId#TYPE_IFD_0
+     * @see IfdId#TYPE_IFD_1
+     * @see IfdId#TYPE_IFD_EXIF
+     * @see IfdId#TYPE_IFD_GPS
+     * @see IfdId#TYPE_IFD_INTEROPERABILITY
+     */
+    public IfdData getIfdData(int ifdId) {
+        return mIfdDatas[ifdId];
     }
 
+    /**
+     * Adds IFD data. If IFD data of the same type already exists,
+     * it will be replaced by the new data.
+     */
     public void addIfdData(IfdData data) {
-        mIfdDatas[data.getIfdType()] = data;
+        mIfdDatas[data.getId()] = data;
     }
 }

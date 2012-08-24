@@ -16,99 +16,64 @@
 
 package com.android.gallery3d.exif;
 
-import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class stores all the tags in an IFD.
+ *
+ * @see ExifData
+ * @see ExifTag
+ */
 public class IfdData {
 
-    private final int mIfdType;
+    private final int mIfdId;
     private final Map<Short, ExifTag> mExifTags = new HashMap<Short, ExifTag>();
-    private final Map<Short, Object> mValues = new HashMap<Short, Object>();
 
-    public IfdData(int ifdType) {
-        mIfdType = ifdType;
+    /**
+     * Creates an IfdData with given IFD ID.
+     *
+     * @see IfdId#TYPE_IFD_0
+     * @see IfdId#TYPE_IFD_1
+     * @see IfdId#TYPE_IFD_EXIF
+     * @see IfdId#TYPE_IFD_GPS
+     * @see IfdId#TYPE_IFD_INTEROPERABILITY
+     */
+    public IfdData(int ifdId) {
+        mIfdId = ifdId;
     }
 
+    /**
+     * Get a array the contains all {@link ExifTag} in this IFD.
+     */
     public ExifTag[] getAllTags(ExifTag[] outTag) {
         return mExifTags.values().toArray(outTag);
     }
 
-    public int getIfdType() {
-        return mIfdType;
+    /**
+     * Gets the ID of this IFD.
+     *
+     * @see IfdId#TYPE_IFD_0
+     * @see IfdId#TYPE_IFD_1
+     * @see IfdId#TYPE_IFD_EXIF
+     * @see IfdId#TYPE_IFD_GPS
+     * @see IfdId#TYPE_IFD_INTEROPERABILITY
+     */
+    public int getId() {
+        return mIfdId;
     }
 
+    /**
+     * Gets the {@link ExifTag} with given tag id. Return null if there is no such tag.
+     */
     public ExifTag getTag(short tagId) {
         return mExifTags.get(tagId);
     }
 
-    public short getShort(short tagId, int index) {
-        return (Short) Array.get(mValues.get(tagId), index);
-    }
-
-    public short getShort(short tagId) {
-        return (Short) Array.get(mValues.get(tagId), 0);
-    }
-
-    public int getUnsignedShort(short tagId, int index) {
-        return (Integer) Array.get(mValues.get(tagId), index);
-    }
-
-    public int getUnsignedShort(short tagId) {
-        return (Integer) Array.get(mValues.get(tagId), 0);
-    }
-
-    public int getInt(short tagId, int index) {
-        return (Integer) Array.get(mValues.get(tagId), index);
-    }
-
-    public int getInt(short tagId) {
-        return (Integer) Array.get(mValues.get(tagId), 0);
-    }
-
-    public long getUnsignedInt(short tagId, int index) {
-        return (Long) Array.get(mValues.get(tagId), index);
-    }
-
-    public long getUnsignedInt(short tagId) {
-        return (Long) Array.get(mValues.get(tagId), 0);
-    }
-
-    public String getString(short tagId) {
-        return (String) mValues.get(tagId);
-    }
-
-    public Rational getRational(short tagId, int index) {
-        return ((Rational[]) mValues.get(tagId))[index];
-    }
-
-    public Rational getRational(short tagId) {
-        return ((Rational[]) mValues.get(tagId))[0];
-    }
-
-    public int getBytes(short tagId, byte[] buf) {
-        return getBytes(tagId, buf, 0, buf.length);
-    }
-
-    public int getBytes(short tagId, byte[] buf, int offset, int length) {
-        Object data = mValues.get(tagId);
-        if (Array.getLength(data) < length + offset) {
-            System.arraycopy(data, offset, buf, 0, Array.getLength(data) - offset);
-            return Array.getLength(data) - offset;
-        } else {
-            System.arraycopy(data, offset, buf, 0, length);
-            return length;
-        }
-    }
-
-    public void addTag(ExifTag tag, Object object) {
-        mExifTags.put(tag.getTagId(),  tag);
-        if (object.getClass().isArray() || object.getClass() == String.class) {
-            mValues.put(tag.getTagId(), object);
-        } else {
-            Object array = Array.newInstance(object.getClass(), 1);
-            Array.set(array, 0, object);
-            mValues.put(tag.getTagId(), array);
-        }
+    /**
+     * Adds or replaces a {@link ExifTag}.
+     */
+    public void setTag(ExifTag tag) {
+        mExifTags.put(tag.getTagId(), tag);
     }
 }
