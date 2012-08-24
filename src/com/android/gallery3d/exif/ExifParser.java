@@ -137,7 +137,7 @@ public class ExifParser {
     private static final int TAG_SIZE = 12;
     private static final int OFFSET_SIZE = 2;
 
-    private final TiffInputStream mTiffStream;
+    private final CountedDataInputStream mTiffStream;
     private final int mOptions;
     private int mIfdStartOffset = 0;
     private int mNumOfTagInIfd = 0;
@@ -174,7 +174,7 @@ public class ExifParser {
     private ExifParser(InputStream inputStream, int options)
             throws IOException, ExifInvalidFormatException {
         seekTiffData(inputStream);
-        mTiffStream = new TiffInputStream(inputStream);
+        mTiffStream = new CountedDataInputStream(inputStream);
         mOptions = options;
         if (mTiffStream.getReadByteCount() == 0) {
             parseTiffHeader();
