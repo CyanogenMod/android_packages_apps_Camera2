@@ -24,7 +24,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 
-class TiffInputStream extends FilterInputStream {
+class CountedDataInputStream extends FilterInputStream {
 
     private int mCount = 0;
 
@@ -32,7 +32,7 @@ class TiffInputStream extends FilterInputStream {
     private final byte mByteArray[] = new byte[8];
     private final ByteBuffer mByteBuffer = ByteBuffer.wrap(mByteArray);
 
-    protected TiffInputStream(InputStream in) {
+    protected CountedDataInputStream(InputStream in) {
         super(in);
     }
 
@@ -42,26 +42,28 @@ class TiffInputStream extends FilterInputStream {
 
     @Override
     public int read(byte[] b) throws IOException {
-        return read(b, 0, b.length);
+        int r = in.read(b);
+        mCount += (r >= 0) ? r : 0;
+        return r;
     }
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
-        int r = super.read(b, off, len);
+        int r = in.read(b, off, len);
         mCount += (r >= 0) ? r : 0;
         return r;
     }
 
     @Override
     public int read() throws IOException {
-        int r = super.read();
+        int r = in.read();
         mCount += (r >= 0) ? 1 : 0;
         return r;
     }
 
     @Override
     public long skip(long length) throws IOException {
-        long skip = super.skip(length);
+        long skip = in.skip(length);
         mCount += skip;
         return skip;
     }
