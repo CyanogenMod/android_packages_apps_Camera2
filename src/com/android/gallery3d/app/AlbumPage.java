@@ -269,10 +269,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         } else {
             // Show pressed-up animation for the single-tap.
             mAlbumView.setPressedIndex(slotIndex);
-            mAlbumView.setPressedUp();
-            mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_PICK_PHOTO, slotIndex, 0),
-                    FadeTexture.DURATION);
             prepareFadeOutTexture();
+            mAlbumView.setPressedIndex(-1);
+            pickPhoto(slotIndex);
         }
     }
 
