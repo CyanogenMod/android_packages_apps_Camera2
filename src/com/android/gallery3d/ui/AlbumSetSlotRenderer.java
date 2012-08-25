@@ -174,11 +174,13 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
     protected int renderLabel(
             GLCanvas canvas, AlbumSetEntry entry, int width, int height) {
         Texture content = checkTexture(entry.labelTexture);
-        if (content != null) {
-            int b = AlbumLabelMaker.getBorderSize();
-            int h = content.getHeight();
-            content.draw(canvas, -b, height - h + b, width + b + b, h);
+        if (content == null) {
+            content = mWaitLoadingTexture;
         }
+        int b = AlbumLabelMaker.getBorderSize();
+        int h = mLabelSpec.labelBackgroundHeight;
+        content.draw(canvas, -b, height - h + b, width + b + b, h);
+
         return 0;
     }
 
