@@ -133,7 +133,7 @@ public class PhotoPage extends ActivityState implements
 
     private RawTexture mFadeOutTexture;
     private Rect mOpenAnimationRect;
-    public static final int ANIM_TIME_OPENING = 300;
+    public static final int ANIM_TIME_OPENING = 400;
 
     // The item that is deleted (but it can still be undeleted before commiting)
     private Path mDeletePath;
@@ -191,7 +191,7 @@ public class PhotoPage extends ActivityState implements
                         view.setAlpha(fadeAlpha);
                     }
                     mFadeOutTexture.draw(view, 0, 0);
-                    view.setAlpha(1f);
+                    view.setAlpha(1f - fadeAlpha);
                     return;
                 }
             }

@@ -1417,11 +1417,9 @@ class PositionController {
                 case ANIM_KIND_CAPTURE:
                     progress = 1 - f;  // linear
                     break;
+                case ANIM_KIND_OPENING:
                 case ANIM_KIND_SCALE:
                     progress = 1 - f * f;  // quadratic
-                    break;
-                case ANIM_KIND_OPENING:
-                    progress = 1 - f * f * f;  // x^3
                     break;
                 case ANIM_KIND_SNAPBACK:
                 case ANIM_KIND_ZOOM:
