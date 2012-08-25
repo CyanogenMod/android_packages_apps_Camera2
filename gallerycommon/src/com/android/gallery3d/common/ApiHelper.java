@@ -35,6 +35,7 @@ public class ApiHelper {
         public static final int ICE_CREAM_SANDWICH = 14;
         public static final int ICE_CREAM_SANDWICH_MR1 = 15;
         public static final int JELLY_BEAN = 16;
+        public static final int JELLY_BEAN_MR1 = 17;
     }
 
     public static final boolean ENABLE_PHOTO_EDITOR =
@@ -146,6 +147,9 @@ public class ApiHelper {
     // Ex: View.setTranslationX.
     public static final boolean HAS_VIEW_TRANSFORM_PROPERTIES =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
+    public static final boolean HAS_CAMERA_HDR =
+            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1;
 
     public static final boolean CAN_START_PREVIEW_IN_JPEG_CALLBACK =
             Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
