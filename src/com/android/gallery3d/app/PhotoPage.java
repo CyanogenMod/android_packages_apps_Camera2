@@ -416,7 +416,8 @@ public class PhotoPage extends ActivityState implements
         if (mShowDetails) {
             mDetailsHelper.reloadDetails();
         }
-        if ((photo.getSupportedOperations() & MediaItem.SUPPORT_SHARE) != 0) {
+        if ((mSecureAlbum == null)
+                && (photo.getSupportedOperations() & MediaItem.SUPPORT_SHARE) != 0) {
             updateShareURI(photo.getPath());
         }
     }
@@ -434,10 +435,12 @@ public class PhotoPage extends ActivityState implements
 
     private void updateMenuOperations() {
         MenuItem item = mActionBar.findMenuItem(R.id.action_slideshow);
-        item.setVisible(canDoSlideShow());
+        item.setVisible((mSecureAlbum == null) && canDoSlideShow());
         if (mCurrentPhoto == null) return;
         int supportedOperations = mCurrentPhoto.getSupportedOperations();
-        if (!GalleryUtils.isEditorAvailable((Context) mActivity, "image/*")) {
+        if (mSecureAlbum != null) {
+            supportedOperations = supportedOperations & MediaObject.SUPPORT_DELETE;
+        } else if (!GalleryUtils.isEditorAvailable(mActivity, "image/*")) {
             supportedOperations &= ~MediaObject.SUPPORT_EDIT;
         }
         MenuExecutor.updateMenuOperation(mActionBar.getMenu(), supportedOperations);
@@ -659,7 +662,7 @@ public class PhotoPage extends ActivityState implements
                 return true;
             }
             case R.id.action_crop: {
-                Activity activity = (Activity) mActivity;
+                Activity activity = mActivity;
                 Intent intent = new Intent(CropImage.CROP_ACTION);
                 intent.setClass(activity, CropImage.class);
                 intent.setData(manager.getContentUri(path));
@@ -706,7 +709,7 @@ public class PhotoPage extends ActivityState implements
                         new ImportCompleteListener(mActivity));
                 return true;
             case R.id.action_share:
-                Activity activity = (Activity) mActivity;
+                Activity activity = mActivity;
                 Intent intent = createShareIntent(mCurrentPhoto.getPath());
                 activity.startActivity(Intent.createChooser(intent,
                         activity.getString(R.string.share)));
@@ -750,8 +753,8 @@ public class PhotoPage extends ActivityState implements
             return;
         }
 
-        boolean playVideo =
-                (item.getSupportedOperations() & MediaItem.SUPPORT_PLAY) != 0;
+        boolean playVideo = (mSecureAlbum == null) &&
+                ((item.getSupportedOperations() & MediaItem.SUPPORT_PLAY) != 0);
 
         if (playVideo) {
             // determine if the point is at center (1/6) of the photo view.
@@ -763,7 +766,7 @@ public class PhotoPage extends ActivityState implements
         }
 
         if (playVideo) {
-            playVideo((Activity) mActivity, item.getPlayUri(), item.getName());
+            playVideo(mActivity, item.getPlayUri(), item.getName());
         } else {
             toggleBars();
         }
@@ -960,7 +963,8 @@ public class PhotoPage extends ActivityState implements
 
         mModel.resume();
         mPhotoView.resume();
-        mActionBar.setDisplayOptions(mSetPathString != null, true);
+        mActionBar.setDisplayOptions(
+                ((mSecureAlbum == null) && (mSetPathString != null)), true);
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
 
         if (mAppBridge != null && !mHasActivityResult) {
