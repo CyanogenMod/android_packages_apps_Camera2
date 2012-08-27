@@ -40,14 +40,13 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.util.FloatMath;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.R;
-import com.android.gallery3d.actionbar.ActionBarUtils;
-import com.android.gallery3d.actionbar.ActionBarInterface;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.ExifTags;
@@ -163,9 +162,9 @@ public class CropImage extends AbstractGalleryActivity {
         mCropView = new CropView(this);
         getGLRoot().setContentPane(mCropView);
 
-        ActionBarInterface actionBar = ActionBarUtils.getActionBar(this);
-        int displayOptions = ActionBarInterface.DISPLAY_HOME_AS_UP
-                | ActionBarInterface.DISPLAY_SHOW_TITLE;
+        ActionBar actionBar = getSupportActionBar();
+        int displayOptions = ActionBar.DISPLAY_HOME_AS_UP
+                | ActionBar.DISPLAY_SHOW_TITLE;
         actionBar.setDisplayOptions(displayOptions, displayOptions);
 
         Bundle extra = getIntent().getExtras();
@@ -216,7 +215,7 @@ public class CropImage extends AbstractGalleryActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.crop, menu);
+        getSupportMenuInflater().inflate(R.menu.crop, menu);
         return true;
     }
 

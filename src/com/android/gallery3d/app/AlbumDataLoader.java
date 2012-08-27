@@ -74,7 +74,7 @@ public class AlbumDataLoader {
 
     private ReloadTask mReloadTask;
 
-    public AlbumDataLoader(GalleryActivity context, MediaSet mediaSet) {
+    public AlbumDataLoader(AbstractGalleryActivity context, MediaSet mediaSet) {
         mSource = mediaSet;
 
         mData = new MediaItem[DATA_CACHE_SIZE];

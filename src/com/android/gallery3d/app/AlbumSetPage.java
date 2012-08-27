@@ -24,15 +24,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaDetails;
-import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
@@ -211,7 +211,7 @@ public class AlbumSetPage extends ActivityState implements
         getSlotCenter(slotIndex, center);
         data.putIntArray(AlbumPage.KEY_SET_CENTER, center);
         if (mGetAlbum && targetSet.isLeafAlbum()) {
-            Activity activity = (Activity) mActivity;
+            Activity activity = mActivity;
             Intent result = new Intent()
                     .putExtra(AlbumPicker.KEY_ALBUM_PATH, targetSet.getPath().toString());
             activity.setResult(Activity.RESULT_OK, result);
@@ -303,7 +303,7 @@ public class AlbumSetPage extends ActivityState implements
             // the page. Toast is redundant if we are going to stay on this page.
             if ((mAlbumSetDataAdapter.size() == 0)) {
                 if (mActivity.getStateManager().getStateCount() > 1) {
-                    Toast.makeText((Context) mActivity,
+                    Toast.makeText(mActivity,
                             R.string.empty_album, Toast.LENGTH_LONG).show();
                     mActivity.getStateManager().finishState(this);
                 }
@@ -371,7 +371,7 @@ public class AlbumSetPage extends ActivityState implements
         mSelectionManager = new SelectionManager(mActivity, true);
         mSelectionManager.setSelectionListener(this);
 
-        mConfig = Config.AlbumSetPage.get((Context) mActivity);
+        mConfig = Config.AlbumSetPage.get(mActivity);
         mSlotView = new SlotView(mActivity, mConfig.slotViewSpec);
         mAlbumSetView = new AlbumSetSlotRenderer(
                 mActivity, mSelectionManager, mSlotView, mConfig.labelSpec,
@@ -411,46 +411,47 @@ public class AlbumSetPage extends ActivityState implements
 
     @Override
     protected boolean onCreateActionBar(Menu menu) {
-        Activity activity = (Activity) mActivity;
+        Activity activity = mActivity;
         final boolean inAlbum = mActivity.getStateManager().hasStateClass(AlbumPage.class);
-        boolean result;
+        MenuInflater inflater = getSupportMenuInflater();
+
         if (mGetContent) {
-            result = mActionBar.createActionMenu(menu, R.menu.pickup);
+            inflater.inflate(R.menu.pickup, menu);
             int typeBits = mData.getInt(
                     Gallery.KEY_TYPE_BITS, DataManager.INCLUDE_IMAGE);
             mActionBar.setTitle(GalleryUtils.getSelectionModePrompt(typeBits));
         } else  if (mGetAlbum) {
-            result = mActionBar.createActionMenu(menu, R.menu.pickup);
+            inflater.inflate(R.menu.pickup, menu);
             mActionBar.setTitle(R.string.select_album);
         } else {
-            result = mActionBar.createActionMenu(menu, R.menu.albumset);
+            inflater.inflate(R.menu.albumset, menu);
             mShowClusterMenu = !inAlbum;
             boolean selectAlbums = !inAlbum &&
                     mActionBar.getClusterTypeAction() == FilterUtils.CLUSTER_BY_ALBUM;
-            mActionBar.setMenuItemTitle(R.id.action_select, activity.getString(
+            MenuItem selectItem = menu.findItem(R.id.action_select);
+            selectItem.setTitle(activity.getString(
                     selectAlbums ? R.string.select_album : R.string.select_group));
+
+            MenuItem cameraItem = menu.findItem(R.id.action_camera);
+            cameraItem.setVisible(GalleryUtils.isCameraAvailable(activity));
 
             FilterUtils.setupMenuItems(mActionBar, mMediaSet.getPath(), false);
 
-            mActionBar.setMenuItemVisible(
-                    R.id.action_camera, GalleryUtils.isCameraAvailable(activity));
-
             Intent helpIntent = HelpUtils.getHelpIntent(activity, R.string.help_url_gallery_main);
-            if (helpIntent == null) {
-                mActionBar.setMenuItemVisible(R.id.action_general_help, false);
-            } else {
-                mActionBar.setMenuItemVisible(R.id.action_general_help, true);
-                mActionBar.setMenuItemIntent(R.id.action_general_help, helpIntent);
-            }
+
+            MenuItem helpItem = menu.findItem(R.id.action_general_help);
+            helpItem.setVisible(helpIntent != null);
+            if (helpIntent != null) helpItem.setIntent(helpIntent);
+
             mActionBar.setTitle(mTitle);
             mActionBar.setSubtitle(mSubtitle);
         }
-        return result;
+        return true;
     }
 
     @Override
     protected boolean onItemSelected(MenuItem item) {
-        Activity activity = (Activity) mActivity;
+        Activity activity = mActivity;
         switch (item.getItemId()) {
             case R.id.action_cancel:
                 activity.setResult(Activity.RESULT_CANCELED);

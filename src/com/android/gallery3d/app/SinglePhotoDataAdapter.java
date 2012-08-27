@@ -52,7 +52,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
     private int mLoadingState = LOADING_INIT;
 
     public SinglePhotoDataAdapter(
-            GalleryActivity activity, PhotoView view, MediaItem item) {
+            AbstractGalleryActivity activity, PhotoView view, MediaItem item) {
         mItem = Utils.checkNotNull(item);
         mHasFullImage = (item.getSupportedOperations() &
                 MediaItem.SUPPORT_FULL_IMAGE) != 0;

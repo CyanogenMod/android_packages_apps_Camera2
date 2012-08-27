@@ -26,10 +26,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.provider.MediaStore;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
@@ -310,7 +311,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
     private void onGetContent(final MediaItem item) {
         DataManager dm = mActivity.getDataManager();
-        Activity activity = (Activity) mActivity;
+        Activity activity = mActivity;
         if (mData.getString(Gallery.EXTRA_CROP) != null) {
             // TODO: Handle MtpImagew
             Uri uri = dm.getContentUri(item.getPath());
@@ -456,7 +457,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private void initializeViews() {
         mSelectionManager = new SelectionManager(mActivity, false);
         mSelectionManager.setSelectionListener(this);
-        Config.AlbumPage config = Config.AlbumPage.get((Context) mActivity);
+        Config.AlbumPage config = Config.AlbumPage.get(mActivity);
         mSlotView = new SlotView(mActivity, config.slotViewSpec);
         mAlbumView = new AlbumSlotRenderer(mActivity, mSlotView,
                 mSelectionManager, config.placeholderColor);
@@ -529,30 +530,29 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     @Override
     protected boolean onCreateActionBar(Menu menu) {
         GalleryActionBar actionBar = mActivity.getGalleryActionBar();
-        boolean result;
+        MenuInflater inflator = getSupportMenuInflater();
         if (mGetContent) {
-            result = actionBar.createActionMenu(menu, R.menu.pickup);
+            inflator.inflate(R.menu.pickup, menu);
             int typeBits = mData.getInt(Gallery.KEY_TYPE_BITS,
                     DataManager.INCLUDE_IMAGE);
-
             actionBar.setTitle(GalleryUtils.getSelectionModePrompt(typeBits));
         } else {
-            result = actionBar.createActionMenu(menu, R.menu.album);
+            inflator.inflate(R.menu.album, menu);
             actionBar.setTitle(mMediaSet.getName());
-            actionBar.setMenuItemVisible(
-                    R.id.action_slideshow, !(mMediaSet instanceof MtpDevice));
+
+            menu.findItem(R.id.action_slideshow)
+                    .setVisible(!(mMediaSet instanceof MtpDevice));
 
             FilterUtils.setupMenuItems(actionBar, mMediaSetPath, true);
-            actionBar.setMenuItemVisible(R.id.action_group_by, mShowClusterMenu);
-            actionBar.setMenuItemVisible(R.id.action_camera,
-                    MediaSetUtils.isCameraSource(mMediaSetPath)
-                    && GalleryUtils.isCameraAvailable((Activity) mActivity));
 
-            actionBar.setTitle(mMediaSet.getName());
+            menu.findItem(R.id.action_group_by).setVisible(mShowClusterMenu);
+            menu.findItem(R.id.action_camera).setVisible(
+                    MediaSetUtils.isCameraSource(mMediaSetPath)
+                    && GalleryUtils.isCameraAvailable(mActivity));
+
         }
         actionBar.setSubtitle(null);
-
-        return result;
+        return true;
     }
 
     @Override
@@ -591,7 +591,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 return true;
             }
             case R.id.action_camera: {
-                GalleryUtils.startCameraActivity((Activity) mActivity);
+                GalleryUtils.startCameraActivity(mActivity);
                 return true;
             }
             default:
@@ -669,7 +669,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                     if (resultCode == MediaSet.SYNC_RESULT_ERROR && mIsActive
                             && (mAlbumDataAdapter.size() == 0)) {
                         // show error toast only if the album is empty
-                        Toast.makeText((Context) mActivity, R.string.sync_album_error,
+                        Toast.makeText(mActivity, R.string.sync_album_error,
                                 Toast.LENGTH_LONG).show();
                     }
                 } finally {
@@ -687,7 +687,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mLoadingBits &= ~loadTaskBit;
         if (mLoadingBits == 0 && mIsActive) {
             if (mAlbumDataAdapter.size() == 0) {
-                Toast.makeText((Context) mActivity,
+                Toast.makeText(mActivity,
                         R.string.empty_album, Toast.LENGTH_LONG).show();
                 mActivity.getStateManager().finishState(AlbumPage.this);
             }

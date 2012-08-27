@@ -19,7 +19,7 @@ import android.content.Context;
 import android.view.View.MeasureSpec;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.app.GalleryActivity;
+import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.ui.DetailsAddressResolver.AddressResolvingListener;
 
@@ -44,7 +44,7 @@ public class DetailsHelper {
         public void hide();
     }
 
-    public DetailsHelper(GalleryActivity activity, GLView rootPane, DetailsSource source) {
+    public DetailsHelper(AbstractGalleryActivity activity, GLView rootPane, DetailsSource source) {
         mContainer = new DialogDetailsView(activity, source);
     }
 
@@ -65,7 +65,7 @@ public class DetailsHelper {
         mContainer.setCloseListener(listener);
     }
 
-    public static String resolveAddress(GalleryActivity activity, double[] latlng,
+    public static String resolveAddress(AbstractGalleryActivity activity, double[] latlng,
             AddressResolvingListener listener) {
         if (sAddressResolver == null) {
             sAddressResolver = new DetailsAddressResolver(activity);

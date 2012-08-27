@@ -17,23 +17,23 @@
 package com.android.gallery3d.ui;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Handler;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.ActionMode;
+import com.actionbarsherlock.view.ActionMode.Callback;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.ShareActionProvider;
+import com.actionbarsherlock.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import com.android.gallery3d.R;
-import com.android.gallery3d.actionbar.ActionBarUtils;
-import com.android.gallery3d.actionbar.ActionModeInterface;
-import com.android.gallery3d.actionbar.ActionModeInterface.OnShareTargetSelectedListener;
-import com.android.gallery3d.app.GalleryActivity;
+import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
@@ -47,8 +47,7 @@ import com.android.gallery3d.util.ThreadPool.JobContext;
 
 import java.util.ArrayList;
 
-public class ActionModeHandler implements
-        ActionModeInterface.Callback, PopupList.OnPopupItemClickListener {
+public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickListener {
 
     @SuppressWarnings("unused")
     private static final String TAG = "ActionModeHandler";
@@ -61,19 +60,20 @@ public class ActionModeHandler implements
         public boolean onActionItemClicked(MenuItem item);
     }
 
-    private final GalleryActivity mActivity;
+    private final AbstractGalleryActivity mActivity;
     private final MenuExecutor mMenuExecutor;
     private final SelectionManager mSelectionManager;
     private final NfcAdapter mNfcAdapter;
     private Menu mMenu;
+    private MenuItem mShareMenuItem;
     private SelectionMenu mSelectionMenu;
     private ActionModeListener mListener;
     private Future<?> mMenuTask;
     private final Handler mMainHandler;
-    private ActionModeInterface mActionMode;
+    private ActionMode mActionMode;
 
     public ActionModeHandler(
-            GalleryActivity activity, SelectionManager selectionManager) {
+            AbstractGalleryActivity activity, SelectionManager selectionManager) {
         mActivity = Utils.checkNotNull(activity);
         mSelectionManager = Utils.checkNotNull(selectionManager);
         mMenuExecutor = new MenuExecutor(activity, selectionManager);
@@ -82,8 +82,8 @@ public class ActionModeHandler implements
     }
 
     public void startActionMode() {
-        Activity a = (Activity) mActivity;
-        mActionMode = ActionBarUtils.startActionMode(a, this);
+        SherlockActivity a = mActivity;
+        mActionMode = a.startActionMode(this);
         View customView = LayoutInflater.from(a).inflate(
                 R.layout.action_mode, null);
         mActionMode.setCustomView(customView);
@@ -105,7 +105,7 @@ public class ActionModeHandler implements
     }
 
     @Override
-    public boolean onActionItemClicked(ActionModeInterface mode, MenuItem item) {
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         GLRoot root = mActivity.getGLRoot();
         root.lockRenderThread();
         try {
@@ -164,24 +164,35 @@ public class ActionModeHandler implements
         mSelectionMenu.updateSelectAllMode(mSelectionManager.inSelectAllMode());
     }
 
-    @Override
-    public boolean onCreateActionMode(ActionModeInterface mode, Menu menu) {
-        mode.inflateMenu(R.menu.operation);
+    private final OnShareTargetSelectedListener mShareTargetSelectedListener =
+            new OnShareTargetSelectedListener() {
+        @Override
+        public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
+            mSelectionManager.leaveSelectionMode();
+            return false;
+        }
+    };
 
-        OnShareTargetSelectedListener listener = new OnShareTargetSelectedListener() {
-            @Override
-            public boolean onShareTargetSelected(Intent intent) {
-                mSelectionManager.leaveSelectionMode();
-                return false;
-            }
-        };
-        mode.setOnShareTargetSelectedListener(listener);
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        mode.getMenuInflater().inflate(R.menu.operation, menu);
+
         mMenu = menu;
+        mShareMenuItem = menu.findItem(R.id.action_share);
+        if (mShareMenuItem != null) {
+            ((ShareActionProvider) mShareMenuItem.getActionProvider())
+                    .setOnShareTargetSelectedListener(mShareTargetSelectedListener);
+        }
         return true;
     }
 
     @Override
-    public void onDestroyActionMode(ActionModeInterface mode) {
+    public void onDestroyActionMode(ActionMode mode) {
         mSelectionManager.leaveSelectionMode();
     }
 
@@ -209,7 +220,7 @@ public class ActionModeHandler implements
         switch (unexpandedPaths.size()) {
             case 1:
                 final String mimeType = MenuExecutor.getMimeType(type);
-                if (!GalleryUtils.isEditorAvailable((Context) mActivity, mimeType)) {
+                if (!GalleryUtils.isEditorAvailable(mActivity, mimeType)) {
                     operation &= ~MediaObject.SUPPORT_EDIT;
                 }
                 break;
@@ -223,7 +234,7 @@ public class ActionModeHandler implements
     @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
     private void setNfcBeamPushUris(Uri[] uris) {
         if (mNfcAdapter != null && ApiHelper.HAS_SET_BEAM_PUSH_URIS) {
-            mNfcAdapter.setBeamPushUris(uris, (Activity)mActivity);
+            mNfcAdapter.setBeamPushUris(uris, mActivity);
         }
     }
 
@@ -275,15 +286,12 @@ public class ActionModeHandler implements
 
     public void updateSupportedOperation() {
         // Interrupt previous unfinished task, mMenuTask is only accessed in main thread
-        if (mMenuTask != null) {
-            mMenuTask.cancel();
-        }
+        if (mMenuTask != null) mMenuTask.cancel();
 
         updateSelectionMenu();
 
         // Disable share action until share intent is in good shape
-        final boolean hasShareButton = mActionMode.hasShareButton();
-        if (hasShareButton) mActionMode.setShareIntent(null);
+        if (mShareMenuItem != null) mShareMenuItem.setEnabled(false);
 
         // Generate sharing intent and update supported operations in the background
         // The task can take a long time and be canceled in the mean time.
@@ -294,17 +302,17 @@ public class ActionModeHandler implements
                 final int operation = computeMenuOptions(jc);
 
                 // Pass2: Deal with expanded media object list for sharing operation.
-                final Intent intent = hasShareButton ? computeSharingIntent(jc) : null;
+                final Intent intent = (mShareMenuItem != null) ? computeSharingIntent(jc) : null;
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         mMenuTask = null;
-                        if (!jc.isCancelled()) {
-                            MenuExecutor.updateMenuOperation(mActionMode, operation);
-                            if (hasShareButton) {
-                                mActionMode.setShareIntent(intent);
-                                mMenuExecutor.setShareIntent(intent);
-                            }
+                        if (jc.isCancelled()) return;
+                        MenuExecutor.updateMenuOperation(mMenu, operation);
+                        if (mShareMenuItem != null) {
+                            mShareMenuItem.setEnabled(true);
+                            ((ShareActionProvider) mShareMenuItem.getActionProvider())
+                                    .setShareIntent(intent);
                         }
                     }
                 });

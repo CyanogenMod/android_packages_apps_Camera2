@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -28,14 +27,15 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.R;
-import com.android.gallery3d.actionbar.ActionBarInterface;
-import com.android.gallery3d.actionbar.ActionBarUtils;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.util.GalleryUtils;
 
@@ -51,7 +51,7 @@ abstract public class ActivityState {
             | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
         );
 
-    protected GalleryActivity mActivity;
+    protected AbstractGalleryActivity mActivity;
     protected Bundle mData;
     protected int mFlags;
 
@@ -78,7 +78,7 @@ abstract public class ActivityState {
         mActivity.getGLRoot().setContentPane(content);
     }
 
-    void initialize(GalleryActivity activity, Bundle data) {
+    void initialize(AbstractGalleryActivity activity, Bundle data) {
         mActivity = activity;
         mData = data;
         mContentResolver = activity.getAndroidContext().getContentResolver();
@@ -160,8 +160,8 @@ abstract public class ActivityState {
 
     // should only be called by StateManager
     void resume() {
-        AbstractGalleryActivity activity = (AbstractGalleryActivity) mActivity;
-        ActionBarInterface actionBar = ActionBarUtils.getActionBar(activity);
+        AbstractGalleryActivity activity = mActivity;
+        ActionBar actionBar = ((SherlockActivity) activity).getSupportActionBar();
         if (actionBar != null) {
             if ((mFlags & FLAG_HIDE_ACTION_BAR) != 0) {
                 actionBar.hide();
@@ -231,5 +231,9 @@ abstract public class ActivityState {
 
     public boolean isFinishing() {
         return mIsFinishing;
+    }
+
+    protected MenuInflater getSupportMenuInflater() {
+        return ((SherlockActivity) mActivity).getSupportMenuInflater();
     }
 }
