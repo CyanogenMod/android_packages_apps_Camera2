@@ -127,6 +127,7 @@ public class DataManager {
         addSource(new ComboSource(mApplication));
         addSource(new ClusterSource(mApplication));
         addSource(new FilterSource(mApplication));
+        addSource(new SecureSource(mApplication));
         addSource(new UriSource(mApplication));
         addSource(new SnailSource(mApplication));
 

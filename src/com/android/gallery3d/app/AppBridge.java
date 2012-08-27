@@ -63,6 +63,8 @@ public abstract class AppBridge implements Parcelable {
         public void setSwipingEnabled(boolean enabled);
         // Notify that the ScreenNail is changed.
         public void notifyScreenNailChanged();
+        // Add a new media item to the secure album.
+        public void addSecureAlbumItem(boolean isVideo, int id);
     }
 
     // If server is null, the services are not available.

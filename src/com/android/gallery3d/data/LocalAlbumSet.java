@@ -43,14 +43,13 @@ public class LocalAlbumSet extends MediaSet
 
     private static final String TAG = "LocalAlbumSet";
 
-    private static final Uri mWatchUriImage = Images.Media.EXTERNAL_CONTENT_URI;
-    private static final Uri mWatchUriVideo = Video.Media.EXTERNAL_CONTENT_URI;
+    private static final Uri[] mWatchUris =
+        {Images.Media.EXTERNAL_CONTENT_URI, Video.Media.EXTERNAL_CONTENT_URI};
 
     private final GalleryApp mApplication;
     private final int mType;
     private ArrayList<MediaSet> mAlbums = new ArrayList<MediaSet>();
-    private final ChangeNotifier mNotifierImage;
-    private final ChangeNotifier mNotifierVideo;
+    private final ChangeNotifier mNotifier;
     private final String mName;
     private final Handler mHandler;
     private boolean mIsLoading;
@@ -63,8 +62,7 @@ public class LocalAlbumSet extends MediaSet
         mApplication = application;
         mHandler = new Handler(application.getMainLooper());
         mType = getTypeFromPath(path);
-        mNotifierImage = new ChangeNotifier(this, mWatchUriImage, application);
-        mNotifierVideo = new ChangeNotifier(this, mWatchUriVideo, application);
+        mNotifier = new ChangeNotifier(this, mWatchUris, application);
         mName = application.getResources().getString(
                 R.string.set_label_local_albums);
     }
@@ -165,8 +163,7 @@ public class LocalAlbumSet extends MediaSet
     //   1. Prevent calling reload() concurrently.
     //   2. Prevent calling onFutureDone() and reload() concurrently
     public synchronized long reload() {
-        // "|" is used instead of "||" because we want to clear both flags.
-        if (mNotifierImage.isDirty() | mNotifierVideo.isDirty()) {
+        if (mNotifier.isDirty()) {
             if (mLoadTask != null) mLoadTask.cancel();
             mIsLoading = true;
             mLoadTask = mApplication.getThreadPool().submit(new AlbumsLoader(), this);
@@ -198,8 +195,7 @@ public class LocalAlbumSet extends MediaSet
 
     // For debug only. Fake there is a ContentObserver.onChange() event.
     void fakeChange() {
-        mNotifierImage.fakeChange();
-        mNotifierVideo.fakeChange();
+        mNotifier.fakeChange();
     }
 
     // Circular shift the array range from a[i] to a[j] (inclusive). That is,
