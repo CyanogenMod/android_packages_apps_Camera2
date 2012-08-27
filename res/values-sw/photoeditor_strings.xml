@@ -57,7 +57,7 @@
     <string name="redeye_tooltip" msgid="4183695928490874014">"Gonga kwenye macho mekundu ili kuyaondoa"</string>
     <string name="rotate_tooltip" msgid="7008602969130734229">"kokota picha ili kuizungusha"</string>
     <string name="straighten_tooltip" msgid="4846317027139212339">"Kokota picha ili kuizungusha"</string>
-    <string name="photoeditor_exposure" msgid="560535856805042987">"Athari za mfichuo"</string>
+    <string name="photoeditor_exposure" msgid="560535856805042987">"Athari za kiwango cha mwangaza"</string>
     <string name="photoeditor_color" msgid="834210916165605468">"Athari za rangi"</string>
     <string name="photoeditor_artistic" msgid="2810641816416597464">"Athari za kisanii"</string>
     <string name="photoeditor_fix" msgid="6441595584425037477">"Rekebisha"</string>
