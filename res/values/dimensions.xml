@@ -38,7 +38,7 @@
     <!-- configuration for album page -->
     <integer name="album_rows_land">2</integer>
     <integer name="album_rows_port">4</integer>
-    <dimen name="album_slot_gap">4dp</dimen>
+    <dimen name="album_slot_gap">5dp</dimen>
 
     <!-- configuration for manage page -->
     <dimen name="cache_pin_size">24dp</dimen>
