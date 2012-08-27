@@ -24,11 +24,11 @@ import java.io.InputStream;
  */
 public class ExifReader {
     /**
-     * Parse the inputStream and return all Exif data.
+     * Parses the inputStream and  and returns the EXIF data in an {@link ExifData}.
      * @throws ExifInvalidFormatException
      * @throws IOException
      */
-    public ExifData getExifData(InputStream inputStream) throws ExifInvalidFormatException,
+    public ExifData read(InputStream inputStream) throws ExifInvalidFormatException,
             IOException {
         ExifParser parser = ExifParser.parse(inputStream);
         ExifData exifData = new ExifData();
@@ -55,6 +55,16 @@ public class ExifReader {
                         tag.setValue(buf);
                     }
                     exifData.getIfdData(tag.getIfd()).setTag(tag);
+                    break;
+                case ExifParser.EVENT_COMPRESSED_IMAGE:
+                    byte buf[] = new byte[parser.getCompressedImageSize()];
+                    parser.read(buf);
+                    exifData.setCompressedThumbnail(buf);
+                    break;
+                case ExifParser.EVENT_UNCOMPRESSED_STRIP:
+                    buf = new byte[parser.getStripSize()];
+                    parser.read(buf);
+                    exifData.setStripBytes(parser.getStripIndex(), buf);
                     break;
             }
             event = parser.next();

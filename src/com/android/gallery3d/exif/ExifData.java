@@ -15,6 +15,9 @@
  */
 
 package com.android.gallery3d.exif;
+
+import java.util.ArrayList;
+
 /**
  *  This class stores the EXIF header in IFDs according to the JPEG specification.
  *  It is the result produced by {@link ExifReader}.
@@ -23,6 +26,8 @@ package com.android.gallery3d.exif;
  */
 public class ExifData {
     private final IfdData[] mIfdDatas = new IfdData[IfdId.TYPE_IFD_COUNT];
+    private byte[] mThumbnail;
+    private ArrayList<byte[]> mStripBytes = new ArrayList<byte[]>();
 
     /**
      * Gets the IFD data of the specified IFD.
@@ -43,5 +48,57 @@ public class ExifData {
      */
     public void addIfdData(IfdData data) {
         mIfdDatas[data.getId()] = data;
+    }
+
+    /**
+     * Gets the compressed thumbnail. Returns null if there is no compressed thumbnail.
+     *
+     * @see #hasCompressedThumbnail()
+     */
+    public byte[] getCompressedThumbnail() {
+        return mThumbnail;
+    }
+
+    /**
+     * Sets the compressed thumbnail.
+     */
+    public void setCompressedThumbnail(byte[] thumbnail) {
+        mThumbnail = thumbnail;
+    }
+
+    /**
+     * Returns true it this header contains a compressed thumbnail.
+     */
+    public boolean hasCompressedThumbnail() {
+        return mThumbnail != null;
+    }
+
+    /**
+     * Adds an uncompressed strip.
+     */
+    public void setStripBytes(int index, byte[] strip) {
+        if (index < mStripBytes.size()) {
+            mStripBytes.set(index, strip);
+        } else {
+            for (int i = mStripBytes.size(); i < index; i++) {
+                mStripBytes.add(null);
+            }
+            mStripBytes.add(strip);
+        }
+    }
+
+    /**
+     * Gets the strip count
+     */
+    public int getStripCount() {
+        return mStripBytes.size();
+    }
+
+    /**
+     * Gets the strip at the specified index.
+     * @exceptions #IndexOutOfBoundException
+     */
+    public byte[] getStrip(int index) {
+        return mStripBytes.get(index);
     }
 }
