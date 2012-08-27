@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.android.gallery3d.common.LightCycleHelper;
 import com.android.gallery3d.picasasource.PicasaSource;
 
 public class PackagesMonitor extends BroadcastReceiver {
@@ -61,10 +62,13 @@ public class PackagesMonitor extends BroadcastReceiver {
         String packageName = intent.getData().getSchemeSpecificPart();
         if (Intent.ACTION_PACKAGE_ADDED.equals(action)) {
             PicasaSource.onPackageAdded(context, packageName);
+            LightCycleHelper.onPackageAdded(context, packageName);
         } else if (Intent.ACTION_PACKAGE_REMOVED.equals(action)) {
             PicasaSource.onPackageRemoved(context, packageName);
+            LightCycleHelper.onPackageRemoved(context, packageName);
         } else if (Intent.ACTION_PACKAGE_CHANGED.equals(action)) {
             PicasaSource.onPackageChanged(context, packageName);
+            LightCycleHelper.onPackageChanged(context, packageName);
         }
     }
 }
