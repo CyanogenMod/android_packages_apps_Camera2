@@ -21,9 +21,9 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.view.Menu;
-import android.view.MenuItem;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.common.Utils;
 
 import java.util.Stack;
@@ -38,12 +38,12 @@ public class StateManager {
     private static final String KEY_STATE = "bundle";
     private static final String KEY_CLASS = "class";
 
-    private GalleryActivity mContext;
+    private AbstractGalleryActivity mActivity;
     private Stack<StateEntry> mStack = new Stack<StateEntry>();
     private ActivityState.ResultEntry mResult;
 
-    public StateManager(GalleryActivity context) {
-        mContext = context;
+    public StateManager(AbstractGalleryActivity activity) {
+        mActivity = activity;
     }
 
     public void startState(Class<? extends ActivityState> klass,
@@ -59,7 +59,7 @@ public class StateManager {
             ActivityState top = getTopState();
             if (mIsResumed) top.onPause();
         }
-        state.initialize(mContext, data);
+        state.initialize(mActivity, data);
 
         mStack.push(new StateEntry(data, state));
         state.onCreate(data, null);
@@ -75,7 +75,7 @@ public class StateManager {
         } catch (Exception e) {
             throw new AssertionError(e);
         }
-        state.initialize(mContext, data);
+        state.initialize(mActivity, data);
         state.mResult = new ActivityState.ResultEntry();
         state.mResult.requestCode = requestCode;
 
@@ -155,7 +155,7 @@ public class StateManager {
         // The finish() request could be rejected (only happens under Monkey),
         // If it is rejected, we won't close the last page.
         if (mStack.size() == 1) {
-            Activity activity = (Activity) mContext.getAndroidContext();
+            Activity activity = (Activity) mActivity.getAndroidContext();
             if (mResult != null) {
                 activity.setResult(mResult.resultCode, mResult.resultData);
             }
@@ -183,7 +183,7 @@ public class StateManager {
         mStack.pop();
         state.mIsFinishing = true;
         if (mIsResumed) state.onPause();
-        mContext.getGLRoot().setContentPane(null);
+        mActivity.getGLRoot().setContentPane(null);
         state.onDestroy();
 
         if (!mStack.isEmpty()) {
@@ -213,7 +213,7 @@ public class StateManager {
         } catch (Exception e) {
             throw new AssertionError(e);
         }
-        state.initialize(mContext, data);
+        state.initialize(mActivity, data);
         mStack.push(new StateEntry(data, state));
         state.onCreate(data, null);
         if (mIsResumed) state.resume();
@@ -246,7 +246,7 @@ public class StateManager {
             } catch (Exception e) {
                 throw new AssertionError(e);
             }
-            activityState.initialize(mContext, data);
+            activityState.initialize(mActivity, data);
             activityState.onCreate(data, state);
             mStack.push(new StateEntry(data, activityState));
         }

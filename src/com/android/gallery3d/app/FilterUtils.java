@@ -77,7 +77,7 @@ public class FilterUtils {
     private static final int CLUSTER_CURRENT_TYPE = 4;
     private static final int FILTER_CURRENT_TYPE = 5;
 
-    public static void setupMenuItems(GalleryActionBar model, Path path, boolean inAlbum) {
+    public static void setupMenuItems(GalleryActionBar actionBar, Path path, boolean inAlbum) {
         int[] result = new int[6];
         getAppliedFilters(path, result);
         int ctype = result[CLUSTER_TYPE];
@@ -86,31 +86,31 @@ public class FilterUtils {
         int ccurrent = result[CLUSTER_CURRENT_TYPE];
         int fcurrent = result[FILTER_CURRENT_TYPE];
 
-        setMenuItemApplied(model, CLUSTER_BY_TIME,
+        setMenuItemApplied(actionBar, CLUSTER_BY_TIME,
                 (ctype & CLUSTER_BY_TIME) != 0, (ccurrent & CLUSTER_BY_TIME) != 0);
-        setMenuItemApplied(model, CLUSTER_BY_LOCATION,
+        setMenuItemApplied(actionBar, CLUSTER_BY_LOCATION,
                 (ctype & CLUSTER_BY_LOCATION) != 0, (ccurrent & CLUSTER_BY_LOCATION) != 0);
-        setMenuItemApplied(model, CLUSTER_BY_TAG,
+        setMenuItemApplied(actionBar, CLUSTER_BY_TAG,
                 (ctype & CLUSTER_BY_TAG) != 0, (ccurrent & CLUSTER_BY_TAG) != 0);
-        setMenuItemApplied(model, CLUSTER_BY_FACE,
+        setMenuItemApplied(actionBar, CLUSTER_BY_FACE,
                 (ctype & CLUSTER_BY_FACE) != 0, (ccurrent & CLUSTER_BY_FACE) != 0);
 
-        model.setClusterItemVisibility(CLUSTER_BY_ALBUM, !inAlbum || ctype == 0);
+        actionBar.setClusterItemVisibility(CLUSTER_BY_ALBUM, !inAlbum || ctype == 0);
 
-        setMenuItemApplied(model, R.id.action_cluster_album, ctype == 0,
+        setMenuItemApplied(actionBar, R.id.action_cluster_album, ctype == 0,
                 ccurrent == 0);
 
         // A filtering is available if it's not applied, and the old filtering
         // (if any) is not fixed.
-        setMenuItemAppliedEnabled(model, R.string.show_images_only,
+        setMenuItemAppliedEnabled(actionBar, R.string.show_images_only,
                 (ftype & FILTER_IMAGE_ONLY) != 0,
                 (ftype & FILTER_IMAGE_ONLY) == 0 && ftypef == 0,
                 (fcurrent & FILTER_IMAGE_ONLY) != 0);
-        setMenuItemAppliedEnabled(model, R.string.show_videos_only,
+        setMenuItemAppliedEnabled(actionBar, R.string.show_videos_only,
                 (ftype & FILTER_VIDEO_ONLY) != 0,
                 (ftype & FILTER_VIDEO_ONLY) == 0 && ftypef == 0,
                 (fcurrent & FILTER_VIDEO_ONLY) != 0);
-        setMenuItemAppliedEnabled(model, R.string.show_all,
+        setMenuItemAppliedEnabled(actionBar, R.string.show_all,
                 ftype == 0, ftype != 0 && ftypef == 0, fcurrent == 0);
     }
 

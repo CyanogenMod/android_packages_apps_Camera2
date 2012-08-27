@@ -23,15 +23,15 @@ import android.os.PowerManager;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.app.AlbumPage;
-import com.android.gallery3d.app.GalleryActivity;
 import com.android.gallery3d.util.MediaSetUtils;
 
 public class ImportCompleteListener implements MenuExecutor.ProgressListener {
-    private GalleryActivity mActivity;
+    private AbstractGalleryActivity mActivity;
     private PowerManager.WakeLock mWakeLock;
 
-    public ImportCompleteListener(GalleryActivity galleryActivity) {
+    public ImportCompleteListener(AbstractGalleryActivity galleryActivity) {
         mActivity = galleryActivity;
         PowerManager pm =
                 (PowerManager) ((Activity) mActivity).getSystemService(Context.POWER_SERVICE);

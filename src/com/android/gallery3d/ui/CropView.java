@@ -33,7 +33,7 @@ import android.widget.Toast;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.anim.Animation;
-import com.android.gallery3d.app.GalleryActivity;
+import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.common.Utils;
 
 import java.util.ArrayList;
@@ -92,14 +92,14 @@ public class CropView extends GLView {
     private int mImageWidth = SIZE_UNKNOWN;
     private int mImageHeight = SIZE_UNKNOWN;
 
-    private GalleryActivity mActivity;
+    private AbstractGalleryActivity mActivity;
 
     private GLPaint mPaint = new GLPaint();
     private GLPaint mFacePaint = new GLPaint();
 
     private int mImageRotation;
 
-    public CropView(GalleryActivity activity) {
+    public CropView(AbstractGalleryActivity activity) {
         mActivity = activity;
         mImageView = new TileImageView(activity);
         mFaceDetectionView = new FaceHighlightView();

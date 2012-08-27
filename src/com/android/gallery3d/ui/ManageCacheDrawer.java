@@ -19,7 +19,7 @@ package com.android.gallery3d.ui;
 import android.content.Context;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.app.GalleryActivity;
+import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.data.DataSourceType;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
@@ -36,11 +36,11 @@ public class ManageCacheDrawer extends AlbumSetSlotRenderer {
     private final int mCachePinSize;
     private final int mCachePinMargin;
 
-    public ManageCacheDrawer(GalleryActivity activity, SelectionManager selectionManager,
+    public ManageCacheDrawer(AbstractGalleryActivity activity, SelectionManager selectionManager,
             SlotView slotView, LabelSpec labelSpec, int cachePinSize, int cachePinMargin) {
         super(activity, selectionManager, slotView, labelSpec,
                 activity.getResources().getColor(R.color.cache_placeholder));
-        Context context = (Context) activity;
+        Context context = activity;
         mCheckedItem = new ResourceTexture(
                 context, R.drawable.btn_make_offline_normal_on_holo_dark);
         mUnCheckedItem = new ResourceTexture(

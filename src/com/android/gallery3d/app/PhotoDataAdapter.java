@@ -169,7 +169,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     // can find the item. If mItemPath is null, then we use the mCurrentIndex to
     // find the image being viewed. cameraIndex is the index of the camera
     // preview. If cameraIndex < 0, there is no camera preview.
-    public PhotoDataAdapter(GalleryActivity activity, PhotoView view,
+    public PhotoDataAdapter(AbstractGalleryActivity activity, PhotoView view,
             MediaSet mediaSet, Path itemPath, int indexHint, int cameraIndex,
             boolean isPanorama, boolean isStaticCamera) {
         mSource = Utils.checkNotNull(mediaSet);

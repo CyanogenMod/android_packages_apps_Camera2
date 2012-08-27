@@ -28,13 +28,13 @@ import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.ActionBar.OnMenuVisibilityListener;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.R;
-import com.android.gallery3d.actionbar.ActionBarInterface.OnMenuVisibilityListener;
 import com.android.gallery3d.anim.FloatAnimation;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
@@ -140,6 +140,8 @@ public class PhotoPage extends ActivityState implements
     private boolean mDeleteIsFocus;  // whether the deleted item was in focus
 
     private NfcAdapter mNfcAdapter;
+
+    private Menu mActionBarMenu;
 
     private final MyMenuVisibilityListener mMenuVisibilityListener =
             new MyMenuVisibilityListener();
@@ -419,13 +421,14 @@ public class PhotoPage extends ActivityState implements
     }
 
     private void updateMenuOperations() {
-        mActionBar.setMenuItemVisible(R.id.action_slideshow, canDoSlideShow());
+        MenuItem item = mActionBar.findMenuItem(R.id.action_slideshow);
+        item.setVisible(canDoSlideShow());
         if (mCurrentPhoto == null) return;
         int supportedOperations = mCurrentPhoto.getSupportedOperations();
         if (!GalleryUtils.isEditorAvailable((Context) mActivity, "image/*")) {
             supportedOperations &= ~MediaObject.SUPPORT_EDIT;
         }
-        MenuExecutor.updateMenuOperation(mActionBar, supportedOperations);
+        MenuExecutor.updateMenuOperation(mActionBar.getMenu(), supportedOperations);
     }
 
     private boolean canDoSlideShow() {
@@ -578,12 +581,11 @@ public class PhotoPage extends ActivityState implements
 
     @Override
     protected boolean onCreateActionBar(Menu menu) {
-        GalleryActionBar actionBar = mActionBar;
-        boolean result = actionBar.createActionMenu(menu, R.menu.photo);
+        mActionBar.createActionBarMenu(R.menu.photo, menu);
         if (mPendingSharePath != null) updateShareURI(mPendingSharePath);
         updateMenuOperations();
         updateTitle();
-        return result;
+        return true;
     }
 
     private MenuExecutor.ProgressListener mConfirmDialogListener =
