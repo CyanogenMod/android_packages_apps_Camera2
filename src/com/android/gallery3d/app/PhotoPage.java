@@ -217,6 +217,8 @@ public class PhotoPage extends ActivityState implements
     public void onCreate(Bundle data, Bundle restoreState) {
         super.onCreate(data, restoreState);
         mActionBar = mActivity.getGalleryActionBar();
+        mFlags |= FLAG_HIDE_ACTION_BAR | FLAG_HIDE_STATUS_BAR;
+        mShowBars = false;
         mSelectionManager = new SelectionManager(mActivity, false);
         mMenuExecutor = new MenuExecutor(mActivity, mSelectionManager);
 
@@ -263,10 +265,6 @@ public class PhotoPage extends ActivityState implements
 
                 // Start from the screen nail.
                 itemPath = screenNailItemPath;
-
-                // Action bar should not be displayed when camera starts.
-                mFlags |= FLAG_HIDE_ACTION_BAR | FLAG_HIDE_STATUS_BAR;
-                mShowBars = false;
             }
 
             MediaSet originalSet = mActivity.getDataManager()

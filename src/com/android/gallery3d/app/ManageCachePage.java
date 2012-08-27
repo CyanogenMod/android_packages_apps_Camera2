@@ -193,6 +193,7 @@ public class ManageCachePage extends ActivityState implements
 
     @Override
     public void onCreate(Bundle data, Bundle restoreState) {
+        super.onCreate(data, restoreState);
         mCacheStorageInfo = new CacheStorageUsageInfo(mActivity);
         initializeViews();
         initializeData(data);

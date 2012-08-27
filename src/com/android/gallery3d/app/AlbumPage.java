@@ -267,10 +267,14 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             mSelectionManager.toggle(item.getPath());
             mSlotView.invalidate();
         } else {
-            // Show pressed-up animation for the single-tap.
+            // Launch photos in lights out mode
+            mActivity.getGLRoot().setLightsOutMode(true);
+
+            // Render transition in pressed state
             mAlbumView.setPressedIndex(slotIndex);
             prepareFadeOutTexture();
             mAlbumView.setPressedIndex(-1);
+
             pickPhoto(slotIndex);
         }
     }
