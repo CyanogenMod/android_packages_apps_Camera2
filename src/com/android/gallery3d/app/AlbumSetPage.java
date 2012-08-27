@@ -272,6 +272,7 @@ public class AlbumSetPage extends ActivityState implements
 
     @Override
     public void onCreate(Bundle data, Bundle restoreState) {
+        super.onCreate(data, restoreState);
         initializeViews();
         initializeData(data);
         Context context = mActivity.getAndroidContext();

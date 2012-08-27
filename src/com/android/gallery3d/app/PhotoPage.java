@@ -215,6 +215,7 @@ public class PhotoPage extends ActivityState implements
 
     @Override
     public void onCreate(Bundle data, Bundle restoreState) {
+        super.onCreate(data, restoreState);
         mActionBar = mActivity.getGalleryActionBar();
         mSelectionManager = new SelectionManager(mActivity, false);
         mMenuExecutor = new MenuExecutor(mActivity, mSelectionManager);
