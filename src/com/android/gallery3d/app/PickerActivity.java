@@ -19,11 +19,11 @@ package com.android.gallery3d.app;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.android.gallery3d.R;
 import com.android.gallery3d.ui.GLRootView;
 

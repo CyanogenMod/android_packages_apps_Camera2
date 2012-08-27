@@ -75,8 +75,8 @@ public class MovieActivity extends SherlockActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        requestWindowFeature(Window.FEATURE_ACTION_BAR);
-        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+        getSherlock().requestFeature(Window.FEATURE_ACTION_BAR);
+        getSherlock().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
         setContentView(R.layout.movie_view);
         View rootView = findViewById(R.id.movie_view_root);
