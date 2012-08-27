@@ -29,8 +29,10 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/dropdown_ic_arrow_normal_holo_dark" />
         <Button android:id="@+id/selection_menu"
+                style="?attr/actionButtonStyle"
                 android:divider="?android:attr/listDividerAlertDialog"
-                style="?android:attr/borderlessButtonStyle"
+                android:textAppearance="?attr/textAppearanceLargePopupMenu"
+                android:textColor="?attr/actionMenuTextColor"
                 android:singleLine="true"
                 android:gravity="left|center_vertical"
                 android:paddingRight="25dip"

@@ -19,7 +19,7 @@
         <item name="listPreferredItemHeightSmall">48dp</item>
         <item name="switchStyle">@android:style/Widget.CompoundButton</item>
     </style>
-    <style name="Theme.Gallery.Dialog" parent="android:Theme.Dialog"/>
+    <style name="Theme.Gallery.Dialog" parent="Theme.Sherlock.Dialog"/>
     <style name="Theme.Gallery" parent="Theme.GalleryBase">
         <item name="android:displayOptions"></item>
         <item name="android:windowContentOverlay">@null</item>

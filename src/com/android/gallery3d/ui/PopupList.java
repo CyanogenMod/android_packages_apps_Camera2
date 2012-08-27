@@ -157,7 +157,9 @@ public class PopupList {
 
         popup.setBackgroundDrawable(mContext.getResources().getDrawable(
                 R.drawable.menu_dropdown_panel_holo_dark));
-        mContentList = new ListView(mContext);
+
+        mContentList = new ListView(mContext, null,
+                com.actionbarsherlock.R.attr.dropDownListViewStyle);
         mContentList.setAdapter(new ItemDataAdapter());
         mContentList.setOnItemClickListener(mOnItemClickListener);
         popup.setContentView(mContentList);

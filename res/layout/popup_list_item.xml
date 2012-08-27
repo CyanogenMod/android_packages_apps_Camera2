@@ -18,10 +18,11 @@
     android:id="@android:id/text1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textAppearance="?android:attr/textAppearanceListItemSmall"
+    android:textAppearance="?attr/textAppearanceLargePopupMenu"
+    android:singleLine="true"
     android:gravity="center_vertical"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:minHeight="?attr/listPreferredItemHeightSmall"
+    android:minHeight="?attr/dropdownListPreferredItemHeight"
     android:minWidth="196dp"
 />

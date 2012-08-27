@@ -40,12 +40,12 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.util.FloatMath;
-import android.view.Window;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.BitmapUtils;
