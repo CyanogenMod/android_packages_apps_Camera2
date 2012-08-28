@@ -87,6 +87,8 @@
     <string name="process_caching_requests" msgid="8722939570307386071">"Begäran om cachelagring bearbetas"</string>
     <string name="caching_label" msgid="4521059045896269095">"Cachelagrar ..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Beskär"</string>
+    <!-- no translation found for trim_action (703098114452883524) -->
+    <skip />
     <string name="set_as" msgid="3636764710790507868">"Använd som"</string>
     <string name="video_err" msgid="7003051631792271009">"Det går inte att spela upp videon."</string>
     <string name="group_by_location" msgid="316641628989023253">"Efter plats"</string>

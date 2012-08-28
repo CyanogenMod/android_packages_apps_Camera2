@@ -87,6 +87,8 @@
     <string name="process_caching_requests" msgid="8722939570307386071">"Önbelleğe alma istekleri işleniyor"</string>
     <string name="caching_label" msgid="4521059045896269095">"Önbelleğe alınıyor..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Kırp"</string>
+    <!-- no translation found for trim_action (703098114452883524) -->
+    <skip />
     <string name="set_as" msgid="3636764710790507868">"Şu şekilde ayarla:"</string>
     <string name="video_err" msgid="7003051631792271009">"Video oynatılamıyor."</string>
     <string name="group_by_location" msgid="316641628989023253">"Konuma göre"</string>
