@@ -53,13 +53,13 @@ import com.android.gallery3d.data.SnailItem;
 import com.android.gallery3d.data.SnailSource;
 import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.ui.AnimationTime;
+import com.android.gallery3d.ui.BitmapScreenNail;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.DetailsHelper.DetailsSource;
 import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLRoot.OnGLIdleListener;
-import com.android.gallery3d.ui.BitmapScreenNail;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.ImportCompleteListener;
 import com.android.gallery3d.ui.MenuExecutor;
@@ -108,7 +108,6 @@ public class PhotoPage extends ActivityState implements
     private PhotoPage.Model mModel;
     private DetailsHelper mDetailsHelper;
     private boolean mShowDetails;
-    private Path mPendingSharePath;
 
     // mMediaSet could be null if there is no KEY_MEDIA_SET_PATH supplied.
     // E.g., viewing a photo in gmail attachment
@@ -377,7 +376,7 @@ public class PhotoPage extends ActivityState implements
     @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
     private void setNfcBeamPushUris(Uri[] uris) {
         if (mNfcAdapter != null && ApiHelper.HAS_SET_BEAM_PUSH_URIS) {
-            mNfcAdapter.setBeamPushUris(uris, (Activity)mActivity);
+            mNfcAdapter.setBeamPushUris(uris, mActivity);
         }
     }
 
@@ -393,16 +392,10 @@ public class PhotoPage extends ActivityState implements
     }
 
     private void updateShareURI(Path path) {
-        if (mActionBar.hasShareMenuItem()) {
-            DataManager manager = mActivity.getDataManager();
-            Uri uri = manager.getContentUri(path);
-            mActionBar.setShareIntent(createShareIntent(path));
-            setNfcBeamPushUris(new Uri[]{uri});
-            mPendingSharePath = null;
-        } else {
-            // This happens when ActionBar is not created yet.
-            mPendingSharePath = path;
-        }
+        DataManager manager = mActivity.getDataManager();
+        Uri uri = manager.getContentUri(path);
+        mActionBar.setShareIntent(createShareIntent(path));
+        setNfcBeamPushUris(new Uri[]{uri});
     }
 
     private void updateCurrentPhoto(MediaItem photo) {
@@ -432,16 +425,22 @@ public class PhotoPage extends ActivityState implements
     }
 
     private void updateMenuOperations() {
-        MenuItem item = mActionBar.findMenuItem(R.id.action_slideshow);
+        Menu menu = mActionBar.getMenu();
+
+        // it could be null if onCreateActionBar has not been called yet
+        if (menu == null) return;
+
+        MenuItem item = menu.findItem(R.id.action_slideshow);
         item.setVisible((mSecureAlbum == null) && canDoSlideShow());
         if (mCurrentPhoto == null) return;
+
         int supportedOperations = mCurrentPhoto.getSupportedOperations();
         if (mSecureAlbum != null) {
-            supportedOperations = supportedOperations & MediaObject.SUPPORT_DELETE;
+            supportedOperations &= MediaObject.SUPPORT_DELETE;
         } else if (!GalleryUtils.isEditorAvailable(mActivity, "image/*")) {
             supportedOperations &= ~MediaObject.SUPPORT_EDIT;
         }
-        MenuExecutor.updateMenuOperation(mActionBar.getMenu(), supportedOperations);
+        MenuExecutor.updateMenuOperation(menu, supportedOperations);
     }
 
     private boolean canDoSlideShow() {
@@ -600,7 +599,6 @@ public class PhotoPage extends ActivityState implements
     @Override
     protected boolean onCreateActionBar(Menu menu) {
         mActionBar.createActionBarMenu(R.menu.photo, menu);
-        if (mPendingSharePath != null) updateShareURI(mPendingSharePath);
         updateMenuOperations();
         updateTitle();
         return true;
