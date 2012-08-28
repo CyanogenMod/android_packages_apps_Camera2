@@ -29,6 +29,7 @@ public class IfdData {
 
     private final int mIfdId;
     private final Map<Short, ExifTag> mExifTags = new HashMap<Short, ExifTag>();
+    private int mOffsetToNextIfd = 0;
 
     /**
      * Creates an IfdData with given IFD ID.
@@ -75,5 +76,18 @@ public class IfdData {
      */
     public void setTag(ExifTag tag) {
         mExifTags.put(tag.getTagId(), tag);
+    }
+    /**
+     * Sets the offset of next IFD.
+     */
+    void setOffsetToNextIfd(int offset) {
+        mOffsetToNextIfd = offset;
+    }
+
+    /**
+     * Gets the offset of next IFD.
+     */
+    int getOffsetToNextIfd() {
+        return mOffsetToNextIfd;
     }
 }
