@@ -31,7 +31,7 @@ public class ExifReader {
     public ExifData read(InputStream inputStream) throws ExifInvalidFormatException,
             IOException {
         ExifParser parser = ExifParser.parse(inputStream);
-        ExifData exifData = new ExifData();
+        ExifData exifData = new ExifData(parser.getByteOrder());
 
         int event = parser.next();
         while (event != ExifParser.EVENT_END) {
