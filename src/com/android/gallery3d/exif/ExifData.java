@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.exif;
 
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 
 /**
@@ -28,6 +29,11 @@ public class ExifData {
     private final IfdData[] mIfdDatas = new IfdData[IfdId.TYPE_IFD_COUNT];
     private byte[] mThumbnail;
     private ArrayList<byte[]> mStripBytes = new ArrayList<byte[]>();
+    private final ByteOrder mByteOrder;
+
+    public ExifData(ByteOrder order) {
+        mByteOrder = order;
+    }
 
     /**
      * Gets the IFD data of the specified IFD.
@@ -100,5 +106,12 @@ public class ExifData {
      */
     public byte[] getStrip(int index) {
         return mStripBytes.get(index);
+    }
+
+    /**
+     * Gets the byte order.
+     */
+    public ByteOrder getByteOrder() {
+        return mByteOrder;
     }
 }
