@@ -270,6 +270,7 @@ public class TileImageView extends GLView {
     protected synchronized void invalidateTiles() {
         mDecodeQueue.clean();
         mUploadQueue.clean();
+
         // TODO disable decoder
         int n = mActiveTiles.size();
         for (int i = 0; i < n; i++) {
@@ -553,21 +554,23 @@ public class TileImageView extends GLView {
 
         @Override
         public boolean onGLIdle(GLCanvas canvas, boolean renderRequested) {
-            if (renderRequested) return false;
+            // Skips uploading if there is a pending rendering request.
+            // Returns true to keep uploading in next rendering loop.
+            if (renderRequested) return true;
             int quota = UPLOAD_LIMIT;
-            Tile tile;
-            while (true) {
+            Tile tile = null;
+            while (quota > 0) {
                 synchronized (TileImageView.this) {
                     tile = mUploadQueue.pop();
                 }
-                if (tile == null || quota <= 0) break;
+                if (tile == null) break;
                 if (!tile.isContentValid()) {
                     Utils.assertTrue(tile.mTileState == STATE_DECODED);
                     tile.updateContent(canvas);
                     --quota;
                 }
             }
-            mActive.set(tile != null);
+            if (tile == null) mActive.set(false);
             return tile != null;
         }
     }
