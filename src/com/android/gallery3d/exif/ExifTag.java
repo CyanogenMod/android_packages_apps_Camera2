@@ -363,8 +363,8 @@ public class ExifTag {
 
     private final short mTagId;
     private final short mDataType;
-    private final int mComponentCount;
     private final int mIfd;
+    private int mComponentCount;
     private Object mValue;
     private int mOffset;
 
@@ -451,57 +451,149 @@ public class ExifTag {
     }
 
     /**
-     * Sets the value of this tag. This is useful when we want to modify the tags and write it back
-     * to the JPEG file
+     * Sets integer values into this tag. This is useful when we want to modify the tags
+     * and write it back to the JPEG file. The component count will be set to the length.
      */
-    public void setValue(Object object) {
-        if (object.getClass().isArray()) {
-            assert(mComponentCount == Array.getLength(object));
-            mValue = object;
-        } else if (object instanceof String) {
-            assert(mComponentCount == ((String) object).length() + 1);
-            mValue = object;
-        } else {
-            // Wrap object with an array because user may try to get object by get method with
-            // index 0 when size = 1
-            // e.g. getShort(0)
-            assert(mComponentCount == 1);
-            Object array = Array.newInstance(object.getClass(), 1);
-            Array.set(array, 0, object);
-            mValue = array;
+    public void setValue(int[] value) {
+        long[] data = new long[value.length];
+        for (int i = 0; i < value.length; i++) {
+            data[i] = value[i];
         }
+        mValue = data;
+        mComponentCount = value.length;
+    }
+
+    /**
+     * Sets integer value into this tag. This is useful when we want to modify the tags
+     * and write it back to the JPEG file. The component count will be set to 1.
+     */
+    public void setValue(int value) {
+        mValue = new long[] {value};
+        mComponentCount = 1;
+    }
+
+    /**
+     * Sets short values into this tag. This is useful when we want to modify the tags
+     * and write it back to the JPEG file. The component count will be set to the length.
+     */
+    public void setValue(short[] value) {
+        long[] data = new long[value.length];
+        for (int i = 0; i < value.length; i++) {
+            data[i] = value[i];
+        }
+        mValue = data;
+        mComponentCount = value.length;
+    }
+
+    /**
+     * Sets short value into this tag. This is useful when we want to modify the tags
+     * and write it back to the JPEG file. The component count will be set to 1.
+     */
+    public void setValue(short value) {
+        mValue = new long[] {value};
+        mComponentCount = 1;
+    }
+
+    /**
+     * Sets long values into this tag. This is useful when we want to modify the tags
+     * and write it back to the JPEG file. The component count will be set to the length.
+     */
+    public void setValue(long[] value) {
+        long[] data = new long[value.length];
+        System.arraycopy(value, 0, data, 0, value.length);
+        mValue = data;
+        mComponentCount = value.length;
+    }
+
+    /**
+     * Sets long value into this tag. This is useful when we want to modify the tags
+     * and write it back to the JPEG file. The component count will be set to 1.
+     */
+    public void setValue(long value) {
+        mValue = new long[] {value};
+        mComponentCount = 1;
+    }
+
+    /**
+     * Sets String value into this tag. This is useful when we want to modify the tags
+     * and write it back to the JPEG file. The component count will be set to
+     * value.length() + 1.
+     */
+    public void setValue(String value) {
+        mComponentCount = value.length() + 1;
+        mValue = value;
+    }
+
+    /**
+     * Sets Rational values into this tag. This is useful when we want to modify the tags
+     * and write it back to the JPEG file. The component count will be set to the length.
+     */
+    public void setValue(Rational[] value) {
+        mValue = new Rational[value.length];
+        System.arraycopy(value, 0, mValue, 0, value.length);
+        mComponentCount = value.length;
+    }
+
+    /**
+     * Sets Rational value into this tag. This is useful when we want to modify the tags
+     * and write it back to the JPEG file. The component count will be set to 1.
+     */
+    public void setValue(Rational value) {
+        mValue = new Rational[] {value};
+        mComponentCount = 1;
+    }
+
+    /**
+     * Sets byte values into this tag. This is useful when we want to modify the tags
+     * and write it back to the JPEG file. The component count will be set to the length.
+     */
+    public void setValue(byte[] value, int offset, int length) {
+        long[] data = new long[length];
+        for (int i = 0; i < length; i++) {
+            data[i] = value[i + offset];
+        }
+        mValue = data;
+        mComponentCount = length;
+    }
+
+    /**
+     * Sets the byte array as the value of this tag.
+     * This is equivalent to setValue(value, 0, value.length).
+     */
+    public void setValue(byte[] value) {
+        setValue(value, 0, value.length);
     }
 
     public short getShort(int index) {
-        return (Short) Array.get(mValue, index);
-    }
-
-    public short getShort() {
-        return (Short) Array.get(mValue, 0);
+        if (mValue instanceof long[]) {
+            return (short) (((long[]) mValue) [index]);
+        } else {
+            throw new RuntimeException("There is numerical value in this tag");
+        }
     }
 
     public int getUnsignedShort(int index) {
-        return (Integer) Array.get(mValue, index);
-    }
-
-    public int getUnsignedShort() {
-        return (Integer) Array.get(mValue, 0);
+        if (mValue instanceof long[]) {
+            return (int) (((long[]) mValue) [index]);
+        } else {
+            throw new RuntimeException("There is numerical value in this tag");
+        }
     }
 
     public int getInt(int index) {
-        return (Integer) Array.get(mValue, index);
-    }
-
-    public int getInt() {
-        return (Integer) Array.get(mValue, 0);
+        if (mValue instanceof long[]) {
+            return (int) (((long[]) mValue) [index]);
+        } else {
+            throw new RuntimeException("There is numerical value in this tag");
+        }
     }
 
     public long getUnsignedInt(int index) {
-        return (Long) Array.get(mValue, index);
-    }
-
-    public long getUnsignedInt() {
-        return (Long) Array.get(mValue, 0);
+        if (mValue instanceof long[]) {
+            return ((long[]) mValue) [index];
+        } else {
+            throw new RuntimeException("There is numerical value in this tag");
+        }
     }
 
     public String getString() {
@@ -509,25 +601,25 @@ public class ExifTag {
     }
 
     public Rational getRational(int index) {
-        return ((Rational[]) mValue)[index];
-    }
-
-    public Rational getRational() {
-        return ((Rational[]) mValue)[0];
-    }
-
-    public int getBytes(byte[] buf) {
-        return getBytes(buf, 0, buf.length);
-    }
-
-    public int getBytes(byte[] buf, int offset, int length) {
-        byte[] data = (byte[]) mValue;
-        if (data.length < length + offset) {
-            System.arraycopy(data, offset, buf, 0, data.length - offset);
-            return data.length - offset;
+        Object value = Array.get(mValue, index);
+        if (value instanceof Rational) {
+            return (Rational) value;
         } else {
-            System.arraycopy(data, offset, buf, 0, length);
-            return length;
+            throw new RuntimeException("There is no Rational value in this tag");
+        }
+    }
+
+    public void getBytes(byte[] buf) {
+        getBytes(buf, 0, buf.length);
+    }
+
+    public void getBytes(byte[] buf, int offset, int length) {
+        if (!(mValue instanceof long[])) {
+            throw new RuntimeException("There is no byte value in this tag");
+        }
+        long[] data = (long[]) mValue;
+        for(int i = 0; i < length; i++) {
+            buf[offset + i] = (byte) data[i];
         }
     }
 
@@ -541,7 +633,7 @@ public class ExifTag {
             case ExifTag.TYPE_UNSIGNED_BYTE:
                 byte buf[] = new byte[getComponentCount()];
                 getBytes(buf);
-                for(int i = 0; i < getComponentCount(); i++) {
+                for(int i = 0, n = getComponentCount(); i < n; i++) {
                     if(i != 0) sbuilder.append(" ");
                     sbuilder.append(String.format("%02x", buf[i]));
                 }
@@ -551,27 +643,27 @@ public class ExifTag {
                 sbuilder.append(getString().trim());
                 break;
             case ExifTag.TYPE_UNSIGNED_INT:
-                for(int i = 0; i < getComponentCount(); i++) {
+                for(int i = 0, n = getComponentCount(); i < n; i++) {
                     if(i != 0) sbuilder.append(" ");
                     sbuilder.append(getUnsignedInt(i));
                 }
                 break;
             case ExifTag.TYPE_RATIONAL:
             case ExifTag.TYPE_UNSIGNED_RATIONAL:
-                for(int i = 0; i < getComponentCount(); i++) {
+                for(int i = 0, n = getComponentCount(); i < n; i++) {
                     Rational r = getRational(i);
                     if(i != 0) sbuilder.append(" ");
                     sbuilder.append(r.getNominator()).append("/").append(r.getDenominator());
                 }
                 break;
             case ExifTag.TYPE_UNSIGNED_SHORT:
-                for(int i = 0; i < getComponentCount(); i++) {
+                for(int i = 0, n = getComponentCount(); i < n; i++) {
                     if(i != 0) sbuilder.append(" ");
                     sbuilder.append(getUnsignedShort(i));
                 }
                 break;
             case ExifTag.TYPE_INT:
-                for(int i = 0; i < getComponentCount(); i++) {
+                for(int i = 0, n = getComponentCount(); i < n; i++) {
                     if(i != 0) sbuilder.append(" ");
                     sbuilder.append(getInt(i));
                 }
