@@ -713,4 +713,11 @@ public class ExifParser {
             this.isRequested = isRequireByUser;
         }
     }
+
+    /**
+     * Gets the byte order of the current InputStream.
+     */
+    public ByteOrder getByteOrder() {
+        return mTiffStream.getByteOrder();
+    }
 }
