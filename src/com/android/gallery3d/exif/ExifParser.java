@@ -405,7 +405,7 @@ public class ExifParser {
      */
     public int getCompressedImageSize() {
         if (mJpegSizeTag == null) return 0;
-        return (int) mJpegSizeTag.getUnsignedInt();
+        return (int) mJpegSizeTag.getUnsignedInt(0);
     }
 
     private void skipTo(int offset) throws IOException {
@@ -449,7 +449,8 @@ public class ExifParser {
                     "Number of component is larger then Integer.MAX_VALUE");
         }
         ExifTag tag = new ExifTag(tagId, dataFormat, (int) numOfComp, mIfdType);
-        if (tag.getDataSize() > 4) {
+        int dataSize = tag.getDataSize();
+        if (dataSize > 4) {
             long offset = mTiffStream.readUnsignedInt();
             if (offset > Integer.MAX_VALUE) {
                 throw new ExifInvalidFormatException(
@@ -458,7 +459,7 @@ public class ExifParser {
             tag.setOffset((int) offset);
         } else {
             readFullTagValue(tag);
-            mTiffStream.skip(4 - tag.getDataSize());
+            mTiffStream.skip(4 - dataSize);
         }
         return tag;
     }
@@ -472,22 +473,22 @@ public class ExifParser {
             case ExifTag.TIFF_TAG.TAG_EXIF_IFD:
                 if (isIfdRequested(IfdId.TYPE_IFD_EXIF)
                         || isIfdRequested(IfdId.TYPE_IFD_INTEROPERABILITY)) {
-                    registerIfd(IfdId.TYPE_IFD_EXIF, tag.getUnsignedInt());
+                    registerIfd(IfdId.TYPE_IFD_EXIF, tag.getUnsignedInt(0));
                 }
                 break;
             case ExifTag.TIFF_TAG.TAG_GPS_IFD:
                 if (isIfdRequested(IfdId.TYPE_IFD_GPS)) {
-                    registerIfd(IfdId.TYPE_IFD_GPS, tag.getUnsignedInt());
+                    registerIfd(IfdId.TYPE_IFD_GPS, tag.getUnsignedInt(0));
                 }
                 break;
             case ExifTag.EXIF_TAG.TAG_INTEROPERABILITY_IFD:
                 if (isIfdRequested(IfdId.TYPE_IFD_INTEROPERABILITY)) {
-                    registerIfd(IfdId.TYPE_IFD_INTEROPERABILITY, tag.getUnsignedInt());
+                    registerIfd(IfdId.TYPE_IFD_INTEROPERABILITY, tag.getUnsignedInt(0));
                 }
                 break;
             case ExifTag.TIFF_TAG.TAG_JPEG_INTERCHANGE_FORMAT:
                 if (isThumbnailRequested()) {
-                    registerCompressedImage(tag.getUnsignedInt());
+                    registerCompressedImage(tag.getUnsignedInt(0));
                 }
                 break;
             case ExifTag.TIFF_TAG.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH:
