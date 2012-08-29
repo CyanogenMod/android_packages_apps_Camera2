@@ -46,16 +46,21 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
+import com.android.camera.Util;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.BitmapUtils;
-import com.android.gallery3d.common.ExifTags;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.LocalImage;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.Path;
+import com.android.gallery3d.exif.ExifData;
+import com.android.gallery3d.exif.ExifOutputStream;
+import com.android.gallery3d.exif.ExifReader;
+import com.android.gallery3d.exif.ExifTag;
+import com.android.gallery3d.exif.IfdId;
 import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.ui.BitmapTileProvider;
 import com.android.gallery3d.ui.CropView;
@@ -72,6 +77,7 @@ import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -318,7 +324,7 @@ public class CropImage extends AbstractGalleryActivity {
     }
 
     private File saveMedia(
-            JobContext jc, Bitmap cropped, File directory, String filename) {
+            JobContext jc, Bitmap cropped, File directory, String filename, ExifData exifData) {
         // Try file-1.jpg, file-2.jpg, ... until we find a filename
         // which does not exist yet.
         File candidate = null;
@@ -344,8 +350,15 @@ public class CropImage extends AbstractGalleryActivity {
         try {
             FileOutputStream fos = new FileOutputStream(candidate);
             try {
-                saveBitmapToOutputStream(jc, cropped,
-                        convertExtensionToCompressFormat(fileExtension), fos);
+                if (exifData != null) {
+                    ExifOutputStream eos = new ExifOutputStream(fos);
+                    eos.setExifData(exifData);
+                    saveBitmapToOutputStream(jc, cropped,
+                            convertExtensionToCompressFormat(fileExtension), eos);
+                } else {
+                    saveBitmapToOutputStream(jc, cropped,
+                            convertExtensionToCompressFormat(fileExtension), fos);
+                }
             } finally {
                 fos.close();
             }
@@ -362,6 +375,27 @@ public class CropImage extends AbstractGalleryActivity {
         }
 
         return candidate;
+    }
+
+    private ExifData getExifData(String path) {
+        FileInputStream is = null;
+        try {
+            is = new FileInputStream(path);
+            ExifReader reader = new ExifReader();
+            ExifData data = reader.read(is);
+            return data;
+        } catch (Throwable t) {
+            Log.w(TAG, "Cannot read EXIF data", t);
+            return null;
+        } finally {
+            Util.closeSilently(is);
+        }
+    }
+
+    private void changeExifImageSizeTag(ExifData data, int width, int height) {
+        data.getIfdData(IfdId.TYPE_IFD_0).getTag(ExifTag.TIFF_TAG.TAG_IMAGE_WIDTH).setValue(width);
+        data.getIfdData(IfdId.TYPE_IFD_0).getTag(ExifTag.TIFF_TAG.TAG_IMAGE_HEIGHT).setValue(
+                height);
     }
 
     private Uri saveToMediaProvider(JobContext jc, Bitmap cropped) {
@@ -391,7 +425,7 @@ public class CropImage extends AbstractGalleryActivity {
         String filename = PicasaSource.getImageTitle(mMediaItem);
         int pos = filename.lastIndexOf('.');
         if (pos >= 0) filename = filename.substring(0, pos);
-        File output = saveMedia(jc, cropped, DOWNLOAD_BUCKET, filename);
+        File output = saveMedia(jc, cropped, DOWNLOAD_BUCKET, filename, null);
         if (output == null) return null;
 
         copyExif(mMediaItem, output.getAbsolutePath(), cropped.getWidth(), cropped.getHeight());
@@ -428,11 +462,17 @@ public class CropImage extends AbstractGalleryActivity {
         String filename = oldPath.getName();
         int pos = filename.lastIndexOf('.');
         if (pos >= 0) filename = filename.substring(0, pos);
-        File output = saveMedia(jc, cropped, directory, filename);
-        if (output == null) return null;
+        File output = null;
 
-        copyExif(oldPath.getAbsolutePath(), output.getAbsolutePath(),
-                cropped.getWidth(), cropped.getHeight());
+        ExifData exifData = null;
+        if (convertExtensionToCompressFormat(getFileExtension()) == CompressFormat.JPEG) {
+            exifData = getExifData(oldPath.getAbsolutePath());
+            if (exifData != null) {
+                changeExifImageSizeTag(exifData, cropped.getWidth(), cropped.getHeight());
+            }
+        }
+        output = saveMedia(jc, cropped, directory, filename, exifData);
+        if (output == null) return null;
 
         long now = System.currentTimeMillis() / 1000;
         ContentValues values = new ContentValues();
@@ -465,7 +505,7 @@ public class CropImage extends AbstractGalleryActivity {
         String filename = new SimpleDateFormat(TIME_STAMP_NAME).
                 format(new Date(now));
 
-        File output = saveMedia(jc, cropped, DOWNLOAD_BUCKET, filename);
+        File output = saveMedia(jc, cropped, DOWNLOAD_BUCKET, filename, null);
         if (output == null) return null;
 
         ContentValues values = new ContentValues();
@@ -961,23 +1001,6 @@ public class CropImage extends AbstractGalleryActivity {
         }
     }
 
-    private static final String[] EXIF_TAGS = {
-            ExifInterface.TAG_DATETIME,
-            ExifInterface.TAG_MAKE,
-            ExifInterface.TAG_MODEL,
-            ExifInterface.TAG_FLASH,
-            ExifInterface.TAG_GPS_LATITUDE,
-            ExifInterface.TAG_GPS_LONGITUDE,
-            ExifInterface.TAG_GPS_LATITUDE_REF,
-            ExifInterface.TAG_GPS_LONGITUDE_REF,
-            ExifInterface.TAG_GPS_ALTITUDE,
-            ExifInterface.TAG_GPS_ALTITUDE_REF,
-            ExifInterface.TAG_GPS_TIMESTAMP,
-            ExifInterface.TAG_GPS_DATESTAMP,
-            ExifInterface.TAG_WHITE_BALANCE,
-            ExifInterface.TAG_FOCAL_LENGTH,
-            ExifInterface.TAG_GPS_PROCESSING_METHOD};
-
     private static void copyExif(MediaItem item, String destination, int newWidth, int newHeight) {
         try {
             ExifInterface newExif = new ExifInterface(destination);
@@ -988,62 +1011,6 @@ public class CropImage extends AbstractGalleryActivity {
             newExif.saveAttributes();
         } catch (Throwable t) {
             Log.w(TAG, "cannot copy exif: " + item, t);
-        }
-    }
-
-    private static void copyExif(String source, String destination, int newWidth, int newHeight) {
-        try {
-            ExifInterface oldExif = new ExifInterface(source);
-            ExifInterface newExif = new ExifInterface(destination);
-
-            newExif.setAttribute(ExifInterface.TAG_IMAGE_WIDTH, String.valueOf(newWidth));
-            newExif.setAttribute(ExifInterface.TAG_IMAGE_LENGTH, String.valueOf(newHeight));
-            newExif.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(0));
-
-            for (String tag : EXIF_TAGS) {
-                String value = oldExif.getAttribute(tag);
-                if (value != null) {
-                    newExif.setAttribute(tag, value);
-                }
-            }
-
-            // Handle some special values here
-            String value = oldExif.getAttribute(ExifTags.TAG_APERTURE);
-            if (value != null) {
-                try {
-                    float aperture = Float.parseFloat(value);
-                    newExif.setAttribute(ExifTags.TAG_APERTURE,
-                            String.valueOf((int) (aperture * 10 + 0.5f)) + "/10");
-                } catch (NumberFormatException e) {
-                    Log.w(TAG, "cannot parse aperture: " + value);
-                }
-            }
-
-            // TODO: The code is broken, need to fix the JHEAD lib
-            /*
-            value = oldExif.getAttribute(ExifTags.TAG_EXPOSURE_TIME);
-            if (value != null) {
-                try {
-                    double exposure = Double.parseDouble(value);
-                    testToRational("test exposure", exposure);
-                    newExif.setAttribute(ExifTags.TAG_EXPOSURE_TIME, value);
-                } catch (NumberFormatException e) {
-                    Log.w(TAG, "cannot parse exposure time: " + value);
-                }
-            }
-
-            value = oldExif.getAttribute(ExifTags.TAG_ISO);
-            if (value != null) {
-                try {
-                    int iso = Integer.parseInt(value);
-                    newExif.setAttribute(ExifTags.TAG_ISO, String.valueOf(iso) + "/1");
-                } catch (NumberFormatException e) {
-                    Log.w(TAG, "cannot parse exposure time: " + value);
-                }
-            }*/
-            newExif.saveAttributes();
-        } catch (Throwable t) {
-            Log.w(TAG, "cannot copy exif: " + source, t);
         }
     }
 }
