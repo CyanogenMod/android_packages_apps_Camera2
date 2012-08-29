@@ -298,27 +298,27 @@ public class GalleryActionBar implements OnNavigationListener {
 
     private Menu mActionBarMenu;
     private MenuItem mShareMenuItem;
+    private Intent mShareIntent;
 
     public void createActionBarMenu(int menuRes, Menu menu) {
         mActivity.getSupportMenuInflater().inflate(menuRes, menu);
         mActionBarMenu = menu;
         mShareMenuItem = menu.findItem(R.id.action_share);
+        if (mShareMenuItem != null) {
+            ((ShareActionProvider) mShareMenuItem.getActionProvider())
+                    .setShareIntent(mShareIntent);
+        }
     }
 
     public Menu getMenu() {
         return mActionBarMenu;
     }
 
-    public boolean hasShareMenuItem() {
-        return mShareMenuItem != null;
-    }
-
     public void setShareIntent(Intent shareIntent) {
-        ((ShareActionProvider) mShareMenuItem.getActionProvider())
-                .setShareIntent(shareIntent);
-    }
-
-    public MenuItem findMenuItem(int itemId) {
-        return mActionBarMenu.findItem(itemId);
+        mShareIntent = shareIntent;
+        if (mShareMenuItem != null) {
+            ((ShareActionProvider) mShareMenuItem.getActionProvider())
+                    .setShareIntent(shareIntent);
+        }
     }
 }
