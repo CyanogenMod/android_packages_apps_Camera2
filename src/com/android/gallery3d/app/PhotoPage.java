@@ -147,8 +147,6 @@ public class PhotoPage extends ActivityState implements
 
     private NfcAdapter mNfcAdapter;
 
-    private Menu mActionBarMenu;
-
     private final MyMenuVisibilityListener mMenuVisibilityListener =
             new MyMenuVisibilityListener();
 

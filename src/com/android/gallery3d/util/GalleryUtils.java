@@ -86,10 +86,10 @@ public class GalleryUtils {
 
     public static float[] intColorToFloatARGBArray(int from) {
         return new float[] {
-            (float) Color.alpha(from) / 255f,
-            (float) Color.red(from) / 255f,
-            (float) Color.green(from) / 255f,
-            (float) Color.blue(from) / 255f
+            Color.alpha(from) / 255f,
+            Color.red(from) / 255f,
+            Color.green(from) / 255f,
+            Color.blue(from) / 255f
         };
     }
 

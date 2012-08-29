@@ -37,7 +37,6 @@ public class MtpDevice extends MediaSet {
     private final GalleryApp mApplication;
     private final int mDeviceId;
     private final String mDeviceName;
-    private final DataManager mDataManager;
     private final MtpContext mMtpContext;
     private final String mName;
     private final ChangeNotifier mNotifier;
@@ -50,7 +49,6 @@ public class MtpDevice extends MediaSet {
         mApplication = application;
         mDeviceId = deviceId;
         mDeviceName = UsbDevice.getDeviceName(deviceId);
-        mDataManager = application.getDataManager();
         mMtpContext = mtpContext;
         mName = name;
         mNotifier = new ChangeNotifier(this, Uri.parse("mtp://"), application);

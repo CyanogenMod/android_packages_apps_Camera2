@@ -24,6 +24,7 @@ import com.android.gallery3d.R;
 import java.util.ArrayList;
 
 public class SizeClustering extends Clustering {
+    @SuppressWarnings("unused")
     private static final String TAG = "SizeClustering";
 
     private Context mContext;
@@ -48,10 +49,11 @@ public class SizeClustering extends Clustering {
         mContext = context;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void run(MediaSet baseSet) {
-        final ArrayList<Path>[] group =
-                (ArrayList<Path>[]) new ArrayList[SIZE_LEVELS.length];
+        @SuppressWarnings("unchecked")
+        final ArrayList<Path>[] group = new ArrayList[SIZE_LEVELS.length];
         baseSet.enumerateTotalMediaItems(new MediaSet.ItemConsumer() {
             @Override
             public void consume(int index, MediaItem item) {
@@ -80,7 +82,7 @@ public class SizeClustering extends Clustering {
             }
         }
 
-        mClusters = (ArrayList<Path>[]) new ArrayList[count];
+        mClusters = new ArrayList[count];
         mNames = new String[count];
         mMinSizes = new long[count];
 

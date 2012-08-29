@@ -20,9 +20,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -312,7 +311,7 @@ public class AlbumSetPage extends ActivityState implements
                             R.string.empty_album, Toast.LENGTH_LONG).show();
                     mActivity.getStateManager().finishState(this);
                 } else {
-                    emptyGalleryPrompt((Activity) mActivity);
+                    emptyGalleryPrompt(mActivity);
                 }
             } else if (mEmptyGalleryPrompt != null) {
                 mEmptyGalleryPrompt = null;

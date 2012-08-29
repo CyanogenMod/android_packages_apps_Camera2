@@ -30,7 +30,7 @@ class Paper {
     private static final int ROTATE_FACTOR = 4;
     private EdgeAnimation mAnimationLeft = new EdgeAnimation();
     private EdgeAnimation mAnimationRight = new EdgeAnimation();
-    private int mWidth, mHeight;
+    private int mWidth;
     private float[] mMatrix = new float[16];
 
     public void overScroll(float distance) {
@@ -63,7 +63,6 @@ class Paper {
 
     public void setSize(int width, int height) {
         mWidth = width;
-        mHeight = height;
     }
 
     public float[] getTransform(Rect rect, float scrollX) {

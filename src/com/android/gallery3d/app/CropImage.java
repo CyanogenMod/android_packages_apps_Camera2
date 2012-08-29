@@ -496,19 +496,23 @@ public class CropImage extends AbstractGalleryActivity {
                 }
             });
         try {
-            bitmap.compress(format, DEFAULT_COMPRESS_QUALITY, os);
+            bitmap.compress(format, DEFAULT_COMPRESS_QUALITY, ios);
             return !jc.isCancelled();
         } finally {
             jc.setCancelListener(null);
-            Utils.closeSilently(os);
+            Utils.closeSilently(ios);
         }
     }
 
     private boolean saveBitmapToUri(JobContext jc, Bitmap bitmap, Uri uri) {
         try {
-            return saveBitmapToOutputStream(jc, bitmap,
-                    convertExtensionToCompressFormat(getFileExtension()),
-                    getContentResolver().openOutputStream(uri));
+            OutputStream out = getContentResolver().openOutputStream(uri);
+            try {
+                return saveBitmapToOutputStream(jc, bitmap,
+                        convertExtensionToCompressFormat(getFileExtension()), out);
+            } finally {
+                Utils.closeSilently(out);
+            }
         } catch (FileNotFoundException e) {
             Log.w(TAG, "cannot write output", e);
         }
