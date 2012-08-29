@@ -21,6 +21,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Message;
 import android.util.FloatMath;
 import android.view.MotionEvent;
@@ -29,6 +30,7 @@ import android.view.animation.AccelerateInterpolator;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.AbstractGalleryActivity;
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
@@ -945,6 +947,19 @@ public class PhotoView extends GLView {
 
         @Override
         public boolean onSingleTapUp(float x, float y) {
+            // On crespo running Android 2.3.6 (gingerbread), a pinch out gesture results in the
+            // following call sequence: onDown(), onUp() and then onSingleTapUp(). The correct
+            // sequence for a single-tap-up gesture should be: onDown(), onSingleTapUp() and onUp().
+            // The call sequence for a pinch out gesture in JB is: onDown(), then onUp() and there's
+            // no onSingleTapUp(). Base on these observations, the following condition is added to
+            // filter out the false alarm where onSingleTapUp() is called within a pinch out
+            // gesture. The framework fix went into ICS. Refer to b/4588114.
+            if (Build.VERSION.SDK_INT < ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                if ((mHolding & HOLD_TOUCH_DOWN) == 0) {
+                    return true;
+                }
+            }
+
             // We do this in addition to onUp() because we want the snapback of
             // setFilmMode to happen.
             mHolding &= ~HOLD_TOUCH_DOWN;
