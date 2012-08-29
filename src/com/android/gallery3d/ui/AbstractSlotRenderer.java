@@ -42,15 +42,13 @@ public abstract class AbstractSlotRenderer implements SlotView.SlotRenderer {
             Texture content, int width, int height, int rotation) {
         canvas.save(GLCanvas.SAVE_FLAG_MATRIX);
 
+        // The content is always rendered in to the largest square that fits
+        // inside the slot, aligned to the top of the slot.
+        width = height = Math.min(width, height);
         if (rotation != 0) {
             canvas.translate(width / 2, height / 2);
             canvas.rotate(rotation, 0, 0, 1);
             canvas.translate(-width / 2, -height / 2);
-            if (((rotation % 90) & 1) != 0) {
-                int temp = height;
-                height = width;
-                width = height;
-            }
         }
 
         // Fit the content into the box
