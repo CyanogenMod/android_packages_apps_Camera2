@@ -23,10 +23,10 @@ import android.util.Log;
 import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.common.OverScroller;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.ui.PhotoView.Size;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.RangeArray;
 import com.android.gallery3d.util.RangeIntArray;
-import com.android.gallery3d.ui.PhotoView.Size;
 
 class PositionController {
     private static final String TAG = "PositionController";
@@ -857,6 +857,7 @@ class PositionController {
         //dumpState();
     }
 
+    @SuppressWarnings("unused")
     private void dumpState() {
         for (int i = -BOX_MAX; i < BOX_MAX; i++) {
             Log.d(TAG, "Gap " + i + ": " + mGaps.get(i).mCurrentGap);
@@ -981,6 +982,7 @@ class PositionController {
         g.mAnimationStartTime = NO_ANIMATION;
     }
 
+    @SuppressWarnings("unused")
     private void debugMoveBox(int fromIndex[]) {
         StringBuilder s = new StringBuilder("moveBox:");
         for (int i = 0; i < fromIndex.length; i++) {

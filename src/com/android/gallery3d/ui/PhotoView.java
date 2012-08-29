@@ -19,7 +19,6 @@ package com.android.gallery3d.ui;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Message;
@@ -189,7 +188,6 @@ public class PhotoView extends GLView {
 
     private Listener mListener;
     private Model mModel;
-    private StringTexture mLoadingText;
     private StringTexture mNoThumbnailText;
     private TileImageView mTileView;
     private EdgeView mEdgeView;
@@ -198,7 +196,6 @@ public class PhotoView extends GLView {
 
     private SynchronizedHandler mHandler;
 
-    private Point mImageCenter = new Point();
     private boolean mCancelExtraScalingPending;
     private boolean mFilmMode = false;
     private int mDisplayRotation = 0;
@@ -252,9 +249,6 @@ public class PhotoView extends GLView {
                     hideUndoBar();
                 }
             });
-        mLoadingText = StringTexture.newInstance(
-                context.getString(R.string.loading),
-                DEFAULT_TEXT_SIZE, Color.WHITE);
         mNoThumbnailText = StringTexture.newInstance(
                 context.getString(R.string.no_thumbnail),
                 DEFAULT_TEXT_SIZE, Color.WHITE);
@@ -266,25 +260,37 @@ public class PhotoView extends GLView {
 
         mPositionController = new PositionController(context,
                 new PositionController.Listener() {
-                    public void invalidate() {
-                        PhotoView.this.invalidate();
-                    }
-                    public boolean isHoldingDown() {
-                        return (mHolding & HOLD_TOUCH_DOWN) != 0;
-                    }
-                    public boolean isHoldingDelete() {
-                        return (mHolding & HOLD_DELETE) != 0;
-                    }
-                    public void onPull(int offset, int direction) {
-                        mEdgeView.onPull(offset, direction);
-                    }
-                    public void onRelease() {
-                        mEdgeView.onRelease();
-                    }
-                    public void onAbsorb(int velocity, int direction) {
-                        mEdgeView.onAbsorb(velocity, direction);
-                    }
-                });
+
+            @Override
+            public void invalidate() {
+                PhotoView.this.invalidate();
+            }
+
+            @Override
+            public boolean isHoldingDown() {
+                return (mHolding & HOLD_TOUCH_DOWN) != 0;
+            }
+
+            @Override
+            public boolean isHoldingDelete() {
+                return (mHolding & HOLD_DELETE) != 0;
+            }
+
+            @Override
+            public void onPull(int offset, int direction) {
+                mEdgeView.onPull(offset, direction);
+            }
+
+            @Override
+            public void onRelease() {
+                mEdgeView.onRelease();
+            }
+
+            @Override
+            public void onAbsorb(int velocity, int direction) {
+                mEdgeView.onAbsorb(velocity, direction);
+            }
+        });
         mVideoPlayIcon = new ResourceTexture(context, R.drawable.ic_control_play);
         for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
             if (i == 0) {
@@ -369,7 +375,7 @@ public class PhotoView extends GLView {
                 default: throw new AssertionError(message.what);
             }
         }
-    };
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     //  Data/Image change notifications
@@ -559,9 +565,6 @@ public class PhotoView extends GLView {
         private int mLoadingState = Model.LOADING_INIT;
         private Size mSize = new Size();
         private boolean mWasCameraCenter;
-        public void FullPicture(TileImageView tileView) {
-            mTileView = tileView;
-        }
 
         @Override
         public void reload() {

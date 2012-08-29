@@ -28,7 +28,6 @@ import android.util.Log;
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.provider.GalleryProvider;
-import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
@@ -44,7 +43,6 @@ public class MtpImage extends MediaItem {
     private int mObjectSize;
     private long mDateTaken;
     private String mFileName;
-    private final ThreadPool mThreadPool;
     private final MtpContext mMtpContext;
     private final MtpObjectInfo mObjInfo;
     private final int mImageWidth;
@@ -63,7 +61,6 @@ public class MtpImage extends MediaItem {
         mFileName = objInfo.getName();
         mImageWidth = objInfo.getImagePixWidth();
         mImageHeight = objInfo.getImagePixHeight();
-        mThreadPool = application.getThreadPool();
         mMtpContext = mtpContext;
     }
 

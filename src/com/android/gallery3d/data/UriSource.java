@@ -22,6 +22,7 @@ import android.webkit.MimeTypeMap;
 
 import com.android.gallery3d.app.GalleryApp;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
@@ -30,6 +31,7 @@ class UriSource extends MediaSource {
     private static final String TAG = "UriSource";
     private static final String IMAGE_TYPE_PREFIX = "image/";
     private static final String IMAGE_TYPE_ANY = "image/*";
+    private static final String CHARSET_UTF_8 = "utf-8";
 
     private GalleryApp mApplication;
 
@@ -44,9 +46,13 @@ class UriSource extends MediaSource {
         if (segment.length != 3) {
             throw new RuntimeException("bad path: " + path);
         }
-        String uri = URLDecoder.decode(segment[1]);
-        String type = URLDecoder.decode(segment[2]);
-        return new UriImage(mApplication, path, Uri.parse(uri), type);
+        try {
+            String uri = URLDecoder.decode(segment[1], CHARSET_UTF_8);
+            String type = URLDecoder.decode(segment[2], CHARSET_UTF_8);
+            return new UriImage(mApplication, path, Uri.parse(uri), type);
+        } catch (UnsupportedEncodingException e) {
+            throw new AssertionError(e);
+        }
     }
 
     private String getMimeType(Uri uri) {
@@ -75,8 +81,13 @@ class UriSource extends MediaSource {
         }
 
         if (type.startsWith(IMAGE_TYPE_PREFIX)) {
-            return Path.fromString("/uri/" + URLEncoder.encode(uri.toString())
-                    + "/" +URLEncoder.encode(type));
+            try {
+                return Path.fromString("/uri/"
+                        + URLEncoder.encode(uri.toString(), CHARSET_UTF_8)
+                        + "/" +URLEncoder.encode(type, CHARSET_UTF_8));
+            } catch (UnsupportedEncodingException e) {
+                throw new AssertionError(e);
+            }
         }
         // We have no clues that it is an image
         return null;

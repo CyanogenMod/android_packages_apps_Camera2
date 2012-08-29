@@ -61,7 +61,6 @@ public class MenuExecutor {
     private Future<?> mTask;
     // wait the operation to finish when we want to stop it.
     private boolean mWaitOnStop;
-    private Intent mShareIntent;
 
     private final AbstractGalleryActivity mActivity;
     private final SelectionManager mSelectionManager;
@@ -230,7 +229,7 @@ public class MenuExecutor {
                 Intent intent = getIntentBySingleSelectedPath(Intent.ACTION_ATTACH_DATA)
                         .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 intent.putExtra("mimeType", intent.getType());
-                Activity activity = (Activity) mActivity;
+                Activity activity = mActivity;
                 activity.startActivity(Intent.createChooser(
                         intent, activity.getString(R.string.set_as)));
                 return;
@@ -314,7 +313,7 @@ public class MenuExecutor {
         ArrayList<Path> ids = mSelectionManager.getSelected(false);
         stopTaskAndDismissDialog();
 
-        Activity activity = (Activity) mActivity;
+        Activity activity = mActivity;
         mDialog = createProgressDialog(activity, title, ids.size());
         if (showDialog) {
             mDialog.show();
@@ -366,7 +365,7 @@ public class MenuExecutor {
                 double latlng[] = new double[2];
                 item.getLatLong(latlng);
                 if (GalleryUtils.isValidLocation(latlng[0], latlng[1])) {
-                    GalleryUtils.showOnMap((Context) mActivity, latlng[0], latlng[1]);
+                    GalleryUtils.showOnMap(mActivity, latlng[0], latlng[1]);
                 }
                 break;
             }

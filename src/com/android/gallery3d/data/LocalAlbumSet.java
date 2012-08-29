@@ -37,11 +37,12 @@ import java.util.Comparator;
 // The path should be "/local/image", "local/video" or "/local/all"
 public class LocalAlbumSet extends MediaSet
         implements FutureListener<ArrayList<MediaSet>> {
+    @SuppressWarnings("unused")
+    private static final String TAG = "LocalAlbumSet";
+
     public static final Path PATH_ALL = Path.fromString("/local/all");
     public static final Path PATH_IMAGE = Path.fromString("/local/image");
     public static final Path PATH_VIDEO = Path.fromString("/local/video");
-
-    private static final String TAG = "LocalAlbumSet";
 
     private static final Uri[] mWatchUris =
         {Images.Media.EXTERNAL_CONTENT_URI, Video.Media.EXTERNAL_CONTENT_URI};
