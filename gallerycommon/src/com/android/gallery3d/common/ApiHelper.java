@@ -106,8 +106,8 @@ public class ApiHelper {
     public static final boolean HAS_MEDIA_ACTION_SOUND =
             Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
 
-    public static final boolean HAS_PANORAMA =
-            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+    public static final boolean HAS_OLD_PANORAMA =
+            Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
 
     public static final boolean HAS_TIME_LAPSE_RECORDING =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
