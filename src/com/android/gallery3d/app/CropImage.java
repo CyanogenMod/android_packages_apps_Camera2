@@ -394,12 +394,12 @@ public class CropImage extends AbstractGalleryActivity {
 
     private void changeExifImageSizeTags(ExifData data, int width, int height) {
         // FIXME: would the image size be too large for TYPE_UNSIGHED_SHORT?
-        ExifTag tag = new ExifTag(ExifTag.TIFF_TAG.TAG_IMAGE_WIDTH,
+        ExifTag tag = new ExifTag(ExifTag.TAG_IMAGE_WIDTH,
                             ExifTag.TYPE_UNSIGNED_SHORT, 1, IfdId.TYPE_IFD_0);
         tag.setValue(new int[] {width});
         data.getIfdData(IfdId.TYPE_IFD_0).setTag(tag);
 
-        tag = new ExifTag(ExifTag.TIFF_TAG.TAG_IMAGE_HEIGHT,
+        tag = new ExifTag(ExifTag.TAG_IMAGE_LENGTH,
                             ExifTag.TYPE_UNSIGNED_SHORT, 1, IfdId.TYPE_IFD_0);
         tag.setValue(new int[] {height});
         data.getIfdData(IfdId.TYPE_IFD_0).setTag(tag);

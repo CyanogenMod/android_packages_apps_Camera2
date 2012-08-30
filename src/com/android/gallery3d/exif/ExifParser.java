@@ -471,33 +471,33 @@ public class ExifParser {
      */
     private void checkOffsetOrImageTag(ExifTag tag) {
         switch (tag.getTagId()) {
-            case ExifTag.TIFF_TAG.TAG_EXIF_IFD:
+            case ExifTag.TAG_EXIF_IFD:
                 if (isIfdRequested(IfdId.TYPE_IFD_EXIF)
                         || isIfdRequested(IfdId.TYPE_IFD_INTEROPERABILITY)) {
                     registerIfd(IfdId.TYPE_IFD_EXIF, tag.getUnsignedInt(0));
                 }
                 break;
-            case ExifTag.TIFF_TAG.TAG_GPS_IFD:
+            case ExifTag.TAG_GPS_IFD:
                 if (isIfdRequested(IfdId.TYPE_IFD_GPS)) {
                     registerIfd(IfdId.TYPE_IFD_GPS, tag.getUnsignedInt(0));
                 }
                 break;
-            case ExifTag.EXIF_TAG.TAG_INTEROPERABILITY_IFD:
+            case ExifTag.TAG_INTEROPERABILITY_IFD:
                 if (isIfdRequested(IfdId.TYPE_IFD_INTEROPERABILITY)) {
                     registerIfd(IfdId.TYPE_IFD_INTEROPERABILITY, tag.getUnsignedInt(0));
                 }
                 break;
-            case ExifTag.TIFF_TAG.TAG_JPEG_INTERCHANGE_FORMAT:
+            case ExifTag.TAG_JPEG_INTERCHANGE_FORMAT:
                 if (isThumbnailRequested()) {
                     registerCompressedImage(tag.getUnsignedInt(0));
                 }
                 break;
-            case ExifTag.TIFF_TAG.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH:
+            case ExifTag.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH:
                 if (isThumbnailRequested()) {
                     mJpegSizeTag = tag;
                 }
                 break;
-            case ExifTag.TIFF_TAG.TAG_STRIP_OFFSETS:
+            case ExifTag.TAG_STRIP_OFFSETS:
                 if (isThumbnailRequested()) {
                     if (tag.hasValue()) {
                         for (int i = 0; i < tag.getComponentCount(); i++) {
@@ -512,7 +512,7 @@ public class ExifParser {
                     }
                 }
                 break;
-            case ExifTag.TIFF_TAG.TAG_STRIP_BYTE_COUNTS:
+            case ExifTag.TAG_STRIP_BYTE_COUNTS:
                 if (isThumbnailRequested()) {
                     if (tag.hasValue()) {
                         mStripSizeTag = tag;
