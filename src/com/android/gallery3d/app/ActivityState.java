@@ -44,12 +44,8 @@ abstract public class ActivityState {
     protected static final int FLAG_HIDE_STATUS_BAR = 2;
     protected static final int FLAG_SCREEN_ON_WHEN_PLUGGED = 4;
     protected static final int FLAG_SCREEN_ON_ALWAYS = 8;
-
-    private static final int SCREEN_ON_FLAGS = (
-              WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-            | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
-            | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-        );
+    protected static final int FLAG_ALLOW_LOCK_WHILE_SCREEN_ON = 16;
+    protected static final int FLAG_SHOW_WHEN_LOCKED = 32;
 
     protected AbstractGalleryActivity mActivity;
     protected Bundle mData;
@@ -134,20 +130,30 @@ abstract public class ActivityState {
 
                 if (plugged != mPlugged) {
                     mPlugged = plugged;
-                    setScreenOnFlags();
+                    setScreenFlags();
                 }
             }
         }
     };
 
-    void setScreenOnFlags() {
-        final Window win = ((Activity) mActivity).getWindow();
+    private void setScreenFlags() {
+        final Window win = mActivity.getWindow();
         final WindowManager.LayoutParams params = win.getAttributes();
         if ((0 != (mFlags & FLAG_SCREEN_ON_ALWAYS)) ||
                 (mPlugged && 0 != (mFlags & FLAG_SCREEN_ON_WHEN_PLUGGED))) {
-            params.flags |= SCREEN_ON_FLAGS;
+            params.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
         } else {
-            params.flags &= ~SCREEN_ON_FLAGS;
+            params.flags &= ~WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+        }
+        if (0 != (mFlags & FLAG_ALLOW_LOCK_WHILE_SCREEN_ON)) {
+            params.flags |= WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON;
+        } else {
+            params.flags &= ~WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON;
+        }
+        if (0 != (mFlags & FLAG_SHOW_WHEN_LOCKED)) {
+            params.flags |= WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+        } else {
+            params.flags &= ~WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
         }
         win.setAttributes(params);
     }
@@ -176,7 +182,7 @@ abstract public class ActivityState {
 
         activity.invalidateOptionsMenu();
 
-        setScreenOnFlags();
+        setScreenFlags();
 
         boolean lightsOut = ((mFlags & FLAG_HIDE_STATUS_BAR) != 0);
         mActivity.getGLRoot().setLightsOutMode(lightsOut);
