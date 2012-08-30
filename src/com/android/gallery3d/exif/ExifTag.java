@@ -17,6 +17,7 @@
 package com.android.gallery3d.exif;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 
 /**
  * This class stores information of an EXIF tag.
@@ -568,7 +569,7 @@ public class ExifTag {
         if (mValue instanceof long[]) {
             return (short) (((long[]) mValue) [index]);
         } else {
-            throw new RuntimeException("There is numerical value in this tag");
+            throw new RuntimeException("There is no numerical value in this tag");
         }
     }
 
@@ -576,7 +577,7 @@ public class ExifTag {
         if (mValue instanceof long[]) {
             return (int) (((long[]) mValue) [index]);
         } else {
-            throw new RuntimeException("There is numerical value in this tag");
+            throw new RuntimeException("There is no numerical value in this tag");
         }
     }
 
@@ -584,7 +585,7 @@ public class ExifTag {
         if (mValue instanceof long[]) {
             return (int) (((long[]) mValue) [index]);
         } else {
-            throw new RuntimeException("There is numerical value in this tag");
+            throw new RuntimeException("There is no numerical value in this tag");
         }
     }
 
@@ -592,7 +593,7 @@ public class ExifTag {
         if (mValue instanceof long[]) {
             return ((long[]) mValue) [index];
         } else {
-            throw new RuntimeException("There is numerical value in this tag");
+            throw new RuntimeException("There is no numerical value in this tag");
         }
     }
 
@@ -670,5 +671,40 @@ public class ExifTag {
                 break;
         }
         return sbuilder.toString();
+    }
+
+    /**
+     * Returns true if the ID is one of the following: {@link TIFF_TAG#TAG_EXIF_IFD},
+     * {@link TIFF_TAG#TAG_GPS_IFD}, {@link TIFF_TAG#TAG_JPEG_INTERCHANGE_FORMAT},
+     * {@link TIFF_TAG#TAG_STRIP_OFFSETS}, {@link EXIF_TAG#TAG_INTEROPERABILITY_IFD}
+     */
+    public static boolean isOffsetTag(short tagId) {
+        return tagId == ExifTag.TIFF_TAG.TAG_EXIF_IFD
+                || tagId == ExifTag.TIFF_TAG.TAG_GPS_IFD
+                || tagId == ExifTag.TIFF_TAG.TAG_JPEG_INTERCHANGE_FORMAT
+                || tagId == ExifTag.TIFF_TAG.TAG_STRIP_OFFSETS
+                || tagId == ExifTag.EXIF_TAG.TAG_INTEROPERABILITY_IFD;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ExifTag) {
+            ExifTag tag = (ExifTag) obj;
+            boolean isArray = mValue != null && mValue.getClass().isArray();
+            if (mValue != null) {
+                if (mValue instanceof long[]) {
+                    if (!(tag.mValue instanceof long[])) return false;
+                    return Arrays.equals((long[]) mValue, (long[]) tag.mValue);
+                } else if (mValue instanceof Rational[]) {
+                    if (!(tag.mValue instanceof Rational[])) return false;
+                    return Arrays.equals((Rational[]) mValue, (Rational[]) tag.mValue);
+                } else {
+                    return mValue.equals(tag.mValue);
+                }
+            } else {
+                return tag.mValue == null;
+            }
+        }
+        return false;
     }
 }

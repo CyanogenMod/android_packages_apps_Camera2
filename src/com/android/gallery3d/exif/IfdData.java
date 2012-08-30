@@ -77,6 +77,14 @@ public class IfdData {
     public void setTag(ExifTag tag) {
         mExifTags.put(tag.getTagId(), tag);
     }
+
+    /**
+     * Gets the tags count in the IFD.
+     */
+    public int getTagCount() {
+        return mExifTags.size();
+    }
+
     /**
      * Sets the offset of next IFD.
      */
@@ -89,5 +97,26 @@ public class IfdData {
      */
     int getOffsetToNextIfd() {
         return mOffsetToNextIfd;
+    }
+
+    /**
+     * Returns true if all tags in this two IFDs are equal. Note that tags of IFDs offset or
+     * thumbnail offset will be ignored.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof IfdData) {
+            IfdData data = (IfdData) obj;
+            if (data.getId() == mIfdId && data.getTagCount() == getTagCount()) {
+                ExifTag[] tags = data.getAllTags(new ExifTag[0]);
+                for (ExifTag tag: tags) {
+                    if (ExifTag.isOffsetTag(tag.getTagId())) continue;
+                    ExifTag tag2 = mExifTags.get(tag.getTagId());
+                    if (!tag.equals(tag2)) return false;
+                }
+                return true;
+            }
+        }
+        return false;
     }
 }
