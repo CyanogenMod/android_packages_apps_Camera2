@@ -154,6 +154,9 @@ public class ApiHelper {
     public static final boolean CAN_START_PREVIEW_IN_JPEG_CALLBACK =
             Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
 
+    public static final boolean CAN_USE_FLAG_SECURE =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
         try {
