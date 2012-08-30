@@ -30,7 +30,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -82,6 +81,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -421,14 +421,13 @@ public class CropImage extends AbstractGalleryActivity {
         if (!DOWNLOAD_BUCKET.isDirectory() && !DOWNLOAD_BUCKET.mkdirs()) {
             throw new RuntimeException("cannot create download folder");
         }
-
         String filename = PicasaSource.getImageTitle(mMediaItem);
         int pos = filename.lastIndexOf('.');
         if (pos >= 0) filename = filename.substring(0, pos);
-        File output = saveMedia(jc, cropped, DOWNLOAD_BUCKET, filename, null);
+        ExifData exifData = new ExifData(ByteOrder.BIG_ENDIAN);
+        PicasaSource.extractExifValues(mMediaItem, exifData);
+        File output = saveMedia(jc, cropped, DOWNLOAD_BUCKET, filename, exifData);
         if (output == null) return null;
-
-        copyExif(mMediaItem, output.getAbsolutePath(), cropped.getWidth(), cropped.getHeight());
 
         long now = System.currentTimeMillis() / 1000;
         ContentValues values = new ContentValues();
@@ -998,19 +997,6 @@ public class CropImage extends AbstractGalleryActivity {
             return mItem == null
                     ? null
                     : mItem.requestImage(MediaItem.TYPE_THUMBNAIL).run(jc);
-        }
-    }
-
-    private static void copyExif(MediaItem item, String destination, int newWidth, int newHeight) {
-        try {
-            ExifInterface newExif = new ExifInterface(destination);
-            PicasaSource.extractExifValues(item, newExif);
-            newExif.setAttribute(ExifInterface.TAG_IMAGE_WIDTH, String.valueOf(newWidth));
-            newExif.setAttribute(ExifInterface.TAG_IMAGE_LENGTH, String.valueOf(newHeight));
-            newExif.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(0));
-            newExif.saveAttributes();
-        } catch (Throwable t) {
-            Log.w(TAG, "cannot copy exif: " + item, t);
         }
     }
 }
