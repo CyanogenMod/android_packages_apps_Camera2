@@ -69,38 +69,38 @@ public class ExifReaderTest extends InstrumentationTestCase {
     private void checkThumbnail(ExifData exifData) {
         IfdData ifd1 = exifData.getIfdData(IfdId.TYPE_IFD_1);
         if (ifd1 != null) {
-            if (ifd1.getTag(ExifTag.TIFF_TAG.TAG_COMPRESSION).getUnsignedShort(0) ==
-                    ExifTag.TIFF_TAG.COMPRESSION_JPEG) {
+            if (ifd1.getTag(ExifTag.TAG_COMPRESSION).getUnsignedShort(0) ==
+                    ExifTag.Compression.JPEG) {
                 assertTrue(exifData.hasCompressedThumbnail());
                 byte[] thumbnail = exifData.getCompressedThumbnail();
                 assertTrue(BitmapFactory.decodeByteArray(thumbnail, 0, thumbnail.length) != null);
             } else {
                 // Try to check the strip count with the formula provided by EXIF spec.
-                int planarType = ExifTag.TIFF_TAG.PLANAR_CONFIGURATION_CHUNKY;
-                ExifTag planarTag = ifd1.getTag(ExifTag.TIFF_TAG.TAG_PLANAR_CONFIGURATION);
+                int planarType = ExifTag.PlanarConfiguration.CHUNKY;
+                ExifTag planarTag = ifd1.getTag(ExifTag.TAG_PLANAR_CONFIGURATION);
                 if (planarTag != null) {
                     planarType = planarTag.getUnsignedShort(0);
                 }
 
-                ExifTag heightTag = ifd1.getTag(ExifTag.TIFF_TAG.TAG_IMAGE_HEIGHT);
-                ExifTag rowPerStripTag = ifd1.getTag(ExifTag.TIFF_TAG.TAG_ROWS_PER_STRIP);
+                ExifTag heightTag = ifd1.getTag(ExifTag.TAG_IMAGE_LENGTH);
+                ExifTag rowPerStripTag = ifd1.getTag(ExifTag.TAG_ROWS_PER_STRIP);
 
                 int imageLength = getUnsignedIntOrShort(heightTag);
                 int rowsPerStrip = getUnsignedIntOrShort(rowPerStripTag);
                 int stripCount = ifd1.getTag(
-                        ExifTag.TIFF_TAG.TAG_STRIP_OFFSETS).getComponentCount();
+                        ExifTag.TAG_STRIP_OFFSETS).getComponentCount();
 
-                if (planarType == ExifTag.TIFF_TAG.PLANAR_CONFIGURATION_CHUNKY) {
+                if (planarType == ExifTag.PlanarConfiguration.CHUNKY) {
                     assertTrue(stripCount == (imageLength + rowsPerStrip - 1) / rowsPerStrip);
                 } else {
-                    ExifTag samplePerPixelTag = ifd1.getTag(ExifTag.TIFF_TAG.TAG_SAMPLES_PER_PIXEL);
+                    ExifTag samplePerPixelTag = ifd1.getTag(ExifTag.TAG_SAMPLES_PER_PIXEL);
                     int samplePerPixel = samplePerPixelTag.getUnsignedShort(0);
                     assertTrue(stripCount ==
                             (imageLength + rowsPerStrip - 1) / rowsPerStrip * samplePerPixel);
                 }
 
                 for (int i = 0; i < stripCount; i++) {
-                    ExifTag byteCountTag = ifd1.getTag(ExifTag.TIFF_TAG.TAG_STRIP_BYTE_COUNTS);
+                    ExifTag byteCountTag = ifd1.getTag(ExifTag.TAG_STRIP_BYTE_COUNTS);
                     if (byteCountTag.getDataType() == ExifTag.TYPE_UNSIGNED_SHORT) {
                         assertEquals(byteCountTag.getUnsignedShort(i), exifData.getStrip(i).length);
                     } else {
