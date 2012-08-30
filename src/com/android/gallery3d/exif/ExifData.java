@@ -36,16 +36,7 @@ public class ExifData {
         mByteOrder = order;
     }
 
-    /**
-     * Gets the IFD data of the specified IFD.
-     *
-     * @see IfdId#TYPE_IFD_0
-     * @see IfdId#TYPE_IFD_1
-     * @see IfdId#TYPE_IFD_EXIF
-     * @see IfdId#TYPE_IFD_GPS
-     * @see IfdId#TYPE_IFD_INTEROPERABILITY
-     */
-    public IfdData getIfdData(int ifdId) {
+    IfdData getIfdData(int ifdId) {
         return mIfdDatas[ifdId];
     }
 
@@ -53,7 +44,7 @@ public class ExifData {
      * Adds IFD data. If IFD data of the same type already exists,
      * it will be replaced by the new data.
      */
-    public void addIfdData(IfdData data) {
+    void addIfdData(IfdData data) {
         mIfdDatas[data.getId()] = data;
     }
 
@@ -143,6 +134,11 @@ public class ExifData {
         return false;
     }
 
+    /**
+     * Adds {@link ExifTag#TAG_GPS_LATITUDE}, {@link ExifTag#TAG_GPS_LONGITUDE},
+     * {@link ExifTag#TAG_GPS_LATITUDE_REF} and {@link ExifTag#TAG_GPS_LONGITUDE_REF} with the
+     * given latitude and longitude.
+     */
     public void addGpsTags(double latitude, double longitude) {
         IfdData gpsIfd = getIfdData(IfdId.TYPE_IFD_GPS);
         if (gpsIfd == null) {
@@ -181,5 +177,79 @@ public class ExifData {
         int seconds = (int) value;
         return new Rational[] {
                 new Rational(degrees, 1), new Rational(minutes, 1), new Rational(seconds, 100)};
+    }
+
+    private IfdData getOrCreateIfdData(int ifdId) {
+        IfdData ifdData = mIfdDatas[ifdId];
+        if (ifdData == null) {
+            ifdData = new IfdData(ifdId);
+            mIfdDatas[ifdId] = ifdData;
+        }
+        return ifdData;
+    }
+
+    /**
+     * Gets the tag with the given tag ID. Returns null if the tag does not exist. For tags
+     * related to interoperability or thumbnail, call {@link #getInteroperabilityTag(short)} and
+     * {@link #getThumbnailTag(short)} respectively.
+     */
+    public ExifTag getTag(short tagId) {
+        int ifdId = ExifTag.getIfdIdFromTagId(tagId);
+        IfdData ifdData = mIfdDatas[ifdId];
+        return (ifdData == null) ? null : ifdData.getTag(tagId);
+    }
+
+    /**
+     * Gets the thumbnail-related tag with the given tag ID.
+     */
+    public ExifTag getThumbnailTag(short tagId) {
+        IfdData ifdData = mIfdDatas[IfdId.TYPE_IFD_1];
+        return (ifdData == null) ? null : ifdData.getTag(tagId);
+    }
+
+    /**
+     * Gets the interoperability-related tag with the given tag ID.
+     */
+    public ExifTag getInteroperabilityTag(short tagId) {
+        IfdData ifdData = mIfdDatas[IfdId.TYPE_IFD_INTEROPERABILITY];
+        return (ifdData == null) ? null : ifdData.getTag(tagId);
+    }
+
+    /**
+     * Adds a tag with the given tag ID. The original tag will be replaced by the new tag. For tags
+     * related to interoperability or thumbnail, call {@link #addInteroperabilityTag(short)} or
+     * {@link #addThumbnailTag(short)} respectively.
+     * @exception IllegalArgumentException if the tag ID is invalid.
+     */
+    public ExifTag addTag(short tagId) {
+        int ifdId = ExifTag.getIfdIdFromTagId(tagId);
+        IfdData ifdData = getOrCreateIfdData(ifdId);
+        ExifTag tag = ExifTag.buildTag(tagId);
+        ifdData.setTag(tag);
+        return tag;
+    }
+
+    /**
+     * Adds a thumbnail-related tag with the given tag ID. The original tag will be replaced
+     * by the new tag.
+     * @exception IllegalArgumentException if the tag ID is invalid.
+     */
+    public ExifTag addThumbnailTag(short tagId) {
+        IfdData ifdData = getOrCreateIfdData(IfdId.TYPE_IFD_1);
+        ExifTag tag = ExifTag.buildThumbnailTag(tagId);
+        ifdData.setTag(tag);
+        return tag;
+    }
+
+    /**
+     * Adds an interoperability-related tag with the given tag ID. The original tag will be
+     * replaced by the new tag.
+     * @exception IllegalArgumentException if the tag ID is invalid.
+     */
+    public ExifTag addInteroperabilityTag(short tagId) {
+        IfdData ifdData = getOrCreateIfdData(IfdId.TYPE_IFD_INTEROPERABILITY);
+        ExifTag tag = ExifTag.buildInteroperabilityTag(tagId);
+        ifdData.setTag(tag);
+        return tag;
     }
 }

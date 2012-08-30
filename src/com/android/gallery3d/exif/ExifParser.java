@@ -230,7 +230,7 @@ public class ExifParser {
             }
             return EVENT_NEW_TAG;
         } else if (offset == endOfTags) {
-            long ifdOffset = readUnsignedInt();
+            long ifdOffset = readUnsignedLong();
             // There is a link to ifd1 at the end of ifd0
             if (mIfdType == IfdId.TYPE_IFD_0) {
                 if (isIfdRequested(IfdId.TYPE_IFD_1) || isThumbnailRequested()) {
@@ -296,7 +296,7 @@ public class ExifParser {
         } else {
             skipTo(endOfTags);
         }
-        long ifdOffset = readUnsignedInt();
+        long ifdOffset = readUnsignedLong();
         // For ifd0, there is a link to ifd1 in the end of all tags
         if (mIfdType == IfdId.TYPE_IFD_0
                 && (isIfdRequested(IfdId.TYPE_IFD_1) || isThumbnailRequested())) {
@@ -340,7 +340,7 @@ public class ExifParser {
      * @see #registerForTagValue(ExifTag)
      * @see #read(byte[])
      * @see #read(byte[], int, int)
-     * @see #readInt()
+     * @see #readLong()
      * @see #readRational()
      * @see #readShort()
      * @see #readString(int)
@@ -396,7 +396,9 @@ public class ExifParser {
         if (mStripSizeTag.getDataType() == ExifTag.TYPE_UNSIGNED_SHORT) {
             return mStripSizeTag.getUnsignedShort(mImageEvent.stripIndex);
         } else {
-            return (int) mStripSizeTag.getUnsignedInt(mImageEvent.stripIndex);
+            // Cast unsigned int to int since the strip size is always smaller
+            // than the size of APP1 (65536)
+            return (int) mStripSizeTag.getUnsignedLong(mImageEvent.stripIndex);
         }
     }
 
@@ -406,7 +408,9 @@ public class ExifParser {
      */
     public int getCompressedImageSize() {
         if (mJpegSizeTag == null) return 0;
-        return (int) mJpegSizeTag.getUnsignedInt(0);
+        // Cast unsigned int to int since the thumbnail is always smaller
+        // than the size of APP1 (65536)
+        return (int) mJpegSizeTag.getUnsignedLong(0);
     }
 
     private void skipTo(int offset) throws IOException {
@@ -429,6 +433,8 @@ public class ExifParser {
     }
 
     private void registerIfd(int ifdType, long offset) {
+        // Cast unsigned int to int since the offset is always smaller
+        // than the size of APP1 (65536)
         mCorrespondingEvent.put((int) offset, new IfdEvent(ifdType, isIfdRequested(ifdType)));
     }
 
@@ -474,22 +480,22 @@ public class ExifParser {
             case ExifTag.TAG_EXIF_IFD:
                 if (isIfdRequested(IfdId.TYPE_IFD_EXIF)
                         || isIfdRequested(IfdId.TYPE_IFD_INTEROPERABILITY)) {
-                    registerIfd(IfdId.TYPE_IFD_EXIF, tag.getUnsignedInt(0));
+                    registerIfd(IfdId.TYPE_IFD_EXIF, tag.getUnsignedLong(0));
                 }
                 break;
             case ExifTag.TAG_GPS_IFD:
                 if (isIfdRequested(IfdId.TYPE_IFD_GPS)) {
-                    registerIfd(IfdId.TYPE_IFD_GPS, tag.getUnsignedInt(0));
+                    registerIfd(IfdId.TYPE_IFD_GPS, tag.getUnsignedLong(0));
                 }
                 break;
             case ExifTag.TAG_INTEROPERABILITY_IFD:
                 if (isIfdRequested(IfdId.TYPE_IFD_INTEROPERABILITY)) {
-                    registerIfd(IfdId.TYPE_IFD_INTEROPERABILITY, tag.getUnsignedInt(0));
+                    registerIfd(IfdId.TYPE_IFD_INTEROPERABILITY, tag.getUnsignedLong(0));
                 }
                 break;
             case ExifTag.TAG_JPEG_INTERCHANGE_FORMAT:
                 if (isThumbnailRequested()) {
-                    registerCompressedImage(tag.getUnsignedInt(0));
+                    registerCompressedImage(tag.getUnsignedLong(0));
                 }
                 break;
             case ExifTag.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH:
@@ -504,7 +510,7 @@ public class ExifParser {
                             if (tag.getDataType() == ExifTag.TYPE_UNSIGNED_SHORT) {
                                 registerUncompressedStrip(i, tag.getUnsignedShort(i));
                             } else {
-                                registerUncompressedStrip(i, tag.getUnsignedInt(i));
+                                registerUncompressedStrip(i, tag.getUnsignedLong(i));
                             }
                         }
                     } else {
@@ -535,11 +541,11 @@ public class ExifParser {
             case ExifTag.TYPE_ASCII:
                 tag.setValue(readString(tag.getComponentCount()));
                 break;
-            case ExifTag.TYPE_UNSIGNED_INT:
+            case ExifTag.TYPE_UNSIGNED_LONG:
                 {
                     long value[] = new long[tag.getComponentCount()];
                     for (int i = 0, n = value.length; i < n; i++) {
-                        value[i] = readUnsignedInt();
+                        value[i] = readUnsignedLong();
                     }
                     tag.setValue(value);
                 }
@@ -562,11 +568,11 @@ public class ExifParser {
                   tag.setValue(value);
               }
               break;
-          case ExifTag.TYPE_INT:
+          case ExifTag.TYPE_LONG:
               {
                   int value[] = new int[tag.getComponentCount()];
                   for (int i = 0, n = value.length; i < n; i++) {
-                      value[i] = readInt();
+                      value[i] = readLong();
                   }
                   tag.setValue(value);
               }
@@ -629,14 +635,24 @@ public class ExifParser {
                 && dataStream.readShort() == EXIF_HEADER_TAIL);
     }
 
+    /**
+     * Reads bytes from the InputStream.
+     */
     public int read(byte[] buffer, int offset, int length) throws IOException {
         return mTiffStream.read(buffer, offset, length);
     }
 
+    /**
+     * Equivalent to read(buffer, 0, buffer.length).
+     */
     public int read(byte[] buffer) throws IOException {
         return mTiffStream.read(buffer);
     }
 
+    /**
+     * Reads a String from the InputStream with UTF8 charset.
+     * This is used for reading values of type {@link ExifTag#TYPE_ASCII}.
+     */
     public String readString(int n) throws IOException {
         if (n > 0) {
             byte[] buf = new byte[n];
@@ -647,37 +663,52 @@ public class ExifParser {
         }
     }
 
+    /**
+     * Reads a String from the InputStream with the given charset.
+     * This is used for reading values of type {@link ExifTag#TYPE_ASCII}.
+     */
     public String readString(int n, Charset charset) throws IOException {
         byte[] buf = new byte[n];
         mTiffStream.readOrThrow(buf);
         return new String(buf, 0, n - 1, charset);
     }
 
+    /**
+     * Reads value of type {@link ExifTag#TYPE_UNSIGNED_SHORT} from the InputStream.
+     */
     public int readUnsignedShort() throws IOException {
-        return readShort() & 0xffff;
+        return mTiffStream.readShort() & 0xffff;
     }
 
-    public long readUnsignedInt() throws IOException {
-        return readInt() & 0xffffffffL;
+    /**
+     * Reads value of type {@link ExifTag#TYPE_UNSIGNED_LONG} from the InputStream.
+     */
+    public long readUnsignedLong() throws IOException {
+        return readLong() & 0xffffffffL;
     }
 
+    /**
+     * Reads value of type {@link ExifTag#TYPE_UNSIGNED_RATIONAL} from the InputStream.
+     */
     public Rational readUnsignedRational() throws IOException {
-        long nomi = readUnsignedInt();
-        long denomi = readUnsignedInt();
+        long nomi = readUnsignedLong();
+        long denomi = readUnsignedLong();
         return new Rational(nomi, denomi);
     }
 
-    public int readInt() throws IOException {
+    /**
+     * Reads value of type {@link ExifTag#TYPE_LONG} from the InputStream.
+     */
+    public int readLong() throws IOException {
         return mTiffStream.readInt();
     }
 
-    public short readShort() throws IOException {
-        return mTiffStream.readShort();
-    }
-
+    /**
+     * Reads value of type {@link ExifTag#TYPE_RATIONAL} from the InputStream.
+     */
     public Rational readRational() throws IOException {
-        int nomi = readInt();
-        int denomi = readInt();
+        int nomi = readLong();
+        int denomi = readLong();
         return new Rational(nomi, denomi);
     }
 
