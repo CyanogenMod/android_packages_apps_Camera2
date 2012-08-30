@@ -29,7 +29,7 @@ public class TextureUploader implements OnGLIdleListener {
     private final ArrayDeque<UploadedTexture> mBgTextures =
             new ArrayDeque<UploadedTexture>(INIT_CAPACITY);
     private final GLRoot mGLRoot;
-    private transient boolean mIsQueued = false;
+    private volatile boolean mIsQueued = false;
 
     public TextureUploader(GLRoot root) {
         mGLRoot = root;
