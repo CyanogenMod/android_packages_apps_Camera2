@@ -44,6 +44,7 @@ public class ExifTestRunner extends InstrumentationTestRunner {
         TestSuite suite = new InstrumentationTestSuite(this);
         getAllTestFromTestCase(ExifParserTest.class, suite);
         getAllTestFromTestCase(ExifReaderTest.class, suite);
+        getAllTestFromTestCase(ExifOutputStreamTest.class, suite);
         return suite;
     }
 
