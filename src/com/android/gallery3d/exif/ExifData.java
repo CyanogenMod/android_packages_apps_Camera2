@@ -116,6 +116,13 @@ public class ExifData {
         return mByteOrder;
     }
 
+    /**
+     * Returns true if this header contains compressed strip of thumbnail.
+     */
+    public boolean hasUncompressedStrip() {
+        return mStripBytes.size() != 0;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ExifData) {
