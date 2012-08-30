@@ -103,7 +103,7 @@ public class ExifParserTest extends InstrumentationTestCase {
         }
 
         String truthString = truth.get(tag.getTagId());
-        String dataString = tag.valueToString();
+        String dataString = tag.valueToString().trim();
         if (truthString == null) {
             fail(String.format("Unknown Tag %02x", tag.getTagId()));
         }
