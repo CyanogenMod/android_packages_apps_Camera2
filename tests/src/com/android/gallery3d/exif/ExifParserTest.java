@@ -210,7 +210,7 @@ public class ExifParserTest extends InstrumentationTestCase {
                 case ExifParser.EVENT_NEW_TAG:
                     ExifTag tag = parser.getTag();
                     if (tag.getTagId() == ExifTag.TIFF_TAG.TAG_COMPRESSION) {
-                        if (tag.getUnsignedShort() == ExifTag.TIFF_TAG.COMPRESSION_JPEG) {
+                        if (tag.getUnsignedShort(0) == ExifTag.TIFF_TAG.COMPRESSION_JPEG) {
                             mIsContainCompressedImage = true;
                         }
                     }

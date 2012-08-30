@@ -69,7 +69,7 @@ public class ExifReaderTest extends InstrumentationTestCase {
     private void checkThumbnail(ExifData exifData) {
         IfdData ifd1 = exifData.getIfdData(IfdId.TYPE_IFD_1);
         if (ifd1 != null) {
-            if (ifd1.getTag(ExifTag.TIFF_TAG.TAG_COMPRESSION).getUnsignedShort() ==
+            if (ifd1.getTag(ExifTag.TIFF_TAG.TAG_COMPRESSION).getUnsignedShort(0) ==
                     ExifTag.TIFF_TAG.COMPRESSION_JPEG) {
                 assertTrue(exifData.hasCompressedThumbnail());
                 byte[] thumbnail = exifData.getCompressedThumbnail();
@@ -79,7 +79,7 @@ public class ExifReaderTest extends InstrumentationTestCase {
                 int planarType = ExifTag.TIFF_TAG.PLANAR_CONFIGURATION_CHUNKY;
                 ExifTag planarTag = ifd1.getTag(ExifTag.TIFF_TAG.TAG_PLANAR_CONFIGURATION);
                 if (planarTag != null) {
-                    planarType = planarTag.getUnsignedShort();
+                    planarType = planarTag.getUnsignedShort(0);
                 }
 
                 ExifTag heightTag = ifd1.getTag(ExifTag.TIFF_TAG.TAG_IMAGE_HEIGHT);
@@ -94,7 +94,7 @@ public class ExifReaderTest extends InstrumentationTestCase {
                     assertTrue(stripCount == (imageLength + rowsPerStrip - 1) / rowsPerStrip);
                 } else {
                     ExifTag samplePerPixelTag = ifd1.getTag(ExifTag.TIFF_TAG.TAG_SAMPLES_PER_PIXEL);
-                    int samplePerPixel = samplePerPixelTag.getUnsignedShort();
+                    int samplePerPixel = samplePerPixelTag.getUnsignedShort(0);
                     assertTrue(stripCount ==
                             (imageLength + rowsPerStrip - 1) / rowsPerStrip * samplePerPixel);
                 }
@@ -114,9 +114,9 @@ public class ExifReaderTest extends InstrumentationTestCase {
 
     private int getUnsignedIntOrShort(ExifTag tag) {
         if (tag.getDataType() == ExifTag.TYPE_UNSIGNED_SHORT) {
-            return tag.getUnsignedShort();
+            return tag.getUnsignedShort(0);
         } else {
-            return (int) tag.getUnsignedInt();
+            return (int) tag.getUnsignedInt(0);
         }
     }
 
