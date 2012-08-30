@@ -18,6 +18,7 @@ package com.android.gallery3d.exif;
 
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *  This class stores the EXIF header in IFDs according to the JPEG specification.
@@ -113,5 +114,25 @@ public class ExifData {
      */
     public ByteOrder getByteOrder() {
         return mByteOrder;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ExifData) {
+            ExifData data = (ExifData) obj;
+            if (data.mByteOrder != mByteOrder
+                    || !Arrays.equals(data.mThumbnail, mThumbnail)
+                    || data.mStripBytes.size() != mStripBytes.size()) return false;
+
+            for (int i = 0; i < mStripBytes.size(); i++) {
+                if (!Arrays.equals(data.mStripBytes.get(i), mStripBytes.get(i))) return false;
+            }
+
+            for (int i = 0; i < IfdId.TYPE_IFD_COUNT; i++) {
+                if (!Util.equals(data.getIfdData(i), getIfdData(i))) return false;
+            }
+            return true;
+        }
+        return false;
     }
 }
