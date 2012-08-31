@@ -255,6 +255,8 @@ public class PhotoPage extends ActivityState implements
                 if (SecureSource.isSecurePath(mSetPathString)) {
                     mSecureAlbum = (SecureAlbum) mActivity.getDataManager()
                             .getMediaSet(mSetPathString);
+                    // Set the flag to be on top of the lock screen.
+                    mFlags |= FLAG_SHOW_WHEN_LOCKED;
                 }
 
                 // Combine the original MediaSet with the one for ScreenNail
