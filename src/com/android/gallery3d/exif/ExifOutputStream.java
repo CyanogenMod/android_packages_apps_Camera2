@@ -26,12 +26,28 @@ public class ExifOutputStream extends FilterOutputStream {
     private static final String TAG = "ExifOutputStream";
 
     private static final int STATE_SOI = 0;
-    private static final int STATE_APP1 = 1;
+    private static final int STATE_FRAME_HEADER = 1;
     private static final int STATE_JPEG_DATA = 2;
 
     private static final short SOI = (short) 0xFFD8;
-    private static final short APP0 = (short) 0xFFE0;
     private static final short APP1 = (short) 0xFFE1;
+    private static final short EOI = (short) 0xFFD9;
+
+    /**
+     *  SOF (start of frame). All value between SOF0 and SOF15 is SOF tag except for DHT, JPG,
+     *  and DAC tag.
+     */
+    private static final short SOF0 = (short) 0xFFC0;
+    private static final short SOF15 = (short) 0xFFCF;
+    private static final short DHT = (short) 0xFFC4;
+    private static final short JPG = (short) 0xFFC8;
+    private static final short DAC = (short) 0xFFCC;
+
+    private static final boolean isSofMarker(short marker) {
+        return marker >= SOF0 && marker <= SOF15 && marker != DHT && marker != JPG
+                && marker != DAC;
+    }
+
     private static final int EXIF_HEADER = 0x45786966;
     private static final short TIFF_HEADER = 0x002A;
     private static final short TIFF_BIG_ENDIAN = 0x4d4d;
@@ -82,6 +98,7 @@ public class ExifOutputStream extends FilterOutputStream {
                 mByteToCopy -= byteToProcess;
                 offset += byteToProcess;
             }
+            if (length == 0) return;
             switch (mState) {
                 case STATE_SOI:
                     int byteRead = requestByteToBuffer(2, buffer, offset, length);
@@ -91,29 +108,37 @@ public class ExifOutputStream extends FilterOutputStream {
                     mBuffer.rewind();
                     assert(mBuffer.getShort() == SOI);
                     out.write(mBuffer.array(), 0 ,2);
-                    mState = STATE_APP1;
+                    mState = STATE_FRAME_HEADER;
                     mBuffer.rewind();
+                    writeExifData();
                     break;
-                case STATE_APP1:
+                case STATE_FRAME_HEADER:
+                    // We ignore the APP1 segment and copy all other segments until SOF tag.
                     byteRead = requestByteToBuffer(4, buffer, offset, length);
                     offset += byteRead;
                     length -= byteRead;
+                    // Check if this image data doesn't contain SOF.
+                    if (mBuffer.position() == 2) {
+                        short tag = mBuffer.getShort();
+                        if (tag == EOI) {
+                            out.write(mBuffer.array(), 0, 2);
+                            mBuffer.rewind();
+                        }
+                    }
                     if (mBuffer.position() < 4) return;
                     mBuffer.rewind();
-                    if (mBuffer.getShort() == APP0) {
-                        out.write(mBuffer.array(), 0 ,4);
-                        mByteToCopy = (mBuffer.getShort() & 0xff) - 2;
-                    } else if (mBuffer.getShort() == APP1) {
-                        writeExifData();
+                    short marker = mBuffer.getShort();
+                    if (marker == APP1) {
                         mByteToSkip = (mBuffer.getShort() & 0xff) - 2;
                         mState = STATE_JPEG_DATA;
+                    } else if (!isSofMarker(marker)) {
+                        out.write(mBuffer.array(), 0, 4);
+                        mByteToCopy = (mBuffer.getShort() & 0xff) - 2;
                     } else {
-                        writeExifData();
                         out.write(mBuffer.array(), 0, 4);
                         mState = STATE_JPEG_DATA;
                     }
                     mBuffer.rewind();
-                    break;
             }
         }
         if (length > 0) {
