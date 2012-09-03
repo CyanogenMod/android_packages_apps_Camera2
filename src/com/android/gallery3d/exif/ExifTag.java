@@ -369,7 +369,7 @@ public class ExifTag {
     private Object mValue;
     private int mOffset;
 
-    ExifTag(short tagId, short type, int componentCount, int ifd) {
+    public ExifTag(short tagId, short type, int componentCount, int ifd) {
         mTagId = tagId;
         mDataType = type;
         mComponentCount = componentCount;

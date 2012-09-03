@@ -142,4 +142,40 @@ public class ExifData {
         }
         return false;
     }
+
+    public void addGpsTags(double latitude, double longitude) {
+        IfdData gpsIfd = getIfdData(IfdId.TYPE_IFD_GPS);
+        if (gpsIfd == null) {
+            gpsIfd = new IfdData(IfdId.TYPE_IFD_GPS);
+            addIfdData(gpsIfd);
+        }
+        ExifTag latTag = new ExifTag(ExifTag.GPS_TAG.TAG_GPS_LATITUDE, ExifTag.TYPE_RATIONAL,
+                3, IfdId.TYPE_IFD_GPS);
+        ExifTag longTag = new ExifTag(ExifTag.GPS_TAG.TAG_GPS_LONGITUDE, ExifTag.TYPE_RATIONAL,
+                3, IfdId.TYPE_IFD_GPS);
+        ExifTag latRefTag = new ExifTag(ExifTag.GPS_TAG.TAG_GPS_LATITUDE_REF,
+                ExifTag.TYPE_ASCII, 2, IfdId.TYPE_IFD_GPS);
+        ExifTag longRefTag = new ExifTag(ExifTag.GPS_TAG.TAG_GPS_LONGITUDE_REF,
+                ExifTag.TYPE_ASCII, 2, IfdId.TYPE_IFD_GPS);
+        latTag.setValue(toExifLatLong(latitude));
+        longTag.setValue(toExifLatLong(longitude));
+        latRefTag.setValue(latitude >= 0 ? "N" : "S");
+        longRefTag.setValue(longitude >= 0 ? "E" : "W");
+        gpsIfd.setTag(latTag);
+        gpsIfd.setTag(longTag);
+        gpsIfd.setTag(latRefTag);
+        gpsIfd.setTag(longRefTag);
+    }
+
+    private static Rational[] toExifLatLong(double value) {
+        // convert to the format dd/1 mm/1 ssss/100
+        value = Math.abs(value);
+        int degrees = (int) value;
+        value = (value - degrees) * 60;
+        int minutes = (int) value;
+        value = (value - minutes) * 6000;
+        int seconds = (int) value;
+        return new Rational[] {
+                new Rational(degrees, 1), new Rational(minutes, 1), new Rational(seconds, 100)};
+    }
 }
