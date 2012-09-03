@@ -47,8 +47,8 @@ public class IfdData {
     /**
      * Get a array the contains all {@link ExifTag} in this IFD.
      */
-    public ExifTag[] getAllTags(ExifTag[] outTag) {
-        return mExifTags.values().toArray(outTag);
+    public ExifTag[] getAllTags() {
+        return mExifTags.values().toArray(new ExifTag[mExifTags.size()]);
     }
 
     /**
@@ -108,7 +108,7 @@ public class IfdData {
         if (obj instanceof IfdData) {
             IfdData data = (IfdData) obj;
             if (data.getId() == mIfdId && data.getTagCount() == getTagCount()) {
-                ExifTag[] tags = data.getAllTags(new ExifTag[0]);
+                ExifTag[] tags = data.getAllTags();
                 for (ExifTag tag: tags) {
                     if (ExifTag.isOffsetTag(tag.getTagId())) continue;
                     ExifTag tag2 = mExifTags.get(tag.getTagId());

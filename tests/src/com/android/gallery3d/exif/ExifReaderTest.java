@@ -125,7 +125,7 @@ public class ExifReaderTest extends InstrumentationTestCase {
             assertEquals(0 ,ifdValue.size());
             return;
         }
-        ExifTag[] tags = ifd.getAllTags(new ExifTag[0]);
+        ExifTag[] tags = ifd.getAllTags();
         for (ExifTag tag : tags) {
             assertEquals(ifdValue.get(tag.getTagId()), tag.valueToString());
         }

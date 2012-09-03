@@ -182,7 +182,7 @@ public class ExifOutputStream extends FilterOutputStream {
 
     private void writeIfd(IfdData ifd, OrderedDataOutputStream dataOutputStream)
             throws IOException {
-        ExifTag[] tags = ifd.getAllTags(new ExifTag[] {});
+        ExifTag[] tags = ifd.getAllTags();
         dataOutputStream.writeShort((short) tags.length);
         for (ExifTag tag: tags) {
             dataOutputStream.writeShort(tag.getTagId());
@@ -247,7 +247,7 @@ public class ExifOutputStream extends FilterOutputStream {
 
     private int calculateOffsetOfIfd(IfdData ifd, int offset) {
         offset += 2 + ifd.getTagCount() * TAG_SIZE + 4;
-        ExifTag[] tags = ifd.getAllTags(new ExifTag[] {});
+        ExifTag[] tags = ifd.getAllTags();
         for(ExifTag tag: tags) {
             if (tag.getDataSize() > 4) {
                 tag.setOffset(offset);
