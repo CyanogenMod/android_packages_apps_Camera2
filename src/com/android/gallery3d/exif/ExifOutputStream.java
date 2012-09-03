@@ -40,7 +40,7 @@ public class ExifOutputStream extends FilterOutputStream {
     private static final short TIFF_HEADER_SIZE = 8;
 
     private ExifData mExifData;
-    private int mState;
+    private int mState = STATE_SOI;
     private int mByteToSkip;
     private int mByteToCopy;
     private ByteBuffer mBuffer = ByteBuffer.allocate(4);
@@ -136,6 +136,7 @@ public class ExifOutputStream extends FilterOutputStream {
         createRequiredIfdAndTag();
         int exifSize = calculateAllOffset();
         OrderedDataOutputStream dataOutputStream = new OrderedDataOutputStream(out);
+        dataOutputStream.setByteOrder(ByteOrder.BIG_ENDIAN);
         dataOutputStream.writeShort(APP1);
         dataOutputStream.writeShort((short) (exifSize + 8));
         dataOutputStream.writeInt(EXIF_HEADER);
@@ -148,7 +149,7 @@ public class ExifOutputStream extends FilterOutputStream {
         dataOutputStream.setByteOrder(mExifData.getByteOrder());
         dataOutputStream.writeShort(TIFF_HEADER);
         dataOutputStream.writeInt(8);
-        writeAllTag(dataOutputStream);
+        writeAllTags(dataOutputStream);
         writeThumbnail(dataOutputStream);
     }
 
@@ -162,7 +163,7 @@ public class ExifOutputStream extends FilterOutputStream {
         }
     }
 
-    private void writeAllTag(OrderedDataOutputStream dataOutputStream) throws IOException {
+    private void writeAllTags(OrderedDataOutputStream dataOutputStream) throws IOException {
         writeIfd(mExifData.getIfdData(IfdId.TYPE_IFD_0), dataOutputStream);
         writeIfd(mExifData.getIfdData(IfdId.TYPE_IFD_EXIF), dataOutputStream);
         IfdData interoperabilityIfd = mExifData.getIfdData(IfdId.TYPE_IFD_INTEROPERABILITY);
@@ -191,7 +192,7 @@ public class ExifOutputStream extends FilterOutputStream {
                 dataOutputStream.writeInt(tag.getOffset());
             } else {
                 writeTagValue(tag, dataOutputStream);
-                for (int i = 0; i < 4 - tag.getDataSize(); i++) {
+                for (int i = 0, n = 4 - tag.getDataSize(); i < n; i++) {
                     dataOutputStream.write(0);
                 }
             }
@@ -209,19 +210,19 @@ public class ExifOutputStream extends FilterOutputStream {
         switch (tag.getDataType()) {
             case ExifTag.TYPE_ASCII:
                 dataOutputStream.write(tag.getString().getBytes());
-                int remain = tag.getComponentCount() - tag.getString().getBytes().length;
+                int remain = tag.getComponentCount() - tag.getString().length();
                 for (int i = 0; i < remain; i++) {
                     dataOutputStream.write(0);
                 }
                 break;
             case ExifTag.TYPE_INT:
-                for (int i = 0; i < tag.getComponentCount(); i++) {
+                for (int i = 0, n = tag.getComponentCount(); i < n; i++) {
                     dataOutputStream.writeInt(tag.getInt(i));
                 }
                 break;
             case ExifTag.TYPE_RATIONAL:
             case ExifTag.TYPE_UNSIGNED_RATIONAL:
-                for (int i = 0; i < tag.getComponentCount(); i++) {
+                for (int i = 0, n = tag.getComponentCount(); i < n; i++) {
                     dataOutputStream.writeRational(tag.getRational(i));
                 }
                 break;
@@ -232,12 +233,12 @@ public class ExifOutputStream extends FilterOutputStream {
                 dataOutputStream.write(buf);
                 break;
             case ExifTag.TYPE_UNSIGNED_INT:
-                for (int i = 0; i < tag.getComponentCount(); i++) {
+                for (int i = 0, n = tag.getComponentCount(); i < n; i++) {
                     dataOutputStream.writeInt((int) tag.getUnsignedInt(i));
                 }
                 break;
             case ExifTag.TYPE_UNSIGNED_SHORT:
-                for (int i = 0; i < tag.getComponentCount(); i++) {
+                for (int i = 0, n = tag.getComponentCount(); i < n; i++) {
                     dataOutputStream.writeShort((short) tag.getUnsignedShort(i));
                 }
                 break;
