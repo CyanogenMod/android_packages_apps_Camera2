@@ -122,10 +122,6 @@ public class ExifParser {
      */
     public static final int OPTION_THUMBNAIL = 1 << 5;
 
-    private static final short SOI =  (short) 0xFFD8; // SOI marker of JPEG
-    private static final short APP1 = (short) 0xFFE1; // APP1 marker of JPEG
-    private static final short APP0 = (short) 0xFFE0; // APP0 marder of JPEG
-
     private static final int EXIF_HEADER = 0x45786966; // EXIF header "Exif"
     private static final short EXIF_HEADER_TAIL = (short) 0x0000; // EXIF header in APP1
 
@@ -148,6 +144,7 @@ public class ExifParser {
     private ExifTag mStripSizeTag;
     private ExifTag mJpegSizeTag;
     private boolean mNeedToParseOffsetsInCurrentIfd;
+    private boolean mContainExifData = false;
 
     private final TreeMap<Integer, Object> mCorrespondingEvent = new TreeMap<Integer, Object>();
 
@@ -173,9 +170,10 @@ public class ExifParser {
 
     private ExifParser(InputStream inputStream, int options)
             throws IOException, ExifInvalidFormatException {
-        seekTiffData(inputStream);
+        mContainExifData = seekTiffData(inputStream);
         mTiffStream = new CountedDataInputStream(inputStream);
         mOptions = options;
+        if (!mContainExifData) return;
         if (mTiffStream.getReadByteCount() == 0) {
             parseTiffHeader();
             long offset = mTiffStream.readUnsignedInt();
@@ -220,6 +218,9 @@ public class ExifParser {
      * @see #EVENT_END
      */
     public int next() throws IOException, ExifInvalidFormatException {
+        if (!mContainExifData) {
+            return EVENT_END;
+        }
         int offset = mTiffStream.getReadByteCount();
         int endOfTags = mIfdStartOffset + OFFSET_SIZE + TAG_SIZE * mNumOfTagInIfd;
         if (offset < endOfTags) {
@@ -599,37 +600,33 @@ public class ExifParser {
         }
     }
 
-    private void seekTiffData(InputStream inputStream) throws IOException,
+    private boolean seekTiffData(InputStream inputStream) throws IOException,
             ExifInvalidFormatException {
         DataInputStream dataStream = new DataInputStream(inputStream);
 
         // SOI and APP1
-        if (dataStream.readShort() != SOI) {
+        if (dataStream.readShort() != JpegHeader.SOI) {
             throw new ExifInvalidFormatException("Invalid JPEG format");
         }
 
-        short tag = dataStream.readShort();
-        if (tag == APP0) {
+        short marker = dataStream.readShort();
+        while(marker != JpegHeader.APP1 && marker != JpegHeader.EOI
+                && !JpegHeader.isSofMarker(marker)) {
             int length = dataStream.readUnsignedShort();
             if ((length - 2) != dataStream.skip(length - 2)) {
                 throw new EOFException();
             }
-            tag = dataStream.readShort();
+            marker = dataStream.readShort();
         }
 
-        if (tag != APP1) {
-            throw new ExifInvalidFormatException("No APP1 segment");
-        }
+        if (marker != JpegHeader.APP1) return false; // No APP1 segment
 
         // APP1 length, it's not used for us
         dataStream.readShort();
 
         // Exif header
-        if (dataStream.readInt() != EXIF_HEADER
-                || dataStream.readShort() != EXIF_HEADER_TAIL) {
-            // There is no EXIF data;
-            throw new ExifInvalidFormatException("No Exif header in APP1");
-        }
+        return (dataStream.readInt() == EXIF_HEADER
+                && dataStream.readShort() == EXIF_HEADER_TAIL);
     }
 
     public int read(byte[] buffer, int offset, int length) throws IOException {
