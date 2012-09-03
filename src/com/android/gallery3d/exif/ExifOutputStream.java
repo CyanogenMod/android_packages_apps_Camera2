@@ -29,25 +29,6 @@ public class ExifOutputStream extends FilterOutputStream {
     private static final int STATE_FRAME_HEADER = 1;
     private static final int STATE_JPEG_DATA = 2;
 
-    private static final short SOI = (short) 0xFFD8;
-    private static final short APP1 = (short) 0xFFE1;
-    private static final short EOI = (short) 0xFFD9;
-
-    /**
-     *  SOF (start of frame). All value between SOF0 and SOF15 is SOF tag except for DHT, JPG,
-     *  and DAC tag.
-     */
-    private static final short SOF0 = (short) 0xFFC0;
-    private static final short SOF15 = (short) 0xFFCF;
-    private static final short DHT = (short) 0xFFC4;
-    private static final short JPG = (short) 0xFFC8;
-    private static final short DAC = (short) 0xFFCC;
-
-    private static final boolean isSofMarker(short marker) {
-        return marker >= SOF0 && marker <= SOF15 && marker != DHT && marker != JPG
-                && marker != DAC;
-    }
-
     private static final int EXIF_HEADER = 0x45786966;
     private static final short TIFF_HEADER = 0x002A;
     private static final short TIFF_BIG_ENDIAN = 0x4d4d;
@@ -106,7 +87,7 @@ public class ExifOutputStream extends FilterOutputStream {
                     length -= byteRead;
                     if (mBuffer.position() < 2) return;
                     mBuffer.rewind();
-                    assert(mBuffer.getShort() == SOI);
+                    assert(mBuffer.getShort() == JpegHeader.SOI);
                     out.write(mBuffer.array(), 0 ,2);
                     mState = STATE_FRAME_HEADER;
                     mBuffer.rewind();
@@ -120,7 +101,7 @@ public class ExifOutputStream extends FilterOutputStream {
                     // Check if this image data doesn't contain SOF.
                     if (mBuffer.position() == 2) {
                         short tag = mBuffer.getShort();
-                        if (tag == EOI) {
+                        if (tag == JpegHeader.EOI) {
                             out.write(mBuffer.array(), 0, 2);
                             mBuffer.rewind();
                         }
@@ -128,10 +109,10 @@ public class ExifOutputStream extends FilterOutputStream {
                     if (mBuffer.position() < 4) return;
                     mBuffer.rewind();
                     short marker = mBuffer.getShort();
-                    if (marker == APP1) {
+                    if (marker == JpegHeader.APP1) {
                         mByteToSkip = (mBuffer.getShort() & 0xff) - 2;
                         mState = STATE_JPEG_DATA;
-                    } else if (!isSofMarker(marker)) {
+                    } else if (!JpegHeader.isSofMarker(marker)) {
                         out.write(mBuffer.array(), 0, 4);
                         mByteToCopy = (mBuffer.getShort() & 0xff) - 2;
                     } else {
@@ -162,7 +143,7 @@ public class ExifOutputStream extends FilterOutputStream {
         int exifSize = calculateAllOffset();
         OrderedDataOutputStream dataOutputStream = new OrderedDataOutputStream(out);
         dataOutputStream.setByteOrder(ByteOrder.BIG_ENDIAN);
-        dataOutputStream.writeShort(APP1);
+        dataOutputStream.writeShort(JpegHeader.APP1);
         dataOutputStream.writeShort((short) (exifSize + 8));
         dataOutputStream.writeInt(EXIF_HEADER);
         dataOutputStream.writeShort((short) 0x0000);
