@@ -95,7 +95,7 @@ public class ExifData {
     }
 
     /**
-     * Gets the strip count
+     * Gets the strip count.
      */
     public int getStripCount() {
         return mStripBytes.size();
@@ -117,7 +117,7 @@ public class ExifData {
     }
 
     /**
-     * Returns true if this header contains compressed strip of thumbnail.
+     * Returns true if this header contains uncompressed strip of thumbnail.
      */
     public boolean hasUncompressedStrip() {
         return mStripBytes.size() != 0;
