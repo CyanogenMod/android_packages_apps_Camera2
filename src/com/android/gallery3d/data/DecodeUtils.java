@@ -25,6 +25,7 @@ import android.graphics.BitmapRegionDecoder;
 import android.os.Build;
 import android.util.FloatMath;
 
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.ui.Log;
@@ -51,9 +52,15 @@ public class DecodeUtils {
         }
     }
 
+    @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
+    public static void setOptionsMutable(Options options) {
+        if (ApiHelper.HAS_OPTIONS_IN_MUTABLE) options.inMutable = true;
+    }
+
     public static Bitmap decode(JobContext jc, FileDescriptor fd, Options options) {
         if (options == null) options = new Options();
         jc.setCancelListener(new DecodeCanceller(options));
+        setOptionsMutable(options);
         return ensureGLCompatibleBitmap(
                 BitmapFactory.decodeFileDescriptor(fd, null, options));
     }
@@ -75,6 +82,7 @@ public class DecodeUtils {
             int length, Options options) {
         if (options == null) options = new Options();
         jc.setCancelListener(new DecodeCanceller(options));
+        setOptionsMutable(options);
         return ensureGLCompatibleBitmap(
                 BitmapFactory.decodeByteArray(bytes, offset, length, options));
     }
@@ -135,6 +143,7 @@ public class DecodeUtils {
         }
 
         options.inJustDecodeBounds = false;
+        setOptionsMutable(options);
 
         Bitmap result = BitmapFactory.decodeFileDescriptor(fd, null, options);
         if (result == null) return null;
@@ -170,6 +179,8 @@ public class DecodeUtils {
         options.inSampleSize = BitmapUtils.computeSampleSizeLarger(
                 options.outWidth, options.outHeight, targetSize);
         options.inJustDecodeBounds = false;
+        setOptionsMutable(options);
+
         return ensureGLCompatibleBitmap(
                 BitmapFactory.decodeByteArray(data, 0, data.length, options));
     }
