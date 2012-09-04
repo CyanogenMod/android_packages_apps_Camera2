@@ -25,7 +25,6 @@ import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.ContentListener;
-import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.LocalMediaItem;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
@@ -1007,57 +1006,55 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                 }
                 mDirty = false;
                 UpdateInfo info = executeAndWait(new GetUpdateInfo());
-                synchronized (DataManager.LOCK) {
-                    updateLoading(true);
-                    long version = mSource.reload();
-                    if (info.version != version) {
-                        info.reloadContent = true;
-                        info.size = mSource.getMediaItemCount();
-                    }
-                    if (!info.reloadContent) continue;
-                    info.items = mSource.getMediaItem(
-                            info.contentStart, info.contentEnd);
-
-                    int index = MediaSet.INDEX_NOT_FOUND;
-
-                    // First try to focus on the given hint path if there is one.
-                    if (mFocusHintPath != null) {
-                        index = findIndexOfPathInCache(info, mFocusHintPath);
-                        mFocusHintPath = null;
-                    }
-
-                    // Otherwise try to see if the currently focused item can be found.
-                    if (index == MediaSet.INDEX_NOT_FOUND) {
-                        MediaItem item = findCurrentMediaItem(info);
-                        if (item != null && item.getPath() == info.target) {
-                            index = info.indexHint;
-                        } else {
-                            index = findIndexOfTarget(info);
-                        }
-                    }
-
-                    // The image has been deleted. Focus on the next image (keep
-                    // mCurrentIndex unchanged) or the previous image (decrease
-                    // mCurrentIndex by 1). In page mode we want to see the next
-                    // image, so we focus on the next one. In film mode we want the
-                    // later images to shift left to fill the empty space, so we
-                    // focus on the previous image (so it will not move). In any
-                    // case the index needs to be limited to [0, mSize).
-                    if (index == MediaSet.INDEX_NOT_FOUND) {
-                        index = info.indexHint;
-                        if (mFocusHintDirection == FOCUS_HINT_PREVIOUS
-                            && index > 0) {
-                            index--;
-                        }
-                    }
-
-                    // Don't change index if mSize == 0
-                    if (mSize > 0) {
-                        if (index >= mSize) index = mSize - 1;
-                    }
-
-                    info.indexHint = index;
+                updateLoading(true);
+                long version = mSource.reload();
+                if (info.version != version) {
+                    info.reloadContent = true;
+                    info.size = mSource.getMediaItemCount();
                 }
+                if (!info.reloadContent) continue;
+                info.items = mSource.getMediaItem(
+                        info.contentStart, info.contentEnd);
+
+                int index = MediaSet.INDEX_NOT_FOUND;
+
+                // First try to focus on the given hint path if there is one.
+                if (mFocusHintPath != null) {
+                    index = findIndexOfPathInCache(info, mFocusHintPath);
+                    mFocusHintPath = null;
+                }
+
+                // Otherwise try to see if the currently focused item can be found.
+                if (index == MediaSet.INDEX_NOT_FOUND) {
+                    MediaItem item = findCurrentMediaItem(info);
+                    if (item != null && item.getPath() == info.target) {
+                        index = info.indexHint;
+                    } else {
+                        index = findIndexOfTarget(info);
+                    }
+                }
+
+                // The image has been deleted. Focus on the next image (keep
+                // mCurrentIndex unchanged) or the previous image (decrease
+                // mCurrentIndex by 1). In page mode we want to see the next
+                // image, so we focus on the next one. In film mode we want the
+                // later images to shift left to fill the empty space, so we
+                // focus on the previous image (so it will not move). In any
+                // case the index needs to be limited to [0, mSize).
+                if (index == MediaSet.INDEX_NOT_FOUND) {
+                    index = info.indexHint;
+                    if (mFocusHintDirection == FOCUS_HINT_PREVIOUS
+                        && index > 0) {
+                        index--;
+                    }
+                }
+
+                // Don't change index if mSize == 0
+                if (mSize > 0) {
+                    if (index >= mSize) index = mSize - 1;
+                }
+
+                info.indexHint = index;
 
                 executeAndWait(new UpdateContent(info));
             }

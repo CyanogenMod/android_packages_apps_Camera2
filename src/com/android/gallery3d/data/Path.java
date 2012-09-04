@@ -72,7 +72,7 @@ public class Path {
         }
     }
 
-    public MediaObject getObject() {
+    MediaObject getObject() {
         synchronized (Path.class) {
             return (mObject == null) ? null : mObject.get();
         }

@@ -140,17 +140,19 @@ public class LocalAlbum extends MediaSet {
 
     private static MediaItem loadOrUpdateItem(Path path, Cursor cursor,
             DataManager dataManager, GalleryApp app, boolean isImage) {
-        LocalMediaItem item = (LocalMediaItem) dataManager.peekMediaObject(path);
-        if (item == null) {
-            if (isImage) {
-                item = new LocalImage(path, app, cursor);
+        synchronized (DataManager.LOCK) {
+            LocalMediaItem item = (LocalMediaItem) dataManager.peekMediaObject(path);
+            if (item == null) {
+                if (isImage) {
+                    item = new LocalImage(path, app, cursor);
+                } else {
+                    item = new LocalVideo(path, app, cursor);
+                }
             } else {
-                item = new LocalVideo(path, app, cursor);
+                item.updateContent(cursor);
             }
-        } else {
-            item.updateContent(cursor);
+            return item;
         }
-        return item;
     }
 
     // The pids array are sorted by the (path) id.
