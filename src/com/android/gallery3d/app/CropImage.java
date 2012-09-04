@@ -392,10 +392,17 @@ public class CropImage extends AbstractGalleryActivity {
         }
     }
 
-    private void changeExifImageSizeTag(ExifData data, int width, int height) {
-        data.getIfdData(IfdId.TYPE_IFD_0).getTag(ExifTag.TIFF_TAG.TAG_IMAGE_WIDTH).setValue(width);
-        data.getIfdData(IfdId.TYPE_IFD_0).getTag(ExifTag.TIFF_TAG.TAG_IMAGE_HEIGHT).setValue(
-                height);
+    private void changeExifImageSizeTags(ExifData data, int width, int height) {
+        // FIXME: would the image size be too large for TYPE_UNSIGHED_SHORT?
+        ExifTag tag = new ExifTag(ExifTag.TIFF_TAG.TAG_IMAGE_WIDTH,
+                            ExifTag.TYPE_UNSIGNED_SHORT, 1, IfdId.TYPE_IFD_0);
+        tag.setValue(new int[] {width});
+        data.getIfdData(IfdId.TYPE_IFD_0).setTag(tag);
+
+        tag = new ExifTag(ExifTag.TIFF_TAG.TAG_IMAGE_HEIGHT,
+                            ExifTag.TYPE_UNSIGNED_SHORT, 1, IfdId.TYPE_IFD_0);
+        tag.setValue(new int[] {height});
+        data.getIfdData(IfdId.TYPE_IFD_0).setTag(tag);
     }
 
     private Uri saveToMediaProvider(JobContext jc, Bitmap cropped) {
@@ -426,6 +433,9 @@ public class CropImage extends AbstractGalleryActivity {
         if (pos >= 0) filename = filename.substring(0, pos);
         ExifData exifData = new ExifData(ByteOrder.BIG_ENDIAN);
         PicasaSource.extractExifValues(mMediaItem, exifData);
+        changeExifImageSizeTags(exifData, cropped.getWidth(), cropped.getHeight());
+        // TODO: modify the Software tag to indicate which the image is revised by
+        // TODO: modify the DateTime tag
         File output = saveMedia(jc, cropped, DOWNLOAD_BUCKET, filename, exifData);
         if (output == null) return null;
 
@@ -467,7 +477,9 @@ public class CropImage extends AbstractGalleryActivity {
         if (convertExtensionToCompressFormat(getFileExtension()) == CompressFormat.JPEG) {
             exifData = getExifData(oldPath.getAbsolutePath());
             if (exifData != null) {
-                changeExifImageSizeTag(exifData, cropped.getWidth(), cropped.getHeight());
+                // TODO: modify the Software tag to indicate which the image is revised by
+                // TODO: modify the DateTime tag
+                changeExifImageSizeTags(exifData, cropped.getWidth(), cropped.getHeight());
             }
         }
         output = saveMedia(jc, cropped, directory, filename, exifData);
