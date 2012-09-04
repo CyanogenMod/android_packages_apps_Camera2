@@ -34,8 +34,8 @@ import android.util.Log;
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.BitmapUtils;
-import com.android.gallery3d.common.LightCycleHelper;
 import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.LightCycleHelper;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.android.gallery3d.util.UpdateHelper;
@@ -243,7 +243,7 @@ public class LocalImage extends LocalMediaItem {
 
         if (LightCycleHelper.isPanorama(caption) &&
                 LightCycleHelper.hasLightCycleView(
-                        mApplication.getAndroidContext().getPackageManager())) {
+                        mApplication.getAndroidContext())) {
             operation |= SUPPORT_VIEW_PANORAMA;
         }
         return operation;
