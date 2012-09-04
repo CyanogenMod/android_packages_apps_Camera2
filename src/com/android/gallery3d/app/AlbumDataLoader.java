@@ -22,7 +22,6 @@ import android.os.Process;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ContentListener;
-import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
@@ -347,21 +346,16 @@ public class AlbumDataLoader {
                 }
                 mDirty = false;
                 updateLoading(true);
-                long version;
-                synchronized (DataManager.LOCK) {
-                    version = mSource.reload();
-                }
+                long version = mSource.reload();
                 UpdateInfo info = executeAndWait(new GetUpdateInfo(version));
                 updateComplete = info == null;
                 if (updateComplete) continue;
-                synchronized (DataManager.LOCK) {
-                    if (info.version != version) {
-                        info.size = mSource.getMediaItemCount();
-                        info.version = version;
-                    }
-                    if (info.reloadCount > 0) {
-                        info.items = mSource.getMediaItem(info.reloadStart, info.reloadCount);
-                    }
+                if (info.version != version) {
+                    info.size = mSource.getMediaItemCount();
+                    info.version = version;
+                }
+                if (info.reloadCount > 0) {
+                    info.items = mSource.getMediaItem(info.reloadStart, info.reloadCount);
                 }
                 executeAndWait(new UpdateContent(info));
             }

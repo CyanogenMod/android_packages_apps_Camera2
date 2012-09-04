@@ -156,29 +156,38 @@ public class DataManager {
         mSourceMap.put(source.getPrefix(), source);
     }
 
+    // A common usage of this method is:
+    // synchronized (DataManager.LOCK) {
+    //     MediaObject object = peekMediaObject(path);
+    //     if (object == null) {
+    //         object = createMediaObject(...);
+    //     }
+    // }
     public MediaObject peekMediaObject(Path path) {
         return path.getObject();
     }
 
     public MediaObject getMediaObject(Path path) {
-        MediaObject obj = path.getObject();
-        if (obj != null) return obj;
+        synchronized (LOCK) {
+            MediaObject obj = path.getObject();
+            if (obj != null) return obj;
 
-        MediaSource source = mSourceMap.get(path.getPrefix());
-        if (source == null) {
-            Log.w(TAG, "cannot find media source for path: " + path);
-            return null;
-        }
-
-        try {
-            MediaObject object = source.createMediaObject(path);
-            if (object == null) {
-                Log.w(TAG, "cannot create media object: " + path);
+            MediaSource source = mSourceMap.get(path.getPrefix());
+            if (source == null) {
+                Log.w(TAG, "cannot find media source for path: " + path);
+                return null;
             }
-            return object;
-        } catch (Throwable t) {
-            Log.w(TAG, "exception in creating media object: " + path, t);
-            return null;
+
+            try {
+                MediaObject object = source.createMediaObject(path);
+                if (object == null) {
+                    Log.w(TAG, "cannot create media object: " + path);
+                }
+                return object;
+            } catch (Throwable t) {
+                Log.w(TAG, "exception in creating media object: " + path, t);
+                return null;
+            }
         }
     }
 

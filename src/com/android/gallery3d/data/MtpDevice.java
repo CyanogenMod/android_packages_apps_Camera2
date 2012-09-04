@@ -127,14 +127,16 @@ public class MtpDevice extends MediaSet {
         for (int i = begin; i < end; i++) {
             MtpObjectInfo child = mJpegChildren.get(i);
             Path childPath = mItemPath.getChild(child.getObjectHandle());
-            MtpImage image = (MtpImage) dataManager.peekMediaObject(childPath);
-            if (image == null) {
-                image = new MtpImage(
-                        childPath, mApplication, mDeviceId, child, mMtpContext);
-            } else {
-                image.updateContent(child);
+            synchronized (DataManager.LOCK) {
+                MtpImage image = (MtpImage) dataManager.peekMediaObject(childPath);
+                if (image == null) {
+                    image = new MtpImage(
+                            childPath, mApplication, mDeviceId, child, mMtpContext);
+                } else {
+                    image.updateContent(child);
+                }
+                result.add(image);
             }
-            result.add(image);
         }
         return result;
     }

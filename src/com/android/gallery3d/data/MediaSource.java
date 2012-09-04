@@ -77,12 +77,15 @@ public abstract class MediaSource {
         int n = list.size();
         for (int i = 0; i < n; i++) {
             PathId pid = list.get(i);
-            MediaObject obj = pid.path.getObject();
-            if (obj == null) {
-                try {
-                    obj = createMediaObject(pid.path);
-                } catch (Throwable th) {
-                    Log.w(TAG, "cannot create media object: " + pid.path, th);
+            MediaObject obj;
+            synchronized (DataManager.LOCK) {
+                obj = pid.path.getObject();
+                if (obj == null) {
+                    try {
+                        obj = createMediaObject(pid.path);
+                    } catch (Throwable th) {
+                        Log.w(TAG, "cannot create media object: " + pid.path, th);
+                    }
                 }
             }
             if (obj != null) {

@@ -19,11 +19,9 @@ package com.android.gallery3d.app;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
-import android.os.SystemClock;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ContentListener;
-import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
@@ -353,38 +351,27 @@ public class AlbumSetDataLoader {
                 mDirty = false;
                 updateLoading(true);
 
-                long version;
-                synchronized (DataManager.LOCK) {
-                    long start = SystemClock.uptimeMillis();
-                    version = mSource.reload();
-                    long duration = SystemClock.uptimeMillis() - start;
-                    if (duration > 20) {
-                        Log.v("DebugLoadingTime", "finish reload - " + duration);
-                    }
-                }
+                long version = mSource.reload();
                 UpdateInfo info = executeAndWait(new GetUpdateInfo(version));
                 updateComplete = info == null;
                 if (updateComplete) continue;
+                if (info.version != version) {
+                    info.version = version;
+                    info.size = mSource.getSubMediaSetCount();
 
-                synchronized (DataManager.LOCK) {
-                    if (info.version != version) {
-                        info.version = version;
-                        info.size = mSource.getSubMediaSetCount();
-
-                        // If the size becomes smaller after reload(), we may
-                        // receive from GetUpdateInfo an index which is too
-                        // big. Because the main thread is not aware of the size
-                        // change until we call UpdateContent.
-                        if (info.index >= info.size) {
-                            info.index = INDEX_NONE;
-                        }
+                    // If the size becomes smaller after reload(), we may
+                    // receive from GetUpdateInfo an index which is too
+                    // big. Because the main thread is not aware of the size
+                    // change until we call UpdateContent.
+                    if (info.index >= info.size) {
+                        info.index = INDEX_NONE;
                     }
-                    if (info.index != INDEX_NONE) {
-                        info.item = mSource.getSubMediaSet(info.index);
-                        if (info.item == null) continue;
-                        info.cover = info.item.getCoverMediaItem();
-                        info.totalCount = info.item.getTotalMediaItemCount();
-                    }
+                }
+                if (info.index != INDEX_NONE) {
+                    info.item = mSource.getSubMediaSet(info.index);
+                    if (info.item == null) continue;
+                    info.cover = info.item.getCoverMediaItem();
+                    info.totalCount = info.item.getTotalMediaItemCount();
                 }
                 executeAndWait(new UpdateContent(info));
             }

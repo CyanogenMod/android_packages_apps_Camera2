@@ -112,10 +112,13 @@ public class ClusterAlbumSet extends MediaSet implements ContentListener {
             } else {
                 childPath = mPath.getChild(i);
             }
-            ClusterAlbum album = (ClusterAlbum) dataManager.peekMediaObject(
-                        childPath);
-            if (album == null) {
-                album = new ClusterAlbum(childPath, dataManager, this);
+
+            ClusterAlbum album;
+            synchronized (DataManager.LOCK) {
+                album = (ClusterAlbum) dataManager.peekMediaObject(childPath);
+                if (album == null) {
+                    album = new ClusterAlbum(childPath, dataManager, this);
+                }
             }
             album.setMediaItems(clustering.getCluster(i));
             album.setName(childName);
