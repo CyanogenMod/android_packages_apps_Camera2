@@ -151,6 +151,9 @@ public class ApiHelper {
     public static final boolean HAS_CAMERA_HDR =
             Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1;
 
+    public static final boolean HAS_OPTIONS_IN_MUTABLE =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
     public static final boolean CAN_START_PREVIEW_IN_JPEG_CALLBACK =
             Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
 
