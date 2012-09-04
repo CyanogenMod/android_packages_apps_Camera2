@@ -237,32 +237,28 @@ public class TimeBar extends View {
       int y = (int) event.getY();
 
       switch (event.getAction()) {
-        case MotionEvent.ACTION_DOWN:
-          if (inScrubber(x, y)) {
-            scrubbing = true;
-            scrubberCorrection = x - scrubberLeft;
-            listener.onScrubbingStart();
-            return true;
-          }
-          break;
-        case MotionEvent.ACTION_MOVE:
-          if (scrubbing) {
-            scrubberLeft = x - scrubberCorrection;
-            clampScrubber();
-            currentTime = getScrubberTime();
-            listener.onScrubbingMove(currentTime);
-            invalidate();
-            return true;
-          }
-          break;
+        case MotionEvent.ACTION_DOWN: {
+          scrubberCorrection = inScrubber(x, y)
+              ? x - scrubberLeft
+              : scrubber.getWidth() / 2;
+          scrubbing = true;
+          listener.onScrubbingStart();
+        }
+            // fall-through
+        case MotionEvent.ACTION_MOVE: {
+          scrubberLeft = x - scrubberCorrection;
+          clampScrubber();
+          currentTime = getScrubberTime();
+          listener.onScrubbingMove(currentTime);
+          invalidate();
+          return true;
+        }
         case MotionEvent.ACTION_CANCEL:
-        case MotionEvent.ACTION_UP:
-          if (scrubbing) {
-            listener.onScrubbingEnd(getScrubberTime());
-            scrubbing = false;
-            return true;
-          }
-          break;
+        case MotionEvent.ACTION_UP: {
+          listener.onScrubbingEnd(getScrubberTime());
+          scrubbing = false;
+          return true;
+        }
       }
     }
     return false;
