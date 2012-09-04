@@ -33,7 +33,8 @@ abstract class BasicTexture implements Texture {
     protected static final int STATE_LOADED = 1;
     protected static final int STATE_ERROR = -1;
 
-    private static final int MAX_TEXTURE_SIZE = 2048;
+    // Log a warning if a texture is larger along a dimension
+    private static final int MAX_TEXTURE_SIZE = 4096;
 
     protected int mId;
     protected int mState;
