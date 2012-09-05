@@ -76,7 +76,7 @@ public class ExifTag {
     public static final short TAG_DATE_TIME_DIGITIZED = (short) 0x9004;
     public static final short TAG_COMPONENTS_CONFIGURATION = (short) 0x9101;
     public static final short TAG_COMPRESSED_BITS_PER_PIXEL = (short) 0x9102;
-    public static final short TAG_SHUTTER_SPEED = (short) 0x9201;
+    public static final short TAG_SHUTTER_SPEED_VALUE = (short) 0x9201;
     public static final short TAG_APERTURE_VALUE = (short) 0x9202;
     public static final short TAG_BRIGHTNESS_VALUE = (short) 0x9203;
     public static final short TAG_EXPOSURE_BIAS_VALUE = (short) 0x9204;
@@ -87,7 +87,7 @@ public class ExifTag {
     public static final short TAG_FLASH = (short) 0x9209;
     public static final short TAG_FOCAL_LENGTH = (short) 0x920A;
     public static final short TAG_SUBJECT_AREA = (short) 0x9214;
-    public static final short TAG_MARER_NOTE = (short) 0x927C;
+    public static final short TAG_MAKER_NOTE = (short) 0x927C;
     public static final short TAG_USER_COMMENT = (short) 0x9286;
     public static final short TAG_SUB_SEC_TIME = (short) 0x9290;
     public static final short TAG_SUB_SEC_TIME_ORIGINAL = (short) 0x9291;
@@ -99,7 +99,7 @@ public class ExifTag {
     public static final short TAG_RELATED_SOUND_FILE = (short) 0xA004;
     public static final short TAG_INTEROPERABILITY_IFD = (short) 0xA005;
     public static final short TAG_FLASH_ENERGY = (short) 0xA20B;
-    public static final short TAG_SPATIAL_FREQUENCY_REPSONSE = (short) 0xA20C;
+    public static final short TAG_SPATIAL_FREQUENCY_RESPONSE = (short) 0xA20C;
     public static final short TAG_FOCAL_PLANE_X_RESOLUTION = (short) 0xA20E;
     public static final short TAG_FOCAL_PLANE_Y_RESOLUTION = (short) 0xA20F;
     public static final short TAG_FOCAL_PLANE_RESOLUTION_UNIT = (short) 0xA210;
@@ -156,7 +156,7 @@ public class ExifTag {
     public static final short TAG_GPS_DATA_STAMP = 29;
     public static final short TAG_GPS_DIFFERENTIAL = 30;
 
-    //Interoperability tag
+    // Interoperability tag
     public static final short TAG_INTEROPERABILITY_INDEX = 1;
 
     /**
@@ -190,8 +190,8 @@ public class ExifTag {
     }
 
     /**
-    * Constants for {@link #TAG_RESOLUTION_UNIT}
-    */
+     * Constants for {@link #TAG_RESOLUTION_UNIT}
+     */
     public static interface ResolutionUnit {
         public static final short INCHES = 2;
         public static final short CENTIMETERS = 3;
@@ -781,7 +781,7 @@ public class ExifTag {
             throw new RuntimeException("There is no byte value in this tag");
         }
         long[] data = (long[]) mValue;
-        for(int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             buf[offset + i] = (byte) data[i];
         }
     }
@@ -791,7 +791,7 @@ public class ExifTag {
      */
     public String valueToString() {
         StringBuilder sbuilder = new StringBuilder();
-        switch(getDataType()) {
+        switch (getDataType()) {
             case ExifTag.TYPE_UNDEFINED:
             case ExifTag.TYPE_UNSIGNED_BYTE:
                 byte buf[] = new byte[getComponentCount()];
