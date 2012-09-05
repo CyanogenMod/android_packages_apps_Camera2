@@ -23,7 +23,7 @@ import android.net.Uri;
 
 public class LightCycleHelper {
 
-    public static void setupCaptureIntent(Intent it, String outputDir) {
+    public static void setupCaptureIntent(Context context, Intent it, String outputDir) {
         /* Do nothing */
     }
 
@@ -33,18 +33,6 @@ public class LightCycleHelper {
 
     public static synchronized boolean hasLightCycleCapture(Context context) {
         return false;
-    }
-
-    public static synchronized void onPackageAdded(Context context, String packageName) {
-        /* Do nothing */
-    }
-
-    public static synchronized void onPackageRemoved(Context context, String packageName) {
-        /* Do nothing */
-    }
-
-    public static synchronized void onPackageChanged(Context context, String packageName) {
-        /* Do nothing */
     }
 
     public static void viewPanorama(Activity activity, Uri uri, String type) {
