@@ -18,24 +18,24 @@
 
     <!-- configuration for album set page -->
     <color name="albumset_background">#181A19</color>
-    <color name="albumset_placeholder">#777</color>
+    <color name="albumset_placeholder">#333</color>
     <color name="albumset_label_background">#BBB</color>
     <color name="albumset_label_title">#171717</color>
     <color name="albumset_label_count">#6F6F6F</color>
 
     <!-- configuration for album page -->
     <color name="album_background">#181A19</color>
-    <color name="album_placeholder">#777</color>
+    <color name="album_placeholder">#333</color>
 
     <!-- configuration for photo page -->
     <color name="photo_background">#181A19</color>
-    <color name="photo_placeholder">#777</color>
+    <color name="photo_placeholder">#333</color>
 
     <!-- configuration for manage cache page -->
     <color name="cache_background">#181A19</color>
-    <color name="cache_placeholder">#777</color>
+    <color name="cache_placeholder">#333</color>
 
-    <color name="bitmap_screennail_placeholder">#777</color>
+    <color name="bitmap_screennail_placeholder">#333</color>
 
     <color name="slideshow_background">#181A19</color>
 </resources>
