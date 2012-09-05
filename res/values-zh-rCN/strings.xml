@@ -87,8 +87,7 @@
     <string name="process_caching_requests" msgid="8722939570307386071">"正在处理缓存请求"</string>
     <string name="caching_label" msgid="4521059045896269095">"正在缓存..."</string>
     <string name="crop_action" msgid="3427470284074377001">"修剪"</string>
-    <!-- no translation found for trim_action (703098114452883524) -->
-    <skip />
+    <string name="trim_action" msgid="703098114452883524">"修剪"</string>
     <string name="set_as" msgid="3636764710790507868">"设置为"</string>
     <string name="video_err" msgid="7003051631792271009">"无法播放视频。"</string>
     <string name="group_by_location" msgid="316641628989023253">"按位置分组"</string>
