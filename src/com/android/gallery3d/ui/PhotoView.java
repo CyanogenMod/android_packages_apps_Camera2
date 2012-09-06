@@ -149,7 +149,6 @@ public class PhotoView extends GLView {
     private static final int MSG_UNDO_BAR_TIMEOUT = 7;
     private static final int MSG_UNDO_BAR_FULL_CAMERA = 8;
 
-    private static final int MOVE_THRESHOLD = 256;
     private static final float SWIPE_THRESHOLD = 300f;
 
     private static final float DEFAULT_TEXT_SIZE = 20;
@@ -1532,7 +1531,9 @@ public class PhotoView extends GLView {
 
         Rect r = mPositionController.getPosition(0);
         int viewW = getWidth();
-        int threshold = MOVE_THRESHOLD + gapToSide(r.width(), viewW);
+        // Setting the move threshold proportional to the width of the view
+        int moveThreshold = viewW / 5 ;
+        int threshold = moveThreshold + gapToSide(r.width(), viewW);
 
         // If we have moved the picture a lot, switching.
         if (viewW - r.right > threshold) {
