@@ -149,18 +149,22 @@ public class ExifData {
             gpsIfd = new IfdData(IfdId.TYPE_IFD_GPS);
             addIfdData(gpsIfd);
         }
-        ExifTag latTag = new ExifTag(ExifTag.GPS_TAG.TAG_GPS_LATITUDE, ExifTag.TYPE_RATIONAL,
+        ExifTag latTag = new ExifTag(ExifTag.TAG_GPS_LATITUDE, ExifTag.TYPE_RATIONAL,
                 3, IfdId.TYPE_IFD_GPS);
-        ExifTag longTag = new ExifTag(ExifTag.GPS_TAG.TAG_GPS_LONGITUDE, ExifTag.TYPE_RATIONAL,
+        ExifTag longTag = new ExifTag(ExifTag.TAG_GPS_LONGITUDE, ExifTag.TYPE_RATIONAL,
                 3, IfdId.TYPE_IFD_GPS);
-        ExifTag latRefTag = new ExifTag(ExifTag.GPS_TAG.TAG_GPS_LATITUDE_REF,
+        ExifTag latRefTag = new ExifTag(ExifTag.TAG_GPS_LATITUDE_REF,
                 ExifTag.TYPE_ASCII, 2, IfdId.TYPE_IFD_GPS);
-        ExifTag longRefTag = new ExifTag(ExifTag.GPS_TAG.TAG_GPS_LONGITUDE_REF,
+        ExifTag longRefTag = new ExifTag(ExifTag.TAG_GPS_LONGITUDE_REF,
                 ExifTag.TYPE_ASCII, 2, IfdId.TYPE_IFD_GPS);
         latTag.setValue(toExifLatLong(latitude));
         longTag.setValue(toExifLatLong(longitude));
-        latRefTag.setValue(latitude >= 0 ? "N" : "S");
-        longRefTag.setValue(longitude >= 0 ? "E" : "W");
+        latRefTag.setValue(latitude >= 0
+                ? ExifTag.GpsLatitudeRef.NORTH
+                : ExifTag.GpsLatitudeRef.SOUTH);
+        longRefTag.setValue(longitude >= 0
+                ? ExifTag.GpsLongitudeRef.EAST
+                : ExifTag.GpsLongitudeRef.WEST);
         gpsIfd.setTag(latTag);
         gpsIfd.setTag(longTag);
         gpsIfd.setTag(latRefTag);
