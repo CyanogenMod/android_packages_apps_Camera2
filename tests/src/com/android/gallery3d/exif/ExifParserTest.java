@@ -176,7 +176,7 @@ public class ExifParserTest extends InstrumentationTestCase {
                     break;
                 case ExifParser.EVENT_NEW_TAG:
                     ExifTag tag = parser.getTag();
-                    if (tag.getTagId() == ExifTag.TIFF_TAG.TAG_MODEL) {
+                    if (tag.getTagId() == ExifTag.TAG_MODEL) {
                         if (tag.hasValue()) {
                             isTagFound = true;
                             checkTag(tag);
@@ -188,7 +188,7 @@ public class ExifParserTest extends InstrumentationTestCase {
                     break;
                 case ExifParser.EVENT_VALUE_OF_REGISTERED_TAG:
                     tag = parser.getTag();
-                    assertEquals(ExifTag.TIFF_TAG.TAG_MODEL, tag.getTagId());
+                    assertEquals(ExifTag.TAG_MODEL, tag.getTagId());
                     checkTag(tag);
                     isTagFound = true;
                     break;
@@ -209,8 +209,8 @@ public class ExifParserTest extends InstrumentationTestCase {
             switch (event) {
                 case ExifParser.EVENT_NEW_TAG:
                     ExifTag tag = parser.getTag();
-                    if (tag.getTagId() == ExifTag.TIFF_TAG.TAG_COMPRESSION) {
-                        if (tag.getUnsignedShort(0) == ExifTag.TIFF_TAG.COMPRESSION_JPEG) {
+                    if (tag.getTagId() == ExifTag.TAG_COMPRESSION) {
+                        if (tag.getUnsignedShort(0) == ExifTag.Compression.JPEG) {
                             mIsContainCompressedImage = true;
                         }
                     }

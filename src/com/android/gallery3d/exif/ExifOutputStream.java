@@ -270,8 +270,8 @@ public class ExifOutputStream extends FilterOutputStream {
             ifd0 = new IfdData(IfdId.TYPE_IFD_0);
             mExifData.addIfdData(ifd0);
         }
-        ExifTag exifOffsetTag = new ExifTag(ExifTag.TIFF_TAG.TAG_EXIF_IFD
-                , ExifTag.TYPE_UNSIGNED_INT, 1, IfdId.TYPE_IFD_0);
+        ExifTag exifOffsetTag = new ExifTag(ExifTag.TAG_EXIF_IFD,
+                ExifTag.TYPE_UNSIGNED_INT, 1, IfdId.TYPE_IFD_0);
         ifd0.setTag(exifOffsetTag);
 
         // Exif IFD is required for all file.
@@ -284,7 +284,7 @@ public class ExifOutputStream extends FilterOutputStream {
         // GPS IFD
         IfdData gpsIfd = mExifData.getIfdData(IfdId.TYPE_IFD_GPS);
         if (gpsIfd != null) {
-            ExifTag gpsOffsetTag = new ExifTag(ExifTag.TIFF_TAG.TAG_GPS_IFD,
+            ExifTag gpsOffsetTag = new ExifTag(ExifTag.TAG_GPS_IFD,
                     ExifTag.TYPE_UNSIGNED_INT, 1, IfdId.TYPE_IFD_0);
             ifd0.setTag(gpsOffsetTag);
         }
@@ -292,7 +292,7 @@ public class ExifOutputStream extends FilterOutputStream {
         // Interoperability IFD
         IfdData interIfd = mExifData.getIfdData(IfdId.TYPE_IFD_INTEROPERABILITY);
         if (interIfd != null) {
-            ExifTag interOffsetTag = new ExifTag(ExifTag.EXIF_TAG.TAG_INTEROPERABILITY_IFD,
+            ExifTag interOffsetTag = new ExifTag(ExifTag.TAG_INTEROPERABILITY_IFD,
                     ExifTag.TYPE_UNSIGNED_INT, 1, IfdId.TYPE_IFD_EXIF);
             exifIfd.setTag(interOffsetTag);
         }
@@ -305,10 +305,10 @@ public class ExifOutputStream extends FilterOutputStream {
                 ifd1 = new IfdData(IfdId.TYPE_IFD_1);
                 mExifData.addIfdData(ifd1);
             }
-            ExifTag offsetTag = new ExifTag(ExifTag.TIFF_TAG.TAG_JPEG_INTERCHANGE_FORMAT,
+            ExifTag offsetTag = new ExifTag(ExifTag.TAG_JPEG_INTERCHANGE_FORMAT,
                     ExifTag.TYPE_UNSIGNED_INT, 1, IfdId.TYPE_IFD_1);
             ifd1.setTag(offsetTag);
-            ExifTag lengthTag = new ExifTag(ExifTag.TIFF_TAG.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
+            ExifTag lengthTag = new ExifTag(ExifTag.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
                     ExifTag.TYPE_UNSIGNED_INT, 1, IfdId.TYPE_IFD_1);
             lengthTag.setValue(mExifData.getCompressedThumbnail().length);
             ifd1.setTag(lengthTag);
@@ -318,9 +318,9 @@ public class ExifOutputStream extends FilterOutputStream {
                 mExifData.addIfdData(ifd1);
             }
             int stripCount = mExifData.getStripCount();
-            ExifTag offsetTag = new ExifTag(ExifTag.TIFF_TAG.TAG_STRIP_OFFSETS,
+            ExifTag offsetTag = new ExifTag(ExifTag.TAG_STRIP_OFFSETS,
                     ExifTag.TYPE_UNSIGNED_INT, stripCount, IfdId.TYPE_IFD_1);
-            ExifTag lengthTag = new ExifTag(ExifTag.TIFF_TAG.TAG_STRIP_BYTE_COUNTS,
+            ExifTag lengthTag = new ExifTag(ExifTag.TAG_STRIP_BYTE_COUNTS,
                     ExifTag.TYPE_UNSIGNED_INT, stripCount, IfdId.TYPE_IFD_1);
             long[] lengths = new long[stripCount];
             for (int i = 0; i < mExifData.getStripCount(); i++) {
@@ -336,20 +336,20 @@ public class ExifOutputStream extends FilterOutputStream {
         int offset = TIFF_HEADER_SIZE;
         IfdData ifd0 = mExifData.getIfdData(IfdId.TYPE_IFD_0);
         offset = calculateOffsetOfIfd(ifd0, offset);
-        ifd0.getTag(ExifTag.TIFF_TAG.TAG_EXIF_IFD).setValue(offset);
+        ifd0.getTag(ExifTag.TAG_EXIF_IFD).setValue(offset);
 
         IfdData exifIfd = mExifData.getIfdData(IfdId.TYPE_IFD_EXIF);
         offset = calculateOffsetOfIfd(exifIfd, offset);
 
         IfdData interIfd = mExifData.getIfdData(IfdId.TYPE_IFD_INTEROPERABILITY);
         if (interIfd != null) {
-            exifIfd.getTag(ExifTag.EXIF_TAG.TAG_INTEROPERABILITY_IFD).setValue(offset);
+            exifIfd.getTag(ExifTag.TAG_INTEROPERABILITY_IFD).setValue(offset);
             offset = calculateOffsetOfIfd(interIfd, offset);
         }
 
         IfdData gpsIfd = mExifData.getIfdData(IfdId.TYPE_IFD_GPS);
         if (gpsIfd != null) {
-            ifd0.getTag(ExifTag.TIFF_TAG.TAG_GPS_IFD).setValue(offset);
+            ifd0.getTag(ExifTag.TAG_GPS_IFD).setValue(offset);
             offset = calculateOffsetOfIfd(gpsIfd, offset);
         }
 
@@ -361,7 +361,7 @@ public class ExifOutputStream extends FilterOutputStream {
 
         // thumbnail
         if (mExifData.hasCompressedThumbnail()) {
-            ifd1.getTag(ExifTag.TIFF_TAG.TAG_JPEG_INTERCHANGE_FORMAT).setValue(offset);
+            ifd1.getTag(ExifTag.TAG_JPEG_INTERCHANGE_FORMAT).setValue(offset);
             offset += mExifData.getCompressedThumbnail().length;
         } else if (mExifData.hasUncompressedStrip()){
             int stripCount = mExifData.getStripCount();
@@ -370,7 +370,7 @@ public class ExifOutputStream extends FilterOutputStream {
                 offsets[i] = offset;
                 offset += mExifData.getStrip(i).length;
             }
-            ifd1.getTag(ExifTag.TIFF_TAG.TAG_STRIP_OFFSETS).setValue(offsets);
+            ifd1.getTag(ExifTag.TAG_STRIP_OFFSETS).setValue(offsets);
         }
         return offset;
     }
