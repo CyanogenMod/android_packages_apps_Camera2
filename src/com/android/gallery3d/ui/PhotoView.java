@@ -938,8 +938,6 @@ public class PhotoView extends GLView {
         private boolean mModeChanged;
         // If this scaling gesture should be ignored.
         private boolean mIgnoreScalingGesture;
-        // If we have seen a scaling gesture.
-        private boolean mSeenScaling;
         // whether the down action happened while the view is scrolling.
         private boolean mDownInScrolling;
         // If we should ignore all gestures other than onSingleTapUp.
@@ -1057,7 +1055,7 @@ public class PhotoView extends GLView {
         @Override
         public boolean onFling(float velocityX, float velocityY) {
             if (mIgnoreSwipingGesture) return true;
-            if (mSeenScaling) return true;
+            if (mModeChanged) return true;
             if (swipeImages(velocityX, velocityY)) {
                 mIgnoreUpEvent = true;
             } else {
@@ -1128,8 +1126,6 @@ public class PhotoView extends GLView {
             // mode and at minimal scale.
             mCanChangeMode = mFilmMode
                     || mPositionController.isAtMinimalScale();
-            mModeChanged = false;
-            mSeenScaling = true;
             mAccScale = 1f;
             return true;
         }
@@ -1206,7 +1202,7 @@ public class PhotoView extends GLView {
             checkHideUndoBar(UNDO_BAR_TOUCHED);
 
             mDeltaY = 0;
-            mSeenScaling = false;
+            mModeChanged = false;
 
             if (mIgnoreSwipingGesture) return;
 
