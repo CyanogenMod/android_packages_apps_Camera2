@@ -61,8 +61,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     @SuppressWarnings("unused")
     private static final String TAG = "AlbumPage";
 
-    private static final int MSG_PICK_PHOTO = 1;
-
     public static final String KEY_MEDIA_PATH = "media-path";
     public static final String KEY_PARENT_MEDIA_PATH = "parent-media-path";
     public static final String KEY_SET_CENTER = "set-center";
@@ -72,7 +70,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     public static final String KEY_FADE_TEXTURE = "fade_texture";
 
     private static final int REQUEST_SLIDESHOW = 1;
-    private static final int REQUEST_PHOTO = 2;
+    public static final int REQUEST_PHOTO = 2;
     private static final int REQUEST_DO_ANIMATION = 3;
 
     private static final int BIT_LOADING_RELOAD = 1;
@@ -102,6 +100,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private boolean mShowDetails;
     private float mUserDistance; // in pixel
     private Future<Integer> mSyncTask = null;
+    private boolean mLaunchedFromPhotoPage;
 
     private int mLoadingBits = 0;
     private boolean mInitialSynced = false;
@@ -261,9 +260,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             mSelectionManager.toggle(item.getPath());
             mSlotView.invalidate();
         } else {
-            // Launch photos in lights out mode
-            mActivity.getGLRoot().setLightsOutMode(true);
-
             // Render transition in pressed state
             mAlbumView.setPressedIndex(slotIndex);
             prepareFadeOutTexture();
@@ -274,12 +270,28 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     }
 
     private void pickPhoto(int slotIndex) {
+        pickPhoto(slotIndex, false);
+    }
+
+    private void pickPhoto(int slotIndex, boolean startInFilmstrip) {
         if (!mIsActive) return;
+
+        if (!startInFilmstrip) {
+            // Launch photos in lights out mode
+            mActivity.getGLRoot().setLightsOutMode(true);
+        }
 
         MediaItem item = mAlbumDataAdapter.get(slotIndex);
         if (item == null) return; // Item not ready yet, ignore the click
         if (mGetContent) {
             onGetContent(item);
+        } else if (mLaunchedFromPhotoPage) {
+            TransitionStore transitions = mActivity.getTransitionStore();
+            transitions.put(
+                    PhotoPage.KEY_ALBUMPAGE_TRANSITION,
+                    PhotoPage.MSG_ALBUMPAGE_PICKED);
+            transitions.put(PhotoPage.KEY_INDEX_HINT, slotIndex);
+            onBackPressed();
         } else {
             // Get into the PhotoPage.
             // mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
@@ -291,6 +303,10 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                     mMediaSetPath.toString());
             data.putString(PhotoPage.KEY_MEDIA_ITEM_PATH,
                     item.getPath().toString());
+            data.putInt(PhotoPage.KEY_ALBUMPAGE_TRANSITION,
+                    PhotoPage.MSG_ALBUMPAGE_STARTED);
+            data.putBoolean(PhotoPage.KEY_START_IN_FILMSTRIP,
+                    startInFilmstrip);
             mActivity.getStateManager().startStateForResult(
                     PhotoPage.class, REQUEST_PHOTO, data);
         }
@@ -371,8 +387,11 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             mSelectionManager.selectAll();
         }
 
-        // Don't show animation if it is restored
-        if (restoreState == null && data != null) {
+        mLaunchedFromPhotoPage =
+                mActivity.getStateManager().hasStateClass(PhotoPage.class);
+
+        // Don't show animation if it is restored or switched from filmstrip
+        if (!mLaunchedFromPhotoPage && restoreState == null && data != null) {
             int[] center = data.getIntArray(KEY_SET_CENTER);
             if (center != null) {
                 mOpenCenter.setAbsolutePosition(center[0], center[1]);
@@ -395,7 +414,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
         setContentPane(mRootPane);
 
-        Path path = mMediaSet.getPath();
         boolean enableHomeButton = (mActivity.getStateManager().getStateCount() > 1) |
                 mParentMediaSetString != null;
         mActivity.getGalleryActionBar().setDisplayOptions(enableHomeButton, true);
@@ -540,6 +558,16 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         return true;
     }
 
+    private void prepareAnimationBackToFilmstrip(int slotIndex) {
+        prepareFadeOutTexture();
+        TransitionStore transitions = mActivity.getTransitionStore();
+        transitions.put(PhotoPage.KEY_INDEX_HINT, slotIndex);
+        transitions.put(PhotoPage.KEY_MEDIA_ITEM_PATH,
+                mAlbumDataAdapter.get(slotIndex).getPath());
+        transitions.put(PhotoPage.KEY_OPEN_ANIMATION_RECT,
+                getSlotRect(slotIndex));
+    }
+
     @Override
     protected boolean onItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -565,6 +593,19 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 data.putBoolean(SlideshowPage.KEY_REPEAT, true);
                 mActivity.getStateManager().startStateForResult(
                         SlideshowPage.class, REQUEST_SLIDESHOW, data);
+                return true;
+            }
+            case R.id.action_filmstrip: {
+                int targetPhoto = mSlotView.getVisibleStart();
+                prepareAnimationBackToFilmstrip(targetPhoto);
+                if(mLaunchedFromPhotoPage) {
+                    mActivity.getTransitionStore().put(
+                            PhotoPage.KEY_ALBUMPAGE_TRANSITION,
+                            PhotoPage.MSG_ALBUMPAGE_RESUMED);
+                    onBackPressed();
+                } else {
+                    pickPhoto(targetPhoto, true);
+                }
                 return true;
             }
             case R.id.action_details: {
