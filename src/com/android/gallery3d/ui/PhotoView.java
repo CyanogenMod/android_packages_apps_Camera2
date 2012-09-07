@@ -79,6 +79,9 @@ public class PhotoView extends GLView {
         // Returns true if the item is the Panorama.
         public boolean isPanorama(int offset);
 
+        // Returns true if the item uses a special panorama viewer
+        public boolean usePanoramaViewer(int offset);
+
         // Returns true if the item is a static image that represents camera
         // preview.
         public boolean isStaticCamera(int offset);
@@ -559,6 +562,7 @@ public class PhotoView extends GLView {
         private int mRotation;
         private boolean mIsCamera;
         private boolean mIsPanorama;
+        private boolean mUsePanoramaViewer;
         private boolean mIsStaticCamera;
         private boolean mIsVideo;
         private boolean mIsDeletable;
@@ -573,6 +577,7 @@ public class PhotoView extends GLView {
 
             mIsCamera = mModel.isCamera(0);
             mIsPanorama = mModel.isPanorama(0);
+            mUsePanoramaViewer = mModel.usePanoramaViewer(0);
             mIsStaticCamera = mModel.isStaticCamera(0);
             mIsVideo = mModel.isVideo(0);
             mIsDeletable = mModel.isDeletable(0);
@@ -712,7 +717,7 @@ public class PhotoView extends GLView {
             // Draw the play video icon and the message.
             canvas.translate((int) (cx + 0.5f), (int) (cy + 0.5f));
             int s = (int) (scale * Math.min(r.width(), r.height()) + 0.5f);
-            if (mIsVideo) drawVideoPlayIcon(canvas, s);
+            if (mIsVideo || mUsePanoramaViewer) drawVideoPlayIcon(canvas, s);
             if (mLoadingState == Model.LOADING_FAIL) {
                 drawLoadingFailMessage(canvas);
             }
@@ -754,6 +759,7 @@ public class PhotoView extends GLView {
         private ScreenNail mScreenNail;
         private boolean mIsCamera;
         private boolean mIsPanorama;
+        private boolean mUsePanoramaViewer;
         private boolean mIsStaticCamera;
         private boolean mIsVideo;
         private boolean mIsDeletable;
@@ -768,6 +774,7 @@ public class PhotoView extends GLView {
         public void reload() {
             mIsCamera = mModel.isCamera(mIndex);
             mIsPanorama = mModel.isPanorama(mIndex);
+            mUsePanoramaViewer = mModel.usePanoramaViewer(mIndex);
             mIsStaticCamera = mModel.isStaticCamera(mIndex);
             mIsVideo = mModel.isVideo(mIndex);
             mIsDeletable = mModel.isDeletable(mIndex);
@@ -833,7 +840,7 @@ public class PhotoView extends GLView {
                 invalidate();
             }
             int s = Math.min(drawW, drawH);
-            if (mIsVideo) drawVideoPlayIcon(canvas, s);
+            if (mIsVideo || mUsePanoramaViewer) drawVideoPlayIcon(canvas, s);
             if (mLoadingState == Model.LOADING_FAIL) {
                 drawLoadingFailMessage(canvas);
             }
