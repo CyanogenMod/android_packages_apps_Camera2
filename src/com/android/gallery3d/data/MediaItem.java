@@ -103,6 +103,10 @@ public abstract class MediaItem extends MediaObject {
 
     public abstract String getMimeType();
 
+    public String getFilePath() {
+        return "";
+    }
+
     // Returns width and height of the media item.
     // Returns 0, 0 if the information is not available.
     public abstract int getWidth();

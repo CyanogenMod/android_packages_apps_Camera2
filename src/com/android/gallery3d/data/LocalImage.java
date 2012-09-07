@@ -338,4 +338,9 @@ public class LocalImage extends LocalMediaItem {
     public int getHeight() {
         return height;
     }
+
+    @Override
+    public String getFilePath() {
+        return filePath;
+    }
 }

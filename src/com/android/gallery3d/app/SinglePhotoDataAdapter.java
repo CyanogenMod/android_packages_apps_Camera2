@@ -33,6 +33,7 @@ import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.ui.TileImageViewAdapter;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
+import com.android.gallery3d.util.LightCycleHelper;
 import com.android.gallery3d.util.ThreadPool;
 
 public class SinglePhotoDataAdapter extends TileImageViewAdapter
@@ -213,6 +214,11 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
     @Override
     public boolean isVideo(int offset) {
         return mItem.getMediaType() == MediaItem.MEDIA_TYPE_VIDEO;
+    }
+
+    @Override
+    public boolean usePanoramaViewer(int offset) {
+        return LightCycleHelper.isPanorama(mItem.getFilePath());
     }
 
     @Override

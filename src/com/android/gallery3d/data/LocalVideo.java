@@ -231,4 +231,9 @@ public class LocalVideo extends LocalMediaItem {
     public int getHeight() {
         return height;
     }
+
+    @Override
+    public String getFilePath() {
+        return filePath;
+    }
 }
