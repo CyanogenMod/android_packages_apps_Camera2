@@ -18,6 +18,8 @@ package com.android.gallery3d.util;
 
 import android.os.Environment;
 
+import com.android.gallery3d.data.LocalAlbum;
+import com.android.gallery3d.data.LocalMergeAlbum;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
 

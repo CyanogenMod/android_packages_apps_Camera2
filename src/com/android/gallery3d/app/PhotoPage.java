@@ -37,6 +37,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.R;
 import com.android.gallery3d.anim.FloatAnimation;
 import com.android.gallery3d.common.ApiHelper;
+import com.android.gallery3d.common.LightCycleHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.FilterDeleteSet;
@@ -70,7 +71,6 @@ import com.android.gallery3d.ui.RawTexture;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.GalleryUtils;
-import com.android.gallery3d.util.LightCycleHelper;
 import com.android.gallery3d.util.MediaSetUtils;
 
 public class PhotoPage extends ActivityState implements
@@ -84,6 +84,7 @@ public class PhotoPage extends ActivityState implements
     private static final int MSG_UPDATE_ACTION_BAR = 5;
     private static final int MSG_UNFREEZE_GLROOT = 6;
     private static final int MSG_WANT_BARS = 7;
+    private static final int MSG_REFRESH_GRID_BUTTON = 8;
 
     private static final int HIDE_BARS_TIMEOUT = 3500;
     private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
@@ -100,8 +101,14 @@ public class PhotoPage extends ActivityState implements
     public static final String KEY_OPEN_ANIMATION_RECT = "open-animation-rect";
     public static final String KEY_APP_BRIDGE = "app-bridge";
     public static final String KEY_TREAT_BACK_AS_UP = "treat-back-as-up";
-
+    public static final String KEY_START_IN_FILMSTRIP = "start-in-filmstrip";
     public static final String KEY_RETURN_INDEX_HINT = "return-index-hint";
+
+    public static final String KEY_ALBUMPAGE_TRANSITION = "albumpage-transition";
+    public static final int MSG_ALBUMPAGE_NONE = 0;
+    public static final int MSG_ALBUMPAGE_STARTED = 1;
+    public static final int MSG_ALBUMPAGE_RESUMED = 2;
+    public static final int MSG_ALBUMPAGE_PICKED = 4;
 
     private GalleryApp mApplication;
     private SelectionManager mSelectionManager;
@@ -136,10 +143,12 @@ public class PhotoPage extends ActivityState implements
     private OrientationManager mOrientationManager;
     private boolean mHasActivityResult;
     private boolean mTreatBackAsUp;
+    private boolean mStartInFilmstrip;
+    private boolean mStartedFromAlbumPage;
 
     private RawTexture mFadeOutTexture;
     private Rect mOpenAnimationRect;
-    public static final int ANIM_TIME_OPENING = 400;
+    public static final int ANIM_TIME_OPENING = 300;
 
     // The item that is deleted (but it can still be undeleted before commiting)
     private Path mDeletePath;
@@ -216,8 +225,6 @@ public class PhotoPage extends ActivityState implements
     public void onCreate(Bundle data, Bundle restoreState) {
         super.onCreate(data, restoreState);
         mActionBar = mActivity.getGalleryActionBar();
-        mFlags |= FLAG_HIDE_ACTION_BAR | FLAG_HIDE_STATUS_BAR;
-        mShowBars = false;
         mSelectionManager = new SelectionManager(mActivity, false);
         mMenuExecutor = new MenuExecutor(mActivity, mSelectionManager);
 
@@ -232,12 +239,23 @@ public class PhotoPage extends ActivityState implements
         mSetPathString = data.getString(KEY_MEDIA_SET_PATH);
         mOriginalSetPathString = mSetPathString;
         mNfcAdapter = NfcAdapter.getDefaultAdapter(mActivity.getAndroidContext());
-        Path itemPath = Path.fromString(data.getString(KEY_MEDIA_ITEM_PATH));
+        String itemPathString = data.getString(KEY_MEDIA_ITEM_PATH);
+        Path itemPath = itemPathString != null ?
+                Path.fromString(data.getString(KEY_MEDIA_ITEM_PATH)) :
+                    null;
         mTreatBackAsUp = data.getBoolean(KEY_TREAT_BACK_AS_UP, false);
-
+        mStartInFilmstrip =
+            data.getBoolean(KEY_START_IN_FILMSTRIP, false);
+        mStartedFromAlbumPage =
+                data.getInt(KEY_ALBUMPAGE_TRANSITION,
+                        MSG_ALBUMPAGE_NONE) == MSG_ALBUMPAGE_STARTED;
+        setGridButtonVisibility(!mStartedFromAlbumPage);
         if (mSetPathString != null) {
             mAppBridge = (AppBridge) data.getParcelable(KEY_APP_BRIDGE);
             if (mAppBridge != null) {
+                mFlags |= FLAG_HIDE_ACTION_BAR | FLAG_HIDE_STATUS_BAR;
+                mShowBars = false;
+
                 mAppBridge.setServer(this);
                 mOrientationManager.lockOrientation();
 
@@ -277,6 +295,10 @@ public class PhotoPage extends ActivityState implements
             mCurrentIndex = data.getInt(KEY_INDEX_HINT, 0);
             if (mMediaSet == null) {
                 Log.w(TAG, "failed to restore " + mSetPathString);
+            }
+            if (itemPath == null) {
+               itemPath = mMediaSet.getMediaItem(mCurrentIndex, 1)
+                       .get(0).getPath();
             }
             PhotoDataAdapter pda = new PhotoDataAdapter(
                     mActivity, mPhotoView, mMediaSet, itemPath, mCurrentIndex,
@@ -334,6 +356,10 @@ public class PhotoPage extends ActivityState implements
                         hideBars();
                         break;
                     }
+                    case MSG_REFRESH_GRID_BUTTON: {
+                        setGridButtonVisibility(mPhotoView.getFilmMode());
+                        break;
+                    }
                     case MSG_LOCK_ORIENTATION: {
                         mOrientationManager.lockOrientation();
                         break;
@@ -363,16 +389,7 @@ public class PhotoPage extends ActivityState implements
             }
         };
 
-        // start the opening animation only if it's not restored.
-        if (restoreState == null) {
-            mFadeOutTexture = mActivity.getTransitionStore().get(AlbumPage.KEY_FADE_TEXTURE);
-            if (mFadeOutTexture != null) {
-                mBackgroundFade.start();
-                BitmapScreenNail.disableDrawPlaceholder();
-                mOpenAnimationRect = (Rect) data.getParcelable(KEY_OPEN_ANIMATION_RECT);
-                mPhotoView.setOpenAnimationRect(mOpenAnimationRect);
-            }
-        }
+        mPhotoView.setFilmMode(mStartInFilmstrip);
     }
 
     @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
@@ -432,6 +449,8 @@ public class PhotoPage extends ActivityState implements
         // it could be null if onCreateActionBar has not been called yet
         if (menu == null) return;
 
+        setGridButtonVisibility(mPhotoView.getFilmMode());
+
         MenuItem item = menu.findItem(R.id.action_slideshow);
         item.setVisible((mSecureAlbum == null) && canDoSlideShow());
         if (mCurrentPhoto == null) return;
@@ -481,7 +500,7 @@ public class PhotoPage extends ActivityState implements
 
     private void refreshHidingMessage() {
         mHandler.removeMessages(MSG_HIDE_BARS);
-        if (!mIsMenuVisible) {
+        if (!mIsMenuVisible && !mPhotoView.getFilmMode()) {
             mHandler.sendEmptyMessageDelayed(MSG_HIDE_BARS, HIDE_BARS_TIMEOUT);
         }
     }
@@ -525,7 +544,9 @@ public class PhotoPage extends ActivityState implements
         } else if (mAppBridge == null || !switchWithCaptureAnimation(-1)) {
             // We are leaving this page. Set the result now.
             setResult();
-            if (mTreatBackAsUp) {
+            if (mStartInFilmstrip && !mPhotoView.getFilmMode()) {
+                mPhotoView.setFilmMode(true);
+            } else if (mTreatBackAsUp) {
                 onUpPressed();
             } else {
                 super.onBackPressed();
@@ -534,7 +555,13 @@ public class PhotoPage extends ActivityState implements
     }
 
     private void onUpPressed() {
+        if (mStartInFilmstrip && !mPhotoView.getFilmMode()) {
+            mPhotoView.setFilmMode(true);
+            return;
+        }
+
         if (mActivity.getStateManager().getStateCount() > 1) {
+            setResult();
             super.onBackPressed();
             return;
         }
@@ -561,10 +588,8 @@ public class PhotoPage extends ActivityState implements
 
     private void setResult() {
         Intent result = null;
-        if (!mPhotoView.getFilmMode()) {
-            result = new Intent();
-            result.putExtra(KEY_RETURN_INDEX_HINT, mCurrentIndex);
-        }
+        result = new Intent();
+        result.putExtra(KEY_RETURN_INDEX_HINT, mCurrentIndex);
         setStateResult(Activity.RESULT_OK, result);
     }
 
@@ -647,6 +672,22 @@ public class PhotoPage extends ActivityState implements
         switch (action) {
             case android.R.id.home: {
                 onUpPressed();
+                return true;
+            }
+            case R.id.action_grid: {
+                if (mStartedFromAlbumPage) {
+                    onUpPressed();
+                } else {
+                    preparePhotoFallbackView();
+                    Bundle data = new Bundle(getData());
+                    data.putString(AlbumPage.KEY_MEDIA_PATH, mOriginalSetPathString);
+                    data.putString(AlbumPage.KEY_PARENT_MEDIA_PATH,
+                            mActivity.getDataManager().getTopSetPath(
+                                    DataManager.INCLUDE_ALL));
+                    mActivity.getTransitionStore().put(
+                            KEY_RETURN_INDEX_HINT, mCurrentIndex);
+                    mActivity.getStateManager().startState(AlbumPage.class, data);
+                }
                 return true;
             }
             case R.id.action_slideshow: {
@@ -958,9 +999,59 @@ public class PhotoPage extends ActivityState implements
         mActivity.getGLRoot().unfreeze();
     }
 
+    private void setGridButtonVisibility(boolean enabled) {
+        Menu menu = mActionBar.getMenu();
+        if (menu == null) return;
+        MenuItem item = menu.findItem(R.id.action_grid);
+        if (item != null) item.setVisible(enabled);
+    }
+
+    public void onFilmModeChanged(boolean enabled) {
+        mHandler.sendEmptyMessage(MSG_REFRESH_GRID_BUTTON);
+        if (enabled) {
+            mHandler.removeMessages(MSG_HIDE_BARS);
+        } else {
+            refreshHidingMessage();
+        }
+    }
+
+    private void transitionFromAlbumPageIfNeeded() {
+        TransitionStore transitions = mActivity.getTransitionStore();
+
+        int resumeIndex = transitions.get(KEY_INDEX_HINT, -1);
+        if (resumeIndex >= 0) {
+            mCurrentIndex = resumeIndex;
+            mModel.setCurrentPhoto((Path)transitions.get(KEY_MEDIA_SET_PATH), mCurrentIndex);
+            mPhotoView.switchToImage(mCurrentIndex);
+        }
+
+        int albumPageTransition = transitions.get(
+                KEY_ALBUMPAGE_TRANSITION, MSG_ALBUMPAGE_NONE);
+
+        if(albumPageTransition != MSG_ALBUMPAGE_NONE) {
+            mPhotoView.setFilmMode(mStartInFilmstrip
+                    && albumPageTransition == MSG_ALBUMPAGE_RESUMED);
+        }
+
+        mFadeOutTexture = transitions.get(AlbumPage.KEY_FADE_TEXTURE);
+        if (mFadeOutTexture != null) {
+            mBackgroundFade.start();
+            BitmapScreenNail.disableDrawPlaceholder();
+            mOpenAnimationRect =
+                    albumPageTransition == MSG_ALBUMPAGE_NONE ?
+                    (Rect) mData.getParcelable(KEY_OPEN_ANIMATION_RECT) :
+                    (Rect) transitions.get(KEY_OPEN_ANIMATION_RECT);
+            mPhotoView.setOpenAnimationRect(mOpenAnimationRect);
+            mBackgroundFade.start();
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+
+        transitionFromAlbumPageIfNeeded();
+
         mActivity.getGLRoot().freeze();
         mIsActive = true;
         setContentPane(mRootPane);

@@ -91,6 +91,11 @@ public class LocalAlbum extends MediaSet {
     }
 
     @Override
+    public boolean isCameraRoll() {
+        return mBucketId == MediaSetUtils.CAMERA_BUCKET_ID;
+    }
+
+    @Override
     public Uri getContentUri() {
         if (mIsImage) {
             return MediaStore.Images.Media.EXTERNAL_CONTENT_URI.buildUpon()

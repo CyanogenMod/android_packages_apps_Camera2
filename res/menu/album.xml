@@ -18,10 +18,14 @@
             android:icon="@drawable/ic_menu_camera_holo_light"
             android:title="@string/switch_to_camera"
             android:showAsAction="ifRoom" />
+    <item android:id="@+id/action_filmstrip"
+            android:icon="@android:drawable/ic_dialog_map"
+            android:title="@string/switch_photo_filmstrip"
+            android:showAsAction="ifRoom" />
     <item android:id="@+id/action_slideshow"
             android:icon="@drawable/ic_menu_slideshow_holo_light"
             android:title="@string/slideshow"
-            android:showAsAction="ifRoom" />
+            android:showAsAction="never" />
     <item android:id="@+id/action_select"
             android:title="@string/select_item"
             android:showAsAction="never" />

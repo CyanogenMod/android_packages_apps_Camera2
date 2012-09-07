@@ -124,6 +124,7 @@ public class PhotoView extends GLView {
         public void onDeleteImage(Path path, int offset);
         public void onUndoDeleteImage();
         public void onCommitDeleteImage();
+        public void onFilmModeChanged(boolean enabled);
     }
 
     // The rules about orientation locking:
@@ -624,7 +625,7 @@ public class PhotoView extends GLView {
 
             if (mWasCameraCenter && mIsCamera && !isCenter && !mFilmMode) {
                 // Temporary disabled to de-emphasize filmstrip.
-                // setFilmMode(true);
+                setFilmMode(true);
             } else if (!mWasCameraCenter && isCameraCenter && mFilmMode) {
                 setFilmMode(false);
             }
@@ -1267,18 +1268,22 @@ public class PhotoView extends GLView {
         mGestureListener.setSwipingEnabled(enabled);
     }
 
-    private void setFilmMode(boolean enabled) {
+    public void setFilmMode(boolean enabled) {
         if (mFilmMode == enabled) return;
         mFilmMode = enabled;
         mPositionController.setFilmMode(mFilmMode);
         mModel.setNeedFullImage(!enabled);
         mModel.setFocusHintDirection(
                 mFilmMode ? Model.FOCUS_HINT_PREVIOUS : Model.FOCUS_HINT_NEXT);
-        mListener.onActionBarAllowed(!enabled);
-
-        // Move into camera in page mode, lock
-        if (!enabled && mPictures.get(0).isCamera()) {
-            mListener.lockOrientation();
+        mListener.onFilmModeChanged(enabled);
+        boolean isCamera = mPictures.get(0).isCamera();
+        if (isCamera) {
+            // Move into camera in page mode, lock
+            if (!enabled) mListener.lockOrientation();
+            mListener.onActionBarAllowed(false);
+        } else {
+            mListener.onActionBarAllowed(true);
+            if (enabled) mListener.onActionBarWanted();
         }
     }
 
@@ -1306,6 +1311,7 @@ public class PhotoView extends GLView {
     // move to the camera preview and show controls after resume
     public void resetToFirstPicture() {
         mModel.moveTo(0);
+        mListener.onActionBarAllowed(false);
         setFilmMode(false);
     }
 
@@ -1566,6 +1572,10 @@ public class PhotoView extends GLView {
     ////////////////////////////////////////////////////////////////////////////
     //  Focus switching
     ////////////////////////////////////////////////////////////////////////////
+
+    public void switchToImage(int index) {
+        mModel.moveTo(index);
+    }
 
     private void switchToNextImage() {
         mModel.moveTo(mModel.getCurrentIndex() + 1);

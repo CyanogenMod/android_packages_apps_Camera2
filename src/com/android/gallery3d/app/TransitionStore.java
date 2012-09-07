@@ -30,6 +30,11 @@ public class TransitionStore {
         return (T) mStorage.get(key);
     }
 
+    public <T> T get(Object key, T valueIfNull) {
+        T value = get(key);
+        return value == null ? valueIfNull : value;
+    }
+
     public void clear() {
         mStorage.clear();
     }

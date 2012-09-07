@@ -56,6 +56,7 @@ import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.HelpUtils;
+import com.android.gallery3d.util.MediaSetUtils;
 
 public class AlbumSetPage extends ActivityState implements
         SelectionManager.SelectionListener, GalleryActionBar.ClusterRunner,
@@ -202,6 +203,10 @@ public class AlbumSetPage extends ActivityState implements
         }
     }
 
+    private static boolean albumShouldOpenInFilmstrip(MediaSet album) {
+        return album.isCameraRoll() && album.getMediaItemCount() > 0;
+    }
+
     private void pickAlbum(int slotIndex) {
         if (!mIsActive) return;
 
@@ -227,10 +232,19 @@ public class AlbumSetPage extends ActivityState implements
             if (!mGetContent && (targetSet.getSupportedOperations()
                     & MediaObject.SUPPORT_IMPORT) != 0) {
                 data.putBoolean(AlbumPage.KEY_AUTO_SELECT_ALL, true);
+            } else if (albumShouldOpenInFilmstrip(targetSet)) {
+                data.putInt(PhotoPage.KEY_INDEX_HINT, 0);
+                data.putString(PhotoPage.KEY_MEDIA_SET_PATH,
+                        mediaPath);
+                data.putBoolean(PhotoPage.KEY_START_IN_FILMSTRIP, true);
+                mActivity.getStateManager().startStateForResult(
+                        PhotoPage.class, AlbumPage.REQUEST_PHOTO, data);
+                return;
             }
             data.putString(AlbumPage.KEY_MEDIA_PATH, mediaPath);
-            boolean inAlbum = mActivity.getStateManager().hasStateClass(AlbumPage.class);
+
             // We only show cluster menu in the first AlbumPage in stack
+            boolean inAlbum = mActivity.getStateManager().hasStateClass(AlbumPage.class);
             data.putBoolean(AlbumPage.KEY_SHOW_CLUSTER_MENU, !inAlbum);
             mActivity.getStateManager().startStateForResult(
                     AlbumPage.class, REQUEST_DO_ANIMATION, data);

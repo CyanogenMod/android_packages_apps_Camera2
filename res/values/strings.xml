@@ -452,4 +452,10 @@
 
     <!-- The message of a dialog showing there is no external storage. [CHAR LIMIT=none] -->
     <string name="no_external_storage">No external storage available</string>
+
+    <!-- Label for album filmstrip button -->
+    <string name="switch_photo_filmstrip">Filmstrip</string>
+
+    <!-- Label for album grid button -->
+    <string name="switch_photo_grid">Grid</string>
 </resources>

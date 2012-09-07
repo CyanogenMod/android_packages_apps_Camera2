@@ -95,6 +95,10 @@ public abstract class MediaSet extends MediaObject {
         return false;
     }
 
+    public boolean isCameraRoll() {
+        return false;
+    }
+
     /**
      * Method {@link #reload()} may process the loading task in background, this method tells
      * its client whether the loading is still in process or not.
