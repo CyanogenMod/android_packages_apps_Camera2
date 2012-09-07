@@ -241,7 +241,7 @@ public class LocalImage extends LocalMediaItem {
             operation |= SUPPORT_SHOW_ON_MAP;
         }
 
-        if (LightCycleHelper.isPanorama(caption) &&
+        if (LightCycleHelper.isPanorama(filePath) &&
                 LightCycleHelper.hasLightCycleView(
                         mApplication.getAndroidContext())) {
             operation |= SUPPORT_VIEW_PANORAMA;
