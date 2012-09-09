@@ -17,10 +17,7 @@
 package com.android.gallery3d.app;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -57,6 +54,8 @@ import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.HelpUtils;
 import com.android.gallery3d.util.MediaSetUtils;
+
+import java.lang.ref.WeakReference;
 
 public class AlbumSetPage extends ActivityState implements
         SelectionManager.SelectionListener, GalleryActionBar.ClusterRunner,
@@ -207,11 +206,40 @@ public class AlbumSetPage extends ActivityState implements
         return album.isCameraRoll() && album.getMediaItemCount() > 0;
     }
 
+    WeakReference<Toast> mEmptyAlbumToast = null;
+
+    private void showEmptyAlbumToast(int toastLength) {
+        Toast toast;
+        if (mEmptyAlbumToast != null) {
+            toast = mEmptyAlbumToast.get();
+            if (toast != null) {
+                toast.show();
+                return;
+            }
+        }
+        toast = Toast.makeText(mActivity, R.string.empty_album, toastLength);
+        mEmptyAlbumToast = new WeakReference<Toast>(toast);
+        toast.show();
+    }
+
+    private void hideEmptyAlbumToast() {
+        if (mEmptyAlbumToast != null) {
+            Toast toast = mEmptyAlbumToast.get();
+            if (toast != null) toast.cancel();
+        }
+    }
+
     private void pickAlbum(int slotIndex) {
         if (!mIsActive) return;
 
         MediaSet targetSet = mAlbumSetDataAdapter.getMediaSet(slotIndex);
         if (targetSet == null) return; // Content is dirty, we shall reload soon
+        if (targetSet.getTotalMediaItemCount() == 0) {
+            showEmptyAlbumToast(Toast.LENGTH_SHORT);
+            return;
+        }
+        hideEmptyAlbumToast();
+
         String mediaPath = targetSet.getPath().toString();
 
         Bundle data = new Bundle(getData());
@@ -314,53 +342,34 @@ public class AlbumSetPage extends ActivityState implements
         };
     }
 
+    private boolean mShowedEmptyToastForSelf = false;
     private void clearLoadingBit(int loadingBit) {
         mLoadingBits &= ~loadingBit;
         if (mLoadingBits == 0 && mIsActive) {
             if ((mAlbumSetDataAdapter.size() == 0)) {
-                // Only show toast when there's no album and we are going to
-                // finish, otherwise prompt user to add some pictures
+                // If this is not the top of the gallery folder hierarchy,
+                // tell the parent AlbumSetPage instance to handle displaying
+                // the empty album toast, otherwise show it within this
+                // instance
                 if (mActivity.getStateManager().getStateCount() > 1) {
-                    Toast.makeText(mActivity,
-                            R.string.empty_album, Toast.LENGTH_LONG).show();
+                    Intent result = new Intent();
+                    result.putExtra(AlbumPage.KEY_EMPTY_ALBUM, true);
+                    setStateResult(Activity.RESULT_OK, result);
                     mActivity.getStateManager().finishState(this);
                 } else {
-                    emptyGalleryPrompt(mActivity);
+                    mShowedEmptyToastForSelf = true;
+                    showEmptyAlbumToast(Toast.LENGTH_LONG);
                 }
-            } else if (mEmptyGalleryPrompt != null) {
-                mEmptyGalleryPrompt = null;
+                return;
             }
         }
-    }
-
-    private AlertDialog mEmptyGalleryPrompt;
-
-    private void emptyGalleryPrompt(final Context c) {
-        if (mEmptyGalleryPrompt != null) {
-            mEmptyGalleryPrompt.show();
-            return;
+        // Hide the empty album toast if we are in the root instance of
+        // AlbumSetPage and the album is no longer empty (for instance,
+        // after a sync is completed and web albums have been synced)
+        if (mShowedEmptyToastForSelf) {
+            mShowedEmptyToastForSelf = false;
+            hideEmptyAlbumToast();
         }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(c);
-        builder.setTitle(R.string.empty_album);
-        builder.setNegativeButton(android.R.string.ok, new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        if(GalleryUtils.isCameraAvailable(c)) {
-            builder.setPositiveButton(R.string.switch_to_camera,
-                    new OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            GalleryUtils.startCameraActivity(c);
-                        }
-                    });
-        }
-        mEmptyGalleryPrompt = builder.create();
-        mEmptyGalleryPrompt.show();
     }
 
     private void setLoadingBit(int loadingBit) {
@@ -369,7 +378,6 @@ public class AlbumSetPage extends ActivityState implements
 
     @Override
     public void onPause() {
-        if (mEmptyGalleryPrompt != null) mEmptyGalleryPrompt.dismiss();
         super.onPause();
         mIsActive = false;
         mActionModeHandler.pause();
@@ -554,6 +562,9 @@ public class AlbumSetPage extends ActivityState implements
 
     @Override
     protected void onStateResult(int requestCode, int resultCode, Intent data) {
+        if (data != null && data.getBooleanExtra(AlbumPage.KEY_EMPTY_ALBUM, false)) {
+            showEmptyAlbumToast(Toast.LENGTH_SHORT);
+        }
         switch (requestCode) {
             case REQUEST_DO_ANIMATION: {
                 mSlotView.startRisingAnimation();
