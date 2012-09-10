@@ -106,6 +106,7 @@
         <item name="android:paddingBottom">@dimen/action_bar_icon_padding_vertical</item>
         <item name="android:paddingLeft">@dimen/action_bar_icon_padding_left</item>
         <item name="android:paddingRight">@dimen/action_bar_icon_padding_right</item>
+        <!-- Icon sourced from www.psdgraphics.com/psd-icons/psd-photo-gallery-icon -->
         <item name="android:src">@mipmap/ic_launcher_gallery</item>
     </style>
     <style name="ActionBarTitle" parent="android:TextAppearance.Holo.Widget.ActionBar.Title">
