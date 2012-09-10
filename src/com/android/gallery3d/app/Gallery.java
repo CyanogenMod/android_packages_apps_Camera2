@@ -202,6 +202,11 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
                 data.putString(PhotoPage.KEY_MEDIA_ITEM_PATH, itemPath.toString());
                 if (intent.getBooleanExtra(PhotoPage.KEY_TREAT_BACK_AS_UP, false)) {
                     data.putBoolean(PhotoPage.KEY_TREAT_BACK_AS_UP, true);
+                } else if ((intent.getFlags() & Intent.FLAG_ACTIVITY_NEW_TASK) != 0) {
+                    // when FLAG_ACTIVITY_NEW_TASK is set, (e.g. when intent is fired
+                    // from notification), back button should behave the same as up button
+                    // rather than taking users back to the home screen
+                    data.putBoolean(PhotoPage.KEY_TREAT_BACK_AS_UP, true);
                 }
 
                 // Displays the filename as title, reading the filename from the interface:
