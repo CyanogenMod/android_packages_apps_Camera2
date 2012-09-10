@@ -22,12 +22,12 @@
     <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
     <string name="movie_view_label" msgid="3526526872644898229">"影片播放器"</string>
     <string name="loading_video" msgid="4013492720121891585">"正在載入影片…"</string>
-    <string name="loading_image" msgid="1200894415793838191">"正在載入圖片..."</string>
-    <string name="loading_account" msgid="928195413034552034">"正在載入帳戶..."</string>
+    <string name="loading_image" msgid="1200894415793838191">"正在載入圖片…"</string>
+    <string name="loading_account" msgid="928195413034552034">"正在載入帳戶…"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"繼續播放影片"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"要從 %s 繼續播放嗎？"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"繼續播放"</string>
-    <string name="loading" msgid="7038208555304563571">"載入中..."</string>
+    <string name="loading" msgid="7038208555304563571">"載入中…"</string>
     <string name="fail_to_load" msgid="8394392853646664505">"無法載入"</string>
     <string name="fail_to_load_image" msgid="6155388718549782425">"無法載入圖片"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"無縮圖"</string>
@@ -35,7 +35,7 @@
     <string name="crop_save_text" msgid="152200178986698300">"確定"</string>
     <string name="ok" msgid="5296833083983263293">"確定"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"輕觸臉孔即可開始。"</string>
-    <string name="saving_image" msgid="7270334453636349407">"正在儲存相片..."</string>
+    <string name="saving_image" msgid="7270334453636349407">"正在儲存相片…"</string>
     <string name="save_error" msgid="6857408774183654970">"無法儲存裁剪的圖片。"</string>
     <string name="crop_label" msgid="521114301871349328">"裁剪相片"</string>
     <string name="select_image" msgid="7841406150484742140">"選取相片"</string>
@@ -45,7 +45,7 @@
     <string name="select_group" msgid="6744208543323307114">"選取群組"</string>
     <string name="set_image" msgid="2331476809308010401">"將相片設為"</string>
     <string name="set_wallpaper" msgid="8491121226190175017">"設定桌布"</string>
-    <string name="wallpaper" msgid="140165383777262070">"正在設定桌布..."</string>
+    <string name="wallpaper" msgid="140165383777262070">"正在設定桌布…"</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"桌布"</string>
     <string name="delete" msgid="2839695998251824487">"刪除"</string>
   <plurals name="delete_selection">
