@@ -810,8 +810,7 @@ public class PhotoPage extends ActivityState implements
             playVideo(mActivity, item.getPlayUri(), item.getName());
         } else if (viewPanorama) {
             LocalImage img = (LocalImage) item;
-            LightCycleHelper.viewPanorama(
-                    mActivity, img.getContentUri(), img.getMimeType());
+            LightCycleHelper.viewPanorama(mActivity, img.getFilePath());
         } else {
             toggleBars();
         }
