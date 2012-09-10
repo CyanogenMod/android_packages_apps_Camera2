@@ -794,7 +794,7 @@ public class PhotoPage extends ActivityState implements
 
         boolean playVideo = (mSecureAlbum == null) &&
                 ((item.getSupportedOperations() & MediaItem.SUPPORT_PLAY) != 0);
-        boolean viewPanorama =
+        boolean viewPanorama = (mSecureAlbum == null) &&
                 (item.getSupportedOperations() & MediaItem.SUPPORT_VIEW_PANORAMA) != 0;
 
         if (playVideo) {
