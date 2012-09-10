@@ -37,7 +37,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.R;
 import com.android.gallery3d.anim.FloatAnimation;
 import com.android.gallery3d.common.ApiHelper;
-import com.android.gallery3d.common.LightCycleHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.FilterDeleteSet;
@@ -71,6 +70,7 @@ import com.android.gallery3d.ui.RawTexture;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.LightCycleHelper;
 import com.android.gallery3d.util.MediaSetUtils;
 
 public class PhotoPage extends ActivityState implements
