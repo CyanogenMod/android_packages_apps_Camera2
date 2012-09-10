@@ -19,7 +19,6 @@ package com.android.gallery3d.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 
 public class LightCycleHelper {
 
@@ -35,7 +34,7 @@ public class LightCycleHelper {
         return false;
     }
 
-    public static void viewPanorama(Activity activity, Uri uri, String type) {
+    public static void viewPanorama(Activity activity, String filePath) {
         /* Do nothing */
     }
 
