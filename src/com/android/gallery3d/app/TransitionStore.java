@@ -30,8 +30,9 @@ public class TransitionStore {
         return (T) mStorage.get(key);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T get(Object key, T valueIfNull) {
-        T value = get(key);
+        T value = (T) mStorage.get(key);
         return value == null ? valueIfNull : value;
     }
 
