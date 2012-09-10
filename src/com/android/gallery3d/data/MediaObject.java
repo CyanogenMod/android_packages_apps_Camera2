@@ -91,7 +91,9 @@ public abstract class MediaObject {
 
     public Uri getContentUri() {
         String className = getClass().getName();
-        throw new UnsupportedOperationException(className);
+        Log.e(TAG, "Class " + className + "should implement getContentUri.");
+        Log.e(TAG, "The object was created from path: " + getPath());
+        throw new UnsupportedOperationException();
     }
 
     public Uri getPlayUri() {
