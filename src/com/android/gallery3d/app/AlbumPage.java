@@ -66,6 +66,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     public static final String KEY_SET_CENTER = "set-center";
     public static final String KEY_AUTO_SELECT_ALL = "auto-select-all";
     public static final String KEY_SHOW_CLUSTER_MENU = "cluster-menu";
+    public static final String KEY_EMPTY_ALBUM = "empty-album";
     public static final String KEY_RESUME_ANIMATION = "resume_animation";
     public static final String KEY_FADE_TEXTURE = "fade_texture";
 
@@ -713,9 +714,10 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mLoadingBits &= ~loadTaskBit;
         if (mLoadingBits == 0 && mIsActive) {
             if (mAlbumDataAdapter.size() == 0) {
-                Toast.makeText(mActivity,
-                        R.string.empty_album, Toast.LENGTH_LONG).show();
-                mActivity.getStateManager().finishState(AlbumPage.this);
+                Intent result = new Intent();
+                result.putExtra(KEY_EMPTY_ALBUM, true);
+                setStateResult(Activity.RESULT_OK, result);
+                mActivity.getStateManager().finishState(this);
             }
         }
     }
