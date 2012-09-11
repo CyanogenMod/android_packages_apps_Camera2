@@ -182,10 +182,10 @@ public class DialogDetailsView implements DetailsViewContainer {
                 }
                 int key = detail.getKey();
                 if (details.hasUnit(key)) {
-                    value = String.format("%s : %s %s", DetailsHelper.getDetailsName(
+                    value = String.format("%s: %s %s", DetailsHelper.getDetailsName(
                             context, key), value, context.getString(details.getUnit(key)));
                 } else {
-                    value = String.format("%s : %s", DetailsHelper.getDetailsName(
+                    value = String.format("%s: %s", DetailsHelper.getDetailsName(
                             context, key), value);
                 }
                 mItems.add(value);
