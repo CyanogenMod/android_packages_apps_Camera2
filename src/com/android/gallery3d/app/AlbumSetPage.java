@@ -53,7 +53,6 @@ import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.HelpUtils;
-import com.android.gallery3d.util.MediaSetUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -260,7 +259,7 @@ public class AlbumSetPage extends ActivityState implements
             if (!mGetContent && (targetSet.getSupportedOperations()
                     & MediaObject.SUPPORT_IMPORT) != 0) {
                 data.putBoolean(AlbumPage.KEY_AUTO_SELECT_ALL, true);
-            } else if (albumShouldOpenInFilmstrip(targetSet)) {
+            } else if (!mGetContent && albumShouldOpenInFilmstrip(targetSet)) {
                 data.putInt(PhotoPage.KEY_INDEX_HINT, 0);
                 data.putString(PhotoPage.KEY_MEDIA_SET_PATH,
                         mediaPath);
