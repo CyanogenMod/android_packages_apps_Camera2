@@ -560,6 +560,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     }
 
     private void prepareAnimationBackToFilmstrip(int slotIndex) {
+        if (!mAlbumDataAdapter.isActive(slotIndex)) return;
         prepareFadeOutTexture();
         TransitionStore transitions = mActivity.getTransitionStore();
         transitions.put(PhotoPage.KEY_INDEX_HINT, slotIndex);
