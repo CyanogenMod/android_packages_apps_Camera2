@@ -612,6 +612,7 @@ public class PhotoView extends GLView {
             mSize.height = getRotated(mRotation, h, w);
         }
 
+        private boolean mNeedToChangeToFilmstripWhenCentered = false;
         @Override
         public void draw(GLCanvas canvas, Rect r) {
             drawTileView(canvas, r);
@@ -629,8 +630,11 @@ public class PhotoView extends GLView {
             boolean isCameraCenter = mIsCamera && isCenter && !canUndoLastPicture();
 
             if (mWasCameraCenter && mIsCamera && !isCenter && !mFilmMode) {
-                // Temporary disabled to de-emphasize filmstrip.
+                setFilmMode(false);
+                mNeedToChangeToFilmstripWhenCentered = true;
+            } else if (isCenter && mNeedToChangeToFilmstripWhenCentered) {
                 setFilmMode(true);
+                mNeedToChangeToFilmstripWhenCentered = false;
             } else if (!mWasCameraCenter && isCameraCenter && mFilmMode) {
                 setFilmMode(false);
             }
