@@ -20,6 +20,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
+import com.android.camera.CameraModule;
+
 public class LightCycleHelper {
 
     public static void setupCaptureIntent(Context context, Intent it, String outputDir) {
@@ -40,5 +42,9 @@ public class LightCycleHelper {
 
     public static boolean isPanorama(String filename) {
         return false;
+    }
+
+    public static CameraModule createPanoramaModule() {
+        return null;
     }
 }
