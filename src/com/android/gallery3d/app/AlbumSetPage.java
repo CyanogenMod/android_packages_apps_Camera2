@@ -202,7 +202,8 @@ public class AlbumSetPage extends ActivityState implements
     }
 
     private static boolean albumShouldOpenInFilmstrip(MediaSet album) {
-        return album.isCameraRoll() && album.getMediaItemCount() > 0;
+        int itemCount = album.getMediaItemCount();
+        return (album.isCameraRoll() && itemCount > 0) || itemCount == 1;
     }
 
     WeakReference<Toast> mEmptyAlbumToast = null;
