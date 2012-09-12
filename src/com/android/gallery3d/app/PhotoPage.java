@@ -245,6 +245,51 @@ public class PhotoPage extends ActivityState implements
         mOrientationManager.addListener(this);
         mActivity.getGLRoot().setOrientationSource(mOrientationManager);
 
+        mHandler = new SynchronizedHandler(mActivity.getGLRoot()) {
+            @Override
+            public void handleMessage(Message message) {
+                switch (message.what) {
+                    case MSG_HIDE_BARS: {
+                        hideBars();
+                        break;
+                    }
+                    case MSG_REFRESH_GRID_BUTTON: {
+                        setGridButtonVisibility(mPhotoView.getFilmMode());
+                        break;
+                    }
+                    case MSG_REFRESH_EDIT_BUTTON: {
+                        refreshEditButton();
+                        break;
+                    }
+                    case MSG_LOCK_ORIENTATION: {
+                        mOrientationManager.lockOrientation();
+                        break;
+                    }
+                    case MSG_UNLOCK_ORIENTATION: {
+                        mOrientationManager.unlockOrientation();
+                        break;
+                    }
+                    case MSG_ON_FULL_SCREEN_CHANGED: {
+                        mAppBridge.onFullScreenChanged(message.arg1 == 1);
+                        break;
+                    }
+                    case MSG_UPDATE_ACTION_BAR: {
+                        updateBars();
+                        break;
+                    }
+                    case MSG_WANT_BARS: {
+                        wantBars();
+                        break;
+                    }
+                    case MSG_UNFREEZE_GLROOT: {
+                        mActivity.getGLRoot().unfreeze();
+                        break;
+                    }
+                    default: throw new AssertionError(message.what);
+                }
+            }
+        };
+
         mSetPathString = data.getString(KEY_MEDIA_SET_PATH);
         mOriginalSetPathString = mSetPathString;
         mNfcAdapter = NfcAdapter.getDefaultAdapter(mActivity.getAndroidContext());
@@ -306,8 +351,13 @@ public class PhotoPage extends ActivityState implements
                 Log.w(TAG, "failed to restore " + mSetPathString);
             }
             if (itemPath == null) {
-               itemPath = mMediaSet.getMediaItem(mCurrentIndex, 1)
-                       .get(0).getPath();
+                mMediaSet.reload();
+                if (mMediaSet.getMediaItemCount() > 0) {
+                    itemPath = mMediaSet.getMediaItem(mCurrentIndex, 1)
+                        .get(0).getPath();
+                } else {
+                    return;
+                }
             }
             PhotoDataAdapter pda = new PhotoDataAdapter(
                     mActivity, mPhotoView, mMediaSet, itemPath, mCurrentIndex,
@@ -356,51 +406,6 @@ public class PhotoPage extends ActivityState implements
             mPhotoView.setModel(mModel);
             updateCurrentPhoto(mediaItem);
         }
-
-        mHandler = new SynchronizedHandler(mActivity.getGLRoot()) {
-            @Override
-            public void handleMessage(Message message) {
-                switch (message.what) {
-                    case MSG_HIDE_BARS: {
-                        hideBars();
-                        break;
-                    }
-                    case MSG_REFRESH_GRID_BUTTON: {
-                        setGridButtonVisibility(mPhotoView.getFilmMode());
-                        break;
-                    }
-                    case MSG_REFRESH_EDIT_BUTTON: {
-                        refreshEditButton();
-                        break;
-                    }
-                    case MSG_LOCK_ORIENTATION: {
-                        mOrientationManager.lockOrientation();
-                        break;
-                    }
-                    case MSG_UNLOCK_ORIENTATION: {
-                        mOrientationManager.unlockOrientation();
-                        break;
-                    }
-                    case MSG_ON_FULL_SCREEN_CHANGED: {
-                        mAppBridge.onFullScreenChanged(message.arg1 == 1);
-                        break;
-                    }
-                    case MSG_UPDATE_ACTION_BAR: {
-                        updateBars();
-                        break;
-                    }
-                    case MSG_WANT_BARS: {
-                        wantBars();
-                        break;
-                    }
-                    case MSG_UNFREEZE_GLROOT: {
-                        mActivity.getGLRoot().unfreeze();
-                        break;
-                    }
-                    default: throw new AssertionError(message.what);
-                }
-            }
-        };
 
         mPhotoView.setFilmMode(mStartInFilmstrip);
         setupEditButton();
@@ -725,6 +730,7 @@ public class PhotoPage extends ActivityState implements
 
     @Override
     protected boolean onItemSelected(MenuItem item) {
+        if (mModel == null) return true;
         refreshHidingMessage();
         MediaItem current = mModel.getMediaItem(0);
 
@@ -1048,11 +1054,13 @@ public class PhotoPage extends ActivityState implements
 
         mActivity.getGLRoot().unfreeze();
         mHandler.removeMessages(MSG_UNFREEZE_GLROOT);
-        if (isFinishing()) preparePhotoFallbackView();
 
         DetailsHelper.pause();
+        if (mModel != null) {
+            if (isFinishing()) preparePhotoFallbackView();
+            mModel.pause();
+        }
         mPhotoView.pause();
-        mModel.pause();
         mHandler.removeMessages(MSG_HIDE_BARS);
         mActionBar.removeOnMenuVisibilityListener(mMenuVisibilityListener);
 
@@ -1118,6 +1126,10 @@ public class PhotoPage extends ActivityState implements
     protected void onResume() {
         super.onResume();
 
+        if (mModel == null) {
+            mActivity.getStateManager().finishState(this);
+            return;
+        }
         transitionFromAlbumPageIfNeeded();
 
         mActivity.getGLRoot().freeze();
