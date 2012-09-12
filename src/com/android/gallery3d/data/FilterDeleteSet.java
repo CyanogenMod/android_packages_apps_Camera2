@@ -72,6 +72,11 @@ public class FilterDeleteSet extends MediaSet implements ContentListener {
     }
 
     @Override
+    public boolean isCameraRoll() {
+        return mBaseSet.isCameraRoll();
+    }
+
+    @Override
     public String getName() {
         return mBaseSet.getName();
     }
