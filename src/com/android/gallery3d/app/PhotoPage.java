@@ -407,7 +407,7 @@ public class PhotoPage extends ActivityState implements
             updateCurrentPhoto(mediaItem);
         }
 
-        mPhotoView.setFilmMode(mStartInFilmstrip);
+        mPhotoView.setFilmMode(mStartInFilmstrip && mMediaSet.getMediaItemCount() > 1);
         setupEditButton();
     }
 
