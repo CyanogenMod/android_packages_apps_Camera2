@@ -22,13 +22,18 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar.OnMenuVisibilityListener;
@@ -85,6 +90,7 @@ public class PhotoPage extends ActivityState implements
     private static final int MSG_UNFREEZE_GLROOT = 6;
     private static final int MSG_WANT_BARS = 7;
     private static final int MSG_REFRESH_GRID_BUTTON = 8;
+    private static final int MSG_REFRESH_EDIT_BUTTON = 9;
 
     private static final int HIDE_BARS_TIMEOUT = 3500;
     private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
@@ -110,6 +116,8 @@ public class PhotoPage extends ActivityState implements
     public static final int MSG_ALBUMPAGE_STARTED = 1;
     public static final int MSG_ALBUMPAGE_RESUMED = 2;
     public static final int MSG_ALBUMPAGE_PICKED = 4;
+
+    public static final String ACTION_NEXTGEN_EDIT = "action_nextgen_edit";
 
     private GalleryApp mApplication;
     private SelectionManager mSelectionManager;
@@ -361,6 +369,10 @@ public class PhotoPage extends ActivityState implements
                         setGridButtonVisibility(mPhotoView.getFilmMode());
                         break;
                     }
+                    case MSG_REFRESH_EDIT_BUTTON: {
+                        refreshEditButton();
+                        break;
+                    }
                     case MSG_LOCK_ORIENTATION: {
                         mOrientationManager.lockOrientation();
                         break;
@@ -391,6 +403,46 @@ public class PhotoPage extends ActivityState implements
         };
 
         mPhotoView.setFilmMode(mStartInFilmstrip);
+        setupEditButton();
+    }
+
+    private ImageView mEditButton;
+    private void setupEditButton() {
+        RelativeLayout galleryRoot = (RelativeLayout) ((Activity) mActivity)
+                .findViewById(mAppBridge != null ? R.id.content : R.id.gallery_root);
+        if (galleryRoot == null) return;
+
+        mEditButton = new ImageView(mActivity);
+        mEditButton.setImageResource(R.drawable.photoeditor_artistic);
+        mEditButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                launchPhotoEditor();
+            }
+        });
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        galleryRoot.addView(mEditButton, lp);
+        refreshEditButton();
+    }
+
+    private void cleanupEditButton() {
+        RelativeLayout galleryRoot = (RelativeLayout) ((Activity) mActivity)
+                .findViewById(mAppBridge != null ? R.id.content : R.id.gallery_root);
+        if (galleryRoot == null) return;
+        galleryRoot.removeView(mEditButton);
+        mEditButton = null;
+    }
+
+    private void refreshEditButton() {
+        if (mEditButton == null) return;
+        if(mShowBars) {
+            mEditButton.setVisibility(View.VISIBLE);
+        } else {
+            mEditButton.setVisibility(View.GONE);
+        }
     }
 
     @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
@@ -409,6 +461,21 @@ public class PhotoPage extends ActivityState implements
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         return intent;
 
+    }
+
+    private void launchPhotoEditor() {
+        MediaItem current = mModel.getMediaItem(0);
+        if (current == null) return;
+
+        Intent intent = new Intent(ACTION_NEXTGEN_EDIT);
+        intent.setData(mActivity.getDataManager().getContentUri(current.getPath())).setFlags(
+                Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        if (mActivity.getPackageManager()
+                .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).size() == 0) {
+            intent.setAction(Intent.ACTION_EDIT);
+        }
+        ((Activity) mActivity).startActivityForResult(Intent.createChooser(intent, null),
+                REQUEST_EDIT);
     }
 
     private void updateShareURI(Path path) {
@@ -489,6 +556,7 @@ public class PhotoPage extends ActivityState implements
         mActionBar.show();
         mActivity.getGLRoot().setLightsOutMode(false);
         refreshHidingMessage();
+        refreshEditButton();
     }
 
     private void hideBars() {
@@ -497,6 +565,7 @@ public class PhotoPage extends ActivityState implements
         mActionBar.hide();
         mActivity.getGLRoot().setLightsOutMode(true);
         mHandler.removeMessages(MSG_HIDE_BARS);
+        refreshEditButton();
     }
 
     private void refreshHidingMessage() {
@@ -718,11 +787,7 @@ public class PhotoPage extends ActivityState implements
                 return true;
             }
             case R.id.action_edit: {
-                Intent intent = new Intent(Intent.ACTION_EDIT)
-                        .setData(manager.getContentUri(path))
-                        .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                ((Activity) mActivity).startActivityForResult(Intent.createChooser(intent, null),
-                        REQUEST_EDIT);
+                launchPhotoEditor();
                 return true;
             }
             case R.id.action_details: {
@@ -1010,6 +1075,7 @@ public class PhotoPage extends ActivityState implements
 
     public void onFilmModeChanged(boolean enabled) {
         mHandler.sendEmptyMessage(MSG_REFRESH_GRID_BUTTON);
+        mHandler.sendEmptyMessage(MSG_REFRESH_EDIT_BUTTON);
         if (enabled) {
             mHandler.removeMessages(MSG_HIDE_BARS);
         } else {
@@ -1083,6 +1149,7 @@ public class PhotoPage extends ActivityState implements
         }
         mOrientationManager.removeListener(this);
         mActivity.getGLRoot().setOrientationSource(null);
+        cleanupEditButton();
 
         // Remove all pending messages.
         mHandler.removeCallbacksAndMessages(null);
