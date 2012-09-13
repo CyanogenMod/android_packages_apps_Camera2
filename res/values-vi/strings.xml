@@ -38,6 +38,8 @@
     <string name="saving_image" msgid="7270334453636349407">"Đang lưu ảnh…"</string>
     <string name="save_error" msgid="6857408774183654970">"Không thể lưu hình ảnh được cắt."</string>
     <string name="crop_label" msgid="521114301871349328">"Cắt ảnh"</string>
+    <!-- no translation found for trim_label (274203231381209979) -->
+    <skip />
     <string name="select_image" msgid="7841406150484742140">"Chọn ảnh"</string>
     <string name="select_video" msgid="4859510992798615076">"Chọn video"</string>
     <string name="select_item" msgid="2816923896202086390">"Chọn mục"</string>

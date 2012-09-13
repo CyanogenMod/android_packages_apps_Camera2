@@ -38,6 +38,8 @@
     <string name="saving_image" msgid="7270334453636349407">"S\'està desant la imatge..."</string>
     <string name="save_error" msgid="6857408774183654970">"No s\'ha pogut desar la imatge retallada."</string>
     <string name="crop_label" msgid="521114301871349328">"Escapça la imatge"</string>
+    <!-- no translation found for trim_label (274203231381209979) -->
+    <skip />
     <string name="select_image" msgid="7841406150484742140">"Selecciona una foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Selecciona un vídeo"</string>
     <string name="select_item" msgid="2816923896202086390">"Tria un element"</string>

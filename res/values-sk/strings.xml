@@ -38,6 +38,8 @@
     <string name="saving_image" msgid="7270334453636349407">"Prebieha ukladanie fotografie..."</string>
     <string name="save_error" msgid="6857408774183654970">"Orezaný obrázok sa nepodarilo uložiť."</string>
     <string name="crop_label" msgid="521114301871349328">"Orezať fotografiu"</string>
+    <!-- no translation found for trim_label (274203231381209979) -->
+    <skip />
     <string name="select_image" msgid="7841406150484742140">"Vyberte fotografiu"</string>
     <string name="select_video" msgid="4859510992798615076">"Vyberte video"</string>
     <string name="select_item" msgid="2816923896202086390">"Vyberte položku"</string>

@@ -38,6 +38,8 @@
     <string name="saving_image" msgid="7270334453636349407">"Kép mentése..."</string>
     <string name="save_error" msgid="6857408774183654970">"Nem lehet menteni a vágott képet."</string>
     <string name="crop_label" msgid="521114301871349328">"Kép levágása"</string>
+    <!-- no translation found for trim_label (274203231381209979) -->
+    <skip />
     <string name="select_image" msgid="7841406150484742140">"Fénykép kiválasztása"</string>
     <string name="select_video" msgid="4859510992798615076">"Videó kiválasztása"</string>
     <string name="select_item" msgid="2816923896202086390">"Elem kiválasztása"</string>
