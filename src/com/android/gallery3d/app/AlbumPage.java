@@ -48,7 +48,6 @@ import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.PhotoFallbackEffect;
 import com.android.gallery3d.ui.PreparePageFadeoutTexture;
-import com.android.gallery3d.ui.RawTexture;
 import com.android.gallery3d.ui.RelativePosition;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
@@ -68,7 +67,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     public static final String KEY_SHOW_CLUSTER_MENU = "cluster-menu";
     public static final String KEY_EMPTY_ALBUM = "empty-album";
     public static final String KEY_RESUME_ANIMATION = "resume_animation";
-    public static final String KEY_FADE_TEXTURE = "fade_texture";
 
     private static final int REQUEST_SLIDESHOW = 1;
     public static final int REQUEST_PHOTO = 2;
@@ -233,25 +231,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         }
     }
 
-    private void prepareFadeOutTexture() {
-        GLRoot root = mActivity.getGLRoot();
-        PreparePageFadeoutTexture task = new PreparePageFadeoutTexture(
-                mSlotView.getWidth(), mSlotView.getHeight() +
-                mActivity.getGalleryActionBar().getHeight(), mRootPane);
-        RawTexture texture = null;
-        root.unlockRenderThread();
-        try {
-            root.addOnGLIdleListener(task);
-            texture = task.get();
-        } finally {
-            root.lockRenderThread();
-        }
-
-        if (texture != null) {
-            mActivity.getTransitionStore().put(KEY_FADE_TEXTURE, texture);
-        }
-    }
-
     private void onSingleTapUp(int slotIndex) {
         if (!mIsActive) return;
 
@@ -263,7 +242,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         } else {
             // Render transition in pressed state
             mAlbumView.setPressedIndex(slotIndex);
-            prepareFadeOutTexture();
+            PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mSlotView, mRootPane);
             mAlbumView.setPressedIndex(-1);
 
             pickPhoto(slotIndex);
@@ -299,7 +278,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             Bundle data = new Bundle();
             data.putInt(PhotoPage.KEY_INDEX_HINT, slotIndex);
             data.putParcelable(PhotoPage.KEY_OPEN_ANIMATION_RECT,
-                    getSlotRect(slotIndex));
+                    mSlotView.getSlotRect(slotIndex, mRootPane));
             data.putString(PhotoPage.KEY_MEDIA_SET_PATH,
                     mMediaSetPath.toString());
             data.putString(PhotoPage.KEY_MEDIA_ITEM_PATH,
@@ -311,16 +290,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             mActivity.getStateManager().startStateForResult(
                     PhotoPage.class, REQUEST_PHOTO, data);
         }
-    }
-
-    private Rect getSlotRect(int slotIndex) {
-        // Get slot rectangle relative to this root pane.
-        Rect offset = new Rect();
-        mRootPane.getBoundsOf(mSlotView, offset);
-        Rect r = mSlotView.getSlotRect(slotIndex);
-        r.offset(offset.left - mSlotView.getScrollX(),
-                offset.top - mSlotView.getScrollY());
-        return r;
     }
 
     private void onGetContent(final MediaItem item) {
@@ -561,13 +530,13 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
     private void prepareAnimationBackToFilmstrip(int slotIndex) {
         if (mAlbumDataAdapter == null || !mAlbumDataAdapter.isActive(slotIndex)) return;
-        prepareFadeOutTexture();
+        PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mSlotView, mRootPane);
         TransitionStore transitions = mActivity.getTransitionStore();
         transitions.put(PhotoPage.KEY_INDEX_HINT, slotIndex);
         transitions.put(PhotoPage.KEY_MEDIA_ITEM_PATH,
                 mAlbumDataAdapter.get(slotIndex).getPath());
         transitions.put(PhotoPage.KEY_OPEN_ANIMATION_RECT,
-                getSlotRect(slotIndex));
+                mSlotView.getSlotRect(slotIndex, mRootPane));
     }
 
     @Override
