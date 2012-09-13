@@ -737,6 +737,16 @@ public class SlotView extends GLView {
         return mScrollY;
     }
 
+    public Rect getSlotRect(int slotIndex, GLView rootPane) {
+        // Get slot rectangle relative to this root pane.
+        Rect offset = new Rect();
+        rootPane.getBoundsOf(this, offset);
+        Rect r = getSlotRect(slotIndex);
+        r.offset(offset.left - getScrollX(),
+                offset.top - getScrollY());
+        return r;
+    }
+
     private static class IntegerAnimation extends Animation {
         private int mTarget;
         private int mCurrent = 0;

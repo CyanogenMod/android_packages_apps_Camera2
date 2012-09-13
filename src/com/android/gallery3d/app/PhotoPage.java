@@ -71,6 +71,7 @@ import com.android.gallery3d.ui.ImportCompleteListener;
 import com.android.gallery3d.ui.MenuExecutor;
 import com.android.gallery3d.ui.PhotoFallbackEffect;
 import com.android.gallery3d.ui.PhotoView;
+import com.android.gallery3d.ui.PreparePageFadeoutTexture;
 import com.android.gallery3d.ui.RawTexture;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
@@ -1109,7 +1110,7 @@ public class PhotoPage extends ActivityState implements
                     && albumPageTransition == MSG_ALBUMPAGE_RESUMED);
         }
 
-        mFadeOutTexture = transitions.get(AlbumPage.KEY_FADE_TEXTURE);
+        mFadeOutTexture = transitions.get(PreparePageFadeoutTexture.KEY_FADE_TEXTURE);
         if (mFadeOutTexture != null) {
             mBackgroundFade.start();
             BitmapScreenNail.disableDrawPlaceholder();
