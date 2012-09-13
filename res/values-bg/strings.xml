@@ -38,6 +38,8 @@
     <string name="saving_image" msgid="7270334453636349407">"Снимката се запазва..."</string>
     <string name="save_error" msgid="6857408774183654970">"Подрязаното изобр. не можа да се запази."</string>
     <string name="crop_label" msgid="521114301871349328">"Подрязване на снимка"</string>
+    <!-- no translation found for trim_label (274203231381209979) -->
+    <skip />
     <string name="select_image" msgid="7841406150484742140">"Избиране на снимка"</string>
     <string name="select_video" msgid="4859510992798615076">"Избиране на видеоклип"</string>
     <string name="select_item" msgid="2816923896202086390">"Избиране на елемент"</string>

@@ -38,6 +38,8 @@
     <string name="saving_image" msgid="7270334453636349407">"Guardando imagen..."</string>
     <string name="save_error" msgid="6857408774183654970">"Error al guardar la imagen recortada"</string>
     <string name="crop_label" msgid="521114301871349328">"Recortar"</string>
+    <!-- no translation found for trim_label (274203231381209979) -->
+    <skip />
     <string name="select_image" msgid="7841406150484742140">"Seleccionar foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Seleccionar vídeo"</string>
     <string name="select_item" msgid="2816923896202086390">"Seleccionar elemento"</string>

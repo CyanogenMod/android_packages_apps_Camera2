@@ -38,6 +38,8 @@
     <string name="saving_image" msgid="7270334453636349407">"در حال ذخیره عکس..."</string>
     <string name="save_error" msgid="6857408774183654970">"ذخیره تصویر برش‌خورده امکان‌پذیر نیست."</string>
     <string name="crop_label" msgid="521114301871349328">"برش تصویر"</string>
+    <!-- no translation found for trim_label (274203231381209979) -->
+    <skip />
     <string name="select_image" msgid="7841406150484742140">"انتخاب عکس"</string>
     <string name="select_video" msgid="4859510992798615076">"انتخاب ویدئو"</string>
     <string name="select_item" msgid="2816923896202086390">"انتخاب مورد"</string>

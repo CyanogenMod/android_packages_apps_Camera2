@@ -38,6 +38,8 @@
     <string name="saving_image" msgid="7270334453636349407">"正在儲存相片…"</string>
     <string name="save_error" msgid="6857408774183654970">"無法儲存裁剪的圖片。"</string>
     <string name="crop_label" msgid="521114301871349328">"裁剪相片"</string>
+    <!-- no translation found for trim_label (274203231381209979) -->
+    <skip />
     <string name="select_image" msgid="7841406150484742140">"選取相片"</string>
     <string name="select_video" msgid="4859510992798615076">"選取影片"</string>
     <string name="select_item" msgid="2816923896202086390">"選取項目"</string>
