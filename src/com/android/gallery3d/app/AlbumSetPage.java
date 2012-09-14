@@ -262,11 +262,9 @@ public class AlbumSetPage extends ActivityState implements
                     & MediaObject.SUPPORT_IMPORT) != 0) {
                 data.putBoolean(AlbumPage.KEY_AUTO_SELECT_ALL, true);
             } else if (!mGetContent && albumShouldOpenInFilmstrip(targetSet)) {
-                if (targetSet.getMediaItemCount() == 1) {
-                    PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mSlotView, mRootPane);
-                    data.putParcelable(PhotoPage.KEY_OPEN_ANIMATION_RECT,
-                            mSlotView.getSlotRect(slotIndex, mRootPane));
-                }
+                PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mSlotView, mRootPane);
+                data.putParcelable(PhotoPage.KEY_OPEN_ANIMATION_RECT,
+                        mSlotView.getSlotRect(slotIndex, mRootPane));
                 data.putInt(PhotoPage.KEY_INDEX_HINT, 0);
                 data.putString(PhotoPage.KEY_MEDIA_SET_PATH,
                         mediaPath);
