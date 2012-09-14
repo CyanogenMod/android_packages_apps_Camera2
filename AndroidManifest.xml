@@ -263,10 +263,15 @@
                 android:taskAffinity="com.android.camera"
                 android:label="@string/camera_label"
                 android:theme="@style/Theme.Camera"
-                android:icon="@mipmap/ic_launcher_camera"
+                android:icon="@drawable/ic_switch_camera_holo_light"
                 android:configChanges="orientation|screenSize|keyboardHidden"
                 android:clearTaskOnLaunch="true"
                 android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <!-- New camera doesn't support the CAPTURE intents yet. -->
@@ -274,7 +279,7 @@
                 android:taskAffinity="com.google.android.camera"
                 android:label="@string/camera_label"
                 android:theme="@style/Theme.Camera"
-                android:icon="@drawable/ic_switch_camera_holo_light"
+                android:icon="@mipmap/ic_launcher_camera"
                 android:configChanges="orientation|screenSize|keyboardHidden"
                 android:clearTaskOnLaunch="true"
                 android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
