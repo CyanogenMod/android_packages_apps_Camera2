@@ -38,6 +38,8 @@
     <string name="saving_image" msgid="7270334453636349407">"Spremanje slike..."</string>
     <string name="save_error" msgid="6857408774183654970">"Nije moguće spremiti obrezanu sliku."</string>
     <string name="crop_label" msgid="521114301871349328">"Obrezivanje slike"</string>
+    <!-- no translation found for trim_label (274203231381209979) -->
+    <skip />
     <string name="select_image" msgid="7841406150484742140">"Odaberite fotog."</string>
     <string name="select_video" msgid="4859510992798615076">"Odaberite videoz."</string>
     <string name="select_item" msgid="2816923896202086390">"Odaberite stavku"</string>

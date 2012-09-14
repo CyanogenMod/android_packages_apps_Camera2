@@ -38,6 +38,8 @@
     <string name="saving_image" msgid="7270334453636349407">"ምስል በማስቀመጥ ላይ..."</string>
     <string name="save_error" msgid="6857408774183654970">"የተቀመቀመውን ምስል ማስቀመጥ አልተቻለም::"</string>
     <string name="crop_label" msgid="521114301871349328">"ፎቶ ክፈፍ"</string>
+    <!-- no translation found for trim_label (274203231381209979) -->
+    <skip />
     <string name="select_image" msgid="7841406150484742140">"ፎቶዎች ምረጥ"</string>
     <string name="select_video" msgid="4859510992798615076">"ቪዲዮ ምረጥ"</string>
     <string name="select_item" msgid="2816923896202086390">"አይነት ምረጥ"</string>
