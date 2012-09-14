@@ -271,28 +271,9 @@
                 <action android:name="android.media.action.IMAGE_CAPTURE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.media.action.STILL_IMAGE_CAMERA" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.media.action.STILL_IMAGE_CAMERA_SECURE" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
 
-        <!-- Icon sourced from www.raadius.deviantart.com/art/Aeolus-HD-200984118 -->
-        <activity-alias android:icon="@mipmap/ic_launcher_camera"
-                        android:label="@string/camera_label"
-                        android:name="com.android.camera.CameraLauncher"
-                        android:targetActivity="com.android.camera.Camera" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-
+        <!-- New camera doesn't support the CAPTURE intents yet. -->
         <activity android:name="com.android.camera.CameraActivity"
                 android:taskAffinity="com.google.android.camera"
                 android:label="@string/camera_label"
@@ -302,11 +283,30 @@
                 android:clearTaskOnLaunch="true"
                 android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
             <intent-filter>
+                <action android:name="android.media.action.STILL_IMAGE_CAMERA" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.media.action.STILL_IMAGE_CAMERA_SECURE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.media.action.VIDEO_CAMERA" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- Icon sourced from www.raadius.deviantart.com/art/Aeolus-HD-200984118 -->
+        <activity-alias android:icon="@mipmap/ic_launcher_camera"
+                        android:label="@string/camera_label"
+                        android:name="com.android.camera.CameraLauncher"
+                        android:targetActivity="com.android.camera.CameraActivity" >
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity-alias>
 
         <activity android:name="com.android.camera.VideoCamera"
                 android:taskAffinity="com.android.camera"
@@ -316,10 +316,6 @@
                 android:icon="@mipmap/ic_launcher_video_camera"
                 android:clearTaskOnLaunch="true"
                 android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-            <intent-filter>
-                <action android:name="android.media.action.VIDEO_CAMERA" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
             <intent-filter>
                 <action android:name="android.media.action.VIDEO_CAPTURE" />
                 <category android:name="android.intent.category.DEFAULT" />
