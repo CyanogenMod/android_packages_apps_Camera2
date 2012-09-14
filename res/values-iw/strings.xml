@@ -38,8 +38,7 @@
     <string name="saving_image" msgid="7270334453636349407">"שומר תמונה..."</string>
     <string name="save_error" msgid="6857408774183654970">"לא ניתן לשמור את התמונה החתוכה."</string>
     <string name="crop_label" msgid="521114301871349328">"חתוך תמונה"</string>
-    <!-- no translation found for trim_label (274203231381209979) -->
-    <skip />
+    <string name="trim_label" msgid="274203231381209979">"חתוך סרטון"</string>
     <string name="select_image" msgid="7841406150484742140">"בחר תמונה"</string>
     <string name="select_video" msgid="4859510992798615076">"בחר סרטון"</string>
     <string name="select_item" msgid="2816923896202086390">"בחר פריט"</string>
