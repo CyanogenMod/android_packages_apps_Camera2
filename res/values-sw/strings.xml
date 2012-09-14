@@ -38,8 +38,7 @@
     <string name="saving_image" msgid="7270334453636349407">"Inahifadhi picha…"</string>
     <string name="save_error" msgid="6857408774183654970">"Haiwezi kuhifadhi picha iliyopogolewa."</string>
     <string name="crop_label" msgid="521114301871349328">"Kata picha"</string>
-    <!-- no translation found for trim_label (274203231381209979) -->
-    <skip />
+    <string name="trim_label" msgid="274203231381209979">"Punguza video"</string>
     <string name="select_image" msgid="7841406150484742140">"Chagua picha"</string>
     <string name="select_video" msgid="4859510992798615076">"Chagua video"</string>
     <string name="select_item" msgid="2816923896202086390">"Chagua kipengee"</string>
@@ -181,8 +180,6 @@
     <string name="help" msgid="7368960711153618354">"Msaada"</string>
     <string name="no_external_storage_title" msgid="2408933644249734569">"Hakuna Hifadhi"</string>
     <string name="no_external_storage" msgid="95726173164068417">"Hakuna hifadhi ya nje inayopatikana"</string>
-    <!-- no translation found for switch_photo_filmstrip (991949386967109493) -->
-    <skip />
-    <!-- no translation found for switch_photo_grid (6533267664294518167) -->
-    <skip />
+    <string name="switch_photo_filmstrip" msgid="991949386967109493">"Utepe wa filamu"</string>
+    <string name="switch_photo_grid" msgid="6533267664294518167">"Kiunzi"</string>
 </resources>
