@@ -24,6 +24,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
@@ -111,6 +115,9 @@ public class AlbumSetPage extends ActivityState implements
 
     private int mLoadingBits = 0;
     private boolean mInitialSynced = false;
+
+    private Button mCameraButton;
+    private boolean mShowedEmptyToastForSelf = false;
 
     @Override
     protected int getBackgroundColorId() {
@@ -346,11 +353,57 @@ public class AlbumSetPage extends ActivityState implements
         };
     }
 
-    private boolean mShowedEmptyToastForSelf = false;
+    @Override
+    public void onDestroy() {
+        cleanupCameraButton();
+        super.onDestroy();
+    }
+
+    private boolean setupCameraButton() {
+        RelativeLayout galleryRoot = (RelativeLayout) ((Activity) mActivity)
+                .findViewById(R.id.gallery_root);
+        if (galleryRoot == null) return false;
+
+        mCameraButton = new Button(mActivity);
+        mCameraButton.setText(R.string.camera_label);
+        mCameraButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.camera_white, 0, 0);
+        mCameraButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                GalleryUtils.startCameraActivity(mActivity);
+            }
+        });
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.addRule(RelativeLayout.CENTER_IN_PARENT);
+        galleryRoot.addView(mCameraButton, lp);
+        return true;
+    }
+
+    private void cleanupCameraButton() {
+        if (mCameraButton == null) return;
+        RelativeLayout galleryRoot = (RelativeLayout) ((Activity) mActivity)
+                .findViewById(R.id.gallery_root);
+        if (galleryRoot == null) return;
+        galleryRoot.removeView(mCameraButton);
+        mCameraButton = null;
+    }
+
+    private void showCameraButton() {
+        if (mCameraButton == null && !setupCameraButton()) return;
+        mCameraButton.setVisibility(View.VISIBLE);
+    }
+
+    private void hideCameraButton() {
+        if (mCameraButton == null) return;
+        mCameraButton.setVisibility(View.GONE);
+    }
+
     private void clearLoadingBit(int loadingBit) {
         mLoadingBits &= ~loadingBit;
         if (mLoadingBits == 0 && mIsActive) {
-            if ((mAlbumSetDataAdapter.size() == 0)) {
+            if (mAlbumSetDataAdapter.size() == 0) {
                 // If this is not the top of the gallery folder hierarchy,
                 // tell the parent AlbumSetPage instance to handle displaying
                 // the empty album toast, otherwise show it within this
@@ -363,6 +416,7 @@ public class AlbumSetPage extends ActivityState implements
                 } else {
                     mShowedEmptyToastForSelf = true;
                     showEmptyAlbumToast(Toast.LENGTH_LONG);
+                    showCameraButton();
                 }
                 return;
             }
@@ -373,6 +427,7 @@ public class AlbumSetPage extends ActivityState implements
         if (mShowedEmptyToastForSelf) {
             mShowedEmptyToastForSelf = false;
             hideEmptyAlbumToast();
+            hideCameraButton();
         }
     }
 
