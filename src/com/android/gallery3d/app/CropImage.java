@@ -101,6 +101,7 @@ public class CropImage extends AbstractGalleryActivity {
     private static final int MSG_BITMAP = 2;
     private static final int MSG_SAVE_COMPLETE = 3;
     private static final int MSG_SHOW_SAVE_ERROR = 4;
+    private static final int MSG_CANCEL_DIALOG = 5;
 
     private static final int MAX_BACKUP_IMAGE_SIZE = 320;
     private static final int DEFAULT_COMPRESS_QUALITY = 90;
@@ -203,6 +204,11 @@ public class CropImage extends AbstractGalleryActivity {
                     case MSG_SAVE_COMPLETE: {
                         dismissProgressDialogIfShown();
                         setResult(RESULT_OK, (Intent) message.obj);
+                        finish();
+                        break;
+                    }
+                    case MSG_CANCEL_DIALOG: {
+                        setResult(RESULT_CANCELED);
                         finish();
                         break;
                     }
@@ -877,7 +883,9 @@ public class CropImage extends AbstractGalleryActivity {
         }
 
         mProgressDialog = ProgressDialog.show(
-                this, null, getString(R.string.loading_image), true, false);
+                this, null, getString(R.string.loading_image), true, true);
+        mProgressDialog.setCanceledOnTouchOutside(false);
+        mProgressDialog.setCancelMessage(mMainHandler.obtainMessage(MSG_CANCEL_DIALOG));
 
         mMediaItem = getMediaItemFromIntentData();
         if (mMediaItem == null) return;
