@@ -635,9 +635,13 @@ public class PhotoView extends GLView {
             } else if (isCenter && mNeedToChangeToFilmstripWhenCentered) {
                 setFilmMode(true);
                 mNeedToChangeToFilmstripWhenCentered = false;
-            } else if (!mWasCameraCenter && isCameraCenter && mFilmMode) {
+            }
+            /*
+            TODO: Come out of film mode if it was a short swipe rather than a fling
+            else if (!mWasCameraCenter && isCameraCenter && mFilmMode) {
                 setFilmMode(false);
             }
+            */
 
             if (isCameraCenter && !mFilmMode) {
                 // Move into camera in page mode, lock
