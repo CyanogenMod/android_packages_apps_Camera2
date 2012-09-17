@@ -366,7 +366,7 @@ public class AlbumSetPage extends ActivityState implements
 
         mCameraButton = new Button(mActivity);
         mCameraButton.setText(R.string.camera_label);
-        mCameraButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.camera_white, 0, 0);
+        mCameraButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.frame_overlay_gallery_camera, 0, 0);
         mCameraButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
