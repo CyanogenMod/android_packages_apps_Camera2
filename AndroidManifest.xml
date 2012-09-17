@@ -260,7 +260,7 @@
 
         <!-- Icon sourced from www.raadius.deviantart.com/art/Aeolus-HD-200984118 -->
         <activity android:name="com.android.camera.Camera"
-                android:taskAffinity="com.android.camera"
+                android:taskAffinity="com.android.camera.Camera"
                 android:label="@string/camera_label"
                 android:theme="@style/Theme.Camera"
                 android:icon="@drawable/ic_switch_camera_holo_light"
@@ -275,7 +275,7 @@
         </activity>
 
         <activity android:name="com.android.camera.CameraActivity"
-                android:taskAffinity="com.google.android.camera"
+                android:taskAffinity="com.android.camera.CameraActivity"
                 android:label="@string/camera_label"
                 android:theme="@style/Theme.Camera"
                 android:icon="@mipmap/ic_launcher_camera"
