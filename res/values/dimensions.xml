@@ -31,9 +31,9 @@
     <dimen name="albumset_count_offset">10dp</dimen>
     <dimen name="albumset_title_font_size">12sp</dimen>
     <dimen name="albumset_count_font_size">9sp</dimen>
-    <dimen name="albumset_left_margin">6dp</dimen>
+    <dimen name="albumset_left_margin">2dp</dimen>
     <dimen name="albumset_title_right_margin">20dp</dimen>
-    <dimen name="albumset_icon_size">15dp</dimen>
+    <dimen name="albumset_icon_size">25dp</dimen>
 
     <!-- configuration for album page -->
     <integer name="album_rows_land">2</integer>
