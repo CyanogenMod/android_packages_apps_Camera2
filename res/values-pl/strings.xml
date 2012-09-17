@@ -38,8 +38,7 @@
     <string name="saving_image" msgid="7270334453636349407">"Zapisywanie zdjęcia…"</string>
     <string name="save_error" msgid="6857408774183654970">"Nie można zapisać przyciętego obrazu."</string>
     <string name="crop_label" msgid="521114301871349328">"Przytnij zdjęcie"</string>
-    <!-- no translation found for trim_label (274203231381209979) -->
-    <skip />
+    <string name="trim_label" msgid="274203231381209979">"Przytnij film"</string>
     <string name="select_image" msgid="7841406150484742140">"Wybierz zdjęcie"</string>
     <string name="select_video" msgid="4859510992798615076">"Wybierz film"</string>
     <string name="select_item" msgid="2816923896202086390">"Wybierz element"</string>

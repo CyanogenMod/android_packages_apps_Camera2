@@ -38,8 +38,7 @@
     <string name="saving_image" msgid="7270334453636349407">"Ilondoloza isithombe..."</string>
     <string name="save_error" msgid="6857408774183654970">"Yehlulekile ukulondoloza umfanekiso onqampuniwe."</string>
     <string name="crop_label" msgid="521114301871349328">"Nqampuna isithombe"</string>
-    <!-- no translation found for trim_label (274203231381209979) -->
-    <skip />
+    <string name="trim_label" msgid="274203231381209979">"Sika ividiyo"</string>
     <string name="select_image" msgid="7841406150484742140">"Khetha isithombe"</string>
     <string name="select_video" msgid="4859510992798615076">"Khetha ividiyo"</string>
     <string name="select_item" msgid="2816923896202086390">"Khetha intwana"</string>

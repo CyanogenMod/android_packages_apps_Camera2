@@ -38,8 +38,7 @@
     <string name="saving_image" msgid="7270334453636349407">"사진 저장 중..."</string>
     <string name="save_error" msgid="6857408774183654970">"잘린 이미지를 저장하지 못했습니다."</string>
     <string name="crop_label" msgid="521114301871349328">"사진 자르기"</string>
-    <!-- no translation found for trim_label (274203231381209979) -->
-    <skip />
+    <string name="trim_label" msgid="274203231381209979">"동영상 다듬기"</string>
     <string name="select_image" msgid="7841406150484742140">"사진 선택"</string>
     <string name="select_video" msgid="4859510992798615076">"동영상 선택"</string>
     <string name="select_item" msgid="2816923896202086390">"항목 선택"</string>
