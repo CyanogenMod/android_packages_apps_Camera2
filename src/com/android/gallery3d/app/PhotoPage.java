@@ -444,7 +444,7 @@ public class PhotoPage extends ActivityState implements
 
     private void refreshEditButton() {
         if (mEditButton == null) return;
-        if (mShowBars && mCurrentPhoto != null
+        if (mShowBars && mCurrentPhoto != null && !mPhotoView.getFilmMode()
                 && mCurrentPhoto.getMediaType() == MediaObject.MEDIA_TYPE_IMAGE) {
             mEditButton.setVisibility(View.VISIBLE);
         } else {
