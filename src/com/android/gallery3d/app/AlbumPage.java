@@ -567,6 +567,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 return true;
             }
             case R.id.action_filmstrip: {
+                if (mAlbumDataAdapter.size() < 1) return true;
                 int targetPhoto = mSlotView.getVisibleStart();
                 prepareAnimationBackToFilmstrip(targetPhoto);
                 if(mLaunchedFromPhotoPage) {
