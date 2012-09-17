@@ -38,8 +38,7 @@
     <string name="saving_image" msgid="7270334453636349407">"चित्र सहेज रहा है…"</string>
     <string name="save_error" msgid="6857408774183654970">"काट-छांट की गई चित्र को नहीं सहेज सका."</string>
     <string name="crop_label" msgid="521114301871349328">"चित्र काटें"</string>
-    <!-- no translation found for trim_label (274203231381209979) -->
-    <skip />
+    <string name="trim_label" msgid="274203231381209979">"वीडियो ट्रिम करें"</string>
     <string name="select_image" msgid="7841406150484742140">"फ़ोटो को चुनें"</string>
     <string name="select_video" msgid="4859510992798615076">"वीडियो को चुनें"</string>
     <string name="select_item" msgid="2816923896202086390">"आइटम को चुनें"</string>

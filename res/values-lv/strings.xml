@@ -38,8 +38,7 @@
     <string name="saving_image" msgid="7270334453636349407">"Notiek attēla saglabāšana..."</string>
     <string name="save_error" msgid="6857408774183654970">"Nevarēja saglabāt izgriezto attēlu."</string>
     <string name="crop_label" msgid="521114301871349328">"Apgriezt attēlu"</string>
-    <!-- no translation found for trim_label (274203231381209979) -->
-    <skip />
+    <string name="trim_label" msgid="274203231381209979">"Apgriezt videoklipu"</string>
     <string name="select_image" msgid="7841406150484742140">"Atlasiet fotoattēlu"</string>
     <string name="select_video" msgid="4859510992798615076">"Atlasiet videoklipu"</string>
     <string name="select_item" msgid="2816923896202086390">"Atlasiet vienumu"</string>

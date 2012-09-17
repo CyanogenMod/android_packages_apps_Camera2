@@ -38,8 +38,7 @@
     <string name="saving_image" msgid="7270334453636349407">"Enregistrement de l\'image"</string>
     <string name="save_error" msgid="6857408774183654970">"Impossible d\'enregistrer l\'image rognée."</string>
     <string name="crop_label" msgid="521114301871349328">"Rogner l\'image"</string>
-    <!-- no translation found for trim_label (274203231381209979) -->
-    <skip />
+    <string name="trim_label" msgid="274203231381209979">"Découper la vidéo"</string>
     <string name="select_image" msgid="7841406150484742140">"Sélectionner photo"</string>
     <string name="select_video" msgid="4859510992798615076">"Sélectionner vidéo"</string>
     <string name="select_item" msgid="2816923896202086390">"Sélectionner élément"</string>
