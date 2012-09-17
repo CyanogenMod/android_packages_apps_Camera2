@@ -352,7 +352,6 @@ public class PhotoPage extends ActivityState implements
                 Log.w(TAG, "failed to restore " + mSetPathString);
             }
             if (itemPath == null) {
-                mMediaSet.reload();
                 if (mMediaSet.getMediaItemCount() > 0) {
                     itemPath = mMediaSet.getMediaItem(mCurrentIndex, 1)
                         .get(0).getPath();

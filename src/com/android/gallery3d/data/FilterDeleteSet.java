@@ -69,6 +69,7 @@ public class FilterDeleteSet extends MediaSet implements ContentListener {
         super(path, INVALID_DATA_VERSION);
         mBaseSet = baseSet;
         mBaseSet.addContentListener(this);
+        mMediaItemCount = mBaseSet.getMediaItemCount() - mCurrent.size();
     }
 
     @Override
