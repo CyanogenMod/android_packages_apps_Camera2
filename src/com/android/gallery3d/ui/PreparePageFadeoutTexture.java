@@ -14,8 +14,8 @@ public class PreparePageFadeoutTexture implements OnGLIdleListener {
     private boolean mCancelled = false;
     private GLView mRootPane;
 
-    public PreparePageFadeoutTexture(int w, int h,  GLView rootPane) {
-        mTexture = new RawTexture(w, h, true);
+    public PreparePageFadeoutTexture(GLView rootPane) {
+        mTexture = new RawTexture(rootPane.getWidth(), rootPane.getHeight(), true);
         mRootPane =  rootPane;
     }
 
@@ -44,11 +44,9 @@ public class PreparePageFadeoutTexture implements OnGLIdleListener {
     }
 
     public static void prepareFadeOutTexture(AbstractGalleryActivity activity,
-            SlotView slotView, GLView rootPane) {
+            GLView rootPane) {
         GLRoot root = activity.getGLRoot();
-        PreparePageFadeoutTexture task = new PreparePageFadeoutTexture(
-                slotView.getWidth(), slotView.getHeight() +
-                activity.getGalleryActionBar().getHeight(), rootPane);
+        PreparePageFadeoutTexture task = new PreparePageFadeoutTexture(rootPane);
         RawTexture texture = null;
         root.unlockRenderThread();
         try {
