@@ -242,7 +242,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         } else {
             // Render transition in pressed state
             mAlbumView.setPressedIndex(slotIndex);
-            PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mSlotView, mRootPane);
+            PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mRootPane);
             mAlbumView.setPressedIndex(-1);
 
             pickPhoto(slotIndex);
@@ -530,7 +530,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
     private void prepareAnimationBackToFilmstrip(int slotIndex) {
         if (mAlbumDataAdapter == null || !mAlbumDataAdapter.isActive(slotIndex)) return;
-        PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mSlotView, mRootPane);
+        PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mRootPane);
         TransitionStore transitions = mActivity.getTransitionStore();
         transitions.put(PhotoPage.KEY_INDEX_HINT, slotIndex);
         transitions.put(PhotoPage.KEY_MEDIA_ITEM_PATH,
