@@ -218,7 +218,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
 
     @Override
     public boolean usePanoramaViewer(int offset) {
-        return LightCycleHelper.isPanorama(mItem.getFilePath());
+        return mItem.usePanoramaViewer();
     }
 
     @Override

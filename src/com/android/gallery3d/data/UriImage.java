@@ -17,6 +17,7 @@
 package com.android.gallery3d.data;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory.Options;
@@ -27,6 +28,7 @@ import android.os.ParcelFileDescriptor;
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.util.LightCycleHelper;
 import com.android.gallery3d.util.ThreadPool.CancelListener;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
@@ -54,6 +56,8 @@ public class UriImage extends MediaItem {
     private int mWidth;
     private int mHeight;
     private int mRotation;
+    private boolean mUsePanoramaViewer;
+    private boolean mUsePanoramaViewerInitialized;
 
     private GalleryApp mApplication;
 
@@ -214,6 +218,9 @@ public class UriImage extends MediaItem {
         if (BitmapUtils.isSupportedByRegionDecoder(mContentType)) {
             supported |= SUPPORT_FULL_IMAGE;
         }
+        if (usePanoramaViewer()) {
+            supported |= SUPPORT_VIEW_PANORAMA;
+        }
         return supported;
     }
 
@@ -282,5 +289,17 @@ public class UriImage extends MediaItem {
     @Override
     public int getRotation() {
         return mRotation;
+    }
+
+    @Override
+    public boolean usePanoramaViewer() {
+        if (!mUsePanoramaViewerInitialized) {
+            Context context = mApplication.getAndroidContext();
+            mUsePanoramaViewer = LightCycleHelper.hasLightCycleView(context)
+                    && LightCycleHelper.isPanorama(mApplication.getContentResolver(),
+                            getContentUri());
+            mUsePanoramaViewerInitialized = true;
+        }
+        return mUsePanoramaViewer;
     }
 }
