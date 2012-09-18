@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/photopage_bottom_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:orientation="horizontal"
+        android:visibility="gone">
+        <ImageButton
+                android:id="@+id/photopage_bottom_control_edit"
+                android:src="@drawable/photoeditor_artistic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+        <ImageButton
+                android:id="@+id/photopage_bottom_control_panorama"
+                android:src="@android:drawable/ic_dialog_map"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+</LinearLayout>
