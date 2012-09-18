@@ -37,7 +37,6 @@ import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.ui.TileImageViewAdapter;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
-import com.android.gallery3d.util.LightCycleHelper;
 import com.android.gallery3d.util.MediaSetUtils;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.Job;
@@ -482,7 +481,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         MediaItem item = getItem(mCurrentIndex + offset);
         boolean usePanoramaViewer = false;
         if (item != null) {
-            usePanoramaViewer = LightCycleHelper.isPanorama(item.getFilePath());
+            usePanoramaViewer = item.usePanoramaViewer();
         }
         return usePanoramaViewer;
     }

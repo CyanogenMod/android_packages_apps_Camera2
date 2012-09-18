@@ -45,7 +45,6 @@ import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.FilterDeleteSet;
-import com.android.gallery3d.data.LocalImage;
 import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
@@ -887,8 +886,7 @@ public class PhotoPage extends ActivityState implements
         if (playVideo) {
             playVideo(mActivity, item.getPlayUri(), item.getName());
         } else if (viewPanorama) {
-            LocalImage img = (LocalImage) item;
-            LightCycleHelper.viewPanorama(mActivity, img.getFilePath());
+            LightCycleHelper.viewPanorama(mActivity, item.getContentUri());
         } else {
             toggleBars();
         }

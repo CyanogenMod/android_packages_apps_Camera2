@@ -17,8 +17,10 @@
 package com.android.gallery3d.util;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import com.android.camera.CameraModule;
 
@@ -36,11 +38,11 @@ public class LightCycleHelper {
         return false;
     }
 
-    public static void viewPanorama(Activity activity, String filePath) {
+    public static void viewPanorama(Activity activity, Uri uri) {
         /* Do nothing */
     }
 
-    public static boolean isPanorama(String filename) {
+    public static boolean isPanorama(ContentResolver contentResolver, Uri uri) {
         return false;
     }
 

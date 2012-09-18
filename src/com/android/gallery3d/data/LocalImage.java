@@ -19,6 +19,7 @@ package com.android.gallery3d.data;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -98,6 +99,9 @@ public class LocalImage extends LocalMediaItem {
     private final GalleryApp mApplication;
 
     public int rotation;
+
+    private boolean mUsePanoramaViewer;
+    private boolean mUsePanoramaViewerInitialized;
 
     public LocalImage(Path path, GalleryApp application, Cursor cursor) {
         super(path, nextVersionNumber());
@@ -241,9 +245,7 @@ public class LocalImage extends LocalMediaItem {
             operation |= SUPPORT_SHOW_ON_MAP;
         }
 
-        if (LightCycleHelper.isPanorama(filePath) &&
-                LightCycleHelper.hasLightCycleView(
-                        mApplication.getAndroidContext())) {
+        if (usePanoramaViewer()) {
             operation |= SUPPORT_VIEW_PANORAMA;
         }
         return operation;
@@ -342,5 +344,17 @@ public class LocalImage extends LocalMediaItem {
     @Override
     public String getFilePath() {
         return filePath;
+    }
+
+    @Override
+    public boolean usePanoramaViewer() {
+        if (!mUsePanoramaViewerInitialized) {
+            Context context = mApplication.getAndroidContext();
+            mUsePanoramaViewer = LightCycleHelper.hasLightCycleView(context)
+                    && LightCycleHelper.isPanorama(mApplication.getContentResolver(),
+                            getContentUri());
+            mUsePanoramaViewerInitialized = true;
+        }
+        return mUsePanoramaViewer;
     }
 }
