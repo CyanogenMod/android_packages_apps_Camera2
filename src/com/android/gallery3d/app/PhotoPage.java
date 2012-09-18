@@ -413,6 +413,7 @@ public class PhotoPage extends ActivityState implements
 
     private ImageView mEditButton;
     private void setupEditButton() {
+        if (mSecureAlbum != null) return;
         RelativeLayout galleryRoot = (RelativeLayout) ((Activity) mActivity)
                 .findViewById(mAppBridge != null ? R.id.content : R.id.gallery_root);
         if (galleryRoot == null) return;
@@ -434,6 +435,7 @@ public class PhotoPage extends ActivityState implements
     }
 
     private void cleanupEditButton() {
+        if (mEditButton == null) return;
         RelativeLayout galleryRoot = (RelativeLayout) ((Activity) mActivity)
                 .findViewById(mAppBridge != null ? R.id.content : R.id.gallery_root);
         if (galleryRoot == null) return;
