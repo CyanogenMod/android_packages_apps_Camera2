@@ -25,6 +25,10 @@ public class TransitionStore {
         mStorage.put(key, value);
     }
 
+    public <T> void putIfNotPresent(Object key, T valueIfNull) {
+        mStorage.put(key, get(key, valueIfNull));
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T get(Object key) {
         return (T) mStorage.get(key);

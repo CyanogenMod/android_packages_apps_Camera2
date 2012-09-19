@@ -100,6 +100,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private float mUserDistance; // in pixel
     private Future<Integer> mSyncTask = null;
     private boolean mLaunchedFromPhotoPage;
+    private boolean mInCameraApp;
 
     private int mLoadingBits = 0;
     private boolean mInitialSynced = false;
@@ -201,6 +202,11 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         } else if (mSelectionManager.inSelectionMode()) {
             mSelectionManager.leaveSelectionMode();
         } else {
+            if(mLaunchedFromPhotoPage) {
+                mActivity.getTransitionStore().putIfNotPresent(
+                        PhotoPage.KEY_ALBUMPAGE_TRANSITION,
+                        PhotoPage.MSG_ALBUMPAGE_RESUMED);
+            }
             // TODO: fix this regression
             // mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
             onUpPressed();
@@ -359,6 +365,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
         mLaunchedFromPhotoPage =
                 mActivity.getStateManager().hasStateClass(PhotoPage.class);
+        mInCameraApp = data.getBoolean(PhotoPage.KEY_APP_BRIDGE, false);
 
         // Don't show animation if it is restored or switched from filmstrip
         if (!mLaunchedFromPhotoPage && restoreState == null && data != null) {
@@ -417,6 +424,14 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             clearLoadingBit(BIT_LOADING_SYNC);
         }
         mActionModeHandler.pause();
+
+        // The camera app should always launch in capture mode when
+        // resumed, so make the next resume faster by closing the grid
+        // view now
+        if (mInCameraApp) {
+            if (mActivity.getStateManager().getTopState() == this)
+                mActivity.getStateManager().finishState(this);
+        }
     }
 
     @Override
@@ -530,11 +545,11 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
     private void prepareAnimationBackToFilmstrip(int slotIndex) {
         if (mAlbumDataAdapter == null || !mAlbumDataAdapter.isActive(slotIndex)) return;
+        MediaItem item = mAlbumDataAdapter.get(slotIndex);
+        if (item == null) return;
         PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mRootPane);
         TransitionStore transitions = mActivity.getTransitionStore();
         transitions.put(PhotoPage.KEY_INDEX_HINT, slotIndex);
-        transitions.put(PhotoPage.KEY_MEDIA_ITEM_PATH,
-                mAlbumDataAdapter.get(slotIndex).getPath());
         transitions.put(PhotoPage.KEY_OPEN_ANIMATION_RECT,
                 mSlotView.getSlotRect(slotIndex, mRootPane));
     }
@@ -571,9 +586,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 int targetPhoto = mSlotView.getVisibleStart();
                 prepareAnimationBackToFilmstrip(targetPhoto);
                 if(mLaunchedFromPhotoPage) {
-                    mActivity.getTransitionStore().put(
-                            PhotoPage.KEY_ALBUMPAGE_TRANSITION,
-                            PhotoPage.MSG_ALBUMPAGE_RESUMED);
                     onBackPressed();
                 } else {
                     pickPhoto(targetPhoto, true);
