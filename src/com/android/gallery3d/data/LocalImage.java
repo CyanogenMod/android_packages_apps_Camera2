@@ -136,6 +136,8 @@ public class LocalImage extends LocalMediaItem {
         latitude = cursor.getDouble(INDEX_LATITUDE);
         longitude = cursor.getDouble(INDEX_LONGITUDE);
         dateTakenInMs = cursor.getLong(INDEX_DATE_TAKEN);
+        dateAddedInSec = cursor.getLong(INDEX_DATE_ADDED);
+        dateModifiedInSec = cursor.getLong(INDEX_DATE_MODIFIED);
         filePath = cursor.getString(INDEX_DATA);
         rotation = cursor.getInt(INDEX_ORIENTATION);
         bucketId = cursor.getInt(INDEX_BUCKET_ID);

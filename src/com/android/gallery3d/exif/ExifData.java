@@ -252,4 +252,10 @@ public class ExifData {
         ifdData.setTag(tag);
         return tag;
     }
+
+    public void removeThumbnailData() {
+        mThumbnail = null;
+        mStripBytes.clear();
+        mIfdDatas[IfdId.TYPE_IFD_1] = null;
+    }
 }
