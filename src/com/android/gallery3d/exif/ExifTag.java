@@ -18,7 +18,9 @@ package com.android.gallery3d.exif;
 
 import android.util.SparseArray;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * This class stores information of an EXIF tag.
@@ -1245,6 +1247,23 @@ public class ExifTag {
      */
     public void setValue(byte[] value) {
         setValue(value, 0, value.length);
+    }
+
+    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy:MM:dd kk:mm:ss");
+
+    /**
+     * Sets a timestamp to this tag. The method converts the timestamp with the format of
+     * "yyyy:MM:dd kk:mm:ss" and calls {@link #setValue(String)}.
+     *
+     * @param time the number of milliseconds since Jan. 1, 1970 GMT
+     * @exception IllegalArgumentException If the data type is not {@link #TYPE_ASCII}
+     * or the component count of this tag is not 20 or undefined
+     */
+    public void setTimeValue(long time) {
+        // synchronized on TIME_FORMAT as SimpleDateFormat is not thread safe
+        synchronized (TIME_FORMAT) {
+            setValue(TIME_FORMAT.format(new Date(time)));
+        }
     }
 
     /**

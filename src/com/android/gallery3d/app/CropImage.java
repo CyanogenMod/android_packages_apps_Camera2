@@ -397,9 +397,16 @@ public class CropImage extends AbstractGalleryActivity {
         }
     }
 
-    private void changeExifImageSizeTags(ExifData data, int width, int height) {
+    private static final String EXIF_SOFTWARE_VALUE = "Android Gallery";
+
+    private void changeExifData(ExifData data, int width, int height) {
         data.addTag(ExifTag.TAG_IMAGE_WIDTH).setValue(width);
         data.addTag(ExifTag.TAG_IMAGE_LENGTH).setValue(height);
+        data.addTag(ExifTag.TAG_SOFTWARE).setValue(EXIF_SOFTWARE_VALUE);
+        data.addTag(ExifTag.TAG_DATE_TIME).setTimeValue(System.currentTimeMillis());
+        // Remove the original thumbnail
+        // TODO: generate a new thumbnail for the cropped image.
+        data.removeThumbnailData();
     }
 
     private Uri saveToMediaProvider(JobContext jc, Bitmap cropped) {
@@ -430,9 +437,7 @@ public class CropImage extends AbstractGalleryActivity {
         if (pos >= 0) filename = filename.substring(0, pos);
         ExifData exifData = new ExifData(ByteOrder.BIG_ENDIAN);
         PicasaSource.extractExifValues(mMediaItem, exifData);
-        changeExifImageSizeTags(exifData, cropped.getWidth(), cropped.getHeight());
-        // TODO: modify the Software tag to indicate which the image is revised by
-        // TODO: modify the DateTime tag
+        changeExifData(exifData, cropped.getWidth(), cropped.getHeight());
         File output = saveMedia(jc, cropped, DOWNLOAD_BUCKET, filename, exifData);
         if (output == null) return null;
 
@@ -474,9 +479,7 @@ public class CropImage extends AbstractGalleryActivity {
         if (convertExtensionToCompressFormat(getFileExtension()) == CompressFormat.JPEG) {
             exifData = getExifData(oldPath.getAbsolutePath());
             if (exifData != null) {
-                // TODO: modify the Software tag to indicate which the image is revised by
-                // TODO: modify the DateTime tag
-                changeExifImageSizeTags(exifData, cropped.getWidth(), cropped.getHeight());
+                changeExifData(exifData, cropped.getWidth(), cropped.getHeight());
             }
         }
         output = saveMedia(jc, cropped, directory, filename, exifData);
