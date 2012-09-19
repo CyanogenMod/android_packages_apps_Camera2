@@ -38,7 +38,7 @@
     <string name="saving_image" msgid="7270334453636349407">"Pildi salvestamine ..."</string>
     <string name="save_error" msgid="6857408774183654970">"Kärbitud kujutist ei saanud salvestada."</string>
     <string name="crop_label" msgid="521114301871349328">"Kärbi pilti"</string>
-    <string name="trim_label" msgid="274203231381209979">"Trimmi videot"</string>
+    <string name="trim_label" msgid="274203231381209979">"Kärbi videot"</string>
     <string name="select_image" msgid="7841406150484742140">"Valige foto"</string>
     <string name="select_video" msgid="4859510992798615076">"Vali video"</string>
     <string name="select_item" msgid="2816923896202086390">"Valige üksus"</string>
