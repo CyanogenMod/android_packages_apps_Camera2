@@ -17,6 +17,8 @@ package com.android.gallery3d.ui;
 
 import android.opengl.GLSurfaceView.EGLConfigChooser;
 
+import com.android.gallery3d.common.ApiHelper;
+
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
@@ -31,7 +33,7 @@ class GalleryEGLConfigChooser implements EGLConfigChooser {
 
     private static final String TAG = "GalleryEGLConfigChooser";
 
-    private final int mConfigSpec[] = new int[] {
+    private final int mConfigSpec565[] = new int[] {
             EGL10.EGL_RED_SIZE, 5,
             EGL10.EGL_GREEN_SIZE, 6,
             EGL10.EGL_BLUE_SIZE, 5,
@@ -39,9 +41,19 @@ class GalleryEGLConfigChooser implements EGLConfigChooser {
             EGL10.EGL_NONE
     };
 
+    private final int mConfigSpec888[] = new int[] {
+            EGL10.EGL_RED_SIZE, 8,
+            EGL10.EGL_GREEN_SIZE, 8,
+            EGL10.EGL_BLUE_SIZE, 8,
+            EGL10.EGL_ALPHA_SIZE, 0,
+            EGL10.EGL_NONE
+    };
+
     @Override
     public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
         int[] numConfig = new int[1];
+        int mConfigSpec[] = ApiHelper.USE_888_PIXEL_FORMAT
+                ? mConfigSpec888 : mConfigSpec565;
         if (!egl.eglChooseConfig(display, mConfigSpec, null, 0, numConfig)) {
             throw new RuntimeException("eglChooseConfig failed");
         }
@@ -70,10 +82,12 @@ class GalleryEGLConfigChooser implements EGLConfigChooser {
         // has stencil support but with smallest number of stencil bits. If
         // none is found, choose any one.
         for (int i = 0, n = configs.length; i < n; ++i) {
-            if (egl.eglGetConfigAttrib(
-                display, configs[i], EGL10.EGL_RED_SIZE, value)) {
-                // Filter out ARGB 8888 configs.
-                if (value[0] == 8) continue;
+            if (!ApiHelper.USE_888_PIXEL_FORMAT) {
+                if (egl.eglGetConfigAttrib(
+                    display, configs[i], EGL10.EGL_RED_SIZE, value)) {
+                    // Filter out ARGB 8888 configs.
+                    if (value[0] == 8) continue;
+                }
             }
             if (egl.eglGetConfigAttrib(
                     display, configs[i], EGL10.EGL_STENCIL_SIZE, value)) {

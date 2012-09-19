@@ -119,7 +119,11 @@ public class GLRootView extends GLSurfaceView
         setBackgroundDrawable(null);
         setEGLConfigChooser(mEglConfigChooser);
         setRenderer(this);
-        getHolder().setFormat(PixelFormat.RGB_565);
+        if (ApiHelper.USE_888_PIXEL_FORMAT) {
+            getHolder().setFormat(PixelFormat.RGB_888);
+        } else {
+            getHolder().setFormat(PixelFormat.RGB_565);
+        }
 
         // Uncomment this to enable gl error check.
         // setDebugFlags(DEBUG_CHECK_GL_ERROR);
