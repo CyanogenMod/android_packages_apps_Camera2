@@ -38,6 +38,9 @@ public class ApiHelper {
         public static final int JELLY_BEAN_MR1 = 17;
     }
 
+    public static final boolean USE_888_PIXEL_FORMAT =
+            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
+
     public static final boolean ENABLE_PHOTO_EDITOR =
             Build.VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH;
 
