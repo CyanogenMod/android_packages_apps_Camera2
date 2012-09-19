@@ -30,6 +30,7 @@ import com.android.gallery3d.gadget.WidgetUtils;
 import com.android.gallery3d.photoeditor.PhotoEditor;
 import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.LightCycleHelper;
 import com.android.gallery3d.util.ThreadPool;
 
 import java.io.File;
@@ -44,6 +45,7 @@ public class GalleryAppImpl extends Application implements GalleryApp {
     private DataManager mDataManager;
     private ThreadPool mThreadPool;
     private DownloadCache mDownloadCache;
+    private StitchingProgressManager mStitchingProgressManager;
 
     @Override
     public void onCreate() {
@@ -59,6 +61,8 @@ public class GalleryAppImpl extends Application implements GalleryApp {
         getPackageManager().setComponentEnabledSetting(
                 new ComponentName(this, PhotoEditor.class),
                 state, PackageManager.DONT_KILL_APP);
+
+        mStitchingProgressManager = LightCycleHelper.createStitchingManagerInstance(this);
     }
 
     @Override
@@ -73,6 +77,11 @@ public class GalleryAppImpl extends Application implements GalleryApp {
             mDataManager.initializeSourceMap();
         }
         return mDataManager;
+    }
+
+    @Override
+    public StitchingProgressManager getStitchingProgressManager() {
+        return mStitchingProgressManager;
     }
 
     @Override

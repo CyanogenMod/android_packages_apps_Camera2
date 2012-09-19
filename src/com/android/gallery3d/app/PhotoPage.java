@@ -371,6 +371,11 @@ public class PhotoPage extends ActivityState implements
                     mSetPathString = "/filter/empty/{"+mSetPathString+"}";
                 }
 
+                // Add support for showing panorama progress.
+                if (LightCycleHelper.hasLightCycleCapture(mActivity.getAndroidContext())) {
+                    mSetPathString = LightCycleHelper.wrapGalleryPath(mSetPathString);
+                }
+
                 // Combine the original MediaSet with the one for ScreenNail
                 // from AppBridge.
                 mSetPathString = "/combo/item/{" + screenNailSetPath +
