@@ -585,7 +585,9 @@ public class PhotoPage extends ActivityState implements
 
     private boolean canShowBars() {
         // No bars if we are showing camera preview.
-        if (mAppBridge != null && mCurrentIndex == 0) return false;
+        if (mAppBridge != null && mCurrentIndex == 0
+                && !mPhotoView.getFilmMode()) return false;
+
         // No bars if it's not allowed.
         if (!mActionBarAllowed) return false;
 
