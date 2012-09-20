@@ -18,7 +18,6 @@ package com.android.gallery3d.exif;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.test.InstrumentationTestCase;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,12 +25,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ExifOutputStreamTest extends InstrumentationTestCase {
-
-    private final int mImageResourceId;
-
-    public ExifOutputStreamTest(int imageResourceId, int xmlReourceId) {
-        mImageResourceId = imageResourceId;
+public class ExifOutputStreamTest extends ExifXmlDataTestCase {
+    public ExifOutputStreamTest(int imageResourceId, int xmlResourceId) {
+        super(imageResourceId, xmlResourceId);
     }
 
     public void testExifOutputStream() throws IOException, ExifInvalidFormatException {

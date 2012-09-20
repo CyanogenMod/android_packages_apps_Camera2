@@ -18,17 +18,13 @@ package com.android.gallery3d.exif;
 
 import android.content.res.XmlResourceParser;
 import android.graphics.BitmapFactory;
-import android.test.InstrumentationTestCase;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-public class ExifReaderTest extends InstrumentationTestCase {
+public class ExifReaderTest extends ExifXmlDataTestCase {
     private static final String TAG = "ExifReaderTest";
-
-    private final int mImageResourceId;
-    private final int mXmlResourceId;
 
     private final HashMap<Short, String> mIfd0Value = new HashMap<Short, String>();
     private final HashMap<Short, String> mIfd1Value = new HashMap<Short, String>();
@@ -38,8 +34,7 @@ public class ExifReaderTest extends InstrumentationTestCase {
     private InputStream mImageInputStream;
 
     public ExifReaderTest(int imageResourceId, int xmlResourceId) {
-        mImageResourceId = imageResourceId;
-        mXmlResourceId = xmlResourceId;
+        super(imageResourceId, xmlResourceId);
     }
 
     @Override
