@@ -105,7 +105,7 @@ public class ExifReaderTest extends InstrumentationTestCase {
                         assertEquals(byteCountTag.getUnsignedShort(i), exifData.getStrip(i).length);
                     } else {
                         assertEquals(
-                                byteCountTag.getUnsignedInt(i), exifData.getStrip(i).length);
+                                byteCountTag.getUnsignedLong(i), exifData.getStrip(i).length);
                     }
                 }
             }
@@ -116,7 +116,7 @@ public class ExifReaderTest extends InstrumentationTestCase {
         if (tag.getDataType() == ExifTag.TYPE_UNSIGNED_SHORT) {
             return tag.getUnsignedShort(0);
         } else {
-            return (int) tag.getUnsignedInt(0);
+            return (int) tag.getUnsignedLong(0);
         }
     }
 
@@ -127,7 +127,7 @@ public class ExifReaderTest extends InstrumentationTestCase {
         }
         ExifTag[] tags = ifd.getAllTags();
         for (ExifTag tag : tags) {
-            assertEquals(ifdValue.get(tag.getTagId()), tag.valueToString());
+            assertEquals(ifdValue.get(tag.getTagId()), tag.valueToString().trim());
         }
         assertEquals(ifdValue.size(), tags.length);
     }
