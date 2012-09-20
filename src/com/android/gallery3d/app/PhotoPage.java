@@ -1075,7 +1075,7 @@ public class PhotoPage extends ActivityState implements
         Menu menu = mActionBar.getMenu();
         if (menu == null) return;
         MenuItem item = menu.findItem(R.id.action_grid);
-        if (item != null) item.setVisible(enabled);
+        if (item != null) item.setVisible((mSecureAlbum == null) && enabled);
     }
 
     public void onFilmModeChanged(boolean enabled) {
