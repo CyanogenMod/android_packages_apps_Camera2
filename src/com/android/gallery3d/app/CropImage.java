@@ -59,7 +59,6 @@ import com.android.gallery3d.exif.ExifData;
 import com.android.gallery3d.exif.ExifOutputStream;
 import com.android.gallery3d.exif.ExifReader;
 import com.android.gallery3d.exif.ExifTag;
-import com.android.gallery3d.exif.IfdId;
 import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.ui.BitmapTileProvider;
 import com.android.gallery3d.ui.CropView;
@@ -399,16 +398,8 @@ public class CropImage extends AbstractGalleryActivity {
     }
 
     private void changeExifImageSizeTags(ExifData data, int width, int height) {
-        // FIXME: would the image size be too large for TYPE_UNSIGHED_SHORT?
-        ExifTag tag = new ExifTag(ExifTag.TAG_IMAGE_WIDTH,
-                            ExifTag.TYPE_UNSIGNED_SHORT, 1, IfdId.TYPE_IFD_0);
-        tag.setValue(new int[] {width});
-        data.getIfdData(IfdId.TYPE_IFD_0).setTag(tag);
-
-        tag = new ExifTag(ExifTag.TAG_IMAGE_LENGTH,
-                            ExifTag.TYPE_UNSIGNED_SHORT, 1, IfdId.TYPE_IFD_0);
-        tag.setValue(new int[] {height});
-        data.getIfdData(IfdId.TYPE_IFD_0).setTag(tag);
+        data.addTag(ExifTag.TAG_IMAGE_WIDTH).setValue(width);
+        data.addTag(ExifTag.TAG_IMAGE_LENGTH).setValue(height);
     }
 
     private Uri saveToMediaProvider(JobContext jc, Bitmap cropped) {
