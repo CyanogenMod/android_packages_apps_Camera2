@@ -411,7 +411,7 @@ public class MenuExecutor {
                     if (!execute(manager, jc, mOperation, id)) {
                         result = EXECUTION_RESULT_FAIL;
                     }
-                    onProgressUpdate(index++, mListener);
+                    onProgressUpdate(++index, mListener);
                 }
             } catch (Throwable th) {
                 Log.e(TAG, "failed to execute operation " + mOperation
