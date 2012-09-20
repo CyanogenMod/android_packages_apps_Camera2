@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.exif;
 
-import android.test.InstrumentationTestCase;
 import android.test.InstrumentationTestRunner;
 import android.test.InstrumentationTestSuite;
 import android.util.Log;
@@ -42,13 +41,15 @@ public class ExifTestRunner extends InstrumentationTestRunner {
     @Override
     public TestSuite getAllTests() {
         TestSuite suite = new InstrumentationTestSuite(this);
-        getAllTestFromTestCase(ExifParserTest.class, suite);
-        getAllTestFromTestCase(ExifReaderTest.class, suite);
-        getAllTestFromTestCase(ExifOutputStreamTest.class, suite);
+        suite.addTestSuite(ExifDataTest.class);
+        suite.addTestSuite(ExifTagTest.class);
+        addAllTestsFromExifTestCase(ExifParserTest.class, suite);
+        addAllTestsFromExifTestCase(ExifReaderTest.class, suite);
+        addAllTestsFromExifTestCase(ExifOutputStreamTest.class, suite);
         return suite;
     }
 
-    private void getAllTestFromTestCase(Class<? extends InstrumentationTestCase> testClass,
+    private void addAllTestsFromExifTestCase(Class<? extends ExifXmlDataTestCase> testClass,
             TestSuite suite) {
         for (Method method : testClass.getDeclaredMethods()) {
             if (method.getName().startsWith("test") && method.getParameterTypes().length == 0) {
