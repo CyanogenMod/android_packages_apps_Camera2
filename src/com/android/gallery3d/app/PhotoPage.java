@@ -108,6 +108,7 @@ public class PhotoPage extends ActivityState implements
     public static final String KEY_TREAT_BACK_AS_UP = "treat-back-as-up";
     public static final String KEY_START_IN_FILMSTRIP = "start-in-filmstrip";
     public static final String KEY_RETURN_INDEX_HINT = "return-index-hint";
+    public static final String KEY_SHOW_WHEN_LOCKED = "show_when_locked";
 
     public static final String KEY_ALBUMPAGE_TRANSITION = "albumpage-transition";
     public static final int MSG_ALBUMPAGE_NONE = 0;
@@ -326,6 +327,8 @@ public class PhotoPage extends ActivityState implements
                 if (SecureSource.isSecurePath(mSetPathString)) {
                     mSecureAlbum = (SecureAlbum) mActivity.getDataManager()
                             .getMediaSet(mSetPathString);
+                }
+                if (data.getBoolean(KEY_SHOW_WHEN_LOCKED, false)) {
                     // Set the flag to be on top of the lock screen.
                     mFlags |= FLAG_SHOW_WHEN_LOCKED;
                 }
