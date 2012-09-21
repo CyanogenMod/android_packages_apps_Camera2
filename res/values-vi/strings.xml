@@ -38,7 +38,7 @@
     <string name="saving_image" msgid="7270334453636349407">"Đang lưu ảnh…"</string>
     <string name="save_error" msgid="6857408774183654970">"Không thể lưu hình ảnh được cắt."</string>
     <string name="crop_label" msgid="521114301871349328">"Cắt ảnh"</string>
-    <string name="trim_label" msgid="274203231381209979">"Cắt video"</string>
+    <string name="trim_label" msgid="274203231381209979">"Cắt ngắn video"</string>
     <string name="select_image" msgid="7841406150484742140">"Chọn ảnh"</string>
     <string name="select_video" msgid="4859510992798615076">"Chọn video"</string>
     <string name="select_item" msgid="2816923896202086390">"Chọn mục"</string>
@@ -177,6 +177,6 @@
     <string name="help" msgid="7368960711153618354">"Trợ giúp"</string>
     <string name="no_external_storage_title" msgid="2408933644249734569">"Không có bộ nhớ nào"</string>
     <string name="no_external_storage" msgid="95726173164068417">"Không có bộ nhớ ngoài nào"</string>
-    <string name="switch_photo_filmstrip" msgid="991949386967109493">"Phim đèn chiếu"</string>
+    <string name="switch_photo_filmstrip" msgid="991949386967109493">"Cuộn phim"</string>
     <string name="switch_photo_grid" msgid="6533267664294518167">"Lưới"</string>
 </resources>
