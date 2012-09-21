@@ -1457,9 +1457,7 @@ class PositionController {
             int x = mCurrentX;
             int y = mDefaultY;
             if (mFilmMode) {
-                int defaultX = mDefaultX;
-                if (!mHasNext) x = Math.max(x, defaultX);
-                if (!mHasPrev) x = Math.min(x, defaultX);
+                x = mDefaultX;
             } else {
                 calculateStableBound(scale, HORIZONTAL_SLACK);
                 // If the picture is zoomed-in, we want to keep the focus point
