@@ -39,6 +39,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.util.FloatMath;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -120,6 +121,7 @@ public class CropImage extends AbstractGalleryActivity {
     public static final String KEY_OUTPUT_FORMAT = "outputFormat";
     public static final String KEY_SET_AS_WALLPAPER = "set-as-wallpaper";
     public static final String KEY_NO_FACE_DETECTION = "noFaceDetection";
+    public static final String KEY_SHOW_WHEN_LOCKED = "showWhenLocked";
 
     private static final String KEY_STATE = "state";
 
@@ -174,8 +176,13 @@ public class CropImage extends AbstractGalleryActivity {
         actionBar.setDisplayOptions(displayOptions, displayOptions);
 
         Bundle extra = getIntent().getExtras();
-        if (extra != null && extra.getBoolean(KEY_SET_AS_WALLPAPER, false)) {
-            actionBar.setTitle(getString(R.string.set_wallpaper));
+        if (extra != null) {
+            if (extra.getBoolean(KEY_SET_AS_WALLPAPER, false)) {
+                actionBar.setTitle(getString(R.string.set_wallpaper));
+            }
+            if (extra.getBoolean(KEY_SHOW_WHEN_LOCKED, false)) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+            }
         }
 
         mMainHandler = new SynchronizedHandler(getGLRoot()) {
