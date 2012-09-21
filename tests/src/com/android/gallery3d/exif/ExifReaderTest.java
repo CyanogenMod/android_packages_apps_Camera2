@@ -18,17 +18,13 @@ package com.android.gallery3d.exif;
 
 import android.content.res.XmlResourceParser;
 import android.graphics.BitmapFactory;
-import android.test.InstrumentationTestCase;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-public class ExifReaderTest extends InstrumentationTestCase {
+public class ExifReaderTest extends ExifXmlDataTestCase {
     private static final String TAG = "ExifReaderTest";
-
-    private final int mImageResourceId;
-    private final int mXmlResourceId;
 
     private final HashMap<Short, String> mIfd0Value = new HashMap<Short, String>();
     private final HashMap<Short, String> mIfd1Value = new HashMap<Short, String>();
@@ -38,8 +34,7 @@ public class ExifReaderTest extends InstrumentationTestCase {
     private InputStream mImageInputStream;
 
     public ExifReaderTest(int imageResourceId, int xmlResourceId) {
-        mImageResourceId = imageResourceId;
-        mXmlResourceId = xmlResourceId;
+        super(imageResourceId, xmlResourceId);
     }
 
     @Override
@@ -105,7 +100,7 @@ public class ExifReaderTest extends InstrumentationTestCase {
                         assertEquals(byteCountTag.getUnsignedShort(i), exifData.getStrip(i).length);
                     } else {
                         assertEquals(
-                                byteCountTag.getUnsignedInt(i), exifData.getStrip(i).length);
+                                byteCountTag.getUnsignedLong(i), exifData.getStrip(i).length);
                     }
                 }
             }
@@ -116,7 +111,7 @@ public class ExifReaderTest extends InstrumentationTestCase {
         if (tag.getDataType() == ExifTag.TYPE_UNSIGNED_SHORT) {
             return tag.getUnsignedShort(0);
         } else {
-            return (int) tag.getUnsignedInt(0);
+            return (int) tag.getUnsignedLong(0);
         }
     }
 
@@ -127,7 +122,7 @@ public class ExifReaderTest extends InstrumentationTestCase {
         }
         ExifTag[] tags = ifd.getAllTags();
         for (ExifTag tag : tags) {
-            assertEquals(ifdValue.get(tag.getTagId()), tag.valueToString());
+            assertEquals(ifdValue.get(tag.getTagId()), tag.valueToString().trim());
         }
         assertEquals(ifdValue.size(), tags.length);
     }

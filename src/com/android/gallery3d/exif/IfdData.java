@@ -25,7 +25,7 @@ import java.util.Map;
  * @see ExifData
  * @see ExifTag
  */
-public class IfdData {
+class IfdData {
 
     private final int mIfdId;
     private final Map<Short, ExifTag> mExifTags = new HashMap<Short, ExifTag>();
