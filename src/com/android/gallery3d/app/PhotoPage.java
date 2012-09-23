@@ -792,6 +792,8 @@ public class PhotoPage extends ActivityState implements
             case R.id.action_trim: {
                 Intent intent = new Intent(mActivity, TrimVideo.class);
                 intent.setData(manager.getContentUri(path));
+                // We need the file path to wrap this into a RandomAccessFile.
+                intent.putExtra(KEY_MEDIA_ITEM_PATH, current.getFilePath());
                 mActivity.startActivityForResult(intent, REQUEST_TRIM);
                 return true;
             }
