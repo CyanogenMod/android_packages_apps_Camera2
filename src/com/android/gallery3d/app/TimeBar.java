@@ -57,9 +57,9 @@ public class TimeBar extends View {
     protected final Rect mProgressBar;
     protected final Rect mPlayedBar;
 
-    private final Paint mProgressPaint;
-    private final Paint mPlayedPaint;
-    private final Paint mTimeTextPaint;
+    protected final Paint mProgressPaint;
+    protected final Paint mPlayedPaint;
+    protected final Paint mTimeTextPaint;
 
     protected final Bitmap mScrubber;
     protected int mScrubberPadding; // adds some touch tolerance around the
@@ -157,14 +157,14 @@ public class TimeBar extends View {
                 && mScrubberTop - mScrubberPadding < y && y < scrubberBottom + mScrubberPadding;
     }
 
-    protected void clampScrubber() {
+    private void clampScrubber() {
         int half = mScrubber.getWidth() / 2;
         int max = mProgressBar.right - half;
         int min = mProgressBar.left - half;
         mScrubberLeft = Math.min(max, Math.max(min, mScrubberLeft));
     }
 
-    protected int getScrubberTime() {
+    private int getScrubberTime() {
         return (int) ((long) (mScrubberLeft + mScrubber.getWidth() / 2 - mProgressBar.left)
                 * mTotalTime / mProgressBar.width());
     }
