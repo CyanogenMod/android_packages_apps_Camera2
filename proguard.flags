@@ -43,3 +43,6 @@
 -keep interface com.actionbarsherlock.** { *; }
 -keepattributes *Annotation*
 
+# Required for mp4parser
+-keep public class * extends com.coremedia.iso.boxes.AbstractBox
+
