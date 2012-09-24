@@ -19,12 +19,18 @@ package com.android.gallery3d.app;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore.Video;
+import android.provider.MediaStore.Video.VideoColumns;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,7 +40,12 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.util.BucketNames;
 
+import java.io.File;
+import java.io.IOException;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 public class TrimVideo extends Activity implements
         MediaPlayer.OnErrorListener,
@@ -58,6 +69,15 @@ public class TrimVideo extends Activity implements
     public static final String KEY_VIDEO_POSITION = "video_pos";
     private boolean mHasPaused = false;
 
+    private String mSrcVideoPath = null;
+    private String mSaveFileName = null;
+    private static final String TIME_STAMP_NAME = "'TRIM'_yyyyMMdd_HHmmss";
+    private File mSrcFile = null;
+    private File mDstFile = null;
+    private File mSaveDirectory = null;
+    // For showing the result.
+    private String saveFolderName = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         mContext = getApplicationContext();
@@ -68,14 +88,14 @@ public class TrimVideo extends Activity implements
 
         Intent intent = getIntent();
         mUri = intent.getData();
-
+        mSrcVideoPath = intent.getStringExtra(PhotoPage.KEY_MEDIA_ITEM_PATH);
         setContentView(R.layout.trim_view);
         View rootView = findViewById(R.id.trim_view_root);
 
         mVideoView = (VideoView) rootView.findViewById(R.id.surface_view);
 
         mController = new TrimControllerOverlay(mContext);
-        ((ViewGroup)rootView).addView(mController.getView());
+        ((ViewGroup) rootView).addView(mController.getView());
         mController.setListener(this);
         mController.setCanReplay(true);
 
@@ -104,6 +124,15 @@ public class TrimVideo extends Activity implements
         mVideoPosition = mVideoView.getCurrentPosition();
         mVideoView.suspend();
         super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        if (mProgress != null) {
+            mProgress.dismiss();
+            mProgress = null;
+        }
+        super.onStop();
     }
 
     @Override
@@ -185,6 +214,42 @@ public class TrimVideo extends Activity implements
         return true;
     };
 
+    // Copy from SaveCopyTask.java in terms of how to handle the destination
+    // path and filename : querySource() and getSaveDirectory().
+    private interface ContentResolverQueryCallback {
+        void onCursorResult(Cursor cursor);
+    }
+
+    private void querySource(String[] projection, ContentResolverQueryCallback callback) {
+        ContentResolver contentResolver = getContentResolver();
+        Cursor cursor = null;
+        try {
+            cursor = contentResolver.query(mUri, projection, null, null, null);
+            if ((cursor != null) && cursor.moveToNext()) {
+                callback.onCursorResult(cursor);
+            }
+        } catch (Exception e) {
+            // Ignore error for lacking the data column from the source.
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    private File getSaveDirectory() {
+        final File[] dir = new File[1];
+        querySource(new String[] {
+        VideoColumns.DATA }, new ContentResolverQueryCallback() {
+
+                @Override
+            public void onCursorResult(Cursor cursor) {
+                dir[0] = new File(cursor.getString(0)).getParentFile();
+            }
+        });
+        return dir[0];
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -192,12 +257,115 @@ public class TrimVideo extends Activity implements
             finish();
             return true;
         } else if (id == R.id.action_trim_video) {
-            // TODO: Add the new MediaMuxer API to support the trimming.
-            Toast.makeText(getApplicationContext(),
-                    "Trimming will be implemented soon!", Toast.LENGTH_SHORT).show();
+            trimVideo();
             return true;
         }
         return false;
+    }
+
+    private void trimVideo() {
+        // Use the default save directory if the source directory cannot be
+        // saved.
+        mSaveDirectory = getSaveDirectory();
+        if ((mSaveDirectory == null) || !mSaveDirectory.canWrite()) {
+            mSaveDirectory = new File(Environment.getExternalStorageDirectory(),
+                    BucketNames.DOWNLOAD);
+            saveFolderName = getString(R.string.folder_download);
+        } else {
+            saveFolderName = mSaveDirectory.getName();
+        }
+        mSaveFileName = new SimpleDateFormat(TIME_STAMP_NAME).format(
+                new Date(System.currentTimeMillis()));
+
+        mDstFile = new File(mSaveDirectory, mSaveFileName + ".mp4");
+        mSrcFile = new File(mSrcVideoPath);
+
+        showProgressDialog();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ShortenExample.main(null, mSrcFile, mDstFile, mTrimStartTime, mTrimEndTime);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                // After trimming is done, trigger the UI changed.
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // TODO: change trimming into a service to avoid
+                        // this progressDialog and add notification properly.
+                        if (mProgress != null) {
+                            mProgress.dismiss();
+                            // Update the database for adding a new video file.
+                            insertContent(mDstFile);
+                            Toast.makeText(getApplicationContext(),
+                                    "Saved into " + saveFolderName, Toast.LENGTH_SHORT)
+                                    .show();
+                            mProgress = null;
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
+
+    private void showProgressDialog() {
+        // create a background thread to trim the video.
+        // and show the progress.
+        mProgress = new ProgressDialog(this);
+        mProgress.setTitle("Trimming");
+        mProgress.setMessage("please wait");
+        // TODO: make this cancelable.
+        mProgress.setCancelable(false);
+        mProgress.setCanceledOnTouchOutside(false);
+        mProgress.show();
+    }
+
+    /**
+     * Insert the content (saved file) with proper video properties.
+     */
+    private Uri insertContent(File file) {
+        long now = System.currentTimeMillis() / 1000;
+
+        final ContentValues values = new ContentValues(12);
+        values.put(Video.Media.TITLE, mSaveFileName);
+        values.put(Video.Media.DISPLAY_NAME, file.getName());
+        values.put(Video.Media.MIME_TYPE, "video/mp4");
+        values.put(Video.Media.DATE_TAKEN, now);
+        values.put(Video.Media.DATE_MODIFIED, now);
+        values.put(Video.Media.DATE_ADDED, now);
+        values.put(Video.Media.DATA, file.getAbsolutePath());
+        values.put(Video.Media.SIZE, file.length());
+        // Copy the data taken and location info from src.
+        String[] projection = new String[] {
+                VideoColumns.DATE_TAKEN,
+                VideoColumns.LATITUDE,
+                VideoColumns.LONGITUDE,
+                VideoColumns.RESOLUTION,
+        };
+
+        // Copy some info from the source file.
+        querySource(projection, new ContentResolverQueryCallback() {
+
+            @Override
+            public void onCursorResult(Cursor cursor) {
+                values.put(Video.Media.DATE_TAKEN, cursor.getLong(0));
+                double latitude = cursor.getDouble(1);
+                double longitude = cursor.getDouble(2);
+                // TODO: Change || to && after the default location issue is
+                // fixed.
+                if ((latitude != 0f) || (longitude != 0f)) {
+                    values.put(Video.Media.LATITUDE, latitude);
+                    values.put(Video.Media.LONGITUDE, longitude);
+                }
+                values.put(Video.Media.RESOLUTION, cursor.getString(3));
+
+            }
+        });
+
+        return getContentResolver().insert(Video.Media.EXTERNAL_CONTENT_URI, values);
     }
 
     @Override
