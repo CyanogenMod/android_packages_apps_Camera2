@@ -46,12 +46,16 @@ public class SecureAlbum extends MediaSet {
     private static final Uri[] mWatchUris =
         {Images.Media.EXTERNAL_CONTENT_URI, Video.Media.EXTERNAL_CONTENT_URI};
     private final ChangeNotifier mNotifier;
+    // A placeholder image in the end of secure album. When it is tapped, it
+    // will take the user to the lock screen.
+    private MediaItem mUnlockItem;
 
-    public SecureAlbum(Path path, GalleryApp application) {
+    public SecureAlbum(Path path, GalleryApp application, MediaItem unlock) {
         super(path, nextVersionNumber());
         mContext = application.getAndroidContext();
         mDataManager = application.getDataManager();
         mNotifier = new ChangeNotifier(this, mWatchUris, application);
+        mUnlockItem = unlock;
     }
 
     public void addMediaItem(boolean isVideo, int id) {
@@ -70,7 +74,7 @@ public class SecureAlbum extends MediaSet {
 
     @Override
     public ArrayList<MediaItem> getMediaItem(int start, int count) {
-        if (start >= mExistingItems.size()) {
+        if (start >= mExistingItems.size() + 1) {
             return new ArrayList<MediaItem>();
         }
         int end = Math.min(start + count, mExistingItems.size());
@@ -88,12 +92,13 @@ public class SecureAlbum extends MediaSet {
         for (int i = 0; i < buf.length; i++) {
             result.add(buf[i]);
         }
+        result.add(mUnlockItem);
         return result;
     }
 
     @Override
     public int getMediaItemCount() {
-        return mExistingItems.size();
+        return mExistingItems.size() + 1;
     }
 
     @Override

@@ -877,10 +877,12 @@ public class PhotoPage extends ActivityState implements
             return;
         }
 
+        int supported = item.getSupportedOperations();
         boolean playVideo = (mSecureAlbum == null) &&
-                ((item.getSupportedOperations() & MediaItem.SUPPORT_PLAY) != 0);
+                ((supported & MediaItem.SUPPORT_PLAY) != 0);
         boolean viewPanorama = (mSecureAlbum == null) &&
-                (item.getSupportedOperations() & MediaItem.SUPPORT_PANORAMA) != 0;
+                ((supported & MediaItem.SUPPORT_PANORAMA) != 0);
+        boolean unlock = ((supported & MediaItem.SUPPORT_UNLOCK) != 0);
 
         if (playVideo) {
             // determine if the point is at center (1/6) of the photo view.
@@ -895,6 +897,8 @@ public class PhotoPage extends ActivityState implements
             playVideo(mActivity, item.getPlayUri(), item.getName());
         } else if (viewPanorama) {
             LightCycleHelper.viewPanorama(mActivity, item.getContentUri());
+        } else if (unlock) {
+            mActivity.getStateManager().finishState(this);
         } else {
             toggleBars();
         }
