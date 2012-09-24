@@ -219,7 +219,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
 
         switch (unexpandedPaths.size()) {
             case 1:
-                final String mimeType = MenuExecutor.getMimeType(type);
+                final String mimeType = MenuExecutor.getMimeType(type, false);
                 if (!GalleryUtils.isEditorAvailable(mActivity, mimeType)) {
                     operation &= ~MediaObject.SUPPORT_EDIT;
                 }
@@ -249,6 +249,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
         final ArrayList<Uri> uris = new ArrayList<Uri>();
         DataManager manager = mActivity.getDataManager();
         int type = 0;
+        boolean isPanorama = true;
         final Intent intent = new Intent();
         for (Path path : expandedPaths) {
             if (jc.isCancelled()) return null;
@@ -258,11 +259,14 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
             if ((support & MediaObject.SUPPORT_SHARE) != 0) {
                 uris.add(manager.getContentUri(path));
             }
+            if ((support & MediaObject.SUPPORT_PANORAMA) == 0) {
+                isPanorama = false;
+            }
         }
 
         final int size = uris.size();
         if (size > 0) {
-            final String mimeType = MenuExecutor.getMimeType(type);
+            final String mimeType = MenuExecutor.getMimeType(type, isPanorama);
             if (size > 1) {
                 intent.setAction(Intent.ACTION_SEND_MULTIPLE).setType(mimeType);
                 intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
@@ -270,7 +274,6 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
                 intent.setAction(Intent.ACTION_SEND).setType(mimeType);
                 intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
             }
-            intent.setType(mimeType);
             setNfcBeamPushUris(uris.toArray(new Uri[uris.size()]));
         } else {
             setNfcBeamPushUris(null);
