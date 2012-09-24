@@ -29,10 +29,7 @@ import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.animation.AccelerateInterpolator;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -79,7 +76,8 @@ import com.android.gallery3d.util.LightCycleHelper;
 import com.android.gallery3d.util.MediaSetUtils;
 
 public class PhotoPage extends ActivityState implements
-        PhotoView.Listener, OrientationManager.Listener, AppBridge.Server {
+        PhotoView.Listener, OrientationManager.Listener, AppBridge.Server,
+        PhotoPageBottomControls.Delegate {
     private static final String TAG = "PhotoPage";
 
     private static final int MSG_HIDE_BARS = 1;
@@ -90,7 +88,7 @@ public class PhotoPage extends ActivityState implements
     private static final int MSG_UNFREEZE_GLROOT = 6;
     private static final int MSG_WANT_BARS = 7;
     private static final int MSG_REFRESH_GRID_BUTTON = 8;
-    private static final int MSG_REFRESH_EDIT_BUTTON = 9;
+    private static final int MSG_REFRESH_BOTTOM_CONTROLS = 9;
 
     private static final int HIDE_BARS_TIMEOUT = 3500;
     private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
@@ -141,6 +139,7 @@ public class PhotoPage extends ActivityState implements
     private volatile boolean mActionBarAllowed = true;
     private GalleryActionBar mActionBar;
     private boolean mIsMenuVisible;
+    private PhotoPageBottomControls mBottomControls;
     private MediaItem mCurrentPhoto = null;
     private MenuExecutor mMenuExecutor;
     private boolean mIsActive;
@@ -258,8 +257,8 @@ public class PhotoPage extends ActivityState implements
                         setGridButtonVisibility(mPhotoView.getFilmMode());
                         break;
                     }
-                    case MSG_REFRESH_EDIT_BUTTON: {
-                        refreshEditButton();
+                    case MSG_REFRESH_BOTTOM_CONTROLS: {
+                        if (mBottomControls != null) mBottomControls.refresh();
                         break;
                     }
                     case MSG_LOCK_ORIENTATION: {
@@ -410,48 +409,42 @@ public class PhotoPage extends ActivityState implements
         }
 
         mPhotoView.setFilmMode(mStartInFilmstrip && mMediaSet.getMediaItemCount() > 1);
-        setupEditButton();
-    }
-
-    private ImageView mEditButton;
-    private void setupEditButton() {
-        if (mSecureAlbum != null) return;
-        RelativeLayout galleryRoot = (RelativeLayout) ((Activity) mActivity)
-                .findViewById(mAppBridge != null ? R.id.content : R.id.gallery_root);
-        if (galleryRoot == null) return;
-
-        mEditButton = new ImageView(mActivity);
-        mEditButton.setImageResource(R.drawable.photoeditor_artistic);
-        mEditButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                launchPhotoEditor();
+        if (mSecureAlbum == null) {
+            RelativeLayout galleryRoot = (RelativeLayout) ((Activity) mActivity)
+                        .findViewById(mAppBridge != null ? R.id.content : R.id.gallery_root);
+            if (galleryRoot != null) {
+                mBottomControls = new PhotoPageBottomControls(this, mActivity, galleryRoot);
             }
-        });
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT);
-        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        galleryRoot.addView(mEditButton, lp);
-        refreshEditButton();
+        }
     }
 
-    private void cleanupEditButton() {
-        if (mEditButton == null) return;
-        RelativeLayout galleryRoot = (RelativeLayout) ((Activity) mActivity)
-                .findViewById(mAppBridge != null ? R.id.content : R.id.gallery_root);
-        if (galleryRoot == null) return;
-        galleryRoot.removeView(mEditButton);
-        mEditButton = null;
+    public boolean canDisplayBottomControls() {
+        return mShowBars && !mPhotoView.getFilmMode();
     }
 
-    private void refreshEditButton() {
-        if (mEditButton == null) return;
-        if (mShowBars && mCurrentPhoto != null && !mPhotoView.getFilmMode()
-                && mCurrentPhoto.getMediaType() == MediaObject.MEDIA_TYPE_IMAGE) {
-            mEditButton.setVisibility(View.VISIBLE);
-        } else {
-            mEditButton.setVisibility(View.GONE);
+    public boolean canDisplayBottomControl(int control) {
+        if (mCurrentPhoto == null) return false;
+        switch(control) {
+            case R.id.photopage_bottom_control_edit:
+                return mCurrentPhoto.getMediaType() == MediaObject.MEDIA_TYPE_IMAGE;
+            case R.id.photopage_bottom_control_panorama:
+                return (mCurrentPhoto.getSupportedOperations()
+                        & MediaItem.SUPPORT_PANORAMA) != 0;
+            default:
+                return false;
+        }
+    }
+
+    public void onBottomControlClicked(int control) {
+        switch(control) {
+            case R.id.photopage_bottom_control_edit:
+                launchPhotoEditor();
+                return;
+            case R.id.photopage_bottom_control_panorama:
+                LightCycleHelper.viewPanorama(mActivity, mCurrentPhoto.getContentUri());
+                return;
+            default:
+                return;
         }
     }
 
@@ -465,8 +458,10 @@ public class PhotoPage extends ActivityState implements
     private Intent createShareIntent(Path path) {
         DataManager manager = mActivity.getDataManager();
         int type = manager.getMediaType(path);
+        int support = manager.getSupportedOperations(path);
+        boolean isPanorama = (support & MediaObject.SUPPORT_PANORAMA) != 0;
         Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType(MenuExecutor.getMimeType(type));
+        intent.setType(MenuExecutor.getMimeType(type, isPanorama));
         Uri uri = manager.getContentUri(path);
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         return intent;
@@ -501,7 +496,7 @@ public class PhotoPage extends ActivityState implements
         if (mCurrentPhoto == null) return;
         updateMenuOperations();
         updateTitle();
-        refreshEditButton();
+        if (mBottomControls != null) mBottomControls.refresh();
         if (mShowDetails) {
             mDetailsHelper.reloadDetails();
         }
@@ -567,7 +562,7 @@ public class PhotoPage extends ActivityState implements
         mActionBar.show();
         mActivity.getGLRoot().setLightsOutMode(false);
         refreshHidingMessage();
-        refreshEditButton();
+        if (mBottomControls != null) mBottomControls.refresh();
     }
 
     private void hideBars() {
@@ -576,7 +571,7 @@ public class PhotoPage extends ActivityState implements
         mActionBar.hide();
         mActivity.getGLRoot().setLightsOutMode(true);
         mHandler.removeMessages(MSG_HIDE_BARS);
-        refreshEditButton();
+        if (mBottomControls != null) mBottomControls.refresh();
     }
 
     private void refreshHidingMessage() {
@@ -588,7 +583,9 @@ public class PhotoPage extends ActivityState implements
 
     private boolean canShowBars() {
         // No bars if we are showing camera preview.
-        if (mAppBridge != null && mCurrentIndex == 0) return false;
+        if (mAppBridge != null && mCurrentIndex == 0
+                && !mPhotoView.getFilmMode()) return false;
+
         // No bars if it's not allowed.
         if (!mActionBarAllowed) return false;
 
@@ -875,7 +872,7 @@ public class PhotoPage extends ActivityState implements
         boolean playVideo = (mSecureAlbum == null) &&
                 ((item.getSupportedOperations() & MediaItem.SUPPORT_PLAY) != 0);
         boolean viewPanorama = (mSecureAlbum == null) &&
-                (item.getSupportedOperations() & MediaItem.SUPPORT_VIEW_PANORAMA) != 0;
+                (item.getSupportedOperations() & MediaItem.SUPPORT_PANORAMA) != 0;
 
         if (playVideo) {
             // determine if the point is at center (1/6) of the photo view.
@@ -1083,12 +1080,12 @@ public class PhotoPage extends ActivityState implements
         Menu menu = mActionBar.getMenu();
         if (menu == null) return;
         MenuItem item = menu.findItem(R.id.action_grid);
-        if (item != null) item.setVisible(enabled);
+        if (item != null) item.setVisible((mSecureAlbum == null) && enabled);
     }
 
     public void onFilmModeChanged(boolean enabled) {
         mHandler.sendEmptyMessage(MSG_REFRESH_GRID_BUTTON);
-        mHandler.sendEmptyMessage(MSG_REFRESH_EDIT_BUTTON);
+        mHandler.sendEmptyMessage(MSG_REFRESH_BOTTOM_CONTROLS);
         if (enabled) {
             mHandler.removeMessages(MSG_HIDE_BARS);
         } else {
@@ -1166,7 +1163,7 @@ public class PhotoPage extends ActivityState implements
         }
         mOrientationManager.removeListener(this);
         mActivity.getGLRoot().setOrientationSource(null);
-        cleanupEditButton();
+        if (mBottomControls != null) mBottomControls.cleanup();
 
         // Remove all pending messages.
         mHandler.removeCallbacksAndMessages(null);

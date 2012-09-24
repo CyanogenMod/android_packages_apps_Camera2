@@ -49,6 +49,11 @@ public class MenuExecutor {
     @SuppressWarnings("unused")
     private static final String TAG = "MenuExecutor";
 
+    private static final String MIME_TYPE_IMAGE = "image/*";
+    private static final String MIME_TYPE_VIDEO = "video/*";
+    private static final String MIME_TYPE_PANORAMA = "application/vnd.google.panorama+jpg";
+    private static final String MIME_TYPE_ALL = "*/*";
+
     private static final int MSG_TASK_COMPLETE = 1;
     private static final int MSG_TASK_UPDATE = 2;
     private static final int MSG_TASK_START = 3;
@@ -197,7 +202,9 @@ public class MenuExecutor {
     private Intent getIntentBySingleSelectedPath(String action) {
         DataManager manager = mActivity.getDataManager();
         Path path = getSingleSelectedPath();
-        String mimeType = getMimeType(manager.getMediaType(path));
+        int support = manager.getSupportedOperations(path);
+        boolean isPanorama = (support & MediaObject.SUPPORT_PANORAMA) != 0;
+        String mimeType = getMimeType(manager.getMediaType(path), isPanorama);
         return new Intent(action).setDataAndType(manager.getContentUri(path), mimeType);
     }
 
@@ -325,13 +332,14 @@ public class MenuExecutor {
         mWaitOnStop = waitOnStop;
     }
 
-    public static String getMimeType(int type) {
+    public static String getMimeType(int type, boolean isPanorama) {
+        if (isPanorama) return MIME_TYPE_PANORAMA;
         switch (type) {
             case MediaObject.MEDIA_TYPE_IMAGE :
-                return "image/*";
+                return MIME_TYPE_IMAGE;
             case MediaObject.MEDIA_TYPE_VIDEO :
-                return "video/*";
-            default: return "*/*";
+                return MIME_TYPE_VIDEO;
+            default: return MIME_TYPE_ALL;
         }
     }
 

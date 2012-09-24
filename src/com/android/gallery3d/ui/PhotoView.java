@@ -1288,9 +1288,9 @@ public class PhotoView extends GLView {
                 mFilmMode ? Model.FOCUS_HINT_PREVIOUS : Model.FOCUS_HINT_NEXT);
         mListener.onFilmModeChanged(enabled);
         boolean isCamera = mPictures.get(0).isCamera();
-        if (isCamera) {
+        if (isCamera && !enabled) {
             // Move into camera in page mode, lock
-            if (!enabled) mListener.lockOrientation();
+            mListener.lockOrientation();
             mListener.onActionBarAllowed(false);
         } else {
             mListener.onActionBarAllowed(true);
