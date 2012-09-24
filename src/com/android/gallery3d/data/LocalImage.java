@@ -248,7 +248,7 @@ public class LocalImage extends LocalMediaItem {
         }
 
         if (usePanoramaViewer()) {
-            operation |= SUPPORT_VIEW_PANORAMA;
+            operation |= SUPPORT_PANORAMA;
         }
         return operation;
     }

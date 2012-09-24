@@ -429,7 +429,7 @@ public class PhotoPage extends ActivityState implements
                 return mCurrentPhoto.getMediaType() == MediaObject.MEDIA_TYPE_IMAGE;
             case R.id.photopage_bottom_control_panorama:
                 return (mCurrentPhoto.getSupportedOperations()
-                        & MediaItem.SUPPORT_VIEW_PANORAMA) != 0;
+                        & MediaItem.SUPPORT_PANORAMA) != 0;
             default:
                 return false;
         }
@@ -458,8 +458,10 @@ public class PhotoPage extends ActivityState implements
     private Intent createShareIntent(Path path) {
         DataManager manager = mActivity.getDataManager();
         int type = manager.getMediaType(path);
+        int support = manager.getSupportedOperations(path);
+        boolean isPanorama = (support & MediaObject.SUPPORT_PANORAMA) != 0;
         Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType(MenuExecutor.getMimeType(type));
+        intent.setType(MenuExecutor.getMimeType(type, isPanorama));
         Uri uri = manager.getContentUri(path);
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         return intent;
@@ -870,7 +872,7 @@ public class PhotoPage extends ActivityState implements
         boolean playVideo = (mSecureAlbum == null) &&
                 ((item.getSupportedOperations() & MediaItem.SUPPORT_PLAY) != 0);
         boolean viewPanorama = (mSecureAlbum == null) &&
-                (item.getSupportedOperations() & MediaItem.SUPPORT_VIEW_PANORAMA) != 0;
+                (item.getSupportedOperations() & MediaItem.SUPPORT_PANORAMA) != 0;
 
         if (playVideo) {
             // determine if the point is at center (1/6) of the photo view.
