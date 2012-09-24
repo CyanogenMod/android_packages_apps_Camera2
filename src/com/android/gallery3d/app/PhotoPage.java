@@ -353,10 +353,13 @@ public class PhotoPage extends ActivityState implements
                 Log.w(TAG, "failed to restore " + mSetPathString);
             }
             if (itemPath == null) {
-                if (mMediaSet.getMediaItemCount() > 0) {
+                int mediaItemCount = mMediaSet.getMediaItemCount();
+                if (mediaItemCount > 0) {
+                    if (mCurrentIndex >= mediaItemCount) mCurrentIndex = 0;
                     itemPath = mMediaSet.getMediaItem(mCurrentIndex, 1)
                         .get(0).getPath();
                 } else {
+                    // Bail out, PhotoPage can't load on an empty album
                     return;
                 }
             }
