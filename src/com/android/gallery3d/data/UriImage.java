@@ -219,7 +219,7 @@ public class UriImage extends MediaItem {
             supported |= SUPPORT_FULL_IMAGE;
         }
         if (usePanoramaViewer()) {
-            supported |= SUPPORT_VIEW_PANORAMA;
+            supported |= SUPPORT_PANORAMA;
         }
         return supported;
     }
