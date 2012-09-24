@@ -415,7 +415,7 @@ public class GLCanvasImpl implements GLCanvas {
     // This function changes the source coordinate to the texture coordinates.
     // It also clips the source and target coordinates if it is beyond the
     // bound of the texture.
-    private void convertCoordinate(RectF source, RectF target,
+    private static void convertCoordinate(RectF source, RectF target,
             BasicTexture texture) {
 
         int width = texture.getWidth();
@@ -465,6 +465,82 @@ public class GLCanvasImpl implements GLCanvas {
         color[3] = alpha;
     }
 
+    private void setMixedColor(int toColor, float ratio, float alpha) {
+        //
+        // The formula we want:
+        //     alpha * ((1 - ratio) * from + ratio * to)
+        //
+        // The formula that GL supports is in the form of:
+        //     combo * from + (1 - combo) * to * scale
+        //
+        // So, we have combo = alpha * (1 - ratio)
+        //     and     scale = alpha * ratio / (1 - combo)
+        //
+        float combo = alpha * (1 - ratio);
+        float scale = alpha * ratio / (1 - combo);
+
+        // Specify the interpolation factor via the alpha component of
+        // GL_TEXTURE_ENV_COLORs.
+        // RGB component are get from toColor and will used as SRC1
+        float colorScale = scale * (toColor >>> 24) / (0xff * 0xff);
+        setTextureColor(((toColor >>> 16) & 0xff) * colorScale,
+                ((toColor >>> 8) & 0xff) * colorScale,
+                (toColor & 0xff) * colorScale, combo);
+        GL11 gl = mGL;
+        gl.glTexEnvfv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_COLOR, mTextureColor, 0);
+
+        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_INTERPOLATE);
+        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_INTERPOLATE);
+        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_CONSTANT);
+        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
+        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_CONSTANT);
+        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);
+
+        // Wire up the interpolation factor for RGB.
+        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_SRC2_RGB, GL11.GL_CONSTANT);
+        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_RGB, GL11.GL_SRC_ALPHA);
+
+        // Wire up the interpolation factor for alpha.
+        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_SRC2_ALPHA, GL11.GL_CONSTANT);
+        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_ALPHA, GL11.GL_SRC_ALPHA);
+
+    }
+
+    @Override
+    public void drawMixed(BasicTexture from, int toColor, float ratio,
+            RectF source, RectF target) {
+        if (target.width() <= 0 || target.height() <= 0) return;
+
+        if (ratio <= 0.01f) {
+            drawTexture(from, source, target);
+            return;
+        } else if (ratio >= 1) {
+            fillRect(target.left, target.top, target.width(), target.height(), toColor);
+            return;
+        }
+
+        float alpha = mAlpha;
+
+        // Copy the input to avoid changing it.
+        mDrawTextureSourceRect.set(source);
+        mDrawTextureTargetRect.set(target);
+        source = mDrawTextureSourceRect;
+        target = mDrawTextureTargetRect;
+
+        mGLState.setBlendEnabled(mBlendEnabled && (!from.isOpaque()
+                || !Utils.isOpaque(toColor) || alpha < OPAQUE_ALPHA));
+
+        if (!bindTexture(from)) return;
+
+        // Interpolate the RGB and alpha values between both textures.
+        mGLState.setTexEnvMode(GL11.GL_COMBINE);
+        setMixedColor(toColor, ratio, alpha);
+        convertCoordinate(source, target, from);
+        setTextureCoords(source);
+        textureRect(target.left, target.top, target.width(), target.height());
+        mGLState.setTexEnvMode(GL11.GL_REPLACE);
+    }
+
     private void drawMixed(BasicTexture from, int toColor,
             float ratio, int x, int y, int width, int height, float alpha) {
         // change from 0 to 0.01f to prevent getting divided by zero below
@@ -482,45 +558,9 @@ public class GLCanvasImpl implements GLCanvas {
         final GL11 gl = mGL;
         if (!bindTexture(from)) return;
 
-        //
-        // The formula we want:
-        //     alpha * ((1 - ratio) * from + ratio * to)
-        //
-        // The formula that GL supports is in the form of:
-        //     combo * from + (1 - combo) * to * scale
-        //
-        // So, we have combo = alpha * (1 - ratio)
-        //     and     scale = alpha * ratio / (1 - combo)
-        //
-        float combo = alpha * (1 - ratio);
-        float scale = alpha * ratio / (1 - combo);
-
         // Interpolate the RGB and alpha values between both textures.
         mGLState.setTexEnvMode(GL11.GL_COMBINE);
-
-        // Specify the interpolation factor via the alpha component of
-        // GL_TEXTURE_ENV_COLORs.
-        // RGB component are get from toColor and will used as SRC1
-        float colorScale = scale * (toColor >>> 24) / (0xff * 0xff);
-        setTextureColor(((toColor >>> 16) & 0xff) * colorScale,
-                ((toColor >>> 8) & 0xff) * colorScale,
-                (toColor & 0xff) * colorScale, combo);
-        gl.glTexEnvfv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_COLOR, mTextureColor, 0);
-
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_RGB, GL11.GL_INTERPOLATE);
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_COMBINE_ALPHA, GL11.GL_INTERPOLATE);
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_RGB, GL11.GL_CONSTANT);
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_RGB, GL11.GL_SRC_COLOR);
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_SRC1_ALPHA, GL11.GL_CONSTANT);
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND1_ALPHA, GL11.GL_SRC_ALPHA);
-
-        // Wire up the interpolation factor for RGB.
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_SRC2_RGB, GL11.GL_CONSTANT);
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_RGB, GL11.GL_SRC_ALPHA);
-
-        // Wire up the interpolation factor for alpha.
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_SRC2_ALPHA, GL11.GL_CONSTANT);
-        gl.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_OPERAND2_ALPHA, GL11.GL_SRC_ALPHA);
+        setMixedColor(toColor, ratio, alpha);
 
         drawBoundTexture(from, x, y, width, height);
         mGLState.setTexEnvMode(GL11.GL_REPLACE);
