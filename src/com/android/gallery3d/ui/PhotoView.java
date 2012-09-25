@@ -568,7 +568,6 @@ public class PhotoView extends GLView {
         private boolean mIsDeletable;
         private int mLoadingState = Model.LOADING_INIT;
         private Size mSize = new Size();
-        private boolean mWasCameraCenter;
 
         @Override
         public void reload() {
@@ -612,7 +611,6 @@ public class PhotoView extends GLView {
             mSize.height = getRotated(mRotation, h, w);
         }
 
-        private boolean mNeedToChangeToFilmstripWhenCentered = false;
         @Override
         public void draw(GLCanvas canvas, Rect r) {
             drawTileView(canvas, r);
@@ -629,26 +627,10 @@ public class PhotoView extends GLView {
             boolean isCenter = mPositionController.isCenter();
             boolean isCameraCenter = mIsCamera && isCenter && !canUndoLastPicture();
 
-            if (mWasCameraCenter && mIsCamera && !isCenter && !mFilmMode) {
-                setFilmMode(false);
-                mNeedToChangeToFilmstripWhenCentered = true;
-            } else if (isCenter && mNeedToChangeToFilmstripWhenCentered) {
-                setFilmMode(true);
-                mNeedToChangeToFilmstripWhenCentered = false;
-            }
-            /*
-            TODO: Come out of film mode if it was a short swipe rather than a fling
-            else if (!mWasCameraCenter && isCameraCenter && mFilmMode) {
-                setFilmMode(false);
-            }
-            */
-
             if (isCameraCenter && !mFilmMode) {
                 // Move into camera in page mode, lock
                 mListener.lockOrientation();
             }
-
-            mWasCameraCenter = isCameraCenter;
         }
 
         @Override
@@ -1279,6 +1261,18 @@ public class PhotoView extends GLView {
         mGestureListener.setSwipingEnabled(enabled);
     }
 
+    private void updateActionBar() {
+        boolean isCamera = mPictures.get(0).isCamera();
+        if (isCamera && !mFilmMode) {
+            // Move into camera in page mode, lock
+            mListener.lockOrientation();
+            mListener.onActionBarAllowed(false);
+        } else {
+            mListener.onActionBarAllowed(true);
+            if (mFilmMode) mListener.onActionBarWanted();
+        }
+    }
+
     public void setFilmMode(boolean enabled) {
         if (mFilmMode == enabled) return;
         mFilmMode = enabled;
@@ -1286,16 +1280,8 @@ public class PhotoView extends GLView {
         mModel.setNeedFullImage(!enabled);
         mModel.setFocusHintDirection(
                 mFilmMode ? Model.FOCUS_HINT_PREVIOUS : Model.FOCUS_HINT_NEXT);
+        updateActionBar();
         mListener.onFilmModeChanged(enabled);
-        boolean isCamera = mPictures.get(0).isCamera();
-        if (isCamera && !enabled) {
-            // Move into camera in page mode, lock
-            mListener.lockOrientation();
-            mListener.onActionBarAllowed(false);
-        } else {
-            mListener.onActionBarAllowed(true);
-            if (enabled) mListener.onActionBarWanted();
-        }
     }
 
     public boolean getFilmMode() {
@@ -1322,7 +1308,6 @@ public class PhotoView extends GLView {
     // move to the camera preview and show controls after resume
     public void resetToFirstPicture() {
         mModel.moveTo(0);
-        mListener.onActionBarAllowed(false);
         setFilmMode(false);
     }
 
