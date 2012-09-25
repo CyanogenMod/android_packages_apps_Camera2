@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2012 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/historyPanel"
+        android:layout_width="200dip"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="invisible" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:padding="2dip"
+            android:text="@string/history"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/operationsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+        </ListView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/resetOperationsButton"
+                style="@style/FilterShowHistoryButton"
+                android:text="@string/reset" />
+
+            <Button
+                android:id="@+id/saveOperationsButton"
+                style="@style/FilterShowHistoryButton"
+                android:text="@string/save" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mainPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layerType="hardware"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="48dip" >
+
+            <Button
+                android:id="@+id/saveButton"
+                style="@style/FilterShowTopButton"
+                android:layout_weight="1"
+                android:gravity="center_vertical|left"
+                android:text="@string/done" />
+
+            <ImageButton
+                android:id="@+id/showOriginalButton"
+                style="@style/FilterShowTopButton"
+                android:src="@drawable/filtershow_button_show_original" />
+
+            <ImageButton
+                android:id="@+id/undoButton"
+                style="@style/FilterShowTopButton"
+                android:src="@drawable/filtershow_button_undo" />
+
+            <ImageButton
+                android:id="@+id/redoButton"
+                style="@style/FilterShowTopButton"
+                android:src="@drawable/filtershow_button_redo" />
+
+            <ImageButton
+                android:id="@+id/operationsButton"
+                style="@style/FilterShowTopButton"
+                android:src="@drawable/filtershow_button_operations" />
+
+        </LinearLayout>
+
+        <com.android.gallery3d.filtershow.imageshow.ImageShow
+            android:id="@+id/imageShow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <com.android.gallery3d.filtershow.imageshow.ImageStraighten
+            android:id="@+id/imageStraighten"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="gone" />
+
+        <com.android.gallery3d.filtershow.ui.ImageCurves
+            android:id="@+id/imageCurves"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="gone" />
+
+        <com.android.gallery3d.filtershow.imageshow.ImageBorder
+            android:id="@+id/imageBorder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:visibility="gone" />
+
+        <HorizontalScrollView
+            android:id="@+id/fxList"
+            android:layout_width="match_parent"
+            android:layout_height="96dip" >
+
+            <LinearLayout
+                android:id="@+id/listFilters"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" >
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <HorizontalScrollView
+            android:id="@+id/bordersList"
+            android:layout_width="match_parent"
+            android:layout_height="96dip"
+            android:visibility="gone" >
+
+            <LinearLayout
+                android:id="@+id/listBorders"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal" >
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <HorizontalScrollView
+            android:id="@+id/gemoetryList"
+            android:layout_width="fill_parent"
+            android:layout_height="96dip"
+            android:background="@color/background_toolbar"
+            android:visibility="gone" >
+
+            <LinearLayout
+                android:id="@+id/listGeometry"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:orientation="horizontal" >
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/straightenButton"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_geometry_straighten"
+                    android:text="@string/straighten" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/cropButton"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_geometry_crop"
+                    android:text="@string/crop" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/rotateButton"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_geometry_rotate"
+                    android:text="@string/rotate" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/flipButton"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_geometry_flip"
+                    android:text="@string/flip" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <HorizontalScrollView
+            android:id="@+id/colorsFxList"
+            android:layout_width="fill_parent"
+            android:layout_height="96dip"
+            android:background="@color/background_toolbar"
+            android:visibility="gone" >
+
+            <LinearLayout
+                android:id="@+id/listColorsFx"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/vignetteButton"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_colors_vignette"
+                    android:text="@string/vignette" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/curvesButtonRGB"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_colors_curve"
+                    android:text="@string/curvesRGB" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/curvesButtonRed"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_colors_curve"
+                    android:text="@string/curvesRed" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/curvesButtonGreen"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_colors_curve"
+                    android:text="@string/curvesGreen" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/curvesButtonBlue"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_colors_curve"
+                    android:text="@string/curvesBlue" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/sharpenButton"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_colors_sharpen"
+                    android:text="@string/sharpen" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/vibranceButton"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_colors_contrast"
+                    android:text="@string/vibrance" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/contrastButton"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_colors_contrast"
+                    android:text="@string/contrast" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/saturationButton"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_colors_contrast"
+                    android:text="@string/saturation" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/exposureButton"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_colors_contrast"
+                    android:text="@string/exposure" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/shadowRecoveryButton"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_colors_contrast"
+                    android:text="@string/shadow_recovery" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dip"
+            android:background="@color/background_main_toolbar" >
+
+            <ImageButton
+                android:id="@+id/fxButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/filtershow_button_background"
+                android:scaleType="centerInside"
+                android:src="@drawable/filtershow_button_fx" />
+
+            <ImageButton
+                android:id="@+id/borderButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/filtershow_button_background"
+                android:padding="2dip"
+                android:scaleType="centerInside"
+                android:src="@drawable/filtershow_button_border" />
+
+            <ImageButton
+                android:id="@+id/geometryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/filtershow_button_background"
+                android:padding="2dip"
+                android:scaleType="centerInside"
+                android:src="@drawable/filtershow_button_geometry" />
+
+            <ImageButton
+                android:id="@+id/colorsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/filtershow_button_background"
+                android:padding="2dip"
+                android:scaleType="centerInside"
+                android:src="@drawable/filtershow_button_colors" />
+        </LinearLayout>
+    </LinearLayout>
+
+</AbsoluteLayout>
