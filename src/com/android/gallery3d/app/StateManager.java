@@ -193,7 +193,7 @@ public class StateManager {
         }
     }
 
-    void switchState(ActivityState oldState,
+    public void switchState(ActivityState oldState,
             Class<? extends ActivityState> klass, Bundle data) {
         Log.v(TAG, "switchState " + oldState + ", " + klass);
         if (oldState != mStack.peek().activityState) {
