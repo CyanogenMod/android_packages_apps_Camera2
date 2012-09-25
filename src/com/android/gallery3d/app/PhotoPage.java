@@ -307,7 +307,6 @@ public class PhotoPage extends ActivityState implements
         if (mSetPathString != null) {
             mAppBridge = (AppBridge) data.getParcelable(KEY_APP_BRIDGE);
             if (mAppBridge != null) {
-                mFlags |= FLAG_HIDE_ACTION_BAR | FLAG_HIDE_STATUS_BAR;
                 mShowBars = false;
 
                 mAppBridge.setServer(this);
@@ -375,12 +374,22 @@ public class PhotoPage extends ActivityState implements
 
                 @Override
                 public void onPhotoChanged(int index, Path item) {
+                    int oldIndex = mCurrentIndex;
                     mCurrentIndex = index;
                     if (item != null) {
                         MediaItem photo = mModel.getMediaItem(0);
                         if (photo != null) updateCurrentPhoto(photo);
                     }
+                    if (mAppBridge != null) {
+                        if (oldIndex == 0 && mCurrentIndex > 0
+                                && !mPhotoView.getFilmMode()) {
+                            mPhotoView.setFilmMode(true);
+                        }
+                    }
                     updateBars();
+
+                    // Reset the timeout for the bars after a swipe
+                    refreshHidingMessage();
                 }
 
                 @Override
@@ -766,11 +775,19 @@ public class PhotoPage extends ActivityState implements
                     data.putString(AlbumPage.KEY_PARENT_MEDIA_PATH,
                             mActivity.getDataManager().getTopSetPath(
                                     DataManager.INCLUDE_ALL));
+
                     // We only show cluster menu in the first AlbumPage in stack
+                    // TODO: Enable this when running from the camera app
                     boolean inAlbum = mActivity.getStateManager().hasStateClass(AlbumPage.class);
-                    data.putBoolean(AlbumPage.KEY_SHOW_CLUSTER_MENU, !inAlbum);
-                    mActivity.getTransitionStore().put(
-                            KEY_RETURN_INDEX_HINT, mCurrentIndex);
+                    data.putBoolean(AlbumPage.KEY_SHOW_CLUSTER_MENU, !inAlbum
+                            && mAppBridge == null);
+
+                    data.putBoolean(PhotoPage.KEY_APP_BRIDGE, mAppBridge != null);
+
+                    // Account for live preview being first item
+                    mActivity.getTransitionStore().put(KEY_RETURN_INDEX_HINT,
+                            mAppBridge != null ? mCurrentIndex - 1 : mCurrentIndex);
+
                     mActivity.getStateManager().startState(AlbumPage.class, data);
                 }
                 return true;
@@ -1108,19 +1125,32 @@ public class PhotoPage extends ActivityState implements
     private void transitionFromAlbumPageIfNeeded() {
         TransitionStore transitions = mActivity.getTransitionStore();
 
-        int resumeIndex = transitions.get(KEY_INDEX_HINT, -1);
-        if (resumeIndex >= 0) {
-            mCurrentIndex = resumeIndex;
-            mModel.setCurrentPhoto((Path)transitions.get(KEY_MEDIA_SET_PATH), mCurrentIndex);
-            mPhotoView.switchToImage(mCurrentIndex);
-        }
-
         int albumPageTransition = transitions.get(
                 KEY_ALBUMPAGE_TRANSITION, MSG_ALBUMPAGE_NONE);
 
-        if(albumPageTransition != MSG_ALBUMPAGE_NONE) {
-            mPhotoView.setFilmMode(mStartInFilmstrip
-                    && albumPageTransition == MSG_ALBUMPAGE_RESUMED);
+        if (albumPageTransition == MSG_ALBUMPAGE_NONE && mAppBridge != null) {
+            // Generally, resuming the PhotoPage when in Camera should
+            // reset to the capture mode to allow quick photo taking
+            mCurrentIndex = 0;
+            mPhotoView.resetToFirstPicture();
+        } else {
+            int resumeIndex = transitions.get(KEY_INDEX_HINT, -1);
+            if (resumeIndex >= 0) {
+                if (mAppBridge != null) {
+                    // Account for live preview being the first item
+                    resumeIndex++;
+                }
+                if (resumeIndex < mMediaSet.getMediaItemCount()) {
+                    mCurrentIndex = resumeIndex;
+                    mModel.moveTo(mCurrentIndex);
+                }
+            }
+        }
+
+        if (albumPageTransition == MSG_ALBUMPAGE_RESUMED) {
+            mPhotoView.setFilmMode(mStartInFilmstrip || mAppBridge != null);
+        } else if (albumPageTransition == MSG_ALBUMPAGE_PICKED) {
+            mPhotoView.setFilmMode(false);
         }
 
         mFadeOutTexture = transitions.get(PreparePageFadeoutTexture.KEY_FADE_TEXTURE);
@@ -1155,10 +1185,11 @@ public class PhotoPage extends ActivityState implements
         mActionBar.setDisplayOptions(
                 ((mSecureAlbum == null) && (mSetPathString != null)), true);
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
-
-        if (mAppBridge != null && !mHasActivityResult) {
-            mPhotoView.resetToFirstPicture();
+        if (!mShowBars) {
+            mActionBar.hide();
+            mActivity.getGLRoot().setLightsOutMode(true);
         }
+
         mHasActivityResult = false;
         mHandler.sendEmptyMessageDelayed(MSG_UNFREEZE_GLROOT, UNFREEZE_GLROOT_TIMEOUT);
     }
