@@ -133,6 +133,10 @@ public class ApiHelper {
     public static final boolean HAS_EFFECTS_RECORDING =
             Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
 
+    // "Background" filter does not have "context" input port in jelly bean.
+    public static final boolean HAS_EFFECTS_RECORDING_CONTEXT_INPUT =
+            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1;
+
     public static final boolean HAS_GET_SUPPORTED_VIDEO_SIZE =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
