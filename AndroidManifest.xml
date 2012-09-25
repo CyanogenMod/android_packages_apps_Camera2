@@ -263,15 +263,9 @@
                 android:taskAffinity="com.android.camera.Camera"
                 android:label="@string/camera_label"
                 android:theme="@style/Theme.Camera"
-                android:icon="@drawable/ic_switch_camera_holo_light"
                 android:configChanges="orientation|screenSize|keyboardHidden"
                 android:clearTaskOnLaunch="true"
                 android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity android:name="com.android.camera.CameraActivity"
