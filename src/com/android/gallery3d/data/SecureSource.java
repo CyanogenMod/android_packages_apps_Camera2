@@ -22,9 +22,11 @@ public class SecureSource extends MediaSource {
     private GalleryApp mApplication;
     private static PathMatcher mMatcher = new PathMatcher();
     private static final int SECURE_ALBUM = 0;
+    private static final int SECURE_UNLOCK = 1;
 
     static {
         mMatcher.add("/secure/all/*", SECURE_ALBUM);
+        mMatcher.add("/secure/unlock", SECURE_UNLOCK);
     }
 
     public SecureSource(GalleryApp context) {
@@ -39,8 +41,14 @@ public class SecureSource extends MediaSource {
     @Override
     public MediaObject createMediaObject(Path path) {
         switch (mMatcher.match(path)) {
-            case SECURE_ALBUM:
-                return new SecureAlbum(path, mApplication);
+            case SECURE_ALBUM: {
+                DataManager dataManager = mApplication.getDataManager();
+                MediaItem unlock = (MediaItem) dataManager.getMediaObject(
+                        "/secure/unlock");
+                return new SecureAlbum(path, mApplication, unlock);
+            }
+            case SECURE_UNLOCK:
+                return new UnlockImage(path, mApplication);
             default:
                 throw new RuntimeException("bad path: " + path);
         }
