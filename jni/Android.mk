@@ -14,4 +14,21 @@ LOCAL_MODULE_TAGS := optional
 
 LOCAL_MODULE := libjni_eglfence
 
+
+include $(BUILD_SHARED_LIBRARY)
+
+# Filtershow
+
+include $(CLEAR_VARS)
+
+LOCAL_LDLIBS 	:= -llog -ljnigraphics
+LOCAL_MODULE    := filters
+LOCAL_SRC_FILES := filters/bw.c \
+		   filters/gradient.c \
+	           filters/saturated.c \
+		   filters/vignette.c
+
+LOCAL_CFLAGS    += -ffast-math -O3 -funroll-loops
+LOCAL_ARM_MODE := arm
+
 include $(BUILD_SHARED_LIBRARY)

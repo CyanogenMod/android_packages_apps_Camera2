@@ -375,5 +375,20 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".filtershow.FilterShowActivity"
+            android:label="@string/title_activity_filter_show"
+             android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
+            <intent-filter>
+                <action android:name="android.intent.action.EDIT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="action_nextgen_edit" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
     </application>
 </manifest>
