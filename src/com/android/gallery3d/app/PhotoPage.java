@@ -659,7 +659,8 @@ public class PhotoPage extends ActivityState implements
     }
 
     private void onUpPressed() {
-        if (mStartInFilmstrip && !mPhotoView.getFilmMode()) {
+        if ((mStartInFilmstrip || mAppBridge != null)
+                && !mPhotoView.getFilmMode()) {
             mPhotoView.setFilmMode(true);
             return;
         }
@@ -681,12 +682,7 @@ public class PhotoPage extends ActivityState implements
                             DataManager.INCLUDE_ALL));
             mActivity.getStateManager().switchState(this, AlbumPage.class, data);
         } else {
-            // Start the real gallery activity to view the camera roll.
-            Uri uri = Uri.parse("content://media/external/file?bucketId="
-                    + MediaSetUtils.CAMERA_BUCKET_ID);
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(uri, ContentResolver.CURSOR_DIR_BASE_TYPE + "/image");
-            ((Activity) mActivity).startActivity(intent);
+            GalleryUtils.startGalleryActivity(mActivity);
         }
     }
 

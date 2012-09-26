@@ -214,7 +214,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     }
 
     private void onUpPressed() {
-        if (mActivity.getStateManager().getStateCount() > 1) {
+        if (mInCameraApp) {
+            GalleryUtils.startGalleryActivity(mActivity);
+        } else if (mActivity.getStateManager().getStateCount() > 1) {
             super.onBackPressed();
         } else if (mParentMediaSetString != null) {
             Bundle data = new Bundle(getData());
