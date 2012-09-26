@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -31,14 +29,17 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 import com.android.gallery3d.R;
 import com.android.gallery3d.util.BucketNames;
 
@@ -47,7 +48,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
-public class TrimVideo extends Activity implements
+public class TrimVideo extends SherlockActivity implements
         MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener,
         ControllerOverlay.Listener {
@@ -83,8 +84,13 @@ public class TrimVideo extends Activity implements
         mContext = getApplicationContext();
         super.onCreate(savedInstanceState);
 
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        requestWindowFeature(Window.FEATURE_ACTION_BAR);
+        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+
+        ActionBar actionBar = getSupportActionBar();
+        int displayOptions = ActionBar.DISPLAY_HOME_AS_UP
+                | ActionBar.DISPLAY_SHOW_TITLE;
+        actionBar.setDisplayOptions(displayOptions, displayOptions);
 
         Intent intent = getIntent();
         mUri = intent.getData();
@@ -209,7 +215,7 @@ public class TrimVideo extends Activity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        MenuInflater inflater = getMenuInflater();
+        MenuInflater inflater = getSupportMenuInflater();
         inflater.inflate(R.menu.trim, menu);
         return true;
     };
