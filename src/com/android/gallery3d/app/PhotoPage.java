@@ -141,6 +141,7 @@ public class PhotoPage extends ActivityState implements
     private volatile boolean mActionBarAllowed = true;
     private GalleryActionBar mActionBar;
     private boolean mIsMenuVisible;
+    private boolean mHaveImageEditor;
     private PhotoPageBottomControls mBottomControls;
     private MediaItem mCurrentPhoto = null;
     private MenuExecutor mMenuExecutor;
@@ -558,7 +559,7 @@ public class PhotoPage extends ActivityState implements
         int supportedOperations = mCurrentPhoto.getSupportedOperations();
         if (mSecureAlbum != null) {
             supportedOperations &= MediaObject.SUPPORT_DELETE;
-        } else if (!GalleryUtils.isEditorAvailable(mActivity, "image/*")) {
+        } else if (!mHaveImageEditor) {
             supportedOperations &= ~MediaObject.SUPPORT_EDIT;
         }
         MenuExecutor.updateMenuOperation(menu, supportedOperations);
@@ -726,6 +727,7 @@ public class PhotoPage extends ActivityState implements
     @Override
     protected boolean onCreateActionBar(Menu menu) {
         mActionBar.createActionBarMenu(R.menu.photo, menu);
+        mHaveImageEditor = GalleryUtils.isEditorAvailable(mActivity, "image/*");
         updateMenuOperations();
         updateTitle();
         return true;
@@ -1198,6 +1200,11 @@ public class PhotoPage extends ActivityState implements
         if (!mShowBars) {
             mActionBar.hide();
             mActivity.getGLRoot().setLightsOutMode(true);
+        }
+        boolean haveImageEditor = GalleryUtils.isEditorAvailable(mActivity, "image/*");
+        if (haveImageEditor != mHaveImageEditor) {
+            mHaveImageEditor = haveImageEditor;
+            updateMenuOperations();
         }
 
         mHasActivityResult = false;
