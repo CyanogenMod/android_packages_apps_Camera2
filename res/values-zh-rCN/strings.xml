@@ -110,7 +110,7 @@
     <string name="no_albums_alert" msgid="4111744447491690896">"没有可用的相册。"</string>
     <string name="empty_album" msgid="4542880442593595494">"没有图片/视频。"</string>
     <string name="picasa_posts" msgid="1497721615718760613">"帖子"</string>
-    <string name="make_available_offline" msgid="5157950985488297112">"允许离线状态下使用"</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"允许离线查看"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"刷新"</string>
     <string name="done" msgid="217672440064436595">"完成"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"第 %1$d 个项（共 %2$d 个）："</string>
