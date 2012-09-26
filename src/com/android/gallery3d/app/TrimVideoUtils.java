@@ -39,9 +39,9 @@ import java.util.List;
 /**
  * Shortens/Crops a track
  */
-public class ShortenExample {
+public class TrimVideoUtils {
 
-    public static void main(String[] args, File src, File dst, int startMs, int endMs) throws IOException {
+    public static void startTrim(File src, File dst, int startMs, int endMs) throws IOException {
         RandomAccessFile randomAccessFile = new RandomAccessFile(src, "r");
         Movie movie = MovieCreator.build(randomAccessFile.getChannel());
 

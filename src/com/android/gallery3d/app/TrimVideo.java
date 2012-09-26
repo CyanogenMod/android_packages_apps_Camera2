@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.app;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -29,17 +31,14 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 import com.android.gallery3d.R;
 import com.android.gallery3d.util.BucketNames;
 
@@ -48,7 +47,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
-public class TrimVideo extends SherlockActivity implements
+public class TrimVideo extends Activity implements
         MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener,
         ControllerOverlay.Listener {
@@ -87,10 +86,23 @@ public class TrimVideo extends SherlockActivity implements
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
-        ActionBar actionBar = getSupportActionBar();
-        int displayOptions = ActionBar.DISPLAY_HOME_AS_UP
-                | ActionBar.DISPLAY_SHOW_TITLE;
+        ActionBar actionBar = getActionBar();
+        int displayOptions = ActionBar.DISPLAY_SHOW_HOME;
+        actionBar.setDisplayOptions(0, displayOptions);
+        displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM;
         actionBar.setDisplayOptions(displayOptions, displayOptions);
+        actionBar.setCustomView(R.layout.trim_menu);
+
+        TextView mSaveVideoTextView = (TextView) findViewById(R.id.start_trim);
+        mSaveVideoTextView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    trimVideo();
+                }
+                return true;
+            }
+        });
 
         Intent intent = getIntent();
         mUri = intent.getData();
@@ -212,14 +224,6 @@ public class TrimVideo extends SherlockActivity implements
         mController.showPaused();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        MenuInflater inflater = getSupportMenuInflater();
-        inflater.inflate(R.menu.trim, menu);
-        return true;
-    };
-
     // Copy from SaveCopyTask.java in terms of how to handle the destination
     // path and filename : querySource() and getSaveDirectory().
     private interface ContentResolverQueryCallback {
@@ -246,27 +250,14 @@ public class TrimVideo extends SherlockActivity implements
     private File getSaveDirectory() {
         final File[] dir = new File[1];
         querySource(new String[] {
-        VideoColumns.DATA }, new ContentResolverQueryCallback() {
+                VideoColumns.DATA }, new ContentResolverQueryCallback() {
 
-                @Override
+            @Override
             public void onCursorResult(Cursor cursor) {
                 dir[0] = new File(cursor.getString(0)).getParentFile();
             }
         });
         return dir[0];
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            finish();
-            return true;
-        } else if (id == R.id.action_trim_video) {
-            trimVideo();
-            return true;
-        }
-        return false;
     }
 
     private void trimVideo() {
@@ -292,7 +283,7 @@ public class TrimVideo extends SherlockActivity implements
             @Override
             public void run() {
                 try {
-                    ShortenExample.main(null, mSrcFile, mDstFile, mTrimStartTime, mTrimEndTime);
+                    TrimVideoUtils.startTrim(mSrcFile, mDstFile, mTrimStartTime, mTrimEndTime);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -354,7 +345,6 @@ public class TrimVideo extends SherlockActivity implements
 
         // Copy some info from the source file.
         querySource(projection, new ContentResolverQueryCallback() {
-
             @Override
             public void onCursorResult(Cursor cursor) {
                 values.put(Video.Media.DATE_TAKEN, cursor.getLong(0));
@@ -404,7 +394,6 @@ public class TrimVideo extends SherlockActivity implements
     @Override
     public void onShown() {
     }
-
 
     @Override
     public void onHidden() {
