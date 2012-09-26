@@ -545,6 +545,7 @@ public class AlbumSetPage extends ActivityState implements
             mActionBar.setTitle(R.string.select_album);
         } else {
             inflater.inflate(R.menu.albumset, menu);
+            boolean wasShowingClusterMenu = mShowClusterMenu;
             mShowClusterMenu = !inAlbum;
             boolean selectAlbums = !inAlbum &&
                     mActionBar.getClusterTypeAction() == FilterUtils.CLUSTER_BY_ALBUM;
@@ -565,6 +566,13 @@ public class AlbumSetPage extends ActivityState implements
 
             mActionBar.setTitle(mTitle);
             mActionBar.setSubtitle(mSubtitle);
+            if (mShowClusterMenu != wasShowingClusterMenu) {
+                if (mShowClusterMenu) {
+                    mActionBar.enableClusterMenu(mSelectedAction, this);
+                } else {
+                    mActionBar.disableClusterMenu(true);
+                }
+            }
         }
         return true;
     }
