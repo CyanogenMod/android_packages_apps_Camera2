@@ -37,6 +37,7 @@ import android.util.Log;
 import android.view.WindowManager;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.app.Gallery;
 import com.android.gallery3d.app.PackagesMonitor;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.data.DataManager;
@@ -237,6 +238,11 @@ public class GalleryUtils {
         Intent intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                         | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    public static void startGalleryActivity(Context context) {
+        Intent intent = new Intent(context, Gallery.class);
         context.startActivity(intent);
     }
 
