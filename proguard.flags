@@ -25,6 +25,12 @@
   public void onProtectiveCurtainClick(...);
 }
 
+-keep class com.android.camera.VideoModule {
+  public boolean isRecording();
+  public void onCancelBgTraining(...);
+  public void onProtectiveCurtainClick(...);
+}
+
 -keep class * extends android.app.Activity {
   @com.android.camera.OnClickAttr <methods>;
 }
