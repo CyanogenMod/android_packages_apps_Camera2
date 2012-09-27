@@ -23,9 +23,14 @@ class FilterSource extends MediaSource {
     private static final String TAG = "FilterSource";
     private static final int FILTER_BY_MEDIATYPE = 0;
     private static final int FILTER_BY_DELETE = 1;
+    private static final int FILTER_BY_EMPTY = 2;
+    private static final int FILTER_BY_EMPTY_ITEM = 3;
+
+    public static final String FILTER_EMPTY_ITEM = "/filter/empty_prompt";
 
     private GalleryApp mApplication;
     private PathMatcher mMatcher;
+    private MediaItem mEmptyItem;
 
     public FilterSource(GalleryApp application) {
         super("filter");
@@ -33,6 +38,11 @@ class FilterSource extends MediaSource {
         mMatcher = new PathMatcher();
         mMatcher.add("/filter/mediatype/*/*", FILTER_BY_MEDIATYPE);
         mMatcher.add("/filter/delete/*", FILTER_BY_DELETE);
+        mMatcher.add("/filter/empty/*", FILTER_BY_EMPTY);
+        mMatcher.add("/filter/empty_item", FILTER_BY_EMPTY_ITEM);
+
+        mEmptyItem = new EmptyAlbumImage(Path.fromString(FILTER_EMPTY_ITEM),
+                mApplication);
     }
 
     // The name we accept are:
@@ -53,6 +63,14 @@ class FilterSource extends MediaSource {
                 String setsName = mMatcher.getVar(0);
                 MediaSet[] sets = dataManager.getMediaSetsFromString(setsName);
                 return new FilterDeleteSet(path, sets[0]);
+            }
+            case FILTER_BY_EMPTY: {
+                String setsName = mMatcher.getVar(0);
+                MediaSet[] sets = dataManager.getMediaSetsFromString(setsName);
+                return new FilterEmptyPromptSet(path, sets[0], mEmptyItem);
+            }
+            case FILTER_BY_EMPTY_ITEM: {
+                return mEmptyItem;
             }
             default:
                 throw new RuntimeException("bad path: " + path);
