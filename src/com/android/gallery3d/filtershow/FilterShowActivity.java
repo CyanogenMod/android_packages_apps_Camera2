@@ -538,7 +538,9 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
                     copy.add(vignette);
                     copy.setHistoryName(vignette.name());
                     copy.setIsFx(false);
+                    filter = copy.getFilter("Vignette");
                     mImageShow.setImagePreset(copy);
+                    mImageShow.setCurrentFilter(filter);
                 }
                 unselectPanelButtons(mColorsPanelButtons);
                 mVignetteButton.setSelected(true);
@@ -620,6 +622,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
                 unselectPanelButtons(mColorsPanelButtons);
                 mSharpenButton.setSelected(true);
                 mImageShow.showToast("Sharpen", true);
+                mImageShow.setCurrentFilter(null);
             }
         };
     }
@@ -633,6 +636,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
                 unselectPanelButtons(mColorsPanelButtons);
                 mContrastButton.setSelected(true);
                 mImageShow.showToast("Contrast", true);
+                mImageShow.setCurrentFilter(null);
             }
         };
     }
