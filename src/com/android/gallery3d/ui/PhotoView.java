@@ -964,9 +964,18 @@ public class PhotoView extends GLView {
 
             if (mFilmMode && !mDownInScrolling) {
                 switchToHitPicture((int) (x + 0.5f), (int) (y + 0.5f));
-                setFilmMode(false);
-                mIgnoreUpEvent = true;
-                return true;
+
+                // If this is a lock screen photo, let the listener handle the
+                // event. Tapping on lock screen photo should take the user
+                // directly to the lock screen.
+                MediaItem item = mModel.getMediaItem(0);
+                int supported = 0;
+                if (item != null) supported = item.getSupportedOperations();
+                if ((supported & MediaItem.SUPPORT_UNLOCK) == 0) {
+                    setFilmMode(false);
+                    mIgnoreUpEvent = true;
+                    return true;
+                }
             }
 
             if (mListener != null) {
