@@ -4,6 +4,7 @@ package com.android.gallery3d.filtershow.imageshow;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.ui.SliderListener;
 import com.android.gallery3d.filtershow.ui.SliderController;
@@ -36,6 +37,7 @@ public class ImageShow extends View implements SliderListener {
 
     protected ImagePreset mImagePreset = null;
     protected ImageLoader mImageLoader = null;
+    private ImageFilter mCurrentFilter = null;
 
     private Bitmap mBackgroundImage = null;
     protected Bitmap mForegroundImage = null;
@@ -58,7 +60,9 @@ public class ImageShow extends View implements SliderListener {
     private Handler mHandler = new Handler();
 
     public void onNewValue(int value) {
-        getImagePreset().setParameter(value);
+        if (mCurrentFilter != null) {
+            mCurrentFilter.setParameter(value);
+        }
         mImageLoader.resetImageForPreset(getImagePreset(), this);
         invalidate();
     }
@@ -83,6 +87,10 @@ public class ImageShow extends View implements SliderListener {
         setMeasuredDimension(parentWidth, parentHeight);
         mSliderController.setWidth(parentWidth);
         mSliderController.setHeight(parentHeight);
+    }
+
+    public void setCurrentFilter(ImageFilter filter) {
+        mCurrentFilter = filter;
     }
 
     public void setAdapter(HistoryAdapter adapter) {
