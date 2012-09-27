@@ -59,7 +59,7 @@ public class UnlockImage extends MediaItem {
         public Bitmap run(JobContext jc) {
             int targetSize = MediaItem.getTargetSize(mType);
             Bitmap bitmap = BitmapFactory.decodeResource(mApplication.getResources(),
-                    R.drawable.ic_lockscreen_unlock_normal);
+                    R.drawable.ic_lockscreen_handle_normal);
 
             if (mType == MediaItem.TYPE_MICROTHUMBNAIL) {
                 bitmap = BitmapUtils.resizeAndCropCenter(bitmap, targetSize, true);
