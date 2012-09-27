@@ -15,8 +15,7 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/action_trim_video"
-            android:icon="@drawable/ic_menu_slideshow_holo_light"
-            android:title="@string/trim_action"
+            android:title="@string/done"
             android:enabled="true"
             android:showAsAction="ifRoom" />
 </menu>
