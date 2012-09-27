@@ -5,8 +5,8 @@ import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
-import com.android.gallery3d.filtershow.ui.PieSlider;
-import com.android.gallery3d.filtershow.ui.PieSliderListener;
+import com.android.gallery3d.filtershow.ui.SliderListener;
+import com.android.gallery3d.filtershow.ui.SliderController;
 import com.android.gallery3d.R;
 import com.android.gallery3d.R.id;
 import com.android.gallery3d.R.layout;
@@ -23,9 +23,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.MeasureSpec;
 import android.widget.ArrayAdapter;
 
-public class ImageShow extends View implements PieSliderListener {
+public class ImageShow extends View implements SliderListener {
 
     private static final String LOGTAG = "ImageShow";
 
@@ -40,7 +41,7 @@ public class ImageShow extends View implements PieSliderListener {
     protected Bitmap mForegroundImage = null;
     protected Bitmap mFilteredImage = null;
 
-    protected PieSlider mPieSlider = new PieSlider();
+    protected SliderController mSliderController = new SliderController();
 
     private HistoryAdapter mAdapter = null;
 
@@ -64,16 +65,24 @@ public class ImageShow extends View implements PieSliderListener {
 
     public ImageShow(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mPieSlider.setListener(this);
+        mSliderController.setListener(this);
         mAdapter = new HistoryAdapter(context, R.layout.filtershow_history_operation_row,
                 R.id.rowTextView);
     }
 
     public ImageShow(Context context) {
         super(context);
-        mPieSlider.setListener(this);
+        mSliderController.setListener(this);
         mAdapter = new HistoryAdapter(context, R.layout.filtershow_history_operation_row,
                 R.id.rowTextView);
+    }
+
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
+        int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
+        setMeasuredDimension(parentWidth, parentHeight);
+        mSliderController.setWidth(parentWidth);
+        mSliderController.setHeight(parentHeight);
     }
 
     public void setAdapter(HistoryAdapter adapter) {
@@ -116,7 +125,7 @@ public class ImageShow extends View implements PieSliderListener {
             paint.setTextSize(128);
             float textWidth = paint.measureText(mToast);
             int toastX = (int) ((getWidth() - textWidth) / 2.0f);
-            int toastY = (int) (getHeight() / 2.0f);
+            int toastY = (int) (getHeight() / 3.0f);
 
             paint.setARGB(255, 0, 0, 0);
             canvas.drawText(mToast, toastX - 2, toastY - 2, paint);
@@ -201,7 +210,7 @@ public class ImageShow extends View implements PieSliderListener {
         canvas.drawLine(0, 0, getWidth(), 0, mPaint);
 
         if (showControls()) {
-            mPieSlider.onDraw(canvas);
+            mSliderController.onDraw(canvas);
         }
 
         drawToast(canvas);
@@ -274,7 +283,7 @@ public class ImageShow extends View implements PieSliderListener {
 
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
-        mPieSlider.onTouchEvent(event);
+        mSliderController.onTouchEvent(event);
         // Log.v(LOGTAG, "invalidate from onTouchEvent");
         invalidate();
         return true;
