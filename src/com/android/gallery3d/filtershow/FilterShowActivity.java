@@ -38,6 +38,9 @@ import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.ImageSmallFilter;
 import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
 import com.android.gallery3d.filtershow.imageshow.ImageZoom;
+import com.android.gallery3d.filtershow.imageshow.ImageFlip;
+import com.android.gallery3d.filtershow.imageshow.ImageCrop;
+import com.android.gallery3d.filtershow.imageshow.ImageRotate;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.presets.ImagePresetBW;
 import com.android.gallery3d.filtershow.presets.ImagePresetBWBlue;
@@ -65,6 +68,9 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private ImageBorder mImageBorders = null;
     private ImageStraighten mImageStraighten = null;
     private ImageZoom mImageZoom = null;
+    private ImageCrop mImageCrop = null;
+    private ImageRotate mImageRotate = null;
+    private ImageFlip mImageFlip = null;
 
     private View mListFx = null;
     private View mListBorders = null;
@@ -123,12 +129,18 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageBorders = (ImageBorder) findViewById(R.id.imageBorder);
         mImageStraighten = (ImageStraighten) findViewById(R.id.imageStraighten);
         mImageZoom = (ImageZoom) findViewById(R.id.imageZoom);
+        mImageCrop = (ImageCrop) findViewById(R.id.imageCrop);
+        mImageRotate = (ImageRotate) findViewById(R.id.imageRotate);
+        mImageFlip = (ImageFlip) findViewById(R.id.imageFlip);
 
         mImageViews.add(mImageShow);
         mImageViews.add(mImageCurves);
         mImageViews.add(mImageBorders);
         mImageViews.add(mImageStraighten);
         mImageViews.add(mImageZoom);
+        mImageViews.add(mImageCrop);
+        mImageViews.add(mImageRotate);
+        mImageViews.add(mImageFlip);
 
         mListFx = findViewById(R.id.fxList);
         mListBorders = findViewById(R.id.bordersList);
@@ -155,11 +167,20 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageStraighten.setMaster(mImageShow);
         mImageZoom.setImageLoader(mImageLoader);
         mImageZoom.setMaster(mImageShow);
+        mImageCrop.setImageLoader(mImageLoader);
+        mImageCrop.setMaster(mImageShow);
+        mImageRotate.setImageLoader(mImageLoader);
+        mImageRotate.setMaster(mImageShow);
+        mImageFlip.setImageLoader(mImageLoader);
+        mImageFlip.setMaster(mImageShow);
 
         mPanelController.addImageView(findViewById(R.id.imageShow));
         mPanelController.addImageView(findViewById(R.id.imageCurves));
         mPanelController.addImageView(findViewById(R.id.imageBorder));
         mPanelController.addImageView(findViewById(R.id.imageStraighten));
+        mPanelController.addImageView(findViewById(R.id.imageCrop));
+        mPanelController.addImageView(findViewById(R.id.imageRotate));
+        mPanelController.addImageView(findViewById(R.id.imageFlip));
         mPanelController.addImageView(findViewById(R.id.imageZoom));
 
         mPanelController.addPanel(mFxButton, mListFx, 0);
@@ -204,12 +225,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         seekBar.setMax(200);
         mImageShow.setSeekBar(seekBar);
         mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
-        mPanelController.setUtilityPanel(findViewById(R.id.filterButtonsList),
+        mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList),
                 findViewById(R.id.compareWithOriginalImage),
                 findViewById(R.id.applyEffect));
         mPanelController.setMasterImage(mImageShow);
         mPanelController.setCurrentPanel(mFxButton);
-
         Intent intent = getIntent();
         String data = intent.getDataString();
         if (data != null) {
@@ -420,6 +440,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     public void invalidateViews() {
         for (ImageShow views : mImageViews) {
             views.invalidate();
+            views.updateImage();
         }
     }
 
