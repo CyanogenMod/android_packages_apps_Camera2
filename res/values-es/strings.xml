@@ -44,7 +44,7 @@
     <string name="select_item" msgid="2816923896202086390">"Seleccionar elemento"</string>
     <string name="select_album" msgid="1557063764849434077">"Seleccionar álbum"</string>
     <string name="select_group" msgid="6744208543323307114">"Seleccionar grupo"</string>
-    <string name="set_image" msgid="2331476809308010401">"Establecer imagen como"</string>
+    <string name="set_image" msgid="2331476809308010401">"Establecer como..."</string>
     <string name="set_wallpaper" msgid="8491121226190175017">"Establecer fondo de pantalla"</string>
     <string name="wallpaper" msgid="140165383777262070">"Estableciendo fondo de pantalla..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Fondo de pantalla"</string>
@@ -110,7 +110,7 @@
     <string name="no_albums_alert" msgid="4111744447491690896">"No hay álbumes disponibles."</string>
     <string name="empty_album" msgid="4542880442593595494">"No hay imágenes ni vídeos disponibles."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Publicaciones"</string>
-    <string name="make_available_offline" msgid="5157950985488297112">"Disponible sin conexión"</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"Disponible sin conex."</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Actualizar"</string>
     <string name="done" msgid="217672440064436595">"Listo"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"Elemento: %1$d de %2$d"</string>
@@ -135,7 +135,7 @@
     <string name="iso" msgid="5028296664327335940">"ISO"</string>
     <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
     <string name="manual" msgid="6608905477477607865">"Manual"</string>
-    <string name="auto" msgid="4296941368722892821">"Automát"</string>
+    <string name="auto" msgid="4296941368722892821">"Automático"</string>
     <string name="flash_on" msgid="7891556231891837284">"Flash activado"</string>
     <string name="flash_off" msgid="1445443413822680010">"Sin flash"</string>
   <plurals name="make_albums_available_offline">
