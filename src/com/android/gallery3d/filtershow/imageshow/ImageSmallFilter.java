@@ -41,7 +41,7 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
         int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
-        setMeasuredDimension((int) (parentHeight * 1.5), parentHeight);
+        setMeasuredDimension(parentHeight, parentHeight);
     }
 
     /*
