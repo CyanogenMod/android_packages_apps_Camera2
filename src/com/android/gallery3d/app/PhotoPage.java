@@ -553,7 +553,9 @@ public class PhotoPage extends ActivityState implements
         setGridButtonVisibility(mPhotoView.getFilmMode());
 
         MenuItem item = menu.findItem(R.id.action_slideshow);
-        item.setVisible((mSecureAlbum == null) && canDoSlideShow());
+        if (item != null) {
+            item.setVisible((mSecureAlbum == null) && canDoSlideShow());
+        }
         if (mCurrentPhoto == null) return;
 
         int supportedOperations = mCurrentPhoto.getSupportedOperations();
