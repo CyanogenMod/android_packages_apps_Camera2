@@ -24,6 +24,7 @@ import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Video;
 
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.util.MediaSetUtils;
 
 import java.util.ArrayList;
 
@@ -49,6 +50,7 @@ public class SecureAlbum extends MediaSet {
     // A placeholder image in the end of secure album. When it is tapped, it
     // will take the user to the lock screen.
     private MediaItem mUnlockItem;
+    private boolean mShowUnlockItem;
 
     public SecureAlbum(Path path, GalleryApp application, MediaItem unlock) {
         super(path, nextVersionNumber());
@@ -56,6 +58,8 @@ public class SecureAlbum extends MediaSet {
         mDataManager = application.getDataManager();
         mNotifier = new ChangeNotifier(this, mWatchUris, application);
         mUnlockItem = unlock;
+        mShowUnlockItem = (!isCameraBucketEmpty(Images.Media.EXTERNAL_CONTENT_URI)
+                || !isCameraBucketEmpty(Video.Media.EXTERNAL_CONTENT_URI));
     }
 
     public void addMediaItem(boolean isVideo, int id) {
@@ -92,13 +96,13 @@ public class SecureAlbum extends MediaSet {
         for (int i = 0; i < buf.length; i++) {
             result.add(buf[i]);
         }
-        result.add(mUnlockItem);
+        if (mShowUnlockItem) result.add(mUnlockItem);
         return result;
     }
 
     @Override
     public int getMediaItemCount() {
-        return mExistingItems.size() + 1;
+        return mExistingItems.size() + (mShowUnlockItem ? 1 : 0);
     }
 
     @Override
@@ -131,6 +135,20 @@ public class SecureAlbum extends MediaSet {
             cursor.close();
         }
         return ids;
+    }
+
+    private boolean isCameraBucketEmpty(Uri baseUri) {
+        Uri uri = baseUri.buildUpon()
+                .appendQueryParameter("limit", "1").build();
+        String[] selection = {String.valueOf(MediaSetUtils.CAMERA_BUCKET_ID)};
+        Cursor cursor = mContext.getContentResolver().query(uri, PROJECTION,
+                "bucket_id = ?", selection, null);
+        if (cursor == null) return true;
+        try {
+            return (cursor.getCount() == 0);
+        } finally {
+            cursor.close();
+        }
     }
 
     private void updateExistingItems() {
