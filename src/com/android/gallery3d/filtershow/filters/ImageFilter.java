@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 
 public class ImageFilter {
 
-    protected int mParameter = 50;
+    protected int mParameter = 0;
 
     public String name() {
         return "Original";
