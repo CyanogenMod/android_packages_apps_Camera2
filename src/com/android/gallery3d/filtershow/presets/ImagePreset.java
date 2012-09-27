@@ -15,7 +15,6 @@ public class ImagePreset {
 
     private static final String LOGTAG = "ImagePreset";
     ImageShow mEndPoint = null;
-    protected int mParameter = 50;
     protected Vector<ImageFilter> mFilters = new Vector<ImageFilter>();
     protected String mName = "Original";
     protected String mHistoryName = "Original";
@@ -175,19 +174,4 @@ public class ImagePreset {
         return bitmap;
     }
 
-    /*
-     * public void applyFilter(Bitmap bitmap) { // do nothing here, subclasses
-     * will implement filtering here } native protected void
-     * nativeApplyGradientFilter(Bitmap bitmap, int w, int h, int[] redGradient,
-     * int[] greenGradient, int[] blueGradient);
-     */
-
-    public void setParameter(int value) {
-        mParameter = value;
-        for (int i = 0; i < mFilters.size(); i++) {
-            ImageFilter filter = mFilters.elementAt(i);
-            filter.setParameter(value);
-        }
-    }
-
-}
+ }
