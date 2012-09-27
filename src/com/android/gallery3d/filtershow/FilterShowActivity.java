@@ -540,8 +540,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
                     copy.setIsFx(false);
                     filter = copy.getFilter("Vignette");
                     mImageShow.setImagePreset(copy);
-                    mImageShow.setCurrentFilter(filter);
                 }
+                mImageShow.setCurrentFilter(filter);
                 unselectPanelButtons(mColorsPanelButtons);
                 mVignetteButton.setSelected(true);
                 invalidateViews();
