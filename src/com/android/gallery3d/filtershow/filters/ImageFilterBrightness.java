@@ -3,23 +3,23 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
 
-public class ImageFilterSaturated extends ImageFilter {
+public class ImageFilterBrightness extends ImageFilter {
 
     public String name() {
-        return "Saturated";
+        return "Brightness";
     }
 
     public ImageFilter copy() {
-        return new ImageFilterSaturated();
+        return new ImageFilterBrightness();
     }
 
-    native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float saturation);
+    native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float bright);
 
     public void apply(Bitmap bitmap) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
         int p = mParameter;
-        float value = 1 +  p / 100.0f;
+        float value = p;
         nativeApplyFilter(bitmap, w, h, value);
     }
 }
