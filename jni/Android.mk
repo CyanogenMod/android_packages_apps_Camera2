@@ -21,8 +21,9 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
-LOCAL_LDLIBS 	:= -llog -ljnigraphics
-LOCAL_MODULE    := filters
+LOCAL_LDFLAGS	:= -llog -ljnigraphics
+LOCAL_SDK_VERSION := 9
+LOCAL_MODULE    := libjni_filtershow_filters
 LOCAL_SRC_FILES := filters/bw.c \
 		   filters/gradient.c \
 	           filters/saturated.c \
