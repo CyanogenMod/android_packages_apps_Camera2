@@ -37,7 +37,8 @@
             android:name="com.android.gallery3d.app.GalleryAppImpl"
             android:theme="@style/Theme.Gallery"
             android:logo="@mipmap/ic_launcher_gallery"
-            android:hardwareAccelerated="true">
+            android:hardwareAccelerated="true"
+            android:largeHeap="true">
         <uses-library android:name="com.google.android.media.effects" android:required="false" />
         <activity android:name="com.android.gallery3d.app.MovieActivity"
                 android:label="@string/movie_view_label"
@@ -223,6 +224,23 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.android.gallery3d.filtershow.FilterShowActivity"
+            android:label="@string/title_activity_filter_show"
+             android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
+            <intent-filter>
+                <action android:name="android.intent.action.EDIT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="action_nextgen_edit" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
+
         <uses-library android:name="com.google.android.media.effects"
                 android:required="false" />
 
@@ -373,21 +391,6 @@
                 android:theme="@style/android:Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".filtershow.FilterShowActivity"
-            android:label="@string/title_activity_filter_show"
-             android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
-            <intent-filter>
-                <action android:name="android.intent.action.EDIT" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/*" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="action_nextgen_edit" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
     </application>
