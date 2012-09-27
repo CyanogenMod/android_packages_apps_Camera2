@@ -719,7 +719,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
     }
 
     static {
-        System.loadLibrary("filters");
+        System.loadLibrary("jni_filtershow_filters");
     }
 
 }
