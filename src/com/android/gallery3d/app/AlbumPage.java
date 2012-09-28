@@ -209,7 +209,11 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             }
             // TODO: fix this regression
             // mAlbumView.savePositions(PositionRepository.getInstance(mActivity));
-            onUpPressed();
+            if (mInCameraApp) {
+                super.onBackPressed();
+            } else {
+                onUpPressed();
+            }
         }
     }
 
