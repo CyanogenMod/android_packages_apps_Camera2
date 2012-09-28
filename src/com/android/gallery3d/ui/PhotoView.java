@@ -971,7 +971,7 @@ public class PhotoView extends GLView {
                 MediaItem item = mModel.getMediaItem(0);
                 int supported = 0;
                 if (item != null) supported = item.getSupportedOperations();
-                if ((supported & MediaItem.SUPPORT_UNLOCK) == 0) {
+                if ((supported & MediaItem.SUPPORT_ACTION) == 0) {
                     setFilmMode(false);
                     mIgnoreUpEvent = true;
                     return true;
