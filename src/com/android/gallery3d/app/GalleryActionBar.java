@@ -324,18 +324,22 @@ public class GalleryActionBar implements OnNavigationListener {
     public void setShareIntents(Intent sharePanoramaIntent, Intent shareIntent) {
         // if panorama sharing is enabled, rename share to share as photo,
         // and move it to overflow
-        if (sharePanoramaIntent != null) {
-            mActivity.invalidateOptionsMenu();
-            mShareMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-            mShareMenuItem.setTitle(
-                    mContext.getResources().getString(R.string.share_as_photo));
-        } else {
-            mSharePanoramaMenuItem.setVisible(false);
-            mShareMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-            mShareMenuItem.setTitle(
-                    mContext.getResources().getString(R.string.share));
+        if (mSharePanoramaMenuItem != null) {
+            if (sharePanoramaIntent != null) {
+                mActivity.invalidateOptionsMenu();
+                mShareMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                mShareMenuItem.setTitle(
+                        mContext.getResources().getString(R.string.share_as_photo));
+            } else {
+                mSharePanoramaMenuItem.setVisible(false);
+                mShareMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                mShareMenuItem.setTitle(
+                        mContext.getResources().getString(R.string.share));
+            }
+            mSharePanoramaActionProvider.setShareIntent(sharePanoramaIntent);
         }
-        mSharePanoramaActionProvider.setShareIntent(sharePanoramaIntent);
-        mShareActionProvider.setShareIntent(shareIntent);
+        if (mShareMenuItem != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
     }
 }
