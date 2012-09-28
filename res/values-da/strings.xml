@@ -56,6 +56,10 @@
     <string name="confirm" msgid="8646870096527848520">"Bekræft"</string>
     <string name="cancel" msgid="3637516880917356226">"Annuller"</string>
     <string name="share" msgid="3619042788254195341">"Del"</string>
+    <!-- no translation found for share_panorama (2569029972820978718) -->
+    <skip />
+    <!-- no translation found for share_as_photo (8959225188897026149) -->
+    <skip />
     <string name="deleted" msgid="6795433049119073871">"Slettet"</string>
     <string name="undo" msgid="2930873956446586313">"FORTRYD"</string>
     <string name="select_all" msgid="3403283025220282175">"Markér alle"</string>
