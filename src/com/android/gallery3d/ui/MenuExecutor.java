@@ -49,11 +49,6 @@ public class MenuExecutor {
     @SuppressWarnings("unused")
     private static final String TAG = "MenuExecutor";
 
-    private static final String MIME_TYPE_IMAGE = "image/*";
-    private static final String MIME_TYPE_VIDEO = "video/*";
-    private static final String MIME_TYPE_PANORAMA = "application/vnd.google.panorama+jpg";
-    private static final String MIME_TYPE_ALL = "*/*";
-
     private static final int MSG_TASK_COMPLETE = 1;
     private static final int MSG_TASK_UPDATE = 2;
     private static final int MSG_TASK_START = 3;
@@ -166,6 +161,7 @@ public class MenuExecutor {
         boolean supportRotate = (supported & MediaObject.SUPPORT_ROTATE) != 0;
         boolean supportCrop = (supported & MediaObject.SUPPORT_CROP) != 0;
         boolean supportTrim = (supported & MediaObject.SUPPORT_TRIM) != 0;
+        boolean supportSharePanorama = (supported & MediaObject.SUPPORT_PANORAMA) != 0;
         boolean supportShare = (supported & MediaObject.SUPPORT_SHARE) != 0;
         boolean supportSetAs = (supported & MediaObject.SUPPORT_SETAS) != 0;
         boolean supportShowOnMap = (supported & MediaObject.SUPPORT_SHOW_ON_MAP) != 0;
@@ -179,6 +175,7 @@ public class MenuExecutor {
         setMenuItemVisible(menu, R.id.action_rotate_cw, supportRotate);
         setMenuItemVisible(menu, R.id.action_crop, supportCrop);
         setMenuItemVisible(menu, R.id.action_trim, supportTrim);
+        setMenuItemVisible(menu, R.id.action_share_panorama, supportSharePanorama);
         setMenuItemVisible(menu, R.id.action_share, supportShare);
         setMenuItemVisible(menu, R.id.action_setas, supportSetAs);
         setMenuItemVisible(menu, R.id.action_show_on_map, supportShowOnMap);
@@ -201,9 +198,7 @@ public class MenuExecutor {
     private Intent getIntentBySingleSelectedPath(String action) {
         DataManager manager = mActivity.getDataManager();
         Path path = getSingleSelectedPath();
-        int support = manager.getSupportedOperations(path);
-        boolean isPanorama = (support & MediaObject.SUPPORT_PANORAMA) != 0;
-        String mimeType = getMimeType(manager.getMediaType(path), isPanorama);
+        String mimeType = getMimeType(manager.getMediaType(path));
         return new Intent(action).setDataAndType(manager.getContentUri(path), mimeType);
     }
 
@@ -331,14 +326,13 @@ public class MenuExecutor {
         mWaitOnStop = waitOnStop;
     }
 
-    public static String getMimeType(int type, boolean isPanorama) {
-        if (isPanorama) return MIME_TYPE_PANORAMA;
+    public static String getMimeType(int type) {
         switch (type) {
             case MediaObject.MEDIA_TYPE_IMAGE :
-                return MIME_TYPE_IMAGE;
+                return GalleryUtils.MIME_TYPE_IMAGE;
             case MediaObject.MEDIA_TYPE_VIDEO :
-                return MIME_TYPE_VIDEO;
-            default: return MIME_TYPE_ALL;
+                return GalleryUtils.MIME_TYPE_VIDEO;
+            default: return GalleryUtils.MIME_TYPE_ALL;
         }
     }
 
