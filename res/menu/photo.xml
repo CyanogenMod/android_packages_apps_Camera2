@@ -19,13 +19,21 @@
             android:icon="@drawable/ic_menu_ptp_holo_light"
             android:showAsAction="always|withText"
             android:visible="false" />
-    <item android:id="@+id/action_share"
+    <!-- Ideally, showAsAction for share_panorama and share should be reversed.
+         But, if share_panorama is set to never, it doesn't seem to get promoted
+         to the action bar and stays on the overflow menu. -->
+    <item android:id="@+id/action_share_panorama"
             android:icon="@drawable/ic_menu_share_holo_light"
-            android:title="@string/share"
-            android:enabled="true"
+            android:title="@string/share_panorama"
             android:visible="false"
             android:actionProviderClass="com.actionbarsherlock.widget.ShareActionProvider"
             android:showAsAction="ifRoom" />
+    <item android:id="@+id/action_share"
+            android:icon="@drawable/ic_menu_share_holo_light"
+            android:title="@string/share"
+            android:visible="false"
+            android:actionProviderClass="com.actionbarsherlock.widget.ShareActionProvider"
+            android:showAsAction="never" />
     <item android:id="@+id/action_grid"
             android:icon="@android:drawable/ic_dialog_dialer"
             android:title="@string/switch_photo_grid"
