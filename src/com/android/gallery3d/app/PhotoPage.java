@@ -485,14 +485,24 @@ public class PhotoPage extends ActivityState implements
     private Intent createShareIntent(Path path) {
         DataManager manager = mActivity.getDataManager();
         int type = manager.getMediaType(path);
-        int support = manager.getSupportedOperations(path);
-        boolean isPanorama = (support & MediaObject.SUPPORT_PANORAMA) != 0;
         Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType(MenuExecutor.getMimeType(type, isPanorama));
+        intent.setType(MenuExecutor.getMimeType(type));
         Uri uri = manager.getContentUri(path);
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         return intent;
+    }
 
+    private Intent createSharePanoramaIntent(Path path) {
+        DataManager manager = mActivity.getDataManager();
+        int supported = manager.getSupportedOperations(path);
+        if ((supported & MediaObject.SUPPORT_PANORAMA) == 0) {
+            return null;
+        }
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType(GalleryUtils.MIME_TYPE_PANORAMA);
+        Uri uri = manager.getContentUri(path);
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        return intent;
     }
 
     private void launchPhotoEditor() {
@@ -512,8 +522,10 @@ public class PhotoPage extends ActivityState implements
 
     private void updateShareURI(Path path) {
         DataManager manager = mActivity.getDataManager();
+        mActionBar.setShareIntents(
+                createSharePanoramaIntent(path),
+                createShareIntent(path));
         Uri uri = manager.getContentUri(path);
-        mActionBar.setShareIntent(createShareIntent(path));
         setNfcBeamPushUri(uri);
     }
 
