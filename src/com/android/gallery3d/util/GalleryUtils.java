@@ -56,9 +56,11 @@ public class GalleryUtils {
     private static final String MAPS_CLASS_NAME = "com.google.android.maps.MapsActivity";
     private static final String CAMERA_LAUNCHER_NAME = "com.android.camera.CameraLauncher";
 
-    private static final String MIME_TYPE_IMAGE = "image/*";
-    private static final String MIME_TYPE_VIDEO = "video/*";
-    private static final String MIME_TYPE_ALL = "*/*";
+    public static final String MIME_TYPE_IMAGE = "image/*";
+    public static final String MIME_TYPE_VIDEO = "video/*";
+    public static final String MIME_TYPE_PANORAMA = "application/vnd.google.panorama360+jpg";
+    public static final String MIME_TYPE_ALL = "*/*";
+
     private static final String DIR_TYPE_IMAGE = "vnd.android.cursor.dir/image";
     private static final String DIR_TYPE_VIDEO = "vnd.android.cursor.dir/video";
 
