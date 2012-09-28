@@ -83,8 +83,15 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
 
         setContentView(R.layout.filtershow_activity);
         ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(R.string.done);
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        actionBar.setCustomView(R.layout.filtershow_actionbar);
+
+        actionBar.getCustomView().setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveImage();
+            }
+        });
 
         mImageLoader = new ImageLoader(getApplicationContext());
 
