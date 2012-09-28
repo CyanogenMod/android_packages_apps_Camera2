@@ -19,7 +19,6 @@ package com.android.gallery3d.app;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -75,7 +74,6 @@ import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.LightCycleHelper;
-import com.android.gallery3d.util.MediaSetUtils;
 
 public class PhotoPage extends ActivityState implements
         PhotoView.Listener, OrientationManager.Listener, AppBridge.Server,
@@ -335,6 +333,11 @@ public class PhotoPage extends ActivityState implements
                     mFlags |= FLAG_SHOW_WHEN_LOCKED;
                 }
 
+                // Don't display "empty album" action item for capture intents
+                if(!mSetPathString.equals("/local/all/0")) {
+                    mSetPathString = "/filter/empty/{"+mSetPathString+"}";
+                }
+
                 // Combine the original MediaSet with the one for ScreenNail
                 // from AppBridge.
                 mSetPathString = "/combo/item/{" + screenNailSetPath +
@@ -533,6 +536,15 @@ public class PhotoPage extends ActivityState implements
         if (mCurrentPhoto == photo) return;
         mCurrentPhoto = photo;
         if (mCurrentPhoto == null) return;
+
+        // If by swiping or deletion the user ends up on an action item
+        // and zoomed in, zoom out so that the context of the action is
+        // more clear
+        if ((photo.getSupportedOperations() & MediaObject.SUPPORT_ACTION) != 0
+                && !mPhotoView.getFilmMode()) {
+            mPhotoView.setFilmMode(true);
+        }
+
         updateMenuOperations();
         updateTitle();
         if (mBottomControls != null) mBottomControls.refresh();
@@ -926,6 +938,7 @@ public class PhotoPage extends ActivityState implements
         boolean viewPanorama = (mSecureAlbum == null) &&
                 ((supported & MediaItem.SUPPORT_PANORAMA) != 0);
         boolean unlock = ((supported & MediaItem.SUPPORT_UNLOCK) != 0);
+        boolean goBack = ((supported & MediaItem.SUPPORT_BACK) != 0);
 
         if (playVideo) {
             // determine if the point is at center (1/6) of the photo view.
@@ -940,6 +953,8 @@ public class PhotoPage extends ActivityState implements
             playVideo(mActivity, item.getPlayUri(), item.getName());
         } else if (viewPanorama) {
             LightCycleHelper.viewPanorama(mActivity, item.getContentUri());
+        } else if (goBack) {
+            onBackPressed();
         } else if (unlock) {
             mActivity.getStateManager().finishState(this);
         } else {
