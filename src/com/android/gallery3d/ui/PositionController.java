@@ -19,9 +19,9 @@ package com.android.gallery3d.ui;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.Log;
+import android.widget.Scroller;
 
 import com.android.gallery3d.app.PhotoPage;
-import com.android.gallery3d.common.OverScroller;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.ui.PhotoView.Size;
 import com.android.gallery3d.util.GalleryUtils;
@@ -128,7 +128,7 @@ class PositionController {
     private FlingScroller mPageScroller;
 
     // This is used by the fling animation (film mode).
-    private OverScroller mFilmScroller;
+    private Scroller mFilmScroller;
 
     // The bound of the stable region that the focused box can stay, see the
     // comments above calculateStableBound() for details.
@@ -211,8 +211,7 @@ class PositionController {
     public PositionController(Context context, Listener listener) {
         mListener = listener;
         mPageScroller = new FlingScroller();
-        mFilmScroller = new OverScroller(context,
-                null /* default interpolator */, 0, 0, false /* no flywheel */);
+        mFilmScroller = new Scroller(context, null, false);
 
         // Initialize the areas.
         initPlatform();
@@ -1540,8 +1539,9 @@ class PositionController {
                 }
             }
             if (dir != EdgeView.INVALID_DIRECTION) {
-                int v = (int) (mFilmScroller.getCurrVelocity() + 0.5f);
-                mListener.onAbsorb(v, dir);
+                // TODO: restore this onAbsorb call
+                //int v = (int) (mFilmScroller.getCurrVelocity() + 0.5f);
+                //mListener.onAbsorb(v, dir);
                 mFilmScroller.forceFinished(true);
                 mCurrentX = mDefaultX;
             }
