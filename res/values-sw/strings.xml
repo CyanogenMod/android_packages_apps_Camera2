@@ -56,6 +56,10 @@
     <string name="confirm" msgid="8646870096527848520">"Thibitisha"</string>
     <string name="cancel" msgid="3637516880917356226">"Ghairi"</string>
     <string name="share" msgid="3619042788254195341">"Shiriki"</string>
+    <!-- no translation found for share_panorama (2569029972820978718) -->
+    <skip />
+    <!-- no translation found for share_as_photo (8959225188897026149) -->
+    <skip />
     <string name="deleted" msgid="6795433049119073871">"Imefutwa"</string>
     <string name="undo" msgid="2930873956446586313">"TENDUA"</string>
     <string name="select_all" msgid="3403283025220282175">"Chagua zote"</string>
@@ -177,7 +181,7 @@
     <string name="folder_download" msgid="7186215137642323932">"Pakua"</string>
     <string name="folder_imported" msgid="2773581395524747099">"Zilizoletwa"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"Picha kiwamba"</string>
-    <string name="help" msgid="7368960711153618354">"Msaada"</string>
+    <string name="help" msgid="7368960711153618354">"Usaidizi"</string>
     <string name="no_external_storage_title" msgid="2408933644249734569">"Hakuna Hifadhi"</string>
     <string name="no_external_storage" msgid="95726173164068417">"Hakuna hifadhi ya nje inayopatikana"</string>
     <string name="switch_photo_filmstrip" msgid="991949386967109493">"Utepe wa filamu"</string>
