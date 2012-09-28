@@ -358,7 +358,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
                             mSharePanoramaMenuItem.setEnabled(true);
                             if ((operation & MediaObject.SUPPORT_PANORAMA) != 0) {
                                 mActivity.invalidateOptionsMenu();
-                                mShareMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                                mShareMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
                                 mShareMenuItem.setTitle(
                                     mActivity.getResources().getString(R.string.share_as_photo));
                             } else {
