@@ -66,6 +66,10 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
         return mImageLoader.getOriginalBitmapSmall();
     }
 
+    public boolean showTitle() {
+        return true;
+    }
+
     public boolean showControls() {
         return false;
     }

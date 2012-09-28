@@ -228,7 +228,7 @@
         <activity
             android:name="com.android.gallery3d.filtershow.FilterShowActivity"
             android:label="@string/title_activity_filter_show"
-             android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
+             android:theme="@android:style/Theme.Holo" >
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />
                 <category android:name="android.intent.category.DEFAULT" />
