@@ -64,7 +64,11 @@ public class SliderController {
     protected int computeValue() {
         int delta = (int) (100 * (getCurrentX() - getCenterX()) / (float) getWidth());
         int value = mOriginalValue + delta;
-        value = Math.max(0, Math.min(value, 100));
+        if (value < -100) {
+            value = -100;
+        } else if (value > 100) {
+            value = 100;
+        }
         setValue(value);
         mToast = "" + value;
         return value;
