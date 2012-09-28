@@ -94,13 +94,10 @@ public class TrimVideo extends Activity implements
         actionBar.setCustomView(R.layout.trim_menu);
 
         TextView mSaveVideoTextView = (TextView) findViewById(R.id.start_trim);
-        mSaveVideoTextView.setOnTouchListener(new View.OnTouchListener() {
+        mSaveVideoTextView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    trimVideo();
-                }
-                return true;
+            public void onClick(View arg0) {
+                trimVideo();
             }
         });
 
