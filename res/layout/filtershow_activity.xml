@@ -67,65 +67,43 @@
         android:layerType="hardware"
         android:orientation="vertical" >
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="48dip" >
+        <FrameLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
 
-            <Button
-                android:id="@+id/saveButton"
-                style="@style/FilterShowTopButton"
-                android:layout_weight="1"
-                android:gravity="center_vertical|left"
-                android:text="@string/done" />
+            <com.android.gallery3d.filtershow.imageshow.ImageShow
+                android:id="@+id/imageShow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.android.gallery3d.filtershow.imageshow.ImageStraighten
+                android:id="@+id/imageStraighten"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <com.android.gallery3d.filtershow.ui.ImageCurves
+                android:id="@+id/imageCurves"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <com.android.gallery3d.filtershow.imageshow.ImageBorder
+                android:id="@+id/imageBorder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
             <ImageButton
                 android:id="@+id/showOriginalButton"
-                style="@style/FilterShowTopButton"
+                android:layout_height="64dip"
+                android:layout_width="64dip"
+                android:scaleType="centerInside"
+                android:layout_gravity="bottom"
                 android:src="@drawable/filtershow_button_show_original" />
-
-            <ImageButton
-                android:id="@+id/undoButton"
-                style="@style/FilterShowTopButton"
-                android:src="@drawable/filtershow_button_undo" />
-
-            <ImageButton
-                android:id="@+id/redoButton"
-                style="@style/FilterShowTopButton"
-                android:src="@drawable/filtershow_button_redo" />
-
-            <ImageButton
-                android:id="@+id/operationsButton"
-                style="@style/FilterShowTopButton"
-                android:src="@drawable/filtershow_button_operations" />
-
-        </LinearLayout>
-
-        <com.android.gallery3d.filtershow.imageshow.ImageShow
-            android:id="@+id/imageShow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <com.android.gallery3d.filtershow.imageshow.ImageStraighten
-            android:id="@+id/imageStraighten"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:visibility="gone" />
-
-        <com.android.gallery3d.filtershow.ui.ImageCurves
-            android:id="@+id/imageCurves"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:visibility="gone" />
-
-        <com.android.gallery3d.filtershow.imageshow.ImageBorder
-            android:id="@+id/imageBorder"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:visibility="gone" />
+            
+        </FrameLayout>
 
         <HorizontalScrollView
             android:id="@+id/fxList"
