@@ -110,6 +110,8 @@
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="share">Share</string>
+    <string name="share_panorama">Share panorama</string>
+    <string name="share_as_photo">Share as photo</string>
 
     <!-- The label shown after an image is deleted [CHAR LIMIT=16] -->
     <string name="deleted">Deleted</string>
