@@ -1,6 +1,6 @@
 
 package com.android.gallery3d.filtershow.ui;
 
-public interface PieSliderListener {
+public interface SliderListener {
     public void onNewValue(int value);
 }
