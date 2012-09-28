@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.webkit.MimeTypeMap;
 
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.util.MediaSetUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -34,6 +35,22 @@ class UriSource extends MediaSource {
     private static final String CHARSET_UTF_8 = "utf-8";
 
     private GalleryApp mApplication;
+
+    //Array of accepted Uri paths
+    private static final String[] ALLOWED_URIS = {
+        "content://downloads/all_downloads/"
+    };
+
+    private static boolean checkIfUriStringAllowed(String uri){
+        boolean ret = false;
+        for(String u : ALLOWED_URIS) {
+                if (uri.startsWith(u)){
+                    ret = true;
+                    break;
+                }
+        }
+        return ret;
+    }
 
     public UriSource(GalleryApp context) {
         super("uri");
@@ -68,6 +85,21 @@ class UriSource extends MediaSource {
         String type = mApplication.getContentResolver().getType(uri);
         if (type == null) type = "image/*";
         return type;
+    }
+
+    @Override
+    public Path getDefaultSetOf(Path item) {
+        MediaObject object = mApplication.getDataManager().getMediaObject(item);
+        if (object instanceof UriImage) {
+            //Check if Uri path is for an item that should appear
+            //in the downloads folder (checks against ALLOWED_URIS).
+            String uri = ((UriImage)object).getContentUri().toString();
+            if(!checkIfUriStringAllowed(uri))
+                return null;
+            return Path.fromString("/local/all").getChild(
+                    MediaSetUtils.DOWNLOAD_BUCKET_ID);
+        }
+        return null;
     }
 
     @Override
