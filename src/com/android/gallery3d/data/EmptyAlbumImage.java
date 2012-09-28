@@ -19,16 +19,16 @@ package com.android.gallery3d.data;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryApp;
 
-public class UnlockImage extends ActionImage {
+public class EmptyAlbumImage extends ActionImage {
     @SuppressWarnings("unused")
-    private static final String TAG = "UnlockImage";
+    private static final String TAG = "EmptyAlbumImage";
 
-    public UnlockImage(Path path, GalleryApp application) {
-        super(path, application, R.drawable.ic_lockscreen_handle_normal);
+    public EmptyAlbumImage(Path path, GalleryApp application) {
+        super(path, application, R.drawable.ic_menu_revert_holo_dark);
     }
 
     @Override
     public int getSupportedOperations() {
-        return super.getSupportedOperations() | SUPPORT_UNLOCK;
+        return super.getSupportedOperations() | SUPPORT_BACK;
     }
 }
