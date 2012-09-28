@@ -56,6 +56,10 @@
     <string name="confirm" msgid="8646870096527848520">"Подтвердить"</string>
     <string name="cancel" msgid="3637516880917356226">"Отмена"</string>
     <string name="share" msgid="3619042788254195341">"Отправить"</string>
+    <!-- no translation found for share_panorama (2569029972820978718) -->
+    <skip />
+    <!-- no translation found for share_as_photo (8959225188897026149) -->
+    <skip />
     <string name="deleted" msgid="6795433049119073871">"Удалено"</string>
     <string name="undo" msgid="2930873956446586313">"ОТМЕНИТЬ"</string>
     <string name="select_all" msgid="3403283025220282175">"Выбрать все"</string>
