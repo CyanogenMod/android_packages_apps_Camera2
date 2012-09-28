@@ -16,6 +16,7 @@ import com.android.gallery3d.R;
 import android.net.Uri;
 import android.os.Bundle;
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -25,6 +26,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -80,6 +82,9 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.filtershow_activity);
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(R.string.done);
 
         mImageLoader = new ImageLoader(getApplicationContext());
 
@@ -132,9 +137,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
 
         mCurvesButtonRGB.setSelected(true);
 
-        // TODO: instead of click listeners, make the activity the single listener and
-        // do a dispatch in the listener callback method.
-        findViewById(R.id.saveButton).setOnClickListener(createOnClickSaveButton());
+        // TODO: instead of click listeners, make the activity the single
+        // listener and do a dispatch in the listener callback method.
         findViewById(R.id.showOriginalButton).setOnTouchListener(createOnTouchShowOriginalButton());
         findViewById(R.id.straightenButton).setOnClickListener(createOnClickStraightenButton());
         findViewById(R.id.cropButton).setOnClickListener(createOnClickCropButton());
@@ -149,15 +153,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
 
         mSharpenButton.setOnClickListener(createOnClickSharpenButton());
         mContrastButton.setOnClickListener(createOnClickContrastButton());
-        findViewById(R.id.undoButton).setOnClickListener(createOnClickUndoButton());
-        findViewById(R.id.redoButton).setOnClickListener(createOnClickRedoButton());
 
         mFxButton.setOnClickListener(createOnClickFxButton());
         mBorderButton.setOnClickListener(createOnClickBorderButton());
         mGeometryButton.setOnClickListener(createOnClickGeometryButton());
         mColorsButton.setOnClickListener(createOnClickColorsButton());
 
-        findViewById(R.id.operationsButton).setOnClickListener(createOnClickOperationsButton());
         findViewById(R.id.resetOperationsButton).setOnClickListener(
                 createOnClickResetOperationsButton());
 
@@ -185,6 +186,50 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
         } else {
             pickImage();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.filtershow_activity_menu, menu);
+        MenuItem item = menu.findItem(R.id.operationsButton);
+        if (mShowingHistoryPanel) {
+            item.setTitle(R.string.hide_history_panel);
+        } else {
+            item.setTitle(R.string.show_history_panel);
+        }
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.undoButton: {
+                HistoryAdapter adapter = (HistoryAdapter) mImageShow
+                        .getListAdapter();
+                int position = adapter.undo();
+                mImageShow.onItemClick(position);
+                mImageShow.showToast("Undo");
+                invalidateViews();
+                return true;
+            }
+            case R.id.redoButton: {
+                HistoryAdapter adapter = (HistoryAdapter) mImageShow
+                        .getListAdapter();
+                int position = adapter.redo();
+                mImageShow.onItemClick(position);
+                mImageShow.showToast("Redo");
+                invalidateViews();
+                return true;
+            }
+            case R.id.operationsButton: {
+                toggleHistoryPanel();
+                return true;
+            }
+            case android.R.id.home: {
+                saveImage();
+                return true;
+            }
+        }
+        return false;
     }
 
     private void fillListImages(LinearLayout listFilters) {
@@ -289,14 +334,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
     // //////////////////////////////////////////////////////////////////////////////
     // Click handlers for the top row buttons
 
-    private OnClickListener createOnClickSaveButton() {
-        return new View.OnClickListener() {
-            public void onClick(View v) {
-                saveImage();
-            }
-        };
-    }
-
     private OnTouchListener createOnTouchShowOriginalButton() {
         return new View.OnTouchListener() {
             @Override
@@ -312,80 +349,56 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
         };
     }
 
-    private OnClickListener createOnClickUndoButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HistoryAdapter adapter = (HistoryAdapter) mImageShow
-                        .getListAdapter();
-                int position = adapter.undo();
-                mImageShow.onItemClick(position);
-                mImageShow.showToast("Undo");
-                invalidateViews();
-            }
-        };
-    }
-
-    private OnClickListener createOnClickRedoButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HistoryAdapter adapter = (HistoryAdapter) mImageShow
-                        .getListAdapter();
-                int position = adapter.redo();
-                mImageShow.onItemClick(position);
-                mImageShow.showToast("Redo");
-                invalidateViews();
-            }
-        };
-    }
-
     // //////////////////////////////////////////////////////////////////////////////
     // history panel...
 
-    private OnClickListener createOnClickOperationsButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final View view = findViewById(R.id.mainPanel);
-                final View viewList = findViewById(R.id.historyPanel);
-                View rootView = viewList.getRootView();
+    private void toggleHistoryPanel() {
+        final View view = findViewById(R.id.mainPanel);
+        final View viewList = findViewById(R.id.historyPanel);
+        View rootView = viewList.getRootView();
 
-                // TODO: use a custom layout instead of absolutelayout...
-                final AbsoluteLayout.LayoutParams lp = (AbsoluteLayout.LayoutParams) view
-                        .getLayoutParams();
-                final AbsoluteLayout.LayoutParams lph = (AbsoluteLayout.LayoutParams) viewList
-                        .getLayoutParams();
-                final int positionHistoryPanel = (int) (rootView.getWidth() - viewList
-                        .getWidth());
-                if (!mShowingHistoryPanel) {
-                    mShowingHistoryPanel = true;
-                    view.animate().setDuration(200).x(-viewList.getWidth())
-                            .withLayer().withEndAction(new Runnable() {
-                                public void run() {
-                                    view.setLayoutParams(lp);
-                                    lph.x = positionHistoryPanel;
-                                    viewList.setLayoutParams(lph);
-                                    viewList.setAlpha(0);
-                                    viewList.setVisibility(View.VISIBLE);
-                                    viewList.animate().setDuration(100)
-                                            .alpha(1.0f).start();
-                                }
-                            }).start();
-                } else {
-                    mShowingHistoryPanel = false;
-                    viewList.setVisibility(View.INVISIBLE);
-                    view.animate().setDuration(200).x(0).withLayer()
-                            .withEndAction(new Runnable() {
-                                public void run() {
-                                    lp.x = 0;
-                                    view.setLayoutParams(lp);
-                                }
-                            }).start();
+        // TODO: use a custom layout instead of absolutelayout...
+        final AbsoluteLayout.LayoutParams lp = (AbsoluteLayout.LayoutParams) view
+                .getLayoutParams();
+        final AbsoluteLayout.LayoutParams lph = (AbsoluteLayout.LayoutParams) viewList
+                .getLayoutParams();
+        final int positionHistoryPanel = (int) (rootView.getWidth() - viewList
+                .getWidth());
+        if (!mShowingHistoryPanel) {
+            mShowingHistoryPanel = true;
+            view.animate().setDuration(200).x(-viewList.getWidth())
+                    .withLayer().withEndAction(new Runnable() {
+                        public void run() {
+                            view.setLayoutParams(lp);
+                            lph.x = positionHistoryPanel;
+                            viewList.setLayoutParams(lph);
+                            viewList.setAlpha(0);
+                            viewList.setVisibility(View.VISIBLE);
+                            viewList.animate().setDuration(100)
+                                    .alpha(1.0f).start();
+                        }
+                    }).start();
+        } else {
+            mShowingHistoryPanel = false;
+            viewList.setVisibility(View.INVISIBLE);
+            view.animate().setDuration(200).x(0).withLayer()
+                    .withEndAction(new Runnable() {
+                        public void run() {
+                            lp.x = 0;
+                            view.setLayoutParams(lp);
+                        }
+                    }).start();
+        }
+        invalidateOptionsMenu();
+    }
 
-                }
-            }
-        };
+    private void resetHistory() {
+        HistoryAdapter adapter = (HistoryAdapter) mImageShow
+                .getListAdapter();
+        adapter.reset();
+        ImagePreset original = new ImagePreset(adapter.getItem(0));
+        mImageShow.setImagePreset(original);
+        invalidateViews();
     }
 
     // reset button in the history panel.
@@ -393,12 +406,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HistoryAdapter adapter = (HistoryAdapter) mImageShow
-                        .getListAdapter();
-                adapter.reset();
-                ImagePreset original = new ImagePreset(adapter.getItem(0));
-                mImageShow.setImagePreset(original);
-                invalidateViews();
+                resetHistory();
             }
         };
     }
@@ -647,12 +655,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
         Resources r = getResources();
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value,
                 r.getDisplayMetrics());
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.filtershow_activity_menu, menu);
-        return true;
     }
 
     public void useImagePreset(ImagePreset preset) {
