@@ -22,9 +22,11 @@
     <string name="save">Save</string>
     <string name="done">Done</string>
     <string name="history">History</string>
+    <string name="show_history_panel">Show History</string>
+    <string name="hide_history_panel">Hide History</string>
     <string name="reset">Reset</string>
-    <string name="undo">Undo</string>
-    <string name="redo">Redo</string>
+    <string name="filtershow_undo">Undo</string>
+    <string name="filtershow_redo">Redo</string>
     <string name="straighten">Straighten</string>
     <string name="crop">Crop</string>
     <string name="rotate">Rotate</string>
