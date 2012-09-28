@@ -30,6 +30,7 @@ import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -89,6 +90,7 @@ public class PhotoPage extends ActivityState implements
     private static final int MSG_WANT_BARS = 7;
     private static final int MSG_REFRESH_GRID_BUTTON = 8;
     private static final int MSG_REFRESH_BOTTOM_CONTROLS = 9;
+    private static final int MSG_ON_CAMERA_CENTER = 10;
 
     private static final int HIDE_BARS_TIMEOUT = 3500;
     private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
@@ -155,6 +157,10 @@ public class PhotoPage extends ActivityState implements
     private boolean mTreatBackAsUp;
     private boolean mStartInFilmstrip;
     private boolean mStartedFromAlbumPage;
+
+    private long mCameraSwitchCutoff = 0;
+    private boolean mSkipUpdateCurrentPhoto = false;
+    private static final long CAMERA_SWITCH_CUTOFF_THRESHOLD_MS = 300;
 
     private RawTexture mFadeOutTexture;
     private Rect mOpenAnimationRect;
@@ -286,6 +292,26 @@ public class PhotoPage extends ActivityState implements
                         mActivity.getGLRoot().unfreeze();
                         break;
                     }
+                    case MSG_ON_CAMERA_CENTER: {
+                        mSkipUpdateCurrentPhoto = false;
+                        boolean updateNeeded = false;
+                        if (!mPhotoView.getFilmMode()) {
+                            lockOrientation();
+                            updateNeeded = true;
+                        } else if (SystemClock.uptimeMillis() < mCameraSwitchCutoff &&
+                                mMediaSet.getMediaItemCount() > 1) {
+                            mPhotoView.switchToImage(1);
+                        } else {
+                            mPhotoView.setFilmMode(false);
+                            updateNeeded = true;
+                        }
+
+                        if (updateNeeded) {
+                            updateBars();
+                            updateCurrentPhoto(mModel.getMediaItem(0));
+                        }
+                        break;
+                    }
                     default: throw new AssertionError(message.what);
                 }
             }
@@ -382,18 +408,32 @@ public class PhotoPage extends ActivityState implements
                 public void onPhotoChanged(int index, Path item) {
                     int oldIndex = mCurrentIndex;
                     mCurrentIndex = index;
-                    if (item != null) {
-                        MediaItem photo = mModel.getMediaItem(0);
-                        if (photo != null) updateCurrentPhoto(photo);
-                    }
+
                     if (mAppBridge != null) {
+                        mPhotoView.setWantCameraCenterCallbacks(true);
+                        if (mCurrentIndex > 0) {
+                            mHandler.removeMessages(MSG_ON_CAMERA_CENTER);
+                            mSkipUpdateCurrentPhoto = false;
+                        }
+
                         if (oldIndex == 0 && mCurrentIndex > 0
                                 && !mPhotoView.getFilmMode()) {
                             mPhotoView.setFilmMode(true);
+                        } else if (oldIndex == 2 && mCurrentIndex == 1) {
+                            mCameraSwitchCutoff = SystemClock.uptimeMillis() +
+                                    CAMERA_SWITCH_CUTOFF_THRESHOLD_MS;
+                            mPhotoView.stopScrolling();
+                        } else if (oldIndex == 1 && mCurrentIndex == 0) {
+                            mSkipUpdateCurrentPhoto = true;
                         }
                     }
-                    updateBars();
-
+                    if (!mSkipUpdateCurrentPhoto) {
+                        if (item != null) {
+                            MediaItem photo = mModel.getMediaItem(0);
+                            if (photo != null) updateCurrentPhoto(photo);
+                        }
+                        updateBars();
+                    }
                     // Reset the timeout for the bars after a swipe
                     refreshHidingMessage();
                 }
@@ -434,6 +474,11 @@ public class PhotoPage extends ActivityState implements
                 mBottomControls = new PhotoPageBottomControls(this, mActivity, galleryRoot);
             }
         }
+    }
+
+    public void onCameraCenter() {
+        mPhotoView.setWantCameraCenterCallbacks(false);
+        mHandler.sendEmptyMessage(MSG_ON_CAMERA_CENTER);
     }
 
     public boolean canDisplayBottomControls() {
