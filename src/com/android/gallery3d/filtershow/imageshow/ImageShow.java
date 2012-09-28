@@ -237,7 +237,7 @@ public class ImageShow extends View implements SliderListener {
     }
 
     public boolean showTitle() {
-        return true;
+        return false;
     }
 
     public void setImagePreset(ImagePreset preset) {
