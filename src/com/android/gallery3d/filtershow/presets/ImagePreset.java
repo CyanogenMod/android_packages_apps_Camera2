@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.util.Log;
 
+import com.android.gallery3d.filtershow.ImageStateAdapter;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterStraighten;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
@@ -36,8 +37,12 @@ public class ImagePreset {
     }
 
     public ImagePreset(ImagePreset source) {
-        for (int i = 0; i < source.mFilters.size(); i++) {
-            add(source.mFilters.elementAt(i).copy());
+        try {
+            for (int i = 0; i < source.mFilters.size(); i++) {
+                add(source.mFilters.elementAt(i).clone());
+            }
+        } catch (java.lang.CloneNotSupportedException e) {
+            Log.v(LOGTAG, "Exception trying to clone: " + e);
         }
         mName = source.name();
         mHistoryName = source.name();
@@ -58,9 +63,6 @@ public class ImagePreset {
         if (mFullRotate != FullRotate.ZERO) {
             // TODO
         }
-
-//        Log.v(LOGTAG, "applyGeometry with rotate " + mStraightenRotate + " and zoom "
- //               + mStraightenZoom);
 
         if (mStraightenRotate != 0) {
             // TODO: keep the instances around
@@ -117,8 +119,8 @@ public class ImagePreset {
         return mHistoryName;
     }
 
-    public void add(ImageFilter preset) {
-        mFilters.add(preset);
+    public void add(ImageFilter filter) {
+        mFilters.add(filter);
     }
 
     public void remove(String filterName) {
@@ -135,7 +137,7 @@ public class ImagePreset {
     public ImageFilter getFilter(String name) {
         for (int i = 0; i < mFilters.size(); i++) {
             ImageFilter filter = mFilters.elementAt(i);
-            if (filter.name().equalsIgnoreCase(name)) {
+            if (filter.getName().equalsIgnoreCase(name)) {
                 return filter;
             }
         }
@@ -158,7 +160,7 @@ public class ImagePreset {
         ImageFilter borderFilter = null;
         for (int i = 0; i < mFilters.size(); i++) {
             ImageFilter filter = mFilters.elementAt(i);
-            if (filter.name().equalsIgnoreCase("Border")) {
+            if (filter.getName().equalsIgnoreCase("Border")) {
                 // TODO don't use the name as an id
                 borderFilter = filter;
             } else {
@@ -174,4 +176,13 @@ public class ImagePreset {
         return bitmap;
     }
 
- }
+    public void fillImageStateAdapter(ImageStateAdapter imageStateAdapter) {
+        if (imageStateAdapter == null) {
+            return;
+        }
+        imageStateAdapter.clear();
+        imageStateAdapter.addAll(mFilters);
+        imageStateAdapter.notifyDataSetChanged();
+    }
+
+}

@@ -10,13 +10,16 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.View.MeasureSpec;
 
 public class ImageSmallFilter extends ImageShow implements View.OnClickListener {
 
+    private static final String LOGTAG = "ImageSmallFilter";
     private FilterShowActivity mController = null;
     private ImageFilter mImageFilter = null;
+    private boolean mShowTitle = true;
 
     public ImageSmallFilter(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -44,11 +47,6 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
         setMeasuredDimension(parentHeight, parentHeight);
     }
 
-    /*
-     * protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-     * setMeasuredDimension(256, 256); }
-     */
-
     public void onClick(View v) {
         if (mController != null) {
             if (mImageFilter != null) {
@@ -66,8 +64,13 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
         return mImageLoader.getOriginalBitmapSmall();
     }
 
+    public void setShowTitle(boolean value) {
+        mShowTitle = value;
+        invalidate();
+    }
+
     public boolean showTitle() {
-        return true;
+        return mShowTitle;
     }
 
     public boolean showControls() {

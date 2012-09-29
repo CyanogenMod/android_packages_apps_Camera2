@@ -5,12 +5,8 @@ import android.graphics.Bitmap;
 
 public class ImageFilterContrast extends ImageFilter {
 
-    public String name() {
-        return "Contrast";
-    }
-
-    public ImageFilter copy() {
-        return new ImageFilterContrast();
+    public ImageFilterContrast() {
+        mName = "Contrast";
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float strength);
