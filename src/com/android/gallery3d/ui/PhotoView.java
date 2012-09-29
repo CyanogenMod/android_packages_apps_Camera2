@@ -128,6 +128,7 @@ public class PhotoView extends GLView {
         public void onUndoDeleteImage();
         public void onCommitDeleteImage();
         public void onFilmModeChanged(boolean enabled);
+        public void onCameraCenter();
     }
 
     // The rules about orientation locking:
@@ -201,6 +202,7 @@ public class PhotoView extends GLView {
 
     private boolean mCancelExtraScalingPending;
     private boolean mFilmMode = false;
+    private boolean mWantCameraCenterCallbacks = false;
     private int mDisplayRotation = 0;
     private int mCompensation = 0;
     private boolean mFullScreenCamera;
@@ -304,6 +306,10 @@ public class PhotoView extends GLView {
         }
     }
 
+    public void stopScrolling() {
+        mPositionController.stopScrolling();
+    }
+
     public void setModel(Model model) {
         mModel = model;
         mTileView.setModel(mModel);
@@ -378,6 +384,10 @@ public class PhotoView extends GLView {
                 default: throw new AssertionError(message.what);
             }
         }
+    }
+
+    public void setWantCameraCenterCallbacks(boolean wanted) {
+        mWantCameraCenterCallbacks = wanted;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -624,12 +634,10 @@ public class PhotoView extends GLView {
             // Holdings except touch-down prevent the transitions.
             if ((mHolding & ~HOLD_TOUCH_DOWN) != 0) return;
 
-            boolean isCenter = mPositionController.isCenter();
-            boolean isCameraCenter = mIsCamera && isCenter && !canUndoLastPicture();
+            boolean isCameraCenter = mIsCamera && mPositionController.isCenter() && !canUndoLastPicture();
 
-            if (isCameraCenter && !mFilmMode) {
-                // Move into camera in page mode, lock
-                mListener.lockOrientation();
+            if (isCameraCenter && mWantCameraCenterCallbacks) {
+                mListener.onCameraCenter();
             }
         }
 
