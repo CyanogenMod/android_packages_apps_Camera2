@@ -239,6 +239,12 @@
                     android:text="@string/saturation" />
 
                 <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/tintButton"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_colors_contrast"
+                    android:text="@string/tint" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
                     android:id="@+id/exposureButton"
                     style="@style/FilterShowBottomButton"
                     android:src="@drawable/filtershow_button_colors_contrast"
