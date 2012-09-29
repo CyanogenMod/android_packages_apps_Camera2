@@ -61,9 +61,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
 
     private ImageButton mVignetteButton = null;
     private ImageButton mCurvesButtonRGB = null;
-    private ImageButton mCurvesButtonRed = null;
-    private ImageButton mCurvesButtonGreen = null;
-    private ImageButton mCurvesButtonBlue = null;
     private ImageButton mSharpenButton = null;
 
     private ImageButton mContrastButton = null;
@@ -135,9 +132,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
 
         mVignetteButton = (ImageButton) findViewById(R.id.vignetteButton);
         mCurvesButtonRGB = (ImageButton) findViewById(R.id.curvesButtonRGB);
-        mCurvesButtonRed = (ImageButton) findViewById(R.id.curvesButtonRed);
-        mCurvesButtonGreen = (ImageButton) findViewById(R.id.curvesButtonGreen);
-        mCurvesButtonBlue = (ImageButton) findViewById(R.id.curvesButtonBlue);
         mSharpenButton = (ImageButton) findViewById(R.id.sharpenButton);
         mVibranceButton = (ImageButton) findViewById(R.id.vibranceButton);
         mContrastButton = (ImageButton) findViewById(R.id.contrastButton);
@@ -148,9 +142,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
 
         mColorsPanelButtons.add(mVignetteButton);
         mColorsPanelButtons.add(mCurvesButtonRGB);
-        mColorsPanelButtons.add(mCurvesButtonRed);
-        mColorsPanelButtons.add(mCurvesButtonGreen);
-        mColorsPanelButtons.add(mCurvesButtonBlue);
         mColorsPanelButtons.add(mSharpenButton);
         mColorsPanelButtons.add(mContrastButton);
         mColorsPanelButtons.add(mSaturationButton);
@@ -158,8 +149,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
         mColorsPanelButtons.add(mVibranceButton);
         mColorsPanelButtons.add(mExposureButton);
         mColorsPanelButtons.add(mShadowRecoveryButton);
-
-        mCurvesButtonRGB.setSelected(true);
 
         // TODO: instead of click listeners, make the activity the single
         // listener and do a dispatch in the listener callback method.
@@ -171,9 +160,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
 
         mVignetteButton.setOnClickListener(createOnClickVignetteButton());
         mCurvesButtonRGB.setOnClickListener(createOnClickCurvesRGBButton());
-        mCurvesButtonRed.setOnClickListener(createOnClickCurvesRedButton());
-        mCurvesButtonGreen.setOnClickListener(createOnClickCurvesGreenButton());
-        mCurvesButtonBlue.setOnClickListener(createOnClickCurvesBlueButton());
 
         mSharpenButton.setOnClickListener(createOnClickSharpenButton());
         mContrastButton.setOnClickListener(createOnClickContrastButton());
@@ -499,7 +485,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
                 hideListViews();
                 unselectBottomPanelButtons();
                 mListColors.setVisibility(View.VISIBLE);
-                mImageCurves.setVisibility(View.VISIBLE);
+                mImageShow.setVisibility(View.VISIBLE);
                 mColorsButton.setSelected(true);
 
                 if (ANIMATE_PANELS) {
@@ -603,54 +589,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
         };
     }
 
-    private OnClickListener createOnClickCurvesRedButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageCurves.setVisibility(View.VISIBLE);
-                unselectPanelButtons(mColorsPanelButtons);
-                mCurvesButtonRed.setSelected(true);
-                mImageCurves.setUseRed(true);
-                mImageCurves.setUseGreen(false);
-                mImageCurves.setUseBlue(false);
-                mImageCurves.reloadCurve();
-            }
-        };
-    }
-
-    private OnClickListener createOnClickCurvesGreenButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageCurves.setVisibility(View.VISIBLE);
-                unselectPanelButtons(mColorsPanelButtons);
-                mCurvesButtonGreen.setSelected(true);
-                mImageCurves.setUseRed(false);
-                mImageCurves.setUseGreen(true);
-                mImageCurves.setUseBlue(false);
-                mImageCurves.reloadCurve();
-            }
-        };
-    }
-
-    private OnClickListener createOnClickCurvesBlueButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageCurves.setVisibility(View.VISIBLE);
-                unselectPanelButtons(mColorsPanelButtons);
-                mCurvesButtonBlue.setSelected(true);
-                mImageCurves.setUseRed(false);
-                mImageCurves.setUseGreen(false);
-                mImageCurves.setUseBlue(true);
-                mImageCurves.reloadCurve();
-            }
-        };
-    }
-
     private OnClickListener createOnClickSharpenButton() {
         return new View.OnClickListener() {
             @Override
@@ -675,7 +613,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
                 ImagePreset preset = mImageShow.getImagePreset();
                 ImageFilter filter = preset.getFilter("Contrast");
                 if (filter == null) {
-                  ImageFilterContrast contrast = new ImageFilterContrast();
+                    ImageFilterContrast contrast = new ImageFilterContrast();
                     ImagePreset copy = new ImagePreset(preset);
                     copy.add(contrast);
                     copy.setHistoryName(contrast.name());
@@ -692,134 +630,134 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
     }
 
     private OnClickListener createOnClickSaturationButton() {
-      return new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-              hideImageViews();
-              mImageShow.setVisibility(View.VISIBLE);
-              mImageShow.setShowControls(true);
-              ImagePreset preset = mImageShow.getImagePreset();
-              ImageFilter filter = preset.getFilter("Saturated");
-              if (filter == null) {
-                ImageFilterSaturated sat = new ImageFilterSaturated();
-                  ImagePreset copy = new ImagePreset(preset);
-                  copy.add(sat);
-                  copy.setHistoryName(sat.name());
-                  copy.setIsFx(false);
-                  filter = copy.getFilter("Saturated");
-                  mImageShow.setImagePreset(copy);
-              }
-              mImageShow.setCurrentFilter(filter);
-              unselectPanelButtons(mColorsPanelButtons);
-              mSaturationButton.setSelected(true);
-              invalidateViews();
-          }
-      };
-  }
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideImageViews();
+                mImageShow.setVisibility(View.VISIBLE);
+                mImageShow.setShowControls(true);
+                ImagePreset preset = mImageShow.getImagePreset();
+                ImageFilter filter = preset.getFilter("Saturated");
+                if (filter == null) {
+                    ImageFilterSaturated sat = new ImageFilterSaturated();
+                    ImagePreset copy = new ImagePreset(preset);
+                    copy.add(sat);
+                    copy.setHistoryName(sat.name());
+                    copy.setIsFx(false);
+                    filter = copy.getFilter("Saturated");
+                    mImageShow.setImagePreset(copy);
+                }
+                mImageShow.setCurrentFilter(filter);
+                unselectPanelButtons(mColorsPanelButtons);
+                mSaturationButton.setSelected(true);
+                invalidateViews();
+            }
+        };
+    }
 
     private OnClickListener createOnClickTintButton() {
-      return new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-              hideImageViews();
-              mImageShow.setVisibility(View.VISIBLE);
-              mImageShow.setShowControls(true);
-              ImagePreset preset = mImageShow.getImagePreset();
-              ImageFilter filter = preset.getFilter("Hue");
-              if (filter == null) {
-                ImageFilterHue contrast = new ImageFilterHue();
-                  ImagePreset copy = new ImagePreset(preset);
-                  copy.add(contrast);
-                  copy.setHistoryName(contrast.name());
-                  copy.setIsFx(false);
-                  filter = copy.getFilter("Hue");
-                  mImageShow.setImagePreset(copy);
-              }
-              mImageShow.setCurrentFilter(filter);
-              unselectPanelButtons(mColorsPanelButtons);
-              mTintButton.setSelected(true);
-              invalidateViews();
-          }
-      };
-  }
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideImageViews();
+                mImageShow.setVisibility(View.VISIBLE);
+                mImageShow.setShowControls(true);
+                ImagePreset preset = mImageShow.getImagePreset();
+                ImageFilter filter = preset.getFilter("Hue");
+                if (filter == null) {
+                    ImageFilterHue contrast = new ImageFilterHue();
+                    ImagePreset copy = new ImagePreset(preset);
+                    copy.add(contrast);
+                    copy.setHistoryName(contrast.name());
+                    copy.setIsFx(false);
+                    filter = copy.getFilter("Hue");
+                    mImageShow.setImagePreset(copy);
+                }
+                mImageShow.setCurrentFilter(filter);
+                unselectPanelButtons(mColorsPanelButtons);
+                mTintButton.setSelected(true);
+                invalidateViews();
+            }
+        };
+    }
 
     private OnClickListener createOnClickVibranceButton() {
-      return new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-              hideImageViews();
-              mImageShow.setVisibility(View.VISIBLE);
-              mImageShow.setShowControls(true);
-              ImagePreset preset = mImageShow.getImagePreset();
-              ImageFilter filter = preset.getFilter("Hue");
-              if (filter == null) {
-                ImageFilterHue contrast = new ImageFilterHue();
-                  ImagePreset copy = new ImagePreset(preset);
-                  copy.add(contrast);
-                  copy.setHistoryName(contrast.name());
-                  copy.setIsFx(false);
-                  filter = copy.getFilter("Hue");
-                  mImageShow.setImagePreset(copy);
-              }
-              mImageShow.setCurrentFilter(filter);
-              unselectPanelButtons(mColorsPanelButtons);
-              mVibranceButton.setSelected(true);
-              invalidateViews();
-          }
-      };
-  }
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideImageViews();
+                mImageShow.setVisibility(View.VISIBLE);
+                mImageShow.setShowControls(true);
+                ImagePreset preset = mImageShow.getImagePreset();
+                ImageFilter filter = preset.getFilter("Hue");
+                if (filter == null) {
+                    ImageFilterHue contrast = new ImageFilterHue();
+                    ImagePreset copy = new ImagePreset(preset);
+                    copy.add(contrast);
+                    copy.setHistoryName(contrast.name());
+                    copy.setIsFx(false);
+                    filter = copy.getFilter("Hue");
+                    mImageShow.setImagePreset(copy);
+                }
+                mImageShow.setCurrentFilter(filter);
+                unselectPanelButtons(mColorsPanelButtons);
+                mVibranceButton.setSelected(true);
+                invalidateViews();
+            }
+        };
+    }
 
     private OnClickListener createOnClickExposureButton() {
-      return new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-              hideImageViews();
-              mImageShow.setVisibility(View.VISIBLE);
-              mImageShow.setShowControls(true);
-              ImagePreset preset = mImageShow.getImagePreset();
-              ImageFilter filter = preset.getFilter("Brightness");
-              if (filter == null) {
-                ImageFilterBrightness bright = new ImageFilterBrightness();
-                  ImagePreset copy = new ImagePreset(preset);
-                  copy.add(bright);
-                  copy.setHistoryName(bright.name());
-                  copy.setIsFx(false);
-                  filter = copy.getFilter("Brightness");
-                  mImageShow.setImagePreset(copy);
-              }
-              mImageShow.setCurrentFilter(filter);
-              unselectPanelButtons(mColorsPanelButtons);
-              mExposureButton.setSelected(true);
-              invalidateViews();
-          }
-      };
-  }
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideImageViews();
+                mImageShow.setVisibility(View.VISIBLE);
+                mImageShow.setShowControls(true);
+                ImagePreset preset = mImageShow.getImagePreset();
+                ImageFilter filter = preset.getFilter("Brightness");
+                if (filter == null) {
+                    ImageFilterBrightness bright = new ImageFilterBrightness();
+                    ImagePreset copy = new ImagePreset(preset);
+                    copy.add(bright);
+                    copy.setHistoryName(bright.name());
+                    copy.setIsFx(false);
+                    filter = copy.getFilter("Brightness");
+                    mImageShow.setImagePreset(copy);
+                }
+                mImageShow.setCurrentFilter(filter);
+                unselectPanelButtons(mColorsPanelButtons);
+                mExposureButton.setSelected(true);
+                invalidateViews();
+            }
+        };
+    }
 
     private OnClickListener createOnClickShadowRecoveryButton() {
-      return new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-              hideImageViews();
-              mImageShow.setVisibility(View.VISIBLE);
-              mImageShow.setShowControls(true);
-              ImagePreset preset = mImageShow.getImagePreset();
-              ImageFilter filter = preset.getFilter("Hue");
-              if (filter == null) {
-                ImageFilterHue contrast = new ImageFilterHue();
-                  ImagePreset copy = new ImagePreset(preset);
-                  copy.add(contrast);
-                  copy.setHistoryName(contrast.name());
-                  copy.setIsFx(false);
-                  filter = copy.getFilter("Hue");
-                  mImageShow.setImagePreset(copy);
-              }
-              mImageShow.setCurrentFilter(filter);
-              unselectPanelButtons(mColorsPanelButtons);
-              mShadowRecoveryButton.setSelected(true);
-              invalidateViews();
-          }
-      };
-  }
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideImageViews();
+                mImageShow.setVisibility(View.VISIBLE);
+                mImageShow.setShowControls(true);
+                ImagePreset preset = mImageShow.getImagePreset();
+                ImageFilter filter = preset.getFilter("Hue");
+                if (filter == null) {
+                    ImageFilterHue contrast = new ImageFilterHue();
+                    ImagePreset copy = new ImagePreset(preset);
+                    copy.add(contrast);
+                    copy.setHistoryName(contrast.name());
+                    copy.setIsFx(false);
+                    filter = copy.getFilter("Hue");
+                    mImageShow.setImagePreset(copy);
+                }
+                mImageShow.setCurrentFilter(filter);
+                unselectPanelButtons(mColorsPanelButtons);
+                mShadowRecoveryButton.setSelected(true);
+                invalidateViews();
+            }
+        };
+    }
 
     // //////////////////////////////////////////////////////////////////////////////
 
