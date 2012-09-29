@@ -43,4 +43,6 @@ typedef unsigned int Color;
 #define ALPHA i+3
 #define CLAMP(c) (MAX(0, MIN(255, c)))
 
+unsigned char __inline__ clamp(int c);
+
 #endif // FILTERS_H
