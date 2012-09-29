@@ -68,9 +68,9 @@
         android:orientation="vertical" >
 
         <FrameLayout
-            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
 
             <com.android.gallery3d.filtershow.imageshow.ImageShow
                 android:id="@+id/imageShow"
@@ -97,12 +97,11 @@
 
             <ImageButton
                 android:id="@+id/showOriginalButton"
-                android:layout_height="64dip"
                 android:layout_width="64dip"
-                android:scaleType="centerInside"
+                android:layout_height="64dip"
                 android:layout_gravity="bottom"
+                android:scaleType="centerInside"
                 android:src="@drawable/filtershow_button_show_original" />
-            
         </FrameLayout>
 
         <HorizontalScrollView
@@ -191,40 +190,10 @@
                     android:text="@string/vignette" />
 
                 <com.android.gallery3d.filtershow.ui.ImageButtonTitle
-                    android:id="@+id/curvesButtonRGB"
-                    style="@style/FilterShowBottomButton"
-                    android:src="@drawable/filtershow_button_colors_curve"
-                    android:text="@string/curvesRGB" />
-
-                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
-                    android:id="@+id/curvesButtonRed"
-                    style="@style/FilterShowBottomButton"
-                    android:src="@drawable/filtershow_button_colors_curve"
-                    android:text="@string/curvesRed" />
-
-                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
-                    android:id="@+id/curvesButtonGreen"
-                    style="@style/FilterShowBottomButton"
-                    android:src="@drawable/filtershow_button_colors_curve"
-                    android:text="@string/curvesGreen" />
-
-                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
-                    android:id="@+id/curvesButtonBlue"
-                    style="@style/FilterShowBottomButton"
-                    android:src="@drawable/filtershow_button_colors_curve"
-                    android:text="@string/curvesBlue" />
-
-                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
-                    android:id="@+id/sharpenButton"
-                    style="@style/FilterShowBottomButton"
-                    android:src="@drawable/filtershow_button_colors_sharpen"
-                    android:text="@string/sharpen" />
-
-                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
-                    android:id="@+id/vibranceButton"
+                    android:id="@+id/exposureButton"
                     style="@style/FilterShowBottomButton"
                     android:src="@drawable/filtershow_button_colors_contrast"
-                    android:text="@string/vibrance" />
+                    android:text="@string/exposure" />
 
                 <com.android.gallery3d.filtershow.ui.ImageButtonTitle
                     android:id="@+id/contrastButton"
@@ -245,16 +214,29 @@
                     android:text="@string/tint" />
 
                 <com.android.gallery3d.filtershow.ui.ImageButtonTitle
-                    android:id="@+id/exposureButton"
+                    android:id="@+id/curvesButtonRGB"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_colors_curve"
+                    android:text="@string/curvesRGB" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/vibranceButton"
                     style="@style/FilterShowBottomButton"
                     android:src="@drawable/filtershow_button_colors_contrast"
-                    android:text="@string/exposure" />
+                    android:text="@string/vibrance" />
+
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/sharpenButton"
+                    style="@style/FilterShowBottomButton"
+                    android:src="@drawable/filtershow_button_colors_sharpen"
+                    android:text="@string/sharpen" />
 
                 <com.android.gallery3d.filtershow.ui.ImageButtonTitle
                     android:id="@+id/shadowRecoveryButton"
                     style="@style/FilterShowBottomButton"
                     android:src="@drawable/filtershow_button_colors_contrast"
                     android:text="@string/shadow_recovery" />
+
             </LinearLayout>
         </HorizontalScrollView>
 
