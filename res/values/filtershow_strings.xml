@@ -41,6 +41,7 @@
     <string name="vibrance">Vibrance</string>
     <string name="exposure">Exposure</string>
     <string name="saturation">Saturation</string>
+    <string name="tint">Tint</string>
     <string name="shadow_recovery">Shadow Recovery</string>
     <string name="curves_channel">Channel</string>
     <string name="curves_channel_rgb">RGB</string>
