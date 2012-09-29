@@ -32,7 +32,7 @@
     <string name="rotate">Rotate</string>
     <string name="flip">Flip</string>
     <string name="vignette">Vignette</string>
-    <string name="curvesRGB">Curves (RGB)</string>
+    <string name="curvesRGB">Curves</string>
     <string name="curvesRed">Curves (Red)</string>
     <string name="curvesGreen">Curves (Green)</string>
     <string name="curvesBlue">Curves (Blue)</string>
