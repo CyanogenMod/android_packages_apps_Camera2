@@ -130,8 +130,7 @@ public class ApiHelper {
     public static final boolean HAS_MOTION_EVENT_TRANSFORM =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
-    public static final boolean HAS_EFFECTS_RECORDING =
-            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
+    public static final boolean HAS_EFFECTS_RECORDING = false;
 
     // "Background" filter does not have "context" input port in jelly bean.
     public static final boolean HAS_EFFECTS_RECORDING_CONTEXT_INPUT =
