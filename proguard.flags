@@ -50,5 +50,5 @@
 -keepattributes *Annotation*
 
 # Required for mp4parser
--keep public class * extends com.coremedia.iso.boxes.AbstractBox
+-keep public class * implements com.coremedia.iso.boxes.Box
 
