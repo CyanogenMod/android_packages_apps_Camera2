@@ -38,4 +38,6 @@
     <color name="bitmap_screennail_placeholder">#333</color>
 
     <color name="slideshow_background">#1A1A1A</color>
+
+    <color name="button_dark_transparent_background">#6000</color>
 </resources>

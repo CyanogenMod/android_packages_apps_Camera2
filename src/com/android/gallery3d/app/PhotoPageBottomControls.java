@@ -51,8 +51,8 @@ public class PhotoPageBottomControls implements OnClickListener {
 
     private static final int CONTROL_ANIM_DURATION_MS = 150;
     private static Animation getControlAnimForVisibility(boolean visible) {
-        Animation anim = visible ? new ScaleAnimation(0, 1, 1, 1)
-                : new ScaleAnimation(1, 0, 1, 1);
+        Animation anim = visible ? new AlphaAnimation(0f, 1f)
+                : new AlphaAnimation(1f, 0f);
         anim.setDuration(CONTROL_ANIM_DURATION_MS);
         return anim;
     }
