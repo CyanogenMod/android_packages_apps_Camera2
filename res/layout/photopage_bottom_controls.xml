@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/photopage_bottom_controls"
+        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -9,14 +10,26 @@
         android:visibility="gone">
         <ImageButton
                 android:id="@+id/photopage_bottom_control_edit"
-                android:src="@drawable/photoeditor_artistic"
+                android:src="@drawable/ic_photoeditor_effects"
+                android:background="@drawable/photopage_bottom_button_background"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
                 android:visibility="gone"/>
         <ImageButton
                 android:id="@+id/photopage_bottom_control_panorama"
-                android:src="@android:drawable/ic_dialog_map"
+                android:src="@drawable/ic_menu_photosphere"
+                android:background="@drawable/photopage_bottom_button_background"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
                 android:visibility="gone"/>
-</LinearLayout>
+</RelativeLayout>
