@@ -152,6 +152,10 @@ public class StateManager {
     }
 
     void finishState(ActivityState state) {
+        finishState(state, true);
+    }
+
+    void finishState(ActivityState state, boolean fireOnPause) {
         // The finish() request could be rejected (only happens under Monkey),
         // If it is rejected, we won't close the last page.
         if (mStack.size() == 1) {
@@ -182,7 +186,7 @@ public class StateManager {
         // Remove the top state.
         mStack.pop();
         state.mIsFinishing = true;
-        if (mIsResumed) state.onPause();
+        if (mIsResumed && fireOnPause) state.onPause();
         mActivity.getGLRoot().setContentPane(null);
         state.onDestroy();
 
