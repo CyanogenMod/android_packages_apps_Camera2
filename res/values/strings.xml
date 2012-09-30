@@ -463,4 +463,19 @@
 
     <!-- Label for album grid button -->
     <string name="switch_photo_grid">Grid</string>
+
+    <!-- The tilte of a dialog showing trimming in progress. [CHAR LIMIT=20] -->
+    <string name="trimming">Trimming</string>
+
+    <!-- The content of a dialog showing trimming in progress. [CHAR LIMIT=30] -->
+    <string name="please_wait">Please wait</string>
+
+    <!-- Toast after the trimming is done. [CHAR LIMIT=50] -->
+    <string name="save_into">Save trimmed video into</string>
+
+    <!-- Toast if the trimmed video is too short to trim. [CHAR LIMIT=80] -->
+    <string name="trim_too_short">Can not trim : target video is too short</string>
+
+    <!-- Toast if the trimmed video is the same as the original one. [CHAR LIMIT=80] -->
+    <string name="trim_too_long">Did not trim : the same length as origin</string>
 </resources>

@@ -31,7 +31,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -258,6 +257,21 @@ public class TrimVideo extends Activity implements
     }
 
     private void trimVideo() {
+        int delta = mTrimEndTime - mTrimStartTime;
+        // Considering that we only trim at sync frame, we don't want to trim
+        // when the time interval is too short or too close to the origin.
+        if (delta < 100 ) {
+            Toast.makeText(getApplicationContext(),
+                getString(R.string.trim_too_short),
+                Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (Math.abs(mVideoView.getDuration() - delta) < 100) {
+            Toast.makeText(getApplicationContext(),
+                getString(R.string.trim_too_long),
+                Toast.LENGTH_SHORT).show();
+            return;
+        }
         // Use the default save directory if the source directory cannot be
         // saved.
         mSaveDirectory = getSaveDirectory();
@@ -281,6 +295,8 @@ public class TrimVideo extends Activity implements
             public void run() {
                 try {
                     TrimVideoUtils.startTrim(mSrcFile, mDstFile, mTrimStartTime, mTrimEndTime);
+                    // Update the database for adding a new video file.
+                    insertContent(mDstFile);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -288,16 +304,19 @@ public class TrimVideo extends Activity implements
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Toast.makeText(getApplicationContext(),
+                            getString(R.string.save_into) + " " + saveFolderName,
+                            Toast.LENGTH_SHORT)
+                            .show();
                         // TODO: change trimming into a service to avoid
                         // this progressDialog and add notification properly.
                         if (mProgress != null) {
                             mProgress.dismiss();
-                            // Update the database for adding a new video file.
-                            insertContent(mDstFile);
-                            Toast.makeText(getApplicationContext(),
-                                    "Saved into " + saveFolderName, Toast.LENGTH_SHORT)
-                                    .show();
                             mProgress = null;
+                            // Show the result only when the activity not stopped.
+                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+                            intent.setDataAndTypeAndNormalize(Uri.fromFile(mDstFile), "video/*");
+                            startActivity(intent);
                         }
                     }
                 });
@@ -309,8 +328,8 @@ public class TrimVideo extends Activity implements
         // create a background thread to trim the video.
         // and show the progress.
         mProgress = new ProgressDialog(this);
-        mProgress.setTitle("Trimming");
-        mProgress.setMessage("please wait");
+        mProgress.setTitle(getString(R.string.trimming));
+        mProgress.setMessage(getString(R.string.please_wait));
         // TODO: make this cancelable.
         mProgress.setCancelable(false);
         mProgress.setCanceledOnTouchOutside(false);
