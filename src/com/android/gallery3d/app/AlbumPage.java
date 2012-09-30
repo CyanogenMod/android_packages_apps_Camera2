@@ -436,7 +436,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         // view now
         if (mInCameraApp) {
             if (mActivity.getStateManager().getTopState() == this)
-                mActivity.getStateManager().finishState(this);
+                mActivity.getStateManager().finishState(this, false);
         }
     }
 
