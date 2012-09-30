@@ -217,11 +217,6 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
     }
 
     @Override
-    public boolean usePanoramaViewer(int offset) {
-        return mItem.usePanoramaViewer();
-    }
-
-    @Override
     public boolean isDeletable(int offset) {
         return (mItem.getSupportedOperations() & MediaItem.SUPPORT_DELETE) != 0;
     }

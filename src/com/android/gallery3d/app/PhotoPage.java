@@ -980,8 +980,6 @@ public class PhotoPage extends ActivityState implements
         int supported = item.getSupportedOperations();
         boolean playVideo = (mSecureAlbum == null) &&
                 ((supported & MediaItem.SUPPORT_PLAY) != 0);
-        boolean viewPanorama = (mSecureAlbum == null) &&
-                ((supported & MediaItem.SUPPORT_PANORAMA) != 0);
         boolean unlock = ((supported & MediaItem.SUPPORT_UNLOCK) != 0);
         boolean goBack = ((supported & MediaItem.SUPPORT_BACK) != 0);
 
@@ -996,8 +994,6 @@ public class PhotoPage extends ActivityState implements
 
         if (playVideo) {
             playVideo(mActivity, item.getPlayUri(), item.getName());
-        } else if (viewPanorama) {
-            LightCycleHelper.viewPanorama(mActivity, item.getContentUri());
         } else if (goBack) {
             onBackPressed();
         } else if (unlock) {
