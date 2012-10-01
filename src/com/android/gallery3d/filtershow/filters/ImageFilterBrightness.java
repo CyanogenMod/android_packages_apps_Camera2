@@ -5,12 +5,8 @@ import android.graphics.Bitmap;
 
 public class ImageFilterBrightness extends ImageFilter {
 
-    public String name() {
-        return "Brightness";
-    }
-
-    public ImageFilter copy() {
-        return new ImageFilterBrightness();
+    public ImageFilterBrightness() {
+        mName = "Brightness";
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float bright);

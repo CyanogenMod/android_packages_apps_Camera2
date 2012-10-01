@@ -4,14 +4,18 @@ package com.android.gallery3d.filtershow.filters;
 import android.graphics.Bitmap;
 
 public class ImageFilterHue extends ImageFilter {
-    private ColorSpaceMatrix cmatrix = new ColorSpaceMatrix();
+    private ColorSpaceMatrix cmatrix = null;
 
-    public String name() {
-        return "Hue";
+    public ImageFilterHue() {
+        mName = "Hue";
+        cmatrix = new ColorSpaceMatrix();
     }
 
-    public ImageFilter copy() {
-        return new ImageFilterHue();
+    @Override
+    public ImageFilter clone() throws CloneNotSupportedException {
+        ImageFilterHue filter = (ImageFilterHue) super.clone();
+        filter.cmatrix = new ColorSpaceMatrix(cmatrix);
+        return filter;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float []matrix);
