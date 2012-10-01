@@ -15,15 +15,18 @@ public class ImageFilterCurves extends ImageFilter {
     private boolean mUseRed = true;
     private boolean mUseGreen = true;
     private boolean mUseBlue = true;
-    private String mName = "Curves";
     private Spline mSpline = null;
 
-    public String name() {
-        return mName;
+    public ImageFilterCurves() {
+        mName = "Curves";
     }
 
-    public void setName(String name) {
-        mName = name;
+    @Override
+    public ImageFilter clone() throws CloneNotSupportedException {
+        ImageFilterCurves filter = (ImageFilterCurves) super.clone();
+        filter.setCurve(mCurve);
+        filter.setSpline(new Spline(mSpline));
+        return filter;
     }
 
     public void setUseRed(boolean value) {
@@ -58,14 +61,6 @@ public class ImageFilterCurves extends ImageFilter {
             }
         }
         return true;
-    }
-
-    public ImageFilter copy() {
-        ImageFilterCurves curves = new ImageFilterCurves();
-        curves.setCurve(mCurve);
-        curves.setName(mName);
-        curves.setSpline(new Spline(mSpline));
-        return curves;
     }
 
     public void populateArray(int[] array) {

@@ -14,16 +14,44 @@
      limitations under the License.
 -->
 
-<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/imageStatePanel"
+        android:layout_width="200dip"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        android:layout_gravity="right">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:padding="2dip"
+            android:text="@string/imageState"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/imageStateList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+        </ListView>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/historyPanel"
         android:layout_width="200dip"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="invisible" >
+        android:visibility="invisible"
+        android:layout_gravity="right">
 
         <TextView
             android:layout_width="match_parent"
@@ -49,6 +77,7 @@
             android:orientation="horizontal" >
 
             <Button
+                android:gravity="center"
                 android:id="@+id/resetOperationsButton"
                 style="@style/FilterShowHistoryButton"
                 android:text="@string/reset" />
@@ -56,6 +85,7 @@
             <Button
                 android:id="@+id/saveOperationsButton"
                 style="@style/FilterShowHistoryButton"
+                android:visibility="gone"
                 android:text="@string/save" />
         </LinearLayout>
     </LinearLayout>
@@ -286,4 +316,4 @@
         </LinearLayout>
     </LinearLayout>
 
-</AbsoluteLayout>
+</FrameLayout>
