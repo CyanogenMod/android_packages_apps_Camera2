@@ -78,7 +78,7 @@ import com.android.gallery3d.util.LightCycleHelper;
 
 public class PhotoPage extends ActivityState implements
         PhotoView.Listener, OrientationManager.Listener, AppBridge.Server,
-        PhotoPageBottomControls.Delegate {
+        PhotoPageBottomControls.Delegate, GalleryActionBar.OnAlbumModeSelectedListener {
     private static final String TAG = "PhotoPage";
 
     private static final int MSG_HIDE_BARS = 1;
@@ -88,9 +88,8 @@ public class PhotoPage extends ActivityState implements
     private static final int MSG_UPDATE_ACTION_BAR = 5;
     private static final int MSG_UNFREEZE_GLROOT = 6;
     private static final int MSG_WANT_BARS = 7;
-    private static final int MSG_REFRESH_GRID_BUTTON = 8;
-    private static final int MSG_REFRESH_BOTTOM_CONTROLS = 9;
-    private static final int MSG_ON_CAMERA_CENTER = 10;
+    private static final int MSG_REFRESH_BOTTOM_CONTROLS = 8;
+    private static final int MSG_ON_CAMERA_CENTER = 9;
 
     private static final int HIDE_BARS_TIMEOUT = 3500;
     private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
@@ -260,10 +259,6 @@ public class PhotoPage extends ActivityState implements
                         hideBars();
                         break;
                     }
-                    case MSG_REFRESH_GRID_BUTTON: {
-                        setGridButtonVisibility(mPhotoView.getFilmMode());
-                        break;
-                    }
                     case MSG_REFRESH_BOTTOM_CONTROLS: {
                         if (mBottomControls != null) mBottomControls.refresh();
                         break;
@@ -330,7 +325,6 @@ public class PhotoPage extends ActivityState implements
         mStartedFromAlbumPage =
                 data.getInt(KEY_ALBUMPAGE_TRANSITION,
                         MSG_ALBUMPAGE_NONE) == MSG_ALBUMPAGE_STARTED;
-        setGridButtonVisibility(!mStartedFromAlbumPage);
         if (mSetPathString != null) {
             mAppBridge = (AppBridge) data.getParcelable(KEY_APP_BRIDGE);
             if (mAppBridge != null) {
@@ -591,7 +585,6 @@ public class PhotoPage extends ActivityState implements
         }
 
         updateMenuOperations();
-        updateTitle();
         if (mBottomControls != null) mBottomControls.refresh();
         if (mShowDetails) {
             mDetailsHelper.reloadDetails();
@@ -602,24 +595,11 @@ public class PhotoPage extends ActivityState implements
         }
     }
 
-    private void updateTitle() {
-        if (mCurrentPhoto == null) return;
-        boolean showTitle = mActivity.getAndroidContext().getResources().getBoolean(
-                R.bool.show_action_bar_title);
-        if (showTitle && mCurrentPhoto.getName() != null) {
-            mActionBar.setTitle(mCurrentPhoto.getName());
-        } else {
-            mActionBar.setTitle("");
-        }
-    }
-
     private void updateMenuOperations() {
         Menu menu = mActionBar.getMenu();
 
         // it could be null if onCreateActionBar has not been called yet
         if (menu == null) return;
-
-        setGridButtonVisibility(mPhotoView.getFilmMode());
 
         MenuItem item = menu.findItem(R.id.action_slideshow);
         if (item != null) {
@@ -800,7 +780,7 @@ public class PhotoPage extends ActivityState implements
         mActionBar.createActionBarMenu(R.menu.photo, menu);
         mHaveImageEditor = GalleryUtils.isEditorAvailable(mActivity, "image/*");
         updateMenuOperations();
-        updateTitle();
+        mActionBar.setTitle(mMediaSet != null ? mMediaSet.getName() : "");
         return true;
     }
 
@@ -826,6 +806,34 @@ public class PhotoPage extends ActivityState implements
         public void onProgressStart() {}
     };
 
+    private void switchToGrid() {
+        if (mStartedFromAlbumPage) {
+            onUpPressed();
+        } else {
+            if (mOriginalSetPathString == null) return;
+            preparePhotoFallbackView();
+            Bundle data = new Bundle(getData());
+            data.putString(AlbumPage.KEY_MEDIA_PATH, mOriginalSetPathString);
+            data.putString(AlbumPage.KEY_PARENT_MEDIA_PATH,
+                    mActivity.getDataManager().getTopSetPath(
+                            DataManager.INCLUDE_ALL));
+
+            // We only show cluster menu in the first AlbumPage in stack
+            // TODO: Enable this when running from the camera app
+            boolean inAlbum = mActivity.getStateManager().hasStateClass(AlbumPage.class);
+            data.putBoolean(AlbumPage.KEY_SHOW_CLUSTER_MENU, !inAlbum
+                    && mAppBridge == null);
+
+            data.putBoolean(PhotoPage.KEY_APP_BRIDGE, mAppBridge != null);
+
+            // Account for live preview being first item
+            mActivity.getTransitionStore().put(KEY_RETURN_INDEX_HINT,
+                    mAppBridge != null ? mCurrentIndex - 1 : mCurrentIndex);
+
+            mActivity.getStateManager().startState(AlbumPage.class, data);
+        }
+    }
+
     @Override
     protected boolean onItemSelected(MenuItem item) {
         if (mModel == null) return true;
@@ -846,33 +854,6 @@ public class PhotoPage extends ActivityState implements
         switch (action) {
             case android.R.id.home: {
                 onUpPressed();
-                return true;
-            }
-            case R.id.action_grid: {
-                if (mStartedFromAlbumPage) {
-                    onUpPressed();
-                } else {
-                    preparePhotoFallbackView();
-                    Bundle data = new Bundle(getData());
-                    data.putString(AlbumPage.KEY_MEDIA_PATH, mOriginalSetPathString);
-                    data.putString(AlbumPage.KEY_PARENT_MEDIA_PATH,
-                            mActivity.getDataManager().getTopSetPath(
-                                    DataManager.INCLUDE_ALL));
-
-                    // We only show cluster menu in the first AlbumPage in stack
-                    // TODO: Enable this when running from the camera app
-                    boolean inAlbum = mActivity.getStateManager().hasStateClass(AlbumPage.class);
-                    data.putBoolean(AlbumPage.KEY_SHOW_CLUSTER_MENU, !inAlbum
-                            && mAppBridge == null);
-
-                    data.putBoolean(PhotoPage.KEY_APP_BRIDGE, mAppBridge != null);
-
-                    // Account for live preview being first item
-                    mActivity.getTransitionStore().put(KEY_RETURN_INDEX_HINT,
-                            mAppBridge != null ? mCurrentIndex - 1 : mCurrentIndex);
-
-                    mActivity.getStateManager().startState(AlbumPage.class, data);
-                }
                 return true;
             }
             case R.id.action_slideshow: {
@@ -1176,6 +1157,7 @@ public class PhotoPage extends ActivityState implements
         mPhotoView.pause();
         mHandler.removeMessages(MSG_HIDE_BARS);
         mActionBar.removeOnMenuVisibilityListener(mMenuVisibilityListener);
+        mActionBar.disableAlbumModeMenu(true);
 
         onCommitDeleteImage();
         mMenuExecutor.pause();
@@ -1187,15 +1169,7 @@ public class PhotoPage extends ActivityState implements
         mActivity.getGLRoot().unfreeze();
     }
 
-    private void setGridButtonVisibility(boolean enabled) {
-        Menu menu = mActionBar.getMenu();
-        if (menu == null) return;
-        MenuItem item = menu.findItem(R.id.action_grid);
-        if (item != null) item.setVisible((mSecureAlbum == null) && enabled);
-    }
-
     public void onFilmModeChanged(boolean enabled) {
-        mHandler.sendEmptyMessage(MSG_REFRESH_GRID_BUTTON);
         mHandler.sendEmptyMessage(MSG_REFRESH_BOTTOM_CONTROLS);
         if (enabled) {
             mHandler.removeMessages(MSG_HIDE_BARS);
@@ -1265,8 +1239,9 @@ public class PhotoPage extends ActivityState implements
         mModel.resume();
         mPhotoView.resume();
         mActionBar.setDisplayOptions(
-                ((mSecureAlbum == null) && (mSetPathString != null)), true);
+                ((mSecureAlbum == null) && (mSetPathString != null)), false);
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
+        mActionBar.enableAlbumModeMenu(GalleryActionBar.ALBUM_FILMSTRIP_MODE_SELECTED, this);
         if (!mShowBars) {
             mActionBar.hide();
             mActivity.getGLRoot().setLightsOutMode(true);
@@ -1315,6 +1290,13 @@ public class PhotoPage extends ActivityState implements
         @Override
         public int setIndex() {
             return mModel.getCurrentIndex();
+        }
+    }
+
+    @Override
+    public void onAlbumModeSelected(int mode) {
+        if (mode == GalleryActionBar.ALBUM_GRID_MODE_SELECTED) {
+            switchToGrid();
         }
     }
 }

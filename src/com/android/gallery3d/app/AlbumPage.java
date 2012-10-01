@@ -56,7 +56,7 @@ import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.MediaSetUtils;
 
 public class AlbumPage extends ActivityState implements GalleryActionBar.ClusterRunner,
-        SelectionManager.SelectionListener, MediaSet.SyncListener {
+        SelectionManager.SelectionListener, MediaSet.SyncListener, GalleryActionBar.OnAlbumModeSelectedListener {
     @SuppressWarnings("unused")
     private static final String TAG = "AlbumPage";
 
@@ -399,7 +399,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
         boolean enableHomeButton = (mActivity.getStateManager().getStateCount() > 1) |
                 mParentMediaSetString != null;
-        mActivity.getGalleryActionBar().setDisplayOptions(enableHomeButton, true);
+        GalleryActionBar actionBar = mActivity.getGalleryActionBar();
+        actionBar.setDisplayOptions(enableHomeButton, false);
+        actionBar.enableAlbumModeMenu(GalleryActionBar.ALBUM_GRID_MODE_SELECTED, this);
 
         // Set the reload bit here to prevent it exit this page in clearLoadingBit().
         setLoadingBit(BIT_LOADING_RELOAD);
@@ -423,6 +425,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mAlbumDataAdapter.pause();
         mAlbumView.pause();
         DetailsHelper.pause();
+        mActivity.getGalleryActionBar().disableAlbumModeMenu(true);
 
         if (mSyncTask != null) {
             mSyncTask.cancel();
@@ -560,6 +563,17 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 mSlotView.getSlotRect(slotIndex, mRootPane));
     }
 
+    private void switchToFilmstrip() {
+        if (mAlbumDataAdapter.size() < 1) return;
+        int targetPhoto = mSlotView.getVisibleStart();
+        prepareAnimationBackToFilmstrip(targetPhoto);
+        if(mLaunchedFromPhotoPage) {
+            onBackPressed();
+        } else {
+            pickPhoto(targetPhoto, true);
+        }
+    }
+
     @Override
     protected boolean onItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -585,17 +599,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 data.putBoolean(SlideshowPage.KEY_REPEAT, true);
                 mActivity.getStateManager().startStateForResult(
                         SlideshowPage.class, REQUEST_SLIDESHOW, data);
-                return true;
-            }
-            case R.id.action_filmstrip: {
-                if (mAlbumDataAdapter.size() < 1) return true;
-                int targetPhoto = mSlotView.getVisibleStart();
-                prepareAnimationBackToFilmstrip(targetPhoto);
-                if(mLaunchedFromPhotoPage) {
-                    onBackPressed();
-                } else {
-                    pickPhoto(targetPhoto, true);
-                }
                 return true;
             }
             case R.id.action_details: {
@@ -748,6 +751,13 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             } else {
                 return null;
             }
+        }
+    }
+
+    @Override
+    public void onAlbumModeSelected(int mode) {
+        if (mode == GalleryActionBar.ALBUM_FILMSTRIP_MODE_SELECTED) {
+            switchToFilmstrip();
         }
     }
 }
