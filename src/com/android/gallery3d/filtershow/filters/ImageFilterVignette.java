@@ -5,12 +5,8 @@ import android.graphics.Bitmap;
 
 public class ImageFilterVignette extends ImageFilter {
 
-    public String name() {
-        return "Vignette";
-    }
-
-    public ImageFilter copy() {
-        return new ImageFilterVignette();
+    public ImageFilterVignette() {
+        mName = "Vignette";
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float strength);

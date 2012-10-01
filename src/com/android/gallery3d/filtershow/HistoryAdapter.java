@@ -93,7 +93,6 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
         if (item != null) {
             TextView itemView = (TextView) view.findViewById(R.id.rowTextView);
             if (itemView != null) {
-                // do whatever you want with your string and long
                 itemView.setText(item.historyName());
             }
             ImageView markView = (ImageView) view.findViewById(R.id.selectedMark);

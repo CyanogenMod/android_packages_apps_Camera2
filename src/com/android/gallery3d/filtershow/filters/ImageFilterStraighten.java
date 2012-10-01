@@ -14,8 +14,21 @@ public class ImageFilterStraighten extends ImageFilter {
     private float mRotation;
     private float mZoomFactor;
 
-    public String name() {
-        return "Straighten";
+    public ImageFilterStraighten() {
+        mName = "Straighten";
+    }
+
+    @Override
+    public ImageFilter clone() throws CloneNotSupportedException {
+        ImageFilterStraighten filter = (ImageFilterStraighten) super.clone();
+        filter.mRotation = mRotation;
+        filter.mZoomFactor = mZoomFactor;
+        return filter;
+    }
+
+    public ImageFilterStraighten(float rotation, float zoomFactor) {
+        mRotation = rotation;
+        mZoomFactor = zoomFactor;
     }
 
     public void setRotation(float rotation) {
@@ -24,15 +37,6 @@ public class ImageFilterStraighten extends ImageFilter {
 
     public void setRotationZoomFactor(float zoomFactor) {
         mZoomFactor = zoomFactor;
-    }
-
-    public ImageFilterStraighten(float rotation, float zoomFactor) {
-        mRotation = rotation;
-        mZoomFactor = zoomFactor;
-    }
-
-    public ImageFilter copy() {
-        return new ImageFilterStraighten(mRotation, mZoomFactor);
     }
 
     public void apply(Bitmap bitmap) {
