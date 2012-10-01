@@ -477,16 +477,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     }
 
     @Override
-    public boolean usePanoramaViewer(int offset) {
-        MediaItem item = getItem(mCurrentIndex + offset);
-        boolean usePanoramaViewer = false;
-        if (item != null) {
-            usePanoramaViewer = item.usePanoramaViewer();
-        }
-        return usePanoramaViewer;
-    }
-
-    @Override
     public boolean isDeletable(int offset) {
         MediaItem item = getItem(mCurrentIndex + offset);
         return (item == null)
