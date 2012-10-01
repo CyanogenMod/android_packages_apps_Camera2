@@ -3,6 +3,7 @@ package com.android.gallery3d.filtershow.imageshow;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
+import com.android.gallery3d.filtershow.ImageStateAdapter;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -45,7 +46,8 @@ public class ImageShow extends View implements SliderListener {
 
     protected SliderController mSliderController = new SliderController();
 
-    private HistoryAdapter mAdapter = null;
+    private HistoryAdapter mHistoryAdapter = null;
+    private ImageStateAdapter mImageStateAdapter = null;
 
     protected Rect mImageBounds = null;
     protected float mImageRotation = 0;
@@ -63,21 +65,26 @@ public class ImageShow extends View implements SliderListener {
         if (mCurrentFilter != null) {
             mCurrentFilter.setParameter(value);
         }
-        mImageLoader.resetImageForPreset(getImagePreset(), this);
+        if (mImagePreset != null) {
+            mImageLoader.resetImageForPreset(mImagePreset, this);
+            mImagePreset.fillImageStateAdapter(mImageStateAdapter);
+        }
         invalidate();
     }
 
     public ImageShow(Context context, AttributeSet attrs) {
         super(context, attrs);
         mSliderController.setListener(this);
-        mAdapter = new HistoryAdapter(context, R.layout.filtershow_history_operation_row,
+        mHistoryAdapter = new HistoryAdapter(context, R.layout.filtershow_history_operation_row,
                 R.id.rowTextView);
+        mImageStateAdapter = new ImageStateAdapter(context,
+                R.layout.filtershow_imagestate_row);
     }
 
     public ImageShow(Context context) {
         super(context);
         mSliderController.setListener(this);
-        mAdapter = new HistoryAdapter(context, R.layout.filtershow_history_operation_row,
+        mHistoryAdapter = new HistoryAdapter(context, R.layout.filtershow_history_operation_row,
                 R.id.rowTextView);
     }
 
@@ -94,7 +101,7 @@ public class ImageShow extends View implements SliderListener {
     }
 
     public void setAdapter(HistoryAdapter adapter) {
-        mAdapter = adapter;
+        mHistoryAdapter = adapter;
     }
 
     public void showToast(String text) {
@@ -166,7 +173,6 @@ public class ImageShow extends View implements SliderListener {
         if (mImageLoader != null) {
             filteredImage = mImageLoader.getImageForPreset(this,
                     getImagePreset(), showHires());
-//            Log.v(LOGTAG, "getImageForPreset " + getImagePreset() + " is: " + filteredImage);
         }
 
         if (filteredImage == null) {
@@ -247,14 +253,13 @@ public class ImageShow extends View implements SliderListener {
     public void setImagePreset(ImagePreset preset, boolean addToHistory) {
         mImagePreset = preset;
         if (getImagePreset() != null) {
-//            Log.v(LOGTAG, "add " + getImagePreset().name() + " " + getImagePreset());
             if (addToHistory) {
-                mAdapter.insert(getImagePreset(), 0);
+                mHistoryAdapter.insert(getImagePreset(), 0);
             }
             getImagePreset().setEndpoint(this);
             updateImage();
         }
-//        Log.v(LOGTAG, "invalidate from setImagePreset");
+        mImagePreset.fillImageStateAdapter(mImageStateAdapter);
         invalidate();
     }
 
@@ -281,8 +286,6 @@ public class ImageShow extends View implements SliderListener {
 
     public void updateFilteredImage(Bitmap bitmap) {
         mFilteredImage = bitmap;
-        // Log.v(LOGTAG, "invalidate from updateFilteredImage");
-        // invalidate();
     }
 
     public void saveImage(FilterShowActivity filterShowActivity) {
@@ -292,28 +295,24 @@ public class ImageShow extends View implements SliderListener {
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
         mSliderController.onTouchEvent(event);
-        // Log.v(LOGTAG, "invalidate from onTouchEvent");
         invalidate();
         return true;
     }
 
     // listview stuff
 
-    public ArrayAdapter getListAdapter() {
-        return mAdapter;
+    public ArrayAdapter getHistoryAdapter() {
+        return mHistoryAdapter;
+    }
+
+    public ArrayAdapter getImageStateAdapter() {
+        return mImageStateAdapter;
     }
 
     public void onItemClick(int position) {
-        Log.v(LOGTAG, "Click on item " + position);
-        Log.v(LOGTAG, "item " + position + " is " + mAdapter.getItem(position));
-        setImagePreset(new ImagePreset(mAdapter.getItem(position)), false); // we
-                                                                            // need
-                                                                            // a
-                                                                            // copy
-                                                                            // from
-                                                                            // the
-                                                                            // history
-        mAdapter.setCurrentPreset(position);
+        setImagePreset(new ImagePreset(mHistoryAdapter.getItem(position)), false);
+        // we need a copy from the history
+        mHistoryAdapter.setCurrentPreset(position);
     }
 
     public void showOriginal(boolean show) {

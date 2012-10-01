@@ -16,37 +16,72 @@
 
 <resources>
 
+    <!--  Name for the image editor activity [CHAR LIMIT=NONE]-->
     <string name="app_name">FilterShow</string>
-    <string name="menu_settings">Settings</string>
+    <!--  Title for the image editor activity [CHAR LIMIT=NONE]-->
     <string name="title_activity_filter_show">FilterShowActivity</string>
-    <string name="save">Save</string>
+
+    <!--  actionbar menu -->
+
+    <!-- Text for the actionbar confirmation button [CHAR LIMIT=20] -->
     <string name="done">Done</string>
-    <string name="history">History</string>
-    <string name="show_history_panel">Show History</string>
-    <string name="hide_history_panel">Hide History</string>
-    <string name="reset">Reset</string>
+    <!--  Text for the undo menu item [CHAR LIMIT=20] -->
     <string name="filtershow_undo">Undo</string>
+    <!--  Text for redo menu item [CHAR LIMIT=20] -->
     <string name="filtershow_redo">Redo</string>
-    <string name="straighten">Straighten</string>
-    <string name="crop">Crop</string>
-    <string name="rotate">Rotate</string>
-    <string name="flip">Flip</string>
-    <string name="vignette">Vignette</string>
-    <string name="curvesRGB">Curves</string>
-    <string name="curvesRed">Curves (Red)</string>
-    <string name="curvesGreen">Curves (Green)</string>
-    <string name="curvesBlue">Curves (Blue)</string>
-    <string name="sharpen">Sharpen</string>
-    <string name="contrast">Contrast</string>
-    <string name="vibrance">Vibrance</string>
+    <!--  Text for the history panel menu item [CHAR LIMIT=20] -->
+    <string name="show_history_panel">Show History</string>
+    <!--  Text for the history panel menu item [CHAR LIMIT=20] -->
+    <string name="hide_history_panel">Hide History</string>
+    <!--  Text for the image state panel menu item [CHAR LIMIT=20] -->
+    <string name="show_imagestate_panel">Show Image State</string>
+    <!--  Text for the image state panel menu item [CHAR LIMIT=20] -->
+    <string name="hide_imagestate_panel">Hide Image State</string>
+    <!--  Name for the overflow menu item for settings [CHAR LIMIT=20] -->
+    <string name="menu_settings">Settings</string>
+
+    <!--  History Panel -->
+
+    <!--  Text for the history panel title [CHAR LIMIT=50] -->
+    <string name="history">History</string>
+    <!--  Text for the history panel reset button [CHAR LIMIT=20]-->
+    <string name="reset">Reset</string>
+
+    <!--  Image state panel -->
+
+    <!--  Text for the image state panel title [CHAR LIMIT=50] -->
+    <string name="imageState">Current Image State</string>
+
+    <!--  Filters buttons -->
+
+    <!--  Label for the exposure filter button [CHAR LIMIT=15] -->
     <string name="exposure">Exposure</string>
+    <!--  Label for the sharpen filter button [CHAR LIMIT=15] -->
+    <string name="sharpen">Sharpen</string>
+    <!--  Label for the contrast filter button [CHAR LIMIT=15] -->
+    <string name="contrast">Contrast</string>
+    <!--  Label for the vibrance filter button [CHAR LIMIT=15] -->
+    <string name="vibrance">Vibrance</string>
+    <!--  Label for the saturation filter button [CHAR LIMIT=15] -->
     <string name="saturation">Saturation</string>
+    <!--  Label for the tint filter button [CHAR LIMIT=15] -->
     <string name="tint">Tint</string>
-    <string name="shadow_recovery">Shadow Recovery</string>
-    <string name="curves_channel">Channel</string>
+    <!--  Label for the shadow recovery filter button [CHAR LIMIT=15] -->
+    <string name="shadow_recovery">Shadows</string>
+    <!--  Label for the curves filter button [CHAR LIMIT=15] -->
+    <string name="curvesRGB">Curves</string>
+    <!--  Label for the vignette filter button [CHAR LIMIT=15] -->
+    <string name="vignette">Vignette</string>
+
+    <!--  Labels for the curves tool -->
+
+    <!--  Label for the curves tool, all channels (RGB) [CHAR LIMIT=3] -->
     <string name="curves_channel_rgb">RGB</string>
+    <!--  Label for the curves tool, Red color channel [CHAR LIMIT=10] -->
     <string name="curves_channel_red">Red</string>
+    <!--  Label for the curves tool, Green color channel [CHAR LIMIT=10] -->
     <string name="curves_channel_green">Green</string>
+    <!--  Label for the curves tool, Blue color channel [CHAR LIMIT=10] -->
     <string name="curves_channel_blue">Blue</string>
 
 </resources>
