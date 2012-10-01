@@ -60,6 +60,7 @@ public abstract class SurfaceTextureScreenNail implements ScreenNail,
 
     @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     private static void releaseSurfaceTexture(SurfaceTexture st) {
+        st.setOnFrameAvailableListener(null);
         if (ApiHelper.HAS_RELEASE_SURFACE_TEXTURE) {
             st.release();
         }
