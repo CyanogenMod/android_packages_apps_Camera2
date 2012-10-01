@@ -22,6 +22,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,8 +54,18 @@ public class GalleryActionBar implements OnNavigationListener {
     private int mCurrentIndex;
     private ClusterAdapter mAdapter = new ClusterAdapter();
 
+    private AlbumModeAdapter mAlbumModeAdapter;
+    private OnAlbumModeSelectedListener mAlbumModeListener;
+    private CharSequence [] mAlbumModes;
+    public static final int ALBUM_FILMSTRIP_MODE_SELECTED = 0;
+    public static final int ALBUM_GRID_MODE_SELECTED = 1;
+
     public interface ClusterRunner {
         public void doCluster(int id);
+    }
+
+    public interface OnAlbumModeSelectedListener {
+        public void onAlbumModeSelected(int mode);
     }
 
     private static class ActionItem {
@@ -120,6 +131,43 @@ public class GalleryActionBar implements OnNavigationListener {
             TextView view = (TextView) convertView;
             view.setText(sClusterItems[position].spinnerTitle);
             return convertView;
+        }
+    }
+
+    private class AlbumModeAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            return mAlbumModes.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mAlbumModes[position];
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        private View getView(CharSequence label, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.action_bar_text,
+                        parent, false);
+            }
+            TextView view = (TextView) convertView;
+            view.setText(label);
+            return convertView;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            return getView(mActionBar.getTitle(), convertView, parent);
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+            return getView((CharSequence) getItem(position), convertView, parent);
         }
     }
 
@@ -196,6 +244,33 @@ public class GalleryActionBar implements OnNavigationListener {
     public void disableClusterMenu(boolean hideMenu) {
         if (mActionBar != null) {
             mClusterRunner = null;
+            if (hideMenu) {
+                mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+            }
+        }
+    }
+
+    public void enableAlbumModeMenu(int selected, OnAlbumModeSelectedListener listener) {
+        if (mActionBar != null) {
+            if (mAlbumModeAdapter == null) {
+                // Initialize the album mode options if they haven't been already
+                Resources res = mActivity.getResources();
+                mAlbumModes = new CharSequence[] {
+                        res.getString(R.string.switch_photo_filmstrip),
+                        res.getString(R.string.switch_photo_grid)};
+                mAlbumModeAdapter = new AlbumModeAdapter();
+            }
+            mAlbumModeListener = null;
+            mActionBar.setListNavigationCallbacks(mAlbumModeAdapter, this);
+            mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+            mActionBar.setSelectedNavigationItem(selected);
+            mAlbumModeListener = listener;
+        }
+    }
+
+    public void disableAlbumModeMenu(boolean hideMenu) {
+        if (mActionBar != null) {
+            mAlbumModeListener = null;
             if (hideMenu) {
                 mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
             }
@@ -283,12 +358,17 @@ public class GalleryActionBar implements OnNavigationListener {
 
     @Override
     public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-        if (itemPosition != mCurrentIndex && mClusterRunner != null) {
+        if (itemPosition != mCurrentIndex && mClusterRunner != null
+                || mAlbumModeListener != null) {
             // Need to lock rendering when operations invoked by system UI (main thread) are
             // modifying slot data used in GL thread for rendering.
             mActivity.getGLRoot().lockRenderThread();
             try {
-                mClusterRunner.doCluster(sClusterItems[itemPosition].action);
+                if (mAlbumModeListener != null) {
+                    mAlbumModeListener.onAlbumModeSelected(itemPosition);
+                } else {
+                    mClusterRunner.doCluster(sClusterItems[itemPosition].action);
+                }
             } finally {
                 mActivity.getGLRoot().unlockRenderThread();
             }
