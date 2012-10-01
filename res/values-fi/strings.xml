@@ -183,4 +183,14 @@
     <string name="no_external_storage" msgid="95726173164068417">"Ei ulkoista tallennustilaa"</string>
     <string name="switch_photo_filmstrip" msgid="991949386967109493">"Videoleike"</string>
     <string name="switch_photo_grid" msgid="6533267664294518167">"Ruudukko"</string>
+    <!-- no translation found for trimming (9122385768369143997) -->
+    <skip />
+    <!-- no translation found for please_wait (7296066089146487366) -->
+    <skip />
+    <!-- no translation found for save_into (6688364520925473396) -->
+    <skip />
+    <!-- no translation found for trim_too_short (751593965620665326) -->
+    <skip />
+    <!-- no translation found for trim_too_long (2657958275279217174) -->
+    <skip />
 </resources>
