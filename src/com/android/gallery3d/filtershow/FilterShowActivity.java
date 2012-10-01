@@ -35,6 +35,8 @@ import android.widget.AbsoluteLayout;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -75,6 +77,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
     protected static final boolean ANIMATE_PANELS = false;
 
     private boolean mShowingHistoryPanel = false;
+    private boolean mShowingImageStatePanel = false;
+
     private Vector<ImageShow> mImageViews = new Vector<ImageShow>();
     private Vector<View> mListViews = new Vector<View>();
     private Vector<ImageButton> mBottomPanelButtons = new Vector<ImageButton>();
@@ -179,9 +183,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
                 createOnClickResetOperationsButton());
 
         ListView operationsList = (ListView) findViewById(R.id.operationsList);
-        operationsList.setAdapter(mImageShow.getListAdapter());
+        operationsList.setAdapter(mImageShow.getHistoryAdapter());
         operationsList.setOnItemClickListener(this);
-        mImageLoader.setAdapter((HistoryAdapter) mImageShow.getListAdapter());
+        ListView imageStateList = (ListView) findViewById(R.id.imageStateList);
+        imageStateList.setAdapter(mImageShow.getImageStateAdapter());
+        mImageLoader.setAdapter((HistoryAdapter) mImageShow.getHistoryAdapter());
 
         fillListImages(listFilters);
         fillListBorders(listBorders);
@@ -207,11 +213,17 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.filtershow_activity_menu, menu);
-        MenuItem item = menu.findItem(R.id.operationsButton);
+        MenuItem showHistory = menu.findItem(R.id.operationsButton);
         if (mShowingHistoryPanel) {
-            item.setTitle(R.string.hide_history_panel);
+            showHistory.setTitle(R.string.hide_history_panel);
         } else {
-            item.setTitle(R.string.show_history_panel);
+            showHistory.setTitle(R.string.show_history_panel);
+        }
+        MenuItem showState = menu.findItem(R.id.showImageStateButton);
+        if (mShowingImageStatePanel) {
+            showState.setTitle(R.string.hide_imagestate_panel);
+        } else {
+            showState.setTitle(R.string.show_imagestate_panel);
         }
         return true;
     }
@@ -220,7 +232,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
         switch (item.getItemId()) {
             case R.id.undoButton: {
                 HistoryAdapter adapter = (HistoryAdapter) mImageShow
-                        .getListAdapter();
+                        .getHistoryAdapter();
                 int position = adapter.undo();
                 mImageShow.onItemClick(position);
                 mImageShow.showToast("Undo");
@@ -229,11 +241,15 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
             }
             case R.id.redoButton: {
                 HistoryAdapter adapter = (HistoryAdapter) mImageShow
-                        .getListAdapter();
+                        .getHistoryAdapter();
                 int position = adapter.redo();
                 mImageShow.onItemClick(position);
                 mImageShow.showToast("Redo");
                 invalidateViews();
+                return true;
+            }
+            case R.id.showImageStateButton: {
+                toggleImageStatePanel();
                 return true;
             }
             case R.id.operationsButton: {
@@ -303,6 +319,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
             filter.setImageFilter(borders[i]);
             filter.setController(this);
             filter.setImageLoader(mImageLoader);
+            filter.setShowTitle(false);
             listBorders.addView(filter);
         }
     }
@@ -366,28 +383,54 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
     }
 
     // //////////////////////////////////////////////////////////////////////////////
+    // imageState panel...
+
+    private void toggleImageStatePanel() {
+        final View view = findViewById(R.id.mainPanel);
+        final View viewList = findViewById(R.id.imageStatePanel);
+
+        if (mShowingHistoryPanel) {
+            findViewById(R.id.historyPanel).setVisibility(View.INVISIBLE);
+            mShowingHistoryPanel = false;
+        }
+
+        if (!mShowingImageStatePanel) {
+            mShowingImageStatePanel = true;
+            view.animate().setDuration(200).x(-viewList.getWidth())
+                    .withLayer().withEndAction(new Runnable() {
+                        public void run() {
+                            viewList.setAlpha(0);
+                            viewList.setVisibility(View.VISIBLE);
+                            viewList.animate().setDuration(100)
+                                    .alpha(1.0f).start();
+                        }
+                    }).start();
+        } else {
+            mShowingImageStatePanel = false;
+            viewList.setVisibility(View.INVISIBLE);
+            view.animate().setDuration(200).x(0).withLayer()
+                    .start();
+        }
+        invalidateOptionsMenu();
+    }
+
+    // //////////////////////////////////////////////////////////////////////////////
     // history panel...
 
     private void toggleHistoryPanel() {
         final View view = findViewById(R.id.mainPanel);
         final View viewList = findViewById(R.id.historyPanel);
-        View rootView = viewList.getRootView();
 
-        // TODO: use a custom layout instead of absolutelayout...
-        final AbsoluteLayout.LayoutParams lp = (AbsoluteLayout.LayoutParams) view
-                .getLayoutParams();
-        final AbsoluteLayout.LayoutParams lph = (AbsoluteLayout.LayoutParams) viewList
-                .getLayoutParams();
-        final int positionHistoryPanel = (int) (rootView.getWidth() - viewList
-                .getWidth());
+        if (mShowingImageStatePanel) {
+            findViewById(R.id.imageStatePanel).setVisibility(View.INVISIBLE);
+            mShowingImageStatePanel = false;
+        }
+
         if (!mShowingHistoryPanel) {
             mShowingHistoryPanel = true;
             view.animate().setDuration(200).x(-viewList.getWidth())
                     .withLayer().withEndAction(new Runnable() {
                         public void run() {
-                            view.setLayoutParams(lp);
-                            lph.x = positionHistoryPanel;
-                            viewList.setLayoutParams(lph);
                             viewList.setAlpha(0);
                             viewList.setVisibility(View.VISIBLE);
                             viewList.animate().setDuration(100)
@@ -398,19 +441,14 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
             mShowingHistoryPanel = false;
             viewList.setVisibility(View.INVISIBLE);
             view.animate().setDuration(200).x(0).withLayer()
-                    .withEndAction(new Runnable() {
-                        public void run() {
-                            lp.x = 0;
-                            view.setLayoutParams(lp);
-                        }
-                    }).start();
+                    .start();
         }
         invalidateOptionsMenu();
     }
 
     private void resetHistory() {
         HistoryAdapter adapter = (HistoryAdapter) mImageShow
-                .getListAdapter();
+                .getHistoryAdapter();
         adapter.reset();
         ImagePreset original = new ImagePreset(adapter.getItem(0));
         mImageShow.setImagePreset(original);
@@ -560,7 +598,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
                     ImageFilterVignette vignette = new ImageFilterVignette();
                     ImagePreset copy = new ImagePreset(preset);
                     copy.add(vignette);
-                    copy.setHistoryName(vignette.name());
+                    copy.setHistoryName(vignette.getName());
                     copy.setIsFx(false);
                     filter = copy.getFilter("Vignette");
                     mImageShow.setImagePreset(copy);
@@ -616,7 +654,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
                     ImageFilterContrast contrast = new ImageFilterContrast();
                     ImagePreset copy = new ImagePreset(preset);
                     copy.add(contrast);
-                    copy.setHistoryName(contrast.name());
+                    copy.setHistoryName(contrast.getName());
                     copy.setIsFx(false);
                     filter = copy.getFilter("Contrast");
                     mImageShow.setImagePreset(copy);
@@ -642,7 +680,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
                     ImageFilterSaturated sat = new ImageFilterSaturated();
                     ImagePreset copy = new ImagePreset(preset);
                     copy.add(sat);
-                    copy.setHistoryName(sat.name());
+                    copy.setHistoryName(sat.getName());
                     copy.setIsFx(false);
                     filter = copy.getFilter("Saturated");
                     mImageShow.setImagePreset(copy);
@@ -668,7 +706,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
                     ImageFilterHue contrast = new ImageFilterHue();
                     ImagePreset copy = new ImagePreset(preset);
                     copy.add(contrast);
-                    copy.setHistoryName(contrast.name());
+                    copy.setHistoryName(contrast.getName());
                     copy.setIsFx(false);
                     filter = copy.getFilter("Hue");
                     mImageShow.setImagePreset(copy);
@@ -694,7 +732,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
                     ImageFilterHue contrast = new ImageFilterHue();
                     ImagePreset copy = new ImagePreset(preset);
                     copy.add(contrast);
-                    copy.setHistoryName(contrast.name());
+                    copy.setHistoryName(contrast.getName());
                     copy.setIsFx(false);
                     filter = copy.getFilter("Hue");
                     mImageShow.setImagePreset(copy);
@@ -720,7 +758,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
                     ImageFilterBrightness bright = new ImageFilterBrightness();
                     ImagePreset copy = new ImagePreset(preset);
                     copy.add(bright);
-                    copy.setHistoryName(bright.name());
+                    copy.setHistoryName(bright.getName());
                     copy.setIsFx(false);
                     filter = copy.getFilter("Brightness");
                     mImageShow.setImagePreset(copy);
@@ -746,7 +784,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
                     ImageFilterHue contrast = new ImageFilterHue();
                     ImagePreset copy = new ImagePreset(preset);
                     copy.add(contrast);
-                    copy.setHistoryName(contrast.name());
+                    copy.setHistoryName(contrast.getName());
                     copy.setIsFx(false);
                     filter = copy.getFilter("Hue");
                     mImageShow.setImagePreset(copy);
@@ -787,11 +825,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
         ImagePreset oldPreset = mImageShow.getImagePreset();
         ImagePreset copy = new ImagePreset(oldPreset);
         // TODO: use a numerical constant instead.
-        if (imageFilter.name().equalsIgnoreCase("Border")) {
+        if (imageFilter.getName().equalsIgnoreCase("Border")) {
             copy.remove("Border");
             copy.setHistoryName("Border");
         }
         copy.add(imageFilter);
+        mImageShow.setImagePreset(copy);
         invalidateViews();
     }
 

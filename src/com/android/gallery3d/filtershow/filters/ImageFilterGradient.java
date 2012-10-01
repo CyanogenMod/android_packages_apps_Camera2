@@ -10,22 +10,25 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Shader.TileMode;
 
+import com.android.gallery3d.filtershow.ui.Spline;
+
 public class ImageFilterGradient extends ImageFilter {
 
     private Bitmap mGradientBitmap = null;
     private int[] mColors = null;
     private float[] mPositions = null;
 
-    public String name() {
-        return "Gradient";
+    public ImageFilterGradient() {
+        mName = "Gradient";
     }
 
-    public ImageFilter copy() {
-        ImageFilterGradient gradient = new ImageFilterGradient();
+    @Override
+    public ImageFilter clone() throws CloneNotSupportedException {
+        ImageFilterGradient filter = (ImageFilterGradient) super.clone();
         for (int i = 0; i < mColors.length; i++) {
-            gradient.addColor(mColors[i], mPositions[i]);
+            filter.addColor(mColors[i], mPositions[i]);
         }
-        return gradient;
+        return filter;
     }
 
     public void addColor(int color, float position) {
