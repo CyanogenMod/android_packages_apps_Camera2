@@ -63,13 +63,11 @@ public class FilterDeleteSet extends MediaSet implements ContentListener {
 
     // Deletions currently in effect, ordered by index
     private ArrayList<Deletion> mCurrent = new ArrayList<Deletion>();
-    private int mMediaItemCount;
 
     public FilterDeleteSet(Path path, MediaSet baseSet) {
         super(path, INVALID_DATA_VERSION);
         mBaseSet = baseSet;
         mBaseSet.addContentListener(this);
-        mMediaItemCount = mBaseSet.getMediaItemCount() - mCurrent.size();
     }
 
     @Override
@@ -84,7 +82,7 @@ public class FilterDeleteSet extends MediaSet implements ContentListener {
 
     @Override
     public int getMediaItemCount() {
-        return mMediaItemCount;
+        return mBaseSet.getMediaItemCount() - mCurrent.size();
     }
 
     // Gets the MediaItems whose (post-deletion) index are in the range [start,
@@ -221,7 +219,6 @@ public class FilterDeleteSet extends MediaSet implements ContentListener {
             mCurrent = result;
         }
 
-        mMediaItemCount = mBaseSet.getMediaItemCount() - mCurrent.size();
         mDataVersion = nextVersionNumber();
         return mDataVersion;
     }
