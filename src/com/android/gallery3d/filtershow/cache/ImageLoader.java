@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
 
+import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
@@ -17,6 +18,7 @@ import com.android.gallery3d.R;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -58,11 +60,17 @@ public class ImageLoader {
     }
 
     private int getOrientation(Uri uri) {
-        Cursor cursor = mContext.getContentResolver().query(uri,
-                new String[] {
-                    MediaStore.Images.ImageColumns.ORIENTATION
-                },
-                null, null, null);
+        Cursor cursor = null;
+        try {
+            cursor = mContext.getContentResolver().query(uri,
+                    new String[] {
+                        MediaStore.Images.ImageColumns.ORIENTATION
+                    },
+                    null, null, null);
+        } catch (SQLiteException e){
+            Utils.closeSilently(cursor);
+            return ExifInterface.ORIENTATION_UNDEFINED;
+        }
 
         if (cursor.getCount() != 1) {
             return -1;
