@@ -4,7 +4,7 @@ package com.android.gallery3d.filtershow.filters;
 import java.util.Arrays;
 
 public class ColorSpaceMatrix {
-    private final float[] matrix = new float[16];
+    private final float[] mMatrix = new float[16];
     private static final float RLUM = 0.3086f;
     private static final float GLUM = 0.6094f;
     private static final float BLUM = 0.0820f;
@@ -14,26 +14,35 @@ public class ColorSpaceMatrix {
     }
 
     /**
+     * Copy constructor
+     *
+     * @param matrix
+     */
+    public ColorSpaceMatrix(ColorSpaceMatrix matrix) {
+        System.arraycopy(matrix.mMatrix, 0, mMatrix, 0, matrix.mMatrix.length);
+    }
+
+    /**
      * get the matrix
      *
      * @return the internal matrix
      */
     public float[] getMatrix() {
-        return matrix;
+        return mMatrix;
     }
 
     /**
      * set matrix to identity
      */
     public void identity() {
-        Arrays.fill(matrix, 0);
-        matrix[0] = matrix[5] = matrix[10] = matrix[15] = 1;
+        Arrays.fill(mMatrix, 0);
+        mMatrix[0] = mMatrix[5] = mMatrix[10] = mMatrix[15] = 1;
     }
 
     public void convertToLuminance() {
-        matrix[0] = matrix[1] = matrix[2] = 0.3086f;
-        matrix[4] = matrix[5] = matrix[6] = 0.6094f;
-        matrix[8] = matrix[9] = matrix[10] = 0.0820f;
+        mMatrix[0] = mMatrix[1] = mMatrix[2] = 0.3086f;
+        mMatrix[4] = mMatrix[5] = mMatrix[6] = 0.6094f;
+        mMatrix[8] = mMatrix[9] = mMatrix[10] = 0.0820f;
     }
 
     private void multiply(float[] a)
@@ -44,20 +53,20 @@ public class ColorSpaceMatrix {
         for (y = 0; y < 4; y++) {
             int y4 = y * 4;
             for (x = 0; x < 4; x++) {
-                temp[y4 + x] = matrix[y4 + 0] * a[x]
-                        + matrix[y4 + 1] * a[4 + x]
-                        + matrix[y4 + 2] * a[8 + x]
-                        + matrix[y4 + 3] * a[12 + x];
+                temp[y4 + x] = mMatrix[y4 + 0] * a[x]
+                        + mMatrix[y4 + 1] * a[4 + x]
+                        + mMatrix[y4 + 2] * a[8 + x]
+                        + mMatrix[y4 + 3] * a[12 + x];
             }
         }
         for (int i = 0; i < 16; i++)
-            matrix[i] = temp[i];
+            mMatrix[i] = temp[i];
     }
 
     private void xRotateMatrix(float rs, float rc)
     {
         ColorSpaceMatrix c = new ColorSpaceMatrix();
-        float[] tmp = c.matrix;
+        float[] tmp = c.mMatrix;
 
         tmp[5] = rc;
         tmp[6] = rs;
@@ -70,7 +79,7 @@ public class ColorSpaceMatrix {
     private void yRotateMatrix(float rs, float rc)
     {
         ColorSpaceMatrix c = new ColorSpaceMatrix();
-        float[] tmp = c.matrix;
+        float[] tmp = c.mMatrix;
 
         tmp[0] = rc;
         tmp[2] = -rs;
@@ -83,7 +92,7 @@ public class ColorSpaceMatrix {
     private void zRotateMatrix(float rs, float rc)
     {
         ColorSpaceMatrix c = new ColorSpaceMatrix();
-        float[] tmp = c.matrix;
+        float[] tmp = c.mMatrix;
 
         tmp[0] = rc;
         tmp[1] = rs;
@@ -95,7 +104,7 @@ public class ColorSpaceMatrix {
     private void zShearMatrix(float dx, float dy)
     {
         ColorSpaceMatrix c = new ColorSpaceMatrix();
-        float[] tmp = c.matrix;
+        float[] tmp = c.mMatrix;
 
         tmp[2] = dx;
         tmp[6] = dy;
@@ -139,15 +148,15 @@ public class ColorSpaceMatrix {
      * @param s
      */
     public void changeSaturation(float s) {
-        matrix[0] = (1 - s) * RLUM + s;
-        matrix[1] = (1 - s) * RLUM;
-        matrix[2] = (1 - s) * RLUM;
-        matrix[4] = (1 - s) * GLUM;
-        matrix[5] = (1 - s) * GLUM + s;
-        matrix[6] = (1 - s) * GLUM;
-        matrix[8] = (1 - s) * BLUM;
-        matrix[9] = (1 - s) * BLUM;
-        matrix[10] = (1 - s) * BLUM + s;
+        mMatrix[0] = (1 - s) * RLUM + s;
+        mMatrix[1] = (1 - s) * RLUM;
+        mMatrix[2] = (1 - s) * RLUM;
+        mMatrix[4] = (1 - s) * GLUM;
+        mMatrix[5] = (1 - s) * GLUM + s;
+        mMatrix[6] = (1 - s) * GLUM;
+        mMatrix[8] = (1 - s) * BLUM;
+        mMatrix[9] = (1 - s) * BLUM;
+        mMatrix[10] = (1 - s) * BLUM + s;
     }
 
     /**
@@ -159,7 +168,7 @@ public class ColorSpaceMatrix {
      * @return computed red pixel value
      */
     public float getRed(int r, int g, int b) {
-        return r * matrix[0] + g * matrix[4] + b * matrix[8] + matrix[12];
+        return r * mMatrix[0] + g * mMatrix[4] + b * mMatrix[8] + mMatrix[12];
     }
 
     /**
@@ -171,7 +180,7 @@ public class ColorSpaceMatrix {
      * @return computed green pixel value
      */
     public float getGreen(int r, int g, int b) {
-        return r * matrix[1] + g * matrix[5] + b * matrix[9] + matrix[13];
+        return r * mMatrix[1] + g * mMatrix[5] + b * mMatrix[9] + mMatrix[13];
     }
 
     /**
@@ -183,19 +192,19 @@ public class ColorSpaceMatrix {
      * @return computed blue pixel value
      */
     public float getBlue(int r, int g, int b) {
-        return r * matrix[2] + g * matrix[6] + b * matrix[10] + matrix[14];
+        return r * mMatrix[2] + g * mMatrix[6] + b * mMatrix[10] + mMatrix[14];
     }
 
     private float getRedf(float r, float g, float b) {
-        return r * matrix[0] + g * matrix[4] + b * matrix[8] + matrix[12];
+        return r * mMatrix[0] + g * mMatrix[4] + b * mMatrix[8] + mMatrix[12];
     }
 
     private float getGreenf(float r, float g, float b) {
-        return r * matrix[1] + g * matrix[5] + b * matrix[9] + matrix[13];
+        return r * mMatrix[1] + g * mMatrix[5] + b * mMatrix[9] + mMatrix[13];
     }
 
     private float getBluef(float r, float g, float b) {
-        return r * matrix[2] + g * matrix[6] + b * matrix[10] + matrix[14];
+        return r * mMatrix[2] + g * mMatrix[6] + b * mMatrix[10] + mMatrix[14];
     }
 
 }

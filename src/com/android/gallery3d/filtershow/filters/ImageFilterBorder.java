@@ -12,16 +12,16 @@ import android.graphics.drawable.NinePatchDrawable;
 public class ImageFilterBorder extends ImageFilter {
     Drawable mNinePatch = null;
 
+    @Override
+    public ImageFilter clone() throws CloneNotSupportedException {
+        ImageFilterBorder filter = (ImageFilterBorder) super.clone();
+        filter.setDrawable(mNinePatch);
+        return filter;
+    }
+
     public ImageFilterBorder(Drawable ninePatch) {
+        mName = "Border";
         mNinePatch = ninePatch;
-    }
-
-    public String name() {
-        return "Border";
-    }
-
-    public ImageFilter copy() {
-        return new ImageFilterBorder(mNinePatch);
     }
 
     public boolean same(ImageFilter filter) {

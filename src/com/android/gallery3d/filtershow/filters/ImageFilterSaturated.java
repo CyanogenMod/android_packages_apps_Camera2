@@ -5,12 +5,8 @@ import android.graphics.Bitmap;
 
 public class ImageFilterSaturated extends ImageFilter {
 
-    public String name() {
-        return "Saturated";
-    }
-
-    public ImageFilter copy() {
-        return new ImageFilterSaturated();
+    public ImageFilterSaturated() {
+        mName = "Saturated";
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float saturation);
