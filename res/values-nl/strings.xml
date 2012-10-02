@@ -56,10 +56,8 @@
     <string name="confirm" msgid="8646870096527848520">"Bevestigen"</string>
     <string name="cancel" msgid="3637516880917356226">"Annuleren"</string>
     <string name="share" msgid="3619042788254195341">"Delen"</string>
-    <!-- no translation found for share_panorama (2569029972820978718) -->
-    <skip />
-    <!-- no translation found for share_as_photo (8959225188897026149) -->
-    <skip />
+    <string name="share_panorama" msgid="2569029972820978718">"Panorama delen"</string>
+    <string name="share_as_photo" msgid="8959225188897026149">"Delen als foto"</string>
     <string name="deleted" msgid="6795433049119073871">"Verwijderd"</string>
     <string name="undo" msgid="2930873956446586313">"ONGEDAAN MAKEN"</string>
     <string name="select_all" msgid="3403283025220282175">"Alles selecteren"</string>
@@ -183,14 +181,9 @@
     <string name="no_external_storage" msgid="95726173164068417">"Geen externe opslag beschikbaar"</string>
     <string name="switch_photo_filmstrip" msgid="991949386967109493">"Filmstrip"</string>
     <string name="switch_photo_grid" msgid="6533267664294518167">"Raster"</string>
-    <!-- no translation found for trimming (9122385768369143997) -->
-    <skip />
-    <!-- no translation found for please_wait (7296066089146487366) -->
-    <skip />
-    <!-- no translation found for save_into (6688364520925473396) -->
-    <skip />
-    <!-- no translation found for trim_too_short (751593965620665326) -->
-    <skip />
-    <!-- no translation found for trim_too_long (2657958275279217174) -->
-    <skip />
+    <string name="trimming" msgid="9122385768369143997">"Bijsnijden"</string>
+    <string name="please_wait" msgid="7296066089146487366">"Een ogenblik geduld"</string>
+    <string name="save_into" msgid="6688364520925473396">"Bijgesneden video opslaan in"</string>
+    <string name="trim_too_short" msgid="751593965620665326">"Kan niet bijsnijden: doelvideo is te kort"</string>
+    <string name="trim_too_long" msgid="2657958275279217174">"Is niet bijgesneden: dezelfde lengte als de originele video"</string>
 </resources>
