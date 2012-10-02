@@ -42,6 +42,7 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.anim.FloatAnimation;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.ComboAlbum;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.FilterDeleteSet;
 import com.android.gallery3d.data.MediaDetails;
@@ -369,6 +370,11 @@ public class PhotoPage extends ActivityState implements
 
             MediaSet originalSet = mActivity.getDataManager()
                     .getMediaSet(mSetPathString);
+            if (originalSet instanceof ComboAlbum) {
+                // Use the name of the camera album rather than the default
+                // ComboAlbum behavior
+                ((ComboAlbum) originalSet).useNameOfChild(1);
+            }
             mSelectionManager.setSourceMediaSet(originalSet);
             mSetPathString = "/filter/delete/{" + mSetPathString + "}";
             mMediaSet = (FilterDeleteSet) mActivity.getDataManager()
