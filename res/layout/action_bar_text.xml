@@ -23,5 +23,6 @@
     android:gravity="center_vertical"
     android:paddingLeft="18dp"
     android:paddingRight="18dp"
+    android:singleLine="true"
     android:minHeight="?attr/listPreferredItemHeightSmall"
 />
