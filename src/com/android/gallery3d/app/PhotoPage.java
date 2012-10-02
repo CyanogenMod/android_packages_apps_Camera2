@@ -1177,8 +1177,9 @@ public class PhotoPage extends ActivityState implements
         mPhotoView.pause();
         mHandler.removeMessages(MSG_HIDE_BARS);
         mActionBar.removeOnMenuVisibilityListener(mMenuVisibilityListener);
-        mActionBar.disableAlbumModeMenu(true);
-
+        if (mSecureAlbum == null) {
+            mActionBar.disableAlbumModeMenu(true);
+        }
         onCommitDeleteImage();
         mMenuExecutor.pause();
         if (mMediaSet != null) mMediaSet.clearDeletion();
@@ -1261,7 +1262,10 @@ public class PhotoPage extends ActivityState implements
         mActionBar.setDisplayOptions(
                 ((mSecureAlbum == null) && (mSetPathString != null)), false);
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
-        mActionBar.enableAlbumModeMenu(GalleryActionBar.ALBUM_FILMSTRIP_MODE_SELECTED, this);
+        if (mSecureAlbum == null) {
+            mActionBar.enableAlbumModeMenu(
+                    GalleryActionBar.ALBUM_FILMSTRIP_MODE_SELECTED, this);
+        }
         if (!mShowBars) {
             mActionBar.hide();
             mActivity.getGLRoot().setLightsOutMode(true);
