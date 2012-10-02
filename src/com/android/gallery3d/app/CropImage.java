@@ -17,6 +17,7 @@
 package com.android.gallery3d.app;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
 import android.content.ContentValues;
@@ -39,13 +40,12 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.util.FloatMath;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 import com.android.camera.Util;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
@@ -170,7 +170,7 @@ public class CropImage extends AbstractGalleryActivity {
         mCropView = new CropView(this);
         getGLRoot().setContentPane(mCropView);
 
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getActionBar();
         int displayOptions = ActionBar.DISPLAY_HOME_AS_UP
                 | ActionBar.DISPLAY_SHOW_TITLE;
         actionBar.setDisplayOptions(displayOptions, displayOptions);
@@ -233,7 +233,7 @@ public class CropImage extends AbstractGalleryActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getSupportMenuInflater().inflate(R.menu.crop, menu);
+        getMenuInflater().inflate(R.menu.crop, menu);
         return true;
     }
 
