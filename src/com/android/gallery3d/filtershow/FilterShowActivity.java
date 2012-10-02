@@ -753,14 +753,14 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
                 mImageShow.setVisibility(View.VISIBLE);
                 mImageShow.setShowControls(true);
                 ImagePreset preset = mImageShow.getImagePreset();
-                ImageFilter filter = preset.getFilter("Brightness");
+                ImageFilter filter = preset.getFilter("Exposure");
                 if (filter == null) {
-                    ImageFilterBrightness bright = new ImageFilterBrightness();
+                    ImageFilterExposure bright = new ImageFilterExposure();
                     ImagePreset copy = new ImagePreset(preset);
                     copy.add(bright);
                     copy.setHistoryName(bright.getName());
                     copy.setIsFx(false);
-                    filter = copy.getFilter("Brightness");
+                    filter = copy.getFilter("Exposure");
                     mImageShow.setImagePreset(copy);
                 }
                 mImageShow.setCurrentFilter(filter);
