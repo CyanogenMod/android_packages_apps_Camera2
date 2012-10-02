@@ -45,6 +45,7 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ComboAlbum;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.FilterDeleteSet;
+import com.android.gallery3d.data.FilterSource;
 import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
@@ -111,6 +112,7 @@ public class PhotoPage extends ActivityState implements
     public static final String KEY_START_IN_FILMSTRIP = "start-in-filmstrip";
     public static final String KEY_RETURN_INDEX_HINT = "return-index-hint";
     public static final String KEY_SHOW_WHEN_LOCKED = "show_when_locked";
+    public static final String KEY_IN_CAMERA_ROLL = "in_camera_roll";
 
     public static final String KEY_ALBUMPAGE_TRANSITION = "albumpage-transition";
     public static final int MSG_ALBUMPAGE_NONE = 0;
@@ -156,6 +158,7 @@ public class PhotoPage extends ActivityState implements
     private boolean mHasActivityResult;
     private boolean mTreatBackAsUp;
     private boolean mStartInFilmstrip;
+    private boolean mInCameraRoll;
     private boolean mStartedFromAlbumPage;
 
     private long mCameraSwitchCutoff = 0;
@@ -321,16 +324,17 @@ public class PhotoPage extends ActivityState implements
                 Path.fromString(data.getString(KEY_MEDIA_ITEM_PATH)) :
                     null;
         mTreatBackAsUp = data.getBoolean(KEY_TREAT_BACK_AS_UP, false);
-        mStartInFilmstrip =
-            data.getBoolean(KEY_START_IN_FILMSTRIP, false);
+        mStartInFilmstrip = data.getBoolean(KEY_START_IN_FILMSTRIP, false);
+        mInCameraRoll = data.getBoolean(KEY_IN_CAMERA_ROLL, false);
         mStartedFromAlbumPage =
                 data.getInt(KEY_ALBUMPAGE_TRANSITION,
                         MSG_ALBUMPAGE_NONE) == MSG_ALBUMPAGE_STARTED;
+        mCurrentIndex = data.getInt(KEY_INDEX_HINT, 0);
         if (mSetPathString != null) {
             mAppBridge = (AppBridge) data.getParcelable(KEY_APP_BRIDGE);
             if (mAppBridge != null) {
                 mShowBars = false;
-
+                mInCameraRoll = true;
                 mAppBridge.setServer(this);
                 mOrientationManager.lockOrientation();
 
@@ -366,11 +370,15 @@ public class PhotoPage extends ActivityState implements
 
                 // Start from the screen nail.
                 itemPath = screenNailItemPath;
+            } else if (mInCameraRoll && GalleryUtils.isCameraAvailable(mActivity)) {
+                mSetPathString = "/combo/item/{" + FilterSource.FILTER_CAMERA_SHORTCUT +
+                        "," + mSetPathString + "}";
+                mCurrentIndex++;
             }
 
             MediaSet originalSet = mActivity.getDataManager()
                     .getMediaSet(mSetPathString);
-            if (originalSet instanceof ComboAlbum) {
+            if (mInCameraRoll && originalSet instanceof ComboAlbum) {
                 // Use the name of the camera album rather than the default
                 // ComboAlbum behavior
                 ((ComboAlbum) originalSet).useNameOfChild(1);
@@ -379,7 +387,6 @@ public class PhotoPage extends ActivityState implements
             mSetPathString = "/filter/delete/{" + mSetPathString + "}";
             mMediaSet = (FilterDeleteSet) mActivity.getDataManager()
                     .getMediaSet(mSetPathString);
-            mCurrentIndex = data.getInt(KEY_INDEX_HINT, 0);
             if (mMediaSet == null) {
                 Log.w(TAG, "failed to restore " + mSetPathString);
             }
@@ -973,6 +980,7 @@ public class PhotoPage extends ActivityState implements
                 ((supported & MediaItem.SUPPORT_PLAY) != 0);
         boolean unlock = ((supported & MediaItem.SUPPORT_UNLOCK) != 0);
         boolean goBack = ((supported & MediaItem.SUPPORT_BACK) != 0);
+        boolean launchCamera = ((supported & MediaItem.SUPPORT_CAMERA_SHORTCUT) != 0);
 
         if (playVideo) {
             // determine if the point is at center (1/6) of the photo view.
@@ -989,6 +997,8 @@ public class PhotoPage extends ActivityState implements
             onBackPressed();
         } else if (unlock) {
             mActivity.getStateManager().finishState(this);
+        } else if (launchCamera) {
+            GalleryUtils.startCameraActivity(mActivity);
         } else {
             toggleBars();
         }
