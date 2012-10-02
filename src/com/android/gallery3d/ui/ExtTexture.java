@@ -33,6 +33,11 @@ public class ExtTexture extends BasicTexture {
         mTarget = target;
     }
 
+    public ExtTexture(int target, int width, int height) {
+        this(target);
+        setSize(width, height);
+    }
+
     private void uploadToCanvas(GLCanvas canvas) {
         GL11 gl = canvas.getGLInstance();
 
