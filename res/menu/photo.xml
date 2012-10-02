@@ -38,7 +38,7 @@
             android:icon="@drawable/ic_menu_trash_holo_light"
             android:title="@string/delete"
             android:visible="false"
-            android:showAsAction="ifRoom" />
+            android:showAsAction="never" />
     <item android:id="@+id/action_slideshow"
             android:icon="@drawable/ic_menu_slideshow_holo_light"
             android:title="@string/slideshow"
