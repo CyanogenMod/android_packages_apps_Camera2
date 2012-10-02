@@ -42,8 +42,8 @@ public class SnailSource extends MediaSource {
         switch (mMatcher.match(path)) {
             case SNAIL_ALBUM:
                 String itemPath = "/snail/item/" + mMatcher.getVar(0);
-                MediaItem item =
-                        (MediaItem) dataManager.getMediaObject(itemPath);
+                SnailItem item =
+                        (SnailItem) dataManager.getMediaObject(itemPath);
                 return new SnailAlbum(path, item);
             case SNAIL_ITEM: {
                 int id = mMatcher.getIntVar(0);

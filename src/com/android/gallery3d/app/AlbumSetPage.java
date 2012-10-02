@@ -276,6 +276,7 @@ public class AlbumSetPage extends ActivityState implements
                 data.putString(PhotoPage.KEY_MEDIA_SET_PATH,
                         mediaPath);
                 data.putBoolean(PhotoPage.KEY_START_IN_FILMSTRIP, true);
+                data.putBoolean(PhotoPage.KEY_IN_CAMERA_ROLL, targetSet.isCameraRoll());
                 mActivity.getStateManager().startStateForResult(
                         PhotoPage.class, AlbumPage.REQUEST_PHOTO, data);
                 return;

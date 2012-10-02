@@ -16,29 +16,19 @@
 
 package com.android.gallery3d.data;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import com.android.gallery3d.R;
+import com.android.gallery3d.app.GalleryApp;
 
-// This is a simple MediaSet which contains only one MediaItem -- a SnailItem.
-public class SnailAlbum extends SingleItemAlbum {
+public class CameraShortcutImage extends ActionImage {
     @SuppressWarnings("unused")
-    private static final String TAG = "SnailAlbum";
-    private AtomicBoolean mDirty = new AtomicBoolean(false);
+    private static final String TAG = "CameraShortcutImage";
 
-    public SnailAlbum(Path path, SnailItem item) {
-        super(path, item);
+    public CameraShortcutImage(Path path, GalleryApp application) {
+        super(path, application, R.drawable.placeholder_camera);
     }
 
     @Override
-    public long reload() {
-        if (mDirty.compareAndSet(true, false)) {
-            ((SnailItem) getItem()).updateVersion();
-            mDataVersion = nextVersionNumber();
-        }
-        return mDataVersion;
-    }
-
-    public void notifyChange() {
-        mDirty.set(true);
-        notifyContentChanged();
+    public int getSupportedOperations() {
+        return super.getSupportedOperations() | SUPPORT_CAMERA_SHORTCUT;
     }
 }
