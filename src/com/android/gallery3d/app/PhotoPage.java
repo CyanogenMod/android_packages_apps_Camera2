@@ -517,6 +517,7 @@ public class PhotoPage extends ActivityState implements
 
         NfcAdapter adapter = NfcAdapter.getDefaultAdapter(mActivity);
         if (adapter != null) {
+            adapter.setBeamPushUris(null, mActivity);
             adapter.setBeamPushUrisCallback(new CreateBeamUrisCallback() {
                 @Override
                 public Uri[] createBeamUris(NfcEvent event) {
