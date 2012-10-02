@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 import android.view.View;
@@ -316,7 +317,9 @@ public class TrimVideo extends Activity implements
                             // Show the result only when the activity not stopped.
                             Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
                             intent.setDataAndTypeAndNormalize(Uri.fromFile(mDstFile), "video/*");
+                            intent.putExtra(MediaStore.EXTRA_FINISH_ON_COMPLETION, false);
                             startActivity(intent);
+                            finish();
                         }
                     }
                 });
