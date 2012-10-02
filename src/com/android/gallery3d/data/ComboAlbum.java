@@ -27,7 +27,7 @@ public class ComboAlbum extends MediaSet implements ContentListener {
     @SuppressWarnings("unused")
     private static final String TAG = "ComboAlbum";
     private final MediaSet[] mSets;
-    private final String mName;
+    private String mName;
 
     public ComboAlbum(Path path, MediaSet[] mediaSets, String name) {
         super(path, nextVersionNumber());
@@ -74,6 +74,10 @@ public class ComboAlbum extends MediaSet implements ContentListener {
     @Override
     public String getName() {
         return mName;
+    }
+
+    public void useNameOfChild(int i) {
+        if (i < mSets.length) mName = mSets[i].getName();
     }
 
     @Override
