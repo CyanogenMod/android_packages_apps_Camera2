@@ -27,7 +27,7 @@ LOCAL_MODULE    := libjni_filtershow_filters
 LOCAL_SRC_FILES := filters/bw.c \
 		   filters/gradient.c \
 	           filters/saturated.c \
-                   filters/brightness.c \
+                   filters/exposure.c \
                    filters/contrast.c \
                    filters/hue.c \
 		   filters/vignette.c
