@@ -59,6 +59,7 @@ public class LocalMergeAlbum extends MediaSet implements ContentListener {
         for (MediaSet set : mSources) {
             set.addContentListener(this);
         }
+        reload();
     }
 
     @Override
@@ -123,17 +124,7 @@ public class LocalMergeAlbum extends MediaSet implements ContentListener {
 
         // First find the nearest mark position <= start.
         SortedMap<Integer, int[]> head = mIndex.headMap(start + 1);
-        int markPos;
-        try {
-            markPos = head.lastKey();
-        } catch (NoSuchElementException e) {
-            Log.e(TAG, "getMediaItem("+start+","+count+") failed");
-            Log.e(TAG, "mSources: ");
-            for (MediaSet set : mSources) {
-                Log.e(TAG, "\t"+set.getPath());
-            }
-            throw e;
-        }
+        int markPos = head.lastKey();
         int[] subPos = head.get(markPos).clone();
         MediaItem[] slot = new MediaItem[mSources.length];
 
