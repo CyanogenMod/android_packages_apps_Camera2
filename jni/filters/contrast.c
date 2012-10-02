@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <math.h>
 #include "filters.h"
 
 unsigned char clamp(int c)
