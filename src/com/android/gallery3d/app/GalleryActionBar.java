@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.text.TextUtils.TruncateAt;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -150,24 +151,26 @@ public class GalleryActionBar implements OnNavigationListener {
             return position;
         }
 
-        private View getView(CharSequence label, View convertView, ViewGroup parent) {
+        private View getView(CharSequence label, View convertView,
+                ViewGroup parent, boolean ellipsize) {
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.action_bar_text,
                         parent, false);
             }
             TextView view = (TextView) convertView;
+            view.setEllipsize(ellipsize ? TruncateAt.END : null);
             view.setText(label);
             return convertView;
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return getView(mActionBar.getTitle(), convertView, parent);
+            return getView(mActionBar.getTitle(), convertView, parent, true);
         }
 
         @Override
         public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            return getView((CharSequence) getItem(position), convertView, parent);
+            return getView((CharSequence) getItem(position), convertView, parent, false);
         }
     }
 
