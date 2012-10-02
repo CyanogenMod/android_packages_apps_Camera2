@@ -24,7 +24,7 @@ public class UnlockImage extends ActionImage {
     private static final String TAG = "UnlockImage";
 
     public UnlockImage(Path path, GalleryApp application) {
-        super(path, application, R.drawable.ic_lockscreen_handle_normal);
+        super(path, application, R.drawable.placeholder_locked);
     }
 
     @Override
