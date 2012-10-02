@@ -33,7 +33,6 @@ import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.ui.TileImageViewAdapter;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
-import com.android.gallery3d.util.LightCycleHelper;
 import com.android.gallery3d.util.ThreadPool;
 
 public class SinglePhotoDataAdapter extends TileImageViewAdapter
