@@ -20,7 +20,7 @@ static int* gVignetteMap = 0;
 static int gVignetteWidth = 0;
 static int gVignetteHeight = 0;
 
-void __inline__ createVignetteMap(int w, int h)
+__inline__ void createVignetteMap(int w, int h)
 {
     if (gVignetteMap && (gVignetteWidth != w || gVignetteHeight != h))
     {
