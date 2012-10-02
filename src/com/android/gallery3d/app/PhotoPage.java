@@ -555,7 +555,10 @@ public class PhotoPage extends ActivityState implements
 
     private void launchPhotoEditor() {
         MediaItem current = mModel.getMediaItem(0);
-        if (current == null) return;
+        if (current == null || (current.getSupportedOperations()
+                & MediaObject.SUPPORT_EDIT) == 0) {
+            return;
+        }
 
         Intent intent = new Intent(ACTION_NEXTGEN_EDIT);
         intent.setData(mActivity.getDataManager().getContentUri(current.getPath())).setFlags(
