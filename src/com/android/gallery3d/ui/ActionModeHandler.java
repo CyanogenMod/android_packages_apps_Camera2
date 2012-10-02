@@ -249,6 +249,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
     @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
     private void setNfcBeamPushUris(Uri[] uris) {
         if (mNfcAdapter != null && ApiHelper.HAS_SET_BEAM_PUSH_URIS) {
+            mNfcAdapter.setBeamPushUrisCallback(null, mActivity);
             mNfcAdapter.setBeamPushUris(uris, mActivity);
         }
     }
