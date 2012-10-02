@@ -56,10 +56,8 @@
     <string name="confirm" msgid="8646870096527848520">"Bekräfta"</string>
     <string name="cancel" msgid="3637516880917356226">"Avbryt"</string>
     <string name="share" msgid="3619042788254195341">"Dela"</string>
-    <!-- no translation found for share_panorama (2569029972820978718) -->
-    <skip />
-    <!-- no translation found for share_as_photo (8959225188897026149) -->
-    <skip />
+    <string name="share_panorama" msgid="2569029972820978718">"Dela panoramabild"</string>
+    <string name="share_as_photo" msgid="8959225188897026149">"Dela som foto"</string>
     <string name="deleted" msgid="6795433049119073871">"Borttagen"</string>
     <string name="undo" msgid="2930873956446586313">"ÅNGRA"</string>
     <string name="select_all" msgid="3403283025220282175">"Markera alla"</string>
@@ -183,4 +181,9 @@
     <string name="no_external_storage" msgid="95726173164068417">"Inget externt lagringsutrymme är tillgängligt"</string>
     <string name="switch_photo_filmstrip" msgid="991949386967109493">"Filmremsa"</string>
     <string name="switch_photo_grid" msgid="6533267664294518167">"Rutnät"</string>
+    <string name="trimming" msgid="9122385768369143997">"Beskärning"</string>
+    <string name="please_wait" msgid="7296066089146487366">"Vänta"</string>
+    <string name="save_into" msgid="6688364520925473396">"Spara förkortad video i"</string>
+    <string name="trim_too_short" msgid="751593965620665326">"Det gick inte att beskära videon. Målvideon är för kort"</string>
+    <string name="trim_too_long" msgid="2657958275279217174">"Det gick inte att beskära videon. Den är lika lång som originalet"</string>
 </resources>
