@@ -1,6 +1,8 @@
 
 package com.android.gallery3d.filtershow;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Vector;
 
 import com.android.gallery3d.filtershow.cache.ImageLoader;
@@ -10,6 +12,8 @@ import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.ImageSmallFilter;
 import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
 import com.android.gallery3d.filtershow.presets.*;
+import com.android.gallery3d.filtershow.provider.SharedImageProvider;
+import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.filtershow.ui.ImageCurves;
 import com.android.gallery3d.R;
 
@@ -18,6 +22,7 @@ import android.os.Bundle;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -31,7 +36,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.AbsoluteLayout;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -40,10 +44,13 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ShareActionProvider;
+import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import android.widget.Toast;
 
 @TargetApi(16)
-public class FilterShowActivity extends Activity implements OnItemClickListener {
+public class FilterShowActivity extends Activity implements OnItemClickListener,
+        OnShareTargetSelectedListener {
 
     private ImageLoader mImageLoader = null;
     private ImageShow mImageShow = null;
@@ -83,6 +90,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
     private Vector<View> mListViews = new Vector<View>();
     private Vector<ImageButton> mBottomPanelButtons = new Vector<ImageButton>();
     private Vector<ImageButton> mColorsPanelButtons = new Vector<ImageButton>();
+
+    private ShareActionProvider mShareActionProvider;
+    private File mSharedOutputFile = null;
+
+    private boolean mSharingImage = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -210,6 +222,46 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
         }
     }
 
+    public void completeSaveImage(Uri saveUri) {
+        if (mSharingImage && mSharedOutputFile != null) {
+            // Image saved, we unblock the content provider
+            Uri uri = Uri.withAppendedPath(SharedImageProvider.CONTENT_URI,
+                    Uri.encode(mSharedOutputFile.getAbsolutePath()));
+            ContentValues values = new ContentValues();
+            values.put(SharedImageProvider.PREPARE, false);
+            getContentResolver().insert(uri, values);
+        }
+        setResult(RESULT_OK, new Intent().setData(saveUri));
+        finish();
+    }
+
+    @Override
+    public boolean onShareTargetSelected(ShareActionProvider arg0, Intent arg1) {
+        // First, let's tell the SharedImageProvider that it will need to wait for the image
+        Uri uri = Uri.withAppendedPath(SharedImageProvider.CONTENT_URI,
+                Uri.encode(mSharedOutputFile.getAbsolutePath()));
+        ContentValues values = new ContentValues();
+        values.put(SharedImageProvider.PREPARE, true);
+        getContentResolver().insert(uri, values);
+        mSharingImage = true;
+
+        // Process and save the image in the background.
+        mImageShow.saveImage(this, mSharedOutputFile);
+        return true;
+    }
+
+    private Intent getDefaultShareIntent() {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setType(SharedImageProvider.MIME_TYPE);
+        mSharedOutputFile = SaveCopyTask.getNewFile(this, mImageLoader.getUri());
+        Uri uri = Uri.withAppendedPath(SharedImageProvider.CONTENT_URI,
+                Uri.encode(mSharedOutputFile.getAbsolutePath()));
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        return intent;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.filtershow_activity_menu, menu);
@@ -225,6 +277,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
         } else {
             showState.setTitle(R.string.show_imagestate_panel);
         }
+        mShareActionProvider = (ShareActionProvider) menu.findItem(R.id.menu_share)
+                .getActionProvider();
+        mShareActionProvider.setShareIntent(getDefaultShareIntent());
+        mShareActionProvider.setOnShareTargetSelectedListener(this);
         return true;
     }
 
@@ -865,12 +921,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener 
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 
-        mImageShow.saveImage(this);
-    }
-
-    public void completeSaveImage(Uri saveUri) {
-        setResult(RESULT_OK, new Intent().setData(saveUri));
-        finish();
+        mImageShow.saveImage(this, null);
     }
 
     static {
