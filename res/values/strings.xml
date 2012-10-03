@@ -111,6 +111,7 @@
     <string name="cancel">Cancel</string>
     <string name="share">Share</string>
     <string name="share_panorama">Share panorama</string>
+    <string name="view_panorama">View in 360\u00b0</string>
     <string name="share_as_photo">Share as photo</string>
 
     <!-- The label shown after an image is deleted [CHAR LIMIT=16] -->
