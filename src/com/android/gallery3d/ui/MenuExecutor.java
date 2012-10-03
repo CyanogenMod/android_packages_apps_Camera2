@@ -175,7 +175,6 @@ public class MenuExecutor {
         setMenuItemVisible(menu, R.id.action_crop, supportCrop);
         setMenuItemVisible(menu, R.id.action_trim, supportTrim);
         setMenuItemVisible(menu, R.id.action_share_panorama, supportSharePanorama);
-        setMenuItemVisible(menu, R.id.action_view_panorama, supportSharePanorama);
         setMenuItemVisible(menu, R.id.action_share, supportShare);
         setMenuItemVisible(menu, R.id.action_setas, supportSetAs);
         setMenuItemVisible(menu, R.id.action_show_on_map, supportShowOnMap);
