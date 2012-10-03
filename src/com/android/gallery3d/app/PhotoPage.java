@@ -930,12 +930,6 @@ public class PhotoPage extends ActivityState implements
                 mMenuExecutor.onMenuClicked(item, confirmMsg,
                         new ImportCompleteListener(mActivity));
                 return true;
-            case R.id.action_share:
-                Activity activity = mActivity;
-                Intent intent = createShareIntent(mCurrentPhoto.getPath());
-                activity.startActivity(Intent.createChooser(intent,
-                        activity.getString(R.string.share)));
-                return true;
             default :
                 return false;
         }
