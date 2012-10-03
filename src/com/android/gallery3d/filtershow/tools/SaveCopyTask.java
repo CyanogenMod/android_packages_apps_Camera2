@@ -30,6 +30,8 @@ import android.provider.MediaStore.Images.ImageColumns;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.android.gallery3d.filtershow.presets.ImagePreset;
+
 //import com.android.gallery3d.R;
 //import com.android.gallery3d.util.BucketNames;
 
@@ -45,46 +47,28 @@ import java.text.SimpleDateFormat;
 /**
  * Asynchronous task for saving edited photo as a new copy.
  */
-public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
+public class SaveCopyTask extends AsyncTask<ProcessedBitmap, Void, Uri> {
 
     public static final String DOWNLOAD = "download";
     public static final String DEFAULT_SAVE_DIRECTORY = "Download";
     private static final int DEFAULT_COMPRESS_QUALITY = 95;
 
     /**
-     * Saves the bitmap by given directory, filename, and format; if the
-     * directory is given null, then saves it under the cache directory.
+     * Saves the bitmap in the final destination
      */
-    public File saveBitmap(Bitmap bitmap, File directory, String filename,
-            CompressFormat format) {
-
-        if (directory == null) {
-            directory = context.getCacheDir();
-        } else {
-            // Check if the given directory exists or try to create it.
-            if (!directory.isDirectory() && !directory.mkdirs()) {
-                return null;
-            }
-        }
-
-        File file = null;
+    public static void saveBitmap(Bitmap bitmap, File destination) {
         OutputStream os = null;
-
         try {
-            filename = (format == CompressFormat.PNG) ? filename + ".png"
-                    : filename + ".jpg";
-            file = new File(directory, filename);
-            os = new FileOutputStream(file);
-            bitmap.compress(format, DEFAULT_COMPRESS_QUALITY, os);
+            os = new FileOutputStream(destination);
+            bitmap.compress(CompressFormat.JPEG, DEFAULT_COMPRESS_QUALITY, os);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
             closeStream(os);
         }
-        return file;
     }
 
-    private void closeStream(Closeable stream) {
+    private static void closeStream(Closeable stream) {
         if (stream != null) {
             try {
                 stream.close();
@@ -113,62 +97,63 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
     private final Uri sourceUri;
     private final Callback callback;
     private final String saveFileName;
-    private String saveFolderName;
+    private final File destinationFile;
 
-    public SaveCopyTask(Context context, Uri sourceUri, Callback callback) {
+    public SaveCopyTask(Context context, Uri sourceUri, File destination, Callback callback) {
         this.context = context;
         this.sourceUri = sourceUri;
         this.callback = callback;
 
+        if (destination == null) {
+            this.destinationFile = getNewFile(context, sourceUri);
+        } else {
+            this.destinationFile = destination;
+        }
+
         saveFileName = new SimpleDateFormat(TIME_STAMP_NAME).format(new Date(
                 System.currentTimeMillis()));
+    }
+
+    public static File getNewFile(Context context, Uri sourceUri) {
+        File saveDirectory = getSaveDirectory(context, sourceUri);
+        if ((saveDirectory == null) || !saveDirectory.canWrite()) {
+            saveDirectory = new File(Environment.getExternalStorageDirectory(),
+                    DOWNLOAD);
+        }
+
+        String filename = new SimpleDateFormat(TIME_STAMP_NAME).format(new Date(
+                System.currentTimeMillis()));
+        return new File(saveDirectory, filename + ".JPG");
     }
 
     /**
      * The task should be executed with one given bitmap to be saved.
      */
     @Override
-    protected Uri doInBackground(Bitmap... params) {
+    protected Uri doInBackground(ProcessedBitmap... params) {
         // TODO: Support larger dimensions for photo saving.
         if (params[0] == null) {
             return null;
         }
-        // Use the default save directory if the source directory cannot be
-        // saved.
-        File saveDirectory = getSaveDirectory();
-        if ((saveDirectory == null) || !saveDirectory.canWrite()) {
-            saveDirectory = new File(Environment.getExternalStorageDirectory(),
-                    DOWNLOAD);
-            saveFolderName = DEFAULT_SAVE_DIRECTORY;
-        } else {
-            saveFolderName = saveDirectory.getName();
-        }
 
-        Bitmap bitmap = params[0];
+        ProcessedBitmap processedBitmap = params[0];
 
-        File file = saveBitmap(bitmap, saveDirectory, saveFileName,
-                Bitmap.CompressFormat.JPEG);
+        Bitmap bitmap = processedBitmap.apply();
+        saveBitmap(bitmap, this.destinationFile);
 
-        Uri uri = (file != null) ? insertContent(file) : null;
+        Uri uri = insertContent(context, sourceUri, this.destinationFile, saveFileName);
         bitmap.recycle();
         return uri;
     }
 
     @Override
     protected void onPostExecute(Uri result) {
-        /*
-         * String message = (result == null) ?
-         * context.getString(R.string.saving_failure) :
-         * context.getString(R.string.photo_saved, saveFolderName); Toast toast
-         * = Toast.makeText(context, message, Toast.LENGTH_SHORT);
-         * toast.setGravity(Gravity.CENTER, 0, 0); toast.show();
-         */
         if (callback != null) {
             callback.onComplete(result);
         }
     }
 
-    private void querySource(String[] projection,
+    private static void querySource(Context context, Uri sourceUri, String[] projection,
             ContentResolverQueryCallback callback) {
         ContentResolver contentResolver = context.getContentResolver();
         Cursor cursor = null;
@@ -187,10 +172,10 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
         }
     }
 
-    private File getSaveDirectory() {
+    private static File getSaveDirectory(Context context, Uri sourceUri) {
         final File[] dir = new File[1];
-        querySource(new String[] {
-            ImageColumns.DATA
+        querySource(context, sourceUri, new String[] {
+                ImageColumns.DATA
         },
                 new ContentResolverQueryCallback() {
 
@@ -205,7 +190,7 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
     /**
      * Insert the content (saved file) with proper source photo properties.
      */
-    private Uri insertContent(File file) {
+    public static Uri insertContent(Context context, Uri sourceUri, File file, String saveFileName) {
         long now = System.currentTimeMillis() / 1000;
 
         final ContentValues values = new ContentValues();
@@ -223,7 +208,7 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
                 ImageColumns.DATE_TAKEN,
                 ImageColumns.LATITUDE, ImageColumns.LONGITUDE,
         };
-        querySource(projection, new ContentResolverQueryCallback() {
+        querySource(context, sourceUri, projection, new ContentResolverQueryCallback() {
 
             @Override
             public void onCursorResult(Cursor cursor) {
@@ -243,4 +228,5 @@ public class SaveCopyTask extends AsyncTask<Bitmap, Void, Uri> {
         return context.getContentResolver().insert(
                 Images.Media.EXTERNAL_CONTENT_URI, values);
     }
+
 }

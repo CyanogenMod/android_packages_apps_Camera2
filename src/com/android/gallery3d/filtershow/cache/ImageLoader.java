@@ -2,6 +2,7 @@
 package com.android.gallery3d.filtershow.cache;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +14,7 @@ import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
+import com.android.gallery3d.filtershow.tools.ProcessedBitmap;
 import com.android.gallery3d.R;
 
 import android.content.Context;
@@ -57,6 +59,10 @@ public class ImageLoader {
         mOriginalBitmapSmall = loadScaledBitmap(uri, 160);
         mOriginalBitmapLarge = loadScaledBitmap(uri, 320);
         updateBitmaps();
+    }
+
+    public Uri getUri() {
+        return mUri;
     }
 
     private int getOrientation(Uri uri) {
@@ -219,7 +225,8 @@ public class ImageLoader {
         mCache.reset(imagePreset);
     }
 
-    public Uri saveImage(ImagePreset preset, final FilterShowActivity filterShowActivity) {
+    public Uri saveImage(ImagePreset preset, final FilterShowActivity filterShowActivity,
+            File destination) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inMutable = true;
 
@@ -235,15 +242,15 @@ public class ImageLoader {
             // TODO: on <3.x we need a copy of the bitmap (inMutable doesn't
             // exist)
             mSaveCopy = mFullOriginalBitmap;
-            preset.apply(mSaveCopy);
-            new SaveCopyTask(mContext, mUri, new SaveCopyTask.Callback() {
+            ProcessedBitmap processedBitmap = new ProcessedBitmap(mSaveCopy, preset);
+            new SaveCopyTask(mContext, mUri, destination, new SaveCopyTask.Callback() {
 
                 @Override
                 public void onComplete(Uri result) {
                     filterShowActivity.completeSaveImage(result);
                 }
 
-            }).execute(mSaveCopy);
+            }).execute(processedBitmap);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
