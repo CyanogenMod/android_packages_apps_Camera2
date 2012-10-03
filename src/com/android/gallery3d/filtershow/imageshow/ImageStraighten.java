@@ -15,8 +15,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
-public class ImageStraighten extends ImageShow {
-    private ImageShow mMasterImageShow = null;
+public class ImageStraighten extends ImageSlave {
     private float mImageRotation = 0;
     private float mImageRotationZoomFactor = 0;
 
@@ -46,26 +45,6 @@ public class ImageStraighten extends ImageShow {
 
     public ImageStraighten(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    public void updateAngle() {
-        mMasterImageShow.setImageRotation(mImageRotation, mImageRotationZoomFactor);
-    }
-
-    public void setMaster(ImageShow master) {
-        mMasterImageShow = master;
-    }
-
-    public boolean showTitle() {
-        return false;
-    }
-
-    public ImagePreset getImagePreset() {
-        return mMasterImageShow.getImagePreset();
-    }
-
-    public void setImagePreset(ImagePreset preset, boolean addToHistory) {
-        mMasterImageShow.setImagePreset(preset, addToHistory);
     }
 
     // ///////////////////////////////////////////////////////////////////////////
@@ -168,7 +147,7 @@ public class ImageStraighten extends ImageShow {
         // so that we can fake the rotation, etc.
         Bitmap image = null; // mMasterImageShow.mFilteredImage;
         if (image == null) {
-            image = mMasterImageShow.mForegroundImage;
+            image = getMaster().mForegroundImage;
         }
         if (image == null) {
             return;

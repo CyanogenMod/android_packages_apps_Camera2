@@ -125,6 +125,12 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
+            <com.android.gallery3d.filtershow.imageshow.ImageZoom
+                android:id="@+id/imageZoom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
             <ImageButton
                 android:id="@+id/showOriginalButton"
                 android:layout_width="64dip"

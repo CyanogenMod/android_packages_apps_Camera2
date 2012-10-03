@@ -116,6 +116,9 @@ public class SliderController {
         mCurrentX = x;
         mCurrentY = y;
         mMode = MODES.DOWN;
+        if (mListener != null) {
+            mListener.onTouchDown(x, y);
+        }
     }
 
     public void setActionMove(float x, float y) {
@@ -131,6 +134,9 @@ public class SliderController {
     public void setActionUp() {
         mMode = MODES.UP;
         mOriginalValue = computeValue();
+        if (mListener != null) {
+            mListener.onTouchUp();
+        }
     }
 
     public void setNoAction() {
