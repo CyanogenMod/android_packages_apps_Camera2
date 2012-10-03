@@ -941,6 +941,8 @@ public class PhotoView extends GLView {
         private int mDeltaY;
         // The accumulated scaling change from a scaling gesture.
         private float mAccScale;
+        // If an onFling happened after the last onDown
+        private boolean mHadFling;
 
         @Override
         public boolean onSingleTapUp(float x, float y) {
@@ -1059,6 +1061,7 @@ public class PhotoView extends GLView {
             } else {
                 flingImages(velocityX, velocityY);
             }
+            mHadFling = true;
             return true;
         }
 
@@ -1212,7 +1215,7 @@ public class PhotoView extends GLView {
             } else {
                 mDownInScrolling = false;
             }
-
+            mHadFling = false;
             mScrolledAfterDown = false;
             if (mFilmMode) {
                 int xi = (int) (x + 0.5f);
@@ -1256,8 +1259,11 @@ public class PhotoView extends GLView {
                 mIgnoreUpEvent = false;
                 return;
             }
-
-            snapback();
+            if (!mFilmMode || mHadFling) {
+                snapback();
+            } else {
+                snapToNeighborImage();
+            }
         }
 
         public void setSwipingEnabled(boolean enabled) {
@@ -1531,14 +1537,12 @@ public class PhotoView extends GLView {
 
     private void snapback() {
         if ((mHolding & ~HOLD_DELETE) != 0) return;
-        if (!snapToNeighborImage()) {
+        if (mFilmMode || !snapToNeighborImage()) {
             mPositionController.snapback();
         }
     }
 
     private boolean snapToNeighborImage() {
-        if (mFilmMode) return false;
-
         Rect r = mPositionController.getPosition(0);
         int viewW = getWidth();
         // Setting the move threshold proportional to the width of the view
