@@ -249,6 +249,8 @@ public class LocalImage extends LocalMediaItem {
 
         if (usePanoramaViewer()) {
             operation |= SUPPORT_PANORAMA;
+            // disable destructive rotate for lightcycle panorama
+            operation &= ~SUPPORT_ROTATE;
         }
         return operation;
     }
