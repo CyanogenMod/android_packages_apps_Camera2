@@ -25,9 +25,8 @@ public class ImageFilterGradient extends ImageFilter {
     @Override
     public ImageFilter clone() throws CloneNotSupportedException {
         ImageFilterGradient filter = (ImageFilterGradient) super.clone();
-        for (int i = 0; i < mColors.length; i++) {
-            filter.addColor(mColors[i], mPositions[i]);
-        }
+        System.arraycopy(mColors, 0, filter.mColors, 0, mColors.length);
+        System.arraycopy(mPositions, 0, filter.mPositions, 0, mPositions.length);
         return filter;
     }
 

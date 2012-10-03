@@ -89,10 +89,17 @@ public class ImageStraighten extends ImageShow {
 
     public void setActionUp() {
         mMode = MODES.UP;
+        updatePreset();
     }
 
     public void setNoAction() {
         mMode = MODES.NONE;
+    }
+
+    private void updatePreset() {
+        ImagePreset copy = new ImagePreset(getImagePreset());
+        copy.setStraightenRotation(mImageRotation, mImageRotationZoomFactor);
+        setImagePreset(copy);
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -231,13 +238,6 @@ public class ImageStraighten extends ImageShow {
         gPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
         mImageRotationZoomFactor = (float) (rw / boundsRect.width());
-
-        ImagePreset copy = new ImagePreset(getImagePreset());
-        Log.v(LOGTAG, "creating a new image preset with rotation " + mImageRotation
-                + " and zoom factor: " + mImageRotationZoomFactor);
-
-        copy.setStraightenRotation(mImageRotation, mImageRotationZoomFactor);
-        setImagePreset(copy);
 
         if (mMode == MODES.MOVE) {
             canvas.save();
