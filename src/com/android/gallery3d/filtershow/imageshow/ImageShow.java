@@ -13,6 +13,8 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.R.id;
 import com.android.gallery3d.R.layout;
 
+import java.io.File;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -288,8 +290,8 @@ public class ImageShow extends View implements SliderListener {
         mFilteredImage = bitmap;
     }
 
-    public void saveImage(FilterShowActivity filterShowActivity) {
-        mImageLoader.saveImage(getImagePreset(), filterShowActivity);
+    public void saveImage(FilterShowActivity filterShowActivity, File file) {
+        mImageLoader.saveImage(getImagePreset(), filterShowActivity, file);
     }
 
     public boolean onTouchEvent(MotionEvent event) {
