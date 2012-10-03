@@ -45,4 +45,7 @@ typedef unsigned int Color;
 
 __inline__ unsigned char  clamp(int c);
 
+extern void rgb2hsv( unsigned char *rgb,int rgbOff,unsigned short *hsv,int hsvOff);
+extern void hsv2rgb(unsigned short *hsv,int hsvOff,unsigned char  *rgb,int rgbOff);
+
 #endif // FILTERS_H

@@ -1,7 +1,7 @@
 
 package com.android.gallery3d.filtershow.ui;
 
-class ControlPoint implements Comparable {
+public class ControlPoint implements Comparable {
     public ControlPoint(float px, float py) {
         x = px;
         y = py;
