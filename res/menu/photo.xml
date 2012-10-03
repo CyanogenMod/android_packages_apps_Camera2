@@ -28,9 +28,6 @@
             android:visible="false"
             android:actionProviderClass="android.widget.ShareActionProvider"
             android:showAsAction="ifRoom" />
-    <item android:id="@+id/action_view_panorama"
-            android:title="@string/view_panorama"
-            android:showAsAction="never" />
     <item android:id="@+id/action_share"
             android:icon="@drawable/ic_menu_share_holo_light"
             android:title="@string/share"
