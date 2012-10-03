@@ -939,6 +939,10 @@ public class PhotoPage extends ActivityState implements
                 mMenuExecutor.onMenuClicked(item, confirmMsg,
                         new ImportCompleteListener(mActivity));
                 return true;
+            case R.id.action_view_panorama:
+                LightCycleHelper.viewPanorama(mActivity,
+                        manager.getContentUri(path));
+                return true;
             default :
                 return false;
         }
