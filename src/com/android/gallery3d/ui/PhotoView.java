@@ -125,7 +125,7 @@ public class PhotoView extends GLView {
         public void onUndoDeleteImage();
         public void onCommitDeleteImage();
         public void onFilmModeChanged(boolean enabled);
-        public void onCameraCenter();
+        public void onPictureCenter(boolean isCamera);
     }
 
     // The rules about orientation locking:
@@ -199,7 +199,7 @@ public class PhotoView extends GLView {
 
     private boolean mCancelExtraScalingPending;
     private boolean mFilmMode = false;
-    private boolean mWantCameraCenterCallbacks = false;
+    private boolean mWantPictureCenterCallbacks = false;
     private int mDisplayRotation = 0;
     private int mCompensation = 0;
     private boolean mFullScreenCamera;
@@ -383,8 +383,8 @@ public class PhotoView extends GLView {
         }
     }
 
-    public void setWantCameraCenterCallbacks(boolean wanted) {
-        mWantCameraCenterCallbacks = wanted;
+    public void setWantPictureCenterCallbacks(boolean wanted) {
+        mWantPictureCenterCallbacks = wanted;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -629,10 +629,8 @@ public class PhotoView extends GLView {
             // Holdings except touch-down prevent the transitions.
             if ((mHolding & ~HOLD_TOUCH_DOWN) != 0) return;
 
-            boolean isCameraCenter = mIsCamera && mPositionController.isCenter() && !canUndoLastPicture();
-
-            if (isCameraCenter && mWantCameraCenterCallbacks) {
-                mListener.onCameraCenter();
+            if (mWantPictureCenterCallbacks && mPositionController.isCenter()) {
+                mListener.onPictureCenter(mIsCamera && !canUndoLastPicture());
             }
         }
 
