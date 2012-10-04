@@ -57,7 +57,7 @@
     <string name="cancel" msgid="3637516880917356226">"Отмена"</string>
     <string name="share" msgid="3619042788254195341">"Отправить"</string>
     <string name="share_panorama" msgid="2569029972820978718">"Отправить панораму"</string>
-    <string name="share_as_photo" msgid="8959225188897026149">"Отправить как фото"</string>
+    <string name="share_as_photo" msgid="8959225188897026149">"Отправить фото"</string>
     <string name="deleted" msgid="6795433049119073871">"Удалено"</string>
     <string name="undo" msgid="2930873956446586313">"ОТМЕНИТЬ"</string>
     <string name="select_all" msgid="3403283025220282175">"Выбрать все"</string>
