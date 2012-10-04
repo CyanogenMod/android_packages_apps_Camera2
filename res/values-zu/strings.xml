@@ -183,14 +183,9 @@
     <string name="no_external_storage" msgid="95726173164068417">"Asikho isilondolozi sangaphandle esikhona"</string>
     <string name="switch_photo_filmstrip" msgid="991949386967109493">"I-Filmstrip"</string>
     <string name="switch_photo_grid" msgid="6533267664294518167">"Igridi"</string>
-    <!-- no translation found for trimming (9122385768369143997) -->
-    <skip />
-    <!-- no translation found for please_wait (7296066089146487366) -->
-    <skip />
-    <!-- no translation found for save_into (6688364520925473396) -->
-    <skip />
-    <!-- no translation found for trim_too_short (751593965620665326) -->
-    <skip />
-    <!-- no translation found for trim_too_long (2657958275279217174) -->
-    <skip />
+    <string name="trimming" msgid="9122385768369143997">"Ukusika"</string>
+    <string name="please_wait" msgid="7296066089146487366">"Sicela ulinde"</string>
+    <string name="save_into" msgid="6688364520925473396">"Londoloza amavidiyo asikiwe ku-"</string>
+    <string name="trim_too_short" msgid="751593965620665326">"Awukwazi ukusika : ividiyo eqondisiwe yifushane kakhulu"</string>
+    <string name="trim_too_long" msgid="2657958275279217174">"Awusikanga : ubude obufanayo njengoboqobo"</string>
 </resources>
