@@ -142,8 +142,8 @@ public class SlideshowView extends GLView {
             int viewWidth = getWidth();
             int viewHeight = getHeight();
 
-            float initScale = Math.min(2f, Math.min((float)
-                    viewWidth / mWidth, (float) viewHeight / mHeight));
+            float initScale = Math.min((float)
+                    viewWidth / mWidth, (float) viewHeight / mHeight);
             float scale = initScale * (1 + SCALE_SPEED * mProgress);
 
             float centerX = viewWidth / 2 + mMovingVector.x * mProgress;
