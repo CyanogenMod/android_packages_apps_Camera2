@@ -28,6 +28,8 @@ import com.android.gallery3d.util.ThreadPool;
 
 public interface GalleryApp {
     public DataManager getDataManager();
+
+    public StitchingProgressManager getStitchingProgressManager();
     public ImageCacheService getImageCacheService();
     public DownloadCache getDownloadCache();
     public ThreadPool getThreadPool();
