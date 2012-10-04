@@ -23,6 +23,9 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.android.camera.CameraModule;
+import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.app.StitchingProgressManager;
+import com.android.gallery3d.data.MediaSource;
 
 public class LightCycleHelper {
 
@@ -30,11 +33,11 @@ public class LightCycleHelper {
         /* Do nothing */
     }
 
-    public static synchronized boolean hasLightCycleView(Context context) {
+    public static boolean hasLightCycleView(Context context) {
         return false;
     }
 
-    public static synchronized boolean hasLightCycleCapture(Context context) {
+    public static boolean hasLightCycleCapture(Context context) {
         return false;
     }
 
@@ -48,5 +51,17 @@ public class LightCycleHelper {
 
     public static CameraModule createPanoramaModule() {
         return null;
+    }
+
+    public static StitchingProgressManager createStitchingManagerInstance(GalleryApp app) {
+        return null;
+    }
+
+    public static MediaSource createMediaSourceInstance(GalleryApp app) {
+        return null;
+    }
+
+    public static String wrapGalleryPath(String path) {
+        return path;
     }
 }
