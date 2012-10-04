@@ -112,7 +112,6 @@ public class TileImageViewAdapter implements TileImageView.Model {
     @Override
     public Bitmap getTile(int level, int x, int y, int tileSize,
             int borderSize, BitmapPool pool) {
-
         if (!ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER) {
             return getTileWithoutReusingBitmap(level, x, y, tileSize, borderSize);
         }
