@@ -18,6 +18,7 @@ package com.android.gallery3d.data;
 
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.app.StateManager;
+import com.android.gallery3d.app.StitchingProgressManager;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.util.ThreadPool;
 
@@ -42,4 +43,5 @@ class GalleryAppStub implements GalleryApp {
     public ContentResolver getContentResolver() { return null; }
     public ThreadPool getThreadPool() { return null; }
     public DownloadCache getDownloadCache() { return null; }
+    public StitchingProgressManager getStitchingProgressManager() { return null; }
 }
