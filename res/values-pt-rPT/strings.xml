@@ -39,7 +39,7 @@
     <string name="save_error" msgid="6857408774183654970">"Impossível guardar imagem recortada."</string>
     <string name="crop_label" msgid="521114301871349328">"Recortar imagem"</string>
     <string name="trim_label" msgid="274203231381209979">"Cortar vídeo"</string>
-    <string name="select_image" msgid="7841406150484742140">"Seleccionar fotog."</string>
+    <string name="select_image" msgid="7841406150484742140">"Selecionar fotog."</string>
     <string name="select_video" msgid="4859510992798615076">"Seleccionar vídeo"</string>
     <string name="select_item" msgid="2816923896202086390">"Seleccionar item"</string>
     <string name="select_album" msgid="1557063764849434077">"Selecionar álbum"</string>
@@ -166,7 +166,7 @@
     <string name="slideshow_dream_name" msgid="6915963319933437083">"Apres. de diap."</string>
     <string name="albums" msgid="7320787705180057947">"Álbuns"</string>
     <string name="times" msgid="2023033894889499219">"Vezes"</string>
-    <string name="locations" msgid="6649297994083130305">"localizações"</string>
+    <string name="locations" msgid="6649297994083130305">"Localizações"</string>
     <string name="people" msgid="4114003823747292747">"Pessoas"</string>
     <string name="tags" msgid="5539648765482935955">"Etiquetas"</string>
     <string name="group_by" msgid="4308299657902209357">"Agrupar por"</string>
@@ -181,14 +181,9 @@
     <string name="no_external_storage" msgid="95726173164068417">"Nenhum armazenamento externo disponível"</string>
     <string name="switch_photo_filmstrip" msgid="991949386967109493">"Película de filme"</string>
     <string name="switch_photo_grid" msgid="6533267664294518167">"Grelha"</string>
-    <!-- no translation found for trimming (9122385768369143997) -->
-    <skip />
-    <!-- no translation found for please_wait (7296066089146487366) -->
-    <skip />
-    <!-- no translation found for save_into (6688364520925473396) -->
-    <skip />
-    <!-- no translation found for trim_too_short (751593965620665326) -->
-    <skip />
-    <!-- no translation found for trim_too_long (2657958275279217174) -->
-    <skip />
+    <string name="trimming" msgid="9122385768369143997">"Recorte"</string>
+    <string name="please_wait" msgid="7296066089146487366">"Aguarde"</string>
+    <string name="save_into" msgid="6688364520925473396">"Guardar vídeo recortado em"</string>
+    <string name="trim_too_short" msgid="751593965620665326">"Não é possível recortar: o vídeo de destino é demasiado pequeno"</string>
+    <string name="trim_too_long" msgid="2657958275279217174">"Não recortar: a mesma duração do original"</string>
 </resources>
