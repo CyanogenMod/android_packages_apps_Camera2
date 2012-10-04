@@ -74,8 +74,8 @@ public class MoviePlayer implements
     private static final long RESUMEABLE_TIMEOUT = 3 * 60 * 1000; // 3 mins
 
     private Context mContext;
-    private final VideoView mVideoView;
     private final View mRootView;
+    private final VideoView mVideoView;
     private final Bookmarker mBookmarker;
     private final Uri mUri;
     private final Handler mHandler = new Handler();
@@ -101,14 +101,6 @@ public class MoviePlayer implements
             } else {
                 mHandler.postDelayed(mPlayingChecker, 250);
             }
-        }
-    };
-
-    private final Runnable mRemoveBackground = new Runnable() {
-        @SuppressWarnings("deprecation")
-        @Override
-        public void run() {
-            mRootView.setBackgroundDrawable(null);
         }
     };
 
@@ -199,19 +191,7 @@ public class MoviePlayer implements
                 if ((diff & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) != 0
                         && (visibility & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0) {
                     mController.show();
-
-                    // We need to set the background to clear ghosting images
-                    // when ActionBar slides in. However, if we keep the background,
-                    // there will be one additional layer in HW composer, which is bad
-                    // to battery. As a solution, we remove the background when we
-                    // hide the action bar
-                    mHandler.removeCallbacks(mRemoveBackground);
                     mRootView.setBackgroundColor(Color.BLACK);
-                } else {
-                    mHandler.removeCallbacks(mRemoveBackground);
-
-                    // Wait for the slide out animation, one second should be enough
-                    mHandler.postDelayed(mRemoveBackground, 1000);
                 }
             }
         });
