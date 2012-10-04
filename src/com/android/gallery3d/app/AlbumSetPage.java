@@ -37,6 +37,7 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaDetails;
+import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
@@ -60,6 +61,7 @@ import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.HelpUtils;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 public class AlbumSetPage extends ActivityState implements
         SelectionManager.SelectionListener, GalleryActionBar.ClusterRunner,
@@ -211,7 +213,10 @@ public class AlbumSetPage extends ActivityState implements
 
     private static boolean albumShouldOpenInFilmstrip(MediaSet album) {
         int itemCount = album.getMediaItemCount();
-        return (album.isCameraRoll() && itemCount > 0) || itemCount == 1;
+        ArrayList<MediaItem> list = (itemCount == 1) ? album.getMediaItem(0, 1) : null;
+        return (album.isCameraRoll() && itemCount > 0)
+                // open in film strip only if there's one item in the album and the item exists
+                || (list != null && !list.isEmpty());
     }
 
     WeakReference<Toast> mEmptyAlbumToast = null;
