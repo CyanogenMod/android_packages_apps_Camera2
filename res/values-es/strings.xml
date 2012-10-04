@@ -181,14 +181,9 @@
     <string name="no_external_storage" msgid="95726173164068417">"No hay almacenamiento externo disponible."</string>
     <string name="switch_photo_filmstrip" msgid="991949386967109493">"Película"</string>
     <string name="switch_photo_grid" msgid="6533267664294518167">"Cuadrícula"</string>
-    <!-- no translation found for trimming (9122385768369143997) -->
-    <skip />
-    <!-- no translation found for please_wait (7296066089146487366) -->
-    <skip />
-    <!-- no translation found for save_into (6688364520925473396) -->
-    <skip />
-    <!-- no translation found for trim_too_short (751593965620665326) -->
-    <skip />
-    <!-- no translation found for trim_too_long (2657958275279217174) -->
-    <skip />
+    <string name="trimming" msgid="9122385768369143997">"Recortando..."</string>
+    <string name="please_wait" msgid="7296066089146487366">"Espera..."</string>
+    <string name="save_into" msgid="6688364520925473396">"Guardar vídeo recortado en"</string>
+    <string name="trim_too_short" msgid="751593965620665326">"No se puede recortar: el vídeo de destino es demasiado corto."</string>
+    <string name="trim_too_long" msgid="2657958275279217174">"No recortar: misma duración que el original"</string>
 </resources>
