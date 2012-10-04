@@ -1,22 +1,7 @@
 
 package com.android.gallery3d.filtershow.cache;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Vector;
-
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.HistoryAdapter;
-import com.android.gallery3d.filtershow.imageshow.ImageShow;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
-import com.android.gallery3d.filtershow.tools.SaveCopyTask;
-import com.android.gallery3d.filtershow.tools.ProcessedBitmap;
-import com.android.gallery3d.R;
-
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -28,6 +13,22 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.filtershow.HistoryAdapter;
+import com.android.gallery3d.filtershow.imageshow.ImageShow;
+import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.tools.ProcessedBitmap;
+import com.android.gallery3d.filtershow.tools.SaveCopyTask;
+
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Vector;
 
 public class ImageLoader {
 
@@ -66,6 +67,10 @@ public class ImageLoader {
     }
 
     private int getOrientation(Uri uri) {
+        if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
+            return getOrientationFromPath(uri.getPath());
+        }
+
         Cursor cursor = null;
         try {
             cursor = mContext.getContentResolver().query(uri,
@@ -73,17 +78,12 @@ public class ImageLoader {
                         MediaStore.Images.ImageColumns.ORIENTATION
                     },
                     null, null, null);
+            return cursor.moveToNext() ? cursor.getInt(0) : -1;
         } catch (SQLiteException e){
-            Utils.closeSilently(cursor);
             return ExifInterface.ORIENTATION_UNDEFINED;
+        } finally {
+            Utils.closeSilently(cursor);
         }
-
-        if (cursor.getCount() != 1) {
-            return -1;
-        }
-
-        cursor.moveToFirst();
-        return cursor.getInt(0);
     }
 
     private int getOrientationFromPath(String path) {
