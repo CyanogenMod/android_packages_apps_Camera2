@@ -1259,10 +1259,11 @@ public class PhotoView extends GLView {
                 mIgnoreUpEvent = false;
                 return;
             }
-            if (!mFilmMode || mHadFling) {
-                snapback();
-            } else {
+
+            if (mFilmMode && !mHadFling && mFirstScrollX) {
                 snapToNeighborImage();
+            } else {
+                snapback();
             }
         }
 
