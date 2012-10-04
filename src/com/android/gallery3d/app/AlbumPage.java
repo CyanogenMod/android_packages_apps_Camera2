@@ -401,7 +401,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 mParentMediaSetString != null;
         GalleryActionBar actionBar = mActivity.getGalleryActionBar();
         actionBar.setDisplayOptions(enableHomeButton, false);
-        actionBar.enableAlbumModeMenu(GalleryActionBar.ALBUM_GRID_MODE_SELECTED, this);
+        if (!mGetContent) {
+            actionBar.enableAlbumModeMenu(GalleryActionBar.ALBUM_GRID_MODE_SELECTED, this);
+        }
 
         // Set the reload bit here to prevent it exit this page in clearLoadingBit().
         setLoadingBit(BIT_LOADING_RELOAD);
@@ -425,7 +427,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mAlbumDataAdapter.pause();
         mAlbumView.pause();
         DetailsHelper.pause();
-        mActivity.getGalleryActionBar().disableAlbumModeMenu(true);
+        if (!mGetContent) {
+            mActivity.getGalleryActionBar().disableAlbumModeMenu(true);
+        }
 
         if (mSyncTask != null) {
             mSyncTask.cancel();
