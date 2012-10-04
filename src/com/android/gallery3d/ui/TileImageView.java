@@ -29,6 +29,7 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.DecodeUtils;
 import com.android.gallery3d.util.Future;
+import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.CancelListener;
 import com.android.gallery3d.util.ThreadPool.JobContext;
@@ -43,15 +44,12 @@ public class TileImageView extends GLView {
 
     // TILE_SIZE must be 2^N - 2. We put one pixel border in each side of the
     // texture to avoid seams between tiles.
-    private static final int TILE_SIZE = 254;
+    private static int TILE_SIZE;
     private static final int TILE_BORDER = 1;
-    private static final int BITMAP_SIZE = TILE_SIZE + TILE_BORDER * 2;
+    private static int BITMAP_SIZE;
     private static final int UPLOAD_LIMIT = 1;
 
-    private static final BitmapPool sTilePool =
-            ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER
-            ? new BitmapPool(BITMAP_SIZE, BITMAP_SIZE, 128)
-            : null;
+    private static BitmapPool sTilePool;
 
     /*
      *  This is the tile state in the CPU side.
@@ -152,6 +150,18 @@ public class TileImageView extends GLView {
     public TileImageView(GalleryContext context) {
         mThreadPool = context.getThreadPool();
         mTileDecoder = mThreadPool.submit(new TileDecoder());
+        if (TILE_SIZE == 0) {
+            if (GalleryUtils.isHighResolution(context.getAndroidContext())) {
+                TILE_SIZE = 510 ;
+            } else {
+                TILE_SIZE = 254;
+            }
+            BITMAP_SIZE = TILE_SIZE + TILE_BORDER * 2;
+            sTilePool =
+                    ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER
+                    ? new BitmapPool(BITMAP_SIZE, BITMAP_SIZE, 128)
+                    : null;
+        }
     }
 
     public void setModel(Model model) {
