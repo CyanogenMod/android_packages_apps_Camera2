@@ -181,14 +181,9 @@
     <string name="no_external_storage" msgid="95726173164068417">"لا تتوفر سعة تخزين خارجية"</string>
     <string name="switch_photo_filmstrip" msgid="991949386967109493">"شريط الصور"</string>
     <string name="switch_photo_grid" msgid="6533267664294518167">"شبكة"</string>
-    <!-- no translation found for trimming (9122385768369143997) -->
-    <skip />
-    <!-- no translation found for please_wait (7296066089146487366) -->
-    <skip />
-    <!-- no translation found for save_into (6688364520925473396) -->
-    <skip />
-    <!-- no translation found for trim_too_short (751593965620665326) -->
-    <skip />
-    <!-- no translation found for trim_too_long (2657958275279217174) -->
-    <skip />
+    <string name="trimming" msgid="9122385768369143997">"جارٍ الاقتطاع"</string>
+    <string name="please_wait" msgid="7296066089146487366">"الرجاء الانتظار"</string>
+    <string name="save_into" msgid="6688364520925473396">"حفظ الفيديو الذي تم اقتطاعه في"</string>
+    <string name="trim_too_short" msgid="751593965620665326">"لا يمكن الاقتطاع : الفيديو المستهدف قصير جدًا"</string>
+    <string name="trim_too_long" msgid="2657958275279217174">"لم يتم الاقتطاع : المدة الزمنية نفسها كالمصدر"</string>
 </resources>
