@@ -181,14 +181,9 @@
     <string name="no_external_storage" msgid="95726173164068417">"Kullanılabilir harici depolama yok"</string>
     <string name="switch_photo_filmstrip" msgid="991949386967109493">"Film şeridi"</string>
     <string name="switch_photo_grid" msgid="6533267664294518167">"Tablo"</string>
-    <!-- no translation found for trimming (9122385768369143997) -->
-    <skip />
-    <!-- no translation found for please_wait (7296066089146487366) -->
-    <skip />
-    <!-- no translation found for save_into (6688364520925473396) -->
-    <skip />
-    <!-- no translation found for trim_too_short (751593965620665326) -->
-    <skip />
-    <!-- no translation found for trim_too_long (2657958275279217174) -->
-    <skip />
+    <string name="trimming" msgid="9122385768369143997">"Kırpma"</string>
+    <string name="please_wait" msgid="7296066089146487366">"Lütfen bekleyin"</string>
+    <string name="save_into" msgid="6688364520925473396">"Kırpılan videoları şuraya kaydet:"</string>
+    <string name="trim_too_short" msgid="751593965620665326">"Kırpılamaz: hedef video çok kısa"</string>
+    <string name="trim_too_long" msgid="2657958275279217174">"Kırpılmadı: orijinal ile aynı uzunlukta"</string>
 </resources>

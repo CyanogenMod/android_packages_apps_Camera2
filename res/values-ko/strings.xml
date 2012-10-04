@@ -181,14 +181,9 @@
     <string name="no_external_storage" msgid="95726173164068417">"사용할 수 있는 외부 저장소 없음"</string>
     <string name="switch_photo_filmstrip" msgid="991949386967109493">"슬라이드"</string>
     <string name="switch_photo_grid" msgid="6533267664294518167">"바둑판"</string>
-    <!-- no translation found for trimming (9122385768369143997) -->
-    <skip />
-    <!-- no translation found for please_wait (7296066089146487366) -->
-    <skip />
-    <!-- no translation found for save_into (6688364520925473396) -->
-    <skip />
-    <!-- no translation found for trim_too_short (751593965620665326) -->
-    <skip />
-    <!-- no translation found for trim_too_long (2657958275279217174) -->
-    <skip />
+    <string name="trimming" msgid="9122385768369143997">"자르기"</string>
+    <string name="please_wait" msgid="7296066089146487366">"잠시 기다려 주세요."</string>
+    <string name="save_into" msgid="6688364520925473396">"잘라낸 동영상 저장 위치"</string>
+    <string name="trim_too_short" msgid="751593965620665326">"잘라낼 수 없음 : 동영상이 너무 짧음"</string>
+    <string name="trim_too_long" msgid="2657958275279217174">"잘라내지 않음 : 원본과 길이가 같음"</string>
 </resources>
