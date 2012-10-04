@@ -578,8 +578,9 @@ public class PhotoPage extends ActivityState implements
         }
 
         Intent intent = new Intent(ACTION_NEXTGEN_EDIT);
-        intent.setData(mActivity.getDataManager().getContentUri(current.getPath())).setFlags(
-                Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        intent.setDataAndType(current.getContentUri(), current.getMimeType())
+                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         if (mActivity.getPackageManager()
                 .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).size() == 0) {
             intent.setAction(Intent.ACTION_EDIT);
