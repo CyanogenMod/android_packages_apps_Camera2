@@ -30,8 +30,6 @@ public abstract class MediaItem extends MediaObject {
     public static final int TYPE_THUMBNAIL = 1;
     public static final int TYPE_MICROTHUMBNAIL = 2;
 
-    public static final int THUMBNAIL_TARGET_SIZE = 640;
-    public static final int MICROTHUMBNAIL_TARGET_SIZE = 200;
     public static final int CACHED_IMAGE_QUALITY = 95;
 
     public static final int IMAGE_READY = 0;
@@ -43,18 +41,16 @@ public abstract class MediaItem extends MediaObject {
     private static final int BYTESBUFFE_POOL_SIZE = 4;
     private static final int BYTESBUFFER_SIZE = 200 * 1024;
 
-    private static final BitmapPool sMicroThumbPool =
-            ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_FACTORY
-            ? new BitmapPool(MICROTHUMBNAIL_TARGET_SIZE, MICROTHUMBNAIL_TARGET_SIZE, 16)
-            : null;
+    private static int sMicrothumbnailTargetSize = 200;
+    private static BitmapPool sMicroThumbPool;
+    private static final BytesBufferPool sMicroThumbBufferPool =
+            new BytesBufferPool(BYTESBUFFE_POOL_SIZE, BYTESBUFFER_SIZE);
 
+    private static int sThumbnailTargetSize = 640;
     private static final BitmapPool sThumbPool =
             ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_FACTORY
             ? new BitmapPool(4)
             : null;
-
-    private static final BytesBufferPool sMicroThumbBufferPool =
-            new BytesBufferPool(BYTESBUFFE_POOL_SIZE, BYTESBUFFER_SIZE);
 
     // TODO: fix default value for latlng and change this.
     public static final double INVALID_LATLNG = 0f;
@@ -125,9 +121,9 @@ public abstract class MediaItem extends MediaObject {
     public static int getTargetSize(int type) {
         switch (type) {
             case TYPE_THUMBNAIL:
-                return THUMBNAIL_TARGET_SIZE;
+                return sThumbnailTargetSize;
             case TYPE_MICROTHUMBNAIL:
-                return MICROTHUMBNAIL_TARGET_SIZE;
+                return sMicrothumbnailTargetSize;
             default:
                 throw new RuntimeException(
                     "should only request thumb/microthumb from cache");
@@ -135,6 +131,9 @@ public abstract class MediaItem extends MediaObject {
     }
 
     public static BitmapPool getMicroThumbPool() {
+        if (ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_FACTORY && sMicroThumbPool == null) {
+            initializeMicroThumbPool();
+        }
         return sMicroThumbPool;
     }
 
@@ -144,5 +143,20 @@ public abstract class MediaItem extends MediaObject {
 
     public static BytesBufferPool getBytesBufferPool() {
         return sMicroThumbBufferPool;
+    }
+
+    private static void initializeMicroThumbPool() {
+        sMicroThumbPool =
+                ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_FACTORY
+                ? new BitmapPool(sMicrothumbnailTargetSize, sMicrothumbnailTargetSize, 16)
+                : null;
+    }
+
+    public static void setThumbnailSizes(int size, int microSize) {
+        sThumbnailTargetSize = size;
+        if (sMicrothumbnailTargetSize != microSize) {
+            sMicrothumbnailTargetSize = microSize;
+            initializeMicroThumbPool();
+        }
     }
 }
