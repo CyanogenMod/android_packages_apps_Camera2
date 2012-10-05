@@ -1,23 +1,23 @@
 
 package com.android.gallery3d.filtershow.cache;
 
-import java.util.Vector;
-
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
+
+import java.util.Vector;
 
 public class DirectPresetCache implements Cache {
 
     private static final String LOGTAG = "DirectPresetCache";
     private Bitmap mOriginalBitmap = null;
-    private Vector<ImageShow> mObservers = new Vector<ImageShow>();
-    private Vector<CachedPreset> mCache = new Vector<CachedPreset>();
+    private final Vector<ImageShow> mObservers = new Vector<ImageShow>();
+    private final Vector<CachedPreset> mCache = new Vector<CachedPreset>();
     private int mCacheSize = 1;
-    private Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
+    private final Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
     private long mGlobalAge = 0;
+    private ImageLoader mLoader = null;
 
     protected class CachedPreset {
         private Bitmap mBitmap = null;
@@ -34,10 +34,12 @@ public class DirectPresetCache implements Cache {
         }
     }
 
-    public DirectPresetCache(int size) {
+    public DirectPresetCache(ImageLoader loader, int size) {
+        mLoader = loader;
         mCacheSize = size;
     }
 
+    @Override
     public void setOriginalBitmap(Bitmap bitmap) {
         mOriginalBitmap = bitmap;
         notifyObservers();
@@ -50,6 +52,7 @@ public class DirectPresetCache implements Cache {
         }
     }
 
+    @Override
     public void addObserver(ImageShow observer) {
         if (!mObservers.contains(observer)) {
             mObservers.add(observer);
@@ -66,6 +69,7 @@ public class DirectPresetCache implements Cache {
         return null;
     }
 
+    @Override
     public Bitmap get(ImagePreset preset) {
         // Log.v(LOGTAG, "get preset " + preset.name() + " : " + preset);
         CachedPreset cache = getCachedPreset(preset);
@@ -77,6 +81,7 @@ public class DirectPresetCache implements Cache {
         return null;
     }
 
+    @Override
     public void reset(ImagePreset preset) {
         CachedPreset cache = getCachedPreset(preset);
         if (cache != null && !cache.mBusy) {
@@ -120,10 +125,16 @@ public class DirectPresetCache implements Cache {
     protected void compute(CachedPreset cache) {
         cache.mBitmap = null;
         cache.mBitmap = mOriginalBitmap.copy(mBitmapConfig, true);
-        cache.mPreset.apply(cache.mBitmap);
+        float scaleFactor = (float) cache.mBitmap.getWidth() / (float) mLoader.getOriginalBounds().width();
+        if (scaleFactor < 1.0f) {
+            cache.mPreset.setIsHighQuality(false);
+        }
+        cache.mPreset.setScaleFactor(scaleFactor);
+        cache.mBitmap = cache.mPreset.apply(cache.mBitmap);
         cache.mAge = mGlobalAge++;
     }
 
+    @Override
     public void prepare(ImagePreset preset) {
         // Log.v(LOGTAG, "prepare preset " + preset.name() + " : " + preset);
         CachedPreset cache = getCachedPreset(preset);

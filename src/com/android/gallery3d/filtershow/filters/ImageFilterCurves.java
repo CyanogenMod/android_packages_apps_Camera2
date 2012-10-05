@@ -1,16 +1,15 @@
 
 package com.android.gallery3d.filtershow.filters;
 
-import com.android.gallery3d.filtershow.ui.Spline;
-
 import android.graphics.Bitmap;
-import android.util.Log;
+
+import com.android.gallery3d.filtershow.ui.Spline;
 
 public class ImageFilterCurves extends ImageFilter {
 
     private static final String LOGTAG = "ImageFilterCurves";
 
-    private float[] mCurve = new float[256];
+    private final float[] mCurve = new float[256];
 
     private boolean mUseRed = true;
     private boolean mUseGreen = true;
@@ -49,6 +48,7 @@ public class ImageFilterCurves extends ImageFilter {
         }
     }
 
+    @Override
     public boolean same(ImageFilter filter) {
         boolean isCurveFilter = super.same(filter);
         if (!isCurveFilter) {
@@ -69,8 +69,8 @@ public class ImageFilterCurves extends ImageFilter {
         }
     }
 
-    public void apply(Bitmap bitmap) {
-
+    @Override
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         int[] redGradient = null;
         if (mUseRed) {
             redGradient = new int[256];
@@ -89,6 +89,7 @@ public class ImageFilterCurves extends ImageFilter {
 
         nativeApplyGradientFilter(bitmap, bitmap.getWidth(), bitmap.getHeight(),
                 redGradient, greenGradient, blueGradient);
+        return bitmap;
     }
 
     public void setSpline(Spline spline) {
