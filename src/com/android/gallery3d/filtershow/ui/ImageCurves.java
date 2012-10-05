@@ -1,27 +1,21 @@
 
 package com.android.gallery3d.filtershow.ui;
 
-import com.android.gallery3d.filtershow.filters.ImageFilter;
-import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
-import com.android.gallery3d.filtershow.imageshow.ImageShow;
-import com.android.gallery3d.filtershow.imageshow.ImageSlave;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
-import com.android.gallery3d.filtershow.ui.ControlPoint;
-import com.android.gallery3d.filtershow.ui.Spline;
-import com.android.gallery3d.R;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
+import com.android.gallery3d.filtershow.imageshow.ImageSlave;
+import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class ImageCurves extends ImageSlave {
 
@@ -47,6 +41,7 @@ public class ImageCurves extends ImageSlave {
         resetCurve();
     }
 
+    @Override
     public boolean showTitle() {
         return false;
     }
@@ -77,6 +72,12 @@ public class ImageCurves extends ImageSlave {
         }
     }
 
+    @Override
+    public void resetParameter() {
+        super.resetParameter();
+        resetCurve();
+    }
+
     public void resetCurve() {
         mSpline = new Spline();
 
@@ -87,6 +88,7 @@ public class ImageCurves extends ImageSlave {
         }
     }
 
+    @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
