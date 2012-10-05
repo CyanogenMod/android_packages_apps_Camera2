@@ -5,8 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 
-import android.util.Log;
-
 public class SliderController {
     private static final String LOGTAG = "SliderController";
 
@@ -22,7 +20,7 @@ public class SliderController {
 
     private String mToast = null;
 
-    private Paint mPaint = new Paint();
+    private final Paint mPaint = new Paint();
 
     private SliderListener mListener = null;
 
@@ -37,7 +35,6 @@ public class SliderController {
         if (mMode == MODES.NONE || mMode == MODES.UP) {
             return;
         }
-        drawToast(canvas);
     }
 
     public void drawToast(Canvas canvas) {
@@ -62,7 +59,7 @@ public class SliderController {
     }
 
     protected int computeValue() {
-        int delta = (int) (100 * (getCurrentX() - getCenterX()) / (float) getWidth());
+        int delta = (int) (100 * (getCurrentX() - getCenterX()) / getWidth());
         int value = mOriginalValue + delta;
         if (value < -100) {
             value = -100;
@@ -168,6 +165,10 @@ public class SliderController {
             }
         }
         return true;
+    }
+
+    public void reset() {
+        mOriginalValue = 0;
     }
 
 }
