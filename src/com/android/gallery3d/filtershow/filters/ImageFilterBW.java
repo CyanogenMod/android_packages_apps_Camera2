@@ -11,10 +11,12 @@ public class ImageFilterBW extends ImageFilter {
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h);
 
-    public void apply(Bitmap bitmap) {
+    @Override
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
         nativeApplyFilter(bitmap, w, h);
+        return bitmap;
     }
 
 }
