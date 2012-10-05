@@ -1,13 +1,10 @@
 
 package com.android.gallery3d.filtershow.filters;
 
-import com.android.gallery3d.R;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.NinePatchDrawable;
 
 public class ImageFilterBorder extends ImageFilter {
     Drawable mNinePatch = null;
@@ -24,6 +21,7 @@ public class ImageFilterBorder extends ImageFilter {
         mNinePatch = ninePatch;
     }
 
+    @Override
     public boolean same(ImageFilter filter) {
         boolean isBorderFilter = super.same(filter);
         if (!isBorderFilter) {
@@ -41,9 +39,10 @@ public class ImageFilterBorder extends ImageFilter {
         mNinePatch = ninePatch;
     }
 
-    public void apply(Bitmap bitmap) {
+    @Override
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         if (mNinePatch == null) {
-            return;
+            return bitmap;
         }
 
         int w = bitmap.getWidth();
@@ -53,5 +52,6 @@ public class ImageFilterBorder extends ImageFilter {
         Canvas canvas = new Canvas(bitmap);
         mNinePatch.setBounds(bounds);
         mNinePatch.draw(canvas);
+        return bitmap;
     }
 }
