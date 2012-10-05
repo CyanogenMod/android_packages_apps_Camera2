@@ -804,14 +804,14 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 mImageShow.setVisibility(View.VISIBLE);
                 mImageShow.setShowControls(true);
                 ImagePreset preset = mImageShow.getImagePreset();
-                ImageFilter filter = preset.getFilter("Shadows");
+                ImageFilter filter = preset.getFilter("Vibrance");
                 if (filter == null) {
-                    ImageFilterShadows contrast = new ImageFilterShadows();
+                    ImageFilterVibrance contrast = new ImageFilterVibrance();
                     ImagePreset copy = new ImagePreset(preset);
                     copy.add(contrast);
                     copy.setHistoryName(contrast.getName());
                     copy.setIsFx(false);
-                    filter = copy.getFilter("Shadows");
+                    filter = copy.getFilter("Vibrance");
                     mImageShow.setImagePreset(copy);
                 }
                 mImageShow.setCurrentFilter(filter);
@@ -856,14 +856,14 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 mImageShow.setVisibility(View.VISIBLE);
                 mImageShow.setShowControls(true);
                 ImagePreset preset = mImageShow.getImagePreset();
-                ImageFilter filter = preset.getFilter("Hue");
+                ImageFilter filter = preset.getFilter("Shadows");
                 if (filter == null) {
-                    ImageFilterHue contrast = new ImageFilterHue();
+                    ImageFilterShadows contrast = new ImageFilterShadows();
                     ImagePreset copy = new ImagePreset(preset);
                     copy.add(contrast);
                     copy.setHistoryName(contrast.getName());
                     copy.setIsFx(false);
-                    filter = copy.getFilter("Hue");
+                    filter = copy.getFilter("Shadows");
                     mImageShow.setImagePreset(copy);
                 }
                 mImageShow.setCurrentFilter(filter);

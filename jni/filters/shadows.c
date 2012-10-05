@@ -34,6 +34,6 @@
      }
 
      (*env)->ReleaseShortArrayElements(env, vlut, lut, 0);
-     free(lut);
+     free(hsv);
      AndroidBitmap_unlockPixels(env, bitmap);
  }
