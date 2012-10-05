@@ -1,8 +1,6 @@
 
 package com.android.gallery3d.filtershow.presets;
 
-import java.util.Vector;
-
 import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.util.Log;
@@ -11,6 +9,8 @@ import com.android.gallery3d.filtershow.ImageStateAdapter;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterStraighten;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
+
+import java.util.Vector;
 
 public class ImagePreset {
 
