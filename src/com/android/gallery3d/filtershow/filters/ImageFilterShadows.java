@@ -11,8 +11,8 @@ public class ImageFilterShadows extends ImageFilter {
     private final float MID = .5f;
     private final float HIGHLIGHT = .9f;
 
-    private float []baseX = {0f,SHADOW,MID,HIGHLIGHT,1f};
-    private float []baseY = {0f,SHADOW,MID,HIGHLIGHT,1f};
+    private final float []baseX = {0f,SHADOW,MID,HIGHLIGHT,1f};
+    private final float []baseY = {0f,SHADOW,MID,HIGHLIGHT,1f};
 
     public ImageFilterShadows() {
         mName = "Shadows";
@@ -50,12 +50,14 @@ public class ImageFilterShadows extends ImageFilter {
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, short []valMap);
 
-    public void apply(Bitmap bitmap) {
+    @Override
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
         float p = mParameter;
         baseY[1] = (float)(SHADOW*Math.pow(4, mParameter/100.));
 
         nativeApplyFilter(bitmap, w, h, calcMap());
+        return bitmap;
     }
 }

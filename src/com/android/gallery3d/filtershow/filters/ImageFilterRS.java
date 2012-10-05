@@ -31,9 +31,10 @@ public class ImageFilterRS extends ImageFilter {
         mOutPixelsAllocation.copyTo(bitmap);
     }
 
-    public void apply(Bitmap bitmap) {
+    @Override
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         if (bitmap == null) {
-            return;
+            return bitmap;
         }
         try {
             prepare(bitmap);
@@ -45,6 +46,7 @@ public class ImageFilterRS extends ImageFilter {
         } catch (android.renderscript.RSRuntimeException e) {
             Log.e(LOGTAG, "RS runtime exception ? " + e);
         }
+        return bitmap;
     }
 
     public static RenderScript getRenderScriptContext() {
