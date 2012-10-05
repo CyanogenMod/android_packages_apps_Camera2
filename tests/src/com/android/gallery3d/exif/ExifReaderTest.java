@@ -21,15 +21,13 @@ import android.graphics.BitmapFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ExifReaderTest extends ExifXmlDataTestCase {
     private static final String TAG = "ExifReaderTest";
 
-    private final HashMap<Short, String> mIfd0Value = new HashMap<Short, String>();
-    private final HashMap<Short, String> mIfd1Value = new HashMap<Short, String>();
-    private final HashMap<Short, String> mExifIfdValue = new HashMap<Short, String>();
-    private final HashMap<Short, String> mInteroperabilityIfdValue = new HashMap<Short, String>();
+    private List<Map<Short, String>> mGroundTruth;
 
     private InputStream mImageInputStream;
 
@@ -45,19 +43,16 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
         XmlResourceParser parser =
                 getInstrumentation().getContext().getResources().getXml(mXmlResourceId);
 
-        ExifXmlReader.readXml(parser, mIfd0Value, mIfd1Value, mExifIfdValue
-                , mInteroperabilityIfdValue);
+        mGroundTruth = ExifXmlReader.readXml(getInstrumentation().getContext(), mXmlResourceId);
         parser.close();
     }
 
     public void testRead() throws ExifInvalidFormatException, IOException {
         ExifReader reader = new ExifReader();
         ExifData exifData = reader.read(mImageInputStream);
-        checkIfd(exifData.getIfdData(IfdId.TYPE_IFD_0), mIfd0Value);
-        checkIfd(exifData.getIfdData(IfdId.TYPE_IFD_1), mIfd1Value);
-        checkIfd(exifData.getIfdData(IfdId.TYPE_IFD_EXIF), mExifIfdValue);
-        checkIfd(exifData.getIfdData(IfdId.TYPE_IFD_INTEROPERABILITY),
-                mInteroperabilityIfdValue);
+        for (int i = 0; i < IfdId.TYPE_IFD_COUNT; i++) {
+            checkIfd(exifData.getIfdData(i), mGroundTruth.get(i));
+        }
         checkThumbnail(exifData);
     }
 
@@ -115,16 +110,19 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
         }
     }
 
-    private void checkIfd(IfdData ifd, HashMap<Short, String> ifdValue) {
+    private void checkIfd(IfdData ifd, Map<Short, String> ifdValue) {
         if (ifd == null) {
             assertEquals(0 ,ifdValue.size());
             return;
         }
         ExifTag[] tags = ifd.getAllTags();
+        int size = 0;
         for (ExifTag tag : tags) {
+            if (ExifTag.isSubIfdOffsetTag(tag.getTagId())) continue;
             assertEquals(ifdValue.get(tag.getTagId()), tag.valueToString().trim());
+            size++;
         }
-        assertEquals(ifdValue.size(), tags.length);
+        assertEquals(ifdValue.size(), size);
     }
 
     @Override

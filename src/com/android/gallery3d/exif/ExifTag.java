@@ -1361,9 +1361,10 @@ public class ExifTag {
         StringBuilder sbuilder = new StringBuilder();
         switch (getDataType()) {
             case ExifTag.TYPE_UNDEFINED:
+                sbuilder.append(new String((byte[]) mValue));
+                break;
             case ExifTag.TYPE_UNSIGNED_BYTE:
-                byte buf[] = new byte[getComponentCount()];
-                getBytes(buf);
+                byte buf[] = (byte[]) mValue;
                 for(int i = 0, n = getComponentCount(); i < n; i++) {
                     if(i != 0) sbuilder.append(" ");
                     sbuilder.append(String.format("%02x", buf[i]));
@@ -1415,6 +1416,15 @@ public class ExifTag {
                 || tagId == TAG_INTEROPERABILITY_IFD;
     }
 
+    /**
+     * Returns true if the ID is one of the following: {@link #TAG_EXIF_IFD},
+     * {@link #TAG_GPS_IFD}, {@link #TAG_INTEROPERABILITY_IFD}
+     */
+    static boolean isSubIfdOffsetTag(short tagId) {
+        return tagId == TAG_EXIF_IFD
+                || tagId == TAG_GPS_IFD
+                || tagId == TAG_INTEROPERABILITY_IFD;
+    }
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ExifTag) {
