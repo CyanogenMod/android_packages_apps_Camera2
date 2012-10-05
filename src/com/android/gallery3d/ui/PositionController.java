@@ -319,10 +319,10 @@ class PositionController {
         b.mImageW = width;
         b.mImageH = height;
 
-        // If this is the first time we receive an image size, we change the
-        // scale directly. Otherwise adjust the scales by a ratio, and snapback
-        // will animate the scale into the min/max bounds if necessary.
-        if (wasViewSize && !isViewSize) {
+        // If this is the first time we receive an image size or we are in fullscreen,
+        // we change the scale directly. Otherwise adjust the scales by a ratio,
+        // and snapback will animate the scale into the min/max bounds if necessary.
+        if ((wasViewSize && !isViewSize) || !mFilmMode) {
             b.mCurrentScale = getMinimalScale(b);
             b.mAnimationStartTime = NO_ANIMATION;
         } else {
