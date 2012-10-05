@@ -14,7 +14,7 @@ public class DelayedPresetCache extends DirectPresetCache implements Callback {
     private final static int COMPUTE_PRESET = 1;
 
     private Handler mProcessingHandler = null;
-    private Handler mUIHandler = new Handler() {
+    private final Handler mUIHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -41,13 +41,14 @@ public class DelayedPresetCache extends DirectPresetCache implements Callback {
         return false;
     }
 
-    public DelayedPresetCache(int size) {
-        super(size);
+    public DelayedPresetCache(ImageLoader loader, int size) {
+        super(loader, size);
         mHandlerThread = new HandlerThread("ImageProcessing", Process.THREAD_PRIORITY_BACKGROUND);
         mHandlerThread.start();
         mProcessingHandler = new Handler(mHandlerThread.getLooper(), this);
     }
 
+    @Override
     protected void willCompute(CachedPreset cache) {
         if (cache == null) {
             return;

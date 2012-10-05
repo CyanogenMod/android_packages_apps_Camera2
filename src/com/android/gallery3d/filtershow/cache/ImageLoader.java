@@ -35,16 +35,16 @@ import java.util.Vector;
 public class ImageLoader {
 
     private static final String LOGTAG = "ImageLoader";
-    private Vector<ImageShow> mListeners = new Vector<ImageShow>();
+    private final Vector<ImageShow> mListeners = new Vector<ImageShow>();
     private Bitmap mOriginalBitmapSmall = null;
     private Bitmap mOriginalBitmapLarge = null;
     private Bitmap mBackgroundBitmap = null;
     private Bitmap mFullOriginalBitmap = null;
     private Bitmap mSaveCopy = null;
 
-    private Cache mCache = new DelayedPresetCache(30);
-    private Cache mHiresCache = new DelayedPresetCache(2);
-    private ZoomCache mZoomCache = new ZoomCache();
+    private Cache mCache = null;
+    private Cache mHiresCache = null;
+    private final ZoomCache mZoomCache = new ZoomCache();
 
     private int mOrientation = 0;
     private HistoryAdapter mAdapter = null;
@@ -57,6 +57,8 @@ public class ImageLoader {
 
     public ImageLoader(Context context) {
         mContext = context;
+        mCache = new DelayedPresetCache(this, 30);
+        mHiresCache = new DelayedPresetCache(this, 2);
     }
 
     public void loadBitmap(Uri uri) {
@@ -230,7 +232,7 @@ public class ImageLoader {
             if (bmp != null) {
                 // TODO: this workaround for RS might not be needed ultimately
                 Bitmap bmp2 = bmp.copy(Bitmap.Config.ARGB_8888, true);
-                imagePreset.apply(bmp2);
+                bmp2 = imagePreset.apply(bmp2);
                 mZoomCache.setImage(imagePreset, bounds, bmp2);
                 return bmp2;
             }
@@ -289,6 +291,8 @@ public class ImageLoader {
             // TODO: on <3.x we need a copy of the bitmap (inMutable doesn't
             // exist)
             mSaveCopy = mFullOriginalBitmap;
+            preset.setIsHighQuality(true);
+            preset.setScaleFactor(1.0f);
             ProcessedBitmap processedBitmap = new ProcessedBitmap(mSaveCopy, preset);
             new SaveCopyTask(mContext, mUri, destination, new SaveCopyTask.Callback() {
 

@@ -1,25 +1,24 @@
 
 package com.android.gallery3d.filtershow.cache;
 
-import java.nio.ByteBuffer;
+import android.graphics.Bitmap;
 
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
-import android.graphics.Bitmap;
-import android.util.Log;
+import java.nio.ByteBuffer;
 
 public class BitmapCache {
 
     private static final String LOGTAG = "BitmapCache";
     static int mNbItems = 20;
-    private Bitmap[] mBitmaps = new Bitmap[mNbItems];
-    private Object[] mKeys = new Object[mNbItems];
-    private long[] mIndices = new long[mNbItems];
-    private boolean[] mBusyStatus = new boolean[mNbItems];
+    private final Bitmap[] mBitmaps = new Bitmap[mNbItems];
+    private final Object[] mKeys = new Object[mNbItems];
+    private final long[] mIndices = new long[mNbItems];
+    private final boolean[] mBusyStatus = new boolean[mNbItems];
 
     private Bitmap mOriginalBitmap = null;
     private ByteBuffer mBuffer = null;
-    private Bitmap.Config mConfig = Bitmap.Config.ARGB_8888;
+    private final Bitmap.Config mConfig = Bitmap.Config.ARGB_8888;
     private long mIndex = 0;
 
     public void setOriginalBitmap(Bitmap original) {
@@ -57,8 +56,7 @@ public class BitmapCache {
     public Bitmap put(ImagePreset preset, int pos) {
         mBitmaps[pos] = mOriginalBitmap.copy(mConfig, true);
         Bitmap bitmap = mBitmaps[pos];
-
-        preset.apply(bitmap);
+        bitmap = preset.apply(bitmap);
         mKeys[pos] = preset;
         mIndices[pos] = mIndex++;
         return bitmap;
@@ -80,7 +78,7 @@ public class BitmapCache {
         ImagePreset preset = (ImagePreset) mKeys[pos];
         mBitmaps[pos] = mOriginalBitmap.copy(mConfig, true);
         Bitmap bitmap = mBitmaps[pos];
-        preset.apply(bitmap);
+        bitmap = preset.apply(bitmap);
         mIndices[pos] = mIndex++;
     }
 
