@@ -13,9 +13,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.NinePatchDrawable;
 import android.util.AttributeSet;
 
-public class ImageBorder extends ImageShow {
+public class ImageBorder extends ImageSlave {
     Paint gPaint = new Paint();
-    private ImageShow mMasterImageShow = null;
 
     public ImageBorder(Context context) {
         super(context);
@@ -23,18 +22,6 @@ public class ImageBorder extends ImageShow {
 
     public ImageBorder(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    public void setMaster(ImageShow master) {
-        mMasterImageShow = master;
-    }
-
-    public ImagePreset getImagePreset() {
-        return mMasterImageShow.getImagePreset();
-    }
-
-    public void setImagePreset(ImagePreset preset, boolean addToHistory) {
-        mMasterImageShow.setImagePreset(preset, addToHistory);
     }
 
     public boolean showTitle() {
