@@ -8,7 +8,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapRegionDecoder;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -42,6 +44,7 @@ public class ImageLoader {
 
     private Cache mCache = new DelayedPresetCache(30);
     private Cache mHiresCache = new DelayedPresetCache(2);
+    private ZoomCache mZoomCache = new ZoomCache();
 
     private int mOrientation = 0;
     private HistoryAdapter mAdapter = null;
@@ -49,6 +52,8 @@ public class ImageLoader {
 
     private Context mContext = null;
     private Uri mUri = null;
+
+    private Rect mOriginalBounds = null;
 
     public ImageLoader(Context context) {
         mContext = context;
@@ -64,6 +69,10 @@ public class ImageLoader {
 
     public Uri getUri() {
         return mUri;
+    }
+
+    public Rect getOriginalBounds() {
+        return mOriginalBounds;
     }
 
     private int getOrientation(Uri uri) {
@@ -125,6 +134,22 @@ public class ImageLoader {
         }
     }
 
+    private Bitmap loadRegionBitmap(Uri uri, Rect bounds) {
+        InputStream is = null;
+        try {
+            is = mContext.getContentResolver().openInputStream(uri);
+            BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(is, false);
+            return decoder.decodeRegion(bounds, null);
+        } catch (FileNotFoundException e) {
+            Log.e(LOGTAG, "FileNotFoundException: " + uri);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeStream(is);
+        }
+        return null;
+    }
+
     private Bitmap loadScaledBitmap(Uri uri, int size) {
         InputStream is = null;
         try {
@@ -137,6 +162,9 @@ public class ImageLoader {
 
             int width_tmp = o.outWidth;
             int height_tmp = o.outHeight;
+
+            mOriginalBounds = new Rect(0, 0, width_tmp, height_tmp);
+
             int scale = 1;
             while (true) {
                 if (width_tmp / 2 < size || height_tmp / 2 < size)
@@ -192,6 +220,24 @@ public class ImageLoader {
         }
     }
 
+    // TODO: this currently does the loading + filtering on the UI thread -- need to
+    // move this to a background thread.
+    public Bitmap getScaleOneImageForPreset(ImageShow caller, ImagePreset imagePreset, Rect bounds,
+            boolean force) {
+        Bitmap bmp = mZoomCache.getImage(imagePreset, bounds);
+        if (force || bmp == null) {
+            bmp = loadRegionBitmap(mUri, bounds);
+            if (bmp != null) {
+                // TODO: this workaround for RS might not be needed ultimately
+                Bitmap bmp2 = bmp.copy(Bitmap.Config.ARGB_8888, true);
+                imagePreset.apply(bmp2);
+                mZoomCache.setImage(imagePreset, bounds, bmp2);
+                return bmp2;
+            }
+        }
+        return bmp;
+    }
+
     // Caching method
     public Bitmap getImageForPreset(ImageShow caller, ImagePreset imagePreset,
             boolean hiRes) {
@@ -223,6 +269,7 @@ public class ImageLoader {
     public void resetImageForPreset(ImagePreset imagePreset, ImageShow caller) {
         mHiresCache.reset(imagePreset);
         mCache.reset(imagePreset);
+        mZoomCache.reset(imagePreset);
     }
 
     public Uri saveImage(ImagePreset preset, final FilterShowActivity filterShowActivity,

@@ -4,6 +4,7 @@ package com.android.gallery3d.filtershow.ui;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
+import com.android.gallery3d.filtershow.imageshow.ImageSlave;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.ui.ControlPoint;
 import com.android.gallery3d.filtershow.ui.Spline;
@@ -22,7 +23,7 @@ import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-public class ImageCurves extends ImageShow {
+public class ImageCurves extends ImageSlave {
 
     private static final String LOGTAG = "ImageCurves";
     Paint gPaint = new Paint();
@@ -31,7 +32,6 @@ public class ImageCurves extends ImageShow {
     float[] mAppliedCurve = new float[256];
     private boolean mDidAddPoint = false;
     private boolean mDidDelete = false;
-    private ImageShow mMasterImageShow = null;
     private ControlPoint mCurrentControlPoint = null;
     private boolean mUseRed = true;
     private boolean mUseGreen = true;
@@ -45,10 +45,6 @@ public class ImageCurves extends ImageShow {
     public ImageCurves(Context context, AttributeSet attrs) {
         super(context, attrs);
         resetCurve();
-    }
-
-    public void setMaster(ImageShow master) {
-        mMasterImageShow = master;
     }
 
     public boolean showTitle() {
@@ -68,7 +64,7 @@ public class ImageCurves extends ImageShow {
     }
 
     public void reloadCurve() {
-        if (mMasterImageShow != null) {
+        if (getMaster() != null) {
             String filterName = getFilterName();
             ImageFilterCurves filter = (ImageFilterCurves) getImagePreset()
                     .getFilter(filterName);
@@ -86,25 +82,9 @@ public class ImageCurves extends ImageShow {
 
         mSpline.addPoint(0.0f, 1.0f);
         mSpline.addPoint(1.0f, 0.0f);
-        if (mMasterImageShow != null) {
+        if (getMaster() != null) {
             applyNewCurve();
         }
-    }
-
-    public ImagePreset getImagePreset() {
-        return mMasterImageShow.getImagePreset();
-    }
-
-    public void setImagePreset(ImagePreset preset, boolean addToHistory) {
-        mMasterImageShow.setImagePreset(preset, addToHistory);
-    }
-
-    public float getImageRotation() {
-        return mMasterImageShow.getImageRotation();
-    }
-
-    public float getImageRotationZoomFactor() {
-        return mMasterImageShow.getImageRotationZoomFactor();
     }
 
     public void onDraw(Canvas canvas) {
