@@ -2,7 +2,6 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 public class ImageFilter implements Cloneable {
 
@@ -26,8 +25,9 @@ public class ImageFilter implements Cloneable {
         return mName;
     }
 
-    public void apply(Bitmap bitmap) {
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         // do nothing here, subclasses will implement filtering here
+        return bitmap;
     }
 
     public int getParameter() {

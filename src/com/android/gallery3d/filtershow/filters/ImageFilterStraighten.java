@@ -1,16 +1,13 @@
 
 package com.android.gallery3d.filtershow.filters;
 
-import java.nio.ByteBuffer;
-
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
 public class ImageFilterStraighten extends ImageFilter {
-    private Bitmap.Config mConfig = Bitmap.Config.ARGB_8888;
+    private final Bitmap.Config mConfig = Bitmap.Config.ARGB_8888;
     private float mRotation;
     private float mZoomFactor;
 
@@ -39,7 +36,8 @@ public class ImageFilterStraighten extends ImageFilter {
         mZoomFactor = zoomFactor;
     }
 
-    public void apply(Bitmap bitmap) {
+    @Override
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         // TODO: implement bilinear or bicubic here... for now, just use
         // canvas to do a simple implementation...
         // TODO: and be more memory efficient! (do it in native?)
@@ -64,6 +62,7 @@ public class ImageFilterStraighten extends ImageFilter {
         temp.recycle();
         temp = null;
         pixels = null;
+        return bitmap;
     }
 
 }
