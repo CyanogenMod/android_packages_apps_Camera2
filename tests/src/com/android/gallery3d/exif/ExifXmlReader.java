@@ -16,82 +16,91 @@
 
 package com.android.gallery3d.exif;
 
+import android.content.Context;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ExifXmlReader {
+    private static final String TAG_EXIF = "exif";
+    private static final String TAG_TAG = "tag";
 
-    private static final String XML_EXIF_TAG = "exif";
-    private static final String XML_IFD_TAG = "ifd";
-    private static final String XML_IFD_NAME = "name";
-    private static final String XML_TAG = "tag";
-    private static final String XML_IFD0 = "ifd0";
-    private static final String XML_IFD1 = "ifd1";
-    private static final String XML_EXIF_IFD = "exif-ifd";
-    private static final String XML_INTEROPERABILITY_IFD = "interoperability-ifd";
-    private static final String XML_TAG_ID = "id";
+    private static final String IFD0 = "IFD0";
+    private static final String EXIF_IFD = "ExifIFD";
+    private static final String GPS_IFD = "GPS";
+    private static final String IFD1 = "IFD1";
+    private static final String PREFIX_INTEROP_IFD = "InteropIFD";
 
-    public static void readXml(XmlPullParser parser, HashMap<Short, String> ifd0,
-            HashMap<Short, String> ifd1, HashMap<Short, String> exifIfd,
-            HashMap<Short, String> interoperabilityIfd) throws XmlPullParserException,
-            IOException {
+    private static final String ATTR_ID = "id";
+    private static final String ATTR_IFD = "ifd";
+
+    /**
+     * This function read the ground truth XML.
+     *
+     * @throws XmlPullParserException
+     * @throws IOException
+     */
+    static public List<Map<Short, String>> readXml(Context context, int xmlResId)
+            throws XmlPullParserException, IOException {
+        XmlPullParser parser = context.getResources().getXml(xmlResId);
+
+        List<Map<Short, String>> exifData =
+                new ArrayList<Map<Short, String>>(IfdId.TYPE_IFD_COUNT);
+        for (int i = 0; i < IfdId.TYPE_IFD_COUNT; i++) {
+            exifData.add(new HashMap<Short, String>());
+        }
 
         while (parser.next() != XmlPullParser.END_DOCUMENT) {
             if (parser.getEventType() == XmlPullParser.START_TAG) {
                 break;
             }
         }
+        parser.require(XmlPullParser.START_TAG, null, TAG_EXIF);
 
-        assert(parser.getName().equals(XML_EXIF_TAG));
-
-        parser.require(XmlPullParser.START_TAG, null, XML_EXIF_TAG);
         while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() == XmlPullParser.START_TAG) {
-                readXmlIfd(parser, ifd0, ifd1, exifIfd, interoperabilityIfd);
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
             }
+
+            parser.require(XmlPullParser.START_TAG, null, TAG_TAG);
+
+            int ifdId = getIfdIdFromString(parser.getAttributeValue(null, ATTR_IFD));
+            short id = Integer.decode(parser.getAttributeValue(null, ATTR_ID)).shortValue();
+
+            String value = "";
+            if (parser.next() == XmlPullParser.TEXT) {
+                value = parser.getText();
+                parser.next();
+            }
+
+            exifData.get(ifdId).put(id, value);
+
+            parser.require(XmlPullParser.END_TAG, null, null);
         }
-        parser.require(XmlPullParser.END_TAG, null, XML_EXIF_TAG);
+        return exifData;
     }
 
-    private static void readXmlIfd(XmlPullParser parser, HashMap<Short, String> ifd0,
-            HashMap<Short, String> ifd1, HashMap<Short, String> exifIfd,
-            HashMap<Short, String> interoperabilityIfd) throws XmlPullParserException,
-            IOException {
-        parser.require(XmlPullParser.START_TAG, null, XML_IFD_TAG);
-        String name = parser.getAttributeValue(null, XML_IFD_NAME);
-        HashMap<Short, String> ifdData = null;
-        if (XML_IFD0.equals(name)) {
-            ifdData = ifd0;
-        } else if (XML_IFD1.equals(name)) {
-            ifdData = ifd1;
-        } else if (XML_EXIF_IFD.equals(name)) {
-            ifdData = exifIfd;
-        } else if (XML_INTEROPERABILITY_IFD.equals(name)) {
-            ifdData = interoperabilityIfd;
+    static private int getIfdIdFromString(String prefix) {
+        if (IFD0.equals(prefix)) {
+            return IfdId.TYPE_IFD_0;
+        } else if (EXIF_IFD.equals(prefix)) {
+            return IfdId.TYPE_IFD_EXIF;
+        } else if (GPS_IFD.equals(prefix)) {
+            return IfdId.TYPE_IFD_GPS;
+        } else if (IFD1.equals(prefix)) {
+            return IfdId.TYPE_IFD_1;
+        } else if (PREFIX_INTEROP_IFD.equals(prefix)) {
+            return IfdId.TYPE_IFD_INTEROPERABILITY;
         } else {
-            throw new RuntimeException("Unknown IFD name in xml file: " + name);
+            assert(false);
+            return -1;
         }
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() == XmlPullParser.START_TAG) {
-                readXmlTag(parser, ifdData);
-            }
-        }
-        parser.require(XmlPullParser.END_TAG, null, XML_IFD_TAG);
-    }
-
-    private static void readXmlTag(XmlPullParser parser, HashMap<Short, String> data)
-        throws XmlPullParserException, IOException {
-        parser.require(XmlPullParser.START_TAG, null, XML_TAG);
-        short id = Integer.decode(parser.getAttributeValue(null, XML_TAG_ID)).shortValue();
-        String value = "";
-        if (parser.next() == XmlPullParser.TEXT) {
-            value = parser.getText();
-            parser.next();
-        }
-        data.put(id, value);
-        parser.require(XmlPullParser.END_TAG, null, XML_TAG);
     }
 }
