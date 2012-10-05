@@ -10,8 +10,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Shader.TileMode;
 
-import com.android.gallery3d.filtershow.ui.Spline;
-
 public class ImageFilterGradient extends ImageFilter {
 
     private Bitmap mGradientBitmap = null;
@@ -50,8 +48,8 @@ public class ImageFilterGradient extends ImageFilter {
         mPositions = positions;
     }
 
-    public void apply(Bitmap bitmap) {
-
+    @Override
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         createGradient();
         int[] gradient = new int[256];
         int[] redGradient = new int[256];
@@ -66,6 +64,7 @@ public class ImageFilterGradient extends ImageFilter {
         }
         nativeApplyGradientFilter(bitmap, bitmap.getWidth(), bitmap.getHeight(),
                 redGradient, greenGradient, blueGradient);
+        return bitmap;
     }
 
     public void createGradient() {
