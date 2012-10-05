@@ -37,7 +37,7 @@ public class BitmapScreenNail implements ScreenNail {
     // The duration of the fading animation in milliseconds
     private static final int DURATION = 180;
 
-    private static final int MAX_SIDE = 640;
+    private static int sMaxSide = 640;
 
     // These are special values for mAnimationStartTime
     private static final long ANIMATION_NOT_NEEDED = -1;
@@ -73,10 +73,10 @@ public class BitmapScreenNail implements ScreenNail {
 
     private void setSize(int width, int height) {
         if (width == 0 || height == 0) {
-            width = 640;
-            height = 480;
+            width = sMaxSide;
+            height = sMaxSide * 3 / 4;
         }
-        float scale = Math.min(1, (float) MAX_SIDE / Math.max(width, height));
+        float scale = Math.min(1, (float) sMaxSide / Math.max(width, height));
         mWidth = Math.round(scale * width);
         mHeight = Math.round(scale * height);
     }
@@ -208,5 +208,9 @@ public class BitmapScreenNail implements ScreenNail {
 
     public TiledTexture getTexture() {
         return mTexture;
+    }
+
+    public static void setMaxSide(int size) {
+        sMaxSide = size;
     }
 }

@@ -75,16 +75,25 @@ public class GalleryUtils {
     private static boolean sCameraAvailable;
 
     public static void initialize(Context context) {
-        if (sPixelDensity < 0) {
-            DisplayMetrics metrics = new DisplayMetrics();
-            WindowManager wm = (WindowManager)
-                    context.getSystemService(Context.WINDOW_SERVICE);
-            wm.getDefaultDisplay().getMetrics(metrics);
-            sPixelDensity = metrics.density;
-        }
+        DisplayMetrics metrics = new DisplayMetrics();
+        WindowManager wm = (WindowManager)
+                context.getSystemService(Context.WINDOW_SERVICE);
+        wm.getDefaultDisplay().getMetrics(metrics);
+        sPixelDensity = metrics.density;
         Resources r = context.getResources();
         BitmapScreenNail.setPlaceholderColor(r.getColor(
                 R.color.bitmap_screennail_placeholder));
+        initializeThumbnailSizes(metrics, r);
+    }
+
+    private static void initializeThumbnailSizes(DisplayMetrics metrics, Resources r) {
+        int minRows = Math.min(r.getInteger(R.integer.album_rows_land),
+                r.getInteger(R.integer.albumset_rows_land));
+        int maxDimensionPixels = Math.max(metrics.heightPixels, metrics.widthPixels);
+        // Never need to completely fill the screen
+        maxDimensionPixels = maxDimensionPixels * 3/4;
+        MediaItem.setThumbnailSizes(maxDimensionPixels, maxDimensionPixels / minRows);
+        BitmapScreenNail.setMaxSide(maxDimensionPixels);
     }
 
     public static boolean isHighResolution(Context context) {
