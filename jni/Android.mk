@@ -32,6 +32,7 @@ LOCAL_SRC_FILES := filters/bw.c \
                    filters/hue.c \
                    filters/shadows.c \
                    filters/hsv.c \
+                   filters/vibrance.c \
 		   filters/vignette.c
 
 LOCAL_CFLAGS    += -ffast-math -O3 -funroll-loops
