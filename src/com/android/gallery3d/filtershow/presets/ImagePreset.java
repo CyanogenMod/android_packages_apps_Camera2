@@ -32,6 +32,9 @@ public class ImagePreset {
     protected boolean mVerticalFlip = false;
     protected RectF mCrop = null;
 
+    private float mScaleFactor = 1.0f;
+    private boolean mIsHighQuality = false;
+
     public ImagePreset() {
         setup();
     }
@@ -50,6 +53,9 @@ public class ImagePreset {
 
         mStraightenRotate = source.mStraightenRotate;
         mStraightenZoom = source.mStraightenZoom;
+
+        mScaleFactor = source.mScaleFactor;
+        mIsHighQuality = source.mIsHighQuality;
     }
 
     public void setStraightenRotation(float rotate, float zoom) {
@@ -57,7 +63,7 @@ public class ImagePreset {
         mStraightenZoom = zoom;
     }
 
-    private Bitmap applyGeometry(Bitmap original) {
+    private Bitmap applyGeometry(Bitmap original, float scaleFactor, boolean highQuality) {
         Bitmap bitmap = original;
 
         if (mFullRotate != FullRotate.ZERO) {
@@ -67,7 +73,7 @@ public class ImagePreset {
         if (mStraightenRotate != 0) {
             // TODO: keep the instances around
             ImageFilter straighten = new ImageFilterStraighten(mStraightenRotate, mStraightenZoom);
-            straighten.apply(bitmap);
+            bitmap = straighten.apply(bitmap, scaleFactor, highQuality);
             straighten = null;
         }
 
@@ -154,7 +160,7 @@ public class ImagePreset {
 
     public Bitmap apply(Bitmap original) {
         // First we apply any transform -- 90 rotate, flip, straighten, crop
-        Bitmap bitmap = applyGeometry(original);
+        Bitmap bitmap = applyGeometry(original, mScaleFactor, mIsHighQuality);
 
         // TODO -- apply borders separately
         ImageFilter borderFilter = null;
@@ -164,11 +170,11 @@ public class ImagePreset {
                 // TODO don't use the name as an id
                 borderFilter = filter;
             } else {
-                filter.apply(bitmap);
+                bitmap = filter.apply(bitmap, mScaleFactor, mIsHighQuality);
             }
         }
         if (borderFilter != null) {
-            borderFilter.apply(bitmap);
+            bitmap = borderFilter.apply(bitmap, mScaleFactor, mIsHighQuality);
         }
         if (mEndPoint != null) {
             mEndPoint.updateFilteredImage(bitmap);
@@ -185,4 +191,19 @@ public class ImagePreset {
         imageStateAdapter.notifyDataSetChanged();
     }
 
+    public float getScaleFactor() {
+        return mScaleFactor;
+    }
+
+    public boolean isHighQuality() {
+        return mIsHighQuality;
+    }
+
+    public void setIsHighQuality(boolean value) {
+        mIsHighQuality = value;
+    }
+
+    public void setScaleFactor(float value) {
+        mScaleFactor = value;
+    }
 }
