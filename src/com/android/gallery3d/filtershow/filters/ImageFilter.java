@@ -2,11 +2,13 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 public class ImageFilter implements Cloneable {
 
     protected int mParameter = 0;
     protected String mName = "Original";
+    private final String LOGTAG = "ImageFilter";
 
     @Override
     public ImageFilter clone() throws CloneNotSupportedException {
