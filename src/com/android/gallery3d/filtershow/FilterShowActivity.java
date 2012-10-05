@@ -1,26 +1,6 @@
 
 package com.android.gallery3d.filtershow;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Vector;
-
-import com.android.gallery3d.filtershow.cache.ImageLoader;
-import com.android.gallery3d.filtershow.filters.*;
-import com.android.gallery3d.filtershow.imageshow.ImageBorder;
-import com.android.gallery3d.filtershow.imageshow.ImageShow;
-import com.android.gallery3d.filtershow.imageshow.ImageSmallFilter;
-import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
-import com.android.gallery3d.filtershow.imageshow.ImageZoom;
-import com.android.gallery3d.filtershow.presets.*;
-import com.android.gallery3d.filtershow.provider.SharedImageProvider;
-import com.android.gallery3d.filtershow.tools.SaveCopyTask;
-import com.android.gallery3d.filtershow.ui.ImageCurves;
-import com.android.gallery3d.R;
-
-import android.net.Uri;
-import android.os.Bundle;
-import android.renderscript.RenderScript;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -28,7 +8,8 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.NinePatchDrawable;
+import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -40,20 +21,44 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.ShareActionProvider;
 import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import android.widget.Toast;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.filters.ImageFilter;
+import com.android.gallery3d.filtershow.filters.ImageFilterBorder;
+import com.android.gallery3d.filtershow.filters.ImageFilterRS;
+import com.android.gallery3d.filtershow.imageshow.ImageBorder;
+import com.android.gallery3d.filtershow.imageshow.ImageShow;
+import com.android.gallery3d.filtershow.imageshow.ImageSmallFilter;
+import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
+import com.android.gallery3d.filtershow.imageshow.ImageZoom;
+import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.presets.ImagePresetBW;
+import com.android.gallery3d.filtershow.presets.ImagePresetBWBlue;
+import com.android.gallery3d.filtershow.presets.ImagePresetBWGreen;
+import com.android.gallery3d.filtershow.presets.ImagePresetBWRed;
+import com.android.gallery3d.filtershow.presets.ImagePresetOld;
+import com.android.gallery3d.filtershow.presets.ImagePresetSaturated;
+import com.android.gallery3d.filtershow.presets.ImagePresetXProcessing;
+import com.android.gallery3d.filtershow.provider.SharedImageProvider;
+import com.android.gallery3d.filtershow.tools.SaveCopyTask;
+import com.android.gallery3d.filtershow.ui.ImageCurves;
+
+import java.io.File;
+import java.util.Vector;
 
 @TargetApi(16)
 public class FilterShowActivity extends Activity implements OnItemClickListener,
         OnShareTargetSelectedListener {
 
+    private final PanelController mPanelController = new PanelController();
     private ImageLoader mImageLoader = null;
     private ImageShow mImageShow = null;
     private ImageCurves mImageCurves = null;
@@ -65,34 +70,23 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private View mListBorders = null;
     private View mListGeometry = null;
     private View mListColors = null;
+    private View mListFilterButtons = null;
 
     private ImageButton mFxButton = null;
     private ImageButton mBorderButton = null;
     private ImageButton mGeometryButton = null;
     private ImageButton mColorsButton = null;
 
-    private ImageButton mVignetteButton = null;
-    private ImageButton mCurvesButtonRGB = null;
-    private ImageButton mSharpenButton = null;
-
-    private ImageButton mContrastButton = null;
-    private ImageButton mSaturationButton = null;
-    private ImageButton mTintButton = null;
-    private ImageButton mVibranceButton = null;
-    private ImageButton mExposureButton = null;
-    private ImageButton mShadowRecoveryButton = null;
-
     private static final int SELECT_PICTURE = 1;
     private static final String LOGTAG = "FilterShowActivity";
-    protected static final boolean ANIMATE_PANELS = false;
+    protected static final boolean ANIMATE_PANELS = true;
 
     private boolean mShowingHistoryPanel = false;
     private boolean mShowingImageStatePanel = false;
 
-    private Vector<ImageShow> mImageViews = new Vector<ImageShow>();
-    private Vector<View> mListViews = new Vector<View>();
-    private Vector<ImageButton> mBottomPanelButtons = new Vector<ImageButton>();
-    private Vector<ImageButton> mColorsPanelButtons = new Vector<ImageButton>();
+    private final Vector<ImageShow> mImageViews = new Vector<ImageShow>();
+    private final Vector<View> mListViews = new Vector<View>();
+    private final Vector<ImageButton> mBottomPanelButtons = new Vector<ImageButton>();
 
     private ShareActionProvider mShareActionProvider;
     private File mSharedOutputFile = null;
@@ -136,67 +130,60 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         mListFx = findViewById(R.id.fxList);
         mListBorders = findViewById(R.id.bordersList);
-        mListGeometry = findViewById(R.id.gemoetryList);
+        mListGeometry = findViewById(R.id.geometryList);
+        mListFilterButtons = findViewById(R.id.filterButtonsList);
         mListColors = findViewById(R.id.colorsFxList);
         mListViews.add(mListFx);
         mListViews.add(mListBorders);
         mListViews.add(mListGeometry);
+        mListViews.add(mListFilterButtons);
         mListViews.add(mListColors);
 
         mFxButton = (ImageButton) findViewById(R.id.fxButton);
         mBorderButton = (ImageButton) findViewById(R.id.borderButton);
         mGeometryButton = (ImageButton) findViewById(R.id.geometryButton);
         mColorsButton = (ImageButton) findViewById(R.id.colorsButton);
-        mBottomPanelButtons.add(mFxButton);
-        mBottomPanelButtons.add(mBorderButton);
-        mBottomPanelButtons.add(mGeometryButton);
-        mBottomPanelButtons.add(mColorsButton);
-        mFxButton.setSelected(true);
 
-        mVignetteButton = (ImageButton) findViewById(R.id.vignetteButton);
-        mCurvesButtonRGB = (ImageButton) findViewById(R.id.curvesButtonRGB);
-        mSharpenButton = (ImageButton) findViewById(R.id.sharpenButton);
-        mVibranceButton = (ImageButton) findViewById(R.id.vibranceButton);
-        mContrastButton = (ImageButton) findViewById(R.id.contrastButton);
-        mSaturationButton = (ImageButton) findViewById(R.id.saturationButton);
-        mTintButton = (ImageButton) findViewById(R.id.tintButton);
-        mExposureButton = (ImageButton) findViewById(R.id.exposureButton);
-        mShadowRecoveryButton = (ImageButton) findViewById(R.id.shadowRecoveryButton);
+        mImageShow.setImageLoader(mImageLoader);
+        mImageCurves.setImageLoader(mImageLoader);
+        mImageCurves.setMaster(mImageShow);
+        mImageBorders.setImageLoader(mImageLoader);
+        mImageBorders.setMaster(mImageShow);
+        mImageStraighten.setImageLoader(mImageLoader);
+        mImageStraighten.setMaster(mImageShow);
+        mImageZoom.setImageLoader(mImageLoader);
+        mImageZoom.setMaster(mImageShow);
 
-        mColorsPanelButtons.add(mVignetteButton);
-        mColorsPanelButtons.add(mCurvesButtonRGB);
-        mColorsPanelButtons.add(mSharpenButton);
-        mColorsPanelButtons.add(mContrastButton);
-        mColorsPanelButtons.add(mSaturationButton);
-        mColorsPanelButtons.add(mTintButton);
-        mColorsPanelButtons.add(mVibranceButton);
-        mColorsPanelButtons.add(mExposureButton);
-        mColorsPanelButtons.add(mShadowRecoveryButton);
+        mPanelController.addImageView(findViewById(R.id.imageShow));
+        mPanelController.addImageView(findViewById(R.id.imageCurves));
+        mPanelController.addImageView(findViewById(R.id.imageBorder));
+        mPanelController.addImageView(findViewById(R.id.imageStraighten));
+        mPanelController.addImageView(findViewById(R.id.imageZoom));
 
-        // TODO: instead of click listeners, make the activity the single
-        // listener and do a dispatch in the listener callback method.
-        findViewById(R.id.showOriginalButton).setOnTouchListener(createOnTouchShowOriginalButton());
-        findViewById(R.id.straightenButton).setOnClickListener(createOnClickStraightenButton());
-        findViewById(R.id.cropButton).setOnClickListener(createOnClickCropButton());
-        findViewById(R.id.rotateButton).setOnClickListener(createOnClickRotateButton());
-        findViewById(R.id.flipButton).setOnClickListener(createOnClickFlipButton());
+        mPanelController.addPanel(mFxButton, mListFx, 0);
+        mPanelController.addPanel(mBorderButton, mListBorders, 1);
 
-        mVignetteButton.setOnClickListener(createOnClickVignetteButton());
-        mCurvesButtonRGB.setOnClickListener(createOnClickCurvesRGBButton());
+        mPanelController.addPanel(mGeometryButton, mListGeometry, 2);
+        mPanelController.addComponent(mGeometryButton, findViewById(R.id.straightenButton));
+        mPanelController.addComponent(mGeometryButton, findViewById(R.id.cropButton));
+        mPanelController.addComponent(mGeometryButton, findViewById(R.id.rotateButton));
+        mPanelController.addComponent(mGeometryButton, findViewById(R.id.flipButton));
 
-        mSharpenButton.setOnClickListener(createOnClickSharpenButton());
-        mContrastButton.setOnClickListener(createOnClickContrastButton());
-        mSaturationButton.setOnClickListener(createOnClickSaturationButton());
+        mPanelController.addPanel(mColorsButton, mListColors, 3);
+        mPanelController.addComponent(mColorsButton, findViewById(R.id.vignetteButton));
+        mPanelController.addComponent(mColorsButton, findViewById(R.id.curvesButtonRGB));
+        mPanelController.addComponent(mColorsButton, findViewById(R.id.sharpenButton));
+        mPanelController.addComponent(mColorsButton, findViewById(R.id.vibranceButton));
+        mPanelController.addComponent(mColorsButton, findViewById(R.id.contrastButton));
+        mPanelController.addComponent(mColorsButton, findViewById(R.id.saturationButton));
+        mPanelController.addComponent(mColorsButton, findViewById(R.id.tintButton));
+        mPanelController.addComponent(mColorsButton, findViewById(R.id.exposureButton));
+        mPanelController.addComponent(mColorsButton, findViewById(R.id.shadowRecoveryButton));
 
-        mTintButton.setOnClickListener(createOnClickTintButton());
-        mVibranceButton.setOnClickListener(createOnClickVibranceButton());
-        mExposureButton.setOnClickListener(createOnClickExposureButton());
-        mShadowRecoveryButton.setOnClickListener(createOnClickShadowRecoveryButton());
+        mPanelController.addView(findViewById(R.id.resetEffect));
+        mPanelController.addView(findViewById(R.id.applyEffect));
 
-        mFxButton.setOnClickListener(createOnClickFxButton());
-        mBorderButton.setOnClickListener(createOnClickBorderButton());
-        mGeometryButton.setOnClickListener(createOnClickGeometryButton());
-        mColorsButton.setOnClickListener(createOnClickColorsButton());
+        findViewById(R.id.compareWithOriginalImage).setOnTouchListener(createOnTouchShowOriginalButton());
 
         findViewById(R.id.resetOperationsButton).setOnClickListener(
                 createOnClickResetOperationsButton());
@@ -211,15 +198,15 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         fillListImages(listFilters);
         fillListBorders(listBorders);
 
-        mImageShow.setImageLoader(mImageLoader);
-        mImageCurves.setImageLoader(mImageLoader);
-        mImageCurves.setMaster(mImageShow);
-        mImageBorders.setImageLoader(mImageLoader);
-        mImageBorders.setMaster(mImageShow);
-        mImageStraighten.setImageLoader(mImageLoader);
-        mImageStraighten.setMaster(mImageShow);
-        mImageZoom.setImageLoader(mImageLoader);
-        mImageZoom.setMaster(mImageShow);
+        SeekBar seekBar = (SeekBar) findViewById(R.id.filterSeekBar);
+        seekBar.setMax(200);
+        mImageShow.setSeekBar(seekBar);
+        mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
+        mPanelController.setUtilityPanel(findViewById(R.id.filterButtonsList),
+                findViewById(R.id.compareWithOriginalImage),
+                findViewById(R.id.applyEffect));
+        mPanelController.setMasterImage(mImageShow);
+        mPanelController.setCurrentPanel(mFxButton);
 
         Intent intent = getIntent();
         String data = intent.getDataString();
@@ -246,7 +233,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
     @Override
     public boolean onShareTargetSelected(ShareActionProvider arg0, Intent arg1) {
-        // First, let's tell the SharedImageProvider that it will need to wait for the image
+        // First, let's tell the SharedImageProvider that it will need to wait
+        // for the image
         Uri uri = Uri.withAppendedPath(SharedImageProvider.CONTENT_URI,
                 Uri.encode(mSharedOutputFile.getAbsolutePath()));
         ContentValues values = new ContentValues();
@@ -293,6 +281,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         return true;
     }
 
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.undoButton: {
@@ -395,6 +384,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
     // //////////////////////////////////////////////////////////////////////////////
     // Some utility functions
+    // TODO: finish the cleanup.
 
     public void showOriginalViews(boolean value) {
         for (ImageShow views : mImageViews) {
@@ -467,6 +457,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             mShowingImageStatePanel = true;
             view.animate().setDuration(200).x(-viewList.getWidth())
                     .withLayer().withEndAction(new Runnable() {
+                        @Override
                         public void run() {
                             viewList.setAlpha(0);
                             viewList.setVisibility(View.VISIBLE);
@@ -499,6 +490,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             mShowingHistoryPanel = true;
             view.animate().setDuration(200).x(-viewList.getWidth())
                     .withLayer().withEndAction(new Runnable() {
+                        @Override
                         public void run() {
                             viewList.setAlpha(0);
                             viewList.setVisibility(View.VISIBLE);
@@ -530,350 +522,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             @Override
             public void onClick(View v) {
                 resetHistory();
-            }
-        };
-    }
-
-    // //////////////////////////////////////////////////////////////////////////////
-    // Now, let's deal with the bottom panel.
-
-    private OnClickListener createOnClickFxButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                hideListViews();
-                unselectBottomPanelButtons();
-                mImageShow.setVisibility(View.VISIBLE);
-                mListFx.setVisibility(View.VISIBLE);
-                mFxButton.setSelected(true);
-            }
-        };
-    }
-
-    private OnClickListener createOnClickBorderButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                hideListViews();
-                unselectBottomPanelButtons();
-                mImageBorders.setVisibility(View.VISIBLE);
-                mListBorders.setVisibility(View.VISIBLE);
-                mBorderButton.setSelected(true);
-            }
-        };
-    }
-
-    private OnClickListener createOnClickGeometryButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                hideListViews();
-                unselectBottomPanelButtons();
-                mImageStraighten.setVisibility(View.VISIBLE);
-                mListGeometry.setVisibility(View.VISIBLE);
-                mGeometryButton.setSelected(true);
-
-                if (ANIMATE_PANELS) {
-                    mListGeometry.setX(mListGeometry.getWidth());
-                    mListGeometry.animate().setDuration(200).x(0).withLayer().start();
-                }
-            }
-        };
-    }
-
-    private OnClickListener createOnClickColorsButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                hideListViews();
-                unselectBottomPanelButtons();
-                mListColors.setVisibility(View.VISIBLE);
-                mImageShow.setVisibility(View.VISIBLE);
-                mColorsButton.setSelected(true);
-
-                if (ANIMATE_PANELS) {
-                    View view = findViewById(R.id.listColorsFx);
-                    view.setX(mListColors.getWidth());
-                    view.animate().setDuration(200).x(0).withLayer().start();
-                }
-            }
-        };
-    }
-
-    // //////////////////////////////////////////////////////////////////////////////
-    // Geometry sub-panel
-
-    private OnClickListener createOnClickStraightenButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageStraighten.setVisibility(View.VISIBLE);
-                mImageStraighten.showToast("Straighten", true);
-            }
-        };
-    }
-
-    private OnClickListener createOnClickCropButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageShow.setVisibility(View.VISIBLE);
-                mImageShow.showToast("Crop", true);
-            }
-        };
-    }
-
-    private OnClickListener createOnClickRotateButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageShow.setVisibility(View.VISIBLE);
-                mImageShow.showToast("Rotate", true);
-            }
-        };
-    }
-
-    private OnClickListener createOnClickFlipButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageShow.setVisibility(View.VISIBLE);
-                mImageShow.showToast("Flip", true);
-            }
-        };
-    }
-
-    // //////////////////////////////////////////////////////////////////////////////
-    // Filters sub-panel
-
-    private OnClickListener createOnClickVignetteButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageShow.setVisibility(View.VISIBLE);
-                mImageShow.setShowControls(true);
-                ImagePreset preset = mImageShow.getImagePreset();
-                ImageFilter filter = preset.getFilter("Vignette");
-                if (filter == null) {
-                    ImageFilterVignette vignette = new ImageFilterVignette();
-                    ImagePreset copy = new ImagePreset(preset);
-                    copy.add(vignette);
-                    copy.setHistoryName(vignette.getName());
-                    copy.setIsFx(false);
-                    filter = copy.getFilter("Vignette");
-                    mImageShow.setImagePreset(copy);
-                }
-                mImageShow.setCurrentFilter(filter);
-                unselectPanelButtons(mColorsPanelButtons);
-                mVignetteButton.setSelected(true);
-                invalidateViews();
-            }
-        };
-    }
-
-    private OnClickListener createOnClickCurvesRGBButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageCurves.setVisibility(View.VISIBLE);
-                unselectPanelButtons(mColorsPanelButtons);
-                mCurvesButtonRGB.setSelected(true);
-                mImageCurves.setUseRed(true);
-                mImageCurves.setUseGreen(true);
-                mImageCurves.setUseBlue(true);
-                mImageCurves.reloadCurve();
-            }
-        };
-    }
-
-    private OnClickListener createOnClickSharpenButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageZoom.setVisibility(View.VISIBLE);
-                mImageZoom.setShowControls(true);
-                ImagePreset preset = mImageZoom.getImagePreset();
-                ImageFilter filter = preset.getFilter("Sharpen");
-                if (filter == null) {
-                    ImageFilterSharpen sharpen = new ImageFilterSharpen();
-                    ImagePreset copy = new ImagePreset(preset);
-                    copy.add(sharpen);
-                    copy.setHistoryName(sharpen.getName());
-                    copy.setIsFx(false);
-                    filter = copy.getFilter("Sharpen");
-                    mImageZoom.setImagePreset(copy);
-                }
-                mImageZoom.setCurrentFilter(filter);
-                unselectPanelButtons(mColorsPanelButtons);
-                mSharpenButton.setSelected(true);
-                invalidateViews();
-            }
-        };
-    }
-
-    private OnClickListener createOnClickContrastButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageShow.setVisibility(View.VISIBLE);
-                mImageShow.setShowControls(true);
-                ImagePreset preset = mImageShow.getImagePreset();
-                ImageFilter filter = preset.getFilter("Contrast");
-                if (filter == null) {
-                    ImageFilterContrast contrast = new ImageFilterContrast();
-                    ImagePreset copy = new ImagePreset(preset);
-                    copy.add(contrast);
-                    copy.setHistoryName(contrast.getName());
-                    copy.setIsFx(false);
-                    filter = copy.getFilter("Contrast");
-                    mImageShow.setImagePreset(copy);
-                }
-                mImageShow.setCurrentFilter(filter);
-                unselectPanelButtons(mColorsPanelButtons);
-                mContrastButton.setSelected(true);
-                invalidateViews();
-            }
-        };
-    }
-
-    private OnClickListener createOnClickSaturationButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageShow.setVisibility(View.VISIBLE);
-                mImageShow.setShowControls(true);
-                ImagePreset preset = mImageShow.getImagePreset();
-                ImageFilter filter = preset.getFilter("Saturated");
-                if (filter == null) {
-                    ImageFilterSaturated sat = new ImageFilterSaturated();
-                    ImagePreset copy = new ImagePreset(preset);
-                    copy.add(sat);
-                    copy.setHistoryName(sat.getName());
-                    copy.setIsFx(false);
-                    filter = copy.getFilter("Saturated");
-                    mImageShow.setImagePreset(copy);
-                }
-                mImageShow.setCurrentFilter(filter);
-                unselectPanelButtons(mColorsPanelButtons);
-                mSaturationButton.setSelected(true);
-                invalidateViews();
-            }
-        };
-    }
-
-    private OnClickListener createOnClickTintButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageShow.setVisibility(View.VISIBLE);
-                mImageShow.setShowControls(true);
-                ImagePreset preset = mImageShow.getImagePreset();
-                ImageFilter filter = preset.getFilter("Hue");
-                if (filter == null) {
-                    ImageFilterHue contrast = new ImageFilterHue();
-                    ImagePreset copy = new ImagePreset(preset);
-                    copy.add(contrast);
-                    copy.setHistoryName(contrast.getName());
-                    copy.setIsFx(false);
-                    filter = copy.getFilter("Hue");
-                    mImageShow.setImagePreset(copy);
-                }
-                mImageShow.setCurrentFilter(filter);
-                unselectPanelButtons(mColorsPanelButtons);
-                mTintButton.setSelected(true);
-                invalidateViews();
-            }
-        };
-    }
-
-    private OnClickListener createOnClickVibranceButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageShow.setVisibility(View.VISIBLE);
-                mImageShow.setShowControls(true);
-                ImagePreset preset = mImageShow.getImagePreset();
-                ImageFilter filter = preset.getFilter("Vibrance");
-                if (filter == null) {
-                    ImageFilterVibrance contrast = new ImageFilterVibrance();
-                    ImagePreset copy = new ImagePreset(preset);
-                    copy.add(contrast);
-                    copy.setHistoryName(contrast.getName());
-                    copy.setIsFx(false);
-                    filter = copy.getFilter("Vibrance");
-                    mImageShow.setImagePreset(copy);
-                }
-                mImageShow.setCurrentFilter(filter);
-                unselectPanelButtons(mColorsPanelButtons);
-                mVibranceButton.setSelected(true);
-                invalidateViews();
-            }
-        };
-    }
-
-    private OnClickListener createOnClickExposureButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageShow.setVisibility(View.VISIBLE);
-                mImageShow.setShowControls(true);
-                ImagePreset preset = mImageShow.getImagePreset();
-                ImageFilter filter = preset.getFilter("Exposure");
-                if (filter == null) {
-                    ImageFilterExposure bright = new ImageFilterExposure();
-                    ImagePreset copy = new ImagePreset(preset);
-                    copy.add(bright);
-                    copy.setHistoryName(bright.getName());
-                    copy.setIsFx(false);
-                    filter = copy.getFilter("Exposure");
-                    mImageShow.setImagePreset(copy);
-                }
-                mImageShow.setCurrentFilter(filter);
-                unselectPanelButtons(mColorsPanelButtons);
-                mExposureButton.setSelected(true);
-                invalidateViews();
-            }
-        };
-    }
-
-    private OnClickListener createOnClickShadowRecoveryButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideImageViews();
-                mImageShow.setVisibility(View.VISIBLE);
-                mImageShow.setShowControls(true);
-                ImagePreset preset = mImageShow.getImagePreset();
-                ImageFilter filter = preset.getFilter("Shadows");
-                if (filter == null) {
-                    ImageFilterShadows contrast = new ImageFilterShadows();
-                    ImagePreset copy = new ImagePreset(preset);
-                    copy.add(contrast);
-                    copy.setHistoryName(contrast.getName());
-                    copy.setIsFx(false);
-                    filter = copy.getFilter("Shadows");
-                    mImageShow.setImagePreset(copy);
-                }
-                mImageShow.setCurrentFilter(filter);
-                unselectPanelButtons(mColorsPanelButtons);
-                mShadowRecoveryButton.setSelected(true);
-                invalidateViews();
             }
         };
     }
@@ -930,6 +578,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 SELECT_PICTURE);
     }
 
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v(LOGTAG, "onActivityResult");
         if (resultCode == RESULT_OK) {
