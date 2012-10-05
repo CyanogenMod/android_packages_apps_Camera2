@@ -11,11 +11,14 @@ public class ImageFilterVignette extends ImageFilter {
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float strength);
 
-    public void apply(Bitmap bitmap) {
+    @Override
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
         float p = mParameter;
         float value = p / 100.0f;
         nativeApplyFilter(bitmap, w, h, value);
+
+        return bitmap;
     }
 }
