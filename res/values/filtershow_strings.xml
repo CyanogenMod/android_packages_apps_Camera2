@@ -52,6 +52,15 @@
     <!--  Text for the image state panel title [CHAR LIMIT=50] -->
     <string name="imageState">Current Image State</string>
 
+    <!--  Additional filters buttons  -->
+
+    <!--  Label for the compare original image filter button [CHAR LIMIT=15] -->
+    <string name="compare_original">Compare</string>
+    <!--  Label for the apply effect button [CHAR LIMIT=15] -->
+    <string name="apply_effect">Apply</string>
+    <!--  Label for the reset effect button [CHAR LIMIT=15] -->
+    <string name="reset_effect">Reset</string>
+
     <!--  Filters buttons -->
 
     <!--  Label for the exposure filter button [CHAR LIMIT=15] -->
