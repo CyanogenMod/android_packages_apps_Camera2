@@ -313,6 +313,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 invalidateViews();
                 return true;
             }
+            case R.id.resetHistoryButton: {
+                resetHistory();
+                return true;
+            }
             case R.id.showImageStateButton: {
                 toggleImageStatePanel();
                 return true;
