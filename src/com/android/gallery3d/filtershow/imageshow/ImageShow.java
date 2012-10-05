@@ -1,36 +1,33 @@
 
 package com.android.gallery3d.filtershow.imageshow;
 
-import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.HistoryAdapter;
-import com.android.gallery3d.filtershow.ImageStateAdapter;
-import com.android.gallery3d.filtershow.cache.ImageLoader;
-import com.android.gallery3d.filtershow.filters.ImageFilter;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
-import com.android.gallery3d.filtershow.ui.SliderListener;
-import com.android.gallery3d.filtershow.ui.SliderController;
-import com.android.gallery3d.R;
-import com.android.gallery3d.R.id;
-import com.android.gallery3d.R.layout;
-
-import java.io.File;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Handler;
-import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.MeasureSpec;
 import android.widget.ArrayAdapter;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class ImageShow extends View implements SliderListener {
+import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.filtershow.HistoryAdapter;
+import com.android.gallery3d.filtershow.ImageStateAdapter;
+import com.android.gallery3d.filtershow.PanelController;
+import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.filters.ImageFilter;
+import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.ui.SliderController;
+import com.android.gallery3d.filtershow.ui.SliderListener;
+
+import java.io.File;
+
+public class ImageShow extends View implements SliderListener, OnSeekBarChangeListener {
 
     private static final String LOGTAG = "ImageShow";
 
@@ -64,8 +61,47 @@ public class ImageShow extends View implements SliderListener {
     protected float mTouchX = 0;
     protected float mTouchY = 0;
 
-    private Handler mHandler = new Handler();
+    private SeekBar mSeekBar = null;
+    private PanelController mController = null;
 
+    private final Handler mHandler = new Handler();
+
+    public void select() {
+        if (getCurrentFilter() != null) {
+            int parameter = getCurrentFilter().getParameter();
+            updateSeekBar(parameter);
+        }
+    }
+
+    public void updateSeekBar(int parameter) {
+        if (mSeekBar == null) {
+            return;
+        }
+        int progress = parameter + 100;
+        mSeekBar.setProgress(progress);
+        if (getPanelController() != null) {
+            getPanelController().onNewValue(parameter);
+        }
+    }
+
+    public void unselect() {
+
+    }
+
+    public void resetParameter() {
+        onNewValue(0);
+        mSliderController.reset();
+    }
+
+    public void setPanelController(PanelController controller) {
+        mController = controller;
+    }
+
+    public PanelController getPanelController() {
+        return mController;
+    }
+
+    @Override
     public void onNewValue(int value) {
         if (getCurrentFilter() != null) {
             getCurrentFilter().setParameter(value);
@@ -74,15 +110,21 @@ public class ImageShow extends View implements SliderListener {
             mImageLoader.resetImageForPreset(getImagePreset(), this);
             getImagePreset().fillImageStateAdapter(mImageStateAdapter);
         }
+        if (getPanelController() != null) {
+            getPanelController().onNewValue(value);
+        }
+        updateSeekBar(value);
         invalidate();
     }
 
+    @Override
     public void onTouchDown(float x, float y) {
         mTouchX = x;
         mTouchY = y;
         invalidate();
     }
 
+    @Override
     public void onTouchUp() {
     }
 
@@ -102,12 +144,18 @@ public class ImageShow extends View implements SliderListener {
                 R.id.rowTextView);
     }
 
+    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
         int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
         setMeasuredDimension(parentWidth, parentHeight);
         mSliderController.setWidth(parentWidth);
         mSliderController.setHeight(parentHeight);
+    }
+
+    public void setSeekBar(SeekBar seekBar) {
+        mSeekBar = seekBar;
+        mSeekBar.setOnSeekBarChangeListener(this);
     }
 
     public void setCurrentFilter(ImageFilter filter) {
@@ -180,6 +228,7 @@ public class ImageShow extends View implements SliderListener {
         }
     }
 
+    @Override
     public void onDraw(Canvas canvas) {
         drawBackground(canvas);
         getFilteredImage();
@@ -262,8 +311,18 @@ public class ImageShow extends View implements SliderListener {
         }
     }
 
-    public void setShowControls(boolean value) {
+    public ImageShow setShowControls(boolean value) {
         mShowControls = value;
+        if (mShowControls) {
+            if (mSeekBar != null) {
+                mSeekBar.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (mSeekBar != null) {
+                mSeekBar.setVisibility(View.INVISIBLE);
+            }
+        }
+        return this;
     }
 
     public boolean showControls() {
@@ -324,6 +383,7 @@ public class ImageShow extends View implements SliderListener {
         mImageLoader.saveImage(getImagePreset(), filterShowActivity, file);
     }
 
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
         mSliderController.onTouchEvent(event);
@@ -367,5 +427,22 @@ public class ImageShow extends View implements SliderListener {
         }
         mImageRotation = imageRotation;
         mImageRotationZoomFactor = imageRotationZoomFactor;
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar arg0, int progress, boolean arg2) {
+        onNewValue(progress - 100);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar arg0) {
+        // TODO Auto-generated method stub
+
     }
 }

@@ -1,26 +1,24 @@
 
 package com.android.gallery3d.filtershow.imageshow;
 
-import com.android.gallery3d.filtershow.presets.ImagePreset;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
+
+import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class ImageStraighten extends ImageSlave {
     private float mImageRotation = 0;
     private float mImageRotationZoomFactor = 0;
 
-    private float mMinAngle = -45;
-    private float mMaxAngle = 45;
+    private final float mMinAngle = -45;
+    private final float mMaxAngle = 45;
     private float mBaseAngle = 0;
     private float mAngle = 0;
     private float mCenterX;
@@ -69,6 +67,7 @@ public class ImageStraighten extends ImageSlave {
     public void setActionUp() {
         mMode = MODES.UP;
         updatePreset();
+        invalidate();
     }
 
     public void setNoAction() {
@@ -81,6 +80,16 @@ public class ImageStraighten extends ImageSlave {
         setImagePreset(copy);
     }
 
+    @Override
+    public void resetParameter() {
+        super.resetParameter();
+        mImageRotation = 0;
+        mAngle = 0;
+        updatePreset();
+        invalidate();
+    }
+
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getActionMasked()) {
             case (MotionEvent.ACTION_DOWN):
@@ -97,6 +106,9 @@ public class ImageStraighten extends ImageSlave {
         }
         mImageRotation = mAngle;
         updateAngle();
+        if (getPanelController() != null) {
+            getPanelController().onNewValue((int) mImageRotation);
+        }
         invalidate();
         return true;
     }
@@ -124,11 +136,16 @@ public class ImageStraighten extends ImageSlave {
 
     // ///////////////////////////////////////////////////////////////////////////
 
+    @Override
     public void onNewValue(int value) {
         mImageRotation = value;
+        if (getPanelController() != null) {
+            getPanelController().onNewValue(value);
+        }
         invalidate();
     }
 
+    @Override
     public void onDraw(Canvas canvas) {
         mCenterX = getWidth() / 2;
         mCenterY = getHeight() / 2;
