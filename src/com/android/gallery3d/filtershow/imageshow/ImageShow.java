@@ -61,17 +61,29 @@ public class ImageShow extends View implements SliderListener {
     private boolean mShowToast = false;
     private boolean mImportantToast = false;
 
+    protected float mTouchX = 0;
+    protected float mTouchY = 0;
+
     private Handler mHandler = new Handler();
 
     public void onNewValue(int value) {
-        if (mCurrentFilter != null) {
-            mCurrentFilter.setParameter(value);
+        if (getCurrentFilter() != null) {
+            getCurrentFilter().setParameter(value);
         }
-        if (mImagePreset != null) {
-            mImageLoader.resetImageForPreset(mImagePreset, this);
-            mImagePreset.fillImageStateAdapter(mImageStateAdapter);
+        if (getImagePreset() != null) {
+            mImageLoader.resetImageForPreset(getImagePreset(), this);
+            getImagePreset().fillImageStateAdapter(mImageStateAdapter);
         }
         invalidate();
+    }
+
+    public void onTouchDown(float x, float y) {
+        mTouchX = x;
+        mTouchY = y;
+        invalidate();
+    }
+
+    public void onTouchUp() {
     }
 
     public ImageShow(Context context, AttributeSet attrs) {
@@ -102,6 +114,10 @@ public class ImageShow extends View implements SliderListener {
         mCurrentFilter = filter;
     }
 
+    public ImageFilter getCurrentFilter() {
+        return mCurrentFilter;
+    }
+
     public void setAdapter(HistoryAdapter adapter) {
         mHistoryAdapter = adapter;
     }
@@ -123,6 +139,10 @@ public class ImageShow extends View implements SliderListener {
                 invalidate();
             }
         }, 400);
+    }
+
+    public Rect getImageBounds() {
+        return mImageBounds;
     }
 
     public ImagePreset getImagePreset() {
@@ -161,55 +181,9 @@ public class ImageShow extends View implements SliderListener {
     }
 
     public void onDraw(Canvas canvas) {
-        if (mBackgroundImage == null) {
-            mBackgroundImage = mImageLoader.getBackgroundBitmap(getResources());
-        }
-        if (mBackgroundImage != null) {
-            Rect s = new Rect(0, 0, mBackgroundImage.getWidth(),
-                    mBackgroundImage.getHeight());
-            Rect d = new Rect(0, 0, getWidth(), getHeight());
-            canvas.drawBitmap(mBackgroundImage, s, d, mPaint);
-        }
-
-        Bitmap filteredImage = null;
-        if (mImageLoader != null) {
-            filteredImage = mImageLoader.getImageForPreset(this,
-                    getImagePreset(), showHires());
-        }
-
-        if (filteredImage == null) {
-            // if no image for the current preset, use the previous one
-            filteredImage = mFilteredImage;
-        } else {
-            mFilteredImage = filteredImage;
-        }
-
-        if (mShowOriginal || mFilteredImage == null) {
-            mFilteredImage = mForegroundImage;
-        }
-
-        if (mFilteredImage != null) {
-            Rect s = new Rect(0, 0, mFilteredImage.getWidth(),
-                    mFilteredImage.getHeight());
-            float ratio = mFilteredImage.getWidth()
-                    / (float) mFilteredImage.getHeight();
-            float w = getWidth();
-            float h = w / ratio;
-            float ty = (getHeight() - h) / 2.0f;
-            float tx = 0;
-            // t = 0;
-            if (ratio < 1.0f) { // portrait image
-                h = getHeight();
-                w = h * ratio;
-                tx = (getWidth() - w) / 2.0f;
-                ty = 0;
-            }
-            Rect d = new Rect((int) tx, (int) ty, (int) (w + tx),
-                    (int) (h + ty));
-            mImageBounds = d;
-
-            canvas.drawBitmap(mFilteredImage, s, d, mPaint);
-        }
+        drawBackground(canvas);
+        getFilteredImage();
+        drawImage(canvas, mFilteredImage);
 
         if (showTitle() && getImagePreset() != null) {
             mPaint.setARGB(200, 0, 0, 0);
@@ -230,6 +204,62 @@ public class ImageShow extends View implements SliderListener {
         }
 
         drawToast(canvas);
+    }
+
+    public void getFilteredImage() {
+        Bitmap filteredImage = null;
+        if (mImageLoader != null) {
+            filteredImage = mImageLoader.getImageForPreset(this,
+                    getImagePreset(), showHires());
+        }
+
+        if (filteredImage == null) {
+            // if no image for the current preset, use the previous one
+            filteredImage = mFilteredImage;
+        } else {
+            mFilteredImage = filteredImage;
+        }
+
+        if (mShowOriginal || mFilteredImage == null) {
+            mFilteredImage = mForegroundImage;
+        }
+    }
+
+    public void drawImage(Canvas canvas, Bitmap image) {
+        if (image != null) {
+            Rect s = new Rect(0, 0, image.getWidth(),
+                    image.getHeight());
+            float ratio = image.getWidth()
+                    / (float) image.getHeight();
+            float w = getWidth();
+            float h = w / ratio;
+            float ty = (getHeight() - h) / 2.0f;
+            float tx = 0;
+            // t = 0;
+            if (ratio < 1.0f) { // portrait image
+                h = getHeight();
+                w = h * ratio;
+                tx = (getWidth() - w) / 2.0f;
+                ty = 0;
+            }
+            Rect d = new Rect((int) tx, (int) ty, (int) (w + tx),
+                    (int) (h + ty));
+            mImageBounds = d;
+
+            canvas.drawBitmap(image, s, d, mPaint);
+        }
+    }
+
+    public void drawBackground(Canvas canvas) {
+        if (mBackgroundImage == null) {
+            mBackgroundImage = mImageLoader.getBackgroundBitmap(getResources());
+        }
+        if (mBackgroundImage != null) {
+            Rect s = new Rect(0, 0, mBackgroundImage.getWidth(),
+                    mBackgroundImage.getHeight());
+            Rect d = new Rect(0, 0, getWidth(), getHeight());
+            canvas.drawBitmap(mBackgroundImage, s, d, mPaint);
+        }
     }
 
     public void setShowControls(boolean value) {

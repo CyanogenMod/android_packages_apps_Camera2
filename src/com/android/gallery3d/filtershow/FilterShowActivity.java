@@ -11,6 +11,7 @@ import com.android.gallery3d.filtershow.imageshow.ImageBorder;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.ImageSmallFilter;
 import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
+import com.android.gallery3d.filtershow.imageshow.ImageZoom;
 import com.android.gallery3d.filtershow.presets.*;
 import com.android.gallery3d.filtershow.provider.SharedImageProvider;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
@@ -19,6 +20,7 @@ import com.android.gallery3d.R;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.renderscript.RenderScript;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -57,6 +59,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private ImageCurves mImageCurves = null;
     private ImageBorder mImageBorders = null;
     private ImageStraighten mImageStraighten = null;
+    private ImageZoom mImageZoom = null;
 
     private View mListFx = null;
     private View mListBorders = null;
@@ -100,6 +103,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        ImageFilterRS.setRenderScriptContext(this);
+
         setContentView(R.layout.filtershow_activity);
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -121,11 +126,13 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageCurves = (ImageCurves) findViewById(R.id.imageCurves);
         mImageBorders = (ImageBorder) findViewById(R.id.imageBorder);
         mImageStraighten = (ImageStraighten) findViewById(R.id.imageStraighten);
+        mImageZoom = (ImageZoom) findViewById(R.id.imageZoom);
 
         mImageViews.add(mImageShow);
         mImageViews.add(mImageCurves);
         mImageViews.add(mImageBorders);
         mImageViews.add(mImageStraighten);
+        mImageViews.add(mImageZoom);
 
         mListFx = findViewById(R.id.fxList);
         mListBorders = findViewById(R.id.bordersList);
@@ -211,6 +218,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageBorders.setMaster(mImageShow);
         mImageStraighten.setImageLoader(mImageLoader);
         mImageStraighten.setMaster(mImageShow);
+        mImageZoom.setImageLoader(mImageLoader);
+        mImageZoom.setMaster(mImageShow);
 
         Intent intent = getIntent();
         String data = intent.getDataString();
@@ -688,11 +697,23 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             @Override
             public void onClick(View v) {
                 hideImageViews();
-                mImageShow.setVisibility(View.VISIBLE);
+                mImageZoom.setVisibility(View.VISIBLE);
+                mImageZoom.setShowControls(true);
+                ImagePreset preset = mImageZoom.getImagePreset();
+                ImageFilter filter = preset.getFilter("Sharpen");
+                if (filter == null) {
+                    ImageFilterSharpen sharpen = new ImageFilterSharpen();
+                    ImagePreset copy = new ImagePreset(preset);
+                    copy.add(sharpen);
+                    copy.setHistoryName(sharpen.getName());
+                    copy.setIsFx(false);
+                    filter = copy.getFilter("Sharpen");
+                    mImageZoom.setImagePreset(copy);
+                }
+                mImageZoom.setCurrentFilter(filter);
                 unselectPanelButtons(mColorsPanelButtons);
                 mSharpenButton.setSelected(true);
-                mImageShow.showToast("Sharpen", true);
-                mImageShow.setCurrentFilter(null);
+                invalidateViews();
             }
         };
     }
