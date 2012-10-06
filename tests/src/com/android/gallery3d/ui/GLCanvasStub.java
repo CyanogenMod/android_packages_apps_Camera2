@@ -83,6 +83,4 @@ public class GLCanvasStub implements GLCanvas {
     public void dumpStatisticsAndClear() {}
     public void beginRenderTarget(RawTexture texture) {}
     public void endRenderTarget() {}
-    public void drawMixed(BasicTexture from, int toColor,
-            float ratio, RectF src, RectF target) {}
 }
