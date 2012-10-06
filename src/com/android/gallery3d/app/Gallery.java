@@ -212,26 +212,6 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
                     }
                 }
 
-                // Displays the filename as title, reading the filename from the interface:
-                // {@link android.provider.OpenableColumns#DISPLAY_NAME}.
-                AsyncQueryHandler queryHandler = new AsyncQueryHandler(getContentResolver()) {
-                    @Override
-                    protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
-                        try {
-                            if ((cursor != null) && cursor.moveToFirst()) {
-                                String displayName = cursor.getString(0);
-
-                                // Just show empty title if other apps don't set DISPLAY_NAME
-                                setTitle((displayName == null) ? "" : displayName);
-                            }
-                        } finally {
-                            Utils.closeSilently(cursor);
-                        }
-                    }
-                };
-                queryHandler.startQuery(0, null, uri, new String[] {OpenableColumns.DISPLAY_NAME},
-                        null, null, null);
-
                 getStateManager().startState(PhotoPage.class, data);
             }
         }
