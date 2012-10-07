@@ -99,13 +99,6 @@ public interface GLCanvas {
     public void drawMixed(BasicTexture from, int toColor,
             float ratio, int x, int y, int w, int h);
 
-    // Draw a region of a texture and a specified color to the specified
-    // rectangle. The actual color used is from * (1 - ratio) + to * ratio.
-    // The region of the texture is defined by parameter "src". The target
-    // rectangle is specified by parameter "target".
-    public void drawMixed(BasicTexture from, int toColor,
-            float ratio, RectF src, RectF target);
-
     // Gets the underlying GL instance. This is used only when direct access to
     // GL is needed.
     public GL11 getGLInstance();
