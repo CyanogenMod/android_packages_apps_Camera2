@@ -162,6 +162,7 @@ public class PhotoPage extends ActivityState implements
     private boolean mStartInFilmstrip;
     private boolean mInCameraRoll;
     private boolean mStartedFromAlbumPage;
+    private boolean mRecenterCameraOnResume = true;
 
     private long mCameraSwitchCutoff = 0;
     private boolean mSkipUpdateCurrentPhoto = false;
@@ -533,6 +534,7 @@ public class PhotoPage extends ActivityState implements
                 launchPhotoEditor();
                 return;
             case R.id.photopage_bottom_control_panorama:
+                mRecenterCameraOnResume = false;
                 LightCycleHelper.viewPanorama(mActivity, mCurrentPhoto.getContentUri());
                 return;
             default:
@@ -598,6 +600,7 @@ public class PhotoPage extends ActivityState implements
                 .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).size() == 0) {
             intent.setAction(Intent.ACTION_EDIT);
         }
+        mRecenterCameraOnResume = false;
         ((Activity) mActivity).startActivityForResult(Intent.createChooser(intent, null),
                 REQUEST_EDIT);
     }
@@ -1082,7 +1085,8 @@ public class PhotoPage extends ActivityState implements
         mDeletePath = null;
     }
 
-    public static void playVideo(Activity activity, Uri uri, String title) {
+    public void playVideo(Activity activity, Uri uri, String title) {
+        mRecenterCameraOnResume = false;
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW)
                     .setDataAndType(uri, "video/*")
@@ -1226,7 +1230,8 @@ public class PhotoPage extends ActivityState implements
         int albumPageTransition = transitions.get(
                 KEY_ALBUMPAGE_TRANSITION, MSG_ALBUMPAGE_NONE);
 
-        if (albumPageTransition == MSG_ALBUMPAGE_NONE && mAppBridge != null) {
+        if (albumPageTransition == MSG_ALBUMPAGE_NONE && mAppBridge != null
+                && mRecenterCameraOnResume) {
             // Generally, resuming the PhotoPage when in Camera should
             // reset to the capture mode to allow quick photo taking
             mCurrentIndex = 0;
@@ -1301,6 +1306,7 @@ public class PhotoPage extends ActivityState implements
         }
 
         mHasActivityResult = false;
+        mRecenterCameraOnResume = true;
         mHandler.sendEmptyMessageDelayed(MSG_UNFREEZE_GLROOT, UNFREEZE_GLROOT_TIMEOUT);
     }
 
