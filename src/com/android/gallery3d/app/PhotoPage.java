@@ -507,14 +507,18 @@ public class PhotoPage extends ActivityState implements
     }
 
     public boolean canDisplayBottomControls() {
-        return mShowBars && !mPhotoView.getFilmMode();
+        return mIsActive && !mPhotoView.getFilmMode();
     }
 
     public boolean canDisplayBottomControl(int control) {
         if (mCurrentPhoto == null) return false;
         switch(control) {
             case R.id.photopage_bottom_control_edit:
-                return mCurrentPhoto.getMediaType() == MediaObject.MEDIA_TYPE_IMAGE;
+                return mHaveImageEditor && mShowBars
+                        && (mCurrentPhoto.getSupportedOperations()
+                        & MediaItem.SUPPORT_EDIT) != 0
+                        && mCurrentPhoto.getMediaType()
+                        == MediaObject.MEDIA_TYPE_IMAGE;
             case R.id.photopage_bottom_control_panorama:
                 return (mCurrentPhoto.getSupportedOperations()
                         & MediaItem.SUPPORT_PANORAMA) != 0;
@@ -1189,6 +1193,10 @@ public class PhotoPage extends ActivityState implements
         }
         mPhotoView.pause();
         mHandler.removeMessages(MSG_HIDE_BARS);
+        mHandler.removeMessages(MSG_REFRESH_BOTTOM_CONTROLS);
+        if (mBottomControls != null) {
+            mBottomControls.refresh();
+        }
         mActionBar.removeOnMenuVisibilityListener(mMenuVisibilityListener);
         if (mShowSpinner) {
             mActionBar.disableAlbumModeMenu(true);
@@ -1275,6 +1283,9 @@ public class PhotoPage extends ActivityState implements
         mActionBar.setDisplayOptions(
                 ((mSecureAlbum == null) && (mSetPathString != null)), false);
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
+        if (mBottomControls != null) {
+            mBottomControls.refresh();
+        }
         if (mShowSpinner) {
             mActionBar.enableAlbumModeMenu(
                     GalleryActionBar.ALBUM_FILMSTRIP_MODE_SELECTED, this);
