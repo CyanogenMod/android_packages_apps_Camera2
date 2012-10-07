@@ -149,6 +149,7 @@ public class PhotoPage extends ActivityState implements
     private MediaItem mCurrentPhoto = null;
     private MenuExecutor mMenuExecutor;
     private boolean mIsActive;
+    private boolean mShowSpinner;
     private String mSetPathString;
     // This is the original mSetPathString before adding the camera preview item.
     private String mOriginalSetPathString;
@@ -339,6 +340,7 @@ public class PhotoPage extends ActivityState implements
                         MSG_ALBUMPAGE_NONE) == MSG_ALBUMPAGE_STARTED;
         mCurrentIndex = data.getInt(KEY_INDEX_HINT, 0);
         if (mSetPathString != null) {
+            mShowSpinner = true;
             mAppBridge = (AppBridge) data.getParcelable(KEY_APP_BRIDGE);
             if (mAppBridge != null) {
                 mShowBars = false;
@@ -360,6 +362,7 @@ public class PhotoPage extends ActivityState implements
                 if (SecureSource.isSecurePath(mSetPathString)) {
                     mSecureAlbum = (SecureAlbum) mActivity.getDataManager()
                             .getMediaSet(mSetPathString);
+                    mShowSpinner = false;
                 }
                 if (data.getBoolean(KEY_SHOW_WHEN_LOCKED, false)) {
                     // Set the flag to be on top of the lock screen.
@@ -483,6 +486,7 @@ public class PhotoPage extends ActivityState implements
             mModel = new SinglePhotoDataAdapter(mActivity, mPhotoView, mediaItem);
             mPhotoView.setModel(mModel);
             updateCurrentPhoto(mediaItem);
+            mShowSpinner = false;
         }
 
         mPhotoView.setFilmMode(mStartInFilmstrip && mMediaSet.getMediaItemCount() > 1);
@@ -1186,7 +1190,7 @@ public class PhotoPage extends ActivityState implements
         mPhotoView.pause();
         mHandler.removeMessages(MSG_HIDE_BARS);
         mActionBar.removeOnMenuVisibilityListener(mMenuVisibilityListener);
-        if (mSecureAlbum == null) {
+        if (mShowSpinner) {
             mActionBar.disableAlbumModeMenu(true);
         }
         onCommitDeleteImage();
@@ -1271,7 +1275,7 @@ public class PhotoPage extends ActivityState implements
         mActionBar.setDisplayOptions(
                 ((mSecureAlbum == null) && (mSetPathString != null)), false);
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
-        if (mSecureAlbum == null) {
+        if (mShowSpinner) {
             mActionBar.enableAlbumModeMenu(
                     GalleryActionBar.ALBUM_FILMSTRIP_MODE_SELECTED, this);
         }
