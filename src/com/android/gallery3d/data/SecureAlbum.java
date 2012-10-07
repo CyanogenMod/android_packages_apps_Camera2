@@ -24,12 +24,13 @@ import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Video;
 
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.app.StitchingChangeListener;
 import com.android.gallery3d.util.MediaSetUtils;
 
 import java.util.ArrayList;
 
 // This class lists all media items added by the client.
-public class SecureAlbum extends MediaSet {
+public class SecureAlbum extends MediaSet implements StitchingChangeListener {
     @SuppressWarnings("unused")
     private static final String TAG = "SecureAlbum";
     private static final String[] PROJECTION = {MediaColumns._ID};
@@ -42,6 +43,7 @@ public class SecureAlbum extends MediaSet {
     // The types of items in mAllItems. True is video and false is image.
     private ArrayList<Boolean> mAllItemTypes = new ArrayList<Boolean>();
     private ArrayList<Path> mExistingItems = new ArrayList<Path>();
+    private ArrayList<String> mStitchingFilePaths = new ArrayList<String>();
     private Context mContext;
     private DataManager mDataManager;
     private static final Uri[] mWatchUris =
@@ -60,6 +62,7 @@ public class SecureAlbum extends MediaSet {
         mUnlockItem = unlock;
         mShowUnlockItem = (!isCameraBucketEmpty(Images.Media.EXTERNAL_CONTENT_URI)
                 || !isCameraBucketEmpty(Video.Media.EXTERNAL_CONTENT_URI));
+        application.getStitchingProgressManager().addChangeListener(this);
     }
 
     public void addMediaItem(boolean isVideo, int id) {
@@ -177,5 +180,22 @@ public class SecureAlbum extends MediaSet {
     @Override
     public boolean isLeafAlbum() {
         return true;
+    }
+
+    @Override
+    public void onStitchingQueued(String filePath) {
+        mStitchingFilePaths.add(filePath);
+    }
+
+    @Override
+    public void onStitchingResult(String filePath, Uri uri) {
+        if (mStitchingFilePaths.remove(filePath)) {
+            int id = Integer.parseInt(uri.getLastPathSegment());
+            addMediaItem(false, id);
+        }
+    }
+
+    @Override
+    public void onStitchingProgress(String filePath, int progress) {
     }
 }
