@@ -35,7 +35,6 @@ import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.ScreenNail;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.ui.TileImageViewAdapter;
-import com.android.gallery3d.ui.TiledTexture;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.MediaSetUtils;
@@ -60,8 +59,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     private static final int MSG_RUN_OBJECT = 3;
     private static final int MSG_UPDATE_IMAGE_REQUESTS = 4;
 
-    private static final int MIN_LOAD_COUNT = 16;
-    private static final int DATA_CACHE_SIZE = 256;
+    private static final int MIN_LOAD_COUNT = 8;
+    private static final int DATA_CACHE_SIZE = 32;
     private static final int SCREEN_NAIL_MAX = PhotoView.SCREEN_NAIL_MAX;
     private static final int IMAGE_CACHE_SIZE = 2 * SCREEN_NAIL_MAX + 1;
 
@@ -163,7 +162,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     private DataListener mDataListener;
 
     private final SourceListener mSourceListener = new SourceListener();
-    private final TiledTexture.Uploader mUploader;
 
     // The path of the current viewing item will be stored in mItemPath.
     // If mItemPath is not null, mCurrentIndex is only a hint for where we
@@ -184,8 +182,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         mNeedFullImage = true;
 
         Arrays.fill(mChanges, MediaObject.INVALID_DATA_VERSION);
-
-        mUploader = new TiledTexture.Uploader(activity.getGLRoot());
 
         mMainHandler = new SynchronizedHandler(activity.getGLRoot()) {
             @SuppressWarnings("unchecked")
@@ -325,7 +321,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
             }
         }
         updateImageRequests();
-        updateScreenNailUploadQueue();
     }
 
     private void updateFullImage(Path path, Future<BitmapRegionDecoder> future) {
@@ -350,8 +345,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     @Override
     public void resume() {
         mIsActive = true;
-        TiledTexture.prepareResources();
-
         mSource.addContentListener(mSourceListener);
         updateImageCache();
         updateImageRequests();
@@ -378,9 +371,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         }
         mImageCache.clear();
         mTileProvider.clear();
-
-        mUploader.clear();
-        TiledTexture.freeResources();
     }
 
     private MediaItem getItem(int index) {
@@ -404,39 +394,12 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         updateImageCache();
         updateImageRequests();
         updateTileProvider();
-        updateScreenNailUploadQueue();
 
         if (mDataListener != null) {
             mDataListener.onPhotoChanged(index, mItemPath);
         }
 
         fireDataChange();
-    }
-
-    private void uploadScreenNail(int offset) {
-        int index = mCurrentIndex + offset;
-        if (index < mActiveStart || index >= mActiveEnd) return;
-
-        MediaItem item = getItem(index);
-        if (item == null) return;
-
-        ImageEntry e = mImageCache.get(item.getPath());
-        if (e == null) return;
-
-        ScreenNail s = e.screenNail;
-        if (s instanceof BitmapScreenNail) {
-            TiledTexture t = ((BitmapScreenNail) s).getTexture();
-            if (t != null && !t.isReady()) mUploader.addTexture(t);
-        }
-    }
-
-    private void updateScreenNailUploadQueue() {
-        mUploader.clear();
-        uploadScreenNail(0);
-        for (int i = 1; i < IMAGE_CACHE_SIZE; ++i) {
-            uploadScreenNail(i);
-            uploadScreenNail(-i);
-        }
     }
 
     @Override
