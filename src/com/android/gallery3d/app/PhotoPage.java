@@ -295,19 +295,19 @@ public class PhotoPage extends ActivityState implements
                     }
                     case MSG_ON_CAMERA_CENTER: {
                         mSkipUpdateCurrentPhoto = false;
-                        boolean updateNeeded = false;
+                        boolean stayedOnCamera = false;
                         if (!mPhotoView.getFilmMode()) {
-                            lockOrientation();
-                            updateNeeded = true;
+                            stayedOnCamera = true;
                         } else if (SystemClock.uptimeMillis() < mCameraSwitchCutoff &&
                                 mMediaSet.getMediaItemCount() > 1) {
                             mPhotoView.switchToImage(1);
                         } else {
                             mPhotoView.setFilmMode(false);
-                            updateNeeded = true;
+                            stayedOnCamera = true;
                         }
 
-                        if (updateNeeded) {
+                        if (stayedOnCamera) {
+                            lockOrientation();
                             updateBars();
                             updateCurrentPhoto(mModel.getMediaItem(0));
                         }
@@ -444,7 +444,7 @@ public class PhotoPage extends ActivityState implements
                             mCameraSwitchCutoff = SystemClock.uptimeMillis() +
                                     CAMERA_SWITCH_CUTOFF_THRESHOLD_MS;
                             mPhotoView.stopScrolling();
-                        } else if (oldIndex == 1 && mCurrentIndex == 0) {
+                        } else if (oldIndex >= 1 && mCurrentIndex == 0) {
                             mPhotoView.setWantPictureCenterCallbacks(true);
                             mSkipUpdateCurrentPhoto = true;
                         }
