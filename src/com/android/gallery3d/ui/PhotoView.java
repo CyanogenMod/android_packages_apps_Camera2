@@ -174,8 +174,8 @@ public class PhotoView extends GLView {
     public static final int SCREEN_NAIL_MAX = 3;
 
     // These are constants for the delete gesture.
-    private static final int SWIPE_ESCAPE_VELOCITY = 500; // dp/sec
-    private static final int MAX_DISMISS_VELOCITY = 2000; // dp/sec
+    private static final int SWIPE_ESCAPE_VELOCITY = 2500; // dp/sec
+    private static final int MAX_DISMISS_VELOCITY = 4000; // dp/sec
 
     // The picture entries, the valid index is from -SCREEN_NAIL_MAX to
     // SCREEN_NAIL_MAX.
