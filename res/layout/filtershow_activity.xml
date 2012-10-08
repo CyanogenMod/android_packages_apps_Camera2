@@ -114,6 +114,24 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
+            <com.android.gallery3d.filtershow.imageshow.ImageCrop
+                android:id="@+id/imageCrop"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <com.android.gallery3d.filtershow.imageshow.ImageRotate
+                android:id="@+id/imageRotate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <com.android.gallery3d.filtershow.imageshow.ImageFlip
+                android:id="@+id/imageFlip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
             <com.android.gallery3d.filtershow.ui.ImageCurves
                 android:id="@+id/imageCurves"
                 android:layout_width="match_parent"

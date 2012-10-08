@@ -1,6 +1,7 @@
 
 package com.android.gallery3d.filtershow;
 
+import android.content.Context;
 import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -103,14 +104,17 @@ public class PanelController implements OnClickListener {
     }
 
     class UtilityPanel {
+        private final Context mContext;
         private final View mView;
         private final View mCompareView;
         private final TextView mTextView;
         private boolean mSelected = false;
         private String mEffectName = null;
         private int mParameterValue = 0;
+        private boolean mShowParameterValue = false;
 
-        public UtilityPanel(View view, View compareView, View textView) {
+        public UtilityPanel(Context context, View view, View compareView, View textView) {
+            mContext = context;
             mView = view;
             mCompareView = compareView;
             mTextView = (TextView) textView;
@@ -135,12 +139,22 @@ public class PanelController implements OnClickListener {
 
         public void setEffectName(String effectName) {
             mEffectName = effectName;
+            showParameter(true);
             updateText();
         }
 
+        public void showParameter(boolean s) {
+            mShowParameterValue = s;
+        }
+
         public void updateText() {
-            mTextView.setText(Html.fromHtml("Apply" + "<br/><small>" + mEffectName + "<br/>"
-                    + mParameterValue + "</small>"));
+            String apply = mContext.getString(R.string.apply_effect);
+            if (mShowParameterValue) {
+                mTextView.setText(Html.fromHtml(apply + "<br/><small>" + mEffectName + "<br/>"
+                        + mParameterValue + "</small>"));
+            } else {
+                mTextView.setText(Html.fromHtml(apply + "<br/><small>" + mEffectName + "</small>"));
+            }
         }
 
         public ViewPropertyAnimator unselect() {
@@ -227,6 +241,10 @@ public class PanelController implements OnClickListener {
         mUtilityPanel.onNewValue(value);
     }
 
+    public void showParameter(boolean s) {
+        mUtilityPanel.showParameter(s);
+    }
+
     public void setCurrentPanel(View panel) {
         showPanel(panel);
     }
@@ -235,8 +253,8 @@ public class PanelController implements OnClickListener {
         mRowPanel = rowPanel;
     }
 
-    public void setUtilityPanel(View utilityPanel, View compareView, View textView) {
-        mUtilityPanel = new UtilityPanel(utilityPanel, compareView, textView);
+    public void setUtilityPanel(Context context, View utilityPanel, View compareView, View textView) {
+        mUtilityPanel = new UtilityPanel(context, utilityPanel, compareView, textView);
     }
 
     public void setMasterImage(ImageShow imageShow) {
@@ -376,20 +394,22 @@ public class PanelController implements OnClickListener {
                 break;
             }
             case R.id.cropButton: {
-                mCurrentImage = showImageView(R.id.imageShow);
+                mCurrentImage = showImageView(R.id.imageCrop);
                 mUtilityPanel.setEffectName("Crop");
+                mUtilityPanel.showParameter(false);
                 mUtilityPanel.setGeometryEffect(true);
                 break;
             }
             case R.id.rotateButton: {
-                mCurrentImage = showImageView(R.id.imageShow);
+                mCurrentImage = showImageView(R.id.imageRotate);
                 mUtilityPanel.setEffectName("Rotate");
                 mUtilityPanel.setGeometryEffect(true);
                 break;
             }
             case R.id.flipButton: {
-                mCurrentImage = showImageView(R.id.imageShow);
+                mCurrentImage = showImageView(R.id.imageFlip);
                 mUtilityPanel.setEffectName("Flip");
+                mUtilityPanel.showParameter(false);
                 mUtilityPanel.setGeometryEffect(true);
                 break;
             }
