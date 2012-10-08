@@ -465,14 +465,15 @@ public class GLRootView extends GLSurfaceView
                 listener = mIdleListeners.removeFirst();
             }
             mRenderLock.lock();
+            boolean keepInQueue;
             try {
-                if (!listener.onGLIdle(mCanvas, mRenderRequested)) return;
+                keepInQueue = listener.onGLIdle(mCanvas, mRenderRequested);
             } finally {
                 mRenderLock.unlock();
             }
             synchronized (mIdleListeners) {
-                mIdleListeners.addLast(listener);
-                if (!mRenderRequested) enable();
+                if (keepInQueue) mIdleListeners.addLast(listener);
+                if (!mRenderRequested && !mIdleListeners.isEmpty()) enable();
             }
         }
 
