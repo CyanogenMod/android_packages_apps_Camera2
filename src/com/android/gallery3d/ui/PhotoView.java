@@ -630,7 +630,7 @@ public class PhotoView extends GLView {
             if ((mHolding & ~HOLD_TOUCH_DOWN) != 0) return;
 
             if (mWantPictureCenterCallbacks && mPositionController.isCenter()) {
-                mListener.onPictureCenter(mIsCamera && !canUndoLastPicture());
+                mListener.onPictureCenter(mIsCamera);
             }
         }
 
@@ -1375,13 +1375,8 @@ public class PhotoView extends GLView {
         }
     }
 
-    // Returns true if the user can still undo the deletion of the last
-    // remaining picture in the album. We need to check this and delay making
-    // the camera preview full screen, otherwise the user won't have a chance to
-    // undo it.
-    private boolean canUndoLastPicture() {
-        if ((mUndoBarState & UNDO_BAR_SHOW) == 0) return false;
-        return (mUndoBarState & UNDO_BAR_DELETE_LAST) != 0;
+    public boolean canUndo() {
+        return (mUndoBarState & UNDO_BAR_SHOW) != 0;
     }
 
     ////////////////////////////////////////////////////////////////////////////
