@@ -103,6 +103,9 @@ public class LocalImage extends LocalMediaItem {
     private boolean mUsePanoramaViewer;
     private boolean mUsePanoramaViewerInitialized;
 
+    private boolean mIsPanorama360;
+    private boolean mIsPanorama360Initialized;
+
     public LocalImage(Path path, GalleryApp application, Cursor cursor) {
         super(path, nextVersionNumber());
         mApplication = application;
@@ -249,8 +252,11 @@ public class LocalImage extends LocalMediaItem {
 
         if (usePanoramaViewer()) {
             operation |= SUPPORT_PANORAMA;
-            // disable destructive rotate for lightcycle panorama
-            operation &= ~SUPPORT_ROTATE;
+            if (isPanorama360()) {
+                operation |= SUPPORT_PANORAMA360;
+                // disable destructive rotate for 360 degree panorama
+                operation &= ~SUPPORT_ROTATE;
+            }
         }
         return operation;
     }
@@ -360,5 +366,16 @@ public class LocalImage extends LocalMediaItem {
             mUsePanoramaViewerInitialized = true;
         }
         return mUsePanoramaViewer;
+    }
+
+    @Override
+    public boolean isPanorama360() {
+        // cache flag for faster access
+        if (!mIsPanorama360Initialized) {
+            mIsPanorama360 = LightCycleHelper.isPanorama360(
+                    mApplication.getAndroidContext(), getContentUri());
+            mIsPanorama360Initialized = true;
+        }
+        return mIsPanorama360;
     }
 }
