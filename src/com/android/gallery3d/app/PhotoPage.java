@@ -1239,8 +1239,8 @@ public class PhotoPage extends ActivityState implements
         } else {
             int resumeIndex = transitions.get(KEY_INDEX_HINT, -1);
             if (resumeIndex >= 0) {
-                if (mAppBridge != null) {
-                    // Account for live preview being the first item
+                if (mInCameraRoll) {
+                    // Account for preview/placeholder being the first item
                     resumeIndex++;
                 }
                 if (resumeIndex < mMediaSet.getMediaItemCount()) {
