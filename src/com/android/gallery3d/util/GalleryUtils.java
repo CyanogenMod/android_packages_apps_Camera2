@@ -58,7 +58,7 @@ public class GalleryUtils {
 
     public static final String MIME_TYPE_IMAGE = "image/*";
     public static final String MIME_TYPE_VIDEO = "video/*";
-    public static final String MIME_TYPE_PANORAMA = "application/vnd.google.panorama360+jpg";
+    public static final String MIME_TYPE_PANORAMA360 = "application/vnd.google.panorama360+jpg";
     public static final String MIME_TYPE_ALL = "*/*";
 
     private static final String DIR_TYPE_IMAGE = "vnd.android.cursor.dir/image";
