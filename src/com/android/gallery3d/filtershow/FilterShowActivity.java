@@ -202,6 +202,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addComponent(mColorsButton, findViewById(R.id.tintButton));
         mPanelController.addComponent(mColorsButton, findViewById(R.id.exposureButton));
         mPanelController.addComponent(mColorsButton, findViewById(R.id.shadowRecoveryButton));
+        mPanelController.addComponent(mColorsButton, findViewById(R.id.redEyeButton));
 
         mPanelController.addView(findViewById(R.id.resetEffect));
         mPanelController.addView(findViewById(R.id.applyEffect));
