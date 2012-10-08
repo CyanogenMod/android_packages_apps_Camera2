@@ -4,6 +4,7 @@ package com.android.gallery3d.filtershow;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -12,7 +13,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -27,7 +27,6 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.ShareActionProvider;
 import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
-import android.widget.Toast;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
@@ -52,6 +51,7 @@ import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.filtershow.ui.ImageCurves;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.Vector;
 
 @TargetApi(16)
@@ -92,6 +92,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private File mSharedOutputFile = null;
 
     private boolean mSharingImage = false;
+
+    private WeakReference<ProgressDialog> mSavingProgressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -218,6 +220,27 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }
     }
 
+    private void showSavingProgress() {
+        ProgressDialog progress;
+        if (mSavingProgressDialog != null) {
+            progress = mSavingProgressDialog.get();
+            if (progress != null) {
+                progress.show();
+                return;
+            }
+        }
+        // TODO: Allow cancellation of the saving process
+        progress = ProgressDialog.show(this, "", getString(R.string.saving_image), true, false);
+        mSavingProgressDialog = new WeakReference<ProgressDialog>(progress);
+    }
+
+    private void hideSavingProgress() {
+        if (mSavingProgressDialog != null) {
+            ProgressDialog progress = mSavingProgressDialog.get();
+            if (progress != null) progress.dismiss();
+        }
+    }
+
     public void completeSaveImage(Uri saveUri) {
         if (mSharingImage && mSharedOutputFile != null) {
             // Image saved, we unblock the content provider
@@ -228,6 +251,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             getContentResolver().insert(uri, values);
         }
         setResult(RESULT_OK, new Intent().setData(saveUri));
+        hideSavingProgress();
         finish();
     }
 
@@ -243,6 +267,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mSharingImage = true;
 
         // Process and save the image in the background.
+        showSavingProgress();
         mImageShow.saveImage(this, mSharedOutputFile);
         return true;
     }
@@ -590,11 +615,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     }
 
     public void saveImage() {
-        Toast toast = Toast.makeText(getBaseContext(), getString(R.string.saving_image),
-                Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
-
+        showSavingProgress();
         mImageShow.saveImage(this, null);
     }
 
