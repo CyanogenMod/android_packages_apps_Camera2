@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2012 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.android.gallery3d.filtershow.imageshow;
 
@@ -6,6 +21,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -38,6 +54,7 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     protected ImagePreset mImagePreset = null;
     protected ImageLoader mImageLoader = null;
     private ImageFilter mCurrentFilter = null;
+    private boolean mDirtyGeometry = true;
 
     private Bitmap mBackgroundImage = null;
     protected Bitmap mForegroundImage = null;
@@ -48,9 +65,14 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     private HistoryAdapter mHistoryAdapter = null;
     private ImageStateAdapter mImageStateAdapter = null;
 
-    protected Rect mImageBounds = null;
-    protected float mImageRotation = 0;
-    protected float mImageRotationZoomFactor = 0;
+    protected GeometryMetadata getGeometry(){
+        return new GeometryMetadata(mImagePreset.mGeoData);
+    }
+
+    public void setGeometry(GeometryMetadata d){
+        mImagePreset.mGeoData.set(d);
+    }
+
 
     private boolean mShowControls = false;
     private boolean mShowOriginal = false;
@@ -190,7 +212,9 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     }
 
     public Rect getImageBounds() {
-        return mImageBounds;
+        Rect dst = new Rect();
+        mImagePreset.mGeoData.getPhotoBounds().roundOut(dst);
+        return dst;
     }
 
     public ImagePreset getImagePreset() {
@@ -284,7 +308,6 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
             float h = w / ratio;
             float ty = (getHeight() - h) / 2.0f;
             float tx = 0;
-            // t = 0;
             if (ratio < 1.0f) { // portrait image
                 h = getHeight();
                 w = h * ratio;
@@ -293,7 +316,6 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
             }
             Rect d = new Rect((int) tx, (int) ty, (int) (w + tx),
                     (int) (h + ty));
-            mImageBounds = d;
 
             canvas.drawBitmap(image, s, d, mPaint);
         }
@@ -361,18 +383,33 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
         }
     }
 
+    protected void setDirtyGeometryFlag(){
+        mDirtyGeometry = true;
+    }
+
+    protected void clearDirtyGeometryFlag(){
+        mDirtyGeometry = false;
+    }
+
+    protected boolean getDirtyGeometryFlag() {
+        return mDirtyGeometry;
+    }
+
+    private void imageSizeChanged(Bitmap image) {
+        if(image == null || mImagePreset == null)
+            return;
+        float w = image.getWidth();
+        float h = image.getHeight();
+        RectF r = new RectF(0, 0, w, h);
+        RectF c = new RectF(w/4f, h/4f, w * 3/4f, h * 3/4f);
+        mImagePreset.mGeoData.setPhotoBounds(r);
+        mImagePreset.mGeoData.setCropBounds(c);
+        setDirtyGeometryFlag();
+    }
+
     public void updateImage() {
         mForegroundImage = getOriginalFrontBitmap();
-        /*
-         * if (mImageLoader != null) {
-         * mImageLoader.resetImageForPreset(getImagePreset(), this); }
-         */
-
-        /*
-         * if (mForegroundImage != null) { Bitmap filteredImage =
-         * mForegroundImage.copy(mConfig, true);
-         * getImagePreset().apply(filteredImage); invalidate(); }
-         */
+        imageSizeChanged(mForegroundImage); // TODO: should change to filtered
     }
 
     public void updateFilteredImage(Bitmap bitmap) {
@@ -413,20 +450,29 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     }
 
     public float getImageRotation() {
-        return mImageRotation;
+        return mImagePreset.mGeoData.getRotation();
     }
 
     public float getImageRotationZoomFactor() {
-        return mImageRotationZoomFactor;
+        return mImagePreset.mGeoData.getScaleFactor();
+    }
+
+    public void setImageRotation(float r){
+        mImagePreset.mGeoData.setRotation(r);
+    }
+
+    public void setImageRotationZoomFactor(float f){
+        mImagePreset.mGeoData.setScaleFactor(f);
     }
 
     public void setImageRotation(float imageRotation,
             float imageRotationZoomFactor) {
-        if (imageRotation != mImageRotation) {
+        float r = getImageRotation();
+        if (imageRotation != r) {
             invalidate();
         }
-        mImageRotation = imageRotation;
-        mImageRotationZoomFactor = imageRotationZoomFactor;
+        setImageRotation(imageRotation);
+        setImageRotationZoomFactor(imageRotationZoomFactor);
     }
 
     @Override
