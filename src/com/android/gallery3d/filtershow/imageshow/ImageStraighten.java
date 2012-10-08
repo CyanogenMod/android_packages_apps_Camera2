@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2012 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.android.gallery3d.filtershow.imageshow;
 
@@ -13,26 +28,10 @@ import android.view.MotionEvent;
 
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
-public class ImageStraighten extends ImageSlave {
-    private float mImageRotation = 0;
-    private float mImageRotationZoomFactor = 0;
+public class ImageStraighten extends ImageGeometry {
 
-    private final float mMinAngle = -45;
-    private final float mMaxAngle = 45;
     private float mBaseAngle = 0;
     private float mAngle = 0;
-    private float mCenterX;
-    private float mCenterY;
-    private float mTouchCenterX;
-    private float mTouchCenterY;
-    private float mCurrentX;
-    private float mCurrentY;
-
-    private enum MODES {
-        NONE, DOWN, UP, MOVE
-    }
-
-    private MODES mMode = MODES.NONE;
 
     private static final String LOGTAG = "ImageStraighten";
     private static final Paint gPaint = new Paint();
@@ -45,72 +44,17 @@ public class ImageStraighten extends ImageSlave {
         super(context, attrs);
     }
 
-    // ///////////////////////////////////////////////////////////////////////////
-    // touch event handler
-
-    public void setActionDown(float x, float y) {
-        mTouchCenterX = x;
-        mTouchCenterY = y;
-        mCurrentX = x;
-        mCurrentY = y;
-        mBaseAngle = mAngle;
-        mMode = MODES.DOWN;
+    @Override
+    protected void setActionDown(float x, float y) {
+        super.setActionDown(x, y);
+        mBaseAngle = mAngle = getLocalStraighten();
     }
 
-    public void setActionMove(float x, float y) {
-        mCurrentX = x;
-        mCurrentY = y;
-        mMode = MODES.MOVE;
+    @Override
+    protected void setActionMove(float x, float y) {
+        super.setActionMove(x, y);
         computeValue();
-    }
-
-    public void setActionUp() {
-        mMode = MODES.UP;
-        updatePreset();
-        invalidate();
-    }
-
-    public void setNoAction() {
-        mMode = MODES.NONE;
-    }
-
-    private void updatePreset() {
-        ImagePreset copy = new ImagePreset(getImagePreset());
-        copy.setStraightenRotation(mImageRotation, mImageRotationZoomFactor);
-        setImagePreset(copy);
-    }
-
-    @Override
-    public void resetParameter() {
-        super.resetParameter();
-        mImageRotation = 0;
-        mAngle = 0;
-        updatePreset();
-        invalidate();
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getActionMasked()) {
-            case (MotionEvent.ACTION_DOWN):
-                setActionDown(event.getX(), event.getY());
-                break;
-            case (MotionEvent.ACTION_UP):
-                setActionUp();
-                break;
-            case (MotionEvent.ACTION_MOVE):
-                setActionMove(event.getX(), event.getY());
-                break;
-            default:
-                setNoAction();
-        }
-        mImageRotation = mAngle;
-        updateAngle();
-        if (getPanelController() != null) {
-            getPanelController().onNewValue((int) mImageRotation);
-        }
-        invalidate();
-        return true;
+        setLocalStraighten(mAngle);
     }
 
     private float angleFor(float dx, float dy) {
@@ -130,122 +74,91 @@ public class ImageStraighten extends ImageSlave {
         float angleB = angleFor(dX2, dY2);
         float angle = (angleB - angleA) % 360;
         mAngle = (mBaseAngle - angle) % 360;
-        mAngle = Math.max(mMinAngle, mAngle);
-        mAngle = Math.min(mMaxAngle, mAngle);
+        mAngle = Math.max(MIN_STRAIGHTEN_ANGLE, mAngle);
+        mAngle = Math.min(MAX_STRAIGHTEN_ANGLE, mAngle);
     }
 
-    // ///////////////////////////////////////////////////////////////////////////
+    @Override
+    protected void gainedVisibility() {
+        correctStraightenRotateAngles();
+    }
+
+    @Override
+    protected void lostVisibility() {
+        saveAndSetPreset();
+    }
 
     @Override
     public void onNewValue(int value) {
-        mImageRotation = value;
+        setLocalStraighten(clamp(value, MIN_STRAIGHTEN_ANGLE, MAX_STRAIGHTEN_ANGLE));
         if (getPanelController() != null) {
-            getPanelController().onNewValue(value);
+            getPanelController().onNewValue((int) getLocalStraighten());
         }
         invalidate();
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
-        mCenterX = getWidth() / 2;
-        mCenterY = getHeight() / 2;
-        drawStraighten(canvas);
+    protected int getLocalValue() {
+        return (int) getLocalStraighten();
     }
 
-    public void drawStraighten(Canvas canvas) {
+    @Override
+    protected void drawShape(Canvas canvas, Bitmap image) {
         gPaint.setAntiAlias(true);
         gPaint.setFilterBitmap(true);
         gPaint.setDither(true);
         gPaint.setARGB(255, 255, 255, 255);
 
-        // canvas.drawARGB(255, 255, 0, 0);
+        // Draw fully rotated image.
+        drawRegularFlippedBitmap(canvas, image, gPaint);
 
-        // TODO: have the concept of multiple image passes (geometry, filter)
-        // so that we can fake the rotation, etc.
-        Bitmap image = null; // mMasterImageShow.mFilteredImage;
-        if (image == null) {
-            image = getMaster().mForegroundImage;
-        }
-        if (image == null) {
-            return;
-        }
+        // Get cropping frame
+        RectF boundsRect = getStraightenCropBounds();
 
-        double iw = image.getWidth();
-        float zoom = (float) (getWidth() / iw);
-        // iw = getWidth(); // we will apply the zoom
-        double ih = image.getHeight();
-        if (ih > iw) {
-            zoom = (float) (getHeight() / ih);
-        }
-        float offset = (float) ((getHeight() - ih) / 2.0f);
+        Matrix m1 = new Matrix();
+        float zoom = getLocalScale();
+        // Center and scale
+        m1.setScale(zoom, zoom, mCenterX, mCenterY);
+        m1.preTranslate(mCenterX - boundsRect.centerX(), mCenterY - boundsRect.centerY());
+        m1.mapRect(boundsRect);
+        RectF displayRect = getLocalDisplayBounds();
+        float dWidth = displayRect.width();
+        float dHeight = displayRect.height();
 
-        canvas.save();
-        float dx = (float) ((getWidth() - iw) / 2.0f);
-        float dy = offset;
-
-        canvas.rotate(mImageRotation, mCenterX, mCenterY);
-        canvas.scale(zoom, zoom, mCenterX, mCenterY);
-        canvas.translate(dx, dy);
-        canvas.drawBitmap(image, 0, 0, gPaint);
-
-        canvas.restore();
-
-        double deg = mImageRotation;
-        if (deg < 0) {
-            deg = -deg;
-        }
-        double a = Math.toRadians(deg);
-        double sina = Math.sin(a);
-        double cosa = Math.cos(a);
-
-        double rw = image.getWidth();
-        double rh = image.getHeight();
-        double h1 = rh * rh / (rw * sina + rh * cosa);
-        double h2 = rh * rw / (rw * cosa + rh * sina);
-        double hh = Math.min(h1, h2);
-        double ww = hh * rw / rh;
-
-        float left = (float) ((rw - ww) * 0.5f);
-        float top = (float) ((rh - hh) * 0.5f);
-        float right = (float) (left + ww);
-        float bottom = (float) (top + hh);
-
-        RectF boundsRect = new RectF(left, top, right, bottom);
-        Matrix m = new Matrix();
-        m.setScale(zoom, zoom, mCenterX, mCenterY);
-        m.preTranslate(dx, dy);
-        m.mapRect(boundsRect);
-
+        // Draw shadows
         gPaint.setARGB(128, 0, 0, 0);
         gPaint.setStyle(Paint.Style.FILL);
-        canvas.drawRect(0, 0, getWidth(), boundsRect.top, gPaint);
-        canvas.drawRect(0, boundsRect.bottom, getWidth(), getHeight(), gPaint);
+
+        // TODO: move to xml file
+        canvas.drawRect(0, 0, dWidth, boundsRect.top, gPaint);
+        canvas.drawRect(0, boundsRect.bottom, dWidth, dHeight, gPaint);
         canvas.drawRect(0, boundsRect.top, boundsRect.left, boundsRect.bottom,
                 gPaint);
-        canvas.drawRect(boundsRect.right, boundsRect.top, getWidth(),
+        canvas.drawRect(boundsRect.right, boundsRect.top, dWidth,
                 boundsRect.bottom, gPaint);
 
+        // Draw crop frame
         Path path = new Path();
         path.addRect(boundsRect, Path.Direction.CCW);
         gPaint.setARGB(255, 255, 255, 255);
         gPaint.setStrokeWidth(3);
         gPaint.setStyle(Paint.Style.STROKE);
         canvas.drawPath(path, gPaint);
+
         gPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
-        mImageRotationZoomFactor = (float) (rw / boundsRect.width());
-
+        // Draw grid
         if (mMode == MODES.MOVE) {
             canvas.save();
             canvas.clipPath(path);
             int n = 16;
-            float step = getWidth() / n;
+            float step = dWidth / n;
             float p = 0;
             for (int i = 1; i < n; i++) {
                 p = i * step;
                 gPaint.setARGB(60, 255, 255, 255);
-                canvas.drawLine(p, 0, p, getHeight(), gPaint);
-                canvas.drawLine(0, p, getWidth(), p, gPaint);
+                canvas.drawLine(p, 0, p, dHeight, gPaint);
+                canvas.drawLine(0, p, dWidth, p, gPaint);
             }
             canvas.restore();
         }
