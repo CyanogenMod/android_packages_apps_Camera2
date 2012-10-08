@@ -81,6 +81,8 @@
     <string name="curvesRGB">Curves</string>
     <!--  Label for the vignette filter button [CHAR LIMIT=15] -->
     <string name="vignette">Vignette</string>
+    <!-- Name for the photo effect that removes redeye. [CHAR LIMIT=15] -->
+    <string name="redeye">Red Eye</string>
 
     <!--  Labels for the curves tool -->
 
