@@ -115,8 +115,6 @@ public class PhotoView extends GLView {
 
     public interface Listener {
         public void onSingleTapUp(int x, int y);
-        public void lockOrientation();
-        public void unlockOrientation();
         public void onFullScreenChanged(boolean full);
         public void onActionBarAllowed(boolean allowed);
         public void onActionBarWanted();
@@ -1280,7 +1278,6 @@ public class PhotoView extends GLView {
         boolean isCamera = mPictures.get(0).isCamera();
         if (isCamera && !mFilmMode) {
             // Move into camera in page mode, lock
-            mListener.lockOrientation();
             mListener.onActionBarAllowed(false);
         } else {
             mListener.onActionBarAllowed(true);
