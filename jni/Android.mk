@@ -25,15 +25,16 @@ LOCAL_LDFLAGS	:= -llog -ljnigraphics
 LOCAL_SDK_VERSION := 9
 LOCAL_MODULE    := libjni_filtershow_filters
 LOCAL_SRC_FILES := filters/bw.c \
-		   filters/gradient.c \
-	           filters/saturated.c \
+                   filters/gradient.c \
+                   filters/saturated.c \
                    filters/exposure.c \
                    filters/contrast.c \
                    filters/hue.c \
                    filters/shadows.c \
                    filters/hsv.c \
                    filters/vibrance.c \
-		   filters/vignette.c
+                   filters/geometry.c \
+                   filters/vignette.c
 
 LOCAL_CFLAGS    += -ffast-math -O3 -funroll-loops
 LOCAL_ARM_MODE := arm
