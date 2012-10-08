@@ -1,12 +1,6 @@
 
 package com.android.gallery3d.filtershow.filters;
 
-import android.graphics.Bitmap;
-import android.util.Log;
-import android.renderscript.Element;
-import android.renderscript.Script;
-import android.renderscript.ScriptC;
-
 import com.android.gallery3d.R;
 
 public class ImageFilterSharpen extends ImageFilterRS {
@@ -18,11 +12,13 @@ public class ImageFilterSharpen extends ImageFilterRS {
         mName = "Sharpen";
     }
 
-    public void createFilter(android.content.res.Resources res) {
+    @Override
+    public void createFilter(android.content.res.Resources res, float scaleFactor,
+            boolean highQuality) {
         int w = mInPixelsAllocation.getType().getX();
         int h = mInPixelsAllocation.getType().getY();
 
-        float p1 = mParameter;
+        float p1 = mParameter * scaleFactor;
         float value = p1 / 100.0f;
         float f[] = new float[9];
         float p = value;
@@ -43,6 +39,7 @@ public class ImageFilterSharpen extends ImageFilterRS {
         mScript.set_gHeight(h);
     }
 
+    @Override
     public void runFilter() {
         mScript.set_gIn(mInPixelsAllocation);
         mScript.bind_gPixels(mInPixelsAllocation);
