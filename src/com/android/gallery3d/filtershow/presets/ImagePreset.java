@@ -55,13 +55,6 @@ public class ImagePreset {
         mGeoData.set(source.mGeoData);
     }
 
-    private Bitmap applyGeometry(Bitmap original, float scaleFactor, boolean highQuality) {
-        Bitmap bitmap = original;
-
-        // TODO: put geometry filters
-        return bitmap;
-    }
-
     public boolean isFx() {
         return mIsFxPreset;
     }
@@ -143,7 +136,7 @@ public class ImagePreset {
 
     public Bitmap apply(Bitmap original) {
         // First we apply any transform -- 90 rotate, flip, straighten, crop
-        Bitmap bitmap = applyGeometry(original, mScaleFactor, mIsHighQuality);
+        Bitmap bitmap = mGeoData.apply(original, mScaleFactor, mIsHighQuality);
 
         // TODO -- apply borders separately
         ImageFilter borderFilter = null;
