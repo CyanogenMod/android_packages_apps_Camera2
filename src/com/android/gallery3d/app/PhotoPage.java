@@ -575,11 +575,11 @@ public class PhotoPage extends ActivityState implements
     private Intent createSharePanoramaIntent(Path path) {
         DataManager manager = mActivity.getDataManager();
         int supported = manager.getSupportedOperations(path);
-        if ((supported & MediaObject.SUPPORT_PANORAMA) == 0) {
+        if ((supported & MediaObject.SUPPORT_PANORAMA360) == 0) {
             return null;
         }
         Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType(GalleryUtils.MIME_TYPE_PANORAMA);
+        intent.setType(GalleryUtils.MIME_TYPE_PANORAMA360);
         Uri uri = manager.getContentUri(path);
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         return intent;

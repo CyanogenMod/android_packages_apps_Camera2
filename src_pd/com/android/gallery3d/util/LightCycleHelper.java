@@ -49,6 +49,10 @@ public class LightCycleHelper {
         return false;
     }
 
+    public static boolean isPanorama360(Context context, Uri uri) {
+        return false;
+    }
+
     public static CameraModule createPanoramaModule() {
         return null;
     }
