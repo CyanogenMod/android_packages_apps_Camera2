@@ -84,8 +84,6 @@ public class PhotoPage extends ActivityState implements
     private static final String TAG = "PhotoPage";
 
     private static final int MSG_HIDE_BARS = 1;
-    private static final int MSG_LOCK_ORIENTATION = 2;
-    private static final int MSG_UNLOCK_ORIENTATION = 3;
     private static final int MSG_ON_FULL_SCREEN_CHANGED = 4;
     private static final int MSG_UPDATE_ACTION_BAR = 5;
     private static final int MSG_UNFREEZE_GLROOT = 6;
@@ -270,14 +268,6 @@ public class PhotoPage extends ActivityState implements
                         if (mBottomControls != null) mBottomControls.refresh();
                         break;
                     }
-                    case MSG_LOCK_ORIENTATION: {
-                        mOrientationManager.lockOrientation();
-                        break;
-                    }
-                    case MSG_UNLOCK_ORIENTATION: {
-                        mOrientationManager.unlockOrientation();
-                        break;
-                    }
                     case MSG_ON_FULL_SCREEN_CHANGED: {
                         mAppBridge.onFullScreenChanged(message.arg1 == 1);
                         break;
@@ -308,7 +298,6 @@ public class PhotoPage extends ActivityState implements
                         }
 
                         if (stayedOnCamera) {
-                            lockOrientation();
                             updateBars();
                             updateCurrentPhoto(mModel.getMediaItem(0));
                         }
@@ -347,7 +336,6 @@ public class PhotoPage extends ActivityState implements
                 mShowBars = false;
                 mInCameraRoll = true;
                 mAppBridge.setServer(this);
-                mOrientationManager.lockOrientation();
 
                 // Get the ScreenNail from AppBridge and register it.
                 int id = SnailSource.newId();
@@ -1022,16 +1010,6 @@ public class PhotoPage extends ActivityState implements
         } else {
             toggleBars();
         }
-    }
-
-    @Override
-    public void lockOrientation() {
-        mHandler.sendEmptyMessage(MSG_LOCK_ORIENTATION);
-    }
-
-    @Override
-    public void unlockOrientation() {
-        mHandler.sendEmptyMessage(MSG_UNLOCK_ORIENTATION);
     }
 
     @Override
