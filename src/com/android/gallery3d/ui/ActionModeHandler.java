@@ -55,7 +55,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
     private static final int SUPPORT_MULTIPLE_MASK = MediaObject.SUPPORT_DELETE
             | MediaObject.SUPPORT_ROTATE | MediaObject.SUPPORT_SHARE
             | MediaObject.SUPPORT_CACHE | MediaObject.SUPPORT_IMPORT
-            | MediaObject.SUPPORT_PANORAMA;
+            | MediaObject.SUPPORT_PANORAMA | MediaObject.SUPPORT_PANORAMA360;
 
     public interface ActionModeListener {
         public boolean onActionItemClicked(MenuItem item);
@@ -273,11 +273,11 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
         if (size > 0) {
             if (size > 1) {
                 intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-                intent.setType(GalleryUtils.MIME_TYPE_PANORAMA);
+                intent.setType(GalleryUtils.MIME_TYPE_PANORAMA360);
                 intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
             } else {
                 intent.setAction(Intent.ACTION_SEND);
-                intent.setType(GalleryUtils.MIME_TYPE_PANORAMA);
+                intent.setType(GalleryUtils.MIME_TYPE_PANORAMA360);
                 intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
             }
         }
@@ -357,7 +357,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
                         MenuExecutor.updateMenuOperation(mMenu, operation);
                         if (mSharePanoramaMenuItem != null) {
                             mSharePanoramaMenuItem.setEnabled(true);
-                            if ((operation & MediaObject.SUPPORT_PANORAMA) != 0) {
+                            if ((operation & MediaObject.SUPPORT_PANORAMA360) != 0) {
                                 mActivity.invalidateOptionsMenu();
                                 mShareMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
                                 mShareMenuItem.setTitle(
