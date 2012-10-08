@@ -13,6 +13,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterContrast;
 import com.android.gallery3d.filtershow.filters.ImageFilterExposure;
 import com.android.gallery3d.filtershow.filters.ImageFilterHue;
+import com.android.gallery3d.filtershow.filters.ImageFilterRedEye;
 import com.android.gallery3d.filtershow.filters.ImageFilterSaturated;
 import com.android.gallery3d.filtershow.filters.ImageFilterShadows;
 import com.android.gallery3d.filtershow.filters.ImageFilterSharpen;
@@ -368,6 +369,9 @@ public class PanelController implements OnClickListener {
         if (filter == null && name.equalsIgnoreCase("Shadows")) {
             filter = setImagePreset(new ImageFilterShadows(), name);
         }
+        if (filter == null && name.equalsIgnoreCase("Redeye")) {
+            filter = setImagePreset(new ImageFilterRedEye(), name);
+        }
         mMasterImage.setCurrentFilter(filter);
     }
 
@@ -478,6 +482,13 @@ public class PanelController implements OnClickListener {
                 mUtilityPanel.setEffectName("Shadows");
                 mUtilityPanel.setGeometryEffect(false);
                 ensureFilter("Shadows");
+                break;
+            }
+            case R.id.redEyeButton: {
+                mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
+                mUtilityPanel.setEffectName("Redeye");
+                mUtilityPanel.setGeometryEffect(false);
+                ensureFilter("Redeye");
                 break;
             }
             case R.id.resetEffect: {
