@@ -8,6 +8,7 @@ import android.util.Log;
 import com.android.gallery3d.filtershow.ImageStateAdapter;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterStraighten;
+import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 
 import java.util.Vector;
@@ -22,15 +23,15 @@ public class ImagePreset {
     protected boolean mIsFxPreset = false;
 
     enum FullRotate {
-        ZERO, NINETY, HUNDRED_HEIGHTY, TWO_HUNDRED_SEVENTY
+        ZERO, NINETY, HUNDRED_EIGHTY, TWO_HUNDRED_SEVENTY
     }
 
-    protected FullRotate mFullRotate = FullRotate.ZERO;
-    protected float mStraightenRotate = 0;
-    protected float mStraightenZoom = 0;
-    protected boolean mHorizontalFlip = false;
-    protected boolean mVerticalFlip = false;
-    protected RectF mCrop = null;
+    // This is where the geometry metadata lives now.
+    public final GeometryMetadata mGeoData = new GeometryMetadata();
+
+    public void setGeometry(GeometryMetadata m) {
+        mGeoData.set(m);
+    }
 
     private float mScaleFactor = 1.0f;
     private boolean mIsHighQuality = false;
@@ -51,32 +52,13 @@ public class ImagePreset {
         mHistoryName = source.name();
         mIsFxPreset = source.isFx();
 
-        mStraightenRotate = source.mStraightenRotate;
-        mStraightenZoom = source.mStraightenZoom;
-
-        mScaleFactor = source.mScaleFactor;
-        mIsHighQuality = source.mIsHighQuality;
-    }
-
-    public void setStraightenRotation(float rotate, float zoom) {
-        mStraightenRotate = rotate;
-        mStraightenZoom = zoom;
+        mGeoData.set(source.mGeoData);
     }
 
     private Bitmap applyGeometry(Bitmap original, float scaleFactor, boolean highQuality) {
         Bitmap bitmap = original;
 
-        if (mFullRotate != FullRotate.ZERO) {
-            // TODO
-        }
-
-        if (mStraightenRotate != 0) {
-            // TODO: keep the instances around
-            ImageFilter straighten = new ImageFilterStraighten(mStraightenRotate, mStraightenZoom);
-            bitmap = straighten.apply(bitmap, scaleFactor, highQuality);
-            straighten = null;
-        }
-
+        // TODO: put geometry filters
         return bitmap;
     }
 
@@ -104,7 +86,8 @@ public class ImagePreset {
         if (!mName.equalsIgnoreCase(preset.name())) {
             return false;
         }
-        if (mStraightenRotate != preset.mStraightenRotate) {
+
+        if (!mGeoData.equals(preset.mGeoData)) {
             return false;
         }
         for (int i = 0; i < preset.mFilters.size(); i++) {
