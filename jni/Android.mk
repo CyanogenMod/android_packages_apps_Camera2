@@ -34,7 +34,9 @@ LOCAL_SRC_FILES := filters/bw.c \
                    filters/hsv.c \
                    filters/vibrance.c \
                    filters/geometry.c \
-                   filters/vignette.c
+                   filters/vignette.c \
+                   filters/redEyeMath.c \
+                   filters/redeye.c
 
 LOCAL_CFLAGS    += -ffast-math -O3 -funroll-loops
 LOCAL_ARM_MODE := arm
