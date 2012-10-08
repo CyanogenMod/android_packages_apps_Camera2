@@ -271,6 +271,12 @@
                         style="@style/FilterShowBottomButton"
                         android:src="@drawable/filtershow_button_geometry_flip"
                         android:text="@string/flip" />
+
+                    <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                        android:id="@+id/redEyeButton"
+                        style="@style/FilterShowBottomButton"
+                        android:src="@drawable/photoeditor_effect_redeye"
+                        android:text="@string/redeye" />
                 </LinearLayout>
             </HorizontalScrollView>
 
