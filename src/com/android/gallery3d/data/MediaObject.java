@@ -38,10 +38,11 @@ public abstract class MediaObject {
     public static final int SUPPORT_IMPORT = 1 << 11;
     public static final int SUPPORT_TRIM = 1 << 12;
     public static final int SUPPORT_PANORAMA = 1 << 13;
-    public static final int SUPPORT_UNLOCK = 1 << 14;
-    public static final int SUPPORT_BACK = 1 << 15;
-    public static final int SUPPORT_ACTION = 1 << 16;
-    public static final int SUPPORT_CAMERA_SHORTCUT = 1 << 17;
+    public static final int SUPPORT_PANORAMA360 = 1 << 14;
+    public static final int SUPPORT_UNLOCK = 1 << 15;
+    public static final int SUPPORT_BACK = 1 << 16;
+    public static final int SUPPORT_ACTION = 1 << 17;
+    public static final int SUPPORT_CAMERA_SHORTCUT = 1 << 18;
     public static final int SUPPORT_ALL = 0xffffffff;
 
     // These are the bits returned from getMediaType():

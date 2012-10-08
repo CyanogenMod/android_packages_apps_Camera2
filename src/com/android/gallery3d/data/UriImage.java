@@ -58,6 +58,8 @@ public class UriImage extends MediaItem {
     private int mRotation;
     private boolean mUsePanoramaViewer;
     private boolean mUsePanoramaViewerInitialized;
+    private boolean mIsPanorama360;
+    private boolean mIsPanorama360Initialized;
 
     private GalleryApp mApplication;
 
@@ -220,6 +222,9 @@ public class UriImage extends MediaItem {
         }
         if (usePanoramaViewer()) {
             supported |= SUPPORT_PANORAMA;
+            if (isPanorama360()) {
+                supported |= SUPPORT_PANORAMA360;
+            }
         }
         return supported;
     }
@@ -301,5 +306,16 @@ public class UriImage extends MediaItem {
             mUsePanoramaViewerInitialized = true;
         }
         return mUsePanoramaViewer;
+    }
+
+    @Override
+    public boolean isPanorama360() {
+        // cache flag for faster access
+        if (!mIsPanorama360Initialized) {
+            mIsPanorama360 = LightCycleHelper.isPanorama360(
+                    mApplication.getAndroidContext(), getContentUri());
+            mIsPanorama360Initialized = true;
+        }
+        return mIsPanorama360;
     }
 }
