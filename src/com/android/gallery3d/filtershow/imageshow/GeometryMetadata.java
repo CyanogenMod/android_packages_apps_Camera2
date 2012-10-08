@@ -16,7 +16,10 @@
 
 package com.android.gallery3d.filtershow.imageshow;
 
+import android.graphics.Bitmap;
 import android.graphics.RectF;
+
+import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
 
 /**
  * This class holds metadata about an image's geometry. Specifically: rotation,
@@ -28,6 +31,7 @@ import android.graphics.RectF;
 public class GeometryMetadata {
     // Applied in order: rotate, crop, scale.
     // Do not scale saved image (presumably?).
+    private static final ImageFilterGeometry mImageFilter = new ImageFilterGeometry();
     private float mScaleFactor = 0;
     private float mRotation = 0;
     private float mStraightenRotation = 0;
@@ -45,6 +49,11 @@ public class GeometryMetadata {
 
     public GeometryMetadata(GeometryMetadata g) {
         set(g);
+    }
+
+    public Bitmap apply(Bitmap original, float scaleFactor, boolean highQuality){
+        mImageFilter.setGeometryMetadata(this);
+        return mImageFilter.apply(original, scaleFactor, highQuality);
     }
 
     public GeometryMetadata(float scale, float rotation, float straighten, RectF cropBounds,
