@@ -53,7 +53,15 @@ public class GeometryMetadata {
 
     public Bitmap apply(Bitmap original, float scaleFactor, boolean highQuality){
         mImageFilter.setGeometryMetadata(this);
-        return mImageFilter.apply(original, scaleFactor, highQuality);
+        Bitmap m = mImageFilter.apply(original, scaleFactor, highQuality);
+        mPhotoBounds.set(0,0, m.getWidth(), m.getHeight());
+        mCropBounds.set(mPhotoBounds);
+        mScaleFactor = 0;
+        mRotation = 0;
+        mStraightenRotation = 0;
+        mFlip = FLIP.NONE;
+        mSafe = false;
+        return m;
     }
 
     public GeometryMetadata(float scale, float rotation, float straighten, RectF cropBounds,
