@@ -323,6 +323,24 @@
     <!-- String indicating camera flash is not used. [CHAR LIMIT=14] -->
     <string name="flash_off">No flash</string>
 
+    <!-- String for filter filtershow_fx_0000_vintage [CHAR LIMIT=14] -->
+    <string name="ffx_vintage">Vintage</string>
+    <!-- String for filter filtershow_fx_0001_instant [CHAR LIMIT=14] -->
+    <string name="ffx_instant">Instant</string>
+    <!-- String for filter filtershow_fx_0002_bleach [CHAR LIMIT=14] -->
+    <string name="ffx_bleach">Bleach</string>
+    <!-- String for filter filtershow_fx_0003_blue_crush [CHAR LIMIT=14] -->
+    <string name="ffx_blue_crush">Blue Crush</string>
+    <!-- String for filter filtershow_fx_0004_bw_contrast [CHAR LIMIT=14] -->
+    <string name="ffx_bw_contrast">BW Contrast</string>
+    <!-- String for filter filtershow_fx_0005_punch [CHAR LIMIT=14] -->
+    <string name="ffx_punch">Punch</string>
+    <!-- String for filter filtershow_fx_0006_x_process [CHAR LIMIT=14] -->
+    <string name="ffx_x_process">X Process</string>
+    <!-- String for filter filtershow_fx_0007_washout [CHAR LIMIT=14] -->
+    <string name="ffx_washout">Washout</string>
+    <!-- String for filter filtershow_fx_0008_washout_color [CHAR LIMIT=14] -->
+    <string name="ffx_washout_color">Washout Color</string>
 
     <!-- Toast message shown after we make some album(s) available offline [CHAR LIMIT=50] -->
     <plurals name="make_albums_available_offline">
