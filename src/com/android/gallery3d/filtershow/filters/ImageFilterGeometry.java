@@ -35,6 +35,9 @@ public class ImageFilterGeometry extends ImageFilter {
     private static final int BOTH = 3;
     private static final int VERTICAL = 2;
     private static final int HORIZONTAL = 1;
+    private static final int NINETY = 1;
+    private static final int ONE_EIGHTY = 2;
+    private static final int TWO_SEVENTY = 3;
 
     public ImageFilterGeometry() {
         mName = "Geometry";
@@ -54,7 +57,7 @@ public class ImageFilterGeometry extends ImageFilter {
             Bitmap dst, int dstWidth, int dstHeight, int flip);
 
     native protected void nativeApplyFilterRotate(Bitmap src, int srcWidth, int srcHeight,
-            Bitmap dst, int dstWidth, int dstHeight, float rotate);
+            Bitmap dst, int dstWidth, int dstHeight, int rotate);
 
     native protected void nativeApplyFilterCrop(Bitmap src, int srcWidth, int srcHeight,
             Bitmap dst, int dstWidth, int dstHeight, int offsetWidth, int offsetHeight);
@@ -111,15 +114,21 @@ public class ImageFilterGeometry extends ImageFilter {
         if (rotate) {
             // Fails for non-90 degree rotations
             Bitmap modBitmapRotate = null;
-            if (((int) (sAngle / 90)) % 2 == 0) {
+            rAngle %= 360;
+            int deg = (int) (rAngle / 90);
+            deg = -deg;  // Make CCW positive
+            if (deg < 0)
+                deg += 4;
+            // Now deg is in [1, 3] as required by native rotate
+            if (deg == ONE_EIGHTY) {
                 modBitmapRotate = Bitmap.createBitmap(bmWidth, bmHeight, mConfig);
                 nativeApplyFilterRotate(modBitmap, bmWidth, bmHeight, modBitmapRotate,
-                        bmWidth, bmHeight, mGeometry.getRotation());
+                        bmWidth, bmHeight, deg);
                 modifiedBounds = new Rect(0, 0, bmWidth, bmHeight);
-            } else {
+            } else if (deg == TWO_SEVENTY || deg == NINETY) {
                 modBitmapRotate = Bitmap.createBitmap(bmHeight, bmWidth, mConfig);
                 nativeApplyFilterRotate(modBitmap, bmWidth, bmHeight, modBitmapRotate,
-                        bmHeight, bmWidth, mGeometry.getRotation());
+                        bmHeight, bmWidth, deg);
                 modifiedBounds = new Rect(0, 0, bmHeight, bmWidth);
             }
             modBitmap = modBitmapRotate;
