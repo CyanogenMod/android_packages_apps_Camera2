@@ -21,7 +21,8 @@ public class ImageFilterRS extends ImageFilter {
         mOutPixelsAllocation = Allocation.createTyped(mRS, mInPixelsAllocation.getType());
     }
 
-    public void createFilter(android.content.res.Resources res) {
+    public void createFilter(android.content.res.Resources res, float scaleFactor,
+            boolean highQuality) {
     }
 
     public void runFilter() {
@@ -38,7 +39,7 @@ public class ImageFilterRS extends ImageFilter {
         }
         try {
             prepare(bitmap);
-            createFilter(mResources);
+            createFilter(mResources, scaleFactor, highQuality);
             runFilter();
             update(bitmap);
         } catch (android.renderscript.RSIllegalArgumentException e) {

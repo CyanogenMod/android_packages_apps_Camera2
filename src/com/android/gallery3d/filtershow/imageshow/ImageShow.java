@@ -60,19 +60,20 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     protected Bitmap mForegroundImage = null;
     protected Bitmap mFilteredImage = null;
 
+    private final boolean USE_SLIDER_GESTURE = false; // set to true to have
+                                                      // slider gesture
     protected SliderController mSliderController = new SliderController();
 
     private HistoryAdapter mHistoryAdapter = null;
     private ImageStateAdapter mImageStateAdapter = null;
 
-    protected GeometryMetadata getGeometry(){
-        return new GeometryMetadata(mImagePreset.mGeoData);
+    protected GeometryMetadata getGeometry() {
+        return new GeometryMetadata(getImagePreset().mGeoData);
     }
 
-    public void setGeometry(GeometryMetadata d){
-        mImagePreset.mGeoData.set(d);
+    public void setGeometry(GeometryMetadata d) {
+        getImagePreset().mGeoData.set(d);
     }
-
 
     private boolean mShowControls = false;
     private boolean mShowOriginal = false;
@@ -93,6 +94,9 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
             int parameter = getCurrentFilter().getParameter();
             updateSeekBar(parameter);
         }
+        if (mSeekBar != null) {
+            mSeekBar.setOnSeekBarChangeListener(this);
+        }
     }
 
     public void updateSeekBar(int parameter) {
@@ -112,7 +116,9 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
 
     public void resetParameter() {
         onNewValue(0);
-        mSliderController.reset();
+        if (USE_SLIDER_GESTURE) {
+            mSliderController.reset();
+        }
     }
 
     public void setPanelController(PanelController controller) {
@@ -152,7 +158,9 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
 
     public ImageShow(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mSliderController.setListener(this);
+        if (USE_SLIDER_GESTURE) {
+            mSliderController.setListener(this);
+        }
         mHistoryAdapter = new HistoryAdapter(context, R.layout.filtershow_history_operation_row,
                 R.id.rowTextView);
         mImageStateAdapter = new ImageStateAdapter(context,
@@ -161,7 +169,9 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
 
     public ImageShow(Context context) {
         super(context);
-        mSliderController.setListener(this);
+        if (USE_SLIDER_GESTURE) {
+            mSliderController.setListener(this);
+        }
         mHistoryAdapter = new HistoryAdapter(context, R.layout.filtershow_history_operation_row,
                 R.id.rowTextView);
     }
@@ -171,13 +181,14 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
         int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
         int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
         setMeasuredDimension(parentWidth, parentHeight);
-        mSliderController.setWidth(parentWidth);
-        mSliderController.setHeight(parentHeight);
+        if (USE_SLIDER_GESTURE) {
+            mSliderController.setWidth(parentWidth);
+            mSliderController.setHeight(parentHeight);
+        }
     }
 
     public void setSeekBar(SeekBar seekBar) {
         mSeekBar = seekBar;
-        mSeekBar.setOnSeekBarChangeListener(this);
     }
 
     public void setCurrentFilter(ImageFilter filter) {
@@ -213,7 +224,7 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
 
     public Rect getImageBounds() {
         Rect dst = new Rect();
-        mImagePreset.mGeoData.getPhotoBounds().roundOut(dst);
+        getImagePreset().mGeoData.getPhotoBounds().roundOut(dst);
         return dst;
     }
 
@@ -273,7 +284,9 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
         canvas.drawLine(0, 0, getWidth(), 0, mPaint);
 
         if (showControls()) {
-            mSliderController.onDraw(canvas);
+            if (USE_SLIDER_GESTURE) {
+                mSliderController.onDraw(canvas);
+            }
         }
 
         drawToast(canvas);
@@ -383,11 +396,11 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
         }
     }
 
-    protected void setDirtyGeometryFlag(){
+    protected void setDirtyGeometryFlag() {
         mDirtyGeometry = true;
     }
 
-    protected void clearDirtyGeometryFlag(){
+    protected void clearDirtyGeometryFlag() {
         mDirtyGeometry = false;
     }
 
@@ -396,14 +409,14 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     }
 
     private void imageSizeChanged(Bitmap image) {
-        if(image == null || mImagePreset == null)
+        if (image == null || getImagePreset() == null)
             return;
         float w = image.getWidth();
         float h = image.getHeight();
         RectF r = new RectF(0, 0, w, h);
-        RectF c = new RectF(w/4f, h/4f, w * 3/4f, h * 3/4f);
-        mImagePreset.mGeoData.setPhotoBounds(r);
-        mImagePreset.mGeoData.setCropBounds(c);
+        RectF c = new RectF(w / 4f, h / 4f, w * 3 / 4f, h * 3 / 4f);
+        getImagePreset().mGeoData.setPhotoBounds(r);
+        getImagePreset().mGeoData.setCropBounds(c);
         setDirtyGeometryFlag();
     }
 
@@ -423,7 +436,9 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
-        mSliderController.onTouchEvent(event);
+        if (USE_SLIDER_GESTURE) {
+            mSliderController.onTouchEvent(event);
+        }
         invalidate();
         return true;
     }
@@ -450,19 +465,19 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     }
 
     public float getImageRotation() {
-        return mImagePreset.mGeoData.getRotation();
+        return getImagePreset().mGeoData.getRotation();
     }
 
     public float getImageRotationZoomFactor() {
-        return mImagePreset.mGeoData.getScaleFactor();
+        return getImagePreset().mGeoData.getScaleFactor();
     }
 
-    public void setImageRotation(float r){
-        mImagePreset.mGeoData.setRotation(r);
+    public void setImageRotation(float r) {
+        getImagePreset().mGeoData.setRotation(r);
     }
 
-    public void setImageRotationZoomFactor(float f){
-        mImagePreset.mGeoData.setScaleFactor(f);
+    public void setImageRotationZoomFactor(float f) {
+        getImagePreset().mGeoData.setScaleFactor(f);
     }
 
     public void setImageRotation(float imageRotation,
