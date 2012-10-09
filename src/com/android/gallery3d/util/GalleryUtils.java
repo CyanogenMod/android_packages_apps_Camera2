@@ -87,12 +87,10 @@ public class GalleryUtils {
     }
 
     private static void initializeThumbnailSizes(DisplayMetrics metrics, Resources r) {
-        int minRows = Math.min(r.getInteger(R.integer.album_rows_land),
-                r.getInteger(R.integer.albumset_rows_land));
         int maxDimensionPixels = Math.max(metrics.heightPixels, metrics.widthPixels);
         // Never need to completely fill the screen
-        maxDimensionPixels = maxDimensionPixels * 3/4;
-        MediaItem.setThumbnailSizes(maxDimensionPixels, maxDimensionPixels / minRows);
+        maxDimensionPixels = maxDimensionPixels / 2;
+        MediaItem.setThumbnailSizes(maxDimensionPixels, 200);
         BitmapScreenNail.setMaxSide(maxDimensionPixels);
     }
 
