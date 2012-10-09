@@ -36,6 +36,7 @@ LOCAL_SRC_FILES := filters/bw.c \
                    filters/geometry.c \
                    filters/vignette.c \
                    filters/redEyeMath.c \
+                   filters/fx.c \
                    filters/redeye.c
 
 LOCAL_CFLAGS    += -ffast-math -O3 -funroll-loops
