@@ -347,25 +347,27 @@ public class PhotoPage extends ActivityState implements
                         .getMediaObject(screenNailItemPath);
                 mScreenNailItem.setScreenNail(mAppBridge.attachScreenNail());
 
-                // Check if the path is a secure album.
-                if (SecureSource.isSecurePath(mSetPathString)) {
-                    mSecureAlbum = (SecureAlbum) mActivity.getDataManager()
-                            .getMediaSet(mSetPathString);
-                    mShowSpinner = false;
-                }
                 if (data.getBoolean(KEY_SHOW_WHEN_LOCKED, false)) {
                     // Set the flag to be on top of the lock screen.
                     mFlags |= FLAG_SHOW_WHEN_LOCKED;
                 }
 
-                // Don't display "empty album" action item for capture intents
-                if(!mSetPathString.equals("/local/all/0")) {
+                // Don't display "empty album" action item or panorama
+                // progress for capture intents.
+                if (!mSetPathString.equals("/local/all/0")) {
+                    // Check if the path is a secure album.
+                    if (SecureSource.isSecurePath(mSetPathString)) {
+                        mSecureAlbum = (SecureAlbum) mActivity.getDataManager()
+                                .getMediaSet(mSetPathString);
+                        mShowSpinner = false;
+                    } else {
+                        // Use lightcycle album to handle panorama progress if
+                        // the path is not a secure album.
+                        if (LightCycleHelper.hasLightCycleCapture(mActivity.getAndroidContext())) {
+                            mSetPathString = LightCycleHelper.wrapGalleryPath(mSetPathString);
+                        }
+                    }
                     mSetPathString = "/filter/empty/{"+mSetPathString+"}";
-                }
-
-                // Add support for showing panorama progress.
-                if (LightCycleHelper.hasLightCycleCapture(mActivity.getAndroidContext())) {
-                    mSetPathString = LightCycleHelper.wrapGalleryPath(mSetPathString);
                 }
 
                 // Combine the original MediaSet with the one for ScreenNail
