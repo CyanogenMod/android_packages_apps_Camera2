@@ -214,9 +214,8 @@ public class AlbumSetPage extends ActivityState implements
     private static boolean albumShouldOpenInFilmstrip(MediaSet album) {
         int itemCount = album.getMediaItemCount();
         ArrayList<MediaItem> list = (itemCount == 1) ? album.getMediaItem(0, 1) : null;
-        return (album.isCameraRoll() && itemCount > 0)
-                // open in film strip only if there's one item in the album and the item exists
-                || (list != null && !list.isEmpty());
+        // open in film strip only if there's one item in the album and the item exists
+        return (list != null && !list.isEmpty());
     }
 
     WeakReference<Toast> mEmptyAlbumToast = null;
