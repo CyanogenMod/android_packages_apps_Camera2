@@ -380,8 +380,6 @@ public class GalleryActionBar implements OnNavigationListener {
     }
 
     private Menu mActionBarMenu;
-    private MenuItem mSharePanoramaMenuItem;
-    private MenuItem mShareMenuItem;
     private ShareActionProvider mSharePanoramaActionProvider;
     private ShareActionProvider mShareActionProvider;
 
@@ -389,15 +387,21 @@ public class GalleryActionBar implements OnNavigationListener {
         mActivity.getMenuInflater().inflate(menuRes, menu);
         mActionBarMenu = menu;
 
-        mSharePanoramaMenuItem = menu.findItem(R.id.action_share_panorama);
-        mSharePanoramaActionProvider = (ShareActionProvider)
-            mSharePanoramaMenuItem.getActionProvider();
-        mSharePanoramaActionProvider.setShareHistoryFileName("panorama_share_history.xml");
+        MenuItem item = menu.findItem(R.id.action_share_panorama);
+        if (item != null) {
+            mSharePanoramaActionProvider = (ShareActionProvider)
+                item.getActionProvider();
+            mSharePanoramaActionProvider
+                .setShareHistoryFileName("panorama_share_history.xml");
+        }
 
-        mShareMenuItem = menu.findItem(R.id.action_share);
-        mShareActionProvider = (ShareActionProvider)
-            mShareMenuItem.getActionProvider();
-        mShareActionProvider.setShareHistoryFileName("share_history.xml");
+        item = menu.findItem(R.id.action_share);
+        if (item != null) {
+            mShareActionProvider = (ShareActionProvider)
+                item.getActionProvider();
+            mShareActionProvider
+                .setShareHistoryFileName("share_history.xml");
+        }
     }
 
     public Menu getMenu() {
@@ -405,23 +409,10 @@ public class GalleryActionBar implements OnNavigationListener {
     }
 
     public void setShareIntents(Intent sharePanoramaIntent, Intent shareIntent) {
-        // if panorama sharing is enabled, rename share to share as photo,
-        // and move it to overflow
-        if (mSharePanoramaMenuItem != null) {
-            if (sharePanoramaIntent != null) {
-                mActivity.invalidateOptionsMenu();
-                mShareMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-                mShareMenuItem.setTitle(
-                        mContext.getResources().getString(R.string.share_as_photo));
-            } else {
-                mSharePanoramaMenuItem.setVisible(false);
-                mShareMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-                mShareMenuItem.setTitle(
-                        mContext.getResources().getString(R.string.share));
-            }
+        if (mSharePanoramaActionProvider != null) {
             mSharePanoramaActionProvider.setShareIntent(sharePanoramaIntent);
         }
-        if (mShareMenuItem != null) {
+        if (mShareActionProvider != null) {
             mShareActionProvider.setShareIntent(shareIntent);
         }
     }
