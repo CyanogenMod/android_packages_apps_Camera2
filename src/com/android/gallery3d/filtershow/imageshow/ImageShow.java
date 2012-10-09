@@ -414,8 +414,8 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
         float w = image.getWidth();
         float h = image.getHeight();
         RectF r = new RectF(0, 0, w, h);
-        mImagePreset.mGeoData.setPhotoBounds(r);
-        mImagePreset.mGeoData.setCropBounds(r);
+        getImagePreset().mGeoData.setPhotoBounds(r);
+        getImagePreset().mGeoData.setCropBounds(r);
         setDirtyGeometryFlag();
     }
 
