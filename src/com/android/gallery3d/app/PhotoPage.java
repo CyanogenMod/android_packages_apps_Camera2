@@ -1169,6 +1169,8 @@ public class PhotoPage extends ActivityState implements
         mHandler.removeMessages(MSG_UNFREEZE_GLROOT);
 
         DetailsHelper.pause();
+        // Hide the detail dialog on exit
+        if (mShowDetails) hideDetails();
         if (mModel != null) {
             if (isFinishing()) preparePhotoFallbackView();
             mModel.pause();
