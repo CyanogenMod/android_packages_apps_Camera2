@@ -1,11 +1,8 @@
 package com.android.gallery3d.filtershow.imageshow;
 
-import com.android.gallery3d.filtershow.presets.ImagePreset;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -33,12 +30,14 @@ public class ImageZoom extends ImageSlave implements OnGestureListener, OnDouble
         mGestureDetector = new GestureDetector(context, this);
     }
 
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean ret = mGestureDetector.onTouchEvent(event);
         ret = super.onTouchEvent(event);
         return ret;
     }
 
+    @Override
     public void onTouchDown(float x, float y) {
         super.onTouchDown(x, y);
         if (mZoomedIn || mTouchDown) {
@@ -64,10 +63,12 @@ public class ImageZoom extends ImageSlave implements OnGestureListener, OnDouble
         mZoomBounds = new Rect(left, top, left + mw * 2, top + mh * 2);
     }
 
+    @Override
     public void onTouchUp() {
         mTouchDown = false;
     }
 
+    @Override
     public void onDraw(Canvas canvas) {
         drawBackground(canvas);
         Bitmap filteredImage = null;
@@ -121,7 +122,13 @@ public class ImageZoom extends ImageSlave implements OnGestureListener, OnDouble
     }
 
     @Override
-    public boolean onDoubleTap(MotionEvent arg0) {
+    public boolean onDoubleTap(MotionEvent event) {
+
+        if (!mZoomedIn) {
+            onTouchDown(event.getX(), event.getY());
+        } else {
+            onTouchUp();
+        }
         mZoomedIn = !mZoomedIn;
         invalidate();
         return false;
