@@ -34,13 +34,13 @@ import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterBorder;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.imageshow.ImageBorder;
+import com.android.gallery3d.filtershow.imageshow.ImageCrop;
+import com.android.gallery3d.filtershow.imageshow.ImageFlip;
+import com.android.gallery3d.filtershow.imageshow.ImageRotate;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.ImageSmallFilter;
 import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
 import com.android.gallery3d.filtershow.imageshow.ImageZoom;
-import com.android.gallery3d.filtershow.imageshow.ImageFlip;
-import com.android.gallery3d.filtershow.imageshow.ImageCrop;
-import com.android.gallery3d.filtershow.imageshow.ImageRotate;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.presets.ImagePresetBW;
 import com.android.gallery3d.filtershow.presets.ImagePresetBWBlue;
@@ -225,6 +225,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         SeekBar seekBar = (SeekBar) findViewById(R.id.filterSeekBar);
         seekBar.setMax(200);
         mImageShow.setSeekBar(seekBar);
+        mImageZoom.setSeekBar(seekBar);
         mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
         mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList),
                 findViewById(R.id.compareWithOriginalImage),

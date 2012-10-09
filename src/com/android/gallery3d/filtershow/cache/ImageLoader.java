@@ -232,7 +232,10 @@ public class ImageLoader {
             if (bmp != null) {
                 // TODO: this workaround for RS might not be needed ultimately
                 Bitmap bmp2 = bmp.copy(Bitmap.Config.ARGB_8888, true);
+                float scaleFactor = imagePreset.getScaleFactor();
+                imagePreset.setScaleFactor(1.0f);
                 bmp2 = imagePreset.apply(bmp2);
+                imagePreset.setScaleFactor(scaleFactor);
                 mZoomCache.setImage(imagePreset, bounds, bmp2);
                 return bmp2;
             }
