@@ -331,6 +331,22 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setOnShareTargetSelectedListener(null);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setOnShareTargetSelectedListener(this);
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.undoButton: {
