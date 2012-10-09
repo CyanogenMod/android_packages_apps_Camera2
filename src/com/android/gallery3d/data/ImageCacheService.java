@@ -35,7 +35,7 @@ public class ImageCacheService {
     private static final String IMAGE_CACHE_FILE = "imgcache";
     private static final int IMAGE_CACHE_MAX_ENTRIES = 5000;
     private static final int IMAGE_CACHE_MAX_BYTES = 200 * 1024 * 1024;
-    private static final int IMAGE_CACHE_VERSION = 5;
+    private static final int IMAGE_CACHE_VERSION = 6;
 
     private BlobCache mCache;
 
