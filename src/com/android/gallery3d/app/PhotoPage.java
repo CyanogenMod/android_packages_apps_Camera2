@@ -645,6 +645,18 @@ public class PhotoPage extends ActivityState implements
             supportedOperations &= ~MediaObject.SUPPORT_EDIT;
         }
         MenuExecutor.updateMenuOperation(menu, supportedOperations);
+        if ((supportedOperations & MediaObject.SUPPORT_PANORAMA360) != 0) {
+            mActivity.invalidateOptionsMenu();
+            item = menu.findItem(R.id.action_share);
+            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+            item.setTitle(
+                    mActivity.getResources().getString(R.string.share_as_photo));
+        } else if ((supportedOperations & MediaObject.SUPPORT_SHARE) != 0) {
+            item = menu.findItem(R.id.action_share);
+            item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            item.setTitle(
+                    mActivity.getResources().getString(R.string.share));
+        }
     }
 
     private boolean canDoSlideShow() {
