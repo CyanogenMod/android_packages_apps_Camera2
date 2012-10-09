@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterBorder;
+import com.android.gallery3d.filtershow.filters.ImageFilterParametricBorder;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.imageshow.ImageBorder;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
@@ -400,29 +402,24 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         // TODO: use listview
         // TODO: load the borders straight from the filesystem
         int p = 0;
-        ImageFilter[] borders = new ImageFilter[8];
+        ImageFilter[] borders = new ImageFilter[7];
         borders[p++] = new ImageFilterBorder(null);
 
+        borders[p++] = new ImageFilterParametricBorder(Color.WHITE, 100, 0);
+        borders[p++] = new ImageFilterParametricBorder(Color.BLACK, 100, 0);
+        borders[p++] = new ImageFilterParametricBorder(Color.WHITE, 100, 100);
+        borders[p++] = new ImageFilterParametricBorder(Color.BLACK, 100, 100);
         Drawable npd3 = getResources().getDrawable(R.drawable.filtershow_border_film3);
         borders[p++] = new ImageFilterBorder(npd3);
         Drawable npd = getResources().getDrawable(
                 R.drawable.filtershow_border_scratch3);
         borders[p++] = new ImageFilterBorder(npd);
-        Drawable npd2 = getResources().getDrawable(R.drawable.filtershow_border_black);
-        borders[p++] = new ImageFilterBorder(npd2);
-        Drawable npd6 = getResources().getDrawable(
-                R.drawable.filtershow_border_rounded_black);
-        borders[p++] = new ImageFilterBorder(npd6);
-        Drawable npd4 = getResources().getDrawable(R.drawable.filtershow_border_white);
-        borders[p++] = new ImageFilterBorder(npd4);
-        Drawable npd5 = getResources().getDrawable(
-                R.drawable.filtershow_border_rounded_white);
-        borders[p++] = new ImageFilterBorder(npd5);
 
         for (int i = 0; i < p; i++) {
             ImageSmallFilter filter = new ImageSmallFilter(getBaseContext());
             filter.setImageFilter(borders[i]);
             filter.setController(this);
+            filter.setBorder(true);
             filter.setImageLoader(mImageLoader);
             filter.setShowTitle(false);
             listBorders.addView(filter);
@@ -595,18 +592,19 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         invalidateViews();
     }
 
-    public void useImageFilter(ImageFilter imageFilter) {
+    public void useImageFilter(ImageFilter imageFilter, boolean setBorder) {
         if (imageFilter == null) {
             return;
         }
         ImagePreset oldPreset = mImageShow.getImagePreset();
         ImagePreset copy = new ImagePreset(oldPreset);
         // TODO: use a numerical constant instead.
-        if (imageFilter.getName().equalsIgnoreCase("Border")) {
-            copy.remove("Border");
+        if (setBorder) {
             copy.setHistoryName("Border");
+            copy.setBorder(imageFilter);
+        } else {
+            copy.add(imageFilter);
         }
-        copy.add(imageFilter);
         mImageShow.setImagePreset(copy);
         invalidateViews();
     }
