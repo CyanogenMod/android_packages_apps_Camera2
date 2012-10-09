@@ -6,13 +6,11 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,7 +35,6 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterBorder;
-import com.android.gallery3d.filtershow.filters.ImageFilterFx;
 import com.android.gallery3d.filtershow.filters.ImageFilterParametricBorder;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.imageshow.ImageBorder;
@@ -45,6 +42,7 @@ import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageFlip;
 import com.android.gallery3d.filtershow.imageshow.ImageRotate;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
+import com.android.gallery3d.filtershow.imageshow.ImageSmallBorder;
 import com.android.gallery3d.filtershow.imageshow.ImageSmallFilter;
 import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
 import com.android.gallery3d.filtershow.imageshow.ImageZoom;
@@ -91,6 +89,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private ImageButton mGeometryButton = null;
     private ImageButton mColorsButton = null;
 
+    private ImageSmallFilter mCurrentImageSmallFilter = null;
     private static final int SELECT_PICTURE = 1;
     private static final String LOGTAG = "FilterShowActivity";
     protected static final boolean ANIMATE_PANELS = true;
@@ -215,7 +214,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addView(findViewById(R.id.resetEffect));
         mPanelController.addView(findViewById(R.id.applyEffect));
 
-        findViewById(R.id.compareWithOriginalImage).setOnTouchListener(createOnTouchShowOriginalButton());
+        findViewById(R.id.compareWithOriginalImage).setOnTouchListener(
+                createOnTouchShowOriginalButton());
 
         findViewById(R.id.resetOperationsButton).setOnClickListener(
                 createOnClickResetOperationsButton());
@@ -267,7 +267,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private void hideSavingProgress() {
         if (mSavingProgressDialog != null) {
             ProgressDialog progress = mSavingProgressDialog.get();
-            if (progress != null) progress.dismiss();
+            if (progress != null)
+                progress.dismiss();
         }
     }
 
@@ -399,7 +400,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImagePreset[] preset = new ImagePreset[18];
         int p = 0;
 
-        int[]drawid = {
+        int[] drawid = {
                 R.drawable.filtershow_fx_0000_vintage,
                 R.drawable.filtershow_fx_0001_instant,
                 R.drawable.filtershow_fx_0002_bleach,
@@ -411,7 +412,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 R.drawable.filtershow_fx_0008_washout_color
         };
 
-        int[]fxNameid = {
+        int[] fxNameid = {
                 R.string.ffx_vintage,
                 R.string.ffx_instant,
                 R.string.ffx_bleach,
@@ -423,12 +424,13 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 R.string.ffx_washout_color,
         };
 
+        preset[p++] = new ImagePreset();
+
         for (int i = 0; i < drawid.length; i++) {
-            Bitmap b =  BitmapFactory.decodeResource(getResources(),drawid[i]);
+            Bitmap b = BitmapFactory.decodeResource(getResources(), drawid[i]);
             preset[p++] = new ImagePresetFX(b, getString(fxNameid[i]));
         }
 
-        preset[p++] = new ImagePreset();
         preset[p++] = new ImagePresetSaturated();
         preset[p++] = new ImagePresetOld();
         preset[p++] = new ImagePresetXProcessing();
@@ -437,13 +439,20 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         preset[p++] = new ImagePresetBWGreen();
         preset[p++] = new ImagePresetBWBlue();
 
+        ImageSmallFilter previousFilter = null;
         for (int i = 0; i < p; i++) {
-            ImageSmallFilter filter = new ImageSmallFilter(getBaseContext());
+            ImageSmallFilter filter = new ImageSmallFilter(this);
+            if (i == 0) {
+                filter.setSelected(true);
+                mCurrentImageSmallFilter = filter;
+            }
+            filter.setPreviousImageSmallFilter(previousFilter);
             preset[i].setIsFx(true);
             filter.setImagePreset(preset[i]);
             filter.setController(this);
             filter.setImageLoader(mImageLoader);
             listFilters.addView(filter);
+            previousFilter = filter;
         }
 
         // Default preset (original)
@@ -457,24 +466,27 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageFilter[] borders = new ImageFilter[7];
         borders[p++] = new ImageFilterBorder(null);
 
-        borders[p++] = new ImageFilterParametricBorder(Color.WHITE, 100, 0);
-        borders[p++] = new ImageFilterParametricBorder(Color.BLACK, 100, 0);
-        borders[p++] = new ImageFilterParametricBorder(Color.WHITE, 100, 100);
-        borders[p++] = new ImageFilterParametricBorder(Color.BLACK, 100, 100);
         Drawable npd3 = getResources().getDrawable(R.drawable.filtershow_border_film3);
         borders[p++] = new ImageFilterBorder(npd3);
         Drawable npd = getResources().getDrawable(
                 R.drawable.filtershow_border_scratch3);
         borders[p++] = new ImageFilterBorder(npd);
+        borders[p++] = new ImageFilterParametricBorder(Color.BLACK, 100, 0);
+        borders[p++] = new ImageFilterParametricBorder(Color.BLACK, 100, 100);
+        borders[p++] = new ImageFilterParametricBorder(Color.WHITE, 100, 0);
+        borders[p++] = new ImageFilterParametricBorder(Color.WHITE, 100, 100);
 
+        ImageSmallFilter previousFilter = null;
         for (int i = 0; i < p; i++) {
-            ImageSmallFilter filter = new ImageSmallFilter(getBaseContext());
+            ImageSmallBorder filter = new ImageSmallBorder(this);
+            filter.setPreviousImageSmallFilter(previousFilter);
             filter.setImageFilter(borders[i]);
             filter.setController(this);
             filter.setBorder(true);
             filter.setImageLoader(mImageLoader);
             filter.setShowTitle(false);
             listBorders.addView(filter);
+            previousFilter = filter;
         }
     }
 
@@ -631,10 +643,17 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 r.getDisplayMetrics());
     }
 
-    public void useImagePreset(ImagePreset preset) {
+    public void useImagePreset(ImageSmallFilter imageSmallFilter, ImagePreset preset) {
         if (preset == null) {
             return;
         }
+
+        if (mCurrentImageSmallFilter != null) {
+            mCurrentImageSmallFilter.setSelected(false);
+        }
+        mCurrentImageSmallFilter = imageSmallFilter;
+        mCurrentImageSmallFilter.setSelected(true);
+
         ImagePreset copy = new ImagePreset(preset);
         mImageShow.setImagePreset(copy);
         if (preset.isFx()) {
@@ -644,10 +663,18 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         invalidateViews();
     }
 
-    public void useImageFilter(ImageFilter imageFilter, boolean setBorder) {
+    public void useImageFilter(ImageSmallFilter imageSmallFilter, ImageFilter imageFilter,
+            boolean setBorder) {
         if (imageFilter == null) {
             return;
         }
+
+        if (mCurrentImageSmallFilter != null) {
+            mCurrentImageSmallFilter.setSelected(false);
+        }
+        mCurrentImageSmallFilter = imageSmallFilter;
+        mCurrentImageSmallFilter.setSelected(true);
+
         ImagePreset oldPreset = mImageShow.getImagePreset();
         ImagePreset copy = new ImagePreset(oldPreset);
         // TODO: use a numerical constant instead.
