@@ -499,6 +499,16 @@ public abstract class ImageGeometry extends ImageSlave {
     }
 
     protected RectF getStraightenCropBounds(RectF imageRect, float straightenAngle) {
+        RectF boundsRect = getUntranslatedStraightenCropBounds(imageRect, straightenAngle);
+        RectF nonRotateImage = getLocalPhotoBounds();
+        Matrix m1 = new Matrix();
+        m1.setTranslate(nonRotateImage.centerX() - boundsRect.centerX(), nonRotateImage.centerY()
+                - boundsRect.centerY());
+        m1.mapRect(boundsRect);
+        return boundsRect;
+    }
+
+    public static RectF getUntranslatedStraightenCropBounds(RectF imageRect, float straightenAngle) {
         float deg = straightenAngle;
         if (deg < 0) {
             deg = -deg;
@@ -519,13 +529,7 @@ public abstract class ImageGeometry extends ImageSlave {
         float right = (float) (left + ww);
         float bottom = (float) (top + hh);
 
-        RectF boundsRect = new RectF(left, top, right, bottom);
-        RectF nonRotateImage = getLocalPhotoBounds();
-        Matrix m1 = new Matrix();
-        m1.setTranslate(nonRotateImage.centerX() - boundsRect.centerX(), nonRotateImage.centerY()
-                - boundsRect.centerY());
-        m1.mapRect(boundsRect);
-        return boundsRect;
+        return new RectF(left, top, right, bottom);
     }
 
     protected void drawShadows(Canvas canvas, RectF innerBounds, RectF outerBounds, Paint p) {
