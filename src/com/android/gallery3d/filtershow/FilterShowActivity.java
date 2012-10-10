@@ -206,10 +206,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addComponent(mColorsButton, findViewById(R.id.vibranceButton));
         mPanelController.addComponent(mColorsButton, findViewById(R.id.contrastButton));
         mPanelController.addComponent(mColorsButton, findViewById(R.id.saturationButton));
-        mPanelController.addComponent(mColorsButton, findViewById(R.id.tintButton));
+        mPanelController.addComponent(mColorsButton, findViewById(R.id.wbalanceButton));
+        mPanelController.addComponent(mColorsButton, findViewById(R.id.hueButton));
         mPanelController.addComponent(mColorsButton, findViewById(R.id.exposureButton));
         mPanelController.addComponent(mColorsButton, findViewById(R.id.shadowRecoveryButton));
-        mPanelController.addComponent(mColorsButton, findViewById(R.id.redEyeButton));
 
         mPanelController.addView(findViewById(R.id.resetEffect));
         mPanelController.addView(findViewById(R.id.applyEffect));
@@ -430,14 +430,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             Bitmap b = BitmapFactory.decodeResource(getResources(), drawid[i]);
             preset[p++] = new ImagePresetFX(b, getString(fxNameid[i]));
         }
-
-        preset[p++] = new ImagePresetSaturated();
-        preset[p++] = new ImagePresetOld();
-        preset[p++] = new ImagePresetXProcessing();
-        preset[p++] = new ImagePresetBW();
-        preset[p++] = new ImagePresetBWRed();
-        preset[p++] = new ImagePresetBWGreen();
-        preset[p++] = new ImagePresetBWBlue();
 
         ImageSmallFilter previousFilter = null;
         for (int i = 0; i < p; i++) {
