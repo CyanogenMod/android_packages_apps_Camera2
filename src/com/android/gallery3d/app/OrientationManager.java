@@ -98,13 +98,19 @@ public class OrientationManager implements OrientationSource {
     public void lockOrientation() {
         if (mOrientationLocked) return;
         mOrientationLocked = true;
+        // Display rotation >= 180 means we need to use the REVERSE landscape/portrait
+        boolean standard = getDisplayRotation() < 180;
         if (mActivity.getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_LANDSCAPE) {
             Log.d(TAG, "lock orientation to landscape");
-            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            mActivity.setRequestedOrientation(standard
+                    ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                    : ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
         } else {
             Log.d(TAG, "lock orientation to portrait");
-            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            mActivity.setRequestedOrientation(standard
+                    ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                    : ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
         }
         updateCompensation();
     }
