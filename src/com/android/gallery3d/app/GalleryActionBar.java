@@ -26,7 +26,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.text.TextUtils.TruncateAt;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +34,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
+import android.widget.TwoLineListItem;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
@@ -151,26 +151,27 @@ public class GalleryActionBar implements OnNavigationListener {
             return position;
         }
 
-        private View getView(CharSequence label, View convertView,
-                ViewGroup parent, boolean ellipsize) {
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.action_bar_two_line_text,
+                        parent, false);
+            }
+            TwoLineListItem view = (TwoLineListItem) convertView;
+            view.getText1().setText(mActionBar.getTitle());
+            view.getText2().setText((CharSequence) getItem(position));
+            return convertView;
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.action_bar_text,
                         parent, false);
             }
             TextView view = (TextView) convertView;
-            view.setEllipsize(ellipsize ? TruncateAt.END : null);
-            view.setText(label);
+            view.setText((CharSequence) getItem(position));
             return convertView;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            return getView(mActionBar.getTitle(), convertView, parent, true);
-        }
-
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            return getView((CharSequence) getItem(position), convertView, parent, false);
         }
     }
 
