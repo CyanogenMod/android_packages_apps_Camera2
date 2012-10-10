@@ -48,8 +48,8 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     private static final String LOGTAG = "ImageShow";
 
     protected Paint mPaint = new Paint();
-    private static int mTextSize = 24;
-    private static int mTextPadding = 20;
+    protected static int mTextSize = 24;
+    protected static int mTextPadding = 20;
 
     protected ImagePreset mImagePreset = null;
     protected ImageLoader mImageLoader = null;

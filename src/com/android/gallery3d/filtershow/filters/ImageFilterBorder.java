@@ -48,8 +48,10 @@ public class ImageFilterBorder extends ImageFilter {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
-        Rect bounds = new Rect(0, 0, w, h);
+        float scale = scaleFactor * 2.0f;
+        Rect bounds = new Rect(0, 0, (int) (w / scale), (int) (h / scale));
         Canvas canvas = new Canvas(bitmap);
+        canvas.scale(scale, scale);
         mNinePatch.setBounds(bounds);
         mNinePatch.draw(canvas);
         return bitmap;
