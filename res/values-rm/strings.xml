@@ -213,6 +213,24 @@
     <skip />
     <!-- no translation found for flash_off (1445443413822680010) -->
     <skip />
+    <!-- no translation found for ffx_vintage (8348759951363844780) -->
+    <skip />
+    <!-- no translation found for ffx_instant (726968618715691987) -->
+    <skip />
+    <!-- no translation found for ffx_bleach (8946700451603478453) -->
+    <skip />
+    <!-- no translation found for ffx_blue_crush (5910979947224043165) -->
+    <skip />
+    <!-- no translation found for ffx_bw_contrast (3853938816686258406) -->
+    <skip />
+    <!-- no translation found for ffx_punch (1343475517872562639) -->
+    <skip />
+    <!-- no translation found for ffx_x_process (4779398678661811765) -->
+    <skip />
+    <!-- no translation found for ffx_washout (2526099635720493268) -->
+    <skip />
+    <!-- no translation found for ffx_washout_color (3209955210402468008) -->
+    <skip />
     <!-- no translation found for make_albums_available_offline:one (2171596356101611086) -->
     <!-- no translation found for make_albums_available_offline:other (4948604338155959389) -->
     <!-- no translation found for try_to_set_local_album_available_offline (2184754031896160755) -->
@@ -284,9 +302,9 @@
     <skip />
     <!-- no translation found for no_external_storage (95726173164068417) -->
     <skip />
-    <!-- no translation found for switch_photo_filmstrip (991949386967109493) -->
+    <!-- no translation found for switch_photo_filmstrip (8227883354281661548) -->
     <skip />
-    <!-- no translation found for switch_photo_grid (6533267664294518167) -->
+    <!-- no translation found for switch_photo_grid (3681299459107925725) -->
     <skip />
     <!-- no translation found for trimming (9122385768369143997) -->
     <skip />
@@ -297,5 +315,7 @@
     <!-- no translation found for trim_too_short (751593965620665326) -->
     <skip />
     <!-- no translation found for trim_too_long (2657958275279217174) -->
+    <skip />
+    <!-- no translation found for pano_progress_text (1586851614586678464) -->
     <skip />
 </resources>
