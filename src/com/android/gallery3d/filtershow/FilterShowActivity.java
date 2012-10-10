@@ -6,9 +6,13 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +37,7 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterBorder;
+import com.android.gallery3d.filtershow.filters.ImageFilterFx;
 import com.android.gallery3d.filtershow.filters.ImageFilterParametricBorder;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.imageshow.ImageBorder;
@@ -48,6 +53,7 @@ import com.android.gallery3d.filtershow.presets.ImagePresetBW;
 import com.android.gallery3d.filtershow.presets.ImagePresetBWBlue;
 import com.android.gallery3d.filtershow.presets.ImagePresetBWGreen;
 import com.android.gallery3d.filtershow.presets.ImagePresetBWRed;
+import com.android.gallery3d.filtershow.presets.ImagePresetFX;
 import com.android.gallery3d.filtershow.presets.ImagePresetOld;
 import com.android.gallery3d.filtershow.presets.ImagePresetSaturated;
 import com.android.gallery3d.filtershow.presets.ImagePresetXProcessing;
@@ -390,8 +396,38 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private void fillListImages(LinearLayout listFilters) {
         // TODO: use listview
         // TODO: load the filters straight from the filesystem
-        ImagePreset[] preset = new ImagePreset[9];
+        ImagePreset[] preset = new ImagePreset[18];
         int p = 0;
+
+        int[]drawid = {
+                R.drawable.filtershow_fx_0000_vintage,
+                R.drawable.filtershow_fx_0001_instant,
+                R.drawable.filtershow_fx_0002_bleach,
+                R.drawable.filtershow_fx_0003_blue_crush,
+                R.drawable.filtershow_fx_0004_bw_contrast,
+                R.drawable.filtershow_fx_0005_punch,
+                R.drawable.filtershow_fx_0006_x_process,
+                R.drawable.filtershow_fx_0007_washout,
+                R.drawable.filtershow_fx_0008_washout_color
+        };
+
+        int[]fxNameid = {
+                R.string.ffx_vintage,
+                R.string.ffx_instant,
+                R.string.ffx_bleach,
+                R.string.ffx_blue_crush,
+                R.string.ffx_bw_contrast,
+                R.string.ffx_punch,
+                R.string.ffx_x_process,
+                R.string.ffx_washout,
+                R.string.ffx_washout_color,
+        };
+
+        for (int i = 0; i < drawid.length; i++) {
+            Bitmap b =  BitmapFactory.decodeResource(getResources(),drawid[i]);
+            preset[p++] = new ImagePresetFX(b, getString(fxNameid[i]));
+        }
+
         preset[p++] = new ImagePreset();
         preset[p++] = new ImagePresetSaturated();
         preset[p++] = new ImagePresetOld();
