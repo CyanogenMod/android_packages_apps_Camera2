@@ -29,17 +29,14 @@
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:ellipsize="end"
-        android:gravity="top"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:minHeight="?attr/listPreferredItemHeightSmall"
+        android:textSize="15dp"
     />
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@android:id/text2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="bottom"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_below="@android:id/text1"
+        android:textSize="9dp"
         android:singleLine="true"
-        android:minHeight="?attr/listPreferredItemHeightSmall"
     />
 </TwoLineListItem>
