@@ -496,4 +496,8 @@
 
     <!-- Toast if the trimmed video is the same as the original one. [CHAR LIMIT=80] -->
     <string name="trim_too_long">Did not trim : the same length as origin</string>
+
+    <!-- Text to show with progress bar while stitching in Gallery -->
+    <string name="pano_progress_text">Rendering panorama</string>
+
 </resources>
