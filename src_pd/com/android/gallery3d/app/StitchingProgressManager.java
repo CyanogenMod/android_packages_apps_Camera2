@@ -16,30 +16,19 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.data.MediaItem;
-
-import java.util.ArrayList;
+import android.net.Uri;
 
 public class StitchingProgressManager {
+    public StitchingProgressManager(GalleryApp app) {
+    }
+
     public void addChangeListener(StitchingChangeListener l) {
     }
 
     public void removeChangeListener(StitchingChangeListener l) {
     }
 
-    public int getItemCount() {
-        return 0;
-    }
-
-    public MediaItem getItem(int i) {
+    public Integer getProgress(Uri uri) {
         return null;
-    }
-
-    public ArrayList<MediaItem> getAllItems() {
-        return null;
-    }
-
-    public int getProgress(String filePath) {
-        return 100;
     }
 }

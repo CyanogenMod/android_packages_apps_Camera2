@@ -46,6 +46,7 @@ import com.android.gallery3d.data.ComboAlbum;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.FilterDeleteSet;
 import com.android.gallery3d.data.FilterSource;
+import com.android.gallery3d.data.LocalImage;
 import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
@@ -207,26 +208,25 @@ public class PhotoPage extends ActivityState implements
     private class UpdateProgressListener implements StitchingChangeListener {
 
         @Override
-        public void onStitchingResult(Path path, Uri uri) {
-            sendUpdate(path);
+        public void onStitchingResult(Uri uri) {
+            sendUpdate(uri);
         }
 
         @Override
-        public void onStitchingQueued(Path path) {
-            sendUpdate(path);
+        public void onStitchingQueued(Uri uri) {
+            sendUpdate(uri);
         }
 
         @Override
-        public void onStitchingProgress(Path path, final int progress) {
-            sendUpdate(path);
+        public void onStitchingProgress(Uri uri, final int progress) {
+            sendUpdate(uri);
         }
 
-        private void sendUpdate(Path path) {
-            boolean isCurrentPhoto = mCurrentPhoto != null
-                    && mCurrentPhoto.getPath().toString().equals(path.toString());
+        private void sendUpdate(Uri uri) {
+            boolean isCurrentPhoto = mCurrentPhoto instanceof LocalImage
+                    && mCurrentPhoto.getContentUri().equals(uri);
             if (isCurrentPhoto) {
                 mHandler.sendEmptyMessage(MSG_REFRESH_IMAGE);
-
             }
         }
     };
@@ -388,20 +388,13 @@ public class PhotoPage extends ActivityState implements
                     mFlags |= FLAG_SHOW_WHEN_LOCKED;
                 }
 
-                // Don't display "empty album" action item or panorama
-                // progress for capture intents.
+                // Don't display "empty album" action item for capture intents.
                 if (!mSetPathString.equals("/local/all/0")) {
                     // Check if the path is a secure album.
                     if (SecureSource.isSecurePath(mSetPathString)) {
                         mSecureAlbum = (SecureAlbum) mActivity.getDataManager()
                                 .getMediaSet(mSetPathString);
                         mShowSpinner = false;
-                    } else {
-                        // Use lightcycle album to handle panorama progress if
-                        // the path is not a secure album.
-                        if (LightCycleHelper.hasLightCycleCapture(mActivity.getAndroidContext())) {
-                            mSetPathString = LightCycleHelper.wrapGalleryPath(mSetPathString);
-                        }
                     }
                     mSetPathString = "/filter/empty/{"+mSetPathString+"}";
                 }
@@ -669,15 +662,11 @@ public class PhotoPage extends ActivityState implements
             updateShareURI(photo.getPath());
         }
         StitchingProgressManager progressManager = mApplication.getStitchingProgressManager();
-        if (progressManager != null) {
-            int itemCount = progressManager.getItemCount();
-            mProgressBar.hideProgress();
-            for (int i = 0; i < itemCount; i++) {
-                MediaItem item = progressManager.getItem(i);
-                if (item.getPath().equals(photo.getPath())) {
-                    mProgressBar.setProgress(progressManager.getProgress(item.getFilePath()));
-                    break;
-                }
+        mProgressBar.hideProgress();
+        if (progressManager != null && mCurrentPhoto instanceof LocalImage) {
+            Integer progress = progressManager.getProgress(photo.getContentUri());
+            if (progress != null) {
+                mProgressBar.setProgress(progress);
             }
         }
     }
