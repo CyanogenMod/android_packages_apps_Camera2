@@ -661,12 +661,14 @@ public class PhotoPage extends ActivityState implements
                 && (photo.getSupportedOperations() & MediaItem.SUPPORT_SHARE) != 0) {
             updateShareURI(photo.getPath());
         }
-        StitchingProgressManager progressManager = mApplication.getStitchingProgressManager();
-        mProgressBar.hideProgress();
-        if (progressManager != null && mCurrentPhoto instanceof LocalImage) {
-            Integer progress = progressManager.getProgress(photo.getContentUri());
-            if (progress != null) {
-                mProgressBar.setProgress(progress);
+        if (mProgressBar != null) {
+            mProgressBar.hideProgress();
+            StitchingProgressManager progressManager = mApplication.getStitchingProgressManager();
+            if (progressManager != null && mCurrentPhoto instanceof LocalImage) {
+                Integer progress = progressManager.getProgress(photo.getContentUri());
+                if (progress != null) {
+                    mProgressBar.setProgress(progress);
+                }
             }
         }
     }
