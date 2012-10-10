@@ -19,19 +19,17 @@ package com.android.gallery3d.data;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.MediaStore.MediaColumns;
 import android.provider.MediaStore.Images;
+import android.provider.MediaStore.MediaColumns;
 import android.provider.MediaStore.Video;
 
 import com.android.gallery3d.app.GalleryApp;
-import com.android.gallery3d.app.StitchingChangeListener;
-import com.android.gallery3d.app.StitchingProgressManager;
 import com.android.gallery3d.util.MediaSetUtils;
 
 import java.util.ArrayList;
 
 // This class lists all media items added by the client.
-public class SecureAlbum extends MediaSet implements StitchingChangeListener {
+public class SecureAlbum extends MediaSet {
     @SuppressWarnings("unused")
     private static final String TAG = "SecureAlbum";
     private static final String[] PROJECTION = {MediaColumns._ID};
@@ -44,10 +42,8 @@ public class SecureAlbum extends MediaSet implements StitchingChangeListener {
     // The types of items in mAllItems. True is video and false is image.
     private ArrayList<Boolean> mAllItemTypes = new ArrayList<Boolean>();
     private ArrayList<Path> mExistingItems = new ArrayList<Path>();
-    private ArrayList<Path> mStitchingItems = new ArrayList<Path>();
     private Context mContext;
     private DataManager mDataManager;
-    private StitchingProgressManager mStitchingProgressManager;
     private static final Uri[] mWatchUris =
         {Images.Media.EXTERNAL_CONTENT_URI, Video.Media.EXTERNAL_CONTENT_URI};
     private final ChangeNotifier mNotifier;
@@ -64,8 +60,6 @@ public class SecureAlbum extends MediaSet implements StitchingChangeListener {
         mUnlockItem = unlock;
         mShowUnlockItem = (!isCameraBucketEmpty(Images.Media.EXTERNAL_CONTENT_URI)
                 || !isCameraBucketEmpty(Video.Media.EXTERNAL_CONTENT_URI));
-        mStitchingProgressManager = application.getStitchingProgressManager();
-        mStitchingProgressManager.addChangeListener(this);
     }
 
     public void addMediaItem(boolean isVideo, int id) {
@@ -85,26 +79,14 @@ public class SecureAlbum extends MediaSet implements StitchingChangeListener {
     // The sequence is stitching items, local media items, and unlock image.
     @Override
     public ArrayList<MediaItem> getMediaItem(int start, int count) {
-        int stitchingCount = mStitchingItems.size();
         int existingCount = mExistingItems.size();
-        if (start >= stitchingCount + existingCount + 1) {
+        if (start >= existingCount + 1) {
             return new ArrayList<MediaItem>();
         }
 
         // Add paths of requested stitching items.
-        int end = Math.min(start + count, stitchingCount + existingCount);
-        ArrayList<Path> subset = new ArrayList<Path>();
-        if (start < stitchingCount) {
-            subset.addAll(mStitchingItems.subList(
-                    start, Math.min(stitchingCount, end)));
-        }
-
-        // Add paths of requested local media items.
-        if (end >= stitchingCount) {
-            int existingStart = Math.max(0, start - stitchingCount);
-            int existingEnd = end - stitchingCount;
-            subset.addAll(mExistingItems.subList(existingStart, existingEnd));
-        }
+        int end = Math.min(start + count, existingCount);
+        ArrayList<Path> subset = new ArrayList<Path>(mExistingItems.subList(start, end));
 
         // Convert paths to media items.
         final MediaItem[] buf = new MediaItem[end - start];
@@ -125,8 +107,7 @@ public class SecureAlbum extends MediaSet implements StitchingChangeListener {
 
     @Override
     public int getMediaItemCount() {
-        return (mStitchingItems.size() + mExistingItems.size()
-                + (mShowUnlockItem ? 1 : 0));
+        return (mExistingItems.size() + (mShowUnlockItem ? 1 : 0));
     }
 
     @Override
@@ -201,27 +182,5 @@ public class SecureAlbum extends MediaSet implements StitchingChangeListener {
     @Override
     public boolean isLeafAlbum() {
         return true;
-    }
-
-    @Override
-    public void onStitchingQueued(Path path) {
-        mStitchingItems.add(path);
-        notifyContentChanged();
-    }
-
-    @Override
-    public void onStitchingResult(Path path, Uri uri) {
-        if (mStitchingItems.remove(path)) {
-            int id = Integer.parseInt(uri.getLastPathSegment());
-            addMediaItem(false, id);
-            notifyContentChanged();
-        }
-    }
-
-    @Override
-    public void onStitchingProgress(Path path, int progress) {
-        if (mStitchingItems.contains(path)) {
-            notifyContentChanged();
-        }
     }
 }
