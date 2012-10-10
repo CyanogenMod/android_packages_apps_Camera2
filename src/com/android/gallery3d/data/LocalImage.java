@@ -259,8 +259,8 @@ public class LocalImage extends LocalMediaItem {
             operation |= SUPPORT_PANORAMA;
             if (isPanorama360()) {
                 operation |= SUPPORT_PANORAMA360;
-                // disable destructive rotate for 360 degree panorama
-                operation &= ~SUPPORT_ROTATE;
+                // disable destructive rotate and crop for 360 degree panorama
+                operation &= ~(SUPPORT_ROTATE | SUPPORT_CROP);
             }
         }
         return operation;
