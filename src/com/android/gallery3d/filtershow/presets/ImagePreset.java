@@ -153,13 +153,13 @@ public class ImagePreset {
         // First we apply any transform -- 90 rotate, flip, straighten, crop
         Bitmap bitmap = mGeoData.apply(original, mScaleFactor, mIsHighQuality);
 
-        if (mImageBorder != null) {
-            bitmap = mImageBorder.apply(bitmap, mScaleFactor, mIsHighQuality);
-        }
-
         for (int i = 0; i < mFilters.size(); i++) {
             ImageFilter filter = mFilters.elementAt(i);
             bitmap = filter.apply(bitmap, mScaleFactor, mIsHighQuality);
+        }
+
+        if (mImageBorder != null) {
+            bitmap = mImageBorder.apply(bitmap, mScaleFactor, mIsHighQuality);
         }
 
         if (mEndPoint != null) {

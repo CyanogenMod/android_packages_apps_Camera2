@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 public class ImageFilterBWRed extends ImageFilter {
 
     public ImageFilterBWRed() {
-        mName = "Black & White (Red)";
+        mName = "B&W - Red";
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h);

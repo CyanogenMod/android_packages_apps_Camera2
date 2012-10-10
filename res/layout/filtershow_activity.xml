@@ -177,7 +177,7 @@
                 android:id="@+id/filterButtonsList"
                 android:layout_width="fill_parent"
                 android:layout_height="96dip"
-                android:background="@color/background_toolbar"
+                android:background="@color/background_main_toolbar"
                 android:orientation="horizontal"
                 android:visibility="gone" >
 
@@ -239,7 +239,7 @@
                 android:id="@+id/geometryList"
                 android:layout_width="fill_parent"
                 android:layout_height="96dip"
-                android:background="@color/background_toolbar"
+                android:background="@color/background_main_toolbar"
                 android:visibility="gone" >
 
                 <LinearLayout
@@ -284,7 +284,7 @@
                 android:id="@+id/colorsFxList"
                 android:layout_width="fill_parent"
                 android:layout_height="96dip"
-                android:background="@color/background_toolbar"
+                android:background="@color/background_main_toolbar"
                 android:visibility="gone" >
 
                 <LinearLayout
