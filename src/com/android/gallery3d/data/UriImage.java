@@ -224,6 +224,8 @@ public class UriImage extends MediaItem {
             supported |= SUPPORT_PANORAMA;
             if (isPanorama360()) {
                 supported |= SUPPORT_PANORAMA360;
+                // disable destructive crop for 360 degree panorama
+                supported &= ~SUPPORT_CROP;
             }
         }
         return supported;
