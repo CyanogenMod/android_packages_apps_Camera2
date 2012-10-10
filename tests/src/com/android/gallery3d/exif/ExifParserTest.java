@@ -20,31 +20,30 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
 public class ExifParserTest extends ExifXmlDataTestCase {
     private static final String TAG = "ExifParserTest";
 
+    public ExifParserTest(int imgRes, int xmlRes) {
+        super(imgRes, xmlRes);
+    }
+
+    public ExifParserTest(String imgPath, String xmlPath) {
+        super(imgPath, xmlPath);
+    }
+
     private List<Map<Short, String>> mGroundTruth;
 
-    private InputStream mImageInputStream;
-
-    public ExifParserTest(int imageResourceId, int xmlResourceId) {
-        super(imageResourceId, xmlResourceId);
-    }
-
     @Override
-    protected void setUp() throws Exception {
-        mImageInputStream = getInstrumentation()
-                .getContext().getResources().openRawResource(mImageResourceId);
-
-        mGroundTruth = ExifXmlReader.readXml(getInstrumentation().getContext(), mXmlResourceId);
+    public void setUp() throws Exception {
+        super.setUp();
+        mGroundTruth = ExifXmlReader.readXml(getXmlParser());
     }
 
-    public void testParse() throws IOException, ExifInvalidFormatException {
-        ExifParser parser = ExifParser.parse(mImageInputStream);
+    public void testParse() throws Exception {
+        ExifParser parser = ExifParser.parse(getImageInputStream());
         int event = parser.next();
         while (event != ExifParser.EVENT_END) {
             switch (event) {
@@ -72,7 +71,6 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         }
     }
 
-
     private void checkTag(ExifTag tag) {
         // Ignore offset tags since the ground-truth from exiftool doesn't have it.
         // We can verify it by examining the sub-IFD or thumbnail itself.
@@ -92,7 +90,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
             throws IOException, ExifInvalidFormatException {
         Map<Short, String> expectedResult = mGroundTruth.get(ifd);
         int numOfTag = 0;
-        ExifParser parser = ExifParser.parse(mImageInputStream, options);
+        ExifParser parser = ExifParser.parse(getImageInputStream(), options);
         int event = parser.next();
         while(event != ExifParser.EVENT_END) {
             switch (event) {
@@ -127,24 +125,24 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         assertEquals(expectedResult.size(), numOfTag);
     }
 
-    public void testOnlyExifIfd() throws IOException, ExifInvalidFormatException {
+    public void testOnlyExifIfd() throws Exception {
         parseOneIfd(IfdId.TYPE_IFD_EXIF, ExifParser.OPTION_IFD_EXIF);
     }
 
-    public void testOnlyIfd0() throws IOException, ExifInvalidFormatException {
+    public void testOnlyIfd0() throws Exception {
         parseOneIfd(IfdId.TYPE_IFD_0, ExifParser.OPTION_IFD_0);
     }
 
-    public void testOnlyIfd1() throws IOException, ExifInvalidFormatException {
+    public void testOnlyIfd1() throws Exception {
         parseOneIfd(IfdId.TYPE_IFD_1, ExifParser.OPTION_IFD_1);
     }
 
-    public void testOnlyInteroperabilityIfd() throws IOException, ExifInvalidFormatException {
+    public void testOnlyInteroperabilityIfd() throws Exception {
         parseOneIfd(IfdId.TYPE_IFD_INTEROPERABILITY, ExifParser.OPTION_IFD_INTEROPERABILITY);
     }
 
-    public void testOnlyReadSomeTag() throws IOException, ExifInvalidFormatException {
-        ExifParser parser = ExifParser.parse(mImageInputStream, ExifParser.OPTION_IFD_0);
+    public void testOnlyReadSomeTag() throws Exception {
+        ExifParser parser = ExifParser.parse(getImageInputStream(), ExifParser.OPTION_IFD_0);
         int event = parser.next();
         boolean isTagFound = false;
         while (event != ExifParser.EVENT_END) {
@@ -176,8 +174,8 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         assertTrue(isTagFound);
     }
 
-    public void testReadThumbnail() throws ExifInvalidFormatException, IOException {
-        ExifParser parser = ExifParser.parse(mImageInputStream,
+    public void testReadThumbnail() throws Exception {
+        ExifParser parser = ExifParser.parse(getImageInputStream(),
                 ExifParser.OPTION_IFD_1 | ExifParser.OPTION_THUMBNAIL);
 
         int event = parser.next();
@@ -205,11 +203,5 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         if (mIsContainCompressedImage) {
             assertNotNull(bmp);
         }
-    }
-
-    @Override
-    protected void tearDown() throws IOException {
-        mImageInputStream.close();
-        mGroundTruth.clear();
     }
 }

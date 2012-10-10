@@ -19,32 +19,39 @@ package com.android.gallery3d.exif;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 public class ExifOutputStreamTest extends ExifXmlDataTestCase {
-    public ExifOutputStreamTest(int imageResourceId, int xmlResourceId) {
-        super(imageResourceId, xmlResourceId);
+    public ExifOutputStreamTest(int imgRes, int xmlRes) {
+        super(imgRes, xmlRes);
     }
 
-    public void testExifOutputStream() throws IOException, ExifInvalidFormatException {
+    public ExifOutputStreamTest(String imgPath, String xmlPath) {
+        super(imgPath, xmlPath);
+    }
+
+    public void testExifOutputStream() throws Exception {
         File file = File.createTempFile("exif_test", ".jpg");
         InputStream imageInputStream = null;
         InputStream exifInputStream = null;
         FileInputStream reDecodeInputStream = null;
         FileInputStream reParseInputStream = null;
         try {
-            // Read the image
-            imageInputStream = getInstrumentation()
-                    .getContext().getResources().openRawResource(mImageResourceId);
-            Bitmap bmp = BitmapFactory.decodeStream(imageInputStream);
+            byte[] imgData = readToByteArray(getImageInputStream());
+            imageInputStream = new ByteArrayInputStream(imgData);
+            exifInputStream = new ByteArrayInputStream(imgData);
 
+            // Read the image data
+            Bitmap bmp = BitmapFactory.decodeStream(imageInputStream);
             // Read exif data
-            exifInputStream = getInstrumentation()
-                    .getContext().getResources().openRawResource(mImageResourceId);
             ExifData exifData = new ExifReader().read(exifInputStream);
 
             // Encode the image with the exif data
@@ -69,5 +76,16 @@ public class ExifOutputStreamTest extends ExifXmlDataTestCase {
             Util.closeSilently(reDecodeInputStream);
             Util.closeSilently(reParseInputStream);
         }
+    }
+
+    private byte[] readToByteArray(InputStream is) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        int len;
+        byte[] buf = new byte[1024];
+        while ((len = is.read(buf)) > -1) {
+            bos.write(buf, 0, len);
+        }
+        bos.flush();
+        return bos.toByteArray();
     }
 }
