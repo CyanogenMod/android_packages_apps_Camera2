@@ -19,6 +19,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilterShadows;
 import com.android.gallery3d.filtershow.filters.ImageFilterSharpen;
 import com.android.gallery3d.filtershow.filters.ImageFilterVibrance;
 import com.android.gallery3d.filtershow.filters.ImageFilterVignette;
+import com.android.gallery3d.filtershow.filters.ImageFilterWBalance;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.ui.ImageCurves;
@@ -372,6 +373,9 @@ public class PanelController implements OnClickListener {
         if (filter == null && name.equalsIgnoreCase("Redeye")) {
             filter = setImagePreset(new ImageFilterRedEye(), name);
         }
+        if (filter == null && name.equalsIgnoreCase("WBalance")) {
+            filter = setImagePreset(new ImageFilterWBalance(), name);
+        }
         mMasterImage.setCurrentFilter(filter);
     }
 
@@ -456,7 +460,14 @@ public class PanelController implements OnClickListener {
                 ensureFilter("Saturated");
                 break;
             }
-            case R.id.tintButton: {
+            case R.id.wbalanceButton: {
+                mCurrentImage = showImageView(R.id.imageShow).setShowControls(false);
+                mUtilityPanel.setEffectName("White Balance");
+                mUtilityPanel.setGeometryEffect(true);
+                ensureFilter("WBalance");
+                break;
+            }
+            case R.id.hueButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
                 mUtilityPanel.setEffectName("Hue");
                 mUtilityPanel.setGeometryEffect(false);
