@@ -425,9 +425,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         };
 
         preset[p++] = new ImagePreset();
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inScaled = false;
 
         for (int i = 0; i < drawid.length; i++) {
-            Bitmap b = BitmapFactory.decodeResource(getResources(), drawid[i]);
+            Bitmap b = BitmapFactory.decodeResource(getResources(), drawid[i], o);
             preset[p++] = new ImagePresetFX(b, getString(fxNameid[i]));
         }
 
