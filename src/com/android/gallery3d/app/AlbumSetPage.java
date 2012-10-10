@@ -421,6 +421,7 @@ public class AlbumSetPage extends ActivityState implements
                 } else {
                     mShowedEmptyToastForSelf = true;
                     showEmptyAlbumToast(Toast.LENGTH_LONG);
+                    mSlotView.invalidate();
                     showCameraButton();
                 }
                 return;
