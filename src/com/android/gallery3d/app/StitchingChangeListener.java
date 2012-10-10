@@ -16,14 +16,12 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.data.Path;
-
 import android.net.Uri;
 
 public interface StitchingChangeListener {
-    public void onStitchingQueued(Path path);
+    public void onStitchingQueued(Uri uri);
 
-    public void onStitchingResult(Path path, Uri uri);
+    public void onStitchingResult(Uri uri);
 
-    public void onStitchingProgress(Path path, int progress);
+    public void onStitchingProgress(Uri uri, int progress);
 }
