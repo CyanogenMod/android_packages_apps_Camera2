@@ -299,6 +299,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                     PhotoPage.MSG_ALBUMPAGE_STARTED);
             data.putBoolean(PhotoPage.KEY_START_IN_FILMSTRIP,
                     startInFilmstrip);
+            data.putBoolean(PhotoPage.KEY_IN_CAMERA_ROLL, mMediaSet.isCameraRoll());
             mActivity.getStateManager().startStateForResult(
                     PhotoPage.class, REQUEST_PHOTO, data);
         }
