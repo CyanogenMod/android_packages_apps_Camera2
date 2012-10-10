@@ -26,7 +26,6 @@ import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.data.BucketHelper.BucketEntry;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
-import com.android.gallery3d.util.LightCycleHelper;
 import com.android.gallery3d.util.MediaSetUtils;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.JobContext;
@@ -128,11 +127,6 @@ public class LocalAlbumSet extends MediaSet
             for (BucketEntry entry : entries) {
                 MediaSet album = getLocalAlbum(dataManager,
                         mType, mPath, entry.bucketId, entry.bucketName);
-                if (LightCycleHelper.hasLightCycleCapture(mApplication.getAndroidContext())
-                        && album.isCameraRoll()) {
-                    album = dataManager.getMediaSet(Path.fromString(
-                            LightCycleHelper.wrapGalleryPath(album.getPath().toString())));
-                }
                 albums.add(album);
             }
             return albums;
