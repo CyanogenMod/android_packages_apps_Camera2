@@ -46,6 +46,7 @@ import com.android.gallery3d.data.ComboAlbum;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.FilterDeleteSet;
 import com.android.gallery3d.data.FilterSource;
+import com.android.gallery3d.data.LocalImage;
 import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
@@ -91,6 +92,7 @@ public class PhotoPage extends ActivityState implements
     private static final int MSG_REFRESH_BOTTOM_CONTROLS = 8;
     private static final int MSG_ON_CAMERA_CENTER = 9;
     private static final int MSG_ON_PICTURE_CENTER = 10;
+    private static final int MSG_REFRESH_IMAGE = 11;
 
     private static final int HIDE_BARS_TIMEOUT = 3500;
     private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
@@ -144,6 +146,7 @@ public class PhotoPage extends ActivityState implements
     private boolean mIsMenuVisible;
     private boolean mHaveImageEditor;
     private PhotoPageBottomControls mBottomControls;
+    private PhotoPageProgressBar mProgressBar;
     private MediaItem mCurrentPhoto = null;
     private MenuExecutor mMenuExecutor;
     private boolean mIsActive;
@@ -178,6 +181,7 @@ public class PhotoPage extends ActivityState implements
 
     private final MyMenuVisibilityListener mMenuVisibilityListener =
             new MyMenuVisibilityListener();
+    private UpdateProgressListener mProgressListener;
 
     public static interface Model extends PhotoView.Model {
         public void resume();
@@ -200,6 +204,32 @@ public class PhotoPage extends ActivityState implements
             setInterpolator(new AccelerateInterpolator(2f));
         }
     }
+
+    private class UpdateProgressListener implements StitchingChangeListener {
+
+        @Override
+        public void onStitchingResult(Uri uri) {
+            sendUpdate(uri);
+        }
+
+        @Override
+        public void onStitchingQueued(Uri uri) {
+            sendUpdate(uri);
+        }
+
+        @Override
+        public void onStitchingProgress(Uri uri, final int progress) {
+            sendUpdate(uri);
+        }
+
+        private void sendUpdate(Uri uri) {
+            boolean isCurrentPhoto = mCurrentPhoto instanceof LocalImage
+                    && mCurrentPhoto.getContentUri().equals(uri);
+            if (isCurrentPhoto) {
+                mHandler.sendEmptyMessage(MSG_REFRESH_IMAGE);
+            }
+        }
+    };
 
     private final FloatAnimation mBackgroundFade = new BackgroundFadeOut();
 
@@ -310,6 +340,12 @@ public class PhotoPage extends ActivityState implements
                         }
                         break;
                     }
+                    case MSG_REFRESH_IMAGE: {
+                        MediaItem currentPhoto = mCurrentPhoto;
+                        mCurrentPhoto = null;
+                        updateCurrentPhoto(currentPhoto);
+                        break;
+                    }
                     default: throw new AssertionError(message.what);
                 }
             }
@@ -352,20 +388,13 @@ public class PhotoPage extends ActivityState implements
                     mFlags |= FLAG_SHOW_WHEN_LOCKED;
                 }
 
-                // Don't display "empty album" action item or panorama
-                // progress for capture intents.
+                // Don't display "empty album" action item for capture intents.
                 if (!mSetPathString.equals("/local/all/0")) {
                     // Check if the path is a secure album.
                     if (SecureSource.isSecurePath(mSetPathString)) {
                         mSecureAlbum = (SecureAlbum) mActivity.getDataManager()
                                 .getMediaSet(mSetPathString);
                         mShowSpinner = false;
-                    } else {
-                        // Use lightcycle album to handle panorama progress if
-                        // the path is not a secure album.
-                        if (LightCycleHelper.hasLightCycleCapture(mActivity.getAndroidContext())) {
-                            mSetPathString = LightCycleHelper.wrapGalleryPath(mSetPathString);
-                        }
                     }
                     mSetPathString = "/filter/empty/{"+mSetPathString+"}";
                 }
@@ -481,11 +510,17 @@ public class PhotoPage extends ActivityState implements
         }
 
         mPhotoView.setFilmMode(mStartInFilmstrip && mMediaSet.getMediaItemCount() > 1);
-        if (mSecureAlbum == null) {
-            RelativeLayout galleryRoot = (RelativeLayout) ((Activity) mActivity)
-                        .findViewById(mAppBridge != null ? R.id.content : R.id.gallery_root);
-            if (galleryRoot != null) {
+        RelativeLayout galleryRoot = (RelativeLayout) ((Activity) mActivity)
+                .findViewById(mAppBridge != null ? R.id.content : R.id.gallery_root);
+        if (galleryRoot != null) {
+            if (mSecureAlbum == null) {
                 mBottomControls = new PhotoPageBottomControls(this, mActivity, galleryRoot);
+            }
+            StitchingProgressManager progressManager = mApplication.getStitchingProgressManager();
+            if (progressManager != null) {
+                mProgressBar = new PhotoPageProgressBar(mActivity, galleryRoot);
+                mProgressListener = new UpdateProgressListener();
+                progressManager.addChangeListener(mProgressListener);
             }
         }
     }
@@ -625,6 +660,14 @@ public class PhotoPage extends ActivityState implements
         if ((mSecureAlbum == null)
                 && (photo.getSupportedOperations() & MediaItem.SUPPORT_SHARE) != 0) {
             updateShareURI(photo.getPath());
+        }
+        StitchingProgressManager progressManager = mApplication.getStitchingProgressManager();
+        mProgressBar.hideProgress();
+        if (progressManager != null && mCurrentPhoto instanceof LocalImage) {
+            Integer progress = progressManager.getProgress(photo.getContentUri());
+            if (progress != null) {
+                mProgressBar.setProgress(progress);
+            }
         }
     }
 
@@ -1209,6 +1252,7 @@ public class PhotoPage extends ActivityState implements
         mActivity.getGLRoot().unfreeze();
     }
 
+    @Override
     public void onFilmModeChanged(boolean enabled) {
         mHandler.sendEmptyMessage(MSG_REFRESH_BOTTOM_CONTROLS);
         if (enabled) {
