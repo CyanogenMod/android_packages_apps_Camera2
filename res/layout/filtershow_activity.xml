@@ -276,7 +276,9 @@
                         android:id="@+id/redEyeButton"
                         style="@style/FilterShowBottomButton"
                         android:src="@drawable/photoeditor_effect_redeye"
-                        android:text="@string/redeye" />
+                        android:text="@string/redeye"
+                        android:visibility="gone" />
+
                 </LinearLayout>
             </HorizontalScrollView>
 
@@ -294,6 +296,12 @@
                     android:orientation="horizontal" >
 
                     <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                        android:id="@+id/wbalanceButton"
+                        style="@style/FilterShowBottomButton"
+                        android:src="@drawable/filtershow_button_colors_contrast"
+                        android:text="@string/wbalance" />
+
+                    <com.android.gallery3d.filtershow.ui.ImageButtonTitle
                         android:id="@+id/exposureButton"
                         style="@style/FilterShowBottomButton"
                         android:src="@drawable/filtershow_button_colors_contrast"
@@ -304,12 +312,6 @@
                         style="@style/FilterShowBottomButton"
                         android:src="@drawable/filtershow_button_colors_contrast"
                         android:text="@string/vibrance" />
-
-                    <com.android.gallery3d.filtershow.ui.ImageButtonTitle
-                        android:id="@+id/saturationButton"
-                        style="@style/FilterShowBottomButton"
-                        android:src="@drawable/filtershow_button_colors_contrast"
-                        android:text="@string/saturation" />
 
                     <com.android.gallery3d.filtershow.ui.ImageButtonTitle
                         android:id="@+id/contrastButton"
@@ -336,16 +338,22 @@
                         android:text="@string/sharpen" />
 
                     <com.android.gallery3d.filtershow.ui.ImageButtonTitle
-                        android:id="@+id/tintButton"
-                        style="@style/FilterShowBottomButton"
-                        android:src="@drawable/filtershow_button_colors_contrast"
-                        android:text="@string/tint" />
-
-                    <com.android.gallery3d.filtershow.ui.ImageButtonTitle
                         android:id="@+id/curvesButtonRGB"
                         style="@style/FilterShowBottomButton"
                         android:src="@drawable/filtershow_button_colors_curve"
                         android:text="@string/curvesRGB" />
+
+                    <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                        android:id="@+id/hueButton"
+                        style="@style/FilterShowBottomButton"
+                        android:src="@drawable/filtershow_button_colors_contrast"
+                        android:text="@string/hue" />
+
+                    <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                        android:id="@+id/saturationButton"
+                        style="@style/FilterShowBottomButton"
+                        android:src="@drawable/filtershow_button_colors_contrast"
+                        android:text="@string/saturation" />
 
                 </LinearLayout>
             </HorizontalScrollView>

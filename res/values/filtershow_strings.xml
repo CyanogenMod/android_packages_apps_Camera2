@@ -73,8 +73,10 @@
     <string name="vibrance">Vibrance</string>
     <!--  Label for the saturation filter button [CHAR LIMIT=15] -->
     <string name="saturation">Saturation</string>
-    <!--  Label for the tint filter button [CHAR LIMIT=15] -->
-    <string name="tint">Tint</string>
+    <!--  Label for the White Balance filter button [CHAR LIMIT=15] -->
+    <string name="wbalance">White Balance</string>
+    <!--  Label for the Hue filter button [CHAR LIMIT=15] -->
+    <string name="hue">Hue</string>
     <!--  Label for the shadow recovery filter button [CHAR LIMIT=15] -->
     <string name="shadow_recovery">Shadows</string>
     <!--  Label for the curves filter button [CHAR LIMIT=15] -->
