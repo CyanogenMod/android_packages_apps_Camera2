@@ -91,6 +91,7 @@ public class PhotoPage extends ActivityState implements
     private static final int MSG_REFRESH_BOTTOM_CONTROLS = 8;
     private static final int MSG_ON_CAMERA_CENTER = 9;
     private static final int MSG_ON_PICTURE_CENTER = 10;
+    private static final int MSG_REFRESH_IMAGE = 11;
 
     private static final int HIDE_BARS_TIMEOUT = 3500;
     private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
@@ -144,6 +145,7 @@ public class PhotoPage extends ActivityState implements
     private boolean mIsMenuVisible;
     private boolean mHaveImageEditor;
     private PhotoPageBottomControls mBottomControls;
+    private PhotoPageProgressBar mProgressBar;
     private MediaItem mCurrentPhoto = null;
     private MenuExecutor mMenuExecutor;
     private boolean mIsActive;
@@ -178,6 +180,7 @@ public class PhotoPage extends ActivityState implements
 
     private final MyMenuVisibilityListener mMenuVisibilityListener =
             new MyMenuVisibilityListener();
+    private UpdateProgressListener mProgressListener;
 
     public static interface Model extends PhotoView.Model {
         public void resume();
@@ -200,6 +203,33 @@ public class PhotoPage extends ActivityState implements
             setInterpolator(new AccelerateInterpolator(2f));
         }
     }
+
+    private class UpdateProgressListener implements StitchingChangeListener {
+
+        @Override
+        public void onStitchingResult(Path path, Uri uri) {
+            sendUpdate(path);
+        }
+
+        @Override
+        public void onStitchingQueued(Path path) {
+            sendUpdate(path);
+        }
+
+        @Override
+        public void onStitchingProgress(Path path, final int progress) {
+            sendUpdate(path);
+        }
+
+        private void sendUpdate(Path path) {
+            boolean isCurrentPhoto = mCurrentPhoto != null
+                    && mCurrentPhoto.getPath().toString().equals(path.toString());
+            if (isCurrentPhoto) {
+                mHandler.sendEmptyMessage(MSG_REFRESH_IMAGE);
+
+            }
+        }
+    };
 
     private final FloatAnimation mBackgroundFade = new BackgroundFadeOut();
 
@@ -308,6 +338,12 @@ public class PhotoPage extends ActivityState implements
                                 && (mCurrentPhoto.getSupportedOperations() & MediaObject.SUPPORT_ACTION) != 0) {
                             mPhotoView.setFilmMode(true);
                         }
+                        break;
+                    }
+                    case MSG_REFRESH_IMAGE: {
+                        MediaItem currentPhoto = mCurrentPhoto;
+                        mCurrentPhoto = null;
+                        updateCurrentPhoto(currentPhoto);
                         break;
                     }
                     default: throw new AssertionError(message.what);
@@ -481,11 +517,17 @@ public class PhotoPage extends ActivityState implements
         }
 
         mPhotoView.setFilmMode(mStartInFilmstrip && mMediaSet.getMediaItemCount() > 1);
-        if (mSecureAlbum == null) {
-            RelativeLayout galleryRoot = (RelativeLayout) ((Activity) mActivity)
-                        .findViewById(mAppBridge != null ? R.id.content : R.id.gallery_root);
-            if (galleryRoot != null) {
+        RelativeLayout galleryRoot = (RelativeLayout) ((Activity) mActivity)
+                .findViewById(mAppBridge != null ? R.id.content : R.id.gallery_root);
+        if (galleryRoot != null) {
+            if (mSecureAlbum == null) {
                 mBottomControls = new PhotoPageBottomControls(this, mActivity, galleryRoot);
+            }
+            StitchingProgressManager progressManager = mApplication.getStitchingProgressManager();
+            if (progressManager != null) {
+                mProgressBar = new PhotoPageProgressBar(mActivity, galleryRoot);
+                mProgressListener = new UpdateProgressListener();
+                progressManager.addChangeListener(mProgressListener);
             }
         }
     }
@@ -625,6 +667,18 @@ public class PhotoPage extends ActivityState implements
         if ((mSecureAlbum == null)
                 && (photo.getSupportedOperations() & MediaItem.SUPPORT_SHARE) != 0) {
             updateShareURI(photo.getPath());
+        }
+        StitchingProgressManager progressManager = mApplication.getStitchingProgressManager();
+        if (progressManager != null) {
+            int itemCount = progressManager.getItemCount();
+            mProgressBar.hideProgress();
+            for (int i = 0; i < itemCount; i++) {
+                MediaItem item = progressManager.getItem(i);
+                if (item.getPath().equals(photo.getPath())) {
+                    mProgressBar.setProgress(progressManager.getProgress(item.getFilePath()));
+                    break;
+                }
+            }
         }
     }
 
@@ -1209,6 +1263,7 @@ public class PhotoPage extends ActivityState implements
         mActivity.getGLRoot().unfreeze();
     }
 
+    @Override
     public void onFilmModeChanged(boolean enabled) {
         mHandler.sendEmptyMessage(MSG_REFRESH_BOTTOM_CONTROLS);
         if (enabled) {
