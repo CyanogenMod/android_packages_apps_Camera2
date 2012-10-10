@@ -28,7 +28,6 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaSet.ItemConsumer;
 import com.android.gallery3d.data.MediaSource.PathId;
 import com.android.gallery3d.picasasource.PicasaSource;
-import com.android.gallery3d.util.LightCycleHelper;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -131,7 +130,6 @@ public class DataManager {
         addSource(new SecureSource(mApplication));
         addSource(new UriSource(mApplication));
         addSource(new SnailSource(mApplication));
-        addSource(LightCycleHelper.createMediaSourceInstance(mApplication));
 
         if (mActiveCount > 0) {
             for (MediaSource source : mSourceMap.values()) {
