@@ -459,10 +459,10 @@
     <string name="no_external_storage">No external storage available</string>
 
     <!-- Label for album filmstrip button -->
-    <string name="switch_photo_filmstrip">Filmstrip</string>
+    <string name="switch_photo_filmstrip">Filmstrip view</string>
 
     <!-- Label for album grid button -->
-    <string name="switch_photo_grid">Grid</string>
+    <string name="switch_photo_grid">Grid view</string>
 
     <!-- The tilte of a dialog showing trimming in progress. [CHAR LIMIT=20] -->
     <string name="trimming">Trimming</string>
