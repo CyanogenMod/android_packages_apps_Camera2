@@ -24,7 +24,7 @@ public class ImageFilterRedEye extends ImageFilter {
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, short []matrix);
 
-    public void apply(Bitmap bitmap) {
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
         float p = mParameter;
@@ -38,5 +38,6 @@ public class ImageFilterRedEye extends ImageFilter {
                 (short) (2*sizex),(short) (2*sizey)};
 
         nativeApplyFilter(bitmap, w, h, rect);
+        return bitmap;
     }
 }
