@@ -546,6 +546,10 @@ public class PhotoView extends GLView {
     }
 
     private int getPanoramaRotation() {
+        // Panorama only support rotations of 0 and 90, so if it is greater
+        // than that flip the output surface texture to compensate
+        if (mDisplayRotation > 180)
+            return (mCompensation + 180) % 360;
         return mCompensation;
     }
 
