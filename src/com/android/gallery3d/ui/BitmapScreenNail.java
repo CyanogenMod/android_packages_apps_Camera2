@@ -46,16 +46,16 @@ public class BitmapScreenNail implements ScreenNail {
 
     private int mWidth;
     private int mHeight;
-    private Bitmap mBitmap;
-    private BitmapTexture mTexture;
     private long mAnimationStartTime = ANIMATION_NOT_NEEDED;
+
+    private Bitmap mBitmap;
+    private TiledTexture mTexture;
 
     public BitmapScreenNail(Bitmap bitmap) {
         mWidth = bitmap.getWidth();
         mHeight = bitmap.getHeight();
         mBitmap = bitmap;
-        // We create mTexture lazily, so we don't incur the cost if we don't
-        // actually need it.
+        mTexture = new TiledTexture(bitmap);
     }
 
     public BitmapScreenNail(int width, int height) {
@@ -103,17 +103,14 @@ public class BitmapScreenNail implements ScreenNail {
         BitmapScreenNail newer = (BitmapScreenNail) other;
         mWidth = newer.mWidth;
         mHeight = newer.mHeight;
-        if (newer.mBitmap != null) {
+        if (newer.mTexture != null) {
             recycleBitmap(MediaItem.getThumbPool(), mBitmap);
+            if (mTexture != null) mTexture.recycle();
             mBitmap = newer.mBitmap;
+            mTexture = newer.mTexture;
             newer.mBitmap = null;
-
-            if (mTexture != null) {
-                mTexture.recycle();
-                mTexture = null;
-            }
+            newer.mTexture = null;
         }
-
         newer.recycle();
         return this;
     }
@@ -158,7 +155,7 @@ public class BitmapScreenNail implements ScreenNail {
 
     @Override
     public void draw(GLCanvas canvas, int x, int y, int width, int height) {
-        if (mBitmap == null) {
+        if (mTexture == null || !mTexture.isReady()) {
             if (mAnimationStartTime == ANIMATION_NOT_NEEDED) {
                 mAnimationStartTime = ANIMATION_NEEDED;
             }
@@ -168,16 +165,12 @@ public class BitmapScreenNail implements ScreenNail {
             return;
         }
 
-        if (mTexture == null) {
-            mTexture = new BitmapTexture(mBitmap);
-        }
-
         if (mAnimationStartTime == ANIMATION_NEEDED) {
-            mAnimationStartTime = now();
+            mAnimationStartTime = AnimationTime.get();
         }
 
         if (isAnimating()) {
-            canvas.drawMixed(mTexture, mPlaceholderColor, getRatio(), x, y,
+            mTexture.drawMixed(canvas, mPlaceholderColor, getRatio(), x, y,
                     width, height);
         } else {
             mTexture.draw(canvas, x, y, width, height);
@@ -186,39 +179,35 @@ public class BitmapScreenNail implements ScreenNail {
 
     @Override
     public void draw(GLCanvas canvas, RectF source, RectF dest) {
-        if (mBitmap == null) {
+        if (mTexture == null || !mTexture.isReady()) {
             canvas.fillRect(dest.left, dest.top, dest.width(), dest.height(),
                     mPlaceholderColor);
             return;
         }
 
-        if (mTexture == null) {
-            mTexture = new BitmapTexture(mBitmap);
-        }
-
-        canvas.drawTexture(mTexture, source, dest);
+        mTexture.draw(canvas, source, dest);
     }
 
     public boolean isAnimating() {
         if (mAnimationStartTime < 0) return false;
-        if (now() - mAnimationStartTime >= DURATION) {
+        if (AnimationTime.get() - mAnimationStartTime >= DURATION) {
             mAnimationStartTime = ANIMATION_DONE;
             return false;
         }
         return true;
     }
 
-    private static long now() {
-        return AnimationTime.get();
-    }
-
     private float getRatio() {
-        float r = (float)(now() - mAnimationStartTime) / DURATION;
+        float r = (float) (AnimationTime.get() - mAnimationStartTime) / DURATION;
         return Utils.clamp(1.0f - r, 0.0f, 1.0f);
     }
 
     public boolean isShowingPlaceholder() {
         return (mBitmap == null) || isAnimating();
+    }
+
+    public TiledTexture getTexture() {
+        return mTexture;
     }
 
     public static void setMaxSide(int size) {
