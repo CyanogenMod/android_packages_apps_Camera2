@@ -13,8 +13,9 @@ public class ImageFilterFx extends ImageFilter {
     private static final String TAG = "ImageFilterFx";
     Bitmap fxBitmap;
 
-    public ImageFilterFx(Bitmap fxBitmap) {
-        mName = "fx";
+    public ImageFilterFx(Bitmap fxBitmap,String name) {
+        setFilterType(TYPE_FX);
+        mName = name;
         this.fxBitmap = fxBitmap;
     }
 
