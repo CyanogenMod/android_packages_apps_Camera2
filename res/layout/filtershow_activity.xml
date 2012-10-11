@@ -211,7 +211,8 @@
             <HorizontalScrollView
                 android:id="@+id/fxList"
                 android:layout_width="match_parent"
-                android:layout_height="96dip">
+                android:layout_height="96dip"
+                android:scrollbars="none" >
 
                 <LinearLayout
                     android:id="@+id/listFilters"
@@ -225,7 +226,8 @@
                 android:id="@+id/bordersList"
                 android:layout_width="match_parent"
                 android:layout_height="96dip"
-                android:visibility="gone" >
+                android:visibility="gone"
+                android:scrollbars="none" >
 
                 <LinearLayout
                     android:id="@+id/listBorders"
@@ -240,7 +242,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="96dip"
                 android:background="@color/background_main_toolbar"
-                android:visibility="gone" >
+                android:visibility="gone"
+                android:scrollbars="none" >
 
                 <LinearLayout
                     android:id="@+id/listGeometry"
@@ -287,7 +290,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="96dip"
                 android:background="@color/background_main_toolbar"
-                android:visibility="gone" >
+                android:visibility="gone"
+                android:scrollbars="none" >
 
                 <LinearLayout
                     android:id="@+id/listColorsFx"
