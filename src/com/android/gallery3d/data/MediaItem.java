@@ -103,14 +103,6 @@ public abstract class MediaItem extends MediaObject {
         return "";
     }
 
-    public boolean usePanoramaViewer() {
-        return false;
-    }
-
-    public boolean isPanorama360() {
-        return false;
-    }
-
     // Returns width and height of the media item.
     // Returns 0, 0 if the information is not available.
     public abstract int getWidth();
