@@ -108,17 +108,15 @@ public class PanelController implements OnClickListener {
     class UtilityPanel {
         private final Context mContext;
         private final View mView;
-        private final View mCompareView;
         private final TextView mTextView;
         private boolean mSelected = false;
         private String mEffectName = null;
         private int mParameterValue = 0;
         private boolean mShowParameterValue = false;
 
-        public UtilityPanel(Context context, View view, View compareView, View textView) {
+        public UtilityPanel(Context context, View view, View textView) {
             mContext = context;
             mView = view;
-            mCompareView = compareView;
             mTextView = (TextView) textView;
         }
 
@@ -129,14 +127,6 @@ public class PanelController implements OnClickListener {
         public void onNewValue(int value) {
             mParameterValue = value;
             updateText();
-        }
-
-        public void setGeometryEffect(boolean isGeometryEffect) {
-            if (isGeometryEffect) {
-                mCompareView.setVisibility(View.INVISIBLE);
-            } else {
-                mCompareView.setVisibility(View.VISIBLE);
-            }
         }
 
         public void setEffectName(String effectName) {
@@ -152,10 +142,10 @@ public class PanelController implements OnClickListener {
         public void updateText() {
             String apply = mContext.getString(R.string.apply_effect);
             if (mShowParameterValue) {
-                mTextView.setText(Html.fromHtml(apply + "<br/><small>" + mEffectName + "<br/>"
+                mTextView.setText(Html.fromHtml(apply + ": <small>" + mEffectName + " "
                         + mParameterValue + "</small>"));
             } else {
-                mTextView.setText(Html.fromHtml(apply + "<br/><small>" + mEffectName + "</small>"));
+                mTextView.setText(Html.fromHtml(apply + ": <small>" + mEffectName + "</small>"));
             }
         }
 
@@ -255,8 +245,8 @@ public class PanelController implements OnClickListener {
         mRowPanel = rowPanel;
     }
 
-    public void setUtilityPanel(Context context, View utilityPanel, View compareView, View textView) {
-        mUtilityPanel = new UtilityPanel(context, utilityPanel, compareView, textView);
+    public void setUtilityPanel(Context context, View utilityPanel, View textView) {
+        mUtilityPanel = new UtilityPanel(context, utilityPanel, textView);
     }
 
     public void setMasterImage(ImageShow imageShow) {
@@ -398,40 +388,34 @@ public class PanelController implements OnClickListener {
             case R.id.straightenButton: {
                 mCurrentImage = showImageView(R.id.imageStraighten);
                 mUtilityPanel.setEffectName("Straighten");
-                mUtilityPanel.setGeometryEffect(true);
                 break;
             }
             case R.id.cropButton: {
                 mCurrentImage = showImageView(R.id.imageCrop);
                 mUtilityPanel.setEffectName("Crop");
                 mUtilityPanel.showParameter(false);
-                mUtilityPanel.setGeometryEffect(true);
                 break;
             }
             case R.id.rotateButton: {
                 mCurrentImage = showImageView(R.id.imageRotate);
                 mUtilityPanel.setEffectName("Rotate");
-                mUtilityPanel.setGeometryEffect(true);
                 break;
             }
             case R.id.flipButton: {
                 mCurrentImage = showImageView(R.id.imageFlip);
                 mUtilityPanel.setEffectName("Flip");
                 mUtilityPanel.showParameter(false);
-                mUtilityPanel.setGeometryEffect(true);
                 break;
             }
             case R.id.vignetteButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
                 mUtilityPanel.setEffectName("Vignette");
-                mUtilityPanel.setGeometryEffect(false);
                 ensureFilter("Vignette");
                 break;
             }
             case R.id.curvesButtonRGB: {
                 ImageCurves curves = (ImageCurves) showImageView(R.id.imageCurves);
                 mUtilityPanel.setEffectName("Curves");
-                mUtilityPanel.setGeometryEffect(true);
                 curves.setUseRed(true);
                 curves.setUseGreen(true);
                 curves.setUseBlue(true);
@@ -442,68 +426,55 @@ public class PanelController implements OnClickListener {
             case R.id.sharpenButton: {
                 mCurrentImage = showImageView(R.id.imageZoom).setShowControls(true);
                 mUtilityPanel.setEffectName("Sharpen");
-                mUtilityPanel.setGeometryEffect(false);
                 ensureFilter("Sharpen");
                 break;
             }
             case R.id.contrastButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
                 mUtilityPanel.setEffectName("Contrast");
-                mUtilityPanel.setGeometryEffect(false);
                 ensureFilter("Contrast");
                 break;
             }
             case R.id.saturationButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
                 mUtilityPanel.setEffectName("Saturated");
-                mUtilityPanel.setGeometryEffect(false);
                 ensureFilter("Saturated");
                 break;
             }
             case R.id.wbalanceButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(false);
                 mUtilityPanel.setEffectName("White Balance");
-                mUtilityPanel.setGeometryEffect(true);
                 ensureFilter("WBalance");
                 break;
             }
             case R.id.hueButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
                 mUtilityPanel.setEffectName("Hue");
-                mUtilityPanel.setGeometryEffect(false);
                 ensureFilter("Hue");
                 break;
             }
             case R.id.exposureButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
                 mUtilityPanel.setEffectName("Exposure");
-                mUtilityPanel.setGeometryEffect(false);
                 ensureFilter("Exposure");
                 break;
             }
             case R.id.vibranceButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
                 mUtilityPanel.setEffectName("Vibrance");
-                mUtilityPanel.setGeometryEffect(false);
                 ensureFilter("Vibrance");
                 break;
             }
             case R.id.shadowRecoveryButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
                 mUtilityPanel.setEffectName("Shadows");
-                mUtilityPanel.setGeometryEffect(false);
                 ensureFilter("Shadows");
                 break;
             }
             case R.id.redEyeButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
                 mUtilityPanel.setEffectName("Redeye");
-                mUtilityPanel.setGeometryEffect(false);
                 ensureFilter("Redeye");
-                break;
-            }
-            case R.id.resetEffect: {
-                mCurrentImage.resetParameter();
                 break;
             }
             case R.id.applyEffect: {
