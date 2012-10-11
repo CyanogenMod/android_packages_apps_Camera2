@@ -57,6 +57,7 @@ public class GalleryActionBar implements OnNavigationListener {
 
     private AlbumModeAdapter mAlbumModeAdapter;
     private OnAlbumModeSelectedListener mAlbumModeListener;
+    private int mLastAlbumModeSelected;
     private CharSequence [] mAlbumModes;
     public static final int ALBUM_FILMSTRIP_MODE_SELECTED = 0;
     public static final int ALBUM_GRID_MODE_SELECTED = 1;
@@ -254,6 +255,13 @@ public class GalleryActionBar implements OnNavigationListener {
         }
     }
 
+    public void onConfigurationChanged() {
+        if (mActionBar != null && mAlbumModeListener != null) {
+            OnAlbumModeSelectedListener listener = mAlbumModeListener;
+            enableAlbumModeMenu(mLastAlbumModeSelected, listener);
+        }
+    }
+
     public void enableAlbumModeMenu(int selected, OnAlbumModeSelectedListener listener) {
         if (mActionBar != null) {
             if (mAlbumModeAdapter == null) {
@@ -265,6 +273,7 @@ public class GalleryActionBar implements OnNavigationListener {
                 mAlbumModeAdapter = new AlbumModeAdapter();
             }
             mAlbumModeListener = null;
+            mLastAlbumModeSelected = selected;
             mActionBar.setListNavigationCallbacks(mAlbumModeAdapter, this);
             mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
             mActionBar.setSelectedNavigationItem(selected);
