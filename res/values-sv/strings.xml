@@ -140,6 +140,24 @@
     <string name="auto" msgid="4296941368722892821">"Auto"</string>
     <string name="flash_on" msgid="7891556231891837284">"Blixt utlöst"</string>
     <string name="flash_off" msgid="1445443413822680010">"Ingen blixt"</string>
+    <!-- no translation found for ffx_vintage (8348759951363844780) -->
+    <skip />
+    <!-- no translation found for ffx_instant (726968618715691987) -->
+    <skip />
+    <!-- no translation found for ffx_bleach (8946700451603478453) -->
+    <skip />
+    <!-- no translation found for ffx_blue_crush (5910979947224043165) -->
+    <skip />
+    <!-- no translation found for ffx_bw_contrast (3853938816686258406) -->
+    <skip />
+    <!-- no translation found for ffx_punch (1343475517872562639) -->
+    <skip />
+    <!-- no translation found for ffx_x_process (4779398678661811765) -->
+    <skip />
+    <!-- no translation found for ffx_washout (2526099635720493268) -->
+    <skip />
+    <!-- no translation found for ffx_washout_color (3209955210402468008) -->
+    <skip />
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"Gör album tillgängligt offline."</item>
     <item quantity="other" msgid="4948604338155959389">"Gör album tillgängliga offline."</item>
@@ -179,11 +197,15 @@
     <string name="help" msgid="7368960711153618354">"Hjälp"</string>
     <string name="no_external_storage_title" msgid="2408933644249734569">"Ingen lagringsenhet"</string>
     <string name="no_external_storage" msgid="95726173164068417">"Inget externt lagringsutrymme är tillgängligt"</string>
-    <string name="switch_photo_filmstrip" msgid="991949386967109493">"Filmremsa"</string>
-    <string name="switch_photo_grid" msgid="6533267664294518167">"Rutnät"</string>
+    <!-- no translation found for switch_photo_filmstrip (8227883354281661548) -->
+    <skip />
+    <!-- no translation found for switch_photo_grid (3681299459107925725) -->
+    <skip />
     <string name="trimming" msgid="9122385768369143997">"Beskärning"</string>
     <string name="please_wait" msgid="7296066089146487366">"Vänta"</string>
     <string name="save_into" msgid="6688364520925473396">"Spara förkortad video i"</string>
     <string name="trim_too_short" msgid="751593965620665326">"Det gick inte att beskära videon. Målvideon är för kort"</string>
     <string name="trim_too_long" msgid="2657958275279217174">"Det gick inte att beskära videon. Den är lika lång som originalet"</string>
+    <!-- no translation found for pano_progress_text (1586851614586678464) -->
+    <skip />
 </resources>
