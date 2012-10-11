@@ -42,12 +42,12 @@
     <string name="negative" msgid="1985508917342811252">"Негатив"</string>
     <string name="posterize" msgid="4139212359561383385">"Постеризация"</string>
     <string name="redeye" msgid="4958448806369928239">"Красные глаза"</string>
-    <string name="rotate" msgid="6607597269792373083">"Поворот"</string>
+    <string name="rotate" msgid="6607597269792373083">"Повернуть"</string>
     <string name="saturation" msgid="8621322012271169931">"Насыщенность"</string>
     <string name="sepia" msgid="7978093531824705601">"Сепия"</string>
     <string name="shadow" msgid="8235188588101973090">"Затенение"</string>
     <string name="sharpen" msgid="8449662378104403230">"Резкость"</string>
-    <string name="straighten" msgid="5217801513491493491">"Выравнивание"</string>
+    <string name="straighten" msgid="5217801513491493491">"Выровнять"</string>
     <string name="temperature" msgid="1607987938521534517">"Тепло"</string>
     <string name="tint" msgid="154435943863418434">"Оттенок"</string>
     <string name="vignette" msgid="7648125924662648282">"Виньетирование"</string>
