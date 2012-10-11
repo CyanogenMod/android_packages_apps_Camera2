@@ -8,6 +8,7 @@ public class ImageFilterWBalance extends ImageFilter {
     private static final String TAG = "ImageFilterWBalance";
 
     public ImageFilterWBalance() {
+        setFilterType(TYPE_WBALANCE);
         mName = "WBalance";
     }
 

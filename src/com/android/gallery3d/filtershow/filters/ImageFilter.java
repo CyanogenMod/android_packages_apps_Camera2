@@ -8,12 +8,27 @@ public class ImageFilter implements Cloneable {
     protected int mParameter = 0;
     protected String mName = "Original";
     private final String LOGTAG = "ImageFilter";
+    public static final byte TYPE_BORDER =1;
+    public static final byte TYPE_FX  = 2;
+    public static final byte TYPE_WBALANCE = 3;
+    public static final byte TYPE_VIGNETTE = 4;
+    public static final byte TYPE_NORMAL = 5;
+    private byte filterType = TYPE_NORMAL;
+
+    public byte getFilterType(){
+        return filterType;
+    }
+
+    protected void setFilterType(byte type){
+        filterType = type;
+    }
 
     @Override
     public ImageFilter clone() throws CloneNotSupportedException {
         ImageFilter filter = (ImageFilter) super.clone();
         filter.setName(getName());
         filter.setParameter(getParameter());
+        filter.setFilterType(filterType);
         return filter;
     }
 

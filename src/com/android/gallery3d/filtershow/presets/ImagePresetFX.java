@@ -22,7 +22,7 @@ public class ImagePresetFX extends ImagePreset {
 
     public void setup() {
         if (fxBitmap != null) {
-            mFilters.add(new ImageFilterFx(fxBitmap));
+            mFilters.add(new ImageFilterFx(fxBitmap,name));
         }
     }
 

@@ -240,17 +240,20 @@ public class ImageCurves extends ImageSlave {
             applyNewCurve();
             // Log.v(LOGTAG, "ACTION UP, mCurrentControlPoint set to null!");
             mCurrentControlPoint = null;
-            ImagePreset copy = new ImagePreset(getImagePreset());
-
+            String name = null;
             if (mUseRed && mUseGreen && mUseBlue) {
-                copy.setHistoryName("Curves (RGB)");
+                name = "Curves (RGB)";
             } else if (mUseRed) {
-                copy.setHistoryName("Curves (Red)");
+                name = "Curves (Red)";
             } else if (mUseGreen) {
-                copy.setHistoryName("Curves (Green)");
+                name = "Curves (Green)";
             } else if (mUseBlue) {
-                copy.setHistoryName("Curves (Blue)");
+                name = "Curves (Blue)";
             }
+
+
+            ImagePreset copy = new ImagePreset(getImagePreset(),name);
+
             copy.setIsFx(false);
             mImageLoader.getHistory().insert(copy, 0);
 
