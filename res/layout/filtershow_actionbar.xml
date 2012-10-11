@@ -22,4 +22,4 @@
     android:text="@string/save"
     android:gravity="center_vertical"
     android:textSize="18dip"
-    android:drawableLeft="?android:attr/actionModeCloseDrawable" />
+    android:drawableLeft="@drawable/ic_menu_savephoto" />
