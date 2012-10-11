@@ -27,6 +27,7 @@ import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.Path;
+import com.android.gallery3d.ui.BitmapScreenNail;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.ScreenNail;
 import com.android.gallery3d.ui.SynchronizedHandler;
@@ -50,6 +51,7 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
     private PhotoView mPhotoView;
     private ThreadPool mThreadPool;
     private int mLoadingState = LOADING_INIT;
+    private BitmapScreenNail mBitmapScreenNail;
 
     public SinglePhotoDataAdapter(
             AbstractGalleryActivity activity, PhotoView view, MediaItem item) {
@@ -113,6 +115,11 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         return false;
     }
 
+    private void setScreenNail(Bitmap bitmap, int width, int height) {
+        mBitmapScreenNail = new BitmapScreenNail(bitmap);
+        setScreenNail(mBitmapScreenNail, width, height);
+    }
+
     private void onDecodeLargeComplete(ImageBundle bundle) {
         try {
             setScreenNail(bundle.backupImage,
@@ -161,6 +168,10 @@ public class SinglePhotoDataAdapter extends TileImageViewAdapter
         task.waitDone();
         if (task.get() == null) {
             mTask = null;
+        }
+        if (mBitmapScreenNail != null) {
+            mBitmapScreenNail.recycle();
+            mBitmapScreenNail = null;
         }
     }
 
