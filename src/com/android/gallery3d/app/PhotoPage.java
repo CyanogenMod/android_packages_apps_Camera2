@@ -50,6 +50,7 @@ import com.android.gallery3d.data.LocalImage;
 import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
+import com.android.gallery3d.data.MediaObject.SupportedOperationsListener;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.MtpSource;
 import com.android.gallery3d.data.Path;
@@ -94,6 +95,7 @@ public class PhotoPage extends ActivityState implements
     private static final int MSG_ON_PICTURE_CENTER = 10;
     private static final int MSG_REFRESH_IMAGE = 11;
     private static final int MSG_UPDATE_DEFERRED = 12;
+    private static final int MSG_UPDATE_PROGRESS = 13;
 
     private static final int HIDE_BARS_TIMEOUT = 3500;
     private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
@@ -188,6 +190,14 @@ public class PhotoPage extends ActivityState implements
             new MyMenuVisibilityListener();
     private UpdateProgressListener mProgressListener;
 
+    private SupportedOperationsListener mSupportedOperationsListener =
+        new SupportedOperationsListener() {
+            @Override
+            public void onChange(int operations) {
+                mHandler.sendEmptyMessage(MSG_REFRESH_IMAGE);
+            }
+        };
+
     public static interface Model extends PhotoView.Model {
         public void resume();
         public void pause();
@@ -214,24 +224,24 @@ public class PhotoPage extends ActivityState implements
 
         @Override
         public void onStitchingResult(Uri uri) {
-            sendUpdate(uri);
+            sendUpdate(uri, MSG_REFRESH_IMAGE);
         }
 
         @Override
         public void onStitchingQueued(Uri uri) {
-            sendUpdate(uri);
+            sendUpdate(uri, MSG_UPDATE_PROGRESS);
         }
 
         @Override
         public void onStitchingProgress(Uri uri, final int progress) {
-            sendUpdate(uri);
+            sendUpdate(uri, MSG_UPDATE_PROGRESS);
         }
 
-        private void sendUpdate(Uri uri) {
+        private void sendUpdate(Uri uri, int message) {
             boolean isCurrentPhoto = mCurrentPhoto instanceof LocalImage
                     && mCurrentPhoto.getContentUri().equals(uri);
             if (isCurrentPhoto) {
-                mHandler.sendEmptyMessage(MSG_REFRESH_IMAGE);
+                mHandler.sendEmptyMessage(message);
             }
         }
     };
@@ -356,9 +366,11 @@ public class PhotoPage extends ActivityState implements
                         break;
                     }
                     case MSG_REFRESH_IMAGE: {
-                        MediaItem currentPhoto = mCurrentPhoto;
-                        mCurrentPhoto = null;
-                        updateCurrentPhoto(currentPhoto);
+                        updateUIForCurrentPhoto();
+                        break;
+                    }
+                    case MSG_UPDATE_PROGRESS: {
+                        updateProgressBar();
                         break;
                     }
                     default: throw new AssertionError(message.what);
@@ -682,21 +694,30 @@ public class PhotoPage extends ActivityState implements
                 && (mCurrentPhoto.getSupportedOperations() & MediaItem.SUPPORT_SHARE) != 0) {
             updateShareURI(mCurrentPhoto.getPath());
         }
+        updateProgressBar();
     }
 
     private void updateCurrentPhoto(MediaItem photo) {
         if (mCurrentPhoto == photo) return;
+        if (mCurrentPhoto != null) {
+            mCurrentPhoto.setSupportedOperationsListener(null);
+        }
         mCurrentPhoto = photo;
+        mCurrentPhoto.setSupportedOperationsListener(
+                mSupportedOperationsListener);
         if (mPhotoView.getFilmMode()) {
             requestDeferredUpdate();
         } else {
             updateUIForCurrentPhoto();
         }
+    }
+
+    private void updateProgressBar() {
         if (mProgressBar != null) {
             mProgressBar.hideProgress();
             StitchingProgressManager progressManager = mApplication.getStitchingProgressManager();
             if (progressManager != null && mCurrentPhoto instanceof LocalImage) {
-                Integer progress = progressManager.getProgress(photo.getContentUri());
+                Integer progress = progressManager.getProgress(mCurrentPhoto.getContentUri());
                 if (progress != null) {
                     mProgressBar.setProgress(progress);
                 }

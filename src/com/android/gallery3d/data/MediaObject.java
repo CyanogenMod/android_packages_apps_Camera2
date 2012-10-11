@@ -18,6 +18,8 @@ package com.android.gallery3d.data;
 
 import android.net.Uri;
 
+import com.android.gallery3d.util.ThreadPool;
+
 public abstract class MediaObject {
     @SuppressWarnings("unused")
     private static final String TAG = "MediaObject";
@@ -37,13 +39,19 @@ public abstract class MediaObject {
     public static final int SUPPORT_INFO = 1 << 10;
     public static final int SUPPORT_IMPORT = 1 << 11;
     public static final int SUPPORT_TRIM = 1 << 12;
-    public static final int SUPPORT_PANORAMA = 1 << 13;
-    public static final int SUPPORT_PANORAMA360 = 1 << 14;
-    public static final int SUPPORT_UNLOCK = 1 << 15;
-    public static final int SUPPORT_BACK = 1 << 16;
-    public static final int SUPPORT_ACTION = 1 << 17;
-    public static final int SUPPORT_CAMERA_SHORTCUT = 1 << 18;
+    public static final int SUPPORT_UNLOCK = 1 << 13;
+    public static final int SUPPORT_BACK = 1 << 14;
+    public static final int SUPPORT_ACTION = 1 << 15;
+    public static final int SUPPORT_CAMERA_SHORTCUT = 1 << 16;
+    // The panorama specific bits are expensive to compute.
+    // Use SupportedOperationsListener to request them.
+    public static final int SUPPORT_PANORAMA = 1 << 30;
+    public static final int SUPPORT_PANORAMA360 = 1 << 31;
     public static final int SUPPORT_ALL = 0xffffffff;
+
+    public static interface SupportedOperationsListener {
+        public void onChange(int operations);
+    }
 
     // These are the bits returned from getMediaType():
     public static final int MEDIA_TYPE_UNKNOWN = 1;
@@ -72,6 +80,11 @@ public abstract class MediaObject {
 
     protected final Path mPath;
 
+    private static ThreadPool sThreadPool = new ThreadPool(1, 1);
+    public static ThreadPool getThreadPool() {
+        return sThreadPool;
+    }
+
     public MediaObject(Path path, long version) {
         path.setObject(this);
         mPath = path;
@@ -84,6 +97,14 @@ public abstract class MediaObject {
 
     public int getSupportedOperations() {
         return 0;
+    }
+
+    public int getSupportedOperations(boolean getAll) {
+        return 0;
+    }
+
+    public void setSupportedOperationsListener(SupportedOperationsListener l) {
+        // nothing to do
     }
 
     public void delete() {
