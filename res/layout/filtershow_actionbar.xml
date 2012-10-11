@@ -19,7 +19,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/filtershow_button_background"
     android:id="@+id/filtershow_done"
-    android:text="@string/done"
+    android:text="@string/save"
     android:gravity="center_vertical"
     android:textSize="18dip"
     android:drawableLeft="?android:attr/actionModeCloseDrawable" />
