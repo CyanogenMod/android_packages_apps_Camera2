@@ -227,7 +227,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
         int type = 0;
         for (Path path : unexpandedPaths) {
             if (jc.isCancelled()) return 0;
-            int support = manager.getSupportedOperations(path);
+            int support = manager.getSupportedOperations(path, true);
             type |= manager.getMediaType(path);
             operation &= support;
         }
@@ -297,7 +297,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
         final Intent intent = new Intent();
         for (Path path : expandedPaths) {
             if (jc.isCancelled()) return null;
-            int support = manager.getSupportedOperations(path);
+            int support = manager.getSupportedOperations(path, true);
             type |= manager.getMediaType(path);
 
             if ((support & MediaObject.SUPPORT_SHARE) != 0) {
