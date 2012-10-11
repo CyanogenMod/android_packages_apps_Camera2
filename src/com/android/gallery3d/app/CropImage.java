@@ -61,6 +61,7 @@ import com.android.gallery3d.exif.ExifOutputStream;
 import com.android.gallery3d.exif.ExifReader;
 import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.picasasource.PicasaSource;
+import com.android.gallery3d.ui.BitmapScreenNail;
 import com.android.gallery3d.ui.BitmapTileProvider;
 import com.android.gallery3d.ui.CropView;
 import com.android.gallery3d.ui.GLRoot;
@@ -151,6 +152,7 @@ public class CropImage extends AbstractGalleryActivity {
     private BitmapRegionDecoder mRegionDecoder;
     private Bitmap mBitmapInIntent;
     private boolean mUseRegionDecoder = false;
+    private BitmapScreenNail mBitmapScreenNail;
 
     private ProgressDialog mProgressDialog;
     private Future<BitmapRegionDecoder> mLoadTask;
@@ -813,8 +815,14 @@ public class CropImage extends AbstractGalleryActivity {
                 BitmapUtils.UNCONSTRAINED, BACKUP_PIXEL_COUNT);
         mBitmap = regionDecoder.decodeRegion(
                 new Rect(0, 0, width, height), options);
-        mCropView.setDataModel(new TileImageViewAdapter(
-                mBitmap, regionDecoder), mMediaItem.getFullImageRotation());
+
+        mBitmapScreenNail = new BitmapScreenNail(mBitmap);
+
+        TileImageViewAdapter adapter = new TileImageViewAdapter();
+        adapter.setScreenNail(mBitmapScreenNail, width, height);
+        adapter.setRegionDecoder(regionDecoder);
+
+        mCropView.setDataModel(adapter, mMediaItem.getFullImageRotation());
         if (mDoFaceDetection) {
             mCropView.detectFaces(mBitmap);
         } else {
@@ -973,6 +981,15 @@ public class CropImage extends AbstractGalleryActivity {
             mCropView.pause();
         } finally {
             root.unlockRenderThread();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mBitmapScreenNail != null) {
+            mBitmapScreenNail.recycle();
+            mBitmapScreenNail = null;
         }
     }
 

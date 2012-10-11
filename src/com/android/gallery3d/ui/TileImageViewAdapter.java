@@ -40,49 +40,23 @@ public class TileImageViewAdapter implements TileImageView.Model {
     public TileImageViewAdapter() {
     }
 
-    public TileImageViewAdapter(
-            Bitmap bitmap, BitmapRegionDecoder regionDecoder) {
-        Utils.checkNotNull(bitmap);
-        updateScreenNail(new BitmapScreenNail(bitmap), true);
-        mRegionDecoder = regionDecoder;
-        mImageWidth = regionDecoder.getWidth();
-        mImageHeight = regionDecoder.getHeight();
-        mLevelCount = calculateLevelCount();
-    }
-
     public synchronized void clear() {
-        updateScreenNail(null, false);
+        mScreenNail = null;
         mImageWidth = 0;
         mImageHeight = 0;
         mLevelCount = 0;
         mRegionDecoder = null;
     }
 
-    public synchronized void setScreenNail(Bitmap bitmap, int width, int height) {
-        Utils.checkNotNull(bitmap);
-        updateScreenNail(new BitmapScreenNail(bitmap), true);
-        mImageWidth = width;
-        mImageHeight = height;
-        mRegionDecoder = null;
-        mLevelCount = 0;
-    }
-
+    // Caller is responsible to recycle the ScreenNail
     public synchronized void setScreenNail(
             ScreenNail screenNail, int width, int height) {
         Utils.checkNotNull(screenNail);
-        updateScreenNail(screenNail, false);
+        mScreenNail = screenNail;
         mImageWidth = width;
         mImageHeight = height;
         mRegionDecoder = null;
         mLevelCount = 0;
-    }
-
-    private void updateScreenNail(ScreenNail screenNail, boolean own) {
-        if (mScreenNail != null && mOwnScreenNail) {
-            mScreenNail.recycle();
-        }
-        mScreenNail = screenNail;
-        mOwnScreenNail = own;
     }
 
     public synchronized void setRegionDecoder(BitmapRegionDecoder decoder) {
