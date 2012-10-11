@@ -35,6 +35,7 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterBorder;
+import com.android.gallery3d.filtershow.filters.ImageFilterFx;
 import com.android.gallery3d.filtershow.filters.ImageFilterParametricBorder;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.imageshow.ImageBorder;
@@ -392,7 +393,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private void fillListImages(LinearLayout listFilters) {
         // TODO: use listview
         // TODO: load the filters straight from the filesystem
-        ImagePreset[] preset = new ImagePreset[18];
+
+        ImageFilterFx[] fxArray = new ImageFilterFx[18];
         int p = 0;
 
         int[] drawid = {
@@ -419,25 +421,34 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 R.string.ffx_washout_color,
         };
 
-        preset[p++] = new ImagePreset();
+        ImagePreset preset = new ImagePreset(); // empty
+        ImageSmallFilter filter = new ImageSmallFilter(this);
+
+        filter.setSelected(true);
+        mCurrentImageSmallFilter = filter;
+
+        filter.setPreviousImageSmallFilter(null);
+        preset.setIsFx(true);
+        filter.setImagePreset(preset);
+
+        filter.setController(this);
+        filter.setImageLoader(mImageLoader);
+        listFilters.addView(filter);
+        ImageSmallFilter   previousFilter = filter;
+
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
 
         for (int i = 0; i < drawid.length; i++) {
             Bitmap b = BitmapFactory.decodeResource(getResources(), drawid[i], o);
-            preset[p++] = new ImagePresetFX(b, getString(fxNameid[i]));
+            fxArray[p++] = new ImageFilterFx(b, getString(fxNameid[i]));
         }
 
-        ImageSmallFilter previousFilter = null;
         for (int i = 0; i < p; i++) {
-            ImageSmallFilter filter = new ImageSmallFilter(this);
-            if (i == 0) {
-                filter.setSelected(true);
-                mCurrentImageSmallFilter = filter;
-            }
+            filter = new ImageSmallFilter(this);
+
             filter.setPreviousImageSmallFilter(previousFilter);
-            preset[i].setIsFx(true);
-            filter.setImagePreset(preset[i]);
+            filter.setImageFilter(fxArray[i]);
             filter.setController(this);
             filter.setImageLoader(mImageLoader);
             listFilters.addView(filter);
@@ -445,7 +456,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }
 
         // Default preset (original)
-        mImageShow.setImagePreset(preset[0]);
+        mImageShow.setImagePreset(preset);
     }
 
     private void fillListBorders(LinearLayout listBorders) {
@@ -650,12 +661,9 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImagePreset oldPreset = mImageShow.getImagePreset();
         ImagePreset copy = new ImagePreset(oldPreset);
         // TODO: use a numerical constant instead.
-        if (setBorder) {
-            copy.setHistoryName("Border");
-            copy.setBorder(imageFilter);
-        } else {
-            copy.add(imageFilter);
-        }
+
+        copy.add(imageFilter);
+
         mImageShow.setImagePreset(copy);
         invalidateViews();
     }
