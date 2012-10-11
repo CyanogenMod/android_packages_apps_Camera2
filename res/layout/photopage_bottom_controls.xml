@@ -23,7 +23,7 @@
                 android:visibility="gone"/>
         <ImageView
                 android:id="@+id/photopage_bottom_control_panorama"
-                android:src="@drawable/ic_menu_photosphere"
+                android:src="@drawable/ic_view_photosphere"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_centerHorizontal="true"
