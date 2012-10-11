@@ -250,6 +250,12 @@ public class DataManager {
         return getMediaObject(path).getSupportedOperations();
     }
 
+    // getAll will cause this call to wait if any of the operations
+    // are expensive to compute. Do not call in UI thread.
+    public int getSupportedOperations(Path path, boolean getAll) {
+        return getMediaObject(path).getSupportedOperations(getAll);
+    }
+
     public void delete(Path path) {
         getMediaObject(path).delete();
     }

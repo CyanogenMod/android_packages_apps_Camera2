@@ -28,7 +28,10 @@ import android.os.ParcelFileDescriptor;
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.util.Future;
+import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.LightCycleHelper;
+import com.android.gallery3d.util.LightCycleHelper.PanoramaMetadata;
 import com.android.gallery3d.util.ThreadPool.CancelListener;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
@@ -56,10 +59,12 @@ public class UriImage extends MediaItem {
     private int mWidth;
     private int mHeight;
     private int mRotation;
-    private boolean mUsePanoramaViewer;
-    private boolean mUsePanoramaViewerInitialized;
-    private boolean mIsPanorama360;
-    private boolean mIsPanorama360Initialized;
+
+    private Object mLock = new Object();
+    private Future<PanoramaMetadata> mGetPanoMetadataTask;
+    private boolean mPanoramaMetadataInitialized;
+    private PanoramaMetadata mPanoramaMetadata;
+    private SupportedOperationsListener mListener;
 
     private GalleryApp mApplication;
 
@@ -220,15 +225,64 @@ public class UriImage extends MediaItem {
         if (BitmapUtils.isSupportedByRegionDecoder(mContentType)) {
             supported |= SUPPORT_FULL_IMAGE;
         }
-        if (usePanoramaViewer()) {
+        if (mPanoramaMetadata != null && mPanoramaMetadata.mUsePanoramaViewer) {
             supported |= SUPPORT_PANORAMA;
-            if (isPanorama360()) {
+            if (mPanoramaMetadata.mIsPanorama360) {
                 supported |= SUPPORT_PANORAMA360;
                 // disable destructive crop for 360 degree panorama
                 supported &= ~SUPPORT_CROP;
             }
         }
         return supported;
+    }
+
+    @Override
+    public int getSupportedOperations(boolean getAll) {
+        synchronized (mLock) {
+            if (getAll && !mPanoramaMetadataInitialized) {
+                if (mGetPanoMetadataTask == null) {
+                    mGetPanoMetadataTask = getThreadPool().submit(
+                            new PanoramaMetadataJob(mApplication.getAndroidContext(),
+                                getContentUri()));
+                }
+                mPanoramaMetadata = mGetPanoMetadataTask.get();
+                mPanoramaMetadataInitialized = true;
+            }
+        }
+        return getSupportedOperations();
+    }
+
+    @Override
+    public void setSupportedOperationsListener(SupportedOperationsListener l) {
+        synchronized (mLock) {
+            if (mPanoramaMetadataInitialized) return; // no more updates
+
+            if (l != null) {
+                if (mGetPanoMetadataTask != null) {
+                    mGetPanoMetadataTask.cancel();
+                    mGetPanoMetadataTask = null;
+                }
+            } else {
+                if (mGetPanoMetadataTask == null) {
+                    mGetPanoMetadataTask = getThreadPool().submit(
+                            new PanoramaMetadataJob(mApplication.getAndroidContext(),
+                                getContentUri()),
+                            new FutureListener<PanoramaMetadata>() {
+                                @Override
+                        public void onFutureDone(Future<PanoramaMetadata> future) {
+                            mGetPanoMetadataTask = null;
+                            if (future.isCancelled()) return;
+                            mPanoramaMetadata = future.get();
+                            mPanoramaMetadataInitialized = true;
+                            if (mListener != null) {
+                                mListener.onChange(getSupportedOperations());
+                            }
+                        }
+                        });
+                }
+            }
+            mListener = l;
+        }
     }
 
     private boolean isSharable() {
@@ -296,28 +350,5 @@ public class UriImage extends MediaItem {
     @Override
     public int getRotation() {
         return mRotation;
-    }
-
-    @Override
-    public boolean usePanoramaViewer() {
-        if (!mUsePanoramaViewerInitialized) {
-            Context context = mApplication.getAndroidContext();
-            mUsePanoramaViewer = LightCycleHelper.hasLightCycleView(context)
-                    && LightCycleHelper.isPanorama(mApplication.getContentResolver(),
-                            getContentUri());
-            mUsePanoramaViewerInitialized = true;
-        }
-        return mUsePanoramaViewer;
-    }
-
-    @Override
-    public boolean isPanorama360() {
-        // cache flag for faster access
-        if (!mIsPanorama360Initialized) {
-            mIsPanorama360 = LightCycleHelper.isPanorama360(
-                    mApplication.getAndroidContext(), getContentUri());
-            mIsPanorama360Initialized = true;
-        }
-        return mIsPanorama360;
     }
 }

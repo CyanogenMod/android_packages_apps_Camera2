@@ -36,8 +36,11 @@ import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.app.StitchingProgressManager;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.BitmapUtils;
+import com.android.gallery3d.util.Future;
+import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.LightCycleHelper;
+import com.android.gallery3d.util.LightCycleHelper.PanoramaMetadata;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.android.gallery3d.util.UpdateHelper;
@@ -101,11 +104,11 @@ public class LocalImage extends LocalMediaItem {
 
     public int rotation;
 
-    private boolean mUsePanoramaViewer;
-    private boolean mUsePanoramaViewerInitialized;
-
-    private boolean mIsPanorama360;
-    private boolean mIsPanorama360Initialized;
+    private Object mLock = new Object();
+    private Future<PanoramaMetadata> mGetPanoMetadataTask;
+    private boolean mPanoramaMetadataInitialized;
+    private PanoramaMetadata mPanoramaMetadata;
+    private SupportedOperationsListener mListener;
 
     public LocalImage(Path path, GalleryApp application, Cursor cursor) {
         super(path, nextVersionNumber());
@@ -255,15 +258,64 @@ public class LocalImage extends LocalMediaItem {
             operation |= SUPPORT_SHOW_ON_MAP;
         }
 
-        if (usePanoramaViewer()) {
+        if (mPanoramaMetadata != null && mPanoramaMetadata.mUsePanoramaViewer) {
             operation |= SUPPORT_PANORAMA;
-            if (isPanorama360()) {
+            if (mPanoramaMetadata.mIsPanorama360) {
                 operation |= SUPPORT_PANORAMA360;
                 // disable destructive rotate and crop for 360 degree panorama
                 operation &= ~(SUPPORT_ROTATE | SUPPORT_CROP);
             }
         }
         return operation;
+    }
+
+    @Override
+    public int getSupportedOperations(boolean getAll) {
+        synchronized (mLock) {
+            if (getAll && !mPanoramaMetadataInitialized) {
+                if (mGetPanoMetadataTask == null) {
+                    mGetPanoMetadataTask = getThreadPool().submit(
+                            new PanoramaMetadataJob(mApplication.getAndroidContext(),
+                                getContentUri()));
+                }
+                mPanoramaMetadata = mGetPanoMetadataTask.get();
+                mPanoramaMetadataInitialized = true;
+            }
+        }
+        return getSupportedOperations();
+    }
+
+    @Override
+    public void setSupportedOperationsListener(SupportedOperationsListener l) {
+        synchronized (mLock) {
+            if (mPanoramaMetadataInitialized) return; // no more updates
+
+            if (l == null) {
+                if (mGetPanoMetadataTask != null) {
+                    mGetPanoMetadataTask.cancel();
+                    mGetPanoMetadataTask = null;
+                }
+            } else {
+                if (mGetPanoMetadataTask == null) {
+                    mGetPanoMetadataTask = getThreadPool().submit(
+                            new PanoramaMetadataJob(mApplication.getAndroidContext(),
+                                getContentUri()),
+                            new FutureListener<PanoramaMetadata>() {
+                                @Override
+                        public void onFutureDone(Future<PanoramaMetadata> future) {
+                            mGetPanoMetadataTask = null;
+                            if (future.isCancelled()) return;
+                            mPanoramaMetadata = future.get();
+                            mPanoramaMetadataInitialized = true;
+                            if (mListener != null) {
+                                mListener.onChange(getSupportedOperations());
+                            }
+                        }
+                        });
+                        }
+            }
+            mListener = l;
+        }
     }
 
     @Override
@@ -359,28 +411,5 @@ public class LocalImage extends LocalMediaItem {
     @Override
     public String getFilePath() {
         return filePath;
-    }
-
-    @Override
-    public boolean usePanoramaViewer() {
-        if (!mUsePanoramaViewerInitialized) {
-            Context context = mApplication.getAndroidContext();
-            mUsePanoramaViewer = LightCycleHelper.hasLightCycleView(context)
-                    && LightCycleHelper.isPanorama(mApplication.getContentResolver(),
-                            getContentUri());
-            mUsePanoramaViewerInitialized = true;
-        }
-        return mUsePanoramaViewer;
-    }
-
-    @Override
-    public boolean isPanorama360() {
-        // cache flag for faster access
-        if (!mIsPanorama360Initialized) {
-            mIsPanorama360 = LightCycleHelper.isPanorama360(
-                    mApplication.getAndroidContext(), getContentUri());
-            mIsPanorama360Initialized = true;
-        }
-        return mIsPanorama360;
     }
 }
