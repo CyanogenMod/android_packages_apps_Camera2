@@ -93,6 +93,7 @@ public class PhotoPage extends ActivityState implements
     private static final int MSG_ON_CAMERA_CENTER = 9;
     private static final int MSG_ON_PICTURE_CENTER = 10;
     private static final int MSG_REFRESH_IMAGE = 11;
+    private static final int MSG_UPDATE_DEFERRED = 12;
 
     private static final int HIDE_BARS_TIMEOUT = 3500;
     private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
@@ -168,6 +169,10 @@ public class PhotoPage extends ActivityState implements
     private long mCameraSwitchCutoff = 0;
     private boolean mSkipUpdateCurrentPhoto = false;
     private static final long CAMERA_SWITCH_CUTOFF_THRESHOLD_MS = 300;
+
+    private static final long DEFERRED_UPDATE_MS = 150;
+    private boolean mDeferredUpdateWaiting = false;
+    private long mDeferUpdateUntil = Long.MAX_VALUE;
 
     private RawTexture mFadeOutTexture;
     private Rect mOpenAnimationRect;
@@ -314,6 +319,16 @@ public class PhotoPage extends ActivityState implements
                         mActivity.getGLRoot().unfreeze();
                         break;
                     }
+                    case MSG_UPDATE_DEFERRED: {
+                        long nextUpdate = mDeferUpdateUntil - SystemClock.uptimeMillis();
+                        if (nextUpdate <= 0) {
+                            mDeferredUpdateWaiting = false;
+                            updateUIForCurrentPhoto();
+                        } else {
+                            mHandler.sendEmptyMessageDelayed(MSG_UPDATE_DEFERRED, nextUpdate);
+                        }
+                        break;
+                    }
                     case MSG_ON_CAMERA_CENTER: {
                         mSkipUpdateCurrentPhoto = false;
                         boolean stayedOnCamera = false;
@@ -334,7 +349,7 @@ public class PhotoPage extends ActivityState implements
                         break;
                     }
                     case MSG_ON_PICTURE_CENTER: {
-                        if (mCurrentPhoto != null
+                        if (!mPhotoView.getFilmMode() && mCurrentPhoto != null
                                 && (mCurrentPhoto.getSupportedOperations() & MediaObject.SUPPORT_ACTION) != 0) {
                             mPhotoView.setFilmMode(true);
                         }
@@ -639,15 +654,21 @@ public class PhotoPage extends ActivityState implements
         setNfcBeamPushUri(uri);
     }
 
-    private void updateCurrentPhoto(MediaItem photo) {
-        if (mCurrentPhoto == photo) return;
-        mCurrentPhoto = photo;
+    private void requestDeferredUpdate() {
+        mDeferUpdateUntil = SystemClock.uptimeMillis() + DEFERRED_UPDATE_MS;
+        if (!mDeferredUpdateWaiting) {
+            mDeferredUpdateWaiting = true;
+            mHandler.sendEmptyMessageDelayed(MSG_UPDATE_DEFERRED, DEFERRED_UPDATE_MS);
+        }
+    }
+
+    private void updateUIForCurrentPhoto() {
         if (mCurrentPhoto == null) return;
 
         // If by swiping or deletion the user ends up on an action item
         // and zoomed in, zoom out so that the context of the action is
         // more clear
-        if ((photo.getSupportedOperations() & MediaObject.SUPPORT_ACTION) != 0
+        if ((mCurrentPhoto.getSupportedOperations() & MediaObject.SUPPORT_ACTION) != 0
                 && !mPhotoView.getFilmMode()) {
             mPhotoView.setWantPictureCenterCallbacks(true);
         }
@@ -658,8 +679,18 @@ public class PhotoPage extends ActivityState implements
             mDetailsHelper.reloadDetails();
         }
         if ((mSecureAlbum == null)
-                && (photo.getSupportedOperations() & MediaItem.SUPPORT_SHARE) != 0) {
-            updateShareURI(photo.getPath());
+                && (mCurrentPhoto.getSupportedOperations() & MediaItem.SUPPORT_SHARE) != 0) {
+            updateShareURI(mCurrentPhoto.getPath());
+        }
+    }
+
+    private void updateCurrentPhoto(MediaItem photo) {
+        if (mCurrentPhoto == photo) return;
+        mCurrentPhoto = photo;
+        if (mPhotoView.getFilmMode()) {
+            requestDeferredUpdate();
+        } else {
+            updateUIForCurrentPhoto();
         }
         if (mProgressBar != null) {
             mProgressBar.hideProgress();
