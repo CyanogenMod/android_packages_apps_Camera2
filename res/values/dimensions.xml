@@ -26,7 +26,7 @@
     <dimen name="albumset_padding_bottom">7dp</dimen>
     <dimen name="albumset_slot_gap">7dp</dimen>
 
-    <dimen name="albumset_label_background_height">25dp</dimen>
+    <dimen name="albumset_label_background_height">30dp</dimen>
     <dimen name="albumset_title_offset">10dp</dimen>
     <dimen name="albumset_count_offset">10dp</dimen>
     <dimen name="albumset_title_font_size">12sp</dimen>
