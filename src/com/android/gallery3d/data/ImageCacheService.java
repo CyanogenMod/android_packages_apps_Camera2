@@ -91,6 +91,18 @@ public class ImageCacheService {
         }
     }
 
+    public void clearImageData(Path path, int type) {
+        byte[] key = makeKey(path, type);
+        long cacheKey = Utils.crc64Long(key);
+        synchronized (mCache) {
+            try {
+                mCache.clearEntry(cacheKey);
+            } catch (IOException ex) {
+                // ignore.
+            }
+        }
+    }
+
     private static byte[] makeKey(Path path, int type) {
         return GalleryUtils.getBytes(path.toString() + "+" + type);
     }
