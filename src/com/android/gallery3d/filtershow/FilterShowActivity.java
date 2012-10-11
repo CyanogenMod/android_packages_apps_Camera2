@@ -211,11 +211,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addComponent(mColorsButton, findViewById(R.id.exposureButton));
         mPanelController.addComponent(mColorsButton, findViewById(R.id.shadowRecoveryButton));
 
-        mPanelController.addView(findViewById(R.id.resetEffect));
         mPanelController.addView(findViewById(R.id.applyEffect));
-
-        findViewById(R.id.compareWithOriginalImage).setOnTouchListener(
-                createOnTouchShowOriginalButton());
 
         findViewById(R.id.resetOperationsButton).setOnClickListener(
                 createOnClickResetOperationsButton());
@@ -236,7 +232,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageZoom.setSeekBar(seekBar);
         mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
         mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList),
-                findViewById(R.id.compareWithOriginalImage),
                 findViewById(R.id.applyEffect));
         mPanelController.setMasterImage(mImageShow);
         mPanelController.setCurrentPanel(mFxButton);
@@ -526,23 +521,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }
     }
 
-    // //////////////////////////////////////////////////////////////////////////////
-    // Click handlers for the top row buttons
-
-    private OnTouchListener createOnTouchShowOriginalButton() {
-        return new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                boolean show = false;
-                if ((event.getActionMasked() != MotionEvent.ACTION_UP)
-                        || (event.getActionMasked() == MotionEvent.ACTION_CANCEL)) {
-                    show = true;
-                }
-                showOriginalViews(show);
-                return true;
-            }
-        };
-    }
 
     // //////////////////////////////////////////////////////////////////////////////
     // imageState panel...
