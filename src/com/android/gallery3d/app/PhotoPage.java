@@ -467,7 +467,7 @@ public class PhotoPage extends ActivityState implements
                     int oldIndex = mCurrentIndex;
                     mCurrentIndex = index;
 
-                    if (mAppBridge != null) {
+                    if (mInCameraRoll) {
                         if (mCurrentIndex > 0) {
                             mSkipUpdateCurrentPhoto = false;
                         }
