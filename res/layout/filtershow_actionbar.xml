@@ -22,4 +22,5 @@
     android:text="@string/save"
     android:gravity="center_vertical"
     android:textSize="18dip"
-    android:drawableLeft="@drawable/ic_menu_savephoto" />
+    android:drawableLeft="@drawable/ic_menu_savephoto"
+    android:drawablePadding="4dip" />
