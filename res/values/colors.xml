@@ -19,9 +19,9 @@
     <!-- configuration for album set page -->
     <color name="albumset_background">#1A1A1A</color>
     <color name="albumset_placeholder">#333</color>
-    <color name="albumset_label_background">#414143</color>
+    <color name="albumset_label_background">#EE414143</color>
     <color name="albumset_label_title">#FBFBFB</color>
-    <color name="albumset_label_count">#717173</color>
+    <color name="albumset_label_count">#A9ABAD</color>
 
     <!-- configuration for album page -->
     <color name="album_background">#1A1A1A</color>
