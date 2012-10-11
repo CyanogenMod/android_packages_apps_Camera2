@@ -17,6 +17,7 @@ public class ImageFilterBorder extends ImageFilter {
     }
 
     public ImageFilterBorder(Drawable ninePatch) {
+        setFilterType(TYPE_BORDER);
         mName = "Border";
         mNinePatch = ninePatch;
     }
