@@ -279,9 +279,6 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
             canvas.drawText(getImagePreset().name(), mTextPadding,
                     10 + mTextPadding, mPaint);
         }
-        mPaint.setARGB(255, 150, 150, 150);
-        mPaint.setStrokeWidth(4);
-        canvas.drawLine(0, 0, getWidth(), 0, mPaint);
 
         if (showControls()) {
             if (USE_SLIDER_GESTURE) {
