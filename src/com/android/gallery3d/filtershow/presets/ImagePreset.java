@@ -35,6 +35,11 @@ public class ImagePreset {
         setup();
     }
 
+    public ImagePreset(ImagePreset source, String historyName) {
+        this(source);
+        if (historyName!=null) setHistoryName(historyName);
+    }
+
     public ImagePreset(ImagePreset source) {
         try {
             if (source.mImageBorder != null) {
@@ -57,7 +62,7 @@ public class ImagePreset {
         mGeoData.set(m);
     }
 
-    public void setBorder(ImageFilter filter) {
+    private void setBorder(ImageFilter filter) {
         mImageBorder = filter;
     }
 
@@ -74,7 +79,7 @@ public class ImagePreset {
         mHistoryName = name;
     }
 
-    public void setHistoryName(String name) {
+    private void setHistoryName(String name) {
         mHistoryName = name;
     }
 
@@ -117,7 +122,32 @@ public class ImagePreset {
     }
 
     public void add(ImageFilter filter) {
-        mFilters.add(filter);
+        if (filter.getFilterType() == ImageFilter.TYPE_BORDER){
+            setHistoryName("Border");
+            setBorder(filter);
+        } else if (filter.getFilterType() == ImageFilter.TYPE_FX){
+            Vector<ImageFilter> fl = mFilters;
+            boolean found = false;
+            for (int i = 0; i < mFilters.size(); i++) {
+                byte type = fl.get(i).getFilterType();
+                if (found) {
+                    if (type != ImageFilter.TYPE_VIGNETTE){
+                        fl.remove(i);
+                    }
+                } else  if (type==ImageFilter.TYPE_FX){
+                    fl.remove(i);
+                    fl.add(i, filter);
+                    setHistoryName(filter.getName());
+                    found = true;
+                }
+
+            }
+            mFilters.add(filter);
+            setHistoryName(filter.getName());
+        } else {
+            mFilters.add(filter);
+            setHistoryName(filter.getName());
+        }
     }
 
     public void remove(String filterName) {
