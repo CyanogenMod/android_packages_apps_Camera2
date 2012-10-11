@@ -127,10 +127,10 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
             GLCanvas canvas, int index, AlbumSetEntry entry, int width, int height) {
         int renderRequestFlags = 0;
         if (entry.album != null && entry.album.isCameraRoll()) {
-            int minDim = Math.min(width, height);
-            int dim = minDim / 2;
-            int pos = (minDim - dim) / 2;
-            mCameraOverlay.draw(canvas, pos, pos, dim, dim);
+            int uncoveredHeight = height - mLabelSpec.labelBackgroundHeight;
+            int dim = uncoveredHeight / 2;
+            mCameraOverlay.draw(canvas, (width - dim) / 2,
+                    (uncoveredHeight - dim) / 2, dim, dim);
         }
         if (mPressedIndex == index) {
             if (mAnimatePressedUp) {
