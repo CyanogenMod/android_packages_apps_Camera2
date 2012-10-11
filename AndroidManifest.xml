@@ -240,7 +240,7 @@
         <activity
             android:name="com.android.gallery3d.filtershow.FilterShowActivity"
             android:label="@string/title_activity_filter_show"
-             android:theme="@android:style/Theme.Holo"
+             android:theme="@style/Theme.Gallery"
              android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />
