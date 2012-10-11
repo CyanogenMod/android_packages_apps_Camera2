@@ -49,8 +49,7 @@ final class Config {
             slotViewSpec.rowsLand = r.getInteger(R.integer.albumset_rows_land);
             slotViewSpec.rowsPort = r.getInteger(R.integer.albumset_rows_port);
             slotViewSpec.slotGap = r.getDimensionPixelSize(R.dimen.albumset_slot_gap);
-            slotViewSpec.slotHeightAdditional = r.getDimensionPixelSize(
-                    R.dimen.albumset_label_background_height);
+            slotViewSpec.slotHeightAdditional = 0;
 
             paddingTop = r.getDimensionPixelSize(R.dimen.albumset_padding_top);
             paddingBottom = r.getDimensionPixelSize(R.dimen.albumset_padding_bottom);
