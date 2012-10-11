@@ -500,4 +500,6 @@
     <!-- Text to show with progress bar while stitching in Gallery -->
     <string name="pano_progress_text">Rendering panorama</string>
 
+    <!-- The label on the button that will save an edited image -->
+    <string name="save" msgid="8140440041190264400">Save</string>
 </resources>
