@@ -21,10 +21,8 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
@@ -51,14 +49,6 @@ import com.android.gallery3d.filtershow.imageshow.ImageSmallFilter;
 import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
 import com.android.gallery3d.filtershow.imageshow.ImageZoom;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
-import com.android.gallery3d.filtershow.presets.ImagePresetBW;
-import com.android.gallery3d.filtershow.presets.ImagePresetBWBlue;
-import com.android.gallery3d.filtershow.presets.ImagePresetBWGreen;
-import com.android.gallery3d.filtershow.presets.ImagePresetBWRed;
-import com.android.gallery3d.filtershow.presets.ImagePresetFX;
-import com.android.gallery3d.filtershow.presets.ImagePresetOld;
-import com.android.gallery3d.filtershow.presets.ImagePresetSaturated;
-import com.android.gallery3d.filtershow.presets.ImagePresetXProcessing;
 import com.android.gallery3d.filtershow.provider.SharedImageProvider;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.filtershow.ui.ImageCurves;
@@ -78,7 +68,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private ImageBorder mImageBorders = null;
     private ImageStraighten mImageStraighten = null;
     private ImageZoom mImageZoom = null;
-    private ImageCrop mImageCrop = null;
+    private final ImageCrop mImageCrop = null;
     private ImageRotate mImageRotate = null;
     private ImageFlip mImageFlip = null;
 
@@ -140,7 +130,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageBorders = (ImageBorder) findViewById(R.id.imageBorder);
         mImageStraighten = (ImageStraighten) findViewById(R.id.imageStraighten);
         mImageZoom = (ImageZoom) findViewById(R.id.imageZoom);
-        mImageCrop = (ImageCrop) findViewById(R.id.imageCrop);
+        // TODO: implement crop
+        // mImageCrop = (ImageCrop) findViewById(R.id.imageCrop);
         mImageRotate = (ImageRotate) findViewById(R.id.imageRotate);
         mImageFlip = (ImageFlip) findViewById(R.id.imageFlip);
 
@@ -149,7 +140,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageViews.add(mImageBorders);
         mImageViews.add(mImageStraighten);
         mImageViews.add(mImageZoom);
-        mImageViews.add(mImageCrop);
+        // TODO: implement crop
+        // mImageViews.add(mImageCrop);
         mImageViews.add(mImageRotate);
         mImageViews.add(mImageFlip);
 
@@ -178,8 +170,9 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageStraighten.setMaster(mImageShow);
         mImageZoom.setImageLoader(mImageLoader);
         mImageZoom.setMaster(mImageShow);
-        mImageCrop.setImageLoader(mImageLoader);
-        mImageCrop.setMaster(mImageShow);
+        // TODO: implement crop
+        // mImageCrop.setImageLoader(mImageLoader);
+        // mImageCrop.setMaster(mImageShow);
         mImageRotate.setImageLoader(mImageLoader);
         mImageRotate.setMaster(mImageShow);
         mImageFlip.setImageLoader(mImageLoader);
@@ -189,7 +182,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addImageView(findViewById(R.id.imageCurves));
         mPanelController.addImageView(findViewById(R.id.imageBorder));
         mPanelController.addImageView(findViewById(R.id.imageStraighten));
-        mPanelController.addImageView(findViewById(R.id.imageCrop));
+        // TODO: implement crop
+        // mPanelController.addImageView(findViewById(R.id.imageCrop));
         mPanelController.addImageView(findViewById(R.id.imageRotate));
         mPanelController.addImageView(findViewById(R.id.imageFlip));
         mPanelController.addImageView(findViewById(R.id.imageZoom));
@@ -199,7 +193,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         mPanelController.addPanel(mGeometryButton, mListGeometry, 2);
         mPanelController.addComponent(mGeometryButton, findViewById(R.id.straightenButton));
-        mPanelController.addComponent(mGeometryButton, findViewById(R.id.cropButton));
+        // TODO: implement crop
+//        mPanelController.addComponent(mGeometryButton, findViewById(R.id.cropButton));
         mPanelController.addComponent(mGeometryButton, findViewById(R.id.rotateButton));
         mPanelController.addComponent(mGeometryButton, findViewById(R.id.flipButton));
 

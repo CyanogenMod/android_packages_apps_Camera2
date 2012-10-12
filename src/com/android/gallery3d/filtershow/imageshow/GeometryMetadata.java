@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.imageshow;
 
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.RectF;
 
 import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
@@ -32,13 +33,17 @@ public class GeometryMetadata {
     // Applied in order: rotate, crop, scale.
     // Do not scale saved image (presumably?).
     private static final ImageFilterGeometry mImageFilter = new ImageFilterGeometry();
-    private float mScaleFactor = 0;
+    private float mScaleFactor = 1.0f;
     private float mRotation = 0;
     private float mStraightenRotation = 0;
     private final RectF mCropBounds = new RectF();
     private final RectF mPhotoBounds = new RectF();
     private FLIP mFlip = FLIP.NONE;
     private boolean mSafe = false;
+
+    private Matrix mMatrix = new Matrix();
+
+    private RectF mBounds = new RectF();
 
     public enum FLIP {
         NONE, VERTICAL, HORIZONTAL, BOTH
@@ -54,25 +59,7 @@ public class GeometryMetadata {
     public Bitmap apply(Bitmap original, float scaleFactor, boolean highQuality){
         mImageFilter.setGeometryMetadata(this);
         Bitmap m = mImageFilter.apply(original, scaleFactor, highQuality);
-        mPhotoBounds.set(0,0, m.getWidth(), m.getHeight());
-        mCropBounds.set(mPhotoBounds);
-        mScaleFactor = 0;
-        mRotation = 0;
-        mStraightenRotation = 0;
-        mFlip = FLIP.NONE;
-        mSafe = false;
         return m;
-    }
-
-    public GeometryMetadata(float scale, float rotation, float straighten, RectF cropBounds,
-            RectF photoBounds, FLIP flipType) {
-        mScaleFactor = scale;
-        mRotation = rotation;
-        mStraightenRotation = straighten;
-        mCropBounds.set(cropBounds);
-        mPhotoBounds.set(photoBounds);
-        mFlip = flipType;
-        mSafe = cropFitsInPhoto(mCropBounds);
     }
 
     // Safe as long as invariant holds.
@@ -84,34 +71,8 @@ public class GeometryMetadata {
         mPhotoBounds.set(g.mPhotoBounds);
         mFlip = g.mFlip;
         mSafe = g.mSafe;
-    }
-
-    public void safeSet(GeometryMetadata g) {
-        if (g.safe()) {
-            set(g);
-            return;
-        }
-
-        mScaleFactor = g.mScaleFactor;
-        mRotation = g.mRotation;
-        mStraightenRotation = g.mStraightenRotation;
-        mCropBounds.set(g.mCropBounds);
-        safeSetPhotoBounds(g.mPhotoBounds);
-        mFlip = g.mFlip;
-    }
-
-    public void safeSet(float scale,
-            float rotation,
-            float straighten,
-            RectF cropBounds,
-            RectF photoBounds,
-            FLIP flipType) {
-        mScaleFactor = scale;
-        mStraightenRotation = straighten;
-        mRotation = rotation;
-        mCropBounds.set(cropBounds);
-        safeSetPhotoBounds(photoBounds);
-        mFlip = flipType;
+        mMatrix = g.mMatrix;
+        mBounds = g.mBounds;
     }
 
     public float getScaleFactor() {
@@ -236,4 +197,38 @@ public class GeometryMetadata {
                 + ",photoRect=" + mPhotoBounds.toShortString() + "]";
     }
 
+    protected Matrix getHorizontalMatrix(float width) {
+        Matrix flipHorizontalMatrix = new Matrix();
+        flipHorizontalMatrix.setScale(-1, 1);
+        flipHorizontalMatrix.postTranslate(width, 0);
+        return flipHorizontalMatrix;
+    }
+
+    protected Matrix getVerticalMatrix(float height) {
+        Matrix flipVerticalMatrix = new Matrix();
+        flipVerticalMatrix.setScale(1, -1);
+        flipVerticalMatrix.postTranslate(0, height);
+        return flipVerticalMatrix;
+    }
+
+    public Matrix getFlipMatrix(float width, float height) {
+        FLIP type = getFlipType();
+        if (type == FLIP.HORIZONTAL) {
+            return getHorizontalMatrix(width);
+        } else if (type == FLIP.VERTICAL) {
+            return getVerticalMatrix(height);
+        } else if (type == FLIP.BOTH) {
+            Matrix flipper = getVerticalMatrix(height);
+            flipper.postConcat(getHorizontalMatrix(width));
+            return flipper;
+        } else {
+            Matrix m = new Matrix();
+            m.reset(); // identity
+            return m;
+        }
+    }
+
+    public Matrix getMatrix() {
+        return mMatrix;
+    }
 }
