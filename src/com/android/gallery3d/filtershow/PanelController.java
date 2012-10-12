@@ -142,10 +142,10 @@ public class PanelController implements OnClickListener {
         public void updateText() {
             String apply = mContext.getString(R.string.apply_effect);
             if (mShowParameterValue) {
-                mTextView.setText(Html.fromHtml(apply + ": " + mEffectName + " "
+                mTextView.setText(Html.fromHtml(apply + " " + mEffectName + " "
                         + mParameterValue));
             } else {
-                mTextView.setText(Html.fromHtml(apply + ": " + mEffectName));
+                mTextView.setText(Html.fromHtml(apply + " " + mEffectName));
             }
         }
 
