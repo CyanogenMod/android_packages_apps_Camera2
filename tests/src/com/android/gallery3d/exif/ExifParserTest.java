@@ -16,21 +16,18 @@
 
 package com.android.gallery3d.exif;
 
-import android.content.res.XmlResourceParser;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ExifParserTest extends ExifXmlDataTestCase {
     private static final String TAG = "ExifParserTest";
 
-    private HashMap<Short, String> mIfd0Value = new HashMap<Short, String>();
-    private HashMap<Short, String> mIfd1Value = new HashMap<Short, String>();
-    private HashMap<Short, String> mExifIfdValue = new HashMap<Short, String>();
-    private HashMap<Short, String> mInteroperabilityIfdValue = new HashMap<Short, String>();
+    private List<Map<Short, String>> mGroundTruth;
 
     private InputStream mImageInputStream;
 
@@ -43,12 +40,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         mImageInputStream = getInstrumentation()
                 .getContext().getResources().openRawResource(mImageResourceId);
 
-        XmlResourceParser parser =
-                getInstrumentation().getContext().getResources().getXml(mXmlResourceId);
-
-        ExifXmlReader.readXml(parser, mIfd0Value, mIfd1Value, mExifIfdValue
-                , mInteroperabilityIfdValue);
-        parser.close();
+        mGroundTruth = ExifXmlReader.readXml(getInstrumentation().getContext(), mXmlResourceId);
     }
 
     public void testParse() throws IOException, ExifInvalidFormatException {
@@ -80,33 +72,25 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         }
     }
 
-    private void checkTag(ExifTag tag) {
-        HashMap<Short, String> truth = null;
-        switch (tag.getIfd()) {
-            case IfdId.TYPE_IFD_0:
-                truth = mIfd0Value;
-                break;
-            case IfdId.TYPE_IFD_1:
-                truth = mIfd1Value;
-                break;
-            case IfdId.TYPE_IFD_EXIF:
-                truth = mExifIfdValue;
-                break;
-            case IfdId.TYPE_IFD_INTEROPERABILITY:
-                truth = mInteroperabilityIfdValue;
-                break;
-        }
 
-        String truthString = truth.get(tag.getTagId());
-        String dataString = tag.valueToString().trim();
+    private void checkTag(ExifTag tag) {
+        // Ignore offset tags since the ground-truth from exiftool doesn't have it.
+        // We can verify it by examining the sub-IFD or thumbnail itself.
+        if (ExifTag.isSubIfdOffsetTag(tag.getTagId())) return;
+
+        String truthString = mGroundTruth.get(tag.getIfd()).get(tag.getTagId());
+
         if (truthString == null) {
             fail(String.format("Unknown Tag %02x", tag.getTagId()));
         }
+
+        String dataString = tag.valueToString().trim();
         assertEquals(String.format("Tag %02x", tag.getTagId()), truthString, dataString);
     }
 
-    private void parseOneIfd(int ifd, int options, HashMap<Short, String> expectedResult)
+    private void parseOneIfd(int ifd, int options)
             throws IOException, ExifInvalidFormatException {
+        Map<Short, String> expectedResult = mGroundTruth.get(ifd);
         int numOfTag = 0;
         ExifParser parser = ExifParser.parse(mImageInputStream, options);
         int event = parser.next();
@@ -116,8 +100,8 @@ public class ExifParserTest extends ExifXmlDataTestCase {
                     assertEquals(ifd, parser.getCurrentIfd());
                     break;
                 case ExifParser.EVENT_NEW_TAG:
-                    numOfTag++;
                     ExifTag tag = parser.getTag();
+                    if (!ExifTag.isSubIfdOffsetTag(tag.getTagId())) numOfTag++;
                     if (tag.hasValue()) {
                         checkTag(tag);
                     } else {
@@ -144,20 +128,19 @@ public class ExifParserTest extends ExifXmlDataTestCase {
     }
 
     public void testOnlyExifIfd() throws IOException, ExifInvalidFormatException {
-        parseOneIfd(IfdId.TYPE_IFD_EXIF, ExifParser.OPTION_IFD_EXIF, mExifIfdValue);
+        parseOneIfd(IfdId.TYPE_IFD_EXIF, ExifParser.OPTION_IFD_EXIF);
     }
 
     public void testOnlyIfd0() throws IOException, ExifInvalidFormatException {
-        parseOneIfd(IfdId.TYPE_IFD_0, ExifParser.OPTION_IFD_0, mIfd0Value);
+        parseOneIfd(IfdId.TYPE_IFD_0, ExifParser.OPTION_IFD_0);
     }
 
     public void testOnlyIfd1() throws IOException, ExifInvalidFormatException {
-        parseOneIfd(IfdId.TYPE_IFD_1, ExifParser.OPTION_IFD_1, mIfd1Value);
+        parseOneIfd(IfdId.TYPE_IFD_1, ExifParser.OPTION_IFD_1);
     }
 
     public void testOnlyInteroperabilityIfd() throws IOException, ExifInvalidFormatException {
-        parseOneIfd(IfdId.TYPE_IFD_INTEROPERABILITY, ExifParser.OPTION_IFD_INTEROPERABILITY
-                , mInteroperabilityIfdValue);
+        parseOneIfd(IfdId.TYPE_IFD_INTEROPERABILITY, ExifParser.OPTION_IFD_INTEROPERABILITY);
     }
 
     public void testOnlyReadSomeTag() throws IOException, ExifInvalidFormatException {
@@ -227,8 +210,6 @@ public class ExifParserTest extends ExifXmlDataTestCase {
     @Override
     protected void tearDown() throws IOException {
         mImageInputStream.close();
-        mIfd0Value.clear();
-        mIfd1Value.clear();
-        mExifIfdValue.clear();
+        mGroundTruth.clear();
     }
 }
