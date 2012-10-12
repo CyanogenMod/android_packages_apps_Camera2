@@ -142,10 +142,10 @@ public class PanelController implements OnClickListener {
         public void updateText() {
             String apply = mContext.getString(R.string.apply_effect);
             if (mShowParameterValue) {
-                mTextView.setText(Html.fromHtml(apply + ": <small>" + mEffectName + " "
-                        + mParameterValue + "</small>"));
+                mTextView.setText(Html.fromHtml(apply + ": " + mEffectName + " "
+                        + mParameterValue));
             } else {
-                mTextView.setText(Html.fromHtml(apply + ": <small>" + mEffectName + "</small>"));
+                mTextView.setText(Html.fromHtml(apply + ": " + mEffectName));
             }
         }
 
@@ -386,35 +386,41 @@ public class PanelController implements OnClickListener {
         switch (view.getId()) {
             case R.id.straightenButton: {
                 mCurrentImage = showImageView(R.id.imageStraighten);
-                mUtilityPanel.setEffectName("Straighten");
+                String ename = mCurrentImage.getContext().getString(R.string.straighten);
+                mUtilityPanel.setEffectName(ename);
                 break;
             }
             case R.id.cropButton: {
                 mCurrentImage = showImageView(R.id.imageCrop);
-                mUtilityPanel.setEffectName("Crop");
+                String ename = mCurrentImage.getContext().getString(R.string.crop);
+                mUtilityPanel.setEffectName(ename);
                 mUtilityPanel.showParameter(false);
                 break;
             }
             case R.id.rotateButton: {
                 mCurrentImage = showImageView(R.id.imageRotate);
-                mUtilityPanel.setEffectName("Rotate");
+                String ename = mCurrentImage.getContext().getString(R.string.rotate);
+                mUtilityPanel.setEffectName(ename);
                 break;
             }
             case R.id.flipButton: {
                 mCurrentImage = showImageView(R.id.imageFlip);
-                mUtilityPanel.setEffectName("Flip");
+                String ename = mCurrentImage.getContext().getString(R.string.flip);
+                mUtilityPanel.setEffectName(ename);
                 mUtilityPanel.showParameter(false);
                 break;
             }
             case R.id.vignetteButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
-                mUtilityPanel.setEffectName("Vignette");
+                String ename = mCurrentImage.getContext().getString(R.string.vignette);
+                mUtilityPanel.setEffectName(ename);
                 ensureFilter("Vignette");
                 break;
             }
             case R.id.curvesButtonRGB: {
                 ImageCurves curves = (ImageCurves) showImageView(R.id.imageCurves);
-                mUtilityPanel.setEffectName("Curves");
+                String ename = mCurrentImage.getContext().getString(R.string.curvesRGB);
+                mUtilityPanel.setEffectName(ename);
                 curves.setUseRed(true);
                 curves.setUseGreen(true);
                 curves.setUseBlue(true);
@@ -424,55 +430,64 @@ public class PanelController implements OnClickListener {
             }
             case R.id.sharpenButton: {
                 mCurrentImage = showImageView(R.id.imageZoom).setShowControls(true);
-                mUtilityPanel.setEffectName("Sharpen");
+                String ename = mCurrentImage.getContext().getString(R.string.sharpen);
+                mUtilityPanel.setEffectName(ename);
                 ensureFilter("Sharpen");
                 break;
             }
             case R.id.contrastButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
-                mUtilityPanel.setEffectName("Contrast");
+                String ename = mCurrentImage.getContext().getString(R.string.contrast);
+                mUtilityPanel.setEffectName(ename);
                 ensureFilter("Contrast");
                 break;
             }
             case R.id.saturationButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
-                mUtilityPanel.setEffectName("Saturated");
+                String ename = mCurrentImage.getContext().getString(R.string.saturation);
+                mUtilityPanel.setEffectName(ename);
                 ensureFilter("Saturated");
                 break;
             }
             case R.id.wbalanceButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(false);
-                mUtilityPanel.setEffectName("White Balance");
+                String ename = mCurrentImage.getContext().getString(R.string.wbalance);
+                mUtilityPanel.setEffectName(ename);
                 ensureFilter("WBalance");
                 break;
             }
             case R.id.hueButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
-                mUtilityPanel.setEffectName("Hue");
+                String ename = mCurrentImage.getContext().getString(R.string.hue);
+                mUtilityPanel.setEffectName(ename);
                 ensureFilter("Hue");
                 break;
             }
             case R.id.exposureButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
-                mUtilityPanel.setEffectName("Exposure");
+                String ename = mCurrentImage.getContext().getString(R.string.exposure);
+                mUtilityPanel.setEffectName(ename);
                 ensureFilter("Exposure");
                 break;
             }
             case R.id.vibranceButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
-                mUtilityPanel.setEffectName("Vibrance");
+                String ename = mCurrentImage.getContext().getString(R.string.vibrance);
+                mUtilityPanel.setEffectName(ename);
                 ensureFilter("Vibrance");
                 break;
             }
             case R.id.shadowRecoveryButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
-                mUtilityPanel.setEffectName("Shadows");
+                String ename = mCurrentImage.getContext().getString(R.string.shadow_recovery);
+                mUtilityPanel.setEffectName(ename);
                 ensureFilter("Shadows");
                 break;
             }
             case R.id.redEyeButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
-                mUtilityPanel.setEffectName("Redeye");
+                String ename = mCurrentImage.getContext().getString(R.string.redeye);
+                mUtilityPanel.setEffectName(ename);
                 ensureFilter("Redeye");
                 break;
             }
