@@ -36,9 +36,17 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterBorder;
+import com.android.gallery3d.filtershow.filters.ImageFilterContrast;
+import com.android.gallery3d.filtershow.filters.ImageFilterExposure;
 import com.android.gallery3d.filtershow.filters.ImageFilterFx;
+import com.android.gallery3d.filtershow.filters.ImageFilterHue;
 import com.android.gallery3d.filtershow.filters.ImageFilterParametricBorder;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
+import com.android.gallery3d.filtershow.filters.ImageFilterSaturated;
+import com.android.gallery3d.filtershow.filters.ImageFilterShadows;
+import com.android.gallery3d.filtershow.filters.ImageFilterVibrance;
+import com.android.gallery3d.filtershow.filters.ImageFilterVignette;
+import com.android.gallery3d.filtershow.filters.ImageFilterWBalance;
 import com.android.gallery3d.filtershow.imageshow.ImageBorder;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageFlip;
@@ -47,6 +55,7 @@ import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.ImageSmallBorder;
 import com.android.gallery3d.filtershow.imageshow.ImageSmallFilter;
 import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
+import com.android.gallery3d.filtershow.imageshow.ImageWithIcon;
 import com.android.gallery3d.filtershow.imageshow.ImageZoom;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.provider.SharedImageProvider;
@@ -124,6 +133,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         LinearLayout listFilters = (LinearLayout) findViewById(R.id.listFilters);
         LinearLayout listBorders = (LinearLayout) findViewById(R.id.listBorders);
+        LinearLayout listColors = (LinearLayout) findViewById(R.id.listColorsFx);
 
         mImageShow = (ImageShow) findViewById(R.id.imageShow);
         mImageCurves = (ImageCurves) findViewById(R.id.imageCurves);
@@ -199,7 +209,84 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addComponent(mGeometryButton, findViewById(R.id.flipButton));
 
         mPanelController.addPanel(mColorsButton, mListColors, 3);
-        mPanelController.addComponent(mColorsButton, findViewById(R.id.vignetteButton));
+
+        int []recastIDs = {
+                R.id.vignetteButton,
+                R.id.vibranceButton,
+                R.id.contrastButton,
+                R.id.saturationButton,
+                R.id.wbalanceButton,
+                R.id.hueButton,
+                R.id.exposureButton,
+                R.id.shadowRecoveryButton
+        };
+        ImageFilter []filters = {
+                new ImageFilterVignette(),
+                new ImageFilterVibrance(),
+                new ImageFilterContrast(),
+                new ImageFilterSaturated(),
+                new ImageFilterWBalance(),
+                new ImageFilterHue(),
+                new ImageFilterExposure(),
+                new ImageFilterShadows()
+        };
+
+
+        for (int i = 0; i < filters.length; i++) {
+
+            ImageSmallFilter fView = new ImageSmallFilter(this);
+            View v = listColors.findViewById(recastIDs[i]);
+            int pos = listColors.indexOfChild(v);
+            listColors.removeView(v);
+
+            filters[i].setParameter(100);
+            fView.setImageFilter(filters[i]);
+            fView.setController(this);
+            fView.setImageLoader(mImageLoader);
+            fView.setId(recastIDs[i]);
+
+            mPanelController.addComponent(mColorsButton, fView);
+            listColors.addView(fView,pos);
+        }
+
+        int []overlayIDs = {
+                R.id.sharpenButton,
+                R.id.curvesButtonRGB
+        };
+        int []overlayBitmaps = {
+                R.drawable.filtershow_button_colors_sharpen,
+                R.drawable.filtershow_button_colors_curve
+        };
+        int []overlayNames = {
+                R.string.sharpen,
+                R.string.curvesRGB
+        };
+
+        for (int i = 0; i < overlayIDs.length; i++)  {
+            ImageWithIcon fView = new ImageWithIcon(this);
+            View v = listColors.findViewById(overlayIDs[i]);
+            int pos = listColors.indexOfChild(v);
+            listColors.removeView(v);
+            final int sid =overlayNames[i];
+            ImageFilterExposure efilter = new ImageFilterExposure(){
+                {
+                    mName = getString(sid);
+                }
+            };
+            efilter.setParameter(-300);
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+                    overlayBitmaps[i] );
+
+            fView.setIcon(bitmap);
+            fView.setImageFilter(efilter);
+            fView.setController(this);
+            fView.setImageLoader(mImageLoader);
+            fView.setId(overlayIDs[i]);
+
+            mPanelController.addComponent(mColorsButton, fView);
+            listColors.addView(fView,pos);
+        }
+
         mPanelController.addComponent(mColorsButton, findViewById(R.id.curvesButtonRGB));
         mPanelController.addComponent(mColorsButton, findViewById(R.id.sharpenButton));
         mPanelController.addComponent(mColorsButton, findViewById(R.id.vibranceButton));
