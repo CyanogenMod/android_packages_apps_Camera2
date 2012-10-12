@@ -255,8 +255,6 @@ public class UriImage extends MediaItem {
     @Override
     public void setSupportedOperationsListener(SupportedOperationsListener l) {
         synchronized (mLock) {
-            if (mPanoramaMetadataInitialized) return; // no more updates
-
             if (l != null) {
                 if (mGetPanoMetadataTask != null) {
                     mGetPanoMetadataTask.cancel();
