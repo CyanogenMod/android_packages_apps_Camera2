@@ -74,6 +74,7 @@ import java.io.RandomAccessFile;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Arrays;
 import java.util.zip.Adler32;
 
 public class BlobCache implements Closeable {
@@ -379,6 +380,16 @@ public class BlobCache implements Closeable {
         updateIndexHeader();
     }
 
+    public void clearEntry(long key) throws IOException {
+        if (!lookupInternal(key, mActiveHashStart)) {
+            return; // Nothing to clear
+        }
+        byte[] header = mBlobHeader;
+        Arrays.fill(header, (byte) 0);
+        mActiveDataFile.seek(mFileOffset);
+        mActiveDataFile.write(header);
+    }
+
     // Appends the data to the active file. It also updates the hash entry.
     // The proper hash entry (suitable for insertion or replacement) must be
     // pointed by mSlotOffset.
@@ -485,6 +496,9 @@ public class BlobCache implements Closeable {
                 return false;
             }
             long blobKey = readLong(header, BH_KEY);
+            if (blobKey == 0) {
+                return false; // This entry has been cleared.
+            }
             if (blobKey != req.key) {
                 Log.w(TAG, "blob key does not match: " + blobKey);
                 return false;
