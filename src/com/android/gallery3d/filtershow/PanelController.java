@@ -131,12 +131,12 @@ public class PanelController implements OnClickListener {
 
         public void setEffectName(String effectName) {
             mEffectName = effectName;
-            showParameter(true);
-            updateText();
+            setShowParameter(true);
         }
 
-        public void showParameter(boolean s) {
+        public void setShowParameter(boolean s) {
             mShowParameterValue = s;
+            updateText();
         }
 
         public void updateText() {
@@ -234,7 +234,7 @@ public class PanelController implements OnClickListener {
     }
 
     public void showParameter(boolean s) {
-        mUtilityPanel.showParameter(s);
+        mUtilityPanel.setShowParameter(s);
     }
 
     public void setCurrentPanel(View panel) {
@@ -410,7 +410,7 @@ public class PanelController implements OnClickListener {
                 mCurrentImage = showImageView(R.id.imageFlip);
                 String ename = mCurrentImage.getContext().getString(R.string.flip);
                 mUtilityPanel.setEffectName(ename);
-                mUtilityPanel.showParameter(false);
+                mUtilityPanel.setShowParameter(false);
                 break;
             }
             case R.id.vignetteButton: {
@@ -424,6 +424,7 @@ public class PanelController implements OnClickListener {
                 ImageCurves curves = (ImageCurves) showImageView(R.id.imageCurves);
                 String ename = mCurrentImage.getContext().getString(R.string.curvesRGB);
                 mUtilityPanel.setEffectName(ename);
+                mUtilityPanel.setShowParameter(false);
                 curves.setUseRed(true);
                 curves.setUseGreen(true);
                 curves.setUseBlue(true);
@@ -456,6 +457,7 @@ public class PanelController implements OnClickListener {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(false);
                 String ename = mCurrentImage.getContext().getString(R.string.wbalance);
                 mUtilityPanel.setEffectName(ename);
+                mUtilityPanel.setShowParameter(false);
                 ensureFilter("WBalance");
                 break;
             }
