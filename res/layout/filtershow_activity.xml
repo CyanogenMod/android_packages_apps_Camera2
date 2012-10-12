@@ -187,6 +187,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
+                    android:textAllCaps="true"
                     android:gravity="center"
                     android:text="@string/apply_effect"
                     android:textSize="24dip" />
