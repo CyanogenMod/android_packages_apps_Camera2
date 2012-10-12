@@ -81,8 +81,12 @@ public class ThreadPool {
     private final Executor mExecutor;
 
     public ThreadPool() {
+        this(CORE_POOL_SIZE, MAX_POOL_SIZE);
+    }
+
+    public ThreadPool(int initPoolSize, int maxPoolSize) {
         mExecutor = new ThreadPoolExecutor(
-                CORE_POOL_SIZE, MAX_POOL_SIZE, KEEP_ALIVE_TIME,
+                initPoolSize, maxPoolSize, KEEP_ALIVE_TIME,
                 TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
                 new PriorityThreadFactory("thread-pool",
                 android.os.Process.THREAD_PRIORITY_BACKGROUND));
