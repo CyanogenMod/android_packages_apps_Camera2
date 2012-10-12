@@ -61,11 +61,12 @@ public class ImageLoader {
         mHiresCache = new DelayedPresetCache(this, 2);
     }
 
-    public void loadBitmap(Uri uri) {
+    public void loadBitmap(Uri uri,int size) {
         mUri = uri;
         mOrientation = getOrientation(uri);
+
         mOriginalBitmapSmall = loadScaledBitmap(uri, 160);
-        mOriginalBitmapLarge = loadScaledBitmap(uri, 320);
+        mOriginalBitmapLarge = loadScaledBitmap(uri, size);
         updateBitmaps();
     }
 
@@ -179,6 +180,7 @@ public class ImageLoader {
             // decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = scale;
+
             closeStream(is);
             is = mContext.getContentResolver().openInputStream(uri);
             return BitmapFactory.decodeStream(is, null, o2);
