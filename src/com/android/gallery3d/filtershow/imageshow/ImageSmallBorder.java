@@ -18,7 +18,7 @@ public class ImageSmallBorder extends ImageSmallFilter {
     protected final int mSelectedBackgroundColor = Color.WHITE;
     protected final int mInnerBorderColor = Color.BLACK;
     protected final int mInnerBorderWidth = 2;
-    protected final float mImageScaleFactor = 2.5f;
+    protected final float mImageScaleFactor = 3.5f;
 
     public ImageSmallBorder(Context context) {
         super(context);
