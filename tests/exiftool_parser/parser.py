@@ -1,0 +1,66 @@
+#!/usr/bin/env python
+#
+# This parser parses the output from Phil Harvey's exiftool (version 9.02)
+# and convert it to xml format. It reads exiftool's output from stdin and
+# write the xml format to stdout.
+#
+# In order to get the raw infomation from exiftool, we need to enable the verbose
+# flag (-v2) of exiftool.
+#
+# Usage:
+#      exiftool -v2 img.jpg | ./parser.py >> output.xml
+#
+#
+
+import os
+import sys
+import re
+
+text = sys.stdin.read()
+
+print """<?xml version="1.0" encoding="utf-8"?>"""
+print "<exif>"
+
+# find the following two groups of string:
+#
+# 1. tag:
+#
+# x) name = value
+#      - Tag 0x1234
+#
+# 2. IFD indicator:
+#
+# + [xxx directory with xx entries]
+#
+p = re.compile(
+        "(^.*?[0-9]\).*? = .*?\n.*?- Tag 0x[0-9a-f]{4})|(\+ \[.*? directory with [0-9]+ entries]$)"
+        , re.M)
+tags = p.findall(text)
+
+for s in tags:
+    if s[1]:
+        ifd = s[1][3:].split()[0]
+    else:
+        s = s[0]
+        # find the raw value in the parenthesis
+        p = re.compile("\(.*\)\n")
+        value = p.search(s)
+        if value:
+            value = value.group(0)[1:-2]
+        else:
+            p = re.compile("=.*\n")
+            value = p.search(s)
+            value = value.group(0)[2:-1]
+
+        # find the ID
+        p = re.compile("0x[0-9a-f]{4}")
+        _id = p.search(s)
+        _id = _id.group(0)
+
+        # find the name
+        p = re.compile("[0-9]*?\).*? = ")
+        name = p.search(s)
+        name = name.group(0)[4:-3]
+        print ('    <tag ifd="' + ifd + '" id="'
+            + _id + '" name="' + name +'">' + value + "</tag>")
+print "</exif>"
