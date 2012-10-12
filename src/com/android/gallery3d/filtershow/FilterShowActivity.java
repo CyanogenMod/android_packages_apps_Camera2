@@ -712,6 +712,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         };
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mPanelController.onBackPressed()) {
+            finish();
+        }
+    }
     // //////////////////////////////////////////////////////////////////////////////
 
     public float getPixelsFromDip(float value) {
