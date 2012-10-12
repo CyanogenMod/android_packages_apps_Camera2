@@ -18,7 +18,6 @@ public class ImageFilterWBalance extends ImageFilter {
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        Log.v(TAG,"White Balance Call");
         nativeApplyFilter(bitmap, w, h, -1,-1);
         return bitmap;
     }
