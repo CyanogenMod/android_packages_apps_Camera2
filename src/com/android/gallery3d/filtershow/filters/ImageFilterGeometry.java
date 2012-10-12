@@ -18,14 +18,10 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.util.Log;
 
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
-import com.android.gallery3d.filtershow.imageshow.GeometryMetadata.FLIP;
-import com.android.gallery3d.filtershow.imageshow.ImageGeometry;
 
 public class ImageFilterGeometry extends ImageFilter {
     private final Bitmap.Config mConfig = Bitmap.Config.ARGB_8888;
@@ -65,99 +61,45 @@ public class ImageFilterGeometry extends ImageFilter {
     native protected void nativeApplyFilterStraighten(Bitmap src, int srcWidth, int srcHeight,
             Bitmap dst, int dstWidth, int dstHeight, float straightenAngle);
 
-    @Override
-    public Bitmap apply(Bitmap originalBitmap, float scaleFactor, boolean highQuality) {
-        Rect cropBounds = new Rect();
-        Rect originalBounds = new Rect();
-        FLIP flipType = mGeometry.getFlipType();
-        float rAngle = mGeometry.getRotation();
-        float sAngle = mGeometry.getStraightenRotation();
-        mGeometry.getCropBounds().roundOut(cropBounds);
-        mGeometry.getPhotoBounds().roundOut(originalBounds);
-        boolean flip = flipType != FLIP.NONE;
-        boolean rotate = rAngle != 0;
-        boolean crop = !cropBounds.equals(originalBounds);
-        boolean straighten = sAngle != 0;
+    public Matrix buildMatrix(Bitmap bitmap, boolean rotated) {
+        Matrix drawMatrix = new Matrix();
+        float dx = bitmap.getWidth() / 2.0f;
+        float dy = bitmap.getHeight() / 2.0f;
 
-        int jniFlipType = 0;
-        switch (flipType) {
-            case BOTH:
-                jniFlipType = BOTH;
-                break;
-            case VERTICAL:
-                jniFlipType = VERTICAL;
-                break;
-            case HORIZONTAL:
-                jniFlipType = HORIZONTAL;
-                break;
-            default:
-                jniFlipType = 0;
-                break;
+        Matrix flipper = mGeometry.getFlipMatrix(bitmap.getWidth(), bitmap.getHeight());
+        drawMatrix.postConcat(flipper);
+        drawMatrix.postTranslate(-dx, -dy);
+        drawMatrix.postScale(1.0f / mGeometry.getScaleFactor(), 1.0f / mGeometry.getScaleFactor());
+        float angle = (mGeometry.getRotation() + mGeometry.getStraightenRotation());
+        drawMatrix.postRotate(angle);
+        if (rotated) {
+            drawMatrix.postTranslate(dy, dx);
+        } else {
+            drawMatrix.postTranslate(dx, dy);
         }
-        int bmWidth = originalBitmap.getWidth();
-        int bmHeight = originalBitmap.getHeight();
-        if (!(flip || rotate || crop || straighten)) {
-            return originalBitmap;
+        return drawMatrix;
+    }
+
+    @Override
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        // TODO: implement bilinear or bicubic here... for now, just use
+        // canvas to do a simple implementation...
+        // TODO: and be more memory efficient! (do it in native?)
+
+        Bitmap temp = null;
+        float rotation = mGeometry.getRotation();
+        boolean rotated = false;
+        if (rotation == 0 || rotation % 180 == 0) {
+            temp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), mConfig);
+        } else {
+            temp = Bitmap.createBitmap(bitmap.getHeight(), bitmap.getWidth(), mConfig);
+            rotated = true;
         }
-        if (originalBounds.width() != bmWidth || originalBounds.height() != bmHeight) {
-            if (LOGV)
-                Log.v(LOGTAG, "PHOTOBOUNDS WIDTH/HEIGHT NOT SAME AS BITMAP WIDTH/HEIGHT");
-            return originalBitmap;
-        }
-        Bitmap modBitmap = originalBitmap;
-        Rect modifiedBounds = new Rect(originalBounds);
-        if (flip) {
-            modBitmap = originalBitmap.copy(mConfig, true);
-            nativeApplyFilterFlip(originalBitmap, bmWidth, bmHeight, modBitmap,
-                    bmWidth, bmHeight, jniFlipType);
-        }
-        if (rotate) {
-            // Fails for non-90 degree rotations
-            Bitmap modBitmapRotate = null;
-            rAngle %= 360;
-            int deg = (int) (rAngle / 90);
-            deg = -deg;  // Make CCW positive
-            if (deg < 0)
-                deg += 4;
-            // Now deg is in [1, 3] as required by native rotate
-            if (deg == ONE_EIGHTY) {
-                modBitmapRotate = Bitmap.createBitmap(bmWidth, bmHeight, mConfig);
-                nativeApplyFilterRotate(modBitmap, bmWidth, bmHeight, modBitmapRotate,
-                        bmWidth, bmHeight, deg);
-                modifiedBounds = new Rect(0, 0, bmWidth, bmHeight);
-            } else if (deg == TWO_SEVENTY || deg == NINETY) {
-                modBitmapRotate = Bitmap.createBitmap(bmHeight, bmWidth, mConfig);
-                nativeApplyFilterRotate(modBitmap, bmWidth, bmHeight, modBitmapRotate,
-                        bmHeight, bmWidth, deg);
-                modifiedBounds = new Rect(0, 0, bmHeight, bmWidth);
-            }
-            modBitmap = modBitmapRotate;
-        }
-        if (straighten) {
-            Rect straightenBounds = new Rect();
-            ImageGeometry.getUntranslatedStraightenCropBounds(new RectF(modifiedBounds), sAngle)
-                    .roundOut(straightenBounds);
-            Bitmap modBitmapStraighten = Bitmap.createBitmap(straightenBounds.width(),
-                    straightenBounds.height(), mConfig);
-            nativeApplyFilterStraighten(modBitmap, modifiedBounds.width(), modifiedBounds.height(),
-                    modBitmapStraighten,
-                    straightenBounds.width(), straightenBounds.height(),
-                    mGeometry.getStraightenRotation());
-            modifiedBounds = straightenBounds;
-            modBitmap = modBitmapStraighten;
-        }
-        if (crop) {
-            Bitmap modBitmapCrop = Bitmap.createBitmap(cropBounds.width(), cropBounds.height(),
-                    mConfig);
-            // Force crop bounds to be within straighten bounds.
-            if (!modifiedBounds.intersect(cropBounds)) {
-                return modBitmap;
-            }
-            nativeApplyFilterCrop(modBitmap, bmWidth, bmHeight, modBitmapCrop,
-                    cropBounds.width(), cropBounds.height(), cropBounds.left, cropBounds.top);
-            modBitmap = modBitmapCrop;
-        }
-        return modBitmap;
+
+        Matrix drawMatrix = buildMatrix(bitmap, rotated);
+        Canvas canvas = new Canvas(temp);
+        canvas.drawBitmap(bitmap, drawMatrix, new Paint());
+        return temp;
     }
 
 }

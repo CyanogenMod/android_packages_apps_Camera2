@@ -79,7 +79,7 @@ public class ImagePreset {
         mHistoryName = name;
     }
 
-    private void setHistoryName(String name) {
+    public void setHistoryName(String name) {
         mHistoryName = name;
     }
 

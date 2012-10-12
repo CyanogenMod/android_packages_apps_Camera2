@@ -19,9 +19,7 @@ package com.android.gallery3d.filtershow.imageshow;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 
@@ -125,55 +123,7 @@ public class ImageFlip extends ImageGeometry {
         gPaint.setFilterBitmap(true);
         gPaint.setDither(true);
         gPaint.setARGB(255, 255, 255, 255);
-
-        FLIP flip = mNextFlip;
-        canvas.save();
-        float zoom = getLocalScale();
-        canvas.rotate(getTotalLocalRotation(), mCenterX, mCenterY);
-        canvas.scale(zoom, zoom, mCenterX, mCenterY);
-        canvas.translate(mXOffset, mYOffset);
-        if (flip == FLIP.HORIZONTAL) {
-            Matrix flipper = getHorizontalMatrix(image.getWidth());
-            canvas.drawBitmap(image, flipper, gPaint);
-        } else if (flip == FLIP.VERTICAL) {
-            Matrix flipper = getVerticalMatrix(image.getHeight());
-            canvas.drawBitmap(image, flipper, gPaint);
-        } else if (flip == FLIP.BOTH) {
-            Matrix flipper = getVerticalMatrix(image.getHeight());
-            flipper.postConcat(getHorizontalMatrix(image.getWidth()));
-            canvas.drawBitmap(image, flipper, gPaint);
-        } else {
-            canvas.drawBitmap(image, 0, 0, gPaint);
-        }
-        canvas.restore();
-
-        RectF cropBounds = getCropBoundsDisplayed(getLocalCropBounds());
-
-        Matrix m0 = new Matrix();
-        m0.setRotate(getLocalRotation(), mCenterX, mCenterY);
-        float[] corners = getCornersFromRect(cropBounds);
-        m0.mapPoints(corners);
-        gPaint.setARGB(255, 255, 255, 255);
-        // TODO: pull out style to xml
-        gPaint.setStrokeWidth(3);
-        gPaint.setStyle(Paint.Style.STROKE);
-        drawClosedPath(canvas, gPaint, corners);
-
-        canvas.save();
-        canvas.rotate(getLocalRotation(), mCenterX, mCenterY);
-        RectF displayRect = getLocalDisplayBounds();
-        float dWidth = displayRect.width();
-        float dHeight = displayRect.height();
-        RectF boundsRect = cropBounds;
-        gPaint.setARGB(128, 0, 0, 0);
-        gPaint.setStyle(Paint.Style.FILL);
-        canvas.drawRect(0, 0, dWidth, boundsRect.top, gPaint);
-        canvas.drawRect(0, boundsRect.bottom, dWidth, dHeight, gPaint);
-        canvas.drawRect(0, boundsRect.top, boundsRect.left, boundsRect.bottom,
-                gPaint);
-        canvas.drawRect(boundsRect.right, boundsRect.top, dWidth,
-                boundsRect.bottom, gPaint);
-        canvas.rotate(-getLocalRotation(), mCenterX, mCenterY);
-        canvas.restore();
+        drawTransformedBitmap(canvas, image, gPaint, false);
     }
+
 }
