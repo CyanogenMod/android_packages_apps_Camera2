@@ -57,6 +57,7 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     private boolean mDirtyGeometry = true;
 
     private Bitmap mBackgroundImage = null;
+ // TODO: remove protected here, it should be private
     protected Bitmap mForegroundImage = null;
     protected Bitmap mFilteredImage = null;
 
@@ -232,7 +233,7 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
         return mImagePreset;
     }
 
-    public Bitmap getOriginalFrontBitmap() {
+    protected Bitmap getOriginalFrontBitmap() {
         if (mImageLoader != null) {
             return mImageLoader.getOriginalBitmapLarge();
         }
@@ -393,7 +394,7 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
         }
     }
 
-    protected void setDirtyGeometryFlag() {
+    private void setDirtyGeometryFlag() {
         mDirtyGeometry = true;
     }
 
@@ -410,6 +411,11 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
             return;
         float w = image.getWidth();
         float h = image.getHeight();
+        GeometryMetadata geo = getImagePreset().mGeoData;
+        RectF pb = geo.getPhotoBounds();
+        if (w == pb.width() && h == pb.height()) {
+            return;
+        }
         RectF r = new RectF(0, 0, w, h);
         getImagePreset().mGeoData.setPhotoBounds(r);
         getImagePreset().mGeoData.setCropBounds(r);
@@ -419,6 +425,7 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     public void updateImage() {
         mForegroundImage = getOriginalFrontBitmap();
         imageSizeChanged(mForegroundImage); // TODO: should change to filtered
+        setDirtyGeometryFlag();
     }
 
     public void updateFilteredImage(Bitmap bitmap) {
