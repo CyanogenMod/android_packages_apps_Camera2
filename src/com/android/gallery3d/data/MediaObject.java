@@ -50,7 +50,7 @@ public abstract class MediaObject {
     public static final int SUPPORT_ALL = 0xffffffff;
 
     public static interface SupportedOperationsListener {
-        public void onChange(int operations);
+        public void onChange(MediaObject item, int operations);
     }
 
     // These are the bits returned from getMediaType():
