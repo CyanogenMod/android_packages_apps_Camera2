@@ -22,13 +22,6 @@ import android.graphics.RectF;
 
 import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
 
-/**
- * This class holds metadata about an image's geometry. Specifically: rotation,
- * scaling, cropping, and image boundaries. It maintains the invariant that the
- * cropping boundaries are within or equal to the image boundaries (before
- * rotation) WHEN mSafe is true.
- */
-
 public class GeometryMetadata {
     // Applied in order: rotate, crop, scale.
     // Do not scale saved image (presumably?).
@@ -39,9 +32,7 @@ public class GeometryMetadata {
     private final RectF mCropBounds = new RectF();
     private final RectF mPhotoBounds = new RectF();
     private FLIP mFlip = FLIP.NONE;
-    private boolean mSafe = false;
 
-    private Matrix mMatrix = new Matrix();
 
     private RectF mBounds = new RectF();
 
@@ -62,7 +53,6 @@ public class GeometryMetadata {
         return m;
     }
 
-    // Safe as long as invariant holds.
     public void set(GeometryMetadata g) {
         mScaleFactor = g.mScaleFactor;
         mRotation = g.mRotation;
@@ -70,8 +60,6 @@ public class GeometryMetadata {
         mCropBounds.set(g.mCropBounds);
         mPhotoBounds.set(g.mPhotoBounds);
         mFlip = g.mFlip;
-        mSafe = g.mSafe;
-        mMatrix = g.mMatrix;
         mBounds = g.mBounds;
     }
 
@@ -99,9 +87,6 @@ public class GeometryMetadata {
         return new RectF(mPhotoBounds);
     }
 
-    public boolean safe() {
-        return mSafe;
-    }
 
     public void setScaleFactor(float scale) {
         mScaleFactor = scale;
@@ -119,41 +104,12 @@ public class GeometryMetadata {
         mStraightenRotation = straighten;
     }
 
-    /**
-     * Sets crop bounds to be the intersection of mPhotoBounds and the new crop
-     * bounds. If there was no intersection, returns false and does not set crop
-     * bounds
-     */
-    public boolean safeSetCropBounds(RectF newCropBounds) {
-        if (mCropBounds.setIntersect(newCropBounds, mPhotoBounds)) {
-            mSafe = true;
-            return true;
-        }
-        return false;
-    }
-
     public void setCropBounds(RectF newCropBounds) {
         mCropBounds.set(newCropBounds);
-        mSafe = false;
-    }
-
-    /**
-     * Sets mPhotoBounds to be the new photo bounds and sets mCropBounds to be
-     * the intersection of the new photo bounds and the old crop bounds. Sets
-     * the crop bounds to mPhotoBounds if there is no intersection.
-     */
-
-    public void safeSetPhotoBounds(RectF newPhotoBounds) {
-        mPhotoBounds.set(newPhotoBounds);
-        if (!mCropBounds.intersect(mPhotoBounds)) {
-            mCropBounds.set(mPhotoBounds);
-        }
-        mSafe = true;
     }
 
     public void setPhotoBounds(RectF newPhotoBounds) {
         mPhotoBounds.set(newPhotoBounds);
-        mSafe = false;
     }
 
     public boolean cropFitsInPhoto(RectF cropBounds) {
@@ -171,7 +127,7 @@ public class GeometryMetadata {
         return (mScaleFactor == d.mScaleFactor &&
                 mRotation == d.mRotation &&
                 mStraightenRotation == d.mStraightenRotation &&
-                mFlip == d.mFlip && mSafe == d.mSafe &&
+                mFlip == d.mFlip &&
                 mCropBounds.equals(d.mCropBounds) && mPhotoBounds.equals(d.mPhotoBounds));
     }
 
@@ -184,15 +140,13 @@ public class GeometryMetadata {
         result = 31 * result + mFlip.hashCode();
         result = 31 * result + mCropBounds.hashCode();
         result = 31 * result + mPhotoBounds.hashCode();
-        result = 31 * result + (mSafe ? 1 : 0);
         return result;
     }
 
     @Override
     public String toString() {
         return getClass().getName() + "[" + "scale=" + mScaleFactor
-                + ",rotation=" + mRotation + ",flip=" + mFlip + ",safe="
-                + (mSafe ? "true" : "false") + ",straighten="
+                + ",rotation=" + mRotation + ",flip=" + mFlip + ",straighten="
                 + mStraightenRotation + ",cropRect=" + mCropBounds.toShortString()
                 + ",photoRect=" + mPhotoBounds.toShortString() + "]";
     }
@@ -228,7 +182,27 @@ public class GeometryMetadata {
         }
     }
 
-    public Matrix getMatrix() {
-        return mMatrix;
+    public boolean hasSwitchedWidthHeight(){
+        return (((int) (mRotation / 90)) % 2) != 0;
+    }
+
+    public Matrix buildGeometryMatrix(float width, float height, float scaling, float dx, float dy){
+        float dx0 = width/2;
+        float dy0 = height/2;
+        Matrix m = getFlipMatrix(width, height);
+        m.postTranslate(-dx0, -dy0);
+        float rot = mRotation % 360;
+        if (rot < 0)
+            rot += 360;
+        m.postRotate(rot + mStraightenRotation);
+        m.postScale(scaling, scaling);
+        m.postTranslate(dx, dy);
+        return m;
+    }
+
+    public Matrix buildGeometryUIMatrix(float scaling, float dx, float dy){
+        float w = mPhotoBounds.width();
+        float h = mPhotoBounds.height();
+        return buildGeometryMatrix(w, h, scaling, dx, dy);
     }
 }
