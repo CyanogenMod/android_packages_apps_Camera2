@@ -474,11 +474,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageFilter[] borders = new ImageFilter[7];
         borders[p++] = new ImageFilterBorder(null);
 
-        Drawable npd3 = getResources().getDrawable(R.drawable.filtershow_border_film3);
-        borders[p++] = new ImageFilterBorder(npd3);
-        Drawable npd = getResources().getDrawable(
-                R.drawable.filtershow_border_scratch3);
-        borders[p++] = new ImageFilterBorder(npd);
+        Drawable npd1 = getResources().getDrawable(R.drawable.filtershow_border_4x5);
+        borders[p++] = new ImageFilterBorder(npd1);
+        Drawable npd2 = getResources().getDrawable(R.drawable.filtershow_border_brush);
+        borders[p++] = new ImageFilterBorder(npd2);
         borders[p++] = new ImageFilterParametricBorder(Color.BLACK, 100, 0);
         borders[p++] = new ImageFilterParametricBorder(Color.BLACK, 100, 100);
         borders[p++] = new ImageFilterParametricBorder(Color.WHITE, 100, 0);
