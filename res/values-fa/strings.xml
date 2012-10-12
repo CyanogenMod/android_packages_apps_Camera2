@@ -208,4 +208,5 @@
     <string name="trim_too_long" msgid="2657958275279217174">"کوتاه نشد: طول ویدیو با ویدیوی اصلی یکسان است"</string>
     <!-- no translation found for pano_progress_text (1586851614586678464) -->
     <skip />
+    <string name="save" msgid="613976532235060516">"ذخیره"</string>
 </resources>
