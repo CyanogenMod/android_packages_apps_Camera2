@@ -77,7 +77,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private ImageBorder mImageBorders = null;
     private ImageStraighten mImageStraighten = null;
     private ImageZoom mImageZoom = null;
-    private final ImageCrop mImageCrop = null;
+    private ImageCrop mImageCrop = null;
     private ImageRotate mImageRotate = null;
     private ImageFlip mImageFlip = null;
 
@@ -140,8 +140,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageBorders = (ImageBorder) findViewById(R.id.imageBorder);
         mImageStraighten = (ImageStraighten) findViewById(R.id.imageStraighten);
         mImageZoom = (ImageZoom) findViewById(R.id.imageZoom);
-        // TODO: implement crop
-        // mImageCrop = (ImageCrop) findViewById(R.id.imageCrop);
+        mImageCrop = (ImageCrop) findViewById(R.id.imageCrop);
         mImageRotate = (ImageRotate) findViewById(R.id.imageRotate);
         mImageFlip = (ImageFlip) findViewById(R.id.imageFlip);
 
@@ -150,8 +149,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageViews.add(mImageBorders);
         mImageViews.add(mImageStraighten);
         mImageViews.add(mImageZoom);
-        // TODO: implement crop
-        // mImageViews.add(mImageCrop);
+        mImageViews.add(mImageCrop);
         mImageViews.add(mImageRotate);
         mImageViews.add(mImageFlip);
 
@@ -180,9 +178,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageStraighten.setMaster(mImageShow);
         mImageZoom.setImageLoader(mImageLoader);
         mImageZoom.setMaster(mImageShow);
-        // TODO: implement crop
-        // mImageCrop.setImageLoader(mImageLoader);
-        // mImageCrop.setMaster(mImageShow);
+        mImageCrop.setImageLoader(mImageLoader);
+        mImageCrop.setMaster(mImageShow);
         mImageRotate.setImageLoader(mImageLoader);
         mImageRotate.setMaster(mImageShow);
         mImageFlip.setImageLoader(mImageLoader);
@@ -192,8 +189,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addImageView(findViewById(R.id.imageCurves));
         mPanelController.addImageView(findViewById(R.id.imageBorder));
         mPanelController.addImageView(findViewById(R.id.imageStraighten));
-        // TODO: implement crop
-        // mPanelController.addImageView(findViewById(R.id.imageCrop));
+        mPanelController.addImageView(findViewById(R.id.imageCrop));
         mPanelController.addImageView(findViewById(R.id.imageRotate));
         mPanelController.addImageView(findViewById(R.id.imageFlip));
         mPanelController.addImageView(findViewById(R.id.imageZoom));
@@ -203,8 +199,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         mPanelController.addPanel(mGeometryButton, mListGeometry, 2);
         mPanelController.addComponent(mGeometryButton, findViewById(R.id.straightenButton));
-        // TODO: implement crop
-//        mPanelController.addComponent(mGeometryButton, findViewById(R.id.cropButton));
+        mPanelController.addComponent(mGeometryButton, findViewById(R.id.cropButton));
         mPanelController.addComponent(mGeometryButton, findViewById(R.id.rotateButton));
         mPanelController.addComponent(mGeometryButton, findViewById(R.id.flipButton));
 
