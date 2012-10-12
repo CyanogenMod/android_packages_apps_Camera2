@@ -306,7 +306,7 @@ public class LocalImage extends LocalMediaItem {
                             mPanoramaMetadata = future.get();
                             mPanoramaMetadataInitialized = true;
                             if (mListener != null) {
-                                mListener.onChange(getSupportedOperations());
+                                mListener.onChange(LocalImage.this, getSupportedOperations());
                             }
                         }
                         });

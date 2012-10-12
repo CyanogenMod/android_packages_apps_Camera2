@@ -273,7 +273,7 @@ public class UriImage extends MediaItem {
                             mPanoramaMetadata = future.get();
                             mPanoramaMetadataInitialized = true;
                             if (mListener != null) {
-                                mListener.onChange(getSupportedOperations());
+                                mListener.onChange(UriImage.this, getSupportedOperations());
                             }
                         }
                         });
