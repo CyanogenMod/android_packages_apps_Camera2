@@ -229,6 +229,16 @@ public class PanelController implements OnClickListener {
         imageShow.setPanelController(this);
     }
 
+    public boolean onBackPressed() {
+        if (mUtilityPanel == null || !mUtilityPanel.selected()) {
+            return true;
+        }
+        mCurrentImage.resetParameter();
+        showPanel(mCurrentPanel);
+        mCurrentImage.select();
+        return false;
+    }
+
     public void onNewValue(int value) {
         mUtilityPanel.onNewValue(value);
     }
@@ -422,7 +432,7 @@ public class PanelController implements OnClickListener {
             }
             case R.id.curvesButtonRGB: {
                 ImageCurves curves = (ImageCurves) showImageView(R.id.imageCurves);
-                String ename = mCurrentImage.getContext().getString(R.string.curvesRGB);
+                String ename = curves.getContext().getString(R.string.curvesRGB);
                 mUtilityPanel.setEffectName(ename);
                 mUtilityPanel.setShowParameter(false);
                 curves.setUseRed(true);
