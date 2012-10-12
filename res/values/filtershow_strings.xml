@@ -83,8 +83,16 @@
     <string name="curvesRGB">Curves</string>
     <!--  Label for the vignette filter button [CHAR LIMIT=15] -->
     <string name="vignette">Vignette</string>
-    <!-- Name for the photo effect that removes redeye. [CHAR LIMIT=15] -->
+    <!--  Label for the photo effect that removes redeye. [CHAR LIMIT=15] -->
     <string name="redeye">Red Eye</string>
+    <!--  Label for the straighten effect [CHAR LIMIT=15] -->
+    <string name="straighten" msgid="5217801513491493491">Straighten</string>
+    <!--  Label for the crop effect [CHAR LIMIT=15] -->
+    <string name="crop" msgid="5584000454518174632">Crop</string>
+    <!--  Label for the rotate effect [CHAR LIMIT=15] -->
+    <string name="rotate" msgid="460017689320955494">Rotate</string>
+    <!--  Label for the flip effect [CHAR LIMIT=15] -->
+    <string name="flip" msgid="2357692401826287480">Flip</string>
 
     <!--  Labels for the curves tool -->
 
