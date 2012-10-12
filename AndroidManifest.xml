@@ -288,15 +288,6 @@
                 android:configChanges="keyboardHidden|orientation|screenSize"
                 android:theme="@style/Theme.Gallery.Dialog"/>
 
-        <activity android:name="com.android.camera.Camera"
-                android:taskAffinity="com.android.camera.Camera"
-                android:label="@string/camera_label"
-                android:theme="@style/Theme.Camera"
-                android:configChanges="orientation|screenSize|keyboardHidden"
-                android:clearTaskOnLaunch="true"
-                android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
-        </activity>
-
         <activity android:name="com.android.camera.CameraActivity"
                 android:taskAffinity="com.android.camera.CameraActivity"
                 android:label="@string/camera_label"
@@ -350,6 +341,16 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias android:icon="@mipmap/ic_launcher_camera"
+                        android:label="@string/camera_label"
+                        android:name="com.android.camera.Camera"
+                        android:targetActivity="com.android.camera.CameraActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity-alias>
 
