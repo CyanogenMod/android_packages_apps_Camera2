@@ -195,6 +195,7 @@
 
                 <Button
                     android:id="@+id/applyEffect"
+                    android:layout_width="wrap_content"
                     android:layout_height="94dip"
                     android:layout_gravity="center"
                     android:layout_weight="1"
