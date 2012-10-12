@@ -208,4 +208,5 @@
     <string name="trim_too_long" msgid="2657958275279217174">"Kırpılmadı: orijinal ile aynı uzunlukta"</string>
     <!-- no translation found for pano_progress_text (1586851614586678464) -->
     <skip />
+    <string name="save" msgid="613976532235060516">"Kaydet"</string>
 </resources>
