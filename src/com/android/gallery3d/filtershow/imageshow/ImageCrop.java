@@ -23,15 +23,12 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
-import com.android.gallery3d.R;
 
-import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.R;
 
 public class ImageCrop extends ImageGeometry {
     private static final boolean LOGV = false;
@@ -45,9 +42,9 @@ public class ImageCrop extends ImageGeometry {
     private static final int TOUCH_TOLERANCE = 30;
     private static final int SHADOW_ALPHA = 160;
 
-    private float mAspectWidth = 4;
-    private float mAspectHeight = 3;
-    private boolean mFixAspectRatio = false; // not working yet
+    private final float mAspectWidth = 4;
+    private final float mAspectHeight = 3;
+    private final boolean mFixAspectRatio = false; // not working yet
 
     private final Paint borderPaint;
 
@@ -104,6 +101,7 @@ public class ImageCrop extends ImageGeometry {
         return m;
     }
 
+    @Override
     protected RectF getCropBoundsDisplayed() {
         RectF bounds = getLocalCropBounds();
         RectF crop = new RectF(bounds);
@@ -168,6 +166,11 @@ public class ImageCrop extends ImageGeometry {
         cbounds.set(cbounds.left, cbounds.top, cbounds.left + newWidth, cbounds.top + newHeight);
         RectF snappedCrop = findCropBoundForRotatedImg(cbounds, pbounds, getLocalStraighten(),
                 mCenterX - mXOffset, mCenterY - mYOffset);
+
+        RectF straightenBounds = getUntranslatedStraightenCropBounds(getLocalPhotoBounds(), getLocalStraighten());
+        snappedCrop.intersect(straightenBounds);
+
+
         if (mFixAspectRatio) {
             // TODO: add aspect ratio stuff
             fixAspectRatio(snappedCrop, mAspectWidth, mAspectHeight);
@@ -259,13 +262,6 @@ public class ImageCrop extends ImageGeometry {
         }
     }
 
-    private void drawShadow(Canvas canvas, float left, float top, float right, float bottom) {
-        canvas.save();
-        canvas.clipRect(left, top, right, bottom);
-        canvas.drawARGB(SHADOW_ALPHA, 0, 0, 0);
-        canvas.restore();
-    }
-
     private void drawIndicator(Canvas canvas, Drawable indicator, float centerX, float centerY) {
         int left = (int) centerX - indicatorSize / 2;
         int top = (int) centerY - indicatorSize / 2;
@@ -299,10 +295,29 @@ public class ImageCrop extends ImageGeometry {
     @Override
     protected void gainedVisibility() {
         setCropBounds(getLocalCropBounds());
+        super.gainedVisibility();
     }
 
-    @Override
-    protected void lostVisibility() {
+    protected RectF drawCrop(Canvas canvas, Paint p, RectF cropBounds, float scale,
+            float rotation, float centerX, float centerY, float offsetX, float offsetY) {
+        RectF crop = new RectF(cropBounds);
+        Matrix m = new Matrix();
+        m.preTranslate(offsetX, offsetY);
+        m.mapRect(crop);
+
+        m.setRotate(rotation, centerX, centerY);
+        if (!m.rectStaysRect()) {
+            float[] corners = getCornersFromRect(crop);
+            m.mapPoints(corners);
+            drawClosedPath(canvas, p, corners);
+        } else {
+            RectF crop2 = new RectF(crop);
+            m.mapRect(crop2);
+            Path path = new Path();
+            path.addRect(crop2, Path.Direction.CCW);
+            canvas.drawPath(path, p);
+        }
+        return crop;
     }
 
     @Override
@@ -311,43 +326,27 @@ public class ImageCrop extends ImageGeometry {
         gPaint.setFilterBitmap(true);
         gPaint.setDither(true);
         gPaint.setARGB(255, 255, 255, 255);
+        drawTransformedBitmap(canvas, image, gPaint, false);
 
-        drawRegularFlippedBitmap(canvas, image, gPaint);
+        float scale = getLocalScale();
+        float rotation = getLocalRotation();
 
-        RectF displayRect = getLocalDisplayBounds();
-        float dWidth = displayRect.width();
-        float dHeight = displayRect.height();
-        RectF boundsRect = getCropBoundsDisplayed();
-        gPaint.setARGB(128, 0, 0, 0);
-        gPaint.setStyle(Paint.Style.FILL);
-        // TODO: move this to style when refactoring
-        canvas.drawRect(0, 0, dWidth, boundsRect.top, gPaint);
-        canvas.drawRect(0, boundsRect.bottom, dWidth, dHeight, gPaint);
-        canvas.drawRect(0, boundsRect.top, boundsRect.left, boundsRect.bottom,
-                gPaint);
-        canvas.drawRect(boundsRect.right, boundsRect.top, dWidth,
-                boundsRect.bottom, gPaint);
-
-        Path path = new Path();
-        path.addRect(boundsRect, Path.Direction.CCW);
-        gPaint.setARGB(255, 255, 255, 255);
-        gPaint.setStrokeWidth(3);
-        gPaint.setStyle(Paint.Style.STROKE);
-
-        canvas.drawPath(path, gPaint);
+        RectF scaledCrop = drawCrop(canvas, gPaint, getLocalCropBounds(), scale,
+                rotation, mCenterX, mCenterY, mXOffset,
+                mYOffset);
 
         boolean notMoving = movingEdges == 0;
         if (((movingEdges & MOVE_TOP) != 0) || notMoving) {
-            drawIndicator(canvas, cropIndicator, boundsRect.centerX(), boundsRect.top);
+            drawIndicator(canvas, cropIndicator, scaledCrop.centerX(), scaledCrop.top);
         }
         if (((movingEdges & MOVE_BOTTOM) != 0) || notMoving) {
-            drawIndicator(canvas, cropIndicator, boundsRect.centerX(), boundsRect.bottom);
+            drawIndicator(canvas, cropIndicator, scaledCrop.centerX(), scaledCrop.bottom);
         }
         if (((movingEdges & MOVE_LEFT) != 0) || notMoving) {
-            drawIndicator(canvas, cropIndicator, boundsRect.left, boundsRect.centerY());
+            drawIndicator(canvas, cropIndicator, scaledCrop.left, scaledCrop.centerY());
         }
         if (((movingEdges & MOVE_RIGHT) != 0) || notMoving) {
-            drawIndicator(canvas, cropIndicator, boundsRect.right, boundsRect.centerY());
+            drawIndicator(canvas, cropIndicator, scaledCrop.right, scaledCrop.centerY());
         }
     }
 
