@@ -115,13 +115,11 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
-            <!--
             <com.android.gallery3d.filtershow.imageshow.ImageCrop
                 android:id="@+id/imageCrop"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
-             -->
 
             <com.android.gallery3d.filtershow.imageshow.ImageRotate
                 android:id="@+id/imageRotate"
