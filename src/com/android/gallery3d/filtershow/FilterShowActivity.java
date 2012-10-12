@@ -11,11 +11,14 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -240,10 +243,20 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         String data = intent.getDataString();
         if (data != null) {
             Uri uri = Uri.parse(data);
-            mImageLoader.loadBitmap(uri);
+            mImageLoader.loadBitmap(uri,getScreenImageSize());
         } else {
             pickImage();
         }
+    }
+
+    private int getScreenImageSize(){
+        DisplayMetrics metrics = new  DisplayMetrics();
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new  Point();
+        display.getSize(size);
+        display.getMetrics(metrics);
+        int msize = Math.min(size.x, size.y);
+        return  (133*msize)/metrics.densityDpi;
     }
 
     private void showSavingProgress() {
@@ -689,7 +702,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
-                mImageLoader.loadBitmap(selectedImageUri);
+                mImageLoader.loadBitmap(selectedImageUri,getScreenImageSize());
             }
         }
     }
