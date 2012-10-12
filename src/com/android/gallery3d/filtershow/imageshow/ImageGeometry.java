@@ -19,8 +19,10 @@ package com.android.gallery3d.filtershow.imageshow;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
@@ -45,6 +47,8 @@ public abstract class ImageGeometry extends ImageSlave {
     protected float mCurrentY;
     protected float mTouchCenterX;
     protected float mTouchCenterY;
+
+    private Matrix mLocalMatrix = null;
 
     // Local geometry data
     private GeometryMetadata mLocalGeoMetadata = null;
@@ -73,6 +77,16 @@ public abstract class ImageGeometry extends ImageSlave {
         calculateLocalScalingFactorAndOffset();
     }
 
+    private float computeScale(float width, float height) {
+        float imageWidth = mLocalGeoMetadata.getPhotoBounds().width();
+        float imageHeight = mLocalGeoMetadata.getPhotoBounds().height();
+        float zoom = width / imageWidth;
+        if (imageHeight > imageWidth) {
+            zoom = height / imageHeight;
+        }
+        return zoom;
+    }
+
     private void calculateLocalScalingFactorAndOffset() {
         if (mLocalGeoMetadata == null || mLocalDisplayBounds == null)
             return;
@@ -84,12 +98,10 @@ public abstract class ImageGeometry extends ImageSlave {
 
         mCenterX = displayWidth / 2;
         mCenterY = displayHeight / 2;
-        float zoom = displayWidth / imageWidth;
-        if (imageHeight > imageWidth) {
-            zoom = displayHeight / imageHeight;
-        }
         mYOffset = (displayHeight - imageHeight) / 2.0f;
         mXOffset = (displayWidth - imageWidth) / 2.0f;
+
+        float zoom = computeScale(mLocalDisplayBounds.width(), mLocalDisplayBounds.height());
         mLocalGeoMetadata.setScaleFactor(zoom);
     }
 
@@ -104,14 +116,15 @@ public abstract class ImageGeometry extends ImageSlave {
         invalidate();
     }
 
-    private GeometryMetadata getMasterImageGeometryMetadataCopy() {
-        return getMaster().getGeometry();
-    }
-
     // Overwrites local with master
     protected void syncLocalToMasterGeometry() {
-        mLocalGeoMetadata = getMasterImageGeometryMetadataCopy();
+        mLocalGeoMetadata = getMaster().getGeometry();
         calculateLocalScalingFactorAndOffset();
+        mLocalMatrix = mLocalGeoMetadata.getMatrix();
+    }
+
+    public Matrix getLocalMatrix() {
+        return mLocalMatrix;
     }
 
     protected RectF getLocalPhotoBounds() {
@@ -142,12 +155,31 @@ public abstract class ImageGeometry extends ImageSlave {
         mLocalGeoMetadata.setScaleFactor(s);
     }
 
+    protected void updateMatrix() {
+        RectF bounds = getUntranslatedStraightenCropBounds(mLocalGeoMetadata.getPhotoBounds(),
+                getLocalStraighten());
+        float zoom = computeScale(bounds.width(), bounds.height());
+        setLocalScale(zoom);
+        float w = mLocalGeoMetadata.getPhotoBounds().width();
+        float h = mLocalGeoMetadata.getPhotoBounds().height();
+        float ratio = h / w;
+        float rcenterx = 0.5f;
+        float rcentery = 0.5f * ratio;
+        Matrix flipper = mLocalGeoMetadata.getFlipMatrix(1.0f, ratio);
+        mLocalMatrix.reset();
+        mLocalMatrix.postConcat(flipper);
+        mLocalMatrix.postRotate(getTotalLocalRotation(), rcenterx, rcentery);
+        invalidate();
+    }
+
     protected void setLocalRotation(float r) {
         mLocalGeoMetadata.setRotation(r);
+        updateMatrix();
     }
 
     protected void setLocalStraighten(float r) {
         mLocalGeoMetadata.setStraightenRotation(r);
+        updateMatrix();
     }
 
     protected void setLocalCropBounds(RectF c) {
@@ -160,6 +192,7 @@ public abstract class ImageGeometry extends ImageSlave {
 
     protected void setLocalFlip(FLIP flip) {
         mLocalGeoMetadata.setFlipType(flip);
+        updateMatrix();
     }
 
     protected float getTotalLocalRotation() {
@@ -170,40 +203,6 @@ public abstract class ImageGeometry extends ImageSlave {
         if (getMaster() == null)
             return null;
         return getMaster().mForegroundImage;
-    }
-
-    protected static Matrix getHorizontalMatrix(int width) {
-        Matrix flipHorizontalMatrix = new Matrix();
-        flipHorizontalMatrix.setScale(-1, 1);
-        flipHorizontalMatrix.postTranslate(width, 0);
-        return flipHorizontalMatrix;
-    }
-
-    protected static Matrix getVerticalMatrix(int height) {
-        Matrix flipVerticalMatrix = new Matrix();
-        flipVerticalMatrix.setScale(1, -1);
-        flipVerticalMatrix.postTranslate(0, height);
-        return flipVerticalMatrix;
-    }
-
-    protected static Matrix getFlipMatrix(FLIP type, int width, int height) {
-        if (type == FLIP.HORIZONTAL) {
-            return getHorizontalMatrix(width);
-        } else if (type == FLIP.VERTICAL) {
-            return getVerticalMatrix(height);
-        } else if (type == FLIP.BOTH) {
-            Matrix flipper = getVerticalMatrix(height);
-            flipper.postConcat(getHorizontalMatrix(width));
-            return flipper;
-        } else {
-            Matrix m = new Matrix();
-            m.reset(); // identity
-            return m;
-        }
-    }
-
-    protected static float clamp(float i, float low, float high) {
-        return Math.max(Math.min(i, high), low);
     }
 
     protected static float[] getCornersFromRect(RectF r) {
@@ -217,7 +216,8 @@ public abstract class ImageGeometry extends ImageSlave {
                 r.right, r.top, // 1
                 r.right, r.bottom,// 2
                 r.left, r.bottom
-        };// 3
+                // 3
+        };
         return corners;
     }
 
@@ -310,6 +310,10 @@ public abstract class ImageGeometry extends ImageSlave {
         return height * w / h;
     }
 
+    protected void logMasterGeo() {
+        Log.v(LOGTAG, getMaster().getGeometry().toString());
+    }
+
     @Override
     protected void onVisibilityChanged(View changedView, int visibility) {
         super.onVisibilityChanged(changedView, visibility);
@@ -317,9 +321,11 @@ public abstract class ImageGeometry extends ImageSlave {
             mVisibilityGained = true;
             syncLocalToMasterGeometry();
             gainedVisibility();
+            logMasterGeo();
         } else {
             if (mVisibilityGained == true && mHasDrawn == true) {
                 lostVisibility();
+                logMasterGeo();
             }
             mVisibilityGained = false;
             mHasDrawn = false;
@@ -328,6 +334,7 @@ public abstract class ImageGeometry extends ImageSlave {
 
     protected void gainedVisibility() {
         // TODO: Override this stub.
+        updateMatrix();
     }
 
     protected void lostVisibility() {
@@ -349,6 +356,8 @@ public abstract class ImageGeometry extends ImageSlave {
             case (MotionEvent.ACTION_UP):
                 setActionUp();
                 saveAndSetPreset();
+                Log.v(LOGTAG, "up action");
+                logMasterGeo();
                 break;
             case (MotionEvent.ACTION_MOVE):
                 setActionMove(event.getX(), event.getY());
@@ -357,7 +366,7 @@ public abstract class ImageGeometry extends ImageSlave {
                 setNoAction();
         }
         if (getPanelController() != null) {
-            getPanelController().onNewValue((int) getLocalValue());
+            getPanelController().onNewValue(getLocalValue());
         }
         invalidate();
         return true;
@@ -397,115 +406,14 @@ public abstract class ImageGeometry extends ImageSlave {
     protected void saveAndSetPreset() {
         ImagePreset copy = new ImagePreset(getImagePreset());
         copy.setGeometry(mLocalGeoMetadata);
+        copy.setHistoryName("Geometry");
+        copy.setIsFx(false);
         setImagePreset(copy);
     }
 
-    @Override
-    public void updateImage() {
-    }
-
-    protected void drawRegularFlippedBitmap(Canvas canvas, Bitmap image, Paint p) {
-        float zoom = getLocalScale();
-        canvas.save();
-        canvas.rotate(getTotalLocalRotation(), mCenterX, mCenterY);
-        canvas.scale(zoom, zoom, mCenterX, mCenterY);
-        canvas.translate(mXOffset, mYOffset);
-        Matrix flipper = getFlipMatrix(getLocalFlip(), image.getWidth(), image.getHeight());
-        canvas.drawBitmap(image, flipper, p);
-        canvas.restore();
-    }
-
-    protected void drawRegularBitmap(Canvas canvas, Bitmap image, Paint p) {
-        float zoom = getLocalScale();
-        canvas.save();
-        canvas.rotate(getTotalLocalRotation(), mCenterX, mCenterY);
-        canvas.scale(zoom, zoom, mCenterX, mCenterY);
-        canvas.translate(mXOffset, mYOffset);
-        canvas.drawBitmap(image, 0, 0, p);
-        canvas.restore();
-    }
-
-    protected RectF getCropBoundsDisplayed() {
-        return getCropBoundsDisplayed(getLocalCropBounds());
-    }
-
-    protected RectF getCropBoundsDisplayed(RectF bounds) {
-        RectF crop = new RectF(bounds);
-        Matrix m = new Matrix();
-        float zoom = getLocalScale();
-        m.setScale(zoom, zoom, mCenterX, mCenterY);
-        m.preTranslate(mXOffset, mYOffset);
-        m.mapRect(crop);
-        return crop;
-    }
-
-    protected static float[] correctAngles(float rotation, float straighten) {
-        float[] ret = {
-                rotation, straighten
-        };
-        if (straighten >= MIN_STRAIGHTEN_ANGLE && straighten <= MAX_STRAIGHTEN_ANGLE
-                && (rotation % 90 == 0)) {
-            return ret;
-        }
-        float remainder = rotation % 90;
-        float newRot = (int) (rotation / 90);
-        float tempStraighten = straighten + remainder;
-        newRot += (int) (tempStraighten / 90);
-        tempStraighten %= 90;
-        if (tempStraighten > MAX_STRAIGHTEN_ANGLE) {
-            tempStraighten -= 90;
-            newRot += 1;
-        } else if (tempStraighten < MIN_STRAIGHTEN_ANGLE) {
-            tempStraighten += 90;
-            newRot -= 1;
-        }
-        ret[0] = newRot * 90;
-        ret[1] = tempStraighten;
-        return ret;
-    }
-
-    protected void correctStraightenRotateAngles() {
-        float straighten = getLocalStraighten();
-        float rotation = getLocalRotation();
-        float[] angles = correctAngles(rotation, straighten);
-        setLocalStraighten(angles[1]);
-        setLocalRotation(angles[0]);
-    }
-
-    protected static Matrix getCropRotationMatrix(float rotation) {
-        Matrix m = new Matrix();
-        m.setRotate(rotation);
-        if (!m.rectStaysRect()) {
-            return null;
-        }
-        return m;
-    }
-
-    protected RectF getStraightenCropBounds() {
-        RectF imageRect = getLocalPhotoBounds();
-        Matrix m = new Matrix();
-        float lRot = getLocalRotation();
-        m.setRotate(lRot);
-        if (!m.rectStaysRect()) {
-            correctStraightenRotateAngles();
-            m.setRotate(getLocalRotation());
-        }
-        RectF crop = getStraightenCropBounds(imageRect, getLocalStraighten());
-        setLocalCropBounds(crop);
-        if (!m.mapRect(crop)) {
-            return null;
-        }
-        return crop;
-    }
-
-    protected RectF getStraightenCropBounds(RectF imageRect, float straightenAngle) {
-        RectF boundsRect = getUntranslatedStraightenCropBounds(imageRect, straightenAngle);
-        RectF nonRotateImage = getLocalPhotoBounds();
-        Matrix m1 = new Matrix();
-        m1.setTranslate(nonRotateImage.centerX() - boundsRect.centerX(), nonRotateImage.centerY()
-                - boundsRect.centerY());
-        m1.mapRect(boundsRect);
-        return boundsRect;
+    //
+    protected static float clamp(float i, float low, float high) {
+        return Math.max(Math.min(i, high), low);
     }
 
     public static RectF getUntranslatedStraightenCropBounds(RectF imageRect, float straightenAngle) {
@@ -532,9 +440,94 @@ public abstract class ImageGeometry extends ImageSlave {
         return new RectF(left, top, right, bottom);
     }
 
+    protected static void drawShadows(Canvas canvas, Paint p, RectF innerBounds, RectF outerBounds,
+            float rotation, float centerX, float centerY) {
+        canvas.save();
+        canvas.rotate(rotation, centerX, centerY);
+        float dWidth = outerBounds.width();
+        float dHeight = outerBounds.height();
+        canvas.drawRect(0, 0, dWidth, innerBounds.top, p);
+        canvas.drawRect(0, innerBounds.bottom, dWidth, dHeight, p);
+        canvas.drawRect(0, innerBounds.top, innerBounds.left, innerBounds.bottom,
+                p);
+        canvas.drawRect(innerBounds.right, innerBounds.top, dWidth,
+                innerBounds.bottom, p);
+        canvas.rotate(-rotation, centerX, centerY);
+        canvas.restore();
+    }
+
+    public Matrix computeBoundsMatrix(Bitmap bitmap) {
+        Matrix boundsMatrix = new Matrix();
+        boundsMatrix.setTranslate((getWidth() - bitmap.getWidth()) / 2.0f,
+                (getHeight() - bitmap.getHeight()) / 2.0f);
+        boundsMatrix.postRotate(getLocalRotation(), getWidth() / 2.0f, getHeight() / 2.0f);
+        return boundsMatrix;
+    }
+
+    public RectF cropBounds(Bitmap bitmap) {
+        Matrix boundsMatrix = computeBoundsMatrix(bitmap);
+        RectF bounds = getUntranslatedStraightenCropBounds(getLocalPhotoBounds(),
+                getLocalStraighten());
+        RectF transformedBounds = new RectF(bounds);
+        boundsMatrix.mapRect(transformedBounds);
+        return transformedBounds;
+    }
+
+    protected void drawTransformedBitmap(Canvas canvas, Bitmap bitmap, Paint paint, boolean clip) {
+        Matrix boundsMatrix = computeBoundsMatrix(bitmap);
+        RectF bounds = getUntranslatedStraightenCropBounds(getLocalPhotoBounds(),
+                getLocalStraighten());
+        RectF transformedBounds = new RectF(bounds);
+        boundsMatrix.mapRect(transformedBounds);
+
+        canvas.save();
+        Matrix matrix = getLocalMatrix();
+        canvas.translate((getWidth() - bitmap.getWidth()) / 2.0f,
+                (getHeight() - bitmap.getHeight()) / 2.0f);
+        paint.setARGB(255, 0, 0, 0);
+        Matrix drawMatrix = new Matrix();
+        float w = bitmap.getWidth();
+        drawMatrix.preScale(1.0f/w, 1.0f/w);
+        drawMatrix.postConcat(matrix);
+        drawMatrix.postScale(w, w);
+        canvas.drawBitmap(bitmap, drawMatrix, paint);
+        canvas.restore();
+
+        canvas.save();
+        canvas.setMatrix(boundsMatrix);
+        paint.setColor(Color.WHITE);
+        paint.setStyle(Style.STROKE);
+        paint.setStrokeWidth(2);
+        canvas.drawRect(bounds, paint);
+        canvas.restore();
+
+        if (!clip) { // we display the rest of the bitmap grayed-out
+            drawShadows(canvas, transformedBounds, new RectF(0, 0, getWidth(), getHeight()), paint);
+        }
+    }
+
+    protected RectF getCropBoundsDisplayed() {
+        return getCropBoundsDisplayed(getLocalCropBounds());
+    }
+
+    protected RectF getCropBoundsDisplayed(RectF bounds) {
+        RectF crop = new RectF(bounds);
+        Matrix m = new Matrix();
+        float zoom = getLocalScale();
+        m.setScale(zoom, zoom, mCenterX, mCenterY);
+        m.preTranslate(mXOffset, mYOffset);
+        m.mapRect(crop);
+        return crop;
+    }
+
     protected void drawShadows(Canvas canvas, RectF innerBounds, RectF outerBounds, Paint p) {
         float dWidth = outerBounds.width();
         float dHeight = outerBounds.height();
+
+        // TODO: move style to xml
+        p.setARGB(128, 0, 0, 0);
+        p.setStyle(Paint.Style.FILL);
+
         canvas.drawRect(0, 0, dWidth, innerBounds.top, p);
         canvas.drawRect(0, innerBounds.bottom, dWidth, dHeight, p);
         canvas.drawRect(0, innerBounds.top, innerBounds.left, innerBounds.bottom,
