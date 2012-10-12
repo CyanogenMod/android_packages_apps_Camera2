@@ -194,8 +194,15 @@ public class PhotoPage extends ActivityState implements
     private SupportedOperationsListener mSupportedOperationsListener =
         new SupportedOperationsListener() {
             @Override
-            public void onChange(int operations) {
-                mHandler.sendEmptyMessage(MSG_UPDATE_PHOTO_UI);
+            public void onChange(MediaObject item, int operations) {
+                if (item == mCurrentPhoto) {
+                    if (mPhotoView.getFilmMode()
+                            && SystemClock.uptimeMillis() < mDeferUpdateUntil) {
+                        requestDeferredUpdate();
+                    } else {
+                        mHandler.sendEmptyMessage(MSG_UPDATE_PHOTO_UI);
+                    }
+                }
             }
         };
 
