@@ -14,6 +14,7 @@ public class ImageFilterParametricBorder extends ImageFilter {
     private int mBorderCornerRadius = 10;
 
     public ImageFilterParametricBorder() {
+        setFilterType(TYPE_BORDER);
         mName = "Border";
     }
 
