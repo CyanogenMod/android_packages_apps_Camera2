@@ -21,4 +21,5 @@
     <color name="text_toolbar">#FFFFFF</color>
     <color name="background_toolbar">#363949</color>
     <color name="background_main_toolbar">#1e2028</color>
+    <color name="toolbar_separation_line">#333333</color>
 </resources>

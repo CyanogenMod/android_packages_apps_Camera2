@@ -360,6 +360,11 @@
             </HorizontalScrollView>
         </FrameLayout>
 
+        <View
+            android:background="@color/toolbar_separation_line"
+            android:layout_height="1dip"
+            android:layout_width="match_parent" />
+
         <com.android.gallery3d.filtershow.CenteredLinearLayout
               xmlns:custom="http://schemas.android.com/apk/res/com.android.gallery3d"
               android:id="@+id/mainPanel"
