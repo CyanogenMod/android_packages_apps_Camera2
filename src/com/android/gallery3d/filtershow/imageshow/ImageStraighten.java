@@ -19,14 +19,10 @@ package com.android.gallery3d.filtershow.imageshow;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
-
-import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class ImageStraighten extends ImageGeometry {
 
@@ -79,11 +75,6 @@ public class ImageStraighten extends ImageGeometry {
     }
 
     @Override
-    protected void gainedVisibility() {
-        correctStraightenRotateAngles();
-    }
-
-    @Override
     protected void lostVisibility() {
         saveAndSetPreset();
     }
@@ -104,53 +95,24 @@ public class ImageStraighten extends ImageGeometry {
 
     @Override
     protected void drawShape(Canvas canvas, Bitmap image) {
-        gPaint.setAntiAlias(true);
-        gPaint.setFilterBitmap(true);
-        gPaint.setDither(true);
-        gPaint.setARGB(255, 255, 255, 255);
+        drawTransformedBitmap(canvas, image, gPaint, false);
 
-        // Draw fully rotated image.
-        drawRegularFlippedBitmap(canvas, image, gPaint);
-
-        // Get cropping frame
-        RectF boundsRect = getStraightenCropBounds();
-
-        Matrix m1 = new Matrix();
-        float zoom = getLocalScale();
-        // Center and scale
-        m1.setScale(zoom, zoom, mCenterX, mCenterY);
-        m1.preTranslate(mCenterX - boundsRect.centerX(), mCenterY - boundsRect.centerY());
-        m1.mapRect(boundsRect);
-        RectF displayRect = getLocalDisplayBounds();
-        float dWidth = displayRect.width();
-        float dHeight = displayRect.height();
-
-        // Draw shadows
-        gPaint.setARGB(128, 0, 0, 0);
-        gPaint.setStyle(Paint.Style.FILL);
-
-        // TODO: move to xml file
-        canvas.drawRect(0, 0, dWidth, boundsRect.top, gPaint);
-        canvas.drawRect(0, boundsRect.bottom, dWidth, dHeight, gPaint);
-        canvas.drawRect(0, boundsRect.top, boundsRect.left, boundsRect.bottom,
-                gPaint);
-        canvas.drawRect(boundsRect.right, boundsRect.top, dWidth,
-                boundsRect.bottom, gPaint);
-
-        // Draw crop frame
+        // Draw the grid
+        RectF bounds = cropBounds(image);
         Path path = new Path();
-        path.addRect(boundsRect, Path.Direction.CCW);
+        path.addRect(bounds, Path.Direction.CCW);
         gPaint.setARGB(255, 255, 255, 255);
         gPaint.setStrokeWidth(3);
-        gPaint.setStyle(Paint.Style.STROKE);
-        canvas.drawPath(path, gPaint);
-
         gPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
-        // Draw grid
+        RectF display = getLocalDisplayBounds();
+        float dWidth = display.width();
+        float dHeight = display.height();
+
         if (mMode == MODES.MOVE) {
             canvas.save();
             canvas.clipPath(path);
+
             int n = 16;
             float step = dWidth / n;
             float p = 0;
