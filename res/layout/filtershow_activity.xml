@@ -17,7 +17,8 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@color/background_main_toolbar" >
 
     <LinearLayout
         android:id="@+id/imageStatePanel"
@@ -170,6 +171,15 @@
                 android:visibility="gone" />
         </FrameLayout>
 
+        <com.android.gallery3d.filtershow.CenteredLinearLayout
+              xmlns:custom="http://schemas.android.com/apk/res/com.android.gallery3d"
+              android:id="@+id/mainPanel"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              custom:max_width="600dip"
+              android:orientation="vertical">
+
         <FrameLayout
             android:id="@+id/secondRowPanel"
             android:layout_width="fill_parent"
@@ -235,7 +245,8 @@
                     android:id="@+id/listGeometry"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:orientation="horizontal" >
+                    android:layout_gravity="center"
+                    android:orientation="horizontal">
 
                     <com.android.gallery3d.filtershow.ui.ImageButtonTitle
                         android:id="@+id/straightenButton"
@@ -349,6 +360,15 @@
             </HorizontalScrollView>
         </FrameLayout>
 
+        <com.android.gallery3d.filtershow.CenteredLinearLayout
+              xmlns:custom="http://schemas.android.com/apk/res/com.android.gallery3d"
+              android:id="@+id/mainPanel"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              custom:max_width="400dip"
+              android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dip"
@@ -393,6 +413,10 @@
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_photoeditor_color" />
         </LinearLayout>
+
+        </com.android.gallery3d.filtershow.CenteredLinearLayout>
+
+        </com.android.gallery3d.filtershow.CenteredLinearLayout>
     </LinearLayout>
 
 </FrameLayout>
