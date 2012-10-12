@@ -390,6 +390,8 @@ public class PanelController implements OnClickListener {
                 mUtilityPanel.setEffectName(ename);
                 break;
             }
+            /*
+            // TODO: implement crop
             case R.id.cropButton: {
                 mCurrentImage = showImageView(R.id.imageCrop);
                 String ename = mCurrentImage.getContext().getString(R.string.crop);
@@ -397,6 +399,7 @@ public class PanelController implements OnClickListener {
                 mUtilityPanel.showParameter(false);
                 break;
             }
+            */
             case R.id.rotateButton: {
                 mCurrentImage = showImageView(R.id.imageRotate);
                 String ename = mCurrentImage.getContext().getString(R.string.rotate);

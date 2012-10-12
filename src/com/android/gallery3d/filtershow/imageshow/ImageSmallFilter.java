@@ -100,7 +100,14 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
     }
 
     @Override
-    public Bitmap getOriginalFrontBitmap() {
+    public void updateImage() {
+        // We don't want to warn listeners here that the image size has changed, because
+        // we'll be working with the small image...
+        mForegroundImage = getOriginalFrontBitmap();
+    }
+
+    @Override
+    protected Bitmap getOriginalFrontBitmap() {
         if (mImageLoader == null) {
             return null;
         }
