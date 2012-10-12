@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 public class ImageFilterVignette extends ImageFilter {
 
     public ImageFilterVignette() {
+        setFilterType(TYPE_VIGNETTE);
         mName = "Vignette";
     }
 
