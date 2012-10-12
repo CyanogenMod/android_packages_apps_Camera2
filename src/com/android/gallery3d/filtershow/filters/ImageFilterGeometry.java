@@ -62,22 +62,15 @@ public class ImageFilterGeometry extends ImageFilter {
             Bitmap dst, int dstWidth, int dstHeight, float straightenAngle);
 
     public Matrix buildMatrix(Bitmap bitmap, boolean rotated) {
-        Matrix drawMatrix = new Matrix();
-        float dx = bitmap.getWidth() / 2.0f;
-        float dy = bitmap.getHeight() / 2.0f;
-
-        Matrix flipper = mGeometry.getFlipMatrix(bitmap.getWidth(), bitmap.getHeight());
-        drawMatrix.postConcat(flipper);
-        drawMatrix.postTranslate(-dx, -dy);
-        drawMatrix.postScale(1.0f / mGeometry.getScaleFactor(), 1.0f / mGeometry.getScaleFactor());
-        float angle = (mGeometry.getRotation() + mGeometry.getStraightenRotation());
-        drawMatrix.postRotate(angle);
-        if (rotated) {
-            drawMatrix.postTranslate(dy, dx);
-        } else {
-            drawMatrix.postTranslate(dx, dy);
+        float dx = bitmap.getWidth()/2;
+        float dy = bitmap.getHeight()/2;
+        if(mGeometry.hasSwitchedWidthHeight()){
+            float temp = dx;
+            dx = dy;
+            dy = temp;
         }
-        return drawMatrix;
+        Matrix m = mGeometry.buildGeometryMatrix(bitmap.getWidth(), bitmap.getHeight(), 1f/mGeometry.getScaleFactor(), dx, dy);
+        return m;
     }
 
     @Override
