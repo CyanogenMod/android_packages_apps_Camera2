@@ -33,7 +33,6 @@ public class GeometryMetadata {
     private final RectF mPhotoBounds = new RectF();
     private FLIP mFlip = FLIP.NONE;
 
-
     private RectF mBounds = new RectF();
 
     public enum FLIP {
@@ -47,7 +46,7 @@ public class GeometryMetadata {
         set(g);
     }
 
-    public Bitmap apply(Bitmap original, float scaleFactor, boolean highQuality){
+    public Bitmap apply(Bitmap original, float scaleFactor, boolean highQuality) {
         mImageFilter.setGeometryMetadata(this);
         Bitmap m = mImageFilter.apply(original, scaleFactor, highQuality);
         return m;
@@ -86,7 +85,6 @@ public class GeometryMetadata {
     public RectF getPhotoBounds() {
         return new RectF(mPhotoBounds);
     }
-
 
     public void setScaleFactor(float scale) {
         mScaleFactor = scale;
@@ -182,27 +180,34 @@ public class GeometryMetadata {
         }
     }
 
-    public boolean hasSwitchedWidthHeight(){
+    public boolean hasSwitchedWidthHeight() {
         return (((int) (mRotation / 90)) % 2) != 0;
     }
 
-    public Matrix buildGeometryMatrix(float width, float height, float scaling, float dx, float dy){
-        float dx0 = width/2;
-        float dy0 = height/2;
+    public Matrix buildGeometryMatrix(float width, float height, float scaling, float dx, float dy,
+            float rotation) {
+        float dx0 = width / 2;
+        float dy0 = height / 2;
         Matrix m = getFlipMatrix(width, height);
         m.postTranslate(-dx0, -dy0);
-        float rot = mRotation % 360;
-        if (rot < 0)
-            rot += 360;
-        m.postRotate(rot + mStraightenRotation);
+        m.postRotate(rotation);
         m.postScale(scaling, scaling);
         m.postTranslate(dx, dy);
         return m;
     }
 
-    public Matrix buildGeometryUIMatrix(float scaling, float dx, float dy){
+    public Matrix buildGeometryMatrix(float width, float height, float scaling, float dx, float dy,
+            boolean onlyRotate) {
+        float rot = mRotation;
+        if (!onlyRotate) {
+            rot += mStraightenRotation;
+        }
+        return buildGeometryMatrix(width, height, scaling, dx, dy, rot);
+    }
+
+    public Matrix buildGeometryUIMatrix(float scaling, float dx, float dy) {
         float w = mPhotoBounds.width();
         float h = mPhotoBounds.height();
-        return buildGeometryMatrix(w, h, scaling, dx, dy);
+        return buildGeometryMatrix(w, h, scaling, dx, dy, false);
     }
 }

@@ -24,6 +24,8 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 
+import com.android.gallery3d.filtershow.imageshow.ImageGeometry.MODES;
+
 public class ImageStraighten extends ImageGeometry {
 
     private float mBaseAngle = 0;
@@ -46,11 +48,17 @@ public class ImageStraighten extends ImageGeometry {
         mBaseAngle = mAngle = getLocalStraighten();
     }
 
+    private void setCropToStraighten(){
+        setLocalCropBounds(getUntranslatedStraightenCropBounds(getLocalPhotoBounds(),
+                getLocalStraighten()));
+    }
+
     @Override
     protected void setActionMove(float x, float y) {
         super.setActionMove(x, y);
         computeValue();
         setLocalStraighten(mAngle);
+        setCropToStraighten();
     }
 
     private float angleFor(float dx, float dy) {
@@ -80,6 +88,17 @@ public class ImageStraighten extends ImageGeometry {
     }
 
     @Override
+    protected void gainedVisibility(){
+        setCropToStraighten();
+    }
+
+    @Override
+    protected void setActionUp() {
+        super.setActionUp();
+        setCropToStraighten();
+    }
+
+    @Override
     public void onNewValue(int value) {
         setLocalStraighten(clamp(value, MIN_STRAIGHTEN_ANGLE, MAX_STRAIGHTEN_ANGLE));
         if (getPanelController() != null) {
@@ -98,7 +117,7 @@ public class ImageStraighten extends ImageGeometry {
         drawTransformedBitmap(canvas, image, gPaint, false);
 
         // Draw the grid
-        RectF bounds = cropBounds(image);
+        RectF bounds = straightenBounds();
         Path path = new Path();
         path.addRect(bounds, Path.Direction.CCW);
         gPaint.setARGB(255, 255, 255, 255);

@@ -20,6 +20,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
 
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 
@@ -61,15 +63,18 @@ public class ImageFilterGeometry extends ImageFilter {
     native protected void nativeApplyFilterStraighten(Bitmap src, int srcWidth, int srcHeight,
             Bitmap dst, int dstWidth, int dstHeight, float straightenAngle);
 
-    public Matrix buildMatrix(Bitmap bitmap, boolean rotated) {
-        float dx = bitmap.getWidth()/2;
-        float dy = bitmap.getHeight()/2;
+    public Matrix buildMatrix(RectF r) {
+        float dx = r.width()/2;
+        float dy = r.height()/2;
         if(mGeometry.hasSwitchedWidthHeight()){
             float temp = dx;
             dx = dy;
             dy = temp;
         }
-        Matrix m = mGeometry.buildGeometryMatrix(bitmap.getWidth(), bitmap.getHeight(), 1f/mGeometry.getScaleFactor(), dx, dy);
+        float w = r.left * 2 + r.width();
+        float h = r.top * 2 + r.height();
+        Matrix m = mGeometry.buildGeometryMatrix(w, h, 1f, dx, dy, false);
+
         return m;
     }
 
@@ -78,18 +83,18 @@ public class ImageFilterGeometry extends ImageFilter {
         // TODO: implement bilinear or bicubic here... for now, just use
         // canvas to do a simple implementation...
         // TODO: and be more memory efficient! (do it in native?)
-
+        Rect cropBounds = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        RectF c = mGeometry.getCropBounds();
+        if(c != null && c.width() > 0 && c.height() > 0)
+            c.roundOut(cropBounds);
         Bitmap temp = null;
-        float rotation = mGeometry.getRotation();
-        boolean rotated = false;
-        if (rotation == 0 || rotation % 180 == 0) {
-            temp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), mConfig);
+        if (mGeometry.hasSwitchedWidthHeight()) {
+            temp = Bitmap.createBitmap(cropBounds.height(), cropBounds.width(), mConfig);
         } else {
-            temp = Bitmap.createBitmap(bitmap.getHeight(), bitmap.getWidth(), mConfig);
-            rotated = true;
+            temp = Bitmap.createBitmap(cropBounds.width(), cropBounds.height(), mConfig);
         }
 
-        Matrix drawMatrix = buildMatrix(bitmap, rotated);
+        Matrix drawMatrix = buildMatrix(c);
         Canvas canvas = new Canvas(temp);
         canvas.drawBitmap(bitmap, drawMatrix, new Paint());
         return temp;
