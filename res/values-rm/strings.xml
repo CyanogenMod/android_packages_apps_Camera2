@@ -318,4 +318,5 @@
     <skip />
     <!-- no translation found for pano_progress_text (1586851614586678464) -->
     <skip />
+    <string name="save" msgid="613976532235060516">"Memorisar"</string>
 </resources>
