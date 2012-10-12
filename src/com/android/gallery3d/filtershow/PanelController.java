@@ -400,16 +400,13 @@ public class PanelController implements OnClickListener {
                 mUtilityPanel.setEffectName(ename);
                 break;
             }
-            /*
-            // TODO: implement crop
             case R.id.cropButton: {
                 mCurrentImage = showImageView(R.id.imageCrop);
                 String ename = mCurrentImage.getContext().getString(R.string.crop);
                 mUtilityPanel.setEffectName(ename);
-                mUtilityPanel.showParameter(false);
+                mUtilityPanel.setShowParameter(false);
                 break;
             }
-            */
             case R.id.rotateButton: {
                 mCurrentImage = showImageView(R.id.imageRotate);
                 String ename = mCurrentImage.getContext().getString(R.string.rotate);
