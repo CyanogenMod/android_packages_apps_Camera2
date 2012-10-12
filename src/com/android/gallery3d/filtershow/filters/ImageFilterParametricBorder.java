@@ -20,6 +20,7 @@ public class ImageFilterParametricBorder extends ImageFilter {
 
     public ImageFilterParametricBorder(int color, int size, int radius) {
         setBorder(color, size, radius);
+        setFilterType(TYPE_BORDER);
     }
 
     @Override
