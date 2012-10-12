@@ -122,32 +122,38 @@ public class ImagePreset {
     }
 
     public void add(ImageFilter filter) {
+
         if (filter.getFilterType() == ImageFilter.TYPE_BORDER){
             setHistoryName("Border");
             setBorder(filter);
         } else if (filter.getFilterType() == ImageFilter.TYPE_FX){
-            Vector<ImageFilter> fl = mFilters;
+
             boolean found = false;
             for (int i = 0; i < mFilters.size(); i++) {
-                byte type = fl.get(i).getFilterType();
+                byte type = mFilters.get(i).getFilterType();
                 if (found) {
                     if (type != ImageFilter.TYPE_VIGNETTE){
-                        fl.remove(i);
+                        mFilters.remove(i);
+                        continue;
                     }
-                } else  if (type==ImageFilter.TYPE_FX){
-                    fl.remove(i);
-                    fl.add(i, filter);
+                }
+                if (type==ImageFilter.TYPE_FX){
+                    mFilters.remove(i);
+                    mFilters.add(i, filter);
                     setHistoryName(filter.getName());
                     found = true;
                 }
 
             }
-            mFilters.add(filter);
-            setHistoryName(filter.getName());
+            if (!found) {
+                mFilters.add(filter);
+                setHistoryName(filter.getName());
+            }
         } else {
             mFilters.add(filter);
             setHistoryName(filter.getName());
         }
+
     }
 
     public void remove(String filterName) {
