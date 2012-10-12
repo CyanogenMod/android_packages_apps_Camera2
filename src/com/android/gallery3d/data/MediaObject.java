@@ -100,7 +100,7 @@ public abstract class MediaObject {
     }
 
     public int getSupportedOperations(boolean getAll) {
-        return 0;
+        return getSupportedOperations();
     }
 
     public void setSupportedOperationsListener(SupportedOperationsListener l) {
