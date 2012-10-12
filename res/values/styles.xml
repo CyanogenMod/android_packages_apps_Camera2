@@ -41,4 +41,6 @@
     </style>
     <bool name="picker_is_dialog">false</bool>
     <color name="darker_transparent">#C1000000</color>
+    <style name="ActionBarTwoLinePrimary" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title"></style>
+    <style name="ActionBarTwoLineSecondary" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Subtitle"></style>
 </resources>
