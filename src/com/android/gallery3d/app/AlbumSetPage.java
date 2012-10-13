@@ -365,6 +365,7 @@ public class AlbumSetPage extends ActivityState implements
     }
 
     private boolean setupCameraButton() {
+        if (!GalleryUtils.isCameraAvailable(mActivity)) return false;
         RelativeLayout galleryRoot = (RelativeLayout) ((Activity) mActivity)
                 .findViewById(R.id.gallery_root);
         if (galleryRoot == null) return false;
