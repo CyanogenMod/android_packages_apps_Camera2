@@ -60,6 +60,7 @@ import com.android.gallery3d.filtershow.imageshow.ImageZoom;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.provider.SharedImageProvider;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
+import com.android.gallery3d.filtershow.ui.ImageButtonTitle;
 import com.android.gallery3d.filtershow.ui.ImageCurves;
 
 import java.io.File;
@@ -96,6 +97,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private static final int SELECT_PICTURE = 1;
     private static final String LOGTAG = "FilterShowActivity";
     protected static final boolean ANIMATE_PANELS = true;
+    private static int mImageBorderSize = 40;
 
     private boolean mShowingHistoryPanel = false;
     private boolean mShowingImageStatePanel = false;
@@ -116,6 +118,15 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         super.onCreate(savedInstanceState);
 
         ImageFilterRS.setRenderScriptContext(this);
+
+        // TODO: get those values from XML.
+        ImageShow.setTextSize((int) getPixelsFromDip(12));
+        ImageShow.setTextPadding((int) getPixelsFromDip(10));
+        ImageButtonTitle.setTextSize((int) getPixelsFromDip(12));
+        ImageButtonTitle.setTextPadding((int) getPixelsFromDip(10));
+        ImageSmallFilter.setMargin((int) getPixelsFromDip(6));
+        ImageSmallFilter.setTextMargin((int) getPixelsFromDip(4));
+        mImageBorderSize = (int) getPixelsFromDip(20);
 
         setContentView(R.layout.filtershow_activity);
         ActionBar actionBar = getActionBar();
@@ -560,10 +571,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         borders[p++] = new ImageFilterBorder(npd1);
         Drawable npd2 = getResources().getDrawable(R.drawable.filtershow_border_brush);
         borders[p++] = new ImageFilterBorder(npd2);
-        borders[p++] = new ImageFilterParametricBorder(Color.BLACK, 100, 0);
-        borders[p++] = new ImageFilterParametricBorder(Color.BLACK, 100, 100);
-        borders[p++] = new ImageFilterParametricBorder(Color.WHITE, 100, 0);
-        borders[p++] = new ImageFilterParametricBorder(Color.WHITE, 100, 100);
+        borders[p++] = new ImageFilterParametricBorder(Color.BLACK, mImageBorderSize, 0);
+        borders[p++] = new ImageFilterParametricBorder(Color.BLACK, mImageBorderSize, mImageBorderSize);
+        borders[p++] = new ImageFilterParametricBorder(Color.WHITE, mImageBorderSize, 0);
+        borders[p++] = new ImageFilterParametricBorder(Color.WHITE, mImageBorderSize, mImageBorderSize);
 
         ImageSmallFilter previousFilter = null;
         for (int i = 0; i < p; i++) {

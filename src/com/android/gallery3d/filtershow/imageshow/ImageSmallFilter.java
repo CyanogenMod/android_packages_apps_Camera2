@@ -27,11 +27,19 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
     private ImageSmallFilter mPreviousImageSmallFilter = null;
 
     // TODO: move this to xml.
-    protected final int mMargin = 12;
-    protected final int mTextMargin = 8;
+    protected static int mMargin = 12;
+    protected static int mTextMargin = 8;
     protected final int mBackgroundColor = Color.argb(255, 30, 32, 40);
     protected final int mSelectedBackgroundColor = Color.WHITE;
     protected final int mTextColor = Color.WHITE;
+
+    public static void setMargin(int value) {
+        mMargin = value;
+    }
+
+    public static void setTextMargin(int value) {
+        mTextMargin = value;
+    }
 
     public ImageSmallFilter(Context context, AttributeSet attrs) {
         super(context, attrs);
