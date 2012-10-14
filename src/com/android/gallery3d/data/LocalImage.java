@@ -322,7 +322,6 @@ public class LocalImage extends LocalMediaItem {
         Uri baseUri = Images.Media.EXTERNAL_CONTENT_URI;
         mApplication.getContentResolver().delete(baseUri, "_id=?",
                 new String[]{String.valueOf(id)});
-        mApplication.getDataManager().broadcastLocalDeletion();
     }
 
     private static String getExifOrientation(int orientation) {
