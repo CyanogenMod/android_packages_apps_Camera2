@@ -74,8 +74,17 @@ public class GeometryMetadata {
         return mStraightenRotation;
     }
 
-    public RectF getCropBounds() {
+    public RectF getPreviewCropBounds() {
         return new RectF(mCropBounds);
+    }
+
+    public RectF getCropBounds(Bitmap bitmap) {
+        float scale = 1.0f;
+        if (mPhotoBounds.width() > 0) {
+            scale = bitmap.getWidth() / mPhotoBounds.width();
+        }
+        return new RectF(mCropBounds.left * scale, mCropBounds.top * scale,
+                mCropBounds.right * scale, mCropBounds.bottom * scale);
     }
 
     public FLIP getFlipType() {
