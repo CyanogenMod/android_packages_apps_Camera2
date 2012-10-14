@@ -122,7 +122,7 @@ public abstract class ImageGeometry extends ImageSlave {
     }
 
     protected RectF getLocalCropBounds() {
-        return mLocalGeometry.getCropBounds();
+        return mLocalGeometry.getPreviewCropBounds();
     }
 
     protected RectF getLocalDisplayBounds() {
