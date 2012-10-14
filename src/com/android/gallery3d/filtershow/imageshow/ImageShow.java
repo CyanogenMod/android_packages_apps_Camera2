@@ -88,6 +88,14 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     private SeekBar mSeekBar = null;
     private PanelController mController = null;
 
+    public static void setTextSize(int value) {
+        mTextSize = value;
+    }
+
+    public static void setTextPadding(int value) {
+        mTextPadding = value;
+    }
+
     private final Handler mHandler = new Handler();
 
     public void select() {
@@ -278,7 +286,7 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
             canvas.drawRect(textRect, mPaint);
             mPaint.setARGB(255, 200, 200, 200);
             canvas.drawText(getImagePreset().name(), mTextPadding,
-                    10 + mTextPadding, mPaint);
+                    1.5f * mTextPadding, mPaint);
         }
 
         if (showControls()) {
