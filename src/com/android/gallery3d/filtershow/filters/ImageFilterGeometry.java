@@ -84,9 +84,9 @@ public class ImageFilterGeometry extends ImageFilter {
         // canvas to do a simple implementation...
         // TODO: and be more memory efficient! (do it in native?)
         Rect cropBounds = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        RectF c = mGeometry.getCropBounds();
-        if(c != null && c.width() > 0 && c.height() > 0)
-            c.roundOut(cropBounds);
+        RectF crop = mGeometry.getCropBounds(bitmap);
+        if(crop.width() > 0 && crop.height() > 0)
+            crop.roundOut(cropBounds);
         Bitmap temp = null;
         if (mGeometry.hasSwitchedWidthHeight()) {
             temp = Bitmap.createBitmap(cropBounds.height(), cropBounds.width(), mConfig);
@@ -94,7 +94,7 @@ public class ImageFilterGeometry extends ImageFilter {
             temp = Bitmap.createBitmap(cropBounds.width(), cropBounds.height(), mConfig);
         }
 
-        Matrix drawMatrix = buildMatrix(c);
+        Matrix drawMatrix = buildMatrix(crop);
         Canvas canvas = new Canvas(temp);
         canvas.drawBitmap(bitmap, drawMatrix, new Paint());
         return temp;
