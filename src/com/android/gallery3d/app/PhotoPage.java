@@ -562,6 +562,9 @@ public class PhotoPage extends ActivityState implements
                 mProgressBar = new PhotoPageProgressBar(mActivity, galleryRoot);
                 mProgressListener = new UpdateProgressListener();
                 progressManager.addChangeListener(mProgressListener);
+                if (mSecureAlbum != null) {
+                    progressManager.addChangeListener(mSecureAlbum);
+                }
             }
         }
     }
