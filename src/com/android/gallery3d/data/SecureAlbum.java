@@ -24,12 +24,13 @@ import android.provider.MediaStore.MediaColumns;
 import android.provider.MediaStore.Video;
 
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.app.StitchingChangeListener;
 import com.android.gallery3d.util.MediaSetUtils;
 
 import java.util.ArrayList;
 
 // This class lists all media items added by the client.
-public class SecureAlbum extends MediaSet {
+public class SecureAlbum extends MediaSet implements StitchingChangeListener {
     @SuppressWarnings("unused")
     private static final String TAG = "SecureAlbum";
     private static final String[] PROJECTION = {MediaColumns._ID};
@@ -182,5 +183,19 @@ public class SecureAlbum extends MediaSet {
     @Override
     public boolean isLeafAlbum() {
         return true;
+    }
+
+    @Override
+    public void onStitchingQueued(Uri uri) {
+        int id = Integer.parseInt(uri.getLastPathSegment());
+        addMediaItem(false, id);
+    }
+
+    @Override
+    public void onStitchingResult(Uri uri) {
+    }
+
+    @Override
+    public void onStitchingProgress(Uri uri, final int progress) {
     }
 }
