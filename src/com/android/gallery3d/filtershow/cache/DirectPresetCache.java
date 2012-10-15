@@ -62,7 +62,7 @@ public class DirectPresetCache implements Cache {
     private CachedPreset getCachedPreset(ImagePreset preset) {
         for (int i = 0; i < mCache.size(); i++) {
             CachedPreset cache = mCache.elementAt(i);
-            if (cache.mPreset == preset && !cache.mBusy) {
+            if (cache.mPreset == preset) {
                 return cache;
             }
         }
@@ -73,7 +73,7 @@ public class DirectPresetCache implements Cache {
     public Bitmap get(ImagePreset preset) {
         // Log.v(LOGTAG, "get preset " + preset.name() + " : " + preset);
         CachedPreset cache = getCachedPreset(preset);
-        if (cache != null) {
+        if (cache != null && !cache.mBusy) {
             return cache.mBitmap;
         }
         // Log.v(LOGTAG, "didn't find preset " + preset.name() + " : " + preset
@@ -138,18 +138,21 @@ public class DirectPresetCache implements Cache {
     public void prepare(ImagePreset preset) {
         // Log.v(LOGTAG, "prepare preset " + preset.name() + " : " + preset);
         CachedPreset cache = getCachedPreset(preset);
-        if (cache == null) {
-            if (mCache.size() < mCacheSize) {
-                cache = new CachedPreset();
-                mCache.add(cache);
-            } else {
-                cache = getOldestCachedPreset();
+        if (cache == null || (cache.mBitmap == null && !cache.mBusy)) {
+            if (cache == null) {
+                if (mCache.size() < mCacheSize) {
+                    cache = new CachedPreset();
+                    mCache.add(cache);
+                } else {
+                    cache = getOldestCachedPreset();
+                }
             }
             if (cache != null) {
                 cache.mPreset = preset;
+                willCompute(cache);
             }
         }
-        willCompute(cache);
+
     }
 
 }
