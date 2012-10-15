@@ -34,12 +34,10 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.anim.FloatAnimation;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ComboAlbum;
@@ -61,7 +59,6 @@ import com.android.gallery3d.data.SnailItem;
 import com.android.gallery3d.data.SnailSource;
 import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.ui.AnimationTime;
-import com.android.gallery3d.ui.TiledScreenNail;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.DetailsHelper.DetailsSource;
@@ -73,8 +70,6 @@ import com.android.gallery3d.ui.ImportCompleteListener;
 import com.android.gallery3d.ui.MenuExecutor;
 import com.android.gallery3d.ui.PhotoFallbackEffect;
 import com.android.gallery3d.ui.PhotoView;
-import com.android.gallery3d.ui.PreparePageFadeoutTexture;
-import com.android.gallery3d.ui.RawTexture;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.GalleryUtils;
@@ -166,7 +161,6 @@ public class PhotoPage extends ActivityState implements
     private boolean mTreatBackAsUp;
     private boolean mStartInFilmstrip;
     private boolean mInCameraRoll;
-    private boolean mStartedFromAlbumPage;
     private boolean mRecenterCameraOnResume = true;
 
     private long mCameraSwitchCutoff = 0;
@@ -177,9 +171,7 @@ public class PhotoPage extends ActivityState implements
     private boolean mDeferredUpdateWaiting = false;
     private long mDeferUpdateUntil = Long.MAX_VALUE;
 
-    private RawTexture mFadeOutTexture;
     private Rect mOpenAnimationRect;
-    public static final int ANIM_TIME_OPENING = 300;
 
     // The item that is deleted (but it can still be undeleted before commiting)
     private Path mDeletePath;
@@ -221,13 +213,6 @@ public class PhotoPage extends ActivityState implements
         }
     }
 
-    private static class BackgroundFadeOut extends FloatAnimation {
-        public BackgroundFadeOut() {
-            super(1f, 0f, ANIM_TIME_OPENING);
-            setInterpolator(new AccelerateInterpolator(2f));
-        }
-    }
-
     private class UpdateProgressListener implements StitchingChangeListener {
 
         @Override
@@ -254,36 +239,12 @@ public class PhotoPage extends ActivityState implements
         }
     };
 
-    private final FloatAnimation mBackgroundFade = new BackgroundFadeOut();
-
     @Override
     protected int getBackgroundColorId() {
         return R.color.photo_background;
     }
 
     private final GLView mRootPane = new GLView() {
-        @Override
-        protected void renderBackground(GLCanvas view) {
-            if (mFadeOutTexture != null) {
-                if (mBackgroundFade.calculate(AnimationTime.get())) invalidate();
-                if (!mBackgroundFade.isActive()) {
-                    mFadeOutTexture = null;
-                    mOpenAnimationRect = null;
-                    TiledScreenNail.enableDrawPlaceholder();
-                } else {
-                    float fadeAlpha = mBackgroundFade.get();
-                    if (fadeAlpha < 1f) {
-                        view.clearBuffer(getBackgroundColor());
-                        view.setAlpha(fadeAlpha);
-                    }
-                    mFadeOutTexture.draw(view, 0, 0);
-                    view.setAlpha(1f - fadeAlpha);
-                    return;
-                }
-            }
-            view.clearBuffer(getBackgroundColor());
-        }
-
         @Override
         protected void onLayout(
                 boolean changed, int left, int top, int right, int bottom) {
@@ -402,9 +363,6 @@ public class PhotoPage extends ActivityState implements
         mTreatBackAsUp = data.getBoolean(KEY_TREAT_BACK_AS_UP, false);
         mStartInFilmstrip = data.getBoolean(KEY_START_IN_FILMSTRIP, false);
         mInCameraRoll = data.getBoolean(KEY_IN_CAMERA_ROLL, false);
-        mStartedFromAlbumPage =
-                data.getInt(KEY_ALBUMPAGE_TRANSITION,
-                        MSG_ALBUMPAGE_NONE) == MSG_ALBUMPAGE_STARTED;
         mCurrentIndex = data.getInt(KEY_INDEX_HINT, 0);
         if (mSetPathString != null) {
             mShowSpinner = true;
@@ -970,11 +928,10 @@ public class PhotoPage extends ActivityState implements
     };
 
     private void switchToGrid() {
-        if (mStartedFromAlbumPage) {
+        if (mActivity.getStateManager().hasStateClass(AlbumPage.class)) {
             onUpPressed();
         } else {
             if (mOriginalSetPathString == null) return;
-            preparePhotoFallbackView();
             Bundle data = new Bundle(getData());
             data.putString(AlbumPage.KEY_MEDIA_PATH, mOriginalSetPathString);
             data.putString(AlbumPage.KEY_PARENT_MEDIA_PATH,
@@ -993,7 +950,11 @@ public class PhotoPage extends ActivityState implements
             mActivity.getTransitionStore().put(KEY_RETURN_INDEX_HINT,
                     mAppBridge != null ? mCurrentIndex - 1 : mCurrentIndex);
 
-            mActivity.getStateManager().startState(AlbumPage.class, data);
+            if (mInCameraRoll && mAppBridge != null) {
+                mActivity.getStateManager().startState(AlbumPage.class, data);
+            } else {
+                mActivity.getStateManager().switchState(this, AlbumPage.class, data);
+            }
         }
     }
 
@@ -1304,7 +1265,6 @@ public class PhotoPage extends ActivityState implements
         // Hide the detail dialog on exit
         if (mShowDetails) hideDetails();
         if (mModel != null) {
-            if (isFinishing()) preparePhotoFallbackView();
             mModel.pause();
         }
         mPhotoView.pause();
@@ -1367,18 +1327,6 @@ public class PhotoPage extends ActivityState implements
             mPhotoView.setFilmMode(mStartInFilmstrip || mAppBridge != null);
         } else if (albumPageTransition == MSG_ALBUMPAGE_PICKED) {
             mPhotoView.setFilmMode(false);
-        }
-
-        mFadeOutTexture = transitions.get(PreparePageFadeoutTexture.KEY_FADE_TEXTURE);
-        if (mFadeOutTexture != null) {
-            mBackgroundFade.start();
-            TiledScreenNail.disableDrawPlaceholder();
-            mOpenAnimationRect =
-                    albumPageTransition == MSG_ALBUMPAGE_NONE ?
-                    (Rect) mData.getParcelable(KEY_OPEN_ANIMATION_RECT) :
-                    (Rect) transitions.get(KEY_OPEN_ANIMATION_RECT);
-            mPhotoView.setOpenAnimationRect(mOpenAnimationRect);
-            mBackgroundFade.start();
         }
     }
 
