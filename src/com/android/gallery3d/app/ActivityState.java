@@ -36,6 +36,8 @@ import android.view.WindowManager;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.ui.GLView;
+import com.android.gallery3d.ui.PreparePageFadeoutTexture;
+import com.android.gallery3d.ui.RawTexture;
 import com.android.gallery3d.util.GalleryUtils;
 
 abstract public class ActivityState {
@@ -66,11 +68,24 @@ abstract public class ActivityState {
     private boolean mPlugged = false;
     boolean mIsFinishing = false;
 
+    private static final String KEY_TRANSITION_IN = "transition-in";
+
+    private RawTexture mFadeOutTexture;
+    private GLView mContentPane;
+    private boolean mWantFadeOut = false;
+    private boolean mTransitionIn;
+
     protected ActivityState() {
     }
 
     protected void setContentPane(GLView content) {
-        mActivity.getGLRoot().setContentPane(content);
+        mContentPane = content;
+        if (mTransitionIn) {
+            mContentPane.setFadeOutTexture(mFadeOutTexture);
+            mFadeOutTexture = null;
+        }
+        mContentPane.setBackgroundColor(getBackgroundColor());
+        mActivity.getGLRoot().setContentPane(mContentPane);
     }
 
     void initialize(AbstractGalleryActivity activity, Bundle data) {
@@ -84,6 +99,9 @@ abstract public class ActivityState {
     }
 
     protected void onBackPressed() {
+        if (mActivity.getStateManager().getStateCount() > 1) {
+            fadeOutOnNextPause();
+        }
         mActivity.getStateManager().finishState(this);
     }
 
@@ -157,9 +175,18 @@ abstract public class ActivityState {
         win.setAttributes(params);
     }
 
+    protected void fadeOutOnNextPause() {
+        mWantFadeOut = true;
+    }
+
     protected void onPause() {
         if (0 != (mFlags & FLAG_SCREEN_ON_WHEN_PLUGGED)) {
             ((Activity) mActivity).unregisterReceiver(mPowerIntentReceiver);
+        }
+        if (mWantFadeOut) {
+            mWantFadeOut = false;
+            mActivity.getTransitionStore().put(KEY_TRANSITION_IN, true);
+            PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mContentPane);
         }
     }
 
@@ -214,6 +241,9 @@ abstract public class ActivityState {
 
     // a subclass of ActivityState should override the method to resume itself
     protected void onResume() {
+        mFadeOutTexture = mActivity.getTransitionStore().get(
+                PreparePageFadeoutTexture.KEY_FADE_TEXTURE);
+        mTransitionIn = mActivity.getTransitionStore().get(KEY_TRANSITION_IN, false);
     }
 
     protected boolean onCreateActionBar(Menu menu) {

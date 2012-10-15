@@ -57,6 +57,7 @@ public class StateManager {
         }
         if (!mStack.isEmpty()) {
             ActivityState top = getTopState();
+            top.fadeOutOnNextPause();
             if (mIsResumed) top.onPause();
         }
         state.initialize(mActivity, data);
@@ -81,6 +82,7 @@ public class StateManager {
 
         if (!mStack.isEmpty()) {
             ActivityState as = getTopState();
+            as.fadeOutOnNextPause();
             as.mReceivedResults = state.mResult;
             if (mIsResumed) as.onPause();
         } else {
@@ -207,6 +209,10 @@ public class StateManager {
         }
         // Remove the top state.
         mStack.pop();
+        if (!data.containsKey(PhotoPage.KEY_APP_BRIDGE)) {
+            // Do not do the fade out stuff when we are switching camera modes
+            oldState.fadeOutOnNextPause();
+        }
         if (mIsResumed) oldState.onPause();
         oldState.onDestroy();
 
