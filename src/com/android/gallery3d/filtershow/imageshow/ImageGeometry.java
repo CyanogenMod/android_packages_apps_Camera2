@@ -31,6 +31,7 @@ import android.view.View;
 
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata.FLIP;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.imageshow.GeometryMath;
 
 public abstract class ImageGeometry extends ImageSlave {
     private boolean mVisibilityGained = false;
@@ -72,6 +73,35 @@ public abstract class ImageGeometry extends ImageSlave {
     private void setupLocalDisplayBounds(RectF b) {
         mLocalDisplayBounds = b;
         calculateLocalScalingFactorAndOffset();
+    }
+
+    protected static float angleFor(float dx, float dy) {
+        return (float) (Math.atan2(dx, dy) * 180 / Math.PI);
+    }
+
+    protected static int snappedAngle(float angle) {
+        float remainder = angle % 90;
+        int current = (int) (angle / 90); // truncates
+        if (remainder < -45) {
+            --current;
+        } else if (remainder > 45) {
+            ++current;
+        }
+        return current * 90;
+    }
+
+    protected float getCurrentTouchAngle(){
+        if (mCurrentX == mTouchCenterX && mCurrentY == mTouchCenterY) {
+            return 0;
+        }
+        float dX1 = mTouchCenterX - mCenterX;
+        float dY1 = mTouchCenterY - mCenterY;
+        float dX2 = mCurrentX - mCenterX;
+        float dY2 = mCurrentY - mCenterY;
+
+        float angleA = angleFor(dX1, dY1);
+        float angleB = angleFor(dX2, dY2);
+        return (angleB - angleA) % 360;
     }
 
     protected float computeScale(float width, float height) {
@@ -219,8 +249,8 @@ public abstract class ImageGeometry extends ImageSlave {
         if (array.length < 2)
             return;
         for (int x = 0; x < array.length; x += 2) {
-            array[x] = clamp(array[x], imageBound.left, imageBound.right);
-            array[x + 1] = clamp(array[x + 1], imageBound.top, imageBound.bottom);
+            array[x] = GeometryMath.clamp(array[x], imageBound.left, imageBound.right);
+            array[x + 1] = GeometryMath.clamp(array[x + 1], imageBound.top, imageBound.bottom);
         }
     }
 
@@ -344,10 +374,6 @@ public abstract class ImageGeometry extends ImageSlave {
         copy.setHistoryName("Geometry");
         copy.setIsFx(false);
         setImagePreset(copy);
-    }
-
-    protected static float clamp(float i, float low, float high) {
-        return Math.max(Math.min(i, high), low);
     }
 
     public static RectF getUntranslatedStraightenCropBounds(RectF imageRect, float straightenAngle) {
