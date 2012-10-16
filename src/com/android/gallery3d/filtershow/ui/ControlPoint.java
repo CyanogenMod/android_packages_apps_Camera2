@@ -2,25 +2,18 @@
 package com.android.gallery3d.filtershow.ui;
 
 public class ControlPoint implements Comparable {
+    public float x;
+    public float y;
+
     public ControlPoint(float px, float py) {
         x = px;
         y = py;
     }
 
-    public ControlPoint multiply(float m) {
-        return new ControlPoint(x * m, y * m);
+    public ControlPoint(ControlPoint point) {
+        x = point.x;
+        y = point.y;
     }
-
-    public ControlPoint add(ControlPoint v) {
-        return new ControlPoint(x + v.x, y + v.y);
-    }
-
-    public ControlPoint sub(ControlPoint v) {
-        return new ControlPoint(x - v.x, y - v.y);
-    }
-
-    public float x;
-    public float y;
 
     public ControlPoint copy() {
         return new ControlPoint(x, y);
