@@ -48,7 +48,15 @@ public class ImageLoader {
 
     private int mOrientation = 0;
     private HistoryAdapter mAdapter = null;
-    private static int PORTRAIT_ORIENTATION = 6;
+
+    private static final int ORI_NORMAL     = ExifInterface.ORIENTATION_NORMAL;
+    private static final int ORI_ROTATE_90  = ExifInterface.ORIENTATION_ROTATE_90;
+    private static final int ORI_ROTATE_180 = ExifInterface.ORIENTATION_ROTATE_180;
+    private static final int ORI_ROTATE_270 = ExifInterface.ORIENTATION_ROTATE_270;
+    private static final int ORI_FLIP_HOR   = ExifInterface.ORIENTATION_FLIP_HORIZONTAL;
+    private static final int ORI_FLIP_VERT  = ExifInterface.ORIENTATION_FLIP_VERTICAL;
+    private static final int ORI_TRANSPOSE  = ExifInterface.ORIENTATION_TRANSPOSE;
+    private static final int ORI_TRANSVERSE = ExifInterface.ORIENTATION_TRANSVERSE;
 
     private Context mContext = null;
     private Uri mUri = null;
@@ -90,7 +98,20 @@ public class ImageLoader {
                         MediaStore.Images.ImageColumns.ORIENTATION
                     },
                     null, null, null);
-            return cursor.moveToNext() ? cursor.getInt(0) : -1;
+            if (cursor.moveToNext()){
+              int ori =   cursor.getInt(0);
+
+              switch (ori){
+                  case 0:   return ORI_NORMAL;
+                  case 90:  return ORI_ROTATE_90;
+                  case 270: return ORI_ROTATE_270;
+                  case 180: return ORI_ROTATE_180;
+                  default:
+                      return -1;
+              }
+            } else{
+                return -1;
+            }
         } catch (SQLiteException e){
             return ExifInterface.ORIENTATION_UNDEFINED;
         } finally {
@@ -111,18 +132,55 @@ public class ImageLoader {
     }
 
     private void updateBitmaps() {
+        if (mOrientation > 1) {
+            mOriginalBitmapSmall = rotateToPortrait(mOriginalBitmapSmall,mOrientation);
+            mOriginalBitmapLarge = rotateToPortrait(mOriginalBitmapLarge,mOrientation);
+        }
         mCache.setOriginalBitmap(mOriginalBitmapSmall);
         mHiresCache.setOriginalBitmap(mOriginalBitmapLarge);
-        if (mOrientation == PORTRAIT_ORIENTATION) {
-            mOriginalBitmapSmall = rotateToPortrait(mOriginalBitmapSmall);
-            mOriginalBitmapLarge = rotateToPortrait(mOriginalBitmapLarge);
-        }
         warnListeners();
     }
 
-    private Bitmap rotateToPortrait(Bitmap bitmap) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(90);
+    private Bitmap rotateToPortrait(Bitmap bitmap,int ori) {
+           Matrix matrix = new Matrix();
+           int w = bitmap.getWidth();
+           int h = bitmap.getHeight();
+           if (ori == ORI_ROTATE_90 ||
+                   ori == ORI_ROTATE_270 ||
+                   ori == ORI_TRANSPOSE||
+                   ori == ORI_TRANSVERSE) {
+               int tmp = w;
+               w = h;
+               h = tmp;
+           }
+           switch(ori){
+               case ORI_NORMAL:
+               case ORI_ROTATE_90:
+                   matrix.setRotate(90,w/2f,h/2f);
+                   break;
+               case ORI_ROTATE_180:
+                   matrix.setRotate(180,w/2f,h/2f);
+                   break;
+               case ORI_ROTATE_270:
+                   matrix.setRotate(270,w/2f,h/2f);
+                   break;
+               case ORI_FLIP_HOR:
+                   matrix.preScale(-1, 1);
+                   break;
+              case ORI_FLIP_VERT:
+                   matrix.preScale(1, -1);
+                   break;
+               case ORI_TRANSPOSE:
+                   matrix.setRotate(90,w/2f,h/2f);
+                   matrix.preScale(1, -1);
+                   break;
+               case ORI_TRANSVERSE:
+                   matrix.setRotate(270,w/2f,h/2f);
+                   matrix.preScale(1, -1);
+                   break;
+               default:
+            }
+
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
                 bitmap.getHeight(), matrix, true);
     }
