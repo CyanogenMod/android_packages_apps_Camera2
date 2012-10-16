@@ -61,7 +61,7 @@ import com.android.gallery3d.data.SnailItem;
 import com.android.gallery3d.data.SnailSource;
 import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.ui.AnimationTime;
-import com.android.gallery3d.ui.BitmapScreenNail;
+import com.android.gallery3d.ui.TiledScreenNail;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.DetailsHelper.DetailsSource;
@@ -269,7 +269,7 @@ public class PhotoPage extends ActivityState implements
                 if (!mBackgroundFade.isActive()) {
                     mFadeOutTexture = null;
                     mOpenAnimationRect = null;
-                    BitmapScreenNail.enableDrawPlaceholder();
+                    TiledScreenNail.enableDrawPlaceholder();
                 } else {
                     float fadeAlpha = mBackgroundFade.get();
                     if (fadeAlpha < 1f) {
@@ -1372,7 +1372,7 @@ public class PhotoPage extends ActivityState implements
         mFadeOutTexture = transitions.get(PreparePageFadeoutTexture.KEY_FADE_TEXTURE);
         if (mFadeOutTexture != null) {
             mBackgroundFade.start();
-            BitmapScreenNail.disableDrawPlaceholder();
+            TiledScreenNail.disableDrawPlaceholder();
             mOpenAnimationRect =
                     albumPageTransition == MSG_ALBUMPAGE_NONE ?
                     (Rect) mData.getParcelable(KEY_OPEN_ANIMATION_RECT) :
