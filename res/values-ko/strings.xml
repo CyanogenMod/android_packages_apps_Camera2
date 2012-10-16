@@ -140,24 +140,15 @@
     <string name="auto" msgid="4296941368722892821">"자동"</string>
     <string name="flash_on" msgid="7891556231891837284">"플래시 터짐"</string>
     <string name="flash_off" msgid="1445443413822680010">"플래시 없음"</string>
-    <!-- no translation found for ffx_vintage (8348759951363844780) -->
-    <skip />
-    <!-- no translation found for ffx_instant (726968618715691987) -->
-    <skip />
-    <!-- no translation found for ffx_bleach (8946700451603478453) -->
-    <skip />
-    <!-- no translation found for ffx_blue_crush (5910979947224043165) -->
-    <skip />
-    <!-- no translation found for ffx_bw_contrast (3853938816686258406) -->
-    <skip />
-    <!-- no translation found for ffx_punch (1343475517872562639) -->
-    <skip />
-    <!-- no translation found for ffx_x_process (4779398678661811765) -->
-    <skip />
-    <!-- no translation found for ffx_washout (2526099635720493268) -->
-    <skip />
-    <!-- no translation found for ffx_washout_color (3209955210402468008) -->
-    <skip />
+    <string name="ffx_vintage" msgid="8348759951363844780">"빈티지"</string>
+    <string name="ffx_instant" msgid="726968618715691987">"순간 검색"</string>
+    <string name="ffx_bleach" msgid="8946700451603478453">"표백제"</string>
+    <string name="ffx_blue_crush" msgid="5910979947224043165">"블루 크러시"</string>
+    <string name="ffx_bw_contrast" msgid="3853938816686258406">"BW 대비"</string>
+    <string name="ffx_punch" msgid="1343475517872562639">"펀치"</string>
+    <string name="ffx_x_process" msgid="4779398678661811765">"X 처리"</string>
+    <string name="ffx_washout" msgid="2526099635720493268">"워시아웃"</string>
+    <string name="ffx_washout_color" msgid="3209955210402468008">"워시아웃 색상"</string>
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"오프라인에서 앨범을 사용하도록 설정합니다."</item>
     <item quantity="other" msgid="4948604338155959389">"오프라인에서 앨범을 사용하도록 설정합니다."</item>
@@ -197,16 +188,14 @@
     <string name="help" msgid="7368960711153618354">"도움말"</string>
     <string name="no_external_storage_title" msgid="2408933644249734569">"저장소 없음"</string>
     <string name="no_external_storage" msgid="95726173164068417">"사용할 수 있는 외부 저장소 없음"</string>
-    <!-- no translation found for switch_photo_filmstrip (8227883354281661548) -->
-    <skip />
-    <!-- no translation found for switch_photo_grid (3681299459107925725) -->
-    <skip />
+    <string name="switch_photo_filmstrip" msgid="8227883354281661548">"슬라이드 보기"</string>
+    <string name="switch_photo_grid" msgid="3681299459107925725">"바둑판식 보기"</string>
     <string name="trimming" msgid="9122385768369143997">"자르기"</string>
     <string name="please_wait" msgid="7296066089146487366">"잠시 기다려 주세요."</string>
-    <string name="save_into" msgid="6688364520925473396">"잘라낸 동영상 저장 위치"</string>
+    <!-- no translation found for save_into (4960537214388766062) -->
+    <skip />
     <string name="trim_too_short" msgid="751593965620665326">"잘라낼 수 없음 : 동영상이 너무 짧음"</string>
     <string name="trim_too_long" msgid="2657958275279217174">"잘라내지 않음 : 원본과 길이가 같음"</string>
-    <!-- no translation found for pano_progress_text (1586851614586678464) -->
-    <skip />
+    <string name="pano_progress_text" msgid="1586851614586678464">"파노라마 렌더링"</string>
     <string name="save" msgid="613976532235060516">"저장"</string>
 </resources>
