@@ -21,6 +21,9 @@
     <!--  Title for the image editor activity [CHAR LIMIT=NONE]-->
     <string name="title_activity_filter_show">FilterShowActivity</string>
 
+    <!--  String shown when we cannot load the image when starting the activity [CHAR LIMIT=NONE] -->
+    <string name="cannot_load_image">Cannot load the image!</string>
+
     <!--  actionbar menu -->
 
     <!-- Text for the actionbar confirmation button [CHAR LIMIT=20] -->
