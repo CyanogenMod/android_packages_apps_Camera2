@@ -30,11 +30,11 @@ import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
-import com.android.gallery3d.ui.BitmapScreenNail;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.ScreenNail;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.ui.TileImageViewAdapter;
+import com.android.gallery3d.ui.TiledScreenNail;
 import com.android.gallery3d.ui.TiledTexture;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
@@ -305,8 +305,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         entry.screenNailTask = null;
 
         // Combine the ScreenNails if we already have a BitmapScreenNail
-        if (entry.screenNail instanceof BitmapScreenNail) {
-            BitmapScreenNail original = (BitmapScreenNail) entry.screenNail;
+        if (entry.screenNail instanceof TiledScreenNail) {
+            TiledScreenNail original = (TiledScreenNail) entry.screenNail;
             screenNail = original.combine(screenNail);
         }
 
@@ -404,7 +404,6 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         updateImageCache();
         updateImageRequests();
         updateTileProvider();
-        updateScreenNailUploadQueue();
 
         if (mDataListener != null) {
             mDataListener.onPhotoChanged(index, mItemPath);
@@ -424,8 +423,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
         if (e == null) return;
 
         ScreenNail s = e.screenNail;
-        if (s instanceof BitmapScreenNail) {
-            TiledTexture t = ((BitmapScreenNail) s).getTexture();
+        if (s instanceof TiledScreenNail) {
+            TiledTexture t = ((TiledScreenNail) s).getTexture();
             if (t != null && !t.isReady()) mUploader.addTexture(t);
         }
     }
@@ -717,7 +716,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                 bitmap = BitmapUtils.rotateBitmap(bitmap,
                     mItem.getRotation() - mItem.getFullImageRotation(), true);
             }
-            return bitmap == null ? null : new BitmapScreenNail(bitmap);
+            return bitmap == null ? null : new TiledScreenNail(bitmap);
         }
     }
 
@@ -766,7 +765,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     private ScreenNail newPlaceholderScreenNail(MediaItem item) {
         int width = item.getWidth();
         int height = item.getHeight();
-        return new BitmapScreenNail(width, height);
+        return new TiledScreenNail(width, height);
     }
 
     // Returns the task if we started the task or the task is already started.
@@ -828,8 +827,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                 if (entry.requestedScreenNail != item.getDataVersion()) {
                     // This ScreenNail is outdated, we want to update it if it's
                     // still a placeholder.
-                    if (entry.screenNail instanceof BitmapScreenNail) {
-                        BitmapScreenNail s = (BitmapScreenNail) entry.screenNail;
+                    if (entry.screenNail instanceof TiledScreenNail) {
+                        TiledScreenNail s = (TiledScreenNail) entry.screenNail;
                         s.updatePlaceholderSize(
                                 item.getWidth(), item.getHeight());
                     }
@@ -847,6 +846,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
             if (entry.screenNailTask != null) entry.screenNailTask.cancel();
             if (entry.screenNail != null) entry.screenNail.recycle();
         }
+
+        updateScreenNailUploadQueue();
     }
 
     private class FullImageListener

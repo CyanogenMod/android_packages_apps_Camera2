@@ -850,8 +850,8 @@ public class PhotoView extends GLView {
         }
 
         private boolean isScreenNailAnimating() {
-            return (mScreenNail instanceof BitmapScreenNail)
-                    && ((BitmapScreenNail) mScreenNail).isAnimating();
+            return (mScreenNail instanceof TiledScreenNail)
+                    && ((TiledScreenNail) mScreenNail).isAnimating();
         }
 
         @Override
@@ -1792,8 +1792,8 @@ public class PhotoView extends GLView {
             MediaItem item = mModel.getMediaItem(i);
             if (item == null) continue;
             ScreenNail sc = mModel.getScreenNail(i);
-            if (!(sc instanceof BitmapScreenNail)
-                    || ((BitmapScreenNail) sc).isShowingPlaceholder()) continue;
+            if (!(sc instanceof TiledScreenNail)
+                    || ((TiledScreenNail) sc).isShowingPlaceholder()) continue;
 
             // Now, sc is BitmapScreenNail and is not showing placeholder
             Rect rect = new Rect(getPhotoRect(i));
