@@ -9,12 +9,7 @@ public class ImageFilterCurves extends ImageFilter {
 
     private static final String LOGTAG = "ImageFilterCurves";
 
-    private final float[] mCurve = new float[256];
-
-    private boolean mUseRed = true;
-    private boolean mUseGreen = true;
-    private boolean mUseBlue = true;
-    private Spline mSpline = null;
+    private final Spline[] mSplines = new Spline[4];
 
     public ImageFilterCurves() {
         mName = "Curves";
@@ -23,29 +18,12 @@ public class ImageFilterCurves extends ImageFilter {
     @Override
     public ImageFilter clone() throws CloneNotSupportedException {
         ImageFilterCurves filter = (ImageFilterCurves) super.clone();
-        filter.setCurve(mCurve);
-        filter.setSpline(new Spline(mSpline));
-        return filter;
-    }
-
-    public void setUseRed(boolean value) {
-        mUseRed = value;
-    }
-
-    public void setUseGreen(boolean value) {
-        mUseGreen = value;
-    }
-
-    public void setUseBlue(boolean value) {
-        mUseBlue = value;
-    }
-
-    public void setCurve(float[] curve) {
-        for (int i = 0; i < curve.length; i++) {
-            if (i < 256) {
-                mCurve[i] = curve[i];
+        for (int i = 0; i < 4; i++) {
+            if (mSplines[i] != null) {
+                filter.setSpline(new Spline(mSplines[i]), i);
             }
         }
+        return filter;
     }
 
     @Override
@@ -55,36 +33,48 @@ public class ImageFilterCurves extends ImageFilter {
             return false;
         }
         ImageFilterCurves curve = (ImageFilterCurves) filter;
-        for (int i = 0; i < 256; i++) {
-            if (curve.mCurve[i] != mCurve[i]) {
+        for (int i = 0; i < 4; i++) {
+            if (mSplines[i] != curve.mSplines[i]) {
                 return false;
             }
         }
         return true;
     }
 
-    public void populateArray(int[] array) {
+    public void populateArray(int[] array, int curveIndex) {
+        Spline spline = mSplines[curveIndex];
+        if (spline == null) {
+            return;
+        }
+        float[] curve = spline.getAppliedCurve();
         for (int i = 0; i < 256; i++) {
-            array[i] = (int) (mCurve[i]);
+            array[i] = (int) (curve[i] * 255);
         }
     }
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        if (!mSplines[Spline.RGB].isOriginal()) {
+            int[] rgbGradient = new int[256];
+            populateArray(rgbGradient, Spline.RGB);
+            nativeApplyGradientFilter(bitmap, bitmap.getWidth(), bitmap.getHeight(),
+                    rgbGradient, rgbGradient, rgbGradient);
+        }
+
         int[] redGradient = null;
-        if (mUseRed) {
+        if (!mSplines[Spline.RED].isOriginal()) {
             redGradient = new int[256];
-            populateArray(redGradient);
+            populateArray(redGradient, Spline.RED);
         }
         int[] greenGradient = null;
-        if (mUseGreen) {
+        if (!mSplines[Spline.GREEN].isOriginal()) {
             greenGradient = new int[256];
-            populateArray(greenGradient);
+            populateArray(greenGradient, Spline.GREEN);
         }
         int[] blueGradient = null;
-        if (mUseBlue) {
+        if (!mSplines[Spline.BLUE].isOriginal()) {
             blueGradient = new int[256];
-            populateArray(blueGradient);
+            populateArray(blueGradient, Spline.BLUE);
         }
 
         nativeApplyGradientFilter(bitmap, bitmap.getWidth(), bitmap.getHeight(),
@@ -92,11 +82,11 @@ public class ImageFilterCurves extends ImageFilter {
         return bitmap;
     }
 
-    public void setSpline(Spline spline) {
-        mSpline = spline;
+    public void setSpline(Spline spline, int splineIndex) {
+        mSplines[splineIndex] = spline;
     }
 
-    public Spline getSpline() {
-        return mSpline;
+    public Spline getSpline(int splineIndex) {
+        return mSplines[splineIndex];
     }
 }
