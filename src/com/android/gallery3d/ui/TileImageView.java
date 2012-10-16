@@ -575,8 +575,10 @@ public class TileImageView extends GLView {
                 }
                 if (tile == null) break;
                 if (!tile.isContentValid()) {
+                    boolean hasBeenLoaded = tile.isLoaded();
                     Utils.assertTrue(tile.mTileState == STATE_DECODED);
                     tile.updateContent(canvas);
+                    if (!hasBeenLoaded) tile.draw(canvas, 0, 0);
                     --quota;
                 }
             }
@@ -621,7 +623,6 @@ public class TileImageView extends GLView {
         }
     }
 
-    // TODO: avoid drawing the unused part of the textures.
     static boolean drawTile(
             Tile tile, GLCanvas canvas, RectF source, RectF target) {
         while (true) {
