@@ -187,7 +187,6 @@ public class LocalVideo extends LocalMediaItem {
         Uri baseUri = Video.Media.EXTERNAL_CONTENT_URI;
         mApplication.getContentResolver().delete(baseUri, "_id=?",
                 new String[]{String.valueOf(id)});
-        mApplication.getDataManager().broadcastLocalDeletion();
     }
 
     @Override

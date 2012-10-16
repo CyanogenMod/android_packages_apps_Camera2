@@ -19,14 +19,11 @@
   public android.content.Intent getResultData();
 }
 
--keep class com.android.camera.VideoCamera {
+-keep class com.android.camera.CameraActivity {
   public boolean isRecording();
-  public void onCancelBgTraining(...);
-  public void onProtectiveCurtainClick(...);
 }
 
 -keep class com.android.camera.VideoModule {
-  public boolean isRecording();
   public void onCancelBgTraining(...);
   public void onProtectiveCurtainClick(...);
 }
