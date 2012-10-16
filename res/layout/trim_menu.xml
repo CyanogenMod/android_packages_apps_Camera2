@@ -23,8 +23,10 @@
         android:layout_marginLeft="8dp"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="@string/done"
+        android:text="@string/save"
+        android:textAllCaps="true"
+        android:textSize="14sp"
         android:gravity="left|center_vertical"
-        android:drawableLeft="@drawable/ic_menu_save_holo_light"
+        android:drawableLeft="@drawable/ic_menu_savephoto"
         android:drawablePadding="8dp" />
 </FrameLayout>

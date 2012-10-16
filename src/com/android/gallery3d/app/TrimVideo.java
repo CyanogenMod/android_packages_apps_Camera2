@@ -268,9 +268,8 @@ public class TrimVideo extends Activity implements
             return;
         }
         if (Math.abs(mVideoView.getDuration() - delta) < 100) {
-            Toast.makeText(getApplicationContext(),
-                getString(R.string.trim_too_long),
-                Toast.LENGTH_SHORT).show();
+            // If no change has been made, go back
+            onBackPressed();
             return;
         }
         // Use the default save directory if the source directory cannot be
