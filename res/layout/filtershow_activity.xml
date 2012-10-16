@@ -137,6 +137,7 @@
                 android:id="@+id/imageCurves"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layerType="software"
                 android:visibility="gone" />
 
             <com.android.gallery3d.filtershow.imageshow.ImageBorder
@@ -190,6 +191,15 @@
                 android:background="@color/background_main_toolbar"
                 android:orientation="horizontal"
                 android:visibility="gone" >
+
+                <ImageButton
+                    android:id="@+id/pickCurvesChannel"
+                    android:layout_width="64dip"
+                    android:layout_height="64dip"
+                    android:layout_gravity="center_vertical|left"
+                    android:scaleType="centerInside"
+                    android:text="@string/curvesRGB"
+                    android:src="@drawable/filtershow_button_show_original" />
 
                 <Button
                     android:id="@+id/applyEffect"
