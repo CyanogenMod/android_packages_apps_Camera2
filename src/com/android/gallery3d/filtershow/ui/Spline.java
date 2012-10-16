@@ -1,10 +1,28 @@
 
 package com.android.gallery3d.filtershow.ui;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.drawable.Drawable;
+
 import java.util.Collections;
 import java.util.Vector;
 
 public class Spline {
+    private final Vector<ControlPoint> mPoints;
+    private static Drawable mCurveHandle;
+    private static int mCurveHandleSize;
+    private static int mCurveWidth;
+
+    public static final int RGB = 0;
+    public static final int RED = 1;
+    public static final int GREEN = 2;
+    public static final int BLUE = 3;
+
+    private final Paint gPaint = new Paint();
+
     public Spline() {
         mPoints = new Vector<ControlPoint>();
     }
@@ -13,28 +31,276 @@ public class Spline {
         mPoints = new Vector<ControlPoint>();
         for (int i = 0; i < spline.mPoints.size(); i++) {
             ControlPoint p = spline.mPoints.elementAt(i);
-            mPoints.add(p);
+            mPoints.add(new ControlPoint(p));
         }
         Collections.sort(mPoints);
-        delta_t = 1.0f / mPoints.size();
     }
 
-    public ControlPoint interpolate(float t, ControlPoint p1,
-            ControlPoint p2, ControlPoint p3, ControlPoint p4) {
+    public static void setCurveHandle(Drawable drawable, int size) {
+        mCurveHandle = drawable;
+        mCurveHandleSize = size;
+    }
 
-        float t3 = t * t * t;
-        float t2 = t * t;
-        float b1 = 0.5f * (-t3 + 2 * t2 - t);
-        float b2 = 0.5f * (3 * t3 - 5 * t2 + 2);
-        float b3 = 0.5f * (-3 * t3 + 4 * t2 + t);
-        float b4 = 0.5f * (t3 - t2);
+    public static void setCurveWidth(int width) {
+        mCurveWidth = width;
+    }
 
-        ControlPoint b1p1 = p1.multiply(b1);
-        ControlPoint b2p2 = p2.multiply(b2);
-        ControlPoint b3p3 = p3.multiply(b3);
-        ControlPoint b4p4 = p4.multiply(b4);
+    public static int curveHandleSize() {
+        return mCurveHandleSize;
+    }
 
-        return b1p1.add(b2p2.add(b3p3.add(b4p4)));
+    public static int colorForCurve(int curveIndex) {
+        switch (curveIndex) {
+            case Spline.RED:
+                return Color.RED;
+            case GREEN:
+                return Color.GREEN;
+            case BLUE:
+                return Color.BLUE;
+        }
+        return Color.WHITE;
+    }
+
+    public boolean isOriginal() {
+        if (this.getNbPoints() > 2) {
+            return false;
+        }
+        if (mPoints.elementAt(0).x != 0 || mPoints.elementAt(0).y != 1) {
+            return false;
+        }
+        if (mPoints.elementAt(1).x != 1 || mPoints.elementAt(1).y != 0) {
+            return false;
+        }
+        return true;
+    }
+
+    private void drawHandles(Canvas canvas, Drawable indicator, float centerX, float centerY) {
+        int left = (int) centerX - mCurveHandleSize / 2;
+        int top = (int) centerY - mCurveHandleSize / 2;
+        indicator.setBounds(left, top, left + mCurveHandleSize, top + mCurveHandleSize);
+        indicator.draw(canvas);
+    }
+
+    public float[] getAppliedCurve() {
+        float[] curve = new float[256];
+        ControlPoint[] points = new ControlPoint[mPoints.size()];
+        for (int i = 0; i < mPoints.size(); i++) {
+            ControlPoint p = mPoints.get(i);
+            points[i] = new ControlPoint(p.x, p.y);
+        }
+        double[] derivatives = solveSystem(points);
+        int start = 0;
+        if (points[0].x != 0) {
+            start = (int) (points[0].x * 256);
+        }
+        for (int i = 0; i < start; i++) {
+            curve[i] = 1.0f - points[0].y;
+        }
+        for (int i = start; i < 256; i++) {
+            ControlPoint cur = null;
+            ControlPoint next = null;
+            double x = i / 256.0;
+            int pivot = 0;
+            for (int j = 0; j < points.length - 1; j++) {
+                if (x >= points[j].x && x <= points[j + 1].x) {
+                    pivot = j;
+                }
+            }
+            cur = points[pivot];
+            next = points[pivot + 1];
+            if (x <= next.x) {
+                double x1 = cur.x;
+                double x2 = next.x;
+                double y1 = cur.y;
+                double y2 = next.y;
+
+                // Use the second derivatives to apply the cubic spline
+                // equation:
+                double delta = (x2 - x1);
+                double delta2 = delta * delta;
+                double b = (x - x1) / delta;
+                double a = 1 - b;
+                double ta = a * y1;
+                double tb = b * y2;
+                double tc = (a * a * a - a) * derivatives[pivot];
+                double td = (b * b * b - b) * derivatives[pivot + 1];
+                double y = ta + tb + (delta2 / 6) * (tc + td);
+                if (y > 1.0f) {
+                    y = 1.0f;
+                }
+                if (y < 0) {
+                    y = 0;
+                }
+                curve[i] = (float) (1.0f - y);
+            } else {
+                curve[i] = 1.0f - next.y;
+            }
+        }
+        return curve;
+    }
+
+    private void drawGrid(Canvas canvas, float w, float h) {
+        // Grid
+        gPaint.setARGB(128, 150, 150, 150);
+        gPaint.setStrokeWidth(1);
+
+        float stepH = h / 9;
+        float stepW = w / 9;
+
+        // central diagonal
+        gPaint.setARGB(255, 100, 100, 100);
+        gPaint.setStrokeWidth(2);
+        canvas.drawLine(0, h, w, 0, gPaint);
+
+        gPaint.setARGB(128, 200, 200, 200);
+        gPaint.setStrokeWidth(4);
+        stepH = h / 3;
+        stepW = w / 3;
+        for (int j = 1; j < 3; j++) {
+            canvas.drawLine(0, j * stepH, w, j * stepH, gPaint);
+            canvas.drawLine(j * stepW, 0, j * stepW, h, gPaint);
+        }
+        canvas.drawLine(0, 0, 0, h, gPaint);
+        canvas.drawLine(w, 0, w, h, gPaint);
+        canvas.drawLine(0, 0, w, 0, gPaint);
+        canvas.drawLine(0, h, w, h, gPaint);
+    }
+
+    public void draw(Canvas canvas, int color, int canvasWidth, int canvasHeight,
+            boolean showHandles) {
+        float w = canvasWidth;
+        float h = canvasHeight - mCurveHandleSize;
+        float dx = 0;
+        float dy = mCurveHandleSize / 2;
+
+        // The cubic spline equation is (from numerical recipes in C):
+        // y = a(y_i) + b(y_i+1) + c(y"_i) + d(y"_i+1)
+        //
+        // with c(y"_i) and d(y"_i+1):
+        // c(y"_i) = 1/6 (a^3 - a) delta^2 (y"_i)
+        // d(y"_i_+1) = 1/6 (b^3 - b) delta^2 (y"_i+1)
+        //
+        // and delta:
+        // delta = x_i+1 - x_i
+        //
+        // To find the second derivatives y", we can rearrange the equation as:
+        // A(y"_i-1) + B(y"_i) + C(y"_i+1) = D
+        //
+        // With the coefficients A, B, C, D:
+        // A = 1/6 (x_i - x_i-1)
+        // B = 1/3 (x_i+1 - x_i-1)
+        // C = 1/6 (x_i+1 - x_i)
+        // D = (y_i+1 - y_i)/(x_i+1 - x_i) - (y_i - y_i-1)/(x_i - x_i-1)
+        //
+        // We can now easily solve the equation to find the second derivatives:
+        ControlPoint[] points = new ControlPoint[mPoints.size()];
+        for (int i = 0; i < mPoints.size(); i++) {
+            ControlPoint p = mPoints.get(i);
+            points[i] = new ControlPoint(p.x * w, p.y * h);
+        }
+        double[] derivatives = solveSystem(points);
+
+        Path path = new Path();
+        path.moveTo(0, points[0].y);
+        for (int i = 0; i < points.length - 1; i++) {
+            double x1 = points[i].x;
+            double x2 = points[i + 1].x;
+            double y1 = points[i].y;
+            double y2 = points[i + 1].y;
+
+            for (double x = x1; x < x2; x += 20) {
+                // Use the second derivatives to apply the cubic spline
+                // equation:
+                double delta = (x2 - x1);
+                double delta2 = delta * delta;
+                double b = (x - x1) / delta;
+                double a = 1 - b;
+                double ta = a * y1;
+                double tb = b * y2;
+                double tc = (a * a * a - a) * derivatives[i];
+                double td = (b * b * b - b) * derivatives[i + 1];
+                double y = ta + tb + (delta2 / 6) * (tc + td);
+                if (y > h) {
+                    y = h;
+                }
+                if (y < 0) {
+                    y = 0;
+                }
+                path.lineTo((float) x, (float) y);
+            }
+        }
+        canvas.save();
+        canvas.translate(dx, dy);
+        drawGrid(canvas, w, h);
+        ControlPoint lastPoint = points[points.length - 1];
+        path.lineTo(lastPoint.x, lastPoint.y);
+        path.lineTo(w, lastPoint.y);
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setFilterBitmap(true);
+        paint.setDither(true);
+        paint.setStyle(Paint.Style.STROKE);
+        int curveWidth = mCurveWidth;
+        if (showHandles) {
+            curveWidth *= 1.5;
+        }
+        paint.setStrokeWidth(curveWidth + 2);
+        paint.setColor(Color.BLACK);
+        canvas.drawPath(path, paint);
+        paint.setStrokeWidth(curveWidth);
+        paint.setColor(color);
+        canvas.drawPath(path, paint);
+        if (showHandles) {
+            for (int i = 0; i < points.length; i++) {
+                float x = points[i].x;
+                float y = points[i].y;
+                drawHandles(canvas, mCurveHandle, x, y);
+            }
+        }
+        canvas.restore();
+    }
+
+    double[] solveSystem(ControlPoint[] points) {
+        int n = points.length;
+        double[][] system = new double[n][3];
+        double[] result = new double[n]; // d
+        double[] solution = new double[n]; // returned coefficients
+        system[0][1] = 1;
+        system[n - 1][1] = 1;
+        double d6 = 1.0 / 6.0;
+        double d3 = 1.0 / 3.0;
+
+        // let's create a tridiagonal matrix representing the
+        // system, and apply the TDMA algorithm to solve it
+        // (see http://en.wikipedia.org/wiki/Tridiagonal_matrix_algorithm)
+        for (int i = 1; i < n - 1; i++) {
+            double deltaPrevX = points[i].x - points[i - 1].x;
+            double deltaX = points[i + 1].x - points[i - 1].x;
+            double deltaNextX = points[i + 1].x - points[i].x;
+            double deltaNextY = points[i + 1].y - points[i].y;
+            double deltaPrevY = points[i].y - points[i - 1].y;
+            system[i][0] = d6 * deltaPrevX; // a_i
+            system[i][1] = d3 * deltaX; // b_i
+            system[i][2] = d6 * deltaNextX; // c_i
+            result[i] = (deltaNextY / deltaNextX) - (deltaPrevY / deltaPrevX); // d_i
+        }
+
+        // Forward sweep
+        for (int i = 1; i < n; i++) {
+            // m = a_i/b_i-1
+            double m = system[i][0] / system[i - 1][1];
+            // b_i = b_i - m(c_i-1)
+            system[i][1] = system[i][1] - m * system[i - 1][2];
+            // d_i = d_i - m(d_i-1)
+            result[i] = result[i] - m * result[i - 1];
+        }
+
+        // Back substitution
+        solution[n - 1] = result[n - 1] / system[n - 1][1];
+        for (int i = n - 2; i >= 0; --i) {
+            solution[i] = (result[i] - system[i][2] * solution[i + 1]) / system[i][1];
+        }
+        return solution;
     }
 
     public void addPoint(float x, float y) {
@@ -44,42 +310,11 @@ public class Spline {
     public void addPoint(ControlPoint v) {
         mPoints.add(v);
         Collections.sort(mPoints);
-        delta_t = 1.0f / mPoints.size();
     }
 
-    public ControlPoint getPoint(float t) {
-        int p = (int) (t / delta_t);
-        int p0 = p - 1;
-        int max = mPoints.size() - 1;
-
-        if (p0 < 0) {
-            p0 = 0;
-        } else if (p0 >= max) {
-            p0 = max;
-        }
-        int p1 = p;
-        if (p1 < 0) {
-            p1 = 0;
-        } else if (p1 >= max) {
-            p1 = max;
-        }
-        int p2 = p + 1;
-        if (p2 < 0) {
-            p2 = 0;
-        } else if (p2 >= max) {
-            p2 = max;
-        }
-        int p3 = p + 2;
-        if (p3 < 0) {
-            p3 = 0;
-        } else if (p3 >= max) {
-            p3 = max;
-        }
-        float lt = (t - delta_t * (float) p) / delta_t;
-        return interpolate(lt, mPoints.elementAt(p0),
-                mPoints.elementAt(p1), mPoints.elementAt(p2),
-                mPoints.elementAt(p3));
-
+    public void deletePoint(int n) {
+        mPoints.remove(n);
+        Collections.sort(mPoints);
     }
 
     public int getNbPoints() {
@@ -106,15 +341,6 @@ public class Spline {
         return true;
     }
 
-    public void deletePoint(int n) {
-        mPoints.remove(n);
-        Collections.sort(mPoints);
-        delta_t = 1.0f / (mPoints.size() - 1f);
-    }
-
-    private Vector<ControlPoint> mPoints;
-    private float delta_t;
-
     public Spline copy() {
         Spline spline = new Spline();
         for (int i = 0; i < mPoints.size(); i++) {
@@ -123,4 +349,5 @@ public class Spline {
         }
         return spline;
     }
+
 }
