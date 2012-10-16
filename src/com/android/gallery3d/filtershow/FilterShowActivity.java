@@ -31,6 +31,7 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.ShareActionProvider;
 import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
+import android.widget.Toast;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
@@ -145,7 +146,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             }
         });
 
-        mImageLoader = new ImageLoader(getApplicationContext());
+        mImageLoader = new ImageLoader(this, getApplicationContext());
 
         LinearLayout listFilters = (LinearLayout) findViewById(R.id.listFilters);
         LinearLayout listBorders = (LinearLayout) findViewById(R.id.listBorders);
@@ -729,6 +730,14 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             finish();
         }
     }
+
+    public void cannotLoadImage() {
+        CharSequence text = getString(R.string.cannot_load_image);
+        Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
+        toast.show();
+        finish();
+    }
+
     // //////////////////////////////////////////////////////////////////////////////
 
     public float getPixelsFromDip(float value) {

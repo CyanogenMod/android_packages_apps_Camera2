@@ -49,6 +49,8 @@ public class ImageLoader {
     private int mOrientation = 0;
     private HistoryAdapter mAdapter = null;
 
+    private FilterShowActivity mActivity = null;
+
     private static final int ORI_NORMAL     = ExifInterface.ORIENTATION_NORMAL;
     private static final int ORI_ROTATE_90  = ExifInterface.ORIENTATION_ROTATE_90;
     private static final int ORI_ROTATE_180 = ExifInterface.ORIENTATION_ROTATE_180;
@@ -63,7 +65,8 @@ public class ImageLoader {
 
     private Rect mOriginalBounds = null;
 
-    public ImageLoader(Context context) {
+    public ImageLoader(FilterShowActivity activity, Context context) {
+        mActivity = activity;
         mContext = context;
         mCache = new DelayedPresetCache(this, 30);
         mHiresCache = new DelayedPresetCache(this, 2);
@@ -74,6 +77,10 @@ public class ImageLoader {
         mOrientation = getOrientation(uri);
 
         mOriginalBitmapSmall = loadScaledBitmap(uri, 160);
+        if (mOriginalBitmapSmall == null) {
+            // Couldn't read the bitmap, let's exit
+            mActivity.cannotLoadImage();
+        }
         mOriginalBitmapLarge = loadScaledBitmap(uri, size);
         updateBitmaps();
     }
