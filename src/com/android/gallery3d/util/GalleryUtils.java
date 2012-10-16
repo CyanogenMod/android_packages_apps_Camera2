@@ -42,7 +42,7 @@ import com.android.gallery3d.app.PackagesMonitor;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
-import com.android.gallery3d.ui.BitmapScreenNail;
+import com.android.gallery3d.ui.TiledScreenNail;
 import com.android.gallery3d.util.ThreadPool.CancelListener;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
@@ -81,7 +81,7 @@ public class GalleryUtils {
         wm.getDefaultDisplay().getMetrics(metrics);
         sPixelDensity = metrics.density;
         Resources r = context.getResources();
-        BitmapScreenNail.setPlaceholderColor(r.getColor(
+        TiledScreenNail.setPlaceholderColor(r.getColor(
                 R.color.bitmap_screennail_placeholder));
         initializeThumbnailSizes(metrics, r);
     }
@@ -91,7 +91,7 @@ public class GalleryUtils {
         // Never need to completely fill the screen
         maxDimensionPixels = maxDimensionPixels / 2;
         MediaItem.setThumbnailSizes(maxDimensionPixels, 200);
-        BitmapScreenNail.setMaxSide(maxDimensionPixels);
+        TiledScreenNail.setMaxSide(maxDimensionPixels);
     }
 
     public static boolean isHighResolution(Context context) {
