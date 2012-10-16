@@ -62,6 +62,7 @@ import com.android.gallery3d.filtershow.provider.SharedImageProvider;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.filtershow.ui.ImageButtonTitle;
 import com.android.gallery3d.filtershow.ui.ImageCurves;
+import com.android.gallery3d.filtershow.ui.Spline;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -127,6 +128,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageSmallFilter.setMargin((int) getPixelsFromDip(6));
         ImageSmallFilter.setTextMargin((int) getPixelsFromDip(4));
         mImageBorderSize = (int) getPixelsFromDip(20);
+        Drawable curveHandle = getResources().getDrawable(R.drawable.camera_crop_holo);
+        int curveHandleSize = (int) getResources().getDimension(R.dimen.crop_indicator_size);
+        Spline.setCurveHandle(curveHandle, curveHandleSize);
+        Spline.setCurveWidth((int) getPixelsFromDip(3));
 
         setContentView(R.layout.filtershow_activity);
         ActionBar actionBar = getActionBar();
@@ -304,7 +309,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addComponent(mColorsButton, findViewById(R.id.shadowRecoveryButton));
 
         mPanelController.addView(findViewById(R.id.applyEffect));
-
+        mPanelController.addView(findViewById(R.id.pickCurvesChannel));
         findViewById(R.id.resetOperationsButton).setOnClickListener(
                 createOnClickResetOperationsButton());
 
@@ -705,6 +710,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         adapter.reset();
         ImagePreset original = new ImagePreset(adapter.getItem(0));
         mImageShow.setImagePreset(original);
+        mPanelController.resetParameters();
         invalidateViews();
     }
 
