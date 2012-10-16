@@ -489,7 +489,8 @@
     <string name="please_wait">Please wait</string>
 
     <!-- Toast after the trimming is done. [CHAR LIMIT=50] -->
-    <string name="save_into">Save trimmed video into</string>
+    <!-- TODO: this should be a format string!-->
+    <string name="save_into">Saving trimmed video into album :</string>
 
     <!-- Toast if the trimmed video is too short to trim. [CHAR LIMIT=80] -->
     <string name="trim_too_short">Can not trim : target video is too short</string>
