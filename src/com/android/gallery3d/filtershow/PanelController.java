@@ -229,13 +229,17 @@ public class PanelController implements OnClickListener {
         imageShow.setPanelController(this);
     }
 
+    public void resetParameters() {
+        mCurrentImage.resetParameter();
+        showPanel(mCurrentPanel);
+        mCurrentImage.select();
+    }
+
     public boolean onBackPressed() {
         if (mUtilityPanel == null || !mUtilityPanel.selected()) {
             return true;
         }
-        mCurrentImage.resetParameter();
-        showPanel(mCurrentPanel);
-        mCurrentImage.select();
+        resetParameters();
         return false;
     }
 
@@ -389,6 +393,12 @@ public class PanelController implements OnClickListener {
             }
         }
 
+        if (view.getId() == R.id.pickCurvesChannel) {
+            ImageCurves curves = (ImageCurves) showImageView(R.id.imageCurves);
+            curves.nextChannel();
+            return;
+        }
+
         if (mCurrentImage != null) {
             mCurrentImage.unselect();
         }
@@ -432,9 +442,6 @@ public class PanelController implements OnClickListener {
                 String ename = curves.getContext().getString(R.string.curvesRGB);
                 mUtilityPanel.setEffectName(ename);
                 mUtilityPanel.setShowParameter(false);
-                curves.setUseRed(true);
-                curves.setUseGreen(true);
-                curves.setUseBlue(true);
                 curves.reloadCurve();
                 mCurrentImage = curves;
                 break;

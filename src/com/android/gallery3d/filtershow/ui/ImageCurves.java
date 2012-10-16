@@ -2,17 +2,17 @@
 package com.android.gallery3d.filtershow.ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
-import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.PopupMenu;
-import android.widget.Toast;
 
-import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
 import com.android.gallery3d.filtershow.imageshow.ImageSlave;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -21,15 +21,18 @@ public class ImageCurves extends ImageSlave {
 
     private static final String LOGTAG = "ImageCurves";
     Paint gPaint = new Paint();
-    Spline mSpline = null;
+    Spline[] mSplines = new Spline[4];
     Path gPathSpline = new Path();
-    float[] mAppliedCurve = new float[256];
+
+    private int mCurrentCurveIndex = 0;
     private boolean mDidAddPoint = false;
     private boolean mDidDelete = false;
     private ControlPoint mCurrentControlPoint = null;
-    private boolean mUseRed = true;
-    private boolean mUseGreen = true;
-    private boolean mUseBlue = true;
+    private ImagePreset mLastPreset = null;
+    int[] redHistogram = new int[256];
+    int[] greenHistogram = new int[256];
+    int[] blueHistogram = new int[256];
+    Path gHistoPath = new Path();
 
     public ImageCurves(Context context) {
         super(context);
@@ -41,21 +44,14 @@ public class ImageCurves extends ImageSlave {
         resetCurve();
     }
 
+    public void nextChannel() {
+        mCurrentCurveIndex = ((mCurrentCurveIndex + 1) % 4);
+        invalidate();
+    }
+
     @Override
     public boolean showTitle() {
         return false;
-    }
-
-    public void setUseRed(boolean value) {
-        mUseRed = value;
-    }
-
-    public void setUseGreen(boolean value) {
-        mUseGreen = value;
-    }
-
-    public void setUseBlue(boolean value) {
-        mUseBlue = value;
     }
 
     public void reloadCurve() {
@@ -67,7 +63,12 @@ public class ImageCurves extends ImageSlave {
                 resetCurve();
                 return;
             }
-            mSpline = new Spline(filter.getSpline());
+            for (int i = 0; i < 4; i++) {
+                Spline spline = filter.getSpline(i);
+                if (spline != null) {
+                    mSplines[i] = new Spline(spline);
+                }
+            }
             applyNewCurve();
         }
     }
@@ -76,13 +77,19 @@ public class ImageCurves extends ImageSlave {
     public void resetParameter() {
         super.resetParameter();
         resetCurve();
+        mLastPreset = null;
+        invalidate();
     }
 
     public void resetCurve() {
-        mSpline = new Spline();
+        Spline spline = new Spline();
 
-        mSpline.addPoint(0.0f, 1.0f);
-        mSpline.addPoint(1.0f, 0.0f);
+        spline.addPoint(0.0f, 1.0f);
+        spline.addPoint(1.0f, 0.0f);
+
+        for (int i = 0; i < 4; i++) {
+            mSplines[i] = new Spline(spline);
+        }
         if (getMaster() != null) {
             applyNewCurve();
         }
@@ -93,86 +100,48 @@ public class ImageCurves extends ImageSlave {
         super.onDraw(canvas);
 
         gPaint.setAntiAlias(true);
-        gPaint.setFilterBitmap(true);
-        gPaint.setDither(true);
 
-        drawGrid(canvas);
-        drawSpline(canvas);
-
-        drawToast(canvas);
-    }
-
-    private void drawGrid(Canvas canvas) {
-        float w = getWidth();
-        float h = getHeight();
-
-        // Grid
-        gPaint.setARGB(128, 150, 150, 150);
-        gPaint.setStrokeWidth(1);
-
-        float stepH = h / 9;
-        float stepW = w / 9;
-
-        // central diagonal
-        gPaint.setARGB(255, 100, 100, 100);
-        gPaint.setStrokeWidth(2);
-        canvas.drawLine(0, h, w, 0, gPaint);
-
-        gPaint.setARGB(128, 200, 200, 200);
-        gPaint.setStrokeWidth(4);
-        stepH = h / 3;
-        stepW = w / 3;
-        for (int j = 1; j < 3; j++) {
-            canvas.drawLine(0, j * stepH, w, j * stepH, gPaint);
-            canvas.drawLine(j * stepW, 0, j * stepW, h, gPaint);
+        if (getImagePreset() != mLastPreset) {
+            new ComputeHistogramTask().execute(mFilteredImage);
+            mLastPreset = getImagePreset();
         }
-    }
 
-    private void drawSpline(Canvas canvas) {
-        float w = getWidth();
-        float h = getHeight();
-
-        gPathSpline.reset();
-        for (int x = 0; x < w; x += 11) {
-            float fx = x / w;
-            ControlPoint drawPoint = mSpline.getPoint(fx);
-            float newX = drawPoint.x * w;
-            float newY = drawPoint.y * h;
-            if (x == 0) {
-                gPathSpline.moveTo(newX, newY);
-            } else {
-                gPathSpline.lineTo(newX, newY);
+        if (mCurrentCurveIndex == Spline.RGB || mCurrentCurveIndex == Spline.RED) {
+            drawHistogram(canvas, redHistogram, Color.RED, PorterDuff.Mode.SCREEN);
+        }
+        if (mCurrentCurveIndex == Spline.RGB || mCurrentCurveIndex == Spline.GREEN) {
+            drawHistogram(canvas, greenHistogram, Color.GREEN, PorterDuff.Mode.SCREEN);
+        }
+        if (mCurrentCurveIndex == Spline.RGB || mCurrentCurveIndex == Spline.BLUE) {
+            drawHistogram(canvas, blueHistogram, Color.BLUE, PorterDuff.Mode.SCREEN);
+        }
+        // We only display the other channels curves when showing the RGB curve
+        if (mCurrentCurveIndex == Spline.RGB) {
+            for (int i = 0; i < 4; i++) {
+                Spline spline = mSplines[i];
+                if (i != mCurrentCurveIndex && !spline.isOriginal()) {
+                    // And we only display a curve if it has more than two
+                    // points
+                    spline.draw(canvas, Spline.colorForCurve(i), getWidth(), getHeight(), false);
+                }
             }
         }
+        // ...but we always display the current curve.
+        mSplines[mCurrentCurveIndex]
+                .draw(canvas, Spline.colorForCurve(mCurrentCurveIndex), getWidth(), getHeight(),
+                        true);
+        drawToast(canvas);
 
-        gPaint.setStrokeWidth(10);
-        gPaint.setStyle(Paint.Style.STROKE);
-        gPaint.setARGB(255, 50, 50, 50);
-        canvas.drawPath(gPathSpline, gPaint);
-        gPaint.setStrokeWidth(5);
-        gPaint.setARGB(255, 150, 150, 150);
-        canvas.drawPath(gPathSpline, gPaint);
-
-        gPaint.setARGB(255, 150, 150, 150);
-        for (int j = 1; j < mSpline.getNbPoints() - 1; j++) {
-            ControlPoint point = mSpline.getPoint(j);
-            gPaint.setStrokeWidth(10);
-            gPaint.setARGB(255, 50, 50, 100);
-            canvas.drawCircle(point.x * w, point.y * h, 30, gPaint);
-            gPaint.setStrokeWidth(5);
-            gPaint.setARGB(255, 150, 150, 200);
-            canvas.drawCircle(point.x * w, point.y * h, 30, gPaint);
-        }
     }
 
     private int pickControlPoint(float x, float y) {
         int pick = 0;
-        float px = mSpline.getPoint(0).x;
-        float py = mSpline.getPoint(0).y;
+        float px = mSplines[mCurrentCurveIndex].getPoint(0).x;
+        float py = mSplines[mCurrentCurveIndex].getPoint(0).y;
         double delta = Math.sqrt((px - x) * (px - x) + (py - y) * (py - y));
-        for (int i = 1; i < mSpline.getNbPoints(); i++) {
-            px = mSpline.getPoint(i).x;
-            py = mSpline.getPoint(i).y;
+        for (int i = 1; i < mSplines[mCurrentCurveIndex].getNbPoints(); i++) {
+            px = mSplines[mCurrentCurveIndex].getPoint(i).x;
+            py = mSplines[mCurrentCurveIndex].getPoint(i).y;
             double currentDelta = Math.sqrt((px - x) * (px - x) + (py - y)
                     * (py - y));
             if (currentDelta < delta) {
@@ -182,77 +151,35 @@ public class ImageCurves extends ImageSlave {
         }
 
         if (!mDidAddPoint && (delta * getWidth() > 100)
-                && (mSpline.getNbPoints() < 10)) {
+                && (mSplines[mCurrentCurveIndex].getNbPoints() < 10)) {
             return -1;
         }
 
-        return pick;// mSpline.getPoint(pick);
-    }
-
-    public void showPopupMenu(View v) {
-        // TODO: sort out the popup menu UI for curves
-        final Context context = v.getContext();
-        PopupMenu popupMenu = new PopupMenu(v.getContext(), v);
-        popupMenu.getMenuInflater().inflate(R.menu.filtershow_menu_curves,
-                popupMenu.getMenu());
-
-        popupMenu
-                .setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        Toast.makeText(context, item.toString(),
-                                Toast.LENGTH_LONG).show();
-                        return true;
-                    }
-                });
-
-        popupMenu.show();
+        return pick;
     }
 
     private String getFilterName() {
-        String filterName = "Curves";
-        if (mUseRed && !mUseGreen && !mUseBlue) {
-            filterName = "CurvesRed";
-        } else if (!mUseRed && mUseGreen && !mUseBlue) {
-            filterName = "CurvesGreen";
-        } else if (!mUseRed && !mUseGreen && mUseBlue) {
-            filterName = "CurvesBlue";
-        }
-        return filterName;
+        return "Curves";
     }
 
     @Override
     public synchronized boolean onTouchEvent(MotionEvent e) {
         float posX = e.getX() / getWidth();
-        float posY = e.getY() / getHeight();
-
-        /*
-         * if (true) { showPopupMenu(this); return true; }
-         */
-
-        // ControlPoint point = null;
-
-        // Log.v(LOGTAG, "onTouchEvent - " + e + " action masked : " +
-        // e.getActionMasked());
+        float posY = e.getY();
+        float margin = Spline.curveHandleSize() / 2;
+        if (posY < margin) {
+            posY = margin;
+        }
+        if (posY > getHeight() - margin) {
+            posY = getHeight() - margin;
+        }
+        posY = (posY - margin) / (getHeight() - 2 * margin);
 
         if (e.getActionMasked() == MotionEvent.ACTION_UP) {
             applyNewCurve();
-            // Log.v(LOGTAG, "ACTION UP, mCurrentControlPoint set to null!");
             mCurrentControlPoint = null;
-            String name = null;
-            if (mUseRed && mUseGreen && mUseBlue) {
-                name = "Curves (RGB)";
-            } else if (mUseRed) {
-                name = "Curves (Red)";
-            } else if (mUseGreen) {
-                name = "Curves (Green)";
-            } else if (mUseBlue) {
-                name = "Curves (Blue)";
-            }
-
-
-            ImagePreset copy = new ImagePreset(getImagePreset(),name);
+            String name = "Curves";
+            ImagePreset copy = new ImagePreset(getImagePreset(), name);
 
             copy.setIsFx(false);
             mImageLoader.getHistory().insert(copy, 0);
@@ -268,103 +195,31 @@ public class ImageCurves extends ImageSlave {
         if (mDidDelete) {
             return true;
         }
-        // Log.v(LOGTAG, "ACTION DOWN, mCurrentControlPoint is " +
-        // mCurrentControlPoint);
 
         int pick = pickControlPoint(posX, posY);
-        // Log.v(LOGTAG, "ACTION DOWN, pick is " + pick);
         if (mCurrentControlPoint == null) {
             if (pick == -1) {
                 mCurrentControlPoint = new ControlPoint(posX, posY);
-                mSpline.addPoint(mCurrentControlPoint);
+                mSplines[mCurrentCurveIndex].addPoint(mCurrentControlPoint);
                 mDidAddPoint = true;
-                // Log.v(LOGTAG, "ACTION DOWN - 2, added a new control point! "
-                // + mCurrentControlPoint);
-
             } else {
-                mCurrentControlPoint = mSpline.getPoint(pick);
-                // Log.v(LOGTAG, "ACTION DOWN - 2, picking up control point " +
-                // mCurrentControlPoint + " at pick " + pick);
+                mCurrentControlPoint = mSplines[mCurrentCurveIndex].getPoint(pick);
             }
         }
-        // Log.v(LOGTAG, "ACTION DOWN - 3, pick is " + pick);
 
-        if (!((mCurrentControlPoint.x == 0 && mCurrentControlPoint.y == 1) || (mCurrentControlPoint.x == 1 && mCurrentControlPoint.y == 0))) {
-            if (mSpline.isPointContained(posX, pick)) {
-                mCurrentControlPoint.x = posX;
-                mCurrentControlPoint.y = posY;
-                // Log.v(LOGTAG, "ACTION DOWN - 4, move control point " +
-                // mCurrentControlPoint);
-            } else if (pick != -1) {
-                // Log.v(LOGTAG, "ACTION DOWN - 4, delete pick " + pick);
-                mSpline.deletePoint(pick);
-                mDidDelete = true;
-            }
+        if (mSplines[mCurrentCurveIndex].isPointContained(posX, pick)) {
+            mCurrentControlPoint.x = posX;
+            mCurrentControlPoint.y = posY;
+        } else if (pick != -1) {
+            mSplines[mCurrentCurveIndex].deletePoint(pick);
+            mDidDelete = true;
         }
-        // Log.v(LOGTAG, "ACTION DOWN - 5, DONE");
         applyNewCurve();
         invalidate();
         return true;
     }
 
     public synchronized void applyNewCurve() {
-        ControlPoint[] points = new ControlPoint[256];
-        for (int i = 0; i < 256; i++) {
-            float v = i / 255.0f;
-            ControlPoint p = mSpline.getPoint(v);
-            points[i] = p;
-        }
-        for (int i = 0; i < 256; i++) {
-            mAppliedCurve[i] = -1;
-        }
-        for (int i = 0; i < 256; i++) {
-            int index = (int) (points[i].x * 255);
-            if (index >= 0 && index <= 255) {
-                float v = 1.0f - points[i].y;
-                if (v < 0) {
-                    v = 0;
-                }
-                if (v > 1.0f) {
-                    v = 1.0f;
-                }
-                mAppliedCurve[index] = v;
-            }
-        }
-        float prev = 0;
-        for (int i = 0; i < 256; i++) {
-            if (mAppliedCurve[i] == -1) {
-                // need to interpolate...
-                int j = i + 1;
-                if (j > 255) {
-                    j = 255;
-                }
-                for (; j < 256; j++) {
-                    if (mAppliedCurve[j] != -1) {
-                        break;
-                    }
-                }
-                if (j > 255) {
-                    j = 255;
-                }
-                // interpolate linearly between i and j - 1
-                float start = prev;
-                float end = mAppliedCurve[j];
-                float delta = (end - start) / (j - i + 1);
-                for (int k = i; k < j; k++) {
-                    start = start + delta;
-                    mAppliedCurve[k] = start;
-                }
-                i = j;
-            }
-            prev = mAppliedCurve[i];
-        }
-        for (int i = 0; i < 256; i++) {
-            mAppliedCurve[i] = mAppliedCurve[i] * 255;
-        }
-        float[] appliedCurve = new float[256];
-        for (int i = 0; i < 256; i++) {
-            appliedCurve[i] = mAppliedCurve[i];
-        }
         // update image
         if (getImagePreset() != null) {
             String filterName = getFilterName();
@@ -379,15 +234,92 @@ public class ImageCurves extends ImageSlave {
             }
 
             if (filter != null) {
-                filter.setSpline(new Spline(mSpline));
-                filter.setCurve(appliedCurve);
-                filter.setUseRed(mUseRed);
-                filter.setUseGreen(mUseGreen);
-                filter.setUseBlue(mUseBlue);
+                for (int i = 0; i < 4; i++) {
+                    filter.setSpline(new Spline(mSplines[i]), i);
+                }
             }
             mImageLoader.resetImageForPreset(getImagePreset(), this);
             invalidate();
         }
     }
 
+    class ComputeHistogramTask extends AsyncTask<Bitmap, Void, int[]> {
+        @Override
+        protected int[] doInBackground(Bitmap... params) {
+            int[] histo = new int[256 * 3];
+            Bitmap bitmap = params[0];
+            int w = bitmap.getWidth();
+            int h = bitmap.getHeight();
+            int[] pixels = new int[w * h];
+            bitmap.getPixels(pixels, 0, w, 0, 0, w, h);
+            for (int i = 0; i < w; i++) {
+                for (int j = 0; j < h; j++) {
+                    int index = j * w + i;
+                    int r = Color.red(pixels[index]);
+                    int g = Color.green(pixels[index]);
+                    int b = Color.blue(pixels[index]);
+                    histo[r]++;
+                    histo[256 + g]++;
+                    histo[512 + b]++;
+                }
+            }
+            return histo;
+        }
+
+        @Override
+        protected void onPostExecute(int[] result) {
+            System.arraycopy(result, 0, redHistogram, 0, 256);
+            System.arraycopy(result, 256, greenHistogram, 0, 256);
+            System.arraycopy(result, 512, blueHistogram, 0, 256);
+            invalidate();
+        }
+    }
+
+    private void drawHistogram(Canvas canvas, int[] histogram, int color, PorterDuff.Mode mode) {
+        int max = 0;
+        for (int i = 0; i < histogram.length; i++) {
+            if (histogram[i] > max) {
+                max = histogram[i];
+            }
+        }
+        float w = getWidth();
+        float h = getHeight();
+        float wl = w / histogram.length;
+        float wh = (0.3f * h) / max;
+        Paint paint = new Paint();
+        paint.setARGB(100, 255, 255, 255);
+        paint.setStrokeWidth((int) Math.ceil(wl));
+
+        Paint paint2 = new Paint();
+        paint2.setColor(color);
+        paint2.setStrokeWidth(6);
+        paint2.setXfermode(new PorterDuffXfermode(mode));
+        gHistoPath.reset();
+        gHistoPath.moveTo(0, h);
+        boolean firstPointEncountered = false;
+        float prev = 0;
+        float last = 0;
+        for (int i = 0; i < histogram.length; i++) {
+            float x = i * wl;
+            float l = histogram[i] * wh;
+            if (l != 0) {
+                float v = h - (l + prev) / 2.0f;
+                if (!firstPointEncountered) {
+                    gHistoPath.lineTo(x, h);
+                    firstPointEncountered = true;
+                }
+                gHistoPath.lineTo(x, v);
+                prev = l;
+                last = x;
+            }
+        }
+        gHistoPath.lineTo(last, h);
+        gHistoPath.lineTo(w, h);
+        gHistoPath.close();
+        canvas.drawPath(gHistoPath, paint2);
+        paint2.setStrokeWidth(2);
+        paint2.setStyle(Paint.Style.STROKE);
+        paint2.setARGB(255, 200, 200, 200);
+        canvas.drawPath(gHistoPath, paint2);
+    }
 }
