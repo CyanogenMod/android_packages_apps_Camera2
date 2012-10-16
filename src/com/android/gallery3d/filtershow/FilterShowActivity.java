@@ -534,8 +534,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mCurrentImageSmallFilter = filter;
 
         filter.setPreviousImageSmallFilter(null);
-        preset.setIsFx(true);
-        filter.setImagePreset(preset);
+        filter.setImageFilter(new ImageFilterFx(null,ImageFilterFx.ORIG));
 
         filter.setController(this);
         filter.setImageLoader(mImageLoader);
