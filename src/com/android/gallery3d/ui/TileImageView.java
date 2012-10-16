@@ -462,8 +462,8 @@ public class TileImageView extends GLView {
     }
 
     private boolean isScreenNailAnimating() {
-        return (mScreenNail instanceof BitmapScreenNail)
-                && ((BitmapScreenNail) mScreenNail).isAnimating();
+        return (mScreenNail instanceof TiledScreenNail)
+                && ((TiledScreenNail) mScreenNail).isAnimating();
     }
 
     private void uploadBackgroundTiles(GLCanvas canvas) {
