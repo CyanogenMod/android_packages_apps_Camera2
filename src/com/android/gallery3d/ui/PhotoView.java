@@ -17,6 +17,7 @@
 package com.android.gallery3d.ui;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -546,10 +547,20 @@ public class PhotoView extends GLView {
     }
 
     private int getPanoramaRotation() {
-        // Panorama only support rotations of 0 and 90, so if it is greater
-        // than that flip the output surface texture to compensate
-        if (mDisplayRotation > 180)
+        // This function is magic
+        // The issue here is that Pano makes bad assumptions about rotation and
+        // orientation. The first is it assumes only two rotations are possible,
+        // 0 and 90. Thus, if display rotation is >= 180, we invert the output.
+        // The second is that it assumes landscape is a 90 rotation from portrait,
+        // however on landscape devices this is not true. Thus, if we are in portrait
+        // on a landscape device, we need to invert the output
+        int orientation = getGLRoot().getContext().getResources().getConfiguration().orientation;
+        boolean invertPortrait = (orientation == Configuration.ORIENTATION_PORTRAIT
+                && (mDisplayRotation == 90 || mDisplayRotation == 270));
+        boolean invert = (mDisplayRotation >= 180);
+        if (invert != invertPortrait) {
             return (mCompensation + 180) % 360;
+        }
         return mCompensation;
     }
 
