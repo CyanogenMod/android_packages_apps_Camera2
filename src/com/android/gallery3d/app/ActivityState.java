@@ -185,8 +185,9 @@ abstract public class ActivityState {
         }
         if (mWantFadeOut) {
             mWantFadeOut = false;
-            mActivity.getTransitionStore().put(KEY_TRANSITION_IN, true);
-            PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mContentPane);
+            if (PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mContentPane)) {
+                mActivity.getTransitionStore().put(KEY_TRANSITION_IN, true);
+            }
         }
     }
 
