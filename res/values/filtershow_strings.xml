@@ -83,7 +83,7 @@
     <!--  Label for the exposure filter button [CHAR LIMIT=15] -->
     <string name="exposure">Exposure</string>
     <!--  Label for the sharpen filter button [CHAR LIMIT=15] -->
-    <string name="sharpen">Sharpen</string>
+    <string name="sharpness">Sharpness</string>
     <!--  Label for the contrast filter button [CHAR LIMIT=15] -->
     <string name="contrast">Contrast</string>
     <!--  Label for the vibrance filter button [CHAR LIMIT=15] -->
@@ -91,7 +91,7 @@
     <!--  Label for the saturation filter button [CHAR LIMIT=15] -->
     <string name="saturation">Saturation</string>
     <!--  Label for the White Balance filter button [CHAR LIMIT=15] -->
-    <string name="wbalance">White Balance</string>
+    <string name="wbalance">Autocolor</string>
     <!--  Label for the Hue filter button [CHAR LIMIT=15] -->
     <string name="hue">Hue</string>
     <!--  Label for the shadow recovery filter button [CHAR LIMIT=15] -->
@@ -109,7 +109,9 @@
     <!--  Label for the rotate effect [CHAR LIMIT=15] -->
     <string name="rotate" msgid="460017689320955494">Rotate</string>
     <!--  Label for the flip effect [CHAR LIMIT=15] -->
-    <string name="flip" msgid="2357692401826287480">Flip</string>
+    <string name="mirror">Mirror</string>
+    <!--  Label for the original [CHAR LIMIT=15] -->
+    <string name="none">None</string>
 
     <!--  Labels for the curves tool -->
 
