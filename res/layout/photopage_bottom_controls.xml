@@ -21,12 +21,17 @@
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"
                 android:visibility="gone"/>
-        <ImageView
+        <ImageButton
                 android:id="@+id/photopage_bottom_control_panorama"
                 android:src="@drawable/ic_view_photosphere"
+                android:background="@drawable/transparent_button_background"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_centerHorizontal="true"
                 android:layout_alignParentBottom="true"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
                 android:visibility="gone"/>
 </RelativeLayout>
