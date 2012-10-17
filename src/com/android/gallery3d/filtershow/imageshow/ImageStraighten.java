@@ -24,8 +24,6 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 
-import com.android.gallery3d.filtershow.imageshow.ImageGeometry.MODES;
-
 public class ImageStraighten extends ImageGeometry {
 
     private float mBaseAngle = 0;
@@ -61,22 +59,8 @@ public class ImageStraighten extends ImageGeometry {
         setCropToStraighten();
     }
 
-    private float angleFor(float dx, float dy) {
-        return (float) (Math.atan2(dx, dy) * 180 / Math.PI);
-    }
-
     private void computeValue() {
-        if (mCurrentX == mTouchCenterX && mCurrentY == mTouchCenterY) {
-            return;
-        }
-        float dX1 = mTouchCenterX - mCenterX;
-        float dY1 = mTouchCenterY - mCenterY;
-        float dX2 = mCurrentX - mCenterX;
-        float dY2 = mCurrentY - mCenterY;
-
-        float angleA = angleFor(dX1, dY1);
-        float angleB = angleFor(dX2, dY2);
-        float angle = (angleB - angleA) % 360;
+        float angle = getCurrentTouchAngle();
         mAngle = (mBaseAngle - angle) % 360;
         mAngle = Math.max(MIN_STRAIGHTEN_ANGLE, mAngle);
         mAngle = Math.min(MAX_STRAIGHTEN_ANGLE, mAngle);
@@ -100,7 +84,7 @@ public class ImageStraighten extends ImageGeometry {
 
     @Override
     public void onNewValue(int value) {
-        setLocalStraighten(clamp(value, MIN_STRAIGHTEN_ANGLE, MAX_STRAIGHTEN_ANGLE));
+        setLocalStraighten(GeometryMath.clamp(value, MIN_STRAIGHTEN_ANGLE, MAX_STRAIGHTEN_ANGLE));
         if (getPanelController() != null) {
             getPanelController().onNewValue((int) getLocalStraighten());
         }
