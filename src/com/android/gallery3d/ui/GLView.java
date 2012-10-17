@@ -21,6 +21,7 @@ import android.os.SystemClock;
 import android.view.MotionEvent;
 
 import com.android.gallery3d.anim.CanvasAnimation;
+import com.android.gallery3d.anim.StateTransitionAnimation;
 import com.android.gallery3d.common.Utils;
 
 import java.util.ArrayList;
@@ -76,6 +77,11 @@ public class GLView {
     protected int mScrollX = 0;
     protected int mScrollHeight = 0;
     protected int mScrollWidth = 0;
+
+    public static final int ANIM_TIME_OPENING = 400;
+    private RawTexture mFadeOutTexture;
+    private float [] mBackgroundColor;
+    private StateTransitionAnimation mTransition = new StateTransitionAnimation(ANIM_TIME_OPENING);
 
     public void startAnimation(CanvasAnimation animation) {
         GLRoot root = getGLRoot();
@@ -217,13 +223,46 @@ public class GLView {
     }
 
     protected void render(GLCanvas canvas) {
+        if (mTransition.calculate(AnimationTime.get())) invalidate();
+        canvas.save();
         renderBackground(canvas);
+        if (mTransition.isActive()) mTransition.applyForegroundTransformation(this, canvas);
         for (int i = 0, n = getComponentCount(); i < n; ++i) {
             renderChild(canvas, getComponent(i));
         }
+        canvas.restore();
+    }
+
+    public void setFadeOutTexture(RawTexture texture) {
+        mFadeOutTexture = texture;
+        if (mFadeOutTexture != null) {
+            TiledScreenNail.disableDrawPlaceholder();
+        }
+        mTransition.start();
+    }
+
+    public float [] getBackgroundColor() {
+        return mBackgroundColor;
+    }
+
+    public void setBackgroundColor(float [] color) {
+        mBackgroundColor = color;
     }
 
     protected void renderBackground(GLCanvas view) {
+        if (mBackgroundColor != null) {
+            view.clearBuffer(mBackgroundColor);
+        }
+        if (mFadeOutTexture != null) {
+            if (!mTransition.isActive()) {
+                mFadeOutTexture.recycle();
+                mFadeOutTexture = null;
+                TiledScreenNail.enableDrawPlaceholder();
+            } else {
+                mTransition.applyBackground(this, view, mFadeOutTexture);
+                return;
+            }
+        }
     }
 
     protected void renderChild(GLCanvas canvas, GLView component) {
