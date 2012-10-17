@@ -41,6 +41,7 @@ import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLRootView;
 import com.android.gallery3d.util.ThreadPool;
+import com.android.gallery3d.util.LightCycleHelper.PanoramaViewHelper;
 
 public class AbstractGalleryActivity extends Activity implements GalleryContext {
     @SuppressWarnings("unused")
@@ -51,6 +52,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryContext 
     private OrientationManager mOrientationManager;
     private TransitionStore mTransitionStore = new TransitionStore();
     private boolean mDisableToggleStatusBar;
+    private PanoramaViewHelper mPanoramaViewHelper;
 
     private AlertDialog mAlertDialog = null;
     private BroadcastReceiver mMountReceiver = new BroadcastReceiver() {
@@ -67,6 +69,8 @@ public class AbstractGalleryActivity extends Activity implements GalleryContext 
         mOrientationManager = new OrientationManager(this);
         toggleStatusBarByOrientation();
         getWindow().setBackgroundDrawable(null);
+        mPanoramaViewHelper = new PanoramaViewHelper(this);
+        mPanoramaViewHelper.onCreate();
     }
 
     @Override
@@ -168,6 +172,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryContext 
             mAlertDialog = builder.show();
             registerReceiver(mMountReceiver, mMountFilter);
         }
+        mPanoramaViewHelper.onStart();
     }
 
     @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
@@ -184,6 +189,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryContext 
             mAlertDialog.dismiss();
             mAlertDialog = null;
         }
+        mPanoramaViewHelper.onStop();
     }
 
     @Override
@@ -292,5 +298,9 @@ public class AbstractGalleryActivity extends Activity implements GalleryContext 
 
     public TransitionStore getTransitionStore() {
         return mTransitionStore;
+    }
+
+    public PanoramaViewHelper getPanoramaViewHelper() {
+        return mPanoramaViewHelper;
     }
 }
