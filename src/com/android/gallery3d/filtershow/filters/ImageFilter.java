@@ -5,6 +5,9 @@ import android.graphics.Bitmap;
 
 public class ImageFilter implements Cloneable {
 
+    protected int mMaxParameter = 100;
+    protected int mMinParameter = -100;
+    protected int mDefaultParameter = 0;
     protected int mParameter = 0;
     protected String mName = "Original";
     private final String LOGTAG = "ImageFilter";
@@ -29,6 +32,9 @@ public class ImageFilter implements Cloneable {
         filter.setName(getName());
         filter.setParameter(getParameter());
         filter.setFilterType(filterType);
+        filter.mMaxParameter = mMaxParameter;
+        filter.mMinParameter = mMinParameter;
+        filter.mDefaultParameter = mDefaultParameter;
         return filter;
     }
 
@@ -51,6 +57,30 @@ public class ImageFilter implements Cloneable {
 
     public void setParameter(int value) {
         mParameter = value;
+    }
+
+    /**
+     * The maximum allowed value (inclusive)
+     * @return maximum value allowed as input to this filter
+     */
+    public int getMaxParameter(){
+        return mMaxParameter;
+    }
+
+    /**
+     * The minimum allowed value (inclusive)
+     * @return minimum value allowed as input to this filter
+     */
+    public int getMinParameter(){
+        return mMinParameter;
+    }
+
+    /**
+     * Returns the default value returned by this filter.
+     * @return default value
+     */
+    public int getDefaultParameter(){
+        return mDefaultParameter;
     }
 
     public boolean same(ImageFilter filter) {
