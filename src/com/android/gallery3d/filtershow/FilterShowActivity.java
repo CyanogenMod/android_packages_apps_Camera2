@@ -222,7 +222,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         mPanelController.addPanel(mColorsButton, mListColors, 3);
 
-        int []recastIDs = {
+        int[] recastIDs = {
                 R.id.vignetteButton,
                 R.id.vibranceButton,
                 R.id.contrastButton,
@@ -232,7 +232,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 R.id.exposureButton,
                 R.id.shadowRecoveryButton
         };
-        ImageFilter []filters = {
+        ImageFilter[] filters = {
                 new ImageFilterVignette(),
                 new ImageFilterVibrance(),
                 new ImageFilterContrast(),
@@ -242,7 +242,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 new ImageFilterExposure(),
                 new ImageFilterShadows()
         };
-
 
         for (int i = 0; i < filters.length; i++) {
 
@@ -258,36 +257,36 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             fView.setId(recastIDs[i]);
 
             mPanelController.addComponent(mColorsButton, fView);
-            listColors.addView(fView,pos);
+            listColors.addView(fView, pos);
         }
 
-        int []overlayIDs = {
+        int[] overlayIDs = {
                 R.id.sharpenButton,
                 R.id.curvesButtonRGB
         };
-        int []overlayBitmaps = {
+        int[] overlayBitmaps = {
                 R.drawable.filtershow_button_colors_sharpen,
                 R.drawable.filtershow_button_colors_curve
         };
-        int []overlayNames = {
+        int[] overlayNames = {
                 R.string.sharpen,
                 R.string.curvesRGB
         };
 
-        for (int i = 0; i < overlayIDs.length; i++)  {
+        for (int i = 0; i < overlayIDs.length; i++) {
             ImageWithIcon fView = new ImageWithIcon(this);
             View v = listColors.findViewById(overlayIDs[i]);
             int pos = listColors.indexOfChild(v);
             listColors.removeView(v);
-            final int sid =overlayNames[i];
-            ImageFilterExposure efilter = new ImageFilterExposure(){
+            final int sid = overlayNames[i];
+            ImageFilterExposure efilter = new ImageFilterExposure() {
                 {
                     mName = getString(sid);
                 }
             };
             efilter.setParameter(-300);
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-                    overlayBitmaps[i] );
+                    overlayBitmaps[i]);
 
             fView.setIcon(bitmap);
             fView.setImageFilter(efilter);
@@ -296,7 +295,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             fView.setId(overlayIDs[i]);
 
             mPanelController.addComponent(mColorsButton, fView);
-            listColors.addView(fView,pos);
+            listColors.addView(fView, pos);
         }
 
         mPanelController.addComponent(mColorsButton, findViewById(R.id.curvesButtonRGB));
@@ -311,6 +310,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         mPanelController.addView(findViewById(R.id.applyEffect));
         mPanelController.addView(findViewById(R.id.pickCurvesChannel));
+        mPanelController.addView(findViewById(R.id.aspect));
         findViewById(R.id.resetOperationsButton).setOnClickListener(
                 createOnClickResetOperationsButton());
 
@@ -330,27 +330,27 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageZoom.setSeekBar(seekBar);
         mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
         mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList),
-                findViewById(R.id.applyEffect));
+                findViewById(R.id.applyEffect), findViewById(R.id.aspect));
         mPanelController.setMasterImage(mImageShow);
         mPanelController.setCurrentPanel(mFxButton);
         Intent intent = getIntent();
         String data = intent.getDataString();
         if (data != null) {
             Uri uri = Uri.parse(data);
-            mImageLoader.loadBitmap(uri,getScreenImageSize());
+            mImageLoader.loadBitmap(uri, getScreenImageSize());
         } else {
             pickImage();
         }
     }
 
-    private int getScreenImageSize(){
-        DisplayMetrics metrics = new  DisplayMetrics();
+    private int getScreenImageSize() {
+        DisplayMetrics metrics = new DisplayMetrics();
         Display display = getWindowManager().getDefaultDisplay();
-        Point size = new  Point();
+        Point size = new Point();
         display.getSize(size);
         display.getMetrics(metrics);
         int msize = Math.min(size.x, size.y);
-        return  (133*msize)/metrics.densityDpi;
+        return (133 * msize) / metrics.densityDpi;
     }
 
     private void showSavingProgress() {
@@ -540,7 +540,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         filter.setController(this);
         filter.setImageLoader(mImageLoader);
         listFilters.addView(filter);
-        ImageSmallFilter   previousFilter = filter;
+        ImageSmallFilter previousFilter = filter;
 
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
@@ -577,9 +577,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         Drawable npd2 = getResources().getDrawable(R.drawable.filtershow_border_brush);
         borders[p++] = new ImageFilterBorder(npd2);
         borders[p++] = new ImageFilterParametricBorder(Color.BLACK, mImageBorderSize, 0);
-        borders[p++] = new ImageFilterParametricBorder(Color.BLACK, mImageBorderSize, mImageBorderSize);
+        borders[p++] = new ImageFilterParametricBorder(Color.BLACK, mImageBorderSize,
+                mImageBorderSize);
         borders[p++] = new ImageFilterParametricBorder(Color.WHITE, mImageBorderSize, 0);
-        borders[p++] = new ImageFilterParametricBorder(Color.WHITE, mImageBorderSize, mImageBorderSize);
+        borders[p++] = new ImageFilterParametricBorder(Color.WHITE, mImageBorderSize,
+                mImageBorderSize);
 
         ImageSmallFilter previousFilter = null;
         for (int i = 0; i < p; i++) {
@@ -636,7 +638,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             button.setSelected(false);
         }
     }
-
 
     // //////////////////////////////////////////////////////////////////////////////
     // imageState panel...
@@ -809,7 +810,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
-                mImageLoader.loadBitmap(selectedImageUri,getScreenImageSize());
+                mImageLoader.loadBitmap(selectedImageUri, getScreenImageSize());
             }
         }
     }
