@@ -16,42 +16,28 @@
 
 package com.android.gallery3d.exif;
 
-import android.content.res.XmlResourceParser;
 import android.graphics.BitmapFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
 public class ExifReaderTest extends ExifXmlDataTestCase {
     private static final String TAG = "ExifReaderTest";
 
-    private List<Map<Short, String>> mGroundTruth;
-
-    private InputStream mImageInputStream;
-
-    public ExifReaderTest(int imageResourceId, int xmlResourceId) {
-        super(imageResourceId, xmlResourceId);
+    public ExifReaderTest(int imgRes, int xmlRes) {
+        super(imgRes, xmlRes);
     }
 
-    @Override
-    public void setUp() throws Exception {
-        mImageInputStream = getInstrumentation()
-                .getContext().getResources().openRawResource(mImageResourceId);
-
-        XmlResourceParser parser =
-                getInstrumentation().getContext().getResources().getXml(mXmlResourceId);
-
-        mGroundTruth = ExifXmlReader.readXml(getInstrumentation().getContext(), mXmlResourceId);
-        parser.close();
+    public ExifReaderTest(String imgPath, String xmlPath) {
+        super(imgPath, xmlPath);
     }
 
-    public void testRead() throws ExifInvalidFormatException, IOException {
+    public void testRead() throws Exception {
         ExifReader reader = new ExifReader();
-        ExifData exifData = reader.read(mImageInputStream);
+        ExifData exifData = reader.read(getImageInputStream());
+        List<Map<Short, String>> groundTruth = ExifXmlReader.readXml(getXmlParser());
         for (int i = 0; i < IfdId.TYPE_IFD_COUNT; i++) {
-            checkIfd(exifData.getIfdData(i), mGroundTruth.get(i));
+            checkIfd(exifData.getIfdData(i), groundTruth.get(i));
         }
         checkThumbnail(exifData);
     }
@@ -123,10 +109,5 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
             size++;
         }
         assertEquals(ifdValue.size(), size);
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        mImageInputStream.close();
     }
 }

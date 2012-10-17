@@ -16,13 +16,10 @@
 
 package com.android.gallery3d.exif;
 
-import android.content.Context;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +33,7 @@ public class ExifXmlReader {
     private static final String EXIF_IFD = "ExifIFD";
     private static final String GPS_IFD = "GPS";
     private static final String IFD1 = "IFD1";
-    private static final String PREFIX_INTEROP_IFD = "InteropIFD";
+    private static final String INTEROP_IFD = "InteropIFD";
 
     private static final String ATTR_ID = "id";
     private static final String ATTR_IFD = "ifd";
@@ -47,9 +44,8 @@ public class ExifXmlReader {
      * @throws XmlPullParserException
      * @throws IOException
      */
-    static public List<Map<Short, String>> readXml(Context context, int xmlResId)
+    static public List<Map<Short, String>> readXml(XmlPullParser parser)
             throws XmlPullParserException, IOException {
-        XmlPullParser parser = context.getResources().getXml(xmlResId);
 
         List<Map<Short, String>> exifData =
                 new ArrayList<Map<Short, String>>(IfdId.TYPE_IFD_COUNT);
@@ -80,7 +76,11 @@ public class ExifXmlReader {
                 parser.next();
             }
 
-            exifData.get(ifdId).put(id, value);
+            if (ifdId < 0) {
+                // TODO: the MarkerNote segment.
+            } else {
+                exifData.get(ifdId).put(id, value);
+            }
 
             parser.require(XmlPullParser.END_TAG, null, null);
         }
@@ -96,7 +96,7 @@ public class ExifXmlReader {
             return IfdId.TYPE_IFD_GPS;
         } else if (IFD1.equals(prefix)) {
             return IfdId.TYPE_IFD_1;
-        } else if (PREFIX_INTEROP_IFD.equals(prefix)) {
+        } else if (INTEROP_IFD.equals(prefix)) {
             return IfdId.TYPE_IFD_INTEROPERABILITY;
         } else {
             assert(false);
