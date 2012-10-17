@@ -316,8 +316,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             activity.startActivity(intent);
             activity.finish();
         } else {
-            activity.setResult(Activity.RESULT_OK,
-                    new Intent(null, item.getContentUri()));
+            Intent intent = new Intent(null, item.getContentUri())
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            activity.setResult(Activity.RESULT_OK, intent);
             activity.finish();
         }
     }
