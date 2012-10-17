@@ -9,6 +9,9 @@
 
     <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="16" />
 
+    <permission android:name="com.android.gallery3d.permission.GALLERY_PROVIDER"
+            android:protectionLevel="signature" />
+
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -275,6 +278,7 @@
                 android:syncable="false"
                 android:grantUriPermissions="true"
                 android:exported="true"
+                android:permission="com.android.gallery3d.permission.GALLERY_PROVIDER"
                 android:authorities="com.android.gallery3d.provider" />
         <activity android:name="com.android.gallery3d.gadget.WidgetClickHandler" />
         <activity android:name="com.android.gallery3d.app.DialogPicker"
