@@ -55,7 +55,7 @@
   </plurals>
     <string name="confirm" msgid="8646870096527848520">"पुष्टि करें"</string>
     <string name="cancel" msgid="3637516880917356226">"रद्द करें"</string>
-    <string name="share" msgid="3619042788254195341">"शेयर करें"</string>
+    <string name="share" msgid="3619042788254195341">"साझा करें"</string>
     <string name="share_panorama" msgid="2569029972820978718">"पैनोरामा को साझा करें"</string>
     <string name="share_as_photo" msgid="8959225188897026149">"फ़ोटो के रूप में साझा करें"</string>
     <string name="deleted" msgid="6795433049119073871">"हटाई गई"</string>
@@ -140,24 +140,15 @@
     <string name="auto" msgid="4296941368722892821">"स्वत:"</string>
     <string name="flash_on" msgid="7891556231891837284">"फ़्लैश चलाया गया"</string>
     <string name="flash_off" msgid="1445443413822680010">"कोई फ़्लैश नहीं"</string>
-    <!-- no translation found for ffx_vintage (8348759951363844780) -->
-    <skip />
-    <!-- no translation found for ffx_instant (726968618715691987) -->
-    <skip />
-    <!-- no translation found for ffx_bleach (8946700451603478453) -->
-    <skip />
-    <!-- no translation found for ffx_blue_crush (5910979947224043165) -->
-    <skip />
-    <!-- no translation found for ffx_bw_contrast (3853938816686258406) -->
-    <skip />
-    <!-- no translation found for ffx_punch (1343475517872562639) -->
-    <skip />
-    <!-- no translation found for ffx_x_process (4779398678661811765) -->
-    <skip />
-    <!-- no translation found for ffx_washout (2526099635720493268) -->
-    <skip />
-    <!-- no translation found for ffx_washout_color (3209955210402468008) -->
-    <skip />
+    <string name="ffx_vintage" msgid="8348759951363844780">"विंटेज"</string>
+    <string name="ffx_instant" msgid="726968618715691987">"झटपट"</string>
+    <string name="ffx_bleach" msgid="8946700451603478453">"ब्लीच"</string>
+    <string name="ffx_blue_crush" msgid="5910979947224043165">"ब्लू क्रश"</string>
+    <string name="ffx_bw_contrast" msgid="3853938816686258406">"BW चमक"</string>
+    <string name="ffx_punch" msgid="1343475517872562639">"पंच"</string>
+    <string name="ffx_x_process" msgid="4779398678661811765">"X प्रक्रिया"</string>
+    <string name="ffx_washout" msgid="2526099635720493268">"वॉशआउट"</string>
+    <string name="ffx_washout_color" msgid="3209955210402468008">"वॉशआउट रंग"</string>
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"एल्‍बम ऑफ़लाइन उपलब्‍ध कराना."</item>
     <item quantity="other" msgid="4948604338155959389">"एल्‍बम ऑफ़लाइन उपलब्‍ध कराना."</item>
@@ -197,16 +188,14 @@
     <string name="help" msgid="7368960711153618354">"सहायता"</string>
     <string name="no_external_storage_title" msgid="2408933644249734569">"कोई संग्रहण नहीं"</string>
     <string name="no_external_storage" msgid="95726173164068417">"कोई बाहरी संग्रहण उपलब्ध नहीं है"</string>
-    <!-- no translation found for switch_photo_filmstrip (8227883354281661548) -->
-    <skip />
-    <!-- no translation found for switch_photo_grid (3681299459107925725) -->
-    <skip />
+    <string name="switch_photo_filmstrip" msgid="8227883354281661548">"फ़िल्मस्ट्रिप दृश्य"</string>
+    <string name="switch_photo_grid" msgid="3681299459107925725">"ग्रिड दृश्य"</string>
     <string name="trimming" msgid="9122385768369143997">"ट्रिम कर रहा है"</string>
     <string name="please_wait" msgid="7296066089146487366">"कृपया प्रतीक्षा करें"</string>
-    <string name="save_into" msgid="6688364520925473396">"ट्रिम किया गया वीडियो यहां सहेजें:"</string>
+    <!-- no translation found for save_into (4960537214388766062) -->
+    <skip />
     <string name="trim_too_short" msgid="751593965620665326">"ट्रिम नहीं कर सकते : लक्ष्य वीडियो बहुत छोटा है"</string>
     <string name="trim_too_long" msgid="2657958275279217174">"ट्रिम नहीं किया : अवधि, मूल के बराबर है"</string>
-    <!-- no translation found for pano_progress_text (1586851614586678464) -->
-    <skip />
+    <string name="pano_progress_text" msgid="1586851614586678464">"पैनोरामा रेंडर किया जा रहा है"</string>
     <string name="save" msgid="613976532235060516">"सहेजें"</string>
 </resources>
