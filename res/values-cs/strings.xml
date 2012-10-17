@@ -140,6 +140,8 @@
     <string name="auto" msgid="4296941368722892821">"Autom."</string>
     <string name="flash_on" msgid="7891556231891837284">"S bleskem"</string>
     <string name="flash_off" msgid="1445443413822680010">"Bez blesku"</string>
+    <!-- no translation found for ffx_original (372686331501281474) -->
+    <skip />
     <string name="ffx_vintage" msgid="8348759951363844780">"Klasika"</string>
     <string name="ffx_instant" msgid="726968618715691987">"Instantní"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"Bělení"</string>
@@ -195,7 +197,6 @@
     <!-- no translation found for save_into (4960537214388766062) -->
     <skip />
     <string name="trim_too_short" msgid="751593965620665326">"Zkrácení nelze provést: výsledné video je příliš krátké"</string>
-    <string name="trim_too_long" msgid="2657958275279217174">"Zkrácení nebylo provedeno: délka videa je stejná jako délka originálu"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Vykreslování panoramatu"</string>
     <string name="save" msgid="613976532235060516">"Uložit"</string>
 </resources>
