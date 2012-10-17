@@ -75,7 +75,6 @@ public class ImageLoader {
     public void loadBitmap(Uri uri,int size) {
         mUri = uri;
         mOrientation = getOrientation(uri);
-
         mOriginalBitmapSmall = loadScaledBitmap(uri, 160);
         if (mOriginalBitmapSmall == null) {
             // Couldn't read the bitmap, let's exit
@@ -161,7 +160,6 @@ public class ImageLoader {
                h = tmp;
            }
            switch(ori){
-               case ORI_NORMAL:
                case ORI_ROTATE_90:
                    matrix.setRotate(90,w/2f,h/2f);
                    break;
@@ -185,7 +183,9 @@ public class ImageLoader {
                    matrix.setRotate(270,w/2f,h/2f);
                    matrix.preScale(1, -1);
                    break;
+               case ORI_NORMAL:
                default:
+                   return bitmap;
             }
 
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
