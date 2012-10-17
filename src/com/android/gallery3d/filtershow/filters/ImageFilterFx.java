@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class ImageFilterFx extends ImageFilter {
     private static final String TAG = "ImageFilterFx";
     Bitmap fxBitmap;
-    public static final String ORIG = "Original";
+
     public ImageFilterFx(Bitmap fxBitmap,String name) {
         setFilterType(TYPE_FX);
         mName = name;
