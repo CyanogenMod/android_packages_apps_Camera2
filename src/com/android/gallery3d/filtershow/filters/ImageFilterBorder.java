@@ -23,6 +23,14 @@ public class ImageFilterBorder extends ImageFilter {
     }
 
     @Override
+    public boolean isNil() {
+        if (mNinePatch == null) {
+            return  true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean same(ImageFilter filter) {
         boolean isBorderFilter = super.same(filter);
         if (!isBorderFilter) {

@@ -115,6 +115,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
     private WeakReference<ProgressDialog> mSavingProgressDialog;
     private static final int SEEK_BAR_MAX = 600;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -536,7 +537,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         filter.setSelected(true);
         mCurrentImageSmallFilter = filter;
 
-        filter.setImageFilter(new ImageFilterFx(null,getString(R.string.ffx_original)));
+        filter.setImageFilter(new ImageFilterFx(null, getString(R.string.ffx_original)));
 
         filter.setController(this);
         filter.setImageLoader(mImageLoader);
@@ -726,7 +727,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     @Override
     public void onBackPressed() {
         if (mPanelController.onBackPressed()) {
-            finish();
+            saveImage();
         }
     }
 
@@ -814,8 +815,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     }
 
     public void saveImage() {
-        showSavingProgress();
-        mImageShow.saveImage(this, null);
+        if (mImageShow.hasModifications()) {
+            showSavingProgress();
+            mImageShow.saveImage(this, null);
+        } else {
+            finish();
+        }
     }
 
     static {
