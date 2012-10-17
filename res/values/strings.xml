@@ -323,7 +323,9 @@
     <!-- String indicating camera flash is not used. [CHAR LIMIT=14] -->
     <string name="flash_off">No flash</string>
 
-    <!-- String for filter filtershow_fx_0000_vintage [CHAR LIMIT=14] -->
+    <!-- String for the empty not filtered image[CHAR LIMIT=14] -->
+    <string name="ffx_original">Original</string>
+   <!-- String for filter filtershow_fx_0000_vintage [CHAR LIMIT=14] -->
     <string name="ffx_vintage">Vintage</string>
     <!-- String for filter filtershow_fx_0001_instant [CHAR LIMIT=14] -->
     <string name="ffx_instant">Instant</string>

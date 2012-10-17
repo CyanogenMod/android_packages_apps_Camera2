@@ -9,6 +9,8 @@ public class ImageFilterHue extends ImageFilter {
     public ImageFilterHue() {
         mName = "Hue";
         cmatrix = new ColorSpaceMatrix();
+        mMaxParameter = 180;
+        mMinParameter = -180;
     }
 
     @Override
