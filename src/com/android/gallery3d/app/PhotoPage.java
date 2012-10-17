@@ -592,11 +592,10 @@ public class PhotoPage extends ActivityState implements
     private Intent createShareIntent(Path path) {
         DataManager manager = mActivity.getDataManager();
         int type = manager.getMediaType(path);
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType(MenuExecutor.getMimeType(type));
-        Uri uri = manager.getContentUri(path);
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
-        return intent;
+        return new Intent(Intent.ACTION_SEND)
+                .setType(MenuExecutor.getMimeType(type))
+                .putExtra(Intent.EXTRA_STREAM, manager.getContentUri(path))
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
     }
 
     private Intent createSharePanoramaIntent(Path path) {
@@ -605,11 +604,10 @@ public class PhotoPage extends ActivityState implements
         if ((supported & MediaObject.SUPPORT_PANORAMA360) == 0) {
             return null;
         }
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType(GalleryUtils.MIME_TYPE_PANORAMA360);
-        Uri uri = manager.getContentUri(path);
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
-        return intent;
+        return new Intent(Intent.ACTION_SEND)
+                .setType(GalleryUtils.MIME_TYPE_PANORAMA360)
+                .putExtra(Intent.EXTRA_STREAM, manager.getContentUri(path))
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
     }
 
     private void launchPhotoEditor() {
