@@ -140,9 +140,11 @@
     <string name="auto" msgid="4296941368722892821">"자동"</string>
     <string name="flash_on" msgid="7891556231891837284">"플래시 터짐"</string>
     <string name="flash_off" msgid="1445443413822680010">"플래시 없음"</string>
+    <!-- no translation found for ffx_original (372686331501281474) -->
+    <skip />
     <string name="ffx_vintage" msgid="8348759951363844780">"빈티지"</string>
-    <string name="ffx_instant" msgid="726968618715691987">"순간 검색"</string>
-    <string name="ffx_bleach" msgid="8946700451603478453">"표백제"</string>
+    <string name="ffx_instant" msgid="726968618715691987">"인스턴트"</string>
+    <string name="ffx_bleach" msgid="8946700451603478453">"블리치"</string>
     <string name="ffx_blue_crush" msgid="5910979947224043165">"블루 크러시"</string>
     <string name="ffx_bw_contrast" msgid="3853938816686258406">"BW 대비"</string>
     <string name="ffx_punch" msgid="1343475517872562639">"펀치"</string>
@@ -195,7 +197,6 @@
     <!-- no translation found for save_into (4960537214388766062) -->
     <skip />
     <string name="trim_too_short" msgid="751593965620665326">"잘라낼 수 없음 : 동영상이 너무 짧음"</string>
-    <string name="trim_too_long" msgid="2657958275279217174">"잘라내지 않음 : 원본과 길이가 같음"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"파노라마 렌더링"</string>
     <string name="save" msgid="613976532235060516">"저장"</string>
 </resources>
