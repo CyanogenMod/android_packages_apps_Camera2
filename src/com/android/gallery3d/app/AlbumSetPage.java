@@ -52,7 +52,6 @@ import com.android.gallery3d.ui.FadeTexture;
 import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLView;
-import com.android.gallery3d.ui.PreparePageFadeoutTexture;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
 import com.android.gallery3d.ui.SynchronizedHandler;
@@ -128,11 +127,6 @@ public class AlbumSetPage extends ActivityState implements
 
     private final GLView mRootPane = new GLView() {
         private final float mMatrix[] = new float[16];
-
-        @Override
-        protected void renderBackground(GLCanvas view) {
-            view.clearBuffer(getBackgroundColor());
-        }
 
         @Override
         protected void onLayout(
@@ -273,7 +267,6 @@ public class AlbumSetPage extends ActivityState implements
                     & MediaObject.SUPPORT_IMPORT) != 0) {
                 data.putBoolean(AlbumPage.KEY_AUTO_SELECT_ALL, true);
             } else if (!mGetContent && albumShouldOpenInFilmstrip(targetSet)) {
-                PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mRootPane);
                 data.putParcelable(PhotoPage.KEY_OPEN_ANIMATION_RECT,
                         mSlotView.getSlotRect(slotIndex, mRootPane));
                 data.putInt(PhotoPage.KEY_INDEX_HINT, 0);
