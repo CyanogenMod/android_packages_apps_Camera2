@@ -6,7 +6,7 @@ import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.ui.GLRoot.OnGLIdleListener;
 
 public class PreparePageFadeoutTexture implements OnGLIdleListener {
-    private static final long TIMEOUT = FadeTexture.DURATION;
+    private static final long TIMEOUT = 500;
     public static final String KEY_FADE_TEXTURE = "fade_texture";
 
     private RawTexture mTexture;
