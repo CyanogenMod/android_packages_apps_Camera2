@@ -140,6 +140,8 @@
     <string name="auto" msgid="4296941368722892821">"स्वत:"</string>
     <string name="flash_on" msgid="7891556231891837284">"फ़्लैश चलाया गया"</string>
     <string name="flash_off" msgid="1445443413822680010">"कोई फ़्लैश नहीं"</string>
+    <!-- no translation found for ffx_original (372686331501281474) -->
+    <skip />
     <string name="ffx_vintage" msgid="8348759951363844780">"विंटेज"</string>
     <string name="ffx_instant" msgid="726968618715691987">"झटपट"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"ब्लीच"</string>
@@ -195,7 +197,6 @@
     <!-- no translation found for save_into (4960537214388766062) -->
     <skip />
     <string name="trim_too_short" msgid="751593965620665326">"ट्रिम नहीं कर सकते : लक्ष्य वीडियो बहुत छोटा है"</string>
-    <string name="trim_too_long" msgid="2657958275279217174">"ट्रिम नहीं किया : अवधि, मूल के बराबर है"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"पैनोरामा रेंडर किया जा रहा है"</string>
     <string name="save" msgid="613976532235060516">"सहेजें"</string>
 </resources>

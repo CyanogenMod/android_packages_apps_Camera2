@@ -140,6 +140,8 @@
     <string name="auto" msgid="4296941368722892821">"خودکار"</string>
     <string name="flash_on" msgid="7891556231891837284">"فلاش زده شد"</string>
     <string name="flash_off" msgid="1445443413822680010">"بدون فلاش"</string>
+    <!-- no translation found for ffx_original (372686331501281474) -->
+    <skip />
     <string name="ffx_vintage" msgid="8348759951363844780">"آنتیک"</string>
     <string name="ffx_instant" msgid="726968618715691987">"فوری"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"سفیدکننده"</string>
@@ -195,7 +197,6 @@
     <!-- no translation found for save_into (4960537214388766062) -->
     <skip />
     <string name="trim_too_short" msgid="751593965620665326">"نمی‌تواند کوتاه شود: ویدیوی موردنظر بسیار کوتاه است"</string>
-    <string name="trim_too_long" msgid="2657958275279217174">"کوتاه نشد: طول ویدیو با ویدیوی اصلی یکسان است"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"در حال تولید تصویر پانوراما"</string>
     <string name="save" msgid="613976532235060516">"ذخیره"</string>
 </resources>
