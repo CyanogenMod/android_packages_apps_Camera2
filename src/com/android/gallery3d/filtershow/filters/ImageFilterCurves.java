@@ -27,6 +27,16 @@ public class ImageFilterCurves extends ImageFilter {
     }
 
     @Override
+    public boolean isNil() {
+        for (int i = 0; i < 4; i++) {
+            if (mSplines[i] != null && !mSplines[i].isOriginal()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public boolean same(ImageFilter filter) {
         boolean isCurveFilter = super.same(filter);
         if (!isCurveFilter) {

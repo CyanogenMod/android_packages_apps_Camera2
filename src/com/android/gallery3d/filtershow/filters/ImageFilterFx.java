@@ -2,12 +2,6 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
-
-import com.android.gallery3d.R;
-
-import java.util.Arrays;
 
 public class ImageFilterFx extends ImageFilter {
     private static final String TAG = "ImageFilterFx";
@@ -26,8 +20,17 @@ public class ImageFilterFx extends ImageFilter {
         return filter;
     }
 
+    @Override
+    public boolean isNil() {
+        if (fxBitmap != null) {
+            return false;
+        }
+        return true;
+    }
+
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h,Bitmap  fxBitmap, int fxw, int fxh);
 
+    @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         if (fxBitmap==null)
             return bitmap;
