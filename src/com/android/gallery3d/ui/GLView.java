@@ -78,10 +78,8 @@ public class GLView {
     protected int mScrollHeight = 0;
     protected int mScrollWidth = 0;
 
-    public static final int ANIM_TIME_OPENING = 400;
-    private RawTexture mFadeOutTexture;
     private float [] mBackgroundColor;
-    private StateTransitionAnimation mTransition = new StateTransitionAnimation(ANIM_TIME_OPENING);
+    private StateTransitionAnimation mTransition;
 
     public void startAnimation(CanvasAnimation animation) {
         GLRoot root = getGLRoot();
@@ -223,22 +221,28 @@ public class GLView {
     }
 
     protected void render(GLCanvas canvas) {
-        if (mTransition.calculate(AnimationTime.get())) invalidate();
-        canvas.save();
+        boolean transitionActive = false;
+        if (mTransition != null && mTransition.calculate(AnimationTime.get())) {
+            invalidate();
+            transitionActive = mTransition.isActive();
+        }
         renderBackground(canvas);
-        if (mTransition.isActive()) mTransition.applyForegroundTransformation(this, canvas);
+        canvas.save();
+        if (transitionActive) {
+            mTransition.applyContentTransform(this, canvas);
+        }
         for (int i = 0, n = getComponentCount(); i < n; ++i) {
             renderChild(canvas, getComponent(i));
         }
         canvas.restore();
+        if (transitionActive) {
+            mTransition.applyOverlay(this, canvas);
+        }
     }
 
-    public void setFadeOutTexture(RawTexture texture) {
-        mFadeOutTexture = texture;
-        if (mFadeOutTexture != null) {
-            TiledScreenNail.disableDrawPlaceholder();
-        }
-        mTransition.start();
+    public void setIntroAnimation(StateTransitionAnimation intro) {
+        mTransition = intro;
+        if (mTransition != null) mTransition.start();
     }
 
     public float [] getBackgroundColor() {
@@ -253,15 +257,9 @@ public class GLView {
         if (mBackgroundColor != null) {
             view.clearBuffer(mBackgroundColor);
         }
-        if (mFadeOutTexture != null) {
-            if (!mTransition.isActive()) {
-                mFadeOutTexture.recycle();
-                mFadeOutTexture = null;
-                TiledScreenNail.enableDrawPlaceholder();
-            } else {
-                mTransition.applyBackground(this, view, mFadeOutTexture);
-                return;
-            }
+        if (mTransition != null && mTransition.isActive()) {
+            mTransition.applyBackground(this, view);
+            return;
         }
     }
 

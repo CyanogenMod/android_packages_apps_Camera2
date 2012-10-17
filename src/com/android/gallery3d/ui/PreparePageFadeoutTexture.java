@@ -6,7 +6,7 @@ import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.ui.GLRoot.OnGLIdleListener;
 
 public class PreparePageFadeoutTexture implements OnGLIdleListener {
-    private static final long TIMEOUT = 500;
+    private static final long TIMEOUT = 200;
     public static final String KEY_FADE_TEXTURE = "fade_texture";
 
     private RawTexture mTexture;
@@ -15,8 +15,18 @@ public class PreparePageFadeoutTexture implements OnGLIdleListener {
     private GLView mRootPane;
 
     public PreparePageFadeoutTexture(GLView rootPane) {
-        mTexture = new RawTexture(rootPane.getWidth(), rootPane.getHeight(), true);
+        int w = rootPane.getWidth();
+        int h = rootPane.getHeight();
+        if (w == 0 || h == 0) {
+            mCancelled = true;
+            return;
+        }
+        mTexture = new RawTexture(w, h, true);
         mRootPane =  rootPane;
+    }
+
+    public boolean isCancelled() {
+        return mCancelled;
     }
 
     public synchronized RawTexture get() {
@@ -32,25 +42,26 @@ public class PreparePageFadeoutTexture implements OnGLIdleListener {
 
     @Override
     public boolean onGLIdle(GLCanvas canvas, boolean renderRequested) {
-            if(!mCancelled) {
+        if (!mCancelled) {
+            try {
                 canvas.beginRenderTarget(mTexture);
                 mRootPane.render(canvas);
                 canvas.endRenderTarget();
-            } else {
+            } catch (RuntimeException e) {
                 mTexture = null;
             }
-            mResultReady.open();
-            return false;
+        } else {
+            mTexture = null;
+        }
+        mResultReady.open();
+        return false;
     }
 
-    public static boolean prepareFadeOutTexture(AbstractGalleryActivity activity,
+    public static void prepareFadeOutTexture(AbstractGalleryActivity activity,
             GLView rootPane) {
-        if (rootPane.getWidth() == 0 || rootPane.getHeight() == 0) {
-            // The view hasn't been measured yet, just abort the animation
-            return false;
-        }
-        GLRoot root = activity.getGLRoot();
         PreparePageFadeoutTexture task = new PreparePageFadeoutTexture(rootPane);
+        if (task.isCancelled()) return;
+        GLRoot root = activity.getGLRoot();
         RawTexture texture = null;
         root.unlockRenderThread();
         try {
@@ -61,9 +72,8 @@ public class PreparePageFadeoutTexture implements OnGLIdleListener {
         }
 
         if (texture == null) {
-            return false;
+            return;
         }
         activity.getTransitionStore().put(KEY_FADE_TEXTURE, texture);
-        return true;
     }
 }
