@@ -253,11 +253,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             listColors.removeView(v);
 
             filters[i].setParameter(100);
+            if(v instanceof ImageButtonTitle)
+                filters[i].setName(((ImageButtonTitle) v).getText());
             fView.setImageFilter(filters[i]);
             fView.setController(this);
             fView.setImageLoader(mImageLoader);
             fView.setId(recastIDs[i]);
-
             mPanelController.addComponent(mColorsButton, fView);
             listColors.addView(fView, pos);
         }
@@ -270,8 +271,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 R.drawable.filtershow_button_colors_sharpen,
                 R.drawable.filtershow_button_colors_curve
         };
-        int[] overlayNames = {
-                R.string.sharpen,
+        int []overlayNames = {
+                R.string.sharpness,
                 R.string.curvesRGB
         };
 
@@ -295,7 +296,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             fView.setController(this);
             fView.setImageLoader(mImageLoader);
             fView.setId(overlayIDs[i]);
-
             mPanelController.addComponent(mColorsButton, fView);
             listColors.addView(fView, pos);
         }
@@ -508,27 +508,27 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         int p = 0;
 
         int[] drawid = {
-                R.drawable.filtershow_fx_0000_vintage,
-                R.drawable.filtershow_fx_0001_instant,
-                R.drawable.filtershow_fx_0002_bleach,
-                R.drawable.filtershow_fx_0003_blue_crush,
-                R.drawable.filtershow_fx_0004_bw_contrast,
                 R.drawable.filtershow_fx_0005_punch,
-                R.drawable.filtershow_fx_0006_x_process,
+                R.drawable.filtershow_fx_0000_vintage,
+                R.drawable.filtershow_fx_0004_bw_contrast,
+                R.drawable.filtershow_fx_0002_bleach,
+                R.drawable.filtershow_fx_0001_instant,
                 R.drawable.filtershow_fx_0007_washout,
-                R.drawable.filtershow_fx_0008_washout_color
+                R.drawable.filtershow_fx_0003_blue_crush,
+                R.drawable.filtershow_fx_0008_washout_color,
+                R.drawable.filtershow_fx_0006_x_process
         };
 
         int[] fxNameid = {
-                R.string.ffx_vintage,
-                R.string.ffx_instant,
-                R.string.ffx_bleach,
-                R.string.ffx_blue_crush,
-                R.string.ffx_bw_contrast,
                 R.string.ffx_punch,
-                R.string.ffx_x_process,
+                R.string.ffx_vintage,
+                R.string.ffx_bw_contrast,
+                R.string.ffx_bleach,
+                R.string.ffx_instant,
                 R.string.ffx_washout,
+                R.string.ffx_blue_crush,
                 R.string.ffx_washout_color,
+                R.string.ffx_x_process
         };
 
         ImagePreset preset = new ImagePreset(); // empty
@@ -537,7 +537,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         filter.setSelected(true);
         mCurrentImageSmallFilter = filter;
 
-        filter.setImageFilter(new ImageFilterFx(null, getString(R.string.ffx_original)));
+        filter.setImageFilter(new ImageFilterFx(null,getString(R.string.none)));
 
         filter.setController(this);
         filter.setImageLoader(mImageLoader);
