@@ -31,6 +31,11 @@ public class ImageFilterParametricBorder extends ImageFilter {
     }
 
     @Override
+    public boolean isNil() {
+        return false;
+    }
+
+    @Override
     public boolean same(ImageFilter filter) {
         boolean isBorderFilter = super.same(filter);
         if (!isBorderFilter) {
