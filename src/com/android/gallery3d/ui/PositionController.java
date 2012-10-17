@@ -67,7 +67,7 @@ class PositionController {
         SNAPBACK_ANIMATION_TIME,  // ANIM_KIND_SNAPBACK
         400,  // ANIM_KIND_SLIDE
         300,  // ANIM_KIND_ZOOM
-        PhotoPage.ANIM_TIME_OPENING,  // ANIM_KIND_OPENING
+        GLView.ANIM_TIME_OPENING,  // ANIM_KIND_OPENING
         0,    // ANIM_KIND_FLING (the duration is calculated dynamically)
         0,    // ANIM_KIND_FLING_X (see the comment above)
         0,    // ANIM_KIND_DELETE (the duration is calculated dynamically)

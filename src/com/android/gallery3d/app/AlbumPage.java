@@ -47,7 +47,6 @@ import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.PhotoFallbackEffect;
-import com.android.gallery3d.ui.PreparePageFadeoutTexture;
 import com.android.gallery3d.ui.RelativePosition;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
@@ -137,11 +136,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
     private final GLView mRootPane = new GLView() {
         private final float mMatrix[] = new float[16];
-
-        @Override
-        protected void renderBackground(GLCanvas view) {
-            view.clearBuffer(getBackgroundColor());
-        }
 
         @Override
         protected void onLayout(
@@ -254,8 +248,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         } else {
             // Render transition in pressed state
             mAlbumView.setPressedIndex(slotIndex);
-            PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mRootPane);
-            mAlbumView.setPressedIndex(-1);
 
             pickPhoto(slotIndex);
         }
@@ -300,8 +292,12 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             data.putBoolean(PhotoPage.KEY_START_IN_FILMSTRIP,
                     startInFilmstrip);
             data.putBoolean(PhotoPage.KEY_IN_CAMERA_ROLL, mMediaSet.isCameraRoll());
-            mActivity.getStateManager().startStateForResult(
-                    PhotoPage.class, REQUEST_PHOTO, data);
+            if (startInFilmstrip) {
+                mActivity.getStateManager().switchState(this, PhotoPage.class, data);
+            } else {
+                mActivity.getStateManager().startStateForResult(
+                            PhotoPage.class, REQUEST_PHOTO, data);
+            }
         }
     }
 
@@ -373,15 +369,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mLaunchedFromPhotoPage =
                 mActivity.getStateManager().hasStateClass(PhotoPage.class);
         mInCameraApp = data.getBoolean(PhotoPage.KEY_APP_BRIDGE, false);
-
-        // Don't show animation if it is restored or switched from filmstrip
-        if (!mLaunchedFromPhotoPage && restoreState == null && data != null) {
-            int[] center = data.getIntArray(KEY_SET_CENTER);
-            if (center != null) {
-                mOpenCenter.setAbsolutePosition(center[0], center[1]);
-                mSlotView.startScatteringAnimation(mOpenCenter);
-            }
-        }
     }
 
     @Override
@@ -411,6 +398,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mAlbumDataAdapter.resume();
 
         mAlbumView.resume();
+        mAlbumView.setPressedIndex(-1);
         mActionModeHandler.resume();
         if (!mInitialSynced) {
             setLoadingBit(BIT_LOADING_SYNC);
@@ -561,7 +549,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         if (mAlbumDataAdapter == null || !mAlbumDataAdapter.isActive(slotIndex)) return;
         MediaItem item = mAlbumDataAdapter.get(slotIndex);
         if (item == null) return;
-        PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mRootPane);
         TransitionStore transitions = mActivity.getTransitionStore();
         transitions.put(PhotoPage.KEY_INDEX_HINT, slotIndex);
         transitions.put(PhotoPage.KEY_OPEN_ANIMATION_RECT,
