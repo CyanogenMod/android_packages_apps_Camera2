@@ -24,7 +24,7 @@ public class EmptyAlbumImage extends ActionImage {
     private static final String TAG = "EmptyAlbumImage";
 
     public EmptyAlbumImage(Path path, GalleryApp application) {
-        super(path, application, R.drawable.ic_menu_revert_holo_dark);
+        super(path, application, R.drawable.placeholder_empty);
     }
 
     @Override
