@@ -26,6 +26,7 @@ public class GeometryMetadata {
     // Applied in order: rotate, crop, scale.
     // Do not scale saved image (presumably?).
     private static final ImageFilterGeometry mImageFilter = new ImageFilterGeometry();
+    private static final String LOGTAG = "GeometryMetadata";
     private float mScaleFactor = 1.0f;
     private float mRotation = 0;
     private float mStraightenRotation = 0;
@@ -46,7 +47,26 @@ public class GeometryMetadata {
         set(g);
     }
 
+    public boolean hasModifications() {
+        if (mScaleFactor != 1.0f) {
+            return true;
+        }
+        if (mRotation != 0) {
+            return true;
+        }
+        if (mStraightenRotation != 0) {
+            return true;
+        }
+        if (!mCropBounds.equals(mPhotoBounds)) {
+            return true;
+        }
+        return false;
+    }
+
     public Bitmap apply(Bitmap original, float scaleFactor, boolean highQuality) {
+        if (!hasModifications()) {
+            return original;
+        }
         mImageFilter.setGeometryMetadata(this);
         Bitmap m = mImageFilter.apply(original, scaleFactor, highQuality);
         return m;

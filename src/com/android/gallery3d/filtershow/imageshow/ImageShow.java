@@ -141,6 +141,13 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
 
     }
 
+    public boolean hasModifications() {
+        if (getImagePreset() == null) {
+            return false;
+        }
+        return getImagePreset().hasModifications();
+    }
+
     public void resetParameter() {
         onNewValue(getCurrentFilter().getDefaultParameter());
         if (USE_SLIDER_GESTURE) {
