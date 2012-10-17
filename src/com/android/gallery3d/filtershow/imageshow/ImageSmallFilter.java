@@ -130,7 +130,7 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
     public void onDraw(Canvas canvas) {
         getFilteredImage();
         canvas.drawColor(mBackgroundColor);
-        float textWidth = mPaint.measureText(getImagePreset().name());
+        float textWidth = mPaint.measureText(mImageFilter.getName());
         int h = mTextSize + 2 * mTextPadding;
         int x = (int) ((getWidth() - textWidth) / 2);
         int y = getHeight();
@@ -142,7 +142,7 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
         drawImage(canvas, mFilteredImage, destination);
         mPaint.setTextSize(mTextSize);
         mPaint.setColor(mTextColor);
-        canvas.drawText(getImagePreset().name(), x, y - mTextMargin, mPaint);
+        canvas.drawText(mImageFilter.getName(), x, y - mTextMargin, mPaint);
     }
 
     public void drawImage(Canvas canvas, Bitmap image, Rect destination) {
