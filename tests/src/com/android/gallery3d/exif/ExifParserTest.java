@@ -76,14 +76,19 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         // We can verify it by examining the sub-IFD or thumbnail itself.
         if (ExifTag.isSubIfdOffsetTag(tag.getTagId())) return;
 
-        String truthString = mGroundTruth.get(tag.getIfd()).get(tag.getTagId());
+        // TODO: Test MakerNote and UserComment
+        if (tag.getTagId() == ExifTag.TAG_MAKER_NOTE
+                || tag.getTagId() == ExifTag.TAG_USER_COMMENT) return;
+
+        String truthString = mGroundTruth.get(tag.getIfd()).get(tag.getTagId()).trim();
 
         if (truthString == null) {
-            fail(String.format("Unknown Tag %02x", tag.getTagId()));
+            fail(String.format("Unknown Tag %02x", tag.getTagId()) + ", " + getImageTitle());
         }
 
         String dataString = tag.valueToString().trim();
-        assertEquals(String.format("Tag %02x", tag.getTagId()), truthString, dataString);
+        assertEquals(String.format("Tag %02x", tag.getTagId()) + ", " + getImageTitle(),
+                truthString, dataString);
     }
 
     private void parseOneIfd(int ifd, int options)
@@ -95,11 +100,13 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         while(event != ExifParser.EVENT_END) {
             switch (event) {
                 case ExifParser.EVENT_START_OF_IFD:
-                    assertEquals(ifd, parser.getCurrentIfd());
+                    assertEquals(getImageTitle(), ifd, parser.getCurrentIfd());
                     break;
                 case ExifParser.EVENT_NEW_TAG:
                     ExifTag tag = parser.getTag();
-                    if (!ExifTag.isSubIfdOffsetTag(tag.getTagId())) numOfTag++;
+                    // The exiftool doesn't provide MakerNote tag
+                    if (!ExifTag.isSubIfdOffsetTag(tag.getTagId())
+                            && tag.getTagId() != ExifTag.TAG_MAKER_NOTE) numOfTag++;
                     if (tag.hasValue()) {
                         checkTag(tag);
                     } else {
@@ -117,7 +124,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
                     break;
                 case ExifParser.EVENT_COMPRESSED_IMAGE:
                 case ExifParser.EVENT_UNCOMPRESSED_STRIP:
-                    fail("Invalid Event type: " + event);
+                    fail("Invalid Event type: " + event + ", " + getImageTitle());
                     break;
             }
             event = parser.next();
@@ -148,7 +155,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         while (event != ExifParser.EVENT_END) {
             switch (event) {
                 case ExifParser.EVENT_START_OF_IFD:
-                    assertEquals(IfdId.TYPE_IFD_0, parser.getCurrentIfd());
+                    assertEquals(getImageTitle(), IfdId.TYPE_IFD_0, parser.getCurrentIfd());
                     break;
                 case ExifParser.EVENT_NEW_TAG:
                     ExifTag tag = parser.getTag();
@@ -164,14 +171,14 @@ public class ExifParserTest extends ExifXmlDataTestCase {
                     break;
                 case ExifParser.EVENT_VALUE_OF_REGISTERED_TAG:
                     tag = parser.getTag();
-                    assertEquals(ExifTag.TAG_MODEL, tag.getTagId());
+                    assertEquals(getImageTitle(), ExifTag.TAG_MODEL, tag.getTagId());
                     checkTag(tag);
                     isTagFound = true;
                     break;
             }
             event = parser.next();
         }
-        assertTrue(isTagFound);
+        assertTrue(getImageTitle(), isTagFound);
     }
 
     public void testReadThumbnail() throws Exception {
@@ -201,7 +208,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
             event = parser.next();
         }
         if (mIsContainCompressedImage) {
-            assertNotNull(bmp);
+            assertNotNull(getImageTitle(), bmp);
         }
     }
 }
