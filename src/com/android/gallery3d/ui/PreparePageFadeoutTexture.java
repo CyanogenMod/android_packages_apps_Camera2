@@ -43,8 +43,12 @@ public class PreparePageFadeoutTexture implements OnGLIdleListener {
             return false;
     }
 
-    public static void prepareFadeOutTexture(AbstractGalleryActivity activity,
+    public static boolean prepareFadeOutTexture(AbstractGalleryActivity activity,
             GLView rootPane) {
+        if (rootPane.getWidth() == 0 || rootPane.getHeight() == 0) {
+            // The view hasn't been measured yet, just abort the animation
+            return false;
+        }
         GLRoot root = activity.getGLRoot();
         PreparePageFadeoutTexture task = new PreparePageFadeoutTexture(rootPane);
         RawTexture texture = null;
@@ -56,8 +60,10 @@ public class PreparePageFadeoutTexture implements OnGLIdleListener {
             root.lockRenderThread();
         }
 
-        if (texture != null) {
-            activity.getTransitionStore().put(KEY_FADE_TEXTURE, texture);
+        if (texture == null) {
+            return false;
         }
+        activity.getTransitionStore().put(KEY_FADE_TEXTURE, texture);
+        return true;
     }
 }
