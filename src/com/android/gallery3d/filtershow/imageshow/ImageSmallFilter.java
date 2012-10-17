@@ -23,8 +23,6 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
     private boolean mSetBorder = false;
     protected final Paint mPaint = new Paint();
     protected boolean mIsSelected = false;
-    protected boolean mNextIsSelected = false;
-    private ImageSmallFilter mPreviousImageSmallFilter = null;
 
     // TODO: move this to xml.
     protected static int mMargin = 12;
@@ -58,26 +56,12 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
         mImagePreset.add(mImageFilter);
     }
 
-    public void setPreviousImageSmallFilter(ImageSmallFilter previous) {
-        mPreviousImageSmallFilter = previous;
-    }
-
     @Override
     public void setSelected(boolean value) {
         if (mIsSelected != value) {
             invalidate();
-            if (mPreviousImageSmallFilter != null) {
-                mPreviousImageSmallFilter.setNextSelected(value);
-            }
         }
         mIsSelected = value;
-    }
-
-    public void setNextSelected(boolean value) {
-        if (mNextIsSelected != value) {
-            invalidate();
-        }
-        mNextIsSelected = value;
     }
 
     public void setBorder(boolean value) {
@@ -146,37 +130,40 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
     public void onDraw(Canvas canvas) {
         getFilteredImage();
         canvas.drawColor(mBackgroundColor);
-        Rect d = new Rect(0, mMargin, getWidth() - mMargin, getWidth());
         float textWidth = mPaint.measureText(getImagePreset().name());
         int h = mTextSize + 2 * mTextPadding;
         int x = (int) ((getWidth() - textWidth) / 2);
         int y = getHeight();
         if (mIsSelected) {
             mPaint.setColor(mSelectedBackgroundColor);
-            canvas.drawRect(0, 0, getWidth(), getWidth() + mMargin, mPaint);
+            canvas.drawRect(0, mMargin, getWidth(), getWidth() + mMargin, mPaint);
         }
-        if (mNextIsSelected) {
-            mPaint.setColor(mSelectedBackgroundColor);
-            canvas.drawRect(getWidth() - mMargin, 0, getWidth(), getWidth() + mMargin, mPaint);
-        }
-        drawImage(canvas, mFilteredImage, d);
+        Rect destination = new Rect(mMargin, 2*mMargin, getWidth() - mMargin, getWidth());
+        drawImage(canvas, mFilteredImage, destination);
         mPaint.setTextSize(mTextSize);
         mPaint.setColor(mTextColor);
         canvas.drawText(getImagePreset().name(), x, y - mTextMargin, mPaint);
     }
 
-    public void drawImage(Canvas canvas, Bitmap image, Rect d) {
+    public void drawImage(Canvas canvas, Bitmap image, Rect destination) {
         if (image != null) {
             int iw = image.getWidth();
             int ih = image.getHeight();
-            int iy = (int) ((ih - iw) / 2.0f);
-            int ix = 0;
+            int x = 0;
+            int y = 0;
+            int size = 0;
+            Rect source = null;
             if (iw > ih) {
-                iy = 0;
-                ix = (int) ((iw - ih) / 2.0f);
+                size = ih;
+                x = (int) ((iw - size) / 2.0f);
+                y = 0;
+            } else {
+                size = iw;
+                x = 0;
+                y = (int) ((ih - size) / 2.0f);
             }
-            Rect s = new Rect(ix, iy, ix + iw, iy + iw);
-            canvas.drawBitmap(image, s, d, mPaint);
+            source = new Rect(x, y, x + size, y + size);
+            canvas.drawBitmap(image, source, destination, mPaint);
         }
     }
 
