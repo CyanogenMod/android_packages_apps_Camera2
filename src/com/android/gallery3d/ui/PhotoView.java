@@ -1013,8 +1013,8 @@ public class PhotoView extends GLView {
             // onDoubleTap happened on the second ACTION_DOWN.
             // We need to ignore the next UP event.
             mIgnoreUpEvent = true;
-            if (scale <= 1.0f || controller.isAtMinimalScale()) {
-                controller.zoomIn(x, y, Math.max(1.5f, scale * 1.5f));
+            if (scale <= .75f || controller.isAtMinimalScale()) {
+                controller.zoomIn(x, y, Math.max(1.0f, scale * 1.5f));
             } else {
                 controller.resetToFullView();
             }
