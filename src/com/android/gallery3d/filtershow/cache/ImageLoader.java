@@ -360,6 +360,7 @@ public class ImageLoader {
             mFullOriginalBitmap = BitmapFactory.decodeStream(is, null, options);
             // TODO: on <3.x we need a copy of the bitmap (inMutable doesn't
             // exist)
+            mFullOriginalBitmap = rotateToPortrait(mFullOriginalBitmap,mOrientation);
             mSaveCopy = mFullOriginalBitmap;
             preset.setIsHighQuality(true);
             preset.setScaleFactor(1.0f);
