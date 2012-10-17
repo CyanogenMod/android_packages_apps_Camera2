@@ -45,6 +45,11 @@ public class ImageFlip extends ImageGeometry {
         super.setActionDown(x, y);
     }
 
+    boolean hasRotated90(){
+        int rot = constrainedRotation(getLocalRotation());
+        return ((int) (rot / 90)) % 2 != 0;
+    }
+
     @Override
     protected void setActionMove(float x, float y) {
         super.setActionMove(x, y);
@@ -52,6 +57,11 @@ public class ImageFlip extends ImageGeometry {
         float diffx = mTouchCenterX - x;
         float diffy = mTouchCenterY - y;
         float flick = getScaledMinFlick();
+        if(hasRotated90()){
+            float temp = diffx;
+            diffx = diffy;
+            diffy = temp;
+        }
         if (Math.abs(diffx) >= flick) {
             // flick moving left/right
             FLIP flip = getLocalFlip();
