@@ -38,6 +38,13 @@ public class ImageFilter implements Cloneable {
         return filter;
     }
 
+    public boolean isNil() {
+        if (mParameter == mDefaultParameter) {
+            return true;
+        }
+        return false;
+    }
+
     public void setName(String name) {
         mName = name;
     }
