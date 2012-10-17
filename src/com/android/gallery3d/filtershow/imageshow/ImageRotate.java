@@ -23,7 +23,6 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 
 public class ImageRotate extends ImageGeometry {
-    private static final float MATH_PI = (float) Math.PI;
 
     private float mBaseAngle = 0;
     private float mAngle = 0;
@@ -39,35 +38,10 @@ public class ImageRotate extends ImageGeometry {
         super(context);
     }
 
-    private float angleFor(float dx, float dy) {
-        return (float) (Math.atan2(dx, dy) * 180 / MATH_PI);
-    }
-
-    private int snappedAngle(float angle) {
-        float remainder = angle % 90;
-        int current = (int) (angle / 90); // truncates
-        if (remainder < -45) {
-            --current;
-        } else if (remainder > 45) {
-            ++current;
-        }
-        return current * 90;
-    }
-
     private static final Paint gPaint = new Paint();
 
     private void computeValue() {
-        if (mCurrentX == mTouchCenterX && mCurrentY == mTouchCenterY) {
-            return;
-        }
-        float dX1 = mTouchCenterX - mCenterX;
-        float dY1 = mTouchCenterY - mCenterY;
-        float dX2 = mCurrentX - mCenterX;
-        float dY2 = mCurrentY - mCenterY;
-
-        float angleA = angleFor(dX1, dY1);
-        float angleB = angleFor(dX2, dY2);
-        float angle = (angleB - angleA) % 360;
+        float angle = getCurrentTouchAngle();
         mAngle = (mBaseAngle - angle) % 360;
     }
 
