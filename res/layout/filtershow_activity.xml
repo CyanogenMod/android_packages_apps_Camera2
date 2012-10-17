@@ -192,6 +192,15 @@
                 android:orientation="horizontal"
                 android:visibility="gone" >
 
+                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    android:id="@+id/aspect"
+                    style="@style/FilterShowBottomButton"
+                    android:layout_gravity="left"
+                    android:layout_weight="0"
+                    android:visibility="gone"
+                    android:src="@drawable/filtershow_button_geometry_straighten"
+                    android:text="@string/aspectNone_effect" />
+
                 <ImageButton
                     android:id="@+id/pickCurvesChannel"
                     android:layout_width="64dip"
