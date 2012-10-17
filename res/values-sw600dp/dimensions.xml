@@ -14,13 +14,7 @@
      limitations under the License.
 -->
 <resources>
-    <color name="yellow">#FFFF00</color>
-    <color name="green">#00FF00</color>
-    <color name="red">#FF0000</color>
-    <color name="blue">#0000FF</color>
-    <color name="text_toolbar">#FFFFFF</color>
-    <color name="background_screen">#000000</color>
-    <color name="background_toolbar">#363949</color>
-    <color name="background_main_toolbar">#1e2028</color>
-    <color name="toolbar_separation_line">#333333</color>
+    <!--  configuration for filtershow UI -->
+    <dimen name="thumbnail_size">128dip</dimen>
+    <dimen name="thumbnail_margin">3dip</dimen>
 </resources>

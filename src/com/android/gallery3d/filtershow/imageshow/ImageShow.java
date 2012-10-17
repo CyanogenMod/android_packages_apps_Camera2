@@ -19,6 +19,7 @@ package com.android.gallery3d.filtershow.imageshow;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -57,7 +58,10 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     private boolean mDirtyGeometry = true;
 
     private Bitmap mBackgroundImage = null;
- // TODO: remove protected here, it should be private
+    private final boolean USE_BACKGROUND_IMAGE = false;
+    private static int mBackgroundColor = Color.RED;
+
+    // TODO: remove protected here, it should be private
     protected Bitmap mForegroundImage = null;
     protected Bitmap mFilteredImage = null;
 
@@ -87,6 +91,10 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
 
     private SeekBar mSeekBar = null;
     private PanelController mController = null;
+
+    public static void setDefaultBackgroundColor(int value) {
+        mBackgroundColor = value;
+    }
 
     public static void setTextSize(int value) {
         mTextSize = value;
@@ -355,14 +363,18 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     }
 
     public void drawBackground(Canvas canvas) {
-        if (mBackgroundImage == null) {
-            mBackgroundImage = mImageLoader.getBackgroundBitmap(getResources());
-        }
-        if (mBackgroundImage != null) {
-            Rect s = new Rect(0, 0, mBackgroundImage.getWidth(),
-                    mBackgroundImage.getHeight());
-            Rect d = new Rect(0, 0, getWidth(), getHeight());
-            canvas.drawBitmap(mBackgroundImage, s, d, mPaint);
+        if (USE_BACKGROUND_IMAGE) {
+            if (mBackgroundImage == null) {
+                mBackgroundImage = mImageLoader.getBackgroundBitmap(getResources());
+            }
+            if (mBackgroundImage != null) {
+                Rect s = new Rect(0, 0, mBackgroundImage.getWidth(),
+                        mBackgroundImage.getHeight());
+                Rect d = new Rect(0, 0, getWidth(), getHeight());
+                canvas.drawBitmap(mBackgroundImage, s, d, mPaint);
+            }
+        } else {
+            canvas.drawColor(mBackgroundColor);
         }
     }
 
