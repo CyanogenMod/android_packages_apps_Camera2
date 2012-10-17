@@ -109,6 +109,7 @@ public abstract class SurfaceTextureScreenNail implements ScreenNail,
             canvas.translate(cx, cy);
             canvas.scale(1, -1, 1);
             canvas.translate(-cx, -cy);
+            updateTransformMatrix(mTransform);
             canvas.drawTexture(mExtTexture, mTransform, x, y, width, height);
             canvas.restore();
         }
@@ -118,6 +119,8 @@ public abstract class SurfaceTextureScreenNail implements ScreenNail,
     public void draw(GLCanvas canvas, RectF source, RectF dest) {
         throw new UnsupportedOperationException();
     }
+
+    protected void updateTransformMatrix(float[] matrix) {}
 
     @Override
     abstract public void noDraw();
