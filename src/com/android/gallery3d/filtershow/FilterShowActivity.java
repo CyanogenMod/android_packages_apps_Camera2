@@ -121,12 +121,13 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         ImageFilterRS.setRenderScriptContext(this);
 
+        ImageShow.setDefaultBackgroundColor(getResources().getColor(R.color.background_screen));
         // TODO: get those values from XML.
         ImageShow.setTextSize((int) getPixelsFromDip(12));
         ImageShow.setTextPadding((int) getPixelsFromDip(10));
         ImageButtonTitle.setTextSize((int) getPixelsFromDip(12));
         ImageButtonTitle.setTextPadding((int) getPixelsFromDip(10));
-        ImageSmallFilter.setMargin((int) getPixelsFromDip(6));
+        ImageSmallFilter.setMargin((int) getPixelsFromDip(3));
         ImageSmallFilter.setTextMargin((int) getPixelsFromDip(4));
         mImageBorderSize = (int) getPixelsFromDip(20);
         Drawable curveHandle = getResources().getDrawable(R.drawable.camera_crop_holo);
@@ -535,7 +536,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         filter.setSelected(true);
         mCurrentImageSmallFilter = filter;
 
-        filter.setPreviousImageSmallFilter(null);
         filter.setImageFilter(new ImageFilterFx(null,getString(R.string.ffx_original)));
 
         filter.setController(this);
@@ -553,8 +553,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         for (int i = 0; i < p; i++) {
             filter = new ImageSmallFilter(this);
-
-            filter.setPreviousImageSmallFilter(previousFilter);
             filter.setImageFilter(fxArray[i]);
             filter.setController(this);
             filter.setImageLoader(mImageLoader);
@@ -587,7 +585,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageSmallFilter previousFilter = null;
         for (int i = 0; i < p; i++) {
             ImageSmallBorder filter = new ImageSmallBorder(this);
-            filter.setPreviousImageSmallFilter(previousFilter);
             filter.setImageFilter(borders[i]);
             filter.setController(this);
             filter.setBorder(true);

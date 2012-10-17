@@ -18,7 +18,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_main_toolbar" >
+    android:background="@color/background_screen" >
 
     <LinearLayout
         android:id="@+id/imageStatePanel"
@@ -176,6 +176,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_gravity="center"
+              android:background="@color/background_main_toolbar"
               custom:max_width="600dip"
               android:orientation="vertical">
 
@@ -187,7 +188,7 @@
             <LinearLayout
                 android:id="@+id/filterButtonsList"
                 android:layout_width="fill_parent"
-                android:layout_height="96dip"
+                android:layout_height="@dimen/thumbnail_size"
                 android:background="@color/background_main_toolbar"
                 android:orientation="horizontal"
                 android:visibility="gone" >
@@ -225,13 +226,14 @@
             <HorizontalScrollView
                 android:id="@+id/fxList"
                 android:layout_width="match_parent"
-                android:layout_height="96dip"
+                android:layout_height="@dimen/thumbnail_size"
                 android:scrollbars="none" >
 
                 <LinearLayout
                     android:id="@+id/listFilters"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/thumbnail_margin"
                     android:orientation="horizontal" >
                 </LinearLayout>
             </HorizontalScrollView>
@@ -239,7 +241,7 @@
             <HorizontalScrollView
                 android:id="@+id/bordersList"
                 android:layout_width="match_parent"
-                android:layout_height="96dip"
+                android:layout_height="@dimen/thumbnail_size"
                 android:visibility="gone"
                 android:scrollbars="none" >
 
@@ -247,6 +249,7 @@
                     android:id="@+id/listBorders"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/thumbnail_margin"
                     android:orientation="horizontal" >
                 </LinearLayout>
             </HorizontalScrollView>
@@ -254,7 +257,7 @@
             <HorizontalScrollView
                 android:id="@+id/geometryList"
                 android:layout_width="fill_parent"
-                android:layout_height="96dip"
+                android:layout_height="@dimen/thumbnail_size"
                 android:background="@color/background_main_toolbar"
                 android:visibility="gone"
                 android:scrollbars="none" >
@@ -303,7 +306,7 @@
             <HorizontalScrollView
                 android:id="@+id/colorsFxList"
                 android:layout_width="fill_parent"
-                android:layout_height="96dip"
+                android:layout_height="@dimen/thumbnail_size"
                 android:background="@color/background_main_toolbar"
                 android:visibility="gone"
                 android:scrollbars="none" >
@@ -312,6 +315,7 @@
                     android:id="@+id/listColorsFx"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/thumbnail_margin"
                     android:orientation="horizontal" >
 
                     <com.android.gallery3d.filtershow.ui.ImageButtonTitle
@@ -399,7 +403,7 @@
 
             <ImageButton
                 android:id="@+id/fxButton"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/thumbnail_size"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/filtershow_button_background"
@@ -408,7 +412,7 @@
 
             <ImageButton
                 android:id="@+id/borderButton"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/thumbnail_size"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/filtershow_button_background"
@@ -418,7 +422,7 @@
 
             <ImageButton
                 android:id="@+id/geometryButton"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/thumbnail_size"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/filtershow_button_background"
@@ -428,7 +432,7 @@
 
             <ImageButton
                 android:id="@+id/colorsButton"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/thumbnail_size"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/filtershow_button_background"
