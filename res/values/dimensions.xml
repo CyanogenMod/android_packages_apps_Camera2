@@ -46,4 +46,8 @@
 
     <!-- for manage cache bar -->
     <dimen name="manage_cache_bottom_height">48dp</dimen>
+
+    <!--  configuration for filtershow UI -->
+    <dimen name="thumbnail_size">96dip</dimen>
+    <dimen name="thumbnail_margin">3dip</dimen>
 </resources>
