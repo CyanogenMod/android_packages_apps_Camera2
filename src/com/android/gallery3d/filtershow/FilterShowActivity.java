@@ -114,7 +114,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private boolean mSharingImage = false;
 
     private WeakReference<ProgressDialog> mSavingProgressDialog;
-
+    private static final int SEEK_BAR_MAX = 600;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -325,7 +325,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         fillListBorders(listBorders);
 
         SeekBar seekBar = (SeekBar) findViewById(R.id.filterSeekBar);
-        seekBar.setMax(200);
+        seekBar.setMax(SEEK_BAR_MAX);
+
         mImageShow.setSeekBar(seekBar);
         mImageZoom.setSeekBar(seekBar);
         mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
@@ -535,7 +536,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mCurrentImageSmallFilter = filter;
 
         filter.setPreviousImageSmallFilter(null);
-        filter.setImageFilter(new ImageFilterFx(null,ImageFilterFx.ORIG));
+        filter.setImageFilter(new ImageFilterFx(null,getString(R.string.ffx_original)));
 
         filter.setController(this);
         filter.setImageLoader(mImageLoader);
