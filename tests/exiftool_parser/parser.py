@@ -63,23 +63,22 @@ for s in tags:
                 ifds.pop()
         layer = new_layer
 
+        # find the ID
+        _id = re.search("0x[0-9a-f]{4}", s)
+        _id = _id.group(0)
+
+        # find the name
+        name = re.search("[0-9]*?\).*? = ", s)
+        name = name.group(0)[4:-3]
+
         # find the raw value in the parenthesis
         value = re.search("\(.*\)\n", s)
-        if value:
+        if (name != 'Model' and value):
             value = value.group(0)[1:-2]
         else:
             value = re.search("=.*\n", s)
             value = value.group(0)[2:-1]
 
-        # find the ID
-        p = re.compile("0x[0-9a-f]{4}")
-        _id = p.search(s)
-        _id = _id.group(0)
-
-        # find the name
-        p = re.compile("[0-9]*?\).*? = ")
-        name = p.search(s)
-        name = name.group(0)[4:-3]
         print ('    <tag ifd="' + ifds[-1] + '" id="'
             + _id + '" name="' + name +'">' + value + "</tag>")
 print "</exif>"
