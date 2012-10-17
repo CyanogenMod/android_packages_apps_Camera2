@@ -101,18 +101,28 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     public void select() {
         if (getCurrentFilter() != null) {
             int parameter = getCurrentFilter().getParameter();
-            updateSeekBar(parameter);
+            int maxp = getCurrentFilter().getMaxParameter();
+            int minp = getCurrentFilter().getMinParameter();
+            updateSeekBar(parameter,minp,maxp);
         }
         if (mSeekBar != null) {
             mSeekBar.setOnSeekBarChangeListener(this);
         }
     }
 
-    public void updateSeekBar(int parameter) {
+    private int parameterToUI(int parameter,int minp,int maxp,int uimax){
+        return (uimax*(parameter-minp))/(maxp-minp);
+    }
+
+    private int uiToParameter(int ui,int minp,int maxp,int uimax){
+        return  ((maxp-minp)*ui)/uimax+minp;
+    }
+    public void updateSeekBar(int parameter,int minp,int maxp) {
         if (mSeekBar == null) {
             return;
         }
-        int progress = parameter + 100;
+        int seekMax  = mSeekBar.getMax();
+        int progress = parameterToUI(parameter,minp,maxp,seekMax);
         mSeekBar.setProgress(progress);
         if (getPanelController() != null) {
             getPanelController().onNewValue(parameter);
@@ -124,7 +134,7 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     }
 
     public void resetParameter() {
-        onNewValue(0);
+        onNewValue(getCurrentFilter().getDefaultParameter());
         if (USE_SLIDER_GESTURE) {
             mSliderController.reset();
         }
@@ -139,18 +149,22 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     }
 
     @Override
-    public void onNewValue(int value) {
+    public void onNewValue(int parameter) {
+        int maxp = 100;
+        int minp = -100;
         if (getCurrentFilter() != null) {
-            getCurrentFilter().setParameter(value);
+            getCurrentFilter().setParameter(parameter);
+            maxp = getCurrentFilter().getMaxParameter();
+            minp = getCurrentFilter().getMinParameter();
         }
         if (getImagePreset() != null) {
             mImageLoader.resetImageForPreset(getImagePreset(), this);
             getImagePreset().fillImageStateAdapter(mImageStateAdapter);
         }
         if (getPanelController() != null) {
-            getPanelController().onNewValue(value);
+            getPanelController().onNewValue(parameter);
         }
-        updateSeekBar(value);
+        updateSeekBar(parameter,minp,maxp);
         invalidate();
     }
 
@@ -503,7 +517,14 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
 
     @Override
     public void onProgressChanged(SeekBar arg0, int progress, boolean arg2) {
-        onNewValue(progress - 100);
+        int parameter = progress;
+        if (getCurrentFilter()!=null){
+            int maxp = getCurrentFilter().getMaxParameter();
+            int minp = getCurrentFilter().getMinParameter();
+            parameter = uiToParameter(progress,minp,maxp,arg0.getMax());
+        }
+
+        onNewValue(parameter);
     }
 
     @Override
