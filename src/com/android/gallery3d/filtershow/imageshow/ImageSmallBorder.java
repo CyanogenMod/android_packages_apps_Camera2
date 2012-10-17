@@ -31,14 +31,16 @@ public class ImageSmallBorder extends ImageSmallFilter {
     @Override
     public void onDraw(Canvas canvas) {
         getFilteredImage();
-        if (mIsSelected) {
-            canvas.drawColor(mSelectedBackgroundColor);
-        } else {
-            canvas.drawColor(mBackgroundColor);
-        }
+        canvas.drawColor(mBackgroundColor);
         // TODO: simplify & make faster...
         mPaint.setColor(mInnerBorderColor);
-        RectF border = new RectF(mMargin, mMargin, getWidth() - mMargin - 1, getHeight() - mMargin);
+        RectF border = new RectF(mMargin, 2*mMargin, getWidth() - mMargin - 1, getWidth());
+
+        if (mIsSelected) {
+            mPaint.setColor(mSelectedBackgroundColor);
+            canvas.drawRect(0, mMargin, getWidth(), getWidth() + mMargin, mPaint);
+        }
+
         canvas.drawLine(0, 0, getWidth(), 0, mPaint);
         mPaint.setStrokeWidth(mInnerBorderWidth);
         Path path = new Path();
@@ -47,7 +49,7 @@ public class ImageSmallBorder extends ImageSmallFilter {
         canvas.drawPath(path, mPaint);
         mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         canvas.save();
-        canvas.clipRect(mMargin + 1, mMargin, getWidth() - mMargin - 2, getHeight() - mMargin - 1,
+        canvas.clipRect(mMargin + 1, 2*mMargin, getWidth() - mMargin - 2, getWidth() - 1,
                 Region.Op.INTERSECT);
         canvas.translate(mMargin, mMargin + 1);
         canvas.scale(mImageScaleFactor, mImageScaleFactor);
