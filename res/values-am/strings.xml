@@ -192,7 +192,8 @@
     <string name="switch_photo_grid" msgid="3681299459107925725">"የፍርግርግ ዕይታ"</string>
     <string name="trimming" msgid="9122385768369143997">"ማሳጠር"</string>
     <string name="please_wait" msgid="7296066089146487366">"እባክዎ ይጠብቁ"</string>
-    <string name="save_into" msgid="6688364520925473396">"ያጠረው ቪዲዮ እዚህ ውስጥ ይቀመጥ፦"</string>
+    <!-- no translation found for save_into (4960537214388766062) -->
+    <skip />
     <string name="trim_too_short" msgid="751593965620665326">"ማሳጠር አይቻልም፤ ዒላማው በጣም አጭር ነው"</string>
     <string name="trim_too_long" msgid="2657958275279217174">"አታሳጥር፤ የመጀመሪያው ያህል ተመሳሳይ ርዝመት"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"ፓኖራማን በማሳየት ላይ"</string>

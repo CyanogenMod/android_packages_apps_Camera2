@@ -192,7 +192,8 @@
     <string name="switch_photo_grid" msgid="3681299459107925725">"Προβολή πλέγματος"</string>
     <string name="trimming" msgid="9122385768369143997">"Περικοπή"</string>
     <string name="please_wait" msgid="7296066089146487366">"Περιμένετε"</string>
-    <string name="save_into" msgid="6688364520925473396">"Αποθήκευση βίντεο που έχει περικοπεί σε"</string>
+    <!-- no translation found for save_into (4960537214388766062) -->
+    <skip />
     <string name="trim_too_short" msgid="751593965620665326">"Δεν είναι δυνατή η περικοπή : το βίντεο-στόχος είναι πολύ σύντομο"</string>
     <string name="trim_too_long" msgid="2657958275279217174">"Δεν έγινε περικοπή : ίδια διάρκεια με την αρχική"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Απόδοση πανοράματος"</string>
