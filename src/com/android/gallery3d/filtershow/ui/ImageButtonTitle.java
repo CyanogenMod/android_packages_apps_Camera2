@@ -37,6 +37,10 @@ public class ImageButtonTitle extends ImageButton {
         mText = a.getString(R.styleable.ImageButtonTitle_android_text);
     }
 
+    public String getText(){
+        return mText;
+    }
+
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
