@@ -72,8 +72,8 @@ import com.android.gallery3d.ui.PhotoFallbackEffect;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
+import com.android.gallery3d.ui.TiledScreenNail;
 import com.android.gallery3d.util.GalleryUtils;
-import com.android.gallery3d.util.LightCycleHelper;
 
 public class PhotoPage extends ActivityState implements
         PhotoView.Listener, OrientationManager.Listener, AppBridge.Server,
@@ -527,6 +527,7 @@ public class PhotoPage extends ActivityState implements
         }
     }
 
+    @Override
     public void onPictureCenter(boolean isCamera) {
         mPhotoView.setWantPictureCenterCallbacks(false);
         mHandler.removeMessages(MSG_ON_CAMERA_CENTER);
@@ -534,10 +535,12 @@ public class PhotoPage extends ActivityState implements
         mHandler.sendEmptyMessage(isCamera ? MSG_ON_CAMERA_CENTER : MSG_ON_PICTURE_CENTER);
     }
 
+    @Override
     public boolean canDisplayBottomControls() {
         return mIsActive && !mPhotoView.getFilmMode();
     }
 
+    @Override
     public boolean canDisplayBottomControl(int control) {
         if (mCurrentPhoto == null) return false;
         switch(control) {
@@ -555,6 +558,7 @@ public class PhotoPage extends ActivityState implements
         }
     }
 
+    @Override
     public void onBottomControlClicked(int control) {
         switch(control) {
             case R.id.photopage_bottom_control_edit:
@@ -562,7 +566,8 @@ public class PhotoPage extends ActivityState implements
                 return;
             case R.id.photopage_bottom_control_panorama:
                 mRecenterCameraOnResume = false;
-                LightCycleHelper.viewPanorama(mActivity, mCurrentPhoto.getContentUri());
+                mActivity.getPanoramaViewHelper()
+                        .showPanorama(mCurrentPhoto.getContentUri());
                 return;
             default:
                 return;
