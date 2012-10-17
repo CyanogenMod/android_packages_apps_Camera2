@@ -280,6 +280,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
                 intent.setType(GalleryUtils.MIME_TYPE_PANORAMA360);
                 intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
             }
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
 
         return intent;
@@ -315,6 +316,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
                 intent.setAction(Intent.ACTION_SEND).setType(mimeType);
                 intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
             }
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             setNfcBeamPushUris(uris.toArray(new Uri[uris.size()]));
         } else {
             setNfcBeamPushUris(null);
