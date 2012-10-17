@@ -71,7 +71,7 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
         mWaitLoadingTexture = new ColorTexture(mPlaceholderColor);
         mWaitLoadingTexture.setSize(1, 1);
         mCameraOverlay = new ResourceTexture(activity,
-                R.drawable.frame_overlay_gallery_camera);
+                R.drawable.ic_cameraalbum_overlay);
     }
 
     public void setPressedIndex(int index) {
