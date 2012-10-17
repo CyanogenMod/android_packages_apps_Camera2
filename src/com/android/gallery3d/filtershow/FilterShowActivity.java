@@ -73,6 +73,7 @@ import java.util.Vector;
 public class FilterShowActivity extends Activity implements OnItemClickListener,
         OnShareTargetSelectedListener {
 
+    public static final String CROP_ACTION = "com.android.camera.action.CROP";
     private final PanelController mPanelController = new PanelController();
     private ImageLoader mImageLoader = null;
     private ImageShow mImageShow = null;
@@ -344,6 +345,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         } else {
             pickImage();
         }
+
+        String action = intent.getAction();
+        if (action == CROP_ACTION){
+            mPanelController.showComponent(findViewById(R.id.cropButton));
+        }
+
     }
 
     private int getScreenImageSize() {
