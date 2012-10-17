@@ -25,6 +25,10 @@ public class ImageButtonTitle extends ImageButton {
         mTextPadding = value;
     }
 
+    public void setText(String text) {
+        mText = text;
+    }
+
     public ImageButtonTitle(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray a = getContext().obtainStyledAttributes(

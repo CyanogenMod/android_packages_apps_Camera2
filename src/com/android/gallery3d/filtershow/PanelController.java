@@ -20,9 +20,11 @@ import com.android.gallery3d.filtershow.filters.ImageFilterSharpen;
 import com.android.gallery3d.filtershow.filters.ImageFilterVibrance;
 import com.android.gallery3d.filtershow.filters.ImageFilterVignette;
 import com.android.gallery3d.filtershow.filters.ImageFilterWBalance;
+import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.ui.ImageCurves;
+import com.android.gallery3d.filtershow.ui.ImageButtonTitle;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -113,15 +115,94 @@ public class PanelController implements OnClickListener {
         private String mEffectName = null;
         private int mParameterValue = 0;
         private boolean mShowParameterValue = false;
+        private View mAspectButton = null;
+        private int mCurrentAspectButton = 0;
+        private static final int NUMBER_OF_ASPECT_BUTTONS = 6;
+        private static final int ASPECT_NONE = 0;
+        private static final int ASPECT_1TO1 = 1;
+        private static final int ASPECT_5TO7 = 2;
+        private static final int ASPECT_4TO6 = 3;
+        private static final int ASPECT_16TO9 = 4;
+        private static final int ASPECT_ORIG = 5;
 
-        public UtilityPanel(Context context, View view, View textView) {
+        public UtilityPanel(Context context, View view, View textView, View button) {
             mContext = context;
             mView = view;
             mTextView = (TextView) textView;
+            mAspectButton = button;
         }
 
         public boolean selected() {
             return mSelected;
+        }
+
+        public void nextAspectButton() {
+            if (mAspectButton instanceof ImageButtonTitle
+                    && mCurrentImage instanceof ImageCrop) {
+                switch (mCurrentAspectButton) {
+                    case ASPECT_NONE:
+                        ((ImageButtonTitle) mAspectButton).setText(mContext
+                                .getString(R.string.aspect)
+                                + " "
+                                + mContext.getString(R.string.aspect1to1_effect));
+                        ((ImageCrop) mCurrentImage).apply(1, 1);
+                        break;
+                    case ASPECT_1TO1:
+                        ((ImageButtonTitle) mAspectButton).setText(mContext
+                                .getString(R.string.aspect)
+                                + " "
+                                + mContext.getString(R.string.aspect5to7_effect));
+                        ((ImageCrop) mCurrentImage).apply(7, 5);
+                        break;
+                    case ASPECT_5TO7:
+                        ((ImageButtonTitle) mAspectButton).setText(mContext
+                                .getString(R.string.aspect)
+                                + " "
+                                + mContext.getString(R.string.aspect4to6_effect));
+                        ((ImageCrop) mCurrentImage).apply(6, 4);
+                        break;
+                    case ASPECT_4TO6:
+                        ((ImageButtonTitle) mAspectButton).setText(mContext
+                                .getString(R.string.aspect)
+                                + " "
+                                + mContext.getString(R.string.aspect9to16_effect));
+                        ((ImageCrop) mCurrentImage).apply(16, 9);
+                        break;
+                    case ASPECT_16TO9:
+                        ((ImageButtonTitle) mAspectButton).setText(mContext
+                                .getString(R.string.aspect)
+                                + " "
+                                + mContext.getString(R.string.aspectOriginal_effect));
+                        ((ImageCrop) mCurrentImage).applyOriginal();
+                        break;
+                    case ASPECT_ORIG:
+                        ((ImageButtonTitle) mAspectButton).setText(mContext
+                                .getString(R.string.aspect)
+                                + " "
+                                + mContext.getString(R.string.aspectNone_effect));
+                        ((ImageCrop) mCurrentImage).applyClear();
+                        break;
+                    default:
+                        ((ImageButtonTitle) mAspectButton).setText(mContext
+                                .getString(R.string.aspect)
+                                + " "
+                                + mContext.getString(R.string.aspect1to1_effect));
+                        ((ImageCrop) mCurrentImage).applyClear();
+                        break;
+                }
+                mCurrentAspectButton = (mCurrentAspectButton + 1) % NUMBER_OF_ASPECT_BUTTONS;
+            }
+        }
+
+        public void showAspectButtons() {
+            if (mAspectButton != null)
+                mAspectButton.setVisibility(View.VISIBLE);
+            mCurrentAspectButton = ASPECT_NONE;
+        }
+
+        public void hideAspectButtons() {
+            if (mAspectButton != null)
+                mAspectButton.setVisibility(View.GONE);
         }
 
         public void onNewValue(int value) {
@@ -259,8 +340,9 @@ public class PanelController implements OnClickListener {
         mRowPanel = rowPanel;
     }
 
-    public void setUtilityPanel(Context context, View utilityPanel, View textView) {
-        mUtilityPanel = new UtilityPanel(context, utilityPanel, textView);
+    public void setUtilityPanel(Context context, View utilityPanel, View textView,
+            View button) {
+        mUtilityPanel = new UtilityPanel(context, utilityPanel, textView, button);
     }
 
     public void setMasterImage(ImageShow imageShow) {
@@ -402,7 +484,7 @@ public class PanelController implements OnClickListener {
         if (mCurrentImage != null) {
             mCurrentImage.unselect();
         }
-
+        mUtilityPanel.hideAspectButtons();
         switch (view.getId()) {
             case R.id.straightenButton: {
                 mCurrentImage = showImageView(R.id.imageStraighten);
@@ -415,6 +497,7 @@ public class PanelController implements OnClickListener {
                 String ename = mCurrentImage.getContext().getString(R.string.crop);
                 mUtilityPanel.setEffectName(ename);
                 mUtilityPanel.setShowParameter(false);
+                mUtilityPanel.showAspectButtons();
                 break;
             }
             case R.id.rotateButton: {
@@ -508,6 +591,10 @@ public class PanelController implements OnClickListener {
                 String ename = mCurrentImage.getContext().getString(R.string.redeye);
                 mUtilityPanel.setEffectName(ename);
                 ensureFilter("Redeye");
+                break;
+            }
+            case R.id.aspect: {
+                mUtilityPanel.nextAspectButton();
                 break;
             }
             case R.id.applyEffect: {
