@@ -140,6 +140,8 @@
     <string name="auto" msgid="4296941368722892821">"Automat."</string>
     <string name="flash_on" msgid="7891556231891837284">"Z lampą"</string>
     <string name="flash_off" msgid="1445443413822680010">"Bez lampy"</string>
+    <!-- no translation found for ffx_original (372686331501281474) -->
+    <skip />
     <string name="ffx_vintage" msgid="8348759951363844780">"Vintage"</string>
     <string name="ffx_instant" msgid="726968618715691987">"Zdjęcie błyskawiczne"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"Wybielacz"</string>
@@ -195,7 +197,6 @@
     <!-- no translation found for save_into (4960537214388766062) -->
     <skip />
     <string name="trim_too_short" msgid="751593965620665326">"Nie można przyciąć: film docelowy jest za krótki"</string>
-    <string name="trim_too_long" msgid="2657958275279217174">"Nie przycięto: ta sama długość co pierwotnie"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Renderuję panoramę"</string>
     <string name="save" msgid="613976532235060516">"Zapisz"</string>
 </resources>
