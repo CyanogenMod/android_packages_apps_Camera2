@@ -30,6 +30,7 @@ import android.provider.MediaStore.Images.ImageColumns;
 import android.view.Gravity;
 import android.widget.Toast;
 
+import com.android.camera.R;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 //import com.android.gallery3d.R;
@@ -49,9 +50,8 @@ import java.text.SimpleDateFormat;
  */
 public class SaveCopyTask extends AsyncTask<ProcessedBitmap, Void, Uri> {
 
-    public static final String DOWNLOAD = "download";
-    public static final String DEFAULT_SAVE_DIRECTORY = "Download";
     private static final int DEFAULT_COMPRESS_QUALITY = 95;
+    private static final String DEFAULT_SAVE_DIRECTORY = "EditedOnlinePhotos";
 
     /**
      * Saves the bitmap in the final destination
@@ -114,13 +114,17 @@ public class SaveCopyTask extends AsyncTask<ProcessedBitmap, Void, Uri> {
                 System.currentTimeMillis()));
     }
 
-    public static File getNewFile(Context context, Uri sourceUri) {
+    public static File getFinalSaveDirectory(Context context, Uri sourceUri) {
         File saveDirectory = getSaveDirectory(context, sourceUri);
         if ((saveDirectory == null) || !saveDirectory.canWrite()) {
             saveDirectory = new File(Environment.getExternalStorageDirectory(),
-                    DOWNLOAD);
+                    DEFAULT_SAVE_DIRECTORY);
         }
+        return saveDirectory;
+    }
 
+    public static File getNewFile(Context context, Uri sourceUri) {
+        File saveDirectory = getFinalSaveDirectory(context, sourceUri);
         String filename = new SimpleDateFormat(TIME_STAMP_NAME).format(new Date(
                 System.currentTimeMillis()));
         return new File(saveDirectory, filename + ".JPG");
