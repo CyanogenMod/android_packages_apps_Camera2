@@ -17,7 +17,6 @@
 package com.android.gallery3d.util;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -39,16 +38,35 @@ public class LightCycleHelper {
         }
     }
 
+    public static class PanoramaViewHelper {
+
+        public PanoramaViewHelper(Activity activity) {
+            /* Do nothing */
+        }
+
+        public void onStart() {
+            /* Do nothing */
+        }
+
+        public void onCreate() {
+            /* Do nothing */
+        }
+
+        public void onStop() {
+            /* Do nothing */
+        }
+
+        public void showPanorama(Uri uri) {
+            /* Do nothing */
+        }
+    }
+
     public static void setupCaptureIntent(Context context, Intent it, String outputDir) {
         /* Do nothing */
     }
 
     public static boolean hasLightCycleCapture(Context context) {
         return false;
-    }
-
-    public static void viewPanorama(Activity activity, Uri uri) {
-        /* Do nothing */
     }
 
     public static PanoramaMetadata getPanoramaMetadata(Context context, Uri uri) {
