@@ -37,7 +37,9 @@ public class ImagePreset {
 
     public ImagePreset(ImagePreset source, String historyName) {
         this(source);
-        if (historyName!=null) setHistoryName(historyName);
+        if (historyName != null) {
+            setHistoryName(historyName);
+        }
     }
 
     public ImagePreset(ImagePreset source) {
@@ -56,6 +58,22 @@ public class ImagePreset {
         mIsFxPreset = source.isFx();
 
         mGeoData.set(source.mGeoData);
+    }
+
+    public boolean hasModifications() {
+        if (mImageBorder != null && !mImageBorder.isNil()) {
+            return true;
+        }
+        if (mGeoData.hasModifications()) {
+            return true;
+        }
+        for (int i = 0; i < mFilters.size(); i++) {
+            ImageFilter filter = mFilters.elementAt(i);
+            if (!filter.isNil()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setGeometry(GeometryMetadata m) {
@@ -123,27 +141,25 @@ public class ImagePreset {
 
     public void add(ImageFilter filter) {
 
-        if (filter.getFilterType() == ImageFilter.TYPE_BORDER){
+        if (filter.getFilterType() == ImageFilter.TYPE_BORDER) {
             setHistoryName("Border");
             setBorder(filter);
-        } else if (filter.getFilterType() == ImageFilter.TYPE_FX){
-
+        } else if (filter.getFilterType() == ImageFilter.TYPE_FX) {
             boolean found = false;
             for (int i = 0; i < mFilters.size(); i++) {
                 byte type = mFilters.get(i).getFilterType();
                 if (found) {
-                    if (type != ImageFilter.TYPE_VIGNETTE){
+                    if (type != ImageFilter.TYPE_VIGNETTE) {
                         mFilters.remove(i);
                         continue;
                     }
                 }
-                if (type==ImageFilter.TYPE_FX){
+                if (type == ImageFilter.TYPE_FX) {
                     mFilters.remove(i);
                     mFilters.add(i, filter);
                     setHistoryName(filter.getName());
                     found = true;
                 }
-
             }
             if (!found) {
                 mFilters.add(filter);
