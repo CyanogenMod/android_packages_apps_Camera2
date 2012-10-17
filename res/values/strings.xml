@@ -332,17 +332,17 @@
     <!-- String for filter filtershow_fx_0002_bleach [CHAR LIMIT=14] -->
     <string name="ffx_bleach">Bleach</string>
     <!-- String for filter filtershow_fx_0003_blue_crush [CHAR LIMIT=14] -->
-    <string name="ffx_blue_crush">Blue Crush</string>
+    <string name="ffx_blue_crush">Blue</string>
     <!-- String for filter filtershow_fx_0004_bw_contrast [CHAR LIMIT=14] -->
-    <string name="ffx_bw_contrast">BW Contrast</string>
+    <string name="ffx_bw_contrast">B/W</string>
     <!-- String for filter filtershow_fx_0005_punch [CHAR LIMIT=14] -->
     <string name="ffx_punch">Punch</string>
     <!-- String for filter filtershow_fx_0006_x_process [CHAR LIMIT=14] -->
     <string name="ffx_x_process">X Process</string>
     <!-- String for filter filtershow_fx_0007_washout [CHAR LIMIT=14] -->
-    <string name="ffx_washout">Washout</string>
+    <string name="ffx_washout">Latte</string>
     <!-- String for filter filtershow_fx_0008_washout_color [CHAR LIMIT=14] -->
-    <string name="ffx_washout_color">Washout Color</string>
+    <string name="ffx_washout_color">Litho</string>
 
     <!-- Toast message shown after we make some album(s) available offline [CHAR LIMIT=50] -->
     <plurals name="make_albums_available_offline">
