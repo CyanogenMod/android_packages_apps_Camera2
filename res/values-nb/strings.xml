@@ -140,14 +140,16 @@
     <string name="auto" msgid="4296941368722892821">"Auto"</string>
     <string name="flash_on" msgid="7891556231891837284">"Blits brukes"</string>
     <string name="flash_off" msgid="1445443413822680010">"Uten blits"</string>
-    <string name="ffx_vintage" msgid="8348759951363844780">"Gammeldags"</string>
-    <string name="ffx_instant" msgid="726968618715691987">"Instant"</string>
+    <!-- no translation found for ffx_original (372686331501281474) -->
+    <skip />
+    <string name="ffx_vintage" msgid="8348759951363844780">"Vintage"</string>
+    <string name="ffx_instant" msgid="726968618715691987">"Polaroid"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"Bleket"</string>
     <string name="ffx_blue_crush" msgid="5910979947224043165">"Blåskjær"</string>
     <string name="ffx_bw_contrast" msgid="3853938816686258406">"Svart/hvitt-kontrast"</string>
-    <string name="ffx_punch" msgid="1343475517872562639">"Punsj"</string>
+    <string name="ffx_punch" msgid="1343475517872562639">"Punch"</string>
     <string name="ffx_x_process" msgid="4779398678661811765">"X-prosess"</string>
-    <string name="ffx_washout" msgid="2526099635720493268">"Utvasket"</string>
+    <string name="ffx_washout" msgid="2526099635720493268">"Slitt"</string>
     <string name="ffx_washout_color" msgid="3209955210402468008">"Utvaskede farger"</string>
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"Gjør album tilgjengelig i frakoblet modus."</item>
@@ -195,7 +197,6 @@
     <!-- no translation found for save_into (4960537214388766062) -->
     <skip />
     <string name="trim_too_short" msgid="751593965620665326">"Videoen kan ikke klippes – målvideoen er for kort"</string>
-    <string name="trim_too_long" msgid="2657958275279217174">"Videoen ble ikke klippet – lengden er den samme som originalen"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Panoramaet settes sammen"</string>
     <string name="save" msgid="613976532235060516">"Lagre"</string>
 </resources>
