@@ -1354,14 +1354,32 @@ public class ExifTag {
                 (length > mComponentCount) ? mComponentCount : length);
     }
 
+    private String undefinedTypeValueToString() {
+        StringBuilder sbuilder = new StringBuilder();
+        switch (mTagId) {
+            case TAG_COMPONENTS_CONFIGURATION:
+            case TAG_FILE_SOURCE:
+            case TAG_SCENE_TYPE:
+                byte buf[] = (byte[]) mValue;
+                for(int i = 0, n = getComponentCount(); i < n; i++) {
+                    if(i != 0) sbuilder.append(" ");
+                    sbuilder.append(buf[i]);
+                }
+                break;
+            default:
+                sbuilder.append(new String((byte[]) mValue));
+        }
+        return sbuilder.toString();
+    }
+
     /**
      * Returns a string representation of the value of this tag.
      */
-    public String valueToString() {
+    String valueToString() {
         StringBuilder sbuilder = new StringBuilder();
         switch (getDataType()) {
             case ExifTag.TYPE_UNDEFINED:
-                sbuilder.append(new String((byte[]) mValue));
+                sbuilder.append(undefinedTypeValueToString());
                 break;
             case ExifTag.TYPE_UNSIGNED_BYTE:
                 byte buf[] = (byte[]) mValue;
