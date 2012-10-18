@@ -40,6 +40,8 @@ public class ExifXmlReader {
     private static final String ATTR_ID = "id";
     private static final String ATTR_IFD = "ifd";
 
+    private static final String NO_VALUE = "NO_VALUE";
+
     /**
      * This function read the ground truth XML.
      *
@@ -86,7 +88,11 @@ public class ExifXmlReader {
                     tagData = new HashSet<String>();
                     exifData.get(ifdId).put(id, tagData);
                 }
-                tagData.add(value.trim());
+                if (NO_VALUE.equals(value)) {
+                    tagData.add(null);
+                } else {
+                    tagData.add(value.trim());
+                }
             }
 
             parser.require(XmlPullParser.END_TAG, null, null);
