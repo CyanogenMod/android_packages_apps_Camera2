@@ -342,7 +342,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageZoom.setSeekBar(seekBar);
         mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
         mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList),
-                findViewById(R.id.applyEffect), findViewById(R.id.aspect));
+                findViewById(R.id.applyEffect), findViewById(R.id.aspect),
+                findViewById(R.id.pickCurvesChannel));
         mPanelController.setMasterImage(mImageShow);
         mPanelController.setCurrentPanel(mFxButton);
         Intent intent = getIntent();
