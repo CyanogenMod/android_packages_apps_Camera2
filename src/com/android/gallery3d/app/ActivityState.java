@@ -35,6 +35,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.anim.StateTransitionAnimation;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.PreparePageFadeoutTexture;
 import com.android.gallery3d.ui.RawTexture;
@@ -70,19 +71,19 @@ abstract public class ActivityState {
 
     private static final String KEY_TRANSITION_IN = "transition-in";
 
-    private RawTexture mFadeOutTexture;
+    public static enum StateTransition { None, Outgoing, Incoming };
+    private StateTransition mNextTransition = StateTransition.None;
+    private StateTransitionAnimation mIntroAnimation;
     private GLView mContentPane;
-    private boolean mWantFadeOut = false;
-    private boolean mTransitionIn;
 
     protected ActivityState() {
     }
 
     protected void setContentPane(GLView content) {
         mContentPane = content;
-        if (mTransitionIn) {
-            mContentPane.setFadeOutTexture(mFadeOutTexture);
-            mFadeOutTexture = null;
+        if (mNextTransition != StateTransition.None) {
+            mContentPane.setIntroAnimation(mIntroAnimation);
+            mIntroAnimation = null;
         }
         mContentPane.setBackgroundColor(getBackgroundColor());
         mActivity.getGLRoot().setContentPane(mContentPane);
@@ -99,9 +100,6 @@ abstract public class ActivityState {
     }
 
     protected void onBackPressed() {
-        if (mActivity.getStateManager().getStateCount() > 1) {
-            fadeOutOnNextPause();
-        }
         mActivity.getStateManager().finishState(this);
     }
 
@@ -175,19 +173,25 @@ abstract public class ActivityState {
         win.setAttributes(params);
     }
 
-    protected void fadeOutOnNextPause() {
-        mWantFadeOut = true;
+    protected void transitionOnNextPause(Class<? extends ActivityState> outgoing,
+            Class<? extends ActivityState> incoming, StateTransition hint) {
+        if (outgoing == PhotoPage.class && incoming == AlbumPage.class) {
+            mNextTransition = StateTransition.Outgoing;
+        } else if (outgoing == AlbumPage.class && incoming == PhotoPage.class) {
+            mNextTransition = StateTransition.Incoming;
+        } else {
+            mNextTransition = hint;
+        }
     }
 
     protected void onPause() {
         if (0 != (mFlags & FLAG_SCREEN_ON_WHEN_PLUGGED)) {
             ((Activity) mActivity).unregisterReceiver(mPowerIntentReceiver);
         }
-        if (mWantFadeOut) {
-            mWantFadeOut = false;
-            if (PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mContentPane)) {
-                mActivity.getTransitionStore().put(KEY_TRANSITION_IN, true);
-            }
+        if (mNextTransition != StateTransition.None) {
+            mActivity.getTransitionStore().put(KEY_TRANSITION_IN, mNextTransition);
+            PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mContentPane);
+            mNextTransition = StateTransition.None;
         }
     }
 
@@ -242,9 +246,16 @@ abstract public class ActivityState {
 
     // a subclass of ActivityState should override the method to resume itself
     protected void onResume() {
-        mFadeOutTexture = mActivity.getTransitionStore().get(
+        RawTexture fade = mActivity.getTransitionStore().get(
                 PreparePageFadeoutTexture.KEY_FADE_TEXTURE);
-        mTransitionIn = mActivity.getTransitionStore().get(KEY_TRANSITION_IN, false);
+        mNextTransition = mActivity.getTransitionStore().get(
+                KEY_TRANSITION_IN, StateTransition.None);
+        if (mNextTransition != StateTransition.None) {
+            mIntroAnimation = new StateTransitionAnimation(
+                    (mNextTransition == StateTransition.Incoming) ?
+                            StateTransitionAnimation.Spec.INCOMING :
+                            StateTransitionAnimation.Spec.OUTGOING, fade);
+        }
     }
 
     protected boolean onCreateActionBar(Menu menu) {
