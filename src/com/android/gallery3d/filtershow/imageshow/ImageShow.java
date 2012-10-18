@@ -25,6 +25,9 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.GestureDetector.OnDoubleTapListener;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -44,7 +47,10 @@ import com.android.gallery3d.filtershow.ui.SliderListener;
 
 import java.io.File;
 
-public class ImageShow extends View implements SliderListener, OnSeekBarChangeListener {
+public class ImageShow extends View implements OnGestureListener,
+                                               OnDoubleTapListener,
+                                               SliderListener,
+                                               OnSeekBarChangeListener {
 
     private static final String LOGTAG = "ImageShow";
 
@@ -69,6 +75,8 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
                                                       // slider gesture
     protected SliderController mSliderController = new SliderController();
 
+    private GestureDetector mGestureDetector = null;
+
     private HistoryAdapter mHistoryAdapter = null;
     private ImageStateAdapter mImageStateAdapter = null;
 
@@ -91,6 +99,8 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
 
     private SeekBar mSeekBar = null;
     private PanelController mController = null;
+
+    private FilterShowActivity mActivity = null;
 
     public static void setDefaultBackgroundColor(int value) {
         mBackgroundColor = value;
@@ -206,6 +216,8 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
                 R.id.rowTextView);
         mImageStateAdapter = new ImageStateAdapter(context,
                 R.layout.filtershow_imagestate_row);
+        setupGestureDetector(context);
+        mActivity = (FilterShowActivity) context;
     }
 
     public ImageShow(Context context) {
@@ -215,6 +227,12 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
         }
         mHistoryAdapter = new HistoryAdapter(context, R.layout.filtershow_history_operation_row,
                 R.id.rowTextView);
+        setupGestureDetector(context);
+        mActivity = (FilterShowActivity) context;
+    }
+
+    public void setupGestureDetector(Context context) {
+        mGestureDetector = new GestureDetector(context, this);
     }
 
     @Override
@@ -422,7 +440,7 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
         mImagePreset = preset;
         if (getImagePreset() != null) {
             if (addToHistory) {
-                mHistoryAdapter.insert(getImagePreset(), 0);
+                mHistoryAdapter.addHistoryItem(getImagePreset());
             }
             getImagePreset().setEndpoint(this);
             updateImage();
@@ -486,13 +504,14 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
         if (USE_SLIDER_GESTURE) {
             mSliderController.onTouchEvent(event);
         }
+        mGestureDetector.onTouchEvent(event);
         invalidate();
         return true;
     }
 
     // listview stuff
 
-    public ArrayAdapter getHistoryAdapter() {
+    public HistoryAdapter getHistory() {
         return mHistoryAdapter;
     }
 
@@ -559,5 +578,62 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     public void onStopTrackingTouch(SeekBar arg0) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public boolean onDoubleTap(MotionEvent arg0) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent arg0) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent arg0) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean onDown(MotionEvent arg0) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean onFling(MotionEvent startEvent, MotionEvent endEvent, float arg2, float arg3) {
+        if ((!mActivity.isShowingHistoryPanel() && startEvent.getX() > endEvent.getX())
+                || (mActivity.isShowingHistoryPanel() && endEvent.getX() > startEvent.getX())){
+            mActivity.toggleHistoryPanel();
+        }
+        return true;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2, float arg3) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent arg0) {
+        // TODO Auto-generated method stub
+        return false;
     }
 }

@@ -21,7 +21,6 @@ public class ImageCurves extends ImageSlave {
 
     private static final String LOGTAG = "ImageCurves";
     Paint gPaint = new Paint();
-    Spline[] mSplines = new Spline[4];
     Path gPathSpline = new Path();
 
     private int mCurrentCurveIndex = 0;
@@ -54,23 +53,16 @@ public class ImageCurves extends ImageSlave {
         return false;
     }
 
-    public void reloadCurve() {
+    private ImageFilterCurves curves() {
         if (getMaster() != null) {
             String filterName = getFilterName();
-            ImageFilterCurves filter = (ImageFilterCurves) getImagePreset()
-                    .getFilter(filterName);
-            if (filter == null) {
-                resetCurve();
-                return;
-            }
-            for (int i = 0; i < 4; i++) {
-                Spline spline = filter.getSpline(i);
-                if (spline != null) {
-                    mSplines[i] = new Spline(spline);
-                }
-            }
-            applyNewCurve();
+            return (ImageFilterCurves) getImagePreset().getFilter(filterName);
         }
+        return null;
+    }
+
+    private Spline getSpline(int index) {
+        return curves().getSpline(index);
     }
 
     @Override
@@ -82,16 +74,9 @@ public class ImageCurves extends ImageSlave {
     }
 
     public void resetCurve() {
-        Spline spline = new Spline();
-
-        spline.addPoint(0.0f, 1.0f);
-        spline.addPoint(1.0f, 0.0f);
-
-        for (int i = 0; i < 4; i++) {
-            mSplines[i] = new Spline(spline);
-        }
-        if (getMaster() != null) {
-            applyNewCurve();
+        if (getMaster() != null && curves() != null) {
+            curves().reset();
+            updateCachedImage();
         }
     }
 
@@ -118,7 +103,7 @@ public class ImageCurves extends ImageSlave {
         // We only display the other channels curves when showing the RGB curve
         if (mCurrentCurveIndex == Spline.RGB) {
             for (int i = 0; i < 4; i++) {
-                Spline spline = mSplines[i];
+                Spline spline = getSpline(i);
                 if (i != mCurrentCurveIndex && !spline.isOriginal()) {
                     // And we only display a curve if it has more than two
                     // points
@@ -127,7 +112,7 @@ public class ImageCurves extends ImageSlave {
             }
         }
         // ...but we always display the current curve.
-        mSplines[mCurrentCurveIndex]
+        getSpline(mCurrentCurveIndex)
                 .draw(canvas, Spline.colorForCurve(mCurrentCurveIndex), getWidth(), getHeight(),
                         true);
         drawToast(canvas);
@@ -136,12 +121,13 @@ public class ImageCurves extends ImageSlave {
 
     private int pickControlPoint(float x, float y) {
         int pick = 0;
-        float px = mSplines[mCurrentCurveIndex].getPoint(0).x;
-        float py = mSplines[mCurrentCurveIndex].getPoint(0).y;
+        Spline spline = getSpline(mCurrentCurveIndex);
+        float px = spline.getPoint(0).x;
+        float py = spline.getPoint(0).y;
         double delta = Math.sqrt((px - x) * (px - x) + (py - y) * (py - y));
-        for (int i = 1; i < mSplines[mCurrentCurveIndex].getNbPoints(); i++) {
-            px = mSplines[mCurrentCurveIndex].getPoint(i).x;
-            py = mSplines[mCurrentCurveIndex].getPoint(i).y;
+        for (int i = 1; i < spline.getNbPoints(); i++) {
+            px = spline.getPoint(i).x;
+            py = spline.getPoint(i).y;
             double currentDelta = Math.sqrt((px - x) * (px - x) + (py - y)
                     * (py - y));
             if (currentDelta < delta) {
@@ -151,7 +137,7 @@ public class ImageCurves extends ImageSlave {
         }
 
         if (!mDidAddPoint && (delta * getWidth() > 100)
-                && (mSplines[mCurrentCurveIndex].getNbPoints() < 10)) {
+                && (spline.getNbPoints() < 10)) {
             return -1;
         }
 
@@ -176,15 +162,8 @@ public class ImageCurves extends ImageSlave {
         posY = (posY - margin) / (getHeight() - 2 * margin);
 
         if (e.getActionMasked() == MotionEvent.ACTION_UP) {
-            applyNewCurve();
             mCurrentControlPoint = null;
-            String name = "Curves";
-            ImagePreset copy = new ImagePreset(getImagePreset(), name);
-
-            copy.setIsFx(false);
-            mImageLoader.getHistory().insert(copy, 0);
-
-            invalidate();
+            updateCachedImage();
             mDidAddPoint = false;
             if (mDidDelete) {
                 mDidDelete = false;
@@ -196,48 +175,32 @@ public class ImageCurves extends ImageSlave {
             return true;
         }
 
+        Spline spline = getSpline(mCurrentCurveIndex);
         int pick = pickControlPoint(posX, posY);
         if (mCurrentControlPoint == null) {
             if (pick == -1) {
                 mCurrentControlPoint = new ControlPoint(posX, posY);
-                mSplines[mCurrentCurveIndex].addPoint(mCurrentControlPoint);
+                spline.addPoint(mCurrentControlPoint);
                 mDidAddPoint = true;
             } else {
-                mCurrentControlPoint = mSplines[mCurrentCurveIndex].getPoint(pick);
+                mCurrentControlPoint = spline.getPoint(pick);
             }
         }
 
-        if (mSplines[mCurrentCurveIndex].isPointContained(posX, pick)) {
+        if (spline.isPointContained(posX, pick)) {
             mCurrentControlPoint.x = posX;
             mCurrentControlPoint.y = posY;
         } else if (pick != -1) {
-            mSplines[mCurrentCurveIndex].deletePoint(pick);
+            spline.deletePoint(pick);
             mDidDelete = true;
         }
-        applyNewCurve();
-        invalidate();
+        updateCachedImage();
         return true;
     }
 
-    public synchronized void applyNewCurve() {
+    public synchronized void updateCachedImage() {
         // update image
         if (getImagePreset() != null) {
-            String filterName = getFilterName();
-            ImageFilterCurves filter = (ImageFilterCurves) getImagePreset()
-                    .getFilter(filterName);
-            if (filter == null) {
-                filter = new ImageFilterCurves();
-                filter.setName(filterName);
-                ImagePreset copy = new ImagePreset(getImagePreset());
-                copy.add(filter);
-                setImagePreset(copy, false);
-            }
-
-            if (filter != null) {
-                for (int i = 0; i < 4; i++) {
-                    filter.setSpline(new Spline(mSplines[i]), i);
-                }
-            }
             mImageLoader.resetImageForPreset(getImagePreset(), this);
             invalidate();
         }
