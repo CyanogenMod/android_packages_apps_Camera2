@@ -120,6 +120,8 @@ public class SaveCopyTask extends AsyncTask<ProcessedBitmap, Void, Uri> {
             saveDirectory = new File(Environment.getExternalStorageDirectory(),
                     DEFAULT_SAVE_DIRECTORY);
         }
+        // Create the directory if it doesn't exist
+        if (!saveDirectory.exists()) saveDirectory.mkdirs();
         return saveDirectory;
     }
 
