@@ -22,6 +22,8 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.view.Menu;
@@ -43,6 +45,7 @@ import com.android.gallery3d.ui.ActionModeHandler.ActionModeListener;
 import com.android.gallery3d.ui.AlbumSlotRenderer;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
+import com.android.gallery3d.ui.FadeTexture;
 import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLView;
@@ -50,6 +53,7 @@ import com.android.gallery3d.ui.PhotoFallbackEffect;
 import com.android.gallery3d.ui.RelativePosition;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SlotView;
+import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.MediaSetUtils;
@@ -104,6 +108,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private int mLoadingBits = 0;
     private boolean mInitialSynced = false;
     private RelativePosition mOpenCenter = new RelativePosition();
+
+    private Handler mHandler;
+    private static final int MSG_PICK_PHOTO = 0;
 
     private PhotoFallbackEffect mResumeEffect;
     private PhotoFallbackEffect.PositionProvider mPositionProvider =
@@ -248,8 +255,9 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         } else {
             // Render transition in pressed state
             mAlbumView.setPressedIndex(slotIndex);
-
-            pickPhoto(slotIndex);
+            mAlbumView.setPressedUp();
+            mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_PICK_PHOTO, slotIndex, 0),
+                    FadeTexture.DURATION);
         }
     }
 
@@ -370,6 +378,20 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mLaunchedFromPhotoPage =
                 mActivity.getStateManager().hasStateClass(PhotoPage.class);
         mInCameraApp = data.getBoolean(PhotoPage.KEY_APP_BRIDGE, false);
+
+        mHandler = new SynchronizedHandler(mActivity.getGLRoot()) {
+            @Override
+            public void handleMessage(Message message) {
+                switch (message.what) {
+                    case MSG_PICK_PHOTO: {
+                        pickPhoto(message.arg1);
+                        break;
+                    }
+                    default:
+                        throw new AssertionError(message.what);
+                }
+            }
+        };
     }
 
     @Override
