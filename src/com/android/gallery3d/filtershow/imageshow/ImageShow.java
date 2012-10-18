@@ -149,7 +149,10 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
     }
 
     public void resetParameter() {
-        onNewValue(getCurrentFilter().getDefaultParameter());
+        ImageFilter currentFilter = getCurrentFilter();
+        if (currentFilter!=null) {
+            onNewValue(currentFilter.getDefaultParameter());
+        }
         if (USE_SLIDER_GESTURE) {
             mSliderController.reset();
         }
