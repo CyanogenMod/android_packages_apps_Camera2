@@ -33,6 +33,9 @@ public class MediaSetUtils {
     public static final int DOWNLOAD_BUCKET_ID = GalleryUtils.getBucketId(
             Environment.getExternalStorageDirectory().toString() + "/"
             + BucketNames.DOWNLOAD);
+    public static final int EDITED_ONLINE_PHOTOS_BUCKET_ID = GalleryUtils.getBucketId(
+            Environment.getExternalStorageDirectory().toString() + "/"
+            + BucketNames.EDITED_ONLINE_PHOTOS);
     public static final int IMPORTED_BUCKET_ID = GalleryUtils.getBucketId(
             Environment.getExternalStorageDirectory().toString() + "/"
             + BucketNames.IMPORTED);
