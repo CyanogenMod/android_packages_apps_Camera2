@@ -140,6 +140,8 @@
     <string name="auto" msgid="4296941368722892821">"Samod."</string>
     <string name="flash_on" msgid="7891556231891837284">"Blis. sprožena"</string>
     <string name="flash_off" msgid="1445443413822680010">"Brez bliskav."</string>
+    <!-- no translation found for ffx_original (372686331501281474) -->
+    <skip />
     <string name="ffx_vintage" msgid="8348759951363844780">"Starinsko"</string>
     <string name="ffx_instant" msgid="726968618715691987">"Takoj"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"Pobeljeno"</string>
@@ -195,7 +197,6 @@
     <!-- no translation found for save_into (4960537214388766062) -->
     <skip />
     <string name="trim_too_short" msgid="751593965620665326">"Obrezovanje ni mogoče: izvirni videoposnetek je prekratek"</string>
-    <string name="trim_too_long" msgid="2657958275279217174">"Ni obrezan: ohranjeno je izvirno trajanje"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Upodabljanje panorame"</string>
     <string name="save" msgid="613976532235060516">"Shrani"</string>
 </resources>
