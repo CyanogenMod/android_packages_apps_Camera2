@@ -17,6 +17,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilterRedEye;
 import com.android.gallery3d.filtershow.filters.ImageFilterSaturated;
 import com.android.gallery3d.filtershow.filters.ImageFilterShadows;
 import com.android.gallery3d.filtershow.filters.ImageFilterSharpen;
+import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
 import com.android.gallery3d.filtershow.filters.ImageFilterVibrance;
 import com.android.gallery3d.filtershow.filters.ImageFilterVignette;
 import com.android.gallery3d.filtershow.filters.ImageFilterWBalance;
