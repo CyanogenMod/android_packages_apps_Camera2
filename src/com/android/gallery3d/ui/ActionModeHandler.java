@@ -38,6 +38,7 @@ import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaObject;
+import com.android.gallery3d.data.MediaObject.PanoramaSupportCallback;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.ui.MenuExecutor.ProgressListener;
 import com.android.gallery3d.util.Future;
@@ -54,8 +55,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
 
     private static final int SUPPORT_MULTIPLE_MASK = MediaObject.SUPPORT_DELETE
             | MediaObject.SUPPORT_ROTATE | MediaObject.SUPPORT_SHARE
-            | MediaObject.SUPPORT_CACHE | MediaObject.SUPPORT_IMPORT
-            | MediaObject.SUPPORT_PANORAMA | MediaObject.SUPPORT_PANORAMA360;
+            | MediaObject.SUPPORT_CACHE | MediaObject.SUPPORT_IMPORT;
 
     public interface ActionModeListener {
         public boolean onActionItemClicked(MenuItem item);
@@ -75,6 +75,49 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
     private Future<?> mMenuTask;
     private final Handler mMainHandler;
     private ActionMode mActionMode;
+
+    private static class GetAllPanoramaSupports implements PanoramaSupportCallback {
+        private int mNumInfoRequired;
+        private JobContext mJobContext;
+        public boolean mAllPanoramas = true;
+        public boolean mAllPanorama360 = true;
+        public boolean mHasPanorama360 = false;
+        private Object mLock = new Object();
+
+        public GetAllPanoramaSupports(ArrayList<MediaObject> mediaObjects, JobContext jc) {
+            mJobContext = jc;
+            mNumInfoRequired = mediaObjects.size();
+            for (MediaObject mediaObject : mediaObjects) {
+                mediaObject.getPanoramaSupport(this);
+            }
+        }
+
+        @Override
+        public void panoramaInfoAvailable(MediaObject mediaObject, boolean isPanorama,
+                boolean isPanorama360) {
+            synchronized (mLock) {
+                mNumInfoRequired--;
+                mAllPanoramas = isPanorama && mAllPanoramas;
+                mAllPanorama360 = isPanorama360 && mAllPanorama360;
+                mHasPanorama360 = mHasPanorama360 || isPanorama360;
+                if (mNumInfoRequired == 0 || mJobContext.isCancelled()) {
+                    mLock.notifyAll();
+                }
+            }
+        }
+
+        public void waitForPanoramaSupport() {
+            synchronized (mLock) {
+                while (mNumInfoRequired != 0 && !mJobContext.isCancelled()) {
+                    try {
+                        mLock.wait();
+                    } catch (InterruptedException e) {
+                        // May be a cancelled job context
+                    }
+                }
+            }
+        }
+    }
 
     public ActionModeHandler(
             AbstractGalleryActivity activity, SelectionManager selectionManager) {
@@ -211,28 +254,38 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
         mSelectionManager.leaveSelectionMode();
     }
 
-    // Menu options are determined by selection set itself.
-    // We cannot expand it because MenuExecuter executes it based on
-    // the selection set instead of the expanded result.
-    // e.g. LocalImage can be rotated but collections of them (LocalAlbum) can't.
-    private int computeMenuOptions(JobContext jc) {
+    private ArrayList<MediaObject> getSelectedMediaObjects(JobContext jc) {
         ArrayList<Path> unexpandedPaths = mSelectionManager.getSelected(false);
         if (unexpandedPaths.isEmpty()) {
             // This happens when starting selection mode from overflow menu
             // (instead of long press a media object)
-            return 0;
+            return null;
         }
-        int operation = MediaObject.SUPPORT_ALL;
+        ArrayList<MediaObject> selected = new ArrayList<MediaObject>();
         DataManager manager = mActivity.getDataManager();
-        int type = 0;
         for (Path path : unexpandedPaths) {
-            if (jc.isCancelled()) return 0;
-            int support = manager.getSupportedOperations(path, true);
-            type |= manager.getMediaType(path);
+            if (jc.isCancelled()) {
+                return null;
+            }
+            selected.add(manager.getMediaObject(path));
+        }
+
+        return selected;
+    }
+    // Menu options are determined by selection set itself.
+    // We cannot expand it because MenuExecuter executes it based on
+    // the selection set instead of the expanded result.
+    // e.g. LocalImage can be rotated but collections of them (LocalAlbum) can't.
+    private int computeMenuOptions(ArrayList<MediaObject> selected) {
+        int operation = MediaObject.SUPPORT_ALL;
+        int type = 0;
+        for (MediaObject mediaObject: selected) {
+            int support = mediaObject.getSupportedOperations();
+            type |= mediaObject.getMediaType();
             operation &= support;
         }
 
-        switch (unexpandedPaths.size()) {
+        switch (selected.size()) {
             case 1:
                 final String mimeType = MenuExecutor.getMimeType(type);
                 if (!GalleryUtils.isEditorAvailable(mActivity, mimeType)) {
@@ -298,7 +351,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
         final Intent intent = new Intent();
         for (Path path : expandedPaths) {
             if (jc.isCancelled()) return null;
-            int support = manager.getSupportedOperations(path, true);
+            int support = manager.getSupportedOperations(path);
             type |= manager.getMediaType(path);
 
             if ((support & MediaObject.SUPPORT_SHARE) != 0) {
@@ -346,21 +399,36 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
             @Override
             public Void run(final JobContext jc) {
                 // Pass1: Deal with unexpanded media object list for menu operation.
-                final int operation = computeMenuOptions(jc);
+                ArrayList<MediaObject> selected = getSelectedMediaObjects(jc);
+                if (selected == null) {
+                    return null;
+                }
+                final int operation = computeMenuOptions(selected);
+                if (jc.isCancelled()) {
+                    return null;
+                }
+                final GetAllPanoramaSupports supportCallback = new GetAllPanoramaSupports(selected,
+                        jc);
 
                 // Pass2: Deal with expanded media object list for sharing operation.
                 final Intent share_panorama_intent = computePanoramaSharingIntent(jc);
                 final Intent share_intent = computeSharingIntent(jc);
+
+                supportCallback.waitForPanoramaSupport();
+                if (jc.isCancelled()) {
+                    return null;
+                }
                 mMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         mMenuTask = null;
                         if (jc.isCancelled()) return;
                         MenuExecutor.updateMenuOperation(mMenu, operation);
+                        MenuExecutor.updateMenuForPanorama(mMenu, supportCallback.mAllPanorama360,
+                                supportCallback.mHasPanorama360);
                         if (mSharePanoramaMenuItem != null) {
                             mSharePanoramaMenuItem.setEnabled(true);
-                            if ((operation & MediaObject.SUPPORT_PANORAMA360) != 0) {
-                                mActivity.invalidateOptionsMenu();
+                            if (supportCallback.mAllPanorama360) {
                                 mShareMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
                                 mShareMenuItem.setTitle(
                                     mActivity.getResources().getString(R.string.share_as_photo));
