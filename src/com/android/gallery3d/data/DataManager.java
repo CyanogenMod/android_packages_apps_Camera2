@@ -16,15 +16,15 @@
 
 package com.android.gallery3d.data;
 
-import android.content.Intent;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
-import android.support.v4.content.LocalBroadcastManager;
 
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.app.StitchingChangeListener;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.MediaObject.PanoramaSupportCallback;
 import com.android.gallery3d.data.MediaSet.ItemConsumer;
 import com.android.gallery3d.data.MediaSource.PathId;
 import com.android.gallery3d.picasasource.PicasaSource;
@@ -49,7 +49,7 @@ import java.util.WeakHashMap;
 // path. And it's used to identify a specific media set even if the process is
 // killed and re-created, so child keys should be stable identifiers.
 
-public class DataManager {
+public class DataManager implements StitchingChangeListener {
     public static final int INCLUDE_IMAGE = 1;
     public static final int INCLUDE_VIDEO = 2;
     public static final int INCLUDE_ALL = INCLUDE_IMAGE | INCLUDE_VIDEO;
@@ -247,10 +247,8 @@ public class DataManager {
         return getMediaObject(path).getSupportedOperations();
     }
 
-    // getAll will cause this call to wait if any of the operations
-    // are expensive to compute. Do not call in UI thread.
-    public int getSupportedOperations(Path path, boolean getAll) {
-        return getMediaObject(path).getSupportedOperations(getAll);
+    public void getPanoramaSupport(Path path, PanoramaSupportCallback callback) {
+        getMediaObject(path).getPanoramaSupport(callback);
     }
 
     public void delete(Path path) {
@@ -350,5 +348,26 @@ public class DataManager {
                 notifier.onChange(selfChange);
             }
         }
+    }
+
+    @Override
+    public void onStitchingQueued(Uri uri) {
+        // Do nothing.
+    }
+
+    @Override
+    public void onStitchingResult(Uri uri) {
+        Path path = findPathByUri(uri, null);
+        if (path != null) {
+            MediaObject mediaObject = getMediaObject(path);
+            if (mediaObject != null) {
+                mediaObject.clearCachedPanoramaSupport();
+            }
+        }
+    }
+
+    @Override
+    public void onStitchingProgress(Uri uri, int progress) {
+        // Do nothing.
     }
 }
