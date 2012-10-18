@@ -29,6 +29,7 @@ public class StateTransitionAnimation extends Animation {
     public static class Spec {
         public static final Spec OUTGOING;
         public static final Spec INCOMING;
+        public static final Spec PHOTO_INCOMING;
 
         public int duration = 330;
         public float backgroundAlphaFrom = 0;
@@ -67,8 +68,35 @@ public class StateTransitionAnimation extends Animation {
             INCOMING.contentScaleFrom = 0.25f;
             INCOMING.contentScaleTo = 1f;
             INCOMING.interpolator = new DecelerateInterpolator();
+
+            PHOTO_INCOMING = new Spec();
+            PHOTO_INCOMING.overlayAlphaFrom = 1f;
+            PHOTO_INCOMING.overlayAlphaTo = 0f;
+            PHOTO_INCOMING.overlayScaleFrom = 1f;
+            PHOTO_INCOMING.overlayScaleTo = 1f;
+            PHOTO_INCOMING.contentAlphaFrom = 0f;
+            PHOTO_INCOMING.contentAlphaTo = 1f;
+            PHOTO_INCOMING.contentScaleFrom = 0.1f;
+            PHOTO_INCOMING.contentScaleTo = 1f;
+            PHOTO_INCOMING.interpolator = new DecelerateInterpolator();
+        }
+
+        private static Spec specForTransition(Transition t) {
+            switch (t) {
+                case Outgoing:
+                    return Spec.OUTGOING;
+                case Incoming:
+                    return Spec.INCOMING;
+                case PhotoIncoming:
+                    return Spec.PHOTO_INCOMING;
+                case None:
+                default:
+                    return null;
+            }
         }
     }
+
+    public static enum Transition { None, Outgoing, Incoming, PhotoIncoming }
 
     private final Spec mTransitionSpec;
     private float mCurrentContentScale;
@@ -79,22 +107,26 @@ public class StateTransitionAnimation extends Animation {
     private float mCurrentOverlayAlpha;
     private RawTexture mOldScreenTexture;
 
+    public StateTransitionAnimation(Transition t, RawTexture oldScreen) {
+        this(Spec.specForTransition(t), oldScreen);
+    }
+
     public StateTransitionAnimation(Spec spec, RawTexture oldScreen) {
         mTransitionSpec = spec != null ? spec : Spec.OUTGOING;
         setDuration(mTransitionSpec.duration);
         setInterpolator(mTransitionSpec.interpolator);
         mOldScreenTexture = oldScreen;
-        if (mOldScreenTexture != null) {
-            TiledScreenNail.disableDrawPlaceholder();
-        }
+        TiledScreenNail.disableDrawPlaceholder();
     }
 
     @Override
     public boolean calculate(long currentTimeMillis) {
         boolean retval = super.calculate(currentTimeMillis);
-        if (mOldScreenTexture != null && !isActive()) {
-            mOldScreenTexture.recycle();
-            mOldScreenTexture = null;
+        if (!isActive()) {
+            if (mOldScreenTexture != null) {
+                mOldScreenTexture.recycle();
+                mOldScreenTexture = null;
+            }
             TiledScreenNail.enableDrawPlaceholder();
         }
         return retval;
