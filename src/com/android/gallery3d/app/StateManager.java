@@ -57,7 +57,8 @@ public class StateManager {
         }
         if (!mStack.isEmpty()) {
             ActivityState top = getTopState();
-            top.fadeOutOnNextPause();
+            top.transitionOnNextPause(top.getClass(), klass,
+                    ActivityState.StateTransition.Incoming);
             if (mIsResumed) top.onPause();
         }
         state.initialize(mActivity, data);
@@ -82,7 +83,8 @@ public class StateManager {
 
         if (!mStack.isEmpty()) {
             ActivityState as = getTopState();
-            as.fadeOutOnNextPause();
+            as.transitionOnNextPause(as.getClass(), klass,
+                    ActivityState.StateTransition.Incoming);
             as.mReceivedResults = state.mResult;
             if (mIsResumed) as.onPause();
         } else {
@@ -188,15 +190,18 @@ public class StateManager {
         // Remove the top state.
         mStack.pop();
         state.mIsFinishing = true;
-        if (mIsResumed && fireOnPause) state.onPause();
+        ActivityState top = !mStack.isEmpty() ? mStack.peek().activityState : null;
+        if (mIsResumed && fireOnPause) {
+            if (top != null) {
+                state.transitionOnNextPause(state.getClass(), top.getClass(),
+                        ActivityState.StateTransition.Outgoing);
+            }
+            state.onPause();
+        }
         mActivity.getGLRoot().setContentPane(null);
         state.onDestroy();
 
-        if (!mStack.isEmpty()) {
-            // Restore the immediately previous state
-            ActivityState top = mStack.peek().activityState;
-            if (mIsResumed) top.resume();
-        }
+        if (top != null && mIsResumed) top.resume();
     }
 
     public void switchState(ActivityState oldState,
@@ -211,7 +216,7 @@ public class StateManager {
         mStack.pop();
         if (!data.containsKey(PhotoPage.KEY_APP_BRIDGE)) {
             // Do not do the fade out stuff when we are switching camera modes
-            oldState.fadeOutOnNextPause();
+            oldState.transitionOnNextPause(oldState.getClass(), klass, ActivityState.StateTransition.Incoming);
         }
         if (mIsResumed) oldState.onPause();
         oldState.onDestroy();
