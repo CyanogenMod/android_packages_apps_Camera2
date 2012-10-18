@@ -71,8 +71,8 @@ abstract public class ActivityState {
 
     private static final String KEY_TRANSITION_IN = "transition-in";
 
-    public static enum StateTransition { None, Outgoing, Incoming };
-    private StateTransition mNextTransition = StateTransition.None;
+    private StateTransitionAnimation.Transition mNextTransition =
+            StateTransitionAnimation.Transition.None;
     private StateTransitionAnimation mIntroAnimation;
     private GLView mContentPane;
 
@@ -81,7 +81,7 @@ abstract public class ActivityState {
 
     protected void setContentPane(GLView content) {
         mContentPane = content;
-        if (mNextTransition != StateTransition.None) {
+        if (mIntroAnimation != null) {
             mContentPane.setIntroAnimation(mIntroAnimation);
             mIntroAnimation = null;
         }
@@ -174,11 +174,11 @@ abstract public class ActivityState {
     }
 
     protected void transitionOnNextPause(Class<? extends ActivityState> outgoing,
-            Class<? extends ActivityState> incoming, StateTransition hint) {
+            Class<? extends ActivityState> incoming, StateTransitionAnimation.Transition hint) {
         if (outgoing == PhotoPage.class && incoming == AlbumPage.class) {
-            mNextTransition = StateTransition.Outgoing;
+            mNextTransition = StateTransitionAnimation.Transition.Outgoing;
         } else if (outgoing == AlbumPage.class && incoming == PhotoPage.class) {
-            mNextTransition = StateTransition.Incoming;
+            mNextTransition = StateTransitionAnimation.Transition.PhotoIncoming;
         } else {
             mNextTransition = hint;
         }
@@ -188,10 +188,10 @@ abstract public class ActivityState {
         if (0 != (mFlags & FLAG_SCREEN_ON_WHEN_PLUGGED)) {
             ((Activity) mActivity).unregisterReceiver(mPowerIntentReceiver);
         }
-        if (mNextTransition != StateTransition.None) {
+        if (mNextTransition != StateTransitionAnimation.Transition.None) {
             mActivity.getTransitionStore().put(KEY_TRANSITION_IN, mNextTransition);
             PreparePageFadeoutTexture.prepareFadeOutTexture(mActivity, mContentPane);
-            mNextTransition = StateTransition.None;
+            mNextTransition = StateTransitionAnimation.Transition.None;
         }
     }
 
@@ -249,12 +249,10 @@ abstract public class ActivityState {
         RawTexture fade = mActivity.getTransitionStore().get(
                 PreparePageFadeoutTexture.KEY_FADE_TEXTURE);
         mNextTransition = mActivity.getTransitionStore().get(
-                KEY_TRANSITION_IN, StateTransition.None);
-        if (mNextTransition != StateTransition.None) {
-            mIntroAnimation = new StateTransitionAnimation(
-                    (mNextTransition == StateTransition.Incoming) ?
-                            StateTransitionAnimation.Spec.INCOMING :
-                            StateTransitionAnimation.Spec.OUTGOING, fade);
+                KEY_TRANSITION_IN, StateTransitionAnimation.Transition.None);
+        if (mNextTransition != StateTransitionAnimation.Transition.None) {
+            mIntroAnimation = new StateTransitionAnimation(mNextTransition, fade);
+            mNextTransition = StateTransitionAnimation.Transition.None;
         }
     }
 
