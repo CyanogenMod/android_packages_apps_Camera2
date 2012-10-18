@@ -1389,7 +1389,16 @@ public class ExifTag {
                 }
                 break;
             case ExifTag.TYPE_ASCII:
-                sbuilder.append(getString());
+                String s = getString();
+                for (int i = 0, n = s.length(); i < n; i++) {
+                    int code = s.codePointAt(i);
+                    if (code == 0) continue;
+                    if (code > 31 && code < 127) {
+                        sbuilder.append((char) code);
+                    } else {
+                        sbuilder.append('.');
+                    }
+                }
                 break;
             case ExifTag.TYPE_UNSIGNED_LONG:
                 for(int i = 0, n = getComponentCount(); i < n; i++) {
