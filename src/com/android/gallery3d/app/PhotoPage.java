@@ -1180,6 +1180,16 @@ public class PhotoPage extends ActivityState implements
         Path path = mApplication.getDataManager()
                 .findPathByUri(intent.getData(), intent.getType());
         if (path != null) {
+            Path albumPath = mApplication.getDataManager().getDefaultSetOf(path);
+            if (!albumPath.equalsIgnoreCase(mOriginalSetPathString)) {
+                // If the edited image is stored in a different album, we need
+                // to start a new activity state to show the new image
+                Bundle data = new Bundle(getData());
+                data.putString(KEY_MEDIA_SET_PATH, albumPath.toString());
+                data.putString(PhotoPage.KEY_MEDIA_ITEM_PATH, path.toString());
+                mActivity.getStateManager().startState(PhotoPage.class, data);
+                return;
+            }
             mModel.setCurrentPhoto(path, mCurrentIndex);
         }
     }
