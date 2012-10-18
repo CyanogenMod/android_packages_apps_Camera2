@@ -255,6 +255,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="image/*" />
             </intent-filter>
+            <intent-filter android:label="@string/crop_label">
+                <action android:name="com.android.camera.action.CROP" />
+                <data android:mimeType="image/*" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.ALTERNATIVE" />
+                <category android:name="android.intent.category.SELECTED_ALTERNATIVE" />
+            </intent-filter>
         </activity>
 
         <uses-library android:name="com.google.android.media.effects"
