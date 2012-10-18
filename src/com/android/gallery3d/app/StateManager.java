@@ -24,6 +24,7 @@ import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.android.gallery3d.anim.StateTransitionAnimation;
 import com.android.gallery3d.common.Utils;
 
 import java.util.Stack;
@@ -58,7 +59,7 @@ public class StateManager {
         if (!mStack.isEmpty()) {
             ActivityState top = getTopState();
             top.transitionOnNextPause(top.getClass(), klass,
-                    ActivityState.StateTransition.Incoming);
+                    StateTransitionAnimation.Transition.Incoming);
             if (mIsResumed) top.onPause();
         }
         state.initialize(mActivity, data);
@@ -84,7 +85,7 @@ public class StateManager {
         if (!mStack.isEmpty()) {
             ActivityState as = getTopState();
             as.transitionOnNextPause(as.getClass(), klass,
-                    ActivityState.StateTransition.Incoming);
+                    StateTransitionAnimation.Transition.Incoming);
             as.mReceivedResults = state.mResult;
             if (mIsResumed) as.onPause();
         } else {
@@ -194,7 +195,7 @@ public class StateManager {
         if (mIsResumed && fireOnPause) {
             if (top != null) {
                 state.transitionOnNextPause(state.getClass(), top.getClass(),
-                        ActivityState.StateTransition.Outgoing);
+                        StateTransitionAnimation.Transition.Outgoing);
             }
             state.onPause();
         }
@@ -216,7 +217,8 @@ public class StateManager {
         mStack.pop();
         if (!data.containsKey(PhotoPage.KEY_APP_BRIDGE)) {
             // Do not do the fade out stuff when we are switching camera modes
-            oldState.transitionOnNextPause(oldState.getClass(), klass, ActivityState.StateTransition.Incoming);
+            oldState.transitionOnNextPause(oldState.getClass(), klass,
+                    StateTransitionAnimation.Transition.Incoming);
         }
         if (mIsResumed) oldState.onPause();
         oldState.onDestroy();
