@@ -186,12 +186,17 @@ public class PanelController implements OnClickListener {
                         ((ImageButtonTitle) mAspectButton).setText(mContext
                                 .getString(R.string.aspect)
                                 + " "
-                                + mContext.getString(R.string.aspect1to1_effect));
+                                + mContext.getString(R.string.aspectNone_effect));
                         ((ImageCrop) mCurrentImage).applyClear();
+                        mCurrentAspectButton = ASPECT_NONE;
                         break;
                 }
                 mCurrentAspectButton = (mCurrentAspectButton + 1) % NUMBER_OF_ASPECT_BUTTONS;
             }
+        }
+
+        void setCurrentAspectButton(int n){
+            mCurrentAspectButton = n;
         }
 
         public void showAspectButtons() {
@@ -507,6 +512,8 @@ public class PanelController implements OnClickListener {
                 String ename = mCurrentImage.getContext().getString(R.string.crop);
                 mUtilityPanel.setEffectName(ename);
                 mUtilityPanel.setShowParameter(false);
+                mUtilityPanel.setCurrentAspectButton(-1);
+                mUtilityPanel.nextAspectButton();
                 mUtilityPanel.showAspectButtons();
                 break;
             }
