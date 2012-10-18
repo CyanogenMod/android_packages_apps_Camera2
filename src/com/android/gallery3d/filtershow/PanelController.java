@@ -197,7 +197,6 @@ public class PanelController implements OnClickListener {
         public void showAspectButtons() {
             if (mAspectButton != null)
                 mAspectButton.setVisibility(View.VISIBLE);
-            mCurrentAspectButton = ASPECT_NONE;
         }
 
         public void hideAspectButtons() {
@@ -606,6 +605,7 @@ public class PanelController implements OnClickListener {
             }
             case R.id.aspect: {
                 mUtilityPanel.nextAspectButton();
+                mUtilityPanel.showAspectButtons();
                 break;
             }
             case R.id.applyEffect: {
