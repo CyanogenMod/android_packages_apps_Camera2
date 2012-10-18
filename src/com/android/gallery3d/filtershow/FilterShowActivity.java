@@ -78,6 +78,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         OnShareTargetSelectedListener {
 
     public static final String CROP_ACTION = "com.android.camera.action.CROP";
+    public static final String TINY_PLANET_ACTION = "com.android.camera.action.TINY_PLANET";
     private final PanelController mPanelController = new PanelController();
     private ImageLoader mImageLoader = null;
     private ImageShow mImageShow = null;
@@ -345,8 +346,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }
 
         String action = intent.getAction();
-        if (action == CROP_ACTION){
+        if (action.equalsIgnoreCase(CROP_ACTION)){
             mPanelController.showComponent(findViewById(R.id.cropButton));
+        } else if (action.equalsIgnoreCase(TINY_PLANET_ACTION)) {
+            mPanelController.showComponent(findViewById(R.id.tinyplanetButton));
         }
 
     }
