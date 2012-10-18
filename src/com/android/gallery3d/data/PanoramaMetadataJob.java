@@ -24,7 +24,7 @@ import com.android.gallery3d.util.LightCycleHelper.PanoramaMetadata;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
-class PanoramaMetadataJob implements Job<PanoramaMetadata> {
+public class PanoramaMetadataJob implements Job<PanoramaMetadata> {
     Context mContext;
     Uri mUri;
 

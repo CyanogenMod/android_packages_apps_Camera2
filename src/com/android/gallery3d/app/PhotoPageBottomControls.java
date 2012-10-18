@@ -23,7 +23,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.widget.RelativeLayout;
 
 import com.android.gallery3d.R;
@@ -34,8 +33,9 @@ import java.util.Map;
 public class PhotoPageBottomControls implements OnClickListener {
     public interface Delegate {
         public boolean canDisplayBottomControls();
-        public boolean canDisplayBottomControl(int control);
+        public boolean canDisplayBottomControl(int control, boolean isPanorama);
         public void onBottomControlClicked(int control);
+        public void refreshBottomControlsWhenReady();
     }
 
     private Delegate mDelegate;
@@ -76,7 +76,7 @@ public class PhotoPageBottomControls implements OnClickListener {
         mContainerAnimIn.setDuration(CONTAINER_ANIM_DURATION_MS);
         mContainerAnimOut.setDuration(CONTAINER_ANIM_DURATION_MS);
 
-        refresh();
+        mDelegate.refreshBottomControlsWhenReady();
     }
 
     private void hide() {
@@ -93,7 +93,7 @@ public class PhotoPageBottomControls implements OnClickListener {
         mContainer.setVisibility(View.VISIBLE);
     }
 
-    public void refresh() {
+    public void refresh(boolean isPanorama) {
         boolean visible = mDelegate.canDisplayBottomControls();
         boolean containerVisibilityChanged = (visible != mContainerVisible);
         if (containerVisibilityChanged) {
@@ -109,7 +109,7 @@ public class PhotoPageBottomControls implements OnClickListener {
         }
         for (View control : mControlsVisible.keySet()) {
             Boolean prevVisibility = mControlsVisible.get(control);
-            boolean curVisibility = mDelegate.canDisplayBottomControl(control.getId());
+            boolean curVisibility = mDelegate.canDisplayBottomControl(control.getId(), isPanorama);
             if (prevVisibility.booleanValue() != curVisibility) {
                 if (!containerVisibilityChanged) {
                     control.clearAnimation();
