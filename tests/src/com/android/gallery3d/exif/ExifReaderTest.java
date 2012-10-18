@@ -33,13 +33,17 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
     }
 
     public void testRead() throws Exception {
-        ExifReader reader = new ExifReader();
-        ExifData exifData = reader.read(getImageInputStream());
-        List<Map<Short, String>> groundTruth = ExifXmlReader.readXml(getXmlParser());
-        for (int i = 0; i < IfdId.TYPE_IFD_COUNT; i++) {
-            checkIfd(exifData.getIfdData(i), groundTruth.get(i));
+        try {
+            ExifReader reader = new ExifReader();
+            ExifData exifData = reader.read(getImageInputStream());
+            List<Map<Short, String>> groundTruth = ExifXmlReader.readXml(getXmlParser());
+            for (int i = 0; i < IfdId.TYPE_IFD_COUNT; i++) {
+                checkIfd(exifData.getIfdData(i), groundTruth.get(i));
+            }
+            checkThumbnail(exifData);
+        } catch (Exception e) {
+            throw new Exception(getImageTitle(), e);
         }
-        checkThumbnail(exifData);
     }
 
     private void checkThumbnail(ExifData exifData) {
