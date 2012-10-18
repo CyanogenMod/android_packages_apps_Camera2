@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
 
 public class ExifOutputStream extends FilterOutputStream {
     private static final String TAG = "ExifOutputStream";
@@ -215,9 +216,12 @@ public class ExifOutputStream extends FilterOutputStream {
             throws IOException {
         switch (tag.getDataType()) {
             case ExifTag.TYPE_ASCII:
-                dataOutputStream.write(tag.getString().getBytes());
-                int remain = tag.getComponentCount() - tag.getString().length();
-                for (int i = 0; i < remain; i++) {
+                byte buf[] = tag.getString().getBytes(Charset.forName("US-ASCII"));
+                if (buf.length == tag.getComponentCount()) {
+                    buf[buf.length - 1] = 0;
+                    dataOutputStream.write(buf);
+                } else {
+                    dataOutputStream.write(buf);
                     dataOutputStream.write(0);
                 }
                 break;
@@ -234,7 +238,7 @@ public class ExifOutputStream extends FilterOutputStream {
                 break;
             case ExifTag.TYPE_UNDEFINED:
             case ExifTag.TYPE_UNSIGNED_BYTE:
-                byte[] buf = new byte[tag.getComponentCount()];
+                buf = new byte[tag.getComponentCount()];
                 tag.getBytes(buf);
                 dataOutputStream.write(buf);
                 break;
