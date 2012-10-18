@@ -140,6 +140,8 @@
     <string name="auto" msgid="4296941368722892821">"Αυτόματο"</string>
     <string name="flash_on" msgid="7891556231891837284">"Το φλας άναψε"</string>
     <string name="flash_off" msgid="1445443413822680010">"Όχι φλας"</string>
+    <!-- no translation found for ffx_original (372686331501281474) -->
+    <skip />
     <string name="ffx_vintage" msgid="8348759951363844780">"Εποχής"</string>
     <string name="ffx_instant" msgid="726968618715691987">"Άμεσα"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"Λεύκανση"</string>
@@ -192,10 +194,8 @@
     <string name="switch_photo_grid" msgid="3681299459107925725">"Προβολή πλέγματος"</string>
     <string name="trimming" msgid="9122385768369143997">"Περικοπή"</string>
     <string name="please_wait" msgid="7296066089146487366">"Περιμένετε"</string>
-    <!-- no translation found for save_into (4960537214388766062) -->
-    <skip />
+    <string name="save_into" msgid="4960537214388766062">"Αποθήκευση βίντεο που έχει περικοπεί στο λεύκωμα :"</string>
     <string name="trim_too_short" msgid="751593965620665326">"Δεν είναι δυνατή η περικοπή : το βίντεο-στόχος είναι πολύ σύντομο"</string>
-    <string name="trim_too_long" msgid="2657958275279217174">"Δεν έγινε περικοπή : ίδια διάρκεια με την αρχική"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Απόδοση πανοράματος"</string>
     <string name="save" msgid="613976532235060516">"Αποθήκευση"</string>
 </resources>
