@@ -274,7 +274,7 @@ public class LocalAlbum extends MediaSet {
         return true;
     }
 
-    private static String getLocalizedName(Resources res, int bucketId,
+    public static String getLocalizedName(Resources res, int bucketId,
             String name) {
         if (bucketId == MediaSetUtils.CAMERA_BUCKET_ID) {
             return res.getString(R.string.folder_camera);
@@ -284,6 +284,8 @@ public class LocalAlbum extends MediaSet {
             return res.getString(R.string.folder_imported);
         } else if (bucketId == MediaSetUtils.SNAPSHOT_BUCKET_ID) {
             return res.getString(R.string.folder_screenshot);
+        } else if (bucketId == MediaSetUtils.EDITED_ONLINE_PHOTOS_BUCKET_ID) {
+            return res.getString(R.string.folder_edited_online_photos);
         } else {
             return name;
         }
