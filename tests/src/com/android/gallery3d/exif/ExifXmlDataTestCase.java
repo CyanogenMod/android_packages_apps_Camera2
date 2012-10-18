@@ -29,6 +29,8 @@ import java.io.InputStreamReader;
 
 public class ExifXmlDataTestCase extends InstrumentationTestCase {
 
+    private static final String RES_ID_TITLE = "Resource ID: %x";
+
     private InputStream mImageInputStream;
     private InputStream mXmlInputStream;
     private XmlPullParser mXmlParser;
@@ -77,5 +79,13 @@ public class ExifXmlDataTestCase extends InstrumentationTestCase {
     public void tearDown() throws Exception {
         Util.closeSilently(mImageInputStream);
         Util.closeSilently(mXmlInputStream);
+    }
+
+    protected String getImageTitle() {
+        if (mImagePath != null) {
+            return mImagePath;
+        } else {
+            return String.format(RES_ID_TITLE, mImageResourceId);
+        }
     }
 }
