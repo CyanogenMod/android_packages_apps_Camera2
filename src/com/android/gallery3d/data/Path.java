@@ -79,6 +79,7 @@ public class Path {
     }
 
     @Override
+    // TODO: toString() should be more efficient, will fix it later
     public String toString() {
         synchronized (Path.class) {
             StringBuilder sb = new StringBuilder();
@@ -89,6 +90,11 @@ public class Path {
             }
             return sb.toString();
         }
+    }
+
+    public boolean equalsIgnoreCase (String p) {
+        String path = toString();
+        return path.equalsIgnoreCase(p);
     }
 
     public static Path fromString(String s) {
