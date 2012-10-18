@@ -17,15 +17,14 @@ import com.android.gallery3d.filtershow.filters.ImageFilterRedEye;
 import com.android.gallery3d.filtershow.filters.ImageFilterSaturated;
 import com.android.gallery3d.filtershow.filters.ImageFilterShadows;
 import com.android.gallery3d.filtershow.filters.ImageFilterSharpen;
-import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
 import com.android.gallery3d.filtershow.filters.ImageFilterVibrance;
 import com.android.gallery3d.filtershow.filters.ImageFilterVignette;
 import com.android.gallery3d.filtershow.filters.ImageFilterWBalance;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
-import com.android.gallery3d.filtershow.ui.ImageCurves;
 import com.android.gallery3d.filtershow.ui.ImageButtonTitle;
+import com.android.gallery3d.filtershow.ui.ImageCurves;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -117,6 +116,7 @@ public class PanelController implements OnClickListener {
         private int mParameterValue = 0;
         private boolean mShowParameterValue = false;
         private View mAspectButton = null;
+        private View mCurvesButton = null;
         private int mCurrentAspectButton = 0;
         private static final int NUMBER_OF_ASPECT_BUTTONS = 6;
         private static final int ASPECT_NONE = 0;
@@ -126,11 +126,13 @@ public class PanelController implements OnClickListener {
         private static final int ASPECT_16TO9 = 4;
         private static final int ASPECT_ORIG = 5;
 
-        public UtilityPanel(Context context, View view, View textView, View button) {
+        public UtilityPanel(Context context, View view, View textView,
+                View aspectButton, View curvesButton) {
             mContext = context;
             mView = view;
             mTextView = (TextView) textView;
-            mAspectButton = button;
+            mAspectButton = aspectButton;
+            mCurvesButton = curvesButton;
         }
 
         public boolean selected() {
@@ -208,6 +210,16 @@ public class PanelController implements OnClickListener {
         public void hideAspectButtons() {
             if (mAspectButton != null)
                 mAspectButton.setVisibility(View.GONE);
+        }
+
+        public void showCurvesButtons() {
+            if (mCurvesButton != null)
+                mCurvesButton.setVisibility(View.VISIBLE);
+        }
+
+        public void hideCurvesButtons() {
+            if (mCurvesButton != null)
+                mCurvesButton.setVisibility(View.GONE);
         }
 
         public void onNewValue(int value) {
@@ -346,8 +358,9 @@ public class PanelController implements OnClickListener {
     }
 
     public void setUtilityPanel(Context context, View utilityPanel, View textView,
-            View button) {
-        mUtilityPanel = new UtilityPanel(context, utilityPanel, textView, button);
+            View aspectButton, View curvesButton) {
+        mUtilityPanel = new UtilityPanel(context, utilityPanel, textView,
+                aspectButton, curvesButton);
     }
 
     public void setMasterImage(ImageShow imageShow) {
@@ -505,6 +518,7 @@ public class PanelController implements OnClickListener {
             mCurrentImage.unselect();
         }
         mUtilityPanel.hideAspectButtons();
+        mUtilityPanel.hideCurvesButtons();
         switch (view.getId()) {
             case R.id.tinyplanetButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
@@ -554,6 +568,7 @@ public class PanelController implements OnClickListener {
                 String ename = curves.getContext().getString(R.string.curvesRGB);
                 mUtilityPanel.setEffectName(ename);
                 mUtilityPanel.setShowParameter(false);
+                mUtilityPanel.showCurvesButtons();
                 curves.reloadCurve();
                 mCurrentImage = curves;
                 break;
