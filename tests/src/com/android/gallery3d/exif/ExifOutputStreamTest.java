@@ -26,8 +26,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
 
 public class ExifOutputStreamTest extends ExifXmlDataTestCase {
     public ExifOutputStreamTest(int imgRes, int xmlRes) {
@@ -45,36 +43,40 @@ public class ExifOutputStreamTest extends ExifXmlDataTestCase {
         FileInputStream reDecodeInputStream = null;
         FileInputStream reParseInputStream = null;
         try {
-            byte[] imgData = readToByteArray(getImageInputStream());
-            imageInputStream = new ByteArrayInputStream(imgData);
-            exifInputStream = new ByteArrayInputStream(imgData);
+            try {
+                byte[] imgData = readToByteArray(getImageInputStream());
+                imageInputStream = new ByteArrayInputStream(imgData);
+                exifInputStream = new ByteArrayInputStream(imgData);
 
-            // Read the image data
-            Bitmap bmp = BitmapFactory.decodeStream(imageInputStream);
-            // Read exif data
-            ExifData exifData = new ExifReader().read(exifInputStream);
+                // Read the image data
+                Bitmap bmp = BitmapFactory.decodeStream(imageInputStream);
+                // Read exif data
+                ExifData exifData = new ExifReader().read(exifInputStream);
 
-            // Encode the image with the exif data
-            FileOutputStream outputStream = new FileOutputStream(file);
-            ExifOutputStream exifOutputStream = new ExifOutputStream(outputStream);
-            exifOutputStream.setExifData(exifData);
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, exifOutputStream);
-            exifOutputStream.close();
+                // Encode the image with the exif data
+                FileOutputStream outputStream = new FileOutputStream(file);
+                ExifOutputStream exifOutputStream = new ExifOutputStream(outputStream);
+                exifOutputStream.setExifData(exifData);
+                bmp.compress(Bitmap.CompressFormat.JPEG, 100, exifOutputStream);
+                exifOutputStream.close();
 
-            // Re-decode the temp file and check the data.
-            reDecodeInputStream = new FileInputStream(file);
-            Bitmap decodedBmp = BitmapFactory.decodeStream(reDecodeInputStream);
-            assertNotNull(decodedBmp);
+                // Re-decode the temp file and check the data.
+                reDecodeInputStream = new FileInputStream(file);
+                Bitmap decodedBmp = BitmapFactory.decodeStream(reDecodeInputStream);
+                assertNotNull(decodedBmp);
 
-            // Re-parse the temp file the check EXIF tag
-            reParseInputStream = new FileInputStream(file);
-            ExifData reExifData = new ExifReader().read(reParseInputStream);
-            assertEquals(exifData, reExifData);
-        } finally {
-            Util.closeSilently(imageInputStream);
-            Util.closeSilently(exifInputStream);
-            Util.closeSilently(reDecodeInputStream);
-            Util.closeSilently(reParseInputStream);
+                // Re-parse the temp file the check EXIF tag
+                reParseInputStream = new FileInputStream(file);
+                ExifData reExifData = new ExifReader().read(reParseInputStream);
+                assertEquals(exifData, reExifData);
+            } finally {
+                Util.closeSilently(imageInputStream);
+                Util.closeSilently(exifInputStream);
+                Util.closeSilently(reDecodeInputStream);
+                Util.closeSilently(reParseInputStream);
+            }
+        } catch (Exception e) {
+            throw new Exception(getImageTitle(), e);
         }
     }
 

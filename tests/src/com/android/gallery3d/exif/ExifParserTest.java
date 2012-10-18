@@ -19,7 +19,6 @@ package com.android.gallery3d.exif;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -43,31 +42,35 @@ public class ExifParserTest extends ExifXmlDataTestCase {
     }
 
     public void testParse() throws Exception {
-        ExifParser parser = ExifParser.parse(getImageInputStream());
-        int event = parser.next();
-        while (event != ExifParser.EVENT_END) {
-            switch (event) {
-                case ExifParser.EVENT_START_OF_IFD:
-                    break;
-                case ExifParser.EVENT_NEW_TAG:
-                    ExifTag tag = parser.getTag();
-                    if (!tag.hasValue()) {
-                        parser.registerForTagValue(tag);
-                    } else {
+        try {
+            ExifParser parser = ExifParser.parse(getImageInputStream());
+            int event = parser.next();
+            while (event != ExifParser.EVENT_END) {
+                switch (event) {
+                    case ExifParser.EVENT_START_OF_IFD:
+                        break;
+                    case ExifParser.EVENT_NEW_TAG:
+                        ExifTag tag = parser.getTag();
+                        if (!tag.hasValue()) {
+                            parser.registerForTagValue(tag);
+                        } else {
+                            checkTag(tag);
+                        }
+                        break;
+                    case ExifParser.EVENT_VALUE_OF_REGISTERED_TAG:
+                        tag = parser.getTag();
+                        if (tag.getDataType() == ExifTag.TYPE_UNDEFINED) {
+                            byte[] buf = new byte[tag.getComponentCount()];
+                            parser.read(buf);
+                            tag.setValue(buf);
+                        }
                         checkTag(tag);
-                    }
-                    break;
-                case ExifParser.EVENT_VALUE_OF_REGISTERED_TAG:
-                    tag = parser.getTag();
-                    if (tag.getDataType() == ExifTag.TYPE_UNDEFINED) {
-                        byte[] buf = new byte[tag.getComponentCount()];
-                        parser.read(buf);
-                        tag.setValue(buf);
-                    }
-                    checkTag(tag);
-                    break;
+                        break;
+                }
+                event = parser.next();
             }
-            event = parser.next();
+        } catch (Exception e) {
+            throw new Exception(getImageTitle(), e);
         }
     }
 
@@ -80,7 +83,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         if (tag.getTagId() == ExifTag.TAG_MAKER_NOTE
                 || tag.getTagId() == ExifTag.TAG_USER_COMMENT) return;
 
-        String truthString = mGroundTruth.get(tag.getIfd()).get(tag.getTagId()).trim();
+        String truthString = mGroundTruth.get(tag.getIfd()).get(tag.getTagId());
 
         if (truthString == null) {
             fail(String.format("Unknown Tag %02x", tag.getTagId()) + ", " + getImageTitle());
@@ -88,48 +91,51 @@ public class ExifParserTest extends ExifXmlDataTestCase {
 
         String dataString = tag.valueToString().trim();
         assertEquals(String.format("Tag %02x", tag.getTagId()) + ", " + getImageTitle(),
-                truthString, dataString);
+                truthString.trim(), dataString);
     }
 
-    private void parseOneIfd(int ifd, int options)
-            throws IOException, ExifInvalidFormatException {
-        Map<Short, String> expectedResult = mGroundTruth.get(ifd);
-        int numOfTag = 0;
-        ExifParser parser = ExifParser.parse(getImageInputStream(), options);
-        int event = parser.next();
-        while(event != ExifParser.EVENT_END) {
-            switch (event) {
-                case ExifParser.EVENT_START_OF_IFD:
-                    assertEquals(getImageTitle(), ifd, parser.getCurrentIfd());
-                    break;
-                case ExifParser.EVENT_NEW_TAG:
-                    ExifTag tag = parser.getTag();
-                    // The exiftool doesn't provide MakerNote tag
-                    if (!ExifTag.isSubIfdOffsetTag(tag.getTagId())
-                            && tag.getTagId() != ExifTag.TAG_MAKER_NOTE) numOfTag++;
-                    if (tag.hasValue()) {
+    private void parseOneIfd(int ifd, int options) throws Exception {
+        try {
+            Map<Short, String> expectedResult = mGroundTruth.get(ifd);
+            int numOfTag = 0;
+            ExifParser parser = ExifParser.parse(getImageInputStream(), options);
+            int event = parser.next();
+            while(event != ExifParser.EVENT_END) {
+                switch (event) {
+                    case ExifParser.EVENT_START_OF_IFD:
+                        assertEquals(getImageTitle(), ifd, parser.getCurrentIfd());
+                        break;
+                    case ExifParser.EVENT_NEW_TAG:
+                        ExifTag tag = parser.getTag();
+                        // The exiftool doesn't provide MakerNote tag
+                        if (!ExifTag.isSubIfdOffsetTag(tag.getTagId())
+                                && tag.getTagId() != ExifTag.TAG_MAKER_NOTE) numOfTag++;
+                        if (tag.hasValue()) {
+                            checkTag(tag);
+                        } else {
+                            parser.registerForTagValue(tag);
+                        }
+                        break;
+                    case ExifParser.EVENT_VALUE_OF_REGISTERED_TAG:
+                        tag = parser.getTag();
+                        if (tag.getDataType() == ExifTag.TYPE_UNDEFINED) {
+                            byte[] buf = new byte[tag.getComponentCount()];
+                            parser.read(buf);
+                            tag.setValue(buf);
+                        }
                         checkTag(tag);
-                    } else {
-                        parser.registerForTagValue(tag);
-                    }
-                    break;
-                case ExifParser.EVENT_VALUE_OF_REGISTERED_TAG:
-                    tag = parser.getTag();
-                    if (tag.getDataType() == ExifTag.TYPE_UNDEFINED) {
-                        byte[] buf = new byte[tag.getComponentCount()];
-                        parser.read(buf);
-                        tag.setValue(buf);
-                    }
-                    checkTag(tag);
-                    break;
-                case ExifParser.EVENT_COMPRESSED_IMAGE:
-                case ExifParser.EVENT_UNCOMPRESSED_STRIP:
-                    fail("Invalid Event type: " + event + ", " + getImageTitle());
-                    break;
+                        break;
+                    case ExifParser.EVENT_COMPRESSED_IMAGE:
+                    case ExifParser.EVENT_UNCOMPRESSED_STRIP:
+                        fail("Invalid Event type: " + event + ", " + getImageTitle());
+                        break;
+                }
+                event = parser.next();
             }
-            event = parser.next();
+            assertEquals(expectedResult.size(), numOfTag);
+        } catch (Exception e) {
+            throw new Exception(getImageTitle(), e);
         }
-        assertEquals(expectedResult.size(), numOfTag);
     }
 
     public void testOnlyExifIfd() throws Exception {
@@ -149,66 +155,74 @@ public class ExifParserTest extends ExifXmlDataTestCase {
     }
 
     public void testOnlyReadSomeTag() throws Exception {
-        ExifParser parser = ExifParser.parse(getImageInputStream(), ExifParser.OPTION_IFD_0);
-        int event = parser.next();
-        boolean isTagFound = false;
-        while (event != ExifParser.EVENT_END) {
-            switch (event) {
-                case ExifParser.EVENT_START_OF_IFD:
-                    assertEquals(getImageTitle(), IfdId.TYPE_IFD_0, parser.getCurrentIfd());
-                    break;
-                case ExifParser.EVENT_NEW_TAG:
-                    ExifTag tag = parser.getTag();
-                    if (tag.getTagId() == ExifTag.TAG_MODEL) {
-                        if (tag.hasValue()) {
-                            isTagFound = true;
-                            checkTag(tag);
-                        } else {
-                            parser.registerForTagValue(tag);
+        try {
+            ExifParser parser = ExifParser.parse(getImageInputStream(), ExifParser.OPTION_IFD_0);
+            int event = parser.next();
+            boolean isTagFound = false;
+            while (event != ExifParser.EVENT_END) {
+                switch (event) {
+                    case ExifParser.EVENT_START_OF_IFD:
+                        assertEquals(getImageTitle(), IfdId.TYPE_IFD_0, parser.getCurrentIfd());
+                        break;
+                    case ExifParser.EVENT_NEW_TAG:
+                        ExifTag tag = parser.getTag();
+                        if (tag.getTagId() == ExifTag.TAG_MODEL) {
+                            if (tag.hasValue()) {
+                                isTagFound = true;
+                                checkTag(tag);
+                            } else {
+                                parser.registerForTagValue(tag);
+                            }
+                            parser.skipRemainingTagsInCurrentIfd();
                         }
-                        parser.skipRemainingTagsInCurrentIfd();
-                    }
-                    break;
-                case ExifParser.EVENT_VALUE_OF_REGISTERED_TAG:
-                    tag = parser.getTag();
-                    assertEquals(getImageTitle(), ExifTag.TAG_MODEL, tag.getTagId());
-                    checkTag(tag);
-                    isTagFound = true;
-                    break;
+                        break;
+                    case ExifParser.EVENT_VALUE_OF_REGISTERED_TAG:
+                        tag = parser.getTag();
+                        assertEquals(getImageTitle(), ExifTag.TAG_MODEL, tag.getTagId());
+                        checkTag(tag);
+                        isTagFound = true;
+                        break;
+                }
+                event = parser.next();
             }
-            event = parser.next();
+            assertTrue(getImageTitle(), isTagFound);
+        } catch (Exception e) {
+            throw new Exception(getImageTitle(), e);
         }
-        assertTrue(getImageTitle(), isTagFound);
     }
 
     public void testReadThumbnail() throws Exception {
-        ExifParser parser = ExifParser.parse(getImageInputStream(),
-                ExifParser.OPTION_IFD_1 | ExifParser.OPTION_THUMBNAIL);
+        try {
+            ExifParser parser = ExifParser.parse(getImageInputStream(),
+                    ExifParser.OPTION_IFD_1 | ExifParser.OPTION_THUMBNAIL);
 
-        int event = parser.next();
-        Bitmap bmp = null;
-        boolean mIsContainCompressedImage = false;
-        while (event != ExifParser.EVENT_END) {
-            switch (event) {
-                case ExifParser.EVENT_NEW_TAG:
-                    ExifTag tag = parser.getTag();
-                    if (tag.getTagId() == ExifTag.TAG_COMPRESSION) {
-                        if (tag.getUnsignedShort(0) == ExifTag.Compression.JPEG) {
-                            mIsContainCompressedImage = true;
+            int event = parser.next();
+            Bitmap bmp = null;
+            boolean mIsContainCompressedImage = false;
+            while (event != ExifParser.EVENT_END) {
+                switch (event) {
+                    case ExifParser.EVENT_NEW_TAG:
+                        ExifTag tag = parser.getTag();
+                        if (tag.getTagId() == ExifTag.TAG_COMPRESSION) {
+                            if (tag.getUnsignedShort(0) == ExifTag.Compression.JPEG) {
+                                mIsContainCompressedImage = true;
+                            }
                         }
-                    }
-                    break;
-                case ExifParser.EVENT_COMPRESSED_IMAGE:
-                    int imageSize = parser.getCompressedImageSize();
-                    byte buf[] = new byte[imageSize];
-                    parser.read(buf);
-                    bmp = BitmapFactory.decodeByteArray(buf, 0, imageSize);
-                    break;
+                        break;
+                    case ExifParser.EVENT_COMPRESSED_IMAGE:
+                        int imageSize = parser.getCompressedImageSize();
+                        byte buf[] = new byte[imageSize];
+                        parser.read(buf);
+                        bmp = BitmapFactory.decodeByteArray(buf, 0, imageSize);
+                        break;
+                }
+                event = parser.next();
             }
-            event = parser.next();
-        }
-        if (mIsContainCompressedImage) {
-            assertNotNull(getImageTitle(), bmp);
+            if (mIsContainCompressedImage) {
+                assertNotNull(getImageTitle(), bmp);
+            }
+        } catch (Exception e) {
+            throw new Exception(getImageTitle(), e);
         }
     }
 }
