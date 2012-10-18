@@ -47,6 +47,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilterParametricBorder;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.filters.ImageFilterSaturated;
 import com.android.gallery3d.filtershow.filters.ImageFilterShadows;
+import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
 import com.android.gallery3d.filtershow.filters.ImageFilterVibrance;
 import com.android.gallery3d.filtershow.filters.ImageFilterVignette;
 import com.android.gallery3d.filtershow.filters.ImageFilterWBalance;
@@ -229,16 +230,19 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addPanel(mColorsButton, mListColors, 3);
 
         int[] recastIDs = {
+                R.id.tinyplanetButton,
                 R.id.vignetteButton,
                 R.id.vibranceButton,
                 R.id.contrastButton,
                 R.id.saturationButton,
+                R.id.shadowRecoveryButton,
                 R.id.wbalanceButton,
                 R.id.hueButton,
                 R.id.exposureButton,
                 R.id.shadowRecoveryButton
         };
         ImageFilter[] filters = {
+                new ImageFilterTinyPlanet(),
                 new ImageFilterVignette(),
                 new ImageFilterVibrance(),
                 new ImageFilterContrast(),
@@ -304,6 +308,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             listColors.addView(fView, pos);
         }
 
+        mPanelController.addComponent(mColorsButton, findViewById(R.id.tinyplanetButton));
         mPanelController.addComponent(mColorsButton, findViewById(R.id.curvesButtonRGB));
         mPanelController.addComponent(mColorsButton, findViewById(R.id.sharpenButton));
         mPanelController.addComponent(mColorsButton, findViewById(R.id.vibranceButton));
