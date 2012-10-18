@@ -19,7 +19,6 @@ package com.android.gallery3d.data;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,14 +32,11 @@ import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.app.PanoramaMetadataSupport;
 import com.android.gallery3d.app.StitchingProgressManager;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.BitmapUtils;
-import com.android.gallery3d.util.Future;
-import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.GalleryUtils;
-import com.android.gallery3d.util.LightCycleHelper;
-import com.android.gallery3d.util.LightCycleHelper.PanoramaMetadata;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.android.gallery3d.util.UpdateHelper;
@@ -104,11 +100,7 @@ public class LocalImage extends LocalMediaItem {
 
     public int rotation;
 
-    private Object mLock = new Object();
-    private Future<PanoramaMetadata> mGetPanoMetadataTask;
-    private boolean mPanoramaMetadataInitialized;
-    private PanoramaMetadata mPanoramaMetadata;
-    private SupportedOperationsListener mListener;
+    private PanoramaMetadataSupport mPanoramaMetadata = new PanoramaMetadataSupport(this);
 
     public LocalImage(Path path, GalleryApp application, Cursor cursor) {
         super(path, nextVersionNumber());
@@ -257,63 +249,17 @@ public class LocalImage extends LocalMediaItem {
         if (GalleryUtils.isValidLocation(latitude, longitude)) {
             operation |= SUPPORT_SHOW_ON_MAP;
         }
-
-        if (mPanoramaMetadata != null && mPanoramaMetadata.mUsePanoramaViewer) {
-            operation |= SUPPORT_PANORAMA;
-            if (mPanoramaMetadata.mIsPanorama360) {
-                operation |= SUPPORT_PANORAMA360;
-                // disable destructive rotate and crop for 360 degree panorama
-                operation &= ~(SUPPORT_ROTATE | SUPPORT_CROP);
-            }
-        }
         return operation;
     }
 
     @Override
-    public int getSupportedOperations(boolean getAll) {
-        synchronized (mLock) {
-            if (getAll && !mPanoramaMetadataInitialized) {
-                if (mGetPanoMetadataTask == null) {
-                    mGetPanoMetadataTask = getThreadPool().submit(
-                            new PanoramaMetadataJob(mApplication.getAndroidContext(),
-                                getContentUri()));
-                }
-                mPanoramaMetadata = mGetPanoMetadataTask.get();
-                mPanoramaMetadataInitialized = true;
-            }
-        }
-        return getSupportedOperations();
+    public void getPanoramaSupport(PanoramaSupportCallback callback) {
+        mPanoramaMetadata.getPanoramaSupport(mApplication, callback);
     }
 
     @Override
-    public void setSupportedOperationsListener(SupportedOperationsListener l) {
-        synchronized (mLock) {
-            if (l == null) {
-                if (mGetPanoMetadataTask != null) {
-                    mGetPanoMetadataTask.cancel();
-                    mGetPanoMetadataTask = null;
-                }
-            } else {
-                if (mGetPanoMetadataTask == null) {
-                    mGetPanoMetadataTask = getThreadPool().submit(
-                            new PanoramaMetadataJob(mApplication.getAndroidContext(),
-                                getContentUri()),
-                            new FutureListener<PanoramaMetadata>() {
-                                @Override
-                        public void onFutureDone(Future<PanoramaMetadata> future) {
-                            mGetPanoMetadataTask = null;
-                            if (future.isCancelled()) return;
-                            mPanoramaMetadata = future.get();
-                            mPanoramaMetadataInitialized = true;
-                            if (mListener != null) {
-                                mListener.onChange(LocalImage.this, getSupportedOperations());
-                            }
-                        }
-                        });
-                        }
-            }
-            mListener = l;
-        }
+    public void clearCachedPanoramaSupport() {
+        mPanoramaMetadata.clearCachedValues();
     }
 
     @Override
