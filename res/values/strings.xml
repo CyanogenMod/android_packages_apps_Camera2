@@ -70,6 +70,10 @@
     <string name="multiface_crop_help">Touch a face to begin.</string>
     <!-- Toast/alert that the image is being saved to the SD card -->
     <string name="saving_image">Saving picture\u2026</string>
+
+    <!-- Toast/alert that the image is being saved after editing in filtershow [CHAR LIMIT=40]-->
+    <string name="filtershow_saving_image">Saving picture to <xliff:g id="album_name">%1$s</xliff:g> \u2026</string>
+
     <!-- Eorror toast message that the image cannot be saved [CHAR LIMIT=40]-->
     <string name="save_error">Couldn\'t save cropped image.</string>
 
@@ -458,6 +462,9 @@
 
     <!-- The label for the folder contains downloaded pictures. [CHAR LIMIT=20]-->
     <string name="folder_download">Download</string>
+
+    <!-- The label for the folder contains edited online pictures. [CHAR LIMIT=40]-->
+    <string name="folder_edited_online_photos">Edited Online Photos</string>
 
     <!-- The label for the folder contains pictures that was imported from an
          external camera. [CHAR LIMIT=20]-->
