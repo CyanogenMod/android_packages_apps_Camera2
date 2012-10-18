@@ -111,18 +111,13 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
             return;
         }
         ExifTag[] tags = ifd.getAllTags();
-        int size = 0;
         for (ExifTag tag : tags) {
-            if (ExifTag.isSubIfdOffsetTag(tag.getTagId())
-                    || tag.getTagId() == ExifTag.TAG_MAKER_NOTE) continue;
-            if (tag.getTagId() != ExifTag.TAG_USER_COMMENT) {
-                Set<String> truth = ifdValue.get(tag.getTagId());
-                assertNotNull(String.format("Tag %x, ", tag.getTagId()) + getImageTitle(), truth);
-                assertTrue(String.format("Tag %x, ", tag.getTagId()) + getImageTitle(),
-                        truth.contains(tag.valueToString().trim()));
-            }
-            size++;
+            Set<String> truth = ifdValue.get(tag.getTagId());
+            assertNotNull(String.format("Tag %x, ", tag.getTagId()) + getImageTitle(), truth);
+            if (truth.contains(null)) continue;
+            assertTrue(String.format("Tag %x, ", tag.getTagId()) + getImageTitle(),
+                    truth.contains(tag.valueToString().trim()));
         }
-        assertEquals(getImageTitle(), ifdValue.size(), size);
+        assertEquals(getImageTitle(), ifdValue.size(), tags.length);
     }
 }
