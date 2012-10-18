@@ -140,6 +140,8 @@
     <string name="auto" msgid="4296941368722892821">"自動"</string>
     <string name="flash_on" msgid="7891556231891837284">"使用閃光燈"</string>
     <string name="flash_off" msgid="1445443413822680010">"未使用閃光燈"</string>
+    <!-- no translation found for ffx_original (372686331501281474) -->
+    <skip />
     <string name="ffx_vintage" msgid="8348759951363844780">"復古"</string>
     <string name="ffx_instant" msgid="726968618715691987">"即時"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"漂白"</string>
@@ -195,7 +197,6 @@
     <!-- no translation found for save_into (4960537214388766062) -->
     <skip />
     <string name="trim_too_short" msgid="751593965620665326">"無法修剪：目標影片長度過短"</string>
-    <string name="trim_too_long" msgid="2657958275279217174">"尚未修剪：片長不變"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"正在進行全景成像作業"</string>
     <string name="save" msgid="613976532235060516">"儲存"</string>
 </resources>
