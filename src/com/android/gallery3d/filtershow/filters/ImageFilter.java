@@ -16,6 +16,7 @@ public class ImageFilter implements Cloneable {
     public static final byte TYPE_WBALANCE = 3;
     public static final byte TYPE_VIGNETTE = 4;
     public static final byte TYPE_NORMAL = 5;
+    public static final byte TYPE_TINYPLANET = 6;
     private byte filterType = TYPE_NORMAL;
 
     public byte getFilterType(){
