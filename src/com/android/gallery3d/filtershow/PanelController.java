@@ -17,6 +17,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilterRedEye;
 import com.android.gallery3d.filtershow.filters.ImageFilterSaturated;
 import com.android.gallery3d.filtershow.filters.ImageFilterShadows;
 import com.android.gallery3d.filtershow.filters.ImageFilterSharpen;
+import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
 import com.android.gallery3d.filtershow.filters.ImageFilterVibrance;
 import com.android.gallery3d.filtershow.filters.ImageFilterVignette;
 import com.android.gallery3d.filtershow.filters.ImageFilterWBalance;
@@ -435,6 +436,10 @@ public class PanelController implements OnClickListener {
     public void ensureFilter(String name) {
         ImagePreset preset = getImagePreset();
         ImageFilter filter = preset.getFilter(name);
+        if (filter == null && name.equalsIgnoreCase(
+                mCurrentImage.getContext().getString(R.string.tinyplanet))) {
+            filter = setImagePreset(new ImageFilterTinyPlanet(), name);
+        }
         if (filter == null
                 && name.equalsIgnoreCase(mCurrentImage.getContext().getString(R.string.vignette))) {
             filter = setImagePreset(new ImageFilterVignette(), name);
@@ -501,6 +506,13 @@ public class PanelController implements OnClickListener {
         }
         mUtilityPanel.hideAspectButtons();
         switch (view.getId()) {
+            case R.id.tinyplanetButton: {
+                mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
+                String ename = mCurrentImage.getContext().getString(R.string.tinyplanet);
+                mUtilityPanel.setEffectName(ename);
+                ensureFilter(ename);
+                break;
+            }
             case R.id.straightenButton: {
                 mCurrentImage = showImageView(R.id.imageStraighten);
                 String ename = mCurrentImage.getContext().getString(R.string.straighten);
