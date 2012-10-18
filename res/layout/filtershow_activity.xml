@@ -200,7 +200,7 @@
                     android:layout_weight="0"
                     android:visibility="gone"
                     android:src="@drawable/filtershow_button_geometry_straighten"
-                    android:text="@string/aspectNone_effect" />
+                    android:text="@string/aspect" />
 
                 <ImageButton
                     android:id="@+id/pickCurvesChannel"

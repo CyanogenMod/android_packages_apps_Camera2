@@ -63,19 +63,19 @@
     <string name="apply_effect">Apply</string>
     <!--  Label for the reset effect button [CHAR LIMIT=15] -->
     <string name="reset_effect">Reset</string>
-    <!--  Label for the aspect 1:1 effect button [CHAR LIMIT=15] -->
+    <!--  Label for aspect [CHAR LIMIT=15] -->
     <string name="aspect">Aspect</string>
-    <!--  Label for the aspect 1:1 effect button [CHAR LIMIT=15] -->
+    <!--  Label for the aspect 1:1 effect [CHAR LIMIT=15] -->
     <string name="aspect1to1_effect">1:1</string>
-    <!--  Label for the aspect 4:7 effect button [CHAR LIMIT=15] -->
+    <!--  Label for the aspect 4:7 effect [CHAR LIMIT=15] -->
     <string name="aspect4to6_effect">4:6</string>
-    <!--  Label for the aspect 1:1 effect button [CHAR LIMIT=15] -->
+    <!--  Label for the aspect 1:1 effect [CHAR LIMIT=15] -->
     <string name="aspect5to7_effect">5:7</string>
-    <!--  Label for the aspect 1:1 effect button [CHAR LIMIT=15] -->
+    <!--  Label for the aspect 1:1 effect [CHAR LIMIT=15] -->
     <string name="aspect9to16_effect">16:9</string>
-    <!--  Label for the aspect None effect button [CHAR LIMIT=15] -->
+    <!--  Label for the aspect None effect [CHAR LIMIT=15] -->
     <string name="aspectNone_effect">None</string>
-    <!--  Label for the aspect None effect button [CHAR LIMIT=15] -->
+    <!--  Label for the aspect None effect [CHAR LIMIT=15] -->
     <string name="aspectOriginal_effect">Original</string>
 
     <!--  Filters buttons -->
