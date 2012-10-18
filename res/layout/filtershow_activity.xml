@@ -317,6 +317,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/thumbnail_margin"
                     android:orientation="horizontal" >
+                    <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                        android:id="@+id/tinyplanetButton"
+                        style="@style/FilterShowBottomButton"
+                        android:src="@drawable/filtershow_button_colors_contrast"
+                        android:text="@string/tinyplanet" />
 
                     <com.android.gallery3d.filtershow.ui.ImageButtonTitle
                         android:id="@+id/wbalanceButton"
