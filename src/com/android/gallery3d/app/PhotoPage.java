@@ -59,7 +59,6 @@ import com.android.gallery3d.data.SnailItem;
 import com.android.gallery3d.data.SnailSource;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.picasasource.PicasaSource;
-import com.android.gallery3d.ui.AnimationTime;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.DetailsHelper.DetailsSource;
@@ -73,7 +72,6 @@ import com.android.gallery3d.ui.PhotoFallbackEffect;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
-import com.android.gallery3d.ui.TiledScreenNail;
 import com.android.gallery3d.util.GalleryUtils;
 
 public class PhotoPage extends ActivityState implements
