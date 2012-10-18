@@ -160,7 +160,6 @@ public class MenuExecutor {
         boolean supportRotate = (supported & MediaObject.SUPPORT_ROTATE) != 0;
         boolean supportCrop = (supported & MediaObject.SUPPORT_CROP) != 0;
         boolean supportTrim = (supported & MediaObject.SUPPORT_TRIM) != 0;
-        boolean supportSharePanorama = (supported & MediaObject.SUPPORT_PANORAMA360) != 0;
         boolean supportShare = (supported & MediaObject.SUPPORT_SHARE) != 0;
         boolean supportSetAs = (supported & MediaObject.SUPPORT_SETAS) != 0;
         boolean supportShowOnMap = (supported & MediaObject.SUPPORT_SHOW_ON_MAP) != 0;
@@ -174,13 +173,24 @@ public class MenuExecutor {
         setMenuItemVisible(menu, R.id.action_rotate_cw, supportRotate);
         setMenuItemVisible(menu, R.id.action_crop, supportCrop);
         setMenuItemVisible(menu, R.id.action_trim, supportTrim);
-        setMenuItemVisible(menu, R.id.action_share_panorama, supportSharePanorama);
+        // Hide panorama until call to updateMenuForPanorama corrects it
+        setMenuItemVisible(menu, R.id.action_share_panorama, false);
         setMenuItemVisible(menu, R.id.action_share, supportShare);
         setMenuItemVisible(menu, R.id.action_setas, supportSetAs);
         setMenuItemVisible(menu, R.id.action_show_on_map, supportShowOnMap);
         setMenuItemVisible(menu, R.id.action_edit, supportEdit);
         setMenuItemVisible(menu, R.id.action_details, supportInfo);
         setMenuItemVisible(menu, R.id.action_import, supportImport);
+    }
+
+    public static void updateMenuForPanorama(Menu menu, boolean shareAsPanorama360,
+            boolean disablePanorama360Options) {
+        setMenuItemVisible(menu, R.id.action_share_panorama, shareAsPanorama360);
+        if (disablePanorama360Options) {
+            setMenuItemVisible(menu, R.id.action_rotate_ccw, false);
+            setMenuItemVisible(menu, R.id.action_rotate_cw, false);
+            setMenuItemVisible(menu, R.id.action_crop, false);
+        }
     }
 
     private static void setMenuItemVisible(Menu menu, int itemId, boolean visible) {

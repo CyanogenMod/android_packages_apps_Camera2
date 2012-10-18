@@ -63,6 +63,7 @@ public class GalleryAppImpl extends Application implements GalleryApp {
                 state, PackageManager.DONT_KILL_APP);
 
         mStitchingProgressManager = LightCycleHelper.createStitchingManagerInstance(this);
+        mStitchingProgressManager.addChangeListener(getDataManager());
     }
 
     @Override

@@ -61,6 +61,8 @@ public class LightCycleHelper {
         }
     }
 
+    private static final PanoramaMetadata NOT_PANORAMA = new PanoramaMetadata(false, false);
+
     public static void setupCaptureIntent(Context context, Intent it, String outputDir) {
         /* Do nothing */
     }
@@ -70,7 +72,7 @@ public class LightCycleHelper {
     }
 
     public static PanoramaMetadata getPanoramaMetadata(Context context, Uri uri) {
-        return null;
+        return NOT_PANORAMA;
     }
 
     public static CameraModule createPanoramaModule() {
