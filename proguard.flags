@@ -21,6 +21,12 @@
 
 -keep class com.android.camera.CameraActivity {
   public boolean isRecording();
+  public long getAutoFocusTime();
+  public long getShutterLag();
+  public long getShutterToPictureDisplayedTime();
+  public long getPictureDisplayedToJpegCallbackTime();
+  public long getJpegCallbackFinishTime();
+  public long getCaptureStartTime();
 }
 
 -keep class com.android.camera.VideoModule {
