@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.exif;
 
+import android.util.Log;
+
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
@@ -64,6 +66,7 @@ import java.util.TreeMap;
  * </pre>
  */
 public class ExifParser {
+    private static final String TAG = "ExifParser";
     /**
      * When the parser reaches a new IFD area. Call
      *  {@link #getCurrentIfd()} to know which IFD we are in.
@@ -230,17 +233,28 @@ public class ExifParser {
             }
             return EVENT_NEW_TAG;
         } else if (offset == endOfTags) {
-            long ifdOffset = readUnsignedLong();
             // There is a link to ifd1 at the end of ifd0
             if (mIfdType == IfdId.TYPE_IFD_0) {
+                long ifdOffset = readUnsignedLong();
                 if (isIfdRequested(IfdId.TYPE_IFD_1) || isThumbnailRequested()) {
                     if (ifdOffset != 0) {
                         registerIfd(IfdId.TYPE_IFD_1, ifdOffset);
                     }
                 }
             } else {
-                if (ifdOffset != 0) {
-                    throw new ExifInvalidFormatException("Invalid link to next IFD");
+                int offsetSize = 4;
+                // Some camera models use invalid length of the offset
+                if (mCorrespondingEvent.size() > 0) {
+                    offsetSize = mCorrespondingEvent.firstEntry().getKey() -
+                            mTiffStream.getReadByteCount();
+                }
+                if (offsetSize < 4) {
+                    Log.w(TAG, "Invalid size of link to next IFD: " + offsetSize);
+                } else {
+                    long ifdOffset = readUnsignedLong();
+                    if (ifdOffset != 0) {
+                        Log.w(TAG, "Invalid link to next IFD: " + ifdOffset);
+                    }
                 }
             }
         }
