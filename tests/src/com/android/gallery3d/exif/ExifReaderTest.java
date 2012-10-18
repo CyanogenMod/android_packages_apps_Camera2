@@ -20,6 +20,7 @@ import android.graphics.BitmapFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ExifReaderTest extends ExifXmlDataTestCase {
     private static final String TAG = "ExifReaderTest";
@@ -36,7 +37,7 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
         try {
             ExifReader reader = new ExifReader();
             ExifData exifData = reader.read(getImageInputStream());
-            List<Map<Short, String>> groundTruth = ExifXmlReader.readXml(getXmlParser());
+            List<Map<Short, Set<String>>> groundTruth = ExifXmlReader.readXml(getXmlParser());
             for (int i = 0; i < IfdId.TYPE_IFD_COUNT; i++) {
                 checkIfd(exifData.getIfdData(i), groundTruth.get(i));
             }
@@ -104,7 +105,7 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
         }
     }
 
-    private void checkIfd(IfdData ifd, Map<Short, String> ifdValue) {
+    private void checkIfd(IfdData ifd, Map<Short, Set<String>> ifdValue) {
         if (ifd == null) {
             assertEquals(getImageTitle(), 0 ,ifdValue.size());
             return;
@@ -115,8 +116,10 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
             if (ExifTag.isSubIfdOffsetTag(tag.getTagId())
                     || tag.getTagId() == ExifTag.TAG_MAKER_NOTE) continue;
             if (tag.getTagId() != ExifTag.TAG_USER_COMMENT) {
-                assertEquals(String.format("Tag %x, ", tag.getTagId()) + getImageTitle(),
-                        ifdValue.get(tag.getTagId()).trim(), tag.valueToString().trim());
+                Set<String> truth = ifdValue.get(tag.getTagId());
+                assertNotNull(String.format("Tag %x, ", tag.getTagId()) + getImageTitle(), truth);
+                assertTrue(String.format("Tag %x, ", tag.getTagId()) + getImageTitle(),
+                        truth.contains(tag.valueToString().trim()));
             }
             size++;
         }
