@@ -76,6 +76,23 @@ public class ImagePreset {
         return false;
     }
 
+    public boolean isPanoramaSafe() {
+        if (mImageBorder != null && !mImageBorder.isNil()) {
+            return false;
+        }
+        if (mGeoData.hasModifications()) {
+            return false;
+        }
+        for (ImageFilter filter : mFilters) {
+            if (filter.getFilterType() == ImageFilter.TYPE_VIGNETTE
+                    && !filter.isNil()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     public void setGeometry(GeometryMetadata m) {
         mGeoData.set(m);
     }
