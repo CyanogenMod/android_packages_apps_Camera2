@@ -104,6 +104,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private Future<Integer> mSyncTask = null;
     private boolean mLaunchedFromPhotoPage;
     private boolean mInCameraApp;
+    private boolean mInCameraAndWantQuitOnPause;
 
     private int mLoadingBits = 0;
     private boolean mInitialSynced = false;
@@ -427,6 +428,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             setLoadingBit(BIT_LOADING_SYNC);
             mSyncTask = mMediaSet.requestSync(this);
         }
+        mInCameraAndWantQuitOnPause = mInCameraApp;
     }
 
     @Override
@@ -453,7 +455,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         // The camera app should always launch in capture mode when
         // resumed, so make the next resume faster by closing the grid
         // view now
-        if (mInCameraApp) {
+        if (mInCameraAndWantQuitOnPause) {
             if (mActivity.getStateManager().getTopState() == this)
                 mActivity.getStateManager().finishState(this, false);
         }
@@ -608,6 +610,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                 return true;
             }
             case R.id.action_slideshow: {
+                mInCameraAndWantQuitOnPause = false;
                 Bundle data = new Bundle();
                 data.putString(SlideshowPage.KEY_SET_PATH,
                         mMediaSetPath.toString());
