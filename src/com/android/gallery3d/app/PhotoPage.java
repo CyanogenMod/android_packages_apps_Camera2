@@ -1240,7 +1240,7 @@ public class PhotoPage extends ActivityState implements
                 if (resultCode == Activity.RESULT_OK) {
                     Context context = mActivity.getAndroidContext();
                     String message = context.getString(R.string.crop_saved,
-                            context.getString(R.string.folder_download));
+                            context.getString(R.string.folder_edited_online_photos));
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
                 }
                 break;
