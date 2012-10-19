@@ -38,6 +38,7 @@ import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
+import com.android.gallery3d.util.XmpUtilHelper;
 
 import java.io.Closeable;
 import java.io.File;
@@ -381,5 +382,14 @@ public class ImageLoader {
     private void cachePreset(ImagePreset preset, Cache cache, ImageShow caller) {
         cache.prepare(preset);
         cache.addObserver(caller);
+    }
+
+    public Object getXmpObject() {
+        try {
+            InputStream is = mContext.getContentResolver().openInputStream(getUri());
+            return XmpUtilHelper.extractXMPMeta(is);
+        } catch (FileNotFoundException e) {
+            return null;
+        }
     }
 }

@@ -8,6 +8,8 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.util.Log;
 
+import com.android.gallery3d.filtershow.presets.ImagePreset;
+
 public class ImageFilterTinyPlanet extends ImageFilter {
     private static final String TAG = ImageFilterTinyPlanet.class.getSimpleName();
 
@@ -19,7 +21,17 @@ public class ImageFilterTinyPlanet extends ImageFilter {
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         Log.d(TAG, "Applying tiny planet.");
+        String str = "TinyPlanet";
+        ImagePreset preset = getImagePreset();
+        if (preset != null) {
+            if (!preset.isPanoramaSafe()) {
+                str = "NO TP";
 
+            } else {
+                Object xmp = preset.getImageLoader().getXmpObject();
+                str = "TP got Xmp";
+            }
+        }
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
@@ -30,7 +42,7 @@ public class ImageFilterTinyPlanet extends ImageFilter {
         paint.setColor(Color.RED);
         paint.setTextSize((int) (((mParameter + 100) / 200f) * 100));
         paint.setTextAlign(Align.CENTER);
-        canvas.drawText("TinyPlanet", w / 2, h / 2, paint);
+        canvas.drawText(str, w / 2, h / 2, paint);
         return super.apply(bitmap, scaleFactor, highQuality);
     }
 }
