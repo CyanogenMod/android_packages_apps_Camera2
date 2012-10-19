@@ -5,36 +5,19 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
-import android.view.GestureDetector.OnDoubleTapListener;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 
-public class ImageZoom extends ImageSlave implements OnGestureListener, OnDoubleTapListener {
+public class ImageZoom extends ImageSlave {
     private boolean mTouchDown = false;
     private boolean mZoomedIn = false;
     private Rect mZoomBounds = null;
-    private GestureDetector mGestureDetector = null;
 
     public ImageZoom(Context context) {
         super(context);
-        setupGestureDetector(context);
     }
 
     public ImageZoom(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setupGestureDetector(context);
-    }
-
-    public void setupGestureDetector(Context context) {
-        mGestureDetector = new GestureDetector(context, this);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        boolean ret = mGestureDetector.onTouchEvent(event);
-        ret = super.onTouchEvent(event);
-        return ret;
     }
 
     @Override
@@ -86,41 +69,6 @@ public class ImageZoom extends ImageSlave implements OnGestureListener, OnDouble
         drawToast(canvas);
     }
 
-    // TODO: move back some of that touch handling to a superclass / refactor
-    // SlideController into a more generic gesture detector
-    @Override
-    public boolean onDown(MotionEvent arg0) {
-        return false;
-    }
-
-    @Override
-    public boolean onFling(MotionEvent arg0, MotionEvent arg1, float arg2, float arg3) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent arg0) {
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2, float arg3) {
-        return false;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent arg0) {
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent arg0) {
-        return false;
-    }
-
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent arg0) {
-        return false;
-    }
-
     @Override
     public boolean onDoubleTap(MotionEvent event) {
 
@@ -131,11 +79,6 @@ public class ImageZoom extends ImageSlave implements OnGestureListener, OnDouble
         }
         mZoomedIn = !mZoomedIn;
         invalidate();
-        return false;
-    }
-
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent arg0) {
         return false;
     }
 }
