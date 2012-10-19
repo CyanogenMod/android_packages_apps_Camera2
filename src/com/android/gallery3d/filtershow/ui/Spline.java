@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import java.util.Collections;
 import java.util.Vector;
@@ -20,6 +21,7 @@ public class Spline {
     public static final int RED = 1;
     public static final int GREEN = 2;
     public static final int BLUE = 3;
+    private static final String LOGTAG = "Spline";
 
     private final Paint gPaint = new Paint();
 
@@ -348,6 +350,14 @@ public class Spline {
             spline.addPoint(point.copy());
         }
         return spline;
+    }
+
+    public void show() {
+        Log.v(LOGTAG, "show curve " + this);
+        for (int i = 0; i < mPoints.size(); i++) {
+            ControlPoint point = mPoints.elementAt(i);
+            Log.v(LOGTAG, "point " + i + " is (" + point.x + ", " + point.y + ")");
+        }
     }
 
 }

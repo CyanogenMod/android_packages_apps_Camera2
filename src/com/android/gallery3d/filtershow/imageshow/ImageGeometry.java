@@ -31,7 +31,6 @@ import android.view.View;
 
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata.FLIP;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
-import com.android.gallery3d.filtershow.imageshow.GeometryMath;
 
 public abstract class ImageGeometry extends ImageSlave {
     private boolean mVisibilityGained = false;
@@ -368,12 +367,23 @@ public abstract class ImageGeometry extends ImageSlave {
         return false;
     }
 
+    public String getName() {
+        return "Geometry";
+    }
+
     protected void saveAndSetPreset() {
-        ImagePreset copy = new ImagePreset(getImagePreset());
-        copy.setGeometry(mLocalGeometry);
-        copy.setHistoryName("Geometry");
-        copy.setIsFx(false);
-        setImagePreset(copy);
+        ImagePreset lastHistoryItem = getHistory().getLast();
+        if (lastHistoryItem != null && lastHistoryItem.historyName().equalsIgnoreCase(getName())) {
+            getImagePreset().setGeometry(mLocalGeometry);
+            mImageLoader.resetImageForPreset(getImagePreset(), this);
+        } else {
+            ImagePreset copy = new ImagePreset(getImagePreset());
+            copy.setGeometry(mLocalGeometry);
+            copy.setHistoryName(getName());
+            copy.setIsFx(false);
+            setImagePreset(copy, true);
+        }
+        invalidate();
     }
 
     public static RectF getUntranslatedStraightenCropBounds(RectF imageRect, float straightenAngle) {
