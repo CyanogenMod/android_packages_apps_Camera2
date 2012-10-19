@@ -267,6 +267,17 @@
         <uses-library android:name="com.google.android.media.effects"
                 android:required="false" />
 
+        <activity android:name="com.android.gallery3d.app.SlideshowDream"
+                android:label="@string/slideshow_dream_name"
+                android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+                android:hardwareAccelerated="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DREAM" />
+            </intent-filter>
+        </activity>
+
         <activity android:name="com.android.gallery3d.settings.GallerySettings"
                 android:theme="@style/Theme.Gallery"
                 android:configChanges="orientation|keyboardHidden|screenSize" />
