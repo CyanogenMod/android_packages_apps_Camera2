@@ -966,6 +966,10 @@ public class PhotoPage extends ActivityState implements
             onUpPressed();
         } else {
             if (mOriginalSetPathString == null) return;
+            if (mProgressBar != null) {
+                updateCurrentPhoto(null);
+                mProgressBar.hideProgress();
+            }
             Bundle data = new Bundle(getData());
             data.putString(AlbumPage.KEY_MEDIA_PATH, mOriginalSetPathString);
             data.putString(AlbumPage.KEY_PARENT_MEDIA_PATH,
