@@ -345,7 +345,7 @@ public class PhotoPage extends ActivityState implements
                                 mMediaSet.getMediaItemCount() > 1) {
                             mPhotoView.switchToImage(1);
                         } else {
-                            mPhotoView.setFilmMode(mPhotoView.canUndo());
+                            mPhotoView.setFilmMode(false);
                             stayedOnCamera = true;
                         }
 
