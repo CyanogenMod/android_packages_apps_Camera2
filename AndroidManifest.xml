@@ -243,8 +243,8 @@
         <activity
             android:name="com.android.gallery3d.filtershow.FilterShowActivity"
             android:label="@string/title_activity_filter_show"
-             android:theme="@style/Theme.Gallery"
-             android:screenOrientation="portrait">
+            android:theme="@style/Theme.Gallery"
+            android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />
                 <category android:name="android.intent.category.DEFAULT" />

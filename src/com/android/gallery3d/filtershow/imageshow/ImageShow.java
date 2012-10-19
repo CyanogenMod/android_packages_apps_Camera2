@@ -359,7 +359,7 @@ public class ImageShow extends View implements SliderListener, OnSeekBarChangeLi
             float h = w / ratio;
             float ty = (getHeight() - h) / 2.0f;
             float tx = 0;
-            if (ratio < 1.0f) { // portrait image
+            if (ratio < 1.0f || (getHeight() < w)) {
                 h = getHeight();
                 w = h * ratio;
                 tx = (getWidth() - w) / 2.0f;
