@@ -21,6 +21,7 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
+LOCAL_CPP_EXTENSION := .cc
 LOCAL_LDFLAGS	:= -llog -ljnigraphics
 LOCAL_SDK_VERSION := 9
 LOCAL_MODULE    := libjni_filtershow_filters
@@ -38,7 +39,8 @@ LOCAL_SRC_FILES := filters/bw.c \
                    filters/redEyeMath.c \
                    filters/fx.c \
                    filters/wbalance.c \
-                   filters/redeye.c
+                   filters/redeye.c \
+                   filters/tinyplanet.cc
 
 LOCAL_CFLAGS    += -ffast-math -O3 -funroll-loops
 LOCAL_ARM_MODE := arm
