@@ -19,7 +19,6 @@ package com.android.gallery3d.exif;
 import android.util.Log;
 
 import java.io.DataInputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
@@ -626,29 +625,35 @@ public class ExifParser {
             ExifInvalidFormatException {
         DataInputStream dataStream = new DataInputStream(inputStream);
 
-        // SOI and APP1
         if (dataStream.readShort() != JpegHeader.SOI) {
             throw new ExifInvalidFormatException("Invalid JPEG format");
         }
 
         short marker = dataStream.readShort();
-        while(marker != JpegHeader.APP1 && marker != JpegHeader.EOI
+        while(marker != JpegHeader.EOI
                 && !JpegHeader.isSofMarker(marker)) {
             int length = dataStream.readUnsignedShort();
-            if ((length - 2) != dataStream.skip(length - 2)) {
-                throw new EOFException();
+            // Some invalid formatted image contains multiple APP1,
+            // try to find the one with Exif data.
+            if (marker == JpegHeader.APP1) {
+                int header = 0;
+                short headerTail = 0;
+                if (length >= 8) {
+                    header = dataStream.readInt();
+                    headerTail = dataStream.readShort();
+                    length -= 6;
+                    if (header == EXIF_HEADER && headerTail == EXIF_HEADER_TAIL) {
+                        return true;
+                    }
+                }
+            }
+            if (length < 2 || (length - 2) != dataStream.skip(length - 2)) {
+                Log.w(TAG, "Invalid JPEG format.");
+                return false;
             }
             marker = dataStream.readShort();
         }
-
-        if (marker != JpegHeader.APP1) return false; // No APP1 segment
-
-        // APP1 length, it's not used for us
-        dataStream.readShort();
-
-        // Exif header
-        return (dataStream.readInt() == EXIF_HEADER
-                && dataStream.readShort() == EXIF_HEADER_TAIL);
+        return false;
     }
 
     /**
