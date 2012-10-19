@@ -149,6 +149,9 @@ public class ExifParserTest extends ExifXmlDataTestCase {
     }
 
     public void testOnlyReadSomeTag() throws Exception {
+        // Do not do this test if there is no model tag.
+        if (mGroundTruth.get(IfdId.TYPE_IFD_0).get(ExifTag.TAG_MODEL) == null) return;
+
         try {
             ExifParser parser = ExifParser.parse(getImageInputStream(), ExifParser.OPTION_IFD_0);
             int event = parser.next();
