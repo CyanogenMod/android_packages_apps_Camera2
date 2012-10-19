@@ -33,7 +33,7 @@ import java.util.Map;
 public class PhotoPageBottomControls implements OnClickListener {
     public interface Delegate {
         public boolean canDisplayBottomControls();
-        public boolean canDisplayBottomControl(int control, boolean isPanorama);
+        public boolean canDisplayBottomControl(int control);
         public void onBottomControlClicked(int control);
         public void refreshBottomControlsWhenReady();
     }
@@ -93,7 +93,7 @@ public class PhotoPageBottomControls implements OnClickListener {
         mContainer.setVisibility(View.VISIBLE);
     }
 
-    public void refresh(boolean isPanorama) {
+    public void refresh() {
         boolean visible = mDelegate.canDisplayBottomControls();
         boolean containerVisibilityChanged = (visible != mContainerVisible);
         if (containerVisibilityChanged) {
@@ -109,7 +109,7 @@ public class PhotoPageBottomControls implements OnClickListener {
         }
         for (View control : mControlsVisible.keySet()) {
             Boolean prevVisibility = mControlsVisible.get(control);
-            boolean curVisibility = mDelegate.canDisplayBottomControl(control.getId(), isPanorama);
+            boolean curVisibility = mDelegate.canDisplayBottomControl(control.getId());
             if (prevVisibility.booleanValue() != curVisibility) {
                 if (!containerVisibilityChanged) {
                     control.clearAnimation();

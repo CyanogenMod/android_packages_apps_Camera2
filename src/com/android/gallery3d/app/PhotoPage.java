@@ -164,6 +164,10 @@ public class PhotoPage extends ActivityState implements
     private boolean mInCameraRoll;
     private boolean mRecenterCameraOnResume = true;
 
+    // These are only valid after the panorama callback
+    private boolean mIsPanorama;
+    private boolean mIsPanorama360;
+
     private long mCameraSwitchCutoff = 0;
     private boolean mSkipUpdateCurrentPhoto = false;
     private static final long CAMERA_SWITCH_CUTOFF_THRESHOLD_MS = 300;
@@ -200,7 +204,8 @@ public class PhotoPage extends ActivityState implements
         public void panoramaInfoAvailable(MediaObject mediaObject, boolean isPanorama,
                 boolean isPanorama360) {
             if (mediaObject == mCurrentPhoto) {
-                mHandler.obtainMessage(MSG_REFRESH_BOTTOM_CONTROLS, isPanorama ? 1 : 0, 0, mediaObject).sendToTarget();
+                mHandler.obtainMessage(MSG_REFRESH_BOTTOM_CONTROLS, isPanorama ? 1 : 0, isPanorama360 ? 1 : 0,
+                        mediaObject).sendToTarget();
             }
         }
     };
@@ -299,7 +304,9 @@ public class PhotoPage extends ActivityState implements
                     }
                     case MSG_REFRESH_BOTTOM_CONTROLS: {
                         if (mCurrentPhoto == message.obj && mBottomControls != null) {
-                            mBottomControls.refresh(message.arg1 != 0);
+                            mIsPanorama = message.arg1 == 1;
+                            mIsPanorama360 = message.arg2 == 1;
+                            mBottomControls.refresh();
                         }
                         break;
                     }
@@ -584,7 +591,7 @@ public class PhotoPage extends ActivityState implements
     }
 
     @Override
-    public boolean canDisplayBottomControl(int control, boolean isPanorama) {
+    public boolean canDisplayBottomControl(int control) {
         if (mCurrentPhoto == null) {
             return false;
         }
@@ -594,7 +601,10 @@ public class PhotoPage extends ActivityState implements
                         && (mCurrentPhoto.getSupportedOperations() & MediaItem.SUPPORT_EDIT) != 0
                         && mCurrentPhoto.getMediaType() == MediaObject.MEDIA_TYPE_IMAGE;
             case R.id.photopage_bottom_control_panorama:
-                return isPanorama;
+                return mIsPanorama;
+            case R.id.photopage_bottom_control_tiny_planet:
+                return mHaveImageEditor && mShowBars
+                        && mIsPanorama360;
             default:
                 return false;
         }
@@ -610,6 +620,9 @@ public class PhotoPage extends ActivityState implements
                 mRecenterCameraOnResume = false;
                 mActivity.getPanoramaViewHelper()
                         .showPanorama(mCurrentPhoto.getContentUri());
+                return;
+            case R.id.photopage_bottom_control_tiny_planet:
+                launchTinyPlanet();
                 return;
             default:
                 return;
@@ -649,6 +662,17 @@ public class PhotoPage extends ActivityState implements
                 .setType(GalleryUtils.MIME_TYPE_PANORAMA360)
                 .putExtra(Intent.EXTRA_STREAM, contentUri)
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+    }
+
+    private void launchTinyPlanet() {
+        // Deep link into tiny planet
+        MediaItem current = mModel.getMediaItem(0);
+        Intent intent = new Intent(FilterShowActivity.TINY_PLANET_ACTION);
+        intent.setClass(mActivity, FilterShowActivity.class);
+        intent.setDataAndType(current.getContentUri(), current.getMimeType())
+            .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        mRecenterCameraOnResume = false;
+        mActivity.startActivityForResult(intent, REQUEST_EDIT);
     }
 
     private void launchPhotoEditor() {
