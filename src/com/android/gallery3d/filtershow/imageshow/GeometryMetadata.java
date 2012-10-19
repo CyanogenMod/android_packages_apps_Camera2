@@ -239,4 +239,21 @@ public class GeometryMetadata {
         float h = mPhotoBounds.height();
         return buildGeometryMatrix(w, h, scaling, dx, dy, false);
     }
+
+    public Matrix buildTotalXform(float pwidth, float pheight, float cwidth, float cheight,
+            float cleft, float ctop, float rotation, float straighten, float scale, RectF dst) {
+        Matrix m = getFlipMatrix(pwidth, pheight);
+        m.postRotate(rotation + straighten, pwidth / 2, pheight / 2);
+        Matrix m1 = new Matrix();
+        m1.setRotate(rotation, pwidth / 2, pheight / 2);
+        // find new top left for crop.
+        RectF crop = new RectF(cleft, ctop, cleft + cwidth, ctop + cheight);
+        if (!m1.mapRect(crop))
+            return null;
+        if (dst != null)
+            dst.set(crop);
+        m.postTranslate(-crop.left, -crop.top);
+        m.postScale(scale, scale);
+        return m;
+    }
 }
