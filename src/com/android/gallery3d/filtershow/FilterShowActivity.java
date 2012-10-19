@@ -131,6 +131,9 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         // TODO: get those values from XML.
         ImageShow.setTextSize((int) getPixelsFromDip(12));
         ImageShow.setTextPadding((int) getPixelsFromDip(10));
+        ImageShow.setOriginalTextMargin((int) getPixelsFromDip(4));
+        ImageShow.setOriginalTextSize((int) getPixelsFromDip(18));
+        ImageShow.setOriginalText(getResources().getString(R.string.original_picture_text));
         ImageButtonTitle.setTextSize((int) getPixelsFromDip(12));
         ImageButtonTitle.setTextPadding((int) getPixelsFromDip(10));
         ImageSmallFilter.setMargin((int) getPixelsFromDip(3));
