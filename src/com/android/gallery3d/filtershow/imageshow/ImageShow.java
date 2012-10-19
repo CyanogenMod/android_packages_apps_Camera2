@@ -84,8 +84,16 @@ public class ImageShow extends View implements OnGestureListener,
 
     private boolean mTouchShowOriginal = false;
     private long mTouchShowOriginalDate = 0;
-    private final long mTouchShowOriginalDelay = 1000; // 1s
+    private final long mTouchShowOriginalDelayMin = 200; // 200ms
+    private final long mTouchShowOriginalDelayMax = 300; // 300ms
     private int mTouchDownX = 0;
+    private int mTouchDownY = 0;
+    protected float mTouchX = 0;
+    protected float mTouchY = 0;
+
+    private static int mOriginalTextMargin = 8;
+    private static int mOriginalTextSize = 26;
+    private static String mOriginalText = "Original";
 
     protected GeometryMetadata getGeometry() {
         return new GeometryMetadata(getImagePreset().mGeoData);
@@ -100,9 +108,6 @@ public class ImageShow extends View implements OnGestureListener,
     private String mToast = null;
     private boolean mShowToast = false;
     private boolean mImportantToast = false;
-
-    protected float mTouchX = 0;
-    protected float mTouchY = 0;
 
     private SeekBar mSeekBar = null;
     private PanelController mController = null;
@@ -119,6 +124,18 @@ public class ImageShow extends View implements OnGestureListener,
 
     public static void setTextPadding(int value) {
         mTextPadding = value;
+    }
+
+    public static void setOriginalTextMargin(int value) {
+        mOriginalTextMargin = value;
+    }
+
+    public static void setOriginalTextSize(int value) {
+        mOriginalTextSize = value;
+    }
+
+    public static void setOriginalText(String text) {
+        mOriginalText = text;
     }
 
     private final Handler mHandler = new Handler();
@@ -404,18 +421,39 @@ public class ImageShow extends View implements OnGestureListener,
             return;
         canvas.save();
         if (image != null) {
-            int px = mTouchDownX - mImageBounds.left;
+            boolean goingDown = false;
+            if ((mTouchY - mTouchDownY) > (mTouchX - mTouchDownX)) {
+                goingDown = true;
+            }
+            int px = (int) (mTouchX - mImageBounds.left);
             int py = mImageBounds.height();
+            if (goingDown) {
+                px = mImageBounds.width();
+                py = (int) (mTouchY - mImageBounds.top);
+            }
             Rect d = new Rect(mImageBounds.left, mImageBounds.top,
                     mImageBounds.left + px, mImageBounds.top + py);
             canvas.clipRect(d);
+            drawImage(canvas, image);
             Paint paint = new Paint();
             paint.setColor(Color.BLACK);
-            canvas.drawLine(px, mImageBounds.top, px, mImageBounds.bottom, paint);
+            if (goingDown) {
+                canvas.drawLine(mImageBounds.left, mTouchY - 1,
+                        mImageBounds.right, mTouchY - 1, paint);
+            } else {
+                canvas.drawLine(mTouchX - 1, mImageBounds.top,
+                        mTouchX - 1, mImageBounds.bottom, paint);
+            }
+            Rect bounds = new Rect();
+            paint.setTextSize(mOriginalTextSize);
+            paint.getTextBounds(mOriginalText, 0, mOriginalText.length(), bounds);
+            paint.setColor(Color.BLACK);
+            canvas.drawText(mOriginalText, mImageBounds.left + mOriginalTextMargin + 1,
+                    mImageBounds.top + bounds.height() + mOriginalTextMargin + 1, paint);
             paint.setColor(Color.WHITE);
-            canvas.drawText("Original", mImageBounds.left, mImageBounds.top + 100, paint);
+            canvas.drawText(mOriginalText, mImageBounds.left + mOriginalTextMargin,
+                    mImageBounds.top + bounds.height() + mOriginalTextMargin, paint);
         }
-        drawImage(canvas, image);
         canvas.restore();
     }
 
@@ -537,20 +575,27 @@ public class ImageShow extends View implements OnGestureListener,
             mGestureDetector.onTouchEvent(event);
         }
         int ex = (int) event.getX();
+        int ey = (int) event.getY();
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             mTouchDownX = ex;
-            if (!mActivity.isShowingHistoryPanel() && mImageBounds != null
-                    && mImageBounds.left < ex && mImageBounds.right > ex) {
-                mTouchShowOriginal = true;
-                mTouchShowOriginalDate = System.currentTimeMillis();
-            }
+            mTouchDownY = ey;
+            mTouchShowOriginalDate = System.currentTimeMillis();
         }
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            mTouchDownX = ex;
+            mTouchX = ex;
+            mTouchY = ey;
+            if (!mActivity.isShowingHistoryPanel()
+                    && (System.currentTimeMillis() - mTouchShowOriginalDate
+                          > mTouchShowOriginalDelayMin)) {
+                mTouchShowOriginal = true;
+            }
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
             mTouchShowOriginal = false;
             mTouchDownX = 0;
+            mTouchDownY = 0;
+            mTouchX = 0;
+            mTouchY = 0;
         }
         invalidate();
         return true;
@@ -656,8 +701,9 @@ public class ImageShow extends View implements OnGestureListener,
         if ((!mActivity.isShowingHistoryPanel() && startEvent.getX() > endEvent.getX())
                 || (mActivity.isShowingHistoryPanel() && endEvent.getX() > startEvent.getX())) {
             if (!mTouchShowOriginal
-                    || (mTouchShowOriginal
-                    && System.currentTimeMillis() - mTouchShowOriginalDate < mTouchShowOriginalDelay)) {
+                    || (mTouchShowOriginal &&
+                          (System.currentTimeMillis() - mTouchShowOriginalDate
+                                  < mTouchShowOriginalDelayMax))) {
                 mActivity.toggleHistoryPanel();
             }
         }
