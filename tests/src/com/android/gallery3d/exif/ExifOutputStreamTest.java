@@ -63,12 +63,12 @@ public class ExifOutputStreamTest extends ExifXmlDataTestCase {
                 // Re-decode the temp file and check the data.
                 reDecodeInputStream = new FileInputStream(file);
                 Bitmap decodedBmp = BitmapFactory.decodeStream(reDecodeInputStream);
-                assertNotNull(decodedBmp);
+                assertNotNull(getImageTitle(), decodedBmp);
 
                 // Re-parse the temp file the check EXIF tag
                 reParseInputStream = new FileInputStream(file);
                 ExifData reExifData = new ExifReader().read(reParseInputStream);
-                assertEquals(exifData, reExifData);
+                assertEquals(getImageTitle(), exifData, reExifData);
             } finally {
                 Util.closeSilently(imageInputStream);
                 Util.closeSilently(exifInputStream);
