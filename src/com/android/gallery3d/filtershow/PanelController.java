@@ -3,9 +3,11 @@ package com.android.gallery3d.filtershow;
 
 import android.content.Context;
 import android.text.Html;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewPropertyAnimator;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.android.gallery3d.R;
@@ -25,6 +27,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilterWBalance;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.ui.FramedTextButton;
 import com.android.gallery3d.filtershow.ui.ImageButtonTitle;
 import com.android.gallery3d.filtershow.ui.ImageCurves;
 
@@ -142,6 +145,43 @@ public class PanelController implements OnClickListener {
             return mSelected;
         }
 
+        public void setAspectButton(FramedTextButton button, int itemId) {
+            ImageCrop imageCrop = (ImageCrop) mCurrentImage;
+            switch (itemId) {
+                case R.id.crop_menu_1to1: {
+                    button.setText(mContext.getString(R.string.aspect1to1_effect));
+                    imageCrop.apply(1, 1);
+                    break;
+                }
+                case R.id.crop_menu_4to6: {
+                    button.setText(mContext.getString(R.string.aspect4to6_effect));
+                    imageCrop.apply(6, 4);
+                    break;
+                }
+                case R.id.crop_menu_5to7: {
+                    button.setText(mContext.getString(R.string.aspect5to7_effect));
+                    imageCrop.apply(7, 5);
+                    break;
+                }
+                case R.id.crop_menu_9to16: {
+                    button.setText(mContext.getString(R.string.aspect9to16_effect));
+                    imageCrop.apply(16, 9);
+                    break;
+                }
+                case R.id.crop_menu_none: {
+                    button.setText(mContext.getString(R.string.aspectNone_effect));
+                    imageCrop.applyClear();
+                    break;
+                }
+                case R.id.crop_menu_original: {
+                    button.setText(mContext.getString(R.string.aspectOriginal_effect));
+                    imageCrop.applyOriginal();
+                    break;
+                }
+            }
+            imageCrop.invalidate();
+        }
+
         public void nextAspectButton() {
             if (mAspectButton instanceof ImageButtonTitle
                     && mCurrentImage instanceof ImageCrop) {
@@ -201,7 +241,7 @@ public class PanelController implements OnClickListener {
             }
         }
 
-        void setCurrentAspectButton(int n){
+        void setCurrentAspectButton(int n) {
             mCurrentAspectButton = n;
         }
 
@@ -331,9 +371,11 @@ public class PanelController implements OnClickListener {
     }
 
     public void resetParameters() {
-        mCurrentImage.resetParameter();
         showPanel(mCurrentPanel);
-        mCurrentImage.select();
+        if (mCurrentImage != null) {
+            mCurrentImage.resetParameter();
+            mCurrentImage.select();
+        }
     }
 
     public boolean onBackPressed() {
@@ -343,6 +385,8 @@ public class PanelController implements OnClickListener {
         HistoryAdapter adapter = mMasterImage.getHistory();
         int position = adapter.undo();
         mMasterImage.onItemClick(position);
+        showPanel(mCurrentPanel);
+        mCurrentImage.select();
         return false;
     }
 
@@ -462,6 +506,7 @@ public class PanelController implements OnClickListener {
             mMasterImage.setImagePreset(copy);
             filter = copy.getFilter(name);
         }
+
         if (filter == null && name.equalsIgnoreCase(
                 mCurrentImage.getContext().getString(R.string.curvesRGB))) {
             filter = setImagePreset(new ImageFilterCurves(), name);
@@ -514,6 +559,33 @@ public class PanelController implements OnClickListener {
         mMasterImage.setCurrentFilter(filter);
     }
 
+    private void showCurvesPopupMenu(final ImageCurves curves, final FramedTextButton anchor) {
+        PopupMenu popupMenu = new PopupMenu(mCurrentImage.getContext(), anchor);
+        popupMenu.getMenuInflater().inflate(R.menu.filtershow_menu_curves, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                curves.setChannel(item.getItemId());
+                anchor.setTextFrom(item.getItemId());
+                return true;
+            }
+        });
+        popupMenu.show();
+    }
+
+    private void showCropPopupMenu(final FramedTextButton anchor) {
+        PopupMenu popupMenu = new PopupMenu(mCurrentImage.getContext(), anchor);
+        popupMenu.getMenuInflater().inflate(R.menu.filtershow_menu_crop, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                mUtilityPanel.setAspectButton(anchor, item.getItemId());
+                return true;
+            }
+        });
+        popupMenu.show();
+    }
+
     public void showComponent(View view) {
         if (mUtilityPanel != null && !mUtilityPanel.selected()) {
             Panel current = mPanels.get(mCurrentPanel);
@@ -527,7 +599,12 @@ public class PanelController implements OnClickListener {
 
         if (view.getId() == R.id.pickCurvesChannel) {
             ImageCurves curves = (ImageCurves) showImageView(R.id.imageCurves);
-            curves.nextChannel();
+            showCurvesPopupMenu(curves, (FramedTextButton) view);
+            return;
+        }
+
+        if (view.getId() == R.id.aspect) {
+            showCropPopupMenu((FramedTextButton) view);
             return;
         }
 
@@ -586,8 +663,8 @@ public class PanelController implements OnClickListener {
                 mUtilityPanel.setEffectName(ename);
                 mUtilityPanel.setShowParameter(false);
                 mUtilityPanel.showCurvesButtons();
-                ensureFilter("Curves");
                 mCurrentImage = curves;
+                ensureFilter(ename);
                 break;
             }
             case R.id.sharpenButton: {
