@@ -23,6 +23,8 @@
 
     <!--  String shown when we cannot load the image when starting the activity [CHAR LIMIT=NONE] -->
     <string name="cannot_load_image">Cannot load the image!</string>
+    <!--  String displayed when showing the original image [CHAR LIMIT=NONE] -->
+    <string name="original_picture_text">Original</string>
 
     <!--  actionbar menu -->
 
