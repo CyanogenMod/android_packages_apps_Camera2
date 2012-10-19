@@ -38,6 +38,11 @@ public class ImageRotate extends ImageGeometry {
         super(context);
     }
 
+    @Override
+    public String getName() {
+        return "Rotation";
+    }
+
     private static final Paint gPaint = new Paint();
 
     private void computeValue() {

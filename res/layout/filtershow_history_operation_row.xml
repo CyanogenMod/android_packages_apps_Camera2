@@ -23,7 +23,7 @@
 
     <ImageView
         android:id="@+id/selectedMark"
-        android:src="@drawable/filtershow_button_current"
+        android:src="@drawable/camera_crop"
         android:background="@android:color/transparent"
         android:layout_width="32dip"
         android:layout_height="match_parent"
