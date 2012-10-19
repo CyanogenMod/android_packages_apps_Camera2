@@ -20,12 +20,14 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
+
 import com.android.gallery3d.R;
 
 public class ImageCrop extends ImageGeometry {
@@ -63,9 +65,9 @@ public class ImageCrop extends ImageGeometry {
     public ImageCrop(Context context) {
         super(context);
         Resources resources = context.getResources();
-        cropIndicator = resources.getDrawable(R.drawable.camera_crop_holo);
+        cropIndicator = resources.getDrawable(R.drawable.camera_crop);
         indicatorSize = (int) resources.getDimension(R.dimen.crop_indicator_size);
-        int borderColor = resources.getColor(R.color.opaque_cyan);
+        int borderColor = Color.argb(128, 255,  255,  255);
         borderPaint = new Paint();
         borderPaint.setStyle(Paint.Style.STROKE);
         borderPaint.setColor(borderColor);
@@ -75,9 +77,9 @@ public class ImageCrop extends ImageGeometry {
     public ImageCrop(Context context, AttributeSet attrs) {
         super(context, attrs);
         Resources resources = context.getResources();
-        cropIndicator = resources.getDrawable(R.drawable.camera_crop_holo);
+        cropIndicator = resources.getDrawable(R.drawable.camera_crop);
         indicatorSize = (int) resources.getDimension(R.dimen.crop_indicator_size);
-        int borderColor = resources.getColor(R.color.opaque_cyan);
+        int borderColor = Color.argb(128, 255,  255,  255);
         borderPaint = new Paint();
         borderPaint.setStyle(Paint.Style.STROKE);
         borderPaint.setColor(borderColor);
