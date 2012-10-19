@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2012 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.android.gallery3d.filtershow.cache;
 
@@ -22,7 +37,6 @@ import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
-import com.android.gallery3d.filtershow.tools.ProcessedBitmap;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 
 import java.io.Closeable;
@@ -39,8 +53,6 @@ public class ImageLoader {
     private Bitmap mOriginalBitmapSmall = null;
     private Bitmap mOriginalBitmapLarge = null;
     private Bitmap mBackgroundBitmap = null;
-    private Bitmap mFullOriginalBitmap = null;
-    private Bitmap mSaveCopy = null;
 
     private Cache mCache = null;
     private Cache mHiresCache = null;
@@ -74,7 +86,7 @@ public class ImageLoader {
 
     public void loadBitmap(Uri uri,int size) {
         mUri = uri;
-        mOrientation = getOrientation(uri);
+        mOrientation = getOrientation(mContext, uri);
         mOriginalBitmapSmall = loadScaledBitmap(uri, 160);
         if (mOriginalBitmapSmall == null) {
             // Couldn't read the bitmap, let's exit
@@ -92,14 +104,14 @@ public class ImageLoader {
         return mOriginalBounds;
     }
 
-    private int getOrientation(Uri uri) {
+    public static int getOrientation(Context context, Uri uri) {
         if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
             return getOrientationFromPath(uri.getPath());
         }
 
         Cursor cursor = null;
         try {
-            cursor = mContext.getContentResolver().query(uri,
+            cursor = context.getContentResolver().query(uri,
                     new String[] {
                         MediaStore.Images.ImageColumns.ORIENTATION
                     },
@@ -125,7 +137,7 @@ public class ImageLoader {
         }
     }
 
-    private int getOrientationFromPath(String path) {
+    static int getOrientationFromPath(String path) {
         int orientation = -1;
         try {
             ExifInterface EXIF = new ExifInterface(path);
@@ -139,15 +151,15 @@ public class ImageLoader {
 
     private void updateBitmaps() {
         if (mOrientation > 1) {
-            mOriginalBitmapSmall = rotateToPortrait(mOriginalBitmapSmall,mOrientation);
-            mOriginalBitmapLarge = rotateToPortrait(mOriginalBitmapLarge,mOrientation);
+            mOriginalBitmapSmall = rotateToPortrait(mOriginalBitmapSmall, mOrientation);
+            mOriginalBitmapLarge = rotateToPortrait(mOriginalBitmapLarge, mOrientation);
         }
         mCache.setOriginalBitmap(mOriginalBitmapSmall);
         mHiresCache.setOriginalBitmap(mOriginalBitmapLarge);
         warnListeners();
     }
 
-    private Bitmap rotateToPortrait(Bitmap bitmap,int ori) {
+    public static Bitmap rotateToPortrait(Bitmap bitmap,int ori) {
            Matrix matrix = new Matrix();
            int w = bitmap.getWidth();
            int h = bitmap.getHeight();
@@ -344,42 +356,18 @@ public class ImageLoader {
         mZoomCache.reset(imagePreset);
     }
 
-    public Uri saveImage(ImagePreset preset, final FilterShowActivity filterShowActivity,
+    public void saveImage(ImagePreset preset, final FilterShowActivity filterShowActivity,
             File destination) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inMutable = true;
+        preset.setIsHighQuality(true);
+        preset.setScaleFactor(1.0f);
+        new SaveCopyTask(mContext, mUri, destination, new SaveCopyTask.Callback() {
 
-        if (mFullOriginalBitmap != null) {
-            mFullOriginalBitmap.recycle();
-        }
+            @Override
+            public void onComplete(Uri result) {
+                filterShowActivity.completeSaveImage(result);
+            }
 
-        InputStream is = null;
-        Uri saveUri = null;
-        try {
-            is = mContext.getContentResolver().openInputStream(mUri);
-            mFullOriginalBitmap = BitmapFactory.decodeStream(is, null, options);
-            // TODO: on <3.x we need a copy of the bitmap (inMutable doesn't
-            // exist)
-            mFullOriginalBitmap = rotateToPortrait(mFullOriginalBitmap,mOrientation);
-            mSaveCopy = mFullOriginalBitmap;
-            preset.setIsHighQuality(true);
-            preset.setScaleFactor(1.0f);
-            ProcessedBitmap processedBitmap = new ProcessedBitmap(mSaveCopy, preset);
-            new SaveCopyTask(mContext, mUri, destination, new SaveCopyTask.Callback() {
-
-                @Override
-                public void onComplete(Uri result) {
-                    filterShowActivity.completeSaveImage(result);
-                }
-
-            }).execute(processedBitmap);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            closeStream(is);
-        }
-
-        return saveUri;
+        }).execute(preset);
     }
 
     public void setAdapter(HistoryAdapter adapter) {
