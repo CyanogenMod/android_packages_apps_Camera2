@@ -49,13 +49,13 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
     private void checkThumbnail(ExifData exifData) {
         IfdData ifd1 = exifData.getIfdData(IfdId.TYPE_IFD_1);
         if (ifd1 != null) {
-            if (ifd1.getTag(ExifTag.TAG_COMPRESSION).getUnsignedShort(0) ==
-                    ExifTag.Compression.JPEG) {
+            int type = ifd1.getTag(ExifTag.TAG_COMPRESSION).getUnsignedShort(0);
+            if (type == ExifTag.Compression.JPEG) {
                 assertTrue(getImageTitle(), exifData.hasCompressedThumbnail());
                 byte[] thumbnail = exifData.getCompressedThumbnail();
                 assertTrue(getImageTitle(),
                         BitmapFactory.decodeByteArray(thumbnail, 0, thumbnail.length) != null);
-            } else {
+            } else if (type == ExifTag.Compression.UNCOMPRESSION) {
                 // Try to check the strip count with the formula provided by EXIF spec.
                 int planarType = ExifTag.PlanarConfiguration.CHUNKY;
                 ExifTag planarTag = ifd1.getTag(ExifTag.TAG_PLANAR_CONFIGURATION);
