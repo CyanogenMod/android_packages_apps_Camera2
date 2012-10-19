@@ -1304,7 +1304,8 @@ public class PhotoView extends GLView {
         mFilmMode = enabled;
         mPositionController.setFilmMode(mFilmMode);
         mModel.setNeedFullImage(!enabled);
-        mModel.setFocusHintDirection(Model.FOCUS_HINT_NEXT);
+        mModel.setFocusHintDirection(
+                mFilmMode ? Model.FOCUS_HINT_PREVIOUS : Model.FOCUS_HINT_NEXT);
         updateActionBar();
         mListener.onFilmModeChanged(enabled);
     }
@@ -1381,7 +1382,7 @@ public class PhotoView extends GLView {
         boolean touched = (mUndoBarState & UNDO_BAR_TOUCHED) != 0;
         boolean fullCamera = (mUndoBarState & UNDO_BAR_FULL_CAMERA) != 0;
         boolean deleteLast = (mUndoBarState & UNDO_BAR_DELETE_LAST) != 0;
-        if ((timeout && (touched || deleteLast)) || fullCamera) {
+        if ((timeout && deleteLast) || fullCamera || touched) {
             hideUndoBar();
         }
     }
