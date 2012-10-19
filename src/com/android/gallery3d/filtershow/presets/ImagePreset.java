@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.android.gallery3d.filtershow.ImageStateAdapter;
+import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
@@ -19,6 +20,7 @@ public class ImagePreset {
     private ImageFilter mImageBorder = null;
     private float mScaleFactor = 1.0f;
     private boolean mIsHighQuality = false;
+    private ImageLoader mImageLoader = null;
 
     protected Vector<ImageFilter> mFilters = new Vector<ImageFilter>();
     protected String mName = "Original";
@@ -48,7 +50,9 @@ public class ImagePreset {
                 mImageBorder = source.mImageBorder.clone();
             }
             for (int i = 0; i < source.mFilters.size(); i++) {
-                add(source.mFilters.elementAt(i).clone());
+                ImageFilter filter = source.mFilters.elementAt(i).clone();
+                filter.setImagePreset(this);
+                add(filter);
             }
         } catch (java.lang.CloneNotSupportedException e) {
             Log.v(LOGTAG, "Exception trying to clone: " + e);
@@ -56,6 +60,7 @@ public class ImagePreset {
         mName = source.name();
         mHistoryName = source.name();
         mIsFxPreset = source.isFx();
+        mImageLoader = source.getImageLoader();
 
         mGeoData.set(source.mGeoData);
     }
@@ -116,6 +121,14 @@ public class ImagePreset {
 
     public void setHistoryName(String name) {
         mHistoryName = name;
+    }
+
+    public ImageLoader getImageLoader() {
+        return mImageLoader;
+    }
+
+    public void setImageLoader(ImageLoader mImageLoader) {
+        this.mImageLoader = mImageLoader;
     }
 
     public boolean same(ImagePreset preset) {
@@ -186,7 +199,7 @@ public class ImagePreset {
             mFilters.add(filter);
             setHistoryName(filter.getName());
         }
-
+        filter.setImagePreset(this);
     }
 
     public void remove(String filterName) {

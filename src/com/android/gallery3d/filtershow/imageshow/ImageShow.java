@@ -506,6 +506,7 @@ public class ImageShow extends View implements OnGestureListener,
     public void setImagePreset(ImagePreset preset, boolean addToHistory) {
         mImagePreset = preset;
         if (getImagePreset() != null) {
+            getImagePreset().setImageLoader(mImageLoader);
             if (addToHistory) {
                 mHistoryAdapter.addHistoryItem(getImagePreset());
             }
@@ -520,6 +521,9 @@ public class ImageShow extends View implements OnGestureListener,
         mImageLoader = loader;
         if (mImageLoader != null) {
             mImageLoader.addListener(this);
+            if (mImagePreset != null) {
+                mImagePreset.setImageLoader(mImageLoader);
+            }
         }
     }
 

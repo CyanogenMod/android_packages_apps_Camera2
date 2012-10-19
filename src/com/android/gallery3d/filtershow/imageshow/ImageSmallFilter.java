@@ -53,6 +53,7 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
         mImageFilter = filter;
         mImagePreset = new ImagePreset();
         mImagePreset.setName(filter.getName());
+        filter.setImagePreset(mImagePreset);
         mImagePreset.add(mImageFilter);
     }
 
