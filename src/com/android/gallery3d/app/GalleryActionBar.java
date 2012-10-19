@@ -392,6 +392,8 @@ public class GalleryActionBar implements OnNavigationListener {
     private Menu mActionBarMenu;
     private ShareActionProvider mSharePanoramaActionProvider;
     private ShareActionProvider mShareActionProvider;
+    private Intent mSharePanoramaIntent;
+    private Intent mShareIntent;
 
     public void createActionBarMenu(int menuRes, Menu menu) {
         mActivity.getMenuInflater().inflate(menuRes, menu);
@@ -403,6 +405,7 @@ public class GalleryActionBar implements OnNavigationListener {
                 item.getActionProvider();
             mSharePanoramaActionProvider
                 .setShareHistoryFileName("panorama_share_history.xml");
+            mSharePanoramaActionProvider.setShareIntent(mSharePanoramaIntent);
         }
 
         item = menu.findItem(R.id.action_share);
@@ -411,6 +414,7 @@ public class GalleryActionBar implements OnNavigationListener {
                 item.getActionProvider();
             mShareActionProvider
                 .setShareHistoryFileName("share_history.xml");
+            mShareActionProvider.setShareIntent(mShareIntent);
         }
     }
 
@@ -419,9 +423,11 @@ public class GalleryActionBar implements OnNavigationListener {
     }
 
     public void setShareIntents(Intent sharePanoramaIntent, Intent shareIntent) {
+        mSharePanoramaIntent = sharePanoramaIntent;
         if (mSharePanoramaActionProvider != null) {
             mSharePanoramaActionProvider.setShareIntent(sharePanoramaIntent);
         }
+        mShareIntent = shareIntent;
         if (mShareActionProvider != null) {
             mShareActionProvider.setShareIntent(shareIntent);
         }
