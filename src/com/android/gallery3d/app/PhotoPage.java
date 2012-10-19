@@ -1309,6 +1309,14 @@ public class PhotoPage extends ActivityState implements
     @Override
     public void onFilmModeChanged(boolean enabled) {
         refreshBottomControlsWhenReady();
+        if (mShowSpinner) {
+            if (enabled) {
+                mActionBar.enableAlbumModeMenu(
+                        GalleryActionBar.ALBUM_FILMSTRIP_MODE_SELECTED, this);
+            } else {
+                mActionBar.disableAlbumModeMenu(true);
+            }
+        }
         if (enabled) {
             mHandler.removeMessages(MSG_HIDE_BARS);
         } else {
@@ -1369,7 +1377,7 @@ public class PhotoPage extends ActivityState implements
                 ((mSecureAlbum == null) && (mSetPathString != null)), false);
         mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);
         refreshBottomControlsWhenReady();
-        if (mShowSpinner) {
+        if (mShowSpinner && mPhotoView.getFilmMode()) {
             mActionBar.enableAlbumModeMenu(
                     GalleryActionBar.ALBUM_FILMSTRIP_MODE_SELECTED, this);
         }
