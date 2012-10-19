@@ -18,6 +18,7 @@ package com.android.gallery3d.exif;
 
 import android.util.SparseArray;
 
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -833,6 +834,7 @@ public class ExifTag {
                 (IfdId.TYPE_IFD_GPS << 24) | TYPE_UNSIGNED_SHORT << 16 | 11);
     }
 
+    private static Charset US_ASCII = Charset.forName("US-ASCII");
     private final short mTagId;
     private final short mDataType;
     private final int mIfd;
@@ -967,6 +969,15 @@ public class ExifTag {
      */
     public int getComponentCount() {
         return mComponentCount;
+    }
+
+    /**
+     * Sets the component count of this tag.
+     * Call this function before setValue() if the length of value does not
+     * match the component count.
+     */
+    public void setComponentCount(int count) {
+        mComponentCount = count;
     }
 
     /**
@@ -1171,18 +1182,37 @@ public class ExifTag {
     }
 
     /**
-     * Sets string values into this tag.
+     * Sets a string value into this tag. The value is treated as an ASCII string where we only
+     * preserve the lower byte of each character. The length of the string should be equal
+     * to either (component count -1) or (component count). A "0" byte will be appeneded while
+     * written to the EXIF file. If the length equals (component count), the final byte will be
+     * replaced by a "0" byte.
+     *
      * @exception IllegalArgumentException If the data type is not {@link #TYPE_ASCII}
-     * or value.length() + 1 does NOT fit the definition of the component count in the
-     * EXIF standard.
+     * or the length of the string is not equal to (component count -1) and (component count)
      */
     public void setValue(String value) {
-        checkComponentCountOrThrow(value.length() + 1);
         if (mDataType != TYPE_ASCII) {
             throwTypeNotMatchedException("String");
         }
-        mComponentCount = value.length() + 1;
-        mValue = value;
+
+        byte[] buf = new byte[value.length()];
+        for (int i = 0, n = value.length(); i < n; i++) {
+            buf[i] = (byte) value.charAt(i);
+        }
+
+        int count = buf.length;
+        if (mComponentCountDefined) {
+            if (mComponentCount != count && mComponentCount != count + 1) {
+                throw new IllegalArgumentException("Tag " + mTagId + ": Required "
+                        + mComponentCount + " or " + (mComponentCount + 1)
+                        + " components but was given " + count
+                        + " component(s)");
+            }
+        } else {
+            mComponentCount = buf[count - 1] == 0 ? count : count + 1;
+        }
+        mValue = buf;
     }
 
     /**
@@ -1311,7 +1341,14 @@ public class ExifTag {
             throw new IllegalArgumentException("Cannot get ASCII value from "
                     + convertTypeToString(mDataType));
         }
-        return (String) mValue;
+        return new String((byte[]) mValue, US_ASCII);
+    }
+
+    /*
+     * Get the converted ascii byte. Used by ExifOutputStream.
+     */
+    byte[] getStringByte() {
+        return (byte[]) mValue;
     }
 
     /**
@@ -1356,18 +1393,28 @@ public class ExifTag {
 
     private String undefinedTypeValueToString() {
         StringBuilder sbuilder = new StringBuilder();
+        byte buf[] = (byte[]) mValue;
         switch (mTagId) {
             case TAG_COMPONENTS_CONFIGURATION:
-            case TAG_FILE_SOURCE:
-            case TAG_SCENE_TYPE:
-                byte buf[] = (byte[]) mValue;
                 for(int i = 0, n = getComponentCount(); i < n; i++) {
                     if(i != 0) sbuilder.append(" ");
                     sbuilder.append(buf[i]);
                 }
                 break;
             default:
-                sbuilder.append(new String((byte[]) mValue));
+                if (buf.length == 1) {
+                    sbuilder.append(buf[0]);
+                } else {
+                    for (int i = 0, n = buf.length; i < n; i++) {
+                        byte code = buf[i];
+                        if (code == 0) continue;
+                        if (code > 31 && code < 127) {
+                            sbuilder.append((char) code);
+                        } else {
+                            sbuilder.append('.');
+                        }
+                    }
+                }
         }
         return sbuilder.toString();
     }
@@ -1389,10 +1436,10 @@ public class ExifTag {
                 }
                 break;
             case ExifTag.TYPE_ASCII:
-                String s = getString();
-                for (int i = 0, n = s.length(); i < n; i++) {
-                    int code = s.codePointAt(i);
-                    if (code == 0) continue;
+                buf = (byte[]) mValue;
+                for (int i = 0, n = buf.length; i < n; i++) {
+                    byte code = buf[i];
+                    if (code == 0) break;
                     if (code > 31 && code < 127) {
                         sbuilder.append((char) code);
                     } else {
