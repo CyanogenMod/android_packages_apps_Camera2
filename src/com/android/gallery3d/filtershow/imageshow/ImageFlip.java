@@ -28,7 +28,7 @@ import com.android.gallery3d.filtershow.imageshow.GeometryMetadata.FLIP;
 public class ImageFlip extends ImageGeometry {
 
     private static final Paint gPaint = new Paint();
-    private static final float MIN_FLICK_DIST_FOR_FLIP = 0.2f;
+    private static final float MIN_FLICK_DIST_FOR_FLIP = 0.1f;
     private static final String LOGTAG = "ImageFlip";
     private FLIP mNextFlip = FLIP.NONE;
 
