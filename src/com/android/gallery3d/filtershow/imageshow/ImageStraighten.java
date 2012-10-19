@@ -41,6 +41,11 @@ public class ImageStraighten extends ImageGeometry {
     }
 
     @Override
+    public String getName() {
+        return "Straighten";
+    }
+
+    @Override
     protected void setActionDown(float x, float y) {
         super.setActionDown(x, y);
         mBaseAngle = mAngle = getLocalStraighten();
