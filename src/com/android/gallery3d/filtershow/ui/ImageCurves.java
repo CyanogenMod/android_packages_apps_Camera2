@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
 import com.android.gallery3d.filtershow.imageshow.ImageSlave;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -23,7 +24,7 @@ public class ImageCurves extends ImageSlave {
     Paint gPaint = new Paint();
     Path gPathSpline = new Path();
 
-    private int mCurrentCurveIndex = 0;
+    private int mCurrentCurveIndex = Spline.RGB;
     private boolean mDidAddPoint = false;
     private boolean mDidDelete = false;
     private ControlPoint mCurrentControlPoint = null;
@@ -32,6 +33,8 @@ public class ImageCurves extends ImageSlave {
     int[] greenHistogram = new int[256];
     int[] blueHistogram = new int[256];
     Path gHistoPath = new Path();
+
+    boolean mDoingTouchMove = false;
 
     public ImageCurves(Context context) {
         super(context);
@@ -107,14 +110,15 @@ public class ImageCurves extends ImageSlave {
                 if (i != mCurrentCurveIndex && !spline.isOriginal()) {
                     // And we only display a curve if it has more than two
                     // points
-                    spline.draw(canvas, Spline.colorForCurve(i), getWidth(), getHeight(), false);
+                    spline.draw(canvas, Spline.colorForCurve(i), getWidth(),
+                            getHeight(), false, mDoingTouchMove);
                 }
             }
         }
         // ...but we always display the current curve.
         getSpline(mCurrentCurveIndex)
                 .draw(canvas, Spline.colorForCurve(mCurrentCurveIndex), getWidth(), getHeight(),
-                        true);
+                        true, mDoingTouchMove);
         drawToast(canvas);
 
     }
@@ -168,8 +172,10 @@ public class ImageCurves extends ImageSlave {
             if (mDidDelete) {
                 mDidDelete = false;
             }
+            mDoingTouchMove = false;
             return true;
         }
+        mDoingTouchMove = true;
 
         if (mDidDelete) {
             return true;
@@ -190,7 +196,8 @@ public class ImageCurves extends ImageSlave {
         if (spline.isPointContained(posX, pick)) {
             mCurrentControlPoint.x = posX;
             mCurrentControlPoint.y = posY;
-        } else if (pick != -1) {
+            spline.didMovePoint(mCurrentControlPoint);
+        } else if (pick != -1 && spline.getNbPoints() > 2) {
             spline.deletePoint(pick);
             mDidDelete = true;
         }
@@ -284,5 +291,27 @@ public class ImageCurves extends ImageSlave {
         paint2.setStyle(Paint.Style.STROKE);
         paint2.setARGB(255, 200, 200, 200);
         canvas.drawPath(gHistoPath, paint2);
+    }
+
+    public void setChannel(int itemId) {
+        switch (itemId) {
+            case R.id.curve_menu_rgb: {
+                mCurrentCurveIndex = Spline.RGB;
+                break;
+            }
+            case R.id.curve_menu_red: {
+                mCurrentCurveIndex = Spline.RED;
+                break;
+            }
+            case R.id.curve_menu_green: {
+                mCurrentCurveIndex = Spline.GREEN;
+                break;
+            }
+            case R.id.curve_menu_blue: {
+                mCurrentCurveIndex = Spline.BLUE;
+                break;
+            }
+        }
+        invalidate();
     }
 }

@@ -48,9 +48,9 @@ import com.android.gallery3d.filtershow.ui.SliderListener;
 import java.io.File;
 
 public class ImageShow extends View implements OnGestureListener,
-                                               OnDoubleTapListener,
-                                               SliderListener,
-                                               OnSeekBarChangeListener {
+        OnDoubleTapListener,
+        SliderListener,
+        OnSeekBarChangeListener {
 
     private static final String LOGTAG = "ImageShow";
 
@@ -79,6 +79,13 @@ public class ImageShow extends View implements OnGestureListener,
 
     private HistoryAdapter mHistoryAdapter = null;
     private ImageStateAdapter mImageStateAdapter = null;
+
+    private Rect mImageBounds = null;
+
+    private boolean mTouchShowOriginal = false;
+    private long mTouchShowOriginalDate = 0;
+    private final long mTouchShowOriginalDelay = 1000; // 1s
+    private int mTouchDownX = 0;
 
     protected GeometryMetadata getGeometry() {
         return new GeometryMetadata(getImagePreset().mGeoData);
@@ -121,26 +128,27 @@ public class ImageShow extends View implements OnGestureListener,
             int parameter = getCurrentFilter().getParameter();
             int maxp = getCurrentFilter().getMaxParameter();
             int minp = getCurrentFilter().getMinParameter();
-            updateSeekBar(parameter,minp,maxp);
+            updateSeekBar(parameter, minp, maxp);
         }
         if (mSeekBar != null) {
             mSeekBar.setOnSeekBarChangeListener(this);
         }
     }
 
-    private int parameterToUI(int parameter,int minp,int maxp,int uimax){
-        return (uimax*(parameter-minp))/(maxp-minp);
+    private int parameterToUI(int parameter, int minp, int maxp, int uimax) {
+        return (uimax * (parameter - minp)) / (maxp - minp);
     }
 
-    private int uiToParameter(int ui,int minp,int maxp,int uimax){
-        return  ((maxp-minp)*ui)/uimax+minp;
+    private int uiToParameter(int ui, int minp, int maxp, int uimax) {
+        return ((maxp - minp) * ui) / uimax + minp;
     }
-    public void updateSeekBar(int parameter,int minp,int maxp) {
+
+    public void updateSeekBar(int parameter, int minp, int maxp) {
         if (mSeekBar == null) {
             return;
         }
-        int seekMax  = mSeekBar.getMax();
-        int progress = parameterToUI(parameter,minp,maxp,seekMax);
+        int seekMax = mSeekBar.getMax();
+        int progress = parameterToUI(parameter, minp, maxp, seekMax);
         mSeekBar.setProgress(progress);
         if (getPanelController() != null) {
             getPanelController().onNewValue(parameter);
@@ -160,7 +168,7 @@ public class ImageShow extends View implements OnGestureListener,
 
     public void resetParameter() {
         ImageFilter currentFilter = getCurrentFilter();
-        if (currentFilter!=null) {
+        if (currentFilter != null) {
             onNewValue(currentFilter.getDefaultParameter());
         }
         if (USE_SLIDER_GESTURE) {
@@ -192,7 +200,7 @@ public class ImageShow extends View implements OnGestureListener,
         if (getPanelController() != null) {
             getPanelController().onNewValue(parameter);
         }
-        updateSeekBar(parameter,minp,maxp);
+        updateSeekBar(parameter, minp, maxp);
         invalidate();
     }
 
@@ -327,6 +335,7 @@ public class ImageShow extends View implements OnGestureListener,
         drawBackground(canvas);
         getFilteredImage();
         drawImage(canvas, mFilteredImage);
+        drawPartialImage(canvas, mForegroundImage);
 
         if (showTitle() && getImagePreset() != null) {
             mPaint.setARGB(200, 0, 0, 0);
@@ -385,9 +394,29 @@ public class ImageShow extends View implements OnGestureListener,
             }
             Rect d = new Rect((int) tx, (int) ty, (int) (w + tx),
                     (int) (h + ty));
-
+            mImageBounds = d;
             canvas.drawBitmap(image, s, d, mPaint);
         }
+    }
+
+    public void drawPartialImage(Canvas canvas, Bitmap image) {
+        if (!mTouchShowOriginal)
+            return;
+        canvas.save();
+        if (image != null) {
+            int px = mTouchDownX - mImageBounds.left;
+            int py = mImageBounds.height();
+            Rect d = new Rect(mImageBounds.left, mImageBounds.top,
+                    mImageBounds.left + px, mImageBounds.top + py);
+            canvas.clipRect(d);
+            Paint paint = new Paint();
+            paint.setColor(Color.BLACK);
+            canvas.drawLine(px, mImageBounds.top, px, mImageBounds.bottom, paint);
+            paint.setColor(Color.WHITE);
+            canvas.drawText("Original", mImageBounds.left, mImageBounds.top + 100, paint);
+        }
+        drawImage(canvas, image);
+        canvas.restore();
     }
 
     public void drawBackground(Canvas canvas) {
@@ -504,7 +533,25 @@ public class ImageShow extends View implements OnGestureListener,
         if (USE_SLIDER_GESTURE) {
             mSliderController.onTouchEvent(event);
         }
-        mGestureDetector.onTouchEvent(event);
+        if (mGestureDetector != null) {
+            mGestureDetector.onTouchEvent(event);
+        }
+        int ex = (int) event.getX();
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            mTouchDownX = ex;
+            if (!mActivity.isShowingHistoryPanel() && mImageBounds != null
+                    && mImageBounds.left < ex && mImageBounds.right > ex) {
+                mTouchShowOriginal = true;
+                mTouchShowOriginalDate = System.currentTimeMillis();
+            }
+        }
+        if (event.getAction() == MotionEvent.ACTION_MOVE) {
+            mTouchDownX = ex;
+        }
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            mTouchShowOriginal = false;
+            mTouchDownX = 0;
+        }
         invalidate();
         return true;
     }
@@ -559,10 +606,10 @@ public class ImageShow extends View implements OnGestureListener,
     @Override
     public void onProgressChanged(SeekBar arg0, int progress, boolean arg2) {
         int parameter = progress;
-        if (getCurrentFilter()!=null){
+        if (getCurrentFilter() != null) {
             int maxp = getCurrentFilter().getMaxParameter();
             int minp = getCurrentFilter().getMinParameter();
-            parameter = uiToParameter(progress,minp,maxp,arg0.getMax());
+            parameter = uiToParameter(progress, minp, maxp, arg0.getMax());
         }
 
         onNewValue(parameter);
@@ -607,8 +654,12 @@ public class ImageShow extends View implements OnGestureListener,
     @Override
     public boolean onFling(MotionEvent startEvent, MotionEvent endEvent, float arg2, float arg3) {
         if ((!mActivity.isShowingHistoryPanel() && startEvent.getX() > endEvent.getX())
-                || (mActivity.isShowingHistoryPanel() && endEvent.getX() > startEvent.getX())){
-            mActivity.toggleHistoryPanel();
+                || (mActivity.isShowingHistoryPanel() && endEvent.getX() > startEvent.getX())) {
+            if (!mTouchShowOriginal
+                    || (mTouchShowOriginal
+                    && System.currentTimeMillis() - mTouchShowOriginalDate < mTouchShowOriginalDelay)) {
+                mActivity.toggleHistoryPanel();
+            }
         }
         return true;
     }

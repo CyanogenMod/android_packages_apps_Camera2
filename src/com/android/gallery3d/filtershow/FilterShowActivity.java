@@ -6,7 +6,6 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -137,7 +136,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageSmallFilter.setMargin((int) getPixelsFromDip(3));
         ImageSmallFilter.setTextMargin((int) getPixelsFromDip(4));
         mImageBorderSize = (int) getPixelsFromDip(20);
-        Drawable curveHandle = getResources().getDrawable(R.drawable.camera_crop_holo);
+        Drawable curveHandle = getResources().getDrawable(R.drawable.camera_crop);
         int curveHandleSize = (int) getResources().getDimension(R.dimen.crop_indicator_size);
         Spline.setCurveHandle(curveHandle, curveHandleSize);
         Spline.setCurveWidth((int) getPixelsFromDip(3));
