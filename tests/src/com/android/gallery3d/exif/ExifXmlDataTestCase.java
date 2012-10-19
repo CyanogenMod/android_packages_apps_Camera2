@@ -63,15 +63,19 @@ public class ExifXmlDataTestCase extends InstrumentationTestCase {
 
     @Override
     public void setUp() throws Exception {
-        if (mImagePath != null) {
-            mImageInputStream = new FileInputStream(mImagePath);
-            mXmlInputStream = new FileInputStream(mXmlPath);
-            mXmlParser = Xml.newPullParser();
-            mXmlParser.setInput(new InputStreamReader(mXmlInputStream));
-        } else {
-            Resources res = getInstrumentation().getContext().getResources();
-            mImageInputStream = res.openRawResource(mImageResourceId);
-            mXmlParser = res.getXml(mXmlResourceId);
+        try {
+            if (mImagePath != null) {
+                mImageInputStream = new FileInputStream(mImagePath);
+                mXmlInputStream = new FileInputStream(mXmlPath);
+                mXmlParser = Xml.newPullParser();
+                mXmlParser.setInput(new InputStreamReader(mXmlInputStream));
+            } else {
+                Resources res = getInstrumentation().getContext().getResources();
+                mImageInputStream = res.openRawResource(mImageResourceId);
+                mXmlParser = res.getXml(mXmlResourceId);
+            }
+        } catch (Exception e) {
+            throw new Exception(getImageTitle(), e);
         }
     }
 
