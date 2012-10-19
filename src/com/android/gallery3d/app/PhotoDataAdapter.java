@@ -1070,8 +1070,12 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                 // case the index needs to be limited to [0, mSize).
                 if (index == MediaSet.INDEX_NOT_FOUND) {
                     index = info.indexHint;
-                    if (mFocusHintDirection == FOCUS_HINT_PREVIOUS
-                        && index > 0) {
+                    int focusHintDirection = mFocusHintDirection;
+                    if (index == (mCameraIndex + 1)) {
+                        focusHintDirection = FOCUS_HINT_NEXT;
+                    }
+                    if (focusHintDirection == FOCUS_HINT_PREVIOUS
+                            && index > 0) {
                         index--;
                     }
                 }
