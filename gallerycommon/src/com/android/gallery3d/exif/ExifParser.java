@@ -229,6 +229,9 @@ public class ExifParser {
         int endOfTags = mIfdStartOffset + OFFSET_SIZE + TAG_SIZE * mNumOfTagInIfd;
         if (offset < endOfTags) {
             mTag = readTag();
+            if (mTag == null) {
+                return next();
+            }
             if (mNeedToParseOffsetsInCurrentIfd) {
                 checkOffsetOrImageTag(mTag);
             }
@@ -305,8 +308,9 @@ public class ExifParser {
         if (mNeedToParseOffsetsInCurrentIfd) {
             while (offset < endOfTags) {
                 mTag = readTag();
-                checkOffsetOrImageTag(mTag);
                 offset += TAG_SIZE;
+                if (mTag == null) continue;
+                checkOffsetOrImageTag(mTag);
             }
         } else {
             skipTo(endOfTags);
@@ -469,6 +473,12 @@ public class ExifParser {
         if (numOfComp > Integer.MAX_VALUE) {
             throw new ExifInvalidFormatException(
                     "Number of component is larger then Integer.MAX_VALUE");
+        }
+        // Some invalid image file contains invalid data type. Ignore those tags
+        if (!ExifTag.isValidType(dataFormat)) {
+            Log.w(TAG, String.format("Tag %04x: Invalid data type %d", tagId, dataFormat));
+            mTiffStream.skip(4);
+            return null;
         }
         ExifTag tag = new ExifTag(tagId, dataFormat, (int) numOfComp, mIfdType);
         int dataSize = tag.getDataSize();

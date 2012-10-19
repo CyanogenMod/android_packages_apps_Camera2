@@ -913,6 +913,13 @@ public class ExifTag {
                 IfdId.TYPE_IFD_INTEROPERABILITY);
     }
 
+    static boolean isValidType(short type) {
+        return type == TYPE_UNSIGNED_BYTE || type == TYPE_ASCII ||
+               type == TYPE_UNSIGNED_SHORT || type == TYPE_UNSIGNED_LONG ||
+               type == TYPE_UNSIGNED_RATIONAL || type == TYPE_UNDEFINED ||
+               type == TYPE_LONG || type == TYPE_RATIONAL;
+    }
+
     ExifTag(short tagId, short type, int componentCount, int ifd) {
         mTagId = tagId;
         mDataType = type;
