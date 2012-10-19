@@ -1304,8 +1304,7 @@ public class PhotoView extends GLView {
         mFilmMode = enabled;
         mPositionController.setFilmMode(mFilmMode);
         mModel.setNeedFullImage(!enabled);
-        mModel.setFocusHintDirection(
-                mFilmMode ? Model.FOCUS_HINT_PREVIOUS : Model.FOCUS_HINT_NEXT);
+        mModel.setFocusHintDirection(Model.FOCUS_HINT_NEXT);
         updateActionBar();
         mListener.onFilmModeChanged(enabled);
     }
