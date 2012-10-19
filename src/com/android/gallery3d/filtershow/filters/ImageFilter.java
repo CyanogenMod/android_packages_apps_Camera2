@@ -3,12 +3,16 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
 
+import com.android.gallery3d.filtershow.presets.ImagePreset;
+
 public class ImageFilter implements Cloneable {
 
     protected int mMaxParameter = 100;
     protected int mMinParameter = -100;
     protected int mDefaultParameter = 0;
     protected int mParameter = 0;
+    private ImagePreset mImagePreset;
+
     protected String mName = "Original";
     private final String LOGTAG = "ImageFilter";
     public static final byte TYPE_BORDER =1;
@@ -35,6 +39,7 @@ public class ImageFilter implements Cloneable {
         filter.setFilterType(filterType);
         filter.mMaxParameter = mMaxParameter;
         filter.mMinParameter = mMinParameter;
+        filter.mImagePreset = mImagePreset;
         filter.mDefaultParameter = mDefaultParameter;
         return filter;
     }
@@ -89,6 +94,14 @@ public class ImageFilter implements Cloneable {
      */
     public int getDefaultParameter(){
         return mDefaultParameter;
+    }
+
+    public ImagePreset getImagePreset() {
+        return mImagePreset;
+    }
+
+    public void setImagePreset(ImagePreset mPreset) {
+        this.mImagePreset = mPreset;
     }
 
     public boolean same(ImageFilter filter) {

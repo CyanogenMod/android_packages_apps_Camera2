@@ -263,7 +263,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             int pos = listColors.indexOfChild(v);
             listColors.removeView(v);
 
-            filters[i].setParameter(100);
+            filters[i].setParameter(filters[i].getMaxParameter());
             if(v instanceof ImageButtonTitle)
                 filters[i].setName(((ImageButtonTitle) v).getText());
             fView.setImageFilter(filters[i]);
@@ -546,6 +546,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         };
 
         ImagePreset preset = new ImagePreset(); // empty
+        preset.setImageLoader(mImageLoader);
         ImageSmallFilter filter = new ImageSmallFilter(this);
 
         filter.setSelected(true);
