@@ -24,6 +24,7 @@ public class Spline {
     private static final String LOGTAG = "Spline";
 
     private final Paint gPaint = new Paint();
+    private ControlPoint mCurrentControlPoint = null;
 
     public Spline() {
         mPoints = new Vector<ControlPoint>();
@@ -61,6 +62,10 @@ public class Spline {
                 return Color.BLUE;
         }
         return Color.WHITE;
+    }
+
+    public void didMovePoint(ControlPoint point) {
+        mCurrentControlPoint = point;
     }
 
     public boolean isOriginal() {
@@ -169,10 +174,10 @@ public class Spline {
     }
 
     public void draw(Canvas canvas, int color, int canvasWidth, int canvasHeight,
-            boolean showHandles) {
-        float w = canvasWidth;
+            boolean showHandles, boolean moving) {
+        float w = canvasWidth - mCurveHandleSize;
         float h = canvasHeight - mCurveHandleSize;
-        float dx = 0;
+        float dx = mCurveHandleSize / 2;
         float dy = mCurveHandleSize / 2;
 
         // The cubic spline equation is (from numerical recipes in C):
@@ -249,6 +254,20 @@ public class Spline {
         paint.setStrokeWidth(curveWidth + 2);
         paint.setColor(Color.BLACK);
         canvas.drawPath(path, paint);
+
+        if (moving && mCurrentControlPoint != null) {
+            float px = mCurrentControlPoint.x * w;
+            float py = mCurrentControlPoint.y * h;
+            paint.setStrokeWidth(3);
+            paint.setColor(Color.BLACK);
+            canvas.drawLine(px, py, px, h, paint);
+            canvas.drawLine(0, py, px, py, paint);
+            paint.setStrokeWidth(1);
+            paint.setColor(color);
+            canvas.drawLine(px, py, px, h, paint);
+            canvas.drawLine(0, py, px, py, paint);
+        }
+
         paint.setStrokeWidth(curveWidth);
         paint.setColor(color);
         canvas.drawPath(path, paint);
