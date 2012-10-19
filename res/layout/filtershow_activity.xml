@@ -193,34 +193,41 @@
                 android:orientation="horizontal"
                 android:visibility="gone" >
 
-                <com.android.gallery3d.filtershow.ui.ImageButtonTitle
-                    android:id="@+id/aspect"
-                    style="@style/FilterShowBottomButton"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:visibility="gone"
-                    android:src="@drawable/filtershow_button_geometry_straighten"
-                    android:text="@string/aspect" />
+                <FrameLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent" >
+                    <com.android.gallery3d.filtershow.ui.FramedTextButton
+                        android:id="@+id/aspect"
+                        android:layout_width="64dip"
+                        android:layout_height="64dip"
+                        android:layout_gravity="center_vertical|left"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:visibility="gone"
+                        android:text="@string/aspectOriginal_effect" />
 
-                <ImageButton
-                    android:id="@+id/pickCurvesChannel"
-                    android:layout_width="64dip"
-                    android:layout_height="64dip"
-                    android:layout_gravity="center_vertical|left"
-                    android:scaleType="centerInside"
-                    android:text="@string/curvesRGB"
-                    android:src="@drawable/filtershow_button_show_original" />
+                    <com.android.gallery3d.filtershow.ui.FramedTextButton
+                        android:id="@+id/pickCurvesChannel"
+                        android:layout_width="64dip"
+                        android:layout_height="64dip"
+                        android:layout_gravity="center_vertical|left"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:visibility="gone"
+                        android:text="@string/curves_channel_rgb" />
 
-                <Button
-                    android:id="@+id/applyEffect"
-                    android:layout_width="wrap_content"
-                    android:layout_height="94dip"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:gravity="center"
-                    android:text="@string/apply_effect"
-                    android:textSize="18dip" />
+                    <Button
+                        android:id="@+id/applyEffect"
+                        android:layout_width="wrap_content"
+                        android:layout_height="94dip"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        android:gravity="center"
+                        android:text="@string/apply_effect"
+                        android:textSize="18dip" />
+                </FrameLayout>
+
             </LinearLayout>
 
             <HorizontalScrollView
