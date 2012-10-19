@@ -189,7 +189,6 @@ public class MenuExecutor {
         if (disablePanorama360Options) {
             setMenuItemVisible(menu, R.id.action_rotate_ccw, false);
             setMenuItemVisible(menu, R.id.action_rotate_cw, false);
-            setMenuItemVisible(menu, R.id.action_crop, false);
         }
     }
 
