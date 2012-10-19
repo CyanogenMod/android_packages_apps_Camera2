@@ -8,11 +8,11 @@ import com.android.gallery3d.filtershow.ui.Spline;
 public class ImageFilterCurves extends ImageFilter {
 
     private static final String LOGTAG = "ImageFilterCurves";
-
     private final Spline[] mSplines = new Spline[4];
 
     public ImageFilterCurves() {
         mName = "Curves";
+        reset();
     }
 
     @Override
@@ -20,7 +20,7 @@ public class ImageFilterCurves extends ImageFilter {
         ImageFilterCurves filter = (ImageFilterCurves) super.clone();
         for (int i = 0; i < 4; i++) {
             if (mSplines[i] != null) {
-                filter.setSpline(new Spline(mSplines[i]), i);
+                filter.setSpline(mSplines[i], i);
             }
         }
         return filter;
@@ -93,10 +93,21 @@ public class ImageFilterCurves extends ImageFilter {
     }
 
     public void setSpline(Spline spline, int splineIndex) {
-        mSplines[splineIndex] = spline;
+        mSplines[splineIndex] = new Spline(spline);
     }
 
     public Spline getSpline(int splineIndex) {
         return mSplines[splineIndex];
+    }
+
+    public void reset() {
+        Spline spline = new Spline();
+
+        spline.addPoint(0.0f, 1.0f);
+        spline.addPoint(1.0f, 0.0f);
+
+        for (int i = 0; i < 4; i++) {
+            mSplines[i] = new Spline(spline);
+        }
     }
 }

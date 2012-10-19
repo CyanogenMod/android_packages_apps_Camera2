@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 
+import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.PanelController;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -41,6 +42,11 @@ public class ImageSlave extends ImageShow {
 
     public void setMaster(ImageShow master) {
         mMasterImageShow = master;
+    }
+
+    @Override
+    public HistoryAdapter getHistory() {
+        return mMasterImageShow.getHistory();
     }
 
     @Override

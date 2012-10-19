@@ -84,6 +84,11 @@ public class ImageCrop extends ImageGeometry {
         borderPaint.setStrokeWidth(2f);
     }
 
+    @Override
+    public String getName() {
+        return "Crop";
+    }
+
     private boolean switchCropBounds(int moving_corner, RectF dst) {
         RectF crop = getCropBoundsDisplayed();
         float dx1 = 0;

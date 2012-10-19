@@ -308,17 +308,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             listColors.addView(fView, pos);
         }
 
-        mPanelController.addComponent(mColorsButton, findViewById(R.id.tinyplanetButton));
-        mPanelController.addComponent(mColorsButton, findViewById(R.id.curvesButtonRGB));
-        mPanelController.addComponent(mColorsButton, findViewById(R.id.sharpenButton));
-        mPanelController.addComponent(mColorsButton, findViewById(R.id.vibranceButton));
-        mPanelController.addComponent(mColorsButton, findViewById(R.id.contrastButton));
-        mPanelController.addComponent(mColorsButton, findViewById(R.id.saturationButton));
-        mPanelController.addComponent(mColorsButton, findViewById(R.id.wbalanceButton));
-        mPanelController.addComponent(mColorsButton, findViewById(R.id.hueButton));
-        mPanelController.addComponent(mColorsButton, findViewById(R.id.exposureButton));
-        mPanelController.addComponent(mColorsButton, findViewById(R.id.shadowRecoveryButton));
-
         mPanelController.addView(findViewById(R.id.applyEffect));
         mPanelController.addView(findViewById(R.id.pickCurvesChannel));
         mPanelController.addView(findViewById(R.id.aspect));
@@ -326,11 +315,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 createOnClickResetOperationsButton());
 
         ListView operationsList = (ListView) findViewById(R.id.operationsList);
-        operationsList.setAdapter(mImageShow.getHistoryAdapter());
+        operationsList.setAdapter(mImageShow.getHistory());
         operationsList.setOnItemClickListener(this);
         ListView imageStateList = (ListView) findViewById(R.id.imageStateList);
         imageStateList.setAdapter(mImageShow.getImageStateAdapter());
-        mImageLoader.setAdapter((HistoryAdapter) mImageShow.getHistoryAdapter());
+        mImageLoader.setAdapter(mImageShow.getHistory());
 
         fillListImages(listFilters);
         fillListBorders(listBorders);
@@ -485,8 +474,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.undoButton: {
-                HistoryAdapter adapter = (HistoryAdapter) mImageShow
-                        .getHistoryAdapter();
+                HistoryAdapter adapter = mImageShow.getHistory();
                 int position = adapter.undo();
                 mImageShow.onItemClick(position);
                 mImageShow.showToast("Undo");
@@ -494,8 +482,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 return true;
             }
             case R.id.redoButton: {
-                HistoryAdapter adapter = (HistoryAdapter) mImageShow
-                        .getHistoryAdapter();
+                HistoryAdapter adapter = mImageShow.getHistory();
                 int position = adapter.redo();
                 mImageShow.onItemClick(position);
                 mImageShow.showToast("Redo");
@@ -663,6 +650,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     // //////////////////////////////////////////////////////////////////////////////
     // imageState panel...
 
+    public boolean isShowingHistoryPanel() {
+        return mShowingHistoryPanel;
+    }
+
     private void toggleImageStatePanel() {
         final View view = findViewById(R.id.mainPanel);
         final View viewList = findViewById(R.id.imageStatePanel);
@@ -696,7 +687,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     // //////////////////////////////////////////////////////////////////////////////
     // history panel...
 
-    private void toggleHistoryPanel() {
+    public void toggleHistoryPanel() {
         final View view = findViewById(R.id.mainPanel);
         final View viewList = findViewById(R.id.historyPanel);
 
@@ -727,8 +718,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     }
 
     private void resetHistory() {
-        HistoryAdapter adapter = (HistoryAdapter) mImageShow
-                .getHistoryAdapter();
+        HistoryAdapter adapter = mImageShow.getHistory();
         adapter.reset();
         ImagePreset original = new ImagePreset(adapter.getItem(0));
         mImageShow.setImagePreset(original);
