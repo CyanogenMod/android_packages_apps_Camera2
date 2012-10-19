@@ -41,13 +41,18 @@ public class ImageFlip extends ImageGeometry {
     }
 
     @Override
+    public String getName() {
+        return "Mirror";
+    }
+
+    @Override
     protected void setActionDown(float x, float y) {
         super.setActionDown(x, y);
     }
 
     boolean hasRotated90(){
         int rot = constrainedRotation(getLocalRotation());
-        return ((int) (rot / 90)) % 2 != 0;
+        return (rot / 90) % 2 != 0;
     }
 
     @Override

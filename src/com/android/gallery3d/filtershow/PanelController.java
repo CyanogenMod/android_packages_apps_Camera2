@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterContrast;
+import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
 import com.android.gallery3d.filtershow.filters.ImageFilterExposure;
 import com.android.gallery3d.filtershow.filters.ImageFilterHue;
 import com.android.gallery3d.filtershow.filters.ImageFilterRedEye;
@@ -36,6 +37,7 @@ public class PanelController implements OnClickListener {
     private static int VERTICAL_MOVE = 0;
     private static int HORIZONTAL_MOVE = 1;
     private static final int ANIM_DURATION = 200;
+    private static final String LOGTAG = "PanelController";
 
     class Panel {
         private final View mView;
@@ -338,7 +340,9 @@ public class PanelController implements OnClickListener {
         if (mUtilityPanel == null || !mUtilityPanel.selected()) {
             return true;
         }
-        resetParameters();
+        HistoryAdapter adapter = mMasterImage.getHistory();
+        int position = adapter.undo();
+        mMasterImage.onItemClick(position);
         return false;
     }
 
@@ -450,6 +454,18 @@ public class PanelController implements OnClickListener {
     public void ensureFilter(String name) {
         ImagePreset preset = getImagePreset();
         ImageFilter filter = preset.getFilter(name);
+        if (filter != null) {
+            // If we already have a filter, we might still want
+            // to push it onto the history stack.
+            ImagePreset copy = new ImagePreset(getImagePreset());
+            copy.setHistoryName(name);
+            mMasterImage.setImagePreset(copy);
+            filter = copy.getFilter(name);
+        }
+        if (filter == null && name.equalsIgnoreCase(
+                mCurrentImage.getContext().getString(R.string.curvesRGB))) {
+            filter = setImagePreset(new ImageFilterCurves(), name);
+        }
         if (filter == null && name.equalsIgnoreCase(
                 mCurrentImage.getContext().getString(R.string.tinyplanet))) {
             filter = setImagePreset(new ImageFilterTinyPlanet(), name);
@@ -570,7 +586,7 @@ public class PanelController implements OnClickListener {
                 mUtilityPanel.setEffectName(ename);
                 mUtilityPanel.setShowParameter(false);
                 mUtilityPanel.showCurvesButtons();
-                curves.reloadCurve();
+                ensureFilter("Curves");
                 mCurrentImage = curves;
                 break;
             }
