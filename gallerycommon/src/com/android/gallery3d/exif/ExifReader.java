@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.exif;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -23,6 +25,7 @@ import java.io.InputStream;
  * This class reads the EXIF header of a JPEG file and stores it in {@link ExifData}.
  */
 public class ExifReader {
+    private static final String TAG = "ExifReader";
     /**
      * Parses the inputStream and  and returns the EXIF data in an {@link ExifData}.
      * @throws ExifInvalidFormatException
@@ -50,21 +53,24 @@ public class ExifReader {
                 case ExifParser.EVENT_VALUE_OF_REGISTERED_TAG:
                     tag = parser.getTag();
                     if (tag.getDataType() == ExifTag.TYPE_UNDEFINED) {
-                        byte[] buf = new byte[tag.getComponentCount()];
-                        parser.read(buf);
-                        tag.setValue(buf);
+                        parser.readFullTagValue(tag);
                     }
                     exifData.getIfdData(tag.getIfd()).setTag(tag);
                     break;
                 case ExifParser.EVENT_COMPRESSED_IMAGE:
                     byte buf[] = new byte[parser.getCompressedImageSize()];
-                    parser.read(buf);
-                    exifData.setCompressedThumbnail(buf);
+                    if (buf.length == parser.read(buf)) {
+                        exifData.setCompressedThumbnail(buf);
+                    } else {
+                        Log.w(TAG, "Failed to read the compressed thumbnail");
+                    }
                     break;
                 case ExifParser.EVENT_UNCOMPRESSED_STRIP:
                     buf = new byte[parser.getStripSize()];
-                    parser.read(buf);
-                    exifData.setStripBytes(parser.getStripIndex(), buf);
+                    if (buf.length == parser.read(buf)) {
+                        exifData.setStripBytes(parser.getStripIndex(), buf);
+                        Log.w(TAG, "Failed to read the strip bytes");
+                    }
                     break;
             }
             event = parser.next();

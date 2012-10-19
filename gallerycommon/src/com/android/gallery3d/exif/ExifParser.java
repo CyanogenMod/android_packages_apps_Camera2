@@ -137,6 +137,8 @@ public class ExifParser {
 
     private static final Charset US_ASCII = Charset.forName("US-ASCII");
 
+    private static final int DEFAULT_IFD0_OFFSET = 8;
+
     private final CountedDataInputStream mTiffStream;
     private final int mOptions;
     private int mIfdStartOffset = 0;
@@ -149,6 +151,9 @@ public class ExifParser {
     private ExifTag mJpegSizeTag;
     private boolean mNeedToParseOffsetsInCurrentIfd;
     private boolean mContainExifData = false;
+    private int mApp1End;
+    private byte[] mDataAboveIfd0;
+    private int mIfd0Position;
 
     private final TreeMap<Integer, Object> mCorrespondingEvent = new TreeMap<Integer, Object>();
 
@@ -178,10 +183,17 @@ public class ExifParser {
         mTiffStream = new CountedDataInputStream(inputStream);
         mOptions = options;
         if (!mContainExifData) return;
-        if (mTiffStream.getReadByteCount() == 0) {
-            parseTiffHeader();
-            long offset = mTiffStream.readUnsignedInt();
-            registerIfd(IfdId.TYPE_IFD_0, offset);
+
+        parseTiffHeader();
+        long offset = mTiffStream.readUnsignedInt();
+        if (offset > Integer.MAX_VALUE) {
+            throw new ExifInvalidFormatException("Invalid offset " + offset);
+        }
+        mIfd0Position = (int) offset;
+        registerIfd(IfdId.TYPE_IFD_0, offset);
+        if (offset != DEFAULT_IFD0_OFFSET) {
+            mDataAboveIfd0 = new byte[(int) offset - DEFAULT_IFD0_OFFSET];
+            read(mDataAboveIfd0);
         }
     }
 
@@ -265,11 +277,23 @@ public class ExifParser {
         while(mCorrespondingEvent.size() != 0) {
             Entry<Integer, Object> entry = mCorrespondingEvent.pollFirstEntry();
             Object event = entry.getValue();
-            skipTo(entry.getKey());
+            try {
+                skipTo(entry.getKey());
+            } catch (IOException e) {
+                Log.w(TAG, "Failed to skip to data at: " + entry.getKey() +
+                        " for " + event.getClass().getName() + ", the file may be broken.");
+                continue;
+            }
             if (event instanceof IfdEvent) {
                 mIfdType = ((IfdEvent) event).ifd;
                 mNumOfTagInIfd = mTiffStream.readUnsignedShort();
                 mIfdStartOffset = entry.getKey();
+
+                if (mNumOfTagInIfd * TAG_SIZE + mIfdStartOffset + OFFSET_SIZE > mApp1End) {
+                    Log.w(TAG, "Invalid size of IFD " + mIfdType);
+                    return EVENT_END;
+                }
+
                 mNeedToParseOffsetsInCurrentIfd = needToParseOffsetsInCurrentIfd();
                 if (((IfdEvent) event).isRequested) {
                     return EVENT_START_OF_IFD;
@@ -361,7 +385,6 @@ public class ExifParser {
      * @see #read(byte[], int, int)
      * @see #readLong()
      * @see #readRational()
-     * @see #readShort()
      * @see #readString(int)
      * @see #readString(int, Charset)
      */
@@ -444,7 +467,6 @@ public class ExifParser {
      * the tag may not contain the value if the size of the value is greater than 4 bytes.
      * When the value is not available here, call this method so that the parser will emit
      * {@link #EVENT_VALUE_OF_REGISTERED_TAG} when it reaches the area where the value is located.
-
      * @see #EVENT_VALUE_OF_REGISTERED_TAG
      */
     public void registerForTagValue(ExifTag tag) {
@@ -488,7 +510,16 @@ public class ExifParser {
                 throw new ExifInvalidFormatException(
                         "offset is larger then Integer.MAX_VALUE");
             }
-            tag.setOffset((int) offset);
+            // Some invalid images put some undefined data before IFD0.
+            // Read the data here.
+            if ((offset < mIfd0Position) && (dataFormat == ExifTag.TYPE_UNDEFINED)) {
+                byte[] buf = new byte[(int) numOfComp];
+                System.arraycopy(mDataAboveIfd0, (int) offset - DEFAULT_IFD0_OFFSET,
+                        buf, 0, (int) numOfComp);
+                tag.setValue(buf);
+            } else {
+                tag.setOffset((int) offset);
+            }
         } else {
             readFullTagValue(tag);
             mTiffStream.skip(4 - dataSize);
@@ -501,6 +532,10 @@ public class ExifParser {
      * caller is interested in, register the IFD or image.
      */
     private void checkOffsetOrImageTag(ExifTag tag) {
+        // Some invalid formattd image contains tag with 0 size.
+        if (tag.getComponentCount() == 0) {
+            return;
+        }
         switch (tag.getTagId()) {
             case ExifTag.TAG_EXIF_IFD:
                 if (isIfdRequested(IfdId.TYPE_IFD_EXIF)
@@ -553,7 +588,22 @@ public class ExifParser {
         }
     }
 
-    private void readFullTagValue(ExifTag tag) throws IOException {
+    void readFullTagValue(ExifTag tag) throws IOException {
+        // Some invalid images contains tags with wrong size, check it here
+        short type = tag.getDataType();
+        if (type == ExifTag.TYPE_ASCII || type == ExifTag.TYPE_UNDEFINED ||
+                type == ExifTag.TYPE_UNSIGNED_BYTE) {
+            int size = tag.getComponentCount();
+            if (mCorrespondingEvent.size() > 0) {
+                if (mCorrespondingEvent.firstEntry().getKey() <
+                        mTiffStream.getReadByteCount() + size) {
+                    Log.w(TAG, "Invalid size of tag.");
+                    size = mCorrespondingEvent.firstEntry().getKey()
+                            - mTiffStream.getReadByteCount();
+                    tag.setComponentCount(size);
+                }
+            }
+        }
         switch(tag.getDataType()) {
             case ExifTag.TYPE_UNSIGNED_BYTE:
             case ExifTag.TYPE_UNDEFINED:
@@ -653,6 +703,7 @@ public class ExifParser {
                     headerTail = dataStream.readShort();
                     length -= 6;
                     if (header == EXIF_HEADER && headerTail == EXIF_HEADER_TAIL) {
+                        mApp1End = length;
                         return true;
                     }
                 }
