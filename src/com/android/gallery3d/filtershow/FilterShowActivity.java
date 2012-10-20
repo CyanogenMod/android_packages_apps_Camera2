@@ -238,7 +238,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 R.id.vibranceButton,
                 R.id.contrastButton,
                 R.id.saturationButton,
-                R.id.shadowRecoveryButton,
                 R.id.wbalanceButton,
                 R.id.hueButton,
                 R.id.exposureButton,
@@ -257,13 +256,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         };
 
         for (int i = 0; i < filters.length; i++) {
-
             ImageSmallFilter fView = new ImageSmallFilter(this);
             View v = listColors.findViewById(recastIDs[i]);
             int pos = listColors.indexOfChild(v);
             listColors.removeView(v);
 
-            filters[i].setParameter(filters[i].getMaxParameter());
+            filters[i].setParameter(filters[i].getPreviewParameter());
             if(v instanceof ImageButtonTitle)
                 filters[i].setName(((ImageButtonTitle) v).getText());
             fView.setImageFilter(filters[i]);
@@ -353,7 +351,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         } else if (action.equalsIgnoreCase(TINY_PLANET_ACTION)) {
             mPanelController.showComponent(findViewById(R.id.tinyplanetButton));
         }
-
     }
 
     private int getScreenImageSize() {
