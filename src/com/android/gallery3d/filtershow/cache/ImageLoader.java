@@ -87,7 +87,7 @@ public class ImageLoader {
         mActivity = activity;
         mContext = context;
         mCache = new DelayedPresetCache(this, 30);
-        mHiresCache = new DelayedPresetCache(this, 2);
+        mHiresCache = new DelayedPresetCache(this, 3);
     }
 
     public void loadBitmap(Uri uri,int size) {
@@ -348,9 +348,11 @@ public class ImageLoader {
 
         if (filteredImage == null) {
             if (hiRes) {
-                cachePreset(imagePreset, mHiresCache, caller);
+                mHiresCache.prepare(imagePreset);
+                mHiresCache.addObserver(caller);
             } else {
-                cachePreset(imagePreset, mCache, caller);
+                mCache.prepare(imagePreset);
+                mCache.addObserver(caller);
             }
         }
         return filteredImage;
@@ -382,11 +384,6 @@ public class ImageLoader {
 
     public HistoryAdapter getHistory() {
         return mAdapter;
-    }
-
-    private void cachePreset(ImagePreset preset, Cache cache, ImageShow caller) {
-        cache.prepare(preset);
-        cache.addObserver(caller);
     }
 
     public Object getXmpObject() {
