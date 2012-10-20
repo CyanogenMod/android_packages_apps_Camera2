@@ -9,6 +9,7 @@ public class ImageFilter implements Cloneable {
 
     protected int mMaxParameter = 100;
     protected int mMinParameter = -100;
+    protected int mPreviewParameter = mMaxParameter;
     protected int mDefaultParameter = 0;
     protected int mParameter = 0;
     private ImagePreset mImagePreset;
@@ -41,6 +42,7 @@ public class ImageFilter implements Cloneable {
         filter.mMinParameter = mMinParameter;
         filter.mImagePreset = mImagePreset;
         filter.mDefaultParameter = mDefaultParameter;
+        filter.mPreviewParameter = mPreviewParameter;
         return filter;
     }
 
@@ -78,6 +80,14 @@ public class ImageFilter implements Cloneable {
      */
     public int getMaxParameter(){
         return mMaxParameter;
+    }
+
+    /**
+     * The parameter value to be used in previews.
+     * @return parameter value to be used to preview the filter
+     */
+    public int getPreviewParameter(){
+        return mPreviewParameter;
     }
 
     /**
