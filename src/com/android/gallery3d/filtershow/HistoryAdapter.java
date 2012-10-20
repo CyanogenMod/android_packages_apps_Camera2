@@ -18,6 +18,11 @@ import java.util.Vector;
 public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
     private static final String LOGTAG = "HistoryAdapter";
     private int mCurrentPresetPosition = 0;
+    private String mBorders = null;
+    private String mCrop = null;
+    private String mRotate = null;
+    private String mStraighten = null;
+    private String mMirror = null;
     private MenuItem mUndoMenuItem = null;
     private MenuItem mRedoMenuItem = null;
     private MenuItem mResetMenuItem = null;
@@ -25,6 +30,11 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
     public HistoryAdapter(Context context, int resource, int textViewResourceId) {
         super(context, resource, textViewResourceId);
         FilterShowActivity activity = (FilterShowActivity) context;
+        mBorders = context.getString(R.string.borders);
+        mCrop = context.getString(R.string.crop);
+        mRotate = context.getString(R.string.rotate);
+        mStraighten = context.getString(R.string.straighten);
+        mMirror = context.getString(R.string.mirror);
     }
 
     public void setMenuItems(MenuItem undoItem, MenuItem redoItem, MenuItem resetItem) {
@@ -176,17 +186,17 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
             // TODO: use type of last filter, not a string, to discriminate.
             if (position == getCount() - 1) {
                 typeView.setImageResource(R.drawable.ic_photoeditor_effects);
-            } else if (item.historyName().equalsIgnoreCase("Border")) {
+            } else if (item.historyName().equalsIgnoreCase(mBorders)) {
                 typeView.setImageResource(R.drawable.ic_photoeditor_border);
-            } else if (item.historyName().equalsIgnoreCase("Straighten")) {
+            } else if (item.historyName().equalsIgnoreCase(mStraighten)) {
                 typeView.setImageResource(R.drawable.ic_photoeditor_fix);
-            } else if (item.historyName().equalsIgnoreCase("Crop")) {
+            } else if (item.historyName().equalsIgnoreCase(mCrop)) {
                 typeView.setImageResource(R.drawable.ic_photoeditor_fix);
-            } else if (item.historyName().equalsIgnoreCase("Rotation")) {
+            } else if (item.historyName().equalsIgnoreCase(mRotate)) {
                 typeView.setImageResource(R.drawable.ic_photoeditor_fix);
-            } else if (item.historyName().equalsIgnoreCase("Mirror")) {
+            } else if (item.historyName().equalsIgnoreCase(mMirror)) {
                 typeView.setImageResource(R.drawable.ic_photoeditor_fix);
-           } else if (item.isFx()) {
+            } else if (item.isFx()) {
                 typeView.setImageResource(R.drawable.ic_photoeditor_effects);
             } else {
                 typeView.setImageResource(R.drawable.ic_photoeditor_color);
