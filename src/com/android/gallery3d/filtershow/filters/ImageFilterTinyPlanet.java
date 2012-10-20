@@ -2,47 +2,51 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Paint.Align;
-import android.util.Log;
 
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
+/**
+ * An image filter which creates a tiny planet projection.
+ */
 public class ImageFilterTinyPlanet extends ImageFilter {
     private static final String TAG = ImageFilterTinyPlanet.class.getSimpleName();
 
     public ImageFilterTinyPlanet() {
         setFilterType(TYPE_TINYPLANET);
         mName = "TinyPlanet";
+
+        mMinParameter = 10;
+        mMaxParameter = 60;
+        mDefaultParameter = 20;
+        mPreviewParameter = 20;
+        mParameter = 20;
     }
 
+    native protected void nativeApplyFilter(
+            Bitmap bitmapIn, int width, int height, Bitmap bitmapOut, int outSize, float scale);
+
     @Override
-    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
-        Log.d(TAG, "Applying tiny planet.");
-        String str = "TinyPlanet";
+    public Bitmap apply(Bitmap bitmapIn, float scaleFactor, boolean highQuality) {
         ImagePreset preset = getImagePreset();
         if (preset != null) {
-            if (!preset.isPanoramaSafe()) {
-                str = "NO TP";
-
-            } else {
+            if (preset.isPanoramaSafe()) {
+                // TODO(haeberling): Get XMPMeta object.
                 Object xmp = preset.getImageLoader().getXmpObject();
-                str = "TP got Xmp";
+            } else {
+                // TODO(haeberling): What should we do for:
+                // !preset.isPanoramaSafe()?
             }
         }
-        int w = bitmap.getWidth();
-        int h = bitmap.getHeight();
 
-        // Print TinyPlanet as text on the image as a placeholder
-        // TODO(haeberling): Implement the real deal.
-        Canvas canvas = new Canvas(bitmap);
-        Paint paint = new Paint();
-        paint.setColor(Color.RED);
-        paint.setTextSize((int) (((mParameter + 100) / 200f) * 100));
-        paint.setTextAlign(Align.CENTER);
-        canvas.drawText(str, w / 2, h / 2, paint);
-        return super.apply(bitmap, scaleFactor, highQuality);
+        int w = bitmapIn.getWidth();
+        int h = bitmapIn.getHeight();
+        int outputSize = Math.min(w, h);
+
+        Bitmap mBitmapOut = Bitmap.createBitmap(
+                outputSize, outputSize, Bitmap.Config.ARGB_8888);
+
+        // TODO(haeberling): Add the padding back in based on the meta-data.
+        nativeApplyFilter(bitmapIn, w, h, mBitmapOut, outputSize, mParameter / 100f);
+        return mBitmapOut;
     }
 }
