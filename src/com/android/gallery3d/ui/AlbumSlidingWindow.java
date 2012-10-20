@@ -24,10 +24,11 @@ import com.android.gallery3d.app.AlbumDataLoader;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.Path;
+import com.android.gallery3d.data.MediaObject.PanoramaSupportCallback;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
-import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.JobLimiter;
 
 public class AlbumSlidingWindow implements AlbumDataLoader.DataListener {
@@ -52,6 +53,7 @@ public class AlbumSlidingWindow implements AlbumDataLoader.DataListener {
         public BitmapTexture bitmapTexture;
         public Texture content;
         private BitmapLoader contentLoader;
+        private PanoSupportListener mPanoSupportListener;
     }
 
     private final AlbumDataLoader mSource;
@@ -72,6 +74,18 @@ public class AlbumSlidingWindow implements AlbumDataLoader.DataListener {
 
     private int mActiveRequestCount = 0;
     private boolean mIsActive = false;
+
+    private class PanoSupportListener implements PanoramaSupportCallback {
+        public final AlbumEntry mEntry;
+        public PanoSupportListener (AlbumEntry entry) {
+            mEntry = entry;
+        }
+        @Override
+        public void panoramaInfoAvailable(MediaObject mediaObject, boolean isPanorama,
+                boolean isPanorama360) {
+            if (mEntry != null) mEntry.isPanorama = isPanorama;
+        }
+    }
 
     public AlbumSlidingWindow(AbstractGalleryActivity activity,
             AlbumDataLoader source, int cacheSize) {
@@ -213,6 +227,10 @@ public class AlbumSlidingWindow implements AlbumDataLoader.DataListener {
         AlbumEntry entry = mData[slotIndex % mData.length];
         if (entry.content != null || entry.item == null) return false;
 
+        // Set up the panorama callback
+        entry.mPanoSupportListener = new PanoSupportListener(entry);
+        entry.item.getPanoramaSupport(entry.mPanoSupportListener);
+
         entry.contentLoader.startLoad();
         return entry.contentLoader.isRequestInProgress();
     }
@@ -245,7 +263,6 @@ public class AlbumSlidingWindow implements AlbumDataLoader.DataListener {
         AlbumEntry entry = new AlbumEntry();
         MediaItem item = mSource.get(slotIndex); // item could be null;
         entry.item = item;
-        entry.isPanorama = GalleryUtils.isPanorama(entry.item);
         entry.mediaType = (item == null)
                 ? MediaItem.MEDIA_TYPE_UNKNOWN
                 : entry.item.getMediaType();
