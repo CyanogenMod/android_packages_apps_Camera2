@@ -87,7 +87,7 @@ public class ImageCrop extends ImageGeometry {
 
     @Override
     public String getName() {
-        return "Crop";
+        return getContext().getString(R.string.crop);
     }
 
     private boolean switchCropBounds(int moving_corner, RectF dst) {
