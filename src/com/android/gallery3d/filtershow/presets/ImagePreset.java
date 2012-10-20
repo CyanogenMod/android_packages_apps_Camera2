@@ -24,7 +24,7 @@ public class ImagePreset {
 
     protected Vector<ImageFilter> mFilters = new Vector<ImageFilter>();
     protected String mName = "Original";
-    protected String mHistoryName = "Original";
+    private String mHistoryName = "Original";
     protected boolean mIsFxPreset = false;
 
     public final GeometryMetadata mGeoData = new GeometryMetadata();
@@ -34,6 +34,11 @@ public class ImagePreset {
     }
 
     public ImagePreset() {
+        setup();
+    }
+
+    public ImagePreset(String historyName) {
+        setHistoryName(historyName);
         setup();
     }
 
@@ -172,7 +177,7 @@ public class ImagePreset {
     public void add(ImageFilter filter) {
 
         if (filter.getFilterType() == ImageFilter.TYPE_BORDER) {
-            setHistoryName("Border");
+            setHistoryName(filter.getName());
             setBorder(filter);
         } else if (filter.getFilterType() == ImageFilter.TYPE_FX) {
             boolean found = false;
