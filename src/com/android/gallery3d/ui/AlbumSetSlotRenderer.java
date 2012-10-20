@@ -170,14 +170,6 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
             renderRequestFlags |= SlotView.RENDER_MORE_FRAME;
         }
 
-        if (entry.mediaType == MediaObject.MEDIA_TYPE_VIDEO) {
-            drawVideoOverlay(canvas, width, height);
-        }
-
-        if (entry.isPanorama) {
-            drawPanoramaBorder(canvas, width, height);
-        }
-
         return renderRequestFlags;
     }
 
