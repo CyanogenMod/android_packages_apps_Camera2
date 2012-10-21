@@ -86,6 +86,10 @@ public class ImageShow extends View implements OnGestureListener,
     private long mTouchShowOriginalDate = 0;
     private final long mTouchShowOriginalDelayMin = 200; // 200ms
     private final long mTouchShowOriginalDelayMax = 300; // 300ms
+    private int mShowOriginalDirection = 0;
+    private static int UNVEIL_HORIZONTAL = 1;
+    private static int UNVEIL_VERTICAL = 2;
+
     private int mTouchDownX = 0;
     private int mTouchDownY = 0;
     protected float mTouchX = 0;
@@ -425,29 +429,39 @@ public class ImageShow extends View implements OnGestureListener,
             return;
         canvas.save();
         if (image != null) {
-            boolean goingDown = false;
-            if ((mTouchY - mTouchDownY) > (mTouchX - mTouchDownX)) {
-                goingDown = true;
+            if (mShowOriginalDirection == 0) {
+                if ((mTouchY - mTouchDownY) > (mTouchX - mTouchDownX)) {
+                    mShowOriginalDirection = UNVEIL_VERTICAL;
+                } else {
+                    mShowOriginalDirection = UNVEIL_HORIZONTAL;
+                }
             }
-            int px = (int) (mTouchX - mImageBounds.left);
-            int py = mImageBounds.height();
-            if (goingDown) {
+
+            int px = 0;
+            int py = 0;
+            if (mShowOriginalDirection == UNVEIL_VERTICAL) {
                 px = mImageBounds.width();
                 py = (int) (mTouchY - mImageBounds.top);
+            } else {
+                px = (int) (mTouchX - mImageBounds.left);
+                py = mImageBounds.height();
             }
+
             Rect d = new Rect(mImageBounds.left, mImageBounds.top,
                     mImageBounds.left + px, mImageBounds.top + py);
             canvas.clipRect(d);
             drawImage(canvas, image);
             Paint paint = new Paint();
             paint.setColor(Color.BLACK);
-            if (goingDown) {
+
+            if (mShowOriginalDirection == UNVEIL_VERTICAL) {
                 canvas.drawLine(mImageBounds.left, mTouchY - 1,
                         mImageBounds.right, mTouchY - 1, paint);
             } else {
                 canvas.drawLine(mTouchX - 1, mImageBounds.top,
                         mTouchX - 1, mImageBounds.bottom, paint);
             }
+
             Rect bounds = new Rect();
             paint.setTextSize(mOriginalTextSize);
             paint.getTextBounds(mOriginalText, 0, mOriginalText.length(), bounds);
@@ -588,6 +602,7 @@ public class ImageShow extends View implements OnGestureListener,
             mTouchDownX = ex;
             mTouchDownY = ey;
             mTouchShowOriginalDate = System.currentTimeMillis();
+            mShowOriginalDirection = 0;
         }
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
             mTouchX = ex;
