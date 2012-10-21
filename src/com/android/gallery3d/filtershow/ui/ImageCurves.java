@@ -94,6 +94,10 @@ public class ImageCurves extends ImageSlave {
             mLastPreset = getImagePreset();
         }
 
+        if (curves() == null) {
+            return;
+        }
+
         if (mCurrentCurveIndex == Spline.RGB || mCurrentCurveIndex == Spline.RED) {
             drawHistogram(canvas, redHistogram, Color.RED, PorterDuff.Mode.SCREEN);
         }
