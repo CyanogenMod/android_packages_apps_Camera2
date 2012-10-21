@@ -57,6 +57,7 @@ public class ImageCrop extends ImageGeometry {
     private int movingEdges;
     private final Drawable cropIndicator;
     private final int indicatorSize;
+    private final int mBorderColor = Color.argb(128, 255, 255, 255);
 
     private static final String LOGTAG = "ImageCrop";
 
@@ -67,10 +68,9 @@ public class ImageCrop extends ImageGeometry {
         Resources resources = context.getResources();
         cropIndicator = resources.getDrawable(R.drawable.camera_crop);
         indicatorSize = (int) resources.getDimension(R.dimen.crop_indicator_size);
-        int borderColor = Color.argb(128, 255,  255,  255);
         borderPaint = new Paint();
         borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setColor(borderColor);
+        borderPaint.setColor(mBorderColor);
         borderPaint.setStrokeWidth(2f);
     }
 
@@ -79,10 +79,9 @@ public class ImageCrop extends ImageGeometry {
         Resources resources = context.getResources();
         cropIndicator = resources.getDrawable(R.drawable.camera_crop);
         indicatorSize = (int) resources.getDimension(R.dimen.crop_indicator_size);
-        int borderColor = Color.argb(128, 255,  255,  255);
         borderPaint = new Paint();
         borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setColor(borderColor);
+        borderPaint.setColor(mBorderColor);
         borderPaint.setStrokeWidth(2f);
     }
 
@@ -580,6 +579,21 @@ public class ImageCrop extends ImageGeometry {
     protected void lostVisibility() {
     }
 
+    private void drawRuleOfThird(Canvas canvas, RectF bounds) {
+        float stepX = bounds.width() / 3.0f;
+        float stepY = bounds.height() / 3.0f;
+        float x = bounds.left + stepX;
+        float y = bounds.top + stepY;
+        for (int i = 0; i < 2; i++) {
+            canvas.drawLine(x, bounds.top, x, bounds.bottom, gPaint);
+            x += stepX;
+        }
+        for (int j = 0; j < 2; j++) {
+            canvas.drawLine(bounds.left, y, bounds.right, y, gPaint);
+            y += stepY;
+        }
+    }
+
     @Override
     protected void drawShape(Canvas canvas, Bitmap image) {
         // TODO: move style to xml
@@ -595,11 +609,12 @@ public class ImageCrop extends ImageGeometry {
         float rotation = getLocalRotation();
         drawTransformedBitmap(canvas, image, gPaint, true);
 
-        gPaint.setARGB(255, 125, 255, 128);
+        gPaint.setColor(mBorderColor);
         gPaint.setStrokeWidth(3);
         gPaint.setStyle(Paint.Style.STROKE);
         drawStraighten(canvas, gPaint);
         RectF scaledCrop = unrotatedCropBounds();
+        drawRuleOfThird(canvas, scaledCrop);
         int decoded_moving = decoder(movingEdges, rotation);
         canvas.save();
         canvas.rotate(rotation, mCenterX, mCenterY);
