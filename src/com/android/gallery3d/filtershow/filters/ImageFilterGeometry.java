@@ -63,6 +63,21 @@ public class ImageFilterGeometry extends ImageFilter {
     native protected void nativeApplyFilterStraighten(Bitmap src, int srcWidth, int srcHeight,
             Bitmap dst, int dstWidth, int dstHeight, float straightenAngle);
 
+    public Matrix buildMatrix(RectF r) {
+        float dx = r.width() / 2;
+        float dy = r.height() / 2;
+        if (mGeometry.hasSwitchedWidthHeight()) {
+            float temp = dx;
+            dx = dy;
+            dy = temp;
+        }
+        float w = r.left * 2 + r.width();
+        float h = r.top * 2 + r.height();
+        Matrix m = mGeometry.buildGeometryMatrix(w, h, 1f, dx, dy, false);
+
+        return m;
+    }
+
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         // TODO: implement bilinear or bicubic here... for now, just use
@@ -79,12 +94,16 @@ public class ImageFilterGeometry extends ImageFilter {
             temp = Bitmap.createBitmap(cropBounds.width(), cropBounds.height(), mConfig);
         }
 
+        Matrix drawMatrix = buildMatrix(crop);
+        /*
         RectF rp = mGeometry.getPhotoBounds();
         RectF rc = mGeometry.getPreviewCropBounds();
+        // TODO: fix this method instead of calling the above buildMatrix()
         Matrix drawMatrix = mGeometry.buildTotalXform(rp.width(), rp.height(), rc.width(),
                 rc.height(), rc.left, rc.top,
                 mGeometry.getRotation(), mGeometry.getStraightenRotation(),
                 bitmap.getWidth() / rp.width(), null);
+        */
         Canvas canvas = new Canvas(temp);
         canvas.drawBitmap(bitmap, drawMatrix, new Paint());
         return temp;
