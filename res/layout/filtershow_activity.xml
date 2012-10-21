@@ -18,6 +18,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/mainView"
     android:background="@color/background_screen" >
 
     <LinearLayout
@@ -45,51 +46,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" >
         </ListView>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/historyPanel"
-        android:layout_width="200dip"
-        android:layout_height="match_parent"
-        android:layout_gravity="right"
-        android:orientation="vertical"
-        android:visibility="invisible" >
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:padding="2dip"
-            android:text="@string/history"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <ListView
-            android:id="@+id/operationsList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" >
-        </ListView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
-
-            <Button
-                android:id="@+id/resetOperationsButton"
-                style="@style/FilterShowHistoryButton"
-                android:gravity="center"
-                android:text="@string/reset" />
-
-            <Button
-                android:id="@+id/saveOperationsButton"
-                style="@style/FilterShowHistoryButton"
-                android:text="@string/save"
-                android:visibility="gone" />
-        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -456,6 +412,51 @@
         </com.android.gallery3d.filtershow.CenteredLinearLayout>
 
         </com.android.gallery3d.filtershow.CenteredLinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/historyPanel"
+        android:layout_width="200dip"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:orientation="vertical"
+        android:visibility="invisible" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:padding="2dip"
+            android:text="@string/history"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/operationsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+        </ListView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/resetOperationsButton"
+                style="@style/FilterShowHistoryButton"
+                android:gravity="center"
+                android:text="@string/reset" />
+
+            <Button
+                android:id="@+id/saveOperationsButton"
+                style="@style/FilterShowHistoryButton"
+                android:text="@string/save"
+                android:visibility="gone" />
+        </LinearLayout>
     </LinearLayout>
 
 </FrameLayout>
