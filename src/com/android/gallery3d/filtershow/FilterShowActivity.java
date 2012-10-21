@@ -353,6 +353,17 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }
     }
 
+    private int translateMainPanel(View viewPanel) {
+        int accessoryPanelWidth = viewPanel.getWidth();
+        int mainViewWidth = findViewById(R.id.mainView).getWidth();
+        int mainPanelWidth = mImageShow.getDisplayedImageBounds().width();
+        int leftOver = mainViewWidth - mainPanelWidth - accessoryPanelWidth;
+        if (leftOver < 0) {
+            return -accessoryPanelWidth;
+        }
+        return 0;
+    }
+
     private int getScreenImageSize() {
         DisplayMetrics metrics = new DisplayMetrics();
         Display display = getWindowManager().getDefaultDisplay();
@@ -666,9 +677,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             mShowingHistoryPanel = false;
         }
 
+        int translate = translateMainPanel(viewList);
         if (!mShowingImageStatePanel) {
             mShowingImageStatePanel = true;
-            view.animate().setDuration(200).x(-viewList.getWidth())
+            view.animate().setDuration(200).x(translate)
                     .withLayer().withEndAction(new Runnable() {
                         @Override
                         public void run() {
@@ -699,9 +711,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             mShowingImageStatePanel = false;
         }
 
+        int translate = translateMainPanel(viewList);
         if (!mShowingHistoryPanel) {
             mShowingHistoryPanel = true;
-            view.animate().setDuration(200).x(-viewList.getWidth())
+            view.animate().setDuration(200).x(translate)
                     .withLayer().withEndAction(new Runnable() {
                         @Override
                         public void run() {
