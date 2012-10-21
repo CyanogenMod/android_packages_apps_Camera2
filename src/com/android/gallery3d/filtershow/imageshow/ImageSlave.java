@@ -18,6 +18,7 @@ package com.android.gallery3d.filtershow.imageshow;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 
 import com.android.gallery3d.filtershow.HistoryAdapter;
@@ -52,6 +53,11 @@ public class ImageSlave extends ImageShow {
     @Override
     public ImagePreset getImagePreset() {
         return mMasterImageShow.getImagePreset();
+    }
+
+    @Override
+    public Rect getDisplayedImageBounds() {
+        return mMasterImageShow.getDisplayedImageBounds();
     }
 
     @Override
