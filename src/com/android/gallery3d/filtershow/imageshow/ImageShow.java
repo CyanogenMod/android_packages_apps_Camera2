@@ -312,6 +312,10 @@ public class ImageShow extends View implements OnGestureListener,
         return dst;
     }
 
+    public Rect getDisplayedImageBounds() {
+        return mImageBounds;
+    }
+
     public ImagePreset getImagePreset() {
         return mImagePreset;
     }
