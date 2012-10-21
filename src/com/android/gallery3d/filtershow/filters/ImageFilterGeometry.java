@@ -105,7 +105,11 @@ public class ImageFilterGeometry extends ImageFilter {
                 bitmap.getWidth() / rp.width(), null);
         */
         Canvas canvas = new Canvas(temp);
-        canvas.drawBitmap(bitmap, drawMatrix, new Paint());
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setFilterBitmap(true);
+        paint.setDither(true);
+        canvas.drawBitmap(bitmap, drawMatrix, paint);
         return temp;
     }
 
