@@ -36,6 +36,8 @@
     <string name="ok" msgid="5296833083983263293">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Chạm vào một khuôn  mặt để bắt đầu."</string>
     <string name="saving_image" msgid="7270334453636349407">"Đang lưu ảnh…"</string>
+    <!-- no translation found for filtershow_saving_image (6659463980581993016) -->
+    <skip />
     <string name="save_error" msgid="6857408774183654970">"Không thể lưu hình ảnh được cắt."</string>
     <string name="crop_label" msgid="521114301871349328">"Cắt ảnh"</string>
     <string name="trim_label" msgid="274203231381209979">"Cắt ngắn video"</string>
@@ -145,12 +147,16 @@
     <string name="ffx_vintage" msgid="8348759951363844780">"Cổ điển"</string>
     <string name="ffx_instant" msgid="726968618715691987">"Instant"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"Làm phai màu"</string>
-    <string name="ffx_blue_crush" msgid="5910979947224043165">"Chỉnh màu xanh"</string>
-    <string name="ffx_bw_contrast" msgid="3853938816686258406">"Tương phản Đ/T"</string>
+    <!-- no translation found for ffx_blue_crush (6034283412305561226) -->
+    <skip />
+    <!-- no translation found for ffx_bw_contrast (517988490066217206) -->
+    <skip />
     <string name="ffx_punch" msgid="1343475517872562639">"Punch"</string>
     <string name="ffx_x_process" msgid="4779398678661811765">"Quá trình X"</string>
-    <string name="ffx_washout" msgid="2526099635720493268">"Làm mờ màu"</string>
-    <string name="ffx_washout_color" msgid="3209955210402468008">"Màu mờ"</string>
+    <!-- no translation found for ffx_washout (4594160692176642735) -->
+    <skip />
+    <!-- no translation found for ffx_washout_color (8034075742195795219) -->
+    <skip />
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"Đặt album khả dụng ở chế độ ngoại tuyến."</item>
     <item quantity="other" msgid="4948604338155959389">"Đặt album khả dụng ở chế độ ngoại tuyến."</item>
@@ -185,6 +191,8 @@
     <string name="add_account" msgid="4271217504968243974">"Thêm tài khoản"</string>
     <string name="folder_camera" msgid="4714658994809533480">"Máy ảnh"</string>
     <string name="folder_download" msgid="7186215137642323932">"Tải xuống"</string>
+    <!-- no translation found for folder_edited_online_photos (6278215510236800181) -->
+    <skip />
     <string name="folder_imported" msgid="2773581395524747099">"Đã nhập"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"Ảnh chụp màn hình"</string>
     <string name="help" msgid="7368960711153618354">"Trợ giúp"</string>
@@ -194,8 +202,7 @@
     <string name="switch_photo_grid" msgid="3681299459107925725">"Chế độ xem lưới"</string>
     <string name="trimming" msgid="9122385768369143997">"Đang cắt ngắn"</string>
     <string name="please_wait" msgid="7296066089146487366">"Vui lòng chờ"</string>
-    <!-- no translation found for save_into (4960537214388766062) -->
-    <skip />
+    <string name="save_into" msgid="4960537214388766062">"Đang lưu video đã được cắt vào album :"</string>
     <string name="trim_too_short" msgid="751593965620665326">"Không thể cắt ngắn : video đích quá ngắn"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Hiển thị ảnh toàn cảnh"</string>
     <string name="save" msgid="613976532235060516">"Lưu"</string>
