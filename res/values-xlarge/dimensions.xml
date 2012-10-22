@@ -22,6 +22,10 @@
     <!-- configuration for album set page -->
     <integer name="albumset_rows_land">3</integer>
     <integer name="albumset_rows_port">5</integer>
+    <dimen name="albumset_title_font_size">14sp</dimen>
+    <dimen name="albumset_count_font_size">11sp</dimen>
+    <dimen name="albumset_title_right_margin">23dp</dimen>
+    <dimen name="albumset_icon_size">27dp</dimen>
 
     <!-- configuration for album page -->
     <integer name="album_rows_land">3</integer>
