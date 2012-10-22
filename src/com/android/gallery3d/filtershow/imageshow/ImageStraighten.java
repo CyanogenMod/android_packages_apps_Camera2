@@ -19,6 +19,7 @@ package com.android.gallery3d.filtershow.imageshow;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
@@ -33,7 +34,6 @@ public class ImageStraighten extends ImageGeometry {
 
     private static final String LOGTAG = "ImageStraighten";
     private static final Paint gPaint = new Paint();
-
     public ImageStraighten(Context context) {
         super(context);
     }
@@ -105,7 +105,7 @@ public class ImageStraighten extends ImageGeometry {
 
     @Override
     protected void drawShape(Canvas canvas, Bitmap image) {
-        drawTransformedBitmap(canvas, image, gPaint, false);
+        drawTransformed(canvas, image, gPaint);
 
         // Draw the grid
         RectF bounds = straightenBounds();
