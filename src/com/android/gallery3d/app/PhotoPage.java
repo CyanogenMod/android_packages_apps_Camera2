@@ -345,13 +345,22 @@ public class PhotoPage extends ActivityState implements
                                 mMediaSet.getMediaItemCount() > 1) {
                             mPhotoView.switchToImage(1);
                         } else {
-                            mPhotoView.setFilmMode(false);
+                            if (mAppBridge != null) mPhotoView.setFilmMode(false);
                             stayedOnCamera = true;
                         }
 
                         if (stayedOnCamera) {
-                            updateBars();
-                            updateCurrentPhoto(mModel.getMediaItem(0));
+                            if (mAppBridge == null) {
+                                GalleryUtils.startCameraActivity(mActivity);
+                                /* We got here by swiping from photo 1 to the
+                                   placeholder, so make it be the thing that
+                                   is in focus when the user presses back from
+                                   the camera app */
+                                mPhotoView.switchToImage(1);
+                            } else {
+                                updateBars();
+                                updateCurrentPhoto(mModel.getMediaItem(0));
+                            }
                         }
                         break;
                     }
@@ -579,6 +588,7 @@ public class PhotoPage extends ActivityState implements
 
     @Override
     public void onPictureCenter(boolean isCamera) {
+        isCamera = isCamera || (mInCameraRoll && mAppBridge == null);
         mPhotoView.setWantPictureCenterCallbacks(false);
         mHandler.removeMessages(MSG_ON_CAMERA_CENTER);
         mHandler.removeMessages(MSG_ON_PICTURE_CENTER);
