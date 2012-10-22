@@ -464,6 +464,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 .getActionProvider();
         mShareActionProvider.setShareIntent(getDefaultShareIntent());
         mShareActionProvider.setOnShareTargetSelectedListener(this);
+
+        MenuItem undoItem = menu.findItem(R.id.undoButton);
+        MenuItem redoItem = menu.findItem(R.id.redoButton);
+        MenuItem resetItem = menu.findItem(R.id.resetHistoryButton);
+        mImageShow.getHistory().setMenuItems(undoItem, redoItem, resetItem);
         return true;
     }
 
