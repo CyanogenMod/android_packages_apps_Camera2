@@ -36,6 +36,8 @@
     <string name="ok" msgid="5296833083983263293">"ठीक"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"शुरू करने के लिए कोई चेहरा स्‍पर्श करें."</string>
     <string name="saving_image" msgid="7270334453636349407">"चित्र सहेज रहा है…"</string>
+    <!-- no translation found for filtershow_saving_image (6659463980581993016) -->
+    <skip />
     <string name="save_error" msgid="6857408774183654970">"काट-छांट की गई चित्र को नहीं सहेज सका."</string>
     <string name="crop_label" msgid="521114301871349328">"चित्र काटें"</string>
     <string name="trim_label" msgid="274203231381209979">"वीडियो ट्रिम करें"</string>
@@ -145,12 +147,16 @@
     <string name="ffx_vintage" msgid="8348759951363844780">"विंटेज"</string>
     <string name="ffx_instant" msgid="726968618715691987">"झटपट"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"ब्लीच"</string>
-    <string name="ffx_blue_crush" msgid="5910979947224043165">"ब्लू क्रश"</string>
-    <string name="ffx_bw_contrast" msgid="3853938816686258406">"BW चमक"</string>
+    <!-- no translation found for ffx_blue_crush (6034283412305561226) -->
+    <skip />
+    <!-- no translation found for ffx_bw_contrast (517988490066217206) -->
+    <skip />
     <string name="ffx_punch" msgid="1343475517872562639">"पंच"</string>
     <string name="ffx_x_process" msgid="4779398678661811765">"X प्रक्रिया"</string>
-    <string name="ffx_washout" msgid="2526099635720493268">"वॉशआउट"</string>
-    <string name="ffx_washout_color" msgid="3209955210402468008">"वॉशआउट रंग"</string>
+    <!-- no translation found for ffx_washout (4594160692176642735) -->
+    <skip />
+    <!-- no translation found for ffx_washout_color (8034075742195795219) -->
+    <skip />
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"एल्‍बम ऑफ़लाइन उपलब्‍ध कराना."</item>
     <item quantity="other" msgid="4948604338155959389">"एल्‍बम ऑफ़लाइन उपलब्‍ध कराना."</item>
@@ -185,6 +191,8 @@
     <string name="add_account" msgid="4271217504968243974">"खाता जोड़ें"</string>
     <string name="folder_camera" msgid="4714658994809533480">"कैमरा"</string>
     <string name="folder_download" msgid="7186215137642323932">"डाउनलोड करें"</string>
+    <!-- no translation found for folder_edited_online_photos (6278215510236800181) -->
+    <skip />
     <string name="folder_imported" msgid="2773581395524747099">"आयातित"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"स्क्रीनशॉट"</string>
     <string name="help" msgid="7368960711153618354">"सहायता"</string>
@@ -194,8 +202,7 @@
     <string name="switch_photo_grid" msgid="3681299459107925725">"ग्रिड दृश्य"</string>
     <string name="trimming" msgid="9122385768369143997">"ट्रिम कर रहा है"</string>
     <string name="please_wait" msgid="7296066089146487366">"कृपया प्रतीक्षा करें"</string>
-    <!-- no translation found for save_into (4960537214388766062) -->
-    <skip />
+    <string name="save_into" msgid="4960537214388766062">"ट्रिम किया गया वीडियो एल्बम में सहेजा जा रहा है :"</string>
     <string name="trim_too_short" msgid="751593965620665326">"ट्रिम नहीं कर सकते : लक्ष्य वीडियो बहुत छोटा है"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"पैनोरामा रेंडर किया जा रहा है"</string>
     <string name="save" msgid="613976532235060516">"सहेजें"</string>
