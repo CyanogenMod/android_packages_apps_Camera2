@@ -558,7 +558,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 R.string.ffx_x_process
         };
 
-        ImagePreset preset = new ImagePreset(); // empty
+        ImagePreset preset = new ImagePreset(getString(R.string.history_original)); // empty
         preset.setImageLoader(mImageLoader);
         ImageSmallFilter filter = new ImageSmallFilter(this);
 
@@ -614,6 +614,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageSmallFilter previousFilter = null;
         for (int i = 0; i < p; i++) {
             ImageSmallBorder filter = new ImageSmallBorder(this);
+            borders[i].setName(getString(R.string.borders));
             filter.setImageFilter(borders[i]);
             filter.setController(this);
             filter.setBorder(true);

@@ -24,11 +24,18 @@
     <!--  String shown when we cannot load the image when starting the activity [CHAR LIMIT=NONE] -->
     <string name="cannot_load_image">Cannot load the image!</string>
     <!--  String displayed when showing the original image [CHAR LIMIT=NONE] -->
-    <string name="original_picture_text">Original</string>
+    <string name="original_picture_text">@string/original</string>
+
+    <!--  generic strings -->
+
+    <!--  Text for original image [CHAR LIMIT=20] -->
+    <string name="original">Original</string>
+    <!--  Text for filters that apply a border to a picture [CHAR LIMIT=20] -->
+    <string name="borders" msgid="4461692156695893616">Borders</string>
 
     <!--  actionbar menu -->
 
-    <!-- Text for the actionbar confirmation button [CHAR LIMIT=20] -->
+    <!--  Text for the actionbar confirmation button [CHAR LIMIT=20] -->
     <string name="done">Done</string>
     <!--  Text for the undo menu item [CHAR LIMIT=20] -->
     <string name="filtershow_undo">Undo</string>
@@ -51,6 +58,8 @@
     <string name="history">History</string>
     <!--  Text for the history panel reset button [CHAR LIMIT=20]-->
     <string name="reset">Reset</string>
+    <!--  Text for the original image[CHAR LIMIT=20]-->
+    <string name="history_original">@string/original</string>
 
     <!--  Image state panel -->
 
@@ -78,7 +87,7 @@
     <!--  Label for the aspect None effect [CHAR LIMIT=15] -->
     <string name="aspectNone_effect">None</string>
     <!--  Label for the aspect None effect [CHAR LIMIT=15] -->
-    <string name="aspectOriginal_effect">Original</string>
+    <string name="aspectOriginal_effect">@string/original</string>
     <!--  Label for the tuny planet effect [CHAR LIMIT=10] -->
     <string name="tinyplanet">Tiny Planet</string>
 
