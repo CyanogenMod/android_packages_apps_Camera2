@@ -31,6 +31,11 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.adobe.xmp.XMPException;
+import com.adobe.xmp.XMPIterator;
+import com.adobe.xmp.XMPMeta;
+import com.adobe.xmp.properties.XMPProperty;
+import com.adobe.xmp.properties.XMPPropertyInfo;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.filtershow.FilterShowActivity;
@@ -392,4 +397,48 @@ public class ImageLoader {
             return null;
         }
     }
+
+    /**
+     * Determine if this is a light cycle 360 image
+     *
+     * @return true if it is a light Cycle image that is full 360
+     */
+    public boolean isLightCycle360() {
+        try {
+            InputStream is = mContext.getContentResolver().openInputStream(getUri());
+            XMPMeta meta = XmpUtilHelper.extractXMPMeta(is);
+            if (meta == null) {
+                return false;
+            }
+            String name = meta.getPacketHeader();
+            try {
+                String namespace = "http://ns.google.com/photos/1.0/panorama/";
+                String cropWidthName = "GPano:CroppedAreaImageWidthPixels";
+                String fullWidthName = "GPano:FullPanoWidthPixels";
+
+                if (!meta.doesPropertyExist(namespace, cropWidthName)) {
+                    return false;
+                }
+                if (!meta.doesPropertyExist(namespace, fullWidthName)) {
+                    return false;
+                }
+
+                Integer cropValue = meta.getPropertyInteger(namespace, cropWidthName);
+                Integer fullValue = meta.getPropertyInteger(namespace, fullWidthName);
+
+                // Definition of a 360:
+                // GFullPanoWidthPixels == CroppedAreaImageWidthPixels
+                if (cropValue != null && fullValue != null) {
+                    return cropValue.equals(fullValue);
+                }
+
+                return false;
+            } catch (XMPException e) {
+                return false;
+            }
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+    }
+
 }
