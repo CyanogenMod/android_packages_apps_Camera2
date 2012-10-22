@@ -24,6 +24,8 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 
+import com.android.gallery3d.R;
+
 public class ImageStraighten extends ImageGeometry {
 
     private float mBaseAngle = 0;
@@ -42,7 +44,7 @@ public class ImageStraighten extends ImageGeometry {
 
     @Override
     public String getName() {
-        return "Straighten";
+        return getContext().getString(R.string.straighten);
     }
 
     @Override
