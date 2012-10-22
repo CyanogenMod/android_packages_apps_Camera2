@@ -31,7 +31,7 @@ public class StateTransitionAnimation extends Animation {
         public static final Spec INCOMING;
         public static final Spec PHOTO_INCOMING;
 
-        public int duration = 330;
+        public int duration = 250;
         public float backgroundAlphaFrom = 0;
         public float backgroundAlphaTo = 0;
         public float backgroundScaleFrom = 0;
@@ -48,7 +48,7 @@ public class StateTransitionAnimation extends Animation {
 
         static {
             OUTGOING = new Spec();
-            OUTGOING.backgroundAlphaFrom = 1f;
+            OUTGOING.backgroundAlphaFrom = 0.5f;
             OUTGOING.backgroundAlphaTo = 0f;
             OUTGOING.backgroundScaleFrom = 1f;
             OUTGOING.backgroundScaleTo = 0f;
