@@ -36,6 +36,8 @@
     <string name="ok" msgid="5296833083983263293">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Berør et ansikt for å begynne."</string>
     <string name="saving_image" msgid="7270334453636349407">"Lagrer bilde ..."</string>
+    <!-- no translation found for filtershow_saving_image (6659463980581993016) -->
+    <skip />
     <string name="save_error" msgid="6857408774183654970">"Kan ikke lagre det beskårede bildet."</string>
     <string name="crop_label" msgid="521114301871349328">"Beskjær bilde"</string>
     <string name="trim_label" msgid="274203231381209979">"Klipp videoen"</string>
@@ -140,15 +142,21 @@
     <string name="auto" msgid="4296941368722892821">"Auto"</string>
     <string name="flash_on" msgid="7891556231891837284">"Blits brukes"</string>
     <string name="flash_off" msgid="1445443413822680010">"Uten blits"</string>
-    <string name="ffx_vintage" msgid="8348759951363844780">"Gammeldags"</string>
-    <string name="ffx_instant" msgid="726968618715691987">"Instant"</string>
+    <!-- no translation found for ffx_original (372686331501281474) -->
+    <skip />
+    <string name="ffx_vintage" msgid="8348759951363844780">"Vintage"</string>
+    <string name="ffx_instant" msgid="726968618715691987">"Polaroid"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"Bleket"</string>
-    <string name="ffx_blue_crush" msgid="5910979947224043165">"Blåskjær"</string>
-    <string name="ffx_bw_contrast" msgid="3853938816686258406">"Svart/hvitt-kontrast"</string>
-    <string name="ffx_punch" msgid="1343475517872562639">"Punsj"</string>
+    <!-- no translation found for ffx_blue_crush (6034283412305561226) -->
+    <skip />
+    <!-- no translation found for ffx_bw_contrast (517988490066217206) -->
+    <skip />
+    <string name="ffx_punch" msgid="1343475517872562639">"Punch"</string>
     <string name="ffx_x_process" msgid="4779398678661811765">"X-prosess"</string>
-    <string name="ffx_washout" msgid="2526099635720493268">"Utvasket"</string>
-    <string name="ffx_washout_color" msgid="3209955210402468008">"Utvaskede farger"</string>
+    <!-- no translation found for ffx_washout (4594160692176642735) -->
+    <skip />
+    <!-- no translation found for ffx_washout_color (8034075742195795219) -->
+    <skip />
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"Gjør album tilgjengelig i frakoblet modus."</item>
     <item quantity="other" msgid="4948604338155959389">"Gjør album tilgjengelige i frakoblet modus."</item>
@@ -183,6 +191,8 @@
     <string name="add_account" msgid="4271217504968243974">"Legg til konto"</string>
     <string name="folder_camera" msgid="4714658994809533480">"Kamera"</string>
     <string name="folder_download" msgid="7186215137642323932">"Nedlasting"</string>
+    <!-- no translation found for folder_edited_online_photos (6278215510236800181) -->
+    <skip />
     <string name="folder_imported" msgid="2773581395524747099">"Importert"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"Skjermdump"</string>
     <string name="help" msgid="7368960711153618354">"Brukerstøtte"</string>
@@ -192,9 +202,8 @@
     <string name="switch_photo_grid" msgid="3681299459107925725">"Rutenettvisning"</string>
     <string name="trimming" msgid="9122385768369143997">"Klipping"</string>
     <string name="please_wait" msgid="7296066089146487366">"Et øyeblikk"</string>
-    <string name="save_into" msgid="6688364520925473396">"Lagre den klippede videoen i"</string>
+    <string name="save_into" msgid="4960537214388766062">"Lagrer den klippede videoen i albumet:"</string>
     <string name="trim_too_short" msgid="751593965620665326">"Videoen kan ikke klippes – målvideoen er for kort"</string>
-    <string name="trim_too_long" msgid="2657958275279217174">"Videoen ble ikke klippet – lengden er den samme som originalen"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Panoramaet settes sammen"</string>
     <string name="save" msgid="613976532235060516">"Lagre"</string>
 </resources>
