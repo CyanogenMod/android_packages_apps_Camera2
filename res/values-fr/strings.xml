@@ -36,6 +36,8 @@
     <string name="ok" msgid="5296833083983263293">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Appuyer sur un visage pour commencer"</string>
     <string name="saving_image" msgid="7270334453636349407">"Enregistrement de l\'image"</string>
+    <!-- no translation found for filtershow_saving_image (6659463980581993016) -->
+    <skip />
     <string name="save_error" msgid="6857408774183654970">"Impossible d\'enregistrer l\'image rognée."</string>
     <string name="crop_label" msgid="521114301871349328">"Rogner l\'image"</string>
     <string name="trim_label" msgid="274203231381209979">"Découper la vidéo"</string>
@@ -140,23 +142,20 @@
     <string name="auto" msgid="4296941368722892821">"Automatique"</string>
     <string name="flash_on" msgid="7891556231891837284">"Flash déclenché"</string>
     <string name="flash_off" msgid="1445443413822680010">"Flash désactivé"</string>
-    <!-- no translation found for ffx_vintage (8348759951363844780) -->
+    <!-- no translation found for ffx_original (372686331501281474) -->
     <skip />
-    <!-- no translation found for ffx_instant (726968618715691987) -->
+    <string name="ffx_vintage" msgid="8348759951363844780">"Vintage"</string>
+    <string name="ffx_instant" msgid="726968618715691987">"Instantané"</string>
+    <string name="ffx_bleach" msgid="8946700451603478453">"Décoloration"</string>
+    <!-- no translation found for ffx_blue_crush (6034283412305561226) -->
     <skip />
-    <!-- no translation found for ffx_bleach (8946700451603478453) -->
+    <!-- no translation found for ffx_bw_contrast (517988490066217206) -->
     <skip />
-    <!-- no translation found for ffx_blue_crush (5910979947224043165) -->
+    <string name="ffx_punch" msgid="1343475517872562639">"Intense"</string>
+    <string name="ffx_x_process" msgid="4779398678661811765">"Rayons X"</string>
+    <!-- no translation found for ffx_washout (4594160692176642735) -->
     <skip />
-    <!-- no translation found for ffx_bw_contrast (3853938816686258406) -->
-    <skip />
-    <!-- no translation found for ffx_punch (1343475517872562639) -->
-    <skip />
-    <!-- no translation found for ffx_x_process (4779398678661811765) -->
-    <skip />
-    <!-- no translation found for ffx_washout (2526099635720493268) -->
-    <skip />
-    <!-- no translation found for ffx_washout_color (3209955210402468008) -->
+    <!-- no translation found for ffx_washout_color (8034075742195795219) -->
     <skip />
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"Activation de consultation d\'album hors connexion."</item>
@@ -192,21 +191,19 @@
     <string name="add_account" msgid="4271217504968243974">"Ajouter un compte"</string>
     <string name="folder_camera" msgid="4714658994809533480">"Appareil photo"</string>
     <string name="folder_download" msgid="7186215137642323932">"Téléchargements"</string>
+    <!-- no translation found for folder_edited_online_photos (6278215510236800181) -->
+    <skip />
     <string name="folder_imported" msgid="2773581395524747099">"Importations"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"Captures d\'écran"</string>
     <string name="help" msgid="7368960711153618354">"Aide"</string>
     <string name="no_external_storage_title" msgid="2408933644249734569">"Aucune mémoire"</string>
     <string name="no_external_storage" msgid="95726173164068417">"Aucune mémoire de stockage externe disponible."</string>
-    <!-- no translation found for switch_photo_filmstrip (8227883354281661548) -->
-    <skip />
-    <!-- no translation found for switch_photo_grid (3681299459107925725) -->
-    <skip />
+    <string name="switch_photo_filmstrip" msgid="8227883354281661548">"Pellicule"</string>
+    <string name="switch_photo_grid" msgid="3681299459107925725">"Grille"</string>
     <string name="trimming" msgid="9122385768369143997">"Découpe en cours"</string>
     <string name="please_wait" msgid="7296066089146487366">"Veuillez patienter."</string>
-    <string name="save_into" msgid="6688364520925473396">"Enregistrer la vidéo coupée dans"</string>
+    <string name="save_into" msgid="4960537214388766062">"Enregistrement de la vidéo coupée dans l\'album"</string>
     <string name="trim_too_short" msgid="751593965620665326">"Découpe impossible : la vidéo cible est trop courte."</string>
-    <string name="trim_too_long" msgid="2657958275279217174">"Échec de la découpe : longueur identique à l\'original."</string>
-    <!-- no translation found for pano_progress_text (1586851614586678464) -->
-    <skip />
+    <string name="pano_progress_text" msgid="1586851614586678464">"Rendu de la vue panoramique en cours…"</string>
     <string name="save" msgid="613976532235060516">"Enregistrer"</string>
 </resources>
