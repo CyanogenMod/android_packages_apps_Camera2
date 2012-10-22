@@ -23,6 +23,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata.FLIP;
 
 public class ImageFlip extends ImageGeometry {
@@ -42,7 +43,7 @@ public class ImageFlip extends ImageGeometry {
 
     @Override
     public String getName() {
-        return "Mirror";
+        return getContext().getString(R.string.mirror);
     }
 
     @Override
