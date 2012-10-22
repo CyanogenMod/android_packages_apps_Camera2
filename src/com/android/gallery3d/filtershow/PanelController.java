@@ -490,6 +490,7 @@ public class PanelController implements OnClickListener {
     public ImageFilter setImagePreset(ImageFilter filter, String name) {
         ImagePreset copy = new ImagePreset(getImagePreset());
         copy.add(filter);
+        copy.setHistoryName(name);
         copy.setIsFx(false);
         mMasterImage.setImagePreset(copy);
         return filter;

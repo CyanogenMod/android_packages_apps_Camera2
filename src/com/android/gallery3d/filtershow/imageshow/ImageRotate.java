@@ -22,6 +22,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 
+import com.android.gallery3d.R;
+
 public class ImageRotate extends ImageGeometry {
 
     private float mBaseAngle = 0;
@@ -40,7 +42,7 @@ public class ImageRotate extends ImageGeometry {
 
     @Override
     public String getName() {
-        return "Rotation";
+        return getContext().getString(R.string.rotate);
     }
 
     private static final Paint gPaint = new Paint();
