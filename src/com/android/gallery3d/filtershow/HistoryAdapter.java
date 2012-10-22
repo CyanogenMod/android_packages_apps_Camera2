@@ -3,6 +3,7 @@ package com.android.gallery3d.filtershow;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -17,14 +18,59 @@ import java.util.Vector;
 public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
     private static final String LOGTAG = "HistoryAdapter";
     private int mCurrentPresetPosition = 0;
-
-    public void setCurrentPreset(int n) {
-        mCurrentPresetPosition = n;
-        this.notifyDataSetChanged();
-    }
+    private MenuItem mUndoMenuItem = null;
+    private MenuItem mRedoMenuItem = null;
+    private MenuItem mResetMenuItem = null;
 
     public HistoryAdapter(Context context, int resource, int textViewResourceId) {
         super(context, resource, textViewResourceId);
+        FilterShowActivity activity = (FilterShowActivity) context;
+    }
+
+    public void setMenuItems(MenuItem undoItem, MenuItem redoItem, MenuItem resetItem) {
+        mUndoMenuItem = undoItem;
+        mRedoMenuItem = redoItem;
+        mResetMenuItem = resetItem;
+        updateMenuItems();
+    }
+
+    public boolean canReset() {
+        if (getCount() <= 1) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean canUndo() {
+        if (mCurrentPresetPosition == getCount() - 1) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean canRedo() {
+        if (mCurrentPresetPosition == 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public void updateMenuItems() {
+        if (mUndoMenuItem != null) {
+            mUndoMenuItem.setEnabled(canUndo());
+        }
+        if (mRedoMenuItem != null) {
+            mRedoMenuItem.setEnabled(canRedo());
+        }
+        if (mResetMenuItem != null) {
+            mResetMenuItem.setEnabled(canReset());
+        }
+    }
+
+    public void setCurrentPreset(int n) {
+        mCurrentPresetPosition = n;
+        updateMenuItems();
+        this.notifyDataSetChanged();
     }
 
     public void reset() {
@@ -34,6 +80,7 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
         ImagePreset first = getItem(getCount() - 1);
         clear();
         addHistoryItem(first);
+        updateMenuItems();
     }
 
     public ImagePreset getLast() {
@@ -46,6 +93,7 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
     public void addHistoryItem(ImagePreset preset) {
         if (canAddHistoryItem(preset)) {
             insert(preset, 0);
+            updateMenuItems();
         }
     }
 
@@ -89,6 +137,7 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
             mCurrentPresetPosition = 0;
         }
         this.notifyDataSetChanged();
+        updateMenuItems();
         return mCurrentPresetPosition;
     }
 
@@ -98,6 +147,7 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
             mCurrentPresetPosition = getCount() - 1;
         }
         this.notifyDataSetChanged();
+        updateMenuItems();
         return mCurrentPresetPosition;
     }
 
