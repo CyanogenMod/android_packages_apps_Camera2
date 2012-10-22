@@ -664,6 +664,11 @@ public class PhotoPage extends ActivityState implements
                 .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
     }
 
+    private void overrideTransitionToEditor() {
+        ((Activity) mActivity).overridePendingTransition(android.R.anim.slide_in_left,
+                android.R.anim.fade_out);
+    }
+
     private void launchTinyPlanet() {
         // Deep link into tiny planet
         MediaItem current = mModel.getMediaItem(0);
@@ -673,6 +678,7 @@ public class PhotoPage extends ActivityState implements
             .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         mRecenterCameraOnResume = false;
         mActivity.startActivityForResult(intent, REQUEST_EDIT);
+        overrideTransitionToEditor();
     }
 
     private void launchPhotoEditor() {
@@ -693,6 +699,7 @@ public class PhotoPage extends ActivityState implements
         mRecenterCameraOnResume = false;
         ((Activity) mActivity).startActivityForResult(Intent.createChooser(intent, null),
                 REQUEST_EDIT);
+        overrideTransitionToEditor();
     }
 
     private void requestDeferredUpdate() {
