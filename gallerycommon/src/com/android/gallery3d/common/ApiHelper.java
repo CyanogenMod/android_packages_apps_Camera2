@@ -167,6 +167,9 @@ public class ApiHelper {
     public static final boolean HAS_VIEW_PROPERTY_ANIMATOR =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB_MR1;
 
+    public static final boolean HAS_POST_ON_ANIMATION =
+            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
+
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
         try {
