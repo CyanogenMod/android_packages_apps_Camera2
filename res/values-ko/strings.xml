@@ -36,6 +36,8 @@
     <string name="ok" msgid="5296833083983263293">"확인"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"시작하려면 얼굴을 터치하세요."</string>
     <string name="saving_image" msgid="7270334453636349407">"사진 저장 중..."</string>
+    <!-- no translation found for filtershow_saving_image (6659463980581993016) -->
+    <skip />
     <string name="save_error" msgid="6857408774183654970">"잘린 이미지를 저장하지 못했습니다."</string>
     <string name="crop_label" msgid="521114301871349328">"사진 자르기"</string>
     <string name="trim_label" msgid="274203231381209979">"동영상 다듬기"</string>
@@ -145,12 +147,16 @@
     <string name="ffx_vintage" msgid="8348759951363844780">"빈티지"</string>
     <string name="ffx_instant" msgid="726968618715691987">"인스턴트"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"블리치"</string>
-    <string name="ffx_blue_crush" msgid="5910979947224043165">"블루 크러시"</string>
-    <string name="ffx_bw_contrast" msgid="3853938816686258406">"BW 대비"</string>
+    <!-- no translation found for ffx_blue_crush (6034283412305561226) -->
+    <skip />
+    <!-- no translation found for ffx_bw_contrast (517988490066217206) -->
+    <skip />
     <string name="ffx_punch" msgid="1343475517872562639">"펀치"</string>
     <string name="ffx_x_process" msgid="4779398678661811765">"X 처리"</string>
-    <string name="ffx_washout" msgid="2526099635720493268">"워시아웃"</string>
-    <string name="ffx_washout_color" msgid="3209955210402468008">"워시아웃 색상"</string>
+    <!-- no translation found for ffx_washout (4594160692176642735) -->
+    <skip />
+    <!-- no translation found for ffx_washout_color (8034075742195795219) -->
+    <skip />
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"오프라인에서 앨범을 사용하도록 설정합니다."</item>
     <item quantity="other" msgid="4948604338155959389">"오프라인에서 앨범을 사용하도록 설정합니다."</item>
@@ -185,6 +191,8 @@
     <string name="add_account" msgid="4271217504968243974">"계정 추가"</string>
     <string name="folder_camera" msgid="4714658994809533480">"카메라"</string>
     <string name="folder_download" msgid="7186215137642323932">"다운로드"</string>
+    <!-- no translation found for folder_edited_online_photos (6278215510236800181) -->
+    <skip />
     <string name="folder_imported" msgid="2773581395524747099">"가져옴"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"스크린샷"</string>
     <string name="help" msgid="7368960711153618354">"도움말"</string>
@@ -194,8 +202,7 @@
     <string name="switch_photo_grid" msgid="3681299459107925725">"바둑판식 보기"</string>
     <string name="trimming" msgid="9122385768369143997">"자르기"</string>
     <string name="please_wait" msgid="7296066089146487366">"잠시 기다려 주세요."</string>
-    <!-- no translation found for save_into (4960537214388766062) -->
-    <skip />
+    <string name="save_into" msgid="4960537214388766062">"잘라낸 동영상을 앨범에 저장 중:"</string>
     <string name="trim_too_short" msgid="751593965620665326">"잘라낼 수 없음 : 동영상이 너무 짧음"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"파노라마 렌더링"</string>
     <string name="save" msgid="613976532235060516">"저장"</string>

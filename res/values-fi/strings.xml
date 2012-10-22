@@ -36,6 +36,7 @@
     <string name="ok" msgid="5296833083983263293">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Aloita koskettamalla kasvoja."</string>
     <string name="saving_image" msgid="7270334453636349407">"Tallennetaan kuvaa…"</string>
+    <string name="filtershow_saving_image" msgid="6659463980581993016">"Tallennetaan kuvaa albumiin <xliff:g id="ALBUM_NAME">%1$s</xliff:g>..."</string>
     <string name="save_error" msgid="6857408774183654970">"Rajattua kuvaa ei voitu tallentaa."</string>
     <string name="crop_label" msgid="521114301871349328">"Leikkaa kuvaa"</string>
     <string name="trim_label" msgid="274203231381209979">"Lyhennä videota"</string>
@@ -140,17 +141,16 @@
     <string name="auto" msgid="4296941368722892821">"Autom."</string>
     <string name="flash_on" msgid="7891556231891837284">"Salama käyt."</string>
     <string name="flash_off" msgid="1445443413822680010">"Ei salamaa"</string>
-    <!-- no translation found for ffx_original (372686331501281474) -->
-    <skip />
+    <string name="ffx_original" msgid="372686331501281474">"Alkuperäinen"</string>
     <string name="ffx_vintage" msgid="8348759951363844780">"Vanha"</string>
     <string name="ffx_instant" msgid="726968618715691987">"Pika"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"Valkaisu"</string>
-    <string name="ffx_blue_crush" msgid="5910979947224043165">"Sinisävy"</string>
-    <string name="ffx_bw_contrast" msgid="3853938816686258406">"MV-kontrasti"</string>
+    <string name="ffx_blue_crush" msgid="6034283412305561226">"Sininen"</string>
+    <string name="ffx_bw_contrast" msgid="517988490066217206">"MV"</string>
     <string name="ffx_punch" msgid="1343475517872562639">"Isku"</string>
     <string name="ffx_x_process" msgid="4779398678661811765">"X-prosessi"</string>
-    <string name="ffx_washout" msgid="2526099635720493268">"Haalea"</string>
-    <string name="ffx_washout_color" msgid="3209955210402468008">"Haalea väri"</string>
+    <string name="ffx_washout" msgid="4594160692176642735">"Latte"</string>
+    <string name="ffx_washout_color" msgid="8034075742195795219">"Litografia"</string>
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"Asetetaan albumeja offline-käyttöön."</item>
     <item quantity="other" msgid="4948604338155959389">"Asetetaan albumeja offline-käyttöön."</item>
@@ -185,6 +185,7 @@
     <string name="add_account" msgid="4271217504968243974">"Lisää tili"</string>
     <string name="folder_camera" msgid="4714658994809533480">"Kamera"</string>
     <string name="folder_download" msgid="7186215137642323932">"Lataus"</string>
+    <string name="folder_edited_online_photos" msgid="6278215510236800181">"Muokatut verkkokuvat"</string>
     <string name="folder_imported" msgid="2773581395524747099">"Tuonti"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"Kuvakaappaus"</string>
     <string name="help" msgid="7368960711153618354">"Ohje"</string>
@@ -194,8 +195,7 @@
     <string name="switch_photo_grid" msgid="3681299459107925725">"Ruudukkonäkymä"</string>
     <string name="trimming" msgid="9122385768369143997">"Leikataan"</string>
     <string name="please_wait" msgid="7296066089146487366">"Odota"</string>
-    <!-- no translation found for save_into (4960537214388766062) -->
-    <skip />
+    <string name="save_into" msgid="4960537214388766062">"Tallennetaan lyhennettyä videota albumiin"</string>
     <string name="trim_too_short" msgid="751593965620665326">"Ei voi leikata: kohdevideo on liian lyhyt"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Panoraamaa hahmonnetaan"</string>
     <string name="save" msgid="613976532235060516">"Tallenna"</string>

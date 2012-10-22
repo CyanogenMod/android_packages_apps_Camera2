@@ -36,6 +36,8 @@
     <string name="ok" msgid="5296833083983263293">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Atingeţi o faţă pentru a începe."</string>
     <string name="saving_image" msgid="7270334453636349407">"Se salvează fotografia..."</string>
+    <!-- no translation found for filtershow_saving_image (6659463980581993016) -->
+    <skip />
     <string name="save_error" msgid="6857408774183654970">"Imaginea decupată nu s-a putut salva."</string>
     <string name="crop_label" msgid="521114301871349328">"Decupaţi fotografia"</string>
     <string name="trim_label" msgid="274203231381209979">"Decupaţi videoclipul"</string>
@@ -145,12 +147,16 @@
     <string name="ffx_vintage" msgid="8348759951363844780">"Vintage"</string>
     <string name="ffx_instant" msgid="726968618715691987">"Instant"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"Albire"</string>
-    <string name="ffx_blue_crush" msgid="5910979947224043165">"Blue Crush"</string>
-    <string name="ffx_bw_contrast" msgid="3853938816686258406">"Contrast A/N"</string>
+    <!-- no translation found for ffx_blue_crush (6034283412305561226) -->
+    <skip />
+    <!-- no translation found for ffx_bw_contrast (517988490066217206) -->
+    <skip />
     <string name="ffx_punch" msgid="1343475517872562639">"Punch"</string>
     <string name="ffx_x_process" msgid="4779398678661811765">"Proces. încr."</string>
-    <string name="ffx_washout" msgid="2526099635720493268">"Estompare"</string>
-    <string name="ffx_washout_color" msgid="3209955210402468008">"Decolorare"</string>
+    <!-- no translation found for ffx_washout (4594160692176642735) -->
+    <skip />
+    <!-- no translation found for ffx_washout_color (8034075742195795219) -->
+    <skip />
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"Se face disponibil offline albumul."</item>
     <item quantity="other" msgid="4948604338155959389">"Se fac disponibile offline albumele"</item>
@@ -185,6 +191,8 @@
     <string name="add_account" msgid="4271217504968243974">"Adăugaţi un cont"</string>
     <string name="folder_camera" msgid="4714658994809533480">"Cameră foto"</string>
     <string name="folder_download" msgid="7186215137642323932">"Descărcate"</string>
+    <!-- no translation found for folder_edited_online_photos (6278215510236800181) -->
+    <skip />
     <string name="folder_imported" msgid="2773581395524747099">"Importate"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"Captură de ecran"</string>
     <string name="help" msgid="7368960711153618354">"Ajutor"</string>
@@ -194,8 +202,7 @@
     <string name="switch_photo_grid" msgid="3681299459107925725">"Afişare tip grilă"</string>
     <string name="trimming" msgid="9122385768369143997">"Se ajustează"</string>
     <string name="please_wait" msgid="7296066089146487366">"Aşteptaţi"</string>
-    <!-- no translation found for save_into (4960537214388766062) -->
-    <skip />
+    <string name="save_into" msgid="4960537214388766062">"Se salvează videoclipul ajustat în album:"</string>
     <string name="trim_too_short" msgid="751593965620665326">"Nu se poate ajusta: videoclipul ţintă este prea scurt"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Se redă panorama"</string>
     <string name="save" msgid="613976532235060516">"Salvaţi"</string>
