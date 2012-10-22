@@ -36,6 +36,7 @@
     <string name="ok" msgid="5296833083983263293">"OK"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Pumindot ng mukha upang magsimula."</string>
     <string name="saving_image" msgid="7270334453636349407">"Nagse-save ng larawan..."</string>
+    <string name="filtershow_saving_image" msgid="6659463980581993016">"Sine-save ang larawan sa <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
     <string name="save_error" msgid="6857408774183654970">"Hindi mai-save ang na-crop na larawan."</string>
     <string name="crop_label" msgid="521114301871349328">"I-crop ang larawan"</string>
     <string name="trim_label" msgid="274203231381209979">"I-trim ang video"</string>
@@ -140,17 +141,16 @@
     <string name="auto" msgid="4296941368722892821">"Auto"</string>
     <string name="flash_on" msgid="7891556231891837284">"Flash fired"</string>
     <string name="flash_off" msgid="1445443413822680010">"Walang flash"</string>
-    <!-- no translation found for ffx_original (372686331501281474) -->
-    <skip />
+    <string name="ffx_original" msgid="372686331501281474">"Orihinal"</string>
     <string name="ffx_vintage" msgid="8348759951363844780">"Vintage"</string>
     <string name="ffx_instant" msgid="726968618715691987">"Instant"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"Bleach"</string>
-    <string name="ffx_blue_crush" msgid="5910979947224043165">"Blue Crush"</string>
-    <string name="ffx_bw_contrast" msgid="3853938816686258406">"BW Contrast"</string>
+    <string name="ffx_blue_crush" msgid="6034283412305561226">"Asul"</string>
+    <string name="ffx_bw_contrast" msgid="517988490066217206">"B/W"</string>
     <string name="ffx_punch" msgid="1343475517872562639">"Punch"</string>
     <string name="ffx_x_process" msgid="4779398678661811765">"X Process"</string>
-    <string name="ffx_washout" msgid="2526099635720493268">"Washout"</string>
-    <string name="ffx_washout_color" msgid="3209955210402468008">"Washout Color"</string>
+    <string name="ffx_washout" msgid="4594160692176642735">"Latte"</string>
+    <string name="ffx_washout_color" msgid="8034075742195795219">"Litho"</string>
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"Ginagawang available ang album offline."</item>
     <item quantity="other" msgid="4948604338155959389">"Ginagawang available ang mga album offline."</item>
@@ -185,6 +185,7 @@
     <string name="add_account" msgid="4271217504968243974">"Magdagdag ng account"</string>
     <string name="folder_camera" msgid="4714658994809533480">"Camera"</string>
     <string name="folder_download" msgid="7186215137642323932">"I-download"</string>
+    <string name="folder_edited_online_photos" msgid="6278215510236800181">"Mga Na-edit na Online na Larawan"</string>
     <string name="folder_imported" msgid="2773581395524747099">"Na-import"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"Screenshot"</string>
     <string name="help" msgid="7368960711153618354">"Tulong"</string>
@@ -194,8 +195,7 @@
     <string name="switch_photo_grid" msgid="3681299459107925725">"Grid view"</string>
     <string name="trimming" msgid="9122385768369143997">"Pag-trim"</string>
     <string name="please_wait" msgid="7296066089146487366">"Mangyaring maghintay"</string>
-    <!-- no translation found for save_into (4960537214388766062) -->
-    <skip />
+    <string name="save_into" msgid="4960537214388766062">"Sine-save ang na-trim na video sa album :"</string>
     <string name="trim_too_short" msgid="751593965620665326">"Hindi ma-trim : masyadong maikli ang target na video"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Nire-render ang panorama"</string>
     <string name="save" msgid="613976532235060516">"I-save"</string>
