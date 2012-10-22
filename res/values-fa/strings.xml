@@ -36,6 +36,7 @@
     <string name="ok" msgid="5296833083983263293">"تأیید"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"برای شروع یک چهره را لمس کنید."</string>
     <string name="saving_image" msgid="7270334453636349407">"در حال ذخیره عکس..."</string>
+    <string name="filtershow_saving_image" msgid="6659463980581993016">"ذخیره تصویر در <xliff:g id="ALBUM_NAME">%1$s</xliff:g>…"</string>
     <string name="save_error" msgid="6857408774183654970">"ذخیره تصویر برش‌خورده امکان‌پذیر نیست."</string>
     <string name="crop_label" msgid="521114301871349328">"برش تصویر"</string>
     <string name="trim_label" msgid="274203231381209979">"برش ویدیو"</string>
@@ -140,17 +141,16 @@
     <string name="auto" msgid="4296941368722892821">"خودکار"</string>
     <string name="flash_on" msgid="7891556231891837284">"فلاش زده شد"</string>
     <string name="flash_off" msgid="1445443413822680010">"بدون فلاش"</string>
-    <!-- no translation found for ffx_original (372686331501281474) -->
-    <skip />
+    <string name="ffx_original" msgid="372686331501281474">"اصلی"</string>
     <string name="ffx_vintage" msgid="8348759951363844780">"آنتیک"</string>
     <string name="ffx_instant" msgid="726968618715691987">"فوری"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"سفیدکننده"</string>
-    <string name="ffx_blue_crush" msgid="5910979947224043165">"شکست آبی"</string>
-    <string name="ffx_bw_contrast" msgid="3853938816686258406">"کنتراست BW"</string>
+    <string name="ffx_blue_crush" msgid="6034283412305561226">"آبی"</string>
+    <string name="ffx_bw_contrast" msgid="517988490066217206">"سیاه‌/سفید"</string>
     <string name="ffx_punch" msgid="1343475517872562639">"پانچ"</string>
     <string name="ffx_x_process" msgid="4779398678661811765">"فرآیند X"</string>
-    <string name="ffx_washout" msgid="2526099635720493268">"محو کردن"</string>
-    <string name="ffx_washout_color" msgid="3209955210402468008">"محو کردن رنگ"</string>
+    <string name="ffx_washout" msgid="4594160692176642735">"Latte"</string>
+    <string name="ffx_washout_color" msgid="8034075742195795219">"Litho"</string>
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"آلبوم را به صورت آفلاین در دسترس قرار دهید."</item>
     <item quantity="other" msgid="4948604338155959389">"آلبوم‌ها را به صورت آفلاین در دسترس قرار دهید."</item>
@@ -185,6 +185,7 @@
     <string name="add_account" msgid="4271217504968243974">"افزودن حساب"</string>
     <string name="folder_camera" msgid="4714658994809533480">"دوربین"</string>
     <string name="folder_download" msgid="7186215137642323932">"دانلود"</string>
+    <string name="folder_edited_online_photos" msgid="6278215510236800181">"ویرایش آنلاین عکس"</string>
     <string name="folder_imported" msgid="2773581395524747099">"وارد شده"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"عکس صفحه"</string>
     <string name="help" msgid="7368960711153618354">"راهنما"</string>
@@ -194,8 +195,7 @@
     <string name="switch_photo_grid" msgid="3681299459107925725">"نمای شبکه‌ای"</string>
     <string name="trimming" msgid="9122385768369143997">"کوتاه کردن"</string>
     <string name="please_wait" msgid="7296066089146487366">"لطفاً منتظر بمانید"</string>
-    <!-- no translation found for save_into (4960537214388766062) -->
-    <skip />
+    <string name="save_into" msgid="4960537214388766062">"ذخیره ویدیوی برش داده شده در آلبوم:"</string>
     <string name="trim_too_short" msgid="751593965620665326">"نمی‌تواند کوتاه شود: ویدیوی موردنظر بسیار کوتاه است"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"در حال تولید تصویر پانوراما"</string>
     <string name="save" msgid="613976532235060516">"ذخیره"</string>
