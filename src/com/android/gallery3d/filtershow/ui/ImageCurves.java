@@ -209,7 +209,7 @@ public class ImageCurves extends ImageSlave {
         if (mCurrentControlPoint == null) {
             if (pick == -1) {
                 mCurrentControlPoint = new ControlPoint(posX, posY);
-                spline.addPoint(mCurrentControlPoint);
+                pick = spline.addPoint(mCurrentControlPoint);
                 mDidAddPoint = true;
             } else {
                 mCurrentControlPoint = spline.getPoint(pick);
