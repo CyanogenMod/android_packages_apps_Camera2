@@ -345,6 +345,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             pickImage();
         }
 
+        View tinyPlanetView = listColors.findViewById(R.id.tinyplanetButton);
+
+        if (tinyPlanetView != null && !mImageLoader.isLightCycle360()) {
+            tinyPlanetView.setVisibility(View.GONE);
+        }
+
         String action = intent.getAction();
         if (action.equalsIgnoreCase(CROP_ACTION)){
             mPanelController.showComponent(findViewById(R.id.cropButton));
