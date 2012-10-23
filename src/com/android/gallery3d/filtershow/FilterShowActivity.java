@@ -55,6 +55,7 @@ import com.android.gallery3d.data.LocalAlbum;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterBorder;
+import com.android.gallery3d.filtershow.filters.ImageFilterBwFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterContrast;
 import com.android.gallery3d.filtershow.filters.ImageFilterExposure;
 import com.android.gallery3d.filtershow.filters.ImageFilterFx;
@@ -255,6 +256,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 R.id.vibranceButton,
                 R.id.contrastButton,
                 R.id.saturationButton,
+                R.id.bwfilterButton,
                 R.id.wbalanceButton,
                 R.id.hueButton,
                 R.id.exposureButton,
@@ -266,6 +268,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 new ImageFilterVibrance(),
                 new ImageFilterContrast(),
                 new ImageFilterSaturated(),
+                new ImageFilterBwFilter(),
                 new ImageFilterWBalance(),
                 new ImageFilterHue(),
                 new ImageFilterExposure(),
