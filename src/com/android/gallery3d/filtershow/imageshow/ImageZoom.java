@@ -58,8 +58,8 @@ public class ImageZoom extends ImageSlave {
         if ((mZoomedIn ||mTouchDown) && mImageLoader != null) {
             filteredImage = mImageLoader.getScaleOneImageForPreset(this, getImagePreset(), mZoomBounds, false);
         } else {
-            getFilteredImage();
-            filteredImage = mFilteredImage;
+            requestFilteredImages();
+            filteredImage = getFilteredImage();
         }
         drawImage(canvas, filteredImage);
         if (showControls()) {
