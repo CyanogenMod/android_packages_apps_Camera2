@@ -687,6 +687,8 @@ public class PhotoPage extends ActivityState implements
         intent.setClass(mActivity, FilterShowActivity.class);
         intent.setDataAndType(current.getContentUri(), current.getMimeType())
             .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.putExtra(FilterShowActivity.LAUNCH_FULLSCREEN,
+                mActivity.isFullscreen());
         mRecenterCameraOnResume = false;
         mActivity.startActivityForResult(intent, REQUEST_EDIT);
         overrideTransitionToEditor();
@@ -707,6 +709,8 @@ public class PhotoPage extends ActivityState implements
                 .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).size() == 0) {
             intent.setAction(Intent.ACTION_EDIT);
         }
+        intent.putExtra(FilterShowActivity.LAUNCH_FULLSCREEN,
+                mActivity.isFullscreen());
         mRecenterCameraOnResume = false;
         ((Activity) mActivity).startActivityForResult(Intent.createChooser(intent, null),
                 REQUEST_EDIT);
