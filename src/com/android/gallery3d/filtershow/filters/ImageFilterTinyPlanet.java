@@ -38,7 +38,8 @@ public class ImageFilterTinyPlanet extends ImageFilter {
     }
 
     native protected void nativeApplyFilter(
-            Bitmap bitmapIn, int width, int height, Bitmap bitmapOut, int outSize, float scale);
+            Bitmap bitmapIn, int width, int height, Bitmap bitmapOut, int outSize, float scale,
+            float angle);
 
     @Override
     public Bitmap apply(Bitmap bitmapIn, float scaleFactor, boolean highQuality) {
@@ -61,7 +62,7 @@ public class ImageFilterTinyPlanet extends ImageFilter {
                 outputSize, outputSize, Bitmap.Config.ARGB_8888);
 
         // TODO(haeberling): Add the padding back in based on the meta-data.
-        nativeApplyFilter(bitmapIn, w, h, mBitmapOut, outputSize, mParameter / 100f);
+        nativeApplyFilter(bitmapIn, w, h, mBitmapOut, outputSize, mParameter / 100f, 0f);
         return mBitmapOut;
     }
 }
