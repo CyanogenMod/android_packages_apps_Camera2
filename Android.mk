@@ -6,6 +6,7 @@ LOCAL_MODULE_TAGS := optional
 
 LOCAL_STATIC_JAVA_LIBRARIES := android-support-v13
 LOCAL_STATIC_JAVA_LIBRARIES += com.android.gallery3d.common2
+LOCAL_STATIC_JAVA_LIBRARIES += libXMPCore
 LOCAL_STATIC_JAVA_LIBRARIES += mp4parser
 
 LOCAL_SRC_FILES := $(call all-java-files-under, src) $(call all-renderscript-files-under, src)
