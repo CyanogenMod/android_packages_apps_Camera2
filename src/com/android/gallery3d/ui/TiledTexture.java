@@ -34,7 +34,7 @@ import java.util.ArrayList;
 // split into tiles. By doing so, we may increase the time required to
 // upload the whole bitmap but we reduce the time of uploading each tile
 // so it make the animation more smooth and prevents jank.
-public class TiledTexture {
+public class TiledTexture implements Texture {
     private static final int CONTENT_SIZE = 254;
     private static final int BORDER_SIZE = 1;
     private static final int TILE_SIZE = CONTENT_SIZE + 2 * BORDER_SIZE;
@@ -162,6 +162,7 @@ public class TiledTexture {
 
     private boolean uploadNextTile(GLCanvas canvas) {
         if (mUploadIndex == mTiles.length) return true;
+
         Tile next = mTiles[mUploadIndex++];
         boolean hasBeenLoad = next.isLoaded();
         next.updateContent(canvas);
@@ -259,6 +260,7 @@ public class TiledTexture {
     }
 
     // Draws the texture on to the specified rectangle.
+    @Override
     public void draw(GLCanvas canvas, int x, int y, int width, int height) {
         RectF src = mSrcRect;
         RectF dest = mDestRect;
@@ -294,5 +296,25 @@ public class TiledTexture {
             src.offset(BORDER_SIZE - t.offsetX, BORDER_SIZE - t.offsetY);
             canvas.drawTexture(t, src, dest);
         }
+    }
+
+    @Override
+    public int getWidth() {
+        return mWidth;
+    }
+
+    @Override
+    public int getHeight() {
+        return mHeight;
+    }
+
+    @Override
+    public void draw(GLCanvas canvas, int x, int y) {
+        draw(canvas, x, y, mWidth, mHeight);
+    }
+
+    @Override
+    public boolean isOpaque() {
+        return false;
     }
 }

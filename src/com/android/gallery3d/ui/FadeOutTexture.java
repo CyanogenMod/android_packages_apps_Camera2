@@ -22,8 +22,11 @@ public class FadeOutTexture extends FadeTexture {
     @SuppressWarnings("unused")
     private static final String TAG = "FadeOutTexture";
 
+    private final BasicTexture mTexture;
+
     public FadeOutTexture(BasicTexture texture) {
-        super(texture);
+        super(texture.getWidth(), texture.getHeight(), texture.isOpaque());
+        mTexture = texture;
     }
 
     @Override
