@@ -20,6 +20,7 @@ import com.android.gallery3d.data.MediaObject.PanoramaSupportCallback;
 import com.android.gallery3d.data.PanoramaMetadataJob;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
+import com.android.gallery3d.util.LightCycleHelper;
 import com.android.gallery3d.util.LightCycleHelper.PanoramaMetadata;
 
 import java.util.ArrayList;
@@ -77,13 +78,16 @@ public class PanoramaMetadataSupport implements FutureListener<PanoramaMetadata>
     public void onFutureDone(Future<PanoramaMetadata> future) {
         synchronized (mLock) {
             mPanoramaMetadata = future.get();
+            if (mPanoramaMetadata == null) {
+                // Error getting panorama data from file. Treat as not panorama.
+                mPanoramaMetadata = LightCycleHelper.NOT_PANORAMA;
+            }
             for (PanoramaSupportCallback cb : mCallbacksWaiting) {
-                cb.panoramaInfoAvailable(mMediaObject,
-                        mPanoramaMetadata.mUsePanoramaViewer,
+                cb.panoramaInfoAvailable(mMediaObject, mPanoramaMetadata.mUsePanoramaViewer,
                         mPanoramaMetadata.mIsPanorama360);
             }
             mGetPanoMetadataTask = null;
             mCallbacksWaiting = null;
         }
-   }
+    }
 }
