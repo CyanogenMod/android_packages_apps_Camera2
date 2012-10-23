@@ -221,12 +221,6 @@ public abstract class ImageGeometry extends ImageSlave {
         return getLocalRotation() + getLocalStraighten();
     }
 
-    protected Bitmap getMasterImage() {
-        if (getMaster() == null)
-            return null;
-        return getMaster().mForegroundImage;
-    }
-
     protected static float[] getCornersFromRect(RectF r) {
         // Order is:
         // 0------->1
@@ -375,7 +369,7 @@ public abstract class ImageGeometry extends ImageSlave {
         ImagePreset lastHistoryItem = getHistory().getLast();
         if (lastHistoryItem != null && lastHistoryItem.historyName().equalsIgnoreCase(getName())) {
             getImagePreset().setGeometry(mLocalGeometry);
-            mImageLoader.resetImageForPreset(getImagePreset(), this);
+            resetImageCaches(this);
         } else {
             ImagePreset copy = new ImagePreset(getImagePreset());
             copy.setGeometry(mLocalGeometry);
@@ -535,8 +529,10 @@ public abstract class ImageGeometry extends ImageSlave {
             syncLocalToMasterGeometry();
             clearDirtyGeometryFlag();
         }
-        Bitmap image = getMasterImage();
+        requestFilteredImages();
+        Bitmap image = getMaster().getFiltersOnlyImage();
         if (image == null) {
+            invalidate();
             return;
         }
         mHasDrawn = true;
