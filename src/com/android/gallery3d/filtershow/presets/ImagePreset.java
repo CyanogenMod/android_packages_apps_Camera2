@@ -169,7 +169,11 @@ public class ImagePreset {
             return false;
         }
 
-        if (!mGeoData.equals(preset.mGeoData)) {
+        if (mDoApplyGeometry != preset.mDoApplyGeometry) {
+            return false;
+        }
+
+        if (mDoApplyGeometry && !mGeoData.equals(preset.mGeoData)) {
             return false;
         }
 
@@ -181,11 +185,19 @@ public class ImagePreset {
             return false;
         }
 
-        for (int i = 0; i < preset.mFilters.size(); i++) {
-            ImageFilter a = preset.mFilters.elementAt(i);
-            ImageFilter b = mFilters.elementAt(i);
-            if (!a.same(b)) {
+        if (mDoApplyFilters != preset.mDoApplyFilters) {
+            if (mFilters.size() > 0 || preset.mFilters.size() > 0) {
                 return false;
+            }
+        }
+
+        if (mDoApplyFilters && preset.mDoApplyFilters) {
+            for (int i = 0; i < preset.mFilters.size(); i++) {
+                ImageFilter a = preset.mFilters.elementAt(i);
+                ImageFilter b = mFilters.elementAt(i);
+                if (!a.same(b)) {
+                    return false;
+                }
             }
         }
         return true;
