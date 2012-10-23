@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
+import com.android.gallery3d.filtershow.filters.ImageFilterBwFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterContrast;
 import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
 import com.android.gallery3d.filtershow.filters.ImageFilterExposure;
@@ -548,6 +549,10 @@ public class PanelController implements OnClickListener {
             filter = setImagePreset(new ImageFilterSaturated(), name);
         }
         if (filter == null
+                && name.equalsIgnoreCase(mCurrentImage.getContext().getString(R.string.bwfilter))) {
+            filter = setImagePreset(new ImageFilterBwFilter(), name);
+        }
+        if (filter == null
                 && name.equalsIgnoreCase(mCurrentImage.getContext().getString(R.string.hue))) {
             filter = setImagePreset(new ImageFilterHue(), name);
         }
@@ -704,6 +709,13 @@ public class PanelController implements OnClickListener {
                 ensureFilter(ename);
                 break;
             }
+            case R.id.bwfilterButton: {
+            mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
+            String ename = mCurrentImage.getContext().getString(R.string.bwfilter);
+            mUtilityPanel.setEffectName(ename);
+            ensureFilter(ename);
+            break;
+        }
             case R.id.wbalanceButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(false);
                 String ename = mCurrentImage.getContext().getString(R.string.wbalance);
