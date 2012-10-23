@@ -84,6 +84,9 @@ public class Spline {
     }
 
     public void movePoint(int pick, float x, float y) {
+        if (pick < 0 || pick > mPoints.size() - 1) {
+            return;
+        }
         ControlPoint point = mPoints.elementAt(pick);
         point.x = x;
         point.y = y;
@@ -345,13 +348,14 @@ public class Spline {
         return solution;
     }
 
-    public void addPoint(float x, float y) {
-        addPoint(new ControlPoint(x, y));
+    public int addPoint(float x, float y) {
+        return addPoint(new ControlPoint(x, y));
     }
 
-    public void addPoint(ControlPoint v) {
+    public int addPoint(ControlPoint v) {
         mPoints.add(v);
         Collections.sort(mPoints);
+        return mPoints.indexOf(v);
     }
 
     public void deletePoint(int n) {
