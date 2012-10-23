@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -277,7 +278,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             listColors.removeView(v);
 
             filters[i].setParameter(filters[i].getPreviewParameter());
-            if(v instanceof ImageButtonTitle)
+            if (v instanceof ImageButtonTitle)
                 filters[i].setName(((ImageButtonTitle) v).getText());
             fView.setImageFilter(filters[i]);
             fView.setController(this);
@@ -295,7 +296,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 R.drawable.filtershow_button_colors_sharpen,
                 R.drawable.filtershow_button_colors_curve
         };
-        int []overlayNames = {
+        int[] overlayNames = {
                 R.string.sharpness,
                 R.string.curvesRGB
         };
@@ -367,7 +368,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }
 
         String action = intent.getAction();
-        if (action.equalsIgnoreCase(CROP_ACTION)){
+        if (action.equalsIgnoreCase(CROP_ACTION)) {
             mPanelController.showComponent(findViewById(R.id.cropButton));
         } else if (action.equalsIgnoreCase(TINY_PLANET_ACTION)) {
             mPanelController.showComponent(findViewById(R.id.tinyplanetButton));
@@ -586,7 +587,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         filter.setSelected(true);
         mCurrentImageSmallFilter = filter;
 
-        filter.setImageFilter(new ImageFilterFx(null,getString(R.string.none)));
+        filter.setImageFilter(new ImageFilterFx(null, getString(R.string.none)));
 
         filter.setController(this);
         filter.setImageLoader(mImageLoader);
@@ -724,6 +725,15 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                     .start();
         }
         invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig)
+    {
+        super.onConfigurationChanged(newConfig);
+        if (mShowingHistoryPanel) {
+            toggleHistoryPanel();
+        }
     }
 
     // //////////////////////////////////////////////////////////////////////////////
