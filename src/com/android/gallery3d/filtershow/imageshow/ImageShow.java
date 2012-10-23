@@ -59,6 +59,9 @@ public class ImageShow extends View implements OnGestureListener,
     protected static int mTextPadding = 20;
 
     protected ImagePreset mImagePreset = null;
+    protected ImagePreset mImageGeometryOnlyPreset = null;
+    protected ImagePreset mImageFiltersOnlyPreset = null;
+
     protected ImageLoader mImageLoader = null;
     private ImageFilter mCurrentFilter = null;
     private boolean mDirtyGeometry = true;
@@ -67,9 +70,9 @@ public class ImageShow extends View implements OnGestureListener,
     private final boolean USE_BACKGROUND_IMAGE = false;
     private static int mBackgroundColor = Color.RED;
 
-    // TODO: remove protected here, it should be private
-    protected Bitmap mForegroundImage = null;
-    protected Bitmap mFilteredImage = null;
+    private Bitmap mGeometryOnlyImage = null;
+    private Bitmap mFiltersOnlyImage = null;
+    private Bitmap mFilteredImage = null;
 
     private final boolean USE_SLIDER_GESTURE = false; // set to true to have
                                                       // slider gesture
@@ -324,13 +327,6 @@ public class ImageShow extends View implements OnGestureListener,
         return mImagePreset;
     }
 
-    protected Bitmap getOriginalFrontBitmap() {
-        if (mImageLoader != null) {
-            return mImageLoader.getOriginalBitmapLarge();
-        }
-        return null;
-    }
-
     public void drawToast(Canvas canvas) {
         if (mShowToast && mToast != null) {
             Paint paint = new Paint();
@@ -355,12 +351,16 @@ public class ImageShow extends View implements OnGestureListener,
         }
     }
 
+    public void defaultDrawImage(Canvas canvas) {
+        drawImage(canvas, getFilteredImage());
+        drawPartialImage(canvas, getGeometryOnlyImage());
+    }
+
     @Override
     public void onDraw(Canvas canvas) {
         drawBackground(canvas);
-        getFilteredImage();
-        drawImage(canvas, mFilteredImage);
-        drawPartialImage(canvas, mForegroundImage);
+        requestFilteredImages();
+        defaultDrawImage(canvas);
 
         if (showTitle() && getImagePreset() != null) {
             mPaint.setARGB(200, 0, 0, 0);
@@ -382,23 +382,76 @@ public class ImageShow extends View implements OnGestureListener,
         drawToast(canvas);
     }
 
-    public void getFilteredImage() {
-        Bitmap filteredImage = null;
+    public void resetImageCaches(ImageShow caller) {
+        if (mImageLoader == null) {
+            return;
+        }
+        if (getImagePreset() != null) {
+            mImageLoader.resetImageForPreset(getImagePreset(), caller);
+        }
+        mImageGeometryOnlyPreset = null;
+        mImageFiltersOnlyPreset = null;
+        invalidate();
+    }
+
+    public void updateImagePresets(boolean force) {
+        ImagePreset preset = getImagePreset();
+        if (preset == null) {
+            return;
+        }
+        if (force) {
+            mImageLoader.resetImageForPreset(getImagePreset(), this);
+        }
+        if (force || mImageGeometryOnlyPreset == null) {
+            mImageGeometryOnlyPreset = new ImagePreset(preset);
+            mImageGeometryOnlyPreset.setDoApplyFilters(false);
+            mGeometryOnlyImage = null;
+        }
+        if (force || mImageFiltersOnlyPreset == null) {
+            mImageFiltersOnlyPreset = new ImagePreset(preset);
+            mImageFiltersOnlyPreset.setDoApplyGeometry(false);
+            mFiltersOnlyImage = null;
+        }
+    }
+
+    public void requestFilteredImages() {
         if (mImageLoader != null) {
-            filteredImage = mImageLoader.getImageForPreset(this,
+            Bitmap bitmap = mImageLoader.getImageForPreset(this,
                     getImagePreset(), showHires());
+
+            if (bitmap != null) {
+                if (mFilteredImage == null) {
+                    invalidate();
+                }
+                mFilteredImage = bitmap;
+            }
+
+            updateImagePresets(false);
+            if (mImageGeometryOnlyPreset != null) {
+                mGeometryOnlyImage = mImageLoader.getImageForPreset(this, mImageGeometryOnlyPreset,
+                        showHires());
+            }
+            if (mImageFiltersOnlyPreset != null) {
+                mFiltersOnlyImage = mImageLoader.getImageForPreset(this, mImageFiltersOnlyPreset,
+                        showHires());
+            }
         }
 
-        if (filteredImage == null) {
-            // if no image for the current preset, use the previous one
-            filteredImage = mFilteredImage;
-        } else {
-            mFilteredImage = filteredImage;
+        if (mShowOriginal) {
+            mFilteredImage = mGeometryOnlyImage;
         }
+    }
 
-        if (mShowOriginal || mFilteredImage == null) {
-            mFilteredImage = mForegroundImage;
-        }
+    public Bitmap getFiltersOnlyImage() {
+        return mFiltersOnlyImage;
+    }
+
+    public Bitmap getGeometryOnlyImage() {
+        return mGeometryOnlyImage;
+    }
+
+    public Bitmap getFilteredImage() {
+        return mFilteredImage;
     }
 
     public void drawImage(Canvas canvas, Bitmap image) {
@@ -522,15 +575,17 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     public void setImagePreset(ImagePreset preset, boolean addToHistory) {
-        mImagePreset = preset;
-        if (getImagePreset() != null) {
-            getImagePreset().setImageLoader(mImageLoader);
-            if (addToHistory) {
-                mHistoryAdapter.addHistoryItem(getImagePreset());
-            }
-            getImagePreset().setEndpoint(this);
-            updateImage();
+        if (preset == null) {
+            return;
         }
+        mImagePreset = preset;
+        getImagePreset().setImageLoader(mImageLoader);
+        updateImagePresets(true);
+        if (addToHistory) {
+            mHistoryAdapter.addHistoryItem(getImagePreset());
+        }
+        getImagePreset().setEndpoint(this);
+        updateImage();
         mImagePreset.fillImageStateAdapter(mImageStateAdapter);
         invalidate();
     }
@@ -573,10 +628,19 @@ public class ImageShow extends View implements OnGestureListener,
         setDirtyGeometryFlag();
     }
 
+    public boolean updateGeometryFlags() {
+        return true;
+    }
+
     public void updateImage() {
-        mForegroundImage = getOriginalFrontBitmap();
-        imageSizeChanged(mForegroundImage); // TODO: should change to filtered
-        setDirtyGeometryFlag();
+        if (!updateGeometryFlags()) {
+            return;
+        }
+        Bitmap bitmap = mImageLoader.getOriginalBitmapLarge();
+        if (bitmap != null) {
+            imageSizeChanged(bitmap);
+            invalidate();
+        }
     }
 
     public void updateFilteredImage(Bitmap bitmap) {
@@ -609,7 +673,7 @@ public class ImageShow extends View implements OnGestureListener,
             mTouchY = ey;
             if (!mActivity.isShowingHistoryPanel()
                     && (System.currentTimeMillis() - mTouchShowOriginalDate
-                          > mTouchShowOriginalDelayMin)) {
+                    > mTouchShowOriginalDelayMin)) {
                 mTouchShowOriginal = true;
             }
         }
@@ -725,8 +789,8 @@ public class ImageShow extends View implements OnGestureListener,
                 || (mActivity.isShowingHistoryPanel() && endEvent.getX() > startEvent.getX())) {
             if (!mTouchShowOriginal
                     || (mTouchShowOriginal &&
-                          (System.currentTimeMillis() - mTouchShowOriginalDate
-                                  < mTouchShowOriginalDelayMax))) {
+                    (System.currentTimeMillis() - mTouchShowOriginalDate
+                    < mTouchShowOriginalDelayMax))) {
                 mActivity.toggleHistoryPanel();
             }
         }
@@ -756,4 +820,5 @@ public class ImageShow extends View implements OnGestureListener,
         // TODO Auto-generated method stub
         return false;
     }
+
 }
