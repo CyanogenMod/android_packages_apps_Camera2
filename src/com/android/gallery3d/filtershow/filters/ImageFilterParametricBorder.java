@@ -82,8 +82,8 @@ public class ImageFilterParametricBorder extends ImageFilter {
         border.moveTo(0, 0);
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        float bs = mBorderSize * scaleFactor;
-        float r = mBorderCornerRadius * scaleFactor;
+        float bs = mBorderSize / 100.0f * bitmap.getWidth();
+        float r = mBorderCornerRadius / 100.0f * bitmap.getWidth();
         border.lineTo(0, h);
         border.lineTo(w, h);
         border.lineTo(w, 0);
