@@ -202,14 +202,14 @@ public class ImageCurves extends ImageSlave {
         }
 
         if (spline.isPointContained(posX, pick)) {
-            mCurrentControlPoint.x = posX;
-            mCurrentControlPoint.y = posY;
             spline.didMovePoint(mCurrentControlPoint);
+            spline.movePoint(pick, posX, posY);
         } else if (pick != -1 && spline.getNbPoints() > 2) {
             spline.deletePoint(pick);
             mDidDelete = true;
         }
         updateCachedImage();
+        invalidate();
         return true;
     }
 
