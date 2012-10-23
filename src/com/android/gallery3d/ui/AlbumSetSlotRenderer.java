@@ -106,9 +106,16 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
         }
     }
 
-    private static Texture checkTexture(Texture texture) {
+    private static Texture checkLabelTexture(Texture texture) {
         return ((texture instanceof UploadedTexture)
                 && ((UploadedTexture) texture).isUploading())
+                ? null
+                : texture;
+    }
+
+    private static Texture checkContentTexture(Texture texture) {
+        return ((texture instanceof TiledTexture)
+                && !((TiledTexture) texture).isReady())
                 ? null
                 : texture;
     }
@@ -155,7 +162,7 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
             GLCanvas canvas, AlbumSetEntry entry, int width, int height) {
         int renderRequestFlags = 0;
 
-        Texture content = checkTexture(entry.content);
+        Texture content = checkContentTexture(entry.content);
         if (content == null) {
             content = mWaitLoadingTexture;
             entry.isWaitLoadingDisplayed = true;
@@ -175,7 +182,7 @@ public class AlbumSetSlotRenderer extends AbstractSlotRenderer {
 
     protected int renderLabel(
             GLCanvas canvas, AlbumSetEntry entry, int width, int height) {
-        Texture content = checkTexture(entry.labelTexture);
+        Texture content = checkLabelTexture(entry.labelTexture);
         if (content == null) {
             content = mWaitLoadingTexture;
         }
