@@ -18,7 +18,7 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
 
     private static final String LOGTAG = "ImageSmallFilter";
     private FilterShowActivity mController = null;
-    private ImageFilter mImageFilter = null;
+    protected ImageFilter mImageFilter = null;
     private boolean mShowTitle = true;
     private boolean mSetBorder = false;
     protected final Paint mPaint = new Paint();
@@ -93,18 +93,10 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
     }
 
     @Override
-    public void updateImage() {
+    public boolean updateGeometryFlags() {
         // We don't want to warn listeners here that the image size has changed, because
         // we'll be working with the small image...
-        mForegroundImage = getOriginalFrontBitmap();
-    }
-
-    @Override
-    protected Bitmap getOriginalFrontBitmap() {
-        if (mImageLoader == null) {
-            return null;
-        }
-        return mImageLoader.getOriginalBitmapSmall();
+        return false;
     }
 
     public void setShowTitle(boolean value) {
@@ -128,8 +120,21 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
     }
 
     @Override
+    public ImagePreset getImagePreset() {
+        return mImagePreset;
+    }
+
+    @Override
+    public void updateImagePresets(boolean force) {
+        ImagePreset preset = getImagePreset();
+        if (preset == null) {
+            return;
+        }
+    }
+
+    @Override
     public void onDraw(Canvas canvas) {
-        getFilteredImage();
+        requestFilteredImages();
         canvas.drawColor(mBackgroundColor);
         float textWidth = mPaint.measureText(mImageFilter.getName());
         int h = mTextSize + 2 * mTextPadding;
@@ -140,7 +145,7 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
             canvas.drawRect(0, mMargin, getWidth(), getWidth() + mMargin, mPaint);
         }
         Rect destination = new Rect(mMargin, 2*mMargin, getWidth() - mMargin, getWidth());
-        drawImage(canvas, mFilteredImage, destination);
+        drawImage(canvas, getFilteredImage(), destination);
         mPaint.setTextSize(mTextSize);
         mPaint.setColor(mTextColor);
         canvas.drawText(mImageFilter.getName(), x, y - mTextMargin, mPaint);

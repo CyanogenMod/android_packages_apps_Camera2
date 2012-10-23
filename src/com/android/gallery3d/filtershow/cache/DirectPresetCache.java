@@ -49,6 +49,7 @@ public class DirectPresetCache implements Cache {
         for (int i = 0; i < mObservers.size(); i++) {
             ImageShow imageShow = mObservers.elementAt(i);
             imageShow.invalidate();
+            imageShow.updateImage();
         }
     }
 
