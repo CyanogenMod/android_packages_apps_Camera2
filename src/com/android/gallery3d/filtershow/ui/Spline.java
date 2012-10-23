@@ -68,6 +68,12 @@ public class Spline {
         mCurrentControlPoint = point;
     }
 
+    public void movePoint(int pick, float x, float y) {
+        ControlPoint point = mPoints.elementAt(pick);
+        point.x = x;
+        point.y = y;
+    }
+
     public boolean isOriginal() {
         if (this.getNbPoints() > 2) {
             return false;
