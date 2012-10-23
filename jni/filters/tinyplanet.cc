@@ -87,7 +87,7 @@ inline float wrap(float value, float dimension) {
   return value - (dimension * floor(value/dimension));
 }
 
-void StereographicProjection(float scale, unsigned char* input_image,
+void StereographicProjection(float scale, float angle, unsigned char* input_image,
                              int input_width, int input_height,
                              unsigned char* output_image, int output_width,
                              int output_height) {
@@ -106,7 +106,8 @@ void StereographicProjection(float scale, unsigned char* input_image,
 
       // Convert to polar
       float r = hypotf(xf, yf);
-      float theta = atan2(yf, xf);
+      float theta = angle+atan2(yf, xf);
+      if (theta>PI_F) theta-=2*PI_F;
 
       // Project onto plane
       float phi = 2 * atan(1 / r);
@@ -127,7 +128,7 @@ void StereographicProjection(float scale, unsigned char* input_image,
 }
 
 
-void JNIFUNCF(ImageFilterTinyPlanet, nativeApplyFilter, jobject bitmap_in, jint width, jint height, jobject bitmap_out, jint output_size, jfloat scale)
+void JNIFUNCF(ImageFilterTinyPlanet, nativeApplyFilter, jobject bitmap_in, jint width, jint height, jobject bitmap_out, jint output_size, jfloat scale,jfloat angle)
 {
     char* source = 0;
     char* destination = 0;
@@ -136,7 +137,7 @@ void JNIFUNCF(ImageFilterTinyPlanet, nativeApplyFilter, jobject bitmap_in, jint 
     unsigned char * rgb_in = (unsigned char * )source;
     unsigned char * rgb_out = (unsigned char * )destination;
 
-    StereographicProjection(scale, rgb_in, width, height, rgb_out, output_size, output_size);
+    StereographicProjection(scale,angle, rgb_in, width, height, rgb_out, output_size, output_size);
     AndroidBitmap_unlockPixels(env, bitmap_in);
     AndroidBitmap_unlockPixels(env, bitmap_out);
 }

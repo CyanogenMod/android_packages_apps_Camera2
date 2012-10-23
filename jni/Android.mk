@@ -40,6 +40,7 @@ LOCAL_SRC_FILES := filters/bw.c \
                    filters/fx.c \
                    filters/wbalance.c \
                    filters/redeye.c \
+                   filters/bwfilter.c \
                    filters/tinyplanet.cc
 
 LOCAL_CFLAGS    += -ffast-math -O3 -funroll-loops
