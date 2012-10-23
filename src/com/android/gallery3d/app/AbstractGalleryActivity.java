@@ -303,4 +303,9 @@ public class AbstractGalleryActivity extends Activity implements GalleryContext 
     public PanoramaViewHelper getPanoramaViewHelper() {
         return mPanoramaViewHelper;
     }
+
+    protected boolean isFullscreen() {
+        return (getWindow().getAttributes().flags
+                & WindowManager.LayoutParams.FLAG_FULLSCREEN) != 0;
+    }
 }
