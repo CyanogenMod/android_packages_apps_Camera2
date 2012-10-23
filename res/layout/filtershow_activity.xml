@@ -117,13 +117,25 @@
                 android:scaleType="centerInside"
                 android:src="@drawable/filtershow_button_show_original" />
                  -->
-            <SeekBar
-                android:id="@+id/filterSeekBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:padding="16dip"
-                android:visibility="gone" />
+
+            <com.android.gallery3d.filtershow.CenteredLinearLayout
+              xmlns:custom="http://schemas.android.com/apk/res/com.android.gallery3d"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_horizontal|bottom"
+              android:background="@android:color/transparent"
+              custom:max_width="600dip"
+              android:orientation="vertical">
+
+              <SeekBar
+                  android:id="@+id/filterSeekBar"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="bottom"
+                  android:padding="16dip"
+                  android:visibility="gone" />
+
+            </com.android.gallery3d.filtershow.CenteredLinearLayout>
         </FrameLayout>
 
         <com.android.gallery3d.filtershow.CenteredLinearLayout
