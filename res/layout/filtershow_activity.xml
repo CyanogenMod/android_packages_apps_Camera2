@@ -358,6 +358,12 @@
                         android:src="@drawable/filtershow_button_colors_contrast"
                         android:text="@string/saturation" />
 
+                    <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                        android:id="@+id/bwfilterButton"
+                        style="@style/FilterShowBottomButton"
+                        android:src="@drawable/filtershow_button_colors_contrast"
+                        android:text="@string/bwfilter" />
+
                 </LinearLayout>
             </HorizontalScrollView>
         </FrameLayout>
