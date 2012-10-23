@@ -89,8 +89,8 @@ public class ImageCurves extends ImageSlave {
 
         gPaint.setAntiAlias(true);
 
-        if (getImagePreset() != mLastPreset) {
-            new ComputeHistogramTask().execute(mFilteredImage);
+        if (getImagePreset() != mLastPreset && getFilteredImage() != null) {
+            new ComputeHistogramTask().execute(getFilteredImage());
             mLastPreset = getImagePreset();
         }
 
@@ -185,6 +185,10 @@ public class ImageCurves extends ImageSlave {
             return true;
         }
 
+        if (curves() == null) {
+            return true;
+        }
+
         Spline spline = getSpline(mCurrentCurveIndex);
         int pick = pickControlPoint(posX, posY);
         if (mCurrentControlPoint == null) {
@@ -212,7 +216,7 @@ public class ImageCurves extends ImageSlave {
     public synchronized void updateCachedImage() {
         // update image
         if (getImagePreset() != null) {
-            mImageLoader.resetImageForPreset(getImagePreset(), this);
+            resetImageCaches(this);
             invalidate();
         }
     }

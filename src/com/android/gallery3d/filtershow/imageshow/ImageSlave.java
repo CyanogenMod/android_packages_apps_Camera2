@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.imageshow;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -51,6 +52,11 @@ public class ImageSlave extends ImageShow {
     }
 
     @Override
+    public void resetImageCaches(ImageShow caller) {
+        mMasterImageShow.resetImageCaches(caller);
+    }
+
+    @Override
     public ImagePreset getImagePreset() {
         return mMasterImageShow.getImagePreset();
     }
@@ -73,6 +79,26 @@ public class ImageSlave extends ImageShow {
     @Override
     public ImageFilter getCurrentFilter() {
         return mMasterImageShow.getCurrentFilter();
+    }
+
+    @Override
+    public Bitmap getFilteredImage() {
+        return mMasterImageShow.getFilteredImage();
+    }
+
+    @Override
+    public void updateImage() {
+        mMasterImageShow.updateImage();
+    }
+
+    @Override
+    public void updateImagePresets(boolean force) {
+        mMasterImageShow.updateImagePresets(force);
+    }
+
+    @Override
+    public void requestFilteredImages() {
+        mMasterImageShow.requestFilteredImages();
     }
 
     @Override
