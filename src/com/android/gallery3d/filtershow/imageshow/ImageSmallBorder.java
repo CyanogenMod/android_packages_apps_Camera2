@@ -30,7 +30,7 @@ public class ImageSmallBorder extends ImageSmallFilter {
 
     @Override
     public void onDraw(Canvas canvas) {
-        getFilteredImage();
+        requestFilteredImages();
         canvas.drawColor(mBackgroundColor);
         // TODO: simplify & make faster...
         RectF border = new RectF(mMargin, 2*mMargin, getWidth() - mMargin - 1, getWidth());
@@ -53,7 +53,7 @@ public class ImageSmallBorder extends ImageSmallFilter {
         canvas.translate(mMargin + 1, 2*mMargin + 1);
         canvas.scale(mImageScaleFactor, mImageScaleFactor);
         Rect d = new Rect(0, 0, getWidth(), getWidth());
-        drawImage(canvas, mFilteredImage, d);
+        drawImage(canvas, getFilteredImage(), d);
         canvas.restore();
     }
 
