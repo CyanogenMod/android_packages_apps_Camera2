@@ -597,7 +597,7 @@ public class PhotoPage extends ActivityState implements
 
     @Override
     public boolean canDisplayBottomControls() {
-        return mIsActive && !mPhotoView.getFilmMode();
+        return mIsActive;
     }
 
     @Override
@@ -608,13 +608,14 @@ public class PhotoPage extends ActivityState implements
         switch(control) {
             case R.id.photopage_bottom_control_edit:
                 return mHaveImageEditor && mShowBars
+                        && !mPhotoView.getFilmMode()
                         && (mCurrentPhoto.getSupportedOperations() & MediaItem.SUPPORT_EDIT) != 0
                         && mCurrentPhoto.getMediaType() == MediaObject.MEDIA_TYPE_IMAGE;
             case R.id.photopage_bottom_control_panorama:
                 return mIsPanorama;
             case R.id.photopage_bottom_control_tiny_planet:
                 return mHaveImageEditor && mShowBars
-                        && mIsPanorama360;
+                        && mIsPanorama360 && !mPhotoView.getFilmMode();
             default:
                 return false;
         }
