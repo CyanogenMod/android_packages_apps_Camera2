@@ -103,6 +103,8 @@
     <string name="vibrance">Vibrance</string>
     <!--  Label for the saturation filter button [CHAR LIMIT=15] -->
     <string name="saturation">Saturation</string>
+    <!--  Label for the BW filter button [CHAR LIMIT=15] -->
+    <string name="bwfilter">BW Filter</string>
     <!--  Label for the White Balance filter button [CHAR LIMIT=15] -->
     <string name="wbalance">Autocolor</string>
     <!--  Label for the Hue filter button [CHAR LIMIT=15] -->
