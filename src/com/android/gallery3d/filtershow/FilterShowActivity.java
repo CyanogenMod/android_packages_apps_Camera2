@@ -120,7 +120,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private static final int SELECT_PICTURE = 1;
     private static final String LOGTAG = "FilterShowActivity";
     protected static final boolean ANIMATE_PANELS = true;
-    private static int mImageBorderSize = 40;
+    private static int mImageBorderSize = 4; // in percent
 
     private boolean mShowingHistoryPanel = false;
     private boolean mShowingImageStatePanel = false;
@@ -154,7 +154,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageButtonTitle.setTextPadding((int) getPixelsFromDip(10));
         ImageSmallFilter.setMargin((int) getPixelsFromDip(3));
         ImageSmallFilter.setTextMargin((int) getPixelsFromDip(4));
-        mImageBorderSize = (int) getPixelsFromDip(20);
         Drawable curveHandle = getResources().getDrawable(R.drawable.camera_crop);
         int curveHandleSize = (int) getResources().getDimension(R.dimen.crop_indicator_size);
         Spline.setCurveHandle(curveHandle, curveHandleSize);
