@@ -31,7 +31,6 @@ import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
-import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.ThreadPool;
 
 public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
@@ -80,8 +79,6 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
         public int cacheFlag;
         public int cacheStatus;
         public int rotation;
-        public int mediaType;
-        public boolean isPanorama;
         public boolean isWaitLoadingDisplayed;
         public long setDataVersion;
         public long coverDataVersion;
@@ -271,9 +268,7 @@ public class AlbumSetSlidingWindow implements AlbumSetDataLoader.DataListener {
         entry.coverItem = cover;
         if (getDataVersion(cover) != entry.coverDataVersion) {
             entry.coverDataVersion = getDataVersion(cover);
-            entry.isPanorama = GalleryUtils.isPanorama(cover);
             entry.rotation = (cover == null) ? 0 : cover.getRotation();
-            entry.mediaType = (cover == null) ? 0 : cover.getMediaType();
             if (entry.coverLoader != null) {
                 entry.coverLoader.recycle();
                 entry.coverLoader = null;

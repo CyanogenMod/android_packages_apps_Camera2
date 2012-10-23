@@ -123,7 +123,7 @@ public class AlbumSlotRenderer extends AbstractSlotRenderer {
         }
 
         if (entry.isPanorama) {
-            drawPanoramaBorder(canvas, width, height);
+            drawPanoramaIcon(canvas, width, height);
         }
 
         renderRequestFlags |= renderOverlay(canvas, index, entry, width, height);
