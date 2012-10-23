@@ -232,15 +232,17 @@ public class PhotoView extends GLView {
     // item. The value Integer.MAX_VALUE means there is no such hint.
     private int mUndoIndexHint = Integer.MAX_VALUE;
 
+    private Context mContext;
+
     public PhotoView(AbstractGalleryActivity activity) {
         mTileView = new TileImageView(activity);
         addComponent(mTileView);
-        Context context = activity.getAndroidContext();
-        mPlaceholderColor = context.getResources().getColor(
+        mContext = activity.getAndroidContext();
+        mPlaceholderColor = mContext.getResources().getColor(
                 R.color.photo_placeholder);
-        mEdgeView = new EdgeView(context);
+        mEdgeView = new EdgeView(mContext);
         addComponent(mEdgeView);
-        mUndoBar = new UndoBarView(context);
+        mUndoBar = new UndoBarView(mContext);
         addComponent(mUndoBar);
         mUndoBar.setVisibility(GLView.INVISIBLE);
         mUndoBar.setOnClickListener(new OnClickListener() {
@@ -251,15 +253,15 @@ public class PhotoView extends GLView {
                 }
             });
         mNoThumbnailText = StringTexture.newInstance(
-                context.getString(R.string.no_thumbnail),
+                mContext.getString(R.string.no_thumbnail),
                 DEFAULT_TEXT_SIZE, Color.WHITE);
 
         mHandler = new MyHandler(activity.getGLRoot());
 
         mGestureListener = new MyGestureListener();
-        mGestureRecognizer = new GestureRecognizer(context, mGestureListener);
+        mGestureRecognizer = new GestureRecognizer(mContext, mGestureListener);
 
-        mPositionController = new PositionController(context,
+        mPositionController = new PositionController(mContext,
                 new PositionController.Listener() {
 
             @Override
@@ -292,7 +294,7 @@ public class PhotoView extends GLView {
                 mEdgeView.onAbsorb(velocity, direction);
             }
         });
-        mVideoPlayIcon = new ResourceTexture(context, R.drawable.ic_control_play);
+        mVideoPlayIcon = new ResourceTexture(mContext, R.drawable.ic_control_play);
         for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
             if (i == 0) {
                 mPictures.put(i, new FullPicture());
@@ -554,7 +556,7 @@ public class PhotoView extends GLView {
         // The second is that it assumes landscape is a 90 rotation from portrait,
         // however on landscape devices this is not true. Thus, if we are in portrait
         // on a landscape device, we need to invert the output
-        int orientation = getGLRoot().getContext().getResources().getConfiguration().orientation;
+        int orientation = mContext.getResources().getConfiguration().orientation;
         boolean invertPortrait = (orientation == Configuration.ORIENTATION_PORTRAIT
                 && (mDisplayRotation == 90 || mDisplayRotation == 270));
         boolean invert = (mDisplayRotation >= 180);
