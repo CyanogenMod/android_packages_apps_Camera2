@@ -27,6 +27,9 @@ public class ImagePreset {
     private String mHistoryName = "Original";
     protected boolean mIsFxPreset = false;
 
+    private boolean mDoApplyGeometry = true;
+    private boolean mDoApplyFilters = true;
+
     public final GeometryMetadata mGeoData = new GeometryMetadata();
 
     enum FullRotate {
@@ -70,6 +73,14 @@ public class ImagePreset {
         mGeoData.set(source.mGeoData);
     }
 
+    public void setDoApplyGeometry(boolean value) {
+        mDoApplyGeometry = value;
+    }
+
+    public void setDoApplyFilters(boolean value) {
+        mDoApplyFilters = value;
+    }
+
     public boolean hasModifications() {
         if (mImageBorder != null && !mImageBorder.isNil()) {
             return true;
@@ -101,7 +112,6 @@ public class ImagePreset {
         }
         return true;
     }
-
 
     public void setGeometry(GeometryMetadata m) {
         mGeoData.set(m);
@@ -238,11 +248,17 @@ public class ImagePreset {
 
     public Bitmap apply(Bitmap original) {
         // First we apply any transform -- 90 rotate, flip, straighten, crop
-        Bitmap bitmap = mGeoData.apply(original, mScaleFactor, mIsHighQuality);
+        Bitmap bitmap = original;
 
-        for (int i = 0; i < mFilters.size(); i++) {
-            ImageFilter filter = mFilters.elementAt(i);
-            bitmap = filter.apply(bitmap, mScaleFactor, mIsHighQuality);
+        if (mDoApplyGeometry) {
+            bitmap = mGeoData.apply(original, mScaleFactor, mIsHighQuality);
+        }
+
+        if (mDoApplyFilters) {
+            for (int i = 0; i < mFilters.size(); i++) {
+                ImageFilter filter = mFilters.elementAt(i);
+                bitmap = filter.apply(bitmap, mScaleFactor, mIsHighQuality);
+            }
         }
 
         if (mImageBorder != null) {
@@ -252,6 +268,7 @@ public class ImagePreset {
         if (mEndPoint != null) {
             mEndPoint.updateFilteredImage(bitmap);
         }
+
         return bitmap;
     }
 
