@@ -386,12 +386,7 @@ public class ImageShow extends View implements OnGestureListener,
         if (mImageLoader == null) {
             return;
         }
-        if (getImagePreset() != null) {
-            mImageLoader.resetImageForPreset(getImagePreset(), caller);
-        }
-        mImageGeometryOnlyPreset = null;
-        mImageFiltersOnlyPreset = null;
-        invalidate();
+        updateImagePresets(true);
     }
 
     public void updateImagePresets(boolean force) {
@@ -403,14 +398,22 @@ public class ImageShow extends View implements OnGestureListener,
             mImageLoader.resetImageForPreset(getImagePreset(), this);
         }
         if (force || mImageGeometryOnlyPreset == null) {
-            mImageGeometryOnlyPreset = new ImagePreset(preset);
-            mImageGeometryOnlyPreset.setDoApplyFilters(false);
-            mGeometryOnlyImage = null;
-        }
+            ImagePreset newPreset = new ImagePreset(preset);
+            newPreset.setDoApplyFilters(false);
+            if (mImageGeometryOnlyPreset == null
+                    || !newPreset.same(mImageGeometryOnlyPreset)) {
+                mImageGeometryOnlyPreset = newPreset;
+                mGeometryOnlyImage = null;
+            }
+         }
         if (force || mImageFiltersOnlyPreset == null) {
-            mImageFiltersOnlyPreset = new ImagePreset(preset);
-            mImageFiltersOnlyPreset.setDoApplyGeometry(false);
-            mFiltersOnlyImage = null;
+            ImagePreset newPreset = new ImagePreset(preset);
+            newPreset.setDoApplyGeometry(false);
+            if (mImageFiltersOnlyPreset == null
+                    || !newPreset.same(mImageFiltersOnlyPreset)) {
+                mImageFiltersOnlyPreset = newPreset;
+                mFiltersOnlyImage = null;
+            }
         }
     }
 
@@ -428,12 +431,18 @@ public class ImageShow extends View implements OnGestureListener,
 
             updateImagePresets(false);
             if (mImageGeometryOnlyPreset != null) {
-                mGeometryOnlyImage = mImageLoader.getImageForPreset(this, mImageGeometryOnlyPreset,
+                bitmap = mImageLoader.getImageForPreset(this, mImageGeometryOnlyPreset,
                         showHires());
+                if (bitmap != null) {
+                    mGeometryOnlyImage = bitmap;
+                }
             }
             if (mImageFiltersOnlyPreset != null) {
-                mFiltersOnlyImage = mImageLoader.getImageForPreset(this, mImageFiltersOnlyPreset,
+                bitmap = mImageLoader.getImageForPreset(this, mImageFiltersOnlyPreset,
                         showHires());
+                if (bitmap != null) {
+                    mFiltersOnlyImage = bitmap;
+                }
             }
         }
 
