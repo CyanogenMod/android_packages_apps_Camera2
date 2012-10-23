@@ -36,8 +36,7 @@
     <string name="ok" msgid="5296833083983263293">"ठीक"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"शुरू करने के लिए कोई चेहरा स्‍पर्श करें."</string>
     <string name="saving_image" msgid="7270334453636349407">"चित्र सहेज रहा है…"</string>
-    <!-- no translation found for filtershow_saving_image (6659463980581993016) -->
-    <skip />
+    <string name="filtershow_saving_image" msgid="6659463980581993016">"चित्र <xliff:g id="ALBUM_NAME">%1$s</xliff:g> में सहेजा जा रहा है …"</string>
     <string name="save_error" msgid="6857408774183654970">"काट-छांट की गई चित्र को नहीं सहेज सका."</string>
     <string name="crop_label" msgid="521114301871349328">"चित्र काटें"</string>
     <string name="trim_label" msgid="274203231381209979">"वीडियो ट्रिम करें"</string>
@@ -142,21 +141,16 @@
     <string name="auto" msgid="4296941368722892821">"स्वत:"</string>
     <string name="flash_on" msgid="7891556231891837284">"फ़्लैश चलाया गया"</string>
     <string name="flash_off" msgid="1445443413822680010">"कोई फ़्लैश नहीं"</string>
-    <!-- no translation found for ffx_original (372686331501281474) -->
-    <skip />
+    <string name="ffx_original" msgid="372686331501281474">"मूल"</string>
     <string name="ffx_vintage" msgid="8348759951363844780">"विंटेज"</string>
     <string name="ffx_instant" msgid="726968618715691987">"झटपट"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"ब्लीच"</string>
-    <!-- no translation found for ffx_blue_crush (6034283412305561226) -->
-    <skip />
-    <!-- no translation found for ffx_bw_contrast (517988490066217206) -->
-    <skip />
+    <string name="ffx_blue_crush" msgid="6034283412305561226">"नीला"</string>
+    <string name="ffx_bw_contrast" msgid="517988490066217206">"श्वेत/श्याम"</string>
     <string name="ffx_punch" msgid="1343475517872562639">"पंच"</string>
     <string name="ffx_x_process" msgid="4779398678661811765">"X प्रक्रिया"</string>
-    <!-- no translation found for ffx_washout (4594160692176642735) -->
-    <skip />
-    <!-- no translation found for ffx_washout_color (8034075742195795219) -->
-    <skip />
+    <string name="ffx_washout" msgid="4594160692176642735">"लैटे"</string>
+    <string name="ffx_washout_color" msgid="8034075742195795219">"लीथो"</string>
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"एल्‍बम ऑफ़लाइन उपलब्‍ध कराना."</item>
     <item quantity="other" msgid="4948604338155959389">"एल्‍बम ऑफ़लाइन उपलब्‍ध कराना."</item>
@@ -191,8 +185,7 @@
     <string name="add_account" msgid="4271217504968243974">"खाता जोड़ें"</string>
     <string name="folder_camera" msgid="4714658994809533480">"कैमरा"</string>
     <string name="folder_download" msgid="7186215137642323932">"डाउनलोड करें"</string>
-    <!-- no translation found for folder_edited_online_photos (6278215510236800181) -->
-    <skip />
+    <string name="folder_edited_online_photos" msgid="6278215510236800181">"ऑनलाइन संपादित फ़ोटो"</string>
     <string name="folder_imported" msgid="2773581395524747099">"आयातित"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"स्क्रीनशॉट"</string>
     <string name="help" msgid="7368960711153618354">"सहायता"</string>

@@ -36,8 +36,7 @@
     <string name="ok" msgid="5296833083983263293">"ΟΚ"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Αγγίξτε κάποιο πρόσωπο για να ξεκινήσετε."</string>
     <string name="saving_image" msgid="7270334453636349407">"Αποθήκευση εικόνας..."</string>
-    <!-- no translation found for filtershow_saving_image (6659463980581993016) -->
-    <skip />
+    <string name="filtershow_saving_image" msgid="6659463980581993016">"Αποθήκευση εικόνας στο λεύκωμα <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
     <string name="save_error" msgid="6857408774183654970">"Αδυναμία αποθήκευσης αποκομμένης εικόνας"</string>
     <string name="crop_label" msgid="521114301871349328">"Περικοπή εικόνας"</string>
     <string name="trim_label" msgid="274203231381209979">"Περικοπή βίντεο"</string>
@@ -142,21 +141,16 @@
     <string name="auto" msgid="4296941368722892821">"Αυτόματο"</string>
     <string name="flash_on" msgid="7891556231891837284">"Το φλας άναψε"</string>
     <string name="flash_off" msgid="1445443413822680010">"Όχι φλας"</string>
-    <!-- no translation found for ffx_original (372686331501281474) -->
-    <skip />
+    <string name="ffx_original" msgid="372686331501281474">"Αρχική"</string>
     <string name="ffx_vintage" msgid="8348759951363844780">"Εποχής"</string>
     <string name="ffx_instant" msgid="726968618715691987">"Άμεσα"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"Λεύκανση"</string>
-    <!-- no translation found for ffx_blue_crush (6034283412305561226) -->
-    <skip />
-    <!-- no translation found for ffx_bw_contrast (517988490066217206) -->
-    <skip />
+    <string name="ffx_blue_crush" msgid="6034283412305561226">"Μπλε"</string>
+    <string name="ffx_bw_contrast" msgid="517988490066217206">"Α/Μ"</string>
     <string name="ffx_punch" msgid="1343475517872562639">"Γροθιά"</string>
     <string name="ffx_x_process" msgid="4779398678661811765">"Επεξεργασία X"</string>
-    <!-- no translation found for ffx_washout (4594160692176642735) -->
-    <skip />
-    <!-- no translation found for ffx_washout_color (8034075742195795219) -->
-    <skip />
+    <string name="ffx_washout" msgid="4594160692176642735">"Latte"</string>
+    <string name="ffx_washout_color" msgid="8034075742195795219">"Litho"</string>
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"Διάθεση λευκώματος εκτός σύνδεσης."</item>
     <item quantity="other" msgid="4948604338155959389">"Διάθεση λευκωμάτων εκτός σύνδεσης."</item>
@@ -191,8 +185,7 @@
     <string name="add_account" msgid="4271217504968243974">"Προσθήκη λογαριασμού"</string>
     <string name="folder_camera" msgid="4714658994809533480">"Φωτογραφική μηχανή"</string>
     <string name="folder_download" msgid="7186215137642323932">"Λήψη"</string>
-    <!-- no translation found for folder_edited_online_photos (6278215510236800181) -->
-    <skip />
+    <string name="folder_edited_online_photos" msgid="6278215510236800181">"Επεξεργασμένες φωτογραφίες στο διαδίκτυο"</string>
     <string name="folder_imported" msgid="2773581395524747099">"Έγινε εισαγωγή"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"Στιγμιότυπο οθόνης"</string>
     <string name="help" msgid="7368960711153618354">"Βοήθεια"</string>
