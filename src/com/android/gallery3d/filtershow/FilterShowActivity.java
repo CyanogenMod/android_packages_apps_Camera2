@@ -38,6 +38,7 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -94,6 +95,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
     public static final String CROP_ACTION = "com.android.camera.action.CROP";
     public static final String TINY_PLANET_ACTION = "com.android.camera.action.TINY_PLANET";
+    public static final String LAUNCH_FULLSCREEN = "launch-fullscreen";
     private final PanelController mPanelController = new PanelController();
     private ImageLoader mImageLoader = null;
     private ImageShow mImageShow = null;
@@ -352,6 +354,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.setMasterImage(mImageShow);
         mPanelController.setCurrentPanel(mFxButton);
         Intent intent = getIntent();
+        if (intent.getBooleanExtra(LAUNCH_FULLSCREEN, false)) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+
         String data = intent.getDataString();
         if (data != null) {
             Uri uri = Uri.parse(data);
