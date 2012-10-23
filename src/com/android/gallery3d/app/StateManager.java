@@ -160,6 +160,13 @@ public class StateManager {
         finishState(state, true);
     }
 
+    public void clearTasks() {
+        // Remove all the states that are on top of the bottom PhotoPage state
+        while (mStack.size() > 1) {
+            mStack.pop().activityState.onDestroy();
+        }
+    }
+
     void finishState(ActivityState state, boolean fireOnPause) {
         // The finish() request could be rejected (only happens under Monkey),
         // If it is rejected, we won't close the last page.
