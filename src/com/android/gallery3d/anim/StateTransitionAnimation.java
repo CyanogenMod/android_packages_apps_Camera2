@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.anim;
 
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
@@ -31,7 +32,10 @@ public class StateTransitionAnimation extends Animation {
         public static final Spec INCOMING;
         public static final Spec PHOTO_INCOMING;
 
-        public int duration = 250;
+        private static final Interpolator DEFAULT_INTERPOLATOR =
+                new DecelerateInterpolator();
+
+        public int duration = 330;
         public float backgroundAlphaFrom = 0;
         public float backgroundAlphaTo = 0;
         public float backgroundScaleFrom = 0;
@@ -44,7 +48,7 @@ public class StateTransitionAnimation extends Animation {
         public float overlayAlphaTo = 0;
         public float overlayScaleFrom = 0;
         public float overlayScaleTo = 0;
-        public Interpolator interpolator;
+        public Interpolator interpolator = DEFAULT_INTERPOLATOR;
 
         static {
             OUTGOING = new Spec();
@@ -52,11 +56,10 @@ public class StateTransitionAnimation extends Animation {
             OUTGOING.backgroundAlphaTo = 0f;
             OUTGOING.backgroundScaleFrom = 1f;
             OUTGOING.backgroundScaleTo = 0f;
-            OUTGOING.contentAlphaFrom = 0.9f;
+            OUTGOING.contentAlphaFrom = 0.5f;
             OUTGOING.contentAlphaTo = 1f;
             OUTGOING.contentScaleFrom = 3f;
             OUTGOING.contentScaleTo = 1f;
-            OUTGOING.interpolator = new DecelerateInterpolator();
 
             INCOMING = new Spec();
             INCOMING.overlayAlphaFrom = 1f;
@@ -67,18 +70,8 @@ public class StateTransitionAnimation extends Animation {
             INCOMING.contentAlphaTo = 1f;
             INCOMING.contentScaleFrom = 0.25f;
             INCOMING.contentScaleTo = 1f;
-            INCOMING.interpolator = new DecelerateInterpolator();
 
-            PHOTO_INCOMING = new Spec();
-            PHOTO_INCOMING.overlayAlphaFrom = 1f;
-            PHOTO_INCOMING.overlayAlphaTo = 0f;
-            PHOTO_INCOMING.overlayScaleFrom = 1f;
-            PHOTO_INCOMING.overlayScaleTo = 1f;
-            PHOTO_INCOMING.contentAlphaFrom = 0f;
-            PHOTO_INCOMING.contentAlphaTo = 1f;
-            PHOTO_INCOMING.contentScaleFrom = 0.1f;
-            PHOTO_INCOMING.contentScaleTo = 1f;
-            PHOTO_INCOMING.interpolator = new DecelerateInterpolator();
+            PHOTO_INCOMING = INCOMING;
         }
 
         private static Spec specForTransition(Transition t) {
