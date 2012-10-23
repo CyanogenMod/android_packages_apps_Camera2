@@ -36,8 +36,7 @@
     <string name="ok" msgid="5296833083983263293">"確定"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"輕觸臉孔即可開始。"</string>
     <string name="saving_image" msgid="7270334453636349407">"正在儲存相片…"</string>
-    <!-- no translation found for filtershow_saving_image (6659463980581993016) -->
-    <skip />
+    <string name="filtershow_saving_image" msgid="6659463980581993016">"正在將圖片儲存至「<xliff:g id="ALBUM_NAME">%1$s</xliff:g>」…"</string>
     <string name="save_error" msgid="6857408774183654970">"無法儲存裁剪的圖片。"</string>
     <string name="crop_label" msgid="521114301871349328">"裁剪相片"</string>
     <string name="trim_label" msgid="274203231381209979">"修剪影片"</string>
@@ -142,21 +141,16 @@
     <string name="auto" msgid="4296941368722892821">"自動"</string>
     <string name="flash_on" msgid="7891556231891837284">"使用閃光燈"</string>
     <string name="flash_off" msgid="1445443413822680010">"未使用閃光燈"</string>
-    <!-- no translation found for ffx_original (372686331501281474) -->
-    <skip />
+    <string name="ffx_original" msgid="372686331501281474">"原始"</string>
     <string name="ffx_vintage" msgid="8348759951363844780">"復古"</string>
     <string name="ffx_instant" msgid="726968618715691987">"即時"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"漂白"</string>
-    <!-- no translation found for ffx_blue_crush (6034283412305561226) -->
-    <skip />
-    <!-- no translation found for ffx_bw_contrast (517988490066217206) -->
-    <skip />
+    <string name="ffx_blue_crush" msgid="6034283412305561226">"藍色"</string>
+    <string name="ffx_bw_contrast" msgid="517988490066217206">"黑白"</string>
     <string name="ffx_punch" msgid="1343475517872562639">"打孔"</string>
     <string name="ffx_x_process" msgid="4779398678661811765">"X 光處理"</string>
-    <!-- no translation found for ffx_washout (4594160692176642735) -->
-    <skip />
-    <!-- no translation found for ffx_washout_color (8034075742195795219) -->
-    <skip />
+    <string name="ffx_washout" msgid="4594160692176642735">"褐色"</string>
+    <string name="ffx_washout_color" msgid="8034075742195795219">"石版"</string>
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"正在將相簿設為可離線瀏覽。"</item>
     <item quantity="other" msgid="4948604338155959389">"正在將相簿設為可離線瀏覽。"</item>
@@ -191,8 +185,7 @@
     <string name="add_account" msgid="4271217504968243974">"新增帳戶"</string>
     <string name="folder_camera" msgid="4714658994809533480">"相機"</string>
     <string name="folder_download" msgid="7186215137642323932">"下載"</string>
-    <!-- no translation found for folder_edited_online_photos (6278215510236800181) -->
-    <skip />
+    <string name="folder_edited_online_photos" msgid="6278215510236800181">"已編輯的線上相片"</string>
     <string name="folder_imported" msgid="2773581395524747099">"匯入"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"螢幕擷取畫面"</string>
     <string name="help" msgid="7368960711153618354">"說明"</string>
