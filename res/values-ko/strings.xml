@@ -36,8 +36,7 @@
     <string name="ok" msgid="5296833083983263293">"확인"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"시작하려면 얼굴을 터치하세요."</string>
     <string name="saving_image" msgid="7270334453636349407">"사진 저장 중..."</string>
-    <!-- no translation found for filtershow_saving_image (6659463980581993016) -->
-    <skip />
+    <string name="filtershow_saving_image" msgid="6659463980581993016">"사진을 <xliff:g id="ALBUM_NAME">%1$s</xliff:g>에 저장 중…"</string>
     <string name="save_error" msgid="6857408774183654970">"잘린 이미지를 저장하지 못했습니다."</string>
     <string name="crop_label" msgid="521114301871349328">"사진 자르기"</string>
     <string name="trim_label" msgid="274203231381209979">"동영상 다듬기"</string>
@@ -142,21 +141,16 @@
     <string name="auto" msgid="4296941368722892821">"자동"</string>
     <string name="flash_on" msgid="7891556231891837284">"플래시 터짐"</string>
     <string name="flash_off" msgid="1445443413822680010">"플래시 없음"</string>
-    <!-- no translation found for ffx_original (372686331501281474) -->
-    <skip />
+    <string name="ffx_original" msgid="372686331501281474">"원본"</string>
     <string name="ffx_vintage" msgid="8348759951363844780">"빈티지"</string>
     <string name="ffx_instant" msgid="726968618715691987">"인스턴트"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"블리치"</string>
-    <!-- no translation found for ffx_blue_crush (6034283412305561226) -->
-    <skip />
-    <!-- no translation found for ffx_bw_contrast (517988490066217206) -->
-    <skip />
+    <string name="ffx_blue_crush" msgid="6034283412305561226">"파란색"</string>
+    <string name="ffx_bw_contrast" msgid="517988490066217206">"흑백"</string>
     <string name="ffx_punch" msgid="1343475517872562639">"펀치"</string>
     <string name="ffx_x_process" msgid="4779398678661811765">"X 처리"</string>
-    <!-- no translation found for ffx_washout (4594160692176642735) -->
-    <skip />
-    <!-- no translation found for ffx_washout_color (8034075742195795219) -->
-    <skip />
+    <string name="ffx_washout" msgid="4594160692176642735">"라테"</string>
+    <string name="ffx_washout_color" msgid="8034075742195795219">"리소"</string>
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"오프라인에서 앨범을 사용하도록 설정합니다."</item>
     <item quantity="other" msgid="4948604338155959389">"오프라인에서 앨범을 사용하도록 설정합니다."</item>
@@ -191,8 +185,7 @@
     <string name="add_account" msgid="4271217504968243974">"계정 추가"</string>
     <string name="folder_camera" msgid="4714658994809533480">"카메라"</string>
     <string name="folder_download" msgid="7186215137642323932">"다운로드"</string>
-    <!-- no translation found for folder_edited_online_photos (6278215510236800181) -->
-    <skip />
+    <string name="folder_edited_online_photos" msgid="6278215510236800181">"수정된 온라인 사진"</string>
     <string name="folder_imported" msgid="2773581395524747099">"가져옴"</string>
     <string name="folder_screenshot" msgid="7200396565864213450">"스크린샷"</string>
     <string name="help" msgid="7368960711153618354">"도움말"</string>
