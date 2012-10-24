@@ -23,6 +23,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import com.android.gallery3d.filtershow.imageshow.GeometryMath;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 
 public class ImageFilterGeometry extends ImageFilter {
@@ -78,19 +79,18 @@ public class ImageFilterGeometry extends ImageFilter {
         } else {
             temp = Bitmap.createBitmap(cropBounds.width(), cropBounds.height(), mConfig);
         }
+        float[] displayCenter = {
+                temp.getWidth() / 2f, temp.getHeight() / 2f
+        };
 
-        RectF rp = mGeometry.getPhotoBounds();
-        RectF rc = mGeometry.getPreviewCropBounds();
-        Matrix drawMatrix = mGeometry.buildTotalXform(rp.width(), rp.height(), rc.width(),
-                rc.height(), rc.left, rc.top,
-                mGeometry.getRotation(), mGeometry.getStraightenRotation(),
-                bitmap.getWidth() / rp.width(), null);
+        Matrix m1 = mGeometry.buildTotalXform(bitmap.getWidth(), bitmap.getHeight(), displayCenter);
+
         Canvas canvas = new Canvas(temp);
         Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setFilterBitmap(true);
         paint.setDither(true);
-        canvas.drawBitmap(bitmap, drawMatrix, paint);
+        canvas.drawBitmap(bitmap, m1, paint);
         return temp;
     }
 
