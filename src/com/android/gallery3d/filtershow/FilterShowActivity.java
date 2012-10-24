@@ -189,6 +189,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageRotate = (ImageRotate) findViewById(R.id.imageRotate);
         mImageFlip = (ImageFlip) findViewById(R.id.imageFlip);
 
+        ImageCrop.setTouchTolerance((int) getPixelsFromDip(25));
         mImageViews.add(mImageShow);
         mImageViews.add(mImageCurves);
         mImageViews.add(mImageBorders);
