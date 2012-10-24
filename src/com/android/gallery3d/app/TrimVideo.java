@@ -342,15 +342,15 @@ public class TrimVideo extends Activity implements
      * Insert the content (saved file) with proper video properties.
      */
     private Uri insertContent(File file) {
-        long now = System.currentTimeMillis() / 1000;
-
+        long nowInMs = System.currentTimeMillis();
+        long nowInSec = nowInMs / 1000;
         final ContentValues values = new ContentValues(12);
         values.put(Video.Media.TITLE, mSaveFileName);
         values.put(Video.Media.DISPLAY_NAME, file.getName());
         values.put(Video.Media.MIME_TYPE, "video/mp4");
-        values.put(Video.Media.DATE_TAKEN, now);
-        values.put(Video.Media.DATE_MODIFIED, now);
-        values.put(Video.Media.DATE_ADDED, now);
+        values.put(Video.Media.DATE_TAKEN, nowInMs);
+        values.put(Video.Media.DATE_MODIFIED, nowInSec);
+        values.put(Video.Media.DATE_ADDED, nowInSec);
         values.put(Video.Media.DATA, file.getAbsolutePath());
         values.put(Video.Media.SIZE, file.length());
         // Copy the data taken and location info from src.
@@ -365,7 +365,10 @@ public class TrimVideo extends Activity implements
         querySource(projection, new ContentResolverQueryCallback() {
             @Override
             public void onCursorResult(Cursor cursor) {
-                values.put(Video.Media.DATE_TAKEN, cursor.getLong(0));
+                long timeTaken = cursor.getLong(0);
+                if (timeTaken > 0) {
+                    values.put(Video.Media.DATE_TAKEN, timeTaken);
+                }
                 double latitude = cursor.getDouble(1);
                 double longitude = cursor.getDouble(2);
                 // TODO: Change || to && after the default location issue is
