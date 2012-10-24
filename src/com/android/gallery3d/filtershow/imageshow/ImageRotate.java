@@ -84,6 +84,6 @@ public class ImageRotate extends ImageGeometry {
         gPaint.setFilterBitmap(true);
         gPaint.setDither(true);
         gPaint.setARGB(255, 255, 255, 255);
-        drawTransformedBitmap(canvas, image, gPaint, true);
+        drawTransformedCropped(canvas, image, gPaint);
     }
 }

@@ -221,6 +221,7 @@ public abstract class ImageGeometry extends ImageSlave {
         return getLocalRotation() + getLocalStraighten();
     }
 
+
     protected static float[] getCornersFromRect(RectF r) {
         // Order is:
         // 0------->1
@@ -541,5 +542,68 @@ public abstract class ImageGeometry extends ImageSlave {
 
     protected void drawShape(Canvas canvas, Bitmap image) {
         // TODO: Override this stub.
+    }
+
+    protected RectF drawTransformed(Canvas canvas, Bitmap photo, Paint p){
+        p.setARGB(255, 0, 0, 0);
+        RectF photoBounds = getLocalPhotoBounds();
+        RectF cropBounds = getLocalCropBounds();
+        float scale = computeScale(getWidth(), getHeight());
+        // put in screen coordinates
+        RectF scaledCrop = GeometryMath.scaleRect(cropBounds, scale);
+        RectF scaledPhoto = GeometryMath.scaleRect(photoBounds, scale);
+        float [] displayCenter = { getWidth() / 2f, getHeight() / 2f };
+        Matrix m = GeometryMetadata.buildCenteredPhotoMatrix(scaledPhoto, scaledCrop,
+                getLocalRotation(), getLocalStraighten(), getLocalFlip(), displayCenter);
+
+        Matrix m1 = GeometryMetadata.buildWanderingCropMatrix(scaledPhoto, scaledCrop,
+                getLocalRotation(), getLocalStraighten(), getLocalFlip(), displayCenter);
+        m1.mapRect(scaledCrop);
+        Path path = new Path();
+        path.addRect(scaledCrop, Path.Direction.CCW);
+
+        m.preScale(scale, scale);
+        canvas.save();
+        canvas.drawBitmap(photo, m, p);
+        canvas.restore();
+
+        p.setColor(Color.WHITE);
+        p.setStyle(Style.STROKE);
+        p.setStrokeWidth(2);
+        canvas.drawPath(path, p);
+        return scaledCrop;
+    }
+
+    protected void drawTransformedCropped(Canvas canvas, Bitmap photo, Paint p){
+        RectF photoBounds = getLocalPhotoBounds();
+        RectF cropBounds = getLocalCropBounds();
+        float imageWidth = cropBounds.width();
+        float imageHeight = cropBounds.height();
+        float scale = getWidth() / imageWidth;
+        if (imageHeight > imageWidth) {
+            scale = getHeight() / imageHeight;
+        }
+        // put in screen coordinates
+        RectF scaledCrop = GeometryMath.scaleRect(cropBounds, scale);
+        RectF scaledPhoto = GeometryMath.scaleRect(photoBounds, scale);
+        float [] displayCenter = { getWidth() / 2f, getHeight() / 2f };
+        Matrix m1 = GeometryMetadata.buildWanderingCropMatrix(scaledPhoto, scaledCrop,
+                getLocalRotation(), getLocalStraighten(), getLocalFlip(), displayCenter);
+        float [] cropCenter = { scaledCrop.centerX(), scaledCrop.centerY() };
+        m1.mapPoints(cropCenter);
+        GeometryMetadata.concatRecenterMatrix(m1, cropCenter, displayCenter);
+        m1.preRotate(getLocalStraighten(), scaledPhoto.centerX(), scaledPhoto.centerY());
+        m1.preScale(scale, scale);
+
+        p.setARGB(255, 0, 0, 0);
+        canvas.save();
+        canvas.drawBitmap(photo, m1, p);
+        canvas.restore();
+
+        p.setARGB(255, 0, 0, 0);
+        p.setStyle(Paint.Style.FILL);
+        scaledCrop.offset(displayCenter[0] - scaledCrop.centerX(), displayCenter[1]
+                - scaledCrop.centerY());
+        drawShadows(canvas, p, scaledCrop);
     }
 }

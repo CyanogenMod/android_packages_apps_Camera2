@@ -64,7 +64,7 @@ public class ImageShow extends View implements OnGestureListener,
 
     protected ImageLoader mImageLoader = null;
     private ImageFilter mCurrentFilter = null;
-    private boolean mDirtyGeometry = true;
+    private boolean mDirtyGeometry = false;
 
     private Bitmap mBackgroundImage = null;
     private final boolean USE_BACKGROUND_IMAGE = false;
