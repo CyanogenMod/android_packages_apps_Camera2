@@ -650,14 +650,14 @@ public class ExifParser {
     }
 
     /**
-     * Reads a String from the InputStream with UTF8 charset.
+     * Reads a String from the InputStream with US-ASCII charset.
      * This is used for reading values of type {@link ExifTag#TYPE_ASCII}.
      */
     public String readString(int n) throws IOException {
         if (n > 0) {
             byte[] buf = new byte[n];
             mTiffStream.readOrThrow(buf);
-            return new String(buf, 0, n - 1, "UTF8");
+            return new String(buf, 0, n - 1, "US-ASCII");
         } else {
             return "";
         }
