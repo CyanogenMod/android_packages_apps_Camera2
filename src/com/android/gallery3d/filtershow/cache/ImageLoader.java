@@ -384,7 +384,7 @@ public class ImageLoader {
         return mAdapter;
     }
 
-    public Object getXmpObject() {
+    public XMPMeta getXmpObject() {
         try {
             InputStream is = mContext.getContentResolver().openInputStream(getUri());
             return XmpUtilHelper.extractXMPMeta(is);
