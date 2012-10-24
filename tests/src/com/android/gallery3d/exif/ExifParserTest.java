@@ -84,7 +84,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         // No value from exiftool.
         if (truth.contains(null)) return;
 
-        String dataString = tag.valueToString().trim();
+        String dataString = Util.tagValueToString(tag).trim();
         assertTrue(String.format("Tag %02x", tag.getTagId()) + ", " + getImageTitle()
                 + ": " + dataString,
                 truth.contains(dataString));

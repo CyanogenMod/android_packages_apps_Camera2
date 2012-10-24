@@ -115,7 +115,7 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
             assertNotNull(String.format("Tag %x, ", tag.getTagId()) + getImageTitle(), truth);
             if (truth.contains(null)) continue;
             assertTrue(String.format("Tag %x, ", tag.getTagId()) + getImageTitle(),
-                    truth.contains(tag.valueToString().trim()));
+                    truth.contains(Util.tagValueToString(tag).trim()));
         }
         assertEquals(getImageTitle(), ifdValue.size(), tags.length);
     }
