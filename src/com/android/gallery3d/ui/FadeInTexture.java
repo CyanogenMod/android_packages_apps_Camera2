@@ -23,16 +23,18 @@ public class FadeInTexture extends FadeTexture implements Texture {
     private static final String TAG = "FadeInTexture";
 
     private final int mColor;
+    private final TiledTexture mTexture;
 
-    public FadeInTexture(int color, BasicTexture texture) {
-        super(texture);
+    public FadeInTexture(int color, TiledTexture texture) {
+        super(texture.getWidth(), texture.getHeight(), texture.isOpaque());
         mColor = color;
+        mTexture = texture;
     }
 
     @Override
     public void draw(GLCanvas canvas, int x, int y, int w, int h) {
         if (isAnimating()) {
-            canvas.drawMixed(mTexture, mColor, getRatio(), x, y, w, h);
+            mTexture.drawMixed(canvas, mColor, getRatio(), x, y, w, h);
         } else {
             mTexture.draw(canvas, x, y, w, h);
         }
