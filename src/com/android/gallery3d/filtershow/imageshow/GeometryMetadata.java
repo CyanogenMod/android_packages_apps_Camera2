@@ -105,9 +105,8 @@ public class GeometryMetadata {
 
     public RectF getCropBounds(Bitmap bitmap) {
         float scale = 1.0f;
-        if (mPhotoBounds.width() > 0) {
-            scale = bitmap.getWidth() / mPhotoBounds.width();
-        }
+        scale = GeometryMath.scale(mPhotoBounds.width(), mPhotoBounds.height(), bitmap.getWidth(),
+                bitmap.getHeight());
         return new RectF(mCropBounds.left * scale, mCropBounds.top * scale,
                 mCropBounds.right * scale, mCropBounds.bottom * scale);
     }
@@ -299,8 +298,8 @@ public class GeometryMetadata {
 
     /**
      * Builds a matrix to transform a bitmap of width bmWidth and height
-     * bmHeight so that the region of the bitmap being cropped to is
-     * oriented and centered at displayCenter.
+     * bmHeight so that the region of the bitmap being cropped to is oriented
+     * and centered at displayCenter.
      *
      * @param bmWidth
      * @param bmHeight
@@ -311,7 +310,7 @@ public class GeometryMetadata {
         RectF rp = getPhotoBounds();
         RectF rc = getPreviewCropBounds();
 
-        float scale = bmWidth / rp.width();
+        float scale = GeometryMath.scale(rp.width(), rp.height(), bmWidth, bmHeight);
         RectF scaledCrop = GeometryMath.scaleRect(rc, scale);
         RectF scaledPhoto = GeometryMath.scaleRect(rp, scale);
 
