@@ -389,5 +389,8 @@
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
+        <activity android:name="com.android.camera.ProxyLauncher"
+                android:theme="@android:style/Theme.NoDisplay">
+        </activity>
     </application>
 </manifest>
