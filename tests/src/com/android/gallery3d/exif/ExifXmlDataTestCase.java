@@ -83,6 +83,7 @@ public class ExifXmlDataTestCase extends InstrumentationTestCase {
     public void tearDown() throws Exception {
         Util.closeSilently(mImageInputStream);
         Util.closeSilently(mXmlInputStream);
+        mXmlParser = null;
     }
 
     protected String getImageTitle() {
