@@ -302,12 +302,21 @@ public class ImageLoader {
         }
     }
 
-    public void warnListeners() {
-        for (int i = 0; i < mListeners.size(); i++) {
-            ImageShow imageShow = mListeners.elementAt(i);
-            imageShow.updateImage();
-        }
+    private void warnListeners() {
+        mActivity.runOnUiThread(mWarnListenersRunnable);
     }
+
+    private Runnable mWarnListenersRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            for (int i = 0; i < mListeners.size(); i++) {
+                ImageShow imageShow = mListeners.elementAt(i);
+                imageShow.updateImage();
+                imageShow.invalidate();
+            }
+        }
+    };
 
     // TODO: this currently does the loading + filtering on the UI thread -- need to
     // move this to a background thread.
