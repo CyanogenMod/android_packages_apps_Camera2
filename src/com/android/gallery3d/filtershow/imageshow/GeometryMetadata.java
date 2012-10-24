@@ -62,6 +62,9 @@ public class GeometryMetadata {
         if (!mCropBounds.equals(mPhotoBounds)) {
             return true;
         }
+        if (!mFlip.equals(FLIP.NONE)){
+            return true;
+        }
         return false;
     }
 
