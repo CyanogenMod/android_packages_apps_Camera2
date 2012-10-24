@@ -125,6 +125,7 @@ public class PhotoView extends GLView {
         public void onCommitDeleteImage();
         public void onFilmModeChanged(boolean enabled);
         public void onPictureCenter(boolean isCamera);
+        public void onUndoBarVisibilityChanged(boolean visible);
     }
 
     // The rules about orientation locking:
@@ -1359,6 +1360,7 @@ public class PhotoView extends GLView {
         if(deleteLast) mUndoBarState |= UNDO_BAR_DELETE_LAST;
         mUndoBar.animateVisibility(GLView.VISIBLE);
         mHandler.sendEmptyMessageDelayed(MSG_UNDO_BAR_TIMEOUT, 3000);
+        if (mListener != null) mListener.onUndoBarVisibilityChanged(true);
     }
 
     private void hideUndoBar() {
@@ -1367,6 +1369,7 @@ public class PhotoView extends GLView {
         mUndoBar.animateVisibility(GLView.INVISIBLE);
         mUndoBarState = 0;
         mUndoIndexHint = Integer.MAX_VALUE;
+        mListener.onUndoBarVisibilityChanged(false);
     }
 
     // Check if the one of the conditions for hiding the undo bar has been
