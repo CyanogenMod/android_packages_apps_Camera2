@@ -93,4 +93,10 @@ public class GeometryMath {
         return (float) Math.sqrt(a[0] * a[0] + a[1] * a[1]);
     }
 
+    public static float scale(float oldWidth, float oldHeight, float newWidth, float newHeight) {
+        if (oldHeight == 0 || oldWidth == 0)
+            return 1;
+        return Math.min(newWidth / oldWidth , newHeight / oldHeight);
+    }
+
 }
