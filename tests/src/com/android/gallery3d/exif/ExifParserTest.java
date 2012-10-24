@@ -76,19 +76,14 @@ public class ExifParserTest extends ExifXmlDataTestCase {
     }
 
     private void checkTag(ExifTag tag) {
-        // Ignore offset tags since the ground-truth from exiftool doesn't have it.
-        // We can verify it by examining the sub-IFD or thumbnail itself.
-        if (ExifTag.isSubIfdOffsetTag(tag.getTagId())) return;
-
-        // TODO: Test MakerNote and UserComment
-        if (tag.getTagId() == ExifTag.TAG_MAKER_NOTE
-                || tag.getTagId() == ExifTag.TAG_USER_COMMENT) return;
-
         Set<String> truth = mGroundTruth.get(tag.getIfd()).get(tag.getTagId());
 
         if (truth == null) {
             fail(String.format("Unknown Tag %02x", tag.getTagId()) + ", " + getImageTitle());
         }
+
+        // No value from exiftool.
+        if (truth.contains(null)) return;
 
         String dataString = tag.valueToString().trim();
         assertTrue(String.format("Tag %02x", tag.getTagId()) + ", " + getImageTitle()
@@ -109,9 +104,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
                         break;
                     case ExifParser.EVENT_NEW_TAG:
                         ExifTag tag = parser.getTag();
-                        // The exiftool doesn't provide MakerNote tag
-                        if (!ExifTag.isSubIfdOffsetTag(tag.getTagId())
-                                && tag.getTagId() != ExifTag.TAG_MAKER_NOTE) numOfTag++;
+                        numOfTag++;
                         if (tag.hasValue()) {
                             checkTag(tag);
                         } else {

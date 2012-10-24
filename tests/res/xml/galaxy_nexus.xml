@@ -8,6 +8,7 @@
     <tag ifd="IFD0" id="0x0131" name="Software">MASTER</tag>
     <tag ifd="IFD0" id="0x0132" name="ModifyDate">2012:07:30 16:28:42</tag>
     <tag ifd="IFD0" id="0x0213" name="YCbCrPositioning">1</tag>
+    <tag ifd="IFD0" id="0x8769" name="ExifOffset">NO_VALUE</tag>
     <tag ifd="ExifIFD" id="0x829a" name="ExposureTime">1/40</tag>
     <tag ifd="ExifIFD" id="0x829d" name="FNumber">26/10</tag>
     <tag ifd="ExifIFD" id="0x8822" name="ExposureProgram">3</tag>
