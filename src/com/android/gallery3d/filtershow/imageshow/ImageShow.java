@@ -405,7 +405,7 @@ public class ImageShow extends View implements OnGestureListener,
                 mImageGeometryOnlyPreset = newPreset;
                 mGeometryOnlyImage = null;
             }
-         }
+        }
         if (force || mImageFiltersOnlyPreset == null) {
             ImagePreset newPreset = new ImagePreset(preset);
             newPreset.setDoApplyGeometry(false);
@@ -467,18 +467,15 @@ public class ImageShow extends View implements OnGestureListener,
         if (image != null) {
             Rect s = new Rect(0, 0, image.getWidth(),
                     image.getHeight());
-            float ratio = image.getWidth()
-                    / (float) image.getHeight();
-            float w = getWidth();
-            float h = w / ratio;
+
+            float scale = GeometryMath.scale(image.getWidth(), image.getHeight(), getWidth(),
+                    getHeight());
+
+            float w = image.getWidth() * scale;
+            float h = image.getHeight() * scale;
             float ty = (getHeight() - h) / 2.0f;
-            float tx = 0;
-            if (ratio < 1.0f || (getHeight() < w)) {
-                h = getHeight();
-                w = h * ratio;
-                tx = (getWidth() - w) / 2.0f;
-                ty = 0;
-            }
+            float tx = (getWidth() - w) / 2.0f;
+
             Rect d = new Rect((int) tx, (int) ty, (int) (w + tx),
                     (int) (h + ty));
             mImageBounds = d;

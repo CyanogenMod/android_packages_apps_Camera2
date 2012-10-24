@@ -89,7 +89,7 @@ public abstract class ImageGeometry extends ImageSlave {
         return current * 90;
     }
 
-    protected float getCurrentTouchAngle(){
+    protected float getCurrentTouchAngle() {
         if (mCurrentX == mTouchCenterX && mCurrentY == mTouchCenterY) {
             return 0;
         }
@@ -106,11 +106,7 @@ public abstract class ImageGeometry extends ImageSlave {
     protected float computeScale(float width, float height) {
         float imageWidth = mLocalGeometry.getPhotoBounds().width();
         float imageHeight = mLocalGeometry.getPhotoBounds().height();
-        float zoom = width / imageWidth;
-        if (imageHeight > imageWidth) {
-            zoom = height / imageHeight;
-        }
-        return zoom;
+        return GeometryMath.scale(imageWidth, imageHeight, width, height);
     }
 
     private void calculateLocalScalingFactorAndOffset() {
@@ -220,7 +216,6 @@ public abstract class ImageGeometry extends ImageSlave {
     protected float getTotalLocalRotation() {
         return getLocalRotation() + getLocalStraighten();
     }
-
 
     protected static float[] getCornersFromRect(RectF r) {
         // Order is:
@@ -406,7 +401,12 @@ public abstract class ImageGeometry extends ImageSlave {
     }
 
     protected Matrix getGeoMatrix(RectF r, boolean onlyRotate) {
-        float scale = computeScale(getWidth(), getHeight());
+        RectF pbounds = getLocalPhotoBounds();
+        float scale = GeometryMath
+                .scale(pbounds.width(), pbounds.height(), getWidth(), getHeight());
+        if (((int) (getLocalRotation() / 90)) % 2 != 0) {
+            scale = GeometryMath.scale(pbounds.width(), pbounds.height(), getHeight(), getWidth());
+        }
         float yoff = getHeight() / 2;
         float xoff = getWidth() / 2;
         float w = r.left * 2 + r.width();
@@ -449,7 +449,8 @@ public abstract class ImageGeometry extends ImageSlave {
         float scale = computeScale(getWidth(), getHeight());
         float yoff = getHeight() / 2;
         float xoff = getWidth() / 2;
-        Matrix m = mLocalGeometry.buildGeometryMatrix(pbounds.width(), pbounds.height(), scale, xoff, yoff, 0);
+        Matrix m = mLocalGeometry.buildGeometryMatrix(pbounds.width(), pbounds.height(), scale,
+                xoff, yoff, 0);
         m.mapRect(bounds);
         return bounds;
     }
@@ -544,15 +545,21 @@ public abstract class ImageGeometry extends ImageSlave {
         // TODO: Override this stub.
     }
 
-    protected RectF drawTransformed(Canvas canvas, Bitmap photo, Paint p){
+    protected RectF drawTransformed(Canvas canvas, Bitmap photo, Paint p) {
         p.setARGB(255, 0, 0, 0);
         RectF photoBounds = getLocalPhotoBounds();
         RectF cropBounds = getLocalCropBounds();
         float scale = computeScale(getWidth(), getHeight());
+        // checks if local rotation is an odd multiple of 90.
+        if (((int) (getLocalRotation() / 90)) % 2 != 0) {
+            scale = computeScale(getHeight(), getWidth());
+        }
         // put in screen coordinates
         RectF scaledCrop = GeometryMath.scaleRect(cropBounds, scale);
         RectF scaledPhoto = GeometryMath.scaleRect(photoBounds, scale);
-        float [] displayCenter = { getWidth() / 2f, getHeight() / 2f };
+        float[] displayCenter = {
+                getWidth() / 2f, getHeight() / 2f
+        };
         Matrix m = GeometryMetadata.buildCenteredPhotoMatrix(scaledPhoto, scaledCrop,
                 getLocalRotation(), getLocalStraighten(), getLocalFlip(), displayCenter);
 
@@ -574,22 +581,27 @@ public abstract class ImageGeometry extends ImageSlave {
         return scaledCrop;
     }
 
-    protected void drawTransformedCropped(Canvas canvas, Bitmap photo, Paint p){
+    protected void drawTransformedCropped(Canvas canvas, Bitmap photo, Paint p) {
         RectF photoBounds = getLocalPhotoBounds();
         RectF cropBounds = getLocalCropBounds();
         float imageWidth = cropBounds.width();
         float imageHeight = cropBounds.height();
-        float scale = getWidth() / imageWidth;
-        if (imageHeight > imageWidth) {
-            scale = getHeight() / imageHeight;
+        float scale = GeometryMath.scale(imageWidth, imageHeight, getWidth(), getHeight());
+        // checks if local rotation is an odd multiple of 90.
+        if (((int) (getLocalRotation() / 90)) % 2 != 0) {
+            scale = GeometryMath.scale(imageWidth, imageHeight, getHeight(), getWidth());
         }
         // put in screen coordinates
         RectF scaledCrop = GeometryMath.scaleRect(cropBounds, scale);
         RectF scaledPhoto = GeometryMath.scaleRect(photoBounds, scale);
-        float [] displayCenter = { getWidth() / 2f, getHeight() / 2f };
+        float[] displayCenter = {
+                getWidth() / 2f, getHeight() / 2f
+        };
         Matrix m1 = GeometryMetadata.buildWanderingCropMatrix(scaledPhoto, scaledCrop,
                 getLocalRotation(), getLocalStraighten(), getLocalFlip(), displayCenter);
-        float [] cropCenter = { scaledCrop.centerX(), scaledCrop.centerY() };
+        float[] cropCenter = {
+                scaledCrop.centerX(), scaledCrop.centerY()
+        };
         m1.mapPoints(cropCenter);
         GeometryMetadata.concatRecenterMatrix(m1, cropCenter, displayCenter);
         m1.preRotate(getLocalStraighten(), scaledPhoto.centerX(), scaledPhoto.centerY());
