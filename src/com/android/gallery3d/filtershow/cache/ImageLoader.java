@@ -508,4 +508,9 @@ public class ImageLoader {
         }
     }
 
+    public void addCacheListener(ImageShow imageShow) {
+        mHiresCache.addObserver(imageShow);
+        mCache.addObserver(imageShow);
+    }
+
 }

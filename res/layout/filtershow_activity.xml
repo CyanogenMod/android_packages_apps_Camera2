@@ -112,6 +112,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <com.android.gallery3d.filtershow.imageshow.ImageRedEyes
+                android:id="@+id/imageRedEyes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
             <!--
             <ImageButton
                 android:id="@+id/showOriginalButton"
@@ -287,8 +293,7 @@
                         android:id="@+id/redEyeButton"
                         style="@style/FilterShowBottomButton"
                         android:src="@drawable/photoeditor_effect_redeye"
-                        android:text="@string/redeye"
-                        android:visibility="gone" />
+                        android:text="@string/redeye" />
 
                 </LinearLayout>
             </HorizontalScrollView>

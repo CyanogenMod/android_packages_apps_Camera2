@@ -17,40 +17,151 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.RectF;
+
+import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
+
+import java.util.Vector;
 
 public class ImageFilterRedEye extends ImageFilter {
-    private static final String TAG = "ImageFilterRedEye";
-
+    private static final String LOGTAG = "ImageFilterRedEye";
+    private Vector<RedEyeCandidate> mCandidates = null;
 
     public ImageFilterRedEye() {
-        mName = "Redeye";
-
+        mName = "Red Eye";
     }
 
     @Override
     public ImageFilter clone() throws CloneNotSupportedException {
         ImageFilterRedEye filter = (ImageFilterRedEye) super.clone();
-
+        if (mCandidates != null) {
+            int size = mCandidates.size();
+            filter.mCandidates = new Vector<RedEyeCandidate>();
+            for (int i = 0; i < size; i++) {
+                filter.mCandidates.add(new RedEyeCandidate(mCandidates.elementAt(i)));
+            }
+        }
         return filter;
     }
 
-    native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, short []matrix);
+    @Override
+    public boolean isNil() {
+        if (mCandidates != null && mCandidates.size() > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean same(ImageFilter filter) {
+        boolean isRedEyeFilter = super.same(filter);
+        if (!isRedEyeFilter) {
+            return false;
+        }
+        ImageFilterRedEye redEyeFilter = (ImageFilterRedEye) filter;
+        if (redEyeFilter.mCandidates == null && mCandidates == null) {
+            return true;
+        }
+        if (redEyeFilter.mCandidates == null || mCandidates == null) {
+            return false;
+        }
+        if (redEyeFilter.mCandidates.size() != mCandidates.size()) {
+            return false;
+        }
+        int size = mCandidates.size();
+        for (int i = 0; i < size; i++) {
+            RedEyeCandidate c1 = mCandidates.elementAt(i);
+            RedEyeCandidate c2 = redEyeFilter.mCandidates.elementAt(i);
+            if (!c1.equals(c2)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public Vector<RedEyeCandidate> getCandidates() {
+        if (mCandidates == null) {
+            mCandidates = new Vector<RedEyeCandidate>();
+        }
+        return mCandidates;
+    }
+
+    public void addRect(RectF rect, RectF bounds) {
+        if (mCandidates == null) {
+            mCandidates = new Vector<RedEyeCandidate>();
+        }
+        Vector<RedEyeCandidate> intersects = new Vector<RedEyeCandidate>();
+        for (int i = 0; i < mCandidates.size(); i++) {
+            RedEyeCandidate r = mCandidates.elementAt(i);
+            if (r.intersect(rect)) {
+                intersects.add(r);
+            }
+        }
+        for (int i = 0; i < intersects.size(); i++) {
+            RedEyeCandidate r = intersects.elementAt(i);
+            rect.union(r.mRect);
+            bounds.union(r.mBounds);
+            mCandidates.remove(r);
+        }
+        mCandidates.add(new RedEyeCandidate(rect, bounds));
+    }
+
+    public void clear() {
+        if (mCandidates == null) {
+            mCandidates = new Vector<RedEyeCandidate>();
+        }
+        mCandidates.clear();
+    }
+
+    native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, short[] matrix);
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        float p = mParameter;
-        float value = p;
-        int box = Math.min(w, h);
-        int sizex = Math.min((int)((p+100)*box/400),w/2);
-        int sizey = Math.min((int)((p+100)*box/800),h/2);
+        short[] rect = new short[4];
 
-        short [] rect = new short[]{
-                (short) (w/2-sizex),(short) (w/2-sizey),
-                (short) (2*sizex),(short) (2*sizey)};
-
-        nativeApplyFilter(bitmap, w, h, rect);
+        if (mCandidates != null && mCandidates.size() > 0) {
+            for (int i = 0; i < mCandidates.size(); i++) {
+                RectF r = new RectF(mCandidates.elementAt(i).mRect);
+                GeometryMetadata geo = getImagePreset().mGeoData;
+                Matrix originalToScreen = geo.getOriginalToScreen(true,
+                        getImagePreset().getImageLoader().getOriginalBounds().width(),
+                        getImagePreset().getImageLoader().getOriginalBounds().height(),
+                        w, h);
+                originalToScreen.mapRect(r);
+                if (r.left < 0) {
+                    r.left = 0;
+                }
+                if (r.left > w) {
+                    r.left = w;
+                }
+                if (r.top < 0) {
+                    r.top = 0;
+                }
+                if (r.top > h) {
+                    r.top = h;
+                }
+                if (r.right < 0) {
+                    r.right = 0;
+                }
+                if (r.right > w) {
+                    r.right = w;
+                }
+                if (r.bottom < 0) {
+                    r.bottom = 0;
+                }
+                if (r.bottom > h) {
+                    r.bottom = h;
+                }
+                rect[0] = (short) r.left;
+                rect[1] = (short) r.top;
+                rect[2] = (short) r.width();
+                rect[3] = (short) r.height();
+                nativeApplyFilter(bitmap, w, h, rect);
+            }
+        }
         return bitmap;
     }
 }
