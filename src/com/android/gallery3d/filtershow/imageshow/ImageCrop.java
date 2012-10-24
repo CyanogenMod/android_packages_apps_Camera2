@@ -430,6 +430,16 @@ public class ImageCrop extends ImageGeometry {
         float deltaY = dY / scale;
         int select = movingEdges;
         if (mFixAspectRatio && (select != MOVE_BLOCK)) {
+
+            // TODO: add in orientation change for fixed aspect
+            /*if (select == TOP_LEFT || select == TOP_RIGHT ||
+                    select == BOTTOM_LEFT || select == BOTTOM_RIGHT){
+                RectF blank = new RectF();
+                if(switchCropBounds(select, blank)){
+                    setCropBounds(blank);
+                    return;
+                }
+            }*/
             if (select == MOVE_LEFT) {
                 select |= MOVE_TOP;
             }
@@ -441,11 +451,6 @@ public class ImageCrop extends ImageGeometry {
             }
             if (select == MOVE_BOTTOM) {
                 select |= MOVE_RIGHT;
-            }
-            RectF blank = new RectF();
-            if(switchCropBounds(select, blank)){
-                setCropBounds(blank);
-                return;
             }
         }
 
