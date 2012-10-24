@@ -708,7 +708,7 @@ public class PanelController implements OnClickListener {
                 break;
             }
             case R.id.redEyeButton: {
-                mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
+                mCurrentImage = showImageView(R.id.imageRedEyes).setShowControls(true);
                 String ename = mCurrentImage.getContext().getString(R.string.redeye);
                 mUtilityPanel.setEffectName(ename);
                 ensureFilter(ename);

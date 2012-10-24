@@ -83,7 +83,7 @@ public class ImageShow extends View implements OnGestureListener,
     private HistoryAdapter mHistoryAdapter = null;
     private ImageStateAdapter mImageStateAdapter = null;
 
-    private Rect mImageBounds = new Rect();
+    protected Rect mImageBounds = new Rect();
 
     private boolean mTouchShowOriginal = false;
     private long mTouchShowOriginalDate = 0;
@@ -646,13 +646,13 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     public void updateImage() {
+        invalidate();
         if (!updateGeometryFlags()) {
             return;
         }
         Bitmap bitmap = mImageLoader.getOriginalBitmapLarge();
         if (bitmap != null) {
             imageSizeChanged(bitmap);
-            invalidate();
         }
     }
 
