@@ -598,7 +598,7 @@ public class PhotoPage extends ActivityState implements
 
     @Override
     public boolean canDisplayBottomControls() {
-        return mIsActive;
+        return mIsActive && !mPhotoView.canUndo();
     }
 
     @Override
@@ -1527,5 +1527,10 @@ public class PhotoPage extends ActivityState implements
                 item.setTitle(mActivity.getResources().getString(R.string.share));
             }
         }
+    }
+
+    @Override
+    public void onUndoBarVisibilityChanged(boolean visible) {
+        refreshBottomControlsWhenReady();
     }
 }
