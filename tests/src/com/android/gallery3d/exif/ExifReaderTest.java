@@ -20,7 +20,6 @@ import android.graphics.BitmapFactory;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class ExifReaderTest extends ExifXmlDataTestCase {
     private static final String TAG = "ExifReaderTest";
@@ -37,7 +36,7 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
         try {
             ExifReader reader = new ExifReader();
             ExifData exifData = reader.read(getImageInputStream());
-            List<Map<Short, Set<String>>> groundTruth = ExifXmlReader.readXml(getXmlParser());
+            List<Map<Short, List<String>>> groundTruth = ExifXmlReader.readXml(getXmlParser());
             for (int i = 0; i < IfdId.TYPE_IFD_COUNT; i++) {
                 checkIfd(exifData.getIfdData(i), groundTruth.get(i));
             }
@@ -105,14 +104,14 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
         }
     }
 
-    private void checkIfd(IfdData ifd, Map<Short, Set<String>> ifdValue) {
+    private void checkIfd(IfdData ifd, Map<Short, List<String>> ifdValue) {
         if (ifd == null) {
             assertEquals(getImageTitle(), 0 ,ifdValue.size());
             return;
         }
         ExifTag[] tags = ifd.getAllTags();
         for (ExifTag tag : tags) {
-            Set<String> truth = ifdValue.get(tag.getTagId());
+            List<String> truth = ifdValue.get(tag.getTagId());
             assertNotNull(String.format("Tag %x, ", tag.getTagId()) + getImageTitle(), truth);
             if (truth.contains(null)) continue;
             assertTrue(String.format("Tag %x, ", tag.getTagId()) + getImageTitle(),

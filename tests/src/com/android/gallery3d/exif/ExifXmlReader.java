@@ -22,10 +22,8 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class ExifXmlReader {
     private static final String TAG_EXIF = "exif";
@@ -48,13 +46,13 @@ public class ExifXmlReader {
      * @throws XmlPullParserException
      * @throws IOException
      */
-    static public List<Map<Short, Set<String>>> readXml(XmlPullParser parser)
+    static public List<Map<Short, List<String>>> readXml(XmlPullParser parser)
             throws XmlPullParserException, IOException {
 
-        List<Map<Short, Set<String>>> exifData =
-                new ArrayList<Map<Short, Set<String>>>(IfdId.TYPE_IFD_COUNT);
+        List<Map<Short, List<String>>> exifData =
+                new ArrayList<Map<Short, List<String>>>(IfdId.TYPE_IFD_COUNT);
         for (int i = 0; i < IfdId.TYPE_IFD_COUNT; i++) {
-            exifData.add(new HashMap<Short, Set<String>>());
+            exifData.add(new HashMap<Short, List<String>>());
         }
 
         while (parser.next() != XmlPullParser.END_DOCUMENT) {
@@ -83,9 +81,9 @@ public class ExifXmlReader {
             if (ifdId < 0) {
                 // TODO: the MarkerNote segment.
             } else {
-                Set<String> tagData = exifData.get(ifdId).get(id);
+                List<String> tagData = exifData.get(ifdId).get(id);
                 if (tagData == null) {
-                    tagData = new HashSet<String>();
+                    tagData = new ArrayList<String>();
                     exifData.get(ifdId).put(id, tagData);
                 }
                 if (NO_VALUE.equals(value)) {
@@ -115,5 +113,13 @@ public class ExifXmlReader {
             assert(false);
             return -1;
         }
+    }
+
+    static public int getTrueTagNumber(Map<Short, List<String>> ifdData) {
+        int size = 0;
+        for (List<String> tag: ifdData.values()) {
+            size += tag.size();
+        }
+        return size;
     }
 }
