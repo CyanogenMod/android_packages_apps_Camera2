@@ -127,7 +127,9 @@ public class ExifData {
             }
 
             for (int i = 0; i < IfdId.TYPE_IFD_COUNT; i++) {
-                if (!Util.equals(data.getIfdData(i), getIfdData(i))) return false;
+                IfdData ifd1 = data.getIfdData(i);
+                IfdData ifd2 = getIfdData(i);
+                if ((ifd1 != ifd2) && (ifd1 != null && !ifd1.equals(ifd2))) return false;
             }
             return true;
         }
