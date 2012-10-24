@@ -1385,7 +1385,7 @@ public class ExifTag {
                 byte buf[] = (byte[]) mValue;
                 for(int i = 0, n = getComponentCount(); i < n; i++) {
                     if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(String.format("%02x", buf[i]));
+                    sbuilder.append(buf[i]);
                 }
                 break;
             case ExifTag.TYPE_ASCII:
