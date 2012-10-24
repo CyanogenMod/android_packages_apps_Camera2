@@ -141,7 +141,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private WeakReference<ProgressDialog> mSavingProgressDialog;
     private static final int SEEK_BAR_MAX = 600;
 
-    private LightCycleChecker mCheckFor360;
+    private LoadBitmapTask mLoadBitmapTask;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -367,17 +367,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 
-        String data = intent.getDataString();
-        if (data != null) {
-            Uri uri = Uri.parse(data);
-            mImageLoader.loadBitmap(uri, getScreenImageSize());
-
-            View tinyPlanetView = listColors.findViewById(R.id.tinyplanetButton);
-            if (tinyPlanetView != null) {
-                tinyPlanetView.setVisibility(View.GONE);
-                mCheckFor360 = new LightCycleChecker(tinyPlanetView);
-                mCheckFor360.execute();
-            }
+        if (intent.getData() != null) {
+            startLoadBitmap(intent.getData());
         } else {
             pickImage();
         }
@@ -390,15 +381,27 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }
     }
 
-    private class LightCycleChecker extends AsyncTask<Void, Void, Boolean> {
-        View mTinyPlanetButton;
+    private void startLoadBitmap(Uri uri) {
+        View tinyPlanetView = findViewById(R.id.tinyplanetButton);
+        if (tinyPlanetView != null) {
+            tinyPlanetView.setVisibility(View.GONE);
+        }
+        mLoadBitmapTask = new LoadBitmapTask(tinyPlanetView);
+        mLoadBitmapTask.execute(uri);
+    }
 
-        public LightCycleChecker(View button) {
+    private class LoadBitmapTask extends AsyncTask<Uri, Void, Boolean> {
+        View mTinyPlanetButton;
+        int mBitmapSize;
+
+        public LoadBitmapTask(View button) {
             mTinyPlanetButton = button;
+            mBitmapSize = getScreenImageSize();
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Boolean doInBackground(Uri... params) {
+            mImageLoader.loadBitmap(params[0], mBitmapSize);
             return mImageLoader.queryLightCycle360();
         }
 
@@ -410,7 +413,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             if (result) {
                 mTinyPlanetButton.setVisibility(View.VISIBLE);
             }
-            mCheckFor360 = null;
+            mLoadBitmapTask = null;
             super.onPostExecute(result);
         }
 
@@ -418,8 +421,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
     @Override
     protected void onDestroy() {
-        if (mCheckFor360 != null) {
-            mCheckFor360.cancel(false);
+        if (mLoadBitmapTask != null) {
+            mLoadBitmapTask.cancel(false);
         }
         super.onDestroy();
     }
@@ -923,7 +926,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();
-                mImageLoader.loadBitmap(selectedImageUri, getScreenImageSize());
+                startLoadBitmap(selectedImageUri);
             }
         }
     }
