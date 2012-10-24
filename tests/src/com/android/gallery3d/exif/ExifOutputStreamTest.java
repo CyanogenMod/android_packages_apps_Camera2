@@ -28,6 +28,15 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class ExifOutputStreamTest extends ExifXmlDataTestCase {
+
+    private File mTmpFile;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        mTmpFile = File.createTempFile("exif_test", ".jpg");
+    }
+
     public ExifOutputStreamTest(int imgRes, int xmlRes) {
         super(imgRes, xmlRes);
     }
@@ -37,7 +46,6 @@ public class ExifOutputStreamTest extends ExifXmlDataTestCase {
     }
 
     public void testExifOutputStream() throws Exception {
-        File file = File.createTempFile("exif_test", ".jpg");
         InputStream imageInputStream = null;
         InputStream exifInputStream = null;
         FileInputStream reDecodeInputStream = null;
@@ -50,23 +58,26 @@ public class ExifOutputStreamTest extends ExifXmlDataTestCase {
 
                 // Read the image data
                 Bitmap bmp = BitmapFactory.decodeStream(imageInputStream);
+                // The image is invalid
+                if (bmp == null) return;
+
                 // Read exif data
                 ExifData exifData = new ExifReader().read(exifInputStream);
 
                 // Encode the image with the exif data
-                FileOutputStream outputStream = new FileOutputStream(file);
+                FileOutputStream outputStream = new FileOutputStream(mTmpFile);
                 ExifOutputStream exifOutputStream = new ExifOutputStream(outputStream);
                 exifOutputStream.setExifData(exifData);
                 bmp.compress(Bitmap.CompressFormat.JPEG, 100, exifOutputStream);
                 exifOutputStream.close();
 
                 // Re-decode the temp file and check the data.
-                reDecodeInputStream = new FileInputStream(file);
+                reDecodeInputStream = new FileInputStream(mTmpFile);
                 Bitmap decodedBmp = BitmapFactory.decodeStream(reDecodeInputStream);
                 assertNotNull(getImageTitle(), decodedBmp);
 
                 // Re-parse the temp file the check EXIF tag
-                reParseInputStream = new FileInputStream(file);
+                reParseInputStream = new FileInputStream(mTmpFile);
                 ExifData reExifData = new ExifReader().read(reParseInputStream);
                 assertEquals(getImageTitle(), exifData, reExifData);
             } finally {
@@ -89,5 +100,10 @@ public class ExifOutputStreamTest extends ExifXmlDataTestCase {
         }
         bos.flush();
         return bos.toByteArray();
+    }
+
+    @Override
+    public void tearDown() {
+        mTmpFile.delete();
     }
 }
