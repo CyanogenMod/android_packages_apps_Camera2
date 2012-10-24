@@ -454,14 +454,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             clearLoadingBit(BIT_LOADING_SYNC);
         }
         mActionModeHandler.pause();
-
-        // The camera app should always launch in capture mode when
-        // resumed, so make the next resume faster by closing the grid
-        // view now
-        if (mInCameraAndWantQuitOnPause) {
-            if (mActivity.getStateManager().getTopState() == this)
-                mActivity.getStateManager().finishState(this, false);
-        }
     }
 
     @Override
