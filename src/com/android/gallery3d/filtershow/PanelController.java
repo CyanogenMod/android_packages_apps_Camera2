@@ -139,14 +139,7 @@ public class PanelController implements OnClickListener {
         private boolean mShowParameterValue = false;
         private View mAspectButton = null;
         private View mCurvesButton = null;
-        private int mCurrentAspectButton = 0;
-        private static final int NUMBER_OF_ASPECT_BUTTONS = 6;
-        private static final int ASPECT_NONE = 0;
-        private static final int ASPECT_1TO1 = 1;
-        private static final int ASPECT_5TO7 = 2;
-        private static final int ASPECT_4TO6 = 3;
-        private static final int ASPECT_16TO9 = 4;
-        private static final int ASPECT_ORIG = 5;
+        boolean firstTimeCropDisplayed = true;
 
         public UtilityPanel(Context context, View view, View textView,
                 View aspectButton, View curvesButton) {
@@ -196,69 +189,6 @@ public class PanelController implements OnClickListener {
                 }
             }
             imageCrop.invalidate();
-        }
-
-        public void nextAspectButton() {
-            if (mAspectButton instanceof ImageButtonTitle
-                    && mCurrentImage instanceof ImageCrop) {
-                switch (mCurrentAspectButton) {
-                    case ASPECT_NONE:
-                        ((ImageButtonTitle) mAspectButton).setText(mContext
-                                .getString(R.string.aspect)
-                                + " "
-                                + mContext.getString(R.string.aspect1to1_effect));
-                        ((ImageCrop) mCurrentImage).apply(1, 1);
-                        break;
-                    case ASPECT_1TO1:
-                        ((ImageButtonTitle) mAspectButton).setText(mContext
-                                .getString(R.string.aspect)
-                                + " "
-                                + mContext.getString(R.string.aspect5to7_effect));
-                        ((ImageCrop) mCurrentImage).apply(7, 5);
-                        break;
-                    case ASPECT_5TO7:
-                        ((ImageButtonTitle) mAspectButton).setText(mContext
-                                .getString(R.string.aspect)
-                                + " "
-                                + mContext.getString(R.string.aspect4to6_effect));
-                        ((ImageCrop) mCurrentImage).apply(6, 4);
-                        break;
-                    case ASPECT_4TO6:
-                        ((ImageButtonTitle) mAspectButton).setText(mContext
-                                .getString(R.string.aspect)
-                                + " "
-                                + mContext.getString(R.string.aspect9to16_effect));
-                        ((ImageCrop) mCurrentImage).apply(16, 9);
-                        break;
-                    case ASPECT_16TO9:
-                        ((ImageButtonTitle) mAspectButton).setText(mContext
-                                .getString(R.string.aspect)
-                                + " "
-                                + mContext.getString(R.string.aspectOriginal_effect));
-                        ((ImageCrop) mCurrentImage).applyOriginal();
-                        break;
-                    case ASPECT_ORIG:
-                        ((ImageButtonTitle) mAspectButton).setText(mContext
-                                .getString(R.string.aspect)
-                                + " "
-                                + mContext.getString(R.string.aspectNone_effect));
-                        ((ImageCrop) mCurrentImage).applyClear();
-                        break;
-                    default:
-                        ((ImageButtonTitle) mAspectButton).setText(mContext
-                                .getString(R.string.aspect)
-                                + " "
-                                + mContext.getString(R.string.aspectNone_effect));
-                        ((ImageCrop) mCurrentImage).applyClear();
-                        mCurrentAspectButton = ASPECT_NONE;
-                        break;
-                }
-                mCurrentAspectButton = (mCurrentAspectButton + 1) % NUMBER_OF_ASPECT_BUTTONS;
-            }
-        }
-
-        void setCurrentAspectButton(int n) {
-            mCurrentAspectButton = n;
         }
 
         public void showAspectButtons() {
@@ -653,8 +583,10 @@ public class PanelController implements OnClickListener {
                 String ename = mCurrentImage.getContext().getString(R.string.crop);
                 mUtilityPanel.setEffectName(ename);
                 mUtilityPanel.setShowParameter(false);
-                mUtilityPanel.setCurrentAspectButton(-1);
-                mUtilityPanel.nextAspectButton();
+                if (mCurrentImage instanceof ImageCrop && mUtilityPanel.firstTimeCropDisplayed){
+                    ((ImageCrop) mCurrentImage).applyOriginal();
+                    mUtilityPanel.firstTimeCropDisplayed = false;
+                }
                 mUtilityPanel.showAspectButtons();
                 break;
             }
@@ -760,7 +692,6 @@ public class PanelController implements OnClickListener {
                 break;
             }
             case R.id.aspect: {
-                mUtilityPanel.nextAspectButton();
                 mUtilityPanel.showAspectButtons();
                 break;
             }

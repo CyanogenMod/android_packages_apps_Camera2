@@ -22,6 +22,8 @@ import android.graphics.RectF;
 
 import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
 
+import java.util.Arrays;
+
 public class GeometryMetadata {
     // Applied in order: rotate, crop, scale.
     // Do not scale saved image (presumably?).
@@ -178,22 +180,34 @@ public class GeometryMetadata {
                 + ",photoRect=" + mPhotoBounds.toShortString() + "]";
     }
 
-    protected Matrix getHorizontalMatrix(float width) {
+    // TODO: refactor away
+    protected static Matrix getHorizontalMatrix(float width) {
         Matrix flipHorizontalMatrix = new Matrix();
         flipHorizontalMatrix.setScale(-1, 1);
         flipHorizontalMatrix.postTranslate(width, 0);
         return flipHorizontalMatrix;
     }
 
-    protected Matrix getVerticalMatrix(float height) {
+    protected static void concatHorizontalMatrix(Matrix m, float width) {
+        m.postScale(-1, 1);
+        m.postTranslate(width, 0);
+    }
+
+    // TODO: refactor away
+    protected static Matrix getVerticalMatrix(float height) {
         Matrix flipVerticalMatrix = new Matrix();
         flipVerticalMatrix.setScale(1, -1);
         flipVerticalMatrix.postTranslate(0, height);
         return flipVerticalMatrix;
     }
 
-    public Matrix getFlipMatrix(float width, float height) {
-        FLIP type = getFlipType();
+    protected static void concatVerticalMatrix(Matrix m, float height) {
+        m.postScale(1, -1);
+        m.postTranslate(0, height);
+    }
+
+    // TODO: refactor away
+    public static Matrix getFlipMatrix(float width, float height, FLIP type) {
         if (type == FLIP.HORIZONTAL) {
             return getHorizontalMatrix(width);
         } else if (type == FLIP.VERTICAL) {
@@ -209,10 +223,28 @@ public class GeometryMetadata {
         }
     }
 
+    public static void concatMirrorMatrix(Matrix m, float width, float height, FLIP type) {
+        if (type == FLIP.HORIZONTAL) {
+            concatHorizontalMatrix(m, width);
+        } else if (type == FLIP.VERTICAL) {
+            concatVerticalMatrix(m, height);
+        } else if (type == FLIP.BOTH) {
+            concatVerticalMatrix(m, height);
+            concatHorizontalMatrix(m, width);
+        }
+    }
+
+    // TODO: refactor away
+    public Matrix getFlipMatrix(float width, float height) {
+        FLIP type = getFlipType();
+        return getFlipMatrix(width, height, type);
+    }
+
     public boolean hasSwitchedWidthHeight() {
         return (((int) (mRotation / 90)) % 2) != 0;
     }
 
+    // TODO: refactor away
     public Matrix buildGeometryMatrix(float width, float height, float scaling, float dx, float dy,
             float rotation) {
         float dx0 = width / 2;
@@ -225,6 +257,7 @@ public class GeometryMetadata {
         return m;
     }
 
+    // TODO: refactor away
     public Matrix buildGeometryMatrix(float width, float height, float scaling, float dx, float dy,
             boolean onlyRotate) {
         float rot = mRotation;
@@ -234,28 +267,124 @@ public class GeometryMetadata {
         return buildGeometryMatrix(width, height, scaling, dx, dy, rot);
     }
 
+    // TODO: refactor away
     public Matrix buildGeometryUIMatrix(float scaling, float dx, float dy) {
         float w = mPhotoBounds.width();
         float h = mPhotoBounds.height();
         return buildGeometryMatrix(w, h, scaling, dx, dy, false);
     }
 
-    public Matrix buildTotalXform(float pwidth, float pheight, float cwidth, float cheight,
-            float cleft, float ctop, float rotation, float straighten, float scale, RectF dst) {
-        float s_pwidth = pwidth * scale;
-        float s_pheight = pheight * scale;
-        Matrix m = getFlipMatrix(s_pwidth, s_pheight);
-        m.postRotate(rotation + straighten, s_pwidth / 2, s_pheight / 2);
-        Matrix m1 = getFlipMatrix(s_pwidth, s_pheight);
-        m1.postRotate(rotation, s_pwidth / 2, s_pheight / 2);
-        // find new top left for crop.
-        RectF crop = new RectF(cleft * scale, ctop * scale, (cleft + cwidth) * scale,
-                (ctop + cheight) * scale);
-        if (!m1.mapRect(crop))
-            return null;
-        if (dst != null)
-            dst.set(crop);
-        m.postTranslate(-crop.left, -crop.top);
+    public static Matrix buildPhotoMatrix(RectF photo, RectF crop, float rotation,
+            float straighten, FLIP type) {
+        Matrix m = new Matrix();
+        m.setRotate(straighten, photo.centerX(), photo.centerY());
+        concatMirrorMatrix(m, photo.right, photo.bottom, type);
+        m.postRotate(rotation, crop.centerX(), crop.centerY());
+
+        return m;
+    }
+
+    public static Matrix buildCropMatrix(RectF crop, float rotation) {
+        Matrix m = new Matrix();
+        m.setRotate(rotation, crop.centerX(), crop.centerY());
+        return m;
+    }
+
+    public static void concatRecenterMatrix(Matrix m, float[] currentCenter, float[] newCenter) {
+        m.postTranslate(newCenter[0] - currentCenter[0], newCenter[1] - currentCenter[1]);
+    }
+
+    /**
+     * Builds a matrix to transform a bitmap of width bmWidth and height
+     * bmHeight so that the region of the bitmap being cropped to is
+     * oriented and centered at displayCenter.
+     *
+     * @param bmWidth
+     * @param bmHeight
+     * @param displayCenter
+     * @return
+     */
+    public Matrix buildTotalXform(float bmWidth, float bmHeight, float[] displayCenter) {
+        RectF rp = getPhotoBounds();
+        RectF rc = getPreviewCropBounds();
+
+        float scale = bmWidth / rp.width();
+        RectF scaledCrop = GeometryMath.scaleRect(rc, scale);
+        RectF scaledPhoto = GeometryMath.scaleRect(rp, scale);
+
+        Matrix m1 = GeometryMetadata.buildWanderingCropMatrix(scaledPhoto, scaledCrop,
+                getRotation(), getStraightenRotation(),
+                getFlipType(), displayCenter);
+        float[] cropCenter = {
+                scaledCrop.centerX(), scaledCrop.centerY()
+        };
+        m1.mapPoints(cropCenter);
+
+        GeometryMetadata.concatRecenterMatrix(m1, cropCenter, displayCenter);
+        m1.preRotate(getStraightenRotation(), scaledPhoto.centerX(),
+                scaledPhoto.centerY());
+        return m1;
+    }
+
+    /**
+     * Builds a matrix that rotates photo rect about it's center by the
+     * straighten angle, mirrors it about the crop center, and rotates it about
+     * the crop center by the rotation angle, and re-centers the photo rect.
+     *
+     * @param photo
+     * @param crop
+     * @param rotation
+     * @param straighten
+     * @param type
+     * @param newCenter
+     * @return
+     */
+    public static Matrix buildCenteredPhotoMatrix(RectF photo, RectF crop, float rotation,
+            float straighten, FLIP type, float[] newCenter) {
+        Matrix m = buildPhotoMatrix(photo, crop, rotation, straighten, type);
+        float[] center = {
+                photo.centerX(), photo.centerY()
+        };
+        m.mapPoints(center);
+        concatRecenterMatrix(m, center, newCenter);
+        return m;
+    }
+
+    /**
+     * Builds a matrix that rotates a crop rect about it's center by rotation
+     * angle, then re-centers the crop rect.
+     *
+     * @param crop
+     * @param rotation
+     * @param newCenter
+     * @return
+     */
+    public static Matrix buildCenteredCropMatrix(RectF crop, float rotation, float[] newCenter) {
+        Matrix m = buildCropMatrix(crop, rotation);
+        float[] center = {
+                crop.centerX(), crop.centerY()
+        };
+        m.mapPoints(center);
+        concatRecenterMatrix(m, center, newCenter);
+        return m;
+    }
+
+    /**
+     * Builds a matrix that transforms the crop rect to its view coordinates
+     * inside the photo rect.
+     *
+     * @param photo
+     * @param crop
+     * @param rotation
+     * @param straighten
+     * @param type
+     * @param newCenter
+     * @return
+     */
+    public static Matrix buildWanderingCropMatrix(RectF photo, RectF crop, float rotation,
+            float straighten, FLIP type, float[] newCenter) {
+        Matrix m = buildCenteredPhotoMatrix(photo, crop, rotation, straighten, type, newCenter);
+        m.preRotate(-straighten, photo.centerX(), photo.centerY());
         return m;
     }
 }
