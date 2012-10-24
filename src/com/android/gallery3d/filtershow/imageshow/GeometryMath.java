@@ -16,8 +16,12 @@
 
 package com.android.gallery3d.filtershow.imageshow;
 
+import android.graphics.RectF;
+
 public class GeometryMath {
-    protected static float clamp(float i, float low, float high) {
+
+    // Math operations for 2d vectors
+    public static float clamp(float i, float low, float high) {
         return Math.max(Math.min(i, high), low);
     }
 
@@ -35,36 +39,58 @@ public class GeometryMath {
         float[] ret = {
                 (x1 + u * (x2 - x1)), (y1 + u * (y2 - y1))
         };
-        return ret;
+        float [] vec = {ret[0] - point[0], ret[1] - point[1] };
+        return vec;
     }
 
-    //A . B
-    protected static float dotProduct(float[] a, float[] b){
+    // A . B
+    public static float dotProduct(float[] a, float[] b){
         return a[0] * b[0] + a[1] * b[1];
     }
 
-    protected static float[] normalize(float[] a){
+    public static float[] normalize(float[] a){
         float length = (float) Math.sqrt(a[0] * a[0] + a[1] * a[1]);
         float[] b = { a[0] / length, a[1] / length };
         return b;
     }
 
-    //A onto B
-    protected static float scalarProjection(float[] a, float[] b){
+    // A onto B
+    public static float scalarProjection(float[] a, float[] b){
         float length = (float) Math.sqrt(b[0] * b[0] + b[1] * b[1]);
         return dotProduct(a, b) / length;
     }
 
-    protected static float[] getVectorFromPoints(float [] point1, float [] point2){
+    public static float[] getVectorFromPoints(float [] point1, float [] point2){
         float [] p = { point2[0] - point1[0], point2[1] - point1[1] };
         return p;
     }
 
-    protected static float[] getUnitVectorFromPoints(float [] point1, float [] point2){
+    public static float[] getUnitVectorFromPoints(float [] point1, float [] point2){
         float [] p = { point2[0] - point1[0], point2[1] - point1[1] };
         float length = (float) Math.sqrt(p[0] * p[0] + p[1] * p[1]);
         p[0] = p[0] / length;
         p[1] = p[1] / length;
         return p;
     }
+
+    public static RectF scaleRect(RectF r, float scale){
+        return new RectF(r.left * scale, r.top * scale, r.right * scale, r.bottom * scale);
+    }
+
+    // A - B
+    public static float[] vectorSubtract(float [] a, float [] b){
+        int len = a.length;
+        if (len != b.length)
+            return null;
+        float [] ret = new float[len];
+        for (int i = 0; i < len; i++){
+            ret[i] = a[i] - b[i];
+        }
+        return ret;
+    }
+
+    public static float vectorLength(float [] a){
+        return (float) Math.sqrt(a[0] * a[0] + a[1] * a[1]);
+    }
+
 }

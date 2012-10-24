@@ -52,6 +52,7 @@ public class ImageCrop extends ImageGeometry {
     private float mAspectHeight = 1;
     private boolean mFixAspectRatio = false;
 
+    private float mLastRot = 0;
     private final Paint borderPaint;
 
     private int movingEdges;
@@ -88,6 +89,12 @@ public class ImageCrop extends ImageGeometry {
     @Override
     public String getName() {
         return getContext().getString(R.string.crop);
+    }
+
+    private void swapAspect(){
+        float temp = mAspectWidth;
+        mAspectWidth = mAspectHeight;
+        mAspectHeight = temp;
     }
 
     private boolean switchCropBounds(int moving_corner, RectF dst) {
@@ -144,9 +151,7 @@ public class ImageCrop extends ImageGeometry {
                      Log.v(LOGTAG, "FAILED TO MAP RECTANGLE TO RECTANGLE");
                  return false;
              }
-             float temp = mAspectWidth;
-             mAspectWidth = mAspectHeight;
-             mAspectHeight = temp;
+             swapAspect();
              dst.set(newCrop);
              return true;
         }
@@ -565,6 +570,11 @@ public class ImageCrop extends ImageGeometry {
 
     @Override
     protected void gainedVisibility() {
+        float rot = getLocalRotation();
+        // if has changed orientation via rotate
+        if( ((int) ((rot - mLastRot) / 90)) % 2 != 0 ){
+            swapAspect();
+        }
         cropSetup();
         mFirstDraw = true;
     }
@@ -577,19 +587,20 @@ public class ImageCrop extends ImageGeometry {
 
     @Override
     protected void lostVisibility() {
+        mLastRot = getLocalRotation();
     }
 
-    private void drawRuleOfThird(Canvas canvas, RectF bounds) {
+    private void drawRuleOfThird(Canvas canvas, RectF bounds, Paint p) {
         float stepX = bounds.width() / 3.0f;
         float stepY = bounds.height() / 3.0f;
         float x = bounds.left + stepX;
         float y = bounds.top + stepY;
         for (int i = 0; i < 2; i++) {
-            canvas.drawLine(x, bounds.top, x, bounds.bottom, gPaint);
+            canvas.drawLine(x, bounds.top, x, bounds.bottom, p);
             x += stepX;
         }
         for (int j = 0; j < 2; j++) {
-            canvas.drawLine(bounds.left, y, bounds.right, y, gPaint);
+            canvas.drawLine(bounds.left, y, bounds.right, y, p);
             y += stepY;
         }
     }
@@ -607,17 +618,22 @@ public class ImageCrop extends ImageGeometry {
             mFirstDraw = false;
         }
         float rotation = getLocalRotation();
-        drawTransformedBitmap(canvas, image, gPaint, true);
+
+        RectF crop = drawTransformed(canvas, image, gPaint);
+        gPaint.setColor(mBorderColor);
+        gPaint.setStrokeWidth(3);
+        gPaint.setStyle(Paint.Style.STROKE);
+        drawRuleOfThird(canvas, crop, gPaint);
 
         gPaint.setColor(mBorderColor);
         gPaint.setStrokeWidth(3);
         gPaint.setStyle(Paint.Style.STROKE);
         drawStraighten(canvas, gPaint);
-        RectF scaledCrop = unrotatedCropBounds();
-        drawRuleOfThird(canvas, scaledCrop);
+
         int decoded_moving = decoder(movingEdges, rotation);
         canvas.save();
         canvas.rotate(rotation, mCenterX, mCenterY);
+        RectF scaledCrop = unrotatedCropBounds();
         boolean notMoving = decoded_moving == 0;
         if (((decoded_moving & MOVE_TOP) != 0) || notMoving) {
             drawIndicator(canvas, cropIndicator, scaledCrop.centerX(), scaledCrop.top);
