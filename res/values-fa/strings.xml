@@ -195,7 +195,7 @@
     <string name="switch_photo_grid" msgid="3681299459107925725">"نمای شبکه‌ای"</string>
     <string name="trimming" msgid="9122385768369143997">"کوتاه کردن"</string>
     <string name="please_wait" msgid="7296066089146487366">"لطفاً منتظر بمانید"</string>
-    <string name="save_into" msgid="4960537214388766062">"ذخیره ویدیوی برش داده شده در آلبوم:"</string>
+    <string name="save_into" msgid="4960537214388766062">"ذخیره ویدیوی کوتاه شده در آلبوم:"</string>
     <string name="trim_too_short" msgid="751593965620665326">"نمی‌تواند کوتاه شود: ویدیوی موردنظر بسیار کوتاه است"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"در حال تولید تصویر پانوراما"</string>
     <string name="save" msgid="613976532235060516">"ذخیره"</string>

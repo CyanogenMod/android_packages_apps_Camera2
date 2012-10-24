@@ -36,7 +36,7 @@
     <string name="ok" msgid="5296833083983263293">"Gerai"</string>
     <string name="multiface_crop_help" msgid="2554690102655855657">"Jei norite pradėti, palieskite veidą."</string>
     <string name="saving_image" msgid="7270334453636349407">"Išsaugomas paveikslėlis..."</string>
-    <string name="filtershow_saving_image" msgid="6659463980581993016">"Nuotrauka išsaugoma į albumą „<xliff:g id="ALBUM_NAME">%1$s</xliff:g>“…"</string>
+    <string name="filtershow_saving_image" msgid="6659463980581993016">"Nuotrauka išsaugoma albume „<xliff:g id="ALBUM_NAME">%1$s</xliff:g>“…"</string>
     <string name="save_error" msgid="6857408774183654970">"Nepavyko išsaugoti apkarpyto vaizdo."</string>
     <string name="crop_label" msgid="521114301871349328">"Apkarpyti paveikslėlį"</string>
     <string name="trim_label" msgid="274203231381209979">"Apkarpyti vaizdo įrašą"</string>
