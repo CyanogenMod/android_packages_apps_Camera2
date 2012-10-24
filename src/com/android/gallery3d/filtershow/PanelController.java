@@ -44,7 +44,6 @@ import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
-import com.android.gallery3d.filtershow.ui.ImageButtonTitle;
 import com.android.gallery3d.filtershow.ui.ImageCurves;
 
 import java.util.HashMap;
@@ -288,6 +287,11 @@ public class PanelController implements OnClickListener {
     private UtilityPanel mUtilityPanel = null;
     private ImageShow mMasterImage = null;
     private ImageShow mCurrentImage = null;
+    private FilterShowActivity mActivity = null;
+
+    public void setActivity(FilterShowActivity activity) {
+        mActivity = activity;
+    }
 
     public void addView(View view) {
         view.setOnClickListener(this);
@@ -696,7 +700,11 @@ public class PanelController implements OnClickListener {
                 break;
             }
             case R.id.applyEffect: {
-                showPanel(mCurrentPanel);
+                if (mMasterImage.getCurrentFilter() instanceof ImageFilterTinyPlanet) {
+                    mActivity.saveImage();
+                } else {
+                    showPanel(mCurrentPanel);
+                }
                 break;
             }
         }
