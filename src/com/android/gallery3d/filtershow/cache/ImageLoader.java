@@ -234,6 +234,7 @@ public class ImageLoader {
         return null;
     }
 
+    static final int MAX_BITMAP_DIM = 2048;
     private Bitmap loadScaledBitmap(Uri uri, int size) {
         InputStream is = null;
         try {
@@ -251,8 +252,11 @@ public class ImageLoader {
 
             int scale = 1;
             while (true) {
-                if (width_tmp / 2 < size || height_tmp / 2 < size)
-                    break;
+                if (width_tmp <= MAX_BITMAP_DIM && height_tmp <= MAX_BITMAP_DIM) {
+                    if (width_tmp / 2 < size || height_tmp / 2 < size) {
+                        break;
+                    }
+                }
                 width_tmp /= 2;
                 height_tmp /= 2;
                 scale *= 2;
