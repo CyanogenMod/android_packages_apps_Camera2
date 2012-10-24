@@ -30,6 +30,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -139,6 +140,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
     private WeakReference<ProgressDialog> mSavingProgressDialog;
     private static final int SEEK_BAR_MAX = 600;
+
+    private LightCycleChecker mCheckFor360;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -366,14 +369,15 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         if (data != null) {
             Uri uri = Uri.parse(data);
             mImageLoader.loadBitmap(uri, getScreenImageSize());
+
+            View tinyPlanetView = listColors.findViewById(R.id.tinyplanetButton);
+            if (tinyPlanetView != null) {
+                tinyPlanetView.setVisibility(View.GONE);
+                mCheckFor360 = new LightCycleChecker(tinyPlanetView);
+                mCheckFor360.execute();
+            }
         } else {
             pickImage();
-        }
-
-        View tinyPlanetView = listColors.findViewById(R.id.tinyplanetButton);
-
-        if (tinyPlanetView != null && !mImageLoader.isLightCycle360()) {
-            tinyPlanetView.setVisibility(View.GONE);
         }
 
         String action = intent.getAction();
@@ -382,6 +386,40 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         } else if (action.equalsIgnoreCase(TINY_PLANET_ACTION)) {
             mPanelController.showComponent(findViewById(R.id.tinyplanetButton));
         }
+    }
+
+    private class LightCycleChecker extends AsyncTask<Void, Void, Boolean> {
+        View mTinyPlanetButton;
+
+        public LightCycleChecker(View button) {
+            mTinyPlanetButton = button;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            return mImageLoader.queryLightCycle360();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (isCancelled()) {
+                return;
+            }
+            if (result) {
+                mTinyPlanetButton.setVisibility(View.VISIBLE);
+            }
+            mCheckFor360 = null;
+            super.onPostExecute(result);
+        }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mCheckFor360 != null) {
+            mCheckFor360.cancel(false);
+        }
+        super.onDestroy();
     }
 
     private int translateMainPanel(View viewPanel) {
