@@ -90,6 +90,8 @@ public class FramedTextButton extends ImageButton {
         canvas.drawRect(mTextPadding, mTextPadding, getWidth() - mTextPadding,
                 getHeight() - mTextPadding, gPaint);
         if (mText != null) {
+            gPaint.reset();
+            gPaint.setARGB(255, 255, 255, 255);
             gPaint.setTextSize(mTextSize);
             float textWidth = gPaint.measureText(mText);
             Rect bounds = new Rect();
