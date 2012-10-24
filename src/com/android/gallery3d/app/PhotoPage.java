@@ -161,7 +161,7 @@ public class PhotoPage extends ActivityState implements
     private boolean mHasActivityResult;
     private boolean mTreatBackAsUp;
     private boolean mStartInFilmstrip;
-    private boolean mInCameraRoll;
+    private boolean mHasCameraScreennailOrPlaceholder = false;
     private boolean mRecenterCameraOnResume = true;
 
     // These are only valid after the panorama callback
@@ -421,14 +421,14 @@ public class PhotoPage extends ActivityState implements
                     null;
         mTreatBackAsUp = data.getBoolean(KEY_TREAT_BACK_AS_UP, false);
         mStartInFilmstrip = data.getBoolean(KEY_START_IN_FILMSTRIP, false);
-        mInCameraRoll = data.getBoolean(KEY_IN_CAMERA_ROLL, false);
+        boolean inCameraRoll = data.getBoolean(KEY_IN_CAMERA_ROLL, false);
         mCurrentIndex = data.getInt(KEY_INDEX_HINT, 0);
         if (mSetPathString != null) {
             mShowSpinner = true;
             mAppBridge = (AppBridge) data.getParcelable(KEY_APP_BRIDGE);
             if (mAppBridge != null) {
                 mShowBars = false;
-                mInCameraRoll = true;
+                mHasCameraScreennailOrPlaceholder = true;
                 mAppBridge.setServer(this);
 
                 // Get the ScreenNail from AppBridge and register it.
@@ -464,15 +464,16 @@ public class PhotoPage extends ActivityState implements
 
                 // Start from the screen nail.
                 itemPath = screenNailItemPath;
-            } else if (mInCameraRoll && GalleryUtils.isCameraAvailable(mActivity)) {
+            } else if (inCameraRoll && GalleryUtils.isCameraAvailable(mActivity)) {
                 mSetPathString = "/combo/item/{" + FilterSource.FILTER_CAMERA_SHORTCUT +
                         "," + mSetPathString + "}";
                 mCurrentIndex++;
+                mHasCameraScreennailOrPlaceholder = true;
             }
 
             MediaSet originalSet = mActivity.getDataManager()
                     .getMediaSet(mSetPathString);
-            if (mInCameraRoll && originalSet instanceof ComboAlbum) {
+            if (mHasCameraScreennailOrPlaceholder && originalSet instanceof ComboAlbum) {
                 // Use the name of the camera album rather than the default
                 // ComboAlbum behavior
                 ((ComboAlbum) originalSet).useNameOfChild(1);
@@ -510,7 +511,7 @@ public class PhotoPage extends ActivityState implements
                     int oldIndex = mCurrentIndex;
                     mCurrentIndex = index;
 
-                    if (mInCameraRoll) {
+                    if (mHasCameraScreennailOrPlaceholder) {
                         if (mCurrentIndex > 0) {
                             mSkipUpdateCurrentPhoto = false;
                         }
@@ -588,7 +589,7 @@ public class PhotoPage extends ActivityState implements
 
     @Override
     public void onPictureCenter(boolean isCamera) {
-        isCamera = isCamera || (mInCameraRoll && mAppBridge == null);
+        isCamera = isCamera || (mHasCameraScreennailOrPlaceholder && mAppBridge == null);
         mPhotoView.setWantPictureCenterCallbacks(false);
         mHandler.removeMessages(MSG_ON_CAMERA_CENTER);
         mHandler.removeMessages(MSG_ON_PICTURE_CENTER);
@@ -1010,7 +1011,7 @@ public class PhotoPage extends ActivityState implements
             mActivity.getTransitionStore().put(KEY_RETURN_INDEX_HINT,
                     mAppBridge != null ? mCurrentIndex - 1 : mCurrentIndex);
 
-            if (mInCameraRoll && mAppBridge != null) {
+            if (mHasCameraScreennailOrPlaceholder && mAppBridge != null) {
                 mActivity.getStateManager().startState(AlbumPage.class, data);
             } else {
                 mActivity.getStateManager().switchState(this, AlbumPage.class, data);
@@ -1389,7 +1390,7 @@ public class PhotoPage extends ActivityState implements
         } else {
             int resumeIndex = transitions.get(KEY_INDEX_HINT, -1);
             if (resumeIndex >= 0) {
-                if (mInCameraRoll) {
+                if (mHasCameraScreennailOrPlaceholder) {
                     // Account for preview/placeholder being the first item
                     resumeIndex++;
                 }
