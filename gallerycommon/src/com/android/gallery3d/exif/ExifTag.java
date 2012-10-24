@@ -157,7 +157,7 @@ public class ExifTag {
     public static final short TAG_GPS_DEST_DISTANCE = 26;
     public static final short TAG_GPS_PROCESSING_METHOD = 27;
     public static final short TAG_GPS_AREA_INFORMATION = 28;
-    public static final short TAG_GPS_DATA_STAMP = 29;
+    public static final short TAG_GPS_DATE_STAMP = 29;
     public static final short TAG_GPS_DIFFERENTIAL = 30;
 
     // Interoperability tag
@@ -828,7 +828,7 @@ public class ExifTag {
                 (IfdId.TYPE_IFD_GPS << 24) | TYPE_UNDEFINED << 16 | SIZE_UNDEFINED);
         sTagInfo.put(TAG_GPS_AREA_INFORMATION,
                 (IfdId.TYPE_IFD_GPS << 24) | TYPE_UNDEFINED << 16 | SIZE_UNDEFINED);
-        sTagInfo.put(TAG_GPS_DATA_STAMP,
+        sTagInfo.put(TAG_GPS_DATE_STAMP,
                 (IfdId.TYPE_IFD_GPS << 24) | TYPE_ASCII << 16 | 11);
         sTagInfo.put(TAG_GPS_DIFFERENTIAL,
                 (IfdId.TYPE_IFD_GPS << 24) | TYPE_UNSIGNED_SHORT << 16 | 11);
@@ -1396,92 +1396,6 @@ public class ExifTag {
         }
         System.arraycopy(mValue, 0, buf, offset,
                 (length > mComponentCount) ? mComponentCount : length);
-    }
-
-    private String undefinedTypeValueToString() {
-        StringBuilder sbuilder = new StringBuilder();
-        byte buf[] = (byte[]) mValue;
-        switch (mTagId) {
-            case TAG_COMPONENTS_CONFIGURATION:
-                for(int i = 0, n = getComponentCount(); i < n; i++) {
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(buf[i]);
-                }
-                break;
-            default:
-                if (buf.length == 1) {
-                    sbuilder.append(buf[0]);
-                } else {
-                    for (int i = 0, n = buf.length; i < n; i++) {
-                        byte code = buf[i];
-                        if (code == 0) continue;
-                        if (code > 31 && code < 127) {
-                            sbuilder.append((char) code);
-                        } else {
-                            sbuilder.append('.');
-                        }
-                    }
-                }
-        }
-        return sbuilder.toString();
-    }
-
-    /**
-     * Returns a string representation of the value of this tag.
-     */
-    String valueToString() {
-        StringBuilder sbuilder = new StringBuilder();
-        switch (getDataType()) {
-            case ExifTag.TYPE_UNDEFINED:
-                sbuilder.append(undefinedTypeValueToString());
-                break;
-            case ExifTag.TYPE_UNSIGNED_BYTE:
-                byte buf[] = (byte[]) mValue;
-                for(int i = 0, n = getComponentCount(); i < n; i++) {
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(buf[i]);
-                }
-                break;
-            case ExifTag.TYPE_ASCII:
-                buf = (byte[]) mValue;
-                for (int i = 0, n = buf.length; i < n; i++) {
-                    byte code = buf[i];
-                    if (code == 0) break;
-                    if (code > 31 && code < 127) {
-                        sbuilder.append((char) code);
-                    } else {
-                        sbuilder.append('.');
-                    }
-                }
-                break;
-            case ExifTag.TYPE_UNSIGNED_LONG:
-                for(int i = 0, n = getComponentCount(); i < n; i++) {
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(getUnsignedLong(i));
-                }
-                break;
-            case ExifTag.TYPE_RATIONAL:
-            case ExifTag.TYPE_UNSIGNED_RATIONAL:
-                for(int i = 0, n = getComponentCount(); i < n; i++) {
-                    Rational r = getRational(i);
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(r.getNominator()).append("/").append(r.getDenominator());
-                }
-                break;
-            case ExifTag.TYPE_UNSIGNED_SHORT:
-                for(int i = 0, n = getComponentCount(); i < n; i++) {
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(getUnsignedShort(i));
-                }
-                break;
-            case ExifTag.TYPE_LONG:
-                for(int i = 0, n = getComponentCount(); i < n; i++) {
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(getLong(i));
-                }
-                break;
-        }
-        return sbuilder.toString();
     }
 
     /**
