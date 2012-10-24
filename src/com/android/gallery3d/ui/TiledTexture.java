@@ -164,14 +164,19 @@ public class TiledTexture implements Texture {
         if (mUploadIndex == mTiles.length) return true;
 
         Tile next = mTiles[mUploadIndex++];
-        boolean hasBeenLoad = next.isLoaded();
-        next.updateContent(canvas);
 
-        // It will take some time for a texture to be drawn for the first
-        // time. When scrolling, we need to draw several tiles on the screen
-        // at the same time. It may cause a UI jank even these textures has
-        // been uploaded.
-        if (!hasBeenLoad) next.draw(canvas, 0, 0);
+        // Make sure tile has not already been recycled by the time
+        // this is called (race condition in onGLIdle)
+        if (next.bitmap != null) {
+            boolean hasBeenLoad = next.isLoaded();
+            next.updateContent(canvas);
+
+            // It will take some time for a texture to be drawn for the first
+            // time. When scrolling, we need to draw several tiles on the screen
+            // at the same time. It may cause a UI jank even these textures has
+            // been uploaded.
+            if (!hasBeenLoad) next.draw(canvas, 0, 0);
+        }
         return mUploadIndex == mTiles.length;
     }
 
