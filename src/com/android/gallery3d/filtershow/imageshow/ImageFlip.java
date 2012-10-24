@@ -139,7 +139,7 @@ public class ImageFlip extends ImageGeometry {
         gPaint.setFilterBitmap(true);
         gPaint.setDither(true);
         gPaint.setARGB(255, 255, 255, 255);
-        drawTransformedBitmap(canvas, image, gPaint, false);
+        drawTransformedCropped(canvas, image, gPaint);
     }
 
 }
