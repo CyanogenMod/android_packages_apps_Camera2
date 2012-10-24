@@ -21,7 +21,6 @@ import android.graphics.BitmapFactory;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class ExifParserTest extends ExifXmlDataTestCase {
     private static final String TAG = "ExifParserTest";
@@ -34,7 +33,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         super(imgPath, xmlPath);
     }
 
-    private List<Map<Short, Set<String>>> mGroundTruth;
+    private List<Map<Short, List<String>>> mGroundTruth;
 
     @Override
     public void setUp() throws Exception {
@@ -76,7 +75,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
     }
 
     private void checkTag(ExifTag tag) {
-        Set<String> truth = mGroundTruth.get(tag.getIfd()).get(tag.getTagId());
+        List<String> truth = mGroundTruth.get(tag.getIfd()).get(tag.getTagId());
 
         if (truth == null) {
             fail(String.format("Unknown Tag %02x", tag.getTagId()) + ", " + getImageTitle());
@@ -93,7 +92,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
 
     private void parseOneIfd(int ifd, int options) throws Exception {
         try {
-            Map<Short, Set<String>> expectedResult = mGroundTruth.get(ifd);
+            Map<Short, List<String>> expectedResult = mGroundTruth.get(ifd);
             int numOfTag = 0;
             ExifParser parser = ExifParser.parse(getImageInputStream(), options);
             int event = parser.next();
@@ -127,7 +126,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
                 }
                 event = parser.next();
             }
-            assertEquals(expectedResult.size(), numOfTag);
+            assertEquals(getImageTitle(), ExifXmlReader.getTrueTagNumber(expectedResult), numOfTag);
         } catch (Exception e) {
             throw new Exception(getImageTitle(), e);
         }
