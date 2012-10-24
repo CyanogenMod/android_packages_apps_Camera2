@@ -32,10 +32,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import com.adobe.xmp.XMPException;
-import com.adobe.xmp.XMPIterator;
 import com.adobe.xmp.XMPMeta;
-import com.adobe.xmp.properties.XMPProperty;
-import com.adobe.xmp.properties.XMPPropertyInfo;
+
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.filtershow.FilterShowActivity;
@@ -400,7 +398,7 @@ public class ImageLoader {
      *
      * @return true if it is a light Cycle image that is full 360
      */
-    public boolean isLightCycle360() {
+    public boolean queryLightCycle360() {
         try {
             InputStream is = mContext.getContentResolver().openInputStream(getUri());
             XMPMeta meta = XmpUtilHelper.extractXMPMeta(is);
