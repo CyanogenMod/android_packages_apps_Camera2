@@ -39,8 +39,8 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
@@ -233,6 +233,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageRotate.setMaster(mImageShow);
         mImageFlip.setImageLoader(mImageLoader);
         mImageFlip.setMaster(mImageShow);
+
+        mPanelController.setActivity(this);
 
         mPanelController.addImageView(findViewById(R.id.imageShow));
         mPanelController.addImageView(findViewById(R.id.imageCurves));
