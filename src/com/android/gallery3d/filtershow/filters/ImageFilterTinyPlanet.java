@@ -66,37 +66,8 @@ public class ImageFilterTinyPlanet extends ImageFilter {
         int outputSize = Math.min(w, h);
 
         ImagePreset preset = getImagePreset();
-        if (preset != null) {
-            if (preset.isPanoramaSafe()) {
-                try {
-                    XMPMeta xmp = preset.getImageLoader().getXmpObject();
-                    int croppedAreaWidth =
-                            getInt(xmp, CROPPED_AREA_IMAGE_WIDTH_PIXELS);
-                    int croppedAreaHeight =
-                            getInt(xmp, CROPPED_AREA_IMAGE_HEIGHT_PIXELS);
-                    int fullPanoWidth =
-                            getInt(xmp, CROPPED_AREA_FULL_PANO_WIDTH_PIXELS);
-                    int fullPanoHeight =
-                            getInt(xmp, CROPPED_AREA_FULL_PANO_HEIGHT_PIXELS);
-                    int left = getInt(xmp, CROPPED_AREA_LEFT);
-                    int top = getInt(xmp, CROPPED_AREA_TOP);
-
-                    Bitmap paddedBitmap = Bitmap.createBitmap(
-                            fullPanoWidth, fullPanoHeight, Bitmap.Config.ARGB_8888);
-                    Canvas paddedCanvas = new Canvas(paddedBitmap);
-
-                    int right = left + croppedAreaWidth;
-                    int bottom = top + croppedAreaHeight;
-                    Rect destRect = new Rect(left, top, right, bottom);
-                    paddedCanvas.drawBitmap(bitmapIn, null, destRect, null);
-                    bitmapIn = paddedBitmap;
-                } catch (XMPException ex) {
-                    // Do nothing, just use bitmapIn as is.
-                }
-            } else {
-                // Do nothing, just use bitmapIn as is, there is nothing else we
-                // can do.
-            }
+        if (preset != null && preset.isPanoramaSafe()) {
+            bitmapIn = applyXmp(bitmapIn, preset);
         }
 
         Bitmap mBitmapOut = Bitmap.createBitmap(
@@ -104,6 +75,39 @@ public class ImageFilterTinyPlanet extends ImageFilter {
         nativeApplyFilter(bitmapIn, bitmapIn.getWidth(), bitmapIn.getHeight(), mBitmapOut,
                 outputSize, mParameter / 100f, 0f);
         return mBitmapOut;
+    }
+
+    private Bitmap applyXmp(Bitmap bitmapIn, ImagePreset preset) {
+        try {
+            XMPMeta xmp = preset.getImageLoader().getXmpObject();
+            if (xmp == null) {
+                // Do nothing, just use bitmapIn as is.
+                return bitmapIn;
+            }
+            int croppedAreaWidth =
+                    getInt(xmp, CROPPED_AREA_IMAGE_WIDTH_PIXELS);
+            int croppedAreaHeight =
+                    getInt(xmp, CROPPED_AREA_IMAGE_HEIGHT_PIXELS);
+            int fullPanoWidth =
+                    getInt(xmp, CROPPED_AREA_FULL_PANO_WIDTH_PIXELS);
+            int fullPanoHeight =
+                    getInt(xmp, CROPPED_AREA_FULL_PANO_HEIGHT_PIXELS);
+            int left = getInt(xmp, CROPPED_AREA_LEFT);
+            int top = getInt(xmp, CROPPED_AREA_TOP);
+
+            Bitmap paddedBitmap = Bitmap.createBitmap(
+                    fullPanoWidth, fullPanoHeight, Bitmap.Config.ARGB_8888);
+            Canvas paddedCanvas = new Canvas(paddedBitmap);
+
+            int right = left + croppedAreaWidth;
+            int bottom = top + croppedAreaHeight;
+            Rect destRect = new Rect(left, top, right, bottom);
+            paddedCanvas.drawBitmap(bitmapIn, null, destRect, null);
+            bitmapIn = paddedBitmap;
+        } catch (XMPException ex) {
+            // Do nothing, just use bitmapIn as is.
+        }
+        return bitmapIn;
     }
 
     private static int getInt(XMPMeta xmp, String key) throws XMPException {
