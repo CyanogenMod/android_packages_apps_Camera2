@@ -45,7 +45,7 @@ public class ImageCrop extends ImageGeometry {
     private static final int BOTTOM_LEFT = MOVE_BOTTOM | MOVE_LEFT;
 
     private static final float MIN_CROP_WIDTH_HEIGHT = 0.1f;
-    private static final int TOUCH_TOLERANCE = 30;
+    private static int mTouchTolerance = 45;
 
     private boolean mFirstDraw = true;
     private float mAspectWidth = 1;
@@ -95,6 +95,10 @@ public class ImageCrop extends ImageGeometry {
         float temp = mAspectWidth;
         mAspectWidth = mAspectHeight;
         mAspectHeight = temp;
+    }
+
+    public static void setTouchTolerance(int tolerance){
+        mTouchTolerance = tolerance;
     }
 
     private boolean switchCropBounds(int moving_corner, RectF dst) {
@@ -357,20 +361,20 @@ public class ImageCrop extends ImageGeometry {
         // Check left or right.
         float left = Math.abs(x - cropped.left);
         float right = Math.abs(x - cropped.right);
-        if ((left <= TOUCH_TOLERANCE) && (left < right)) {
+        if ((left <= mTouchTolerance) && (left < right)) {
             movingEdges |= MOVE_LEFT;
         }
-        else if (right <= TOUCH_TOLERANCE) {
+        else if (right <= mTouchTolerance) {
             movingEdges |= MOVE_RIGHT;
         }
 
         // Check top or bottom.
         float top = Math.abs(y - cropped.top);
         float bottom = Math.abs(y - cropped.bottom);
-        if ((top <= TOUCH_TOLERANCE) & (top < bottom)) {
+        if ((top <= mTouchTolerance) & (top < bottom)) {
             movingEdges |= MOVE_TOP;
         }
-        else if (bottom <= TOUCH_TOLERANCE) {
+        else if (bottom <= mTouchTolerance) {
             movingEdges |= MOVE_BOTTOM;
         }
         // Check inside block.
