@@ -450,6 +450,12 @@ public class ExifParser {
      */
     public int getCompressedImageSize() {
         if (mJpegSizeTag == null) return 0;
+
+        // Some invalid image use short type tag
+        if (mJpegSizeTag.getDataType() == ExifTag.TYPE_UNSIGNED_SHORT) {
+            return mJpegSizeTag.getUnsignedShort(0);
+        }
+
         // Cast unsigned int to int since the thumbnail is always smaller
         // than the size of APP1 (65536)
         return (int) mJpegSizeTag.getUnsignedLong(0);
