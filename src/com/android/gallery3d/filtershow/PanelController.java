@@ -161,19 +161,24 @@ public class PanelController implements OnClickListener {
                     imageCrop.apply(1, 1);
                     break;
                 }
-                case R.id.crop_menu_4to6: {
-                    button.setText(mContext.getString(R.string.aspect4to6_effect));
-                    imageCrop.apply(6, 4);
+                case R.id.crop_menu_4to3: {
+                    button.setText(mContext.getString(R.string.aspect4to3_effect));
+                    imageCrop.apply(4, 3);
+                    break;
+                }
+                case R.id.crop_menu_3to4: {
+                    button.setText(mContext.getString(R.string.aspect3to4_effect));
+                    imageCrop.apply(3, 4);
                     break;
                 }
                 case R.id.crop_menu_5to7: {
                     button.setText(mContext.getString(R.string.aspect5to7_effect));
-                    imageCrop.apply(7, 5);
+                    imageCrop.apply(5, 7);
                     break;
                 }
-                case R.id.crop_menu_9to16: {
-                    button.setText(mContext.getString(R.string.aspect9to16_effect));
-                    imageCrop.apply(16, 9);
+                case R.id.crop_menu_7to5: {
+                    button.setText(mContext.getString(R.string.aspect7to5_effect));
+                    imageCrop.apply(7, 5);
                     break;
                 }
                 case R.id.crop_menu_none: {
