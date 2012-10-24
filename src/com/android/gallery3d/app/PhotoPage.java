@@ -37,6 +37,7 @@ import android.view.MenuItem;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.android.camera.CameraActivity;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
@@ -351,7 +352,7 @@ public class PhotoPage extends ActivityState implements
 
                         if (stayedOnCamera) {
                             if (mAppBridge == null) {
-                                GalleryUtils.startCameraActivity(mActivity);
+                                launchCamera();
                                 /* We got here by swiping from photo 1 to the
                                    placeholder, so make it be the thing that
                                    is in focus when the user presses back from
@@ -693,6 +694,12 @@ public class PhotoPage extends ActivityState implements
         mRecenterCameraOnResume = false;
         mActivity.startActivityForResult(intent, REQUEST_EDIT);
         overrideTransitionToEditor();
+    }
+
+    private void launchCamera() {
+        Intent intent = new Intent(mActivity, CameraActivity.class);
+        mRecenterCameraOnResume = false;
+        mActivity.startActivity(intent);
     }
 
     private void launchPhotoEditor() {
@@ -1161,7 +1168,7 @@ public class PhotoPage extends ActivityState implements
         } else if (unlock) {
             mActivity.getStateManager().finishState(this);
         } else if (launchCamera) {
-            GalleryUtils.startCameraActivity(mActivity);
+            launchCamera();
         } else {
             toggleBars();
         }
