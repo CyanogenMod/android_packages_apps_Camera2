@@ -89,8 +89,8 @@ public class AlbumSlotRenderer extends AbstractSlotRenderer {
     }
 
     private static Texture checkTexture(Texture texture) {
-        return (texture instanceof UploadedTexture)
-                && ((UploadedTexture) texture).isUploading()
+        return (texture instanceof TiledTexture)
+                && !((TiledTexture) texture).isReady()
                 ? null
                 : texture;
     }

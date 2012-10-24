@@ -87,11 +87,11 @@ public class GalleryUtils {
     }
 
     private static void initializeThumbnailSizes(DisplayMetrics metrics, Resources r) {
-        int maxDimensionPixels = Math.max(metrics.heightPixels, metrics.widthPixels);
-        // Never need to completely fill the screen
-        maxDimensionPixels = maxDimensionPixels / 2;
-        MediaItem.setThumbnailSizes(maxDimensionPixels, 200);
-        TiledScreenNail.setMaxSide(maxDimensionPixels);
+        int maxPixels = Math.max(metrics.heightPixels, metrics.widthPixels);
+
+        // For screen-nails, we never need to completely fill the screen
+        MediaItem.setThumbnailSizes(maxPixels / 2, maxPixels / 5);
+        TiledScreenNail.setMaxSide(maxPixels / 2);
     }
 
     public static boolean isHighResolution(Context context) {
