@@ -89,6 +89,10 @@ public class ImageLoader {
         mHiresCache = new DelayedPresetCache(this, 3);
     }
 
+    public FilterShowActivity getActivity() {
+        return mActivity;
+    }
+
     public void loadBitmap(Uri uri,int size) {
         mUri = uri;
         mOrientation = getOrientation(mContext, uri);
