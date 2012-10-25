@@ -243,7 +243,12 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
             <intent-filter android:label="@string/crop_label">
-                <action android:name="com.android.camera.action.CROP" />
+                <action android:name="com.android.camera.action.EDITOR_CROP" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:scheme="" />
                 <data android:mimeType="image/*" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.ALTERNATIVE" />
