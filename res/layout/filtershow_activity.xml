@@ -108,6 +108,11 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
+            <com.android.gallery3d.filtershow.imageshow.ImageTinyPlanet
+                android:id="@+id/imageTinyPlanet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <!--
             <ImageButton
                 android:id="@+id/showOriginalButton"
