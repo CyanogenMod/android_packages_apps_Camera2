@@ -578,6 +578,14 @@ public class ImageCrop extends ImageGeometry {
     }
 
     @Override
+    public void imageLoaded() {
+        super.imageLoaded();
+        syncLocalToMasterGeometry();
+        applyOriginal();
+        invalidate();
+    }
+
+    @Override
     protected void gainedVisibility() {
         float rot = getLocalRotation();
         // if has changed orientation via rotate
