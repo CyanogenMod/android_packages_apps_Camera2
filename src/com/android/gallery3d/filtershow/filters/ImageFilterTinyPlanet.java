@@ -66,6 +66,11 @@ public class ImageFilterTinyPlanet extends ImageFilter {
         return mAngle;
     }
 
+    public boolean isNil() {
+        // TinyPlanet always has an effect
+        return false;
+    }
+
     native protected void nativeApplyFilter(
             Bitmap bitmapIn, int width, int height, Bitmap bitmapOut, int outSize, float scale,
             float angle);
