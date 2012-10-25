@@ -23,6 +23,7 @@ import com.android.gallery3d.anim.CanvasAnimation;
 public class GLRootStub implements GLRoot {
     public void addOnGLIdleListener(OnGLIdleListener listener) {}
     public void registerLaunchedAnimation(CanvasAnimation animation) {}
+    public void requestRenderForced() {}
     public void requestRender() {}
     public void requestLayoutContentPane() {}
     public boolean hasStencil() { return true; }
