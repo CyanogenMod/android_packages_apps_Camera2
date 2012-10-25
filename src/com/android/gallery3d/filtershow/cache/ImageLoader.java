@@ -301,6 +301,7 @@ public class ImageLoader {
         if (!mListeners.contains(imageShow)) {
             mListeners.add(imageShow);
         }
+        mHiresCache.addObserver(imageShow);
     }
 
     private void warnListeners() {
