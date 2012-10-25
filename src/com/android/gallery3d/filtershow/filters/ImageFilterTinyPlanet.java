@@ -28,6 +28,8 @@ import com.android.gallery3d.filtershow.presets.ImagePreset;
  * An image filter which creates a tiny planet projection.
  */
 public class ImageFilterTinyPlanet extends ImageFilter {
+    private float mAngle = 0;
+
     private static final String TAG = ImageFilterTinyPlanet.class.getSimpleName();
     public static final String GOOGLE_PANO_NAMESPACE = "http://ns.google.com/photos/1.0/panorama/";
 
@@ -53,6 +55,15 @@ public class ImageFilterTinyPlanet extends ImageFilter {
         mDefaultParameter = 20;
         mPreviewParameter = 20;
         mParameter = 20;
+        mAngle = 0;
+    }
+
+    public void setAngle(float angle) {
+        mAngle = angle;
+    }
+
+    public float getAngle() {
+        return mAngle;
     }
 
     native protected void nativeApplyFilter(
@@ -73,7 +84,7 @@ public class ImageFilterTinyPlanet extends ImageFilter {
         Bitmap mBitmapOut = Bitmap.createBitmap(
                 outputSize, outputSize, Bitmap.Config.ARGB_8888);
         nativeApplyFilter(bitmapIn, bitmapIn.getWidth(), bitmapIn.getHeight(), mBitmapOut,
-                outputSize, mParameter / 100f, 0f);
+                outputSize, mParameter / 100f, mAngle);
         return mBitmapOut;
     }
 
