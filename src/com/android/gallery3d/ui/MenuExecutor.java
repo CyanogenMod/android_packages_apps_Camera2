@@ -37,6 +37,7 @@ import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.Path;
+import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.ThreadPool.Job;
@@ -226,7 +227,8 @@ public class MenuExecutor {
                 }
                 return;
             case R.id.action_crop: {
-                Intent intent = getIntentBySingleSelectedPath(CropImage.ACTION_CROP);
+                Intent intent = getIntentBySingleSelectedPath(FilterShowActivity.CROP_ACTION)
+                        .setClass((Activity) mActivity, FilterShowActivity.class);
                 ((Activity) mActivity).startActivity(intent);
                 return;
             }
