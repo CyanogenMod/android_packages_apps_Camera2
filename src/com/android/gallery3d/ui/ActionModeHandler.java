@@ -151,6 +151,8 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
         mListener = listener;
     }
 
+    private WakeLockHoldingProgressListener mDeleteProgressListener;
+
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         GLRoot root = mActivity.getGLRoot();
@@ -173,9 +175,14 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
             int action = item.getItemId();
             if (action == R.id.action_import) {
                 listener = new ImportCompleteListener(mActivity);
-            } else if (item.getItemId() == R.id.action_delete) {
+            } else if (action == R.id.action_delete) {
                 confirmMsg = mActivity.getResources().getQuantityString(
                         R.plurals.delete_selection, mSelectionManager.getSelectedCount());
+                if (mDeleteProgressListener == null) {
+                    mDeleteProgressListener = new WakeLockHoldingProgressListener(mActivity,
+                            "Gallery Delete Progress Listener");
+                }
+                listener = mDeleteProgressListener;
             }
             mMenuExecutor.onMenuClicked(item, confirmMsg, listener);
         } finally {

@@ -16,10 +16,7 @@
 
 package com.android.gallery3d.ui;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
@@ -27,19 +24,16 @@ import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.app.AlbumPage;
 import com.android.gallery3d.util.MediaSetUtils;
 
-public class ImportCompleteListener implements MenuExecutor.ProgressListener {
-    private AbstractGalleryActivity mActivity;
-    private PowerManager.WakeLock mWakeLock;
+public class ImportCompleteListener extends WakeLockHoldingProgressListener {
+    private static final String WAKE_LOCK_LABEL = "Gallery Album Import";
 
     public ImportCompleteListener(AbstractGalleryActivity galleryActivity) {
-        mActivity = galleryActivity;
-        PowerManager pm =
-                (PowerManager) ((Activity) mActivity).getSystemService(Context.POWER_SERVICE);
-        mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Gallery Album Import");
+        super(galleryActivity, WAKE_LOCK_LABEL);
     }
 
     @Override
     public void onProgressComplete(int result) {
+        super.onProgressComplete(result);
         int message;
         if (result == MenuExecutor.EXECUTION_RESULT_SUCCESS) {
             message = R.string.import_complete;
@@ -47,31 +41,13 @@ public class ImportCompleteListener implements MenuExecutor.ProgressListener {
         } else {
             message = R.string.import_fail;
         }
-        Toast.makeText(mActivity.getAndroidContext(), message, Toast.LENGTH_LONG).show();
-        mWakeLock.release();
-    }
-
-    @Override
-    public void onProgressUpdate(int index) {
-    }
-
-    @Override
-    public void onProgressStart() {
-        mWakeLock.acquire();
+        Toast.makeText(getActivity().getAndroidContext(), message, Toast.LENGTH_LONG).show();
     }
 
     private void goToImportedAlbum() {
         String pathOfImportedAlbum = "/local/all/" + MediaSetUtils.IMPORTED_BUCKET_ID;
         Bundle data = new Bundle();
         data.putString(AlbumPage.KEY_MEDIA_PATH, pathOfImportedAlbum);
-        mActivity.getStateManager().startState(AlbumPage.class, data);
-    }
-
-    @Override
-    public void onConfirmDialogDismissed(boolean confirmed) {
-    }
-
-    @Override
-    public void onConfirmDialogShown() {
+        getActivity().getStateManager().startState(AlbumPage.class, data);
     }
 }
