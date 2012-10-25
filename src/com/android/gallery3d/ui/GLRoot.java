@@ -32,6 +32,7 @@ public interface GLRoot {
 
     public void addOnGLIdleListener(OnGLIdleListener listener);
     public void registerLaunchedAnimation(CanvasAnimation animation);
+    public void requestRenderForced();
     public void requestRender();
     public void requestLayoutContentPane();
 
