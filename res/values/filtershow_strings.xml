@@ -16,10 +16,8 @@
 
 <resources>
 
-    <!--  Name for the image editor activity [CHAR LIMIT=NONE]-->
-    <string name="app_name">FilterShow</string>
     <!--  Title for the image editor activity [CHAR LIMIT=NONE]-->
-    <string name="title_activity_filter_show">FilterShowActivity</string>
+    <string name="title_activity_filter_show">Photo Editor</string>
 
     <!--  String shown when we cannot load the image when starting the activity [CHAR LIMIT=NONE] -->
     <string name="cannot_load_image">Cannot load the image!</string>
