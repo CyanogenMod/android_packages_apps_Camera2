@@ -575,7 +575,7 @@ public class PanelController implements OnClickListener {
         mUtilityPanel.hideCurvesButtons();
         switch (view.getId()) {
             case R.id.tinyplanetButton: {
-                mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
+                mCurrentImage = showImageView(R.id.imageTinyPlanet).setShowControls(true);
                 String ename = mCurrentImage.getContext().getString(R.string.tinyplanet);
                 mUtilityPanel.setEffectName(ename);
                 ensureFilter(ename);
