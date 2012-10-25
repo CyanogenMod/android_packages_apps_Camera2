@@ -82,6 +82,7 @@ import com.android.gallery3d.filtershow.imageshow.ImageZoom;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.provider.SharedImageProvider;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
+import com.android.gallery3d.filtershow.ui.FramedTextButton;
 import com.android.gallery3d.filtershow.ui.ImageButtonTitle;
 import com.android.gallery3d.filtershow.ui.ImageCurves;
 import com.android.gallery3d.filtershow.ui.Spline;
@@ -152,6 +153,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageShow.setDefaultBackgroundColor(getResources().getColor(R.color.background_screen));
         ImageSmallFilter.setDefaultBackgroundColor(getResources().getColor(R.color.background_main_toolbar));
         // TODO: get those values from XML.
+        FramedTextButton.setTextSize((int) getPixelsFromDip(14));
         ImageShow.setTextSize((int) getPixelsFromDip(12));
         ImageShow.setTextPadding((int) getPixelsFromDip(10));
         ImageShow.setOriginalTextMargin((int) getPixelsFromDip(4));
