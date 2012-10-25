@@ -27,7 +27,6 @@ import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.DownloadCache;
 import com.android.gallery3d.data.ImageCacheService;
 import com.android.gallery3d.gadget.WidgetUtils;
-import com.android.gallery3d.photoeditor.PhotoEditor;
 import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.LightCycleHelper;
@@ -55,12 +54,6 @@ public class GalleryAppImpl extends Application implements GalleryApp {
         GalleryUtils.initialize(this);
         WidgetUtils.initialize(this);
         PicasaSource.initialize(this);
-        int state = ApiHelper.ENABLE_PHOTO_EDITOR
-                ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                : PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
-        getPackageManager().setComponentEnabledSetting(
-                new ComponentName(this, PhotoEditor.class),
-                state, PackageManager.DONT_KILL_APP);
 
         mStitchingProgressManager = LightCycleHelper.createStitchingManagerInstance(this);
         if (mStitchingProgressManager != null) {
