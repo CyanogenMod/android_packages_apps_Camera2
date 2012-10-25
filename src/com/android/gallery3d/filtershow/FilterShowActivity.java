@@ -77,6 +77,7 @@ import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.ImageSmallBorder;
 import com.android.gallery3d.filtershow.imageshow.ImageSmallFilter;
 import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
+import com.android.gallery3d.filtershow.imageshow.ImageTinyPlanet;
 import com.android.gallery3d.filtershow.imageshow.ImageWithIcon;
 import com.android.gallery3d.filtershow.imageshow.ImageZoom;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -109,6 +110,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private ImageCrop mImageCrop = null;
     private ImageRotate mImageRotate = null;
     private ImageFlip mImageFlip = null;
+    private ImageTinyPlanet mImageTinyPlanet = null;
 
     private View mListFx = null;
     private View mListBorders = null;
@@ -194,6 +196,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageCrop = (ImageCrop) findViewById(R.id.imageCrop);
         mImageRotate = (ImageRotate) findViewById(R.id.imageRotate);
         mImageFlip = (ImageFlip) findViewById(R.id.imageFlip);
+        mImageTinyPlanet = (ImageTinyPlanet) findViewById(R.id.imageTinyPlanet);
 
         ImageCrop.setTouchTolerance((int) getPixelsFromDip(25));
         mImageViews.add(mImageShow);
@@ -204,6 +207,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageViews.add(mImageCrop);
         mImageViews.add(mImageRotate);
         mImageViews.add(mImageFlip);
+        mImageViews.add(mImageTinyPlanet);
 
         mListFx = findViewById(R.id.fxList);
         mListBorders = findViewById(R.id.bordersList);
@@ -236,6 +240,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageRotate.setMaster(mImageShow);
         mImageFlip.setImageLoader(mImageLoader);
         mImageFlip.setMaster(mImageShow);
+        mImageTinyPlanet.setImageLoader(mImageLoader);
+        mImageTinyPlanet.setMaster(mImageShow);
 
         mPanelController.setActivity(this);
 
@@ -247,6 +253,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addImageView(findViewById(R.id.imageRotate));
         mPanelController.addImageView(findViewById(R.id.imageFlip));
         mPanelController.addImageView(findViewById(R.id.imageZoom));
+        mPanelController.addImageView(findViewById(R.id.imageTinyPlanet));
 
         mPanelController.addPanel(mFxButton, mListFx, 0);
         mPanelController.addPanel(mBorderButton, mListBorders, 1);
@@ -359,6 +366,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         mImageShow.setSeekBar(seekBar);
         mImageZoom.setSeekBar(seekBar);
+        mImageTinyPlanet.setSeekBar(seekBar);
         mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
         mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList),
                 findViewById(R.id.applyEffect), findViewById(R.id.aspect),
