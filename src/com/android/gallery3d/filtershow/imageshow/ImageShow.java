@@ -649,6 +649,11 @@ public class ImageShow extends View implements OnGestureListener,
         }
     }
 
+    public void imageLoaded() {
+        updateImage();
+        invalidate();
+    }
+
     public void updateFilteredImage(Bitmap bitmap) {
         mFilteredImage = bitmap;
     }
