@@ -38,6 +38,7 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
+import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
@@ -312,8 +313,7 @@ public class ImageLoader {
         public void run() {
             for (int i = 0; i < mListeners.size(); i++) {
                 ImageShow imageShow = mListeners.elementAt(i);
-                imageShow.updateImage();
-                imageShow.invalidate();
+                imageShow.imageLoaded();
             }
         }
     };
