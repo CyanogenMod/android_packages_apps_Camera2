@@ -100,7 +100,7 @@
     <!--  Filters buttons -->
 
     <!--  Label for the exposure filter button [CHAR LIMIT=15] -->
-    <string name="exposure">Exposure</string>
+    <string name="exposure" msgid="1229093066434614811">Exposure</string>
     <!--  Label for the sharpen filter button [CHAR LIMIT=15] -->
     <string name="sharpness">Sharpness</string>
     <!--  Label for the contrast filter button [CHAR LIMIT=15] -->
@@ -132,7 +132,7 @@
     <!--  Label for the flip effect [CHAR LIMIT=15] -->
     <string name="mirror">Mirror</string>
     <!--  Label for the original [CHAR LIMIT=15] -->
-    <string name="none">None</string>
+    <string name="none" msgid="3601545724573307541">None</string>
 
     <!--  Labels for the curves tool -->
 
