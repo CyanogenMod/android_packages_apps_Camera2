@@ -18,7 +18,7 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Rect;
+import android.graphics.RectF;
 
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
@@ -74,11 +74,11 @@ public class ImageFilterTinyPlanet extends ImageFilter {
     public Bitmap apply(Bitmap bitmapIn, float scaleFactor, boolean highQuality) {
         int w = bitmapIn.getWidth();
         int h = bitmapIn.getHeight();
-        int outputSize = Math.min(w, h);
+        int outputSize = (int) (w / 2f);
 
         ImagePreset preset = getImagePreset();
         if (preset != null && preset.isPanoramaSafe()) {
-            bitmapIn = applyXmp(bitmapIn, preset);
+            bitmapIn = applyXmp(bitmapIn, preset, w);
         }
 
         Bitmap mBitmapOut = Bitmap.createBitmap(
@@ -88,7 +88,7 @@ public class ImageFilterTinyPlanet extends ImageFilter {
         return mBitmapOut;
     }
 
-    private Bitmap applyXmp(Bitmap bitmapIn, ImagePreset preset) {
+    private Bitmap applyXmp(Bitmap bitmapIn, ImagePreset preset, int intermediateWidth) {
         try {
             XMPMeta xmp = preset.getImageLoader().getXmpObject();
             if (xmp == null) {
@@ -106,13 +106,17 @@ public class ImageFilterTinyPlanet extends ImageFilter {
             int left = getInt(xmp, CROPPED_AREA_LEFT);
             int top = getInt(xmp, CROPPED_AREA_TOP);
 
+            // Make sure the intermediate image has the similar size to the
+            // input.
+            float scale = intermediateWidth / (float) fullPanoWidth;
             Bitmap paddedBitmap = Bitmap.createBitmap(
-                    fullPanoWidth, fullPanoHeight, Bitmap.Config.ARGB_8888);
+                    (int) (fullPanoWidth * scale), (int) (fullPanoHeight * scale),
+                    Bitmap.Config.ARGB_8888);
             Canvas paddedCanvas = new Canvas(paddedBitmap);
 
             int right = left + croppedAreaWidth;
             int bottom = top + croppedAreaHeight;
-            Rect destRect = new Rect(left, top, right, bottom);
+            RectF destRect = new RectF(left * scale, top * scale, right * scale, bottom * scale);
             paddedCanvas.drawBitmap(bitmapIn, null, destRect, null);
             bitmapIn = paddedBitmap;
         } catch (XMPException ex) {
