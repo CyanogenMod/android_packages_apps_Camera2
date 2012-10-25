@@ -169,6 +169,11 @@ public class GLRootView extends GLSurfaceView
     }
 
     @Override
+    public void requestRenderForced() {
+        superRequestRender();
+    }
+
+    @Override
     public void requestRender() {
         if (DEBUG_INVALIDATE) {
             StackTraceElement e = Thread.currentThread().getStackTrace()[4];
