@@ -35,8 +35,8 @@ import java.util.ArrayList;
 // upload the whole bitmap but we reduce the time of uploading each tile
 // so it make the animation more smooth and prevents jank.
 public class TiledTexture implements Texture {
-    private static final int CONTENT_SIZE = 254;
-    private static final int BORDER_SIZE = 1;
+    private static final int CONTENT_SIZE = 256;
+    private static final int BORDER_SIZE = 0;
     private static final int TILE_SIZE = CONTENT_SIZE + 2 * BORDER_SIZE;
     private static final int INIT_CAPACITY = 8;
 
