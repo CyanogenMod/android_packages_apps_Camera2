@@ -61,12 +61,19 @@ public class DirectPresetCache implements Cache {
     }
 
     public void notifyObservers() {
-        for (int i = 0; i < mObservers.size(); i++) {
-            ImageShow imageShow = mObservers.elementAt(i);
-            imageShow.invalidate();
-            imageShow.updateImage();
-        }
+        mLoader.getActivity().runOnUiThread(mNotifyObserversRunnable);
     }
+
+    private final Runnable mNotifyObserversRunnable = new Runnable() {
+        @Override
+        public void run() {
+            for (int i = 0; i < mObservers.size(); i++) {
+                ImageShow imageShow = mObservers.elementAt(i);
+                imageShow.invalidate();
+                imageShow.updateImage();
+            }
+        }
+    };
 
     @Override
     public void addObserver(ImageShow observer) {
