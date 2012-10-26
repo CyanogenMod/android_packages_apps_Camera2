@@ -494,7 +494,7 @@ public abstract class ImageGeometry extends ImageSlave {
         paint.setStyle(Style.STROKE);
         paint.setStrokeWidth(2);
         drawCropSafe(canvas, paint);
-        paint.setARGB(128, 0, 0, 0);
+        paint.setColor(getDefaultBackgroundColor());
         paint.setStyle(Paint.Style.FILL);
         drawShadows(canvas, paint, unrotatedCropBounds());
     }
@@ -614,7 +614,7 @@ public abstract class ImageGeometry extends ImageSlave {
         canvas.drawBitmap(photo, m1, p);
         canvas.restore();
 
-        p.setARGB(255, 0, 0, 0);
+        p.setColor(getDefaultBackgroundColor());
         p.setStyle(Paint.Style.FILL);
         scaledCrop.offset(displayCenter[0] - scaledCrop.centerX(), displayCenter[1]
                 - scaledCrop.centerY());
