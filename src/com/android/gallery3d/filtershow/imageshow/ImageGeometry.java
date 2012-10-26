@@ -361,7 +361,7 @@ public abstract class ImageGeometry extends ImageSlave {
         return "Geometry";
     }
 
-    protected void saveAndSetPreset() {
+    public void saveAndSetPreset() {
         ImagePreset lastHistoryItem = getHistory().getLast();
         if (lastHistoryItem != null && lastHistoryItem.historyName().equalsIgnoreCase(getName())) {
             getImagePreset().setGeometry(mLocalGeometry);

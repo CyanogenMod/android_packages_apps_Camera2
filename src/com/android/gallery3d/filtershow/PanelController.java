@@ -41,6 +41,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilterVibrance;
 import com.android.gallery3d.filtershow.filters.ImageFilterVignette;
 import com.android.gallery3d.filtershow.filters.ImageFilterWBalance;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
+import com.android.gallery3d.filtershow.imageshow.ImageGeometry;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
@@ -708,6 +709,9 @@ public class PanelController implements OnClickListener {
                 if (mMasterImage.getCurrentFilter() instanceof ImageFilterTinyPlanet) {
                     mActivity.saveImage();
                 } else {
+                    if (mCurrentImage instanceof ImageCrop) {
+                        ((ImageCrop) mCurrentImage).saveAndSetPreset();
+                    }
                     showPanel(mCurrentPanel);
                 }
                 break;
