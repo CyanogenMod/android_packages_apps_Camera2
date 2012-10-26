@@ -189,6 +189,10 @@ public class TiledScreenNail implements ScreenNail {
     }
 
     public boolean isAnimating() {
+        // The TiledTexture may not be uploaded completely yet.
+        // In that case, we count it as animating state and we will draw
+        // the placeholder in TileImageView.
+        if (mTexture == null || !mTexture.isReady()) return true;
         if (mAnimationStartTime < 0) return false;
         if (AnimationTime.get() - mAnimationStartTime >= DURATION) {
             mAnimationStartTime = ANIMATION_DONE;
