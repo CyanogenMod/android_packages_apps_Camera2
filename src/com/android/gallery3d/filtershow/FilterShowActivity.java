@@ -97,7 +97,7 @@ import java.util.Vector;
 public class FilterShowActivity extends Activity implements OnItemClickListener,
         OnShareTargetSelectedListener {
 
-    public static final String CROP_ACTION = "com.android.camera.action.CROP";
+    public static final String CROP_ACTION = "com.android.camera.action.EDITOR_CROP";
     public static final String TINY_PLANET_ACTION = "com.android.camera.action.TINY_PLANET";
     public static final String LAUNCH_FULLSCREEN = "launch-fullscreen";
     private final PanelController mPanelController = new PanelController();
