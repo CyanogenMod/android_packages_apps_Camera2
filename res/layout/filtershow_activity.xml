@@ -141,11 +141,21 @@
                   android:visibility="gone" />
 
             </com.android.gallery3d.filtershow.CenteredLinearLayout>
+
+            <ProgressBar
+                android:id="@+id/loading"
+                style="@android:style/Widget.Holo.ProgressBar.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                android:indeterminateOnly="true" />
+
         </FrameLayout>
 
         <com.android.gallery3d.filtershow.CenteredLinearLayout
               xmlns:custom="http://schemas.android.com/apk/res/com.android.gallery3d"
-              android:id="@+id/mainPanel"
+              android:id="@+id/filtersPanel"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_gravity="center"
@@ -380,7 +390,6 @@
 
         <com.android.gallery3d.filtershow.CenteredLinearLayout
               xmlns:custom="http://schemas.android.com/apk/res/com.android.gallery3d"
-              android:id="@+id/mainPanel"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:layout_gravity="center"
