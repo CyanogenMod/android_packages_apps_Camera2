@@ -118,7 +118,10 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
 
     private String getContentType(Intent intent) {
         String type = intent.getType();
-        if (type != null) return type;
+        if (type != null) {
+            return GalleryUtils.MIME_TYPE_PANORAMA360.equals(type)
+                ? MediaItem.MIME_TYPE_JPEG : type;
+        }
 
         Uri uri = intent.getData();
         try {
@@ -192,7 +195,7 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
                     startDefaultPage();
                 }
             } else {
-                Path itemPath = dm.findPathByUri(uri, intent.getType());
+                Path itemPath = dm.findPathByUri(uri, contentType);
                 Path albumPath = dm.getDefaultSetOf(itemPath);
 
                 data.putString(PhotoPage.KEY_MEDIA_ITEM_PATH, itemPath.toString());
