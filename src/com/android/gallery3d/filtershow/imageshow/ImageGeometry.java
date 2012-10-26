@@ -367,11 +367,13 @@ public abstract class ImageGeometry extends ImageSlave {
             getImagePreset().setGeometry(mLocalGeometry);
             resetImageCaches(this);
         } else {
-            ImagePreset copy = new ImagePreset(getImagePreset());
-            copy.setGeometry(mLocalGeometry);
-            copy.setHistoryName(getName());
-            copy.setIsFx(false);
-            setImagePreset(copy, true);
+            if (mLocalGeometry.hasModifications()) {
+                ImagePreset copy = new ImagePreset(getImagePreset());
+                copy.setGeometry(mLocalGeometry);
+                copy.setHistoryName(getName());
+                copy.setIsFx(false);
+                setImagePreset(copy, true);
+            }
         }
         invalidate();
     }
