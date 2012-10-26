@@ -393,6 +393,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     }
 
     private void startLoadBitmap(Uri uri) {
+        final View filters = findViewById(R.id.filtersPanel);
+        final View loading = findViewById(R.id.loading);
+        loading.setVisibility(View.VISIBLE);
+        filters.setVisibility(View.INVISIBLE);
         View tinyPlanetView = findViewById(R.id.tinyplanetButton);
         if (tinyPlanetView != null) {
             tinyPlanetView.setVisibility(View.GONE);
@@ -413,7 +417,18 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         @Override
         protected Boolean doInBackground(Uri... params) {
             mImageLoader.loadBitmap(params[0], mBitmapSize);
+            publishProgress();
             return mImageLoader.queryLightCycle360();
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            if (isCancelled()) return;
+            final View filters = findViewById(R.id.filtersPanel);
+            final View loading = findViewById(R.id.loading);
+            loading.setVisibility(View.GONE);
+            filters.setVisibility(View.VISIBLE);
         }
 
         @Override
