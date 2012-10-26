@@ -20,9 +20,8 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 
+import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
-
-import java.util.Arrays;
 
 public class GeometryMetadata {
     // Applied in order: rotate, crop, scale.
@@ -62,7 +61,7 @@ public class GeometryMetadata {
         if (!mCropBounds.equals(mPhotoBounds)) {
             return true;
         }
-        if (!mFlip.equals(FLIP.NONE)){
+        if (!mFlip.equals(FLIP.NONE)) {
             return true;
         }
         return false;
@@ -234,6 +233,99 @@ public class GeometryMetadata {
             concatVerticalMatrix(m, height);
             concatHorizontalMatrix(m, width);
         }
+    }
+
+    public Matrix getMatrixOriginalOrientation(int orientation, float originalWidth,
+            float originalHeight) {
+        Matrix imageRotation = new Matrix();
+        switch (orientation) {
+            case ImageLoader.ORI_ROTATE_90: {
+                imageRotation.setRotate(90, originalWidth / 2f, originalHeight / 2f);
+                imageRotation.postTranslate(-(originalWidth - originalHeight) / 2f,
+                        -(originalHeight - originalWidth) / 2f);
+                break;
+            }
+            case ImageLoader.ORI_ROTATE_180: {
+                imageRotation.setRotate(180, originalWidth / 2f, originalHeight / 2f);
+                break;
+            }
+            case ImageLoader.ORI_ROTATE_270: {
+                imageRotation.setRotate(270, originalWidth / 2f, originalHeight / 2f);
+                imageRotation.postTranslate(-(originalWidth - originalHeight) / 2f,
+                        -(originalHeight - originalWidth) / 2f);
+                break;
+            }
+            case ImageLoader.ORI_FLIP_HOR: {
+                imageRotation.preScale(-1, 1);
+                break;
+            }
+            case ImageLoader.ORI_FLIP_VERT: {
+                imageRotation.preScale(1, -1);
+                break;
+            }
+            case ImageLoader.ORI_TRANSPOSE: {
+                imageRotation.setRotate(90, originalWidth / 2f, originalHeight / 2f);
+                imageRotation.postTranslate(-(originalWidth - originalHeight) / 2f,
+                        -(originalHeight - originalWidth) / 2f);
+                imageRotation.preScale(1, -1);
+                break;
+            }
+            case ImageLoader.ORI_TRANSVERSE: {
+                imageRotation.setRotate(270, originalWidth / 2f, originalHeight / 2f);
+                imageRotation.postTranslate(-(originalWidth - originalHeight) / 2f,
+                        -(originalHeight - originalWidth) / 2f);
+                imageRotation.preScale(1, -1);
+                break;
+            }
+        }
+        return imageRotation;
+    }
+
+    public Matrix getOriginalToScreen(boolean rotate, float originalWidth, float originalHeight,
+            float viewWidth, float viewHeight) {
+        RectF photoBounds = getPhotoBounds();
+        RectF cropBounds = getPreviewCropBounds();
+        float imageWidth = cropBounds.width();
+        float imageHeight = cropBounds.height();
+
+        int orientation = ImageLoader.getZoomOrientation();
+        Matrix imageRotation = getMatrixOriginalOrientation(orientation, originalWidth,
+                originalHeight);
+        if (orientation == ImageLoader.ORI_ROTATE_90 ||
+                orientation == ImageLoader.ORI_ROTATE_270 ||
+                orientation == ImageLoader.ORI_TRANSPOSE ||
+                orientation == ImageLoader.ORI_TRANSVERSE) {
+            float tmp = originalWidth;
+            originalWidth = originalHeight;
+            originalHeight = tmp;
+        }
+
+        float preScale = GeometryMath.scale(originalWidth, originalHeight,
+                photoBounds.width(), photoBounds.height());
+        float scale = GeometryMath.scale(imageWidth, imageHeight, viewWidth, viewHeight);
+        // checks if local rotation is an odd multiple of 90.
+        if (((int) (getRotation() / 90)) % 2 != 0) {
+            scale = GeometryMath.scale(imageWidth, imageHeight, viewHeight, viewWidth);
+        }
+        // put in screen coordinates
+        RectF scaledCrop = GeometryMath.scaleRect(cropBounds, scale);
+        RectF scaledPhoto = GeometryMath.scaleRect(photoBounds, scale);
+        float[] displayCenter = {
+                viewWidth / 2f, viewHeight / 2f
+        };
+        Matrix m1 = GeometryMetadata.buildWanderingCropMatrix(scaledPhoto, scaledCrop,
+                getRotation(), getStraightenRotation(), getFlipType(), displayCenter);
+        float[] cropCenter = {
+                scaledCrop.centerX(), scaledCrop.centerY()
+        };
+        m1.mapPoints(cropCenter);
+        GeometryMetadata.concatRecenterMatrix(m1, cropCenter, displayCenter);
+        m1.preRotate(getStraightenRotation(), scaledPhoto.centerX(), scaledPhoto.centerY());
+        m1.preScale(scale, scale);
+        m1.preScale(preScale, preScale);
+        m1.preConcat(imageRotation);
+
+        return m1;
     }
 
     // TODO: refactor away
