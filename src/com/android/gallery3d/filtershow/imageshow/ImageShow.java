@@ -125,6 +125,10 @@ public class ImageShow extends View implements OnGestureListener,
         mBackgroundColor = value;
     }
 
+    public int getDefaultBackgroundColor() {
+        return mBackgroundColor;
+    }
+
     public static void setTextSize(int value) {
         mTextSize = value;
     }
