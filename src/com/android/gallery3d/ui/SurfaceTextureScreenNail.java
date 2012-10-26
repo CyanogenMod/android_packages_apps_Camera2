@@ -85,6 +85,13 @@ public abstract class SurfaceTextureScreenNail implements ScreenNail,
         mHeight = height;
     }
 
+    public void resizeTexture() {
+        if (mExtTexture != null) {
+            mExtTexture.setSize(mWidth, mHeight);
+            setDefaultBufferSize(mSurfaceTexture, mWidth, mHeight);
+        }
+    }
+
     @Override
     public int getWidth() {
         return mWidth;
