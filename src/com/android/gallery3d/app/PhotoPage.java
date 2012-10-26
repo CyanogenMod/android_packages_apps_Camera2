@@ -38,9 +38,9 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.android.camera.CameraActivity;
+import com.android.camera.ProxyLauncher;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
-import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ComboAlbum;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.FilterDeleteSet;
@@ -63,13 +63,9 @@ import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.DetailsHelper.DetailsSource;
-import com.android.gallery3d.ui.GLCanvas;
-import com.android.gallery3d.ui.GLRoot;
-import com.android.gallery3d.ui.GLRoot.OnGLIdleListener;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.ImportCompleteListener;
 import com.android.gallery3d.ui.MenuExecutor;
-import com.android.gallery3d.ui.PhotoFallbackEffect;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
@@ -159,7 +155,6 @@ public class PhotoPage extends ActivityState implements
     private SnailItem mScreenNailItem;
     private SnailAlbum mScreenNailSet;
     private OrientationManager mOrientationManager;
-    private boolean mHasActivityResult;
     private boolean mTreatBackAsUp;
     private boolean mStartInFilmstrip;
     private boolean mHasCameraScreennailOrPlaceholder = false;
@@ -176,8 +171,6 @@ public class PhotoPage extends ActivityState implements
     private static final long DEFERRED_UPDATE_MS = 250;
     private boolean mDeferredUpdateWaiting = false;
     private long mDeferUpdateUntil = Long.MAX_VALUE;
-
-    private Rect mOpenAnimationRect;
 
     // The item that is deleted (but it can still be undeleted before commiting)
     private Path mDeletePath;
@@ -630,7 +623,6 @@ public class PhotoPage extends ActivityState implements
                 launchPhotoEditor();
                 return;
             case R.id.photopage_bottom_control_panorama:
-                mRecenterCameraOnResume = false;
                 mActivity.getPanoramaViewHelper()
                         .showPanorama(mCurrentPhoto.getContentUri());
                 return;
@@ -691,7 +683,6 @@ public class PhotoPage extends ActivityState implements
             .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.putExtra(FilterShowActivity.LAUNCH_FULLSCREEN,
                 mActivity.isFullscreen());
-        mRecenterCameraOnResume = false;
         mActivity.startActivityForResult(intent, REQUEST_EDIT);
         overrideTransitionToEditor();
     }
@@ -719,7 +710,6 @@ public class PhotoPage extends ActivityState implements
         }
         intent.putExtra(FilterShowActivity.LAUNCH_FULLSCREEN,
                 mActivity.isFullscreen());
-        mRecenterCameraOnResume = false;
         ((Activity) mActivity).startActivityForResult(Intent.createChooser(intent, null),
                 REQUEST_EDIT);
         overrideTransitionToEditor();
@@ -1226,7 +1216,6 @@ public class PhotoPage extends ActivityState implements
     }
 
     public void playVideo(Activity activity, Uri uri, String title) {
-        mRecenterCameraOnResume = false;
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW)
                     .setDataAndType(uri, "video/*")
@@ -1260,7 +1249,15 @@ public class PhotoPage extends ActivityState implements
 
     @Override
     protected void onStateResult(int requestCode, int resultCode, Intent data) {
-        mHasActivityResult = true;
+        if (resultCode == Activity.RESULT_CANCELED) {
+            // This is a reset, not a canceled
+            return;
+        }
+        if (resultCode == ProxyLauncher.RESULT_USER_CANCELED) {
+            // Unmap reset vs. canceled
+            resultCode = Activity.RESULT_CANCELED;
+        }
+        mRecenterCameraOnResume = false;
         switch (requestCode) {
             case REQUEST_EDIT:
                 setCurrentPhotoByIntent(data);
@@ -1288,48 +1285,6 @@ public class PhotoPage extends ActivityState implements
                 }
             }
         }
-    }
-
-    @Override
-    protected void clearStateResult() {
-        mHasActivityResult = false;
-    }
-
-    private class PreparePhotoFallback implements OnGLIdleListener {
-        private PhotoFallbackEffect mPhotoFallback = new PhotoFallbackEffect();
-        private boolean mResultReady = false;
-
-        public synchronized PhotoFallbackEffect get() {
-            while (!mResultReady) {
-                Utils.waitWithoutInterrupt(this);
-            }
-            return mPhotoFallback;
-        }
-
-        @Override
-        public boolean onGLIdle(GLCanvas canvas, boolean renderRequested) {
-            mPhotoFallback = mPhotoView.buildFallbackEffect(mRootPane, canvas);
-            synchronized (this) {
-                mResultReady = true;
-                notifyAll();
-            }
-            return false;
-        }
-    }
-
-    private void preparePhotoFallbackView() {
-        GLRoot root = mActivity.getGLRoot();
-        PreparePhotoFallback task = new PreparePhotoFallback();
-        root.unlockRenderThread();
-        PhotoFallbackEffect anim;
-        try {
-            root.addOnGLIdleListener(task);
-            anim = task.get();
-        } finally {
-            root.lockRenderThread();
-        }
-        mActivity.getTransitionStore().put(
-                AlbumPage.KEY_RESUME_ANIMATION, anim);
     }
 
     @Override
@@ -1449,7 +1404,6 @@ public class PhotoPage extends ActivityState implements
             updateMenuOperations();
         }
 
-        mHasActivityResult = false;
         mRecenterCameraOnResume = true;
         mHandler.sendEmptyMessageDelayed(MSG_UNFREEZE_GLROOT, UNFREEZE_GLROOT_TIMEOUT);
     }
