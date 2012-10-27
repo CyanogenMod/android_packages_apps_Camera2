@@ -45,6 +45,7 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
     protected static int mBackgroundColor = Color.BLUE;
     protected final int mSelectedBackgroundColor = Color.WHITE;
     protected final int mTextColor = Color.WHITE;
+    private ImageSmallFilter mNullFilter;
 
     public static void setMargin(int value) {
         mMargin = value;
@@ -100,13 +101,32 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
         setMeasuredDimension(parentHeight - h, parentHeight);
     }
 
+    /**
+     * Setting the nullFilter implies that the behavior of the button is toggle
+     *
+     * @param nullFilter
+     */
+    public void setNulfilter(ImageSmallFilter nullFilter) {
+        mNullFilter = nullFilter;
+    }
+
     @Override
     public void onClick(View v) {
         if (mController != null) {
             if (mImageFilter != null) {
-                mController.useImageFilter(this, mImageFilter, mSetBorder);
+                if (mIsSelected && mNullFilter != null) {
+                    mNullFilter.onClick(v);
+                }
+                else {
+                    mController.useImageFilter(this, mImageFilter, mSetBorder);
+                }
             } else if (mImagePreset != null) {
-                mController.useImagePreset(this, mImagePreset);
+                if (mIsSelected && mNullFilter != null) {
+                    mNullFilter.onClick(v);
+                }
+                else {
+                    mController.useImagePreset(this, mImagePreset);
+                }
             }
         }
     }
