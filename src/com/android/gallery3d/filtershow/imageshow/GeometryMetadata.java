@@ -18,11 +18,10 @@ package com.android.gallery3d.filtershow.imageshow;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.graphics.RectF;
 
 import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
-
-import java.util.Arrays;
 
 public class GeometryMetadata {
     // Applied in order: rotate, crop, scale.
@@ -59,7 +58,11 @@ public class GeometryMetadata {
         if (mStraightenRotation != 0) {
             return true;
         }
-        if (!mCropBounds.equals(mPhotoBounds)) {
+        Rect cropBounds = new Rect();
+        mCropBounds.roundOut(cropBounds);
+        Rect photoBounds = new Rect();
+        mPhotoBounds.roundOut(photoBounds);
+        if (!cropBounds.equals(photoBounds)) {
             return true;
         }
         if (!mFlip.equals(FLIP.NONE)){
