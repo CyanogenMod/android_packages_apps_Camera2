@@ -75,7 +75,7 @@ public class ImageRotate extends ImageGeometry {
 
     @Override
     protected int getLocalValue() {
-        return (int) getLocalRotation();
+        return constrainedRotation(snappedAngle(getLocalRotation()));
     }
 
     @Override
