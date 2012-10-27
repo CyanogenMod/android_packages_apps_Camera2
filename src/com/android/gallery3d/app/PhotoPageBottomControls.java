@@ -116,10 +116,11 @@ public class PhotoPageBottomControls implements OnClickListener {
                     control.startAnimation(getControlAnimForVisibility(curVisibility));
                 }
                 control.setVisibility(curVisibility ? View.VISIBLE : View.INVISIBLE);
-                control.requestLayout(); // Kick framework to draw the control.
                 mControlsVisible.put(control, curVisibility);
             }
         }
+        // Force a layout change
+        mContainer.requestLayout(); // Kick framework to draw the control.
     }
 
     public void cleanup() {
