@@ -53,6 +53,7 @@ public class TrimVideo extends Activity implements
         ControllerOverlay.Listener {
 
     private VideoView mVideoView;
+    private TextView mSaveVideoTextView;
     private TrimControllerOverlay mController;
     private Context mContext;
     private Uri mUri;
@@ -93,13 +94,14 @@ public class TrimVideo extends Activity implements
         actionBar.setDisplayOptions(displayOptions, displayOptions);
         actionBar.setCustomView(R.layout.trim_menu);
 
-        TextView mSaveVideoTextView = (TextView) findViewById(R.id.start_trim);
+        mSaveVideoTextView = (TextView) findViewById(R.id.start_trim);
         mSaveVideoTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 trimVideo();
             }
         });
+        mSaveVideoTextView.setEnabled(false);
 
         Intent intent = getIntent();
         mUri = intent.getData();
@@ -257,21 +259,18 @@ public class TrimVideo extends Activity implements
         return dir[0];
     }
 
-    private void trimVideo() {
+    private boolean isModified() {
         int delta = mTrimEndTime - mTrimStartTime;
+
         // Considering that we only trim at sync frame, we don't want to trim
         // when the time interval is too short or too close to the origin.
-        if (delta < 100 ) {
-            Toast.makeText(getApplicationContext(),
-                getString(R.string.trim_too_short),
-                Toast.LENGTH_SHORT).show();
-            return;
+        if (delta < 100 || Math.abs(mVideoView.getDuration() - delta) < 100) {
+            return false;
+        } else {
+            return true;
         }
-        if (Math.abs(mVideoView.getDuration() - delta) < 100) {
-            // If no change has been made, go back
-            onBackPressed();
-            return;
-        }
+    }
+    private void trimVideo() {
         // Use the default save directory if the source directory cannot be
         // saved.
         mSaveDirectory = getSaveDirectory();
@@ -410,6 +409,8 @@ public class TrimVideo extends Activity implements
         mTrimStartTime = start;
         mTrimEndTime = end;
         setProgress();
+        // Enable save if there's modifications
+        mSaveVideoTextView.setEnabled(isModified());
     }
 
     @Override

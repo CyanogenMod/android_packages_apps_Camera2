@@ -230,6 +230,7 @@ public class ImageShow extends View implements OnGestureListener,
         }
         updateSeekBar(parameter, minp, maxp);
         invalidate();
+        mActivity.enableSave(hasModifications());
     }
 
     @Override
@@ -396,6 +397,7 @@ public class ImageShow extends View implements OnGestureListener,
     public void updateImagePresets(boolean force) {
         ImagePreset preset = getImagePreset();
         if (preset == null) {
+            mActivity.enableSave(false);
             return;
         }
         if (force) {
@@ -419,6 +421,7 @@ public class ImageShow extends View implements OnGestureListener,
                 mFiltersOnlyImage = null;
             }
         }
+        mActivity.enableSave(hasModifications());
     }
 
     public void requestFilteredImages() {

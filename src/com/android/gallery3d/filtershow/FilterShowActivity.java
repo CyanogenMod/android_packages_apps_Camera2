@@ -117,6 +117,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private View mListGeometry = null;
     private View mListColors = null;
     private View mListFilterButtons = null;
+    private View mSaveButton = null;
 
     private ImageButton mFxButton = null;
     private ImageButton mBorderButton = null;
@@ -178,7 +179,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         actionBar.setCustomView(R.layout.filtershow_actionbar);
 
-        actionBar.getCustomView().setOnClickListener(new OnClickListener() {
+        mSaveButton = actionBar.getCustomView();
+        mSaveButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 saveImage();
@@ -631,6 +633,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             }
         }
         return false;
+    }
+
+    public void enableSave(boolean enable) {
+        if (mSaveButton != null)
+            mSaveButton.setEnabled(enable);
     }
 
     private void fillListImages(LinearLayout listFilters) {
