@@ -27,6 +27,6 @@
         android:textAllCaps="true"
         android:textSize="14sp"
         android:gravity="left|center_vertical"
-        android:drawableLeft="@drawable/ic_menu_savephoto"
+        android:drawableLeft="@drawable/menu_save_photo"
         android:drawablePadding="8dp" />
 </FrameLayout>
