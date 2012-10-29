@@ -124,6 +124,10 @@ public class ImagePreset {
                     && !filter.isNil()) {
                 return false;
             }
+            if (filter.getFilterType() == ImageFilter.TYPE_TINYPLANET
+                    && !filter.isNil()) {
+                return false;
+            }
         }
         return true;
     }
