@@ -36,8 +36,8 @@ import java.util.ArrayList;
 // upload the whole bitmap but we reduce the time of uploading each tile
 // so it make the animation more smooth and prevents jank.
 public class TiledTexture implements Texture {
-    private static final int CONTENT_SIZE = 256;
-    private static final int BORDER_SIZE = 0;
+    private static final int CONTENT_SIZE = 254;
+    private static final int BORDER_SIZE = 1;
     private static final int TILE_SIZE = CONTENT_SIZE + 2 * BORDER_SIZE;
     private static final int INIT_CAPACITY = 8;
 
@@ -50,6 +50,7 @@ public class TiledTexture implements Texture {
 
     private static Bitmap sUploadBitmap;
     private static Canvas sCanvas;
+    private static Paint sBitmapPaint;
     private static Paint sPaint;
 
     private int mUploadIndex = 0;
@@ -128,9 +129,9 @@ public class TiledTexture implements Texture {
         protected Bitmap onGetBitmap() {
             int x = BORDER_SIZE - offsetX;
             int y = BORDER_SIZE - offsetY;
-            int r = bitmap.getWidth() - x;
-            int b = bitmap.getHeight() - y ;
-            sCanvas.drawBitmap(bitmap, x, y, null);
+            int r = bitmap.getWidth() + x;
+            int b = bitmap.getHeight() + y ;
+            sCanvas.drawBitmap(bitmap, x, y, sBitmapPaint);
             bitmap = null;
 
             // draw borders if need
@@ -220,15 +221,18 @@ public class TiledTexture implements Texture {
     public static void freeResources() {
         sUploadBitmap = null;
         sCanvas = null;
+        sBitmapPaint = null;
         sPaint = null;
     }
 
     public static void prepareResources() {
         sUploadBitmap = Bitmap.createBitmap(TILE_SIZE, TILE_SIZE, Config.ARGB_8888);
         sCanvas = new Canvas(sUploadBitmap);
-        sPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
+        sBitmapPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
+        sBitmapPaint.setXfermode(new PorterDuffXfermode(Mode.SRC));
+        sPaint = new Paint();
+        sPaint.setXfermode(new PorterDuffXfermode(Mode.SRC));
         sPaint.setColor(Color.TRANSPARENT);
-        sPaint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
     }
 
     // We want to draw the "source" on the "target".
