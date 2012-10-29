@@ -157,6 +157,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageShow.setDefaultBackgroundColor(getResources().getColor(R.color.background_screen));
         ImageSmallFilter.setDefaultBackgroundColor(getResources().getColor(R.color.background_main_toolbar));
         // TODO: get those values from XML.
+        ImageZoom.setZoomedSize(getPixelsFromDip(256));
         FramedTextButton.setTextSize((int) getPixelsFromDip(14));
         ImageShow.setTextSize((int) getPixelsFromDip(12));
         ImageShow.setTextPadding((int) getPixelsFromDip(10));
