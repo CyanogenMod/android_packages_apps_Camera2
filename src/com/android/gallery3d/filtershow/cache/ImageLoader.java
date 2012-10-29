@@ -68,25 +68,30 @@ public class ImageLoader {
 
     private FilterShowActivity mActivity = null;
 
-    private static final int ORI_NORMAL     = ExifInterface.ORIENTATION_NORMAL;
-    private static final int ORI_ROTATE_90  = ExifInterface.ORIENTATION_ROTATE_90;
-    private static final int ORI_ROTATE_180 = ExifInterface.ORIENTATION_ROTATE_180;
-    private static final int ORI_ROTATE_270 = ExifInterface.ORIENTATION_ROTATE_270;
-    private static final int ORI_FLIP_HOR   = ExifInterface.ORIENTATION_FLIP_HORIZONTAL;
-    private static final int ORI_FLIP_VERT  = ExifInterface.ORIENTATION_FLIP_VERTICAL;
-    private static final int ORI_TRANSPOSE  = ExifInterface.ORIENTATION_TRANSPOSE;
-    private static final int ORI_TRANSVERSE = ExifInterface.ORIENTATION_TRANSVERSE;
+    public static final int ORI_NORMAL     = ExifInterface.ORIENTATION_NORMAL;
+    public static final int ORI_ROTATE_90  = ExifInterface.ORIENTATION_ROTATE_90;
+    public static final int ORI_ROTATE_180 = ExifInterface.ORIENTATION_ROTATE_180;
+    public static final int ORI_ROTATE_270 = ExifInterface.ORIENTATION_ROTATE_270;
+    public static final int ORI_FLIP_HOR   = ExifInterface.ORIENTATION_FLIP_HORIZONTAL;
+    public static final int ORI_FLIP_VERT  = ExifInterface.ORIENTATION_FLIP_VERTICAL;
+    public static final int ORI_TRANSPOSE  = ExifInterface.ORIENTATION_TRANSPOSE;
+    public static final int ORI_TRANSVERSE = ExifInterface.ORIENTATION_TRANSVERSE;
 
     private Context mContext = null;
     private Uri mUri = null;
 
     private Rect mOriginalBounds = null;
+    private static int mZoomOrientation = ORI_NORMAL;
 
     public ImageLoader(FilterShowActivity activity, Context context) {
         mActivity = activity;
         mContext = context;
         mCache = new DelayedPresetCache(this, 30);
         mHiresCache = new DelayedPresetCache(this, 3);
+    }
+
+    public static int getZoomOrientation() {
+        return mZoomOrientation;
     }
 
     public FilterShowActivity getActivity() {
@@ -170,6 +175,7 @@ public class ImageLoader {
 
     public static Bitmap rotateToPortrait(Bitmap bitmap,int ori) {
            Matrix matrix = new Matrix();
+           mZoomOrientation = ori;
            int w = bitmap.getWidth();
            int h = bitmap.getHeight();
            if (ori == ORI_ROTATE_90 ||
