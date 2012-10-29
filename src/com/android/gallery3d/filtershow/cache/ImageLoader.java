@@ -168,6 +168,7 @@ public class ImageLoader {
             mOriginalBitmapSmall = rotateToPortrait(mOriginalBitmapSmall, mOrientation);
             mOriginalBitmapLarge = rotateToPortrait(mOriginalBitmapLarge, mOrientation);
         }
+        mZoomOrientation = mOrientation;
         mCache.setOriginalBitmap(mOriginalBitmapSmall);
         mHiresCache.setOriginalBitmap(mOriginalBitmapLarge);
         warnListeners();
@@ -175,7 +176,6 @@ public class ImageLoader {
 
     public static Bitmap rotateToPortrait(Bitmap bitmap,int ori) {
            Matrix matrix = new Matrix();
-           mZoomOrientation = ori;
            int w = bitmap.getWidth();
            int h = bitmap.getHeight();
            if (ori == ORI_ROTATE_90 ||
