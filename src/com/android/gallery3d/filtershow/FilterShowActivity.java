@@ -145,6 +145,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private static final int SEEK_BAR_MAX = 600;
 
     private LoadBitmapTask mLoadBitmapTask;
+    private ImageSmallFilter mNullFxFilter;
+    private ImageSmallFilter mNullBorderFilter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -663,17 +665,17 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         ImagePreset preset = new ImagePreset(getString(R.string.history_original)); // empty
         preset.setImageLoader(mImageLoader);
-        ImageSmallFilter filter = new ImageSmallFilter(this);
+        mNullFxFilter = new ImageSmallFilter(this);
 
-        filter.setSelected(true);
-        mCurrentImageSmallFilter = filter;
+        mNullFxFilter.setSelected(true);
+        mCurrentImageSmallFilter = mNullFxFilter;
 
-        filter.setImageFilter(new ImageFilterFx(null, getString(R.string.none)));
+        mNullFxFilter.setImageFilter(new ImageFilterFx(null, getString(R.string.none)));
 
-        filter.setController(this);
-        filter.setImageLoader(mImageLoader);
-        listFilters.addView(filter);
-        ImageSmallFilter previousFilter = filter;
+        mNullFxFilter.setController(this);
+        mNullFxFilter.setImageLoader(mImageLoader);
+        listFilters.addView(mNullFxFilter);
+        ImageSmallFilter previousFilter = mNullFxFilter;
 
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
@@ -682,11 +684,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             Bitmap b = BitmapFactory.decodeResource(getResources(), drawid[i], o);
             fxArray[p++] = new ImageFilterFx(b, getString(fxNameid[i]));
         }
-
+        ImageSmallFilter filter;
         for (int i = 0; i < p; i++) {
             filter = new ImageSmallFilter(this);
             filter.setImageFilter(fxArray[i]);
             filter.setController(this);
+            filter.setNulfilter(mNullFxFilter);
             filter.setImageLoader(mImageLoader);
             listFilters.addView(filter);
             previousFilter = filter;
@@ -717,6 +720,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageSmallFilter previousFilter = null;
         for (int i = 0; i < p; i++) {
             ImageSmallBorder filter = new ImageSmallBorder(this);
+            if (i == 0) { // save the first to reset it
+                mNullBorderFilter = filter;
+            } else {
+                filter.setNulfilter(mNullBorderFilter);
+            }
             borders[i].setName(getString(R.string.borders));
             filter.setImageFilter(borders[i]);
             filter.setController(this);
@@ -852,6 +860,9 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     }
 
     private void resetHistory() {
+        mNullFxFilter.onClick(mNullFxFilter);
+        mNullBorderFilter.onClick(mNullBorderFilter);
+
         HistoryAdapter adapter = mImageShow.getHistory();
         adapter.reset();
         ImagePreset original = new ImagePreset(adapter.getItem(0));
@@ -865,6 +876,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 resetHistory();
             }
         };
