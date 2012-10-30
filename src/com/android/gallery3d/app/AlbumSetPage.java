@@ -734,7 +734,7 @@ public class AlbumSetPage extends ActivityState implements
         }
 
         @Override
-        public void onLoadingFinished() {
+        public void onLoadingFinished(boolean loadingFailed) {
             clearLoadingBit(BIT_LOADING_RELOAD);
         }
     }
