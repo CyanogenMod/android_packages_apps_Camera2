@@ -72,6 +72,8 @@ public class AlbumDataLoader {
     private LoadingListener mLoadingListener;
 
     private ReloadTask mReloadTask;
+    // the data version on which last loading failed
+    private long mFailedVersion = MediaObject.INVALID_DATA_VERSION;
 
     public AlbumDataLoader(AbstractGalleryActivity context, MediaSet mediaSet) {
         mSource = mediaSet;
@@ -93,7 +95,11 @@ public class AlbumDataLoader {
                         if (mLoadingListener != null) mLoadingListener.onLoadingStarted();
                         return;
                     case MSG_LOAD_FINISH:
-                        if (mLoadingListener != null) mLoadingListener.onLoadingFinished();
+                        if (mLoadingListener != null) {
+                            boolean loadingFailed =
+                                    (mFailedVersion != MediaObject.INVALID_DATA_VERSION);
+                            mLoadingListener.onLoadingFinished(loadingFailed);
+                        }
                         return;
                 }
             }
@@ -245,6 +251,10 @@ public class AlbumDataLoader {
 
         @Override
         public UpdateInfo call() throws Exception {
+            if (mFailedVersion == mVersion) {
+                // previous loading failed, return null to pause loading
+                return null;
+            }
             UpdateInfo info = new UpdateInfo();
             long version = mVersion;
             info.version = mSourceVersion;
@@ -283,7 +293,14 @@ public class AlbumDataLoader {
 
             ArrayList<MediaItem> items = info.items;
 
-            if (items == null) return null;
+            mFailedVersion = MediaObject.INVALID_DATA_VERSION;
+            if ((items == null) || items.isEmpty()) {
+                if (info.reloadCount > 0) {
+                    mFailedVersion = info.version;
+                    Log.d(TAG, "loading failed: " + mFailedVersion);
+                }
+                return null;
+            }
             int start = Math.max(info.reloadStart, mContentStart);
             int end = Math.min(info.reloadStart + items.size(), mContentEnd);
 
@@ -340,11 +357,17 @@ public class AlbumDataLoader {
                 synchronized (this) {
                     if (mActive && !mDirty && updateComplete) {
                         updateLoading(false);
+                        if (mFailedVersion != MediaObject.INVALID_DATA_VERSION) {
+                            Log.d(TAG, "reload pause");
+                        }
                         Utils.waitWithoutInterrupt(this);
+                        if (mActive && (mFailedVersion != MediaObject.INVALID_DATA_VERSION)) {
+                            Log.d(TAG, "reload resume");
+                        }
                         continue;
                     }
+                    mDirty = false;
                 }
-                mDirty = false;
                 updateLoading(true);
                 long version = mSource.reload();
                 UpdateInfo info = executeAndWait(new GetUpdateInfo(version));
