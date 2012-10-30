@@ -108,6 +108,8 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
     private int mLoadingBits = 0;
     private boolean mInitialSynced = false;
+    private int mSyncResult;
+    private boolean mLoadingFailed;
     private RelativePosition mOpenCenter = new RelativePosition();
 
     private Handler mHandler;
@@ -419,6 +421,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
 
         // Set the reload bit here to prevent it exit this page in clearLoadingBit().
         setLoadingBit(BIT_LOADING_RELOAD);
+        mLoadingFailed = false;
         mAlbumDataAdapter.resume();
 
         mAlbumView.resume();
@@ -693,22 +696,31 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             public void run() {
                 GLRoot root = mActivity.getGLRoot();
                 root.lockRenderThread();
+                mSyncResult = resultCode;
                 try {
                     if (resultCode == MediaSet.SYNC_RESULT_SUCCESS) {
                         mInitialSynced = true;
                     }
                     clearLoadingBit(BIT_LOADING_SYNC);
-                    if (resultCode == MediaSet.SYNC_RESULT_ERROR && mIsActive
-                            && (mAlbumDataAdapter.size() == 0)) {
-                        // show error toast only if the album is empty
-                        Toast.makeText(mActivity, R.string.sync_album_error,
-                                Toast.LENGTH_LONG).show();
-                    }
+                    showSyncErrorIfNecessary(mLoadingFailed);
                 } finally {
                     root.unlockRenderThread();
                 }
             }
         });
+    }
+
+    // Show sync error toast when all the following conditions are met:
+    // (1) both loading and sync are done,
+    // (2) sync result is error,
+    // (3) the page is still active, and
+    // (4) no photo is shown or loading fails.
+    private void showSyncErrorIfNecessary(boolean loadingFailed) {
+        if ((mLoadingBits == 0) && (mSyncResult == MediaSet.SYNC_RESULT_ERROR) && mIsActive
+                && (loadingFailed || (mAlbumDataAdapter.size() == 0))) {
+            Toast.makeText(mActivity, R.string.sync_album_error,
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     private void setLoadingBit(int loadTaskBit) {
@@ -731,11 +743,14 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         @Override
         public void onLoadingStarted() {
             setLoadingBit(BIT_LOADING_RELOAD);
+            mLoadingFailed = false;
         }
 
         @Override
-        public void onLoadingFinished() {
+        public void onLoadingFinished(boolean loadingFailed) {
             clearLoadingBit(BIT_LOADING_RELOAD);
+            mLoadingFailed = loadingFailed;
+            showSyncErrorIfNecessary(loadingFailed);
         }
     }
 
