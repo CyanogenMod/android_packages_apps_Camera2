@@ -19,14 +19,20 @@ package com.android.gallery3d.filtershow.imageshow;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import com.android.gallery3d.filtershow.cache.ImageLoader;
+
 public class ImageZoom extends ImageSlave {
+    private static final String LOGTAG = "ImageZoom";
     private boolean mTouchDown = false;
     private boolean mZoomedIn = false;
     private Rect mZoomBounds = null;
+    private static float mMaxSize = 512;
 
     public ImageZoom(Context context) {
         super(context);
@@ -36,6 +42,17 @@ public class ImageZoom extends ImageSlave {
         super(context, attrs);
     }
 
+    public static void setZoomedSize(float size) {
+        mMaxSize = size;
+    }
+
+    @Override
+    public void resetParameter() {
+        super.resetParameter();
+        mZoomedIn = false;
+        mTouchDown = false;
+    }
+
     @Override
     public void onTouchDown(float x, float y) {
         super.onTouchDown(x, y);
@@ -43,23 +60,28 @@ public class ImageZoom extends ImageSlave {
             return;
         }
         mTouchDown = true;
-        Rect originalBounds = mImageLoader.getOriginalBounds();
-        Rect imageBounds = getImageBounds();
-        float touchX = x - imageBounds.left;
-        float touchY = y - imageBounds.top;
+        GeometryMetadata geo = getImagePreset().mGeoData;
+        Matrix originalToScreen = geo.getOriginalToScreen(true,
+                mImageLoader.getOriginalBounds().width(),
+                mImageLoader.getOriginalBounds().height(),
+                getWidth(), getHeight());
+        float[] point = new float[2];
+        point[0] = x;
+        point[1] = y;
+        Matrix inverse = new Matrix();
+        originalToScreen.invert(inverse);
+        inverse.mapPoints(point);
 
-        float w = originalBounds.width();
-        float h = originalBounds.height();
-        float ratio = w / h;
-        int mw = getWidth() / 2;
-        int mh = getHeight() / 2;
-        int cx = (int) (w / 2);
-        int cy = (int) (h / 2);
-        cx = (int) (touchX / imageBounds.width() * w);
-        cy = (int) (touchY / imageBounds.height() * h);
-        int left = cx - mw;
-        int top = cy - mh;
-        mZoomBounds = new Rect(left, top, left + mw * 2, top + mh * 2);
+        float ratio = (float) getWidth() / (float) getHeight();
+        float mh = mMaxSize;
+        float mw = ratio * mh;
+        RectF zoomRect = new RectF(mTouchX - mw, mTouchY - mh, mTouchX + mw, mTouchY + mw);
+        inverse.mapRect(zoomRect);
+        zoomRect.set(zoomRect.centerX() - mw, zoomRect.centerY() - mh,
+                zoomRect.centerX() + mw, zoomRect.centerY() + mh);
+        mZoomBounds = new Rect((int) zoomRect.left, (int) zoomRect.top,
+                (int) zoomRect.right, (int) zoomRect.bottom);
+        invalidate();
     }
 
     @Override
@@ -70,14 +92,42 @@ public class ImageZoom extends ImageSlave {
     @Override
     public void onDraw(Canvas canvas) {
         drawBackground(canvas);
+
         Bitmap filteredImage = null;
-        if ((mZoomedIn ||mTouchDown) && mImageLoader != null) {
-            filteredImage = mImageLoader.getScaleOneImageForPreset(this, getImagePreset(), mZoomBounds, false);
+        if ((mZoomedIn || mTouchDown) && mImageLoader != null) {
+            filteredImage = mImageLoader.getScaleOneImageForPreset(this, getImagePreset(),
+                    mZoomBounds, false);
         } else {
             requestFilteredImages();
             filteredImage = getFilteredImage();
         }
+        canvas.save();
+        if (mZoomedIn || mTouchDown) {
+            int orientation = ImageLoader.getZoomOrientation();
+            switch (orientation) {
+                case ImageLoader.ORI_ROTATE_90: {
+                    canvas.rotate(90, getWidth() / 2, getHeight() / 2);
+                    break;
+                }
+                case ImageLoader.ORI_ROTATE_270: {
+                    canvas.rotate(270, getWidth() / 2, getHeight() / 2);
+                    break;
+                }
+                case ImageLoader.ORI_TRANSPOSE: {
+                    canvas.rotate(90, getWidth() / 2, getHeight() / 2);
+                    canvas.scale(1,  -1);
+                    break;
+                }
+                case ImageLoader.ORI_TRANSVERSE: {
+                    canvas.rotate(270, getWidth() / 2, getHeight() / 2);
+                    canvas.scale(1,  -1);
+                    break;
+                }
+            }
+        }
         drawImage(canvas, filteredImage);
+        canvas.restore();
+
         if (showControls()) {
             mSliderController.onDraw(canvas);
         }
