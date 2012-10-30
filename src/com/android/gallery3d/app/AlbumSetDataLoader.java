@@ -95,7 +95,7 @@ public class AlbumSetDataLoader {
                         if (mLoadingListener != null) mLoadingListener.onLoadingStarted();
                         return;
                     case MSG_LOAD_FINISH:
-                        if (mLoadingListener != null) mLoadingListener.onLoadingFinished();
+                        if (mLoadingListener != null) mLoadingListener.onLoadingFinished(false);
                         return;
                 }
             }
