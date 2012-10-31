@@ -17,21 +17,21 @@
 package com.android.gallery3d.ui;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Handler;
-import android.view.ActionMode;
-import android.view.ActionMode.Callback;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ShareActionProvider;
-import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.ActionMode;
+import com.actionbarsherlock.view.ActionMode.Callback;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.ShareActionProvider;
+import com.actionbarsherlock.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.common.ApiHelper;
@@ -129,7 +129,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
     }
 
     public void startActionMode() {
-        Activity a = mActivity;
+        SherlockActivity a = mActivity;
         mActionMode = a.startActionMode(this);
         View customView = LayoutInflater.from(a).inflate(
                 R.layout.action_mode, null);
