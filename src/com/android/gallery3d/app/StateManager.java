@@ -21,10 +21,10 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.android.gallery3d.anim.StateTransitionAnimation;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.common.Utils;
 
 import java.util.Stack;

@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -28,12 +27,14 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.R;
 import com.android.gallery3d.anim.StateTransitionAnimation;
 import com.android.gallery3d.ui.GLView;
@@ -198,7 +199,7 @@ abstract public class ActivityState {
     // should only be called by StateManager
     void resume() {
         AbstractGalleryActivity activity = mActivity;
-        ActionBar actionBar = activity.getActionBar();
+        ActionBar actionBar = ((SherlockActivity) activity).getSupportActionBar();
         if (actionBar != null) {
             if ((mFlags & FLAG_HIDE_ACTION_BAR) != 0) {
                 actionBar.hide();
@@ -279,6 +280,6 @@ abstract public class ActivityState {
     }
 
     protected MenuInflater getSupportMenuInflater() {
-        return mActivity.getMenuInflater();
+        return ((SherlockActivity) mActivity).getSupportMenuInflater();
     }
 }
