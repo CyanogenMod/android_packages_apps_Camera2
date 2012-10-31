@@ -297,6 +297,8 @@
                 <action android:name="android.media.action.STILL_IMAGE_CAMERA" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <meta-data android:name="com.android.keyguard.layout"
+                    android:resource="@layout/keyguard_widget" />
         </activity>
 
         <activity android:name="com.android.camera.SecureCameraActivity"
@@ -316,6 +318,8 @@
                 <action android:name="android.media.action.IMAGE_CAPTURE_SECURE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <meta-data android:name="com.android.keyguard.layout"
+                    android:resource="@layout/keyguard_widget" />
         </activity>
 
         <activity-alias android:icon="@mipmap/ic_launcher_camera"
