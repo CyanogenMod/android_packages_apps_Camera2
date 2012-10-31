@@ -46,7 +46,7 @@
     <string name="aspect5to7_effect" msgid="5122395569059384741">"5:7"</string>
     <string name="aspect7to5_effect" msgid="5780001758108328143">"7:5"</string>
     <string name="aspect9to16_effect" msgid="7740468012919660728">"16:9"</string>
-    <string name="aspectNone_effect" msgid="6263330561046574134">"Inget"</string>
+    <string name="aspectNone_effect" msgid="6263330561046574134">"Ingen"</string>
     <!-- no translation found for aspectOriginal_effect (5678516555493036594) -->
     <skip />
     <string name="tinyplanet" msgid="2783694326474415761">"Tiny Planet"</string>
@@ -57,7 +57,7 @@
     <string name="saturation" msgid="7026791551032438585">"Mättnad"</string>
     <string name="bwfilter" msgid="8927492494576933793">"Svartvitt filt."</string>
     <string name="wbalance" msgid="6346581563387083613">"Autofärg"</string>
-    <string name="hue" msgid="6231252147971086030">"Hue"</string>
+    <string name="hue" msgid="6231252147971086030">"Nyans"</string>
     <string name="shadow_recovery" msgid="3928572915300287152">"Skuggor"</string>
     <string name="curvesRGB" msgid="915010781090477550">"Kurvor"</string>
     <string name="vignette" msgid="934721068851885390">"Vignette"</string>
