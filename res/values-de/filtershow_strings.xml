@@ -46,7 +46,7 @@
     <string name="aspect5to7_effect" msgid="5122395569059384741">"5:7"</string>
     <string name="aspect7to5_effect" msgid="5780001758108328143">"7:5"</string>
     <string name="aspect9to16_effect" msgid="7740468012919660728">"16:9"</string>
-    <string name="aspectNone_effect" msgid="6263330561046574134">"Kein"</string>
+    <string name="aspectNone_effect" msgid="6263330561046574134">"Kein Effekt"</string>
     <!-- no translation found for aspectOriginal_effect (5678516555493036594) -->
     <skip />
     <string name="tinyplanet" msgid="2783694326474415761">"Tiny Planet"</string>
