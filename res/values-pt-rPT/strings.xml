@@ -149,7 +149,7 @@
     <string name="ffx_bw_contrast" msgid="517988490066217206">"P/B"</string>
     <string name="ffx_punch" msgid="1343475517872562639">"Punch"</string>
     <string name="ffx_x_process" msgid="4779398678661811765">"Processo X"</string>
-    <string name="ffx_washout" msgid="4594160692176642735">"Café com leite"</string>
+    <string name="ffx_washout" msgid="4594160692176642735">"Latte"</string>
     <string name="ffx_washout_color" msgid="8034075742195795219">"Litografia"</string>
   <plurals name="make_albums_available_offline">
     <item quantity="one" msgid="2171596356101611086">"Disponibilizar álbum offline."</item>
