@@ -10,7 +10,7 @@
     <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="16" />
 
     <permission android:name="com.android.gallery3d.permission.GALLERY_PROVIDER"
-            android:protectionLevel="signature" />
+            android:protectionLevel="signatureOrSystem" />
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
