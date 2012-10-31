@@ -18,12 +18,12 @@
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="photoeditor_name" msgid="2141682370266509503">"Fotostudio"</string>
     <string name="loading_failure" msgid="4430965264692871140">"Foto konnte nicht geladen werden."</string>
-    <string name="saving_failure" msgid="7896222027047170982">"Das bearbeitete Foto konnte nicht gesp. werden."</string>
-    <string name="photo_saved" msgid="358760800912053916">"Das bearbeitete Foto wurde in <xliff:g id="FOLDER_NAME">%s</xliff:g> gesp."</string>
+    <string name="saving_failure" msgid="7896222027047170982">"Bearbeitetes Foto konnte nicht gespeichert werden."</string>
+    <string name="photo_saved" msgid="358760800912053916">"Bearbeitetes Foto wurde in <xliff:g id="FOLDER_NAME">%s</xliff:g> gespeichert"</string>
     <string name="discard_unsaved_photo" msgid="7621529106313330133">"Nicht gespeicherte Änderungen verwerfen?"</string>
     <string name="yes" msgid="6281719750476942468">"Ja"</string>
     <string name="save" msgid="8861201735155829719">"Speichern"</string>
-    <string name="autofix" msgid="7944390017263652926">"Autom. Bildkorrektur"</string>
+    <string name="autofix" msgid="7944390017263652926">"Autom. Korrektur"</string>
     <string name="crop" msgid="6491363680194796014">"Zuschneiden"</string>
     <string name="crossprocess" msgid="1472013603094183614">"Cross-Entwickl."</string>
     <string name="documentary" msgid="3241380167998037384">"Dokumentation"</string>
@@ -56,7 +56,7 @@
     <string name="flip_tooltip" msgid="2442349154773120409">"Zum Spiegeln Foto ziehen"</string>
     <string name="redeye_tooltip" msgid="8317077842047241049">"Zur Korrektur auf rote Augen tippen"</string>
     <string name="rotate_tooltip" msgid="4675156711699347421">"Zum Drehen Foto ziehen"</string>
-    <string name="straighten_tooltip" msgid="2512346096190533095">"Foto ziehen, um es zu strecken"</string>
+    <string name="straighten_tooltip" msgid="2512346096190533095">"Foto zum Strecken ziehen"</string>
     <string name="photoeditor_exposure" msgid="460371724772128171">"Belichtungseffekte"</string>
     <string name="photoeditor_color" msgid="1026541951500898735">"Farbeffekte"</string>
     <string name="photoeditor_artistic" msgid="7730603034092865949">"Künstlerische Effekte"</string>

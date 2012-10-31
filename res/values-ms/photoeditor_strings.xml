@@ -54,7 +54,7 @@
     <string name="crop_tooltip" msgid="5028271751720427003">"Seret penanda untuk memangkas foto"</string>
     <string name="doodle_tooltip" msgid="652340030415979327">"Lukis pada foto untuk mencoret"</string>
     <string name="flip_tooltip" msgid="2442349154773120409">"Seret foto untuk menterbalikkannya"</string>
-    <string name="redeye_tooltip" msgid="8317077842047241049">"Ketik pada mata merah untuk mengalih keluar"</string>
+    <string name="redeye_tooltip" msgid="8317077842047241049">"Ketik pada mata merah untuk mengalihnya keluar"</string>
     <string name="rotate_tooltip" msgid="4675156711699347421">"Seret foto untuk memutarnya"</string>
     <string name="straighten_tooltip" msgid="2512346096190533095">"Seret foto untuk meluruskannya"</string>
     <string name="photoeditor_exposure" msgid="460371724772128171">"Kesan dedahan"</string>

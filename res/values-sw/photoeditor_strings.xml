@@ -19,27 +19,27 @@
     <string name="photoeditor_name" msgid="2141682370266509503">"Studio ya Picha"</string>
     <string name="loading_failure" msgid="4430965264692871140">"Haikuweza kupakia picha"</string>
     <string name="saving_failure" msgid="7896222027047170982">"Haikuweza kuhifadhi picha iliyohaririwa"</string>
-    <string name="photo_saved" msgid="358760800912053916">"Picha iliyohaririwa imehifadhiwa kwa <xliff:g id="FOLDER_NAME">%s</xliff:g>"</string>
+    <string name="photo_saved" msgid="358760800912053916">"Picha iliyohaririwa imehifadhiwa katika <xliff:g id="FOLDER_NAME">%s</xliff:g>"</string>
     <string name="discard_unsaved_photo" msgid="7621529106313330133">"Tupa mabadiliko yasiyohifadhiwa?"</string>
     <string name="yes" msgid="6281719750476942468">"Ndiyo"</string>
     <string name="save" msgid="8861201735155829719">"HIFADHI"</string>
     <string name="autofix" msgid="7944390017263652926">"Rekebisha kiotomatiki"</string>
-    <string name="crop" msgid="6491363680194796014">"Puna"</string>
+    <string name="crop" msgid="6491363680194796014">"Punguza"</string>
     <string name="crossprocess" msgid="1472013603094183614">"Mchakato wa kati"</string>
     <string name="documentary" msgid="3241380167998037384">"Ya hali halisi"</string>
     <string name="doodle" msgid="7378447840618633191">"Mchakuro"</string>
-    <string name="duotone" msgid="3248891724790119677">"Duo-toni"</string>
+    <string name="duotone" msgid="3248891724790119677">"Rangi-mbili"</string>
     <string name="facelift" msgid="1485390158100614056">"Mg\'ao wa Uso"</string>
     <string name="facetan" msgid="3921463359584460598">"Tani ya Uso"</string>
     <string name="filllight" msgid="5228480587177464589">"Jaza Mwangaza"</string>
-    <string name="fisheye" msgid="3102157475164320675">"Fisheye"</string>
+    <string name="fisheye" msgid="3102157475164320675">"Macho ya samaki"</string>
     <string name="flip" msgid="404825526098985907">"Geuza"</string>
-    <string name="grain" msgid="8336064860901705844">"Nafaka ya Filamu"</string>
+    <string name="grain" msgid="8336064860901705844">"Waa za Filamu"</string>
     <string name="grayscale" msgid="895511627632504167">"Nyeusi na Nyeupe"</string>
     <string name="accessibility_black_and_white" msgid="1304436215071513173">"Nyeusi na nyeupe"</string>
-    <string name="highlight" msgid="7206397969888227366">"Angazisho"</string>
+    <string name="highlight" msgid="7206397969888227366">"Angazio"</string>
     <string name="lomoish" msgid="5630441654104635556">"Lomo"</string>
-    <string name="negative" msgid="608235382589213651">"Hasi"</string>
+    <string name="negative" msgid="608235382589213651">"Negativu"</string>
     <string name="posterize" msgid="933491230280844273">"Weka kwenye bango"</string>
     <string name="redeye" msgid="8399041285845316254">"Jicho Jekundu"</string>
     <string name="rotate" msgid="1799940414619421832">"Zungusha"</string>
@@ -50,8 +50,8 @@
     <string name="straighten" msgid="4551302289295998179">"Nyoosha"</string>
     <string name="temperature" msgid="919852023864669874">"Joto"</string>
     <string name="tint" msgid="5176938985727714799">"Kivulivuli"</string>
-    <string name="vignette" msgid="4858893727790879554">"Vignette"</string>
-    <string name="crop_tooltip" msgid="5028271751720427003">"Kokota viweka alama ili kupuna picha"</string>
+    <string name="vignette" msgid="4858893727790879554">"Vignete"</string>
+    <string name="crop_tooltip" msgid="5028271751720427003">"Kokota viweka alama ili kupunguza picha"</string>
     <string name="doodle_tooltip" msgid="652340030415979327">"Chora kwenye picha ili kuchakura"</string>
     <string name="flip_tooltip" msgid="2442349154773120409">"Kokota picha ili kuigeuza"</string>
     <string name="redeye_tooltip" msgid="8317077842047241049">"Gonga kwenye macho mekundu ili kuyaondoa"</string>

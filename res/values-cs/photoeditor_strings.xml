@@ -16,7 +16,7 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="photoeditor_name" msgid="2141682370266509503">"Photo Studio"</string>
+    <string name="photoeditor_name" msgid="2141682370266509503">"Fotostudio"</string>
     <string name="loading_failure" msgid="4430965264692871140">"Fotografii nelze načíst"</string>
     <string name="saving_failure" msgid="7896222027047170982">"Upravenou fotografii nelze uložit"</string>
     <string name="photo_saved" msgid="358760800912053916">"Upravená fotografie uložena do složky <xliff:g id="FOLDER_NAME">%s</xliff:g>"</string>
