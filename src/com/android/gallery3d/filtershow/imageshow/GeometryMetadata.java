@@ -25,8 +25,6 @@ import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
 
 public class GeometryMetadata {
-    // Applied in order: rotate, crop, scale.
-    // Do not scale saved image (presumably?).
     private static final ImageFilterGeometry mImageFilter = new ImageFilterGeometry();
     private static final String LOGTAG = "GeometryMetadata";
     private float mScaleFactor = 1.0f;
@@ -35,8 +33,6 @@ public class GeometryMetadata {
     private final RectF mCropBounds = new RectF();
     private final RectF mPhotoBounds = new RectF();
     private FLIP mFlip = FLIP.NONE;
-
-    private RectF mBounds = new RectF();
 
     public enum FLIP {
         NONE, VERTICAL, HORIZONTAL, BOTH
@@ -86,7 +82,6 @@ public class GeometryMetadata {
         mCropBounds.set(g.mCropBounds);
         mPhotoBounds.set(g.mPhotoBounds);
         mFlip = g.mFlip;
-        mBounds = g.mBounds;
     }
 
     public float getScaleFactor() {
@@ -184,25 +179,9 @@ public class GeometryMetadata {
                 + ",photoRect=" + mPhotoBounds.toShortString() + "]";
     }
 
-    // TODO: refactor away
-    protected static Matrix getHorizontalMatrix(float width) {
-        Matrix flipHorizontalMatrix = new Matrix();
-        flipHorizontalMatrix.setScale(-1, 1);
-        flipHorizontalMatrix.postTranslate(width, 0);
-        return flipHorizontalMatrix;
-    }
-
     protected static void concatHorizontalMatrix(Matrix m, float width) {
         m.postScale(-1, 1);
         m.postTranslate(width, 0);
-    }
-
-    // TODO: refactor away
-    protected static Matrix getVerticalMatrix(float height) {
-        Matrix flipVerticalMatrix = new Matrix();
-        flipVerticalMatrix.setScale(1, -1);
-        flipVerticalMatrix.postTranslate(0, height);
-        return flipVerticalMatrix;
     }
 
     protected static void concatVerticalMatrix(Matrix m, float height) {
@@ -210,22 +189,6 @@ public class GeometryMetadata {
         m.postTranslate(0, height);
     }
 
-    // TODO: refactor away
-    public static Matrix getFlipMatrix(float width, float height, FLIP type) {
-        if (type == FLIP.HORIZONTAL) {
-            return getHorizontalMatrix(width);
-        } else if (type == FLIP.VERTICAL) {
-            return getVerticalMatrix(height);
-        } else if (type == FLIP.BOTH) {
-            Matrix flipper = getVerticalMatrix(height);
-            flipper.postConcat(getHorizontalMatrix(width));
-            return flipper;
-        } else {
-            Matrix m = new Matrix();
-            m.reset(); // identity
-            return m;
-        }
-    }
 
     public static void concatMirrorMatrix(Matrix m, float width, float height, FLIP type) {
         if (type == FLIP.HORIZONTAL) {
@@ -331,44 +294,8 @@ public class GeometryMetadata {
         return m1;
     }
 
-    // TODO: refactor away
-    public Matrix getFlipMatrix(float width, float height) {
-        FLIP type = getFlipType();
-        return getFlipMatrix(width, height, type);
-    }
-
     public boolean hasSwitchedWidthHeight() {
         return (((int) (mRotation / 90)) % 2) != 0;
-    }
-
-    // TODO: refactor away
-    public Matrix buildGeometryMatrix(float width, float height, float scaling, float dx, float dy,
-            float rotation) {
-        float dx0 = width / 2;
-        float dy0 = height / 2;
-        Matrix m = getFlipMatrix(width, height);
-        m.postTranslate(-dx0, -dy0);
-        m.postRotate(rotation);
-        m.postScale(scaling, scaling);
-        m.postTranslate(dx, dy);
-        return m;
-    }
-
-    // TODO: refactor away
-    public Matrix buildGeometryMatrix(float width, float height, float scaling, float dx, float dy,
-            boolean onlyRotate) {
-        float rot = mRotation;
-        if (!onlyRotate) {
-            rot += mStraightenRotation;
-        }
-        return buildGeometryMatrix(width, height, scaling, dx, dy, rot);
-    }
-
-    // TODO: refactor away
-    public Matrix buildGeometryUIMatrix(float scaling, float dx, float dy) {
-        float w = mPhotoBounds.width();
-        float h = mPhotoBounds.height();
-        return buildGeometryMatrix(w, h, scaling, dx, dy, false);
     }
 
     public static Matrix buildPhotoMatrix(RectF photo, RectF crop, float rotation,
