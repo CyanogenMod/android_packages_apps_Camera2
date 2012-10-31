@@ -23,7 +23,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Vibrator;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -92,7 +92,6 @@ public class AlbumSetPage extends ActivityState implements
     private boolean mShowClusterMenu;
     private GalleryActionBar mActionBar;
     private int mSelectedAction;
-    private Vibrator mVibrator;
 
     protected SelectionManager mSelectionManager;
     private AlbumSetDataLoader mAlbumSetDataAdapter;
@@ -332,7 +331,6 @@ public class AlbumSetPage extends ActivityState implements
         mSubtitle = data.getString(AlbumSetPage.KEY_SET_SUBTITLE);
         mEyePosition = new EyePosition(context, this);
         mDetailsSource = new MyDetailsSource();
-        mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         mActionBar = mActivity.getGalleryActionBar();
         mSelectedAction = data.getInt(AlbumSetPage.KEY_SELECTED_CLUSTER_TYPE,
                 FilterUtils.CLUSTER_BY_ALBUM);
@@ -655,7 +653,7 @@ public class AlbumSetPage extends ActivityState implements
             case SelectionManager.ENTER_SELECTION_MODE: {
                 mActionBar.disableClusterMenu(true);
                 mActionModeHandler.startActionMode();
-                if (mHapticsEnabled) mVibrator.vibrate(100);
+                performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
                 break;
             }
             case SelectionManager.LEAVE_SELECTION_MODE: {

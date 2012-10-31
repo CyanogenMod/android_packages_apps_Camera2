@@ -24,8 +24,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Vibrator;
 import android.provider.MediaStore;
+import android.view.HapticFeedbackConstants;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
@@ -89,7 +89,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
     private AlbumDataLoader mAlbumDataAdapter;
 
     protected SelectionManager mSelectionManager;
-    private Vibrator mVibrator;
 
     private boolean mGetContent;
     private boolean mShowClusterMenu;
@@ -371,7 +370,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mShowClusterMenu = data.getBoolean(KEY_SHOW_CLUSTER_MENU, false);
         mDetailsSource = new MyDetailsSource();
         Context context = mActivity.getAndroidContext();
-        mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
         // Enable auto-select-all for mtp album
         if (data.getBoolean(KEY_AUTO_SELECT_ALL)) {
@@ -662,7 +660,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         switch (mode) {
             case SelectionManager.ENTER_SELECTION_MODE: {
                 mActionModeHandler.startActionMode();
-                if (mHapticsEnabled) mVibrator.vibrate(100);
+                performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
                 break;
             }
             case SelectionManager.LEAVE_SELECTION_MODE: {
