@@ -18,10 +18,10 @@ package com.android.gallery3d.ui;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Scroller;
 
-import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.ui.PhotoView.Size;
 import com.android.gallery3d.util.GalleryUtils;
@@ -211,7 +211,11 @@ class PositionController {
     public PositionController(Context context, Listener listener) {
         mListener = listener;
         mPageScroller = new FlingScroller();
-        mFilmScroller = new Scroller(context, null, false);
+        if (Build.VERSION.SDK_INT >= 11) {
+            mFilmScroller = new Scroller(context, null, false);
+        } else {
+            mFilmScroller = new Scroller(context, null);
+        }
 
         // Initialize the areas.
         initPlatform();

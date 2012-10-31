@@ -159,7 +159,7 @@ public class PopupList {
                 R.drawable.menu_dropdown_panel_holo_dark));
 
         mContentList = new ListView(mContext, null,
-                android.R.attr.dropDownListViewStyle);
+                com.actionbarsherlock.R.attr.dropDownListViewStyle);
         mContentList.setAdapter(new ItemDataAdapter());
         mContentList.setOnItemClickListener(mOnItemClickListener);
         popup.setContentView(mContentList);
