@@ -28,7 +28,7 @@
     <string name="show_history_panel" msgid="7785810372502120090">"Mostrar historial"</string>
     <string name="hide_history_panel" msgid="2082672248771133871">"Ocultar historial"</string>
     <string name="show_imagestate_panel" msgid="7132294085840948243">"Mostrar estado imagen"</string>
-    <string name="hide_imagestate_panel" msgid="1135313661068111161">"Ocultar estado imagen"</string>
+    <string name="hide_imagestate_panel" msgid="1135313661068111161">"Ocultar estado de la imagen"</string>
     <string name="menu_settings" msgid="6428291655769260831">"Ajustes"</string>
     <string name="history" msgid="455767361472692409">"Historial"</string>
     <string name="reset" msgid="9013181350779592937">"Restablecer"</string>
