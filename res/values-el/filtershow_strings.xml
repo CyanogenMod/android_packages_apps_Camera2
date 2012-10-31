@@ -57,7 +57,7 @@
     <string name="saturation" msgid="7026791551032438585">"Κορεσμός"</string>
     <string name="bwfilter" msgid="8927492494576933793">"Φίλτρο ΑΜ"</string>
     <string name="wbalance" msgid="6346581563387083613">"Αυτόματο χρώμα"</string>
-    <string name="hue" msgid="6231252147971086030">"Χουέ"</string>
+    <string name="hue" msgid="6231252147971086030">"Απόχρωση"</string>
     <string name="shadow_recovery" msgid="3928572915300287152">"Σκιές"</string>
     <string name="curvesRGB" msgid="915010781090477550">"Καμπύλες"</string>
     <string name="vignette" msgid="934721068851885390">"Βινιετάρισμα"</string>

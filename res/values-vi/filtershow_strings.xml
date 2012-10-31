@@ -27,7 +27,7 @@
     <string name="filtershow_redo" msgid="4219489910543059747">"Làm lại"</string>
     <string name="show_history_panel" msgid="7785810372502120090">"Hiển thị lịch sử"</string>
     <string name="hide_history_panel" msgid="2082672248771133871">"Ẩn lịch sử"</string>
-    <string name="show_imagestate_panel" msgid="7132294085840948243">"H.thị tr.thái h.ảnh"</string>
+    <string name="show_imagestate_panel" msgid="7132294085840948243">"Hiện tr.thái hình ảnh"</string>
     <string name="hide_imagestate_panel" msgid="1135313661068111161">"Ẩn tr.thái hình ảnh"</string>
     <string name="menu_settings" msgid="6428291655769260831">"Cài đặt"</string>
     <string name="history" msgid="455767361472692409">"Lịch sử"</string>
@@ -38,7 +38,7 @@
     <string name="compare_original" msgid="8140838959007796977">"So sánh"</string>
     <string name="apply_effect" msgid="1218288221200568947">"Áp dụng"</string>
     <string name="reset_effect" msgid="7712605581024929564">"Đặt lại"</string>
-    <string name="aspect" msgid="4025244950820813059">"Tỷ lệ co"</string>
+    <string name="aspect" msgid="4025244950820813059">"Tỷ lệ"</string>
     <string name="aspect1to1_effect" msgid="1159104543795779123">"1:1"</string>
     <string name="aspect4to3_effect" msgid="7968067847241223578">"4:3"</string>
     <string name="aspect3to4_effect" msgid="7078163990979248864">"3:4"</string>
@@ -46,7 +46,7 @@
     <string name="aspect5to7_effect" msgid="5122395569059384741">"5:7"</string>
     <string name="aspect7to5_effect" msgid="5780001758108328143">"7:5"</string>
     <string name="aspect9to16_effect" msgid="7740468012919660728">"16:9"</string>
-    <string name="aspectNone_effect" msgid="6263330561046574134">"Không"</string>
+    <string name="aspectNone_effect" msgid="6263330561046574134">"Không có"</string>
     <!-- no translation found for aspectOriginal_effect (5678516555493036594) -->
     <skip />
     <string name="tinyplanet" msgid="2783694326474415761">"Hành tinh nhỏ"</string>
@@ -56,7 +56,7 @@
     <string name="vibrance" msgid="3326744578577835915">"Dao động"</string>
     <string name="saturation" msgid="7026791551032438585">"Bão hòa"</string>
     <string name="bwfilter" msgid="8927492494576933793">"Bộ lọc ĐT"</string>
-    <string name="wbalance" msgid="6346581563387083613">"Chỉnh màu tđộng"</string>
+    <string name="wbalance" msgid="6346581563387083613">"Màu tự động"</string>
     <string name="hue" msgid="6231252147971086030">"Màu sắc"</string>
     <string name="shadow_recovery" msgid="3928572915300287152">"Bóng"</string>
     <string name="curvesRGB" msgid="915010781090477550">"Đồ thị màu"</string>
@@ -66,7 +66,7 @@
     <string name="crop" msgid="5781263790107850771">"Cắt"</string>
     <string name="rotate" msgid="2796802553793795371">"Xoay"</string>
     <string name="mirror" msgid="5482518108154883096">"Phản chiếu"</string>
-    <string name="none" msgid="6633966646410296520">"Không"</string>
+    <string name="none" msgid="6633966646410296520">"Không có"</string>
     <string name="curves_channel_rgb" msgid="7909209509638333690">"RGB"</string>
     <string name="curves_channel_red" msgid="4199710104162111357">"Đỏ"</string>
     <string name="curves_channel_green" msgid="3733003466905031016">"Xanh lục"</string>
