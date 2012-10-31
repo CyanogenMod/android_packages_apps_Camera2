@@ -29,22 +29,25 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.imageshow.ImageGeometry.MODES;
 
 public class ImageCrop extends ImageGeometry {
     private static final boolean LOGV = false;
+
+    // Sides
     private static final int MOVE_LEFT = 1;
     private static final int MOVE_TOP = 2;
     private static final int MOVE_RIGHT = 4;
     private static final int MOVE_BOTTOM = 8;
     private static final int MOVE_BLOCK = 16;
 
-    //Corners
+    // Corners
     private static final int TOP_LEFT = MOVE_TOP | MOVE_LEFT;
     private static final int TOP_RIGHT = MOVE_TOP | MOVE_RIGHT;
     private static final int BOTTOM_RIGHT = MOVE_BOTTOM | MOVE_RIGHT;
     private static final int BOTTOM_LEFT = MOVE_BOTTOM | MOVE_LEFT;
 
-    private static final float MIN_CROP_WIDTH_HEIGHT = 0.1f;
+    private static int mMinSideSize = 100;
     private static int mTouchTolerance = 45;
 
     private boolean mFirstDraw = true;
@@ -53,23 +56,28 @@ public class ImageCrop extends ImageGeometry {
     private boolean mFixAspectRatio = false;
 
     private float mLastRot = 0;
-    private final Paint borderPaint;
 
+    private BoundedRect mBounded = null;
     private int movingEdges;
     private final Drawable cropIndicator;
     private final int indicatorSize;
     private final int mBorderColor = Color.argb(128, 255, 255, 255);
+
+    // Offset between crop center and photo center
+    private float[] mOffset = {
+            0, 0
+    };
 
     private static final String LOGTAG = "ImageCrop";
 
     private String mAspect = "";
     private int mAspectTextSize = 24;
 
-    public void setAspectTextSize(int textSize){
+    public void setAspectTextSize(int textSize) {
         mAspectTextSize = textSize;
     }
 
-    public void setAspectString(String a){
+    public void setAspectString(String a) {
         mAspect = a;
     }
 
@@ -80,10 +88,6 @@ public class ImageCrop extends ImageGeometry {
         Resources resources = context.getResources();
         cropIndicator = resources.getDrawable(R.drawable.camera_crop);
         indicatorSize = (int) resources.getDimension(R.dimen.crop_indicator_size);
-        borderPaint = new Paint();
-        borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setColor(mBorderColor);
-        borderPaint.setStrokeWidth(2f);
     }
 
     public ImageCrop(Context context, AttributeSet attrs) {
@@ -91,10 +95,6 @@ public class ImageCrop extends ImageGeometry {
         Resources resources = context.getResources();
         cropIndicator = resources.getDrawable(R.drawable.camera_crop);
         indicatorSize = (int) resources.getDimension(R.dimen.crop_indicator_size);
-        borderPaint = new Paint();
-        borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setColor(mBorderColor);
-        borderPaint.setStrokeWidth(2f);
     }
 
     @Override
@@ -102,84 +102,35 @@ public class ImageCrop extends ImageGeometry {
         return getContext().getString(R.string.crop);
     }
 
-    private void swapAspect(){
+    private void swapAspect() {
         float temp = mAspectWidth;
         mAspectWidth = mAspectHeight;
         mAspectHeight = temp;
     }
 
-    public static void setTouchTolerance(int tolerance){
+    /**
+     * Set tolerance for crop marker selection (in pixels)
+     */
+    public static void setTouchTolerance(int tolerance) {
         mTouchTolerance = tolerance;
     }
 
-    private boolean switchCropBounds(int moving_corner, RectF dst) {
-        RectF crop = getCropBoundsDisplayed();
-        float dx1 = 0;
-        float dy1 = 0;
-        float dx2 = 0;
-        float dy2 = 0;
-        if ((moving_corner & MOVE_RIGHT) != 0) {
-            dx1 = mCurrentX - crop.right;
-        } else if ((moving_corner & MOVE_LEFT) != 0) {
-            dx1 = mCurrentX - crop.left;
-        }
-        if ((moving_corner & MOVE_BOTTOM) != 0) {
-            dy1 = mCurrentY - crop.bottom;
-        } else if ((moving_corner & MOVE_TOP) != 0) {
-            dy1 = mCurrentY - crop.top;
-        }
-        RectF newCrop = null;
-        //Fix opposite corner in place and move sides
-        if (moving_corner == BOTTOM_RIGHT) {
-            newCrop = new RectF(crop.left, crop.top, crop.left + crop.height(), crop.top
-                    + crop.width());
-        } else if (moving_corner == BOTTOM_LEFT) {
-            newCrop = new RectF(crop.right - crop.height(), crop.top, crop.right, crop.top
-                    + crop.width());
-        } else if (moving_corner == TOP_LEFT) {
-            newCrop = new RectF(crop.right - crop.height(), crop.bottom - crop.width(),
-                    crop.right, crop.bottom);
-        } else if (moving_corner == TOP_RIGHT) {
-            newCrop = new RectF(crop.left, crop.bottom - crop.width(), crop.left
-                    + crop.height(), crop.bottom);
-        }
-        if ((moving_corner & MOVE_RIGHT) != 0) {
-            dx2 = mCurrentX - newCrop.right;
-        } else if ((moving_corner & MOVE_LEFT) != 0) {
-            dx2 = mCurrentX - newCrop.left;
-        }
-        if ((moving_corner & MOVE_BOTTOM) != 0) {
-            dy2 = mCurrentY - newCrop.bottom;
-        } else if ((moving_corner & MOVE_TOP) != 0) {
-            dy2 = mCurrentY - newCrop.top;
-        }
-        if (Math.sqrt(dx1*dx1 + dy1*dy1) > Math.sqrt(dx2*dx2 + dy2*dy2)){
-             Matrix m = getCropBoundDisplayMatrix();
-             Matrix m0 = new Matrix();
-             if (!m.invert(m0)){
-                 if (LOGV)
-                     Log.v(LOGTAG, "FAILED TO INVERT CROP MATRIX");
-                 return false;
-             }
-             if (!m0.mapRect(newCrop)){
-                 if (LOGV)
-                     Log.v(LOGTAG, "FAILED TO MAP RECTANGLE TO RECTANGLE");
-                 return false;
-             }
-             swapAspect();
-             dst.set(newCrop);
-             return true;
-        }
-        return false;
+    /**
+     * Set minimum side length for crop box (in pixels)
+     */
+    public static void setMinCropSize(int minHeightWidth) {
+        mMinSideSize = minHeightWidth;
     }
 
-    public void apply(float w, float h){
+    public void apply(float w, float h) {
         mFixAspectRatio = true;
         mAspectWidth = w;
         mAspectHeight = h;
         setLocalCropBounds(getUntranslatedStraightenCropBounds(getLocalPhotoBounds(),
                 getLocalStraighten()));
-        cropSetup();
+        if (mVisibilityGained) {
+            cropSetup();
+        }
         saveAndSetPreset();
         invalidate();
     }
@@ -194,202 +145,147 @@ public class ImageCrop extends ImageGeometry {
         mAspectHeight = h / scale;
         setLocalCropBounds(getUntranslatedStraightenCropBounds(photobounds,
                 getLocalStraighten()));
-        cropSetup();
+        if (mVisibilityGained) {
+            cropSetup();
+        }
         saveAndSetPreset();
         invalidate();
     }
 
     public void applyClear() {
         mFixAspectRatio = false;
+        mAspectWidth = 1;
+        mAspectHeight = 1;
         setLocalCropBounds(getUntranslatedStraightenCropBounds(getLocalPhotoBounds(),
                 getLocalStraighten()));
-        cropSetup();
+        if (mVisibilityGained) {
+            cropSetup();
+        }
         saveAndSetPreset();
         invalidate();
     }
 
-    private float getScaledMinWidthHeight() {
-        RectF disp = new RectF(0, 0, getWidth(), getHeight());
-        float scaled = Math.min(disp.width(), disp.height()) * MIN_CROP_WIDTH_HEIGHT
-                / computeScale(getWidth(), getHeight());
-        return scaled;
-    }
-
-    protected Matrix getCropRotationMatrix(float rotation, RectF localImage) {
-        Matrix m = getLocalGeoFlipMatrix(localImage.width(), localImage.height());
-        m.postRotate(rotation, localImage.centerX(), localImage.centerY());
-        if (!m.rectStaysRect()) {
-            return null;
-        }
+    private Matrix getPhotoBoundDisplayedMatrix() {
+        float[] displayCenter = new float[2];
+        RectF scaledCrop = new RectF();
+        RectF scaledPhoto = new RectF();
+        float scale = getTransformState(scaledPhoto, scaledCrop, displayCenter);
+        Matrix m = GeometryMetadata.buildCenteredPhotoMatrix(scaledPhoto, scaledCrop,
+                getLocalRotation(), getLocalStraighten(), getLocalFlip(), displayCenter);
+        m.preScale(scale, scale);
         return m;
     }
 
-    protected Matrix getCropBoundDisplayMatrix(){
-        Matrix m = getCropRotationMatrix(getLocalRotation(), getLocalPhotoBounds());
-        if (m == null) {
-            if (LOGV)
-                Log.v(LOGTAG, "FAILED TO MAP CROP BOUNDS TO RECTANGLE");
-            m = new Matrix();
-        }
-        float zoom = computeScale(getWidth(), getHeight());
-        m.postTranslate(mXOffset, mYOffset);
-        m.postScale(zoom, zoom, mCenterX, mCenterY);
-        return m;
+    private Matrix getCropBoundDisplayedMatrix() {
+        float[] displayCenter = new float[2];
+        RectF scaledCrop = new RectF();
+        RectF scaledPhoto = new RectF();
+        float scale = getTransformState(scaledPhoto, scaledCrop, displayCenter);
+        Matrix m1 = GeometryMetadata.buildWanderingCropMatrix(scaledPhoto, scaledCrop,
+                getLocalRotation(), getLocalStraighten(), getLocalFlip(), displayCenter);
+        m1.preScale(scale, scale);
+        return m1;
     }
 
-    protected RectF getCropBoundsDisplayed() {
-        RectF bounds = getLocalCropBounds();
-        RectF crop = new RectF(bounds);
-        Matrix m = getCropRotationMatrix(getLocalRotation(), getLocalPhotoBounds());
-
-        if (m == null) {
-            if (LOGV)
-                Log.v(LOGTAG, "FAILED TO MAP CROP BOUNDS TO RECTANGLE");
-            m = new Matrix();
-        } else {
-            m.mapRect(crop);
-        }
-        m = new Matrix();
-        float zoom = computeScale(getWidth(), getHeight());
-        m.setScale(zoom, zoom, mCenterX, mCenterY);
-        m.preTranslate(mXOffset, mYOffset);
-        m.mapRect(crop);
-        return crop;
-    }
-
-    private RectF getRotatedCropBounds() {
-        RectF bounds = getLocalCropBounds();
-        RectF crop = new RectF(bounds);
-        Matrix m = getCropRotationMatrix(getLocalRotation(), getLocalPhotoBounds());
-
-        if (m == null) {
-            if (LOGV)
-                Log.v(LOGTAG, "FAILED TO MAP CROP BOUNDS TO RECTANGLE");
-            return null;
-        } else {
-            m.mapRect(crop);
-        }
-        return crop;
-    }
-
-    private RectF getUnrotatedCropBounds(RectF cropBounds) {
-        Matrix m = getCropRotationMatrix(getLocalRotation(), getLocalPhotoBounds());
-
-        if (m == null) {
-            if (LOGV)
-                Log.v(LOGTAG, "FAILED TO GET ROTATION MATRIX");
-            return null;
-        }
-        Matrix m0 = new Matrix();
-        if (!m.invert(m0)) {
-            if (LOGV)
-                Log.v(LOGTAG, "FAILED TO INVERT ROTATION MATRIX");
-            return null;
-        }
-        RectF crop = new RectF(cropBounds);
-        if (!m0.mapRect(crop)) {
-            if (LOGV)
-                Log.v(LOGTAG, "FAILED TO UNROTATE CROPPING BOUNDS");
-            return null;
-        }
-        return crop;
-    }
-
-    private RectF getRotatedStraightenBounds() {
-        RectF straightenBounds = getUntranslatedStraightenCropBounds(getLocalPhotoBounds(),
-                getLocalStraighten());
-        Matrix m = getCropRotationMatrix(getLocalRotation(), getLocalPhotoBounds());
-
-        if (m == null) {
-            if (LOGV)
-                Log.v(LOGTAG, "FAILED TO MAP STRAIGHTEN BOUNDS TO RECTANGLE");
-            return null;
-        } else {
-            m.mapRect(straightenBounds);
-        }
-        return straightenBounds;
+    /**
+     * Takes the rotated corners of a rectangle and returns the angle; sets
+     * unrotated to be the unrotated version of the rectangle.
+     */
+    private static float getUnrotated(float[] rotatedRect, float[] center, RectF unrotated) {
+        float dy = rotatedRect[1] - rotatedRect[3];
+        float dx = rotatedRect[0] - rotatedRect[2];
+        float angle = (float) (Math.atan(dy / dx) * 180 / Math.PI);
+        Matrix m = new Matrix();
+        m.setRotate(-angle, center[0], center[1]);
+        float[] unrotatedRect = new float[rotatedRect.length];
+        m.mapPoints(unrotatedRect, rotatedRect);
+        unrotated.set(CropMath.trapToRect(unrotatedRect));
+        return angle;
     }
 
     /**
      * Sets cropped bounds; modifies the bounds if it's smaller than the allowed
      * dimensions.
      */
-    public void setCropBounds(RectF bounds) {
-        // Avoid cropping smaller than minimum width or height.
+    public boolean setCropBounds(RectF bounds) {
         RectF cbounds = new RectF(bounds);
-        float minWidthHeight = getScaledMinWidthHeight();
-        float aw = mAspectWidth;
-        float ah = mAspectHeight;
-        if (mFixAspectRatio) {
-            minWidthHeight /= aw * ah;
-            int r = (int) (getLocalRotation() / 90);
-            if (r % 2 != 0) {
-                float temp = aw;
-                aw = ah;
-                ah = temp;
-            }
-        }
-
+        Matrix mc = getCropBoundDisplayedMatrix();
+        Matrix mcInv = new Matrix();
+        mc.invert(mcInv);
+        mcInv.mapRect(cbounds);
+        // Avoid cropping smaller than minimum
         float newWidth = cbounds.width();
         float newHeight = cbounds.height();
-        if (mFixAspectRatio) {
-            if (newWidth < (minWidthHeight * aw) || newHeight < (minWidthHeight * ah)) {
-                newWidth = minWidthHeight * aw;
-                newHeight = minWidthHeight * ah;
-            }
-        } else {
-            if (newWidth < minWidthHeight) {
-                newWidth = minWidthHeight;
-            }
-            if (newHeight < minWidthHeight) {
-                newHeight = minWidthHeight;
-            }
-        }
+        float scale = getTransformState(null, null, null);
+        float minWidthHeight = mMinSideSize / scale;
         RectF pbounds = getLocalPhotoBounds();
-        if (pbounds.width() < minWidthHeight) {
-            newWidth = pbounds.width();
-        }
-        if (pbounds.height() < minWidthHeight) {
-            newHeight = pbounds.height();
+
+        // if photo is smaller than minimum, refuse to set crop bounds
+        if (pbounds.width() < minWidthHeight || pbounds.height() < minWidthHeight) {
+            return false;
         }
 
-        cbounds.set(cbounds.left, cbounds.top, cbounds.left + newWidth, cbounds.top + newHeight);
-        RectF straightenBounds = getUntranslatedStraightenCropBounds(getLocalPhotoBounds(),
-                getLocalStraighten());
-        cbounds.intersect(straightenBounds);
-
-        if (mFixAspectRatio) {
-            fixAspectRatio(cbounds, aw, ah);
+        // if incoming crop is smaller than minimum, refuse to set crop bounds
+        if (newWidth < minWidthHeight || newHeight < minWidthHeight) {
+            return false;
         }
+
+        float newX = bounds.centerX() - (getWidth() / 2f);
+        float newY = bounds.centerY() - (getHeight() / 2f);
+        mOffset[0] = newX;
+        mOffset[1] = newY;
+
         setLocalCropBounds(cbounds);
         invalidate();
+        return true;
+    }
+
+    private BoundedRect getBoundedCrop(RectF crop) {
+        RectF photo = getLocalPhotoBounds();
+        Matrix mp = getPhotoBoundDisplayedMatrix();
+        float[] photoCorners = CropMath.getCornersFromRect(photo);
+        float[] photoCenter = {
+                photo.centerX(), photo.centerY()
+        };
+        mp.mapPoints(photoCorners);
+        mp.mapPoints(photoCenter);
+        RectF scaledPhoto = new RectF();
+        float angle = getUnrotated(photoCorners, photoCenter, scaledPhoto);
+        return new BoundedRect(angle, scaledPhoto, crop);
     }
 
     private void detectMovingEdges(float x, float y) {
-        RectF cropped = getCropBoundsDisplayed();
+        Matrix m = getCropBoundDisplayedMatrix();
+        RectF cropped = getLocalCropBounds();
+        m.mapRect(cropped);
+        mBounded = getBoundedCrop(cropped);
         movingEdges = 0;
 
-        // Check left or right.
         float left = Math.abs(x - cropped.left);
         float right = Math.abs(x - cropped.right);
-        if ((left <= mTouchTolerance) && (left < right)) {
+        float top = Math.abs(y - cropped.top);
+        float bottom = Math.abs(y - cropped.bottom);
+
+        // Check left or right.
+        if ((left <= mTouchTolerance) && ((y + mTouchTolerance) >= cropped.top)
+                && ((y - mTouchTolerance) <= cropped.bottom) && (left < right)) {
             movingEdges |= MOVE_LEFT;
         }
-        else if (right <= mTouchTolerance) {
+        else if ((right <= mTouchTolerance) && ((y + mTouchTolerance) >= cropped.top)
+                && ((y - mTouchTolerance) <= cropped.bottom)) {
             movingEdges |= MOVE_RIGHT;
         }
 
         // Check top or bottom.
-        float top = Math.abs(y - cropped.top);
-        float bottom = Math.abs(y - cropped.bottom);
-        if ((top <= mTouchTolerance) & (top < bottom)) {
+        if ((top <= mTouchTolerance) && ((x + mTouchTolerance) >= cropped.left)
+                && ((x - mTouchTolerance) <= cropped.right) && (top < bottom)) {
             movingEdges |= MOVE_TOP;
         }
-        else if (bottom <= mTouchTolerance) {
+        else if ((bottom <= mTouchTolerance) && ((x + mTouchTolerance) >= cropped.left)
+                && ((x - mTouchTolerance) <= cropped.right)) {
             movingEdges |= MOVE_BOTTOM;
         }
-        // Check inside block.
-        if (cropped.contains(x, y) && (movingEdges == 0)) {
+        if (movingEdges == 0) {
             movingEdges = MOVE_BLOCK;
         }
         if (mFixAspectRatio && (movingEdges != MOVE_BLOCK)) {
@@ -398,7 +294,7 @@ public class ImageCrop extends ImageGeometry {
         invalidate();
     }
 
-    private int fixEdgeToCorner(int moving_edges){
+    private int fixEdgeToCorner(int moving_edges) {
         if (moving_edges == MOVE_LEFT) {
             moving_edges |= MOVE_TOP;
         }
@@ -414,9 +310,9 @@ public class ImageCrop extends ImageGeometry {
         return moving_edges;
     }
 
-    private RectF fixedCornerResize(RectF r, int moving_corner, float dx, float dy){
+    private RectF fixedCornerResize(RectF r, int moving_corner, float dx, float dy) {
         RectF newCrop = null;
-        //Fix opposite corner in place and move sides
+        // Fix opposite corner in place and move sides
         if (moving_corner == BOTTOM_RIGHT) {
             newCrop = new RectF(r.left, r.top, r.left + r.width() + dx, r.top + r.height()
                     + dy);
@@ -434,120 +330,90 @@ public class ImageCrop extends ImageGeometry {
     }
 
     private void moveEdges(float dX, float dY) {
-        RectF cropped = getRotatedCropBounds();
-        float minWidthHeight = getScaledMinWidthHeight();
-        float scale = computeScale(getWidth(), getHeight());
-        float deltaX = dX / scale;
-        float deltaY = dY / scale;
-        int select = movingEdges;
-        if (mFixAspectRatio && (select != MOVE_BLOCK)) {
+        RectF crop = mBounded.getInner();
 
-            // TODO: add in orientation change for fixed aspect
-            /*if (select == TOP_LEFT || select == TOP_RIGHT ||
-                    select == BOTTOM_LEFT || select == BOTTOM_RIGHT){
-                RectF blank = new RectF();
-                if(switchCropBounds(select, blank)){
-                    setCropBounds(blank);
-                    return;
-                }
-            }*/
-            if (select == MOVE_LEFT) {
-                select |= MOVE_TOP;
-            }
-            if (select == MOVE_TOP) {
-                select |= MOVE_LEFT;
-            }
-            if (select == MOVE_RIGHT) {
-                select |= MOVE_BOTTOM;
-            }
-            if (select == MOVE_BOTTOM) {
-                select |= MOVE_RIGHT;
-            }
-        }
+        Matrix mc = getCropBoundDisplayedMatrix();
 
-        if (select == MOVE_BLOCK) {
-            RectF straight = getRotatedStraightenBounds();
-            // Move the whole cropped bounds within the photo display bounds.
-            deltaX = (deltaX > 0) ? Math.min(straight.right - cropped.right, deltaX)
-                    : Math.max(straight.left - cropped.left, deltaX);
-            deltaY = (deltaY > 0) ? Math.min(straight.bottom - cropped.bottom, deltaY)
-                    : Math.max(straight.top - cropped.top, deltaY);
-            cropped.offset(deltaX, deltaY);
+        RectF photo = getLocalPhotoBounds();
+        Matrix mp = getPhotoBoundDisplayedMatrix();
+        float[] photoCorners = CropMath.getCornersFromRect(photo);
+        float[] photoCenter = {
+                photo.centerX(), photo.centerY()
+        };
+        mp.mapPoints(photoCorners);
+        mp.mapPoints(photoCenter);
+
+        float minWidthHeight = mMinSideSize;
+
+        if (movingEdges == MOVE_BLOCK) {
+            mBounded.moveInner(-dX, -dY);
+            RectF r = mBounded.getInner();
+            setCropBounds(r);
+            return;
         } else {
             float dx = 0;
             float dy = 0;
 
-            if ((select & MOVE_LEFT) != 0) {
-                dx = Math.min(cropped.left + deltaX, cropped.right - minWidthHeight) - cropped.left;
+            if ((movingEdges & MOVE_LEFT) != 0) {
+                dx = Math.min(crop.left + dX, crop.right - minWidthHeight) - crop.left;
             }
-            if ((select & MOVE_TOP) != 0) {
-                dy = Math.min(cropped.top + deltaY, cropped.bottom - minWidthHeight) - cropped.top;
+            if ((movingEdges & MOVE_TOP) != 0) {
+                dy = Math.min(crop.top + dY, crop.bottom - minWidthHeight) - crop.top;
             }
-            if ((select & MOVE_RIGHT) != 0) {
-                dx = Math.max(cropped.right + deltaX, cropped.left + minWidthHeight)
-                        - cropped.right;
+            if ((movingEdges & MOVE_RIGHT) != 0) {
+                dx = Math.max(crop.right + dX, crop.left + minWidthHeight)
+                        - crop.right;
             }
-            if ((select & MOVE_BOTTOM) != 0) {
-                dy = Math.max(cropped.bottom + deltaY, cropped.top + minWidthHeight)
-                        - cropped.bottom;
+            if ((movingEdges & MOVE_BOTTOM) != 0) {
+                dy = Math.max(crop.bottom + dY, crop.top + minWidthHeight)
+                        - crop.bottom;
             }
 
             if (mFixAspectRatio) {
-                RectF crop = getCropBoundsDisplayed();
-                float [] l1 = {crop.left, crop.bottom};
-                float [] l2 = {crop.right, crop.top};
-                if(movingEdges == TOP_LEFT || movingEdges == BOTTOM_RIGHT){
+                float[] l1 = {
+                        crop.left, crop.bottom
+                };
+                float[] l2 = {
+                        crop.right, crop.top
+                };
+                if (movingEdges == TOP_LEFT || movingEdges == BOTTOM_RIGHT) {
                     l1[1] = crop.top;
                     l2[1] = crop.bottom;
                 }
-                float[] b = { l1[0] - l2[0], l1[1] - l2[1] };
-                float[] disp = {dx, dy};
+                float[] b = {
+                        l1[0] - l2[0], l1[1] - l2[1]
+                };
+                float[] disp = {
+                        dx, dy
+                };
                 float[] bUnit = GeometryMath.normalize(b);
                 float sp = GeometryMath.scalarProjection(disp, bUnit);
                 dx = sp * bUnit[0];
                 dy = sp * bUnit[1];
-                RectF newCrop = fixedCornerResize(crop, select, dx * scale, dy * scale);
-                Matrix m = getCropBoundDisplayMatrix();
-                Matrix m0 = new Matrix();
-                if (!m.invert(m0)){
-                    if (LOGV)
-                        Log.v(LOGTAG, "FAILED TO INVERT CROP MATRIX");
-                    return;
-                }
-                if (!m0.mapRect(newCrop)){
-                    if (LOGV)
-                        Log.v(LOGTAG, "FAILED TO MAP RECTANGLE TO RECTANGLE");
-                    return;
-                }
+                RectF newCrop = fixedCornerResize(crop, movingEdges, dx, dy);
+
+                mBounded.fixedAspectResizeInner(newCrop);
+                newCrop = mBounded.getInner();
                 setCropBounds(newCrop);
                 return;
             } else {
-                if ((select & MOVE_LEFT) != 0) {
-                    cropped.left += dx;
+                if ((movingEdges & MOVE_LEFT) != 0) {
+                    crop.left += dx;
                 }
-                if ((select & MOVE_TOP) != 0) {
-                    cropped.top += dy;
+                if ((movingEdges & MOVE_TOP) != 0) {
+                    crop.top += dy;
                 }
-                if ((select & MOVE_RIGHT) != 0) {
-                    cropped.right += dx;
+                if ((movingEdges & MOVE_RIGHT) != 0) {
+                    crop.right += dx;
                 }
-                if ((select & MOVE_BOTTOM) != 0) {
-                    cropped.bottom += dy;
+                if ((movingEdges & MOVE_BOTTOM) != 0) {
+                    crop.bottom += dy;
                 }
             }
         }
-        movingEdges = select;
-        Matrix m = getCropRotationMatrix(getLocalRotation(), getLocalPhotoBounds());
-        Matrix m0 = new Matrix();
-        if (!m.invert(m0)) {
-            if (LOGV)
-                Log.v(LOGTAG, "FAILED TO INVERT ROTATION MATRIX");
-        }
-        if (!m0.mapRect(cropped)) {
-            if (LOGV)
-                Log.v(LOGTAG, "FAILED TO UNROTATE CROPPING BOUNDS");
-        }
-        setCropBounds(cropped);
+        mBounded.resizeInner(crop);
+        crop = mBounded.getInner();
+        setCropBounds(crop);
     }
 
     private void drawIndicator(Canvas canvas, Drawable indicator, float centerX, float centerY) {
@@ -560,7 +426,8 @@ public class ImageCrop extends ImageGeometry {
     @Override
     protected void setActionDown(float x, float y) {
         super.setActionDown(x, y);
-        detectMovingEdges(x, y);
+        detectMovingEdges(x + mOffset[0], y + mOffset[1]);
+
     }
 
     @Override
@@ -571,20 +438,54 @@ public class ImageCrop extends ImageGeometry {
 
     @Override
     protected void setActionMove(float x, float y) {
-        if (movingEdges != 0){
+
+        if (movingEdges != 0) {
             moveEdges(x - mCurrentX, y - mCurrentY);
         }
         super.setActionMove(x, y);
+
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        setActionUp();
+        cropSetup();
+        invalidate();
     }
 
     private void cropSetup() {
+        RectF crop = getLocalCropBounds();
+        Matrix m = getCropBoundDisplayedMatrix();
+        m.mapRect(crop);
         if (mFixAspectRatio) {
-            RectF cb = getRotatedCropBounds();
-            fixAspectRatio(cb, mAspectWidth, mAspectHeight);
-            RectF cb0 = getUnrotatedCropBounds(cb);
-            setCropBounds(cb0);
-        } else {
-            setCropBounds(getLocalCropBounds());
+            CropMath.fixAspectRatio(crop, mAspectWidth, mAspectHeight);
+        }
+        float dCentX = getWidth() / 2;
+        float dCentY = getHeight() / 2;
+
+        BoundedRect r = getBoundedCrop(crop);
+        crop = r.getInner();
+        if (!setCropBounds(crop)) {
+            float h = mMinSideSize / 2;
+            float wScale = 1;
+            float hScale = mAspectHeight / mAspectWidth;
+            if (hScale < 1) {
+                wScale = mAspectWidth / mAspectHeight;
+                hScale = 1;
+            }
+            crop.set(dCentX - h * wScale, dCentY - h * hScale, dCentX + h * wScale, dCentY + h
+                    * hScale);
+            if (mFixAspectRatio) {
+                CropMath.fixAspectRatio(crop, mAspectWidth, mAspectHeight);
+            }
+            r.setInner(crop);
+            crop = r.getInner();
+            if (!setCropBounds(crop)) {
+                crop.set(dCentX - h, dCentY - h, dCentX + h, dCentY + h);
+                r.setInner(crop);
+                crop = r.getInner();
+                setCropBounds(crop);
+            }
         }
     }
 
@@ -600,7 +501,7 @@ public class ImageCrop extends ImageGeometry {
     protected void gainedVisibility() {
         float rot = getLocalRotation();
         // if has changed orientation via rotate
-        if( ((int) ((rot - mLastRot) / 90)) % 2 != 0 ){
+        if (((int) ((rot - mLastRot) / 90)) % 2 != 0) {
             swapAspect();
         }
         cropSetup();
@@ -610,7 +511,6 @@ public class ImageCrop extends ImageGeometry {
     @Override
     public void resetParameter() {
         super.resetParameter();
-        cropSetup();
     }
 
     @Override
@@ -635,7 +535,6 @@ public class ImageCrop extends ImageGeometry {
 
     @Override
     protected void drawShape(Canvas canvas, Bitmap image) {
-        // TODO: move style to xml
         gPaint.setAntiAlias(true);
         gPaint.setFilterBitmap(true);
         gPaint.setDither(true);
@@ -645,32 +544,35 @@ public class ImageCrop extends ImageGeometry {
             cropSetup();
             mFirstDraw = false;
         }
-        float rotation = getLocalRotation();
 
-        RectF crop = drawTransformed(canvas, image, gPaint);
+        RectF crop = drawTransformed(canvas, image, gPaint, mOffset);
         gPaint.setColor(mBorderColor);
         gPaint.setStrokeWidth(3);
         gPaint.setStyle(Paint.Style.STROKE);
         drawRuleOfThird(canvas, crop, gPaint);
 
-        if (mFixAspectRatio){
+        if (mFixAspectRatio) {
             float w = crop.width();
             float h = crop.height();
-            float diag = (float) Math.sqrt(w*w + h*h);
+            float diag = (float) Math.sqrt(w * w + h * h);
 
             float dash_len = 20;
             int num_intervals = (int) (diag / dash_len);
-            float [] tl = { crop.left, crop.top };
-            float centX = tl[0] + w/2;
-            float centY = tl[1] + h/2 + 5;
-            float [] br = { crop.right, crop.bottom };
-            float [] vec = GeometryMath.getUnitVectorFromPoints(tl, br);
+            float[] tl = {
+                    crop.left, crop.top
+            };
+            float centX = tl[0] + w / 2;
+            float centY = tl[1] + h / 2 + 5;
+            float[] br = {
+                    crop.right, crop.bottom
+            };
+            float[] vec = GeometryMath.getUnitVectorFromPoints(tl, br);
 
-            float [] counter = tl;
-            for (int x = 0; x < num_intervals; x++ ){
+            float[] counter = tl;
+            for (int x = 0; x < num_intervals; x++) {
                 float tempX = counter[0] + vec[0] * dash_len;
                 float tempY = counter[1] + vec[1] * dash_len;
-                if ((x % 2) == 0 && Math.abs(x - num_intervals / 2) > 2){
+                if ((x % 2) == 0 && Math.abs(x - num_intervals / 2) > 2) {
                     canvas.drawLine(counter[0], counter[1], tempX, tempY, gPaint);
                 }
                 counter[0] = tempX;
@@ -682,54 +584,35 @@ public class ImageCrop extends ImageGeometry {
             canvas.drawText(mAspect, centX, centY, gPaint);
         }
 
-        gPaint.setColor(mBorderColor);
-        gPaint.setStrokeWidth(3);
-        gPaint.setStyle(Paint.Style.STROKE);
-        drawStraighten(canvas, gPaint);
-
-        int decoded_moving = decoder(movingEdges, rotation);
-        canvas.save();
-        canvas.rotate(rotation, mCenterX, mCenterY);
-        RectF scaledCrop = unrotatedCropBounds();
-        boolean notMoving = decoded_moving == 0;
-        if (((decoded_moving & MOVE_TOP) != 0) || notMoving) {
-            drawIndicator(canvas, cropIndicator, scaledCrop.centerX(), scaledCrop.top);
-        }
-        if (((decoded_moving & MOVE_BOTTOM) != 0) || notMoving) {
-            drawIndicator(canvas, cropIndicator, scaledCrop.centerX(), scaledCrop.bottom);
-        }
-        if (((decoded_moving & MOVE_LEFT) != 0) || notMoving) {
-            drawIndicator(canvas, cropIndicator, scaledCrop.left, scaledCrop.centerY());
-        }
-        if (((decoded_moving & MOVE_RIGHT) != 0) || notMoving) {
-            drawIndicator(canvas, cropIndicator, scaledCrop.right, scaledCrop.centerY());
-        }
-        canvas.restore();
-    }
-
-    private int bitCycleLeft(int x, int times, int d) {
-        int mask = (1 << d) - 1;
-        int mout = x & mask;
-        times %= d;
-        int hi = mout >> (d - times);
-        int low = (mout << times) & mask;
-        int ret = x & ~mask;
-        ret |= low;
-        ret |= hi;
-        return ret;
-    }
-
-    protected int decoder(int movingEdges, float rotation) {
-        int rot = constrainedRotation(rotation);
-        switch (rot) {
-            case 90:
-                return bitCycleLeft(movingEdges, 3, 4);
-            case 180:
-                return bitCycleLeft(movingEdges, 2, 4);
-            case 270:
-                return bitCycleLeft(movingEdges, 1, 4);
-            default:
-                return movingEdges;
+        RectF scaledCrop = crop;
+        boolean notMoving = (movingEdges == 0);
+        if (mFixAspectRatio) {
+            if ((movingEdges == TOP_LEFT) || notMoving) {
+                drawIndicator(canvas, cropIndicator, scaledCrop.left, scaledCrop.top);
+            }
+            if ((movingEdges == TOP_RIGHT) || notMoving) {
+                drawIndicator(canvas, cropIndicator, scaledCrop.right, scaledCrop.top);
+            }
+            if ((movingEdges == BOTTOM_LEFT) || notMoving) {
+                drawIndicator(canvas, cropIndicator, scaledCrop.left, scaledCrop.bottom);
+            }
+            if ((movingEdges == BOTTOM_RIGHT) || notMoving) {
+                drawIndicator(canvas, cropIndicator, scaledCrop.right, scaledCrop.bottom);
+            }
+        } else {
+            if (((movingEdges & MOVE_TOP) != 0) || notMoving) {
+                drawIndicator(canvas, cropIndicator, scaledCrop.centerX(), scaledCrop.top);
+            }
+            if (((movingEdges & MOVE_BOTTOM) != 0) || notMoving) {
+                drawIndicator(canvas, cropIndicator, scaledCrop.centerX(), scaledCrop.bottom);
+            }
+            if (((movingEdges & MOVE_LEFT) != 0) || notMoving) {
+                drawIndicator(canvas, cropIndicator, scaledCrop.left, scaledCrop.centerY());
+            }
+            if (((movingEdges & MOVE_RIGHT) != 0) || notMoving) {
+                drawIndicator(canvas, cropIndicator, scaledCrop.right, scaledCrop.centerY());
+            }
         }
     }
+
 }
