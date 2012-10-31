@@ -154,7 +154,7 @@ public abstract class CommonControllerOverlay extends FrameLayout implements
     @Override
     public void showEnded() {
         mState = State.ENDED;
-        showMainView(mPlayPauseReplayView);
+        if (mCanReplay) showMainView(mPlayPauseReplayView);
     }
 
     @Override
