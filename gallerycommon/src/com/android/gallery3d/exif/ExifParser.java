@@ -136,6 +136,8 @@ public class ExifParser {
     private static final int TAG_SIZE = 12;
     private static final int OFFSET_SIZE = 2;
 
+    private static final Charset US_ASCII = Charset.forName("US-ASCII");
+
     private final CountedDataInputStream mTiffStream;
     private final int mOptions;
     private int mIfdStartOffset = 0;
@@ -665,26 +667,25 @@ public class ExifParser {
 
     /**
      * Reads a String from the InputStream with US-ASCII charset.
+     * The parser will read n bytes and convert it to ascii string.
      * This is used for reading values of type {@link ExifTag#TYPE_ASCII}.
      */
     public String readString(int n) throws IOException {
-        if (n > 0) {
-            byte[] buf = new byte[n];
-            mTiffStream.readOrThrow(buf);
-            return new String(buf, 0, n - 1, "US-ASCII");
-        } else {
-            return "";
-        }
+        return readString(n, US_ASCII);
     }
 
     /**
      * Reads a String from the InputStream with the given charset.
+     * The parser will read n bytes and convert it to string.
      * This is used for reading values of type {@link ExifTag#TYPE_ASCII}.
      */
     public String readString(int n, Charset charset) throws IOException {
-        byte[] buf = new byte[n];
-        mTiffStream.readOrThrow(buf);
-        return new String(buf, 0, n - 1, charset);
+        if (n > 0) {
+            byte[] buf = new byte[n];
+            return mTiffStream.readString(n, charset);
+        } else {
+            return "";
+        }
     }
 
     /**
