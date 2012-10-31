@@ -15,7 +15,7 @@
 -->
 
 <resources>
-    <style name="Theme.GalleryBase" parent="android:Theme.Holo">
+    <style name="Theme.GalleryBase" parent="Theme.Sherlock">
         <item name="listPreferredItemHeightSmall">?android:attr/listPreferredItemHeightSmall</item>
         <item name="switchStyle">@android:style/Widget.CompoundButton</item>
     </style>
