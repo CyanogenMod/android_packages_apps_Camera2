@@ -24,7 +24,7 @@
     <string name="yes" msgid="6281719750476942468">"Yebo"</string>
     <string name="save" msgid="8861201735155829719">"LONDOLOZA"</string>
     <string name="autofix" msgid="7944390017263652926">"Lungisa ngokuzenzakalelayo"</string>
-    <string name="crop" msgid="6491363680194796014">"Sika"</string>
+    <string name="crop" msgid="6491363680194796014">"Nquma"</string>
     <string name="crossprocess" msgid="1472013603094183614">"Inqubo-eshayisanayo"</string>
     <string name="documentary" msgid="3241380167998037384">"Awamadokhumentari"</string>
     <string name="doodle" msgid="7378447840618633191">"Imidwebo eshintshayo"</string>
@@ -51,7 +51,7 @@
     <string name="temperature" msgid="919852023864669874">"Ukufudumala"</string>
     <string name="tint" msgid="5176938985727714799">"Thikabeza umbala"</string>
     <string name="vignette" msgid="4858893727790879554">"I-Vignette"</string>
-    <string name="crop_tooltip" msgid="5028271751720427003">"Hudula insiza yokubeka uphawu ukuze usike ongakudingi esithombeni"</string>
+    <string name="crop_tooltip" msgid="5028271751720427003">"Hudula insiza yokubeka uphawu ukuze unqume ongakudingi esithombeni"</string>
     <string name="doodle_tooltip" msgid="652340030415979327">"Dweba esithombeni ukuze kube nemidwebo eshintshayo"</string>
     <string name="flip_tooltip" msgid="2442349154773120409">"Hudula isithombe ukuze usiphendule"</string>
     <string name="redeye_tooltip" msgid="8317077842047241049">"Thinta emehlweni abomvu ukuze uwasuse"</string>
