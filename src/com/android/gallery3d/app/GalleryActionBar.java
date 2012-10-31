@@ -17,9 +17,6 @@
 package com.android.gallery3d.app;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
-import android.app.ActionBar.OnMenuVisibilityListener;
-import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -27,15 +24,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.TwoLineListItem;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.OnMenuVisibilityListener;
+import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.ShareActionProvider;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 
@@ -186,7 +186,7 @@ public class GalleryActionBar implements OnNavigationListener {
     }
 
     public GalleryActionBar(AbstractGalleryActivity activity) {
-        mActionBar = activity.getActionBar();
+        mActionBar = activity.getSupportActionBar();
         mContext = activity.getAndroidContext();
         mActivity = activity;
         mInflater = ((Activity) mActivity).getLayoutInflater();
@@ -396,7 +396,7 @@ public class GalleryActionBar implements OnNavigationListener {
     private Intent mShareIntent;
 
     public void createActionBarMenu(int menuRes, Menu menu) {
-        mActivity.getMenuInflater().inflate(menuRes, menu);
+        mActivity.getSupportMenuInflater().inflate(menuRes, menu);
         mActionBarMenu = menu;
 
         MenuItem item = menu.findItem(R.id.action_share_panorama);
