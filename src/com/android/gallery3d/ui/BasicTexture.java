@@ -36,7 +36,7 @@ abstract class BasicTexture implements Texture {
     // Log a warning if a texture is larger along a dimension
     private static final int MAX_TEXTURE_SIZE = 4096;
 
-    protected int mId;
+    protected int mId = -1;
     protected int mState;
 
     protected int mWidth = UNSPECIFIED;
@@ -165,8 +165,9 @@ abstract class BasicTexture implements Texture {
 
     private void freeResource() {
         GLCanvas canvas = mCanvasRef;
-        if (canvas != null && isLoaded()) {
+        if (canvas != null && mId != -1) {
             canvas.unloadTexture(this);
+            mId = -1; // Don't free it again.
         }
         mState = STATE_UNLOADED;
         setAssociatedCanvas(null);
