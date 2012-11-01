@@ -80,10 +80,14 @@ public class ImageFilterTinyPlanet extends ImageFilter {
         int w = bitmapIn.getWidth();
         int h = bitmapIn.getHeight();
         int outputSize = (int) (w / 2f);
-
         ImagePreset preset = getImagePreset();
-        if (preset != null && preset.isPanoramaSafe()) {
-            bitmapIn = applyXmp(bitmapIn, preset, w);
+
+        if (preset != null) {
+            XMPMeta xmp = preset.getImageLoader().getXmpObject();
+            // Do nothing, just use bitmapIn as is if we don't have XMP.
+            if(xmp != null) {
+              bitmapIn = applyXmp(bitmapIn, xmp, w);
+            }
         }
 
         Bitmap mBitmapOut = Bitmap.createBitmap(
@@ -93,13 +97,8 @@ public class ImageFilterTinyPlanet extends ImageFilter {
         return mBitmapOut;
     }
 
-    private Bitmap applyXmp(Bitmap bitmapIn, ImagePreset preset, int intermediateWidth) {
+    private Bitmap applyXmp(Bitmap bitmapIn, XMPMeta xmp, int intermediateWidth) {
         try {
-            XMPMeta xmp = preset.getImageLoader().getXmpObject();
-            if (xmp == null) {
-                // Do nothing, just use bitmapIn as is.
-                return bitmapIn;
-            }
             int croppedAreaWidth =
                     getInt(xmp, CROPPED_AREA_IMAGE_WIDTH_PIXELS);
             int croppedAreaHeight =
