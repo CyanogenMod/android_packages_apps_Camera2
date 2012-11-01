@@ -41,8 +41,12 @@
             android:theme="@style/Theme.Gallery"
             android:logo="@mipmap/ic_launcher_gallery"
             android:hardwareAccelerated="true"
-            android:largeHeap="true">
+            android:largeHeap="true"
+            android:backupAgent="com.android.camera.CameraBackupAgent"
+            android:restoreAnyVersion="true">
         <uses-library android:name="com.google.android.media.effects" android:required="false" />
+        <meta-data android:name="com.google.android.backup.api_key"
+                android:value="AEdPqrEAAAAIRIXquXawbz6duuuCIUAZ_YJv1zbFMMcjZ0NoVw" />
         <activity android:name="com.android.gallery3d.app.MovieActivity"
                 android:label="@string/movie_view_label"
                 android:configChanges="orientation|keyboardHidden|screenSize">
