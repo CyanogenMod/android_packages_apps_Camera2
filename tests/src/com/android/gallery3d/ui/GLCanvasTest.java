@@ -359,13 +359,6 @@ public class GLCanvasTest extends TestCase {
         }
     }
 
-    @SmallTest
-    public void testGetGLInstance() {
-        GL11 glStub = new GLStub();
-        GLCanvas canvas = new GLCanvasImpl(glStub);
-        assertSame(glStub, canvas.getGLInstance());
-    }
-
     private static void assertPremultipliedBlending(GLMock mock) {
         assertTrue(mock.mGLBlendFuncCalled > 0);
         assertTrue(mock.mGLBlendEnabled);
