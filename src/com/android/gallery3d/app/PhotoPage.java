@@ -1137,8 +1137,7 @@ public class PhotoPage extends ActivityState implements
         }
 
         int supported = item.getSupportedOperations();
-        boolean playVideo = (mSecureAlbum == null) &&
-                ((supported & MediaItem.SUPPORT_PLAY) != 0);
+        boolean playVideo = ((supported & MediaItem.SUPPORT_PLAY) != 0);
         boolean unlock = ((supported & MediaItem.SUPPORT_UNLOCK) != 0);
         boolean goBack = ((supported & MediaItem.SUPPORT_BACK) != 0);
         boolean launchCamera = ((supported & MediaItem.SUPPORT_CAMERA_SHORTCUT) != 0);
@@ -1153,7 +1152,11 @@ public class PhotoPage extends ActivityState implements
         }
 
         if (playVideo) {
-            playVideo(mActivity, item.getPlayUri(), item.getName());
+            if (mSecureAlbum == null) {
+                playVideo(mActivity, item.getPlayUri(), item.getName());
+            } else {
+                mActivity.getStateManager().finishState(this);
+            }
         } else if (goBack) {
             onBackPressed();
         } else if (unlock) {
