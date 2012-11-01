@@ -64,17 +64,22 @@ public class SecureAlbum extends MediaSet implements StitchingChangeListener {
     }
 
     public void addMediaItem(boolean isVideo, int id) {
+        Path pathBase;
         if (isVideo) {
-            mAllItems.add(Path.fromString("/local/video/item/" + id));
+            pathBase = LocalVideo.ITEM_PATH;
             mMinVideoId = Math.min(mMinVideoId, id);
             mMaxVideoId = Math.max(mMaxVideoId, id);
         } else {
-            mAllItems.add(Path.fromString("/local/image/item/" + id));
+            pathBase = LocalImage.ITEM_PATH;
             mMinImageId = Math.min(mMinImageId, id);
             mMaxImageId = Math.max(mMaxImageId, id);
         }
-        mAllItemTypes.add(isVideo);
-        mNotifier.fakeChange();
+        Path path = pathBase.getChild(id);
+        if (!mAllItems.contains(path)) {
+            mAllItems.add(path);
+            mAllItemTypes.add(isVideo);
+            mNotifier.fakeChange();
+        }
     }
 
     // The sequence is stitching items, local media items, and unlock image.
