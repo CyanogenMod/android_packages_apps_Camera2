@@ -62,7 +62,7 @@
     <string name="curvesRGB" msgid="915010781090477550">"곡선"</string>
     <string name="vignette" msgid="934721068851885390">"비네트"</string>
     <string name="redeye" msgid="4508883127049472069">"적목현상 없애기"</string>
-    <string name="straighten" msgid="26025591664983528">"똑바르게"</string>
+    <string name="straighten" msgid="26025591664983528">"수평조절"</string>
     <string name="crop" msgid="5781263790107850771">"자르기"</string>
     <string name="rotate" msgid="2796802553793795371">"회전"</string>
     <string name="mirror" msgid="5482518108154883096">"거울"</string>
