@@ -27,6 +27,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
@@ -48,6 +49,7 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
     public static final String KEY_GET_ALBUM = "get-album";
     public static final String KEY_TYPE_BITS = "type-bits";
     public static final String KEY_MEDIA_TYPES = "mediaTypes";
+    public static final String KEY_DISMISS_KEYGUARD = "dismiss-keyguard";
 
     private static final String TAG = "Gallery";
     private Dialog mVersionCheckDialog;
@@ -57,6 +59,11 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+
+        if (getIntent().getBooleanExtra(KEY_DISMISS_KEYGUARD, false)) {
+            getWindow().addFlags(
+                    WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        }
 
         setContentView(R.layout.main);
 
