@@ -1159,7 +1159,9 @@ public class PhotoPage extends ActivityState implements
         } else if (goBack) {
             onBackPressed();
         } else if (unlock) {
-            mActivity.getStateManager().finishState(this);
+            Intent intent = new Intent(mActivity, Gallery.class);
+            intent.putExtra(Gallery.KEY_DISMISS_KEYGUARD, true);
+            mActivity.startActivity(intent);
         } else if (launchCamera) {
             launchCamera();
         } else {
