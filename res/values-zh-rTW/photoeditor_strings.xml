@@ -19,7 +19,7 @@
     <string name="photoeditor_name" msgid="2141682370266509503">"相片工作室"</string>
     <string name="loading_failure" msgid="4430965264692871140">"無法載入相片"</string>
     <string name="saving_failure" msgid="7896222027047170982">"無法儲存編輯完成的相片"</string>
-    <string name="photo_saved" msgid="358760800912053916">"編輯完成的相片已儲存至「<xliff:g id="FOLDER_NAME">%s</xliff:g>」"</string>
+    <string name="photo_saved" msgid="358760800912053916">"已將編輯完成的相片儲存到「<xliff:g id="FOLDER_NAME">%s</xliff:g>」"</string>
     <string name="discard_unsaved_photo" msgid="7621529106313330133">"捨棄尚未儲存的變更？"</string>
     <string name="yes" msgid="6281719750476942468">"是"</string>
     <string name="save" msgid="8861201735155829719">"儲存"</string>
@@ -34,7 +34,7 @@
     <string name="filllight" msgid="5228480587177464589">"調整亮度"</string>
     <string name="fisheye" msgid="3102157475164320675">"魚眼"</string>
     <string name="flip" msgid="404825526098985907">"翻轉"</string>
-    <string name="grain" msgid="8336064860901705844">"影片雜訊"</string>
+    <string name="grain" msgid="8336064860901705844">"噴砂效果"</string>
     <string name="grayscale" msgid="895511627632504167">"黑白"</string>
     <string name="accessibility_black_and_white" msgid="1304436215071513173">"黑白"</string>
     <string name="highlight" msgid="7206397969888227366">"強光"</string>
@@ -48,7 +48,7 @@
     <string name="shadow" msgid="6032230441080829394">"陰影"</string>
     <string name="sharpen" msgid="4613973349599918590">"銳化"</string>
     <string name="straighten" msgid="4551302289295998179">"拉正"</string>
-    <string name="temperature" msgid="919852023864669874">"色溫"</string>
+    <string name="temperature" msgid="919852023864669874">"暖色調"</string>
     <string name="tint" msgid="5176938985727714799">"著色"</string>
     <string name="vignette" msgid="4858893727790879554">"暈影"</string>
     <string name="crop_tooltip" msgid="5028271751720427003">"拖曳標記即可裁剪相片"</string>

@@ -31,7 +31,7 @@
     <string name="duotone" msgid="3248891724790119677">"Tofargebilde"</string>
     <string name="facelift" msgid="1485390158100614056">"Ansiktsglød"</string>
     <string name="facetan" msgid="3921463359584460598">"Solbruning"</string>
-    <string name="filllight" msgid="5228480587177464589">"Fyll-lys"</string>
+    <string name="filllight" msgid="5228480587177464589">"Utfyllende lys"</string>
     <string name="fisheye" msgid="3102157475164320675">"Fiskeøye"</string>
     <string name="flip" msgid="404825526098985907">"Vend"</string>
     <string name="grain" msgid="8336064860901705844">"Filmtekstur"</string>
@@ -49,7 +49,7 @@
     <string name="sharpen" msgid="4613973349599918590">"Gjør skarpere"</string>
     <string name="straighten" msgid="4551302289295998179">"Rett opp"</string>
     <string name="temperature" msgid="919852023864669874">"Varme"</string>
-    <string name="tint" msgid="5176938985727714799">"Fargetone"</string>
+    <string name="tint" msgid="5176938985727714799">"Fargeskjær"</string>
     <string name="vignette" msgid="4858893727790879554">"Vignettering"</string>
     <string name="crop_tooltip" msgid="5028271751720427003">"Dra markørene for å beskjære bildet"</string>
     <string name="doodle_tooltip" msgid="652340030415979327">"Tegn på bildet for å drodle"</string>
@@ -59,7 +59,7 @@
     <string name="straighten_tooltip" msgid="2512346096190533095">"Dra bildet for å rette på det"</string>
     <string name="photoeditor_exposure" msgid="460371724772128171">"Eksponeringseffekter"</string>
     <string name="photoeditor_color" msgid="1026541951500898735">"Fargeeffekter"</string>
-    <string name="photoeditor_artistic" msgid="7730603034092865949">"Kustneriske effekter"</string>
+    <string name="photoeditor_artistic" msgid="7730603034092865949">"Kunstneriske effekter"</string>
     <string name="photoeditor_fix" msgid="3812167922898325515">"Forbedre"</string>
     <string name="photoeditor_undo" msgid="6702301566524836996">"Angre"</string>
     <string name="photoeditor_redo" msgid="5203739560744044128">"Gjør om"</string>

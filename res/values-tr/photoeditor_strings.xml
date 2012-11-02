@@ -19,7 +19,7 @@
     <string name="photoeditor_name" msgid="2141682370266509503">"Fotoğraf Stüdyosu"</string>
     <string name="loading_failure" msgid="4430965264692871140">"Fotoğraf yüklenemedi"</string>
     <string name="saving_failure" msgid="7896222027047170982">"Düzenlenen fotoğraf kaydedilemedi"</string>
-    <string name="photo_saved" msgid="358760800912053916">"Düzenlenen fotoğraf <xliff:g id="FOLDER_NAME">%s</xliff:g> içine kaydedildi"</string>
+    <string name="photo_saved" msgid="358760800912053916">"Düzenlenen fotoğraf <xliff:g id="FOLDER_NAME">%s</xliff:g> klasörüne kaydedildi"</string>
     <string name="discard_unsaved_photo" msgid="7621529106313330133">"Kaydedilmeyen değişiklikler silinsin mi?"</string>
     <string name="yes" msgid="6281719750476942468">"Evet"</string>
     <string name="save" msgid="8861201735155829719">"KAYDET"</string>
@@ -35,7 +35,7 @@
     <string name="fisheye" msgid="3102157475164320675">"Balık Gözü"</string>
     <string name="flip" msgid="404825526098985907">"Çevir"</string>
     <string name="grain" msgid="8336064860901705844">"Film Greni"</string>
-    <string name="grayscale" msgid="895511627632504167">"S&amp;B"</string>
+    <string name="grayscale" msgid="895511627632504167">"Siyah Beyaz"</string>
     <string name="accessibility_black_and_white" msgid="1304436215071513173">"Siyah beyaz"</string>
     <string name="highlight" msgid="7206397969888227366">"Parlak Noktalar"</string>
     <string name="lomoish" msgid="5630441654104635556">"Lomo"</string>
