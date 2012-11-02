@@ -43,4 +43,7 @@
     <color name="darker_transparent">#C1000000</color>
     <style name="ActionBarTwoLinePrimary" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title"></style>
     <style name="ActionBarTwoLineSecondary" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Subtitle"></style>
+    <style name="ActionBarTwoLineItem">
+        <item name="android:background">@drawable/action_bar_two_line_background</item>
+    </style>
 </resources>
