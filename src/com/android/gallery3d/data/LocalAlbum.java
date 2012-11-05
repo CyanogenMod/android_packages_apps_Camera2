@@ -61,7 +61,7 @@ public class LocalAlbum extends MediaSet {
         mApplication = application;
         mResolver = application.getContentResolver();
         mBucketId = bucketId;
-        mName = getLocalizedName(application.getResources(), bucketId, name);
+        mName = name;
         mIsImage = isImage;
 
         if (isImage) {
@@ -245,7 +245,7 @@ public class LocalAlbum extends MediaSet {
 
     @Override
     public String getName() {
-        return mName;
+        return getLocalizedName(mApplication.getResources(), mBucketId, mName);
     }
 
     @Override
