@@ -170,9 +170,9 @@ abstract public class ActivityState {
 
     protected void transitionOnNextPause(Class<? extends ActivityState> outgoing,
             Class<? extends ActivityState> incoming, StateTransitionAnimation.Transition hint) {
-        if (outgoing == PhotoPage.class && incoming == AlbumPage.class) {
+        if (outgoing == SinglePhotoPage.class && incoming == AlbumPage.class) {
             mNextTransition = StateTransitionAnimation.Transition.Outgoing;
-        } else if (outgoing == AlbumPage.class && incoming == PhotoPage.class) {
+        } else if (outgoing == AlbumPage.class && incoming == SinglePhotoPage.class) {
             mNextTransition = StateTransitionAnimation.Transition.PhotoIncoming;
         } else {
             mNextTransition = hint;

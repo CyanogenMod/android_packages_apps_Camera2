@@ -215,7 +215,7 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
                     }
                 }
 
-                getStateManager().startState(PhotoPage.class, data);
+                getStateManager().startState(SinglePhotoPage.class, data);
             }
         }
     }
