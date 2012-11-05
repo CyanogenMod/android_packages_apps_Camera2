@@ -303,10 +303,10 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
                     startInFilmstrip);
             data.putBoolean(PhotoPage.KEY_IN_CAMERA_ROLL, mMediaSet.isCameraRoll());
             if (startInFilmstrip) {
-                mActivity.getStateManager().switchState(this, PhotoPage.class, data);
+                mActivity.getStateManager().switchState(this, FilmstripPage.class, data);
             } else {
                 mActivity.getStateManager().startStateForResult(
-                            PhotoPage.class, REQUEST_PHOTO, data);
+                            SinglePhotoPage.class, REQUEST_PHOTO, data);
             }
         }
     }
@@ -377,7 +377,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         }
 
         mLaunchedFromPhotoPage =
-                mActivity.getStateManager().hasStateClass(PhotoPage.class);
+                mActivity.getStateManager().hasStateClass(FilmstripPage.class);
         mInCameraApp = data.getBoolean(PhotoPage.KEY_APP_BRIDGE, false);
 
         mHandler = new SynchronizedHandler(mActivity.getGLRoot()) {

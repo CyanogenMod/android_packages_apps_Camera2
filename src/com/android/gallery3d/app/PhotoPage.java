@@ -72,7 +72,7 @@ import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.GalleryUtils;
 
-public class PhotoPage extends ActivityState implements
+public abstract class PhotoPage extends ActivityState implements
         PhotoView.Listener, OrientationManager.Listener, AppBridge.Server,
         PhotoPageBottomControls.Delegate, GalleryActionBar.OnAlbumModeSelectedListener {
     private static final String TAG = "PhotoPage";
@@ -1244,7 +1244,7 @@ public class PhotoPage extends ActivityState implements
                 Bundle data = new Bundle(getData());
                 data.putString(KEY_MEDIA_SET_PATH, albumPath.toString());
                 data.putString(PhotoPage.KEY_MEDIA_ITEM_PATH, path.toString());
-                mActivity.getStateManager().startState(PhotoPage.class, data);
+                mActivity.getStateManager().startState(SinglePhotoPage.class, data);
                 return;
             }
             mModel.setCurrentPhoto(path, mCurrentIndex);
