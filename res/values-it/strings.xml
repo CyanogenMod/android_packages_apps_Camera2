@@ -57,7 +57,7 @@
     <string name="confirm" msgid="8646870096527848520">"Conferma"</string>
     <string name="cancel" msgid="3637516880917356226">"Annulla"</string>
     <string name="share" msgid="3619042788254195341">"Condividi"</string>
-    <string name="share_panorama" msgid="2569029972820978718">"Condividi panoramica"</string>
+    <string name="share_panorama" msgid="2569029972820978718">"Condividi panorama"</string>
     <string name="share_as_photo" msgid="8959225188897026149">"Condividi come foto"</string>
     <string name="deleted" msgid="6795433049119073871">"Eliminata"</string>
     <string name="undo" msgid="2930873956446586313">"ANNULLA"</string>
@@ -197,6 +197,6 @@
     <string name="please_wait" msgid="7296066089146487366">"Attendi"</string>
     <string name="save_into" msgid="4960537214388766062">"Salvataggio del video ritagliato nell\'album:"</string>
     <string name="trim_too_short" msgid="751593965620665326">"Impossibile tagliare: video di destinazione troppo breve"</string>
-    <string name="pano_progress_text" msgid="1586851614586678464">"Creazione panoramica in corso"</string>
+    <string name="pano_progress_text" msgid="1586851614586678464">"Creazione panorama in corso"</string>
     <string name="save" msgid="613976532235060516">"Salva"</string>
 </resources>
