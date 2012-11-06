@@ -688,7 +688,8 @@ public class PhotoPage extends ActivityState implements
     }
 
     private void launchCamera() {
-        Intent intent = new Intent(mActivity, CameraActivity.class);
+        Intent intent = new Intent(mActivity, CameraActivity.class)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mRecenterCameraOnResume = false;
         mActivity.startActivity(intent);
     }
