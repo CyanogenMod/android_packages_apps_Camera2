@@ -305,7 +305,7 @@
                 android:taskAffinity="com.android.camera.SecureCameraActivity"
                 android:excludeFromRecents="true"
                 android:label="@string/camera_label"
-                android:theme="@style/Theme.Camera"
+                android:theme="@style/Theme.CameraSecure"
                 android:icon="@mipmap/ic_launcher_camera"
                 android:configChanges="orientation|screenSize|keyboardHidden"
                 android:clearTaskOnLaunch="true"
