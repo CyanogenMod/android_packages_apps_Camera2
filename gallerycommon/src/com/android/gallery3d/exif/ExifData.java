@@ -17,8 +17,12 @@
 package com.android.gallery3d.exif;
 
 import java.nio.ByteOrder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  *  This class stores the EXIF header in IFDs according to the JPEG specification.
@@ -27,6 +31,17 @@ import java.util.Arrays;
  *  @see IfdData
  */
 public class ExifData {
+
+    private static final String GPS_DATE_FORMAT_STR = "yyyy:MM:dd";
+    private static final String DATETIME_FORMAT_STR = "yyyy:MM:dd kk:mm:ss";
+
+    private final DateFormat mDateTimeStampFormat =
+            new SimpleDateFormat(DATETIME_FORMAT_STR);
+    private final DateFormat mGPSDateStampFormat =
+            new SimpleDateFormat(GPS_DATE_FORMAT_STR);
+    private final Calendar mGPSTimeStampCalendar = Calendar.getInstance(
+            TimeZone.getTimeZone("UTC"));
+
     private final IfdData[] mIfdDatas = new IfdData[IfdId.TYPE_IFD_COUNT];
     private byte[] mThumbnail;
     private ArrayList<byte[]> mStripBytes = new ArrayList<byte[]>();
@@ -34,6 +49,7 @@ public class ExifData {
 
     public ExifData(ByteOrder order) {
         mByteOrder = order;
+        mGPSDateStampFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     IfdData getIfdData(int ifdId) {
@@ -137,8 +153,9 @@ public class ExifData {
     }
 
     /**
-     * Adds {@link ExifTag#TAG_GPS_LATITUDE}, {@link ExifTag#TAG_GPS_LONGITUDE},
-     * {@link ExifTag#TAG_GPS_LATITUDE_REF} and {@link ExifTag#TAG_GPS_LONGITUDE_REF} with the
+     * A convenient method to adds tags {@link ExifTag#TAG_GPS_LATITUDE},
+     * {@link ExifTag#TAG_GPS_LONGITUDE}, {@link ExifTag#TAG_GPS_LATITUDE_REF} and
+     * {@link ExifTag#TAG_GPS_LONGITUDE_REF} at once with the
      * given latitude and longitude.
      */
     public void addGpsTags(double latitude, double longitude) {
@@ -167,6 +184,40 @@ public class ExifData {
         gpsIfd.setTag(longTag);
         gpsIfd.setTag(latRefTag);
         gpsIfd.setTag(longRefTag);
+    }
+
+    /**
+     * A convenient method to add date or time related tags (
+     * {@link ExifTag#TAG_DATE_TIME_DIGITIZED}, {@link ExifTag#TAG_DATE_TIME_ORIGINAL},
+     * and {@link ExifTag#TAG_DATE_TIME}) with the given time stamp value.
+     *
+     */
+    public void addDateTimeStampTag(short tagId, long timestamp, TimeZone timezone) {
+        if (tagId == ExifTag.TAG_DATE_TIME ||
+                tagId == ExifTag.TAG_DATE_TIME_DIGITIZED ||
+                tagId == ExifTag.TAG_DATE_TIME_ORIGINAL) {
+            mDateTimeStampFormat.setTimeZone(timezone);
+            addTag(tagId).setValue(mDateTimeStampFormat.format(timestamp));
+        } else {
+            throw new IllegalArgumentException(
+                    String.format("Tag %04x is not a supported date or time stamp tag", tagId));
+        }
+    }
+
+    /**
+     * A convenient method to add both {@link ExifTag#TAG_GPS_DATE_STAMP}
+     * and {@link ExifTag#TAG_GPS_TIME_STAMP}).
+     * Note that UTC timezone will be used as specified in the EXIF standard.
+     */
+    public void addGpsDateTimeStampTag(long timestamp) {
+        addTag(ExifTag.TAG_GPS_DATE_STAMP).setValue(mGPSDateStampFormat.format(timestamp));
+
+        mGPSTimeStampCalendar.setTimeInMillis(timestamp);
+        addTag(ExifTag.TAG_GPS_TIME_STAMP).
+                setValue(new Rational[] {
+                        new Rational(mGPSTimeStampCalendar.get(Calendar.HOUR_OF_DAY), 1),
+                        new Rational(mGPSTimeStampCalendar.get(Calendar.MINUTE), 1),
+                        new Rational(mGPSTimeStampCalendar.get(Calendar.SECOND), 1)});
     }
 
     private static Rational[] toExifLatLong(double value) {
