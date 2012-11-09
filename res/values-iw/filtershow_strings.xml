@@ -17,7 +17,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="title_activity_filter_show" msgid="2036539130684382763">"עורך תמונות"</string>
-    <string name="cannot_load_image" msgid="5023634941212959976">"לא ניתן לטעון את התמונה!"</string>
+    <string name="cannot_load_image" msgid="5023634941212959976">"לא ניתן להעלות את התמונה!"</string>
     <!-- no translation found for original_picture_text (3076213290079909698) -->
     <skip />
     <string name="original" msgid="3524493791230430897">"מקור"</string>
