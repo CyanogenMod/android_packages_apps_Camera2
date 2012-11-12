@@ -1024,11 +1024,16 @@ public abstract class PhotoPage extends ActivityState implements
         refreshHidingMessage();
         MediaItem current = mModel.getMediaItem(0);
 
+        // This is a shield for monkey when it clicks the action bar
+        // menu when transitioning from filmstrip to camera
+        if (current instanceof SnailItem) return true;
+        // TODO: We should check the current photo against the MediaItem
+        // that the menu was initially created for. We need to fix this
+        // after PhotoPage being refactored.
         if (current == null) {
             // item is not ready, ignore
             return true;
         }
-
         int currentIndex = mModel.getCurrentIndex();
         Path path = current.getPath();
 
