@@ -25,31 +25,50 @@ print "<exif>"
 #
 # 1. tag:
 #
-# x) name = value
-#      - Tag 0x1234
+# | | | x) name = value
+# | | |     - Tag 0x1234
 #
 # 2. IFD indicator:
 #
-# + [xxx directory with xx entries]
+# | | | + [xxx directory with xx entries]
 #
 p = re.compile(
-        "(^.*?[0-9]\).*? = .*?\n.*?- Tag 0x[0-9a-f]{4})|(\+ \[.*? directory with [0-9]+ entries]$)"
+        "(((?:\| )+)[0-9]*\).*? = .*?\n.*?- Tag 0x[0-9a-f]{4})" + "|"
+        + "(((?:\| )*)\+ \[.*? directory with [0-9]+ entries]$)"
         , re.M)
 tags = p.findall(text)
 
+layer = 0
+ifds = []
+
 for s in tags:
-    if s[1]:
-        ifd = s[1][3:].split()[0]
+    # IFD indicator
+    if s[2]:
+        l = len(s[3])
+        ifd = s[2][l + 3:].split()[0]
+        new_layer = l / 2 + 1
+        if new_layer > layer:
+            ifds.append(ifd)
+        else:
+            for i in range(layer - new_layer):
+                ifds.pop()
+            ifds[-1] = ifd
+        layer = new_layer
     else:
+        l = len(s[1])
         s = s[0]
+        new_layer = l / 2
+        if new_layer < layer:
+            for i in range(layer - new_layer):
+                ifds.pop()
+        layer = new_layer
+
         # find the raw value in the parenthesis
-        p = re.compile("\(.*\)\n")
-        value = p.search(s)
+        value = re.search("\(.*\)\n", s)
         if value:
             value = value.group(0)[1:-2]
         else:
-            p = re.compile("=.*\n")
-            value = p.search(s)
+            value = re.search("=.*\n", s)
             value = value.group(0)[2:-1]
 
         # find the ID
@@ -61,6 +80,6 @@ for s in tags:
         p = re.compile("[0-9]*?\).*? = ")
         name = p.search(s)
         name = name.group(0)[4:-3]
-        print ('    <tag ifd="' + ifd + '" id="'
+        print ('    <tag ifd="' + ifds[-1] + '" id="'
             + _id + '" name="' + name +'">' + value + "</tag>")
 print "</exif>"
