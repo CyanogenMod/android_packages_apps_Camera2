@@ -83,8 +83,7 @@ public class MuteVideo {
                             // Show the result only when the activity not
                             // stopped.
                             Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-                            intent.setDataAndTypeAndNormalize(
-                                    Uri.fromFile(mDstFileInfo.mFile), "video/*");
+                            intent.setDataAndType(Uri.fromFile(mDstFileInfo.mFile), "video/*");
                             intent.putExtra(MediaStore.EXTRA_FINISH_ON_COMPLETION, false);
                             mActivity.startActivity(intent);
                         }

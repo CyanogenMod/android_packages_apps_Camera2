@@ -23,6 +23,8 @@ import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.android.gallery3d.common.ApiHelper;
+
 /**
  * The controller for the Trimming Video.
  */
@@ -41,36 +43,41 @@ public class TrimControllerOverlay extends CommonControllerOverlay  {
         if (mState == State.PLAYING) {
             mPlayPauseReplayView.setVisibility(View.INVISIBLE);
         }
-        mPlayPauseReplayView.setAlpha(1f);
+        if (ApiHelper.HAS_OBJECT_ANIMATION) {
+            mPlayPauseReplayView.setAlpha(1f);
+        }
     }
 
     @Override
     public void showPlaying() {
         super.showPlaying();
+        if (ApiHelper.HAS_OBJECT_ANIMATION) {
+            // Add animation to hide the play button while playing.
+            ObjectAnimator anim = ObjectAnimator.ofFloat(mPlayPauseReplayView, "alpha", 1f, 0f);
+            anim.setDuration(200);
+            anim.start();
+            anim.addListener(new AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                }
 
-        // Add animation to hide the play button while playing.
-        ObjectAnimator anim = ObjectAnimator.ofFloat(mPlayPauseReplayView, "alpha", 1f, 0f);
-        anim.setDuration(200);
-        anim.start();
-        anim.addListener(new AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-            }
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    hidePlayButtonIfPlaying();
+                }
 
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                hidePlayButtonIfPlaying();
-            }
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    hidePlayButtonIfPlaying();
+                }
 
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                hidePlayButtonIfPlaying();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-          });
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                }
+            });
+        } else {
+            hidePlayButtonIfPlaying();
+        }
     }
 
     @Override

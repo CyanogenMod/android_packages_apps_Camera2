@@ -173,6 +173,9 @@ public class ApiHelper {
     public static final boolean HAS_ANNOUNCE_FOR_ACCESSIBILITY =
             Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
 
+    public static final boolean HAS_OBJECT_ANIMATION =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
         try {
