@@ -33,7 +33,7 @@ print "<exif>"
 # | | | + [xxx directory with xx entries]
 #
 p = re.compile(
-        "(((?:\| )+)[0-9]*\).*? = .*?\n.*?- Tag 0x[0-9a-f]{4})" + "|"
+        "(((?:\| )+)[0-9]*\)(?:(?:.*? = .*?)|(?:.*? \(SubDirectory\) -->))\n.*?- Tag 0x[0-9a-f]{4})" + "|"
         + "(((?:\| )*)\+ \[.*? directory with [0-9]+ entries]$)"
         , re.M)
 tags = p.findall(text)
@@ -68,16 +68,22 @@ for s in tags:
         _id = _id.group(0)
 
         # find the name
-        name = re.search("[0-9]*?\).*? = ", s)
-        name = name.group(0)[4:-3]
+        name = re.search("[0-9]*?\).*?(?:(?: = )|(?: \(SubDirectory\) -->))", s)
+        name = name.group(0).split()[1]
 
         # find the raw value in the parenthesis
-        value = re.search("\(.*\)\n", s)
-        if (name != 'Model' and value):
-            value = value.group(0)[1:-2]
+        value = re.search("\(SubDirectory\) -->", s)
+        if value:
+            value = "NO_VALUE"
         else:
-            value = re.search("=.*\n", s)
-            value = value.group(0)[2:-1]
+            value = re.search("\(.*\)\n", s)
+            if (name != 'Model' and value):
+                value = value.group(0)[1:-2]
+            else:
+                value = re.search("=.*\n", s)
+                value = value.group(0)[2:-1]
+                if "[snip]" in value:
+                    value = "NO_VALUE"
 
         print ('    <tag ifd="' + ifds[-1] + '" id="'
             + _id + '" name="' + name +'">' + value + "</tag>")
