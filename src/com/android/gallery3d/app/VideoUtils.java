@@ -19,6 +19,7 @@
 
 package com.android.gallery3d.app;
 
+import com.android.gallery3d.util.SaveVideoFileInfo;
 import com.coremedia.iso.IsoFile;
 import com.coremedia.iso.boxes.TimeToSampleBox;
 import com.googlecode.mp4parser.authoring.Movie;
@@ -36,12 +37,46 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Shortens/Crops a track
- */
-public class TrimVideoUtils {
+public class VideoUtils {
 
-    public static void startTrim(File src, File dst, int startMs, int endMs) throws IOException {
+    public static void startMute(String filePath, SaveVideoFileInfo dstFileInfo) throws IOException {
+        File dst = dstFileInfo.mFile;
+        File src = new File(filePath);
+        RandomAccessFile randomAccessFile = new RandomAccessFile(src, "r");
+        Movie movie = MovieCreator.build(randomAccessFile.getChannel());
+
+        // remove all tracks we will create new tracks from the old
+        List<Track> tracks = movie.getTracks();
+        movie.setTracks(new LinkedList<Track>());
+
+        for (Track track : tracks) {
+            if (track.getHandler().equals("vide")) {
+                movie.addTrack(track);
+            }
+        }
+        writeMovieIntoFile(dst, movie);
+        randomAccessFile.close();
+    }
+
+    private static void writeMovieIntoFile(File dst, Movie movie)
+            throws IOException {
+        if (!dst.exists()) {
+            dst.createNewFile();
+        }
+
+        IsoFile out = new DefaultMp4Builder().build(movie);
+        FileOutputStream fos = new FileOutputStream(dst);
+        FileChannel fc = fos.getChannel();
+        out.getBox(fc);  // This one build up the memory.
+
+        fc.close();
+        fos.close();
+    }
+
+    /**
+     * Shortens/Crops a track
+     */
+    public static void startTrim(File src, File dst, int startMs, int endMs, int totalMs) throws IOException {
         RandomAccessFile randomAccessFile = new RandomAccessFile(src, "r");
         Movie movie = MovieCreator.build(randomAccessFile.getChannel());
 
@@ -100,18 +135,7 @@ public class TrimVideoUtils {
             }
             movie.addTrack(new CroppedTrack(track, startSample, endSample));
         }
-        IsoFile out = new DefaultMp4Builder().build(movie);
-
-        if (!dst.exists()) {
-            dst.createNewFile();
-        }
-
-        FileOutputStream fos = new FileOutputStream(dst);
-        FileChannel fc = fos.getChannel();
-        out.getBox(fc);  // This one build up the memory.
-
-        fc.close();
-        fos.close();
+        writeMovieIntoFile(dst, movie);
         randomAccessFile.close();
     }
 

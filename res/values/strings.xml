@@ -183,11 +183,18 @@
          offline. [CHAR LIMIT=15] -->
     <string name="caching_label">Caching\u2026</string>
 
+    <!-- The title of the menu item to let user crop the image. [CHAR LIMIT=15] -->
     <string name="crop_action">Crop</string>
+    <!-- The title of the menu item to let user trim the video. [CHAR LIMIT=15] -->
     <string name="trim_action">Trim</string>
+    <!-- The title of the menu item to let user mute the video. [CHAR LIMIT=15] -->
+    <string name="mute_action">Mute</string>
+    <!-- The title of the menu item to let user set the image as background etc. [CHAR LIMIT=15] -->
     <string name="set_as">Set as</string>
 
-    <!-- String indicating an approximate location eg. Around Palo Alto, CA -->
+    <!-- String indicating an error when muting the video. [CHAR LIMIT=30] -->
+    <string name="video_mute_err">Can\'t mute video.</string>
+    <!-- String indicating an error when playing the video. [CHAR LIMIT=30] -->
     <string name="video_err">Can\'t play video.</string>
 
     <!-- Strings for grouping operations in the menu. The photos can be grouped
@@ -494,12 +501,14 @@
     <!-- The tilte of a dialog showing trimming in progress. [CHAR LIMIT=20] -->
     <string name="trimming">Trimming</string>
 
+    <!-- The tilte of a dialog showing muting in progress. [CHAR LIMIT=20] -->
+    <string name="muting">Muting</string>
+
     <!-- The content of a dialog showing trimming in progress. [CHAR LIMIT=30] -->
     <string name="please_wait">Please wait</string>
 
-    <!-- Toast after the trimming is done. [CHAR LIMIT=50] -->
-    <!-- TODO: this should be a format string!-->
-    <string name="save_into">Saving trimmed video into album :</string>
+    <!-- Toast after the trimming / muting is done. [CHAR LIMIT=50] -->
+    <string name="save_into">Saving video to <xliff:g id="album_name">%1$s</xliff:g> \u2026</string>
 
     <!-- Toast if the trimmed video is too short to trim. [CHAR LIMIT=80] -->
     <string name="trim_too_short">Can not trim : target video is too short</string>
