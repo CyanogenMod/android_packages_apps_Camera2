@@ -1286,7 +1286,8 @@ public class ExifTag {
         setValue(value, 0, value.length);
     }
 
-    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy:MM:dd kk:mm:ss");
+    private static final SimpleDateFormat TIME_FORMAT =
+            new SimpleDateFormat("yyyy:MM:dd kk:mm:ss");
 
     /**
      * Sets a timestamp to this tag. The method converts the timestamp with the format of
@@ -1302,41 +1303,23 @@ public class ExifTag {
             setValue(TIME_FORMAT.format(new Date(time)));
         }
     }
-
     /**
-     * Gets the {@link #TYPE_UNSIGNED_SHORT} data.
-     * @exception IllegalArgumentException If the type is NOT {@link #TYPE_UNSIGNED_SHORT}.
+     * Gets the value for type {@link #TYPE_ASCII}, {@link #TYPE_LONG},
+     * {@link #TYPE_UNDEFINED}, {@link #TYPE_UNSIGNED_BYTE}, {@link #TYPE_UNSIGNED_LONG}, or
+     * {@link #TYPE_UNSIGNED_SHORT}. For {@link #TYPE_RATIONAL} or {@link #TYPE_UNSIGNED_RATIONAL},
+     * call {@link #getRational(int)} instead.
+     *
+     * @exception IllegalArgumentException if the data type is {@link #TYPE_RATIONAL} or
+     * {@link #TYPE_UNSIGNED_RATIONAL}.
      */
-    public int getUnsignedShort(int index) {
-        if (mDataType != TYPE_UNSIGNED_SHORT) {
-            throw new IllegalArgumentException("Cannot get UNSIGNED_SHORT value from "
-                    + convertTypeToString(mDataType));
+    public long getValueAt(int index) {
+        if (mValue instanceof long[]) {
+            return ((long[]) mValue) [index];
+        } else if (mValue instanceof byte[]) {
+            return ((byte[]) mValue) [index];
         }
-        return (int) (((long[]) mValue) [index]);
-    }
-
-    /**
-     * Gets the {@link #TYPE_LONG} data.
-     * @exception IllegalArgumentException If the type is NOT {@link #TYPE_LONG}.
-     */
-    public int getLong(int index) {
-        if (mDataType != TYPE_LONG) {
-            throw new IllegalArgumentException("Cannot get LONG value from "
-                    + convertTypeToString(mDataType));
-        }
-        return (int) (((long[]) mValue) [index]);
-    }
-
-    /**
-     * Gets the {@link #TYPE_UNSIGNED_LONG} data.
-     * @exception IllegalArgumentException If the type is NOT {@link #TYPE_UNSIGNED_LONG}.
-     */
-    public long getUnsignedLong(int index) {
-        if (mDataType != TYPE_UNSIGNED_LONG) {
-            throw new IllegalArgumentException("Cannot get UNSIGNED LONG value from "
-                    + convertTypeToString(mDataType));
-        }
-        return ((long[]) mValue) [index];
+        throw new IllegalArgumentException("Cannot get integer value from "
+                + convertTypeToString(mDataType));
     }
 
     /**

@@ -225,8 +225,9 @@ public class ExifOutputStream extends FilterOutputStream {
                 }
                 break;
             case ExifTag.TYPE_LONG:
+            case ExifTag.TYPE_UNSIGNED_LONG:
                 for (int i = 0, n = tag.getComponentCount(); i < n; i++) {
-                    dataOutputStream.writeInt(tag.getLong(i));
+                    dataOutputStream.writeInt((int) tag.getValueAt(i));
                 }
                 break;
             case ExifTag.TYPE_RATIONAL:
@@ -241,14 +242,9 @@ public class ExifOutputStream extends FilterOutputStream {
                 tag.getBytes(buf);
                 dataOutputStream.write(buf);
                 break;
-            case ExifTag.TYPE_UNSIGNED_LONG:
-                for (int i = 0, n = tag.getComponentCount(); i < n; i++) {
-                    dataOutputStream.writeInt((int) tag.getUnsignedLong(i));
-                }
-                break;
             case ExifTag.TYPE_UNSIGNED_SHORT:
                 for (int i = 0, n = tag.getComponentCount(); i < n; i++) {
-                    dataOutputStream.writeShort((short) tag.getUnsignedShort(i));
+                    dataOutputStream.writeShort((short) tag.getValueAt(i));
                 }
                 break;
         }
