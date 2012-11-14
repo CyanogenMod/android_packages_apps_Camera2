@@ -20,8 +20,15 @@ import android.media.ExifInterface;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ExifTags;
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.exif.ExifData;
+import com.android.gallery3d.exif.ExifInvalidFormatException;
+import com.android.gallery3d.exif.ExifReader;
+import com.android.gallery3d.exif.ExifTag;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -105,10 +112,18 @@ public class MediaDetails implements Iterable<Entry<Integer, Object>> {
         return mUnits.get(index);
     }
 
-    private static void setExifData(MediaDetails details, ExifInterface exif, String tag,
+    private static void setExifData(MediaDetails details, ExifTag tag,
             int key) {
-        String value = exif.getAttribute(tag);
-        if (value != null) {
+        if (tag != null) {
+            String value = null;
+            int type = tag.getDataType();
+            if (type == ExifTag.TYPE_UNSIGNED_RATIONAL || type == ExifTag.TYPE_RATIONAL) {
+                value = String.valueOf(tag.getRational(0).toDouble());
+            } else if (type == ExifTag.TYPE_ASCII) {
+                value = tag.getString();
+            } else {
+                value = String.valueOf(tag.getValueAt(0));
+            }
             if (key == MediaDetails.INDEX_FLASH) {
                 MediaDetails.FlashState state = new MediaDetails.FlashState(
                         Integer.valueOf(value.toString()));
@@ -120,29 +135,37 @@ public class MediaDetails implements Iterable<Entry<Integer, Object>> {
     }
 
     public static void extractExifInfo(MediaDetails details, String filePath) {
+        InputStream is = null;
         try {
-            ExifInterface exif = new ExifInterface(filePath);
-            setExifData(details, exif, ExifInterface.TAG_FLASH, MediaDetails.INDEX_FLASH);
-            setExifData(details, exif, ExifInterface.TAG_IMAGE_WIDTH, MediaDetails.INDEX_WIDTH);
-            setExifData(details, exif, ExifInterface.TAG_IMAGE_LENGTH,
-                    MediaDetails.INDEX_HEIGHT);
-            setExifData(details, exif, ExifInterface.TAG_MAKE, MediaDetails.INDEX_MAKE);
-            setExifData(details, exif, ExifInterface.TAG_MODEL, MediaDetails.INDEX_MODEL);
-            setExifData(details, exif, ExifTags.TAG_APERTURE, MediaDetails.INDEX_APERTURE);
-            setExifData(details, exif, ExifTags.TAG_ISO, MediaDetails.INDEX_ISO);
-            setExifData(details, exif, ExifInterface.TAG_WHITE_BALANCE,
+            is = new FileInputStream(filePath);
+            ExifData data = new ExifReader().read(is);
+            setExifData(details, data.getTag(ExifTag.TAG_FLASH), MediaDetails.INDEX_FLASH);
+            setExifData(details, data.getTag(ExifTag.TAG_IMAGE_WIDTH), MediaDetails.INDEX_WIDTH);
+            setExifData(details, data.getTag(ExifTag.TAG_IMAGE_LENGTH), MediaDetails.INDEX_HEIGHT);
+            setExifData(details, data.getTag(ExifTag.TAG_MAKE), MediaDetails.INDEX_MAKE);
+            setExifData(details, data.getTag(ExifTag.TAG_MODEL),MediaDetails.INDEX_MODEL);
+            setExifData(details, data.getTag(ExifTag.TAG_APERTURE_VALUE),
+                    MediaDetails.INDEX_APERTURE);
+            setExifData(details, data.getTag(ExifTag.TAG_ISO_SPEED_RATINGS),
+                    MediaDetails.INDEX_ISO);
+            setExifData(details, data.getTag(ExifTag.TAG_WHITE_BALANCE),
                     MediaDetails.INDEX_WHITE_BALANCE);
-            setExifData(details, exif, ExifTags.TAG_EXPOSURE_TIME,
+            setExifData(details, data.getTag(ExifTag.TAG_EXPOSURE_TIME),
                     MediaDetails.INDEX_EXPOSURE_TIME);
-
-            double data = exif.getAttributeDouble(ExifInterface.TAG_FOCAL_LENGTH, 0);
-            if (data != 0f) {
-                details.addDetail(MediaDetails.INDEX_FOCAL_LENGTH, data);
+            ExifTag focalTag = data.getTag(ExifTag.TAG_FOCAL_LENGTH);
+            if (focalTag != null) {
+                details.addDetail(MediaDetails.INDEX_FOCAL_LENGTH,
+                        focalTag.getRational(0).toDouble());
                 details.setUnit(MediaDetails.INDEX_FOCAL_LENGTH, R.string.unit_mm);
             }
         } catch (IOException ex) {
             // ignore it.
             Log.w(TAG, "", ex);
+        } catch (ExifInvalidFormatException ex) {
+         // ignore it.
+            Log.w(TAG, "", ex);
+        } finally {
+            Utils.closeSilently(is);
         }
     }
 }
