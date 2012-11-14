@@ -45,6 +45,7 @@ import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLRootView;
 import com.android.gallery3d.util.LightCycleHelper.PanoramaViewHelper;
 import com.android.gallery3d.util.ThreadPool;
+import com.android.gallery3d.util.UsageStatistics;
 
 public class AbstractGalleryActivity extends Activity implements GalleryContext {
     @SuppressWarnings("unused")
@@ -75,6 +76,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryContext 
         mPanoramaViewHelper = new PanoramaViewHelper(this);
         mPanoramaViewHelper.onCreate();
         doBindBatchService();
+        UsageStatistics.showOptInDialogIfNeeded(this);
     }
 
     @Override
