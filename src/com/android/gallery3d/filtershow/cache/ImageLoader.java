@@ -36,6 +36,9 @@ import com.adobe.xmp.XMPMeta;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.exif.ExifInvalidFormatException;
+import com.android.gallery3d.exif.ExifParser;
+import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
@@ -46,6 +49,7 @@ import com.android.gallery3d.util.XmpUtilHelper;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -153,12 +157,27 @@ public class ImageLoader {
 
     static int getOrientationFromPath(String path) {
         int orientation = -1;
+        InputStream is = null;
         try {
-            ExifInterface EXIF = new ExifInterface(path);
-            orientation = EXIF.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                    1);
+            is = new FileInputStream(path);
+            ExifParser parser = ExifParser.parse(is, ExifParser.OPTION_IFD_0);
+            int event = parser.next();
+            while (event != ExifParser.EVENT_END) {
+                if (event == ExifParser.EVENT_NEW_TAG) {
+                    ExifTag tag = parser.getTag();
+                    if (tag.getTagId() == ExifTag.TAG_ORIENTATION) {
+                        orientation = (int) tag.getValueAt(0);
+                        break;
+                    }
+                }
+                event = parser.next();
+            }
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (ExifInvalidFormatException e) {
+            e.printStackTrace();
+        } finally {
+            Utils.closeSilently(is);
         }
         return orientation;
     }
