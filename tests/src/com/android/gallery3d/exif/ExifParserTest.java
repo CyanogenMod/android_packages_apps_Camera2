@@ -201,7 +201,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
                     case ExifParser.EVENT_NEW_TAG:
                         ExifTag tag = parser.getTag();
                         if (tag.getTagId() == ExifTag.TAG_COMPRESSION) {
-                            if (tag.getUnsignedShort(0) == ExifTag.Compression.JPEG) {
+                            if (tag.getValueAt(0) == ExifTag.Compression.JPEG) {
                                 mIsContainCompressedImage = true;
                             }
                         }
