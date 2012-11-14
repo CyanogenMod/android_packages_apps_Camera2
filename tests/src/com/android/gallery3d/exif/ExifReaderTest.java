@@ -64,8 +64,7 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
 
         String typeTagTruth = typeTagValue.get(0);
 
-        ExifTag typeTag = ifd1.getTag(ExifTag.TAG_COMPRESSION);
-        int type = typeTag.getUnsignedShort(0);
+        int type = (int) ifd1.getTag(ExifTag.TAG_COMPRESSION).getValueAt(0);
 
         if (String.valueOf(ExifTag.Compression.JPEG).equals(typeTagTruth)) {
             assertTrue(getImageTitle(), type == ExifTag.Compression.JPEG);
@@ -79,7 +78,7 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
             int planarType = ExifTag.PlanarConfiguration.CHUNKY;
             ExifTag planarTag = ifd1.getTag(ExifTag.TAG_PLANAR_CONFIGURATION);
             if (planarTag != null) {
-                planarType = planarTag.getUnsignedShort(0);
+                planarType = (int) planarTag.getValueAt(0);
             }
 
             if (!ifd1Truth.containsKey(ExifTag.TAG_IMAGE_LENGTH) ||
@@ -91,8 +90,8 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
             // Fail the test if required tags are missing
             if (heightTag == null || rowPerStripTag == null) fail(getImageTitle());
 
-            int imageLength = getUnsignedIntOrShort(heightTag);
-            int rowsPerStrip = getUnsignedIntOrShort(rowPerStripTag);
+            int imageLength = (int) heightTag.getValueAt(0);
+            int rowsPerStrip = (int) rowPerStripTag.getValueAt(0);
             int stripCount = ifd1.getTag(
                     ExifTag.TAG_STRIP_OFFSETS).getComponentCount();
 
@@ -102,7 +101,7 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
             } else {
                 if (!ifd1Truth.containsKey(ExifTag.TAG_SAMPLES_PER_PIXEL)) return;
                 ExifTag samplePerPixelTag = ifd1.getTag(ExifTag.TAG_SAMPLES_PER_PIXEL);
-                int samplePerPixel = samplePerPixelTag.getUnsignedShort(0);
+                int samplePerPixel = (int) samplePerPixelTag.getValueAt(0);
                 assertTrue(getImageTitle(),
                         stripCount ==
                         (imageLength + rowsPerStrip - 1) / rowsPerStrip * samplePerPixel);
@@ -114,20 +113,12 @@ public class ExifReaderTest extends ExifXmlDataTestCase {
             for (int i = 0; i < stripCount; i++) {
                 if (byteCountDataType == ExifTag.TYPE_UNSIGNED_SHORT) {
                     assertEquals(getImageTitle(),
-                            byteCountTag.getUnsignedShort(i), exifData.getStrip(i).length);
+                            byteCountTag.getValueAt(i), exifData.getStrip(i).length);
                 } else {
                     assertEquals(getImageTitle(),
-                            byteCountTag.getUnsignedLong(i), exifData.getStrip(i).length);
+                            byteCountTag.getValueAt(i), exifData.getStrip(i).length);
                 }
             }
-        }
-    }
-
-    private int getUnsignedIntOrShort(ExifTag tag) {
-        if (tag.getDataType() == ExifTag.TYPE_UNSIGNED_SHORT) {
-            return tag.getUnsignedShort(0);
-        } else {
-            return (int) tag.getUnsignedLong(0);
         }
     }
 

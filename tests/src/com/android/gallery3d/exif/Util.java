@@ -116,7 +116,7 @@ class Util {
             case ExifTag.TYPE_UNSIGNED_LONG:
                 for(int i = 0, n = tag.getComponentCount(); i < n; i++) {
                     if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(tag.getUnsignedLong(i));
+                    sbuilder.append(tag.getValueAt(i));
                 }
                 break;
             case ExifTag.TYPE_RATIONAL:
@@ -130,13 +130,13 @@ class Util {
             case ExifTag.TYPE_UNSIGNED_SHORT:
                 for(int i = 0, n = tag.getComponentCount(); i < n; i++) {
                     if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(tag.getUnsignedShort(i));
+                    sbuilder.append((int) tag.getValueAt(i));
                 }
                 break;
             case ExifTag.TYPE_LONG:
                 for(int i = 0, n = tag.getComponentCount(); i < n; i++) {
                     if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(tag.getLong(i));
+                    sbuilder.append((int) tag.getValueAt(i));
                 }
                 break;
         }

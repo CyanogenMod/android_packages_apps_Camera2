@@ -435,13 +435,7 @@ public class ExifParser {
      */
     public int getStripSize() {
         if (mStripSizeTag == null) return 0;
-        if (mStripSizeTag.getDataType() == ExifTag.TYPE_UNSIGNED_SHORT) {
-            return mStripSizeTag.getUnsignedShort(mImageEvent.stripIndex);
-        } else {
-            // Cast unsigned int to int since the strip size is always smaller
-            // than the size of APP1 (65536)
-            return (int) mStripSizeTag.getUnsignedLong(mImageEvent.stripIndex);
-        }
+        return (int) mStripSizeTag.getValueAt(0);
     }
 
     /**
@@ -450,15 +444,7 @@ public class ExifParser {
      */
     public int getCompressedImageSize() {
         if (mJpegSizeTag == null) return 0;
-
-        // Some invalid image use short type tag
-        if (mJpegSizeTag.getDataType() == ExifTag.TYPE_UNSIGNED_SHORT) {
-            return mJpegSizeTag.getUnsignedShort(0);
-        }
-
-        // Cast unsigned int to int since the thumbnail is always smaller
-        // than the size of APP1 (65536)
-        return (int) mJpegSizeTag.getUnsignedLong(0);
+        return (int) mJpegSizeTag.getValueAt(0);
     }
 
     private void skipTo(int offset) throws IOException {
@@ -546,22 +532,22 @@ public class ExifParser {
             case ExifTag.TAG_EXIF_IFD:
                 if (isIfdRequested(IfdId.TYPE_IFD_EXIF)
                         || isIfdRequested(IfdId.TYPE_IFD_INTEROPERABILITY)) {
-                    registerIfd(IfdId.TYPE_IFD_EXIF, tag.getUnsignedLong(0));
+                    registerIfd(IfdId.TYPE_IFD_EXIF, tag.getValueAt(0));
                 }
                 break;
             case ExifTag.TAG_GPS_IFD:
                 if (isIfdRequested(IfdId.TYPE_IFD_GPS)) {
-                    registerIfd(IfdId.TYPE_IFD_GPS, tag.getUnsignedLong(0));
+                    registerIfd(IfdId.TYPE_IFD_GPS, tag.getValueAt(0));
                 }
                 break;
             case ExifTag.TAG_INTEROPERABILITY_IFD:
                 if (isIfdRequested(IfdId.TYPE_IFD_INTEROPERABILITY)) {
-                    registerIfd(IfdId.TYPE_IFD_INTEROPERABILITY, tag.getUnsignedLong(0));
+                    registerIfd(IfdId.TYPE_IFD_INTEROPERABILITY, tag.getValueAt(0));
                 }
                 break;
             case ExifTag.TAG_JPEG_INTERCHANGE_FORMAT:
                 if (isThumbnailRequested()) {
-                    registerCompressedImage(tag.getUnsignedLong(0));
+                    registerCompressedImage(tag.getValueAt(0));
                 }
                 break;
             case ExifTag.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH:
@@ -574,9 +560,9 @@ public class ExifParser {
                     if (tag.hasValue()) {
                         for (int i = 0; i < tag.getComponentCount(); i++) {
                             if (tag.getDataType() == ExifTag.TYPE_UNSIGNED_SHORT) {
-                                registerUncompressedStrip(i, tag.getUnsignedShort(i));
+                                registerUncompressedStrip(i, tag.getValueAt(i));
                             } else {
-                                registerUncompressedStrip(i, tag.getUnsignedLong(i));
+                                registerUncompressedStrip(i, tag.getValueAt(i));
                             }
                         }
                     } else {

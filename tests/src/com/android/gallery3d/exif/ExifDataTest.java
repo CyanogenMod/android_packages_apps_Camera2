@@ -42,13 +42,13 @@ public class ExifDataTest extends TestCase {
 
         // check data
         assertEquals("test", exifData.getTag(ExifTag.TAG_MAKE).getString());
-        assertEquals(1000, exifData.getTag(ExifTag.TAG_IMAGE_WIDTH).getUnsignedLong(0));
-        assertEquals(1, exifData.getTag(ExifTag.TAG_ISO_SPEED_RATINGS).getUnsignedShort(0));
+        assertEquals(1000, (int) exifData.getTag(ExifTag.TAG_IMAGE_WIDTH).getValueAt(0));
+        assertEquals(1, (int) exifData.getTag(ExifTag.TAG_ISO_SPEED_RATINGS).getValueAt(0));
         assertEquals(new Rational(10, 100),
                 exifData.getTag(ExifTag.TAG_GPS_ALTITUDE).getRational(0));
         assertEquals("inter_test",
                 exifData.getInteroperabilityTag(ExifTag.TAG_INTEROPERABILITY_INDEX).getString());
         assertEquals("test_thumb", exifData.getThumbnailTag(ExifTag.TAG_MAKE).getString());
-        assertEquals(100, exifData.getThumbnailTag(ExifTag.TAG_IMAGE_WIDTH).getUnsignedLong(0));
+        assertEquals(100, (int) exifData.getThumbnailTag(ExifTag.TAG_IMAGE_WIDTH).getValueAt(0));
     }
 }
