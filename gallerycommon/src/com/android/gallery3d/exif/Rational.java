@@ -42,4 +42,13 @@ public class Rational {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return mNominator + "/" + mDenominator;
+    }
+
+    public double toDouble() {
+        return mNominator / (double) mDenominator;
+    }
 }
