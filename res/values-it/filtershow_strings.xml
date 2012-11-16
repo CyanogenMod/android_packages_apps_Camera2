@@ -56,7 +56,7 @@
     <string name="vibrance" msgid="3326744578577835915">"Vividezza"</string>
     <string name="saturation" msgid="7026791551032438585">"Saturazione"</string>
     <string name="bwfilter" msgid="8927492494576933793">"Filtro BN"</string>
-    <string name="wbalance" msgid="6346581563387083613">"Colore automatico"</string>
+    <string name="wbalance" msgid="6346581563387083613">"Colore autom."</string>
     <string name="hue" msgid="6231252147971086030">"Tonalità"</string>
     <string name="shadow_recovery" msgid="3928572915300287152">"Ombre"</string>
     <string name="curvesRGB" msgid="915010781090477550">"Curve"</string>
