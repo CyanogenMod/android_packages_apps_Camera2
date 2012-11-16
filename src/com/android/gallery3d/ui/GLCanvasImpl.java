@@ -50,7 +50,7 @@ public class GLCanvasImpl extends GLCanvas {
             0, 0, 1, 1,              // used for drawing a line
             0, 0, 0, 1, 1, 1, 1, 0}; // used for drawing the outline of a rectangle
 
-    private final GL11 mGL;
+    private GL11 mGL;
 
     private final float mMatrixValues[] = new float[16];
     private final float mTextureMatrixValues[] = new float[16];
@@ -63,7 +63,7 @@ public class GLCanvasImpl extends GLCanvas {
 
     private int mBoxCoords;
 
-    private final GLState mGLState;
+    private GLState mGLState;
     private final ArrayList<RawTexture> mTargetStack = new ArrayList<RawTexture>();
 
     private float mAlpha;
@@ -91,10 +91,7 @@ public class GLCanvasImpl extends GLCanvas {
     int mCountTextureRect;
     int mCountTextureOES;
 
-    GLCanvasImpl(GL11 gl) {
-        mGL = gl;
-        mGLState = new GLState(gl);
-        initialize();
+    GLCanvasImpl() {
     }
 
     @Override
@@ -146,9 +143,10 @@ public class GLCanvasImpl extends GLCanvas {
         return ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
     }
 
-    private void initialize() {
-        GL11 gl = mGL;
-
+    @Override
+    public void initialize(GL11 gl) {
+        mGL = gl;
+        mGLState = new GLState(gl);
         // First create an nio buffer, then create a VBO from it.
         int size = BOX_COORDINATES.length * Float.SIZE / Byte.SIZE;
         FloatBuffer xyBuffer = allocateDirectNativeOrderBuffer(size).asFloatBuffer();
@@ -977,27 +975,24 @@ public class GLCanvasImpl extends GLCanvas {
     }
 
     @Override
-    public int[] uploadBuffers(Buffer[] buffers) {
-        int[] bufferIds = new int[buffers.length];
+    public int uploadBuffer(FloatBuffer buf) {
+        return uploadBuffer(buf, Float.SIZE / Byte.SIZE);
+    }
+
+    @Override
+    public int uploadBuffer(ByteBuffer buf) {
+        return uploadBuffer(buf, 1);
+    }
+
+    private int uploadBuffer(Buffer buf, int elementSize) {
+        int[] bufferIds = new int[1];
         GLId glId = getGLId();
         glId.glGenBuffers(bufferIds.length, bufferIds, 0);
-
-        for (int i = 0; i < bufferIds.length; i++) {
-            Buffer buf = buffers[i];
-            int elementSize = 0;
-            if (buf instanceof FloatBuffer) {
-                elementSize = Float.SIZE / Byte.SIZE;
-            } else if (buf instanceof ByteBuffer) {
-                elementSize = 1;
-            } else {
-                Utils.fail("Unknown element size for %s", buf.getClass().getSimpleName());
-            }
-            mGL.glBindBuffer(GL11.GL_ARRAY_BUFFER, bufferIds[i]);
-            mGL.glBufferData(GL11.GL_ARRAY_BUFFER, buf.capacity() * elementSize, buf,
-                    GL11.GL_STATIC_DRAW);
-        }
-
-        return bufferIds;
+        int bufferId = bufferIds[0];
+        mGL.glBindBuffer(GL11.GL_ARRAY_BUFFER, bufferId);
+        mGL.glBufferData(GL11.GL_ARRAY_BUFFER, buf.capacity() * elementSize, buf,
+                GL11.GL_STATIC_DRAW);
+        return bufferId;
     }
 
     @Override

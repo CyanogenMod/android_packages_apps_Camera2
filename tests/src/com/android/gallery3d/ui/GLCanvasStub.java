@@ -19,7 +19,8 @@ package com.android.gallery3d.ui;
 import android.graphics.Bitmap;
 import android.graphics.RectF;
 
-import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL11;
 
@@ -132,8 +133,12 @@ public class GLCanvasStub extends GLCanvas {
             int format, int type) {
     }
     @Override
-    public int[] uploadBuffers(Buffer[] buffers) {
-        return null;
+    public int uploadBuffer(ByteBuffer buffer) {
+        return 0;
+    }
+    @Override
+    public int uploadBuffer(FloatBuffer buffer) {
+        return 0;
     }
     @Override
     public void setBlending(Blending blending) {
@@ -152,5 +157,8 @@ public class GLCanvasStub extends GLCanvas {
     }
     @Override
     public void drawOnlyOutsideStencil(boolean onlyOutside) {
+    }
+    @Override
+    public void initialize(GL11 gl) {
     }
 }

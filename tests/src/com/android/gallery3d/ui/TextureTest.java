@@ -48,6 +48,7 @@ public class TextureTest extends TestCase {
             return GL11.GL_TEXTURE_2D;
         }
 
+        @Override
         public boolean isOpaque() {
             mOpaqueCalled++;
             return true;
@@ -61,7 +62,8 @@ public class TextureTest extends TestCase {
     @SmallTest
     public void testBasicTexture() {
         GL11 glStub = new GLStub();
-        GLCanvas canvas = new GLCanvasImpl(glStub);
+        GLCanvas canvas = new GLCanvasImpl();
+        canvas.initialize(glStub);
         MyBasicTexture texture = new MyBasicTexture(canvas, 47);
 
         assertEquals(47, texture.getId());
@@ -81,7 +83,8 @@ public class TextureTest extends TestCase {
         assertTrue(texture.isLoaded());
 
         // For a different GL, it's not loaded.
-        GLCanvas canvas2 = new GLCanvasImpl(new GLStub());
+        GLCanvas canvas2 = new GLCanvasImpl();
+        canvas2.initialize(glStub);
         assertFalse(texture.isLoaded());
 
         assertEquals(0, texture.mOnBindCalled);
@@ -135,7 +138,8 @@ public class TextureTest extends TestCase {
     @SmallTest
     public void testUploadedTexture() {
         GL11 glStub = new GLStub();
-        GLCanvas canvas = new GLCanvasImpl(glStub);
+        GLCanvas canvas = new GLCanvasImpl();
+        canvas.initialize(glStub);
         MyUploadedTexture texture = new MyUploadedTexture();
 
         // draw it and the bitmap should be fetched.
@@ -181,6 +185,7 @@ public class TextureTest extends TestCase {
             return GL11.GL_TEXTURE_2D;
         }
 
+        @Override
         public boolean isOpaque() {
             return true;
         }
