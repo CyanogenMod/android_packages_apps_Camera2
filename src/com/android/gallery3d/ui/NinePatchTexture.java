@@ -23,7 +23,6 @@ import android.graphics.Rect;
 
 import com.android.gallery3d.common.Utils;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -198,7 +197,9 @@ class NinePatchInstance {
     private ByteBuffer mIndexBuffer;
 
     // Names for buffer names: xy, uv, index.
-    private int[] mBufferNames;
+    private int mXyBufferName = -1;
+    private int mUvBufferName;
+    private int mIndexBufferName;
 
     private int mIdxCount;
 
@@ -395,10 +396,9 @@ class NinePatchInstance {
     }
 
     private void prepareBuffers(GLCanvas canvas) {
-        Buffer[] buffers = {
-                mXyBuffer, mUvBuffer, mIndexBuffer
-        };
-        mBufferNames = canvas.uploadBuffers(buffers);
+        mXyBufferName = canvas.uploadBuffer(mXyBuffer);
+        mUvBufferName = canvas.uploadBuffer(mUvBuffer);
+        mIndexBufferName = canvas.uploadBuffer(mIndexBuffer);
 
         // These buffers are never used again.
         mXyBuffer = null;
@@ -407,19 +407,18 @@ class NinePatchInstance {
     }
 
     public void draw(GLCanvas canvas, NinePatchTexture tex, int x, int y) {
-        if (mBufferNames == null) {
+        if (mXyBufferName == -1) {
             prepareBuffers(canvas);
         }
-        canvas.drawMesh(tex, x, y, mBufferNames[0], mBufferNames[1],
-                mBufferNames[2], mIdxCount);
+        canvas.drawMesh(tex, x, y, mXyBufferName, mUvBufferName, mIndexBufferName, mIdxCount);
     }
 
     public void recycle(GLCanvas canvas) {
-        if (mBufferNames != null) {
-            canvas.deleteBuffer(mBufferNames[0]);
-            canvas.deleteBuffer(mBufferNames[1]);
-            canvas.deleteBuffer(mBufferNames[2]);
-            mBufferNames = null;
+        if (mXyBuffer == null) {
+            canvas.deleteBuffer(mXyBufferName);
+            canvas.deleteBuffer(mUvBufferName);
+            canvas.deleteBuffer(mIndexBufferName);
+            mXyBufferName = -1;
         }
     }
 }

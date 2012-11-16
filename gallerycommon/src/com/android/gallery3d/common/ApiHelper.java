@@ -176,6 +176,9 @@ public class ApiHelper {
     public static final boolean HAS_OBJECT_ANIMATION =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
 
+    public static final boolean HAS_GLES20_REQUIRED =
+            Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
         try {

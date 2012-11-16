@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.ui;
 
+import android.opengl.GLES20;
+
 import javax.microedition.khronos.opengles.GL11;
 
 public class RawTexture extends BasicTexture {
@@ -26,8 +28,6 @@ public class RawTexture extends BasicTexture {
     public RawTexture(int width, int height, boolean opaque) {
         mOpaque = opaque;
         setSize(width, height);
-        GLId glId = GLCanvas.getGLId();
-        mId = glId.generateTexture();
     }
 
     @Override
@@ -36,8 +36,10 @@ public class RawTexture extends BasicTexture {
     }
 
     protected void prepare(GLCanvas canvas) {
-        canvas.setTextureParameters(this);
+        GLId glId = GLCanvas.getGLId();
+        mId = glId.generateTexture();
         canvas.initializeTextureSize(this, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE);
+        canvas.setTextureParameters(this);
         mState = STATE_LOADED;
         setAssociatedCanvas(canvas);
     }

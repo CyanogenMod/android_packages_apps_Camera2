@@ -49,12 +49,35 @@ class GalleryEGLConfigChooser implements EGLConfigChooser {
             EGL10.EGL_NONE
     };
 
+    private final int mConfig2Spec565[] = new int[] {
+            EGL10.EGL_RED_SIZE, 5,
+            EGL10.EGL_GREEN_SIZE, 6,
+            EGL10.EGL_BLUE_SIZE, 5,
+            EGL10.EGL_ALPHA_SIZE, 0,
+            EGL10.EGL_RENDERABLE_TYPE, 4, /* EGL_OPENGL_ES2_BIT */
+            EGL10.EGL_NONE
+    };
+
+    private final int mConfig2Spec888[] = new int[] {
+            EGL10.EGL_RED_SIZE, 8,
+            EGL10.EGL_GREEN_SIZE, 8,
+            EGL10.EGL_BLUE_SIZE, 8,
+            EGL10.EGL_ALPHA_SIZE, 0,
+            EGL10.EGL_RENDERABLE_TYPE, 4, /* EGL_OPENGL_ES2_BIT */
+            EGL10.EGL_NONE
+    };
+
     @Override
     public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
         int[] numConfig = new int[1];
-        int mConfigSpec[] = ApiHelper.USE_888_PIXEL_FORMAT
-                ? mConfigSpec888 : mConfigSpec565;
-        if (!egl.eglChooseConfig(display, mConfigSpec, null, 0, numConfig)) {
+
+        int configSpec[];
+        if (GLCanvas.getEGLContextClientVersion() == 2) {
+            configSpec = ApiHelper.USE_888_PIXEL_FORMAT ? mConfig2Spec888 : mConfig2Spec565;
+        } else {
+            configSpec = ApiHelper.USE_888_PIXEL_FORMAT ? mConfigSpec888 : mConfigSpec565;
+        }
+        if (!egl.eglChooseConfig(display, configSpec, null, 0, numConfig)) {
             throw new RuntimeException("eglChooseConfig failed");
         }
 
@@ -64,7 +87,7 @@ class GalleryEGLConfigChooser implements EGLConfigChooser {
 
         EGLConfig[] configs = new EGLConfig[numConfig[0]];
         if (!egl.eglChooseConfig(display,
-                mConfigSpec, configs, configs.length, numConfig)) {
+                configSpec, configs, configs.length, numConfig)) {
             throw new RuntimeException();
         }
 
