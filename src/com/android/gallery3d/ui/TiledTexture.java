@@ -55,7 +55,8 @@ public class TiledTexture implements Texture {
 
     private int mUploadIndex = 0;
 
-    private final Tile[] mTiles;
+    private final Tile[] mTiles;  // Can be modified in different threads.
+                                  // Should be protected by "synchronized."
     private final int mWidth;
     private final int mHeight;
     private final RectF mSrcRect = new RectF();
@@ -91,7 +92,7 @@ public class TiledTexture implements Texture {
             synchronized (this) {
                 long now = SystemClock.uptimeMillis();
                 long dueTime = now + UPLOAD_TILE_LIMIT;
-                while(now < dueTime && !deque.isEmpty()) {
+                while (now < dueTime && !deque.isEmpty()) {
                     TiledTexture t = deque.peekFirst();
                     if (t.uploadNextTile(canvas)) {
                         deque.removeFirst();
@@ -130,7 +131,7 @@ public class TiledTexture implements Texture {
             int x = BORDER_SIZE - offsetX;
             int y = BORDER_SIZE - offsetY;
             int r = bitmap.getWidth() + x;
-            int b = bitmap.getHeight() + y ;
+            int b = bitmap.getHeight() + y;
             sCanvas.drawBitmap(bitmap, x, y, sBitmapPaint);
             bitmap = null;
 
@@ -171,19 +172,21 @@ public class TiledTexture implements Texture {
     private boolean uploadNextTile(GLCanvas canvas) {
         if (mUploadIndex == mTiles.length) return true;
 
-        Tile next = mTiles[mUploadIndex++];
+        synchronized (mTiles) {
+            Tile next = mTiles[mUploadIndex++];
 
-        // Make sure tile has not already been recycled by the time
-        // this is called (race condition in onGLIdle)
-        if (next.bitmap != null) {
-            boolean hasBeenLoad = next.isLoaded();
-            next.updateContent(canvas);
+            // Make sure tile has not already been recycled by the time
+            // this is called (race condition in onGLIdle)
+            if (next.bitmap != null) {
+                boolean hasBeenLoad = next.isLoaded();
+                next.updateContent(canvas);
 
-            // It will take some time for a texture to be drawn for the first
-            // time. When scrolling, we need to draw several tiles on the screen
-            // at the same time. It may cause a UI jank even these textures has
-            // been uploaded.
-            if (!hasBeenLoad) next.draw(canvas, 0, 0);
+                // It will take some time for a texture to be drawn for the first
+                // time. When scrolling, we need to draw several tiles on the screen
+                // at the same time. It may cause a UI jank even these textures has
+                // been uploaded.
+                if (!hasBeenLoad) next.draw(canvas, 0, 0);
+            }
         }
         return mUploadIndex == mTiles.length;
     }
@@ -212,9 +215,12 @@ public class TiledTexture implements Texture {
         return mUploadIndex == mTiles.length;
     }
 
+    // Can be called in UI thread.
     public void recycle() {
-        for (int i = 0, n = mTiles.length; i < n; ++i) {
-            freeTile(mTiles[i]);
+        synchronized (mTiles) {
+            for (int i = 0, n = mTiles.length; i < n; ++i) {
+                freeTile(mTiles[i]);
+            }
         }
     }
 
@@ -263,15 +269,17 @@ public class TiledTexture implements Texture {
             int x, int y, int width, int height) {
         RectF src = mSrcRect;
         RectF dest = mDestRect;
-        float scaleX = (float) width / mWidth ;
+        float scaleX = (float) width / mWidth;
         float scaleY = (float) height / mHeight;
-        for (int i = 0, n = mTiles.length; i < n; ++i) {
-            Tile t = mTiles[i];
-            src.set(0, 0, t.contentWidth, t.contentHeight);
-            src.offset(t.offsetX, t.offsetY);
-            mapRect(dest, src, 0, 0, x, y, scaleX, scaleY);
-            src.offset(BORDER_SIZE - t.offsetX, BORDER_SIZE - t.offsetY);
-            canvas.drawMixed(t, color, ratio, mSrcRect, mDestRect);
+        synchronized (mTiles) {
+            for (int i = 0, n = mTiles.length; i < n; ++i) {
+                Tile t = mTiles[i];
+                src.set(0, 0, t.contentWidth, t.contentHeight);
+                src.offset(t.offsetX, t.offsetY);
+                mapRect(dest, src, 0, 0, x, y, scaleX, scaleY);
+                src.offset(BORDER_SIZE - t.offsetX, BORDER_SIZE - t.offsetY);
+                canvas.drawMixed(t, color, ratio, mSrcRect, mDestRect);
+            }
         }
     }
 
@@ -280,15 +288,17 @@ public class TiledTexture implements Texture {
     public void draw(GLCanvas canvas, int x, int y, int width, int height) {
         RectF src = mSrcRect;
         RectF dest = mDestRect;
-        float scaleX = (float) width / mWidth ;
+        float scaleX = (float) width / mWidth;
         float scaleY = (float) height / mHeight;
-        for (int i = 0, n = mTiles.length; i < n; ++i) {
-            Tile t = mTiles[i];
-            src.set(0, 0, t.contentWidth, t.contentHeight);
-            src.offset(t.offsetX, t.offsetY);
-            mapRect(dest, src, 0, 0, x, y, scaleX, scaleY);
-            src.offset(BORDER_SIZE - t.offsetX, BORDER_SIZE - t.offsetY);
-            canvas.drawTexture(t, mSrcRect, mDestRect);
+        synchronized (mTiles) {
+            for (int i = 0, n = mTiles.length; i < n; ++i) {
+                Tile t = mTiles[i];
+                src.set(0, 0, t.contentWidth, t.contentHeight);
+                src.offset(t.offsetX, t.offsetY);
+                mapRect(dest, src, 0, 0, x, y, scaleX, scaleY);
+                src.offset(BORDER_SIZE - t.offsetX, BORDER_SIZE - t.offsetY);
+                canvas.drawTexture(t, mSrcRect, mDestRect);
+            }
         }
     }
 
@@ -303,14 +313,16 @@ public class TiledTexture implements Texture {
         float scaleX = target.width() / source.width();
         float scaleY = target.height() / source.height();
 
-        for (int i = 0, n = mTiles.length; i < n; ++i) {
-            Tile t = mTiles[i];
-            src.set(0, 0, t.contentWidth, t.contentHeight);
-            src.offset(t.offsetX, t.offsetY);
-            if (!src.intersect(source)) continue;
-            mapRect(dest, src, x0, y0, x, y, scaleX, scaleY);
-            src.offset(BORDER_SIZE - t.offsetX, BORDER_SIZE - t.offsetY);
-            canvas.drawTexture(t, src, dest);
+        synchronized (mTiles) {
+            for (int i = 0, n = mTiles.length; i < n; ++i) {
+                Tile t = mTiles[i];
+                src.set(0, 0, t.contentWidth, t.contentHeight);
+                src.offset(t.offsetX, t.offsetY);
+                if (!src.intersect(source)) continue;
+                mapRect(dest, src, x0, y0, x, y, scaleX, scaleY);
+                src.offset(BORDER_SIZE - t.offsetX, BORDER_SIZE - t.offsetY);
+                canvas.drawTexture(t, src, dest);
+            }
         }
     }
 
