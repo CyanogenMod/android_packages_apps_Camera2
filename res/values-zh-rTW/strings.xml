@@ -92,7 +92,11 @@
     <string name="caching_label" msgid="4521059045896269095">"快取中…"</string>
     <string name="crop_action" msgid="3427470284074377001">"裁剪"</string>
     <string name="trim_action" msgid="703098114452883524">"修剪"</string>
+    <!-- no translation found for mute_action (5296241754753306251) -->
+    <skip />
     <string name="set_as" msgid="3636764710790507868">"設為"</string>
+    <!-- no translation found for video_mute_err (6392457611270600908) -->
+    <skip />
     <string name="video_err" msgid="7003051631792271009">"無法播放影片。"</string>
     <string name="group_by_location" msgid="316641628989023253">"依位置"</string>
     <string name="group_by_time" msgid="9046168567717963573">"依時間"</string>
@@ -194,8 +198,11 @@
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"幻燈片檢視"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"格狀檢視"</string>
     <string name="trimming" msgid="9122385768369143997">"修剪中"</string>
+    <!-- no translation found for muting (5094925919589915324) -->
+    <skip />
     <string name="please_wait" msgid="7296066089146487366">"請稍候"</string>
-    <string name="save_into" msgid="4960537214388766062">"正在將修剪後的影片儲存至相簿："</string>
+    <!-- no translation found for save_into (9155488424829609229) -->
+    <skip />
     <string name="trim_too_short" msgid="751593965620665326">"無法修剪：目標影片長度過短"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"正在進行全景成像作業"</string>
     <string name="save" msgid="613976532235060516">"儲存"</string>
