@@ -1074,6 +1074,12 @@ public abstract class PhotoPage extends ActivityState implements
                 mActivity.startActivityForResult(intent, REQUEST_TRIM);
                 return true;
             }
+            case R.id.action_mute: {
+                MuteVideo muteVideo = new MuteVideo(current,
+                        manager.getContentUri(path), mActivity);
+                muteVideo.muteInBackground();
+                return true;
+            }
             case R.id.action_edit: {
                 launchPhotoEditor();
                 return true;
