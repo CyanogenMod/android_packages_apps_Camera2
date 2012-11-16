@@ -95,7 +95,11 @@
     <string name="caching_label" msgid="4521059045896269095">"Inaakibisha..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Punguza"</string>
     <string name="trim_action" msgid="703098114452883524">"Punguza"</string>
+    <!-- no translation found for mute_action (5296241754753306251) -->
+    <skip />
     <string name="set_as" msgid="3636764710790507868">"Weka kama"</string>
+    <!-- no translation found for video_mute_err (6392457611270600908) -->
+    <skip />
     <string name="video_err" msgid="7003051631792271009">"Video haiwezi kuchezwa."</string>
     <string name="group_by_location" msgid="316641628989023253">"Kwa mahali"</string>
     <string name="group_by_time" msgid="9046168567717963573">"Kwa saa"</string>
@@ -197,8 +201,11 @@
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"Mwonekano wa utepe wa filamu"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"Mwonekano wa gridi"</string>
     <string name="trimming" msgid="9122385768369143997">"Inapunguza"</string>
+    <!-- no translation found for muting (5094925919589915324) -->
+    <skip />
     <string name="please_wait" msgid="7296066089146487366">"Tafadhali subiri"</string>
-    <string name="save_into" msgid="4960537214388766062">"Inahifadhi video zilizopunguzwa kwenye albamu:"</string>
+    <!-- no translation found for save_into (9155488424829609229) -->
+    <skip />
     <string name="trim_too_short" msgid="751593965620665326">"Haiwezi kupunguza : video iliyolengwa ni fupi sana"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Inaonyesha panorama"</string>
     <string name="save" msgid="613976532235060516">"Hifadhi"</string>

@@ -92,7 +92,11 @@
     <string name="caching_label" msgid="4521059045896269095">"Кэширование..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Кадрировать"</string>
     <string name="trim_action" msgid="703098114452883524">"Обрезка"</string>
+    <!-- no translation found for mute_action (5296241754753306251) -->
+    <skip />
     <string name="set_as" msgid="3636764710790507868">"Установить как"</string>
+    <!-- no translation found for video_mute_err (6392457611270600908) -->
+    <skip />
     <string name="video_err" msgid="7003051631792271009">"Не удалось воспроизвести видео."</string>
     <string name="group_by_location" msgid="316641628989023253">"По месту съемки"</string>
     <string name="group_by_time" msgid="9046168567717963573">"По времени создания"</string>
@@ -194,8 +198,11 @@
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"Кинолента"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"Сетка"</string>
     <string name="trimming" msgid="9122385768369143997">"Обрезка"</string>
+    <!-- no translation found for muting (5094925919589915324) -->
+    <skip />
     <string name="please_wait" msgid="7296066089146487366">"Подождите…"</string>
-    <string name="save_into" msgid="4960537214388766062">"Сохраните видео в альбом:"</string>
+    <!-- no translation found for save_into (9155488424829609229) -->
+    <skip />
     <string name="trim_too_short" msgid="751593965620665326">"Нельзя обрезать видео: оно слишком короткое"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Создание панорамы…"</string>
     <string name="save" msgid="613976532235060516">"Сохранить"</string>
