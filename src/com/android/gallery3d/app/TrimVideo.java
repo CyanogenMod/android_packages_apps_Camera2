@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -39,6 +37,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockActivity;
 import com.android.gallery3d.R;
 import com.android.gallery3d.util.BucketNames;
 import com.android.gallery3d.util.SaveVideoFileInfo;
@@ -49,7 +49,7 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
-public class TrimVideo extends Activity implements
+public class TrimVideo extends SherlockActivity implements
         MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener,
         ControllerOverlay.Listener {
@@ -84,7 +84,7 @@ public class TrimVideo extends Activity implements
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         int displayOptions = ActionBar.DISPLAY_SHOW_HOME;
         actionBar.setDisplayOptions(0, displayOptions);
         displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM;
@@ -268,7 +268,7 @@ public class TrimVideo extends Activity implements
                             mProgress = null;
                             // Show the result only when the activity not stopped.
                             Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-                            intent.setDataAndTypeAndNormalize(Uri.fromFile(mDstFileInfo.mFile), "video/*");
+                            intent.setDataAndType(Uri.fromFile(mDstFileInfo.mFile), "video/*");
                             intent.putExtra(MediaStore.EXTRA_FINISH_ON_COMPLETION, false);
                             startActivity(intent);
                             finish();
