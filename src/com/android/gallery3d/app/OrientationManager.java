@@ -27,30 +27,16 @@ import android.view.Surface;
 
 import com.android.gallery3d.ui.OrientationSource;
 
-import java.util.ArrayList;
-
 public class OrientationManager implements OrientationSource {
     private static final String TAG = "OrientationManager";
-
-    public interface Listener {
-        public void onOrientationCompensationChanged();
-    }
 
     // Orientation hysteresis amount used in rounding, in degrees
     private static final int ORIENTATION_HYSTERESIS = 5;
 
     private Activity mActivity;
-    private ArrayList<Listener> mListeners;
     private MyOrientationEventListener mOrientationListener;
-    // The degrees of the device rotated clockwise from its natural orientation.
-    private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
     // If the framework orientation is locked.
     private boolean mOrientationLocked = false;
-    // The orientation compensation: if the framwork orientation is locked, the
-    // device orientation and the framework orientation may be different, so we
-    // need to rotate the UI. For example, if this value is 90, the UI
-    // components should be rotated 90 degrees counter-clockwise.
-    private int mOrientationCompensation = 0;
 
     // This is true if "Settings -> Display -> Rotation Lock" is checked. We
     // don't allow the orientation to be unlocked if the value is true.
@@ -58,7 +44,6 @@ public class OrientationManager implements OrientationSource {
 
     public OrientationManager(Activity activity) {
         mActivity = activity;
-        mListeners = new ArrayList<Listener>();
         mOrientationListener = new MyOrientationEventListener(activity);
     }
 
@@ -71,18 +56,6 @@ public class OrientationManager implements OrientationSource {
 
     public void pause() {
         mOrientationListener.disable();
-    }
-
-    public void addListener(Listener listener) {
-        synchronized (mListeners) {
-            mListeners.add(listener);
-        }
-    }
-
-    public void removeListener(Listener listener) {
-        synchronized (mListeners) {
-            mListeners.remove(listener);
-        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -98,15 +71,27 @@ public class OrientationManager implements OrientationSource {
     public void lockOrientation() {
         if (mOrientationLocked) return;
         mOrientationLocked = true;
+        mActivity.setRequestedOrientation(calculateCurrentScreenOrientation());
+    }
+
+    // Unlock the framework orientation, so it can change when the device
+    // rotates.
+    public void unlockOrientation() {
+        if (!mOrientationLocked) return;
+        mOrientationLocked = false;
+        Log.d(TAG, "unlock orientation");
+        mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+    }
+
+    private int calculateCurrentScreenOrientation() {
         int displayRotation = getDisplayRotation();
         // Display rotation >= 180 means we need to use the REVERSE landscape/portrait
         boolean standard = displayRotation < 180;
         if (mActivity.getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_LANDSCAPE) {
-            Log.d(TAG, "lock orientation to landscape");
-            mActivity.setRequestedOrientation(standard
+            return standard
                     ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                    : ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                    : ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
         } else {
             if (displayRotation == 90 || displayRotation == 270) {
                 // If displayRotation = 90 or 270 then we are on a landscape
@@ -115,53 +100,9 @@ public class OrientationManager implements OrientationSource {
                 // to flip which portrait we pick as display rotation is counter clockwise
                 standard = !standard;
             }
-            Log.d(TAG, "lock orientation to portrait");
-            mActivity.setRequestedOrientation(standard
+            return standard
                     ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                    : ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
-        }
-        updateCompensation();
-    }
-
-    // Unlock the framework orientation, so it can change when the device
-    // rotates.
-    public void unlockOrientation() {
-        if (!mOrientationLocked) return;
-        if (mRotationLockedSetting) return;
-        mOrientationLocked = false;
-        Log.d(TAG, "unlock orientation");
-        mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-        disableCompensation();
-    }
-
-    // Calculate the compensation value and send it to listeners.
-    private void updateCompensation() {
-        if (mOrientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
-            return;
-        }
-
-        int orientationCompensation =
-            (mOrientation + getDisplayRotation(mActivity)) % 360;
-
-        if (mOrientationCompensation != orientationCompensation) {
-            mOrientationCompensation = orientationCompensation;
-            notifyListeners();
-        }
-    }
-
-    // Make the compensation value 0 and send it to listeners.
-    private void disableCompensation() {
-        if (mOrientationCompensation != 0) {
-            mOrientationCompensation = 0;
-            notifyListeners();
-        }
-    }
-
-    private void notifyListeners() {
-        synchronized (mListeners) {
-            for (int i = 0, n = mListeners.size(); i < n; i++) {
-                mListeners.get(i).onOrientationCompensationChanged();
-            }
+                    : ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
         }
     }
 
@@ -177,10 +118,7 @@ public class OrientationManager implements OrientationSource {
             // the camera then point the camera to floor or sky, we still have
             // the correct orientation.
             if (orientation == ORIENTATION_UNKNOWN) return;
-            mOrientation = roundOrientation(orientation, mOrientation);
-            // If the framework orientation is locked, we update the
-            // compensation value and notify the listeners.
-            if (mOrientationLocked) updateCompensation();
+            orientation = roundOrientation(orientation, 0);
         }
     }
 
@@ -191,7 +129,7 @@ public class OrientationManager implements OrientationSource {
 
     @Override
     public int getCompensation() {
-        return mOrientationCompensation;
+        return 0;
     }
 
     private static int roundOrientation(int orientation, int orientationHistory) {
