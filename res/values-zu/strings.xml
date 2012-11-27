@@ -94,11 +94,9 @@
     <string name="caching_label" msgid="4521059045896269095">"Ukulondoloza isikhashana..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Khropha"</string>
     <string name="trim_action" msgid="703098114452883524">"Lungisa"</string>
-    <!-- no translation found for mute_action (5296241754753306251) -->
-    <skip />
+    <string name="mute_action" msgid="5296241754753306251">"Thulisa"</string>
     <string name="set_as" msgid="3636764710790507868">"Hlela njenge"</string>
-    <!-- no translation found for video_mute_err (6392457611270600908) -->
-    <skip />
+    <string name="video_mute_err" msgid="6392457611270600908">"Ayikwazi ukuthulisa ividiyo."</string>
     <string name="video_err" msgid="7003051631792271009">"Ayikwazi ukudlala ividiyo"</string>
     <string name="group_by_location" msgid="316641628989023253">"Ngendawo"</string>
     <string name="group_by_time" msgid="9046168567717963573">"Ngesikhathi"</string>
@@ -200,11 +198,9 @@
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"Ukubuka nge-Filmstrip"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"Ukubuka ngegridi"</string>
     <string name="trimming" msgid="9122385768369143997">"Ukusika"</string>
-    <!-- no translation found for muting (5094925919589915324) -->
-    <skip />
+    <string name="muting" msgid="5094925919589915324">"Ukuthulisa"</string>
     <string name="please_wait" msgid="7296066089146487366">"Sicela ulinde"</string>
-    <!-- no translation found for save_into (9155488424829609229) -->
-    <skip />
+    <string name="save_into" msgid="9155488424829609229">"Kulondolozwa ividiyo ku-<xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
     <string name="trim_too_short" msgid="751593965620665326">"Awukwazi ukusika : ividiyo eqondisiwe yifushane kakhulu"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Ukufaka i-panorama"</string>
     <string name="save" msgid="613976532235060516">"Londoloza"</string>

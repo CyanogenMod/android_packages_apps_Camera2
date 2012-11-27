@@ -92,11 +92,9 @@
     <string name="caching_label" msgid="4521059045896269095">"Do pamäte..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Orezať"</string>
     <string name="trim_action" msgid="703098114452883524">"Orezať"</string>
-    <!-- no translation found for mute_action (5296241754753306251) -->
-    <skip />
+    <string name="mute_action" msgid="5296241754753306251">"Vypnúť zvuk"</string>
     <string name="set_as" msgid="3636764710790507868">"Použiť ako"</string>
-    <!-- no translation found for video_mute_err (6392457611270600908) -->
-    <skip />
+    <string name="video_mute_err" msgid="6392457611270600908">"Zvuk videa sa nedá vypnúť."</string>
     <string name="video_err" msgid="7003051631792271009">"Video sa nepodarilo prehrať."</string>
     <string name="group_by_location" msgid="316641628989023253">"Podľa miesta"</string>
     <string name="group_by_time" msgid="9046168567717963573">"Podľa času"</string>
@@ -198,11 +196,9 @@
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"Zobrazenie filmového pásu"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"Zobrazenie v mriežke"</string>
     <string name="trimming" msgid="9122385768369143997">"Orezanie"</string>
-    <!-- no translation found for muting (5094925919589915324) -->
-    <skip />
+    <string name="muting" msgid="5094925919589915324">"Vypína sa zvuk..."</string>
     <string name="please_wait" msgid="7296066089146487366">"Počkajte"</string>
-    <!-- no translation found for save_into (9155488424829609229) -->
-    <skip />
+    <string name="save_into" msgid="9155488424829609229">"Video sa ukladá do albumu <xliff:g id="ALBUM_NAME">%1$s</xliff:g> …"</string>
     <string name="trim_too_short" msgid="751593965620665326">"Nie je možné orezať: výsledné video je príliš krátke"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Vykresľovanie panorámy"</string>
     <string name="save" msgid="613976532235060516">"Uložiť"</string>
