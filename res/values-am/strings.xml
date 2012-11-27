@@ -172,7 +172,7 @@
     <string name="click_import" msgid="6407959065464291972">"ለማስገባት እዚህ ንካ"</string>
     <string name="widget_type_album" msgid="6013045393140135468">"አልበም ምረጥ"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"ሁሉንም  ምስሎች  በውዝ"</string>
-    <string name="widget_type_photo" msgid="6267065337367795355">"ምስል ምረጥ"</string>
+    <string name="widget_type_photo" msgid="6267065337367795355">"ምስል ይምረጡ"</string>
     <string name="widget_type" msgid="1364653978966343448">"ምስሎችን ምረጥ"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"ስላይድ ትዕይንት"</string>
     <string name="albums" msgid="7320787705180057947">"አልበሞች"</string>
