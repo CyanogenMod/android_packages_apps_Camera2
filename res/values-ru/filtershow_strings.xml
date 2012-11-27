@@ -70,5 +70,5 @@
     <string name="curves_channel_rgb" msgid="7909209509638333690">"RGB"</string>
     <string name="curves_channel_red" msgid="4199710104162111357">"Красный"</string>
     <string name="curves_channel_green" msgid="3733003466905031016">"Зеленый"</string>
-    <string name="curves_channel_blue" msgid="9129211507395079371">"Синева"</string>
+    <string name="curves_channel_blue" msgid="9129211507395079371">"Синий"</string>
 </resources>
