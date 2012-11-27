@@ -72,7 +72,7 @@ import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.GalleryUtils;
 
 public class PhotoPage extends ActivityState implements
-        PhotoView.Listener, OrientationManager.Listener, AppBridge.Server,
+        PhotoView.Listener, AppBridge.Server,
         PhotoPageBottomControls.Delegate, GalleryActionBar.OnAlbumModeSelectedListener {
     private static final String TAG = "PhotoPage";
 
@@ -285,7 +285,6 @@ public class PhotoPage extends ActivityState implements
         mRootPane.addComponent(mPhotoView);
         mApplication = (GalleryApp) ((Activity) mActivity).getApplication();
         mOrientationManager = mActivity.getOrientationManager();
-        mOrientationManager.addListener(this);
         mActivity.getGLRoot().setOrientationSource(mOrientationManager);
 
         mHandler = new SynchronizedHandler(mActivity.getGLRoot()) {
@@ -865,11 +864,6 @@ public class PhotoPage extends ActivityState implements
     }
 
     @Override
-    public void onOrientationCompensationChanged() {
-        mActivity.getGLRoot().requestLayoutContentPane();
-    }
-
-    @Override
     protected void onBackPressed() {
         if (mShowDetails) {
             hideDetails();
@@ -1424,7 +1418,6 @@ public class PhotoPage extends ActivityState implements
             mScreenNailSet = null;
             mScreenNailItem = null;
         }
-        mOrientationManager.removeListener(this);
         mActivity.getGLRoot().setOrientationSource(null);
         if (mBottomControls != null) mBottomControls.cleanup();
 
