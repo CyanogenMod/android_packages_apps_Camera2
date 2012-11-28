@@ -20,6 +20,7 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.WallpaperManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -32,6 +33,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -52,6 +54,7 @@ import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.data.CropExtras;
 import com.android.gallery3d.data.LocalAlbum;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
@@ -91,6 +94,7 @@ import com.android.gallery3d.filtershow.ui.Spline;
 import com.android.gallery3d.util.GalleryUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Vector;
 
@@ -98,9 +102,13 @@ import java.util.Vector;
 public class FilterShowActivity extends Activity implements OnItemClickListener,
         OnShareTargetSelectedListener {
 
+    // fields for supporting crop action
     public static final String CROP_ACTION = "com.android.camera.action.EDITOR_CROP";
+    private CropExtras mCropExtras = null;
+
     public static final String TINY_PLANET_ACTION = "com.android.camera.action.TINY_PLANET";
     public static final String LAUNCH_FULLSCREEN = "launch-fullscreen";
+    public static final int MAX_BMAP_IN_INTENT = 990000;
     private final PanelController mPanelController = new PanelController();
     private ImageLoader mImageLoader = null;
     private ImageShow mImageShow = null;
@@ -405,8 +413,37 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             pickImage();
         }
 
+        // Handle behavior for various actions
         String action = intent.getAction();
         if (action.equalsIgnoreCase(CROP_ACTION)) {
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                mCropExtras = new CropExtras(extras.getInt(CropExtras.KEY_OUTPUT_X, 0),
+                        extras.getInt(CropExtras.KEY_OUTPUT_Y, 0),
+                        extras.getBoolean(CropExtras.KEY_SCALE, true) &&
+                                extras.getBoolean(CropExtras.KEY_SCALE_UP_IF_NEEDED, false),
+                        extras.getInt(CropExtras.KEY_ASPECT_X, 0),
+                        extras.getInt(CropExtras.KEY_ASPECT_Y, 0),
+                        extras.getBoolean(CropExtras.KEY_SET_AS_WALLPAPER, false),
+                        extras.getBoolean(CropExtras.KEY_RETURN_DATA, false),
+                        (Uri) extras.getParcelable(MediaStore.EXTRA_OUTPUT),
+                        extras.getString(CropExtras.KEY_OUTPUT_FORMAT),
+                        extras.getBoolean(CropExtras.KEY_SHOW_WHEN_LOCKED, false),
+                        extras.getFloat(CropExtras.KEY_SPOTLIGHT_X),
+                        extras.getFloat(CropExtras.KEY_SPOTLIGHT_Y));
+
+                if (mCropExtras.getShowWhenLocked()) {
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+                }
+                mImageShow.getImagePreset().mGeoData.setCropExtras(mCropExtras);
+
+                mImageCrop.setExtras(mCropExtras);
+                String s = getString(R.string.Fixed);
+                mImageCrop.setAspectString(s);
+                mImageCrop.setCropActionFlag(true);
+                mPanelController.setFixedAspect(mCropExtras.getAspectX() > 0
+                        && mCropExtras.getAspectY() > 0);
+            }
             mPanelController.showComponent(findViewById(R.id.cropButton));
         } else if (action.equalsIgnoreCase(TINY_PLANET_ACTION)) {
             mPanelController.showComponent(findViewById(R.id.tinyplanetButton));
@@ -447,8 +484,9 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         @Override
         protected void onProgressUpdate(Boolean... values) {
             super.onProgressUpdate(values);
-            if (isCancelled())
+            if (isCancelled()) {
                 return;
+            }
             final View filters = findViewById(R.id.filtersPanel);
             final View loading = findViewById(R.id.loading);
             loading.setVisibility(View.GONE);
@@ -1017,17 +1055,88 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }
     }
 
+    private boolean mSaveToExtraUri = false;
+    private boolean mSaveAsWallpaper = false;
+    private boolean mReturnAsExtra = false;
+    private boolean outputted = false;
+
     public void saveImage() {
-        if (mImageShow.hasModifications()) {
-            // Get the name of the album, to which the image will be saved
-            File saveDir = SaveCopyTask.getFinalSaveDirectory(this, mImageLoader.getUri());
-            int bucketId = GalleryUtils.getBucketId(saveDir.getPath());
-            String albumName = LocalAlbum.getLocalizedName(getResources(), bucketId, null);
-            showSavingProgress(albumName);
-            mImageShow.saveImage(this, null);
-        } else {
-            finish();
+        // boolean outputted = false;
+        if (mCropExtras != null) {
+            if (mCropExtras.getExtraOutput() != null) {
+                mSaveToExtraUri = true;
+                outputted = true;
+            }
+            if (mCropExtras.getSetAsWallpaper()) {
+                mSaveAsWallpaper = true;
+                outputted = true;
+            }
+            if (mCropExtras.getReturnData()) {
+
+                mReturnAsExtra = true;
+                outputted = true;
+            }
+
+            if (outputted) {
+                mImageShow.getImagePreset().mGeoData.setUseCropExtrasFlag(true);
+                showSavingProgress(null);
+                mImageShow.returnFilteredResult(this);
+            }
         }
+        if (!outputted) {
+            if (mImageShow.hasModifications()) {
+                // Get the name of the album, to which the image will be saved
+                File saveDir = SaveCopyTask.getFinalSaveDirectory(this, mImageLoader.getUri());
+                int bucketId = GalleryUtils.getBucketId(saveDir.getPath());
+                String albumName = LocalAlbum.getLocalizedName(getResources(), bucketId, null);
+                showSavingProgress(albumName);
+                mImageShow.saveImage(this, null);
+            } else {
+                done();
+            }
+        }
+    }
+
+    public void onFilteredResult(Bitmap filtered) {
+        Intent intent = new Intent();
+        intent.putExtra(CropExtras.KEY_CROPPED_RECT, mImageShow.getImageCropBounds());
+        if (mSaveToExtraUri) {
+            mImageShow.saveToUri(filtered, mCropExtras.getExtraOutput(),
+                    mCropExtras.getOutputFormat(), this);
+        }
+        if (mSaveAsWallpaper) {
+            try {
+                WallpaperManager.getInstance(this).setBitmap(filtered);
+            } catch (IOException e) {
+                Log.w(LOGTAG, "fail to set wall paper", e);
+            }
+        }
+        if (mReturnAsExtra) {
+            if (filtered != null) {
+                int bmapSize = filtered.getRowBytes() * filtered.getHeight();
+                /*
+                 * Max size of Binder transaction buffer is 1Mb, so constrain
+                 * Bitmap to be somewhat less than this, otherwise we get
+                 * TransactionTooLargeExceptions.
+                 */
+                if (bmapSize > MAX_BMAP_IN_INTENT) {
+                    Log.w(LOGTAG, "Bitmap too large to be returned via intent");
+                } else {
+                    intent.putExtra(CropExtras.KEY_DATA, filtered);
+                }
+            }
+        }
+        setResult(RESULT_OK, intent);
+        if (!mSaveToExtraUri) {
+            done();
+        }
+    }
+
+    public void done() {
+        if (outputted) {
+            hideSavingProgress();
+        }
+        finish();
     }
 
     static {

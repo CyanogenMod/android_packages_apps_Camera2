@@ -23,6 +23,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -322,6 +323,10 @@ public class ImageShow extends View implements OnGestureListener,
         Rect dst = new Rect();
         getImagePreset().mGeoData.getPhotoBounds().roundOut(dst);
         return dst;
+    }
+
+    public Rect getImageCropBounds() {
+        return GeometryMath.roundNearest(getImagePreset().mGeoData.getPreviewCropBounds());
     }
 
     public Rect getDisplayedImageBounds() {
@@ -667,6 +672,14 @@ public class ImageShow extends View implements OnGestureListener,
 
     public void saveImage(FilterShowActivity filterShowActivity, File file) {
         mImageLoader.saveImage(getImagePreset(), filterShowActivity, file);
+    }
+
+    public void saveToUri(Bitmap f, Uri u, String m, FilterShowActivity filterShowActivity) {
+        mImageLoader.saveToUri(f, u, m, filterShowActivity);
+    }
+
+    public void returnFilteredResult(FilterShowActivity filterShowActivity) {
+        mImageLoader.returnFilteredResult(getImagePreset(), filterShowActivity);
     }
 
     @Override

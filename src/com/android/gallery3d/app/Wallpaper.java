@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.view.Display;
 
 import com.android.gallery3d.common.ApiHelper;
+import com.android.gallery3d.filtershow.FilterShowActivity;
 
 /**
  * Wallpaper picker for the gallery application. This just redirects to the
@@ -98,7 +99,7 @@ public class Wallpaper extends Activity {
                 Point size = getDefaultDisplaySize(new Point());
                 float spotlightX = (float) size.x / width;
                 float spotlightY = (float) size.y / height;
-                Intent request = new Intent(CropImage.ACTION_CROP)
+                Intent request = new Intent(FilterShowActivity.CROP_ACTION)
                         .setDataAndType(mPickedItem, IMAGE_TYPE)
                         .addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT)
                         .putExtra(CropImage.KEY_OUTPUT_X, width)

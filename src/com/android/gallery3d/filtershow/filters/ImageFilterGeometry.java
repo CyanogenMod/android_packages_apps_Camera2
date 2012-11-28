@@ -23,6 +23,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import com.android.gallery3d.data.CropExtras;
 import com.android.gallery3d.filtershow.imageshow.GeometryMath;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 
@@ -69,21 +70,55 @@ public class ImageFilterGeometry extends ImageFilter {
         // TODO: implement bilinear or bicubic here... for now, just use
         // canvas to do a simple implementation...
         // TODO: and be more memory efficient! (do it in native?)
+
+        CropExtras extras = mGeometry.getCropExtras();
+        boolean useExtras = mGeometry.getUseCropExtrasFlag();
+        int outputX = 0;
+        int outputY = 0;
+        boolean s = false;
+        if (extras != null && useExtras){
+            outputX = extras.getOutputX();
+            outputY = extras.getOutputY();
+            s = extras.getScaleUp();
+        }
+
+
         Rect cropBounds = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
         RectF crop = mGeometry.getCropBounds(bitmap);
         if (crop.width() > 0 && crop.height() > 0)
             cropBounds = GeometryMath.roundNearest(crop);
-        Bitmap temp = null;
-        if (mGeometry.hasSwitchedWidthHeight()) {
-            temp = Bitmap.createBitmap(cropBounds.height(), cropBounds.width(), mConfig);
-        } else {
-            temp = Bitmap.createBitmap(cropBounds.width(), cropBounds.height(), mConfig);
+
+        int width = cropBounds.width();
+        int height = cropBounds.height();
+
+        if (mGeometry.hasSwitchedWidthHeight()){
+            int temp = width;
+            width = height;
+            height = temp;
         }
+
+        if(outputX <= 0 || outputY <= 0){
+            outputX = width;
+            outputY = height;
+        }
+
+        float scaleX = 1;
+        float scaleY = 1;
+        if (s){
+                scaleX = (float) outputX / width;
+                scaleY = (float) outputY / height;
+        }
+
+        Bitmap temp = null;
+        temp = Bitmap.createBitmap(outputX, outputY, mConfig);
+
         float[] displayCenter = {
                 temp.getWidth() / 2f, temp.getHeight() / 2f
         };
 
         Matrix m1 = mGeometry.buildTotalXform(bitmap.getWidth(), bitmap.getHeight(), displayCenter);
+
+        m1.postScale(scaleX, scaleY, displayCenter[0], displayCenter[1]);
 
         Canvas canvas = new Canvas(temp);
         Paint paint = new Paint();
