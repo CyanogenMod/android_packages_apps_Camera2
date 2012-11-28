@@ -287,6 +287,14 @@ public class ExifData {
     }
 
     /**
+     * Adds the given ExifTag to its corresponding IFD.
+     */
+    public void addTag(ExifTag tag) {
+        IfdData ifdData = getOrCreateIfdData(tag.getIfd());
+        ifdData.setTag(tag);
+    }
+
+    /**
      * Adds a thumbnail-related tag with the given tag ID. If the tag of the given ID
      * already exists, the original tag will be returned. Otherwise, a new ExifTag will
      * be created.
