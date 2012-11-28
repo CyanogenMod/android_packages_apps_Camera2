@@ -103,7 +103,8 @@ public class ExifOutputStreamTest extends ExifXmlDataTestCase {
     }
 
     @Override
-    public void tearDown() {
+    public void tearDown() throws Exception {
+        super.tearDown();
         mTmpFile.delete();
     }
 }
