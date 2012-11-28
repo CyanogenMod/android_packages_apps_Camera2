@@ -59,10 +59,8 @@ public class GeometryMetadata {
         if (mStraightenRotation != 0) {
             return true;
         }
-        Rect cropBounds = new Rect();
-        mCropBounds.roundOut(cropBounds);
-        Rect photoBounds = new Rect();
-        mPhotoBounds.roundOut(photoBounds);
+        Rect cropBounds = GeometryMath.roundNearest(mCropBounds);
+        Rect photoBounds = GeometryMath.roundNearest(mPhotoBounds);
         if (!cropBounds.equals(photoBounds)) {
             return true;
         }

@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.filtershow.imageshow;
 
+import android.graphics.Rect;
 import android.graphics.RectF;
 
 public class GeometryMath {
@@ -97,6 +98,12 @@ public class GeometryMath {
         if (oldHeight == 0 || oldWidth == 0)
             return 1;
         return Math.min(newWidth / oldWidth , newHeight / oldHeight);
+    }
+
+    public static Rect roundNearest(RectF r){
+        Rect q = new Rect(Math.round(r.left), Math.round(r.top), Math.round(r.right),
+                Math.round(r.bottom));
+        return q;
     }
 
 }
