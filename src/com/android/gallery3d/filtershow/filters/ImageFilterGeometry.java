@@ -72,7 +72,7 @@ public class ImageFilterGeometry extends ImageFilter {
         Rect cropBounds = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
         RectF crop = mGeometry.getCropBounds(bitmap);
         if (crop.width() > 0 && crop.height() > 0)
-            crop.roundOut(cropBounds);
+            cropBounds = GeometryMath.roundNearest(crop);
         Bitmap temp = null;
         if (mGeometry.hasSwitchedWidthHeight()) {
             temp = Bitmap.createBitmap(cropBounds.height(), cropBounds.width(), mConfig);
