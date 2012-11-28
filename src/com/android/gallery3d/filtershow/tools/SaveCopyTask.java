@@ -52,9 +52,6 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
 
 
     private static final String LOGTAG = "SaveCopyTask";
-    private static final int DEFAULT_COMPRESS_QUALITY = 95;
-    private static final String DEFAULT_SAVE_DIRECTORY = "EditedOnlinePhotos";
-
     /**
      * Saves the bitmap in the final destination
      */
@@ -62,7 +59,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         OutputStream os = null;
         try {
             os = new FileOutputStream(destination);
-            bitmap.compress(CompressFormat.JPEG, DEFAULT_COMPRESS_QUALITY, os);
+            bitmap.compress(CompressFormat.JPEG, ImageLoader.DEFAULT_COMPRESS_QUALITY, os);
         } catch (FileNotFoundException e) {
             Log.v(LOGTAG,"Error in writing "+destination.getAbsolutePath());
         } finally {
@@ -123,7 +120,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         File saveDirectory = getSaveDirectory(context, sourceUri);
         if ((saveDirectory == null) || !saveDirectory.canWrite()) {
             saveDirectory = new File(Environment.getExternalStorageDirectory(),
-                    DEFAULT_SAVE_DIRECTORY);
+                    ImageLoader.DEFAULT_SAVE_DIRECTORY);
         }
         // Create the directory if it doesn't exist
         if (!saveDirectory.exists()) saveDirectory.mkdirs();
@@ -135,19 +132,6 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         String filename = new SimpleDateFormat(TIME_STAMP_NAME).format(new Date(
                 System.currentTimeMillis()));
         return new File(saveDirectory, filename + ".JPG");
-    }
-
-    private Bitmap loadMutableBitmap() throws FileNotFoundException {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        // TODO: on <3.x we need a copy of the bitmap (inMutable doesn't
-        // exist)
-        options.inMutable = true;
-
-        InputStream is = context.getContentResolver().openInputStream(sourceUri);
-        Bitmap bitmap = BitmapFactory.decodeStream(is, null, options);
-        int orientation = ImageLoader.getOrientation(context, sourceUri);
-        bitmap = ImageLoader.rotateToPortrait(bitmap, orientation);
-        return bitmap;
     }
 
     private static final String[] COPY_EXIF_ATTRIBUTES = new String[] {
@@ -228,7 +212,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         ImagePreset preset = params[0];
 
         try {
-            Bitmap bitmap = preset.apply(loadMutableBitmap());
+            Bitmap bitmap = preset.apply(ImageLoader.loadMutableBitmap(context, sourceUri));
 
             Object xmp = null;
             InputStream is = null;

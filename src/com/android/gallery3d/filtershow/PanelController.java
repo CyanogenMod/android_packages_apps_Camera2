@@ -56,6 +56,11 @@ public class PanelController implements OnClickListener {
     private static int HORIZONTAL_MOVE = 1;
     private static final int ANIM_DURATION = 200;
     private static final String LOGTAG = "PanelController";
+    private boolean mFixedAspect = false;
+
+    public void setFixedAspect(boolean t){
+        mFixedAspect = t;
+    }
 
     class Panel {
         private final View mView;
@@ -607,10 +612,12 @@ public class PanelController implements OnClickListener {
                 mUtilityPanel.setEffectName(ename);
                 mUtilityPanel.setShowParameter(false);
                 if (mCurrentImage instanceof ImageCrop && mUtilityPanel.firstTimeCropDisplayed){
-                    ((ImageCrop) mCurrentImage).applyClear();
+                    ((ImageCrop) mCurrentImage).clear();
                     mUtilityPanel.firstTimeCropDisplayed = false;
                 }
-                mUtilityPanel.showAspectButtons();
+                if (!mFixedAspect){
+                    mUtilityPanel.showAspectButtons();
+                }
                 break;
             }
             case R.id.rotateButton: {

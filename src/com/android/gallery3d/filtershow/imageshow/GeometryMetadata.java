@@ -21,6 +21,7 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import com.android.gallery3d.data.CropExtras;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
 
@@ -36,6 +37,25 @@ public class GeometryMetadata {
 
     public enum FLIP {
         NONE, VERTICAL, HORIZONTAL, BOTH
+    }
+
+    // Output format data from intent extras
+    private boolean mUseCropExtras = false;
+    private CropExtras mCropExtras = null;
+    public void setUseCropExtrasFlag(boolean f){
+        mUseCropExtras = f;
+    }
+
+    public boolean getUseCropExtrasFlag(){
+        return mUseCropExtras;
+    }
+
+    public void setCropExtras(CropExtras e){
+        mCropExtras = e;
+    }
+
+    public CropExtras getCropExtras(){
+        return mCropExtras;
     }
 
     public GeometryMetadata() {
@@ -82,6 +102,11 @@ public class GeometryMetadata {
         mCropBounds.set(g.mCropBounds);
         mPhotoBounds.set(g.mPhotoBounds);
         mFlip = g.mFlip;
+
+        mUseCropExtras = g.mUseCropExtras;
+        if (g.mCropExtras != null){
+            mCropExtras = new CropExtras(g.mCropExtras);
+        }
     }
 
     public float getScaleFactor() {

@@ -30,6 +30,7 @@ import com.android.gallery3d.app.AlbumPicker;
 import com.android.gallery3d.app.CropImage;
 import com.android.gallery3d.app.DialogPicker;
 import com.android.gallery3d.common.ApiHelper;
+import com.android.gallery3d.filtershow.FilterShowActivity;
 
 public class WidgetConfigure extends Activity {
     @SuppressWarnings("unused")
@@ -142,7 +143,7 @@ public class WidgetConfigure extends Activity {
         int widgetHeight = Math.round(height * scale);
 
         mPickedItem = data.getData();
-        Intent request = new Intent(CropImage.ACTION_CROP, mPickedItem)
+        Intent request = new Intent(FilterShowActivity.CROP_ACTION, mPickedItem)
                 .putExtra(CropImage.KEY_OUTPUT_X, widgetWidth)
                 .putExtra(CropImage.KEY_OUTPUT_Y, widgetHeight)
                 .putExtra(CropImage.KEY_ASPECT_X, widgetWidth)

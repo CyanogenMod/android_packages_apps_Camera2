@@ -92,6 +92,8 @@
     <string name="aspectNone_effect">None</string>
     <!--  Label for the aspect None effect [CHAR LIMIT=15] -->
     <string name="aspectOriginal_effect">@string/original</string>
+    <!-- Label for when the aspect ratio is fixed to a value [CHAR LIMIT=15] -->
+    <string name="Fixed">Fixed</string>
     <!--  Label for the tuny planet effect [CHAR LIMIT=10] -->
     <string name="tinyplanet">Tiny Planet</string>
 

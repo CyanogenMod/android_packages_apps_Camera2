@@ -18,6 +18,7 @@ package com.android.gallery3d.filtershow.cache;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
@@ -26,6 +27,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.graphics.Bitmap.CompressFormat;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -36,6 +38,7 @@ import com.adobe.xmp.XMPMeta;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.CropExtras;
 import com.android.gallery3d.exif.ExifInvalidFormatException;
 import com.android.gallery3d.exif.ExifParser;
 import com.android.gallery3d.exif.ExifTag;
@@ -44,7 +47,9 @@ import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.tools.BitmapTask;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
+import com.android.gallery3d.util.InterruptableOutputStream;
 import com.android.gallery3d.util.XmpUtilHelper;
 
 import java.io.Closeable;
@@ -53,6 +58,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Vector;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -72,6 +78,9 @@ public class ImageLoader {
     private HistoryAdapter mAdapter = null;
 
     private FilterShowActivity mActivity = null;
+
+    public static final String DEFAULT_SAVE_DIRECTORY = "EditedOnlinePhotos";
+    public static final int DEFAULT_COMPRESS_QUALITY = 95;
 
     public static final int ORI_NORMAL = ExifInterface.ORIENTATION_NORMAL;
     public static final int ORI_ROTATE_90 = ExifInterface.ORIENTATION_ROTATE_90;
@@ -449,6 +458,109 @@ public class ImageLoader {
         }).execute(preset);
     }
 
+    public static Bitmap loadMutableBitmap(Context context, Uri sourceUri)
+            throws FileNotFoundException {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        // TODO: on <3.x we need a copy of the bitmap (inMutable doesn't
+        // exist)
+        options.inMutable = true;
+
+        InputStream is = context.getContentResolver().openInputStream(sourceUri);
+        Bitmap bitmap = BitmapFactory.decodeStream(is, null, options);
+        int orientation = ImageLoader.getOrientation(context, sourceUri);
+        bitmap = ImageLoader.rotateToPortrait(bitmap, orientation);
+        return bitmap;
+    }
+
+    public void returnFilteredResult(ImagePreset preset,
+            final FilterShowActivity filterShowActivity) {
+        preset.setIsHighQuality(true);
+        preset.setScaleFactor(1.0f);
+
+        BitmapTask.Callbacks<ImagePreset> cb = new BitmapTask.Callbacks<ImagePreset>() {
+
+            @Override
+            public void onComplete(Bitmap result) {
+                filterShowActivity.onFilteredResult(result);
+            }
+
+            @Override
+            public void onCancel() {
+            }
+
+            @Override
+            public Bitmap onExecute(ImagePreset param) {
+                if (param == null) {
+                    return null;
+                }
+                try {
+                    Bitmap bitmap = param.apply(loadMutableBitmap(mContext, mUri));
+                    return bitmap;
+                } catch (FileNotFoundException ex) {
+                    Log.w(LOGTAG, "Failed to save image!", ex);
+                    return null;
+                }
+            }
+        };
+
+        (new BitmapTask<ImagePreset>(cb)).execute(preset);
+    }
+
+    private String getFileExtension(String requestFormat) {
+        String outputFormat = (requestFormat == null)
+                ? "jpg"
+                : requestFormat;
+        outputFormat = outputFormat.toLowerCase();
+        return (outputFormat.equals("png") || outputFormat.equals("gif"))
+                ? "png" // We don't support gif compression.
+                : "jpg";
+    }
+
+    private CompressFormat convertExtensionToCompressFormat(String extension) {
+        return extension.equals("png") ? CompressFormat.PNG : CompressFormat.JPEG;
+    }
+
+    public void saveToUri(Bitmap bmap, Uri uri, final String outputFormat,
+            final FilterShowActivity filterShowActivity) {
+
+        OutputStream out = null;
+        try {
+            out = filterShowActivity.getContentResolver().openOutputStream(uri);
+        } catch (FileNotFoundException e) {
+            Log.w(LOGTAG, "cannot write output", e);
+            out = null;
+        } finally {
+            if (bmap == null || out == null) {
+                return;
+            }
+        }
+
+        final InterruptableOutputStream ios = new InterruptableOutputStream(out);
+
+        BitmapTask.Callbacks<Bitmap> cb = new BitmapTask.Callbacks<Bitmap>() {
+
+            @Override
+            public void onComplete(Bitmap result) {
+                filterShowActivity.done();
+            }
+
+            @Override
+            public void onCancel() {
+                ios.interrupt();
+            }
+
+            @Override
+            public Bitmap onExecute(Bitmap param) {
+                CompressFormat cf = convertExtensionToCompressFormat(getFileExtension(outputFormat));
+                param.compress(cf, DEFAULT_COMPRESS_QUALITY, ios);
+                Utils.closeSilently(ios);
+                return null;
+            }
+        };
+
+        (new BitmapTask<Bitmap>(cb)).execute(bmap);
+    }
+
     public void setAdapter(HistoryAdapter adapter) {
         mAdapter = adapter;
     }
@@ -468,6 +580,7 @@ public class ImageLoader {
 
     /**
      * Determine if this is a light cycle 360 image
+     *
      * @return true if it is a light Cycle image that is full 360
      */
     public boolean queryLightCycle360() {

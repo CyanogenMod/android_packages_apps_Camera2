@@ -29,7 +29,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.imageshow.ImageGeometry.MODES;
+import com.android.gallery3d.data.CropExtras;
 
 public class ImageCrop extends ImageGeometry {
     private static final boolean LOGV = false;
@@ -67,6 +67,8 @@ public class ImageCrop extends ImageGeometry {
     private float[] mOffset = {
             0, 0
     };
+    private CropExtras mCropExtras = null;
+    private boolean mDoingCropIntentAction = false;
 
     private static final String LOGTAG = "ImageCrop";
 
@@ -103,6 +105,9 @@ public class ImageCrop extends ImageGeometry {
     }
 
     private void swapAspect() {
+        if (mDoingCropIntentAction) {
+            return;
+        }
         float temp = mAspectWidth;
         mAspectWidth = mAspectHeight;
         mAspectHeight = temp;
@@ -120,6 +125,14 @@ public class ImageCrop extends ImageGeometry {
      */
     public static void setMinCropSize(int minHeightWidth) {
         mMinSideSize = minHeightWidth;
+    }
+
+    public void setExtras(CropExtras e) {
+        mCropExtras = e;
+    }
+
+    public void setCropActionFlag(boolean f) {
+        mDoingCropIntentAction = f;
     }
 
     public void apply(float w, float h) {
@@ -163,6 +176,18 @@ public class ImageCrop extends ImageGeometry {
         }
         saveAndSetPreset();
         invalidate();
+    }
+
+    public void clear() {
+        if (mCropExtras != null) {
+            int x = mCropExtras.getAspectX();
+            int y = mCropExtras.getAspectY();
+            if (mDoingCropIntentAction && x > 0 && y > 0) {
+                apply(x, y);
+            }
+        } else {
+            applyClear();
+        }
     }
 
     private Matrix getPhotoBoundDisplayedMatrix() {
@@ -493,7 +518,7 @@ public class ImageCrop extends ImageGeometry {
     public void imageLoaded() {
         super.imageLoaded();
         syncLocalToMasterGeometry();
-        applyClear();
+        clear();
         invalidate();
     }
 
@@ -549,39 +574,66 @@ public class ImageCrop extends ImageGeometry {
         gPaint.setColor(mBorderColor);
         gPaint.setStrokeWidth(3);
         gPaint.setStyle(Paint.Style.STROKE);
-        drawRuleOfThird(canvas, crop, gPaint);
+
+        boolean doThirds = true;
 
         if (mFixAspectRatio) {
-            float w = crop.width();
-            float h = crop.height();
-            float diag = (float) Math.sqrt(w * w + h * h);
-
-            float dash_len = 20;
-            int num_intervals = (int) (diag / dash_len);
-            float[] tl = {
-                    crop.left, crop.top
-            };
-            float centX = tl[0] + w / 2;
-            float centY = tl[1] + h / 2 + 5;
-            float[] br = {
-                    crop.right, crop.bottom
-            };
-            float[] vec = GeometryMath.getUnitVectorFromPoints(tl, br);
-
-            float[] counter = tl;
-            for (int x = 0; x < num_intervals; x++) {
-                float tempX = counter[0] + vec[0] * dash_len;
-                float tempY = counter[1] + vec[1] * dash_len;
-                if ((x % 2) == 0 && Math.abs(x - num_intervals / 2) > 2) {
-                    canvas.drawLine(counter[0], counter[1], tempX, tempY, gPaint);
-                }
-                counter[0] = tempX;
-                counter[1] = tempY;
+            float spotlightX = 0;
+            float spotlightY = 0;
+            if (mCropExtras != null) {
+                spotlightX = mCropExtras.getSpotlightX();
+                spotlightY = mCropExtras.getSpotlightY();
             }
+            if (mDoingCropIntentAction && spotlightX > 0 && spotlightY > 0) {
+                float sx = crop.width() * spotlightX;
+                float sy = crop.height() * spotlightY;
+                float cx = crop.centerX();
+                float cy = crop.centerY();
+                RectF r1 = new RectF(cx - sx / 2, cy - sy / 2, cx + sx / 2, cy + sy / 2);
+                float temp = sx;
+                sx = sy;
+                sy = temp;
+                RectF r2 = new RectF(cx - sx / 2, cy - sy / 2, cx + sx / 2, cy + sy / 2);
+                canvas.drawRect(r1, gPaint);
+                canvas.drawRect(r2, gPaint);
+                doThirds = false;
+            } else {
+                float w = crop.width();
+                float h = crop.height();
+                float diag = (float) Math.sqrt(w * w + h * h);
 
-            gPaint.setTextAlign(Paint.Align.CENTER);
-            gPaint.setTextSize(mAspectTextSize);
-            canvas.drawText(mAspect, centX, centY, gPaint);
+                float dash_len = 20;
+                int num_intervals = (int) (diag / dash_len);
+                float[] tl = {
+                        crop.left, crop.top
+                };
+                float centX = tl[0] + w / 2;
+                float centY = tl[1] + h / 2 + 5;
+                float[] br = {
+                        crop.right, crop.bottom
+                };
+                float[] vec = GeometryMath.getUnitVectorFromPoints(tl, br);
+
+                float[] counter = tl;
+                for (int x = 0; x < num_intervals; x++) {
+                    float tempX = counter[0] + vec[0] * dash_len;
+                    float tempY = counter[1] + vec[1] * dash_len;
+                    if ((x % 2) == 0 && Math.abs(x - num_intervals / 2) > 2) {
+                        canvas.drawLine(counter[0], counter[1], tempX, tempY, gPaint);
+                    }
+                    counter[0] = tempX;
+                    counter[1] = tempY;
+                }
+
+                gPaint.setTextAlign(Paint.Align.CENTER);
+                gPaint.setTextSize(mAspectTextSize);
+                canvas.drawText(mAspect, centX, centY, gPaint);
+            }
+        }
+
+        if (doThirds) {
+            drawRuleOfThird(canvas, crop, gPaint);
+
         }
 
         RectF scaledCrop = crop;
