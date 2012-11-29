@@ -49,7 +49,11 @@ public class Spline {
         mPoints = new Vector<ControlPoint>();
         for (int i = 0; i < spline.mPoints.size(); i++) {
             ControlPoint p = spline.mPoints.elementAt(i);
-            mPoints.add(new ControlPoint(p));
+            ControlPoint newPoint = new ControlPoint(p);
+            mPoints.add(newPoint);
+            if (spline.mCurrentControlPoint == p) {
+                mCurrentControlPoint = newPoint;
+            }
         }
         Collections.sort(mPoints);
     }
@@ -79,7 +83,7 @@ public class Spline {
         return Color.WHITE;
     }
 
-    public void didMovePoint(ControlPoint point) {
+    private void didMovePoint(ControlPoint point) {
         mCurrentControlPoint = point;
     }
 
@@ -90,6 +94,7 @@ public class Spline {
         ControlPoint point = mPoints.elementAt(pick);
         point.x = x;
         point.y = y;
+        didMovePoint(point);
     }
 
     public boolean isOriginal() {
