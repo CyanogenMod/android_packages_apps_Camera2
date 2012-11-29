@@ -22,6 +22,7 @@ import android.graphics.RectF;
 
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
+import com.android.gallery3d.app.Log;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 /**
@@ -90,8 +91,17 @@ public class ImageFilterTinyPlanet extends ImageFilter {
             }
         }
 
-        Bitmap mBitmapOut = Bitmap.createBitmap(
-                outputSize, outputSize, Bitmap.Config.ARGB_8888);
+        Bitmap mBitmapOut = null;
+        while (mBitmapOut == null) {
+            try {
+                mBitmapOut = Bitmap.createBitmap(
+                        outputSize, outputSize, Bitmap.Config.ARGB_8888);
+            } catch (java.lang.OutOfMemoryError e) {
+                System.gc();
+                outputSize /= 2;
+                Log.v(TAG, "No memory to create Full Tiny Planet create half");
+            }
+        }
         nativeApplyFilter(bitmapIn, bitmapIn.getWidth(), bitmapIn.getHeight(), mBitmapOut,
                 outputSize, mParameter / 100f, mAngle);
         return mBitmapOut;
@@ -112,10 +122,19 @@ public class ImageFilterTinyPlanet extends ImageFilter {
 
             // Make sure the intermediate image has the similar size to the
             // input.
+            Bitmap paddedBitmap = null;
             float scale = intermediateWidth / (float) fullPanoWidth;
-            Bitmap paddedBitmap = Bitmap.createBitmap(
+            while (paddedBitmap == null) {
+                try {
+                    paddedBitmap = Bitmap.createBitmap(
                     (int) (fullPanoWidth * scale), (int) (fullPanoHeight * scale),
                     Bitmap.Config.ARGB_8888);
+                } catch (java.lang.OutOfMemoryError e) {
+                    System.gc();
+                    scale /= 2;
+                    Log.v(TAG, "No memory to create Full Tiny Planet create half");
+                }
+            }
             Canvas paddedCanvas = new Canvas(paddedBitmap);
 
             int right = left + croppedAreaWidth;
