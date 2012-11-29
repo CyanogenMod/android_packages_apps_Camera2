@@ -186,7 +186,7 @@
                         android:background="@drawable/filtershow_button_background"
                         android:scaleType="centerInside"
                         android:visibility="gone"
-                        android:text="@string/aspectOriginal_effect" />
+                        android:text="@string/aspectNone_effect" />
 
                     <com.android.gallery3d.filtershow.ui.FramedTextButton
                         android:id="@+id/pickCurvesChannel"
