@@ -130,6 +130,9 @@ public class ImageFilter implements Cloneable {
     }
 
     public boolean same(ImageFilter filter) {
+        if (filter == null) {
+            return false;
+        }
         if (!filter.getName().equalsIgnoreCase(getName())) {
             return false;
         }

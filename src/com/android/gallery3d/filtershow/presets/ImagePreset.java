@@ -181,7 +181,7 @@ public class ImagePreset {
             return false;
         }
 
-        if (mImageBorder != preset.mImageBorder) {
+        if (mDoApplyGeometry && mImageBorder != preset.mImageBorder) {
             return false;
         }
 
@@ -292,7 +292,7 @@ public class ImagePreset {
             }
         }
 
-        if (mImageBorder != null) {
+        if (mImageBorder != null && mDoApplyGeometry) {
             bitmap = mImageBorder.apply(bitmap, mScaleFactor, mIsHighQuality);
         }
 
