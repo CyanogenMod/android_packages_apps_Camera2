@@ -157,38 +157,52 @@ public class PanelController implements OnClickListener {
             ImageCrop imageCrop = (ImageCrop) mCurrentImage;
             switch (itemId) {
                 case R.id.crop_menu_1to1: {
-                    button.setText(mContext.getString(R.string.aspect1to1_effect));
+                    String t = mContext.getString(R.string.aspect1to1_effect);
+                    button.setText(t);
                     imageCrop.apply(1, 1);
+                    imageCrop.setAspectString(t);
                     break;
                 }
                 case R.id.crop_menu_4to3: {
-                    button.setText(mContext.getString(R.string.aspect4to3_effect));
+                    String t = mContext.getString(R.string.aspect4to3_effect);
+                    button.setText(t);
                     imageCrop.apply(4, 3);
+                    imageCrop.setAspectString(t);
                     break;
                 }
                 case R.id.crop_menu_3to4: {
-                    button.setText(mContext.getString(R.string.aspect3to4_effect));
+                    String t = mContext.getString(R.string.aspect3to4_effect);
+                    button.setText(t);
                     imageCrop.apply(3, 4);
+                    imageCrop.setAspectString(t);
                     break;
                 }
                 case R.id.crop_menu_5to7: {
-                    button.setText(mContext.getString(R.string.aspect5to7_effect));
+                    String t = mContext.getString(R.string.aspect5to7_effect);
+                    button.setText(t);
                     imageCrop.apply(5, 7);
+                    imageCrop.setAspectString(t);
                     break;
                 }
                 case R.id.crop_menu_7to5: {
-                    button.setText(mContext.getString(R.string.aspect7to5_effect));
+                    String t = mContext.getString(R.string.aspect7to5_effect);
+                    button.setText(t);
                     imageCrop.apply(7, 5);
+                    imageCrop.setAspectString(t);
                     break;
                 }
                 case R.id.crop_menu_none: {
-                    button.setText(mContext.getString(R.string.aspectNone_effect));
+                    String t = mContext.getString(R.string.aspectNone_effect);
+                    button.setText(t);
                     imageCrop.applyClear();
+                    imageCrop.setAspectString(t);
                     break;
                 }
                 case R.id.crop_menu_original: {
-                    button.setText(mContext.getString(R.string.aspectOriginal_effect));
+                    String t = mContext.getString(R.string.aspectOriginal_effect);
+                    button.setText(t);
                     imageCrop.applyOriginal();
+                    imageCrop.setAspectString(t);
                     break;
                 }
             }
