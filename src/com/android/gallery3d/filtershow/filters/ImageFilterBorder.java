@@ -51,6 +51,9 @@ public class ImageFilterBorder extends ImageFilter {
         if (!isBorderFilter) {
             return false;
         }
+        if (!(filter instanceof ImageFilterBorder)) {
+            return false;
+        }
         ImageFilterBorder borderFilter = (ImageFilterBorder) filter;
         if (mNinePatch != borderFilter.mNinePatch) {
             return false;

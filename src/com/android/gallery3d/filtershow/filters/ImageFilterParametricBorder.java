@@ -56,6 +56,9 @@ public class ImageFilterParametricBorder extends ImageFilter {
         if (!isBorderFilter) {
             return false;
         }
+        if (!(filter instanceof ImageFilterParametricBorder)) {
+            return false;
+        }
         ImageFilterParametricBorder borderFilter = (ImageFilterParametricBorder) filter;
         if (borderFilter.mBorderColor != mBorderColor) {
             return false;
