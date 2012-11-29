@@ -221,7 +221,6 @@ public class ImageCurves extends ImageSlave {
         }
 
         if (spline.isPointContained(posX, pick)) {
-            spline.didMovePoint(mCurrentControlPoint);
             spline.movePoint(pick, posX, posY);
         } else if (pick != -1 && spline.getNbPoints() > 2) {
             spline.deletePoint(pick);
@@ -279,8 +278,9 @@ public class ImageCurves extends ImageSlave {
                 max = histogram[i];
             }
         }
-        float w = getWidth();
-        float h = getHeight();
+        float w = getWidth() - Spline.curveHandleSize();
+        float h = getHeight() - Spline.curveHandleSize() / 2.0f;
+        float dx = Spline.curveHandleSize() / 2.0f;
         float wl = w / histogram.length;
         float wh = (0.3f * h) / max;
         Paint paint = new Paint();
@@ -292,12 +292,12 @@ public class ImageCurves extends ImageSlave {
         paint2.setStrokeWidth(6);
         paint2.setXfermode(new PorterDuffXfermode(mode));
         gHistoPath.reset();
-        gHistoPath.moveTo(0, h);
+        gHistoPath.moveTo(dx, h);
         boolean firstPointEncountered = false;
         float prev = 0;
         float last = 0;
         for (int i = 0; i < histogram.length; i++) {
-            float x = i * wl;
+            float x = i * wl + dx;
             float l = histogram[i] * wh;
             if (l != 0) {
                 float v = h - (l + prev) / 2.0f;
