@@ -54,6 +54,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class ImageLoader {
 
@@ -87,6 +88,8 @@ public class ImageLoader {
     private Rect mOriginalBounds = null;
     private static int mZoomOrientation = ORI_NORMAL;
 
+    private ReentrantLock mLoadingLock = new ReentrantLock();
+
     public ImageLoader(FilterShowActivity activity, Context context) {
         mActivity = activity;
         mContext = context;
@@ -103,6 +106,7 @@ public class ImageLoader {
     }
 
     public void loadBitmap(Uri uri,int size) {
+        mLoadingLock.lock();
         mUri = uri;
         mOrientation = getOrientation(mContext, uri);
         mOriginalBitmapSmall = loadScaledBitmap(uri, 160);
@@ -112,6 +116,7 @@ public class ImageLoader {
         }
         mOriginalBitmapLarge = loadScaledBitmap(uri, size);
         updateBitmaps();
+        mLoadingLock.unlock();
     }
 
     public Uri getUri() {
@@ -327,10 +332,12 @@ public class ImageLoader {
     }
 
     public void addListener(ImageShow imageShow) {
+        mLoadingLock.lock();
         if (!mListeners.contains(imageShow)) {
             mListeners.add(imageShow);
         }
         mHiresCache.addObserver(imageShow);
+        mLoadingLock.unlock();
     }
 
     private void warnListeners() {
@@ -352,6 +359,7 @@ public class ImageLoader {
     // move this to a background thread.
     public Bitmap getScaleOneImageForPreset(ImageShow caller, ImagePreset imagePreset, Rect bounds,
             boolean force) {
+        mLoadingLock.lock();
         Bitmap bmp = mZoomCache.getImage(imagePreset, bounds);
         if (force || bmp == null) {
             bmp = loadRegionBitmap(mUri, bounds);
@@ -366,12 +374,14 @@ public class ImageLoader {
                 return bmp2;
             }
         }
+        mLoadingLock.unlock();
         return bmp;
     }
 
     // Caching method
     public Bitmap getImageForPreset(ImageShow caller, ImagePreset imagePreset,
             boolean hiRes) {
+        mLoadingLock.lock();
         if (mOriginalBitmapSmall == null) {
             return null;
         }
@@ -396,13 +406,16 @@ public class ImageLoader {
                 mCache.addObserver(caller);
             }
         }
+        mLoadingLock.unlock();
         return filteredImage;
     }
 
     public void resetImageForPreset(ImagePreset imagePreset, ImageShow caller) {
+        mLoadingLock.lock();
         mHiresCache.reset(imagePreset);
         mCache.reset(imagePreset);
         mZoomCache.reset(imagePreset);
+        mLoadingLock.unlock();
     }
 
     public void saveImage(ImagePreset preset, final FilterShowActivity filterShowActivity,
