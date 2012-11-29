@@ -148,7 +148,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:indeterminate="true"
-                android:indeterminateOnly="true" />
+                android:indeterminateOnly="true"
+                android:background="@color/background_screen" />
 
         </FrameLayout>
 
