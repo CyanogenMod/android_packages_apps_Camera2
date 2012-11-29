@@ -205,6 +205,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageFlip = (ImageFlip) findViewById(R.id.imageFlip);
         mImageTinyPlanet = (ImageTinyPlanet) findViewById(R.id.imageTinyPlanet);
 
+        mImageCrop.setAspectTextSize((int) getPixelsFromDip(18));
         ImageCrop.setTouchTolerance((int) getPixelsFromDip(25));
         mImageViews.add(mImageShow);
         mImageViews.add(mImageCurves);
