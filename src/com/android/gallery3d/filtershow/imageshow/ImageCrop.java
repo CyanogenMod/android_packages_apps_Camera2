@@ -581,7 +581,7 @@ public class ImageCrop extends ImageGeometry {
     public void imageLoaded() {
         super.imageLoaded();
         syncLocalToMasterGeometry();
-        applyOriginal();
+        applyClear();
         invalidate();
     }
 
