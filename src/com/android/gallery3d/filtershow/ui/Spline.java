@@ -121,13 +121,20 @@ public class Spline {
         }
         double[] derivatives = solveSystem(points);
         int start = 0;
+        int end = 256;
         if (points[0].x != 0) {
             start = (int) (points[0].x * 256);
+        }
+        if (points[points.length - 1].x != 1) {
+            end = (int) (points[points.length - 1].x * 256);
         }
         for (int i = 0; i < start; i++) {
             curve[i] = 1.0f - points[0].y;
         }
-        for (int i = start; i < 256; i++) {
+        for (int i = end; i < 256; i++) {
+            curve[i] = 1.0f - points[points.length - 1].y;
+        }
+        for (int i = start; i < end; i++) {
             ControlPoint cur = null;
             ControlPoint next = null;
             double x = i / 256.0;
