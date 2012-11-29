@@ -43,6 +43,7 @@ public class ImageCurves extends ImageSlave {
     private boolean mDidAddPoint = false;
     private boolean mDidDelete = false;
     private ControlPoint mCurrentControlPoint = null;
+    private int mCurrentPick = -1;
     private ImagePreset mLastPreset = null;
     int[] redHistogram = new int[256];
     int[] greenHistogram = new int[256];
@@ -186,6 +187,7 @@ public class ImageCurves extends ImageSlave {
 
         if (e.getActionMasked() == MotionEvent.ACTION_UP) {
             mCurrentControlPoint = null;
+            mCurrentPick = -1;
             updateCachedImage();
             mDidAddPoint = false;
             if (mDidDelete) {
@@ -205,8 +207,9 @@ public class ImageCurves extends ImageSlave {
         }
 
         Spline spline = getSpline(mCurrentCurveIndex);
-        int pick = pickControlPoint(posX, posY);
+        int pick = mCurrentPick;
         if (mCurrentControlPoint == null) {
+            pick = pickControlPoint(posX, posY);
             if (pick == -1) {
                 mCurrentControlPoint = new ControlPoint(posX, posY);
                 pick = spline.addPoint(mCurrentControlPoint);
@@ -214,6 +217,7 @@ public class ImageCurves extends ImageSlave {
             } else {
                 mCurrentControlPoint = spline.getPoint(pick);
             }
+            mCurrentPick = pick;
         }
 
         if (spline.isPointContained(posX, pick)) {
