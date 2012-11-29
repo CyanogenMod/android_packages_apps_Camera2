@@ -94,7 +94,7 @@
     <string name="trim_action" msgid="703098114452883524">"Скрати"</string>
     <string name="mute_action" msgid="5296241754753306251">"Искључи звук"</string>
     <string name="set_as" msgid="3636764710790507868">"Постави као"</string>
-    <string name="video_mute_err" msgid="6392457611270600908">"Звук за видео не може да се искључи."</string>
+    <string name="video_mute_err" msgid="6392457611270600908">"Звук не може да се искључи."</string>
     <string name="video_err" msgid="7003051631792271009">"Није могуће пустити видео."</string>
     <string name="group_by_location" msgid="316641628989023253">"Према локацији"</string>
     <string name="group_by_time" msgid="9046168567717963573">"Према времену"</string>
