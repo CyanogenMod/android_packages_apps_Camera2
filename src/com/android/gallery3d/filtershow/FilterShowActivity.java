@@ -706,18 +706,28 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         // TODO: use listview
         // TODO: load the borders straight from the filesystem
         int p = 0;
-        ImageFilter[] borders = new ImageFilter[7];
+        ImageFilter[] borders = new ImageFilter[12];
         borders[p++] = new ImageFilterBorder(null);
 
         Drawable npd1 = getResources().getDrawable(R.drawable.filtershow_border_4x5);
         borders[p++] = new ImageFilterBorder(npd1);
         Drawable npd2 = getResources().getDrawable(R.drawable.filtershow_border_brush);
         borders[p++] = new ImageFilterBorder(npd2);
+        Drawable npd3 = getResources().getDrawable(R.drawable.filtershow_border_grunge);
+        borders[p++] = new ImageFilterBorder(npd3);
+        Drawable npd4 = getResources().getDrawable(R.drawable.filtershow_border_sumi_e);
+        borders[p++] = new ImageFilterBorder(npd4);
+        Drawable npd5 = getResources().getDrawable(R.drawable.filtershow_border_tape);
+        borders[p++] = new ImageFilterBorder(npd5);
         borders[p++] = new ImageFilterParametricBorder(Color.BLACK, mImageBorderSize, 0);
         borders[p++] = new ImageFilterParametricBorder(Color.BLACK, mImageBorderSize,
                 mImageBorderSize);
         borders[p++] = new ImageFilterParametricBorder(Color.WHITE, mImageBorderSize, 0);
         borders[p++] = new ImageFilterParametricBorder(Color.WHITE, mImageBorderSize,
+                mImageBorderSize);
+        int creamColor = Color.argb(255, 237, 237, 227);
+        borders[p++] = new ImageFilterParametricBorder(creamColor, mImageBorderSize, 0);
+        borders[p++] = new ImageFilterParametricBorder(creamColor, mImageBorderSize,
                 mImageBorderSize);
 
         ImageSmallFilter previousFilter = null;
