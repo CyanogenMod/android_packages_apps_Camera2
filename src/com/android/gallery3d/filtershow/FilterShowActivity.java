@@ -467,6 +467,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         if (mainPanelWidth == 0) {
             mainPanelWidth = mainViewWidth;
         }
+        int filtersPanelWidth = findViewById(R.id.filtersPanel).getWidth();
+        if (mainPanelWidth < filtersPanelWidth) {
+            mainPanelWidth = filtersPanelWidth;
+        }
         int leftOver = mainViewWidth - mainPanelWidth - accessoryPanelWidth;
         if (leftOver < 0) {
             return -accessoryPanelWidth;
