@@ -62,6 +62,17 @@ public class ImageCrop extends ImageGeometry {
 
     private static final String LOGTAG = "ImageCrop";
 
+    private String mAspect = "";
+    private int mAspectTextSize = 24;
+
+    public void setAspectTextSize(int textSize){
+        mAspectTextSize = textSize;
+    }
+
+    public void setAspectString(String a){
+        mAspect = a;
+    }
+
     private static final Paint gPaint = new Paint();
 
     public ImageCrop(Context context) {
@@ -641,6 +652,35 @@ public class ImageCrop extends ImageGeometry {
         gPaint.setStrokeWidth(3);
         gPaint.setStyle(Paint.Style.STROKE);
         drawRuleOfThird(canvas, crop, gPaint);
+
+        if (mFixAspectRatio){
+            float w = crop.width();
+            float h = crop.height();
+            float diag = (float) Math.sqrt(w*w + h*h);
+
+            float dash_len = 20;
+            int num_intervals = (int) (diag / dash_len);
+            float [] tl = { crop.left, crop.top };
+            float centX = tl[0] + w/2;
+            float centY = tl[1] + h/2 + 5;
+            float [] br = { crop.right, crop.bottom };
+            float [] vec = GeometryMath.getUnitVectorFromPoints(tl, br);
+
+            float [] counter = tl;
+            for (int x = 0; x < num_intervals; x++ ){
+                float tempX = counter[0] + vec[0] * dash_len;
+                float tempY = counter[1] + vec[1] * dash_len;
+                if ((x % 2) == 0 && Math.abs(x - num_intervals / 2) > 2){
+                    canvas.drawLine(counter[0], counter[1], tempX, tempY, gPaint);
+                }
+                counter[0] = tempX;
+                counter[1] = tempY;
+            }
+
+            gPaint.setTextAlign(Paint.Align.CENTER);
+            gPaint.setTextSize(mAspectTextSize);
+            canvas.drawText(mAspect, centX, centY, gPaint);
+        }
 
         gPaint.setColor(mBorderColor);
         gPaint.setStrokeWidth(3);
