@@ -174,8 +174,9 @@ public class PhotoView extends GLView {
     public static final int SCREEN_NAIL_MAX = 3;
 
     // These are constants for the delete gesture.
-    private static final int SWIPE_ESCAPE_VELOCITY = 2500; // dp/sec
-    private static final int MAX_DISMISS_VELOCITY = 4000; // dp/sec
+    private static final int SWIPE_ESCAPE_VELOCITY = 500; // dp/sec
+    private static final int MAX_DISMISS_VELOCITY = 2500; // dp/sec
+    private static final int SWIPE_ESCAPE_DISTANCE = 150; // dp
 
     // The picture entries, the valid index is from -SCREEN_NAIL_MAX to
     // SCREEN_NAIL_MAX.
@@ -1069,19 +1070,19 @@ public class PhotoView extends GLView {
         }
 
         @Override
-        public boolean onFling(float velocityX, float velocityY) {
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             if (mIgnoreSwipingGesture) return true;
             if (mModeChanged) return true;
             if (swipeImages(velocityX, velocityY)) {
                 mIgnoreUpEvent = true;
             } else {
-                flingImages(velocityX, velocityY);
+                flingImages(velocityX, velocityY, Math.abs(e2.getY() - e1.getY()));
             }
             mHadFling = true;
             return true;
         }
 
-        private boolean flingImages(float velocityX, float velocityY) {
+        private boolean flingImages(float velocityX, float velocityY, float dY) {
             int vx = (int) (velocityX + 0.5f);
             int vy = (int) (velocityY + 0.5f);
             if (!mFilmMode) {
@@ -1098,11 +1099,13 @@ public class PhotoView extends GLView {
             }
             int maxVelocity = GalleryUtils.dpToPixel(MAX_DISMISS_VELOCITY);
             int escapeVelocity = GalleryUtils.dpToPixel(SWIPE_ESCAPE_VELOCITY);
+            int escapeDistance = GalleryUtils.dpToPixel(SWIPE_ESCAPE_DISTANCE);
             int centerY = mPositionController.getPosition(mTouchBoxIndex)
                     .centerY();
             boolean fastEnough = (Math.abs(vy) > escapeVelocity)
                     && (Math.abs(vy) > Math.abs(vx))
-                    && ((vy > 0) == (centerY > getHeight() / 2));
+                    && ((vy > 0) == (centerY > getHeight() / 2))
+                    && dY >= escapeDistance;
             if (fastEnough) {
                 vy = Math.min(vy, maxVelocity);
                 int duration = mPositionController.flingFilmY(mTouchBoxIndex, vy);
@@ -1236,7 +1239,10 @@ public class PhotoView extends GLView {
             if (mFilmMode) {
                 int xi = (int) (x + 0.5f);
                 int yi = (int) (y + 0.5f);
-                mTouchBoxIndex = mPositionController.hitTest(xi, yi);
+                // We only care about being within the x bounds, necessary for
+                // handling very wide images which are otherwise very hard to fling
+                mTouchBoxIndex = mPositionController.hitTest(xi, getHeight() / 2);
+
                 if (mTouchBoxIndex < mPrevBound || mTouchBoxIndex > mNextBound) {
                     mTouchBoxIndex = Integer.MAX_VALUE;
                 } else {
