@@ -207,6 +207,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         mImageCrop.setAspectTextSize((int) getPixelsFromDip(18));
         ImageCrop.setTouchTolerance((int) getPixelsFromDip(25));
+        ImageCrop.setMinCropSize((int) getPixelsFromDip(55));
         mImageViews.add(mImageShow);
         mImageViews.add(mImageCurves);
         mImageViews.add(mImageBorders);

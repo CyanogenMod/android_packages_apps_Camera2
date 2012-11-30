@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
@@ -105,10 +106,10 @@ public class ImageStraighten extends ImageGeometry {
 
     @Override
     protected void drawShape(Canvas canvas, Bitmap image) {
-        drawTransformed(canvas, image, gPaint);
+        float [] o = {0, 0};
+        RectF bounds = drawTransformed(canvas, image, gPaint, o);
 
         // Draw the grid
-        RectF bounds = straightenBounds();
         Path path = new Path();
         path.addRect(bounds, Path.Direction.CCW);
         gPaint.setARGB(255, 255, 255, 255);
