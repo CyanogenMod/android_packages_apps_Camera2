@@ -25,7 +25,6 @@ import com.android.gallery3d.common.Utils;
 import java.util.HashMap;
 
 import javax.microedition.khronos.opengles.GL11;
-import javax.microedition.khronos.opengles.GL11Ext;
 
 // UploadedTextures use a Bitmap for the content of the texture.
 //
@@ -194,9 +193,7 @@ abstract class UploadedTexture extends BasicTexture {
             Bitmap bitmap = getBitmap();
             int format = GLUtils.getInternalFormat(bitmap);
             int type = GLUtils.getType(bitmap);
-            canvas.getGLInstance().glBindTexture(GL11.GL_TEXTURE_2D, mId);
-            GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0, mBorder, mBorder,
-                    bitmap, format, type);
+            canvas.texSubImage2D(this, mBorder, mBorder, bitmap, format, type);
             freeBitmap();
             mContentValid = true;
         }
@@ -210,11 +207,7 @@ abstract class UploadedTexture extends BasicTexture {
         return sUploadedCount > UPLOAD_LIMIT;
     }
 
-    static int[] sTextureId = new int[1];
-    static float[] sCropRect = new float[4];
-
     private void uploadToCanvas(GLCanvas canvas) {
-        GL11 gl = canvas.getGLInstance();
 
         Bitmap bitmap = getBitmap();
         if (bitmap != null) {
@@ -228,65 +221,40 @@ abstract class UploadedTexture extends BasicTexture {
 
                 Utils.assertTrue(bWidth <= texWidth && bHeight <= texHeight);
 
-                // Define a vertically flipped crop rectangle for
-                // OES_draw_texture.
-                // The four values in sCropRect are: left, bottom, width, and
-                // height. Negative value of width or height means flip.
-                sCropRect[0] = mBorder;
-                sCropRect[1] = mBorder + bHeight;
-                sCropRect[2] = bWidth;
-                sCropRect[3] = -bHeight;
-
                 // Upload the bitmap to a new texture.
-                GLId.glGenTextures(1, sTextureId, 0);
-                gl.glBindTexture(GL11.GL_TEXTURE_2D, sTextureId[0]);
-                gl.glTexParameterfv(GL11.GL_TEXTURE_2D,
-                        GL11Ext.GL_TEXTURE_CROP_RECT_OES, sCropRect, 0);
-                gl.glTexParameteri(GL11.GL_TEXTURE_2D,
-                        GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP_TO_EDGE);
-                gl.glTexParameteri(GL11.GL_TEXTURE_2D,
-                        GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP_TO_EDGE);
-                gl.glTexParameterf(GL11.GL_TEXTURE_2D,
-                        GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-                gl.glTexParameterf(GL11.GL_TEXTURE_2D,
-                        GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+                mId = GLCanvas.getGLId().generateTexture();
+                canvas.setTextureParameters(this);
 
                 if (bWidth == texWidth && bHeight == texHeight) {
-                    GLUtils.texImage2D(GL11.GL_TEXTURE_2D, 0, bitmap, 0);
+                    canvas.initializeTexture(this, bitmap);
                 } else {
                     int format = GLUtils.getInternalFormat(bitmap);
                     int type = GLUtils.getType(bitmap);
                     Config config = bitmap.getConfig();
 
-                    gl.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format,
-                            texWidth, texHeight, 0, format, type, null);
-                    GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0,
-                            mBorder, mBorder, bitmap, format, type);
+                    canvas.initializeTextureSize(this, format, type);
+                    canvas.texSubImage2D(this, mBorder, mBorder, bitmap, format, type);
 
                     if (mBorder > 0) {
                         // Left border
                         Bitmap line = getBorderLine(true, config, texHeight);
-                        GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0,
-                                0, 0, line, format, type);
+                        canvas.texSubImage2D(this, 0, 0, line, format, type);
 
                         // Top border
                         line = getBorderLine(false, config, texWidth);
-                        GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0,
-                                0, 0, line, format, type);
+                        canvas.texSubImage2D(this, 0, 0, line, format, type);
                     }
 
                     // Right border
                     if (mBorder + bWidth < texWidth) {
                         Bitmap line = getBorderLine(true, config, texHeight);
-                        GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0,
-                                mBorder + bWidth, 0, line, format, type);
+                        canvas.texSubImage2D(this, mBorder + bWidth, 0, line, format, type);
                     }
 
                     // Bottom border
                     if (mBorder + bHeight < texHeight) {
                         Bitmap line = getBorderLine(false, config, texWidth);
-                        GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0,
-                                0, mBorder + bHeight, line, format, type);
+                        canvas.texSubImage2D(this, 0, mBorder + bHeight, line, format, type);
                     }
                 }
             } finally {
@@ -294,7 +262,6 @@ abstract class UploadedTexture extends BasicTexture {
             }
             // Update texture state.
             setAssociatedCanvas(canvas);
-            mId = sTextureId[0];
             mState = STATE_LOADED;
             mContentValid = true;
         } else {

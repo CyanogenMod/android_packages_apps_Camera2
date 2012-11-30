@@ -23,11 +23,10 @@ import android.graphics.Rect;
 
 import com.android.gallery3d.common.Utils;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-
-import javax.microedition.khronos.opengles.GL11;
 
 // NinePatchTexture is a texture backed by a NinePatch resource.
 //
@@ -396,24 +395,10 @@ class NinePatchInstance {
     }
 
     private void prepareBuffers(GLCanvas canvas) {
-        mBufferNames = new int[3];
-        GL11 gl = canvas.getGLInstance();
-        GLId.glGenBuffers(3, mBufferNames, 0);
-
-        gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, mBufferNames[0]);
-        gl.glBufferData(GL11.GL_ARRAY_BUFFER,
-                mXyBuffer.capacity() * (Float.SIZE / Byte.SIZE),
-                mXyBuffer, GL11.GL_STATIC_DRAW);
-
-        gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, mBufferNames[1]);
-        gl.glBufferData(GL11.GL_ARRAY_BUFFER,
-                mUvBuffer.capacity() * (Float.SIZE / Byte.SIZE),
-                mUvBuffer, GL11.GL_STATIC_DRAW);
-
-        gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, mBufferNames[2]);
-        gl.glBufferData(GL11.GL_ELEMENT_ARRAY_BUFFER,
-                mIndexBuffer.capacity(),
-                mIndexBuffer, GL11.GL_STATIC_DRAW);
+        Buffer[] buffers = {
+                mXyBuffer, mUvBuffer, mIndexBuffer
+        };
+        mBufferNames = canvas.uploadBuffers(buffers);
 
         // These buffers are never used again.
         mXyBuffer = null;
