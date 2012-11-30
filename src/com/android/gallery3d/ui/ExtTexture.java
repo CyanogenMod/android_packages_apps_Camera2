@@ -16,49 +16,21 @@
 
 package com.android.gallery3d.ui;
 
-import javax.microedition.khronos.opengles.GL11;
-import javax.microedition.khronos.opengles.GL11Ext;
 
 // ExtTexture is a texture whose content comes from a external texture.
 // Before drawing, setSize() should be called.
 public class ExtTexture extends BasicTexture {
 
-    private static int[] sTextureId = new int[1];
-    private static float[] sCropRect = new float[4];
     private int mTarget;
 
     public ExtTexture(int target) {
-        GLId.glGenTextures(1, sTextureId, 0);
-        mId = sTextureId[0];
+        GLId glId = GLCanvas.getGLId();
+        mId = glId.generateTexture();
         mTarget = target;
     }
 
     private void uploadToCanvas(GLCanvas canvas) {
-        GL11 gl = canvas.getGLInstance();
-
-        int width = getWidth();
-        int height = getHeight();
-        // Define a vertically flipped crop rectangle for OES_draw_texture.
-        // The four values in sCropRect are: left, bottom, width, and
-        // height. Negative value of width or height means flip.
-        sCropRect[0] = 0;
-        sCropRect[1] = height;
-        sCropRect[2] = width;
-        sCropRect[3] = -height;
-
-        // Set texture parameters.
-        gl.glBindTexture(mTarget, mId);
-        gl.glTexParameterfv(mTarget,
-                GL11Ext.GL_TEXTURE_CROP_RECT_OES, sCropRect, 0);
-        gl.glTexParameteri(mTarget,
-                GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP_TO_EDGE);
-        gl.glTexParameteri(mTarget,
-                GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP_TO_EDGE);
-        gl.glTexParameterf(mTarget,
-                GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-        gl.glTexParameterf(mTarget,
-                GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-
+        canvas.setTextureParameters(this);
         setAssociatedCanvas(canvas);
         mState = STATE_LOADED;
     }

@@ -16,13 +16,16 @@
 
 package com.android.gallery3d.ui;
 
+import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.opengl.GLU;
+import android.opengl.GLUtils;
 import android.opengl.Matrix;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.IntArray;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -33,7 +36,7 @@ import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 import javax.microedition.khronos.opengles.GL11ExtensionPack;
 
-public class GLCanvasImpl implements GLCanvas {
+public class GLCanvasImpl extends GLCanvas {
     @SuppressWarnings("unused")
     private static final String TAG = "GLCanvasImp";
 
@@ -76,8 +79,10 @@ public class GLCanvasImpl implements GLCanvas {
     private int mScreenHeight;
     private boolean mBlendEnabled = true;
     private int mFrameBuffer[] = new int[1];
+    private static float[] sCropRect = new float[4];
 
     private RawTexture mTargetTexture;
+    private Blending mBlending = Blending.Mix;
 
     // Drawing statistics
     int mCountDrawLine;
@@ -150,7 +155,8 @@ public class GLCanvasImpl implements GLCanvas {
         xyBuffer.put(BOX_COORDINATES, 0, BOX_COORDINATES.length).position(0);
 
         int[] name = new int[1];
-        GLId.glGenBuffers(1, name, 0);
+        GLId glId = getGLId();
+        glId.glGenBuffers(1, name, 0);
         mBoxCoords = name[0];
 
         gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, mBoxCoords);
@@ -684,11 +690,6 @@ public class GLCanvasImpl implements GLCanvas {
     }
 
     @Override
-    public GL11 getGLInstance() {
-        return mGL;
-    }
-
-    @Override
     public void clearBuffer(float[] argb) {
         if(argb != null && argb.length == 4) {
             mGL.glClearColor(argb[1], argb[2], argb[3], argb[0]);
@@ -748,14 +749,15 @@ public class GLCanvasImpl implements GLCanvas {
     public void deleteRecycledResources() {
         synchronized (mUnboundTextures) {
             IntArray ids = mUnboundTextures;
+            GLId glId = getGLId();
             if (ids.size() > 0) {
-                GLId.glDeleteTextures(mGL, ids.size(), ids.getInternalArray(), 0);
+                glId.glDeleteTextures(mGL, ids.size(), ids.getInternalArray(), 0);
                 ids.clear();
             }
 
             ids = mDeleteBuffers;
             if (ids.size() > 0) {
-                GLId.glDeleteBuffers(mGL, ids.size(), ids.getInternalArray(), 0);
+                glId.glDeleteBuffers(mGL, ids.size(), ids.getInternalArray(), 0);
                 ids.clear();
             }
         }
@@ -776,6 +778,11 @@ public class GLCanvasImpl implements GLCanvas {
             config.mAlpha = -1;
         }
 
+        if ((saveFlags & SAVE_FLAG_BLEND) != 0) {
+            config.mBlending = mBlending;
+        } else {
+            config.mBlending = null;
+        }
 
         if ((saveFlags & SAVE_FLAG_MATRIX) != 0) {
             System.arraycopy(mMatrixValues, 0, config.mMatrix, 0, 16);
@@ -811,12 +818,16 @@ public class GLCanvasImpl implements GLCanvas {
     private static class ConfigState {
         float mAlpha;
         float mMatrix[] = new float[16];
+        Blending mBlending;
         ConfigState mNextFree;
 
         public void restore(GLCanvasImpl canvas) {
             if (mAlpha >= 0) canvas.setAlpha(mAlpha);
             if (mMatrix[0] != Float.NEGATIVE_INFINITY) {
                 System.arraycopy(mMatrix, 0, canvas.mMatrixValues, 0, 16);
+            }
+            if (mBlending != null) {
+                canvas.setBlending(mBlending);
             }
         }
     }
@@ -847,7 +858,8 @@ public class GLCanvasImpl implements GLCanvas {
         GL11ExtensionPack gl11ep = (GL11ExtensionPack) mGL;
 
         if (mTargetTexture == null && texture != null) {
-            GLId.glGenBuffers(1, mFrameBuffer, 0);
+            GLId glId = getGLId();
+            glId.glGenBuffers(1, mFrameBuffer, 0);
             gl11ep.glBindFramebufferOES(
                     GL11ExtensionPack.GL_FRAMEBUFFER_OES, mFrameBuffer[0]);
         }
@@ -916,5 +928,114 @@ public class GLCanvasImpl implements GLCanvas {
             }
             throw new RuntimeException(msg + ":" + Integer.toHexString(status));
         }
+    }
+
+    @Override
+    public void setTextureParameters(BasicTexture texture) {
+        int width = texture.getWidth();
+        int height = texture.getHeight();
+        // Define a vertically flipped crop rectangle for OES_draw_texture.
+        // The four values in sCropRect are: left, bottom, width, and
+        // height. Negative value of width or height means flip.
+        sCropRect[0] = 0;
+        sCropRect[1] = height;
+        sCropRect[2] = width;
+        sCropRect[3] = -height;
+
+        // Set texture parameters.
+        int target = texture.getTarget();
+        mGL.glBindTexture(target, texture.getId());
+        mGL.glTexParameterfv(target, GL11Ext.GL_TEXTURE_CROP_RECT_OES, sCropRect, 0);
+        mGL.glTexParameteri(target, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP_TO_EDGE);
+        mGL.glTexParameteri(target, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP_TO_EDGE);
+        mGL.glTexParameterf(target, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        mGL.glTexParameterf(target, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+    }
+
+    @Override
+    public void initializeTextureSize(BasicTexture texture, int format, int type) {
+        int target = texture.getTarget();
+        mGL.glBindTexture(target, texture.getId());
+        int width = texture.getTextureWidth();
+        int height = texture.getTextureHeight();
+        mGL.glTexImage2D(target, 0, format, width, height, 0, format, type, null);
+    }
+
+    @Override
+    public void initializeTexture(BasicTexture texture, Bitmap bitmap) {
+        int target = texture.getTarget();
+        mGL.glBindTexture(target, texture.getId());
+        GLUtils.texImage2D(target, 0, bitmap, 0);
+    }
+
+    @Override
+    public void texSubImage2D(BasicTexture texture, int xOffset, int yOffset, Bitmap bitmap,
+            int format, int type) {
+        int target = texture.getTarget();
+        mGL.glBindTexture(target, texture.getId());
+        GLUtils.texSubImage2D(target, 0, xOffset, yOffset, bitmap, format, type);
+    }
+
+    @Override
+    public int[] uploadBuffers(Buffer[] buffers) {
+        int[] bufferIds = new int[buffers.length];
+        GLId glId = getGLId();
+        glId.glGenBuffers(bufferIds.length, bufferIds, 0);
+
+        for (int i = 0; i < bufferIds.length; i++) {
+            Buffer buf = buffers[i];
+            int elementSize = 0;
+            if (buf instanceof FloatBuffer) {
+                elementSize = Float.SIZE / Byte.SIZE;
+            } else if (buf instanceof ByteBuffer) {
+                elementSize = 1;
+            } else {
+                Utils.fail("Unknown element size for %s", buf.getClass().getSimpleName());
+            }
+            mGL.glBindBuffer(GL11.GL_ARRAY_BUFFER, bufferIds[i]);
+            mGL.glBufferData(GL11.GL_ARRAY_BUFFER, buf.capacity() * elementSize, buf,
+                    GL11.GL_STATIC_DRAW);
+        }
+
+        return bufferIds;
+    }
+
+    @Override
+    public void setBlending(Blending blending) {
+        if (mBlending == blending) {
+            return;
+        }
+        Utils.assertTrue(blending == Blending.Additive || blending == Blending.Mix);
+        mBlending = blending;
+        int srcFunc = GL11.GL_ONE;
+        int dstFunc = (blending == Blending.Additive) ? GL11.GL_ONE : GL11.GL_ONE_MINUS_SRC_ALPHA;
+        mGL.glBlendFunc(srcFunc, dstFunc);
+    }
+
+    @Override
+    public void enableStencil() {
+        mGL.glEnable(GL11.GL_STENCIL_TEST);
+    }
+
+    @Override
+    public void disableStencil() {
+        mGL.glDisable(GL11.GL_STENCIL_TEST);
+    }
+
+    @Override
+    public void clearStencilBuffer() {
+        mGL.glClear(GL11.GL_STENCIL_BUFFER_BIT);
+    }
+
+    @Override
+    public void updateStencil(boolean update) {
+        int passOp = update ? GL11.GL_REPLACE : GL11.GL_KEEP;
+        mGL.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, passOp);
+    }
+
+    @Override
+    public void drawOnlyOutsideStencil(boolean onlyOutside) {
+        int func = onlyOutside ? GL11.GL_NOTEQUAL : GL11.GL_ALWAYS;
+        mGL.glStencilFunc(func, 1, 1);
     }
 }

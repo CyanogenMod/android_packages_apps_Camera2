@@ -38,8 +38,6 @@ import com.android.gallery3d.common.Utils;
 
 import java.util.ArrayList;
 
-import javax.microedition.khronos.opengles.GL11;
-
 /**
  * The activity can crop specific region of interest from an image.
  */
@@ -207,12 +205,11 @@ public class CropView extends GLView {
         }
 
         private void renderFace(GLCanvas canvas, RectF face, boolean pressed) {
-            GL11 gl = canvas.getGLInstance();
             if (pressed) {
-                gl.glEnable(GL11.GL_STENCIL_TEST);
-                gl.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-                gl.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
-                gl.glStencilFunc(GL11.GL_ALWAYS, 1, 1);
+                canvas.enableStencil();
+                canvas.clearStencilBuffer();
+                canvas.updateStencil(true);
+                canvas.drawOnlyOutsideStencil(false);
             }
 
             RectF r = mAnimation.mapRect(face, mRect);
@@ -220,7 +217,8 @@ public class CropView extends GLView {
             canvas.drawRect(r.left, r.top, r.width(), r.height(), mFacePaint);
 
             if (pressed) {
-                gl.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+                canvas.updateStencil(false);
+                canvas.disableStencil();
             }
         }
 
@@ -231,11 +229,11 @@ public class CropView extends GLView {
                 renderFace(canvas, faces.get(i), i == mPressedFaceIndex);
             }
 
-            GL11 gl = canvas.getGLInstance();
             if (mPressedFaceIndex != INDEX_NONE) {
-                gl.glStencilFunc(GL11.GL_NOTEQUAL, 1, 1);
+                canvas.enableStencil();
+                canvas.drawOnlyOutsideStencil(true);
                 canvas.fillRect(0, 0, getWidth(), getHeight(), 0x66000000);
-                gl.glDisable(GL11.GL_STENCIL_TEST);
+                canvas.disableStencil();
             }
         }
 
@@ -622,18 +620,16 @@ public class CropView extends GLView {
         }
 
         private void drawHighlightRectangle(GLCanvas canvas, RectF r) {
-            GL11 gl = canvas.getGLInstance();
-            gl.glLineWidth(3.0f);
-            gl.glEnable(GL11.GL_LINE_SMOOTH);
 
-            gl.glEnable(GL11.GL_STENCIL_TEST);
-            gl.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-            gl.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
-            gl.glStencilFunc(GL11.GL_ALWAYS, 1, 1);
+            canvas.enableStencil();
+            canvas.clearStencilBuffer();
+            canvas.updateStencil(true);
+            canvas.drawOnlyOutsideStencil(false);
 
             if (mSpotlightRatioX == 0 || mSpotlightRatioY == 0) {
                 canvas.fillRect(r.left, r.top, r.width(), r.height(), Color.TRANSPARENT);
                 canvas.drawRect(r.left, r.top, r.width(), r.height(), mPaint);
+                canvas.drawOnlyOutsideStencil(true);
             } else {
                 float sx = r.width() * mSpotlightRatioX;
                 float sy = r.height() * mSpotlightRatioY;
@@ -644,20 +640,17 @@ public class CropView extends GLView {
                 canvas.drawRect(cx - sx / 2, cy - sy / 2, sx, sy, mPaint);
                 canvas.drawRect(r.left, r.top, r.width(), r.height(), mPaint);
 
-                gl.glStencilFunc(GL11.GL_NOTEQUAL, 1, 1);
-                gl.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
+                canvas.drawOnlyOutsideStencil(true);
 
                 canvas.drawRect(cx - sy / 2, cy - sx / 2, sy, sx, mPaint);
                 canvas.fillRect(cx - sy / 2, cy - sx / 2, sy, sx, Color.TRANSPARENT);
                 canvas.fillRect(r.left, r.top, r.width(), r.height(), 0x80000000);
             }
 
-            gl.glStencilFunc(GL11.GL_NOTEQUAL, 1, 1);
-            gl.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-
+            canvas.updateStencil(false);
             canvas.fillRect(0, 0, getWidth(), getHeight(), 0xA0000000);
 
-            gl.glDisable(GL11.GL_STENCIL_TEST);
+            canvas.disableStencil();
         }
     }
 
