@@ -441,7 +441,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             mSelectionManager.leaveSelectionMode();
         }
         mAlbumView.setSlotFilter(null);
-
+        mActionModeHandler.pause();
         mAlbumDataAdapter.pause();
         mAlbumView.pause();
         DetailsHelper.pause();
@@ -454,7 +454,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             mSyncTask = null;
             clearLoadingBit(BIT_LOADING_SYNC);
         }
-        mActionModeHandler.pause();
     }
 
     @Override
@@ -463,6 +462,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         if (mAlbumDataAdapter != null) {
             mAlbumDataAdapter.setLoadingListener(null);
         }
+        mActionModeHandler.destroy();
     }
 
     private void initializeViews() {
