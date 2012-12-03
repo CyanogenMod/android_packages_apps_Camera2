@@ -63,6 +63,7 @@ public class MenuExecutor {
     private Future<?> mTask;
     // wait the operation to finish when we want to stop it.
     private boolean mWaitOnStop;
+    private boolean mPaused;
 
     private final AbstractGalleryActivity mActivity;
     private final SelectionManager mSelectionManager;
@@ -114,7 +115,7 @@ public class MenuExecutor {
                         break;
                     }
                     case MSG_TASK_UPDATE: {
-                        if (mDialog != null) mDialog.setProgress(message.arg1);
+                        if (mDialog != null && !mPaused) mDialog.setProgress(message.arg1);
                         if (message.obj != null) {
                             ProgressListener listener = (ProgressListener) message.obj;
                             listener.onProgressUpdate(message.arg1);
@@ -134,13 +135,23 @@ public class MenuExecutor {
         if (mTask != null) {
             if (!mWaitOnStop) mTask.cancel();
             mTask.waitDone();
-            mDialog.dismiss();
+            if (mDialog != null && mDialog.isShowing()) mDialog.dismiss();
             mDialog = null;
             mTask = null;
         }
     }
 
+    public void resume() {
+        mPaused = false;
+        if (mDialog != null) mDialog.show();
+    }
+
     public void pause() {
+        mPaused = true;
+        if (mDialog != null && mDialog.isShowing()) mDialog.hide();
+    }
+
+    public void destroy() {
         stopTaskAndDismissDialog();
     }
 
@@ -335,7 +346,7 @@ public class MenuExecutor {
             mDialog.show();
         }
         MediaOperation operation = new MediaOperation(action, ids, listener);
-        mTask = mActivity.getThreadPool().submit(operation, null);
+        mTask = mActivity.getBatchServiceThreadPoolIfAvailable().submit(operation, null);
         mWaitOnStop = waitOnStop;
     }
 
