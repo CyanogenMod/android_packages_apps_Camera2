@@ -73,13 +73,13 @@ public class ImageLoader {
 
     private FilterShowActivity mActivity = null;
 
-    public static final int ORI_NORMAL     = ExifInterface.ORIENTATION_NORMAL;
-    public static final int ORI_ROTATE_90  = ExifInterface.ORIENTATION_ROTATE_90;
+    public static final int ORI_NORMAL = ExifInterface.ORIENTATION_NORMAL;
+    public static final int ORI_ROTATE_90 = ExifInterface.ORIENTATION_ROTATE_90;
     public static final int ORI_ROTATE_180 = ExifInterface.ORIENTATION_ROTATE_180;
     public static final int ORI_ROTATE_270 = ExifInterface.ORIENTATION_ROTATE_270;
-    public static final int ORI_FLIP_HOR   = ExifInterface.ORIENTATION_FLIP_HORIZONTAL;
-    public static final int ORI_FLIP_VERT  = ExifInterface.ORIENTATION_FLIP_VERTICAL;
-    public static final int ORI_TRANSPOSE  = ExifInterface.ORIENTATION_TRANSPOSE;
+    public static final int ORI_FLIP_HOR = ExifInterface.ORIENTATION_FLIP_HORIZONTAL;
+    public static final int ORI_FLIP_VERT = ExifInterface.ORIENTATION_FLIP_VERTICAL;
+    public static final int ORI_TRANSPOSE = ExifInterface.ORIENTATION_TRANSPOSE;
     public static final int ORI_TRANSVERSE = ExifInterface.ORIENTATION_TRANSVERSE;
 
     private Context mContext = null;
@@ -105,18 +105,24 @@ public class ImageLoader {
         return mActivity;
     }
 
-    public void loadBitmap(Uri uri,int size) {
+    public boolean loadBitmap(Uri uri, int size) {
         mLoadingLock.lock();
         mUri = uri;
         mOrientation = getOrientation(mContext, uri);
         mOriginalBitmapSmall = loadScaledBitmap(uri, 160);
         if (mOriginalBitmapSmall == null) {
             // Couldn't read the bitmap, let's exit
-            mActivity.cannotLoadImage();
+            mLoadingLock.unlock();
+            return false;
         }
         mOriginalBitmapLarge = loadScaledBitmap(uri, size);
+        if (mOriginalBitmapLarge == null) {
+            mLoadingLock.unlock();
+            return false;
+        }
         updateBitmaps();
         mLoadingLock.unlock();
+        return true;
     }
 
     public Uri getUri() {
@@ -139,21 +145,25 @@ public class ImageLoader {
                         MediaStore.Images.ImageColumns.ORIENTATION
                     },
                     null, null, null);
-            if (cursor.moveToNext()){
-              int ori =   cursor.getInt(0);
+            if (cursor.moveToNext()) {
+                int ori = cursor.getInt(0);
 
-              switch (ori){
-                  case 0:   return ORI_NORMAL;
-                  case 90:  return ORI_ROTATE_90;
-                  case 270: return ORI_ROTATE_270;
-                  case 180: return ORI_ROTATE_180;
-                  default:
-                      return -1;
-              }
-            } else{
+                switch (ori) {
+                    case 0:
+                        return ORI_NORMAL;
+                    case 90:
+                        return ORI_ROTATE_90;
+                    case 270:
+                        return ORI_ROTATE_270;
+                    case 180:
+                        return ORI_ROTATE_180;
+                    default:
+                        return -1;
+                }
+            } else {
                 return -1;
             }
-        } catch (SQLiteException e){
+        } catch (SQLiteException e) {
             return ExifInterface.ORIENTATION_UNDEFINED;
         } finally {
             Utils.closeSilently(cursor);
@@ -198,46 +208,46 @@ public class ImageLoader {
         warnListeners();
     }
 
-    public static Bitmap rotateToPortrait(Bitmap bitmap,int ori) {
-           Matrix matrix = new Matrix();
-           int w = bitmap.getWidth();
-           int h = bitmap.getHeight();
-           if (ori == ORI_ROTATE_90 ||
-                   ori == ORI_ROTATE_270 ||
-                   ori == ORI_TRANSPOSE||
-                   ori == ORI_TRANSVERSE) {
-               int tmp = w;
-               w = h;
-               h = tmp;
-           }
-           switch(ori){
-               case ORI_ROTATE_90:
-                   matrix.setRotate(90,w/2f,h/2f);
-                   break;
-               case ORI_ROTATE_180:
-                   matrix.setRotate(180,w/2f,h/2f);
-                   break;
-               case ORI_ROTATE_270:
-                   matrix.setRotate(270,w/2f,h/2f);
-                   break;
-               case ORI_FLIP_HOR:
-                   matrix.preScale(-1, 1);
-                   break;
-              case ORI_FLIP_VERT:
-                   matrix.preScale(1, -1);
-                   break;
-               case ORI_TRANSPOSE:
-                   matrix.setRotate(90,w/2f,h/2f);
-                   matrix.preScale(1, -1);
-                   break;
-               case ORI_TRANSVERSE:
-                   matrix.setRotate(270,w/2f,h/2f);
-                   matrix.preScale(1, -1);
-                   break;
-               case ORI_NORMAL:
-               default:
-                   return bitmap;
-            }
+    public static Bitmap rotateToPortrait(Bitmap bitmap, int ori) {
+        Matrix matrix = new Matrix();
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        if (ori == ORI_ROTATE_90 ||
+                ori == ORI_ROTATE_270 ||
+                ori == ORI_TRANSPOSE ||
+                ori == ORI_TRANSVERSE) {
+            int tmp = w;
+            w = h;
+            h = tmp;
+        }
+        switch (ori) {
+            case ORI_ROTATE_90:
+                matrix.setRotate(90, w / 2f, h / 2f);
+                break;
+            case ORI_ROTATE_180:
+                matrix.setRotate(180, w / 2f, h / 2f);
+                break;
+            case ORI_ROTATE_270:
+                matrix.setRotate(270, w / 2f, h / 2f);
+                break;
+            case ORI_FLIP_HOR:
+                matrix.preScale(-1, 1);
+                break;
+            case ORI_FLIP_VERT:
+                matrix.preScale(1, -1);
+                break;
+            case ORI_TRANSPOSE:
+                matrix.setRotate(90, w / 2f, h / 2f);
+                matrix.preScale(1, -1);
+                break;
+            case ORI_TRANSVERSE:
+                matrix.setRotate(270, w / 2f, h / 2f);
+                matrix.preScale(1, -1);
+                break;
+            case ORI_NORMAL:
+            default:
+                return bitmap;
+        }
 
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
                 bitmap.getHeight(), matrix, true);
@@ -270,6 +280,7 @@ public class ImageLoader {
     }
 
     static final int MAX_BITMAP_DIM = 2048;
+
     private Bitmap loadScaledBitmap(Uri uri, int size) {
         InputStream is = null;
         try {
@@ -355,7 +366,8 @@ public class ImageLoader {
         }
     };
 
-    // TODO: this currently does the loading + filtering on the UI thread -- need to
+    // TODO: this currently does the loading + filtering on the UI thread --
+    // need to
     // move this to a background thread.
     public Bitmap getScaleOneImageForPreset(ImageShow caller, ImagePreset imagePreset, Rect bounds,
             boolean force) {
@@ -371,6 +383,7 @@ public class ImageLoader {
                 bmp2 = imagePreset.apply(bmp2);
                 imagePreset.setScaleFactor(scaleFactor);
                 mZoomCache.setImage(imagePreset, bounds, bmp2);
+                mLoadingLock.unlock();
                 return bmp2;
             }
         }
@@ -383,9 +396,11 @@ public class ImageLoader {
             boolean hiRes) {
         mLoadingLock.lock();
         if (mOriginalBitmapSmall == null) {
+            mLoadingLock.unlock();
             return null;
         }
         if (mOriginalBitmapLarge == null) {
+            mLoadingLock.unlock();
             return null;
         }
 
@@ -451,7 +466,6 @@ public class ImageLoader {
 
     /**
      * Determine if this is a light cycle 360 image
-     *
      * @return true if it is a light Cycle image that is full 360
      */
     public boolean queryLightCycle360() {
