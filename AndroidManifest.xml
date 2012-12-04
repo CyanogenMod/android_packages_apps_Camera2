@@ -398,7 +398,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.android.camera.ProxyLauncher"
-                android:theme="@android:style/Theme.NoDisplay">
+                android:theme="@style/Theme.ProxyLauncher">
         </activity>
     </application>
 </manifest>
