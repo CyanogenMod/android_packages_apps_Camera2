@@ -475,7 +475,12 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
         mMenuExecutor.pause();
     }
 
+    public void destroy() {
+        mMenuExecutor.destroy();
+    }
+
     public void resume() {
         if (mSelectionManager.inSelectionMode()) updateSupportedOperation();
+        mMenuExecutor.resume();
     }
 }

@@ -351,8 +351,9 @@ public class AlbumSetPage extends ActivityState implements
 
     @Override
     public void onDestroy() {
-        cleanupCameraButton();
         super.onDestroy();
+        cleanupCameraButton();
+        mActionModeHandler.destroy();
     }
 
     private boolean setupCameraButton() {
@@ -437,9 +438,9 @@ public class AlbumSetPage extends ActivityState implements
     public void onPause() {
         super.onPause();
         mIsActive = false;
-        mActionModeHandler.pause();
         mAlbumSetDataAdapter.pause();
         mAlbumSetView.pause();
+        mActionModeHandler.pause();
         mEyePosition.pause();
         DetailsHelper.pause();
         // Call disableClusterMenu to avoid receiving callback after paused.

@@ -19,14 +19,17 @@ package com.android.gallery3d.app;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -40,8 +43,8 @@ import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLRootView;
-import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.LightCycleHelper.PanoramaViewHelper;
+import com.android.gallery3d.util.ThreadPool;
 
 public class AbstractGalleryActivity extends SherlockActivity implements GalleryContext {
     @SuppressWarnings("unused")
@@ -71,6 +74,7 @@ public class AbstractGalleryActivity extends SherlockActivity implements Gallery
         getWindow().setBackgroundDrawable(null);
         mPanoramaViewHelper = new PanoramaViewHelper(this);
         mPanoramaViewHelper.onCreate();
+        doBindBatchService();
     }
 
     @Override
@@ -237,6 +241,7 @@ public class AbstractGalleryActivity extends SherlockActivity implements Gallery
         } finally {
             mGLRootView.unlockRenderThread();
         }
+        doUnbindBatchService();
     }
 
     @Override
@@ -307,5 +312,40 @@ public class AbstractGalleryActivity extends SherlockActivity implements Gallery
     protected boolean isFullscreen() {
         return (getWindow().getAttributes().flags
                 & WindowManager.LayoutParams.FLAG_FULLSCREEN) != 0;
+    }
+
+    private BatchService mBatchService;
+    private boolean mBatchServiceIsBound = false;
+    private ServiceConnection mBatchServiceConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            mBatchService = ((BatchService.LocalBinder)service).getService();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            mBatchService = null;
+        }
+    };
+
+    private void doBindBatchService() {
+        bindService(new Intent(this, BatchService.class), mBatchServiceConnection, Context.BIND_AUTO_CREATE);
+        mBatchServiceIsBound = true;
+    }
+
+    private void doUnbindBatchService() {
+        if (mBatchServiceIsBound) {
+            // Detach our existing connection.
+            unbindService(mBatchServiceConnection);
+            mBatchServiceIsBound = false;
+        }
+    }
+
+    public ThreadPool getBatchServiceThreadPoolIfAvailable() {
+        if (mBatchServiceIsBound && mBatchService != null) {
+            return mBatchService.getThreadPool();
+        } else {
+            // Fall back on the old behavior if for some reason the
+            // service is not available.
+            return getThreadPool();
+        }
     }
 }
