@@ -205,6 +205,7 @@ public class PhotoView extends GLView {
     private boolean mFullScreenCamera;
     private Rect mCameraRelativeFrame = new Rect();
     private Rect mCameraRect = new Rect();
+    private boolean mFirst = true;
 
     // [mPrevBound, mNextBound] is the range of index for all pictures in the
     // model, if we assume the index of current focused picture is 0.  So if
@@ -1406,8 +1407,9 @@ public class PhotoView extends GLView {
         boolean full = !mFilmMode && mPictures.get(0).isCamera()
                 && mPositionController.isCenter()
                 && mPositionController.isAtMinimalScale();
-        if (full != mFullScreenCamera) {
+        if (mFirst || full != mFullScreenCamera) {
             mFullScreenCamera = full;
+            mFirst = false;
             mListener.onFullScreenChanged(full);
             if (full) mHandler.sendEmptyMessage(MSG_UNDO_BAR_FULL_CAMERA);
         }
