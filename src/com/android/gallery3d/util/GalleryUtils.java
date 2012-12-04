@@ -94,14 +94,6 @@ public class GalleryUtils {
         TiledScreenNail.setMaxSide(maxPixels / 2);
     }
 
-    public static boolean isHighResolution(Context context) {
-        DisplayMetrics metrics = new DisplayMetrics();
-        WindowManager wm = (WindowManager)
-                context.getSystemService(Context.WINDOW_SERVICE);
-        wm.getDefaultDisplay().getMetrics(metrics);
-        return metrics.heightPixels > 2048 ||  metrics.widthPixels > 2048;
-    }
-
     public static float[] intColorToFloatARGBArray(int from) {
         return new float[] {
             Color.alpha(from) / 255f,
