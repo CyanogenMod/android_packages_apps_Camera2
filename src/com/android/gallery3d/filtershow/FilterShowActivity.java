@@ -156,7 +156,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageFilterRS.setRenderScriptContext(this);
 
         ImageShow.setDefaultBackgroundColor(getResources().getColor(R.color.background_screen));
-        ImageSmallFilter.setDefaultBackgroundColor(getResources().getColor(R.color.background_main_toolbar));
+        ImageSmallFilter.setDefaultBackgroundColor(getResources().getColor(
+                R.color.background_main_toolbar));
         // TODO: get those values from XML.
         ImageZoom.setZoomedSize(getPixelsFromDip(256));
         FramedTextButton.setTextSize((int) getPixelsFromDip(14));
@@ -414,7 +415,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mLoadBitmapTask.execute(uri);
     }
 
-    private class LoadBitmapTask extends AsyncTask<Uri, Void, Boolean> {
+    private class LoadBitmapTask extends AsyncTask<Uri, Boolean, Boolean> {
         View mTinyPlanetButton;
         int mBitmapSize;
 
@@ -425,19 +426,25 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         @Override
         protected Boolean doInBackground(Uri... params) {
-            mImageLoader.loadBitmap(params[0], mBitmapSize);
-            publishProgress();
-            return mImageLoader.queryLightCycle360();
+            if (!mImageLoader.loadBitmap(params[0], mBitmapSize)) {
+                return false;
+            }
+            publishProgress(mImageLoader.queryLightCycle360());
+            return true;
         }
 
         @Override
-        protected void onProgressUpdate(Void... values) {
+        protected void onProgressUpdate(Boolean... values) {
             super.onProgressUpdate(values);
-            if (isCancelled()) return;
+            if (isCancelled())
+                return;
             final View filters = findViewById(R.id.filtersPanel);
             final View loading = findViewById(R.id.loading);
             loading.setVisibility(View.GONE);
             filters.setVisibility(View.VISIBLE);
+            if (values[0]) {
+                mTinyPlanetButton.setVisibility(View.VISIBLE);
+            }
         }
 
         @Override
@@ -445,9 +452,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             if (isCancelled()) {
                 return;
             }
-            if (result) {
-                mTinyPlanetButton.setVisibility(View.VISIBLE);
+            if (!result) {
+                cannotLoadImage();
             }
+
             mLoadBitmapTask = null;
             super.onPostExecute(result);
         }
