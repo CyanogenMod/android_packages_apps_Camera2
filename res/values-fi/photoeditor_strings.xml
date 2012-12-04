@@ -16,51 +16,51 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="photoeditor_name" msgid="2141682370266509503">"Valokuvastudio"</string>
-    <string name="loading_failure" msgid="4430965264692871140">"Kuvan lataus epäonnistui"</string>
-    <string name="saving_failure" msgid="7896222027047170982">"Muokatun kuvan tallentaminen epäonnistui"</string>
-    <string name="photo_saved" msgid="358760800912053916">"Muokattu kuva tallennettu kansioon <xliff:g id="FOLDER_NAME">%s</xliff:g>"</string>
-    <string name="discard_unsaved_photo" msgid="7621529106313330133">"Hylätäänkö tallentamattomat muutokset?"</string>
-    <string name="yes" msgid="6281719750476942468">"Kyllä"</string>
-    <string name="save" msgid="8861201735155829719">"TALLENNA"</string>
-    <string name="autofix" msgid="7944390017263652926">"Autom. korjaus"</string>
-    <string name="crop" msgid="6491363680194796014">"Rajaa"</string>
-    <string name="crossprocess" msgid="1472013603094183614">"Ristiinkehitys"</string>
-    <string name="documentary" msgid="3241380167998037384">"Dokumentaarinen"</string>
-    <string name="doodle" msgid="7378447840618633191">"Piirros"</string>
-    <string name="duotone" msgid="3248891724790119677">"Kaksoissävy"</string>
-    <string name="facelift" msgid="1485390158100614056">"Kasvotasoitus"</string>
-    <string name="facetan" msgid="3921463359584460598">"Kasvorusketus"</string>
-    <string name="filllight" msgid="5228480587177464589">"Täytevalo"</string>
-    <string name="fisheye" msgid="3102157475164320675">"Kalansilmä"</string>
-    <string name="flip" msgid="404825526098985907">"Käännä"</string>
-    <string name="grain" msgid="8336064860901705844">"Rakeinen filmi"</string>
-    <string name="grayscale" msgid="895511627632504167">"MV"</string>
-    <string name="accessibility_black_and_white" msgid="1304436215071513173">"Mustavalkoinen"</string>
-    <string name="highlight" msgid="7206397969888227366">"Korostus"</string>
-    <string name="lomoish" msgid="5630441654104635556">"Lomo"</string>
-    <string name="negative" msgid="608235382589213651">"Käänt. värit"</string>
-    <string name="posterize" msgid="933491230280844273">"Posterisaatio"</string>
-    <string name="redeye" msgid="8399041285845316254">"Punasilmäisyys"</string>
-    <string name="rotate" msgid="1799940414619421832">"Kierrä"</string>
-    <string name="saturation" msgid="1624207084133899802">"Värikylläisyys"</string>
-    <string name="sepia" msgid="6352460579372924828">"Seepia"</string>
-    <string name="shadow" msgid="6032230441080829394">"Tummat alueet"</string>
-    <string name="sharpen" msgid="4613973349599918590">"Terävöinti"</string>
-    <string name="straighten" msgid="4551302289295998179">"Suorista"</string>
-    <string name="temperature" msgid="919852023864669874">"Lämmin/kylmä"</string>
-    <string name="tint" msgid="5176938985727714799">"Sävytys"</string>
-    <string name="vignette" msgid="4858893727790879554">"Vinjetti"</string>
-    <string name="crop_tooltip" msgid="5028271751720427003">"Rajaa kuvaa vetämällä merkkejä"</string>
-    <string name="doodle_tooltip" msgid="652340030415979327">"Piirrä valokuvaan sormella"</string>
-    <string name="flip_tooltip" msgid="2442349154773120409">"Käännä kuva vetämällä"</string>
-    <string name="redeye_tooltip" msgid="8317077842047241049">"Poista punasilmäisyys napauttamalla"</string>
-    <string name="rotate_tooltip" msgid="4675156711699347421">"Kierrä valokuvaa vetämällä"</string>
-    <string name="straighten_tooltip" msgid="2512346096190533095">"Suorista valokuva vetämällä"</string>
-    <string name="photoeditor_exposure" msgid="460371724772128171">"Valotustehosteet"</string>
-    <string name="photoeditor_color" msgid="1026541951500898735">"Väritehosteet"</string>
-    <string name="photoeditor_artistic" msgid="7730603034092865949">"Taiteelliset tehosteet"</string>
-    <string name="photoeditor_fix" msgid="3812167922898325515">"Korjaa"</string>
-    <string name="photoeditor_undo" msgid="6702301566524836996">"Kumoa"</string>
-    <string name="photoeditor_redo" msgid="5203739560744044128">"Toista"</string>
+    <string name="photoeditor_name" msgid="4738587346771969697">"Valokuvastudio"</string>
+    <string name="loading_failure" msgid="7890360277163832130">"Kuvaa ei voi ladata"</string>
+    <string name="saving_failure" msgid="8229491575433743974">"Muokatun kuvan tallentaminen epäonnistui"</string>
+    <string name="photo_saved" msgid="6163006724627682202">"Muokattu kuva tallennettu kansioon <xliff:g id="FOLDER_NAME">%s</xliff:g>"</string>
+    <string name="discard_unsaved_photo" msgid="2353274490633681946">"Hylätäänkö tallentamattomat muutokset?"</string>
+    <string name="yes" msgid="5402582493291792293">"Kyllä"</string>
+    <string name="save" msgid="5516670392524294967">"Tallenna"</string>
+    <string name="autofix" msgid="1663414996270538748">"Autom. korjaus"</string>
+    <string name="crop" msgid="7598378507763334041">"Rajaa"</string>
+    <string name="crossprocess" msgid="4173724489001742342">"Ristiinkäsittely"</string>
+    <string name="documentary" msgid="50396326708699797">"Dokumentti"</string>
+    <string name="doodle" msgid="1686409894518940990">"Piirtely"</string>
+    <string name="duotone" msgid="8145893940788467106">"Kaksoissävy"</string>
+    <string name="facelift" msgid="6205748523156172637">"Face Glow"</string>
+    <string name="facetan" msgid="4412831806626044111">"Face Tan"</string>
+    <string name="filllight" msgid="2644989991700022526">"Täytä vaaleat"</string>
+    <string name="fisheye" msgid="6037488646928998921">"Kalansilmä"</string>
+    <string name="flip" msgid="2357692401826287480">"Käännä"</string>
+    <string name="grain" msgid="7487585304579789098">"Rakeisuus"</string>
+    <string name="grayscale" msgid="7641563843060945228">"MV"</string>
+    <string name="accessibility_black_and_white" msgid="1156382046161392389">"Mustavalkoinen"</string>
+    <string name="highlight" msgid="3902653944386623972">"Korostus"</string>
+    <string name="lomoish" msgid="1270032154357186736">"Lomo"</string>
+    <string name="negative" msgid="1985508917342811252">"Negatiivinen"</string>
+    <string name="posterize" msgid="4139212359561383385">"Posterisaatio"</string>
+    <string name="redeye" msgid="4958448806369928239">"Punasilmäisyys"</string>
+    <string name="rotate" msgid="6607597269792373083">"Kierrä"</string>
+    <string name="saturation" msgid="8621322012271169931">"Värikylläisyys"</string>
+    <string name="sepia" msgid="7978093531824705601">"Seepia"</string>
+    <string name="shadow" msgid="8235188588101973090">"Varjostus"</string>
+    <string name="sharpen" msgid="8449662378104403230">"Tarkennus"</string>
+    <string name="straighten" msgid="5217801513491493491">"Suorista"</string>
+    <string name="temperature" msgid="1607987938521534517">"Lämpö"</string>
+    <string name="tint" msgid="154435943863418434">"Sävytys"</string>
+    <string name="vignette" msgid="7648125924662648282">"Vinjetti"</string>
+    <string name="crop_tooltip" msgid="8794037869706891710">"Leikkaa kuvaa vetämällä merkkejä"</string>
+    <string name="doodle_tooltip" msgid="2902117272374362915">"Piirrä valokuvaan siirtämällä osoitin sen päälle"</string>
+    <string name="flip_tooltip" msgid="2700943256714731737">"Käännä kuva vetämällä"</string>
+    <string name="redeye_tooltip" msgid="4183695928490874014">"Poista punasilmäisyys napautt. silmiä"</string>
+    <string name="rotate_tooltip" msgid="7008602969130734229">"Käännä valokuvaa vetämällä"</string>
+    <string name="straighten_tooltip" msgid="4846317027139212339">"Suorista valokuva vetämällä"</string>
+    <string name="photoeditor_exposure" msgid="560535856805042987">"Valotustehosteet"</string>
+    <string name="photoeditor_color" msgid="834210916165605468">"Väritehosteet"</string>
+    <string name="photoeditor_artistic" msgid="2810641816416597464">"Taiteelliset tehosteet"</string>
+    <string name="photoeditor_fix" msgid="6441595584425037477">"Korjaa"</string>
+    <string name="photoeditor_undo" msgid="4831462549862253564">"Kumoa"</string>
+    <string name="photoeditor_redo" msgid="5999984591376273768">"Toista"</string>
 </resources>
