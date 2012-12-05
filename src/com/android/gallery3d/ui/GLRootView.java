@@ -117,6 +117,7 @@ public class GLRootView extends GLSurfaceView
         super(context, attrs);
         mFlags |= FLAG_INITIALIZED;
         setBackgroundDrawable(null);
+        setEGLContextClientVersion(GLCanvas.getEGLContextClientVersion());
         setEGLConfigChooser(mEglConfigChooser);
         setRenderer(this);
         if (ApiHelper.USE_888_PIXEL_FORMAT) {
@@ -283,7 +284,8 @@ public class GLRootView extends GLSurfaceView
         mRenderLock.lock();
         try {
             mGL = gl;
-            mCanvas = new GLCanvasImpl(gl);
+            mCanvas = GLCanvas.getInstance();
+            mCanvas.initialize(gl);
             BasicTexture.invalidateAllTextures();
         } finally {
             mRenderLock.unlock();
