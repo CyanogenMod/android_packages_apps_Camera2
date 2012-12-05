@@ -304,7 +304,9 @@ public class PhotoPage extends ActivityState implements
                         break;
                     }
                     case MSG_ON_FULL_SCREEN_CHANGED: {
-                        mAppBridge.onFullScreenChanged(message.arg1 == 1);
+                        if (mAppBridge != null) {
+                            mAppBridge.onFullScreenChanged(message.arg1 == 1);
+                        }
                         break;
                     }
                     case MSG_UPDATE_ACTION_BAR: {
