@@ -19,6 +19,10 @@ package com.android.gallery3d.ui;
 import android.graphics.Bitmap;
 import android.graphics.RectF;
 
+import com.android.gallery3d.common.ApiHelper;
+
+import javax.microedition.khronos.opengles.GL11;
+
 //
 // GLCanvas gives a convenient interface to draw using OpenGL.
 //
@@ -30,11 +34,30 @@ public abstract class GLCanvas {
         Additive, Mix,
     }
 
-    private static GLId sGLId = new GLIdImpl();
+    private static GLCanvas sInstance = instantiateCanvas();
+    private static GLId sGLId = instantiateGLId();
 
     public static GLId getGLId() {
         return sGLId;
     }
+
+    public static GLCanvas getInstance() {
+        return sInstance;
+    }
+
+    private static GLId instantiateGLId() {
+        return ApiHelper.HAS_GLES20_REQUIRED ? (GLES20Canvas) sInstance : new GLIdImpl();
+    }
+
+    private static GLCanvas instantiateCanvas() {
+        return ApiHelper.HAS_GLES20_REQUIRED ? new GLES20Canvas() : new GLCanvasImpl();
+    }
+
+    public static int getEGLContextClientVersion() {
+        return ApiHelper.HAS_GLES20_REQUIRED ? 2 : 1;
+    }
+
+    public abstract void initialize(GL11 gl);
 
     // Tells GLCanvas the size of the underlying GL surface. This should be
     // called before first drawing and when the size of GL surface is changed.
@@ -188,10 +211,18 @@ public abstract class GLCanvas {
     /**
      * Generates buffers and uploads the buffer data.
      *
-     * @param buffers An array of buffers to upload
-     * @return The buffer IDs that were generated.
+     * @param buffer The buffer to upload
+     * @return The buffer ID that was generated.
      */
-    public abstract int[] uploadBuffers(java.nio.Buffer[] buffers);
+    public abstract int uploadBuffer(java.nio.FloatBuffer buffer);
+
+    /**
+     * Generates buffers and uploads the element array buffer data.
+     *
+     * @param buffer The buffer to upload
+     * @return The buffer ID that was generated.
+     */
+    public abstract int uploadBuffer(java.nio.ByteBuffer buffer);
 
     /**
      * Sets the blending algorithm if a texture is not opaque.
@@ -217,7 +248,7 @@ public abstract class GLCanvas {
 
     /**
      * Start/stop updating the stencil buffer.
-     * 
+     *
      * @param update True if the stencil should be updated, false otherwise.
      */
     public abstract void updateStencil(boolean update);
