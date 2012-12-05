@@ -151,6 +151,8 @@ public class ImageLoader {
             }
         } catch (SQLiteException e){
             return ExifInterface.ORIENTATION_UNDEFINED;
+        } catch (IllegalArgumentException e) {
+            return ExifInterface.ORIENTATION_UNDEFINED;
         } finally {
             Utils.closeSilently(cursor);
         }
