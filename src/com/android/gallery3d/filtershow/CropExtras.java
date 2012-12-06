@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.data;
+package com.android.gallery3d.filtershow;
 
 import android.net.Uri;
 

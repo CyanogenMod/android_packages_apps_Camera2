@@ -23,7 +23,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
-import com.android.gallery3d.data.CropExtras;
+import com.android.gallery3d.filtershow.CropExtras;
 import com.android.gallery3d.filtershow.imageshow.GeometryMath;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 
