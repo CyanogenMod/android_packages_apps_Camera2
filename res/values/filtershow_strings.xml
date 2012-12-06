@@ -99,39 +99,39 @@
 
     <!--  Filters buttons -->
 
-    <!--  Label for the exposure filter button [CHAR LIMIT=15] -->
+    <!--  Label for the image exposure (brightness) filter button [CHAR LIMIT=10] -->
     <string name="exposure" msgid="1229093066434614811">Exposure</string>
-    <!--  Label for the sharpen filter button [CHAR LIMIT=15] -->
+    <!--  Label for the image sharpness (clarity, distinctness) filter button [CHAR LIMIT=10] -->
     <string name="sharpness">Sharpness</string>
-    <!--  Label for the contrast filter button [CHAR LIMIT=15] -->
+    <!--  Label for the image contrast (color difference) filter button [CHAR LIMIT=10] -->
     <string name="contrast">Contrast</string>
-    <!--  Label for the vibrance filter button [CHAR LIMIT=15] -->
+    <!--  Label for the image vibrance (strengthens colors) filter button [CHAR LIMIT=10] -->
     <string name="vibrance">Vibrance</string>
-    <!--  Label for the saturation filter button [CHAR LIMIT=15] -->
+    <!--  Label for the image saturation (brightens colors) filter button [CHAR LIMIT=10] -->
     <string name="saturation">Saturation</string>
-    <!--  Label for the BW filter button [CHAR LIMIT=15] -->
+    <!--  Label for the image BW filter (makes black & white) button [CHAR LIMIT=10] -->
     <string name="bwfilter">BW Filter</string>
-    <!--  Label for the White Balance filter button [CHAR LIMIT=15] -->
+    <!--  Label for the image Autocolor filter (makes off-white colors whiter) button [CHAR LIMIT=10] -->
     <string name="wbalance">Autocolor</string>
-    <!--  Label for the Hue filter button [CHAR LIMIT=15] -->
+    <!--  Label for the image Hue filter (color, shade, tinge, tone) button [CHAR LIMIT=10] -->
     <string name="hue">Hue</string>
-    <!--  Label for the shadow recovery filter button [CHAR LIMIT=15] -->
+    <!--  Label for the image shadow recovery (lightens/darkens shadows) filter button [CHAR LIMIT=10] -->
     <string name="shadow_recovery">Shadows</string>
-    <!--  Label for the curves filter button [CHAR LIMIT=15] -->
+    <!--  Label for the image curves filter button [CHAR LIMIT=10] -->
     <string name="curvesRGB">Curves</string>
-    <!--  Label for the vignette filter button [CHAR LIMIT=15] -->
+    <!--  Label for the image vignette filter (darkens photo around edges) button [CHAR LIMIT=10] -->
     <string name="vignette">Vignette</string>
-    <!--  Label for the photo effect that removes redeye. [CHAR LIMIT=15] -->
+    <!--  Label for the image effect that removes redeye. [CHAR LIMIT=10] -->
     <string name="redeye">Red Eye</string>
-    <!--  Label for the straighten effect [CHAR LIMIT=15] -->
+    <!--  Label for the image straighten effect [CHAR LIMIT=15] -->
     <string name="straighten" msgid="5217801513491493491">Straighten</string>
-    <!--  Label for the crop effect [CHAR LIMIT=15] -->
+    <!--  Label for the image crop effect [CHAR LIMIT=15] -->
     <string name="crop" msgid="5584000454518174632">Crop</string>
-    <!--  Label for the rotate effect [CHAR LIMIT=15] -->
+    <!--  Label for the image rotate effect [CHAR LIMIT=15] -->
     <string name="rotate" msgid="460017689320955494">Rotate</string>
-    <!--  Label for the flip effect [CHAR LIMIT=15] -->
+    <!--  Label for the image flip effect [CHAR LIMIT=15] -->
     <string name="mirror">Mirror</string>
-    <!--  Label for the original [CHAR LIMIT=15] -->
+    <!--  Label for having no filters applied to the image [CHAR LIMIT=10] -->
     <string name="none" msgid="3601545724573307541">None</string>
 
     <!--  Labels for the curves tool -->
