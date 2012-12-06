@@ -334,25 +334,27 @@
     <!-- String indicating camera flash is not used. [CHAR LIMIT=14] -->
     <string name="flash_off">No flash</string>
 
-    <!-- String for the empty not filtered image[CHAR LIMIT=14] -->
+    <!-- String for the empty not filtered image [CHAR LIMIT=10] -->
     <string name="ffx_original">Original</string>
-   <!-- String for filter filtershow_fx_0000_vintage [CHAR LIMIT=14] -->
+    <!-- String for brown-colored old-fashion looking filter (filtershow_fx_0000_vintage) [CHAR LIMIT=10] -->
     <string name="ffx_vintage">Vintage</string>
-    <!-- String for filter filtershow_fx_0001_instant [CHAR LIMIT=14] -->
+    <!-- String for filter that brightens colors (filtershow_fx_0001_instant) [CHAR LIMIT=10] -->
     <string name="ffx_instant">Instant</string>
-    <!-- String for filter filtershow_fx_0002_bleach [CHAR LIMIT=14] -->
+    <!-- String for filter that washes out colors (filtershow_fx_0002_bleach) [CHAR LIMIT=10] -->
     <string name="ffx_bleach">Bleach</string>
-    <!-- String for filter filtershow_fx_0003_blue_crush [CHAR LIMIT=14] -->
+    <!-- String for filter that makes colors a bluish (filtershow_fx_0003_blue_crush) [CHAR LIMIT=10] -->
     <string name="ffx_blue_crush">Blue</string>
-    <!-- String for filter filtershow_fx_0004_bw_contrast [CHAR LIMIT=14] -->
+    <!-- String for filter that makes image black & white (filtershow_fx_0004_bw_contrast) [CHAR LIMIT=10] -->
     <string name="ffx_bw_contrast">B/W</string>
-    <!-- String for filter filtershow_fx_0005_punch [CHAR LIMIT=14] -->
+    <!-- String for filter that makes colors a yellowish (filtershow_fx_0005_punch) [CHAR LIMIT=10] -->
     <string name="ffx_punch">Punch</string>
-    <!-- String for filter filtershow_fx_0006_x_process [CHAR LIMIT=14] -->
+    <!-- String for filter that mimics the cross-process technique in
+         photography (makes colors bluish) (filtershow_fx_0006_x_process) [CHAR LIMIT=10] -->
     <string name="ffx_x_process">X Process</string>
-    <!-- String for filter filtershow_fx_0007_washout [CHAR LIMIT=14] -->
+    <!-- String for filter that makes image coffee-colored (filtershow_fx_0007_washout) [CHAR LIMIT=10] -->
     <string name="ffx_washout">Latte</string>
-    <!-- String for filter filtershow_fx_0008_washout_color [CHAR LIMIT=14] -->
+    <!-- String for filter that makes colors washed out and brownish
+         (filtershow_fx_0008_washout_color) [CHAR LIMIT=10] -->
     <string name="ffx_washout_color">Litho</string>
 
     <!-- Toast message shown after we make some album(s) available offline [CHAR LIMIT=50] -->
