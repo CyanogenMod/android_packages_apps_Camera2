@@ -35,4 +35,9 @@ public class ImageFilterWBalance extends ImageFilter {
         nativeApplyFilter(bitmap, w, h, -1,-1);
         return bitmap;
     }
+
+    @Override
+    public boolean isNil() {
+        return false;
+    }
 }
