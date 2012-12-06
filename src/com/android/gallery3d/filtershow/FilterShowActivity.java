@@ -54,7 +54,6 @@ import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.data.CropExtras;
 import com.android.gallery3d.data.LocalAlbum;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
@@ -103,7 +102,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         OnShareTargetSelectedListener {
 
     // fields for supporting crop action
-    public static final String CROP_ACTION = "com.android.camera.action.EDITOR_CROP";
+    public static final String CROP_ACTION = "com.android.camera.action.CROP";
     private CropExtras mCropExtras = null;
 
     public static final String TINY_PLANET_ACTION = "com.android.camera.action.TINY_PLANET";

@@ -57,6 +57,9 @@ import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.MediaSetUtils;
+import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.filtershow.CropExtras;
+
 
 public class AlbumPage extends ActivityState implements GalleryActionBar.ClusterRunner,
         SelectionManager.SelectionListener, MediaSet.SyncListener, GalleryActionBar.OnAlbumModeSelectedListener {
@@ -317,11 +320,11 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         if (mData.getString(Gallery.EXTRA_CROP) != null) {
             // TODO: Handle MtpImagew
             Uri uri = dm.getContentUri(item.getPath());
-            Intent intent = new Intent(CropImage.ACTION_CROP, uri)
+            Intent intent = new Intent(FilterShowActivity.CROP_ACTION, uri)
                     .addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT)
                     .putExtras(getData());
             if (mData.getParcelable(MediaStore.EXTRA_OUTPUT) == null) {
-                intent.putExtra(CropImage.KEY_RETURN_DATA, true);
+                intent.putExtra(CropExtras.KEY_RETURN_DATA, true);
             }
             activity.startActivity(intent);
             activity.finish();

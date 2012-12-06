@@ -38,10 +38,10 @@ import com.adobe.xmp.XMPMeta;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.CropExtras;
 import com.android.gallery3d.exif.ExifInvalidFormatException;
 import com.android.gallery3d.exif.ExifParser;
 import com.android.gallery3d.exif.ExifTag;
+import com.android.gallery3d.filtershow.CropExtras;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;

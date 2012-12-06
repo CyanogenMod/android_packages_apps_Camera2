@@ -27,10 +27,10 @@ import android.widget.RemoteViews;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.AlbumPicker;
-import com.android.gallery3d.app.CropImage;
 import com.android.gallery3d.app.DialogPicker;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.filtershow.CropExtras;
 
 public class WidgetConfigure extends Activity {
     @SuppressWarnings("unused")
@@ -144,13 +144,13 @@ public class WidgetConfigure extends Activity {
 
         mPickedItem = data.getData();
         Intent request = new Intent(FilterShowActivity.CROP_ACTION, mPickedItem)
-                .putExtra(CropImage.KEY_OUTPUT_X, widgetWidth)
-                .putExtra(CropImage.KEY_OUTPUT_Y, widgetHeight)
-                .putExtra(CropImage.KEY_ASPECT_X, widgetWidth)
-                .putExtra(CropImage.KEY_ASPECT_Y, widgetHeight)
-                .putExtra(CropImage.KEY_SCALE_UP_IF_NEEDED, true)
-                .putExtra(CropImage.KEY_SCALE, true)
-                .putExtra(CropImage.KEY_RETURN_DATA, true);
+                .putExtra(CropExtras.KEY_OUTPUT_X, widgetWidth)
+                .putExtra(CropExtras.KEY_OUTPUT_Y, widgetHeight)
+                .putExtra(CropExtras.KEY_ASPECT_X, widgetWidth)
+                .putExtra(CropExtras.KEY_ASPECT_Y, widgetHeight)
+                .putExtra(CropExtras.KEY_SCALE_UP_IF_NEEDED, true)
+                .putExtra(CropExtras.KEY_SCALE, true)
+                .putExtra(CropExtras.KEY_RETURN_DATA, true);
         startActivityForResult(request, REQUEST_CROP_IMAGE);
     }
 

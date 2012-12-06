@@ -29,7 +29,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.data.CropExtras;
+import com.android.gallery3d.filtershow.CropExtras;
 
 public class ImageCrop extends ImageGeometry {
     private static final boolean LOGV = false;
