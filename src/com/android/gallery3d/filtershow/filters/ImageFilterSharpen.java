@@ -33,6 +33,16 @@ public class ImageFilterSharpen extends ImageFilterRS {
     }
 
     @Override
+    public int getTextId() {
+        return R.string.sharpness;
+    }
+
+    @Override
+    public int getOverlayBitmaps() {
+        return R.drawable.filtershow_button_colors_sharpen;
+    }
+
+    @Override
     public void createFilter(android.content.res.Resources res, float scaleFactor,
             boolean highQuality) {
         int w = mInPixelsAllocation.getType().getX();

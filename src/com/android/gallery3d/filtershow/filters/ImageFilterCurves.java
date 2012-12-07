@@ -18,6 +18,7 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.ui.Spline;
 
 public class ImageFilterCurves extends ImageFilter {
@@ -28,6 +29,21 @@ public class ImageFilterCurves extends ImageFilter {
     public ImageFilterCurves() {
         mName = "Curves";
         reset();
+    }
+
+    @Override
+    public int getButtonId() {
+        return R.id.curvesButtonRGB;
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.curvesRGB;
+    }
+
+    @Override
+    public int getOverlayBitmaps() {
+        return R.drawable.filtershow_button_colors_curve;
     }
 
     @Override
