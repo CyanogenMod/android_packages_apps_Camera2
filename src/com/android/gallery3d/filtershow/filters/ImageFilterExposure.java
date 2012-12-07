@@ -16,12 +16,24 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import com.android.gallery3d.R;
+
 import android.graphics.Bitmap;
 
 public class ImageFilterExposure extends ImageFilter {
 
     public ImageFilterExposure() {
         mName = "Exposure";
+    }
+
+    @Override
+    public int getButtonId() {
+        return R.id.exposureButton;
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.exposure;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float bright);

@@ -47,6 +47,18 @@ public class ImageFilter implements Cloneable {
         filterType = type;
     }
 
+    public int getButtonId() {
+        return 0;
+    }
+
+    public int getTextId() {
+        return 0;
+    }
+
+    public int getOverlayBitmaps() {
+        return 0;
+    }
+
     @Override
     public ImageFilter clone() throws CloneNotSupportedException {
         ImageFilter filter = (ImageFilter) super.clone();

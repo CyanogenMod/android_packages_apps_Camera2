@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import com.android.gallery3d.R;
+
 import android.graphics.Bitmap;
 
 public class ImageFilterHue extends ImageFilter {
@@ -26,6 +28,16 @@ public class ImageFilterHue extends ImageFilter {
         cmatrix = new ColorSpaceMatrix();
         mMaxParameter = 180;
         mMinParameter = -180;
+    }
+
+    @Override
+    public int getButtonId() {
+        return R.id.hueButton;
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.hue;
     }
 
     @Override

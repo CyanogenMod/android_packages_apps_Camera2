@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import com.android.gallery3d.R;
+
 import android.graphics.Bitmap;
 
 public class ImageFilterShadows extends ImageFilter {
@@ -23,6 +25,16 @@ public class ImageFilterShadows extends ImageFilter {
     public ImageFilterShadows() {
         mName = "Shadows";
 
+    }
+
+    @Override
+    public int getButtonId() {
+        return R.id.shadowRecoveryButton;
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.shadow_recovery;
     }
 
     @Override

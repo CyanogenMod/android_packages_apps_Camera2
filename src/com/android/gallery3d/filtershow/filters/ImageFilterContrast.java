@@ -16,12 +16,24 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import com.android.gallery3d.R;
+
 import android.graphics.Bitmap;
 
 public class ImageFilterContrast extends ImageFilter {
 
     public ImageFilterContrast() {
         mName = "Contrast";
+    }
+
+    @Override
+    public int getButtonId() {
+        return R.id.contrastButton;
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.contrast;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float strength);

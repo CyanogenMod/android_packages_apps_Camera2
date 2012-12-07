@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import com.android.gallery3d.R;
+
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
@@ -26,6 +28,16 @@ public class ImageFilterBwFilter extends ImageFilter {
         mName = "BW Filter";
         mMaxParameter = 180;
         mMinParameter = -180;
+    }
+
+    @Override
+    public int getButtonId() {
+        return R.id.bwfilterButton;
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.bwfilter;
     }
 
     @Override
