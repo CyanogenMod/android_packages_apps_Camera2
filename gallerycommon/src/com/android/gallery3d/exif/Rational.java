@@ -16,6 +16,9 @@
 
 package com.android.gallery3d.exif;
 
+/**
+ * The rational data type of EXIF tag.
+ */
 public class Rational {
 
     private final long mNominator;
@@ -26,10 +29,16 @@ public class Rational {
         mDenominator = denominator;
     }
 
+    /*
+     * Gets the nominator of the rational.
+     */
     public long getNominator() {
         return mNominator;
     }
 
+    /*
+     * Gets the denominator of the rational
+     */
     public long getDenominator() {
         return mDenominator;
     }
@@ -48,6 +57,9 @@ public class Rational {
         return mNominator + "/" + mDenominator;
     }
 
+    /*
+     * Gets the rational value as type double.
+     */
     public double toDouble() {
         return mNominator / (double) mDenominator;
     }
