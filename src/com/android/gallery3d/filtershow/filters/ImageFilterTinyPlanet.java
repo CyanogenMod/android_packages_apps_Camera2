@@ -22,6 +22,7 @@ import android.graphics.RectF;
 
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
+import com.android.gallery3d.R;
 import com.android.gallery3d.app.Log;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
@@ -57,6 +58,16 @@ public class ImageFilterTinyPlanet extends ImageFilter {
         mPreviewParameter = 20;
         mParameter = 20;
         mAngle = 0;
+    }
+
+    @Override
+    public int getButtonId() {
+        return R.id.tinyplanetButton;
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.tinyplanet;
     }
 
     public void setAngle(float angle) {

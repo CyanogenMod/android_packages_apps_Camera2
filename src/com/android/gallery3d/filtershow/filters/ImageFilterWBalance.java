@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import com.android.gallery3d.R;
+
 import android.graphics.Bitmap;
 
 public class ImageFilterWBalance extends ImageFilter {
@@ -24,6 +26,16 @@ public class ImageFilterWBalance extends ImageFilter {
     public ImageFilterWBalance() {
         setFilterType(TYPE_WBALANCE);
         mName = "WBalance";
+    }
+
+    @Override
+    public int getButtonId() {
+        return R.id.wbalanceButton;
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.wbalance;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, int locX, int locY);

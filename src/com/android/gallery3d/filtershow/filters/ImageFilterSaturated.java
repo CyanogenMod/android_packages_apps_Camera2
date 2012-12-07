@@ -16,12 +16,24 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import com.android.gallery3d.R;
+
 import android.graphics.Bitmap;
 
 public class ImageFilterSaturated extends ImageFilter {
 
     public ImageFilterSaturated() {
         mName = "Saturated";
+    }
+
+    @Override
+    public int getButtonId() {
+        return R.id.saturationButton;
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.saturation;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float saturation);

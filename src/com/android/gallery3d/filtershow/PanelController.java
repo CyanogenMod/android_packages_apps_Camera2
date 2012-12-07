@@ -672,12 +672,12 @@ public class PanelController implements OnClickListener {
                 break;
             }
             case R.id.bwfilterButton: {
-            mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
-            String ename = mCurrentImage.getContext().getString(R.string.bwfilter);
-            mUtilityPanel.setEffectName(ename);
-            ensureFilter(ename);
-            break;
-        }
+                mCurrentImage = showImageView(R.id.imageShow).setShowControls(true);
+                String ename = mCurrentImage.getContext().getString(R.string.bwfilter);
+                mUtilityPanel.setEffectName(ename);
+                ensureFilter(ename);
+                break;
+            }
             case R.id.wbalanceButton: {
                 mCurrentImage = showImageView(R.id.imageShow).setShowControls(false);
                 String ename = mCurrentImage.getContext().getString(R.string.wbalance);

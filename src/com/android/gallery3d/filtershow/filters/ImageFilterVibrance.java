@@ -16,12 +16,24 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import com.android.gallery3d.R;
+
 import android.graphics.Bitmap;
 
 public class ImageFilterVibrance extends ImageFilter {
 
     public ImageFilterVibrance() {
         mName = "Vibrance";
+    }
+
+    @Override
+    public int getButtonId() {
+        return R.id.vibranceButton;
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.vibrance;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float bright);

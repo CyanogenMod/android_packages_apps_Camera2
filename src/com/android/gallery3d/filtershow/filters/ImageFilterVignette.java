@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import com.android.gallery3d.R;
+
 import android.graphics.Bitmap;
 
 public class ImageFilterVignette extends ImageFilter {
@@ -23,6 +25,16 @@ public class ImageFilterVignette extends ImageFilter {
     public ImageFilterVignette() {
         setFilterType(TYPE_VIGNETTE);
         mName = "Vignette";
+    }
+
+    @Override
+    public int getButtonId() {
+        return R.id.vignetteButton;
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.vignette;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float strength);

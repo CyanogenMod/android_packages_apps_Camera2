@@ -67,6 +67,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilterParametricBorder;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.filters.ImageFilterSaturated;
 import com.android.gallery3d.filtershow.filters.ImageFilterShadows;
+import com.android.gallery3d.filtershow.filters.ImageFilterSharpen;
 import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
 import com.android.gallery3d.filtershow.filters.ImageFilterVibrance;
 import com.android.gallery3d.filtershow.filters.ImageFilterVignette;
@@ -294,46 +295,32 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         mPanelController.addPanel(mColorsButton, mListColors, 3);
 
-        int[] recastIDs = {
-                R.id.tinyplanetButton,
-                R.id.vignetteButton,
-                R.id.vibranceButton,
-                R.id.contrastButton,
-                R.id.saturationButton,
-                R.id.bwfilterButton,
-                R.id.wbalanceButton,
-                R.id.hueButton,
-                R.id.exposureButton,
-                R.id.shadowRecoveryButton
-        };
         ImageFilter[] filters = {
                 new ImageFilterTinyPlanet(),
-                new ImageFilterVignette(),
-                new ImageFilterVibrance(),
-                new ImageFilterContrast(),
-                new ImageFilterSaturated(),
-                new ImageFilterBwFilter(),
                 new ImageFilterWBalance(),
-                new ImageFilterHue(),
                 new ImageFilterExposure(),
-                new ImageFilterShadows()
+                new ImageFilterVignette(),
+                new ImageFilterContrast(),
+                new ImageFilterShadows(),
+                new ImageFilterVibrance(),
+                // TODO: move sharpen and curves here
+                // sharpen
+                // curves
+                new ImageFilterHue(),
+                new ImageFilterSaturated(),
+                new ImageFilterBwFilter()
         };
 
         for (int i = 0; i < filters.length; i++) {
             ImageSmallFilter fView = new ImageSmallFilter(this);
-            View v = listColors.findViewById(recastIDs[i]);
-            int pos = listColors.indexOfChild(v);
-            listColors.removeView(v);
-
             filters[i].setParameter(filters[i].getPreviewParameter());
-            if (v instanceof ImageButtonTitle)
-                filters[i].setName(((ImageButtonTitle) v).getText());
+            filters[i].setName(getString(filters[i].getTextId()));
             fView.setImageFilter(filters[i]);
             fView.setController(this);
             fView.setImageLoader(mImageLoader);
-            fView.setId(recastIDs[i]);
+            fView.setId(filters[i].getButtonId());
             mPanelController.addComponent(mColorsButton, fView);
-            listColors.addView(fView, pos);
+            listColors.addView(fView);
         }
 
         int[] overlayIDs = {
