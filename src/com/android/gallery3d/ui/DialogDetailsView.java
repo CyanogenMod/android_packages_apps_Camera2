@@ -37,6 +37,7 @@ import com.android.gallery3d.ui.DetailsAddressResolver.AddressResolvingListener;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.DetailsHelper.DetailsSource;
 import com.android.gallery3d.ui.DetailsHelper.DetailsViewContainer;
+import com.android.gallery3d.ui.DetailsHelper.ResolutionResolvingListener;
 
 import java.util.ArrayList;
 import java.util.Map.Entry;
@@ -111,9 +112,13 @@ public class DialogDetailsView implements DetailsViewContainer {
         });
     }
 
-    private class DetailsAdapter extends BaseAdapter implements AddressResolvingListener {
+
+    private class DetailsAdapter extends BaseAdapter
+        implements AddressResolvingListener, ResolutionResolvingListener {
         private final ArrayList<String> mItems;
         private int mLocationIndex;
+        private int mWidthIndex = -1;
+        private int mHeightIndex = -1;
 
         public DetailsAdapter(MediaDetails details) {
             Context context = mActivity.getAndroidContext();
@@ -123,6 +128,8 @@ public class DialogDetailsView implements DetailsViewContainer {
         }
 
         private void setDetails(Context context, MediaDetails details) {
+            boolean resolutionIsValid = true;
+            String path = null;
             for (Entry<Integer, Object> detail : details) {
                 String value;
                 switch (detail.getKey()) {
@@ -170,6 +177,26 @@ public class DialogDetailsView implements DetailsViewContainer {
                         }
                         break;
                     }
+                    case MediaDetails.INDEX_WIDTH:
+                        mWidthIndex = mItems.size();
+                        value = detail.getValue().toString();
+                        if (value.equalsIgnoreCase("0")) {
+                            value = context.getString(R.string.unknown);
+                            resolutionIsValid = false;
+                        }
+                        break;
+                    case MediaDetails.INDEX_HEIGHT: {
+                        mHeightIndex = mItems.size();
+                        value = detail.getValue().toString();
+                        if (value.equalsIgnoreCase("0")) {
+                            value = context.getString(R.string.unknown);
+                            resolutionIsValid = false;
+                        }
+                        break;
+                    }
+                    case MediaDetails.INDEX_PATH:
+                        // Get the path and then fall through to the default case
+                        path = detail.getValue().toString();
                     default: {
                         Object valueObj = detail.getValue();
                         // This shouldn't happen, log its key to help us diagnose the problem.
@@ -189,6 +216,9 @@ public class DialogDetailsView implements DetailsViewContainer {
                             context, key), value);
                 }
                 mItems.add(value);
+                if (!resolutionIsValid) {
+                    DetailsHelper.resolveResolution(path, this);
+                }
             }
         }
 
@@ -233,6 +263,20 @@ public class DialogDetailsView implements DetailsViewContainer {
         @Override
         public void onAddressAvailable(String address) {
             mItems.set(mLocationIndex, address);
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public void onResolutionAvailable(int width, int height) {
+            if (width == 0 || height == 0) return;
+            // Update the resolution with the new width and height
+            Context context = mActivity.getAndroidContext();
+            String widthString = String.format("%s: %d", DetailsHelper.getDetailsName(
+                    context, MediaDetails.INDEX_WIDTH), width);
+            String heightString = String.format("%s: %d", DetailsHelper.getDetailsName(
+                    context, MediaDetails.INDEX_HEIGHT), height);
+            mItems.set(mWidthIndex, String.valueOf(widthString));
+            mItems.set(mHeightIndex, String.valueOf(heightString));
             notifyDataSetChanged();
         }
     }
