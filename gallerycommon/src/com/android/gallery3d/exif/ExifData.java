@@ -16,6 +16,10 @@
 
 package com.android.gallery3d.exif;
 
+import android.util.Log;
+
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.nio.ByteOrder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -31,9 +35,18 @@ import java.util.TimeZone;
  *  @see IfdData
  */
 public class ExifData {
-
+    private static final String TAG = "ExifData";
     private static final String GPS_DATE_FORMAT_STR = "yyyy:MM:dd";
     private static final String DATETIME_FORMAT_STR = "yyyy:MM:dd kk:mm:ss";
+
+    private static final byte[] USER_COMMENT_ASCII = {
+            0x41, 0x53, 0x43, 0x49, 0x49, 0x00, 0x00, 0x00};
+    private static final byte[] USER_COMMENT_JIS = {
+            0x4A, 0x49, 0x53, 0x00, 0x00, 0x00, 0x00, 0x00};
+    private static final byte[] USER_COMMENT_UNICODE = {
+            0x55, 0x4E, 0x49, 0x43, 0x4F, 0x44, 0x45, 0x00};
+    private static final byte[] USER_COMMENT_UNDEFINED = {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
     private final DateFormat mDateTimeStampFormat =
             new SimpleDateFormat(DATETIME_FORMAT_STR);
@@ -322,5 +335,39 @@ public class ExifData {
         mThumbnail = null;
         mStripBytes.clear();
         mIfdDatas[IfdId.TYPE_IFD_1] = null;
+    }
+
+    /**
+     * Decodes the user comment tag into string as specified in the EXIF standard.
+     * Returns null if decoding failed.
+     */
+    public String decodeUserComment() {
+        IfdData ifdData = mIfdDatas[IfdId.TYPE_IFD_0];
+        if (ifdData == null) return null;
+        ExifTag tag = ifdData.getTag(ExifTag.TAG_USER_COMMENT);
+        if (tag == null) return null;
+        if (tag.getComponentCount() < 8) return null;
+
+        byte[] buf = new byte[tag.getComponentCount()];
+        tag.getBytes(buf);
+
+        byte[] code = new byte[8];
+        System.arraycopy(buf, 0, code, 0, 8);
+
+        try {
+            if (Arrays.equals(code, USER_COMMENT_ASCII)) {
+                return new String(buf, 8, buf.length - 8, "US-ASCII");
+            } else if (Arrays.equals(code, USER_COMMENT_JIS)) {
+                return new String(buf, 8, buf.length - 8, "EUC-JP");
+            } else if (Arrays.equals(code, USER_COMMENT_UNICODE)) {
+                return new String(buf, 8, buf.length - 8, "UTF-16");
+            } else {
+                return null;
+            }
+        } catch (UnsupportedEncodingException e) {
+            Log.w(TAG, "Failed to decode the user comment");
+            return null;
+        }
+
     }
 }
