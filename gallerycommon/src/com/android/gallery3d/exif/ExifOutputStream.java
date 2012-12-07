@@ -22,6 +22,38 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+/**
+ * This class provides a way to replace the Exif header of a JPEG image.
+ * <p>
+ * Below is an example of writing EXIF data into a file
+ * <pre>
+ * public static void writeExif(byte[] jpeg, ExifData exif, String path) {
+ *     OutputStream os = null;
+ *     try {
+ *         os = new FileOutputStream(path);
+ *         ExifOutputStream eos = new ExifOutputStream(os);
+ *
+ *         // Set the exif header
+ *         eos.setExifData(exif);
+ *
+ *         // Write the original jpeg out, the header will be add into the file.
+ *         eos.write(jpeg);
+ *     } catch (FileNotFoundException e) {
+ *         e.printStackTrace();
+ *     } catch (IOException e) {
+ *         e.printStackTrace();
+ *     } finally {
+ *         if (os != null) {
+ *             try {
+ *                 os.close();
+ *             } catch (IOException e) {
+ *                 e.printStackTrace();
+ *             }
+ *         }
+ *     }
+ * }
+ * </pre>
+ */
 public class ExifOutputStream extends FilterOutputStream {
     private static final String TAG = "ExifOutputStream";
 
@@ -46,10 +78,17 @@ public class ExifOutputStream extends FilterOutputStream {
         super(ou);
     }
 
+    /**
+     * Sets the ExifData to be written into the JPEG file. Should be called before writing image
+     * data.
+     */
     public void setExifData(ExifData exifData) {
         mExifData = exifData;
     }
 
+    /**
+     * Gets the Exif header to be written into the JPEF file.
+     */
     public ExifData getExifData() {
         return mExifData;
     }
@@ -62,6 +101,10 @@ public class ExifOutputStream extends FilterOutputStream {
         return byteToRead;
     }
 
+    /**
+     * Writes the image out. The input data should be a valid JPEG format. After writing, it's
+     * Exif header will be replaced by the given header.
+     */
     @Override
     public void write(byte[] buffer, int offset, int length) throws IOException {
         while((mByteToSkip > 0 || mByteToCopy > 0 || mState != STATE_JPEG_DATA)
@@ -127,18 +170,26 @@ public class ExifOutputStream extends FilterOutputStream {
         }
     }
 
+    /**
+     * Writes the one bytes out. The input data should be a valid JPEG format. After writing, it's
+     * Exif header will be replaced by the given header.
+     */
     @Override
     public void write(int oneByte) throws IOException {
         byte[] buf = new byte[] {(byte) (0xff & oneByte)};
         write(buf);
     }
 
+    /**
+     * Equivalent to calling write(buffer, 0, buffer.length).
+     */
     @Override
     public void write(byte[] buffer) throws IOException {
         write(buffer, 0, buffer.length);
     }
 
     private void writeExifData() throws IOException {
+        if (mExifData == null) return;
         createRequiredIfdAndTag();
         int exifSize = calculateAllOffset();
         OrderedDataOutputStream dataOutputStream = new OrderedDataOutputStream(out);
