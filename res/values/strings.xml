@@ -334,6 +334,9 @@
     <!-- String indicating camera flash is not used. [CHAR LIMIT=14] -->
     <string name="flash_off">No flash</string>
 
+    <!-- String indicating image width or height is unknown. [CHAR LIMIT=14] -->
+    <string name="unknown">Unknown</string>
+
     <!-- String for the empty not filtered image [CHAR LIMIT=10] -->
     <string name="ffx_original">Original</string>
     <!-- String for brown-colored old-fashion looking filter (filtershow_fx_0000_vintage) [CHAR LIMIT=10] -->
