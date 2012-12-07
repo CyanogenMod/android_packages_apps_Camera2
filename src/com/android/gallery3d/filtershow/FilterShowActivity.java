@@ -60,6 +60,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterBorder;
 import com.android.gallery3d.filtershow.filters.ImageFilterBwFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterContrast;
+import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
 import com.android.gallery3d.filtershow.filters.ImageFilterExposure;
 import com.android.gallery3d.filtershow.filters.ImageFilterFx;
 import com.android.gallery3d.filtershow.filters.ImageFilterHue;
@@ -82,7 +83,6 @@ import com.android.gallery3d.filtershow.imageshow.ImageSmallBorder;
 import com.android.gallery3d.filtershow.imageshow.ImageSmallFilter;
 import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
 import com.android.gallery3d.filtershow.imageshow.ImageTinyPlanet;
-import com.android.gallery3d.filtershow.imageshow.ImageWithIcon;
 import com.android.gallery3d.filtershow.imageshow.ImageZoom;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.provider.SharedImageProvider;
@@ -303,9 +303,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 new ImageFilterContrast(),
                 new ImageFilterShadows(),
                 new ImageFilterVibrance(),
-                // TODO: move sharpen and curves here
-                // sharpen
-                // curves
+                new ImageFilterSharpen(),
+                new ImageFilterCurves(),
                 new ImageFilterHue(),
                 new ImageFilterSaturated(),
                 new ImageFilterBwFilter()
@@ -319,45 +318,13 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             fView.setController(this);
             fView.setImageLoader(mImageLoader);
             fView.setId(filters[i].getButtonId());
+            if (filters[i].getOverlayBitmaps() != 0) {
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
+                        filters[i].getOverlayBitmaps());
+                fView.setOverlayBitmap(bitmap);
+            }
             mPanelController.addComponent(mColorsButton, fView);
             listColors.addView(fView);
-        }
-
-        int[] overlayIDs = {
-                R.id.sharpenButton,
-                R.id.curvesButtonRGB
-        };
-        int[] overlayBitmaps = {
-                R.drawable.filtershow_button_colors_sharpen,
-                R.drawable.filtershow_button_colors_curve
-        };
-        int[] overlayNames = {
-                R.string.sharpness,
-                R.string.curvesRGB
-        };
-
-        for (int i = 0; i < overlayIDs.length; i++) {
-            ImageWithIcon fView = new ImageWithIcon(this);
-            View v = listColors.findViewById(overlayIDs[i]);
-            int pos = listColors.indexOfChild(v);
-            listColors.removeView(v);
-            final int sid = overlayNames[i];
-            ImageFilterExposure efilter = new ImageFilterExposure() {
-                {
-                    mName = getString(sid);
-                }
-            };
-            efilter.setParameter(-300);
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-                    overlayBitmaps[i]);
-
-            fView.setIcon(bitmap);
-            fView.setImageFilter(efilter);
-            fView.setController(this);
-            fView.setImageLoader(mImageLoader);
-            fView.setId(overlayIDs[i]);
-            mPanelController.addComponent(mColorsButton, fView);
-            listColors.addView(fView, pos);
         }
 
         mPanelController.addView(findViewById(R.id.applyEffect));

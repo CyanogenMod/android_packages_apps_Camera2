@@ -47,6 +47,13 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
     protected final int mTextColor = Color.WHITE;
     private ImageSmallFilter mNullFilter;
 
+    private Bitmap mOverlayBitmap = null;
+    private final int mOverlayTint = Color.argb(100, 0, 0, 0);
+
+    public void setOverlayBitmap(Bitmap bitmap){
+        mOverlayBitmap = bitmap;
+    }
+
     public static void setMargin(int value) {
         mMargin = value;
     }
@@ -188,6 +195,13 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
         mPaint.setTextSize(mTextSize);
         mPaint.setColor(mTextColor);
         canvas.drawText(mImageFilter.getName(), x, y - mTextMargin, mPaint);
+        if (mOverlayBitmap != null) {
+            mPaint.setColor(mOverlayTint);
+            canvas.drawRect(0, mMargin, getWidth(), getWidth() + mMargin, mPaint);
+            Rect d = new Rect(0, mMargin, getWidth() - mMargin, getWidth());
+            mPaint.setColor(Color.BLACK);
+            drawImage(canvas, mOverlayBitmap, d);
+        }
     }
 
     public void drawImage(Canvas canvas, Bitmap image, Rect destination) {
