@@ -270,7 +270,7 @@ public class ExifData {
 
     /**
      * Adds a tag with the given tag ID. If the tag of the given ID already exists,
-     * the original tag will be returned. Otherwise, a new ExifTag will be created. For tags
+     * the original tag will be replaced. For tags
      * related to interoperability or thumbnail, call {@link #addInteroperabilityTag(short)} or
      * {@link #addThumbnailTag(short)} respectively.
      * @exception IllegalArgumentException if the tag ID is invalid.
@@ -278,11 +278,8 @@ public class ExifData {
     public ExifTag addTag(short tagId) {
         int ifdId = ExifTag.getIfdIdFromTagId(tagId);
         IfdData ifdData = getOrCreateIfdData(ifdId);
-        ExifTag tag = ifdData.getTag(tagId);
-        if (tag == null) {
-            tag = ExifTag.buildTag(tagId);
-            ifdData.setTag(tag);
-        }
+        ExifTag tag = ExifTag.buildTag(tagId);
+        ifdData.setTag(tag);
         return tag;
     }
 
@@ -296,36 +293,31 @@ public class ExifData {
 
     /**
      * Adds a thumbnail-related tag with the given tag ID. If the tag of the given ID
-     * already exists, the original tag will be returned. Otherwise, a new ExifTag will
-     * be created.
+     * already exists, the original tag will be replaced.
      * @exception IllegalArgumentException if the tag ID is invalid.
      */
     public ExifTag addThumbnailTag(short tagId) {
         IfdData ifdData = getOrCreateIfdData(IfdId.TYPE_IFD_1);
-        ExifTag tag = ifdData.getTag(tagId);
-        if (tag == null) {
-            tag = ExifTag.buildThumbnailTag(tagId);
-            ifdData.setTag(tag);
-        }
+        ExifTag tag = ExifTag.buildThumbnailTag(tagId);
+        ifdData.setTag(tag);
         return tag;
     }
 
     /**
      * Adds an interoperability-related tag with the given tag ID. If the tag of the given ID
-     * already exists, the original tag will be returned. Otherwise, a new ExifTag will
-     * be created.
+     * already exists, the original tag will be replaced.
      * @exception IllegalArgumentException if the tag ID is invalid.
      */
     public ExifTag addInteroperabilityTag(short tagId) {
         IfdData ifdData = getOrCreateIfdData(IfdId.TYPE_IFD_INTEROPERABILITY);
-        ExifTag tag = ifdData.getTag(tagId);
-        if (tag == null) {
-            tag = ExifTag.buildInteroperabilityTag(tagId);
-            ifdData.setTag(tag);
-        }
+        ExifTag tag = ExifTag.buildInteroperabilityTag(tagId);
+        ifdData.setTag(tag);
         return tag;
     }
 
+    /**
+     * Removes the thumbnail and its related tags. IFD1 will be removed.
+     */
     public void removeThumbnailData() {
         mThumbnail = null;
         mStripBytes.clear();
