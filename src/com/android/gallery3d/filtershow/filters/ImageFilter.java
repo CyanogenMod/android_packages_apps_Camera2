@@ -18,6 +18,7 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class ImageFilter implements Cloneable {
@@ -31,19 +32,19 @@ public class ImageFilter implements Cloneable {
 
     protected String mName = "Original";
     private final String LOGTAG = "ImageFilter";
-    public static final byte TYPE_BORDER =1;
-    public static final byte TYPE_FX  = 2;
+    public static final byte TYPE_BORDER = 1;
+    public static final byte TYPE_FX = 2;
     public static final byte TYPE_WBALANCE = 3;
     public static final byte TYPE_VIGNETTE = 4;
     public static final byte TYPE_NORMAL = 5;
     public static final byte TYPE_TINYPLANET = 6;
     private byte filterType = TYPE_NORMAL;
 
-    public byte getFilterType(){
+    public byte getFilterType() {
         return filterType;
     }
 
-    protected void setFilterType(byte type){
+    protected void setFilterType(byte type) {
         filterType = type;
     }
 
@@ -57,6 +58,14 @@ public class ImageFilter implements Cloneable {
 
     public int getOverlayBitmaps() {
         return 0;
+    }
+
+    public int getEditingViewId() {
+        return R.id.imageShow;
+    }
+
+    public boolean showEditingControls() {
+        return true;
     }
 
     @Override
@@ -105,7 +114,7 @@ public class ImageFilter implements Cloneable {
      * The maximum allowed value (inclusive)
      * @return maximum value allowed as input to this filter
      */
-    public int getMaxParameter(){
+    public int getMaxParameter() {
         return mMaxParameter;
     }
 
@@ -113,7 +122,7 @@ public class ImageFilter implements Cloneable {
      * The parameter value to be used in previews.
      * @return parameter value to be used to preview the filter
      */
-    public int getPreviewParameter(){
+    public int getPreviewParameter() {
         return mPreviewParameter;
     }
 
@@ -121,7 +130,7 @@ public class ImageFilter implements Cloneable {
      * The minimum allowed value (inclusive)
      * @return minimum value allowed as input to this filter
      */
-    public int getMinParameter(){
+    public int getMinParameter() {
         return mMinParameter;
     }
 
@@ -129,7 +138,7 @@ public class ImageFilter implements Cloneable {
      * Returns the default value returned by this filter.
      * @return default value
      */
-    public int getDefaultParameter(){
+    public int getDefaultParameter() {
         return mDefaultParameter;
     }
 

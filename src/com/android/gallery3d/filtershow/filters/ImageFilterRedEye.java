@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 
 import java.util.Vector;
@@ -30,6 +31,21 @@ public class ImageFilterRedEye extends ImageFilter {
 
     public ImageFilterRedEye() {
         mName = "Red Eye";
+    }
+
+    @Override
+    public int getButtonId() {
+        return R.id.redEyeButton;
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.redeye;
+    }
+
+    @Override
+    public int getEditingViewId() {
+        return R.id.imageRedEyes;
     }
 
     @Override

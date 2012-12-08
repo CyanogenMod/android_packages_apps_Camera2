@@ -43,6 +43,11 @@ public class ImageFilterSharpen extends ImageFilterRS {
     }
 
     @Override
+    public int getEditingViewId() {
+        return R.id.imageZoom;
+    }
+
+    @Override
     public void createFilter(android.content.res.Resources res, float scaleFactor,
             boolean highQuality) {
         int w = mInPixelsAllocation.getType().getX();

@@ -84,6 +84,10 @@ public class ImageSmallFilter extends ImageShow implements View.OnClickListener 
         mImagePreset.add(mImageFilter);
     }
 
+    public ImageFilter getImageFilter() {
+        return mImageFilter;
+    }
+
     @Override
     public void setSelected(boolean value) {
         if (mIsSelected != value) {
