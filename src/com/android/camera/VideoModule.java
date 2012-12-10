@@ -2018,6 +2018,9 @@ public class VideoModule implements CameraModule,
             mParameters.setPreviewFrameRate(mProfile.videoFrameRate);
         }
 
+        // Set video mode
+        CameraSettings.setVideoMode(mParameters, true);
+
         forceFlashOffIfSupported(!mUI.isVisible());
         videoWidth = mProfile.videoFrameWidth;
         videoHeight = mProfile.videoFrameHeight;
