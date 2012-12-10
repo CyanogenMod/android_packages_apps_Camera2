@@ -910,6 +910,21 @@ public class CameraSettings {
         return params.get("face-beautify") != null;
     }
 
+    /**
+     * Enable video mode for certain cameras.
+     *
+     * @param params
+     * @param on
+     */
+    public static void setVideoMode(Parameters params, boolean on) {
+        if (CameraUtil.useSamsungCamMode()) {
+            params.set("cam_mode", on ? "1" : "0");
+        }
+        if (CameraUtil.useHTCCamMode()) {
+            params.set("cam-mode", on ? "1" : "0");
+        }
+    }
+
     public static List<String> getSupportedSlowShutter(Parameters params) {
         String p = params.get("slow-shutter-values");
         if (p != null) {

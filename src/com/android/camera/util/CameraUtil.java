@@ -211,6 +211,12 @@ public class CameraUtil {
     // Get available hardware keys
     private static int sDeviceKeysPresent;
 
+    // Samsung camcorder mode
+    private static boolean sSamsungCamMode;
+
+    // HTC camcorder mode
+    private static boolean sHTCCamMode;
+
     private CameraUtil() {
     }
 
@@ -230,6 +236,8 @@ public class CameraUtil {
         sSamsungHDRFormat = context.getResources().getBoolean(R.bool.needsSamsungHDRFormat);
         sDeviceKeysPresent = context.getResources().getInteger(
                 com.android.internal.R.integer.config_deviceHardwareKeys);
+        sSamsungCamMode = context.getResources().getBoolean(R.bool.needsSamsungCamMode);
+        sHTCCamMode = context.getResources().getBoolean(R.bool.needsHTCCamMode);
     }
 
     public static int dpToPixel(int dp) {
@@ -242,6 +250,14 @@ public class CameraUtil {
 
     public static boolean noFocusModeChangeForTouch() {
         return sNoFocusModeChangeForTouch;
+    }
+
+    public static boolean useHTCCamMode() {
+        return sHTCCamMode;
+    }
+
+    public static boolean useSamsungCamMode() {
+        return sSamsungCamMode;
     }
 
     // Rotates the bitmap by the specified degree.
