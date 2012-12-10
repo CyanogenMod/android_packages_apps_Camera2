@@ -1477,6 +1477,9 @@ public class VideoModule implements CameraModule,
         // Set video mode
         CameraSettings.setVideoMode(mParameters, true);
 
+	// Set video size before recording starts
+        CameraSettings.setEarlyVideoSize(mParameters, mProfile);
+
         forceFlashOffIfSupported(!mUI.isVisible());
 
         // Set white balance parameter.
