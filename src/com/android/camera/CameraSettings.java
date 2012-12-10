@@ -499,4 +499,19 @@ public class CameraSettings {
         }
         return supported;
     }
+
+    /**
+     * Enable video mode for certain cameras.
+     *
+     * @param params
+     * @param on
+     */
+    public static void setVideoMode(Parameters params, boolean on) {
+        if (CameraUtil.useSamsungCamMode()) {
+            params.set("cam_mode", on ? "1" : "0");
+        }
+        if (CameraUtil.useHTCCamMode()) {
+            params.set("cam-mode", on ? "1" : "0");
+        }
+    }
 }
