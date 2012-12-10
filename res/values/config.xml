@@ -19,4 +19,8 @@
 <resources>
     <!-- Maximum recording length in milliseconds. 0 means unlimited. -->
     <integer name="max_video_recording_length">0</integer>
+    <!-- Samsung Camcorder Mode -->
+    <bool name="needsSamsungCamMode">false</bool>
+    <!-- HTC Camcorder Mode -->
+    <bool name="needsHTCCamMode">false</bool>
 </resources>
