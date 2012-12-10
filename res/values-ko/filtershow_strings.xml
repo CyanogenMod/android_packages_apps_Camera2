@@ -49,6 +49,7 @@
     <string name="aspectNone_effect" msgid="6263330561046574134">"선택 안 함"</string>
     <!-- no translation found for aspectOriginal_effect (5678516555493036594) -->
     <skip />
+    <string name="Fixed" msgid="8017376448916924565">"고정"</string>
     <string name="tinyplanet" msgid="2783694326474415761">"작은 행성"</string>
     <string name="exposure" msgid="6526397045949374905">"노출"</string>
     <string name="sharpness" msgid="6463103068318055412">"선명도"</string>
