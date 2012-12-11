@@ -68,6 +68,10 @@ public class ImageFilter implements Cloneable {
         return true;
     }
 
+    public boolean showParameterValue() {
+        return true;
+    }
+
     @Override
     public ImageFilter clone() throws CloneNotSupportedException {
         ImageFilter filter = (ImageFilter) super.clone();

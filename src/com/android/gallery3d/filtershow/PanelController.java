@@ -32,6 +32,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilterContrast;
 import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
 import com.android.gallery3d.filtershow.filters.ImageFilterExposure;
 import com.android.gallery3d.filtershow.filters.ImageFilterHue;
+import com.android.gallery3d.filtershow.filters.ImageFilterNegative;
 import com.android.gallery3d.filtershow.filters.ImageFilterRedEye;
 import com.android.gallery3d.filtershow.filters.ImageFilterSaturated;
 import com.android.gallery3d.filtershow.filters.ImageFilterShadows;
@@ -571,9 +572,9 @@ public class PanelController implements OnClickListener {
                 if (view.getId() == R.id.curvesButtonRGB) {
                     // TODO: delegate to the filter / editing view the management of the
                     // panel accessory view
-                    mUtilityPanel.setShowParameter(false);
                     mUtilityPanel.showCurvesButtons();
                 }
+                mUtilityPanel.setShowParameter(filter.showParameterValue());
                 ensureFilter(ename);
                 mCurrentImage.select();
             }

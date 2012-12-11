@@ -131,6 +131,8 @@
     <string name="rotate" msgid="460017689320955494">Rotate</string>
     <!--  Label for the image flip effect [CHAR LIMIT=15] -->
     <string name="mirror">Mirror</string>
+    <!-- Name for the photo effect that inverts photo to negative images. [CHAR LIMIT=10] -->
+    <string name="negative">Negative</string>
     <!--  Label for having no filters applied to the image [CHAR LIMIT=10] -->
     <string name="none" msgid="3601545724573307541">None</string>
 

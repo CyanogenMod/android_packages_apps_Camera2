@@ -35,6 +35,7 @@ LOCAL_SRC_FILES := filters/bw.c \
                    filters/hsv.c \
                    filters/vibrance.c \
                    filters/geometry.c \
+                   filters/negative.c \
                    filters/vignette.c \
                    filters/redEyeMath.c \
                    filters/fx.c \
