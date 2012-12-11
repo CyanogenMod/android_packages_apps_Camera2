@@ -324,6 +324,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 fView.setOverlayBitmap(bitmap);
             }
             mPanelController.addComponent(mColorsButton, fView);
+            mPanelController.addFilter(filters[i]);
             listColors.addView(fView);
         }
 

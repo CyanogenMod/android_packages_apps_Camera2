@@ -82,6 +82,10 @@ public class ImageFilter implements Cloneable {
         return filter;
     }
 
+    public void reset() {
+        setParameter(mDefaultParameter);
+    }
+
     public boolean isNil() {
         if (mParameter == mDefaultParameter) {
             return true;
