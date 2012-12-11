@@ -31,4 +31,5 @@
     <item type="id" name="sharpenButton" />
     <item type="id" name="curvesButtonRGB" />
     <item type="id" name="negativeButton" />
+    <item type="id" name="edgeButton" />
 </resources>
