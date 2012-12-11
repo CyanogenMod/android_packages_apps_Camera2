@@ -29,6 +29,7 @@ LOCAL_SRC_FILES := filters/bw.c \
                    filters/gradient.c \
                    filters/saturated.c \
                    filters/exposure.c \
+                   filters/edge.c \
                    filters/contrast.c \
                    filters/hue.c \
                    filters/shadows.c \
