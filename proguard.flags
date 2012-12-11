@@ -55,3 +55,7 @@
 # Required for mp4parser
 -keep public class * implements com.coremedia.iso.boxes.Box
 
+#-assumenosideeffects junit.framework.Assert {
+#*;
+#}
+

@@ -20,9 +20,9 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
-import com.android.gallery3d.ui.GLCanvas;
+import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.RawTexture;
 import com.android.gallery3d.ui.GLView;
-import com.android.gallery3d.ui.RawTexture;
 import com.android.gallery3d.ui.TiledScreenNail;
 
 public class StateTransitionAnimation extends Animation {

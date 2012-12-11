@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
-
+package com.android.gallery3d.glrenderer;
 
 // ExtTexture is a texture whose content comes from a external texture.
 // Before drawing, setSize() should be called.

@@ -21,6 +21,10 @@ import android.view.MotionEvent;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.NinePatchTexture;
+import com.android.gallery3d.glrenderer.ResourceTexture;
+import com.android.gallery3d.glrenderer.StringTexture;
 import com.android.gallery3d.util.GalleryUtils;
 
 public class UndoBarView extends GLView {

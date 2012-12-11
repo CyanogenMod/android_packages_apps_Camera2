@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.glrenderer;
 
 import android.test.suitebuilder.annotation.SmallTest;
 import android.util.Log;
+
+import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.GLES11Canvas;
+import com.android.gallery3d.glrenderer.GLPaint;
 
 import junit.framework.TestCase;
 
@@ -39,7 +43,7 @@ public class GLCanvasTest extends TestCase {
     @SmallTest
     public void testSetSize() {
         GL11 glStub = new GLStub();
-        GLCanvas canvas = new GLCanvasImpl();
+        GLCanvas canvas = new GLES11Canvas();
         canvas.initialize(glStub);
         canvas.setSize(100, 200);
         canvas.setSize(1000, 100);
@@ -58,7 +62,7 @@ public class GLCanvasTest extends TestCase {
 
     private static class ClearBufferTest extends GLMock {
         void run() {
-            GLCanvas canvas = new GLCanvasImpl();
+            GLCanvas canvas = new GLES11Canvas();
             canvas.initialize(this);
             assertEquals(0, mGLClearCalled);
             canvas.clearBuffer();
@@ -81,7 +85,7 @@ public class GLCanvasTest extends TestCase {
                 0x7F010101, 0xFEFEFDFC, 0x017F8081, 0x027F8081, 0x2ADE4C4D
             };
 
-            GLCanvas canvas = new GLCanvasImpl();
+            GLCanvas canvas = new GLES11Canvas();
             canvas.initialize(this);
             canvas.setSize(400, 300);
             // Test one color to make sure blend function is set.
@@ -110,7 +114,7 @@ public class GLCanvasTest extends TestCase {
     @SmallTest
     public void testSetGetMultiplyAlpha() {
         GL11 glStub = new GLStub();
-        GLCanvas canvas = new GLCanvasImpl();
+        GLCanvas canvas = new GLES11Canvas();
         canvas.initialize(glStub);
 
         canvas.setAlpha(1f);
@@ -150,7 +154,7 @@ public class GLCanvasTest extends TestCase {
 
     private static class AlphaTest extends GLMock {
         void run() {
-            GLCanvas canvas = new GLCanvasImpl();
+            GLCanvas canvas = new GLES11Canvas();
             canvas.initialize(this);
             canvas.setSize(400, 300);
 
@@ -193,7 +197,7 @@ public class GLCanvasTest extends TestCase {
         }
 
         void run() {
-            GLCanvas canvas = new GLCanvasImpl();
+            GLCanvas canvas = new GLES11Canvas();
             canvas.initialize(this);
             canvas.setSize(400, 300);
             canvas.drawLine(2, 7, 1, 8, newColorPaint(0) /* color */);
@@ -238,7 +242,7 @@ public class GLCanvasTest extends TestCase {
         }
 
         void run() {
-            GLCanvas canvas = new GLCanvasImpl();
+            GLCanvas canvas = new GLES11Canvas();
             canvas.initialize(this);
             canvas.setSize(400, 300);
             canvas.fillRect(2, 7, 1, 8, 0 /* color */);
@@ -301,7 +305,7 @@ public class GLCanvasTest extends TestCase {
         }
 
         void run() {
-            GLCanvas canvas = new GLCanvasImpl();
+            GLCanvas canvas = new GLES11Canvas();
             canvas.initialize(this);
             canvas.setSize(40, 50);
             int color = 0;

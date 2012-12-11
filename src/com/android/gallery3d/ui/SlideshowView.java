@@ -21,7 +21,9 @@ import android.graphics.PointF;
 
 import com.android.gallery3d.anim.CanvasAnimation;
 import com.android.gallery3d.anim.FloatAnimation;
-import com.android.gallery3d.ui.GLCanvas.Blending;
+import com.android.gallery3d.glrenderer.BitmapTexture;
+import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.GLCanvas.Blending;
 
 import java.util.Random;
 

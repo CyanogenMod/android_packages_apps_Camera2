@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.glrenderer;
 
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.ui.AnimationTime;
 
 // FadeTexture is a texture which fades the given texture along the time.
 public abstract class FadeTexture implements Texture {

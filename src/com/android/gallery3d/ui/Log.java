@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.ui;
 
+// TODO: Delete this
 public class Log {
     public static int v(String tag, String msg) {
         return android.util.Log.v(tag, msg);

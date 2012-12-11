@@ -17,6 +17,8 @@ package com.android.gallery3d.ui;
 
 import android.graphics.RectF;
 
+import com.android.gallery3d.glrenderer.GLCanvas;
+
 public interface ScreenNail {
     public int getWidth();
     public int getHeight();

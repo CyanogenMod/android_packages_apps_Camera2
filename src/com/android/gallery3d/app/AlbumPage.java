@@ -45,8 +45,6 @@ import com.android.gallery3d.ui.ActionModeHandler.ActionModeListener;
 import com.android.gallery3d.ui.AlbumSlotRenderer;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
-import com.android.gallery3d.ui.FadeTexture;
-import com.android.gallery3d.ui.GLCanvas;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.PhotoFallbackEffect;
@@ -59,6 +57,8 @@ import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.MediaSetUtils;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.CropExtras;
+import com.android.gallery3d.glrenderer.FadeTexture;
+import com.android.gallery3d.glrenderer.GLCanvas;
 
 
 public class AlbumPage extends ActivityState implements GalleryActionBar.ClusterRunner,

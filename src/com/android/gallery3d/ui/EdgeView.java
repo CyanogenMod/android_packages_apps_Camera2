@@ -19,6 +19,8 @@ package com.android.gallery3d.ui;
 import android.content.Context;
 import android.opengl.Matrix;
 
+import com.android.gallery3d.glrenderer.GLCanvas;
+
 // EdgeView draws EdgeEffect (blue glow) at four sides of the view.
 public class EdgeView extends GLView {
     @SuppressWarnings("unused")
