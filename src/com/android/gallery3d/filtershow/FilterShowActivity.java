@@ -64,6 +64,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
 import com.android.gallery3d.filtershow.filters.ImageFilterExposure;
 import com.android.gallery3d.filtershow.filters.ImageFilterFx;
 import com.android.gallery3d.filtershow.filters.ImageFilterHue;
+import com.android.gallery3d.filtershow.filters.ImageFilterNegative;
 import com.android.gallery3d.filtershow.filters.ImageFilterParametricBorder;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.filters.ImageFilterSaturated;
@@ -307,7 +308,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 new ImageFilterCurves(),
                 new ImageFilterHue(),
                 new ImageFilterSaturated(),
-                new ImageFilterBwFilter()
+                new ImageFilterBwFilter(),
+                new ImageFilterNegative()
         };
 
         for (int i = 0; i < filters.length; i++) {

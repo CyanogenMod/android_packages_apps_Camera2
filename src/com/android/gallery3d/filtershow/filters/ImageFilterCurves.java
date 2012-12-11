@@ -52,6 +52,11 @@ public class ImageFilterCurves extends ImageFilter {
     }
 
     @Override
+    public boolean showParameterValue() {
+        return false;
+    }
+
+    @Override
     public ImageFilter clone() throws CloneNotSupportedException {
         ImageFilterCurves filter = (ImageFilterCurves) super.clone();
         for (int i = 0; i < 4; i++) {
