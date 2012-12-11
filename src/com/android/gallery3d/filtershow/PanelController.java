@@ -306,6 +306,7 @@ public class PanelController implements OnClickListener {
 
     private final HashMap<View, Panel> mPanels = new HashMap<View, Panel>();
     private final HashMap<View, ViewType> mViews = new HashMap<View, ViewType>();
+    private final HashMap<String, ImageFilter> mFilters = new HashMap<String, ImageFilter>();
     private final Vector<View> mImageViews = new Vector<View>();
     private View mCurrentPanel = null;
     private View mRowPanel = null;
@@ -337,6 +338,10 @@ public class PanelController implements OnClickListener {
         panel.addView(component);
         component.setOnClickListener(this);
         mViews.put(component, new ViewType(component, COMPONENT));
+    }
+
+    public void addFilter(ImageFilter filter) {
+        mFilters.put(filter.getName(), filter);
     }
 
     public void addImageView(View view) {
@@ -483,60 +488,21 @@ public class PanelController implements OnClickListener {
             filter = copy.getFilter(name);
         }
 
-        if (filter == null && name.equalsIgnoreCase(
-                mCurrentImage.getContext().getString(R.string.curvesRGB))) {
-            filter = setImagePreset(new ImageFilterCurves(), name);
+        if (filter == null) {
+            ImageFilter filterInstance = mFilters.get(name);
+            if (filterInstance != null) {
+                try {
+                    ImageFilter newFilter = filterInstance.clone();
+                    newFilter.reset();
+                    filter = setImagePreset(newFilter, name);
+                } catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        if (filter == null && name.equalsIgnoreCase(
-                mCurrentImage.getContext().getString(R.string.tinyplanet))) {
-            filter = setImagePreset(new ImageFilterTinyPlanet(), name);
+        if (filter != null) {
+            mMasterImage.setCurrentFilter(filter);
         }
-        if (filter == null
-                && name.equalsIgnoreCase(mCurrentImage.getContext().getString(R.string.vignette))) {
-            filter = setImagePreset(new ImageFilterVignette(), name);
-        }
-        if (filter == null
-                && name.equalsIgnoreCase(mCurrentImage.getContext().getString(R.string.sharpness))) {
-            filter = setImagePreset(new ImageFilterSharpen(), name);
-        }
-        if (filter == null
-                && name.equalsIgnoreCase(mCurrentImage.getContext().getString(R.string.contrast))) {
-            filter = setImagePreset(new ImageFilterContrast(), name);
-        }
-        if (filter == null
-                && name.equalsIgnoreCase(mCurrentImage.getContext().getString(R.string.saturation))) {
-            filter = setImagePreset(new ImageFilterSaturated(), name);
-        }
-        if (filter == null
-                && name.equalsIgnoreCase(mCurrentImage.getContext().getString(R.string.bwfilter))) {
-            filter = setImagePreset(new ImageFilterBwFilter(), name);
-        }
-        if (filter == null
-                && name.equalsIgnoreCase(mCurrentImage.getContext().getString(R.string.hue))) {
-            filter = setImagePreset(new ImageFilterHue(), name);
-        }
-        if (filter == null
-                && name.equalsIgnoreCase(mCurrentImage.getContext().getString(R.string.exposure))) {
-            filter = setImagePreset(new ImageFilterExposure(), name);
-        }
-        if (filter == null
-                && name.equalsIgnoreCase(mCurrentImage.getContext().getString(R.string.vibrance))) {
-            filter = setImagePreset(new ImageFilterVibrance(), name);
-        }
-        if (filter == null
-                && name.equalsIgnoreCase(mCurrentImage.getContext().getString(
-                        R.string.shadow_recovery))) {
-            filter = setImagePreset(new ImageFilterShadows(), name);
-        }
-        if (filter == null
-                && name.equalsIgnoreCase(mCurrentImage.getContext().getString(R.string.redeye))) {
-            filter = setImagePreset(new ImageFilterRedEye(), name);
-        }
-        if (filter == null
-                && name.equalsIgnoreCase(mCurrentImage.getContext().getString(R.string.wbalance))) {
-            filter = setImagePreset(new ImageFilterWBalance(), name);
-        }
-        mMasterImage.setCurrentFilter(filter);
     }
 
     private void showCurvesPopupMenu(final ImageCurves curves, final FramedTextButton anchor) {
