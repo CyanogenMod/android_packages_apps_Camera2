@@ -392,7 +392,11 @@ public class GLRootView extends GLSurfaceView
 
         mRenderRequested = false;
 
-        if ((mFlags & FLAG_NEED_LAYOUT) != 0) layoutContentPane();
+        if ((mOrientationSource != null
+                && mDisplayRotation != mOrientationSource.getDisplayRotation())
+                || (mFlags & FLAG_NEED_LAYOUT) != 0) {
+            layoutContentPane();
+        }
 
         mCanvas.save(GLCanvas.SAVE_FLAG_ALL);
         rotateCanvas(-mCompensation);
