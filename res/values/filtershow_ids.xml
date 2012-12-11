@@ -30,4 +30,5 @@
     <item type="id" name="shadowRecoveryButton" />
     <item type="id" name="sharpenButton" />
     <item type="id" name="curvesButtonRGB" />
+    <item type="id" name="negativeButton" />
 </resources>
