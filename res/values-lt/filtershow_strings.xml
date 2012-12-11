@@ -49,6 +49,7 @@
     <string name="aspectNone_effect" msgid="6263330561046574134">"Nėra"</string>
     <!-- no translation found for aspectOriginal_effect (5678516555493036594) -->
     <skip />
+    <string name="Fixed" msgid="8017376448916924565">"Fiksuota"</string>
     <string name="tinyplanet" msgid="2783694326474415761">"Maža plan."</string>
     <string name="exposure" msgid="6526397045949374905">"Išlaikymas"</string>
     <string name="sharpness" msgid="6463103068318055412">"Ryškumas"</string>
