@@ -19,6 +19,11 @@ package com.android.gallery3d.ui;
 import android.graphics.Bitmap;
 import android.graphics.RectF;
 
+import com.android.gallery3d.glrenderer.BasicTexture;
+import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.GLPaint;
+import com.android.gallery3d.glrenderer.RawTexture;
+
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 

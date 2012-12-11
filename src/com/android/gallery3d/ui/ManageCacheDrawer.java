@@ -23,6 +23,9 @@ import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.data.DataSourceType;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
+import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.ResourceTexture;
+import com.android.gallery3d.glrenderer.StringTexture;
 import com.android.gallery3d.ui.AlbumSetSlidingWindow.AlbumSetEntry;
 
 public class ManageCacheDrawer extends AlbumSetSlotRenderer {

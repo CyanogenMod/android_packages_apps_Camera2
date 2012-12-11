@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.glrenderer;
+
 
 // Texture is a rectangular image which can be drawn on GLCanvas.
 // The isOpaque() function gives a hint about whether the texture is opaque,

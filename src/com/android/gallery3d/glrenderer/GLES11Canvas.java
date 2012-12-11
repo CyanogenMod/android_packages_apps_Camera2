@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.glrenderer;
 
 import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
+import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.IntArray;
+
+import junit.framework.Assert;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -36,7 +39,7 @@ import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 import javax.microedition.khronos.opengles.GL11ExtensionPack;
 
-public class GLCanvasImpl extends GLCanvas {
+public class GLES11Canvas extends GLCanvas {
     @SuppressWarnings("unused")
     private static final String TAG = "GLCanvasImp";
 
@@ -91,12 +94,12 @@ public class GLCanvasImpl extends GLCanvas {
     int mCountTextureRect;
     int mCountTextureOES;
 
-    GLCanvasImpl() {
+    GLES11Canvas() {
     }
 
     @Override
     public void setSize(int width, int height) {
-        Utils.assertTrue(width >= 0 && height >= 0);
+        Assert.assertTrue(width >= 0 && height >= 0);
 
         if (mTargetTexture == null) {
             mScreenWidth = width;
@@ -124,7 +127,7 @@ public class GLCanvasImpl extends GLCanvas {
 
     @Override
     public void setAlpha(float alpha) {
-        Utils.assertTrue(alpha >= 0 && alpha <= 1);
+        Assert.assertTrue(alpha >= 0 && alpha <= 1);
         mAlpha = alpha;
     }
 
@@ -135,7 +138,7 @@ public class GLCanvasImpl extends GLCanvas {
 
     @Override
     public void multiplyAlpha(float alpha) {
-        Utils.assertTrue(alpha >= 0 && alpha <= 1);
+        Assert.assertTrue(alpha >= 0 && alpha <= 1);
         mAlpha *= alpha;
     }
 
@@ -819,7 +822,7 @@ public class GLCanvasImpl extends GLCanvas {
         Blending mBlending;
         ConfigState mNextFree;
 
-        public void restore(GLCanvasImpl canvas) {
+        public void restore(GLES11Canvas canvas) {
             if (mAlpha >= 0) canvas.setAlpha(mAlpha);
             if (mMatrix[0] != Float.NEGATIVE_INFINITY) {
                 System.arraycopy(mMatrix, 0, canvas.mMatrixValues, 0, 16);
@@ -1000,7 +1003,7 @@ public class GLCanvasImpl extends GLCanvas {
         if (mBlending == blending) {
             return;
         }
-        Utils.assertTrue(blending == Blending.Additive || blending == Blending.Mix);
+        Assert.assertTrue(blending == Blending.Additive || blending == Blending.Mix);
         mBlending = blending;
         int srcFunc = GL11.GL_ONE;
         int dstFunc = (blending == Blending.Additive) ? GL11.GL_ONE : GL11.GL_ONE_MINUS_SRC_ALPHA;

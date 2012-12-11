@@ -31,7 +31,7 @@ import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
-import com.android.gallery3d.ui.GLCanvas;
+import com.android.gallery3d.glrenderer.GLCanvas;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.SlideshowView;
 import com.android.gallery3d.ui.SynchronizedHandler;

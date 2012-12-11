@@ -19,6 +19,8 @@ package com.android.gallery3d.ui;
 import android.content.Context;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.ResourceTexture;
 
 public class ProgressSpinner {
     private static float ROTATE_SPEED_OUTER = 1080f / 3500f;

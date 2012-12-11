@@ -20,6 +20,11 @@ import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.app.AlbumDataLoader;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.Path;
+import com.android.gallery3d.glrenderer.ColorTexture;
+import com.android.gallery3d.glrenderer.FadeInTexture;
+import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.Texture;
+import com.android.gallery3d.glrenderer.TiledTexture;
 
 public class AlbumSlotRenderer extends AbstractSlotRenderer {
     @SuppressWarnings("unused")

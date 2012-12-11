@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.glrenderer;
 
 import android.graphics.Bitmap;
 
-import com.android.gallery3d.common.Utils;
+import junit.framework.Assert;
 
 // BitmapTexture is a texture whose content is specified by a fixed Bitmap.
 //
@@ -34,7 +34,7 @@ public class BitmapTexture extends UploadedTexture {
 
     public BitmapTexture(Bitmap bitmap, boolean hasBorder) {
         super(hasBorder);
-        Utils.assertTrue(bitmap != null && !bitmap.isRecycled());
+        Assert.assertTrue(bitmap != null && !bitmap.isRecycled());
         mContentBitmap = bitmap;
     }
 
