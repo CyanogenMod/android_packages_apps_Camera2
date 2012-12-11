@@ -143,6 +143,8 @@
     <string name="auto" msgid="4296941368722892821">"Automatski"</string>
     <string name="flash_on" msgid="7891556231891837284">"Bljes. okinuta"</string>
     <string name="flash_off" msgid="1445443413822680010">"Bez bljesk."</string>
+    <!-- no translation found for unknown (3506693015896912952) -->
+    <skip />
     <string name="ffx_original" msgid="372686331501281474">"Izvornik"</string>
     <string name="ffx_vintage" msgid="8348759951363844780">"Vintage"</string>
     <string name="ffx_instant" msgid="726968618715691987">"Instant"</string>
