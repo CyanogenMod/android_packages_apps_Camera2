@@ -17,6 +17,7 @@
 package com.android.gallery3d.glrenderer;
 
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.graphics.RectF;
 
 import com.android.gallery3d.common.ApiHelper;
@@ -261,4 +262,23 @@ public abstract class GLCanvas {
      *            as well.
      */
     public abstract void drawOnlyOutsideStencil(boolean onlyOutside);
+
+    /**
+     * After LightCycle makes GL calls, this method is called to restore the GL
+     * configuration to the one expected by GLCanvas.
+     */
+    public abstract void recoverFromLightCycle();
+
+    /**
+     * Gets the bounds given by x, y, width, and height as well as the internal
+     * matrix state. There is no special handling for non-90-degree rotations.
+     * It only considers the lower-left and upper-right corners as the bounds.
+     *
+     * @param bounds The output bounds to write to.
+     * @param x The left side of the input rectangle.
+     * @param y The bottom of the input rectangle.
+     * @param width The width of the input rectangle.
+     * @param height The height of the input rectangle.
+     */
+    public abstract void getBounds(Rect bounds, int x, int y, int width, int height);
 }

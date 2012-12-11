@@ -17,6 +17,7 @@
 package com.android.gallery3d.ui;
 
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.graphics.RectF;
 
 import com.android.gallery3d.glrenderer.BasicTexture;
@@ -165,5 +166,11 @@ public class GLCanvasStub extends GLCanvas {
     }
     @Override
     public void initialize(GL11 gl) {
+    }
+    @Override
+    public void recoverFromLightCycle() {
+    }
+    @Override
+    public void getBounds(Rect bounds, int x, int y, int width, int height) {
     }
 }
