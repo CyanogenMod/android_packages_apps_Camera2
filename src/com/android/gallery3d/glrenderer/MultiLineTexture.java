@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.glrenderer;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+
 
 // MultiLineTexture is a texture shows the content of a specified String.
 //

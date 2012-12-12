@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.glrenderer;
+
+import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
 
@@ -23,7 +25,7 @@ import java.util.WeakHashMap;
 // BasicTexture is a Texture corresponds to a real GL texture.
 // The state of a BasicTexture indicates whether its data is loaded to GL memory.
 // If a BasicTexture is loaded into GL memory, it has a GL texture id.
-abstract class BasicTexture implements Texture {
+public abstract class BasicTexture implements Texture {
 
     @SuppressWarnings("unused")
     private static final String TAG = "BasicTexture";
@@ -73,7 +75,7 @@ abstract class BasicTexture implements Texture {
      * Sets the content size of this texture. In OpenGL, the actual texture
      * size must be of power of 2, the size of the content may be smaller.
      */
-    protected void setSize(int width, int height) {
+    public void setSize(int width, int height) {
         mWidth = width;
         mHeight = height;
         mTextureWidth = Utils.nextPowerOf2(width);

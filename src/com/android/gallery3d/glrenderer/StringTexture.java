@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.glrenderer;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -29,7 +29,7 @@ import android.util.FloatMath;
 //
 // To create a StringTexture, use the newInstance() method and specify
 // the String, the font size, and the color.
-class StringTexture extends CanvasTexture {
+public class StringTexture extends CanvasTexture {
     private final String mText;
     private final TextPaint mPaint;
     private final FontMetricsInt mMetrics;

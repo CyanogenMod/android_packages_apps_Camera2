@@ -19,6 +19,9 @@ package com.android.gallery3d.ui;
 import android.graphics.Bitmap;
 import android.graphics.RectF;
 
+import com.android.gallery3d.glrenderer.BitmapTexture;
+import com.android.gallery3d.glrenderer.GLCanvas;
+
 public class BitmapScreenNail implements ScreenNail {
     private final BitmapTexture mBitmapTexture;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.glrenderer;
 
 import javax.microedition.khronos.opengles.GL;
 import javax.microedition.khronos.opengles.GL10;

@@ -17,7 +17,7 @@
 package com.android.gallery3d.anim;
 
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.ui.GLCanvas;
+import com.android.gallery3d.glrenderer.GLCanvas;
 
 public class AlphaAnimation extends CanvasAnimation {
     private final float mStartAlpha;

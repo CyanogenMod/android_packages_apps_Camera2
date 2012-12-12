@@ -22,6 +22,8 @@ import android.graphics.RectF;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.TiledTexture;
 
 // This is a ScreenNail wraps a Bitmap. There are some extra functions:
 //

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.glrenderer;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.opengl.GLUtils;
 
-import com.android.gallery3d.common.Utils;
+import junit.framework.Assert;
 
 import java.util.HashMap;
 
@@ -40,7 +40,7 @@ import javax.microedition.khronos.opengles.GL11;
 //
 // By default an UploadedTexture is opaque (so it can be drawn faster without
 // blending). The user or subclass can override it using setOpaque().
-abstract class UploadedTexture extends BasicTexture {
+public abstract class UploadedTexture extends BasicTexture {
 
     // To prevent keeping allocation the borders, we store those used borders here.
     // Since the length will be power of two, it won't use too much memory.
@@ -144,7 +144,7 @@ abstract class UploadedTexture extends BasicTexture {
     }
 
     private void freeBitmap() {
-        Utils.assertTrue(mBitmap != null);
+        Assert.assertTrue(mBitmap != null);
         onFreeBitmap(mBitmap);
         mBitmap = null;
     }
@@ -219,7 +219,7 @@ abstract class UploadedTexture extends BasicTexture {
                 int texWidth = getTextureWidth();
                 int texHeight = getTextureHeight();
 
-                Utils.assertTrue(bWidth <= texWidth && bHeight <= texHeight);
+                Assert.assertTrue(bWidth <= texWidth && bHeight <= texHeight);
 
                 // Upload the bitmap to a new texture.
                 mId = GLCanvas.getGLId().generateTexture();
