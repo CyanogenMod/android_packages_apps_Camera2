@@ -143,11 +143,10 @@
     <string name="auto" msgid="4296941368722892821">"Automàtic"</string>
     <string name="flash_on" msgid="7891556231891837284">"Flaix disparat"</string>
     <string name="flash_off" msgid="1445443413822680010">"Sense flaix"</string>
-    <!-- no translation found for unknown (3506693015896912952) -->
-    <skip />
+    <string name="unknown" msgid="3506693015896912952">"No disponible"</string>
     <string name="ffx_original" msgid="372686331501281474">"Original"</string>
     <string name="ffx_vintage" msgid="8348759951363844780">"Vintage"</string>
-    <string name="ffx_instant" msgid="726968618715691987">"Instantani"</string>
+    <string name="ffx_instant" msgid="726968618715691987">"Instantània"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"Destenyeix"</string>
     <string name="ffx_blue_crush" msgid="6034283412305561226">"Blau"</string>
     <string name="ffx_bw_contrast" msgid="517988490066217206">"B/N"</string>
