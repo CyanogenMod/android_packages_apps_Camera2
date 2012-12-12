@@ -28,7 +28,7 @@ import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.BitmapPool;
 
-public class TileImageViewAdapter implements TileImageView.Model {
+public class TileImageViewAdapter implements TileImageView.TileSource {
     private static final String TAG = "TileImageViewAdapter";
     protected ScreenNail mScreenNail;
     protected boolean mOwnScreenNail;
@@ -84,16 +84,14 @@ public class TileImageViewAdapter implements TileImageView.Model {
     // (44, 44, 256, 256) from the original photo and down sample it to 106.
     @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
     @Override
-    public Bitmap getTile(int level, int x, int y, int tileSize,
-            int borderSize, BitmapPool pool) {
+    public Bitmap getTile(int level, int x, int y, int tileSize, BitmapPool pool) {
         if (!ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER) {
-            return getTileWithoutReusingBitmap(level, x, y, tileSize, borderSize);
+            return getTileWithoutReusingBitmap(level, x, y, tileSize);
         }
 
-        int b = borderSize << level;
         int t = tileSize << level;
 
-        Rect wantRegion = new Rect(x - b, y - b, x + t + b, y + t + b);
+        Rect wantRegion = new Rect(x, y, x + t, y + t);
 
         boolean needClear;
         BitmapRegionDecoder regionDecoder = null;
@@ -112,8 +110,7 @@ public class TileImageViewAdapter implements TileImageView.Model {
         if (bitmap != null) {
             if (needClear) bitmap.eraseColor(0);
         } else {
-            int s = tileSize + 2 * borderSize;
-            bitmap = Bitmap.createBitmap(s, s, Config.ARGB_8888);
+            bitmap = Bitmap.createBitmap(tileSize, tileSize, Config.ARGB_8888);
         }
 
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -141,10 +138,9 @@ public class TileImageViewAdapter implements TileImageView.Model {
     }
 
     private Bitmap getTileWithoutReusingBitmap(
-            int level, int x, int y, int tileSize, int borderSize) {
-        int b = borderSize << level;
+            int level, int x, int y, int tileSize) {
         int t = tileSize << level;
-        Rect wantRegion = new Rect(x - b, y - b, x + t + b, y + t + b);
+        Rect wantRegion = new Rect(x, y, x + t, y + t);
 
         BitmapRegionDecoder regionDecoder;
         Rect overlapRegion;
@@ -173,8 +169,7 @@ public class TileImageViewAdapter implements TileImageView.Model {
 
         if (wantRegion.equals(overlapRegion)) return bitmap;
 
-        int s = tileSize + 2 * borderSize;
-        Bitmap result = Bitmap.createBitmap(s, s, Config.ARGB_8888);
+        Bitmap result = Bitmap.createBitmap(tileSize, tileSize, Config.ARGB_8888);
         Canvas canvas = new Canvas(result);
         canvas.drawBitmap(bitmap,
                 (overlapRegion.left - wantRegion.left) >> level,

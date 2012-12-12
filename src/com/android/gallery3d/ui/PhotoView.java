@@ -57,7 +57,7 @@ public class PhotoView extends GLView {
         public int height;
     }
 
-    public interface Model extends TileImageView.Model {
+    public interface Model extends TileImageView.TileSource {
         public int getCurrentIndex();
         public void moveTo(int index);
 
