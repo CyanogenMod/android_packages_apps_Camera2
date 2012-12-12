@@ -143,8 +143,7 @@
     <string name="auto" msgid="4296941368722892821">"Automātiski"</string>
     <string name="flash_on" msgid="7891556231891837284">"Zibspuldze ir aktivizēta"</string>
     <string name="flash_off" msgid="1445443413822680010">"Bez zibspuldzes"</string>
-    <!-- no translation found for unknown (3506693015896912952) -->
-    <skip />
+    <string name="unknown" msgid="3506693015896912952">"Nezināms"</string>
     <string name="ffx_original" msgid="372686331501281474">"Sākotnējais"</string>
     <string name="ffx_vintage" msgid="8348759951363844780">"Senlaicīgs"</string>
     <string name="ffx_instant" msgid="726968618715691987">"Ātrais foto"</string>
