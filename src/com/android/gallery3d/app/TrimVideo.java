@@ -16,20 +16,16 @@
 
 package com.android.gallery3d.app;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Video;
-import android.provider.MediaStore.Video.VideoColumns;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -37,19 +33,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockActivity;
 import com.android.gallery3d.R;
-import com.android.gallery3d.util.BucketNames;
 import com.android.gallery3d.util.SaveVideoFileInfo;
 import com.android.gallery3d.util.SaveVideoFileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 
-public class TrimVideo extends SherlockActivity implements
+public class TrimVideo extends Activity implements
         MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener,
         ControllerOverlay.Listener {
@@ -84,7 +75,7 @@ public class TrimVideo extends SherlockActivity implements
         requestWindowFeature(Window.FEATURE_ACTION_BAR);
         requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getActionBar();
         int displayOptions = ActionBar.DISPLAY_SHOW_HOME;
         actionBar.setDisplayOptions(0, displayOptions);
         displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM;

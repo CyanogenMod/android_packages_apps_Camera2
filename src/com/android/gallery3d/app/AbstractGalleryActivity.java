@@ -17,6 +17,7 @@
 package com.android.gallery3d.app;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -30,12 +31,11 @@ import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.data.BitmapPool;
@@ -46,7 +46,7 @@ import com.android.gallery3d.ui.GLRootView;
 import com.android.gallery3d.util.LightCycleHelper.PanoramaViewHelper;
 import com.android.gallery3d.util.ThreadPool;
 
-public class AbstractGalleryActivity extends SherlockActivity implements GalleryContext {
+public class AbstractGalleryActivity extends Activity implements GalleryContext {
     @SuppressWarnings("unused")
     private static final String TAG = "AbstractGalleryActivity";
     private GLRootView mGLRootView;
