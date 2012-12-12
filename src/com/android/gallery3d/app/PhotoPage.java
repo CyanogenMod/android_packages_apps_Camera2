@@ -17,6 +17,7 @@
 package com.android.gallery3d.app;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar.OnMenuVisibilityListener;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -31,15 +32,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.ProxyLauncher;
-
-import com.actionbarsherlock.app.ActionBar.OnMenuVisibilityListener;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.data.ComboAlbum;

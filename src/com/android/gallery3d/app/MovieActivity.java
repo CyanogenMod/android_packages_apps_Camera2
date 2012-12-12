@@ -17,6 +17,8 @@
 package com.android.gallery3d.app;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
+import android.app.Activity;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -31,15 +33,13 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ShareActionProvider;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.ShareActionProvider;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
@@ -51,7 +51,7 @@ import com.android.gallery3d.common.Utils;
  * to set the action bar logo so the playback process looks more seamlessly integrated with
  * the original activity.
  */
-public class MovieActivity extends SherlockActivity {
+public class MovieActivity extends Activity {
     @SuppressWarnings("unused")
     private static final String TAG = "MovieActivity";
     public static final String KEY_LOGO_BITMAP = "logo-bitmap";
@@ -75,8 +75,8 @@ public class MovieActivity extends SherlockActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getSherlock().requestFeature(Window.FEATURE_ACTION_BAR);
-        getSherlock().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+        requestWindowFeature(Window.FEATURE_ACTION_BAR);
+        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
         setContentView(R.layout.movie_view);
         View rootView = findViewById(R.id.movie_view_root);
@@ -119,14 +119,14 @@ public class MovieActivity extends SherlockActivity {
     private void setActionBarLogoFromIntent(Intent intent) {
         Bitmap logo = intent.getParcelableExtra(KEY_LOGO_BITMAP);
         if (logo != null) {
-            getSupportActionBar().setLogo(
+            getActionBar().setLogo(
                     new BitmapDrawable(getResources(), logo));
         }
     }
 
     private void initializeActionBar(Intent intent) {
         mUri = intent.getData();
-        final ActionBar actionBar = getSupportActionBar();
+        final ActionBar actionBar = getActionBar();
         setActionBarLogoFromIntent(intent);
         actionBar.setDisplayOptions(
                 ActionBar.DISPLAY_HOME_AS_UP,
@@ -166,7 +166,7 @@ public class MovieActivity extends SherlockActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getSupportMenuInflater().inflate(R.menu.movie, menu);
+        getMenuInflater().inflate(R.menu.movie, menu);
 
         // Document says EXTRA_STREAM should be a content: Uri
         // So, we only share the video if it's "content:".
