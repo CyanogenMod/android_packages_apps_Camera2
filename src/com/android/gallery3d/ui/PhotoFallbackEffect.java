@@ -23,6 +23,8 @@ import android.view.animation.Interpolator;
 
 import com.android.gallery3d.anim.Animation;
 import com.android.gallery3d.data.Path;
+import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.RawTexture;
 import com.android.gallery3d.ui.AlbumSlotRenderer.SlotFilter;
 
 import java.util.ArrayList;

@@ -20,6 +20,9 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.util.TypedValue;
 
+import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.NinePatchTexture;
+
 public class ScrollBarView extends GLView {
     @SuppressWarnings("unused")
     private static final String TAG = "ScrollBarView";

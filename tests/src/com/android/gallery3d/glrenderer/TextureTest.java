@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.glrenderer;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.test.suitebuilder.annotation.SmallTest;
+
+import com.android.gallery3d.glrenderer.BasicTexture;
+import com.android.gallery3d.glrenderer.BitmapTexture;
+import com.android.gallery3d.glrenderer.ColorTexture;
+import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.GLES11Canvas;
+import com.android.gallery3d.glrenderer.UploadedTexture;
 
 import junit.framework.TestCase;
 
@@ -62,7 +69,7 @@ public class TextureTest extends TestCase {
     @SmallTest
     public void testBasicTexture() {
         GL11 glStub = new GLStub();
-        GLCanvas canvas = new GLCanvasImpl();
+        GLCanvas canvas = new GLES11Canvas();
         canvas.initialize(glStub);
         MyBasicTexture texture = new MyBasicTexture(canvas, 47);
 
@@ -83,7 +90,7 @@ public class TextureTest extends TestCase {
         assertTrue(texture.isLoaded());
 
         // For a different GL, it's not loaded.
-        GLCanvas canvas2 = new GLCanvasImpl();
+        GLCanvas canvas2 = new GLES11Canvas();
         canvas2.initialize(glStub);
         assertFalse(texture.isLoaded());
 
@@ -138,7 +145,7 @@ public class TextureTest extends TestCase {
     @SmallTest
     public void testUploadedTexture() {
         GL11 glStub = new GLStub();
-        GLCanvas canvas = new GLCanvasImpl();
+        GLCanvas canvas = new GLES11Canvas();
         canvas.initialize(glStub);
         MyUploadedTexture texture = new MyUploadedTexture();
 

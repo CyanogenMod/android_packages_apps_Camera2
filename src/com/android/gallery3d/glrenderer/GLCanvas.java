@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.glrenderer;
 
 import android.graphics.Bitmap;
 import android.graphics.RectF;
@@ -50,7 +50,7 @@ public abstract class GLCanvas {
     }
 
     private static GLCanvas instantiateCanvas() {
-        return ApiHelper.HAS_GLES20_REQUIRED ? new GLES20Canvas() : new GLCanvasImpl();
+        return ApiHelper.HAS_GLES20_REQUIRED ? new GLES20Canvas() : new GLES11Canvas();
     }
 
     public static int getEGLContextClientVersion() {

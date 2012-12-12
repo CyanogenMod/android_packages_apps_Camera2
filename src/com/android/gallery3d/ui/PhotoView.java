@@ -35,6 +35,11 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.Path;
+import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.RawTexture;
+import com.android.gallery3d.glrenderer.ResourceTexture;
+import com.android.gallery3d.glrenderer.StringTexture;
+import com.android.gallery3d.glrenderer.Texture;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.RangeArray;
 

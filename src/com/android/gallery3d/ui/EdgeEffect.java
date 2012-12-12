@@ -23,6 +23,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.ResourceTexture;
 
 // This is copied from android.widget.EdgeEffect with some small modifications:
 // (1) Copy the images (overscroll_{edge|glow}.png) to local resources.

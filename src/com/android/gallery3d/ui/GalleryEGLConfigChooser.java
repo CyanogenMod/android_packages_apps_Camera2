@@ -18,6 +18,7 @@ package com.android.gallery3d.ui;
 import android.opengl.GLSurfaceView.EGLConfigChooser;
 
 import com.android.gallery3d.common.ApiHelper;
+import com.android.gallery3d.glrenderer.GLCanvas;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;

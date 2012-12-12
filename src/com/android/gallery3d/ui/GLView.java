@@ -23,6 +23,7 @@ import android.view.MotionEvent;
 import com.android.gallery3d.anim.CanvasAnimation;
 import com.android.gallery3d.anim.StateTransitionAnimation;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.glrenderer.GLCanvas;
 
 import java.util.ArrayList;
 

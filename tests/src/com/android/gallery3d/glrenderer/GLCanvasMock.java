@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.glrenderer;
+
+import com.android.gallery3d.glrenderer.BasicTexture;
+import com.android.gallery3d.ui.GLCanvasStub;
 
 import javax.microedition.khronos.opengles.GL11;
 

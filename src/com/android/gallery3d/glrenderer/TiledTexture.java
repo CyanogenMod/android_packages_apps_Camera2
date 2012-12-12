@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.glrenderer;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -26,6 +26,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.os.SystemClock;
 
+import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLRoot.OnGLIdleListener;
 
 import java.util.ArrayDeque;

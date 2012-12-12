@@ -27,6 +27,8 @@ import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.data.MediaObject.PanoramaSupportCallback;
+import com.android.gallery3d.glrenderer.Texture;
+import com.android.gallery3d.glrenderer.TiledTexture;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.JobLimiter;

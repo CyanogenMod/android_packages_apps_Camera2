@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.glrenderer;
 
 import android.graphics.Rect;
 

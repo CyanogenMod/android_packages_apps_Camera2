@@ -25,6 +25,7 @@ import android.view.animation.DecelerateInterpolator;
 import com.android.gallery3d.anim.Animation;
 import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.glrenderer.GLCanvas;
 
 public class SlotView extends GLView {
     @SuppressWarnings("unused")
