@@ -550,9 +550,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
     }
 
     @Override
-    public Bitmap getTile(int level, int x, int y, int tileSize,
-            int borderSize, BitmapPool pool) {
-        return mTileProvider.getTile(level, x, y, tileSize, borderSize, pool);
+    public Bitmap getTile(int level, int x, int y, int tileSize, BitmapPool pool) {
+        return mTileProvider.getTile(level, x, y, tileSize, pool);
     }
 
     @Override
