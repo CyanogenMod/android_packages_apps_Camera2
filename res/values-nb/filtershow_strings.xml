@@ -49,7 +49,7 @@
     <string name="aspectNone_effect" msgid="6263330561046574134">"Ingen"</string>
     <!-- no translation found for aspectOriginal_effect (5678516555493036594) -->
     <skip />
-    <string name="Fixed" msgid="8017376448916924565">"Stillestående"</string>
+    <string name="Fixed" msgid="8017376448916924565">"Låst"</string>
     <string name="tinyplanet" msgid="2783694326474415761">"Liten planet"</string>
     <string name="exposure" msgid="6526397045949374905">"Eksponering"</string>
     <string name="sharpness" msgid="6463103068318055412">"Skarphet"</string>

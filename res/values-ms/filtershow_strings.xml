@@ -49,8 +49,7 @@
     <string name="aspectNone_effect" msgid="6263330561046574134">"Tiada"</string>
     <!-- no translation found for aspectOriginal_effect (5678516555493036594) -->
     <skip />
-    <!-- no translation found for Fixed (8017376448916924565) -->
-    <skip />
+    <string name="Fixed" msgid="8017376448916924565">"Dibetulkan"</string>
     <string name="tinyplanet" msgid="2783694326474415761">"Planet Kecil"</string>
     <string name="exposure" msgid="6526397045949374905">"Dedahan"</string>
     <string name="sharpness" msgid="6463103068318055412">"Ketajaman"</string>
