@@ -26,11 +26,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.view.HapticFeedbackConstants;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DataManager;
@@ -40,6 +40,10 @@ import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.MtpDevice;
 import com.android.gallery3d.data.Path;
+import com.android.gallery3d.filtershow.CropExtras;
+import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.glrenderer.FadeTexture;
+import com.android.gallery3d.glrenderer.GLCanvas;
 import com.android.gallery3d.ui.ActionModeHandler;
 import com.android.gallery3d.ui.ActionModeHandler.ActionModeListener;
 import com.android.gallery3d.ui.AlbumSlotRenderer;
@@ -55,10 +59,6 @@ import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.MediaSetUtils;
-import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.CropExtras;
-import com.android.gallery3d.glrenderer.FadeTexture;
-import com.android.gallery3d.glrenderer.GLCanvas;
 
 
 public class AlbumPage extends ActivityState implements GalleryActionBar.ClusterRunner,
