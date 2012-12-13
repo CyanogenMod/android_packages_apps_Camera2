@@ -46,6 +46,7 @@ import com.android.gallery3d.ui.TiledScreenNail;
 import com.android.gallery3d.util.ThreadPool.CancelListener;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -307,6 +308,26 @@ public class GalleryUtils {
 
     public static int getBucketId(String path) {
         return path.toLowerCase().hashCode();
+    }
+
+    // Return the local path that matches the given bucketId. If no match is
+    // found, return null
+    public static String searchDirForPath(File dir, int bucketId) {
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    String path = file.getAbsolutePath();
+                    if (GalleryUtils.getBucketId(path) == bucketId) {
+                        return path;
+                    } else {
+                        path = searchDirForPath(file, bucketId);
+                        if (path != null) return path;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     // Returns a (localized) string for the given duration (in seconds).
