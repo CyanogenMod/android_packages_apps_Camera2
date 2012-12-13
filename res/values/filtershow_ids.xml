@@ -32,4 +32,5 @@
     <item type="id" name="curvesButtonRGB" />
     <item type="id" name="negativeButton" />
     <item type="id" name="edgeButton" />
+    <item type="id" name="kmeansButton" />
 </resources>
