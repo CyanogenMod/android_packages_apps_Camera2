@@ -43,7 +43,8 @@ LOCAL_SRC_FILES := filters/bw.c \
                    filters/wbalance.c \
                    filters/redeye.c \
                    filters/bwfilter.c \
-                   filters/tinyplanet.cc
+                   filters/tinyplanet.cc \
+                   filters/kmeans.cc
 
 LOCAL_CFLAGS    += -ffast-math -O3 -funroll-loops
 LOCAL_ARM_MODE := arm
