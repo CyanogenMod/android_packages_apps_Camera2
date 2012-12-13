@@ -137,6 +137,9 @@
     <string name="none" msgid="3601545724573307541">None</string>
     <!--  Label for the image edges effect (highlights edges in image) [CHAR LIMIT=10] -->
     <string name="edge">Edges</string>
+    <!--  Label for an image effect that replicates the "pop art" style of segmenting
+          images into solid colors, as popularized by Andy Warhol [CHAR LIMIT=10] -->
+    <string name="kmeans">Warhol</string>
 
     <!--  Labels for the curves tool -->
 
