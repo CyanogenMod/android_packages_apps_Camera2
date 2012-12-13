@@ -23,12 +23,18 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.AlbumPicker;
 import com.android.gallery3d.app.DialogPicker;
+import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.ApiHelper;
+import com.android.gallery3d.data.DataManager;
+import com.android.gallery3d.data.LocalAlbum;
+import com.android.gallery3d.data.MediaSet;
+import com.android.gallery3d.data.Path;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.CropExtras;
 
@@ -158,8 +164,21 @@ public class WidgetConfigure extends Activity {
         String albumPath = data.getStringExtra(AlbumPicker.KEY_ALBUM_PATH);
         WidgetDatabaseHelper helper = new WidgetDatabaseHelper(this);
         try {
+            String relativePath = null;
+            GalleryApp galleryApp = (GalleryApp) getApplicationContext();
+            DataManager manager = galleryApp.getDataManager();
+            Path path = Path.fromString(albumPath);
+            MediaSet mediaSet = (MediaSet) manager.getMediaObject(path);
+            if (mediaSet instanceof LocalAlbum) {
+                int bucketId = Integer.parseInt(path.getSuffix());
+                // If the chosen album is a local album, find relative path
+                // Otherwise, leave the relative path field empty
+                relativePath = LocalAlbum.getRelativePath(bucketId);
+                Log.i(TAG, "Setting widget, album path: " + albumPath
+                        + ", relative path: " + relativePath);
+            }
             helper.setWidget(mAppWidgetId,
-                    WidgetDatabaseHelper.TYPE_ALBUM, albumPath);
+                    WidgetDatabaseHelper.TYPE_ALBUM, albumPath, relativePath);
             updateWidgetAndFinish(helper.getEntry(mAppWidgetId));
         } finally {
             helper.close();
@@ -174,7 +193,7 @@ public class WidgetConfigure extends Activity {
         } else if (widgetType == R.id.widget_type_shuffle) {
             WidgetDatabaseHelper helper = new WidgetDatabaseHelper(this);
             try {
-                helper.setWidget(mAppWidgetId, WidgetDatabaseHelper.TYPE_SHUFFLE, null);
+                helper.setWidget(mAppWidgetId, WidgetDatabaseHelper.TYPE_SHUFFLE, null, null);
                 updateWidgetAndFinish(helper.getEntry(mAppWidgetId));
             } finally {
                 helper.close();
