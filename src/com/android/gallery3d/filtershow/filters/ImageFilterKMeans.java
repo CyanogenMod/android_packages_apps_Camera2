@@ -13,30 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
 
 import com.android.gallery3d.R;
 
-public class ImageFilterEdge extends ImageFilter {
-
-    public ImageFilterEdge() {
-        mName = "Edge";
-        mPreviewParameter = 0;
+public class ImageFilterKMeans extends ImageFilter {
+    public ImageFilterKMeans() {
+        mName = "KMeans";
+        mMaxParameter = 20;
+        mMinParameter = 2;
+        mPreviewParameter = 4;
+        mDefaultParameter = 4;
+        mParameter = 4;
     }
 
-    native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float p);
+    native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, int p);
 
     @Override
     public int getButtonId() {
-        return R.id.edgeButton;
+        return R.id.kmeansButton;
     }
 
     @Override
     public int getTextId() {
-        return R.string.edge;
+        return R.string.kmeans;
     }
 
     @Override
@@ -48,8 +50,7 @@ public class ImageFilterEdge extends ImageFilter {
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        float p = mParameter + 101;
-        p = (float) p / 100;
+        int p = Math.max(mParameter, mMinParameter) % (mMaxParameter + 1);
         nativeApplyFilter(bitmap, w, h, p);
         return bitmap;
     }
