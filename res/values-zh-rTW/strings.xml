@@ -146,11 +146,11 @@
     <string name="unknown" msgid="3506693015896912952">"不明"</string>
     <string name="ffx_original" msgid="372686331501281474">"原始"</string>
     <string name="ffx_vintage" msgid="8348759951363844780">"復古"</string>
-    <string name="ffx_instant" msgid="726968618715691987">"即時"</string>
+    <string name="ffx_instant" msgid="726968618715691987">"拍立得"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"漂白"</string>
     <string name="ffx_blue_crush" msgid="6034283412305561226">"藍色"</string>
     <string name="ffx_bw_contrast" msgid="517988490066217206">"黑白"</string>
-    <string name="ffx_punch" msgid="1343475517872562639">"打孔"</string>
+    <string name="ffx_punch" msgid="1343475517872562639">"凹魚眼"</string>
     <string name="ffx_x_process" msgid="4779398678661811765">"X 光處理"</string>
     <string name="ffx_washout" msgid="4594160692176642735">"褐色"</string>
     <string name="ffx_washout_color" msgid="8034075742195795219">"石版"</string>

@@ -143,7 +143,7 @@
     <string name="auto" msgid="4296941368722892821">"Automàtic"</string>
     <string name="flash_on" msgid="7891556231891837284">"Flaix disparat"</string>
     <string name="flash_off" msgid="1445443413822680010">"Sense flaix"</string>
-    <string name="unknown" msgid="3506693015896912952">"No disponible"</string>
+    <string name="unknown" msgid="3506693015896912952">"Desconeguda"</string>
     <string name="ffx_original" msgid="372686331501281474">"Original"</string>
     <string name="ffx_vintage" msgid="8348759951363844780">"Vintage"</string>
     <string name="ffx_instant" msgid="726968618715691987">"Instantània"</string>
