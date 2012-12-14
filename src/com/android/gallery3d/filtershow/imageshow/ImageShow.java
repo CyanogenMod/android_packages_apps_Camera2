@@ -75,10 +75,6 @@ public class ImageShow extends View implements OnGestureListener,
     private Bitmap mFiltersOnlyImage = null;
     private Bitmap mFilteredImage = null;
 
-    private final boolean USE_SLIDER_GESTURE = false; // set to true to have
-                                                      // slider gesture
-    protected SliderController mSliderController = new SliderController();
-
     private GestureDetector mGestureDetector = null;
 
     private HistoryAdapter mHistoryAdapter = null;
@@ -200,9 +196,6 @@ public class ImageShow extends View implements OnGestureListener,
         if (currentFilter != null) {
             onNewValue(currentFilter.getDefaultParameter());
         }
-        if (USE_SLIDER_GESTURE) {
-            mSliderController.reset();
-        }
     }
 
     public void setPanelController(PanelController controller) {
@@ -247,9 +240,6 @@ public class ImageShow extends View implements OnGestureListener,
 
     public ImageShow(Context context, AttributeSet attrs) {
         super(context, attrs);
-        if (USE_SLIDER_GESTURE) {
-            mSliderController.setListener(this);
-        }
         mHistoryAdapter = new HistoryAdapter(context, R.layout.filtershow_history_operation_row,
                 R.id.rowTextView);
         mImageStateAdapter = new ImageStateAdapter(context,
@@ -260,9 +250,6 @@ public class ImageShow extends View implements OnGestureListener,
 
     public ImageShow(Context context) {
         super(context);
-        if (USE_SLIDER_GESTURE) {
-            mSliderController.setListener(this);
-        }
         mHistoryAdapter = new HistoryAdapter(context, R.layout.filtershow_history_operation_row,
                 R.id.rowTextView);
         setupGestureDetector(context);
@@ -278,10 +265,6 @@ public class ImageShow extends View implements OnGestureListener,
         int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
         int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
         setMeasuredDimension(parentWidth, parentHeight);
-        if (USE_SLIDER_GESTURE) {
-            mSliderController.setWidth(parentWidth);
-            mSliderController.setHeight(parentHeight);
-        }
     }
 
     public void setSeekBar(SeekBar seekBar) {
@@ -381,12 +364,6 @@ public class ImageShow extends View implements OnGestureListener,
             mPaint.setARGB(255, 200, 200, 200);
             canvas.drawText(getImagePreset().name(), mTextPadding,
                     1.5f * mTextPadding, mPaint);
-        }
-
-        if (showControls()) {
-            if (USE_SLIDER_GESTURE) {
-                mSliderController.onDraw(canvas);
-            }
         }
 
         drawToast(canvas);
@@ -685,9 +662,6 @@ public class ImageShow extends View implements OnGestureListener,
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
-        if (USE_SLIDER_GESTURE) {
-            mSliderController.onTouchEvent(event);
-        }
         if (mGestureDetector != null) {
             mGestureDetector.onTouchEvent(event);
         }

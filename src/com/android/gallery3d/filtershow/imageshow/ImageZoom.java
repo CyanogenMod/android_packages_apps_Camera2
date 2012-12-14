@@ -128,10 +128,6 @@ public class ImageZoom extends ImageSlave {
         drawImage(canvas, filteredImage);
         canvas.restore();
 
-        if (showControls()) {
-            mSliderController.onDraw(canvas);
-        }
-
         drawToast(canvas);
     }
 
