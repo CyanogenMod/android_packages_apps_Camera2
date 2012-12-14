@@ -23,11 +23,15 @@ import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class ImageFilter implements Cloneable {
 
-    protected int mMaxParameter = 100;
-    protected int mMinParameter = -100;
+    public static int DEFAULT_MAX_PARAMETER = 100;
+    public static int DEFAULT_MIN_PARAMETER = -100;
+    public static int DEFAULT_INITIAL_PARAMETER = 0;
+
+    protected int mMaxParameter = DEFAULT_MAX_PARAMETER;
+    protected int mMinParameter = DEFAULT_MIN_PARAMETER;
     protected int mPreviewParameter = mMaxParameter;
-    protected int mDefaultParameter = 0;
-    protected int mParameter = 0;
+    protected int mDefaultParameter = DEFAULT_INITIAL_PARAMETER;
+    protected int mParameter = DEFAULT_INITIAL_PARAMETER;
     private ImagePreset mImagePreset;
 
     protected String mName = "Original";

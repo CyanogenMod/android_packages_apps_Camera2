@@ -153,14 +153,14 @@ public class ImageShow extends View implements OnGestureListener,
     private final Handler mHandler = new Handler();
 
     public void select() {
+        if (mSeekBar != null) {
+            mSeekBar.setOnSeekBarChangeListener(this);
+        }
         if (getCurrentFilter() != null) {
             int parameter = getCurrentFilter().getParameter();
             int maxp = getCurrentFilter().getMaxParameter();
             int minp = getCurrentFilter().getMinParameter();
             updateSeekBar(parameter, minp, maxp);
-        }
-        if (mSeekBar != null) {
-            mSeekBar.setOnSeekBarChangeListener(this);
         }
     }
 
@@ -179,9 +179,6 @@ public class ImageShow extends View implements OnGestureListener,
         int seekMax = mSeekBar.getMax();
         int progress = parameterToUI(parameter, minp, maxp, seekMax);
         mSeekBar.setProgress(progress);
-        if (getPanelController() != null) {
-            getPanelController().onNewValue(parameter);
-        }
     }
 
     public void unselect() {
@@ -198,7 +195,8 @@ public class ImageShow extends View implements OnGestureListener,
     public void resetParameter() {
         ImageFilter currentFilter = getCurrentFilter();
         if (currentFilter != null) {
-            onNewValue(currentFilter.getDefaultParameter());
+            updateSeekBar(currentFilter.getDefaultParameter(),
+                    getCurrentFilter().getMinParameter(), getCurrentFilter().getMaxParameter());
         }
         if (USE_SLIDER_GESTURE) {
             mSliderController.reset();
@@ -215,8 +213,8 @@ public class ImageShow extends View implements OnGestureListener,
 
     @Override
     public void onNewValue(int parameter) {
-        int maxp = 100;
-        int minp = -100;
+        int maxp = ImageFilter.DEFAULT_MAX_PARAMETER;
+        int minp = ImageFilter.DEFAULT_MIN_PARAMETER;
         if (getCurrentFilter() != null) {
             getCurrentFilter().setParameter(parameter);
             maxp = getCurrentFilter().getMaxParameter();
@@ -229,7 +227,6 @@ public class ImageShow extends View implements OnGestureListener,
         if (getPanelController() != null) {
             getPanelController().onNewValue(parameter);
         }
-        updateSeekBar(parameter, minp, maxp);
         invalidate();
         mActivity.enableSave(hasModifications());
     }
