@@ -140,6 +140,8 @@
     <!--  Label for an image effect that replicates the "pop art" style of segmenting
           images into solid colors, as popularized by Andy Warhol [CHAR LIMIT=10] -->
     <string name="kmeans">Warhol</string>
+    <!--  Label for the image downsampling effect (makes image smaller) [CHAR LIMIT=10] -->
+    <string name="downsample">Downsample</string>
 
     <!--  Labels for the curves tool -->
 

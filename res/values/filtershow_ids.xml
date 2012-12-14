@@ -33,4 +33,5 @@
     <item type="id" name="negativeButton" />
     <item type="id" name="edgeButton" />
     <item type="id" name="kmeansButton" />
+    <item type="id" name="downsampleButton" />
 </resources>
