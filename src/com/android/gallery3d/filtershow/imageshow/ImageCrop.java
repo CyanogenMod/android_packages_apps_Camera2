@@ -561,7 +561,6 @@ public class ImageCrop extends ImageGeometry {
     @Override
     protected void drawShape(Canvas canvas, Bitmap image) {
         gPaint.setAntiAlias(true);
-        gPaint.setFilterBitmap(true);
         gPaint.setARGB(255, 255, 255, 255);
 
         if (mFirstDraw) {
