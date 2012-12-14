@@ -25,8 +25,7 @@ LOCAL_CPP_EXTENSION := .cc
 LOCAL_LDFLAGS	:= -llog -ljnigraphics
 LOCAL_SDK_VERSION := 9
 LOCAL_MODULE    := libjni_filtershow_filters
-LOCAL_SRC_FILES := filters/bw.c \
-                   filters/gradient.c \
+LOCAL_SRC_FILES := filters/gradient.c \
                    filters/saturated.c \
                    filters/exposure.c \
                    filters/edge.c \
