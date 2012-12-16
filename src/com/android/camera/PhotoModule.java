@@ -88,6 +88,9 @@ public class PhotoModule
 
     private static final String TAG = "CAM_PhotoModule";
 
+    private boolean mRestartPreview = false;
+    private boolean mAspectRatioChanged = false;
+
     // We number the request code from 1000 to avoid collision with Gallery.
     private static final int REQUEST_CROP = 1000;
 
@@ -680,9 +683,6 @@ public class PhotoModule
             if (mPaused) {
                 return;
             }
-            if (mIsImageCaptureIntent) {
-                stopPreview();
-            }
             if (mSceneMode == CameraUtil.SCENE_MODE_HDR) {
                 mUI.showSwitcher();
                 mUI.setSwipingEnabled(true);
@@ -707,8 +707,21 @@ public class PhotoModule
                     + mPictureDisplayedToJpegCallbackTime + "ms");
 
             mFocusManager.updateFocusUI(); // Ensure focus indicator is hidden.
-            if (!mIsImageCaptureIntent) {
+            if (!mIsImageCaptureIntent && !CameraUtil.enableZSL()) {
                 setupPreview();
+            } else if (CameraUtil.enableZSL()){
+                Log.v(TAG, "enableZSL true");
+                // In ZSL mode, the preview is not stopped, due to which the
+                // review mode (ImageCapture) doesn't show the captured frame.
+                // Hence stop the preview if ZSL mode is active so that the
+                // preview can be restarted using the onReviewRetakeClicked().
+                if (mIsImageCaptureIntent) {
+                    Log.v(TAG,"enableZSL - stopPreview");
+                    stopPreview();
+                } else {
+                    mFocusManager.resetTouchFocus();
+                    setCameraState(IDLE);
+                }
             }
 
             ExifInterface exif = Exif.getExif(jpegData);
@@ -905,6 +918,10 @@ public class PhotoModule
                 new JpegPictureCallback(loc));
 
         mNamedImages.nameNewImage(mCaptureStartTime);
+
+        if (CameraUtil.enableZSL()) {
+            mRestartPreview = false;
+        }
 
         mFaceDetectionStarted = false;
         setCameraState(SNAPSHOT_IN_PROGRESS);
@@ -1484,7 +1501,7 @@ public class PhotoModule
 
         setDisplayOrientation();
 
-        if (!mSnapshotOnIdle) {
+        if (!mSnapshotOnIdle && !mAspectRatioChanged) {
             // If the focus mode is continuous autofocus, call cancelAutoFocus to
             // resume it because it may have been paused by autoFocus call.
             if (CameraUtil.FOCUS_MODE_CONTINUOUS_PICTURE.equals(mFocusManager.getFocusMode())) {
@@ -1587,9 +1604,18 @@ public class PhotoModule
         if (pictureSize == null) {
             CameraSettings.initialCameraPictureSize(mActivity, mParameters);
         } else {
+            Size oldSize = mParameters.getPictureSize();
             List<Size> supported = mParameters.getSupportedPictureSizes();
             CameraSettings.setCameraPictureSize(
                     pictureSize, supported, mParameters);
+            Size size = mParameters.getPictureSize();
+            if (oldSize != null && size != null) {
+                if(!size.equals(oldSize) && mCameraState != PREVIEW_STOPPED) {
+                    Log.d(TAG, "Picture size changed. Restart preview");
+                    mAspectRatioChanged = true;
+                    stopPreview();
+                }
+            }
         }
         Size size = mParameters.getPictureSize();
 
@@ -1653,6 +1679,13 @@ public class PhotoModule
             if (mSceneMode == null) {
                 mSceneMode = Parameters.SCENE_MODE_AUTO;
             }
+        }
+
+        if (CameraUtil.enableZSL()) {
+            // Switch on ZSL mode
+            mParameters.set("camera-mode", "1");
+        } else {
+            //mParameters.setCameraMode(0);
         }
 
         // Set JPEG quality.
@@ -1766,6 +1799,11 @@ public class PhotoModule
             mUpdateSet = 0;
             return;
         } else if (isCameraIdle()) {
+            if (mRestartPreview) {
+                Log.d(TAG, "Restarting preview");
+                startPreview();
+                mRestartPreview = false;
+            }
             setCameraParameters(mUpdateSet);
             updateSceneMode();
             mUpdateSet = 0;
