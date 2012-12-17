@@ -17,7 +17,6 @@
 #ifndef KMEANS_H
 #define KMEANS_H
 
-#include <ctime>
 #include <cstdlib>
 #include <math.h>
 
@@ -86,11 +85,12 @@ inline N euclideanDist(T val1[], T val2[], int dimension) {
  * Picks k random starting points from the data set.
  */
 template <typename T>
-void initialPickHeuristicRandom(int k, T values[], int len, int dimension, int stride, T dst[]) {
+void initialPickHeuristicRandom(int k, T values[], int len, int dimension, int stride, T dst[],
+        unsigned int seed) {
     int x, z, num_vals, cntr;
     num_vals = len / stride;
     cntr = 0;
-    srand((unsigned)time(0));
+    srand(seed);
     unsigned int r_vals[k];
     unsigned int r;
 
@@ -175,36 +175,45 @@ int calculateNewCentroids(int k, T values[], int len, int dimension, int stride,
     return ret;
 }
 
+template <typename T, typename N>
+void runKMeansWithPicks(int k, T finalCentroids[], T values[], int len, int dimension, int stride,
+        int iterations, T initialPicks[]){
+        int k_len = k * stride;
+        int x;
+
+        // zero newCenters
+        for (x = 0; x < k_len; x++) {
+            finalCentroids[x] = 0;
+        }
+
+        T * c1 = initialPicks;
+        T * c2 = finalCentroids;
+        T * temp;
+        int ret = 1;
+        for (x = 0; x < iterations; x++) {
+            ret = calculateNewCentroids<T, N>(k, values, len, dimension, stride, c1, c2);
+            temp = c1;
+            c1 = c2;
+            c2 = temp;
+            if (ret == 0) {
+                x = iterations;
+            }
+        }
+        set<T, T>(finalCentroids, c1, dimension);
+}
+
 /**
  * Runs the k-means algorithm on dataset values with some initial centroids.
  */
 template <typename T, typename N>
 void runKMeans(int k, T finalCentroids[], T values[], int len, int dimension, int stride,
-        int iterations){
+        int iterations, unsigned int seed){
     int k_len = k * stride;
-    int x;
     T initialPicks [k_len];
-    initialPickHeuristicRandom<T>(k, values, len, dimension, stride, initialPicks);
+    initialPickHeuristicRandom<T>(k, values, len, dimension, stride, initialPicks, seed);
 
-    // zero newCenters
-    for (x = 0; x < k_len; x++) {
-        finalCentroids[x] = 0;
-    }
-
-    T * c1 = initialPicks;
-    T * c2 = finalCentroids;
-    T * temp;
-    int ret = 1;
-    for (x = 0; x < iterations; x++) {
-        ret = calculateNewCentroids<T, N>(k, values, len, dimension, stride, c1, c2);
-        temp = c1;
-        c1 = c2;
-        c2 = temp;
-        if (ret == 0) {
-            x = iterations;
-        }
-    }
-    set<T, T>(finalCentroids, c1, dimension);
+    runKMeansWithPicks<T, N>(k, finalCentroids, values, len, dimension, stride,
+        iterations, initialPicks);
 }
 
 /**
