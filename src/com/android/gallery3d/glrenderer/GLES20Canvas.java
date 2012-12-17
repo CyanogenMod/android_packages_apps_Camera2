@@ -16,6 +16,7 @@
 package com.android.gallery3d.glrenderer;
 
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
@@ -62,6 +63,11 @@ public class GLES20Canvas extends GLCanvas implements GLId {
             0, 1,
             1, 1,
             1, 0,
+    };
+
+    private static final float[] BOUNDS_COORDINATES = {
+        0, 0, 0, 1,
+        1, 1, 0, 1,
     };
 
     private static final String POSITION_ATTRIBUTE = "aPosition";
@@ -247,8 +253,6 @@ public class GLES20Canvas extends GLCanvas implements GLId {
     private int mCountTextureRect = 0;
     private int mCountFillRect = 0;
     private int mCountDrawLine = 0;
-
-    private int mNextTextureId = 1;
 
     // Buffer for framebuffer IDs -- we keep track so we can switch the attached
     // texture.
@@ -560,6 +564,8 @@ public class GLES20Canvas extends GLCanvas implements GLId {
         GLES20.glVertexAttribPointer(params[INDEX_POSITION].handle, COORDS_PER_VERTEX,
                 GLES20.GL_FLOAT, false, VERTEX_STRIDE, offset * VERTEX_STRIDE);
         checkError();
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
+        checkError();
     }
 
     private void draw(ShaderParameter[] params, int type, int count, float x, float y, float width,
@@ -734,6 +740,8 @@ public class GLES20Canvas extends GLCanvas implements GLId {
         int texCoordHandle = mMeshParameters[INDEX_TEXTURE_COORD].handle;
         GLES20.glVertexAttribPointer(texCoordHandle, COORDS_PER_VERTEX, GLES20.GL_FLOAT,
                 false, VERTEX_STRIDE, 0);
+        checkError();
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
         checkError();
 
         GLES20.glEnableVertexAttribArray(positionHandle);
@@ -987,10 +995,9 @@ public class GLES20Canvas extends GLCanvas implements GLId {
 
     @Override
     public int generateTexture() {
-        // Can use anything as a lock. No need to create a new object.
-        synchronized (mTempIntArray) {
-            return mNextTextureId++;
-        }
+        GLES20.glGenTextures(1, mTempIntArray, 0);
+        checkError();
+        return mTempIntArray[0];
     }
 
     @Override
@@ -1044,7 +1051,7 @@ public class GLES20Canvas extends GLCanvas implements GLId {
         GLES20.glStencilFunc(func, 1, 1);
     }
 
-    private static void checkError() {
+    public static void checkError() {
         int error = GLES20.glGetError();
         if (error != 0) {
             Throwable t = new Throwable();
@@ -1065,4 +1072,26 @@ public class GLES20Canvas extends GLCanvas implements GLId {
         Log.v(TAG, b.toString());
     }
 
+    @Override
+    public void recoverFromLightCycle() {
+        GLES20.glViewport(0, 0, mWidth, mHeight);
+        int blendingIndex = mBlendings.size() - 1;
+        Blending currentBlending = mBlendings.get(blendingIndex);
+        mBlendings.set(blendingIndex, null);
+        setBlending(currentBlending);
+        GLES20.glDisable(GLES20.GL_DEPTH_TEST);
+    }
+
+    @Override
+    public void getBounds(Rect bounds, int x, int y, int width, int height) {
+        Matrix.translateM(mTempMatrix, 0, mMatrices, mCurrentMatrixIndex, x, y, 0f);
+        Matrix.scaleM(mTempMatrix, 0, width, height, 1f);
+        Matrix.multiplyMV(mTempMatrix, MATRIX_SIZE, mTempMatrix, 0, BOUNDS_COORDINATES, 0);
+        Matrix.multiplyMV(mTempMatrix, MATRIX_SIZE + 4, mTempMatrix, 0, BOUNDS_COORDINATES, 4);
+        bounds.left = Math.round(mTempMatrix[MATRIX_SIZE]);
+        bounds.right = Math.round(mTempMatrix[MATRIX_SIZE + 4]);
+        bounds.top = Math.round(mTempMatrix[MATRIX_SIZE + 1]);
+        bounds.bottom = Math.round(mTempMatrix[MATRIX_SIZE + 5]);
+        bounds.sort();
+    }
 }
