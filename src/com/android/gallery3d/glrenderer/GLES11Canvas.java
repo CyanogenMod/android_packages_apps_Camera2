@@ -17,6 +17,7 @@
 package com.android.gallery3d.glrenderer;
 
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
@@ -1035,5 +1036,15 @@ public class GLES11Canvas extends GLCanvas {
     public void drawOnlyOutsideStencil(boolean onlyOutside) {
         int func = onlyOutside ? GL11.GL_NOTEQUAL : GL11.GL_ALWAYS;
         mGL.glStencilFunc(func, 1, 1);
+    }
+
+    @Override
+    public void recoverFromLightCycle() {
+        // This is only required for GLES20
+    }
+
+    @Override
+    public void getBounds(Rect bounds, int x, int y, int width, int height) {
+        // This is only required for GLES20
     }
 }
