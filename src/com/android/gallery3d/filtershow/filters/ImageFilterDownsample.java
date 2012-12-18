@@ -17,18 +17,22 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.cache.ImageLoader;
 
 public class ImageFilterDownsample extends ImageFilter {
+    private ImageLoader mImageLoader;
 
-    public ImageFilterDownsample() {
+    public ImageFilterDownsample(ImageLoader loader) {
         mName = "Downsample";
         mMaxParameter = 100;
-        mMinParameter = 5;
-        mPreviewParameter = 10;
+        mMinParameter = 1;
+        mPreviewParameter = 3;
         mDefaultParameter = 50;
         mParameter = 50;
+        mImageLoader = loader;
     }
 
     @Override
@@ -51,10 +55,19 @@ public class ImageFilterDownsample extends ImageFilter {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
         int p = mParameter;
+
+        // size of original precached image
+        Rect size = mImageLoader.getOriginalBounds();
+        int orig_w = size.width();
+        int orig_h = size.height();
+
         if (p > 0 && p < 100) {
-            int newWidth =  w * p / 100;
-            int newHeight = h * p / 100;
-            if (newWidth <= 0 || newHeight <= 0) {
+            // scale preview to same size as the resulting bitmap from a "save"
+            int newWidth =  orig_w * p / 100;
+            int newHeight = orig_h * p / 100;
+
+            // only scale preview if preview isn't already scaled enough
+            if (newWidth <= 0 || newHeight <= 0 || newWidth >= w || newHeight >= h) {
                 return bitmap;
             }
             Bitmap ret = Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
