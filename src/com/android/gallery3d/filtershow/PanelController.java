@@ -58,6 +58,7 @@ public class PanelController implements OnClickListener {
     private static int HORIZONTAL_MOVE = 1;
     private static final int ANIM_DURATION = 200;
     private static final String LOGTAG = "PanelController";
+    private boolean mDisableFilterButtons = false;
     private boolean mFixedAspect = false;
 
     public void setFixedAspect(boolean t) {
@@ -357,6 +358,10 @@ public class PanelController implements OnClickListener {
             mCurrentImage.resetParameter();
             mCurrentImage.select();
         }
+        if (mDisableFilterButtons) {
+            mActivity.enableFilterButtons();
+            mDisableFilterButtons = false;
+        }
     }
 
     public boolean onBackPressed() {
@@ -368,6 +373,11 @@ public class PanelController implements OnClickListener {
         mMasterImage.onItemClick(position);
         showPanel(mCurrentPanel);
         mCurrentImage.select();
+        if (mDisableFilterButtons) {
+            mActivity.enableFilterButtons();
+            mActivity.resetHistory();
+            mDisableFilterButtons = false;
+        }
         return false;
     }
 
@@ -587,6 +597,10 @@ public class PanelController implements OnClickListener {
                 String ename = mCurrentImage.getContext().getString(R.string.tinyplanet);
                 mUtilityPanel.setEffectName(ename);
                 ensureFilter(ename);
+                if (!mDisableFilterButtons) {
+                    mActivity.disableFilterButtons();
+                    mDisableFilterButtons = true;
+                }
                 break;
             }
             case R.id.straightenButton: {
