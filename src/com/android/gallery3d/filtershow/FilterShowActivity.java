@@ -320,7 +320,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 new ImageFilterNegative(),
                 new ImageFilterEdge(),
                 new ImageFilterKMeans(),
-                new ImageFilterDownsample()
+                new ImageFilterDownsample(mImageLoader)
         };
 
         for (int i = 0; i < filters.length; i++) {
