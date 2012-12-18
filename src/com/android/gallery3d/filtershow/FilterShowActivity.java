@@ -231,6 +231,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mGeometryButton = (ImageButton) findViewById(R.id.geometryButton);
         mColorsButton = (ImageButton) findViewById(R.id.colorsButton);
 
+        mBottomPanelButtons.add(mFxButton);
+        mBottomPanelButtons.add(mBorderButton);
+        mBottomPanelButtons.add(mGeometryButton);
+        mBottomPanelButtons.add(mColorsButton);
+
         mImageShow.setImageLoader(mImageLoader);
         mImageCurves.setImageLoader(mImageLoader);
         mImageCurves.setMaster(mImageShow);
@@ -796,6 +801,22 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }
     }
 
+    public void disableFilterButtons() {
+        for (ImageButton b : mBottomPanelButtons) {
+            b.setEnabled(false);
+            b.setClickable(false);
+            b.setAlpha(0.4f);
+        }
+    }
+
+    public void enableFilterButtons() {
+        for (ImageButton b : mBottomPanelButtons) {
+            b.setEnabled(true);
+            b.setClickable(true);
+            b.setAlpha(1.0f);
+        }
+    }
+
     // //////////////////////////////////////////////////////////////////////////////
     // imageState panel...
 
@@ -877,7 +898,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         invalidateOptionsMenu();
     }
 
-    private void resetHistory() {
+    void resetHistory() {
         mNullFxFilter.onClick(mNullFxFilter);
         mNullBorderFilter.onClick(mNullBorderFilter);
 
