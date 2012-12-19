@@ -79,6 +79,13 @@ class IfdData {
     }
 
     /**
+     * Removes the tag of the given ID
+     */
+    public void removeTag(short tagId) {
+        mExifTags.remove(tagId);
+    }
+
+    /**
      * Gets the tags count in the IFD.
      */
     public int getTagCount() {

@@ -18,7 +18,6 @@ package com.android.gallery3d.exif;
 
 import android.util.Log;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
@@ -154,6 +153,7 @@ public class ExifParser {
     private int mApp1End;
     private byte[] mDataAboveIfd0;
     private int mIfd0Position;
+    private int mTiffStartPosition;
 
     private final TreeMap<Integer, Object> mCorrespondingEvent = new TreeMap<Integer, Object>();
 
@@ -190,10 +190,13 @@ public class ExifParser {
             throw new ExifInvalidFormatException("Invalid offset " + offset);
         }
         mIfd0Position = (int) offset;
-        registerIfd(IfdId.TYPE_IFD_0, offset);
-        if (offset != DEFAULT_IFD0_OFFSET) {
-            mDataAboveIfd0 = new byte[(int) offset - DEFAULT_IFD0_OFFSET];
-            read(mDataAboveIfd0);
+        mIfdType = IfdId.TYPE_IFD_0;
+        if (isIfdRequested(IfdId.TYPE_IFD_0) || needToParseOffsetsInCurrentIfd()) {
+            registerIfd(IfdId.TYPE_IFD_0, offset);
+            if (offset != DEFAULT_IFD0_OFFSET) {
+                mDataAboveIfd0 = new byte[(int) offset - DEFAULT_IFD0_OFFSET];
+                read(mDataAboveIfd0);
+            }
         }
     }
 
@@ -203,8 +206,8 @@ public class ExifParser {
      * @exception ExifInvalidFormatException
      */
     public static ExifParser parse(InputStream inputStream, int options)
-             throws IOException, ExifInvalidFormatException {
-         return new ExifParser(inputStream, options);
+            throws IOException, ExifInvalidFormatException {
+        return new ExifParser(inputStream, options);
     }
 
     /**
@@ -353,7 +356,8 @@ public class ExifParser {
         switch (mIfdType) {
             case IfdId.TYPE_IFD_0:
                 return isIfdRequested(IfdId.TYPE_IFD_EXIF) || isIfdRequested(IfdId.TYPE_IFD_GPS)
-                        || isIfdRequested(IfdId.TYPE_IFD_INTEROPERABILITY);
+                        || isIfdRequested(IfdId.TYPE_IFD_INTEROPERABILITY)
+                        || isIfdRequested(IfdId.TYPE_IFD_1);
             case IfdId.TYPE_IFD_1:
                 return isThumbnailRequested();
             case IfdId.TYPE_IFD_EXIF:
@@ -515,6 +519,8 @@ public class ExifParser {
         } else {
             readFullTagValue(tag);
             mTiffStream.skip(4 - dataSize);
+            // Set the offset to the position of value.
+            tag.setOffset(mTiffStream.getReadByteCount() - 4);
         }
         return tag;
     }
@@ -617,42 +623,42 @@ public class ExifParser {
                     tag.setValue(value);
                 }
                 break;
-          case ExifTag.TYPE_UNSIGNED_RATIONAL:
-              {
-                  Rational value[] = new Rational[tag.getComponentCount()];
-                  for (int i = 0, n = value.length; i < n; i++) {
-                      value[i] = readUnsignedRational();
-                  }
-                  tag.setValue(value);
-              }
-              break;
-          case ExifTag.TYPE_UNSIGNED_SHORT:
-              {
-                  int value[] = new int[tag.getComponentCount()];
-                  for (int i = 0, n = value.length; i < n; i++) {
-                      value[i] = readUnsignedShort();
-                  }
-                  tag.setValue(value);
-              }
-              break;
-          case ExifTag.TYPE_LONG:
-              {
-                  int value[] = new int[tag.getComponentCount()];
-                  for (int i = 0, n = value.length; i < n; i++) {
-                      value[i] = readLong();
-                  }
-                  tag.setValue(value);
-              }
-              break;
-          case ExifTag.TYPE_RATIONAL:
-              {
-                  Rational value[] = new Rational[tag.getComponentCount()];
-                  for (int i = 0, n = value.length; i < n; i++) {
-                      value[i] = readRational();
-                  }
-                  tag.setValue(value);
-              }
-              break;
+            case ExifTag.TYPE_UNSIGNED_RATIONAL:
+                {
+                    Rational value[] = new Rational[tag.getComponentCount()];
+                    for (int i = 0, n = value.length; i < n; i++) {
+                        value[i] = readUnsignedRational();
+                    }
+                    tag.setValue(value);
+                }
+                break;
+            case ExifTag.TYPE_UNSIGNED_SHORT:
+                {
+                    int value[] = new int[tag.getComponentCount()];
+                    for (int i = 0, n = value.length; i < n; i++) {
+                        value[i] = readUnsignedShort();
+                    }
+                    tag.setValue(value);
+                }
+                break;
+            case ExifTag.TYPE_LONG:
+                {
+                    int value[] = new int[tag.getComponentCount()];
+                    for (int i = 0, n = value.length; i < n; i++) {
+                        value[i] = readLong();
+                    }
+                    tag.setValue(value);
+                }
+                break;
+            case ExifTag.TYPE_RATIONAL:
+                {
+                    Rational value[] = new Rational[tag.getComponentCount()];
+                    for (int i = 0, n = value.length; i < n; i++) {
+                        value[i] = readRational();
+                    }
+                    tag.setValue(value);
+                }
+                break;
         }
     }
 
@@ -675,7 +681,7 @@ public class ExifParser {
 
     private boolean seekTiffData(InputStream inputStream) throws IOException,
             ExifInvalidFormatException {
-        DataInputStream dataStream = new DataInputStream(inputStream);
+        CountedDataInputStream dataStream = new CountedDataInputStream(inputStream);
 
         if (dataStream.readShort() != JpegHeader.SOI) {
             throw new ExifInvalidFormatException("Invalid JPEG format");
@@ -695,6 +701,7 @@ public class ExifParser {
                     headerTail = dataStream.readShort();
                     length -= 6;
                     if (header == EXIF_HEADER && headerTail == EXIF_HEADER_TAIL) {
+                        mTiffStartPosition = dataStream.getReadByteCount();
                         mApp1End = length;
                         return true;
                     }
@@ -707,6 +714,10 @@ public class ExifParser {
             marker = dataStream.readShort();
         }
         return false;
+    }
+
+    int getTiffStartPosition() {
+        return mTiffStartPosition;
     }
 
     /**

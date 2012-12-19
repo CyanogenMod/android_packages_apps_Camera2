@@ -56,6 +56,7 @@ public class ExifTestRunner extends InstrumentationTestRunner {
         addAllTestsFromExifTestCase(ExifParserTest.class, suite);
         addAllTestsFromExifTestCase(ExifReaderTest.class, suite);
         addAllTestsFromExifTestCase(ExifOutputStreamTest.class, suite);
+        addAllTestsFromExifTestCase(ExifModifierTest.class, suite);
         return suite;
     }
 
