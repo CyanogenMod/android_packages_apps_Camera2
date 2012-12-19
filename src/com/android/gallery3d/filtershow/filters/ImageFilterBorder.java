@@ -21,7 +21,11 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
+import com.android.gallery3d.R;
+
 public class ImageFilterBorder extends ImageFilter {
+    private static final float NINEPATCH_ICON_SCALING = 10;
+    private static final float BITMAP_ICON_SCALING = 1 / 3.0f;
     Drawable mNinePatch = null;
 
     @Override
@@ -40,8 +44,28 @@ public class ImageFilterBorder extends ImageFilter {
     @Override
     public boolean isNil() {
         if (mNinePatch == null) {
-            return  true;
+            return true;
         }
+        return false;
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.borders;
+    }
+
+    @Override
+    public boolean showParameterValue() {
+        return false;
+    }
+
+    @Override
+    public boolean showEditingControls() {
+        return false;
+    }
+
+    @Override
+    public boolean showUtilityPanel() {
         return false;
     }
 
@@ -66,21 +90,34 @@ public class ImageFilterBorder extends ImageFilter {
         mNinePatch = ninePatch;
     }
 
+    public Bitmap applyHelper(Bitmap bitmap, float scale1, float scale2 ) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        Rect bounds = new Rect(0, 0, (int) (w * scale1), (int) (h * scale1));
+        Canvas canvas = new Canvas(bitmap);
+        canvas.scale(scale2, scale2);
+        mNinePatch.setBounds(bounds);
+        mNinePatch.draw(canvas);
+        return bitmap;
+    }
+
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         if (mNinePatch == null) {
             return bitmap;
         }
+        float scale2 = scaleFactor * 2.0f;
+        float scale1 = 1 / scale2;
+        return applyHelper(bitmap, scale1, scale2);
+    }
 
-        int w = bitmap.getWidth();
-        int h = bitmap.getHeight();
-
-        float scale = scaleFactor * 2.0f;
-        Rect bounds = new Rect(0, 0, (int) (w / scale), (int) (h / scale));
-        Canvas canvas = new Canvas(bitmap);
-        canvas.scale(scale, scale);
-        mNinePatch.setBounds(bounds);
-        mNinePatch.draw(canvas);
-        return bitmap;
+    @Override
+    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        if (mNinePatch == null) {
+            return bitmap;
+        }
+        float scale1 = NINEPATCH_ICON_SCALING;
+        float scale2 = BITMAP_ICON_SCALING;
+        return applyHelper(bitmap, scale1, scale2);
     }
 }

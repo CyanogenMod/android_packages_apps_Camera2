@@ -17,12 +17,14 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 
 public class ImageFilterDownsample extends ImageFilter {
+    private static final int ICON_DOWNSAMPLE_FRACTION = 8;
     private ImageLoader mImageLoader;
 
     public ImageFilterDownsample(ImageLoader loader) {
@@ -63,7 +65,7 @@ public class ImageFilterDownsample extends ImageFilter {
 
         if (p > 0 && p < 100) {
             // scale preview to same size as the resulting bitmap from a "save"
-            int newWidth =  orig_w * p / 100;
+            int newWidth = orig_w * p / 100;
             int newHeight = orig_h * p / 100;
 
             // only scale preview if preview isn't already scaled enough
@@ -76,6 +78,19 @@ public class ImageFilterDownsample extends ImageFilter {
             }
             return ret;
         }
+        return bitmap;
+    }
+
+    @Override
+    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        Bitmap ret = Bitmap.createScaledBitmap(bitmap, w / ICON_DOWNSAMPLE_FRACTION, h
+                / ICON_DOWNSAMPLE_FRACTION, false);
+        Rect dst = new Rect(0, 0, w, h);
+        Rect src = new Rect(0, 0, w / ICON_DOWNSAMPLE_FRACTION, h / ICON_DOWNSAMPLE_FRACTION);
+        Canvas c = new Canvas(bitmap);
+        c.drawBitmap(ret, src, dst, null);
         return bitmap;
     }
 }

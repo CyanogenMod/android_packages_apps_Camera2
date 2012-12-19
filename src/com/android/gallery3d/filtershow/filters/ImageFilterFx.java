@@ -21,10 +21,18 @@ import android.graphics.Bitmap;
 public class ImageFilterFx extends ImageFilter {
     private static final String TAG = "ImageFilterFx";
     Bitmap fxBitmap;
-    public ImageFilterFx(Bitmap fxBitmap,String name) {
+    int mNameResource = 0;
+
+    public ImageFilterFx(Bitmap fxBitmap, String name, int nameResource) {
         setFilterType(TYPE_FX);
         mName = name;
         this.fxBitmap = fxBitmap;
+        mNameResource = nameResource;
+    }
+
+    @Override
+    public int getTextId() {
+        return mNameResource;
     }
 
     @Override
@@ -40,6 +48,21 @@ public class ImageFilterFx extends ImageFilter {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean showParameterValue() {
+        return false;
+    }
+
+    @Override
+    public boolean showEditingControls() {
+        return false;
+    }
+
+    @Override
+    public boolean showUtilityPanel() {
+        return false;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h,Bitmap  fxBitmap, int fxw, int fxh);

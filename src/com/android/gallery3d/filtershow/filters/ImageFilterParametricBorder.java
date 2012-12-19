@@ -23,6 +23,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 
+import com.android.gallery3d.R;
+
 public class ImageFilterParametricBorder extends ImageFilter {
     private int mBorderColor = Color.WHITE;
     private int mBorderSize = 10;
@@ -31,6 +33,26 @@ public class ImageFilterParametricBorder extends ImageFilter {
     public ImageFilterParametricBorder() {
         setFilterType(TYPE_BORDER);
         mName = "Border";
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.borders;
+    }
+
+    @Override
+    public boolean showParameterValue() {
+        return false;
+    }
+
+    @Override
+    public boolean showEditingControls() {
+        return false;
+    }
+
+    @Override
+    public boolean showUtilityPanel() {
+        return false;
     }
 
     public ImageFilterParametricBorder(int color, int size, int radius) {
@@ -78,15 +100,11 @@ public class ImageFilterParametricBorder extends ImageFilter {
         mBorderCornerRadius = radius;
     }
 
-    @Override
-    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
-        Canvas canvas = new Canvas(bitmap);
+    private void applyHelper(Canvas canvas, int w, int h) {
         Path border = new Path();
         border.moveTo(0, 0);
-        int w = bitmap.getWidth();
-        int h = bitmap.getHeight();
-        float bs = mBorderSize / 100.0f * bitmap.getWidth();
-        float r = mBorderCornerRadius / 100.0f * bitmap.getWidth();
+        float bs = mBorderSize / 100.0f * w;
+        float r = mBorderCornerRadius / 100.0f * w;
         border.lineTo(0, h);
         border.lineTo(w, h);
         border.lineTo(w, 0);
@@ -98,6 +116,19 @@ public class ImageFilterParametricBorder extends ImageFilter {
         paint.setAntiAlias(true);
         paint.setColor(mBorderColor);
         canvas.drawPath(border, paint);
+    }
+
+    @Override
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+       Canvas canvas = new Canvas(bitmap);
+       applyHelper(canvas, bitmap.getWidth(), bitmap.getHeight());
+       return bitmap;
+    }
+
+    @Override
+    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        Canvas canvas = new Canvas(bitmap);
+        applyHelper(canvas, bitmap.getWidth() * 4, bitmap.getHeight() * 4);
         return bitmap;
     }
 
