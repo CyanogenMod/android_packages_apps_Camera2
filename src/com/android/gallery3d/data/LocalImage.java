@@ -36,6 +36,10 @@ import com.android.gallery3d.app.PanoramaMetadataSupport;
 import com.android.gallery3d.app.StitchingProgressManager;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.BitmapUtils;
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.exif.ExifInvalidFormatException;
+import com.android.gallery3d.exif.ExifModifier;
+import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
@@ -43,6 +47,8 @@ import com.android.gallery3d.util.UpdateHelper;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel.MapMode;
 
 // LocalImage represents an image in the local storage.
 public class LocalImage extends LocalMediaItem {
@@ -270,16 +276,16 @@ public class LocalImage extends LocalMediaItem {
                 new String[]{String.valueOf(id)});
     }
 
-    private static String getExifOrientation(int orientation) {
+    private static int getExifOrientation(int orientation) {
         switch (orientation) {
             case 0:
-                return String.valueOf(ExifInterface.ORIENTATION_NORMAL);
+                return ExifInterface.ORIENTATION_NORMAL;
             case 90:
-                return String.valueOf(ExifInterface.ORIENTATION_ROTATE_90);
+                return ExifInterface.ORIENTATION_ROTATE_90;
             case 180:
-                return String.valueOf(ExifInterface.ORIENTATION_ROTATE_180);
+                return ExifInterface.ORIENTATION_ROTATE_180;
             case 270:
-                return String.valueOf(ExifInterface.ORIENTATION_ROTATE_270);
+                return ExifInterface.ORIENTATION_ROTATE_270;
             default:
                 throw new AssertionError("invalid: " + orientation);
         }
@@ -294,18 +300,35 @@ public class LocalImage extends LocalMediaItem {
         if (rotation < 0) rotation += 360;
 
         if (mimeType.equalsIgnoreCase("image/jpeg")) {
+            RandomAccessFile file = null;
             try {
-                ExifInterface exif = new ExifInterface(filePath);
-                exif.setAttribute(ExifInterface.TAG_ORIENTATION,
-                        getExifOrientation(rotation));
-                exif.saveAttributes();
+                // Because most of the images contain the orientation tag, we
+                // use ExifModifier to modify the tag for better efficiency.
+                // If the tag doesn't exist, ExifInterface will be used to replace the entire
+                // header.
+                file = new RandomAccessFile(filePath, "rw");
+                ExifModifier modifier = new ExifModifier(
+                                file.getChannel().map(MapMode.READ_WRITE, 0, file.length()));
+                ExifTag tag = ExifTag.buildTag(ExifTag.TAG_ORIENTATION);
+                tag.setValue(getExifOrientation(rotation));
+                modifier.modifyTag(tag);
+                if (!modifier.commit()) {
+                    // Need to change the file size, use ExifInterface instead.
+                    ExifInterface exif = new ExifInterface(filePath);
+                    exif.setAttribute(ExifInterface.TAG_ORIENTATION,
+                            String.valueOf(getExifOrientation(rotation)));
+                    exif.saveAttributes();
+                    // We need to update the filesize as well
+                    fileSize = new File(filePath).length();
+                    values.put(Images.Media.SIZE, fileSize);
+                }
             } catch (IOException e) {
                 Log.w(TAG, "cannot set exif data: " + filePath);
+            } catch (ExifInvalidFormatException e) {
+                Log.w(TAG, "cannot set exif data: " + filePath);
+            } finally {
+                Utils.closeSilently(file);
             }
-
-            // We need to update the filesize as well
-            fileSize = new File(filePath).length();
-            values.put(Images.Media.SIZE, fileSize);
         }
 
         values.put(Images.Media.ORIENTATION, rotation);
