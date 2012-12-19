@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.data;
 
-import android.media.ExifInterface;
-
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.exif.ExifData;
