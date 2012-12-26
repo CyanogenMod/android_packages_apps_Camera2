@@ -46,7 +46,6 @@ public class AlbumLabelMaker {
     private final LazyLoadedBitmap mLocalSetIcon;
     private final LazyLoadedBitmap mPicasaIcon;
     private final LazyLoadedBitmap mCameraIcon;
-    private final LazyLoadedBitmap mMtpIcon;
 
     public AlbumLabelMaker(Context context, AlbumSetSlotRenderer.LabelSpec spec) {
         mContext = context;
@@ -57,7 +56,6 @@ public class AlbumLabelMaker {
         mLocalSetIcon = new LazyLoadedBitmap(R.drawable.frame_overlay_gallery_folder);
         mPicasaIcon = new LazyLoadedBitmap(R.drawable.frame_overlay_gallery_picasa);
         mCameraIcon = new LazyLoadedBitmap(R.drawable.frame_overlay_gallery_camera);
-        mMtpIcon = new LazyLoadedBitmap(R.drawable.frame_overlay_gallery_ptp);
     }
 
     public static int getBorderSize() {
@@ -70,8 +68,6 @@ public class AlbumLabelMaker {
                 return mCameraIcon.get();
             case DataSourceType.TYPE_LOCAL:
                 return mLocalSetIcon.get();
-            case DataSourceType.TYPE_MTP:
-                return mMtpIcon.get();
             case DataSourceType.TYPE_PICASA:
                 return mPicasaIcon.get();
         }

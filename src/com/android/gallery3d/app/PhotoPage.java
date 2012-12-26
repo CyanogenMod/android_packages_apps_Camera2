@@ -51,7 +51,6 @@ import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaObject.PanoramaSupportCallback;
 import com.android.gallery3d.data.MediaSet;
-import com.android.gallery3d.data.MtpSource;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.data.SecureAlbum;
 import com.android.gallery3d.data.SecureSource;
@@ -64,7 +63,6 @@ import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
 import com.android.gallery3d.ui.DetailsHelper.DetailsSource;
 import com.android.gallery3d.ui.GLView;
-import com.android.gallery3d.ui.ImportCompleteListener;
 import com.android.gallery3d.ui.MenuExecutor;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.SelectionManager;
@@ -800,9 +798,6 @@ public abstract class PhotoPage extends ActivityState implements
         if (mCurrentPhoto.getMediaType() != MediaObject.MEDIA_TYPE_IMAGE) {
             return false;
         }
-        if (MtpSource.isMtpPath(mOriginalSetPathString)) {
-            return false;
-        }
         return true;
     }
 
@@ -1097,12 +1092,6 @@ public abstract class PhotoPage extends ActivityState implements
                 mSelectionManager.deSelectAll();
                 mSelectionManager.toggle(path);
                 mMenuExecutor.onMenuClicked(item, confirmMsg, mConfirmDialogListener);
-                return true;
-            case R.id.action_import:
-                mSelectionManager.deSelectAll();
-                mSelectionManager.toggle(path);
-                mMenuExecutor.onMenuClicked(item, confirmMsg,
-                        new ImportCompleteListener(mActivity));
                 return true;
             default :
                 return false;
