@@ -178,7 +178,6 @@ public class MenuExecutor {
         boolean supportCache = (supported & MediaObject.SUPPORT_CACHE) != 0;
         boolean supportEdit = (supported & MediaObject.SUPPORT_EDIT) != 0;
         boolean supportInfo = (supported & MediaObject.SUPPORT_INFO) != 0;
-        boolean supportImport = (supported & MediaObject.SUPPORT_IMPORT) != 0;
 
         setMenuItemVisible(menu, R.id.action_delete, supportDelete);
         setMenuItemVisible(menu, R.id.action_rotate_ccw, supportRotate);
@@ -193,7 +192,6 @@ public class MenuExecutor {
         setMenuItemVisible(menu, R.id.action_show_on_map, supportShowOnMap);
         setMenuItemVisible(menu, R.id.action_edit, supportEdit);
         setMenuItemVisible(menu, R.id.action_details, supportInfo);
-        setMenuItemVisible(menu, R.id.action_import, supportImport);
     }
 
     public static void updateMenuForPanorama(Menu menu, boolean shareAsPanorama360,
@@ -270,9 +268,6 @@ public class MenuExecutor {
                 break;
             case R.id.action_show_on_map:
                 title = R.string.show_on_map;
-                break;
-            case R.id.action_import:
-                title = R.string.Import;
                 break;
             default:
                 return;
@@ -392,11 +387,6 @@ public class MenuExecutor {
                 if (GalleryUtils.isValidLocation(latlng[0], latlng[1])) {
                     GalleryUtils.showOnMap(mActivity, latlng[0], latlng[1]);
                 }
-                break;
-            }
-            case R.id.action_import: {
-                MediaObject obj = manager.getMediaObject(path);
-                result = obj.Import();
                 break;
             }
             default:

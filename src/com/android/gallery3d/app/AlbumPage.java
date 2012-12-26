@@ -38,7 +38,6 @@ import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
-import com.android.gallery3d.data.MtpDevice;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.filtershow.CropExtras;
 import com.android.gallery3d.filtershow.FilterShowActivity;
@@ -318,7 +317,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         DataManager dm = mActivity.getDataManager();
         Activity activity = mActivity;
         if (mData.getString(Gallery.EXTRA_CROP) != null) {
-            // TODO: Handle MtpImagew
             Uri uri = dm.getContentUri(item.getPath());
             Intent intent = new Intent(FilterShowActivity.CROP_ACTION, uri)
                     .addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT)
@@ -374,7 +372,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         mDetailsSource = new MyDetailsSource();
         Context context = mActivity.getAndroidContext();
 
-        // Enable auto-select-all for mtp album
         if (data.getBoolean(KEY_AUTO_SELECT_ALL)) {
             mSelectionManager.selectAll();
         }
@@ -553,9 +550,6 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
         } else {
             inflator.inflate(R.menu.album, menu);
             actionBar.setTitle(mMediaSet.getName());
-
-            menu.findItem(R.id.action_slideshow)
-                    .setVisible(!(mMediaSet instanceof MtpDevice));
 
             FilterUtils.setupMenuItems(actionBar, mMediaSetPath, true);
 

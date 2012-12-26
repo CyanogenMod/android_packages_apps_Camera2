@@ -55,7 +55,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
 
     private static final int SUPPORT_MULTIPLE_MASK = MediaObject.SUPPORT_DELETE
             | MediaObject.SUPPORT_ROTATE | MediaObject.SUPPORT_SHARE
-            | MediaObject.SUPPORT_CACHE | MediaObject.SUPPORT_IMPORT;
+            | MediaObject.SUPPORT_CACHE;
 
     public interface ActionModeListener {
         public boolean onActionItemClicked(MenuItem item);
@@ -173,9 +173,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
             ProgressListener listener = null;
             String confirmMsg = null;
             int action = item.getItemId();
-            if (action == R.id.action_import) {
-                listener = new ImportCompleteListener(mActivity);
-            } else if (action == R.id.action_delete) {
+            if (action == R.id.action_delete) {
                 confirmMsg = mActivity.getResources().getQuantityString(
                         R.plurals.delete_selection, mSelectionManager.getSelectedCount());
                 if (mDeleteProgressListener == null) {
