@@ -523,4 +523,23 @@
 
     <!-- The label on the button that will save an edited image -->
     <string name="save" msgid="8140440041190264400">Save</string>
+
+    <!--  Text of notification message which is shown when user attaches camera -->
+    <string name="ingest_scanning" msgid="2048262851775139720">Scanning content...</string>
+
+    <!-- String indicating how many media items from the camera have been scanned -->
+    <plurals name="ingest_number_of_items_scanned">
+        <item quantity="zero">%1$d items scanned</item>
+        <item quantity="one">%1$d item scanned</item>
+        <item quantity="other">%1$d items scanned</item>
+    </plurals>
+
+    <!--  Status message shown when content from the camera is being sorted -->
+    <string name="ingest_sorting" msgid="624687230903648118">Sorting...</string>
+
+    <!--  Status message shown when scanning the content from the camera has completed -->
+    <string name="ingest_scanning_done">Scanning done</string>
+
+    <!--  Status message shown when content from an external camera is being imported -->
+    <string name="ingest_importing">Importing...</string>
 </resources>

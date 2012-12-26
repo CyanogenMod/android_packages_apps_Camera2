@@ -40,4 +40,7 @@
     <color name="slideshow_background">#1A1A1A</color>
 
     <color name="button_dark_transparent_background">#6000</color>
+
+    <color name="ingest_highlight_semitransparent">#8833b5e5</color>
+    <color name="ingest_date_tile_text">#33b5e5</color>
 </resources>
