@@ -70,6 +70,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilterKMeans;
 import com.android.gallery3d.filtershow.filters.ImageFilterNegative;
 import com.android.gallery3d.filtershow.filters.ImageFilterParametricBorder;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
+import com.android.gallery3d.filtershow.filters.ImageFilterRedEye;
 import com.android.gallery3d.filtershow.filters.ImageFilterSaturated;
 import com.android.gallery3d.filtershow.filters.ImageFilterShadows;
 import com.android.gallery3d.filtershow.filters.ImageFilterSharpen;
@@ -340,6 +341,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             mPanelController.addFilter(filters[i]);
             listColors.addView(fView);
         }
+        mPanelController.addFilter(new ImageFilterRedEye());
 
         mPanelController.addView(findViewById(R.id.applyEffect));
         mPanelController.addView(findViewById(R.id.pickCurvesChannel));
