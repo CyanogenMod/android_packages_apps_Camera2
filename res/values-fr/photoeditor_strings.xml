@@ -16,51 +16,51 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="photoeditor_name" msgid="4738587346771969697">"Photo Studio"</string>
-    <string name="loading_failure" msgid="7890360277163832130">"Impossible de charger la photo."</string>
-    <string name="saving_failure" msgid="8229491575433743974">"Imposs. enregistrer photo retouchée."</string>
-    <string name="photo_saved" msgid="6163006724627682202">"Photo retouchée enregistrée dans <xliff:g id="FOLDER_NAME">%s</xliff:g>."</string>
-    <string name="discard_unsaved_photo" msgid="2353274490633681946">"Annuler modifications non enregistrées ?"</string>
-    <string name="yes" msgid="5402582493291792293">"Oui"</string>
-    <string name="save" msgid="5516670392524294967">"ENREG."</string>
-    <string name="autofix" msgid="1663414996270538748">"Correction auto"</string>
-    <string name="crop" msgid="7598378507763334041">"Rogner"</string>
-    <string name="crossprocess" msgid="4173724489001742342">"Traitement croisé"</string>
-    <string name="documentary" msgid="50396326708699797">"Documentaire"</string>
-    <string name="doodle" msgid="1686409894518940990">"Gribouillage"</string>
-    <string name="duotone" msgid="8145893940788467106">"Deux tons"</string>
-    <string name="facelift" msgid="6205748523156172637">"Halo visage"</string>
-    <string name="facetan" msgid="4412831806626044111">"Bronzage visage"</string>
-    <string name="filllight" msgid="2644989991700022526">"Éclairage d\'appoint"</string>
-    <string name="fisheye" msgid="6037488646928998921">"Objectif fisheye"</string>
-    <string name="flip" msgid="2357692401826287480">"Retourner"</string>
-    <string name="grain" msgid="7487585304579789098">"Grain"</string>
-    <string name="grayscale" msgid="7641563843060945228">"N&amp;B"</string>
-    <string name="accessibility_black_and_white" msgid="1156382046161392389">"Noir et blanc"</string>
-    <string name="highlight" msgid="3902653944386623972">"Reflets"</string>
-    <string name="lomoish" msgid="1270032154357186736">"Lomographie"</string>
-    <string name="negative" msgid="1985508917342811252">"Négatif"</string>
-    <string name="posterize" msgid="4139212359561383385">"Postérisation"</string>
-    <string name="redeye" msgid="4958448806369928239">"Yeux rouges"</string>
-    <string name="rotate" msgid="6607597269792373083">"Rotation"</string>
-    <string name="saturation" msgid="8621322012271169931">"Saturation"</string>
-    <string name="sepia" msgid="7978093531824705601">"Sépia"</string>
-    <string name="shadow" msgid="8235188588101973090">"Ombres"</string>
-    <string name="sharpen" msgid="8449662378104403230">"Netteté"</string>
-    <string name="straighten" msgid="5217801513491493491">"Redresser"</string>
-    <string name="temperature" msgid="1607987938521534517">"Chaud"</string>
-    <string name="tint" msgid="154435943863418434">"Coloration"</string>
-    <string name="vignette" msgid="7648125924662648282">"Vignetage"</string>
-    <string name="crop_tooltip" msgid="8794037869706891710">"Faire glisser les marqueurs pour rogner la photo"</string>
-    <string name="doodle_tooltip" msgid="2902117272374362915">"Dessiner sur la photo pour gribouiller"</string>
-    <string name="flip_tooltip" msgid="2700943256714731737">"Faire glisser la photo pour la retourner"</string>
-    <string name="redeye_tooltip" msgid="4183695928490874014">"Appuyer sur yeux rouges pour les effacer"</string>
-    <string name="rotate_tooltip" msgid="7008602969130734229">"Faire glisser la photo pour la faire pivoter"</string>
-    <string name="straighten_tooltip" msgid="4846317027139212339">"Faire glisser la photo pour la redresser"</string>
-    <string name="photoeditor_exposure" msgid="560535856805042987">"Effets d\'exposition"</string>
-    <string name="photoeditor_color" msgid="834210916165605468">"Effets de couleur"</string>
-    <string name="photoeditor_artistic" msgid="2810641816416597464">"Effets artistiques"</string>
-    <string name="photoeditor_fix" msgid="6441595584425037477">"Retoucher"</string>
-    <string name="photoeditor_undo" msgid="4831462549862253564">"Annuler"</string>
-    <string name="photoeditor_redo" msgid="5999984591376273768">"Rétablir"</string>
+    <string name="photoeditor_name" msgid="2141682370266509503">"Studio photo"</string>
+    <string name="loading_failure" msgid="4430965264692871140">"Impossible de charger la photo."</string>
+    <string name="saving_failure" msgid="7896222027047170982">"Impossible d\'enregistrer la photo retouchée."</string>
+    <string name="photo_saved" msgid="358760800912053916">"Photo retouchée enregistrée dans \"<xliff:g id="FOLDER_NAME">%s</xliff:g>\"."</string>
+    <string name="discard_unsaved_photo" msgid="7621529106313330133">"Annuler modifications non enregistrées ?"</string>
+    <string name="yes" msgid="6281719750476942468">"Oui"</string>
+    <string name="save" msgid="8861201735155829719">"ENREGIS."</string>
+    <string name="autofix" msgid="7944390017263652926">"Correction automatique"</string>
+    <string name="crop" msgid="6491363680194796014">"Rogner"</string>
+    <string name="crossprocess" msgid="1472013603094183614">"Traitement croisé"</string>
+    <string name="documentary" msgid="3241380167998037384">"Documentaire"</string>
+    <string name="doodle" msgid="7378447840618633191">"Griffonnage"</string>
+    <string name="duotone" msgid="3248891724790119677">"Deux tons"</string>
+    <string name="facelift" msgid="1485390158100614056">"Halo visage"</string>
+    <string name="facetan" msgid="3921463359584460598">"Visage bronzé"</string>
+    <string name="filllight" msgid="5228480587177464589">"Éclairage appoint"</string>
+    <string name="fisheye" msgid="3102157475164320675">"Fisheye"</string>
+    <string name="flip" msgid="404825526098985907">"Retourner"</string>
+    <string name="grain" msgid="8336064860901705844">"Grain"</string>
+    <string name="grayscale" msgid="895511627632504167">"N&amp;B"</string>
+    <string name="accessibility_black_and_white" msgid="1304436215071513173">"Noir et blanc"</string>
+    <string name="highlight" msgid="7206397969888227366">"Reflets"</string>
+    <string name="lomoish" msgid="5630441654104635556">"Lomographie"</string>
+    <string name="negative" msgid="608235382589213651">"Négatif"</string>
+    <string name="posterize" msgid="933491230280844273">"Postérisation"</string>
+    <string name="redeye" msgid="8399041285845316254">"Yeux rouges"</string>
+    <string name="rotate" msgid="1799940414619421832">"Rotation"</string>
+    <string name="saturation" msgid="1624207084133899802">"Saturation"</string>
+    <string name="sepia" msgid="6352460579372924828">"Sépia"</string>
+    <string name="shadow" msgid="6032230441080829394">"Ombres"</string>
+    <string name="sharpen" msgid="4613973349599918590">"Netteté"</string>
+    <string name="straighten" msgid="4551302289295998179">"Redresser"</string>
+    <string name="temperature" msgid="919852023864669874">"Chaleur"</string>
+    <string name="tint" msgid="5176938985727714799">"Coloration"</string>
+    <string name="vignette" msgid="4858893727790879554">"Vignetage"</string>
+    <string name="crop_tooltip" msgid="5028271751720427003">"Faire glisser marqueurs pour rogner photo"</string>
+    <string name="doodle_tooltip" msgid="652340030415979327">"Griffonner sur la photo"</string>
+    <string name="flip_tooltip" msgid="2442349154773120409">"Faire glisser la photo pour la retourner"</string>
+    <string name="redeye_tooltip" msgid="8317077842047241049">"Appuyer sur yeux rouges pour les effacer"</string>
+    <string name="rotate_tooltip" msgid="4675156711699347421">"Faire glisser pour faire pivoter"</string>
+    <string name="straighten_tooltip" msgid="2512346096190533095">"Faire glisser pour redresser"</string>
+    <string name="photoeditor_exposure" msgid="460371724772128171">"Effets d\'exposition"</string>
+    <string name="photoeditor_color" msgid="1026541951500898735">"Effets de couleur"</string>
+    <string name="photoeditor_artistic" msgid="7730603034092865949">"Effets artistiques"</string>
+    <string name="photoeditor_fix" msgid="3812167922898325515">"Retoucher"</string>
+    <string name="photoeditor_undo" msgid="6702301566524836996">"Annuler"</string>
+    <string name="photoeditor_redo" msgid="5203739560744044128">"Rétablir"</string>
 </resources>
