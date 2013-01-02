@@ -16,51 +16,51 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="photoeditor_name" msgid="4738587346771969697">"Estudi de fotografia"</string>
-    <string name="loading_failure" msgid="7890360277163832130">"No s\'ha pogut carregar la foto"</string>
-    <string name="saving_failure" msgid="8229491575433743974">"No s\'ha pogut desar la foto editada"</string>
-    <string name="photo_saved" msgid="6163006724627682202">"S\'ha desat la foto editada a <xliff:g id="FOLDER_NAME">%s</xliff:g>"</string>
-    <string name="discard_unsaved_photo" msgid="2353274490633681946">"Vols descartar els canvis no desats?"</string>
-    <string name="yes" msgid="5402582493291792293">"Sí"</string>
-    <string name="save" msgid="5516670392524294967">"DESA"</string>
-    <string name="autofix" msgid="1663414996270538748">"Correcció automàtica"</string>
-    <string name="crop" msgid="7598378507763334041">"Retalla"</string>
-    <string name="crossprocess" msgid="4173724489001742342">"Procés creuat"</string>
-    <string name="documentary" msgid="50396326708699797">"Documental"</string>
-    <string name="doodle" msgid="1686409894518940990">"Gargots"</string>
-    <string name="duotone" msgid="8145893940788467106">"Dos tons"</string>
-    <string name="facelift" msgid="6205748523156172637">"Brillantor cara"</string>
-    <string name="facetan" msgid="4412831806626044111">"Pell morena"</string>
-    <string name="filllight" msgid="2644989991700022526">"Retroil·lumin."</string>
-    <string name="fisheye" msgid="6037488646928998921">"Ull de peix"</string>
-    <string name="flip" msgid="2357692401826287480">"Inversió"</string>
-    <string name="grain" msgid="7487585304579789098">"Gra pel·lícula"</string>
-    <string name="grayscale" msgid="7641563843060945228">"B/N"</string>
-    <string name="accessibility_black_and_white" msgid="1156382046161392389">"Blanc i negre"</string>
-    <string name="highlight" msgid="3902653944386623972">"Realçaments"</string>
-    <string name="lomoish" msgid="1270032154357186736">"Lomo"</string>
-    <string name="negative" msgid="1985508917342811252">"Negatiu"</string>
-    <string name="posterize" msgid="4139212359561383385">"Posterització"</string>
-    <string name="redeye" msgid="4958448806369928239">"Ulls vermells"</string>
-    <string name="rotate" msgid="6607597269792373083">"Gir"</string>
-    <string name="saturation" msgid="8621322012271169931">"Saturació"</string>
-    <string name="sepia" msgid="7978093531824705601">"Sèpia"</string>
-    <string name="shadow" msgid="8235188588101973090">"Ombres"</string>
-    <string name="sharpen" msgid="8449662378104403230">"Nitidesa"</string>
-    <string name="straighten" msgid="5217801513491493491">"Redreçament"</string>
-    <string name="temperature" msgid="1607987938521534517">"Calidesa"</string>
-    <string name="tint" msgid="154435943863418434">"Tint"</string>
-    <string name="vignette" msgid="7648125924662648282">"Vinyeta"</string>
-    <string name="crop_tooltip" msgid="8794037869706891710">"Arrossega els marcadors per retallar la foto"</string>
-    <string name="doodle_tooltip" msgid="2902117272374362915">"Arrossega el cursor sobre la foto per dibuixar"</string>
-    <string name="flip_tooltip" msgid="2700943256714731737">"Arrossega la foto per invertir-la"</string>
-    <string name="redeye_tooltip" msgid="4183695928490874014">"Toca els ulls vermells per eliminar-los"</string>
-    <string name="rotate_tooltip" msgid="7008602969130734229">"Arrossega la foto per girar-la"</string>
-    <string name="straighten_tooltip" msgid="4846317027139212339">"Arrossega la foto per redreçar-la"</string>
-    <string name="photoeditor_exposure" msgid="560535856805042987">"Efectes d\'exposició"</string>
-    <string name="photoeditor_color" msgid="834210916165605468">"Efectes de color"</string>
-    <string name="photoeditor_artistic" msgid="2810641816416597464">"Efectes artístics"</string>
-    <string name="photoeditor_fix" msgid="6441595584425037477">"Repara"</string>
-    <string name="photoeditor_undo" msgid="4831462549862253564">"Desfés"</string>
-    <string name="photoeditor_redo" msgid="5999984591376273768">"Refés"</string>
+    <string name="photoeditor_name" msgid="2141682370266509503">"Estudi de fotografia"</string>
+    <string name="loading_failure" msgid="4430965264692871140">"No s\'ha pogut carregar la foto"</string>
+    <string name="saving_failure" msgid="7896222027047170982">"No s\'ha pogut desar la foto editada"</string>
+    <string name="photo_saved" msgid="358760800912053916">"S\'ha desat la foto editada a <xliff:g id="FOLDER_NAME">%s</xliff:g>"</string>
+    <string name="discard_unsaved_photo" msgid="7621529106313330133">"Vols descartar els canvis no desats?"</string>
+    <string name="yes" msgid="6281719750476942468">"Sí"</string>
+    <string name="save" msgid="8861201735155829719">"DESA"</string>
+    <string name="autofix" msgid="7944390017263652926">"Correc. autom."</string>
+    <string name="crop" msgid="6491363680194796014">"Retalla"</string>
+    <string name="crossprocess" msgid="1472013603094183614">"Procés creuat"</string>
+    <string name="documentary" msgid="3241380167998037384">"Documental"</string>
+    <string name="doodle" msgid="7378447840618633191">"Gargots"</string>
+    <string name="duotone" msgid="3248891724790119677">"Dos tons"</string>
+    <string name="facelift" msgid="1485390158100614056">"Brillantor cara"</string>
+    <string name="facetan" msgid="3921463359584460598">"Pell morena"</string>
+    <string name="filllight" msgid="5228480587177464589">"Il·lumina"</string>
+    <string name="fisheye" msgid="3102157475164320675">"Ull de peix"</string>
+    <string name="flip" msgid="404825526098985907">"Inversió"</string>
+    <string name="grain" msgid="8336064860901705844">"Gra"</string>
+    <string name="grayscale" msgid="895511627632504167">"B/N"</string>
+    <string name="accessibility_black_and_white" msgid="1304436215071513173">"Blanc i negre"</string>
+    <string name="highlight" msgid="7206397969888227366">"Ressalta"</string>
+    <string name="lomoish" msgid="5630441654104635556">"Lomo"</string>
+    <string name="negative" msgid="608235382589213651">"Negatius"</string>
+    <string name="posterize" msgid="933491230280844273">"Posteritza"</string>
+    <string name="redeye" msgid="8399041285845316254">"Ulls vermells"</string>
+    <string name="rotate" msgid="1799940414619421832">"Gira"</string>
+    <string name="saturation" msgid="1624207084133899802">"Saturació"</string>
+    <string name="sepia" msgid="6352460579372924828">"Sèpia"</string>
+    <string name="shadow" msgid="6032230441080829394">"Ombres"</string>
+    <string name="sharpen" msgid="4613973349599918590">"Més nitidesa"</string>
+    <string name="straighten" msgid="4551302289295998179">"Redreça"</string>
+    <string name="temperature" msgid="919852023864669874">"Calidesa"</string>
+    <string name="tint" msgid="5176938985727714799">"Tint"</string>
+    <string name="vignette" msgid="4858893727790879554">"Vinyeta"</string>
+    <string name="crop_tooltip" msgid="5028271751720427003">"Arrossega els marcadors per retallar la foto"</string>
+    <string name="doodle_tooltip" msgid="652340030415979327">"Arross. cursor sobre foto per dibuixar"</string>
+    <string name="flip_tooltip" msgid="2442349154773120409">"Arrossega la foto per invertir-la"</string>
+    <string name="redeye_tooltip" msgid="8317077842047241049">"Toca els ulls vermells per eliminar-los"</string>
+    <string name="rotate_tooltip" msgid="4675156711699347421">"Arrossega la foto per girar-la"</string>
+    <string name="straighten_tooltip" msgid="2512346096190533095">"Arrossega la foto per redreçar-la"</string>
+    <string name="photoeditor_exposure" msgid="460371724772128171">"Efectes d\'exposició"</string>
+    <string name="photoeditor_color" msgid="1026541951500898735">"Efectes de color"</string>
+    <string name="photoeditor_artistic" msgid="7730603034092865949">"Efectes artístics"</string>
+    <string name="photoeditor_fix" msgid="3812167922898325515">"Repara"</string>
+    <string name="photoeditor_undo" msgid="6702301566524836996">"Desfés"</string>
+    <string name="photoeditor_redo" msgid="5203739560744044128">"Refés"</string>
 </resources>
