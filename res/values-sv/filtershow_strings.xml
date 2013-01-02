@@ -70,10 +70,8 @@
     <string name="negative" msgid="6998313764388022201">"Negativ"</string>
     <string name="none" msgid="6633966646410296520">"Inga"</string>
     <string name="edge" msgid="7036064886242147551">"Kanter"</string>
-    <!-- no translation found for kmeans (1630263230946107457) -->
-    <skip />
-    <!-- no translation found for downsample (3552938534146980104) -->
-    <skip />
+    <string name="kmeans" msgid="1630263230946107457">"Warhol"</string>
+    <string name="downsample" msgid="3552938534146980104">"Nedsampla"</string>
     <string name="curves_channel_rgb" msgid="7909209509638333690">"RGB"</string>
     <string name="curves_channel_red" msgid="4199710104162111357">"Röd"</string>
     <string name="curves_channel_green" msgid="3733003466905031016">"Grön"</string>
