@@ -67,15 +67,11 @@
     <string name="crop" msgid="5781263790107850771">"Абрэзаць"</string>
     <string name="rotate" msgid="2796802553793795371">"Павярнуць"</string>
     <string name="mirror" msgid="5482518108154883096">"Люстра"</string>
-    <!-- no translation found for negative (6998313764388022201) -->
-    <skip />
+    <string name="negative" msgid="6998313764388022201">"Негатыў"</string>
     <string name="none" msgid="6633966646410296520">"Няма"</string>
-    <!-- no translation found for edge (7036064886242147551) -->
-    <skip />
-    <!-- no translation found for kmeans (1630263230946107457) -->
-    <skip />
-    <!-- no translation found for downsample (3552938534146980104) -->
-    <skip />
+    <string name="edge" msgid="7036064886242147551">"Краi"</string>
+    <string name="kmeans" msgid="1630263230946107457">"Уорхал"</string>
+    <string name="downsample" msgid="3552938534146980104">"Паменшыць"</string>
     <string name="curves_channel_rgb" msgid="7909209509638333690">"RGB"</string>
     <string name="curves_channel_red" msgid="4199710104162111357">"Чырвоны"</string>
     <string name="curves_channel_green" msgid="3733003466905031016">"Зялёны"</string>
