@@ -22,6 +22,7 @@ import android.graphics.RectF;
 
 import com.android.gallery3d.glrenderer.BasicTexture;
 import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.GLId;
 import com.android.gallery3d.glrenderer.GLPaint;
 import com.android.gallery3d.glrenderer.RawTexture;
 
@@ -30,7 +31,7 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL11;
 
-public class GLCanvasStub extends GLCanvas {
+public class GLCanvasStub implements GLCanvas {
     @Override
     public void setSize(int width, int height) {}
     @Override
@@ -165,12 +166,13 @@ public class GLCanvasStub extends GLCanvas {
     public void drawOnlyOutsideStencil(boolean onlyOutside) {
     }
     @Override
-    public void initialize(GL11 gl) {
-    }
-    @Override
     public void recoverFromLightCycle() {
     }
     @Override
     public void getBounds(Rect bounds, int x, int y, int width, int height) {
+    }
+    @Override
+    public GLId getGLId() {
+        return null;
     }
 }

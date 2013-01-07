@@ -22,7 +22,7 @@ import javax.microedition.khronos.opengles.GL11ExtensionPack;
  * Open GL ES 1.1 implementation for generating and destroying texture IDs and
  * buffer IDs
  */
-public class GLIdImpl implements GLId {
+public class GLES11IdImpl implements GLId {
     private static int sNextId = 1;
     // Mutex for sNextId
     private static Object sLock = new Object();
