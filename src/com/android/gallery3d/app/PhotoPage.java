@@ -345,7 +345,7 @@ public abstract class PhotoPage extends ActivityState implements
                         }
 
                         if (stayedOnCamera) {
-                            if (mAppBridge == null) {
+                            if (mAppBridge == null && mMediaSet.getTotalMediaItemCount() > 1) {
                                 launchCamera();
                                 /* We got here by swiping from photo 1 to the
                                    placeholder, so make it be the thing that
