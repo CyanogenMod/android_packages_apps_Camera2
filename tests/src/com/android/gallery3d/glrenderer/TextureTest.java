@@ -69,8 +69,7 @@ public class TextureTest extends TestCase {
     @SmallTest
     public void testBasicTexture() {
         GL11 glStub = new GLStub();
-        GLCanvas canvas = new GLES11Canvas();
-        canvas.initialize(glStub);
+        GLCanvas canvas = new GLES11Canvas(glStub);
         MyBasicTexture texture = new MyBasicTexture(canvas, 47);
 
         assertEquals(47, texture.getId());
@@ -90,8 +89,7 @@ public class TextureTest extends TestCase {
         assertTrue(texture.isLoaded());
 
         // For a different GL, it's not loaded.
-        GLCanvas canvas2 = new GLES11Canvas();
-        canvas2.initialize(glStub);
+        GLCanvas canvas2 = new GLES11Canvas(glStub);
         assertFalse(texture.isLoaded());
 
         assertEquals(0, texture.mOnBindCalled);
@@ -145,8 +143,7 @@ public class TextureTest extends TestCase {
     @SmallTest
     public void testUploadedTexture() {
         GL11 glStub = new GLStub();
-        GLCanvas canvas = new GLES11Canvas();
-        canvas.initialize(glStub);
+        GLCanvas canvas = new GLES11Canvas(glStub);
         MyUploadedTexture texture = new MyUploadedTexture();
 
         // draw it and the bitmap should be fetched.

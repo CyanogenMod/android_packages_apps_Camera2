@@ -222,7 +222,7 @@ public abstract class UploadedTexture extends BasicTexture {
                 Assert.assertTrue(bWidth <= texWidth && bHeight <= texHeight);
 
                 // Upload the bitmap to a new texture.
-                mId = GLCanvas.getGLId().generateTexture();
+                mId = canvas.getGLId().generateTexture();
                 canvas.setTextureParameters(this);
 
                 if (bWidth == texWidth && bHeight == texHeight) {
