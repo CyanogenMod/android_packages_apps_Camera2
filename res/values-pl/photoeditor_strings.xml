@@ -16,51 +16,51 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="photoeditor_name" msgid="2141682370266509503">"Studio fotograficzne"</string>
-    <string name="loading_failure" msgid="4430965264692871140">"Nie można wczytać zdjęcia"</string>
-    <string name="saving_failure" msgid="7896222027047170982">"Nie można zapisać edytowanego zdjęcia"</string>
-    <string name="photo_saved" msgid="358760800912053916">"Edytowane zdjęcie zapisano w <xliff:g id="FOLDER_NAME">%s</xliff:g>"</string>
-    <string name="discard_unsaved_photo" msgid="7621529106313330133">"Odrzucić niezapisane zmiany?"</string>
-    <string name="yes" msgid="6281719750476942468">"Tak"</string>
-    <string name="save" msgid="8861201735155829719">"ZAPISZ"</string>
-    <string name="autofix" msgid="7944390017263652926">"Autopoprawka"</string>
-    <string name="crop" msgid="6491363680194796014">"Przycinanie"</string>
-    <string name="crossprocess" msgid="1472013603094183614">"Proces krosowy"</string>
-    <string name="documentary" msgid="3241380167998037384">"Dokumentalny"</string>
-    <string name="doodle" msgid="7378447840618633191">"Bazgroły"</string>
-    <string name="duotone" msgid="3248891724790119677">"Dwuton"</string>
-    <string name="facelift" msgid="1485390158100614056">"Wygładzanie"</string>
-    <string name="facetan" msgid="3921463359584460598">"Opalenizna"</string>
-    <string name="filllight" msgid="5228480587177464589">"Doświetlenie"</string>
-    <string name="fisheye" msgid="3102157475164320675">"Rybie oko"</string>
-    <string name="flip" msgid="404825526098985907">"Odwrócenie"</string>
-    <string name="grain" msgid="8336064860901705844">"Ziarno kliszy"</string>
-    <string name="grayscale" msgid="895511627632504167">"Cz-b"</string>
-    <string name="accessibility_black_and_white" msgid="1304436215071513173">"Czarno-białe"</string>
-    <string name="highlight" msgid="7206397969888227366">"Podświetlenie"</string>
-    <string name="lomoish" msgid="5630441654104635556">"Lomo"</string>
-    <string name="negative" msgid="608235382589213651">"Negatyw"</string>
-    <string name="posterize" msgid="933491230280844273">"Posteryzacja"</string>
-    <string name="redeye" msgid="8399041285845316254">"Czerwone oczy"</string>
-    <string name="rotate" msgid="1799940414619421832">"Obrót"</string>
-    <string name="saturation" msgid="1624207084133899802">"Nasycenie"</string>
-    <string name="sepia" msgid="6352460579372924828">"Sepia"</string>
-    <string name="shadow" msgid="6032230441080829394">"Cienie"</string>
-    <string name="sharpen" msgid="4613973349599918590">"Wyostrzenie"</string>
-    <string name="straighten" msgid="4551302289295998179">"Wyprostowanie"</string>
-    <string name="temperature" msgid="919852023864669874">"Ocieplenie"</string>
-    <string name="tint" msgid="5176938985727714799">"Odcień"</string>
-    <string name="vignette" msgid="4858893727790879554">"Winietowanie"</string>
-    <string name="crop_tooltip" msgid="5028271751720427003">"Przeciągnij znaczniki, aby przyciąć zdjęcie"</string>
-    <string name="doodle_tooltip" msgid="652340030415979327">"Rysuj po zdjęciu, aby dodać bazgroły"</string>
-    <string name="flip_tooltip" msgid="2442349154773120409">"Przeciągnij zdjęcie, aby je odwrócić"</string>
-    <string name="redeye_tooltip" msgid="8317077842047241049">"Dotknij czerwonych oczu, aby je usunąć"</string>
-    <string name="rotate_tooltip" msgid="4675156711699347421">"Przeciągnij zdjęcie, aby je obrócić"</string>
-    <string name="straighten_tooltip" msgid="2512346096190533095">"Przeciągnij zdjęcie, aby je wyprostować"</string>
-    <string name="photoeditor_exposure" msgid="460371724772128171">"Efekty ekspozycji"</string>
-    <string name="photoeditor_color" msgid="1026541951500898735">"Efekty kolorystyczne"</string>
-    <string name="photoeditor_artistic" msgid="7730603034092865949">"Efekty artystyczne"</string>
-    <string name="photoeditor_fix" msgid="3812167922898325515">"Popraw"</string>
-    <string name="photoeditor_undo" msgid="6702301566524836996">"Cofnij"</string>
-    <string name="photoeditor_redo" msgid="5203739560744044128">"Ponów"</string>
+    <string name="photoeditor_name" msgid="4738587346771969697">"Studio fotograficzne"</string>
+    <string name="loading_failure" msgid="7890360277163832130">"Nie można wczytać zdjęcia"</string>
+    <string name="saving_failure" msgid="8229491575433743974">"Nie można zapisać edytowanego zdjęcia"</string>
+    <string name="photo_saved" msgid="6163006724627682202">"Edytowane zdjęcie zapisano w <xliff:g id="FOLDER_NAME">%s</xliff:g>"</string>
+    <string name="discard_unsaved_photo" msgid="2353274490633681946">"Odrzucić niezapisane zmiany?"</string>
+    <string name="yes" msgid="5402582493291792293">"Tak"</string>
+    <string name="save" msgid="5516670392524294967">"ZAPISZ"</string>
+    <string name="autofix" msgid="1663414996270538748">"Autopoprawka"</string>
+    <string name="crop" msgid="7598378507763334041">"Przytnij"</string>
+    <string name="crossprocess" msgid="4173724489001742342">"Proces krosowy"</string>
+    <string name="documentary" msgid="50396326708699797">"Dokument"</string>
+    <string name="doodle" msgid="1686409894518940990">"Bazgroły"</string>
+    <string name="duotone" msgid="8145893940788467106">"Dwuton"</string>
+    <string name="facelift" msgid="6205748523156172637">"Wygładzanie"</string>
+    <string name="facetan" msgid="4412831806626044111">"Opalenizna"</string>
+    <string name="filllight" msgid="2644989991700022526">"Doświetlenie"</string>
+    <string name="fisheye" msgid="6037488646928998921">"Rybie oko"</string>
+    <string name="flip" msgid="2357692401826287480">"Odwrócenie"</string>
+    <string name="grain" msgid="7487585304579789098">"Ziarno kliszy"</string>
+    <string name="grayscale" msgid="7641563843060945228">"Czerń i biel"</string>
+    <string name="accessibility_black_and_white" msgid="1156382046161392389">"Czarno-białe"</string>
+    <string name="highlight" msgid="3902653944386623972">"Podświetlenie"</string>
+    <string name="lomoish" msgid="1270032154357186736">"Łomo"</string>
+    <string name="negative" msgid="1985508917342811252">"Negatyw"</string>
+    <string name="posterize" msgid="4139212359561383385">"Posteryzacja"</string>
+    <string name="redeye" msgid="4958448806369928239">"Czerwone oczy"</string>
+    <string name="rotate" msgid="6607597269792373083">"Obrót"</string>
+    <string name="saturation" msgid="8621322012271169931">"Nasycenie"</string>
+    <string name="sepia" msgid="7978093531824705601">"Sepia"</string>
+    <string name="shadow" msgid="8235188588101973090">"Cienie"</string>
+    <string name="sharpen" msgid="8449662378104403230">"Wyostrzenie"</string>
+    <string name="straighten" msgid="5217801513491493491">"Wyprostowanie"</string>
+    <string name="temperature" msgid="1607987938521534517">"Ciepło"</string>
+    <string name="tint" msgid="154435943863418434">"Odcień"</string>
+    <string name="vignette" msgid="7648125924662648282">"Winietowanie"</string>
+    <string name="crop_tooltip" msgid="8794037869706891710">"Przeciągnij znaczniki, aby przyciąć zdjęcie"</string>
+    <string name="doodle_tooltip" msgid="2902117272374362915">"Rysuj po zdjęciu, aby dodać bazgroły."</string>
+    <string name="flip_tooltip" msgid="2700943256714731737">"Przeciągnij zdjęcie, aby je odwrócić."</string>
+    <string name="redeye_tooltip" msgid="4183695928490874014">"Dotknij czerwonych oczu, aby je usunąć"</string>
+    <string name="rotate_tooltip" msgid="7008602969130734229">"Przeciągnij zdjęcie, aby je obrócić."</string>
+    <string name="straighten_tooltip" msgid="4846317027139212339">"Przeciągnij zdjęcie, aby je wyprostować."</string>
+    <string name="photoeditor_exposure" msgid="560535856805042987">"Efekty ekspozycji"</string>
+    <string name="photoeditor_color" msgid="834210916165605468">"Efekty kolorystyczne"</string>
+    <string name="photoeditor_artistic" msgid="2810641816416597464">"Efekty artystyczne"</string>
+    <string name="photoeditor_fix" msgid="6441595584425037477">"Popraw"</string>
+    <string name="photoeditor_undo" msgid="4831462549862253564">"Cofnij"</string>
+    <string name="photoeditor_redo" msgid="5999984591376273768">"Ponów"</string>
 </resources>
