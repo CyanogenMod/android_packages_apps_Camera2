@@ -118,6 +118,11 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
+            <com.android.gallery3d.filtershow.imageshow.ImageDraw
+                android:id="@+id/imageDraw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
             <!--
             <ImageButton
                 android:id="@+id/showOriginalButton"
