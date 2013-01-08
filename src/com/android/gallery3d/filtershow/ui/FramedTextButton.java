@@ -37,8 +37,6 @@ public class FramedTextButton extends ImageButton {
     private static int mTrianglePadding = 2;
     private static int mTriangleSize = 30;
 
-    private Context mContext = null;
-
     public static void setTextSize(int value) {
         mTextSize = value;
     }
@@ -63,28 +61,34 @@ public class FramedTextButton extends ImageButton {
     public void setTextFrom(int itemId) {
         switch (itemId) {
             case R.id.curve_menu_rgb: {
-                setText(mContext.getString(R.string.curves_channel_rgb));
+                setText(getContext().getString(R.string.curves_channel_rgb));
                 break;
             }
             case R.id.curve_menu_red: {
-                setText(mContext.getString(R.string.curves_channel_red));
+                setText(getContext().getString(R.string.curves_channel_red));
                 break;
             }
             case R.id.curve_menu_green: {
-                setText(mContext.getString(R.string.curves_channel_green));
+                setText(getContext().getString(R.string.curves_channel_green));
                 break;
             }
             case R.id.curve_menu_blue: {
-                setText(mContext.getString(R.string.curves_channel_blue));
+                setText(getContext().getString(R.string.curves_channel_blue));
                 break;
             }
         }
         invalidate();
     }
 
+    public FramedTextButton(Context context) {
+        this(context, null);
+    }
+
     public FramedTextButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
+        if (attrs == null) {
+            return;
+        }
         TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.ImageButtonTitle);
 

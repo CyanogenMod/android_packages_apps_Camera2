@@ -32,6 +32,7 @@ import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
@@ -120,6 +121,10 @@ public class ImageShow extends View implements OnGestureListener,
 
     public static void setDefaultBackgroundColor(int value) {
         mBackgroundColor = value;
+    }
+
+    public FilterShowActivity getActivity() {
+        return mActivity;
     }
 
     public int getDefaultBackgroundColor() {
@@ -821,6 +826,14 @@ public class ImageShow extends View implements OnGestureListener,
     public boolean onSingleTapUp(MotionEvent arg0) {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    public boolean useUtilityPanel() {
+        return false;
+    }
+
+    public void openUtilityPanel(final LinearLayout accessoryViewList) {
+        // TODO Auto-generated method stub
     }
 
 }
