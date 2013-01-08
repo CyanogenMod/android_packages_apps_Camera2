@@ -27,9 +27,17 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.CropExtras;
+import com.android.gallery3d.filtershow.ui.FramedTextButton;
 
 public class ImageCrop extends ImageGeometry {
     private static final boolean LOGV = false;
@@ -74,6 +82,8 @@ public class ImageCrop extends ImageGeometry {
 
     private String mAspect = "";
     private int mAspectTextSize = 24;
+
+    private boolean mFixedAspect = false;
 
     public void setAspectTextSize(int textSize) {
         mAspectTextSize = textSize;
@@ -662,6 +672,110 @@ public class ImageCrop extends ImageGeometry {
             if (((movingEdges & MOVE_RIGHT) != 0) || notMoving) {
                 drawIndicator(canvas, cropIndicator, scaledCrop.right, scaledCrop.centerY());
             }
+        }
+    }
+
+    private void setAspectButton(Button button, int itemId) {
+        switch (itemId) {
+            case R.id.crop_menu_1to1: {
+                String t = getActivity().getString(R.string.aspect1to1_effect);
+                button.setText(t);
+                apply(1, 1);
+                setAspectString(t);
+                break;
+            }
+            case R.id.crop_menu_4to3: {
+                String t = getActivity().getString(R.string.aspect4to3_effect);
+                button.setText(t);
+                apply(4, 3);
+                setAspectString(t);
+                break;
+            }
+            case R.id.crop_menu_3to4: {
+                String t = getActivity().getString(R.string.aspect3to4_effect);
+                button.setText(t);
+                apply(3, 4);
+                setAspectString(t);
+                break;
+            }
+            case R.id.crop_menu_5to7: {
+                String t = getActivity().getString(R.string.aspect5to7_effect);
+                button.setText(t);
+                apply(5, 7);
+                setAspectString(t);
+                break;
+            }
+            case R.id.crop_menu_7to5: {
+                String t = getActivity().getString(R.string.aspect7to5_effect);
+                button.setText(t);
+                apply(7, 5);
+                setAspectString(t);
+                break;
+            }
+            case R.id.crop_menu_none: {
+                String t = getActivity().getString(R.string.aspectNone_effect);
+                button.setText(t);
+                applyClear();
+                setAspectString(t);
+                break;
+            }
+            case R.id.crop_menu_original: {
+                String t = getActivity().getString(R.string.aspectOriginal_effect);
+                button.setText(t);
+                applyOriginal();
+                setAspectString(t);
+                break;
+            }
+        }
+        invalidate();
+    }
+
+    public void setFixedAspect(boolean fixedAspect) {
+        mFixedAspect = fixedAspect;
+    }
+
+    @Override
+    public boolean useUtilityPanel() {
+        // Only shows the aspect ratio popup if we are not fixed
+        return !mFixedAspect;
+    }
+
+    private void showPopupMenu(LinearLayout accessoryViewList) {
+        final Button button = (Button) accessoryViewList.findViewById(
+                R.id.cropUtilityButton);
+        if (button == null) {
+            return;
+        }
+        PopupMenu popupMenu = new PopupMenu(getActivity(), button);
+        popupMenu.getMenuInflater().inflate(R.menu.filtershow_menu_crop, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                setAspectButton(button, item.getItemId());
+                return true;
+            }
+        });
+        popupMenu.show();
+    }
+
+    @Override
+    public void openUtilityPanel(final LinearLayout accessoryViewList) {
+        View view = accessoryViewList.findViewById(R.id.cropUtilityButton);
+        if (view == null) {
+            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService
+                    (Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.filtershow_crop_button, accessoryViewList, false);
+            accessoryViewList.addView(view, view.getLayoutParams());
+            view.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    showPopupMenu(accessoryViewList);
+                }
+            });
+        }
+
+        if (view != null) {
+            view.setVisibility(View.VISIBLE);
         }
     }
 

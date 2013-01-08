@@ -26,7 +26,13 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
@@ -60,6 +66,51 @@ public class ImageCurves extends ImageSlave {
     public ImageCurves(Context context, AttributeSet attrs) {
         super(context, attrs);
         resetCurve();
+    }
+
+    @Override
+    public boolean useUtilityPanel() {
+        return true;
+    }
+
+    private void showPopupMenu(LinearLayout accessoryViewList) {
+        final FramedTextButton button = (FramedTextButton) accessoryViewList.findViewById(
+                R.id.curvesUtilityButton);
+        if (button == null) {
+            return;
+        }
+        PopupMenu popupMenu = new PopupMenu(getActivity(), button);
+        popupMenu.getMenuInflater().inflate(R.menu.filtershow_menu_curves, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                setChannel(item.getItemId());
+                button.setTextFrom(item.getItemId());
+                return true;
+            }
+        });
+        popupMenu.show();
+    }
+
+    @Override
+    public void openUtilityPanel(final LinearLayout accessoryViewList) {
+        View view = accessoryViewList.findViewById(R.id.curvesUtilityButton);
+        if (view == null) {
+            LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService
+                    (Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(R.layout.filtershow_curves_button, accessoryViewList, false);
+            accessoryViewList.addView(view, view.getLayoutParams());
+            view.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    showPopupMenu(accessoryViewList);
+                }
+            });
+        }
+
+        if (view != null) {
+            view.setVisibility(View.VISIBLE);
+        }
     }
 
     public void nextChannel() {
