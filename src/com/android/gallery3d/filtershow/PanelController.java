@@ -18,35 +18,19 @@ package com.android.gallery3d.filtershow;
 
 import android.content.Context;
 import android.text.Html;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewPropertyAnimator;
-import android.widget.PopupMenu;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
-import com.android.gallery3d.filtershow.filters.ImageFilterBwFilter;
-import com.android.gallery3d.filtershow.filters.ImageFilterContrast;
-import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
-import com.android.gallery3d.filtershow.filters.ImageFilterExposure;
-import com.android.gallery3d.filtershow.filters.ImageFilterHue;
-import com.android.gallery3d.filtershow.filters.ImageFilterNegative;
-import com.android.gallery3d.filtershow.filters.ImageFilterRedEye;
-import com.android.gallery3d.filtershow.filters.ImageFilterSaturated;
-import com.android.gallery3d.filtershow.filters.ImageFilterShadows;
-import com.android.gallery3d.filtershow.filters.ImageFilterSharpen;
 import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
-import com.android.gallery3d.filtershow.filters.ImageFilterVibrance;
-import com.android.gallery3d.filtershow.filters.ImageFilterVignette;
-import com.android.gallery3d.filtershow.filters.ImageFilterWBalance;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.ImageSmallFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
-import com.android.gallery3d.filtershow.ui.FramedTextButton;
-import com.android.gallery3d.filtershow.ui.ImageCurves;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -139,102 +123,33 @@ public class PanelController implements OnClickListener {
     class UtilityPanel {
         private final Context mContext;
         private final View mView;
+        private final LinearLayout mAccessoryViewList;
+        private Vector<View> mAccessoryViews = new Vector<View>();
         private final TextView mTextView;
         private boolean mSelected = false;
         private String mEffectName = null;
         private int mParameterValue = 0;
         private boolean mShowParameterValue = false;
-        private View mAspectButton = null;
-        private View mCurvesButton = null;
         boolean firstTimeCropDisplayed = true;
 
-        public UtilityPanel(Context context, View view, View textView,
-                View aspectButton, View curvesButton) {
+        public UtilityPanel(Context context, View view, View accessoryViewList,
+                View textView) {
             mContext = context;
             mView = view;
+            mAccessoryViewList = (LinearLayout) accessoryViewList;
             mTextView = (TextView) textView;
-            mAspectButton = aspectButton;
-            mCurvesButton = curvesButton;
         }
 
         public boolean selected() {
             return mSelected;
         }
 
-        public void setAspectButton(FramedTextButton button, int itemId) {
-            ImageCrop imageCrop = (ImageCrop) mCurrentImage;
-            switch (itemId) {
-                case R.id.crop_menu_1to1: {
-                    String t = mContext.getString(R.string.aspect1to1_effect);
-                    button.setText(t);
-                    imageCrop.apply(1, 1);
-                    imageCrop.setAspectString(t);
-                    break;
-                }
-                case R.id.crop_menu_4to3: {
-                    String t = mContext.getString(R.string.aspect4to3_effect);
-                    button.setText(t);
-                    imageCrop.apply(4, 3);
-                    imageCrop.setAspectString(t);
-                    break;
-                }
-                case R.id.crop_menu_3to4: {
-                    String t = mContext.getString(R.string.aspect3to4_effect);
-                    button.setText(t);
-                    imageCrop.apply(3, 4);
-                    imageCrop.setAspectString(t);
-                    break;
-                }
-                case R.id.crop_menu_5to7: {
-                    String t = mContext.getString(R.string.aspect5to7_effect);
-                    button.setText(t);
-                    imageCrop.apply(5, 7);
-                    imageCrop.setAspectString(t);
-                    break;
-                }
-                case R.id.crop_menu_7to5: {
-                    String t = mContext.getString(R.string.aspect7to5_effect);
-                    button.setText(t);
-                    imageCrop.apply(7, 5);
-                    imageCrop.setAspectString(t);
-                    break;
-                }
-                case R.id.crop_menu_none: {
-                    String t = mContext.getString(R.string.aspectNone_effect);
-                    button.setText(t);
-                    imageCrop.applyClear();
-                    imageCrop.setAspectString(t);
-                    break;
-                }
-                case R.id.crop_menu_original: {
-                    String t = mContext.getString(R.string.aspectOriginal_effect);
-                    button.setText(t);
-                    imageCrop.applyOriginal();
-                    imageCrop.setAspectString(t);
-                    break;
-                }
+        public void hideAccessoryViews() {
+            int childCount = mAccessoryViewList.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                View child = mAccessoryViewList.getChildAt(i);
+                child.setVisibility(View.GONE);
             }
-            imageCrop.invalidate();
-        }
-
-        public void showAspectButtons() {
-            if (mAspectButton != null)
-                mAspectButton.setVisibility(View.VISIBLE);
-        }
-
-        public void hideAspectButtons() {
-            if (mAspectButton != null)
-                mAspectButton.setVisibility(View.GONE);
-        }
-
-        public void showCurvesButtons() {
-            if (mCurvesButton != null)
-                mCurvesButton.setVisibility(View.VISIBLE);
-        }
-
-        public void hideCurvesButtons() {
-            if (mCurvesButton != null)
-                mCurvesButton.setVisibility(View.GONE);
         }
 
         public void onNewValue(int value) {
@@ -290,6 +205,7 @@ public class PanelController implements OnClickListener {
             mSelected = true;
             return anim;
         }
+
     }
 
     class ViewType {
@@ -397,10 +313,10 @@ public class PanelController implements OnClickListener {
         mRowPanel = rowPanel;
     }
 
-    public void setUtilityPanel(Context context, View utilityPanel, View textView,
-            View aspectButton, View curvesButton) {
-        mUtilityPanel = new UtilityPanel(context, utilityPanel, textView,
-                aspectButton, curvesButton);
+    public void setUtilityPanel(Context context, View utilityPanel,
+            View accessoryViewList, View textView) {
+        mUtilityPanel = new UtilityPanel(context, utilityPanel,
+                accessoryViewList, textView);
     }
 
     public void setMasterImage(ImageShow imageShow) {
@@ -516,33 +432,6 @@ public class PanelController implements OnClickListener {
         }
     }
 
-    private void showCurvesPopupMenu(final ImageCurves curves, final FramedTextButton anchor) {
-        PopupMenu popupMenu = new PopupMenu(mCurrentImage.getContext(), anchor);
-        popupMenu.getMenuInflater().inflate(R.menu.filtershow_menu_curves, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                curves.setChannel(item.getItemId());
-                anchor.setTextFrom(item.getItemId());
-                return true;
-            }
-        });
-        popupMenu.show();
-    }
-
-    private void showCropPopupMenu(final FramedTextButton anchor) {
-        PopupMenu popupMenu = new PopupMenu(mCurrentImage.getContext(), anchor);
-        popupMenu.getMenuInflater().inflate(R.menu.filtershow_menu_crop, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                mUtilityPanel.setAspectButton(anchor, item.getItemId());
-                return true;
-            }
-        });
-        popupMenu.show();
-    }
-
     public void showComponent(View view) {
         if (mUtilityPanel != null && !mUtilityPanel.selected()) {
             Panel current = mPanels.get(mCurrentPanel);
@@ -554,22 +443,10 @@ public class PanelController implements OnClickListener {
             }
         }
 
-        if (view.getId() == R.id.pickCurvesChannel) {
-            ImageCurves curves = (ImageCurves) showImageView(R.id.imageCurves);
-            showCurvesPopupMenu(curves, (FramedTextButton) view);
-            return;
-        }
-
-        if (view.getId() == R.id.aspect) {
-            showCropPopupMenu((FramedTextButton) view);
-            return;
-        }
-
         if (mCurrentImage != null) {
             mCurrentImage.unselect();
         }
-        mUtilityPanel.hideAspectButtons();
-        mUtilityPanel.hideCurvesButtons();
+        mUtilityPanel.hideAccessoryViews();
 
         if (view instanceof ImageSmallFilter) {
             ImageSmallFilter component = (ImageSmallFilter) view;
@@ -579,10 +456,8 @@ public class PanelController implements OnClickListener {
                 mCurrentImage.setShowControls(filter.showEditingControls());
                 String ename = mCurrentImage.getContext().getString(filter.getTextId());
                 mUtilityPanel.setEffectName(ename);
-                if (view.getId() == R.id.curvesButtonRGB) {
-                    // TODO: delegate to the filter / editing view the management of the
-                    // panel accessory view
-                    mUtilityPanel.showCurvesButtons();
+                if (mCurrentImage.useUtilityPanel()) {
+                    mCurrentImage.openUtilityPanel(mUtilityPanel.mAccessoryViewList);
                 }
                 mUtilityPanel.setShowParameter(filter.showParameterValue());
                 ensureFilter(ename);
@@ -618,9 +493,7 @@ public class PanelController implements OnClickListener {
                     ((ImageCrop) mCurrentImage).clear();
                     mUtilityPanel.firstTimeCropDisplayed = false;
                 }
-                if (!mFixedAspect) {
-                    mUtilityPanel.showAspectButtons();
-                }
+                ((ImageCrop) mCurrentImage).setFixedAspect(mFixedAspect);
                 break;
             }
             case R.id.rotateButton: {
@@ -643,10 +516,6 @@ public class PanelController implements OnClickListener {
                 ensureFilter(ename);
                 break;
             }
-            case R.id.aspect: {
-                mUtilityPanel.showAspectButtons();
-                break;
-            }
             case R.id.applyEffect: {
                 if (mMasterImage.getCurrentFilter() instanceof ImageFilterTinyPlanet) {
                     mActivity.saveImage();
@@ -658,6 +527,9 @@ public class PanelController implements OnClickListener {
                 }
                 break;
             }
+        }
+        if (mCurrentImage.useUtilityPanel()) {
+            mCurrentImage.openUtilityPanel(mUtilityPanel.mAccessoryViewList);
         }
         mCurrentImage.select();
     }
