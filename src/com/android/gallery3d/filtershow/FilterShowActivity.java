@@ -344,8 +344,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addFilter(new ImageFilterRedEye());
 
         mPanelController.addView(findViewById(R.id.applyEffect));
-        mPanelController.addView(findViewById(R.id.pickCurvesChannel));
-        mPanelController.addView(findViewById(R.id.aspect));
         findViewById(R.id.resetOperationsButton).setOnClickListener(
                 createOnClickResetOperationsButton());
 
@@ -367,8 +365,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageTinyPlanet.setSeekBar(seekBar);
         mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
         mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList),
-                findViewById(R.id.applyEffect), findViewById(R.id.aspect),
-                findViewById(R.id.pickCurvesChannel));
+                findViewById(R.id.panelAccessoryViewList),
+                findViewById(R.id.applyEffect));
         mPanelController.setMasterImage(mImageShow);
         mPanelController.setCurrentPanel(mFxButton);
         Intent intent = getIntent();

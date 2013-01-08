@@ -185,25 +185,13 @@
                 <FrameLayout
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent" >
-                    <com.android.gallery3d.filtershow.ui.FramedTextButton
-                        android:id="@+id/aspect"
-                        android:layout_width="84dip"
-                        android:layout_height="84dip"
-                        android:layout_gravity="center_vertical|left"
-                        android:background="@drawable/filtershow_button_background"
-                        android:scaleType="centerInside"
-                        android:visibility="gone"
-                        android:text="@string/aspectNone_effect" />
 
-                    <com.android.gallery3d.filtershow.ui.FramedTextButton
-                        android:id="@+id/pickCurvesChannel"
-                        android:layout_width="84dip"
-                        android:layout_height="84dip"
-                        android:layout_gravity="center_vertical|left"
-                        android:background="@drawable/filtershow_button_background"
-                        android:scaleType="centerInside"
-                        android:visibility="gone"
-                        android:text="@string/curves_channel_rgb" />
+                    <LinearLayout
+                        android:id="@+id/panelAccessoryViewList"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:orientation="horizontal"
+                        android:visibility="visible" />
 
                     <Button
                         android:id="@+id/applyEffect"
