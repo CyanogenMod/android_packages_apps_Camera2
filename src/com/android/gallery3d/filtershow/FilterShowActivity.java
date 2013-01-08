@@ -62,6 +62,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilterBwFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterContrast;
 import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
 import com.android.gallery3d.filtershow.filters.ImageFilterDownsample;
+import com.android.gallery3d.filtershow.filters.ImageFilterDraw;
 import com.android.gallery3d.filtershow.filters.ImageFilterEdge;
 import com.android.gallery3d.filtershow.filters.ImageFilterExposure;
 import com.android.gallery3d.filtershow.filters.ImageFilterFx;
@@ -80,6 +81,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilterVignette;
 import com.android.gallery3d.filtershow.filters.ImageFilterWBalance;
 import com.android.gallery3d.filtershow.imageshow.ImageBorder;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
+import com.android.gallery3d.filtershow.imageshow.ImageDraw;
 import com.android.gallery3d.filtershow.imageshow.ImageFlip;
 import com.android.gallery3d.filtershow.imageshow.ImageRedEyes;
 import com.android.gallery3d.filtershow.imageshow.ImageRotate;
@@ -120,6 +122,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private ImageCurves mImageCurves = null;
     private ImageBorder mImageBorders = null;
     private ImageRedEyes mImageRedEyes = null;
+    private ImageDraw mImageDraw = null;
     private ImageStraighten mImageStraighten = null;
     private ImageZoom mImageZoom = null;
     private ImageCrop mImageCrop = null;
@@ -221,6 +224,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageFlip = (ImageFlip) findViewById(R.id.imageFlip);
         mImageTinyPlanet = (ImageTinyPlanet) findViewById(R.id.imageTinyPlanet);
         mImageRedEyes = (ImageRedEyes) findViewById(R.id.imageRedEyes);
+        mImageDraw = (ImageDraw) findViewById(R.id.imageDraw);
 
         mImageCrop.setAspectTextSize((int) getPixelsFromDip(18));
         ImageCrop.setTouchTolerance((int) getPixelsFromDip(25));
@@ -280,6 +284,9 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageRedEyes.setImageLoader(mImageLoader);
         mImageRedEyes.setMaster(mImageShow);
 
+        mImageDraw.setImageLoader(mImageLoader);
+        mImageDraw.setMaster(mImageShow);
+
         mPanelController.setActivity(this);
 
         mPanelController.addImageView(findViewById(R.id.imageShow));
@@ -292,6 +299,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addImageView(findViewById(R.id.imageZoom));
         mPanelController.addImageView(findViewById(R.id.imageTinyPlanet));
         mPanelController.addImageView(findViewById(R.id.imageRedEyes));
+        mPanelController.addImageView(findViewById(R.id.imageDraw));
 
         mPanelController.addPanel(mFxButton, mListFx, 0);
         mPanelController.addPanel(mBorderButton, mListBorders, 1);
@@ -315,6 +323,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 new ImageFilterVibrance(),
                 new ImageFilterSharpen(),
                 new ImageFilterCurves(),
+                new ImageFilterDraw(),
                 new ImageFilterHue(),
                 new ImageFilterSaturated(),
                 new ImageFilterBwFilter(),
