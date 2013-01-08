@@ -34,4 +34,5 @@
     <item type="id" name="edgeButton" />
     <item type="id" name="kmeansButton" />
     <item type="id" name="downsampleButton" />
+    <item type="id" name="drawOnImageButton" />
 </resources>

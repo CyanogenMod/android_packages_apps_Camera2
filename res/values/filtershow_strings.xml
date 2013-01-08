@@ -123,6 +123,8 @@
     <string name="vignette">Vignette</string>
     <!--  Label for the image effect that removes redeye. [CHAR LIMIT=10] -->
     <string name="redeye">Red Eye</string>
+    <!--  Label for the that allows drawing on Image [CHAR LIMIT=10] -->
+    <string name="imageDraw">Draw</string>
     <!--  Label for the image straighten effect [CHAR LIMIT=15] -->
     <string name="straighten" msgid="5217801513491493491">Straighten</string>
     <!--  Label for the image crop effect [CHAR LIMIT=15] -->
