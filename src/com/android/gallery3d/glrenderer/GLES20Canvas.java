@@ -33,10 +33,7 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.microedition.khronos.opengles.GL11;
-import javax.microedition.khronos.opengles.GL11ExtensionPack;
-
-public class GLES20Canvas extends GLCanvas implements GLId {
+public class GLES20Canvas implements GLCanvas {
     // ************** Constants **********************
     private static final String TAG = GLES20Canvas.class.getSimpleName();
     private static final int FLOAT_SIZE = Float.SIZE / Byte.SIZE;
@@ -269,15 +266,14 @@ public class GLES20Canvas extends GLCanvas implements GLId {
     private final float[] mTempTextureMatrix = new float[MATRIX_SIZE];
     private final int[] mTempIntArray = new int[1];
 
+    private static final GLId mGLId = new GLES20IdImpl();
+
     public GLES20Canvas() {
         Matrix.setIdentityM(mTempTextureMatrix, 0);
         Matrix.setIdentityM(mMatrices, mCurrentMatrixIndex);
         mAlphas[mCurrentAlphaIndex] = 1f;
         mTargetTextures.add(null);
-    }
 
-    @Override
-    public void initialize(GL11 gl) {
         FloatBuffer boxBuffer = createBuffer(BOX_COORDINATES);
         mBoxCoordinates = uploadBuffer(boxBuffer);
 
@@ -813,13 +809,13 @@ public class GLES20Canvas extends GLCanvas implements GLId {
         synchronized (mUnboundTextures) {
             IntArray ids = mUnboundTextures;
             if (mUnboundTextures.size() > 0) {
-                glDeleteTextures(null, ids.size(), ids.getInternalArray(), 0);
+                mGLId.glDeleteTextures(null, ids.size(), ids.getInternalArray(), 0);
                 ids.clear();
             }
 
             ids = mDeleteBuffers;
             if (ids.size() > 0) {
-                glDeleteBuffers(null, ids.size(), ids.getInternalArray(), 0);
+                mGLId.glDeleteBuffers(null, ids.size(), ids.getInternalArray(), 0);
                 ids.clear();
             }
         }
@@ -957,7 +953,7 @@ public class GLES20Canvas extends GLCanvas implements GLId {
     }
 
     private int uploadBuffer(Buffer buffer, int elementSize) {
-        glGenBuffers(1, mTempIntArray, 0);
+        mGLId.glGenBuffers(1, mTempIntArray, 0);
         checkError();
         int bufferId = mTempIntArray[0];
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, bufferId);
@@ -993,36 +989,6 @@ public class GLES20Canvas extends GLCanvas implements GLId {
         checkError();
     }
 
-    @Override
-    public int generateTexture() {
-        GLES20.glGenTextures(1, mTempIntArray, 0);
-        checkError();
-        return mTempIntArray[0];
-    }
-
-    @Override
-    public void glGenBuffers(int n, int[] buffers, int offset) {
-        GLES20.glGenBuffers(n, buffers, offset);
-        checkError();
-    }
-
-    @Override
-    public void glDeleteTextures(GL11 gl, int n, int[] textures, int offset) {
-        GLES20.glDeleteTextures(n, textures, offset);
-        checkError();
-    }
-
-    @Override
-    public void glDeleteBuffers(GL11 gl, int n, int[] buffers, int offset) {
-        GLES20.glDeleteBuffers(n, buffers, offset);
-        checkError();
-    }
-
-    @Override
-    public void glDeleteFramebuffers(GL11ExtensionPack gl11ep, int n, int[] buffers, int offset) {
-        GLES20.glDeleteFramebuffers(n, buffers, offset);
-        checkError();
-    }
 
     @Override
     public void enableStencil() {
@@ -1093,5 +1059,10 @@ public class GLES20Canvas extends GLCanvas implements GLId {
         bounds.top = Math.round(mTempMatrix[MATRIX_SIZE + 1]);
         bounds.bottom = Math.round(mTempMatrix[MATRIX_SIZE + 5]);
         bounds.sort();
+    }
+
+    @Override
+    public GLId getGLId() {
+        return mGLId;
     }
 }

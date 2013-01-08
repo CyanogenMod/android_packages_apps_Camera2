@@ -36,7 +36,7 @@ public class RawTexture extends BasicTexture {
     }
 
     protected void prepare(GLCanvas canvas) {
-        GLId glId = GLCanvas.getGLId();
+        GLId glId = canvas.getGLId();
         mId = glId.generateTexture();
         canvas.initializeTextureSize(this, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE);
         canvas.setTextureParameters(this);
