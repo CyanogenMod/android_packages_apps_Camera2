@@ -86,7 +86,6 @@ public class GLES11Canvas implements GLCanvas {
     private static float[] sCropRect = new float[4];
 
     private RawTexture mTargetTexture;
-    private Blending mBlending = Blending.Mix;
 
     // Drawing statistics
     int mCountDrawLine;
@@ -775,12 +774,6 @@ public class GLES11Canvas implements GLCanvas {
             config.mAlpha = -1;
         }
 
-        if ((saveFlags & SAVE_FLAG_BLEND) != 0) {
-            config.mBlending = mBlending;
-        } else {
-            config.mBlending = null;
-        }
-
         if ((saveFlags & SAVE_FLAG_MATRIX) != 0) {
             System.arraycopy(mMatrixValues, 0, config.mMatrix, 0, 16);
         } else {
@@ -815,16 +808,12 @@ public class GLES11Canvas implements GLCanvas {
     private static class ConfigState {
         float mAlpha;
         float mMatrix[] = new float[16];
-        Blending mBlending;
         ConfigState mNextFree;
 
         public void restore(GLES11Canvas canvas) {
             if (mAlpha >= 0) canvas.setAlpha(mAlpha);
             if (mMatrix[0] != Float.NEGATIVE_INFINITY) {
                 System.arraycopy(mMatrix, 0, canvas.mMatrixValues, 0, 16);
-            }
-            if (mBlending != null) {
-                canvas.setBlending(mBlending);
             }
         }
     }
@@ -990,18 +979,6 @@ public class GLES11Canvas implements GLCanvas {
         mGL.glBufferData(GL11.GL_ARRAY_BUFFER, buf.capacity() * elementSize, buf,
                 GL11.GL_STATIC_DRAW);
         return bufferId;
-    }
-
-    @Override
-    public void setBlending(Blending blending) {
-        if (mBlending == blending) {
-            return;
-        }
-        Assert.assertTrue(blending == Blending.Additive || blending == Blending.Mix);
-        mBlending = blending;
-        int srcFunc = GL11.GL_ONE;
-        int dstFunc = (blending == Blending.Additive) ? GL11.GL_ONE : GL11.GL_ONE_MINUS_SRC_ALPHA;
-        mGL.glBlendFunc(srcFunc, dstFunc);
     }
 
     @Override
