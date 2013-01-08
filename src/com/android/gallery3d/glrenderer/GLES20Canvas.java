@@ -23,7 +23,6 @@ import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.util.Log;
 
-import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.IntArray;
 
 import java.nio.Buffer;
@@ -119,7 +118,7 @@ public class GLES20Canvas implements GLCanvas {
             + "uniform sampler2D " + TEXTURE_SAMPLER_UNIFORM + ";\n"
             + "void main() {\n"
             + "  gl_FragColor = texture2D(" + TEXTURE_SAMPLER_UNIFORM + ", vTextureCoord);\n"
-            + "  gl_FragColor.a *= " + ALPHA_UNIFORM + ";\n"
+            + "  gl_FragColor *= " + ALPHA_UNIFORM + ";\n"
             + "}\n";
 
     private static final String OES_TEXTURE_FRAGMENT_SHADER = ""
@@ -130,7 +129,7 @@ public class GLES20Canvas implements GLCanvas {
             + "uniform samplerExternalOES " + TEXTURE_SAMPLER_UNIFORM + ";\n"
             + "void main() {\n"
             + "  gl_FragColor = texture2D(" + TEXTURE_SAMPLER_UNIFORM + ", vTextureCoord);\n"
-            + "  gl_FragColor.a *= " + ALPHA_UNIFORM + ";\n"
+            + "  gl_FragColor *= " + ALPHA_UNIFORM + ";\n"
             + "}\n";
 
     private static final int INITIAL_RESTORE_STATE_SIZE = 8;
@@ -140,7 +139,6 @@ public class GLES20Canvas implements GLCanvas {
     private float[] mMatrices = new float[INITIAL_RESTORE_STATE_SIZE * MATRIX_SIZE];
     private float[] mAlphas = new float[INITIAL_RESTORE_STATE_SIZE];
     private IntArray mSaveFlags = new IntArray();
-    private ArrayList<Blending> mBlendings = new ArrayList<Blending>();
 
     private int mCurrentAlphaIndex = 0;
     private int mCurrentMatrixIndex = 0;
@@ -291,10 +289,8 @@ public class GLES20Canvas implements GLCanvas {
         mOesTextureProgram = assembleProgram(textureVertexShader, oesTextureFragmentShader,
                 mOesTextureParameters);
         mMeshProgram = assembleProgram(meshVertexShader, textureFragmentShader, mMeshParameters);
-
-        mBlendings.clear();
-        mBlendings.add(null);
-        setBlending(Blending.Mix);
+        GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+        checkError();
     }
 
     private static FloatBuffer createBuffer(float[] values) {
@@ -463,10 +459,6 @@ public class GLES20Canvas implements GLCanvas {
             }
             System.arraycopy(mMatrices, currentIndex, mMatrices, mCurrentMatrixIndex, MATRIX_SIZE);
         }
-        boolean saveBlending = (saveFlags & SAVE_FLAG_BLEND) == SAVE_FLAG_BLEND;
-        if (saveBlending) {
-            mBlendings.add(mBlendings.get(mBlendings.size() - 1));
-        }
         mSaveFlags.add(saveFlags);
     }
 
@@ -480,11 +472,6 @@ public class GLES20Canvas implements GLCanvas {
         boolean restoreMatrix = (restoreFlags & SAVE_FLAG_MATRIX) == SAVE_FLAG_MATRIX;
         if (restoreMatrix) {
             mCurrentMatrixIndex -= MATRIX_SIZE;
-        }
-        boolean restoreBlending = (restoreFlags & SAVE_FLAG_BLEND) == SAVE_FLAG_BLEND;
-        if (restoreBlending) {
-            setBlending(mBlendings.get(mBlendings.size() - 2));
-            mBlendings.remove(mBlendings.size() - 1);
         }
     }
 
@@ -965,32 +952,6 @@ public class GLES20Canvas implements GLCanvas {
     }
 
     @Override
-    public void setBlending(Blending blending) {
-        Blending currentBlending = mBlendings.get(mBlendings.size() - 1);
-        if (currentBlending == blending) {
-            return; // nothing to change
-        }
-        mBlendings.set(mBlendings.size() - 1, blending);
-        int srcFunc = GLES20.GL_ONE;
-        int dstFunc;
-        switch (blending) {
-            case Additive:
-                dstFunc = GLES20.GL_ONE;
-                break;
-            case Mix:
-                dstFunc = GLES20.GL_ONE_MINUS_SRC_ALPHA;
-                break;
-            default:
-                Utils.fail("Unknown blend: " + blending);
-                dstFunc = GLES20.GL_ONE_MINUS_SRC_ALPHA;
-                break;
-        }
-        GLES20.glBlendFunc(srcFunc, dstFunc);
-        checkError();
-    }
-
-
-    @Override
     public void enableStencil() {
         GLES20.glEnable(GLES20.GL_STENCIL_TEST);
     }
@@ -1041,11 +1002,9 @@ public class GLES20Canvas implements GLCanvas {
     @Override
     public void recoverFromLightCycle() {
         GLES20.glViewport(0, 0, mWidth, mHeight);
-        int blendingIndex = mBlendings.size() - 1;
-        Blending currentBlending = mBlendings.get(blendingIndex);
-        mBlendings.set(blendingIndex, null);
-        setBlending(currentBlending);
         GLES20.glDisable(GLES20.GL_DEPTH_TEST);
+        GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+        checkError();
     }
 
     @Override
