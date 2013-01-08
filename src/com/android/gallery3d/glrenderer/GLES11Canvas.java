@@ -40,7 +40,7 @@ import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 import javax.microedition.khronos.opengles.GL11ExtensionPack;
 
-public class GLES11Canvas extends GLCanvas {
+public class GLES11Canvas implements GLCanvas {
     @SuppressWarnings("unused")
     private static final String TAG = "GLCanvasImp";
 
@@ -95,7 +95,34 @@ public class GLES11Canvas extends GLCanvas {
     int mCountTextureRect;
     int mCountTextureOES;
 
-    GLES11Canvas() {
+    private static GLId mGLId = new GLES11IdImpl();
+
+    public GLES11Canvas(GL11 gl) {
+        mGL = gl;
+        mGLState = new GLState(gl);
+        // First create an nio buffer, then create a VBO from it.
+        int size = BOX_COORDINATES.length * Float.SIZE / Byte.SIZE;
+        FloatBuffer xyBuffer = allocateDirectNativeOrderBuffer(size).asFloatBuffer();
+        xyBuffer.put(BOX_COORDINATES, 0, BOX_COORDINATES.length).position(0);
+
+        int[] name = new int[1];
+        mGLId.glGenBuffers(1, name, 0);
+        mBoxCoords = name[0];
+
+        gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, mBoxCoords);
+        gl.glBufferData(GL11.GL_ARRAY_BUFFER, xyBuffer.capacity() * (Float.SIZE / Byte.SIZE),
+                xyBuffer, GL11.GL_STATIC_DRAW);
+
+        gl.glVertexPointer(2, GL11.GL_FLOAT, 0, 0);
+        gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
+
+        // Enable the texture coordinate array for Texture 1
+        gl.glClientActiveTexture(GL11.GL_TEXTURE1);
+        gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
+        gl.glClientActiveTexture(GL11.GL_TEXTURE0);
+        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+
+        // mMatrixValues and mAlpha will be initialized in setSize()
     }
 
     @Override
@@ -145,37 +172,6 @@ public class GLES11Canvas extends GLCanvas {
 
     private static ByteBuffer allocateDirectNativeOrderBuffer(int size) {
         return ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
-    }
-
-    @Override
-    public void initialize(GL11 gl) {
-        mGL = gl;
-        mGLState = new GLState(gl);
-        // First create an nio buffer, then create a VBO from it.
-        int size = BOX_COORDINATES.length * Float.SIZE / Byte.SIZE;
-        FloatBuffer xyBuffer = allocateDirectNativeOrderBuffer(size).asFloatBuffer();
-        xyBuffer.put(BOX_COORDINATES, 0, BOX_COORDINATES.length).position(0);
-
-        int[] name = new int[1];
-        GLId glId = getGLId();
-        glId.glGenBuffers(1, name, 0);
-        mBoxCoords = name[0];
-
-        gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, mBoxCoords);
-        gl.glBufferData(GL11.GL_ARRAY_BUFFER,
-                xyBuffer.capacity() * (Float.SIZE / Byte.SIZE),
-                xyBuffer, GL11.GL_STATIC_DRAW);
-
-        gl.glVertexPointer(2, GL11.GL_FLOAT, 0, 0);
-        gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
-
-        // Enable the texture coordinate array for Texture 1
-        gl.glClientActiveTexture(GL11.GL_TEXTURE1);
-        gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
-        gl.glClientActiveTexture(GL11.GL_TEXTURE0);
-        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-
-        // mMatrixValues and mAlpha will be initialized in setSize()
     }
 
     @Override
@@ -751,15 +747,14 @@ public class GLES11Canvas extends GLCanvas {
     public void deleteRecycledResources() {
         synchronized (mUnboundTextures) {
             IntArray ids = mUnboundTextures;
-            GLId glId = getGLId();
             if (ids.size() > 0) {
-                glId.glDeleteTextures(mGL, ids.size(), ids.getInternalArray(), 0);
+                mGLId.glDeleteTextures(mGL, ids.size(), ids.getInternalArray(), 0);
                 ids.clear();
             }
 
             ids = mDeleteBuffers;
             if (ids.size() > 0) {
-                glId.glDeleteBuffers(mGL, ids.size(), ids.getInternalArray(), 0);
+                mGLId.glDeleteBuffers(mGL, ids.size(), ids.getInternalArray(), 0);
                 ids.clear();
             }
         }
@@ -860,8 +855,7 @@ public class GLES11Canvas extends GLCanvas {
         GL11ExtensionPack gl11ep = (GL11ExtensionPack) mGL;
 
         if (mTargetTexture == null && texture != null) {
-            GLId glId = getGLId();
-            glId.glGenBuffers(1, mFrameBuffer, 0);
+            mGLId.glGenBuffers(1, mFrameBuffer, 0);
             gl11ep.glBindFramebufferOES(
                     GL11ExtensionPack.GL_FRAMEBUFFER_OES, mFrameBuffer[0]);
         }
@@ -990,8 +984,7 @@ public class GLES11Canvas extends GLCanvas {
 
     private int uploadBuffer(Buffer buf, int elementSize) {
         int[] bufferIds = new int[1];
-        GLId glId = getGLId();
-        glId.glGenBuffers(bufferIds.length, bufferIds, 0);
+        mGLId.glGenBuffers(bufferIds.length, bufferIds, 0);
         int bufferId = bufferIds[0];
         mGL.glBindBuffer(GL11.GL_ARRAY_BUFFER, bufferId);
         mGL.glBufferData(GL11.GL_ARRAY_BUFFER, buf.capacity() * elementSize, buf,
@@ -1046,5 +1039,10 @@ public class GLES11Canvas extends GLCanvas {
     @Override
     public void getBounds(Rect bounds, int x, int y, int width, int height) {
         // This is only required for GLES20
+    }
+
+    @Override
+    public GLId getGLId() {
+        return mGLId;
     }
 }

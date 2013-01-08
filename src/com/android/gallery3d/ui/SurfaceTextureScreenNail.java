@@ -42,8 +42,8 @@ public abstract class SurfaceTextureScreenNail implements ScreenNail,
     public SurfaceTextureScreenNail() {
     }
 
-    public void acquireSurfaceTexture() {
-        mExtTexture = new ExtTexture(GL_TEXTURE_EXTERNAL_OES);
+    public void acquireSurfaceTexture(GLCanvas canvas) {
+        mExtTexture = new ExtTexture(canvas, GL_TEXTURE_EXTERNAL_OES);
         mExtTexture.setSize(mWidth, mHeight);
         mSurfaceTexture = new SurfaceTexture(mExtTexture.getId());
         setDefaultBufferSize(mSurfaceTexture, mWidth, mHeight);

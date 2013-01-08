@@ -18,7 +18,6 @@ package com.android.gallery3d.ui;
 import android.opengl.GLSurfaceView.EGLConfigChooser;
 
 import com.android.gallery3d.common.ApiHelper;
-import com.android.gallery3d.glrenderer.GLCanvas;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -73,7 +72,7 @@ class GalleryEGLConfigChooser implements EGLConfigChooser {
         int[] numConfig = new int[1];
 
         int configSpec[];
-        if (GLCanvas.getEGLContextClientVersion() == 2) {
+        if (ApiHelper.HAS_GLES20_REQUIRED) {
             configSpec = ApiHelper.USE_888_PIXEL_FORMAT ? mConfig2Spec888 : mConfig2Spec565;
         } else {
             configSpec = ApiHelper.USE_888_PIXEL_FORMAT ? mConfigSpec888 : mConfigSpec565;

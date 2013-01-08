@@ -35,6 +35,8 @@ import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.glrenderer.BasicTexture;
 import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.GLES11Canvas;
+import com.android.gallery3d.glrenderer.GLES20Canvas;
 import com.android.gallery3d.glrenderer.UploadedTexture;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.MotionEventHelper;
@@ -120,7 +122,7 @@ public class GLRootView extends GLSurfaceView
         super(context, attrs);
         mFlags |= FLAG_INITIALIZED;
         setBackgroundDrawable(null);
-        setEGLContextClientVersion(GLCanvas.getEGLContextClientVersion());
+        setEGLContextClientVersion(ApiHelper.HAS_GLES20_REQUIRED ? 2 : 1);
         setEGLConfigChooser(mEglConfigChooser);
         setRenderer(this);
         if (ApiHelper.USE_888_PIXEL_FORMAT) {
@@ -287,8 +289,7 @@ public class GLRootView extends GLSurfaceView
         mRenderLock.lock();
         try {
             mGL = gl;
-            mCanvas = GLCanvas.getInstance();
-            mCanvas.initialize(gl);
+            mCanvas = ApiHelper.HAS_GLES20_REQUIRED ? new GLES20Canvas() : new GLES11Canvas(gl);
             BasicTexture.invalidateAllTextures();
         } finally {
             mRenderLock.unlock();

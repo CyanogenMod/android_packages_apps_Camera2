@@ -22,8 +22,8 @@ public class ExtTexture extends BasicTexture {
 
     private int mTarget;
 
-    public ExtTexture(int target) {
-        GLId glId = GLCanvas.getGLId();
+    public ExtTexture(GLCanvas canvas, int target) {
+        GLId glId = canvas.getGLId();
         mId = glId.generateTexture();
         mTarget = target;
     }
