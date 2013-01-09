@@ -56,30 +56,13 @@ import android.widget.Toast;
 import com.android.gallery3d.R;
 import com.android.gallery3d.data.LocalAlbum;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterBorder;
-import com.android.gallery3d.filtershow.filters.ImageFilterBwFilter;
-import com.android.gallery3d.filtershow.filters.ImageFilterContrast;
-import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
-import com.android.gallery3d.filtershow.filters.ImageFilterDownsample;
-import com.android.gallery3d.filtershow.filters.ImageFilterDrama;
-import com.android.gallery3d.filtershow.filters.ImageFilterDraw;
-import com.android.gallery3d.filtershow.filters.ImageFilterEdge;
-import com.android.gallery3d.filtershow.filters.ImageFilterExposure;
 import com.android.gallery3d.filtershow.filters.ImageFilterFx;
-import com.android.gallery3d.filtershow.filters.ImageFilterHue;
-import com.android.gallery3d.filtershow.filters.ImageFilterKMeans;
-import com.android.gallery3d.filtershow.filters.ImageFilterNegative;
 import com.android.gallery3d.filtershow.filters.ImageFilterParametricBorder;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.filters.ImageFilterRedEye;
-import com.android.gallery3d.filtershow.filters.ImageFilterSaturated;
-import com.android.gallery3d.filtershow.filters.ImageFilterShadows;
-import com.android.gallery3d.filtershow.filters.ImageFilterSharpen;
-import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
-import com.android.gallery3d.filtershow.filters.ImageFilterVibrance;
-import com.android.gallery3d.filtershow.filters.ImageFilterVignette;
-import com.android.gallery3d.filtershow.filters.ImageFilterWBalance;
 import com.android.gallery3d.filtershow.imageshow.ImageBorder;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageDraw;
@@ -314,42 +297,24 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         mPanelController.addPanel(mColorsButton, mListColors, 3);
 
-        ImageFilter[] filters = {
-                new ImageFilterTinyPlanet(),
-                new ImageFilterWBalance(),
-                new ImageFilterExposure(),
-                new ImageFilterVignette(),
-                new ImageFilterContrast(),
-                new ImageFilterShadows(),
-                new ImageFilterVibrance(),
-                new ImageFilterSharpen(),
-                new ImageFilterDrama(),
-                new ImageFilterCurves(),
-                new ImageFilterDraw(),
-                new ImageFilterHue(),
-                new ImageFilterSaturated(),
-                new ImageFilterBwFilter(),
-                new ImageFilterNegative(),
-                new ImageFilterEdge(),
-                new ImageFilterKMeans(),
-                new ImageFilterDownsample(mImageLoader)
-        };
+        Vector<ImageFilter> filters = new Vector<ImageFilter>();
+        FiltersManager.addFilters(filters, mImageLoader);
 
-        for (int i = 0; i < filters.length; i++) {
+        for (ImageFilter filter : filters) {
             ImageSmallFilter fView = new ImageSmallFilter(this);
-            filters[i].setParameter(filters[i].getPreviewParameter());
-            filters[i].setName(getString(filters[i].getTextId()));
-            fView.setImageFilter(filters[i]);
+            filter.setParameter(filter.getPreviewParameter());
+            filter.setName(getString(filter.getTextId()));
+            fView.setImageFilter(filter);
             fView.setController(this);
             fView.setImageLoader(mImageLoader);
-            fView.setId(filters[i].getButtonId());
-            if (filters[i].getOverlayBitmaps() != 0) {
+            fView.setId(filter.getButtonId());
+            if (filter.getOverlayBitmaps() != 0) {
                 Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-                        filters[i].getOverlayBitmaps());
+                        filter.getOverlayBitmaps());
                 fView.setOverlayBitmap(bitmap);
             }
             mPanelController.addComponent(mColorsButton, fView);
-            mPanelController.addFilter(filters[i]);
+            mPanelController.addFilter(filter);
             listColors.addView(fView);
         }
         mPanelController.addFilter(new ImageFilterRedEye());
