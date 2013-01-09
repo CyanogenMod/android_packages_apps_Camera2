@@ -103,8 +103,6 @@
     <string name="exposure" msgid="1229093066434614811">Exposure</string>
     <!--  Label for the image sharpness (clarity, distinctness) filter button [CHAR LIMIT=10] -->
     <string name="sharpness">Sharpness</string>
-    <!--  Label for the image Drama (striking, sensational) filter button [CHAR LIMIT=10] -->
-    <string name="drama">Drama</string>
     <!--  Label for the image contrast (color difference) filter button [CHAR LIMIT=10] -->
     <string name="contrast">Contrast</string>
     <!--  Label for the image vibrance (strengthens colors) filter button [CHAR LIMIT=10] -->
