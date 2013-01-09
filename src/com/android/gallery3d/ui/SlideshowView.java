@@ -23,7 +23,6 @@ import com.android.gallery3d.anim.CanvasAnimation;
 import com.android.gallery3d.anim.FloatAnimation;
 import com.android.gallery3d.glrenderer.BitmapTexture;
 import com.android.gallery3d.glrenderer.GLCanvas;
-import com.android.gallery3d.glrenderer.GLCanvas.Blending;
 
 import java.util.Random;
 
@@ -94,8 +93,6 @@ public class SlideshowView extends GLView {
     protected void render(GLCanvas canvas) {
         long animTime = AnimationTime.get();
         boolean requestRender = mTransitionAnimation.calculate(animTime);
-        canvas.save(GLCanvas.SAVE_FLAG_BLEND);
-        canvas.setBlending(Blending.Additive);
         float alpha = mPrevTexture == null ? 1f : mTransitionAnimation.get();
 
         if (mPrevTexture != null && alpha != 1f) {
@@ -119,7 +116,6 @@ public class SlideshowView extends GLView {
             canvas.restore();
         }
         if (requestRender) invalidate();
-        canvas.restore();
     }
 
     private class SlideshowAnimation extends CanvasAnimation {

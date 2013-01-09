@@ -148,9 +148,6 @@ public class GLCanvasStub implements GLCanvas {
         return 0;
     }
     @Override
-    public void setBlending(Blending blending) {
-    }
-    @Override
     public void enableStencil() {
     }
     @Override
