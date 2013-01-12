@@ -16,6 +16,7 @@
 -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:iconbutton="http://schemas.android.com/apk/res/com.android.gallery3d"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/mainView">
@@ -95,12 +96,6 @@
                 android:layerType="software"
                 android:visibility="gone" />
 
-            <com.android.gallery3d.filtershow.imageshow.ImageBorder
-                android:id="@+id/imageBorder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
             <com.android.gallery3d.filtershow.imageshow.ImageZoom
                 android:id="@+id/imageZoom"
                 android:layout_width="match_parent"
@@ -123,15 +118,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
-            <!--
-            <ImageButton
-                android:id="@+id/showOriginalButton"
-                android:layout_width="64dip"
-                android:layout_height="64dip"
-                android:layout_gravity="bottom"
-                android:scaleType="centerInside"
-                android:src="@drawable/filtershow_button_show_original" />
-                 -->
 
             <com.android.gallery3d.filtershow.CenteredLinearLayout
               xmlns:custom="http://schemas.android.com/apk/res/com.android.gallery3d"
@@ -255,37 +241,42 @@
                     android:id="@+id/listGeometry"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:layout_gravity="center"
+                    android:layout_gravity="left"
                     android:orientation="horizontal">
 
-                    <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    <com.android.gallery3d.filtershow.ui.IconButton
                         android:id="@+id/straightenButton"
-                        style="@style/FilterShowBottomButton"
-                        android:src="@drawable/filtershow_button_geometry_straighten"
+                        android:layout_height="match_parent"
+                        style="@style/IconButton"
+                        android:drawableTop="@drawable/filtershow_button_geometry_straighten"
                         android:text="@string/straighten" />
 
-                    <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    <com.android.gallery3d.filtershow.ui.IconButton
                         android:id="@+id/cropButton"
-                        style="@style/FilterShowBottomButton"
-                        android:src="@drawable/filtershow_button_geometry_crop"
+                        android:layout_height="match_parent"
+                        style="@style/IconButton"
+                        android:drawableTop="@drawable/filtershow_button_geometry_crop"
                         android:text="@string/crop" />
 
-                    <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    <com.android.gallery3d.filtershow.ui.IconButton
                         android:id="@+id/rotateButton"
-                        style="@style/FilterShowBottomButton"
-                        android:src="@drawable/filtershow_button_geometry_rotate"
+                        android:layout_height="match_parent"
+                        style="@style/IconButton"
+                        android:drawableTop="@drawable/filtershow_button_geometry_rotate"
                         android:text="@string/rotate" />
 
-                    <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    <com.android.gallery3d.filtershow.ui.IconButton
                         android:id="@+id/flipButton"
-                        style="@style/FilterShowBottomButton"
-                        android:src="@drawable/filtershow_button_geometry_flip"
+                        android:layout_height="match_parent"
+                        style="@style/IconButton"
+                        android:drawableTop="@drawable/filtershow_button_geometry_flip"
                         android:text="@string/mirror" />
 
-                    <com.android.gallery3d.filtershow.ui.ImageButtonTitle
+                    <com.android.gallery3d.filtershow.ui.IconButton
                         android:id="@+id/redEyeButton"
-                        style="@style/FilterShowBottomButton"
-                        android:src="@drawable/photoeditor_effect_redeye"
+                        android:layout_height="match_parent"
+                        style="@style/IconButton"
+                        android:drawableTop="@drawable/photoeditor_effect_redeye"
                         android:text="@string/redeye" />
 
                 </LinearLayout>
@@ -294,7 +285,7 @@
             <HorizontalScrollView
                 android:id="@+id/colorsFxList"
                 android:layout_width="fill_parent"
-                android:layout_height="@dimen/thumbnail_size"
+                android:layout_height="wrap_content"
                 android:background="@color/background_main_toolbar"
                 android:visibility="gone"
                 android:scrollbars="none" >
@@ -302,7 +293,8 @@
                 <LinearLayout
                     android:id="@+id/listColorsFx"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/thumbnail_size"
+                    android:background="@color/background_main_toolbar"
                     android:layout_marginLeft="@dimen/thumbnail_margin"
                     android:orientation="horizontal" >
 

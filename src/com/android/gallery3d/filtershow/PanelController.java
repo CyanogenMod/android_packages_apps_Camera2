@@ -29,8 +29,9 @@ import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
-import com.android.gallery3d.filtershow.imageshow.ImageSmallFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.ui.FilterIconButton;
+import com.android.gallery3d.filtershow.ui.FramedTextButton;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -403,6 +404,7 @@ public class PanelController implements OnClickListener {
         return filter;
     }
 
+    // TODO: remove this.
     public void ensureFilter(String name) {
         ImagePreset preset = getImagePreset();
         ImageFilter filter = preset.getFilter(name);
@@ -433,7 +435,14 @@ public class PanelController implements OnClickListener {
     }
 
     public void showComponent(View view) {
-        if (mUtilityPanel != null && !mUtilityPanel.selected()) {
+
+        boolean doPanelTransition = true;
+        if (view instanceof FilterIconButton) {
+            ImageFilter f = ((FilterIconButton) view).getImageFilter();
+            doPanelTransition = f.showUtilityPanel();
+        }
+
+        if (mUtilityPanel != null && !mUtilityPanel.selected() && doPanelTransition ) {
             Panel current = mPanels.get(mCurrentPanel);
             ViewPropertyAnimator anim1 = current.unselect(-1, VERTICAL_MOVE);
             anim1.start();
@@ -448,8 +457,8 @@ public class PanelController implements OnClickListener {
         }
         mUtilityPanel.hideAccessoryViews();
 
-        if (view instanceof ImageSmallFilter) {
-            ImageSmallFilter component = (ImageSmallFilter) view;
+        if (view instanceof FilterIconButton) {
+            FilterIconButton component = (FilterIconButton) view;
             ImageFilter filter = component.getImageFilter();
             if (filter.getEditingViewId() != 0) {
                 mCurrentImage = showImageView(filter.getEditingViewId());
@@ -460,7 +469,9 @@ public class PanelController implements OnClickListener {
                     mCurrentImage.openUtilityPanel(mUtilityPanel.mAccessoryViewList);
                 }
                 mUtilityPanel.setShowParameter(filter.showParameterValue());
-                ensureFilter(ename);
+                if (filter != null) {
+                    mMasterImage.setCurrentFilter(filter);
+                }
                 mCurrentImage.select();
             }
             return;

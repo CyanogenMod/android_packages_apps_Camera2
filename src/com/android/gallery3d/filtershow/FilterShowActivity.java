@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -38,6 +39,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,6 +54,7 @@ import android.widget.SeekBar;
 import android.widget.ShareActionProvider;
 import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import android.widget.Toast;
+import android.text.TextUtils;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.data.LocalAlbum;
@@ -63,23 +66,21 @@ import com.android.gallery3d.filtershow.filters.ImageFilterFx;
 import com.android.gallery3d.filtershow.filters.ImageFilterParametricBorder;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.filters.ImageFilterRedEye;
-import com.android.gallery3d.filtershow.imageshow.ImageBorder;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageDraw;
 import com.android.gallery3d.filtershow.imageshow.ImageFlip;
 import com.android.gallery3d.filtershow.imageshow.ImageRedEyes;
 import com.android.gallery3d.filtershow.imageshow.ImageRotate;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
-import com.android.gallery3d.filtershow.imageshow.ImageSmallBorder;
-import com.android.gallery3d.filtershow.imageshow.ImageSmallFilter;
 import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
 import com.android.gallery3d.filtershow.imageshow.ImageTinyPlanet;
 import com.android.gallery3d.filtershow.imageshow.ImageZoom;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.provider.SharedImageProvider;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
+import com.android.gallery3d.filtershow.ui.FilterIconButton;
+import com.android.gallery3d.filtershow.ui.IconButton;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
-import com.android.gallery3d.filtershow.ui.ImageButtonTitle;
 import com.android.gallery3d.filtershow.ui.ImageCurves;
 import com.android.gallery3d.filtershow.ui.Spline;
 import com.android.gallery3d.util.GalleryUtils;
@@ -104,7 +105,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private ImageLoader mImageLoader = null;
     private ImageShow mImageShow = null;
     private ImageCurves mImageCurves = null;
-    private ImageBorder mImageBorders = null;
     private ImageRedEyes mImageRedEyes = null;
     private ImageDraw mImageDraw = null;
     private ImageStraighten mImageStraighten = null;
@@ -126,7 +126,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private ImageButton mGeometryButton = null;
     private ImageButton mColorsButton = null;
 
-    private ImageSmallFilter mCurrentImageSmallFilter = null;
+    private LinearLayout listColors = null;
+    private LinearLayout listFilters = null;
+    private LinearLayout listBorders = null;
+
+    private ImageFilter mCurrentFilter = null;
+
     private static final int SELECT_PICTURE = 1;
     private static final String LOGTAG = "FilterShowActivity";
     protected static final boolean ANIMATE_PANELS = true;
@@ -148,8 +153,9 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private static final int SEEK_BAR_MAX = 600;
 
     private LoadBitmapTask mLoadBitmapTask;
-    private ImageSmallFilter mNullFxFilter;
-    private ImageSmallFilter mNullBorderFilter;
+    private FilterIconButton mNullFxFilter;
+    private FilterIconButton mNullBorderFilter;
+    private int mIconSeedSize = 140;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -158,8 +164,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageFilterRS.setRenderScriptContext(this);
 
         ImageShow.setDefaultBackgroundColor(getResources().getColor(R.color.background_screen));
-        ImageSmallFilter.setDefaultBackgroundColor(getResources().getColor(
-                R.color.background_main_toolbar));
         // TODO: get those values from XML.
         ImageZoom.setZoomedSize(getPixelsFromDip(256));
         FramedTextButton.setTextSize((int) getPixelsFromDip(14));
@@ -170,10 +174,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageShow.setOriginalTextMargin((int) getPixelsFromDip(4));
         ImageShow.setOriginalTextSize((int) getPixelsFromDip(18));
         ImageShow.setOriginalText(getResources().getString(R.string.original_picture_text));
-        ImageButtonTitle.setTextSize((int) getPixelsFromDip(12));
-        ImageButtonTitle.setTextPadding((int) getPixelsFromDip(10));
-        ImageSmallFilter.setMargin((int) getPixelsFromDip(3));
-        ImageSmallFilter.setTextMargin((int) getPixelsFromDip(4));
+        mIconSeedSize = getResources().getDimensionPixelSize(R.dimen.thumbnail_size);
+
         Drawable curveHandle = getResources().getDrawable(R.drawable.camera_crop);
         int curveHandleSize = (int) getResources().getDimension(R.dimen.crop_indicator_size);
         Spline.setCurveHandle(curveHandle, curveHandleSize);
@@ -194,13 +196,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         mImageLoader = new ImageLoader(this, getApplicationContext());
 
-        LinearLayout listFilters = (LinearLayout) findViewById(R.id.listFilters);
-        LinearLayout listBorders = (LinearLayout) findViewById(R.id.listBorders);
-        LinearLayout listColors = (LinearLayout) findViewById(R.id.listColorsFx);
+        listFilters = (LinearLayout) findViewById(R.id.listFilters);
+        listBorders = (LinearLayout) findViewById(R.id.listBorders);
+        listColors = (LinearLayout) findViewById(R.id.listColorsFx);
 
         mImageShow = (ImageShow) findViewById(R.id.imageShow);
         mImageCurves = (ImageCurves) findViewById(R.id.imageCurves);
-        mImageBorders = (ImageBorder) findViewById(R.id.imageBorder);
         mImageStraighten = (ImageStraighten) findViewById(R.id.imageStraighten);
         mImageZoom = (ImageZoom) findViewById(R.id.imageZoom);
         mImageCrop = (ImageCrop) findViewById(R.id.imageCrop);
@@ -215,7 +216,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageCrop.setMinCropSize((int) getPixelsFromDip(55));
         mImageViews.add(mImageShow);
         mImageViews.add(mImageCurves);
-        mImageViews.add(mImageBorders);
         mImageViews.add(mImageStraighten);
         mImageViews.add(mImageZoom);
         mImageViews.add(mImageCrop);
@@ -251,8 +251,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageShow.setImageLoader(mImageLoader);
         mImageCurves.setImageLoader(mImageLoader);
         mImageCurves.setMaster(mImageShow);
-        mImageBorders.setImageLoader(mImageLoader);
-        mImageBorders.setMaster(mImageShow);
         mImageStraighten.setImageLoader(mImageLoader);
         mImageStraighten.setMaster(mImageShow);
         mImageZoom.setImageLoader(mImageLoader);
@@ -275,7 +273,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         mPanelController.addImageView(findViewById(R.id.imageShow));
         mPanelController.addImageView(findViewById(R.id.imageCurves));
-        mPanelController.addImageView(findViewById(R.id.imageBorder));
         mPanelController.addImageView(findViewById(R.id.imageStraighten));
         mPanelController.addImageView(findViewById(R.id.imageCrop));
         mPanelController.addImageView(findViewById(R.id.imageRotate));
@@ -301,21 +298,9 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         FiltersManager.addFilters(filters, mImageLoader);
 
         for (ImageFilter filter : filters) {
-            ImageSmallFilter fView = new ImageSmallFilter(this);
-            filter.setParameter(filter.getPreviewParameter());
+            filter.setParameter(filter.getDefaultParameter());
             filter.setName(getString(filter.getTextId()));
-            fView.setImageFilter(filter);
-            fView.setController(this);
-            fView.setImageLoader(mImageLoader);
-            fView.setId(filter.getButtonId());
-            if (filter.getOverlayBitmaps() != 0) {
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(),
-                        filter.getOverlayBitmaps());
-                fView.setOverlayBitmap(bitmap);
-            }
-            mPanelController.addComponent(mColorsButton, fView);
-            mPanelController.addFilter(filter);
-            listColors.addView(fView);
+            setupFilterButton(filter, listColors, mColorsButton);
         }
         mPanelController.addFilter(new ImageFilterRedEye());
 
@@ -448,6 +433,36 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 cannotLoadImage();
             }
 
+            mImageShow.requestFilteredImages();
+            Bitmap bmap = mImageShow.getFilteredImage();
+            if (bmap != null && bmap.getWidth() > 0 && bmap.getHeight() > 0) {
+                float w = bmap.getWidth();
+                float h = bmap.getHeight();
+                float f = mIconSeedSize / Math.min(w, h);
+                w = w * f;
+                h = h * f;
+                bmap = Bitmap.createScaledBitmap(bmap, (int) w, (int) h, true);
+
+                int num_colors_buttons = listColors.getChildCount();
+                for (int i = 0; i < num_colors_buttons; i++) {
+                    FilterIconButton b = (FilterIconButton) listColors.getChildAt(i);
+
+                    b.setIcon(bmap);
+                }
+                int num_filters_buttons = listFilters.getChildCount();
+                for (int i = 0; i < num_filters_buttons; i++) {
+                    FilterIconButton b = (FilterIconButton) listFilters.getChildAt(i);
+
+                    b.setIcon(bmap);
+                }
+                int num_borders_buttons = listBorders.getChildCount();
+                for (int i = 0; i < num_borders_buttons; i++) {
+                    FilterIconButton b = (FilterIconButton) listBorders.getChildAt(i);
+
+                    b.setIcon(bmap);
+                }
+
+            }
             mLoadBitmapTask = null;
             super.onPostExecute(result);
         }
@@ -648,6 +663,23 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             mSaveButton.setEnabled(enable);
     }
 
+    public FilterIconButton setupFilterButton(ImageFilter filter, LinearLayout panel, View button) {
+        LayoutInflater inflater =
+                (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        FilterIconButton icon = (FilterIconButton) inflater.inflate(R.layout.filtericonbutton,
+                panel, false);
+        String text = filter.getName();
+        if (filter instanceof ImageFilterBorder || filter instanceof ImageFilterParametricBorder) {
+            text = "";
+        }
+        icon.setup(text, filter, this, panel);
+        icon.setId(filter.getButtonId());
+        mPanelController.addComponent(button, icon);
+        mPanelController.addFilter(filter);
+        panel.addView(icon);
+        return icon;
+    }
+
     private void fillListImages(LinearLayout listFilters) {
         // TODO: use listview
         // TODO: load the filters straight from the filesystem
@@ -681,34 +713,21 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         ImagePreset preset = new ImagePreset(getString(R.string.history_original)); // empty
         preset.setImageLoader(mImageLoader);
-        mNullFxFilter = new ImageSmallFilter(this);
-
-        mNullFxFilter.setSelected(true);
-        mCurrentImageSmallFilter = mNullFxFilter;
-
-        mNullFxFilter.setImageFilter(new ImageFilterFx(null, getString(R.string.none)));
-
-        mNullFxFilter.setController(this);
-        mNullFxFilter.setImageLoader(mImageLoader);
-        listFilters.addView(mNullFxFilter);
-        ImageSmallFilter previousFilter = mNullFxFilter;
 
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
 
         for (int i = 0; i < drawid.length; i++) {
             Bitmap b = BitmapFactory.decodeResource(getResources(), drawid[i], o);
-            fxArray[p++] = new ImageFilterFx(b, getString(fxNameid[i]));
+            fxArray[p++] = new ImageFilterFx(b, getString(fxNameid[i]), fxNameid[i]);
         }
-        ImageSmallFilter filter;
+
+        ImageFilterFx nullFilter = new ImageFilterFx(null, getString(R.string.none), R.string.none);
+        mNullFxFilter = setupFilterButton(nullFilter, listFilters, mFxButton);
+        mNullFxFilter.setSelected(true);
+
         for (int i = 0; i < p; i++) {
-            filter = new ImageSmallFilter(this);
-            filter.setImageFilter(fxArray[i]);
-            filter.setController(this);
-            filter.setNulfilter(mNullFxFilter);
-            filter.setImageLoader(mImageLoader);
-            listFilters.addView(filter);
-            previousFilter = filter;
+            setupFilterButton(fxArray[i], listFilters, mFxButton);
         }
 
         // Default preset (original)
@@ -743,22 +762,13 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         borders[p++] = new ImageFilterParametricBorder(creamColor, mImageBorderSize,
                 mImageBorderSize);
 
-        ImageSmallFilter previousFilter = null;
         for (int i = 0; i < p; i++) {
-            ImageSmallBorder filter = new ImageSmallBorder(this);
-            if (i == 0) { // save the first to reset it
-                mNullBorderFilter = filter;
-            } else {
-                filter.setNulfilter(mNullBorderFilter);
-            }
             borders[i].setName(getString(R.string.borders));
-            filter.setImageFilter(borders[i]);
-            filter.setController(this);
-            filter.setBorder(true);
-            filter.setImageLoader(mImageLoader);
-            filter.setShowTitle(false);
-            listBorders.addView(filter);
-            previousFilter = filter;
+            FilterIconButton b = setupFilterButton(borders[i], listBorders, mBorderButton);
+            if (i == 0) {
+                mNullBorderFilter = b;
+                mNullBorderFilter.setSelected(true);
+            }
         }
     }
 
@@ -901,10 +911,13 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         invalidateOptionsMenu();
     }
 
-    void resetHistory() {
+    public void dispatchNullFilterClick() {
         mNullFxFilter.onClick(mNullFxFilter);
         mNullBorderFilter.onClick(mNullBorderFilter);
+    }
 
+    void resetHistory() {
+        dispatchNullFilterClick();
         HistoryAdapter adapter = mImageShow.getHistory();
         adapter.reset();
         ImagePreset original = new ImagePreset(adapter.getItem(0));
@@ -946,43 +959,16 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 r.getDisplayMetrics());
     }
 
-    public void useImagePreset(ImageSmallFilter imageSmallFilter, ImagePreset preset) {
-        if (preset == null) {
+    public void useFilter(ImageFilter filter) {
+        if (mCurrentFilter == filter) {
             return;
         }
-
-        if (mCurrentImageSmallFilter != null) {
-            mCurrentImageSmallFilter.setSelected(false);
-        }
-        mCurrentImageSmallFilter = imageSmallFilter;
-        mCurrentImageSmallFilter.setSelected(true);
-
-        ImagePreset copy = new ImagePreset(preset);
-        mImageShow.setImagePreset(copy);
-        if (preset.isFx()) {
-            // if it's an FX we rest the curve adjustment too
-            mImageCurves.resetCurve();
-        }
-        invalidateViews();
-    }
-
-    public void useImageFilter(ImageSmallFilter imageSmallFilter, ImageFilter imageFilter,
-            boolean setBorder) {
-        if (imageFilter == null) {
-            return;
-        }
-
-        if (mCurrentImageSmallFilter != null) {
-            mCurrentImageSmallFilter.setSelected(false);
-        }
-        mCurrentImageSmallFilter = imageSmallFilter;
-        mCurrentImageSmallFilter.setSelected(true);
-
+        mCurrentFilter = filter;
         ImagePreset oldPreset = mImageShow.getImagePreset();
         ImagePreset copy = new ImagePreset(oldPreset);
         // TODO: use a numerical constant instead.
 
-        copy.add(imageFilter);
+        copy.add(filter);
 
         mImageShow.setImagePreset(copy);
         invalidateViews();
@@ -1020,7 +1006,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private boolean outputted = false;
 
     public void saveImage() {
-        // boolean outputted = false;
         if (mCropExtras != null) {
             if (mCropExtras.getExtraOutput() != null) {
                 mSaveToExtraUri = true;

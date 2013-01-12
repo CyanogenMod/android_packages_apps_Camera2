@@ -76,6 +76,10 @@ public class ImageFilter implements Cloneable {
         return true;
     }
 
+    public boolean showUtilityPanel() {
+        return true;
+    }
+
     @Override
     public ImageFilter clone() throws CloneNotSupportedException {
         ImageFilter filter = (ImageFilter) super.clone();
@@ -111,6 +115,18 @@ public class ImageFilter implements Cloneable {
 
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         // do nothing here, subclasses will implement filtering here
+        return bitmap;
+    }
+
+    /**
+     * Called on small bitmaps to create button icons for each filter.
+     * Override this to provide filter-specific button icons.
+     */
+    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        int param = getParameter();
+        setParameter(getPreviewParameter());
+        bitmap = apply(bitmap, scaleFactor, highQuality);
+        setParameter(param);
         return bitmap;
     }
 
