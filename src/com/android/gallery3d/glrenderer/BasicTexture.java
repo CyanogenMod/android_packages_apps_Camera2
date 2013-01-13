@@ -86,6 +86,10 @@ public abstract class BasicTexture implements Texture {
         }
     }
 
+    public boolean isFlippedVertically() {
+      return false;
+    }
+
     public int getId() {
         return mId;
     }
