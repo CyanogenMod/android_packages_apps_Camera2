@@ -669,8 +669,17 @@ public class GLES20Canvas implements GLCanvas {
         setPosition(params, OFFSET_FILL_RECT);
         GLES20.glUniformMatrix4fv(params[INDEX_TEXTURE_MATRIX].handle, 1, false, textureMatrix, 0);
         checkError();
+        if (texture.isFlippedVertically()) {
+            save(SAVE_FLAG_MATRIX);
+            translate(0, target.centerY());
+            scale(1, -1, 1);
+            translate(0, -target.centerY());
+        }
         draw(params, GLES20.GL_TRIANGLE_STRIP, COUNT_FILL_VERTEX, target.left, target.top,
                 target.width(), target.height());
+        if (texture.isFlippedVertically()) {
+            restore();
+        }
         mCountTextureRect++;
     }
 
