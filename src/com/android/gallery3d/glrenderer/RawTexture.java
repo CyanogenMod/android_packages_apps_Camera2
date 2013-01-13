@@ -24,6 +24,7 @@ public class RawTexture extends BasicTexture {
     private static final String TAG = "RawTexture";
 
     private final boolean mOpaque;
+    private boolean mIsFlipped;
 
     public RawTexture(int width, int height, boolean opaque) {
         mOpaque = opaque;
@@ -33,6 +34,15 @@ public class RawTexture extends BasicTexture {
     @Override
     public boolean isOpaque() {
         return mOpaque;
+    }
+
+    @Override
+    public boolean isFlippedVertically() {
+        return mIsFlipped;
+    }
+
+    public void setIsFlippedVertically(boolean isFlipped) {
+        mIsFlipped = isFlipped;
     }
 
     protected void prepare(GLCanvas canvas) {
