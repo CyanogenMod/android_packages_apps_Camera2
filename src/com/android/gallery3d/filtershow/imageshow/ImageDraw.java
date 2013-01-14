@@ -15,7 +15,7 @@ import android.view.MotionEvent;
 import com.android.gallery3d.filtershow.filters.ImageFilterDraw;
 import com.android.gallery3d.filtershow.filters.RedEyeCandidate;
 
-public class ImageDraw extends ImageSlave {
+public class ImageDraw extends ImageShow {
 
     private static final String LOGTAG = "ImageDraw";
 

@@ -27,7 +27,7 @@ import android.view.MotionEvent;
 
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 
-public class ImageZoom extends ImageSlave {
+public class ImageZoom extends ImageShow {
     private static final String LOGTAG = "ImageZoom";
     private boolean mTouchDown = false;
     private boolean mZoomedIn = false;

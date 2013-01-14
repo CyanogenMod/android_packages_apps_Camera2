@@ -31,20 +31,15 @@ import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.HistoryAdapter;
-import com.android.gallery3d.filtershow.ImageStateAdapter;
 import com.android.gallery3d.filtershow.PanelController;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
-import com.android.gallery3d.filtershow.ui.SliderController;
 import com.android.gallery3d.filtershow.ui.SliderListener;
 
 import java.io.File;
@@ -54,32 +49,21 @@ public class ImageShow extends View implements OnGestureListener,
         SliderListener,
         OnSeekBarChangeListener {
 
+    protected MasterImage mMasterImage = MasterImage.getImage();
     private static final String LOGTAG = "ImageShow";
 
     protected Paint mPaint = new Paint();
     protected static int mTextSize = 24;
     protected static int mTextPadding = 20;
 
-    protected ImagePreset mImagePreset = null;
-    protected ImagePreset mImageGeometryOnlyPreset = null;
-    protected ImagePreset mImageFiltersOnlyPreset = null;
-
     protected ImageLoader mImageLoader = null;
-    private ImageFilter mCurrentFilter = null;
     private boolean mDirtyGeometry = false;
 
     private Bitmap mBackgroundImage = null;
     private final boolean USE_BACKGROUND_IMAGE = false;
     private static int mBackgroundColor = Color.RED;
 
-    private Bitmap mGeometryOnlyImage = null;
-    private Bitmap mFiltersOnlyImage = null;
-    private Bitmap mFilteredImage = null;
-
     private GestureDetector mGestureDetector = null;
-
-    private HistoryAdapter mHistoryAdapter = null;
-    private ImageStateAdapter mImageStateAdapter = null;
 
     protected Rect mImageBounds = new Rect();
 
@@ -109,7 +93,6 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     private boolean mShowControls = false;
-    private boolean mShowOriginal = false;
     private String mToast = null;
     private boolean mShowToast = false;
     private boolean mImportantToast = false;
@@ -220,7 +203,7 @@ public class ImageShow extends View implements OnGestureListener,
         }
         if (getImagePreset() != null) {
             mImageLoader.resetImageForPreset(getImagePreset(), this);
-            getImagePreset().fillImageStateAdapter(mImageStateAdapter);
+            getImagePreset().fillImageStateAdapter(mMasterImage.getState());
         }
         if (getPanelController() != null) {
             getPanelController().onNewValue(parameter);
@@ -242,20 +225,18 @@ public class ImageShow extends View implements OnGestureListener,
 
     public ImageShow(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mHistoryAdapter = new HistoryAdapter(context, R.layout.filtershow_history_operation_row,
-                R.id.rowTextView);
-        mImageStateAdapter = new ImageStateAdapter(context,
-                R.layout.filtershow_imagestate_row);
+
         setupGestureDetector(context);
         mActivity = (FilterShowActivity) context;
+        mMasterImage.addObserver(this);
     }
 
     public ImageShow(Context context) {
         super(context);
-        mHistoryAdapter = new HistoryAdapter(context, R.layout.filtershow_history_operation_row,
-                R.id.rowTextView);
+
         setupGestureDetector(context);
         mActivity = (FilterShowActivity) context;
+        mMasterImage.addObserver(this);
     }
 
     public void setupGestureDetector(Context context) {
@@ -274,15 +255,11 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     public void setCurrentFilter(ImageFilter filter) {
-        mCurrentFilter = filter;
+        mMasterImage.setCurrentFilter(filter);
     }
 
     public ImageFilter getCurrentFilter() {
-        return mCurrentFilter;
-    }
-
-    public void setAdapter(HistoryAdapter adapter) {
-        mHistoryAdapter = adapter;
+        return mMasterImage.getCurrentFilter();
     }
 
     public void showToast(String text) {
@@ -319,7 +296,7 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     public ImagePreset getImagePreset() {
-        return mImagePreset;
+        return mMasterImage.getPreset();
     }
 
     public void drawToast(Canvas canvas) {
@@ -354,7 +331,6 @@ public class ImageShow extends View implements OnGestureListener,
     @Override
     public void onDraw(Canvas canvas) {
         drawBackground(canvas);
-        requestFilteredImages();
         defaultDrawImage(canvas);
 
         if (showTitle() && getImagePreset() != null) {
@@ -375,83 +351,27 @@ public class ImageShow extends View implements OnGestureListener,
         if (mImageLoader == null) {
             return;
         }
-        updateImagePresets(true);
+        mMasterImage.updatePresets(true);
     }
 
     public void updateImagePresets(boolean force) {
-        ImagePreset preset = getImagePreset();
-        if (preset == null) {
-            mActivity.enableSave(false);
-            return;
-        }
-        if (force) {
-            mImageLoader.resetImageForPreset(getImagePreset(), this);
-        }
-        if (force || mImageGeometryOnlyPreset == null) {
-            ImagePreset newPreset = new ImagePreset(preset);
-            newPreset.setDoApplyFilters(false);
-            if (mImageGeometryOnlyPreset == null
-                    || !newPreset.same(mImageGeometryOnlyPreset)) {
-                mImageGeometryOnlyPreset = newPreset;
-                mGeometryOnlyImage = null;
-            }
-        }
-        if (force || mImageFiltersOnlyPreset == null) {
-            ImagePreset newPreset = new ImagePreset(preset);
-            newPreset.setDoApplyGeometry(false);
-            if (mImageFiltersOnlyPreset == null
-                    || !newPreset.same(mImageFiltersOnlyPreset)) {
-                mImageFiltersOnlyPreset = newPreset;
-                mFiltersOnlyImage = null;
-            }
-        }
-        mActivity.enableSave(hasModifications());
+        mMasterImage.updatePresets(force);
     }
 
     public void requestFilteredImages() {
-        if (mImageLoader != null) {
-            Bitmap bitmap = mImageLoader.getImageForPreset(this,
-                    getImagePreset(), showHires());
-
-            if (bitmap != null) {
-                if (mFilteredImage == null) {
-                    invalidate();
-                }
-                mFilteredImage = bitmap;
-            }
-
-            updateImagePresets(false);
-            if (mImageGeometryOnlyPreset != null) {
-                bitmap = mImageLoader.getImageForPreset(this, mImageGeometryOnlyPreset,
-                        showHires());
-                if (bitmap != null) {
-                    mGeometryOnlyImage = bitmap;
-                }
-            }
-            if (mImageFiltersOnlyPreset != null) {
-                bitmap = mImageLoader.getImageForPreset(this, mImageFiltersOnlyPreset,
-                        showHires());
-                if (bitmap != null) {
-                    mFiltersOnlyImage = bitmap;
-                }
-            }
-        }
-
-        if (mShowOriginal) {
-            mFilteredImage = mGeometryOnlyImage;
-        }
+        mMasterImage.requestImages();
     }
 
     public Bitmap getFiltersOnlyImage() {
-        return mFiltersOnlyImage;
+        return mMasterImage.getFiltersOnlyImage();
     }
 
     public Bitmap getGeometryOnlyImage() {
-        return mGeometryOnlyImage;
+        return mMasterImage.getGeometryOnlyImage();
     }
 
     public Bitmap getFilteredImage() {
-        return mFilteredImage;
+        return mMasterImage.getFilteredImage();
     }
 
     public void drawImage(Canvas canvas, Bitmap image) {
@@ -567,33 +487,13 @@ public class ImageShow extends View implements OnGestureListener,
         return false;
     }
 
-    public void setImagePreset(ImagePreset preset) {
-        setImagePreset(preset, true);
-    }
 
-    public void setImagePreset(ImagePreset preset, boolean addToHistory) {
-        if (preset == null) {
-            return;
-        }
-        mImagePreset = preset;
-        getImagePreset().setImageLoader(mImageLoader);
-        updateImagePresets(true);
-        if (addToHistory) {
-            mHistoryAdapter.addHistoryItem(getImagePreset());
-        }
-        getImagePreset().setEndpoint(this);
-        updateImage();
-        mImagePreset.fillImageStateAdapter(mImageStateAdapter);
-        invalidate();
-    }
 
     public void setImageLoader(ImageLoader loader) {
         mImageLoader = loader;
         if (mImageLoader != null) {
             mImageLoader.addListener(this);
-            if (mImagePreset != null) {
-                mImagePreset.setImageLoader(mImageLoader);
-            }
+            mMasterImage.setImageLoader(mImageLoader);
         }
     }
 
@@ -622,7 +522,7 @@ public class ImageShow extends View implements OnGestureListener,
         RectF r = new RectF(0, 0, w, h);
         getImagePreset().mGeoData.setPhotoBounds(r);
         getImagePreset().mGeoData.setCropBounds(r);
-        setDirtyGeometryFlag();
+
     }
 
     public boolean updateGeometryFlags() {
@@ -643,10 +543,6 @@ public class ImageShow extends View implements OnGestureListener,
     public void imageLoaded() {
         updateImage();
         invalidate();
-    }
-
-    public void updateFilteredImage(Bitmap bitmap) {
-        mFilteredImage = bitmap;
     }
 
     public void saveImage(FilterShowActivity filterShowActivity, File file) {
@@ -680,7 +576,7 @@ public class ImageShow extends View implements OnGestureListener,
             mTouchY = ey;
             if (!mActivity.isShowingHistoryPanel()
                     && (System.currentTimeMillis() - mTouchShowOriginalDate
-                    > mTouchShowOriginalDelayMin)) {
+                            > mTouchShowOriginalDelayMin)) {
                 mTouchShowOriginal = true;
             }
         }
@@ -696,23 +592,7 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     // listview stuff
-
-    public HistoryAdapter getHistory() {
-        return mHistoryAdapter;
-    }
-
-    public ArrayAdapter getImageStateAdapter() {
-        return mImageStateAdapter;
-    }
-
-    public void onItemClick(int position) {
-        setImagePreset(new ImagePreset(mHistoryAdapter.getItem(position)), false);
-        // we need a copy from the history
-        mHistoryAdapter.setCurrentPreset(position);
-    }
-
     public void showOriginal(boolean show) {
-        mShowOriginal = show;
         invalidate();
     }
 
@@ -757,13 +637,11 @@ public class ImageShow extends View implements OnGestureListener,
     @Override
     public void onStartTrackingTouch(SeekBar arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -796,8 +674,8 @@ public class ImageShow extends View implements OnGestureListener,
                 || (mActivity.isShowingHistoryPanel() && endEvent.getX() > startEvent.getX())) {
             if (!mTouchShowOriginal
                     || (mTouchShowOriginal &&
-                    (System.currentTimeMillis() - mTouchShowOriginalDate
-                    < mTouchShowOriginalDelayMax))) {
+                            (System.currentTimeMillis() - mTouchShowOriginalDate
+                            < mTouchShowOriginalDelayMax))) {
                 mActivity.toggleHistoryPanel();
             }
         }
@@ -807,7 +685,6 @@ public class ImageShow extends View implements OnGestureListener,
     @Override
     public void onLongPress(MotionEvent arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -819,7 +696,6 @@ public class ImageShow extends View implements OnGestureListener,
     @Override
     public void onShowPress(MotionEvent arg0) {
         // TODO Auto-generated method stub
-
     }
 
     @Override

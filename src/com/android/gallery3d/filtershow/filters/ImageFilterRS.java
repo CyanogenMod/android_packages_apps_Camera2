@@ -31,6 +31,12 @@ public class ImageFilterRS extends ImageFilter {
     private static android.content.res.Resources mResources = null;
 
     public void prepare(Bitmap bitmap) {
+        if (mInPixelsAllocation != null) {
+            mInPixelsAllocation.destroy();
+        }
+        if (mOutPixelsAllocation != null) {
+            mOutPixelsAllocation.destroy();
+        }
         mInPixelsAllocation = Allocation.createFromBitmap(mRS, bitmap,
                 Allocation.MipmapControl.MIPMAP_NONE,
                 Allocation.USAGE_SCRIPT);
