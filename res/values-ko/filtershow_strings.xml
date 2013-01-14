@@ -53,8 +53,6 @@
     <string name="tinyplanet" msgid="2783694326474415761">"작은 행성"</string>
     <string name="exposure" msgid="6526397045949374905">"노출"</string>
     <string name="sharpness" msgid="6463103068318055412">"선명도"</string>
-    <!-- no translation found for drama (6015220327357937442) -->
-    <skip />
     <string name="contrast" msgid="2310908487756769019">"대비"</string>
     <string name="vibrance" msgid="3326744578577835915">"생동감"</string>
     <string name="saturation" msgid="7026791551032438585">"채도"</string>
@@ -65,8 +63,7 @@
     <string name="curvesRGB" msgid="915010781090477550">"곡선"</string>
     <string name="vignette" msgid="934721068851885390">"비네트"</string>
     <string name="redeye" msgid="4508883127049472069">"적목현상 없애기"</string>
-    <!-- no translation found for imageDraw (6918552177844486656) -->
-    <skip />
+    <string name="imageDraw" msgid="6918552177844486656">"그리기"</string>
     <string name="straighten" msgid="26025591664983528">"수평조절"</string>
     <string name="crop" msgid="5781263790107850771">"자르기"</string>
     <string name="rotate" msgid="2796802553793795371">"회전"</string>
