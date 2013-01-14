@@ -296,10 +296,6 @@ public class ImagePreset {
             bitmap = mImageBorder.apply(bitmap, mScaleFactor, mIsHighQuality);
         }
 
-        if (mEndPoint != null) {
-            mEndPoint.updateFilteredImage(bitmap);
-        }
-
         return bitmap;
     }
 
