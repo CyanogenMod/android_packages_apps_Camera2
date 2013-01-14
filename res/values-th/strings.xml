@@ -146,7 +146,7 @@
     <string name="unknown" msgid="3506693015896912952">"ไม่ทราบ"</string>
     <string name="ffx_original" msgid="372686331501281474">"ต้นฉบับ"</string>
     <string name="ffx_vintage" msgid="8348759951363844780">"วินเทจ"</string>
-    <string name="ffx_instant" msgid="726968618715691987">"รวมแสง"</string>
+    <string name="ffx_instant" msgid="726968618715691987">"รูปด่วน"</string>
     <string name="ffx_bleach" msgid="8946700451603478453">"ทำให้สีซีด"</string>
     <string name="ffx_blue_crush" msgid="6034283412305561226">"สีน้ำเงิน"</string>
     <string name="ffx_bw_contrast" msgid="517988490066217206">"ขาวดำ"</string>
@@ -203,17 +203,13 @@
     <string name="trim_too_short" msgid="751593965620665326">"ไม่สามารถตัด : วิดีโอปลายทางสั้นเกินไป"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"กำลังแสดงภาพพาโนรามา"</string>
     <string name="save" msgid="613976532235060516">"บันทึก"</string>
-    <!-- no translation found for ingest_scanning (1062957108473988971) -->
-    <!-- no translation found for ingest_scanning (2048262851775139720) -->
-    <skip />
-    <!-- no translation found for ingest_number_of_items_scanned:zero (2623289390474007396) -->
-    <!-- no translation found for ingest_number_of_items_scanned:one (4340019444460561648) -->
-    <!-- no translation found for ingest_number_of_items_scanned:other (3138021473860555499) -->
-    <!-- no translation found for ingest_sorting (1028652103472581918) -->
-    <!-- no translation found for ingest_sorting (624687230903648118) -->
-    <skip />
-    <!-- no translation found for ingest_scanning_done (8911916277034483430) -->
-    <skip />
-    <!-- no translation found for ingest_importing (7456633398378527611) -->
-    <skip />
+    <string name="ingest_scanning" msgid="1062957108473988971">"กำลังสแกนเนื้อหา..."</string>
+  <plurals name="ingest_number_of_items_scanned">
+    <item quantity="zero" msgid="2623289390474007396">"สแกน %1$d รายการแล้ว"</item>
+    <item quantity="one" msgid="4340019444460561648">"สแกน %1$d รายการแล้ว"</item>
+    <item quantity="other" msgid="3138021473860555499">"สแกน %1$d รายการแล้ว"</item>
+  </plurals>
+    <string name="ingest_sorting" msgid="1028652103472581918">"กำลังจัดเรียง..."</string>
+    <string name="ingest_scanning_done" msgid="8911916277034483430">"สแกนเสร็จแล้ว"</string>
+    <string name="ingest_importing" msgid="7456633398378527611">"กำลังนำเข้า..."</string>
 </resources>
