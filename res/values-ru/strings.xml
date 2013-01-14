@@ -203,17 +203,13 @@
     <string name="trim_too_short" msgid="751593965620665326">"Нельзя обрезать видео: оно слишком короткое"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Создание панорамы…"</string>
     <string name="save" msgid="613976532235060516">"Сохранить"</string>
-    <!-- no translation found for ingest_scanning (1062957108473988971) -->
-    <!-- no translation found for ingest_scanning (2048262851775139720) -->
-    <skip />
-    <!-- no translation found for ingest_number_of_items_scanned:zero (2623289390474007396) -->
-    <!-- no translation found for ingest_number_of_items_scanned:one (4340019444460561648) -->
-    <!-- no translation found for ingest_number_of_items_scanned:other (3138021473860555499) -->
-    <!-- no translation found for ingest_sorting (1028652103472581918) -->
-    <!-- no translation found for ingest_sorting (624687230903648118) -->
-    <skip />
-    <!-- no translation found for ingest_scanning_done (8911916277034483430) -->
-    <skip />
-    <!-- no translation found for ingest_importing (7456633398378527611) -->
-    <skip />
+    <string name="ingest_scanning" msgid="1062957108473988971">"Сканирование…"</string>
+  <plurals name="ingest_number_of_items_scanned">
+    <item quantity="zero" msgid="2623289390474007396">"Отсканировано: %1$d"</item>
+    <item quantity="one" msgid="4340019444460561648">"Отсканировано: %1$d"</item>
+    <item quantity="other" msgid="3138021473860555499">"Отсканировано: %1$d"</item>
+  </plurals>
+    <string name="ingest_sorting" msgid="1028652103472581918">"Сортировка…"</string>
+    <string name="ingest_scanning_done" msgid="8911916277034483430">"Сканирование завершено"</string>
+    <string name="ingest_importing" msgid="7456633398378527611">"Импорт…"</string>
 </resources>
