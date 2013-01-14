@@ -675,7 +675,7 @@ public class ImageCrop extends ImageGeometry {
         }
     }
 
-    private void setAspectButton(Button button, int itemId) {
+    private void setAspectButton(FramedTextButton button, int itemId) {
         switch (itemId) {
             case R.id.crop_menu_1to1: {
                 String t = getActivity().getString(R.string.aspect1to1_effect);
@@ -741,7 +741,7 @@ public class ImageCrop extends ImageGeometry {
     }
 
     private void showPopupMenu(LinearLayout accessoryViewList) {
-        final Button button = (Button) accessoryViewList.findViewById(
+        final FramedTextButton button = (FramedTextButton) accessoryViewList.findViewById(
                 R.id.cropUtilityButton);
         if (button == null) {
             return;
