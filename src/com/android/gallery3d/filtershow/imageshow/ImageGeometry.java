@@ -32,7 +32,7 @@ import android.view.View;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata.FLIP;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
-public abstract class ImageGeometry extends ImageSlave {
+public abstract class ImageGeometry extends ImageShow {
     protected boolean mVisibilityGained = false;
     private boolean mHasDrawn = false;
 
@@ -138,7 +138,7 @@ public abstract class ImageGeometry extends ImageSlave {
 
     // Overwrites local with master
     protected void syncLocalToMasterGeometry() {
-        mLocalGeometry = getMaster().getGeometry();
+        mLocalGeometry = getGeometry();
         calculateLocalScalingFactorAndOffset();
     }
 
@@ -326,7 +326,7 @@ public abstract class ImageGeometry extends ImageSlave {
     }
 
     public void saveAndSetPreset() {
-        ImagePreset lastHistoryItem = getHistory().getLast();
+        ImagePreset lastHistoryItem = mMasterImage.getHistory().getLast();
         if (lastHistoryItem != null && lastHistoryItem.historyName().equalsIgnoreCase(getName())) {
             getImagePreset().setGeometry(mLocalGeometry);
             resetImageCaches(this);
@@ -336,7 +336,7 @@ public abstract class ImageGeometry extends ImageSlave {
                 copy.setGeometry(mLocalGeometry);
                 copy.setHistoryName(getName());
                 copy.setIsFx(false);
-                setImagePreset(copy, true);
+                mMasterImage.setPreset(copy, true);
             }
         }
         invalidate();
@@ -416,7 +416,7 @@ public abstract class ImageGeometry extends ImageSlave {
             clearDirtyGeometryFlag();
         }
         requestFilteredImages();
-        Bitmap image = getMaster().getFiltersOnlyImage();
+        Bitmap image = getFiltersOnlyImage();
         if (image == null) {
             invalidate();
             return;

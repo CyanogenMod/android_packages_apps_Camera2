@@ -54,7 +54,6 @@ import android.widget.SeekBar;
 import android.widget.ShareActionProvider;
 import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import android.widget.Toast;
-import android.text.TextUtils;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.data.LocalAlbum;
@@ -75,11 +74,11 @@ import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
 import com.android.gallery3d.filtershow.imageshow.ImageTinyPlanet;
 import com.android.gallery3d.filtershow.imageshow.ImageZoom;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.provider.SharedImageProvider;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.filtershow.ui.FilterIconButton;
-import com.android.gallery3d.filtershow.ui.IconButton;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
 import com.android.gallery3d.filtershow.ui.ImageCurves;
 import com.android.gallery3d.filtershow.ui.Spline;
@@ -97,6 +96,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     // fields for supporting crop action
     public static final String CROP_ACTION = "com.android.camera.action.CROP";
     private CropExtras mCropExtras = null;
+    MasterImage mMasterImage = MasterImage.getImage();
 
     public static final String TINY_PLANET_ACTION = "com.android.camera.action.TINY_PLANET";
     public static final String LAUNCH_FULLSCREEN = "launch-fullscreen";
@@ -130,8 +130,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private LinearLayout listFilters = null;
     private LinearLayout listBorders = null;
 
-    private ImageFilter mCurrentFilter = null;
-
     private static final int SELECT_PICTURE = 1;
     private static final String LOGTAG = "FilterShowActivity";
     protected static final boolean ANIMATE_PANELS = true;
@@ -161,6 +159,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setupMasterImage();
         ImageFilterRS.setRenderScriptContext(this);
 
         ImageShow.setDefaultBackgroundColor(getResources().getColor(R.color.background_screen));
@@ -250,24 +249,14 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         mImageShow.setImageLoader(mImageLoader);
         mImageCurves.setImageLoader(mImageLoader);
-        mImageCurves.setMaster(mImageShow);
         mImageStraighten.setImageLoader(mImageLoader);
-        mImageStraighten.setMaster(mImageShow);
         mImageZoom.setImageLoader(mImageLoader);
-        mImageZoom.setMaster(mImageShow);
         mImageCrop.setImageLoader(mImageLoader);
-        mImageCrop.setMaster(mImageShow);
         mImageRotate.setImageLoader(mImageLoader);
-        mImageRotate.setMaster(mImageShow);
         mImageFlip.setImageLoader(mImageLoader);
-        mImageFlip.setMaster(mImageShow);
         mImageTinyPlanet.setImageLoader(mImageLoader);
-        mImageTinyPlanet.setMaster(mImageShow);
         mImageRedEyes.setImageLoader(mImageLoader);
-        mImageRedEyes.setMaster(mImageShow);
-
         mImageDraw.setImageLoader(mImageLoader);
-        mImageDraw.setMaster(mImageShow);
 
         mPanelController.setActivity(this);
 
@@ -309,11 +298,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 createOnClickResetOperationsButton());
 
         ListView operationsList = (ListView) findViewById(R.id.operationsList);
-        operationsList.setAdapter(mImageShow.getHistory());
+        operationsList.setAdapter(mMasterImage.getHistory());
         operationsList.setOnItemClickListener(this);
         ListView imageStateList = (ListView) findViewById(R.id.imageStateList);
-        imageStateList.setAdapter(mImageShow.getImageStateAdapter());
-        mImageLoader.setAdapter(mImageShow.getHistory());
+        imageStateList.setAdapter(mMasterImage.getState());
+        mImageLoader.setAdapter(mMasterImage.getHistory());
 
         fillListImages(listFilters);
         fillListBorders(listBorders);
@@ -328,7 +317,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList),
                 findViewById(R.id.panelAccessoryViewList),
                 findViewById(R.id.applyEffect));
-        mPanelController.setMasterImage(mImageShow);
+
         mPanelController.setCurrentPanel(mFxButton);
         Intent intent = getIntent();
         if (intent.getBooleanExtra(LAUNCH_FULLSCREEN, false)) {
@@ -433,7 +422,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 cannotLoadImage();
             }
 
-            mImageShow.requestFilteredImages();
             Bitmap bmap = mImageShow.getFilteredImage();
             if (bmap != null && bmap.getWidth() > 0 && bmap.getHeight() > 0) {
                 float w = bmap.getWidth();
@@ -599,7 +587,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         MenuItem undoItem = menu.findItem(R.id.undoButton);
         MenuItem redoItem = menu.findItem(R.id.redoButton);
         MenuItem resetItem = menu.findItem(R.id.resetHistoryButton);
-        mImageShow.getHistory().setMenuItems(undoItem, redoItem, resetItem);
+        mMasterImage.getHistory().setMenuItems(undoItem, redoItem, resetItem);
         return true;
     }
 
@@ -623,17 +611,17 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.undoButton: {
-                HistoryAdapter adapter = mImageShow.getHistory();
+                HistoryAdapter adapter = mMasterImage.getHistory();
                 int position = adapter.undo();
-                mImageShow.onItemClick(position);
+                mMasterImage.onHistoryItemClick(position);
                 mImageShow.showToast("Undo");
                 invalidateViews();
                 return true;
             }
             case R.id.redoButton: {
-                HistoryAdapter adapter = mImageShow.getHistory();
+                HistoryAdapter adapter = mMasterImage.getHistory();
                 int position = adapter.redo();
-                mImageShow.onItemClick(position);
+                mMasterImage.onHistoryItemClick(position);
                 mImageShow.showToast("Redo");
                 invalidateViews();
                 return true;
@@ -731,7 +719,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }
 
         // Default preset (original)
-        mImageShow.setImagePreset(preset);
+        mMasterImage.setPreset(preset, true);
     }
 
     private void fillListBorders(LinearLayout listBorders) {
@@ -877,6 +865,18 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }
     }
 
+    public void setupMasterImage() {
+        HistoryAdapter mHistoryAdapter = new HistoryAdapter(
+                this, R.layout.filtershow_history_operation_row,
+                R.id.rowTextView);
+        ImageStateAdapter mImageStateAdapter = new ImageStateAdapter(this,
+                R.layout.filtershow_imagestate_row);
+
+        mMasterImage.setHistoryAdapter(mHistoryAdapter);
+        mMasterImage.setStateAdapter(mImageStateAdapter);
+        mMasterImage.setActivity(this);
+    }
+
     // //////////////////////////////////////////////////////////////////////////////
     // history panel...
 
@@ -918,10 +918,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
     void resetHistory() {
         dispatchNullFilterClick();
-        HistoryAdapter adapter = mImageShow.getHistory();
+        HistoryAdapter adapter = mMasterImage.getHistory();
         adapter.reset();
         ImagePreset original = new ImagePreset(adapter.getItem(0));
-        mImageShow.setImagePreset(original);
+        mMasterImage.setPreset(original, true);
         mPanelController.resetParameters();
         invalidateViews();
     }
@@ -931,7 +931,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 resetHistory();
             }
         };
@@ -960,24 +959,24 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     }
 
     public void useFilter(ImageFilter filter) {
-        if (mCurrentFilter == filter) {
+        if (mMasterImage.getCurrentFilter() == filter) {
             return;
         }
-        mCurrentFilter = filter;
+        mMasterImage.setCurrentFilter(filter);
         ImagePreset oldPreset = mImageShow.getImagePreset();
         ImagePreset copy = new ImagePreset(oldPreset);
         // TODO: use a numerical constant instead.
 
         copy.add(filter);
 
-        mImageShow.setImagePreset(copy);
+        mMasterImage.setPreset(copy, true);
         invalidateViews();
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,
             long id) {
-        mImageShow.onItemClick(position);
+        mMasterImage.onHistoryItemClick(position);
         invalidateViews();
     }
 
@@ -991,7 +990,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v(LOGTAG, "onActivityResult");
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 Uri selectedImageUri = data.getData();

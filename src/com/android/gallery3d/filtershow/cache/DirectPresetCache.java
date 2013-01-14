@@ -19,6 +19,7 @@ package com.android.gallery3d.filtershow.cache;
 import android.graphics.Bitmap;
 
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 import java.util.Vector;
@@ -69,8 +70,13 @@ public class DirectPresetCache implements Cache {
         public void run() {
             for (int i = 0; i < mObservers.size(); i++) {
                 ImageShow imageShow = mObservers.elementAt(i);
-                imageShow.invalidate();
-                imageShow.updateImage();
+                // FIXME: need to replace the observer from ImageShow to
+                // MasterImage
+                if (imageShow != null) {
+                    imageShow.invalidate();
+                    imageShow.updateImage();
+                }
+                MasterImage.getImage().updatedCache();
             }
         }
     };
@@ -94,13 +100,10 @@ public class DirectPresetCache implements Cache {
 
     @Override
     public Bitmap get(ImagePreset preset) {
-        // Log.v(LOGTAG, "get preset " + preset.name() + " : " + preset);
         CachedPreset cache = getCachedPreset(preset);
         if (cache != null && !cache.mBusy) {
             return cache.mBitmap;
         }
-        // Log.v(LOGTAG, "didn't find preset " + preset.name() + " : " + preset
-        // + " we have " + mCache.size() + " elts / " + mCacheSize);
         return null;
     }
 
@@ -159,7 +162,6 @@ public class DirectPresetCache implements Cache {
 
     @Override
     public void prepare(ImagePreset preset) {
-        // Log.v(LOGTAG, "prepare preset " + preset.name() + " : " + preset);
         CachedPreset cache = getCachedPreset(preset);
         if (cache == null || (cache.mBitmap == null && !cache.mBusy)) {
             if (cache == null) {
