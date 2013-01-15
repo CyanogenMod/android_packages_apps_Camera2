@@ -53,8 +53,6 @@
     <string name="tinyplanet" msgid="2783694326474415761">"Planetek"</string>
     <string name="exposure" msgid="6526397045949374905">"Osvetlitev"</string>
     <string name="sharpness" msgid="6463103068318055412">"Ostrina"</string>
-    <!-- no translation found for drama (6015220327357937442) -->
-    <skip />
     <string name="contrast" msgid="2310908487756769019">"Kontrast"</string>
     <string name="vibrance" msgid="3326744578577835915">"Živahnost"</string>
     <string name="saturation" msgid="7026791551032438585">"Nasičenost"</string>
@@ -65,8 +63,7 @@
     <string name="curvesRGB" msgid="915010781090477550">"Krivulje"</string>
     <string name="vignette" msgid="934721068851885390">"Vinjeta"</string>
     <string name="redeye" msgid="4508883127049472069">"Rdeče oči"</string>
-    <!-- no translation found for imageDraw (6918552177844486656) -->
-    <skip />
+    <string name="imageDraw" msgid="6918552177844486656">"Risanje"</string>
     <string name="straighten" msgid="26025591664983528">"Poravnanje"</string>
     <string name="crop" msgid="5781263790107850771">"Obrezovanje"</string>
     <string name="rotate" msgid="2796802553793795371">"Zavrti"</string>
