@@ -22,7 +22,7 @@ import android.view.MotionEvent;
 
 import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
 
-public class ImageTinyPlanet extends ImageSlave {
+public class ImageTinyPlanet extends ImageShow {
 
     private float mTouchCenterX = 0;
     private float mTouchCenterY = 0;

@@ -16,25 +16,16 @@
 
 package com.android.gallery3d.filtershow.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
-import com.android.gallery3d.filtershow.filters.ImageFilterBorder;
-import com.android.gallery3d.filtershow.filters.ImageFilterDownsample;
-import com.android.gallery3d.filtershow.filters.ImageFilterParametricBorder;
 
 public class FilterIconButton extends IconButton implements View.OnClickListener {
     private Bitmap mOverlayBitmap = null;
@@ -89,11 +80,9 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if (mController != null && mImageFilter != null) {
-            if (!isSelected()) {
-                mController.useFilter(mImageFilter);
-                mParentContainer.dispatchSetSelected(false);
-                setSelected(true);
-            }
+            mController.useFilter(mImageFilter);
+            mParentContainer.dispatchSetSelected(false);
+            setSelected(true);
         }
         if (mListener != null && mListener != this) {
             mListener.onClick(v);

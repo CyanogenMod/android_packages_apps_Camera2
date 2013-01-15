@@ -14,7 +14,7 @@ import android.view.MotionEvent;
 import com.android.gallery3d.filtershow.filters.ImageFilterRedEye;
 import com.android.gallery3d.filtershow.filters.RedEyeCandidate;
 
-public class ImageRedEyes extends ImageSlave {
+public class ImageRedEyes extends ImageShow {
 
     private static final String LOGTAG = "ImageRedEyes";
     private RectF mCurrentRect = null;

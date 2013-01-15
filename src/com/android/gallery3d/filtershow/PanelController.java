@@ -18,6 +18,7 @@ package com.android.gallery3d.filtershow;
 
 import android.content.Context;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewPropertyAnimator;
@@ -29,6 +30,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.ui.FilterIconButton;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
@@ -230,7 +232,7 @@ public class PanelController implements OnClickListener {
     private View mCurrentPanel = null;
     private View mRowPanel = null;
     private UtilityPanel mUtilityPanel = null;
-    private ImageShow mMasterImage = null;
+    private MasterImage mMasterImage = MasterImage.getImage();
     private ImageShow mCurrentImage = null;
     private FilterShowActivity mActivity = null;
 
@@ -287,7 +289,7 @@ public class PanelController implements OnClickListener {
         }
         HistoryAdapter adapter = mMasterImage.getHistory();
         int position = adapter.undo();
-        mMasterImage.onItemClick(position);
+        mMasterImage.onHistoryItemClick(position);
         showPanel(mCurrentPanel);
         mCurrentImage.select();
         if (mDisableFilterButtons) {
@@ -318,10 +320,6 @@ public class PanelController implements OnClickListener {
             View accessoryViewList, View textView) {
         mUtilityPanel = new UtilityPanel(context, utilityPanel,
                 accessoryViewList, textView);
-    }
-
-    public void setMasterImage(ImageShow imageShow) {
-        mMasterImage = imageShow;
     }
 
     @Override
@@ -392,7 +390,7 @@ public class PanelController implements OnClickListener {
     }
 
     public ImagePreset getImagePreset() {
-        return mMasterImage.getImagePreset();
+        return mMasterImage.getPreset();
     }
 
     public ImageFilter setImagePreset(ImageFilter filter, String name) {
@@ -400,7 +398,7 @@ public class PanelController implements OnClickListener {
         copy.add(filter);
         copy.setHistoryName(name);
         copy.setIsFx(false);
-        mMasterImage.setImagePreset(copy);
+        mMasterImage.setPreset(copy, true);
         return filter;
     }
 
@@ -413,7 +411,7 @@ public class PanelController implements OnClickListener {
             // to push it onto the history stack.
             ImagePreset copy = new ImagePreset(getImagePreset());
             copy.setHistoryName(name);
-            mMasterImage.setImagePreset(copy);
+            mMasterImage.setPreset(copy, true);
             filter = copy.getFilter(name);
         }
 
@@ -469,9 +467,7 @@ public class PanelController implements OnClickListener {
                     mCurrentImage.openUtilityPanel(mUtilityPanel.mAccessoryViewList);
                 }
                 mUtilityPanel.setShowParameter(filter.showParameterValue());
-                if (filter != null) {
-                    mMasterImage.setCurrentFilter(filter);
-                }
+                mMasterImage.setCurrentFilter(filter);
                 mCurrentImage.select();
             }
             return;

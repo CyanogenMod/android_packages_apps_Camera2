@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -115,6 +116,10 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
         return getItem(0);
     }
 
+    public ImagePreset getCurrent() {
+        return getItem(mCurrentPresetPosition);
+    }
+
     public void addHistoryItem(ImagePreset preset) {
         if (canAddHistoryItem(preset)) {
             insert(preset, 0);
@@ -123,7 +128,7 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
     }
 
     public boolean canAddHistoryItem(ImagePreset preset) {
-        if (getCount() > 0 && getLast().same(preset)) {
+        if (getCount() > 0 && getCurrent().same(preset)) {
             // we may still want to insert if the previous
             // history element isn't the same
             if (getLast().historyName().equalsIgnoreCase(preset.historyName())) {

@@ -36,10 +36,10 @@ import android.widget.PopupMenu;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
-import com.android.gallery3d.filtershow.imageshow.ImageSlave;
+import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
-public class ImageCurves extends ImageSlave {
+public class ImageCurves extends ImageShow {
 
     private static final String LOGTAG = "ImageCurves";
     Paint gPaint = new Paint();
@@ -124,9 +124,10 @@ public class ImageCurves extends ImageSlave {
     }
 
     private ImageFilterCurves curves() {
-        if (getMaster() != null) {
-            String filterName = getFilterName();
-            return (ImageFilterCurves) getImagePreset().getFilter(filterName);
+        String filterName = getFilterName();
+        ImagePreset p = getImagePreset();
+        if (p != null) {
+            return (ImageFilterCurves) p.getFilter(filterName);
         }
         return null;
     }
@@ -144,7 +145,7 @@ public class ImageCurves extends ImageSlave {
     }
 
     public void resetCurve() {
-        if (getMaster() != null && curves() != null) {
+        if (curves() != null) {
             curves().reset();
             updateCachedImage();
         }
