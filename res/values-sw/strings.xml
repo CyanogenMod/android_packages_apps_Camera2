@@ -118,7 +118,7 @@
     <string name="no_albums_alert" msgid="4111744447491690896">"Hakuna albamu zinazopatikana."</string>
     <string name="empty_album" msgid="4542880442593595494">"picha / video zilizopo 0."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Zilizowekwa"</string>
-    <string name="make_available_offline" msgid="5157950985488297112">"Fanya ipatikane nje ya mkondo"</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"Fanya ipatikane nje ya mtandao"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Onyesha upya"</string>
     <string name="done" msgid="217672440064436595">"Kwisha"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"Vipengee %1$d kati ya %2$d:"</string>
@@ -206,17 +206,13 @@
     <string name="trim_too_short" msgid="751593965620665326">"Haiwezi kupunguza : video iliyolengwa ni fupi sana"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"Inaonyesha panorama"</string>
     <string name="save" msgid="613976532235060516">"Hifadhi"</string>
-    <!-- no translation found for ingest_scanning (1062957108473988971) -->
-    <!-- no translation found for ingest_scanning (2048262851775139720) -->
-    <skip />
-    <!-- no translation found for ingest_number_of_items_scanned:zero (2623289390474007396) -->
-    <!-- no translation found for ingest_number_of_items_scanned:one (4340019444460561648) -->
-    <!-- no translation found for ingest_number_of_items_scanned:other (3138021473860555499) -->
-    <!-- no translation found for ingest_sorting (1028652103472581918) -->
-    <!-- no translation found for ingest_sorting (624687230903648118) -->
-    <skip />
-    <!-- no translation found for ingest_scanning_done (8911916277034483430) -->
-    <skip />
-    <!-- no translation found for ingest_importing (7456633398378527611) -->
-    <skip />
+    <string name="ingest_scanning" msgid="1062957108473988971">"Maudhui yanachanganuliwa..."</string>
+  <plurals name="ingest_number_of_items_scanned">
+    <item quantity="zero" msgid="2623289390474007396">"%1$d vipengee vimechanganuliwa"</item>
+    <item quantity="one" msgid="4340019444460561648">"%1$d kipengee kimechanganuliwa"</item>
+    <item quantity="other" msgid="3138021473860555499">"%1$d vipengee vimechanganuliwa"</item>
+  </plurals>
+    <string name="ingest_sorting" msgid="1028652103472581918">"Inapanga..."</string>
+    <string name="ingest_scanning_done" msgid="8911916277034483430">"Uchanganuzi umefanyika"</string>
+    <string name="ingest_importing" msgid="7456633398378527611">"Inaingiza..."</string>
 </resources>

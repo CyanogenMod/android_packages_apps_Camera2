@@ -203,17 +203,13 @@
     <string name="trim_too_short" msgid="751593965620665326">"無法修剪：目標影片長度過短"</string>
     <string name="pano_progress_text" msgid="1586851614586678464">"正在進行全景成像作業"</string>
     <string name="save" msgid="613976532235060516">"儲存"</string>
-    <!-- no translation found for ingest_scanning (1062957108473988971) -->
-    <!-- no translation found for ingest_scanning (2048262851775139720) -->
-    <skip />
-    <!-- no translation found for ingest_number_of_items_scanned:zero (2623289390474007396) -->
-    <!-- no translation found for ingest_number_of_items_scanned:one (4340019444460561648) -->
-    <!-- no translation found for ingest_number_of_items_scanned:other (3138021473860555499) -->
-    <!-- no translation found for ingest_sorting (1028652103472581918) -->
-    <!-- no translation found for ingest_sorting (624687230903648118) -->
-    <skip />
-    <!-- no translation found for ingest_scanning_done (8911916277034483430) -->
-    <skip />
-    <!-- no translation found for ingest_importing (7456633398378527611) -->
-    <skip />
+    <string name="ingest_scanning" msgid="1062957108473988971">"正在掃描內容..."</string>
+  <plurals name="ingest_number_of_items_scanned">
+    <item quantity="zero" msgid="2623289390474007396">"已掃描 %1$d 個項目"</item>
+    <item quantity="one" msgid="4340019444460561648">"已掃描 %1$d 個項目"</item>
+    <item quantity="other" msgid="3138021473860555499">"已掃描 %1$d 個項目"</item>
+  </plurals>
+    <string name="ingest_sorting" msgid="1028652103472581918">"排序中..."</string>
+    <string name="ingest_scanning_done" msgid="8911916277034483430">"掃描完成"</string>
+    <string name="ingest_importing" msgid="7456633398378527611">"匯入中..."</string>
 </resources>
