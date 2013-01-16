@@ -1,13 +1,29 @@
+/*
+ * Copyright (C) 2013 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.android.gallery3d.filtershow.imageshow;
 
 import android.graphics.Bitmap;
 import android.graphics.RectF;
-import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.ImageStateAdapter;
+import com.android.gallery3d.filtershow.cache.TripleBufferBitmap;
+import com.android.gallery3d.filtershow.cache.FilteringPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -25,9 +41,9 @@ public class MasterImage {
     private ImagePreset mGeometryOnlyPreset = null;
     private ImagePreset mFiltersOnlyPreset = null;
 
-    private Bitmap mGeometryOnlyImage = null;
-    private Bitmap mFiltersOnlyImage = null;
-    private Bitmap mFilteredImage = null;
+    private TripleBufferBitmap mFilteredPreview = new TripleBufferBitmap();
+    private TripleBufferBitmap mGeometryOnlyPreview = new TripleBufferBitmap();
+    private TripleBufferBitmap mFiltersOnlyPreview = new TripleBufferBitmap();
 
     private ImageLoader mLoader = null;
     private HistoryAdapter mHistory = null;
@@ -37,8 +53,7 @@ public class MasterImage {
 
     private Vector<ImageShow> mObservers = new Vector<ImageShow>();
 
-    private MasterImage() {
-    }
+    private MasterImage() { }
 
     public static MasterImage getImage() {
         return sMasterImage;
@@ -52,11 +67,19 @@ public class MasterImage {
         mActivity = activity;
     }
 
-    public ImagePreset getPreset() {
+    public synchronized ImagePreset getPreset() {
         return mPreset;
     }
 
-    public void setPreset(ImagePreset preset, boolean addToHistory) {
+    public synchronized ImagePreset getGeometryPreset() {
+        return mGeometryOnlyPreset;
+    }
+
+    public synchronized ImagePreset getFiltersOnlyPreset() {
+        return mFiltersOnlyPreset;
+    }
+
+    public synchronized void setPreset(ImagePreset preset, boolean addToHistory) {
         mPreset = preset;
         mPreset.setImageLoader(mLoader);
         setGeometry();
@@ -118,29 +141,45 @@ public class MasterImage {
         return mCurrentFilter;
     }
 
-    public boolean hasModifications() {
+    public synchronized boolean hasModifications() {
         if (mPreset == null) {
             return false;
         }
         return mPreset.hasModifications();
     }
 
+    public TripleBufferBitmap getDoubleBuffer() {
+        return mFilteredPreview;
+    }
+
+    public TripleBufferBitmap getGeometryOnlyBuffer() {
+        return mGeometryOnlyPreview;
+    }
+
+    public TripleBufferBitmap getFiltersOnlyBuffer() {
+        return mFiltersOnlyPreview;
+    }
+
     public Bitmap getFilteredImage() {
         requestImages();
-        return mFilteredImage;
+        mFilteredPreview.swapConsumer();
+        return mFilteredPreview.getConsumer();
     }
 
     public Bitmap getFiltersOnlyImage() {
         requestImages();
-        return mFiltersOnlyImage;
+        mFiltersOnlyPreview.swapConsumer();
+        return mFiltersOnlyPreview.getConsumer();
     }
 
     public Bitmap getGeometryOnlyImage() {
         requestImages();
-        return mGeometryOnlyImage;
+        mGeometryOnlyPreview.swapConsumer();
+        return mGeometryOnlyPreview.getConsumer();
     }
 
-    private void notifyObservers() {
+    public void notifyObservers() {
+        requestImages();
         for (ImageShow observer : mObservers) {
             observer.invalidate();
         }
@@ -152,16 +191,12 @@ public class MasterImage {
     }
 
     public void updatePresets(boolean force) {
-        if (force) {
-            mLoader.resetImageForPreset(mPreset, null);
-        }
         if (force || mGeometryOnlyPreset == null) {
             ImagePreset newPreset = new ImagePreset(mPreset);
             newPreset.setDoApplyFilters(false);
             if (mGeometryOnlyPreset == null
                     || !newPreset.same(mGeometryOnlyPreset)) {
                 mGeometryOnlyPreset = newPreset;
-                mGeometryOnlyImage = null;
             }
         }
         if (force || mFiltersOnlyPreset == null) {
@@ -170,7 +205,6 @@ public class MasterImage {
             if (mFiltersOnlyPreset == null
                     || !newPreset.same(mFiltersOnlyPreset)) {
                 mFiltersOnlyPreset = newPreset;
-                mFiltersOnlyImage = null;
             }
         }
         mActivity.enableSave(hasModifications());
@@ -181,25 +215,9 @@ public class MasterImage {
             return;
         }
 
-        Bitmap bitmap = mLoader.getImageForPreset(null, mPreset, true);
-
-        if (bitmap != null) {
-            mFilteredImage = bitmap;
-        }
         updatePresets(false);
-        if (mGeometryOnlyPreset != null) {
-            bitmap = mLoader.getImageForPreset(null, mGeometryOnlyPreset,
-                    true);
-            if (bitmap != null) {
-                mGeometryOnlyImage = bitmap;
-            }
-        }
-        if (mFiltersOnlyPreset != null) {
-            bitmap = mLoader.getImageForPreset(null, mFiltersOnlyPreset,
-                    true);
-            if (bitmap != null) {
-                mFiltersOnlyImage = bitmap;
-            }
-        }
+        FilteringPipeline.getPipeline().updatePreviewBuffer();
+        FilteringPipeline.getPipeline().updateGeometryOnlyPreviewBuffer();
+        FilteringPipeline.getPipeline().updateFiltersOnlyPreviewBuffer();
     }
 }

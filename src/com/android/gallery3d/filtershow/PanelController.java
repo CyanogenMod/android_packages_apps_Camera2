@@ -483,7 +483,8 @@ public class PanelController implements OnClickListener {
                 mUtilityPanel.setEffectName(ename);
 
                 mUtilityPanel.setShowParameter(filter.showParameterValue());
-                mMasterImage.setCurrentFilter(filter);
+                ImageFilter currentFilter = mMasterImage.getPreset().getFilter(filter.getName());
+                mMasterImage.setCurrentFilter(currentFilter);
                 mCurrentImage.select();
                 if (mCurrentEditor != null) {
                     mCurrentEditor.reflectCurrentFilter();

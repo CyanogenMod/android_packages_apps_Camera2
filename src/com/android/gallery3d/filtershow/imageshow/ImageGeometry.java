@@ -415,7 +415,6 @@ public abstract class ImageGeometry extends ImageShow {
             syncLocalToMasterGeometry();
             clearDirtyGeometryFlag();
         }
-        requestFilteredImages();
         Bitmap image = getFiltersOnlyImage();
         if (image == null) {
             invalidate();

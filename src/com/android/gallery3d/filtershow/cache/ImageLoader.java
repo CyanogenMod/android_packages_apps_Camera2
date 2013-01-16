@@ -70,8 +70,6 @@ public class ImageLoader {
     private Bitmap mOriginalBitmapLarge = null;
     private Bitmap mBackgroundBitmap = null;
 
-    private Cache mCache = null;
-    private Cache mHiresCache = null;
     private final ZoomCache mZoomCache = new ZoomCache();
 
     private int mOrientation = 0;
@@ -104,8 +102,6 @@ public class ImageLoader {
     public ImageLoader(FilterShowActivity activity, Context context) {
         mActivity = activity;
         mContext = context;
-        mCache = new DelayedPresetCache(this, 30);
-        mHiresCache = new DelayedPresetCache(this, 3);
     }
 
     public static int getZoomOrientation() {
@@ -216,8 +212,7 @@ public class ImageLoader {
             mOriginalBitmapLarge = rotateToPortrait(mOriginalBitmapLarge, mOrientation);
         }
         mZoomOrientation = mOrientation;
-        mCache.setOriginalBitmap(mOriginalBitmapSmall);
-        mHiresCache.setOriginalBitmap(mOriginalBitmapLarge);
+        FilteringPipeline.getPipeline().setOriginal(mOriginalBitmapLarge);
         warnListeners();
     }
 
@@ -350,7 +345,6 @@ public class ImageLoader {
         if (!mListeners.contains(imageShow)) {
             mListeners.add(imageShow);
         }
-        mHiresCache.addObserver(imageShow);
         mLoadingLock.unlock();
     }
 
@@ -369,9 +363,8 @@ public class ImageLoader {
         }
     };
 
-    // TODO: this currently does the loading + filtering on the UI thread --
-    // need to
-    // move this to a background thread.
+    // FIXME: this currently does the loading + filtering on the UI thread --
+    // need to move this to a background thread.
     public Bitmap getScaleOneImageForPreset(ImageShow caller, ImagePreset imagePreset, Rect bounds,
             boolean force) {
         mLoadingLock.lock();
@@ -392,48 +385,6 @@ public class ImageLoader {
         }
         mLoadingLock.unlock();
         return bmp;
-    }
-
-    // Caching method
-    public Bitmap getImageForPreset(ImageShow caller, ImagePreset imagePreset,
-            boolean hiRes) {
-        mLoadingLock.lock();
-        if (mOriginalBitmapSmall == null) {
-            mLoadingLock.unlock();
-            return null;
-        }
-        if (mOriginalBitmapLarge == null) {
-            mLoadingLock.unlock();
-            return null;
-        }
-
-        Bitmap filteredImage = null;
-
-        if (hiRes) {
-            filteredImage = mHiresCache.get(imagePreset);
-        } else {
-            filteredImage = mCache.get(imagePreset);
-        }
-
-        if (filteredImage == null) {
-            if (hiRes) {
-                mHiresCache.prepare(imagePreset);
-                mHiresCache.addObserver(caller);
-            } else {
-                mCache.prepare(imagePreset);
-                mCache.addObserver(caller);
-            }
-        }
-        mLoadingLock.unlock();
-        return filteredImage;
-    }
-
-    public void resetImageForPreset(ImagePreset imagePreset, ImageShow caller) {
-        mLoadingLock.lock();
-        mHiresCache.reset(imagePreset);
-        mCache.reset(imagePreset);
-        mZoomCache.reset(imagePreset);
-        mLoadingLock.unlock();
     }
 
     public void saveImage(ImagePreset preset, final FilterShowActivity filterShowActivity,
@@ -624,10 +575,4 @@ public class ImageLoader {
             Utils.closeSilently(is);
         }
     }
-
-    public void addCacheListener(ImageShow imageShow) {
-        mHiresCache.addObserver(imageShow);
-        mCache.addObserver(imageShow);
-    }
-
 }

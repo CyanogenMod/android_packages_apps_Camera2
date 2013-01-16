@@ -220,9 +220,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageViews.add(mImageFlip);
         mImageViews.add(mImageTinyPlanet);
         mImageViews.add(mImageRedEyes);
-        for (ImageShow imageShow : mImageViews) {
-            mImageLoader.addCacheListener(imageShow);
-        }
 
         mEditorPlaceHolder.setContainer((FrameLayout) findViewById(R.id.editorContainer));
         EditorManager.addEditors(mEditorPlaceHolder);
@@ -961,14 +958,18 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         if (mMasterImage.getCurrentFilter() == filter) {
             return;
         }
-        mMasterImage.setCurrentFilter(filter);
-        ImagePreset oldPreset = mImageShow.getImagePreset();
+        ImagePreset oldPreset = mMasterImage.getPreset();
         ImagePreset copy = new ImagePreset(oldPreset);
+        mMasterImage.setPreset(copy, true);
         // TODO: use a numerical constant instead.
 
-        copy.add(filter);
-
-        mMasterImage.setPreset(copy, true);
+        ImagePreset current = mMasterImage.getPreset();
+        ImageFilter existingFilter = current.getFilter(filter.getName());
+        if (existingFilter == null) {
+            current.add(filter);
+        }
+        existingFilter = current.getFilter(filter.getName());
+        mMasterImage.setCurrentFilter(existingFilter);
         invalidateViews();
     }
 
