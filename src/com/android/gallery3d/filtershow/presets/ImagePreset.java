@@ -96,6 +96,14 @@ public class ImagePreset {
         mDoApplyFilters = value;
     }
 
+    public boolean getDoApplyFilters() {
+        return mDoApplyFilters;
+    }
+
+    public GeometryMetadata getGeometry() {
+        return mGeoData;
+    }
+
     public boolean hasModifications() {
         if (mImageBorder != null && !mImageBorder.isNil()) {
             return true;
@@ -165,10 +173,31 @@ public class ImagePreset {
         this.mImageLoader = mImageLoader;
     }
 
+    public boolean equals(ImagePreset preset) {
+        if (!same(preset)) {
+            return false;
+        }
+        if (mDoApplyFilters && preset.mDoApplyFilters) {
+            for (int i = 0; i < preset.mFilters.size(); i++) {
+                ImageFilter a = preset.mFilters.elementAt(i);
+                ImageFilter b = mFilters.elementAt(i);
+                if (!a.equals(b)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public boolean same(ImagePreset preset) {
+        if (preset == null) {
+            return false;
+        }
+
         if (preset.mFilters.size() != mFilters.size()) {
             return false;
         }
+
         if (!mName.equalsIgnoreCase(preset.name())) {
             return false;
         }
@@ -205,6 +234,32 @@ public class ImagePreset {
             }
         }
         return true;
+    }
+
+    public int nbFilters() {
+        return mFilters.size();
+    }
+
+    public int similarUpTo(ImagePreset preset) {
+        if (!mGeoData.equals(preset.mGeoData)) {
+            return -1;
+        }
+
+        for (int i = 0; i < preset.mFilters.size(); i++) {
+            ImageFilter a = preset.mFilters.elementAt(i);
+            if (i < mFilters.size()) {
+                ImageFilter b = mFilters.elementAt(i);
+                if (!a.same(b)) {
+                    return i;
+                }
+                if (a.getParameter() != b.getParameter()) {
+                    return i;
+                }
+            } else {
+                return i;
+            }
+        }
+        return preset.mFilters.size();
     }
 
     public String name() {
@@ -278,22 +333,38 @@ public class ImagePreset {
     }
 
     public Bitmap apply(Bitmap original) {
-        // First we apply any transform -- 90 rotate, flip, straighten, crop
         Bitmap bitmap = original;
+//        bitmap = applyGeometry(bitmap);
+        bitmap = applyFilters(bitmap, -1, -1);
+        return applyBorder(bitmap);
+    }
 
-        if (mDoApplyGeometry) {
-            bitmap = mGeoData.apply(original, mScaleFactor, mIsHighQuality);
+    public Bitmap applyGeometry(Bitmap bitmap) {
+        // Apply any transform -- 90 rotate, flip, straighten, crop
+        // Returns a new bitmap.
+        return mGeoData.apply(bitmap, mScaleFactor, mIsHighQuality);
+    }
+
+    public Bitmap applyBorder(Bitmap bitmap) {
+        if (mImageBorder != null && mDoApplyGeometry) {
+            bitmap = mImageBorder.apply(bitmap, mScaleFactor, mIsHighQuality);
         }
+        return bitmap;
+    }
+
+    public Bitmap applyFilters(Bitmap bitmap, int from, int to) {
 
         if (mDoApplyFilters) {
-            for (int i = 0; i < mFilters.size(); i++) {
+            if (from < 0) {
+                from = 0;
+            }
+            if (to == -1) {
+                to = mFilters.size();
+            }
+            for (int i = from; i < to; i++) {
                 ImageFilter filter = mFilters.elementAt(i);
                 bitmap = filter.apply(bitmap, mScaleFactor, mIsHighQuality);
             }
-        }
-
-        if (mImageBorder != null && mDoApplyGeometry) {
-            bitmap = mImageBorder.apply(bitmap, mScaleFactor, mIsHighQuality);
         }
 
         return bitmap;
