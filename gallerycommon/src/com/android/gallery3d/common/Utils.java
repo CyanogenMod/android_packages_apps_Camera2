@@ -26,6 +26,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.io.InterruptedIOException;
 
 public class Utils {
@@ -173,8 +174,8 @@ public class Utils {
         if (c == null) return;
         try {
             c.close();
-        } catch (Throwable t) {
-            Log.w(TAG, "close fail", t);
+        } catch (IOException t) {
+            Log.w(TAG, "close fail ", t);
         }
     }
 
