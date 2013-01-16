@@ -180,6 +180,12 @@ public abstract class MediaSet extends MediaObject {
     // in the same thread as getMediaItem(int, int) and getSubMediaSet(int).
     public abstract long reload();
 
+    /**
+     * Synchronously load if the MediaSet is dirty
+     * @return True if new data was loaded, false otherwise
+     */
+    public boolean loadIfDirty() { throw new IllegalStateException("not implemented"); }
+
     @Override
     public MediaDetails getDetails() {
         MediaDetails details = super.getDetails();
