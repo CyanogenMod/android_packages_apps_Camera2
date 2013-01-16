@@ -25,9 +25,26 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.ingest.SimpleDate;
 
 import java.text.DateFormatSymbols;
+import java.util.Locale;
 
 public class DateTileView extends FrameLayout {
-    private static final String[] sMonthNames = DateFormatSymbols.getInstance().getShortMonths();
+    private static String[] sMonthNames = DateFormatSymbols.getInstance().getShortMonths();
+    private static Locale sLocale;
+
+    static {
+        refreshLocale();
+    }
+
+    public static boolean refreshLocale() {
+        Locale currentLocale = Locale.getDefault();
+        if (!currentLocale.equals(sLocale)) {
+            sLocale = currentLocale;
+            sMonthNames = DateFormatSymbols.getInstance(sLocale).getShortMonths();
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     private TextView mDateTextView;
     private TextView mMonthTextView;
@@ -35,6 +52,7 @@ public class DateTileView extends FrameLayout {
     private int mMonth = -1;
     private int mYear = -1;
     private int mDate = -1;
+    private String[] mMonthNames = sMonthNames;
 
     public DateTileView(Context context) {
         super(context);
@@ -71,9 +89,15 @@ public class DateTileView extends FrameLayout {
             mDate = date;
             mDateTextView.setText(mDate > 9 ? Integer.toString(mDate) : "0" + mDate);
         }
+        if (mMonthNames != sMonthNames) {
+            mMonthNames = sMonthNames;
+            if (month == mMonth) {
+                mMonthTextView.setText(mMonthNames[mMonth]);
+            }
+        }
         if (month != mMonth) {
             mMonth = month;
-            mMonthTextView.setText(sMonthNames[mMonth]);
+            mMonthTextView.setText(mMonthNames[mMonth]);
         }
         if (year != mYear) {
             mYear = year;

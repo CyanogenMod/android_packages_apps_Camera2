@@ -40,6 +40,7 @@ import android.widget.GridView;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.ingest.adapter.MtpAdapter;
+import com.android.gallery3d.ingest.ui.DateTileView;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
@@ -167,6 +168,7 @@ public class IngestActivity extends Activity implements
 
     @Override
     protected void onResume() {
+        DateTileView.refreshLocale();
         mActive = true;
         if (mHelperService != null) mHelperService.setClientActivity(this);
         super.onResume();
