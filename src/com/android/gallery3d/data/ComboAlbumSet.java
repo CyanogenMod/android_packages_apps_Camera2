@@ -85,6 +85,15 @@ public class ComboAlbumSet extends MediaSet implements ContentListener {
     }
 
     @Override
+    public boolean loadIfDirty() {
+        boolean changed = false;
+        for (int i = 0; i < mSets.length; i++) {
+            changed |= mSets[i].loadIfDirty();
+        }
+        return changed;
+    }
+
+    @Override
     public void onContentDirty() {
         notifyContentChanged();
     }
