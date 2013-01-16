@@ -127,6 +127,7 @@
                 <data android:mimeType="image/jpeg" />
                 <data android:mimeType="image/gif" />
                 <data android:mimeType="image/png" />
+                <data android:mimeType="image/webp" />
                 <data android:mimeType="image/x-ms-bmp" />
                 <data android:mimeType="image/vnd.wap.wbmp" />
                 <data android:mimeType="application/vnd.google.panorama360+jpg" />
