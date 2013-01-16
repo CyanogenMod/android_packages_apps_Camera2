@@ -98,7 +98,6 @@ public class ImageZoom extends ImageShow {
             filteredImage = mImageLoader.getScaleOneImageForPreset(this, getImagePreset(),
                     mZoomBounds, false);
         } else {
-            requestFilteredImages();
             filteredImage = getFilteredImage();
         }
         canvas.save();

@@ -179,6 +179,16 @@ public class ImageFilter implements Cloneable {
         this.mImagePreset = mPreset;
     }
 
+    public boolean equals(ImageFilter filter) {
+        if (!same(filter)) {
+            return false;
+        }
+        if (mParameter != filter.mParameter) {
+            return false;
+        }
+        return true;
+    }
+
     public boolean same(ImageFilter filter) {
         if (filter == null) {
             return false;

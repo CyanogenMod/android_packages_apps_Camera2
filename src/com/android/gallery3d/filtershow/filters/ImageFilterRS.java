@@ -19,6 +19,7 @@ package com.android.gallery3d.filtershow.filters;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.renderscript.Allocation;
+import android.renderscript.Allocation.MipmapControl;
 import android.renderscript.RenderScript;
 import android.util.Log;
 
@@ -29,25 +30,43 @@ public class ImageFilterRS extends ImageFilter {
     protected static Allocation mInPixelsAllocation;
     protected static Allocation mOutPixelsAllocation;
     private static android.content.res.Resources mResources = null;
+    private static Bitmap sOldBitmap = null;
+    private Bitmap mOldBitmap = null;
 
-    public void prepare(Bitmap bitmap) {
-        if (mInPixelsAllocation != null) {
-            mInPixelsAllocation.destroy();
+    private static Bitmap mReturnBitmap = null;
+    private final Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
+
+    public void prepare(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        if (sOldBitmap == null
+                || (bitmap.getWidth() != sOldBitmap.getWidth())
+                || (bitmap.getHeight() != sOldBitmap.getHeight())) {
+            if (mInPixelsAllocation != null) {
+                mInPixelsAllocation.destroy();
+            }
+            if (mOutPixelsAllocation != null) {
+                mOutPixelsAllocation.destroy();
+            }
+            Bitmap bitmapBuffer = bitmap.copy(mBitmapConfig, true);
+            mOutPixelsAllocation = Allocation.createFromBitmap(mRS, bitmapBuffer,
+                    MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+            mInPixelsAllocation = Allocation.createTyped(mRS,
+                    mOutPixelsAllocation.getType());
+            sOldBitmap = bitmap;
         }
-        if (mOutPixelsAllocation != null) {
-            mOutPixelsAllocation.destroy();
+        mInPixelsAllocation.copyFrom(bitmap);
+        if (mOldBitmap != sOldBitmap) {
+            createFilter(mResources, scaleFactor, highQuality);
+            mOldBitmap = sOldBitmap;
         }
-        mInPixelsAllocation = Allocation.createFromBitmap(mRS, bitmap,
-                Allocation.MipmapControl.MIPMAP_NONE,
-                Allocation.USAGE_SCRIPT);
-        mOutPixelsAllocation = Allocation.createTyped(mRS, mInPixelsAllocation.getType());
     }
 
-    public void createFilter(android.content.res.Resources res, float scaleFactor,
-            boolean highQuality) {
+    public void createFilter(android.content.res.Resources res,
+            float scaleFactor, boolean highQuality) {
+        // Stub
     }
 
     public void runFilter() {
+        // Stub
     }
 
     public void update(Bitmap bitmap) {
@@ -60,8 +79,7 @@ public class ImageFilterRS extends ImageFilter {
             return bitmap;
         }
         try {
-            prepare(bitmap);
-            createFilter(mResources, scaleFactor, highQuality);
+            prepare(bitmap, scaleFactor, highQuality);
             runFilter();
             update(bitmap);
         } catch (android.renderscript.RSIllegalArgumentException e) {
