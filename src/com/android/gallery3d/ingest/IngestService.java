@@ -188,12 +188,11 @@ public class IngestService extends Service implements ImportTask.Listener,
         }
         if (mClientActivity != null) {
             mClientActivity.onImportProgress(visitedCount, totalCount, pathIfSuccessful);
-        } else {
-            mNotificationBuilder.setProgress(totalCount, visitedCount, false)
-                .setContentText(getResources().getText(R.string.ingest_importing));
-            mNotificationManager.notify(NotificationIds.INGEST_NOTIFICATION_IMPORTING,
-                    mNotificationBuilder.build());
         }
+        mNotificationBuilder.setProgress(totalCount, visitedCount, false)
+            .setContentText(getResources().getText(R.string.ingest_importing));
+        mNotificationManager.notify(NotificationIds.INGEST_NOTIFICATION_IMPORTING,
+                mNotificationBuilder.build());
     }
 
     @Override
