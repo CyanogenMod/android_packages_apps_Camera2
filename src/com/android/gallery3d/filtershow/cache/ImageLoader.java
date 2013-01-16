@@ -79,6 +79,8 @@ public class ImageLoader {
 
     private FilterShowActivity mActivity = null;
 
+    public static final String JPEG_MIME_TYPE = "image/jpeg";
+
     public static final String DEFAULT_SAVE_DIRECTORY = "EditedOnlinePhotos";
     public static final int DEFAULT_COMPRESS_QUALITY = 95;
 
@@ -144,9 +146,36 @@ public class ImageLoader {
 
     public static int getOrientation(Context context, Uri uri) {
         if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
-            return getOrientationFromPath(uri.getPath());
+            String mimeType = context.getContentResolver().getType(uri);
+            if (mimeType != ImageLoader.JPEG_MIME_TYPE) {
+                return -1;
+            }
+            String path = uri.getPath();
+            int orientation = -1;
+            InputStream is = null;
+            try {
+                is = new FileInputStream(path);
+                ExifParser parser = ExifParser.parse(is, ExifParser.OPTION_IFD_0);
+                int event = parser.next();
+                while (event != ExifParser.EVENT_END) {
+                    if (event == ExifParser.EVENT_NEW_TAG) {
+                        ExifTag tag = parser.getTag();
+                        if (tag.getTagId() == ExifTag.TAG_ORIENTATION) {
+                            orientation = (int) tag.getValueAt(0);
+                            break;
+                        }
+                    }
+                    event = parser.next();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ExifInvalidFormatException e) {
+                e.printStackTrace();
+            } finally {
+                Utils.closeSilently(is);
+            }
+            return orientation;
         }
-
         Cursor cursor = null;
         try {
             cursor = context.getContentResolver().query(uri,
@@ -179,33 +208,6 @@ public class ImageLoader {
         } finally {
             Utils.closeSilently(cursor);
         }
-    }
-
-    static int getOrientationFromPath(String path) {
-        int orientation = -1;
-        InputStream is = null;
-        try {
-            is = new FileInputStream(path);
-            ExifParser parser = ExifParser.parse(is, ExifParser.OPTION_IFD_0);
-            int event = parser.next();
-            while (event != ExifParser.EVENT_END) {
-                if (event == ExifParser.EVENT_NEW_TAG) {
-                    ExifTag tag = parser.getTag();
-                    if (tag.getTagId() == ExifTag.TAG_ORIENTATION) {
-                        orientation = (int) tag.getValueAt(0);
-                        break;
-                    }
-                }
-                event = parser.next();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ExifInvalidFormatException e) {
-            e.printStackTrace();
-        } finally {
-            Utils.closeSilently(is);
-        }
-        return orientation;
     }
 
     private void updateBitmaps() {
@@ -264,16 +266,6 @@ public class ImageLoader {
                 bitmap.getHeight(), matrix, true);
     }
 
-    private void closeStream(Closeable stream) {
-        if (stream != null) {
-            try {
-                stream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private Bitmap loadRegionBitmap(Uri uri, Rect bounds) {
         InputStream is = null;
         try {
@@ -285,7 +277,7 @@ public class ImageLoader {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            closeStream(is);
+            Utils.closeSilently(is);
         }
         return null;
     }
@@ -323,7 +315,7 @@ public class ImageLoader {
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = scale;
 
-            closeStream(is);
+            Utils.closeSilently(is);
             is = mContext.getContentResolver().openInputStream(uri);
             return BitmapFactory.decodeStream(is, null, o2);
         } catch (FileNotFoundException e) {
@@ -331,7 +323,7 @@ public class ImageLoader {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            closeStream(is);
+            Utils.closeSilently(is);
         }
         return null;
     }
@@ -458,15 +450,27 @@ public class ImageLoader {
         }).execute(preset);
     }
 
-    public static Bitmap loadMutableBitmap(Context context, Uri sourceUri)
-            throws FileNotFoundException {
+    public static Bitmap loadMutableBitmap(Context context, Uri sourceUri) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         // TODO: on <3.x we need a copy of the bitmap (inMutable doesn't
         // exist)
         options.inMutable = true;
 
-        InputStream is = context.getContentResolver().openInputStream(sourceUri);
-        Bitmap bitmap = BitmapFactory.decodeStream(is, null, options);
+        InputStream is = null;
+        Bitmap bitmap = null;
+        try {
+            is = context.getContentResolver().openInputStream(sourceUri);
+            bitmap = BitmapFactory.decodeStream(is, null, options);
+        } catch (FileNotFoundException e) {
+            Log.w(LOGTAG, "could not load bitmap ", e);
+            is = null;
+            bitmap = null;
+        } finally {
+            Utils.closeSilently(is);
+        }
+        if (bitmap == null) {
+            return null;
+        }
         int orientation = ImageLoader.getOrientation(context, sourceUri);
         bitmap = ImageLoader.rotateToPortrait(bitmap, orientation);
         return bitmap;
@@ -493,13 +497,12 @@ public class ImageLoader {
                 if (param == null) {
                     return null;
                 }
-                try {
-                    Bitmap bitmap = param.apply(loadMutableBitmap(mContext, mUri));
-                    return bitmap;
-                } catch (FileNotFoundException ex) {
-                    Log.w(LOGTAG, "Failed to save image!", ex);
+                Bitmap bitmap = loadMutableBitmap(mContext, mUri);
+                if (bitmap == null) {
+                    Log.w(LOGTAG, "Failed to save image!");
                     return null;
                 }
+                return param.apply(bitmap);
             }
         };
 
@@ -584,40 +587,41 @@ public class ImageLoader {
      * @return true if it is a light Cycle image that is full 360
      */
     public boolean queryLightCycle360() {
+        InputStream is = null;
         try {
-            InputStream is = mContext.getContentResolver().openInputStream(getUri());
+            is = mContext.getContentResolver().openInputStream(getUri());
             XMPMeta meta = XmpUtilHelper.extractXMPMeta(is);
             if (meta == null) {
                 return false;
             }
             String name = meta.getPacketHeader();
-            try {
-                String namespace = "http://ns.google.com/photos/1.0/panorama/";
-                String cropWidthName = "GPano:CroppedAreaImageWidthPixels";
-                String fullWidthName = "GPano:FullPanoWidthPixels";
+            String namespace = "http://ns.google.com/photos/1.0/panorama/";
+            String cropWidthName = "GPano:CroppedAreaImageWidthPixels";
+            String fullWidthName = "GPano:FullPanoWidthPixels";
 
-                if (!meta.doesPropertyExist(namespace, cropWidthName)) {
-                    return false;
-                }
-                if (!meta.doesPropertyExist(namespace, fullWidthName)) {
-                    return false;
-                }
-
-                Integer cropValue = meta.getPropertyInteger(namespace, cropWidthName);
-                Integer fullValue = meta.getPropertyInteger(namespace, fullWidthName);
-
-                // Definition of a 360:
-                // GFullPanoWidthPixels == CroppedAreaImageWidthPixels
-                if (cropValue != null && fullValue != null) {
-                    return cropValue.equals(fullValue);
-                }
-
-                return false;
-            } catch (XMPException e) {
+            if (!meta.doesPropertyExist(namespace, cropWidthName)) {
                 return false;
             }
+            if (!meta.doesPropertyExist(namespace, fullWidthName)) {
+                return false;
+            }
+
+            Integer cropValue = meta.getPropertyInteger(namespace, cropWidthName);
+            Integer fullValue = meta.getPropertyInteger(namespace, fullWidthName);
+
+            // Definition of a 360:
+            // GFullPanoWidthPixels == CroppedAreaImageWidthPixels
+            if (cropValue != null && fullValue != null) {
+                return cropValue.equals(fullValue);
+            }
+
+            return false;
         } catch (FileNotFoundException e) {
             return false;
+        } catch (XMPException e) {
+            return false;
+        } finally {
+            Utils.closeSilently(is);
         }
     }
 

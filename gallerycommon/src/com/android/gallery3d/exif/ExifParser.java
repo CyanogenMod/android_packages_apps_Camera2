@@ -179,6 +179,9 @@ public class ExifParser {
 
     private ExifParser(InputStream inputStream, int options)
             throws IOException, ExifInvalidFormatException {
+        if (inputStream == null) {
+            throw new IOException("Null argument inputStream to ExifParser");
+        }
         mContainExifData = seekTiffData(inputStream);
         mTiffStream = new CountedDataInputStream(inputStream);
         mOptions = options;
@@ -682,7 +685,6 @@ public class ExifParser {
     private boolean seekTiffData(InputStream inputStream) throws IOException,
             ExifInvalidFormatException {
         CountedDataInputStream dataStream = new CountedDataInputStream(inputStream);
-
         if (dataStream.readShort() != JpegHeader.SOI) {
             throw new ExifInvalidFormatException("Invalid JPEG format");
         }
