@@ -53,6 +53,14 @@ public class MtpAdapter extends BaseAdapter implements SectionIndexer {
         notifyDataSetChanged();
     }
 
+    public boolean deviceConnected() {
+        return (mModel != null) && (mModel.getDevice() != null);
+    }
+
+    public boolean indexReady() {
+        return (mModel != null) && mModel.indexReady();
+    }
+
     @Override
     public int getCount() {
         return mModel != null ? mModel.size() : 0;
