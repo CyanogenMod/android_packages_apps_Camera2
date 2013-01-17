@@ -136,10 +136,10 @@
     <string name="maker" msgid="7921835498034236197">"Mtengenezaji"</string>
     <string name="model" msgid="8240207064064337366">"Mtindo"</string>
     <string name="flash" msgid="2816779031261147723">"Mmweko"</string>
-    <string name="aperture" msgid="5920657630303915195">"Kilango"</string>
+    <string name="aperture" msgid="5920657630303915195">"Kitundu cha kamera"</string>
     <string name="focal_length" msgid="1291383769749877010">"Urefu wa Lengo"</string>
     <string name="white_balance" msgid="1582509289994216078">"Usawazishaji wa weupe"</string>
-    <string name="exposure_time" msgid="3990163680281058826">"Muda wa Mfichuo"</string>
+    <string name="exposure_time" msgid="3990163680281058826">"Muda ambao kilango cha kamera kinakaa wazi"</string>
     <string name="iso" msgid="5028296664327335940">"ISO"</string>
     <string name="unit_mm" msgid="1125768433254329136">"mm"</string>
     <string name="manual" msgid="6608905477477607865">"Mwongozo"</string>
