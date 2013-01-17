@@ -18,7 +18,7 @@ package com.android.gallery3d.data;
 
 import java.util.ArrayList;
 
-public class FilterEmptyPromptSet extends MediaSet implements ContentListener {
+public class FilterEmptyPromptSet extends MediaSetWrapper implements ContentListener {
     @SuppressWarnings("unused")
     private static final String TAG = "FilterEmptyPromptSet";
 
@@ -26,7 +26,7 @@ public class FilterEmptyPromptSet extends MediaSet implements ContentListener {
     private MediaSet mBaseSet;
 
     public FilterEmptyPromptSet(Path path, MediaSet baseSet, MediaItem emptyItem) {
-        super(path, INVALID_DATA_VERSION);
+        super(baseSet, path, INVALID_DATA_VERSION);
         mEmptyItem = new ArrayList<MediaItem>(1);
         mEmptyItem.add(emptyItem);
         mBaseSet = baseSet;
@@ -68,11 +68,6 @@ public class FilterEmptyPromptSet extends MediaSet implements ContentListener {
     @Override
     public boolean isCameraRoll() {
         return mBaseSet.isCameraRoll();
-    }
-
-    @Override
-    public long reload() {
-        return mBaseSet.reload();
     }
 
     @Override
