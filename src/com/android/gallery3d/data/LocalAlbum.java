@@ -252,12 +252,12 @@ public class LocalAlbum extends MediaSet {
     }
 
     @Override
-    public long reload() {
-        if (mNotifier.isDirty()) {
-            mDataVersion = nextVersionNumber();
-            mCachedCount = INVALID_COUNT;
-        }
-        return mDataVersion;
+    protected boolean isDirtyLocked() {
+        return mNotifier.isDirty();
+    }
+    @Override
+    public void load() {
+        mCachedCount = INVALID_COUNT;
     }
 
     @Override

@@ -24,7 +24,7 @@ import com.android.gallery3d.app.GalleryApp;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class ClusterAlbumSet extends MediaSet implements ContentListener {
+public class ClusterAlbumSet extends MediaSetWrapper implements ContentListener {
     @SuppressWarnings("unused")
     private static final String TAG = "ClusterAlbumSet";
     private GalleryApp mApplication;
@@ -35,7 +35,7 @@ public class ClusterAlbumSet extends MediaSet implements ContentListener {
 
     public ClusterAlbumSet(Path path, GalleryApp application,
             MediaSet baseSet, int kind) {
-        super(path, INVALID_DATA_VERSION);
+        super(baseSet, path, INVALID_DATA_VERSION);
         mApplication = application;
         mBaseSet = baseSet;
         mKind = kind;
@@ -58,17 +58,20 @@ public class ClusterAlbumSet extends MediaSet implements ContentListener {
     }
 
     @Override
-    public long reload() {
-        if (mBaseSet.reload() > mDataVersion) {
-            if (mFirstReloadDone) {
-                updateClustersContents();
-            } else {
-                updateClusters();
-                mFirstReloadDone = true;
-            }
-            mDataVersion = nextVersionNumber();
+    protected boolean isDirtyLocked() {
+        return super.isDirtyLocked()
+                || !mFirstReloadDone;
+    }
+
+    @Override
+    public void load() throws InterruptedException {
+        super.load();
+        if (mFirstReloadDone) {
+            updateClustersContents();
+        } else {
+            updateClusters();
+            mFirstReloadDone = true;
         }
-        return mDataVersion;
     }
 
     @Override

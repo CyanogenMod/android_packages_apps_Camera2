@@ -27,11 +27,13 @@ public class ComboAlbumSet extends MediaSet implements ContentListener {
     @SuppressWarnings("unused")
     private static final String TAG = "ComboAlbumSet";
     private final MediaSet[] mSets;
+    private final boolean[] mDirtySets;
     private final String mName;
 
     public ComboAlbumSet(Path path, GalleryApp application, MediaSet[] mediaSets) {
         super(path, nextVersionNumber());
         mSets = mediaSets;
+        mDirtySets = new boolean[mSets.length];
         for (MediaSet set : mSets) {
             set.addContentListener(this);
         }
@@ -66,31 +68,24 @@ public class ComboAlbumSet extends MediaSet implements ContentListener {
     }
 
     @Override
-    public boolean isLoading() {
-        for (int i = 0, n = mSets.length; i < n; ++i) {
-            if (mSets[i].isLoading()) return true;
-        }
-        return false;
-    }
-
-    @Override
-    public long reload() {
-        boolean changed = false;
-        for (int i = 0, n = mSets.length; i < n; ++i) {
-            long version = mSets[i].reload();
-            if (version > mDataVersion) changed = true;
-        }
-        if (changed) mDataVersion = nextVersionNumber();
-        return mDataVersion;
-    }
-
-    @Override
-    public boolean loadIfDirty() {
-        boolean changed = false;
+    protected boolean isDirtyLocked() {
+        boolean dirty = false;
         for (int i = 0; i < mSets.length; i++) {
-            changed |= mSets[i].loadIfDirty();
+            mDirtySets[i] = mSets[i].isDirtyLocked();
+            dirty |= mDirtySets[i]
+                    || mSets[i].getDataVersion() > getDataVersion();
         }
-        return changed;
+        return dirty;
+    }
+
+    @Override
+    protected void load() throws InterruptedException {
+        for (int i = 0, n = mSets.length; i < n; ++i) {
+            if (mDirtySets[i]) {
+                mDirtySets[i] = false;
+                mSets[i].load();
+            }
+        }
     }
 
     @Override
