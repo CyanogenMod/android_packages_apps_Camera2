@@ -37,6 +37,7 @@ import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.ingest.adapter.MtpAdapter;
@@ -55,6 +56,9 @@ public class IngestActivity extends Activity implements
     private Handler mHandler;
     private ProgressDialog mProgressDialog;
     private ActionMode mActiveActionMode;
+
+    private View mWarningOverlay;
+    private TextView mWarningOverlayText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +175,7 @@ public class IngestActivity extends Activity implements
         DateTileView.refreshLocale();
         mActive = true;
         if (mHelperService != null) mHelperService.setClientActivity(this);
+        updateWarningOverlay();
         super.onResume();
     }
 
@@ -182,12 +187,45 @@ public class IngestActivity extends Activity implements
         super.onPause();
     }
 
-    protected void notifyIndexChanged() {
+    private void showWarningOverlay(int textResId) {
+        if (mWarningOverlay == null) {
+            mWarningOverlay = findViewById(R.id.ingest_warning_overlay);
+            mWarningOverlayText =
+                    (TextView)mWarningOverlay.findViewById(R.id.ingest_warning_overlay_text);
+        }
+        mWarningOverlayText.setText(textResId);
+        mWarningOverlay.setVisibility(View.VISIBLE);
+        mGridView.setVisibility(View.GONE);
+    }
+
+    private void hideWarningOverlay() {
+        if (mWarningOverlay != null) {
+            mWarningOverlay.setVisibility(View.GONE);
+            mGridView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void updateWarningOverlay() {
+        if (!mAdapter.deviceConnected()) {
+            showWarningOverlay(R.string.ingest_no_device);
+        } else if (mAdapter.indexReady() && mAdapter.getCount() == 0) {
+            showWarningOverlay(R.string.ingest_empty_device);
+        } else {
+            hideWarningOverlay();
+        }
+    }
+
+    private void UiThreadNotifyIndexChanged() {
         mAdapter.notifyDataSetChanged();
         if (mActiveActionMode != null) {
             mActiveActionMode.finish();
             mActiveActionMode = null;
         }
+        updateWarningOverlay();
+    }
+
+    protected void notifyIndexChanged() {
+        mHandler.sendEmptyMessage(ItemListHandler.MSG_NOTIFY_CHANGED);
     }
 
     private static class ProgressState {
@@ -229,7 +267,7 @@ public class IngestActivity extends Activity implements
     public void onIndexFinish() {
         // Not guaranteed to be called on the UI thread
         mHandler.sendEmptyMessage(ItemListHandler.MSG_PROGRESS_HIDE);
-        mHandler.sendEmptyMessage(ItemListHandler.MSG_ADAPTER_NOTIFY_CHANGED);
+        mHandler.sendEmptyMessage(ItemListHandler.MSG_NOTIFY_CHANGED);
     }
 
     @Override
@@ -291,7 +329,7 @@ public class IngestActivity extends Activity implements
     private static class ItemListHandler extends Handler {
         public static final int MSG_PROGRESS_UPDATE = 0;
         public static final int MSG_PROGRESS_HIDE = 1;
-        public static final int MSG_ADAPTER_NOTIFY_CHANGED = 2;
+        public static final int MSG_NOTIFY_CHANGED = 2;
 
         WeakReference<IngestActivity> mParentReference;
 
@@ -311,8 +349,8 @@ public class IngestActivity extends Activity implements
                 case MSG_PROGRESS_UPDATE:
                     parent.updateProgressDialog();
                     break;
-                case MSG_ADAPTER_NOTIFY_CHANGED:
-                    parent.notifyIndexChanged();
+                case MSG_NOTIFY_CHANGED:
+                    parent.UiThreadNotifyIndexChanged();
                     break;
                 default:
                     break;
