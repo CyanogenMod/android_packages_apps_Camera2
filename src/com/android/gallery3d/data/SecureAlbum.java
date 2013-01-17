@@ -122,12 +122,13 @@ public class SecureAlbum extends MediaSet implements StitchingChangeListener {
     }
 
     @Override
-    public long reload() {
-        if (mNotifier.isDirty()) {
-            mDataVersion = nextVersionNumber();
-            updateExistingItems();
-        }
-        return mDataVersion;
+    protected boolean isDirtyLocked() {
+        return mNotifier.isDirty();
+    }
+
+    @Override
+    public void load() {
+        updateExistingItems();
     }
 
     private ArrayList<Integer> queryExistingIds(Uri uri, int minId, int maxId) {
