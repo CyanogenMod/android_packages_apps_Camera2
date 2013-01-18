@@ -47,6 +47,7 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -58,6 +59,7 @@ import android.widget.Toast;
 import com.android.gallery3d.R;
 import com.android.gallery3d.data.LocalAlbum;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.editors.EditorManager;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterBorder;
@@ -104,11 +106,9 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private final PanelController mPanelController = new PanelController();
     private ImageLoader mImageLoader = null;
     private ImageShow mImageShow = null;
-    private ImageCurves mImageCurves = null;
     private ImageRedEyes mImageRedEyes = null;
     private ImageDraw mImageDraw = null;
     private ImageStraighten mImageStraighten = null;
-    private ImageZoom mImageZoom = null;
     private ImageCrop mImageCrop = null;
     private ImageRotate mImageRotate = null;
     private ImageFlip mImageFlip = null;
@@ -129,6 +129,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private LinearLayout listColors = null;
     private LinearLayout listFilters = null;
     private LinearLayout listBorders = null;
+
+    private EditorPlaceHolder mEditorPlaceHolder = new EditorPlaceHolder(this);
 
     private static final int SELECT_PICTURE = 1;
     private static final String LOGTAG = "FilterShowActivity";
@@ -200,9 +202,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         listColors = (LinearLayout) findViewById(R.id.listColorsFx);
 
         mImageShow = (ImageShow) findViewById(R.id.imageShow);
-        mImageCurves = (ImageCurves) findViewById(R.id.imageCurves);
         mImageStraighten = (ImageStraighten) findViewById(R.id.imageStraighten);
-        mImageZoom = (ImageZoom) findViewById(R.id.imageZoom);
         mImageCrop = (ImageCrop) findViewById(R.id.imageCrop);
         mImageRotate = (ImageRotate) findViewById(R.id.imageRotate);
         mImageFlip = (ImageFlip) findViewById(R.id.imageFlip);
@@ -214,9 +214,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageCrop.setTouchTolerance((int) getPixelsFromDip(25));
         ImageCrop.setMinCropSize((int) getPixelsFromDip(55));
         mImageViews.add(mImageShow);
-        mImageViews.add(mImageCurves);
         mImageViews.add(mImageStraighten);
-        mImageViews.add(mImageZoom);
         mImageViews.add(mImageCrop);
         mImageViews.add(mImageRotate);
         mImageViews.add(mImageFlip);
@@ -225,6 +223,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         for (ImageShow imageShow : mImageViews) {
             mImageLoader.addCacheListener(imageShow);
         }
+
+        mEditorPlaceHolder.setContainer((FrameLayout) findViewById(R.id.editorContainer));
+        EditorManager.addEditors(mEditorPlaceHolder);
+        mEditorPlaceHolder.setOldViews(mImageViews);
+        mEditorPlaceHolder.setImageLoader(mImageLoader);
 
         mListFx = findViewById(R.id.fxList);
         mListBorders = findViewById(R.id.bordersList);
@@ -248,9 +251,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mBottomPanelButtons.add(mColorsButton);
 
         mImageShow.setImageLoader(mImageLoader);
-        mImageCurves.setImageLoader(mImageLoader);
         mImageStraighten.setImageLoader(mImageLoader);
-        mImageZoom.setImageLoader(mImageLoader);
         mImageCrop.setImageLoader(mImageLoader);
         mImageRotate.setImageLoader(mImageLoader);
         mImageFlip.setImageLoader(mImageLoader);
@@ -259,14 +260,13 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageDraw.setImageLoader(mImageLoader);
 
         mPanelController.setActivity(this);
+        mPanelController.setEditorPlaceHolder(mEditorPlaceHolder);
 
         mPanelController.addImageView(findViewById(R.id.imageShow));
-        mPanelController.addImageView(findViewById(R.id.imageCurves));
         mPanelController.addImageView(findViewById(R.id.imageStraighten));
         mPanelController.addImageView(findViewById(R.id.imageCrop));
         mPanelController.addImageView(findViewById(R.id.imageRotate));
         mPanelController.addImageView(findViewById(R.id.imageFlip));
-        mPanelController.addImageView(findViewById(R.id.imageZoom));
         mPanelController.addImageView(findViewById(R.id.imageTinyPlanet));
         mPanelController.addImageView(findViewById(R.id.imageRedEyes));
         mPanelController.addImageView(findViewById(R.id.imageDraw));
@@ -311,7 +311,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         seekBar.setMax(SEEK_BAR_MAX);
 
         mImageShow.setSeekBar(seekBar);
-        mImageZoom.setSeekBar(seekBar);
         mImageTinyPlanet.setSeekBar(seekBar);
         mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
         mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList),

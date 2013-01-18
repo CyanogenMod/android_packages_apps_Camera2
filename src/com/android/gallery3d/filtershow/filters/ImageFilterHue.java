@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.filters;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.editors.BasicEditor;
 
 import android.graphics.Bitmap;
 
@@ -38,6 +39,11 @@ public class ImageFilterHue extends ImageFilter {
     @Override
     public int getTextId() {
         return R.string.hue;
+    }
+
+    @Override
+    public int getEditingViewId() {
+        return BasicEditor.ID;
     }
 
     @Override
