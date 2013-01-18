@@ -35,4 +35,6 @@
     <item type="id" name="kmeansButton" />
     <item type="id" name="downsampleButton" />
     <item type="id" name="drawOnImageButton" />
+    <item type="id" name="imageCurves" />
+    <item type="id" name="imageZoom" />
 </resources>

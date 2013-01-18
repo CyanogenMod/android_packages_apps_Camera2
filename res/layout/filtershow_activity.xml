@@ -60,6 +60,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" >
 
+            <FrameLayout
+                android:id="@+id/editorContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"  />
+
             <com.android.gallery3d.filtershow.imageshow.ImageShow
                 android:id="@+id/imageShow"
                 android:layout_width="match_parent"
@@ -85,19 +91,6 @@
 
             <com.android.gallery3d.filtershow.imageshow.ImageFlip
                 android:id="@+id/imageFlip"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
-            <com.android.gallery3d.filtershow.ui.ImageCurves
-                android:id="@+id/imageCurves"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layerType="software"
-                android:visibility="gone" />
-
-            <com.android.gallery3d.filtershow.imageshow.ImageZoom
-                android:id="@+id/imageZoom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
