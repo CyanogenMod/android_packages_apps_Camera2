@@ -87,7 +87,6 @@ public class MtpDeviceIndex {
     private int[] mUnifiedLookupIndex;
     private MtpObjectInfo[] mMtpObjects;
     private DateBucket[] mBuckets;
-    private Map<SimpleDate, DateBucket> mBucketsTemp;
     private int mGeneration = 0;
 
     public enum Progress {
@@ -95,11 +94,11 @@ public class MtpDeviceIndex {
     }
 
     private Progress mProgress = Progress.Uninitialized;
-    private int mNumObjects = 0;
     private ProgressListener mProgressListener;
 
     private static final MtpDeviceIndex sInstance = new MtpDeviceIndex();
-    private static final MtpObjectTimestampComparator sMtpObjectComparator = new MtpObjectTimestampComparator();
+    private static final MtpObjectTimestampComparator sMtpObjectComparator =
+            new MtpObjectTimestampComparator();
 
     public static MtpDeviceIndex getInstance() {
         return sInstance;
@@ -135,12 +134,7 @@ public class MtpDeviceIndex {
     synchronized public Runnable getIndexRunnable() {
         if (mProgress != Progress.Initialized) return null;
         mProgress = Progress.Pending;
-        return new Runnable() {
-            @Override
-            public void run() {
-                indexDevice();
-            }
-        };
+        return new IndexRunnable(mDevice);
     }
 
     synchronized public boolean indexReady() {
@@ -365,135 +359,178 @@ public class MtpDeviceIndex {
         mMtpObjects = null;
         mBuckets = null;
         mCachedReverseBuckets = null;
-        mBucketsTemp = null;
-        mNumObjects = 0;
         mProgress = (mDevice == null) ? Progress.Uninitialized : Progress.Initialized;
     }
 
-    /*
-     * Implementation note: this is the way the index supports a lot of its operations in
-     * constant time and respecting the need to have bucket names always come before items
-     * in that bucket when accessing the list sequentially, both in ascending and descending
-     * orders.
-     *
-     * Let's say the data we have in the index is the following:
-     *  [Bucket A]: [photo 1], [photo 2]
-     *  [Bucket B]: [photo 3]
-     *
-     *  In this case, the lookup index array would be
-     *  [0, 0, 0, 1, 1]
-     *
-     *  Now, whether we access the list in ascending or descending order, we know which bucket
-     *  to look in (0 corresponds to A and 1 to B), and can return the bucket label as the first
-     *  item in a bucket as needed. The individual IndexBUckets have a startIndex and endIndex
-     *  that correspond to indices in this lookup index array, allowing us to calculate the offset
-     *  of the specific item we want from within a specific bucket.
-     */
-    private void buildLookupIndex() {
-        int numBuckets = mBuckets.length;
-        mUnifiedLookupIndex = new int[mNumObjects + numBuckets];
-        int currentUnifiedIndexEntry = 0;
-        int nextUnifiedEntry;
 
-        mMtpObjects = new MtpObjectInfo[mNumObjects];
-        int currentItemsEntry = 0;
-        for (int i = 0; i < numBuckets; i++) {
-            DateBucket bucket = mBuckets[i];
-            nextUnifiedEntry = currentUnifiedIndexEntry + bucket.tempElementsList.size() + 1;
-            Arrays.fill(mUnifiedLookupIndex, currentUnifiedIndexEntry, nextUnifiedEntry, i);
-            bucket.unifiedStartIndex = currentUnifiedIndexEntry;
-            bucket.unifiedEndIndex = nextUnifiedEntry - 1;
-            currentUnifiedIndexEntry = nextUnifiedEntry;
+    private class IndexRunnable implements Runnable {
+        private int[] mUnifiedLookupIndex;
+        private MtpObjectInfo[] mMtpObjects;
+        private DateBucket[] mBuckets;
+        private Map<SimpleDate, DateBucket> mBucketsTemp;
+        private MtpDevice mDevice;
+        private int mNumObjects = 0;
 
-            bucket.itemsStartIndex = currentItemsEntry;
-            for (int j = 0; j < bucket.tempElementsList.size(); j++) {
-                mMtpObjects[currentItemsEntry] = bucket.tempElementsList.get(j);
-                currentItemsEntry++;
+        private class IndexingException extends Exception {};
+
+        public IndexRunnable(MtpDevice device) {
+            mDevice = device;
+        }
+
+        /*
+         * Implementation note: this is the way the index supports a lot of its operations in
+         * constant time and respecting the need to have bucket names always come before items
+         * in that bucket when accessing the list sequentially, both in ascending and descending
+         * orders.
+         *
+         * Let's say the data we have in the index is the following:
+         *  [Bucket A]: [photo 1], [photo 2]
+         *  [Bucket B]: [photo 3]
+         *
+         *  In this case, the lookup index array would be
+         *  [0, 0, 0, 1, 1]
+         *
+         *  Now, whether we access the list in ascending or descending order, we know which bucket
+         *  to look in (0 corresponds to A and 1 to B), and can return the bucket label as the first
+         *  item in a bucket as needed. The individual IndexBUckets have a startIndex and endIndex
+         *  that correspond to indices in this lookup index array, allowing us to calculate the
+         *  offset of the specific item we want from within a specific bucket.
+         */
+        private void buildLookupIndex() {
+            int numBuckets = mBuckets.length;
+            mUnifiedLookupIndex = new int[mNumObjects + numBuckets];
+            int currentUnifiedIndexEntry = 0;
+            int nextUnifiedEntry;
+
+            mMtpObjects = new MtpObjectInfo[mNumObjects];
+            int currentItemsEntry = 0;
+            for (int i = 0; i < numBuckets; i++) {
+                DateBucket bucket = mBuckets[i];
+                nextUnifiedEntry = currentUnifiedIndexEntry + bucket.tempElementsList.size() + 1;
+                Arrays.fill(mUnifiedLookupIndex, currentUnifiedIndexEntry, nextUnifiedEntry, i);
+                bucket.unifiedStartIndex = currentUnifiedIndexEntry;
+                bucket.unifiedEndIndex = nextUnifiedEntry - 1;
+                currentUnifiedIndexEntry = nextUnifiedEntry;
+
+                bucket.itemsStartIndex = currentItemsEntry;
+                for (int j = 0; j < bucket.tempElementsList.size(); j++) {
+                    mMtpObjects[currentItemsEntry] = bucket.tempElementsList.get(j);
+                    currentItemsEntry++;
+                }
+                bucket.tempElementsList = null;
             }
-            bucket.tempElementsList = null;
         }
-    }
 
-    private void indexDevice() {
-        synchronized (this) {
-            mProgress = Progress.Started;
+        private void copyResults() {
+            MtpDeviceIndex.this.mUnifiedLookupIndex = mUnifiedLookupIndex;
+            MtpDeviceIndex.this.mMtpObjects = mMtpObjects;
+            MtpDeviceIndex.this.mBuckets = mBuckets;
+            mUnifiedLookupIndex = null;
+            mMtpObjects = null;
+            mBuckets = null;
         }
-        mBucketsTemp = new HashMap<SimpleDate, DateBucket>();
-        for (int storageId : mDevice.getStorageIds()) {
-            Stack<Integer> pendingDirectories = new Stack<Integer>();
-            pendingDirectories.add(0xFFFFFFFF); // start at the root of the
-                                                // device
-            while (!pendingDirectories.isEmpty()) {
-                int dirHandle = pendingDirectories.pop();
-                for (int objectHandle : mDevice.getObjectHandles(storageId, 0, dirHandle)) {
-                    MtpObjectInfo objectInfo = mDevice.getObjectInfo(objectHandle);
-                    switch (objectInfo.getFormat()) {
-                        case MtpConstants.FORMAT_JFIF:
-                        case MtpConstants.FORMAT_EXIF_JPEG:
-                            addObject(objectInfo);
-                            break;
-                        case MtpConstants.FORMAT_ASSOCIATION:
-                            pendingDirectories.add(objectHandle);
-                            break;
+
+        @Override
+        public void run() {
+            try {
+                indexDevice();
+            } catch (IndexingException e) {
+                synchronized (MtpDeviceIndex.this) {
+                    resetState();
+                    if (mProgressListener != null) {
+                        mProgressListener.onIndexFinish();
                     }
                 }
             }
         }
-        Collection<DateBucket> values = mBucketsTemp.values();
-        mBucketsTemp = null;
-        mBuckets = values.toArray(new DateBucket[values.size()]);
-        values = null;
-        synchronized (this) {
-            mProgress = Progress.Sorting;
-            if (mProgressListener != null) {
-                mProgressListener.onSorting();
+
+        private void indexDevice() throws IndexingException {
+            synchronized (MtpDeviceIndex.this) {
+                mProgress = Progress.Started;
+            }
+            mBucketsTemp = new HashMap<SimpleDate, DateBucket>();
+            for (int storageId : mDevice.getStorageIds()) {
+                if (mDevice != getDevice()) throw new IndexingException();
+                Stack<Integer> pendingDirectories = new Stack<Integer>();
+                pendingDirectories.add(0xFFFFFFFF); // start at the root of the device
+                while (!pendingDirectories.isEmpty()) {
+                    if (mDevice != getDevice()) throw new IndexingException();
+                    int dirHandle = pendingDirectories.pop();
+                    for (int objectHandle : mDevice.getObjectHandles(storageId, 0, dirHandle)) {
+                        MtpObjectInfo objectInfo = mDevice.getObjectInfo(objectHandle);
+                        if (objectInfo == null) throw new IndexingException();
+                        switch (objectInfo.getFormat()) {
+                            case MtpConstants.FORMAT_JFIF:
+                            case MtpConstants.FORMAT_EXIF_JPEG:
+                                addObject(objectInfo);
+                                break;
+                            case MtpConstants.FORMAT_ASSOCIATION:
+                                pendingDirectories.add(objectHandle);
+                                break;
+                        }
+                    }
+                }
+            }
+            Collection<DateBucket> values = mBucketsTemp.values();
+            mBucketsTemp = null;
+            mBuckets = values.toArray(new DateBucket[values.size()]);
+            values = null;
+            synchronized (MtpDeviceIndex.this) {
+                mProgress = Progress.Sorting;
+                if (mProgressListener != null) {
+                    mProgressListener.onSorting();
+                }
+            }
+            sortAll();
+            buildLookupIndex();
+            synchronized (MtpDeviceIndex.this) {
+                if (mDevice != getDevice()) throw new IndexingException();
+                copyResults();
+
+                /*
+                 * In order for getBuckets to operate in constant time for descending
+                 * order, we must precompute a reversed array of the buckets, mainly
+                 * because the android.widget.SectionIndexer interface which adapters
+                 * that call getBuckets implement depends on section numbers to be
+                 * ascending relative to the scroll position, so we must have this for
+                 * descending order or the scrollbar goes crazy.
+                 */
+                computeReversedBuckets();
+
+                mProgress = Progress.Finished;
+                if (mProgressListener != null) {
+                    mProgressListener.onIndexFinish();
+                }
             }
         }
-        sortAll();
-        buildLookupIndex();
-        synchronized (this) {
-            mProgress = Progress.Finished;
+
+        private SimpleDate mDateInstance = new SimpleDate();
+
+        private void addObject(MtpObjectInfo objectInfo) {
+            mNumObjects++;
+            mDateInstance.setTimestamp(objectInfo.getDateCreated());
+            DateBucket bucket = mBucketsTemp.get(mDateInstance);
+            if (bucket == null) {
+                bucket = new DateBucket(mDateInstance, objectInfo);
+                mBucketsTemp.put(mDateInstance, bucket);
+                mDateInstance = new SimpleDate(); // only create new date
+                                                  // objects when they are used
+                return;
+            } else {
+                bucket.tempElementsList.add(objectInfo);
+            }
             if (mProgressListener != null) {
-                mProgressListener.onIndexFinish();
+                mProgressListener.onObjectIndexed(objectInfo, mNumObjects);
             }
         }
-    }
 
-    private SimpleDate mDateInstance = new SimpleDate();
-
-    private void addObject(MtpObjectInfo objectInfo) {
-        mNumObjects++;
-        mDateInstance.setTimestamp(objectInfo.getDateCreated());
-        DateBucket bucket = mBucketsTemp.get(mDateInstance);
-        if (bucket == null) {
-            bucket = new DateBucket(mDateInstance, objectInfo);
-            mBucketsTemp.put(mDateInstance, bucket);
-            mDateInstance = new SimpleDate(); // only create new date
-                                              // objects when they are used
-            return;
-        } else {
-            bucket.tempElementsList.add(objectInfo);
-        }
-        if (mProgressListener != null) {
-            mProgressListener.onObjectIndexed(objectInfo, mNumObjects);
-        }
-    }
-
-    private void sortAll() {
-        Arrays.sort(mBuckets);
-        for (DateBucket bucket : mBuckets) {
-            bucket.sortElements(sMtpObjectComparator);
+        private void sortAll() {
+            Arrays.sort(mBuckets);
+            for (DateBucket bucket : mBuckets) {
+                bucket.sortElements(sMtpObjectComparator);
+            }
         }
 
-        /*
-         * In order for getBuckets to operate in constant time for descending
-         * order, we must precompute a reversed array of the buckets, mainly
-         * because the android.widget.SectionIndexer interface which adapters
-         * that call getBuckets implement depends on section numbers to be
-         * ascending relative to the scroll position, so we must have this for
-         * descending order or the scrollbar goes crazy.
-         */
-        computeReversedBuckets();
     }
 
     private void computeReversedBuckets() {
