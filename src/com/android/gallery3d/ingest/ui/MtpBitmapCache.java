@@ -34,6 +34,9 @@ public class MtpBitmapCache extends LruCache<Integer, Bitmap> {
 
     public synchronized static void onDeviceDisconnected(MtpDevice device) {
         if (sInstance != null && sInstance.mDevice == device) {
+            synchronized (sInstance) {
+                sInstance.mDevice = null;
+            }
             sInstance = null;
         }
     }
@@ -56,7 +59,13 @@ public class MtpBitmapCache extends LruCache<Integer, Bitmap> {
     }
 
     private Bitmap createAndInsert(Integer key) {
-        byte[] imageBytes = mDevice.getThumbnail(key);
+        MtpDevice device;
+        synchronized (this) {
+            device = mDevice;
+        }
+        if (device == null) return null;
+        byte[] imageBytes = device.getThumbnail(key);
+        if (imageBytes == null) return null;
         Bitmap created = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
         put(key, created);
         return created;
