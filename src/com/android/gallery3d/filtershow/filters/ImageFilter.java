@@ -19,6 +19,7 @@ package com.android.gallery3d.filtershow.filters;
 import android.graphics.Bitmap;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.editors.BasicEditor;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class ImageFilter implements Cloneable {
@@ -65,7 +66,7 @@ public class ImageFilter implements Cloneable {
     }
 
     public int getEditingViewId() {
-        return R.id.imageShow;
+        return BasicEditor.ID;
     }
 
     public boolean showEditingControls() {

@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.editors.Editor;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
@@ -234,7 +235,9 @@ public class PanelController implements OnClickListener {
     private UtilityPanel mUtilityPanel = null;
     private MasterImage mMasterImage = MasterImage.getImage();
     private ImageShow mCurrentImage = null;
+    private Editor mCurrentEditor = null;
     private FilterShowActivity mActivity = null;
+    private EditorPlaceHolder mEditorPlaceHolder = null;
 
     public void setActivity(FilterShowActivity activity) {
         mActivity = activity;
@@ -276,6 +279,10 @@ public class PanelController implements OnClickListener {
         if (mCurrentImage != null) {
             mCurrentImage.resetParameter();
             mCurrentImage.select();
+            if (mCurrentEditor != null) {
+                mCurrentEditor.reflectCurrentFilter();
+            }
+
         }
         if (mDisableFilterButtons) {
             mActivity.enableFilterButtons();
@@ -292,6 +299,10 @@ public class PanelController implements OnClickListener {
         mMasterImage.onHistoryItemClick(position);
         showPanel(mCurrentPanel);
         mCurrentImage.select();
+        if (mCurrentEditor != null) {
+            mCurrentEditor.reflectCurrentFilter();
+        }
+
         if (mDisableFilterButtons) {
             mActivity.enableFilterButtons();
             mActivity.resetHistory();
@@ -456,19 +467,32 @@ public class PanelController implements OnClickListener {
         mUtilityPanel.hideAccessoryViews();
 
         if (view instanceof FilterIconButton) {
+            mCurrentEditor = null;
             FilterIconButton component = (FilterIconButton) view;
             ImageFilter filter = component.getImageFilter();
             if (filter.getEditingViewId() != 0) {
-                mCurrentImage = showImageView(filter.getEditingViewId());
+                if (mEditorPlaceHolder.contains(filter.getEditingViewId())) {
+                    mCurrentEditor = mEditorPlaceHolder.showEditor(filter.getEditingViewId());
+                    mCurrentImage = mCurrentEditor.getImageShow();
+                    mCurrentEditor.setPanelController(this);
+                } else {
+                    mCurrentImage = showImageView(filter.getEditingViewId());
+                }
                 mCurrentImage.setShowControls(filter.showEditingControls());
                 String ename = mCurrentImage.getContext().getString(filter.getTextId());
                 mUtilityPanel.setEffectName(ename);
-                if (mCurrentImage.useUtilityPanel()) {
-                    mCurrentImage.openUtilityPanel(mUtilityPanel.mAccessoryViewList);
-                }
+
                 mUtilityPanel.setShowParameter(filter.showParameterValue());
                 mMasterImage.setCurrentFilter(filter);
                 mCurrentImage.select();
+                if (mCurrentEditor != null) {
+                    mCurrentEditor.reflectCurrentFilter();
+                    if (mCurrentEditor.useUtilityPanel()) {
+                        mCurrentEditor.openUtilityPanel(mUtilityPanel.mAccessoryViewList);
+                    }
+                } else if (mCurrentImage.useUtilityPanel()) {
+                    mCurrentImage.openUtilityPanel(mUtilityPanel.mAccessoryViewList);
+                }
             }
             return;
         }
@@ -535,9 +559,19 @@ public class PanelController implements OnClickListener {
                 break;
             }
         }
-        if (mCurrentImage.useUtilityPanel()) {
+        mCurrentImage.select();
+        if (mCurrentEditor != null) {
+            mCurrentEditor.reflectCurrentFilter();
+            if (mCurrentEditor.useUtilityPanel()) {
+                mCurrentEditor.openUtilityPanel(mUtilityPanel.mAccessoryViewList);
+            }
+        } else if (mCurrentImage.useUtilityPanel()) {
             mCurrentImage.openUtilityPanel(mUtilityPanel.mAccessoryViewList);
         }
-        mCurrentImage.select();
+
+    }
+
+    public void setEditorPlaceHolder(EditorPlaceHolder editorPlaceHolder) {
+        mEditorPlaceHolder = editorPlaceHolder;
     }
 }
