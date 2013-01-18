@@ -46,7 +46,6 @@ public class ImageDraw extends ImageShow {
     float[] mTmpPoint = new float[2]; // so we do not malloc
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
         if (event.getPointerCount() != 1) {
             return false;
         }
