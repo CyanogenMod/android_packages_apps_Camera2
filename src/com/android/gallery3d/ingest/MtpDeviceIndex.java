@@ -143,6 +143,10 @@ public class MtpDeviceIndex {
         };
     }
 
+    synchronized public boolean indexReady() {
+        return mProgress == Progress.Finished;
+    }
+
     synchronized public Progress getProgress() {
         return mProgress;
     }

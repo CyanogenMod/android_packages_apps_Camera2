@@ -542,4 +542,10 @@
 
     <!--  Status message shown when content from an external camera is being imported -->
     <string name="ingest_importing">Importing...</string>
+
+    <!--  Status message shown when there is no content available to be imported -->
+    <string name="ingest_empty_device">There is no content available for importing on this device.</string>
+
+    <!--  Status message shown when there is no MTP device connected  -->
+    <string name="ingest_no_device">There is no MTP device connected</string>
 </resources>
