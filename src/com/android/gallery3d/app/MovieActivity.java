@@ -127,6 +127,9 @@ public class MovieActivity extends Activity {
     private void initializeActionBar(Intent intent) {
         mUri = intent.getData();
         final ActionBar actionBar = getActionBar();
+        if (actionBar == null) {
+            return;
+        }
         setActionBarLogoFromIntent(intent);
         actionBar.setDisplayOptions(
                 ActionBar.DISPLAY_HOME_AS_UP,

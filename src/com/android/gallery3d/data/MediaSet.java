@@ -153,16 +153,10 @@ public abstract class MediaSet extends MediaObject {
     // listener is automatically removed when there is no other reference to
     // the listener.
     public void addContentListener(ContentListener listener) {
-        if (mListeners.containsKey(listener)) {
-            throw new IllegalArgumentException();
-        }
         mListeners.put(listener, null);
     }
 
     public void removeContentListener(ContentListener listener) {
-        if (!mListeners.containsKey(listener)) {
-            throw new IllegalArgumentException();
-        }
         mListeners.remove(listener);
     }
 
