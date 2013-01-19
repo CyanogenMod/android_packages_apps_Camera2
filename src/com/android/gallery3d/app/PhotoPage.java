@@ -23,6 +23,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -838,6 +839,11 @@ public abstract class PhotoPage extends ActivityState implements
 
         // No bars if it's not allowed.
         if (!mActionBarAllowed) return false;
+
+        Configuration config = mActivity.getResources().getConfiguration();
+        if (config.touchscreen == Configuration.TOUCHSCREEN_NOTOUCH) {
+            return false;
+        }
 
         return true;
     }
