@@ -17,15 +17,15 @@
 package com.android.gallery3d.app;
 
 import android.app.Dialog;
-import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.OpenableColumns;
+import android.view.InputDevice;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -249,5 +249,26 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
         if (dialog == mVersionCheckDialog) {
             mVersionCheckDialog = null;
         }
+    }
+
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        final boolean isTouchPad = (event.getSource()
+                & InputDevice.SOURCE_CLASS_POSITION) != 0;
+        if (isTouchPad) {
+            float maxX = event.getDevice().getMotionRange(MotionEvent.AXIS_X).getMax();
+            float maxY = event.getDevice().getMotionRange(MotionEvent.AXIS_Y).getMax();
+            View decor = getWindow().getDecorView();
+            float scaleX = decor.getWidth() / maxX;
+            float scaleY = decor.getHeight() / maxY;
+            float x = event.getX() * scaleX;
+            //x = decor.getWidth() - x; // invert x
+            float y = event.getY() * scaleY;
+            //y = decor.getHeight() - y; // invert y
+            MotionEvent touchEvent = MotionEvent.obtain(event.getDownTime(),
+                    event.getEventTime(), event.getAction(), x, y, event.getMetaState());
+            return dispatchTouchEvent(touchEvent);
+        }
+        return super.onGenericMotionEvent(event);
     }
 }
