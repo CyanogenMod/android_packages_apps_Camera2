@@ -181,12 +181,10 @@ public class MasterImage {
             return;
         }
 
-        // FIXME getImageForPreset caller
         Bitmap bitmap = mLoader.getImageForPreset(null, mPreset, true);
 
         if (bitmap != null) {
             mFilteredImage = bitmap;
-            notifyObservers();
         }
         updatePresets(false);
         if (mGeometryOnlyPreset != null) {

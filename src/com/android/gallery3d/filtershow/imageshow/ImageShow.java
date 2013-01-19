@@ -26,6 +26,7 @@ import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
