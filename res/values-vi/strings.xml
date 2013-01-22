@@ -212,4 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"Đang sắp xếp..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"Đã quét xong"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"Đang nhập..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"Không có nội dung nào để nhập vào thiết bị này."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"Không có thiết bị MTP nào được kết nối"</string>
 </resources>

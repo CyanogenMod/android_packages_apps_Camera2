@@ -212,4 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"Sorterer ..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"Skanning fullført"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"Importerer ..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"Det er ikke noe innhold for import på denne enheten."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"Ingen MTP-enhet tilkoblet"</string>
 </resources>

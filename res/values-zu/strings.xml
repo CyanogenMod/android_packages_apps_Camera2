@@ -214,4 +214,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"Kuyahlungwa..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"Ukuskena kuqediwe"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"Iyangenisa..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"Akukho okuqukethwe okutholakalela ukungeniswa kule divayisi."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"Ayikho idivayisi ye-MTP exhunyiwe"</string>
 </resources>
