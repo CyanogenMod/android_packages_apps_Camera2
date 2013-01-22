@@ -212,4 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"정렬 중..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"스캔 완료"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"가져오는 중..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"이 기기로 가져올 수 있는 콘텐츠가 없습니다."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"연결된 MTP 기기가 없습니다."</string>
 </resources>

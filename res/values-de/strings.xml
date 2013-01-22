@@ -212,4 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"Wird sortiert..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"Scan abgeschlossen"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"Wird importiert..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"Es sind keine Inhalte zum Importieren auf dieses Gerät vorhanden."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"Es ist kein MTP-Gerät angeschlossen."</string>
 </resources>

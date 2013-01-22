@@ -212,4 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"جارٍ التصنيف..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"تم المسح الضوئي"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"جارٍ الاستيراد..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"لا يتوفر أي محتوى لاستيراده على هذا الجهاز."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"ليس هناك جهاز MTP متصل"</string>
 </resources>

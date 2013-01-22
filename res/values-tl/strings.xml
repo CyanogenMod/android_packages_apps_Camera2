@@ -212,4 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"Pinagbubukud-bukod..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"Tapos na ang pag-scan"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"Ini-import..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"Walang nilalamang available para sa pag-import sa device na ito."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"Walang MTP device na nakakonekta"</string>
 </resources>

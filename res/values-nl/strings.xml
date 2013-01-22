@@ -212,4 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"Sorteren..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"Scannen gereed"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"Importeren..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"Er is geen inhoud om te importeren naar dit apparaat."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"Er is geen MTP-apparaat verbonden"</string>
 </resources>
