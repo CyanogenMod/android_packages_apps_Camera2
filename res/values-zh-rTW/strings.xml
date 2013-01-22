@@ -212,4 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"排序中..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"掃描完成"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"匯入中..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"沒有任何內容可供這個裝置匯入。"</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"未連接任何 MTP 裝置"</string>
 </resources>

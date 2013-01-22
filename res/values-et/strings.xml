@@ -212,4 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"Sortimine ..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"Skannimine on lõppenud"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"Importimine ..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"Seadmes pole importimiseks saadaval mingit sisu."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"Ühtegi MTP-seadet pole ühendatud"</string>
 </resources>

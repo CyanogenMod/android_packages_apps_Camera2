@@ -212,4 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"Sıralanıyor..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"Tarama tamamlandı"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"İçe aktarılıyor..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"Bu cihazda içe aktarılacak içerik yok."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"Bağlı MTP cihazı yok"</string>
 </resources>

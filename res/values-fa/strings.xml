@@ -212,4 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"در حال مرتب‌سازی..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"اسکن انجام شد"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"درحال وارد کردن..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"هیچ محتوایی برای وارد کردن در این دستگاه، موجود نیست."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"هیچ دستگاه MTP متصل نیست"</string>
 </resources>
