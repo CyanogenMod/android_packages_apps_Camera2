@@ -212,4 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"ממיין..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"הסריקה הסתיימה"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"מייבא..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"אין תוכן זמין לייבוא במכשיר זה."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"לא מחובר אף מכשיר MTP"</string>
 </resources>

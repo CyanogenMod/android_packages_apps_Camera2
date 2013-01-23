@@ -215,4 +215,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"Inapanga..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"Uchanganuzi umefanyika"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"Inaingiza..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"Hakuna maudhui yanayopatikana ya kuingiza kwenye kifaa hiki."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"Hakuna kifaa cha MTP kilichounganishwa"</string>
 </resources>
