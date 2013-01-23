@@ -212,4 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"Razvrščanje ..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"Pregled končan"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"Uvažanje ..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"Ni na voljo vsebine za uvoz v to napravo."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"Ni priključene naprave MTP"</string>
 </resources>

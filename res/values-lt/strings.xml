@@ -212,4 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"Rūšiuojama..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"Nuskaityta"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"Importuojama..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"Nėra turinio, kurį galima importuoti į šį įrenginį."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"Nėra prijungto MTP įrenginio"</string>
 </resources>

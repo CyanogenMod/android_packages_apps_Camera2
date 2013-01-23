@@ -212,4 +212,8 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"Classificando..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"Verificação concluída"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"Importando..."</string>
+    <!-- no translation found for ingest_empty_device (2010470482779872622) -->
+    <skip />
+    <!-- no translation found for ingest_no_device (3054128223131382122) -->
+    <skip />
 </resources>
