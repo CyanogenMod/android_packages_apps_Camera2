@@ -212,4 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"Rendezés..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"A beolvasás befejeződött."</string>
     <string name="ingest_importing" msgid="7456633398378527611">"Importálás..."</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"Nem áll rendelkezésre az eszközre importálható tartalom."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"Nincs MTP-eszköz csatlakoztatva"</string>
 </resources>
