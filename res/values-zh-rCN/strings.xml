@@ -212,6 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"正在排序..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"扫描已完成"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"正在导入..."</string>
-    <string name="ingest_empty_device" msgid="2010470482779872622">"没有任何内容可在这台设备上导入。"</string>
+    <string name="ingest_empty_device" msgid="2010470482779872622">"这台设备上没有可导入的内容。"</string>
     <string name="ingest_no_device" msgid="3054128223131382122">"未连接 MTP 设备"</string>
 </resources>

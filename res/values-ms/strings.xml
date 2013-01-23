@@ -212,8 +212,6 @@
     <string name="ingest_sorting" msgid="1028652103472581918">"Mengisih..."</string>
     <string name="ingest_scanning_done" msgid="8911916277034483430">"Pengimbasan selesai"</string>
     <string name="ingest_importing" msgid="7456633398378527611">"Mengimport..."</string>
-    <!-- no translation found for ingest_empty_device (2010470482779872622) -->
-    <skip />
-    <!-- no translation found for ingest_no_device (3054128223131382122) -->
-    <skip />
+    <string name="ingest_empty_device" msgid="2010470482779872622">"Tiada kandungan tersedia untuk diimport pada peranti ini."</string>
+    <string name="ingest_no_device" msgid="3054128223131382122">"Tiada peranti MTP disambungkan"</string>
 </resources>
