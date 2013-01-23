@@ -198,12 +198,14 @@ public class ImageShow extends View implements OnGestureListener,
         int maxp = ImageFilter.DEFAULT_MAX_PARAMETER;
         int minp = ImageFilter.DEFAULT_MIN_PARAMETER;
         if (getCurrentFilter() != null) {
+            if (getCurrentFilter().getParameter() == parameter) {
+                return;
+            }
             getCurrentFilter().setParameter(parameter);
             maxp = getCurrentFilter().getMaxParameter();
             minp = getCurrentFilter().getMinParameter();
         }
         if (getImagePreset() != null) {
-            mImageLoader.resetImageForPreset(getImagePreset(), this);
             getImagePreset().fillImageStateAdapter(mMasterImage.getState());
         }
         if (getPanelController() != null) {
@@ -253,10 +255,6 @@ public class ImageShow extends View implements OnGestureListener,
 
     public void setSeekBar(SeekBar seekBar) {
         mSeekBar = seekBar;
-    }
-
-    public void setCurrentFilter(ImageFilter filter) {
-        mMasterImage.setCurrentFilter(filter);
     }
 
     public ImageFilter getCurrentFilter() {
@@ -353,14 +351,6 @@ public class ImageShow extends View implements OnGestureListener,
             return;
         }
         mMasterImage.updatePresets(true);
-    }
-
-    public void updateImagePresets(boolean force) {
-        mMasterImage.updatePresets(force);
-    }
-
-    public void requestFilteredImages() {
-        mMasterImage.requestImages();
     }
 
     public Bitmap getFiltersOnlyImage() {
