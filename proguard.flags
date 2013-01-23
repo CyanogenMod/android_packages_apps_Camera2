@@ -45,8 +45,6 @@
 # Disable the warnings of using dynamic method calls in EffectsRecorder
 -dontnote com.android.camera.EffectsRecorder
 
--keep class android.support.v8.renderscript.** { *; }
-
 # Required for ActionBarSherlock
 -keep class android.support.v4.app.** { *; }
 -keep interface android.support.v4.app.** { *; }
