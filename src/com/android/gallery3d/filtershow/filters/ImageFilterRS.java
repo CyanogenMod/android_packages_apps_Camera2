@@ -18,9 +18,7 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.renderscript.Allocation;
-import android.renderscript.Allocation.MipmapControl;
-import android.renderscript.RenderScript;
+import android.support.v8.renderscript.*;
 import android.util.Log;
 
 public class ImageFilterRS extends ImageFilter {
@@ -48,7 +46,7 @@ public class ImageFilterRS extends ImageFilter {
             }
             Bitmap bitmapBuffer = bitmap.copy(mBitmapConfig, true);
             mOutPixelsAllocation = Allocation.createFromBitmap(mRS, bitmapBuffer,
-                    MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+                    Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
             mInPixelsAllocation = Allocation.createTyped(mRS,
                     mOutPixelsAllocation.getType());
             sOldBitmap = bitmap;
