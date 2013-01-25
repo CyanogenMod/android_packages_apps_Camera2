@@ -27,6 +27,7 @@ public class EditorManager {
         editorPlaceHolder.addEditor(new EditorZoom());
         editorPlaceHolder.addEditor(new EditorCurves());
         editorPlaceHolder.addEditor(new BasicEditor());
+        editorPlaceHolder.addEditor(new EditorDraw());
     }
 
 }
