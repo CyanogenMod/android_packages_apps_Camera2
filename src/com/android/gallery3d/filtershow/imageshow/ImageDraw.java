@@ -18,6 +18,9 @@ import com.android.gallery3d.filtershow.filters.RedEyeCandidate;
 public class ImageDraw extends ImageShow {
 
     private static final String LOGTAG = "ImageDraw";
+    private int mCurrentColor = Color.RED;
+    final static float INITAL_STROKE_RADIUS = 40;
+    private float mCurrentSize = INITAL_STROKE_RADIUS;
 
     public ImageDraw(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -33,8 +36,23 @@ public class ImageDraw extends ImageShow {
         if (filter != null) {
             filter.clear();
         }
+    }
 
-        invalidate();
+    public void setColor(int color) {
+        mCurrentColor = color;
+    }
+
+    public void setSize(int size) {
+        mCurrentSize = size;
+    }
+
+    public void setStyle(char style) {
+        ImageFilterDraw filter = (ImageFilterDraw) getCurrentFilter();
+        filter.setStyle(style);
+    }
+
+    public int getSize() {
+        return (int) mCurrentSize;
     }
 
     @Override
@@ -57,12 +75,7 @@ public class ImageDraw extends ImageShow {
             mTmpPoint[0] = event.getX();
             mTmpPoint[1] = event.getY();
             mToOrig.mapPoints(mTmpPoint);
-            float[] hsv = new float[3];
-            hsv[0] = (float) (360 * Math.random());
-            hsv[1] = 1;
-            hsv[2] = 1;
-            int col = Color.HSVToColor(0x88, hsv);
-            filter.startSection(col, mTmpPoint[0], mTmpPoint[1]);
+            filter.startSection(mCurrentColor, mCurrentSize, mTmpPoint[0], mTmpPoint[1]);
 
         }
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -109,10 +122,11 @@ public class ImageDraw extends ImageShow {
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-        calcScreenMapping();
-
         ImageFilterDraw filter = (ImageFilterDraw) getCurrentFilter();
-        filter.draw(canvas, mRotateToScreen);
+        if (filter != null) {
+            calcScreenMapping();
+            filter.draw(canvas, mRotateToScreen);
+        }
     }
+
 }
