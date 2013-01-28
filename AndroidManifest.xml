@@ -161,6 +161,9 @@
                 <data android:mimeType="vnd.android.cursor.dir/image" />
                 <data android:mimeType="vnd.android.cursor.dir/video" />
             </intent-filter>
+            <meta-data
+                android:name="com.google.android.canvas.data.launcher_info"
+                android:resource="@xml/canvas_info" />
         </activity>
 
         <!-- we add this activity-alias for shortcut backward compatibility -->
@@ -387,5 +390,12 @@
                 android:theme="@style/Theme.ProxyLauncher">
         </activity>
         <service android:name="com.android.gallery3d.app.BatchService" />
+        <!-- canvas -->
+        <provider
+            android:name="com.android.gallery3d.provider.CanvasProvider"
+            android:authorities="com.android.gallery3d.provider.CanvasProvider"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:permission="android.permission.ACCESS_APP_BROWSE_DATA" />
     </application>
 </manifest>
