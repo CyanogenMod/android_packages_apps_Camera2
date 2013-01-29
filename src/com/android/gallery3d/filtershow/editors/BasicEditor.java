@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 /**
  * The basic editor that all the one parameter filters
@@ -76,6 +77,7 @@ public class BasicEditor extends Editor implements OnSeekBarChangeListener {
         }
 
         Log.v(LOGTAG, "    #### progress=" + value);
+        MasterImage.getImage().updateBuffers();
     }
 
     @Override
