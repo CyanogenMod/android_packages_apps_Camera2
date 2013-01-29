@@ -334,7 +334,6 @@ public class ImagePreset {
 
     public Bitmap apply(Bitmap original) {
         Bitmap bitmap = original;
-//        bitmap = applyGeometry(bitmap);
         bitmap = applyFilters(bitmap, -1, -1);
         return applyBorder(bitmap);
     }

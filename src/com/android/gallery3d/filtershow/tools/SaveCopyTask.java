@@ -178,6 +178,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
             if (bitmap == null) {
                 return null;
             }
+            bitmap = preset.applyGeometry(bitmap);
             bitmap = preset.apply(bitmap);
 
             Object xmp = null;
