@@ -22,12 +22,19 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 
 
-public class ImageFilterBwFilter extends ImageFilter {
+public class ImageFilterBwFilter extends SimpleImageFilter {
 
     public ImageFilterBwFilter() {
         mName = "BW Filter";
-        mMaxParameter = 180;
-        mMinParameter = -180;
+    }
+
+    public FilterRepresentation getDefaultRepresentation() {
+        FilterBasicRepresentation representation = (FilterBasicRepresentation) super.getDefaultRepresentation();
+        representation.setName("BW Filter");
+        representation.setFilterClass(ImageFilterBwFilter.class);
+        representation.setMaximum(180);
+        representation.setMinimum(-180);
+        return representation;
     }
 
     @Override
@@ -50,10 +57,13 @@ public class ImageFilterBwFilter extends ImageFilter {
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        if (getParameters() == null) {
+            return bitmap;
+        }
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
         float[] hsv = new float[] {
-                180 + mParameter, 1, 1
+                180 + getParameters().getValue(), 1, 1
         };
         int rgb = Color.HSVToColor(hsv);
         int r = 0xFF & (rgb >> 16);

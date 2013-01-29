@@ -141,12 +141,6 @@ public class ImageShow extends View implements OnGestureListener,
         if (mSeekBar != null) {
             mSeekBar.setOnSeekBarChangeListener(this);
         }
-        if (getCurrentFilter() != null) {
-            int parameter = getCurrentFilter().getParameter();
-            int maxp = getCurrentFilter().getMaxParameter();
-            int minp = getCurrentFilter().getMinParameter();
-            updateSeekBar(parameter, minp, maxp);
-        }
     }
 
     private int parameterToUI(int parameter, int minp, int maxp, int uimax) {
@@ -178,11 +172,7 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     public void resetParameter() {
-        ImageFilter currentFilter = getCurrentFilter();
-        if (currentFilter != null) {
-            updateSeekBar(currentFilter.getDefaultParameter(),
-                    getCurrentFilter().getMinParameter(), getCurrentFilter().getMaxParameter());
-        }
+        // TODO: implement reset
     }
 
     public void setPanelController(PanelController controller) {
@@ -195,16 +185,6 @@ public class ImageShow extends View implements OnGestureListener,
 
     @Override
     public void onNewValue(int parameter) {
-        int maxp = ImageFilter.DEFAULT_MAX_PARAMETER;
-        int minp = ImageFilter.DEFAULT_MIN_PARAMETER;
-        if (getCurrentFilter() != null) {
-            if (getCurrentFilter().getParameter() == parameter) {
-                return;
-            }
-            getCurrentFilter().setParameter(parameter);
-            maxp = getCurrentFilter().getMaxParameter();
-            minp = getCurrentFilter().getMinParameter();
-        }
         if (getImagePreset() != null) {
             getImagePreset().fillImageStateAdapter(mMasterImage.getState());
         }
@@ -616,12 +596,6 @@ public class ImageShow extends View implements OnGestureListener,
     @Override
     public void onProgressChanged(SeekBar arg0, int progress, boolean arg2) {
         int parameter = progress;
-        if (getCurrentFilter() != null) {
-            int maxp = getCurrentFilter().getMaxParameter();
-            int minp = getCurrentFilter().getMinParameter();
-            parameter = uiToParameter(progress, minp, maxp, arg0.getMax());
-        }
-
         onNewValue(parameter);
     }
 

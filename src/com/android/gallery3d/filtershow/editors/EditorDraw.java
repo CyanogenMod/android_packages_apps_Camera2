@@ -94,8 +94,6 @@ public class EditorDraw extends Editor {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 ImageFilterDraw filter = (ImageFilterDraw) mImageShow.getCurrentFilter();
-                int minp = filter.getMinParameter();
-                int parameter = filter.getParameter();
                 if (item.getItemId() == R.id.draw_menu_color) {
                     showColorGrid(item);
                 } else if (item.getItemId() == R.id.draw_menu_size) {

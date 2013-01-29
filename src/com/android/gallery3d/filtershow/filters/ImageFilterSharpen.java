@@ -24,8 +24,26 @@ public class ImageFilterSharpen extends ImageFilterRS {
     private ScriptC_convolve3x3 mScript;
     float mScaleFactor;
 
+    private FilterBasicRepresentation mParameters;
+
     public ImageFilterSharpen() {
         mName = "Sharpen";
+    }
+
+    public FilterRepresentation getDefaultRepresentation() {
+        FilterRepresentation representation = new FilterBasicRepresentation("Sharpen", 0, 0, 100);
+        representation.setShowParameterValue(true);
+        representation.setFilterClass(ImageFilterSharpen.class);
+        return representation;
+    }
+
+    public void useRepresentation(FilterRepresentation representation) {
+        FilterBasicRepresentation parameters = (FilterBasicRepresentation) representation;
+        mParameters = parameters;
+    }
+
+    public boolean hasDefaultRepresentation() {
+        return true;
     }
 
     @Override
@@ -63,7 +81,7 @@ public class ImageFilterSharpen extends ImageFilterRS {
     }
 
     private void computeKernel(){
-        float p1 = mParameter * mScaleFactor;
+        float p1 = mParameters.getValue() * mScaleFactor;
         float value = p1 / 100.0f;
         float f[] = new float[9];
         float p = value;
@@ -81,6 +99,9 @@ public class ImageFilterSharpen extends ImageFilterRS {
 
     @Override
     public void runFilter() {
+        if (mParameters == null) {
+            return;
+        }
         computeKernel();
         mScript.set_gIn(mInPixelsAllocation);
         mScript.bind_gPixels(mInPixelsAllocation);

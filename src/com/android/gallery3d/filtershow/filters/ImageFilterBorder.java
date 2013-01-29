@@ -41,7 +41,6 @@ public class ImageFilterBorder extends ImageFilter {
         mNinePatch = ninePatch;
     }
 
-    @Override
     public boolean isNil() {
         if (mNinePatch == null) {
             return true;

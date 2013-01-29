@@ -62,13 +62,7 @@ import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.editors.BasicEditor;
 import com.android.gallery3d.filtershow.editors.EditorDraw;
 import com.android.gallery3d.filtershow.editors.EditorManager;
-import com.android.gallery3d.filtershow.filters.FiltersManager;
-import com.android.gallery3d.filtershow.filters.ImageFilter;
-import com.android.gallery3d.filtershow.filters.ImageFilterBorder;
-import com.android.gallery3d.filtershow.filters.ImageFilterFx;
-import com.android.gallery3d.filtershow.filters.ImageFilterParametricBorder;
-import com.android.gallery3d.filtershow.filters.ImageFilterRS;
-import com.android.gallery3d.filtershow.filters.ImageFilterRedEye;
+import com.android.gallery3d.filtershow.filters.*;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageDraw;
 import com.android.gallery3d.filtershow.imageshow.ImageFlip;
@@ -288,7 +282,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         FiltersManager.addFilters(filters, mImageLoader);
 
         for (ImageFilter filter : filters) {
-            filter.setParameter(filter.getDefaultParameter());
             filter.setName(getString(filter.getTextId()));
             setupFilterButton(filter, listColors, mColorsButton);
         }
@@ -714,6 +707,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             text = "";
         }
         icon.setup(text, filter, this, panel);
+        // TODO: get rid of hasDefaultRepresentation()
+        if (filter.hasDefaultRepresentation()) {
+            icon.setFilterRepresentation(filter.getDefaultRepresentation());
+        }
         icon.setId(filter.getButtonId());
         mPanelController.addComponent(button, icon);
         mPanelController.addFilter(filter);
@@ -973,20 +970,23 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 r.getDisplayMetrics());
     }
 
-    public void useFilter(ImageFilter filter) {
-        if (mMasterImage.getCurrentFilter() == filter) {
+    public void useFilterRepresentation(FilterRepresentation filterRepresentation) {
+        if (filterRepresentation == null) {
+            return;
+        }
+        if (mMasterImage.getCurrentFilterRepresentation() == filterRepresentation) {
             return;
         }
         ImagePreset oldPreset = mMasterImage.getPreset();
         ImagePreset copy = new ImagePreset(oldPreset);
-
-        ImageFilter existingFilter = copy.getFilter(filter.getName());
-        if (existingFilter == null) {
-            copy.add(filter);
+        FilterRepresentation representation = copy.getRepresentation(filterRepresentation);
+        if (representation == null) {
+            copy.addFilter(filterRepresentation);
+        } else {
+            filterRepresentation = representation;
         }
-        existingFilter = copy.getFilter(filter.getName());
         mMasterImage.setPreset(copy, true);
-        mMasterImage.setCurrentFilter(existingFilter);
+        mMasterImage.setCurrentFilterRepresentation(filterRepresentation);
         invalidateViews();
     }
 

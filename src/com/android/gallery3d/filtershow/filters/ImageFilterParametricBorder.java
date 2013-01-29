@@ -67,7 +67,6 @@ public class ImageFilterParametricBorder extends ImageFilter {
         return filter;
     }
 
-    @Override
     public boolean isNil() {
         return false;
     }

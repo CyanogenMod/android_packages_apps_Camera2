@@ -42,7 +42,6 @@ public class ImageFilterFx extends ImageFilter {
         return filter;
     }
 
-    @Override
     public boolean isNil() {
         if (fxBitmap != null) {
             return false;

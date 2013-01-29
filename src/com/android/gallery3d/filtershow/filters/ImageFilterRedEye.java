@@ -45,7 +45,7 @@ public class ImageFilterRedEye extends ImageFilter {
 
     @Override
     public int getEditingViewId() {
-        return R.id.imageRedEyes;
+            return R.id.imageRedEyes;
     }
 
     @Override
@@ -61,7 +61,6 @@ public class ImageFilterRedEye extends ImageFilter {
         return filter;
     }
 
-    @Override
     public boolean isNil() {
         if (mCandidates != null && mCandidates.size() > 0) {
             return false;

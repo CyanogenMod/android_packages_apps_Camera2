@@ -435,7 +435,6 @@ public class ImageFilterDraw extends ImageFilter {
         return filter;
     }
 
-    @Override
     public boolean isNil() {
         for (int i = 0; i < mDrawings.length; i++) {
             if (mDrawings[i].getNumberOfStrokes() != 0) {
