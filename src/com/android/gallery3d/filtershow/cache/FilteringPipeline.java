@@ -37,6 +37,7 @@ public class FilteringPipeline implements Handler.Callback {
     private ImagePreset mPreviousGeometryPreset = null;
     private ImagePreset mPreviousFiltersPreset = null;
     private GeometryMetadata mPreviousGeometry = null;
+    private float mPreviewScaleFactor = 1.0f;
 
     private Bitmap mOriginalBitmap = null;
     private Bitmap mResizedOriginalBitmap = null;
@@ -218,6 +219,13 @@ public class FilteringPipeline implements Handler.Callback {
         Bitmap bitmap = buffer.getProducer();
         long time2 = System.currentTimeMillis();
 
+        preset.setScaleFactor(mPreviewScaleFactor);
+        if (mPreviewScaleFactor < 1.0f) {
+            preset.setIsHighQuality(false);
+        } else {
+            preset.setIsHighQuality(true);
+        }
+
         if (type != COMPUTE_FILTERS_PRESET) {
             if (bitmap == null || (bitmap.getWidth() != mResizedOriginalBitmap.getWidth())
                     || (bitmap.getHeight() != mResizedOriginalBitmap.getHeight())) {
@@ -294,5 +302,13 @@ public class FilteringPipeline implements Handler.Callback {
             return false;
         }
         return true;
+    }
+
+    public void setPreviewScaleFactor(float previewScaleFactor) {
+        mPreviewScaleFactor = previewScaleFactor;
+    }
+
+    public float getPreviewScaleFactor() {
+        return mPreviewScaleFactor;
     }
 }
