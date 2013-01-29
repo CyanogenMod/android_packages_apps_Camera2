@@ -11,7 +11,6 @@ LOCAL_STATIC_JAVA_LIBRARIES += mp4parser
 
 LOCAL_SRC_FILES := $(call all-java-files-under, src) $(call all-renderscript-files-under, src)
 LOCAL_SRC_FILES += $(call all-java-files-under, src_pd)
-LOCAL_SRC_FILES += $(call all-java-files-under, ../Camera/src)
 
 LOCAL_RESOURCE_DIR += $(LOCAL_PATH)/res 
 LOCAL_RESOURCE_DIR += packages/apps/Camera/res
@@ -41,10 +40,8 @@ include $(BUILD_PACKAGE)
 include $(call all-makefiles-under, jni)
 
 ifeq ($(strip $(LOCAL_PACKAGE_OVERRIDES)),)
-# Use the following include to make gallery test apk.
-include $(call all-makefiles-under, $(LOCAL_PATH))
 
-# Use the following include to make camera test apk.
-include $(call all-makefiles-under, ../Camera)
+# Use the following include to make gallery test apk and the mosaic library
+include $(call all-makefiles-under, $(LOCAL_PATH))
 
 endif
