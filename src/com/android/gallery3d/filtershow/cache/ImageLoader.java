@@ -212,7 +212,10 @@ public class ImageLoader {
             mOriginalBitmapLarge = rotateToPortrait(mOriginalBitmapLarge, mOrientation);
         }
         mZoomOrientation = mOrientation;
-        FilteringPipeline.getPipeline().setOriginal(mOriginalBitmapLarge);
+        FilteringPipeline pipeline = FilteringPipeline.getPipeline();
+        pipeline.setOriginal(mOriginalBitmapLarge);
+        float previewScale = (float) mOriginalBitmapLarge.getWidth() / (float) getOriginalBounds().width();
+        pipeline.setPreviewScaleFactor(previewScale);
         warnListeners();
     }
 
