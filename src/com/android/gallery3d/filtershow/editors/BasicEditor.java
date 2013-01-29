@@ -64,6 +64,9 @@ public class BasicEditor extends Editor implements OnSeekBarChangeListener {
     @Override
     public void onProgressChanged(SeekBar sbar, int progress, boolean arg2) {
         ImageFilter filter = mImageShow.getCurrentFilter();
+        if (filter == null) {
+            return;
+        }
         int minp = filter.getMinParameter();
         int value = progress + minp;
         mImageShow.onNewValue(value);
