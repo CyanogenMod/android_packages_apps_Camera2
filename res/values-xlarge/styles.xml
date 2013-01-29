@@ -17,4 +17,13 @@
     <style name="DialogPickerTheme" parent="android:Theme.Holo.Dialog">
     </style>
     <bool name="picker_is_dialog">true</bool>
+
+    <!-- Camera resources below -->
+
+    <style name="ReviewControlText" parent="@style/ReviewControlText_xlarge" />
+    <style name="PopupTitleText" parent="@style/PopupTitleText_xlarge" />
+    <style name="PanoCustomDialogText" parent="@style/PanoCustomDialogText_xlarge" />
+    <style name="ViewfinderLabelLayout" parent="@style/ViewfinderLabelLayout_xlarge" />
+    <style name="SettingPopupWindow" parent="@style/SettingPopupWindow_xlarge" />
+
 </resources>

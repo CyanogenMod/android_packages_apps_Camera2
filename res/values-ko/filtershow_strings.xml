@@ -22,7 +22,6 @@
     <skip />
     <string name="original" msgid="3524493791230430897">"원본"</string>
     <string name="borders" msgid="2067345080568684614">"테두리"</string>
-    <string name="done" msgid="3112344807927554662">"완료"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"실행취소"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"다시실행"</string>
     <string name="show_history_panel" msgid="7785810372502120090">"기록 표시"</string>

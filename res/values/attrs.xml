@@ -21,4 +21,28 @@
     <declare-styleable name="CenteredLinearLayout">
         <attr name="max_width" format="dimension" />
     </declare-styleable>
+
+    <!-- Camera resources below -->
+
+    <declare-styleable name="CameraPreference">
+        <attr name="title" format="string" />
+    </declare-styleable>
+    <declare-styleable name="ListPreference">
+        <attr name="key" format="string" />
+        <attr name="defaultValue" format="string|reference" />
+        <attr name="entryValues" format="reference" />
+        <attr name="entries" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="IconIndicator">
+        <attr name="icons" format="reference" />
+        <attr name="modes" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="IconListPreference">
+        <!-- If a preference does not have individual icons for each entry, it can has a single icon to represent it. -->
+        <attr name="singleIcon" format="reference" />
+        <attr name="icons" />
+        <attr name="largeIcons" format="reference" />
+        <attr name="images" format="reference" />
+    </declare-styleable>
+
 </resources>

@@ -22,7 +22,6 @@
     <skip />
     <string name="original" msgid="3524493791230430897">"Oryginalny"</string>
     <string name="borders" msgid="2067345080568684614">"Granice"</string>
-    <string name="done" msgid="3112344807927554662">"Gotowe"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Cofnij"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"Ponów"</string>
     <string name="show_history_panel" msgid="7785810372502120090">"Pokaż historię"</string>
