@@ -202,4 +202,7 @@ public class ImageFilter implements Cloneable {
     native protected void nativeApplyGradientFilter(Bitmap bitmap, int w, int h,
             int[] redGradient, int[] greenGradient, int[] blueGradient);
 
+    public void useFilter(ImageFilter a) {
+        setParameter(a.getParameter());
+    }
 }
