@@ -39,6 +39,9 @@ public class BatchService extends Service {
         return mBinder;
     }
 
+    // The threadpool returned by getThreadPool must have only 1 thread
+    // running at a time, as MenuExecutor (atrociously) depends on this
+    // guarantee for synchronization.
     public ThreadPool getThreadPool() {
         return mThreadPool;
     }
