@@ -40,6 +40,7 @@ public class MtpAdapter extends BaseAdapter implements SectionIndexer {
     private MtpDeviceIndex mModel;
     private SortOrder mSortOrder = SortOrder.Descending;
     private LayoutInflater mInflater;
+    private int mGeneration = 0;
 
     public MtpAdapter(Activity context) {
         super();
@@ -51,6 +52,18 @@ public class MtpAdapter extends BaseAdapter implements SectionIndexer {
     public void setMtpDeviceIndex(MtpDeviceIndex index) {
         mModel = index;
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        mGeneration++;
+        super.notifyDataSetChanged();
+    }
+
+    @Override
+    public void notifyDataSetInvalidated() {
+        mGeneration++;
+        super.notifyDataSetInvalidated();
     }
 
     public boolean deviceConnected() {
@@ -121,7 +134,7 @@ public class MtpAdapter extends BaseAdapter implements SectionIndexer {
             } else {
                 imageView = (MtpThumbnailTileView) convertView;
             }
-            imageView.setMtpDeviceAndObjectInfo(mModel.getDevice(), (MtpObjectInfo)getItem(position));
+            imageView.setMtpDeviceAndObjectInfo(mModel.getDevice(), (MtpObjectInfo)getItem(position), mGeneration);
             return imageView;
         } else {
             DateTileView dateTile;
