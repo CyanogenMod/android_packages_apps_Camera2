@@ -12,8 +12,7 @@ LOCAL_STATIC_JAVA_LIBRARIES += mp4parser
 LOCAL_SRC_FILES := $(call all-java-files-under, src) $(call all-renderscript-files-under, src)
 LOCAL_SRC_FILES += $(call all-java-files-under, src_pd)
 
-LOCAL_RESOURCE_DIR += $(LOCAL_PATH)/res 
-LOCAL_RESOURCE_DIR += packages/apps/Camera/res
+LOCAL_RESOURCE_DIR += $(LOCAL_PATH)/res
 
 LOCAL_AAPT_FLAGS := --auto-add-overlay \
     --extra-packages com.android.camera
