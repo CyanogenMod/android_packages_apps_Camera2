@@ -16,11 +16,14 @@
 
 package com.android.gallery3d.provider;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.UriMatcher;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
@@ -655,6 +658,19 @@ public class CanvasProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection,
             String[] selectionArgs) {
         throw new UnsupportedOperationException("Update not supported");
+    }
+
+    // TODO: Remove once b/8079561 is resolved
+    public static boolean startBrowseActivity(Activity activity) {
+        Configuration config = activity.getResources().getConfiguration();
+        if (config.touchscreen == Configuration.TOUCHSCREEN_NOTOUCH) {
+            try {
+                Intent intent = CanvasContract.getBrowseIntent(BROWSER_ROOT_URI, 0);
+                activity.startActivity(intent);
+                return true;
+            } catch (ActivityNotFoundException ex) {}
+        }
+        return false;
     }
 
 }
