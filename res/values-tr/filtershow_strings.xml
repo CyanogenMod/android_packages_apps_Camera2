@@ -22,7 +22,6 @@
     <skip />
     <string name="original" msgid="3524493791230430897">"Orijinal"</string>
     <string name="borders" msgid="2067345080568684614">"Kenarlıklar"</string>
-    <string name="done" msgid="3112344807927554662">"Bitti"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Geri al"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"Yeniden yap"</string>
     <string name="show_history_panel" msgid="7785810372502120090">"Geçmişi Göster"</string>

@@ -19,4 +19,57 @@
     <style name="ActionBarTwoLinePrimary" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
         <item name="android:textSize">14sp</item>
     </style>
+
+    <!-- Camera resources below -->
+
+    <style name="ReviewControlIcon">
+        <item name="android:layout_height">@dimen/switcher_size</item>
+        <item name="android:layout_width">@dimen/switcher_size</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">@drawable/bg_pressed</item>
+    </style>
+    <style name="SettingPopupWindow">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginRight">@dimen/setting_popup_right_margin</item>
+        <item name="android:visibility">gone</item>
+    </style>
+    <style name="PopupTitleText">
+        <item name="android:textSize">@dimen/popup_title_text_size</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/popup_title_color</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:paddingLeft">16dp</item>
+    </style>
+    <style name="ViewfinderLabelLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginLeft">13dp</item>
+        <item name="android:layout_marginRight">@dimen/indicator_bar_width</item>
+        <item name="android:layout_marginBottom">13dp</item>
+        <item name="android:layout_marginTop">13dp</item>
+    </style>
+        <style name="PanoViewHorizontalBar">
+        <item name="android:background">#000000</item>
+        <item name="android:alpha">1.0</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_weight">1.5</item>
+    </style>
+    <style name="SettingPopupWindow_xlarge">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_marginRight">@dimen/setting_popup_right_margin</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
 </resources>

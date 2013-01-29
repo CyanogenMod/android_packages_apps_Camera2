@@ -22,7 +22,6 @@
     <skip />
     <string name="original" msgid="3524493791230430897">"原图"</string>
     <string name="borders" msgid="2067345080568684614">"边框"</string>
-    <string name="done" msgid="3112344807927554662">"完成"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"撤消"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"重做"</string>
     <string name="show_history_panel" msgid="7785810372502120090">"显示历史记录"</string>
