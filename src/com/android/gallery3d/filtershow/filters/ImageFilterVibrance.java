@@ -20,10 +20,17 @@ import com.android.gallery3d.R;
 
 import android.graphics.Bitmap;
 
-public class ImageFilterVibrance extends ImageFilter {
+public class ImageFilterVibrance extends SimpleImageFilter {
 
     public ImageFilterVibrance() {
         mName = "Vibrance";
+    }
+
+    public FilterRepresentation getDefaultRepresentation() {
+        FilterRepresentation representation = super.getDefaultRepresentation();
+        representation.setName("Vibrance");
+        representation.setFilterClass(ImageFilterVibrance.class);
+        return representation;
     }
 
     @Override
@@ -40,10 +47,12 @@ public class ImageFilterVibrance extends ImageFilter {
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        if (getParameters() == null) {
+            return bitmap;
+        }
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        int p = mParameter;
-        float value = p;
+        float value = getParameters().getValue();
         nativeApplyFilter(bitmap, w, h, value);
 
         return bitmap;

@@ -10,6 +10,16 @@ public class ImageFilterNegative extends ImageFilter {
         mName = "Negative";
     }
 
+    public FilterRepresentation getDefaultRepresentation() {
+        FilterRepresentation representation = new FilterDirectRepresentation("Negative");
+        representation.setFilterClass(ImageFilterNegative.class);
+        return representation;
+    }
+
+    public boolean hasDefaultRepresentation() {
+        return true;
+    }
+
     @Override
     public int getButtonId() {
         return R.id.negativeButton;
@@ -18,11 +28,6 @@ public class ImageFilterNegative extends ImageFilter {
     @Override
     public int getTextId() {
         return R.string.negative;
-    }
-
-    @Override
-    public boolean isNil() {
-        return false;
     }
 
     @Override

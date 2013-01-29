@@ -19,12 +19,23 @@ package com.android.gallery3d.filtershow.filters;
 import com.android.gallery3d.R;
 
 import android.graphics.Bitmap;
+import com.android.gallery3d.app.Log;
 
-public class ImageFilterVignette extends ImageFilter {
+public class ImageFilterVignette extends SimpleImageFilter {
+
+    private static final String LOGTAG = "ImageFilterVignette";
 
     public ImageFilterVignette() {
         setFilterType(TYPE_VIGNETTE);
         mName = "Vignette";
+    }
+
+    public FilterRepresentation getDefaultRepresentation() {
+        FilterBasicRepresentation representation = (FilterBasicRepresentation) super.getDefaultRepresentation();
+        representation.setName("Vignette");
+        representation.setFilterClass(ImageFilterVignette.class);
+        representation.setPriority(TYPE_VIGNETTE);
+        return representation;
     }
 
     @Override
@@ -41,10 +52,12 @@ public class ImageFilterVignette extends ImageFilter {
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        if (getParameters() == null) {
+            return bitmap;
+        }
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        float p = mParameter;
-        float value = p / 100.0f;
+        float value = getParameters().getValue() / 100.0f;
         nativeApplyFilter(bitmap, w, h, value);
 
         return bitmap;

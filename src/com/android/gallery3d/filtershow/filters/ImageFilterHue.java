@@ -21,14 +21,21 @@ import com.android.gallery3d.filtershow.editors.BasicEditor;
 
 import android.graphics.Bitmap;
 
-public class ImageFilterHue extends ImageFilter {
+public class ImageFilterHue extends SimpleImageFilter {
     private ColorSpaceMatrix cmatrix = null;
 
     public ImageFilterHue() {
         mName = "Hue";
         cmatrix = new ColorSpaceMatrix();
-        mMaxParameter = 180;
-        mMinParameter = -180;
+    }
+
+    public FilterRepresentation getDefaultRepresentation() {
+        FilterBasicRepresentation representation = (FilterBasicRepresentation) super.getDefaultRepresentation();
+        representation.setName("Hue");
+        representation.setFilterClass(ImageFilterHue.class);
+        representation.setMinimum(-180);
+        representation.setMaximum(180);
+        return representation;
     }
 
     @Override
@@ -57,10 +64,12 @@ public class ImageFilterHue extends ImageFilter {
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        if (getParameters() == null) {
+            return bitmap;
+        }
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        float p = mParameter;
-        float value = p;
+        float value = getParameters().getValue();
         cmatrix.identity();
         cmatrix.setHue(value);
 

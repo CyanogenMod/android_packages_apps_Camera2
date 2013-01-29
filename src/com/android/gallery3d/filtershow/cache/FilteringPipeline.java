@@ -22,10 +22,15 @@ import android.os.Process;
 import android.support.v8.renderscript.*;
 import android.util.Log;
 
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
+import com.android.gallery3d.filtershow.filters.ImageFilterVignette;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
+
+import java.util.HashMap;
 
 public class FilteringPipeline implements Handler.Callback {
 
@@ -235,17 +240,12 @@ public class FilteringPipeline implements Handler.Callback {
     }
 
     private void compute(TripleBufferBitmap buffer, ImagePreset preset, int type) {
-        String thread = Thread.currentThread().getName();
-        if (type == COMPUTE_PRESET && preset.same(mPreviousPreset)) {
-            mPreviousPreset.usePreset(preset);
-            preset = mPreviousPreset;
-        } else if (type == COMPUTE_GEOMETRY_PRESET && preset.same(mPreviousGeometryPreset)) {
-            mPreviousGeometryPreset.usePreset(preset);
-            preset = mPreviousGeometryPreset;
-        } else if (type == COMPUTE_FILTERS_PRESET && preset.same(mPreviousFiltersPreset)) {
-            mPreviousFiltersPreset.usePreset(preset);
-            preset = mPreviousFiltersPreset;
+        if (DEBUG) {
+            Log.v(LOGTAG, "compute preset " + preset);
+            preset.showFilters();
         }
+
+        String thread = Thread.currentThread().getName();
         long time = System.currentTimeMillis();
         if (updateOriginalAllocation(preset)) {
             buffer.updateBitmaps(mResizedOriginalBitmap);
