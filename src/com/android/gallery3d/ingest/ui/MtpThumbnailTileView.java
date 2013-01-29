@@ -35,6 +35,8 @@ public class MtpThumbnailTileView extends ImageView implements Checkable {
 
     private Paint mForegroundPaint;
     private boolean mIsChecked;
+    private int mObjectHandle;
+    private int mGeneration;
 
     private void init() {
         mForegroundPaint = new Paint();
@@ -92,13 +94,19 @@ public class MtpThumbnailTileView extends ImageView implements Checkable {
 
     private LoadThumbnailTask mTask;
 
-    public void setMtpDeviceAndObjectInfo(MtpDevice device, MtpObjectInfo object) {
+    public void setMtpDeviceAndObjectInfo(MtpDevice device, MtpObjectInfo object, int gen) {
+        int handle = object.getObjectHandle();
+        if (handle == mObjectHandle && gen == mGeneration) {
+            return;
+        }
         animate().cancel();
         if (mTask != null) {
             mTask.cancel(true);
         }
+        mGeneration = gen;
+        mObjectHandle = handle;
         Bitmap thumbnail = MtpBitmapCache.getInstanceForDevice(device)
-                .get(object.getObjectHandle());
+                .get(handle);
         if (thumbnail != null) {
             setAlpha(1f);
             setImageBitmap(thumbnail);
