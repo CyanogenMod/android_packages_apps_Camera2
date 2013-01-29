@@ -22,6 +22,7 @@ import android.util.Log;
 import com.android.gallery3d.filtershow.ImageStateAdapter;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
+import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 
@@ -187,6 +188,14 @@ public class ImagePreset {
             }
         }
         return true;
+    }
+
+    public void usePreset(ImagePreset preset) {
+        for (int i = 0; i < preset.mFilters.size(); i++) {
+            ImageFilter a = preset.mFilters.elementAt(i);
+            ImageFilter b = mFilters.elementAt(i);
+            b.useFilter(a);
+        }
     }
 
     public boolean same(ImagePreset preset) {
