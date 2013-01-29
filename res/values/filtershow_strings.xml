@@ -33,8 +33,6 @@
 
     <!--  actionbar menu -->
 
-    <!--  Text for the actionbar confirmation button [CHAR LIMIT=20] -->
-    <string name="done">Done</string>
     <!--  Text for the undo menu item [CHAR LIMIT=20] -->
     <string name="filtershow_undo">Undo</string>
     <!--  Text for redo menu item [CHAR LIMIT=20] -->
