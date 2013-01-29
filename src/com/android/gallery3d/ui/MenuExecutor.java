@@ -132,7 +132,6 @@ public class MenuExecutor {
     private void stopTaskAndDismissDialog() {
         if (mTask != null) {
             if (!mWaitOnStop) mTask.cancel();
-            mTask.waitDone();
             if (mDialog != null && mDialog.isShowing()) mDialog.dismiss();
             mDialog = null;
             mTask = null;
@@ -334,13 +333,24 @@ public class MenuExecutor {
         stopTaskAndDismissDialog();
 
         Activity activity = mActivity;
-        mDialog = createProgressDialog(activity, title, ids.size());
         if (showDialog) {
+            mDialog = createProgressDialog(activity, title, ids.size());
             mDialog.show();
+        } else {
+            mDialog = null;
         }
         MediaOperation operation = new MediaOperation(action, ids, listener);
         mTask = mActivity.getBatchServiceThreadPoolIfAvailable().submit(operation, null);
         mWaitOnStop = waitOnStop;
+    }
+
+    public void startSingleItemAction(int action, Path targetPath) {
+        ArrayList<Path> ids = new ArrayList<Path>(1);
+        ids.add(targetPath);
+        mDialog = null;
+        MediaOperation operation = new MediaOperation(action, ids, null);
+        mTask = mActivity.getBatchServiceThreadPoolIfAvailable().submit(operation, null);
+        mWaitOnStop = false;
     }
 
     public static String getMimeType(int type) {
