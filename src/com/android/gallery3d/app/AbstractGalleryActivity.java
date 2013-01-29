@@ -343,9 +343,7 @@ public class AbstractGalleryActivity extends Activity implements GalleryContext 
         if (mBatchServiceIsBound && mBatchService != null) {
             return mBatchService.getThreadPool();
         } else {
-            // Fall back on the old behavior if for some reason the
-            // service is not available.
-            return getThreadPool();
+            throw new RuntimeException("Batch service unavailable");
         }
     }
 }

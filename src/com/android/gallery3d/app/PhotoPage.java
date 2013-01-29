@@ -1217,9 +1217,7 @@ public abstract class PhotoPage extends ActivityState implements
     @Override
     public void onCommitDeleteImage() {
         if (mDeletePath == null) return;
-        mSelectionManager.deSelectAll();
-        mSelectionManager.toggle(mDeletePath);
-        mMenuExecutor.onMenuClicked(R.id.action_delete, null, true, false);
+        mMenuExecutor.startSingleItemAction(R.id.action_delete, mDeletePath);
         mDeletePath = null;
     }
 
