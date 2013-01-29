@@ -418,7 +418,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 cannotLoadImage();
             }
 
-            Bitmap bmap = mImageShow.getFilteredImage();
+            Bitmap bmap = mImageLoader.getOriginalBitmapSmall();
             if (bmap != null && bmap.getWidth() > 0 && bmap.getHeight() > 0) {
                 float w = bmap.getWidth();
                 float h = bmap.getHeight();

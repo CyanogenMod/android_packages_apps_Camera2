@@ -65,6 +65,7 @@ public class IconButton extends Button {
     public void setIcon(Bitmap image) {
         mImageMirror = image;
         stale_icon = true;
+        invalidate();
     }
 
     /**
