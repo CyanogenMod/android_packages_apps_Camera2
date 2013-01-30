@@ -390,6 +390,7 @@
                 android:theme="@style/Theme.ProxyLauncher">
         </activity>
         <service android:name="com.android.gallery3d.app.BatchService" />
+        <service android:name="com.android.camera.MediaSaveService" />
         <!-- canvas -->
         <provider
             android:name="com.android.gallery3d.provider.CanvasProvider"
