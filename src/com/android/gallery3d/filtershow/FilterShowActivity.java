@@ -960,15 +960,13 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }
         ImagePreset oldPreset = mMasterImage.getPreset();
         ImagePreset copy = new ImagePreset(oldPreset);
-        mMasterImage.setPreset(copy, true);
-        // TODO: use a numerical constant instead.
 
-        ImagePreset current = mMasterImage.getPreset();
-        ImageFilter existingFilter = current.getFilter(filter.getName());
+        ImageFilter existingFilter = copy.getFilter(filter.getName());
         if (existingFilter == null) {
-            current.add(filter);
+            copy.add(filter);
         }
-        existingFilter = current.getFilter(filter.getName());
+        existingFilter = copy.getFilter(filter.getName());
+        mMasterImage.setPreset(copy, true);
         mMasterImage.setCurrentFilter(existingFilter);
         invalidateViews();
     }
