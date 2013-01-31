@@ -19,6 +19,7 @@ package com.android.gallery3d.filtershow.imageshow;
 import android.graphics.Bitmap;
 import android.graphics.RectF;
 
+import com.android.gallery3d.app.Log;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.ImageStateAdapter;
@@ -88,7 +89,6 @@ public class MasterImage {
             mHistory.addHistoryItem(mPreset);
         }
         updatePresets(true);
-        requestImages();
     }
 
     private void setGeometry() {
@@ -161,33 +161,21 @@ public class MasterImage {
     }
 
     public Bitmap getFilteredImage() {
-        requestImages();
-        mFilteredPreview.swapConsumer();
         return mFilteredPreview.getConsumer();
     }
 
     public Bitmap getFiltersOnlyImage() {
-        requestImages();
-        mFiltersOnlyPreview.swapConsumer();
         return mFiltersOnlyPreview.getConsumer();
     }
 
     public Bitmap getGeometryOnlyImage() {
-        requestImages();
-        mGeometryOnlyPreview.swapConsumer();
         return mGeometryOnlyPreview.getConsumer();
     }
 
     public void notifyObservers() {
-        requestImages();
         for (ImageShow observer : mObservers) {
             observer.invalidate();
         }
-    }
-
-    public void updatedCache() {
-        requestImages();
-        notifyObservers();
     }
 
     public void updatePresets(boolean force) {
@@ -208,16 +196,13 @@ public class MasterImage {
             }
         }
         mActivity.enableSave(hasModifications());
+        updateBuffers();
     }
 
-    public void requestImages() {
-        if (mLoader == null) {
-            return;
-        }
-
-        updatePresets(false);
+    public void updateBuffers() {
         FilteringPipeline.getPipeline().updatePreviewBuffer();
         FilteringPipeline.getPipeline().updateGeometryOnlyPreviewBuffer();
         FilteringPipeline.getPipeline().updateFiltersOnlyPreviewBuffer();
     }
+
 }
