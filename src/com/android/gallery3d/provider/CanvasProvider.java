@@ -16,10 +16,13 @@
 
 package com.android.gallery3d.provider;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.Configuration;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
@@ -30,6 +33,7 @@ import android.os.Binder;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.DataManager;
@@ -42,7 +46,9 @@ import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.google.android.canvas.data.Cluster;
 import com.google.android.canvas.provider.CanvasContract;
+import com.google.android.canvas.provider.EnableSyncActivity;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -52,7 +58,11 @@ public class CanvasProvider extends CanvasProviderBase {
 
     private static final String TAG = "GalleryCanvasProvider";
 
-    DataManager mDataManager;
+    // TODO: Temporary for testing, remove once b/8099821 fixed
+    public static final String PHOTO_AUTHORITY = "com.google.android.gallery3d.GooglePhotoProvider";
+    public static final String ACCOUNT_TYPE = "com.google";
+
+    private DataManager mDataManager;
     private MediaSet mRootSet;
 
     private final static SyncListener sNullSyncListener = new SyncListener() {
@@ -128,11 +138,39 @@ public class CanvasProvider extends CanvasProviderBase {
             itemCount = items.size();
             if (itemCount <= 0) {
                 Log.d(TAG, "Skipping, no items...");
+                continue;
             }
             bob.visibleCount(itemCount);
             for (MediaItem item : items) {
                 bob.addItem(createImageUri(item));
             }
+            clusters.add(bob.build());
+        }
+
+        if (clusters.size() == 0) {
+            handleEmptyClusters(clusters);
+        }
+    }
+
+    private void handleEmptyClusters(List<Cluster> clusters) {
+        // Images are temporary, remove once b/8108002 fixed
+        Account[] accounts = AccountManager.get(getContext()).getAccountsByType(ACCOUNT_TYPE);
+        boolean syncEnabled = false;
+        for (Account account : accounts) {
+            syncEnabled |= ContentResolver.getSyncAutomatically(account, PHOTO_AUTHORITY);
+        }
+        Cluster.Builder bob = new Cluster.Builder();
+        bob.displayName(getContext().getString(R.string.no_albums_alert));
+        bob.addItem(createImageUri(R.mipmap.ic_launcher_gallery));
+        bob.visibleCount(1);
+        clusters.add(bob.build());
+        if (!syncEnabled) {
+            bob = new Cluster.Builder();
+            bob.displayName("Enable Picasa sync");
+            bob.id(1);
+            bob.intent(new Intent(getContext(), EnableSyncActivity.class));
+            bob.addItem(createImageUri(R.drawable.frame_overlay_gallery_picasa));
+            bob.visibleCount(1);
             clusters.add(bob.build());
         }
     }
@@ -159,6 +197,9 @@ public class CanvasProvider extends CanvasProviderBase {
         long identity = Binder.clearCallingIdentity();
         try {
             String path = uri.getQueryParameter("path");
+            if (path == null) {
+                return null;
+            }
             MediaItem item = (MediaItem) mDataManager.getMediaObject(path);
             Job<Bitmap> job = item.requestImage(MediaItem.TYPE_MICROTHUMBNAIL);
             final Bitmap bitmap = job.run(sJobStub);
@@ -183,11 +224,30 @@ public class CanvasProvider extends CanvasProviderBase {
                     (Object[]) null);
 
             return fds[0];
-        } catch (IOException e) {
+        } catch (Exception e) {
+            Log.w(TAG, "openFile failed", e);
             throw new RuntimeException(e);
         } finally {
             Binder.restoreCallingIdentity(identity);
         }
+    }
+
+    @Override
+    public AssetFileDescriptor openAssetFile(Uri uri, String mode)
+            throws FileNotFoundException {
+        ParcelFileDescriptor fd = openFile(uri, mode);
+        if (fd != null) {
+            return new AssetFileDescriptor(fd, 0, -1);
+        }
+        int id = Integer.parseInt(uri.getPathSegments().get(0));
+        return getContext().getResources().openRawResourceFd(id);
+    }
+
+    private Uri createImageUri(int imageResId) {
+        return new Uri.Builder().scheme(ContentResolver.SCHEME_CONTENT)
+                .authority(AUTHORITY)
+                .path(Integer.toString(imageResId))
+                .build();
     }
 
     private Uri createImageUri(MediaItem item) {
