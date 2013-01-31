@@ -326,7 +326,9 @@ public abstract class CanvasProviderBase extends ContentProvider {
                     obj = cluster.getCacheTimeMs();
                     break;
                 case LAUNCHER_CASE_INTENT_URI:
-                    obj = cluster.getIntent().toUri(Intent.URI_INTENT_SCHEME);
+                    if (cluster.getIntent() != null) {
+                        obj = cluster.getIntent().toUri(Intent.URI_INTENT_SCHEME);
+                    }
                     break;
                 case LAUNCHER_CASE_CROP_ALLOWED:
                     obj = cluster.isImageCropAllowed();
