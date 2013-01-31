@@ -19,10 +19,13 @@ package com.android.camera;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -39,6 +42,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.ConditionVariable;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.MessageQueue;
@@ -95,7 +99,8 @@ public class PhotoModule
     ShutterButton.OnShutterButtonListener,
     SurfaceHolder.Callback,
     PieRenderer.PieListener,
-    CountDownView.OnCountDownFinishedListener {
+    CountDownView.OnCountDownFinishedListener,
+    MediaSaveService.Listener {
 
     private static final String TAG = "CAM_PhotoModule";
 
@@ -114,7 +119,6 @@ public class PhotoModule
     private static final int START_PREVIEW_DONE = 10;
     private static final int OPEN_CAMERA_FAIL = 11;
     private static final int CAMERA_DISABLED = 12;
-    private static final int UPDATE_SECURE_ALBUM_ITEM = 13;
 
     // The subset of parameters we need to update in setCameraParameters().
     private static final int UPDATE_PARAM_INITIALIZE = 1;
@@ -200,11 +204,21 @@ public class PhotoModule
     // A view group that contains all the small indicators.
     private View mOnScreenIndicators;
 
-    // We use a thread in MediaSaver to do the work of saving images. This
+    // We use MediaSaveService to do the work of saving images in background. This
     // reduces the shot-to-shot time.
-    private MediaSaver mMediaSaver;
-    // Similarly, we use a thread to generate the name of the picture and insert
-    // it into MediaStore while picture taking is still in progress.
+    private MediaSaveService mMediaSaveService;
+    private ServiceConnection mConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName className, IBinder b) {
+                mMediaSaveService = ((MediaSaveService.LocalBinder) b).getService();
+                mMediaSaveService.setListener(PhotoModule.this);
+            }
+            @Override
+            public void onServiceDisconnected(ComponentName className) {
+                mMediaSaveService = null;
+            }};
+    // We use a queue to generated names of the images to be used later
+    // when the image is ready to be saved.
     private NamedImages mNamedImages;
 
     private Runnable mDoSnapRunnable = new Runnable() {
@@ -304,16 +318,16 @@ public class PhotoModule
 
     private PreviewGestures mGestures;
 
-    private MediaSaver.OnMediaSavedListener mOnMediaSavedListener = new MediaSaver.OnMediaSavedListener() {
-        @Override
-
-        public void onMediaSaved(Uri uri) {
-            if (uri != null) {
-                mHandler.obtainMessage(UPDATE_SECURE_ALBUM_ITEM, uri).sendToTarget();
-                Util.broadcastNewPicture(mActivity, uri);
-            }
-        }
-    };
+    private MediaSaveService.OnMediaSavedListener mOnMediaSavedListener =
+            new MediaSaveService.OnMediaSavedListener() {
+                @Override
+                public void onMediaSaved(Uri uri) {
+                    if (uri != null) {
+                        mActivity.addSecureAlbumItemIfNeeded(false, uri);
+                        Util.broadcastNewPicture(mActivity, uri);
+                    }
+                }
+            };
 
     // The purpose is not to block the main thread in onCreate and onResume.
     private class CameraStartUpThread extends Thread {
@@ -447,11 +461,6 @@ public class PhotoModule
                     mCameraDisabled = true;
                     Util.showErrorAndFinish(mActivity,
                             R.string.camera_disabled);
-                    break;
-                }
-
-                case UPDATE_SECURE_ALBUM_ITEM: {
-                    mActivity.addSecureAlbumItemIfNeeded(false, (Uri) msg.obj);
                     break;
                 }
             }
@@ -648,9 +657,15 @@ public class PhotoModule
         mShutterButton = mActivity.getShutterButton();
         mShutterButton.setImageResource(R.drawable.btn_new_shutter);
         mShutterButton.setOnShutterButtonListener(this);
+        if (mMediaSaveService != null) {
+            if (mMediaSaveService.isQueueFull()) {
+                mShutterButton.enableTouch(false);
+            } else {
+                mShutterButton.enableTouch(true);
+            }
+        }
         mShutterButton.setVisibility(View.VISIBLE);
 
-        mMediaSaver = new MediaSaver(mContentResolver);
         mNamedImages = new NamedImages();
 
         mFirstTimeInitialized = true;
@@ -688,7 +703,6 @@ public class PhotoModule
                 mPreferences, mContentResolver);
         mLocationManager.recordLocation(recordLocation);
 
-        mMediaSaver = new MediaSaver(mContentResolver);
         mNamedImages = new NamedImages();
         initializeZoom();
         keepMediaProviderInstance();
@@ -994,8 +1008,8 @@ public class PhotoModule
                     Log.e(TAG, "Unbalanced name/data pair");
                 } else {
                     if (date == -1) date = mCaptureStartTime;
-                    mMediaSaver.addImage(jpegData, title, date, mLocation, width, height,
-                            orientation, mOnMediaSavedListener);
+                    mMediaSaveService.addImage(jpegData, title, date, mLocation, width, height,
+                            orientation, mOnMediaSavedListener, mContentResolver);
                 }
             } else {
                 mJpegImageData = jpegData;
@@ -1117,7 +1131,7 @@ public class PhotoModule
         // If we are already in the middle of taking a snapshot or the image save request
         // is full then ignore.
         if (mCameraDevice == null || mCameraState == SNAPSHOT_IN_PROGRESS
-                || mCameraState == SWITCHING_CAMERA || mMediaSaver.queueFull()) {
+                || mCameraState == SWITCHING_CAMERA || mMediaSaveService.isQueueFull()) {
             return false;
         }
         mCaptureStartTime = System.currentTimeMillis();
@@ -1517,6 +1531,7 @@ public class PhotoModule
             mCameraStartUpThread.start();
         }
 
+        bindMediaSaveService();
         // If first time initialization is not finished, put it in the
         // message queue.
         if (!mFirstTimeInitialized) {
@@ -1528,6 +1543,18 @@ public class PhotoModule
 
         // Dismiss open menu if exists.
         PopupManager.getInstance(mActivity).notifyShowPopup(null);
+    }
+
+    private void bindMediaSaveService() {
+        Intent intent = new Intent(mActivity, MediaSaveService.class);
+        mActivity.startService(intent);  // start service before binding it so the
+                                         // service won't be killed if we unbind it.
+        mActivity.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void unbindMediaSaveService() {
+        mMediaSaveService.setListener(null);
+        mActivity.unbindService(mConnection);
     }
 
     void waitCameraStartUpThread() {
@@ -1576,18 +1603,13 @@ public class PhotoModule
             mSurfaceTexture = null;
         }
         resetScreenOn();
+        unbindMediaSaveService();
 
         // Clear UI.
         collapseCameraControls();
         if (mFaceView != null) mFaceView.clear();
 
-        if (mFirstTimeInitialized) {
-            if (mMediaSaver != null) {
-                mMediaSaver.finish();
-                mMediaSaver = null;
-                mNamedImages = null;
-            }
-        }
+        mNamedImages = null;
 
         if (mLocationManager != null) mLocationManager.recordLocation(false);
 
@@ -2478,4 +2500,13 @@ public class PhotoModule
         }
     }
 
+    @Override
+    public void onQueueAvailable() {
+        if (mShutterButton != null) mShutterButton.enableTouch(true);
+    }
+
+    @Override
+    public void onQueueFull() {
+        if (mShutterButton != null) mShutterButton.enableTouch(false);
+    }
 }
