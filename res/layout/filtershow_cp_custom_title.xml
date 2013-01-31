@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2013 The Android Open Source Project
+<!--
+     Copyright (C) 2013 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,17 +15,12 @@
      limitations under the License.
 -->
 
-<resources>
-    <color name="yellow">#FFFF00</color>
-    <color name="green">#00FF00</color>
-    <color name="red">#FF0000</color>
-    <color name="blue">#0000FF</color>
-    <color name="text_toolbar">#FFFFFF</color>
-    <color name="background_screen">#101010</color>
-    <color name="background_toolbar">#363949</color>
-    <color name="background_main_toolbar">#232323</color>
-    <color name="toolbar_separation_line">#333333</color>
-    <color name="slider_dot_color">#6464FF</color>
-    <color name="slider_line_color">#33B5E5</color>
-
-</resources>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/customTitle"
+    android:text="@string/color_pick_title"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp" >
+</TextView>

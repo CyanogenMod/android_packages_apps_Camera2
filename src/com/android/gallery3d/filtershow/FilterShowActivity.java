@@ -59,6 +59,7 @@ import android.widget.Toast;
 import com.android.gallery3d.R;
 import com.android.gallery3d.data.LocalAlbum;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.editors.EditorDraw;
 import com.android.gallery3d.filtershow.editors.EditorManager;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
@@ -222,6 +223,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageViews.add(mImageRedEyes);
 
         mEditorPlaceHolder.setContainer((FrameLayout) findViewById(R.id.editorContainer));
+        mEditorPlaceHolder.addEditor(new EditorDraw());
         EditorManager.addEditors(mEditorPlaceHolder);
         mEditorPlaceHolder.setOldViews(mImageViews);
         mEditorPlaceHolder.setImageLoader(mImageLoader);

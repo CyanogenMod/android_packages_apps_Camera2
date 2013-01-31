@@ -21,27 +21,29 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.RectF;
-import android.graphics.Xfermode;
 import android.graphics.Paint.Style;
+import android.graphics.Path;
+import android.graphics.PathMeasure;
 import android.util.Log;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
+import com.android.gallery3d.filtershow.editors.EditorDraw;
 
 import java.util.Arrays;
-import java.util.Vector;
 
 public class ImageFilterDraw extends ImageFilter {
     private static final String LOGTAG = "ImageFilterDraw";
-
-    final float STROKE_RADIUS = 40;
+    public final static char SIMPLE_STYLE = 0;
+    public final static char BRUSH_STYLE = 1;
     Bitmap mOverlayBitmap; // this accelerates interaction
-    int   mCachedStrokes =-1;
-    SimpleDraw mSimpleDraw = new SimpleDraw();
+    int mCachedStrokes = -1;
+    int mCurrentStyle = 0;
+    DrawStyle[] mDrawings = new DrawStyle[] {
+            new SimpleDraw(), new Brush() };
+
+    public void setStyle(char style) {
+        mCurrentStyle = style;
+    }
 
     public static interface DrawStyle {
         public DrawStyle clone();
@@ -55,6 +57,7 @@ public class ImageFilterDraw extends ImageFilter {
         public void paintCurrentStroke(Canvas canvas, Matrix toScrMatrix, boolean highQuality);
         public int paintLast(int from, Canvas canvas, Matrix toScrMatrix, boolean highQuality);
         public boolean same(DrawStyle o);
+        public boolean empty();
     };
 
     class SimpleDraw implements DrawStyle {
@@ -67,10 +70,11 @@ public class ImageFilterDraw extends ImageFilter {
         private float mCurrentRadius;
         private int mCurrentColor;
 
+        @Override
         public DrawStyle clone() {
             SimpleDraw ret = new SimpleDraw();
             ret.mPaths = new Path[mPaths.length];
-            for (int i = 0; i < mPaths.length; i++) {
+            for (int i = 0; i < ret.mPaths.length; i++) {
                 ret.mPaths[i] = new Path(mPaths[i]);
             }
             ret.mColors = Arrays.copyOf(mColors, mColors.length);
@@ -79,25 +83,35 @@ public class ImageFilterDraw extends ImageFilter {
             return ret;
         }
 
+        @Override
+        public boolean empty() {
+            return mStrokeCnt == -1;
+        }
+
+        @Override
         public void setSize(float radius) {
             mCurrentRadius = radius;
         }
 
+        @Override
         public void setColor(int color) {
             mCurrentColor = color;
         }
 
+        @Override
         public void startStroke(float x, float y) {
             mCurrentPath = new Path();
             mCurrentPath.moveTo(x, y);
         }
 
+        @Override
         public void stroke(float x, float y) {
             if (mCurrentPath != null) {
                 mCurrentPath.lineTo(x, y);
             }
         }
 
+        @Override
         public void endStroke(float x, float y) {
             if (mCurrentPath != null) {
                 mCurrentPath.lineTo(x, y);
@@ -114,13 +128,18 @@ public class ImageFilterDraw extends ImageFilter {
                 mStrokeCnt++;
             }
         }
+
+        @Override
         public void clearCurren(){
             mCurrentPath = null;
         }
+
+        @Override
         public void paintCurrentStroke(Canvas canvas, Matrix toScrMatrix, boolean highQuality) {
             Path path = mCurrentPath;
-            if (path == null)
+            if (path == null) {
                 return;
+            }
             Paint paint = new Paint();
 
             paint.setStyle(Style.STROKE);
@@ -134,6 +153,7 @@ public class ImageFilterDraw extends ImageFilter {
             canvas.drawPath(mCacheTransPath, paint);
         }
 
+        @Override
         public int paintLast(int from, Canvas canvas, Matrix toScrMatrix, boolean highQuality) {
             Paint paint = new Paint();
             Matrix m = new Matrix();
@@ -149,6 +169,7 @@ public class ImageFilterDraw extends ImageFilter {
             return mStrokeCnt;
         }
 
+        @Override
         public boolean same(DrawStyle o) {
             if (!(o instanceof SimpleDraw)) {
                 return false;
@@ -171,23 +192,177 @@ public class ImageFilterDraw extends ImageFilter {
             return true;
         }
 
+        @Override
         public int getNumberOfStrokes() {
             return mStrokeCnt;
         }
     }
 
-    public void startSection(int color, float x, float y) {
-        mSimpleDraw.setColor(color);
-        mSimpleDraw.setSize(STROKE_RADIUS);
-        mSimpleDraw.startStroke(x, y);
+    class Brush implements DrawStyle {
+        private Path[] mPaths = new Path[0];
+        private int[] mColors = new int[0];
+        private float[] mRadius = new float[0];
+        private int mStrokeCnt = 0;
+
+        private Path mCurrentPath;
+        private float mCurrentRadius;
+        private int mCurrentColor;
+
+        @Override
+        public DrawStyle clone() {
+            Brush ret = new Brush();
+            ret.mPaths = new Path[mPaths.length];
+            for (int i = 0; i < ret.mPaths.length; i++) {
+                ret.mPaths[i] = new Path(mPaths[i]);
+            }
+            ret.mColors = Arrays.copyOf(mColors, mColors.length);
+            ret.mRadius = Arrays.copyOf(mRadius, mRadius.length);
+            ret.mStrokeCnt = mStrokeCnt;
+            return ret;
+        }
+
+        @Override
+        public boolean empty() {
+            return mStrokeCnt == -1;
+        }
+
+        @Override
+        public void setSize(float radius) {
+            mCurrentRadius = radius;
+        }
+
+        @Override
+        public void setColor(int color) {
+            mCurrentColor = color;
+        }
+
+        @Override
+        public void startStroke(float x, float y) {
+            mCurrentPath = new Path();
+            mCurrentPath.moveTo(x, y);
+        }
+
+        @Override
+        public void stroke(float x, float y) {
+            if (mCurrentPath != null) {
+                mCurrentPath.lineTo(x, y);
+            }
+        }
+
+        @Override
+        public void endStroke(float x, float y) {
+            if (mCurrentPath != null) {
+                mCurrentPath.lineTo(x, y);
+                Path[] np = new Path[mStrokeCnt + 1];
+                for (int i = 0; i < mStrokeCnt; i++) {
+                    np[i] = mPaths[i];
+                }
+                np[mStrokeCnt] = mCurrentPath;
+                mColors = Arrays.copyOf(mColors, mColors.length + 1);
+                mRadius = Arrays.copyOf(mRadius, mRadius.length + 1);
+                mRadius[mStrokeCnt] = mCurrentRadius;
+                mColors[mStrokeCnt] = mCurrentColor;
+                mPaths = np;
+                mStrokeCnt++;
+                clearCurren();
+            }
+        }
+
+        @Override
+        public void clearCurren() {
+            mCurrentPath = null;
+        }
+
+        @Override
+        public void paintCurrentStroke(Canvas canvas, Matrix toScrMatrix, boolean highQuality) {
+            Path path = mCurrentPath;
+            if (path == null) {
+                return;
+            }
+            Paint paint = new Paint();
+
+            canvas.save();
+            canvas.concat(toScrMatrix);
+            paint.setStyle(Style.STROKE);
+
+            float scale = toScrMatrix.mapRadius(1);
+            draw(canvas, paint, mCurrentColor, mCurrentRadius, path);
+            canvas.restore();
+        }
+
+        @Override
+        public int paintLast(int from, Canvas canvas, Matrix toScrMatrix, boolean highQuality) {
+            Paint paint = new Paint();
+
+            Matrix m = new Matrix();
+            canvas.save();
+            canvas.concat(toScrMatrix);
+            paint.setStyle(Style.STROKE);
+            for (int i = from; i < mStrokeCnt; i++) {
+
+                draw(canvas, paint, mColors[i], mRadius[i], mPaths[i]);
+            }
+            canvas.restore();
+            return mStrokeCnt;
+        }
+
+        PathMeasure mPathMeasure = new PathMeasure();
+
+        void draw(Canvas canvas, Paint paint, int color, float size, Path path) {
+
+            mPathMeasure.setPath(path, false);
+            float[] pos = new float[2];
+            float[] tan = new float[2];
+            paint.setColor(color);
+            float len = mPathMeasure.getLength();
+            for (float i = 0; i < len; i += (size) / 2) {
+                mPathMeasure.getPosTan(i, pos, tan);
+                canvas.drawCircle(pos[0], pos[1], size, paint);
+            }
+
+        }
+
+        @Override
+        public boolean same(DrawStyle o) {
+            if (!(o instanceof Brush)) {
+                return false;
+            }
+            Brush sd = (Brush) o;
+            boolean same;
+            same = Arrays.equals(mRadius, sd.mRadius);
+            if (!same) {
+                return false;
+            }
+            same = Arrays.equals(mColors, sd.mColors);
+            if (!same) {
+                return false;
+            }
+            for (int i = 0; i < mPaths.length; i++) {
+                if (!mPaths[i].equals(sd.mPaths)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public int getNumberOfStrokes() {
+            return mStrokeCnt;
+        }
+    }
+
+    public void startSection(int color, float size, float x, float y) {
+        mDrawings[mCurrentStyle].setColor(color);
+        mDrawings[mCurrentStyle].setSize(size);
+        mDrawings[mCurrentStyle].startStroke(x, y);
     }
 
     public void addPoint(float x, float y) {
-        mSimpleDraw.stroke(x, y);
+        mDrawings[mCurrentStyle].stroke(x, y);
     }
 
     public void endSection(float x, float y) {
-        mSimpleDraw.endStroke(x, y);
+        mDrawings[mCurrentStyle].endStroke(x, y);
     }
 
     public ImageFilterDraw() {
@@ -202,11 +377,18 @@ public class ImageFilterDraw extends ImageFilter {
         paint.setStyle(Style.STROKE);
         paint.setColor(Color.RED);
         paint.setStrokeWidth(40);
-        if (mSimpleDraw.mStrokeCnt == -1) {
+        boolean empty = true;
+        for (int i = 0; i < mDrawings.length; i++) {
+            empty &= mDrawings[i].empty();
+        }
+        if (empty) {
             return;
         }
         if (highQuality) {
-            mSimpleDraw.paintLast(0, canvas, originalRotateToScreen, highQuality);
+            for (int i = 0; i < mDrawings.length; i++) {
+                mDrawings[i].paintLast(0, canvas, originalRotateToScreen, highQuality);
+            }
+
             return;
         }
         if (mOverlayBitmap == null ||
@@ -217,22 +399,19 @@ public class ImageFilterDraw extends ImageFilter {
                     canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
             mCachedStrokes = 0;
         }
-        if (mCachedStrokes < mSimpleDraw.getNumberOfStrokes()) {
+        if (mCachedStrokes < mDrawings[mCurrentStyle].getNumberOfStrokes()) {
             fillBuffer(originalRotateToScreen);
         }
         canvas.drawBitmap(mOverlayBitmap, 0, 0, paint);
     }
 
     public void fillBuffer(Matrix originalRotateToScreen) {
-        Paint paint = new Paint();
-        paint.setStyle(Style.STROKE);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-        paint.setStrokeWidth(STROKE_RADIUS);
-
         Canvas drawCache = new Canvas(mOverlayBitmap);
-        mCachedStrokes = mSimpleDraw.paintLast(
-                mCachedStrokes, drawCache, originalRotateToScreen, false);
+        for (int i = 0; i < mDrawings.length; i++) {
 
+            mCachedStrokes = mDrawings[i].paintLast(
+                mCachedStrokes, drawCache, originalRotateToScreen, false);
+        }
     }
 
     @Override
@@ -247,21 +426,23 @@ public class ImageFilterDraw extends ImageFilter {
 
     @Override
     public int getEditingViewId() {
-        return R.id.imageDraw;
+        return EditorDraw.ID;
     }
 
     @Override
     public ImageFilter clone() throws CloneNotSupportedException {
         ImageFilterDraw filter = (ImageFilterDraw) super.clone();
 
-        filter.mSimpleDraw = (SimpleDraw) mSimpleDraw.clone();
+        filter.mDrawings = mDrawings.clone();
         return filter;
     }
 
     @Override
     public boolean isNil() {
-        if (mSimpleDraw.getNumberOfStrokes() != 0) {
-            return false;
+        for (int i = 0; i < mDrawings.length; i++) {
+            if (mDrawings[i].getNumberOfStrokes() != 0) {
+                return false;
+            }
         }
         return true;
     }
@@ -274,15 +455,21 @@ public class ImageFilterDraw extends ImageFilter {
         }
 
         ImageFilterDraw dfilter = (ImageFilterDraw) filter;
-        return mSimpleDraw.same(dfilter.mSimpleDraw);
+        boolean same = true;
+        for (int i = 0; i < mDrawings.length; i++) {
+            same &= mDrawings[i].same(dfilter.mDrawings[i]);
+        }
+        return same;
     }
 
     public void clear() {
-        mSimpleDraw.clearCurren();
+        mDrawings[mCurrentStyle].clearCurren();
     }
 
     public void draw(Canvas canvas, Matrix originalRotateToScreen) {
-        mSimpleDraw.paintCurrentStroke(canvas, originalRotateToScreen, false);
+        for (int i = 0; i < mDrawings.length; i++) {
+            mDrawings[i].paintCurrentStroke(canvas, originalRotateToScreen, false);
+        }
     }
 
     @Override
@@ -298,5 +485,4 @@ public class ImageFilterDraw extends ImageFilter {
 
         return bitmap;
     }
-
 }

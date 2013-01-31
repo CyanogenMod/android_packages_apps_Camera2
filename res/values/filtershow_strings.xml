@@ -147,11 +147,31 @@
 
     <!--  Label for the curves tool, all channels (RGB) [CHAR LIMIT=3] -->
     <string name="curves_channel_rgb">RGB</string>
-    <!--  Label for the curves tool, Red color channel [CHAR LIMIT=10] -->
+    <!--  Label for the curves tool, Red color channel [CHAR LIMIT=14] -->
     <string name="curves_channel_red">Red</string>
-    <!--  Label for the curves tool, Green color channel [CHAR LIMIT=10] -->
+    <!--  Label for the curves tool, Green color channel [CHAR LIMIT=14] -->
     <string name="curves_channel_green">Green</string>
-    <!--  Label for the curves tool, Blue color channel [CHAR LIMIT=10] -->
+    <!--  Label for the curves tool, Blue color channel [CHAR LIMIT=14] -->
     <string name="curves_channel_blue">Blue</string>
+
+    <!--  Label for the The style to draw in [CHAR LIMIT=14] -->
+    <string name="draw_style">Style</string>
+    <!--  Label for the size to draw in in [CHAR LIMIT=14] -->
+    <string name="draw_size">Size</string>
+    <!--  Label for the color to draw in [CHAR LIMIT=14] -->
+    <string name="draw_color">Color</string>
+    <!--  Label for the line style of drawing in [CHAR LIMIT=14] -->
+    <string name="draw_style_line">Lines</string>
+    <!--  Label for the brush style of drawing in [CHAR LIMIT=14] -->
+    <string name="draw_style_brush">Brush</string>
+
+    <!--  Label for the select the color [CHAR LIMIT=30] -->
+    <string name="color_pick_select">Choose custom color</string>
+    <!--  The title for the color pick dialog [CHAR LIMIT=20] -->
+    <string name="color_pick_title">Select Color</string>
+    <!--  The title for draw size [CHAR LIMIT=50] -->
+    <string name="draw_size_title">Select Size</string>
+    <!--  The accept the draw size [CHAR LIMIT=20] -->
+    <string name="draw_size_accept">OK</string>
 
 </resources>
