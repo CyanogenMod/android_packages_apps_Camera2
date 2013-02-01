@@ -76,4 +76,22 @@
     <string name="curves_channel_red" msgid="4199710104162111357">"Đỏ"</string>
     <string name="curves_channel_green" msgid="3733003466905031016">"Xanh lục"</string>
     <string name="curves_channel_blue" msgid="9129211507395079371">"Xanh lam"</string>
+    <!-- no translation found for draw_style (2036125061987325389) -->
+    <skip />
+    <!-- no translation found for draw_size (4360005386104151209) -->
+    <skip />
+    <!-- no translation found for draw_color (2119030386987211193) -->
+    <skip />
+    <!-- no translation found for draw_style_line (9216476853904429628) -->
+    <skip />
+    <!-- no translation found for draw_style_brush (383079660590023404) -->
+    <skip />
+    <!-- no translation found for color_pick_select (734312818059057394) -->
+    <skip />
+    <!-- no translation found for color_pick_title (6195567431995308876) -->
+    <skip />
+    <!-- no translation found for draw_size_title (3121649039610273977) -->
+    <skip />
+    <!-- no translation found for draw_size_accept (6781529716526190028) -->
+    <skip />
 </resources>
