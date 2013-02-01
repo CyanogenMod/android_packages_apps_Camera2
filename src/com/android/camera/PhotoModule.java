@@ -19,13 +19,10 @@ package com.android.camera;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -42,7 +39,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.ConditionVariable;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.MessageQueue;
@@ -204,19 +200,6 @@ public class PhotoModule
     // A view group that contains all the small indicators.
     private View mOnScreenIndicators;
 
-    // We use MediaSaveService to do the work of saving images in background. This
-    // reduces the shot-to-shot time.
-    private MediaSaveService mMediaSaveService;
-    private ServiceConnection mConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName className, IBinder b) {
-                mMediaSaveService = ((MediaSaveService.LocalBinder) b).getService();
-                mMediaSaveService.setListener(PhotoModule.this);
-            }
-            @Override
-            public void onServiceDisconnected(ComponentName className) {
-                mMediaSaveService = null;
-            }};
     // We use a queue to generated names of the images to be used later
     // when the image is ready to be saved.
     private NamedImages mNamedImages;
@@ -657,14 +640,13 @@ public class PhotoModule
         mShutterButton = mActivity.getShutterButton();
         mShutterButton.setImageResource(R.drawable.btn_new_shutter);
         mShutterButton.setOnShutterButtonListener(this);
-        if (mMediaSaveService != null) {
-            if (mMediaSaveService.isQueueFull()) {
-                mShutterButton.enableTouch(false);
-            } else {
-                mShutterButton.enableTouch(true);
-            }
-        }
         mShutterButton.setVisibility(View.VISIBLE);
+        MediaSaveService s = mActivity.getMediaSaveService();
+        // We set the listener only when both service and shutterbutton
+        // are initialized.
+        if (s != null) {
+            s.setListener(this);
+        }
 
         mNamedImages = new NamedImages();
 
@@ -703,6 +685,10 @@ public class PhotoModule
                 mPreferences, mContentResolver);
         mLocationManager.recordLocation(recordLocation);
 
+        MediaSaveService s = mActivity.getMediaSaveService();
+        if (s != null) {
+            s.setListener(this);
+        }
         mNamedImages = new NamedImages();
         initializeZoom();
         keepMediaProviderInstance();
@@ -1008,7 +994,8 @@ public class PhotoModule
                     Log.e(TAG, "Unbalanced name/data pair");
                 } else {
                     if (date == -1) date = mCaptureStartTime;
-                    mMediaSaveService.addImage(jpegData, title, date, mLocation, width, height,
+                    mActivity.getMediaSaveService().addImage(
+                            jpegData, title, date, mLocation, width, height,
                             orientation, mOnMediaSavedListener, mContentResolver);
                 }
             } else {
@@ -1131,7 +1118,8 @@ public class PhotoModule
         // If we are already in the middle of taking a snapshot or the image save request
         // is full then ignore.
         if (mCameraDevice == null || mCameraState == SNAPSHOT_IN_PROGRESS
-                || mCameraState == SWITCHING_CAMERA || mMediaSaveService.isQueueFull()) {
+                || mCameraState == SWITCHING_CAMERA
+                || mActivity.getMediaSaveService().isQueueFull()) {
             return false;
         }
         mCaptureStartTime = System.currentTimeMillis();
@@ -1531,7 +1519,6 @@ public class PhotoModule
             mCameraStartUpThread.start();
         }
 
-        bindMediaSaveService();
         // If first time initialization is not finished, put it in the
         // message queue.
         if (!mFirstTimeInitialized) {
@@ -1543,18 +1530,6 @@ public class PhotoModule
 
         // Dismiss open menu if exists.
         PopupManager.getInstance(mActivity).notifyShowPopup(null);
-    }
-
-    private void bindMediaSaveService() {
-        Intent intent = new Intent(mActivity, MediaSaveService.class);
-        mActivity.startService(intent);  // start service before binding it so the
-                                         // service won't be killed if we unbind it.
-        mActivity.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    private void unbindMediaSaveService() {
-        mMediaSaveService.setListener(null);
-        mActivity.unbindService(mConnection);
     }
 
     void waitCameraStartUpThread() {
@@ -1603,7 +1578,6 @@ public class PhotoModule
             mSurfaceTexture = null;
         }
         resetScreenOn();
-        unbindMediaSaveService();
 
         // Clear UI.
         collapseCameraControls();
@@ -1630,6 +1604,10 @@ public class PhotoModule
 
         mPendingSwitchCameraId = -1;
         if (mFocusManager != null) mFocusManager.removeMessages();
+        MediaSaveService s = mActivity.getMediaSaveService();
+        if (s != null) {
+            s.setListener(null);
+        }
     }
 
     private void initializeControlByIntent() {
@@ -2508,5 +2486,12 @@ public class PhotoModule
     @Override
     public void onQueueFull() {
         if (mShutterButton != null) mShutterButton.enableTouch(false);
+    }
+
+    @Override
+    public void onMediaSaveServiceConnected(MediaSaveService s) {
+        // We set the listener only when both service and shutterbutton
+        // are initialized.
+        if (mShutterButton != null) s.setListener(this);
     }
 }
