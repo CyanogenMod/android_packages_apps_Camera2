@@ -16,22 +16,12 @@
 
 package com.android.gallery3d.filtershow.editors;
 
-import android.content.Context;
-import android.widget.FrameLayout;
-
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.imageshow.ImageZoom;
 
-public class EditorZoom extends Editor {
+public class EditorZoom extends BasicEditor {
     public static final int ID = R.id.imageZoom;
 
     public EditorZoom() {
-        super(ID);
-    }
-
-    @Override
-    public void createEditor(Context context, FrameLayout frameLayout) {
-        super.createEditor(context, frameLayout);
-        mView = mImageShow = new ImageZoom(context);
+        super(ID, R.layout.filtershow_zoom_editor,R.id.imageZoom);
     }
 }
