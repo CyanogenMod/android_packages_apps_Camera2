@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.ui.Spline;
@@ -24,7 +25,7 @@ import com.android.gallery3d.filtershow.ui.Spline;
 public class ImageFilterCurves extends ImageFilter {
 
     private static final String LOGTAG = "ImageFilterCurves";
-    private final Spline[] mSplines = new Spline[4];
+    private Spline[] mSplines = new Spline[4];
 
     public ImageFilterCurves() {
         mName = "Curves";
@@ -57,8 +58,14 @@ public class ImageFilterCurves extends ImageFilter {
     }
 
     @Override
+    public boolean equals(ImageFilter filter) {
+        return same(filter);
+    }
+
+    @Override
     public ImageFilter clone() throws CloneNotSupportedException {
         ImageFilterCurves filter = (ImageFilterCurves) super.clone();
+        filter.mSplines = new Spline[4];
         for (int i = 0; i < 4; i++) {
             if (mSplines[i] != null) {
                 filter.setSpline(mSplines[i], i);
@@ -141,6 +148,7 @@ public class ImageFilterCurves extends ImageFilter {
         return mSplines[splineIndex];
     }
 
+    @Override
     public void reset() {
         Spline spline = new Spline();
 
@@ -149,6 +157,16 @@ public class ImageFilterCurves extends ImageFilter {
 
         for (int i = 0; i < 4; i++) {
             mSplines[i] = new Spline(spline);
+        }
+    }
+
+    @Override
+    public void useFilter(ImageFilter a) {
+        ImageFilterCurves c = (ImageFilterCurves) a;
+        for (int i = 0; i < 4; i++) {
+            if (c.mSplines[i] != null) {
+                setSpline(c.mSplines[i], i);
+            }
         }
     }
 }
