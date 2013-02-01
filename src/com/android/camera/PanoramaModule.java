@@ -1309,4 +1309,9 @@ public class PanoramaModule implements CameraModule,
     @Override
     public void onShowSwitcherPopup() {
     }
+
+    @Override
+    public void onMediaSaveServiceConnected(MediaSaveService s) {
+        // do nothing.
+    }
 }

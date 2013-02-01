@@ -26,8 +26,9 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
-import java.util.ArrayList;
-
+/*
+ * Service for saving images in the background thread.
+ */
 public class MediaSaveService extends Service {
     private static final int SAVE_TASK_LIMIT = 3;
     private static final String TAG = MediaSaveService.class.getSimpleName();
