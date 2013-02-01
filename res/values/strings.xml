@@ -503,6 +503,9 @@
     <!-- Label for album grid button -->
     <string name="switch_photo_grid">Grid view</string>
 
+    <!-- Label for fullscreen button. [CHAR LIMIT=20] -->
+    <string name="switch_photo_fullscreen">Fullscreen view</string>
+
     <!-- The tilte of a dialog showing trimming in progress. [CHAR LIMIT=20] -->
     <string name="trimming">Trimming</string>
 
