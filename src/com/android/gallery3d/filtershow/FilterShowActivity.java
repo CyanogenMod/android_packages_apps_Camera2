@@ -304,7 +304,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageLoader.setAdapter(mMasterImage.getHistory());
 
         fillListImages(listFilters);
-        fillListBorders(listBorders);
+        LoadBordersTask loadBorders = new LoadBordersTask(listBorders);
+        loadBorders.execute();
 
         SeekBar seekBar = (SeekBar) findViewById(R.id.filterSeekBar);
         seekBar.setMax(SEEK_BAR_MAX);
@@ -376,6 +377,58 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }
         mLoadBitmapTask = new LoadBitmapTask(tinyPlanetView);
         mLoadBitmapTask.execute(uri);
+    }
+
+    private class LoadBordersTask extends AsyncTask<Void, Boolean, Boolean> {
+        Vector<ImageFilter> mBorders;
+        LinearLayout mList;
+
+        public LoadBordersTask(LinearLayout list) {
+            mList = list;
+            mBorders = new Vector<ImageFilter>();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            mBorders.add(new ImageFilterBorder(null));
+            Drawable npd1 = getResources().getDrawable(R.drawable.filtershow_border_4x5);
+            mBorders.add(new ImageFilterBorder(npd1));
+            Drawable npd2 = getResources().getDrawable(R.drawable.filtershow_border_brush);
+            mBorders.add(new ImageFilterBorder(npd2));
+            Drawable npd3 = getResources().getDrawable(R.drawable.filtershow_border_grunge);
+            mBorders.add(new ImageFilterBorder(npd3));
+            Drawable npd4 = getResources().getDrawable(R.drawable.filtershow_border_sumi_e);
+            mBorders.add(new ImageFilterBorder(npd4));
+            Drawable npd5 = getResources().getDrawable(R.drawable.filtershow_border_tape);
+            mBorders.add(new ImageFilterBorder(npd5));
+            mBorders.add(new ImageFilterParametricBorder(Color.BLACK, mImageBorderSize, 0));
+            mBorders.add(new ImageFilterParametricBorder(Color.BLACK, mImageBorderSize,
+                    mImageBorderSize));
+            mBorders.add(new ImageFilterParametricBorder(Color.WHITE, mImageBorderSize, 0));
+            mBorders.add(new ImageFilterParametricBorder(Color.WHITE, mImageBorderSize,
+                    mImageBorderSize));
+            int creamColor = Color.argb(255, 237, 237, 227);
+            mBorders.add(new ImageFilterParametricBorder(creamColor, mImageBorderSize, 0));
+            mBorders.add(new ImageFilterParametricBorder(creamColor, mImageBorderSize,
+                    mImageBorderSize));
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (!result) {
+                return;
+            }
+            for (int i = 0; i < mBorders.size(); i++) {
+                ImageFilter filter = mBorders.elementAt(i);
+                filter.setName(getString(R.string.borders));
+                FilterIconButton b = setupFilterButton(filter, mList, mBorderButton);
+                if (i == 0) {
+                    mNullBorderFilter = b;
+                    mNullBorderFilter.setSelected(true);
+                }
+            }
+        }
     }
 
     private class LoadBitmapTask extends AsyncTask<Uri, Boolean, Boolean> {
@@ -718,44 +771,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         // Default preset (original)
         mMasterImage.setPreset(preset, true);
-    }
-
-    private void fillListBorders(LinearLayout listBorders) {
-        // TODO: use listview
-        // TODO: load the borders straight from the filesystem
-        int p = 0;
-        ImageFilter[] borders = new ImageFilter[12];
-        borders[p++] = new ImageFilterBorder(null);
-
-        Drawable npd1 = getResources().getDrawable(R.drawable.filtershow_border_4x5);
-        borders[p++] = new ImageFilterBorder(npd1);
-        Drawable npd2 = getResources().getDrawable(R.drawable.filtershow_border_brush);
-        borders[p++] = new ImageFilterBorder(npd2);
-        Drawable npd3 = getResources().getDrawable(R.drawable.filtershow_border_grunge);
-        borders[p++] = new ImageFilterBorder(npd3);
-        Drawable npd4 = getResources().getDrawable(R.drawable.filtershow_border_sumi_e);
-        borders[p++] = new ImageFilterBorder(npd4);
-        Drawable npd5 = getResources().getDrawable(R.drawable.filtershow_border_tape);
-        borders[p++] = new ImageFilterBorder(npd5);
-        borders[p++] = new ImageFilterParametricBorder(Color.BLACK, mImageBorderSize, 0);
-        borders[p++] = new ImageFilterParametricBorder(Color.BLACK, mImageBorderSize,
-                mImageBorderSize);
-        borders[p++] = new ImageFilterParametricBorder(Color.WHITE, mImageBorderSize, 0);
-        borders[p++] = new ImageFilterParametricBorder(Color.WHITE, mImageBorderSize,
-                mImageBorderSize);
-        int creamColor = Color.argb(255, 237, 237, 227);
-        borders[p++] = new ImageFilterParametricBorder(creamColor, mImageBorderSize, 0);
-        borders[p++] = new ImageFilterParametricBorder(creamColor, mImageBorderSize,
-                mImageBorderSize);
-
-        for (int i = 0; i < p; i++) {
-            borders[i].setName(getString(R.string.borders));
-            FilterIconButton b = setupFilterButton(borders[i], listBorders, mBorderButton);
-            if (i == 0) {
-                mNullBorderFilter = b;
-                mNullBorderFilter.setSelected(true);
-            }
-        }
     }
 
     // //////////////////////////////////////////////////////////////////////////////
