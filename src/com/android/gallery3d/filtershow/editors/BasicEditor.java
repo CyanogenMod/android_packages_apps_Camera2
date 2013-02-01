@@ -34,15 +34,27 @@ public class BasicEditor extends Editor implements OnSeekBarChangeListener {
     public static int ID = R.id.basicEditor;
     private SeekBar mSeekBar;
     private final String LOGTAG = "Editor";
+    private int mLayoutID = R.layout.filtershow_default_editor;
+    private int mViewID = R.id.basicEditor;
 
     public BasicEditor() {
         super(ID);
     }
 
+    protected BasicEditor(int id) {
+        super(id);
+    }
+
+    protected BasicEditor(int id, int layoutID, int viewID) {
+        super(id);
+        int mLayoutID = layoutID;
+        int mViewID = viewID;
+    }
+
     @Override
     public void createEditor(Context context, FrameLayout frameLayout) {
         super.createEditor(context, frameLayout);
-        unpack(R.id.basicEditor, R.layout.filtershow_default_editor);
+        unpack(mViewID, mLayoutID);
         mSeekBar = (SeekBar) mView.findViewById(R.id.filterSeekBar);
         mSeekBar.setOnSeekBarChangeListener(this);
     }
