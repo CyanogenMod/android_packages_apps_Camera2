@@ -20,10 +20,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -59,6 +62,18 @@ public class CameraActivity extends ActivityBase
     // The degrees of the device rotated clockwise from its natural orientation.
     private int mLastRawOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
 
+    private MediaSaveService mMediaSaveService;
+    private ServiceConnection mConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName className, IBinder b) {
+                mMediaSaveService = ((MediaSaveService.LocalBinder) b).getService();
+                mCurrentModule.onMediaSaveServiceConnected(mMediaSaveService);
+            }
+            @Override
+            public void onServiceDisconnected(ComponentName className) {
+                mMediaSaveService = null;
+            }};
+
     private static final String TAG = "CAM_activity";
 
     private static final int[] DRAW_IDS = {
@@ -89,6 +104,7 @@ public class CameraActivity extends ActivityBase
         mCurrentModule.init(this, mFrame, true);
         mSwitcher.setCurrentIndex(mCurrentModuleIndex);
         mOrientationListener = new MyOrientationEventListener(this);
+        bindMediaSaveService();
     }
 
     public void init() {
@@ -116,6 +132,12 @@ public class CameraActivity extends ActivityBase
         mSwitcher.setIds(moduleids, drawids);
         mSwitcher.setSwitchListener(this);
         mSwitcher.setCurrentIndex(mCurrentModuleIndex);
+    }
+
+    @Override
+    public void onDestroy() {
+        unbindMediaSaveService();
+        super.onDestroy();
     }
 
     private class MyOrientationEventListener
@@ -184,6 +206,9 @@ public class CameraActivity extends ActivityBase
         }
         openModule(mCurrentModule, canReuse);
         mCurrentModule.onOrientationChanged(mLastRawOrientation);
+        if (mMediaSaveService != null) {
+            mCurrentModule.onMediaSaveServiceConnected(mMediaSaveService);
+        }
         getCameraScreenNail().setAlpha(0f);
         getCameraScreenNail().setOnFrameDrawnOneShot(mOnFrameDrawn);
     }
@@ -296,6 +321,18 @@ public class CameraActivity extends ActivityBase
         mCurrentModule.onResumeBeforeSuper();
         super.onResume();
         mCurrentModule.onResumeAfterSuper();
+    }
+
+    private void bindMediaSaveService() {
+        Intent intent = new Intent(this, MediaSaveService.class);
+        startService(intent);  // start service before binding it so the
+                               // service won't be killed if we unbind it.
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void unbindMediaSaveService() {
+        mMediaSaveService.setListener(null);
+        unbindService(mConnection);
     }
 
     @Override
@@ -480,5 +517,9 @@ public class CameraActivity extends ActivityBase
 
     public CameraScreenNail getCameraScreenNail() {
         return (CameraScreenNail) mCameraScreenNail;
+    }
+
+    public MediaSaveService getMediaSaveService() {
+        return mMediaSaveService;
     }
 }
