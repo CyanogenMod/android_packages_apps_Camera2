@@ -90,6 +90,8 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
         }
     };
     private DrawClient mDraw = mDefaultDraw;
+    private float mAlpha = 1f;
+    private Runnable mOnFrameDrawnListener;
 
     public interface Listener {
         void requestRender();
@@ -338,6 +340,12 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
             if (mDraw.requiresSurfaceTexture() && (surfaceTexture == null || !mFirstFrameArrived)) {
                 return;
             }
+            if (mOnFrameDrawnListener != null) {
+                mOnFrameDrawnListener.run();
+                mOnFrameDrawnListener = null;
+            }
+            float oldAlpha = canvas.getAlpha();
+            canvas.setAlpha(mAlpha);
 
             switch (mAnimState) {
                 case ANIM_NONE:
@@ -393,6 +401,7 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
                     directDraw(canvas, x, y, width, height);
                 }
             }
+            canvas.setAlpha(oldAlpha);
             callbackIfNeeded();
         } // mLock
     }
@@ -492,6 +501,25 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
                 mAcquireTexture = false;
                 mLock.notifyAll();
             }
+        }
+    }
+
+    public void setOnFrameDrawnOneShot(Runnable run) {
+        synchronized (mLock) {
+            mOnFrameDrawnListener = run;
+        }
+    }
+
+    public float getAlpha() {
+        synchronized (mLock) {
+            return mAlpha;
+        }
+    }
+
+    public void setAlpha(float alpha) {
+        synchronized (mLock) {
+            mAlpha = alpha;
+            mListener.requestRender();
         }
     }
 }
