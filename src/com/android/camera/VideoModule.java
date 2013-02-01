@@ -237,6 +237,17 @@ public class VideoModule implements CameraModule,
     private boolean mRestoreFlash;  // This is used to check if we need to restore the flash
                                     // status when going back from gallery.
 
+    private MediaSaveService.OnMediaSavedListener mOnMediaSavedListener =
+            new MediaSaveService.OnMediaSavedListener() {
+                @Override
+                public void onMediaSaved(Uri uri) {
+                    if (uri != null) {
+                        Util.broadcastNewPicture(mActivity, uri);
+                    }
+                }
+            };
+
+
     protected class CameraOpenThread extends Thread {
         @Override
         public void run() {
@@ -2165,6 +2176,7 @@ public class VideoModule implements CameraModule,
         mShutterButton.setImageResource(R.drawable.btn_new_shutter_video);
         mShutterButton.setOnShutterButtonListener(this);
         mShutterButton.requestFocus();
+        mShutterButton.enableTouch(true);
 
         // Disable the shutter button if effects are ON since it might take
         // a little more time for the effects preview to be ready. We do not
@@ -2465,7 +2477,8 @@ public class VideoModule implements CameraModule,
             return;
         }
 
-        if (mPaused || mSnapshotInProgress || effectsActive()) {
+        MediaSaveService s = mActivity.getMediaSaveService();
+        if (mPaused || mSnapshotInProgress || effectsActive() || s == null || s.isQueueFull()) {
             return;
         }
 
@@ -2568,11 +2581,9 @@ public class VideoModule implements CameraModule,
         String title = Util.createJpegName(dateTaken);
         int orientation = Exif.getOrientation(data);
         Size s = mParameters.getPictureSize();
-        Uri uri = Storage.addImage(mContentResolver, title, dateTaken, loc, orientation, data,
-                s.width, s.height);
-        if (uri != null) {
-            Util.broadcastNewPicture(mActivity, uri);
-        }
+        mActivity.getMediaSaveService().addImage(
+                data, title, dateTaken, loc, s.width, s.height,
+                orientation, mOnMediaSavedListener, mContentResolver);
     }
 
     private boolean resetEffect() {
@@ -2812,5 +2823,10 @@ public class VideoModule implements CameraModule,
         if (mPieRenderer.showsItems()) {
             mPieRenderer.hide();
         }
+    }
+
+    @Override
+    public void onMediaSaveServiceConnected(MediaSaveService s) {
+        // do nothing.
     }
 }

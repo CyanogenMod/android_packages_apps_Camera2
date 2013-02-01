@@ -72,4 +72,5 @@ public interface CameraModule {
 
     public void onShowSwitcherPopup();
 
+    public void onMediaSaveServiceConnected(MediaSaveService s);
 }
