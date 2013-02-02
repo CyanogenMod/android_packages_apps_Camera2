@@ -24,7 +24,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
-import android.util.Log;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.editors.EditorDraw;
@@ -280,14 +279,13 @@ public class ImageFilterDraw extends ImageFilter {
                 return;
             }
             Paint paint = new Paint();
-
-            canvas.save();
-            canvas.concat(toScrMatrix);
             paint.setStyle(Style.STROKE);
 
             float scale = toScrMatrix.mapRadius(1);
-            draw(canvas, paint, mCurrentColor, mCurrentRadius, path);
-            canvas.restore();
+            Path mCacheTransPath = new Path();
+            mCacheTransPath.addPath(path, toScrMatrix);
+            draw(canvas, paint, mCurrentColor, toScrMatrix.mapRadius(mCurrentRadius),
+                    mCacheTransPath);
         }
 
         @Override
