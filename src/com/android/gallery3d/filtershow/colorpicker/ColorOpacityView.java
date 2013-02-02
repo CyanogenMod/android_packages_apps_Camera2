@@ -47,7 +47,7 @@ public class ColorOpacityView extends View implements ColorListener {
     private Paint mDotPaint;
     private int mBgcolor = 0;
 
-    private float mDotRadus;
+    private float mDotRadius;
     private float mBorder;
 
     private float[] mHSVO = new float[4];
@@ -61,7 +61,7 @@ public class ColorOpacityView extends View implements ColorListener {
         super(ctx, attrs);
         DisplayMetrics metrics = ctx.getResources().getDisplayMetrics();
         float mDpToPix = metrics.density;
-        mDotRadus = DOT_SIZE * mDpToPix;
+        mDotRadius = DOT_SIZE * mDpToPix;
         mBorder = BORDER_SIZE * mDpToPix;
         mBarPaint1 = new Paint();
 
@@ -115,10 +115,11 @@ public class ColorOpacityView extends View implements ColorListener {
         mHSVO[3] = (mDotX - mBorder) / (mWidth - mBorder * 2);
         notifyColorListeners(mHSVO);
         setupButton();
-        invalidate((int) (ox - mDotRadus), (int) (oy - mDotRadus), (int) (ox + mDotRadus),
-                (int) (oy + mDotRadus));
-        invalidate((int) (mDotX - mDotRadus), (int) (mDotY - mDotRadus), (int) (mDotX + mDotRadus),
-                (int) (mDotY + mDotRadus));
+        invalidate((int) (ox - mDotRadius), (int) (oy - mDotRadius), (int) (ox + mDotRadius),
+                (int) (oy + mDotRadius));
+        invalidate(
+                (int) (mDotX - mDotRadius), (int) (mDotY - mDotRadius), (int) (mDotX + mDotRadius),
+                (int) (mDotY + mDotRadius));
 
         return true;
     }
@@ -129,7 +130,7 @@ public class ColorOpacityView extends View implements ColorListener {
 
         int[] colors3 = new int[] {
         mSliderColor, mSliderColor, 0x66000000, 0 };
-        RadialGradient g = new RadialGradient(mDotX, mDotY, mDotRadus, colors3, new float[] {
+        RadialGradient g = new RadialGradient(mDotX, mDotY, mDotRadius, colors3, new float[] {
         0, .3f, .31f, 1 }, Shader.TileMode.CLAMP);
         mDotPaint.setShader(g);
     }
@@ -163,7 +164,7 @@ public class ColorOpacityView extends View implements ColorListener {
         canvas.drawLine(mDotX, mDotY, mWidth - mBorder, mDotY, mLinePaint1);
         canvas.drawLine(mBorder, mDotY, mDotX, mDotY, mLinePaint2);
         if (mDotX != Float.NaN) {
-            canvas.drawCircle(mDotX, mDotY, mDotRadus, mDotPaint);
+            canvas.drawCircle(mDotX, mDotY, mDotRadius, mDotPaint);
         }
     }
 
