@@ -19,9 +19,7 @@ package com.android.gallery3d.filtershow.cache;
 import android.graphics.Bitmap;
 import android.os.*;
 import android.os.Process;
-import android.renderscript.Allocation;
-import android.renderscript.Allocation.MipmapControl;
-import android.renderscript.RenderScript;
+import android.support.v8.renderscript.*;
 import android.util.Log;
 
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
@@ -164,13 +162,13 @@ public class FilteringPipeline implements Handler.Callback {
             mFiltersOnlyOriginalAllocation.destroy();
         }
         mFiltersOnlyOriginalAllocation = Allocation.createFromBitmap(RS, mOriginalBitmap,
-                MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+                Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
         if (mOriginalAllocation != null) {
             mOriginalAllocation.destroy();
         }
         mResizedOriginalBitmap = preset.applyGeometry(mOriginalBitmap);
         mOriginalAllocation = Allocation.createFromBitmap(RS, mResizedOriginalBitmap,
-                MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+                Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
         mPreviousGeometry = new GeometryMetadata(geometry);
         return true;
     }
