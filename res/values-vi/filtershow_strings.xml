@@ -76,22 +76,13 @@
     <string name="curves_channel_red" msgid="4199710104162111357">"Đỏ"</string>
     <string name="curves_channel_green" msgid="3733003466905031016">"Xanh lục"</string>
     <string name="curves_channel_blue" msgid="9129211507395079371">"Xanh lam"</string>
-    <!-- no translation found for draw_style (2036125061987325389) -->
-    <skip />
-    <!-- no translation found for draw_size (4360005386104151209) -->
-    <skip />
-    <!-- no translation found for draw_color (2119030386987211193) -->
-    <skip />
-    <!-- no translation found for draw_style_line (9216476853904429628) -->
-    <skip />
-    <!-- no translation found for draw_style_brush (383079660590023404) -->
-    <skip />
-    <!-- no translation found for color_pick_select (734312818059057394) -->
-    <skip />
-    <!-- no translation found for color_pick_title (6195567431995308876) -->
-    <skip />
-    <!-- no translation found for draw_size_title (3121649039610273977) -->
-    <skip />
-    <!-- no translation found for draw_size_accept (6781529716526190028) -->
-    <skip />
+    <string name="draw_style" msgid="2036125061987325389">"Kiểu"</string>
+    <string name="draw_size" msgid="4360005386104151209">"Kích thước"</string>
+    <string name="draw_color" msgid="2119030386987211193">"Màu"</string>
+    <string name="draw_style_line" msgid="9216476853904429628">"Đường vẽ"</string>
+    <string name="draw_style_brush" msgid="383079660590023404">"Bút vẽ"</string>
+    <string name="color_pick_select" msgid="734312818059057394">"Chọn màu tùy chỉnh"</string>
+    <string name="color_pick_title" msgid="6195567431995308876">"Chọn màu"</string>
+    <string name="draw_size_title" msgid="3121649039610273977">"Chọn kích thước"</string>
+    <string name="draw_size_accept" msgid="6781529716526190028">"OK"</string>
 </resources>
