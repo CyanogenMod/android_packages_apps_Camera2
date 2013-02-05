@@ -20,11 +20,13 @@ import android.content.Context;
 import android.widget.FrameLayout;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.filters.FilterCurvesRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.ui.ImageCurves;
 
 public class EditorCurves extends Editor {
     public static final int ID = R.id.imageCurves;
-
+    ImageCurves mImageCurves;
     public EditorCurves() {
         super(ID);
     }
@@ -32,6 +34,17 @@ public class EditorCurves extends Editor {
     @Override
     public void createEditor(Context context, FrameLayout frameLayout) {
         super.createEditor(context, frameLayout);
-        mView = mImageShow = new ImageCurves(context);
+        mView = mImageShow = mImageCurves = new ImageCurves(context);
+        mImageCurves.setEditor(this);
+    }
+
+    @Override
+    public void reflectCurrentFilter() {
+        super.reflectCurrentFilter();
+        FilterRepresentation rep = getLocalRepresentation();
+        if (rep != null && getLocalRepresentation() instanceof FilterCurvesRepresentation) {
+            FilterCurvesRepresentation drawRep = (FilterCurvesRepresentation) rep;
+            mImageCurves.setFilterDrawRepresentation(drawRep);
+        }
     }
 }

@@ -215,6 +215,10 @@ public class ImageLoader {
         warnListeners();
     }
 
+    public Bitmap decodeImage(int id, BitmapFactory.Options options) {
+        return BitmapFactory.decodeResource(mContext.getResources(), id, options);
+    }
+
     public static Bitmap rotateToPortrait(Bitmap bitmap, int ori) {
         Matrix matrix = new Matrix();
         int w = bitmap.getWidth();
