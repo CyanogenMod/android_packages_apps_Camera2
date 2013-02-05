@@ -28,6 +28,16 @@ public class ImageFilterWBalance extends ImageFilter {
         mName = "WBalance";
     }
 
+    public FilterRepresentation getDefaultRepresentation() {
+        FilterRepresentation representation = new FilterDirectRepresentation("WBalance");
+        representation.setFilterClass(ImageFilterWBalance.class);
+        return representation;
+    }
+
+    public boolean hasDefaultRepresentation() {
+        return true;
+    }
+
     @Override
     public int getButtonId() {
         return R.id.wbalanceButton;
@@ -52,8 +62,4 @@ public class ImageFilterWBalance extends ImageFilter {
         return bitmap;
     }
 
-    @Override
-    public boolean isNil() {
-        return false;
-    }
 }

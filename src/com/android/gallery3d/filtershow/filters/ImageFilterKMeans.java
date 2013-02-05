@@ -20,22 +20,30 @@ import android.graphics.Bitmap;
 import android.text.format.Time;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.ingest.ui.MtpThumbnailTileView;
 
-public class ImageFilterKMeans extends ImageFilter {
+public class ImageFilterKMeans extends SimpleImageFilter {
     private int mSeed = 0;
 
     public ImageFilterKMeans() {
         mName = "KMeans";
-        mMaxParameter = 20;
-        mMinParameter = 2;
-        mPreviewParameter = 4;
-        mDefaultParameter = 4;
-        mParameter = 4;
 
         // set random seed for session
         Time t = new Time();
         t.setToNow();
         mSeed = (int) t.toMillis(false);
+    }
+
+    public FilterRepresentation getDefaultRepresentation() {
+        FilterBasicRepresentation representation = (FilterBasicRepresentation) super.getDefaultRepresentation();
+        representation.setName("KMeans");
+        representation.setFilterClass(ImageFilterKMeans.class);
+        representation.setMaximum(20);
+        representation.setMinimum(2);
+        representation.setValue(4);
+        representation.setDefaultValue(4);
+        representation.setPreviewValue(4);
+        return representation;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int width, int height,
@@ -53,12 +61,10 @@ public class ImageFilterKMeans extends ImageFilter {
     }
 
     @Override
-    public boolean isNil() {
-        return false;
-    }
-
-    @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        if (getParameters() == null) {
+            return bitmap;
+        }
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
@@ -87,8 +93,10 @@ public class ImageFilterKMeans extends ImageFilter {
             small_bm_ds = Bitmap.createScaledBitmap(large_bm_ds, sw, sh, true);
         }
 
-        int p = Math.max(mParameter, mMinParameter) % (mMaxParameter + 1);
-        nativeApplyFilter(bitmap, w, h, large_bm_ds, lw, lh, small_bm_ds, sw, sh, p, mSeed);
+        if (getParameters() != null) {
+            int p = Math.max(getParameters().getValue(), getParameters().getMinimum()) % (getParameters().getMaximum() + 1);
+            nativeApplyFilter(bitmap, w, h, large_bm_ds, lw, lh, small_bm_ds, sw, sh, p, mSeed);
+        }
         return bitmap;
     }
 }

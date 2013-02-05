@@ -17,7 +17,7 @@
 package com.android.gallery3d.filtershow.editors;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.filters.ImageFilter;
+import com.android.gallery3d.filtershow.filters.*;
 
 import android.content.Context;
 import android.util.Log;
@@ -61,35 +61,35 @@ public class BasicEditor extends Editor implements OnSeekBarChangeListener {
 
     @Override
     public void reflectCurrentFilter() {
-        ImageFilter filter = mImageShow.getCurrentFilter();
-        if (filter == null) {
-            return;
+        FilterRepresentation filterRepresentation = MasterImage.getImage().getCurrentFilterRepresentation();
+        if (filterRepresentation != null && filterRepresentation instanceof FilterBasicRepresentation) {
+            FilterBasicRepresentation interval = (FilterBasicRepresentation) filterRepresentation;
+            boolean f = interval.showParameterValue();
+            mSeekBar.setVisibility((f) ? View.VISIBLE : View.INVISIBLE);
+            int value = interval.getValue();
+            int min = interval.getMinimum();
+            int max = interval.getMaximum();
+            mSeekBar.setMax(max - min);
+            mSeekBar.setProgress(value - min);
         }
-        boolean f = filter.showParameterValue();
-        mSeekBar.setVisibility((f) ? View.VISIBLE : View.INVISIBLE);
-        int parameter = filter.getParameter();
-        int maxp = filter.getMaxParameter();
-        int minp = filter.getMinParameter();
-        mSeekBar.setMax(maxp - minp);
-        mSeekBar.setProgress(parameter - minp);
     }
 
     @Override
     public void onProgressChanged(SeekBar sbar, int progress, boolean arg2) {
-        ImageFilter filter = mImageShow.getCurrentFilter();
-        if (filter == null) {
-            return;
-        }
-        int minp = filter.getMinParameter();
-        int value = progress + minp;
-        mImageShow.onNewValue(value);
-        mView.invalidate();
-        if (filter.showParameterValue()) {
-            mPanelController.onNewValue(value);
-        }
+        FilterRepresentation filterRepresentation = MasterImage.getImage().getCurrentFilterRepresentation();
+        if (filterRepresentation != null && filterRepresentation instanceof FilterBasicRepresentation) {
+            FilterBasicRepresentation interval = (FilterBasicRepresentation) filterRepresentation;
+            int value = progress + interval.getMinimum();
+            interval.setValue(value);
+            mImageShow.onNewValue(value);
+            mView.invalidate();
+            if (interval.showParameterValue()) {
+                mPanelController.onNewValue(value);
+            }
 
-        Log.v(LOGTAG, "    #### progress=" + value);
-        MasterImage.getImage().updateBuffers();
+            Log.v(LOGTAG, "    #### progress=" + value);
+            MasterImage.getImage().updateBuffers();
+        }
     }
 
     @Override

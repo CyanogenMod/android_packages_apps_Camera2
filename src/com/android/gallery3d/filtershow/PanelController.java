@@ -359,6 +359,7 @@ public class PanelController implements OnClickListener {
     public void showDefaultImageView() {
         showImageView(R.id.imageShow).setShowControls(false);
         mMasterImage.setCurrentFilter(null);
+        mMasterImage.setCurrentFilterRepresentation(null);
     }
 
     public void showPanel(View view) {
@@ -415,6 +416,7 @@ public class PanelController implements OnClickListener {
 
     // TODO: remove this.
     public void ensureFilter(String name) {
+        /*
         ImagePreset preset = getImagePreset();
         ImageFilter filter = preset.getFilter(name);
         if (filter != null) {
@@ -441,6 +443,7 @@ public class PanelController implements OnClickListener {
         if (filter != null) {
             mMasterImage.setCurrentFilter(filter);
         }
+        */
     }
 
     public void showComponent(View view) {
@@ -483,8 +486,6 @@ public class PanelController implements OnClickListener {
                 mUtilityPanel.setEffectName(ename);
 
                 mUtilityPanel.setShowParameter(filter.showParameterValue());
-                ImageFilter currentFilter = mMasterImage.getPreset().getFilter(filter.getName());
-                mMasterImage.setCurrentFilter(currentFilter);
                 mCurrentImage.select();
                 if (mCurrentEditor != null) {
                     mCurrentEditor.reflectCurrentFilter();

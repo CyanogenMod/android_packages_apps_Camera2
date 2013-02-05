@@ -20,10 +20,17 @@ import com.android.gallery3d.R;
 
 import android.graphics.Bitmap;
 
-public class ImageFilterSaturated extends ImageFilter {
+public class ImageFilterSaturated extends SimpleImageFilter {
 
     public ImageFilterSaturated() {
         mName = "Saturated";
+    }
+
+    public FilterRepresentation getDefaultRepresentation() {
+        FilterRepresentation representation = super.getDefaultRepresentation();
+        representation.setName("Saturated");
+        representation.setFilterClass(ImageFilterSaturated.class);
+        return representation;
     }
 
     @Override
@@ -40,9 +47,12 @@ public class ImageFilterSaturated extends ImageFilter {
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        if (getParameters() == null) {
+            return bitmap;
+        }
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        int p = mParameter;
+        int p = getParameters().getValue();
         float value = 1 +  p / 100.0f;
         nativeApplyFilter(bitmap, w, h, value);
         return bitmap;
