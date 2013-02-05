@@ -16,17 +16,45 @@
 
 package com.android.gallery3d.filtershow.filters;
 
-import android.util.Log;
-
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 public class FiltersManager {
 
     private static final String LOGTAG = "FiltersManager";
+    private static FiltersManager gInstance = null;
+    private static HashMap<Class, ImageFilter> mFilters = new HashMap<Class, ImageFilter>();
 
-    public static void addFilters(Vector<ImageFilter> filters, ImageLoader imageLoader) {
+    private FiltersManager() {
+        Vector<ImageFilter> filters = new Vector<ImageFilter>();
+        FiltersManager.addFilters(filters);
+        for (ImageFilter filter : filters) {
+            mFilters.put(filter.getClass(), filter);
+        }
+    }
+
+    public ImageFilter getFilter(Class c) {
+        return mFilters.get(c);
+    }
+
+    public ImageFilter getFilterForRepresentation(FilterRepresentation representation) {
+        return mFilters.get(representation.getFilterClass());
+    }
+
+    public void addFilter(Class filterClass, ImageFilter filter) {
+        mFilters.put(filterClass, filter);
+    }
+
+    public static FiltersManager getManager() {
+        if (gInstance == null) {
+            gInstance = new FiltersManager();
+        }
+        return gInstance;
+    }
+
+    public static void addFilters(Vector<ImageFilter> filters) {
         filters.add(new ImageFilterTinyPlanet());
         filters.add(new ImageFilterWBalance());
         filters.add(new ImageFilterExposure());
@@ -43,6 +71,13 @@ public class FiltersManager {
         filters.add(new ImageFilterNegative());
         filters.add(new ImageFilterEdge());
         filters.add(new ImageFilterKMeans());
-        filters.add(new ImageFilterDownsample(imageLoader));
     }
+
+    public static void addFilters(Vector<ImageFilter> filters, ImageLoader imageLoader) {
+        FiltersManager.addFilters(filters);
+        filters.add(new ImageFilterDownsample(imageLoader));
+        FiltersManager.getManager().addFilter(ImageFilterDownsample.class,
+                new ImageFilterDownsample(imageLoader));
+    }
+
 }

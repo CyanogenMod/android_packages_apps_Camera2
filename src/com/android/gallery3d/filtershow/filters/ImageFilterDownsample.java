@@ -23,18 +23,25 @@ import android.graphics.Rect;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 
-public class ImageFilterDownsample extends ImageFilter {
+public class ImageFilterDownsample extends SimpleImageFilter {
     private static final int ICON_DOWNSAMPLE_FRACTION = 8;
     private ImageLoader mImageLoader;
 
     public ImageFilterDownsample(ImageLoader loader) {
         mName = "Downsample";
-        mMaxParameter = 100;
-        mMinParameter = 1;
-        mPreviewParameter = 3;
-        mDefaultParameter = 50;
-        mParameter = 50;
         mImageLoader = loader;
+    }
+
+    public FilterRepresentation getDefaultRepresentation() {
+        FilterBasicRepresentation representation = (FilterBasicRepresentation) super.getDefaultRepresentation();
+        representation.setName("Downsample");
+        representation.setFilterClass(ImageFilterDownsample.class);
+        representation.setMaximum(100);
+        representation.setMinimum(1);
+        representation.setValue(50);
+        representation.setDefaultValue(50);
+        representation.setPreviewValue(3);
+        return representation;
     }
 
     @Override
@@ -48,15 +55,13 @@ public class ImageFilterDownsample extends ImageFilter {
     }
 
     @Override
-    public boolean isNil() {
-        return false;
-    }
-
-    @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        if (getParameters() == null) {
+            return bitmap;
+        }
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        int p = mParameter;
+        int p = getParameters().getValue();
 
         // size of original precached image
         Rect size = mImageLoader.getOriginalBounds();

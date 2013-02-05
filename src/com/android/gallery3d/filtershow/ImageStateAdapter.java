@@ -46,7 +46,8 @@ public class ImageStateAdapter extends ArrayAdapter<ImageFilter> {
             TextView itemLabel = (TextView) view.findViewById(R.id.imagestate_label);
             itemLabel.setText(filter.getName());
             TextView itemParameter = (TextView) view.findViewById(R.id.imagestate_parameter);
-            itemParameter.setText("" + filter.getParameter());
+            // TODO: fix the image state adapter
+            // itemParameter.setText("" + filter.getParameter());
         }
         return view;
     }

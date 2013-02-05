@@ -20,10 +20,17 @@ import com.android.gallery3d.R;
 
 import android.graphics.Bitmap;
 
-public class ImageFilterExposure extends ImageFilter {
+public class ImageFilterExposure extends SimpleImageFilter {
 
     public ImageFilterExposure() {
         mName = "Exposure";
+    }
+
+    public FilterRepresentation getDefaultRepresentation() {
+        FilterRepresentation representation = super.getDefaultRepresentation();
+        representation.setName("Exposure");
+        representation.setFilterClass(ImageFilterExposure.class);
+        return representation;
     }
 
     @Override
@@ -40,10 +47,12 @@ public class ImageFilterExposure extends ImageFilter {
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        if (getParameters() == null) {
+            return bitmap;
+        }
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        int p = mParameter;
-        float value = p;
+        float value = getParameters().getValue();
         nativeApplyFilter(bitmap, w, h, value);
         return bitmap;
     }

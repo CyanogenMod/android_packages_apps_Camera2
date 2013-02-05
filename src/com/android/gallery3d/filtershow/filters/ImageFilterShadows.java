@@ -20,11 +20,18 @@ import com.android.gallery3d.R;
 
 import android.graphics.Bitmap;
 
-public class ImageFilterShadows extends ImageFilter {
+public class ImageFilterShadows extends SimpleImageFilter {
 
     public ImageFilterShadows() {
         mName = "Shadows";
 
+    }
+
+    public FilterRepresentation getDefaultRepresentation() {
+        FilterRepresentation representation = super.getDefaultRepresentation();
+        representation.setName("Shadows");
+        representation.setFilterClass(ImageFilterShadows.class);
+        return representation;
     }
 
     @Override
@@ -47,9 +54,12 @@ public class ImageFilterShadows extends ImageFilter {
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+        if (getParameters() == null) {
+            return bitmap;
+        }
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        float p = mParameter;
+        float p = getParameters().getValue();
 
         nativeApplyFilter(bitmap, w, h, p);
         return bitmap;
