@@ -76,22 +76,13 @@
     <string name="curves_channel_red" msgid="4199710104162111357">"Rosso"</string>
     <string name="curves_channel_green" msgid="3733003466905031016">"Verde"</string>
     <string name="curves_channel_blue" msgid="9129211507395079371">"Blu"</string>
-    <!-- no translation found for draw_style (2036125061987325389) -->
-    <skip />
-    <!-- no translation found for draw_size (4360005386104151209) -->
-    <skip />
-    <!-- no translation found for draw_color (2119030386987211193) -->
-    <skip />
-    <!-- no translation found for draw_style_line (9216476853904429628) -->
-    <skip />
-    <!-- no translation found for draw_style_brush (383079660590023404) -->
-    <skip />
-    <!-- no translation found for color_pick_select (734312818059057394) -->
-    <skip />
-    <!-- no translation found for color_pick_title (6195567431995308876) -->
-    <skip />
-    <!-- no translation found for draw_size_title (3121649039610273977) -->
-    <skip />
-    <!-- no translation found for draw_size_accept (6781529716526190028) -->
-    <skip />
+    <string name="draw_style" msgid="2036125061987325389">"Stile"</string>
+    <string name="draw_size" msgid="4360005386104151209">"Dimensioni"</string>
+    <string name="draw_color" msgid="2119030386987211193">"Colore"</string>
+    <string name="draw_style_line" msgid="9216476853904429628">"Linee"</string>
+    <string name="draw_style_brush" msgid="383079660590023404">"Pennello"</string>
+    <string name="color_pick_select" msgid="734312818059057394">"Scegli colore personalizzato"</string>
+    <string name="color_pick_title" msgid="6195567431995308876">"Seleziona colore"</string>
+    <string name="draw_size_title" msgid="3121649039610273977">"Seleziona dimensioni"</string>
+    <string name="draw_size_accept" msgid="6781529716526190028">"OK"</string>
 </resources>
