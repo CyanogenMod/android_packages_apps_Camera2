@@ -35,6 +35,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -127,7 +128,7 @@ public class ImageCurves extends ImageShow {
         String filterName = getFilterName();
         ImagePreset p = getImagePreset();
         if (p != null) {
-            return (ImageFilterCurves) p.getFilter(filterName);
+            return (ImageFilterCurves) FiltersManager.getManager().getFilter(ImageFilterCurves.class);
         }
         return null;
     }

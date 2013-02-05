@@ -26,6 +26,7 @@ import com.android.gallery3d.filtershow.ImageStateAdapter;
 import com.android.gallery3d.filtershow.cache.TripleBufferBitmap;
 import com.android.gallery3d.filtershow.cache.FilteringPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
@@ -53,6 +54,7 @@ public class MasterImage {
     private FilterShowActivity mActivity = null;
 
     private Vector<ImageShow> mObservers = new Vector<ImageShow>();
+    private FilterRepresentation mCurrentFilterRepresentation;
 
     private MasterImage() { }
 
@@ -205,4 +207,11 @@ public class MasterImage {
         FilteringPipeline.getPipeline().updateFiltersOnlyPreviewBuffer();
     }
 
+    public FilterRepresentation getCurrentFilterRepresentation() {
+        return mCurrentFilterRepresentation;
+    }
+
+    public void setCurrentFilterRepresentation(FilterRepresentation currentFilterRepresentation) {
+        mCurrentFilterRepresentation = currentFilterRepresentation;
+    }
 }

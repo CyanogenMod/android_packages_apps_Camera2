@@ -25,12 +25,14 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 
 public class FilterIconButton extends IconButton implements View.OnClickListener {
     private Bitmap mOverlayBitmap = null;
     private FilterShowActivity mController = null;
     private ImageFilter mImageFilter = null;
+    private FilterRepresentation mFilterRepresentation = null;
     private LinearLayout mParentContainer = null;
     private View.OnClickListener mListener = null;
 
@@ -80,7 +82,7 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if (mController != null && mImageFilter != null) {
-            mController.useFilter(mImageFilter);
+            mController.useFilterRepresentation(mFilterRepresentation);
             mParentContainer.dispatchSetSelected(false);
             setSelected(true);
         }
@@ -91,5 +93,9 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
 
     public ImageFilter getImageFilter() {
         return mImageFilter;
+    }
+
+    public void setFilterRepresentation(FilterRepresentation filterRepresentation) {
+        mFilterRepresentation = filterRepresentation;
     }
 }

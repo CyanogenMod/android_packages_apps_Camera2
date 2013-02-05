@@ -74,7 +74,6 @@ public class ImageFilterCurves extends ImageFilter {
         return filter;
     }
 
-    @Override
     public boolean isNil() {
         for (int i = 0; i < 4; i++) {
             if (mSplines[i] != null && !mSplines[i].isOriginal()) {
@@ -148,7 +147,6 @@ public class ImageFilterCurves extends ImageFilter {
         return mSplines[splineIndex];
     }
 
-    @Override
     public void reset() {
         Spline spline = new Spline();
 
@@ -160,7 +158,7 @@ public class ImageFilterCurves extends ImageFilter {
         }
     }
 
-    @Override
+    // TODO: fix useFilter
     public void useFilter(ImageFilter a) {
         ImageFilterCurves c = (ImageFilterCurves) a;
         for (int i = 0; i < 4; i++) {
