@@ -345,6 +345,7 @@ public class PanelController implements OnClickListener {
 
     public ImageShow showImageView(int id) {
         ImageShow image = null;
+        mActivity.hideImageViews();
         for (View view : mImageViews) {
             if (view.getId() == id) {
                 view.setVisibility(View.VISIBLE);

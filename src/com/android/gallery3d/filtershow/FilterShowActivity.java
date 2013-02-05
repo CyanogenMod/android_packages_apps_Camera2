@@ -800,6 +800,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         for (View view : mImageViews) {
             view.setVisibility(View.GONE);
         }
+        mEditorPlaceHolder.hide();
     }
 
     public void unselectBottomPanelButtons() {
