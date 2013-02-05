@@ -21,8 +21,10 @@ import android.util.Log;
 
 import com.android.gallery3d.filtershow.ImageStateAdapter;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
-import com.android.gallery3d.filtershow.filters.ImageFilterRS;
+import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 
@@ -33,12 +35,13 @@ public class ImagePreset {
     private static final String LOGTAG = "ImagePreset";
 
     private ImageShow mEndPoint = null;
-    private ImageFilter mImageBorder = null;
+    private FilterRepresentation mImageBorder = null;
     private float mScaleFactor = 1.0f;
     private boolean mIsHighQuality = false;
     private ImageLoader mImageLoader = null;
 
-    protected Vector<ImageFilter> mFilters = new Vector<ImageFilter>();
+    private Vector<FilterRepresentation> mFilters = new Vector<FilterRepresentation>();
+
     protected String mName = "Original";
     private String mHistoryName = "Original";
     protected boolean mIsFxPreset = false;
@@ -74,9 +77,9 @@ public class ImagePreset {
                 mImageBorder = source.mImageBorder.clone();
             }
             for (int i = 0; i < source.mFilters.size(); i++) {
-                ImageFilter filter = source.mFilters.elementAt(i).clone();
-                filter.setImagePreset(this);
-                add(filter);
+                FilterRepresentation representation = source.mFilters.elementAt(i).clone();
+                representation.setImagePreset(this);
+                addFilter(representation);
             }
         } catch (java.lang.CloneNotSupportedException e) {
             Log.v(LOGTAG, "Exception trying to clone: " + e);
@@ -113,7 +116,7 @@ public class ImagePreset {
             return true;
         }
         for (int i = 0; i < mFilters.size(); i++) {
-            ImageFilter filter = mFilters.elementAt(i);
+            FilterRepresentation filter = mFilters.elementAt(i);
             if (!filter.isNil()) {
                 return true;
             }
@@ -128,13 +131,13 @@ public class ImagePreset {
         if (mGeoData.hasModifications()) {
             return false;
         }
-        for (ImageFilter filter : mFilters) {
-            if (filter.getFilterType() == ImageFilter.TYPE_VIGNETTE
-                    && !filter.isNil()) {
+        for (FilterRepresentation representation : mFilters) {
+            if (representation.getPriority() == ImageFilter.TYPE_VIGNETTE
+                && !representation.isNil()) {
                 return false;
             }
-            if (filter.getFilterType() == ImageFilter.TYPE_TINYPLANET
-                    && !filter.isNil()) {
+            if (representation.getPriority() == ImageFilter.TYPE_TINYPLANET
+                && !representation.isNil()) {
                 return false;
             }
         }
@@ -145,7 +148,7 @@ public class ImagePreset {
         mGeoData.set(m);
     }
 
-    private void setBorder(ImageFilter filter) {
+    private void setBorder(FilterRepresentation filter) {
         mImageBorder = filter;
     }
 
@@ -180,22 +183,14 @@ public class ImagePreset {
         }
         if (mDoApplyFilters && preset.mDoApplyFilters) {
             for (int i = 0; i < preset.mFilters.size(); i++) {
-                ImageFilter a = preset.mFilters.elementAt(i);
-                ImageFilter b = mFilters.elementAt(i);
+                FilterRepresentation a = preset.mFilters.elementAt(i);
+                FilterRepresentation b = mFilters.elementAt(i);
                 if (!a.equals(b)) {
                     return false;
                 }
             }
         }
         return true;
-    }
-
-    public void usePreset(ImagePreset preset) {
-        for (int i = 0; i < preset.mFilters.size(); i++) {
-            ImageFilter a = preset.mFilters.elementAt(i);
-            ImageFilter b = mFilters.elementAt(i);
-            b.useFilter(a);
-        }
     }
 
     public boolean same(ImagePreset preset) {
@@ -223,7 +218,7 @@ public class ImagePreset {
             return false;
         }
 
-        if (mImageBorder != null && !mImageBorder.same(preset.mImageBorder)) {
+        if (mImageBorder != null && !mImageBorder.equals(preset.mImageBorder)) {
             return false;
         }
 
@@ -235,18 +230,15 @@ public class ImagePreset {
 
         if (mDoApplyFilters && preset.mDoApplyFilters) {
             for (int i = 0; i < preset.mFilters.size(); i++) {
-                ImageFilter a = preset.mFilters.elementAt(i);
-                ImageFilter b = mFilters.elementAt(i);
+                FilterRepresentation a = preset.mFilters.elementAt(i);
+                FilterRepresentation b = mFilters.elementAt(i);
                 if (!a.same(b)) {
                     return false;
                 }
             }
         }
-        return true;
-    }
 
-    public int nbFilters() {
-        return mFilters.size();
+        return true;
     }
 
     public int similarUpTo(ImagePreset preset) {
@@ -255,13 +247,13 @@ public class ImagePreset {
         }
 
         for (int i = 0; i < preset.mFilters.size(); i++) {
-            ImageFilter a = preset.mFilters.elementAt(i);
+            FilterRepresentation a = preset.mFilters.elementAt(i);
             if (i < mFilters.size()) {
-                ImageFilter b = mFilters.elementAt(i);
+                FilterRepresentation b = mFilters.elementAt(i);
                 if (!a.same(b)) {
                     return i;
                 }
-                if (a.getParameter() != b.getParameter()) {
+                if (!a.equals(b)) {
                     return i;
                 }
             } else {
@@ -279,15 +271,25 @@ public class ImagePreset {
         return mHistoryName;
     }
 
-    public void add(ImageFilter filter) {
+    public void showFilters() {
+        Log.v(LOGTAG, "\\\\\\ showFilters -- " + mFilters.size() + " filters");
+        int n = 0;
+        for (FilterRepresentation representation : mFilters) {
+            Log.v(LOGTAG, " filter " + n + " : " + representation.toString());
+            n++;
+        }
+        Log.v(LOGTAG, "/// showFilters -- " + mFilters.size() + " filters");
+    }
 
-        if (filter.getFilterType() == ImageFilter.TYPE_BORDER) {
-            setHistoryName(filter.getName());
-            setBorder(filter);
-        } else if (filter.getFilterType() == ImageFilter.TYPE_FX) {
+    public void addFilter(FilterRepresentation representation) {
+        Log.v(LOGTAG, "*** Add Filter *** " + representation);
+        if (representation.getPriority() == ImageFilter.TYPE_BORDER) {
+            setHistoryName(representation.getName());
+            setBorder(representation);
+        } else if (representation.getPriority() == ImageFilter.TYPE_FX) {
             boolean found = false;
             for (int i = 0; i < mFilters.size(); i++) {
-                byte type = mFilters.get(i).getFilterType();
+                int type = mFilters.elementAt(i).getPriority();
                 if (found) {
                     if (type != ImageFilter.TYPE_VIGNETTE) {
                         mFilters.remove(i);
@@ -296,38 +298,30 @@ public class ImagePreset {
                 }
                 if (type == ImageFilter.TYPE_FX) {
                     mFilters.remove(i);
-                    mFilters.add(i, filter);
-                    setHistoryName(filter.getName());
+                    mFilters.add(i, representation);
+                    setHistoryName(representation.getName());
                     found = true;
                 }
             }
             if (!found) {
-                mFilters.add(filter);
-                setHistoryName(filter.getName());
+                mFilters.add(representation);
+                setHistoryName(representation.getName());
             }
         } else {
-            mFilters.add(filter);
-            setHistoryName(filter.getName());
+            mFilters.add(representation);
+            setHistoryName(representation.getName());
         }
-        filter.setImagePreset(this);
+        representation.setImagePreset(this);
     }
 
-    public void remove(String filterName) {
-        ImageFilter filter = getFilter(filterName);
-        if (filter != null) {
-            mFilters.remove(filter);
-        }
+    public void add(ImageFilter filter) {
     }
 
-    public int getCount() {
-        return mFilters.size();
-    }
-
-    public ImageFilter getFilter(String name) {
+    public FilterRepresentation getRepresentation(FilterRepresentation filterRepresentation) {
         for (int i = 0; i < mFilters.size(); i++) {
-            ImageFilter filter = mFilters.elementAt(i);
-            if (filter.getName().equalsIgnoreCase(name)) {
-                return filter;
+            FilterRepresentation representation = mFilters.elementAt(i);
+            if (representation.getFilterClass() == filterRepresentation.getFilterClass()) {
+                return representation;
             }
         }
         return null;
@@ -335,10 +329,6 @@ public class ImagePreset {
 
     public void setup() {
         // do nothing here
-    }
-
-    public void setEndpoint(ImageShow image) {
-        mEndPoint = image;
     }
 
     public Bitmap apply(Bitmap original) {
@@ -355,7 +345,8 @@ public class ImagePreset {
 
     public Bitmap applyBorder(Bitmap bitmap) {
         if (mImageBorder != null && mDoApplyGeometry) {
-            bitmap = mImageBorder.apply(bitmap, mScaleFactor, mIsHighQuality);
+            ImageFilter filter = FiltersManager.getManager().getFilterForRepresentation(mImageBorder);
+            bitmap = filter.apply(bitmap, mScaleFactor, mIsHighQuality);
         }
         return bitmap;
     }
@@ -370,7 +361,9 @@ public class ImagePreset {
                 to = mFilters.size();
             }
             for (int i = from; i < to; i++) {
-                ImageFilter filter = mFilters.elementAt(i);
+                FilterRepresentation representation = mFilters.elementAt(i);
+                ImageFilter filter = FiltersManager.getManager().getFilterForRepresentation(representation);
+                filter.useRepresentation(representation);
                 bitmap = filter.apply(bitmap, mScaleFactor, mIsHighQuality);
             }
         }
@@ -383,7 +376,8 @@ public class ImagePreset {
             return;
         }
         imageStateAdapter.clear();
-        imageStateAdapter.addAll(mFilters);
+        // TODO: re-enable the state panel
+        // imageStateAdapter.addAll(mFilters);
         imageStateAdapter.notifyDataSetChanged();
     }
 
