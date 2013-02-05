@@ -37,7 +37,6 @@ import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.picasasource.PicasaSource;
-import com.android.gallery3d.provider.CanvasProvider;
 import com.android.gallery3d.util.GalleryUtils;
 
 public final class Gallery extends AbstractGalleryActivity implements OnCancelListener {
@@ -101,10 +100,6 @@ public final class Gallery extends AbstractGalleryActivity implements OnCancelLi
     }
 
     public void startDefaultPage() {
-        if (CanvasProvider.startBrowseActivity(this)) {
-            finish();
-            return;
-        }
         PicasaSource.showSignInReminder(this);
         Bundle data = new Bundle();
         data.putString(AlbumSetPage.KEY_MEDIA_PATH,

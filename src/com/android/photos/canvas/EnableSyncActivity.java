@@ -1,4 +1,4 @@
-package com.google.android.canvas.provider;
+package com.android.photos.canvas;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -6,8 +6,6 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.os.Bundle;
 
-import com.android.gallery3d.provider.CanvasProvider;
-import com.android.gallery3d.provider.CanvasProviderBase;
 
 
 public class EnableSyncActivity extends Activity {
