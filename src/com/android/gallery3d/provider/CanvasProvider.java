@@ -31,6 +31,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.ParcelFileDescriptor;
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.android.gallery3d.R;
@@ -52,6 +53,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CanvasProvider extends CanvasProviderBase {
@@ -65,10 +67,18 @@ public class CanvasProvider extends CanvasProviderBase {
     private DataManager mDataManager;
     private MediaSet mRootSet;
 
-    private final static SyncListener sNullSyncListener = new SyncListener() {
+    private static final long SYNC_IN_PROGRESS = -1;
+    private HashMap<MediaSet, Long> mSyncedSets = new HashMap<MediaSet, Long>();
+
+    private final SyncListener mSyncListener = new SyncListener() {
 
         @Override
         public void onSyncDone(MediaSet mediaSet, int resultCode) {
+            if (resultCode != MediaSet.SYNC_RESULT_SUCCESS) {
+                mSyncedSets.put(mediaSet, (long) 0);
+            } else {
+                mSyncedSets.put(mediaSet, SystemClock.uptimeMillis());
+            }
         }
     };
 
@@ -97,12 +107,26 @@ public class CanvasProvider extends CanvasProviderBase {
         return mRootSet;
     }
 
+    private boolean shouldRequestSync(MediaSet set) {
+        if (!mSyncedSets.containsKey(set)) {
+            return true;
+        }
+        long lastSynced = mSyncedSets.get(set);
+        if (lastSynced == SYNC_IN_PROGRESS) {
+            return true;
+        }
+        return (SystemClock.uptimeMillis() - lastSynced) > CACHE_TIME_MS;
+    }
+
     private void loadMediaSet(MediaSet set) {
         try {
-            Future<Integer> future = set.requestSync(sNullSyncListener);
-            synchronized (future) {
-                if (!future.isDone()) {
-                    future.wait(100);
+            if (shouldRequestSync(set)) {
+                mSyncedSets.put(set, SYNC_IN_PROGRESS);
+                Future<Integer> future = set.requestSync(mSyncListener);
+                synchronized (future) {
+                    if (!future.isDone()) {
+                        future.wait(500);
+                    }
                 }
             }
         } catch (InterruptedException e) {
@@ -119,7 +143,6 @@ public class CanvasProvider extends CanvasProviderBase {
         for (int i = 0; i < count && clusters.size() < MAX_CLUSTER_SIZE; i++) {
             MediaSet set = root.getSubMediaSet(i);
             loadMediaSet(set);
-            Log.d(TAG, "Building set: " + set.getName());
             Cluster.Builder bob = new Cluster.Builder();
             bob.id(i);
             bob.displayName(set.getName());
@@ -130,14 +153,9 @@ public class CanvasProvider extends CanvasProviderBase {
             int itemCount = Math.min(set.getMediaItemCount(),
                     MAX_CLUSTER_ITEM_SIZE);
             List<MediaItem> items = set.getMediaItem(0, itemCount);
-            if (itemCount != items.size()) {
-                Log.d(TAG, "Size mismatch, expected " + itemCount + ", got "
-                        + items.size());
-            }
             // This is done because not all items may have been synced yet
             itemCount = items.size();
             if (itemCount <= 0) {
-                Log.d(TAG, "Skipping, no items...");
                 continue;
             }
             bob.visibleCount(itemCount);

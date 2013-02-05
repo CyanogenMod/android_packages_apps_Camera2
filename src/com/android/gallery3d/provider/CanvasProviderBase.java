@@ -223,7 +223,7 @@ public abstract class CanvasProviderBase extends ContentProvider {
     protected static final int MAX_CLUSTER_SIZE = 3;
     // The max amount of items we'll return for a cluster
     protected static final int MAX_CLUSTER_ITEM_SIZE = 10;
-    protected static final Integer CACHE_TIME_MS = 1 * 1000;
+    protected static final Integer CACHE_TIME_MS = 15 * 60 * 1000;
 
     private ArrayList<Cluster> mClusters = new ArrayList<Cluster>(
             MAX_CLUSTER_SIZE);
