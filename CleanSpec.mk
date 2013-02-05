@@ -47,6 +47,7 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/Camera*)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Camera*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/Gallery*)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Gallery*)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Gallery*)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
