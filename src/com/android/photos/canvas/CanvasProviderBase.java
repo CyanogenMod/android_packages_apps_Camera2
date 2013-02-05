@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.provider;
+package com.android.photos.canvas;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -50,14 +50,15 @@ public abstract class CanvasProviderBase extends ContentProvider {
     protected static final String PATH_BROWSE_HEADERS = PATH_BROWSE + "/"
             + CanvasContract.PATH_BROWSE_HEADERS;
 
+    public static final Uri BROWSER_ROOT_URI = Uri.parse("content://"
+            + AUTHORITY + "/" + PATH_BROWSE);
+
     protected static final int LAUNCHER = 1;
     protected static final int LAUNCHER_ITEMS = 2;
     protected static final int LAUNCHER_ITEM_ID = 3;
     protected static final int BROWSE_HEADERS = 4;
     protected static final int BROWSE = 5;
     protected static final int IMAGE = 6;
-    protected static final Uri BROWSER_ROOT_URI = Uri.parse("content://"
-            + AUTHORITY + "/" + PATH_BROWSE);
     protected static final UriMatcher sUriMatcher = new UriMatcher(
             UriMatcher.NO_MATCH);
 

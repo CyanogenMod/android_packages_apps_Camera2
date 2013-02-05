@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.provider;
+package com.android.photos.canvas;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
-import android.content.res.Configuration;
 import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -47,7 +44,6 @@ import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.google.android.canvas.data.Cluster;
 import com.google.android.canvas.provider.CanvasContract;
-import com.google.android.canvas.provider.EnableSyncActivity;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -334,6 +330,7 @@ public class CanvasProvider extends CanvasProviderBase {
 
     @Override
     protected void buildBrowseRow(String[] projection, MatrixCursor c, Uri uri) {
+        // TODO: Switch to item_uri scheme b/8018482
         int row = Integer.parseInt(uri.getLastPathSegment());
         MediaSet album = loadRootMediaSet().getSubMediaSet(row);
         loadMediaSet(album);
@@ -381,20 +378,4 @@ public class CanvasProvider extends CanvasProviderBase {
             c.addRow(header);
         }
     }
-
-    // TODO: Remove once b/8079561 is resolved
-    public static boolean startBrowseActivity(Activity activity) {
-        Configuration config = activity.getResources().getConfiguration();
-        if (config.touchscreen == Configuration.TOUCHSCREEN_NOTOUCH) {
-            try {
-                Intent intent = CanvasContract.getBrowseIntent(
-                        BROWSER_ROOT_URI, 0);
-                activity.startActivity(intent);
-                return true;
-            } catch (ActivityNotFoundException ex) {
-            }
-        }
-        return false;
-    }
-
 }
