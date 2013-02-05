@@ -5,15 +5,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
-import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 
+import com.android.gallery3d.filtershow.editors.EditorDraw;
+import com.android.gallery3d.filtershow.filters.FilterDrawRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilterDraw;
-import com.android.gallery3d.filtershow.filters.RedEyeCandidate;
 
 public class ImageDraw extends ImageShow {
 
@@ -21,20 +19,36 @@ public class ImageDraw extends ImageShow {
     private int mCurrentColor = Color.RED;
     final static float INITAL_STROKE_RADIUS = 40;
     private float mCurrentSize = INITAL_STROKE_RADIUS;
+    private byte mType = 0;
+    private FilterDrawRepresentation mFRep;
+    private EditorDraw mEditorDraw;
 
     public ImageDraw(Context context, AttributeSet attrs) {
         super(context, attrs);
+        resetParameter();
     }
 
     public ImageDraw(Context context) {
         super(context);
+        resetParameter();
+    }
+
+    public void setEditor(EditorDraw editorDraw) {
+        mEditorDraw = editorDraw;
+    }
+    public void setFilterDrawRepresentation(FilterDrawRepresentation fr) {
+        mFRep = fr;
+    }
+
+    public Drawable getIcon(Context context) {
+
+        return null;
     }
 
     @Override
     public void resetParameter() {
-        ImageFilterDraw filter = (ImageFilterDraw) getCurrentFilter();
-        if (filter != null) {
-            filter.clear();
+        if (mFRep != null) {
+            mFRep.clear();
         }
     }
 
@@ -46,9 +60,12 @@ public class ImageDraw extends ImageShow {
         mCurrentSize = size;
     }
 
-    public void setStyle(char style) {
-        ImageFilterDraw filter = (ImageFilterDraw) getCurrentFilter();
-        filter.setStyle(style);
+    public void setStyle(byte style) {
+        mType = (byte) (style % ImageFilterDraw.NUMBER_OF_STYLES);
+    }
+
+    public int getStyle() {
+        return mType;
     }
 
     public int getSize() {
@@ -75,7 +92,7 @@ public class ImageDraw extends ImageShow {
             mTmpPoint[0] = event.getX();
             mTmpPoint[1] = event.getY();
             mToOrig.mapPoints(mTmpPoint);
-            filter.startSection(mCurrentColor, mCurrentSize, mTmpPoint[0], mTmpPoint[1]);
+            mFRep.startNewSection(mType, mCurrentColor, mCurrentSize, mTmpPoint[0], mTmpPoint[1]);
 
         }
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -87,7 +104,7 @@ public class ImageDraw extends ImageShow {
                     mTmpPoint[0] = event.getHistoricalX(p, h);
                     mTmpPoint[1] = event.getHistoricalY(p, h);
                     mToOrig.mapPoints(mTmpPoint);
-                    filter.addPoint(mTmpPoint[0], mTmpPoint[1]);
+                    mFRep.addPoint(mTmpPoint[0], mTmpPoint[1]);
                 }
             }
         }
@@ -95,10 +112,11 @@ public class ImageDraw extends ImageShow {
             mTmpPoint[0] = event.getX();
             mTmpPoint[1] = event.getY();
             mToOrig.mapPoints(mTmpPoint);
-            filter.endSection(mTmpPoint[0], mTmpPoint[1]);
+            mFRep.endSection(mTmpPoint[0], mTmpPoint[1]);
             this.resetImageCaches(this);
 
         }
+        mEditorDraw.commitLocalRepresentation();
         invalidate();
         return true;
     }
@@ -122,11 +140,8 @@ public class ImageDraw extends ImageShow {
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        ImageFilterDraw filter = (ImageFilterDraw) getCurrentFilter();
-        if (filter != null) {
-            calcScreenMapping();
-            filter.draw(canvas, mRotateToScreen);
-        }
+        calcScreenMapping();
+
     }
 
 }
