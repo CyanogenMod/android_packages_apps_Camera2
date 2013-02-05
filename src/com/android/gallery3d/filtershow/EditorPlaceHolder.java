@@ -66,6 +66,10 @@ public class EditorPlaceHolder {
         mOldViews = views;
     }
 
+    public void hide() {
+        mContainer.setVisibility(View.GONE);
+    }
+
     public void hideOldViews() {
         for (View view : mOldViews) {
             view.setVisibility(View.GONE);
