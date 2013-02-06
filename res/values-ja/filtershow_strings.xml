@@ -55,7 +55,7 @@
     <string name="contrast" msgid="2310908487756769019">"コントラスト"</string>
     <string name="vibrance" msgid="3326744578577835915">"自然な彩度"</string>
     <string name="saturation" msgid="7026791551032438585">"彩度"</string>
-    <string name="bwfilter" msgid="8927492494576933793">"モノクロフィルタ"</string>
+    <string name="bwfilter" msgid="8927492494576933793">"モノクロ"</string>
     <string name="wbalance" msgid="6346581563387083613">"自動色補正"</string>
     <string name="hue" msgid="6231252147971086030">"色彩"</string>
     <string name="shadow_recovery" msgid="3928572915300287152">"影"</string>
