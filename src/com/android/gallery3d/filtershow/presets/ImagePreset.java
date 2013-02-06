@@ -27,14 +27,15 @@ import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 public class ImagePreset {
 
     private static final String LOGTAG = "ImagePreset";
 
-    private ImageShow mEndPoint = null;
     private FilterRepresentation mImageBorder = null;
     private float mScaleFactor = 1.0f;
     private boolean mIsHighQuality = false;
@@ -50,10 +51,6 @@ public class ImagePreset {
     private boolean mDoApplyFilters = true;
 
     public final GeometryMetadata mGeoData = new GeometryMetadata();
-
-    enum FullRotate {
-        ZERO, NINETY, HUNDRED_EIGHTY, TWO_HUNDRED_SEVENTY
-    }
 
     public ImagePreset() {
         setup();
@@ -92,6 +89,52 @@ public class ImagePreset {
         mGeoData.set(source.mGeoData);
     }
 
+    public FilterRepresentation getFilterRepresentation(int position) {
+        FilterRepresentation representation = null;
+        try {
+            representation = mFilters.elementAt(position).clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return representation;
+    }
+
+    public int getPositionForRepresentation(FilterRepresentation representation) {
+        for (int i = 0; i < mFilters.size(); i++) {
+            if (mFilters.elementAt(i).getFilterClass() == representation.getFilterClass()) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public FilterRepresentation getFilterRepresentationCopyFrom(FilterRepresentation filterRepresentation) {
+        // TODO: add concept of position in the filters (to allow multiple instances)
+        if (filterRepresentation == null) {
+            return null;
+        }
+        int position = getPositionForRepresentation(filterRepresentation);
+        if (position == -1) {
+            return null;
+        }
+        FilterRepresentation representation = null;
+        try {
+            representation = mFilters.elementAt(position).clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return representation;
+    }
+
+    public void updateFilterRepresentation(FilterRepresentation representation) {
+        synchronized (mFilters) {
+            int position = getPositionForRepresentation(representation);
+            FilterRepresentation old = mFilters.elementAt(position);
+            old.useParametersFrom(representation);
+        }
+        MasterImage.getImage().invalidatePreview();
+    }
+
     public void setDoApplyGeometry(boolean value) {
         mDoApplyGeometry = value;
     }
@@ -104,7 +147,7 @@ public class ImagePreset {
         return mDoApplyFilters;
     }
 
-    public GeometryMetadata getGeometry() {
+    public synchronized GeometryMetadata getGeometry() {
         return mGeoData;
     }
 
@@ -144,7 +187,7 @@ public class ImagePreset {
         return true;
     }
 
-    public void setGeometry(GeometryMetadata m) {
+    public synchronized void setGeometry(GeometryMetadata m) {
         mGeoData.set(m);
     }
 
@@ -314,9 +357,6 @@ public class ImagePreset {
         representation.setImagePreset(this);
     }
 
-    public void add(ImageFilter filter) {
-    }
-
     public FilterRepresentation getRepresentation(FilterRepresentation filterRepresentation) {
         for (int i = 0; i < mFilters.size(); i++) {
             FilterRepresentation representation = mFilters.elementAt(i);
@@ -361,7 +401,10 @@ public class ImagePreset {
                 to = mFilters.size();
             }
             for (int i = from; i < to; i++) {
-                FilterRepresentation representation = mFilters.elementAt(i);
+                FilterRepresentation representation = null;
+                synchronized (mFilters) {
+                    representation = mFilters.elementAt(i);
+                }
                 ImageFilter filter = FiltersManager.getManager().getFilterForRepresentation(representation);
                 filter.useRepresentation(representation);
                 bitmap = filter.apply(bitmap, mScaleFactor, mIsHighQuality);
