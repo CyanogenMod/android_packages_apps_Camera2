@@ -22,21 +22,15 @@ import android.os.Process;
 import android.support.v8.renderscript.*;
 import android.util.Log;
 
-import com.android.gallery3d.filtershow.filters.FilterRepresentation;
-import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
-import com.android.gallery3d.filtershow.filters.ImageFilterVignette;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
-
-import java.util.HashMap;
 
 public class FilteringPipeline implements Handler.Callback {
 
     private final static FilteringPipeline gPipeline = new FilteringPipeline();
     private static final String LOGTAG = "FilteringPipeline";
-    private ImagePreset mPreviousPreset = null;
     private ImagePreset mPreviousGeometryPreset = null;
     private ImagePreset mPreviousFiltersPreset = null;
     private GeometryMetadata mPreviousGeometry = null;
@@ -141,8 +135,10 @@ public class FilteringPipeline implements Handler.Callback {
         Log.v(LOGTAG,"setOriginal, size " + bitmap.getWidth() + " x " + bitmap.getHeight());
         updateOriginalAllocation(MasterImage.getImage().getPreset());
         updatePreviewBuffer();
+        /*
         updateFiltersOnlyPreviewBuffer();
         updateGeometryOnlyPreviewBuffer();
+        */
     }
 
     public synchronized boolean updateOriginalAllocation(ImagePreset preset) {
@@ -182,16 +178,17 @@ public class FilteringPipeline implements Handler.Callback {
         if (mOriginalAllocation == null) {
             return;
         }
+        if (mProcessingHandler.hasMessages(COMPUTE_PRESET)) {
+            return;
+        }
         if (!needsRepaint()) {
             return;
         }
-        if (mProcessingHandler.hasMessages(COMPUTE_PRESET)) {
-            mProcessingHandler.removeMessages(COMPUTE_PRESET);
+        if (MasterImage.getImage().getPreset() == null) {
+            return;
         }
         Message msg = mProcessingHandler.obtainMessage(COMPUTE_PRESET);
-        ImagePreset preset = new ImagePreset(MasterImage.getImage().getPreset());
-        setPresetParameters(preset);
-        msg.obj = preset;
+        msg.obj = MasterImage.getImage().getPreset();
         mProcessingHandler.sendMessage(msg);
     }
 
@@ -286,7 +283,6 @@ public class FilteringPipeline implements Handler.Callback {
                     + ") took " + time + " ms, " + time2 + " ms for the filter, on thread " + thread);
         }
         if (type == COMPUTE_PRESET) {
-            mPreviousPreset = preset;
             if (mResizeFactor > 0.6 && time > MAX_PROCESS_TIME && (System.currentTimeMillis() + 1000 > mResizeTime)) {
                 mResizeTime = System.currentTimeMillis();
                 mResizeFactor *= RESIZE_FACTOR;
@@ -299,14 +295,8 @@ public class FilteringPipeline implements Handler.Callback {
     }
 
     private synchronized boolean needsRepaint() {
-        ImagePreset preset = MasterImage.getImage().getPreset();
-        if (preset == null || mPreviousPreset == null) {
-            return true;
-        }
-        if (preset.equals(mPreviousPreset)) {
-            return false;
-        }
-        return true;
+        TripleBufferBitmap buffer = MasterImage.getImage().getDoubleBuffer();
+        return buffer.checkRepaintNeeded();
     }
 
     private synchronized boolean needsGeometryRepaint() {

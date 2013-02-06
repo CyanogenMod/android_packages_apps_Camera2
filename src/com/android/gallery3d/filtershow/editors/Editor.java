@@ -25,7 +25,10 @@ import android.widget.LinearLayout;
 
 import com.android.gallery3d.filtershow.PanelController;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
+import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 /**
  * Base class for Editors Must contain a mImageShow and a top level view
@@ -38,6 +41,7 @@ public class Editor {
     protected PanelController mPanelController;
     protected int mID;
     private final String LOGTAG = "Editor";
+    protected FilterRepresentation mLocalRepresentation = null;
 
     public void setPanelController(PanelController panelController) {
         this.mPanelController = panelController;
@@ -53,6 +57,7 @@ public class Editor {
     public void createEditor(Context context,FrameLayout frameLayout) {
         mContext = context;
         mFrameLayout = frameLayout;
+        mLocalRepresentation = null;
     }
 
     protected void unpack(int viewid, int layoutid) {
@@ -105,10 +110,25 @@ public class Editor {
         mView.setVisibility(visible);
     }
 
+    public FilterRepresentation getLocalRepresentation() {
+        if (mLocalRepresentation == null) {
+            ImagePreset preset = MasterImage.getImage().getPreset();
+            FilterRepresentation filterRepresentation = MasterImage.getImage().getCurrentFilterRepresentation();
+            mLocalRepresentation = preset.getFilterRepresentationCopyFrom(filterRepresentation);
+        }
+        return mLocalRepresentation;
+    }
+
+    public void commitLocalRepresentation() {
+        ImagePreset preset = MasterImage.getImage().getPreset();
+        preset.updateFilterRepresentation(getLocalRepresentation());
+    }
+
     /**
      * called after the filter is set and the select is called
      */
     public void reflectCurrentFilter() {
+        mLocalRepresentation = null;
     }
 
     public boolean useUtilityPanel() {

@@ -30,6 +30,7 @@ public class TripleBufferBitmap {
     private boolean mNeedsSwap = false;
 
     private final Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
+    private boolean mNeedsRepaint = true;
 
     public TripleBufferBitmap() {
 
@@ -68,4 +69,17 @@ public class TripleBufferBitmap {
         mConsumer = intermediate;
         mNeedsSwap = false;
     }
+
+    public synchronized void invalidate() {
+        mNeedsRepaint = true;
+    }
+
+    public synchronized boolean checkRepaintNeeded() {
+        if (mNeedsRepaint) {
+            mNeedsRepaint = false;
+            return true;
+        }
+        return false;
+    }
+
 }
