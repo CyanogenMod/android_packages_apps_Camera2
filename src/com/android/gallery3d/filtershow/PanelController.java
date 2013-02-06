@@ -406,6 +406,7 @@ public class PanelController implements OnClickListener {
         return mMasterImage.getPreset();
     }
 
+    /**
     public ImageFilter setImagePreset(ImageFilter filter, String name) {
         ImagePreset copy = new ImagePreset(getImagePreset());
         copy.add(filter);
@@ -414,6 +415,7 @@ public class PanelController implements OnClickListener {
         mMasterImage.setPreset(copy, true);
         return filter;
     }
+     */
 
     // TODO: remove this.
     public void ensureFilter(String name) {

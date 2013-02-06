@@ -20,12 +20,12 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.*;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
+import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 /**
  * The basic editor that all the one parameter filters
@@ -47,8 +47,8 @@ public class BasicEditor extends Editor implements OnSeekBarChangeListener {
 
     protected BasicEditor(int id, int layoutID, int viewID) {
         super(id);
-        int mLayoutID = layoutID;
-        int mViewID = viewID;
+        mLayoutID = layoutID;
+        mViewID = viewID;
     }
 
     @Override
@@ -61,9 +61,9 @@ public class BasicEditor extends Editor implements OnSeekBarChangeListener {
 
     @Override
     public void reflectCurrentFilter() {
-        FilterRepresentation filterRepresentation = MasterImage.getImage().getCurrentFilterRepresentation();
-        if (filterRepresentation != null && filterRepresentation instanceof FilterBasicRepresentation) {
-            FilterBasicRepresentation interval = (FilterBasicRepresentation) filterRepresentation;
+        super.reflectCurrentFilter();
+        if (getLocalRepresentation() != null && getLocalRepresentation() instanceof FilterBasicRepresentation) {
+            FilterBasicRepresentation interval = (FilterBasicRepresentation) getLocalRepresentation();
             boolean f = interval.showParameterValue();
             mSeekBar.setVisibility((f) ? View.VISIBLE : View.INVISIBLE);
             int value = interval.getValue();
@@ -76,9 +76,8 @@ public class BasicEditor extends Editor implements OnSeekBarChangeListener {
 
     @Override
     public void onProgressChanged(SeekBar sbar, int progress, boolean arg2) {
-        FilterRepresentation filterRepresentation = MasterImage.getImage().getCurrentFilterRepresentation();
-        if (filterRepresentation != null && filterRepresentation instanceof FilterBasicRepresentation) {
-            FilterBasicRepresentation interval = (FilterBasicRepresentation) filterRepresentation;
+        if (getLocalRepresentation() != null && getLocalRepresentation() instanceof FilterBasicRepresentation) {
+            FilterBasicRepresentation interval = (FilterBasicRepresentation) getLocalRepresentation();
             int value = progress + interval.getMinimum();
             interval.setValue(value);
             mImageShow.onNewValue(value);
@@ -86,9 +85,7 @@ public class BasicEditor extends Editor implements OnSeekBarChangeListener {
             if (interval.showParameterValue()) {
                 mPanelController.onNewValue(value);
             }
-
-            Log.v(LOGTAG, "    #### progress=" + value);
-            MasterImage.getImage().updateBuffers();
+            commitLocalRepresentation();
         }
     }
 
