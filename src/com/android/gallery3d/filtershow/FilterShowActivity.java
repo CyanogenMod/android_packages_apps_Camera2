@@ -58,6 +58,7 @@ import android.widget.Toast;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.data.LocalAlbum;
+import com.android.gallery3d.filtershow.cache.FilteringPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.editors.BasicEditor;
 import com.android.gallery3d.filtershow.editors.EditorDraw;
@@ -467,6 +468,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             if (!result) {
                 cannotLoadImage();
             }
+
+            Bitmap largeBitmap = mImageLoader.getOriginalBitmapLarge();
+            FilteringPipeline pipeline = FilteringPipeline.getPipeline();
+            pipeline.setOriginal(largeBitmap);
+            float previewScale = (float) largeBitmap.getWidth() / (float) mImageLoader.getOriginalBounds().width();
+            pipeline.setPreviewScaleFactor(previewScale);
 
             Bitmap bmap = mImageLoader.getOriginalBitmapSmall();
             if (bmap != null && bmap.getWidth() > 0 && bmap.getHeight() > 0) {

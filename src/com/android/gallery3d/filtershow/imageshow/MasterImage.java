@@ -187,6 +187,7 @@ public class MasterImage {
             if (mGeometryOnlyPreset == null
                     || !newPreset.same(mGeometryOnlyPreset)) {
                 mGeometryOnlyPreset = newPreset;
+                mGeometryOnlyPreview.invalidate();
             }
         }
         if (force || mFiltersOnlyPreset == null) {
@@ -195,16 +196,10 @@ public class MasterImage {
             if (mFiltersOnlyPreset == null
                     || !newPreset.same(mFiltersOnlyPreset)) {
                 mFiltersOnlyPreset = newPreset;
+                mFilteredPreview.invalidate();
             }
         }
         mActivity.enableSave(hasModifications());
-        updateBuffers();
-    }
-
-    public void updateBuffers() {
-        FilteringPipeline.getPipeline().updatePreviewBuffer();
-        FilteringPipeline.getPipeline().updateGeometryOnlyPreviewBuffer();
-        FilteringPipeline.getPipeline().updateFiltersOnlyPreviewBuffer();
     }
 
     public FilterRepresentation getCurrentFilterRepresentation() {
@@ -213,5 +208,10 @@ public class MasterImage {
 
     public void setCurrentFilterRepresentation(FilterRepresentation currentFilterRepresentation) {
         mCurrentFilterRepresentation = currentFilterRepresentation;
+    }
+
+    public void invalidatePreview() {
+        mFilteredPreview.invalidate();
+        FilteringPipeline.getPipeline().updatePreviewBuffer();
     }
 }

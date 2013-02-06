@@ -45,8 +45,7 @@ public class ImageFilterRS extends ImageFilter {
                 mOutPixelsAllocation.destroy();
             }
             Bitmap bitmapBuffer = bitmap.copy(mBitmapConfig, true);
-            mOutPixelsAllocation = Allocation.createFromBitmap(mRS, bitmapBuffer,
-                    Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+            mOutPixelsAllocation = Allocation.createFromBitmap(mRS, bitmapBuffer);
             mInPixelsAllocation = Allocation.createTyped(mRS,
                     mOutPixelsAllocation.getType());
             sOldBitmap = bitmap;
