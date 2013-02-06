@@ -274,10 +274,6 @@ public abstract class CommonControllerOverlay extends FrameLayout implements
         mBackground.layout(0, y - mTimeBar.getBarHeight(), w, y);
         mTimeBar.layout(pl, y - mTimeBar.getPreferredHeight(), w - pr, y);
 
-        // Needed, otherwise the framework will not re-layout in case only the
-        // padding is changed
-        mTimeBar.requestLayout();
-
         // Put the play/pause/next/ previous button in the center of the screen
         layoutCenteredView(mPlayPauseReplayView, 0, 0, w, h);
 
