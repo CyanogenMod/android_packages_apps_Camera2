@@ -23,16 +23,14 @@ import com.android.gallery3d.app.Log;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.ImageStateAdapter;
-import com.android.gallery3d.filtershow.cache.TripleBufferBitmap;
-import com.android.gallery3d.filtershow.cache.FilteringPipeline;
-import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.cache.*;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 import java.util.Vector;
 
-public class MasterImage {
+public class MasterImage implements RenderingRequestCaller {
 
     private static final String LOGTAG = "MasterImage";
 
@@ -44,8 +42,9 @@ public class MasterImage {
     private ImagePreset mFiltersOnlyPreset = null;
 
     private TripleBufferBitmap mFilteredPreview = new TripleBufferBitmap();
-    private TripleBufferBitmap mGeometryOnlyPreview = new TripleBufferBitmap();
-    private TripleBufferBitmap mFiltersOnlyPreview = new TripleBufferBitmap();
+
+    private Bitmap mGeometryOnlyBitmap = null;
+    private Bitmap mFiltersOnlyBitmap = null;
 
     private ImageLoader mLoader = null;
     private HistoryAdapter mHistory = null;
@@ -154,24 +153,16 @@ public class MasterImage {
         return mFilteredPreview;
     }
 
-    public TripleBufferBitmap getGeometryOnlyBuffer() {
-        return mGeometryOnlyPreview;
-    }
-
-    public TripleBufferBitmap getFiltersOnlyBuffer() {
-        return mFiltersOnlyPreview;
-    }
-
     public Bitmap getFilteredImage() {
         return mFilteredPreview.getConsumer();
     }
 
     public Bitmap getFiltersOnlyImage() {
-        return mFiltersOnlyPreview.getConsumer();
+        return mFiltersOnlyBitmap;
     }
 
     public Bitmap getGeometryOnlyImage() {
-        return mGeometryOnlyPreview.getConsumer();
+        return mGeometryOnlyBitmap;
     }
 
     public void notifyObservers() {
@@ -187,7 +178,8 @@ public class MasterImage {
             if (mGeometryOnlyPreset == null
                     || !newPreset.same(mGeometryOnlyPreset)) {
                 mGeometryOnlyPreset = newPreset;
-                mGeometryOnlyPreview.invalidate();
+                RenderingRequest.post(mLoader.getOriginalBitmapLarge(),
+                        mGeometryOnlyPreset, RenderingRequest.GEOMETRY_RENDERING, this);
             }
         }
         if (force || mFiltersOnlyPreset == null) {
@@ -196,9 +188,11 @@ public class MasterImage {
             if (mFiltersOnlyPreset == null
                     || !newPreset.same(mFiltersOnlyPreset)) {
                 mFiltersOnlyPreset = newPreset;
-                mFilteredPreview.invalidate();
+                RenderingRequest.post(mLoader.getOriginalBitmapLarge(),
+                        mFiltersOnlyPreset, RenderingRequest.FILTERS_RENDERING, this);
             }
         }
+        invalidatePreview();
         mActivity.enableSave(hasModifications());
     }
 
@@ -210,8 +204,26 @@ public class MasterImage {
         mCurrentFilterRepresentation = currentFilterRepresentation;
     }
 
+    public void invalidateFiltersOnly() {
+        mFiltersOnlyPreset = null;
+        updatePresets(false);
+    }
+
     public void invalidatePreview() {
         mFilteredPreview.invalidate();
         FilteringPipeline.getPipeline().updatePreviewBuffer();
+    }
+
+    @Override
+    public void available(RenderingRequest request) {
+        if (request.getBitmap() == null) {
+            return;
+        }
+        if (request.getType() == RenderingRequest.GEOMETRY_RENDERING) {
+            mGeometryOnlyBitmap = request.getBitmap();
+        }
+        if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
+            mFiltersOnlyBitmap = request.getBitmap();
+        }
     }
 }
