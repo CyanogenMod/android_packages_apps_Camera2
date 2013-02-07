@@ -561,6 +561,7 @@ public class PanelController implements OnClickListener {
                     }
                     showPanel(mCurrentPanel);
                 }
+                MasterImage.getImage().invalidateFiltersOnly();
                 break;
             }
         }
