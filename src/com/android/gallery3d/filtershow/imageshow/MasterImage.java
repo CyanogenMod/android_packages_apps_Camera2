@@ -134,6 +134,10 @@ public class MasterImage implements RenderingRequestCaller {
         mLoader = loader;
     }
 
+    public ImageLoader getImageLoader() {
+        return mLoader;
+    }
+
     public void setCurrentFilter(ImageFilter filter) {
         mCurrentFilter = filter;
     }

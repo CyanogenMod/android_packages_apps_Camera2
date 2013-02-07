@@ -110,6 +110,12 @@ public class Spline {
         return true;
     }
 
+    public void reset() {
+        mPoints.clear();
+        addPoint(0.0f, 1.0f);
+        addPoint(1.0f, 0.0f);
+    }
+
     private void drawHandles(Canvas canvas, Drawable indicator, float centerX, float centerY) {
         int left = (int) centerX - mCurveHandleSize / 2;
         int top = (int) centerY - mCurveHandleSize / 2;

@@ -35,6 +35,8 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.editors.EditorCurves;
+import com.android.gallery3d.filtershow.filters.FilterCurvesRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
@@ -58,6 +60,8 @@ public class ImageCurves extends ImageShow {
     Path gHistoPath = new Path();
 
     boolean mDoingTouchMove = false;
+    private EditorCurves mEditorCurves;
+    private FilterCurvesRepresentation mFilterCurvesRepresentation;
 
     public ImageCurves(Context context) {
         super(context);
@@ -285,9 +289,11 @@ public class ImageCurves extends ImageShow {
     }
 
     public synchronized void updateCachedImage() {
-        // update image
         if (getImagePreset() != null) {
             resetImageCaches(this);
+            if (mEditorCurves != null) {
+                mEditorCurves.commitLocalRepresentation();
+            }
             invalidate();
         }
     }
@@ -392,6 +398,15 @@ public class ImageCurves extends ImageShow {
                 break;
             }
         }
+        mEditorCurves.commitLocalRepresentation();
         invalidate();
+    }
+
+    public void setEditor(EditorCurves editorCurves) {
+        mEditorCurves = editorCurves;
+    }
+
+    public void setFilterDrawRepresentation(FilterCurvesRepresentation drawRep) {
+        mFilterCurvesRepresentation = drawRep;
     }
 }
