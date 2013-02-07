@@ -43,11 +43,9 @@ public class FilteringPipeline implements Handler.Callback {
 
     private HandlerThread mHandlerThread = null;
     private final static int NEW_PRESET = 0;
-    private final static int NEW_GEOMETRY_PRESET = 1;
-    private final static int NEW_FILTERS_PRESET = 2;
-    private final static int COMPUTE_PRESET = 3;
-    private final static int COMPUTE_GEOMETRY_PRESET = 4;
-    private final static int COMPUTE_FILTERS_PRESET = 5;
+    private final static int NEW_RENDERING_REQUEST = 1;
+    private final static int COMPUTE_PRESET = 2;
+    private final static int COMPUTE_RENDERING_REQUEST = 3;
 
     private Handler mProcessingHandler = null;
     private final Handler mUIHandler = new Handler() {
@@ -60,16 +58,9 @@ public class FilteringPipeline implements Handler.Callback {
                     MasterImage.getImage().notifyObservers();
                     break;
                 }
-                case NEW_GEOMETRY_PRESET: {
-                    TripleBufferBitmap buffer = MasterImage.getImage().getGeometryOnlyBuffer();
-                    buffer.swapConsumer();
-                    MasterImage.getImage().notifyObservers();
-                    break;
-                }
-                case NEW_FILTERS_PRESET: {
-                    TripleBufferBitmap buffer = MasterImage.getImage().getFiltersOnlyBuffer();
-                    buffer.swapConsumer();
-                    MasterImage.getImage().notifyObservers();
+                case NEW_RENDERING_REQUEST: {
+                    RenderingRequest request = (RenderingRequest) msg.obj;
+                    request.markAvailable();
                     break;
                 }
             }
@@ -88,21 +79,11 @@ public class FilteringPipeline implements Handler.Callback {
                 mUIHandler.sendMessage(uimsg);
                 break;
             }
-            case COMPUTE_GEOMETRY_PRESET: {
-                ImagePreset preset = (ImagePreset) msg.obj;
-                TripleBufferBitmap buffer = MasterImage.getImage().getGeometryOnlyBuffer();
-                compute(buffer, preset, COMPUTE_GEOMETRY_PRESET);
-                buffer.swapProducer();
-                Message uimsg = mUIHandler.obtainMessage(NEW_GEOMETRY_PRESET);
-                mUIHandler.sendMessage(uimsg);
-                break;
-            }
-            case COMPUTE_FILTERS_PRESET: {
-                ImagePreset preset = (ImagePreset) msg.obj;
-                TripleBufferBitmap buffer = MasterImage.getImage().getFiltersOnlyBuffer();
-                compute(buffer, preset, COMPUTE_FILTERS_PRESET);
-                buffer.swapProducer();
-                Message uimsg = mUIHandler.obtainMessage(NEW_FILTERS_PRESET);
+            case COMPUTE_RENDERING_REQUEST: {
+                RenderingRequest request = (RenderingRequest) msg.obj;
+                render(request);
+                Message uimsg = mUIHandler.obtainMessage(NEW_RENDERING_REQUEST);
+                uimsg.obj = request;
                 mUIHandler.sendMessage(uimsg);
                 break;
             }
@@ -115,7 +96,6 @@ public class FilteringPipeline implements Handler.Callback {
     private float mResizeFactor = 1.0f;
     private long mResizeTime = 0;
 
-    private Allocation mOriginalBitmapAllocation = null;
     private Allocation mOriginalAllocation = null;
     private Allocation mFiltersOnlyOriginalAllocation =  null;
 
@@ -135,10 +115,6 @@ public class FilteringPipeline implements Handler.Callback {
         Log.v(LOGTAG,"setOriginal, size " + bitmap.getWidth() + " x " + bitmap.getHeight());
         updateOriginalAllocation(MasterImage.getImage().getPreset());
         updatePreviewBuffer();
-        /*
-        updateFiltersOnlyPreviewBuffer();
-        updateGeometryOnlyPreviewBuffer();
-        */
     }
 
     public synchronized boolean updateOriginalAllocation(ImagePreset preset) {
@@ -174,6 +150,15 @@ public class FilteringPipeline implements Handler.Callback {
         return true;
     }
 
+    public void postRenderingRequest(RenderingRequest request) {
+        if (mOriginalAllocation == null) {
+            return;
+        }
+        Message msg = mProcessingHandler.obtainMessage(COMPUTE_RENDERING_REQUEST);
+        msg.obj = request;
+        mProcessingHandler.sendMessage(msg);
+    }
+
     public synchronized void updatePreviewBuffer() {
         if (mOriginalAllocation == null) {
             return;
@@ -192,47 +177,33 @@ public class FilteringPipeline implements Handler.Callback {
         mProcessingHandler.sendMessage(msg);
     }
 
-    public void updateGeometryOnlyPreviewBuffer() {
-        if (mOriginalAllocation == null) {
-            return;
-        }
-        if (!needsGeometryRepaint()) {
-            return;
-        }
-        if (mProcessingHandler.hasMessages(COMPUTE_GEOMETRY_PRESET)) {
-            mProcessingHandler.removeMessages(COMPUTE_GEOMETRY_PRESET);
-        }
-        Message msg = mProcessingHandler.obtainMessage(COMPUTE_GEOMETRY_PRESET);
-        ImagePreset preset = new ImagePreset(MasterImage.getImage().getGeometryPreset());
-        setPresetParameters(preset);
-        msg.obj = preset;
-        mProcessingHandler.sendMessage(msg);
-    }
-
-    public void updateFiltersOnlyPreviewBuffer() {
-        if (mOriginalAllocation == null) {
-            return;
-        }
-        if (!needsFiltersRepaint()) {
-            return;
-        }
-        if (mProcessingHandler.hasMessages(COMPUTE_FILTERS_PRESET)) {
-            mProcessingHandler.removeMessages(COMPUTE_FILTERS_PRESET);
-        }
-        Message msg = mProcessingHandler.obtainMessage(COMPUTE_FILTERS_PRESET);
-        ImagePreset preset = new ImagePreset(MasterImage.getImage().getFiltersOnlyPreset());
-        setPresetParameters(preset);
-
-        msg.obj = preset;
-        mProcessingHandler.sendMessage(msg);
-    }
-
     private void setPresetParameters(ImagePreset preset) {
         preset.setScaleFactor(mPreviewScaleFactor);
         if (mPreviewScaleFactor < 1.0f) {
             preset.setIsHighQuality(false);
         } else {
             preset.setIsHighQuality(true);
+        }
+    }
+
+    private void render(RenderingRequest request) {
+        if (request.getBitmap() == null
+                || request.getImagePreset() == null) {
+            return;
+        }
+        Bitmap bitmap = request.getBitmap();
+        ImagePreset preset = request.getImagePreset();
+        updateOriginalAllocation(preset);
+        if (request.getType() == RenderingRequest.FULL_RENDERING
+                || request.getType() == RenderingRequest.GEOMETRY_RENDERING) {
+            mOriginalAllocation.copyTo(bitmap);
+        } else {
+            mFiltersOnlyOriginalAllocation.copyTo(bitmap);
+        }
+        if (request.getType() == RenderingRequest.FULL_RENDERING
+                || request.getType() == RenderingRequest.FILTERS_RENDERING) {
+            Bitmap bmp = preset.apply(bitmap);
+            request.setBitmap(bmp);
         }
     }
 
@@ -250,30 +221,14 @@ public class FilteringPipeline implements Handler.Callback {
         Bitmap bitmap = buffer.getProducer();
         long time2 = System.currentTimeMillis();
 
-        if (type != COMPUTE_FILTERS_PRESET) {
-            if (bitmap == null || (bitmap.getWidth() != mResizedOriginalBitmap.getWidth())
-                    || (bitmap.getHeight() != mResizedOriginalBitmap.getHeight())) {
-                buffer.updateBitmaps(mResizedOriginalBitmap);
-                bitmap = buffer.getProducer();
-            }
-            mOriginalAllocation.copyTo(bitmap);
-        } else {
-            if (bitmap == null || (bitmap.getWidth() != mOriginalBitmap.getWidth())
-                    || (bitmap.getHeight() != mOriginalBitmap.getHeight())) {
-                buffer.updateBitmaps(mOriginalBitmap);
-                bitmap = buffer.getProducer();
-            }
-            mFiltersOnlyOriginalAllocation.copyTo(bitmap);
+        if (bitmap == null || (bitmap.getWidth() != mResizedOriginalBitmap.getWidth())
+                || (bitmap.getHeight() != mResizedOriginalBitmap.getHeight())) {
+            buffer.updateBitmaps(mResizedOriginalBitmap);
+            bitmap = buffer.getProducer();
         }
+        mOriginalAllocation.copyTo(bitmap);
 
-        if (mOriginalAllocation == null || bitmap == null) {
-            Log.v(LOGTAG, "exiting compute because mOriginalAllocation: " + mOriginalAllocation + " or bitmap: " + bitmap);
-            return;
-        }
-
-        if (type != COMPUTE_GEOMETRY_PRESET) {
-            bitmap = preset.apply(bitmap);
-        }
+        bitmap = preset.apply(bitmap);
 
         time = System.currentTimeMillis() - time;
         time2 = System.currentTimeMillis() - time2;
@@ -287,39 +242,12 @@ public class FilteringPipeline implements Handler.Callback {
                 mResizeTime = System.currentTimeMillis();
                 mResizeFactor *= RESIZE_FACTOR;
             }
-        } else if (type == COMPUTE_GEOMETRY_PRESET) {
-            mPreviousGeometryPreset = preset;
-        } else if (type == COMPUTE_FILTERS_PRESET) {
-            mPreviousFiltersPreset = preset;
         }
     }
 
     private synchronized boolean needsRepaint() {
         TripleBufferBitmap buffer = MasterImage.getImage().getDoubleBuffer();
         return buffer.checkRepaintNeeded();
-    }
-
-    private synchronized boolean needsGeometryRepaint() {
-        ImagePreset preset = MasterImage.getImage().getPreset();
-        if (preset == null || mPreviousGeometry == null || mPreviousGeometryPreset == null) {
-            return true;
-        }
-        GeometryMetadata geometry = preset.getGeometry();
-        if (geometry.equals(mPreviousGeometryPreset.getGeometry())) {
-            return false;
-        }
-        return true;
-    }
-
-    private synchronized boolean needsFiltersRepaint() {
-        ImagePreset preset = MasterImage.getImage().getPreset();
-        if (preset == null || mPreviousFiltersPreset == null) {
-            return true;
-        }
-        if (preset.equals(mPreviousFiltersPreset)) {
-            return false;
-        }
-        return true;
     }
 
     public void setPreviewScaleFactor(float previewScaleFactor) {
