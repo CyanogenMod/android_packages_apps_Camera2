@@ -32,12 +32,14 @@ public class ComboPreferences implements
         OnSharedPreferenceChangeListener {
     private SharedPreferences mPrefGlobal;  // global preferences
     private SharedPreferences mPrefLocal;  // per-camera preferences
-    private BackupManager mBackupManager;
+    private String mPackageName;
     private CopyOnWriteArrayList<OnSharedPreferenceChangeListener> mListeners;
+    // TODO: Remove this WeakHashMap in the camera code refactoring
     private static WeakHashMap<Context, ComboPreferences> sMap =
             new WeakHashMap<Context, ComboPreferences>();
 
     public ComboPreferences(Context context) {
+        mPackageName = context.getPackageName();
         mPrefGlobal = context.getSharedPreferences(
                 getGlobalSharedPreferencesName(context), Context.MODE_PRIVATE);
         mPrefGlobal.registerOnSharedPreferenceChangeListener(this);
@@ -45,7 +47,6 @@ public class ComboPreferences implements
         synchronized (sMap) {
             sMap.put(context, this);
         }
-        mBackupManager = new BackupManager(context);
         mListeners = new CopyOnWriteArrayList<OnSharedPreferenceChangeListener>();
 
         // The global preferences was previously stored in the default
@@ -327,6 +328,6 @@ public class ComboPreferences implements
         for (OnSharedPreferenceChangeListener listener : mListeners) {
             listener.onSharedPreferenceChanged(this, key);
         }
-        mBackupManager.dataChanged();
+        BackupManager.dataChanged(mPackageName);
     }
 }
