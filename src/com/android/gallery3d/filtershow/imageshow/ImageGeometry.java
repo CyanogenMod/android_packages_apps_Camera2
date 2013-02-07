@@ -29,6 +29,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.android.gallery3d.app.Log;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata.FLIP;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
@@ -241,6 +242,7 @@ public abstract class ImageGeometry extends ImageShow {
         super.onVisibilityChanged(changedView, visibility);
         if (visibility == View.VISIBLE) {
             mVisibilityGained = true;
+            MasterImage.getImage().invalidateFiltersOnly();
             syncLocalToMasterGeometry();
             updateScale();
             gainedVisibility();
