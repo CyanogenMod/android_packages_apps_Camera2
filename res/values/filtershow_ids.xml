@@ -38,4 +38,5 @@
     <item type="id" name="imageCurves" />
     <item type="id" name="imageZoom" />
     <item type="id" name="editorDraw" />
+    <item type="id" name="imageOnlyEditor" />
 </resources>
