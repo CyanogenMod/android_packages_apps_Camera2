@@ -72,6 +72,10 @@ public class FilterFxRepresentation extends FilterRepresentation {
         return false;
     }
 
+    public boolean allowsMultipleInstances() {
+        return false;
+    }
+
     public Bitmap getFxBitmap() {
         return mFxBitmap;
     }
