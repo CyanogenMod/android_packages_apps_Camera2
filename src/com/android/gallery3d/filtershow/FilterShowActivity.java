@@ -79,7 +79,6 @@ import com.android.gallery3d.filtershow.provider.SharedImageProvider;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.filtershow.ui.FilterIconButton;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
-import com.android.gallery3d.filtershow.ui.ImageCurves;
 import com.android.gallery3d.filtershow.ui.Spline;
 import com.android.gallery3d.util.GalleryUtils;
 
@@ -376,37 +375,34 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     }
 
     private class LoadBordersTask extends AsyncTask<Void, Boolean, Boolean> {
-        Vector<ImageFilter> mBorders;
+        Vector<FilterRepresentation> mBorders;
         LinearLayout mList;
 
         public LoadBordersTask(LinearLayout list) {
             mList = list;
-            mBorders = new Vector<ImageFilter>();
+            mBorders = new Vector<FilterRepresentation>();
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            mBorders.add(new ImageFilterBorder(null));
+            mBorders.add(new FilterImageBorderRepresentation(0, null));
             Drawable npd1 = getResources().getDrawable(R.drawable.filtershow_border_4x5);
-            mBorders.add(new ImageFilterBorder(npd1));
+            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5, npd1));
             Drawable npd2 = getResources().getDrawable(R.drawable.filtershow_border_brush);
-            mBorders.add(new ImageFilterBorder(npd2));
+            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_brush, npd2));
             Drawable npd3 = getResources().getDrawable(R.drawable.filtershow_border_grunge);
-            mBorders.add(new ImageFilterBorder(npd3));
+            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_grunge, npd3));
             Drawable npd4 = getResources().getDrawable(R.drawable.filtershow_border_sumi_e);
-            mBorders.add(new ImageFilterBorder(npd4));
+            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_sumi_e, npd4));
             Drawable npd5 = getResources().getDrawable(R.drawable.filtershow_border_tape);
-            mBorders.add(new ImageFilterBorder(npd5));
-            mBorders.add(new ImageFilterParametricBorder(Color.BLACK, mImageBorderSize, 0));
-            mBorders.add(new ImageFilterParametricBorder(Color.BLACK, mImageBorderSize,
-                    mImageBorderSize));
-            mBorders.add(new ImageFilterParametricBorder(Color.WHITE, mImageBorderSize, 0));
-            mBorders.add(new ImageFilterParametricBorder(Color.WHITE, mImageBorderSize,
-                    mImageBorderSize));
+            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_tape, npd5));
+            mBorders.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, 0));
+            mBorders.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, mImageBorderSize));
+            mBorders.add(new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize, 0));
+            mBorders.add(new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize, mImageBorderSize));
             int creamColor = Color.argb(255, 237, 237, 227);
-            mBorders.add(new ImageFilterParametricBorder(creamColor, mImageBorderSize, 0));
-            mBorders.add(new ImageFilterParametricBorder(creamColor, mImageBorderSize,
-                    mImageBorderSize));
+            mBorders.add(new FilterColorBorderRepresentation(creamColor, mImageBorderSize, 0));
+            mBorders.add(new FilterColorBorderRepresentation(creamColor, mImageBorderSize, mImageBorderSize));
             return true;
         }
 
@@ -416,9 +412,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 return;
             }
             for (int i = 0; i < mBorders.size(); i++) {
-                ImageFilter filter = mBorders.elementAt(i);
+                FilterRepresentation filter = mBorders.elementAt(i);
                 filter.setName(getString(R.string.borders));
-                FilterIconButton b = setupFilterButton(filter, mList, mBorderButton);
+                if (i == 0) {
+                    filter.setName(getString(R.string.none));
+                }
+                FilterIconButton b = setupFilterRepresentationButton(filter, mList, mBorderButton);
                 if (i == 0) {
                     mNullBorderFilter = b;
                     mNullBorderFilter.setSelected(true);
@@ -1006,7 +1005,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         if (representation == null) {
             copy.addFilter(filterRepresentation);
         } else {
-            if (filterRepresentation instanceof FilterFxRepresentation) {
+            if (filterRepresentation.allowsMultipleInstances()) {
                 representation.useParametersFrom(filterRepresentation);
                 copy.setHistoryName(filterRepresentation.getName());
             }

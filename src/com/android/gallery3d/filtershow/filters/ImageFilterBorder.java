@@ -27,6 +27,7 @@ public class ImageFilterBorder extends ImageFilter {
     private static final float NINEPATCH_ICON_SCALING = 10;
     private static final float BITMAP_ICON_SCALING = 1 / 3.0f;
     Drawable mNinePatch = null;
+    private FilterImageBorderRepresentation mParameters = null;
 
     @Override
     public ImageFilter clone() throws CloneNotSupportedException {
@@ -35,10 +36,23 @@ public class ImageFilterBorder extends ImageFilter {
         return filter;
     }
 
+    public ImageFilterBorder() {
+
+    }
+
     public ImageFilterBorder(Drawable ninePatch) {
         setFilterType(TYPE_BORDER);
         mName = "Border";
         mNinePatch = ninePatch;
+    }
+
+    public void useRepresentation(FilterRepresentation representation) {
+        FilterImageBorderRepresentation parameters = (FilterImageBorderRepresentation) representation;
+        mParameters = parameters;
+    }
+
+    public FilterImageBorderRepresentation getParameters() {
+        return mParameters;
     }
 
     public boolean isNil() {
@@ -95,14 +109,14 @@ public class ImageFilterBorder extends ImageFilter {
         Rect bounds = new Rect(0, 0, (int) (w * scale1), (int) (h * scale1));
         Canvas canvas = new Canvas(bitmap);
         canvas.scale(scale2, scale2);
-        mNinePatch.setBounds(bounds);
-        mNinePatch.draw(canvas);
+        getParameters().getDrawable().setBounds(bounds);
+        getParameters().getDrawable().draw(canvas);
         return bitmap;
     }
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
-        if (mNinePatch == null) {
+        if (getParameters() == null || getParameters().getDrawable() == null) {
             return bitmap;
         }
         float scale2 = scaleFactor * 2.0f;
@@ -112,7 +126,7 @@ public class ImageFilterBorder extends ImageFilter {
 
     @Override
     public Bitmap iconApply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
-        if (mNinePatch == null) {
+        if (getParameters() == null || getParameters().getDrawable() == null) {
             return bitmap;
         }
         float scale1 = NINEPATCH_ICON_SCALING;
