@@ -95,7 +95,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     // fields for supporting crop action
     public static final String CROP_ACTION = "com.android.camera.action.CROP";
     private CropExtras mCropExtras = null;
-    MasterImage mMasterImage = MasterImage.getImage();
+    MasterImage mMasterImage = null;
 
     public static final String TINY_PLANET_ACTION = "com.android.camera.action.TINY_PLANET";
     public static final String LAUNCH_FULLSCREEN = "launch-fullscreen";
@@ -157,6 +157,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setResources();
 
         Resources res = getResources();
         setupMasterImage();
@@ -387,18 +388,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            Resources res = getResources();
-            mBorders.add(new FilterImageBorderRepresentation(0, null));
-            Drawable npd1 = getBitmapDrawable(res, R.drawable.filtershow_border_4x5);
-            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5, npd1));
-            Drawable npd2 = getBitmapDrawable(res, R.drawable.filtershow_border_brush);
-            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_brush, npd2));
-            Drawable npd3 = getBitmapDrawable(res, R.drawable.filtershow_border_grunge);
-            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_grunge, npd3));
-            Drawable npd4 = getBitmapDrawable(res, R.drawable.filtershow_border_sumi_e);
-            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_sumi_e, npd4));
-            Drawable npd5 = getBitmapDrawable(res, R.drawable.filtershow_border_tape);
-            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_tape, npd5));
+            mBorders.add(new FilterImageBorderRepresentation(0));
+            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5));
+            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_brush));
+            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_grunge));
+            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_sumi_e));
+            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_tape));
             mBorders.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, 0));
             mBorders.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, mImageBorderSize));
             mBorders.add(new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize, 0));
@@ -464,9 +459,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         @Override
         protected void onPostExecute(Boolean result) {
+
             if (isCancelled()) {
                 return;
             }
+
             if (!result) {
                 cannotLoadImage();
             }
@@ -897,6 +894,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     public void onConfigurationChanged(Configuration newConfig)
     {
         super.onConfigurationChanged(newConfig);
+        setResources();
         if (mShowingHistoryPanel) {
             toggleHistoryPanel();
         }
@@ -909,6 +907,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageStateAdapter mImageStateAdapter = new ImageStateAdapter(this,
                 R.layout.filtershow_imagestate_row);
 
+        MasterImage.reset();
+        mMasterImage = MasterImage.getImage();
         mMasterImage.setHistoryAdapter(mHistoryAdapter);
         mMasterImage.setStateAdapter(mImageStateAdapter);
         mMasterImage.setActivity(this);
@@ -1127,11 +1127,13 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         finish();
     }
 
+    private void setResources() {
+        ImageFilterBorder filterBorder = (ImageFilterBorder) FiltersManager.getManager().getFilter(ImageFilterBorder.class);
+        filterBorder.setResources(getResources());
+    }
+
     static {
         System.loadLibrary("jni_filtershow_filters");
     }
 
-    public static Drawable getBitmapDrawable(Resources res, int id) {
-        return new BitmapDrawable(res, BitmapFactory.decodeResource(res, id));
-    }
 }
