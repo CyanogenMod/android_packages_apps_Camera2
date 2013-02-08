@@ -485,8 +485,10 @@ public class PanelController implements OnClickListener {
                     mCurrentImage = showImageView(filter.getEditingViewId());
                 }
                 mCurrentImage.setShowControls(filter.showEditingControls());
-                String ename = mCurrentImage.getContext().getString(filter.getTextId());
-                mUtilityPanel.setEffectName(ename);
+                if (filter.getTextId() != 0) {
+                    String ename = mCurrentImage.getContext().getString(filter.getTextId());
+                    mUtilityPanel.setEffectName(ename);
+                }
 
                 mUtilityPanel.setShowParameter(filter.showParameterValue());
                 mCurrentImage.select();
