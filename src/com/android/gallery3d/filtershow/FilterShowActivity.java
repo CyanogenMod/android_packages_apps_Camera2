@@ -64,6 +64,7 @@ import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.editors.BasicEditor;
 import com.android.gallery3d.filtershow.editors.EditorDraw;
 import com.android.gallery3d.filtershow.editors.EditorManager;
+import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 import com.android.gallery3d.filtershow.filters.*;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageDraw;
@@ -223,6 +224,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mEditorPlaceHolder.setContainer((FrameLayout) findViewById(R.id.editorContainer));
         mEditorPlaceHolder.addEditor(new EditorDraw());
         mEditorPlaceHolder.addEditor(new BasicEditor());
+        mEditorPlaceHolder.addEditor(new ImageOnlyEditor());
         EditorManager.addEditors(mEditorPlaceHolder);
         mEditorPlaceHolder.setOldViews(mImageViews);
         mEditorPlaceHolder.setImageLoader(mImageLoader);
@@ -305,11 +307,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         LoadBordersTask loadBorders = new LoadBordersTask(listBorders);
         loadBorders.execute();
 
-        SeekBar seekBar = (SeekBar) findViewById(R.id.filterSeekBar);
-        seekBar.setMax(SEEK_BAR_MAX);
-
-        mImageShow.setSeekBar(seekBar);
-        mImageTinyPlanet.setSeekBar(seekBar);
         mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
         mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList),
                 findViewById(R.id.panelAccessoryViewList),
