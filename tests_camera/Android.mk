@@ -1,3 +1,4 @@
+ifeq (0,1)
 LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
@@ -14,3 +15,4 @@ LOCAL_PACKAGE_NAME := CameraTests
 LOCAL_INSTRUMENTATION_FOR := Gallery2
 
 include $(BUILD_PACKAGE)
+endif
