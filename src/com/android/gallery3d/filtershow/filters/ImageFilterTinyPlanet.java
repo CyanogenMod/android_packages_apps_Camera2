@@ -18,22 +18,26 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.Log;
+import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 /**
  * An image filter which creates a tiny planet projection.
  */
 public class ImageFilterTinyPlanet extends SimpleImageFilter {
-    private float mAngle = 0;
 
-    private static final String TAG = ImageFilterTinyPlanet.class.getSimpleName();
+
+    private static final String LOGTAG = ImageFilterTinyPlanet.class.getSimpleName();
     public static final String GOOGLE_PANO_NAMESPACE = "http://ns.google.com/photos/1.0/panorama/";
+    FilterTinyPlanetRepresentation mParameters = new FilterTinyPlanetRepresentation();
 
     public static final String CROPPED_AREA_IMAGE_WIDTH_PIXELS =
             "CroppedAreaImageWidthPixels";
@@ -51,7 +55,30 @@ public class ImageFilterTinyPlanet extends SimpleImageFilter {
     public ImageFilterTinyPlanet() {
         setFilterType(TYPE_TINYPLANET);
         mName = "TinyPlanet";
-        mAngle = 0;
+    }
+
+    @Override
+    public int getEditingViewId() {
+        return EditorTinyPlanet.ID;
+    }
+
+    @Override
+    public boolean hasDefaultRepresentation() {
+        return true;
+    }
+
+    @Override
+    public void useRepresentation(FilterRepresentation representation) {
+        FilterTinyPlanetRepresentation parameters = (FilterTinyPlanetRepresentation) representation;
+        mParameters = parameters;
+    }
+
+    @Override
+    public FilterRepresentation getDefaultRepresentation() {
+        FilterTinyPlanetRepresentation representation = new FilterTinyPlanetRepresentation();
+        representation.setName("TinyPlanet");
+        representation.setFilterClass(ImageFilterTinyPlanet.class);
+        return representation;
     }
 
     @Override
@@ -62,14 +89,6 @@ public class ImageFilterTinyPlanet extends SimpleImageFilter {
     @Override
     public int getTextId() {
         return R.string.tinyplanet;
-    }
-
-    public void setAngle(float angle) {
-        mAngle = angle;
-    }
-
-    public float getAngle() {
-        return mAngle;
     }
 
     public boolean isNil() {
@@ -104,11 +123,38 @@ public class ImageFilterTinyPlanet extends SimpleImageFilter {
             } catch (java.lang.OutOfMemoryError e) {
                 System.gc();
                 outputSize /= 2;
-                Log.v(TAG, "No memory to create Full Tiny Planet create half");
+                Log.v(LOGTAG, "No memory to create Full Tiny Planet create half");
             }
         }
         nativeApplyFilter(bitmapIn, bitmapIn.getWidth(), bitmapIn.getHeight(), mBitmapOut,
-                outputSize, getParameters().getValue() / 100f, mAngle);
+                outputSize, mParameters.getZoom() / 100f, mParameters.getAngle());
+
+        if (true) {
+            // TODO(hoford): FIXME and remove this section
+            String text = "Tiny Planet Not Working";
+            int w2 = bitmapIn.getWidth() / 2;
+            int h2 = bitmapIn.getHeight() / 2;
+            Canvas c = new Canvas(bitmapIn);
+            Paint p = new Paint();
+            Rect src = new Rect(0, 0, mBitmapOut.getWidth(), mBitmapOut.getHeight());
+            Rect dst = new Rect(0, 0, bitmapIn.getWidth(), bitmapIn.getHeight());
+            c.drawBitmap(mBitmapOut, 0, 0, p);
+            float size = Math.min(w2, h2) / 4f;
+            p.setTextSize(size);
+            p.setColor(0xFF000000);
+            p.setStyle(Paint.Style.STROKE);
+            p.setStrokeWidth(20);
+            Rect bounds = new Rect();
+            p.getTextBounds(text, 0, text.length(), bounds);
+            int tw = bounds.width() / 2;
+            c.drawText(text, w2 - tw, h2, p);
+
+            p.setColor(0xFFFF0000);
+            p.setStyle(Paint.Style.FILL);
+            p.setStrokeWidth(0);
+
+            c.drawText(text, w2 - tw, h2, p);
+        }
         return mBitmapOut;
     }
 
@@ -137,7 +183,6 @@ public class ImageFilterTinyPlanet extends SimpleImageFilter {
                 } catch (java.lang.OutOfMemoryError e) {
                     System.gc();
                     scale /= 2;
-                    Log.v(TAG, "No memory to create Full Tiny Planet create half");
                 }
             }
             Canvas paddedCanvas = new Canvas(paddedBitmap);

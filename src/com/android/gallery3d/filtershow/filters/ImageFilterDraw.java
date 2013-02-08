@@ -66,6 +66,7 @@ public class ImageFilterDraw extends ImageFilter {
     public boolean hasDefaultRepresentation() {
         return true;
     }
+
     @Override
     public FilterRepresentation getDefaultRepresentation() {
         FilterDrawRepresentation representation = new FilterDrawRepresentation();
