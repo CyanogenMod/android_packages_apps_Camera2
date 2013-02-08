@@ -30,6 +30,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -157,10 +158,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Resources res = getResources();
         setupMasterImage();
         ImageFilterRS.setRenderScriptContext(this);
 
-        ImageShow.setDefaultBackgroundColor(getResources().getColor(R.color.background_screen));
+        ImageShow.setDefaultBackgroundColor(res.getColor(R.color.background_screen));
         // TODO: get those values from XML.
         ImageZoom.setZoomedSize(getPixelsFromDip(256));
         FramedTextButton.setTextSize((int) getPixelsFromDip(14));
@@ -170,11 +172,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageShow.setTextPadding((int) getPixelsFromDip(10));
         ImageShow.setOriginalTextMargin((int) getPixelsFromDip(4));
         ImageShow.setOriginalTextSize((int) getPixelsFromDip(18));
-        ImageShow.setOriginalText(getResources().getString(R.string.original_picture_text));
-        mIconSeedSize = getResources().getDimensionPixelSize(R.dimen.thumbnail_size);
+        ImageShow.setOriginalText(res.getString(R.string.original_picture_text));
+        mIconSeedSize = res.getDimensionPixelSize(R.dimen.thumbnail_size);
 
-        Drawable curveHandle = getResources().getDrawable(R.drawable.camera_crop);
-        int curveHandleSize = (int) getResources().getDimension(R.dimen.crop_indicator_size);
+        Drawable curveHandle = res.getDrawable(R.drawable.camera_crop);
+        int curveHandleSize = (int) res.getDimension(R.dimen.crop_indicator_size);
         Spline.setCurveHandle(curveHandle, curveHandleSize);
         Spline.setCurveWidth((int) getPixelsFromDip(3));
 
@@ -385,16 +387,17 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         @Override
         protected Boolean doInBackground(Void... params) {
+            Resources res = getResources();
             mBorders.add(new FilterImageBorderRepresentation(0, null));
-            Drawable npd1 = getResources().getDrawable(R.drawable.filtershow_border_4x5);
+            Drawable npd1 = getBitmapDrawable(res, R.drawable.filtershow_border_4x5);
             mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5, npd1));
-            Drawable npd2 = getResources().getDrawable(R.drawable.filtershow_border_brush);
+            Drawable npd2 = getBitmapDrawable(res, R.drawable.filtershow_border_brush);
             mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_brush, npd2));
-            Drawable npd3 = getResources().getDrawable(R.drawable.filtershow_border_grunge);
+            Drawable npd3 = getBitmapDrawable(res, R.drawable.filtershow_border_grunge);
             mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_grunge, npd3));
-            Drawable npd4 = getResources().getDrawable(R.drawable.filtershow_border_sumi_e);
+            Drawable npd4 = getBitmapDrawable(res, R.drawable.filtershow_border_sumi_e);
             mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_sumi_e, npd4));
-            Drawable npd5 = getResources().getDrawable(R.drawable.filtershow_border_tape);
+            Drawable npd5 = getBitmapDrawable(res, R.drawable.filtershow_border_tape);
             mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_tape, npd5));
             mBorders.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, 0));
             mBorders.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, mImageBorderSize));
@@ -1128,4 +1131,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         System.loadLibrary("jni_filtershow_filters");
     }
 
+    public static Drawable getBitmapDrawable(Resources res, int id) {
+        return new BitmapDrawable(res, BitmapFactory.decodeResource(res, id));
+    }
 }
