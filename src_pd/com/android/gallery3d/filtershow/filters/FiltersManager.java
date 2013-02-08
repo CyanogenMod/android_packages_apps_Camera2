@@ -31,6 +31,8 @@ public class FiltersManager {
         Vector<ImageFilter> filters = new Vector<ImageFilter>();
         FiltersManager.addFilters(filters);
         filters.add(new ImageFilterFx());
+        filters.add(new ImageFilterBorder());
+        filters.add(new ImageFilterParametricBorder());
         for (ImageFilter filter : filters) {
             mFilters.put(filter.getClass(), filter);
         }
