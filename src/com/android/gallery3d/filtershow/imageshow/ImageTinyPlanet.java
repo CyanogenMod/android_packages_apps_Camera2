@@ -17,9 +17,14 @@
 package com.android.gallery3d.filtershow.imageshow;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
+import com.android.gallery3d.filtershow.filters.FilterCurvesRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterTinyPlanetRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
 
 public class ImageTinyPlanet extends ImageShow {
@@ -31,6 +36,8 @@ public class ImageTinyPlanet extends ImageShow {
     private float mCenterX = 0;
     private float mCenterY = 0;
     private float mStartAngle = 0;
+    private FilterTinyPlanetRepresentation mTinyPlanetRep;
+    private EditorTinyPlanet mEditorTinyPlanet;
 
     public ImageTinyPlanet(Context context) {
         super(context);
@@ -60,7 +67,6 @@ public class ImageTinyPlanet extends ImageShow {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        ImageFilterTinyPlanet filter = (ImageFilterTinyPlanet) getCurrentFilter();
         float x = event.getX();
         float y = event.getY();
         mCurrentX = x;
@@ -71,15 +77,30 @@ public class ImageTinyPlanet extends ImageShow {
             case (MotionEvent.ACTION_DOWN):
                 mTouchCenterX = x;
                 mTouchCenterY = y;
-                mStartAngle = filter.getAngle();
+                mStartAngle = mTinyPlanetRep.getAngle();
                 break;
             case (MotionEvent.ACTION_UP):
             case (MotionEvent.ACTION_MOVE):
-                filter.setAngle(mStartAngle + getCurrentTouchAngle());
+                mTinyPlanetRep.setAngle(mStartAngle + getCurrentTouchAngle());
                 break;
         }
         resetImageCaches(this);
         invalidate();
+        mEditorTinyPlanet.commitLocalRepresentation();
         return true;
     }
+
+    public void setRepresentation(FilterTinyPlanetRepresentation tinyPlanetRep) {
+        mTinyPlanetRep = tinyPlanetRep;
+    }
+
+    public void setEditor(EditorTinyPlanet editorTinyPlanet) {
+        mEditorTinyPlanet = editorTinyPlanet;
+    }
+
+    @Override
+    public void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+    }
+
 }

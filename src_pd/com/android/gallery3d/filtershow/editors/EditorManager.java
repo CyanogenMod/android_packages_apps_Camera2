@@ -26,6 +26,7 @@ public class EditorManager {
     public static void addEditors(EditorPlaceHolder editorPlaceHolder) {
         editorPlaceHolder.addEditor(new EditorZoom());
         editorPlaceHolder.addEditor(new EditorCurves());
+        editorPlaceHolder.addEditor(new EditorTinyPlanet());
         editorPlaceHolder.addEditor(new EditorDraw());
     }
 
