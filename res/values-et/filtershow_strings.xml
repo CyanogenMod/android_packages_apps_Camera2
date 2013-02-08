@@ -81,7 +81,7 @@
     <string name="draw_color" msgid="2119030386987211193">"Värv"</string>
     <string name="draw_style_line" msgid="9216476853904429628">"Jooned"</string>
     <string name="draw_style_brush" msgid="383079660590023404">"Pintsel"</string>
-    <string name="color_pick_select" msgid="734312818059057394">"Vali kohandatud värv"</string>
+    <string name="color_pick_select" msgid="734312818059057394">"Valige kohandatud värv"</string>
     <string name="color_pick_title" msgid="6195567431995308876">"Värvi valimine"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"Suuruse valimine"</string>
     <string name="draw_size_accept" msgid="6781529716526190028">"OK"</string>
