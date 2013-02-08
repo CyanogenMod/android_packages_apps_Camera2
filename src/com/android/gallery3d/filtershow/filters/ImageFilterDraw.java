@@ -260,27 +260,8 @@ public class ImageFilterDraw extends ImageFilter {
         return EditorDraw.ID;
     }
 
-    @Override
-    public ImageFilter clone() throws CloneNotSupportedException {
-        ImageFilterDraw filter = (ImageFilterDraw) super.clone();
-
-        filter.mDrawingsTypes = mDrawingsTypes.clone();
-        return filter;
-    }
-
     public boolean isNil() {
         return mParameters.getDrawing().isEmpty();
-    }
-
-    @Override
-    public boolean same(ImageFilter filter) {
-        boolean isSuperSame = super.same(filter);
-        if (!isSuperSame || !(filter instanceof ImageFilterDraw)) {
-            return false;
-        }
-
-        ImageFilterDraw dfilter = (ImageFilterDraw) filter;
-        return mParameters.getDrawing().equals(dfilter.mParameters.getDrawing());
     }
 
     public void draw(Canvas canvas, Matrix originalRotateToScreen) {

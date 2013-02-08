@@ -29,8 +29,6 @@ public class FilterRepresentation implements Cloneable {
     private boolean mShowParameterValue;
     private Class mFilterClass;
 
-    public static String DEFAULT = "Default";
-
     public FilterRepresentation(String name) {
         mName = name;
     }

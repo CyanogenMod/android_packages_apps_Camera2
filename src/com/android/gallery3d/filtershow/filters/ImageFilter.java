@@ -97,23 +97,6 @@ public class ImageFilter implements Cloneable {
         return mImagePreset;
     }
 
-    public boolean equals(ImageFilter filter) {
-        if (!same(filter)) {
-            return false;
-        }
-        return true;
-    }
-
-    public boolean same(ImageFilter filter) {
-        if (filter == null) {
-            return false;
-        }
-        if (!filter.getName().equalsIgnoreCase(getName())) {
-            return false;
-        }
-        return true;
-    }
-
     public void useRepresentation(FilterRepresentation representation) {
     }
 
