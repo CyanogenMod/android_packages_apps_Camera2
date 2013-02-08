@@ -46,6 +46,9 @@ public class FilterRepresentation implements Cloneable {
     }
 
     public boolean equals(FilterRepresentation representation) {
+        if (representation == null) {
+            return false;
+        }
         if (representation.mFilterClass == representation.mFilterClass
                 && representation.mName.equalsIgnoreCase(mName)
                 && representation.mPriority == mPriority
@@ -92,6 +95,10 @@ public class FilterRepresentation implements Cloneable {
 
     public boolean showParameterValue() {
         return mShowParameterValue;
+    }
+
+    public boolean allowsMultipleInstances() {
+        return false;
     }
 
     public Class getFilterClass() {
