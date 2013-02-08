@@ -670,7 +670,7 @@ public abstract class PhotoPage extends ActivityState implements
     }
 
     private void overrideTransitionToEditor() {
-        ((Activity) mActivity).overridePendingTransition(android.R.anim.slide_in_left,
+        ((Activity) mActivity).overridePendingTransition(android.R.anim.fade_in,
                 android.R.anim.fade_out);
     }
 
