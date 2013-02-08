@@ -32,6 +32,7 @@ public class ImageFilterStraighten extends ImageFilter {
 
     @Override
     public ImageFilter clone() throws CloneNotSupportedException {
+        // FIXME: clone() should not be needed. Remove when we fix geometry.
         ImageFilterStraighten filter = (ImageFilterStraighten) super.clone();
         filter.mRotation = mRotation;
         filter.mZoomFactor = mZoomFactor;

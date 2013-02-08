@@ -53,13 +53,6 @@ public class ImageFilterHue extends SimpleImageFilter {
         return BasicEditor.ID;
     }
 
-    @Override
-    public ImageFilter clone() throws CloneNotSupportedException {
-        ImageFilterHue filter = (ImageFilterHue) super.clone();
-        filter.cmatrix = new ColorSpaceMatrix(cmatrix);
-        return filter;
-    }
-
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float []matrix);
 
     @Override

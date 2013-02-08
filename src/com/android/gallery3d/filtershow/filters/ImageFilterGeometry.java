@@ -45,6 +45,7 @@ public class ImageFilterGeometry extends ImageFilter {
 
     @Override
     public ImageFilter clone() throws CloneNotSupportedException {
+        // FIXME: clone() should not be needed. Remove when we fix geometry.
         ImageFilterGeometry filter = (ImageFilterGeometry) super.clone();
         return filter;
     }

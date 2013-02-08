@@ -76,43 +76,6 @@ public class ImageFilterCurves extends ImageFilter {
         return false;
     }
 
-    @Override
-    public boolean equals(ImageFilter filter) {
-        return same(filter);
-    }
-
-    @Override
-    public ImageFilter clone() throws CloneNotSupportedException {
-        ImageFilterCurves filter = (ImageFilterCurves) super.clone();
-        filter.mParameters = (FilterCurvesRepresentation) mParameters.clone();
-
-        return filter;
-    }
-
-    public boolean isNil() {
-        for (int i = 0; i < 4; i++) {
-            if (mParameters.getSpline(i) != null && !mParameters.getSpline(i).isOriginal()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public boolean same(ImageFilter filter) {
-        boolean isCurveFilter = super.same(filter);
-        if (!isCurveFilter) {
-            return false;
-        }
-        ImageFilterCurves curve = (ImageFilterCurves) filter;
-        for (int i = 0; i < 4; i++) {
-            if (mParameters.getSpline(i) != curve.mParameters.getSpline(i)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public void populateArray(int[] array, int curveIndex) {
         Spline spline = mParameters.getSpline(curveIndex);
         if (spline == null) {
