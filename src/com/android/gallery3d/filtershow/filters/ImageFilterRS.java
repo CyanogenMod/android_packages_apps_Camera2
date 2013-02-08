@@ -31,7 +31,6 @@ public class ImageFilterRS extends ImageFilter {
     private static Bitmap sOldBitmap = null;
     private Bitmap mOldBitmap = null;
 
-    private static Bitmap mReturnBitmap = null;
     private final Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
 
     public void prepare(Bitmap bitmap, float scaleFactor, boolean highQuality) {
@@ -95,6 +94,15 @@ public class ImageFilterRS extends ImageFilter {
     public static void setRenderScriptContext(Activity context) {
         mRS = RenderScript.create(context);
         mResources = context.getResources();
+        if (mInPixelsAllocation != null) {
+            mInPixelsAllocation.destroy();
+            mInPixelsAllocation = null;
+        }
+        if (mOutPixelsAllocation != null) {
+            mOutPixelsAllocation.destroy();
+            mOutPixelsAllocation = null;
+        }
+        sOldBitmap = null;
     }
 
 }
