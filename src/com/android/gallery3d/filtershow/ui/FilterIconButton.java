@@ -25,7 +25,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.filtershow.cache.FilteringPipeline;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 
 public class FilterIconButton extends IconButton implements View.OnClickListener {
@@ -48,26 +50,36 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
         super(context, attrs, defStyle);
     }
 
-    public void setup(String text, ImageFilter filter, FilterShowActivity controller,
-            LinearLayout parent) {
-        mImageFilter = filter;
+    public void setup(String text, FilterShowActivity controller, LinearLayout parent) {
         mController = controller;
         setText(text);
-
-        if (mImageFilter.getOverlayBitmaps() != 0) {
-            mOverlayBitmap = BitmapFactory.decodeResource(getResources(),
-                    mImageFilter.getOverlayBitmaps());
-        }
-
         mParentContainer = parent;
         super.setOnClickListener(this);
         invalidate();
     }
 
+    public void setup(String text, ImageFilter filter, FilterShowActivity controller,
+            LinearLayout parent) {
+        setup(text, controller, parent);
+        mImageFilter = filter;
+        if (mImageFilter.getOverlayBitmaps() != 0) {
+            mOverlayBitmap = BitmapFactory.decodeResource(getResources(),
+                    mImageFilter.getOverlayBitmaps());
+        }
+    }
+
     @Override
     protected Bitmap drawImage(Bitmap dst, Bitmap image, Rect destination) {
         dst = super.drawImage(dst, image, destination);
-        dst =  mImageFilter.iconApply(dst, 1.0f, false);
+        if (mImageFilter == null && mFilterRepresentation != null) {
+            mImageFilter = FiltersManager.getManager().getFilterForRepresentation(mFilterRepresentation);
+        }
+        if (mFilterRepresentation != null && mImageFilter != null) {
+            mImageFilter.useRepresentation(mFilterRepresentation);
+        }
+        if (mImageFilter != null) {
+            dst =  mImageFilter.iconApply(dst, 1.0f, false);
+        }
         if (mOverlayBitmap != null) {
             dst = super.drawImage(dst, mOverlayBitmap, destination);
         }

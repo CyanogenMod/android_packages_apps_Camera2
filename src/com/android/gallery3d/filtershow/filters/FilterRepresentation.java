@@ -40,6 +40,7 @@ public class FilterRepresentation implements Cloneable {
         FilterRepresentation representation = (FilterRepresentation) super.clone();
         representation.setName(getName());
         representation.setPriority(getPriority());
+        representation.setFilterClass(getFilterClass());
         Log.v(LOGTAG, "cloning from <" + this + "> to <" + representation + ">");
         return representation;
     }

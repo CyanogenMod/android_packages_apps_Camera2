@@ -30,6 +30,7 @@ public class FiltersManager {
     private FiltersManager() {
         Vector<ImageFilter> filters = new Vector<ImageFilter>();
         FiltersManager.addFilters(filters);
+        filters.add(new ImageFilterFx());
         for (ImageFilter filter : filters) {
             mFilters.put(filter.getClass(), filter);
         }

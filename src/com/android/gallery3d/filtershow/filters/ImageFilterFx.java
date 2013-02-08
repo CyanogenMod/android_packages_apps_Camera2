@@ -22,12 +22,26 @@ public class ImageFilterFx extends ImageFilter {
     private static final String TAG = "ImageFilterFx";
     Bitmap fxBitmap;
     int mNameResource = 0;
+    private FilterFxRepresentation mParameters = null;
+
+    public ImageFilterFx() {
+
+    }
 
     public ImageFilterFx(Bitmap fxBitmap, String name, int nameResource) {
         setFilterType(TYPE_FX);
         mName = name;
         this.fxBitmap = fxBitmap;
         mNameResource = nameResource;
+    }
+
+    public void useRepresentation(FilterRepresentation representation) {
+        FilterFxRepresentation parameters = (FilterFxRepresentation) representation;
+        mParameters = parameters;
+    }
+
+    public FilterFxRepresentation getParameters() {
+        return mParameters;
     }
 
     @Override
@@ -68,16 +82,17 @@ public class ImageFilterFx extends ImageFilter {
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
-        if (fxBitmap==null)
+        if (getParameters() == null || getParameters().getFxBitmap() ==null) {
             return bitmap;
+        }
 
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
-        int fxw = fxBitmap.getWidth();
-        int fxh = fxBitmap.getHeight();
+        int fxw = getParameters().getFxBitmap().getWidth();
+        int fxh = getParameters().getFxBitmap().getHeight();
 
-        nativeApplyFilter(bitmap, w, h,   fxBitmap,  fxw,  fxh);
+        nativeApplyFilter(bitmap, w, h,   getParameters().getFxBitmap(),  fxw,  fxh);
         return bitmap;
     }
 }
