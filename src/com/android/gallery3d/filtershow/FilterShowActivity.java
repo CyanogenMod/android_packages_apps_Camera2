@@ -704,6 +704,19 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             mSaveButton.setEnabled(enable);
     }
 
+    public FilterIconButton setupFilterRepresentationButton(FilterRepresentation representation, LinearLayout panel, View button) {
+        LayoutInflater inflater =
+                (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        FilterIconButton icon = (FilterIconButton) inflater.inflate(R.layout.filtericonbutton,
+                panel, false);
+        String text = representation.getName();
+        icon.setup(text, this, panel);
+        icon.setFilterRepresentation(representation);
+        mPanelController.addComponent(button, icon);
+        panel.addView(icon);
+        return icon;
+    }
+
     public FilterIconButton setupFilterButton(ImageFilter filter, LinearLayout panel, View button) {
         LayoutInflater inflater =
                 (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -729,7 +742,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         // TODO: use listview
         // TODO: load the filters straight from the filesystem
 
-        ImageFilterFx[] fxArray = new ImageFilterFx[18];
+        FilterFxRepresentation[] fxArray = new FilterFxRepresentation[18];
         int p = 0;
 
         int[] drawid = {
@@ -764,15 +777,17 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         for (int i = 0; i < drawid.length; i++) {
             Bitmap b = BitmapFactory.decodeResource(getResources(), drawid[i], o);
-            fxArray[p++] = new ImageFilterFx(b, getString(fxNameid[i]), fxNameid[i]);
+            FilterFxRepresentation fx = new FilterFxRepresentation(getString(fxNameid[i]), drawid[i], fxNameid[i]);
+            fx.setFxBitmap(b);
+            fxArray[p++] = fx;
         }
 
-        ImageFilterFx nullFilter = new ImageFilterFx(null, getString(R.string.none), R.string.none);
-        mNullFxFilter = setupFilterButton(nullFilter, listFilters, mFxButton);
+        FilterFxRepresentation nullFx = new FilterFxRepresentation(getString(R.string.none), 0, R.string.none);
+        mNullFxFilter = setupFilterRepresentationButton(nullFx, listFilters, mFxButton);
         mNullFxFilter.setSelected(true);
 
         for (int i = 0; i < p; i++) {
-            setupFilterButton(fxArray[i], listFilters, mFxButton);
+            setupFilterRepresentationButton(fxArray[i], listFilters, mFxButton);
         }
 
         // Default preset (original)
@@ -991,6 +1006,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         if (representation == null) {
             copy.addFilter(filterRepresentation);
         } else {
+            if (filterRepresentation instanceof FilterFxRepresentation) {
+                representation.useParametersFrom(filterRepresentation);
+                copy.setHistoryName(filterRepresentation.getName());
+            }
             filterRepresentation = representation;
         }
         mMasterImage.setPreset(copy, true);

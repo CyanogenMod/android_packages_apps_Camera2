@@ -60,7 +60,7 @@ public class FilterBasicRepresentation extends FilterRepresentation {
 
     @Override
     public boolean equals(FilterRepresentation representation) {
-        if (super.equals(representation)) {
+        if (!super.equals(representation)) {
             return false;
         }
         if (representation instanceof FilterBasicRepresentation) {
