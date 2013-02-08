@@ -68,6 +68,11 @@ public class FilterDrawRepresentation extends FilterRepresentation {
     }
 
     @Override
+    public boolean isNil() {
+        return getDrawing().isEmpty();
+    }
+
+    @Override
     public void useParametersFrom(FilterRepresentation a) {
         if (a instanceof FilterDrawRepresentation) {
             FilterDrawRepresentation representation = (FilterDrawRepresentation) a;
@@ -85,14 +90,15 @@ public class FilterDrawRepresentation extends FilterRepresentation {
             }
         }
     }
+
     @Override
     public boolean equals(FilterRepresentation representation) {
         if (!super.equals(representation)) {
             return false;
         }
         if (representation instanceof FilterDrawRepresentation) {
-            FilterDrawRepresentation grunge = (FilterDrawRepresentation) representation;
-                return true;
+            // FIXME!
+            return true;
         }
         return false;
     }

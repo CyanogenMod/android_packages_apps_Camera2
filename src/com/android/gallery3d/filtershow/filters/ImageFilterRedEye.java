@@ -50,6 +50,7 @@ public class ImageFilterRedEye extends ImageFilter {
 
     @Override
     public ImageFilter clone() throws CloneNotSupportedException {
+        // FIXME: clone() should not be needed. Remove when we fix red eyes.
         ImageFilterRedEye filter = (ImageFilterRedEye) super.clone();
         if (mCandidates != null) {
             int size = mCandidates.size();
@@ -64,33 +65,6 @@ public class ImageFilterRedEye extends ImageFilter {
     public boolean isNil() {
         if (mCandidates != null && mCandidates.size() > 0) {
             return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean same(ImageFilter filter) {
-        boolean isRedEyeFilter = super.same(filter);
-        if (!isRedEyeFilter) {
-            return false;
-        }
-        ImageFilterRedEye redEyeFilter = (ImageFilterRedEye) filter;
-        if (redEyeFilter.mCandidates == null && mCandidates == null) {
-            return true;
-        }
-        if (redEyeFilter.mCandidates == null || mCandidates == null) {
-            return false;
-        }
-        if (redEyeFilter.mCandidates.size() != mCandidates.size()) {
-            return false;
-        }
-        int size = mCandidates.size();
-        for (int i = 0; i < size; i++) {
-            RedEyeCandidate c1 = mCandidates.elementAt(i);
-            RedEyeCandidate c2 = redEyeFilter.mCandidates.elementAt(i);
-            if (!c1.equals(c2)) {
-                return false;
-            }
         }
         return true;
     }

@@ -47,12 +47,6 @@ public class ImageFilterBwFilter extends SimpleImageFilter {
         return R.string.bwfilter;
     }
 
-    @Override
-    public ImageFilter clone() throws CloneNotSupportedException {
-        ImageFilterBwFilter filter = (ImageFilterBwFilter) super.clone();
-        return filter;
-    }
-
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, int r, int g, int b);
 
     @Override

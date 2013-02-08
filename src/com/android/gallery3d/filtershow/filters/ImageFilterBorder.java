@@ -26,24 +26,10 @@ import com.android.gallery3d.R;
 public class ImageFilterBorder extends ImageFilter {
     private static final float NINEPATCH_ICON_SCALING = 10;
     private static final float BITMAP_ICON_SCALING = 1 / 3.0f;
-    Drawable mNinePatch = null;
     private FilterImageBorderRepresentation mParameters = null;
 
-    @Override
-    public ImageFilter clone() throws CloneNotSupportedException {
-        ImageFilterBorder filter = (ImageFilterBorder) super.clone();
-        filter.setDrawable(mNinePatch);
-        return filter;
-    }
-
     public ImageFilterBorder() {
-
-    }
-
-    public ImageFilterBorder(Drawable ninePatch) {
-        setFilterType(TYPE_BORDER);
         mName = "Border";
-        mNinePatch = ninePatch;
     }
 
     public void useRepresentation(FilterRepresentation representation) {
@@ -53,13 +39,6 @@ public class ImageFilterBorder extends ImageFilter {
 
     public FilterImageBorderRepresentation getParameters() {
         return mParameters;
-    }
-
-    public boolean isNil() {
-        if (mNinePatch == null) {
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -80,27 +59,6 @@ public class ImageFilterBorder extends ImageFilter {
     @Override
     public boolean showUtilityPanel() {
         return false;
-    }
-
-    @Override
-    public boolean same(ImageFilter filter) {
-        boolean isBorderFilter = super.same(filter);
-        if (!isBorderFilter) {
-            return false;
-        }
-        if (!(filter instanceof ImageFilterBorder)) {
-            return false;
-        }
-        ImageFilterBorder borderFilter = (ImageFilterBorder) filter;
-        if (mNinePatch != borderFilter.mNinePatch) {
-            return false;
-        }
-        return true;
-    }
-
-    public void setDrawable(Drawable ninePatch) {
-        // TODO: for now we only use nine patch
-        mNinePatch = ninePatch;
     }
 
     public Bitmap applyHelper(Bitmap bitmap, float scale1, float scale2 ) {

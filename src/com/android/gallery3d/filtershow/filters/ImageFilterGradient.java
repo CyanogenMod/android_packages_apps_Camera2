@@ -37,6 +37,7 @@ public class ImageFilterGradient extends ImageFilter {
 
     @Override
     public ImageFilter clone() throws CloneNotSupportedException {
+        // FIXME: clone() should not be needed. Remove?.
         ImageFilterGradient filter = (ImageFilterGradient) super.clone();
         System.arraycopy(mColors, 0, filter.mColors, 0, mColors.length);
         System.arraycopy(mPositions, 0, filter.mPositions, 0, mPositions.length);

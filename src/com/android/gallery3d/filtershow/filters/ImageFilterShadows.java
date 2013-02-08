@@ -44,12 +44,6 @@ public class ImageFilterShadows extends SimpleImageFilter {
         return R.string.shadow_recovery;
     }
 
-    @Override
-    public ImageFilter clone() throws CloneNotSupportedException {
-        ImageFilterShadows filter = (ImageFilterShadows) super.clone();
-        return filter;
-    }
-
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float  factor);
 
     @Override

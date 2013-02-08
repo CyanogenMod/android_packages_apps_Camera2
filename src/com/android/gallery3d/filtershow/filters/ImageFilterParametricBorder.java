@@ -26,9 +26,6 @@ import android.graphics.RectF;
 import com.android.gallery3d.R;
 
 public class ImageFilterParametricBorder extends ImageFilter {
-    private int mBorderColor = Color.WHITE;
-    private int mBorderSize = 10;
-    private int mBorderCornerRadius = 10;
     private FilterColorBorderRepresentation mParameters = null;
 
     public ImageFilterParametricBorder() {
@@ -63,50 +60,6 @@ public class ImageFilterParametricBorder extends ImageFilter {
     @Override
     public boolean showUtilityPanel() {
         return false;
-    }
-
-    public ImageFilterParametricBorder(int color, int size, int radius) {
-        setBorder(color, size, radius);
-        setFilterType(TYPE_BORDER);
-    }
-
-    @Override
-    public ImageFilter clone() throws CloneNotSupportedException {
-        ImageFilterParametricBorder filter = (ImageFilterParametricBorder) super.clone();
-        filter.setBorder(mBorderColor, mBorderSize, mBorderCornerRadius);
-        return filter;
-    }
-
-    public boolean isNil() {
-        return false;
-    }
-
-    @Override
-    public boolean same(ImageFilter filter) {
-        boolean isBorderFilter = super.same(filter);
-        if (!isBorderFilter) {
-            return false;
-        }
-        if (!(filter instanceof ImageFilterParametricBorder)) {
-            return false;
-        }
-        ImageFilterParametricBorder borderFilter = (ImageFilterParametricBorder) filter;
-        if (borderFilter.mBorderColor != mBorderColor) {
-            return false;
-        }
-        if (borderFilter.mBorderSize != mBorderSize) {
-            return false;
-        }
-        if (borderFilter.mBorderCornerRadius != mBorderCornerRadius) {
-            return false;
-        }
-        return true;
-    }
-
-    public void setBorder(int color, int size, int radius) {
-        mBorderColor = color;
-        mBorderSize = size;
-        mBorderCornerRadius = radius;
     }
 
     private void applyHelper(Canvas canvas, int w, int h) {
