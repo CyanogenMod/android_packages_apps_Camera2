@@ -24,19 +24,16 @@ import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
-import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
-import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
-import java.util.HashMap;
 import java.util.Vector;
 
 public class ImagePreset {
 
     private static final String LOGTAG = "ImagePreset";
 
-    private FilterRepresentation mImageBorder = null;
+    private FilterRepresentation mBorder = null;
     private float mScaleFactor = 1.0f;
     private boolean mIsHighQuality = false;
     private ImageLoader mImageLoader = null;
@@ -70,8 +67,8 @@ public class ImagePreset {
 
     public ImagePreset(ImagePreset source) {
         try {
-            if (source.mImageBorder != null) {
-                mImageBorder = source.mImageBorder.clone();
+            if (source.mBorder != null) {
+                mBorder = source.mBorder.clone();
             }
             for (int i = 0; i < source.mFilters.size(); i++) {
                 FilterRepresentation representation = source.mFilters.elementAt(i).clone();
@@ -152,7 +149,7 @@ public class ImagePreset {
     }
 
     public boolean hasModifications() {
-        if (mImageBorder != null && !mImageBorder.isNil()) {
+        if (mBorder != null && !mBorder.isNil()) {
             return true;
         }
         if (mGeoData.hasModifications()) {
@@ -168,7 +165,7 @@ public class ImagePreset {
     }
 
     public boolean isPanoramaSafe() {
-        if (mImageBorder != null && !mImageBorder.isNil()) {
+        if (mBorder != null && !mBorder.isNil()) {
             return false;
         }
         if (mGeoData.hasModifications()) {
@@ -192,7 +189,7 @@ public class ImagePreset {
     }
 
     private void setBorder(FilterRepresentation filter) {
-        mImageBorder = filter;
+        mBorder = filter;
     }
 
     public boolean isFx() {
@@ -257,11 +254,11 @@ public class ImagePreset {
             return false;
         }
 
-        if (mDoApplyGeometry && mImageBorder != preset.mImageBorder) {
+        if (mDoApplyGeometry && mBorder != preset.mBorder) {
             return false;
         }
 
-        if (mImageBorder != null && !mImageBorder.equals(preset.mImageBorder)) {
+        if (mBorder != null && !mBorder.equals(preset.mBorder)) {
             return false;
         }
 
@@ -364,6 +361,9 @@ public class ImagePreset {
                 return representation;
             }
         }
+        if (mBorder != null && mBorder.getFilterClass() == filterRepresentation.getFilterClass()) {
+            return mBorder;
+        }
         return null;
     }
 
@@ -384,8 +384,9 @@ public class ImagePreset {
     }
 
     public Bitmap applyBorder(Bitmap bitmap) {
-        if (mImageBorder != null && mDoApplyGeometry) {
-            ImageFilter filter = FiltersManager.getManager().getFilterForRepresentation(mImageBorder);
+        if (mBorder != null && mDoApplyGeometry) {
+            ImageFilter filter = FiltersManager.getManager().getFilterForRepresentation(mBorder);
+            filter.useRepresentation(mBorder);
             bitmap = filter.apply(bitmap, mScaleFactor, mIsHighQuality);
         }
         return bitmap;
