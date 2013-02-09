@@ -29,7 +29,6 @@ public class ImageFilterParametricBorder extends ImageFilter {
     private FilterColorBorderRepresentation mParameters = null;
 
     public ImageFilterParametricBorder() {
-        setFilterType(TYPE_BORDER);
         mName = "Border";
     }
 

@@ -53,7 +53,6 @@ public class ImageFilterTinyPlanet extends SimpleImageFilter {
             "CroppedAreaTopPixels";
 
     public ImageFilterTinyPlanet() {
-        setFilterType(TYPE_TINYPLANET);
         mName = "TinyPlanet";
     }
 
@@ -78,6 +77,7 @@ public class ImageFilterTinyPlanet extends SimpleImageFilter {
         FilterTinyPlanetRepresentation representation = new FilterTinyPlanetRepresentation();
         representation.setName("TinyPlanet");
         representation.setFilterClass(ImageFilterTinyPlanet.class);
+        representation.setFilterType(FilterRepresentation.TYPE_TINYPLANET);
         return representation;
     }
 

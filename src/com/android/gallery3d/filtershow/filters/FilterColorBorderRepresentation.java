@@ -27,7 +27,7 @@ public class FilterColorBorderRepresentation extends FilterRepresentation {
         mBorderSize = size;
         mBorderRadius = radius;
         setFilterClass(ImageFilterParametricBorder.class);
-        setPriority(ImageFilter.TYPE_BORDER);
+        setPriority(FilterRepresentation.TYPE_BORDER);
     }
 
     public String toString() {

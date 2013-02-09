@@ -29,6 +29,14 @@ public class FilterRepresentation implements Cloneable {
     private boolean mShowParameterValue;
     private Class mFilterClass;
 
+    public static final byte TYPE_BORDER = 1;
+    public static final byte TYPE_FX = 2;
+    public static final byte TYPE_WBALANCE = 3;
+    public static final byte TYPE_VIGNETTE = 4;
+    public static final byte TYPE_NORMAL = 5;
+    public static final byte TYPE_TINYPLANET = 6;
+    private byte filterType = TYPE_NORMAL;
+
     public FilterRepresentation(String name) {
         mName = name;
     }
@@ -58,6 +66,14 @@ public class FilterRepresentation implements Cloneable {
 
     public String toString() {
         return mName;
+    }
+
+    public byte getFilterType() {
+        return filterType;
+    }
+
+    protected void setFilterType(byte type) {
+        filterType = type;
     }
 
     public void setName(String name) {
