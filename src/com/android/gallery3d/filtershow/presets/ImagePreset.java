@@ -172,11 +172,11 @@ public class ImagePreset {
             return false;
         }
         for (FilterRepresentation representation : mFilters) {
-            if (representation.getPriority() == ImageFilter.TYPE_VIGNETTE
+            if (representation.getPriority() == FilterRepresentation.TYPE_VIGNETTE
                 && !representation.isNil()) {
                 return false;
             }
-            if (representation.getPriority() == ImageFilter.TYPE_TINYPLANET
+            if (representation.getPriority() == FilterRepresentation.TYPE_TINYPLANET
                 && !representation.isNil()) {
                 return false;
             }
@@ -323,20 +323,20 @@ public class ImagePreset {
 
     public void addFilter(FilterRepresentation representation) {
         Log.v(LOGTAG, "*** Add Filter *** " + representation);
-        if (representation.getPriority() == ImageFilter.TYPE_BORDER) {
+        if (representation.getPriority() == FilterRepresentation.TYPE_BORDER) {
             setHistoryName(representation.getName());
             setBorder(representation);
-        } else if (representation.getPriority() == ImageFilter.TYPE_FX) {
+        } else if (representation.getPriority() == FilterRepresentation.TYPE_FX) {
             boolean found = false;
             for (int i = 0; i < mFilters.size(); i++) {
                 int type = mFilters.elementAt(i).getPriority();
                 if (found) {
-                    if (type != ImageFilter.TYPE_VIGNETTE) {
+                    if (type != FilterRepresentation.TYPE_VIGNETTE) {
                         mFilters.remove(i);
                         continue;
                     }
                 }
-                if (type == ImageFilter.TYPE_FX) {
+                if (type == FilterRepresentation.TYPE_FX) {
                     mFilters.remove(i);
                     mFilters.add(i, representation);
                     setHistoryName(representation.getName());

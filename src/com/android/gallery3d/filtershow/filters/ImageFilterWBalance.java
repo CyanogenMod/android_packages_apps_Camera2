@@ -24,13 +24,13 @@ public class ImageFilterWBalance extends ImageFilter {
     private static final String TAG = "ImageFilterWBalance";
 
     public ImageFilterWBalance() {
-        setFilterType(TYPE_WBALANCE);
         mName = "WBalance";
     }
 
     public FilterRepresentation getDefaultRepresentation() {
         FilterRepresentation representation = new FilterDirectRepresentation("WBalance");
         representation.setFilterClass(ImageFilterWBalance.class);
+        representation.setFilterType(FilterRepresentation.TYPE_WBALANCE);
         return representation;
     }
 

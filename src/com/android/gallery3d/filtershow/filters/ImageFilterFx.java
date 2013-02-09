@@ -23,19 +23,10 @@ import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 
 public class ImageFilterFx extends ImageFilter {
     private static final String TAG = "ImageFilterFx";
-    Bitmap fxBitmap;
-    int mNameResource = 0;
     private FilterFxRepresentation mParameters = null;
 
     public ImageFilterFx() {
 
-    }
-
-    public ImageFilterFx(Bitmap fxBitmap, String name, int nameResource) {
-        setFilterType(TYPE_FX);
-        mName = name;
-        this.fxBitmap = fxBitmap;
-        mNameResource = nameResource;
     }
 
     public void useRepresentation(FilterRepresentation representation) {
@@ -49,14 +40,10 @@ public class ImageFilterFx extends ImageFilter {
 
     @Override
     public int getTextId() {
-        return mNameResource;
-    }
-
-    public boolean isNil() {
-        if (fxBitmap != null) {
-            return false;
+        if (getParameters() == null) {
+            return 0;
         }
-        return true;
+        return getParameters().getNameResource();
     }
 
     @Override

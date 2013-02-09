@@ -23,7 +23,7 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
         super("ImageBorder");
         mDrawableResource = drawableResource;
         setFilterClass(ImageFilterBorder.class);
-        setPriority(ImageFilter.TYPE_BORDER);
+        setPriority(FilterRepresentation.TYPE_BORDER);
         // load the drawable at init as we are in a background thread
         // (see FilterShowActivity's LoadBordersTask)
         ImageFilterBorder filter = (ImageFilterBorder) FiltersManager.getManager().getFilter(getFilterClass());
