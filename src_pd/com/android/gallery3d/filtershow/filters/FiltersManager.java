@@ -67,6 +67,7 @@ public class FiltersManager {
 
     public static void addFilterRepresentations(Vector<FilterRepresentation> representations) {
         representations.add(getRepresentation(ImageFilterTinyPlanet.class));
+        representations.add(getRepresentation(ImageFilterRedEye.class));
         representations.add(getRepresentation(ImageFilterWBalance.class));
         representations.add(getRepresentation(ImageFilterExposure.class));
         representations.add(getRepresentation(ImageFilterVignette.class));
@@ -86,6 +87,7 @@ public class FiltersManager {
 
     public static void addFilters(Vector<ImageFilter> filters) {
         filters.add(new ImageFilterTinyPlanet());
+        filters.add(new ImageFilterRedEye());
         filters.add(new ImageFilterWBalance());
         filters.add(new ImageFilterExposure());
         filters.add(new ImageFilterVignette());

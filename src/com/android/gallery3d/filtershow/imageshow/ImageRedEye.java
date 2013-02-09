@@ -11,24 +11,28 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import com.android.gallery3d.filtershow.editors.EditorRedEye;
+import com.android.gallery3d.filtershow.filters.FilterRedEyeRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilterRedEye;
 import com.android.gallery3d.filtershow.filters.RedEyeCandidate;
 
-public class ImageRedEyes extends ImageShow {
+public class ImageRedEye extends ImageShow {
 
     private static final String LOGTAG = "ImageRedEyes";
     private RectF mCurrentRect = null;
+    private EditorRedEye mEditorRedEye;
+    private FilterRedEyeRepresentation mRedEyeRep;
     private static float mTouchPadding = 80;
 
     public static void setTouchPadding(float padding) {
         mTouchPadding = padding;
     }
 
-    public ImageRedEyes(Context context, AttributeSet attrs) {
+    public ImageRedEye(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ImageRedEyes(Context context) {
+    public ImageRedEye(Context context) {
         super(context);
     }
 
@@ -53,8 +57,6 @@ public class ImageRedEyes extends ImageShow {
         super.onTouchEvent(event);
         float ex = event.getX();
         float ey = event.getY();
-
-        ImageFilterRedEye filter = (ImageFilterRedEye) getCurrentFilter();
 
         // let's transform (ex, ey) to displayed image coordinates
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -87,11 +89,12 @@ public class ImageRedEyes extends ImageShow {
                 invert.reset();
                 originalNoRotateToScreen.invert(invert);
                 invert.mapRect(r2);
-                filter.addRect(r, r2);
+                mRedEyeRep.addRect(r, r2);
                 this.resetImageCaches(this);
             }
             mCurrentRect = null;
         }
+        mEditorRedEye.commitLocalRepresentation();
         invalidate();
         return true;
     }
@@ -117,32 +120,41 @@ public class ImageRedEyes extends ImageShow {
                 mImageLoader.getOriginalBounds().width(),
                 mImageLoader.getOriginalBounds().height(), getWidth(), getHeight());
 
-        ImageFilterRedEye filter = (ImageFilterRedEye) getCurrentFilter();
-        for (RedEyeCandidate candidate : filter.getCandidates()) {
-            RectF rect = candidate.getRect();
-            RectF drawRect = new RectF();
-            originalToScreen.mapRect(drawRect, rect);
-            RectF fullRect = new RectF();
-            originalRotateToScreen.mapRect(fullRect, rect);
-            paint.setColor(Color.BLUE);
-            canvas.drawRect(fullRect, paint);
-            canvas.drawLine(fullRect.centerX(), fullRect.top,
-                    fullRect.centerX(), fullRect.bottom, paint);
-            canvas.drawLine(fullRect.left, fullRect.centerY(),
-                    fullRect.right, fullRect.centerY(), paint);
-            paint.setColor(Color.GREEN);
-            float dw = drawRect.width();
-            float dh = drawRect.height();
-            float dx = fullRect.centerX() - dw/2;
-            float dy = fullRect.centerY() - dh/2;
-            drawRect.set(dx, dy, dx + dw, dy + dh);
-            canvas.drawRect(drawRect, paint);
-            canvas.drawLine(drawRect.centerX(), drawRect.top,
-                    drawRect.centerX(), drawRect.bottom, paint);
-            canvas.drawLine(drawRect.left, drawRect.centerY(),
-                    drawRect.right, drawRect.centerY(), paint);
-            canvas.drawCircle(drawRect.centerX(), drawRect.centerY(),
-                    mTouchPadding, paint);
+        if (mRedEyeRep != null) {
+            for (RedEyeCandidate candidate : mRedEyeRep.getCandidates()) {
+                RectF rect = candidate.getRect();
+                RectF drawRect = new RectF();
+                originalToScreen.mapRect(drawRect, rect);
+                RectF fullRect = new RectF();
+                originalRotateToScreen.mapRect(fullRect, rect);
+                paint.setColor(Color.BLUE);
+                canvas.drawRect(fullRect, paint);
+                canvas.drawLine(fullRect.centerX(), fullRect.top,
+                        fullRect.centerX(), fullRect.bottom, paint);
+                canvas.drawLine(fullRect.left, fullRect.centerY(),
+                        fullRect.right, fullRect.centerY(), paint);
+                paint.setColor(Color.GREEN);
+                float dw = drawRect.width();
+                float dh = drawRect.height();
+                float dx = fullRect.centerX() - dw / 2;
+                float dy = fullRect.centerY() - dh / 2;
+                drawRect.set(dx, dy, dx + dw, dy + dh);
+                canvas.drawRect(drawRect, paint);
+                canvas.drawLine(drawRect.centerX(), drawRect.top,
+                        drawRect.centerX(), drawRect.bottom, paint);
+                canvas.drawLine(drawRect.left, drawRect.centerY(),
+                        drawRect.right, drawRect.centerY(), paint);
+                canvas.drawCircle(drawRect.centerX(), drawRect.centerY(),
+                        mTouchPadding, paint);
+            }
         }
+    }
+
+    public void setEditor(EditorRedEye editorRedEye) {
+        mEditorRedEye = editorRedEye;
+    }
+
+    public void setRepresentation(FilterRedEyeRepresentation redEyeRep) {
+        mRedEyeRep = redEyeRep;
     }
 }
