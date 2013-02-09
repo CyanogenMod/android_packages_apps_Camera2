@@ -454,7 +454,10 @@ public class PanelController implements OnClickListener {
         boolean doPanelTransition = true;
         if (view instanceof FilterIconButton) {
             ImageFilter f = ((FilterIconButton) view).getImageFilter();
-            doPanelTransition = f.showUtilityPanel();
+            if (f != null) {
+                // FIXME: this check shouldn't be necessary
+                doPanelTransition = f.showUtilityPanel();
+            }
         }
 
         if (mUtilityPanel != null && !mUtilityPanel.selected() && doPanelTransition ) {
