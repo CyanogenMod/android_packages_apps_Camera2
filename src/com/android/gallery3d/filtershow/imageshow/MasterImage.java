@@ -55,7 +55,8 @@ public class MasterImage implements RenderingRequestCaller {
     private Vector<ImageShow> mObservers = new Vector<ImageShow>();
     private FilterRepresentation mCurrentFilterRepresentation;
 
-    private MasterImage() { }
+    private MasterImage() {
+    }
 
     public static MasterImage getImage() {
         if (sMasterImage == null) {
@@ -65,6 +66,9 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public void addObserver(ImageShow observer) {
+        if (mObservers.contains(observer)) {
+            return;
+        }
         mObservers.add(observer);
     }
 
@@ -117,6 +121,7 @@ public class MasterImage implements RenderingRequestCaller {
         // We need a copy from the history
         mHistory.setCurrentPreset(position);
     }
+
     public HistoryAdapter getHistory() {
         return mHistory;
     }

@@ -50,7 +50,6 @@ public class ImageShow extends View implements OnGestureListener,
         SliderListener,
         OnSeekBarChangeListener {
 
-    protected MasterImage mMasterImage = MasterImage.getImage();
     private static final String LOGTAG = "ImageShow";
 
     protected Paint mPaint = new Paint();
@@ -186,7 +185,7 @@ public class ImageShow extends View implements OnGestureListener,
     @Override
     public void onNewValue(int parameter) {
         if (getImagePreset() != null) {
-            getImagePreset().fillImageStateAdapter(mMasterImage.getState());
+            getImagePreset().fillImageStateAdapter(MasterImage.getImage().getState());
         }
         if (getPanelController() != null) {
             getPanelController().onNewValue(parameter);
@@ -211,7 +210,7 @@ public class ImageShow extends View implements OnGestureListener,
 
         setupGestureDetector(context);
         mActivity = (FilterShowActivity) context;
-        mMasterImage.addObserver(this);
+        MasterImage.getImage().addObserver(this);
     }
 
     public ImageShow(Context context) {
@@ -219,7 +218,7 @@ public class ImageShow extends View implements OnGestureListener,
 
         setupGestureDetector(context);
         mActivity = (FilterShowActivity) context;
-        mMasterImage.addObserver(this);
+        MasterImage.getImage().addObserver(this);
     }
 
     public void setupGestureDetector(Context context) {
@@ -238,7 +237,7 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     public ImageFilter getCurrentFilter() {
-        return mMasterImage.getCurrentFilter();
+        return MasterImage.getImage().getCurrentFilter();
     }
 
     public void showToast(String text) {
@@ -275,7 +274,7 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     public ImagePreset getImagePreset() {
-        return mMasterImage.getPreset();
+        return MasterImage.getImage().getPreset();
     }
 
     public void drawToast(Canvas canvas) {
@@ -330,19 +329,19 @@ public class ImageShow extends View implements OnGestureListener,
         if (mImageLoader == null) {
             return;
         }
-        mMasterImage.updatePresets(true);
+        MasterImage.getImage().updatePresets(true);
     }
 
     public Bitmap getFiltersOnlyImage() {
-        return mMasterImage.getFiltersOnlyImage();
+        return MasterImage.getImage().getFiltersOnlyImage();
     }
 
     public Bitmap getGeometryOnlyImage() {
-        return mMasterImage.getGeometryOnlyImage();
+        return MasterImage.getImage().getGeometryOnlyImage();
     }
 
     public Bitmap getFilteredImage() {
-        return mMasterImage.getFilteredImage();
+        return MasterImage.getImage().getFilteredImage();
     }
 
     public void drawImage(Canvas canvas, Bitmap image) {
@@ -464,7 +463,7 @@ public class ImageShow extends View implements OnGestureListener,
         mImageLoader = loader;
         if (mImageLoader != null) {
             mImageLoader.addListener(this);
-            mMasterImage.setImageLoader(mImageLoader);
+            MasterImage.getImage().setImageLoader(mImageLoader);
         }
     }
 
