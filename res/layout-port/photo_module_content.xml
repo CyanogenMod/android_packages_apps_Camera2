@@ -43,7 +43,7 @@
         <include layout="@layout/review_module_control"
             android:layout_marginBottom="2dip" />
 
-        <View
+        <com.android.camera.ui.PieMenuButton
             android:id="@+id/menu"
             style="@style/SwitcherButton"
             android:layout_gravity="bottom|right"
