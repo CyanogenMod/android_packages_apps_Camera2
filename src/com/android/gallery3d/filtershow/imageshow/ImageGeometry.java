@@ -328,7 +328,7 @@ public abstract class ImageGeometry extends ImageShow {
     }
 
     public void saveAndSetPreset() {
-        ImagePreset lastHistoryItem = mMasterImage.getHistory().getLast();
+        ImagePreset lastHistoryItem = MasterImage.getImage().getHistory().getLast();
         if (lastHistoryItem != null && lastHistoryItem.historyName().equalsIgnoreCase(getName())) {
             getImagePreset().setGeometry(mLocalGeometry);
             resetImageCaches(this);
@@ -338,7 +338,7 @@ public abstract class ImageGeometry extends ImageShow {
                 copy.setGeometry(mLocalGeometry);
                 copy.setHistoryName(getName());
                 copy.setIsFx(false);
-                mMasterImage.setPreset(copy, true);
+                MasterImage.getImage().setPreset(copy, true);
             }
         }
         invalidate();
