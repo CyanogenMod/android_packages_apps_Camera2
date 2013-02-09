@@ -479,7 +479,7 @@ public class PanelController implements OnClickListener {
             mCurrentEditor = null;
             FilterIconButton component = (FilterIconButton) view;
             ImageFilter filter = component.getImageFilter();
-            if (filter.getEditingViewId() != 0) {
+            if (filter != null && filter.getEditingViewId() != 0) {
                 if (mEditorPlaceHolder.contains(filter.getEditingViewId())) {
                     mCurrentEditor = mEditorPlaceHolder.showEditor(filter.getEditingViewId());
                     mCurrentImage = mCurrentEditor.getImageShow();
