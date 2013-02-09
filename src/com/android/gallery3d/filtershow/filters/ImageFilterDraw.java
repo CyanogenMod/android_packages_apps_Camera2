@@ -50,7 +50,6 @@ public class ImageFilterDraw extends ImageFilter {
 
     public ImageFilterDraw() {
         mName = "Image Draw";
-        setFilterType(TYPE_VIGNETTE);
     }
 
     DrawStyle[] mDrawingsTypes = new DrawStyle[] {
@@ -72,6 +71,7 @@ public class ImageFilterDraw extends ImageFilter {
         FilterDrawRepresentation representation = new FilterDrawRepresentation();
         representation.setName("Draw");
         representation.setFilterClass(ImageFilterDraw.class);
+        representation.setFilterType(FilterRepresentation.TYPE_VIGNETTE);
         return representation;
     }
 

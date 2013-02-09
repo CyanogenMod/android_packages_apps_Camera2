@@ -26,7 +26,6 @@ public class ImageFilterVignette extends SimpleImageFilter {
     private static final String LOGTAG = "ImageFilterVignette";
 
     public ImageFilterVignette() {
-        setFilterType(TYPE_VIGNETTE);
         mName = "Vignette";
     }
 
@@ -34,7 +33,7 @@ public class ImageFilterVignette extends SimpleImageFilter {
         FilterBasicRepresentation representation = (FilterBasicRepresentation) super.getDefaultRepresentation();
         representation.setName("Vignette");
         representation.setFilterClass(ImageFilterVignette.class);
-        representation.setPriority(TYPE_VIGNETTE);
+        representation.setPriority(FilterRepresentation.TYPE_VIGNETTE);
         return representation;
     }
 
