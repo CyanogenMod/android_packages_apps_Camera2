@@ -1437,7 +1437,11 @@ public class PhotoModule
             }
             mFocusManager.onShutterDown();
         } else {
-            mFocusManager.onShutterUp();
+            // for countdown mode, we need to postpone the shutter release
+            // i.e. lock the focus during countdown.
+            if (!mCountDownView.isCountingDown()) {
+                mFocusManager.onShutterUp();
+            }
         }
     }
 
@@ -2429,6 +2433,7 @@ public class PhotoModule
     public void onCountDownFinished() {
         mSnapshotOnIdle = false;
         mFocusManager.doSnap();
+        mFocusManager.onShutterUp();
     }
 
     void setPreviewFrameLayoutAspectRatio() {
