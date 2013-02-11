@@ -16,7 +16,8 @@
 
 package com.android.gallery3d.filtershow.filters;
 
-import android.util.Log;
+import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
 
 public class FilterTinyPlanetRepresentation extends FilterBasicRepresentation {
     private static final String LOGTAG = "FilterTinyPlanetRepresentation";
@@ -25,6 +26,11 @@ public class FilterTinyPlanetRepresentation extends FilterBasicRepresentation {
     public FilterTinyPlanetRepresentation() {
         super("TinyPlanet", 0, 50, 100);
         setShowParameterValue(true);
+        setFilterClass(ImageFilterTinyPlanet.class);
+        setFilterType(FilterRepresentation.TYPE_TINYPLANET);
+        setTextId(R.string.tinyplanet);
+        setButtonId(R.id.tinyplanetButton);
+        setEditorId(EditorTinyPlanet.ID);
     }
 
     @Override
@@ -50,5 +56,10 @@ public class FilterTinyPlanetRepresentation extends FilterBasicRepresentation {
 
     public void setZoom(int zoom) {
         setValue(zoom);
+    }
+
+    public boolean isNil() {
+        // TinyPlanet always has an effect
+        return false;
     }
 }
