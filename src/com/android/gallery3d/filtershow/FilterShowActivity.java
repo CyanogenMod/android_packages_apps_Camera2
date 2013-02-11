@@ -714,7 +714,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             representation.setName(getString(representation.getTextId()));
         }
         String text = representation.getName();
-        icon.setup(text, this, panel);
+        icon.setup(text, mPanelController, panel);
         icon.setFilterRepresentation(representation);
         if (representation instanceof FilterTinyPlanetRepresentation) {
             // needed to hide tinyplanet on startup
@@ -981,30 +981,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         Resources r = getResources();
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value,
                 r.getDisplayMetrics());
-    }
-
-    public void useFilterRepresentation(FilterRepresentation filterRepresentation) {
-        if (filterRepresentation == null) {
-            return;
-        }
-        if (mMasterImage.getCurrentFilterRepresentation() == filterRepresentation) {
-            return;
-        }
-        ImagePreset oldPreset = mMasterImage.getPreset();
-        ImagePreset copy = new ImagePreset(oldPreset);
-        FilterRepresentation representation = copy.getRepresentation(filterRepresentation);
-        if (representation == null) {
-            copy.addFilter(filterRepresentation);
-        } else {
-            if (filterRepresentation.allowsMultipleInstances()) {
-                representation.useParametersFrom(filterRepresentation);
-                copy.setHistoryName(filterRepresentation.getName());
-            }
-            filterRepresentation = representation;
-        }
-        mMasterImage.setPreset(copy, true);
-        mMasterImage.setCurrentFilterRepresentation(filterRepresentation);
-        invalidateViews();
     }
 
     @Override
