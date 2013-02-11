@@ -50,32 +50,6 @@ public class ImageFilterBorder extends ImageFilter {
         return mParameters;
     }
 
-    @Override
-    public int getTextId() {
-        return R.string.borders;
-    }
-
-    @Override
-    public int getEditingViewId() {
-        return ImageOnlyEditor.ID;
-    }
-
-    @Override
-
-    public boolean showParameterValue() {
-        return false;
-    }
-
-    @Override
-    public boolean showEditingControls() {
-        return false;
-    }
-
-    @Override
-    public boolean showUtilityPanel() {
-        return false;
-    }
-
     public Bitmap applyHelper(Bitmap bitmap, float scale1, float scale2 ) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();

@@ -57,6 +57,33 @@ public class FiltersManager {
         return gInstance;
     }
 
+    public static FilterRepresentation getRepresentation(Class c) {
+        ImageFilter filter = mFilters.get(c);
+        if (filter != null) {
+            return filter.getDefaultRepresentation();
+        }
+        return null;
+    }
+
+    public static void addFilterRepresentations(Vector<FilterRepresentation> representations) {
+        representations.add(getRepresentation(ImageFilterTinyPlanet.class));
+        representations.add(getRepresentation(ImageFilterWBalance.class));
+        representations.add(getRepresentation(ImageFilterExposure.class));
+        representations.add(getRepresentation(ImageFilterVignette.class));
+        representations.add(getRepresentation(ImageFilterContrast.class));
+        representations.add(getRepresentation(ImageFilterShadows.class));
+        representations.add(getRepresentation(ImageFilterVibrance.class));
+        representations.add(getRepresentation(ImageFilterSharpen.class));
+        representations.add(getRepresentation(ImageFilterCurves.class));
+        representations.add(getRepresentation(ImageFilterDraw.class));
+        representations.add(getRepresentation(ImageFilterHue.class));
+        representations.add(getRepresentation(ImageFilterSaturated.class));
+        representations.add(getRepresentation(ImageFilterBwFilter.class));
+        representations.add(getRepresentation(ImageFilterNegative.class));
+        representations.add(getRepresentation(ImageFilterEdge.class));
+        representations.add(getRepresentation(ImageFilterKMeans.class));
+    }
+
     public static void addFilters(Vector<ImageFilter> filters) {
         filters.add(new ImageFilterTinyPlanet());
         filters.add(new ImageFilterWBalance());

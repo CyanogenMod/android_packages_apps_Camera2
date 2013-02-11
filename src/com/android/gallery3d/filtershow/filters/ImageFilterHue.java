@@ -35,22 +35,10 @@ public class ImageFilterHue extends SimpleImageFilter {
         representation.setFilterClass(ImageFilterHue.class);
         representation.setMinimum(-180);
         representation.setMaximum(180);
+        representation.setTextId(R.string.hue);
+        representation.setButtonId(R.id.hueButton);
+        representation.setEditorId(BasicEditor.ID);
         return representation;
-    }
-
-    @Override
-    public int getButtonId() {
-        return R.id.hueButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.hue;
-    }
-
-    @Override
-    public int getEditingViewId() {
-        return BasicEditor.ID;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float []matrix);

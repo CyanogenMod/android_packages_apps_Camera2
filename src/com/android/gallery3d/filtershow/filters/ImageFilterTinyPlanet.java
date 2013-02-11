@@ -57,16 +57,6 @@ public class ImageFilterTinyPlanet extends SimpleImageFilter {
     }
 
     @Override
-    public int getEditingViewId() {
-        return EditorTinyPlanet.ID;
-    }
-
-    @Override
-    public boolean hasDefaultRepresentation() {
-        return true;
-    }
-
-    @Override
     public void useRepresentation(FilterRepresentation representation) {
         FilterTinyPlanetRepresentation parameters = (FilterTinyPlanetRepresentation) representation;
         mParameters = parameters;
@@ -74,26 +64,7 @@ public class ImageFilterTinyPlanet extends SimpleImageFilter {
 
     @Override
     public FilterRepresentation getDefaultRepresentation() {
-        FilterTinyPlanetRepresentation representation = new FilterTinyPlanetRepresentation();
-        representation.setName("TinyPlanet");
-        representation.setFilterClass(ImageFilterTinyPlanet.class);
-        representation.setFilterType(FilterRepresentation.TYPE_TINYPLANET);
-        return representation;
-    }
-
-    @Override
-    public int getButtonId() {
-        return R.id.tinyplanetButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.tinyplanet;
-    }
-
-    public boolean isNil() {
-        // TinyPlanet always has an effect
-        return false;
+        return new FilterTinyPlanetRepresentation();
     }
 
     native protected void nativeApplyFilter(

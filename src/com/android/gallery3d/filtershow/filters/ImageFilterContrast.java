@@ -30,17 +30,9 @@ public class ImageFilterContrast extends SimpleImageFilter {
         FilterRepresentation representation = super.getDefaultRepresentation();
         representation.setName("Contrast");
         representation.setFilterClass(ImageFilterContrast.class);
+        representation.setTextId(R.string.contrast);
+        representation.setButtonId(R.id.contrastButton);
         return representation;
-    }
-
-    @Override
-    public int getButtonId() {
-        return R.id.contrastButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.contrast;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float strength);
