@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.filtershow.PanelController;
 import com.android.gallery3d.filtershow.cache.FilteringPipeline;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
@@ -32,7 +33,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilter;
 
 public class FilterIconButton extends IconButton implements View.OnClickListener {
     private Bitmap mOverlayBitmap = null;
-    private FilterShowActivity mController = null;
+    private PanelController mController = null;
     private ImageFilter mImageFilter = null;
     private FilterRepresentation mFilterRepresentation = null;
     private LinearLayout mParentContainer = null;
@@ -50,18 +51,12 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
         super(context, attrs, defStyle);
     }
 
-    public void setup(String text, FilterShowActivity controller, LinearLayout parent) {
+    public void setup(String text, PanelController controller, LinearLayout parent) {
         mController = controller;
         setText(text);
         mParentContainer = parent;
         super.setOnClickListener(this);
         invalidate();
-    }
-
-    public void setup(String text, ImageFilter filter, FilterShowActivity controller,
-            LinearLayout parent) {
-        setup(text, controller, parent);
-        mImageFilter = filter;
     }
 
     @Override
@@ -89,7 +84,7 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        if (mController != null && mImageFilter != null) {
+        if (mController != null) {
             mController.useFilterRepresentation(mFilterRepresentation);
             mParentContainer.dispatchSetSelected(false);
             setSelected(true);
@@ -97,10 +92,6 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
         if (mListener != null && mListener != this) {
             mListener.onClick(v);
         }
-    }
-
-    public ImageFilter getImageFilter() {
-        return mImageFilter;
     }
 
     public FilterRepresentation getFilterRepresentation() {
