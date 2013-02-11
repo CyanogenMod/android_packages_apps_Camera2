@@ -17,17 +17,22 @@
 package com.android.gallery3d.filtershow.filters;
 
 import com.android.gallery3d.app.Log;
+import com.android.gallery3d.filtershow.editors.BasicEditor;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
-
-import java.util.HashMap;
 
 public class FilterRepresentation implements Cloneable {
     private static final String LOGTAG = "FilterRepresentation";
     private String mName;
     private int mPriority;
     private ImagePreset mPreset;
-    private boolean mShowParameterValue;
     private Class mFilterClass;
+    private int mTextId = 0;
+    private int mEditorId = BasicEditor.ID;
+    private int mButtonId = 0;
+    private int mOverlayId = 0;
+    private boolean mShowEditingControls = true;
+    private boolean mShowParameterValue = true;
+    private boolean mShowUtilityPanel = true;
 
     public static final byte TYPE_BORDER = 1;
     public static final byte TYPE_FX = 2;
@@ -47,6 +52,13 @@ public class FilterRepresentation implements Cloneable {
         representation.setName(getName());
         representation.setPriority(getPriority());
         representation.setFilterClass(getFilterClass());
+        representation.setTextId(getTextId());
+        representation.setEditorId(getEditorId());
+        representation.setButtonId(getButtonId());
+        representation.setOverlayId(getOverlayId());
+        representation.setShowEditingControls(showEditingControls());
+        representation.setShowParameterValue(showParameterValue());
+        representation.setShowUtilityPanel(showUtilityPanel());
         Log.v(LOGTAG, "cloning from <" + this + "> to <" + representation + ">");
         return representation;
     }
@@ -58,7 +70,13 @@ public class FilterRepresentation implements Cloneable {
         if (representation.mFilterClass == representation.mFilterClass
                 && representation.mName.equalsIgnoreCase(mName)
                 && representation.mPriority == mPriority
-                && representation.mShowParameterValue == mShowParameterValue) {
+                && representation.mTextId == mTextId
+                && representation.mEditorId == mEditorId
+                && representation.mButtonId == mButtonId
+                && representation.mOverlayId == mOverlayId
+                && representation.mShowEditingControls == mShowEditingControls
+                && representation.mShowParameterValue == mShowParameterValue
+                && representation.mShowUtilityPanel == mShowUtilityPanel) {
             return true;
         }
         return false;
@@ -103,14 +121,6 @@ public class FilterRepresentation implements Cloneable {
     public void useParametersFrom(FilterRepresentation a) {
     }
 
-    public void setShowParameterValue(boolean showParameterValue) {
-        mShowParameterValue = showParameterValue;
-    }
-
-    public boolean showParameterValue() {
-        return mShowParameterValue;
-    }
-
     public boolean allowsMultipleInstances() {
         return false;
     }
@@ -128,5 +138,61 @@ public class FilterRepresentation implements Cloneable {
             return false;
         }
         return getFilterClass() == b.getFilterClass();
+    }
+
+    public int getTextId() {
+        return mTextId;
+    }
+
+    public void setTextId(int textId) {
+        mTextId = textId;
+    }
+
+    public int getButtonId() {
+        return mButtonId;
+    }
+
+    public void setButtonId(int buttonId) {
+        mButtonId = buttonId;
+    }
+
+    public int getOverlayId() {
+        return mOverlayId;
+    }
+
+    public void setOverlayId(int overlayId) {
+        mOverlayId = overlayId;
+    }
+
+    public int getEditorId() {
+        return mEditorId;
+    }
+
+    public void setEditorId(int editorId) {
+        mEditorId = editorId;
+    }
+
+    public boolean showEditingControls() {
+        return mShowEditingControls;
+    }
+
+    public void setShowEditingControls(boolean showEditingControls) {
+        mShowEditingControls = showEditingControls;
+    }
+
+    public boolean showParameterValue() {
+        return mShowParameterValue;
+    }
+
+    public void setShowParameterValue(boolean showParameterValue) {
+        mShowParameterValue = showParameterValue;
+    }
+
+    public boolean showUtilityPanel() {
+        return mShowUtilityPanel;
+    }
+
+    public void setShowUtilityPanel(boolean showUtilityPanel) {
+        mShowUtilityPanel = showUtilityPanel;
     }
 }

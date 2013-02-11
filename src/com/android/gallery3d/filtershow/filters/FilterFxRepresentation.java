@@ -17,7 +17,7 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
-import com.android.gallery3d.app.Log;
+import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 
 public class FilterFxRepresentation extends FilterRepresentation {
     private Bitmap mFxBitmap = null;
@@ -32,6 +32,11 @@ public class FilterFxRepresentation extends FilterRepresentation {
         mNameResource = nameResource;
         setFilterClass(ImageFilterFx.class);
         setFilterType(FilterRepresentation.TYPE_FX);
+        setTextId(nameResource);
+        setEditorId(ImageOnlyEditor.ID);
+        setShowEditingControls(false);
+        setShowParameterValue(false);
+        setShowUtilityPanel(false);
     }
 
     public String toString() {

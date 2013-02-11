@@ -41,17 +41,9 @@ public class ImageFilterDownsample extends SimpleImageFilter {
         representation.setValue(50);
         representation.setDefaultValue(50);
         representation.setPreviewValue(3);
+        representation.setTextId(R.string.downsample);
+        representation.setButtonId(R.id.downsampleButton);
         return representation;
-    }
-
-    @Override
-    public int getButtonId() {
-        return R.id.downsampleButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.downsample;
     }
 
     @Override

@@ -13,31 +13,11 @@ public class ImageFilterNegative extends ImageFilter {
     public FilterRepresentation getDefaultRepresentation() {
         FilterRepresentation representation = new FilterDirectRepresentation("Negative");
         representation.setFilterClass(ImageFilterNegative.class);
+        representation.setTextId(R.string.negative);
+        representation.setButtonId(R.id.negativeButton);
+        representation.setShowEditingControls(false);
+        representation.setShowParameterValue(false);
         return representation;
-    }
-
-    public boolean hasDefaultRepresentation() {
-        return true;
-    }
-
-    @Override
-    public int getButtonId() {
-        return R.id.negativeButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.negative;
-    }
-
-    @Override
-    public boolean showEditingControls() {
-        return false;
-    }
-
-    @Override
-    public boolean showParameterValue() {
-        return false;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h);

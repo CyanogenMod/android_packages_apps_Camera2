@@ -34,17 +34,9 @@ public class ImageFilterVignette extends SimpleImageFilter {
         representation.setName("Vignette");
         representation.setFilterClass(ImageFilterVignette.class);
         representation.setPriority(FilterRepresentation.TYPE_VIGNETTE);
+        representation.setTextId(R.string.vignette);
+        representation.setButtonId(R.id.vignetteButton);
         return representation;
-    }
-
-    @Override
-    public int getButtonId() {
-        return R.id.vignetteButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.vignette;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float strength);
