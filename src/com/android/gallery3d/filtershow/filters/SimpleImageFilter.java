@@ -33,10 +33,6 @@ public class SimpleImageFilter extends ImageFilter {
         mParameters = parameters;
     }
 
-    public boolean hasDefaultRepresentation() {
-        return true;
-    }
-
     public FilterBasicRepresentation getParameters() {
         return mParameters;
     }

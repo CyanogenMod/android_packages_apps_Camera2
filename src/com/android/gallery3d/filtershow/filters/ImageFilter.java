@@ -29,34 +29,6 @@ public class ImageFilter implements Cloneable {
     protected String mName = "Original";
     private final String LOGTAG = "ImageFilter";
 
-    public int getButtonId() {
-        return 0;
-    }
-
-    public int getTextId() {
-        return 0;
-    }
-
-    public int getOverlayBitmaps() {
-        return 0;
-    }
-
-    public int getEditingViewId() {
-        return BasicEditor.ID;
-    }
-
-    public boolean showEditingControls() {
-        return true;
-    }
-
-    public boolean showParameterValue() {
-        return true;
-    }
-
-    public boolean showUtilityPanel() {
-        return true;
-    }
-
     public void setName(String name) {
         mName = name;
     }
@@ -92,7 +64,4 @@ public class ImageFilter implements Cloneable {
         return null;
     }
 
-    public boolean hasDefaultRepresentation() {
-        return false;
-    }
 }

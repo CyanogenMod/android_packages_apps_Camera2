@@ -62,10 +62,6 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
             LinearLayout parent) {
         setup(text, controller, parent);
         mImageFilter = filter;
-        if (mImageFilter.getOverlayBitmaps() != 0) {
-            mOverlayBitmap = BitmapFactory.decodeResource(getResources(),
-                    mImageFilter.getOverlayBitmaps());
-        }
     }
 
     @Override
@@ -107,7 +103,15 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
         return mImageFilter;
     }
 
+    public FilterRepresentation getFilterRepresentation() {
+        return mFilterRepresentation;
+    }
+
     public void setFilterRepresentation(FilterRepresentation filterRepresentation) {
         mFilterRepresentation = filterRepresentation;
+        if (mFilterRepresentation != null && mFilterRepresentation.getOverlayId() != 0) {
+            mOverlayBitmap = BitmapFactory.decodeResource(getResources(),
+                    mFilterRepresentation.getOverlayId());
+        }
     }
 }

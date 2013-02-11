@@ -16,6 +16,9 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
+
 public class FilterColorBorderRepresentation extends FilterRepresentation {
     private int mColor;
     private int mBorderSize;
@@ -28,6 +31,11 @@ public class FilterColorBorderRepresentation extends FilterRepresentation {
         mBorderRadius = radius;
         setFilterClass(ImageFilterParametricBorder.class);
         setPriority(FilterRepresentation.TYPE_BORDER);
+        setTextId(R.string.borders);
+        setEditorId(ImageOnlyEditor.ID);
+        setShowEditingControls(false);
+        setShowParameterValue(false);
+        setShowUtilityPanel(false);
     }
 
     public String toString() {
@@ -72,6 +80,11 @@ public class FilterColorBorderRepresentation extends FilterRepresentation {
 
     public boolean allowsMultipleInstances() {
         return true;
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.borders;
     }
 
     public int getColor() {
