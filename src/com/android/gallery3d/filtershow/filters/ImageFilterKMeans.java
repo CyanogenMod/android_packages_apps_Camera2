@@ -43,22 +43,14 @@ public class ImageFilterKMeans extends SimpleImageFilter {
         representation.setValue(4);
         representation.setDefaultValue(4);
         representation.setPreviewValue(4);
+        representation.setTextId(R.string.kmeans);
+        representation.setButtonId(R.id.kmeansButton);
         return representation;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int width, int height,
             Bitmap large_ds_bm, int lwidth, int lheight, Bitmap small_ds_bm,
             int swidth, int sheight, int p, int seed);
-
-    @Override
-    public int getButtonId() {
-        return R.id.kmeansButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.kmeans;
-    }
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {

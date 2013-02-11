@@ -31,25 +31,10 @@ public class ImageFilterWBalance extends ImageFilter {
         FilterRepresentation representation = new FilterDirectRepresentation("WBalance");
         representation.setFilterClass(ImageFilterWBalance.class);
         representation.setFilterType(FilterRepresentation.TYPE_WBALANCE);
+        representation.setTextId(R.string.wbalance);
+        representation.setButtonId(R.id.wbalanceButton);
+        representation.setShowEditingControls(false);
         return representation;
-    }
-
-    public boolean hasDefaultRepresentation() {
-        return true;
-    }
-
-    @Override
-    public int getButtonId() {
-        return R.id.wbalanceButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.wbalance;
-    }
-
-    public boolean showEditingControls() {
-        return false;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, int locX, int locY);

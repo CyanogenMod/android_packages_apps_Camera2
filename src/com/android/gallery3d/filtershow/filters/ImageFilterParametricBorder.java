@@ -41,26 +41,6 @@ public class ImageFilterParametricBorder extends ImageFilter {
         return mParameters;
     }
 
-    @Override
-    public int getTextId() {
-        return R.string.borders;
-    }
-
-    @Override
-    public boolean showParameterValue() {
-        return false;
-    }
-
-    @Override
-    public boolean showEditingControls() {
-        return false;
-    }
-
-    @Override
-    public boolean showUtilityPanel() {
-        return false;
-    }
-
     private void applyHelper(Canvas canvas, int w, int h) {
         if (getParameters() == null) {
             return;

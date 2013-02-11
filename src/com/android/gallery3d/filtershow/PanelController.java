@@ -18,7 +18,6 @@ package com.android.gallery3d.filtershow;
 
 import android.content.Context;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewPropertyAnimator;
@@ -27,6 +26,7 @@ import android.widget.TextView;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.editors.Editor;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
@@ -34,7 +34,6 @@ import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.ui.FilterIconButton;
-import com.android.gallery3d.filtershow.ui.FramedTextButton;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -233,7 +232,6 @@ public class PanelController implements OnClickListener {
     private View mCurrentPanel = null;
     private View mRowPanel = null;
     private UtilityPanel mUtilityPanel = null;
-    private MasterImage mMasterImage = MasterImage.getImage();
     private ImageShow mCurrentImage = null;
     private Editor mCurrentEditor = null;
     private FilterShowActivity mActivity = null;
@@ -294,9 +292,9 @@ public class PanelController implements OnClickListener {
         if (mUtilityPanel == null || !mUtilityPanel.selected()) {
             return true;
         }
-        HistoryAdapter adapter = mMasterImage.getHistory();
+        HistoryAdapter adapter = MasterImage.getImage().getHistory();
         int position = adapter.undo();
-        mMasterImage.onHistoryItemClick(position);
+        MasterImage.getImage().onHistoryItemClick(position);
         showPanel(mCurrentPanel);
         mCurrentImage.select();
         if (mCurrentEditor != null) {
@@ -359,8 +357,8 @@ public class PanelController implements OnClickListener {
 
     public void showDefaultImageView() {
         showImageView(R.id.imageShow).setShowControls(false);
-        mMasterImage.setCurrentFilter(null);
-        mMasterImage.setCurrentFilterRepresentation(null);
+        MasterImage.getImage().setCurrentFilter(null);
+        MasterImage.getImage().setCurrentFilterRepresentation(null);
     }
 
     public void showPanel(View view) {
@@ -403,7 +401,7 @@ public class PanelController implements OnClickListener {
     }
 
     public ImagePreset getImagePreset() {
-        return mMasterImage.getPreset();
+        return MasterImage.getImage().getPreset();
     }
 
     /**
@@ -453,9 +451,9 @@ public class PanelController implements OnClickListener {
 
         boolean doPanelTransition = true;
         if (view instanceof FilterIconButton) {
-            ImageFilter f = ((FilterIconButton) view).getImageFilter();
+            FilterRepresentation f = ((FilterIconButton) view).getFilterRepresentation();
             if (f != null) {
-                // FIXME: this check shouldn't be necessary
+                // FIXME: this check shouldn't be necessary (f shouldn't be null)
                 doPanelTransition = f.showUtilityPanel();
             }
         }
@@ -479,21 +477,23 @@ public class PanelController implements OnClickListener {
             mCurrentEditor = null;
             FilterIconButton component = (FilterIconButton) view;
             ImageFilter filter = component.getImageFilter();
-            if (filter != null && filter.getEditingViewId() != 0) {
-                if (mEditorPlaceHolder.contains(filter.getEditingViewId())) {
-                    mCurrentEditor = mEditorPlaceHolder.showEditor(filter.getEditingViewId());
-                    mCurrentImage = mCurrentEditor.getImageShow();
-                    mCurrentEditor.setPanelController(this);
-                } else {
-                    mCurrentImage = showImageView(filter.getEditingViewId());
-                }
-                mCurrentImage.setShowControls(filter.showEditingControls());
-                if (filter.getTextId() != 0) {
-                    String ename = mCurrentImage.getContext().getString(filter.getTextId());
-                    mUtilityPanel.setEffectName(ename);
-                }
+            FilterRepresentation representation = component.getFilterRepresentation();
+            if (representation != null) {
+                mUtilityPanel.setEffectName(representation.getName());
+                mUtilityPanel.setShowParameter(representation.showParameterValue());
 
-                mUtilityPanel.setShowParameter(filter.showParameterValue());
+                if (representation.getEditorId() != 0) {
+                    if (mEditorPlaceHolder.contains(representation.getEditorId())) {
+                        mCurrentEditor = mEditorPlaceHolder.showEditor(representation.getEditorId());
+                        mCurrentImage = mCurrentEditor.getImageShow();
+                        mCurrentEditor.setPanelController(this);
+                    } else {
+                        mCurrentImage = showImageView(representation.getEditorId());
+                    }
+                }
+                mCurrentImage.setShowControls(representation.showEditingControls());
+                mUtilityPanel.setShowParameter(representation.showParameterValue());
+
                 mCurrentImage.select();
                 if (mCurrentEditor != null) {
                     mCurrentEditor.reflectCurrentFilter();
@@ -558,7 +558,7 @@ public class PanelController implements OnClickListener {
                 break;
             }
             case R.id.applyEffect: {
-                if (mMasterImage.getCurrentFilter() instanceof ImageFilterTinyPlanet) {
+                if (MasterImage.getImage().getCurrentFilter() instanceof ImageFilterTinyPlanet) {
                     mActivity.saveImage();
                 } else {
                     if (mCurrentImage instanceof ImageCrop) {

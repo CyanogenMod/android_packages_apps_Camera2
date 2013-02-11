@@ -31,17 +31,9 @@ public class ImageFilterShadows extends SimpleImageFilter {
         FilterRepresentation representation = super.getDefaultRepresentation();
         representation.setName("Shadows");
         representation.setFilterClass(ImageFilterShadows.class);
+        representation.setTextId(R.string.shadow_recovery);
+        representation.setButtonId(R.id.shadowRecoveryButton);
         return representation;
-    }
-
-    @Override
-    public int getButtonId() {
-        return R.id.shadowRecoveryButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.shadow_recovery;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float  factor);

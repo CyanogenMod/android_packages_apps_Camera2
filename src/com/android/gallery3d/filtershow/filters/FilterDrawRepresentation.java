@@ -17,6 +17,8 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Path;
+import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.editors.EditorDraw;
 
 import java.util.Vector;
 
@@ -45,6 +47,11 @@ public class FilterDrawRepresentation extends FilterRepresentation {
 
     public FilterDrawRepresentation() {
         super("Draw");
+        setFilterClass(ImageFilterDraw.class);
+        setFilterType(FilterRepresentation.TYPE_VIGNETTE);
+        setTextId(R.string.imageDraw);
+        setButtonId(R.id.drawOnImageButton);
+        setEditorId(EditorDraw.ID);
     }
 
     @Override

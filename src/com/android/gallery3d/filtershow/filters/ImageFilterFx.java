@@ -26,7 +26,6 @@ public class ImageFilterFx extends ImageFilter {
     private FilterFxRepresentation mParameters = null;
 
     public ImageFilterFx() {
-
     }
 
     public void useRepresentation(FilterRepresentation representation) {
@@ -36,34 +35,6 @@ public class ImageFilterFx extends ImageFilter {
 
     public FilterFxRepresentation getParameters() {
         return mParameters;
-    }
-
-    @Override
-    public int getTextId() {
-        if (getParameters() == null) {
-            return 0;
-        }
-        return getParameters().getNameResource();
-    }
-
-    @Override
-    public int getEditingViewId() {
-        return ImageOnlyEditor.ID;
-    }
-
-    @Override
-    public boolean showParameterValue() {
-        return false;
-    }
-
-    @Override
-    public boolean showEditingControls() {
-        return false;
-    }
-
-    @Override
-    public boolean showUtilityPanel() {
-        return false;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h,Bitmap  fxBitmap, int fxw, int fxh);

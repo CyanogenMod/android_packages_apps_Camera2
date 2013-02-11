@@ -28,16 +28,8 @@ public class ImageFilterCurves extends ImageFilter {
     FilterCurvesRepresentation mParameters = new FilterCurvesRepresentation();
 
     @Override
-    public boolean hasDefaultRepresentation() {
-        return true;
-    }
-
-    @Override
     public FilterRepresentation getDefaultRepresentation() {
-        FilterCurvesRepresentation representation = new FilterCurvesRepresentation();
-        representation.setName("Draw");
-        representation.setFilterClass(ImageFilterCurves.class);
-        return representation;
+        return new FilterCurvesRepresentation();
     }
 
     @Override
@@ -49,31 +41,6 @@ public class ImageFilterCurves extends ImageFilter {
     public ImageFilterCurves() {
         mName = "Curves";
         reset();
-    }
-
-    @Override
-    public int getButtonId() {
-        return R.id.curvesButtonRGB;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.curvesRGB;
-    }
-
-    @Override
-    public int getOverlayBitmaps() {
-        return R.drawable.filtershow_button_colors_curve;
-    }
-
-    @Override
-    public int getEditingViewId() {
-        return R.id.imageCurves;
-    }
-
-    @Override
-    public boolean showParameterValue() {
-        return false;
     }
 
     public void populateArray(int[] array, int curveIndex) {
