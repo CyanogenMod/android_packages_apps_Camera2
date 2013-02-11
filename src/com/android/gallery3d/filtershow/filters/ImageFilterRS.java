@@ -92,7 +92,9 @@ public class ImageFilterRS extends ImageFilter {
     }
 
     public static void setRenderScriptContext(Activity context) {
-        mRS = RenderScript.create(context);
+        if (mRS == null) {
+            mRS = RenderScript.create(context);
+        }
         mResources = context.getResources();
         if (mInPixelsAllocation != null) {
             mInPixelsAllocation.destroy();
