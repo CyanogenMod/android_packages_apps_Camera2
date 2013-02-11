@@ -30,20 +30,12 @@ public class ImageFilterEdge extends SimpleImageFilter {
         FilterRepresentation representation = super.getDefaultRepresentation();
         representation.setName("Edge");
         representation.setFilterClass(ImageFilterEdge.class);
+        representation.setTextId(R.string.edge);
+        representation.setButtonId(R.id.edgeButton);
         return representation;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float p);
-
-    @Override
-    public int getButtonId() {
-        return R.id.edgeButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.edge;
-    }
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {

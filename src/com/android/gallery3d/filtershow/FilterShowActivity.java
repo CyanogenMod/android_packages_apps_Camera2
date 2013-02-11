@@ -280,13 +280,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         mPanelController.addPanel(mColorsButton, mListColors, 3);
 
-        Vector<ImageFilter> filters = new Vector<ImageFilter>();
-        FiltersManager.addFilters(filters, mImageLoader);
-
-        for (ImageFilter filter : filters) {
-            filter.setName(getString(filter.getTextId()));
-            setupFilterButton(filter, listColors, mColorsButton);
+        Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
+        FiltersManager.addFilterRepresentations(filtersRepresentations);
+        for (FilterRepresentation representation : filtersRepresentations) {
+            setupFilterRepresentationButton(representation, listColors, mColorsButton);
         }
+
         mPanelController.addFilter(new ImageFilterRedEye());
 
         mPanelController.addView(findViewById(R.id.applyEffect));
@@ -711,31 +710,17 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         FilterIconButton icon = (FilterIconButton) inflater.inflate(R.layout.filtericonbutton,
                 panel, false);
+        if (representation.getTextId() != 0) {
+            representation.setName(getString(representation.getTextId()));
+        }
         String text = representation.getName();
         icon.setup(text, this, panel);
         icon.setFilterRepresentation(representation);
-        mPanelController.addComponent(button, icon);
-        panel.addView(icon);
-        return icon;
-    }
-
-    public FilterIconButton setupFilterButton(ImageFilter filter, LinearLayout panel, View button) {
-        LayoutInflater inflater =
-                (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        FilterIconButton icon = (FilterIconButton) inflater.inflate(R.layout.filtericonbutton,
-                panel, false);
-        String text = filter.getName();
-        if (filter instanceof ImageFilterBorder || filter instanceof ImageFilterParametricBorder) {
-            text = "";
+        if (representation instanceof FilterTinyPlanetRepresentation) {
+            // needed to hide tinyplanet on startup
+            icon.setId(R.id.tinyplanetButton);
         }
-        icon.setup(text, filter, this, panel);
-        // TODO: get rid of hasDefaultRepresentation()
-        if (filter.hasDefaultRepresentation()) {
-            icon.setFilterRepresentation(filter.getDefaultRepresentation());
-        }
-        icon.setId(filter.getButtonId());
         mPanelController.addComponent(button, icon);
-        mPanelController.addFilter(filter);
         panel.addView(icon);
         return icon;
     }

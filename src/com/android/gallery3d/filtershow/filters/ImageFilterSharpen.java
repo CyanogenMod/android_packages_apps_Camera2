@@ -34,36 +34,16 @@ public class ImageFilterSharpen extends ImageFilterRS {
         FilterRepresentation representation = new FilterBasicRepresentation("Sharpen", 0, 0, 100);
         representation.setShowParameterValue(true);
         representation.setFilterClass(ImageFilterSharpen.class);
+        representation.setTextId(R.string.sharpness);
+        representation.setButtonId(R.id.sharpenButton);
+        representation.setOverlayId(R.drawable.filtershow_button_colors_sharpen);
+        representation.setEditorId(R.id.imageZoom);
         return representation;
     }
 
     public void useRepresentation(FilterRepresentation representation) {
         FilterBasicRepresentation parameters = (FilterBasicRepresentation) representation;
         mParameters = parameters;
-    }
-
-    public boolean hasDefaultRepresentation() {
-        return true;
-    }
-
-    @Override
-    public int getButtonId() {
-        return R.id.sharpenButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.sharpness;
-    }
-
-    @Override
-    public int getOverlayBitmaps() {
-        return R.drawable.filtershow_button_colors_sharpen;
-    }
-
-    @Override
-    public int getEditingViewId() {
-        return R.id.imageZoom;
     }
 
     @Override

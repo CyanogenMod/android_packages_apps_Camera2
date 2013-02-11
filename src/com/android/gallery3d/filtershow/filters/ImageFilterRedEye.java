@@ -33,17 +33,14 @@ public class ImageFilterRedEye extends ImageFilter {
         mName = "Red Eye";
     }
 
-    @Override
     public int getButtonId() {
         return R.id.redEyeButton;
     }
 
-    @Override
     public int getTextId() {
         return R.string.redeye;
     }
 
-    @Override
     public int getEditingViewId() {
             return R.id.imageRedEyes;
     }

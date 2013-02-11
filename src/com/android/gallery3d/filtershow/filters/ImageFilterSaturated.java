@@ -30,17 +30,9 @@ public class ImageFilterSaturated extends SimpleImageFilter {
         FilterRepresentation representation = super.getDefaultRepresentation();
         representation.setName("Saturated");
         representation.setFilterClass(ImageFilterSaturated.class);
+        representation.setTextId(R.string.saturation);
+        representation.setButtonId(R.id.saturationButton);
         return representation;
-    }
-
-    @Override
-    public int getButtonId() {
-        return R.id.saturationButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.saturation;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float saturation);

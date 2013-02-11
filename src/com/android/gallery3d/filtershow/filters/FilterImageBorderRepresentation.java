@@ -16,6 +16,9 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
+
 public class FilterImageBorderRepresentation extends FilterRepresentation {
     private int mDrawableResource = 0;
 
@@ -24,6 +27,11 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
         mDrawableResource = drawableResource;
         setFilterClass(ImageFilterBorder.class);
         setPriority(FilterRepresentation.TYPE_BORDER);
+        setTextId(R.string.borders);
+        setEditorId(ImageOnlyEditor.ID);
+        setShowEditingControls(false);
+        setShowParameterValue(false);
+        setShowUtilityPanel(false);
         // load the drawable at init as we are in a background thread
         // (see FilterShowActivity's LoadBordersTask)
         ImageFilterBorder filter = (ImageFilterBorder) FiltersManager.getManager().getFilter(getFilterClass());
@@ -62,6 +70,11 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
             }
         }
         return false;
+    }
+
+    @Override
+    public int getTextId() {
+        return R.string.borders;
     }
 
     public boolean allowsMultipleInstances() {

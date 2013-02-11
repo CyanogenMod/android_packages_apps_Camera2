@@ -30,17 +30,9 @@ public class ImageFilterExposure extends SimpleImageFilter {
         FilterRepresentation representation = super.getDefaultRepresentation();
         representation.setName("Exposure");
         representation.setFilterClass(ImageFilterExposure.class);
+        representation.setTextId(R.string.exposure);
+        representation.setButtonId(R.id.exposureButton);
         return representation;
-    }
-
-    @Override
-    public int getButtonId() {
-        return R.id.exposureButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.exposure;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float bright);

@@ -30,17 +30,9 @@ public class ImageFilterVibrance extends SimpleImageFilter {
         FilterRepresentation representation = super.getDefaultRepresentation();
         representation.setName("Vibrance");
         representation.setFilterClass(ImageFilterVibrance.class);
+        representation.setTextId(R.string.vibrance);
+        representation.setButtonId(R.id.vibranceButton);
         return representation;
-    }
-
-    @Override
-    public int getButtonId() {
-        return R.id.vibranceButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.vibrance;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float bright);
