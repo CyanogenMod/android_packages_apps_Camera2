@@ -37,7 +37,7 @@ public class ImageFilter implements Cloneable {
         return mName;
     }
 
-    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         // do nothing here, subclasses will implement filtering here
         return bitmap;
     }
@@ -46,8 +46,8 @@ public class ImageFilter implements Cloneable {
      * Called on small bitmaps to create button icons for each filter.
      * Override this to provide filter-specific button icons.
      */
-    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
-        return apply(bitmap, scaleFactor, highQuality);
+    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, int quality) {
+        return apply(bitmap, scaleFactor, quality);
     }
 
     public ImagePreset getImagePreset() {

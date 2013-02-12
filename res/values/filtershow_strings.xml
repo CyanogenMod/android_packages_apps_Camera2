@@ -166,6 +166,8 @@
     <string name="draw_style_brush_spatter">Marker</string>
     <!--  Label for the Spatter brush style of drawing in [CHAR LIMIT=14] -->
     <string name="draw_style_brush_marker">Spatter</string>
+    <!--  Label for the removing drawing from screen [CHAR LIMIT=14] -->
+    <string name="draw_clear">Clear</string>
 
     <!--  Label for the select the color [CHAR LIMIT=30] -->
     <string name="color_pick_select">Choose custom color</string>

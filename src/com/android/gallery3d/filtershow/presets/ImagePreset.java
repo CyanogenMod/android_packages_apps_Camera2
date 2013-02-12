@@ -35,7 +35,10 @@ public class ImagePreset {
 
     private FilterRepresentation mBorder = null;
     private float mScaleFactor = 1.0f;
-    private boolean mIsHighQuality = false;
+    public static final int QUALITY_ICON = 0;
+    public static final int QUALITY_PREVIEW = 1;
+    public static final int QUALITY_FINAL = 2;
+    private int mQuality = QUALITY_PREVIEW;
     private ImageLoader mImageLoader = null;
 
     private Vector<FilterRepresentation> mFilters = new Vector<FilterRepresentation>();
@@ -380,14 +383,14 @@ public class ImagePreset {
     public Bitmap applyGeometry(Bitmap bitmap) {
         // Apply any transform -- 90 rotate, flip, straighten, crop
         // Returns a new bitmap.
-        return mGeoData.apply(bitmap, mScaleFactor, mIsHighQuality);
+        return mGeoData.apply(bitmap, mScaleFactor, mQuality);
     }
 
     public Bitmap applyBorder(Bitmap bitmap) {
         if (mBorder != null && mDoApplyGeometry) {
             ImageFilter filter = FiltersManager.getManager().getFilterForRepresentation(mBorder);
             filter.useRepresentation(mBorder);
-            bitmap = filter.apply(bitmap, mScaleFactor, mIsHighQuality);
+            bitmap = filter.apply(bitmap, mScaleFactor, mQuality);
         }
         return bitmap;
     }
@@ -408,7 +411,7 @@ public class ImagePreset {
                 }
                 ImageFilter filter = FiltersManager.getManager().getFilterForRepresentation(representation);
                 filter.useRepresentation(representation);
-                bitmap = filter.apply(bitmap, mScaleFactor, mIsHighQuality);
+                bitmap = filter.apply(bitmap, mScaleFactor, mQuality);
             }
         }
 
@@ -429,12 +432,12 @@ public class ImagePreset {
         return mScaleFactor;
     }
 
-    public boolean isHighQuality() {
-        return mIsHighQuality;
+    public int getQuality() {
+        return mQuality;
     }
 
-    public void setIsHighQuality(boolean value) {
-        mIsHighQuality = value;
+    public void setQuality(int value) {
+        mQuality = value;
     }
 
     public void setScaleFactor(float value) {

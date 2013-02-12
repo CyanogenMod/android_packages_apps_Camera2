@@ -37,7 +37,7 @@ public class ImageFilterRS extends ImageFilter {
         mOldBitmap = null;
     }
 
-    public void prepare(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+    public void prepare(Bitmap bitmap, float scaleFactor, int quality) {
         if (sOldBitmap == null
                 || (bitmap.getWidth() != sOldBitmap.getWidth())
                 || (bitmap.getHeight() != sOldBitmap.getHeight())) {
@@ -56,13 +56,13 @@ public class ImageFilterRS extends ImageFilter {
         }
         mInPixelsAllocation.copyFrom(bitmap);
         if (mOldBitmap != sOldBitmap) {
-            createFilter(mResources, scaleFactor, highQuality);
+            createFilter(mResources, scaleFactor, quality);
             mOldBitmap = sOldBitmap;
         }
     }
 
     public void createFilter(android.content.res.Resources res,
-            float scaleFactor, boolean highQuality) {
+            float scaleFactor, int quality) {
         // Stub
     }
 
@@ -75,12 +75,12 @@ public class ImageFilterRS extends ImageFilter {
     }
 
     @Override
-    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         if (bitmap == null) {
             return bitmap;
         }
         try {
-            prepare(bitmap, scaleFactor, highQuality);
+            prepare(bitmap, scaleFactor, quality);
             runFilter();
             update(bitmap);
         } catch (android.renderscript.RSIllegalArgumentException e) {

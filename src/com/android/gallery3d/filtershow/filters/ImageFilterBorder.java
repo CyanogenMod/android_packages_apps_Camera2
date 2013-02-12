@@ -63,7 +63,7 @@ public class ImageFilterBorder extends ImageFilter {
     }
 
     @Override
-    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         if (getParameters() == null || getParameters().getDrawableResource() == 0) {
             return bitmap;
         }
@@ -73,7 +73,7 @@ public class ImageFilterBorder extends ImageFilter {
     }
 
     @Override
-    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, int quality) {
         if (getParameters() == null || getParameters().getDrawableResource() == 0) {
             return bitmap;
         }

@@ -53,7 +53,7 @@ public class ImageFilterKMeans extends SimpleImageFilter {
             int swidth, int sheight, int p, int seed);
 
     @Override
-    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         if (getParameters() == null) {
             return bitmap;
         }

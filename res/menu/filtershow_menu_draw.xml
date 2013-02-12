@@ -33,6 +33,9 @@
         <item
             android:id="@+id/draw_menu_color"
             android:title="@string/draw_color"/>
+        <item
+            android:id="@+id/draw_menu_clear"
+            android:title="@string/draw_clear"/>
     </group>
 
 </menu>

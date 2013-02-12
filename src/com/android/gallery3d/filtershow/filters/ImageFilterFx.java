@@ -40,7 +40,7 @@ public class ImageFilterFx extends ImageFilter {
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h,Bitmap  fxBitmap, int fxw, int fxh);
 
     @Override
-    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         if (getParameters() == null || getParameters().getFxBitmap() ==null) {
             return bitmap;
         }

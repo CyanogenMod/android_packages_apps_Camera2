@@ -44,7 +44,7 @@ public class ImageFilterHue extends SimpleImageFilter {
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float []matrix);
 
     @Override
-    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         if (getParameters() == null) {
             return bitmap;
         }
