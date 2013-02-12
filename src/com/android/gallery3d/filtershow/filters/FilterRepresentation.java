@@ -23,7 +23,7 @@ import com.android.gallery3d.filtershow.presets.ImagePreset;
 public class FilterRepresentation implements Cloneable {
     private static final String LOGTAG = "FilterRepresentation";
     private String mName;
-    private int mPriority;
+    private int mPriority = TYPE_NORMAL;
     private ImagePreset mPreset;
     private Class mFilterClass;
     private int mTextId = 0;
@@ -40,7 +40,6 @@ public class FilterRepresentation implements Cloneable {
     public static final byte TYPE_VIGNETTE = 4;
     public static final byte TYPE_NORMAL = 5;
     public static final byte TYPE_TINYPLANET = 6;
-    private byte filterType = TYPE_NORMAL;
 
     public FilterRepresentation(String name) {
         mName = name;
@@ -84,14 +83,6 @@ public class FilterRepresentation implements Cloneable {
 
     public String toString() {
         return mName;
-    }
-
-    public byte getFilterType() {
-        return filterType;
-    }
-
-    protected void setFilterType(byte type) {
-        filterType = type;
     }
 
     public void setName(String name) {
