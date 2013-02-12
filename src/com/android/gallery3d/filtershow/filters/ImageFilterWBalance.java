@@ -30,7 +30,7 @@ public class ImageFilterWBalance extends ImageFilter {
     public FilterRepresentation getDefaultRepresentation() {
         FilterRepresentation representation = new FilterDirectRepresentation("WBalance");
         representation.setFilterClass(ImageFilterWBalance.class);
-        representation.setFilterType(FilterRepresentation.TYPE_WBALANCE);
+        representation.setPriority(FilterRepresentation.TYPE_WBALANCE);
         representation.setTextId(R.string.wbalance);
         representation.setButtonId(R.id.wbalanceButton);
         representation.setShowEditingControls(false);

@@ -24,18 +24,12 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.android.gallery3d.app.Log;
-import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.PanelController;
-import com.android.gallery3d.filtershow.cache.FilteringPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.cache.RenderingRequest;
 import com.android.gallery3d.filtershow.cache.RenderingRequestCaller;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
-import com.android.gallery3d.filtershow.filters.FiltersManager;
-import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.imageshow.GeometryListener;
-import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
