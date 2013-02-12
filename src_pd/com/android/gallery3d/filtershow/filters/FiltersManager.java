@@ -112,4 +112,13 @@ public class FiltersManager {
                 new ImageFilterDownsample(imageLoader));
     }
 
+    public void resetBitmapsRS() {
+        for (Class c : mFilters.keySet()) {
+            ImageFilter filter = mFilters.get(c);
+            if (filter instanceof ImageFilterRS) {
+                ImageFilterRS filterRS = (ImageFilterRS) filter;
+                filterRS.resetBitmap();
+            }
+        }
+    }
 }

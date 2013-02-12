@@ -33,6 +33,10 @@ public class ImageFilterRS extends ImageFilter {
 
     private final Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
 
+    public void resetBitmap() {
+        mOldBitmap = null;
+    }
+
     public void prepare(Bitmap bitmap, float scaleFactor, boolean highQuality) {
         if (sOldBitmap == null
                 || (bitmap.getWidth() != sOldBitmap.getWidth())
