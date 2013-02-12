@@ -22,8 +22,11 @@
             android:id="@+id/draw_menu_style_line"
             android:title="@string/draw_style_line" />
          <item
-            android:id="@+id/draw_menu_style_brush"
-            android:title="@string/draw_style_brush" />
+            android:id="@+id/draw_menu_style_brush_marker"
+            android:title="@string/draw_style_brush_marker"/>
+         <item
+            android:id="@+id/draw_menu_style_brush_spatter"
+            android:title="@string/draw_style_brush_spatter"/>
          <item
             android:id="@+id/draw_menu_size"
             android:title="@string/draw_size" />

@@ -111,11 +111,12 @@ public class EditorDraw extends Editor {
                     showColorGrid(item);
                 } else if (item.getItemId() == R.id.draw_menu_size) {
                     showSizeDialog(item);
-                } else if (item.getItemId() == R.id.draw_menu_style_brush) {
+                } else if (item.getItemId() == R.id.draw_menu_style_brush_marker) {
                     ImageDraw idraw = (ImageDraw) mImageShow;
-                    idraw.setStyle((byte) (idraw.getStyle() + 1));
-                    item.setIcon(idraw.getIcon(mContext));
-                    popupMenu.show();
+                    idraw.setStyle(ImageFilterDraw.BRUSH_STYLE_MARKER);
+                } else if (item.getItemId() == R.id.draw_menu_style_brush_spatter) {
+                    ImageDraw idraw = (ImageDraw) mImageShow;
+                    idraw.setStyle(ImageFilterDraw.BRUSH_STYLE_SPATTER);
                 } else if (item.getItemId() == R.id.draw_menu_style_line) {
                     ImageDraw idraw = (ImageDraw) mImageShow;
                     idraw.setStyle(ImageFilterDraw.SIMPLE_STYLE);
