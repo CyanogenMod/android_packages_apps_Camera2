@@ -76,6 +76,10 @@ public class MasterImage implements RenderingRequestCaller {
         mActivity = activity;
     }
 
+    public ImageLoader getLoader() {
+        return mLoader;
+    }
+
     public synchronized ImagePreset getPreset() {
         return mPreset;
     }
