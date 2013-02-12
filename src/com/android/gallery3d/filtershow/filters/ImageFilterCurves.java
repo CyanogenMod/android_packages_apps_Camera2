@@ -55,7 +55,7 @@ public class ImageFilterCurves extends ImageFilter {
     }
 
     @Override
-    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         if (!mParameters.getSpline(Spline.RGB).isOriginal()) {
             int[] rgbGradient = new int[256];
             populateArray(rgbGradient, Spline.RGB);

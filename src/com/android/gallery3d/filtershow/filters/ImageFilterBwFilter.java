@@ -42,7 +42,7 @@ public class ImageFilterBwFilter extends SimpleImageFilter {
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, int r, int g, int b);
 
     @Override
-    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         if (getParameters() == null) {
             return bitmap;
         }

@@ -32,6 +32,7 @@ import android.util.Log;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.FilterDrawRepresentation.StrokeData;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
+import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 import java.util.Vector;
 
@@ -85,7 +86,7 @@ public class ImageFilterDraw extends ImageFilter {
     public static interface DrawStyle {
         public void setType(byte type);
         public void paint(FilterDrawRepresentation.StrokeData sd, Canvas canvas, Matrix toScrMatrix,
-                boolean highQuality);
+                int quality);
     }
 
     class SimpleDraw implements DrawStyle {
@@ -98,7 +99,7 @@ public class ImageFilterDraw extends ImageFilter {
 
         @Override
         public void paint(FilterDrawRepresentation.StrokeData sd, Canvas canvas, Matrix toScrMatrix,
-                boolean highQuality) {
+                int quality) {
             if (sd == null) {
                 return;
             }
@@ -139,7 +140,7 @@ public class ImageFilterDraw extends ImageFilter {
 
         @Override
         public void paint(FilterDrawRepresentation.StrokeData sd, Canvas canvas, Matrix toScrMatrix,
-                boolean highQuality) {
+                int quality) {
             if (sd == null || sd.mPath == null) {
                 return;
             }
@@ -198,13 +199,13 @@ public class ImageFilterDraw extends ImageFilter {
     }
 
     void paint(FilterDrawRepresentation.StrokeData sd, Canvas canvas, Matrix toScrMatrix,
-            boolean highQuality) {
-        mDrawingsTypes[sd.mType].paint(sd, canvas, toScrMatrix, highQuality);
+            int quality) {
+        mDrawingsTypes[sd.mType].paint(sd, canvas, toScrMatrix, quality);
     }
 
-    public void drawData(Canvas canvas, Matrix originalRotateToScreen, boolean highQuality) {
+    public void drawData(Canvas canvas, Matrix originalRotateToScreen, int quality) {
         Paint paint = new Paint();
-        if (highQuality) {
+        if (quality == ImagePreset.QUALITY_FINAL) {
             paint.setAntiAlias(true);
         }
         paint.setStyle(Style.STROKE);
@@ -214,9 +215,9 @@ public class ImageFilterDraw extends ImageFilter {
         if (mParameters.getDrawing().isEmpty() && mParameters.getCurrentDrawing() == null) {
             return;
         }
-        if (highQuality) {
+        if (quality == ImagePreset.QUALITY_FINAL) {
             for (FilterDrawRepresentation.StrokeData strokeData : mParameters.getDrawing()) {
-                paint(strokeData, canvas, originalRotateToScreen, highQuality);
+                paint(strokeData, canvas, originalRotateToScreen, quality);
             }
             return;
         }
@@ -237,7 +238,7 @@ public class ImageFilterDraw extends ImageFilter {
 
         StrokeData stroke = mParameters.getCurrentDrawing();
         if (stroke != null) {
-            paint(stroke, canvas, originalRotateToScreen, highQuality);
+            paint(stroke, canvas, originalRotateToScreen, quality);
         }
     }
 
@@ -247,27 +248,28 @@ public class ImageFilterDraw extends ImageFilter {
         int n = v.size();
 
         for (int i = mCachedStrokes; i < n; i++) {
-            paint(v.get(i), drawCache, originalRotateToScreen, false);
+            paint(v.get(i), drawCache, originalRotateToScreen, ImagePreset.QUALITY_PREVIEW);
         }
         mCachedStrokes = n;
     }
 
     public void draw(Canvas canvas, Matrix originalRotateToScreen) {
         for (FilterDrawRepresentation.StrokeData strokeData : mParameters.getDrawing()) {
-            paint(strokeData, canvas, originalRotateToScreen, false);
+            paint(strokeData, canvas, originalRotateToScreen, ImagePreset.QUALITY_PREVIEW);
         }
-        mDrawingsTypes[mCurrentStyle].paint(null, canvas, originalRotateToScreen, false);
+        mDrawingsTypes[mCurrentStyle].paint(
+                null, canvas, originalRotateToScreen, ImagePreset.QUALITY_PREVIEW);
     }
 
     @Override
-    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
         short[] rect = new short[4];
 
         Matrix m = new Matrix();
         m.setScale(scaleFactor, scaleFactor);
-        drawData(new Canvas(bitmap), m, highQuality);
+        drawData(new Canvas(bitmap), m, quality);
 
 
         return bitmap;

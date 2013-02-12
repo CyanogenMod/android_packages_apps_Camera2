@@ -38,9 +38,9 @@ public class SimpleImageFilter extends ImageFilter {
     }
 
     @Override
-    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, int quality) {
         FilterRepresentation representation = getDefaultRepresentation();
         this.useRepresentation(representation);
-        return apply(bitmap, scaleFactor, highQuality);
+        return apply(bitmap, scaleFactor, quality);
     }
 }

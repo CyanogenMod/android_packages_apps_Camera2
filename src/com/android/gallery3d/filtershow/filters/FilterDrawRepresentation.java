@@ -17,6 +17,8 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Path;
+import android.util.Log;
+
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.editors.EditorDraw;
 
@@ -30,7 +32,7 @@ public class FilterDrawRepresentation extends FilterRepresentation {
         public Path mPath;
         public float mRadius;
         public int mColor;
-
+        public int noPoints = 0;
         @Override
         public String toString() {
             return "stroke(" + mType + ", path(" + (mPath) + "), " + mRadius + " , "
@@ -57,7 +59,8 @@ public class FilterDrawRepresentation extends FilterRepresentation {
     @Override
     public String toString() {
         return getName() + " : strokes=" + mDrawing.size()
-                + ((mCurrent == null) ? " no current " : ("current=" + mCurrent.mType));
+                + ((mCurrent == null) ? " no current "
+                        : ("draw=" + mCurrent.mType + " " + mCurrent.noPoints));
     }
 
     public Vector<StrokeData> getDrawing() {
@@ -95,6 +98,8 @@ public class FilterDrawRepresentation extends FilterRepresentation {
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
+        } else {
+            Log.v(LOGTAG, "cannot use parameters from " + a);
         }
     }
 
@@ -104,8 +109,18 @@ public class FilterDrawRepresentation extends FilterRepresentation {
             return false;
         }
         if (representation instanceof FilterDrawRepresentation) {
-            // FIXME!
-            return true;
+            FilterDrawRepresentation fdRep = (FilterDrawRepresentation) representation;
+            if (fdRep.mDrawing.size() != mDrawing.size())
+                return false;
+            if (fdRep.mCurrent == null && mCurrent.mPath == null) {
+                return true;
+            }
+            if (fdRep.mCurrent != null && mCurrent.mPath != null) {
+                if (fdRep.mCurrent.noPoints == mCurrent.noPoints) {
+                    return true;
+                }
+                return false;
+            }
         }
         return false;
     }
@@ -117,14 +132,17 @@ public class FilterDrawRepresentation extends FilterRepresentation {
         mCurrent.mType = type;
         mCurrent.mPath = new Path();
         mCurrent.mPath.moveTo(x, y);
+        mCurrent.noPoints = 0;
     }
 
     public void addPoint(float x, float y) {
+        mCurrent.noPoints++;
         mCurrent.mPath.lineTo(x, y);
     }
 
     public void endSection(float x, float y) {
         mCurrent.mPath.lineTo(x, y);
+        mCurrent.noPoints++;
         mDrawing.add(mCurrent);
         mCurrent = null;
     }

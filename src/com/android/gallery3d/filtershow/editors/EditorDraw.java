@@ -120,6 +120,10 @@ public class EditorDraw extends Editor {
                 } else if (item.getItemId() == R.id.draw_menu_style_line) {
                     ImageDraw idraw = (ImageDraw) mImageShow;
                     idraw.setStyle(ImageFilterDraw.SIMPLE_STYLE);
+                } else if (item.getItemId() == R.id.draw_menu_clear) {
+                    FilterDrawRepresentation drawRep = (FilterDrawRepresentation) getLocalRepresentation();
+                    drawRep.clear();
+                    commitLocalRepresentation();
                 }
                 mView.invalidate();
                 return true;
