@@ -34,10 +34,13 @@ import com.android.gallery3d.filtershow.cache.RenderingRequestCaller;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
+import com.android.gallery3d.filtershow.imageshow.GeometryListener;
+import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
-public class FilterIconButton extends IconButton implements View.OnClickListener, RenderingRequestCaller {
+public class FilterIconButton extends IconButton implements View.OnClickListener,
+        RenderingRequestCaller, GeometryListener {
     private static final String LOGTAG = "FilterIconButton";
     private Bitmap mOverlayBitmap = null;
     private PanelController mController = null;
@@ -65,6 +68,7 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
         setText(text);
         mParentContainer = parent;
         super.setOnClickListener(this);
+        MasterImage.getImage().addGeometryListener(this);
         invalidate();
     }
 
@@ -73,6 +77,8 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
         if (mIconBitmap == null && mPreset == null) {
             ImageLoader loader = MasterImage.getImage().getLoader();
             if (loader != null) {
+                ImagePreset geoPreset = new ImagePreset(MasterImage.getImage().getGeometryPreset());
+                image = geoPreset.applyGeometry(image);
                 dst = super.drawImage(dst, image, destination);
                 ImagePreset mPreset = new ImagePreset();
                 mPreset.addFilter(mFilterRepresentation);
@@ -126,5 +132,13 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
         }
         invalidate();
         stale_icon = true;
+    }
+
+    @Override
+    public void geometryChanged() {
+        stale_icon = true;
+        mIconBitmap = null;
+        mPreset = null;
+        invalidate();
     }
 }
