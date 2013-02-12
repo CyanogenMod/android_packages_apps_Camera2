@@ -31,7 +31,7 @@ public class FilterFxRepresentation extends FilterRepresentation {
         mBitmapResource = bitmapResource;
         mNameResource = nameResource;
         setFilterClass(ImageFilterFx.class);
-        setFilterType(FilterRepresentation.TYPE_FX);
+        setPriority(FilterRepresentation.TYPE_FX);
         setTextId(nameResource);
         setEditorId(ImageOnlyEditor.ID);
         setShowEditingControls(false);

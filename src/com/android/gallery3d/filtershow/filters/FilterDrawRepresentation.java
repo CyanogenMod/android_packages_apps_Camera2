@@ -50,7 +50,7 @@ public class FilterDrawRepresentation extends FilterRepresentation {
     public FilterDrawRepresentation() {
         super("Draw");
         setFilterClass(ImageFilterDraw.class);
-        setFilterType(FilterRepresentation.TYPE_VIGNETTE);
+        setPriority(FilterRepresentation.TYPE_VIGNETTE);
         setTextId(R.string.imageDraw);
         setButtonId(R.id.drawOnImageButton);
         setEditorId(EditorDraw.ID);
