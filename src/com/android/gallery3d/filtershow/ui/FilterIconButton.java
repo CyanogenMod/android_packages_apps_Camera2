@@ -24,20 +24,29 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.android.gallery3d.app.Log;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.PanelController;
 import com.android.gallery3d.filtershow.cache.FilteringPipeline;
+import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.cache.RenderingRequest;
+import com.android.gallery3d.filtershow.cache.RenderingRequestCaller;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
+import com.android.gallery3d.filtershow.presets.ImagePreset;
 
-public class FilterIconButton extends IconButton implements View.OnClickListener {
+public class FilterIconButton extends IconButton implements View.OnClickListener, RenderingRequestCaller {
+    private static final String LOGTAG = "FilterIconButton";
     private Bitmap mOverlayBitmap = null;
     private PanelController mController = null;
-    private ImageFilter mImageFilter = null;
     private FilterRepresentation mFilterRepresentation = null;
     private LinearLayout mParentContainer = null;
     private View.OnClickListener mListener = null;
+    private Bitmap mIconBitmap = null;
+    private ImagePreset mPreset = null;
+    private Rect mDestination = null;
 
     public FilterIconButton(Context context) {
         super(context);
@@ -61,20 +70,19 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
 
     @Override
     protected Bitmap drawImage(Bitmap dst, Bitmap image, Rect destination) {
-        dst = super.drawImage(dst, image, destination);
-        if (mImageFilter == null && mFilterRepresentation != null) {
-            mImageFilter = FiltersManager.getManager().getFilterForRepresentation(mFilterRepresentation);
+        if (mIconBitmap == null && mPreset == null) {
+            ImageLoader loader = MasterImage.getImage().getLoader();
+            if (loader != null) {
+                dst = super.drawImage(dst, image, destination);
+                ImagePreset mPreset = new ImagePreset();
+                mPreset.addFilter(mFilterRepresentation);
+                mDestination = destination;
+                RenderingRequest.post(dst.copy(Bitmap.Config.ARGB_8888, true), mPreset, RenderingRequest.ICON_RENDERING, this);
+            }
+            return dst;
+        } else {
+            return mIconBitmap;
         }
-        if (mFilterRepresentation != null && mImageFilter != null) {
-            mImageFilter.useRepresentation(mFilterRepresentation);
-        }
-        if (mImageFilter != null) {
-            dst =  mImageFilter.iconApply(dst, 1.0f, false);
-        }
-        if (mOverlayBitmap != null) {
-            dst = super.drawImage(dst, mOverlayBitmap, destination);
-        }
-        return dst;
     }
 
     @Override
@@ -104,5 +112,19 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
             mOverlayBitmap = BitmapFactory.decodeResource(getResources(),
                     mFilterRepresentation.getOverlayId());
         }
+        invalidate();
+    }
+
+    @Override
+    public void available(RenderingRequest request) {
+        if (request.getBitmap() == null) {
+            return;
+        }
+        mIconBitmap = request.getBitmap();
+        if (mOverlayBitmap != null) {
+            mIconBitmap = super.drawImage(mIconBitmap, mOverlayBitmap, mDestination);
+        }
+        invalidate();
+        stale_icon = true;
     }
 }
