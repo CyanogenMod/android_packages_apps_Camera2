@@ -130,10 +130,12 @@ public class FilteringPipeline implements Handler.Callback {
         }
         mResizedOriginalBitmap = Bitmap.createScaledBitmap(mOriginalBitmap, w, h, true);
         */
+
         GeometryMetadata geometry = preset.getGeometry();
         if (mPreviousGeometry != null && geometry.equals(mPreviousGeometry)) {
             return false;
         }
+
         RenderScript RS = ImageFilterRS.getRenderScriptContext();
         if (mFiltersOnlyOriginalAllocation != null) {
             mFiltersOnlyOriginalAllocation.destroy();
@@ -146,7 +148,9 @@ public class FilteringPipeline implements Handler.Callback {
         mResizedOriginalBitmap = preset.applyGeometry(mOriginalBitmap);
         mOriginalAllocation = Allocation.createFromBitmap(RS, mResizedOriginalBitmap,
                 Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+
         mPreviousGeometry = new GeometryMetadata(geometry);
+
         return true;
     }
 
@@ -193,15 +197,24 @@ public class FilteringPipeline implements Handler.Callback {
         }
         Bitmap bitmap = request.getBitmap();
         ImagePreset preset = request.getImagePreset();
-        updateOriginalAllocation(preset);
+        setPresetParameters(preset);
+        if (request.getType() != RenderingRequest.ICON_RENDERING) {
+            updateOriginalAllocation(preset);
+        }
+        if (DEBUG) {
+            Log.v(LOGTAG, "after update, req bitmap (" + bitmap.getWidth() + "x" + bitmap.getHeight()
+                    +" ? resizeOriginal (" + mResizedOriginalBitmap.getWidth() + "x"
+                    + mResizedOriginalBitmap.getHeight());
+        }
         if (request.getType() == RenderingRequest.FULL_RENDERING
                 || request.getType() == RenderingRequest.GEOMETRY_RENDERING) {
             mOriginalAllocation.copyTo(bitmap);
-        } else {
+        } else if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
             mFiltersOnlyOriginalAllocation.copyTo(bitmap);
         }
         if (request.getType() == RenderingRequest.FULL_RENDERING
-                || request.getType() == RenderingRequest.FILTERS_RENDERING) {
+                || request.getType() == RenderingRequest.FILTERS_RENDERING
+                || request.getType() == RenderingRequest.ICON_RENDERING) {
             Bitmap bmp = preset.apply(bitmap);
             request.setBitmap(bmp);
         }
@@ -228,6 +241,7 @@ public class FilteringPipeline implements Handler.Callback {
         }
         mOriginalAllocation.copyTo(bitmap);
 
+        setPresetParameters(preset);
         bitmap = preset.apply(bitmap);
 
         time = System.currentTimeMillis() - time;

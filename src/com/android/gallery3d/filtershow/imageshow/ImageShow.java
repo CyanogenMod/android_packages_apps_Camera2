@@ -406,8 +406,12 @@ public class ImageShow extends View implements OnGestureListener,
             paint.setTextSize(mOriginalTextSize);
             paint.getTextBounds(mOriginalText, 0, mOriginalText.length(), bounds);
             paint.setColor(Color.BLACK);
-            canvas.drawText(mOriginalText, mImageBounds.left + mOriginalTextMargin + 1,
-                    mImageBounds.top + bounds.height() + mOriginalTextMargin + 1, paint);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(3);
+            canvas.drawText(mOriginalText, mImageBounds.left + mOriginalTextMargin,
+                    mImageBounds.top + bounds.height() + mOriginalTextMargin, paint);
+            paint.setStyle(Paint.Style.FILL);
+            paint.setStrokeWidth(1);
             paint.setColor(Color.WHITE);
             canvas.drawText(mOriginalText, mImageBounds.left + mOriginalTextMargin,
                     mImageBounds.top + bounds.height() + mOriginalTextMargin, paint);
