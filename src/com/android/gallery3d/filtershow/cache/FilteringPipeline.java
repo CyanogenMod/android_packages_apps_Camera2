@@ -22,6 +22,7 @@ import android.os.Process;
 import android.support.v8.renderscript.*;
 import android.util.Log;
 
+import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
@@ -136,6 +137,10 @@ public class FilteringPipeline implements Handler.Callback {
             return false;
         }
 
+        if (DEBUG) {
+            Log.v(LOGTAG, "geometry has changed");
+        }
+
         RenderScript RS = ImageFilterRS.getRenderScriptContext();
         if (mFiltersOnlyOriginalAllocation != null) {
             mFiltersOnlyOriginalAllocation.destroy();
@@ -151,6 +156,7 @@ public class FilteringPipeline implements Handler.Callback {
 
         mPreviousGeometry = new GeometryMetadata(geometry);
 
+        FiltersManager.getManager().resetBitmapsRS();
         return true;
     }
 
@@ -190,14 +196,38 @@ public class FilteringPipeline implements Handler.Callback {
         }
     }
 
+    private String getType(RenderingRequest request) {
+        if (request.getType() == RenderingRequest.ICON_RENDERING) {
+            return "ICON_RENDERING";
+        }
+        if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
+            return "FILTERS_RENDERING";
+        }
+        if (request.getType() == RenderingRequest.FULL_RENDERING) {
+            return "FULL_RENDERING";
+        }
+        if (request.getType() == RenderingRequest.GEOMETRY_RENDERING) {
+            return "GEOMETRY_RENDERING";
+        }
+        return "UNKNOWN TYPE!";
+    }
+
     private void render(RenderingRequest request) {
         if (request.getBitmap() == null
                 || request.getImagePreset() == null) {
             return;
         }
+        if (DEBUG) {
+            Log.v(LOGTAG, "render image of type " + getType(request));
+        }
+
         Bitmap bitmap = request.getBitmap();
         ImagePreset preset = request.getImagePreset();
         setPresetParameters(preset);
+        if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
+            FiltersManager.getManager().resetBitmapsRS();
+        }
+
         if (request.getType() != RenderingRequest.ICON_RENDERING) {
             updateOriginalAllocation(preset);
         }
@@ -217,6 +247,9 @@ public class FilteringPipeline implements Handler.Callback {
                 || request.getType() == RenderingRequest.ICON_RENDERING) {
             Bitmap bmp = preset.apply(bitmap);
             request.setBitmap(bmp);
+        }
+        if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
+            FiltersManager.getManager().resetBitmapsRS();
         }
     }
 
