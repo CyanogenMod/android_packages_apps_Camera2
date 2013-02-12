@@ -27,7 +27,7 @@ public class FilterTinyPlanetRepresentation extends FilterBasicRepresentation {
         super("TinyPlanet", 0, 50, 100);
         setShowParameterValue(true);
         setFilterClass(ImageFilterTinyPlanet.class);
-        setFilterType(FilterRepresentation.TYPE_TINYPLANET);
+        setPriority(FilterRepresentation.TYPE_TINYPLANET);
         setTextId(R.string.tinyplanet);
         setButtonId(R.id.tinyplanetButton);
         setEditorId(EditorTinyPlanet.ID);

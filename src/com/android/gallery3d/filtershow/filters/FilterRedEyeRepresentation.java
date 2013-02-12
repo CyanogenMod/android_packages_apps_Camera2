@@ -31,7 +31,7 @@ public class FilterRedEyeRepresentation extends FilterRepresentation {
     public FilterRedEyeRepresentation() {
         super("RedEye");
         setFilterClass(ImageFilterRedEye.class);
-        setFilterType(FilterRepresentation.TYPE_NORMAL);
+        setPriority(FilterRepresentation.TYPE_NORMAL);
         setButtonId(R.id.redEyeButton);
         setTextId(R.string.redeye);
         setEditorId(EditorRedEye.ID);
