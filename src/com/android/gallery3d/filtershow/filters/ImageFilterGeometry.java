@@ -67,7 +67,7 @@ public class ImageFilterGeometry extends ImageFilter {
             Bitmap dst, int dstWidth, int dstHeight, float straightenAngle);
 
     @Override
-    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         // TODO: implement bilinear or bicubic here... for now, just use
         // canvas to do a simple implementation...
         // TODO: and be more memory efficient! (do it in native?)

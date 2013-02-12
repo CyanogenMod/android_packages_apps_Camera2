@@ -86,12 +86,12 @@ public class GeometryMetadata {
         return false;
     }
 
-    public Bitmap apply(Bitmap original, float scaleFactor, boolean highQuality) {
+    public Bitmap apply(Bitmap original, float scaleFactor, int quality) {
         if (!hasModifications()) {
             return original;
         }
         mImageFilter.setGeometryMetadata(this);
-        Bitmap m = mImageFilter.apply(original, scaleFactor, highQuality);
+        Bitmap m = mImageFilter.apply(original, scaleFactor, quality);
         return m;
     }
 

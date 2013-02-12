@@ -5,8 +5,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -91,7 +89,6 @@ public class ImageDraw extends ImageShow {
         ImageFilterDraw filter = (ImageFilterDraw) getCurrentFilter();
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
             mTmpPoint[0] = event.getX();
             mTmpPoint[1] = event.getY();
             mToOrig.mapPoints(mTmpPoint);
@@ -116,8 +113,6 @@ public class ImageDraw extends ImageShow {
             mTmpPoint[1] = event.getY();
             mToOrig.mapPoints(mTmpPoint);
             mFRep.endSection(mTmpPoint[0], mTmpPoint[1]);
-            this.resetImageCaches(this);
-
         }
         mEditorDraw.commitLocalRepresentation();
         invalidate();
