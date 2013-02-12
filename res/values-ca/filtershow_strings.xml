@@ -80,7 +80,10 @@
     <string name="draw_size" msgid="4360005386104151209">"Mida"</string>
     <string name="draw_color" msgid="2119030386987211193">"Color"</string>
     <string name="draw_style_line" msgid="9216476853904429628">"Línies"</string>
-    <string name="draw_style_brush" msgid="383079660590023404">"Pinzell"</string>
+    <!-- no translation found for draw_style_brush_spatter (7612691122932981554) -->
+    <skip />
+    <!-- no translation found for draw_style_brush_marker (8468302322165644292) -->
+    <skip />
     <string name="color_pick_select" msgid="734312818059057394">"Tria un color personalitzat"</string>
     <string name="color_pick_title" msgid="6195567431995308876">"Selecció del color"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"Selecció de la mida"</string>
