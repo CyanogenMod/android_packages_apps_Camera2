@@ -168,7 +168,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
     @Override
     protected Uri doInBackground(ImagePreset... params) {
         // TODO: Support larger dimensions for photo saving.
-        if (params[0] == null) {
+        if (params[0] == null || sourceUri == null) {
             return null;
         }
         ImagePreset preset = params[0];

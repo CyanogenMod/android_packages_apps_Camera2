@@ -448,7 +448,7 @@ public class ImageLoader {
 
             @Override
             public Bitmap onExecute(ImagePreset param) {
-                if (param == null) {
+                if (param == null || mUri == null) {
                     return null;
                 }
                 Bitmap bitmap = loadMutableBitmap(mContext, mUri);
