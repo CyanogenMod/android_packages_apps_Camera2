@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.filtershow;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.text.Html;
 import android.view.View;
@@ -47,6 +48,10 @@ public class PanelController implements OnClickListener {
     private static final String LOGTAG = "PanelController";
     private boolean mDisableFilterButtons = false;
     private boolean mFixedAspect = false;
+
+    public static boolean useAnimations() {
+        return true;
+    }
 
     public void setFixedAspect(boolean t) {
         mFixedAspect = t;
@@ -86,16 +91,28 @@ public class PanelController implements OnClickListener {
                 } else {
                     delta = w;
                 }
-                anim.x(delta);
-            } else if (move == VERTICAL_MOVE) {
-                anim.y(h);
-            }
-            anim.setDuration(ANIM_DURATION).withLayer().withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    mContainer.setVisibility(View.GONE);
+                if (PanelController.useAnimations()) {
+                    anim.x(delta);
+                } else {
+                    mContainer.setX(delta);
                 }
-            });
+            } else if (move == VERTICAL_MOVE) {
+                if (PanelController.useAnimations()) {
+                    anim.y(h);
+                } else {
+                    mContainer.setY(h);
+                }
+            }
+            if (PanelController.useAnimations()) {
+                anim.setDuration(ANIM_DURATION).withLayer().withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        mContainer.setVisibility(View.GONE);
+                        }
+                });
+            } else {
+                mContainer.setVisibility(View.GONE);
+            }
             return anim;
         }
 
@@ -107,18 +124,20 @@ public class PanelController implements OnClickListener {
             ViewPropertyAnimator anim = mContainer.animate();
             int w = mRowPanel.getWidth();
             int h = mRowPanel.getHeight();
-            if (move == HORIZONTAL_MOVE) {
-                if (oldPos < mPosition) {
-                    mContainer.setX(w);
-                } else {
-                    mContainer.setX(-w);
+            if (useAnimations()) {
+                if (move == HORIZONTAL_MOVE) {
+                    if (oldPos < mPosition) {
+                        mContainer.setX(w);
+                    } else {
+                        mContainer.setX(-w);
+                    }
+                    anim.x(0);
+                } else if (move == VERTICAL_MOVE) {
+                    mContainer.setY(h);
+                    anim.y(0);
                 }
-                anim.x(0);
-            } else if (move == VERTICAL_MOVE) {
-                mContainer.setY(h);
-                anim.y(0);
+                anim.setDuration(ANIM_DURATION).withLayer();
             }
-            anim.setDuration(ANIM_DURATION).withLayer();
             return anim;
         }
     }
@@ -368,10 +387,14 @@ public class PanelController implements OnClickListener {
         if (mUtilityPanel != null && mUtilityPanel.selected()) {
             ViewPropertyAnimator anim1 = mUtilityPanel.unselect();
             removedUtilityPanel = true;
-            anim1.start();
+            if (anim1 != null) {
+                anim1.start();
+            }
             if (mCurrentPanel == view) {
                 ViewPropertyAnimator anim2 = current.select(-1, VERTICAL_MOVE);
-                anim2.start();
+                if (anim2 != null) {
+                    anim2.start();
+                }
                 showDefaultImageView();
             }
         }
@@ -387,15 +410,22 @@ public class PanelController implements OnClickListener {
                 currentPos = current.getPosition();
             }
             ViewPropertyAnimator anim1 = panel.select(currentPos, HORIZONTAL_MOVE);
-            anim1.start();
+            if (anim1 != null) {
+                anim1.start();
+            }
             if (current != null) {
                 ViewPropertyAnimator anim2 = current.unselect(panel.getPosition(), HORIZONTAL_MOVE);
-                anim2.start();
+                if (anim2 != null) {
+                    anim2.start();
+                }
             }
         } else {
             ViewPropertyAnimator anim = panel.select(-1, VERTICAL_MOVE);
-            anim.start();
+            if (anim != null) {
+                anim.start();
+            }
         }
+
         showDefaultImageView();
         mCurrentPanel = view;
     }
@@ -481,13 +511,17 @@ public class PanelController implements OnClickListener {
             }
         }
 
-        if (mUtilityPanel != null && !mUtilityPanel.selected() && doPanelTransition ) {
+        if (mUtilityPanel != null && !mUtilityPanel.selected() && doPanelTransition) {
             Panel current = mPanels.get(mCurrentPanel);
             ViewPropertyAnimator anim1 = current.unselect(-1, VERTICAL_MOVE);
-            anim1.start();
+            if (anim1 != null) {
+                anim1.start();
+            }
             if (mUtilityPanel != null) {
                 ViewPropertyAnimator anim2 = mUtilityPanel.select();
-                anim2.start();
+                if (anim2 != null) {
+                    anim2.start();
+                }
             }
         }
 

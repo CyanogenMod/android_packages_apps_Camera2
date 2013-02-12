@@ -84,7 +84,6 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Vector;
 
-@TargetApi(16)
 public class FilterShowActivity extends Activity implements OnItemClickListener,
         OnShareTargetSelectedListener {
 
@@ -465,9 +464,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             loading.setVisibility(View.GONE);
             final View filters = findViewById(R.id.filtersPanel);
             filters.setVisibility(View.VISIBLE);
-            float y = filters.getY();
-            filters.setY(y + filters.getHeight());
-            filters.animate().setDuration(600).y(y).withLayer().start();
+            if (PanelController.useAnimations()) {
+                float y = filters.getY();
+                filters.setY(y + filters.getHeight());
+                filters.animate().setDuration(600).y(y).withLayer().start();
+            }
             final View imageShow = findViewById(R.id.imageShow);
             imageShow.setVisibility(View.VISIBLE);
 
@@ -860,7 +861,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         int translate = translateMainPanel(viewList);
         if (!mShowingImageStatePanel) {
             mShowingImageStatePanel = true;
-            view.animate().setDuration(200).x(translate)
+            if (PanelController.useAnimations()) {
+                view.animate().setDuration(200).x(translate)
                     .withLayer().withEndAction(new Runnable() {
                         @Override
                         public void run() {
@@ -870,11 +872,18 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                                     .alpha(1.0f).start();
                         }
                     }).start();
+            } else {
+                view.setX(translate);
+            }
         } else {
             mShowingImageStatePanel = false;
             viewList.setVisibility(View.INVISIBLE);
-            view.animate().setDuration(200).x(0).withLayer()
+            if (PanelController.useAnimations()) {
+                view.animate().setDuration(200).x(0).withLayer()
                     .start();
+            } else {
+                view.setX(0);
+            }
         }
         invalidateOptionsMenu();
     }
@@ -918,7 +927,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         int translate = translateMainPanel(viewList);
         if (!mShowingHistoryPanel) {
             mShowingHistoryPanel = true;
-            view.animate().setDuration(200).x(translate)
+            if (PanelController.useAnimations()) {
+                view.animate().setDuration(200).x(translate)
                     .withLayer().withEndAction(new Runnable() {
                         @Override
                         public void run() {
@@ -928,11 +938,18 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                                     .alpha(1.0f).start();
                         }
                     }).start();
+            } else {
+                view.setX(translate);
+            }
         } else {
             mShowingHistoryPanel = false;
             viewList.setVisibility(View.INVISIBLE);
-            view.animate().setDuration(200).x(0).withLayer()
+            if (PanelController.useAnimations()) {
+                view.animate().setDuration(200).x(0).withLayer()
                     .start();
+            } else {
+                view.setX(0);
+            }
         }
         invalidateOptionsMenu();
     }
