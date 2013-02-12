@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.filtershow.filters;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -28,10 +27,9 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.util.Log;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.editors.EditorDraw;
 import com.android.gallery3d.filtershow.filters.FilterDrawRepresentation.StrokeData;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
@@ -40,7 +38,8 @@ import java.util.Vector;
 public class ImageFilterDraw extends ImageFilter {
     private static final String LOGTAG = "ImageFilterDraw";
     public final static byte SIMPLE_STYLE = 0;
-    public final static byte BRUSH_STYLE = 1;
+    public final static byte BRUSH_STYLE_SPATTER = 1;
+    public final static byte BRUSH_STYLE_MARKER = 2;
     public final static int NUMBER_OF_STYLES = 3;
     Bitmap mOverlayBitmap; // this accelerates interaction
     int mCachedStrokes = -1;
@@ -53,7 +52,10 @@ public class ImageFilterDraw extends ImageFilter {
     }
 
     DrawStyle[] mDrawingsTypes = new DrawStyle[] {
-            new SimpleDraw(), new Brush(R.drawable.brush1), new Brush(R.drawable.brush2) };
+            new SimpleDraw(),
+            new Brush(R.drawable.brush_marker),
+            new Brush(R.drawable.brush_spatter)
+    };
     {
         for (int i = 0; i < mDrawingsTypes.length; i++) {
             mDrawingsTypes[i].setType((byte) i);
@@ -109,7 +111,7 @@ public class ImageFilterDraw extends ImageFilter {
             paint.setColor(sd.mColor);
             paint.setStrokeWidth(toScrMatrix.mapRadius(sd.mRadius));
 
-            // don this way because of a bug in path.transform(matrix)
+            // done this way because of a bug in path.transform(matrix)
             Path mCacheTransPath = new Path();
             mCacheTransPath.addPath(sd.mPath, toScrMatrix);
 
@@ -118,7 +120,7 @@ public class ImageFilterDraw extends ImageFilter {
     }
 
     class Brush implements DrawStyle {
-        int mBrushID = R.drawable.brush2;
+        int mBrushID;
         Bitmap mBrush;
         byte mType;
 
@@ -138,23 +140,32 @@ public class ImageFilterDraw extends ImageFilter {
         @Override
         public void paint(FilterDrawRepresentation.StrokeData sd, Canvas canvas, Matrix toScrMatrix,
                 boolean highQuality) {
-            if (sd == null) {
-                return;
-            }
-
             if (sd == null || sd.mPath == null) {
                 return;
             }
             Paint paint = new Paint();
             paint.setStyle(Style.STROKE);
-
-            float scale = toScrMatrix.mapRadius(1);
+            paint.setAntiAlias(true);
             Path mCacheTransPath = new Path();
             mCacheTransPath.addPath(sd.mPath, toScrMatrix);
-            draw(canvas, paint, sd.mColor, toScrMatrix.mapRadius(sd.mRadius),
+            draw(canvas, paint, sd.mColor, toScrMatrix.mapRadius(sd.mRadius) * 2,
                     mCacheTransPath);
         }
 
+        public Bitmap createScaledBitmap(Bitmap src, int dstWidth, int dstHeight, boolean filter)
+        {
+            Matrix m = new Matrix();
+            m.setScale(dstWidth / (float) src.getWidth(), dstHeight / (float) src.getHeight());
+            Bitmap result = Bitmap.createBitmap(dstWidth, dstHeight, src.getConfig());
+            Canvas canvas = new Canvas(result);
+
+            Paint paint = new Paint();
+            paint.setFilterBitmap(filter);
+            canvas.drawBitmap(src, m, paint);
+
+            return result;
+
+        }
         void draw(Canvas canvas, Paint paint, int color, float size, Path path) {
             PathMeasure mPathMeasure = new PathMeasure();
             float[] mPosition = new float[2];
@@ -164,11 +175,15 @@ public class ImageFilterDraw extends ImageFilter {
 
             paint.setAntiAlias(true);
             paint.setColor(color);
+
             paint.setColorFilter(new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY));
-            Bitmap brush = Bitmap.createScaledBitmap(getBrush(), (int) size, (int) size, true);
+            Bitmap brush;
+            // done this way because of a bug in
+            // Bitmap.createScaledBitmap(getBrush(),(int) size,(int) size,true);
+            brush = createScaledBitmap(getBrush(), (int) size, (int) size, true);
             float len = mPathMeasure.getLength();
             float s2 = size / 2;
-            float step = s2 / 6;
+            float step = s2 / 8;
             for (float i = 0; i < len; i += step) {
                 mPathMeasure.getPosTan(i, mPosition, mTan);
                 //                canvas.drawCircle(pos[0], pos[1], size, paint);
@@ -196,7 +211,7 @@ public class ImageFilterDraw extends ImageFilter {
         paint.setColor(Color.RED);
         paint.setStrokeWidth(40);
 
-        if (mParameters.getDrawing().isEmpty()) {
+        if (mParameters.getDrawing().isEmpty() && mParameters.getCurrentDrawing() == null) {
             return;
         }
         if (highQuality) {
@@ -252,8 +267,8 @@ public class ImageFilterDraw extends ImageFilter {
 
         Matrix m = new Matrix();
         m.setScale(scaleFactor, scaleFactor);
-
         drawData(new Canvas(bitmap), m, highQuality);
+
 
         return bitmap;
     }
