@@ -80,7 +80,10 @@
     <string name="draw_size" msgid="4360005386104151209">"크기"</string>
     <string name="draw_color" msgid="2119030386987211193">"색상"</string>
     <string name="draw_style_line" msgid="9216476853904429628">"선"</string>
-    <string name="draw_style_brush" msgid="383079660590023404">"브러시"</string>
+    <!-- no translation found for draw_style_brush_spatter (7612691122932981554) -->
+    <skip />
+    <!-- no translation found for draw_style_brush_marker (8468302322165644292) -->
+    <skip />
     <string name="color_pick_select" msgid="734312818059057394">"맞춤 색상 선택"</string>
     <string name="color_pick_title" msgid="6195567431995308876">"색상 선택"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"크기 선택"</string>
