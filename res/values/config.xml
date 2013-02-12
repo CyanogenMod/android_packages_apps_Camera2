@@ -25,4 +25,9 @@
     <bool name="needsHTCCamMode">false</bool>
     <!-- Allows setting video size before recording starts -->
     <bool name="needsEarlyVideoSize">false</bool>
+    <!-- Always use preferred preview size path for effects recording instead of the display resolution -->
+    <bool name="usePreferredPreviewSizeForEffects">false</bool>
+    <!-- Ignore preferred preview size and use best value from supported preview sizes
+         Setting both this and the above option true will always use values from preview sizes for both -->
+    <bool name="ignorePreferredPreviewSizeForVideo">false</bool>
 </resources>
