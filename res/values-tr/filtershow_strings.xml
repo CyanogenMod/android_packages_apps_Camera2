@@ -80,7 +80,10 @@
     <string name="draw_size" msgid="4360005386104151209">"Boyut"</string>
     <string name="draw_color" msgid="2119030386987211193">"Renk"</string>
     <string name="draw_style_line" msgid="9216476853904429628">"Çizgi"</string>
-    <string name="draw_style_brush" msgid="383079660590023404">"Fırça"</string>
+    <!-- no translation found for draw_style_brush_spatter (7612691122932981554) -->
+    <skip />
+    <!-- no translation found for draw_style_brush_marker (8468302322165644292) -->
+    <skip />
     <string name="color_pick_select" msgid="734312818059057394">"Özel renk seç"</string>
     <string name="color_pick_title" msgid="6195567431995308876">"Renk Seçin"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"Boyut Seçin"</string>
