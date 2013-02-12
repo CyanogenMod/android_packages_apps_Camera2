@@ -57,13 +57,14 @@ import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.editors.BasicEditor;
 import com.android.gallery3d.filtershow.editors.EditorDraw;
 import com.android.gallery3d.filtershow.editors.EditorManager;
+import com.android.gallery3d.filtershow.editors.EditorRedEye;
 import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
 import com.android.gallery3d.filtershow.filters.*;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageDraw;
 import com.android.gallery3d.filtershow.imageshow.ImageFlip;
-import com.android.gallery3d.filtershow.imageshow.ImageRedEyes;
+import com.android.gallery3d.filtershow.imageshow.ImageRedEye;
 import com.android.gallery3d.filtershow.imageshow.ImageRotate;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
@@ -98,7 +99,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private final PanelController mPanelController = new PanelController();
     private ImageLoader mImageLoader = null;
     private ImageShow mImageShow = null;
-    private ImageRedEyes mImageRedEyes = null;
+    private ImageRedEye mImageRedEye = null;
     private ImageDraw mImageDraw = null;
     private ImageStraighten mImageStraighten = null;
     private ImageCrop mImageCrop = null;
@@ -201,7 +202,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageRotate = (ImageRotate) findViewById(R.id.imageRotate);
         mImageFlip = (ImageFlip) findViewById(R.id.imageFlip);
         mImageTinyPlanet = (ImageTinyPlanet) findViewById(R.id.imageTinyPlanet);
-        mImageRedEyes = (ImageRedEyes) findViewById(R.id.imageRedEyes);
+        mImageRedEye = (ImageRedEye) findViewById(R.id.imageRedEyes);
         mImageDraw = (ImageDraw) findViewById(R.id.imageDraw);
 
         mImageCrop.setAspectTextSize((int) getPixelsFromDip(18));
@@ -213,13 +214,14 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageViews.add(mImageRotate);
         mImageViews.add(mImageFlip);
         mImageViews.add(mImageTinyPlanet);
-        mImageViews.add(mImageRedEyes);
+        mImageViews.add(mImageRedEye);
 
         mEditorPlaceHolder.setContainer((FrameLayout) findViewById(R.id.editorContainer));
         mEditorPlaceHolder.addEditor(new EditorDraw());
         mEditorPlaceHolder.addEditor(new BasicEditor());
         mEditorPlaceHolder.addEditor(new ImageOnlyEditor());
         mEditorPlaceHolder.addEditor(new EditorTinyPlanet());
+        mEditorPlaceHolder.addEditor(new EditorRedEye());
         EditorManager.addEditors(mEditorPlaceHolder);
         mEditorPlaceHolder.setOldViews(mImageViews);
         mEditorPlaceHolder.setImageLoader(mImageLoader);
@@ -253,7 +255,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageRotate.setImageLoader(mImageLoader);
         mImageFlip.setImageLoader(mImageLoader);
         mImageTinyPlanet.setImageLoader(mImageLoader);
-        mImageRedEyes.setImageLoader(mImageLoader);
+        mImageRedEye.setImageLoader(mImageLoader);
         mImageDraw.setImageLoader(mImageLoader);
 
         mPanelController.setActivity(this);
@@ -286,7 +288,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             setupFilterRepresentationButton(representation, listColors, mColorsButton);
         }
 
-        mPanelController.addFilter(new ImageFilterRedEye());
 
         mPanelController.addView(findViewById(R.id.applyEffect));
         findViewById(R.id.resetOperationsButton).setOnClickListener(
