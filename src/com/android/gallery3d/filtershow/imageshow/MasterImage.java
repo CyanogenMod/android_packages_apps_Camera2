@@ -19,7 +19,6 @@ package com.android.gallery3d.filtershow.imageshow;
 import android.graphics.Bitmap;
 import android.graphics.RectF;
 
-import com.android.gallery3d.app.Log;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.ImageStateAdapter;
@@ -54,6 +53,9 @@ public class MasterImage implements RenderingRequestCaller {
 
     private Vector<ImageShow> mObservers = new Vector<ImageShow>();
     private FilterRepresentation mCurrentFilterRepresentation;
+    private Vector<GeometryListener> mGeometryListeners = new Vector<GeometryListener>();
+
+    private GeometryMetadata mPreviousGeometry = null;
 
     private MasterImage() {
     }
@@ -101,6 +103,11 @@ public class MasterImage implements RenderingRequestCaller {
             mHistory.addHistoryItem(mPreset);
         }
         updatePresets(true);
+        GeometryMetadata geo = mPreset.mGeoData;
+        if (!geo.equals(mPreviousGeometry)) {
+            notifyGeometryChange();
+        }
+        mPreviousGeometry = new GeometryMetadata(geo);
     }
 
     private void setGeometry() {
@@ -245,5 +252,15 @@ public class MasterImage implements RenderingRequestCaller {
 
     public static void reset() {
         sMasterImage = null;
+    }
+
+    public void addGeometryListener(GeometryListener listener) {
+        mGeometryListeners.add(listener);
+    }
+
+    public void notifyGeometryChange() {
+        for (GeometryListener listener : mGeometryListeners) {
+            listener.geometryChanged();
+        }
     }
 }
