@@ -121,8 +121,8 @@ public class EditorDraw extends Editor {
                     ImageDraw idraw = (ImageDraw) mImageShow;
                     idraw.setStyle(ImageFilterDraw.SIMPLE_STYLE);
                 } else if (item.getItemId() == R.id.draw_menu_clear) {
-                    FilterDrawRepresentation drawRep = (FilterDrawRepresentation) getLocalRepresentation();
-                    drawRep.clear();
+                    ImageDraw idraw = (ImageDraw) mImageShow;
+                    idraw.resetParameter();
                     commitLocalRepresentation();
                 }
                 mView.invalidate();
