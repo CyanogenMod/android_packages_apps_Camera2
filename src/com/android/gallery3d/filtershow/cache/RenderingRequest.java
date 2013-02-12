@@ -30,6 +30,7 @@ public class RenderingRequest {
     public static int FULL_RENDERING = 0;
     public static int FILTERS_RENDERING = 1;
     public static int GEOMETRY_RENDERING = 2;
+    public static int ICON_RENDERING = 3;
     private static final Bitmap.Config mConfig = Bitmap.Config.ARGB_8888;
 
     public static void post(Bitmap source, ImagePreset preset, int type,
@@ -40,7 +41,7 @@ public class RenderingRequest {
         }
         RenderingRequest request = new RenderingRequest();
         Bitmap bitmap = null;
-        if (type == FULL_RENDERING || type == GEOMETRY_RENDERING) {
+        if (type == FULL_RENDERING || type == GEOMETRY_RENDERING || type == ICON_RENDERING) {
             bitmap = preset.applyGeometry(source);
         } else {
             bitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), mConfig);
