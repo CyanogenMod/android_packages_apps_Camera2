@@ -280,7 +280,7 @@ public class ImageLoader {
         return null;
     }
 
-    static final int MAX_BITMAP_DIM = 2048;
+    static final int MAX_BITMAP_DIM = 900;
 
     private Bitmap loadScaledBitmap(Uri uri, int size) {
         InputStream is = null;
