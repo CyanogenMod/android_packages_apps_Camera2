@@ -25,7 +25,15 @@
              android:targetPackage="com.android.gallery3d"
              android:label="Tests for GalleryNew3D application."/>
 
+    <instrumentation android:name="com.android.gallery3d.CameraTestRunner"
+            android:targetPackage="com.android.gallery3d"
+            android:label="Camera continuous test runner"/>
+
     <instrumentation android:name="com.android.gallery3d.exif.ExifTestRunner"
             android:targetPackage="com.android.gallery3d"
             android:label="Tests for ExifParser."/>
+
+    <instrumentation android:name="com.android.gallery3d.stress.CameraStressTestRunner"
+            android:targetPackage="com.android.gallery3d"
+            android:label="Camera stress test runner"/>
 </manifest>
