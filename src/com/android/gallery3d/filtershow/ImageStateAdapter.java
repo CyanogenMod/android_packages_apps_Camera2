@@ -24,9 +24,10 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 
-public class ImageStateAdapter extends ArrayAdapter<ImageFilter> {
+public class ImageStateAdapter extends ArrayAdapter<FilterRepresentation> {
     private static final String LOGTAG = "ImageStateAdapter";
 
     public ImageStateAdapter(Context context, int textViewResourceId) {
@@ -41,13 +42,12 @@ public class ImageStateAdapter extends ArrayAdapter<ImageFilter> {
                     Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.filtershow_imagestate_row, null);
         }
-        ImageFilter filter = getItem(position);
+        FilterRepresentation filter = getItem(position);
         if (filter != null) {
             TextView itemLabel = (TextView) view.findViewById(R.id.imagestate_label);
             itemLabel.setText(filter.getName());
             TextView itemParameter = (TextView) view.findViewById(R.id.imagestate_parameter);
-            // TODO: fix the image state adapter
-            // itemParameter.setText("" + filter.getParameter());
+            itemParameter.setText(filter.getStateRepresentation());
         }
         return view;
     }
