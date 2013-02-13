@@ -121,4 +121,8 @@ public class FilterBasicRepresentation extends FilterRepresentation {
     public void setPreviewValue(int previewValue) {
         mPreviewValue = previewValue;
     }
+
+    public String getStateRepresentation() {
+        return "" + getValue();
+    }
 }
