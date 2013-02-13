@@ -445,49 +445,6 @@ public class PanelController implements OnClickListener {
         return MasterImage.getImage().getPreset();
     }
 
-    /**
-    public ImageFilter setImagePreset(ImageFilter filter, String name) {
-        ImagePreset copy = new ImagePreset(getImagePreset());
-        copy.add(filter);
-        copy.setHistoryName(name);
-        copy.setIsFx(false);
-        mMasterImage.setPreset(copy, true);
-        return filter;
-    }
-     */
-
-    // TODO: remove this.
-    public void ensureFilter(String name) {
-        /*
-        ImagePreset preset = getImagePreset();
-        ImageFilter filter = preset.getFilter(name);
-        if (filter != null) {
-            // If we already have a filter, we might still want
-            // to push it onto the history stack.
-            ImagePreset copy = new ImagePreset(getImagePreset());
-            copy.setHistoryName(name);
-            mMasterImage.setPreset(copy, true);
-            filter = copy.getFilter(name);
-        }
-
-        if (filter == null) {
-            ImageFilter filterInstance = mFilters.get(name);
-            if (filterInstance != null) {
-                try {
-                    ImageFilter newFilter = filterInstance.clone();
-                    newFilter.reset();
-                    filter = setImagePreset(newFilter, name);
-                } catch (CloneNotSupportedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        if (filter != null) {
-            mMasterImage.setCurrentFilter(filter);
-        }
-        */
-    }
-
     public void useFilterRepresentation(FilterRepresentation filterRepresentation) {
         if (filterRepresentation == null) {
             return;
@@ -579,7 +536,6 @@ public class PanelController implements OnClickListener {
                 mCurrentImage = showImageView(R.id.imageTinyPlanet).setShowControls(true);
                 String ename = mCurrentImage.getContext().getString(R.string.tinyplanet);
                 mUtilityPanel.setEffectName(ename);
-                ensureFilter(ename);
                 if (!mDisableFilterButtons) {
                     mActivity.disableFilterButtons();
                     mDisableFilterButtons = true;
@@ -615,13 +571,6 @@ public class PanelController implements OnClickListener {
                 String ename = mCurrentImage.getContext().getString(R.string.mirror);
                 mUtilityPanel.setEffectName(ename);
                 mUtilityPanel.setShowParameter(false);
-                break;
-            }
-            case R.id.redEyeButton: {
-                mCurrentImage = showImageView(R.id.imageRedEyes).setShowControls(true);
-                String ename = mCurrentImage.getContext().getString(R.string.redeye);
-                mUtilityPanel.setEffectName(ename);
-                ensureFilter(ename);
                 break;
             }
             case R.id.applyEffect: {
