@@ -411,6 +411,7 @@ public class ImagePreset {
                 }
                 ImageFilter filter = FiltersManager.getManager().getFilterForRepresentation(representation);
                 filter.useRepresentation(representation);
+                filter.setImagePreset(this);
                 bitmap = filter.apply(bitmap, mScaleFactor, mQuality);
             }
         }

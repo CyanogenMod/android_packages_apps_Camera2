@@ -18,6 +18,7 @@ package com.android.gallery3d.filtershow.cache;
 
 import android.graphics.Bitmap;
 import com.android.gallery3d.app.Log;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class RenderingRequest {
@@ -47,7 +48,9 @@ public class RenderingRequest {
             bitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), mConfig);
         }
         request.setBitmap(bitmap);
-        request.setImagePreset(new ImagePreset(preset));
+        ImagePreset passedPreset = new ImagePreset(preset);
+        passedPreset.setImageLoader(MasterImage.getImage().getImageLoader());
+        request.setImagePreset(passedPreset);
         request.setType(type);
         request.setCaller(caller);
         request.post();
