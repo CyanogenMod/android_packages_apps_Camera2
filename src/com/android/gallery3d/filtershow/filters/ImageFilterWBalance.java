@@ -40,6 +40,11 @@ public class ImageFilterWBalance extends ImageFilter {
         return representation;
     }
 
+    @Override
+    public void useRepresentation(FilterRepresentation representation) {
+
+    }
+
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, int locX, int locY);
 
     @Override

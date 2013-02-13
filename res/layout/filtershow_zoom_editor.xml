@@ -22,7 +22,7 @@
     android:layout_height="wrap_content"
     android:layout_weight="1" >
 
-    <com.android.gallery3d.filtershow.imageshow.ImageZoom
+    <com.android.gallery3d.filtershow.imageshow.ImageShow
         android:id="@+id/imageZoom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

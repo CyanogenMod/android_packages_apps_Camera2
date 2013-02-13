@@ -53,6 +53,11 @@ public class ImageFilterStraighten extends ImageFilter {
     }
 
     @Override
+    public void useRepresentation(FilterRepresentation representation) {
+
+    }
+
+    @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         // TODO: implement bilinear or bicubic here... for now, just use
         // canvas to do a simple implementation...

@@ -22,7 +22,7 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.editors.BasicEditor;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
-public class ImageFilter implements Cloneable {
+public abstract class ImageFilter implements Cloneable {
 
     private ImagePreset mImagePreset;
 
@@ -58,8 +58,7 @@ public class ImageFilter implements Cloneable {
         mImagePreset = imagePreset;
     }
 
-    public void useRepresentation(FilterRepresentation representation) {
-    }
+    public abstract void useRepresentation(FilterRepresentation representation);
 
     native protected void nativeApplyGradientFilter(Bitmap bitmap, int w, int h,
             int[] redGradient, int[] greenGradient, int[] blueGradient);

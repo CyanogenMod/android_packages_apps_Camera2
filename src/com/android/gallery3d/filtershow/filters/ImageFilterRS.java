@@ -21,7 +21,7 @@ import android.graphics.Bitmap;
 import android.support.v8.renderscript.*;
 import android.util.Log;
 
-public class ImageFilterRS extends ImageFilter {
+public abstract class ImageFilterRS extends ImageFilter {
     private final String LOGTAG = "ImageFilterRS";
 
     private static RenderScript mRS = null;
