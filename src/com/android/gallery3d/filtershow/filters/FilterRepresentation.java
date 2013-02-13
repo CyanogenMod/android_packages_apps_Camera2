@@ -24,7 +24,6 @@ public class FilterRepresentation implements Cloneable {
     private static final String LOGTAG = "FilterRepresentation";
     private String mName;
     private int mPriority = TYPE_NORMAL;
-    private ImagePreset mPreset;
     private Class mFilterClass;
     private int mTextId = 0;
     private int mEditorId = BasicEditor.ID;
@@ -99,10 +98,6 @@ public class FilterRepresentation implements Cloneable {
 
     public int getPriority() {
         return mPriority;
-    }
-
-    public void setImagePreset(ImagePreset preset) {
-        mPreset = preset;
     }
 
     public boolean isNil() {
