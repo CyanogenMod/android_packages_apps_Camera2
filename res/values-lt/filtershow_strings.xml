@@ -84,6 +84,8 @@
     <skip />
     <!-- no translation found for draw_style_brush_marker (8468302322165644292) -->
     <skip />
+    <!-- no translation found for draw_clear (6728155515454921052) -->
+    <skip />
     <string name="color_pick_select" msgid="734312818059057394">"Pasirinkti tinkintą spalvą"</string>
     <string name="color_pick_title" msgid="6195567431995308876">"Pasirinkti spalvą"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"Pasirinkti dydį"</string>
