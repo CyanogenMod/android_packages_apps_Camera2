@@ -425,7 +425,7 @@ public class ImagePreset {
         }
         imageStateAdapter.clear();
         // TODO: re-enable the state panel
-        // imageStateAdapter.addAll(mFilters);
+        imageStateAdapter.addAll(mFilters);
         imageStateAdapter.notifyDataSetChanged();
     }
 
