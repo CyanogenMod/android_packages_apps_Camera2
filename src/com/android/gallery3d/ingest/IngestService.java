@@ -37,7 +37,7 @@ import android.widget.Adapter;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.NotificationIds;
 import com.android.gallery3d.data.MtpClient;
-import com.android.gallery3d.ingest.ui.MtpBitmapCache;
+import com.android.gallery3d.ingest.data.MtpBitmapFetch;
 import com.android.gallery3d.util.BucketNames;
 
 import java.util.ArrayList;
@@ -66,6 +66,7 @@ public class IngestService extends Service implements ImportTask.Listener,
     private boolean mRedeliverImportFinish = false;
     private Collection<MtpObjectInfo> mRedeliverObjectsNotImported;
     private boolean mRedeliverNotifyIndexChanged = false;
+    private boolean mRedeliverIndexFinish = false;
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder;
     private long mLastProgressIndexTime = 0;
@@ -108,13 +109,19 @@ public class IngestService extends Service implements ImportTask.Listener,
         mRedeliverImportFinish = false;
         mRedeliverObjectsNotImported = null;
         mRedeliverNotifyIndexChanged = false;
+        mRedeliverIndexFinish = false;
         mDevice = device;
         mIndex.setDevice(mDevice);
         if (mDevice != null) {
             MtpDeviceInfo deviceInfo = mDevice.getDeviceInfo();
-            mDevicePrettyName = deviceInfo.getModel();
-            mNotificationBuilder.setContentTitle(mDevicePrettyName);
-            new Thread(mIndex.getIndexRunnable()).start();
+            if (deviceInfo == null) {
+                setDevice(null);
+                return;
+            } else {
+                mDevicePrettyName = deviceInfo.getModel();
+                mNotificationBuilder.setContentTitle(mDevicePrettyName);
+                new Thread(mIndex.getIndexRunnable()).start();
+            }
         } else {
             mDevicePrettyName = null;
         }
@@ -143,6 +150,10 @@ public class IngestService extends Service implements ImportTask.Listener,
         if (mRedeliverNotifyIndexChanged) {
             mClientActivity.notifyIndexChanged();
             mRedeliverNotifyIndexChanged = false;
+        }
+        if (mRedeliverIndexFinish) {
+            mClientActivity.onIndexFinish();
+            mRedeliverIndexFinish = false;
         }
     }
 
@@ -176,8 +187,8 @@ public class IngestService extends Service implements ImportTask.Listener,
     public void deviceRemoved(MtpDevice device) {
         if (device == mDevice) {
             setDevice(null);
+            MtpBitmapFetch.onDeviceDisconnected(device);
         }
-        MtpBitmapCache.onDeviceDisconnected(device);
     }
 
     @Override
@@ -197,6 +208,7 @@ public class IngestService extends Service implements ImportTask.Listener,
 
     @Override
     public void onImportFinish(Collection<MtpObjectInfo> objectsNotImported) {
+        stopForeground(true);
         if (mClientActivity != null) {
             mClientActivity.onImportFinish(objectsNotImported);
         } else {
@@ -207,7 +219,6 @@ public class IngestService extends Service implements ImportTask.Listener,
             mNotificationManager.notify(NotificationIds.INGEST_NOTIFICATION_IMPORTING,
                     mNotificationBuilder.build());
         }
-        stopForeground(mClientActivity != null);
     }
 
     @Override
@@ -241,6 +252,7 @@ public class IngestService extends Service implements ImportTask.Listener,
                 .setContentText(getResources().getText(R.string.ingest_scanning_done));
             mNotificationManager.notify(NotificationIds.INGEST_NOTIFICATION_SCANNING,
                     mNotificationBuilder.build());
+            mRedeliverIndexFinish = true;
         }
     }
 
