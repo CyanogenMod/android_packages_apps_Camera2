@@ -61,3 +61,37 @@
 #*;
 #}
 
+# For unit testing:
+
+# - Required for running exif tests on userdebug
+-keepclassmembers class com.android.gallery3d.exif.ExifTag {
+  *** setValue(...);
+  *** valueToString(...);
+}
+-keepclassmembers class com.android.gallery3d.exif.ExifParser {
+  *** parse(...);
+}
+-keepclassmembers class com.android.gallery3d.exif.Util {
+  *** closeSilently(...);
+}
+-keepclassmembers class com.android.gallery3d.exif.ExifData {
+  *** addInteroperabilityTag(...);
+  *** addThumbnailTag(...);
+  *** getTag(...);
+  *** getInteroperabilityTag(...);
+  *** getThumbnailTag(...);
+}
+
+# - Required for running blobcache tests on userdebug
+-keep class com.android.gallery3d.common.BlobCache { *; }
+
+# - Required for running glcanvas tests on userdebug
+-keep class com.android.gallery3d.ui.GLPaint { *; }
+-keep class com.android.gallery3d.ui.GLCanvas { *; }
+-keep class com.android.gallery3d.glrenderer.GLPaint { *; }
+-keep class com.android.gallery3d.glrenderer.GLCanvas { *; }
+-keep class com.android.gallery3d.ui.GLView { *; }
+-keepclassmembers class com.android.gallery3d.util.IntArray {
+  *** toArray(...);
+}
+-keep class com.android.gallery3d.util.ProfileData { *; }
