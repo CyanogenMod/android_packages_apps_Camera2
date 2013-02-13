@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.android.gallery3d.filtershow.editors.EditorRedEye;
@@ -119,7 +120,6 @@ public class ImageRedEye extends ImageShow {
         Matrix originalRotateToScreen = geo.getOriginalToScreen(true,
                 mImageLoader.getOriginalBounds().width(),
                 mImageLoader.getOriginalBounds().height(), getWidth(), getHeight());
-
         if (mRedEyeRep != null) {
             for (RedEyeCandidate candidate : mRedEyeRep.getCandidates()) {
                 RectF rect = candidate.getRect();

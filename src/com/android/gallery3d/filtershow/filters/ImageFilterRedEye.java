@@ -17,10 +17,13 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 
-import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 
 import java.util.Vector;
@@ -62,12 +65,17 @@ public class ImageFilterRedEye extends ImageFilter {
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, short[] matrix);
 
     @Override
+    public void useRepresentation(FilterRepresentation representation) {
+        FilterRedEyeRepresentation parameters = (FilterRedEyeRepresentation) representation;
+        mParameters = parameters;
+    }
+
+    @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
         short[] rect = new short[4];
         int size = mParameters.getNumberOfCandidates();
-
         for (int i = 0; i < size; i++) {
             RectF r = new RectF(mParameters.getCandidate(i).mRect);
             GeometryMetadata geo = getImagePreset().mGeoData;
@@ -100,13 +108,14 @@ public class ImageFilterRedEye extends ImageFilter {
             if (r.bottom > h) {
                 r.bottom = h;
             }
+
             rect[0] = (short) r.left;
             rect[1] = (short) r.top;
             rect[2] = (short) r.width();
             rect[3] = (short) r.height();
+
             nativeApplyFilter(bitmap, w, h, rect);
         }
-
         return bitmap;
     }
 }
