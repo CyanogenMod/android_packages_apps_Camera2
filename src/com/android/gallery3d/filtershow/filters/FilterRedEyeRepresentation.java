@@ -32,9 +32,9 @@ public class FilterRedEyeRepresentation extends FilterRepresentation {
         super("RedEye");
         setFilterClass(ImageFilterRedEye.class);
         setPriority(FilterRepresentation.TYPE_NORMAL);
-        setButtonId(R.id.redEyeButton);
         setTextId(R.string.redeye);
         setEditorId(EditorRedEye.ID);
+        setOverlayId(R.drawable.photoeditor_effect_redeye);
     }
 
     @Override

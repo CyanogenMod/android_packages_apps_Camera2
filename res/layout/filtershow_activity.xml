@@ -99,12 +99,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.android.gallery3d.filtershow.imageshow.ImageRedEye
-                android:id="@+id/imageRedEyes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
             <com.android.gallery3d.filtershow.imageshow.ImageDraw
                 android:id="@+id/imageDraw"
                 android:layout_width="match_parent"
@@ -244,13 +238,6 @@
                         style="@style/IconButton"
                         android:drawableTop="@drawable/filtershow_button_geometry_flip"
                         android:text="@string/mirror" />
-
-                    <com.android.gallery3d.filtershow.ui.IconButton
-                        android:id="@+id/redEyeButton"
-                        android:layout_height="match_parent"
-                        style="@style/IconButton"
-                        android:drawableTop="@drawable/photoeditor_effect_redeye"
-                        android:text="@string/redeye" />
 
                 </LinearLayout>
             </HorizontalScrollView>
