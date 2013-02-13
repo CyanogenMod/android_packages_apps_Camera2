@@ -30,12 +30,18 @@ public class ImageFilterVignette extends SimpleImageFilter {
     }
 
     public FilterRepresentation getDefaultRepresentation() {
-        FilterBasicRepresentation representation = (FilterBasicRepresentation) super.getDefaultRepresentation();
+        FilterBasicRepresentation representation =
+                (FilterBasicRepresentation) super.getDefaultRepresentation();
         representation.setName("Vignette");
         representation.setFilterClass(ImageFilterVignette.class);
         representation.setPriority(FilterRepresentation.TYPE_VIGNETTE);
         representation.setTextId(R.string.vignette);
         representation.setButtonId(R.id.vignetteButton);
+
+        representation.setMinimum(-100);
+        representation.setMaximum(100);
+        representation.setDefaultValue(0);
+
         return representation;
     }
 

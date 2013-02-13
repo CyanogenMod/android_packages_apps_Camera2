@@ -28,11 +28,15 @@ public class ImageFilterShadows extends SimpleImageFilter {
     }
 
     public FilterRepresentation getDefaultRepresentation() {
-        FilterRepresentation representation = super.getDefaultRepresentation();
+        FilterBasicRepresentation representation =
+                (FilterBasicRepresentation) super.getDefaultRepresentation();
         representation.setName("Shadows");
         representation.setFilterClass(ImageFilterShadows.class);
         representation.setTextId(R.string.shadow_recovery);
         representation.setButtonId(R.id.shadowRecoveryButton);
+        representation.setMinimum(-100);
+        representation.setMaximum(100);
+        representation.setDefaultValue(0);
         return representation;
     }
 

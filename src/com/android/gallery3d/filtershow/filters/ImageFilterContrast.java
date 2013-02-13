@@ -27,11 +27,16 @@ public class ImageFilterContrast extends SimpleImageFilter {
     }
 
     public FilterRepresentation getDefaultRepresentation() {
-        FilterRepresentation representation = super.getDefaultRepresentation();
+        FilterBasicRepresentation representation =
+                (FilterBasicRepresentation) super.getDefaultRepresentation();
         representation.setName("Contrast");
         representation.setFilterClass(ImageFilterContrast.class);
         representation.setTextId(R.string.contrast);
         representation.setButtonId(R.id.contrastButton);
+
+        representation.setMinimum(-100);
+        representation.setMaximum(100);
+        representation.setDefaultValue(0);
         return representation;
     }
 
