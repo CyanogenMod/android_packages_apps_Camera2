@@ -76,7 +76,6 @@ public class ImagePreset {
             }
             for (int i = 0; i < source.mFilters.size(); i++) {
                 FilterRepresentation representation = source.mFilters.elementAt(i).clone();
-                representation.setImagePreset(this);
                 addFilter(representation);
             }
         } catch (java.lang.CloneNotSupportedException e) {
@@ -355,7 +354,6 @@ public class ImagePreset {
             mFilters.add(representation);
             setHistoryName(representation.getName());
         }
-        representation.setImagePreset(this);
     }
 
     public FilterRepresentation getRepresentation(FilterRepresentation filterRepresentation) {
@@ -391,6 +389,7 @@ public class ImagePreset {
         if (mBorder != null && mDoApplyGeometry) {
             ImageFilter filter = FiltersManager.getManager().getFilterForRepresentation(mBorder);
             filter.useRepresentation(mBorder);
+            filter.setImagePreset(this);
             bitmap = filter.apply(bitmap, mScaleFactor, mQuality);
         }
         return bitmap;
