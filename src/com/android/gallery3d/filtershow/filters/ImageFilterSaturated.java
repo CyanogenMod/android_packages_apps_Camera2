@@ -26,12 +26,17 @@ public class ImageFilterSaturated extends SimpleImageFilter {
         mName = "Saturated";
     }
 
+    @Override
     public FilterRepresentation getDefaultRepresentation() {
-        FilterRepresentation representation = super.getDefaultRepresentation();
+        FilterBasicRepresentation representation =
+                (FilterBasicRepresentation) super.getDefaultRepresentation();
         representation.setName("Saturated");
         representation.setFilterClass(ImageFilterSaturated.class);
         representation.setTextId(R.string.saturation);
         representation.setButtonId(R.id.saturationButton);
+        representation.setMinimum(-100);
+        representation.setMaximum(100);
+        representation.setDefaultValue(0);
         return representation;
     }
 

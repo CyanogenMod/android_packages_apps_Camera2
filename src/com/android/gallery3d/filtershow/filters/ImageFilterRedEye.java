@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 
 import java.util.Vector;
@@ -35,6 +36,7 @@ public class ImageFilterRedEye extends ImageFilter {
     @Override
     public FilterRepresentation getDefaultRepresentation() {
         FilterRedEyeRepresentation representation = new FilterRedEyeRepresentation();
+        representation.setOverlayId(R.drawable.photoeditor_effect_redeye);
 
         return representation;
     }

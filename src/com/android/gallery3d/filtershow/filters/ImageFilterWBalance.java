@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.filters;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 
 import android.graphics.Bitmap;
 
@@ -34,6 +35,8 @@ public class ImageFilterWBalance extends ImageFilter {
         representation.setTextId(R.string.wbalance);
         representation.setButtonId(R.id.wbalanceButton);
         representation.setShowEditingControls(false);
+        representation.setShowParameterValue(false);
+        representation.setEditorId(ImageOnlyEditor.ID);
         return representation;
     }
 
