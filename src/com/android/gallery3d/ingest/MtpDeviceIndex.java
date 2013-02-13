@@ -180,48 +180,31 @@ public class MtpDeviceIndex {
      *         order
      */
     public Object get(int position, SortOrder order) {
+        if (mProgress != Progress.Finished) return null;
         if(order == SortOrder.Ascending) {
-            return getAscending(position);
+            DateBucket bucket = mBuckets[mUnifiedLookupIndex[position]];
+            if (bucket.unifiedStartIndex == position) {
+                return bucket.bucket;
+            } else {
+                return mMtpObjects[bucket.itemsStartIndex + position - 1
+                                   - bucket.unifiedStartIndex];
+            }
         } else {
-            return getDescending(position);
-        }
-    }
-
-    /**
-     * @param position Index of item to fetch, where 0 is the first item in
-     *            ascending order
-     * @return position-th item in ascending order
-     */
-    public Object getAscending(int position) {
-        if (mProgress != Progress.Finished) return null;
-        DateBucket bucket = mBuckets[mUnifiedLookupIndex[position]];
-        if (bucket.unifiedStartIndex == position) {
-            return bucket.bucket;
-        } else {
-            return bucket.get(position - 1 - bucket.unifiedStartIndex);
-        }
-    }
-
-    /**
-     * @param position Index of item to fetch, where 0 is the last item in
-     *            ascending order
-     * @return position-th item in descending order
-     */
-    public Object getDescending(int position) {
-        if (mProgress != Progress.Finished) return null;
-        int zeroIndex = mUnifiedLookupIndex.length - 1 - position;
-        DateBucket bucket = mBuckets[mUnifiedLookupIndex[zeroIndex]];
-        if (bucket.unifiedEndIndex == zeroIndex) {
-            return bucket.bucket;
-        } else {
-            return bucket.get(zeroIndex - bucket.unifiedStartIndex);
+            int zeroIndex = mUnifiedLookupIndex.length - 1 - position;
+            DateBucket bucket = mBuckets[mUnifiedLookupIndex[zeroIndex]];
+            if (bucket.unifiedEndIndex == zeroIndex) {
+                return bucket.bucket;
+            } else {
+                return mMtpObjects[bucket.itemsStartIndex + zeroIndex
+                                   - bucket.unifiedStartIndex];
+            }
         }
     }
 
     /**
      * @param position Index of item to fetch from a view of the data that doesn't
-     *            include labels and is in ascending order
-     * @return position-th item in ascending order, when not including labels
+     *            include labels and is in the specified order
+     * @return position-th item in specified order, when not including labels
      */
     public MtpObjectInfo getWithoutLabels(int position, SortOrder order) {
         if (mProgress != Progress.Finished) return null;
@@ -229,6 +212,58 @@ public class MtpDeviceIndex {
             return mMtpObjects[position];
         } else {
             return mMtpObjects[mMtpObjects.length - 1 - position];
+        }
+    }
+
+    /**
+     * Although this is O(log(number of buckets)), and thus should not be used
+     * in hotspots, even if the attached device has items for every day for
+     * a five-year timeframe, it would still only take 11 iterations at most,
+     * so shouldn't be a huge issue.
+     * @param position Index of item to map from a view of the data that doesn't
+     *            include labels and is in the specified order
+     * @param order
+     * @return position in a view of the data that does include labels
+     */
+    public int getPositionFromPositionWithoutLabels(int position, SortOrder order) {
+        if (mProgress != Progress.Finished) return -1;
+        if (order == SortOrder.Descending) {
+            position = mMtpObjects.length - 1 - position;
+        }
+        int bucketNumber = 0;
+        int iMin = 0;
+        int iMax = mBuckets.length - 1;
+        while (iMax >= iMin) {
+            int iMid = (iMax + iMin) / 2;
+            if (mBuckets[iMid].itemsStartIndex + mBuckets[iMid].numItems <= position) {
+                iMin = iMid + 1;
+            } else if (mBuckets[iMid].itemsStartIndex > position) {
+                iMax = iMid - 1;
+            } else {
+                bucketNumber = iMid;
+                break;
+            }
+        }
+        int mappedPos = mBuckets[bucketNumber].unifiedStartIndex
+                + position - mBuckets[bucketNumber].itemsStartIndex;
+        if (order == SortOrder.Descending) {
+            mappedPos = mUnifiedLookupIndex.length - 1 - mappedPos;
+        }
+        return mappedPos;
+    }
+
+    public int getPositionWithoutLabelsFromPosition(int position, SortOrder order) {
+        if (mProgress != Progress.Finished) return -1;
+        if(order == SortOrder.Ascending) {
+            DateBucket bucket = mBuckets[mUnifiedLookupIndex[position]];
+            if (bucket.unifiedStartIndex == position) position++;
+            return bucket.itemsStartIndex + position - 1 - bucket.unifiedStartIndex;
+        } else {
+            int zeroIndex = mUnifiedLookupIndex.length - 1 - position;
+            DateBucket bucket = mBuckets[mUnifiedLookupIndex[zeroIndex]];
+            if (bucket.unifiedEndIndex == zeroIndex) zeroIndex--;
+            return mMtpObjects.length - 1 - bucket.itemsStartIndex
+                    - zeroIndex + bucket.unifiedStartIndex;
         }
     }
 
@@ -288,6 +323,7 @@ public class MtpDeviceIndex {
         int unifiedStartIndex;
         int unifiedEndIndex;
         int itemsStartIndex;
+        int numItems;
 
         public DateBucket(SimpleDate bucket) {
             this.bucket = bucket;
@@ -300,10 +336,6 @@ public class MtpDeviceIndex {
 
         void sortElements(Comparator<MtpObjectInfo> comparator) {
             Collections.sort(tempElementsList, comparator);
-        }
-
-        public MtpObjectInfo get(int position) {
-            return mMtpObjects[itemsStartIndex + position];
         }
 
         @Override
@@ -413,7 +445,8 @@ public class MtpDeviceIndex {
                 currentUnifiedIndexEntry = nextUnifiedEntry;
 
                 bucket.itemsStartIndex = currentItemsEntry;
-                for (int j = 0; j < bucket.tempElementsList.size(); j++) {
+                bucket.numItems = bucket.tempElementsList.size();
+                for (int j = 0; j < bucket.numItems; j++) {
                     mMtpObjects[currentItemsEntry] = bucket.tempElementsList.get(j);
                     currentItemsEntry++;
                 }

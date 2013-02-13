@@ -45,13 +45,16 @@ public class MtpAdapter extends BaseAdapter implements SectionIndexer {
     public MtpAdapter(Activity context) {
         super();
         mContext = context;
-        mInflater = (LayoutInflater)context.getSystemService
-                (Context.LAYOUT_INFLATER_SERVICE);
+        mInflater = LayoutInflater.from(context);
     }
 
     public void setMtpDeviceIndex(MtpDeviceIndex index) {
         mModel = index;
         notifyDataSetChanged();
+    }
+
+    public MtpDeviceIndex getMtpDeviceIndex() {
+        return mModel;
     }
 
     @Override
@@ -176,5 +179,14 @@ public class MtpAdapter extends BaseAdapter implements SectionIndexer {
     @Override
     public Object[] getSections() {
         return getCount() > 0 ? mModel.getBuckets(mSortOrder) : null;
+    }
+
+    public SortOrder getSortOrder() {
+        return mSortOrder;
+    }
+
+    public int translatePositionWithoutLabels(int position) {
+        if (mModel == null) return -1;
+        return mModel.getPositionFromPositionWithoutLabels(position, mSortOrder);
     }
 }

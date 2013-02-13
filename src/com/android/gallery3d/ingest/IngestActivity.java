@@ -22,11 +22,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
+import android.database.DataSetObserver;
 import android.mtp.MtpObjectInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.view.ViewPager;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -36,12 +39,16 @@ import android.view.View;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
 import android.widget.TextView;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.ingest.adapter.CheckBroker;
 import com.android.gallery3d.ingest.adapter.MtpAdapter;
+import com.android.gallery3d.ingest.adapter.MtpPagerAdapter;
+import com.android.gallery3d.ingest.data.MtpBitmapFetch;
 import com.android.gallery3d.ingest.ui.DateTileView;
+import com.android.gallery3d.ingest.ui.IngestGridView;
+import com.android.gallery3d.ingest.ui.IngestGridView.OnClearChoicesListener;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
@@ -51,14 +58,22 @@ public class IngestActivity extends Activity implements
 
     private IngestService mHelperService;
     private boolean mActive = false;
-    private GridView mGridView;
+    private IngestGridView mGridView;
     private MtpAdapter mAdapter;
     private Handler mHandler;
     private ProgressDialog mProgressDialog;
     private ActionMode mActiveActionMode;
 
-    private View mWarningOverlay;
-    private TextView mWarningOverlayText;
+    private View mWarningView;
+    private TextView mWarningText;
+    private int mLastCheckedPosition = 0;
+
+    private ViewPager mFullscreenPager;
+    private MtpPagerAdapter mPagerAdapter;
+    private boolean mFullscreenPagerVisible = false;
+
+    private MenuItem mMenuSwitcherItem;
+    private MenuItem mActionMenuSwitcherItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,18 +81,25 @@ public class IngestActivity extends Activity implements
         doBindHelperService();
 
         setContentView(R.layout.ingest_activity_item_list);
-        mGridView = (GridView) findViewById(R.id.ingest_gridview);
+        mGridView = (IngestGridView) findViewById(R.id.ingest_gridview);
         mAdapter = new MtpAdapter(this);
+        mAdapter.registerDataSetObserver(mMasterObserver);
         mGridView.setAdapter(mAdapter);
         mGridView.setMultiChoiceModeListener(mMultiChoiceModeListener);
         mGridView.setOnItemClickListener(mOnItemClickListener);
+        mGridView.setOnClearChoicesListener(mPositionMappingCheckBroker);
+
+        mFullscreenPager = (ViewPager) findViewById(R.id.ingest_view_pager);
 
         mHandler = new ItemListHandler(this);
+
+        MtpBitmapFetch.configureForContext(this);
     }
 
     private OnItemClickListener mOnItemClickListener = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View itemView, int position, long arg3) {
+            mLastCheckedPosition = position;
             mGridView.setItemChecked(position, !mGridView.getCheckedItemPositions().get(position));
         }
     };
@@ -124,23 +146,18 @@ public class IngestActivity extends Activity implements
                         mGridView.setItemChecked(i, rangeValue);
                 }
 
+                mPositionMappingCheckBroker.onBulkCheckedChange();
                 mIgnoreItemCheckedStateChanges = false;
+            } else {
+                mPositionMappingCheckBroker.onCheckedChange(position, checked);
             }
+            mLastCheckedPosition = position;
             updateSelectedTitle(mode);
         }
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.import_items:
-                    mHelperService.importSelectedItems(
-                            mGridView.getCheckedItemPositions(),
-                            mAdapter);
-                    mode.finish();
-                    return true;
-                default:
-                    return false;
-            }
+            return onOptionsItemSelected(item);
         }
 
         @Override
@@ -149,12 +166,16 @@ public class IngestActivity extends Activity implements
             inflater.inflate(R.menu.ingest_menu_item_list_selection, menu);
             updateSelectedTitle(mode);
             mActiveActionMode = mode;
+            mActionMenuSwitcherItem = menu.findItem(R.id.ingest_switch_view);
+            setSwitcherMenuState(mActionMenuSwitcherItem, mFullscreenPagerVisible);
             return true;
         }
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             mActiveActionMode = null;
+            mActionMenuSwitcherItem = null;
+            mHandler.sendEmptyMessage(ItemListHandler.MSG_BULK_CHECKED_CHANGE);
         }
 
         @Override
@@ -163,6 +184,34 @@ public class IngestActivity extends Activity implements
             return false;
         }
     };
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.import_items:
+                if (mActiveActionMode != null) {
+                    mHelperService.importSelectedItems(
+                            mGridView.getCheckedItemPositions(),
+                            mAdapter);
+                    mActiveActionMode.finish();
+                }
+                return true;
+            case R.id.ingest_switch_view:
+                setFullscreenPagerVisibility(!mFullscreenPagerVisible);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.ingest_menu_item_list_selection, menu);
+        mMenuSwitcherItem = menu.findItem(R.id.ingest_switch_view);
+        menu.findItem(R.id.import_items).setVisible(false);
+        setSwitcherMenuState(mMenuSwitcherItem, mFullscreenPagerVisible);
+        return true;
+    }
 
     @Override
     protected void onDestroy() {
@@ -175,7 +224,7 @@ public class IngestActivity extends Activity implements
         DateTileView.refreshLocale();
         mActive = true;
         if (mHelperService != null) mHelperService.setClientActivity(this);
-        updateWarningOverlay();
+        updateWarningView();
         super.onResume();
     }
 
@@ -187,31 +236,140 @@ public class IngestActivity extends Activity implements
         super.onPause();
     }
 
-    private void showWarningOverlay(int textResId) {
-        if (mWarningOverlay == null) {
-            mWarningOverlay = findViewById(R.id.ingest_warning_overlay);
-            mWarningOverlayText =
-                    (TextView)mWarningOverlay.findViewById(R.id.ingest_warning_overlay_text);
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        MtpBitmapFetch.configureForContext(this);
+    }
+
+    private void showWarningView(int textResId) {
+        if (mWarningView == null) {
+            mWarningView = findViewById(R.id.ingest_warning_view);
+            mWarningText =
+                    (TextView)mWarningView.findViewById(R.id.ingest_warning_view_text);
         }
-        mWarningOverlayText.setText(textResId);
-        mWarningOverlay.setVisibility(View.VISIBLE);
+        mWarningText.setText(textResId);
+        mWarningView.setVisibility(View.VISIBLE);
+        setFullscreenPagerVisibility(false);
         mGridView.setVisibility(View.GONE);
     }
 
-    private void hideWarningOverlay() {
-        if (mWarningOverlay != null) {
-            mWarningOverlay.setVisibility(View.GONE);
-            mGridView.setVisibility(View.VISIBLE);
+    private void hideWarningView() {
+        if (mWarningView != null) {
+            mWarningView.setVisibility(View.GONE);
+            setFullscreenPagerVisibility(false);
         }
     }
 
-    private void updateWarningOverlay() {
-        if (!mAdapter.deviceConnected()) {
-            showWarningOverlay(R.string.ingest_no_device);
-        } else if (mAdapter.indexReady() && mAdapter.getCount() == 0) {
-            showWarningOverlay(R.string.ingest_empty_device);
+    private PositionMappingCheckBroker mPositionMappingCheckBroker = new PositionMappingCheckBroker();
+
+    private class PositionMappingCheckBroker extends CheckBroker
+        implements OnClearChoicesListener {
+        private int mLastMappingPager = -1;
+        private int mLastMappingGrid = -1;
+
+        private int mapPagerToGridPosition(int position) {
+            if (position != mLastMappingPager) {
+               mLastMappingPager = position;
+               mLastMappingGrid = mAdapter.translatePositionWithoutLabels(position);
+            }
+            return mLastMappingGrid;
+        }
+
+        private int mapGridToPagerPosition(int position) {
+            if (position != mLastMappingGrid) {
+                mLastMappingGrid = position;
+                mLastMappingPager = mPagerAdapter.translatePositionWithLabels(position);
+            }
+            return mLastMappingPager;
+        }
+
+        @Override
+        public void setItemChecked(int position, boolean checked) {
+            mGridView.setItemChecked(mapPagerToGridPosition(position), checked);
+        }
+
+        @Override
+        public void onCheckedChange(int position, boolean checked) {
+            if (mPagerAdapter != null) {
+                super.onCheckedChange(mapGridToPagerPosition(position), checked);
+            }
+        }
+
+        @Override
+        public boolean isItemChecked(int position) {
+            return mGridView.getCheckedItemPositions().get(mapPagerToGridPosition(position));
+        }
+
+        @Override
+        public void onClearChoices() {
+            onBulkCheckedChange();
+        }
+    };
+
+    private DataSetObserver mMasterObserver = new DataSetObserver() {
+        @Override
+        public void onChanged() {
+            if (mPagerAdapter != null) mPagerAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onInvalidated() {
+            if (mPagerAdapter != null) mPagerAdapter.notifyDataSetChanged();
+        }
+    };
+
+    private int pickFullscreenStartingPosition() {
+        int firstVisiblePosition = mGridView.getFirstVisiblePosition();
+        if (mLastCheckedPosition <= firstVisiblePosition
+                || mLastCheckedPosition > mGridView.getLastVisiblePosition()) {
+            return firstVisiblePosition;
         } else {
-            hideWarningOverlay();
+            return mLastCheckedPosition;
+        }
+    }
+
+    private void setSwitcherMenuState(MenuItem menuItem, boolean inFullscreenMode) {
+        if (menuItem == null) return;
+        if (!inFullscreenMode) {
+            menuItem.setIcon(android.R.drawable.ic_menu_zoom);
+            menuItem.setTitle(R.string.switch_photo_fullscreen);
+        } else {
+            menuItem.setIcon(android.R.drawable.ic_dialog_dialer);
+            menuItem.setTitle(R.string.switch_photo_grid);
+        }
+    }
+
+    private void setFullscreenPagerVisibility(boolean visible) {
+        mFullscreenPagerVisible = visible;
+        if (visible) {
+            if (mPagerAdapter == null) {
+                mPagerAdapter = new MtpPagerAdapter(this, mPositionMappingCheckBroker);
+                mPagerAdapter.setMtpDeviceIndex(mAdapter.getMtpDeviceIndex());
+            }
+            mFullscreenPager.setAdapter(mPagerAdapter);
+            mFullscreenPager.setCurrentItem(mPagerAdapter.translatePositionWithLabels(
+                    pickFullscreenStartingPosition()), false);
+        } else if (mPagerAdapter != null) {
+            mGridView.setSelection(mAdapter.translatePositionWithoutLabels(
+                    mFullscreenPager.getCurrentItem()));
+            mFullscreenPager.setAdapter(null);
+        }
+        mGridView.setVisibility(visible ? View.INVISIBLE : View.VISIBLE);
+        mFullscreenPager.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        if (mActionMenuSwitcherItem != null) {
+            setSwitcherMenuState(mActionMenuSwitcherItem, visible);
+        }
+        setSwitcherMenuState(mMenuSwitcherItem, visible);
+    }
+
+    private void updateWarningView() {
+        if (!mAdapter.deviceConnected()) {
+            showWarningView(R.string.ingest_no_device);
+        } else if (mAdapter.indexReady() && mAdapter.getCount() == 0) {
+            showWarningView(R.string.ingest_empty_device);
+        } else {
+            hideWarningView();
         }
     }
 
@@ -221,7 +379,7 @@ public class IngestActivity extends Activity implements
             mActiveActionMode.finish();
             mActiveActionMode = null;
         }
-        updateWarningOverlay();
+        updateWarningView();
     }
 
     protected void notifyIndexChanged() {
@@ -330,6 +488,7 @@ public class IngestActivity extends Activity implements
         public static final int MSG_PROGRESS_UPDATE = 0;
         public static final int MSG_PROGRESS_HIDE = 1;
         public static final int MSG_NOTIFY_CHANGED = 2;
+        public static final int MSG_BULK_CHECKED_CHANGE = 3;
 
         WeakReference<IngestActivity> mParentReference;
 
@@ -352,6 +511,9 @@ public class IngestActivity extends Activity implements
                 case MSG_NOTIFY_CHANGED:
                     parent.UiThreadNotifyIndexChanged();
                     break;
+                case MSG_BULK_CHECKED_CHANGE:
+                    parent.mPositionMappingCheckBroker.onBulkCheckedChange();
+                    break;
                 default:
                     break;
             }
@@ -362,7 +524,9 @@ public class IngestActivity extends Activity implements
         public void onServiceConnected(ComponentName className, IBinder service) {
             mHelperService = ((IngestService.LocalBinder) service).getService();
             mHelperService.setClientActivity(IngestActivity.this);
-            mAdapter.setMtpDeviceIndex(mHelperService.getIndex());
+            MtpDeviceIndex index = mHelperService.getIndex();
+            mAdapter.setMtpDeviceIndex(index);
+            if (mPagerAdapter != null) mPagerAdapter.setMtpDeviceIndex(index);
         }
 
         public void onServiceDisconnected(ComponentName className) {
