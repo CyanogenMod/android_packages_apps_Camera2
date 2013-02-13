@@ -30,7 +30,8 @@ public class ImageFilterHue extends SimpleImageFilter {
     }
 
     public FilterRepresentation getDefaultRepresentation() {
-        FilterBasicRepresentation representation = (FilterBasicRepresentation) super.getDefaultRepresentation();
+        FilterBasicRepresentation representation =
+                (FilterBasicRepresentation) super.getDefaultRepresentation();
         representation.setName("Hue");
         representation.setFilterClass(ImageFilterHue.class);
         representation.setMinimum(-180);

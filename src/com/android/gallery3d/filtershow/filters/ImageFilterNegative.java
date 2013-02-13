@@ -3,6 +3,7 @@ package com.android.gallery3d.filtershow.filters;
 import android.graphics.Bitmap;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 
 public class ImageFilterNegative extends ImageFilter {
 
@@ -17,6 +18,7 @@ public class ImageFilterNegative extends ImageFilter {
         representation.setButtonId(R.id.negativeButton);
         representation.setShowEditingControls(false);
         representation.setShowParameterValue(false);
+        representation.setEditorId(ImageOnlyEditor.ID);
         return representation;
     }
 
