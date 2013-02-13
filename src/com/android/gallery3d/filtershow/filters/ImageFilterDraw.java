@@ -224,7 +224,8 @@ public class ImageFilterDraw extends ImageFilter {
 
         if (mOverlayBitmap == null ||
                 mOverlayBitmap.getWidth() != canvas.getWidth() ||
-                mOverlayBitmap.getHeight() != canvas.getHeight()) {
+                mOverlayBitmap.getHeight() != canvas.getHeight() ||
+                mParameters.getDrawing().size() < mCachedStrokes) {
 
             mOverlayBitmap = Bitmap.createBitmap(
                     canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
