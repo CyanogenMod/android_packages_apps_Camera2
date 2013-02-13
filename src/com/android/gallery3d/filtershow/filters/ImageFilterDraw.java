@@ -27,6 +27,7 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.Rect;
 import android.util.Log;
 
 import com.android.gallery3d.R;
@@ -266,13 +267,12 @@ public class ImageFilterDraw extends ImageFilter {
     public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        short[] rect = new short[4];
-
-        Matrix m = new Matrix();
-        m.setScale(scaleFactor, scaleFactor);
+        ImagePreset imgPreset = getImagePreset();
+        Rect bounds = imgPreset.getImageLoader().getOriginalBounds();
+        Matrix m = imgPreset.mGeoData.getOriginalToScreen(true,
+                bounds.width(),
+                bounds.height(), w, h);
         drawData(new Canvas(bitmap), m, quality);
-
-
         return bitmap;
     }
 
