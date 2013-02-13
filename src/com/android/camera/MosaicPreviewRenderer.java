@@ -90,6 +90,7 @@ public class MosaicPreviewRenderer {
                     break;
                 case MSG_RELEASE:
                     doRelease();
+                    mEglThreadBlockVar.open();
                     break;
             }
         }
@@ -203,7 +204,7 @@ public class MosaicPreviewRenderer {
     }
 
     public void release() {
-        mEglHandler.sendEmptyMessage(EGLHandler.MSG_RELEASE);
+        mEglHandler.sendMessageSync(EGLHandler.MSG_RELEASE);
     }
 
     public void showPreviewFrameSync() {
