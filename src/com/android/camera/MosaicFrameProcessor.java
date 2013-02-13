@@ -92,7 +92,8 @@ public class MosaicFrameProcessor {
         mPreviewBufferSize = bufSize;
         setupMosaicer(mPreviewWidth, mPreviewHeight, mPreviewBufferSize);
         setStripType(Mosaic.STRIPTYPE_WIDE);
-        reset();
+        // no need to call reset() here. reset() should be called by the client
+        // after this initialization before calling other methods of this object.
     }
 
     public void clear() {
