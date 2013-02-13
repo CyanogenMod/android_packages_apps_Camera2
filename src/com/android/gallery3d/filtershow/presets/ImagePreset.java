@@ -130,7 +130,7 @@ public class ImagePreset {
         synchronized (mFilters) {
             int position = getPositionForRepresentation(representation);
             FilterRepresentation old = mFilters.elementAt(position);
-            old.useParametersFrom(representation);
+            old.updateTempParametersFrom(representation);
         }
         MasterImage.getImage().invalidatePreview();
     }
@@ -388,6 +388,7 @@ public class ImagePreset {
     public Bitmap applyBorder(Bitmap bitmap) {
         if (mBorder != null && mDoApplyGeometry) {
             ImageFilter filter = FiltersManager.getManager().getFilterForRepresentation(mBorder);
+            mBorder.synchronizeRepresentation();
             filter.useRepresentation(mBorder);
             filter.setImagePreset(this);
             bitmap = filter.apply(bitmap, mScaleFactor, mQuality);
@@ -408,6 +409,7 @@ public class ImagePreset {
                 FilterRepresentation representation = null;
                 synchronized (mFilters) {
                     representation = mFilters.elementAt(i);
+                    representation.synchronizeRepresentation();
                 }
                 ImageFilter filter = FiltersManager.getManager().getFilterForRepresentation(representation);
                 filter.useRepresentation(representation);
