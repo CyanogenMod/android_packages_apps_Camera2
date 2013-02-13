@@ -14,35 +14,42 @@
      limitations under the License.
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
-    <GridView
+    <com.android.gallery3d.ingest.ui.IngestGridView
         android:id="@+id/ingest_gridview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnWidth="200px"
+        android:columnWidth="120dip"
         android:numColumns="auto_fit"
         android:fastScrollEnabled="true"
         android:background="@android:color/background_dark"
         android:choiceMode="multipleChoiceModal"
         android:stretchMode="columnWidth"  />
 
+    <android.support.v4.view.ViewPager
+        android:id="@+id/ingest_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/background_dark"
+        android:visibility="invisible" />
+
     <LinearLayout
-        android:id="@+id/ingest_warning_overlay"
+        android:id="@+id/ingest_warning_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="20dip"
         android:gravity="center"
         android:orientation="horizontal"
-        android:visibility="gone" >
+        android:visibility="invisible" >
 
         <ImageView
-            android:id="@+id/ingest_warning_overlay_icon"
+            android:id="@+id/ingest_warning_view_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@android:drawable/ic_dialog_alert" />
 
         <TextView
-            android:id="@+id/ingest_warning_overlay_text"
+            android:id="@+id/ingest_warning_view_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dip"
