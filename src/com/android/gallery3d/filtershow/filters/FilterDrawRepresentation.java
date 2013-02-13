@@ -94,7 +94,10 @@ public class FilterDrawRepresentation extends FilterRepresentation {
                 }
                 if (representation.mDrawing != null) {
                     mDrawing = (Vector<StrokeData>) representation.mDrawing.clone();
+                } else {
+                    mDrawing = null;
                 }
+
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
