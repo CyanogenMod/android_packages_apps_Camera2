@@ -19,18 +19,31 @@ package com.android.gallery3d.ingest.ui;
 import android.content.Context;
 import android.mtp.MtpDevice;
 import android.mtp.MtpObjectInfo;
-import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
 import com.android.gallery3d.ingest.data.BitmapWithMetadata;
 import com.android.gallery3d.ingest.data.MtpBitmapFetch;
 
-public class MtpImageView extends ImageView {
-    private static final int FADE_IN_TIME_MS = 80;
+import java.lang.ref.WeakReference;
 
+public class MtpImageView extends ImageView {
     private int mObjectHandle;
     private int mGeneration;
+
+    private WeakReference<MtpImageView> mWeakReference = new WeakReference<MtpImageView>(this);
+    private Object mFetchLock = new Object();
+    private boolean mFetchPending = false;
+    private MtpObjectInfo mFetchObjectInfo;
+    private MtpDevice mFetchDevice;
+    private Object mFetchResult;
+
+    private static final FetchImageHandler sFetchHandler = FetchImageHandler.createOnNewThread();
+    private static final ShowImageHandler sFetchCompleteHandler = new ShowImageHandler();
 
     private void init() {
          showPlaceholder();
@@ -55,8 +68,6 @@ public class MtpImageView extends ImageView {
         setImageResource(android.R.color.transparent);
     }
 
-    private LoadMtpImageTask mTask;
-
     public void setMtpDeviceAndObjectInfo(MtpDevice device, MtpObjectInfo object, int gen) {
         int handle = object.getObjectHandle();
         if (handle == mObjectHandle && gen == mGeneration) {
@@ -66,8 +77,14 @@ public class MtpImageView extends ImageView {
         showPlaceholder();
         mGeneration = gen;
         mObjectHandle = handle;
-        mTask = new LoadMtpImageTask(device);
-        mTask.execute(object);
+        synchronized (mFetchLock) {
+            mFetchObjectInfo = object;
+            mFetchDevice = device;
+            if (mFetchPending) return;
+            mFetchPending = true;
+            sFetchHandler.sendMessage(
+                    sFetchHandler.obtainMessage(0, mWeakReference));
+        }
     }
 
     protected Object fetchMtpImageDataFromDevice(MtpDevice device, MtpObjectInfo info) {
@@ -80,44 +97,12 @@ public class MtpImageView extends ImageView {
         setRotation(bitmapWithMetadata.rotationDegrees);
     }
 
-    private class LoadMtpImageTask extends AsyncTask<MtpObjectInfo, Void, Object> {
-        private MtpDevice mDevice;
-
-        public LoadMtpImageTask(MtpDevice device) {
-            mDevice = device;
-        }
-
-        @Override
-        protected Object doInBackground(MtpObjectInfo... args) {
-            Object result = null;
-            if (!isCancelled()) {
-                result = fetchMtpImageDataFromDevice(mDevice, args[0]);
-            }
-            mDevice = null;
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            if (isCancelled() || result == null) {
-                return;
-            }
-            setAlpha(0f);
-            onMtpImageDataFetchedFromDevice(result);
-            animate().alpha(1f).setDuration(FADE_IN_TIME_MS);
-        }
-
-        @Override
-        protected void onCancelled() {
-        }
-    }
-
     protected void cancelLoadingAndClear() {
-        if (mTask != null) {
-            mTask.cancel(true);
+        synchronized (mFetchLock) {
+            mFetchDevice = null;
+            mFetchObjectInfo = null;
+            mFetchResult = null;
         }
-        mTask = null;
-        animate().cancel();
         setImageResource(android.R.color.transparent);
         setRotation(0);
     }
@@ -126,5 +111,57 @@ public class MtpImageView extends ImageView {
     public void onDetachedFromWindow() {
         cancelLoadingAndClear();
         super.onDetachedFromWindow();
+    }
+
+    private static class FetchImageHandler extends Handler {
+        public FetchImageHandler(Looper l) {
+            super(l);
+        }
+
+        public static FetchImageHandler createOnNewThread() {
+            HandlerThread t = new HandlerThread("MtpImageView Fetch");
+            t.start();
+            return new FetchImageHandler(t.getLooper());
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            @SuppressWarnings("unchecked")
+            MtpImageView parent = ((WeakReference<MtpImageView>) msg.obj).get();
+            if (parent == null) return;
+            MtpObjectInfo objectInfo;
+            MtpDevice device;
+            synchronized (parent.mFetchLock) {
+                parent.mFetchPending = false;
+                device = parent.mFetchDevice;
+                objectInfo = parent.mFetchObjectInfo;
+            }
+            if (device == null) return;
+            Object result = parent.fetchMtpImageDataFromDevice(device, objectInfo);
+            if (result == null) return;
+            synchronized (parent.mFetchLock) {
+                if (parent.mFetchObjectInfo != objectInfo) return;
+                parent.mFetchResult = result;
+                parent.mFetchDevice = null;
+                parent.mFetchObjectInfo = null;
+                sFetchCompleteHandler.sendMessage(
+                        sFetchCompleteHandler.obtainMessage(0, parent.mWeakReference));
+            }
+        }
+    }
+
+    private static class ShowImageHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            @SuppressWarnings("unchecked")
+            MtpImageView parent = ((WeakReference<MtpImageView>) msg.obj).get();
+            if (parent == null) return;
+            Object result;
+            synchronized (parent.mFetchLock) {
+                result = parent.mFetchResult;
+            }
+            if (result == null) return;
+            parent.onMtpImageDataFetchedFromDevice(result);
+        }
     }
 }
