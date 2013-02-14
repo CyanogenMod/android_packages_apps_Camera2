@@ -267,11 +267,8 @@ public class ImageFilterDraw extends ImageFilter {
     public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        ImagePreset imgPreset = getImagePreset();
-        Rect bounds = imgPreset.getImageLoader().getOriginalBounds();
-        Matrix m = imgPreset.mGeoData.getOriginalToScreen(true,
-                bounds.width(),
-                bounds.height(), w, h);
+
+        Matrix m = getOriginalToScreenMatrix(w, h);
         drawData(new Canvas(bitmap), m, quality);
         return bitmap;
     }

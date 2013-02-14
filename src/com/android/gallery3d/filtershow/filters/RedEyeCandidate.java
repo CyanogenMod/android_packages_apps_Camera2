@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.RectF;
 
-public class RedEyeCandidate {
+public class RedEyeCandidate implements FilterPoint {
     RectF mRect = new RectF();
     RectF mBounds = new RectF();
 
