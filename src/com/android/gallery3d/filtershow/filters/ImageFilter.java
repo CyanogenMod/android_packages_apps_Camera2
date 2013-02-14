@@ -17,9 +17,11 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.editors.BasicEditor;
+import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public abstract class ImageFilter implements Cloneable {
@@ -67,4 +69,12 @@ public abstract class ImageFilter implements Cloneable {
         return null;
     }
 
+    protected Matrix getOriginalToScreenMatrix(int w, int h) {
+        GeometryMetadata geo = getImagePreset().mGeoData;
+        Matrix originalToScreen = geo.getOriginalToScreen(true,
+                getImagePreset().getImageLoader().getOriginalBounds().width(),
+                getImagePreset().getImageLoader().getOriginalBounds().height(),
+                w, h);
+        return originalToScreen;
+    }
 }
