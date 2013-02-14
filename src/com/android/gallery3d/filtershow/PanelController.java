@@ -459,7 +459,7 @@ public class PanelController implements OnClickListener {
             copy.addFilter(filterRepresentation);
         } else {
             if (filterRepresentation.allowsMultipleInstances()) {
-                representation.useParametersFrom(filterRepresentation);
+                representation.updateTempParametersFrom(filterRepresentation);
                 copy.setHistoryName(filterRepresentation.getName());
             }
             filterRepresentation = representation;

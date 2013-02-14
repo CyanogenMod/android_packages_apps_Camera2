@@ -40,6 +40,8 @@ public class FilterRepresentation implements Cloneable {
     public static final byte TYPE_NORMAL = 5;
     public static final byte TYPE_TINYPLANET = 6;
 
+    public FilterRepresentation mTempRepresentation = null;
+
     public FilterRepresentation(String name) {
         mName = name;
     }
@@ -105,6 +107,24 @@ public class FilterRepresentation implements Cloneable {
     }
 
     public void useParametersFrom(FilterRepresentation a) {
+    }
+
+    public synchronized void updateTempParametersFrom(FilterRepresentation representation) {
+        if (mTempRepresentation == null) {
+            try {
+                mTempRepresentation = representation.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            mTempRepresentation.useParametersFrom(representation);
+        }
+    }
+
+    public synchronized void synchronizeRepresentation() {
+        if (mTempRepresentation != null) {
+            useParametersFrom(mTempRepresentation);
+        }
     }
 
     public boolean allowsMultipleInstances() {
@@ -185,4 +205,5 @@ public class FilterRepresentation implements Cloneable {
     public String getStateRepresentation() {
         return "";
     }
+
 }
