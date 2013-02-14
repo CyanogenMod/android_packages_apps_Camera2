@@ -651,7 +651,7 @@ public class VideoModule implements CameraModule,
                 if (mQuickCapture) {
                     doReturnToCaller(!recordFail);
                 } else if (!recordFail) {
-                    showAlert();
+                    showCaptureResult();
                 }
             }
         } else if (!recordFail){
@@ -1657,14 +1657,14 @@ public class VideoModule implements CameraModule,
         }
     }
 
-    private void showAlert() {
+    private void showCaptureResult() {
         Bitmap bitmap = null;
         if (mVideoFileDescriptor != null) {
             bitmap = Thumbnail.createVideoThumbnailBitmap(mVideoFileDescriptor.getFileDescriptor(),
-                    mPreviewFrameLayout.getWidth());
+                    mDesiredPreviewWidth);
         } else if (mCurrentVideoFilename != null) {
             bitmap = Thumbnail.createVideoThumbnailBitmap(mCurrentVideoFilename,
-                    mPreviewFrameLayout.getWidth());
+                    mDesiredPreviewWidth);
         }
         if (bitmap != null) {
             // MetadataRetriever already rotates the thumbnail. We should rotate
@@ -2052,7 +2052,7 @@ public class VideoModule implements CameraModule,
                     if (mQuickCapture) {
                         doReturnToCaller(true);
                     } else {
-                        showAlert();
+                        showCaptureResult();
                     }
                 }
             }
@@ -2203,7 +2203,6 @@ public class VideoModule implements CameraModule,
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         setDisplayOrientation();
-
         // Change layout in response to configuration change
         LayoutInflater inflater = mActivity.getLayoutInflater();
         ((ViewGroup) mRootView).removeAllViews();
@@ -2223,6 +2222,9 @@ public class VideoModule implements CameraModule,
         initializeZoom();
         onFullScreenChanged(mActivity.isInCameraApp());
         updateOnScreenIndicators();
+        if (mIsVideoCaptureIntent && mVideoFileDescriptor != null) {
+            showCaptureResult();
+        }
     }
 
     @Override
