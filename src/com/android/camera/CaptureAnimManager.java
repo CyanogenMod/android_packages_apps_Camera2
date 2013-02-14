@@ -30,13 +30,18 @@ import com.android.gallery3d.glrenderer.RawTexture;
 public class CaptureAnimManager {
     @SuppressWarnings("unused")
     private static final String TAG = "CAM_Capture";
+    // times mark endpoint of animation phase
     private static final int TIME_FLASH = 200;
     private static final int TIME_HOLD = 400;
-    private static final int TIME_SLIDE = 400;  // milliseconds.
+    private static final int TIME_SLIDE = 700;
+    private static final int TIME_HOLD2 = 1000;
+    private static final int TIME_SLIDE2 = 1200;
 
     private static final int ANIM_BOTH = 0;
     private static final int ANIM_FLASH = 1;
     private static final int ANIM_SLIDE = 2;
+    private static final int ANIM_HOLD2 = 3;
+    private static final int ANIM_SLIDE2 = 4;
 
     private final Interpolator mSlideInterpolator = new DecelerateInterpolator();
 
@@ -44,15 +49,22 @@ public class CaptureAnimManager {
     private long mAnimStartTime;  // milliseconds.
     private float mX;  // The center of the whole view including preview and review.
     private float mY;
-    private float mDelta;
     private int mDrawWidth;
     private int mDrawHeight;
     private int mAnimType;
+
+    private int mHoldX;
+    private int mHoldY;
+    private int mHoldW;
+    private int mHoldH;
+
+    private int mOffset = 80;
 
     /* preview: camera preview view.
      * review: view of picture just taken.
      */
     public CaptureAnimManager() {
+
     }
 
     public void setOrientation(int displayRotation) {
@@ -83,18 +95,24 @@ public class CaptureAnimManager {
         mDrawHeight = h;
         mX = x;
         mY = y;
+        mHoldW = (int) (mDrawWidth * 0.7f);
+        mHoldH = (int) (mDrawHeight * 0.7f);
         switch (mAnimOrientation) {
             case 0:  // Preview is on the left.
-                mDelta = w;
+                mHoldX = x + w - mOffset;
+                mHoldY = y + (mDrawHeight - mHoldH) / 2;
                 break;
             case 90:  // Preview is below.
-                mDelta = -h;
+                mHoldX = x + (mDrawWidth - mHoldW + 1) / 2;
+                mHoldY = y + mOffset- mHoldH;
                 break;
             case 180:  // Preview on the right.
-                mDelta = -w;
+                mHoldX = x - w + mOffset;
+                mHoldY = y + (mDrawHeight -  mHoldH) / 2;
                 break;
             case 270:  // Preview is above.
-                mDelta = h;
+                mHoldX = x + (mDrawWidth - mHoldW + 1) / 2;
+                mHoldY = y + h - mOffset;
                 break;
         }
     }
@@ -104,14 +122,27 @@ public class CaptureAnimManager {
                 RawTexture review) {
         long timeDiff = SystemClock.uptimeMillis() - mAnimStartTime;
         // Check if the animation is over
-        if (mAnimType == ANIM_SLIDE && timeDiff > TIME_SLIDE) return false;
-        if (mAnimType == ANIM_BOTH && timeDiff > TIME_HOLD + TIME_SLIDE) return false;
+        if (mAnimType == ANIM_SLIDE && timeDiff > TIME_SLIDE2 - TIME_HOLD) return false;
+        if (mAnimType == ANIM_BOTH && timeDiff > TIME_SLIDE2) return false;
 
+        // determine phase and time in phase
         int animStep = mAnimType;
-        if (mAnimType == ANIM_BOTH) {
-            animStep = (timeDiff < TIME_HOLD) ? ANIM_FLASH : ANIM_SLIDE;
-            if (animStep == ANIM_SLIDE) {
+        if (mAnimType == ANIM_SLIDE) {
+            timeDiff += TIME_HOLD;
+        }
+        if (mAnimType == ANIM_SLIDE || mAnimType == ANIM_BOTH) {
+            if (timeDiff < TIME_HOLD) {
+                animStep = ANIM_FLASH;
+            } else if (timeDiff < TIME_SLIDE) {
+                animStep = ANIM_SLIDE;
                 timeDiff -= TIME_HOLD;
+            } else if (timeDiff < TIME_HOLD2) {
+                animStep = ANIM_HOLD2;
+                timeDiff -= TIME_SLIDE;
+            } else {
+                // SLIDE2
+                animStep = ANIM_SLIDE2;
+                timeDiff -= TIME_HOLD2;
             }
         }
 
@@ -123,24 +154,47 @@ public class CaptureAnimManager {
                 canvas.fillRect(mX, mY, mDrawWidth, mDrawHeight, color);
             }
         } else if (animStep == ANIM_SLIDE) {
-            float fraction = (float) (timeDiff) / TIME_SLIDE;
+            float fraction = mSlideInterpolator.getInterpolation((float) (timeDiff) / (TIME_SLIDE - TIME_HOLD));
             float x = mX;
             float y = mY;
-            if (mAnimOrientation == 0 || mAnimOrientation == 180) {
-                x = x + mDelta * mSlideInterpolator.getInterpolation(fraction);
-            } else {
-                y = y + mDelta * mSlideInterpolator.getInterpolation(fraction);
+            float w = 0;
+            float h = 0;
+            x = interpolate(mX, mHoldX, fraction);
+            y = interpolate(mY, mHoldY, fraction);
+            w = interpolate(mDrawWidth, mHoldW, fraction);
+            h = interpolate(mDrawHeight, mHoldH, fraction);
+            preview.directDraw(canvas, (int) mX, (int) mY, mDrawWidth, mDrawHeight);
+            review.draw(canvas, (int) x, (int) y, (int) w, (int) h);
+        } else if (animStep == ANIM_HOLD2) {
+            preview.directDraw(canvas, (int) mX, (int) mY, mDrawWidth, mDrawHeight);
+            review.draw(canvas, mHoldX, mHoldY, mHoldW, mHoldH);
+        } else if (animStep == ANIM_SLIDE2) {
+            float fraction = (float)(timeDiff) / (TIME_SLIDE2 - TIME_HOLD2);
+            float x = mHoldX;
+            float y = mHoldY;
+            float d = mOffset * fraction;
+            switch (mAnimOrientation) {
+            case 0:
+                x = mHoldX + d;
+                break;
+            case 180:
+                x = mHoldX - d;
+                break;
+            case 90:
+                y = mHoldY - d;
+                break;
+            case 270:
+                y = mHoldY + d;
+                break;
             }
-            // float alpha = canvas.getAlpha();
-            // canvas.setAlpha(fraction);
-            preview.directDraw(canvas, (int) mX, (int) mY,
-                    mDrawWidth, mDrawHeight);
-            // canvas.setAlpha(alpha);
-
-            review.draw(canvas, (int) x, (int) y, mDrawWidth, mDrawHeight);
-        } else {
-            return false;
+            preview.directDraw(canvas, (int) mX, (int) mY, mDrawWidth, mDrawHeight);
+            review.draw(canvas, (int) x, (int) y, mHoldW, mHoldH);
         }
         return true;
     }
+
+    private static float interpolate(float start, float end, float fraction) {
+        return start + (end - start) * fraction;
+    }
+
 }
