@@ -430,6 +430,7 @@ public class FocusOverlayManager {
 
     public String getFocusMode() {
         if (mOverrideFocusMode != null) return mOverrideFocusMode;
+        if (mParameters == null) return Parameters.FOCUS_MODE_AUTO;
         List<String> supportedFocusModes = mParameters.getSupportedFocusModes();
 
         if (mFocusAreaSupported && mFocusArea != null) {
