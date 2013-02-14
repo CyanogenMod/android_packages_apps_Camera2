@@ -2175,6 +2175,7 @@ public class VideoModule implements CameraModule,
         mShutterButton = mActivity.getShutterButton();
         mShutterButton.setImageResource(R.drawable.btn_new_shutter_video);
         mShutterButton.setOnShutterButtonListener(this);
+        mShutterButton.setVisibility(View.VISIBLE);
         mShutterButton.requestFocus();
         mShutterButton.enableTouch(true);
 
