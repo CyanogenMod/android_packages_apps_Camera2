@@ -51,10 +51,10 @@ public class EditorRedEye extends Editor {
     @Override
     public void reflectCurrentFilter() {
         super.reflectCurrentFilter();
-
         FilterRepresentation rep = getLocalRepresentation();
         if (rep != null && getLocalRepresentation() instanceof FilterRedEyeRepresentation) {
             FilterRedEyeRepresentation redEyeRep = (FilterRedEyeRepresentation) rep;
+
             mImageRedEyes.setRepresentation(redEyeRep);
         }
     }

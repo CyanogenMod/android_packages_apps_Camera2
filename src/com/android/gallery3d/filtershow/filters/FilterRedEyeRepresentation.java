@@ -65,6 +65,17 @@ public class FilterRedEyeRepresentation extends FilterRepresentation {
         this.mCandidates.add(c);
     }
 
+    @Override
+    public void useParametersFrom(FilterRepresentation a) {
+        if (a instanceof FilterRedEyeRepresentation) {
+            FilterRedEyeRepresentation representation = (FilterRedEyeRepresentation) a;
+            mCandidates.clear();
+            for (RedEyeCandidate redEyeCandidate : representation.mCandidates) {
+                mCandidates.add(redEyeCandidate);
+            }
+        }
+    }
+
     public void removeCandidate(RedEyeCandidate c) {
         this.mCandidates.remove(c);
     }
