@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,8 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.Log;
-
-import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 
 import java.util.Vector;
 
@@ -42,23 +36,14 @@ public class ImageFilterRedEye extends ImageFilter {
     }
 
     public boolean isNil() {
-        if (mParameters.getCandidates() != null && mParameters.getCandidates().size() > 0) {
-            return false;
-        }
-        return true;
+        return mParameters.isNil();
     }
 
-    public Vector<RedEyeCandidate> getCandidates() {
-        if (!mParameters.hasCandidates()) {
-            mParameters.setCandidates(new Vector<RedEyeCandidate>());
-        }
+    public Vector<FilterPoint> getCandidates() {
         return mParameters.getCandidates();
     }
 
     public void clear() {
-        if (!mParameters.hasCandidates()) {
-            mParameters.setCandidates(new Vector<RedEyeCandidate>());
-        }
         mParameters.clearCandidates();
     }
 
@@ -75,46 +60,19 @@ public class ImageFilterRedEye extends ImageFilter {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
         short[] rect = new short[4];
+
         int size = mParameters.getNumberOfCandidates();
+        Matrix originalToScreen = getOriginalToScreenMatrix(w, h);
         for (int i = 0; i < size; i++) {
-            RectF r = new RectF(mParameters.getCandidate(i).mRect);
-            GeometryMetadata geo = getImagePreset().mGeoData;
-            Matrix originalToScreen = geo.getOriginalToScreen(true,
-                    getImagePreset().getImageLoader().getOriginalBounds().width(),
-                    getImagePreset().getImageLoader().getOriginalBounds().height(),
-                    w, h);
+            RectF r = new RectF(((RedEyeCandidate) (mParameters.getCandidate(i))).mRect);
             originalToScreen.mapRect(r);
-            if (r.left < 0) {
-                r.left = 0;
+            if (r.intersect(0, 0, w, h)) {
+                rect[0] = (short) r.left;
+                rect[1] = (short) r.top;
+                rect[2] = (short) r.width();
+                rect[3] = (short) r.height();
+                nativeApplyFilter(bitmap, w, h, rect);
             }
-            if (r.left > w) {
-                r.left = w;
-            }
-            if (r.top < 0) {
-                r.top = 0;
-            }
-            if (r.top > h) {
-                r.top = h;
-            }
-            if (r.right < 0) {
-                r.right = 0;
-            }
-            if (r.right > w) {
-                r.right = w;
-            }
-            if (r.bottom < 0) {
-                r.bottom = 0;
-            }
-            if (r.bottom > h) {
-                r.bottom = h;
-            }
-
-            rect[0] = (short) r.left;
-            rect[1] = (short) r.top;
-            rect[2] = (short) r.width();
-            rect[3] = (short) r.height();
-
-            nativeApplyFilter(bitmap, w, h, rect);
         }
         return bitmap;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,80 +24,19 @@ import com.android.gallery3d.filtershow.editors.EditorRedEye;
 
 import java.util.Vector;
 
-public class FilterRedEyeRepresentation extends FilterRepresentation {
+public class FilterRedEyeRepresentation extends FilterPointRepresentation {
     private static final String LOGTAG = "FilterRedEyeRepresentation";
-    private Vector<RedEyeCandidate> mCandidates = new Vector<RedEyeCandidate>();
 
     public FilterRedEyeRepresentation() {
-        super("RedEye");
+        super("RedEye",R.string.redeye,EditorRedEye.ID);
         setFilterClass(ImageFilterRedEye.class);
-        setPriority(FilterRepresentation.TYPE_NORMAL);
-        setTextId(R.string.redeye);
-        setEditorId(EditorRedEye.ID);
         setOverlayId(R.drawable.photoeditor_effect_redeye);
     }
 
-    @Override
-    public FilterRepresentation clone() throws CloneNotSupportedException {
-        FilterRedEyeRepresentation representation = (FilterRedEyeRepresentation) super
-                .clone();
-        representation.mCandidates = (Vector<RedEyeCandidate>) mCandidates.clone();
-        return representation;
-    }
-
-    public boolean hasCandidates() {
-        return mCandidates != null;
-    }
-
-    public Vector<RedEyeCandidate> getCandidates() {
-        return mCandidates;
-    }
-
-    public void setCandidates(Vector<RedEyeCandidate> mCandidates) {
-        this.mCandidates = mCandidates;
-    }
-
-    public RedEyeCandidate getCandidate(int index) {
-        return this.mCandidates.get(index);
-    }
-
-    public void addCandidate(RedEyeCandidate c) {
-        this.mCandidates.add(c);
-    }
-
-    @Override
-    public void useParametersFrom(FilterRepresentation a) {
-        if (a instanceof FilterRedEyeRepresentation) {
-            FilterRedEyeRepresentation representation = (FilterRedEyeRepresentation) a;
-            mCandidates.clear();
-            for (RedEyeCandidate redEyeCandidate : representation.mCandidates) {
-                mCandidates.add(redEyeCandidate);
-            }
-        }
-    }
-
-    public void removeCandidate(RedEyeCandidate c) {
-        this.mCandidates.remove(c);
-    }
-
-    public void clearCandidates() {
-        this.mCandidates.clear();
-    }
-
-    public int getNumberOfCandidates() {
-        if (mCandidates == null) {
-            return 0;
-        }
-        return mCandidates.size();
-    }
-
     public void addRect(RectF rect, RectF bounds) {
-        if (!hasCandidates()) {
-            setCandidates(new Vector<RedEyeCandidate>());
-        }
         Vector<RedEyeCandidate> intersects = new Vector<RedEyeCandidate>();
         for (int i = 0; i < getCandidates().size(); i++) {
-            RedEyeCandidate r = getCandidate(i);
+            RedEyeCandidate r = (RedEyeCandidate) getCandidate(i);
             if (r.intersect(rect)) {
                 intersects.add(r);
             }
