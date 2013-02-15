@@ -22,4 +22,6 @@
     <style name="ActionBarTwoLineItem">
         <item name="android:background">?android:attr/activatedBackgroundIndicator</item>
     </style>
+    <style name="Theme.Photos.Gallery" parent="android:Theme.Holo.Light">
+    </style>
 </resources>
