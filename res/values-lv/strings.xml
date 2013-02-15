@@ -196,6 +196,7 @@
     <string name="no_external_storage" msgid="95726173164068417">"Nav ārējās atmiņas"</string>
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"Kinolentes skats"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"Režģa skats"</string>
+    <string name="switch_photo_fullscreen" msgid="8360489096099127071">"Pilnekrāna skatījums"</string>
     <string name="trimming" msgid="9122385768369143997">"Notiek apgriešana"</string>
     <string name="muting" msgid="5094925919589915324">"Skaņas izslēgšana"</string>
     <string name="please_wait" msgid="7296066089146487366">"Lūdzu, uzgaidiet!"</string>

@@ -196,6 +196,7 @@
     <string name="no_external_storage" msgid="95726173164068417">"لا تتوفر سعة تخزين خارجية"</string>
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"عرض شريط الفيلم"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"عرض الشبكة"</string>
+    <string name="switch_photo_fullscreen" msgid="8360489096099127071">"عرض ملء الشاشة"</string>
     <string name="trimming" msgid="9122385768369143997">"جارٍ الاقتطاع"</string>
     <string name="muting" msgid="5094925919589915324">"جارِ كتم الصوت"</string>
     <string name="please_wait" msgid="7296066089146487366">"الرجاء الانتظار"</string>

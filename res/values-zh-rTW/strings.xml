@@ -196,6 +196,7 @@
     <string name="no_external_storage" msgid="95726173164068417">"沒有可用的外部儲存裝置"</string>
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"幻燈片檢視"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"格狀檢視"</string>
+    <string name="switch_photo_fullscreen" msgid="8360489096099127071">"全螢幕檢視"</string>
     <string name="trimming" msgid="9122385768369143997">"修剪中"</string>
     <string name="muting" msgid="5094925919589915324">"正在設為靜音"</string>
     <string name="please_wait" msgid="7296066089146487366">"請稍候"</string>

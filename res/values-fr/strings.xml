@@ -196,6 +196,7 @@
     <string name="no_external_storage" msgid="95726173164068417">"Aucune mémoire de stockage externe disponible."</string>
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"Pellicule"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"Grille"</string>
+    <string name="switch_photo_fullscreen" msgid="8360489096099127071">"Affichage plein écran"</string>
     <string name="trimming" msgid="9122385768369143997">"Découpe en cours"</string>
     <string name="muting" msgid="5094925919589915324">"Coupure du son"</string>
     <string name="please_wait" msgid="7296066089146487366">"Veuillez patienter."</string>
