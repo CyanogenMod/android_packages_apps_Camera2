@@ -49,13 +49,6 @@ public class ImageFilterFx extends ImageFilter {
         return mNameResource;
     }
 
-    @Override
-    public ImageFilter clone() throws CloneNotSupportedException {
-        ImageFilterFx filter = (ImageFilterFx) super.clone();
-        filter.fxBitmap = this.fxBitmap;
-        return filter;
-    }
-
     public boolean isNil() {
         if (fxBitmap != null) {
             return false;

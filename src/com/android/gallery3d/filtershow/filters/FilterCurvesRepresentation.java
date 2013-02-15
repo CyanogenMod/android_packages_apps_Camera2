@@ -7,12 +7,22 @@ import com.android.gallery3d.filtershow.ui.Spline;
  */
 public class FilterCurvesRepresentation extends FilterRepresentation {
     private Spline[] mSplines = new Spline[4];
+
     public FilterCurvesRepresentation() {
         super("Curves");
         for (int i = 0; i < mSplines.length; i++) {
             mSplines[i] = new Spline();
             mSplines[i].reset();
         }
+    }
+
+    public boolean isNil() {
+        for (int i = 0; i < 4; i++) {
+            if (getSpline(i) != null && !getSpline(i).isOriginal()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void reset() {
