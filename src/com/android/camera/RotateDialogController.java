@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.android.camera.ui.Rotatable;
 import com.android.camera.ui.RotateLayout;
+import com.android.gallery3d.R;
 
 public class RotateDialogController implements Rotatable {
 

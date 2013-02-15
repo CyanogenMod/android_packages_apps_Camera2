@@ -32,7 +32,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.android.camera.R;
+import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 
 public class CameraSwitcher extends RotateImageView

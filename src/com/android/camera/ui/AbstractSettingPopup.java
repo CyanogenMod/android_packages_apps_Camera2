@@ -21,7 +21,7 @@ import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.camera.R;
+import com.android.gallery3d.R;
 
 // A popup window that shows one or more camera settings.
 abstract public class AbstractSettingPopup extends RotateLayout {

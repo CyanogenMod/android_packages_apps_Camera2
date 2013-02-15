@@ -37,6 +37,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.android.camera.ui.CameraSwitcher;
+import com.android.gallery3d.R;
 import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.util.LightCycleHelper;

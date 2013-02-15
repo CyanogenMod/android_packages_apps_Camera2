@@ -21,6 +21,8 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 
+import com.android.gallery3d.R;
+
 import java.util.List;
 
 /** A {@code ListPreference} where each entry has a corresponding icon. */
