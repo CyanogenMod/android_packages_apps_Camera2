@@ -43,6 +43,7 @@ public class MtpBitmapFetch {
 
     public static Bitmap getThumbnail(MtpDevice device, MtpObjectInfo info) {
         byte[] imageBytes = device.getThumbnail(info.getObjectHandle());
+        if (imageBytes == null) return null;
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, o);
@@ -60,6 +61,7 @@ public class MtpBitmapFetch {
 
     public static BitmapWithMetadata getFullsize(MtpDevice device, MtpObjectInfo info, int maxSide) {
         byte[] imageBytes = device.getObject(info.getObjectHandle(), info.getCompressedSize());
+        if (imageBytes == null) return null;
         Bitmap created;
         if (maxSide > 0) {
             BitmapFactory.Options o = new BitmapFactory.Options();
