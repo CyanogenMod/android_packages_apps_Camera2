@@ -80,12 +80,9 @@
     <string name="draw_size" msgid="4360005386104151209">"サイズ"</string>
     <string name="draw_color" msgid="2119030386987211193">"色"</string>
     <string name="draw_style_line" msgid="9216476853904429628">"線"</string>
-    <!-- no translation found for draw_style_brush_spatter (7612691122932981554) -->
-    <skip />
-    <!-- no translation found for draw_style_brush_marker (8468302322165644292) -->
-    <skip />
-    <!-- no translation found for draw_clear (6728155515454921052) -->
-    <skip />
+    <string name="draw_style_brush_spatter" msgid="7612691122932981554">"マーカー"</string>
+    <string name="draw_style_brush_marker" msgid="8468302322165644292">"スパッタリング"</string>
+    <string name="draw_clear" msgid="6728155515454921052">"消去"</string>
     <string name="color_pick_select" msgid="734312818059057394">"ユーザー定義の色を選択"</string>
     <string name="color_pick_title" msgid="6195567431995308876">"色の選択"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"サイズの選択"</string>
