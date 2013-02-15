@@ -196,6 +196,7 @@
     <string name="no_external_storage" msgid="95726173164068417">"Nessun archivio esterno disponibile"</string>
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"Visualizzazione sequenza"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"Visualizzazione griglia"</string>
+    <string name="switch_photo_fullscreen" msgid="8360489096099127071">"Schermo intero"</string>
     <string name="trimming" msgid="9122385768369143997">"Taglio in corso"</string>
     <string name="muting" msgid="5094925919589915324">"Disattivazione audio"</string>
     <string name="please_wait" msgid="7296066089146487366">"Attendi"</string>
