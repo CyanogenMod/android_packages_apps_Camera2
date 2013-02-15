@@ -196,6 +196,7 @@
     <string name="no_external_storage" msgid="95726173164068417">"Ükski välismäluseade ei ole saadaval"</string>
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"Filmiribakuva"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"Ruudustiku kuva"</string>
+    <string name="switch_photo_fullscreen" msgid="8360489096099127071">"Täisekraani vaade"</string>
     <string name="trimming" msgid="9122385768369143997">"Kärpimine"</string>
     <string name="muting" msgid="5094925919589915324">"Vaigistamine"</string>
     <string name="please_wait" msgid="7296066089146487366">"Palun oodake"</string>

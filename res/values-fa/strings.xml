@@ -196,6 +196,7 @@
     <string name="no_external_storage" msgid="95726173164068417">"هیچ دستگاه ذخیره خارجی دردسترس نیست"</string>
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"نمایش نوار فیلم"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"نمای شبکه‌ای"</string>
+    <string name="switch_photo_fullscreen" msgid="8360489096099127071">"نمایش تمام صفحه"</string>
     <string name="trimming" msgid="9122385768369143997">"کوتاه کردن"</string>
     <string name="muting" msgid="5094925919589915324">"بیصدا کردن"</string>
     <string name="please_wait" msgid="7296066089146487366">"لطفاً منتظر بمانید"</string>

@@ -196,6 +196,7 @@
     <string name="no_external_storage" msgid="95726173164068417">"ምንም ውጫዊ ማከማቻ የለም"</string>
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"የድርድር ፊልም እይታ"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"የፍርግርግ ዕይታ"</string>
+    <string name="switch_photo_fullscreen" msgid="8360489096099127071">"የሙሉ ማያገጽ እይታ"</string>
     <string name="trimming" msgid="9122385768369143997">"ማሳጠር"</string>
     <string name="muting" msgid="5094925919589915324">"ድምጸ-ከል በማድረግ ላይ"</string>
     <string name="please_wait" msgid="7296066089146487366">"እባክዎ ይጠብቁ"</string>

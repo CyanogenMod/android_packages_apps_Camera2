@@ -196,6 +196,7 @@
     <string name="no_external_storage" msgid="95726173164068417">"कोई बाहरी संग्रहण उपलब्ध नहीं है"</string>
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"फ़िल्मस्ट्रिप दृश्य"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"ग्रिड दृश्य"</string>
+    <string name="switch_photo_fullscreen" msgid="8360489096099127071">"पूर्णस्क्रीन दृश्य"</string>
     <string name="trimming" msgid="9122385768369143997">"ट्रिम कर रहा है"</string>
     <string name="muting" msgid="5094925919589915324">"म्‍यूट हो रहा है"</string>
     <string name="please_wait" msgid="7296066089146487366">"कृपया प्रतीक्षा करें"</string>
