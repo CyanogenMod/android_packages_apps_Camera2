@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.imageshow;
 
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.RectF;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
@@ -56,6 +57,10 @@ public class MasterImage implements RenderingRequestCaller {
     private Vector<GeometryListener> mGeometryListeners = new Vector<GeometryListener>();
 
     private GeometryMetadata mPreviousGeometry = null;
+
+    private float mScaleFactor = 1.0f;
+    private Point mTranslation = new Point();
+    private Point mOriginalTranslation = new Point();
 
     private MasterImage() {
     }
@@ -262,5 +267,35 @@ public class MasterImage implements RenderingRequestCaller {
         for (GeometryListener listener : mGeometryListeners) {
             listener.geometryChanged();
         }
+    }
+
+    public float getScaleFactor() {
+        return mScaleFactor;
+    }
+
+    public void setScaleFactor(float scaleFactor) {
+        mScaleFactor = scaleFactor;
+    }
+
+    public Point getTranslation() {
+        return mTranslation;
+    }
+
+    public void setTranslation(Point translation) {
+        mTranslation = translation;
+    }
+
+    public Point getOriginalTranslation() {
+        return mOriginalTranslation;
+    }
+
+    public void setOriginalTranslation(Point originalTranslation) {
+        mOriginalTranslation.x = originalTranslation.x;
+        mOriginalTranslation.y = originalTranslation.y;
+    }
+
+    public void resetTranslation() {
+        mTranslation.x = 0;
+        mTranslation.y = 0;
     }
 }

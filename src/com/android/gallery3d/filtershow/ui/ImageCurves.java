@@ -233,6 +233,16 @@ public class ImageCurves extends ImageShow {
 
     @Override
     public synchronized boolean onTouchEvent(MotionEvent e) {
+        super.onTouchEvent(e);
+
+        if (e.getPointerCount() != 1) {
+            return true;
+        }
+
+        if (didFinishScalingOperation()) {
+            return true;
+        }
+
         float posX = e.getX() / getWidth();
         float posY = e.getY();
         float margin = Spline.curveHandleSize() / 2;
@@ -255,7 +265,6 @@ public class ImageCurves extends ImageShow {
             mDoingTouchMove = false;
             return true;
         }
-        mDoingTouchMove = true;
 
         if (mDidDelete) {
             return true;
@@ -265,28 +274,31 @@ public class ImageCurves extends ImageShow {
             return true;
         }
 
-        Spline spline = getSpline(mCurrentCurveIndex);
-        int pick = mCurrentPick;
-        if (mCurrentControlPoint == null) {
-            pick = pickControlPoint(posX, posY);
-            if (pick == -1) {
-                mCurrentControlPoint = new ControlPoint(posX, posY);
-                pick = spline.addPoint(mCurrentControlPoint);
-                mDidAddPoint = true;
-            } else {
-                mCurrentControlPoint = spline.getPoint(pick);
+        if (e.getActionMasked() == MotionEvent.ACTION_MOVE) {
+            mDoingTouchMove = true;
+            Spline spline = getSpline(mCurrentCurveIndex);
+            int pick = mCurrentPick;
+            if (mCurrentControlPoint == null) {
+                pick = pickControlPoint(posX, posY);
+                if (pick == -1) {
+                    mCurrentControlPoint = new ControlPoint(posX, posY);
+                    pick = spline.addPoint(mCurrentControlPoint);
+                    mDidAddPoint = true;
+                } else {
+                    mCurrentControlPoint = spline.getPoint(pick);
+                }
+                mCurrentPick = pick;
             }
-            mCurrentPick = pick;
-        }
 
-        if (spline.isPointContained(posX, pick)) {
-            spline.movePoint(pick, posX, posY);
-        } else if (pick != -1 && spline.getNbPoints() > 2) {
-            spline.deletePoint(pick);
-            mDidDelete = true;
+            if (spline.isPointContained(posX, pick)) {
+                spline.movePoint(pick, posX, posY);
+            } else if (pick != -1 && spline.getNbPoints() > 2) {
+                spline.deletePoint(pick);
+                mDidDelete = true;
+            }
+            updateCachedImage();
+            invalidate();
         }
-        updateCachedImage();
-        invalidate();
         return true;
     }
 
