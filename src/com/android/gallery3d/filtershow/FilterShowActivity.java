@@ -88,6 +88,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     // fields for supporting crop action
     public static final String CROP_ACTION = "com.android.camera.action.CROP";
     private CropExtras mCropExtras = null;
+    private String mAction = "";
     MasterImage mMasterImage = null;
 
     public static final String TINY_PLANET_ACTION = "com.android.camera.action.TINY_PLANET";
@@ -145,6 +146,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private FilterIconButton mNullFxFilter;
     private FilterIconButton mNullBorderFilter;
     private int mIconSeedSize = 140;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -308,6 +310,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 
+        mAction = intent.getAction();
+
         if (intent.getData() != null) {
             startLoadBitmap(intent.getData());
         } else {
@@ -315,8 +319,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }
 
         // Handle behavior for various actions
-        String action = intent.getAction();
-        if (action.equalsIgnoreCase(CROP_ACTION)) {
+        if (mAction.equalsIgnoreCase(CROP_ACTION)) {
             Bundle extras = intent.getExtras();
             if (extras != null) {
                 mCropExtras = new CropExtras(extras.getInt(CropExtras.KEY_OUTPUT_X, 0),
@@ -345,9 +348,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 mPanelController.setFixedAspect(mCropExtras.getAspectX() > 0
                         && mCropExtras.getAspectY() > 0);
             }
-            mPanelController.showComponent(findViewById(R.id.cropButton));
-        } else if (action.equalsIgnoreCase(TINY_PLANET_ACTION)) {
-            mPanelController.showComponent(findViewById(R.id.tinyplanetButton));
         }
     }
 
@@ -502,6 +502,13 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
             }
             mLoadBitmapTask = null;
+
+            if (mAction == CROP_ACTION) {
+                mPanelController.showComponent(findViewById(R.id.cropButton));
+            } else if (mAction == TINY_PLANET_ACTION) {
+                mPanelController.showComponent(findViewById(R.id.tinyplanetButton));
+            }
+
             super.onPostExecute(result);
         }
 
@@ -1037,31 +1044,31 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private boolean mSaveToExtraUri = false;
     private boolean mSaveAsWallpaper = false;
     private boolean mReturnAsExtra = false;
-    private boolean outputted = false;
+    private boolean mOutputted = false;
 
     public void saveImage() {
         if (mCropExtras != null) {
             if (mCropExtras.getExtraOutput() != null) {
                 mSaveToExtraUri = true;
-                outputted = true;
+                mOutputted = true;
             }
             if (mCropExtras.getSetAsWallpaper()) {
                 mSaveAsWallpaper = true;
-                outputted = true;
+                mOutputted = true;
             }
             if (mCropExtras.getReturnData()) {
 
                 mReturnAsExtra = true;
-                outputted = true;
+                mOutputted = true;
             }
 
-            if (outputted) {
+            if (mOutputted) {
                 mImageShow.getImagePreset().mGeoData.setUseCropExtrasFlag(true);
                 showSavingProgress(null);
                 mImageShow.returnFilteredResult(this);
             }
         }
-        if (!outputted) {
+        if (!mOutputted) {
             if (mImageShow.hasModifications()) {
                 // Get the name of the album, to which the image will be saved
                 File saveDir = SaveCopyTask.getFinalSaveDirectory(this, mImageLoader.getUri());
@@ -1111,7 +1118,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     }
 
     public void done() {
-        if (outputted) {
+        if (mOutputted) {
             hideSavingProgress();
         }
         finish();

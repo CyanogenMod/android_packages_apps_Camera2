@@ -456,6 +456,7 @@ public class ImageLoader {
                     Log.w(LOGTAG, "Failed to save image!");
                     return null;
                 }
+                bitmap = param.applyGeometry(bitmap);
                 return param.apply(bitmap);
             }
         };
