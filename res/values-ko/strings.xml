@@ -196,6 +196,7 @@
     <string name="no_external_storage" msgid="95726173164068417">"사용할 수 있는 외부 저장소 없음"</string>
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"슬라이드 보기"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"바둑판식 보기"</string>
+    <string name="switch_photo_fullscreen" msgid="8360489096099127071">"전체화면 보기"</string>
     <string name="trimming" msgid="9122385768369143997">"자르기"</string>
     <string name="muting" msgid="5094925919589915324">"음소거 중"</string>
     <string name="please_wait" msgid="7296066089146487366">"잠시 기다려 주세요."</string>

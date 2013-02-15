@@ -199,6 +199,7 @@
     <string name="no_external_storage" msgid="95726173164068417">"Hakuna hifadhi ya nje inayopatikana"</string>
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"Mwonekano wa utepe wa filamu"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"Mwonekano wa gridi"</string>
+    <string name="switch_photo_fullscreen" msgid="8360489096099127071">"Muonekano wa skrini nzima"</string>
     <string name="trimming" msgid="9122385768369143997">"Inapunguza"</string>
     <string name="muting" msgid="5094925919589915324">"Inanyamazisha"</string>
     <string name="please_wait" msgid="7296066089146487366">"Tafadhali subiri"</string>

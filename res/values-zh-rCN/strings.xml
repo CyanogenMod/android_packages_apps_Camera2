@@ -196,6 +196,7 @@
     <string name="no_external_storage" msgid="95726173164068417">"没有可用的外部存储设备"</string>
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"幻灯片视图"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"网格视图"</string>
+    <string name="switch_photo_fullscreen" msgid="8360489096099127071">"全屏视图"</string>
     <string name="trimming" msgid="9122385768369143997">"正在剪辑"</string>
     <string name="muting" msgid="5094925919589915324">"正在静音"</string>
     <string name="please_wait" msgid="7296066089146487366">"请稍候"</string>
