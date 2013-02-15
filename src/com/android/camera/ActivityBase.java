@@ -38,6 +38,7 @@ import android.view.animation.DecelerateInterpolator;
 
 import com.android.camera.ui.LayoutChangeNotifier;
 import com.android.camera.ui.PopupManager;
+import com.android.gallery3d.R;
 import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.app.AppBridge;
 import com.android.gallery3d.app.FilmstripPage;

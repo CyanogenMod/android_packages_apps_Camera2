@@ -27,6 +27,7 @@ import android.view.ViewConfiguration;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.RenderOverlay;
 import com.android.camera.ui.ZoomRenderer;
+import com.android.gallery3d.R;
 
 import java.util.ArrayList;
 import java.util.List;

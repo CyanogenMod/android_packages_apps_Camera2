@@ -26,6 +26,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 
 import java.io.FileDescriptor;
