@@ -27,6 +27,7 @@ import com.android.camera.ui.PieItem;
 import com.android.camera.ui.PieItem.OnClickListener;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.TimerSettingPopup;
+import com.android.gallery3d.R;
 
 public class PhotoController extends PieController
         implements MoreSettingPopup.Listener,

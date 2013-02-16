@@ -28,7 +28,7 @@ import android.widget.ListView;
 
 import com.android.camera.ListPreference;
 import com.android.camera.PreferenceGroup;
-import com.android.camera.R;
+import com.android.gallery3d.R;
 
 import java.util.ArrayList;
 

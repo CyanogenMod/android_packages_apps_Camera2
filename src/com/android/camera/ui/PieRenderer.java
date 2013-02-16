@@ -36,7 +36,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.Transformation;
 
-import com.android.camera.R;
+import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 
 import java.util.ArrayList;
