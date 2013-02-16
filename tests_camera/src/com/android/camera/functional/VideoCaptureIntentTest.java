@@ -17,7 +17,7 @@
 package com.android.camera.functional;
 
 import com.android.camera.CameraActivity;
-import com.android.camera.R;
+import com.android.gallery3d.R;
 
 import android.app.Activity;
 import android.content.ContentResolver;
