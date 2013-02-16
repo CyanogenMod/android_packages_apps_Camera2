@@ -447,6 +447,29 @@ public class PanelController implements OnClickListener {
         */
     }
 
+    public void useFilterRepresentation(FilterRepresentation filterRepresentation) {
+        if (filterRepresentation == null) {
+            return;
+        }
+        if (MasterImage.getImage().getCurrentFilterRepresentation() == filterRepresentation) {
+            return;
+        }
+        ImagePreset oldPreset = MasterImage.getImage().getPreset();
+        ImagePreset copy = new ImagePreset(oldPreset);
+        FilterRepresentation representation = copy.getRepresentation(filterRepresentation);
+        if (representation == null) {
+            copy.addFilter(filterRepresentation);
+        } else {
+            if (filterRepresentation.allowsMultipleInstances()) {
+                representation.useParametersFrom(filterRepresentation);
+                copy.setHistoryName(filterRepresentation.getName());
+            }
+            filterRepresentation = representation;
+        }
+        MasterImage.getImage().setPreset(copy, true);
+        MasterImage.getImage().setCurrentFilterRepresentation(filterRepresentation);
+    }
+
     public void showComponent(View view) {
 
         boolean doPanelTransition = true;
@@ -476,7 +499,6 @@ public class PanelController implements OnClickListener {
         if (view instanceof FilterIconButton) {
             mCurrentEditor = null;
             FilterIconButton component = (FilterIconButton) view;
-            ImageFilter filter = component.getImageFilter();
             FilterRepresentation representation = component.getFilterRepresentation();
             if (representation != null) {
                 mUtilityPanel.setEffectName(representation.getName());
