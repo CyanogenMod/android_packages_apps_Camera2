@@ -25,6 +25,7 @@ import android.widget.RelativeLayout;
 
 import com.android.camera.ui.LayoutChangeHelper;
 import com.android.camera.ui.LayoutChangeNotifier;
+import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 
 /**

@@ -23,7 +23,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.TextView;
 
 import com.android.camera.ListPreference;
-import com.android.camera.R;
+import com.android.gallery3d.R;
 
 /* Setting menu item that will bring up a menu when you click on it. */
 public class InLineSettingMenu extends InLineSettingItem {

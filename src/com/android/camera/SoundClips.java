@@ -23,6 +23,7 @@ import android.media.MediaActionSound;
 import android.media.SoundPool;
 import android.util.Log;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 
 /*
