@@ -31,6 +31,7 @@ public class FilterFxRepresentation extends FilterRepresentation {
         mBitmapResource = bitmapResource;
         mNameResource = nameResource;
         setFilterClass(ImageFilterFx.class);
+        setFilterType(FilterRepresentation.TYPE_FX);
     }
 
     public String toString() {
