@@ -46,16 +46,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.SeekBar;
-import android.widget.ShareActionProvider;
 import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
-import android.widget.Toast;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.data.LocalAlbum;
@@ -231,6 +224,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mEditorPlaceHolder.setOldViews(mImageViews);
         mEditorPlaceHolder.setImageLoader(mImageLoader);
 
+        mEditorPlaceHolder.hide();
+
         mListFx = findViewById(R.id.fxList);
         mListBorders = findViewById(R.id.bordersList);
         mListGeometry = findViewById(R.id.geometryList);
@@ -366,8 +361,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private void startLoadBitmap(Uri uri) {
         final View filters = findViewById(R.id.filtersPanel);
         final View loading = findViewById(R.id.loading);
-        loading.setVisibility(View.VISIBLE);
+        final View imageShow = findViewById(R.id.imageShow);
+        imageShow.setVisibility(View.INVISIBLE);
         filters.setVisibility(View.INVISIBLE);
+        loading.setVisibility(View.VISIBLE);
+
         View tinyPlanetView = findViewById(R.id.tinyplanetButton);
         if (tinyPlanetView != null) {
             tinyPlanetView.setVisibility(View.GONE);
@@ -447,10 +445,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             if (isCancelled()) {
                 return;
             }
-            final View filters = findViewById(R.id.filtersPanel);
-            final View loading = findViewById(R.id.loading);
-            loading.setVisibility(View.GONE);
-            filters.setVisibility(View.VISIBLE);
             if (values[0]) {
                 mTinyPlanetButton.setVisibility(View.VISIBLE);
             }
@@ -466,6 +460,16 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             if (!result) {
                 cannotLoadImage();
             }
+
+            final View loading = findViewById(R.id.loading);
+            loading.setVisibility(View.GONE);
+            final View filters = findViewById(R.id.filtersPanel);
+            filters.setVisibility(View.VISIBLE);
+            float y = filters.getY();
+            filters.setY(y + filters.getHeight());
+            filters.animate().setDuration(600).y(y).withLayer().start();
+            final View imageShow = findViewById(R.id.imageShow);
+            imageShow.setVisibility(View.VISIBLE);
 
             Bitmap largeBitmap = mImageLoader.getOriginalBitmapLarge();
             FilteringPipeline pipeline = FilteringPipeline.getPipeline();
