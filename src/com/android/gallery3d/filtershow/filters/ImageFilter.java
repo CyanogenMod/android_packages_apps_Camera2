@@ -54,6 +54,10 @@ public class ImageFilter implements Cloneable {
         return mImagePreset;
     }
 
+    public void setImagePreset(ImagePreset imagePreset) {
+        mImagePreset = imagePreset;
+    }
+
     public void useRepresentation(FilterRepresentation representation) {
     }
 
