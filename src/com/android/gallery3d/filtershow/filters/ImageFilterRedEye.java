@@ -35,10 +35,7 @@ public class ImageFilterRedEye extends ImageFilter {
 
     @Override
     public FilterRepresentation getDefaultRepresentation() {
-        FilterRedEyeRepresentation representation = new FilterRedEyeRepresentation();
-        representation.setOverlayId(R.drawable.photoeditor_effect_redeye);
-
-        return representation;
+        return new FilterRedEyeRepresentation();
     }
 
     public boolean isNil() {

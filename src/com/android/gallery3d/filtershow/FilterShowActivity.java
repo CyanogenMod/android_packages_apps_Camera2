@@ -96,7 +96,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private final PanelController mPanelController = new PanelController();
     private ImageLoader mImageLoader = null;
     private ImageShow mImageShow = null;
-    private ImageRedEye mImageRedEye = null;
     private ImageDraw mImageDraw = null;
     private ImageStraighten mImageStraighten = null;
     private ImageCrop mImageCrop = null;
@@ -199,7 +198,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageRotate = (ImageRotate) findViewById(R.id.imageRotate);
         mImageFlip = (ImageFlip) findViewById(R.id.imageFlip);
         mImageTinyPlanet = (ImageTinyPlanet) findViewById(R.id.imageTinyPlanet);
-        mImageRedEye = (ImageRedEye) findViewById(R.id.imageRedEyes);
         mImageDraw = (ImageDraw) findViewById(R.id.imageDraw);
 
         mImageCrop.setAspectTextSize((int) getPixelsFromDip(18));
@@ -211,7 +209,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageViews.add(mImageRotate);
         mImageViews.add(mImageFlip);
         mImageViews.add(mImageTinyPlanet);
-        mImageViews.add(mImageRedEye);
 
         mEditorPlaceHolder.setContainer((FrameLayout) findViewById(R.id.editorContainer));
         mEditorPlaceHolder.addEditor(new EditorDraw());
@@ -252,7 +249,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mImageRotate.setImageLoader(mImageLoader);
         mImageFlip.setImageLoader(mImageLoader);
         mImageTinyPlanet.setImageLoader(mImageLoader);
-        mImageRedEye.setImageLoader(mImageLoader);
         mImageDraw.setImageLoader(mImageLoader);
 
         mPanelController.setActivity(this);
@@ -264,7 +260,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addImageView(findViewById(R.id.imageRotate));
         mPanelController.addImageView(findViewById(R.id.imageFlip));
         mPanelController.addImageView(findViewById(R.id.imageTinyPlanet));
-        mPanelController.addImageView(findViewById(R.id.imageRedEyes));
         mPanelController.addImageView(findViewById(R.id.imageDraw));
 
         mPanelController.addPanel(mFxButton, mListFx, 0);
@@ -275,7 +270,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addComponent(mGeometryButton, findViewById(R.id.cropButton));
         mPanelController.addComponent(mGeometryButton, findViewById(R.id.rotateButton));
         mPanelController.addComponent(mGeometryButton, findViewById(R.id.flipButton));
-        mPanelController.addComponent(mGeometryButton, findViewById(R.id.redEyeButton));
 
         mPanelController.addPanel(mColorsButton, mListColors, 3);
 
