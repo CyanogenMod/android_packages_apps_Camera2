@@ -22,6 +22,7 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import com.android.gallery3d.filtershow.editors.BasicEditor;
 import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
 import com.android.gallery3d.filtershow.filters.FilterCurvesRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterTinyPlanetRepresentation;
@@ -37,7 +38,7 @@ public class ImageTinyPlanet extends ImageShow {
     private float mCenterY = 0;
     private float mStartAngle = 0;
     private FilterTinyPlanetRepresentation mTinyPlanetRep;
-    private EditorTinyPlanet mEditorTinyPlanet;
+    private BasicEditor mEditorTinyPlanet;
 
     public ImageTinyPlanet(Context context) {
         super(context);
@@ -94,7 +95,7 @@ public class ImageTinyPlanet extends ImageShow {
         mTinyPlanetRep = tinyPlanetRep;
     }
 
-    public void setEditor(EditorTinyPlanet editorTinyPlanet) {
+    public void setEditor(BasicEditor editorTinyPlanet) {
         mEditorTinyPlanet = editorTinyPlanet;
     }
 

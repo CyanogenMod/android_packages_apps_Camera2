@@ -62,16 +62,8 @@ public class ImageRedEye extends ImagePoint {
         if (event.getAction() == MotionEvent.ACTION_UP) {
             if (mCurrentRect != null) {
                 // transform to original coordinates
-                GeometryMetadata geo = getImagePreset().mGeoData;
-                Matrix originalToScreen = geo.getOriginalToScreen(true,
-                        mImageLoader.getOriginalBounds().width(),
-                        mImageLoader.getOriginalBounds().height(),
-                        getWidth(), getHeight());
-                Matrix originalNoRotateToScreen = geo.getOriginalToScreen(false,
-                        mImageLoader.getOriginalBounds().width(),
-                        mImageLoader.getOriginalBounds().height(),
-                        getWidth(), getHeight());
-
+                Matrix originalNoRotateToScreen = getImageToScreenMatrix(false);
+                Matrix originalToScreen = getImageToScreenMatrix(true);
                 Matrix invert = new Matrix();
                 originalToScreen.invert(invert);
                 RectF r = new RectF(mCurrentRect);
