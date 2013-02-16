@@ -50,7 +50,11 @@ public class PanelController implements OnClickListener {
     private boolean mFixedAspect = false;
 
     public static boolean useAnimations() {
-        return true;
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        if (currentapiVersion >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            return true;
+        }
+        return false;
     }
 
     public void setFixedAspect(boolean t) {
@@ -205,12 +209,16 @@ public class PanelController implements OnClickListener {
             mView.setY(0);
             int h = mRowPanel.getHeight();
             anim.y(-h);
-            anim.setDuration(ANIM_DURATION).withLayer().withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    mView.setVisibility(View.GONE);
-                }
-            });
+            if (PanelController.useAnimations()) {
+                anim.setDuration(ANIM_DURATION).withLayer().withEndAction(new Runnable() {
+                        @Override
+                    public void run() {
+                        mView.setVisibility(View.GONE);
+                    }
+                });
+            } else {
+                mView.setVisibility(View.GONE);
+            }
             mSelected = false;
             return anim;
         }
@@ -221,10 +229,13 @@ public class PanelController implements OnClickListener {
             mView.setX(0);
             mView.setY(-h);
             updateText();
+            mSelected = true;
             ViewPropertyAnimator anim = mView.animate();
             anim.y(0);
-            anim.setDuration(ANIM_DURATION).withLayer();
-            mSelected = true;
+            anim.setDuration(ANIM_DURATION);
+            if (PanelController.useAnimations()) {
+                anim.withLayer();
+            }
             return anim;
         }
 

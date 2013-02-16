@@ -874,6 +874,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                     }).start();
             } else {
                 view.setX(translate);
+                viewList.setAlpha(0);
+                viewList.setVisibility(View.VISIBLE);
+                viewList.animate().setDuration(100)
+                        .alpha(1.0f).start();
             }
         } else {
             mShowingImageStatePanel = false;
@@ -940,6 +944,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                     }).start();
             } else {
                 view.setX(translate);
+                viewList.setAlpha(0);
+                viewList.setVisibility(View.VISIBLE);
+                viewList.animate().setDuration(100)
+                        .alpha(1.0f).start();
             }
         } else {
             mShowingHistoryPanel = false;
