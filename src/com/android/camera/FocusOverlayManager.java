@@ -95,6 +95,7 @@ public class FocusOverlayManager {
     private Handler mHandler;
     Listener mListener;
     private boolean mPreviousMoving;
+    private boolean mFocusDefault;
 
     public interface Listener {
         public void autoFocus();
@@ -132,6 +133,7 @@ public class FocusOverlayManager {
         setParameters(parameters);
         mListener = listener;
         setMirror(mirror);
+        mFocusDefault = true;
     }
 
     public void setFocusRenderer(PieRenderer renderer) {
@@ -278,7 +280,7 @@ public class FocusOverlayManager {
             updateFocusUI();
             // If this is triggered by touch focus, cancel focus after a
             // while.
-            if (mFocusArea != null) {
+            if (!mFocusDefault) {
                 mHandler.sendEmptyMessageDelayed(RESET_TOUCH_FOCUS, RESET_TOUCH_FOCUS_DELAY);
             }
             if (shutterButtonPressed) {
@@ -313,21 +315,18 @@ public class FocusOverlayManager {
     }
 
     @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private void initializeFocusAreas(int focusWidth, int focusHeight,
-            int x, int y, int previewWidth, int previewHeight) {
+    private void initializeFocusAreas(int x, int y) {
         if (mFocusArea == null) {
             mFocusArea = new ArrayList<Object>();
             mFocusArea.add(new Area(new Rect(), 1));
         }
 
         // Convert the coordinates to driver format.
-        calculateTapArea(focusWidth, focusHeight, 1f, x, y, previewWidth, previewHeight,
-                ((Area) mFocusArea.get(0)).rect);
+        calculateTapArea(x, y, 1f, ((Area) mFocusArea.get(0)).rect);
     }
 
     @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private void initializeMeteringAreas(int focusWidth, int focusHeight,
-            int x, int y, int previewWidth, int previewHeight) {
+    private void initializeMeteringAreas(int x, int y) {
         if (mMeteringArea == null) {
             mMeteringArea = new ArrayList<Object>();
             mMeteringArea.add(new Area(new Rect(), 1));
@@ -336,34 +335,26 @@ public class FocusOverlayManager {
         // Convert the coordinates to driver format.
         // AE area is bigger because exposure is sensitive and
         // easy to over- or underexposure if area is too small.
-        calculateTapArea(focusWidth, focusHeight, 1.5f, x, y, previewWidth, previewHeight,
-                ((Area) mMeteringArea.get(0)).rect);
+        calculateTapArea(x, y, 1.5f, ((Area) mMeteringArea.get(0)).rect);
     }
 
     public void onSingleTapUp(int x, int y) {
         if (!mInitialized || mState == STATE_FOCUSING_SNAP_ON_FINISH) return;
 
         // Let users be able to cancel previous touch focus.
-        if ((mFocusArea != null) && (mState == STATE_FOCUSING ||
+        if ((!mFocusDefault) && (mState == STATE_FOCUSING ||
                     mState == STATE_SUCCESS || mState == STATE_FAIL)) {
             cancelAutoFocus();
         }
-        // Initialize variables.
-        int focusWidth = mPieRenderer.getSize();
-        int focusHeight = mPieRenderer.getSize();
-        if (focusWidth == 0 || mPieRenderer.getWidth() == 0
-                || mPieRenderer.getHeight() == 0) return;
-        int previewWidth = mPreviewWidth;
-        int previewHeight = mPreviewHeight;
+        if (mPreviewWidth == 0 || mPreviewHeight == 0) return;
+        mFocusDefault = false;
         // Initialize mFocusArea.
         if (mFocusAreaSupported) {
-            initializeFocusAreas(
-                    focusWidth, focusHeight, x, y, previewWidth, previewHeight);
+            initializeFocusAreas(x, y);
         }
         // Initialize mMeteringArea.
         if (mMeteringAreaSupported) {
-            initializeMeteringAreas(
-                    focusWidth, focusHeight, x, y, previewWidth, previewHeight);
+            initializeMeteringAreas(x, y);
         }
 
         // Use margin to set the focus indicator to the touched area.
@@ -436,7 +427,7 @@ public class FocusOverlayManager {
         if (mParameters == null) return Parameters.FOCUS_MODE_AUTO;
         List<String> supportedFocusModes = mParameters.getSupportedFocusModes();
 
-        if (mFocusAreaSupported && mFocusArea != null) {
+        if (mFocusAreaSupported && !mFocusDefault) {
             // Always use autofocus in tap-to-focus.
             mFocusMode = Parameters.FOCUS_MODE_AUTO;
         } else {
@@ -483,7 +474,7 @@ public class FocusOverlayManager {
         FocusIndicator focusIndicator = (faceExists) ? mFaceView : mPieRenderer;
 
         if (mState == STATE_IDLE) {
-            if (mFocusArea == null) {
+            if (mFocusDefault) {
                 focusIndicator.clear();
             } else {
                 // Users touch on the preview and the indicator represents the
@@ -510,19 +501,23 @@ public class FocusOverlayManager {
 
         // Put focus indicator to the center. clear reset position
         mPieRenderer.clear();
-
-        mFocusArea = null;
-        mMeteringArea = null;
+        // Initialize mFocusArea.
+        if (mFocusAreaSupported) {
+            initializeFocusAreas(mPreviewWidth / 2, mPreviewHeight / 2);
+        }
+        // Initialize mMeteringArea.
+        if (mMeteringAreaSupported) {
+            initializeMeteringAreas(mPreviewWidth / 2, mPreviewHeight / 2);
+        }
+        mFocusDefault = true;
     }
 
-    private void calculateTapArea(int focusWidth, int focusHeight, float areaMultiple,
-            int x, int y, int previewWidth, int previewHeight, Rect rect) {
-        int areaWidth = (int) (focusWidth * areaMultiple);
-        int areaHeight = (int) (focusHeight * areaMultiple);
-        int left = Util.clamp(x - areaWidth / 2, 0, previewWidth - areaWidth);
-        int top = Util.clamp(y - areaHeight / 2, 0, previewHeight - areaHeight);
+    private void calculateTapArea(int x, int y, float areaMultiple, Rect rect) {
+        int areaSize = (int) (Math.min(mPreviewWidth, mPreviewHeight) * areaMultiple / 20);
+        int left = Util.clamp(x - areaSize, 0, mPreviewWidth - 2 * areaSize);
+        int top = Util.clamp(y - areaSize, 0, mPreviewHeight - 2 * areaSize);
 
-        RectF rectF = new RectF(left, top, left + areaWidth, top + areaHeight);
+        RectF rectF = new RectF(left, top, left + 2 * areaSize, top + 2 * areaSize);
         mMatrix.mapRect(rectF);
         Util.rectFToRect(rectF, rect);
     }
