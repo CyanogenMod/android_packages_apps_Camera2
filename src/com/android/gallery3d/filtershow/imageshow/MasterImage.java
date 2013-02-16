@@ -34,7 +34,7 @@ public class MasterImage implements RenderingRequestCaller {
 
     private static final String LOGTAG = "MasterImage";
 
-    private static MasterImage sMasterImage = new MasterImage();
+    private static MasterImage sMasterImage = null;
 
     private ImageFilter mCurrentFilter = null;
     private ImagePreset mPreset = null;
@@ -58,6 +58,9 @@ public class MasterImage implements RenderingRequestCaller {
     private MasterImage() { }
 
     public static MasterImage getImage() {
+        if (sMasterImage == null) {
+            sMasterImage = new MasterImage();
+        }
         return sMasterImage;
     }
 
@@ -229,5 +232,9 @@ public class MasterImage implements RenderingRequestCaller {
         if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
             mFiltersOnlyBitmap = request.getBitmap();
         }
+    }
+
+    public static void reset() {
+        sMasterImage = null;
     }
 }

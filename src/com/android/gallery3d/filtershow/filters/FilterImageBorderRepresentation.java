@@ -16,18 +16,18 @@
 
 package com.android.gallery3d.filtershow.filters;
 
-import android.graphics.drawable.Drawable;
-
 public class FilterImageBorderRepresentation extends FilterRepresentation {
-    private Drawable mDrawable;
     private int mDrawableResource = 0;
 
-    public FilterImageBorderRepresentation(int drawableResource, Drawable drawable) {
+    public FilterImageBorderRepresentation(int drawableResource) {
         super("ImageBorder");
         mDrawableResource = drawableResource;
-        mDrawable = drawable;
         setFilterClass(ImageFilterBorder.class);
         setPriority(ImageFilter.TYPE_BORDER);
+        // load the drawable at init as we are in a background thread
+        // (see FilterShowActivity's LoadBordersTask)
+        ImageFilterBorder filter = (ImageFilterBorder) FiltersManager.getManager().getFilter(getFilterClass());
+        filter.getDrawable(getDrawableResource());
     }
 
     public String toString() {
@@ -38,7 +38,6 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
     public FilterRepresentation clone() throws CloneNotSupportedException {
         FilterImageBorderRepresentation representation = (FilterImageBorderRepresentation) super.clone();
         representation.setName(getName());
-        representation.setDrawable(getDrawable());
         representation.setDrawableResource(getDrawableResource());
         return representation;
     }
@@ -47,7 +46,6 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
         if (a instanceof FilterImageBorderRepresentation) {
             FilterImageBorderRepresentation representation = (FilterImageBorderRepresentation) a;
             setName(representation.getName());
-            setDrawable(representation.getDrawable());
             setDrawableResource(representation.getDrawableResource());
         }
     }
@@ -68,14 +66,6 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
 
     public boolean allowsMultipleInstances() {
         return true;
-    }
-
-    public Drawable getDrawable() {
-        return mDrawable;
-    }
-
-    public void setDrawable(Drawable drawable) {
-        mDrawable = drawable;
     }
 
     public int getDrawableResource() {
