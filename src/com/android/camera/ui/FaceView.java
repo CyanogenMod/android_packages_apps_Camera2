@@ -33,8 +33,8 @@ import android.view.View;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraScreenNail;
-import com.android.camera.R;
 import com.android.camera.Util;
+import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 
 @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)

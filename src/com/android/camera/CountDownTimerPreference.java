@@ -19,6 +19,8 @@ package com.android.camera;
 import android.content.Context;
 import android.util.AttributeSet;
 
+import com.android.gallery3d.R;
+
 import java.util.List;
 
 /* CountDownTimerPreference generates entries (i.e. what users see in the UI),

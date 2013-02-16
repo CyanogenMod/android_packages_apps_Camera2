@@ -28,7 +28,7 @@ import android.widget.TextView;
 
 import com.android.camera.IconListPreference;
 import com.android.camera.ListPreference;
-import com.android.camera.R;
+import com.android.gallery3d.R;
 
 /**
  * This is a popup window that allows users to turn on/off time lapse feature,

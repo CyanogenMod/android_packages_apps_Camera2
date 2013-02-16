@@ -23,6 +23,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 
+import com.android.gallery3d.R;
+
 import java.util.ArrayList;
 import java.util.List;
 

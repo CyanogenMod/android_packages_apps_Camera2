@@ -31,7 +31,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.android.camera.R;
+import com.android.gallery3d.R;
 
 public class CountDownView extends FrameLayout {
 

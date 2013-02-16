@@ -26,8 +26,8 @@ import android.widget.GridView;
 import android.widget.SimpleAdapter;
 
 import com.android.camera.IconListPreference;
-import com.android.camera.R;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 
 import java.util.ArrayList;

@@ -52,6 +52,7 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 
 import java.io.Closeable;
