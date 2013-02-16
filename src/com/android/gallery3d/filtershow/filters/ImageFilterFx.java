@@ -18,6 +18,9 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
 
+import com.android.gallery3d.filtershow.editors.BasicEditor;
+import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
+
 public class ImageFilterFx extends ImageFilter {
     private static final String TAG = "ImageFilterFx";
     Bitmap fxBitmap;
@@ -54,6 +57,11 @@ public class ImageFilterFx extends ImageFilter {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int getEditingViewId() {
+        return ImageOnlyEditor.ID;
     }
 
     @Override

@@ -25,6 +25,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 
 import java.util.HashMap;
 
@@ -55,6 +56,12 @@ public class ImageFilterBorder extends ImageFilter {
     }
 
     @Override
+    public int getEditingViewId() {
+        return ImageOnlyEditor.ID;
+    }
+
+    @Override
+
     public boolean showParameterValue() {
         return false;
     }
