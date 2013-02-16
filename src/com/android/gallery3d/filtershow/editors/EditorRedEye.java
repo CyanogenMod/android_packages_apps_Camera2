@@ -21,24 +21,31 @@ import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.filters.FilterRedEyeRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
-import com.android.gallery3d.filtershow.filters.FilterTinyPlanetRepresentation;
-import com.android.gallery3d.filtershow.imageshow.ImageTinyPlanet;
+import com.android.gallery3d.filtershow.imageshow.ImageRedEye;
 
-public class EditorTinyPlanet extends BasicEditor {
-    public static final int ID = R.id.tinyPlanetEditor;
-    private static final String LOGTAG = "EditorTinyPlanet";
-    ImageTinyPlanet mImageTinyPlanet;
+/**
+ * The editor with no slider for filters without UI
+ */
+public class EditorRedEye extends Editor {
+    public static int ID = R.id.editorRedEye;
+    private final String LOGTAG = "EditorRedEye";
+    ImageRedEye mImageRedEyes;
 
-    public EditorTinyPlanet() {
-        super(ID, R.layout.filtershow_tiny_planet_editor, R.id.imageTinyPlanet);
+    public EditorRedEye() {
+        super(ID);
+    }
+
+    protected EditorRedEye(int id) {
+        super(id);
     }
 
     @Override
     public void createEditor(Context context, FrameLayout frameLayout) {
         super.createEditor(context, frameLayout);
-        mImageTinyPlanet = (ImageTinyPlanet) mImageShow;
-        mImageTinyPlanet.setEditor(this);
+        mView = mImageShow = mImageRedEyes=  new ImageRedEye(context);
+        mImageRedEyes.setEditor(this);
     }
 
     @Override
@@ -46,9 +53,9 @@ public class EditorTinyPlanet extends BasicEditor {
         super.reflectCurrentFilter();
 
         FilterRepresentation rep = getLocalRepresentation();
-        if (rep != null && getLocalRepresentation() instanceof FilterTinyPlanetRepresentation) {
-            FilterTinyPlanetRepresentation drawRep = (FilterTinyPlanetRepresentation) rep;
-            mImageTinyPlanet.setRepresentation(drawRep);
+        if (rep != null && getLocalRepresentation() instanceof FilterRedEyeRepresentation) {
+            FilterRedEyeRepresentation redEyeRep = (FilterRedEyeRepresentation) rep;
+            mImageRedEyes.setRepresentation(redEyeRep);
         }
     }
 }
