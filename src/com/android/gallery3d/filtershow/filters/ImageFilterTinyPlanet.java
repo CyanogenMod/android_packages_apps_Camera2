@@ -72,7 +72,7 @@ public class ImageFilterTinyPlanet extends SimpleImageFilter {
             float angle);
 
     @Override
-    public Bitmap apply(Bitmap bitmapIn, float scaleFactor, boolean highQuality) {
+    public Bitmap apply(Bitmap bitmapIn, float scaleFactor, int quality) {
         int w = bitmapIn.getWidth();
         int h = bitmapIn.getHeight();
         int outputSize = (int) (w / 2f);

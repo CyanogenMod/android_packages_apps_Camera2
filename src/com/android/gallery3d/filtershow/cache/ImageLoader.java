@@ -392,7 +392,7 @@ public class ImageLoader {
 
     public void saveImage(ImagePreset preset, final FilterShowActivity filterShowActivity,
             File destination) {
-        preset.setIsHighQuality(true);
+        preset.setQuality(ImagePreset.QUALITY_FINAL);
         preset.setScaleFactor(1.0f);
         new SaveCopyTask(mContext, mUri, destination, new SaveCopyTask.Callback() {
 
@@ -432,7 +432,7 @@ public class ImageLoader {
 
     public void returnFilteredResult(ImagePreset preset,
             final FilterShowActivity filterShowActivity) {
-        preset.setIsHighQuality(true);
+        preset.setQuality(ImagePreset.QUALITY_FINAL);
         preset.setScaleFactor(1.0f);
 
         BitmapTask.Callbacks<ImagePreset> cb = new BitmapTask.Callbacks<ImagePreset>() {

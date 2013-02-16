@@ -190,9 +190,9 @@ public class FilteringPipeline implements Handler.Callback {
     private void setPresetParameters(ImagePreset preset) {
         preset.setScaleFactor(mPreviewScaleFactor);
         if (mPreviewScaleFactor < 1.0f) {
-            preset.setIsHighQuality(false);
+            preset.setQuality(ImagePreset.QUALITY_PREVIEW);
         } else {
-            preset.setIsHighQuality(true);
+            preset.setQuality(ImagePreset.QUALITY_PREVIEW);
         }
     }
 

@@ -47,7 +47,7 @@ public class ImageFilterDownsample extends SimpleImageFilter {
     }
 
     @Override
-    public Bitmap apply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+    public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         if (getParameters() == null) {
             return bitmap;
         }
@@ -79,7 +79,7 @@ public class ImageFilterDownsample extends SimpleImageFilter {
     }
 
     @Override
-    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, boolean highQuality) {
+    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, int quality) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
         Bitmap ret = Bitmap.createScaledBitmap(bitmap, w / ICON_DOWNSAMPLE_FRACTION, h

@@ -48,7 +48,7 @@ public class ImageFilterSharpen extends ImageFilterRS {
 
     @Override
     public void createFilter(android.content.res.Resources res, float scaleFactor,
-            boolean highQuality) {
+            int quality) {
         int w = mInPixelsAllocation.getType().getX();
         int h = mInPixelsAllocation.getType().getY();
         mScaleFactor = scaleFactor;
