@@ -65,7 +65,7 @@ public class BasicEditor extends Editor implements OnSeekBarChangeListener {
         if (getLocalRepresentation() != null && getLocalRepresentation() instanceof FilterBasicRepresentation) {
             FilterBasicRepresentation interval = (FilterBasicRepresentation) getLocalRepresentation();
             boolean f = interval.showParameterValue();
-            mSeekBar.setVisibility((f) ? View.VISIBLE : View.INVISIBLE);
+            mSeekBar.setVisibility((f) ? View.VISIBLE : View.GONE);
             int value = interval.getValue();
             int min = interval.getMinimum();
             int max = interval.getMaximum();
