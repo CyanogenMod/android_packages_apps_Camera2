@@ -38,7 +38,7 @@ public class IconButton extends Button {
     protected Bitmap mImageMirror = null;
     protected Bitmap mIcon = null;
 
-    private boolean stale_icon = true;
+    protected boolean stale_icon = true;
 
     public IconButton(Context context) {
         this(context, null);
