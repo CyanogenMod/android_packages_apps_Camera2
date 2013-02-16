@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -267,6 +268,34 @@ public class ImageShow extends View implements OnGestureListener,
 
     public Rect getImageCropBounds() {
         return GeometryMath.roundNearest(getImagePreset().mGeoData.getPreviewCropBounds());
+    }
+
+    /* consider moving the following 2 methods into a subclass */
+    /**
+     * This function calculates a Image to Screen Transformation matrix
+     *
+     * @param reflectRotation set true if you want the rotation encoded
+     * @return Image to Screen transformation matrix
+     */
+    protected Matrix getImageToScreenMatrix(boolean reflectRotation) {
+        GeometryMetadata geo = getImagePreset().mGeoData;
+        Matrix m = geo.getOriginalToScreen(reflectRotation,
+                mImageLoader.getOriginalBounds().width(),
+                mImageLoader.getOriginalBounds().height(), getWidth(), getHeight());
+        return m;
+    }
+
+    /**
+     * This function calculates a to Screen Image Transformation matrix
+     *
+     * @param reflectRotation set true if you want the rotation encoded
+     * @return Screen to Image transformation matrix
+     */
+    protected Matrix getScreenToImageMatrix(boolean reflectRotation) {
+        Matrix m = getImageToScreenMatrix(reflectRotation);
+        Matrix invert = new Matrix();
+        m.invert(invert);
+        return invert;
     }
 
     public Rect getDisplayedImageBounds() {

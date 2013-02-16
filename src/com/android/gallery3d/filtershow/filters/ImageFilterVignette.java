@@ -16,47 +16,67 @@
 
 package com.android.gallery3d.filtershow.filters;
 
-import com.android.gallery3d.R;
-
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+
 import com.android.gallery3d.app.Log;
 
 public class ImageFilterVignette extends SimpleImageFilter {
-
     private static final String LOGTAG = "ImageFilterVignette";
 
     public ImageFilterVignette() {
         mName = "Vignette";
     }
 
+    @Override
     public FilterRepresentation getDefaultRepresentation() {
-        FilterBasicRepresentation representation =
-                (FilterBasicRepresentation) super.getDefaultRepresentation();
-        representation.setName("Vignette");
-        representation.setFilterClass(ImageFilterVignette.class);
-        representation.setPriority(FilterRepresentation.TYPE_VIGNETTE);
-        representation.setTextId(R.string.vignette);
-        representation.setButtonId(R.id.vignetteButton);
-
-        representation.setMinimum(-100);
-        representation.setMaximum(100);
-        representation.setDefaultValue(0);
-
+        FilterVignetteRepresentation representation = new FilterVignetteRepresentation();
         return representation;
     }
 
-    native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, float strength);
+    native protected void nativeApplyFilter(
+            Bitmap bitmap, int w, int h, int cx, int cy, float radx, float rady, float strength);
+
+    private float calcRadius(float cx, float cy, int w, int h) {
+        float d = cx;
+        if (d < (w - cx)) {
+            d = w - cx;
+        }
+        if (d < cy) {
+            d = cy;
+        }
+        if (d < (h - cy)) {
+            d = h - cy;
+        }
+        return d * d * 2.0f;
+    }
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
-        if (getParameters() == null) {
+        FilterVignetteRepresentation rep = (FilterVignetteRepresentation) getParameters();
+        if (rep == null) {
             return bitmap;
         }
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
-        float value = getParameters().getValue() / 100.0f;
-        nativeApplyFilter(bitmap, w, h, value);
-
+        float value = rep.getValue() / 100.0f;
+        float cx = w / 2;
+        float cy = h / 2;
+        float r = calcRadius(cx, cy, w, h);
+        float rx = r;
+        float ry = r;
+        if (rep.isCenterSet()) {
+            Matrix m = getOriginalToScreenMatrix(w, h);
+            cx = rep.getCenterX();
+            cy = rep.getCenterY();
+            float[] center = new float[] { cx, cy };
+            m.mapPoints(center);
+            cx = center[0];
+            cy = center[1];
+            rx = m.mapRadius(rep.getRadiusX());
+            ry = m.mapRadius(rep.getRadiusY());
+         }
+        nativeApplyFilter(bitmap, w, h, (int) cx, (int) cy, rx, ry, value);
         return bitmap;
     }
 }
