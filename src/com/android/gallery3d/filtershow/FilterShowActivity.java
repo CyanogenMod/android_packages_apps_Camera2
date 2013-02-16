@@ -65,6 +65,7 @@ import com.android.gallery3d.filtershow.editors.BasicEditor;
 import com.android.gallery3d.filtershow.editors.EditorDraw;
 import com.android.gallery3d.filtershow.editors.EditorManager;
 import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
+import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
 import com.android.gallery3d.filtershow.filters.*;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageDraw;
@@ -225,6 +226,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mEditorPlaceHolder.addEditor(new EditorDraw());
         mEditorPlaceHolder.addEditor(new BasicEditor());
         mEditorPlaceHolder.addEditor(new ImageOnlyEditor());
+        mEditorPlaceHolder.addEditor(new EditorTinyPlanet());
         EditorManager.addEditors(mEditorPlaceHolder);
         mEditorPlaceHolder.setOldViews(mImageViews);
         mEditorPlaceHolder.setImageLoader(mImageLoader);
