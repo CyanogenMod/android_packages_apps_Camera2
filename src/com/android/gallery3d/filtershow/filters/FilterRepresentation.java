@@ -186,4 +186,8 @@ public class FilterRepresentation implements Cloneable {
     public void setShowUtilityPanel(boolean showUtilityPanel) {
         mShowUtilityPanel = showUtilityPanel;
     }
+
+    public String getStateRepresentation() {
+        return "";
+    }
 }
