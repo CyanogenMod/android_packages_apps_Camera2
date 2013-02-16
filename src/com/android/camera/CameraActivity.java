@@ -23,11 +23,14 @@ import android.content.Context;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -58,6 +61,7 @@ public class CameraActivity extends ActivityBase
     private Drawable[] mDrawables;
     private int mCurrentModuleIndex;
     private MotionEvent mDown;
+    private boolean mAutoRotateScreen;
 
     private MyOrientationEventListener mOrientationListener;
     // The degrees of the device rotated clockwise from its natural orientation.
@@ -139,6 +143,12 @@ public class CameraActivity extends ActivityBase
     public void onDestroy() {
         unbindMediaSaveService();
         super.onDestroy();
+    }
+
+    // Return whether the auto-rotate screen in system settings
+    // is turned on.
+    public boolean isAutoRotateScreen() {
+        return mAutoRotateScreen;
     }
 
     private class MyOrientationEventListener
@@ -318,6 +328,14 @@ public class CameraActivity extends ActivityBase
     @Override
     public void onResume() {
         mPaused = false;
+        if (Settings.System.getInt(getContentResolver(),
+                Settings.System.ACCELEROMETER_ROTATION, 0) == 0) {// auto-rotate off
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            mAutoRotateScreen = false;
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+            mAutoRotateScreen = true;
+        }
         mOrientationListener.enable();
         mCurrentModule.onResumeBeforeSuper();
         super.onResume();

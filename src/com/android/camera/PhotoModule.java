@@ -1134,7 +1134,15 @@ public class PhotoModule
         }
 
         // Set rotation and gps data.
-        mJpegRotation = Util.getJpegRotation(mCameraId, mOrientation);
+        int orientation;
+        // We need to be consistent with the framework orientation (i.e. the
+        // orientation of the UI.) when the auto-rotate screen setting is on.
+        if (mActivity.isAutoRotateScreen()) {
+            orientation = (360 - mDisplayRotation) % 360;
+        } else {
+            orientation = mOrientation;
+        }
+        mJpegRotation = Util.getJpegRotation(mCameraId, orientation);
         mParameters.setRotation(mJpegRotation);
         Location loc = mLocationManager.getCurrentLocation();
         Util.setGpsParameters(mParameters, loc);
