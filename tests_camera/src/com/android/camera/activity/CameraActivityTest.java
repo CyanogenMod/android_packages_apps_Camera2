@@ -21,7 +21,7 @@ import android.test.suitebuilder.annotation.LargeTest;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraHolder;
-import com.android.camera.R;
+import com.android.gallery3d.R;
 
 import static com.google.testing.littlemock.LittleMock.doReturn;
 
