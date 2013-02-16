@@ -34,17 +34,9 @@ public class ImageFilterBwFilter extends SimpleImageFilter {
         representation.setFilterClass(ImageFilterBwFilter.class);
         representation.setMaximum(180);
         representation.setMinimum(-180);
+        representation.setTextId(R.string.bwfilter);
+        representation.setButtonId(R.id.bwfilterButton);
         return representation;
-    }
-
-    @Override
-    public int getButtonId() {
-        return R.id.bwfilterButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.bwfilter;
     }
 
     native protected void nativeApplyFilter(Bitmap bitmap, int w, int h, int r, int g, int b);

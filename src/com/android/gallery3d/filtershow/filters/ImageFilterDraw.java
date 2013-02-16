@@ -62,17 +62,8 @@ public class ImageFilterDraw extends ImageFilter {
     }
 
     @Override
-    public boolean hasDefaultRepresentation() {
-        return true;
-    }
-
-    @Override
     public FilterRepresentation getDefaultRepresentation() {
-        FilterDrawRepresentation representation = new FilterDrawRepresentation();
-        representation.setName("Draw");
-        representation.setFilterClass(ImageFilterDraw.class);
-        representation.setFilterType(FilterRepresentation.TYPE_VIGNETTE);
-        return representation;
+        return new FilterDrawRepresentation();
     }
 
     @Override
@@ -244,25 +235,6 @@ public class ImageFilterDraw extends ImageFilter {
             paint(v.get(i), drawCache, originalRotateToScreen, false);
         }
         mCachedStrokes = n;
-    }
-
-    @Override
-    public int getButtonId() {
-        return R.id.drawOnImageButton;
-    }
-
-    @Override
-    public int getTextId() {
-        return R.string.imageDraw;
-    }
-
-    @Override
-    public int getEditingViewId() {
-        return EditorDraw.ID;
-    }
-
-    public boolean isNil() {
-        return mParameters.getDrawing().isEmpty();
     }
 
     public void draw(Canvas canvas, Matrix originalRotateToScreen) {
