@@ -22,26 +22,22 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.mtp.MtpDevice;
 import android.mtp.MtpObjectInfo;
-import android.os.AsyncTask;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.Checkable;
-import android.widget.ImageView;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.ingest.data.MtpBitmapFetch;
 
-public class MtpThumbnailTileView extends ImageView implements Checkable {
-    private static final int FADE_IN_TIME_MS = 80;
+
+public class MtpThumbnailTileView extends MtpImageView implements Checkable {
 
     private Paint mForegroundPaint;
     private boolean mIsChecked;
-    private int mObjectHandle;
-    private int mGeneration;
+    private Bitmap mBitmap;
 
     private void init() {
         mForegroundPaint = new Paint();
         mForegroundPaint.setColor(getResources().getColor(R.color.ingest_highlight_semitransparent));
-        showPlaceholder();
     }
 
     public MtpThumbnailTileView(Context context) {
@@ -66,9 +62,20 @@ public class MtpThumbnailTileView extends ImageView implements Checkable {
     }
 
     @Override
+    protected Object fetchMtpImageDataFromDevice(MtpDevice device, MtpObjectInfo info) {
+        return MtpBitmapFetch.getThumbnail(device, info);
+    }
+
+    @Override
+    protected void onMtpImageDataFetchedFromDevice(Object result) {
+        mBitmap = (Bitmap)result;
+        setImageBitmap(mBitmap);
+    }
+
+    @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        if (mIsChecked) {
+        if (isChecked()) {
             canvas.drawRect(canvas.getClipBounds(), mForegroundPaint);
         }
     }
@@ -88,65 +95,12 @@ public class MtpThumbnailTileView extends ImageView implements Checkable {
         setChecked(!mIsChecked);
     }
 
-    private void showPlaceholder() {
-        setAlpha(0f);
-    }
-
-    private LoadThumbnailTask mTask;
-
-    public void setMtpDeviceAndObjectInfo(MtpDevice device, MtpObjectInfo object, int gen) {
-        int handle = object.getObjectHandle();
-        if (handle == mObjectHandle && gen == mGeneration) {
-            return;
-        }
-        animate().cancel();
-        if (mTask != null) {
-            mTask.cancel(true);
-        }
-        mGeneration = gen;
-        mObjectHandle = handle;
-        Bitmap thumbnail = MtpBitmapCache.getInstanceForDevice(device)
-                .get(handle);
-        if (thumbnail != null) {
-            setAlpha(1f);
-            setImageBitmap(thumbnail);
-        } else {
-            showPlaceholder();
-            mTask = new LoadThumbnailTask(device);
-            mTask.execute(object);
-        }
-    }
-
-    private class LoadThumbnailTask extends AsyncTask<MtpObjectInfo, Void, Bitmap> {
-        private MtpDevice mDevice;
-
-        public LoadThumbnailTask(MtpDevice device) {
-            mDevice = device;
-        }
-
-        @Override
-        protected Bitmap doInBackground(MtpObjectInfo... args) {
-            Bitmap result = null;
-            if (!isCancelled()) {
-                result = MtpBitmapCache.getInstanceForDevice(mDevice).getOrCreate(
-                        args[0].getObjectHandle());
-            }
-            mDevice = null;
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            if (isCancelled() || result == null) {
-                return;
-            }
-            setAlpha(0f);
-            setImageBitmap(result);
-            animate().alpha(1f).setDuration(FADE_IN_TIME_MS);
-        }
-
-        @Override
-        protected void onCancelled() {
+    @Override
+    protected void cancelLoadingAndClear() {
+        super.cancelLoadingAndClear();
+        if (mBitmap != null) {
+            MtpBitmapFetch.recycleThumbnail(mBitmap);
+            mBitmap = null;
         }
     }
 }
