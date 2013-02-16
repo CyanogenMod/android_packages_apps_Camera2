@@ -65,11 +65,13 @@ public class ImageCurves extends ImageShow {
 
     public ImageCurves(Context context) {
         super(context);
+        setLayerType(LAYER_TYPE_SOFTWARE, gPaint);
         resetCurve();
     }
 
     public ImageCurves(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setLayerType(LAYER_TYPE_SOFTWARE, gPaint);
         resetCurve();
     }
 
