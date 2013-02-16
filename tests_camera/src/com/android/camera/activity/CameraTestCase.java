@@ -31,8 +31,8 @@ import android.view.View;
 
 import com.android.camera.CameraHolder;
 import com.android.camera.CameraManager.CameraProxy;
-import com.android.camera.R;
 import com.android.camera.Util;
+import com.android.gallery3d.R;
 
 import static com.google.testing.littlemock.LittleMock.mock;
 import static com.google.testing.littlemock.LittleMock.doAnswer;
