@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.filtershow;
 
-import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -30,7 +29,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -282,11 +280,13 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addPanel(mColorsButton, mListColors, 3);
 
         Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
-        FiltersManager.addFilterRepresentations(filtersRepresentations);
+
+        FiltersManager filtersManager = FiltersManager.getManager();
+        filtersManager.addEffects(filtersRepresentations);
+
         for (FilterRepresentation representation : filtersRepresentations) {
             setupFilterRepresentationButton(representation, listColors, mColorsButton);
         }
-
 
         mPanelController.addView(findViewById(R.id.applyEffect));
         findViewById(R.id.resetOperationsButton).setOnClickListener(
@@ -774,6 +774,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         FilterFxRepresentation nullFx = new FilterFxRepresentation(getString(R.string.none), 0, R.string.none);
         mNullFxFilter = setupFilterRepresentationButton(nullFx, listFilters, mFxButton);
         mNullFxFilter.setSelected(true);
+
+        Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
+        FiltersManager.getManager().addLooks(filtersRepresentations);
+        for (FilterRepresentation representation : filtersRepresentations) {
+            setupFilterRepresentationButton(representation, listFilters, mFxButton);
+        }
 
         for (int i = 0; i < p; i++) {
             setupFilterRepresentationButton(fxArray[i], listFilters, mFxButton);
