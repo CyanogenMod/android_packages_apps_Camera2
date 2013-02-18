@@ -717,7 +717,7 @@ public class PieRenderer extends OverlayRenderer
     private void cancelFocus() {
         mFocusCancelled = true;
         mOverlay.removeCallbacks(mDisappear);
-        if (mAnimation != null) {
+        if (mAnimation != null && !mAnimation.hasEnded()) {
             mAnimation.cancel();
         }
         mFocusCancelled = false;
