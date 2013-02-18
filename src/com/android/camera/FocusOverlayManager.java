@@ -94,6 +94,7 @@ public class FocusOverlayManager {
     private ComboPreferences mPreferences;
     private Handler mHandler;
     Listener mListener;
+    private boolean mPreviousMoving;
 
     public interface Listener {
         public void autoFocus();
@@ -302,11 +303,13 @@ public class FocusOverlayManager {
         // continuous autofocus.
         if (mState != STATE_IDLE) return;
 
-        if (moving) {
+        // animate on false->true trasition only b/8219520
+        if (moving && !mPreviousMoving) {
             mPieRenderer.showStart();
-        } else {
+        } else if (!moving) {
             mPieRenderer.showSuccess(true);
         }
+        mPreviousMoving = moving;
     }
 
     @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
