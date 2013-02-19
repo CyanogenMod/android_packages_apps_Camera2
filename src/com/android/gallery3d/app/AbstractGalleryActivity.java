@@ -38,9 +38,9 @@ import android.view.WindowManager;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
-import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
+import com.android.photos.data.GalleryBitmapPool;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLRootView;
 import com.android.gallery3d.util.LightCycleHelper.PanoramaViewHelper;
@@ -222,14 +222,8 @@ public class AbstractGalleryActivity extends Activity implements GalleryContext 
         } finally {
             mGLRootView.unlockRenderThread();
         }
-        clearBitmapPool(MediaItem.getMicroThumbPool());
-        clearBitmapPool(MediaItem.getThumbPool());
-
+        GalleryBitmapPool.getInstance().clear();
         MediaItem.getBytesBufferPool().clear();
-    }
-
-    private static void clearBitmapPool(BitmapPool pool) {
-        if (pool != null) pool.clear();
     }
 
     @Override

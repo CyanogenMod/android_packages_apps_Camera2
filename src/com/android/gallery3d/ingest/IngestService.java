@@ -187,7 +187,6 @@ public class IngestService extends Service implements ImportTask.Listener,
     public void deviceRemoved(MtpDevice device) {
         if (device == mDevice) {
             setDevice(null);
-            MtpBitmapFetch.onDeviceDisconnected(device);
         }
     }
 
