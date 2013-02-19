@@ -75,13 +75,9 @@ public abstract class ImagePoint extends ImageShow {
         paint.setColor(Color.RED);
         paint.setStrokeWidth(2);
 
-        GeometryMetadata geo = getImagePreset().mGeoData;
-        Matrix originalToScreen = geo.getOriginalToScreen(false,
-                mImageLoader.getOriginalBounds().width(),
-                mImageLoader.getOriginalBounds().height(), getWidth(), getHeight());
-        Matrix originalRotateToScreen = geo.getOriginalToScreen(true,
-                mImageLoader.getOriginalBounds().width(),
-                mImageLoader.getOriginalBounds().height(), getWidth(), getHeight());
+        Matrix originalToScreen = getImageToScreenMatrix(false);
+        Matrix originalRotateToScreen = getImageToScreenMatrix(true);
+
         if (mRedEyeRep != null) {
             for (FilterPoint candidate : mRedEyeRep.getCandidates()) {
                 drawPoint(candidate, canvas, originalToScreen, originalRotateToScreen, paint);

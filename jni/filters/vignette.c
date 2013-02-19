@@ -15,52 +15,32 @@
  */
 
 #include "filters.h"
+#include <math.h>
 
 static int* gVignetteMap = 0;
 static int gVignetteWidth = 0;
 static int gVignetteHeight = 0;
 
-__inline__ void createVignetteMap(int w, int h)
-{
-    if (gVignetteMap && (gVignetteWidth != w || gVignetteHeight != h))
-    {
-        free(gVignetteMap);
-        gVignetteMap = 0;
-    }
-    if (gVignetteMap == 0)
-    {
-        gVignetteWidth = w;
-        gVignetteHeight = h;
-
-        int cx = w / 2;
-        int cy = h / 2;
-        int i, j;
-
-        gVignetteMap = malloc(w * h * sizeof(int));
-        float maxDistance = cx * cx * 2.0f;
-        for (i = 0; i < w; i++)
-        {
-            for (j = 0; j < h; j++)
-            {
-                float distance = (cx - i) * (cx - i) + (cy - j) * (cy - j);
-                gVignetteMap[j * w + i] = (int) (distance / maxDistance * 255);
-            }
-        }
-    }
-}
-
-void JNIFUNCF(ImageFilterVignette, nativeApplyFilter, jobject bitmap, jint width, jint height, jfloat strength)
+void JNIFUNCF(ImageFilterVignette, nativeApplyFilter, jobject bitmap, jint width, jint height, jint centerx, jint centery, jfloat radiusx, jfloat radiusy, jfloat strength)
 {
     char* destination = 0;
     AndroidBitmap_lockPixels(env, bitmap, (void**) &destination);
-    createVignetteMap(width, height);
     int i;
     int len = width * height * 4;
     int vignette = 0;
+    float d = centerx;
+    if (radiusx == 0) radiusx = 10;
+    if (radiusy == 0) radiusy = 10;
+    float scalex = 1/radiusx;
+    float scaley = 1/radiusy;
 
     for (i = 0; i < len; i += 4)
     {
-        vignette = (int) (strength * gVignetteMap[i / 4]);
+        int p = i/4;
+        float x = ((p%width)-centerx)*scalex;
+        float y = ((p/width)-centery)*scaley;
+        float dist = sqrt(x*x+y*y)-1;
+        vignette = (int) (strength*256*MAX(dist,0));
         destination[RED] = CLAMP(destination[RED] - vignette);
         destination[GREEN] = CLAMP(destination[GREEN] - vignette);
         destination[BLUE] = CLAMP(destination[BLUE] - vignette);
