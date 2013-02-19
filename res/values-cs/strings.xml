@@ -195,7 +195,7 @@
     <string name="no_external_storage_title" msgid="2408933644249734569">"Žádné úložiště"</string>
     <string name="no_external_storage" msgid="95726173164068417">"Žádné externí úložiště není k dispozici"</string>
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"Zobrazení filmového pásu"</string>
-    <string name="switch_photo_grid" msgid="3681299459107925725">"Zobrazení v mřížce"</string>
+    <string name="switch_photo_grid" msgid="3681299459107925725">"Mřížkové zobrazení"</string>
     <string name="switch_photo_fullscreen" msgid="8360489096099127071">"Celá obrazovka"</string>
     <string name="trimming" msgid="9122385768369143997">"Zkracování"</string>
     <string name="muting" msgid="5094925919589915324">"Probíhá ztlumení"</string>
