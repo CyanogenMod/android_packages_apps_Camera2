@@ -80,7 +80,7 @@
     <string name="draw_size" msgid="4360005386104151209">"Størrelse"</string>
     <string name="draw_color" msgid="2119030386987211193">"Farve"</string>
     <string name="draw_style_line" msgid="9216476853904429628">"Linjer"</string>
-    <string name="draw_style_brush_spatter" msgid="7612691122932981554">"Markør"</string>
+    <string name="draw_style_brush_spatter" msgid="7612691122932981554">"Tusch"</string>
     <string name="draw_style_brush_marker" msgid="8468302322165644292">"Stænk"</string>
     <string name="draw_clear" msgid="6728155515454921052">"Ryd"</string>
     <string name="color_pick_select" msgid="734312818059057394">"Vælg tilpasset farve"</string>
