@@ -28,6 +28,7 @@ public class EditorManager {
         editorPlaceHolder.addEditor(new EditorCurves());
         editorPlaceHolder.addEditor(new EditorTinyPlanet());
         editorPlaceHolder.addEditor(new EditorDraw());
+        editorPlaceHolder.addEditor(new EditorVignette());
     }
 
 }

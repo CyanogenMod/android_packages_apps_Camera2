@@ -40,4 +40,5 @@
     <item type="id" name="editorDraw" />
     <item type="id" name="editorRedEye" />
     <item type="id" name="imageOnlyEditor" />
+    <item type="id" name="vignetteEditor" />
 </resources>
