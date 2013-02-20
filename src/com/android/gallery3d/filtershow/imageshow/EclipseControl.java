@@ -249,4 +249,8 @@ public class EclipseControl {
         fillHandles(canvas, mCenterX, mCenterY, mRadiusX, mRadiusY);
         paintPoint(canvas, mCenterX, mCenterY);
     }
+
+    public boolean isUndefined() {
+        return Float.isNaN(mCenterX);
+    }
 }
