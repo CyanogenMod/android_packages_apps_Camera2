@@ -92,17 +92,18 @@ public class ImageVignette extends ImageShow {
         if (Float.isNaN(c[0])) {
             float cx = mImageLoader.getOriginalBounds().width() / 2;
             float cy = mImageLoader.getOriginalBounds().height() / 2;
-            float rx = cx * .8f;
-            float ry = cy * .8f;
+            float rx = Math.min(cx, cy) * .8f;
+            float ry = rx;
             mVignetteRep.setCenter(cx, cy);
             mVignetteRep.setRadius(rx, ry);
 
             c[0] = cx;
             c[1] = cy;
             toScr.mapPoints(c);
-
-            mElipse.setCenter(c[0], c[1]);
-            mElipse.setRadius(c[0] * 0.8f, c[1] * 0.8f);
+            if (getWidth() != 0) {
+                mElipse.setCenter(c[0], c[1]);
+                mElipse.setRadius(c[0] * 0.8f, c[1] * 0.8f);
+            }
         } else {
 
             toScr.mapPoints(c);
@@ -120,6 +121,9 @@ public class ImageVignette extends ImageShow {
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (mElipse.isUndefined()) {
+            setRepresentation(mVignetteRep);
+        }
         mElipse.draw(canvas);
 
     }
