@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.cache;
 
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import com.android.gallery3d.app.Log;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -27,29 +28,46 @@ public class RenderingRequest {
     private Bitmap mBitmap = null;
     private ImagePreset mImagePreset = null;
     private RenderingRequestCaller mCaller = null;
+    private Rect mBounds = null;
+    private Rect mDestination = null;
     private int mType = FULL_RENDERING;
-    public static int FULL_RENDERING = 0;
-    public static int FILTERS_RENDERING = 1;
-    public static int GEOMETRY_RENDERING = 2;
-    public static int ICON_RENDERING = 3;
+    public static final int FULL_RENDERING = 0;
+    public static final int FILTERS_RENDERING = 1;
+    public static final int GEOMETRY_RENDERING = 2;
+    public static final int ICON_RENDERING = 3;
+    public static final int PARTIAL_RENDERING = 4;
     private static final Bitmap.Config mConfig = Bitmap.Config.ARGB_8888;
 
+    public static void post(Bitmap source, ImagePreset preset, int type, RenderingRequestCaller caller) {
+        RenderingRequest.post(source, preset, type, caller, null, null);
+    }
+
     public static void post(Bitmap source, ImagePreset preset, int type,
-                            RenderingRequestCaller caller) {
-        if (source == null || preset == null || caller == null) {
+                            RenderingRequestCaller caller, Rect bounds, Rect destination) {
+        if ((type != PARTIAL_RENDERING && source == null) || preset == null || caller == null) {
             Log.v(LOGTAG, "something null: source: " + source + " or preset: " + preset + " or caller: " + caller);
             return;
         }
         RenderingRequest request = new RenderingRequest();
         Bitmap bitmap = null;
-        if (type == FULL_RENDERING || type == GEOMETRY_RENDERING || type == ICON_RENDERING) {
+        if (type == FULL_RENDERING
+                || type == GEOMETRY_RENDERING
+                || type == ICON_RENDERING) {
             bitmap = preset.applyGeometry(source);
-        } else {
+        } else if (type != PARTIAL_RENDERING) {
             bitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), mConfig);
         }
+
         request.setBitmap(bitmap);
         ImagePreset passedPreset = new ImagePreset(preset);
         passedPreset.setImageLoader(MasterImage.getImage().getImageLoader());
+
+        if (type == PARTIAL_RENDERING) {
+            request.setBounds(bounds);
+            request.setDestination(destination);
+            passedPreset.setPartialRendering(true, bounds);
+        }
+
         request.setImagePreset(passedPreset);
         request.setType(type);
         request.setCaller(caller);
@@ -102,5 +120,21 @@ public class RenderingRequest {
 
     public void setCaller(RenderingRequestCaller caller) {
         mCaller = caller;
+    }
+
+    public Rect getBounds() {
+        return mBounds;
+    }
+
+    public void setBounds(Rect bounds) {
+        mBounds = bounds;
+    }
+
+    public Rect getDestination() {
+        return mDestination;
+    }
+
+    public void setDestination(Rect destination) {
+        mDestination = destination;
     }
 }

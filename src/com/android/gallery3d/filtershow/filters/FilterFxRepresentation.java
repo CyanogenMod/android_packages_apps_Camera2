@@ -37,6 +37,7 @@ public class FilterFxRepresentation extends FilterRepresentation {
         setShowEditingControls(false);
         setShowParameterValue(false);
         setShowUtilityPanel(false);
+        setSupportsPartialRendering(true);
     }
 
     public String toString() {

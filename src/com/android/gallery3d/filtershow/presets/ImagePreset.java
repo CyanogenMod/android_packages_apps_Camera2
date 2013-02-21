@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.presets;
 
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.util.Log;
 
 import com.android.gallery3d.filtershow.ImageStateAdapter;
@@ -52,6 +53,8 @@ public class ImagePreset {
     private boolean mDoApplyFilters = true;
 
     public final GeometryMetadata mGeoData = new GeometryMetadata();
+    private boolean mPartialRendering = false;
+    private Rect mPartialRenderingBounds;
 
     public ImagePreset() {
         setup();
@@ -421,6 +424,22 @@ public class ImagePreset {
         return bitmap;
     }
 
+    public boolean canDoPartialRendering() {
+        if (mGeoData.hasModifications()) {
+            return false;
+        }
+        for (int i = 0; i < mFilters.size(); i++) {
+            FilterRepresentation representation = null;
+            synchronized (mFilters) {
+                representation = mFilters.elementAt(i);
+            }
+            if (!representation.supportsPartialRendering()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void fillImageStateAdapter(ImageStateAdapter imageStateAdapter) {
         if (imageStateAdapter == null) {
             return;
@@ -445,5 +464,18 @@ public class ImagePreset {
 
     public void setScaleFactor(float value) {
         mScaleFactor = value;
+    }
+
+    public void setPartialRendering(boolean partialRendering, Rect bounds) {
+        mPartialRendering = partialRendering;
+        mPartialRenderingBounds = bounds;
+    }
+
+    public boolean isPartialRendering() {
+        return mPartialRendering;
+    }
+
+    public Rect getPartialRenderingBounds() {
+        return mPartialRenderingBounds;
     }
 }
