@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.android.gallery3d.filtershow.editors.EditorVignette;
@@ -48,16 +49,28 @@ public class ImageVignette extends ImageShow {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int mask = event.getActionMasked();
-        if (MotionEvent.ACTION_UP == mask) {
-            mActiveHandle = -1;
-        }
-        if (MotionEvent.ACTION_DOWN == mask && event.getPointerCount() == 1) {
-            mActiveHandle = mElipse.getCloseHandle(event.getX(), event.getY());
-        }
-        if (mActiveHandle == -1 || event.getPointerCount() > 1) {
-            mActiveHandle = -1;
-
-            return super.onTouchEvent(event);
+        if (mActiveHandle == -1) {
+            if (MotionEvent.ACTION_DOWN != mask) {
+                return super.onTouchEvent(event);
+            }
+            if (event.getPointerCount() == 1) {
+                mActiveHandle = mElipse.getCloseHandle(event.getX(), event.getY());
+            }
+            if (mActiveHandle == -1) {
+                return super.onTouchEvent(event);
+            }
+        } else {
+            switch (mask) {
+                case MotionEvent.ACTION_UP:
+                    mActiveHandle = -1;
+                    break;
+                case MotionEvent.ACTION_DOWN:
+                    if (event.getPointerCount() == 1) {
+                        Log.v(LOGTAG, "################### ACTION_DOWN odd " + mActiveHandle
+                                + " touches=1");
+                    }
+                    break;
+            }
         }
         float x = event.getX();
         float y = event.getY();
@@ -121,9 +134,7 @@ public class ImageVignette extends ImageShow {
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (mElipse.isUndefined()) {
-            setRepresentation(mVignetteRep);
-        }
+        setRepresentation(mVignetteRep);
         mElipse.draw(canvas);
 
     }
