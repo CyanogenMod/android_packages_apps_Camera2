@@ -19,6 +19,7 @@ public class FilterCurvesRepresentation extends FilterRepresentation {
         setShowEditingControls(false);
         setShowParameterValue(false);
         setShowUtilityPanel(true);
+        setSupportsPartialRendering(true);
         for (int i = 0; i < mSplines.length; i++) {
             mSplines[i] = new Spline();
             mSplines[i].reset();
