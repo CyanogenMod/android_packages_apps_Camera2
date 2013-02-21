@@ -39,6 +39,7 @@ public class ImageFilterHue extends SimpleImageFilter {
         representation.setTextId(R.string.hue);
         representation.setButtonId(R.id.hueButton);
         representation.setEditorId(BasicEditor.ID);
+        representation.setSupportsPartialRendering(true);
         return representation;
     }
 

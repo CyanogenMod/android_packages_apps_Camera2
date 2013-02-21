@@ -48,6 +48,7 @@ public class FilteringPipeline implements Handler.Callback {
     private final static int NEW_RENDERING_REQUEST = 1;
     private final static int COMPUTE_PRESET = 2;
     private final static int COMPUTE_RENDERING_REQUEST = 3;
+    private final static int COMPUTE_PARTIAL_RENDERING_REQUEST = 4;
 
     private Handler mProcessingHandler = null;
     private final Handler mUIHandler = new Handler() {
@@ -81,7 +82,13 @@ public class FilteringPipeline implements Handler.Callback {
                 mUIHandler.sendMessage(uimsg);
                 break;
             }
-            case COMPUTE_RENDERING_REQUEST: {
+            case COMPUTE_RENDERING_REQUEST:
+            case COMPUTE_PARTIAL_RENDERING_REQUEST: {
+                if (msg.what == COMPUTE_PARTIAL_RENDERING_REQUEST) {
+                    if (mProcessingHandler.hasMessages(COMPUTE_PARTIAL_RENDERING_REQUEST)) {
+                        return false;
+                    }
+                }
                 RenderingRequest request = (RenderingRequest) msg.obj;
                 render(request);
                 Message uimsg = mUIHandler.obtainMessage(NEW_RENDERING_REQUEST);
@@ -95,6 +102,7 @@ public class FilteringPipeline implements Handler.Callback {
 
     private static float RESIZE_FACTOR = 0.8f;
     private static float MAX_PROCESS_TIME = 100; // in ms
+    private static long HIRES_DELAY = 100; // in ms
     private float mResizeFactor = 1.0f;
     private long mResizeTime = 0;
 
@@ -165,9 +173,17 @@ public class FilteringPipeline implements Handler.Callback {
         if (mOriginalAllocation == null) {
             return;
         }
-        Message msg = mProcessingHandler.obtainMessage(COMPUTE_RENDERING_REQUEST);
+        int type = COMPUTE_RENDERING_REQUEST;
+        if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
+            type = COMPUTE_PARTIAL_RENDERING_REQUEST;
+        }
+        Message msg = mProcessingHandler.obtainMessage(type);
         msg.obj = request;
-        mProcessingHandler.sendMessage(msg);
+        if (type == COMPUTE_PARTIAL_RENDERING_REQUEST) {
+            mProcessingHandler.sendMessageDelayed(msg, HIRES_DELAY);
+        } else {
+            mProcessingHandler.sendMessage(msg);
+        }
     }
 
     public synchronized void updatePreviewBuffer() {
@@ -210,11 +226,15 @@ public class FilteringPipeline implements Handler.Callback {
         if (request.getType() == RenderingRequest.GEOMETRY_RENDERING) {
             return "GEOMETRY_RENDERING";
         }
+        if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
+            return "PARTIAL_RENDERING";
+        }
         return "UNKNOWN TYPE!";
     }
 
     private void render(RenderingRequest request) {
-        if (request.getBitmap() == null
+        if ((request.getType() != RenderingRequest.PARTIAL_RENDERING
+                && request.getBitmap() == null)
                 || request.getImagePreset() == null) {
             return;
         }
@@ -225,11 +245,21 @@ public class FilteringPipeline implements Handler.Callback {
         Bitmap bitmap = request.getBitmap();
         ImagePreset preset = request.getImagePreset();
         setPresetParameters(preset);
+
+        if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
+            bitmap = MasterImage.getImage().getImageLoader().getScaleOneImageForPreset(null, preset, request.getBounds(), request.getDestination(), false);
+            if (bitmap == null) {
+                return;
+            }
+            bitmap = preset.applyGeometry(bitmap);
+        }
+
         if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
             FiltersManager.getManager().resetBitmapsRS();
         }
 
-        if (request.getType() != RenderingRequest.ICON_RENDERING) {
+        if (request.getType() != RenderingRequest.ICON_RENDERING
+                && request.getType() != RenderingRequest.PARTIAL_RENDERING) {
             updateOriginalAllocation(preset);
         }
         if (DEBUG) {
@@ -243,9 +273,11 @@ public class FilteringPipeline implements Handler.Callback {
         } else if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
             mFiltersOnlyOriginalAllocation.copyTo(bitmap);
         }
+
         if (request.getType() == RenderingRequest.FULL_RENDERING
                 || request.getType() == RenderingRequest.FILTERS_RENDERING
-                || request.getType() == RenderingRequest.ICON_RENDERING) {
+                || request.getType() == RenderingRequest.ICON_RENDERING
+                || request.getType() == RenderingRequest.PARTIAL_RENDERING) {
             Bitmap bmp = preset.apply(bitmap);
             request.setBitmap(bmp);
         }

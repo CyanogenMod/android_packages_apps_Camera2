@@ -37,6 +37,7 @@ public class ImageFilterContrast extends SimpleImageFilter {
         representation.setMinimum(-100);
         representation.setMaximum(100);
         representation.setDefaultValue(0);
+        representation.setSupportsPartialRendering(true);
         return representation;
     }
 

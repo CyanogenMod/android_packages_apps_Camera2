@@ -25,6 +25,7 @@ public class FilterRepresentation implements Cloneable {
     private String mName;
     private int mPriority = TYPE_NORMAL;
     private Class mFilterClass;
+    private boolean mSupportsPartialRendering = false;
     private int mTextId = 0;
     private int mEditorId = BasicEditor.ID;
     private int mButtonId = 0;
@@ -52,6 +53,7 @@ public class FilterRepresentation implements Cloneable {
         representation.setName(getName());
         representation.setPriority(getPriority());
         representation.setFilterClass(getFilterClass());
+        representation.setSupportsPartialRendering(supportsPartialRendering());
         representation.setTextId(getTextId());
         representation.setEditorId(getEditorId());
         representation.setButtonId(getButtonId());
@@ -70,6 +72,7 @@ public class FilterRepresentation implements Cloneable {
         if (representation.mFilterClass == representation.mFilterClass
                 && representation.mName.equalsIgnoreCase(mName)
                 && representation.mPriority == mPriority
+                && representation.mSupportsPartialRendering == mSupportsPartialRendering
                 && representation.mTextId == mTextId
                 && representation.mEditorId == mEditorId
                 && representation.mButtonId == mButtonId
@@ -104,6 +107,14 @@ public class FilterRepresentation implements Cloneable {
 
     public boolean isNil() {
         return false;
+    }
+
+    public boolean supportsPartialRendering() {
+        return mSupportsPartialRendering;
+    }
+
+    public void setSupportsPartialRendering(boolean value) {
+        mSupportsPartialRendering = value;
     }
 
     public void useParametersFrom(FilterRepresentation a) {
