@@ -17,11 +17,7 @@
 package com.android.gallery3d.filtershow.imageshow;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -75,7 +71,8 @@ public class ImageZoom extends ImageShow {
         float ratio = (float) getWidth() / (float) getHeight();
         float mh = mMaxSize;
         float mw = ratio * mh;
-        RectF zoomRect = new RectF(mTouchX - mw, mTouchY - mh, mTouchX + mw, mTouchY + mw);
+        Point touch = getTouchPoint();
+        RectF zoomRect = new RectF(touch.x - mw, touch.y - mh, touch.x + mw, touch.y + mw);
         inverse.mapRect(zoomRect);
         zoomRect.set(zoomRect.centerX() - mw, zoomRect.centerY() - mh,
                 zoomRect.centerX() + mw, zoomRect.centerY() + mh);

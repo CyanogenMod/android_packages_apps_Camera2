@@ -46,6 +46,15 @@ public class ImageRedEye extends ImagePoint {
 
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
+
+        if (event.getPointerCount() > 1) {
+            return true;
+        }
+
+        if (didFinishScalingOperation()) {
+            return true;
+        }
+
         float ex = event.getX();
         float ey = event.getY();
 
