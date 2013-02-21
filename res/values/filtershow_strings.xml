@@ -115,6 +115,8 @@
     <string name="hue">Hue</string>
     <!--  Label for the image shadow recovery (lightens/darkens shadows) filter button [CHAR LIMIT=10] -->
     <string name="shadow_recovery">Shadows</string>
+    <!--  Label for the image highlights recovery (lightens/darkens bright regions) filter button [CHAR LIMIT=15] -->
+    <string name="highlight_recovery">Highlights</string>
     <!--  Label for the image curves filter button [CHAR LIMIT=10] -->
     <string name="curvesRGB">Curves</string>
     <!--  Label for the image vignette filter (darkens photo around edges) button [CHAR LIMIT=10] -->
