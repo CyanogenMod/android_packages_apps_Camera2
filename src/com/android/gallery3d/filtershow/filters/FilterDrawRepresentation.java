@@ -150,6 +150,10 @@ public class FilterDrawRepresentation extends FilterRepresentation {
         mCurrent = null;
     }
 
+    public void clearCurrentSection() {
+        mCurrent = null;
+    }
+
     public void clear() {
         mCurrent = null;
         mDrawing.clear();
