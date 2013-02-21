@@ -814,7 +814,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     }
 
     public void hideImageViews() {
-        mImageShow.setShowControls(false); // reset
         for (View view : mImageViews) {
             view.setVisibility(View.GONE);
         }
