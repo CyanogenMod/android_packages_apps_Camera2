@@ -386,7 +386,7 @@ public class PanelController implements OnClickListener {
     }
 
     public void showDefaultImageView() {
-        showImageView(R.id.imageShow).setShowControls(false);
+        showImageView(R.id.imageShow);
         MasterImage.getImage().setCurrentFilter(null);
         MasterImage.getImage().setCurrentFilterRepresentation(null);
     }
@@ -515,7 +515,6 @@ public class PanelController implements OnClickListener {
                         mCurrentImage = showImageView(representation.getEditorId());
                     }
                 }
-                mCurrentImage.setShowControls(representation.showEditingControls());
                 mUtilityPanel.setShowParameter(representation.showParameterValue());
 
                 mCurrentImage.select();
@@ -533,7 +532,7 @@ public class PanelController implements OnClickListener {
 
         switch (view.getId()) {
             case R.id.tinyplanetButton: {
-                mCurrentImage = showImageView(R.id.imageTinyPlanet).setShowControls(true);
+                mCurrentImage = showImageView(R.id.imageTinyPlanet);
                 String ename = mCurrentImage.getContext().getString(R.string.tinyplanet);
                 mUtilityPanel.setEffectName(ename);
                 if (!mDisableFilterButtons) {
