@@ -36,4 +36,8 @@
     <instrumentation android:name="com.android.gallery3d.stress.CameraStressTestRunner"
             android:targetPackage="com.android.gallery3d"
             android:label="Camera stress test runner"/>
+
+    <instrumentation android:name="com.android.photos.data.DataTestRunner"
+            android:targetPackage="com.android.gallery3d"
+            android:label="Tests for android photo DataProviders."/>
 </manifest>
