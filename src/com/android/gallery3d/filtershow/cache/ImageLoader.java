@@ -91,6 +91,7 @@ public class ImageLoader {
     public static final int ORI_TRANSPOSE = ExifInterface.ORIENTATION_TRANSPOSE;
     public static final int ORI_TRANSVERSE = ExifInterface.ORIENTATION_TRANSVERSE;
 
+    private static final int BITMAP_LOAD_BACKOUT_ATTEMPTS = 5;
     private Context mContext = null;
     private Uri mUri = null;
 
@@ -406,28 +407,97 @@ public class ImageLoader {
 
     public static Bitmap loadMutableBitmap(Context context, Uri sourceUri) {
         BitmapFactory.Options options = new BitmapFactory.Options();
+        return loadMutableBitmap(context, sourceUri, options);
+    }
+
+    public static Bitmap loadMutableBitmap(Context context, Uri sourceUri,
+            BitmapFactory.Options options) {
         // TODO: on <3.x we need a copy of the bitmap (inMutable doesn't
         // exist)
         options.inMutable = true;
 
-        InputStream is = null;
-        Bitmap bitmap = null;
-        try {
-            is = context.getContentResolver().openInputStream(sourceUri);
-            bitmap = BitmapFactory.decodeStream(is, null, options);
-        } catch (FileNotFoundException e) {
-            Log.w(LOGTAG, "could not load bitmap ", e);
-            is = null;
-            bitmap = null;
-        } finally {
-            Utils.closeSilently(is);
-        }
+        Bitmap bitmap = decodeUriWithBackouts(context, sourceUri, options);
         if (bitmap == null) {
             return null;
         }
         int orientation = ImageLoader.getOrientation(context, sourceUri);
         bitmap = ImageLoader.rotateToPortrait(bitmap, orientation);
         return bitmap;
+    }
+
+    public static Bitmap decodeUriWithBackouts(Context context, Uri sourceUri,
+            BitmapFactory.Options options) {
+        boolean noBitmap = true;
+        int num_tries = 0;
+        InputStream is = getInputStream(context, sourceUri);
+
+        if (options.inSampleSize < 1) {
+            options.inSampleSize = 1;
+        }
+        // Stopgap fix for low-memory devices.
+        Bitmap bmap = null;
+        while (noBitmap) {
+            if (is == null) {
+                return null;
+            }
+            try {
+                // Try to decode, downsample if low-memory.
+                bmap = BitmapFactory.decodeStream(is, null, options);
+                noBitmap = false;
+            } catch (java.lang.OutOfMemoryError e) {
+                // Try 5 times before failing for good.
+                if (++num_tries >= BITMAP_LOAD_BACKOUT_ATTEMPTS) {
+                    throw e;
+                }
+                is = null;
+                bmap = null;
+                System.gc();
+                is = getInputStream(context, sourceUri);
+                options.inSampleSize *= 2;
+            }
+        }
+        Utils.closeSilently(is);
+        return bmap;
+    }
+
+    private static InputStream getInputStream(Context context, Uri sourceUri) {
+        InputStream is = null;
+        try {
+            is = context.getContentResolver().openInputStream(sourceUri);
+        } catch (FileNotFoundException e) {
+            Log.w(LOGTAG, "could not load bitmap ", e);
+            Utils.closeSilently(is);
+            is = null;
+        }
+        return is;
+    }
+
+    public static Bitmap decodeResourceWithBackouts(Resources res, BitmapFactory.Options options,
+            int id) {
+        boolean noBitmap = true;
+        int num_tries = 0;
+        if (options.inSampleSize < 1) {
+            options.inSampleSize = 1;
+        }
+        // Stopgap fix for low-memory devices.
+        Bitmap bmap = null;
+        while (noBitmap) {
+            try {
+                // Try to decode, downsample if low-memory.
+                bmap = BitmapFactory.decodeResource(
+                        res, id, options);
+                noBitmap = false;
+            } catch (java.lang.OutOfMemoryError e) {
+                // Try 5 times before failing for good.
+                if (++num_tries >= BITMAP_LOAD_BACKOUT_ATTEMPTS) {
+                    throw e;
+                }
+                bmap = null;
+                System.gc();
+                options.inSampleSize *= 2;
+            }
+        }
+        return bmap;
     }
 
     public void returnFilteredResult(ImagePreset preset,
@@ -451,13 +521,36 @@ public class ImageLoader {
                 if (param == null || mUri == null) {
                     return null;
                 }
-                Bitmap bitmap = loadMutableBitmap(mContext, mUri);
-                if (bitmap == null) {
-                    Log.w(LOGTAG, "Failed to save image!");
-                    return null;
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                boolean noBitmap = true;
+                int num_tries = 0;
+                if (options.inSampleSize < 1) {
+                    options.inSampleSize = 1;
                 }
-                bitmap = param.applyGeometry(bitmap);
-                return param.apply(bitmap);
+                Bitmap bitmap = null;
+                // Stopgap fix for low-memory devices.
+                while (noBitmap) {
+                    try {
+                        // Try to do bitmap operations, downsample if low-memory
+                        bitmap = loadMutableBitmap(mContext, mUri, options);
+                        if (bitmap == null) {
+                            Log.w(LOGTAG, "Failed to save image!");
+                            return null;
+                        }
+                        bitmap = param.applyGeometry(bitmap);
+                        bitmap = param.apply(bitmap);
+                        noBitmap = false;
+                    } catch (java.lang.OutOfMemoryError e) {
+                        // Try 5 times before failing for good.
+                        if (++num_tries >= 5) {
+                            throw e;
+                        }
+                        bitmap = null;
+                        System.gc();
+                        options.inSampleSize *= 2;
+                    }
+                }
+                return bitmap;
             }
         };
 
