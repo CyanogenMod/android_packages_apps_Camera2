@@ -22,7 +22,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 
@@ -110,8 +109,6 @@ public class ImageStraighten extends ImageGeometry {
         RectF bounds = drawTransformed(canvas, image, gPaint, o);
 
         // Draw the grid
-        Path path = new Path();
-        path.addRect(bounds, Path.Direction.CCW);
         gPaint.setARGB(255, 255, 255, 255);
         gPaint.setStrokeWidth(3);
         gPaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -122,7 +119,7 @@ public class ImageStraighten extends ImageGeometry {
 
         if (mMode == MODES.MOVE) {
             canvas.save();
-            canvas.clipPath(path);
+            canvas.clipRect(bounds);
 
             int n = 16;
             float step = dWidth / n;
