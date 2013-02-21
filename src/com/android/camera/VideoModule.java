@@ -2216,7 +2216,6 @@ public class VideoModule implements CameraModule,
         initializeMiscControls();
         showTimeLapseUI(mCaptureTimeLapse);
         initializeVideoSnapshot();
-        resizeForPreviewAspectRatio();
 
         // from onResume()
         showVideoSnapshotUI(false);
@@ -2279,6 +2278,7 @@ public class VideoModule implements CameraModule,
     }
 
     private void updateOnScreenIndicators() {
+        if (mParameters == null) return;
         updateFlashOnScreenIndicator(mParameters.getFlashMode());
     }
 
@@ -2436,7 +2436,7 @@ public class VideoModule implements CameraModule,
     }
 
     private void initializeZoom() {
-        if (!mParameters.isZoomSupported()) return;
+        if (mParameters == null || !mParameters.isZoomSupported()) return;
         mZoomMax = mParameters.getMaxZoom();
         mZoomRatios = mParameters.getZoomRatios();
         // Currently we use immediate zoom for fast zooming to get better UX and
@@ -2448,6 +2448,7 @@ public class VideoModule implements CameraModule,
     }
 
     private void initializeVideoSnapshot() {
+        if (mParameters == null) return;
         if (Util.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
             mActivity.setSingleTapUpListener(mPreviewFrameLayout);
             // Show the tap to focus toast if this is the first start.
@@ -2462,6 +2463,7 @@ public class VideoModule implements CameraModule,
     }
 
     void showVideoSnapshotUI(boolean enabled) {
+        if (mParameters == null) return;
         if (Util.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
             if (ApiHelper.HAS_SURFACE_TEXTURE && enabled) {
                 ((CameraScreenNail) mActivity.mCameraScreenNail).animateCapture(mDisplayRotation);
