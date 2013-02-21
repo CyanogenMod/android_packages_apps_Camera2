@@ -21,20 +21,16 @@ import android.graphics.*;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.*;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.PanelController;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
-import com.android.gallery3d.filtershow.ui.SliderListener;
 
 import java.io.File;
 
