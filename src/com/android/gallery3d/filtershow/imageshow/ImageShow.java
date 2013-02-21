@@ -26,6 +26,7 @@ import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
 import android.widget.LinearLayout;
 
+import com.android.gallery3d.app.Log;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.PanelController;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
@@ -55,7 +56,7 @@ public class ImageShow extends View implements OnGestureListener,
     private ScaleGestureDetector mScaleGestureDetector = null;
 
     protected Rect mImageBounds = new Rect();
-
+    private boolean mOriginalDisabled = false;
     private boolean mTouchShowOriginal = false;
     private long mTouchShowOriginalDate = 0;
     private final long mTouchShowOriginalDelayMin = 200; // 200ms
@@ -503,6 +504,14 @@ public class ImageShow extends View implements OnGestureListener,
         return mScaleGestureDetector.isInProgress();
     }
 
+    protected boolean isOriginalDisabled() {
+        return mOriginalDisabled;
+    }
+
+    protected void setOriginalDisabled(boolean originalDisabled) {
+        mOriginalDisabled = originalDisabled;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
@@ -539,7 +548,7 @@ public class ImageShow extends View implements OnGestureListener,
                     translation.x = (int) (originalTranslation.x + translateX);
                     translation.y = (int) (originalTranslation.y + translateY);
                 }
-            } else if (!mActivity.isShowingHistoryPanel()
+            } else if (!mOriginalDisabled && !mActivity.isShowingHistoryPanel()
                     && (System.currentTimeMillis() - mTouchShowOriginalDate
                             > mTouchShowOriginalDelayMin)
                     && event.getPointerCount() == 1) {
@@ -593,6 +602,9 @@ public class ImageShow extends View implements OnGestureListener,
 
     @Override
     public boolean onFling(MotionEvent startEvent, MotionEvent endEvent, float arg2, float arg3) {
+        if (mActivity == null) {
+            return false;
+        }
         if ((!mActivity.isShowingHistoryPanel() && startEvent.getX() > endEvent.getX())
                 || (mActivity.isShowingHistoryPanel() && endEvent.getX() > startEvent.getX())) {
             if (!mTouchShowOriginal
