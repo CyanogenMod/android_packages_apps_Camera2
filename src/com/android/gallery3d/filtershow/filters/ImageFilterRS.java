@@ -43,9 +43,11 @@ public abstract class ImageFilterRS extends ImageFilter {
                 || (bitmap.getHeight() != sOldBitmap.getHeight())) {
             if (mInPixelsAllocation != null) {
                 mInPixelsAllocation.destroy();
+                mInPixelsAllocation = null;
             }
             if (mOutPixelsAllocation != null) {
                 mOutPixelsAllocation.destroy();
+                mOutPixelsAllocation = null;
             }
             Bitmap bitmapBuffer = bitmap.copy(mBitmapConfig, true);
             mOutPixelsAllocation = Allocation.createFromBitmap(mRS, bitmapBuffer,
