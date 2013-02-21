@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,40 +17,24 @@
 #include <math.h>
 #include "filters.h"
 
-unsigned char clamp(int c)
-{
-    int N = 255;
-    c &= ~(c >> 31);
-    c -= N;
-    c &= (c >> 31);
-    c += N;
-    return  (unsigned char) c;
-}
-
-int clampMax(int c,int max)
-{
-    c &= ~(c >> 31);
-    c -= max;
-    c &= (c >> 31);
-    c += max;
-    return  c;
-}
-
-void JNIFUNCF(ImageFilterContrast, nativeApplyFilter, jobject bitmap, jint width, jint height, jfloat bright)
-{
+void JNIFUNCF(ImageFilterHighlights, nativeApplyFilter, jobject bitmap,
+              jint width, jint height, jfloatArray luminanceMap){
     char* destination = 0;
     AndroidBitmap_lockPixels(env, bitmap, (void**) &destination);
     unsigned char * rgb = (unsigned char * )destination;
     int i;
     int len = width * height * 4;
-    float m =  (float)pow(2, bright/100.);
-    float c =  127-m*127;
+    jfloat* lum = (*env)->GetFloatArrayElements(env, luminanceMap,0);
+    unsigned short * hsv = (unsigned short *)malloc(3*sizeof(short));
 
-    for (i = 0; i < len; i+=4) {
-        rgb[RED]   = clamp((int)(m*rgb[RED]+c));
-        rgb[GREEN] = clamp((int)(m*rgb[GREEN]+c));
-        rgb[BLUE]  = clamp((int)(m*rgb[BLUE]+c));
+    for (i = 0; i < len; i+=4)
+    {
+        rgb2hsv(rgb,i,hsv,0);
+        int v = clampMax(hsv[0],4080);
+        hsv[0] = (unsigned short) clampMax(lum[((255*v)/4080)]*4080,4080);
+        hsv2rgb(hsv,0, rgb,i);
     }
+
+    free(hsv);
     AndroidBitmap_unlockPixels(env, bitmap);
 }
-

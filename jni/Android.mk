@@ -32,6 +32,7 @@ LOCAL_SRC_FILES := filters/gradient.c \
                    filters/contrast.c \
                    filters/hue.c \
                    filters/shadows.c \
+                   filters/highlight.c \
                    filters/hsv.c \
                    filters/vibrance.c \
                    filters/geometry.c \
