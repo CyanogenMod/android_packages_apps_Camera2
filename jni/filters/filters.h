@@ -44,6 +44,7 @@ typedef unsigned int Color;
 #define CLAMP(c) (MAX(0, MIN(255, c)))
 
 __inline__ unsigned char  clamp(int c);
+__inline__ int clampMax(int c,int max);
 
 extern void rgb2hsv( unsigned char *rgb,int rgbOff,unsigned short *hsv,int hsvOff);
 extern void hsv2rgb(unsigned short *hsv,int hsvOff,unsigned char  *rgb,int rgbOff);
