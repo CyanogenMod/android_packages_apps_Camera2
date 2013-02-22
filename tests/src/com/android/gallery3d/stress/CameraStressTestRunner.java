@@ -25,8 +25,8 @@ public class CameraStressTestRunner extends InstrumentationTestRunner {
 
     // Default recorder settings
     public static int mVideoDuration = 20000; // set default to 20 seconds
-    public static int mVideoIterations = 100; // set default to 100 videos
-    public static int mImageIterations = 100; // set default to 100 images
+    public static int mVideoIterations = 1; // set default to 1 video
+    public static int mImageIterations = 10; // set default to 10 images
 
     @Override
     public TestSuite getAllTests() {
