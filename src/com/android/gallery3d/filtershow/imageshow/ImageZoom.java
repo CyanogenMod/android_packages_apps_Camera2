@@ -49,9 +49,7 @@ public class ImageZoom extends ImageShow {
         mTouchDown = false;
     }
 
-    @Override
     public void onTouchDown(float x, float y) {
-        super.onTouchDown(x, y);
         if (mZoomedIn || mTouchDown) {
             return;
         }
@@ -81,7 +79,6 @@ public class ImageZoom extends ImageShow {
         invalidate();
     }
 
-    @Override
     public void onTouchUp() {
         mTouchDown = false;
     }
