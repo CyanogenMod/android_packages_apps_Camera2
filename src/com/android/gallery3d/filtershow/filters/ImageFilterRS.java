@@ -89,11 +89,6 @@ public abstract class ImageFilterRS extends ImageFilter {
             Log.e(LOGTAG, "Illegal argument? " + e);
         } catch (android.renderscript.RSRuntimeException e) {
             Log.e(LOGTAG, "RS runtime exception ? " + e);
-        } catch (java.lang.OutOfMemoryError e) {
-            // Many of the renderscript filters allocated large (>16Mb resources) in order to apply.
-            System.gc();
-            displayLowMemoryToast();
-            Log.e(LOGTAG, "not enough memory for filter " + getName(), e);
         }
         return bitmap;
     }
