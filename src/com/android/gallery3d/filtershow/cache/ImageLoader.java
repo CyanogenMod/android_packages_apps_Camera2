@@ -62,6 +62,8 @@ import java.io.OutputStream;
 import java.util.Vector;
 import java.util.concurrent.locks.ReentrantLock;
 
+
+// TODO: this class has waaaay to much bitmap copying.  Cleanup.
 public class ImageLoader {
 
     private static final String LOGTAG = "ImageLoader";
@@ -393,15 +395,13 @@ public class ImageLoader {
                 return bmp;
             }
             if (bmp != null) {
-                // TODO: this workaround for RS might not be needed ultimately
-                Bitmap bmp2 = bmp.copy(Bitmap.Config.ARGB_8888, true);
                 float scaleFactor = imagePreset.getScaleFactor();
                 imagePreset.setScaleFactor(1.0f);
-                bmp2 = imagePreset.apply(bmp2);
+                bmp = imagePreset.apply(bmp);
                 imagePreset.setScaleFactor(scaleFactor);
-                mZoomCache.setImage(imagePreset, bounds, bmp2);
+                mZoomCache.setImage(imagePreset, bounds, bmp);
                 mLoadingLock.unlock();
-                return bmp2;
+                return bmp;
             }
         }
         mLoadingLock.unlock();
