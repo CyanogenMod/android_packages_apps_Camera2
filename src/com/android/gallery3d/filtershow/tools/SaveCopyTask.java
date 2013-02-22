@@ -22,6 +22,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -173,37 +174,52 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         }
         ImagePreset preset = params[0];
         InputStream is = null;
-        try {
-            Bitmap bitmap = ImageLoader.loadMutableBitmap(context, sourceUri);
-            if (bitmap == null) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        boolean noBitmap = true;
+        int num_tries = 0;
+        // Stopgap fix for low-memory devices.
+        while(noBitmap) {
+            try {
+                // Try to do bitmap operations, downsample if low-memory
+                Bitmap bitmap = ImageLoader.loadMutableBitmap(context, sourceUri, options);
+                if (bitmap == null) {
+                    return null;
+                }
+                bitmap = preset.applyGeometry(bitmap);
+                bitmap = preset.apply(bitmap);
+
+                Object xmp = null;
+                if (preset.isPanoramaSafe()) {
+                    is = context.getContentResolver().openInputStream(sourceUri);
+                    xmp =  XmpUtilHelper.extractXMPMeta(is);
+                }
+                ExifData exif = getExifData(sourceUri);
+                if (exif != null) {
+                    exif.addDateTimeStampTag(ExifTag.TAG_DATE_TIME, System.currentTimeMillis(),
+                            TimeZone.getDefault());
+                    // Since the image has been modified, set the orientation to normal.
+                    exif.addTag(ExifTag.TAG_ORIENTATION).setValue(ExifTag.Orientation.TOP_LEFT);
+                }
+                saveBitmap(bitmap, this.destinationFile, xmp, exif);
+                bitmap.recycle();
+                noBitmap = false;
+            } catch (FileNotFoundException ex) {
+                Log.w(LOGTAG, "Failed to save image!", ex);
                 return null;
+            } catch (java.lang.OutOfMemoryError e) {
+                // Try 5 times before failing for good.
+                if (++num_tries >= 5) {
+                    throw e;
+                }
+                System.gc();
+                options.inSampleSize *= 2;
+            } finally {
+                Utils.closeSilently(is);
             }
-            bitmap = preset.applyGeometry(bitmap);
-            bitmap = preset.apply(bitmap);
-
-            Object xmp = null;
-            if (preset.isPanoramaSafe()) {
-                is = context.getContentResolver().openInputStream(sourceUri);
-                xmp =  XmpUtilHelper.extractXMPMeta(is);
-            }
-            ExifData exif = getExifData(sourceUri);
-            if (exif != null) {
-                exif.addDateTimeStampTag(ExifTag.TAG_DATE_TIME, System.currentTimeMillis(),
-                        TimeZone.getDefault());
-                // Since the image has been modified, set the orientation to normal.
-                exif.addTag(ExifTag.TAG_ORIENTATION).setValue(ExifTag.Orientation.TOP_LEFT);
-            }
-            saveBitmap(bitmap, this.destinationFile, xmp, exif);
-
-            Uri uri = insertContent(context, sourceUri, this.destinationFile, saveFileName);
-            bitmap.recycle();
-            return uri;
-        } catch (FileNotFoundException ex) {
-            Log.w(LOGTAG, "Failed to save image!", ex);
-            return null;
-        } finally {
-            Utils.closeSilently(is);
         }
+        Uri uri = insertContent(context, sourceUri, this.destinationFile, saveFileName);
+        return uri;
+
     }
 
     @Override
