@@ -31,7 +31,7 @@ import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class FilteringPipeline implements Handler.Callback {
 
-    private final static FilteringPipeline gPipeline = new FilteringPipeline();
+    private static FilteringPipeline sPipeline;
     private static final String LOGTAG = "FilteringPipeline";
     private ImagePreset mPreviousGeometryPreset = null;
     private ImagePreset mPreviousFiltersPreset = null;
@@ -117,7 +117,10 @@ public class FilteringPipeline implements Handler.Callback {
     }
 
     public static FilteringPipeline getPipeline() {
-        return gPipeline;
+        if (sPipeline == null) {
+            sPipeline = new FilteringPipeline();
+        }
+        return sPipeline;
     }
 
     public synchronized void setOriginal(Bitmap bitmap) {
@@ -336,5 +339,9 @@ public class FilteringPipeline implements Handler.Callback {
 
     public float getPreviewScaleFactor() {
         return mPreviewScaleFactor;
+    }
+
+    public static void reset() {
+        sPipeline = null;
     }
 }
