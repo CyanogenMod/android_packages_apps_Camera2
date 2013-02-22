@@ -21,28 +21,22 @@ import android.graphics.*;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.*;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
 import android.widget.LinearLayout;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.PanelController;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
-import com.android.gallery3d.filtershow.ui.SliderListener;
 
 import java.io.File;
 
 public class ImageShow extends View implements OnGestureListener,
         ScaleGestureDetector.OnScaleGestureListener,
-        OnDoubleTapListener,
-        SliderListener,
-        OnSeekBarChangeListener {
+        OnDoubleTapListener {
 
     private static final String LOGTAG = "ImageShow";
 
@@ -82,16 +76,10 @@ public class ImageShow extends View implements OnGestureListener,
         return new GeometryMetadata(getImagePreset().mGeoData);
     }
 
-    public void setGeometry(GeometryMetadata d) {
-        getImagePreset().mGeoData.set(d);
-    }
-
-    private boolean mShowControls = false;
     private String mToast = null;
     private boolean mShowToast = false;
     private boolean mImportantToast = false;
 
-    private SeekBar mSeekBar = null;
     private PanelController mController = null;
 
     private FilterShowActivity mActivity = null;
@@ -131,30 +119,9 @@ public class ImageShow extends View implements OnGestureListener,
     private final Handler mHandler = new Handler();
 
     public void select() {
-        if (mSeekBar != null) {
-            mSeekBar.setOnSeekBarChangeListener(this);
-        }
-    }
-
-    private int parameterToUI(int parameter, int minp, int maxp, int uimax) {
-        return (uimax * (parameter - minp)) / (maxp - minp);
-    }
-
-    private int uiToParameter(int ui, int minp, int maxp, int uimax) {
-        return ((maxp - minp) * ui) / uimax + minp;
-    }
-
-    public void updateSeekBar(int parameter, int minp, int maxp) {
-        if (mSeekBar == null) {
-            return;
-        }
-        int seekMax = mSeekBar.getMax();
-        int progress = parameterToUI(parameter, minp, maxp, seekMax);
-        mSeekBar.setProgress(progress);
     }
 
     public void unselect() {
-
     }
 
     public boolean hasModifications() {
@@ -176,7 +143,6 @@ public class ImageShow extends View implements OnGestureListener,
         return mController;
     }
 
-    @Override
     public void onNewValue(int parameter) {
         if (getImagePreset() != null) {
             getImagePreset().fillImageStateAdapter(MasterImage.getImage().getState());
@@ -190,17 +156,6 @@ public class ImageShow extends View implements OnGestureListener,
 
     public Point getTouchPoint() {
         return mTouch;
-    }
-
-    @Override
-    public void onTouchDown(float x, float y) {
-        mTouch.x = (int) x;
-        mTouch.y = (int) y;
-        invalidate();
-    }
-
-    @Override
-    public void onTouchUp() {
     }
 
     public ImageShow(Context context, AttributeSet attrs) {
@@ -229,10 +184,6 @@ public class ImageShow extends View implements OnGestureListener,
         int parentWidth = MeasureSpec.getSize(widthMeasureSpec);
         int parentHeight = MeasureSpec.getSize(heightMeasureSpec);
         setMeasuredDimension(parentWidth, parentHeight);
-    }
-
-    public void setSeekBar(SeekBar seekBar) {
-        mSeekBar = seekBar;
     }
 
     public ImageFilter getCurrentFilter() {
@@ -343,7 +294,7 @@ public class ImageShow extends View implements OnGestureListener,
         canvas.save();
         // TODO: center scale on gesture
         float cx = canvas.getWidth()/2.0f;
-        float cy = canvas.getWidth()/2.0f;
+        float cy = canvas.getHeight()/2.0f;
         float scaleFactor = MasterImage.getImage().getScaleFactor();
         Point translation = MasterImage.getImage().getTranslation();
         canvas.scale(scaleFactor, scaleFactor, cx, cy);
@@ -474,28 +425,6 @@ public class ImageShow extends View implements OnGestureListener,
         } else {
             canvas.drawColor(mBackgroundColor);
         }
-    }
-
-    public ImageShow setShowControls(boolean value) {
-        mShowControls = value;
-        if (mShowControls) {
-            if (mSeekBar != null) {
-                mSeekBar.setVisibility(View.VISIBLE);
-            }
-        } else {
-            if (mSeekBar != null) {
-                mSeekBar.setVisibility(View.INVISIBLE);
-            }
-        }
-        return this;
-    }
-
-    public boolean showControls() {
-        return mShowControls;
-    }
-
-    public boolean showHires() {
-        return true;
     }
 
     public boolean showTitle() {
@@ -636,48 +565,6 @@ public class ImageShow extends View implements OnGestureListener,
     // listview stuff
     public void showOriginal(boolean show) {
         invalidate();
-    }
-
-    public float getImageRotation() {
-        return getImagePreset().mGeoData.getRotation();
-    }
-
-    public float getImageRotationZoomFactor() {
-        return getImagePreset().mGeoData.getScaleFactor();
-    }
-
-    public void setImageRotation(float r) {
-        getImagePreset().mGeoData.setRotation(r);
-    }
-
-    public void setImageRotationZoomFactor(float f) {
-        getImagePreset().mGeoData.setScaleFactor(f);
-    }
-
-    public void setImageRotation(float imageRotation,
-            float imageRotationZoomFactor) {
-        float r = getImageRotation();
-        if (imageRotation != r) {
-            invalidate();
-        }
-        setImageRotation(imageRotation);
-        setImageRotationZoomFactor(imageRotationZoomFactor);
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar arg0, int progress, boolean arg2) {
-        int parameter = progress;
-        onNewValue(parameter);
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar arg0) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar arg0) {
-        // TODO Auto-generated method stub
     }
 
     @Override

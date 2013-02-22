@@ -42,6 +42,7 @@ public class BaseFiltersManager {
         filters.add(new ImageFilterVignette());
         filters.add(new ImageFilterContrast());
         filters.add(new ImageFilterShadows());
+        filters.add(new ImageFilterHighlights());
         filters.add(new ImageFilterVibrance());
         filters.add(new ImageFilterSharpen());
         filters.add(new ImageFilterCurves());
@@ -89,6 +90,7 @@ public class BaseFiltersManager {
         representations.add(getRepresentation(ImageFilterVignette.class));
         representations.add(getRepresentation(ImageFilterContrast.class));
         representations.add(getRepresentation(ImageFilterShadows.class));
+        representations.add(getRepresentation(ImageFilterHighlights.class));
         representations.add(getRepresentation(ImageFilterVibrance.class));
         representations.add(getRepresentation(ImageFilterSharpen.class));
         representations.add(getRepresentation(ImageFilterCurves.class));
