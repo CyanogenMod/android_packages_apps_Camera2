@@ -59,6 +59,8 @@
     <string name="wbalance" msgid="6346581563387083613">"צבע אוטומטי"</string>
     <string name="hue" msgid="6231252147971086030">"גוון"</string>
     <string name="shadow_recovery" msgid="3928572915300287152">"צלליות"</string>
+    <!-- no translation found for highlight_recovery (8262208470735204243) -->
+    <skip />
     <string name="curvesRGB" msgid="915010781090477550">"קימורים"</string>
     <string name="vignette" msgid="934721068851885390">"עמעום קצוות"</string>
     <string name="redeye" msgid="4508883127049472069">"עיניים אדומות"</string>
