@@ -59,6 +59,8 @@
     <string name="wbalance" msgid="6346581563387083613">"Coloration auto"</string>
     <string name="hue" msgid="6231252147971086030">"Teinte"</string>
     <string name="shadow_recovery" msgid="3928572915300287152">"Ombres"</string>
+    <!-- no translation found for highlight_recovery (8262208470735204243) -->
+    <skip />
     <string name="curvesRGB" msgid="915010781090477550">"Courbes"</string>
     <string name="vignette" msgid="934721068851885390">"Vignetage"</string>
     <string name="redeye" msgid="4508883127049472069">"Yeux rouges"</string>

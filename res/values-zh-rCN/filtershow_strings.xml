@@ -59,6 +59,8 @@
     <string name="wbalance" msgid="6346581563387083613">"自动调整色彩"</string>
     <string name="hue" msgid="6231252147971086030">"色调"</string>
     <string name="shadow_recovery" msgid="3928572915300287152">"阴影"</string>
+    <!-- no translation found for highlight_recovery (8262208470735204243) -->
+    <skip />
     <string name="curvesRGB" msgid="915010781090477550">"曲线"</string>
     <string name="vignette" msgid="934721068851885390">"晕影"</string>
     <string name="redeye" msgid="4508883127049472069">"红眼"</string>
