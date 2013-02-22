@@ -1002,4 +1002,12 @@ CHAR LIMIT = NONE] -->
     <!-- Positive answer for first run dialog asking if the user wants to remember photo locations [CHAR LIMIT = 20] -->
     <string name="remember_location_yes">Yes</string>
 
+    <!-- Menu item to launch the camera app [CHAR LIMIT=25] -->
+    <string name="menu_camera">Camera</string>
+    <!-- Menu item to search for photos [CHAR LIMIT=25] -->
+    <string name="menu_search">Search</string>
+    <!-- Title for the all photos tab [CHAR LIMIT=25] -->
+    <string name="tab_photos">Photos</string>
+    <!-- Title for the albums tab [CHAR LIMIT=25] -->
+    <string name="tab_albums">Albums</string>
 </resources>
