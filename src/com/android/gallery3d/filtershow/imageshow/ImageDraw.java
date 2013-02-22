@@ -27,11 +27,13 @@ public class ImageDraw extends ImageShow {
     public ImageDraw(Context context, AttributeSet attrs) {
         super(context, attrs);
         resetParameter();
+        super.setOriginalDisabled(true);
     }
 
     public ImageDraw(Context context) {
         super(context);
         resetParameter();
+        super.setOriginalDisabled(true);
     }
 
     public void setEditor(EditorDraw editorDraw) {
@@ -82,27 +84,32 @@ public class ImageDraw extends ImageShow {
     float[] mTmpPoint = new float[2]; // so we do not malloc
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        super.onTouchEvent(event);
-
-        if (event.getPointerCount() != 1) {
-            return true;
+        boolean ret = super.onTouchEvent(event);
+        if (event.getPointerCount() > 1) {
+            if (mFRep.getCurrentDrawing() != null) {
+                mFRep.clearCurrentSection();
+                mEditorDraw.commitLocalRepresentation();
+            }
+            return ret;
         }
-
-        if (didFinishScalingOperation()) {
-            return true;
+        if (event.getAction() != MotionEvent.ACTION_DOWN) {
+            if (mFRep.getCurrentDrawing() == null) {
+                return ret;
+            }
         }
 
         ImageFilterDraw filter = (ImageFilterDraw) getCurrentFilter();
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            calcScreenMapping();
             mTmpPoint[0] = event.getX();
             mTmpPoint[1] = event.getY();
             mToOrig.mapPoints(mTmpPoint);
             mFRep.startNewSection(mType, mCurrentColor, mCurrentSize, mTmpPoint[0], mTmpPoint[1]);
-
         }
 
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
+
             int historySize = event.getHistorySize();
             final int pointerCount = event.getPointerCount();
             for (int h = 0; h < historySize; h++) {
@@ -127,19 +134,10 @@ public class ImageDraw extends ImageShow {
         return true;
     }
 
-    Matrix mRotateToScreen;
-    Matrix mToScreen;
-    Matrix mToOrig = new Matrix();
+    Matrix mRotateToScreen = new Matrix();
+    Matrix mToOrig;
     private void calcScreenMapping() {
-
-        GeometryMetadata geo = getImagePreset().mGeoData;
-        mToScreen = geo.getOriginalToScreen(false,
-                mImageLoader.getOriginalBounds().width(),
-                mImageLoader.getOriginalBounds().height(), getWidth(), getHeight());
-        mRotateToScreen = geo.getOriginalToScreen(true,
-                mImageLoader.getOriginalBounds().width(),
-                mImageLoader.getOriginalBounds().height(), getWidth(), getHeight());
-        mRotateToScreen.invert(mToOrig);
+        mToOrig = getScreenToImageMatrix(true);
         mToOrig.invert(mRotateToScreen);
     }
 
