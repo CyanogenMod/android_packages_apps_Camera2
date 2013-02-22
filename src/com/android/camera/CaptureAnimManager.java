@@ -33,9 +33,9 @@ public class CaptureAnimManager {
     // times mark endpoint of animation phase
     private static final int TIME_FLASH = 200;
     private static final int TIME_HOLD = 400;
-    private static final int TIME_SLIDE = 700;
-    private static final int TIME_HOLD2 = 1000;
-    private static final int TIME_SLIDE2 = 1200;
+    private static final int TIME_SLIDE = 800;
+    private static final int TIME_HOLD2 = 3300;
+    private static final int TIME_SLIDE2 = 4100;
 
     private static final int ANIM_BOTH = 0;
     private static final int ANIM_FLASH = 1;
