@@ -16,9 +16,7 @@
 
 package com.android.gallery3d.filtershow.imageshow;
 
-import android.graphics.Bitmap;
-import android.graphics.Point;
-import android.graphics.RectF;
+import android.graphics.*;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
@@ -45,6 +43,7 @@ public class MasterImage implements RenderingRequestCaller {
 
     private Bitmap mGeometryOnlyBitmap = null;
     private Bitmap mFiltersOnlyBitmap = null;
+    private Bitmap mPartialBitmap = null;
 
     private ImageLoader mLoader = null;
     private HistoryAdapter mHistory = null;
@@ -61,6 +60,8 @@ public class MasterImage implements RenderingRequestCaller {
     private float mScaleFactor = 1.0f;
     private Point mTranslation = new Point();
     private Point mOriginalTranslation = new Point();
+
+    private Point mImageShowSize = new Point();
 
     private MasterImage() {
     }
@@ -193,6 +194,10 @@ public class MasterImage implements RenderingRequestCaller {
         return mGeometryOnlyBitmap;
     }
 
+    public Bitmap getPartialImage() {
+        return mPartialBitmap;
+    }
+
     public void notifyObservers() {
         for (ImageShow observer : mObservers) {
             observer.invalidate();
@@ -221,6 +226,7 @@ public class MasterImage implements RenderingRequestCaller {
             }
         }
         invalidatePreview();
+        needsUpdateFullResPreview();
         mActivity.enableSave(hasModifications());
     }
 
@@ -237,9 +243,65 @@ public class MasterImage implements RenderingRequestCaller {
         updatePresets(false);
     }
 
+    public void invalidatePartialPreview() {
+        if (mPartialBitmap != null) {
+            mPartialBitmap = null;
+            notifyObservers();
+        }
+    }
+
     public void invalidatePreview() {
         mFilteredPreview.invalidate();
+        invalidatePartialPreview();
+        needsUpdateFullResPreview();
         FilteringPipeline.getPipeline().updatePreviewBuffer();
+    }
+
+    public void setImageShowSize(int w, int h) {
+        if (mImageShowSize.x != w || mImageShowSize.y != h) {
+            mImageShowSize.set(w, h);
+            needsUpdateFullResPreview();
+        }
+    }
+
+    private Matrix getImageToScreenMatrix(boolean reflectRotation) {
+        GeometryMetadata geo = mPreset.mGeoData;
+        if (geo == null || mLoader == null
+                || mLoader.getOriginalBounds() == null
+                || mImageShowSize.x == 0) {
+            return new Matrix();
+        }
+        Matrix m = geo.getOriginalToScreen(reflectRotation,
+                mLoader.getOriginalBounds().width(),
+                mLoader.getOriginalBounds().height(), mImageShowSize.x, mImageShowSize.y);
+        Point translate = getTranslation();
+        float scaleFactor = getScaleFactor();
+        m.postTranslate(translate.x, translate.y);
+        m.postScale(scaleFactor, scaleFactor, mImageShowSize.x/2.0f, mImageShowSize.y/2.0f);
+        return m;
+    }
+
+    private Matrix getScreenToImageMatrix(boolean reflectRotation) {
+        Matrix m = getImageToScreenMatrix(reflectRotation);
+        Matrix invert = new Matrix();
+        m.invert(invert);
+        return invert;
+    }
+
+    public void needsUpdateFullResPreview() {
+        if (!mPreset.canDoPartialRendering()) {
+            invalidatePartialPreview();
+            return;
+        }
+        Matrix m = getScreenToImageMatrix(true);
+        RectF r = new RectF(0, 0, mImageShowSize.x, mImageShowSize.y);
+        RectF dest = new RectF();
+        m.mapRect(dest, r);
+        Rect bounds = new Rect();
+        dest.roundOut(bounds);
+        RenderingRequest.post(null, mPreset, RenderingRequest.PARTIAL_RENDERING,
+                this, bounds, new Rect(0, 0, mImageShowSize.x, mImageShowSize.y));
+        invalidatePartialPreview();
     }
 
     @Override
@@ -252,6 +314,10 @@ public class MasterImage implements RenderingRequestCaller {
         }
         if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
             mFiltersOnlyBitmap = request.getBitmap();
+        }
+        if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
+            mPartialBitmap = request.getBitmap();
+            notifyObservers();
         }
     }
 
@@ -275,6 +341,7 @@ public class MasterImage implements RenderingRequestCaller {
 
     public void setScaleFactor(float scaleFactor) {
         mScaleFactor = scaleFactor;
+        needsUpdateFullResPreview();
     }
 
     public Point getTranslation() {
@@ -282,7 +349,9 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public void setTranslation(Point translation) {
-        mTranslation = translation;
+        mTranslation.x = translation.x;
+        mTranslation.y = translation.y;
+        needsUpdateFullResPreview();
     }
 
     public Point getOriginalTranslation() {
@@ -297,5 +366,6 @@ public class MasterImage implements RenderingRequestCaller {
     public void resetTranslation() {
         mTranslation.x = 0;
         mTranslation.y = 0;
+        needsUpdateFullResPreview();
     }
 }

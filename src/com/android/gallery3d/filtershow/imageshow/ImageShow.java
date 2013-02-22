@@ -21,15 +21,16 @@ import android.graphics.*;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.*;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
 import android.widget.LinearLayout;
 
-import com.android.gallery3d.app.Log;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.PanelController;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.cache.RenderingRequestCaller;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
@@ -229,6 +230,10 @@ public class ImageShow extends View implements OnGestureListener,
      */
     protected Matrix getImageToScreenMatrix(boolean reflectRotation) {
         GeometryMetadata geo = getImagePreset().mGeoData;
+        if (geo == null || mImageLoader == null
+                || mImageLoader.getOriginalBounds() == null) {
+            return new Matrix();
+        }
         Matrix m = geo.getOriginalToScreen(reflectRotation,
                 mImageLoader.getOriginalBounds().width(),
                 mImageLoader.getOriginalBounds().height(), getWidth(), getHeight());
@@ -291,7 +296,7 @@ public class ImageShow extends View implements OnGestureListener,
 
     @Override
     public void onDraw(Canvas canvas) {
-
+        MasterImage.getImage().setImageShowSize(getWidth(), getHeight());
         canvas.save();
         // TODO: center scale on gesture
         float cx = canvas.getWidth()/2.0f;
@@ -315,6 +320,12 @@ public class ImageShow extends View implements OnGestureListener,
                     1.5f * mTextPadding, mPaint);
         }
 
+        Bitmap partialPreview = MasterImage.getImage().getPartialImage();
+        if (partialPreview != null) {
+            Rect src = new Rect(0, 0, partialPreview.getWidth(), partialPreview.getHeight());
+            Rect dest = new Rect(0, 0, getWidth(), getHeight());
+            canvas.drawBitmap(partialPreview, src, dest, mPaint);
+        }
         drawToast(canvas);
     }
 
@@ -547,6 +558,7 @@ public class ImageShow extends View implements OnGestureListener,
                     Point translation = MasterImage.getImage().getTranslation();
                     translation.x = (int) (originalTranslation.x + translateX);
                     translation.y = (int) (originalTranslation.y + translateY);
+                    MasterImage.getImage().setTranslation(translation);
                 }
             } else if (!mOriginalDisabled && !mActivity.isShowingHistoryPanel()
                     && (System.currentTimeMillis() - mTouchShowOriginalDate
@@ -682,4 +694,5 @@ public class ImageShow extends View implements OnGestureListener,
         }
         return false;
     }
+
 }

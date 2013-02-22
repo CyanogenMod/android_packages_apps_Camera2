@@ -375,11 +375,13 @@ public class PanelController implements OnClickListener {
         ImageShow image = null;
         mActivity.hideImageViews();
         for (View view : mImageViews) {
+            image = (ImageShow) view;
             if (view.getId() == id) {
                 view.setVisibility(View.VISIBLE);
-                image = (ImageShow) view;
+                image.select();
             } else {
                 view.setVisibility(View.GONE);
+                image.unselect();
             }
         }
         return image;
@@ -498,7 +500,7 @@ public class PanelController implements OnClickListener {
         }
         mUtilityPanel.hideAccessoryViews();
 
-        if (view instanceof FilterIconButton) {
+        if (view instanceof FilterIconButton && view.getId() != R.id.applyEffect) {
             mCurrentEditor = null;
             FilterIconButton component = (FilterIconButton) view;
             FilterRepresentation representation = component.getFilterRepresentation();
@@ -555,8 +557,8 @@ public class PanelController implements OnClickListener {
                 if (mCurrentImage instanceof ImageCrop && mUtilityPanel.firstTimeCropDisplayed) {
                     ((ImageCrop) mCurrentImage).clear();
                     mUtilityPanel.firstTimeCropDisplayed = false;
+                    ((ImageCrop) mCurrentImage).setFixedAspect(mFixedAspect);
                 }
-                ((ImageCrop) mCurrentImage).setFixedAspect(mFixedAspect);
                 break;
             }
             case R.id.rotateButton: {

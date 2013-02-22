@@ -19,6 +19,7 @@ public class ImageFilterNegative extends ImageFilter {
         representation.setShowEditingControls(false);
         representation.setShowParameterValue(false);
         representation.setEditorId(ImageOnlyEditor.ID);
+        representation.setSupportsPartialRendering(true);
         return representation;
     }
 
