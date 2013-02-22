@@ -45,7 +45,7 @@
     <string name="aspect5to7_effect" msgid="5122395569059384741">"5:7"</string>
     <string name="aspect7to5_effect" msgid="5780001758108328143">"7:5"</string>
     <string name="aspect9to16_effect" msgid="7740468012919660728">"16:9"</string>
-    <string name="aspectNone_effect" msgid="6263330561046574134">"Оригинал"</string>
+    <string name="aspectNone_effect" msgid="6263330561046574134">"Вручную"</string>
     <!-- no translation found for aspectOriginal_effect (5678516555493036594) -->
     <skip />
     <string name="Fixed" msgid="8017376448916924565">"Постоянное"</string>
@@ -59,6 +59,8 @@
     <string name="wbalance" msgid="6346581563387083613">"Авторежим"</string>
     <string name="hue" msgid="6231252147971086030">"Оттенок"</string>
     <string name="shadow_recovery" msgid="3928572915300287152">"Тени"</string>
+    <!-- no translation found for highlight_recovery (8262208470735204243) -->
+    <skip />
     <string name="curvesRGB" msgid="915010781090477550">"Кривые"</string>
     <string name="vignette" msgid="934721068851885390">"Виньет-ние"</string>
     <string name="redeye" msgid="4508883127049472069">"Красные глаза"</string>
