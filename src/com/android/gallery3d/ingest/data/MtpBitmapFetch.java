@@ -25,19 +25,14 @@ import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
 import com.android.camera.Exif;
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.BitmapPool;
-
-import java.util.ArrayList;
+import com.android.photos.data.GalleryBitmapPool;
 
 public class MtpBitmapFetch {
-    private static final int BITMAP_POOL_SIZE = 32;
-    private static BitmapPool sThumbnailPool = new BitmapPool(BITMAP_POOL_SIZE);
     private static int sMaxSize = 0;
 
     public static void recycleThumbnail(Bitmap b) {
         if (b != null) {
-            sThumbnailPool.recycle(b);
+            GalleryBitmapPool.getInstance().put(b);
         }
     }
 
@@ -48,7 +43,7 @@ public class MtpBitmapFetch {
         o.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, o);
         if (o.outWidth == 0 || o.outHeight == 0) return null;
-        o.inBitmap = sThumbnailPool.getBitmap(o.outWidth, o.outHeight);
+        o.inBitmap = GalleryBitmapPool.getInstance().get(o.outWidth, o.outHeight);
         o.inMutable = true;
         o.inJustDecodeBounds = false;
         o.inSampleSize = 1;
@@ -84,10 +79,6 @@ public class MtpBitmapFetch {
         if (created == null) return null;
 
         return new BitmapWithMetadata(created, Exif.getOrientation(imageBytes));
-    }
-
-    public static void onDeviceDisconnected(MtpDevice device) {
-        sThumbnailPool.clear();
     }
 
     public static void configureForContext(Context context) {
