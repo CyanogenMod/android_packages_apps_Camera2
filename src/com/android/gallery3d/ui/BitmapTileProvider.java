@@ -21,7 +21,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 
 import com.android.gallery3d.common.BitmapUtils;
-import com.android.gallery3d.data.BitmapPool;
+import com.android.photos.data.GalleryBitmapPool;
 
 import java.util.ArrayList;
 
@@ -71,12 +71,11 @@ public class BitmapTileProvider implements TileImageView.TileSource {
     }
 
     @Override
-    public Bitmap getTile(int level, int x, int y, int tileSize,
-            BitmapPool pool) {
+    public Bitmap getTile(int level, int x, int y, int tileSize) {
         x >>= level;
         y >>= level;
 
-        Bitmap result = pool == null ? null : pool.getBitmap();
+        Bitmap result = GalleryBitmapPool.getInstance().get(tileSize, tileSize);
         if (result == null) {
             result = Bitmap.createBitmap(tileSize, tileSize, mConfig);
         } else {

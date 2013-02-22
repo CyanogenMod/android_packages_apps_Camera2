@@ -26,7 +26,7 @@ import android.graphics.Rect;
 
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.BitmapPool;
+import com.android.photos.data.GalleryBitmapPool;
 
 public class TileImageViewAdapter implements TileImageView.TileSource {
     private static final String TAG = "TileImageViewAdapter";
@@ -84,7 +84,7 @@ public class TileImageViewAdapter implements TileImageView.TileSource {
     // (44, 44, 256, 256) from the original photo and down sample it to 106.
     @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
     @Override
-    public Bitmap getTile(int level, int x, int y, int tileSize, BitmapPool pool) {
+    public Bitmap getTile(int level, int x, int y, int tileSize) {
         if (!ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER) {
             return getTileWithoutReusingBitmap(level, x, y, tileSize);
         }
@@ -106,7 +106,7 @@ public class TileImageViewAdapter implements TileImageView.TileSource {
                     .contains(wantRegion);
         }
 
-        Bitmap bitmap = pool == null ? null : pool.getBitmap();
+        Bitmap bitmap = GalleryBitmapPool.getInstance().get(tileSize, tileSize);
         if (bitmap != null) {
             if (needClear) bitmap.eraseColor(0);
         } else {
@@ -126,7 +126,7 @@ public class TileImageViewAdapter implements TileImageView.TileSource {
             }
         } finally {
             if (options.inBitmap != bitmap && options.inBitmap != null) {
-                if (pool != null) pool.recycle(options.inBitmap);
+                GalleryBitmapPool.getInstance().put(options.inBitmap);
                 options.inBitmap = null;
             }
         }

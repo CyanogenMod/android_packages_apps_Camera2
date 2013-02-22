@@ -27,8 +27,8 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.DataSourceType;
+import com.android.photos.data.GalleryBitmapPool;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
@@ -41,7 +41,8 @@ public class AlbumLabelMaker {
     private final Context mContext;
 
     private int mLabelWidth;
-    private BitmapPool mBitmapPool;
+    private int mBitmapWidth;
+    private int mBitmapHeight;
 
     private final LazyLoadedBitmap mLocalSetIcon;
     private final LazyLoadedBitmap mPicasaIcon;
@@ -109,8 +110,8 @@ public class AlbumLabelMaker {
         if (mLabelWidth == width) return;
         mLabelWidth = width;
         int borders = 2 * BORDER_SIZE;
-        mBitmapPool = new BitmapPool(
-                width + borders, mSpec.labelBackgroundHeight + borders, 16);
+        mBitmapWidth = width + borders;
+        mBitmapHeight = mSpec.labelBackgroundHeight + borders;
     }
 
     public ThreadPool.Job<Bitmap> requestLabel(
@@ -152,7 +153,7 @@ public class AlbumLabelMaker {
 
             synchronized (this) {
                 labelWidth = mLabelWidth;
-                bitmap = mBitmapPool.getBitmap();
+                bitmap = GalleryBitmapPool.getInstance().get(mBitmapWidth, mBitmapHeight);
             }
 
             if (bitmap == null) {
@@ -200,10 +201,6 @@ public class AlbumLabelMaker {
     }
 
     public void recycleLabel(Bitmap label) {
-        mBitmapPool.recycle(label);
-    }
-
-    public void clearRecycledLabels() {
-        if (mBitmapPool != null) mBitmapPool.clear();
+        GalleryBitmapPool.getInstance().put(label);
     }
 }

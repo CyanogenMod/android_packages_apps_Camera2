@@ -27,10 +27,9 @@ import android.util.FloatMath;
 import android.view.WindowManager;
 
 import com.android.gallery3d.app.GalleryContext;
-import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.DecodeUtils;
+import com.android.photos.data.GalleryBitmapPool;
 import com.android.gallery3d.glrenderer.GLCanvas;
 import com.android.gallery3d.glrenderer.UploadedTexture;
 import com.android.gallery3d.util.Future;
@@ -49,8 +48,6 @@ public class TileImageView extends GLView {
 
     // TILE_SIZE must be 2^N
     private static int sTileSize;
-
-    private static BitmapPool sTilePool;
 
     /*
      *  This is the tile state in the CPU side.
@@ -143,8 +140,7 @@ public class TileImageView extends GLView {
         // still refers to the coordinate on the original image.
         //
         // The method would be called in another thread.
-        public Bitmap getTile(int level, int x, int y, int tileSize,
-                BitmapPool pool);
+        public Bitmap getTile(int level, int x, int y, int tileSize);
     }
 
     public static boolean isHighResolution(Context context) {
@@ -164,10 +160,6 @@ public class TileImageView extends GLView {
             } else {
                 sTileSize = 256;
             }
-            sTilePool =
-                    ApiHelper.HAS_REUSING_BITMAP_IN_BITMAP_REGION_DECODER
-                    ? new BitmapPool(sTileSize, sTileSize, 128)
-                    : null;
         }
     }
 
@@ -399,7 +391,6 @@ public class TileImageView extends GLView {
             }
         }
         setScreenNail(null);
-        if (sTilePool != null) sTilePool.clear();
     }
 
     public void prepareTextures() {
@@ -508,7 +499,7 @@ public class TileImageView extends GLView {
             if (tile.mTileState == STATE_RECYCLING) {
                 tile.mTileState = STATE_RECYCLED;
                 if (tile.mDecodedTile != null) {
-                    if (sTilePool != null) sTilePool.recycle(tile.mDecodedTile);
+                    GalleryBitmapPool.getInstance().put(tile.mDecodedTile);
                     tile.mDecodedTile = null;
                 }
                 mRecycledQueue.push(tile);
@@ -536,7 +527,7 @@ public class TileImageView extends GLView {
         }
         tile.mTileState = STATE_RECYCLED;
         if (tile.mDecodedTile != null) {
-            if (sTilePool != null) sTilePool.recycle(tile.mDecodedTile);
+            GalleryBitmapPool.getInstance().put(tile.mDecodedTile);
             tile.mDecodedTile = null;
         }
         mRecycledQueue.push(tile);
@@ -675,7 +666,7 @@ public class TileImageView extends GLView {
 
         @Override
         protected void onFreeBitmap(Bitmap bitmap) {
-            if (sTilePool != null) sTilePool.recycle(bitmap);
+            GalleryBitmapPool.getInstance().put(bitmap);
         }
 
         boolean decode() {
@@ -683,7 +674,7 @@ public class TileImageView extends GLView {
             // by (1 << mTilelevel) from a region in the original image.
             try {
                 mDecodedTile = DecodeUtils.ensureGLCompatibleBitmap(mModel.getTile(
-                        mTileLevel, mX, mY, sTileSize, sTilePool));
+                        mTileLevel, mX, mY, sTileSize));
             } catch (Throwable t) {
                 Log.w(TAG, "fail to decode tile", t);
             }
