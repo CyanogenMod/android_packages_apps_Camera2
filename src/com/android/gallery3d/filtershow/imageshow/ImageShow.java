@@ -343,7 +343,7 @@ public class ImageShow extends View implements OnGestureListener,
         canvas.save();
         // TODO: center scale on gesture
         float cx = canvas.getWidth()/2.0f;
-        float cy = canvas.getWidth()/2.0f;
+        float cy = canvas.getHeight()/2.0f;
         float scaleFactor = MasterImage.getImage().getScaleFactor();
         Point translation = MasterImage.getImage().getTranslation();
         canvas.scale(scaleFactor, scaleFactor, cx, cy);
