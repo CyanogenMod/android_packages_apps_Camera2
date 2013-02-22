@@ -82,8 +82,14 @@ public class ImageDraw extends ImageShow {
     float[] mTmpPoint = new float[2]; // so we do not malloc
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
+
         if (event.getPointerCount() != 1) {
-            return false;
+            return true;
+        }
+
+        if (didFinishScalingOperation()) {
+            return true;
         }
 
         ImageFilterDraw filter = (ImageFilterDraw) getCurrentFilter();
@@ -95,6 +101,7 @@ public class ImageDraw extends ImageShow {
             mFRep.startNewSection(mType, mCurrentColor, mCurrentSize, mTmpPoint[0], mTmpPoint[1]);
 
         }
+
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
             int historySize = event.getHistorySize();
             final int pointerCount = event.getPointerCount();
@@ -108,6 +115,7 @@ public class ImageDraw extends ImageShow {
                 }
             }
         }
+
         if (event.getAction() == MotionEvent.ACTION_UP) {
             mTmpPoint[0] = event.getX();
             mTmpPoint[1] = event.getY();

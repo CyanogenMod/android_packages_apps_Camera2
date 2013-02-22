@@ -17,22 +17,14 @@
 package com.android.gallery3d.filtershow.imageshow;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.GestureDetector;
+import android.view.*;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -47,6 +39,7 @@ import com.android.gallery3d.filtershow.ui.SliderListener;
 import java.io.File;
 
 public class ImageShow extends View implements OnGestureListener,
+        ScaleGestureDetector.OnScaleGestureListener,
         OnDoubleTapListener,
         SliderListener,
         OnSeekBarChangeListener {
@@ -65,6 +58,7 @@ public class ImageShow extends View implements OnGestureListener,
     private static int mBackgroundColor = Color.RED;
 
     private GestureDetector mGestureDetector = null;
+    private ScaleGestureDetector mScaleGestureDetector = null;
 
     protected Rect mImageBounds = new Rect();
 
@@ -76,10 +70,9 @@ public class ImageShow extends View implements OnGestureListener,
     private static int UNVEIL_HORIZONTAL = 1;
     private static int UNVEIL_VERTICAL = 2;
 
-    private int mTouchDownX = 0;
-    private int mTouchDownY = 0;
-    protected float mTouchX = 0;
-    protected float mTouchY = 0;
+    private Point mTouchDown = new Point();
+    private Point mTouch = new Point();
+    private boolean mFinishedScalingOperation = false;
 
     private static int mOriginalTextMargin = 8;
     private static int mOriginalTextSize = 26;
@@ -195,10 +188,14 @@ public class ImageShow extends View implements OnGestureListener,
         mActivity.enableSave(hasModifications());
     }
 
+    public Point getTouchPoint() {
+        return mTouch;
+    }
+
     @Override
     public void onTouchDown(float x, float y) {
-        mTouchX = x;
-        mTouchY = y;
+        mTouch.x = (int) x;
+        mTouch.y = (int) y;
         invalidate();
     }
 
@@ -224,6 +221,7 @@ public class ImageShow extends View implements OnGestureListener,
 
     public void setupGestureDetector(Context context) {
         mGestureDetector = new GestureDetector(context, this);
+        mScaleGestureDetector = new ScaleGestureDetector(context, this);
     }
 
     @Override
@@ -282,6 +280,10 @@ public class ImageShow extends View implements OnGestureListener,
         Matrix m = geo.getOriginalToScreen(reflectRotation,
                 mImageLoader.getOriginalBounds().width(),
                 mImageLoader.getOriginalBounds().height(), getWidth(), getHeight());
+        Point translate = MasterImage.getImage().getTranslation();
+        float scaleFactor = MasterImage.getImage().getScaleFactor();
+        m.postTranslate(translate.x, translate.y);
+        m.postScale(scaleFactor, scaleFactor, getWidth()/2.0f, getHeight()/2.0f);
         return m;
     }
 
@@ -337,8 +339,18 @@ public class ImageShow extends View implements OnGestureListener,
 
     @Override
     public void onDraw(Canvas canvas) {
+
+        canvas.save();
+        // TODO: center scale on gesture
+        float cx = canvas.getWidth()/2.0f;
+        float cy = canvas.getWidth()/2.0f;
+        float scaleFactor = MasterImage.getImage().getScaleFactor();
+        Point translation = MasterImage.getImage().getTranslation();
+        canvas.scale(scaleFactor, scaleFactor, cx, cy);
+        canvas.translate(translation.x, translation.y);
         drawBackground(canvas);
         defaultDrawImage(canvas);
+        canvas.restore();
 
         if (showTitle() && getImagePreset() != null) {
             mPaint.setARGB(200, 0, 0, 0);
@@ -399,7 +411,7 @@ public class ImageShow extends View implements OnGestureListener,
         canvas.save();
         if (image != null) {
             if (mShowOriginalDirection == 0) {
-                if ((mTouchY - mTouchDownY) > (mTouchX - mTouchDownX)) {
+                if ((mTouch.y - mTouchDown.y) > (mTouch.x - mTouchDown.x)) {
                     mShowOriginalDirection = UNVEIL_VERTICAL;
                 } else {
                     mShowOriginalDirection = UNVEIL_HORIZONTAL;
@@ -410,9 +422,9 @@ public class ImageShow extends View implements OnGestureListener,
             int py = 0;
             if (mShowOriginalDirection == UNVEIL_VERTICAL) {
                 px = mImageBounds.width();
-                py = (int) (mTouchY - mImageBounds.top);
+                py = (int) (mTouch.y - mImageBounds.top);
             } else {
-                px = (int) (mTouchX - mImageBounds.left);
+                px = (int) (mTouch.x - mImageBounds.left);
                 py = mImageBounds.height();
             }
 
@@ -424,11 +436,11 @@ public class ImageShow extends View implements OnGestureListener,
             paint.setColor(Color.BLACK);
 
             if (mShowOriginalDirection == UNVEIL_VERTICAL) {
-                canvas.drawLine(mImageBounds.left, mTouchY - 1,
-                        mImageBounds.right, mTouchY - 1, paint);
+                canvas.drawLine(mImageBounds.left, mTouch.y - 1,
+                        mImageBounds.right, mTouch.y - 1, paint);
             } else {
-                canvas.drawLine(mTouchX - 1, mImageBounds.top,
-                        mTouchX - 1, mImageBounds.bottom, paint);
+                canvas.drawLine(mTouch.x - 1, mImageBounds.top,
+                        mTouch.x - 1, mImageBounds.bottom, paint);
             }
 
             Rect bounds = new Rect();
@@ -489,8 +501,6 @@ public class ImageShow extends View implements OnGestureListener,
     public boolean showTitle() {
         return false;
     }
-
-
 
     public void setImageLoader(ImageLoader loader) {
         mImageLoader = loader;
@@ -560,35 +570,64 @@ public class ImageShow extends View implements OnGestureListener,
         mImageLoader.returnFilteredResult(getImagePreset(), filterShowActivity);
     }
 
+    public boolean scaleInProgress() {
+        return mScaleGestureDetector.isInProgress();
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
-        if (mGestureDetector != null) {
-            mGestureDetector.onTouchEvent(event);
+        mGestureDetector.onTouchEvent(event);
+        boolean scaleInProgress = scaleInProgress();
+        mScaleGestureDetector.onTouchEvent(event);
+        if (!scaleInProgress() && scaleInProgress) {
+            // If we were scaling, the scale will stop but we will
+            // still issue an ACTION_UP. Let the subclasses know.
+            mFinishedScalingOperation = true;
         }
+
         int ex = (int) event.getX();
         int ey = (int) event.getY();
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            mTouchDownX = ex;
-            mTouchDownY = ey;
+            mTouchDown.x = ex;
+            mTouchDown.y = ey;
             mTouchShowOriginalDate = System.currentTimeMillis();
             mShowOriginalDirection = 0;
+            MasterImage.getImage().setOriginalTranslation(MasterImage.getImage().getTranslation());
         }
+
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            mTouchX = ex;
-            mTouchY = ey;
-            if (!mActivity.isShowingHistoryPanel()
+            mTouch.x = ex;
+            mTouch.y = ey;
+
+            if (event.getPointerCount() == 2) {
+                float scaleFactor = MasterImage.getImage().getScaleFactor();
+                if (scaleFactor >= 1) {
+                    float translateX = (mTouch.x - mTouchDown.x) / scaleFactor;
+                    float translateY = (mTouch.y - mTouchDown.y) / scaleFactor;
+                    Point originalTranslation = MasterImage.getImage().getOriginalTranslation();
+                    Point translation = MasterImage.getImage().getTranslation();
+                    translation.x = (int) (originalTranslation.x + translateX);
+                    translation.y = (int) (originalTranslation.y + translateY);
+                }
+            } else if (!mActivity.isShowingHistoryPanel()
                     && (System.currentTimeMillis() - mTouchShowOriginalDate
-                            > mTouchShowOriginalDelayMin)) {
+                            > mTouchShowOriginalDelayMin)
+                    && event.getPointerCount() == 1) {
                 mTouchShowOriginal = true;
             }
         }
+
         if (event.getAction() == MotionEvent.ACTION_UP) {
             mTouchShowOriginal = false;
-            mTouchDownX = 0;
-            mTouchDownY = 0;
-            mTouchX = 0;
-            mTouchY = 0;
+            mTouchDown.x = 0;
+            mTouchDown.y = 0;
+            mTouch.x = 0;
+            mTouch.y = 0;
+            if (MasterImage.getImage().getScaleFactor() <= 1) {
+                MasterImage.getImage().setScaleFactor(1);
+                MasterImage.getImage().resetTranslation();
+            }
         }
         invalidate();
         return true;
@@ -673,7 +712,8 @@ public class ImageShow extends View implements OnGestureListener,
                     || (mTouchShowOriginal &&
                             (System.currentTimeMillis() - mTouchShowOriginalDate
                             < mTouchShowOriginalDelayMax))) {
-                mActivity.toggleHistoryPanel();
+                // TODO fix gesture.
+                // mActivity.toggleHistoryPanel();
             }
         }
         return true;
@@ -709,4 +749,38 @@ public class ImageShow extends View implements OnGestureListener,
         // TODO Auto-generated method stub
     }
 
+    @Override
+    public boolean onScale(ScaleGestureDetector detector) {
+        float scaleFactor = MasterImage.getImage().getScaleFactor();
+        scaleFactor = scaleFactor * detector.getScaleFactor();
+        if (scaleFactor > 2) {
+            scaleFactor = 2;
+        }
+        if (scaleFactor < 0.5) {
+            scaleFactor = 0.5f;
+        }
+        MasterImage.getImage().setScaleFactor(scaleFactor);
+        return true;
+    }
+
+    @Override
+    public boolean onScaleBegin(ScaleGestureDetector detector) {
+        return true;
+    }
+
+    @Override
+    public void onScaleEnd(ScaleGestureDetector detector) {
+        if (MasterImage.getImage().getScaleFactor() < 1) {
+            MasterImage.getImage().setScaleFactor(1);
+            invalidate();
+        }
+    }
+
+    public boolean didFinishScalingOperation() {
+        if (mFinishedScalingOperation) {
+            mFinishedScalingOperation = false;
+            return true;
+        }
+        return false;
+    }
 }
