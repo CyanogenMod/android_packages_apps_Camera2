@@ -22,11 +22,10 @@ import android.os.Message;
 import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.app.AlbumDataLoader;
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.BitmapPool;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
-import com.android.gallery3d.data.Path;
 import com.android.gallery3d.data.MediaObject.PanoramaSupportCallback;
+import com.android.gallery3d.data.Path;
 import com.android.gallery3d.glrenderer.Texture;
 import com.android.gallery3d.glrenderer.TiledTexture;
 import com.android.gallery3d.util.Future;
@@ -293,12 +292,6 @@ public class AlbumSlidingWindow implements AlbumDataLoader.DataListener {
         public ThumbnailLoader(int slotIndex, MediaItem item) {
             mSlotIndex = slotIndex;
             mItem = item;
-        }
-
-        @Override
-        protected void recycleBitmap(Bitmap bitmap) {
-            BitmapPool pool = MediaItem.getMicroThumbPool();
-            if (pool != null) pool.recycle(bitmap);
         }
 
         @Override
