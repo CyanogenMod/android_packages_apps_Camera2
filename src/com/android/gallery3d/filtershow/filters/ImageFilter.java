@@ -18,8 +18,10 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.widget.Toast;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.editors.BasicEditor;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -30,6 +32,30 @@ public abstract class ImageFilter implements Cloneable {
 
     protected String mName = "Original";
     private final String LOGTAG = "ImageFilter";
+
+    // TODO: Temporary, for dogfood note memory issues with toasts for better
+    // feedback. Remove this when filters actually work in low memory
+    // situations.
+    private static FilterShowActivity sActivity = null;
+
+    public static void setActivityForMemoryToasts(FilterShowActivity activity) {
+        sActivity = activity;
+    }
+
+    public static void resetStatics() {
+        sActivity = null;
+    }
+
+    public void displayLowMemoryToast() {
+        if (sActivity != null) {
+            sActivity.runOnUiThread(new Runnable() {
+                public void run() {
+                    Toast.makeText(sActivity, "Memory too low for filter " + getName() +
+                            ", please file a bug report", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
 
     public void setName(String name) {
         mName = name;
@@ -45,8 +71,8 @@ public abstract class ImageFilter implements Cloneable {
     }
 
     /**
-     * Called on small bitmaps to create button icons for each filter.
-     * Override this to provide filter-specific button icons.
+     * Called on small bitmaps to create button icons for each filter. Override
+     * this to provide filter-specific button icons.
      */
     public Bitmap iconApply(Bitmap bitmap, float scaleFactor, int quality) {
         return apply(bitmap, scaleFactor, quality);
