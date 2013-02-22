@@ -23,6 +23,8 @@
     <string name="cannot_load_image">Cannot load the image!</string>
     <!--  String displayed when showing the original image [CHAR LIMIT=NONE] -->
     <string name="original_picture_text">@string/original</string>
+    <!--  String displayed when setting the homepage wallpaper in the background [CHAR LIMIT=NONE] -->
+    <string name="setting_wallpaper">Setting wallpaper</string>
 
     <!--  generic strings -->
 
