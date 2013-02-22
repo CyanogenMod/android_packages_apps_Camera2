@@ -71,6 +71,7 @@ import com.android.gallery3d.filtershow.imageshow.ImageZoom;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.provider.SharedImageProvider;
+import com.android.gallery3d.filtershow.tools.BitmapTask;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.filtershow.ui.FilterIconButton;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
@@ -1089,11 +1090,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                     mCropExtras.getOutputFormat(), this);
         }
         if (mSaveAsWallpaper) {
-            try {
-                WallpaperManager.getInstance(this).setBitmap(filtered);
-            } catch (IOException e) {
-                Log.w(LOGTAG, "fail to set wall paper", e);
-            }
+            setWallpaperInBackground(filtered);
         }
         if (mReturnAsExtra) {
             if (filtered != null) {
@@ -1114,6 +1111,28 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         if (!mSaveToExtraUri) {
             done();
         }
+    }
+
+    void setWallpaperInBackground(final Bitmap bmap) {
+        Toast.makeText(this, R.string.setting_wallpaper, Toast.LENGTH_LONG).show();
+        BitmapTask.Callbacks<FilterShowActivity> cb = new BitmapTask.Callbacks<FilterShowActivity>() {
+            @Override
+            public void onComplete(Bitmap result) {}
+
+            @Override
+            public void onCancel() {}
+
+            @Override
+            public Bitmap onExecute(FilterShowActivity param) {
+                try {
+                    WallpaperManager.getInstance(param).setBitmap(bmap);
+                } catch (IOException e) {
+                    Log.w(LOGTAG, "fail to set wall paper", e);
+                }
+                return null;
+            }
+        };
+        (new BitmapTask<FilterShowActivity>(cb)).execute(this);
     }
 
     public void done() {
