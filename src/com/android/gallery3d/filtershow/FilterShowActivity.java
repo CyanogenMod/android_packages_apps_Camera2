@@ -152,7 +152,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ImageFilter.setActivityForMemoryToasts(this);
         setResources();
 
         Resources res = getResources();
@@ -521,9 +520,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         if (mLoadBitmapTask != null) {
             mLoadBitmapTask.cancel(false);
         }
-        MasterImage.reset();
-        FilteringPipeline.reset();
-        ImageFilter.reset();
         super.onDestroy();
     }
 
