@@ -388,6 +388,10 @@ public class ImageLoader {
                 }
             }
             bmp = loadRegionBitmap(mUri, options, bounds);
+            if (destination != null) {
+                mLoadingLock.unlock();
+                return bmp;
+            }
             if (bmp != null) {
                 // TODO: this workaround for RS might not be needed ultimately
                 Bitmap bmp2 = bmp.copy(Bitmap.Config.ARGB_8888, true);
