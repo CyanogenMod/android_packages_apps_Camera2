@@ -16,13 +16,13 @@
 
 package com.android.gallery3d.data;
 
+import android.content.Context;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
 
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.app.StitchingChangeListener;
-import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaObject.PanoramaSupportCallback;
 import com.android.gallery3d.data.MediaSet.ItemConsumer;
@@ -64,6 +64,11 @@ public class DataManager implements StitchingChangeListener {
     // Any one who would like to access data should require this lock
     // to prevent concurrency issue.
     public static final Object LOCK = new Object();
+
+    public static DataManager from(Context context) {
+        GalleryApp app = (GalleryApp) context.getApplicationContext();
+        return app.getDataManager();
+    }
 
     private static final String TAG = "DataManager";
 
