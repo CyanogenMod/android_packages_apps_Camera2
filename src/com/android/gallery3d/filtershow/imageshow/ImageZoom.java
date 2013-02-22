@@ -90,7 +90,7 @@ public class ImageZoom extends ImageShow {
         Bitmap filteredImage = null;
         if ((mZoomedIn || mTouchDown) && mImageLoader != null) {
             filteredImage = mImageLoader.getScaleOneImageForPreset(this, getImagePreset(),
-                    mZoomBounds, false);
+                    mZoomBounds, null, false);
         } else {
             filteredImage = getFilteredImage();
         }

@@ -265,12 +265,12 @@ public class ImageLoader {
                 bitmap.getHeight(), matrix, true);
     }
 
-    private Bitmap loadRegionBitmap(Uri uri, Rect bounds) {
+    private Bitmap loadRegionBitmap(Uri uri, BitmapFactory.Options options, Rect bounds) {
         InputStream is = null;
         try {
             is = mContext.getContentResolver().openInputStream(uri);
             BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(is, false);
-            return decoder.decodeRegion(bounds, null);
+            return decoder.decodeRegion(bounds, options);
         } catch (FileNotFoundException e) {
             Log.e(LOGTAG, "FileNotFoundException: " + uri);
         } catch (Exception e) {
@@ -370,11 +370,24 @@ public class ImageLoader {
     // FIXME: this currently does the loading + filtering on the UI thread --
     // need to move this to a background thread.
     public Bitmap getScaleOneImageForPreset(ImageShow caller, ImagePreset imagePreset, Rect bounds,
-            boolean force) {
+                                            Rect destination, boolean force) {
         mLoadingLock.lock();
         Bitmap bmp = mZoomCache.getImage(imagePreset, bounds);
         if (force || bmp == null) {
-            bmp = loadRegionBitmap(mUri, bounds);
+            BitmapFactory.Options options = null;
+            if (destination != null) {
+                options = new BitmapFactory.Options();
+                if (bounds.width() > destination.width()) {
+                    int sampleSize = 1;
+                    int w = bounds.width();
+                    while (w > destination.width()) {
+                        sampleSize *= 2;
+                        w /= sampleSize;
+                    }
+                    options.inSampleSize = sampleSize;
+                }
+            }
+            bmp = loadRegionBitmap(mUri, options, bounds);
             if (bmp != null) {
                 // TODO: this workaround for RS might not be needed ultimately
                 Bitmap bmp2 = bmp.copy(Bitmap.Config.ARGB_8888, true);

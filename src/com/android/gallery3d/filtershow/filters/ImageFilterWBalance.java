@@ -37,6 +37,7 @@ public class ImageFilterWBalance extends ImageFilter {
         representation.setShowEditingControls(false);
         representation.setShowParameterValue(false);
         representation.setEditorId(ImageOnlyEditor.ID);
+        representation.setSupportsPartialRendering(true);
         return representation;
     }
 
