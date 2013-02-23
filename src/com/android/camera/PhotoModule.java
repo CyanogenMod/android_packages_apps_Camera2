@@ -1586,10 +1586,9 @@ public class PhotoModule
         mCountDownView.cancelCountDown();
         // Close the camera now because other activities may need to use it.
         closeCamera();
-        if (mSurfaceTexture != null) {
-            ((CameraScreenNail) mActivity.mCameraScreenNail).releaseSurfaceTexture();
-            mSurfaceTexture = null;
-        }
+        // Release surface texture.
+        ((CameraScreenNail) mActivity.mCameraScreenNail).releaseSurfaceTexture();
+        mSurfaceTexture = null;
         resetScreenOn();
 
         // Clear UI.
