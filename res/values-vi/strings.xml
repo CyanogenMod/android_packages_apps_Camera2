@@ -389,4 +389,12 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"Gắn thẻ cho ảnh và video của bạn với những địa điểm mà ảnh đó được chụp và video đó được quay."\n\n"Các ứng dụng khác có thể truy cập vào thông tin này cùng với các hình ảnh đã lưu của bạn."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"Không, cảm ơn"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"Có"</string>
+    <!-- no translation found for menu_camera (3476709832879398998) -->
+    <skip />
+    <!-- no translation found for menu_search (7580008232297437190) -->
+    <skip />
+    <!-- no translation found for tab_photos (9110813680630313419) -->
+    <skip />
+    <!-- no translation found for tab_albums (8079449907770685691) -->
+    <skip />
 </resources>
