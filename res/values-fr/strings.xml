@@ -389,4 +389,12 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"Ajoutez des tags à vos photos et à vos vidéos pour identifier l\'endroit de la prise de vue."\n\n"D\'autres applications peuvent accéder à ces informations, ainsi qu\'aux images enregistrées."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"Non, merci"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"Oui"</string>
+    <!-- no translation found for menu_camera (3476709832879398998) -->
+    <skip />
+    <!-- no translation found for menu_search (7580008232297437190) -->
+    <skip />
+    <!-- no translation found for tab_photos (9110813680630313419) -->
+    <skip />
+    <!-- no translation found for tab_albums (8079449907770685691) -->
+    <skip />
 </resources>
