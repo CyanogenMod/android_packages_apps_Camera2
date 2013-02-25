@@ -389,4 +389,12 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"Beri tag foto dan video Anda dengan lokasi tempat pengambilannya."\n\n"Aplikasi lain dapat mengakses informasi ini beserta gambar Anda yang tersimpan."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"Tidak, terima kasih"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"Ya"</string>
+    <!-- no translation found for menu_camera (3476709832879398998) -->
+    <skip />
+    <!-- no translation found for menu_search (7580008232297437190) -->
+    <skip />
+    <!-- no translation found for tab_photos (9110813680630313419) -->
+    <skip />
+    <!-- no translation found for tab_albums (8079449907770685691) -->
+    <skip />
 </resources>
