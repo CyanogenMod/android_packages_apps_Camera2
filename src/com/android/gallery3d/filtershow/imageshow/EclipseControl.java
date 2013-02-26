@@ -158,7 +158,24 @@ public class EclipseControl {
         }
     }
 
-    void paintPoint(Canvas canvas, float x, float y) {
+    public void paintGrayPoint(Canvas canvas, float x, float y) {
+        if (x == Float.NaN) {
+            return;
+        }
+
+        Paint paint = new Paint();
+
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.BLUE);
+        int[] colors3 = new int[] {
+                Color.GRAY, Color.LTGRAY, 0x66000000, 0 };
+        RadialGradient g = new RadialGradient(x, y, mCenterDotSize, colors3, new float[] {
+                0, .3f, .31f, 1 }, Shader.TileMode.CLAMP);
+        paint.setShader(g);
+        canvas.drawCircle(x, y, mCenterDotSize, paint);
+    }
+
+    public void paintPoint(Canvas canvas, float x, float y) {
         if (x == Float.NaN) {
             return;
         }
