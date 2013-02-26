@@ -315,6 +315,7 @@ public class ImageLoader {
             // decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = scale;
+            o2.inMutable = true;
 
             Utils.closeSilently(is);
             is = mContext.getContentResolver().openInputStream(uri);
@@ -376,9 +377,9 @@ public class ImageLoader {
         mLoadingLock.lock();
         Bitmap bmp = mZoomCache.getImage(imagePreset, bounds);
         if (force || bmp == null) {
-            BitmapFactory.Options options = null;
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inMutable = true;
             if (destination != null) {
-                options = new BitmapFactory.Options();
                 if (bounds.width() > destination.width()) {
                     int sampleSize = 1;
                     int w = bounds.width();
