@@ -714,13 +714,13 @@ public class PanoramaModule implements CameraModule,
     }
 
     private void createContentView() {
-        mActivity.getLayoutInflater().inflate(R.layout.panorama_module, (ViewGroup) mRootView);
+        mActivity.getLayoutInflater().inflate(R.layout.panorama_module, (ViewGroup) mRootView, true);
         Resources appRes = mActivity.getResources();
-        mCaptureLayout = (LinearLayout) mRootView.findViewById(R.id.camera_app_root);
+        mCaptureLayout = (LinearLayout) mRootView.findViewById(R.id.camera_app);
         mIndicatorColor = appRes.getColor(R.color.pano_progress_indication);
         mReviewBackground = appRes.getColor(R.color.review_background);
         mIndicatorColorFast = appRes.getColor(R.color.pano_progress_indication_fast);
-        mPanoLayout = (ViewGroup) mRootView.findViewById(R.id.pano_layout);
+        mPanoLayout = (ViewGroup) mRootView.findViewById(R.id.camera_app_root);
         mRotateDialog = new RotateDialogController(mActivity, R.layout.rotate_dialog);
         setViews(appRes);
     }
@@ -1305,6 +1305,11 @@ public class PanoramaModule implements CameraModule,
     @Override
     public boolean needsSwitcher() {
         return true;
+    }
+
+    @Override
+    public boolean needsPieMenu() {
+        return false;
     }
 
     @Override

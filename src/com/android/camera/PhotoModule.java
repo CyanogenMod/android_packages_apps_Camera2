@@ -52,6 +52,7 @@ import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.view.ViewStub;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -66,11 +67,8 @@ import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.PopupManager;
-import com.android.camera.ui.PreviewSurfaceView;
 import com.android.camera.ui.RenderOverlay;
-import com.android.camera.ui.Rotatable;
 import com.android.camera.ui.RotateTextToast;
-import com.android.camera.ui.TwoStateImageView;
 import com.android.camera.ui.ZoomRenderer;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
@@ -92,7 +90,6 @@ public class PhotoModule
     FocusOverlayManager.Listener,
     CameraPreference.OnPreferenceChangedListener,
     LocationManager.Listener,
-    PreviewFrameLayout.OnSizeChangedListener,
     ShutterButton.OnShutterButtonListener,
     SurfaceHolder.Callback,
     PieRenderer.PieListener,
@@ -172,18 +169,15 @@ public class PhotoModule
     private ShutterButton mShutterButton;
     private boolean mFaceDetectionStarted = false;
 
-    private PreviewFrameLayout mPreviewFrameLayout;
     private Object mSurfaceTexture;
     private CountDownView mCountDownView;
 
-    // for API level 10
-    private PreviewSurfaceView mPreviewSurfaceView;
     private volatile SurfaceHolder mCameraSurfaceHolder;
 
     private FaceView mFaceView;
     private RenderOverlay mRenderOverlay;
-    private Rotatable mReviewCancelButton;
-    private Rotatable mReviewDoneButton;
+    private View mReviewCancelButton;
+    private View mReviewDoneButton;
     private View mReviewRetakeButton;
 
     // mCropValue and mSaveUri are used only if isImageCaptureIntent() is true.
@@ -288,7 +282,6 @@ public class PhotoModule
     private PhotoController mPhotoControl;
 
     private ZoomRenderer mZoomRenderer;
-
     private String mSceneMode;
     private Toast mNotSelectableToast;
 
@@ -466,7 +459,16 @@ public class PhotoModule
         mCameraStartUpThread = new CameraStartUpThread();
         mCameraStartUpThread.start();
 
-        mActivity.getLayoutInflater().inflate(R.layout.photo_module, (ViewGroup) mRootView);
+        mActivity.getLayoutInflater().inflate(R.layout.photo_module,
+                (ViewGroup) mRootView, true);
+        if (ApiHelper.HAS_FACE_DETECTION) {
+            ViewStub faceViewStub = (ViewStub) mRootView
+                    .findViewById(R.id.face_view_stub);
+            if (faceViewStub != null) {
+                faceViewStub.inflate();
+                mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
+            }
+        }
 
         // Surface texture is from camera screen nail and startPreview needs it.
         // This must be done before startPreview.
@@ -487,7 +489,6 @@ public class PhotoModule
 
         initializeControlByIntent();
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
-        initializeMiscControls();
         mLocationManager = new LocationManager(mActivity, this);
         initOnScreenIndicator();
         mCountDownView = (CountDownView) (mRootView.findViewById(R.id.count_down_to_capture));
@@ -557,10 +558,10 @@ public class PhotoModule
 
             if (isImageCaptureIntent()) {
                 if (mReviewCancelButton != null) {
-                    mGestures.addTouchReceiver((View) mReviewCancelButton);
+                    mGestures.addTouchReceiver(mReviewCancelButton);
                 }
                 if (mReviewDoneButton != null) {
-                    mGestures.addTouchReceiver((View) mReviewDoneButton);
+                    mGestures.addTouchReceiver(mReviewDoneButton);
                 }
             }
         }
@@ -585,9 +586,17 @@ public class PhotoModule
         initializePhotoControl();
 
         // These depend on camera parameters.
-        setPreviewFrameLayoutAspectRatio();
-        mFocusManager.setPreviewSize(mPreviewFrameLayout.getWidth(),
-                mPreviewFrameLayout.getHeight());
+        int width = mActivity.getWindowManager().getDefaultDisplay().getWidth();
+        int height = mActivity.getWindowManager().getDefaultDisplay().getHeight();
+        mFocusManager.setPreviewSize(width, height);
+        // Full-screen screennail
+        if (Util.getDisplayRotation(mActivity) % 180 == 0) {
+            ((CameraScreenNail) mActivity.mCameraScreenNail).setPreviewFrameLayoutSize(width, height);
+        } else {
+            ((CameraScreenNail) mActivity.mCameraScreenNail).setPreviewFrameLayoutSize(height, width);
+        }
+        // Set touch focus listener.
+        mActivity.setSingleTapUpListener(mRootView);
         loadCameraPreferences();
         initializeZoom();
         updateOnScreenIndicators();
@@ -795,7 +804,7 @@ public class PhotoModule
     }
 
     private void initOnScreenIndicator() {
-        mOnScreenIndicators = mRootView.findViewById(R.id.on_screen_indicators);
+        mOnScreenIndicators = mActivity.findViewById(R.id.on_screen_indicators);
         mExposureIndicator = (ImageView) mOnScreenIndicators.findViewById(R.id.menu_exposure_indicator);
         mFlashIndicator = (ImageView) mOnScreenIndicators.findViewById(R.id.menu_flash_indicator);
         mSceneIndicator = (ImageView) mOnScreenIndicators.findViewById(R.id.menu_scenemode_indicator);
@@ -1217,11 +1226,6 @@ public class PhotoModule
             }
             return;
         }
-        if (full) {
-            mPreviewSurfaceView.expand();
-        } else {
-            mPreviewSurfaceView.shrink();
-        }
     }
 
     @Override
@@ -1623,8 +1627,8 @@ public class PhotoModule
     }
 
     private void initializeControlByIntent() {
-        mBlocker = mRootView.findViewById(R.id.blocker);
-        mMenu = mRootView.findViewById(R.id.menu);
+        mBlocker = mActivity.findViewById(R.id.blocker);
+        mMenu = mActivity.findViewById(R.id.menu);
         mMenu.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1637,23 +1641,22 @@ public class PhotoModule
             }
         });
         if (mIsImageCaptureIntent) {
-
             mActivity.hideSwitcher();
-            // Cannot use RotateImageView for "done" and "cancel" button because
-            // the tablet layout uses RotateLayout, which cannot be cast to
-            // RotateImageView.
-            mReviewDoneButton = (Rotatable) mRootView.findViewById(R.id.btn_done);
-            mReviewCancelButton = (Rotatable) mRootView.findViewById(R.id.btn_cancel);
-            mReviewRetakeButton = mRootView.findViewById(R.id.btn_retake);
-            ((View) mReviewCancelButton).setVisibility(View.VISIBLE);
+            ViewGroup cameraControls = (ViewGroup) mActivity.findViewById(R.id.camera_controls);
+            mActivity.getLayoutInflater().inflate(R.layout.review_module_control, cameraControls);
 
-            ((View) mReviewDoneButton).setOnClickListener(new OnClickListener() {
+            mReviewDoneButton = mActivity.findViewById(R.id.btn_done);
+            mReviewCancelButton = mActivity.findViewById(R.id.btn_cancel);
+            mReviewRetakeButton = mActivity.findViewById(R.id.btn_retake);
+            mReviewCancelButton.setVisibility(View.VISIBLE);
+
+            mReviewDoneButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onReviewDoneClicked(v);
                 }
             });
-            ((View) mReviewCancelButton).setOnClickListener(new OnClickListener() {
+            mReviewCancelButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onReviewCancelClicked(v);
@@ -1666,13 +1669,6 @@ public class PhotoModule
                     onReviewRetakeClicked(v);
                 }
             });
-
-            // Not grayed out upon disabled, to make the follow-up fade-out
-            // effect look smooth. Note that the review done button in tablet
-            // layout is not a TwoStateImageView.
-            if (mReviewDoneButton instanceof TwoStateImageView) {
-                ((TwoStateImageView) mReviewDoneButton).enableFilter(false);
-            }
 
             setupCaptureParams();
         }
@@ -1700,62 +1696,10 @@ public class PhotoModule
         }
     }
 
-    private void initializeMiscControls() {
-        // startPreview needs this.
-        mPreviewFrameLayout = (PreviewFrameLayout) mRootView.findViewById(R.id.frame);
-        // Set touch focus listener.
-        mActivity.setSingleTapUpListener(mPreviewFrameLayout);
-
-        mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
-        mPreviewFrameLayout.setOnSizeChangedListener(this);
-        mPreviewFrameLayout.setOnLayoutChangeListener(mActivity);
-        if (!ApiHelper.HAS_SURFACE_TEXTURE) {
-            mPreviewSurfaceView =
-                    (PreviewSurfaceView) mRootView.findViewById(R.id.preview_surface_view);
-            mPreviewSurfaceView.setVisibility(View.VISIBLE);
-            mPreviewSurfaceView.getHolder().addCallback(this);
-        }
-    }
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         Log.v(TAG, "onConfigurationChanged");
         setDisplayOrientation();
-
-        // Only the views in photo_module_content need to be removed and recreated
-        // i.e. CountDownView won't be recreated
-        ViewGroup viewGroup = (ViewGroup) mRootView.findViewById(R.id.camera_app);
-        viewGroup.removeAllViews();
-        LayoutInflater inflater = mActivity.getLayoutInflater();
-        inflater.inflate(R.layout.photo_module_content, (ViewGroup) viewGroup);
-
-        // from onCreate()
-        initializeControlByIntent();
-
-        initializeFocusManager();
-        initializeMiscControls();
-        loadCameraPreferences();
-
-        // from initializeFirstTime()
-        mShutterButton = mActivity.getShutterButton();
-        mShutterButton.setOnShutterButtonListener(this);
-        initializeZoom();
-        initOnScreenIndicator();
-        updateOnScreenIndicators();
-        if (mFaceView != null) {
-            mFaceView.clear();
-            mFaceView.setVisibility(View.VISIBLE);
-            mFaceView.setDisplayOrientation(mDisplayOrientation);
-            CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
-            mFaceView.setMirror(info.facing == CameraInfo.CAMERA_FACING_FRONT);
-            mFaceView.resume();
-            mFocusManager.setFaceView(mFaceView);
-        }
-        initializeRenderOverlay();
-        onFullScreenChanged(mActivity.isInCameraApp());
-        if (mJpegImageData != null) {  // Jpeg data found, picture has been taken.
-            showPostCaptureAlert();
-        }
     }
 
     @Override
@@ -2258,7 +2202,7 @@ public class PhotoModule
         if (mIsImageCaptureIntent) {
             mOnScreenIndicators.setVisibility(View.GONE);
             mMenu.setVisibility(View.GONE);
-            Util.fadeIn((View) mReviewDoneButton);
+            Util.fadeIn(mReviewDoneButton);
             mShutterButton.setVisibility(View.INVISIBLE);
             Util.fadeIn(mReviewRetakeButton);
         }
@@ -2268,7 +2212,7 @@ public class PhotoModule
         if (mIsImageCaptureIntent) {
             mOnScreenIndicators.setVisibility(View.VISIBLE);
             mMenu.setVisibility(View.VISIBLE);
-            Util.fadeOut((View) mReviewDoneButton);
+            Util.fadeOut(mReviewDoneButton);
             mShutterButton.setVisibility(View.VISIBLE);
             Util.fadeOut(mReviewRetakeButton);
         }
@@ -2284,7 +2228,6 @@ public class PhotoModule
         mLocationManager.recordLocation(recordLocation);
 
         setCameraParametersWhenIdle(UPDATE_PARAM_PREFERENCE);
-        setPreviewFrameLayoutAspectRatio();
         updateOnScreenIndicators();
     }
 
@@ -2431,12 +2374,6 @@ public class PhotoModule
                 Util.FOCUS_MODE_CONTINUOUS_PICTURE);
     }
 
-    // PreviewFrameLayout size has changed.
-    @Override
-    public void onSizeChanged(int width, int height) {
-        if (mFocusManager != null) mFocusManager.setPreviewSize(width, height);
-    }
-
     @Override
     public void onCountDownFinished() {
         mSnapshotOnIdle = false;
@@ -2444,15 +2381,14 @@ public class PhotoModule
         mFocusManager.onShutterUp();
     }
 
-    void setPreviewFrameLayoutAspectRatio() {
-        // Set the preview frame aspect ratio according to the picture size.
-        Size size = mParameters.getPictureSize();
-        mPreviewFrameLayout.setAspectRatio((double) size.width / size.height);
-    }
-
     @Override
     public boolean needsSwitcher() {
         return !mIsImageCaptureIntent;
+    }
+
+    @Override
+    public boolean needsPieMenu() {
+        return true;
     }
 
     public void showPopup(AbstractSettingPopup popup) {

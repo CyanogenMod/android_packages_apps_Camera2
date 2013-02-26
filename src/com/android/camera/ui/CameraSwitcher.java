@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.FrameLayout.LayoutParams;
 import android.widget.LinearLayout;
 
 import com.android.gallery3d.R;
@@ -177,6 +178,16 @@ public class CameraSwitcher extends RotateImageView
         mParent.setOnTouchListener(null);
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration config) {
+        if (showsPopup()) {
+            ((ViewGroup) mParent).removeView(mPopup);
+            mPopup = null;
+            initPopup();
+            mPopup.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void showSwitcher() {
         mShowingPopup = true;
         if (mPopup == null) {
@@ -245,6 +256,8 @@ public class CameraSwitcher extends RotateImageView
                     // Verify that we weren't canceled
                     if (!showsPopup()) {
                         mPopup.setVisibility(View.INVISIBLE);
+                        ((ViewGroup) mParent).removeView(mPopup);
+                        mPopup = null;
                     }
                 }
             };
