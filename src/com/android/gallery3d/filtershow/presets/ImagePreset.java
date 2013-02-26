@@ -427,6 +427,9 @@ public class ImagePreset {
         if (mGeoData.hasModifications()) {
             return false;
         }
+        if (mBorder != null && !mBorder.supportsPartialRendering()) {
+            return false;
+        }
         for (int i = 0; i < mFilters.size(); i++) {
             FilterRepresentation representation = null;
             synchronized (mFilters) {
