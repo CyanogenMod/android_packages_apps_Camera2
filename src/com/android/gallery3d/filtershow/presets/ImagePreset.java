@@ -22,7 +22,6 @@ import android.util.Log;
 
 import com.android.gallery3d.filtershow.ImageStateAdapter;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
-import com.android.gallery3d.filtershow.filters.BaseFiltersManager;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;

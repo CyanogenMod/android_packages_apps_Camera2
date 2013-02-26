@@ -16,13 +16,24 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import java.util.HashMap;
+
 public class FiltersManager extends BaseFiltersManager {
-    private static FiltersManager gInstance = null;
+    private static FiltersManager sInstance = null;
+
+    protected FiltersManager() {
+        mFilters = new HashMap<Class, ImageFilter>();
+        addFilters(mFilters);
+    }
 
     public static FiltersManager getManager() {
-        if (gInstance == null) {
-            gInstance = new FiltersManager();
+        if (sInstance == null) {
+            sInstance = new FiltersManager();
         }
-        return gInstance;
+        return sInstance;
+    }
+
+    public static void reset() {
+        sInstance = null;
     }
 }
