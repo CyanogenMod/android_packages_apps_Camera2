@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2012 The Android Open Source Project
+<!-- Copyright (C) 2013 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -13,16 +13,14 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<!-- This layout is shared by phone and tablet in landscape orientation. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/camera_app"
+    android:id="@+id/camera_controls"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
 
-    <include layout="@layout/preview_module_frame"/>
-
-    <FrameLayout
+    <com.android.camera.ui.RotatableLayout
         style="@style/CameraControls"
+        android:id="@+id/menu_button"
         android:layout_gravity="center" >
 
         <View
@@ -40,17 +38,36 @@
             android:layout_marginRight="-2dip"
             android:layout_gravity="top|right"/>
 
-
-        <include layout="@layout/review_module_control"
-            android:layout_marginRight="2dip" />
-
         <com.android.camera.ui.PieMenuButton
             android:id="@+id/menu"
             style="@style/SwitcherButton"
             android:contentDescription="@string/accessibility_menu_button"
             android:layout_gravity="right|top"
             android:layout_marginRight="2dip" />
+    </com.android.camera.ui.RotatableLayout>
 
-    </FrameLayout>
+    <com.android.camera.ui.RotatableLayout
+        style="@style/CameraControls"
+        android:id="@+id/switcher_control"
+        android:layout_gravity="right|center_horizontal" >
+        <com.android.camera.ui.CameraSwitcher
+            android:id="@+id/camera_switcher"
+            style="@style/SwitcherButton"
+            android:layout_gravity="right|bottom"
+            android:layout_marginRight="2dip"
+            android:contentDescription="@string/accessibility_mode_picker" />
+    </com.android.camera.ui.RotatableLayout>
+
+    <com.android.camera.ShutterButton
+        android:id="@+id/shutter_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:layout_marginRight="@dimen/shutter_offset"
+        android:clickable="true"
+        android:contentDescription="@string/accessibility_shutter_button"
+        android:focusable="true"
+        android:scaleType="center"
+        android:src="@drawable/btn_new_shutter" />
 
 </FrameLayout>
