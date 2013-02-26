@@ -99,12 +99,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.android.gallery3d.filtershow.imageshow.ImageDraw
-                android:id="@+id/imageDraw"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
             <ProgressBar
                 android:id="@+id/loading"
                 style="@android:style/Widget.Holo.ProgressBar.Large"
