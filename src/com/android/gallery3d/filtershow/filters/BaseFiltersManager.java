@@ -13,49 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.android.gallery3d.filtershow.filters;
 
-import com.android.gallery3d.filtershow.cache.ImageLoader;
-
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
-public class BaseFiltersManager {
+public abstract class BaseFiltersManager {
+    protected HashMap<Class, ImageFilter> mFilters = null;
 
-    private static final String LOGTAG = "BaseFiltersManager";
-    private static HashMap<Class, ImageFilter> mFilters = new HashMap<Class, ImageFilter>();
-
-    protected BaseFiltersManager() {
-        Vector<ImageFilter> filters = new Vector<ImageFilter>();
-        addFilters(filters);
-        for (ImageFilter filter : filters) {
-            mFilters.put(filter.getClass(), filter);
-        }
-    }
-
-    protected void addFilters(Vector<ImageFilter> filters) {
-        filters.add(new ImageFilterTinyPlanet());
-        filters.add(new ImageFilterRedEye());
-        filters.add(new ImageFilterWBalance());
-        filters.add(new ImageFilterExposure());
-        filters.add(new ImageFilterVignette());
-        filters.add(new ImageFilterContrast());
-        filters.add(new ImageFilterShadows());
-        filters.add(new ImageFilterHighlights());
-        filters.add(new ImageFilterVibrance());
-        filters.add(new ImageFilterSharpen());
-        filters.add(new ImageFilterCurves());
-        filters.add(new ImageFilterDraw());
-        filters.add(new ImageFilterHue());
-        filters.add(new ImageFilterSaturated());
-        filters.add(new ImageFilterBwFilter());
-        filters.add(new ImageFilterNegative());
-        filters.add(new ImageFilterEdge());
-        filters.add(new ImageFilterKMeans());
-        filters.add(new ImageFilterFx());
-        filters.add(new ImageFilterBorder());
-        filters.add(new ImageFilterParametricBorder());
+    protected void addFilters(Map<Class, ImageFilter> filters) {
+        filters.put(ImageFilterTinyPlanet.class, new ImageFilterTinyPlanet());
+        filters.put(ImageFilterRedEye.class, new ImageFilterRedEye());
+        filters.put(ImageFilterWBalance.class, new ImageFilterWBalance());
+        filters.put(ImageFilterExposure.class, new ImageFilterExposure());
+        filters.put(ImageFilterVignette.class, new ImageFilterVignette());
+        filters.put(ImageFilterContrast.class, new ImageFilterContrast());
+        filters.put(ImageFilterShadows.class, new ImageFilterShadows());
+        filters.put(ImageFilterHighlights.class, new ImageFilterHighlights());
+        filters.put(ImageFilterVibrance.class, new ImageFilterVibrance());
+        filters.put(ImageFilterSharpen.class, new ImageFilterSharpen());
+        filters.put(ImageFilterCurves.class, new ImageFilterCurves());
+        filters.put(ImageFilterDraw.class, new ImageFilterDraw());
+        filters.put(ImageFilterHue.class, new ImageFilterHue());
+        filters.put(ImageFilterSaturated.class, new ImageFilterSaturated());
+        filters.put(ImageFilterBwFilter.class, new ImageFilterBwFilter());
+        filters.put(ImageFilterNegative.class, new ImageFilterNegative());
+        filters.put(ImageFilterEdge.class, new ImageFilterEdge());
+        filters.put(ImageFilterKMeans.class, new ImageFilterKMeans());
+        filters.put(ImageFilterFx.class, new ImageFilterFx());
+        filters.put(ImageFilterBorder.class, new ImageFilterBorder());
+        filters.put(ImageFilterParametricBorder.class, new ImageFilterParametricBorder());
     }
 
     public ImageFilter getFilter(Class c) {
@@ -79,7 +67,7 @@ public class BaseFiltersManager {
     }
 
     public void addLooks(Vector<FilterRepresentation> representations) {
-        // subclass can add representations
+        // Override
     }
 
     public void addEffects(Vector<FilterRepresentation> representations) {
