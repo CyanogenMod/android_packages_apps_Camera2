@@ -447,6 +447,10 @@ public class PanelController implements OnClickListener {
         return MasterImage.getImage().getPreset();
     }
 
+    public void setEffectName(String ename) {
+        mUtilityPanel.setEffectName(ename);
+    }
+
     public void useFilterRepresentation(FilterRepresentation filterRepresentation) {
         if (filterRepresentation == null) {
             return;
