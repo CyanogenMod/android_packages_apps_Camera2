@@ -521,9 +521,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         if (mLoadBitmapTask != null) {
             mLoadBitmapTask.cancel(false);
         }
+        // TODO:  Using singletons is a bad design choice for many of these
+        // due static reference leaks and in general.  Please refactor.
         MasterImage.reset();
         FilteringPipeline.reset();
         ImageFilter.resetStatics();
+        FiltersManager.reset();
         super.onDestroy();
     }
 
