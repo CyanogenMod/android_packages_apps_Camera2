@@ -249,7 +249,8 @@ public class FilteringPipeline implements Handler.Callback {
         setPresetParameters(preset);
 
         if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
-            bitmap = MasterImage.getImage().getImageLoader().getScaleOneImageForPreset(null, preset, request.getBounds(), request.getDestination(), false);
+            bitmap = MasterImage.getImage().getImageLoader().getScaleOneImageForPreset(null, preset,
+                    request.getBounds(), request.getDestination(), false);
             if (bitmap == null) {
                 return;
             }
