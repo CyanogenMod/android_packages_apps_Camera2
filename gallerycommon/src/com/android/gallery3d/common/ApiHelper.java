@@ -22,6 +22,7 @@ import android.hardware.Camera;
 import android.os.Build;
 import android.provider.MediaStore.MediaColumns;
 import android.view.View;
+import android.view.WindowManager;
 
 import java.lang.reflect.Field;
 
@@ -178,6 +179,9 @@ public class ApiHelper {
 
     public static final boolean HAS_GLES20_REQUIRED =
             Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB;
+
+    public static final boolean HAS_ROTATION_ANIMATION =
+            hasField(WindowManager.LayoutParams.class, "rotationAnimation");
 
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
