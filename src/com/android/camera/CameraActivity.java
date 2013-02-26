@@ -41,6 +41,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.android.camera.ui.CameraSwitcher;
+import com.android.camera.ui.RotatableLayout;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.common.ApiHelper;
@@ -57,8 +58,10 @@ public class CameraActivity extends ActivityBase
     private FrameLayout mFrame;
     private ShutterButton mShutter;
     private CameraSwitcher mSwitcher;
-    private View mShutterSwitcher;
+    private View mCameraControls;
     private View mControlsBackground;
+    private View mPieMenuButton;
+    private View mSwitcherControl;
     private Drawable[] mDrawables;
     private int mCurrentModuleIndex;
     private MotionEvent mDown;
@@ -94,7 +97,7 @@ public class CameraActivity extends ActivityBase
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.camera_main);
-        mFrame = (FrameLayout) findViewById(R.id.main_content);
+        mFrame = (FrameLayout) findViewById(R.id.camera_app_root);
         mDrawables = new Drawable[DRAW_IDS.length];
         for (int i = 0; i < DRAW_IDS.length; i++) {
             mDrawables[i] = getResources().getDrawable(DRAW_IDS[i]);
@@ -115,10 +118,12 @@ public class CameraActivity extends ActivityBase
     }
 
     public void init() {
-        mControlsBackground = findViewById(R.id.controls);
-        mShutterSwitcher = findViewById(R.id.camera_shutter_switcher);
+        mControlsBackground = findViewById(R.id.blocker);
+        mCameraControls = findViewById(R.id.camera_controls);
         mShutter = (ShutterButton) findViewById(R.id.shutter_button);
         mSwitcher = (CameraSwitcher) findViewById(R.id.camera_switcher);
+        mPieMenuButton = findViewById(R.id.menu_button);
+        mSwitcherControl = findViewById(R.id.switcher_control);
         int totaldrawid = (LightCycleHelper.hasLightCycleCapture(this)
                                 ? DRAW_IDS.length : DRAW_IDS.length - 1);
         if (!ApiHelper.HAS_OLD_PANORAMA) totaldrawid--;
@@ -217,6 +222,11 @@ public class CameraActivity extends ActivityBase
                 mCurrentModule = LightCycleHelper.createPanoramaModule();
                 break;
         }
+        if (mCurrentModule.needsPieMenu()) {
+            mPieMenuButton.setVisibility(View.VISIBLE);
+        } else {
+            mPieMenuButton.setVisibility(View.INVISIBLE);
+        }
         openModule(mCurrentModule, canReuse);
         mCurrentModule.onOrientationChanged(mLastRawOrientation);
         if (mMediaSaveService != null) {
@@ -268,13 +278,13 @@ public class CameraActivity extends ActivityBase
     }
 
     public void hideUI() {
-        mControlsBackground.setVisibility(View.INVISIBLE);
+        mCameraControls.setVisibility(View.INVISIBLE);
         hideSwitcher();
         mShutter.setVisibility(View.GONE);
     }
 
     public void showUI() {
-        mControlsBackground.setVisibility(View.VISIBLE);
+        mCameraControls.setVisibility(View.VISIBLE);
         showSwitcher();
         mShutter.setVisibility(View.VISIBLE);
         // Force a layout change to show shutter button
@@ -310,20 +320,10 @@ public class CameraActivity extends ActivityBase
         }
         appRoot.setLayoutParams(lp);
 
-        // remove old switcher, shutter and shutter icon
-        View cameraControlsView = findViewById(R.id.camera_shutter_switcher);
-        appRoot.removeView(cameraControlsView);
+        // Reset the background after rotation
+        mControlsBackground.setBackgroundResource(0);  // remove the current background
+        mControlsBackground.setBackgroundResource(R.drawable.switcher_bg);
 
-        // create new layout with the current orientation
-        LayoutInflater inflater = getLayoutInflater();
-        inflater.inflate(R.layout.camera_shutter_switcher, appRoot);
-        init();
-
-        if (mShowCameraAppView) {
-            showUI();
-        } else {
-            hideUI();
-        }
         mCurrentModule.onConfigurationChanged(config);
     }
 
@@ -466,7 +466,7 @@ public class CameraActivity extends ActivityBase
         if ((mSwitcher != null) && mSwitcher.showsPopup() && !mSwitcher.isInsidePopup(m)) {
             return mSwitcher.onTouch(null, m);
         } else {
-            return mShutterSwitcher.dispatchTouchEvent(m)
+            return mSwitcherControl.dispatchTouchEvent(m)
                     || mCurrentModule.dispatchTouchEvent(m);
         }
     }

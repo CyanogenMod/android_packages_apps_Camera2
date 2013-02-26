@@ -17,10 +17,13 @@
 package com.android.camera;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+
+import com.android.camera.ui.RotatableLayout;
 
 /**
  * A button designed to be used for the on-screen shutter button.
@@ -126,5 +129,11 @@ public class ShutterButton extends ImageView {
             mListener.onShutterButtonClick();
         }
         return result;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration config) {
+        super.onConfigurationChanged(config);
+        RotatableLayout.rotate(this, config.orientation == Configuration.ORIENTATION_PORTRAIT);
     }
 }
