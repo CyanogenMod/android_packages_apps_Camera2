@@ -254,6 +254,11 @@
                 android:exported="true"
                 android:permission="com.android.gallery3d.permission.GALLERY_PROVIDER"
                 android:authorities="com.android.gallery3d.provider" />
+        <provider
+                android:name="com.android.photos.data.PhotoProvider"
+                android:authorities="com.android.gallery3d.photoprovider"
+                android:syncable="false"
+                android:exported="false"/>
         <activity android:name="com.android.gallery3d.gadget.WidgetClickHandler" />
         <activity android:name="com.android.gallery3d.app.DialogPicker"
                 android:configChanges="keyboardHidden|orientation|screenSize"
