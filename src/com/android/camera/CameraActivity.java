@@ -19,8 +19,8 @@ package com.android.camera;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
@@ -30,13 +30,14 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.android.camera.ui.CameraSwitcher;
@@ -62,6 +63,7 @@ public class CameraActivity extends ActivityBase
     private int mCurrentModuleIndex;
     private MotionEvent mDown;
     private boolean mAutoRotateScreen;
+    private int mHeightOrWidth = -1;
 
     private MyOrientationEventListener mOrientationListener;
     // The degrees of the device rotated clockwise from its natural orientation.
@@ -299,6 +301,15 @@ public class CameraActivity extends ActivityBase
         super.onConfigurationChanged(config);
 
         ViewGroup appRoot = (ViewGroup) findViewById(R.id.content);
+        boolean landscape = (config.orientation == Configuration.ORIENTATION_LANDSCAPE);
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) appRoot.getLayoutParams();
+        if (landscape) {
+            lp.rightMargin = getResources().getDimensionPixelSize(R.dimen.margin_systemui_offset);
+        } else {
+            lp.rightMargin = 0;
+        }
+        appRoot.setLayoutParams(lp);
+
         // remove old switcher, shutter and shutter icon
         View cameraControlsView = findViewById(R.id.camera_shutter_switcher);
         appRoot.removeView(cameraControlsView);
@@ -362,7 +373,21 @@ public class CameraActivity extends ActivityBase
             hideUI();
         }
         super.onFullScreenChanged(full);
+        if (ApiHelper.HAS_ROTATION_ANIMATION) {
+            setRotationAnimation(full);
+        }
         mCurrentModule.onFullScreenChanged(full);
+    }
+
+    private void setRotationAnimation(boolean fullscreen) {
+        int rotationAnimation = WindowManager.LayoutParams.ROTATION_ANIMATION_ROTATE;
+        if (fullscreen) {
+            rotationAnimation = WindowManager.LayoutParams.ROTATION_ANIMATION_CROSSFADE;
+        }
+        Window win = getWindow();
+        WindowManager.LayoutParams winParams = win.getAttributes();
+        winParams.rotationAnimation = rotationAnimation;
+        win.setAttributes(winParams);
     }
 
     @Override
