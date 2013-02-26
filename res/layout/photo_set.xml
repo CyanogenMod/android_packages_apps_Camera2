@@ -5,7 +5,7 @@
     android:paddingLeft="8dp"
     android:paddingRight="8dp" >
 
-    <ListView
+    <com.android.photos.views.GalleryThumbnailView
         android:id="@id/android:list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
