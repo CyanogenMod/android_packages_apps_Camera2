@@ -289,11 +289,6 @@ public class ImageShow extends View implements OnGestureListener,
         }
     }
 
-    public void defaultDrawImage(Canvas canvas) {
-        drawImage(canvas, getFilteredImage());
-        drawPartialImage(canvas, getGeometryOnlyImage());
-    }
-
     @Override
     public void onDraw(Canvas canvas) {
         MasterImage.getImage().setImageShowSize(getWidth(), getHeight());
@@ -306,7 +301,7 @@ public class ImageShow extends View implements OnGestureListener,
         canvas.scale(scaleFactor, scaleFactor, cx, cy);
         canvas.translate(translation.x, translation.y);
         drawBackground(canvas);
-        defaultDrawImage(canvas);
+        drawImage(canvas, getFilteredImage());
         canvas.restore();
 
         if (showTitle() && getImagePreset() != null) {
@@ -326,6 +321,13 @@ public class ImageShow extends View implements OnGestureListener,
             Rect dest = new Rect(0, 0, getWidth(), getHeight());
             canvas.drawBitmap(partialPreview, src, dest, mPaint);
         }
+
+        canvas.save();
+        canvas.scale(scaleFactor, scaleFactor, cx, cy);
+        canvas.translate(translation.x, translation.y);
+        drawPartialImage(canvas, getGeometryOnlyImage());
+        canvas.restore();
+
         drawToast(canvas);
     }
 
@@ -374,7 +376,7 @@ public class ImageShow extends View implements OnGestureListener,
         canvas.save();
         if (image != null) {
             if (mShowOriginalDirection == 0) {
-                if ((mTouch.y - mTouchDown.y) > (mTouch.x - mTouchDown.x)) {
+                if (Math.abs(mTouch.y - mTouchDown.y) > Math.abs(mTouch.x - mTouchDown.x)) {
                     mShowOriginalDirection = UNVEIL_VERTICAL;
                 } else {
                     mShowOriginalDirection = UNVEIL_HORIZONTAL;
@@ -397,16 +399,18 @@ public class ImageShow extends View implements OnGestureListener,
             drawImage(canvas, image);
             Paint paint = new Paint();
             paint.setColor(Color.BLACK);
+            paint.setStrokeWidth(3);
 
             if (mShowOriginalDirection == UNVEIL_VERTICAL) {
-                canvas.drawLine(mImageBounds.left, mTouch.y - 1,
-                        mImageBounds.right, mTouch.y - 1, paint);
+                canvas.drawLine(mImageBounds.left, mTouch.y,
+                        mImageBounds.right, mTouch.y, paint);
             } else {
-                canvas.drawLine(mTouch.x - 1, mImageBounds.top,
-                        mTouch.x - 1, mImageBounds.bottom, paint);
+                canvas.drawLine(mTouch.x, mImageBounds.top,
+                        mTouch.x, mImageBounds.bottom, paint);
             }
 
             Rect bounds = new Rect();
+            paint.setAntiAlias(true);
             paint.setTextSize(mOriginalTextSize);
             paint.getTextBounds(mOriginalText, 0, mOriginalText.length(), bounds);
             paint.setColor(Color.BLACK);
