@@ -31,6 +31,7 @@ import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
+import com.android.gallery3d.filtershow.imageshow.ImageGeometry;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -155,7 +156,6 @@ public class PanelController implements OnClickListener {
         private String mEffectName = null;
         private int mParameterValue = 0;
         private boolean mShowParameterValue = false;
-        boolean firstTimeCropDisplayed = true;
 
         public UtilityPanel(Context context, View view, View accessoryViewList,
                 View textView) {
@@ -532,44 +532,10 @@ public class PanelController implements OnClickListener {
                 mUtilityPanel.setEffectName(ename);
                 break;
             }
-            case R.id.straightenButton: {
-                mCurrentImage = showImageView(R.id.imageStraighten);
-                String ename = mCurrentImage.getContext().getString(R.string.straighten);
-                mUtilityPanel.setEffectName(ename);
-                break;
-            }
-            case R.id.cropButton: {
-                mCurrentImage = showImageView(R.id.imageCrop);
-                String ename = mCurrentImage.getContext().getString(R.string.crop);
-                mUtilityPanel.setEffectName(ename);
-                mUtilityPanel.setShowParameter(false);
-                if (mCurrentImage instanceof ImageCrop && mUtilityPanel.firstTimeCropDisplayed) {
-                    ((ImageCrop) mCurrentImage).clear();
-                    mUtilityPanel.firstTimeCropDisplayed = false;
-                    ((ImageCrop) mCurrentImage).setFixedAspect(mFixedAspect);
-                }
-                break;
-            }
-            case R.id.rotateButton: {
-                mCurrentImage = showImageView(R.id.imageRotate);
-                String ename = mCurrentImage.getContext().getString(R.string.rotate);
-                mUtilityPanel.setEffectName(ename);
-                break;
-            }
-            case R.id.flipButton: {
-                mCurrentImage = showImageView(R.id.imageFlip);
-                String ename = mCurrentImage.getContext().getString(R.string.mirror);
-                mUtilityPanel.setEffectName(ename);
-                mUtilityPanel.setShowParameter(false);
-                break;
-            }
             case R.id.applyEffect: {
                 if (MasterImage.getImage().getCurrentFilter() instanceof ImageFilterTinyPlanet) {
                     mActivity.saveImage();
                 } else {
-                    if (mCurrentImage instanceof ImageCrop) {
-                        ((ImageCrop) mCurrentImage).saveAndSetPreset();
-                    }
                     showPanel(mCurrentPanel);
                 }
                 MasterImage.getImage().invalidateFiltersOnly();
