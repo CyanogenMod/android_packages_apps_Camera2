@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,14 +88,20 @@ public class ImageVignette extends ImageShow {
                 setRepresentation(mVignetteRep);
                 break;
         }
-        resetImageCaches(this);
+        computeEllipses();
         invalidate();
-        mEditorVignette.commitLocalRepresentation();
         return true;
     }
 
     public void setRepresentation(FilterVignetteRepresentation vignetteRep) {
         mVignetteRep = vignetteRep;
+        computeEllipses();
+    }
+
+    public void computeEllipses() {
+        if (mVignetteRep == null) {
+            return;
+        }
         Matrix toImg = getScreenToImageMatrix(false);
         Matrix toScr = new Matrix();
         toImg.invert(toScr);
@@ -125,6 +131,7 @@ public class ImageVignette extends ImageShow {
             mElipse.setRadius(toScr.mapRadius(mVignetteRep.getRadiusX()),
                     toScr.mapRadius(mVignetteRep.getRadiusY()));
         }
+        mEditorVignette.commitLocalRepresentation();
     }
 
     public void setEditor(EditorVignette editorVignette) {
@@ -132,11 +139,18 @@ public class ImageVignette extends ImageShow {
     }
 
     @Override
+    public void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w,  h, oldw, oldh);
+        computeEllipses();
+    }
+
+    @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        setRepresentation(mVignetteRep);
+        if (mVignetteRep == null) {
+            return;
+        }
         mElipse.draw(canvas);
-
     }
 
 }
