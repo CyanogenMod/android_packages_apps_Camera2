@@ -16,8 +16,6 @@
 
 package com.android.camera.ui;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -37,7 +35,6 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.Transformation;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.common.ApiHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +60,8 @@ public class PieRenderer extends OverlayRenderer
     private static final int SCALING_DOWN_TIME = 100;
     private static final int DISAPPEAR_TIMEOUT = 200;
     private static final int DIAL_HORIZONTAL = 157;
+    // fade out timings
+    private static final int PIE_FADE_OUT_DURATION = 600;
 
     private static final long PIE_FADE_IN_DURATION = 200;
     private static final long PIE_XFADE_DURATION = 200;
@@ -117,6 +116,7 @@ public class PieRenderer extends OverlayRenderer
     private boolean mOpening;
     private LinearAnimation mXFade;
     private LinearAnimation mFadeIn;
+    private FadeOutAnimation mFadeOut;
     private volatile boolean mFocusCancelled;
 
     private Handler mHandler = new Handler() {
@@ -347,21 +347,35 @@ public class PieRenderer extends OverlayRenderer
         return (float) (360 - 180 * angle / Math.PI);
     }
 
-    private void startFadeOut() {
-        if (ApiHelper.HAS_VIEW_PROPERTY_ANIMATOR) {
-            mOverlay.animate().alpha(0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    deselect();
-                    show(false);
-                    mOverlay.setAlpha(1);
-                    super.onAnimationEnd(animation);
-                }
-            }).setDuration(PIE_SELECT_FADE_DURATION);
-        } else {
-            deselect();
-            show(false);
+    private void startFadeOut(final PieItem item) {
+        if (mFadeIn != null) {
+            mFadeIn.cancel();
         }
+        if (mXFade != null) {
+            mXFade.cancel();
+        }
+        mFadeOut = new FadeOutAnimation();
+        mFadeOut.setDuration(PIE_FADE_OUT_DURATION);
+        mFadeOut.setAnimationListener(new AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                item.performClick();
+                mFadeOut = null;
+                deselect();
+                show(false);
+                mOverlay.setAlpha(1);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        mFadeOut.startNow();
+        mOverlay.startAnimation(mFadeOut);
     }
 
     @Override
@@ -371,6 +385,8 @@ public class PieRenderer extends OverlayRenderer
             alpha = mXFade.getValue();
         } else if (mFadeIn != null) {
             alpha = mFadeIn.getValue();
+        } else if (mFadeOut != null) {
+            alpha = mFadeOut.getValue();
         }
         int state = canvas.save();
         if (mFadeIn != null) {
@@ -390,7 +406,11 @@ public class PieRenderer extends OverlayRenderer
         }
         if (mOpenItem != null) {
             for (PieItem inner : mOpenItem.getItems()) {
-                drawItem(canvas, inner, (mXFade != null) ? (1 - 0.5f * alpha) : 1);
+                if (mFadeOut != null) {
+                    drawItem(canvas, inner, alpha);
+                } else {
+                    drawItem(canvas, inner, (mXFade != null) ? (1 - 0.5f * alpha) : 1);
+                }
             }
         }
         canvas.restoreToCount(state);
@@ -404,12 +424,20 @@ public class PieRenderer extends OverlayRenderer
                     int state = canvas.save();
                     float r = getDegrees(item.getStartAngle());
                     canvas.rotate(r, mCenter.x, mCenter.y);
+                    if (mFadeOut != null) {
+                        p.setAlpha((int)(255 * alpha));
+                    }
                     canvas.drawPath(item.getPath(), p);
+                    if (mFadeOut != null) {
+                        p.setAlpha(255);
+                    }
                     canvas.restoreToCount(state);
                 }
-                alpha = alpha * (item.isEnabled() ? 1 : 0.3f);
-                // draw the item view
-                item.setAlpha(alpha);
+                if (mFadeOut == null) {
+                    alpha = alpha * (item.isEnabled() ? 1 : 0.3f);
+                    // draw the item view
+                    item.setAlpha(alpha);
+                }
                 item.draw(canvas);
             }
         }
@@ -451,8 +479,7 @@ public class PieRenderer extends OverlayRenderer
                     show(false);
                 } else if (!mOpening
                         && !item.hasItems()) {
-                    item.performClick();
-                    startFadeOut();
+                    startFadeOut(item);
                     mTapMode = false;
                 }
                 return true;
@@ -527,6 +554,9 @@ public class PieRenderer extends OverlayRenderer
             mCurrentItem.setSelected(false);
             mOpenItem = mCurrentItem;
             mOpening = true;
+            if (mFadeIn != null) {
+                mFadeIn.cancel();
+            }
             mXFade = new LinearAnimation(1, 0);
             mXFade.setDuration(PIE_XFADE_DURATION);
             mXFade.setAnimationListener(new AnimationListener() {
@@ -777,6 +807,26 @@ public class PieRenderer extends OverlayRenderer
             mState = STATE_IDLE;
             setCircle(mFocusX, mFocusY);
             mFocused = false;
+        }
+    }
+
+    private class FadeOutAnimation extends Animation {
+
+        private float mAlpha;
+
+        public float getValue() {
+            return mAlpha;
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            if (interpolatedTime < 0.2) {
+                mAlpha = 1;
+            } else if (interpolatedTime < 0.3) {
+                mAlpha = 0;
+            } else {
+                mAlpha = 1 - (interpolatedTime - 0.3f) / 0.7f;
+            }
         }
     }
 
