@@ -1,4 +1,4 @@
-package com.google.android.canvas.provider;
+package com.google.android.pano.provider;
 
 import android.content.ContentUris;
 import android.content.Intent;
@@ -6,13 +6,13 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
- * The contract between Canvas and ContentProviders that allow access to Canvas
- * browsing data. All apps that wish to interact with Canvas should use these
+ * The contract between Pano and ContentProviders that allow access to Pano
+ * browsing data. All apps that wish to interact with Pano should use these
  * definitions.
  *
  * TODO add more details
  */
-public final class CanvasContract {
+public final class PanoContract {
 
     // Base for content uris
     public static final String CONTENT = "content://";
@@ -30,37 +30,50 @@ public final class CanvasContract {
     public static final String PATH_BROWSE_HEADERS = "headers";
 
     /**
-     * This tag is used to identify the authority to be used for a canvas
-     * launcher app.
-     *
-     * TODO: this is obsolete: remove.
+     * Pano will search for activities with the action {@link Intent#ACTION_MAIN} and this
+     * category in order to find the activities for the home screen.
      */
-    public static final String METADATA_TAG = "com.google.android.canvas.data.launcher";
+    public static final String CATEGORY_BROWSE_LAUNCHER =
+            "com.google.android.pano.category.BROWSE_LAUNCHER";
 
     /**
-     * This tag is used to identify the launcher info data file to be used for a canvas
+     * This tag is used to identify the launcher info data file to be used for a Pano
      * launcher app.
      */
     public static final String METADATA_LAUNCHER_INFO_TAG =
-            "com.google.android.canvas.data.launcher_info";
+            "com.google.android.pano.data.launcher_info";
 
     /**
-     * This tag is used to denote a background color hint for the activity.
-     * <p>
-     * This can either be a reference to an @color or else a string (e.g. #ff001100).
-     *
-     * TODO: this is obsolete: remove.
-     */
-    public static final String METADATA_COLOR_HINT =
-            "com.google.android.canvas.ui.launcher_color_hint";
-
-    /**
-     * An intent action for browsing app content in Canvas. Apps receiving this
+     * An intent action for browsing app content in Pano. Apps receiving this
      * intent should call {@link Intent#getData()} to retrieve the base Uri and
      * {@link #EXTRA_START_INDEX} or {@link #EXTRA_START_ID} to find which header
      * to start at (default 0).
      */
-    public static final String ACTION_BROWSE = "com.google.android.canvas.action.BROWSE";
+    public static final String ACTION_BROWSE = "com.google.android.pano.action.BROWSE";
+
+    /**
+     * An intent action for picking app content in Pano.
+     * <p>
+     * Any intents launched from here will be returned to the calling activity instead of being
+     * directly launched.
+     * <p>
+     * This can be used to select an item.
+     */
+    public static final String ACTION_BROWSE_PICKER =
+            "com.google.android.pano.action.BROWSE_PICKER";
+
+    /**
+     * An intent action for picking app content while keeping the launching app running.
+     * <p>
+     * Pano Browse will appear over the app.
+     * <p>
+     * Any intents launched from here will be returned to the calling activity instead of being
+     * directly launched.
+     * <p>
+     * This can be used to select an item.
+     */
+    public static final String ACTION_BROWSE_PICKER_TRANSLUCENT =
+            "com.google.android.pano.action.BROWSE_PICKER_TRANSLUCENT";
 
     /**
      * The index of the header to focus on initially when the browse is launched.
@@ -76,10 +89,25 @@ public final class CanvasContract {
     public static final String EXTRA_START_ID = "start_id";
 
     /**
-     * An intent action for viewing detail content in Canvas. Apps receiving this
+     * An intent action for viewing detail content in Pano. Apps receiving this
      * intent should call {@link Intent#getData()} to retrieve the base Uri.
      */
-    public static final String ACTION_DETAIL = "com.google.android.canvas.action.DETAIL";
+    public static final String ACTION_DETAIL = "com.google.android.pano.action.DETAIL";
+
+    /**
+     * The name of the section to focus on initially when {@link #ACTION_DETAIL} is launched.
+     * <p>
+     * Using name allows targeting a sub section.
+     */
+    public static final String EXTRA_START_NAME = "start_name";
+
+    /**
+     * Index of a child to focus on initially when {@link #ACTION_DETAIL} is launched.
+     * <p>
+     * Requires a start section to be specified using {@link #EXTRA_START_INDEX} or
+     * {@link #EXTRA_START_NAME}.
+     */
+    public static final String EXTRA_START_CHILD_INDEX = "start_child_index";
 
     /**
      * Path for querying details for an item.
@@ -99,17 +127,46 @@ public final class CanvasContract {
     public static final String PATH_DETAIL_ACTIONS = "actions";
 
     /**
-     * Action for searching a Canvas provider. Apps receiving this
+     * Action for searching a Pano provider. Apps receiving this
      * intent should call {@link Intent#getData()} to retrieve the base Uri and
      * {@link #EXTRA_QUERY} to find query.
      */
-    public static final String ACTION_SEARCH = "com.google.android.canvas.action.SEARCH";
+    public static final String ACTION_SEARCH = "com.google.android.pano.action.SEARCH";
+
+    /**
+     * Action for searching a Pano provider.
+     * <p>
+     * Any intent selected off this activity will be returned to the calling activity instead of
+     * being launched directly.
+     */
+    public static final String ACTION_SEARCH_PICKER =
+            "com.google.android.pano.action.SEARCH_PICKER";
+
+    /**
+     * An intent action for searching app content while keeping the launching app running.
+     * <p>
+     * Pano Search will appear over the app.
+     * <p>
+     * Any intents launched from here will be returned to the calling activity instead of being
+     * directly launched.
+     * <p>
+     * This can be used to select an item.
+     */
+    public static final String ACTION_SEARCH_PICKER_TRANSLUCENT =
+            "com.google.android.pano.action.SEARCH_PICKER_TRANSLUCENT";
 
     /**
      * The query to be executed when search activity is launched
      * This extra is optional and defaults to null.
      */
     public static final String EXTRA_QUERY = "query";
+
+    /**
+     * Optional String extra for meta information. This must be supplied as a string, but must be a valid URI.
+     * <p>
+     * Used with {@link #ACTION_SEARCH}.
+     */
+    public static final String EXTRA_META_URI = "meta_uri";
 
     /**
      * Optional int extra for setting the display mode of the search activity.
@@ -121,9 +178,10 @@ public final class CanvasContract {
 
     public static final int DISPLAY_MODE_ROW = 0;
     public static final int DISPLAY_MODE_GRID = 1;
+    public static final int DISPLAY_MODE_BROWSE = 2;
 
     /**
-     * Value for the root Canvas URI when this activity should be excluded from the Canvas top level
+     * Value for the root Pano URI when this activity should be excluded from the Pano top level
      * and the legacy apps area.
      *
      * TODO: this is obsolete: remove.
@@ -187,10 +245,27 @@ public final class CanvasContract {
         public static final String CACHE_TIME_MS = "cache_time_ms";
 
         /**
+         * Content URI pointing to a list of items in the {@link PanoContract.BrowseItemsColumns}
+         * schema.
+         * <p>
+         * This is optional but highly recommended if the cluster represents a browse row.
+         * <p>
+         * In this case, the cluster items will be read from this URI instead of from the cluster
+         * items.
+         * <p>
+         * If this is filled in, the intent_uri must have the action
+         * {@link PanoContract#ACTION_BROWSE}. The row with this URI will automatically be
+         * selected when the activity starts up.
+         *
+         * <P>Type: String (Uri)</P>
+         */
+        public static final String BROWSE_ITEMS_URI = "browse_items_uri";
+
+        /**
          * A standard Intent Uri to be launched when this cluster is selected.
-         * This may be a {@link CanvasContract#ACTION_BROWSE} intent or an
+         * This may be a {@link PanoContract#ACTION_BROWSE} intent or an
          * intent to launch directly into an app. You can also use
-         * {@link CanvasContract#getBrowseIntent(Uri, int)} to generate a
+         * {@link PanoContract#getBrowseIntent(Uri, int)} to generate a
          * browse intent for a given root Uri. Use {@link Intent#toUri(int)}
          * with a flag of {@link Intent#URI_INTENT_SCHEME}.
          *
@@ -208,7 +283,7 @@ public final class CanvasContract {
         public static final String NOTIFICATION_TEXT = "notification_text";
 
         /**
-         * An optional Uri for querying progresss for any ongoing actions, such
+         * An optional Uri for querying progress for any ongoing actions, such
          * as an active download.
          *
          * <P>Type: String (Uri)</P>
@@ -232,6 +307,16 @@ public final class CanvasContract {
          * <P>Type: INTEGER</P>
          */
         public static final String PROGRESS = "progress";
+
+        /**
+         * The smallest value that is a valid {@link #PROGRESS}.
+         */
+        public static final int PROGRESS_MIN = 0;
+
+        /**
+         * The largest value that is a valid {@link #PROGRESS}.
+         */
+        public static final int PROGRESS_MAX = 100;
     }
 
     public static final class Progress implements BaseColumns, ProgressColumns {
@@ -305,6 +390,16 @@ public final class CanvasContract {
         public static final String DISPLAY_NAME = "display_name";
 
         /**
+         * Optional Uri pointing to the data for the items for this header.
+         * <p>
+         * If this is not provided, a Uri will be constructed using
+         * {@link BrowseItems#getBrowseItemsUri(Uri, long)}.
+         *
+         * <P>Type: String</P>
+         */
+        public static final String ITEMS_URI = "items_uri";
+
+        /**
          * Uri pointing to an icon to be used as part of the header. This
          * String should be generated using {@link Uri#toString()}
          *
@@ -345,6 +440,20 @@ public final class CanvasContract {
          * like file://, http://, https://.
          *
          * <P>Type: String (Uri)</P>
+         */
+        public static final String BACKGROUND_IMAGE_URI = "background_image_uri";
+
+        /**
+         * Uri pointing to an image to display in the background when on this
+         * tab. Be sure the image contrasts enough with the text color hint and
+         * is of high enough quality to be displayed at 1080p. This String
+         * should be generated using {@link Uri#toString()}.  The URI will be either
+         * a resource uri in format of android:resource:// or an external URL
+         * like file://, http://, https://.
+         *
+         * <P>Type: String (Uri)</P>
+         * <P>This is the obsolete version of {@link #BACKGROUND_IMAGE_URI}</P>
+         * TODO: remove obsolete version when all clients have upgraded.
          */
         public static final String BG_IMAGE_URI = "bg_image_uri";
 
@@ -481,22 +590,30 @@ public final class CanvasContract {
 
     protected interface UserRatingColumns {
         /**
-         * The average rating for this item. (Optional)
-         *
-         * <P>Type: Double</P>
+         * A custom rating String for this item, such as "78 points" or
+         * "20/100". (Optional)
+         * <p>
+         * A null or the absence of this column indicates there is no custom
+         * rating available.
+         * <P>Type: String</P>
          */
-        public static final String USER_RATING_AVERAGE = "user_rating_average";
+        public static final String USER_RATING_CUSTOM = "user_rating_custom";
 
         /**
-         * A simple rating for this item as an integer in the range
-         * [0-10] inclusive. (Optional)
-         *
-         * <P>Type: INTEGER</P>
+         * A scaled rating for this item as a float in the range [0-10]
+         * inclusive. Pano will be responsible for visualizing this
+         * value.(Optional)
+         * <p>
+         * A -1 or the absence of this column indicates there is no rating
+         * available.
+         * <P>Type: FLOAT</P>
          */
-        public static final String USER_RATING_SIMPLE = "user_rating_simple";
+        public static final String USER_RATING = "user_rating";
 
         /**
          * The number of reviews included in the average rating. (Optional)
+         * <p>
+         * A value of 0 indicates the count is not available.
          *
          * <P>Type: INTEGER</P>
          */
@@ -566,6 +683,13 @@ public final class CanvasContract {
     }
 
     protected interface DetailSectionsColumns {
+
+        /**
+         * Text ID for a section. Can be used to target the section
+         *
+         * <P>Type: String</P>
+         */
+        public static final String NAME = "name";
 
         /**
          * Text that will be shown to the user for navigating between sections.
@@ -776,6 +900,23 @@ public final class CanvasContract {
         public static final String DISPLAY_NUMBER = "display_number";
 
         /**
+         * Hint for how to display the item. This is either {@link #ITEM_DISPLAY_TYPE_NORMAL} or
+         * {@link #ITEM_DISPLAY_TYPE_SINGLE_LINE}.
+         */
+        public static final String ITEM_DISPLAY_TYPE = "item_display_type";
+
+        /**
+         * Value for {@link #ITEM_DISPLAY_TYPE} which allows for multiple lines.
+         */
+        public static final int ITEM_DISPLAY_TYPE_NORMAL = 0;
+
+        /**
+         * Value for {@link #ITEM_DISPLAY_TYPE} which hints that the content should be displayed
+         * on a single line.
+         */
+        public static final int ITEM_DISPLAY_TYPE_SINGLE_LINE = 1;
+
+        /**
          * The uri for retrieving the image to show for this item. This string
          * should be created using {@link Uri#toString()}. (Optional)
          *
@@ -795,6 +936,23 @@ public final class CanvasContract {
         public static final String ACTION_URI = "action_uri";
     }
 
+    protected interface SearchBrowseResult {
+        public static final String RESULTS_URI = "results_uri";
+        /**
+         * The default width of the expanded image
+         *
+         * <P>Type: INTEGER</P>
+         */
+        public static final String DEFAULT_ITEM_WIDTH = "default_item_width";
+
+        /**
+         * The default height of the expanded image
+         *
+         * <P>Type: INTEGER</P>
+         */
+        public static final String DEFAULT_ITEM_HEIGHT = "default_item_height";
+    }
+
     public static final class DetailChildren
             implements BaseColumns, ItemChildrenColumns, UserRatingColumns {
 
@@ -805,12 +963,46 @@ public final class CanvasContract {
     }
 
     public static final class SearchResults
-            implements BaseColumns, ItemChildrenColumns, UserRatingColumns {
+            implements BaseColumns, ItemChildrenColumns, UserRatingColumns, SearchBrowseResult {
 
         /**
          * Non instantiable.
          */
         private SearchResults() {}
+    }
+
+    protected interface MetaColumns {
+
+        /**
+         * The uri for retrieving the background image to show for this item. This string
+         * should be created using {@link Uri#toString()}.
+         *
+         * <P>Type: String (Uri)</P>
+         */
+        public static final String BACKGROUND_IMAGE_URI = "background_image_uri";
+        /**
+         * Uri pointing to an icon to be used for app branding on this tab.
+         * This String should be generated using {@link Uri#toString()}
+         *
+         * <P>Type: String (Uri)</P>
+         */
+        public static final String BADGE_URI = "badge_uri";
+
+        /**
+         * A 0xAARRGGBB color that should be applied to the background when on
+         * this tab.
+         *
+         * <P>Type: INTEGER</P>
+         */
+        public static final String COLOR_HINT = "color_hint";
+    }
+
+    public static final class MetaSchema implements BaseColumns, MetaColumns {
+
+        /**
+         * Non instantiable.
+         */
+        private MetaSchema() {}
     }
 
     protected interface DetailActionsColumns {
