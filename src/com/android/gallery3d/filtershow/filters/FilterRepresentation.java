@@ -30,6 +30,7 @@ public class FilterRepresentation implements Cloneable {
     private int mEditorId = BasicEditor.ID;
     private int mButtonId = 0;
     private int mOverlayId = 0;
+    private boolean mOverlayOnly = false;
     private boolean mShowEditingControls = true;
     private boolean mShowParameterValue = true;
     private boolean mShowUtilityPanel = true;
@@ -58,6 +59,7 @@ public class FilterRepresentation implements Cloneable {
         representation.setEditorId(getEditorId());
         representation.setButtonId(getButtonId());
         representation.setOverlayId(getOverlayId());
+        representation.setOverlayOnly(getOverlayOnly());
         representation.setShowEditingControls(showEditingControls());
         representation.setShowParameterValue(showParameterValue());
         representation.setShowUtilityPanel(showUtilityPanel());
@@ -77,6 +79,7 @@ public class FilterRepresentation implements Cloneable {
                 && representation.mEditorId == mEditorId
                 && representation.mButtonId == mButtonId
                 && representation.mOverlayId == mOverlayId
+                && representation.mOverlayOnly == mOverlayOnly
                 && representation.mShowEditingControls == mShowEditingControls
                 && representation.mShowParameterValue == mShowParameterValue
                 && representation.mShowUtilityPanel == mShowUtilityPanel) {
@@ -181,8 +184,21 @@ public class FilterRepresentation implements Cloneable {
         mOverlayId = overlayId;
     }
 
-    public int getEditorId() {
+    public boolean getOverlayOnly() {
+        return mOverlayOnly;
+    }
+
+    public void setOverlayOnly(boolean value) {
+        mOverlayOnly = value;
+    }
+
+    final public int getEditorId() {
         return mEditorId;
+    }
+
+    public int[] getEditorIds() {
+        return new int[] {
+        mEditorId };
     }
 
     public void setEditorId(int editorId) {
