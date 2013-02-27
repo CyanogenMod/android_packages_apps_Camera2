@@ -389,12 +389,8 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"I-tag ang iyong mga larawan at video sa mga lokasyon kung saan kinunan ang mga iyon."\n\n"Maaaring i-access ng mga ibang app ang impormasyong ito kasama ng iyong mga na-save na larawan."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"Hindi na, salamat"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"Oo"</string>
-    <!-- no translation found for menu_camera (3476709832879398998) -->
-    <skip />
-    <!-- no translation found for menu_search (7580008232297437190) -->
-    <skip />
-    <!-- no translation found for tab_photos (9110813680630313419) -->
-    <skip />
-    <!-- no translation found for tab_albums (8079449907770685691) -->
-    <skip />
+    <string name="menu_camera" msgid="3476709832879398998">"Camera"</string>
+    <string name="menu_search" msgid="7580008232297437190">"Maghanap"</string>
+    <string name="tab_photos" msgid="9110813680630313419">"Mga Larawan"</string>
+    <string name="tab_albums" msgid="8079449907770685691">"Mga Album"</string>
 </resources>

@@ -389,12 +389,8 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"Címkézze fel a fotókat és videókat a hellyel, ahol készítette őket."\n\n"Más alkalmazások hozzáférnek ehhez az információhoz és a mentett képekhez."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"Nem, köszönöm."</string>
     <string name="remember_location_yes" msgid="862884269285964180">"Igen"</string>
-    <!-- no translation found for menu_camera (3476709832879398998) -->
-    <skip />
-    <!-- no translation found for menu_search (7580008232297437190) -->
-    <skip />
-    <!-- no translation found for tab_photos (9110813680630313419) -->
-    <skip />
-    <!-- no translation found for tab_albums (8079449907770685691) -->
-    <skip />
+    <string name="menu_camera" msgid="3476709832879398998">"Kamera"</string>
+    <string name="menu_search" msgid="7580008232297437190">"Keresés"</string>
+    <string name="tab_photos" msgid="9110813680630313419">"Fotók"</string>
+    <string name="tab_albums" msgid="8079449907770685691">"Albumok"</string>
 </resources>
