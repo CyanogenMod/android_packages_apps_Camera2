@@ -1,6 +1,6 @@
 // Copyright 2012 Google Inc. All Rights Reserved.
 
-package com.google.android.canvas.data.util;
+package com.google.android.pano.data.util;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -83,6 +83,15 @@ public final class UriUtils {
     }
 
     /**
+     * Returns {@code true} if the URI refers to a content URI which can be opened via
+     * {@link ContentResolver#openInputStream(Uri)}.
+     */
+    public static boolean isContentUri(Uri uri) {
+        return ContentResolver.SCHEME_CONTENT.equals(uri.getScheme()) ||
+                ContentResolver.SCHEME_FILE.equals(uri.getScheme());
+    }
+
+    /**
      * Checks if the URI refers to an shortcut icon resource.
      */
     public static boolean isShortcutIconResourceUri(Uri uri) {
@@ -118,7 +127,8 @@ public final class UriUtils {
      * Returns {@code true} if this is a web URI.
      */
     public static boolean isWebUri(Uri resourceUri) {
-        String scheme = resourceUri.getScheme().toLowerCase();
+        String scheme = resourceUri.getScheme() == null ? null
+                : resourceUri.getScheme().toLowerCase();
         return HTTP_PREFIX.equals(scheme) || HTTPS_PREFIX.equals(scheme);
     }
 }
