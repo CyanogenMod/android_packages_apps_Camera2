@@ -20,8 +20,7 @@
     <string name="cannot_load_image" msgid="5023634941212959976">"Nije moguće učitati sliku!"</string>
     <!-- no translation found for original_picture_text (3076213290079909698) -->
     <skip />
-    <!-- no translation found for setting_wallpaper (4679087092300036632) -->
-    <skip />
+    <string name="setting_wallpaper" msgid="4679087092300036632">"Postavljanje pozadinske slike"</string>
     <string name="original" msgid="3524493791230430897">"Original"</string>
     <string name="borders" msgid="2067345080568684614">"Obrubi"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Poništi"</string>
