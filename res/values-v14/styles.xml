@@ -24,4 +24,6 @@
     </style>
     <style name="Theme.Photos.Gallery" parent="android:Theme.Holo.Light">
     </style>
+    <style name="Theme.Photos.Fullscreen" parent="android:Theme.Holo">
+    </style>
 </resources>
