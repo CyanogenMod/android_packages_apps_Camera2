@@ -155,9 +155,7 @@ public class ImageCrop extends ImageGeometry {
         mAspectHeight = h;
         setLocalCropBounds(getUntranslatedStraightenCropBounds(getLocalPhotoBounds(),
                 getLocalStraighten()));
-        if (mVisibilityGained) {
-            cropSetup();
-        }
+        cropSetup();
         saveAndSetPreset();
         invalidate();
     }
@@ -172,9 +170,7 @@ public class ImageCrop extends ImageGeometry {
         mAspectHeight = h / scale;
         setLocalCropBounds(getUntranslatedStraightenCropBounds(photobounds,
                 getLocalStraighten()));
-        if (mVisibilityGained) {
-            cropSetup();
-        }
+        cropSetup();
         saveAndSetPreset();
         invalidate();
     }
@@ -185,9 +181,7 @@ public class ImageCrop extends ImageGeometry {
         mAspectHeight = 1;
         setLocalCropBounds(getUntranslatedStraightenCropBounds(getLocalPhotoBounds(),
                 getLocalStraighten()));
-        if (mVisibilityGained) {
-            cropSetup();
-        }
+        cropSetup();
         saveAndSetPreset();
         invalidate();
     }
