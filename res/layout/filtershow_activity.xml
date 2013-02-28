@@ -22,36 +22,16 @@
     android:id="@+id/mainView">
 
     <LinearLayout
-        android:id="@+id/imageStatePanel"
-        android:layout_width="200dip"
-        android:layout_height="match_parent"
-        android:layout_gravity="right"
-        android:orientation="vertical"
-        android:visibility="invisible" >
-
-        <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:padding="2dip"
-            android:text="@string/imageState"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:animateLayoutChanges="true">
 
-        <ListView
-            android:id="@+id/imageStateList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" >
-        </ListView>
-    </LinearLayout>
-
-    <LinearLayout
+        <LinearLayout
         android:id="@+id/mainPanel"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:orientation="vertical" >
 
         <FrameLayout
@@ -264,6 +244,38 @@
         </com.android.gallery3d.filtershow.CenteredLinearLayout>
 
         </com.android.gallery3d.filtershow.CenteredLinearLayout>
+
+    </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/imageStatePanel"
+                android:layout_width="400dip"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:visibility="gone" >
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:gravity="center"
+                    android:padding="2dip"
+                    android:text="@string/imageState"
+                    android:textColor="@android:color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+            <ListView
+                    android:id="@+id/imageStateList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" >
+            </ListView>
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout

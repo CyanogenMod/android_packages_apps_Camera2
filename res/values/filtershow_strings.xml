@@ -62,7 +62,7 @@
     <!--  Image state panel -->
 
     <!--  Text for the image state panel title [CHAR LIMIT=50] -->
-    <string name="imageState">Current Image State</string>
+    <string name="imageState">Applied Effects</string>
 
     <!--  Additional filters buttons  -->
 
