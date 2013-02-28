@@ -29,7 +29,7 @@ public class EditorCrop extends Editor implements EditorInfo {
     private static final String LOGTAG = "EditorCrop";
 
     ImageCrop mImageCrop;
-    private String mAspectString = null;
+    private String mAspectString = "";
     private boolean mCropActionFlag = false;
     private CropExtras mCropExtras = null;
 
@@ -40,13 +40,24 @@ public class EditorCrop extends Editor implements EditorInfo {
     @Override
     public void createEditor(Context context, FrameLayout frameLayout) {
         super.createEditor(context, frameLayout);
-        mView = mImageShow = mImageCrop = new ImageCrop(context);
-        mImageCrop.setExtras(mCropExtras);
-        mImageCrop.setAspectString(mAspectString);
-        mImageCrop.setCropActionFlag(mCropActionFlag);
+        if (mImageCrop == null) {
+            // TODO: need this for now because there's extra state in ImageCrop.
+            // all the state instead should be in the representation.
+            // Same thing for the other geometry editors.
+            mImageCrop = new ImageCrop(context);
+        }
+        mView = mImageShow = mImageCrop;
         mImageCrop.setImageLoader(MasterImage.getImage().getImageLoader());
         mImageCrop.setEditor(this);
         mImageCrop.syncLocalToMasterGeometry();
+        mImageCrop.setCropActionFlag(mCropActionFlag);
+        if (mCropActionFlag) {
+            mImageCrop.setExtras(mCropExtras);
+            mImageCrop.setAspectString(mAspectString);
+            mImageCrop.clear();
+        } else {
+            mImageCrop.setExtras(null);
+        }
     }
 
     @Override
