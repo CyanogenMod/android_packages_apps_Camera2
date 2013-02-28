@@ -129,6 +129,9 @@ public class ImagePreset {
     }
 
     public void updateFilterRepresentation(FilterRepresentation representation) {
+        if (representation == null) {
+            return;
+        }
         synchronized (mFilters) {
             if (representation instanceof GeometryMetadata) {
                 setGeometry((GeometryMetadata) representation);
@@ -331,6 +334,23 @@ public class ImagePreset {
         Log.v(LOGTAG, "/// showFilters -- " + mFilters.size() + " filters");
     }
 
+    public FilterRepresentation getLastRepresentation() {
+        if (mFilters.size() > 0) {
+            return mFilters.lastElement();
+        }
+        return null;
+    }
+
+    public void removeFilter(FilterRepresentation filterRepresentation) {
+        for (int i = 0; i < mFilters.size(); i++) {
+            if (mFilters.elementAt(i).getFilterClass() == filterRepresentation.getFilterClass()) {
+                mFilters.remove(i);
+                setHistoryName("Remove");
+                return;
+            }
+        }
+    }
+
     public void addFilter(FilterRepresentation representation) {
         if (representation instanceof GeometryMetadata) {
             setGeometry((GeometryMetadata) representation);
@@ -501,4 +521,5 @@ public class ImagePreset {
     public Rect getPartialRenderingBounds() {
         return mPartialRenderingBounds;
     }
+
 }

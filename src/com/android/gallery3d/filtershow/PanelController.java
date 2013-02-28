@@ -24,6 +24,8 @@ import android.view.ViewPropertyAnimator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import android.util.Log;
+
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.editors.Editor;
 import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
@@ -36,6 +38,7 @@ import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.ui.FilterIconButton;
 
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Vector;
 
 public class PanelController implements OnClickListener {
@@ -264,6 +267,13 @@ public class PanelController implements OnClickListener {
     private FilterShowActivity mActivity = null;
     private EditorPlaceHolder mEditorPlaceHolder = null;
 
+    public void clear() {
+        mPanels.clear();
+        mViews.clear();
+        mFilters.clear();
+        mImageViews.clear();
+    }
+
     public void setActivity(FilterShowActivity activity) {
         mActivity = activity;
     }
@@ -273,7 +283,18 @@ public class PanelController implements OnClickListener {
         mViews.put(view, new ViewType(view, COMPONENT));
     }
 
-    public void addPanel(View view, View container, int position) {
+    public View getViewFromId(int viewId) {
+        for (View view : mPanels.keySet()) {
+            if (view.getId() == viewId) {
+                return view;
+            }
+        }
+        return null;
+    }
+
+    public void addPanel(int viewId, int containerId, int position) {
+        View view = mActivity.findViewById(viewId);
+        View container = mActivity.findViewById(containerId);
         mPanels.put(view, new Panel(view, container, position));
         view.setOnClickListener(this);
         mViews.put(view, new ViewType(view, PANEL));
@@ -334,8 +355,8 @@ public class PanelController implements OnClickListener {
         mUtilityPanel.setShowParameter(s);
     }
 
-    public void setCurrentPanel(View panel) {
-        showPanel(panel);
+    public void setCurrentPanel(int panelId) {
+        showPanel(getViewFromId(panelId));
     }
 
     public void setRowPanel(View rowPanel) {
@@ -438,6 +459,30 @@ public class PanelController implements OnClickListener {
         mUtilityPanel.setEffectName(ename);
     }
 
+    public void removeFilterRepresentation(FilterRepresentation filterRepresentation) {
+        if (filterRepresentation == null) {
+            Log.v(LOGTAG, "RemoveFilterRepresentation: " + filterRepresentation);
+            return;
+        }
+        ImagePreset oldPreset = MasterImage.getImage().getPreset();
+        ImagePreset copy = new ImagePreset(oldPreset);
+        copy.removeFilter(filterRepresentation);
+        MasterImage.getImage().setPreset(copy, true);
+        if (MasterImage.getImage().getCurrentFilterRepresentation() == filterRepresentation) {
+            FilterRepresentation lastRepresentation = copy.getLastRepresentation();
+            MasterImage.getImage().setCurrentFilterRepresentation(lastRepresentation);
+        }
+        // Now let's reset the panel
+        if (mUtilityPanel == null || !mUtilityPanel.selected()) {
+            return;
+        }
+        showPanel(mCurrentPanel);
+        mCurrentImage.select();
+        if (mCurrentEditor != null) {
+            mCurrentEditor.reflectCurrentFilter();
+        }
+    }
+
     public void useFilterRepresentation(FilterRepresentation filterRepresentation) {
         if (filterRepresentation == null) {
             return;
@@ -459,6 +504,23 @@ public class PanelController implements OnClickListener {
         }
         MasterImage.getImage().setPreset(copy, true);
         MasterImage.getImage().setCurrentFilterRepresentation(filterRepresentation);
+    }
+
+    public void showComponentWithRepresentation(FilterRepresentation filterRepresentation) {
+        if (filterRepresentation == null) {
+            return;
+        }
+        Set<View> views = mViews.keySet();
+        for (View view : views) {
+            if (view instanceof FilterIconButton) {
+                FilterIconButton button = (FilterIconButton) view;
+                if (button.getFilterRepresentation().getFilterClass() == filterRepresentation.getFilterClass()) {
+                    MasterImage.getImage().setCurrentFilterRepresentation(filterRepresentation);
+                    showComponent(view);
+                    return;
+                }
+            }
+        }
     }
 
     public void showComponent(View view) {

@@ -116,11 +116,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
     private View mSaveButton = null;
 
-    private ImageButton mFxButton = null;
-    private ImageButton mBorderButton = null;
-    private ImageButton mGeometryButton = null;
-    private ImageButton mColorsButton = null;
-
     private EditorPlaceHolder mEditorPlaceHolder = new EditorPlaceHolder(this);
 
     private static final int SELECT_PICTURE = 1;
@@ -145,35 +140,24 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private FilterIconButton mNullBorderFilter;
     private int mIconSeedSize = 140;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ImageFilter.setActivityForMemoryToasts(this);
-        setResources();
 
-        Resources res = getResources();
         setupMasterImage();
-        ImageFilterRS.setRenderScriptContext(this);
+        setDefaultValues();
+        fillEditors();
 
-        ImageShow.setDefaultBackgroundColor(res.getColor(R.color.background_screen));
-        // TODO: get those values from XML.
-        ImageZoom.setZoomedSize(getPixelsFromDip(256));
-        FramedTextButton.setTextSize((int) getPixelsFromDip(14));
-        FramedTextButton.setTrianglePadding((int) getPixelsFromDip(4));
-        FramedTextButton.setTriangleSize((int) getPixelsFromDip(10));
-        ImageShow.setTextSize((int) getPixelsFromDip(12));
-        ImageShow.setTextPadding((int) getPixelsFromDip(10));
-        ImageShow.setOriginalTextMargin((int) getPixelsFromDip(4));
-        ImageShow.setOriginalTextSize((int) getPixelsFromDip(18));
-        ImageShow.setOriginalText(res.getString(R.string.original_picture_text));
-        mIconSeedSize = res.getDimensionPixelSize(R.dimen.thumbnail_size);
+        loadXML();
+        setDefaultPreset();
 
-        Drawable curveHandle = res.getDrawable(R.drawable.camera_crop);
-        int curveHandleSize = (int) res.getDimension(R.dimen.crop_indicator_size);
-        Spline.setCurveHandle(curveHandle, curveHandleSize);
-        Spline.setCurveWidth((int) getPixelsFromDip(3));
+        processIntent();
+    }
 
+    private void loadXML() {
         setContentView(R.layout.filtershow_activity);
+
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         actionBar.setCustomView(R.layout.filtershow_actionbar);
@@ -186,53 +170,75 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             }
         });
 
-        mImageLoader = new ImageLoader(this, getApplicationContext());
         mImageShow = (ImageShow) findViewById(R.id.imageShow);
         mImageTinyPlanet = (ImageTinyPlanet) findViewById(R.id.imageTinyPlanet);
-
-        ImageCrop.setAspectTextSize((int) getPixelsFromDip(18));
-        ImageCrop.setTouchTolerance((int) getPixelsFromDip(25));
-        ImageCrop.setMinCropSize((int) getPixelsFromDip(55));
         mImageViews.add(mImageShow);
         mImageViews.add(mImageTinyPlanet);
 
-        mEditorPlaceHolder.setContainer((FrameLayout) findViewById(R.id.editorContainer));
-        mEditorPlaceHolder.addEditor(new EditorDraw());
-        mEditorPlaceHolder.addEditor(new BasicEditor());
-        mEditorPlaceHolder.addEditor(new ImageOnlyEditor());
-        mEditorPlaceHolder.addEditor(new EditorTinyPlanet());
-        mEditorPlaceHolder.addEditor(new EditorRedEye());
-        mEditorPlaceHolder.addEditor(new EditorCrop());
-        mEditorPlaceHolder.addEditor(new EditorFlip());
-        mEditorPlaceHolder.addEditor(new EditorRotate());
-        mEditorPlaceHolder.addEditor(new EditorStraighten());
-        EditorManager.addEditors(mEditorPlaceHolder);
-        mEditorPlaceHolder.setOldViews(mImageViews);
-        mEditorPlaceHolder.setImageLoader(mImageLoader);
+        setupEditors();
 
         mEditorPlaceHolder.hide();
-
-        mFxButton = (ImageButton) findViewById(R.id.fxButton);
-        mBorderButton = (ImageButton) findViewById(R.id.borderButton);
-        mGeometryButton = (ImageButton) findViewById(R.id.geometryButton);
-        mColorsButton = (ImageButton) findViewById(R.id.colorsButton);
 
         mImageShow.setImageLoader(mImageLoader);
         mImageTinyPlanet.setImageLoader(mImageLoader);
 
+        mPanelController.clear();
         mPanelController.setActivity(this);
         mPanelController.setEditorPlaceHolder(mEditorPlaceHolder);
 
         mPanelController.addImageView(findViewById(R.id.imageShow));
         mPanelController.addImageView(findViewById(R.id.imageTinyPlanet));
 
-        mPanelController.addPanel(mFxButton, findViewById(R.id.fxList), 0);
-        mPanelController.addPanel(mBorderButton, findViewById(R.id.bordersList), 1);
-        mPanelController.addPanel(mGeometryButton, findViewById(R.id.geometryList), 2);
+        mPanelController.addPanel(R.id.fxButton, R.id.fxList, 0);
+        mPanelController.addPanel(R.id.borderButton, R.id.bordersList, 1);
+        mPanelController.addPanel(R.id.geometryButton, R.id.geometryList, 2);
+        mPanelController.addPanel(R.id.colorsButton, R.id.colorsFxList, 3);
 
+        fillFilters();
+        fillGeometry();
+        fillFx((LinearLayout) findViewById(R.id.listFilters), R.id.fxButton);
+        LoadBordersTask loadBorders = new LoadBordersTask((LinearLayout) findViewById(R.id.listBorders));
+        loadBorders.execute();
+
+        mPanelController.addView(findViewById(R.id.applyEffect));
+
+        findViewById(R.id.resetOperationsButton).setOnClickListener(
+                createOnClickResetOperationsButton());
+
+        ListView operationsList = (ListView) findViewById(R.id.operationsList);
+        operationsList.setAdapter(mMasterImage.getHistory());
+        operationsList.setOnItemClickListener(this);
+
+        ListView imageStateList = (ListView) findViewById(R.id.imageStateList);
+        imageStateList.setAdapter(mMasterImage.getState());
+        mImageLoader.setAdapter(mMasterImage.getHistory());
+
+        mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
+        mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList),
+                findViewById(R.id.panelAccessoryViewList),
+                findViewById(R.id.applyEffect));
+
+        mPanelController.setCurrentPanel(R.id.fxButton);
+    }
+
+    private void fillFilters() {
+        Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
+
+        FiltersManager filtersManager = FiltersManager.getManager();
+        filtersManager.addEffects(filtersRepresentations);
+
+        ImageButton colorsButton = (ImageButton) findViewById(R.id.colorsButton);
+        for (FilterRepresentation representation : filtersRepresentations) {
+            setupFilterRepresentationButton(representation,
+                    (LinearLayout) findViewById(R.id.listColorsFx), colorsButton);
+        }
+    }
+
+    private void fillGeometry() {
         // TODO: move to a separate function.
         GeometryMetadata geo = new GeometryMetadata();
         int[] editorsId = geo.getEditorIds();
+        ImageButton geometryButton = (ImageButton) findViewById(R.id.geometryButton);
         for (int i = 0; i < editorsId.length; i++) {
             int editorId = editorsId[i];
             GeometryMetadata geometry = new GeometryMetadata(geo);
@@ -242,42 +248,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             geometry.setOverlayId(editorInfo.getOverlayId());
             geometry.setOverlayOnly(editorInfo.getOverlayOnly());
             setupFilterRepresentationButton(
-                    geometry, (LinearLayout) findViewById(R.id.listGeometry), mGeometryButton);
+                    geometry, (LinearLayout) findViewById(R.id.listGeometry), geometryButton);
         }
+    }
 
-        mPanelController.addPanel(mColorsButton, findViewById(R.id.colorsFxList), 3);
-
-        Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
-
-        FiltersManager filtersManager = FiltersManager.getManager();
-        filtersManager.addEffects(filtersRepresentations);
-
-        for (FilterRepresentation representation : filtersRepresentations) {
-            setupFilterRepresentationButton(representation,
-                    (LinearLayout) findViewById(R.id.listColorsFx), mColorsButton);
-        }
-
-        mPanelController.addView(findViewById(R.id.applyEffect));
-        findViewById(R.id.resetOperationsButton).setOnClickListener(
-                createOnClickResetOperationsButton());
-
-        ListView operationsList = (ListView) findViewById(R.id.operationsList);
-        operationsList.setAdapter(mMasterImage.getHistory());
-        operationsList.setOnItemClickListener(this);
-        ListView imageStateList = (ListView) findViewById(R.id.imageStateList);
-        imageStateList.setAdapter(mMasterImage.getState());
-        mImageLoader.setAdapter(mMasterImage.getHistory());
-
-        fillListImages((LinearLayout) findViewById(R.id.listFilters));
-        LoadBordersTask loadBorders = new LoadBordersTask((LinearLayout) findViewById(R.id.listBorders));
-        loadBorders.execute();
-
-        mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
-        mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList),
-                findViewById(R.id.panelAccessoryViewList),
-                findViewById(R.id.applyEffect));
-
-        mPanelController.setCurrentPanel(mFxButton);
+    private void processIntent() {
         Intent intent = getIntent();
         if (intent.getBooleanExtra(LAUNCH_FULLSCREEN, false)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -325,6 +300,56 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                         && mCropExtras.getAspectY() > 0);
             }
         }
+    }
+
+    private void setupEditors() {
+        mEditorPlaceHolder.setContainer((FrameLayout) findViewById(R.id.editorContainer));
+        EditorManager.addEditors(mEditorPlaceHolder);
+        mEditorPlaceHolder.setOldViews(mImageViews);
+        mEditorPlaceHolder.setImageLoader(mImageLoader);
+    }
+
+    private void fillEditors() {
+        mEditorPlaceHolder.addEditor(new EditorDraw());
+        mEditorPlaceHolder.addEditor(new BasicEditor());
+        mEditorPlaceHolder.addEditor(new ImageOnlyEditor());
+        mEditorPlaceHolder.addEditor(new EditorTinyPlanet());
+        mEditorPlaceHolder.addEditor(new EditorRedEye());
+        mEditorPlaceHolder.addEditor(new EditorCrop());
+        mEditorPlaceHolder.addEditor(new EditorFlip());
+        mEditorPlaceHolder.addEditor(new EditorRotate());
+        mEditorPlaceHolder.addEditor(new EditorStraighten());
+    }
+
+    private void setDefaultValues() {
+        ImageFilter.setActivityForMemoryToasts(this);
+        ImageFilterRS.setRenderScriptContext(this);
+
+        Resources res = getResources();
+        ImageFilterBorder filterBorder = (ImageFilterBorder) FiltersManager.getManager().getFilter(ImageFilterBorder.class);
+        filterBorder.setResources(res);
+
+        ImageShow.setDefaultBackgroundColor(res.getColor(R.color.background_screen));
+        // TODO: get those values from XML.
+        ImageZoom.setZoomedSize(getPixelsFromDip(256));
+        FramedTextButton.setTextSize((int) getPixelsFromDip(14));
+        FramedTextButton.setTrianglePadding((int) getPixelsFromDip(4));
+        FramedTextButton.setTriangleSize((int) getPixelsFromDip(10));
+        ImageShow.setTextSize((int) getPixelsFromDip(12));
+        ImageShow.setTextPadding((int) getPixelsFromDip(10));
+        ImageShow.setOriginalTextMargin((int) getPixelsFromDip(4));
+        ImageShow.setOriginalTextSize((int) getPixelsFromDip(18));
+        ImageShow.setOriginalText(res.getString(R.string.original_picture_text));
+        mIconSeedSize = res.getDimensionPixelSize(R.dimen.thumbnail_size);
+
+        Drawable curveHandle = res.getDrawable(R.drawable.camera_crop);
+        int curveHandleSize = (int) res.getDimension(R.dimen.crop_indicator_size);
+        Spline.setCurveHandle(curveHandle, curveHandleSize);
+        Spline.setCurveWidth((int) getPixelsFromDip(3));
+
+        ImageCrop.setAspectTextSize((int) getPixelsFromDip(18));
+        ImageCrop.setTouchTolerance((int) getPixelsFromDip(25));
+        ImageCrop.setMinCropSize((int) getPixelsFromDip(55));
     }
 
     private void startLoadBitmap(Uri uri) {
@@ -381,7 +406,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 if (i == 0) {
                     filter.setName(getString(R.string.none));
                 }
-                FilterIconButton b = setupFilterRepresentationButton(filter, mList, mBorderButton);
+                ImageButton borderButton = (ImageButton) findViewById(R.id.borderButton);
+                FilterIconButton b = setupFilterRepresentationButton(filter, mList, borderButton);
                 if (i == 0) {
                     mNullBorderFilter = b;
                     mNullBorderFilter.setSelected(true);
@@ -448,42 +474,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             float previewScale = (float) largeBitmap.getWidth() / (float) mImageLoader.getOriginalBounds().width();
             pipeline.setPreviewScaleFactor(previewScale);
 
-            Bitmap bmap = mImageLoader.getOriginalBitmapSmall();
-            if (bmap != null && bmap.getWidth() > 0 && bmap.getHeight() > 0) {
-                float w = bmap.getWidth();
-                float h = bmap.getHeight();
-                float f = mIconSeedSize / Math.min(w, h);
-                w = w * f;
-                h = h * f;
-                bmap = Bitmap.createScaledBitmap(bmap, (int) w, (int) h, true);
-
-                LinearLayout listColors = (LinearLayout) findViewById(R.id.listColorsFx);
-                int num_colors_buttons = listColors.getChildCount();
-                for (int i = 0; i < num_colors_buttons; i++) {
-                    FilterIconButton b = (FilterIconButton) listColors.getChildAt(i);
-                    b.setIcon(bmap);
-                }
-
-                LinearLayout listFilters = (LinearLayout) findViewById(R.id.listFilters);
-                int num_filters_buttons = listFilters.getChildCount();
-                for (int i = 0; i < num_filters_buttons; i++) {
-                    FilterIconButton b = (FilterIconButton) listFilters.getChildAt(i);
-                    b.setIcon(bmap);
-                }
-
-                LinearLayout listBorders = (LinearLayout) findViewById(R.id.listBorders);
-                int num_borders_buttons = listBorders.getChildCount();
-                for (int i = 0; i < num_borders_buttons; i++) {
-                    FilterIconButton b = (FilterIconButton) listBorders.getChildAt(i);
-                    b.setIcon(bmap);
-                }
-
-            }
+            fillButtonIcons();
             MasterImage.getImage().setOriginalGeometry(largeBitmap);
             mLoadBitmapTask = null;
 
             if (mAction == CROP_ACTION) {
-
                 mPanelController.showComponent(findViewById(EditorCrop.ID));
             } else if (mAction == TINY_PLANET_ACTION) {
                 mPanelController.showComponent(findViewById(EditorTinyPlanet.ID));
@@ -492,6 +487,40 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             super.onPostExecute(result);
         }
 
+    }
+
+    private void fillButtonIcons() {
+        Bitmap bmap = mImageLoader.getOriginalBitmapSmall();
+        if (bmap != null && bmap.getWidth() > 0 && bmap.getHeight() > 0) {
+            float w = bmap.getWidth();
+            float h = bmap.getHeight();
+            float f = mIconSeedSize / Math.min(w, h);
+            w = w * f;
+            h = h * f;
+            bmap = Bitmap.createScaledBitmap(bmap, (int) w, (int) h, true);
+
+            LinearLayout listColors = (LinearLayout) findViewById(R.id.listColorsFx);
+            int num_colors_buttons = listColors.getChildCount();
+            for (int i = 0; i < num_colors_buttons; i++) {
+                FilterIconButton b = (FilterIconButton) listColors.getChildAt(i);
+                b.setIcon(bmap);
+            }
+
+            LinearLayout listFilters = (LinearLayout) findViewById(R.id.listFilters);
+            int num_filters_buttons = listFilters.getChildCount();
+            for (int i = 0; i < num_filters_buttons; i++) {
+                FilterIconButton b = (FilterIconButton) listFilters.getChildAt(i);
+                b.setIcon(bmap);
+            }
+
+            LinearLayout listBorders = (LinearLayout) findViewById(R.id.listBorders);
+            int num_borders_buttons = listBorders.getChildCount();
+            for (int i = 0; i < num_borders_buttons; i++) {
+                FilterIconButton b = (FilterIconButton) listBorders.getChildAt(i);
+                b.setIcon(bmap);
+            }
+
+        }
     }
 
     @Override
@@ -711,7 +740,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         return icon;
     }
 
-    private void fillListImages(LinearLayout listFilters) {
+    private void fillFx(LinearLayout listFilters, int buttonId) {
         // TODO: use listview
         // TODO: load the filters straight from the filesystem
 
@@ -742,9 +771,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 R.string.ffx_x_process
         };
 
-        ImagePreset preset = new ImagePreset(getString(R.string.history_original)); // empty
-        preset.setImageLoader(mImageLoader);
-
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
 
@@ -755,21 +781,28 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             fxArray[p++] = fx;
         }
 
+        ImageButton button = (ImageButton) findViewById(buttonId);
+
         FilterFxRepresentation nullFx = new FilterFxRepresentation(getString(R.string.none), 0, R.string.none);
-        mNullFxFilter = setupFilterRepresentationButton(nullFx, listFilters, mFxButton);
+        mNullFxFilter = setupFilterRepresentationButton(nullFx, listFilters, button);
         mNullFxFilter.setSelected(true);
 
         Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
         FiltersManager.getManager().addLooks(filtersRepresentations);
         for (FilterRepresentation representation : filtersRepresentations) {
-            setupFilterRepresentationButton(representation, listFilters, mFxButton);
+            setupFilterRepresentationButton(representation, listFilters, button);
         }
 
         for (int i = 0; i < p; i++) {
-            setupFilterRepresentationButton(fxArray[i], listFilters, mFxButton);
+            setupFilterRepresentationButton(fxArray[i], listFilters, button);
         }
+    }
 
+    public void setDefaultPreset() {
         // Default preset (original)
+        ImagePreset preset = new ImagePreset(getString(R.string.history_original)); // empty
+        preset.setImageLoader(mImageLoader);
+
         mMasterImage.setPreset(preset, true);
     }
 
@@ -799,7 +832,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     }
 
     private void toggleImageStatePanel() {
-        final View view = findViewById(R.id.mainPanel);
         final View viewList = findViewById(R.id.imageStatePanel);
 
         if (mShowingHistoryPanel) {
@@ -807,36 +839,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             mShowingHistoryPanel = false;
         }
 
-        int translate = translateMainPanel(viewList);
         if (!mShowingImageStatePanel) {
             mShowingImageStatePanel = true;
-            if (PanelController.useAnimations()) {
-                view.animate().setDuration(200).x(translate)
-                    .withLayer().withEndAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            viewList.setAlpha(0);
-                            viewList.setVisibility(View.VISIBLE);
-                            viewList.animate().setDuration(100)
-                                    .alpha(1.0f).start();
-                        }
-                    }).start();
-            } else {
-                view.setX(translate);
-                viewList.setAlpha(0);
-                viewList.setVisibility(View.VISIBLE);
-                viewList.animate().setDuration(100)
-                        .alpha(1.0f).start();
-            }
+            viewList.setVisibility(View.VISIBLE);
         } else {
             mShowingImageStatePanel = false;
-            viewList.setVisibility(View.INVISIBLE);
-            if (PanelController.useAnimations()) {
-                view.animate().setDuration(200).x(0).withLayer()
-                    .start();
-            } else {
-                view.setX(0);
-            }
+            viewList.setVisibility(View.GONE);
         }
         invalidateOptionsMenu();
     }
@@ -845,13 +853,19 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     public void onConfigurationChanged(Configuration newConfig)
     {
         super.onConfigurationChanged(newConfig);
-        setResources();
+        setDefaultValues();
+        loadXML();
+        fillButtonIcons();
         if (mShowingHistoryPanel) {
             toggleHistoryPanel();
         }
+        final View loading = findViewById(R.id.loading);
+        loading.setVisibility(View.GONE);
     }
 
     public void setupMasterImage() {
+        mImageLoader = new ImageLoader(this, getApplicationContext());
+
         HistoryAdapter mHistoryAdapter = new HistoryAdapter(
                 this, R.layout.filtershow_history_operation_row,
                 R.id.rowTextView);
@@ -941,6 +955,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         if (mPanelController.onBackPressed()) {
             saveImage();
         }
+    }
+
+    public PanelController getPanelController() {
+        return mPanelController;
     }
 
     public void cannotLoadImage() {
@@ -1082,11 +1100,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             hideSavingProgress();
         }
         finish();
-    }
-
-    private void setResources() {
-        ImageFilterBorder filterBorder = (ImageFilterBorder) FiltersManager.getManager().getFilter(ImageFilterBorder.class);
-        filterBorder.setResources(getResources());
     }
 
     static {
