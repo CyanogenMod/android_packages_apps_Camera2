@@ -138,7 +138,7 @@ public abstract class ImageGeometry extends ImageShow {
     }
 
     // Overwrites local with master
-    protected void syncLocalToMasterGeometry() {
+    public void syncLocalToMasterGeometry() {
         mLocalGeometry = getGeometry();
         calculateLocalScalingFactorAndOffset();
     }
@@ -423,6 +423,7 @@ public abstract class ImageGeometry extends ImageShow {
             return;
         }
         mHasDrawn = true;
+
         drawShape(canvas, image);
     }
 

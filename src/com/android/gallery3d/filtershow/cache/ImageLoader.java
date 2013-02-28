@@ -28,6 +28,7 @@ import android.graphics.BitmapRegionDecoder;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.RectF;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -44,8 +45,10 @@ import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.filtershow.CropExtras;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
+import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.tools.BitmapTask;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
@@ -131,6 +134,15 @@ public class ImageLoader {
             return false;
         }
         updateBitmaps();
+        // TODO: cleanup
+        GeometryMetadata geo = MasterImage.getImage().getPreset().mGeoData;
+        float w = mOriginalBitmapLarge.getWidth();
+        float h = mOriginalBitmapLarge.getHeight();
+        RectF r = new RectF(0, 0, w, h);
+        geo.setPhotoBounds(r);
+        geo.setCropBounds(r);
+        MasterImage.getImage().getPreset().setGeometry(geo);
+        MasterImage.getImage().notifyGeometryChange();
         mLoadingLock.unlock();
         return true;
     }
