@@ -42,8 +42,8 @@ import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.ThreadPool.CancelListener;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
-import com.google.android.canvas.data.Cluster;
-import com.google.android.canvas.provider.CanvasContract;
+import com.google.android.pano.data.Cluster;
+import com.google.android.pano.provider.PanoContract;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -142,7 +142,7 @@ public class CanvasProvider extends CanvasProviderBase {
             Cluster.Builder bob = new Cluster.Builder();
             bob.id(i);
             bob.displayName(set.getName());
-            Intent intent = CanvasContract.getBrowseIntent(BROWSER_ROOT_URI, i);
+            Intent intent = PanoContract.getBrowseIntent(BROWSER_ROOT_URI, i);
             bob.intent(intent);
             bob.imageCropAllowed(true);
             bob.cacheTimeMs(CACHE_TIME_MS);

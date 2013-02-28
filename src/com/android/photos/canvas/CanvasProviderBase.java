@@ -26,8 +26,8 @@ import android.net.Uri;
 import android.os.Binder;
 import android.provider.BaseColumns;
 
-import com.google.android.canvas.data.Cluster;
-import com.google.android.canvas.provider.CanvasContract;
+import com.google.android.pano.data.Cluster;
+import com.google.android.pano.provider.PanoContract;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,10 +45,10 @@ public abstract class CanvasProviderBase extends ContentProvider {
     protected static final String PATH_IMAGE = "image";
     protected static final String PATH_LAUNCHER = "launcher";
     protected static final String PATH_LAUNCHER_ITEM = PATH_LAUNCHER + "/"
-            + CanvasContract.PATH_LAUNCHER_ITEM;
+            + PanoContract.PATH_LAUNCHER_ITEM;
     protected static final String PATH_BROWSE = "browse";
     protected static final String PATH_BROWSE_HEADERS = PATH_BROWSE + "/"
-            + CanvasContract.PATH_BROWSE_HEADERS;
+            + PanoContract.PATH_BROWSE_HEADERS;
 
     public static final Uri BROWSER_ROOT_URI = Uri.parse("content://"
             + AUTHORITY + "/" + PATH_BROWSE);
@@ -91,19 +91,19 @@ public abstract class CanvasProviderBase extends ContentProvider {
     static {
         LAUNCHER_COLUMN_CASES.put(BaseColumns._ID, LAUNCHER_CASE_ID);
         LAUNCHER_COLUMN_CASES.put(BaseColumns._COUNT, LAUNCHER_CASE_COUNT);
-        LAUNCHER_COLUMN_CASES.put(CanvasContract.Launcher.NAME,
+        LAUNCHER_COLUMN_CASES.put(PanoContract.Launcher.NAME,
                 LAUNCHER_CASE_NAME);
-        LAUNCHER_COLUMN_CASES.put(CanvasContract.Launcher.IMPORTANCE,
+        LAUNCHER_COLUMN_CASES.put(PanoContract.Launcher.IMPORTANCE,
                 LAUNCHER_CASE_IMPORTANCE);
-        LAUNCHER_COLUMN_CASES.put(CanvasContract.Launcher.DISPLAY_NAME,
+        LAUNCHER_COLUMN_CASES.put(PanoContract.Launcher.DISPLAY_NAME,
                 LAUNCHER_CASE_DISPLAY_NAME);
-        LAUNCHER_COLUMN_CASES.put(CanvasContract.Launcher.VISIBLE_COUNT,
+        LAUNCHER_COLUMN_CASES.put(PanoContract.Launcher.VISIBLE_COUNT,
                 LAUNCHER_CASE_VISIBLE_COUNT);
-        LAUNCHER_COLUMN_CASES.put(CanvasContract.Launcher.IMAGE_CROP_ALLOWED,
+        LAUNCHER_COLUMN_CASES.put(PanoContract.Launcher.IMAGE_CROP_ALLOWED,
                 LAUNCHER_CASE_CROP_ALLOWED);
-        LAUNCHER_COLUMN_CASES.put(CanvasContract.Launcher.CACHE_TIME_MS,
+        LAUNCHER_COLUMN_CASES.put(PanoContract.Launcher.CACHE_TIME_MS,
                 LAUNCHER_CASE_CACHE_TIME);
-        LAUNCHER_COLUMN_CASES.put(CanvasContract.Launcher.INTENT_URI,
+        LAUNCHER_COLUMN_CASES.put(PanoContract.Launcher.INTENT_URI,
                 LAUNCHER_CASE_INTENT_URI);
 
         LAUNCHER_PROJECTION_ALL = LAUNCHER_COLUMN_CASES.keySet().toArray(
@@ -120,9 +120,9 @@ public abstract class CanvasProviderBase extends ContentProvider {
     static {
         CLUSTER_COLUMN_CASES.put(BaseColumns._ID, CLUSTER_CASE_ID);
         CLUSTER_COLUMN_CASES.put(BaseColumns._COUNT, CLUSTER_CASE_COUNT);
-        CLUSTER_COLUMN_CASES.put(CanvasContract.LauncherItem.PARENT_ID,
+        CLUSTER_COLUMN_CASES.put(PanoContract.LauncherItem.PARENT_ID,
                 CLUSTER_CASE_PARENT_ID);
-        CLUSTER_COLUMN_CASES.put(CanvasContract.LauncherItem.IMAGE_URI,
+        CLUSTER_COLUMN_CASES.put(PanoContract.LauncherItem.IMAGE_URI,
                 CLUSTER_CASE_IMAGE_URI);
 
         CLUSTER_PROJECTION_ALL = CLUSTER_COLUMN_CASES.keySet().toArray(
@@ -149,33 +149,33 @@ public abstract class CanvasProviderBase extends ContentProvider {
         BROWSE_HEADER_COLUMN_CASES.put(BaseColumns._ID, BROWSE_HEADER_CASE_ID);
         BROWSE_HEADER_COLUMN_CASES.put(BaseColumns._COUNT,
                 BROWSE_HEADER_CASE_COUNT);
-        BROWSE_HEADER_COLUMN_CASES.put(CanvasContract.BrowseHeaders.NAME,
+        BROWSE_HEADER_COLUMN_CASES.put(PanoContract.BrowseHeaders.NAME,
                 BROWSE_HEADER_CASE_NAME);
         BROWSE_HEADER_COLUMN_CASES.put(
-                CanvasContract.BrowseHeaders.DISPLAY_NAME,
+                PanoContract.BrowseHeaders.DISPLAY_NAME,
                 BROWSE_HEADER_CASE_DISPLAY_NAME);
-        BROWSE_HEADER_COLUMN_CASES.put(CanvasContract.BrowseHeaders.ICON_URI,
+        BROWSE_HEADER_COLUMN_CASES.put(PanoContract.BrowseHeaders.ICON_URI,
                 BROWSE_HEADER_CASE_ICON_URI);
-        BROWSE_HEADER_COLUMN_CASES.put(CanvasContract.BrowseHeaders.BADGE_URI,
+        BROWSE_HEADER_COLUMN_CASES.put(PanoContract.BrowseHeaders.BADGE_URI,
                 BROWSE_HEADER_CASE_BADGE_URI);
-        BROWSE_HEADER_COLUMN_CASES.put(CanvasContract.BrowseHeaders.COLOR_HINT,
+        BROWSE_HEADER_COLUMN_CASES.put(PanoContract.BrowseHeaders.COLOR_HINT,
                 BROWSE_HEADER_CASE_COLOR_HINT);
         BROWSE_HEADER_COLUMN_CASES.put(
-                CanvasContract.BrowseHeaders.TEXT_COLOR_HINT,
+                PanoContract.BrowseHeaders.TEXT_COLOR_HINT,
                 BROWSE_HEADER_CASE_TEXT_COLOR_HINT);
         BROWSE_HEADER_COLUMN_CASES.put(
-                CanvasContract.BrowseHeaders.BG_IMAGE_URI,
+                PanoContract.BrowseHeaders.BG_IMAGE_URI,
                 BROWSE_HEADER_CASE_BG_IMAGE_URI);
         BROWSE_HEADER_COLUMN_CASES.put(
-                CanvasContract.BrowseHeaders.EXPAND_GROUP,
+                PanoContract.BrowseHeaders.EXPAND_GROUP,
                 BROWSE_HEADER_CASE_EXPAND_GROUP);
-        BROWSE_HEADER_COLUMN_CASES.put(CanvasContract.BrowseHeaders.WRAP_ITEMS,
+        BROWSE_HEADER_COLUMN_CASES.put(PanoContract.BrowseHeaders.WRAP_ITEMS,
                 BROWSE_HEADER_CASE_WRAP);
         BROWSE_HEADER_COLUMN_CASES.put(
-                CanvasContract.BrowseHeaders.DEFAULT_ITEM_WIDTH,
+                PanoContract.BrowseHeaders.DEFAULT_ITEM_WIDTH,
                 BROWSE_HEADER_CASE_DEFAULT_ITEM_WIDTH);
         BROWSE_HEADER_COLUMN_CASES.put(
-                CanvasContract.BrowseHeaders.DEFAULT_ITEM_HEIGHT,
+                PanoContract.BrowseHeaders.DEFAULT_ITEM_HEIGHT,
                 BROWSE_HEADER_CASE_DEFAULT_ITEM_HEIGHT);
 
         BROWSE_HEADER_PROJECTION_ALL = BROWSE_HEADER_COLUMN_CASES.keySet()
@@ -197,19 +197,19 @@ public abstract class CanvasProviderBase extends ContentProvider {
     static {
         BROWSE_COLUMN_CASES.put(BaseColumns._ID, BROWSE_CASE_ID);
         BROWSE_COLUMN_CASES.put(BaseColumns._COUNT, BROWSE_CASE_COUNT);
-        BROWSE_COLUMN_CASES.put(CanvasContract.BrowseItems.PARENT_ID,
+        BROWSE_COLUMN_CASES.put(PanoContract.BrowseItems.PARENT_ID,
                 BROWSE_CASE_PARENT_ID);
-        BROWSE_COLUMN_CASES.put(CanvasContract.BrowseItems.DISPLAY_NAME,
+        BROWSE_COLUMN_CASES.put(PanoContract.BrowseItems.DISPLAY_NAME,
                 BROWSE_CASE_DISPLAY_NAME);
-        BROWSE_COLUMN_CASES.put(CanvasContract.BrowseItems.DISPLAY_DESCRIPTION,
+        BROWSE_COLUMN_CASES.put(PanoContract.BrowseItems.DISPLAY_DESCRIPTION,
                 BROWSE_CASE_DISPLAY_DESCRIPTION);
-        BROWSE_COLUMN_CASES.put(CanvasContract.BrowseItems.IMAGE_URI,
+        BROWSE_COLUMN_CASES.put(PanoContract.BrowseItems.IMAGE_URI,
                 BROWSE_CASE_IMAGE_URI);
-        BROWSE_COLUMN_CASES.put(CanvasContract.BrowseItems.WIDTH,
+        BROWSE_COLUMN_CASES.put(PanoContract.BrowseItems.WIDTH,
                 BROWSE_CASE_WIDTH);
-        BROWSE_COLUMN_CASES.put(CanvasContract.BrowseItems.HEIGHT,
+        BROWSE_COLUMN_CASES.put(PanoContract.BrowseItems.HEIGHT,
                 BROWSE_CASE_HEIGHT);
-        BROWSE_COLUMN_CASES.put(CanvasContract.BrowseItems.INTENT_URI,
+        BROWSE_COLUMN_CASES.put(PanoContract.BrowseItems.INTENT_URI,
                 BROWSE_CASE_INTENT_URI);
 
         BROWSE_PROJECTION_ALL = BROWSE_COLUMN_CASES.keySet().toArray(
