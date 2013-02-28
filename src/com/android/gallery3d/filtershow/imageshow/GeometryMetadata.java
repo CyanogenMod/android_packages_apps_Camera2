@@ -107,9 +107,6 @@ public class GeometryMetadata extends FilterRepresentation {
     }
 
     public void set(GeometryMetadata g) {
-        if (g == null) {
-            return;
-        }
         mScaleFactor = g.mScaleFactor;
         mRotation = g.mRotation;
         mStraightenRotation = g.mStraightenRotation;
