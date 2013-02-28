@@ -44,6 +44,8 @@ public abstract class BaseFiltersManager {
         filters.put(ImageFilterFx.class, new ImageFilterFx());
         filters.put(ImageFilterBorder.class, new ImageFilterBorder());
         filters.put(ImageFilterParametricBorder.class, new ImageFilterParametricBorder());
+        filters.put(ImageFilterGeometry.class, new ImageFilterGeometry());
+
     }
 
     public ImageFilter getFilter(Class c) {

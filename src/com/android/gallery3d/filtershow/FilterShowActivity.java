@@ -53,12 +53,18 @@ import com.android.gallery3d.data.LocalAlbum;
 import com.android.gallery3d.filtershow.cache.FilteringPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.editors.BasicEditor;
+import com.android.gallery3d.filtershow.editors.EditorCrop;
 import com.android.gallery3d.filtershow.editors.EditorDraw;
+import com.android.gallery3d.filtershow.editors.EditorFlip;
+import com.android.gallery3d.filtershow.editors.EditorInfo;
 import com.android.gallery3d.filtershow.editors.EditorManager;
 import com.android.gallery3d.filtershow.editors.EditorRedEye;
+import com.android.gallery3d.filtershow.editors.EditorRotate;
+import com.android.gallery3d.filtershow.editors.EditorStraighten;
 import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
 import com.android.gallery3d.filtershow.filters.*;
+import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageFlip;
 import com.android.gallery3d.filtershow.imageshow.ImageRotate;
@@ -96,10 +102,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private final PanelController mPanelController = new PanelController();
     private ImageLoader mImageLoader = null;
     private ImageShow mImageShow = null;
-    private ImageStraighten mImageStraighten = null;
-    private ImageCrop mImageCrop = null;
-    private ImageRotate mImageRotate = null;
-    private ImageFlip mImageFlip = null;
     private ImageTinyPlanet mImageTinyPlanet = null;
 
     private View mSaveButton = null;
@@ -175,22 +177,13 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         });
 
         mImageLoader = new ImageLoader(this, getApplicationContext());
-
         mImageShow = (ImageShow) findViewById(R.id.imageShow);
-        mImageStraighten = (ImageStraighten) findViewById(R.id.imageStraighten);
-        mImageCrop = (ImageCrop) findViewById(R.id.imageCrop);
-        mImageRotate = (ImageRotate) findViewById(R.id.imageRotate);
-        mImageFlip = (ImageFlip) findViewById(R.id.imageFlip);
         mImageTinyPlanet = (ImageTinyPlanet) findViewById(R.id.imageTinyPlanet);
 
-        mImageCrop.setAspectTextSize((int) getPixelsFromDip(18));
+        ImageCrop.setAspectTextSize((int) getPixelsFromDip(18));
         ImageCrop.setTouchTolerance((int) getPixelsFromDip(25));
         ImageCrop.setMinCropSize((int) getPixelsFromDip(55));
         mImageViews.add(mImageShow);
-        mImageViews.add(mImageStraighten);
-        mImageViews.add(mImageCrop);
-        mImageViews.add(mImageRotate);
-        mImageViews.add(mImageFlip);
         mImageViews.add(mImageTinyPlanet);
 
         mEditorPlaceHolder.setContainer((FrameLayout) findViewById(R.id.editorContainer));
@@ -199,6 +192,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mEditorPlaceHolder.addEditor(new ImageOnlyEditor());
         mEditorPlaceHolder.addEditor(new EditorTinyPlanet());
         mEditorPlaceHolder.addEditor(new EditorRedEye());
+        mEditorPlaceHolder.addEditor(new EditorCrop());
+        mEditorPlaceHolder.addEditor(new EditorFlip());
+        mEditorPlaceHolder.addEditor(new EditorRotate());
+        mEditorPlaceHolder.addEditor(new EditorStraighten());
         EditorManager.addEditors(mEditorPlaceHolder);
         mEditorPlaceHolder.setOldViews(mImageViews);
         mEditorPlaceHolder.setImageLoader(mImageLoader);
@@ -211,30 +208,32 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mColorsButton = (ImageButton) findViewById(R.id.colorsButton);
 
         mImageShow.setImageLoader(mImageLoader);
-        mImageStraighten.setImageLoader(mImageLoader);
-        mImageCrop.setImageLoader(mImageLoader);
-        mImageRotate.setImageLoader(mImageLoader);
-        mImageFlip.setImageLoader(mImageLoader);
         mImageTinyPlanet.setImageLoader(mImageLoader);
 
         mPanelController.setActivity(this);
         mPanelController.setEditorPlaceHolder(mEditorPlaceHolder);
 
         mPanelController.addImageView(findViewById(R.id.imageShow));
-        mPanelController.addImageView(findViewById(R.id.imageStraighten));
-        mPanelController.addImageView(findViewById(R.id.imageCrop));
-        mPanelController.addImageView(findViewById(R.id.imageRotate));
-        mPanelController.addImageView(findViewById(R.id.imageFlip));
         mPanelController.addImageView(findViewById(R.id.imageTinyPlanet));
 
         mPanelController.addPanel(mFxButton, findViewById(R.id.fxList), 0);
         mPanelController.addPanel(mBorderButton, findViewById(R.id.bordersList), 1);
-
         mPanelController.addPanel(mGeometryButton, findViewById(R.id.geometryList), 2);
-        mPanelController.addComponent(mGeometryButton, findViewById(R.id.straightenButton));
-        mPanelController.addComponent(mGeometryButton, findViewById(R.id.cropButton));
-        mPanelController.addComponent(mGeometryButton, findViewById(R.id.rotateButton));
-        mPanelController.addComponent(mGeometryButton, findViewById(R.id.flipButton));
+
+        // TODO: move to a separate function.
+        GeometryMetadata geo = new GeometryMetadata();
+        int[] editorsId = geo.getEditorIds();
+        for (int i = 0; i < editorsId.length; i++) {
+            int editorId = editorsId[i];
+            GeometryMetadata geometry = new GeometryMetadata(geo);
+            geometry.setEditorId(editorId);
+            EditorInfo editorInfo = (EditorInfo) mEditorPlaceHolder.getEditor(editorId);
+            geometry.setTextId(editorInfo.getTextId());
+            geometry.setOverlayId(editorInfo.getOverlayId());
+            geometry.setOverlayOnly(editorInfo.getOverlayOnly());
+            setupFilterRepresentationButton(
+                    geometry, (LinearLayout) findViewById(R.id.listGeometry), mGeometryButton);
+        }
 
         mPanelController.addPanel(mColorsButton, findViewById(R.id.colorsFxList), 3);
 
@@ -305,10 +304,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 }
                 mImageShow.getImagePreset().mGeoData.setCropExtras(mCropExtras);
 
-                mImageCrop.setExtras(mCropExtras);
+                // FIXME: moving to editors breaks the crop action
+//                mImageCrop.setExtras(mCropExtras);
                 String s = getString(R.string.Fixed);
-                mImageCrop.setAspectString(s);
-                mImageCrop.setCropActionFlag(true);
+//                mImageCrop.setAspectString(s);
+//                mImageCrop.setCropActionFlag(true);
                 mPanelController.setFixedAspect(mCropExtras.getAspectX() > 0
                         && mCropExtras.getAspectY() > 0);
             }
@@ -470,7 +470,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             mLoadBitmapTask = null;
 
             if (mAction == CROP_ACTION) {
-                mPanelController.showComponent(findViewById(R.id.cropButton));
+                // FIXME: broken by the move to editors
+                // mPanelController.showComponent(findViewById(R.id.cropButton));
             } else if (mAction == TINY_PLANET_ACTION) {
                 mPanelController.showComponent(findViewById(R.id.tinyplanetButton));
             }
