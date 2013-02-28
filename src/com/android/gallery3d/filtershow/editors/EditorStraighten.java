@@ -34,7 +34,10 @@ public class EditorStraighten extends Editor implements EditorInfo {
     @Override
     public void createEditor(Context context, FrameLayout frameLayout) {
         super.createEditor(context, frameLayout);
-        mView = mImageShow = mImageStraighten = new ImageStraighten(context);
+        if (mImageStraighten == null) {
+            mImageStraighten = new ImageStraighten(context);
+        }
+        mView = mImageShow = mImageStraighten;
         mImageStraighten.setImageLoader(MasterImage.getImage().getImageLoader());
         mImageStraighten.setEditor(this);
         mImageStraighten.syncLocalToMasterGeometry();
