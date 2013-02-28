@@ -34,7 +34,10 @@ public class EditorFlip extends Editor implements EditorInfo {
     @Override
     public void createEditor(Context context, FrameLayout frameLayout) {
         super.createEditor(context, frameLayout);
-        mView = mImageShow = mImageFlip = new ImageFlip(context);
+        if (mImageFlip == null) {
+            mImageFlip = new ImageFlip(context);
+        }
+        mView = mImageShow = mImageFlip;
         mImageFlip.setImageLoader(MasterImage.getImage().getImageLoader());
         mImageFlip.setEditor(this);
         mImageFlip.syncLocalToMasterGeometry();
