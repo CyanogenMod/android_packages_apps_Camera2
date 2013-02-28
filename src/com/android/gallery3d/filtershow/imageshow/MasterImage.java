@@ -234,7 +234,8 @@ public class MasterImage implements RenderingRequestCaller {
     public void updatePresets(boolean force) {
         if (force || mGeometryOnlyPreset == null) {
             ImagePreset newPreset = new ImagePreset(mPreset);
-            newPreset.resetFilters();
+            newPreset.setDoApplyFilters(false);
+            newPreset.setDoApplyGeometry(true);
             if (force || mGeometryOnlyPreset == null
                     || !newPreset.same(mGeometryOnlyPreset)) {
                 mGeometryOnlyPreset = newPreset;
@@ -244,7 +245,8 @@ public class MasterImage implements RenderingRequestCaller {
         }
         if (force || mFiltersOnlyPreset == null) {
             ImagePreset newPreset = new ImagePreset(mPreset);
-            newPreset.resetGeometry();
+            newPreset.setDoApplyFilters(true);
+            newPreset.setDoApplyGeometry(false);
             if (force || mFiltersOnlyPreset == null
                     || !newPreset.same(mFiltersOnlyPreset)) {
                 mFiltersOnlyPreset = newPreset;
@@ -400,5 +402,4 @@ public class MasterImage implements RenderingRequestCaller {
         mTranslation.y = 0;
         needsUpdateFullResPreview();
     }
-
 }
