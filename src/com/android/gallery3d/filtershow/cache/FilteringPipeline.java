@@ -254,7 +254,6 @@ public class FilteringPipeline implements Handler.Callback {
             if (bitmap == null) {
                 return;
             }
-            bitmap = preset.applyGeometry(bitmap);
         }
 
         if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
