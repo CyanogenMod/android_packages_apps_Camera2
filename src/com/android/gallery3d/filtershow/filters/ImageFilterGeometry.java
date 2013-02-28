@@ -50,10 +50,6 @@ public class ImageFilterGeometry extends ImageFilter {
         return filter;
     }
 
-    public void setGeometryMetadata(GeometryMetadata m) {
-        mGeometry = m;
-    }
-
     native protected void nativeApplyFilterFlip(Bitmap src, int srcWidth, int srcHeight,
             Bitmap dst, int dstWidth, int dstHeight, int flip);
 
@@ -68,7 +64,7 @@ public class ImageFilterGeometry extends ImageFilter {
 
     @Override
     public void useRepresentation(FilterRepresentation representation) {
-
+        mGeometry = (GeometryMetadata) representation;
     }
 
     @Override

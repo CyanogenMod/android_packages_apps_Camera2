@@ -37,6 +37,8 @@ import android.widget.PopupMenu;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.CropExtras;
+import com.android.gallery3d.filtershow.editors.EditorCrop;
+import com.android.gallery3d.filtershow.filters.FilterCurvesRepresentation;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
 
 public class ImageCrop extends ImageGeometry {
@@ -81,11 +83,13 @@ public class ImageCrop extends ImageGeometry {
     private static final String LOGTAG = "ImageCrop";
 
     private String mAspect = "";
-    private int mAspectTextSize = 24;
+    private static int mAspectTextSize = 24;
 
     private boolean mFixedAspect = false;
 
-    public void setAspectTextSize(int textSize) {
+    private EditorCrop mEditorCrop;
+
+    public static void setAspectTextSize(int textSize) {
         mAspectTextSize = textSize;
     }
 
@@ -777,6 +781,10 @@ public class ImageCrop extends ImageGeometry {
         if (view != null) {
             view.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void setEditor(EditorCrop editorCrop) {
+        mEditorCrop = editorCrop;
     }
 
 }
