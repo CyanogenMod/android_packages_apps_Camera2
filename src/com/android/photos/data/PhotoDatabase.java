@@ -30,7 +30,6 @@ import com.android.photos.data.PhotoProvider.Photos;
 public class PhotoDatabase extends SQLiteOpenHelper {
     @SuppressWarnings("unused")
     private static final String TAG = PhotoDatabase.class.getSimpleName();
-    static final String DB_NAME = "photo.db";
     static final int DB_VERSION = 1;
 
     private static final String SQL_CREATE_TABLE = "CREATE TABLE ";
@@ -72,8 +71,8 @@ public class PhotoDatabase extends SQLiteOpenHelper {
         createTable(db, Metadata.TABLE, CREATE_METADATA);
     }
 
-    public PhotoDatabase(Context context) {
-        super(context, DB_NAME, null, DB_VERSION);
+    public PhotoDatabase(Context context, String dbName) {
+        super(context, dbName, null, DB_VERSION);
     }
 
     @Override

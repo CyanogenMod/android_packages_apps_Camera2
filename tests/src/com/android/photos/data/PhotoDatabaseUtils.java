@@ -108,10 +108,4 @@ public class PhotoDatabaseUtils {
         values.put(Metadata.VALUE, value);
         return db.insert(Metadata.TABLE, null, values) != -1;
     }
-
-    public static void deleteAllContent(SQLiteDatabase db) {
-        db.delete(Metadata.TABLE, null, null);
-        db.delete(Photos.TABLE, null, null);
-        db.delete(Albums.TABLE, null, null);
-    }
 }
