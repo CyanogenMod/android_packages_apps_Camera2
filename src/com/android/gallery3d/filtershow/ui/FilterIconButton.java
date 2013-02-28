@@ -83,7 +83,7 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
                 dst = super.drawImage(dst, image, destination);
                 ImagePreset mPreset = new ImagePreset();
                 mPreset.addFilter(mFilterRepresentation);
-                mPreset.resetGeometry();
+                mPreset.setDoApplyGeometry(false);
                 mDestination = destination;
                 RenderingRequest.post(dst.copy(Bitmap.Config.ARGB_8888, true), mPreset, RenderingRequest.ICON_RENDERING, this);
             }
