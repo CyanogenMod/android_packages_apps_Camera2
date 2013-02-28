@@ -44,9 +44,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ShareActionProvider;
 import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
+import android.widget.Toast;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.data.LocalAlbum;
@@ -61,15 +67,19 @@ import com.android.gallery3d.filtershow.editors.EditorManager;
 import com.android.gallery3d.filtershow.editors.EditorRedEye;
 import com.android.gallery3d.filtershow.editors.EditorRotate;
 import com.android.gallery3d.filtershow.editors.EditorStraighten;
-import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
-import com.android.gallery3d.filtershow.filters.*;
+import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
+import com.android.gallery3d.filtershow.filters.FilterColorBorderRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterFxRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterImageBorderRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.filters.FiltersManager;
+import com.android.gallery3d.filtershow.filters.ImageFilter;
+import com.android.gallery3d.filtershow.filters.ImageFilterBorder;
+import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
-import com.android.gallery3d.filtershow.imageshow.ImageFlip;
-import com.android.gallery3d.filtershow.imageshow.ImageRotate;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
-import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
 import com.android.gallery3d.filtershow.imageshow.ImageTinyPlanet;
 import com.android.gallery3d.filtershow.imageshow.ImageZoom;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
@@ -305,10 +315,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 mImageShow.getImagePreset().mGeoData.setCropExtras(mCropExtras);
 
                 // FIXME: moving to editors breaks the crop action
-//                mImageCrop.setExtras(mCropExtras);
+                EditorCrop crop = (EditorCrop) mEditorPlaceHolder.getEditor(EditorCrop.ID);
+
+                crop.setExtras(mCropExtras);
                 String s = getString(R.string.Fixed);
-//                mImageCrop.setAspectString(s);
-//                mImageCrop.setCropActionFlag(true);
+                crop.setAspectString(s);
+                crop.setCropActionFlag(true);
                 mPanelController.setFixedAspect(mCropExtras.getAspectX() > 0
                         && mCropExtras.getAspectY() > 0);
             }
@@ -467,13 +479,14 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 }
 
             }
+            MasterImage.getImage().setOriginalGeometry(largeBitmap);
             mLoadBitmapTask = null;
 
             if (mAction == CROP_ACTION) {
-                // FIXME: broken by the move to editors
-                // mPanelController.showComponent(findViewById(R.id.cropButton));
+
+                mPanelController.showComponent(findViewById(EditorCrop.ID));
             } else if (mAction == TINY_PLANET_ACTION) {
-                mPanelController.showComponent(findViewById(R.id.tinyplanetButton));
+                mPanelController.showComponent(findViewById(EditorTinyPlanet.ID));
             }
 
             super.onPostExecute(result);
@@ -692,10 +705,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         String text = representation.getName();
         icon.setup(text, mPanelController, panel);
         icon.setFilterRepresentation(representation);
-        if (representation instanceof FilterTinyPlanetRepresentation) {
-            // needed to hide tinyplanet on startup
-            icon.setId(R.id.tinyplanetButton);
-        }
+        icon.setId(representation.getEditorId());
         mPanelController.addComponent(button, icon);
         panel.addView(icon);
         return icon;
