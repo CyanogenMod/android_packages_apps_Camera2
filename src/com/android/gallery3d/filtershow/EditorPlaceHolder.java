@@ -79,4 +79,8 @@ public class EditorPlaceHolder {
     public void setImageLoader(ImageLoader imageLoader) {
         mImageLoader = imageLoader;
     }
+
+    public Editor getEditor(int editorId) {
+        return mEditors.get(editorId);
+    }
 }

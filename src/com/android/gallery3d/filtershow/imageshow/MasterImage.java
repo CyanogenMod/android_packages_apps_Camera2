@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.imageshow;
 
 import android.graphics.*;
+import android.util.Log;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
@@ -208,7 +209,8 @@ public class MasterImage implements RenderingRequestCaller {
         if (force || mGeometryOnlyPreset == null) {
             ImagePreset newPreset = new ImagePreset(mPreset);
             newPreset.setDoApplyFilters(false);
-            if (mGeometryOnlyPreset == null
+            newPreset.setDoApplyGeometry(true);
+            if (force || mGeometryOnlyPreset == null
                     || !newPreset.same(mGeometryOnlyPreset)) {
                 mGeometryOnlyPreset = newPreset;
                 RenderingRequest.post(mLoader.getOriginalBitmapLarge(),
@@ -217,8 +219,9 @@ public class MasterImage implements RenderingRequestCaller {
         }
         if (force || mFiltersOnlyPreset == null) {
             ImagePreset newPreset = new ImagePreset(mPreset);
+            newPreset.setDoApplyFilters(true);
             newPreset.setDoApplyGeometry(false);
-            if (mFiltersOnlyPreset == null
+            if (force || mFiltersOnlyPreset == null
                     || !newPreset.same(mFiltersOnlyPreset)) {
                 mFiltersOnlyPreset = newPreset;
                 RenderingRequest.post(mLoader.getOriginalBitmapLarge(),
@@ -330,6 +333,7 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public void notifyGeometryChange() {
+        updatePresets(true);
         for (GeometryListener listener : mGeometryListeners) {
             listener.geometryChanged();
         }

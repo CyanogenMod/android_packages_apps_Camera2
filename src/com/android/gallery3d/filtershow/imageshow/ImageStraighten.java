@@ -26,11 +26,13 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.editors.EditorStraighten;
 
 public class ImageStraighten extends ImageGeometry {
 
     private float mBaseAngle = 0;
     private float mAngle = 0;
+    private EditorStraighten mEditorStraighten;
 
     private static final String LOGTAG = "ImageStraighten";
     private static final Paint gPaint = new Paint();
@@ -132,6 +134,10 @@ public class ImageStraighten extends ImageGeometry {
             }
             canvas.restore();
         }
+    }
+
+    public void setEditor(EditorStraighten editorStraighten) {
+        mEditorStraighten = editorStraighten;
     }
 
 }
