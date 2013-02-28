@@ -409,7 +409,8 @@ public class ImageLoader {
             }
             if (bmp != null) {
                 float scaleFactor = imagePreset.getScaleFactor();
-                imagePreset.setScaleFactor(1.0f);
+                float scale = (float) bmp.getWidth() / (float) getOriginalBounds().width();
+                imagePreset.setScaleFactor(scale);
                 bmp = imagePreset.apply(bmp);
                 imagePreset.setScaleFactor(scaleFactor);
                 mZoomCache.setImage(imagePreset, bounds, bmp);

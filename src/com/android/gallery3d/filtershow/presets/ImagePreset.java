@@ -448,7 +448,7 @@ public class ImagePreset {
         if (mBorder != null && !mBorder.supportsPartialRendering()) {
             return false;
         }
-        if (ImageLoader.getZoomOrientation() != 0) {
+        if (ImageLoader.getZoomOrientation() != ImageLoader.ORI_NORMAL) {
             return false;
         }
         for (int i = 0; i < mFilters.size(); i++) {
