@@ -405,10 +405,10 @@
                 android:theme="@style/Theme.ProxyLauncher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="com.google.android.canvas.category.BROWSE_LAUNCHER" />
+                <category android:name="com.google.android.pano.category.BROWSE_LAUNCHER" />
             </intent-filter>
             <meta-data
-                android:name="com.google.android.canvas.data.launcher_info"
+                android:name="com.google.android.canvas.pano.launcher_info"
                 android:resource="@xml/canvas_info" />
         </activity>
     </application>

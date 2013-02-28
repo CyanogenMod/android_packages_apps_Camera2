@@ -20,14 +20,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.google.android.canvas.provider.CanvasContract;
+import com.google.android.pano.provider.PanoContract;
 
 
 public class CanvasActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = CanvasContract.getBrowseIntent(
+        Intent intent = PanoContract.getBrowseIntent(
                 CanvasProvider.BROWSER_ROOT_URI, 0);
         startActivity(intent);
         finish();
