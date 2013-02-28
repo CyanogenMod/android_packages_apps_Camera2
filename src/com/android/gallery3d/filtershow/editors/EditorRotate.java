@@ -34,7 +34,10 @@ public class EditorRotate extends Editor implements EditorInfo {
     @Override
     public void createEditor(Context context, FrameLayout frameLayout) {
         super.createEditor(context, frameLayout);
-        mView = mImageShow = mImageRotate = new ImageRotate(context);
+        if (mImageRotate == null) {
+            mImageRotate = new ImageRotate(context);
+        }
+        mView = mImageShow = mImageRotate;
         mImageRotate.setImageLoader(MasterImage.getImage().getImageLoader());
         mImageRotate.setEditor(this);
         mImageRotate.syncLocalToMasterGeometry();
