@@ -134,15 +134,6 @@ public class ImageLoader {
             return false;
         }
         updateBitmaps();
-        // TODO: cleanup
-        GeometryMetadata geo = MasterImage.getImage().getPreset().mGeoData;
-        float w = mOriginalBitmapLarge.getWidth();
-        float h = mOriginalBitmapLarge.getHeight();
-        RectF r = new RectF(0, 0, w, h);
-        geo.setPhotoBounds(r);
-        geo.setCropBounds(r);
-        MasterImage.getImage().getPreset().setGeometry(geo);
-        MasterImage.getImage().notifyGeometryChange();
         mLoadingLock.unlock();
         return true;
     }

@@ -20,6 +20,7 @@ import android.content.Context;
 import android.widget.FrameLayout;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.CropExtras;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
@@ -28,6 +29,9 @@ public class EditorCrop extends Editor implements EditorInfo {
     private static final String LOGTAG = "EditorCrop";
 
     ImageCrop mImageCrop;
+    private String mAspectString = null;
+    private boolean mCropActionFlag = false;
+    private CropExtras mCropExtras = null;
 
     public EditorCrop() {
         super(ID);
@@ -37,6 +41,9 @@ public class EditorCrop extends Editor implements EditorInfo {
     public void createEditor(Context context, FrameLayout frameLayout) {
         super.createEditor(context, frameLayout);
         mView = mImageShow = mImageCrop = new ImageCrop(context);
+        mImageCrop.setExtras(mCropExtras);
+        mImageCrop.setAspectString(mAspectString);
+        mImageCrop.setCropActionFlag(mCropActionFlag);
         mImageCrop.setImageLoader(MasterImage.getImage().getImageLoader());
         mImageCrop.setEditor(this);
         mImageCrop.syncLocalToMasterGeometry();
@@ -56,4 +63,17 @@ public class EditorCrop extends Editor implements EditorInfo {
     public boolean getOverlayOnly() {
         return true;
     }
+
+    public void setExtras(CropExtras cropExtras) {
+        mCropExtras = cropExtras;
+    }
+
+    public void setAspectString(String s) {
+        mAspectString = s;
+    }
+
+    public void setCropActionFlag(boolean b) {
+        mCropActionFlag = b;
+    }
+
 }

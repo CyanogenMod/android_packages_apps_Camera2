@@ -17,6 +17,8 @@
 package com.android.gallery3d.filtershow.imageshow;
 
 import android.graphics.*;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
@@ -63,6 +65,20 @@ public class MasterImage implements RenderingRequestCaller {
     private Point mOriginalTranslation = new Point();
 
     private Point mImageShowSize = new Point();
+
+    final private static int NEW_GEOMETRY = 1;
+
+    private final Handler mHandler = new Handler() {
+            @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case NEW_GEOMETRY: {
+                hasNewGeometry();
+                break;
+            }
+            }
+        }
+    };
 
     private MasterImage() {
     }
@@ -181,6 +197,16 @@ public class MasterImage implements RenderingRequestCaller {
 
     public TripleBufferBitmap getDoubleBuffer() {
         return mFilteredPreview;
+    }
+
+    public void setOriginalGeometry(Bitmap originalBitmapLarge) {
+        GeometryMetadata geo = getPreset().mGeoData;
+        float w = originalBitmapLarge.getWidth();
+        float h = originalBitmapLarge.getHeight();
+        RectF r = new RectF(0, 0, w, h);
+        geo.setPhotoBounds(r);
+        geo.setCropBounds(r);
+        getPreset().setGeometry(geo);
     }
 
     public Bitmap getFilteredImage() {
@@ -333,6 +359,10 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public void notifyGeometryChange() {
+        mHandler.sendEmptyMessage(NEW_GEOMETRY);
+    }
+
+    public void hasNewGeometry() {
         updatePresets(true);
         for (GeometryListener listener : mGeometryListeners) {
             listener.geometryChanged();
