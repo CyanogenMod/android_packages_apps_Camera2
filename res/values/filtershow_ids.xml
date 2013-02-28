@@ -42,4 +42,8 @@
     <item type="id" name="editorRedEye" />
     <item type="id" name="imageOnlyEditor" />
     <item type="id" name="vignetteEditor" />
+    <item type="id" name="editorCrop" />
+    <item type="id" name="editorFlip" />
+    <item type="id" name="editorRotate" />
+    <item type="id" name="editorStraighten" />
 </resources>

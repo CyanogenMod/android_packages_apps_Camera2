@@ -24,6 +24,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.editors.EditorFlip;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata.FLIP;
 
 public class ImageFlip extends ImageGeometry {
@@ -32,6 +33,7 @@ public class ImageFlip extends ImageGeometry {
     private static final float MIN_FLICK_DIST_FOR_FLIP = 0.1f;
     private static final String LOGTAG = "ImageFlip";
     private FLIP mNextFlip = FLIP.NONE;
+    private EditorFlip mEditorFlip;
 
     public ImageFlip(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -138,6 +140,10 @@ public class ImageFlip extends ImageGeometry {
         gPaint.setAntiAlias(true);
         gPaint.setARGB(255, 255, 255, 255);
         drawTransformedCropped(canvas, image, gPaint);
+    }
+
+    public void setEditor(EditorFlip editorFlip) {
+        mEditorFlip = editorFlip;
     }
 
 }

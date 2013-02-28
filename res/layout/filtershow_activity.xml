@@ -70,30 +70,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.android.gallery3d.filtershow.imageshow.ImageStraighten
-                android:id="@+id/imageStraighten"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
-            <com.android.gallery3d.filtershow.imageshow.ImageCrop
-                android:id="@+id/imageCrop"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
-            <com.android.gallery3d.filtershow.imageshow.ImageRotate
-                android:id="@+id/imageRotate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
-            <com.android.gallery3d.filtershow.imageshow.ImageFlip
-                android:id="@+id/imageFlip"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
             <com.android.gallery3d.filtershow.imageshow.ImageTinyPlanet
                 android:id="@+id/imageTinyPlanet"
                 android:layout_width="match_parent"
@@ -203,37 +179,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:layout_gravity="left"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal" />
 
-                    <com.android.gallery3d.filtershow.ui.IconButton
-                        android:id="@+id/straightenButton"
-                        android:layout_height="match_parent"
-                        style="@style/IconButton"
-                        android:drawableTop="@drawable/filtershow_button_geometry_straighten"
-                        android:text="@string/straighten" />
-
-                    <com.android.gallery3d.filtershow.ui.IconButton
-                        android:id="@+id/cropButton"
-                        android:layout_height="match_parent"
-                        style="@style/IconButton"
-                        android:drawableTop="@drawable/filtershow_button_geometry_crop"
-                        android:text="@string/crop" />
-
-                    <com.android.gallery3d.filtershow.ui.IconButton
-                        android:id="@+id/rotateButton"
-                        android:layout_height="match_parent"
-                        style="@style/IconButton"
-                        android:drawableTop="@drawable/filtershow_button_geometry_rotate"
-                        android:text="@string/rotate" />
-
-                    <com.android.gallery3d.filtershow.ui.IconButton
-                        android:id="@+id/flipButton"
-                        android:layout_height="match_parent"
-                        style="@style/IconButton"
-                        android:drawableTop="@drawable/filtershow_button_geometry_flip"
-                        android:text="@string/mirror" />
-
-                </LinearLayout>
             </HorizontalScrollView>
 
             <HorizontalScrollView

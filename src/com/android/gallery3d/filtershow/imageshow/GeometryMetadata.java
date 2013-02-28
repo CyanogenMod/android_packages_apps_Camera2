@@ -23,10 +23,14 @@ import android.graphics.RectF;
 
 import com.android.gallery3d.filtershow.CropExtras;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.editors.EditorCrop;
+import com.android.gallery3d.filtershow.editors.EditorFlip;
+import com.android.gallery3d.filtershow.editors.EditorRotate;
+import com.android.gallery3d.filtershow.editors.EditorStraighten;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
 
-public class GeometryMetadata {
-    private static final ImageFilterGeometry mImageFilter = new ImageFilterGeometry();
+public class GeometryMetadata extends FilterRepresentation {
     private static final String LOGTAG = "GeometryMetadata";
     private float mScaleFactor = 1.0f;
     private float mRotation = 0;
@@ -59,9 +63,25 @@ public class GeometryMetadata {
     }
 
     public GeometryMetadata() {
+        super("GeometryMetadata");
+        setFilterClass(ImageFilterGeometry.class);
+        setEditorId(EditorCrop.ID);
+        setName("Crop");
+        setTextId(0);
+    }
+
+    @Override
+    public int[] getEditorIds() {
+        return new int[] {
+                EditorCrop.ID,
+                EditorStraighten.ID,
+                EditorRotate.ID,
+                EditorFlip.ID
+        };
     }
 
     public GeometryMetadata(GeometryMetadata g) {
+        super("GeometryMetadata");
         set(g);
     }
 
@@ -84,15 +104,6 @@ public class GeometryMetadata {
             return true;
         }
         return false;
-    }
-
-    public Bitmap apply(Bitmap original, float scaleFactor, int quality) {
-        if (!hasModifications()) {
-            return original;
-        }
-        mImageFilter.setGeometryMetadata(this);
-        Bitmap m = mImageFilter.apply(original, scaleFactor, quality);
-        return m;
     }
 
     public void set(GeometryMetadata g) {
@@ -435,5 +446,18 @@ public class GeometryMetadata {
         Matrix m = buildCenteredPhotoMatrix(photo, crop, rotation, straighten, type, newCenter);
         m.preRotate(-straighten, photo.centerX(), photo.centerY());
         return m;
+    }
+
+    @Override
+    public void useParametersFrom(FilterRepresentation a) {
+        GeometryMetadata data = (GeometryMetadata) a;
+        set(data);
+    }
+
+    @Override
+    public FilterRepresentation clone() throws CloneNotSupportedException {
+        GeometryMetadata representation = (GeometryMetadata) super.clone();
+        representation.useParametersFrom(this);
+        return representation;
     }
 }

@@ -21,6 +21,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -30,6 +31,7 @@ import com.android.gallery3d.filtershow.cache.RenderingRequest;
 import com.android.gallery3d.filtershow.cache.RenderingRequestCaller;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.imageshow.GeometryListener;
+import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
@@ -37,6 +39,7 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
         RenderingRequestCaller, GeometryListener {
     private static final String LOGTAG = "FilterIconButton";
     private Bitmap mOverlayBitmap = null;
+    private boolean mOverlayOnly = false;
     private PanelController mController = null;
     private FilterRepresentation mFilterRepresentation = null;
     private LinearLayout mParentContainer = null;
@@ -68,6 +71,10 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
 
     @Override
     protected Bitmap drawImage(Bitmap dst, Bitmap image, Rect destination) {
+        if (mOverlayOnly) {
+            // TODO: merge back IconButton and FilterIconButton
+            return super.drawImage(dst, image, destination);
+        }
         if (mIconBitmap == null && mPreset == null) {
             ImageLoader loader = MasterImage.getImage().getLoader();
             if (loader != null) {
@@ -76,6 +83,7 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
                 dst = super.drawImage(dst, image, destination);
                 ImagePreset mPreset = new ImagePreset();
                 mPreset.addFilter(mFilterRepresentation);
+                mPreset.setDoApplyGeometry(false);
                 mDestination = destination;
                 RenderingRequest.post(dst.copy(Bitmap.Config.ARGB_8888, true), mPreset, RenderingRequest.ICON_RENDERING, this);
             }
@@ -112,6 +120,10 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
             mOverlayBitmap = BitmapFactory.decodeResource(getResources(),
                     mFilterRepresentation.getOverlayId());
         }
+        mOverlayOnly = mFilterRepresentation.getOverlayOnly();
+        if (mOverlayOnly) {
+            setIcon(mOverlayBitmap);
+        }
         invalidate();
     }
 
@@ -131,6 +143,7 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
     @Override
     public void geometryChanged() {
         stale_icon = true;
+
         mIconBitmap = null;
         mPreset = null;
         invalidate();
