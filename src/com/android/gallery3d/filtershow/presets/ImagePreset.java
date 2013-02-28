@@ -130,9 +130,13 @@ public class ImagePreset {
 
     public void updateFilterRepresentation(FilterRepresentation representation) {
         synchronized (mFilters) {
-            int position = getPositionForRepresentation(representation);
-            FilterRepresentation old = mFilters.elementAt(position);
-            old.updateTempParametersFrom(representation);
+            if (representation instanceof GeometryMetadata) {
+                setGeometry((GeometryMetadata) representation);
+            } else {
+                int position = getPositionForRepresentation(representation);
+                FilterRepresentation old = mFilters.elementAt(position);
+                old.updateTempParametersFrom(representation);
+            }
         }
         MasterImage.getImage().invalidatePreview();
     }
@@ -191,6 +195,7 @@ public class ImagePreset {
 
     public synchronized void setGeometry(GeometryMetadata m) {
         mGeoData.set(m);
+        MasterImage.getImage().notifyGeometryChange();
     }
 
     private void setBorder(FilterRepresentation filter) {
@@ -327,7 +332,10 @@ public class ImagePreset {
     }
 
     public void addFilter(FilterRepresentation representation) {
-        Log.v(LOGTAG, "*** Add Filter *** " + representation);
+        if (representation instanceof GeometryMetadata) {
+            setGeometry((GeometryMetadata) representation);
+            return;
+        }
         if (representation.getPriority() == FilterRepresentation.TYPE_BORDER) {
             setHistoryName(representation.getName());
             setBorder(representation);
@@ -359,6 +367,9 @@ public class ImagePreset {
     }
 
     public FilterRepresentation getRepresentation(FilterRepresentation filterRepresentation) {
+        if (filterRepresentation instanceof GeometryMetadata) {
+            return mGeoData;
+        }
         for (int i = 0; i < mFilters.size(); i++) {
             FilterRepresentation representation = mFilters.elementAt(i);
             if (representation.getFilterClass() == filterRepresentation.getFilterClass()) {
@@ -384,7 +395,14 @@ public class ImagePreset {
     public Bitmap applyGeometry(Bitmap bitmap) {
         // Apply any transform -- 90 rotate, flip, straighten, crop
         // Returns a new bitmap.
-        return mGeoData.apply(bitmap, mScaleFactor, mQuality);
+        if (mDoApplyGeometry) {
+            ImageFilter filter = FiltersManager.getManager().getFilterForRepresentation(mGeoData);
+            mGeoData.synchronizeRepresentation();
+            filter.useRepresentation(mGeoData);
+            filter.setImagePreset(this);
+            bitmap = filter.apply(bitmap, mScaleFactor, mQuality);
+        }
+        return bitmap;
     }
 
     public Bitmap applyBorder(Bitmap bitmap) {
