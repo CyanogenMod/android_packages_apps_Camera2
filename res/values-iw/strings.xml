@@ -389,4 +389,8 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"מתייג את התמונות והסרטונים שלך לציון המקומות שבהם צולמו."\n\n"יישומים אחרים יכולים לגשת למידע זה, כולל תמונות שנשמרו."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"לא, תודה"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"כן"</string>
+    <string name="menu_camera" msgid="3476709832879398998">"מצלמה"</string>
+    <string name="menu_search" msgid="7580008232297437190">"חיפוש"</string>
+    <string name="tab_photos" msgid="9110813680630313419">"תמונות"</string>
+    <string name="tab_albums" msgid="8079449907770685691">"אלבומים"</string>
 </resources>

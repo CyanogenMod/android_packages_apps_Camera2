@@ -389,4 +389,8 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"محل گرفتن عکس‌ها و ویدیوها را به آنها برچسب کنید."\n\n" سایر برنامه‌ها می‌توانند به این اطلاعات در کنار تصاویر ذخیره شده شما دسترسی پیدا کنند."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"نه متشکرم"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"بله"</string>
+    <string name="menu_camera" msgid="3476709832879398998">"دوربین"</string>
+    <string name="menu_search" msgid="7580008232297437190">"جستجو"</string>
+    <string name="tab_photos" msgid="9110813680630313419">"عکس‌ها"</string>
+    <string name="tab_albums" msgid="8079449907770685691">"آلبوم‌ها"</string>
 </resources>

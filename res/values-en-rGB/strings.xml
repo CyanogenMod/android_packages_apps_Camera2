@@ -389,4 +389,8 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"Tag your photos and videos with the locations where they are taken."\n\n"Other apps can access this information along with your saved images."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"No thanks"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"Yes"</string>
+    <string name="menu_camera" msgid="3476709832879398998">"Camera"</string>
+    <string name="menu_search" msgid="7580008232297437190">"Search"</string>
+    <string name="tab_photos" msgid="9110813680630313419">"Photos"</string>
+    <string name="tab_albums" msgid="8079449907770685691">"Albums"</string>
 </resources>

@@ -389,4 +389,8 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"Додавайте до своїх фотографій і відео теги про місця, де їх було зроблено."\n\n"Інші програми можуть отримувати доступ до цієї інформації, а також ваших збережених зображень."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"Ні, дякую"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"Так"</string>
+    <string name="menu_camera" msgid="3476709832879398998">"Камера"</string>
+    <string name="menu_search" msgid="7580008232297437190">"Пошук"</string>
+    <string name="tab_photos" msgid="9110813680630313419">"Фотографії"</string>
+    <string name="tab_albums" msgid="8079449907770685691">"Альбоми"</string>
 </resources>

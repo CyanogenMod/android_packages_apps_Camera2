@@ -389,4 +389,8 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"Atzīmē jūsu fotoattēlos un videoklipos atrašanās vietas, kurās tie tika uzņemti."\n\n"Citas lietotnes var piekļūt šai informācijai līdz ar saglabātajiem attēliem."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"Nē, paldies!"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"Jā"</string>
+    <string name="menu_camera" msgid="3476709832879398998">"Kamera"</string>
+    <string name="menu_search" msgid="7580008232297437190">"Meklēt"</string>
+    <string name="tab_photos" msgid="9110813680630313419">"Fotoattēli"</string>
+    <string name="tab_albums" msgid="8079449907770685691">"Albumi"</string>
 </resources>

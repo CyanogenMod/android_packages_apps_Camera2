@@ -389,4 +389,8 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"Etiqueta tus fotos y videos con la ubicación donde fueron tomados."\n\n"Otras aplicaciones pueden acceder a esta información junto con tus imágenes guardadas."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"No, gracias"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"Sí"</string>
+    <string name="menu_camera" msgid="3476709832879398998">"Cámara"</string>
+    <string name="menu_search" msgid="7580008232297437190">"Búsqueda"</string>
+    <string name="tab_photos" msgid="9110813680630313419">"Fotos"</string>
+    <string name="tab_albums" msgid="8079449907770685691">"Álbumes"</string>
 </resources>
