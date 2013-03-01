@@ -181,7 +181,7 @@ public class GeometryMetadata extends FilterRepresentation {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(FilterRepresentation o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
