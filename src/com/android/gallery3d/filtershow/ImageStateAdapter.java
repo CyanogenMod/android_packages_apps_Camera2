@@ -21,10 +21,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.filters.ImageFilter;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 public class ImageStateAdapter extends ArrayAdapter<FilterRepresentation> {
     private static final String LOGTAG = "ImageStateAdapter";
@@ -35,13 +38,20 @@ public class ImageStateAdapter extends ArrayAdapter<FilterRepresentation> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
+        MovableLinearLayout view = (MovableLinearLayout) convertView;
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(
                     Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.filtershow_imagestate_row, null);
+            view = (MovableLinearLayout) inflater.inflate(R.layout.filtershow_imagestate_row, null);
         }
         FilterRepresentation filter = getItem(position);
+        view.setFilterRepresentation(filter);
+        ImageView markView = (ImageView) view.findViewById(R.id.selectedMark);
+        if (filter == MasterImage.getImage().getCurrentFilterRepresentation()) {
+                markView.setVisibility(View.VISIBLE);
+        } else {
+            markView.setVisibility(View.INVISIBLE);
+        }
         if (filter != null) {
             TextView itemLabel = (TextView) view.findViewById(R.id.imagestate_label);
             itemLabel.setText(filter.getName());

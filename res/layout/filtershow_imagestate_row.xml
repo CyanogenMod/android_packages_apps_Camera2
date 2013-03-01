@@ -14,12 +14,24 @@
      limitations under the License.
 -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.android.gallery3d.filtershow.MovableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="128dip"
     android:orientation="horizontal"
     android:background="@drawable/filtershow_button_background">
+
+    <ImageView
+            android:id="@+id/selectedMark"
+            android:src="@drawable/camera_crop"
+            android:background="@android:color/transparent"
+            android:layout_width="32dip"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:visibility="visible"
+            android:layout_weight="1"
+            >
+    </ImageView>
 
     <TextView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -44,4 +56,4 @@
         android:textStyle="bold" >
     </TextView>
 
-</LinearLayout>
+</com.android.gallery3d.filtershow.MovableLinearLayout>
