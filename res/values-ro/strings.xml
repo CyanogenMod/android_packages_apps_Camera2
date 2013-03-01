@@ -389,4 +389,8 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"Etichetaţi-vă fotografiile şi videoclipurile cu locaţiile în care acestea au fost create."\n\n"Alte aplicaţii pot accesa aceste informaţii, împreună cu imaginile salvate."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"Nu, mulţumesc"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"Da"</string>
+    <string name="menu_camera" msgid="3476709832879398998">"Cameră foto"</string>
+    <string name="menu_search" msgid="7580008232297437190">"Căutați"</string>
+    <string name="tab_photos" msgid="9110813680630313419">"Fotografii"</string>
+    <string name="tab_albums" msgid="8079449907770685691">"Albume"</string>
 </resources>

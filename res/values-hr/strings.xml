@@ -389,4 +389,8 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"Dodajte svojim fotografijama i videozapisima oznake lokacija na kojima su snimljeni."\n\n"Ostale aplikacije mogu pristupiti tim podacima s vašim spremljenim slikama."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"Ne, hvala"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"Da"</string>
+    <string name="menu_camera" msgid="3476709832879398998">"Fotoaparat"</string>
+    <string name="menu_search" msgid="7580008232297437190">"Pretraživanje"</string>
+    <string name="tab_photos" msgid="9110813680630313419">"Fotografije"</string>
+    <string name="tab_albums" msgid="8079449907770685691">"Albumi"</string>
 </resources>

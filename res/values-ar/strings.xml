@@ -389,4 +389,8 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"ضع علامة على الصور ومقاطع الفيديو التابعة لك تشير إلى المواقع التي تم التقاطها منها."\n\n"يمكن لتطبيقات أخرى الدخول إلى هذه المعلومات إلى جانب صورك المحفوظة."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"لا، شكرًا"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"نعم"</string>
+    <string name="menu_camera" msgid="3476709832879398998">"الكاميرا"</string>
+    <string name="menu_search" msgid="7580008232297437190">"البحث"</string>
+    <string name="tab_photos" msgid="9110813680630313419">"الصور"</string>
+    <string name="tab_albums" msgid="8079449907770685691">"الألبومات"</string>
 </resources>

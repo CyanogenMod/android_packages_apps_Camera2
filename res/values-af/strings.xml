@@ -389,4 +389,8 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"Merk jou foto\'s en video\'s met die liggings waar hulle geneem is."\n\n"Ander programme kan toegang kry tot hierdie inligting saam met jou gestoorde prente."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"Nee dankie"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"Ja"</string>
+    <string name="menu_camera" msgid="3476709832879398998">"Kamera"</string>
+    <string name="menu_search" msgid="7580008232297437190">"Soek"</string>
+    <string name="tab_photos" msgid="9110813680630313419">"Foto\'s"</string>
+    <string name="tab_albums" msgid="8079449907770685691">"Albums"</string>
 </resources>

@@ -389,4 +389,8 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"Označte pre fotografie a videá polohy, kde boli zaznamenané."\n\n"Ostatné aplikácie môžu pristupovať k týmto informáciám aj k vašim uloženým snímkam."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"Nie, ďakujem"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"Áno"</string>
+    <string name="menu_camera" msgid="3476709832879398998">"Fotoaparát"</string>
+    <string name="menu_search" msgid="7580008232297437190">"Vyhľadávanie"</string>
+    <string name="tab_photos" msgid="9110813680630313419">"Fotografie"</string>
+    <string name="tab_albums" msgid="8079449907770685691">"Albumy"</string>
 </resources>

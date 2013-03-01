@@ -196,7 +196,7 @@
     <string name="no_external_storage" msgid="95726173164068417">"Intet tilgængeligt eksternt lager"</string>
     <string name="switch_photo_filmstrip" msgid="8227883354281661548">"Filmstrip-visning"</string>
     <string name="switch_photo_grid" msgid="3681299459107925725">"Gittervisning"</string>
-    <string name="switch_photo_fullscreen" msgid="8360489096099127071">"Visning i fuld skærm"</string>
+    <string name="switch_photo_fullscreen" msgid="8360489096099127071">"Se i fuld skærm"</string>
     <string name="trimming" msgid="9122385768369143997">"Beskæring"</string>
     <string name="muting" msgid="5094925919589915324">"Slår lyden fra"</string>
     <string name="please_wait" msgid="7296066089146487366">"Vent"</string>
@@ -387,4 +387,8 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"Tag dine fotos og videoer med de placeringer, hvor de blev taget."\n\n"Andre apps kan få adgang til disse oplysninger sammen med dine gemte billeder."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"Nej tak"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"Ja"</string>
+    <string name="menu_camera" msgid="3476709832879398998">"Kamera"</string>
+    <string name="menu_search" msgid="7580008232297437190">"Søg"</string>
+    <string name="tab_photos" msgid="9110813680630313419">"Fotos"</string>
+    <string name="tab_albums" msgid="8079449907770685691">"Albummer"</string>
 </resources>

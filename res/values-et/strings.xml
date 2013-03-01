@@ -389,4 +389,8 @@
     <string name="remember_location_prompt" msgid="724592331305808098">"Märkige oma fotodele ja videotele jäädvustamise asukoht."\n\n"Muud rakendused pääsevad lisaks salvestatud piltidele juurde ka sellele teabele."</string>
     <string name="remember_location_no" msgid="7541394381714894896">"Ei, tänan"</string>
     <string name="remember_location_yes" msgid="862884269285964180">"Jah"</string>
+    <string name="menu_camera" msgid="3476709832879398998">"Kaamera"</string>
+    <string name="menu_search" msgid="7580008232297437190">"Otsing"</string>
+    <string name="tab_photos" msgid="9110813680630313419">"Fotod"</string>
+    <string name="tab_albums" msgid="8079449907770685691">"Albumid"</string>
 </resources>
