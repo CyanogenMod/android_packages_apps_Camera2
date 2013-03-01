@@ -20,8 +20,7 @@
     <string name="cannot_load_image" msgid="5023634941212959976">"Δεν είναι δυνατή η φόρτωση της εικόνας!"</string>
     <!-- no translation found for original_picture_text (3076213290079909698) -->
     <skip />
-    <!-- no translation found for setting_wallpaper (4679087092300036632) -->
-    <skip />
+    <string name="setting_wallpaper" msgid="4679087092300036632">"Ορισμός ταπετσαρίας…"</string>
     <string name="original" msgid="3524493791230430897">"Αρχική"</string>
     <string name="borders" msgid="2067345080568684614">"Σύνορα"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Αναίρεση"</string>
@@ -61,8 +60,7 @@
     <string name="wbalance" msgid="6346581563387083613">"Αυτόματο χρώμα"</string>
     <string name="hue" msgid="6231252147971086030">"Απόχρωση"</string>
     <string name="shadow_recovery" msgid="3928572915300287152">"Σκιές"</string>
-    <!-- no translation found for highlight_recovery (8262208470735204243) -->
-    <skip />
+    <string name="highlight_recovery" msgid="8262208470735204243">"Φωτεινά σημεία"</string>
     <string name="curvesRGB" msgid="915010781090477550">"Καμπύλες"</string>
     <string name="vignette" msgid="934721068851885390">"Βινιετάρισμα"</string>
     <string name="redeye" msgid="4508883127049472069">"Κόκκινα μάτια"</string>
