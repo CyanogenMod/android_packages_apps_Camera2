@@ -335,7 +335,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         filters.setVisibility(View.INVISIBLE);
         loading.setVisibility(View.VISIBLE);
 
-        View tinyPlanetView = findViewById(R.id.tinyplanetButton);
+        View tinyPlanetView = findViewById(EditorTinyPlanet.ID);
         if (tinyPlanetView != null) {
             tinyPlanetView.setVisibility(View.GONE);
         }

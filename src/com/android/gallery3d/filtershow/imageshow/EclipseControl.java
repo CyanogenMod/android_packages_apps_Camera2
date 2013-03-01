@@ -46,15 +46,15 @@ public class EclipseControl {
     private float mDownRadiusY;
     private Matrix mScrToImg;
 
-    private final static int HAN_CENTER = 0;
-    private final static int HAN_NORTH = 7;
-    private final static int HAN_NE = 8;
-    private final static int HAN_EAST = 1;
-    private final static int HAN_SE = 2;
-    private final static int HAN_SOUTH = 3;
-    private final static int HAN_SW = 4;
-    private final static int HAN_WEST = 5;
-    private final static int HAN_NW = 6;
+    public final static int HAN_CENTER = 0;
+    public final static int HAN_NORTH = 7;
+    public final static int HAN_NE = 8;
+    public final static int HAN_EAST = 1;
+    public final static int HAN_SE = 2;
+    public final static int HAN_SOUTH = 3;
+    public final static int HAN_SW = 4;
+    public final static int HAN_WEST = 5;
+    public final static int HAN_NW = 6;
 
     public EclipseControl(Context context) {
         mSliderColor = context.getResources().getColor(R.color.slider_line_color);
