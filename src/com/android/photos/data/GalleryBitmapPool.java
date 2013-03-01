@@ -46,11 +46,9 @@ public class GalleryBitmapPool {
         mCapacityBytes = capacityBytes;
     }
 
-    private static GalleryBitmapPool sInstance;
+    private static GalleryBitmapPool sInstance = new GalleryBitmapPool(CAPACITY_BYTES);
+
     public static GalleryBitmapPool getInstance() {
-        if (sInstance == null) {
-            sInstance = new GalleryBitmapPool(CAPACITY_BYTES);
-        }
         return sInstance;
     }
 
