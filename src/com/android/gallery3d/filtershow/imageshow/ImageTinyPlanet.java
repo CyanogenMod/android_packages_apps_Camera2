@@ -18,15 +18,11 @@ package com.android.gallery3d.filtershow.imageshow;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import com.android.gallery3d.filtershow.editors.BasicEditor;
-import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
-import com.android.gallery3d.filtershow.filters.FilterCurvesRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterTinyPlanetRepresentation;
-import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
 
 public class ImageTinyPlanet extends ImageShow {
 

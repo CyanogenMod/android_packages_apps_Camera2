@@ -18,7 +18,6 @@ package com.android.gallery3d.filtershow.filters;
 
 import com.android.gallery3d.app.Log;
 import com.android.gallery3d.filtershow.editors.BasicEditor;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class FilterRepresentation implements Cloneable {
     private static final String LOGTAG = "FilterRepresentation";

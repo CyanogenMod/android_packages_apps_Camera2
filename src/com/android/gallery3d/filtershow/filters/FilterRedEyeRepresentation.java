@@ -17,7 +17,6 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.RectF;
-import android.util.Log;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.editors.EditorRedEye;

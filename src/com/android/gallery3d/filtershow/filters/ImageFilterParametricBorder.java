@@ -18,12 +18,9 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
-
-import com.android.gallery3d.R;
 
 public class ImageFilterParametricBorder extends ImageFilter {
     private FilterColorBorderRepresentation mParameters = null;
