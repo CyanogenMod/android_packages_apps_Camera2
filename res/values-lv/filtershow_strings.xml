@@ -20,6 +20,7 @@
     <string name="cannot_load_image" msgid="5023634941212959976">"Nevar ielādēt attēlu."</string>
     <!-- no translation found for original_picture_text (3076213290079909698) -->
     <skip />
+    <string name="setting_wallpaper" msgid="4679087092300036632">"Notiek fona tapetes iestatīšana"</string>
     <string name="original" msgid="3524493791230430897">"Oriģināls"</string>
     <string name="borders" msgid="2067345080568684614">"Robežas"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Atsaukt"</string>
@@ -59,6 +60,7 @@
     <string name="wbalance" msgid="6346581563387083613">"Aut. krāsu pal."</string>
     <string name="hue" msgid="6231252147971086030">"Nokrāsa"</string>
     <string name="shadow_recovery" msgid="3928572915300287152">"Ēnas"</string>
+    <string name="highlight_recovery" msgid="8262208470735204243">"Gaišās vietas"</string>
     <string name="curvesRGB" msgid="915010781090477550">"Līknes"</string>
     <string name="vignette" msgid="934721068851885390">"Vinjete"</string>
     <string name="redeye" msgid="4508883127049472069">"Sarkano acu ef."</string>

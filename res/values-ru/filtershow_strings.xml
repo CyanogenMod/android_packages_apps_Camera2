@@ -20,6 +20,7 @@
     <string name="cannot_load_image" msgid="5023634941212959976">"Не удалось загрузить изображение."</string>
     <!-- no translation found for original_picture_text (3076213290079909698) -->
     <skip />
+    <string name="setting_wallpaper" msgid="4679087092300036632">"Установка обоев…"</string>
     <string name="original" msgid="3524493791230430897">"Оригинал"</string>
     <string name="borders" msgid="2067345080568684614">"Границы"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Отмена"</string>
@@ -45,7 +46,7 @@
     <string name="aspect5to7_effect" msgid="5122395569059384741">"5:7"</string>
     <string name="aspect7to5_effect" msgid="5780001758108328143">"7:5"</string>
     <string name="aspect9to16_effect" msgid="7740468012919660728">"16:9"</string>
-    <string name="aspectNone_effect" msgid="6263330561046574134">"Оригинал"</string>
+    <string name="aspectNone_effect" msgid="6263330561046574134">"Вручную"</string>
     <!-- no translation found for aspectOriginal_effect (5678516555493036594) -->
     <skip />
     <string name="Fixed" msgid="8017376448916924565">"Постоянное"</string>
@@ -59,6 +60,7 @@
     <string name="wbalance" msgid="6346581563387083613">"Авторежим"</string>
     <string name="hue" msgid="6231252147971086030">"Оттенок"</string>
     <string name="shadow_recovery" msgid="3928572915300287152">"Тени"</string>
+    <string name="highlight_recovery" msgid="8262208470735204243">"Блики"</string>
     <string name="curvesRGB" msgid="915010781090477550">"Кривые"</string>
     <string name="vignette" msgid="934721068851885390">"Виньет-ние"</string>
     <string name="redeye" msgid="4508883127049472069">"Красные глаза"</string>
