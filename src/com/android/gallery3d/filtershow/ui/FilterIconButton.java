@@ -122,6 +122,7 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
         if (mOverlayOnly) {
             setIcon(mOverlayBitmap);
         }
+        stale_icon = true;
         invalidate();
     }
 
@@ -134,8 +135,8 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
         if (mOverlayBitmap != null) {
             mIconBitmap = super.drawImage(mIconBitmap, mOverlayBitmap, mDestination);
         }
-        invalidate();
         stale_icon = true;
+        invalidate();
     }
 
     @Override
