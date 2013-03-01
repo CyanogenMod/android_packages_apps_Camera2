@@ -41,15 +41,21 @@ public class AutoThumbnailDrawable extends Drawable {
     private static ExecutorService sThreadPool = Executors.newSingleThreadExecutor();
     private static byte[] sTempStorage = new byte[64 * 1024];
 
-    private Bitmap mBitmap;
+    // UI thread only
     private Paint mPaint = new Paint();
+    private Matrix mDrawMatrix = new Matrix();
+    private int mSampleSize = 1;
+
+    // Decoder thread only
+    private BitmapFactory.Options mOptions = new BitmapFactory.Options();
+
+    // Shared, guarded by mLock
+    private Object mLock = new Object();
+    private Bitmap mBitmap;
     private String mDataUri;
     private boolean mIsQueued;
     private int mImageWidth, mImageHeight;
-    private BitmapFactory.Options mOptions = new BitmapFactory.Options();
     private Rect mBounds = new Rect();
-    private Matrix mDrawMatrix = new Matrix();
-    private int mSampleSize = 1;
 
     public AutoThumbnailDrawable() {
         mPaint.setAntiAlias(true);
@@ -60,7 +66,7 @@ public class AutoThumbnailDrawable extends Drawable {
 
     public void setImage(String dataUri, int width, int height) {
         if (TextUtils.equals(mDataUri, dataUri)) return;
-        synchronized (this) {
+        synchronized (mLock) {
             mImageWidth = width;
             mImageHeight = height;
             mDataUri = dataUri;
@@ -73,7 +79,7 @@ public class AutoThumbnailDrawable extends Drawable {
     @Override
     protected void onBoundsChange(Rect bounds) {
         super.onBoundsChange(bounds);
-        synchronized (this) {
+        synchronized (mLock) {
             mBounds.set(bounds);
             if (mBounds.isEmpty()) {
                 mBitmap = null;
@@ -205,7 +211,7 @@ public class AutoThumbnailDrawable extends Drawable {
             // TODO: Use bitmap pool
             String data;
             int sampleSize;
-            synchronized (this) {
+            synchronized (mLock) {
                 data = mDataUri;
                 sampleSize = calculateSampleSizeLocked(mImageWidth, mImageHeight);
                 mSampleSize = sampleSize;
@@ -226,7 +232,7 @@ public class AutoThumbnailDrawable extends Drawable {
                     mBitmap = BitmapFactory.decodeByteArray(thumbnail, 0,
                             thumbnail.length, mOptions);
                     if (mBitmap != null) {
-                        synchronized (this) {
+                        synchronized (mLock) {
                             if (TextUtils.equals(data, mDataUri)) {
                                 scheduleSelf(mUpdateBitmap, 0);
                             }
@@ -243,10 +249,12 @@ public class AutoThumbnailDrawable extends Drawable {
                 return;
             } finally {
                 try {
-                    fis.close();
+                    if (fis != null) {
+                        fis.close();
+                    }
                 } catch (Exception e) {}
             }
-            synchronized (this) {
+            synchronized (mLock) {
                 if (TextUtils.equals(data, mDataUri)) {
                     scheduleSelf(mUpdateBitmap, 0);
                 }
