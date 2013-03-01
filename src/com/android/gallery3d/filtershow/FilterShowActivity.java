@@ -413,6 +413,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                     mNullBorderFilter.setSelected(true);
                 }
             }
+            fillButtonIcons();
         }
     }
 
@@ -855,7 +856,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         super.onConfigurationChanged(newConfig);
         setDefaultValues();
         loadXML();
-        fillButtonIcons();
         if (mShowingHistoryPanel) {
             toggleHistoryPanel();
         }
