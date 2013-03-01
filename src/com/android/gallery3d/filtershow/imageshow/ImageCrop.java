@@ -26,19 +26,15 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.CropExtras;
 import com.android.gallery3d.filtershow.editors.EditorCrop;
-import com.android.gallery3d.filtershow.filters.FilterCurvesRepresentation;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
 
 public class ImageCrop extends ImageGeometry {

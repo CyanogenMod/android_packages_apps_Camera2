@@ -19,8 +19,6 @@ package com.android.gallery3d.filtershow.filters;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 
-import com.android.gallery3d.app.Log;
-
 public class ImageFilterVignette extends SimpleImageFilter {
     private static final String LOGTAG = "ImageFilterVignette";
 

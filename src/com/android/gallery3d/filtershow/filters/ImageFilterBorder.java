@@ -24,9 +24,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
-
 import java.util.HashMap;
 
 public class ImageFilterBorder extends ImageFilter {

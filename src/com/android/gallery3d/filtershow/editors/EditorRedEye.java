@@ -17,7 +17,6 @@
 package com.android.gallery3d.filtershow.editors;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.android.gallery3d.R;
