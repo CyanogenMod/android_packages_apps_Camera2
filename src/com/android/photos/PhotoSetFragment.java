@@ -19,16 +19,17 @@ package com.android.photos;
 import android.app.Fragment;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 
 import com.android.gallery3d.R;
 import com.android.photos.data.PhotoSetLoader;
@@ -81,7 +82,21 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
+    private static class ShowFullScreen implements OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            String path = (String) view.getTag();
+            Intent intent = new Intent(view.getContext(), FullscreenViewer.class);
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(path));
+            view.getContext().startActivity(intent);
+        }
+
+    }
+
     private static class ThumbnailAdapter extends CursorAdapter implements GalleryThumbnailAdapter {
+        private static ShowFullScreen sShowFullscreenClickListener = new ShowFullScreen();
 
         public ThumbnailAdapter(Context context) {
             super(context, null, false);
@@ -95,6 +110,7 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
             int height = cursor.getInt(PhotoSetLoader.INDEX_HEIGHT);
             String path = cursor.getString(PhotoSetLoader.INDEX_DATA);
             drawable.setImage(path, width, height);
+            iv.setTag(path);
         }
 
         @Override
@@ -104,6 +120,7 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
             iv.setImageDrawable(drawable);
             int padding = (int) Math.ceil(2 * context.getResources().getDisplayMetrics().density);
             iv.setPadding(padding, padding, padding, padding);
+            iv.setOnClickListener(sShowFullscreenClickListener);
             return iv;
         }
 
