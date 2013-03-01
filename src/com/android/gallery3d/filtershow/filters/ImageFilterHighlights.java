@@ -16,10 +16,9 @@
 
 package com.android.gallery3d.filtershow.filters;
 
-import com.android.gallery3d.R;
-
 import android.graphics.Bitmap;
-import android.util.Log;
+
+import com.android.gallery3d.R;
 
 public class ImageFilterHighlights extends SimpleImageFilter {
     private static final String LOGTAG = "ImageFilterVignette";

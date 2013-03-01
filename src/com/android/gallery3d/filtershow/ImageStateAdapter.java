@@ -25,7 +25,6 @@ import android.widget.TextView;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
-import com.android.gallery3d.filtershow.filters.ImageFilter;
 
 public class ImageStateAdapter extends ArrayAdapter<FilterRepresentation> {
     private static final String LOGTAG = "ImageStateAdapter";

@@ -24,9 +24,7 @@ import android.graphics.RectF;
 
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
-import com.android.gallery3d.R;
 import com.android.gallery3d.app.Log;
-import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 /**

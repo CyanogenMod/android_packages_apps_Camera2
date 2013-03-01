@@ -18,17 +18,15 @@ package com.android.gallery3d.filtershow.cache;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Matrix;
 import android.graphics.Rect;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.RectF;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -36,26 +34,20 @@ import android.util.Log;
 
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
-
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.exif.ExifInvalidFormatException;
 import com.android.gallery3d.exif.ExifParser;
 import com.android.gallery3d.exif.ExifTag;
-import com.android.gallery3d.filtershow.CropExtras;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
-import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
-import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
-import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.tools.BitmapTask;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.util.InterruptableOutputStream;
 import com.android.gallery3d.util.XmpUtilHelper;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

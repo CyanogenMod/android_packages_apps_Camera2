@@ -16,16 +16,14 @@
 
 package com.android.gallery3d.filtershow.editors;
 
-import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.filters.*;
-
 import android.content.Context;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-import com.android.gallery3d.filtershow.imageshow.MasterImage;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
+
+import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.filters.FilterBasicRepresentation;
 
 /**
  * The basic editor that all the one parameter filters

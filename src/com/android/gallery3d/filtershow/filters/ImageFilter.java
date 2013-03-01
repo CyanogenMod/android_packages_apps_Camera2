@@ -20,9 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.widget.Toast;
 
-import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.editors.BasicEditor;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 

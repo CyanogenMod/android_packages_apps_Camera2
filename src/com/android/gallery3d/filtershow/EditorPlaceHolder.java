@@ -1,7 +1,5 @@
 package com.android.gallery3d.filtershow;
 
-import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -9,7 +7,6 @@ import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.editors.Editor;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Vector;
 

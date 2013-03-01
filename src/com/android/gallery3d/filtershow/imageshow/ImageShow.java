@@ -17,20 +17,28 @@
 package com.android.gallery3d.filtershow.imageshow;
 
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.*;
+import android.view.GestureDetector;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.PanelController;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
-import com.android.gallery3d.filtershow.cache.RenderingRequestCaller;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 

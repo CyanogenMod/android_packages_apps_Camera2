@@ -20,7 +20,6 @@ import android.graphics.Bitmap;
 import android.text.format.Time;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.ingest.ui.MtpThumbnailTileView;
 
 public class ImageFilterKMeans extends SimpleImageFilter {
     private int mSeed = 0;
