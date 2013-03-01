@@ -17,7 +17,6 @@
 package com.android.gallery3d.filtershow;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;

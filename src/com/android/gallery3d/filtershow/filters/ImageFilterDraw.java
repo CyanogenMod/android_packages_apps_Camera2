@@ -27,8 +27,6 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.Rect;
-import android.util.Log;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.FilterDrawRepresentation.StrokeData;

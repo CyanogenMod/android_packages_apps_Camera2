@@ -17,7 +17,6 @@
 package com.android.gallery3d.filtershow.cache;
 
 import android.graphics.Bitmap;
-import com.android.gallery3d.app.Log;
 
 public class TripleBufferBitmap {
 

@@ -22,16 +22,12 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
-import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
 
 import com.android.gallery3d.filtershow.editors.EditorRedEye;
 import com.android.gallery3d.filtershow.filters.FilterPoint;
 import com.android.gallery3d.filtershow.filters.FilterRedEyeRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilterRedEye;
-import com.android.gallery3d.filtershow.filters.RedEyeCandidate;
 
 public abstract class ImagePoint extends ImageShow {
 

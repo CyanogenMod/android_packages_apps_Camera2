@@ -17,18 +17,13 @@
 package com.android.gallery3d.filtershow.ui;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.Button;
-
-import com.android.gallery3d.R;
 
 /**
  * Class of buttons with both an image icon and text.
