@@ -20,6 +20,7 @@
     <string name="cannot_load_image" msgid="5023634941212959976">"Неможливо завантажити зображення."</string>
     <!-- no translation found for original_picture_text (3076213290079909698) -->
     <skip />
+    <string name="setting_wallpaper" msgid="4679087092300036632">"Встановлення фонового малюнка"</string>
     <string name="original" msgid="3524493791230430897">"Оригінал"</string>
     <string name="borders" msgid="2067345080568684614">"Облямівка"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Відмінити"</string>
@@ -59,6 +60,7 @@
     <string name="wbalance" msgid="6346581563387083613">"Автоколір"</string>
     <string name="hue" msgid="6231252147971086030">"Тон"</string>
     <string name="shadow_recovery" msgid="3928572915300287152">"Тіні"</string>
+    <string name="highlight_recovery" msgid="8262208470735204243">"Затемнення"</string>
     <string name="curvesRGB" msgid="915010781090477550">"Криві"</string>
     <string name="vignette" msgid="934721068851885390">"Віньєтка"</string>
     <string name="redeye" msgid="4508883127049472069">"Червоні очі"</string>

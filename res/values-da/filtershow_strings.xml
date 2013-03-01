@@ -20,6 +20,7 @@
     <string name="cannot_load_image" msgid="5023634941212959976">"Billedet kan ikke indlæses."</string>
     <!-- no translation found for original_picture_text (3076213290079909698) -->
     <skip />
+    <string name="setting_wallpaper" msgid="4679087092300036632">"Angiver baggrund"</string>
     <string name="original" msgid="3524493791230430897">"Original"</string>
     <string name="borders" msgid="2067345080568684614">"Rammer"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Fortryd"</string>
@@ -59,6 +60,7 @@
     <string name="wbalance" msgid="6346581563387083613">"Automatisk farve"</string>
     <string name="hue" msgid="6231252147971086030">"Nuance"</string>
     <string name="shadow_recovery" msgid="3928572915300287152">"Skygger"</string>
+    <string name="highlight_recovery" msgid="8262208470735204243">"Fremhævninger"</string>
     <string name="curvesRGB" msgid="915010781090477550">"Kurver"</string>
     <string name="vignette" msgid="934721068851885390">"Vignet"</string>
     <string name="redeye" msgid="4508883127049472069">"Røde øjne"</string>
@@ -80,7 +82,7 @@
     <string name="draw_size" msgid="4360005386104151209">"Størrelse"</string>
     <string name="draw_color" msgid="2119030386987211193">"Farve"</string>
     <string name="draw_style_line" msgid="9216476853904429628">"Linjer"</string>
-    <string name="draw_style_brush_spatter" msgid="7612691122932981554">"Markør"</string>
+    <string name="draw_style_brush_spatter" msgid="7612691122932981554">"Tusch"</string>
     <string name="draw_style_brush_marker" msgid="8468302322165644292">"Stænk"</string>
     <string name="draw_clear" msgid="6728155515454921052">"Ryd"</string>
     <string name="color_pick_select" msgid="734312818059057394">"Vælg tilpasset farve"</string>
