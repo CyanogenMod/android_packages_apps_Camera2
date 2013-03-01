@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.filtershow;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.text.Html;
 import android.view.View;
@@ -27,11 +26,10 @@ import android.widget.TextView;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.editors.Editor;
+import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
-import com.android.gallery3d.filtershow.imageshow.ImageCrop;
-import com.android.gallery3d.filtershow.imageshow.ImageGeometry;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -525,21 +523,21 @@ public class PanelController implements OnClickListener {
             return;
         }
 
-        switch (view.getId()) {
-            case R.id.tinyplanetButton: {
-                mCurrentImage = showImageView(R.id.imageTinyPlanet);
-                String ename = mCurrentImage.getContext().getString(R.string.tinyplanet);
-                mUtilityPanel.setEffectName(ename);
-                break;
-            }
-            case R.id.applyEffect: {
+        int id = view.getId();
+        if (id == EditorTinyPlanet.ID) {
+            mCurrentImage = showImageView(R.id.imageTinyPlanet);
+            String ename = mCurrentImage.getContext().getString(R.string.tinyplanet);
+            mUtilityPanel.setEffectName(ename);
+
+        } else {
+            if (id == R.id.applyEffect) {
                 if (MasterImage.getImage().getCurrentFilter() instanceof ImageFilterTinyPlanet) {
                     mActivity.saveImage();
                 } else {
                     showPanel(mCurrentPanel);
                 }
                 MasterImage.getImage().invalidateFiltersOnly();
-                break;
+
             }
         }
         mCurrentImage.select();
