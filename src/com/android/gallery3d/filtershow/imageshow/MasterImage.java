@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import android.util.Log;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.ImageStateAdapter;
