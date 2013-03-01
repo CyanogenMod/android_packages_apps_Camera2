@@ -360,6 +360,9 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public void notifyGeometryChange() {
+        if (mHandler.hasMessages(NEW_GEOMETRY)) {
+            return;
+        }
         mHandler.sendEmptyMessage(NEW_GEOMETRY);
     }
 
