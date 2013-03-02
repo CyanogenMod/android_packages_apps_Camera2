@@ -25,26 +25,25 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
-import android.text.TextUtils;
 import android.util.Log;
 
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
+import com.android.photos.data.GalleryBitmapPool;
+
+import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class AutoThumbnailDrawable extends Drawable {
+public abstract class AutoThumbnailDrawable<T> extends Drawable {
 
-    private static final String TAG = "AutoMipMapDrawable";
+    private static final String TAG = "AutoThumbnailDrawable";
 
     private static ExecutorService sThreadPool = Executors.newSingleThreadExecutor();
+    private static GalleryBitmapPool sBitmapPool = GalleryBitmapPool.getInstance();
     private static byte[] sTempStorage = new byte[64 * 1024];
 
     // UI thread only
     private Paint mPaint = new Paint();
     private Matrix mDrawMatrix = new Matrix();
-    private int mSampleSize = 1;
 
     // Decoder thread only
     private BitmapFactory.Options mOptions = new BitmapFactory.Options();
@@ -52,10 +51,16 @@ public class AutoThumbnailDrawable extends Drawable {
     // Shared, guarded by mLock
     private Object mLock = new Object();
     private Bitmap mBitmap;
-    private String mDataUri;
+    protected T mData;
     private boolean mIsQueued;
     private int mImageWidth, mImageHeight;
     private Rect mBounds = new Rect();
+    private int mSampleSize = 1;
+    // mSampleSize is the target sample size for the full-size dimensions
+    // of the image (so if a preferred, smaller image is used, it might
+    // not reflect the sample size used when decoding that image). This
+    // value is used in refreshSampleSizeLocked to determine whether the
+    // image needs to be refreshed.
 
     public AutoThumbnailDrawable() {
         mPaint.setAntiAlias(true);
@@ -64,16 +69,33 @@ public class AutoThumbnailDrawable extends Drawable {
         mOptions.inTempStorage = sTempStorage;
     }
 
-    public void setImage(String dataUri, int width, int height) {
-        if (TextUtils.equals(mDataUri, dataUri)) return;
+    protected abstract byte[] getPreferredImageBytes(T data);
+    protected abstract InputStream getFallbackImageStream(T data);
+
+    // Must hold mLock when calling on different thread from setImage
+    protected abstract boolean dataChangedLocked(T data);
+
+    // Must only be called from one thread (usually the UI thread)
+    public void setImage(T data, int width, int height) {
+        if (!dataChangedLocked(data)) return;
         synchronized (mLock) {
             mImageWidth = width;
             mImageHeight = height;
-            mDataUri = dataUri;
-            mBitmap = null;
+            mData = data;
+            setBitmapLocked(null);
             refreshSampleSizeLocked();
         }
         invalidateSelf();
+    }
+
+    private void setBitmapLocked(Bitmap b) {
+        if (b == mBitmap) {
+            return;
+        }
+        if (mBitmap != null) {
+            sBitmapPool.put(mBitmap);
+        }
+        mBitmap = b;
     }
 
     @Override
@@ -148,7 +170,8 @@ public class AutoThumbnailDrawable extends Drawable {
         } else {
             scale = (float) dwidth / (float) vwidth;
         }
-        return (int) (scale + .5f);
+        int result = Math.round(scale);
+        return result > 0 ? result : 1;
     }
 
     private void refreshSampleSizeLocked() {
@@ -208,62 +231,78 @@ public class AutoThumbnailDrawable extends Drawable {
     private final Runnable mLoadBitmap = new Runnable() {
         @Override
         public void run() {
-            // TODO: Use bitmap pool
-            String data;
-            int sampleSize;
+            T data;
             synchronized (mLock) {
-                data = mDataUri;
-                sampleSize = calculateSampleSizeLocked(mImageWidth, mImageHeight);
-                mSampleSize = sampleSize;
+                data = mData;
+            }
+            int preferredSampleSize = 1;
+            byte[] preferred = getPreferredImageBytes(data);
+            boolean hasPreferred = (preferred != null && preferred.length > 0);
+            if (hasPreferred) {
+                mOptions.inJustDecodeBounds = true;
+                BitmapFactory.decodeByteArray(preferred, 0, preferred.length, mOptions);
+                mOptions.inJustDecodeBounds = false;
+            }
+            int sampleSize, width, height;
+            synchronized (mLock) {
+                if (dataChangedLocked(data)) {
+                    return;
+                }
+                width = mImageWidth;
+                height = mImageHeight;
+                if (hasPreferred) {
+                    preferredSampleSize = calculateSampleSizeLocked(
+                            mOptions.outWidth, mOptions.outHeight);
+                }
+                sampleSize = calculateSampleSizeLocked(width, height);
                 mIsQueued = false;
             }
-            FileInputStream fis = null;
+            Bitmap b = null;
+            InputStream is = null;
             try {
-                ExifInterface exif = new ExifInterface(data);
-                if (exif.hasThumbnail()) {
-                    byte[] thumbnail = exif.getThumbnail();
-                    mOptions.inJustDecodeBounds = true;
-                    BitmapFactory.decodeByteArray(thumbnail, 0,
-                            thumbnail.length, mOptions);
-                    int exifThumbSampleSize = calculateSampleSizeLocked(
-                            mOptions.outWidth, mOptions.outHeight);
-                    mOptions.inJustDecodeBounds = false;
-                    mOptions.inSampleSize = exifThumbSampleSize;
-                    mBitmap = BitmapFactory.decodeByteArray(thumbnail, 0,
-                            thumbnail.length, mOptions);
-                    if (mBitmap != null) {
-                        synchronized (mLock) {
-                            if (TextUtils.equals(data, mDataUri)) {
-                                scheduleSelf(mUpdateBitmap, 0);
-                            }
-                        }
-                        return;
+                if (hasPreferred) {
+                    mOptions.inSampleSize = preferredSampleSize;
+                    mOptions.inBitmap = sBitmapPool.get(
+                            mOptions.outWidth / preferredSampleSize,
+                            mOptions.outHeight / preferredSampleSize);
+                    b = BitmapFactory.decodeByteArray(preferred, 0, preferred.length, mOptions);
+                    if (mOptions.inBitmap != null && b != mOptions.inBitmap) {
+                        sBitmapPool.put(mOptions.inBitmap);
+                        mOptions.inBitmap = null;
                     }
                 }
-                fis = new FileInputStream(data);
-                FileDescriptor fd = fis.getFD();
-                mOptions.inSampleSize = sampleSize;
-                mBitmap = BitmapFactory.decodeFileDescriptor(fd, null, mOptions);
+                if (b == null) {
+                    is = getFallbackImageStream(data);
+                    mOptions.inSampleSize = sampleSize;
+                    mOptions.inBitmap = sBitmapPool.get(width / sampleSize, height / sampleSize);
+                    b = BitmapFactory.decodeStream(is, null, mOptions);
+                    if (mOptions.inBitmap != null && b != mOptions.inBitmap) {
+                        sBitmapPool.put(mOptions.inBitmap);
+                        mOptions.inBitmap = null;
+                    }
+                }
             } catch (Exception e) {
-                Log.d("AsyncBitmap", "Failed to fetch bitmap", e);
+                Log.d(TAG, "Failed to fetch bitmap", e);
                 return;
             } finally {
                 try {
-                    if (fis != null) {
-                        fis.close();
+                    if (is != null) {
+                        is.close();
                     }
                 } catch (Exception e) {}
-            }
-            synchronized (mLock) {
-                if (TextUtils.equals(data, mDataUri)) {
-                    scheduleSelf(mUpdateBitmap, 0);
+                if (b != null) {
+                    synchronized (mLock) {
+                        if (!dataChangedLocked(data)) {
+                            setBitmapLocked(b);
+                            scheduleSelf(mUpdateBitmap, 0);
+                        }
+                    }
                 }
             }
         }
     };
 
     private final Runnable mUpdateBitmap = new Runnable() {
-
         @Override
         public void run() {
             synchronized (AutoThumbnailDrawable.this) {
