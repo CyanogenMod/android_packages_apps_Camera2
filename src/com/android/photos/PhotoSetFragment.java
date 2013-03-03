@@ -33,7 +33,7 @@ import android.widget.ImageView;
 
 import com.android.gallery3d.R;
 import com.android.photos.data.PhotoSetLoader;
-import com.android.photos.drawables.AutoThumbnailDrawable;
+import com.android.photos.drawables.DataUriThumbnailDrawable;
 import com.android.photos.views.GalleryThumbnailView;
 import com.android.photos.views.GalleryThumbnailView.GalleryThumbnailAdapter;
 
@@ -105,7 +105,7 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             ImageView iv = (ImageView) view;
-            AutoThumbnailDrawable drawable = (AutoThumbnailDrawable) iv.getDrawable();
+            DataUriThumbnailDrawable drawable = (DataUriThumbnailDrawable) iv.getDrawable();
             int width = cursor.getInt(PhotoSetLoader.INDEX_WIDTH);
             int height = cursor.getInt(PhotoSetLoader.INDEX_HEIGHT);
             String path = cursor.getString(PhotoSetLoader.INDEX_DATA);
@@ -116,7 +116,7 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             ImageView iv = new ImageView(context);
-            AutoThumbnailDrawable drawable = new AutoThumbnailDrawable();
+            DataUriThumbnailDrawable drawable = new DataUriThumbnailDrawable();
             iv.setImageDrawable(drawable);
             int padding = (int) Math.ceil(2 * context.getResources().getDisplayMetrics().density);
             iv.setPadding(padding, padding, padding, padding);
