@@ -68,6 +68,8 @@ public interface CameraModule {
 
     public boolean needsSwitcher();
 
+    public boolean needsPieMenu();
+
     public void onOrientationChanged(int orientation);
 
     public void onShowSwitcherPopup();

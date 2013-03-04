@@ -20,10 +20,20 @@
  need to be recreated in onConfigurationChanged from old photo_module to this
  layout. -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/camera_app_root"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_gravity="center">
     <include layout="@layout/count_down_to_capture"/>
-    <include layout="@layout/photo_module_content"/>
-</FrameLayout>
+
+    <ViewStub android:id="@+id/face_view_stub"
+        android:inflatedId="@+id/face_view"
+        android:layout="@layout/face_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+    <com.android.camera.ui.RenderOverlay
+        android:id="@+id/render_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</merge>
