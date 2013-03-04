@@ -18,21 +18,18 @@ package com.android.photos.data;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.BaseColumns;
-import android.test.InstrumentationTestCase;
+import android.test.ProviderTestCase2;
 
 import com.android.photos.data.PhotoProvider.Albums;
 import com.android.photos.data.PhotoProvider.Metadata;
 import com.android.photos.data.PhotoProvider.Photos;
 
-public class PhotoProviderTest extends InstrumentationTestCase {
+public class PhotoProviderTest extends ProviderTestCase2<PhotoProvider> {
     @SuppressWarnings("unused")
     private static final String TAG = PhotoProviderTest.class.getSimpleName();
 
@@ -51,87 +48,25 @@ public class PhotoProviderTest extends InstrumentationTestCase {
     private static final String WHERE_METADATA = Metadata.PHOTO_ID + " = ? AND " + Metadata.KEY
             + " = ?";
 
-    private static final long WAIT_FOR_CHANGE_MILLIS = 200;
-
     private long mAlbumId;
     private long mPhotoId;
     private long mMetadataId;
 
-    private PhotoDatabase mDBHelper;
+    private SQLiteOpenHelper mDBHelper;
     private ContentResolver mResolver;
+    private NotificationWatcher mNotifications = new NotificationWatcher();
 
-    private static class WatchContentObserverThread extends Thread {
-        private WatchContentObserver mObserver;
-        private Looper mLooper;
-
-        @Override
-        public void run() {
-            Looper.prepare();
-            mLooper = Looper.myLooper();
-            WatchContentObserver observer = new WatchContentObserver();
-            synchronized (this) {
-                mObserver = observer;
-                this.notifyAll();
-            }
-            Looper.loop();
-        }
-
-        public void waitForObserver() throws InterruptedException {
-            synchronized (this) {
-                while (mObserver == null) {
-                    this.wait();
-                }
-            }
-        }
-
-        public WatchContentObserver getObserver() {
-            return mObserver;
-        }
-
-        public void stopLooper() {
-            mLooper.quit();
-        }
-    };
-
-    private static class WatchContentObserver extends ContentObserver {
-        private boolean mOnChangeReceived = false;
-        private Uri mUri = null;
-
-        public WatchContentObserver() {
-            super(new Handler());
-        }
-
-        @Override
-        public synchronized void onChange(boolean selfChange, Uri uri) {
-            mOnChangeReceived = true;
-            mUri = uri;
-            notifyAll();
-        }
-
-        @Override
-        public synchronized void onChange(boolean selfChange) {
-            mOnChangeReceived = true;
-            notifyAll();
-        }
-
-        public boolean waitForNotification() {
-            synchronized (this) {
-                if (!mOnChangeReceived) {
-                    try {
-                        wait(WAIT_FOR_CHANGE_MILLIS);
-                    } catch (InterruptedException e) {
-                    }
-                }
-            }
-            return mOnChangeReceived;
-        }
-    };
+    public PhotoProviderTest() {
+        super(PhotoProvider.class, PhotoProvider.AUTHORITY);
+    }
 
     @Override
-    protected void setUp() {
-        Context context = getInstrumentation().getTargetContext();
-        mDBHelper = new PhotoDatabase(context);
-        mResolver = context.getContentResolver();
+    protected void setUp() throws Exception {
+        super.setUp();
+        mResolver = getMockContentResolver();
+        PhotoProvider provider = (PhotoProvider) getProvider();
+        provider.setMockNotification(mNotifications);
+        mDBHelper = provider.getDatabaseHelper();
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -150,23 +85,18 @@ public class PhotoProviderTest extends InstrumentationTestCase {
             mMetadataId = cursor.getLong(0);
             cursor.close();
             db.setTransactionSuccessful();
+            mNotifications.reset();
         } finally {
             db.endTransaction();
         }
     }
 
     @Override
-    protected void tearDown() {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            PhotoDatabaseUtils.deleteAllContent(db);
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
+    protected void tearDown() throws Exception {
         mDBHelper.close();
         mDBHelper = null;
+        super.tearDown();
+        getMockContext().deleteDatabase(PhotoProvider.DB_NAME);
     }
 
     public void testDelete() {
@@ -204,85 +134,46 @@ public class PhotoProviderTest extends InstrumentationTestCase {
         assertEquals(0, cursor.getCount());
         cursor.close();
     }
+
     // Delete the album and ensure that the photos referring to the album are
     // deleted.
     public void testDeleteAlbumCascade() {
-        WatchContentObserverThread observerThread = createObserverThread();
-        WatchContentObserver observer = observerThread.getObserver();
-        mResolver.registerContentObserver(Photos.CONTENT_URI, true, observer);
-        try {
-            Uri albumUri = ContentUris.withAppendedId(Albums.CONTENT_URI, mAlbumId);
-            mResolver.delete(albumUri, null, null);
-            assertTrue(observer.waitForNotification());
-            assertEquals(observer.mUri, Photos.CONTENT_URI);
-            Cursor cursor = mResolver.query(Photos.CONTENT_URI,
-                    PhotoDatabaseUtils.PROJECTION_PHOTOS, null, null, null);
-            assertEquals(0, cursor.getCount());
-            cursor.close();
-        } finally {
-            mResolver.unregisterContentObserver(observer);
-            observerThread.stopLooper();
-        }
-    }
-
-    // Delete the album and ensure that the metadata referring to photos in that
-    // album are deleted.
-    public void testDeleteAlbumCascade2() {
-        WatchContentObserverThread observerThread = createObserverThread();
-        WatchContentObserver observer = observerThread.getObserver();
-        mResolver.registerContentObserver(Metadata.CONTENT_URI, true, observer);
-        try {
-            Uri albumUri = ContentUris.withAppendedId(Albums.CONTENT_URI, mAlbumId);
-            mResolver.delete(albumUri, null, null);
-            assertTrue(observer.waitForNotification());
-            assertEquals(observer.mUri, Metadata.CONTENT_URI);
-            Cursor cursor = mResolver.query(Metadata.CONTENT_URI,
-                    PhotoDatabaseUtils.PROJECTION_METADATA, null, null, null);
-            assertEquals(0, cursor.getCount());
-            cursor.close();
-        } finally {
-            mResolver.unregisterContentObserver(observer);
-            observerThread.stopLooper();
-        }
+        Uri albumUri = ContentUris.withAppendedId(Albums.CONTENT_URI, mAlbumId);
+        mResolver.delete(albumUri, null, null);
+        assertTrue(mNotifications.isNotified(Photos.CONTENT_URI));
+        assertTrue(mNotifications.isNotified(Metadata.CONTENT_URI));
+        assertTrue(mNotifications.isNotified(albumUri));
+        assertEquals(3, mNotifications.notificationCount());
+        Cursor cursor = mResolver.query(Photos.CONTENT_URI, PhotoDatabaseUtils.PROJECTION_PHOTOS,
+                null, null, null);
+        assertEquals(0, cursor.getCount());
+        cursor.close();
     }
 
     // Delete all albums and ensure that photos in any album are deleted.
-    public void testDeleteAlbumCascade3() {
-        WatchContentObserverThread observerThread = createObserverThread();
-        WatchContentObserver observer = observerThread.getObserver();
-        mResolver.registerContentObserver(Photos.CONTENT_URI, true, observer);
-        try {
-            mResolver.delete(Albums.CONTENT_URI, null, null);
-            assertTrue(observer.waitForNotification());
-            assertEquals(observer.mUri, Photos.CONTENT_URI);
-            Cursor cursor = mResolver.query(Photos.CONTENT_URI,
-                    PhotoDatabaseUtils.PROJECTION_PHOTOS, null, null, null);
-            assertEquals(0, cursor.getCount());
-            cursor.close();
-        } finally {
-            mResolver.unregisterContentObserver(observer);
-            observerThread.stopLooper();
-        }
+    public void testDeleteAlbumCascade2() {
+        mResolver.delete(Albums.CONTENT_URI, null, null);
+        assertTrue(mNotifications.isNotified(Photos.CONTENT_URI));
+        assertTrue(mNotifications.isNotified(Metadata.CONTENT_URI));
+        assertTrue(mNotifications.isNotified(Albums.CONTENT_URI));
+        assertEquals(3, mNotifications.notificationCount());
+        Cursor cursor = mResolver.query(Photos.CONTENT_URI, PhotoDatabaseUtils.PROJECTION_PHOTOS,
+                null, null, null);
+        assertEquals(0, cursor.getCount());
+        cursor.close();
     }
 
     // Delete a photo and ensure that the metadata for that photo are deleted.
     public void testDeletePhotoCascade() {
-        WatchContentObserverThread observerThread = createObserverThread();
-        WatchContentObserver observer = observerThread.getObserver();
-        mResolver.registerContentObserver(Metadata.CONTENT_URI, true, observer);
-        try {
-            Uri albumUri = ContentUris.withAppendedId(Photos.CONTENT_URI, mPhotoId);
-            mResolver.delete(albumUri, null, null);
-            assertTrue(observer.waitForNotification());
-            assertEquals(observer.mUri, Metadata.CONTENT_URI);
-            Cursor cursor = mResolver.query(Metadata.CONTENT_URI,
-                    PhotoDatabaseUtils.PROJECTION_METADATA, null, null, null);
-            assertEquals(0, cursor.getCount());
-            cursor.close();
-        } finally {
-            mResolver.unregisterContentObserver(observer);
-            observerThread.stopLooper();
-        }
+        Uri photoUri = ContentUris.withAppendedId(Photos.CONTENT_URI, mPhotoId);
+        mResolver.delete(photoUri, null, null);
+        assertTrue(mNotifications.isNotified(photoUri));
+        assertTrue(mNotifications.isNotified(Metadata.CONTENT_URI));
+        assertEquals(2, mNotifications.notificationCount());
+        Cursor cursor = mResolver.query(Metadata.CONTENT_URI,
+                PhotoDatabaseUtils.PROJECTION_METADATA, null, null, null);
+        assertEquals(0, cursor.getCount());
+        cursor.close();
     }
 
     public void testGetType() {
@@ -399,65 +290,19 @@ public class PhotoProviderTest extends InstrumentationTestCase {
     }
 
     public void testUpdatePhotoNotification() {
-        WatchContentObserverThread observerThread = createObserverThread();
-        WatchContentObserver observer = observerThread.getObserver();
-        mResolver.registerContentObserver(Photos.CONTENT_URI, true, observer);
-        try {
-            Uri photoUri = ContentUris.withAppendedId(Photos.CONTENT_URI, mPhotoId);
-            ContentValues values = new ContentValues();
-            values.put(Photos.MIME_TYPE, "not-a/mime-type");
-            mResolver.update(photoUri, values, null, null);
-            assertTrue(observer.waitForNotification());
-            assertEquals(observer.mUri, photoUri);
-        } finally {
-            mResolver.unregisterContentObserver(observer);
-            observerThread.stopLooper();
-        }
+        Uri photoUri = ContentUris.withAppendedId(Photos.CONTENT_URI, mPhotoId);
+        ContentValues values = new ContentValues();
+        values.put(Photos.MIME_TYPE, "not-a/mime-type");
+        mResolver.update(photoUri, values, null, null);
+        assertTrue(mNotifications.isNotified(photoUri));
     }
 
     public void testUpdateMetadataNotification() {
-        WatchContentObserverThread observerThread = createObserverThread();
-        WatchContentObserver observer = observerThread.getObserver();
-        mResolver.registerContentObserver(Metadata.CONTENT_URI, true, observer);
-        try {
-            ContentValues values = new ContentValues();
-            values.put(Metadata.PHOTO_ID, mPhotoId);
-            values.put(Metadata.KEY, META_KEY);
-            values.put(Metadata.VALUE, "hello world");
-            mResolver.update(Metadata.CONTENT_URI, values, null, null);
-            assertTrue(observer.waitForNotification());
-            assertEquals(observer.mUri, Metadata.CONTENT_URI);
-        } finally {
-            mResolver.unregisterContentObserver(observer);
-            observerThread.stopLooper();
-        }
-    }
-
-    public void testDeletePhotoNotification() {
-        WatchContentObserverThread observerThread = createObserverThread();
-        WatchContentObserver observer = observerThread.getObserver();
-        mResolver.registerContentObserver(Photos.CONTENT_URI, true, observer);
-        try {
-            Uri photoUri = ContentUris.withAppendedId(Photos.CONTENT_URI, mPhotoId);
-            mResolver.delete(photoUri, null, null);
-            assertTrue(observer.waitForNotification());
-            assertEquals(observer.mUri, photoUri);
-        } finally {
-            mResolver.unregisterContentObserver(observer);
-            observerThread.stopLooper();
-        }
-    }
-
-    private WatchContentObserverThread createObserverThread() {
-        WatchContentObserverThread thread = new WatchContentObserverThread();
-        thread.start();
-        try {
-            thread.waitForObserver();
-            return thread;
-        } catch (InterruptedException e) {
-            thread.stopLooper();
-            fail("Interruption while waiting for observer being created.");
-            return null;
-        }
+        ContentValues values = new ContentValues();
+        values.put(Metadata.PHOTO_ID, mPhotoId);
+        values.put(Metadata.KEY, META_KEY);
+        values.put(Metadata.VALUE, "hello world");
+        mResolver.update(Metadata.CONTENT_URI, values, null, null);
+        assertTrue(mNotifications.isNotified(Metadata.CONTENT_URI));
     }
 }

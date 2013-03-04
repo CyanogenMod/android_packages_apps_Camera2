@@ -16,17 +16,18 @@
 package com.android.photos.data;
 
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteStatement;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.CancellationSignal;
 import android.provider.BaseColumns;
+
+import com.google.android.gms.common.util.VisibleForTesting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,9 +49,17 @@ import java.util.List;
 public class PhotoProvider extends ContentProvider {
     @SuppressWarnings("unused")
     private static final String TAG = PhotoProvider.class.getSimpleName();
-    static final String AUTHORITY = "com.android.gallery3d.photoprovider";
+
+    protected static final String DB_NAME = "photo.db";
+    public static final String AUTHORITY = PhotoProviderAuthority.AUTHORITY;
     static final Uri BASE_CONTENT_URI = new Uri.Builder().scheme("content").authority(AUTHORITY)
             .build();
+
+    // Used to allow mocking out the change notification because
+    // MockContextResolver disallows system-wide notification.
+    public static interface ChangeNotification {
+        void notifyChange(Uri uri);
+    }
 
     /**
      * Contains columns that can be accessed via PHOTOS_CONTENT_URI.
@@ -185,7 +194,7 @@ public class PhotoProvider extends ContentProvider {
         /**
          * Foreign key to the photos._id. Long value.
          */
-        public static final String PHOTO_ID = "photos_id";
+        public static final String PHOTO_ID = "photo_id";
         /**
          * One of IMAGE_TYPE_* values.
          */
@@ -221,6 +230,11 @@ public class PhotoProvider extends ContentProvider {
         Photos.MIME_TYPE,
     };
 
+    private static final String[] BASE_COLUMNS_ID = {
+        BaseColumns._ID,
+    };
+
+    protected ChangeNotification mNotifier = null;
     private SQLiteOpenHelper mOpenHelper;
     protected static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -294,6 +308,11 @@ public class PhotoProvider extends ContentProvider {
     }
 
     @Override
+    public void shutdown() {
+        getDatabaseHelper().close();
+    }
+
+    @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
             String sortOrder) {
         return query(uri, projection, selection, selectionArgs, sortOrder, null);
@@ -332,6 +351,11 @@ public class PhotoProvider extends ContentProvider {
         }
         notifyChanges(uri);
         return rowsUpdated;
+    }
+
+    @VisibleForTesting
+    public void setMockNotification(ChangeNotification notification) {
+        mNotifier = notification;
     }
 
     protected static String addIdToSelection(int match, String selection) {
@@ -400,7 +424,7 @@ public class PhotoProvider extends ContentProvider {
     }
 
     protected SQLiteOpenHelper createDatabaseHelper() {
-        return new PhotoDatabase(getContext());
+        return new PhotoDatabase(getContext(), DB_NAME);
     }
 
     private int modifyMetadata(SQLiteDatabase db, ContentValues values) {
@@ -433,30 +457,21 @@ public class PhotoProvider extends ContentProvider {
     }
 
     protected void notifyChanges(Uri uri) {
-        ContentResolver resolver = getContext().getContentResolver();
-        resolver.notifyChange(uri, null, false);
+        if (mNotifier != null) {
+            mNotifier.notifyChange(uri);
+        } else {
+            getContext().getContentResolver().notifyChange(uri, null, false);
+        }
     }
 
     protected static IllegalArgumentException unknownUri(Uri uri) {
         return new IllegalArgumentException("Unknown Uri format: " + uri);
     }
 
-    protected static String nestSql(String base, String columnMatch, String nested) {
-        StringBuilder sql = new StringBuilder(base);
-        sql.append(WHERE);
-        sql.append(columnMatch);
-        sql.append(IN);
-        sql.append(NESTED_SELECT_START);
-        sql.append(nested);
-        sql.append(NESTED_SELECT_END);
-        return sql.toString();
-    }
-
-    protected static String addWhere(String base, String where) {
-        if (where == null || where.isEmpty()) {
-            return base;
-        }
-        return base + WHERE + where;
+    protected static String nestWhere(String matchColumn, String table, String nestedWhere) {
+        String query = SQLiteQueryBuilder.buildQueryString(false, table, BASE_COLUMNS_ID,
+                nestedWhere, null, null, null, null);
+        return matchColumn + IN + NESTED_SELECT_START + query + NESTED_SELECT_END;
     }
 
     protected static int deleteCascade(SQLiteDatabase db, int match, String selection,
@@ -464,38 +479,28 @@ public class PhotoProvider extends ContentProvider {
         switch (match) {
             case MATCH_PHOTO:
             case MATCH_PHOTO_ID: {
-                String selectPhotoIdsSql = addWhere(SELECT_PHOTO_ID, selection);
-                deleteCascadeMetadata(db, selectPhotoIdsSql, selectionArgs, changeUris);
+                deleteCascadeMetadata(db, selection, selectionArgs, changeUris);
                 break;
             }
             case MATCH_ALBUM:
             case MATCH_ALBUM_ID: {
-                String selectAlbumIdSql = addWhere(SELECT_ALBUM_ID, selection);
-                deleteCascadePhotos(db, selectAlbumIdSql, selectionArgs, changeUris);
+                deleteCascadePhotos(db, selection, selectionArgs, changeUris);
                 break;
             }
         }
         String table = getTableFromMatch(match, uri);
-        changeUris.add(uri);
-        return db.delete(table, selection, selectionArgs);
-    }
-
-    protected static void execSql(SQLiteDatabase db, String sql, String[] args) {
-        if (args == null) {
-            db.execSQL(sql);
-        } else {
-            db.execSQL(sql, args);
+        int deleted = db.delete(table, selection, selectionArgs);
+        if (deleted > 0) {
+            changeUris.add(uri);
         }
+        return deleted;
     }
 
     private static void deleteCascadePhotos(SQLiteDatabase db, String albumSelect,
             String[] selectArgs, List<Uri> changeUris) {
-        String selectPhotoIdSql = nestSql(SELECT_PHOTO_ID, Photos.ALBUM_ID, albumSelect);
-        deleteCascadeMetadata(db, selectPhotoIdSql, selectArgs, changeUris);
-        String deletePhotoSql = nestSql(DELETE_PHOTOS, Photos.ALBUM_ID, albumSelect);
-        SQLiteStatement statement = db.compileStatement(deletePhotoSql);
-        statement.bindAllArgsAsStrings(selectArgs);
-        int deleted = statement.executeUpdateDelete();
+        String photoWhere = nestWhere(Photos.ALBUM_ID, Albums.TABLE, albumSelect);
+        deleteCascadeMetadata(db, photoWhere, selectArgs, changeUris);
+        int deleted = db.delete(Photos.TABLE, photoWhere, selectArgs);
         if (deleted > 0) {
             changeUris.add(Photos.CONTENT_URI);
         }
@@ -503,10 +508,8 @@ public class PhotoProvider extends ContentProvider {
 
     private static void deleteCascadeMetadata(SQLiteDatabase db, String photosSelect,
             String[] selectArgs, List<Uri> changeUris) {
-        String deleteMetadataSql = nestSql(DELETE_METADATA, Metadata.PHOTO_ID, photosSelect);
-        SQLiteStatement statement = db.compileStatement(deleteMetadataSql);
-        statement.bindAllArgsAsStrings(selectArgs);
-        int deleted = statement.executeUpdateDelete();
+        String metadataWhere = nestWhere(Metadata.PHOTO_ID, Photos.TABLE, photosSelect);
+        int deleted = db.delete(Metadata.TABLE, metadataWhere, selectArgs);
         if (deleted > 0) {
             changeUris.add(Metadata.CONTENT_URI);
         }
