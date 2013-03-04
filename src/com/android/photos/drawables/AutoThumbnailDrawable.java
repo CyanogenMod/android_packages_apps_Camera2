@@ -56,11 +56,6 @@ public abstract class AutoThumbnailDrawable<T> extends Drawable {
     private int mImageWidth, mImageHeight;
     private Rect mBounds = new Rect();
     private int mSampleSize = 1;
-    // mSampleSize is the target sample size for the full-size dimensions
-    // of the image (so if a preferred, smaller image is used, it might
-    // not reflect the sample size used when decoding that image). This
-    // value is used in refreshSampleSizeLocked to determine whether the
-    // image needs to be refreshed.
 
     public AutoThumbnailDrawable() {
         mPaint.setAntiAlias(true);
@@ -71,11 +66,8 @@ public abstract class AutoThumbnailDrawable<T> extends Drawable {
 
     protected abstract byte[] getPreferredImageBytes(T data);
     protected abstract InputStream getFallbackImageStream(T data);
-
-    // Must hold mLock when calling on different thread from setImage
     protected abstract boolean dataChangedLocked(T data);
 
-    // Must only be called from one thread (usually the UI thread)
     public void setImage(T data, int width, int height) {
         if (!dataChangedLocked(data)) return;
         synchronized (mLock) {
