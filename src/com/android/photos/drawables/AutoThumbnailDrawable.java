@@ -167,7 +167,9 @@ public abstract class AutoThumbnailDrawable<T> extends Drawable {
     }
 
     private void refreshSampleSizeLocked() {
-        if (mBounds.isEmpty()) return;
+        if (mBounds.isEmpty() || mImageWidth == 0 || mImageHeight == 0) {
+            return;
+        }
 
         int sampleSize = calculateSampleSizeLocked(mImageWidth, mImageHeight);
         if (sampleSize != mSampleSize || mBitmap == null) {
