@@ -34,7 +34,7 @@
     <string name="reset" msgid="9013181350779592937">"リセット"</string>
     <!-- no translation found for history_original (150973253194312841) -->
     <skip />
-    <string name="imageState" msgid="3609930035023754855">"現在の画像ステータス"</string>
+    <string name="imageState" msgid="8632586742752891968">"適用済みの効果"</string>
     <string name="compare_original" msgid="8140838959007796977">"比較"</string>
     <string name="apply_effect" msgid="1218288221200568947">"適用"</string>
     <string name="reset_effect" msgid="7712605581024929564">"リセット"</string>

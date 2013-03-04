@@ -34,7 +34,7 @@
     <string name="reset" msgid="9013181350779592937">"重設"</string>
     <!-- no translation found for history_original (150973253194312841) -->
     <skip />
-    <string name="imageState" msgid="3609930035023754855">"目前圖片狀態"</string>
+    <string name="imageState" msgid="8632586742752891968">"套用的效果"</string>
     <string name="compare_original" msgid="8140838959007796977">"比較"</string>
     <string name="apply_effect" msgid="1218288221200568947">"套用"</string>
     <string name="reset_effect" msgid="7712605581024929564">"重設"</string>
