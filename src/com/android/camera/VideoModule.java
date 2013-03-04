@@ -73,7 +73,6 @@ import com.android.camera.ui.Rotatable;
 import com.android.camera.ui.RotateImageView;
 import com.android.camera.ui.RotateLayout;
 import com.android.camera.ui.RotateTextToast;
-import com.android.camera.ui.TwoStateImageView;
 import com.android.camera.ui.ZoomRenderer;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
@@ -142,14 +141,13 @@ public class VideoModule implements CameraModule,
     private SurfaceHolder.Callback mSurfaceViewCallback;
     private PreviewSurfaceView mPreviewSurfaceView;
     private CameraScreenNail.OnFrameDrawnListener mFrameDrawnListener;
-    private View mReviewControl;
 
     // An review image having same size as preview. It is displayed when
     // recording is stopped in capture intent.
     private ImageView mReviewImage;
-    private Rotatable mReviewCancelButton;
-    private Rotatable mReviewDoneButton;
-    private RotateImageView mReviewPlayButton;
+    private View mReviewCancelButton;
+    private View mReviewDoneButton;
+    private View mReviewPlayButton;
     private ShutterButton mShutterButton;
     private TextView mRecordingTimeView;
     private RotateLayout mBgLearningMessageRotater;
@@ -414,13 +412,13 @@ public class VideoModule implements CameraModule,
 
         if (isVideoCaptureIntent()) {
             if (mReviewCancelButton != null) {
-                mGestures.addTouchReceiver((View) mReviewCancelButton);
+                mGestures.addTouchReceiver(mReviewCancelButton);
             }
             if (mReviewDoneButton != null) {
-                mGestures.addTouchReceiver((View) mReviewDoneButton);
+                mGestures.addTouchReceiver(mReviewDoneButton);
             }
             if (mReviewPlayButton != null) {
-                mGestures.addTouchReceiver((View) mReviewPlayButton);
+                mGestures.addTouchReceiver(mReviewPlayButton);
             }
         }
     }
@@ -449,7 +447,7 @@ public class VideoModule implements CameraModule,
 
         mContentResolver = mActivity.getContentResolver();
 
-        mActivity.getLayoutInflater().inflate(R.layout.video_module, (ViewGroup) mRootView);
+        mActivity.getLayoutInflater().inflate(R.layout.video_module, (ViewGroup) mRootView, true);
 
         // Surface texture is from camera screen nail and startPreview needs it.
         // This must be done before startPreview.
@@ -589,21 +587,12 @@ public class VideoModule implements CameraModule,
 
     private void setOrientationIndicator(int orientation, boolean animation) {
         Rotatable[] indicators = {
-                mBgLearningMessageRotater,
-                mReviewDoneButton, mReviewPlayButton};
+                mBgLearningMessageRotater};
         for (Rotatable indicator : indicators) {
             if (indicator != null) indicator.setOrientation(orientation, animation);
         }
         if (mGestures != null) {
             mGestures.setOrientation(orientation);
-        }
-
-        // We change the orientation of the review cancel button only for tablet
-        // UI because there's a label along with the X icon. For phone UI, we
-        // don't change the orientation because there's only a symmetrical X
-        // icon.
-        if (mReviewCancelButton instanceof RotateLayout) {
-            mReviewCancelButton.setOrientation(orientation, animation);
         }
 
         // We change the orientation of the linearlayout only for phone UI because when in portrait
@@ -1636,7 +1625,6 @@ public class VideoModule implements CameraModule,
             mActivity.hideSwitcher();
             mRecordingTimeView.setText("");
             mRecordingTimeView.setVisibility(View.VISIBLE);
-            if (mReviewControl != null) mReviewControl.setVisibility(View.GONE);
             // The camera is not allowed to be accessed in older api levels during
             // recording. It is therefore necessary to hide the zoom UI on older
             // platforms.
@@ -1650,7 +1638,6 @@ public class VideoModule implements CameraModule,
             mShutterButton.setImageResource(R.drawable.btn_new_shutter_video);
             mActivity.showSwitcher();
             mRecordingTimeView.setVisibility(View.GONE);
-            if (mReviewControl != null) mReviewControl.setVisibility(View.VISIBLE);
             if (!ApiHelper.HAS_ZOOM_WHEN_RECORDING
                     && mParameters.isZoomSupported()) {
                 // TODO: enable zoom UI here.
@@ -1679,7 +1666,7 @@ public class VideoModule implements CameraModule,
 
         Util.fadeOut(mShutterButton);
 
-        Util.fadeIn((View) mReviewDoneButton);
+        Util.fadeIn(mReviewDoneButton);
         Util.fadeIn(mReviewPlayButton);
         mMenu.setVisibility(View.GONE);
         mOnScreenIndicators.setVisibility(View.GONE);
@@ -1695,7 +1682,7 @@ public class VideoModule implements CameraModule,
         mOnScreenIndicators.setVisibility(View.VISIBLE);
         enableCameraControls(true);
 
-        Util.fadeOut((View) mReviewDoneButton);
+        Util.fadeOut(mReviewDoneButton);
         Util.fadeOut(mReviewPlayButton);
 
         Util.fadeIn(mShutterButton);
@@ -2115,8 +2102,8 @@ public class VideoModule implements CameraModule,
     }
 
     private void initializeControlByIntent() {
-        mBlocker = mRootView.findViewById(R.id.blocker);
-        mMenu = mRootView.findViewById(R.id.menu);
+        mBlocker = mActivity.findViewById(R.id.blocker);
+        mMenu = mActivity.findViewById(R.id.menu);
         mMenu.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -2125,46 +2112,40 @@ public class VideoModule implements CameraModule,
                 }
             }
         });
-        mOnScreenIndicators = mRootView.findViewById(R.id.on_screen_indicators);
-        mFlashIndicator = (ImageView) mRootView.findViewById(R.id.menu_flash_indicator);
+        mOnScreenIndicators = mActivity.findViewById(R.id.on_screen_indicators);
+        mFlashIndicator = (ImageView) mActivity.findViewById(R.id.menu_flash_indicator);
         if (mIsVideoCaptureIntent) {
             mActivity.hideSwitcher();
+            ViewGroup cameraControls = (ViewGroup) mActivity.findViewById(R.id.camera_controls);
+            mActivity.getLayoutInflater().inflate(R.layout.review_module_control, cameraControls);
             // Cannot use RotateImageView for "done" and "cancel" button because
             // the tablet layout uses RotateLayout, which cannot be cast to
             // RotateImageView.
-            mReviewDoneButton = (Rotatable) mRootView.findViewById(R.id.btn_done);
-            mReviewCancelButton = (Rotatable) mRootView.findViewById(R.id.btn_cancel);
-            mReviewPlayButton = (RotateImageView) mRootView.findViewById(R.id.btn_play);
+            mReviewDoneButton = mActivity.findViewById(R.id.btn_done);
+            mReviewCancelButton = mActivity.findViewById(R.id.btn_cancel);
+            mReviewPlayButton = mActivity.findViewById(R.id.btn_play);
 
-            ((View) mReviewCancelButton).setVisibility(View.VISIBLE);
+            mReviewCancelButton.setVisibility(View.VISIBLE);
 
-            ((View) mReviewDoneButton).setOnClickListener(new OnClickListener() {
+            mReviewDoneButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onReviewDoneClicked(v);
                 }
             });
-            ((View) mReviewCancelButton).setOnClickListener(new OnClickListener() {
+            mReviewCancelButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onReviewCancelClicked(v);
                 }
             });
 
-            ((View) mReviewPlayButton).setOnClickListener(new OnClickListener() {
+            mReviewPlayButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     onReviewPlayClicked(v);
                 }
             });
-
-
-            // Not grayed out upon disabled, to make the follow-up fade-out
-            // effect look smooth. Note that the review done button in tablet
-            // layout is not a TwoStateImageView.
-            if (mReviewDoneButton instanceof TwoStateImageView) {
-                ((TwoStateImageView) mReviewDoneButton).enableFilter(false);
-            }
         }
     }
 
@@ -2203,28 +2184,8 @@ public class VideoModule implements CameraModule,
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        Log.v(TAG, "onConfigurationChanged");
         setDisplayOrientation();
-        // Change layout in response to configuration change
-        LayoutInflater inflater = mActivity.getLayoutInflater();
-        ((ViewGroup) mRootView).removeAllViews();
-        inflater.inflate(R.layout.video_module, (ViewGroup) mRootView);
-
-        // from onCreate()
-        initializeControlByIntent();
-        initializeOverlay();
-        initializeSurfaceView();
-        initializeMiscControls();
-        showTimeLapseUI(mCaptureTimeLapse);
-        initializeVideoSnapshot();
-
-        // from onResume()
-        showVideoSnapshotUI(false);
-        initializeZoom();
-        onFullScreenChanged(mActivity.isInCameraApp());
-        updateOnScreenIndicators();
-        if (mIsVideoCaptureIntent && mVideoFileDescriptor != null) {
-            showCaptureResult();
-        }
     }
 
     @Override
@@ -2782,6 +2743,11 @@ public class VideoModule implements CameraModule,
     @Override
     public boolean needsSwitcher() {
         return !mIsVideoCaptureIntent;
+    }
+
+    @Override
+    public boolean needsPieMenu() {
+        return true;
     }
 
     @Override
