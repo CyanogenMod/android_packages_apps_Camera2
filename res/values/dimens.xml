@@ -89,4 +89,6 @@
     <dimen name="zoom_font_size">14pt</dimen>
     <dimen name="shutter_offset">-22dp</dimen>
     <dimen name="margin_systemui_offset">6dip</dimen>
+    <dimen name="size_thumbnail">200dip</dimen>
+    <dimen name="size_preview">600dip</dimen>
 </resources>
