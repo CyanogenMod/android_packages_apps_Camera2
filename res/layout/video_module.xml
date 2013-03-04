@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2007 The Android Open Source Project
+<!-- Copyright (C) 2012 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -13,16 +13,20 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/frame_layout"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:layout_weight="1">
+<!-- This layout is shared by phone and tablet in landscape orientation. -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/camera_app_root"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
     <com.android.camera.PreviewFrameLayout android:id="@+id/frame"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:layout_centerInParent="true">
-        <include layout="@layout/preview_surface_view"/>
+            android:layout_gravity="center">
+        <com.android.camera.ui.PreviewSurfaceView
+                android:id="@+id/preview_surface_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
         <FrameLayout android:id="@+id/preview_border"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -41,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:visibility="gone"
                 android:background="@android:color/black"/>
-        <com.android.camera.ui.RotateImageView
+        <ImageView
                 android:id="@+id/btn_play"
                 style="@style/ReviewControlIcon"
                 android:layout_centerInParent="true"
@@ -50,11 +54,4 @@
                 android:onClick="onReviewPlayClicked"/>
     </com.android.camera.PreviewFrameLayout>
 
-    <ImageView android:id="@+id/capture_anim_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layerType="hardware"
-            android:visibility="gone"/>
-
-</RelativeLayout>
-
+</merge>
