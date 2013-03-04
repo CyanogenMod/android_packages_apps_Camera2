@@ -30,29 +30,32 @@ import java.io.IOException;
 public class PhotoDatabaseTest extends InstrumentationTestCase {
 
     private PhotoDatabase mDBHelper;
+    private static final String DB_NAME = "dummy.db";
 
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
+        super.setUp();
         Context context = getInstrumentation().getTargetContext();
-        mDBHelper = new PhotoDatabase(context);
+        context.deleteDatabase(DB_NAME);
+        mDBHelper = new PhotoDatabase(context, DB_NAME);
     }
 
     @Override
-    protected void tearDown() {
+    protected void tearDown() throws Exception {
         mDBHelper.close();
+        mDBHelper = null;
+        Context context = getInstrumentation().getTargetContext();
+        context.deleteDatabase(DB_NAME);
+        super.tearDown();
     }
 
     public void testCreateDatabase() throws IOException {
         Context context = getInstrumentation().getTargetContext();
-        File dbFile = context.getDatabasePath(PhotoDatabase.DB_NAME);
-        if (dbFile.exists()) {
-            dbFile.delete();
-        }
+        File dbFile = context.getDatabasePath(DB_NAME);
         SQLiteDatabase db = getReadableDB();
         db.beginTransaction();
         db.endTransaction();
         assertTrue(dbFile.exists());
-        dbFile.delete();
     }
 
     public void testTables() {
