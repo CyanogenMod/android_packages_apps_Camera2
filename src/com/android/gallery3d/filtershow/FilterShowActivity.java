@@ -353,6 +353,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageShow.setOriginalTextSize((int) getPixelsFromDip(18));
         ImageShow.setOriginalText(res.getString(R.string.original_picture_text));
         mIconSeedSize = res.getDimensionPixelSize(R.dimen.thumbnail_size);
+        // TODO: pick correct value
+        // MasterImage.setIconSeedSize(mIconSeedSize);
 
         Drawable curveHandle = res.getDrawable(R.drawable.camera_crop);
         int curveHandleSize = (int) res.getDimension(R.dimen.crop_indicator_size);
