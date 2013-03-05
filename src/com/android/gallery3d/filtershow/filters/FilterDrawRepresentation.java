@@ -54,6 +54,8 @@ public class FilterDrawRepresentation extends FilterRepresentation {
         setTextId(R.string.imageDraw);
         setButtonId(R.id.drawOnImageButton);
         setEditorId(EditorDraw.ID);
+        setOverlayId(R.drawable.filtershow_drawing);
+        setOverlayOnly(true);
     }
 
     @Override
