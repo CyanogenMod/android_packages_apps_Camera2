@@ -16,12 +16,16 @@
 
 package com.android.camera.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import com.android.camera.Util;
 
 /* RotatableLayout rotates itself as well as all its children when orientation
  * changes. Specifically, when going from portrait to landscape, camera
@@ -33,6 +37,8 @@ import android.widget.FrameLayout;
 
 public class RotatableLayout extends FrameLayout {
 
+    private static final String TAG = "RotatableLayout";
+    private int mPrevRotation;
     public RotatableLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
@@ -46,16 +52,36 @@ public class RotatableLayout extends FrameLayout {
     }
 
     @Override
+    public void onFinishInflate() { // get initial orientation
+        mPrevRotation = Util.getDisplayRotation((Activity) getContext());
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
-        // rotate the layout itself and all its children
-        boolean clockwise = (config.orientation == Configuration.ORIENTATION_PORTRAIT);
-        rotate(this, clockwise);
+        // Change the size of the layout
+        ViewGroup.LayoutParams lp = getLayoutParams();
+        int width = lp.width;
+        int height = lp.height;
+        lp.height = width;
+        lp.width = height;
+        setLayoutParams(lp);
+        // rotate all the children
+        int rotation = Util.getDisplayRotation((Activity) getContext());
+        boolean clockwise = isClockWiseRotation(mPrevRotation, rotation);
+        mPrevRotation = rotation;
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
             rotate(child, clockwise);
         }
+    }
+
+    public static boolean isClockWiseRotation(int prevRotation, int currentRotation) {
+        if (prevRotation == (currentRotation + 90) % 360) {
+            return true;
+        }
+        return false;
     }
 
     public static void rotate(View view, boolean isClockwise) {
