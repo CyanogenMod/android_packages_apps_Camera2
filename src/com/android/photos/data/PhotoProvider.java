@@ -27,8 +27,6 @@ import android.net.Uri;
 import android.os.CancellationSignal;
 import android.provider.BaseColumns;
 
-import com.google.android.gms.common.util.VisibleForTesting;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -353,7 +351,6 @@ public class PhotoProvider extends ContentProvider {
         return rowsUpdated;
     }
 
-    @VisibleForTesting
     public void setMockNotification(ChangeNotification notification) {
         mNotifier = notification;
     }
