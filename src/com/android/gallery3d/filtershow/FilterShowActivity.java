@@ -150,6 +150,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         fillEditors();
 
         loadXML();
+        if (getResources().getConfiguration().orientation
+                == Configuration.ORIENTATION_LANDSCAPE) {
+            mShowingImageStatePanel = true;
+        }
+
         setDefaultPreset();
 
         processIntent();
@@ -842,7 +847,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         final View viewList = findViewById(R.id.imageStatePanel);
 
         if (mShowingHistoryPanel) {
-            findViewById(R.id.historyPanel).setVisibility(View.INVISIBLE);
+            findViewById(R.id.historyPanel).setVisibility(View.GONE);
             mShowingHistoryPanel = false;
         }
 
@@ -862,6 +867,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         super.onConfigurationChanged(newConfig);
         setDefaultValues();
         loadXML();
+        mShowingImageStatePanel = true;
         if (mShowingHistoryPanel) {
             toggleHistoryPanel();
         }
@@ -893,16 +899,18 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         final View viewList = findViewById(R.id.historyPanel);
 
         if (mShowingImageStatePanel) {
-            findViewById(R.id.imageStatePanel).setVisibility(View.INVISIBLE);
+            findViewById(R.id.imageStatePanel).setVisibility(View.GONE);
             mShowingImageStatePanel = false;
         }
 
         int translate = translateMainPanel(viewList);
         if (!mShowingHistoryPanel) {
             mShowingHistoryPanel = true;
-            if (PanelController.useAnimations()) {
-                view.animate().setDuration(200).x(translate)
-                    .withLayer().withEndAction(new Runnable() {
+            if (getResources().getConfiguration().orientation
+                    == Configuration.ORIENTATION_PORTRAIT) {
+                if (PanelController.useAnimations()) {
+                    view.animate().setDuration(200).x(translate)
+                            .withLayer().withEndAction(new Runnable() {
                         @Override
                         public void run() {
                             viewList.setAlpha(0);
@@ -911,21 +919,29 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                                     .alpha(1.0f).start();
                         }
                     }).start();
+                } else {
+                    view.setX(translate);
+                    viewList.setAlpha(0);
+                    viewList.setVisibility(View.VISIBLE);
+                    viewList.animate().setDuration(100)
+                            .alpha(1.0f).start();
+                }
             } else {
-                view.setX(translate);
-                viewList.setAlpha(0);
                 viewList.setVisibility(View.VISIBLE);
-                viewList.animate().setDuration(100)
-                        .alpha(1.0f).start();
             }
         } else {
             mShowingHistoryPanel = false;
-            viewList.setVisibility(View.INVISIBLE);
-            if (PanelController.useAnimations()) {
-                view.animate().setDuration(200).x(0).withLayer()
-                    .start();
+            if (getResources().getConfiguration().orientation
+                    == Configuration.ORIENTATION_PORTRAIT) {
+                viewList.setVisibility(View.INVISIBLE);
+                if (PanelController.useAnimations()) {
+                    view.animate().setDuration(200).x(0).withLayer()
+                            .start();
+                } else {
+                    view.setX(0);
+                }
             } else {
-                view.setX(0);
+                viewList.setVisibility(View.GONE);
             }
         }
         invalidateOptionsMenu();
