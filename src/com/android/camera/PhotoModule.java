@@ -215,6 +215,8 @@ public class PhotoModule
             onScreenSizeChanged(right - left, bottom - top);
         }
     };
+    private int mPreviewWidth = 0;
+    private int mPreviewHeight = 0;
     private final StringBuilder mBuilder = new StringBuilder();
     private final Formatter mFormatter = new Formatter(mBuilder);
     private final Object[] mFormatterArgs = new Object[1];
@@ -615,12 +617,17 @@ public class PhotoModule
     }
 
     public void onScreenSizeChanged(int width, int height) {
-        if (mFocusManager != null) mFocusManager.setPreviewSize(width, height);
         // Full-screen screennail
-        if (Util.getDisplayRotation(mActivity) % 180 == 0) {
-            ((CameraScreenNail) mActivity.mCameraScreenNail).setPreviewFrameLayoutSize(width, height);
-        } else {
-            ((CameraScreenNail) mActivity.mCameraScreenNail).setPreviewFrameLayoutSize(height, width);
+        int w = width;
+        int h = height;
+        if (Util.getDisplayRotation(mActivity) % 180 != 0) {
+            w = height;
+            h = width;
+        }
+        if (mPreviewWidth != w || mPreviewHeight != h) {
+            Log.d(TAG, "Preview size changed.");
+            if (mFocusManager != null) mFocusManager.setPreviewSize(width, height);
+            ((CameraScreenNail) mActivity.mCameraScreenNail).setPreviewFrameLayoutSize(w, h);
         }
     }
 
@@ -1639,6 +1646,8 @@ public class PhotoModule
         mHandler.removeMessages(CAMERA_DISABLED);
 
         mRootView.removeOnLayoutChangeListener(mLayoutChangeListener);
+        mPreviewWidth = 0;
+        mPreviewHeight = 0;
         mPendingSwitchCameraId = -1;
         if (mFocusManager != null) mFocusManager.removeMessages();
         MediaSaveService s = mActivity.getMediaSaveService();
