@@ -54,6 +54,7 @@ public class ImagePreset {
     public final GeometryMetadata mGeoData = new GeometryMetadata();
     private boolean mPartialRendering = false;
     private Rect mPartialRenderingBounds;
+    private Bitmap mPreviewImage;
 
     public ImagePreset() {
         setup();
@@ -520,6 +521,14 @@ public class ImagePreset {
 
     public Rect getPartialRenderingBounds() {
         return mPartialRenderingBounds;
+    }
+
+    public Bitmap getPreviewImage() {
+        return mPreviewImage;
+    }
+
+    public void setPreviewImage(Bitmap previewImage) {
+        mPreviewImage = previewImage;
     }
 
 }

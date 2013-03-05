@@ -17,6 +17,8 @@
 package com.android.gallery3d.filtershow;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -195,30 +197,15 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
             if (itemView != null) {
                 itemView.setText(item.historyName());
             }
-            ImageView markView = (ImageView) view.findViewById(R.id.selectedMark);
-            if (position == mCurrentPresetPosition) {
-                markView.setVisibility(View.VISIBLE);
-            } else {
-                markView.setVisibility(View.INVISIBLE);
+            ImageView preview = (ImageView) view.findViewById(R.id.preview);
+            Bitmap bmp = item.getPreviewImage();
+            if (bmp != null) {
+                preview.setImageBitmap(bmp);
             }
-            ImageView typeView = (ImageView) view.findViewById(R.id.typeMark);
-            // TODO: use type of last filter, not a string, to discriminate.
-            if (position == getCount() - 1) {
-                typeView.setImageResource(R.drawable.ic_photoeditor_effects);
-            } else if (item.historyName().equalsIgnoreCase(mBorders)) {
-                typeView.setImageResource(R.drawable.ic_photoeditor_border);
-            } else if (item.historyName().equalsIgnoreCase(mStraighten)) {
-                typeView.setImageResource(R.drawable.ic_photoeditor_fix);
-            } else if (item.historyName().equalsIgnoreCase(mCrop)) {
-                typeView.setImageResource(R.drawable.ic_photoeditor_fix);
-            } else if (item.historyName().equalsIgnoreCase(mRotate)) {
-                typeView.setImageResource(R.drawable.ic_photoeditor_fix);
-            } else if (item.historyName().equalsIgnoreCase(mMirror)) {
-                typeView.setImageResource(R.drawable.ic_photoeditor_fix);
-            } else if (item.isFx()) {
-                typeView.setImageResource(R.drawable.ic_photoeditor_effects);
+            if (position == mCurrentPresetPosition) {
+                view.setBackgroundColor(Color.WHITE);
             } else {
-                typeView.setImageResource(R.drawable.ic_photoeditor_color);
+                view.setBackgroundResource(R.drawable.filtershow_button_background);
             }
         }
 
