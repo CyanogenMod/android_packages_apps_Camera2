@@ -150,6 +150,16 @@ public class ImageVignette extends ImageShow {
         if (mVignetteRep == null) {
             return;
         }
+        Matrix toImg = getScreenToImageMatrix(false);
+        Matrix toScr = new Matrix();
+        toImg.invert(toScr);
+        float[] c = new float[] {
+                mVignetteRep.getCenterX(), mVignetteRep.getCenterY() };
+        toScr.mapPoints(c);
+        mElipse.setCenter(c[0], c[1]);
+        mElipse.setRadius(toScr.mapRadius(mVignetteRep.getRadiusX()),
+                toScr.mapRadius(mVignetteRep.getRadiusY()));
+
         mElipse.draw(canvas);
     }
 
