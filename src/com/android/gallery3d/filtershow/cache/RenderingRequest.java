@@ -27,6 +27,7 @@ public class RenderingRequest {
     private boolean mIsDirect = false;
     private Bitmap mBitmap = null;
     private ImagePreset mImagePreset = null;
+    private ImagePreset mOriginalImagePreset = null;
     private RenderingRequestCaller mCaller = null;
     private Rect mBounds = null;
     private Rect mDestination = null;
@@ -61,6 +62,7 @@ public class RenderingRequest {
         request.setBitmap(bitmap);
         ImagePreset passedPreset = new ImagePreset(preset);
         passedPreset.setImageLoader(MasterImage.getImage().getImageLoader());
+        request.setOriginalImagePreset(preset);
 
         if (type == PARTIAL_RENDERING) {
             request.setBounds(bounds);
@@ -136,5 +138,13 @@ public class RenderingRequest {
 
     public void setDestination(Rect destination) {
         mDestination = destination;
+    }
+
+    public ImagePreset getOriginalImagePreset() {
+        return mOriginalImagePreset;
+    }
+
+    public void setOriginalImagePreset(ImagePreset originalImagePreset) {
+        mOriginalImagePreset = originalImagePreset;
     }
 }
