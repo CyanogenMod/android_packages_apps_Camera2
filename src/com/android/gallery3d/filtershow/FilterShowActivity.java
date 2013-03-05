@@ -123,6 +123,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     protected static final boolean ANIMATE_PANELS = true;
     private static int mImageBorderSize = 4; // in percent
 
+    private boolean mShowingTinyPlanet = false;
     private boolean mShowingHistoryPanel = false;
     private boolean mShowingImageStatePanel = false;
 
@@ -373,6 +374,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         View tinyPlanetView = findViewById(EditorTinyPlanet.ID);
         if (tinyPlanetView != null) {
+            mShowingTinyPlanet = false;
             tinyPlanetView.setVisibility(View.GONE);
         }
         mLoadBitmapTask = new LoadBitmapTask(tinyPlanetView);
@@ -453,6 +455,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 return;
             }
             if (values[0]) {
+                mShowingTinyPlanet = true;
                 mTinyPlanetButton.setVisibility(View.VISIBLE);
             }
         }
@@ -870,6 +873,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mShowingImageStatePanel = true;
         if (mShowingHistoryPanel) {
             toggleHistoryPanel();
+        }
+        if (mShowingTinyPlanet == false) {
+            View tinyPlanetView = findViewById(EditorTinyPlanet.ID);
+            if (tinyPlanetView != null) {
+                tinyPlanetView.setVisibility(View.GONE);
+            }
         }
         final View loading = findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
