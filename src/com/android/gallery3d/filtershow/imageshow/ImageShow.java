@@ -572,6 +572,7 @@ public class ImageShow extends View implements OnGestureListener,
                     translation.y = (int) (originalTranslation.y + translateY);
                     MasterImage.getImage().setTranslation(translation);
                 }
+                mTouchShowOriginal = false;
             } else if (!mOriginalDisabled && !mActivity.isShowingHistoryPanel()
                     && (System.currentTimeMillis() - mTouchShowOriginalDate
                             > mTouchShowOriginalDelayMin)
@@ -629,14 +630,16 @@ public class ImageShow extends View implements OnGestureListener,
         if (mActivity == null) {
             return false;
         }
+        if (endEvent.getPointerCount() == 2) {
+            return false;
+        }
         if ((!mActivity.isShowingHistoryPanel() && startEvent.getX() > endEvent.getX())
                 || (mActivity.isShowingHistoryPanel() && endEvent.getX() > startEvent.getX())) {
             if (!mTouchShowOriginal
                     || (mTouchShowOriginal &&
                             (System.currentTimeMillis() - mTouchShowOriginalDate
                             < mTouchShowOriginalDelayMax))) {
-                // TODO fix gesture.
-                // mActivity.toggleHistoryPanel();
+                mActivity.toggleHistoryPanel();
             }
         }
         return true;
