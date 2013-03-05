@@ -30,6 +30,7 @@ public class FilterRedEyeRepresentation extends FilterPointRepresentation {
         super("RedEye",R.string.redeye,EditorRedEye.ID);
         setFilterClass(ImageFilterRedEye.class);
         setOverlayId(R.drawable.photoeditor_effect_redeye);
+        setOverlayOnly(true);
     }
 
     public void addRect(RectF rect, RectF bounds) {
