@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.filters;
 
 import java.util.HashMap;
+import java.util.Vector;
 
 public class FiltersManager extends BaseFiltersManager {
     private static FiltersManager sInstance = null;
@@ -36,4 +37,5 @@ public class FiltersManager extends BaseFiltersManager {
     public static void reset() {
         sInstance = null;
     }
+
 }
