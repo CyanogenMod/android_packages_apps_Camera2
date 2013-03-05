@@ -18,40 +18,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="10dip"
     android:background="@drawable/filtershow_button_background">
 
     <ImageView
-        android:id="@+id/selectedMark"
-        android:src="@drawable/camera_crop"
-        android:background="@android:color/transparent"
-        android:layout_width="32dip"
-        android:layout_height="match_parent"
-        android:scaleType="centerInside"
-        android:visibility="invisible"
-        >
-    </ImageView>
+            android:id="@+id/preview"
+            android:background="@android:color/transparent"
+            android:layout_width="match_parent"
+            android:layout_height="128dip"
+            android:scaleType="centerCrop"
+            android:cropToPadding="true"
+            android:paddingTop="10dip"
+            android:visibility="visible"
+            />
 
     <TextView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/rowTextView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:padding="10dip"
-        android:textSize="16dip" >
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/rowTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:padding="5dip"
+            android:textSize="16dip">
     </TextView>
-
-    <ImageView
-        android:id="@+id/typeMark"
-        android:src="@drawable/filtershow_button_origin"
-        android:background="@android:color/transparent"
-        android:layout_width="32dip"
-        android:layout_height="match_parent"
-        android:scaleType="centerInside"
-        android:paddingRight="4dip"
-        android:visibility="visible"
-        >
-    </ImageView>
 
 </LinearLayout>
