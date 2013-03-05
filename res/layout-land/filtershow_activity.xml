@@ -86,6 +86,51 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                    android:id="@+id/historyPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:visibility="gone" >
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:gravity="center"
+                        android:padding="2dip"
+                        android:text="@string/history"
+                        android:textColor="@android:color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                <ListView
+                        android:id="@+id/operationsList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" >
+                </ListView>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                    <Button
+                            android:id="@+id/resetOperationsButton"
+                            style="@style/FilterShowHistoryButton"
+                            android:gravity="center"
+                            android:text="@string/reset" />
+
+                    <Button
+                            android:id="@+id/saveOperationsButton"
+                            style="@style/FilterShowHistoryButton"
+                            android:text="@string/save"
+                            android:visibility="gone" />
+                </LinearLayout>
+            </LinearLayout>
+
 
             <FrameLayout
                     android:layout_gravity="bottom"
@@ -286,51 +331,6 @@
 
         </LinearLayout>
 
-    </LinearLayout>
-
-    <LinearLayout
-            android:id="@+id/historyPanel"
-            android:layout_width="200dip"
-            android:layout_height="match_parent"
-            android:layout_gravity="right"
-            android:orientation="vertical"
-            android:visibility="invisible" >
-
-        <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:gravity="center"
-                android:padding="2dip"
-                android:text="@string/history"
-                android:textColor="@android:color/white"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-        <ListView
-                android:id="@+id/operationsList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" >
-        </ListView>
-
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-
-            <Button
-                    android:id="@+id/resetOperationsButton"
-                    style="@style/FilterShowHistoryButton"
-                    android:gravity="center"
-                    android:text="@string/reset" />
-
-            <Button
-                    android:id="@+id/saveOperationsButton"
-                    style="@style/FilterShowHistoryButton"
-                    android:text="@string/save"
-                    android:visibility="gone" />
-        </LinearLayout>
     </LinearLayout>
 
 </FrameLayout>
