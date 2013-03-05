@@ -194,11 +194,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addPanel(R.id.geometryButton, R.id.geometryList, 2);
         mPanelController.addPanel(R.id.colorsButton, R.id.colorsFxList, 3);
 
-        fillFilters();
-        fillGeometry();
         fillFx((LinearLayout) findViewById(R.id.listFilters), R.id.fxButton);
         LoadBordersTask loadBorders = new LoadBordersTask((LinearLayout) findViewById(R.id.listBorders));
         loadBorders.execute();
+        fillGeometry();
+        fillFilters();
 
         mPanelController.addView(findViewById(R.id.applyEffect));
 
@@ -221,24 +221,28 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.setCurrentPanel(R.id.fxButton);
     }
 
-    private void fillFilters() {
-        Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
+    private void fillPanel(Vector<FilterRepresentation> representations, int layoutId, int buttonId) {
+        ImageButton button = (ImageButton) findViewById(buttonId);
+        LinearLayout layout = (LinearLayout) findViewById(layoutId);
 
-        FiltersManager filtersManager = FiltersManager.getManager();
-        filtersManager.addEffects(filtersRepresentations);
-
-        ImageButton colorsButton = (ImageButton) findViewById(R.id.colorsButton);
-        for (FilterRepresentation representation : filtersRepresentations) {
-            setupFilterRepresentationButton(representation,
-                    (LinearLayout) findViewById(R.id.listColorsFx), colorsButton);
+        for (FilterRepresentation representation : representations) {
+            setupFilterRepresentationButton(representation, layout, button);
         }
     }
 
+    private void fillFilters() {
+        Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
+        FiltersManager filtersManager = FiltersManager.getManager();
+        filtersManager.addEffects(filtersRepresentations);
+        fillPanel(filtersRepresentations, R.id.listColorsFx, R.id.colorsButton);
+    }
+
     private void fillGeometry() {
-        // TODO: move to a separate function.
+        Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
+        FiltersManager filtersManager = FiltersManager.getManager();
+
         GeometryMetadata geo = new GeometryMetadata();
         int[] editorsId = geo.getEditorIds();
-        ImageButton geometryButton = (ImageButton) findViewById(R.id.geometryButton);
         for (int i = 0; i < editorsId.length; i++) {
             int editorId = editorsId[i];
             GeometryMetadata geometry = new GeometryMetadata(geo);
@@ -247,9 +251,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             geometry.setTextId(editorInfo.getTextId());
             geometry.setOverlayId(editorInfo.getOverlayId());
             geometry.setOverlayOnly(editorInfo.getOverlayOnly());
-            setupFilterRepresentationButton(
-                    geometry, (LinearLayout) findViewById(R.id.listGeometry), geometryButton);
+            filtersRepresentations.add(geometry);
         }
+
+        filtersManager.addTools(filtersRepresentations);
+        fillPanel(filtersRepresentations, R.id.listGeometry, R.id.geometryButton);
     }
 
     private void processIntent() {
