@@ -872,7 +872,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         super.onConfigurationChanged(newConfig);
         setDefaultValues();
         loadXML();
-        mShowingImageStatePanel = true;
+        if (getResources().getConfiguration().orientation
+                == Configuration.ORIENTATION_LANDSCAPE) {
+            mShowingImageStatePanel = true;
+        }
         if (mShowingHistoryPanel) {
             toggleHistoryPanel();
         }
@@ -911,7 +914,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         if (mShowingImageStatePanel) {
             findViewById(R.id.imageStatePanel).setVisibility(View.GONE);
-            mShowingImageStatePanel = false;
         }
 
         int translate = translateMainPanel(viewList);
@@ -919,6 +921,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             mShowingHistoryPanel = true;
             if (getResources().getConfiguration().orientation
                     == Configuration.ORIENTATION_PORTRAIT) {
+                // If portrait, always remove the state panel
+                mShowingImageStatePanel = false;
                 if (PanelController.useAnimations()) {
                     view.animate().setDuration(200).x(translate)
                             .withLayer().withEndAction(new Runnable() {
@@ -938,6 +942,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                             .alpha(1.0f).start();
                 }
             } else {
+                findViewById(R.id.filtersPanel).setVisibility(View.GONE);
                 viewList.setVisibility(View.VISIBLE);
             }
         } else {
@@ -953,6 +958,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 }
             } else {
                 viewList.setVisibility(View.GONE);
+                findViewById(R.id.filtersPanel).setVisibility(View.VISIBLE);
+                // In landscape, bring back the state panel if it was there
+                if (mShowingImageStatePanel) {
+                    findViewById(R.id.imageStatePanel).setVisibility(View.VISIBLE);
+                }
             }
         }
         invalidateOptionsMenu();
