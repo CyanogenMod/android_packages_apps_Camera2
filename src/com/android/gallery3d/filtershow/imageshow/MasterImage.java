@@ -39,6 +39,7 @@ public class MasterImage implements RenderingRequestCaller {
 
     private static MasterImage sMasterImage = null;
     private static int sIconSeedSize = 128;
+    private static float sHistoryPreviewSize = 128.0f;
     private Bitmap mThumbnailBitmap;
 
     private ImageFilter mCurrentFilter = null;
@@ -132,6 +133,7 @@ public class MasterImage implements RenderingRequestCaller {
         mPreset.fillImageStateAdapter(mState);
         if (addToHistory) {
             mHistory.addHistoryItem(mPreset);
+            renderHistoryPreview();
         }
         updatePresets(true);
         GeometryMetadata geo = mPreset.mGeoData;
@@ -139,6 +141,23 @@ public class MasterImage implements RenderingRequestCaller {
             notifyGeometryChange();
         }
         mPreviousGeometry = new GeometryMetadata(geo);
+    }
+
+    private void renderHistoryPreview() {
+        ImagePreset historyPreset = mPreset;
+        if (historyPreset != null) {
+            Bitmap preview = mLoader.getOriginalBitmapSmall();
+            if (preview != null) {
+                float s = Math.min(preview.getWidth(), preview.getHeight());
+                float f = sHistoryPreviewSize / s;
+                int w = (int) (preview.getWidth() * f);
+                int h = (int) (preview.getHeight() * f);
+                Bitmap historyPreview = Bitmap.createScaledBitmap(preview, w, h, true);
+                historyPreset.setPreviewImage(historyPreview);
+                RenderingRequest.post(historyPreview,
+                        historyPreset, RenderingRequest.ICON_RENDERING, this);
+            }
+        }
     }
 
     private void setGeometry() {
@@ -292,6 +311,7 @@ public class MasterImage implements RenderingRequestCaller {
         invalidatePartialPreview();
         needsUpdateFullResPreview();
         FilteringPipeline.getPipeline().updatePreviewBuffer();
+        renderHistoryPreview();
     }
 
     public void setImageShowSize(int w, int h) {
@@ -355,6 +375,12 @@ public class MasterImage implements RenderingRequestCaller {
         if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
             mPartialBitmap = request.getBitmap();
             notifyObservers();
+        }
+        if (request.getType() == RenderingRequest.ICON_RENDERING) {
+            // History preview images
+            ImagePreset preset = request.getOriginalImagePreset();
+            preset.setPreviewImage(request.getBitmap());
+            mHistory.notifyDataSetChanged();
         }
     }
 
