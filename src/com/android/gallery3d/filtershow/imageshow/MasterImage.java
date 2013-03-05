@@ -35,8 +35,11 @@ import java.util.Vector;
 public class MasterImage implements RenderingRequestCaller {
 
     private static final String LOGTAG = "MasterImage";
+    private boolean DEBUG  = false;
 
     private static MasterImage sMasterImage = null;
+    private static int sIconSeedSize = 128;
+    private Bitmap mThumbnailBitmap;
 
     private ImageFilter mCurrentFilter = null;
     private ImagePreset mPreset = null;
@@ -89,6 +92,10 @@ public class MasterImage implements RenderingRequestCaller {
             sMasterImage = new MasterImage();
         }
         return sMasterImage;
+    }
+
+    public static void setIconSeedSize(int iconSeedSize) {
+        sIconSeedSize = iconSeedSize;
     }
 
     public void addObserver(ImageShow observer) {
@@ -368,9 +375,57 @@ public class MasterImage implements RenderingRequestCaller {
 
     public void hasNewGeometry() {
         updatePresets(true);
+        computeThumbnailBitmap();
         for (GeometryListener listener : mGeometryListeners) {
             listener.geometryChanged();
         }
+    }
+
+    private Bitmap createSquareImage(Bitmap dst, Bitmap image, Rect destination) {
+        if (image != null) {
+            Canvas canvas = new Canvas(dst);
+            int iw = image.getWidth();
+            int ih = image.getHeight();
+            int x = 0;
+            int y = 0;
+            int size = 0;
+            Rect source = null;
+            if (iw > ih) {
+                size = ih;
+                x = (int) ((iw - size) / 2.0f);
+                y = 0;
+            } else {
+                size = iw;
+                x = 0;
+                y = (int) ((ih - size) / 2.0f);
+            }
+            source = new Rect(x, y, x + size, y + size);
+            canvas.drawBitmap(image, source, destination, new Paint());
+        }
+        return dst;
+    }
+
+    public void computeThumbnailBitmap() {
+        Bitmap bmap = mLoader.getOriginalBitmapSmall();
+        if (bmap == null) {
+            return;
+        }
+        ImagePreset geoPreset = new ImagePreset(MasterImage.getImage().getGeometryPreset());
+        bmap = geoPreset.applyGeometry(bmap);
+        float w = bmap.getWidth();
+        float h = bmap.getHeight();
+        float s = Math.min(w, h);
+        float f = sIconSeedSize / s;
+        w = w * f;
+        h = h * f;
+        s = Math.min(w, h);
+        Bitmap bmap2 = Bitmap.createScaledBitmap(bmap, (int) s, (int) s, true);
+        bmap = createSquareImage(bmap2, bmap, new Rect(0, 0, (int) s, (int) s));
+        if (DEBUG) {
+            Log.v(LOGTAG, "Create thumbnail of size " + bmap.getWidth() + " x " + bmap.getHeight()
+                    + " seed size: " + sIconSeedSize);
+        }
+        mThumbnailBitmap = bmap;
     }
 
     public float getScaleFactor() {
@@ -405,5 +460,9 @@ public class MasterImage implements RenderingRequestCaller {
         mTranslation.x = 0;
         mTranslation.y = 0;
         needsUpdateFullResPreview();
+    }
+
+    public Bitmap getThumbnailBitmap() {
+        return mThumbnailBitmap;
     }
 }

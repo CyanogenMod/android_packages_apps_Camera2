@@ -74,11 +74,8 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
             return super.drawImage(dst, image, destination);
         }
         if (mIconBitmap == null && mPreset == null) {
-            ImageLoader loader = MasterImage.getImage().getLoader();
-            if (loader != null) {
-                ImagePreset geoPreset = new ImagePreset(MasterImage.getImage().getGeometryPreset());
-                image = geoPreset.applyGeometry(image);
-                dst = super.drawImage(dst, image, destination);
+            dst = MasterImage.getImage().getThumbnailBitmap();
+            if (dst != null) {
                 ImagePreset mPreset = new ImagePreset();
                 mPreset.addFilter(mFilterRepresentation);
                 mPreset.setDoApplyGeometry(false);
