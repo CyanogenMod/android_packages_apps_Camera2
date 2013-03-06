@@ -173,10 +173,14 @@ public class CameraSwitcher extends RotateImageView
 
     public boolean isInsidePopup(MotionEvent evt) {
         if (!showsPopup()) return false;
-        return evt.getX() >= mPopup.getLeft()
-                && evt.getX() < mPopup.getRight()
-                && evt.getY() >= mPopup.getTop()
-                && evt.getY() < mPopup.getBottom();
+        int topLeft[] = new int[2];
+        mPopup.getLocationOnScreen(topLeft);
+        int left = topLeft[0];
+        int top = topLeft[1];
+        int bottom = top + mPopup.getHeight();
+        int right = left + mPopup.getWidth();
+        return evt.getX() >= left && evt.getX() < right
+                && evt.getY() >= top && evt.getY() < bottom;
     }
 
     private void hidePopup() {
