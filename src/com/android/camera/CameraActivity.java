@@ -61,7 +61,6 @@ public class CameraActivity extends ActivityBase
     private View mCameraControls;
     private View mControlsBackground;
     private View mPieMenuButton;
-    private View mSwitcherControl;
     private Drawable[] mDrawables;
     private int mCurrentModuleIndex;
     private MotionEvent mDown;
@@ -122,8 +121,7 @@ public class CameraActivity extends ActivityBase
         mCameraControls = findViewById(R.id.camera_controls);
         mShutter = (ShutterButton) findViewById(R.id.shutter_button);
         mSwitcher = (CameraSwitcher) findViewById(R.id.camera_switcher);
-        mPieMenuButton = findViewById(R.id.menu_button);
-        mSwitcherControl = findViewById(R.id.switcher_control);
+        mPieMenuButton = findViewById(R.id.menu);
         int totaldrawid = (LightCycleHelper.hasLightCycleCapture(this)
                                 ? DRAW_IDS.length : DRAW_IDS.length - 1);
         if (!ApiHelper.HAS_OLD_PANORAMA) totaldrawid--;
@@ -222,11 +220,8 @@ public class CameraActivity extends ActivityBase
                 mCurrentModule = LightCycleHelper.createPanoramaModule();
                 break;
         }
-        if (mCurrentModule.needsPieMenu()) {
-            mPieMenuButton.setVisibility(View.VISIBLE);
-        } else {
-            mPieMenuButton.setVisibility(View.INVISIBLE);
-        }
+        showPieMenuButton(mCurrentModule.needsPieMenu());
+
         openModule(mCurrentModule, canReuse);
         mCurrentModule.onOrientationChanged(mLastRawOrientation);
         if (mMediaSaveService != null) {
@@ -234,6 +229,18 @@ public class CameraActivity extends ActivityBase
         }
         getCameraScreenNail().setAlpha(0f);
         getCameraScreenNail().setOnFrameDrawnOneShot(mOnFrameDrawn);
+    }
+
+    public void showPieMenuButton(boolean show) {
+        if (show) {
+            findViewById(R.id.blocker).setVisibility(View.VISIBLE);
+            findViewById(R.id.menu).setVisibility(View.VISIBLE);
+            findViewById(R.id.on_screen_indicators).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.blocker).setVisibility(View.INVISIBLE);
+            findViewById(R.id.menu).setVisibility(View.INVISIBLE);
+            findViewById(R.id.on_screen_indicators).setVisibility(View.INVISIBLE);
+        }
     }
 
     private Runnable mOnFrameDrawn = new Runnable() {
@@ -313,17 +320,23 @@ public class CameraActivity extends ActivityBase
         ViewGroup appRoot = (ViewGroup) findViewById(R.id.content);
         boolean landscape = (config.orientation == Configuration.ORIENTATION_LANDSCAPE);
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) appRoot.getLayoutParams();
+        int offset = getResources().getDimensionPixelSize(R.dimen.margin_systemui_offset);
+        int navBarHeight = getResources().getDimensionPixelSize(R.dimen.navigation_bar_height);
         if (landscape) {
-            lp.rightMargin = getResources().getDimensionPixelSize(R.dimen.margin_systemui_offset);
+            lp.rightMargin = offset;
         } else {
             lp.rightMargin = 0;
         }
         appRoot.setLayoutParams(lp);
 
-        // Reset the background after rotation
-        mControlsBackground.setBackgroundResource(0);  // remove the current background
-        mControlsBackground.setBackgroundResource(R.drawable.switcher_bg);
-
+        // Set padding to move camera controls away from the edge of the screen
+        // so that they are in the same place as if there was a navigation bar between
+        // the screen edge and the controls
+        if (landscape) {
+            mCameraControls.setPadding(navBarHeight, 0, 0, 0);
+        } else {
+            mCameraControls.setPadding(0, navBarHeight, 0, 0);
+        }
         mCurrentModule.onConfigurationChanged(config);
     }
 
@@ -466,7 +479,7 @@ public class CameraActivity extends ActivityBase
         if ((mSwitcher != null) && mSwitcher.showsPopup() && !mSwitcher.isInsidePopup(m)) {
             return mSwitcher.onTouch(null, m);
         } else {
-            return mSwitcherControl.dispatchTouchEvent(m)
+            return mCameraControls.dispatchTouchEvent(m)
                     || mCurrentModule.dispatchTouchEvent(m);
         }
     }

@@ -54,6 +54,7 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewStub;
 import android.view.View.OnClickListener;
+import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -206,6 +207,14 @@ public class PhotoModule
         }
     };
 
+    private final View.OnLayoutChangeListener mLayoutChangeListener =
+            new View.OnLayoutChangeListener() {
+        @Override
+        public void onLayoutChange(View v, int left, int top, int right,
+                int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+            onScreenSizeChanged(right - left, bottom - top);
+        }
+    };
     private final StringBuilder mBuilder = new StringBuilder();
     private final Formatter mFormatter = new Formatter(mBuilder);
     private final Object[] mFormatterArgs = new Object[1];
@@ -461,6 +470,7 @@ public class PhotoModule
 
         mActivity.getLayoutInflater().inflate(R.layout.photo_module,
                 (ViewGroup) mRootView, true);
+        mRootView.addOnLayoutChangeListener(mLayoutChangeListener);
         if (ApiHelper.HAS_FACE_DETECTION) {
             ViewStub faceViewStub = (ViewStub) mRootView
                     .findViewById(R.id.face_view_stub);
@@ -586,8 +596,8 @@ public class PhotoModule
         initializePhotoControl();
 
         // These depend on camera parameters.
-        int width = mActivity.getWindowManager().getDefaultDisplay().getWidth();
-        int height = mActivity.getWindowManager().getDefaultDisplay().getHeight();
+        int width = mRootView.getWidth();
+        int height = mRootView.getHeight();
         mFocusManager.setPreviewSize(width, height);
         // Full-screen screennail
         if (Util.getDisplayRotation(mActivity) % 180 == 0) {
@@ -602,6 +612,16 @@ public class PhotoModule
         updateOnScreenIndicators();
         showTapToFocusToastIfNeeded();
         onFullScreenChanged(mActivity.isInCameraApp());
+    }
+
+    public void onScreenSizeChanged(int width, int height) {
+        if (mFocusManager != null) mFocusManager.setPreviewSize(width, height);
+        // Full-screen screennail
+        if (Util.getDisplayRotation(mActivity) % 180 == 0) {
+            ((CameraScreenNail) mActivity.mCameraScreenNail).setPreviewFrameLayoutSize(width, height);
+        } else {
+            ((CameraScreenNail) mActivity.mCameraScreenNail).setPreviewFrameLayoutSize(height, width);
+        }
     }
 
     private void initializePhotoControl() {
@@ -1618,6 +1638,7 @@ public class PhotoModule
         mHandler.removeMessages(OPEN_CAMERA_FAIL);
         mHandler.removeMessages(CAMERA_DISABLED);
 
+        mRootView.removeOnLayoutChangeListener(mLayoutChangeListener);
         mPendingSwitchCameraId = -1;
         if (mFocusManager != null) mFocusManager.removeMessages();
         MediaSaveService s = mActivity.getMediaSaveService();
