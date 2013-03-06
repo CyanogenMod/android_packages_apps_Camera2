@@ -140,7 +140,7 @@ public class CameraSwitcher extends RotateImageView
             item.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onCameraSelected(index);
+                    if (showsPopup()) onCameraSelected(index);
                 }
             });
             switch (mDrawIds[i]) {
@@ -271,7 +271,7 @@ public class CameraSwitcher extends RotateImageView
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     // Verify that we weren't canceled
-                    if (!showsPopup()) {
+                    if (!showsPopup() && mPopup != null) {
                         mPopup.setVisibility(View.INVISIBLE);
                         ((ViewGroup) mParent).removeView(mPopup);
                         mPopup = null;
