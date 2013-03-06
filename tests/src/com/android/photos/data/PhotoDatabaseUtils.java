@@ -19,6 +19,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.android.photos.data.PhotoProvider.Accounts;
 import com.android.photos.data.PhotoProvider.Albums;
 import com.android.photos.data.PhotoProvider.Metadata;
 import com.android.photos.data.PhotoProvider.Photos;
@@ -28,10 +29,15 @@ import junit.framework.AssertionFailedError;
 public class PhotoDatabaseUtils {
     public static String[] PROJECTION_ALBUMS = {
         Albums._ID,
+        Albums.ACCOUNT_ID,
         Albums.PARENT_ID,
-        Albums.VISIBILITY,
         Albums.NAME,
-        Albums.SERVER_ID,
+        Albums.VISIBILITY,
+        Albums.LOCATION_STRING,
+        Albums.TITLE,
+        Albums.SUMMARY,
+        Albums.DATE_PUBLISHED,
+        Albums.DATE_MODIFIED,
     };
 
     public static String[] PROJECTION_METADATA = {
@@ -42,23 +48,31 @@ public class PhotoDatabaseUtils {
 
     public static String[] PROJECTION_PHOTOS = {
         Photos._ID,
-        Photos.SERVER_ID,
+        Photos.ACCOUNT_ID,
         Photos.WIDTH,
         Photos.HEIGHT,
         Photos.DATE_TAKEN,
         Photos.ALBUM_ID,
         Photos.MIME_TYPE,
+        Photos.TITLE,
+        Photos.DATE_MODIFIED,
+        Photos.ROTATION,
     };
 
-    private static String SELECTION_ALBUM_SERVER_ID = Albums.SERVER_ID + " = ?";
-    private static String SELECTION_PHOTO_SERVER_ID = Photos.SERVER_ID + " = ?";
+    public static String[] PROJECTION_ACCOUNTS = {
+        Accounts._ID,
+        Accounts.ACCOUNT_NAME,
+    };
 
-    public static long queryAlbumIdFromServerId(SQLiteDatabase db, long serverId) {
-        return queryId(db, Albums.TABLE, PROJECTION_ALBUMS, SELECTION_ALBUM_SERVER_ID, serverId);
+    private static String SELECTION_ALBUM_PARENT_ID = Albums.PARENT_ID + " = ?";
+    private static String SELECTION_PHOTO_ALBUM_ID = Photos.ALBUM_ID + " = ?";
+
+    public static long queryAlbumIdFromParentId(SQLiteDatabase db, long parentId) {
+        return queryId(db, Albums.TABLE, PROJECTION_ALBUMS, SELECTION_ALBUM_PARENT_ID, parentId);
     }
 
-    public static long queryPhotoIdFromServerId(SQLiteDatabase db, long serverId) {
-        return queryId(db, Photos.TABLE, PROJECTION_PHOTOS, SELECTION_PHOTO_SERVER_ID, serverId);
+    public static long queryPhotoIdFromAlbumId(SQLiteDatabase db, long albumId) {
+        return queryId(db, Photos.TABLE, PROJECTION_PHOTOS, SELECTION_PHOTO_ALBUM_ID, albumId);
     }
 
     public static long queryId(SQLiteDatabase db, String table, String[] projection,
@@ -79,25 +93,25 @@ public class PhotoDatabaseUtils {
         }
     }
 
-    public static boolean insertPhoto(SQLiteDatabase db, Long serverId, Integer width,
-            Integer height, Long dateTaken, Long albumId, String mimeType) {
+    public static boolean insertPhoto(SQLiteDatabase db, Integer width, Integer height,
+            Long dateTaken, Long albumId, String mimeType, Long accountId) {
         ContentValues values = new ContentValues();
-        values.put(Photos.SERVER_ID, serverId);
         values.put(Photos.WIDTH, width);
         values.put(Photos.HEIGHT, height);
         values.put(Photos.DATE_TAKEN, dateTaken);
         values.put(Photos.ALBUM_ID, albumId);
         values.put(Photos.MIME_TYPE, mimeType);
+        values.put(Photos.ACCOUNT_ID, accountId);
         return db.insert(Photos.TABLE, null, values) != -1;
     }
 
     public static boolean insertAlbum(SQLiteDatabase db, Long parentId, String name,
-            Integer privacy, Long serverId) {
+            Integer privacy, Long accountId) {
         ContentValues values = new ContentValues();
         values.put(Albums.PARENT_ID, parentId);
         values.put(Albums.NAME, name);
         values.put(Albums.VISIBILITY, privacy);
-        values.put(Albums.SERVER_ID, serverId);
+        values.put(Albums.ACCOUNT_ID, accountId);
         return db.insert(Albums.TABLE, null, values) != -1;
     }
 
@@ -107,5 +121,11 @@ public class PhotoDatabaseUtils {
         values.put(Metadata.KEY, key);
         values.put(Metadata.VALUE, value);
         return db.insert(Metadata.TABLE, null, values) != -1;
+    }
+
+    public static boolean insertAccount(SQLiteDatabase db, String name) {
+        ContentValues values = new ContentValues();
+        values.put(Accounts.ACCOUNT_NAME, name);
+        return db.insert(Accounts.TABLE, null, values) != -1;
     }
 }
