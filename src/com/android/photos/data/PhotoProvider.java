@@ -214,9 +214,10 @@ public class PhotoProvider extends ContentProvider {
         public static final String IMAGE_TYPE_QUERY_PARAMETER = "image_type";
 
         // ImageCache.IMAGE_TYPE values
-        public static final int IMAGE_TYPE_THUMBNAIL = 1;
-        public static final int IMAGE_TYPE_PREVIEW = 2;
-        public static final int IMAGE_TYPE_ORIGINAL = 3;
+        public static final int IMAGE_TYPE_ALBUM_COVER = 1;
+        public static final int IMAGE_TYPE_THUMBNAIL = 2;
+        public static final int IMAGE_TYPE_PREVIEW = 3;
+        public static final int IMAGE_TYPE_ORIGINAL = 4;
 
         /**
          * Content URI for retrieving image paths. The
@@ -224,8 +225,18 @@ public class PhotoProvider extends ContentProvider {
          */
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, TABLE);
 
-        /** Foreign key to the photos._id. Long value. */
-        public static final String PHOTO_ID = "photo_id";
+        /**
+         * Content URI for retrieving the album cover art. The album ID must be
+         * appended to the URI.
+         */
+        public static final Uri ALBUM_COVER_CONTENT_URI = Uri.withAppendedPath(CONTENT_URI,
+                Albums.TABLE);
+
+        /**
+         * An _ID from Albums or Photos, depending on whether IMAGE_TYPE is
+         * IMAGE_TYPE_ALBUM or not. Long value.
+         */
+        public static final String REMOTE_ID = "remote_id";
         /** One of IMAGE_TYPE_* values. */
         public static final String IMAGE_TYPE = "image_type";
         /** The String path to the image. */
@@ -272,6 +283,7 @@ public class PhotoProvider extends ContentProvider {
     protected static final int MATCH_METADATA = 5;
     protected static final int MATCH_METADATA_ID = 6;
     protected static final int MATCH_IMAGE = 7;
+    protected static final int MATCH_ALBUM_COVER = 8;
 
     static {
         sUriMatcher.addURI(AUTHORITY, Photos.TABLE, MATCH_PHOTO);
@@ -285,6 +297,9 @@ public class PhotoProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, Metadata.TABLE + "/#", MATCH_METADATA_ID);
         // match against image_cache/<ImageCache.PHOTO_ID>
         sUriMatcher.addURI(AUTHORITY, ImageCache.TABLE + "/#", MATCH_IMAGE);
+        // match against image_cache/album/<Albums._ID>
+        sUriMatcher.addURI(AUTHORITY, ImageCache.TABLE + "/" + Albums.TABLE + "/#",
+                MATCH_ALBUM_COVER);
     }
 
     @Override
