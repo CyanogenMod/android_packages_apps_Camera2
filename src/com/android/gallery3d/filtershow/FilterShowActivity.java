@@ -700,6 +700,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.undoButton: {
+                mPanelController.resetParameters();
                 HistoryAdapter adapter = mMasterImage.getHistory();
                 int position = adapter.undo();
                 mMasterImage.onHistoryItemClick(position);
