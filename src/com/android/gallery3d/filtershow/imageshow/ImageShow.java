@@ -81,6 +81,7 @@ public class ImageShow extends View implements OnGestureListener,
     private static int mOriginalTextMargin = 8;
     private static int mOriginalTextSize = 26;
     private static String mOriginalText = "Original";
+    private boolean mZoomIn = false;
 
     protected GeometryMetadata getGeometry() {
         return new GeometryMetadata(getImagePreset().mGeoData);
@@ -603,8 +604,17 @@ public class ImageShow extends View implements OnGestureListener,
 
     @Override
     public boolean onDoubleTap(MotionEvent arg0) {
-        // TODO Auto-generated method stub
-        return false;
+        mZoomIn = !mZoomIn;
+        float scale = 1.0f;
+        if (mZoomIn) {
+            scale = MasterImage.getImage().getMaxScaleFactor();
+        }
+        if (scale != MasterImage.getImage().getScaleFactor()) {
+            MasterImage.getImage().setScaleFactor(scale);
+            MasterImage.getImage().needsUpdateFullResPreview();
+            invalidate();
+        }
+        return true;
     }
 
     @Override
@@ -679,8 +689,8 @@ public class ImageShow extends View implements OnGestureListener,
     public boolean onScale(ScaleGestureDetector detector) {
         float scaleFactor = MasterImage.getImage().getScaleFactor();
         scaleFactor = scaleFactor * detector.getScaleFactor();
-        if (scaleFactor > 2) {
-            scaleFactor = 2;
+        if (scaleFactor > MasterImage.getImage().getMaxScaleFactor()) {
+            scaleFactor = MasterImage.getImage().getMaxScaleFactor();
         }
         if (scaleFactor < 0.5) {
             scaleFactor = 0.5f;
