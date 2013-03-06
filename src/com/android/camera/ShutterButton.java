@@ -130,10 +130,4 @@ public class ShutterButton extends ImageView {
         }
         return result;
     }
-
-    @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
-        RotatableLayout.rotate(this, config.orientation == Configuration.ORIENTATION_PORTRAIT);
-    }
 }
