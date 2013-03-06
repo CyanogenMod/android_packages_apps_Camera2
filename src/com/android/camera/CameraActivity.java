@@ -117,6 +117,8 @@ public class CameraActivity extends ActivityBase
     }
 
     public void init() {
+        boolean landscape = Util.getDisplayRotation(this) % 180 == 90;
+        setMargins(landscape);
         mControlsBackground = findViewById(R.id.blocker);
         mCameraControls = findViewById(R.id.camera_controls);
         mShutter = (ShutterButton) findViewById(R.id.shutter_button);
@@ -316,28 +318,22 @@ public class CameraActivity extends ActivityBase
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
-
-        ViewGroup appRoot = (ViewGroup) findViewById(R.id.content);
         boolean landscape = (config.orientation == Configuration.ORIENTATION_LANDSCAPE);
+        setMargins(landscape);
+        mCurrentModule.onConfigurationChanged(config);
+    }
+
+    private void setMargins(boolean landscape) {
+        ViewGroup appRoot = (ViewGroup) findViewById(R.id.content);
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) appRoot.getLayoutParams();
-        int offset = getResources().getDimensionPixelSize(R.dimen.margin_systemui_offset);
+        int navBarWidth = getResources().getDimensionPixelSize(R.dimen.navigation_bar_width);
         int navBarHeight = getResources().getDimensionPixelSize(R.dimen.navigation_bar_height);
         if (landscape) {
-            lp.rightMargin = offset;
+            lp.setMargins(navBarHeight, 0, navBarHeight - navBarWidth, 0);
         } else {
-            lp.rightMargin = 0;
+            lp.setMargins(0, navBarHeight, 0, 0);
         }
         appRoot.setLayoutParams(lp);
-
-        // Set padding to move camera controls away from the edge of the screen
-        // so that they are in the same place as if there was a navigation bar between
-        // the screen edge and the controls
-        if (landscape) {
-            mCameraControls.setPadding(navBarHeight, 0, 0, 0);
-        } else {
-            mCameraControls.setPadding(0, navBarHeight, 0, 0);
-        }
-        mCurrentModule.onConfigurationChanged(config);
     }
 
     @Override
@@ -478,9 +474,10 @@ public class CameraActivity extends ActivityBase
         }
         if ((mSwitcher != null) && mSwitcher.showsPopup() && !mSwitcher.isInsidePopup(m)) {
             return mSwitcher.onTouch(null, m);
+        } else if ((mSwitcher != null) && mSwitcher.isInsidePopup(m)) {
+            return superDispatchTouchEvent(m);
         } else {
-            return mCameraControls.dispatchTouchEvent(m)
-                    || mCurrentModule.dispatchTouchEvent(m);
+            return mCurrentModule.dispatchTouchEvent(m);
         }
     }
 
