@@ -40,7 +40,7 @@
             android:layout_marginBottom="2dip"
             android:contentDescription="@string/accessibility_menu_button" />
 
-       <com.android.camera.ui.CameraSwitcher
+        <com.android.camera.ui.CameraSwitcher
            android:id="@+id/camera_switcher"
            style="@style/SwitcherButton"
            android:layout_gravity="bottom|left"
