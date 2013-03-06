@@ -19,11 +19,13 @@ package com.android.camera.ui;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.LinearLayout;
 
+import com.android.camera.Util;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 
@@ -120,6 +123,13 @@ public class CameraSwitcher extends RotateImageView
                 (ViewGroup) getParent());
         LinearLayout content = (LinearLayout) mParent.findViewById(R.id.content);
         mPopup = content;
+        // Set the gravity of the popup, so that it shows up at the right position
+        // on screen
+        LayoutParams lp = ((LayoutParams) mPopup.getLayoutParams());
+        lp.gravity = ((LayoutParams) mParent.findViewById(R.id.camera_switcher)
+                .getLayoutParams()).gravity;
+        mPopup.setLayoutParams(lp);
+
         mPopup.setVisibility(View.INVISIBLE);
         mNeedsAnimationSetup = true;
         for (int i = mDrawIds.length - 1; i >= 0; i--) {
@@ -224,15 +234,22 @@ public class CameraSwitcher extends RotateImageView
     }
 
     private void updateInitialTranslations() {
-        if (getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_PORTRAIT) {
+        int orientation = Util.getDisplayRotation((Activity) getContext());
+        if (orientation == 0) {
             mTranslationX = -getWidth() / 2;
             mTranslationY = getHeight();
-        } else {
+        } else if (orientation == 90) {
             mTranslationX = getWidth();
             mTranslationY = getHeight() / 2;
+        } else if (orientation == 180) {
+            mTranslationX = getWidth();
+            mTranslationY = -getHeight() / 2;
+        } else {
+            mTranslationX = -getWidth();
+            mTranslationY = -getHeight() / 2;
         }
     }
+
     private void popupAnimationSetup() {
         if (!ApiHelper.HAS_VIEW_PROPERTY_ANIMATOR) {
             return;
