@@ -31,6 +31,8 @@ public class PhotoDatabaseTest extends InstrumentationTestCase {
 
     private PhotoDatabase mDBHelper;
     private static final String DB_NAME = "dummy.db";
+    private static final long PARENT_ID1 = 100;
+    private static final long PARENT_ID2 = 101;
 
     @Override
     protected void setUp() throws Exception {
@@ -68,45 +70,38 @@ public class PhotoDatabaseTest extends InstrumentationTestCase {
         SQLiteDatabase db = getWriteableDB();
         db.beginTransaction();
         try {
+            long accountId = 100;
             // Test NOT NULL constraint on name
-            assertFalse(PhotoDatabaseUtils
-                    .insertAlbum(db, null, null, Albums.VISIBILITY_PRIVATE, null));
+            assertFalse(PhotoDatabaseUtils.insertAlbum(db, null, null, Albums.VISIBILITY_PRIVATE,
+                    accountId));
 
             // test NOT NULL constraint on privacy
-            assertFalse(PhotoDatabaseUtils.insertAlbum(db, null, "hello", null, null));
+            assertFalse(PhotoDatabaseUtils.insertAlbum(db, null, "hello", null, accountId));
 
-            // Normal insert
-            assertTrue(PhotoDatabaseUtils.insertAlbum(db, null, "hello", Albums.VISIBILITY_PRIVATE,
-                    100L));
-
-            // Test server id uniqueness
-            assertFalse(PhotoDatabaseUtils.insertAlbum(db, null, "world", Albums.VISIBILITY_PRIVATE,
-                    100L));
-
-            // Different server id allowed
-            assertTrue(PhotoDatabaseUtils.insertAlbum(db, null, "world", Albums.VISIBILITY_PRIVATE,
-                    101L));
-
-            // Allow null server id
-            assertTrue(PhotoDatabaseUtils.insertAlbum(db, null, "hello world",
+            // test NOT NULL constraint on account_id
+            assertFalse(PhotoDatabaseUtils.insertAlbum(db, null, "hello",
                     Albums.VISIBILITY_PRIVATE, null));
 
-            long albumId = PhotoDatabaseUtils.queryAlbumIdFromServerId(db, 100);
+            // Normal insert
+            assertTrue(PhotoDatabaseUtils.insertAlbum(db, PARENT_ID1, "hello",
+                    Albums.VISIBILITY_PRIVATE, accountId));
+
+            long albumId = PhotoDatabaseUtils.queryAlbumIdFromParentId(db, PARENT_ID1);
 
             // Assign a valid child
-            assertTrue(PhotoDatabaseUtils.insertAlbum(db, albumId, "hello", Albums.VISIBILITY_PRIVATE,
-                    null));
+            assertTrue(PhotoDatabaseUtils.insertAlbum(db, PARENT_ID2, "hello",
+                    Albums.VISIBILITY_PRIVATE, accountId));
 
-            long otherAlbumId = PhotoDatabaseUtils.queryAlbumIdFromServerId(db, 101);
+            long otherAlbumId = PhotoDatabaseUtils.queryAlbumIdFromParentId(db, PARENT_ID2);
             assertNotSame(albumId, otherAlbumId);
 
             // This is a valid child of another album.
             assertTrue(PhotoDatabaseUtils.insertAlbum(db, otherAlbumId, "hello",
-                    Albums.VISIBILITY_PRIVATE, null));
+                    Albums.VISIBILITY_PRIVATE, accountId));
 
             // This isn't allowed due to uniqueness constraint (parent_id/name)
             assertFalse(PhotoDatabaseUtils.insertAlbum(db, otherAlbumId, "hello",
-                    Albums.VISIBILITY_PRIVATE, null));
+                    Albums.VISIBILITY_PRIVATE, accountId));
         } finally {
             db.endTransaction();
         }
@@ -120,26 +115,31 @@ public class PhotoDatabaseTest extends InstrumentationTestCase {
             int height = 100;
             long dateTaken = System.currentTimeMillis();
             String mimeType = "test/test";
+            long accountId = 100;
 
             // Test NOT NULL mime-type
-            assertFalse(PhotoDatabaseUtils.insertPhoto(db, null, width, height, dateTaken, null,
-                    null));
+            assertFalse(PhotoDatabaseUtils.insertPhoto(db, width, height, dateTaken, null, null,
+                    accountId));
 
             // Test NOT NULL width
-            assertFalse(PhotoDatabaseUtils.insertPhoto(db, null, null, height, dateTaken, null,
-                    mimeType));
+            assertFalse(PhotoDatabaseUtils.insertPhoto(db, null, height, dateTaken, null, mimeType,
+                    accountId));
 
             // Test NOT NULL height
-            assertFalse(PhotoDatabaseUtils.insertPhoto(db, null, width, null, dateTaken, null,
-                    mimeType));
+            assertFalse(PhotoDatabaseUtils.insertPhoto(db, width, null, dateTaken, null, mimeType,
+                    accountId));
 
             // Test NOT NULL dateTaken
-            assertFalse(PhotoDatabaseUtils.insertPhoto(db, null, width, height, null, null,
-                    mimeType));
+            assertFalse(PhotoDatabaseUtils.insertPhoto(db, width, height, null, null, mimeType,
+                    accountId));
+
+            // Test NOT NULL accountId
+            assertFalse(PhotoDatabaseUtils.insertPhoto(db, width, height, dateTaken, null,
+                    mimeType, null));
 
             // Test normal insert
-            assertTrue(PhotoDatabaseUtils.insertPhoto(db, null, width, height, dateTaken, null,
-                    mimeType));
+            assertTrue(PhotoDatabaseUtils.insertPhoto(db, width, height, dateTaken, null, mimeType,
+                    accountId));
         } finally {
             db.endTransaction();
         }
@@ -150,9 +150,8 @@ public class PhotoDatabaseTest extends InstrumentationTestCase {
         db.beginTransaction();
         try {
             final String mimeType = "test/test";
-            long photoServerId = 100;
-            PhotoDatabaseUtils.insertPhoto(db, photoServerId, 100, 100, 100L, null, mimeType);
-            long photoId = PhotoDatabaseUtils.queryPhotoIdFromServerId(db, photoServerId);
+            PhotoDatabaseUtils.insertPhoto(db, 100, 100, 100L, PARENT_ID1, mimeType, 100L);
+            long photoId = PhotoDatabaseUtils.queryPhotoIdFromAlbumId(db, PARENT_ID1);
 
             // Test NOT NULL PHOTO_ID constraint.
             assertFalse(PhotoDatabaseUtils.insertMetadata(db, null, "foo", "bar"));
@@ -162,6 +161,18 @@ public class PhotoDatabaseTest extends InstrumentationTestCase {
 
             // Test uniqueness constraint.
             assertFalse(PhotoDatabaseUtils.insertMetadata(db, photoId, "foo", "baz"));
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    public void testAccountsConstraints() {
+        SQLiteDatabase db = getWriteableDB();
+        db.beginTransaction();
+        try {
+            assertFalse(PhotoDatabaseUtils.insertAccount(db, null));
+            assertTrue(PhotoDatabaseUtils.insertAccount(db, "hello"));
+            assertTrue(PhotoDatabaseUtils.insertAccount(db, "hello"));
         } finally {
             db.endTransaction();
         }
