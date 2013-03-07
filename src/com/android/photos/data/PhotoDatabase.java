@@ -59,14 +59,13 @@ public class PhotoDatabase extends SQLiteOpenHelper {
         { Albums.ACCOUNT_ID, "INTEGER NOT NULL" },
         // Albums.PARENT_ID is a foreign key to Albums._ID
         { Albums.PARENT_ID, "INTEGER" },
-        { Albums.NAME, "Text NOT NULL" },
         { Albums.VISIBILITY, "INTEGER NOT NULL" },
         { Albums.LOCATION_STRING, "TEXT" },
-        { Albums.TITLE, "TEXT" },
+        { Albums.TITLE, "TEXT NOT NULL" },
         { Albums.SUMMARY, "TEXT" },
         { Albums.DATE_PUBLISHED, "INTEGER" },
         { Albums.DATE_MODIFIED, "INTEGER" },
-        createUniqueConstraint(Albums.PARENT_ID, Albums.NAME),
+        createUniqueConstraint(Albums.PARENT_ID, Albums.TITLE),
     };
 
     private static final String[][] CREATE_METADATA = {

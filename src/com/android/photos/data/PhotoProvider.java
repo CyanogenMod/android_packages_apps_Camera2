@@ -131,8 +131,6 @@ public class PhotoProvider extends ContentProvider {
         public static final String ACCOUNT_ID = "account_id";
         /** Parent directory or null if this is in the root. */
         public static final String PARENT_ID = "parent_id";
-        /** Column name for the name of the album. String value. */
-        public static final String NAME = "name";
         /**
          * Column name for the visibility level of the album. Can be any of the
          * VISIBILITY_* values.
