@@ -15,9 +15,10 @@
  */
 package com.android.photos.data;
 
-import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -29,7 +30,6 @@ import android.net.Uri;
 import android.os.CancellationSignal;
 import android.provider.BaseColumns;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,7 +46,7 @@ import java.util.List;
  * in the selection. The selection and selectionArgs are not used when updating
  * metadata. If the metadata values are null, the row will be deleted.
  */
-public class PhotoProvider extends ContentProvider {
+public class PhotoProvider extends SQLiteContentProvider {
     @SuppressWarnings("unused")
     private static final String TAG = PhotoProvider.class.getSimpleName();
 
@@ -58,7 +58,7 @@ public class PhotoProvider extends ContentProvider {
     // Used to allow mocking out the change notification because
     // MockContextResolver disallows system-wide notification.
     public static interface ChangeNotification {
-        void notifyChange(Uri uri);
+        void notifyChange(Uri uri, boolean syncToNetwork);
     }
 
     /**
@@ -272,7 +272,6 @@ public class PhotoProvider extends ContentProvider {
     };
 
     protected ChangeNotification mNotifier = null;
-    private SQLiteOpenHelper mOpenHelper;
     protected static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     protected static final int MATCH_PHOTO = 1;
@@ -302,23 +301,14 @@ public class PhotoProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int deleteInTransaction(Uri uri, String selection, String[] selectionArgs,
+            boolean callerIsSyncAdapter) {
         int match = matchUri(uri);
         selection = addIdToSelection(match, selection);
         selectionArgs = addIdToSelectionArgs(match, uri, selectionArgs);
-        List<Uri> changeUris = new ArrayList<Uri>();
         int deleted = 0;
-        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            deleted = deleteCascade(db, match, selection, selectionArgs, changeUris, uri);
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-        for (Uri changeUri : changeUris) {
-            notifyChanges(changeUri);
-        }
+        SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
+        deleted = deleteCascade(db, match, selection, selectionArgs, uri);
         return deleted;
     }
 
@@ -334,36 +324,19 @@ public class PhotoProvider extends ContentProvider {
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insertInTransaction(Uri uri, ContentValues values, boolean callerIsSyncAdapter) {
         int match = matchUri(uri);
         validateMatchTable(match);
         String table = getTableFromMatch(match, uri);
-        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
         Uri insertedUri = null;
-        db.beginTransaction();
-        try {
-            long id = db.insert(table, null, values);
-            if (id != -1) {
-                // uri already matches the table.
-                insertedUri = ContentUris.withAppendedId(uri, id);
-            }
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
+        long id = db.insert(table, null, values);
+        if (id != -1) {
+            // uri already matches the table.
+            insertedUri = ContentUris.withAppendedId(uri, id);
+            postNotifyUri(insertedUri);
         }
-        notifyChanges(insertedUri);
         return insertedUri;
-    }
-
-    @Override
-    public boolean onCreate() {
-        mOpenHelper = createDatabaseHelper();
-        return true;
-    }
-
-    @Override
-    public void shutdown() {
-        getDatabaseHelper().close();
     }
 
     @Override
@@ -379,31 +352,26 @@ public class PhotoProvider extends ContentProvider {
         selection = addIdToSelection(match, selection);
         selectionArgs = addIdToSelectionArgs(match, uri, selectionArgs);
         String table = getTableFromMatch(match, uri);
-        SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        SQLiteDatabase db = getDatabaseHelper().getReadableDatabase();
         return db.query(false, table, projection, selection, selectionArgs, null, null, sortOrder,
                 null, cancellationSignal);
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public int updateInTransaction(Uri uri, ContentValues values, String selection,
+            String[] selectionArgs, boolean callerIsSyncAdapter) {
         int match = matchUri(uri);
         int rowsUpdated = 0;
-        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        db.beginTransaction();
-        try {
-            if (match == MATCH_METADATA) {
-                rowsUpdated = modifyMetadata(db, values);
-            } else {
-                selection = addIdToSelection(match, selection);
-                selectionArgs = addIdToSelectionArgs(match, uri, selectionArgs);
-                String table = getTableFromMatch(match, uri);
-                rowsUpdated = db.update(table, values, selection, selectionArgs);
-            }
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
+        SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
+        if (match == MATCH_METADATA) {
+            rowsUpdated = modifyMetadata(db, values);
+        } else {
+            selection = addIdToSelection(match, selection);
+            selectionArgs = addIdToSelectionArgs(match, uri, selectionArgs);
+            String table = getTableFromMatch(match, uri);
+            rowsUpdated = db.update(table, values, selection, selectionArgs);
         }
-        notifyChanges(uri);
+        postNotifyUri(uri);
         return rowsUpdated;
     }
 
@@ -472,12 +440,9 @@ public class PhotoProvider extends ContentProvider {
         return table;
     }
 
-    protected final SQLiteOpenHelper getDatabaseHelper() {
-        return mOpenHelper;
-    }
-
-    protected SQLiteOpenHelper createDatabaseHelper() {
-        return new PhotoDatabase(getContext(), DB_NAME);
+    @Override
+    public SQLiteOpenHelper getDatabaseHelper(Context context) {
+        return new PhotoDatabase(context, DB_NAME);
     }
 
     private int modifyMetadata(SQLiteDatabase db, ContentValues values) {
@@ -505,11 +470,12 @@ public class PhotoProvider extends ContentProvider {
         return match;
     }
 
-    protected void notifyChanges(Uri uri) {
+    @Override
+    protected void notifyChange(ContentResolver resolver, Uri uri, boolean syncToNetwork) {
         if (mNotifier != null) {
-            mNotifier.notifyChange(uri);
+            mNotifier.notifyChange(uri, syncToNetwork);
         } else {
-            getContext().getContentResolver().notifyChange(uri, null, false);
+            resolver.notifyChange(uri, null, syncToNetwork);
         }
     }
 
@@ -523,44 +489,44 @@ public class PhotoProvider extends ContentProvider {
         return matchColumn + IN + NESTED_SELECT_START + query + NESTED_SELECT_END;
     }
 
-    protected static int deleteCascade(SQLiteDatabase db, int match, String selection,
-            String[] selectionArgs, List<Uri> changeUris, Uri uri) {
+    protected int deleteCascade(SQLiteDatabase db, int match, String selection,
+            String[] selectionArgs, Uri uri) {
         switch (match) {
             case MATCH_PHOTO:
             case MATCH_PHOTO_ID: {
-                deleteCascadeMetadata(db, selection, selectionArgs, changeUris);
+                deleteCascadeMetadata(db, selection, selectionArgs);
                 break;
             }
             case MATCH_ALBUM:
             case MATCH_ALBUM_ID: {
-                deleteCascadePhotos(db, selection, selectionArgs, changeUris);
+                deleteCascadePhotos(db, selection, selectionArgs);
                 break;
             }
         }
         String table = getTableFromMatch(match, uri);
         int deleted = db.delete(table, selection, selectionArgs);
         if (deleted > 0) {
-            changeUris.add(uri);
+            postNotifyUri(uri);
         }
         return deleted;
     }
 
-    private static void deleteCascadePhotos(SQLiteDatabase db, String albumSelect,
-            String[] selectArgs, List<Uri> changeUris) {
+    private void deleteCascadePhotos(SQLiteDatabase db, String albumSelect,
+            String[] selectArgs) {
         String photoWhere = nestWhere(Photos.ALBUM_ID, Albums.TABLE, albumSelect);
-        deleteCascadeMetadata(db, photoWhere, selectArgs, changeUris);
+        deleteCascadeMetadata(db, photoWhere, selectArgs);
         int deleted = db.delete(Photos.TABLE, photoWhere, selectArgs);
         if (deleted > 0) {
-            changeUris.add(Photos.CONTENT_URI);
+            postNotifyUri(Photos.CONTENT_URI);
         }
     }
 
-    private static void deleteCascadeMetadata(SQLiteDatabase db, String photosSelect,
-            String[] selectArgs, List<Uri> changeUris) {
+    private void deleteCascadeMetadata(SQLiteDatabase db, String photosSelect,
+            String[] selectArgs) {
         String metadataWhere = nestWhere(Metadata.PHOTO_ID, Photos.TABLE, photosSelect);
         int deleted = db.delete(Metadata.TABLE, metadataWhere, selectArgs);
         if (deleted > 0) {
-            changeUris.add(Metadata.CONTENT_URI);
+            postNotifyUri(Metadata.CONTENT_URI);
         }
     }
 
