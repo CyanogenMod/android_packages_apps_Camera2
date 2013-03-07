@@ -15,19 +15,24 @@
  */
 package com.android.photos.data;
 
+import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.provider.BaseColumns;
 import android.test.ProviderTestCase2;
 
 import com.android.photos.data.PhotoProvider.Albums;
 import com.android.photos.data.PhotoProvider.Metadata;
 import com.android.photos.data.PhotoProvider.Photos;
+
+import java.util.ArrayList;
 
 public class PhotoProviderTest extends ProviderTestCase2<PhotoProvider> {
     @SuppressWarnings("unused")
@@ -317,4 +322,38 @@ public class PhotoProviderTest extends ProviderTestCase2<PhotoProvider> {
         mResolver.update(Metadata.CONTENT_URI, values, null, null);
         assertTrue(mNotifications.isNotified(Metadata.CONTENT_URI));
     }
+
+    public void testBatchTransaction() throws RemoteException, OperationApplicationException {
+        ArrayList<ContentProviderOperation> operations = new ArrayList<ContentProviderOperation>();
+        ContentProviderOperation.Builder insert = ContentProviderOperation
+                .newInsert(Photos.CONTENT_URI);
+        insert.withValue(Photos.WIDTH, 200L);
+        insert.withValue(Photos.HEIGHT, 100L);
+        insert.withValue(Photos.DATE_TAKEN, System.currentTimeMillis());
+        insert.withValue(Photos.ALBUM_ID, 1000L);
+        insert.withValue(Photos.MIME_TYPE, "image/jpg");
+        insert.withValue(Photos.ACCOUNT_ID, 1L);
+        operations.add(insert.build());
+        ContentProviderOperation.Builder update = ContentProviderOperation.newUpdate(Photos.CONTENT_URI);
+        update.withValue(Photos.DATE_MODIFIED, System.currentTimeMillis());
+        String[] whereArgs = {
+            "100",
+        };
+        String where = Photos.WIDTH + " = ?";
+        update.withSelection(where, whereArgs);
+        operations.add(update.build());
+        ContentProviderOperation.Builder delete = ContentProviderOperation
+                .newDelete(Photos.CONTENT_URI);
+        delete.withSelection(where, whereArgs);
+        operations.add(delete.build());
+        mResolver.applyBatch(PhotoProvider.AUTHORITY, operations);
+        assertEquals(3, mNotifications.notificationCount());
+        SQLiteDatabase db = mDBHelper.getReadableDatabase();
+        long id = PhotoDatabaseUtils.queryPhotoIdFromAlbumId(db, 1000L);
+        Uri uri = ContentUris.withAppendedId(Photos.CONTENT_URI, id);
+        assertTrue(mNotifications.isNotified(uri));
+        assertTrue(mNotifications.isNotified(Metadata.CONTENT_URI));
+        assertTrue(mNotifications.isNotified(Photos.CONTENT_URI));
+    }
+
 }
