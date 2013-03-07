@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.photos.data;
+package com.android.photos.shims;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
