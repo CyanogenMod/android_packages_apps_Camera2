@@ -31,7 +31,6 @@ public class PhotoDatabaseUtils {
         Albums._ID,
         Albums.ACCOUNT_ID,
         Albums.PARENT_ID,
-        Albums.NAME,
         Albums.VISIBILITY,
         Albums.LOCATION_STRING,
         Albums.TITLE,
@@ -105,11 +104,11 @@ public class PhotoDatabaseUtils {
         return db.insert(Photos.TABLE, null, values) != -1;
     }
 
-    public static boolean insertAlbum(SQLiteDatabase db, Long parentId, String name,
+    public static boolean insertAlbum(SQLiteDatabase db, Long parentId, String title,
             Integer privacy, Long accountId) {
         ContentValues values = new ContentValues();
         values.put(Albums.PARENT_ID, parentId);
-        values.put(Albums.NAME, name);
+        values.put(Albums.TITLE, title);
         values.put(Albums.VISIBILITY, privacy);
         values.put(Albums.ACCOUNT_ID, accountId);
         return db.insert(Albums.TABLE, null, values) != -1;
