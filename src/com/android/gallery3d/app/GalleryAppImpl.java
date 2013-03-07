@@ -31,6 +31,7 @@ import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.LightCycleHelper;
 import com.android.gallery3d.util.ThreadPool;
+import com.android.gallery3d.util.UsageStatistics;
 
 import java.io.File;
 
@@ -54,6 +55,7 @@ public class GalleryAppImpl extends Application implements GalleryApp {
         GalleryUtils.initialize(this);
         WidgetUtils.initialize(this);
         PicasaSource.initialize(this);
+        UsageStatistics.initialize(this);
 
         mStitchingProgressManager = LightCycleHelper.createStitchingManagerInstance(this);
         if (mStitchingProgressManager != null) {
