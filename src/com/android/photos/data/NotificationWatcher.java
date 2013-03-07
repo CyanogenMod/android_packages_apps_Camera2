@@ -19,8 +19,7 @@ import android.net.Uri;
 
 import com.android.photos.data.PhotoProvider.ChangeNotification;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
 
 /**
  * Used for capturing notifications from PhotoProvider without relying on
@@ -28,11 +27,13 @@ import java.util.Set;
  * ContentObservers, so PhotoProvider allows this alternative for testing.
  */
 public class NotificationWatcher implements ChangeNotification {
-    private Set<Uri> mUris = new HashSet<Uri>();
+    private ArrayList<Uri> mUris = new ArrayList<Uri>();
+    private boolean mSyncToNetwork = false;
 
     @Override
-    public void notifyChange(Uri uri) {
+    public void notifyChange(Uri uri, boolean syncToNetwork) {
         mUris.add(uri);
+        mSyncToNetwork = mSyncToNetwork || syncToNetwork;
     }
 
     public boolean isNotified(Uri uri) {
@@ -43,7 +44,12 @@ public class NotificationWatcher implements ChangeNotification {
         return mUris.size();
     }
 
+    public boolean syncToNetwork() {
+        return mSyncToNetwork;
+    }
+
     public void reset() {
         mUris.clear();
+        mSyncToNetwork = false;
     }
 }
