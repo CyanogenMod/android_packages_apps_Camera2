@@ -16,6 +16,7 @@
 package com.android.photos.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -305,9 +306,6 @@ public class PhotoProvider extends ContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         int match = matchUri(uri);
-        if (match == MATCH_IMAGE) {
-            throw new IllegalArgumentException("Cannot delete from image cache");
-        }
         selection = addIdToSelection(match, selection);
         selectionArgs = addIdToSelectionArgs(match, uri, selectionArgs);
         List<Uri> changeUris = new ArrayList<Uri>();
@@ -339,8 +337,24 @@ public class PhotoProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        // Cannot insert into this ContentProvider
-        return null;
+        int match = matchUri(uri);
+        validateMatchTable(match);
+        String table = getTableFromMatch(match, uri);
+        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        Uri insertedUri = null;
+        db.beginTransaction();
+        try {
+            long id = db.insert(table, null, values);
+            if (id != -1) {
+                // uri already matches the table.
+                insertedUri = ContentUris.withAppendedId(uri, id);
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+        notifyChanges(insertedUri);
+        return insertedUri;
     }
 
     @Override
@@ -469,22 +483,15 @@ public class PhotoProvider extends ContentProvider {
     }
 
     private int modifyMetadata(SQLiteDatabase db, ContentValues values) {
-        String[] selectionArgs = {
-            values.getAsString(Metadata.PHOTO_ID),
-            values.getAsString(Metadata.KEY),
-        };
         int rowCount;
         if (values.get(Metadata.VALUE) == null) {
+            String[] selectionArgs = {
+                    values.getAsString(Metadata.PHOTO_ID), values.getAsString(Metadata.KEY),
+            };
             rowCount = db.delete(Metadata.TABLE, WHERE_METADATA_ID, selectionArgs);
         } else {
-            rowCount = (int) DatabaseUtils.queryNumEntries(db, Metadata.TABLE, WHERE_METADATA_ID,
-                    selectionArgs);
-            if (rowCount > 0) {
-                db.update(Metadata.TABLE, values, WHERE_METADATA_ID, selectionArgs);
-            } else {
-                db.insert(Metadata.TABLE, null, values);
-                rowCount = 1;
-            }
+            long rowId = db.replace(Metadata.TABLE, null, values);
+            rowCount = (rowId == -1) ? 0 : 1;
         }
         return rowCount;
     }
@@ -493,6 +500,9 @@ public class PhotoProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         if (match == UriMatcher.NO_MATCH) {
             throw unknownUri(uri);
+        }
+        if (match == MATCH_IMAGE || match == MATCH_ALBUM_COVER) {
+            throw new IllegalArgumentException("Operation not allowed on image cache database");
         }
         return match;
     }
@@ -553,6 +563,17 @@ public class PhotoProvider extends ContentProvider {
         int deleted = db.delete(Metadata.TABLE, metadataWhere, selectArgs);
         if (deleted > 0) {
             changeUris.add(Metadata.CONTENT_URI);
+        }
+    }
+
+    private static void validateMatchTable(int match) {
+        switch (match) {
+            case MATCH_PHOTO:
+            case MATCH_ALBUM:
+            case MATCH_METADATA:
+                break;
+            default:
+                throw new IllegalArgumentException("Operation not allowed on an existing row.");
         }
     }
 }
