@@ -19,15 +19,20 @@ package com.android.photos.data;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.database.ContentObserver;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Files;
 import android.provider.MediaStore.Files.FileColumns;
 
-public class PhotoSetLoader extends CursorLoader {
+import com.android.photos.drawables.DataUriThumbnailDrawable;
+import com.android.photos.drawables.DrawableFactory;
+
+public class PhotoSetLoader extends CursorLoader implements DrawableFactory<Cursor> {
 
     private static final Uri CONTENT_URI = Files.getContentUri("external");
-    private static final String[] PROJECTION = new String[] {
+    public static final String[] PROJECTION = new String[] {
         FileColumns._ID,
         FileColumns.DATA,
         FileColumns.WIDTH,
@@ -66,5 +71,18 @@ public class PhotoSetLoader extends CursorLoader {
     protected void onReset() {
         super.onReset();
         getContext().getContentResolver().unregisterContentObserver(mGlobalObserver);
+    }
+
+    @Override
+    public Drawable drawableForItem(Cursor item, Drawable recycle) {
+        DataUriThumbnailDrawable drawable = null;
+        if (recycle == null || !(recycle instanceof DataUriThumbnailDrawable)) {
+            drawable = new DataUriThumbnailDrawable();
+        } else {
+            drawable = (DataUriThumbnailDrawable) recycle;
+        }
+        drawable.setImage(item.getString(INDEX_DATA),
+                item.getInt(INDEX_WIDTH), item.getInt(INDEX_HEIGHT));
+        return drawable;
     }
 }
