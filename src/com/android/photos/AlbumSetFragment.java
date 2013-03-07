@@ -54,13 +54,18 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
     private static final int LOADER_ALBUMSET = 1;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mAdapter = new AlbumSetCursorAdapter(getActivity());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.album_set, container, false);
         mAlbumSetView = (GridView) root.findViewById(android.R.id.list);
         mEmptyView = root.findViewById(android.R.id.empty);
         mEmptyView.setVisibility(View.GONE);
-        mAdapter = new AlbumSetCursorAdapter(getActivity());
         mAlbumSetView.setAdapter(mAdapter);
         mAlbumSetView.setOnItemClickListener(this);
         getLoaderManager().initLoader(LOADER_ALBUMSET, null, this);
