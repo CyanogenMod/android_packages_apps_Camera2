@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.support.v8.renderscript.*;
 import android.util.Log;
+import com.android.gallery3d.R;
 
 public abstract class ImageFilterRS extends ImageFilter {
     private final String LOGTAG = "ImageFilterRS";
@@ -116,6 +117,25 @@ public abstract class ImageFilterRS extends ImageFilter {
             mOutPixelsAllocation = null;
         }
         sOldBitmap = null;
+    }
+
+    public Allocation convertRGBAtoA(Bitmap bitmap) {
+        Type.Builder tb_a8 = new Type.Builder(mRS, Element.U8(mRS));
+        ScriptC_grey greyConvert = new ScriptC_grey(mRS, mResources, R.raw.grey);
+
+        Allocation bitmapTemp = Allocation.createFromBitmap(mRS, bitmap);
+
+        if (bitmapTemp.getType().getElement().isCompatible(Element.U8(mRS))) {
+            return bitmapTemp;
+        }
+
+        tb_a8.setX(bitmapTemp.getType().getX());
+        tb_a8.setY(bitmapTemp.getType().getY());
+        Allocation bitmapAlloc = Allocation.createTyped(mRS, tb_a8.create());
+        greyConvert.forEach_RGBAtoA(bitmapTemp, bitmapAlloc);
+
+        return bitmapAlloc;
+
     }
 
 }
