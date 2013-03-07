@@ -35,8 +35,7 @@ public class PhotoProviderTest extends ProviderTestCase2<PhotoProvider> {
 
     private static final String MIME_TYPE = "test/test";
     private static final String ALBUM_NAME = "My Album";
-    private static final long ALBUM_SERVER_ID = 100;
-    private static final long PHOTO_SERVER_ID = 50;
+    private static final long ALBUM_PARENT_ID = 100;
     private static final String META_KEY = "mykey";
     private static final String META_VALUE = "myvalue";
 
@@ -70,12 +69,12 @@ public class PhotoProviderTest extends ProviderTestCase2<PhotoProvider> {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         db.beginTransaction();
         try {
-            PhotoDatabaseUtils.insertAlbum(db, null, ALBUM_NAME, Albums.VISIBILITY_PRIVATE,
-                    ALBUM_SERVER_ID);
-            mAlbumId = PhotoDatabaseUtils.queryAlbumIdFromServerId(db, ALBUM_SERVER_ID);
-            PhotoDatabaseUtils.insertPhoto(db, PHOTO_SERVER_ID, 100, 100,
-                    System.currentTimeMillis(), mAlbumId, MIME_TYPE);
-            mPhotoId = PhotoDatabaseUtils.queryPhotoIdFromServerId(db, PHOTO_SERVER_ID);
+            PhotoDatabaseUtils.insertAlbum(db, ALBUM_PARENT_ID, ALBUM_NAME,
+                    Albums.VISIBILITY_PRIVATE, 100L);
+            mAlbumId = PhotoDatabaseUtils.queryAlbumIdFromParentId(db, ALBUM_PARENT_ID);
+            PhotoDatabaseUtils.insertPhoto(db, 100, 100, System.currentTimeMillis(), mAlbumId,
+                    MIME_TYPE, 100L);
+            mPhotoId = PhotoDatabaseUtils.queryPhotoIdFromAlbumId(db, mAlbumId);
             PhotoDatabaseUtils.insertMetadata(db, mPhotoId, META_KEY, META_VALUE);
             String[] projection = {
                     BaseColumns._ID,
