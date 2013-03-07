@@ -5,12 +5,18 @@
     android:paddingLeft="8dp"
     android:paddingRight="8dp" >
 
-    <com.android.photos.views.GalleryThumbnailView
+    <GridView
         android:id="@id/android:list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:drawSelectorOnTop="true" />
+        android:drawSelectorOnTop="true"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:columnWidth="200dip"
+        android:horizontalSpacing="4dip"
+        android:verticalSpacing="4dip"
+        android:padding="4dip" />
 
     <TextView
         android:id="@id/android:empty"
