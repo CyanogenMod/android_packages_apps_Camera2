@@ -27,6 +27,7 @@ import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.ImageStateAdapter;
 import com.android.gallery3d.filtershow.cache.*;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
@@ -40,7 +41,6 @@ public class MasterImage implements RenderingRequestCaller {
     private static MasterImage sMasterImage = null;
     private static int sIconSeedSize = 128;
     private static float sHistoryPreviewSize = 128.0f;
-    private Bitmap mThumbnailBitmap;
 
     private ImageFilter mCurrentFilter = null;
     private ImagePreset mPreset = null;
@@ -52,6 +52,7 @@ public class MasterImage implements RenderingRequestCaller {
     private Bitmap mGeometryOnlyBitmap = null;
     private Bitmap mFiltersOnlyBitmap = null;
     private Bitmap mPartialBitmap = null;
+    private Bitmap mThumbnailBitmap  = null;
 
     private ImageLoader mLoader = null;
     private HistoryAdapter mHistory = null;
@@ -312,7 +313,6 @@ public class MasterImage implements RenderingRequestCaller {
         invalidatePartialPreview();
         needsUpdateFullResPreview();
         FilteringPipeline.getPipeline().updatePreviewBuffer();
-        renderHistoryPreview();
     }
 
     public void setImageShowSize(int w, int h) {
@@ -438,6 +438,7 @@ public class MasterImage implements RenderingRequestCaller {
             return;
         }
         ImagePreset geoPreset = new ImagePreset(MasterImage.getImage().getGeometryPreset());
+        geoPreset.setupEnvironment();
         bmap = geoPreset.applyGeometry(bmap);
         float w = bmap.getWidth();
         float h = bmap.getHeight();

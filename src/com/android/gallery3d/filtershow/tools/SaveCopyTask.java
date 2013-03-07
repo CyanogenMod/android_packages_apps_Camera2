@@ -185,6 +185,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
                 if (bitmap == null) {
                     return null;
                 }
+                preset.setupEnvironment();
                 bitmap = preset.applyGeometry(bitmap);
                 bitmap = preset.apply(bitmap);
 

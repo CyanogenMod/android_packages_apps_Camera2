@@ -44,6 +44,8 @@ public abstract class ImageFilter implements Cloneable {
         sActivity = null;
     }
 
+    public void freeResources() {}
+
     public void displayLowMemoryToast() {
         if (sActivity != null) {
             sActivity.runOnUiThread(new Runnable() {
