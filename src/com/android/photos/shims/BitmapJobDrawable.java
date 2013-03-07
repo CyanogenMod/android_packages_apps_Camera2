@@ -14,6 +14,7 @@ import com.android.gallery3d.ui.BitmapLoader;
 import com.android.gallery3d.util.Future;
 import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.ThreadPool;
+import com.android.photos.data.GalleryBitmapPool;
 import com.android.photos.drawables.AutoThumbnailDrawable;
 
 
@@ -33,7 +34,10 @@ public class BitmapJobDrawable extends Drawable implements Runnable {
             mLoader.cancelLoad();
         }
         mItem = item;
-        mBitmap = null;
+        if (mBitmap != null) {
+            GalleryBitmapPool.getInstance().put(mBitmap);
+            mBitmap = null;
+        }
         // TODO: Figure out why ThumbnailLoader doesn't like to be re-used
         mLoader = new ThumbnailLoader(this);
         mLoader.startLoad();
