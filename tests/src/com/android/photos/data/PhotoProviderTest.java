@@ -188,9 +188,23 @@ public class PhotoProviderTest extends ProviderTestCase2<PhotoProvider> {
 
     public void testInsert() {
         ContentValues values = new ContentValues();
-        values.put(Albums.NAME, "don't add me");
+        values.put(Albums.NAME, "add me");
         values.put(Albums.VISIBILITY, Albums.VISIBILITY_PRIVATE);
-        assertNull(mResolver.insert(Albums.CONTENT_URI, values));
+        values.put(Albums.ACCOUNT_ID, 100L);
+        values.put(Albums.DATE_MODIFIED, 100L);
+        values.put(Albums.DATE_PUBLISHED, 100L);
+        values.put(Albums.LOCATION_STRING, "Home");
+        values.put(Albums.NAME, "hello world");
+        values.putNull(Albums.PARENT_ID);
+        values.put(Albums.SUMMARY, "Nothing much to say about this");
+        values.put(Albums.TITLE, "Title");
+        Uri insertedUri = mResolver.insert(Albums.CONTENT_URI, values);
+        assertNotNull(insertedUri);
+        Cursor cursor = mResolver.query(insertedUri, PhotoDatabaseUtils.PROJECTION_ALBUMS, null,
+                null, null);
+        assertNotNull(cursor);
+        assertEquals(1, cursor.getCount());
+        cursor.close();
     }
 
     public void testUpdate() {
