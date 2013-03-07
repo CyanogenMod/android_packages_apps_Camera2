@@ -19,22 +19,22 @@ package com.android.photos;
 import android.app.Fragment;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.net.Uri;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.CursorAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.android.gallery3d.R;
 import com.android.photos.data.PhotoSetLoader;
-import com.android.photos.drawables.DataUriThumbnailDrawable;
-import com.android.photos.views.GalleryThumbnailView;
+import com.android.photos.drawables.DrawableFactory;
+import com.android.photos.shims.MediaItemsLoader;
 import com.android.photos.views.GalleryThumbnailView.GalleryThumbnailAdapter;
 
 
@@ -42,7 +42,7 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
 
     private static final int LOADER_PHOTOSET = 1;
 
-    private GalleryThumbnailView mPhotoSetView;
+    private GridView mPhotoSetView;
     private View mEmptyView;
     private ThumbnailAdapter mAdapter;
 
@@ -50,7 +50,9 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.photo_set, container, false);
-        mPhotoSetView = (GalleryThumbnailView) root.findViewById(android.R.id.list);
+        mPhotoSetView = (GridView) root.findViewById(android.R.id.list);
+        // TODO: Remove once UI stabilizes
+        mPhotoSetView.setColumnWidth(MediaItemsLoader.getThumbnailSize());
         mEmptyView = root.findViewById(android.R.id.empty);
         mEmptyView.setVisibility(View.GONE);
         mAdapter = new ThumbnailAdapter(getActivity());
@@ -68,7 +70,10 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new PhotoSetLoader(getActivity());
+        // TODO: Switch to PhotoSetLoader
+        MediaItemsLoader loader = new MediaItemsLoader(getActivity());
+        mAdapter.setDrawableFactory(loader);
+        return loader;
     }
 
     @Override
@@ -82,46 +87,37 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
-    private static class ShowFullScreen implements OnClickListener {
-
-        @Override
-        public void onClick(View view) {
-            String path = (String) view.getTag();
-            Intent intent = new Intent(view.getContext(), FullscreenViewer.class);
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(path));
-            view.getContext().startActivity(intent);
-        }
-
-    }
-
     private static class ThumbnailAdapter extends CursorAdapter implements GalleryThumbnailAdapter {
-        private static ShowFullScreen sShowFullscreenClickListener = new ShowFullScreen();
+        private LayoutInflater mInflater;
+        private DrawableFactory<Cursor> mDrawableFactory;
 
         public ThumbnailAdapter(Context context) {
             super(context, null, false);
+            mInflater = LayoutInflater.from(context);
+        }
+
+        public void setDrawableFactory(DrawableFactory<Cursor> factory) {
+            mDrawableFactory = factory;
         }
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
             ImageView iv = (ImageView) view;
-            DataUriThumbnailDrawable drawable = (DataUriThumbnailDrawable) iv.getDrawable();
-            int width = cursor.getInt(PhotoSetLoader.INDEX_WIDTH);
-            int height = cursor.getInt(PhotoSetLoader.INDEX_HEIGHT);
-            String path = cursor.getString(PhotoSetLoader.INDEX_DATA);
-            drawable.setImage(path, width, height);
-            iv.setTag(path);
+            Drawable recycle = iv.getDrawable();
+            Drawable drawable = mDrawableFactory.drawableForItem(cursor, recycle);
+            if (recycle != drawable) {
+                iv.setImageDrawable(drawable);
+            }
         }
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            ImageView iv = new ImageView(context);
-            DataUriThumbnailDrawable drawable = new DataUriThumbnailDrawable();
-            iv.setImageDrawable(drawable);
-            int padding = (int) Math.ceil(2 * context.getResources().getDisplayMetrics().density);
-            iv.setPadding(padding, padding, padding, padding);
-            iv.setOnClickListener(sShowFullscreenClickListener);
-            return iv;
+            View view = mInflater.inflate(R.layout.photo_set_item, parent, false);
+            LayoutParams params = view.getLayoutParams();
+            int columnWidth = ((GridView) parent).getColumnWidth();
+            params.height = columnWidth;
+            view.setLayoutParams(params);
+            return view;
         }
 
         @Override
