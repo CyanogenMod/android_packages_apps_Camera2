@@ -17,14 +17,15 @@
 package com.android.photos;
 
 import android.app.Fragment;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
+import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -37,15 +38,20 @@ import android.widget.Toast;
 
 import com.android.gallery3d.R;
 import com.android.photos.data.AlbumSetLoader;
-import com.android.photos.drawables.DataUriThumbnailDrawable;
+import com.android.photos.drawables.DrawableFactory;
+import com.android.photos.shims.MediaSetLoader;
 
 import java.util.Date;
 
 
-public class AlbumSetFragment extends Fragment implements OnItemClickListener {
+public class AlbumSetFragment extends Fragment implements OnItemClickListener,
+    LoaderCallbacks<Cursor> {
+
     private GridView mAlbumSetView;
     private View mEmptyView;
-    private CursorAdapter mAdapter;
+    private AlbumSetCursorAdapter mAdapter;
+
+    private static final int LOADER_ALBUMSET = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,8 +63,34 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener {
         mAdapter = new AlbumSetCursorAdapter(getActivity());
         mAlbumSetView.setAdapter(mAdapter);
         mAlbumSetView.setOnItemClickListener(this);
-        mAdapter.swapCursor(AlbumSetLoader.MOCK);
+        getLoaderManager().initLoader(LOADER_ALBUMSET, null, this);
+        updateEmptyStatus();
         return root;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        // TODO: Switch to AlbumSetLoader
+        MediaSetLoader loader = new MediaSetLoader(getActivity());
+        mAdapter.setDrawableFactory(loader);
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader,
+            Cursor data) {
+        mAdapter.swapCursor(data);
+        updateEmptyStatus();
+    }
+
+    private void updateEmptyStatus() {
+        boolean empty = (mAdapter == null || mAdapter.getCount() == 0);
+        mAlbumSetView.setVisibility(empty ? View.GONE : View.VISIBLE);
+        mEmptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
     }
 
     @Override
@@ -71,6 +103,11 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener {
 
     private static class AlbumSetCursorAdapter extends CursorAdapter {
 
+        private DrawableFactory<Cursor> mDrawableFactory;
+
+        public void setDrawableFactory(DrawableFactory<Cursor> factory) {
+            mDrawableFactory = factory;
+        }
         private Date mDate = new Date(); // Used for converting timestamps for display
 
         public AlbumSetCursorAdapter(Context context) {
@@ -85,8 +122,13 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener {
 
             TextView dateTextView = (TextView) v.findViewById(
                     R.id.album_set_item_date);
-            mDate.setTime(cursor.getLong(AlbumSetLoader.INDEX_TIMESTAMP));
-            dateTextView.setText(DateFormat.getMediumDateFormat(context).format(mDate));
+            long timestamp = cursor.getLong(AlbumSetLoader.INDEX_TIMESTAMP);
+            if (timestamp > 0) {
+                mDate.setTime(timestamp);
+                dateTextView.setText(DateFormat.getMediumDateFormat(context).format(mDate));
+            } else {
+                dateTextView.setText(null);
+            }
 
             ProgressBar uploadProgressBar = (ProgressBar) v.findViewById(
                     R.id.album_set_item_upload_progress);
@@ -97,17 +139,19 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener {
                 uploadProgressBar.setVisibility(View.INVISIBLE);
             }
 
-            // TODO show the thumbnail
+            ImageView thumbImageView = (ImageView) v.findViewById(
+                    R.id.album_set_item_image);
+            Drawable recycle = thumbImageView.getDrawable();
+            Drawable drawable = mDrawableFactory.drawableForItem(cursor, recycle);
+            if (recycle != drawable) {
+                thumbImageView.setImageDrawable(drawable);
+            }
         }
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            View v = LayoutInflater.from(context).inflate(
+            return LayoutInflater.from(context).inflate(
                     R.layout.album_set_item, parent, false);
-            ImageView thumbImageView = (ImageView) v.findViewById(
-                    R.id.album_set_item_image);
-            thumbImageView.setImageResource(android.R.color.darker_gray);
-            return v;
         }
     }
 }
