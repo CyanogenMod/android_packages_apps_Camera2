@@ -18,17 +18,32 @@ package com.android.photos.shims;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.graphics.drawable.Drawable;
+import android.provider.MediaStore.Files.FileColumns;
 
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.DataManager;
+import com.android.gallery3d.data.MediaDetails;
+import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaSet;
+import com.android.gallery3d.data.MediaSet.ItemConsumer;
 import com.android.gallery3d.data.MediaSet.SyncListener;
 import com.android.gallery3d.util.Future;
+import com.android.photos.data.AlbumSetLoader;
+import com.android.photos.data.PhotoSetLoader;
+import com.android.photos.drawables.DrawableFactory;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
 
 /**
- * Proof of concept, don't use
+ * Returns all MediaSets in a MediaSet, wrapping them in a cursor to appear
+ * like a AlbumSetLoader.
  */
-public class MediaSetLoader extends AsyncTaskLoader<MediaSet> {
+public class MediaSetLoader extends AsyncTaskLoader<Cursor> implements DrawableFactory<Cursor>{
 
     private static final SyncListener sNullListener = new SyncListener() {
         @Override
@@ -44,6 +59,15 @@ public class MediaSetLoader extends AsyncTaskLoader<MediaSet> {
             onContentChanged();
         }
     };
+
+    private ArrayList<MediaItem> mCoverItems = new ArrayList<MediaItem>();
+
+    public MediaSetLoader(Context context) {
+        super(context);
+        DataManager dm = DataManager.from(context);
+        String path = dm.getTopSetPath(DataManager.INCLUDE_ALL);
+        mMediaSet = dm.getMediaSet(path);
+    }
 
     public MediaSetLoader(Context context, String path) {
         super(context);
@@ -81,9 +105,39 @@ public class MediaSetLoader extends AsyncTaskLoader<MediaSet> {
     }
 
     @Override
-    public MediaSet loadInBackground() {
+    public Cursor loadInBackground() {
         mMediaSet.loadIfDirty();
-        return mMediaSet;
+        final MatrixCursor cursor = new MatrixCursor(AlbumSetLoader.PROJECTION);
+        final Object[] row = new Object[AlbumSetLoader.PROJECTION.length];
+        int count = mMediaSet.getSubMediaSetCount();
+        for (int i = 0; i < count; i++) {
+            MediaSet m = mMediaSet.getSubMediaSet(i);
+            m.loadIfDirty();
+            row[AlbumSetLoader.INDEX_ID] = i;
+            row[AlbumSetLoader.INDEX_TITLE] = m.getName();
+            row[AlbumSetLoader.INDEX_COUNT] = m.getMediaItemCount();
+            MediaItem coverItem = m.getCoverMediaItem();
+            row[AlbumSetLoader.INDEX_TIMESTAMP] = coverItem.getDateInMs();
+            mCoverItems.add(coverItem);
+            cursor.addRow(row);
+        }
+        return cursor;
     }
 
+    @Override
+    public Drawable drawableForItem(Cursor item, Drawable recycle) {
+        BitmapJobDrawable drawable = null;
+        if (recycle == null || !(recycle instanceof BitmapJobDrawable)) {
+            drawable = new BitmapJobDrawable();
+        } else {
+            drawable = (BitmapJobDrawable) recycle;
+        }
+        int index = item.getInt(AlbumSetLoader.INDEX_ID);
+        drawable.setMediaItem(mCoverItems.get(index));
+        return drawable;
+    }
+
+    public static int getThumbnailSize() {
+        return MediaItem.getTargetSize(MediaItem.TYPE_MICROTHUMBNAIL);
+    }
 }
