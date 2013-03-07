@@ -13,20 +13,20 @@ public class AlbumSetLoader {
     public static final int INDEX_COUNT_PENDING_UPLOAD = 6;
     public static final int INDEX_COUNT = 7;
 
+    public static final String[] PROJECTION = {
+        "_id",
+        "title",
+        "timestamp",
+        "thumb_uri",
+        "thumb_width",
+        "thumb_height",
+        "count_pending_upload",
+        "_count"
+    };
     public static final MatrixCursor MOCK = createRandomCursor(30);
 
     private static MatrixCursor createRandomCursor(int count) {
-        String[] rows = {
-                "_id",
-                "title",
-                "timestamp",
-                "thumb_uri",
-                "thumb_width",
-                "thumb_height",
-                "count_pending_upload",
-                "_count"
-        };
-        MatrixCursor c = new MatrixCursor(rows, count);
+        MatrixCursor c = new MatrixCursor(PROJECTION, count);
         for (int i = 0; i < count; i++) {
             c.addRow(createRandomRow());
         }
