@@ -34,7 +34,7 @@ public class PhotoProviderTest extends ProviderTestCase2<PhotoProvider> {
     private static final String TAG = PhotoProviderTest.class.getSimpleName();
 
     private static final String MIME_TYPE = "test/test";
-    private static final String ALBUM_NAME = "My Album";
+    private static final String ALBUM_TITLE = "My Album";
     private static final long ALBUM_PARENT_ID = 100;
     private static final String META_KEY = "mykey";
     private static final String META_VALUE = "myvalue";
@@ -69,7 +69,7 @@ public class PhotoProviderTest extends ProviderTestCase2<PhotoProvider> {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         db.beginTransaction();
         try {
-            PhotoDatabaseUtils.insertAlbum(db, ALBUM_PARENT_ID, ALBUM_NAME,
+            PhotoDatabaseUtils.insertAlbum(db, ALBUM_PARENT_ID, ALBUM_TITLE,
                     Albums.VISIBILITY_PRIVATE, 100L);
             mAlbumId = PhotoDatabaseUtils.queryAlbumIdFromParentId(db, ALBUM_PARENT_ID);
             PhotoDatabaseUtils.insertPhoto(db, 100, 100, System.currentTimeMillis(), mAlbumId,
@@ -188,16 +188,15 @@ public class PhotoProviderTest extends ProviderTestCase2<PhotoProvider> {
 
     public void testInsert() {
         ContentValues values = new ContentValues();
-        values.put(Albums.NAME, "add me");
+        values.put(Albums.TITLE, "add me");
         values.put(Albums.VISIBILITY, Albums.VISIBILITY_PRIVATE);
         values.put(Albums.ACCOUNT_ID, 100L);
         values.put(Albums.DATE_MODIFIED, 100L);
         values.put(Albums.DATE_PUBLISHED, 100L);
         values.put(Albums.LOCATION_STRING, "Home");
-        values.put(Albums.NAME, "hello world");
+        values.put(Albums.TITLE, "hello world");
         values.putNull(Albums.PARENT_ID);
         values.put(Albums.SUMMARY, "Nothing much to say about this");
-        values.put(Albums.TITLE, "Title");
         Uri insertedUri = mResolver.insert(Albums.CONTENT_URI, values);
         assertNotNull(insertedUri);
         Cursor cursor = mResolver.query(insertedUri, PhotoDatabaseUtils.PROJECTION_ALBUMS, null,
@@ -210,11 +209,11 @@ public class PhotoProviderTest extends ProviderTestCase2<PhotoProvider> {
     public void testUpdate() {
         ContentValues values = new ContentValues();
         // Normal update -- use an album.
-        values.put(Albums.NAME, "foo");
+        values.put(Albums.TITLE, "foo");
         Uri albumUri = ContentUris.withAppendedId(Albums.CONTENT_URI, mAlbumId);
         assertEquals(1, mResolver.update(albumUri, values, null, null));
         String[] projection = {
-            Albums.NAME,
+            Albums.TITLE,
         };
         Cursor cursor = mResolver.query(albumUri, projection, null, null, null);
         assertEquals(1, cursor.getCount());
@@ -224,7 +223,7 @@ public class PhotoProviderTest extends ProviderTestCase2<PhotoProvider> {
 
         // Update a row that doesn't exist.
         Uri noAlbumUri = ContentUris.withAppendedId(Albums.CONTENT_URI, mAlbumId + 1);
-        values.put(Albums.NAME, "bar");
+        values.put(Albums.TITLE, "bar");
         assertEquals(0, mResolver.update(noAlbumUri, values, null, null));
 
         // Update a metadata value that exists.
