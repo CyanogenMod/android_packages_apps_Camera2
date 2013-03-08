@@ -47,6 +47,12 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
     private ThumbnailAdapter mAdapter;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mAdapter = new ThumbnailAdapter(getActivity());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.photo_set, container, false);
@@ -55,7 +61,6 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
         mPhotoSetView.setColumnWidth(MediaItemsLoader.getThumbnailSize());
         mEmptyView = root.findViewById(android.R.id.empty);
         mEmptyView.setVisibility(View.GONE);
-        mAdapter = new ThumbnailAdapter(getActivity());
         mPhotoSetView.setAdapter(mAdapter);
         getLoaderManager().initLoader(LOADER_PHOTOSET, null, this);
         updateEmptyStatus();
