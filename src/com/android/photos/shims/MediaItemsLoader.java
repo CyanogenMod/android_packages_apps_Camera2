@@ -21,6 +21,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.provider.MediaStore.Files.FileColumns;
 import android.util.SparseArray;
 
@@ -32,13 +33,12 @@ import com.android.gallery3d.data.MediaSet.ItemConsumer;
 import com.android.gallery3d.data.MediaSet.SyncListener;
 import com.android.gallery3d.util.Future;
 import com.android.photos.data.PhotoSetLoader;
-import com.android.photos.drawables.DrawableFactory;
 
 /**
  * Returns all MediaItems in a MediaSet, wrapping them in a cursor to appear
  * like a PhotoSetLoader
  */
-public class MediaItemsLoader extends AsyncTaskLoader<Cursor> implements DrawableFactory<Cursor> {
+public class MediaItemsLoader extends AsyncTaskLoader<Cursor> implements LoaderCompatShim<Cursor> {
 
     private static final SyncListener sNullListener = new SyncListener() {
         @Override
@@ -146,6 +146,13 @@ public class MediaItemsLoader extends AsyncTaskLoader<Cursor> implements Drawabl
 
     public static int getThumbnailSize() {
         return MediaItem.getTargetSize(MediaItem.TYPE_MICROTHUMBNAIL);
+    }
+
+    @Override
+    public Uri uriForItem(Cursor item) {
+        int index = item.getInt(PhotoSetLoader.INDEX_ID);
+        MediaItem mi = mMediaItems.get(index);
+        return mi == null ? null : mi.getContentUri();
     }
 
 }
