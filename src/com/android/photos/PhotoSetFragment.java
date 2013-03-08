@@ -19,32 +19,40 @@ package com.android.photos;
 import android.app.Fragment;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CursorAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.app.Gallery;
 import com.android.photos.data.PhotoSetLoader;
-import com.android.photos.drawables.DrawableFactory;
+import com.android.photos.shims.LoaderCompatShim;
 import com.android.photos.shims.MediaItemsLoader;
 import com.android.photos.views.GalleryThumbnailView.GalleryThumbnailAdapter;
 
 
-public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor> {
+public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor>,
+        OnItemClickListener {
 
     private static final int LOADER_PHOTOSET = 1;
 
     private GridView mPhotoSetView;
     private View mEmptyView;
     private ThumbnailAdapter mAdapter;
+    private boolean mInitialLoadComplete = false;
+    private LoaderCompatShim<Cursor> mLoaderCompatShim;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +67,7 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
         mPhotoSetView = (GridView) root.findViewById(android.R.id.list);
         // TODO: Remove once UI stabilizes
         mPhotoSetView.setColumnWidth(MediaItemsLoader.getThumbnailSize());
+        mPhotoSetView.setOnItemClickListener(this);
         mEmptyView = root.findViewById(android.R.id.empty);
         mEmptyView.setVisibility(View.GONE);
         mPhotoSetView.setAdapter(mAdapter);
@@ -70,7 +79,22 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
     private void updateEmptyStatus() {
         boolean empty = (mAdapter == null || mAdapter.getCount() == 0);
         mPhotoSetView.setVisibility(empty ? View.GONE : View.VISIBLE);
-        mEmptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
+        mEmptyView.setVisibility(empty && mInitialLoadComplete
+                ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position,
+            long id) {
+        if (mLoaderCompatShim == null) {
+            // Not fully initialized yet, discard
+            return;
+        }
+        Cursor item = mAdapter.getItem(position);
+        Uri uri = mLoaderCompatShim.uriForItem(item);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.setClass(getActivity(), Gallery.class);
+        startActivity(intent);
     }
 
     @Override
@@ -78,6 +102,8 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
         // TODO: Switch to PhotoSetLoader
         MediaItemsLoader loader = new MediaItemsLoader(getActivity());
         mAdapter.setDrawableFactory(loader);
+        mInitialLoadComplete = false;
+        mLoaderCompatShim = loader;
         return loader;
     }
 
@@ -85,6 +111,7 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
     public void onLoadFinished(Loader<Cursor> loader,
             Cursor data) {
         mAdapter.swapCursor(data);
+        mInitialLoadComplete = true;
         updateEmptyStatus();
     }
 
@@ -94,14 +121,14 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
 
     private static class ThumbnailAdapter extends CursorAdapter implements GalleryThumbnailAdapter {
         private LayoutInflater mInflater;
-        private DrawableFactory<Cursor> mDrawableFactory;
+        private LoaderCompatShim<Cursor> mDrawableFactory;
 
         public ThumbnailAdapter(Context context) {
             super(context, null, false);
             mInflater = LayoutInflater.from(context);
         }
 
-        public void setDrawableFactory(DrawableFactory<Cursor> factory) {
+        public void setDrawableFactory(LoaderCompatShim<Cursor> factory) {
             mDrawableFactory = factory;
         }
 
