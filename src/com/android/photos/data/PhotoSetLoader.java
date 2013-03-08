@@ -31,6 +31,8 @@ import com.android.photos.shims.LoaderCompatShim;
 
 public class PhotoSetLoader extends CursorLoader implements LoaderCompatShim<Cursor> {
 
+    public static final String SUPPORTED_OPERATIONS = "supported_operations";
+
     private static final Uri CONTENT_URI = Files.getContentUri("external");
     public static final String[] PROJECTION = new String[] {
         FileColumns._ID,
@@ -39,7 +41,9 @@ public class PhotoSetLoader extends CursorLoader implements LoaderCompatShim<Cur
         FileColumns.HEIGHT,
         FileColumns.DATE_ADDED,
         FileColumns.MEDIA_TYPE,
+        SUPPORTED_OPERATIONS,
     };
+
     private static final String SORT_ORDER = FileColumns.DATE_ADDED + " DESC";
     private static final String SELECTION =
             FileColumns.MEDIA_TYPE + " == " + FileColumns.MEDIA_TYPE_IMAGE
@@ -52,6 +56,7 @@ public class PhotoSetLoader extends CursorLoader implements LoaderCompatShim<Cur
     public static final int INDEX_HEIGHT = 3;
     public static final int INDEX_DATE_ADDED = 4;
     public static final int INDEX_MEDIA_TYPE = 5;
+    public static final int INDEX_SUPPORTED_OPERATIONS = 6;
 
     private static final Uri GLOBAL_CONTENT_URI = Uri.parse("content://" + MediaStore.AUTHORITY + "/external/");
     private final ContentObserver mGlobalObserver = new ForceLoadContentObserver();
