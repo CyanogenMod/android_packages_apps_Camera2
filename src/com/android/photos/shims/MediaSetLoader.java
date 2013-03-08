@@ -21,6 +21,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.DataManager;
@@ -29,7 +30,6 @@ import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.MediaSet.SyncListener;
 import com.android.gallery3d.util.Future;
 import com.android.photos.data.AlbumSetLoader;
-import com.android.photos.drawables.DrawableFactory;
 
 import java.util.ArrayList;
 
@@ -37,7 +37,7 @@ import java.util.ArrayList;
  * Returns all MediaSets in a MediaSet, wrapping them in a cursor to appear
  * like a AlbumSetLoader.
  */
-public class MediaSetLoader extends AsyncTaskLoader<Cursor> implements DrawableFactory<Cursor>{
+public class MediaSetLoader extends AsyncTaskLoader<Cursor> implements LoaderCompatShim<Cursor>{
 
     private static final SyncListener sNullListener = new SyncListener() {
         @Override
@@ -139,5 +139,12 @@ public class MediaSetLoader extends AsyncTaskLoader<Cursor> implements DrawableF
 
     public static int getThumbnailSize() {
         return MediaItem.getTargetSize(MediaItem.TYPE_MICROTHUMBNAIL);
+    }
+
+    @Override
+    public Uri uriForItem(Cursor item) {
+        int index = item.getInt(AlbumSetLoader.INDEX_ID);
+        MediaSet ms = mMediaSet.getSubMediaSet(index);
+        return ms == null ? null : ms.getContentUri();
     }
 }
