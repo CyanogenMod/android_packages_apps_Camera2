@@ -24,6 +24,7 @@ public class BitmapJobDrawable extends Drawable implements Runnable {
     private Bitmap mBitmap;
     private Paint mPaint = new Paint();
     private Matrix mDrawMatrix = new Matrix();
+    private int mRotation = 0;
 
     public BitmapJobDrawable() {
     }
@@ -43,6 +44,7 @@ public class BitmapJobDrawable extends Drawable implements Runnable {
             // TODO: Figure out why ThumbnailLoader doesn't like to be re-used
             mLoader = new ThumbnailLoader(this);
             mLoader.startLoad();
+            mRotation = mItem.getRotation();
         }
         invalidateSelf();
     }
@@ -69,6 +71,7 @@ public class BitmapJobDrawable extends Drawable implements Runnable {
             canvas.save();
             canvas.clipRect(bounds);
             canvas.concat(mDrawMatrix);
+            canvas.rotate(mRotation, bounds.centerX(), bounds.centerY());
             canvas.drawBitmap(mBitmap, 0, 0, mPaint);
             canvas.restore();
         } else {
