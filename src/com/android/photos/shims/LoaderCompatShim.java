@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package com.android.photos.drawables;
+package com.android.photos.shims;
 
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 
 
-public interface DrawableFactory<T> {
+public interface LoaderCompatShim<T> {
     Drawable drawableForItem(T item, Drawable recycle);
+    Uri uriForItem(T item);
 }
