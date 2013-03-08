@@ -121,6 +121,8 @@ public class MediaItemsLoader extends AsyncTaskLoader<Cursor> implements LoaderC
                     mappedMediaType = FileColumns.MEDIA_TYPE_VIDEO;
                 }
                 row[PhotoSetLoader.INDEX_MEDIA_TYPE] = mappedMediaType;
+                row[PhotoSetLoader.INDEX_SUPPORTED_OPERATIONS] =
+                        item.getSupportedOperations();
                 cursor.addRow(row);
                 mediaItems.append(index, item);
             }

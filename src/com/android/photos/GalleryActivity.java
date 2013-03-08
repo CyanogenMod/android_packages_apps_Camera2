@@ -33,12 +33,20 @@ public class GalleryActivity extends Activity {
 
     private final String FTAG_PHOTOSET = "PhotoSet";
     private final String FTAG_ALBUMSET = "AlbumSet";
+    private SelectionManager mSelectionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setupActionBar();
+    }
+
+    protected SelectionManager getSelectionManager() {
+        if (mSelectionManager == null) {
+            mSelectionManager = new SelectionManager(this);
+        }
+        return mSelectionManager;
     }
 
     private void setupActionBar() {
