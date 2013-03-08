@@ -22,6 +22,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.drawable.Drawable;
 import android.provider.MediaStore.Files.FileColumns;
+import android.util.SparseArray;
 
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.DataManager;
@@ -32,8 +33,6 @@ import com.android.gallery3d.data.MediaSet.SyncListener;
 import com.android.gallery3d.util.Future;
 import com.android.photos.data.PhotoSetLoader;
 import com.android.photos.drawables.DrawableFactory;
-
-import java.util.ArrayList;
 
 /**
  * Returns all MediaItems in a MediaSet, wrapping them in a cursor to appear
@@ -47,7 +46,7 @@ public class MediaItemsLoader extends AsyncTaskLoader<Cursor> implements Drawabl
         }
     };
 
-    private MediaSet mMediaSet;
+    private final MediaSet mMediaSet;
     private Future<Integer> mSyncTask = null;
     private ContentListener mObserver = new ContentListener() {
         @Override
@@ -55,7 +54,7 @@ public class MediaItemsLoader extends AsyncTaskLoader<Cursor> implements Drawabl
             onContentChanged();
         }
     };
-    private ArrayList<MediaItem> mMediaItems = new ArrayList<MediaItem>();
+    private SparseArray<MediaItem> mMediaItems;
 
     public MediaItemsLoader(Context context) {
         super(context);
@@ -104,6 +103,7 @@ public class MediaItemsLoader extends AsyncTaskLoader<Cursor> implements Drawabl
         mMediaSet.loadIfDirty();
         final MatrixCursor cursor = new MatrixCursor(PhotoSetLoader.PROJECTION);
         final Object[] row = new Object[PhotoSetLoader.PROJECTION.length];
+        final SparseArray<MediaItem> mediaItems = new SparseArray<MediaItem>();
         mMediaSet.enumerateTotalMediaItems(new ItemConsumer() {
             @Override
             public void consume(int index, MediaItem item) {
@@ -122,9 +122,12 @@ public class MediaItemsLoader extends AsyncTaskLoader<Cursor> implements Drawabl
                 }
                 row[PhotoSetLoader.INDEX_MEDIA_TYPE] = mappedMediaType;
                 cursor.addRow(row);
-                mMediaItems.add(item);
+                mediaItems.append(index, item);
             }
         });
+        synchronized (mMediaSet) {
+            mMediaItems = mediaItems;
+        }
         return cursor;
     }
 
