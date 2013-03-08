@@ -27,9 +27,9 @@ import android.provider.MediaStore.Files;
 import android.provider.MediaStore.Files.FileColumns;
 
 import com.android.photos.drawables.DataUriThumbnailDrawable;
-import com.android.photos.drawables.DrawableFactory;
+import com.android.photos.shims.LoaderCompatShim;
 
-public class PhotoSetLoader extends CursorLoader implements DrawableFactory<Cursor> {
+public class PhotoSetLoader extends CursorLoader implements LoaderCompatShim<Cursor> {
 
     private static final Uri CONTENT_URI = Files.getContentUri("external");
     public static final String[] PROJECTION = new String[] {
@@ -84,5 +84,10 @@ public class PhotoSetLoader extends CursorLoader implements DrawableFactory<Curs
         drawable.setImage(item.getString(INDEX_DATA),
                 item.getInt(INDEX_WIDTH), item.getInt(INDEX_HEIGHT));
         return drawable;
+    }
+
+    @Override
+    public Uri uriForItem(Cursor item) {
+        return null;
     }
 }

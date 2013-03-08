@@ -38,7 +38,7 @@ import android.widget.Toast;
 
 import com.android.gallery3d.R;
 import com.android.photos.data.AlbumSetLoader;
-import com.android.photos.drawables.DrawableFactory;
+import com.android.photos.shims.LoaderCompatShim;
 import com.android.photos.shims.MediaSetLoader;
 
 import java.util.Date;
@@ -108,9 +108,9 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
 
     private static class AlbumSetCursorAdapter extends CursorAdapter {
 
-        private DrawableFactory<Cursor> mDrawableFactory;
+        private LoaderCompatShim<Cursor> mDrawableFactory;
 
-        public void setDrawableFactory(DrawableFactory<Cursor> factory) {
+        public void setDrawableFactory(LoaderCompatShim<Cursor> factory) {
             mDrawableFactory = factory;
         }
         private Date mDate = new Date(); // Used for converting timestamps for display
