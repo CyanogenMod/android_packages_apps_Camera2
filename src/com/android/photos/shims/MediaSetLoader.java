@@ -21,22 +21,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.drawable.Drawable;
-import android.provider.MediaStore.Files.FileColumns;
 
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.DataManager;
-import com.android.gallery3d.data.MediaDetails;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaSet;
-import com.android.gallery3d.data.MediaSet.ItemConsumer;
 import com.android.gallery3d.data.MediaSet.SyncListener;
 import com.android.gallery3d.util.Future;
 import com.android.photos.data.AlbumSetLoader;
-import com.android.photos.data.PhotoSetLoader;
 import com.android.photos.drawables.DrawableFactory;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 
 /**
@@ -51,7 +45,7 @@ public class MediaSetLoader extends AsyncTaskLoader<Cursor> implements DrawableF
         }
     };
 
-    private MediaSet mMediaSet;
+    private final MediaSet mMediaSet;
     private Future<Integer> mSyncTask = null;
     private ContentListener mObserver = new ContentListener() {
         @Override
@@ -60,7 +54,7 @@ public class MediaSetLoader extends AsyncTaskLoader<Cursor> implements DrawableF
         }
     };
 
-    private ArrayList<MediaItem> mCoverItems = new ArrayList<MediaItem>();
+    private ArrayList<MediaItem> mCoverItems;
 
     public MediaSetLoader(Context context) {
         super(context);
@@ -110,6 +104,7 @@ public class MediaSetLoader extends AsyncTaskLoader<Cursor> implements DrawableF
         final MatrixCursor cursor = new MatrixCursor(AlbumSetLoader.PROJECTION);
         final Object[] row = new Object[AlbumSetLoader.PROJECTION.length];
         int count = mMediaSet.getSubMediaSetCount();
+        ArrayList<MediaItem> coverItems = new ArrayList<MediaItem>(count);
         for (int i = 0; i < count; i++) {
             MediaSet m = mMediaSet.getSubMediaSet(i);
             m.loadIfDirty();
@@ -117,9 +112,14 @@ public class MediaSetLoader extends AsyncTaskLoader<Cursor> implements DrawableF
             row[AlbumSetLoader.INDEX_TITLE] = m.getName();
             row[AlbumSetLoader.INDEX_COUNT] = m.getMediaItemCount();
             MediaItem coverItem = m.getCoverMediaItem();
-            row[AlbumSetLoader.INDEX_TIMESTAMP] = coverItem.getDateInMs();
-            mCoverItems.add(coverItem);
+            if (coverItem != null) {
+                row[AlbumSetLoader.INDEX_TIMESTAMP] = coverItem.getDateInMs();
+            }
+            coverItems.add(coverItem);
             cursor.addRow(row);
+        }
+        synchronized (mMediaSet) {
+            mCoverItems = coverItems;
         }
         return cursor;
     }
