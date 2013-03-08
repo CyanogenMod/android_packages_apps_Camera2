@@ -66,6 +66,7 @@ public class MasterImage implements RenderingRequestCaller {
     private GeometryMetadata mPreviousGeometry = null;
 
     private float mScaleFactor = 1.0f;
+    private float mMaxScaleFactor = 3.0f; // TODO: base this on the current view / image
     private Point mTranslation = new Point();
     private Point mOriginalTranslation = new Point();
 
@@ -490,5 +491,13 @@ public class MasterImage implements RenderingRequestCaller {
 
     public Bitmap getThumbnailBitmap() {
         return mThumbnailBitmap;
+    }
+
+    public float getMaxScaleFactor() {
+        return mMaxScaleFactor;
+    }
+
+    public void setMaxScaleFactor(float maxScaleFactor) {
+        mMaxScaleFactor = maxScaleFactor;
     }
 }
