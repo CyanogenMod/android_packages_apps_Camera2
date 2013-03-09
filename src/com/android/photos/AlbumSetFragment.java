@@ -21,42 +21,54 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
-import android.text.format.DateFormat;
+import android.provider.MediaStore.Files.FileColumns;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.CursorAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
+import com.android.photos.adapters.AlbumSetCursorAdapter;
 import com.android.photos.data.AlbumSetLoader;
 import com.android.photos.shims.LoaderCompatShim;
 import com.android.photos.shims.MediaSetLoader;
 
-import java.util.Date;
+import java.util.ArrayList;
 
 
 public class AlbumSetFragment extends Fragment implements OnItemClickListener,
-    LoaderCallbacks<Cursor> {
+    LoaderCallbacks<Cursor>, MultiChoiceManager.Delegate, SelectionManager.Client {
 
     private GridView mAlbumSetView;
     private View mEmptyView;
     private AlbumSetCursorAdapter mAdapter;
+    private LoaderCompatShim<Cursor> mLoaderCompatShim;
+    private MultiChoiceManager mMultiChoiceManager;
+    private SelectionManager mSelectionManager;
 
     private static final int LOADER_ALBUMSET = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAdapter = new AlbumSetCursorAdapter(getActivity());
+        Context context = getActivity();
+        mAdapter = new AlbumSetCursorAdapter(context);
+        mMultiChoiceManager = new MultiChoiceManager(context, this);
+        mMultiChoiceManager.setSelectionManager(mSelectionManager);
+    }
+
+    @Override
+    public void setSelectionManager(SelectionManager manager) {
+        mSelectionManager = manager;
+        if (mMultiChoiceManager != null) {
+            mMultiChoiceManager.setSelectionManager(manager);
+        }
     }
 
     @Override
@@ -67,6 +79,8 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
         mEmptyView = root.findViewById(android.R.id.empty);
         mEmptyView.setVisibility(View.GONE);
         mAlbumSetView.setAdapter(mAdapter);
+        mAlbumSetView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
+        mAlbumSetView.setMultiChoiceModeListener(mMultiChoiceManager);
         mAlbumSetView.setOnItemClickListener(this);
         getLoaderManager().initLoader(LOADER_ALBUMSET, null, this);
         updateEmptyStatus();
@@ -78,6 +92,7 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
         // TODO: Switch to AlbumSetLoader
         MediaSetLoader loader = new MediaSetLoader(getActivity());
         mAdapter.setDrawableFactory(loader);
+        mLoaderCompatShim = loader;
         return loader;
     }
 
@@ -100,63 +115,54 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
 
     @Override
     public void onItemClick(AdapterView<?> av, View v, int pos, long id) {
-        Cursor c = (Cursor) av.getItemAtPosition(pos);
-        int albumId = c.getInt(AlbumSetLoader.INDEX_ID);
-        // TODO launch an activity showing the photos in the album
-        Toast.makeText(v.getContext(), "Clicked " + albumId, Toast.LENGTH_SHORT).show();
+        if (mLoaderCompatShim == null) {
+            // Not fully initialized yet, discard
+            return;
+        }
+        Cursor item = (Cursor) mAdapter.getItem(pos);
+        Toast.makeText(v.getContext(),
+                "Tapped " + item.getInt(AlbumSetLoader.INDEX_ID),
+                Toast.LENGTH_SHORT).show();
     }
 
-    private static class AlbumSetCursorAdapter extends CursorAdapter {
-
-        private LoaderCompatShim<Cursor> mDrawableFactory;
-
-        public void setDrawableFactory(LoaderCompatShim<Cursor> factory) {
-            mDrawableFactory = factory;
-        }
-        private Date mDate = new Date(); // Used for converting timestamps for display
-
-        public AlbumSetCursorAdapter(Context context) {
-            super(context, null, false);
-        }
-
-        @Override
-        public void bindView(View v, Context context, Cursor cursor) {
-            TextView titleTextView = (TextView) v.findViewById(
-                    R.id.album_set_item_title);
-            titleTextView.setText(cursor.getString(AlbumSetLoader.INDEX_TITLE));
-
-            TextView dateTextView = (TextView) v.findViewById(
-                    R.id.album_set_item_date);
-            long timestamp = cursor.getLong(AlbumSetLoader.INDEX_TIMESTAMP);
-            if (timestamp > 0) {
-                mDate.setTime(timestamp);
-                dateTextView.setText(DateFormat.getMediumDateFormat(context).format(mDate));
-            } else {
-                dateTextView.setText(null);
-            }
-
-            ProgressBar uploadProgressBar = (ProgressBar) v.findViewById(
-                    R.id.album_set_item_upload_progress);
-            if (cursor.getInt(AlbumSetLoader.INDEX_COUNT_PENDING_UPLOAD) > 0) {
-                uploadProgressBar.setVisibility(View.VISIBLE);
-                uploadProgressBar.setProgress(50);
-            } else {
-                uploadProgressBar.setVisibility(View.INVISIBLE);
-            }
-
-            ImageView thumbImageView = (ImageView) v.findViewById(
-                    R.id.album_set_item_image);
-            Drawable recycle = thumbImageView.getDrawable();
-            Drawable drawable = mDrawableFactory.drawableForItem(cursor, recycle);
-            if (recycle != drawable) {
-                thumbImageView.setImageDrawable(drawable);
-            }
-        }
-
-        @Override
-        public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            return LayoutInflater.from(context).inflate(
-                    R.layout.album_set_item, parent, false);
-        }
+    @Override
+    public int getItemMediaType(Object item) {
+        return FileColumns.MEDIA_TYPE_NONE;
     }
+
+    @Override
+    public int getItemSupportedOperations(Object item) {
+        return ((Cursor) item).getInt(AlbumSetLoader.INDEX_SUPPORTED_OPERATIONS);
+    }
+
+    @Override
+    public Object getItemAtPosition(int position) {
+        return mAdapter.getItem(position);
+    }
+
+    @Override
+    public ArrayList<Uri> getSubItemUrisForItem(Object item) {
+        return mLoaderCompatShim.urisForSubItems((Cursor) item);
+    }
+
+    @Override
+    public Object getPathForItemAtPosition(int position) {
+        return mLoaderCompatShim.getPathForItem((Cursor) mAdapter.getItem(position));
+    }
+
+    @Override
+    public void deleteItemWithPath(Object itemPath) {
+        mLoaderCompatShim.deleteItemWithPath(itemPath);
+    }
+
+    @Override
+    public SparseBooleanArray getSelectedItemPositions() {
+        return mAlbumSetView.getCheckedItemPositions();
+    }
+
+    @Override
+    public int getSelectedItemCount() {
+        return mAlbumSetView.getCheckedItemCount();
+    }
+
 }
