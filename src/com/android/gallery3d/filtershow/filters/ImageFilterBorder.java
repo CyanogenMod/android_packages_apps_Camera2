@@ -47,6 +47,10 @@ public class ImageFilterBorder extends ImageFilter {
         return mParameters;
     }
 
+    public void freeResources() {
+       mDrawables.clear();
+    }
+
     public Bitmap applyHelper(Bitmap bitmap, float scale1, float scale2 ) {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
