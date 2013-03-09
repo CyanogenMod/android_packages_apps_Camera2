@@ -125,7 +125,9 @@ public class FilteringPipeline implements Handler.Callback {
     public synchronized void setOriginal(Bitmap bitmap) {
         mOriginalBitmap = bitmap;
         Log.v(LOGTAG,"setOriginal, size " + bitmap.getWidth() + " x " + bitmap.getHeight());
-        updateOriginalAllocation(MasterImage.getImage().getPreset());
+        ImagePreset preset = MasterImage.getImage().getPreset();
+        preset.setupEnvironment();
+        updateOriginalAllocation(preset);
         updatePreviewBuffer();
     }
 
@@ -203,7 +205,7 @@ public class FilteringPipeline implements Handler.Callback {
         }
         Message msg = mProcessingHandler.obtainMessage(COMPUTE_PRESET);
         msg.obj = MasterImage.getImage().getPreset();
-        mProcessingHandler.sendMessage(msg);
+        mProcessingHandler.sendMessageAtFrontOfQueue(msg);
     }
 
     private void setPresetParameters(ImagePreset preset) {
@@ -247,6 +249,7 @@ public class FilteringPipeline implements Handler.Callback {
         Bitmap bitmap = request.getBitmap();
         ImagePreset preset = request.getImagePreset();
         setPresetParameters(preset);
+        preset.setupEnvironment();
 
         if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
             bitmap = MasterImage.getImage().getImageLoader().getScaleOneImageForPreset(null, preset,
@@ -282,7 +285,10 @@ public class FilteringPipeline implements Handler.Callback {
                 || request.getType() == RenderingRequest.PARTIAL_RENDERING) {
             Bitmap bmp = preset.apply(bitmap);
             request.setBitmap(bmp);
+
+            FiltersManager.getManager().freeFilterResources(preset);
         }
+
         if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
             FiltersManager.getManager().resetBitmapsRS();
         }
@@ -296,6 +302,9 @@ public class FilteringPipeline implements Handler.Callback {
 
         String thread = Thread.currentThread().getName();
         long time = System.currentTimeMillis();
+        setPresetParameters(preset);
+        preset.setupEnvironment(FiltersManager.getPreviewManager());
+
         if (updateOriginalAllocation(preset)) {
             buffer.updateBitmaps(mResizedOriginalBitmap);
         }
@@ -309,8 +318,8 @@ public class FilteringPipeline implements Handler.Callback {
         }
         mOriginalAllocation.copyTo(bitmap);
 
-        setPresetParameters(preset);
         bitmap = preset.apply(bitmap);
+        FiltersManager.getPreviewManager().freeFilterResources(preset);
 
         time = System.currentTimeMillis() - time;
         time2 = System.currentTimeMillis() - time2;
