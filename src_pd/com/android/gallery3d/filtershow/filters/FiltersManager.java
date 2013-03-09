@@ -21,10 +21,17 @@ import java.util.Vector;
 
 public class FiltersManager extends BaseFiltersManager {
     private static FiltersManager sInstance = null;
+    private static FiltersManager sPreviewInstance = null;
 
-    protected FiltersManager() {
-        mFilters = new HashMap<Class, ImageFilter>();
-        addFilters(mFilters);
+    public FiltersManager() {
+        init();
+    }
+
+    public static FiltersManager getPreviewManager() {
+        if (sPreviewInstance == null) {
+            sPreviewInstance = new FiltersManager();
+        }
+        return sPreviewInstance;
     }
 
     public static FiltersManager getManager() {

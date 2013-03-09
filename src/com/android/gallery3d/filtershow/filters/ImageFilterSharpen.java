@@ -47,6 +47,10 @@ public class ImageFilterSharpen extends ImageFilterRS {
         mParameters = parameters;
     }
 
+    protected void resetAllocations() {
+        // nothing to do
+    }
+
     @Override
     public void createFilter(android.content.res.Resources res, float scaleFactor,
             int quality) {

@@ -36,6 +36,8 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
         // (see FilterShowActivity's LoadBordersTask)
         ImageFilterBorder filter = (ImageFilterBorder) FiltersManager.getManager().getFilter(getFilterClass());
         filter.getDrawable(getDrawableResource());
+        filter = (ImageFilterBorder) FiltersManager.getPreviewManager().getFilter(getFilterClass());
+        filter.getDrawable(getDrawableResource());
     }
 
     public String toString() {

@@ -394,6 +394,7 @@ public class ImageLoader {
                 float scaleFactor = imagePreset.getScaleFactor();
                 float scale = (float) bmp.getWidth() / (float) getOriginalBounds().width();
                 imagePreset.setScaleFactor(scale);
+                imagePreset.setupEnvironment();
                 bmp = imagePreset.apply(bmp);
                 imagePreset.setScaleFactor(scaleFactor);
                 mZoomCache.setImage(imagePreset, bounds, bmp);
@@ -551,6 +552,7 @@ public class ImageLoader {
                             Log.w(LOGTAG, "Failed to save image!");
                             return null;
                         }
+                        param.setupEnvironment();
                         bitmap = param.applyGeometry(bitmap);
                         bitmap = param.apply(bitmap);
                         noBitmap = false;

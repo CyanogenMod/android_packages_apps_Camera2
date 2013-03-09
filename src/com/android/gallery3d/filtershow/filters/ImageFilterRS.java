@@ -32,6 +32,8 @@ public abstract class ImageFilterRS extends ImageFilter {
     private static Bitmap sOldBitmap = null;
     private Bitmap mOldBitmap = null;
 
+    private boolean mResourcesLoaded = false;
+
     private final Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
 
     public void resetBitmap() {
@@ -58,20 +60,18 @@ public abstract class ImageFilterRS extends ImageFilter {
             sOldBitmap = bitmap;
         }
         mInPixelsAllocation.copyFrom(bitmap);
-        if (mOldBitmap != sOldBitmap) {
+        if (mOldBitmap != sOldBitmap || !isResourcesLoaded()) {
+            freeResources();
             createFilter(mResources, scaleFactor, quality);
             mOldBitmap = sOldBitmap;
+            setResourcesLoaded(true);
         }
     }
 
-    public void createFilter(android.content.res.Resources res,
-            float scaleFactor, int quality) {
-        // Stub
-    }
+    abstract public void createFilter(android.content.res.Resources res,
+            float scaleFactor, int quality);
 
-    public void runFilter() {
-        // Stub
-    }
+    abstract public void runFilter();
 
     public void update(Bitmap bitmap) {
         mOutPixelsAllocation.copyTo(bitmap);
@@ -135,7 +135,23 @@ public abstract class ImageFilterRS extends ImageFilter {
         greyConvert.forEach_RGBAtoA(bitmapTemp, bitmapAlloc);
 
         return bitmapAlloc;
-
     }
 
+    public boolean isResourcesLoaded() {
+        return mResourcesLoaded;
+    }
+
+    public void setResourcesLoaded(boolean resourcesLoaded) {
+        mResourcesLoaded = resourcesLoaded;
+    }
+
+    abstract protected void resetAllocations();
+
+    public void freeResources() {
+        if (!isResourcesLoaded()) {
+            return;
+        }
+        resetAllocations();
+        setResourcesLoaded(false);
+    }
 }

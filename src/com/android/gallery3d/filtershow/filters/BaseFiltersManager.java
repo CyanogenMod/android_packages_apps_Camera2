@@ -15,37 +15,30 @@
  */
 package com.android.gallery3d.filtershow.filters;
 
+import com.android.gallery3d.filtershow.presets.ImagePreset;
+
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
 
 public abstract class BaseFiltersManager {
     protected HashMap<Class, ImageFilter> mFilters = null;
 
-    protected void addFilters(Map<Class, ImageFilter> filters) {
-        filters.put(ImageFilterTinyPlanet.class, new ImageFilterTinyPlanet());
-        filters.put(ImageFilterRedEye.class, new ImageFilterRedEye());
-        filters.put(ImageFilterWBalance.class, new ImageFilterWBalance());
-        filters.put(ImageFilterExposure.class, new ImageFilterExposure());
-        filters.put(ImageFilterVignette.class, new ImageFilterVignette());
-        filters.put(ImageFilterContrast.class, new ImageFilterContrast());
-        filters.put(ImageFilterShadows.class, new ImageFilterShadows());
-        filters.put(ImageFilterHighlights.class, new ImageFilterHighlights());
-        filters.put(ImageFilterVibrance.class, new ImageFilterVibrance());
-        filters.put(ImageFilterSharpen.class, new ImageFilterSharpen());
-        filters.put(ImageFilterCurves.class, new ImageFilterCurves());
-        filters.put(ImageFilterDraw.class, new ImageFilterDraw());
-        filters.put(ImageFilterHue.class, new ImageFilterHue());
-        filters.put(ImageFilterSaturated.class, new ImageFilterSaturated());
-        filters.put(ImageFilterBwFilter.class, new ImageFilterBwFilter());
-        filters.put(ImageFilterNegative.class, new ImageFilterNegative());
-        filters.put(ImageFilterEdge.class, new ImageFilterEdge());
-        filters.put(ImageFilterKMeans.class, new ImageFilterKMeans());
-        filters.put(ImageFilterFx.class, new ImageFilterFx());
-        filters.put(ImageFilterBorder.class, new ImageFilterBorder());
-        filters.put(ImageFilterParametricBorder.class, new ImageFilterParametricBorder());
-        filters.put(ImageFilterGeometry.class, new ImageFilterGeometry());
-
+    protected void init() {
+        mFilters = new HashMap<Class, ImageFilter>();
+        Vector<Class> filters = new Vector<Class>();
+        addFilterClasses(filters);
+        for (Class filterClass : filters) {
+            try {
+                Object filterInstance = filterClass.newInstance();
+                if (filterInstance instanceof ImageFilter) {
+                    mFilters.put(filterClass, (ImageFilter) filterInstance);
+                }
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public ImageFilter getFilter(Class c) {
@@ -66,6 +59,54 @@ public abstract class BaseFiltersManager {
             return filter.getDefaultRepresentation();
         }
         return null;
+    }
+
+    public void resetBitmapsRS() {
+        for (Class c : mFilters.keySet()) {
+            ImageFilter filter = mFilters.get(c);
+            if (filter instanceof ImageFilterRS) {
+                ImageFilterRS filterRS = (ImageFilterRS) filter;
+                filterRS.resetBitmap();
+            }
+        }
+    }
+
+    public void freeFilterResources(ImagePreset preset) {
+        if (preset == null) {
+            return;
+        }
+        Vector<ImageFilter> usedFilters = preset.getUsedFilters();
+        for (Class c : mFilters.keySet()) {
+            ImageFilter filter = mFilters.get(c);
+            if (!usedFilters.contains(filter)) {
+                filter.freeResources();
+            }
+        }
+    }
+
+    protected void addFilterClasses(Vector<Class> filters) {
+        filters.add(ImageFilterTinyPlanet.class);
+        filters.add(ImageFilterRedEye.class);
+        filters.add(ImageFilterWBalance.class);
+        filters.add(ImageFilterExposure.class);
+        filters.add(ImageFilterVignette.class);
+        filters.add(ImageFilterContrast.class);
+        filters.add(ImageFilterShadows.class);
+        filters.add(ImageFilterHighlights.class);
+        filters.add(ImageFilterVibrance.class);
+        filters.add(ImageFilterSharpen.class);
+        filters.add(ImageFilterCurves.class);
+        filters.add(ImageFilterDraw.class);
+        filters.add(ImageFilterHue.class);
+        filters.add(ImageFilterSaturated.class);
+        filters.add(ImageFilterBwFilter.class);
+        filters.add(ImageFilterNegative.class);
+        filters.add(ImageFilterEdge.class);
+        filters.add(ImageFilterKMeans.class);
+        filters.add(ImageFilterFx.class);
+        filters.add(ImageFilterBorder.class);
+        filters.add(ImageFilterParametricBorder.class);
+        filters.add(ImageFilterGeometry.class);
     }
 
     public void addLooks(Vector<FilterRepresentation> representations) {
@@ -96,13 +137,4 @@ public abstract class BaseFiltersManager {
         representations.add(getRepresentation(ImageFilterDraw.class));
     }
 
-    public void resetBitmapsRS() {
-        for (Class c : mFilters.keySet()) {
-            ImageFilter filter = mFilters.get(c);
-            if (filter instanceof ImageFilterRS) {
-                ImageFilterRS filterRS = (ImageFilterRS) filter;
-                filterRS.resetBitmap();
-            }
-        }
-    }
 }
