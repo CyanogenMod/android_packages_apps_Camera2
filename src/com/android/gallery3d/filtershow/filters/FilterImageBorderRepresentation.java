@@ -32,12 +32,6 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
         setShowEditingControls(false);
         setShowParameterValue(false);
         setShowUtilityPanel(false);
-        // load the drawable at init as we are in a background thread
-        // (see FilterShowActivity's LoadBordersTask)
-        ImageFilterBorder filter = (ImageFilterBorder) FiltersManager.getManager().getFilter(getFilterClass());
-        filter.getDrawable(getDrawableResource());
-        filter = (ImageFilterBorder) FiltersManager.getPreviewManager().getFilter(getFilterClass());
-        filter.getDrawable(getDrawableResource());
     }
 
     public String toString() {
