@@ -56,6 +56,8 @@ public class ImagePreset {
     private Rect mPartialRenderingBounds;
     private Bitmap mPreviewImage;
 
+    private FilterEnvironment mEnvironment = new FilterEnvironment();
+
     public ImagePreset() {
         setup();
     }
@@ -407,6 +409,17 @@ public class ImagePreset {
         // do nothing here
     }
 
+    public void setupEnvironment() {
+        setupEnvironment(FiltersManager.getManager());
+    }
+
+    public void setupEnvironment(FiltersManager filtersManager) {
+        getEnvironment().setImagePreset(this);
+        getEnvironment().setScaleFactor(mScaleFactor);
+        getEnvironment().setQuality(mQuality);
+        getEnvironment().setFiltersManager(filtersManager);
+    }
+
     public Bitmap apply(Bitmap original) {
         Bitmap bitmap = original;
         bitmap = applyFilters(bitmap, -1, -1);
@@ -417,28 +430,21 @@ public class ImagePreset {
         // Apply any transform -- 90 rotate, flip, straighten, crop
         // Returns a new bitmap.
         if (mDoApplyGeometry) {
-            ImageFilter filter = FiltersManager.getManager().getFilterForRepresentation(mGeoData);
             mGeoData.synchronizeRepresentation();
-            filter.useRepresentation(mGeoData);
-            filter.setImagePreset(this);
-            bitmap = filter.apply(bitmap, mScaleFactor, mQuality);
+            bitmap = mEnvironment.applyRepresentation(mGeoData, bitmap);
         }
         return bitmap;
     }
 
     public Bitmap applyBorder(Bitmap bitmap) {
         if (mBorder != null && mDoApplyGeometry) {
-            ImageFilter filter = FiltersManager.getManager().getFilterForRepresentation(mBorder);
             mBorder.synchronizeRepresentation();
-            filter.useRepresentation(mBorder);
-            filter.setImagePreset(this);
-            bitmap = filter.apply(bitmap, mScaleFactor, mQuality);
+            bitmap = mEnvironment.applyRepresentation(mBorder, bitmap);
         }
         return bitmap;
     }
 
     public Bitmap applyFilters(Bitmap bitmap, int from, int to) {
-
         if (mDoApplyFilters) {
             if (from < 0) {
                 from = 0;
@@ -452,10 +458,7 @@ public class ImagePreset {
                     representation = mFilters.elementAt(i);
                     representation.synchronizeRepresentation();
                 }
-                ImageFilter filter = FiltersManager.getManager().getFilterForRepresentation(representation);
-                filter.useRepresentation(representation);
-                filter.setImagePreset(this);
-                bitmap = filter.apply(bitmap, mScaleFactor, mQuality);
+                bitmap = mEnvironment.applyRepresentation(representation, bitmap);
             }
         }
 
@@ -531,4 +534,18 @@ public class ImagePreset {
         mPreviewImage = previewImage;
     }
 
+    public Vector<ImageFilter> getUsedFilters() {
+        Vector<ImageFilter> usedFilters = new Vector<ImageFilter>();
+        for (int i = 0; i < mFilters.size(); i++) {
+            FilterRepresentation representation = mFilters.elementAt(i);
+            FiltersManager filtersManager = getEnvironment().getFiltersManager();
+            ImageFilter filter = filtersManager.getFilterForRepresentation(representation);
+            usedFilters.add(filter);
+        }
+        return usedFilters;
+    }
+
+    public FilterEnvironment getEnvironment() {
+        return mEnvironment;
+    }
 }

@@ -54,6 +54,7 @@ public class RenderingRequest {
         if (type == FULL_RENDERING
                 || type == GEOMETRY_RENDERING
                 || type == ICON_RENDERING) {
+            preset.setupEnvironment();
             bitmap = preset.applyGeometry(source);
         } else if (type != PARTIAL_RENDERING) {
             bitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), mConfig);
