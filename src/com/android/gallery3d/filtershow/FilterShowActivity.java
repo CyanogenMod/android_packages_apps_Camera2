@@ -37,13 +37,8 @@ import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
@@ -208,16 +203,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         mPanelController.addView(findViewById(R.id.applyEffect));
 
-        findViewById(R.id.resetOperationsButton).setOnClickListener(
-                createOnClickResetOperationsButton());
-
-        ListView operationsList = (ListView) findViewById(R.id.operationsList);
-        operationsList.setAdapter(mMasterImage.getHistory());
-        operationsList.setOnItemClickListener(this);
-
-        ListView imageStateList = (ListView) findViewById(R.id.imageStateList);
-        imageStateList.setAdapter(mMasterImage.getState());
-        mImageLoader.setAdapter(mMasterImage.getHistory());
+        ((ViewStub) findViewById(R.id.historyPanelStub)).inflate();
+        ((ViewStub) findViewById(R.id.statePanelStub)).inflate();
+        setupHistoryPanel();
+        setupStatePanel();
 
         mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
         mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList),
@@ -225,6 +214,21 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 findViewById(R.id.applyEffect));
 
         mPanelController.setCurrentPanel(R.id.fxButton);
+    }
+
+    public void setupHistoryPanel() {
+        findViewById(R.id.resetOperationsButton).setOnClickListener(
+                createOnClickResetOperationsButton());
+
+        ListView operationsList = (ListView) findViewById(R.id.operationsList);
+        operationsList.setAdapter(mMasterImage.getHistory());
+        operationsList.setOnItemClickListener(this);
+    }
+
+    public void setupStatePanel() {
+        ListView imageStateList = (ListView) findViewById(R.id.imageStateList);
+        imageStateList.setAdapter(mMasterImage.getState());
+        mImageLoader.setAdapter(mMasterImage.getHistory());
     }
 
     private void fillPanel(Vector<FilterRepresentation> representations, int layoutId, int buttonId) {
