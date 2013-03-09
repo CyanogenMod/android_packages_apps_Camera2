@@ -17,20 +17,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="120dip"
     android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:padding="10dip"
-    android:background="@drawable/filtershow_button_background">
+    android:orientation="horizontal"
+    android:padding="0dip"
+    android:background="@color/background_main_toolbar">
 
     <ImageView
             android:id="@+id/preview"
-            android:background="@android:color/transparent"
-            android:layout_width="match_parent"
-            android:layout_height="128dip"
+            android:layout_width="180dip"
+            android:layout_height="120dip"
             android:scaleType="centerCrop"
             android:cropToPadding="true"
-            android:paddingTop="10dip"
             android:visibility="visible"
             />
 
@@ -38,11 +36,12 @@
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/rowTextView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:padding="5dip"
-            android:textSize="16dip">
+            android:gravity="bottom|right"
+            android:padding="10dip"
+            android:textSize="16dip"
+            android:textStyle="bold">
     </TextView>
 
 </LinearLayout>
