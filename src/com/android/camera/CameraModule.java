@@ -64,8 +64,6 @@ public interface CameraModule {
 
     public void updateCameraAppView();
 
-    public boolean collapseCameraControls();
-
     public boolean needsSwitcher();
 
     public boolean needsPieMenu();
