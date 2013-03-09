@@ -340,6 +340,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         Resources res = getResources();
         ImageFilterBorder filterBorder = (ImageFilterBorder) FiltersManager.getManager().getFilter(ImageFilterBorder.class);
         filterBorder.setResources(res);
+        filterBorder = (ImageFilterBorder) FiltersManager.getPreviewManager().getFilter(ImageFilterBorder.class);
+        filterBorder.setResources(res);
 
         ImageShow.setDefaultBackgroundColor(res.getColor(R.color.background_screen));
         // TODO: get those values from XML.
