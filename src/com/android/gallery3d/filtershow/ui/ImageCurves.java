@@ -30,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
@@ -41,11 +42,14 @@ import com.android.gallery3d.filtershow.filters.ImageFilterCurves;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
+import java.util.HashMap;
+
 public class ImageCurves extends ImageShow {
 
     private static final String LOGTAG = "ImageCurves";
     Paint gPaint = new Paint();
     Path gPathSpline = new Path();
+    HashMap<Integer, String> mIdStrLut;
 
     private int mCurrentCurveIndex = Spline.RGB;
     private boolean mDidAddPoint = false;
@@ -80,10 +84,21 @@ public class ImageCurves extends ImageShow {
     }
 
     private void showPopupMenu(LinearLayout accessoryViewList) {
-        final FramedTextButton button = (FramedTextButton) accessoryViewList.findViewById(
-                R.id.curvesUtilityButton);
+        final Button button = (Button) accessoryViewList.findViewById(
+                R.id.applyEffect);
         if (button == null) {
             return;
+        }
+        if (mIdStrLut == null){
+            mIdStrLut = new HashMap<Integer, String>();
+            mIdStrLut.put(R.id.curve_menu_rgb,
+                    getContext().getString(R.string.curves_channel_rgb));
+            mIdStrLut.put(R.id.curve_menu_red,
+                    getContext().getString(R.string.curves_channel_red));
+            mIdStrLut.put(R.id.curve_menu_green,
+                    getContext().getString(R.string.curves_channel_green));
+            mIdStrLut.put(R.id.curve_menu_blue,
+                    getContext().getString(R.string.curves_channel_blue));
         }
         PopupMenu popupMenu = new PopupMenu(getActivity(), button);
         popupMenu.getMenuInflater().inflate(R.menu.filtershow_menu_curves, popupMenu.getMenu());
@@ -91,7 +106,7 @@ public class ImageCurves extends ImageShow {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 setChannel(item.getItemId());
-                button.setTextFrom(item.getItemId());
+                button.setText(mIdStrLut.get(item.getItemId()));
                 return true;
             }
         });
@@ -100,19 +115,17 @@ public class ImageCurves extends ImageShow {
 
     @Override
     public void openUtilityPanel(final LinearLayout accessoryViewList) {
-        View view = accessoryViewList.findViewById(R.id.curvesUtilityButton);
-        if (view == null) {
-            LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService
-                    (Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.filtershow_curves_button, accessoryViewList, false);
-            accessoryViewList.addView(view, view.getLayoutParams());
-            view.setOnClickListener(new OnClickListener() {
+        Context context = accessoryViewList.getContext();
+        Button view = (Button) accessoryViewList.findViewById(R.id.applyEffect);
+        view.setText(context.getString(R.string.curves_channel_rgb));
+        view.setVisibility(View.VISIBLE);
+
+        view.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View arg0) {
-                    showPopupMenu(accessoryViewList);
-                }
-            });
-        }
+            public void onClick(View arg0) {
+                showPopupMenu(accessoryViewList);
+            }
+        });
 
         if (view != null) {
             view.setVisibility(View.VISIBLE);

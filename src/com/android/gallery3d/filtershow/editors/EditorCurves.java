@@ -27,6 +27,7 @@ import com.android.gallery3d.filtershow.ui.ImageCurves;
 public class EditorCurves extends Editor {
     public static final int ID = R.id.imageCurves;
     ImageCurves mImageCurves;
+
     public EditorCurves() {
         super(ID);
     }

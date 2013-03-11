@@ -28,9 +28,9 @@ import com.android.gallery3d.filtershow.filters.FilterBasicRepresentation;
 /**
  * The basic editor that all the one parameter filters
  */
-public class BasicEditor extends Editor implements OnSeekBarChangeListener {
+public class BasicEditor extends Editor {
     public static int ID = R.id.basicEditor;
-    private SeekBar mSeekBar;
+
     private final String LOGTAG = "Editor";
     private int mLayoutID = R.layout.filtershow_default_editor;
     private int mViewID = R.id.basicEditor;
@@ -53,8 +53,6 @@ public class BasicEditor extends Editor implements OnSeekBarChangeListener {
     public void createEditor(Context context, FrameLayout frameLayout) {
         super.createEditor(context, frameLayout);
         unpack(mViewID, mLayoutID);
-        mSeekBar = (SeekBar) mView.findViewById(R.id.filterSeekBar);
-        mSeekBar.setOnSeekBarChangeListener(this);
     }
 
     @Override
