@@ -91,7 +91,6 @@ import com.android.gallery3d.filtershow.ui.FilterIconButton;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
 import com.android.gallery3d.filtershow.ui.Spline;
 import com.android.gallery3d.util.GalleryUtils;
-import com.android.photos.data.GalleryBitmapPool;
 
 import java.io.File;
 import java.io.IOException;
@@ -146,8 +145,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        clearGalleryBitmapPoolInBackground();
 
         setupMasterImage();
         setDefaultValues();
@@ -509,24 +506,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             super.onPostExecute(result);
         }
 
-    }
-
-    void clearGalleryBitmapPoolInBackground() {
-        BitmapTask.Callbacks<Object, Object> cb = new BitmapTask.Callbacks<Object, Object>() {
-            @Override
-            public void onComplete(Object result) {}
-
-            @Override
-            public void onCancel() {}
-
-            @Override
-            public Object onExecute(Object param) {
-                // Free memory held in Gallery's Bitmap pool.  May be O(n) for n bitmaps.
-                GalleryBitmapPool.getInstance().clear();
-                return null;
-            }
-        };
-        (new BitmapTask<Object, Object>(cb)).execute(0);
     }
 
     private void fillButtonIcons() {
@@ -1142,7 +1121,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
     void setWallpaperInBackground(final Bitmap bmap) {
         Toast.makeText(this, R.string.setting_wallpaper, Toast.LENGTH_LONG).show();
-        BitmapTask.Callbacks<FilterShowActivity, Bitmap> cb = new BitmapTask.Callbacks<FilterShowActivity, Bitmap>() {
+        BitmapTask.Callbacks<FilterShowActivity> cb = new BitmapTask.Callbacks<FilterShowActivity>() {
             @Override
             public void onComplete(Bitmap result) {}
 
@@ -1151,9 +1130,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
             @Override
             public Bitmap onExecute(FilterShowActivity param) {
-                if (param == null) {
-                    return null;
-                }
                 try {
                     WallpaperManager.getInstance(param).setBitmap(bmap);
                 } catch (IOException e) {
@@ -1162,7 +1138,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 return null;
             }
         };
-        (new BitmapTask<FilterShowActivity, Bitmap>(cb)).execute(this);
+        (new BitmapTask<FilterShowActivity>(cb)).execute(this);
     }
 
     public void done() {
