@@ -267,7 +267,7 @@ public class PhotoProvider extends SQLiteContentProvider {
         Photos.MIME_TYPE,
     };
 
-    private static final String[] BASE_COLUMNS_ID = {
+    protected static final String[] BASE_COLUMNS_ID = {
         BaseColumns._ID,
     };
 
