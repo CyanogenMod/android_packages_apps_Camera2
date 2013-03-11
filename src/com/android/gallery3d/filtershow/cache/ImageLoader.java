@@ -520,7 +520,7 @@ public class ImageLoader {
         preset.setQuality(ImagePreset.QUALITY_FINAL);
         preset.setScaleFactor(1.0f);
 
-        BitmapTask.Callbacks<ImagePreset> cb = new BitmapTask.Callbacks<ImagePreset>() {
+        BitmapTask.Callbacks<ImagePreset, Bitmap> cb = new BitmapTask.Callbacks<ImagePreset, Bitmap>() {
 
             @Override
             public void onComplete(Bitmap result) {
@@ -570,7 +570,7 @@ public class ImageLoader {
             }
         };
 
-        (new BitmapTask<ImagePreset>(cb)).execute(preset);
+        (new BitmapTask<ImagePreset, Bitmap>(cb)).execute(preset);
     }
 
     private String getFileExtension(String requestFormat) {
@@ -604,7 +604,7 @@ public class ImageLoader {
 
         final InterruptableOutputStream ios = new InterruptableOutputStream(out);
 
-        BitmapTask.Callbacks<Bitmap> cb = new BitmapTask.Callbacks<Bitmap>() {
+        BitmapTask.Callbacks<Bitmap, Bitmap> cb = new BitmapTask.Callbacks<Bitmap, Bitmap>() {
 
             @Override
             public void onComplete(Bitmap result) {
@@ -618,6 +618,9 @@ public class ImageLoader {
 
             @Override
             public Bitmap onExecute(Bitmap param) {
+                if (param == null) {
+                    return null;
+                }
                 CompressFormat cf = convertExtensionToCompressFormat(getFileExtension(outputFormat));
                 param.compress(cf, DEFAULT_COMPRESS_QUALITY, ios);
                 Utils.closeSilently(ios);
@@ -625,7 +628,7 @@ public class ImageLoader {
             }
         };
 
-        (new BitmapTask<Bitmap>(cb)).execute(bmap);
+        (new BitmapTask<Bitmap, Bitmap>(cb)).execute(bmap);
     }
 
     public void setAdapter(HistoryAdapter adapter) {
