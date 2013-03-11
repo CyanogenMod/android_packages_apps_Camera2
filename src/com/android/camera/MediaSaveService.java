@@ -38,8 +38,8 @@ public class MediaSaveService extends Service {
     private Listener mListener;
 
     interface Listener {
-        public void onQueueAvailable();
-        public void onQueueFull();
+
+        public void onQueueStatus(boolean full);
     }
 
     interface OnMediaSavedListener {
@@ -96,19 +96,15 @@ public class MediaSaveService extends Service {
     public void setListener(Listener l) {
         mListener = l;
         if (l == null) return;
-        if (isQueueFull()) {
-            l.onQueueFull();
-        } else {
-            l.onQueueAvailable();
-        }
+        l.onQueueStatus(isQueueFull());
     }
 
     private void onQueueFull() {
-        if (mListener != null) mListener.onQueueFull();
+        if (mListener != null) mListener.onQueueStatus(true);
     }
 
     private void onQueueAvailable() {
-        if (mListener != null) mListener.onQueueAvailable();
+        if (mListener != null) mListener.onQueueStatus(false);
     }
 
     private class SaveTask extends AsyncTask <Void, Void, Uri> {
