@@ -91,7 +91,8 @@ public class VideoModule implements CameraModule,
     MediaRecorder.OnErrorListener,
     MediaRecorder.OnInfoListener,
     EffectsRecorder.EffectsListener,
-    PieRenderer.PieListener {
+    PieRenderer.PieListener,
+    PreviewGestures.SingleTapListener {
 
     private static final String TAG = "CAM_VideoModule";
 
@@ -213,7 +214,7 @@ public class VideoModule implements CameraModule,
     private RenderOverlay mRenderOverlay;
     private PieRenderer mPieRenderer;
 
-    private VideoController mVideoControl;
+    private VideoMenu mVideoControl;
     private AbstractSettingPopup mPopup;
     private int mPendingSwitchCameraId;
 
@@ -393,7 +394,7 @@ public class VideoModule implements CameraModule,
         mRenderOverlay = (RenderOverlay) mRootView.findViewById(R.id.render_overlay);
         if (mPieRenderer == null) {
             mPieRenderer = new PieRenderer(mActivity);
-            mVideoControl = new VideoController(mActivity, this, mPieRenderer);
+            mVideoControl = new VideoMenu(mActivity, this, mPieRenderer);
             mVideoControl.setListener(this);
             mPieRenderer.setPieListener(this);
         }
@@ -511,7 +512,6 @@ public class VideoModule implements CameraModule,
                 settings.getPreferenceGroup(R.xml.video_preferences));
     }
 
-    @Override
     public boolean collapseCameraControls() {
         boolean ret = false;
         if (mPopup != null) {
