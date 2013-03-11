@@ -162,6 +162,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private void loadXML() {
         setContentView(R.layout.filtershow_activity);
 
+        ((ViewStub) findViewById(R.id.stateCategoryStub)).inflate();
+        ((ViewStub) findViewById(R.id.editorPanelStub)).inflate();
+        ((ViewStub) findViewById(R.id.historyPanelStub)).inflate();
+        ((ViewStub) findViewById(R.id.statePanelStub)).inflate();
+
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         actionBar.setCustomView(R.layout.filtershow_actionbar);
@@ -206,8 +211,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         mPanelController.addView(findViewById(R.id.applyEffect));
 
-        ((ViewStub) findViewById(R.id.historyPanelStub)).inflate();
-        ((ViewStub) findViewById(R.id.statePanelStub)).inflate();
         setupHistoryPanel();
         setupStatePanel();
     }
