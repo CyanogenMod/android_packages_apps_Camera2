@@ -46,7 +46,7 @@ public class PreviewGestures
     private static final int MODE_ALL = 4;
 
     private CameraActivity mActivity;
-    private CameraModule mModule;
+    private SingleTapListener mTapListener;
     private RenderOverlay mOverlay;
     private PieRenderer mPie;
     private ZoomRenderer mZoom;
@@ -72,10 +72,14 @@ public class PreviewGestures
         }
     };
 
-    public PreviewGestures(CameraActivity ctx, CameraModule module,
+    public interface SingleTapListener {
+        public void onSingleTapUp(View v, int x, int y);
+    }
+
+    public PreviewGestures(CameraActivity ctx, SingleTapListener tapListener,
             ZoomRenderer zoom, PieRenderer pie) {
         mActivity = ctx;
-        mModule = module;
+        mTapListener = tapListener;
         mPie = pie;
         mZoom = zoom;
         mMode = MODE_ALL;
@@ -199,7 +203,7 @@ public class PreviewGestures
                 cancelActivityTouchHandling(m);
                 // must have been tap
                 if (m.getEventTime() - mDown.getEventTime() < mTapTimeout) {
-                    mModule.onSingleTapUp(null,
+                    mTapListener.onSingleTapUp(null,
                             (int) mDown.getX() - mOverlay.getWindowPositionX(),
                             (int) mDown.getY() - mOverlay.getWindowPositionY());
                     return true;
