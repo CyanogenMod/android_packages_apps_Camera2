@@ -68,6 +68,7 @@ public class GeometryMetadata extends FilterRepresentation {
         setEditorId(EditorCrop.ID);
         setName("Crop");
         setTextId(0);
+        setShowParameterValue(true);
     }
 
     @Override
