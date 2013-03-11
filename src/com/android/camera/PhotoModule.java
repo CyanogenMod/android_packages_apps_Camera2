@@ -28,8 +28,6 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera.CameraInfo;
-import android.hardware.Camera.Face;
-import android.hardware.Camera.FaceDetectionListener;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
@@ -45,32 +43,17 @@ import android.os.MessageQueue;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.SurfaceHolder;
 import android.view.View;
-import android.view.ViewStub;
-import android.view.View.OnClickListener;
-import android.view.View.OnLayoutChangeListener;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.FrameLayout.LayoutParams;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.android.camera.CameraManager.CameraProxy;
-import com.android.camera.ui.AbstractSettingPopup;
-import com.android.camera.ui.CountDownView;
-import com.android.camera.ui.FaceView;
-import com.android.camera.ui.PieRenderer;
+import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
 import com.android.camera.ui.PopupManager;
-import com.android.camera.ui.RenderOverlay;
 import com.android.camera.ui.RotateTextToast;
-import com.android.camera.ui.ZoomRenderer;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.filtershow.CropExtras;
@@ -88,14 +71,12 @@ import java.util.List;
 
 public class PhotoModule
     implements CameraModule,
+    PhotoController,
     FocusOverlayManager.Listener,
     CameraPreference.OnPreferenceChangedListener,
-    LocationManager.Listener,
     ShutterButton.OnShutterButtonListener,
-    SurfaceHolder.Callback,
-    PieRenderer.PieListener,
-    CountDownView.OnCountDownFinishedListener,
-    MediaSaveService.Listener {
+    MediaSaveService.Listener,
+    OnCountDownFinishedListener {
 
     private static final String TAG = "CAM_PhotoModule";
 
@@ -127,12 +108,12 @@ public class PhotoModule
 
     // copied from Camera hierarchy
     private CameraActivity mActivity;
-    private View mRootView;
     private CameraProxy mCameraDevice;
     private int mCameraId;
     private Parameters mParameters;
     private boolean mPaused;
-    private AbstractSettingPopup mPopup;
+
+    private PhotoUI mUI;
 
     // these are only used by Camera
 
@@ -150,8 +131,6 @@ public class PhotoModule
     private static final int SCREEN_DELAY = 2 * 60 * 1000;
 
     private int mZoomValue;  // The current zoom value.
-    private int mZoomMax;
-    private List<Integer> mZoomRatios;
 
     private Parameters mInitialParams;
     private boolean mFocusAreaSupported;
@@ -167,34 +146,11 @@ public class PhotoModule
     private static final String sTempCropFilename = "crop-temp";
 
     private ContentProviderClient mMediaProviderClient;
-    private ShutterButton mShutterButton;
     private boolean mFaceDetectionStarted = false;
-
-    private Object mSurfaceTexture;
-    private CountDownView mCountDownView;
-
-    private volatile SurfaceHolder mCameraSurfaceHolder;
-
-    private FaceView mFaceView;
-    private RenderOverlay mRenderOverlay;
-    private View mReviewCancelButton;
-    private View mReviewDoneButton;
-    private View mReviewRetakeButton;
 
     // mCropValue and mSaveUri are used only if isImageCaptureIntent() is true.
     private String mCropValue;
     private Uri mSaveUri;
-
-    private View mMenu;
-    private View mBlocker;
-
-    // Small indicators which show the camera settings in the viewfinder.
-    private ImageView mExposureIndicator;
-    private ImageView mFlashIndicator;
-    private ImageView mSceneIndicator;
-    private ImageView mHdrIndicator;
-    // A view group that contains all the small indicators.
-    private View mOnScreenIndicators;
 
     // We use a queue to generated names of the images to be used later
     // when the image is ready to be saved.
@@ -207,16 +163,6 @@ public class PhotoModule
         }
     };
 
-    private final View.OnLayoutChangeListener mLayoutChangeListener =
-            new View.OnLayoutChangeListener() {
-        @Override
-        public void onLayoutChange(View v, int left, int top, int right,
-                int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-            onScreenSizeChanged(right - left, bottom - top);
-        }
-    };
-    private int mPreviewWidth = 0;
-    private int mPreviewHeight = 0;
     private final StringBuilder mBuilder = new StringBuilder();
     private final Formatter mFormatter = new Formatter(mBuilder);
     private final Object[] mFormatterArgs = new Object[1];
@@ -242,13 +188,6 @@ public class PhotoModule
     private boolean mFirstTimeInitialized;
     private boolean mIsImageCaptureIntent;
 
-    private static final int PREVIEW_STOPPED = 0;
-    private static final int IDLE = 1;  // preview is active
-    // Focus is in progress. The exact focus state is in Focus.java.
-    private static final int FOCUSING = 2;
-    private static final int SNAPSHOT_IN_PROGRESS = 3;
-    // Switching between cameras.
-    private static final int SWITCHING_CAMERA = 4;
     private int mCameraState = PREVIEW_STOPPED;
     private boolean mSnapshotOnIdle = false;
 
@@ -289,12 +228,7 @@ public class PhotoModule
     // This handles everything about focus.
     private FocusOverlayManager mFocusManager;
 
-    private PieRenderer mPieRenderer;
-    private PhotoController mPhotoControl;
-
-    private ZoomRenderer mZoomRenderer;
     private String mSceneMode;
-    private Toast mNotSelectableToast;
 
     private final Handler mHandler = new MainHandler();
     private PreferenceGroup mPreferenceGroup;
@@ -303,8 +237,6 @@ public class PhotoModule
 
     CameraStartUpThread mCameraStartUpThread;
     ConditionVariable mStartPreviewPrerequisiteReady = new ConditionVariable();
-
-    private PreviewGestures mGestures;
 
     private MediaSaveService.OnMediaSavedListener mOnMediaSavedListener =
             new MediaSaveService.OnMediaSavedListener() {
@@ -420,19 +352,12 @@ public class PhotoModule
                 }
 
                 case CAMERA_OPEN_DONE: {
-                    initializeAfterCameraOpen();
+                    onCameraOpened();
                     break;
                 }
 
                 case START_PREVIEW_DONE: {
-                    mCameraStartUpThread = null;
-                    setCameraState(IDLE);
-                    if (!ApiHelper.HAS_SURFACE_TEXTURE) {
-                        // This may happen if surfaceCreated has arrived.
-                        mCameraDevice.setPreviewDisplayAsync(mCameraSurfaceHolder);
-                    }
-                    startFaceDetection();
-                    locationFirstRun();
+                    onPreviewStarted();
                     break;
                 }
 
@@ -458,7 +383,7 @@ public class PhotoModule
     @Override
     public void init(CameraActivity activity, View parent, boolean reuseNail) {
         mActivity = activity;
-        mRootView = parent;
+        mUI = new PhotoUI(activity, this, parent);
         mPreferences = new ComboPreferences(mActivity);
         CameraSettings.upgradeGlobalPreferences(mPreferences.getGlobal());
         mCameraId = getPreferredCameraId(mPreferences);
@@ -470,17 +395,6 @@ public class PhotoModule
         mCameraStartUpThread = new CameraStartUpThread();
         mCameraStartUpThread.start();
 
-        mActivity.getLayoutInflater().inflate(R.layout.photo_module,
-                (ViewGroup) mRootView, true);
-        mRootView.addOnLayoutChangeListener(mLayoutChangeListener);
-        if (ApiHelper.HAS_FACE_DETECTION) {
-            ViewStub faceViewStub = (ViewStub) mRootView
-                    .findViewById(R.id.face_view_stub);
-            if (faceViewStub != null) {
-                faceViewStub.inflate();
-                mFaceView = (FaceView) mRootView.findViewById(R.id.face_view);
-            }
-        }
 
         // Surface texture is from camera screen nail and startPreview needs it.
         // This must be done before startPreview.
@@ -501,10 +415,25 @@ public class PhotoModule
 
         initializeControlByIntent();
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
-        mLocationManager = new LocationManager(mActivity, this);
-        initOnScreenIndicator();
-        mCountDownView = (CountDownView) (mRootView.findViewById(R.id.count_down_to_capture));
-        mCountDownView.setCountDownFinishedListener(this);
+        mLocationManager = new LocationManager(mActivity, mUI);
+    }
+
+    private void initializeControlByIntent() {
+        mUI.initializeControlByIntent();
+        if (mIsImageCaptureIntent) {
+            setupCaptureParams();
+        }
+    }
+
+    private void onPreviewStarted() {
+        mCameraStartUpThread = null;
+        setCameraState(IDLE);
+        if (!ApiHelper.HAS_SURFACE_TEXTURE) {
+            // This may happen if surfaceCreated has arrived.
+            mCameraDevice.setPreviewDisplayAsync(mUI.getSurfaceHolder());
+        }
+        startFaceDetection();
+        locationFirstRun();
     }
 
     // Prompt the user to pick to record location for the very first run of
@@ -554,52 +483,12 @@ public class PhotoModule
         onSharedPreferenceChanged();
     }
 
-    private void initializeRenderOverlay() {
-        if (mPieRenderer != null) {
-            mRenderOverlay.addRenderer(mPieRenderer);
-            mFocusManager.setFocusRenderer(mPieRenderer);
-        }
-        if (mZoomRenderer != null) {
-            mRenderOverlay.addRenderer(mZoomRenderer);
-        }
-        if (mGestures != null) {
-            mGestures.clearTouchReceivers();
-            mGestures.setRenderOverlay(mRenderOverlay);
-            mGestures.addTouchReceiver(mMenu);
-            mGestures.addTouchReceiver(mBlocker);
-
-            if (isImageCaptureIntent()) {
-                if (mReviewCancelButton != null) {
-                    mGestures.addTouchReceiver(mReviewCancelButton);
-                }
-                if (mReviewDoneButton != null) {
-                    mGestures.addTouchReceiver(mReviewDoneButton);
-                }
-            }
-        }
-        mRenderOverlay.requestLayout();
-    }
-
-    private void initializeAfterCameraOpen() {
-        if (mPieRenderer == null) {
-            mPieRenderer = new PieRenderer(mActivity);
-            mPhotoControl = new PhotoController(mActivity, this, mPieRenderer);
-            mPhotoControl.setListener(this);
-            mPieRenderer.setPieListener(this);
-        }
-        if (mZoomRenderer == null) {
-            mZoomRenderer = new ZoomRenderer(mActivity);
-        }
-        if (mGestures == null) {
-            // this will handle gesture disambiguation and dispatching
-            mGestures = new PreviewGestures(mActivity, this, mZoomRenderer, mPieRenderer);
-        }
-        initializeRenderOverlay();
-        initializePhotoControl();
-
+    private void onCameraOpened() {
+        View root = mUI.getRootView();
         // These depend on camera parameters.
-        int width = mRootView.getWidth();
-        int height = mRootView.getHeight();
+
+        int width = root.getWidth();
+        int height = root.getHeight();
         mFocusManager.setPreviewSize(width, height);
         // Full-screen screennail
         if (Util.getDisplayRotation(mActivity) % 180 == 0) {
@@ -608,37 +497,76 @@ public class PhotoModule
             ((CameraScreenNail) mActivity.mCameraScreenNail).setPreviewFrameLayoutSize(height, width);
         }
         // Set touch focus listener.
-        mActivity.setSingleTapUpListener(mRootView);
-        loadCameraPreferences();
-        initializeZoom();
-        updateOnScreenIndicators();
-        showTapToFocusToastIfNeeded();
+        mActivity.setSingleTapUpListener(root);
+        openCameraCommon();
         onFullScreenChanged(mActivity.isInCameraApp());
     }
 
-    public void onScreenSizeChanged(int width, int height) {
-        // Full-screen screennail
-        int w = width;
-        int h = height;
-        if (Util.getDisplayRotation(mActivity) % 180 != 0) {
-            w = height;
-            h = width;
+    private void switchCamera() {
+        if (mPaused) return;
+
+        Log.v(TAG, "Start to switch camera. id=" + mPendingSwitchCameraId);
+        mCameraId = mPendingSwitchCameraId;
+        mPendingSwitchCameraId = -1;
+        setCameraId(mCameraId);
+
+        // from onPause
+        closeCamera();
+        mUI.collapseCameraControls();
+        mUI.clearFaces();
+        if (mFocusManager != null) mFocusManager.removeMessages();
+
+        // Restart the camera and initialize the UI. From onCreate.
+        mPreferences.setLocalId(mActivity, mCameraId);
+        CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
+        try {
+            mCameraDevice = Util.openCamera(mActivity, mCameraId);
+            mParameters = mCameraDevice.getParameters();
+        } catch (CameraHardwareException e) {
+            Util.showErrorAndFinish(mActivity, R.string.cannot_connect_camera);
+            return;
+        } catch (CameraDisabledException e) {
+            Util.showErrorAndFinish(mActivity, R.string.camera_disabled);
+            return;
         }
-        if (mPreviewWidth != w || mPreviewHeight != h) {
-            Log.d(TAG, "Preview size changed.");
-            if (mFocusManager != null) mFocusManager.setPreviewSize(width, height);
-            ((CameraScreenNail) mActivity.mCameraScreenNail).setPreviewFrameLayoutSize(w, h);
+        initializeCapabilities();
+        CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
+        boolean mirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
+        mFocusManager.setMirror(mirror);
+        mFocusManager.setParameters(mInitialParams);
+        setupPreview();
+
+        openCameraCommon();
+
+        if (ApiHelper.HAS_SURFACE_TEXTURE) {
+            // Start switch camera animation. Post a message because
+            // onFrameAvailable from the old camera may already exist.
+            mHandler.sendEmptyMessage(SWITCH_CAMERA_START_ANIMATION);
         }
     }
 
-    private void initializePhotoControl() {
+    protected void setCameraId(int cameraId) {
+        ListPreference pref = mPreferenceGroup.findPreference(CameraSettings.KEY_CAMERA_ID);
+        pref.setValue("" + cameraId);
+    }
+
+    // either open a new camera or switch cameras
+    private void openCameraCommon() {
         loadCameraPreferences();
-        if (mPhotoControl != null) {
-            mPhotoControl.initialize(mPreferenceGroup);
-        }
-        updateSceneModeUI();
+
+        mUI.onCameraOpened(mPreferenceGroup, mPreferences, mParameters, this);
+        updateSceneMode();
+        showTapToFocusToastIfNeeded();
+
+
     }
 
+    public void onScreenSizeChanged(int width, int height, int previewWidth, int previewHeight) {
+        Log.d(TAG, "Preview size changed.");
+        if (mFocusManager != null) mFocusManager.setPreviewSize(width, height);
+        ((CameraScreenNail) mActivity.mCameraScreenNail).setPreviewFrameLayoutSize(
+                previewWidth, previewHeight);
+    }
 
     private void resetExposureCompensation() {
         String value = mPreferences.getString(CameraSettings.KEY_EXPOSURE,
@@ -673,11 +601,7 @@ public class PhotoModule
 
         keepMediaProviderInstance();
 
-        // Initialize shutter button.
-        mShutterButton = mActivity.getShutterButton();
-        mShutterButton.setImageResource(R.drawable.btn_new_shutter);
-        mShutterButton.setOnShutterButtonListener(this);
-        mShutterButton.setVisibility(View.VISIBLE);
+        mUI.initializeFirstTime();
         MediaSaveService s = mActivity.getMediaSaveService();
         // We set the listener only when both service and shutterbutton
         // are initialized.
@@ -691,6 +615,36 @@ public class PhotoModule
         addIdleHandler();
 
         mActivity.updateStorageSpaceAndHint();
+    }
+
+    // If the activity is paused and resumed, this method will be called in
+    // onResume.
+    private void initializeSecondTime() {
+        // Start location update if needed.
+        boolean recordLocation = RecordLocationPreference.get(
+                mPreferences, mContentResolver);
+        mLocationManager.recordLocation(recordLocation);
+        MediaSaveService s = mActivity.getMediaSaveService();
+        if (s != null) {
+            s.setListener(this);
+        }
+        mNamedImages = new NamedImages();
+        mUI.initializeSecondTime(mParameters);
+        keepMediaProviderInstance();
+    }
+
+    @Override
+    public void onSurfaceCreated(SurfaceHolder holder) {
+        // Do not access the camera if camera start up thread is not finished.
+        if (mCameraDevice == null || mCameraStartUpThread != null)
+            return;
+
+        mCameraDevice.setPreviewDisplayAsync(holder);
+        // This happens when onConfigurationChanged arrives, surface has been
+        // destroyed, and there is no onFullScreenChanged.
+        if (mCameraState == PREVIEW_STOPPED) {
+            setupPreview();
+        }
     }
 
     private void showTapToFocusToastIfNeeded() {
@@ -713,75 +667,6 @@ public class PhotoModule
         });
     }
 
-    // If the activity is paused and resumed, this method will be called in
-    // onResume.
-    private void initializeSecondTime() {
-
-        // Start location update if needed.
-        boolean recordLocation = RecordLocationPreference.get(
-                mPreferences, mContentResolver);
-        mLocationManager.recordLocation(recordLocation);
-
-        MediaSaveService s = mActivity.getMediaSaveService();
-        if (s != null) {
-            s.setListener(this);
-        }
-        mNamedImages = new NamedImages();
-        initializeZoom();
-        keepMediaProviderInstance();
-        hidePostCaptureAlert();
-
-        if (mPhotoControl != null) {
-            mPhotoControl.reloadPreferences();
-        }
-    }
-
-    private class ZoomChangeListener implements ZoomRenderer.OnZoomChangedListener {
-        @Override
-        public void onZoomValueChanged(int index) {
-            // Not useful to change zoom value when the activity is paused.
-            if (mPaused) return;
-            mZoomValue = index;
-            if (mParameters == null || mCameraDevice == null) return;
-            // Set zoom parameters asynchronously
-            mParameters.setZoom(mZoomValue);
-            mCameraDevice.setParametersAsync(mParameters);
-            if (mZoomRenderer != null) {
-                Parameters p = mCameraDevice.getParameters();
-                mZoomRenderer.setZoomValue(mZoomRatios.get(p.getZoom()));
-            }
-        }
-
-        @Override
-        public void onZoomStart() {
-            if (mPieRenderer != null) {
-                mPieRenderer.setBlockFocus(true);
-            }
-        }
-
-        @Override
-        public void onZoomEnd() {
-            if (mPieRenderer != null) {
-                mPieRenderer.setBlockFocus(false);
-            }
-        }
-    }
-
-    private void initializeZoom() {
-        if ((mParameters == null) || !mParameters.isZoomSupported()
-                || (mZoomRenderer == null)) return;
-        mZoomMax = mParameters.getMaxZoom();
-        mZoomRatios = mParameters.getZoomRatios();
-        // Currently we use immediate zoom for fast zooming to get better UX and
-        // there is no plan to take advantage of the smooth zoom.
-        if (mZoomRenderer != null) {
-            mZoomRenderer.setZoomMax(mZoomMax);
-            mZoomRenderer.setZoom(mParameters.getZoom());
-            mZoomRenderer.setZoomValue(mZoomRatios.get(mParameters.getZoom()));
-            mZoomRenderer.setOnZoomChangeListener(new ZoomChangeListener());
-        }
-    }
-
     @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     public void startFaceDetection() {
@@ -789,19 +674,10 @@ public class PhotoModule
         if (mFaceDetectionStarted) return;
         if (mParameters.getMaxNumDetectedFaces() > 0) {
             mFaceDetectionStarted = true;
-            mFaceView.clear();
-            mFaceView.setVisibility(View.VISIBLE);
-            mFaceView.setDisplayOrientation(mDisplayOrientation);
             CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
-            mFaceView.setMirror(info.facing == CameraInfo.CAMERA_FACING_FRONT);
-            mFaceView.resume();
-            mFocusManager.setFaceView(mFaceView);
-            mCameraDevice.setFaceDetectionListener(new FaceDetectionListener() {
-                @Override
-                public void onFaceDetection(Face[] faces, android.hardware.Camera camera) {
-                    mFaceView.setFaces(faces);
-                }
-            });
+            mUI.onStartFaceDetection(mDisplayOrientation,
+                    (info.facing == CameraInfo.CAMERA_FACING_FRONT));
+            mCameraDevice.setFaceDetectionListener(mUI);
             mCameraDevice.startFaceDetection();
         }
     }
@@ -815,115 +691,14 @@ public class PhotoModule
             mFaceDetectionStarted = false;
             mCameraDevice.setFaceDetectionListener(null);
             mCameraDevice.stopFaceDetection();
-            if (mFaceView != null) mFaceView.clear();
+            mUI.clearFaces();
         }
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent m) {
         if (mCameraState == SWITCHING_CAMERA) return true;
-        if (mPopup != null) {
-            return mActivity.superDispatchTouchEvent(m);
-        } else if (mGestures != null && mRenderOverlay != null) {
-            return mGestures.dispatchTouch(m);
-        }
-        return false;
-    }
-
-    private void initOnScreenIndicator() {
-        mOnScreenIndicators = mActivity.findViewById(R.id.on_screen_indicators);
-        mExposureIndicator = (ImageView) mOnScreenIndicators.findViewById(R.id.menu_exposure_indicator);
-        mFlashIndicator = (ImageView) mOnScreenIndicators.findViewById(R.id.menu_flash_indicator);
-        mSceneIndicator = (ImageView) mOnScreenIndicators.findViewById(R.id.menu_scenemode_indicator);
-        mHdrIndicator = (ImageView) mOnScreenIndicators.findViewById(R.id.menu_hdr_indicator);
-    }
-
-    @Override
-    public void showGpsOnScreenIndicator(boolean hasSignal) { }
-
-    @Override
-    public void hideGpsOnScreenIndicator() { }
-
-    private void updateExposureOnScreenIndicator(int value) {
-        if (mExposureIndicator == null) {
-            return;
-        }
-        int id = 0;
-        float step = mParameters.getExposureCompensationStep();
-        value = (int) Math.round(value * step);
-        switch(value) {
-        case -3:
-            id = R.drawable.ic_indicator_ev_n3;
-            break;
-        case -2:
-            id = R.drawable.ic_indicator_ev_n2;
-            break;
-        case -1:
-            id = R.drawable.ic_indicator_ev_n1;
-            break;
-        case 0:
-            id = R.drawable.ic_indicator_ev_0;
-            break;
-        case 1:
-            id = R.drawable.ic_indicator_ev_p1;
-            break;
-        case 2:
-            id = R.drawable.ic_indicator_ev_p2;
-            break;
-        case 3:
-            id = R.drawable.ic_indicator_ev_p3;
-            break;
-        }
-        mExposureIndicator.setImageResource(id);
-
-    }
-
-    private void updateFlashOnScreenIndicator(String value) {
-        if (mFlashIndicator == null) {
-            return;
-        }
-        if (value == null || Parameters.FLASH_MODE_OFF.equals(value)) {
-            mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_off);
-        } else {
-            if (Parameters.FLASH_MODE_AUTO.equals(value)) {
-                mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_auto);
-            } else if (Parameters.FLASH_MODE_ON.equals(value)) {
-                mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_on);
-            } else {
-                mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_off);
-            }
-        }
-    }
-
-    private void updateSceneOnScreenIndicator(String value) {
-        if (mSceneIndicator == null) {
-            return;
-        }
-        if ((value == null) || Parameters.SCENE_MODE_AUTO.equals(value)
-                || Parameters.SCENE_MODE_HDR.equals(value)) {
-            mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_off);
-        } else {
-            mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_on);
-        }
-    }
-
-    private void updateHdrOnScreenIndicator(String value) {
-        if (mHdrIndicator == null) {
-            return;
-        }
-        if ((value != null) && Parameters.SCENE_MODE_HDR.equals(value)) {
-            mHdrIndicator.setImageResource(R.drawable.ic_indicator_hdr_on);
-        } else {
-            mHdrIndicator.setImageResource(R.drawable.ic_indicator_hdr_off);
-        }
-    }
-
-    private void updateOnScreenIndicators() {
-        if (mParameters == null) return;
-        updateSceneOnScreenIndicator(mParameters.getSceneMode());
-        updateExposureOnScreenIndicator(CameraSettings.readExposure(mPreferences));
-        updateFlashOnScreenIndicator(mParameters.getFlashMode());
-        updateHdrOnScreenIndicator(mParameters.getSceneMode());
+        return mUI.dispatchTouchEvent(m);
     }
 
     private final class ShutterCallback
@@ -1038,9 +813,9 @@ public class PhotoModule
             } else {
                 mJpegImageData = jpegData;
                 if (!mQuickCapture) {
-                    showPostCaptureAlert();
+                    mUI.showPostCaptureAlert();
                 } else {
-                    doAttach();
+                    onCaptureDone();
                 }
             }
 
@@ -1068,7 +843,7 @@ public class PhotoModule
             mAutoFocusTime = System.currentTimeMillis() - mFocusStartTime;
             Log.v(TAG, "mAutoFocusTime = " + mAutoFocusTime + "ms");
             setCameraState(IDLE);
-            mFocusManager.onAutoFocus(focused, mShutterButton.isPressed());
+            mFocusManager.onAutoFocus(focused, mUI.isShutterPressed());
         }
     }
 
@@ -1124,18 +899,17 @@ public class PhotoModule
     private void setCameraState(int state) {
         mCameraState = state;
         switch (state) {
-            case PREVIEW_STOPPED:
-            case SNAPSHOT_IN_PROGRESS:
-            case FOCUSING:
-            case SWITCHING_CAMERA:
-                if (mGestures != null) mGestures.setEnabled(false);
-                break;
-            case IDLE:
-                if (mGestures != null && mActivity.mShowCameraAppView) {
-                    // Enable gestures only when the camera app view is visible
-                    mGestures.setEnabled(true);
-                }
-                break;
+        case PhotoController.PREVIEW_STOPPED:
+        case PhotoController.SNAPSHOT_IN_PROGRESS:
+        case PhotoController.FOCUSING:
+        case PhotoController.SWITCHING_CAMERA:
+            mUI.enableGestures(false);
+            break;
+        case PhotoController.IDLE:
+            if (mActivity.isInCameraApp()) {
+                mUI.enableGestures(true);
+            }
+            break;
         }
     }
 
@@ -1215,38 +989,9 @@ public class PhotoModule
         }
     }
 
-    private void setShowMenu(boolean show) {
-        if (mOnScreenIndicators != null) {
-            mOnScreenIndicators.setVisibility(show ? View.VISIBLE : View.GONE);
-        }
-        if (mMenu != null) {
-            mMenu.setVisibility(show ? View.VISIBLE : View.GONE);
-        }
-    }
-
     @Override
     public void onFullScreenChanged(boolean full) {
-        if (mFaceView != null) {
-            mFaceView.setBlockDraw(!full);
-        }
-        if (mPopup != null) {
-            dismissPopup(false, full);
-        }
-        if (mGestures != null) {
-            mGestures.setEnabled(full);
-        }
-        if (mRenderOverlay != null) {
-            // this can not happen in capture mode
-            mRenderOverlay.setVisibility(full ? View.VISIBLE : View.GONE);
-        }
-        if (mPieRenderer != null) {
-            mPieRenderer.setBlockFocus(!full);
-        }
-        setShowMenu(full);
-        if (mBlocker != null) {
-            mBlocker.setVisibility(full ? View.VISIBLE : View.GONE);
-        }
-        if (!full && mCountDownView != null) mCountDownView.cancelCountDown();
+        mUI.onFullScreenChanged(full);
         if (ApiHelper.HAS_SURFACE_TEXTURE) {
             if (mActivity.mCameraScreenNail != null) {
                 ((CameraScreenNail) mActivity.mCameraScreenNail).setFullScreen(full);
@@ -1255,35 +1000,7 @@ public class PhotoModule
         }
     }
 
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.v(TAG, "surfaceChanged:" + holder + " width=" + width + ". height="
-                + height);
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        Log.v(TAG, "surfaceCreated: " + holder);
-        mCameraSurfaceHolder = holder;
-        // Do not access the camera if camera start up thread is not finished.
-        if (mCameraDevice == null || mCameraStartUpThread != null) return;
-
-        mCameraDevice.setPreviewDisplayAsync(holder);
-        // This happens when onConfigurationChanged arrives, surface has been
-        // destroyed, and there is no onFullScreenChanged.
-        if (mCameraState == PREVIEW_STOPPED) {
-            setupPreview();
-        }
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.v(TAG, "surfaceDestroyed: " + holder);
-        mCameraSurfaceHolder = null;
-        stopPreview();
-    }
-
-    private void updateSceneModeUI() {
+    private void updateSceneMode() {
         // If scene mode is set, we cannot set flash mode, white balance, and
         // focus mode, instead, we read it from driver
         if (!Parameters.SCENE_MODE_AUTO.equals(mSceneMode)) {
@@ -1296,40 +1013,16 @@ public class PhotoModule
 
     private void overrideCameraSettings(final String flashMode,
             final String whiteBalance, final String focusMode) {
-        if (mPhotoControl != null) {
-//            mPieControl.enableFilter(true);
-            mPhotoControl.overrideSettings(
-                    CameraSettings.KEY_FLASH_MODE, flashMode,
-                    CameraSettings.KEY_WHITE_BALANCE, whiteBalance,
-                    CameraSettings.KEY_FOCUS_MODE, focusMode);
-//            mPieControl.enableFilter(false);
-        }
+        mUI.overrideSettings(
+                CameraSettings.KEY_FLASH_MODE, flashMode,
+                CameraSettings.KEY_WHITE_BALANCE, whiteBalance,
+                CameraSettings.KEY_FOCUS_MODE, focusMode);
     }
 
     private void loadCameraPreferences() {
         CameraSettings settings = new CameraSettings(mActivity, mInitialParams,
                 mCameraId, CameraHolder.instance().getCameraInfo());
         mPreferenceGroup = settings.getPreferenceGroup(R.xml.camera_preferences);
-    }
-
-    @Override
-    public boolean collapseCameraControls() {
-        // Remove all the popups/dialog boxes
-        boolean ret = false;
-        if (mPopup != null) {
-            dismissPopup(false);
-            ret = true;
-        }
-        return ret;
-    }
-
-    public boolean removeTopLevelPopup() {
-        // Remove the top level popup or dialog box and return true if there's any
-        if (mPopup != null) {
-            dismissPopup(true);
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -1355,29 +1048,22 @@ public class PhotoModule
         }
     }
 
-    // onClick handler for R.id.btn_done
-    @OnClickAttr
-    public void onReviewDoneClicked(View v) {
-        doAttach();
+    @Override
+    public void onCaptureCancelled() {
+        mActivity.setResultEx(Activity.RESULT_CANCELED, new Intent());
+        mActivity.finish();
     }
 
-    // onClick handler for R.id.btn_cancel
-    @OnClickAttr
-    public void onReviewCancelClicked(View v) {
-        doCancel();
-    }
-
-    // onClick handler for R.id.btn_retake
-    @OnClickAttr
-    public void onReviewRetakeClicked(View v) {
+    @Override
+    public void onCaptureRetake() {
         if (mPaused)
             return;
-
-        hidePostCaptureAlert();
+        mUI.hidePostCaptureAlert();
         setupPreview();
     }
 
-    private void doAttach() {
+    @Override
+    public void onCaptureDone() {
         if (mPaused) {
             return;
         }
@@ -1456,14 +1142,9 @@ public class PhotoModule
         }
     }
 
-    private void doCancel() {
-        mActivity.setResultEx(Activity.RESULT_CANCELED, new Intent());
-        mActivity.finish();
-    }
-
     @Override
     public void onShutterButtonFocus(boolean pressed) {
-        if (mPaused || collapseCameraControls()
+        if (mPaused || mUI.collapseCameraControls()
                 || (mCameraState == SNAPSHOT_IN_PROGRESS)
                 || (mCameraState == PREVIEW_STOPPED)) return;
 
@@ -1479,7 +1160,7 @@ public class PhotoModule
         } else {
             // for countdown mode, we need to postpone the shutter release
             // i.e. lock the focus during countdown.
-            if (!mCountDownView.isCountingDown()) {
+            if (!mUI.isCountingDown()) {
                 mFocusManager.onShutterUp();
             }
         }
@@ -1487,7 +1168,7 @@ public class PhotoModule
 
     @Override
     public void onShutterButtonClick() {
-        if (mPaused || collapseCameraControls()
+        if (mPaused || mUI.collapseCameraControls()
                 || (mCameraState == SWITCHING_CAMERA)
                 || (mCameraState == PREVIEW_STOPPED)) return;
 
@@ -1520,11 +1201,11 @@ public class PhotoModule
         int seconds = Integer.parseInt(timer);
         // When shutter button is pressed, check whether the previous countdown is
         // finished. If not, cancel the previous countdown and start a new one.
-        if (mCountDownView.isCountingDown()) {
-            mCountDownView.cancelCountDown();
-            mCountDownView.startCountDown(seconds, playSound);
-        } else if (seconds > 0) {
-            mCountDownView.startCountDown(seconds, playSound);
+        if (mUI.isCountingDown()) {
+            mUI.cancelCountDown();
+        }
+        if (seconds > 0) {
+            mUI.startCountDown(seconds, playSound);
         } else {
            mSnapshotOnIdle = false;
            mFocusManager.doSnap();
@@ -1614,17 +1295,8 @@ public class PhotoModule
             mCameraDevice.cancelAutoFocus();
         }
         stopPreview();
-        mCountDownView.cancelCountDown();
-        // Close the camera now because other activities may need to use it.
-        closeCamera();
         // Release surface texture.
         ((CameraScreenNail) mActivity.mCameraScreenNail).releaseSurfaceTexture();
-        mSurfaceTexture = null;
-        resetScreenOn();
-
-        // Clear UI.
-        collapseCameraControls();
-        if (mFaceView != null) mFaceView.clear();
 
         mNamedImages = null;
 
@@ -1645,62 +1317,16 @@ public class PhotoModule
         mHandler.removeMessages(OPEN_CAMERA_FAIL);
         mHandler.removeMessages(CAMERA_DISABLED);
 
-        mRootView.removeOnLayoutChangeListener(mLayoutChangeListener);
-        mPreviewWidth = 0;
-        mPreviewHeight = 0;
+        closeCamera();
+
+        resetScreenOn();
+        mUI.onPause();
+
         mPendingSwitchCameraId = -1;
         if (mFocusManager != null) mFocusManager.removeMessages();
         MediaSaveService s = mActivity.getMediaSaveService();
         if (s != null) {
             s.setListener(null);
-        }
-    }
-
-    private void initializeControlByIntent() {
-        mBlocker = mActivity.findViewById(R.id.blocker);
-        mMenu = mActivity.findViewById(R.id.menu);
-        mMenu.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mPieRenderer != null) {
-                    // If autofocus is not finished, cancel autofocus so that the
-                    // subsequent touch can be handled by PreviewGestures
-                    if (mCameraState == FOCUSING) cancelAutoFocus();
-                    mPieRenderer.showInCenter();
-                }
-            }
-        });
-        if (mIsImageCaptureIntent) {
-            mActivity.hideSwitcher();
-            ViewGroup cameraControls = (ViewGroup) mActivity.findViewById(R.id.camera_controls);
-            mActivity.getLayoutInflater().inflate(R.layout.review_module_control, cameraControls);
-
-            mReviewDoneButton = mActivity.findViewById(R.id.btn_done);
-            mReviewCancelButton = mActivity.findViewById(R.id.btn_cancel);
-            mReviewRetakeButton = mActivity.findViewById(R.id.btn_retake);
-            mReviewCancelButton.setVisibility(View.VISIBLE);
-
-            mReviewDoneButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onReviewDoneClicked(v);
-                }
-            });
-            mReviewCancelButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onReviewCancelClicked(v);
-                }
-            });
-
-            mReviewRetakeButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onReviewRetakeClicked(v);
-                }
-            });
-
-            setupCaptureParams();
         }
     }
 
@@ -1710,7 +1336,6 @@ public class PhotoModule
      */
     private void initializeFocusManager() {
         // Create FocusManager object. startPreview needs it.
-        mRenderOverlay = (RenderOverlay) mRootView.findViewById(R.id.render_overlay);
         // if mFocusManager not null, reuse it
         // otherwise create a new instance
         if (mFocusManager != null) {
@@ -1722,7 +1347,7 @@ public class PhotoModule
                     R.array.pref_camera_focusmode_default_array);
             mFocusManager = new FocusOverlayManager(mPreferences, defaultFocusModes,
                     mInitialParams, this, mirror,
-                    mActivity.getMainLooper());
+                    mActivity.getMainLooper(), mUI);
         }
     }
 
@@ -1784,7 +1409,7 @@ public class PhotoModule
         }
 
         // Do not trigger touch focus if popup window is opened.
-        if (removeTopLevelPopup()) return;
+        if (mUI.removeTopLevelPopup()) return;
 
         // Check if metering area or focus area is supported.
         if (!mFocusAreaSupported && !mMeteringAreaSupported) return;
@@ -1793,24 +1418,7 @@ public class PhotoModule
 
     @Override
     public boolean onBackPressed() {
-        if (mPieRenderer != null && mPieRenderer.showsItems()) {
-            mPieRenderer.hide();
-            return true;
-        }
-        // In image capture mode, back button should:
-        // 1) if there is any popup, dismiss them, 2) otherwise, get out of image capture
-        if (mIsImageCaptureIntent) {
-            if (!removeTopLevelPopup()) {
-                // no popup to dismiss, cancel image capture
-                doCancel();
-            }
-            return true;
-        } else if (!isCameraIdle()) {
-            // ignore backs while we're taking a picture
-            return true;
-        } else {
-            return removeTopLevelPopup();
-        }
+        return mUI.onBackPressed();
     }
 
     @Override
@@ -1838,14 +1446,9 @@ public class PhotoModule
                 // Start auto-focus immediately to reduce shutter lag. After
                 // the shutter button gets the focus, onShutterButtonFocus()
                 // will be called again but it is fine.
-                if (removeTopLevelPopup()) return true;
+                if (mUI.removeTopLevelPopup()) return true;
                 onShutterButtonFocus(true);
-                if (mShutterButton.isInTouchMode()) {
-                    mShutterButton.requestFocusFromTouch();
-                } else {
-                    mShutterButton.requestFocus();
-                }
-                mShutterButton.setPressed(true);
+                mUI.pressShutterButton();
             }
             return true;
         }
@@ -1891,9 +1494,7 @@ public class PhotoModule
         mDisplayRotation = Util.getDisplayRotation(mActivity);
         mDisplayOrientation = Util.getDisplayOrientation(mDisplayRotation, mCameraId);
         mCameraDisplayOrientation = Util.getDisplayOrientation(0, mCameraId);
-        if (mFaceView != null) {
-            mFaceView.setDisplayOrientation(mDisplayOrientation);
-        }
+        mUI.setDisplayOrientation(mDisplayOrientation);
         if (mFocusManager != null) {
             mFocusManager.setDisplayOrientation(mDisplayOrientation);
         }
@@ -1933,7 +1534,7 @@ public class PhotoModule
 
         if (ApiHelper.HAS_SURFACE_TEXTURE) {
             CameraScreenNail screenNail = (CameraScreenNail) mActivity.mCameraScreenNail;
-            if (mSurfaceTexture == null) {
+            if (mUI.getSurfaceTexture() == null) {
                 Size size = mParameters.getPreviewSize();
                 if (mCameraDisplayOrientation % 180 == 0) {
                     screenNail.setSize(size.width, size.height);
@@ -1947,15 +1548,16 @@ public class PhotoModule
                 if (t != null && t.isCanceled()) {
                     return; // Exiting, so no need to get the surface texture.
                 }
-                mSurfaceTexture = screenNail.getSurfaceTexture();
+                mUI.setSurfaceTexture(screenNail.getSurfaceTexture());
             }
             mCameraDevice.setDisplayOrientation(mCameraDisplayOrientation);
-            if (mSurfaceTexture != null) {
-                mCameraDevice.setPreviewTextureAsync((SurfaceTexture) mSurfaceTexture);
+            Object st = mUI.getSurfaceTexture();
+            if (st != null) {
+                mCameraDevice.setPreviewTextureAsync((SurfaceTexture) st);
             }
         } else {
             mCameraDevice.setDisplayOrientation(mDisplayOrientation);
-            mCameraDevice.setPreviewDisplayAsync(mCameraSurfaceHolder);
+            mCameraDevice.setPreviewDisplayAsync(mUI.getSurfaceHolder());
         }
 
         Log.v(TAG, "startPreview");
@@ -1968,7 +1570,8 @@ public class PhotoModule
         }
     }
 
-    private void stopPreview() {
+    @Override
+    public void stopPreview() {
         if (mCameraDevice != null && mCameraState != PREVIEW_STOPPED) {
             Log.v(TAG, "stopPreview");
             mCameraDevice.stopPreview();
@@ -2197,7 +1800,7 @@ public class PhotoModule
             return;
         } else if (isCameraIdle()) {
             setCameraParameters(mUpdateSet);
-            updateSceneModeUI();
+            updateSceneMode();
             mUpdateSet = 0;
         } else {
             if (!mHandler.hasMessages(SET_CAMERA_PARAMETERS_WHEN_IDLE)) {
@@ -2207,14 +1810,14 @@ public class PhotoModule
         }
     }
 
-    private boolean isCameraIdle() {
+    public boolean isCameraIdle() {
         return (mCameraState == IDLE) ||
                 (mCameraState == PREVIEW_STOPPED) ||
                 ((mFocusManager != null) && mFocusManager.isFocusCompleted()
                         && (mCameraState != SWITCHING_CAMERA));
     }
 
-    private boolean isImageCaptureIntent() {
+    public boolean isImageCaptureIntent() {
         String action = mActivity.getIntent().getAction();
         return (MediaStore.ACTION_IMAGE_CAPTURE.equals(action)
                 || ActivityBase.ACTION_IMAGE_CAPTURE_SECURE.equals(action));
@@ -2228,26 +1831,6 @@ public class PhotoModule
         }
     }
 
-    private void showPostCaptureAlert() {
-        if (mIsImageCaptureIntent) {
-            mOnScreenIndicators.setVisibility(View.GONE);
-            mMenu.setVisibility(View.GONE);
-            Util.fadeIn(mReviewDoneButton);
-            mShutterButton.setVisibility(View.INVISIBLE);
-            Util.fadeIn(mReviewRetakeButton);
-        }
-    }
-
-    private void hidePostCaptureAlert() {
-        if (mIsImageCaptureIntent) {
-            mOnScreenIndicators.setVisibility(View.VISIBLE);
-            mMenu.setVisibility(View.VISIBLE);
-            Util.fadeOut(mReviewDoneButton);
-            mShutterButton.setVisibility(View.VISIBLE);
-            Util.fadeOut(mReviewRetakeButton);
-        }
-    }
-
     @Override
     public void onSharedPreferenceChanged() {
         // ignore the events after "onPause()"
@@ -2258,7 +1841,7 @@ public class PhotoModule
         mLocationManager.recordLocation(recordLocation);
 
         setCameraParametersWhenIdle(UPDATE_PARAM_PREFERENCE);
-        updateOnScreenIndicators();
+        mUI.updateOnScreenIndicators(mParameters, mPreferences);
     }
 
     @Override
@@ -2275,71 +1858,6 @@ public class PhotoModule
             setCameraState(SWITCHING_CAMERA);
         } else {
             switchCamera();
-        }
-    }
-
-    private void switchCamera() {
-        if (mPaused) return;
-
-        Log.v(TAG, "Start to switch camera. id=" + mPendingSwitchCameraId);
-        mCameraId = mPendingSwitchCameraId;
-        mPendingSwitchCameraId = -1;
-        mPhotoControl.setCameraId(mCameraId);
-
-        // from onPause
-        closeCamera();
-        collapseCameraControls();
-        if (mFaceView != null) mFaceView.clear();
-        if (mFocusManager != null) mFocusManager.removeMessages();
-
-        // Restart the camera and initialize the UI. From onCreate.
-        mPreferences.setLocalId(mActivity, mCameraId);
-        CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
-        try {
-            mCameraDevice = Util.openCamera(mActivity, mCameraId);
-            mParameters = mCameraDevice.getParameters();
-        } catch (CameraHardwareException e) {
-            Util.showErrorAndFinish(mActivity, R.string.cannot_connect_camera);
-            return;
-        } catch (CameraDisabledException e) {
-            Util.showErrorAndFinish(mActivity, R.string.camera_disabled);
-            return;
-        }
-        initializeCapabilities();
-        CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
-        boolean mirror = (info.facing == CameraInfo.CAMERA_FACING_FRONT);
-        mFocusManager.setMirror(mirror);
-        mFocusManager.setParameters(mInitialParams);
-        setupPreview();
-        loadCameraPreferences();
-        initializePhotoControl();
-
-        // from initializeFirstTime
-        initializeZoom();
-        updateOnScreenIndicators();
-        showTapToFocusToastIfNeeded();
-
-        if (ApiHelper.HAS_SURFACE_TEXTURE) {
-            // Start switch camera animation. Post a message because
-            // onFrameAvailable from the old camera may already exist.
-            mHandler.sendEmptyMessage(SWITCH_CAMERA_START_ANIMATION);
-        }
-    }
-
-    @Override
-    public void onPieOpened(int centerX, int centerY) {
-        mActivity.cancelActivityTouchHandling();
-        mActivity.setSwipingEnabled(false);
-        if (mFaceView != null) {
-            mFaceView.setBlockDraw(true);
-        }
-    }
-
-    @Override
-    public void onPieClosed() {
-        mActivity.setSwipingEnabled(true);
-        if (mFaceView != null) {
-            mFaceView.setBlockDraw(false);
         }
     }
 
@@ -2378,11 +1896,7 @@ public class PhotoModule
     @Override
     public void onOverriddenPreferencesClicked() {
         if (mPaused) return;
-        if (mNotSelectableToast == null) {
-            String str = mActivity.getResources().getString(R.string.not_selectable_in_scene_mode);
-            mNotSelectableToast = Toast.makeText(mActivity, str, Toast.LENGTH_SHORT);
-        }
-        mNotSelectableToast.show();
+        mUI.showPreferencesToast();
     }
 
     private void showTapToFocusToast() {
@@ -2421,56 +1935,41 @@ public class PhotoModule
         return true;
     }
 
-    public void showPopup(AbstractSettingPopup popup) {
-        mActivity.hideUI();
-        mBlocker.setVisibility(View.INVISIBLE);
-        setShowMenu(false);
-        mPopup = popup;
-        mPopup.setVisibility(View.VISIBLE);
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT);
-        lp.gravity = Gravity.CENTER;
-        ((FrameLayout) mRootView).addView(mPopup, lp);
-    }
-
-    public void dismissPopup(boolean topPopupOnly) {
-        dismissPopup(topPopupOnly, true);
-    }
-
-    private void dismissPopup(boolean topOnly, boolean fullScreen) {
-        if (fullScreen) {
-            mActivity.showUI();
-            mBlocker.setVisibility(View.VISIBLE);
-        }
-        setShowMenu(fullScreen);
-        if (mPopup != null) {
-            ((FrameLayout) mRootView).removeView(mPopup);
-            mPopup = null;
-        }
-        mPhotoControl.popupDismissed(topOnly);
-    }
-
     @Override
     public void onShowSwitcherPopup() {
-        if (mPieRenderer != null && mPieRenderer.showsItems()) {
-            mPieRenderer.hide();
-        }
+        mUI.onShowSwitcherPopup();
     }
 
     @Override
-    public void onQueueAvailable() {
-        if (mShutterButton != null) mShutterButton.enableTouch(true);
+    public int onZoomChanged(int index) {
+        // Not useful to change zoom value when the activity is paused.
+        if (mPaused) return index;
+        mZoomValue = index;
+        if (mParameters == null || mCameraDevice == null) return index;
+        // Set zoom parameters asynchronously
+        mParameters.setZoom(mZoomValue);
+        mCameraDevice.setParametersAsync(mParameters);
+        Parameters p = mCameraDevice.getParameters();
+        if (p != null) return p.getZoom();
+        return index;
     }
 
     @Override
-    public void onQueueFull() {
-        if (mShutterButton != null) mShutterButton.enableTouch(false);
+    public int getCameraState() {
+        return mCameraState;
+    }
+
+    @Override
+    public void onQueueStatus(boolean full) {
+        mUI.enableShutter(!full);
     }
 
     @Override
     public void onMediaSaveServiceConnected(MediaSaveService s) {
         // We set the listener only when both service and shutterbutton
         // are initialized.
-        if (mShutterButton != null) s.setListener(this);
+        if (mFirstTimeInitialized) {
+            s.setListener(this);
+        }
     }
 }

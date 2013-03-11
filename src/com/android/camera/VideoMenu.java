@@ -28,7 +28,7 @@ import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.TimeIntervalPopup;
 import com.android.gallery3d.R;
 
-public class VideoController extends PieController
+public class VideoMenu extends PieController
         implements MoreSettingPopup.Listener,
         ListPrefSettingPopup.Listener,
         TimeIntervalPopup.Listener {
@@ -46,7 +46,7 @@ public class VideoController extends PieController
     private static final int POPUP_SECOND_LEVEL = 2;
     private int mPopupStatus;
 
-    public VideoController(CameraActivity activity, VideoModule module, PieRenderer pie) {
+    public VideoMenu(CameraActivity activity, VideoModule module, PieRenderer pie) {
         super(activity, pie);
         mModule = module;
     }
