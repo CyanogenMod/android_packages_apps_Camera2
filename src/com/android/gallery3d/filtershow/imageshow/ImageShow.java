@@ -28,6 +28,7 @@ import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
@@ -249,7 +250,7 @@ public class ImageShow extends View implements OnGestureListener,
         Point translate = MasterImage.getImage().getTranslation();
         float scaleFactor = MasterImage.getImage().getScaleFactor();
         m.postTranslate(translate.x, translate.y);
-        m.postScale(scaleFactor, scaleFactor, getWidth()/2.0f, getHeight()/2.0f);
+        m.postScale(scaleFactor, scaleFactor, getWidth() / 2.0f, getHeight() / 2.0f);
         return m;
     }
 
@@ -301,12 +302,26 @@ public class ImageShow extends View implements OnGestureListener,
     @Override
     public void onDraw(Canvas canvas) {
         MasterImage.getImage().setImageShowSize(getWidth(), getHeight());
-        canvas.save();
-        // TODO: center scale on gesture
+
         float cx = canvas.getWidth()/2.0f;
         float cy = canvas.getHeight()/2.0f;
         float scaleFactor = MasterImage.getImage().getScaleFactor();
         Point translation = MasterImage.getImage().getTranslation();
+
+        Matrix scalingMatrix = new Matrix();
+        scalingMatrix.postScale(scaleFactor, scaleFactor, cx, cy);
+        scalingMatrix.preTranslate(translation.x, translation.y);
+
+        RectF unscaledClipRect = new RectF(mImageBounds);
+        scalingMatrix.mapRect(unscaledClipRect, unscaledClipRect);
+
+        canvas.save();
+        if (!unscaledClipRect.isEmpty()) {
+            canvas.clipRect(unscaledClipRect);
+        }
+
+        canvas.save();
+        // TODO: center scale on gesture
         canvas.scale(scaleFactor, scaleFactor, cx, cy);
         canvas.translate(translation.x, translation.y);
         drawBackground(canvas);
@@ -335,6 +350,8 @@ public class ImageShow extends View implements OnGestureListener,
         canvas.scale(scaleFactor, scaleFactor, cx, cy);
         canvas.translate(translation.x, translation.y);
         drawPartialImage(canvas, getGeometryOnlyImage());
+        canvas.restore();
+
         canvas.restore();
 
         drawToast(canvas);

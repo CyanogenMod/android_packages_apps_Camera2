@@ -205,7 +205,7 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
             if (position == mCurrentPresetPosition) {
                 view.setBackgroundColor(Color.WHITE);
             } else {
-                view.setBackgroundResource(R.drawable.filtershow_button_background);
+                view.setBackgroundResource(R.color.background_main_toolbar);
             }
         }
 
