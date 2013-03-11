@@ -27,9 +27,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import com.android.camera.ui.FaceView;
-import com.android.camera.ui.FocusIndicator;
-import com.android.camera.ui.PieRenderer;
 import com.android.gallery3d.common.ApiHelper;
 
 import java.util.ArrayList;
@@ -78,13 +75,10 @@ public class FocusOverlayManager {
     private boolean mAeAwbLock;
     private Matrix mMatrix;
 
-    private PieRenderer mPieRenderer;
-
     private int mPreviewWidth; // The width of the preview frame layout.
     private int mPreviewHeight; // The height of the preview frame layout.
     private boolean mMirror; // true if the camera is front-facing.
     private int mDisplayOrientation;
-    private FaceView mFaceView;
     private List<Object> mFocusArea; // focus area in driver format
     private List<Object> mMeteringArea; // metering area in driver format
     private String mFocusMode;
@@ -96,6 +90,19 @@ public class FocusOverlayManager {
     Listener mListener;
     private boolean mPreviousMoving;
     private boolean mFocusDefault;
+
+    private FocusUI mUI;
+
+    public  interface FocusUI {
+        public boolean hasFaces();
+        public void clearFocus();
+        public void setFocusPosition(int x, int y);
+        public void onFocusStarted();
+        public void onFocusSucceeded(boolean timeOut);
+        public void onFocusFailed(boolean timeOut);
+        public void pauseFaceDetection();
+        public void resumeFaceDetection();
+    }
 
     public interface Listener {
         public void autoFocus();
@@ -125,7 +132,7 @@ public class FocusOverlayManager {
 
     public FocusOverlayManager(ComboPreferences preferences, String[] defaultFocusModes,
             Parameters parameters, Listener listener,
-            boolean mirror, Looper looper) {
+            boolean mirror, Looper looper, FocusUI ui) {
         mHandler = new MainHandler(looper);
         mMatrix = new Matrix();
         mPreferences = preferences;
@@ -134,11 +141,7 @@ public class FocusOverlayManager {
         mListener = listener;
         setMirror(mirror);
         mFocusDefault = true;
-    }
-
-    public void setFocusRenderer(PieRenderer renderer) {
-        mPieRenderer = renderer;
-        mInitialized = (mMatrix != null);
+        mUI = ui;
     }
 
     public void setParameters(Parameters parameters) {
@@ -172,10 +175,6 @@ public class FocusOverlayManager {
         setMatrix();
     }
 
-    public void setFaceView(FaceView faceView) {
-        mFaceView = faceView;
-    }
-
     private void setMatrix() {
         if (mPreviewWidth != 0 && mPreviewHeight != 0) {
             Matrix matrix = new Matrix();
@@ -185,7 +184,7 @@ public class FocusOverlayManager {
             // coordinates. In tap focus, the inverted matrix converts the UI
             // coordinates to driver coordinates.
             matrix.invert(mMatrix);
-            mInitialized = (mPieRenderer != null);
+            mInitialized = true;
         }
     }
 
@@ -295,9 +294,11 @@ public class FocusOverlayManager {
 
     public void onAutoFocusMoving(boolean moving) {
         if (!mInitialized) return;
+
+
         // Ignore if the camera has detected some faces.
-        if (mFaceView != null && mFaceView.faceExists()) {
-            mPieRenderer.clear();
+        if (mUI.hasFaces()) {
+            mUI.clearFocus();
             return;
         }
 
@@ -307,9 +308,9 @@ public class FocusOverlayManager {
 
         // animate on false->true trasition only b/8219520
         if (moving && !mPreviousMoving) {
-            mPieRenderer.showStart();
+            mUI.onFocusStarted();
         } else if (!moving) {
-            mPieRenderer.showSuccess(true);
+            mUI.onFocusSucceeded(true);
         }
         mPreviousMoving = moving;
     }
@@ -358,7 +359,7 @@ public class FocusOverlayManager {
         }
 
         // Use margin to set the focus indicator to the touched area.
-        mPieRenderer.setFocus(x, y);
+        mUI.setFocusPosition(x, y);
 
         // Stop face detection because we want to specify focus and metering area.
         mListener.stopFaceDetection();
@@ -396,7 +397,7 @@ public class FocusOverlayManager {
         mState = STATE_FOCUSING;
         // Pause the face view because the driver will keep sending face
         // callbacks after the focus completes.
-        if (mFaceView != null) mFaceView.pause();
+        mUI.pauseFaceDetection();
         updateFocusUI();
         mHandler.removeMessages(RESET_TOUCH_FOCUS);
     }
@@ -409,7 +410,7 @@ public class FocusOverlayManager {
         // driver is not reset.
         resetTouchFocus();
         mListener.cancelAutoFocus();
-        if (mFaceView != null) mFaceView.resume();
+        mUI.resumeFaceDetection();
         mState = STATE_IDLE;
         updateFocusUI();
         mHandler.removeMessages(RESET_TOUCH_FOCUS);
@@ -470,28 +471,26 @@ public class FocusOverlayManager {
     public void updateFocusUI() {
         if (!mInitialized) return;
         // Show only focus indicator or face indicator.
-        boolean faceExists = (mFaceView != null && mFaceView.faceExists());
-        FocusIndicator focusIndicator = (faceExists) ? mFaceView : mPieRenderer;
 
         if (mState == STATE_IDLE) {
             if (mFocusDefault) {
-                focusIndicator.clear();
+                mUI.clearFocus();
             } else {
                 // Users touch on the preview and the indicator represents the
                 // metering area. Either focus area is not supported or
                 // autoFocus call is not required.
-                focusIndicator.showStart();
+                mUI.onFocusStarted();
             }
         } else if (mState == STATE_FOCUSING || mState == STATE_FOCUSING_SNAP_ON_FINISH) {
-            focusIndicator.showStart();
+            mUI.onFocusStarted();
         } else {
             if (Util.FOCUS_MODE_CONTINUOUS_PICTURE.equals(mFocusMode)) {
                 // TODO: check HAL behavior and decide if this can be removed.
-                focusIndicator.showSuccess(false);
+                mUI.onFocusSucceeded(false);
             } else if (mState == STATE_SUCCESS) {
-                focusIndicator.showSuccess(false);
+                mUI.onFocusSucceeded(false);
             } else if (mState == STATE_FAIL) {
-                focusIndicator.showFail(false);
+                mUI.onFocusFailed(false);
             }
         }
     }
@@ -500,7 +499,7 @@ public class FocusOverlayManager {
         if (!mInitialized) return;
 
         // Put focus indicator to the center. clear reset position
-        mPieRenderer.clear();
+        mUI.clearFocus();
         // Initialize mFocusArea.
         if (mFocusAreaSupported) {
             initializeFocusAreas(mPreviewWidth / 2, mPreviewHeight / 2);
