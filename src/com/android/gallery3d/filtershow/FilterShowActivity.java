@@ -210,19 +210,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ((ViewStub) findViewById(R.id.statePanelStub)).inflate();
         setupHistoryPanel();
         setupStatePanel();
-
-        mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
-        mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList),
-                findViewById(R.id.panelAccessoryViewList),
-                findViewById(R.id.applyEffect));
-
-        mPanelController.setCurrentPanel(R.id.fxButton);
     }
 
     public void setupHistoryPanel() {
         findViewById(R.id.resetOperationsButton).setOnClickListener(
                 createOnClickResetOperationsButton());
-
         ListView operationsList = (ListView) findViewById(R.id.operationsList);
         operationsList.setAdapter(mMasterImage.getHistory());
         operationsList.setOnItemClickListener(this);
@@ -232,6 +224,9 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ListView imageStateList = (ListView) findViewById(R.id.imageStateList);
         imageStateList.setAdapter(mMasterImage.getState());
         mImageLoader.setAdapter(mMasterImage.getHistory());
+        mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
+        mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList));
+        mPanelController.setCurrentPanel(R.id.fxButton);
     }
 
     private void fillPanel(Vector<FilterRepresentation> representations, int layoutId, int buttonId) {

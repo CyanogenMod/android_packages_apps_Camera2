@@ -20,15 +20,26 @@ import android.content.Context;
 import android.widget.FrameLayout;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 public class EditorStraighten extends Editor implements EditorInfo {
     public static final int ID = R.id.editorStraighten;
     ImageStraighten mImageStraighten;
+    GeometryMetadata mGeometryMetadata;
 
     public EditorStraighten() {
         super(ID);
+        mShowParameter = SHOW_VALUE_INT;
+    }
+
+    // TODO use filter reflection like
+    @Override
+    public String calculateUserMessage(Context context, String effectName, Object parameterValue) {
+        String apply = context.getString(R.string.apply_effect);
+        apply += " " + effectName + " " + parameterValue;
+        return apply;
     }
 
     @Override
