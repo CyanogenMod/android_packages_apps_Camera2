@@ -17,12 +17,18 @@
 package com.android.gallery3d.filtershow.editors;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.PanelController;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
@@ -33,25 +39,64 @@ import com.android.gallery3d.filtershow.presets.ImagePreset;
 /**
  * Base class for Editors Must contain a mImageShow and a top level view
  */
-public class Editor {
+public class Editor implements OnSeekBarChangeListener {
     protected Context mContext;
     protected View mView;
     protected ImageShow mImageShow;
     protected FrameLayout mFrameLayout;
+    protected SeekBar mSeekBar;
     protected PanelController mPanelController;
     protected int mID;
     private final String LOGTAG = "Editor";
     protected FilterRepresentation mLocalRepresentation = null;
+    protected byte mShowParameter = SHOW_VALUE_UNDEFINED;
+    public static byte SHOW_VALUE_UNDEFINED = -1;
+    public static byte SHOW_VALUE_OFF = 0;
+    public static byte SHOW_VALUE_INT = 1;
 
     public void setPanelController(PanelController panelController) {
         this.mPanelController = panelController;
     }
 
+    public String calculateUserMessage(Context context, String effectName, Object parameterValue) {
+        String apply = context.getString(R.string.apply_effect);
+        if (mShowParameter == SHOW_VALUE_INT) {
+            apply += " " + effectName + " " + parameterValue;
+        } else {
+            apply += " " + effectName;
+        }
+        return apply;
+    }
+
     protected Editor(int id) {
         mID = id;
     }
+
     public int getID() {
         return mID;
+    }
+
+
+    public byte showParameterValue() {
+        return mShowParameter;
+    }
+
+    /**
+     * @param actionButton the would be the area for menu etc
+     * @param editControl this is the black area for sliders etc
+     */
+    public void setUtilityPanelUI(View actionButton, View editControl) {
+        mSeekBar = (SeekBar) editControl.findViewById(R.id.primarySeekBar);
+        mSeekBar.setOnSeekBarChangeListener(this);
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar sbar, int progress, boolean arg2) {
+
+    }
+
+    public void setPanel() {
+
     }
 
     public void createEditor(Context context,FrameLayout frameLayout) {
@@ -115,7 +160,12 @@ public class Editor {
             ImagePreset preset = MasterImage.getImage().getPreset();
             FilterRepresentation filterRepresentation = MasterImage.getImage().getCurrentFilterRepresentation();
             mLocalRepresentation = preset.getFilterRepresentationCopyFrom(filterRepresentation);
+            if (mShowParameter == SHOW_VALUE_UNDEFINED) {
+                boolean show = filterRepresentation.showParameterValue();
+                mShowParameter = show ? SHOW_VALUE_INT : SHOW_VALUE_OFF;
+            }
         }
+
         return mLocalRepresentation;
     }
 
@@ -142,6 +192,24 @@ public class Editor {
         if (mImageShow != null) {
             mImageShow.openUtilityPanel(mAccessoryViewList);
         }
+    }
+
+    protected void createMenu(int[] strId, View button) {
+        PopupMenu pmenu = new PopupMenu(mContext, button);
+        Menu menu = pmenu.getMenu();
+        for (int i = 0; i < strId.length; i++) {
+            menu.add(Menu.NONE, Menu.FIRST + i, 0, mContext.getString(strId[i]));
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar arg0) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar arg0) {
+
     }
 
 }
