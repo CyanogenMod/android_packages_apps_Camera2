@@ -16,23 +16,22 @@
 
 package com.android.gallery3d.filtershow.tools;
 
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 
 /**
- * Asynchronous task filtering or doign I/O with bitmaps.
+ * Asynchronous task wrapper class for doing Bitmap I/O.
  */
-public class BitmapTask <T> extends AsyncTask<T, Void, Bitmap> {
+public class BitmapTask <T, K> extends AsyncTask<T, Void, K> {
 
-    private Callbacks<T> mCallbacks;
+    private Callbacks<T, K> mCallbacks;
     private static final String LOGTAG = "BitmapTask";
 
-    public BitmapTask(Callbacks<T> callbacks) {
+    public BitmapTask(Callbacks<T, K> callbacks) {
         mCallbacks = callbacks;
     }
 
     @Override
-    protected Bitmap doInBackground(T... params) {
+    protected K doInBackground(T... params) {
         if (params == null || mCallbacks == null) {
             return null;
         }
@@ -40,7 +39,7 @@ public class BitmapTask <T> extends AsyncTask<T, Void, Bitmap> {
     }
 
     @Override
-    protected void onPostExecute(Bitmap result) {
+    protected void onPostExecute(K result) {
         if (mCallbacks == null) {
             return;
         }
@@ -58,11 +57,11 @@ public class BitmapTask <T> extends AsyncTask<T, Void, Bitmap> {
     /**
      * Callbacks for the asynchronous task.
      */
-    public interface Callbacks<P> {
-        void onComplete(Bitmap result);
+    public interface Callbacks<P, J> {
+        void onComplete(J result);
 
         void onCancel();
 
-        Bitmap onExecute(P param);
+        J onExecute(P param);
     }
 }
