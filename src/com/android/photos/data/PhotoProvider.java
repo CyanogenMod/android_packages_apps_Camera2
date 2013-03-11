@@ -282,6 +282,8 @@ public class PhotoProvider extends SQLiteContentProvider {
     protected static final int MATCH_METADATA_ID = 6;
     protected static final int MATCH_IMAGE = 7;
     protected static final int MATCH_ALBUM_COVER = 8;
+    protected static final int MATCH_ACCOUNT = 9;
+    protected static final int MATCH_ACCOUNT_ID = 10;
 
     static {
         sUriMatcher.addURI(AUTHORITY, Photos.TABLE, MATCH_PHOTO);
@@ -298,6 +300,9 @@ public class PhotoProvider extends SQLiteContentProvider {
         // match against image_cache/album/<Albums._ID>
         sUriMatcher.addURI(AUTHORITY, ImageCache.TABLE + "/" + Albums.TABLE + "/#",
                 MATCH_ALBUM_COVER);
+        sUriMatcher.addURI(AUTHORITY, Accounts.TABLE, MATCH_ACCOUNT);
+        // match against Accounts._ID
+        sUriMatcher.addURI(AUTHORITY, Accounts.TABLE + "/#", MATCH_ACCOUNT_ID);
     }
 
     @Override
@@ -434,6 +439,10 @@ public class PhotoProvider extends SQLiteContentProvider {
             case MATCH_METADATA_ID:
                 table = Metadata.TABLE;
                 break;
+            case MATCH_ACCOUNT:
+            case MATCH_ACCOUNT_ID:
+                table = Accounts.TABLE;
+                break;
             default:
                 throw unknownUri(uri);
         }
@@ -535,6 +544,7 @@ public class PhotoProvider extends SQLiteContentProvider {
             case MATCH_PHOTO:
             case MATCH_ALBUM:
             case MATCH_METADATA:
+            case MATCH_ACCOUNT:
                 break;
             default:
                 throw new IllegalArgumentException("Operation not allowed on an existing row.");
