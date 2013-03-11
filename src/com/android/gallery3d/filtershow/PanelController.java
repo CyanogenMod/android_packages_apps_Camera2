@@ -21,6 +21,7 @@ import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewPropertyAnimator;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -158,10 +159,11 @@ public class PanelController implements OnClickListener {
         private int mParameterValue = 0;
         private boolean mShowParameterValue = false;
 
-        public UtilityPanel(Context context, View view, View accessoryViewList,
-                View textView) {
+        public UtilityPanel(Context context, View utilityPanel) {
+            mView = utilityPanel;
+            View accessoryViewList = mView.findViewById(R.id.panelAccessoryViewList);
+            Button textView = (Button) mView.findViewById(R.id.applyEffect);
             mContext = context;
-            mView = view;
             mAccessoryViewList = (LinearLayout) accessoryViewList;
             mTextView = (TextView) textView;
         }
@@ -193,14 +195,34 @@ public class PanelController implements OnClickListener {
             updateText();
         }
 
-        public void updateText() {
-            String apply = mContext.getString(R.string.apply_effect);
-            if (mShowParameterValue) {
-                mTextView.setText(Html.fromHtml(apply + " " + mEffectName + " "
-                        + mParameterValue));
+        public void showMenu(boolean show) {
+            mTextView.setOnClickListener(null);
+            if (show){
+                mAccessoryViewList.setVisibility(View.VISIBLE);
+                mTextView.setVisibility(View.VISIBLE);
             } else {
-                mTextView.setText(Html.fromHtml(apply + " " + mEffectName));
+                mAccessoryViewList.setVisibility(View.VISIBLE);
+                mTextView.setVisibility(View.VISIBLE);
             }
+
+        }
+
+        public View getActionControl() {
+            return mView.findViewById(R.id.panelAccessoryViewList);
+        }
+
+        public View getEditControl() {
+            return mView.findViewById(R.id.controlArea);
+        }
+        public void updateText() {
+            String s;
+            if (mCurrentEditor == null) {
+                String apply = mContext.getString(R.string.apply_effect);
+                s = apply + " " + mEffectName + " " + mParameterValue;
+            } else {
+                s = mCurrentEditor.calculateUserMessage(mContext, mEffectName, mParameterValue);
+            }
+            mTextView.setText(Html.fromHtml(s));
         }
 
         public ViewPropertyAnimator unselect() {
@@ -363,10 +385,12 @@ public class PanelController implements OnClickListener {
         mRowPanel = rowPanel;
     }
 
-    public void setUtilityPanel(Context context, View utilityPanel,
-            View accessoryViewList, View textView) {
-        mUtilityPanel = new UtilityPanel(context, utilityPanel,
-                accessoryViewList, textView);
+    public void setUtilityPanel(Context context, View utilityPanel) {
+        addView(utilityPanel.findViewById(R.id.applyEffect));
+        addView(utilityPanel.findViewById(R.id.applyFilter));
+        // TODO rename applyFilter to panelFilterDescription
+        addView(utilityPanel.findViewById(R.id.cancelFilter));
+        mUtilityPanel = new UtilityPanel(context, utilityPanel);
     }
 
     @Override
@@ -552,8 +576,8 @@ public class PanelController implements OnClickListener {
             mCurrentImage.unselect();
         }
         mUtilityPanel.hideAccessoryViews();
-
-        if (view instanceof FilterIconButton && view.getId() != R.id.applyEffect) {
+        mUtilityPanel.showMenu(false);
+        if (view instanceof FilterIconButton) {
             mCurrentEditor = null;
             FilterIconButton component = (FilterIconButton) view;
             FilterRepresentation representation = component.getFilterRepresentation();
@@ -563,9 +587,13 @@ public class PanelController implements OnClickListener {
 
                 if (representation.getEditorId() != 0) {
                     if (mEditorPlaceHolder.contains(representation.getEditorId())) {
-                        mCurrentEditor = mEditorPlaceHolder.showEditor(representation.getEditorId());
+                        mCurrentEditor = mEditorPlaceHolder.showEditor(
+                                representation.getEditorId());
+                        mCurrentEditor.setUtilityPanelUI(
+                                mUtilityPanel.getActionControl(), mUtilityPanel.getEditControl());
                         mCurrentImage = mCurrentEditor.getImageShow();
                         mCurrentEditor.setPanelController(this);
+
                     } else {
                         mCurrentImage = showImageView(representation.getEditorId());
                     }
@@ -576,6 +604,7 @@ public class PanelController implements OnClickListener {
                 if (mCurrentEditor != null) {
                     mCurrentEditor.reflectCurrentFilter();
                     if (mCurrentEditor.useUtilityPanel()) {
+                        mUtilityPanel.showMenu(true);
                         mCurrentEditor.openUtilityPanel(mUtilityPanel.mAccessoryViewList);
                     }
                 } else if (mCurrentImage.useUtilityPanel()) {
@@ -592,7 +621,9 @@ public class PanelController implements OnClickListener {
             mUtilityPanel.setEffectName(ename);
 
         } else {
-            if (id == R.id.applyEffect) {
+            if (id == R.id.cancelFilter) {
+                cancelCurrentFilter();
+            } else if (id == R.id.applyEffect || id == R.id.applyFilter) {
                 if (MasterImage.getImage().getCurrentFilter() instanceof ImageFilterTinyPlanet) {
                     mActivity.saveImage();
                 } else {
@@ -611,7 +642,16 @@ public class PanelController implements OnClickListener {
         } else if (mCurrentImage.useUtilityPanel()) {
             mCurrentImage.openUtilityPanel(mUtilityPanel.mAccessoryViewList);
         }
+    }
 
+    public void cancelCurrentFilter() {
+        resetParameters();
+        MasterImage masterImage = MasterImage.getImage();
+        HistoryAdapter adapter = masterImage.getHistory();
+
+        int position = adapter.undo();
+        masterImage.onHistoryItemClick(position);
+        mActivity.invalidateViews();
     }
 
     public void setEditorPlaceHolder(EditorPlaceHolder editorPlaceHolder) {

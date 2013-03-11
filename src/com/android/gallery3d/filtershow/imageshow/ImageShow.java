@@ -695,7 +695,7 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     public boolean useUtilityPanel() {
-        return true;
+        return false;
     }
 
     public void openUtilityPanel(final LinearLayout accessoryViewList) {
