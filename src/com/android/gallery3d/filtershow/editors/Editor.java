@@ -182,10 +182,7 @@ public class Editor implements OnSeekBarChangeListener {
     }
 
     public boolean useUtilityPanel() {
-        if (mImageShow != null) {
-            return mImageShow.useUtilityPanel();
-        }
-        return false;
+        return true;
     }
 
     public void openUtilityPanel(LinearLayout mAccessoryViewList) {
