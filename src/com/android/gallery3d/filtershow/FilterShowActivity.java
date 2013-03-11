@@ -86,6 +86,7 @@ import com.android.gallery3d.filtershow.ui.FilterIconButton;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
 import com.android.gallery3d.filtershow.ui.Spline;
 import com.android.gallery3d.util.GalleryUtils;
+import com.android.photos.data.GalleryBitmapPool;
 
 import java.io.File;
 import java.io.IOException;
@@ -140,6 +141,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        clearGalleryBitmapPool();
 
         setupMasterImage();
         setDefaultValues();
@@ -510,6 +513,17 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             super.onPostExecute(result);
         }
 
+    }
+
+    private void clearGalleryBitmapPool() {
+        (new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                // Free memory held in Gallery's Bitmap pool.  May be O(n) for n bitmaps.
+                GalleryBitmapPool.getInstance().clear();
+                return null;
+            }
+        }).execute();
     }
 
     private void fillButtonIcons() {
