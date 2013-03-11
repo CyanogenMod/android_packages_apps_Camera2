@@ -810,7 +810,9 @@ public class VideoModule implements CameraModule,
     public void onResumeAfterSuper() {
         if (mActivity.mOpenCameraFail || mActivity.mCameraDisabled)
             return;
-
+        if (mShutterButton != null) {
+            mShutterButton.setEnabled(false);
+        }
         mZoomValue = 0;
 
         showVideoSnapshotUI(false);
@@ -884,7 +886,6 @@ public class VideoModule implements CameraModule,
             }
         }
 
-        mPreviewing = true;
 
         setDisplayOrientation();
         mActivity.mCameraDevice.setDisplayOrientation(mCameraDisplayOrientation);
@@ -903,9 +904,13 @@ public class VideoModule implements CameraModule,
                     mActivity.mCameraDevice.setPreviewDisplayAsync(mPreviewSurfaceView.getHolder());
                 }
                 mActivity.mCameraDevice.startPreviewAsync();
+                mPreviewing = true;
+                onPreviewStarted();
             } else {
                 initializeEffectsPreview();
                 mEffectsRecorder.startPreview();
+                mPreviewing = true;
+                onPreviewStarted();
             }
         } catch (Throwable ex) {
             closeCamera();
@@ -921,6 +926,13 @@ public class VideoModule implements CameraModule,
                     }
                 }
             });
+        }
+
+    }
+
+    private void onPreviewStarted() {
+        if (mShutterButton != null) {
+            mShutterButton.setEnabled(true);
         }
     }
 
