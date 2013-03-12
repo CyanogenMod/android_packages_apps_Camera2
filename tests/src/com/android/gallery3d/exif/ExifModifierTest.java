@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.android.gallery3d.exif;
 
 import java.io.File;
@@ -30,47 +31,16 @@ public class ExifModifierTest extends ExifXmlDataTestCase {
 
     private File mTmpFile;
     private List<Map<Short, List<String>>> mGroundTruth;
-
-    // TYPE_UNDEFINED with 4 components
-    private static final ExifTag sVersionTag = ExifTag.buildTag(ExifTag.TAG_EXIF_VERSION);
-    // TYPE_UNSIGNED_BYTE with 4 components
-    private static final ExifTag sGpsVersionTag = ExifTag.buildTag(ExifTag.TAG_GPS_VERSION_ID);
-    // TYPE ASCII with arbitary length
-    private static final ExifTag sModelTag = ExifTag.buildTag(ExifTag.TAG_MODEL);
-    // TYPE_ASCII with 20 components
-    private static final ExifTag sDateTimeTag = ExifTag.buildTag(ExifTag.TAG_DATE_TIME);
-    // TYPE_UNSIGNED_SHORT with 1 components
-    private static final ExifTag sCompressionTag = ExifTag.buildTag(ExifTag.TAG_COMPRESSION);
-    // TYPE_UNSIGNED_LONG with 1 components
-    private static final ExifTag sThumbnailFormatTag =
-            ExifTag.buildTag(ExifTag.TAG_JPEG_INTERCHANGE_FORMAT);
-    // TYPE_UNSIGNED_RATIONAL with 3 components
-    private static final ExifTag sLongitudeTag = ExifTag.buildTag(ExifTag.TAG_GPS_LONGITUDE);
-    // TYPE_RATIONAL with 1 components
-    private static final ExifTag sShutterTag = ExifTag.buildTag(ExifTag.TAG_SHUTTER_SPEED_VALUE);
-
-    private static final Map<Short, ExifTag> sTestTags = new HashMap<Short, ExifTag>();
-
-    static {
-        sVersionTag.setValue(new byte[] {1, 2, 3, 4});
-        sGpsVersionTag.setValue(new byte[] {4, 3, 2, 1});
-        sModelTag.setValue("end-of-the-world");
-        sDateTimeTag.setValue("2012:12:31 23:59:59");
-        sCompressionTag.setValue(100);
-        sThumbnailFormatTag.setValue(100);
-        sLongitudeTag.setValue(new Rational[] {new Rational(1, 1), new Rational(10, 10),
-                new Rational(100, 100)});
-        sShutterTag.setValue(new Rational(1, 1));
-
-        sTestTags.put(sVersionTag.getTagId(), sVersionTag);
-        sTestTags.put(sGpsVersionTag.getTagId(), sGpsVersionTag);
-        sTestTags.put(sModelTag.getTagId(), sModelTag);
-        sTestTags.put(sDateTimeTag.getTagId(), sDateTimeTag);
-        sTestTags.put(sCompressionTag.getTagId(), sCompressionTag);
-        sTestTags.put(sThumbnailFormatTag.getTagId(), sThumbnailFormatTag);
-        sTestTags.put(sLongitudeTag.getTagId(), sLongitudeTag);
-        sTestTags.put(sShutterTag.getTagId(), sShutterTag);
-    }
+    private ExifInterface mInterface;
+    private Map<Short, ExifTag> mTestTags;
+    ExifTag mVersionTag;
+    ExifTag mGpsVersionTag;
+    ExifTag mModelTag;
+    ExifTag mDateTimeTag;
+    ExifTag mCompressionTag;
+    ExifTag mThumbnailFormatTag;
+    ExifTag mLongitudeTag;
+    ExifTag mShutterTag;
 
     @Override
     public void setUp() throws Exception {
@@ -89,14 +59,53 @@ public class ExifModifierTest extends ExifXmlDataTestCase {
         } finally {
             Util.closeSilently(os);
         }
+
+        // TYPE_UNDEFINED with 4 components
+        mVersionTag = mInterface.buildTag(ExifInterface.TAG_EXIF_VERSION, new byte[] {
+                1, 2, 3, 4
+        });
+        // TYPE_UNSIGNED_BYTE with 4 components
+        mGpsVersionTag = mInterface.buildTag(ExifInterface.TAG_GPS_VERSION_ID, new byte[] {
+                4, 3, 2, 1
+        });
+        // TYPE ASCII with arbitary length
+        mModelTag = mInterface.buildTag(ExifInterface.TAG_MODEL, "end-of-the-world");
+        // TYPE_ASCII with 20 components
+        mDateTimeTag = mInterface.buildTag(ExifInterface.TAG_DATE_TIME, "2012:12:31 23:59:59");
+        // TYPE_UNSIGNED_SHORT with 1 components
+        mCompressionTag = mInterface.buildTag(ExifInterface.TAG_COMPRESSION, 100);
+        // TYPE_UNSIGNED_LONG with 1 components
+        mThumbnailFormatTag =
+                mInterface.buildTag(ExifInterface.TAG_JPEG_INTERCHANGE_FORMAT, 100);
+        // TYPE_UNSIGNED_RATIONAL with 3 components
+        mLongitudeTag = mInterface.buildTag(ExifInterface.TAG_GPS_LONGITUDE, new Rational[] {
+                new Rational(1, 1), new Rational(10, 10),
+                new Rational(100, 100)
+        });
+        // TYPE_RATIONAL with 1 components
+        mShutterTag = mInterface
+                .buildTag(ExifInterface.TAG_SHUTTER_SPEED_VALUE, new Rational(1, 1));
+
+        mTestTags = new HashMap<Short, ExifTag>();
+
+        mTestTags.put(mVersionTag.getTagId(), mVersionTag);
+        mTestTags.put(mGpsVersionTag.getTagId(), mGpsVersionTag);
+        mTestTags.put(mModelTag.getTagId(), mModelTag);
+        mTestTags.put(mDateTimeTag.getTagId(), mDateTimeTag);
+        mTestTags.put(mCompressionTag.getTagId(), mCompressionTag);
+        mTestTags.put(mThumbnailFormatTag.getTagId(), mThumbnailFormatTag);
+        mTestTags.put(mLongitudeTag.getTagId(), mLongitudeTag);
+        mTestTags.put(mShutterTag.getTagId(), mShutterTag);
     }
 
     public ExifModifierTest(int imageRes, int xmlRes) {
         super(imageRes, xmlRes);
+        mInterface = new ExifInterface();
     }
 
     public ExifModifierTest(String imagePath, String xmlPath) {
         super(imagePath, xmlPath);
+        mInterface = new ExifInterface();
     }
 
     public void testModify() throws Exception {
@@ -106,8 +115,8 @@ public class ExifModifierTest extends ExifXmlDataTestCase {
         try {
             file = new RandomAccessFile(mTmpFile, "rw");
             MappedByteBuffer buf = file.getChannel().map(MapMode.READ_WRITE, 0, file.length());
-            for (ExifTag tag: sTestTags.values()) {
-                ExifModifier modifier = new ExifModifier(buf);
+            for (ExifTag tag : mTestTags.values()) {
+                ExifModifier modifier = new ExifModifier(buf, mInterface);
                 modifier.modifyTag(tag);
                 boolean result = modifier.commit();
                 results.put(tag.getTagId(), result);
@@ -116,8 +125,8 @@ public class ExifModifierTest extends ExifXmlDataTestCase {
 
                 if (!result) {
                     List<String> value = mGroundTruth.get(tag.getIfd()).get(tag.getTagId());
-                    assertTrue (String.format("Tag %x, ", tag.getTagId()) + getImageTitle(),
-                            value == null || tag.getTagId() == ExifTag.TAG_MODEL);
+                    assertTrue(String.format("Tag %x, ", tag.getTagId()) + getImageTitle(),
+                            value == null || tag.getTagId() == ExifInterface.TAG_MODEL);
                 }
             }
         } finally {
@@ -128,7 +137,7 @@ public class ExifModifierTest extends ExifXmlDataTestCase {
         InputStream is = null;
         try {
             is = new FileInputStream(mTmpFile);
-            ExifData data = new ExifReader().read(is);
+            ExifData data = new ExifReader(mInterface).read(is);
             for (int i = 0; i < IfdId.TYPE_IFD_COUNT; i++) {
                 checkIfd(data.getIfdData(i), mGroundTruth.get(i), results);
             }
@@ -138,20 +147,21 @@ public class ExifModifierTest extends ExifXmlDataTestCase {
 
     }
 
-
     private void checkIfd(IfdData ifd, Map<Short, List<String>> ifdValue,
             Map<Short, Boolean> results) {
         if (ifd == null) {
-            assertEquals(getImageTitle(), 0 ,ifdValue.size());
+            assertEquals(getImageTitle(), 0, ifdValue.size());
             return;
         }
         ExifTag[] tags = ifd.getAllTags();
         for (ExifTag tag : tags) {
             List<String> truth = ifdValue.get(tag.getTagId());
             assertNotNull(String.format("Tag %x, ", tag.getTagId()) + getImageTitle(), truth);
-            if (truth.contains(null)) continue;
+            if (truth.contains(null)) {
+                continue;
+            }
 
-            ExifTag newTag = sTestTags.get(tag.getTagId());
+            ExifTag newTag = mTestTags.get(tag.getTagId());
             if (newTag != null
                     && results.get(tag.getTagId())) {
                 assertEquals(String.format("Tag %x, ", tag.getTagId()) + getImageTitle(),

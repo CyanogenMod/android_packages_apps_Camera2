@@ -22,19 +22,30 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * This class reads the EXIF header of a JPEG file and stores it in {@link ExifData}.
+ * This class reads the EXIF header of a JPEG file and stores it in
+ * {@link ExifData}.
  */
-public class ExifReader {
+class ExifReader {
     private static final String TAG = "ExifReader";
+
+    private final ExifInterface mInterface;
+
+    ExifReader(ExifInterface iRef) {
+        mInterface = iRef;
+    }
+
     /**
-     * Parses the inputStream and  and returns the EXIF data in an {@link ExifData}.
+     * Parses the inputStream and and returns the EXIF data in an
+     * {@link ExifData}.
+     *
      * @throws ExifInvalidFormatException
      * @throws IOException
      */
-    public ExifData read(InputStream inputStream) throws ExifInvalidFormatException,
+    protected ExifData read(InputStream inputStream) throws ExifInvalidFormatException,
             IOException {
-        ExifParser parser = ExifParser.parse(inputStream);
+        ExifParser parser = ExifParser.parse(inputStream, mInterface);
         ExifData exifData = new ExifData(parser.getByteOrder());
+        ExifTag tag = null;
 
         int event = parser.next();
         while (event != ExifParser.EVENT_END) {
@@ -43,7 +54,7 @@ public class ExifReader {
                     exifData.addIfdData(new IfdData(parser.getCurrentIfd()));
                     break;
                 case ExifParser.EVENT_NEW_TAG:
-                    ExifTag tag = parser.getTag();
+                    tag = parser.getTag();
                     if (!tag.hasValue()) {
                         parser.registerForTagValue(tag);
                     } else {
@@ -69,6 +80,7 @@ public class ExifReader {
                     buf = new byte[parser.getStripSize()];
                     if (buf.length == parser.read(buf)) {
                         exifData.setStripBytes(parser.getStripIndex(), buf);
+                    } else {
                         Log.w(TAG, "Failed to read the strip bytes");
                     }
                     break;

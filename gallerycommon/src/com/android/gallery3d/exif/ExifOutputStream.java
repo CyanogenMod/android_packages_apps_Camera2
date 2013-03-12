@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.exif;
 
+import android.util.Log;
+
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,16 +28,15 @@ import java.nio.ByteOrder;
  * This class provides a way to replace the Exif header of a JPEG image.
  * <p>
  * Below is an example of writing EXIF data into a file
+ *
  * <pre>
  * public static void writeExif(byte[] jpeg, ExifData exif, String path) {
  *     OutputStream os = null;
  *     try {
  *         os = new FileOutputStream(path);
  *         ExifOutputStream eos = new ExifOutputStream(os);
- *
  *         // Set the exif header
  *         eos.setExifData(exif);
- *
  *         // Write the original jpeg out, the header will be add into the file.
  *         eos.write(jpeg);
  *     } catch (FileNotFoundException e) {
@@ -54,8 +55,9 @@ import java.nio.ByteOrder;
  * }
  * </pre>
  */
-public class ExifOutputStream extends FilterOutputStream {
+class ExifOutputStream extends FilterOutputStream {
     private static final String TAG = "ExifOutputStream";
+    private static final boolean DEBUG = false;
 
     private static final int STATE_SOI = 0;
     private static final int STATE_FRAME_HEADER = 1;
@@ -67,29 +69,32 @@ public class ExifOutputStream extends FilterOutputStream {
     private static final short TIFF_LITTLE_ENDIAN = 0x4949;
     private static final short TAG_SIZE = 12;
     private static final short TIFF_HEADER_SIZE = 8;
+    private static final int MAX_EXIF_SIZE = 65535;
 
     private ExifData mExifData;
     private int mState = STATE_SOI;
     private int mByteToSkip;
     private int mByteToCopy;
     private ByteBuffer mBuffer = ByteBuffer.allocate(4);
+    private final ExifInterface mInterface;
 
-    public ExifOutputStream(OutputStream ou) {
+    protected ExifOutputStream(OutputStream ou, ExifInterface iRef) {
         super(ou);
+        mInterface = iRef;
     }
 
     /**
-     * Sets the ExifData to be written into the JPEG file. Should be called before writing image
-     * data.
+     * Sets the ExifData to be written into the JPEG file. Should be called
+     * before writing image data.
      */
-    public void setExifData(ExifData exifData) {
+    protected void setExifData(ExifData exifData) {
         mExifData = exifData;
     }
 
     /**
      * Gets the Exif header to be written into the JPEF file.
      */
-    public ExifData getExifData() {
+    protected ExifData getExifData() {
         return mExifData;
     }
 
@@ -102,12 +107,12 @@ public class ExifOutputStream extends FilterOutputStream {
     }
 
     /**
-     * Writes the image out. The input data should be a valid JPEG format. After writing, it's
-     * Exif header will be replaced by the given header.
+     * Writes the image out. The input data should be a valid JPEG format. After
+     * writing, it's Exif header will be replaced by the given header.
      */
     @Override
     public void write(byte[] buffer, int offset, int length) throws IOException {
-        while((mByteToSkip > 0 || mByteToCopy > 0 || mState != STATE_JPEG_DATA)
+        while ((mByteToSkip > 0 || mByteToCopy > 0 || mState != STATE_JPEG_DATA)
                 && length > 0) {
             if (mByteToSkip > 0) {
                 int byteToProcess = length > mByteToSkip ? mByteToSkip : length;
@@ -122,22 +127,29 @@ public class ExifOutputStream extends FilterOutputStream {
                 mByteToCopy -= byteToProcess;
                 offset += byteToProcess;
             }
-            if (length == 0) return;
+            if (length == 0) {
+                return;
+            }
             switch (mState) {
                 case STATE_SOI:
                     int byteRead = requestByteToBuffer(2, buffer, offset, length);
                     offset += byteRead;
                     length -= byteRead;
-                    if (mBuffer.position() < 2) return;
+                    if (mBuffer.position() < 2) {
+                        return;
+                    }
                     mBuffer.rewind();
-                    assert(mBuffer.getShort() == JpegHeader.SOI);
-                    out.write(mBuffer.array(), 0 ,2);
+                    if (mBuffer.getShort() != JpegHeader.SOI) {
+                        throw new IOException("Not a valid jpeg image, cannot write exif");
+                    }
+                    out.write(mBuffer.array(), 0, 2);
                     mState = STATE_FRAME_HEADER;
                     mBuffer.rewind();
                     writeExifData();
                     break;
                 case STATE_FRAME_HEADER:
-                    // We ignore the APP1 segment and copy all other segments until SOF tag.
+                    // We ignore the APP1 segment and copy all other segments
+                    // until SOF tag.
                     byteRead = requestByteToBuffer(4, buffer, offset, length);
                     offset += byteRead;
                     length -= byteRead;
@@ -149,15 +161,17 @@ public class ExifOutputStream extends FilterOutputStream {
                             mBuffer.rewind();
                         }
                     }
-                    if (mBuffer.position() < 4) return;
+                    if (mBuffer.position() < 4) {
+                        return;
+                    }
                     mBuffer.rewind();
                     short marker = mBuffer.getShort();
                     if (marker == JpegHeader.APP1) {
-                        mByteToSkip = (mBuffer.getShort() & 0xff) - 2;
+                        mByteToSkip = (mBuffer.getShort() & 0x0000ffff) - 2;
                         mState = STATE_JPEG_DATA;
                     } else if (!JpegHeader.isSofMarker(marker)) {
                         out.write(mBuffer.array(), 0, 4);
-                        mByteToCopy = (mBuffer.getShort() & 0xff) - 2;
+                        mByteToCopy = (mBuffer.getShort() & 0x0000ffff) - 2;
                     } else {
                         out.write(mBuffer.array(), 0, 4);
                         mState = STATE_JPEG_DATA;
@@ -171,12 +185,14 @@ public class ExifOutputStream extends FilterOutputStream {
     }
 
     /**
-     * Writes the one bytes out. The input data should be a valid JPEG format. After writing, it's
-     * Exif header will be replaced by the given header.
+     * Writes the one bytes out. The input data should be a valid JPEG format.
+     * After writing, it's Exif header will be replaced by the given header.
      */
     @Override
     public void write(int oneByte) throws IOException {
-        byte[] buf = new byte[] {(byte) (0xff & oneByte)};
+        byte[] buf = new byte[] {
+            (byte) (0xff & oneByte)
+        };
         write(buf);
     }
 
@@ -189,9 +205,17 @@ public class ExifOutputStream extends FilterOutputStream {
     }
 
     private void writeExifData() throws IOException {
-        if (mExifData == null) return;
+        if (mExifData == null) {
+            return;
+        }
+        if (DEBUG) {
+            Log.v(TAG, "Writing exif data...");
+        }
         createRequiredIfdAndTag();
         int exifSize = calculateAllOffset();
+        if (exifSize + 8 > MAX_EXIF_SIZE) {
+            throw new IOException("Exif header is too large (>64Kb)");
+        }
         OrderedDataOutputStream dataOutputStream = new OrderedDataOutputStream(out);
         dataOutputStream.setByteOrder(ByteOrder.BIG_ENDIAN);
         dataOutputStream.writeShort(JpegHeader.APP1);
@@ -241,28 +265,202 @@ public class ExifOutputStream extends FilterOutputStream {
             throws IOException {
         ExifTag[] tags = ifd.getAllTags();
         dataOutputStream.writeShort((short) tags.length);
-        for (ExifTag tag: tags) {
+        for (ExifTag tag : tags) {
             dataOutputStream.writeShort(tag.getTagId());
             dataOutputStream.writeShort(tag.getDataType());
             dataOutputStream.writeInt(tag.getComponentCount());
+            if (DEBUG) {
+                Log.v(TAG, "\n" + tag.toString());
+            }
             if (tag.getDataSize() > 4) {
                 dataOutputStream.writeInt(tag.getOffset());
             } else {
-                writeTagValue(tag, dataOutputStream);
+                ExifOutputStream.writeTagValue(tag, dataOutputStream);
                 for (int i = 0, n = 4 - tag.getDataSize(); i < n; i++) {
                     dataOutputStream.write(0);
                 }
             }
         }
         dataOutputStream.writeInt(ifd.getOffsetToNextIfd());
-        for (ExifTag tag: tags) {
+        for (ExifTag tag : tags) {
             if (tag.getDataSize() > 4) {
-                writeTagValue(tag, dataOutputStream);
+                ExifOutputStream.writeTagValue(tag, dataOutputStream);
             }
         }
     }
 
-    private void writeTagValue(ExifTag tag, OrderedDataOutputStream dataOutputStream)
+    private int calculateOffsetOfIfd(IfdData ifd, int offset) {
+        offset += 2 + ifd.getTagCount() * TAG_SIZE + 4;
+        ExifTag[] tags = ifd.getAllTags();
+        for (ExifTag tag : tags) {
+            if (tag.getDataSize() > 4) {
+                tag.setOffset(offset);
+                offset += tag.getDataSize();
+            }
+        }
+        return offset;
+    }
+
+    private void createRequiredIfdAndTag() throws IOException {
+        // IFD0 is required for all file
+        IfdData ifd0 = mExifData.getIfdData(IfdId.TYPE_IFD_0);
+        if (ifd0 == null) {
+            ifd0 = new IfdData(IfdId.TYPE_IFD_0);
+            mExifData.addIfdData(ifd0);
+        }
+        ExifTag exifOffsetTag = mInterface.buildUninitializedTag(ExifInterface.TAG_EXIF_IFD);
+        if (exifOffsetTag == null) {
+            throw new IOException("No definition for crucial exif tag: "
+                    + ExifInterface.TAG_EXIF_IFD);
+        }
+        ifd0.setTag(exifOffsetTag);
+
+        // Exif IFD is required for all files.
+        IfdData exifIfd = mExifData.getIfdData(IfdId.TYPE_IFD_EXIF);
+        if (exifIfd == null) {
+            exifIfd = new IfdData(IfdId.TYPE_IFD_EXIF);
+            mExifData.addIfdData(exifIfd);
+        }
+
+        // GPS IFD
+        IfdData gpsIfd = mExifData.getIfdData(IfdId.TYPE_IFD_GPS);
+        if (gpsIfd != null) {
+            ExifTag gpsOffsetTag = mInterface.buildUninitializedTag(ExifInterface.TAG_GPS_IFD);
+            if (gpsOffsetTag == null) {
+                throw new IOException("No definition for crucial exif tag: "
+                        + ExifInterface.TAG_GPS_IFD);
+            }
+            ifd0.setTag(gpsOffsetTag);
+        }
+
+        // Interoperability IFD
+        IfdData interIfd = mExifData.getIfdData(IfdId.TYPE_IFD_INTEROPERABILITY);
+        if (interIfd != null) {
+            ExifTag interOffsetTag = mInterface
+                    .buildUninitializedTag(ExifInterface.TAG_INTEROPERABILITY_IFD);
+            if (interOffsetTag == null) {
+                throw new IOException("No definition for crucial exif tag: "
+                        + ExifInterface.TAG_INTEROPERABILITY_IFD);
+            }
+            exifIfd.setTag(interOffsetTag);
+        }
+
+        IfdData ifd1 = mExifData.getIfdData(IfdId.TYPE_IFD_1);
+
+        // thumbnail
+        if (mExifData.hasCompressedThumbnail()) {
+
+            if (ifd1 == null) {
+                ifd1 = new IfdData(IfdId.TYPE_IFD_1);
+                mExifData.addIfdData(ifd1);
+            }
+
+            ExifTag offsetTag = mInterface
+                    .buildUninitializedTag(ExifInterface.TAG_JPEG_INTERCHANGE_FORMAT);
+            if (offsetTag == null) {
+                throw new IOException("No definition for crucial exif tag: "
+                        + ExifInterface.TAG_JPEG_INTERCHANGE_FORMAT);
+            }
+
+            ifd1.setTag(offsetTag);
+            ExifTag lengthTag = mInterface
+                    .buildUninitializedTag(ExifInterface.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
+            if (lengthTag == null) {
+                throw new IOException("No definition for crucial exif tag: "
+                        + ExifInterface.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH);
+            }
+
+            lengthTag.setValue(mExifData.getCompressedThumbnail().length);
+            ifd1.setTag(lengthTag);
+
+            // Get rid of tags for uncompressed if they exist.
+            ifd1.removeTag(ExifInterface.getTrueTagKey(ExifInterface.TAG_STRIP_OFFSETS));
+            ifd1.removeTag(ExifInterface.getTrueTagKey(ExifInterface.TAG_STRIP_BYTE_COUNTS));
+        } else if (mExifData.hasUncompressedStrip()) {
+            if (ifd1 == null) {
+                ifd1 = new IfdData(IfdId.TYPE_IFD_1);
+                mExifData.addIfdData(ifd1);
+            }
+            int stripCount = mExifData.getStripCount();
+            ExifTag offsetTag = mInterface.buildUninitializedTag(ExifInterface.TAG_STRIP_OFFSETS);
+            if (offsetTag == null) {
+                throw new IOException("No definition for crucial exif tag: "
+                        + ExifInterface.TAG_STRIP_OFFSETS);
+            }
+            ExifTag lengthTag = mInterface
+                    .buildUninitializedTag(ExifInterface.TAG_STRIP_BYTE_COUNTS);
+            if (lengthTag == null) {
+                throw new IOException("No definition for crucial exif tag: "
+                        + ExifInterface.TAG_STRIP_BYTE_COUNTS);
+            }
+            long[] lengths = new long[stripCount];
+            for (int i = 0; i < mExifData.getStripCount(); i++) {
+                lengths[i] = mExifData.getStrip(i).length;
+            }
+            lengthTag.setValue(lengths);
+            ifd1.setTag(offsetTag);
+            ifd1.setTag(lengthTag);
+            // Get rid of tags for compressed if they exist.
+            ifd1.removeTag(ExifInterface.getTrueTagKey(ExifInterface.TAG_JPEG_INTERCHANGE_FORMAT));
+            ifd1.removeTag(ExifInterface
+                    .getTrueTagKey(ExifInterface.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH));
+        } else {
+            // Get rid of offset and length tags if there is no thumbnail.
+            ifd1.removeTag(ExifInterface.getTrueTagKey(ExifInterface.TAG_STRIP_OFFSETS));
+            ifd1.removeTag(ExifInterface.getTrueTagKey(ExifInterface.TAG_STRIP_BYTE_COUNTS));
+            ifd1.removeTag(ExifInterface.getTrueTagKey(ExifInterface.TAG_JPEG_INTERCHANGE_FORMAT));
+            ifd1.removeTag(ExifInterface
+                    .getTrueTagKey(ExifInterface.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH));
+        }
+    }
+
+    private int calculateAllOffset() {
+        int offset = TIFF_HEADER_SIZE;
+        IfdData ifd0 = mExifData.getIfdData(IfdId.TYPE_IFD_0);
+        offset = calculateOffsetOfIfd(ifd0, offset);
+        ifd0.getTag(ExifInterface.getTrueTagKey(ExifInterface.TAG_EXIF_IFD)).setValue(offset);
+
+        IfdData exifIfd = mExifData.getIfdData(IfdId.TYPE_IFD_EXIF);
+        offset = calculateOffsetOfIfd(exifIfd, offset);
+
+        IfdData interIfd = mExifData.getIfdData(IfdId.TYPE_IFD_INTEROPERABILITY);
+        if (interIfd != null) {
+            exifIfd.getTag(ExifInterface.getTrueTagKey(ExifInterface.TAG_INTEROPERABILITY_IFD))
+                    .setValue(offset);
+            offset = calculateOffsetOfIfd(interIfd, offset);
+        }
+
+        IfdData gpsIfd = mExifData.getIfdData(IfdId.TYPE_IFD_GPS);
+        if (gpsIfd != null) {
+            ifd0.getTag(ExifInterface.getTrueTagKey(ExifInterface.TAG_GPS_IFD)).setValue(offset);
+            offset = calculateOffsetOfIfd(gpsIfd, offset);
+        }
+
+        IfdData ifd1 = mExifData.getIfdData(IfdId.TYPE_IFD_1);
+        if (ifd1 != null) {
+            ifd0.setOffsetToNextIfd(offset);
+            offset = calculateOffsetOfIfd(ifd1, offset);
+        }
+
+        // thumbnail
+        if (mExifData.hasCompressedThumbnail()) {
+            ifd1.getTag(ExifInterface.getTrueTagKey(ExifInterface.TAG_JPEG_INTERCHANGE_FORMAT))
+                    .setValue(offset);
+            offset += mExifData.getCompressedThumbnail().length;
+        } else if (mExifData.hasUncompressedStrip()) {
+            int stripCount = mExifData.getStripCount();
+            long[] offsets = new long[stripCount];
+            for (int i = 0; i < mExifData.getStripCount(); i++) {
+                offsets[i] = offset;
+                offset += mExifData.getStrip(i).length;
+            }
+            ifd1.getTag(ExifInterface.getTrueTagKey(ExifInterface.TAG_STRIP_OFFSETS)).setValue(
+                    offsets);
+        }
+        return offset;
+    }
+
+    static void writeTagValue(ExifTag tag, OrderedDataOutputStream dataOutputStream)
             throws IOException {
         switch (tag.getDataType()) {
             case ExifTag.TYPE_ASCII:
@@ -299,129 +497,5 @@ public class ExifOutputStream extends FilterOutputStream {
                 }
                 break;
         }
-    }
-
-    private int calculateOffsetOfIfd(IfdData ifd, int offset) {
-        offset += 2 + ifd.getTagCount() * TAG_SIZE + 4;
-        ExifTag[] tags = ifd.getAllTags();
-        for(ExifTag tag: tags) {
-            if (tag.getDataSize() > 4) {
-                tag.setOffset(offset);
-                offset += tag.getDataSize();
-            }
-        }
-        return offset;
-    }
-
-    private void createRequiredIfdAndTag() {
-        // IFD0 is required for all file
-        IfdData ifd0 = mExifData.getIfdData(IfdId.TYPE_IFD_0);
-        if (ifd0 == null) {
-            ifd0 = new IfdData(IfdId.TYPE_IFD_0);
-            mExifData.addIfdData(ifd0);
-        }
-        ExifTag exifOffsetTag = new ExifTag(ExifTag.TAG_EXIF_IFD,
-                ExifTag.TYPE_UNSIGNED_LONG, 1, IfdId.TYPE_IFD_0);
-        ifd0.setTag(exifOffsetTag);
-
-        // Exif IFD is required for all file.
-        IfdData exifIfd = mExifData.getIfdData(IfdId.TYPE_IFD_EXIF);
-        if (exifIfd == null) {
-            exifIfd = new IfdData(IfdId.TYPE_IFD_EXIF);
-            mExifData.addIfdData(exifIfd);
-        }
-
-        // GPS IFD
-        IfdData gpsIfd = mExifData.getIfdData(IfdId.TYPE_IFD_GPS);
-        if (gpsIfd != null) {
-            ExifTag gpsOffsetTag = new ExifTag(ExifTag.TAG_GPS_IFD,
-                    ExifTag.TYPE_UNSIGNED_LONG, 1, IfdId.TYPE_IFD_0);
-            ifd0.setTag(gpsOffsetTag);
-        }
-
-        // Interoperability IFD
-        IfdData interIfd = mExifData.getIfdData(IfdId.TYPE_IFD_INTEROPERABILITY);
-        if (interIfd != null) {
-            ExifTag interOffsetTag = new ExifTag(ExifTag.TAG_INTEROPERABILITY_IFD,
-                    ExifTag.TYPE_UNSIGNED_LONG, 1, IfdId.TYPE_IFD_EXIF);
-            exifIfd.setTag(interOffsetTag);
-        }
-
-        IfdData ifd1 = mExifData.getIfdData(IfdId.TYPE_IFD_1);
-
-        // thumbnail
-        if (mExifData.hasCompressedThumbnail()) {
-            if (ifd1 == null) {
-                ifd1 = new IfdData(IfdId.TYPE_IFD_1);
-                mExifData.addIfdData(ifd1);
-            }
-            ExifTag offsetTag = new ExifTag(ExifTag.TAG_JPEG_INTERCHANGE_FORMAT,
-                    ExifTag.TYPE_UNSIGNED_LONG, 1, IfdId.TYPE_IFD_1);
-            ifd1.setTag(offsetTag);
-            ExifTag lengthTag = new ExifTag(ExifTag.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH,
-                    ExifTag.TYPE_UNSIGNED_LONG, 1, IfdId.TYPE_IFD_1);
-            lengthTag.setValue(mExifData.getCompressedThumbnail().length);
-            ifd1.setTag(lengthTag);
-        } else if (mExifData.hasUncompressedStrip()){
-            if (ifd1 == null) {
-                ifd1 = new IfdData(IfdId.TYPE_IFD_1);
-                mExifData.addIfdData(ifd1);
-            }
-            int stripCount = mExifData.getStripCount();
-            ExifTag offsetTag = new ExifTag(ExifTag.TAG_STRIP_OFFSETS,
-                    ExifTag.TYPE_UNSIGNED_LONG, stripCount, IfdId.TYPE_IFD_1);
-            ExifTag lengthTag = new ExifTag(ExifTag.TAG_STRIP_BYTE_COUNTS,
-                    ExifTag.TYPE_UNSIGNED_LONG, stripCount, IfdId.TYPE_IFD_1);
-            long[] lengths = new long[stripCount];
-            for (int i = 0; i < mExifData.getStripCount(); i++) {
-                lengths[i] = mExifData.getStrip(i).length;
-            }
-            lengthTag.setValue(lengths);
-            ifd1.setTag(offsetTag);
-            ifd1.setTag(lengthTag);
-        }
-    }
-
-    private int calculateAllOffset() {
-        int offset = TIFF_HEADER_SIZE;
-        IfdData ifd0 = mExifData.getIfdData(IfdId.TYPE_IFD_0);
-        offset = calculateOffsetOfIfd(ifd0, offset);
-        ifd0.getTag(ExifTag.TAG_EXIF_IFD).setValue(offset);
-
-        IfdData exifIfd = mExifData.getIfdData(IfdId.TYPE_IFD_EXIF);
-        offset = calculateOffsetOfIfd(exifIfd, offset);
-
-        IfdData interIfd = mExifData.getIfdData(IfdId.TYPE_IFD_INTEROPERABILITY);
-        if (interIfd != null) {
-            exifIfd.getTag(ExifTag.TAG_INTEROPERABILITY_IFD).setValue(offset);
-            offset = calculateOffsetOfIfd(interIfd, offset);
-        }
-
-        IfdData gpsIfd = mExifData.getIfdData(IfdId.TYPE_IFD_GPS);
-        if (gpsIfd != null) {
-            ifd0.getTag(ExifTag.TAG_GPS_IFD).setValue(offset);
-            offset = calculateOffsetOfIfd(gpsIfd, offset);
-        }
-
-        IfdData ifd1 = mExifData.getIfdData(IfdId.TYPE_IFD_1);
-        if (ifd1 != null) {
-            ifd0.setOffsetToNextIfd(offset);
-            offset = calculateOffsetOfIfd(ifd1, offset);
-        }
-
-        // thumbnail
-        if (mExifData.hasCompressedThumbnail()) {
-            ifd1.getTag(ExifTag.TAG_JPEG_INTERCHANGE_FORMAT).setValue(offset);
-            offset += mExifData.getCompressedThumbnail().length;
-        } else if (mExifData.hasUncompressedStrip()){
-            int stripCount = mExifData.getStripCount();
-            long[] offsets = new long[stripCount];
-            for (int i = 0; i < mExifData.getStripCount(); i++) {
-                offsets[i] = offset;
-                offset += mExifData.getStrip(i).length;
-            }
-            ifd1.getTag(ExifTag.TAG_STRIP_OFFSETS).setValue(offsets);
-        }
-        return offset;
     }
 }

@@ -110,14 +110,14 @@ public class ExifXmlReader {
         } else if (INTEROP_IFD.equals(prefix)) {
             return IfdId.TYPE_IFD_INTEROPERABILITY;
         } else {
-            assert(false);
+            assert (false);
             return -1;
         }
     }
 
     static public int getTrueTagNumber(Map<Short, List<String>> ifdData) {
         int size = 0;
-        for (List<String> tag: ifdData.values()) {
+        for (List<String> tag : ifdData.values()) {
             size += tag.size();
         }
         return size;
