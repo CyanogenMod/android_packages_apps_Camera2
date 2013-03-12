@@ -502,15 +502,17 @@ public class PhotoProvider extends SQLiteContentProvider {
             String[] selectionArgs, Uri uri) {
         switch (match) {
             case MATCH_PHOTO:
-            case MATCH_PHOTO_ID: {
+            case MATCH_PHOTO_ID:
                 deleteCascadeMetadata(db, selection, selectionArgs);
                 break;
-            }
             case MATCH_ALBUM:
-            case MATCH_ALBUM_ID: {
+            case MATCH_ALBUM_ID:
                 deleteCascadePhotos(db, selection, selectionArgs);
                 break;
-            }
+            case MATCH_ACCOUNT:
+            case MATCH_ACCOUNT_ID:
+                deleteCascadeAccounts(db, selection, selectionArgs);
+                break;
         }
         String table = getTableFromMatch(match, uri);
         int deleted = db.delete(table, selection, selectionArgs);
@@ -518,6 +520,17 @@ public class PhotoProvider extends SQLiteContentProvider {
             postNotifyUri(uri);
         }
         return deleted;
+    }
+
+    private void deleteCascadeAccounts(SQLiteDatabase db, String accountSelect, String[] args) {
+        // Delete all photos associated with the account
+        String photoWhere = nestWhere(Photos.ACCOUNT_ID, Accounts.TABLE, accountSelect);
+        deleteCascadeMetadata(db, photoWhere, args);
+        db.delete(Photos.TABLE, photoWhere, args);
+
+        // Delete all albums that are associated with this account
+        String albumWhere = nestWhere(Albums.ACCOUNT_ID, Accounts.TABLE, accountSelect);
+        db.delete(Albums.TABLE, albumWhere, args);
     }
 
     private void deleteCascadePhotos(SQLiteDatabase db, String albumSelect,
