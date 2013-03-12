@@ -65,6 +65,7 @@ public class PhotoDatabaseUtils {
 
     private static String SELECTION_ALBUM_PARENT_ID = Albums.PARENT_ID + " = ?";
     private static String SELECTION_PHOTO_ALBUM_ID = Photos.ALBUM_ID + " = ?";
+    private static String SELECTION_ACCOUNT_ID = Accounts.ACCOUNT_NAME + " = ?";
 
     public static long queryAlbumIdFromParentId(SQLiteDatabase db, long parentId) {
         return queryId(db, Albums.TABLE, PROJECTION_ALBUMS, SELECTION_ALBUM_PARENT_ID, parentId);
@@ -72,6 +73,10 @@ public class PhotoDatabaseUtils {
 
     public static long queryPhotoIdFromAlbumId(SQLiteDatabase db, long albumId) {
         return queryId(db, Photos.TABLE, PROJECTION_PHOTOS, SELECTION_PHOTO_ALBUM_ID, albumId);
+    }
+
+    public static long queryAccountIdFromName(SQLiteDatabase db, String accountName) {
+        return queryId(db, Accounts.TABLE, PROJECTION_ACCOUNTS, SELECTION_ACCOUNT_ID, accountName);
     }
 
     public static long queryId(SQLiteDatabase db, String table, String[] projection,
