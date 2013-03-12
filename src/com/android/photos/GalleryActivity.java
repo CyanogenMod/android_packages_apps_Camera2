@@ -21,25 +21,53 @@ import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.android.camera.CameraActivity;
 import com.android.gallery3d.R;
 
+import java.util.ArrayList;
+
 public class GalleryActivity extends Activity {
 
-    private final String FTAG_PHOTOSET = "PhotoSet";
-    private final String FTAG_ALBUMSET = "AlbumSet";
     private SelectionManager mSelectionManager;
+    private ViewPager mViewPager;
+    private TabsAdapter mTabsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setupActionBar();
+        mViewPager = new ViewPager(this);
+        mViewPager.setId(R.id.root_view);
+        setContentView(mViewPager);
+
+        ActionBar ab = getActionBar();
+        ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        ab.setDisplayShowHomeEnabled(false);
+        ab.setDisplayShowTitleEnabled(false);
+
+        mTabsAdapter = new TabsAdapter(this, mViewPager);
+        mTabsAdapter.addTab(ab.newTab().setText(R.string.tab_photos),
+                PhotoSetFragment.class, null);
+        mTabsAdapter.addTab(ab.newTab().setText(R.string.tab_albums),
+                AlbumSetFragment.class, null);
+
+        if (savedInstanceState != null) {
+            ab.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("tab", getActionBar().getSelectedNavigationIndex());
     }
 
     protected SelectionManager getSelectionManager() {
@@ -47,23 +75,6 @@ public class GalleryActivity extends Activity {
             mSelectionManager = new SelectionManager(this);
         }
         return mSelectionManager;
-    }
-
-    private void setupActionBar() {
-        ActionBar ab = getActionBar();
-        ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        ab.setDisplayShowHomeEnabled(false);
-        ab.setDisplayShowTitleEnabled(false);
-        Tab tab = ab.newTab();
-        tab.setText(R.string.tab_photos);
-        tab.setTabListener(new TabListener<PhotoSetFragment>(this,
-                FTAG_PHOTOSET, PhotoSetFragment.class));
-        ab.addTab(tab, true);
-        tab = ab.newTab();
-        tab.setText(R.string.tab_albums);
-        tab.setTabListener(new TabListener<AlbumSetFragment>(this,
-                FTAG_ALBUMSET, AlbumSetFragment.class));
-        ab.addTab(tab);
     }
 
     @Override
@@ -85,49 +96,85 @@ public class GalleryActivity extends Activity {
         }
     }
 
-    private static class TabListener<T extends Fragment> implements ActionBar.TabListener {
-        private Fragment mFragment;
-        private final Activity mActivity;
-        private final String mTag;
-        private final Class<T> mClass;
+    public static class TabsAdapter extends FragmentPagerAdapter implements
+            ActionBar.TabListener, ViewPager.OnPageChangeListener {
 
-        /** Constructor used each time a new tab is created.
-          * @param activity  The host Activity, used to instantiate the fragment
-          * @param tag  The identifier tag for the fragment
-          * @param clz  The fragment's Class, used to instantiate the fragment
-          */
-        public TabListener(Activity activity, String tag, Class<T> clz) {
-            mActivity = activity;
-            mTag = tag;
-            mClass = clz;
+        private final Context mContext;
+        private final ActionBar mActionBar;
+        private final ViewPager mViewPager;
+        private final ArrayList<TabInfo> mTabs = new ArrayList<TabInfo>();
+
+        static final class TabInfo {
+
+            private final Class<?> clss;
+            private final Bundle args;
+
+            TabInfo(Class<?> _class, Bundle _args) {
+                clss = _class;
+                args = _args;
+            }
         }
 
-        /* The following are each of the ActionBar.TabListener callbacks */
+        public TabsAdapter(Activity activity, ViewPager pager) {
+            super(activity.getFragmentManager());
+            mContext = activity;
+            mActionBar = activity.getActionBar();
+            mViewPager = pager;
+            mViewPager.setAdapter(this);
+            mViewPager.setOnPageChangeListener(this);
+        }
+
+        public void addTab(ActionBar.Tab tab, Class<?> clss, Bundle args) {
+            TabInfo info = new TabInfo(clss, args);
+            tab.setTag(info);
+            tab.setTabListener(this);
+            mTabs.add(info);
+            mActionBar.addTab(tab);
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getCount() {
+            return mTabs.size();
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            TabInfo info = mTabs.get(position);
+            return Fragment.instantiate(mContext, info.clss.getName(),
+                    info.args);
+        }
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset,
+                int positionOffsetPixels) {
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            mActionBar.setSelectedNavigationItem(position);
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+        }
 
         @Override
         public void onTabSelected(Tab tab, FragmentTransaction ft) {
-            // Check if the fragment is already initialized
-            if (mFragment == null) {
-                // If not, instantiate and add it to the activity
-                mFragment = Fragment.instantiate(mActivity, mClass.getName());
-                ft.add(android.R.id.content, mFragment, mTag);
-            } else {
-                // If it exists, simply attach it in order to show it
-                ft.attach(mFragment);
+            Object tag = tab.getTag();
+            for (int i = 0; i < mTabs.size(); i++) {
+                if (mTabs.get(i) == tag) {
+                    mViewPager.setCurrentItem(i);
+                }
             }
         }
 
         @Override
         public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-            if (mFragment != null) {
-                // Detach the fragment, because another one is being attached
-                ft.detach(mFragment);
-            }
         }
 
         @Override
         public void onTabReselected(Tab tab, FragmentTransaction ft) {
-            // User selected the already selected tab. Usually do nothing.
         }
     }
 }
