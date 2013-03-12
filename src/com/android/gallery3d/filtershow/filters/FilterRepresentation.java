@@ -21,6 +21,7 @@ import com.android.gallery3d.filtershow.editors.BasicEditor;
 
 public class FilterRepresentation implements Cloneable {
     private static final String LOGTAG = "FilterRepresentation";
+    private static final boolean DEBUG = false;
     private String mName;
     private int mPriority = TYPE_NORMAL;
     private Class mFilterClass;
@@ -62,7 +63,10 @@ public class FilterRepresentation implements Cloneable {
         representation.setShowEditingControls(showEditingControls());
         representation.setShowParameterValue(showParameterValue());
         representation.setShowUtilityPanel(showUtilityPanel());
-        Log.v(LOGTAG, "cloning from <" + this + "> to <" + representation + ">");
+        representation.mTempRepresentation = null;
+        if (DEBUG) {
+            Log.v(LOGTAG, "cloning from <" + this + "> to <" + representation + ">");
+        }
         return representation;
     }
 

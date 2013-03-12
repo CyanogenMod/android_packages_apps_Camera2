@@ -523,6 +523,7 @@ public class PanelController implements OnClickListener {
             if (filterRepresentation.allowsMultipleInstances()) {
                 representation.updateTempParametersFrom(filterRepresentation);
                 copy.setHistoryName(filterRepresentation.getName());
+                representation.synchronizeRepresentation();
             }
             filterRepresentation = representation;
         }

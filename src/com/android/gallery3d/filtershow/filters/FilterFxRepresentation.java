@@ -17,10 +17,11 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
+import com.android.gallery3d.app.Log;
 import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 
 public class FilterFxRepresentation extends FilterRepresentation {
-    private Bitmap mFxBitmap = null;
+    private static final String LOGTAG = "FilterFxRepresentation";
     // TODO: When implementing serialization, we should find a unique way of
     // specifying bitmaps / names (the resource IDs being random)
     private int mBitmapResource = 0;
@@ -41,26 +42,24 @@ public class FilterFxRepresentation extends FilterRepresentation {
     }
 
     public String toString() {
-        return "FilterFx: " + getName();
+        return "FilterFx: " + hashCode() + " : " + getName() + " bitmap rsc: " + mBitmapResource;
     }
 
     @Override
-    public FilterRepresentation clone() throws CloneNotSupportedException {
+    public synchronized FilterRepresentation clone() throws CloneNotSupportedException {
         FilterFxRepresentation representation = (FilterFxRepresentation) super.clone();
         representation.setName(getName());
         representation.setBitmapResource(getBitmapResource());
         representation.setNameResource(getNameResource());
-        representation.setFxBitmap(getFxBitmap());
         return representation;
     }
 
-    public void useParametersFrom(FilterRepresentation a) {
+    public synchronized void useParametersFrom(FilterRepresentation a) {
         if (a instanceof FilterFxRepresentation) {
             FilterFxRepresentation representation = (FilterFxRepresentation) a;
             setName(representation.getName());
             setBitmapResource(representation.getBitmapResource());
             setNameResource(representation.getNameResource());
-            setFxBitmap(representation.getFxBitmap());
         }
     }
 
@@ -79,16 +78,15 @@ public class FilterFxRepresentation extends FilterRepresentation {
         return false;
     }
 
+    public boolean same(FilterRepresentation representation) {
+        if (!super.same(representation)) {
+            return false;
+        }
+        return equals(representation);
+    }
+
     public boolean allowsMultipleInstances() {
         return true;
-    }
-
-    public Bitmap getFxBitmap() {
-        return mFxBitmap;
-    }
-
-    public void setFxBitmap(Bitmap fxBitmap) {
-        mFxBitmap = fxBitmap;
     }
 
     public int getNameResource() {
