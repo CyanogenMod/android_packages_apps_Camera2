@@ -26,7 +26,7 @@ public class ImageFilterFx extends ImageFilter {
     private FilterFxRepresentation mParameters = null;
     private Bitmap mFxBitmap = null;
     private Resources mResources = null;
-    private int mFxBitmapId = -1;
+    private int mFxBitmapId = 0;
 
     public ImageFilterFx() {
     }
