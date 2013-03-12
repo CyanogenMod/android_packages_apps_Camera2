@@ -64,14 +64,7 @@ import com.android.gallery3d.filtershow.editors.EditorRotate;
 import com.android.gallery3d.filtershow.editors.EditorStraighten;
 import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
 import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
-import com.android.gallery3d.filtershow.filters.FilterColorBorderRepresentation;
-import com.android.gallery3d.filtershow.filters.FilterFxRepresentation;
-import com.android.gallery3d.filtershow.filters.FilterImageBorderRepresentation;
-import com.android.gallery3d.filtershow.filters.FilterRepresentation;
-import com.android.gallery3d.filtershow.filters.FiltersManager;
-import com.android.gallery3d.filtershow.filters.ImageFilter;
-import com.android.gallery3d.filtershow.filters.ImageFilterBorder;
-import com.android.gallery3d.filtershow.filters.ImageFilterRS;
+import com.android.gallery3d.filtershow.filters.*;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
@@ -343,10 +336,15 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageFilterRS.setRenderScriptContext(this);
 
         Resources res = getResources();
+        // TODO: add a mechanism to set the resources in FiltersManagmer
         ImageFilterBorder filterBorder = (ImageFilterBorder) FiltersManager.getManager().getFilter(ImageFilterBorder.class);
         filterBorder.setResources(res);
         filterBorder = (ImageFilterBorder) FiltersManager.getPreviewManager().getFilter(ImageFilterBorder.class);
         filterBorder.setResources(res);
+        ImageFilterFx filterFx = (ImageFilterFx) FiltersManager.getManager().getFilter(ImageFilterFx.class);
+        filterFx.setResources(res);
+        filterFx = (ImageFilterFx) FiltersManager.getPreviewManager().getFilter(ImageFilterFx.class);
+        filterFx.setResources(res);
 
         ImageShow.setDefaultBackgroundColor(res.getColor(R.color.background_screen));
         // TODO: get those values from XML.
@@ -807,13 +805,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 R.string.ffx_x_process
         };
 
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inScaled = false;
-
         for (int i = 0; i < drawid.length; i++) {
-            Bitmap b = BitmapFactory.decodeResource(getResources(), drawid[i], o);
             FilterFxRepresentation fx = new FilterFxRepresentation(getString(fxNameid[i]), drawid[i], fxNameid[i]);
-            fx.setFxBitmap(b);
             fxArray[p++] = fx;
         }
 
@@ -922,6 +915,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mMasterImage.setHistoryAdapter(mHistoryAdapter);
         mMasterImage.setStateAdapter(mImageStateAdapter);
         mMasterImage.setActivity(this);
+        mMasterImage.setImageLoader(mImageLoader);
     }
 
     // //////////////////////////////////////////////////////////////////////////////

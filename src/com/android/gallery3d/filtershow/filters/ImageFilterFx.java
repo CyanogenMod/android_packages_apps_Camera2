@@ -16,13 +16,25 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import com.android.gallery3d.app.Log;
 
 public class ImageFilterFx extends ImageFilter {
-    private static final String TAG = "ImageFilterFx";
+    private static final String LOGTAG = "ImageFilterFx";
     private FilterFxRepresentation mParameters = null;
+    private Bitmap mFxBitmap = null;
+    private Resources mResources = null;
+    private int mFxBitmapId = -1;
 
     public ImageFilterFx() {
+    }
+
+    @Override
+    public void freeResources() {
+        if (mFxBitmap != null) mFxBitmap.recycle();
+        mFxBitmap = null;
     }
 
     public void useRepresentation(FilterRepresentation representation) {
@@ -38,17 +50,32 @@ public class ImageFilterFx extends ImageFilter {
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
-        if (getParameters() == null || getParameters().getFxBitmap() ==null) {
+        if (getParameters() == null || mResources == null) {
             return bitmap;
         }
 
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
-        int fxw = getParameters().getFxBitmap().getWidth();
-        int fxh = getParameters().getFxBitmap().getHeight();
+        if (mFxBitmap == null || mFxBitmapId != getParameters().getBitmapResource()) {
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inScaled = false;
+            mFxBitmapId = getParameters().getBitmapResource();
+            mFxBitmap = BitmapFactory.decodeResource(mResources, mFxBitmapId, o);
+        }
 
-        nativeApplyFilter(bitmap, w, h,   getParameters().getFxBitmap(),  fxw,  fxh);
+        if (mFxBitmap == null) {
+            return bitmap;
+        }
+
+        int fxw = mFxBitmap.getWidth();
+        int fxh = mFxBitmap.getHeight();
+
+        nativeApplyFilter(bitmap, w, h, mFxBitmap, fxw, fxh);
         return bitmap;
+    }
+
+    public void setResources(Resources resources) {
+        mResources = resources;
     }
 }

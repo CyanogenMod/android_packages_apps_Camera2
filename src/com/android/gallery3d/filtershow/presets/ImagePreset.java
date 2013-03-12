@@ -54,6 +54,7 @@ public class ImagePreset {
     public final GeometryMetadata mGeoData = new GeometryMetadata();
     private boolean mPartialRendering = false;
     private Rect mPartialRenderingBounds;
+
     private Bitmap mPreviewImage;
 
     private FilterEnvironment mEnvironment = new FilterEnvironment();
@@ -90,6 +91,7 @@ public class ImagePreset {
         mHistoryName = source.name();
         mIsFxPreset = source.isFx();
         mImageLoader = source.getImageLoader();
+        mPreviewImage = source.getPreviewImage();
 
         mGeoData.set(source.mGeoData);
     }
