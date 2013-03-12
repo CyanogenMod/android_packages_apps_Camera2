@@ -407,7 +407,7 @@
             android:authorities="com.android.gallery3d.provider.CanvasProvider"
             android:exported="true"
             android:label="@string/app_name"
-            android:permission="android.permission.ACCESS_APP_BROWSE_DATA" />
+            android:permission="com.google.android.pano.permission.ACCESS_APP_BROWSE_DATA" />
         <activity android:name="com.android.photos.canvas.EnableSyncActivity"
                 android:exported="true"
                 android:theme="@style/Theme.ProxyLauncher">
