@@ -128,6 +128,8 @@ public class VideoModule implements CameraModule,
     private int mCameraId;
     private Parameters mParameters;
 
+    private Boolean mCameraOpened = false;
+
     private boolean mSnapshotInProgress = false;
 
     private static final String EFFECT_BG_FROM_GALLERY = "gallery";
@@ -257,7 +259,12 @@ public class VideoModule implements CameraModule,
 
     private void openCamera() {
         try {
-            mActivity.mCameraDevice = Util.openCamera(mActivity, mCameraId);
+            synchronized(mCameraOpened) {
+                if (!mCameraOpened) {
+                    mActivity.mCameraDevice = Util.openCamera(mActivity, mCameraId);
+                    mCameraOpened = true;
+                }
+            }
             mParameters = mActivity.mCameraDevice.getParameters();
         } catch (CameraHardwareException e) {
             mActivity.mOpenCameraFail = true;
@@ -986,7 +993,12 @@ public class VideoModule implements CameraModule,
         if (closeEffectsAlso) closeEffects();
         mActivity.mCameraDevice.setZoomChangeListener(null);
         mActivity.mCameraDevice.setErrorCallback(null);
-        CameraHolder.instance().release();
+        synchronized(mCameraOpened) {
+            if (mCameraOpened) {
+                CameraHolder.instance().release();
+            }
+            mCameraOpened = false;
+        }
         mActivity.mCameraDevice = null;
         mPreviewing = false;
         mSnapshotInProgress = false;
