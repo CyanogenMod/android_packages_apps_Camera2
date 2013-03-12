@@ -16,11 +16,11 @@
 
 package com.android.photos;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
+import android.nfc.NfcAdapter.CreateBeamUrisCallback;
 import android.nfc.NfcEvent;
 import android.provider.MediaStore.Files.FileColumns;
 import android.widget.ShareActionProvider;
@@ -31,7 +31,7 @@ import com.android.gallery3d.util.GalleryUtils;
 
 import java.util.ArrayList;
 
-public class SelectionManager implements NfcAdapter.CreateBeamUrisCallback {
+public class SelectionManager {
     private Activity mActivity;
     private NfcAdapter mNfcAdapter;
     private SelectedUriSource mUriSource;
@@ -41,12 +41,19 @@ public class SelectionManager implements NfcAdapter.CreateBeamUrisCallback {
         public ArrayList<Uri> getSelectedShareableUris();
     }
 
-    @TargetApi(16)
     public SelectionManager(Activity activity) {
         mActivity = activity;
         if (ApiHelper.AT_LEAST_16) {
             mNfcAdapter = NfcAdapter.getDefaultAdapter(mActivity);
-            mNfcAdapter.setBeamPushUrisCallback(this, mActivity);
+            mNfcAdapter.setBeamPushUrisCallback(new CreateBeamUrisCallback() {
+                @Override
+                public Uri[] createBeamUris(NfcEvent arg0) {
+                 // This will have been preceded by a call to onItemSelectedStateChange
+                    if (mCachedShareableUris == null) return null;
+                    return mCachedShareableUris.toArray(
+                            new Uri[mCachedShareableUris.size()]);
+                }
+            }, mActivity);
         }
     }
 
@@ -115,12 +122,5 @@ public class SelectionManager implements NfcAdapter.CreateBeamUrisCallback {
         mCachedShareableUris = null;
         mShareIntent.removeExtra(Intent.EXTRA_STREAM);
         mShareIntent.setAction(null).setType(null);
-    }
-
-    @Override
-    public Uri[] createBeamUris(NfcEvent event) {
-        // This will have been preceded by a call to onItemSelectedStateChange
-        if (mCachedShareableUris == null) return null;
-        return mCachedShareableUris.toArray(new Uri[mCachedShareableUris.size()]);
     }
 }
