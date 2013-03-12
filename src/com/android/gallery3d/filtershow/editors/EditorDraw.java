@@ -18,7 +18,6 @@ package com.android.gallery3d.filtershow.editors;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,7 +36,6 @@ import com.android.gallery3d.filtershow.filters.FilterDrawRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilterDraw;
 import com.android.gallery3d.filtershow.imageshow.ImageDraw;
-import com.android.gallery3d.filtershow.ui.FramedTextButton;
 
 public class EditorDraw extends Editor {
     private static final String LOGTAG = "EditorDraw";
@@ -57,11 +55,6 @@ public class EditorDraw extends Editor {
     }
 
     @Override
-    public boolean useUtilityPanel() {
-        return true;
-    }
-
-    @Override
     public void reflectCurrentFilter() {
         super.reflectCurrentFilter();
         FilterRepresentation rep = getLocalRepresentation();
@@ -74,29 +67,20 @@ public class EditorDraw extends Editor {
 
     @Override
     public void openUtilityPanel(final LinearLayout accessoryViewList) {
-        View view = accessoryViewList.findViewById(R.id.drawUtilityButton);
-        if (view == null) {
-            LayoutInflater inflater = (LayoutInflater) mImageShow.getActivity().getSystemService
-                    (Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.filtershow_draw_button, accessoryViewList, false);
-            accessoryViewList.addView(view, view.getLayoutParams());
-            view.setOnClickListener(new OnClickListener() {
+        Button view = (Button) accessoryViewList.findViewById(R.id.applyEffect);
+        view.setText(mContext.getString(R.string.draw_style));
+        view.setOnClickListener(new OnClickListener() {
 
                 @Override
-                public void onClick(View arg0) {
-                    showPopupMenu(accessoryViewList);
-                }
-            });
-        }
-
-        if (view != null) {
-            view.setVisibility(View.VISIBLE);
-        }
+            public void onClick(View arg0) {
+                showPopupMenu(accessoryViewList);
+            }
+        });
     }
 
     private void showPopupMenu(LinearLayout accessoryViewList) {
-        final FramedTextButton button = (FramedTextButton) accessoryViewList.findViewById(
-                R.id.drawUtilityButton);
+        final Button button = (Button) accessoryViewList.findViewById(
+                R.id.applyEffect);
         if (button == null) {
             return;
         }
