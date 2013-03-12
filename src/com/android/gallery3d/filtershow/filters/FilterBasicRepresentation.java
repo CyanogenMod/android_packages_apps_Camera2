@@ -17,8 +17,10 @@
 package com.android.gallery3d.filtershow.filters;
 
 import com.android.gallery3d.app.Log;
+import com.android.gallery3d.filtershow.controller.Control;
+import com.android.gallery3d.filtershow.controller.ParameterInteger;
 
-public class FilterBasicRepresentation extends FilterRepresentation {
+public class FilterBasicRepresentation extends FilterRepresentation implements ParameterInteger {
     private static final String LOGTAG = "FilterBasicRepresentation";
     private int mMinimum;
     private int mValue;
@@ -33,6 +35,7 @@ public class FilterBasicRepresentation extends FilterRepresentation {
         setValue(value);
     }
 
+    @Override
     public String toString() {
         return getName() + " : " + mMinimum + " < " + mValue + " < " + mMaximum;
     }
@@ -47,6 +50,7 @@ public class FilterBasicRepresentation extends FilterRepresentation {
         return representation;
     }
 
+    @Override
     public void useParametersFrom(FilterRepresentation a) {
         if (a instanceof FilterBasicRepresentation) {
             FilterBasicRepresentation representation = (FilterBasicRepresentation) a;
@@ -76,6 +80,7 @@ public class FilterBasicRepresentation extends FilterRepresentation {
         return false;
     }
 
+    @Override
     public int getMinimum() {
         return mMinimum;
     }
@@ -84,10 +89,12 @@ public class FilterBasicRepresentation extends FilterRepresentation {
         mMinimum = minimum;
     }
 
+    @Override
     public int getValue() {
         return mValue;
     }
 
+    @Override
     public void setValue(int value) {
         mValue = value;
         if (mValue < mMinimum) {
@@ -98,6 +105,7 @@ public class FilterBasicRepresentation extends FilterRepresentation {
         }
     }
 
+    @Override
     public int getMaximum() {
         return mMaximum;
     }
@@ -110,6 +118,7 @@ public class FilterBasicRepresentation extends FilterRepresentation {
         mDefaultValue = defaultValue;
     }
 
+    @Override
     public int getDefaultValue() {
         return mDefaultValue;
     }
@@ -122,7 +131,27 @@ public class FilterBasicRepresentation extends FilterRepresentation {
         mPreviewValue = previewValue;
     }
 
+    @Override
     public String getStateRepresentation() {
         return "" + getValue();
+    }
+
+    @Override
+    public String getParameterType(){
+        return sParameterType;
+    }
+
+    @Override
+    public void setController(Control control) {
+    }
+
+    @Override
+    public String getValueString() {
+        return getStateRepresentation();
+    }
+
+    @Override
+    public String getParameterName() {
+        return getName();
     }
 }
