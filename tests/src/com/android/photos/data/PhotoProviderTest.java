@@ -28,6 +28,7 @@ import android.os.RemoteException;
 import android.provider.BaseColumns;
 import android.test.ProviderTestCase2;
 
+import com.android.photos.data.PhotoProvider.Accounts;
 import com.android.photos.data.PhotoProvider.Albums;
 import com.android.photos.data.PhotoProvider.Metadata;
 import com.android.photos.data.PhotoProvider.Photos;
@@ -43,6 +44,7 @@ public class PhotoProviderTest extends ProviderTestCase2<PhotoProvider> {
     private static final long ALBUM_PARENT_ID = 100;
     private static final String META_KEY = "mykey";
     private static final String META_VALUE = "myvalue";
+    private static final String ACCOUNT_NAME = "foo@bar.com";
 
     private static final Uri NO_TABLE_URI = PhotoProvider.BASE_CONTENT_URI;
     private static final Uri BAD_TABLE_URI = Uri.withAppendedPath(PhotoProvider.BASE_CONTENT_URI,
@@ -55,6 +57,7 @@ public class PhotoProviderTest extends ProviderTestCase2<PhotoProvider> {
     private long mAlbumId;
     private long mPhotoId;
     private long mMetadataId;
+    private long mAccountId;
 
     private SQLiteOpenHelper mDBHelper;
     private ContentResolver mResolver;
@@ -74,11 +77,13 @@ public class PhotoProviderTest extends ProviderTestCase2<PhotoProvider> {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         db.beginTransaction();
         try {
+            PhotoDatabaseUtils.insertAccount(db, ACCOUNT_NAME);
+            mAccountId = PhotoDatabaseUtils.queryAccountIdFromName(db, ACCOUNT_NAME);
             PhotoDatabaseUtils.insertAlbum(db, ALBUM_PARENT_ID, ALBUM_TITLE,
-                    Albums.VISIBILITY_PRIVATE, 100L);
+                    Albums.VISIBILITY_PRIVATE, mAccountId);
             mAlbumId = PhotoDatabaseUtils.queryAlbumIdFromParentId(db, ALBUM_PARENT_ID);
             PhotoDatabaseUtils.insertPhoto(db, 100, 100, System.currentTimeMillis(), mAlbumId,
-                    MIME_TYPE, 100L);
+                    MIME_TYPE, mAccountId);
             mPhotoId = PhotoDatabaseUtils.queryPhotoIdFromAlbumId(db, mAlbumId);
             PhotoDatabaseUtils.insertMetadata(db, mPhotoId, META_KEY, META_VALUE);
             String[] projection = {
@@ -177,6 +182,33 @@ public class PhotoProviderTest extends ProviderTestCase2<PhotoProvider> {
         Cursor cursor = mResolver.query(Metadata.CONTENT_URI,
                 PhotoDatabaseUtils.PROJECTION_METADATA, null, null, null);
         assertEquals(0, cursor.getCount());
+        cursor.close();
+    }
+
+    public void testDeleteAccountCascade() {
+        Uri accountUri = ContentUris.withAppendedId(Accounts.CONTENT_URI, mAccountId);
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        db.beginTransaction();
+        PhotoDatabaseUtils.insertPhoto(db, 100, 100, System.currentTimeMillis(), null,
+                "image/jpeg", mAccountId);
+        PhotoDatabaseUtils.insertPhoto(db, 100, 100, System.currentTimeMillis(), null,
+                "image/jpeg", 0L);
+        PhotoDatabaseUtils.insertAlbum(db, null, "title", Albums.VISIBILITY_PRIVATE, 10630L);
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        // ensure all pictures are there:
+        Cursor cursor = mResolver.query(Photos.CONTENT_URI, null, null, null, null);
+        assertEquals(3, cursor.getCount());
+        cursor.close();
+        // delete the account
+        assertEquals(1, mResolver.delete(accountUri, null, null));
+        // now ensure that all associated photos were deleted
+        cursor = mResolver.query(Photos.CONTENT_URI, null, null, null, null);
+        assertEquals(1, cursor.getCount());
+        cursor.close();
+        // now ensure all associated albums were deleted.
+        cursor = mResolver.query(Albums.CONTENT_URI, null, null, null, null);
+        assertEquals(1, cursor.getCount());
         cursor.close();
     }
 
