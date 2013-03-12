@@ -59,10 +59,6 @@ public class PhotoThumbnailAdapter extends CursorAdapter implements GalleryThumb
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         View view = mInflater.inflate(R.layout.photo_set_item, parent, false);
-        LayoutParams params = view.getLayoutParams();
-        int columnWidth = ((GridView) parent).getColumnWidth();
-        params.height = columnWidth;
-        view.setLayoutParams(params);
         return view;
     }
 
