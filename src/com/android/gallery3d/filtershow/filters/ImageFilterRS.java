@@ -18,6 +18,7 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v8.renderscript.*;
 import android.util.Log;
 import com.android.gallery3d.R;
@@ -119,12 +120,16 @@ public abstract class ImageFilterRS extends ImageFilter {
         sOldBitmap = null;
     }
 
-    public Allocation convertRGBAtoA(Bitmap bitmap) {
+    private Allocation convertBitmap(Bitmap bitmap) {
+        return Allocation.createFromBitmap(mRS, bitmap,
+                Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+    }
+
+    private Allocation convertRGBAtoA(Bitmap bitmap) {
         Type.Builder tb_a8 = new Type.Builder(mRS, Element.U8(mRS));
         ScriptC_grey greyConvert = new ScriptC_grey(mRS, mResources, R.raw.grey);
 
-        Allocation bitmapTemp = Allocation.createFromBitmap(mRS, bitmap);
-
+        Allocation bitmapTemp = convertBitmap(bitmap);
         if (bitmapTemp.getType().getElement().isCompatible(Element.U8(mRS))) {
             return bitmapTemp;
         }
@@ -135,6 +140,28 @@ public abstract class ImageFilterRS extends ImageFilter {
         greyConvert.forEach_RGBAtoA(bitmapTemp, bitmapAlloc);
 
         return bitmapAlloc;
+    }
+
+    public Allocation loadResourceAlpha(int resource) {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ALPHA_8;
+        Bitmap bitmap = BitmapFactory.decodeResource(
+                mRS.getApplicationContext().getResources(),
+                resource, options);
+        Allocation ret = convertRGBAtoA(bitmap);
+        bitmap.recycle();
+        return ret;
+    }
+
+    public Allocation loadResource(int resource) {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeResource(
+                mRS.getApplicationContext().getResources(),
+                resource, options);
+        Allocation ret = convertBitmap(bitmap);
+        bitmap.recycle();
+        return ret;
     }
 
     public boolean isResourcesLoaded() {
