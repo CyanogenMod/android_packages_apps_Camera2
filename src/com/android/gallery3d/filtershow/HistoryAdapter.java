@@ -201,6 +201,8 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
             Bitmap bmp = item.getPreviewImage();
             if (bmp != null) {
                 preview.setImageBitmap(bmp);
+            } else {
+                preview.setImageResource(android.R.color.transparent);
             }
             if (position == mCurrentPresetPosition) {
                 view.setBackgroundColor(Color.WHITE);
