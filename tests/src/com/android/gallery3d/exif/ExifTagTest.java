@@ -18,27 +18,83 @@ package com.android.gallery3d.exif;
 
 import junit.framework.TestCase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ExifTagTest extends TestCase {
 
     private static long MAX_UNSIGNED_LONG = (1L << 32) - 1;
     private static int MAX_LONG = Integer.MAX_VALUE;
     private static int MIN_LONG = Integer.MIN_VALUE;
 
-    private static final ExifTag sTestTags[] = {
-        ExifTag.buildTag(ExifTag.TAG_EXIF_VERSION), // TYPE_UNDEFINED with 4 components
-        ExifTag.buildTag(ExifTag.TAG_GPS_VERSION_ID), // TYPE_UNSIGNED_BYTE with 4 components
-        ExifTag.buildTag(ExifTag.TAG_DATE_TIME), // TYPE_ASCII with 20 components
-        ExifTag.buildTag(ExifTag.TAG_COMPRESSION), // TYPE_UNSIGNED_SHORT with 1 components
+    Map<Integer, ExifTag> mTestTags;
+    ExifInterface mInterface;
+    private ExifTag mVersionTag;
+    private ExifTag mGpsVersionTag;
+    private ExifTag mModelTag;
+    private ExifTag mDateTimeTag;
+    private ExifTag mCompressionTag;
+    private ExifTag mThumbnailFormatTag;
+    private ExifTag mLongitudeTag;
+    private ExifTag mShutterTag;
+    private ExifTag mInteropIndex;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        mInterface = new ExifInterface();
+
+        // TYPE_UNDEFINED with 4 components
+        mVersionTag = mInterface.buildTag(ExifInterface.TAG_EXIF_VERSION, new byte[] {
+                5, 4, 3, 2
+        });
+        // TYPE_UNSIGNED_BYTE with 4 components
+        mGpsVersionTag = mInterface.buildTag(ExifInterface.TAG_GPS_VERSION_ID, new byte[] {
+                6, 7, 8, 9
+        });
+        // TYPE ASCII with arbitrary length
+        mModelTag = mInterface.buildTag(ExifInterface.TAG_MODEL, "helloworld");
+        // TYPE_ASCII with 20 components
+        mDateTimeTag = mInterface.buildTag(ExifInterface.TAG_DATE_TIME, "2013:02:11 20:20:20");
+        // TYPE_UNSIGNED_SHORT with 1 components
+        mCompressionTag = mInterface.buildTag(ExifInterface.TAG_COMPRESSION, 100);
         // TYPE_UNSIGNED_LONG with 1 components
-        ExifTag.buildTag(ExifTag.TAG_JPEG_INTERCHANGE_FORMAT),
-        ExifTag.buildTag(ExifTag.TAG_GPS_LONGITUDE), // TYPE_UNSIGNED_RATIONAL with 3 components
-        ExifTag.buildTag(ExifTag.TAG_SHUTTER_SPEED_VALUE), // TYPE_RATIONAL with 1 components
-        // There is no tag defined with TYPE_LONG. Create a dummy one for testing.
-        new ExifTag((short) 0, ExifTag.TYPE_LONG, 1, 0)
-    };
+        mThumbnailFormatTag =
+                mInterface.buildTag(ExifInterface.TAG_JPEG_INTERCHANGE_FORMAT, 100);
+        // TYPE_UNSIGNED_RATIONAL with 3 components
+        mLongitudeTag = mInterface.buildTag(ExifInterface.TAG_GPS_LONGITUDE, new Rational[] {
+                new Rational(2, 2), new Rational(11, 11),
+                new Rational(102, 102)
+        });
+        // TYPE_RATIONAL with 1 components
+        mShutterTag = mInterface
+                .buildTag(ExifInterface.TAG_SHUTTER_SPEED_VALUE, new Rational(4, 6));
+        // TYPE_ASCII with arbitrary length
+        mInteropIndex = mInterface.buildTag(ExifInterface.TAG_INTEROPERABILITY_INDEX, "foo");
+
+        mTestTags = new HashMap<Integer, ExifTag>();
+
+        mTestTags.put(ExifInterface.TAG_EXIF_VERSION, mVersionTag);
+        mTestTags.put(ExifInterface.TAG_GPS_VERSION_ID, mGpsVersionTag);
+        mTestTags.put(ExifInterface.TAG_MODEL, mModelTag);
+        mTestTags.put(ExifInterface.TAG_DATE_TIME, mDateTimeTag);
+        mTestTags.put(ExifInterface.TAG_COMPRESSION, mCompressionTag);
+        mTestTags.put(ExifInterface.TAG_JPEG_INTERCHANGE_FORMAT, mThumbnailFormatTag);
+        mTestTags.put(ExifInterface.TAG_GPS_LONGITUDE, mLongitudeTag);
+        mTestTags.put(ExifInterface.TAG_SHUTTER_SPEED_VALUE, mShutterTag);
+        mTestTags.put(ExifInterface.TAG_INTEROPERABILITY_INDEX, mInteropIndex);
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+        mInterface = null;
+        mTestTags = null;
+    }
 
     public void testValueType() {
-        for (ExifTag tag: sTestTags) {
+        for (ExifTag tag : mTestTags.values()) {
+            assertTrue(tag != null);
             int count = tag.getComponentCount();
             int intBuf[] = new int[count];
             long longBuf[] = new long[count];
@@ -51,7 +107,11 @@ public class ExifTagTest extends TestCase {
                 byteBuf[i] = 0;
                 rationalBuf[i] = new Rational(0, 0);
                 // The string size should equal to component count - 1
-                if (i != 0) sb.append("*");
+                if (i != count - 1) {
+                    sb.append("*");
+                } else {
+                    sb.append("\0");
+                }
             }
             String strBuf = sb.toString();
 
@@ -66,141 +126,90 @@ public class ExifTagTest extends TestCase {
     }
 
     private void checkTypeByte(ExifTag tag, byte[] buf) {
-        boolean excepThrow = false;
         short type = tag.getDataType();
-        try {
-            tag.setValue(buf);
-        } catch (IllegalArgumentException e) {
-            excepThrow = true;
-        }
-        assertTrue("Tag ID: " + tag.getTagId(),
-                (type == ExifTag.TYPE_UNDEFINED || type == ExifTag.TYPE_UNSIGNED_BYTE)
-                ^ excepThrow);
+        assertFalse("\nTag: " + tag.toString(), tag.setValue(buf)
+                ^ (type == ExifTag.TYPE_UNDEFINED || type == ExifTag.TYPE_UNSIGNED_BYTE));
     }
 
     private void checkTypeAscii(ExifTag tag, String str) {
-        boolean excepThrow = false;
-        try {
-            tag.setValue(str);
-        } catch (IllegalArgumentException e) {
-            excepThrow = true;
-        }
-        assertTrue("Tag ID: " + tag.getTagId(),
-                tag.getDataType() == ExifTag.TYPE_ASCII ^ excepThrow);
+        short type = tag.getDataType();
+        assertFalse("\nTag: " + tag.toString(), tag.setValue(str)
+                ^ (type == ExifTag.TYPE_ASCII || type == ExifTag.TYPE_UNDEFINED));
     }
 
     private void checkTypeUnsignedShort(ExifTag tag, int[] intBuf) {
-        boolean excepThrow = false;
         short type = tag.getDataType();
-        try {
-            tag.setValue(intBuf);
-        } catch (IllegalArgumentException e) {
-            excepThrow = true;
-        }
-        assertTrue("Tag ID: " + tag.getTagId(),
-                (type == ExifTag.TYPE_UNSIGNED_SHORT
-                || type == ExifTag.TYPE_UNSIGNED_LONG || type == ExifTag.TYPE_LONG) ^ excepThrow);
+        assertFalse("\nTag: " + tag.toString(),
+                tag.setValue(intBuf)
+                        ^ (type == ExifTag.TYPE_UNSIGNED_SHORT
+                                || type == ExifTag.TYPE_UNSIGNED_LONG
+                                || type == ExifTag.TYPE_LONG));
     }
 
     private void checkTypeUnsignedLong(ExifTag tag, int[] intBuf, long[] longBuf) {
 
         // Test value only for unsigned long.
-        boolean excepThrow = false;
         int count = intBuf.length;
-        try {
-            intBuf[count - 1] = MAX_LONG;
-            tag.setValue(intBuf);
-            longBuf[count - 1] = MAX_UNSIGNED_LONG;
-            tag.setValue(longBuf);
-        } catch (IllegalArgumentException e) {
-            excepThrow = true;
-        }
+        intBuf[count - 1] = MAX_LONG;
+        tag.setValue(intBuf);
+        longBuf[count - 1] = MAX_UNSIGNED_LONG;
+
+        assertFalse("\nTag: " + tag.toString(), tag.setValue(longBuf)
+                ^ (tag.getDataType() == ExifTag.TYPE_UNSIGNED_LONG));
+
         intBuf[count - 1] = 0;
-        assertTrue("Tag ID: " + tag.getTagId(),
-                tag.getDataType() == ExifTag.TYPE_UNSIGNED_LONG ^ excepThrow);
-
-
         // Test invalid value for all type.
-        try {
-            longBuf[count - 1] = MAX_UNSIGNED_LONG + 1;
-            tag.setValue(longBuf);
-            fail();
-        } catch (IllegalArgumentException expected) {}
+        longBuf[count - 1] = MAX_UNSIGNED_LONG + 1;
+        assertFalse(tag.setValue(longBuf));
         longBuf[count - 1] = 0;
     }
 
     private void checkTypeLong(ExifTag tag, int[] intBuf) {
-        boolean excepThrow = false;
         int count = intBuf.length;
-        try {
-            intBuf[count - 1] = MAX_LONG;
-            tag.setValue(intBuf);
-            intBuf[count - 1] = MIN_LONG;
-            tag.setValue(intBuf);
-        } catch (IllegalArgumentException e) {
-            excepThrow = true;
-        }
+        intBuf[count - 1] = MAX_LONG;
+        tag.setValue(intBuf);
+        intBuf[count - 1] = MIN_LONG;
+
+        assertFalse("\nTag: " + tag.toString(), tag.setValue(intBuf)
+                ^ (tag.getDataType() == ExifTag.TYPE_LONG));
         intBuf[count - 1] = 0;
-        assertTrue("Tag ID: " + tag.getTagId(),
-                tag.getDataType() == ExifTag.TYPE_LONG ^ excepThrow);
     }
 
     private void checkTypeRational(ExifTag tag, Rational rationalBuf[]) {
-        boolean excepThrow = false;
         int count = rationalBuf.length;
         Rational r = rationalBuf[count - 1];
-        try {
-            rationalBuf[count - 1] = new Rational(MAX_LONG, MIN_LONG);
-            tag.setValue(rationalBuf);
-        } catch (IllegalArgumentException e) {
-            excepThrow = true;
-        }
-        assertTrue("Tag ID: " + tag.getTagId(),
-                tag.getDataType() == ExifTag.TYPE_RATIONAL ^ excepThrow);
+        rationalBuf[count - 1] = new Rational(MAX_LONG, MIN_LONG);
 
-        if(tag.getDataType() == ExifTag.TYPE_RATIONAL) {
+        assertFalse("\nTag: " + tag.toString(), tag.setValue(rationalBuf)
+                ^ (tag.getDataType() == ExifTag.TYPE_RATIONAL));
+
+        if (tag.getDataType() == ExifTag.TYPE_RATIONAL) {
             // check overflow
-            try {
-                rationalBuf[count - 1] = new Rational(MAX_LONG + 1L, MIN_LONG);
-                tag.setValue(rationalBuf);
-                fail();
-            } catch (IllegalArgumentException expected) {}
 
-            try {
-                rationalBuf[count - 1] = new Rational(MAX_LONG, MIN_LONG - 1L);
-                tag.setValue(rationalBuf);
-                fail();
-            } catch (IllegalArgumentException expected) {}
+            rationalBuf[count - 1] = new Rational(MAX_LONG + 1L, MIN_LONG);
+            assertFalse(tag.setValue(rationalBuf));
+
+            rationalBuf[count - 1] = new Rational(MAX_LONG, MIN_LONG - 1L);
+            assertFalse(tag.setValue(rationalBuf));
         }
         rationalBuf[count - 1] = r;
     }
 
     private void checkTypeUnsignedRational(ExifTag tag, Rational rationalBuf[]) {
-        boolean excepThrow = false;
         int count = rationalBuf.length;
         Rational r = rationalBuf[count - 1];
-        try {
-            rationalBuf[count - 1] = new Rational(MAX_UNSIGNED_LONG, MAX_UNSIGNED_LONG);
-            tag.setValue(rationalBuf);
-        } catch (IllegalArgumentException e) {
-            excepThrow = true;
-        }
-        assertTrue("Tag ID: " + tag.getTagId(),
-                tag.getDataType() == ExifTag.TYPE_UNSIGNED_RATIONAL ^ excepThrow);
+        rationalBuf[count - 1] = new Rational(MAX_UNSIGNED_LONG, MAX_UNSIGNED_LONG);
 
-        if(tag.getDataType() == ExifTag.TYPE_UNSIGNED_RATIONAL) {
+        assertFalse("\nTag: " + tag.toString(), tag.setValue(rationalBuf)
+                ^ (tag.getDataType() == ExifTag.TYPE_UNSIGNED_RATIONAL));
+
+        if (tag.getDataType() == ExifTag.TYPE_UNSIGNED_RATIONAL) {
             // check overflow
-            try {
-                rationalBuf[count - 1] = new Rational(MAX_UNSIGNED_LONG + 1, 0);
-                tag.setValue(rationalBuf);
-                fail();
-            } catch (IllegalArgumentException expected) {}
+            rationalBuf[count - 1] = new Rational(MAX_UNSIGNED_LONG + 1, 0);
+            assertFalse(tag.setValue(rationalBuf));
 
-            try {
-                rationalBuf[count - 1] = new Rational(MAX_UNSIGNED_LONG, -1);
-                tag.setValue(rationalBuf);
-                fail();
-            } catch (IllegalArgumentException expected) {}
+            rationalBuf[count - 1] = new Rational(MAX_UNSIGNED_LONG, -1);
+            assertFalse(tag.setValue(rationalBuf));
         }
         rationalBuf[count - 1] = r;
     }

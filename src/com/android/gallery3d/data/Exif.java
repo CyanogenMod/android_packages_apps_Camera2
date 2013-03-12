@@ -18,53 +18,29 @@ package com.android.gallery3d.data;
 
 import android.util.Log;
 
-import com.android.gallery3d.exif.ExifInvalidFormatException;
-import com.android.gallery3d.exif.ExifParser;
-import com.android.gallery3d.exif.ExifTag;
+import com.android.gallery3d.exif.ExifInterface;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 public class Exif {
-    private static final String TAG = "GalleryExif";
+    private static final String TAG = "CameraExif";
 
+    // Returns the degrees in clockwise. Values are 0, 90, 180, or 270.
     public static int getOrientation(InputStream is) {
         if (is == null) {
             return 0;
         }
-
+        ExifInterface exif = new ExifInterface();
         try {
-            ExifParser parser = ExifParser.parse(is, ExifParser.OPTION_IFD_0);
-            int event = parser.next();
-            while (event != ExifParser.EVENT_END) {
-                if (event == ExifParser.EVENT_NEW_TAG) {
-                    ExifTag tag = parser.getTag();
-                    if (tag.getTagId() == ExifTag.TAG_ORIENTATION &&
-                            tag.hasValue()) {
-                        int orient = (int) tag.getValueAt(0);
-                        switch (orient) {
-                            case ExifTag.Orientation.TOP_LEFT:
-                                return 0;
-                            case ExifTag.Orientation.BOTTOM_LEFT:
-                                return 180;
-                            case ExifTag.Orientation.RIGHT_TOP:
-                                return 90;
-                            case ExifTag.Orientation.RIGHT_BOTTOM:
-                                return 270;
-                            default:
-                                Log.i(TAG, "Unsupported orientation");
-                                return 0;
-                        }
-                    }
-                }
-                event = parser.next();
+            exif.readExif(is);
+            Integer val = exif.getTagIntValue(ExifInterface.TAG_ORIENTATION);
+            if (val == null) {
+                return 0;
+            } else {
+                return ExifInterface.getRotationForOrientationValue(val.shortValue());
             }
-            Log.i(TAG, "Orientation not found");
-            return 0;
         } catch (IOException e) {
-            Log.w(TAG, "Failed to read EXIF orientation", e);
-            return 0;
-        } catch (ExifInvalidFormatException e) {
             Log.w(TAG, "Failed to read EXIF orientation", e);
             return 0;
         }

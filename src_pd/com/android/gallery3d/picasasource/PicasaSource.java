@@ -28,7 +28,6 @@ import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.MediaSource;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.data.PathMatcher;
-import com.android.gallery3d.exif.ExifData;
 
 import java.io.FileNotFoundException;
 
@@ -146,8 +145,6 @@ public class PicasaSource extends MediaSource {
     public static void onPackageRemoved(Context context, String packageName) {/*do nothing*/}
 
     public static void onPackageChanged(Context context, String packageName) {/*do nothing*/}
-
-    public static void extractExifValues(MediaObject item, ExifData exif) {/*do nothing*/}
 
     public static Dialog getVersionCheckDialog(Activity activity){
         return null;

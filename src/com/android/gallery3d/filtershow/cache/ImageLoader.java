@@ -27,7 +27,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Matrix;
 import android.graphics.Rect;
-import android.media.ExifInterface;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -36,9 +36,8 @@ import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.exif.ExifInvalidFormatException;
-import com.android.gallery3d.exif.ExifParser;
 import com.android.gallery3d.exif.ExifTag;
+import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
@@ -48,6 +47,8 @@ import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.util.InterruptableOutputStream;
 import com.android.gallery3d.util.XmpUtilHelper;
 
+import java.io.ByteArrayInputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -79,14 +80,14 @@ public class ImageLoader {
     public static final String DEFAULT_SAVE_DIRECTORY = "EditedOnlinePhotos";
     public static final int DEFAULT_COMPRESS_QUALITY = 95;
 
-    public static final int ORI_NORMAL = ExifInterface.ORIENTATION_NORMAL;
-    public static final int ORI_ROTATE_90 = ExifInterface.ORIENTATION_ROTATE_90;
-    public static final int ORI_ROTATE_180 = ExifInterface.ORIENTATION_ROTATE_180;
-    public static final int ORI_ROTATE_270 = ExifInterface.ORIENTATION_ROTATE_270;
-    public static final int ORI_FLIP_HOR = ExifInterface.ORIENTATION_FLIP_HORIZONTAL;
-    public static final int ORI_FLIP_VERT = ExifInterface.ORIENTATION_FLIP_VERTICAL;
-    public static final int ORI_TRANSPOSE = ExifInterface.ORIENTATION_TRANSPOSE;
-    public static final int ORI_TRANSVERSE = ExifInterface.ORIENTATION_TRANSVERSE;
+    public static final int ORI_NORMAL = ExifInterface.Orientation.TOP_LEFT;
+    public static final int ORI_ROTATE_90 = ExifInterface.Orientation.RIGHT_TOP;
+    public static final int ORI_ROTATE_180 = ExifInterface.Orientation.BOTTOM_LEFT;
+    public static final int ORI_ROTATE_270 = ExifInterface.Orientation.RIGHT_BOTTOM;
+    public static final int ORI_FLIP_HOR = ExifInterface.Orientation.TOP_RIGHT;
+    public static final int ORI_FLIP_VERT = ExifInterface.Orientation.BOTTOM_RIGHT;
+    public static final int ORI_TRANSPOSE = ExifInterface.Orientation.LEFT_TOP;
+    public static final int ORI_TRANSVERSE = ExifInterface.Orientation.LEFT_BOTTOM;
 
     private static final int BITMAP_LOAD_BACKOUT_ATTEMPTS = 5;
     private Context mContext = null;
@@ -147,26 +148,13 @@ public class ImageLoader {
             String path = uri.getPath();
             int orientation = -1;
             InputStream is = null;
+            ExifInterface exif = new ExifInterface();
             try {
-                is = new FileInputStream(path);
-                ExifParser parser = ExifParser.parse(is, ExifParser.OPTION_IFD_0);
-                int event = parser.next();
-                while (event != ExifParser.EVENT_END) {
-                    if (event == ExifParser.EVENT_NEW_TAG) {
-                        ExifTag tag = parser.getTag();
-                        if (tag.getTagId() == ExifTag.TAG_ORIENTATION) {
-                            orientation = (int) tag.getValueAt(0);
-                            break;
-                        }
-                    }
-                    event = parser.next();
-                }
+                exif.readExif(path);
+                orientation = ExifInterface.getRotationForOrientationValue(
+                        exif.getTagIntValue(ExifInterface.TAG_ORIENTATION).shortValue());
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ExifInvalidFormatException e) {
-                e.printStackTrace();
-            } finally {
-                Utils.closeSilently(is);
+                Log.w(LOGTAG, "Failed to read EXIF orientation", e);
             }
             return orientation;
         }
@@ -196,9 +184,9 @@ public class ImageLoader {
                 return -1;
             }
         } catch (SQLiteException e) {
-            return ExifInterface.ORIENTATION_UNDEFINED;
+            return -1;
         } catch (IllegalArgumentException e) {
-            return ExifInterface.ORIENTATION_UNDEFINED;
+            return -1;
         } finally {
             Utils.closeSilently(cursor);
         }

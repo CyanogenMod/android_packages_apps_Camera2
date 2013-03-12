@@ -37,11 +37,11 @@ public class ExifTestRunner extends InstrumentationTestRunner {
     private static final String TAG = "ExifTestRunner";
 
     private static final int[] IMG_RESOURCE = {
-        R.raw.galaxy_nexus
+            R.raw.galaxy_nexus
     };
 
     private static final int[] EXIF_DATA_RESOURCE = {
-        R.xml.galaxy_nexus
+            R.xml.galaxy_nexus
     };
 
     private static List<String> mTestImgPath = new ArrayList<String>();
@@ -57,6 +57,7 @@ public class ExifTestRunner extends InstrumentationTestRunner {
         addAllTestsFromExifTestCase(ExifReaderTest.class, suite);
         addAllTestsFromExifTestCase(ExifOutputStreamTest.class, suite);
         addAllTestsFromExifTestCase(ExifModifierTest.class, suite);
+        addAllTestsFromExifTestCase(ExifInterfaceTest.class, suite);
         return suite;
     }
 
@@ -67,8 +68,10 @@ public class ExifTestRunner extends InstrumentationTestRunner {
 
         if (imgDir != null && xmlDir != null) {
             String[] imgs = imgDir.list();
-            if (imgs == null) return;
-            for (String imgName: imgs) {
+            if (imgs == null) {
+                return;
+            }
+            for (String imgName : imgs) {
                 String xmlName = imgName.substring(0, imgName.lastIndexOf('.')) + ".xml";
                 File xmlFile = new File(xmlDir, xmlName);
                 if (xmlFile.exists()) {
