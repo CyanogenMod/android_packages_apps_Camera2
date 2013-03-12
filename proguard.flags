@@ -64,22 +64,11 @@
 # For unit testing:
 
 # - Required for running exif tests on userdebug
--keepclassmembers class com.android.gallery3d.exif.ExifTag {
-  *** setValue(...);
-  *** valueToString(...);
-}
--keepclassmembers class com.android.gallery3d.exif.ExifParser {
-  *** parse(...);
-}
+-keep class com.android.gallery3d.exif.ExifTag { *; }
+-keep class com.android.gallery3d.exif.ExifData { *; }
+-keep class com.android.gallery3d.exif.ExifInterface { *; }
 -keepclassmembers class com.android.gallery3d.exif.Util {
   *** closeSilently(...);
-}
--keepclassmembers class com.android.gallery3d.exif.ExifData {
-  *** addInteroperabilityTag(...);
-  *** addThumbnailTag(...);
-  *** getTag(...);
-  *** getInteroperabilityTag(...);
-  *** getThumbnailTag(...);
 }
 
 # - Required for running blobcache tests on userdebug
