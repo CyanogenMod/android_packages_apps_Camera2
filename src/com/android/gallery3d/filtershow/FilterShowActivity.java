@@ -146,6 +146,16 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 == Configuration.ORIENTATION_LANDSCAPE) {
             mShowingImageStatePanel = true;
         }
+        if (mShowingHistoryPanel) {
+            findViewById(R.id.historyPanel).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.historyPanel).setVisibility(View.GONE);
+        }
+        if (mShowingImageStatePanel) {
+            findViewById(R.id.imageStatePanel).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.imageStatePanel).setVisibility(View.GONE);
+        }
 
         setDefaultPreset();
 
