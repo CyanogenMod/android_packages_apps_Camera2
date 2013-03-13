@@ -69,6 +69,7 @@ import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.SelectionManager;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.UsageStatistics;
 
 public abstract class PhotoPage extends ActivityState implements
         PhotoView.Listener, AppBridge.Server,
@@ -1338,8 +1339,17 @@ public abstract class PhotoPage extends ActivityState implements
         }
         if (enabled) {
             mHandler.removeMessages(MSG_HIDE_BARS);
+            UsageStatistics.onContentViewChanged(
+                    UsageStatistics.COMPONENT_GALLERY, "FilmstripPage");
         } else {
             refreshHidingMessage();
+            if (mAppBridge == null || mCurrentIndex > 0) {
+                UsageStatistics.onContentViewChanged(
+                        UsageStatistics.COMPONENT_GALLERY, "SinglePhotoPage");
+            } else {
+                UsageStatistics.onContentViewChanged(
+                        UsageStatistics.COMPONENT_CAMERA, "Unknown"); // TODO
+            }
         }
     }
 

@@ -42,6 +42,7 @@ import com.android.gallery3d.glrenderer.StringTexture;
 import com.android.gallery3d.glrenderer.Texture;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.RangeArray;
+import com.android.gallery3d.util.UsageStatistics;
 
 public class PhotoView extends GLView {
     @SuppressWarnings("unused")
@@ -1180,7 +1181,15 @@ public class PhotoView extends GLView {
                     // Removing the touch down flag allows snapback to happen
                     // for film mode change.
                     mHolding &= ~HOLD_TOUCH_DOWN;
+                    if (mFilmMode) {
+                        UsageStatistics.setPendingTransitionCause(
+                                UsageStatistics.TRANSITION_PINCH_OUT);
+                    } else {
+                        UsageStatistics.setPendingTransitionCause(
+                                UsageStatistics.TRANSITION_PINCH_IN);
+                    }
                     setFilmMode(!mFilmMode);
+
 
                     // We need to call onScaleEnd() before setting mModeChanged
                     // to true.
