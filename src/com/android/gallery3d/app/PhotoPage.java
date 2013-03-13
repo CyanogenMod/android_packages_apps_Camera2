@@ -514,6 +514,10 @@ public abstract class PhotoPage extends ActivityState implements
                         if (oldIndex == 0 && mCurrentIndex > 0
                                 && !mPhotoView.getFilmMode()) {
                             mPhotoView.setFilmMode(true);
+                            if (mAppBridge != null) {
+                                UsageStatistics.onEvent("CameraToFilmstrip",
+                                        UsageStatistics.TRANSITION_SWIPE, null);
+                            }
                         } else if (oldIndex == 2 && mCurrentIndex == 1) {
                             mCameraSwitchCutoff = SystemClock.uptimeMillis() +
                                     CAMERA_SWITCH_CUTOFF_THRESHOLD_MS;
