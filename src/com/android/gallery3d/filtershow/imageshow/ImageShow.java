@@ -156,9 +156,6 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     public void onNewValue(int parameter) {
-        if (getImagePreset() != null) {
-            getImagePreset().fillImageStateAdapter(MasterImage.getImage().getState());
-        }
         if (getPanelController() != null) {
             getPanelController().onNewValue(parameter);
         }
