@@ -26,7 +26,9 @@ import android.net.Uri;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
+import com.android.gallery3d.data.Path;
 import com.android.gallery3d.data.MediaSet.SyncListener;
 import com.android.gallery3d.util.Future;
 import com.android.photos.data.AlbumSetLoader;
@@ -46,6 +48,7 @@ public class MediaSetLoader extends AsyncTaskLoader<Cursor> implements LoaderCom
     };
 
     private final MediaSet mMediaSet;
+    private final DataManager mDataManager;
     private Future<Integer> mSyncTask = null;
     private ContentListener mObserver = new ContentListener() {
         @Override
@@ -58,14 +61,15 @@ public class MediaSetLoader extends AsyncTaskLoader<Cursor> implements LoaderCom
 
     public MediaSetLoader(Context context) {
         super(context);
-        DataManager dm = DataManager.from(context);
-        String path = dm.getTopSetPath(DataManager.INCLUDE_ALL);
-        mMediaSet = dm.getMediaSet(path);
+        mDataManager = DataManager.from(context);
+        String path = mDataManager.getTopSetPath(DataManager.INCLUDE_ALL);
+        mMediaSet = mDataManager.getMediaSet(path);
     }
 
     public MediaSetLoader(Context context, String path) {
         super(context);
-        mMediaSet = DataManager.from(getContext()).getMediaSet(path);
+        mDataManager = DataManager.from(getContext());
+        mMediaSet = mDataManager.getMediaSet(path);
     }
 
     @Override
@@ -111,6 +115,7 @@ public class MediaSetLoader extends AsyncTaskLoader<Cursor> implements LoaderCom
             row[AlbumSetLoader.INDEX_ID] = i;
             row[AlbumSetLoader.INDEX_TITLE] = m.getName();
             row[AlbumSetLoader.INDEX_COUNT] = m.getMediaItemCount();
+            row[AlbumSetLoader.INDEX_SUPPORTED_OPERATIONS] = m.getSupportedOperations();
             MediaItem coverItem = m.getCoverMediaItem();
             if (coverItem != null) {
                 row[AlbumSetLoader.INDEX_TIMESTAMP] = coverItem.getDateInMs();
@@ -146,5 +151,40 @@ public class MediaSetLoader extends AsyncTaskLoader<Cursor> implements LoaderCom
         int index = item.getInt(AlbumSetLoader.INDEX_ID);
         MediaSet ms = mMediaSet.getSubMediaSet(index);
         return ms == null ? null : ms.getContentUri();
+    }
+
+    @Override
+    public ArrayList<Uri> urisForSubItems(Cursor item) {
+        int index = item.getInt(AlbumSetLoader.INDEX_ID);
+        MediaSet ms = mMediaSet.getSubMediaSet(index);
+        if (ms == null) return null;
+        final ArrayList<Uri> result = new ArrayList<Uri>();
+        ms.enumerateMediaItems(new MediaSet.ItemConsumer() {
+            @Override
+            public void consume(int index, MediaItem item) {
+                if (item != null) {
+                    result.add(item.getContentUri());
+                }
+            }
+        });
+        return result;
+    }
+
+    @Override
+    public void deleteItemWithPath(Object path) {
+        MediaObject o = mDataManager.getMediaObject((Path) path);
+        if (o != null) {
+            o.delete();
+        }
+    }
+
+    @Override
+    public Object getPathForItem(Cursor item) {
+        int index = item.getInt(AlbumSetLoader.INDEX_ID);
+        MediaSet ms = mMediaSet.getSubMediaSet(index);
+        if (ms != null) {
+            return ms.getPath();
+        }
+        return null;
     }
 }
