@@ -147,6 +147,7 @@ public class ImagePreset {
             }
         }
         MasterImage.getImage().invalidatePreview();
+        fillImageStateAdapter(MasterImage.getImage().getState());
     }
 
     public void setDoApplyGeometry(boolean value) {
