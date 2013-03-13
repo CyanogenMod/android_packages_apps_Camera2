@@ -43,7 +43,7 @@ public class GalleryActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mSelectionManager = new SelectionManager(this);
         mViewPager = new ViewPager(this);
         mViewPager.setId(R.id.viewpager);
         setContentView(mViewPager);
@@ -70,13 +70,6 @@ public class GalleryActivity extends Activity {
         outState.putInt("tab", getActionBar().getSelectedNavigationIndex());
     }
 
-    protected SelectionManager getSelectionManager() {
-        if (mSelectionManager == null) {
-            mSelectionManager = new SelectionManager(this);
-        }
-        return mSelectionManager;
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.gallery, menu);
@@ -99,7 +92,7 @@ public class GalleryActivity extends Activity {
     public static class TabsAdapter extends FragmentPagerAdapter implements
             ActionBar.TabListener, ViewPager.OnPageChangeListener {
 
-        private final Context mContext;
+        private final GalleryActivity mActivity;
         private final ActionBar mActionBar;
         private final ViewPager mViewPager;
         private final ArrayList<TabInfo> mTabs = new ArrayList<TabInfo>();
@@ -115,9 +108,9 @@ public class GalleryActivity extends Activity {
             }
         }
 
-        public TabsAdapter(Activity activity, ViewPager pager) {
+        public TabsAdapter(GalleryActivity activity, ViewPager pager) {
             super(activity.getFragmentManager());
-            mContext = activity;
+            mActivity = activity;
             mActionBar = activity.getActionBar();
             mViewPager = pager;
             mViewPager.setAdapter(this);
@@ -141,8 +134,11 @@ public class GalleryActivity extends Activity {
         @Override
         public Fragment getItem(int position) {
             TabInfo info = mTabs.get(position);
-            return Fragment.instantiate(mContext, info.clss.getName(),
+            Fragment item = Fragment.instantiate(mActivity, info.clss.getName(),
                     info.args);
+            ((SelectionManager.Client) item).setSelectionManager(
+                    mActivity.mSelectionManager);
+            return item;
         }
 
         @Override

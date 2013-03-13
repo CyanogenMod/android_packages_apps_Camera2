@@ -26,7 +26,7 @@ import android.provider.MediaStore.Files.FileColumns;
 import android.widget.ShareActionProvider;
 
 import com.android.gallery3d.common.ApiHelper;
-import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.util.GalleryUtils;
 
 import java.util.ArrayList;
@@ -39,6 +39,10 @@ public class SelectionManager {
 
     public interface SelectedUriSource {
         public ArrayList<Uri> getSelectedShareableUris();
+    }
+
+    public interface Client {
+        public void setSelectionManager(SelectionManager manager);
     }
 
     public SelectionManager(Activity activity) {
@@ -76,10 +80,10 @@ public class SelectionManager {
         mSelectedTotalCount += increment;
         mCachedShareableUris = null;
 
-        if ((itemSupportedOperations & MediaItem.SUPPORT_DELETE) > 0) {
+        if ((itemSupportedOperations & MediaObject.SUPPORT_DELETE) > 0) {
             mSelectedDeletableCount += increment;
         }
-        if ((itemSupportedOperations & MediaItem.SUPPORT_SHARE) > 0) {
+        if ((itemSupportedOperations & MediaObject.SUPPORT_SHARE) > 0) {
             mSelectedShareableCount += increment;
             if (itemType == FileColumns.MEDIA_TYPE_IMAGE) {
                 mSelectedShareableImageCount += increment;
@@ -93,24 +97,42 @@ public class SelectionManager {
             mShareIntent.setAction(null).setType(null);
         } else if (mSelectedShareableCount >= 1) {
             mCachedShareableUris = mUriSource.getSelectedShareableUris();
-            if (mSelectedShareableImageCount == mSelectedShareableCount) {
-                mShareIntent.setType(GalleryUtils.MIME_TYPE_IMAGE);
-            } else if (mSelectedShareableVideoCount == mSelectedShareableCount) {
-                mShareIntent.setType(GalleryUtils.MIME_TYPE_VIDEO);
+            if (mCachedShareableUris.size() == 0) {
+                mShareIntent.setAction(null).setType(null);
             } else {
-                mShareIntent.setType(GalleryUtils.MIME_TYPE_ALL);
-            }
-            if (mSelectedShareableCount == 1) {
-                mShareIntent.setAction(Intent.ACTION_SEND);
-                mShareIntent.putExtra(Intent.EXTRA_STREAM, mCachedShareableUris.get(0));
-            } else {
-                mShareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
-                mShareIntent.putExtra(Intent.EXTRA_STREAM, mCachedShareableUris);
+                if (mSelectedShareableImageCount == mSelectedShareableCount) {
+                    mShareIntent.setType(GalleryUtils.MIME_TYPE_IMAGE);
+                } else if (mSelectedShareableVideoCount == mSelectedShareableCount) {
+                    mShareIntent.setType(GalleryUtils.MIME_TYPE_VIDEO);
+                } else {
+                    mShareIntent.setType(GalleryUtils.MIME_TYPE_ALL);
+                }
+                if (mCachedShareableUris.size() == 1) {
+                    mShareIntent.setAction(Intent.ACTION_SEND);
+                    mShareIntent.putExtra(Intent.EXTRA_STREAM, mCachedShareableUris.get(0));
+                } else {
+                    mShareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+                    mShareIntent.putExtra(Intent.EXTRA_STREAM, mCachedShareableUris);
+                }
             }
         }
         share.setShareIntent(mShareIntent);
 
-        // TODO update deletability, editability, etc.
+        // TODO update editability, etc.
+    }
+
+    public int getSupportedOperations() {
+        if (mSelectedTotalCount == 0) {
+            return 0;
+        }
+        int supported = 0;
+        if (mSelectedDeletableCount == mSelectedTotalCount) {
+            supported |= MediaObject.SUPPORT_DELETE;
+        }
+        if (mSelectedShareableCount > 0) {
+            supported |= MediaObject.SUPPORT_SHARE;
+        }
+        return supported;
     }
 
     public void onClearSelection() {
