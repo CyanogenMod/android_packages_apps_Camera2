@@ -22,9 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.CursorAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.android.gallery3d.R;
@@ -48,7 +46,7 @@ public class PhotoThumbnailAdapter extends CursorAdapter implements GalleryThumb
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        ImageView iv = (ImageView) view;
+        ImageView iv = (ImageView) view.findViewById(R.id.thumbnail);
         Drawable recycle = iv.getDrawable();
         Drawable drawable = mDrawableFactory.drawableForItem(cursor, recycle);
         if (recycle != drawable) {
