@@ -107,6 +107,7 @@ public class CameraSwitcher extends RotateImageView
     private void onCameraSelected(int ix) {
         hidePopup();
         if ((ix != mCurrentIndex) && (mListener != null)) {
+            UsageStatistics.onEvent("CameraModeSwitch", null, null);
             UsageStatistics.setPendingTransitionCause(
                     UsageStatistics.TRANSITION_MENU_TAP);
             setCurrentIndex(ix);
