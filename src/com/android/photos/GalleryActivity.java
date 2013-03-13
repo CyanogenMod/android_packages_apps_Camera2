@@ -45,7 +45,7 @@ public class GalleryActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         mViewPager = new ViewPager(this);
-        mViewPager.setId(R.id.root_view);
+        mViewPager.setId(R.id.viewpager);
         setContentView(mViewPager);
 
         ActionBar ab = getActionBar();
