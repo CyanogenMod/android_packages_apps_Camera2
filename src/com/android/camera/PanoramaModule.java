@@ -66,6 +66,7 @@ import com.android.gallery3d.exif.ExifOutputStream;
 import com.android.gallery3d.exif.ExifReader;
 import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.ui.GLRootView;
+import com.android.gallery3d.util.UsageStatistics;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -1101,6 +1102,8 @@ public class PanoramaModule implements CameraModule,
         // Dismiss open menu if exists.
         PopupManager.getInstance(mActivity).notifyShowPopup(null);
         mRootView.requestLayout();
+        UsageStatistics.onContentViewChanged(
+                UsageStatistics.COMPONENT_CAMERA, "PanoramaModule");
     }
 
     /**

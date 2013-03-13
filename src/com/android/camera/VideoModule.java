@@ -77,6 +77,7 @@ import com.android.camera.ui.ZoomRenderer;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.util.AccessibilityUtils;
+import com.android.gallery3d.util.UsageStatistics;
 
 import java.io.File;
 import java.io.IOException;
@@ -866,6 +867,8 @@ public class VideoModule implements CameraModule,
         PopupManager.getInstance(mActivity).notifyShowPopup(null);
 
         mVideoNamer = new VideoNamer();
+        UsageStatistics.onContentViewChanged(
+                UsageStatistics.COMPONENT_CAMERA, "VideoModule");
     }
 
     private void setDisplayOrientation() {
