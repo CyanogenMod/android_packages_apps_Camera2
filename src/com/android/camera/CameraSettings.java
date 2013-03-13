@@ -235,8 +235,8 @@ public class CameraSettings {
 
     private void buildExposureCompensation(
             PreferenceGroup group, IconListPreference exposure) {
-        int max = mParameters.getMaxExposureCompensation();
-        int min = mParameters.getMinExposureCompensation();
+        int max = Math.min(3, mParameters.getMaxExposureCompensation());
+        int min = Math.max(-3, mParameters.getMinExposureCompensation());
         if (max == 0 && min == 0) {
             removePreference(group, exposure.getKey());
             return;
