@@ -49,6 +49,8 @@ public class FilteringPipeline implements Handler.Callback {
     private final static int COMPUTE_RENDERING_REQUEST = 3;
     private final static int COMPUTE_PARTIAL_RENDERING_REQUEST = 4;
 
+    private boolean mHasUnhandledPreviewRequest = false;
+
     private Handler mProcessingHandler = null;
     private final Handler mUIHandler = new Handler() {
         @Override
@@ -58,6 +60,9 @@ public class FilteringPipeline implements Handler.Callback {
                     TripleBufferBitmap buffer = MasterImage.getImage().getDoubleBuffer();
                     buffer.swapConsumer();
                     MasterImage.getImage().notifyObservers();
+                    if (mHasUnhandledPreviewRequest) {
+                        updatePreviewBuffer();
+                    }
                     break;
                 }
                 case NEW_RENDERING_REQUEST: {
@@ -194,6 +199,7 @@ public class FilteringPipeline implements Handler.Callback {
         if (mOriginalAllocation == null) {
             return;
         }
+        mHasUnhandledPreviewRequest = true;
         if (mProcessingHandler.hasMessages(COMPUTE_PRESET)) {
             return;
         }
@@ -205,6 +211,7 @@ public class FilteringPipeline implements Handler.Callback {
         }
         Message msg = mProcessingHandler.obtainMessage(COMPUTE_PRESET);
         msg.obj = MasterImage.getImage().getPreset();
+        mHasUnhandledPreviewRequest = false;
         mProcessingHandler.sendMessageAtFrontOfQueue(msg);
     }
 
