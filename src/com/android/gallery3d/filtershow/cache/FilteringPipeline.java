@@ -30,7 +30,7 @@ import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class FilteringPipeline implements Handler.Callback {
 
-    private static FilteringPipeline sPipeline;
+    private static volatile FilteringPipeline sPipeline = null;
     private static final String LOGTAG = "FilteringPipeline";
     private ImagePreset mPreviousGeometryPreset = null;
     private ImagePreset mPreviousFiltersPreset = null;
@@ -120,7 +120,7 @@ public class FilteringPipeline implements Handler.Callback {
         mProcessingHandler = new Handler(mHandlerThread.getLooper(), this);
     }
 
-    public static FilteringPipeline getPipeline() {
+    public synchronized static FilteringPipeline getPipeline() {
         if (sPipeline == null) {
             sPipeline = new FilteringPipeline();
         }
@@ -173,8 +173,6 @@ public class FilteringPipeline implements Handler.Callback {
                 Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
 
         mPreviousGeometry = new GeometryMetadata(geometry);
-
-        FiltersManager.getManager().resetBitmapsRS();
         return true;
     }
 
@@ -259,15 +257,17 @@ public class FilteringPipeline implements Handler.Callback {
         preset.setupEnvironment();
 
         if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
-            bitmap = MasterImage.getImage().getImageLoader().getScaleOneImageForPreset(null, preset,
-                    request.getBounds(), request.getDestination(), false);
-            if (bitmap == null) {
+            ImageLoader loader = MasterImage.getImage().getImageLoader();
+            if (loader == null) {
+                Log.w(LOGTAG, "loader not yet setup, cannot handle: " + getType(request));
                 return;
             }
-        }
-
-        if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
-            FiltersManager.getManager().resetBitmapsRS();
+            bitmap = loader.getScaleOneImageForPreset(null, preset,
+                    request.getBounds(), request.getDestination(), false);
+            if (bitmap == null) {
+                Log.w(LOGTAG, "could not get bitmap for: " + getType(request));
+                return;
+            }
         }
 
         if (request.getType() != RenderingRequest.ICON_RENDERING
@@ -296,9 +296,6 @@ public class FilteringPipeline implements Handler.Callback {
             FiltersManager.getManager().freeFilterResources(preset);
         }
 
-        if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
-            FiltersManager.getManager().resetBitmapsRS();
-        }
     }
 
     private void compute(TripleBufferBitmap buffer, ImagePreset preset, int type) {
@@ -356,7 +353,8 @@ public class FilteringPipeline implements Handler.Callback {
         return mPreviewScaleFactor;
     }
 
-    public static void reset() {
+    public static synchronized void reset() {
+        sPipeline.mHandlerThread.quit();
         sPipeline = null;
     }
 }

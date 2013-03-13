@@ -61,16 +61,6 @@ public abstract class BaseFiltersManager {
         return null;
     }
 
-    public void resetBitmapsRS() {
-        for (Class c : mFilters.keySet()) {
-            ImageFilter filter = mFilters.get(c);
-            if (filter instanceof ImageFilterRS) {
-                ImageFilterRS filterRS = (ImageFilterRS) filter;
-                filterRS.resetBitmap();
-            }
-        }
-    }
-
     public void freeFilterResources(ImagePreset preset) {
         if (preset == null) {
             return;
