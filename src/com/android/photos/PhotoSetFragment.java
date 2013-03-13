@@ -18,41 +18,31 @@ package com.android.photos;
 
 import android.app.Fragment;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.SparseBooleanArray;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
-import android.widget.ShareActionProvider;
-import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.Gallery;
-import com.android.gallery3d.data.MediaItem;
 import com.android.photos.adapters.PhotoThumbnailAdapter;
 import com.android.photos.data.PhotoSetLoader;
 import com.android.photos.shims.LoaderCompatShim;
 import com.android.photos.shims.MediaItemsLoader;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
-public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor>,
-        OnItemClickListener, SelectionManager.SelectedUriSource, MultiChoiceModeListener,
-        OnShareTargetSelectedListener {
+public class PhotoSetFragment extends Fragment implements OnItemClickListener,
+    LoaderCallbacks<Cursor>, MultiChoiceManager.Delegate, SelectionManager.Client  {
 
     private static final int LOADER_PHOTOSET = 1;
 
@@ -62,14 +52,24 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
     private boolean mInitialLoadComplete = false;
     private LoaderCompatShim<Cursor> mLoaderCompatShim;
     private PhotoThumbnailAdapter mAdapter;
+    private MultiChoiceManager mMultiChoiceManager;
     private SelectionManager mSelectionManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        GalleryActivity activity = (GalleryActivity) getActivity();
-        mSelectionManager = activity.getSelectionManager();
-        mAdapter = new PhotoThumbnailAdapter(activity);
+        Context context = getActivity();
+        mAdapter = new PhotoThumbnailAdapter(context);
+        mMultiChoiceManager = new MultiChoiceManager(context, this);
+        mMultiChoiceManager.setSelectionManager(mSelectionManager);
+    }
+
+    @Override
+    public void setSelectionManager(SelectionManager manager) {
+        mSelectionManager = manager;
+        if (mMultiChoiceManager != null) {
+            mMultiChoiceManager.setSelectionManager(manager);
+        }
     }
 
     @Override
@@ -84,7 +84,7 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
         mEmptyView.setVisibility(View.GONE);
         mPhotoSetView.setAdapter(mAdapter);
         mPhotoSetView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
-        mPhotoSetView.setMultiChoiceModeListener(this);
+        mPhotoSetView.setMultiChoiceModeListener(mMultiChoiceManager);
         getLoaderManager().initLoader(LOADER_PHOTOSET, null, this);
         updateEmptyStatus();
         return root;
@@ -129,112 +129,51 @@ public class PhotoSetFragment extends Fragment implements LoaderCallbacks<Cursor
         updateEmptyStatus();
     }
 
-    private Set<Uri> mSelectedUris = new HashSet<Uri>();
-    private ArrayList<Uri> mSelectedUrisArray = new ArrayList<Uri>();
-
-    @Override
-    public ArrayList<Uri> getSelectedShareableUris() {
-        mSelectedUrisArray.clear();
-        mSelectedUrisArray.addAll(mSelectedUris);
-        return mSelectedUrisArray;
-    }
-
-    public ArrayList<Uri> getSelectedShareableUrisUncached() {
-        mSelectedUrisArray.clear();
-        SparseBooleanArray selected = mPhotoSetView.getCheckedItemPositions();
-
-        for (int i = 0; i < selected.size(); i++) {
-            if (selected.valueAt(i)) {
-                Cursor item = mAdapter.getItem(selected.keyAt(i));
-                int supported = item.getInt(PhotoSetLoader.INDEX_SUPPORTED_OPERATIONS);
-                if ((supported & MediaItem.SUPPORT_SHARE) > 0) {
-                    mSelectedUrisArray.add(mLoaderCompatShim.uriForItem(item));
-                }
-            }
-        }
-
-        return mSelectedUrisArray;
-    }
-
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
     }
 
-
-    private ShareActionProvider mShareActionProvider;
-    private ActionMode mActionMode;
-    private boolean mSharePending = false;
-
-    private void updateSelectedTitle(ActionMode mode) {
-        int count = mPhotoSetView.getCheckedItemCount();
-        mode.setTitle(getResources().getQuantityString(
-                R.plurals.number_of_items_selected, count, count));
+    @Override
+    public int getItemMediaType(Object item) {
+        return ((Cursor) item).getInt(PhotoSetLoader.INDEX_MEDIA_TYPE);
     }
 
     @Override
-    public void onItemCheckedStateChanged(ActionMode mode, int position, long id,
-            boolean checked) {
-        updateSelectedTitle(mode);
-        Cursor item = mAdapter.getItem(position);
-
-        if (checked) {
-            mSelectedUris.add(mLoaderCompatShim.uriForItem(item));
-        } else {
-            mSelectedUris.remove(mLoaderCompatShim.uriForItem(item));
-        }
-
-        mSelectionManager.onItemSelectedStateChanged(mShareActionProvider,
-                item.getInt(PhotoSetLoader.INDEX_MEDIA_TYPE),
-                item.getInt(PhotoSetLoader.INDEX_SUPPORTED_OPERATIONS),
-                checked);
+    public int getItemSupportedOperations(Object item) {
+        return ((Cursor) item).getInt(PhotoSetLoader.INDEX_SUPPORTED_OPERATIONS);
     }
 
     @Override
-    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        mSelectionManager.setSelectedUriSource(PhotoSetFragment.this);
-        mActionMode = mode;
-        MenuInflater inflater = mode.getMenuInflater();
-        inflater.inflate(R.menu.gallery_multiselect, menu);
-        MenuItem menuItem = menu.findItem(R.id.menu_share);
-        mShareActionProvider = (ShareActionProvider) menuItem.getActionProvider();
-        mShareActionProvider.setOnShareTargetSelectedListener(this);
-        updateSelectedTitle(mode);
-        return true;
+    public Object getItemAtPosition(int position) {
+        return mAdapter.getItem(position);
+    }
+
+    private ArrayList<Uri> mSubItemUriTemp = new ArrayList<Uri>(1);
+    @Override
+    public ArrayList<Uri> getSubItemUrisForItem(Object item) {
+        mSubItemUriTemp.clear();
+        mSubItemUriTemp.add(mLoaderCompatShim.uriForItem((Cursor) item));
+        return mSubItemUriTemp;
+    }
+
+
+    @Override
+    public Object getPathForItemAtPosition(int position) {
+        return mLoaderCompatShim.getPathForItem(mAdapter.getItem(position));
     }
 
     @Override
-    public void onDestroyActionMode(ActionMode mode) {
-        mSelectedUris.clear();
-        if (mSharePending) {
-            // onDestroyActionMode gets called when the share target was selected,
-            // but apparently before the ArrayList is serialized in the intent
-            // so we can't clear the old one here.
-            mSelectedUrisArray = new ArrayList<Uri>();
-            mSharePending = false;
-        } else {
-            mSelectedUrisArray.clear();
-        }
-        mSelectionManager.onClearSelection();
-        mSelectionManager.setSelectedUriSource(null);
-        mShareActionProvider = null;
-        mActionMode = null;
+    public void deleteItemWithPath(Object itemPath) {
+        mLoaderCompatShim.deleteItemWithPath(itemPath);
     }
 
     @Override
-    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        updateSelectedTitle(mode);
-        return false;
+    public SparseBooleanArray getSelectedItemPositions() {
+        return mPhotoSetView.getCheckedItemPositions();
     }
 
     @Override
-    public boolean onShareTargetSelected(ShareActionProvider provider, Intent intent) {
-        mSharePending = true;
-        mActionMode.finish();
-        return false;
-    }
-
-    @Override
-    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        return false;
+    public int getSelectedItemCount() {
+        return mPhotoSetView.getCheckedItemCount();
     }
 }
