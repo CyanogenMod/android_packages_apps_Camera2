@@ -12,6 +12,7 @@ public class AlbumSetLoader {
     public static final int INDEX_THUMBNAIL_HEIGHT = 5;
     public static final int INDEX_COUNT_PENDING_UPLOAD = 6;
     public static final int INDEX_COUNT = 7;
+    public static final int INDEX_SUPPORTED_OPERATIONS = 8;
 
     public static final String[] PROJECTION = {
         "_id",
@@ -21,7 +22,8 @@ public class AlbumSetLoader {
         "thumb_width",
         "thumb_height",
         "count_pending_upload",
-        "_count"
+        "_count",
+        "supported_operations"
     };
     public static final MatrixCursor MOCK = createRandomCursor(30);
 
@@ -44,7 +46,8 @@ public class AlbumSetLoader {
             0,
             0,
             (random < .3 ? 1 : 0),
-            1
+            1,
+            0
         };
         return row;
     }
