@@ -676,7 +676,8 @@ public class PhotoUI implements PieListener,
 
     @Override
     public void clearFocus() {
-        getFocusIndicator().clear();
+        FocusIndicator indicator = getFocusIndicator();
+        if (indicator != null) indicator.clear();
     }
 
     @Override
