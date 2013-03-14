@@ -108,7 +108,7 @@ public abstract class ImageFilterRS extends ImageFilter {
         return sRS;
     }
 
-    public static synchronized void setRenderScriptContext(Activity context) {
+    public static synchronized void createRenderscriptContext(Activity context) {
         if( sRS != null) {
             Log.w(LOGTAG, "A prior RS context exists when calling setRenderScriptContext");
             destroyRenderScriptContext();
