@@ -138,7 +138,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         clearGalleryBitmapPool();
 
         setupMasterImage();
-        ImageFilterRS.setRenderScriptContext(this);
+        ImageFilterRS.createRenderscriptContext(this);
         setDefaultValues();
         fillEditors();
 
