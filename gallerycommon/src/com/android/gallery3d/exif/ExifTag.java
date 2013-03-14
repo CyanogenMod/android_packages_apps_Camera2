@@ -248,7 +248,9 @@ public class ExifTag {
         }
 
         long[] data = new long[value.length];
-        System.arraycopy(value, 0, data, 0, value.length);
+        for (int i = 0; i < value.length; i++) {
+            data[i] = value[i];
+        }
         mValue = data;
         mComponentCountActual = value.length;
         return true;
