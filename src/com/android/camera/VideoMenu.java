@@ -33,11 +33,10 @@ public class VideoMenu extends PieController
         ListPrefSettingPopup.Listener,
         TimeIntervalPopup.Listener {
 
-
-    private static String TAG = "CAM_videocontrol";
+    private static String TAG = "CAM_VideoMenu";
     private static float FLOAT_PI_DIVIDED_BY_TWO = (float) Math.PI / 2;
 
-    private VideoModule mModule;
+    private VideoUI mUI;
     private String[] mOtherKeys;
     private AbstractSettingPopup mPopup;
 
@@ -46,9 +45,9 @@ public class VideoMenu extends PieController
     private static final int POPUP_SECOND_LEVEL = 2;
     private int mPopupStatus;
 
-    public VideoMenu(CameraActivity activity, VideoModule module, PieRenderer pie) {
+    public VideoMenu(CameraActivity activity, VideoUI ui, PieRenderer pie) {
         super(activity, pie);
-        mModule = module;
+        mUI = ui;
     }
 
     public void initialize(PreferenceGroup group) {
@@ -60,7 +59,7 @@ public class VideoMenu extends PieController
         addItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE, FLOAT_PI_DIVIDED_BY_TWO - sweep, sweep);
         addItem(CameraSettings.KEY_WHITE_BALANCE, 3 * FLOAT_PI_DIVIDED_BY_TWO + sweep, sweep);
         PieItem item = makeItem(R.drawable.ic_switch_video_facing_holo_light);
-        item.setFixedSlice(FLOAT_PI_DIVIDED_BY_TWO + sweep,  sweep);
+        item.setFixedSlice(FLOAT_PI_DIVIDED_BY_TWO + sweep, sweep);
         item.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -81,7 +80,8 @@ public class VideoMenu extends PieController
                 CameraSettings.KEY_VIDEO_EFFECT,
                 CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
                 CameraSettings.KEY_VIDEO_QUALITY,
-                CameraSettings.KEY_RECORD_LOCATION};
+                CameraSettings.KEY_RECORD_LOCATION
+        };
 
         item = makeItem(R.drawable.ic_settings_holo_light);
         item.setFixedSlice(FLOAT_PI_DIVIDED_BY_TWO * 3, sweep);
@@ -92,15 +92,10 @@ public class VideoMenu extends PieController
                     initializePopup();
                     mPopupStatus = POPUP_FIRST_LEVEL;
                 }
-                mModule.showPopup(mPopup);
+                mUI.showPopup(mPopup);
             }
         });
         mRenderer.addItem(item);
-    }
-
-    protected void setCameraId(int cameraId) {
-        ListPreference pref = mPreferenceGroup.findPreference(CameraSettings.KEY_CAMERA_ID);
-        pref.setValue("" + cameraId);
     }
 
     @Override
@@ -126,7 +121,7 @@ public class VideoMenu extends PieController
     public void onListPrefChanged(ListPreference pref) {
         if (mPopup != null) {
             if (mPopupStatus == POPUP_SECOND_LEVEL) {
-                mModule.dismissPopup(true);
+                mUI.dismissPopup(true);
             }
         }
         super.onSettingChanged(pref);
@@ -152,7 +147,7 @@ public class VideoMenu extends PieController
         if (mPopupStatus == POPUP_SECOND_LEVEL) {
             initializePopup();
             mPopupStatus = POPUP_FIRST_LEVEL;
-            if (topPopupOnly) mModule.showPopup(mPopup);
+            if (topPopupOnly) mUI.showPopup(mPopup);
         }
     }
 
@@ -170,17 +165,17 @@ public class VideoMenu extends PieController
                     R.layout.time_interval_popup, null, false);
             timeInterval.initialize((IconListPreference) pref);
             timeInterval.setSettingChangedListener(this);
-            mModule.dismissPopup(true);
+            mUI.dismissPopup(true);
             mPopup = timeInterval;
         } else {
             ListPrefSettingPopup basic = (ListPrefSettingPopup) inflater.inflate(
                     R.layout.list_pref_setting_popup, null, false);
             basic.initialize(pref);
             basic.setSettingChangedListener(this);
-            mModule.dismissPopup(true);
+            mUI.dismissPopup(true);
             mPopup = basic;
         }
-        mModule.showPopup(mPopup);
+        mUI.showPopup(mPopup);
         mPopupStatus = POPUP_SECOND_LEVEL;
     }
 
