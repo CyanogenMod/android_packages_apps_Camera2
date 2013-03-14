@@ -19,13 +19,13 @@ package com.android.gallery3d.filtershow.ui;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import com.android.gallery3d.filtershow.PanelController;
-import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.cache.RenderingRequest;
 import com.android.gallery3d.filtershow.cache.RenderingRequestCaller;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
@@ -33,6 +33,7 @@ import com.android.gallery3d.filtershow.imageshow.GeometryListener;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
+// TODO: merge back IconButton and FilterIconButton?
 public class FilterIconButton extends IconButton implements View.OnClickListener,
         RenderingRequestCaller, GeometryListener {
     private static final String LOGTAG = "FilterIconButton";
@@ -43,9 +44,6 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
     private LinearLayout mParentContainer = null;
     private View.OnClickListener mListener = null;
     private Bitmap mIconBitmap = null;
-    private ImagePreset mPreset = null;
-    private Rect mDestination = null;
-
     public FilterIconButton(Context context) {
         super(context);
     }
@@ -65,27 +63,6 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
         super.setOnClickListener(this);
         MasterImage.getImage().addGeometryListener(this);
         invalidate();
-    }
-
-    @Override
-    protected Bitmap drawImage(Bitmap dst, Bitmap image, Rect destination) {
-        if (mOverlayOnly) {
-            // TODO: merge back IconButton and FilterIconButton
-            return super.drawImage(dst, image, destination);
-        }
-        if (mIconBitmap == null && mPreset == null) {
-            dst = MasterImage.getImage().getThumbnailBitmap();
-            if (dst != null) {
-                ImagePreset mPreset = new ImagePreset();
-                mPreset.addFilter(mFilterRepresentation);
-                mPreset.setDoApplyGeometry(false);
-                mDestination = destination;
-                RenderingRequest.post(dst.copy(Bitmap.Config.ARGB_8888, true), mPreset, RenderingRequest.ICON_RENDERING, this);
-            }
-            return dst;
-        } else {
-            return mIconBitmap;
-        }
     }
 
     @Override
@@ -117,31 +94,55 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
         }
         mOverlayOnly = mFilterRepresentation.getOverlayOnly();
         if (mOverlayOnly) {
+            assert(mOverlayBitmap != null);
             setIcon(mOverlayBitmap);
         }
-        stale_icon = true;
         invalidate();
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        if (mIconBitmap == null && !mOverlayOnly) {
+            postNewIconRenderRequest();
+        }
+        super.onDraw(canvas);
     }
 
     @Override
     public void available(RenderingRequest request) {
-        if (request.getBitmap() == null) {
+        Bitmap bmap = request.getBitmap();
+        if (bmap == null) {
             return;
         }
-        mIconBitmap = request.getBitmap();
-        if (mOverlayBitmap != null) {
-            mIconBitmap = super.drawImage(mIconBitmap, mOverlayBitmap, mDestination);
+        if (mOverlayOnly) {
+            setIcon(mOverlayBitmap);
+        } else {
+            mIconBitmap = bmap;
+            if (mOverlayBitmap != null) {
+                Rect destination = new Rect(0, 0, mIconBitmap.getWidth(), mIconBitmap.getHeight());
+                drawImage(mIconBitmap, mOverlayBitmap, destination);
+            }
+            setIcon(mIconBitmap);
         }
-        stale_icon = true;
-        invalidate();
     }
 
     @Override
     public void geometryChanged() {
-        stale_icon = true;
-
+        if (mOverlayOnly) {
+            return;
+        }
         mIconBitmap = null;
-        mPreset = null;
-        invalidate();
+        postNewIconRenderRequest();
+    }
+
+    private void postNewIconRenderRequest() {
+        Bitmap dst = MasterImage.getImage().getThumbnailBitmap();
+        if (dst != null) {
+            ImagePreset mPreset = new ImagePreset();
+            mPreset.addFilter(mFilterRepresentation);
+            mPreset.setDoApplyGeometry(false);
+            RenderingRequest.post(dst.copy(Bitmap.Config.ARGB_8888, true),
+                    mPreset, RenderingRequest.ICON_RENDERING, this);
+        }
     }
 }
