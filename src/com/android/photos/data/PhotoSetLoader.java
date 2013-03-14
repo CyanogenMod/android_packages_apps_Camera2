@@ -29,6 +29,8 @@ import android.provider.MediaStore.Files.FileColumns;
 import com.android.photos.drawables.DataUriThumbnailDrawable;
 import com.android.photos.shims.LoaderCompatShim;
 
+import java.util.ArrayList;
+
 public class PhotoSetLoader extends CursorLoader implements LoaderCompatShim<Cursor> {
 
     public static final String SUPPORTED_OPERATIONS = "supported_operations";
@@ -93,6 +95,21 @@ public class PhotoSetLoader extends CursorLoader implements LoaderCompatShim<Cur
 
     @Override
     public Uri uriForItem(Cursor item) {
+        return null;
+    }
+
+    @Override
+    public ArrayList<Uri> urisForSubItems(Cursor item) {
+        return null;
+    }
+
+    @Override
+    public void deleteItemWithPath(Object path) {
+
+    }
+
+    @Override
+    public Object getPathForItem(Cursor item) {
         return null;
     }
 }
