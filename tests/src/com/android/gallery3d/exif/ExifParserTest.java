@@ -25,12 +25,16 @@ import java.util.Map;
 public class ExifParserTest extends ExifXmlDataTestCase {
     private static final String TAG = "ExifParserTest";
 
+    private ExifInterface mInterface;
+
     public ExifParserTest(int imgRes, int xmlRes) {
         super(imgRes, xmlRes);
+        mInterface = new ExifInterface();
     }
 
     public ExifParserTest(String imgPath, String xmlPath) {
         super(imgPath, xmlPath);
+        mInterface = new ExifInterface();
     }
 
     private List<Map<Short, List<String>>> mGroundTruth;
@@ -43,7 +47,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
 
     public void testParse() throws Exception {
         try {
-            ExifParser parser = ExifParser.parse(getImageInputStream());
+            ExifParser parser = ExifParser.parse(getImageInputStream(), mInterface);
             int event = parser.next();
             while (event != ExifParser.EVENT_END) {
                 switch (event) {
@@ -62,7 +66,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
                         if (tag.getDataType() == ExifTag.TYPE_UNDEFINED) {
                             byte[] buf = new byte[tag.getComponentCount()];
                             parser.read(buf);
-                            tag.setValue(buf);
+                            assertTrue(TAG, tag.setValue(buf));
                         }
                         checkTag(tag);
                         break;
@@ -82,7 +86,9 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         }
 
         // No value from exiftool.
-        if (truth.contains(null)) return;
+        if (truth.contains(null)) {
+            return;
+        }
 
         String dataString = Util.tagValueToString(tag).trim();
         assertTrue(String.format("Tag %02x", tag.getTagId()) + ", " + getImageTitle()
@@ -94,9 +100,9 @@ public class ExifParserTest extends ExifXmlDataTestCase {
         try {
             Map<Short, List<String>> expectedResult = mGroundTruth.get(ifd);
             int numOfTag = 0;
-            ExifParser parser = ExifParser.parse(getImageInputStream(), options);
+            ExifParser parser = ExifParser.parse(getImageInputStream(), options, mInterface);
             int event = parser.next();
-            while(event != ExifParser.EVENT_END) {
+            while (event != ExifParser.EVENT_END) {
                 switch (event) {
                     case ExifParser.EVENT_START_OF_IFD:
                         assertEquals(getImageTitle(), ifd, parser.getCurrentIfd());
@@ -150,10 +156,13 @@ public class ExifParserTest extends ExifXmlDataTestCase {
 
     public void testOnlyReadSomeTag() throws Exception {
         // Do not do this test if there is no model tag.
-        if (mGroundTruth.get(IfdId.TYPE_IFD_0).get(ExifTag.TAG_MODEL) == null) return;
+        if (mGroundTruth.get(IfdId.TYPE_IFD_0).get(ExifInterface.TAG_MODEL) == null) {
+            return;
+        }
 
         try {
-            ExifParser parser = ExifParser.parse(getImageInputStream(), ExifParser.OPTION_IFD_0);
+            ExifParser parser = ExifParser.parse(getImageInputStream(), ExifParser.OPTION_IFD_0,
+                    mInterface);
             int event = parser.next();
             boolean isTagFound = false;
             while (event != ExifParser.EVENT_END) {
@@ -163,7 +172,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
                         break;
                     case ExifParser.EVENT_NEW_TAG:
                         ExifTag tag = parser.getTag();
-                        if (tag.getTagId() == ExifTag.TAG_MODEL) {
+                        if (tag.getTagId() == ExifInterface.TAG_MODEL) {
                             if (tag.hasValue()) {
                                 isTagFound = true;
                                 checkTag(tag);
@@ -175,7 +184,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
                         break;
                     case ExifParser.EVENT_VALUE_OF_REGISTERED_TAG:
                         tag = parser.getTag();
-                        assertEquals(getImageTitle(), ExifTag.TAG_MODEL, tag.getTagId());
+                        assertEquals(getImageTitle(), ExifInterface.TAG_MODEL, tag.getTagId());
                         checkTag(tag);
                         isTagFound = true;
                         break;
@@ -191,7 +200,7 @@ public class ExifParserTest extends ExifXmlDataTestCase {
     public void testReadThumbnail() throws Exception {
         try {
             ExifParser parser = ExifParser.parse(getImageInputStream(),
-                    ExifParser.OPTION_IFD_1 | ExifParser.OPTION_THUMBNAIL);
+                    ExifParser.OPTION_IFD_1 | ExifParser.OPTION_THUMBNAIL, mInterface);
 
             int event = parser.next();
             Bitmap bmp = null;
@@ -200,8 +209,8 @@ public class ExifParserTest extends ExifXmlDataTestCase {
                 switch (event) {
                     case ExifParser.EVENT_NEW_TAG:
                         ExifTag tag = parser.getTag();
-                        if (tag.getTagId() == ExifTag.TAG_COMPRESSION) {
-                            if (tag.getValueAt(0) == ExifTag.Compression.JPEG) {
+                        if (tag.getTagId() == ExifInterface.TAG_COMPRESSION) {
+                            if (tag.getValueAt(0) == ExifInterface.Compression.JPEG) {
                                 mIsContainCompressedImage = true;
                             }
                         }

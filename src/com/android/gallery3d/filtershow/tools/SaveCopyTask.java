@@ -21,7 +21,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -31,21 +30,15 @@ import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.exif.ExifData;
-import com.android.gallery3d.exif.ExifInvalidFormatException;
-import com.android.gallery3d.exif.ExifOutputStream;
-import com.android.gallery3d.exif.ExifReader;
-import com.android.gallery3d.exif.ExifTag;
+import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.util.XmpUtilHelper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
@@ -55,35 +48,7 @@ import java.util.TimeZone;
  */
 public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
 
-
     private static final String LOGTAG = "SaveCopyTask";
-    /**
-     * Saves the bitmap in the final destination
-     */
-    public static void saveBitmap(Bitmap bitmap, File destination, Object xmp) {
-        saveBitmap(bitmap, destination, xmp, null);
-    }
-
-    private static void saveBitmap(Bitmap bitmap, File destination, Object xmp, ExifData exif) {
-        OutputStream os = null;
-        try {
-            os = new FileOutputStream(destination);
-            if (exif != null) {
-                ExifOutputStream eos = new ExifOutputStream(os);
-                eos.setExifData(exif);
-                bitmap.compress(CompressFormat.JPEG, ImageLoader.DEFAULT_COMPRESS_QUALITY, eos);
-            } else {
-                bitmap.compress(CompressFormat.JPEG, ImageLoader.DEFAULT_COMPRESS_QUALITY, os);
-            }
-        } catch (FileNotFoundException e) {
-            Log.v(LOGTAG,"Error in writing "+destination.getAbsolutePath());
-        } finally {
-            Utils.closeSilently(os);;
-        }
-        if (xmp != null) {
-            XmpUtilHelper.writeXMPMeta(destination.getAbsolutePath(), xmp);
-        }
-    }
 
     /**
      * Callback for the completed asynchronous task.
@@ -128,7 +93,8 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
                     ImageLoader.DEFAULT_SAVE_DIRECTORY);
         }
         // Create the directory if it doesn't exist
-        if (!saveDirectory.exists()) saveDirectory.mkdirs();
+        if (!saveDirectory.exists())
+            saveDirectory.mkdirs();
         return saveDirectory;
     }
 
@@ -139,28 +105,59 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         return new File(saveDirectory, filename + ".JPG");
     }
 
-    private ExifData getExifData(Uri sourceUri) {
+    public Object getPanoramaXMPData(Uri source, ImagePreset preset) {
+        Object xmp = null;
+        if (preset.isPanoramaSafe()) {
+            InputStream is = null;
+            try {
+                is = context.getContentResolver().openInputStream(source);
+                xmp = XmpUtilHelper.extractXMPMeta(is);
+            } catch (FileNotFoundException e) {
+                Log.w(LOGTAG, "Failed to get XMP data from image: ", e);
+            } finally {
+                Utils.closeSilently(is);
+            }
+        }
+        return xmp;
+    }
+
+    public boolean putPanoramaXMPData(File file, Object xmp) {
+        if (xmp != null) {
+            return XmpUtilHelper.writeXMPMeta(file.getAbsolutePath(), xmp);
+        }
+        return false;
+    }
+
+    public ExifInterface getExifData(Uri source) {
+        ExifInterface exif = new ExifInterface();
         String mimeType = context.getContentResolver().getType(sourceUri);
-        if (mimeType != ImageLoader.JPEG_MIME_TYPE) {
-            return null;
+        if (mimeType == ImageLoader.JPEG_MIME_TYPE) {
+            InputStream inStream = null;
+            try {
+                inStream = context.getContentResolver().openInputStream(source);
+                exif.readExif(inStream);
+            } catch (FileNotFoundException e) {
+                Log.w(LOGTAG, "Cannot find file: " + source, e);
+            } catch (IOException e) {
+                Log.w(LOGTAG, "Cannot read exif for: " + source, e);
+            } finally {
+                Utils.closeSilently(inStream);
+            }
         }
-        InputStream is = null;
+        return exif;
+    }
+
+    public boolean putExifData(File file, ExifInterface exif, Bitmap image) {
+        boolean ret = false;
         try {
-            is = context.getContentResolver().openInputStream(sourceUri);
-            ExifReader reader = new ExifReader();
-            return reader.read(is);
+            exif.writeExif(image, file.getAbsolutePath());
+            ret = true;
         } catch (FileNotFoundException e) {
-            Log.w(LOGTAG, "Failed to find file", e);
-            return null;
-        } catch (ExifInvalidFormatException e) {
-            Log.w(LOGTAG, "Invalid EXIF data", e);
-            return null;
+            Log.w(LOGTAG, "File not found: " + file.getAbsolutePath(), e);
         } catch (IOException e) {
-            Log.w(LOGTAG, "Failed to read original file", e);
-            return null;
-        } finally {
-            Utils.closeSilently(is);
+            Log.w(LOGTAG, "Could not write exif: ", e);
         }
+        return ret;
     }
 
     /**
@@ -173,12 +170,12 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
             return null;
         }
         ImagePreset preset = params[0];
-        InputStream is = null;
         BitmapFactory.Options options = new BitmapFactory.Options();
+        Uri uri = null;
         boolean noBitmap = true;
         int num_tries = 0;
         // Stopgap fix for low-memory devices.
-        while(noBitmap) {
+        while (noBitmap) {
             try {
                 // Try to do bitmap operations, downsample if low-memory
                 Bitmap bitmap = ImageLoader.loadMutableBitmap(context, sourceUri, options);
@@ -189,24 +186,23 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
                 bitmap = preset.applyGeometry(bitmap);
                 bitmap = preset.apply(bitmap);
 
-                Object xmp = null;
-                if (preset.isPanoramaSafe()) {
-                    is = context.getContentResolver().openInputStream(sourceUri);
-                    xmp =  XmpUtilHelper.extractXMPMeta(is);
+                Object xmp = getPanoramaXMPData(sourceUri, preset);
+                ExifInterface exif = getExifData(sourceUri);
+
+                // Set tags
+                long time = System.currentTimeMillis();
+                exif.addDateTimeStampTag(ExifInterface.TAG_DATE_TIME, time,
+                        TimeZone.getDefault());
+                exif.setTag(exif.buildTag(ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.Orientation.TOP_LEFT));
+
+                // If we succeed in writing the bitmap as a jpeg, return a uri.
+                if (putExifData(this.destinationFile, exif, bitmap)) {
+                    putPanoramaXMPData(this.destinationFile, xmp);
+                    uri = insertContent(context, sourceUri, this.destinationFile, saveFileName,
+                            time);
                 }
-                ExifData exif = getExifData(sourceUri);
-                if (exif != null) {
-                    exif.addDateTimeStampTag(ExifTag.TAG_DATE_TIME, System.currentTimeMillis(),
-                            TimeZone.getDefault());
-                    // Since the image has been modified, set the orientation to normal.
-                    exif.addTag(ExifTag.TAG_ORIENTATION).setValue(ExifTag.Orientation.TOP_LEFT);
-                }
-                saveBitmap(bitmap, this.destinationFile, xmp, exif);
-                bitmap.recycle();
                 noBitmap = false;
-            } catch (FileNotFoundException ex) {
-                Log.w(LOGTAG, "Failed to save image!", ex);
-                return null;
             } catch (java.lang.OutOfMemoryError e) {
                 // Try 5 times before failing for good.
                 if (++num_tries >= 5) {
@@ -214,13 +210,9 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
                 }
                 System.gc();
                 options.inSampleSize *= 2;
-            } finally {
-                Utils.closeSilently(is);
             }
         }
-        Uri uri = insertContent(context, sourceUri, this.destinationFile, saveFileName);
         return uri;
-
     }
 
     @Override
@@ -267,16 +259,17 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
     /**
      * Insert the content (saved file) with proper source photo properties.
      */
-    public static Uri insertContent(Context context, Uri sourceUri, File file, String saveFileName) {
-        long now = System.currentTimeMillis() / 1000;
+    public static Uri insertContent(Context context, Uri sourceUri, File file, String saveFileName,
+            long time) {
+        time /= 1000;
 
         final ContentValues values = new ContentValues();
         values.put(Images.Media.TITLE, saveFileName);
         values.put(Images.Media.DISPLAY_NAME, file.getName());
         values.put(Images.Media.MIME_TYPE, "image/jpeg");
-        values.put(Images.Media.DATE_TAKEN, now);
-        values.put(Images.Media.DATE_MODIFIED, now);
-        values.put(Images.Media.DATE_ADDED, now);
+        values.put(Images.Media.DATE_TAKEN, time);
+        values.put(Images.Media.DATE_MODIFIED, time);
+        values.put(Images.Media.DATE_ADDED, time);
         values.put(Images.Media.ORIENTATION, 0);
         values.put(Images.Media.DATA, file.getAbsolutePath());
         values.put(Images.Media.SIZE, file.length());
@@ -288,20 +281,20 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         querySource(context, sourceUri, projection,
                 new ContentResolverQueryCallback() {
 
-            @Override
-            public void onCursorResult(Cursor cursor) {
-                values.put(Images.Media.DATE_TAKEN, cursor.getLong(0));
+                    @Override
+                    public void onCursorResult(Cursor cursor) {
+                        values.put(Images.Media.DATE_TAKEN, cursor.getLong(0));
 
-                double latitude = cursor.getDouble(1);
-                double longitude = cursor.getDouble(2);
-                // TODO: Change || to && after the default location issue is
-                // fixed.
-                if ((latitude != 0f) || (longitude != 0f)) {
-                    values.put(Images.Media.LATITUDE, latitude);
-                    values.put(Images.Media.LONGITUDE, longitude);
-                }
-            }
-        });
+                        double latitude = cursor.getDouble(1);
+                        double longitude = cursor.getDouble(2);
+                        // TODO: Change || to && after the default location
+                        // issue is fixed.
+                        if ((latitude != 0f) || (longitude != 0f)) {
+                            values.put(Images.Media.LATITUDE, latitude);
+                            values.put(Images.Media.LONGITUDE, longitude);
+                        }
+                    }
+                });
 
         return context.getContentResolver().insert(
                 Images.Media.EXTERNAL_CONTENT_URI, values);
