@@ -30,10 +30,10 @@ import android.widget.Button;
  */
 public class IconButton extends Button {
 
-    protected Bitmap mImageMirror = null;
-    protected Bitmap mIcon = null;
+    private Bitmap mImageMirror = null;
+    private Bitmap mIcon = null;
 
-    protected boolean stale_icon = true;
+    private boolean stale_icon = true;
 
     public IconButton(Context context) {
         this(context, null);
@@ -53,7 +53,9 @@ public class IconButton extends Button {
     }
 
     /**
-     * Set the image that the button icon will use.
+     * Set the image that the button icon will use.  The image bitmap will be scaled
+     * and cropped into the largest square bitmap that will fit cleanly within the
+     * IconButton's layout.
      *
      * @param image image that icon will be set to before next draw.
      */
@@ -68,7 +70,7 @@ public class IconButton extends Button {
      *
      * @param image bitmap to use as icon
      */
-    protected boolean makeAndSetIcon(Bitmap image) {
+    private boolean makeAndSetIcon(Bitmap image) {
         int size = getGoodIconSideSize();
         if (size > 0) {
             return setImageIcon(makeImageIcon(image, size, size));
@@ -81,7 +83,7 @@ public class IconButton extends Button {
      *
      * @param image bitmap to set the icon to.
      */
-    protected boolean setImageIcon(Bitmap image) {
+    private boolean setImageIcon(Bitmap image) {
         if (image == null) {
             return false;
         }
@@ -99,11 +101,11 @@ public class IconButton extends Button {
      * @param height icon height
      * @return the scaled/cropped icon bitmap
      */
-    protected Bitmap makeImageIcon(Bitmap image, int width, int height) {
+    private Bitmap makeImageIcon(Bitmap image, int width, int height) {
         Rect destination = new Rect(0, 0, width, height);
         Bitmap bmap = Bitmap.createBitmap(width, height,
                 Bitmap.Config.ARGB_8888);
-        bmap = drawImage(bmap, image, destination);
+        drawImage(bmap, image, destination);
         return bmap;
     }
 
@@ -113,7 +115,7 @@ public class IconButton extends Button {
      *
      * @return icon side length
      */
-    protected int getGoodIconSideSize() {
+    private int getGoodIconSideSize() {
         Paint p = getPaint();
         Rect bounds = new Rect();
         String s = getText().toString();
@@ -128,7 +130,9 @@ public class IconButton extends Button {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        stale_icon = true;
+        if (w != oldw || h != oldh) {
+            stale_icon = true;
+        }
     }
 
     @Override
@@ -140,12 +144,20 @@ public class IconButton extends Button {
         super.onDraw(canvas);
     }
 
-    // Override this for custom icon generation
-    protected Bitmap drawImage(Bitmap dst, Bitmap image, Rect destination) {
-        if (image != null) {
+    /**
+     * Draws the src image into the destination rectangle within the dst bitmap.
+     * If src is a non-square image, clips to be a square before drawing into dst.
+     *
+     * @param dst  bitmap being drawn on.
+     * @param src  bitmap to draw into dst.
+     * @param destination  square in dst in which to draw src.
+     */
+    protected static void drawImage(Bitmap dst, Bitmap src, Rect destination) {
+        if (src != null && dst != null && src.getWidth() > 0 && dst.getWidth() > 0
+                && src.getHeight() > 0 && dst.getHeight() > 0) {
             Canvas canvas = new Canvas(dst);
-            int iw = image.getWidth();
-            int ih = image.getHeight();
+            int iw = src.getWidth();
+            int ih = src.getHeight();
             int x = 0;
             int y = 0;
             int size = 0;
@@ -160,9 +172,8 @@ public class IconButton extends Button {
                 y = (int) ((ih - size) / 2.0f);
             }
             source = new Rect(x, y, x + size, y + size);
-            canvas.drawBitmap(image, source, destination, new Paint());
+            canvas.drawBitmap(src, source, destination, new Paint());
         }
-        return dst;
     }
 
 }
