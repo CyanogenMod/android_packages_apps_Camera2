@@ -144,12 +144,12 @@ public abstract class ImageFilterRS extends ImageFilter {
     }
 
     private static synchronized Allocation convertRGBAtoA(Bitmap bitmap) {
-        Type.Builder tb_a8 = new Type.Builder(sRS, Element.U8(sRS));
+        Type.Builder tb_a8 = new Type.Builder(sRS, Element.A_8(sRS));
         ScriptC_grey greyConvert = new ScriptC_grey(sRS,
                 sRS.getApplicationContext().getResources(), R.raw.grey);
 
         Allocation bitmapTemp = convertBitmap(bitmap);
-        if (bitmapTemp.getType().getElement().isCompatible(Element.U8(sRS))) {
+        if (bitmapTemp.getType().getElement().isCompatible(Element.A_8(sRS))) {
             return bitmapTemp;
         }
 
