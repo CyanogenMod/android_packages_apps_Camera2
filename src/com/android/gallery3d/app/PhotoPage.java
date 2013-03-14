@@ -1076,7 +1076,7 @@ public abstract class PhotoPage extends ActivityState implements
                 return true;
             }
             case R.id.action_mute: {
-                MuteVideo muteVideo = new MuteVideo(current,
+                MuteVideo muteVideo = new MuteVideo(current.getFilePath(),
                         manager.getContentUri(path), mActivity);
                 muteVideo.muteInBackground();
                 return true;
