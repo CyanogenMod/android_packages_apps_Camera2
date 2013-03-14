@@ -138,6 +138,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         clearGalleryBitmapPool();
 
         setupMasterImage();
+        ImageFilterRS.setRenderScriptContext(this);
         setDefaultValues();
         fillEditors();
 
@@ -343,7 +344,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
     private void setDefaultValues() {
         ImageFilter.setActivityForMemoryToasts(this);
-        ImageFilterRS.setRenderScriptContext(this);
 
         Resources res = getResources();
         // TODO: add a mechanism to set the resources in FiltersManagmer
