@@ -28,11 +28,15 @@ import android.util.SparseArray;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.MediaSet.ItemConsumer;
 import com.android.gallery3d.data.MediaSet.SyncListener;
+import com.android.gallery3d.data.Path;
 import com.android.gallery3d.util.Future;
 import com.android.photos.data.PhotoSetLoader;
+
+import java.util.ArrayList;
 
 /**
  * Returns all MediaItems in a MediaSet, wrapping them in a cursor to appear
@@ -47,6 +51,7 @@ public class MediaItemsLoader extends AsyncTaskLoader<Cursor> implements LoaderC
     };
 
     private final MediaSet mMediaSet;
+    private final DataManager mDataManager;
     private Future<Integer> mSyncTask = null;
     private ContentListener mObserver = new ContentListener() {
         @Override
@@ -58,14 +63,15 @@ public class MediaItemsLoader extends AsyncTaskLoader<Cursor> implements LoaderC
 
     public MediaItemsLoader(Context context) {
         super(context);
-        DataManager dm = DataManager.from(context);
-        String path = dm.getTopSetPath(DataManager.INCLUDE_ALL);
-        mMediaSet = dm.getMediaSet(path);
+        mDataManager = DataManager.from(context);
+        String path = mDataManager.getTopSetPath(DataManager.INCLUDE_ALL);
+        mMediaSet = mDataManager.getMediaSet(path);
     }
 
     public MediaItemsLoader(Context context, String parentPath) {
         super(context);
-        mMediaSet = DataManager.from(getContext()).getMediaSet(parentPath);
+        mDataManager = DataManager.from(getContext());
+        mMediaSet = mDataManager.getMediaSet(parentPath);
     }
 
     @Override
@@ -155,6 +161,29 @@ public class MediaItemsLoader extends AsyncTaskLoader<Cursor> implements LoaderC
         int index = item.getInt(PhotoSetLoader.INDEX_ID);
         MediaItem mi = mMediaItems.get(index);
         return mi == null ? null : mi.getContentUri();
+    }
+
+    @Override
+    public ArrayList<Uri> urisForSubItems(Cursor item) {
+        return null;
+    }
+
+    @Override
+    public void deleteItemWithPath(Object path) {
+        MediaObject o = mDataManager.getMediaObject((Path) path);
+        if (o != null) {
+            o.delete();
+        }
+    }
+
+    @Override
+    public Object getPathForItem(Cursor item) {
+        int index = item.getInt(PhotoSetLoader.INDEX_ID);
+        MediaItem mi = mMediaItems.get(index);
+        if (mi != null) {
+            return mi.getPath();
+        }
+        return null;
     }
 
 }

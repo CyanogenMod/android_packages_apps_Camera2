@@ -19,8 +19,13 @@ package com.android.photos.shims;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 
+import java.util.ArrayList;
+
 
 public interface LoaderCompatShim<T> {
     Drawable drawableForItem(T item, Drawable recycle);
     Uri uriForItem(T item);
+    ArrayList<Uri> urisForSubItems(T item);
+    void deleteItemWithPath(Object path);
+    Object getPathForItem(T item);
 }
