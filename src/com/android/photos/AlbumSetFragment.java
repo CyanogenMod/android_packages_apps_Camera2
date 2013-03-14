@@ -165,4 +165,8 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
         return mAlbumSetView.getCheckedItemCount();
     }
 
+    @Override
+    public Uri getItemUri(Object item) {
+        return mLoaderCompatShim.uriForItem((Cursor) item);
+    }
 }

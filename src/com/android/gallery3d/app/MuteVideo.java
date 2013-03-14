@@ -35,7 +35,7 @@ public class MuteVideo {
 
     private ProgressDialog mMuteProgress;
 
-    private MediaItem mCurrentItem = null;
+    private String mFilePath = null;
     private Uri mUri = null;
     private SaveVideoFileInfo mDstFileInfo = null;
     private Activity mActivity = null;
@@ -43,9 +43,9 @@ public class MuteVideo {
 
     final String TIME_STAMP_NAME = "'MUTE'_yyyyMMdd_HHmmss";
 
-    public MuteVideo(MediaItem current, Uri uri, Activity activity) {
+    public MuteVideo(String filePath, Uri uri, Activity activity) {
         mUri = uri;
-        mCurrentItem = current;
+        mFilePath = filePath;
         mActivity = activity;
     }
 
@@ -59,7 +59,7 @@ public class MuteVideo {
                 @Override
             public void run() {
                 try {
-                    VideoUtils.startMute(mCurrentItem.getFilePath(), mDstFileInfo);
+                    VideoUtils.startMute(mFilePath, mDstFileInfo);
                     SaveVideoFileUtils.insertContent(
                             mDstFileInfo, mActivity.getContentResolver(), mUri);
                 } catch (IOException e) {
