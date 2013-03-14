@@ -78,7 +78,8 @@
                 android:background="@android:color/transparent"
                 android:gravity="center"
                 android:text="@string/apply_effect"
-                android:textSize="18dip" />
+                android:textSize="18dip"
+                android:drawableRight="@drawable/filtershow_menu_marker"/>
         </LinearLayout>
 
         <ImageView
