@@ -16,7 +16,11 @@
 
 package com.android.gallery3d.exif;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 
 class Util {
     public static boolean equals(Object a, Object b) {
@@ -24,12 +28,24 @@ class Util {
     }
 
     public static void closeSilently(Closeable c) {
-        if (c == null) return;
+        if (c == null)
+            return;
         try {
             c.close();
         } catch (Throwable t) {
             // do nothing
         }
+    }
+
+    public static byte[] readToByteArray(InputStream is) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        int len;
+        byte[] buf = new byte[1024];
+        while ((len = is.read(buf)) > -1) {
+            bos.write(buf, 0, len);
+        }
+        bos.flush();
+        return bos.toByteArray();
     }
 
     /**
@@ -45,27 +61,30 @@ class Util {
         StringBuilder sbuilder = new StringBuilder();
         byte[] buf = new byte[tag.getComponentCount()];
         tag.getBytes(buf);
-        switch (tag.getTagId()) {
-            case ExifTag.TAG_COMPONENTS_CONFIGURATION:
-                for(int i = 0, n = tag.getComponentCount(); i < n; i++) {
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(buf[i]);
+        short tagId = tag.getTagId();
+        if (tagId == ExifInterface.getTrueTagKey(ExifInterface.TAG_COMPONENTS_CONFIGURATION)) {
+            for (int i = 0, n = tag.getComponentCount(); i < n; i++) {
+                if (i != 0) {
+                    sbuilder.append(" ");
                 }
-                break;
-            default:
-                if (buf.length == 1) {
-                    sbuilder.append(buf[0]);
-                } else {
-                    for (int i = 0, n = buf.length; i < n; i++) {
-                        byte code = buf[i];
-                        if (code == 0) continue;
-                        if (code > 31 && code < 127) {
-                            sbuilder.append((char) code);
-                        } else {
-                            sbuilder.append('.');
-                        }
+                sbuilder.append(buf[i]);
+            }
+        } else {
+            if (buf.length == 1) {
+                sbuilder.append(buf[0]);
+            } else {
+                for (int i = 0, n = buf.length; i < n; i++) {
+                    byte code = buf[i];
+                    if (code == 0) {
+                        continue;
+                    }
+                    if (code > 31 && code < 127) {
+                        sbuilder.append((char) code);
+                    } else {
+                        sbuilder.append('.');
                     }
                 }
+            }
         }
         return sbuilder.toString();
     }
@@ -81,15 +100,16 @@ class Util {
                 sbuilder.append(tagUndefinedTypeValueToString(tag));
                 break;
             case ExifTag.TYPE_UNSIGNED_BYTE:
-                if (id == ExifTag.TAG_MAKER_NOTE || id == TAG_XP_TITLE ||
+                if (id == ExifInterface.TAG_MAKER_NOTE || id == TAG_XP_TITLE ||
                         id == TAG_XP_COMMENT || id == TAG_XP_AUTHOR ||
                         id == TAG_XP_KEYWORDS || id == TAG_XP_SUBJECT) {
                     sbuilder.append(tagUndefinedTypeValueToString(tag));
                 } else {
                     byte[] buf = new byte[tag.getComponentCount()];
                     tag.getBytes(buf);
-                    for(int i = 0, n = tag.getComponentCount(); i < n; i++) {
-                        if(i != 0) sbuilder.append(" ");
+                    for (int i = 0, n = tag.getComponentCount(); i < n; i++) {
+                        if (i != 0)
+                            sbuilder.append(" ");
                         sbuilder.append(buf[i]);
                     }
                 }
@@ -100,7 +120,8 @@ class Util {
                     byte code = buf[i];
                     if (code == 0) {
                         // Treat some tag as undefined type data.
-                        if (id == ExifTag.TAG_COPYRIGHT || id == ExifTag.TAG_GPS_DATE_STAMP) {
+                        if (id == ExifInterface.TAG_COPYRIGHT
+                                || id == ExifInterface.TAG_GPS_DATE_STAMP) {
                             continue;
                         } else {
                             break;
@@ -114,32 +135,61 @@ class Util {
                 }
                 break;
             case ExifTag.TYPE_UNSIGNED_LONG:
-                for(int i = 0, n = tag.getComponentCount(); i < n; i++) {
-                    if(i != 0) sbuilder.append(" ");
+                for (int i = 0, n = tag.getComponentCount(); i < n; i++) {
+                    if (i != 0) {
+                        sbuilder.append(" ");
+                    }
                     sbuilder.append(tag.getValueAt(i));
                 }
                 break;
             case ExifTag.TYPE_RATIONAL:
             case ExifTag.TYPE_UNSIGNED_RATIONAL:
-                for(int i = 0, n = tag.getComponentCount(); i < n; i++) {
+                for (int i = 0, n = tag.getComponentCount(); i < n; i++) {
                     Rational r = tag.getRational(i);
-                    if(i != 0) sbuilder.append(" ");
-                    sbuilder.append(r.getNominator()).append("/").append(r.getDenominator());
+                    if (i != 0) {
+                        sbuilder.append(" ");
+                    }
+                    sbuilder.append(r.getNumerator()).append("/").append(r.getDenominator());
                 }
                 break;
             case ExifTag.TYPE_UNSIGNED_SHORT:
-                for(int i = 0, n = tag.getComponentCount(); i < n; i++) {
-                    if(i != 0) sbuilder.append(" ");
+                for (int i = 0, n = tag.getComponentCount(); i < n; i++) {
+                    if (i != 0) {
+                        sbuilder.append(" ");
+                    }
                     sbuilder.append((int) tag.getValueAt(i));
                 }
                 break;
             case ExifTag.TYPE_LONG:
-                for(int i = 0, n = tag.getComponentCount(); i < n; i++) {
-                    if(i != 0) sbuilder.append(" ");
+                for (int i = 0, n = tag.getComponentCount(); i < n; i++) {
+                    if (i != 0) {
+                        sbuilder.append(" ");
+                    }
                     sbuilder.append((int) tag.getValueAt(i));
                 }
                 break;
         }
         return sbuilder.toString();
+    }
+
+    public static String valueToString(Object obj) {
+        if (obj instanceof int[]) {
+            return Arrays.toString((int[]) obj);
+        } else if (obj instanceof Integer[]) {
+            return Arrays.toString((Integer[]) obj);
+        } else if (obj instanceof long[]) {
+            return Arrays.toString((long[]) obj);
+        } else if (obj instanceof Long[]) {
+            return Arrays.toString((Long[]) obj);
+        } else if (obj instanceof Rational) {
+            return ((Rational) obj).toString();
+        } else if (obj instanceof Rational[]) {
+            return Arrays.toString((Rational[]) obj);
+        } else if (obj instanceof byte[]) {
+            return Arrays.toString((byte[]) obj);
+        } else if (obj != null) {
+            return obj.toString();
+        }
+        return "";
     }
 }

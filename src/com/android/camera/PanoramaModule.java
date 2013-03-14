@@ -60,10 +60,7 @@ import com.android.camera.ui.PopupManager;
 import com.android.camera.ui.Rotatable;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
-import com.android.gallery3d.exif.ExifData;
-import com.android.gallery3d.exif.ExifInvalidFormatException;
-import com.android.gallery3d.exif.ExifOutputStream;
-import com.android.gallery3d.exif.ExifReader;
+import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.ui.GLRootView;
 import com.android.gallery3d.util.UsageStatistics;
@@ -913,31 +910,18 @@ public class PanoramaModule implements CameraModule,
                     mActivity.getResources().getString(R.string.pano_file_name_format), mTimeTaken);
             String filepath = Storage.generateFilepath(filename);
 
-            ExifOutputStream out = null;
-            InputStream is = null;
+            ExifInterface exif = new ExifInterface();
             try {
-                is = new ByteArrayInputStream(jpegData);
-                ExifReader reader = new ExifReader();
-                ExifData data = reader.read(is);
-
-                // Add Exif tags.
-                data.addGpsDateTimeStampTag(mTimeTaken);
-                data.addDateTimeStampTag(ExifTag.TAG_DATE_TIME, mTimeTaken, TimeZone.getDefault());
-                data.addTag(ExifTag.TAG_ORIENTATION).
-                        setValue(getExifOrientation(orientation));
-
-                out = new ExifOutputStream(new FileOutputStream(filepath));
-                out.setExifData(data);
-                out.write(jpegData);
+                exif.readExif(jpegData);
+                exif.addGpsDateTimeStampTag(mTimeTaken);
+                exif.addDateTimeStampTag(ExifInterface.TAG_DATE_TIME, mTimeTaken,
+                        TimeZone.getDefault());
+                exif.setTag(exif.buildTag(ExifInterface.TAG_ORIENTATION,
+                        ExifInterface.getOrientationValueForRotation(orientation)));
+                exif.writeExif(jpegData, filepath);
             } catch (IOException e) {
-                Log.e(TAG, "Cannot set EXIF for " + filepath, e);
+                Log.e(TAG, "Cannot set exif for " + filepath, e);
                 Storage.writeFile(filepath, jpegData);
-            } catch (ExifInvalidFormatException e) {
-                Log.e(TAG, "Cannot set EXIF for " + filepath, e);
-                Storage.writeFile(filepath, jpegData);
-            } finally {
-                Util.closeSilently(out);
-                Util.closeSilently(is);
             }
 
             int jpegLength = (int) (new File(filepath).length());
@@ -945,21 +929,6 @@ public class PanoramaModule implements CameraModule,
                     null, orientation, jpegLength, filepath, width, height);
         }
         return null;
-    }
-
-    private static int getExifOrientation(int orientation) {
-        switch (orientation) {
-            case 0:
-                return ExifTag.Orientation.TOP_LEFT;
-            case 90:
-                return ExifTag.Orientation.RIGHT_TOP;
-            case 180:
-                return ExifTag.Orientation.BOTTOM_LEFT;
-            case 270:
-                return ExifTag.Orientation.RIGHT_BOTTOM;
-            default:
-                throw new AssertionError("invalid: " + orientation);
-        }
     }
 
     private void clearMosaicFrameProcessorIfNeeded() {
