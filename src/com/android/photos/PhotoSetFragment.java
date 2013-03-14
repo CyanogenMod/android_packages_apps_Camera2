@@ -176,4 +176,9 @@ public class PhotoSetFragment extends Fragment implements OnItemClickListener,
     public int getSelectedItemCount() {
         return mPhotoSetView.getCheckedItemCount();
     }
+
+    @Override
+    public Uri getItemUri(Object item) {
+        return mLoaderCompatShim.uriForItem((Cursor) item);
+    }
 }

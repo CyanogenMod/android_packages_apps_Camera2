@@ -70,6 +70,11 @@ public class SelectionManager {
     private int mSelectedShareableImageCount = 0;
     private int mSelectedShareableVideoCount = 0;
     private int mSelectedDeletableCount = 0;
+    private int mSelectedEditableCount = 0;
+    private int mSelectedCroppableCount = 0;
+    private int mSelectedSetableCount = 0;
+    private int mSelectedTrimmableCount = 0;
+    private int mSelectedMuteableCount = 0;
 
     private ArrayList<Uri> mCachedShareableUris = null;
 
@@ -82,6 +87,21 @@ public class SelectionManager {
 
         if ((itemSupportedOperations & MediaObject.SUPPORT_DELETE) > 0) {
             mSelectedDeletableCount += increment;
+        }
+        if ((itemSupportedOperations & MediaObject.SUPPORT_EDIT) > 0) {
+            mSelectedEditableCount += increment;
+        }
+        if ((itemSupportedOperations & MediaObject.SUPPORT_CROP) > 0) {
+            mSelectedCroppableCount += increment;
+        }
+        if ((itemSupportedOperations & MediaObject.SUPPORT_SETAS) > 0) {
+            mSelectedSetableCount += increment;
+        }
+        if ((itemSupportedOperations & MediaObject.SUPPORT_TRIM) > 0) {
+            mSelectedTrimmableCount += increment;
+        }
+        if ((itemSupportedOperations & MediaObject.SUPPORT_MUTE) > 0) {
+            mSelectedMuteableCount += increment;
         }
         if ((itemSupportedOperations & MediaObject.SUPPORT_SHARE) > 0) {
             mSelectedShareableCount += increment;
@@ -117,8 +137,6 @@ public class SelectionManager {
             }
         }
         share.setShareIntent(mShareIntent);
-
-        // TODO update editability, etc.
     }
 
     public int getSupportedOperations() {
@@ -126,6 +144,23 @@ public class SelectionManager {
             return 0;
         }
         int supported = 0;
+        if (mSelectedTotalCount == 1) {
+            if (mSelectedCroppableCount == 1) {
+                supported |= MediaObject.SUPPORT_CROP;
+            }
+            if (mSelectedEditableCount == 1) {
+                supported |= MediaObject.SUPPORT_EDIT;
+            }
+            if (mSelectedSetableCount == 1) {
+                supported |= MediaObject.SUPPORT_SETAS;
+            }
+            if (mSelectedTrimmableCount == 1) {
+                supported |= MediaObject.SUPPORT_TRIM;
+            }
+            if (mSelectedMuteableCount == 1) {
+                supported |= MediaObject.SUPPORT_MUTE;
+            }
+        }
         if (mSelectedDeletableCount == mSelectedTotalCount) {
             supported |= MediaObject.SUPPORT_DELETE;
         }
@@ -141,6 +176,11 @@ public class SelectionManager {
         mSelectedShareableImageCount = 0;
         mSelectedShareableVideoCount = 0;
         mSelectedDeletableCount = 0;
+        mSelectedEditableCount = 0;
+        mSelectedCroppableCount = 0;
+        mSelectedSetableCount = 0;
+        mSelectedTrimmableCount = 0;
+        mSelectedMuteableCount = 0;
         mCachedShareableUris = null;
         mShareIntent.removeExtra(Intent.EXTRA_STREAM);
         mShareIntent.setAction(null).setType(null);
