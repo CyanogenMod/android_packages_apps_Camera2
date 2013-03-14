@@ -58,6 +58,7 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.filtershow.CropExtras;
 import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.util.UsageStatistics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -1255,6 +1256,8 @@ public class PhotoModule
 
         // Dismiss open menu if exists.
         PopupManager.getInstance(mActivity).notifyShowPopup(null);
+        UsageStatistics.onContentViewChanged(
+                UsageStatistics.COMPONENT_CAMERA, "PhotoModule");
     }
 
     void waitCameraStartUpThread() {

@@ -38,6 +38,7 @@ import android.widget.LinearLayout;
 import com.android.camera.Util;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
+import com.android.gallery3d.util.UsageStatistics;
 
 public class CameraSwitcher extends RotateImageView
         implements OnClickListener, OnTouchListener {
@@ -106,6 +107,8 @@ public class CameraSwitcher extends RotateImageView
     private void onCameraSelected(int ix) {
         hidePopup();
         if ((ix != mCurrentIndex) && (mListener != null)) {
+            UsageStatistics.setPendingTransitionCause(
+                    UsageStatistics.TRANSITION_MENU_TAP);
             setCurrentIndex(ix);
             mListener.onCameraSelected(mModuleIds[ix]);
         }
