@@ -235,8 +235,8 @@ public class CameraSettings {
 
     private void buildExposureCompensation(
             PreferenceGroup group, IconListPreference exposure) {
-        int max = Math.min(3, mParameters.getMaxExposureCompensation());
-        int min = Math.max(-3, mParameters.getMinExposureCompensation());
+        int max = mParameters.getMaxExposureCompensation();
+        int min = mParameters.getMinExposureCompensation();
         if (max == 0 && min == 0) {
             removePreference(group, exposure.getKey());
             return;
@@ -244,8 +244,8 @@ public class CameraSettings {
         float step = mParameters.getExposureCompensationStep();
 
         // show only integer values for exposure compensation
-        int maxValue = (int) FloatMath.floor(max * step);
-        int minValue = (int) FloatMath.ceil(min * step);
+        int maxValue = Math.min(3, (int) FloatMath.floor(max * step));
+        int minValue = Math.max(-3, (int) FloatMath.ceil(min * step));
         CharSequence entries[] = new CharSequence[maxValue - minValue + 1];
         CharSequence entryValues[] = new CharSequence[maxValue - minValue + 1];
         int[] icons = new int[maxValue - minValue + 1];
