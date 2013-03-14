@@ -19,91 +19,67 @@ package com.android.gallery3d.exif;
 import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
 import java.nio.ByteOrder;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.TimeZone;
+import java.util.List;
 
 /**
- *  This class stores the EXIF header in IFDs according to the JPEG specification.
- *  It is the result produced by {@link ExifReader}.
- *  @see ExifReader
- *  @see IfdData
+ * This class stores the EXIF header in IFDs according to the JPEG
+ * specification. It is the result produced by {@link ExifReader}.
+ *
+ * @see ExifReader
+ * @see IfdData
  */
-public class ExifData {
+class ExifData {
     private static final String TAG = "ExifData";
-    private static final String GPS_DATE_FORMAT_STR = "yyyy:MM:dd";
-    private static final String DATETIME_FORMAT_STR = "yyyy:MM:dd kk:mm:ss";
-
     private static final byte[] USER_COMMENT_ASCII = {
-            0x41, 0x53, 0x43, 0x49, 0x49, 0x00, 0x00, 0x00};
+            0x41, 0x53, 0x43, 0x49, 0x49, 0x00, 0x00, 0x00
+    };
     private static final byte[] USER_COMMENT_JIS = {
-            0x4A, 0x49, 0x53, 0x00, 0x00, 0x00, 0x00, 0x00};
+            0x4A, 0x49, 0x53, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
     private static final byte[] USER_COMMENT_UNICODE = {
-            0x55, 0x4E, 0x49, 0x43, 0x4F, 0x44, 0x45, 0x00};
-    private static final byte[] USER_COMMENT_UNDEFINED = {
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-    private final DateFormat mDateTimeStampFormat =
-            new SimpleDateFormat(DATETIME_FORMAT_STR);
-    private final DateFormat mGPSDateStampFormat =
-            new SimpleDateFormat(GPS_DATE_FORMAT_STR);
-    private final Calendar mGPSTimeStampCalendar = Calendar.getInstance(
-            TimeZone.getTimeZone("UTC"));
+            0x55, 0x4E, 0x49, 0x43, 0x4F, 0x44, 0x45, 0x00
+    };
 
     private final IfdData[] mIfdDatas = new IfdData[IfdId.TYPE_IFD_COUNT];
     private byte[] mThumbnail;
     private ArrayList<byte[]> mStripBytes = new ArrayList<byte[]>();
     private final ByteOrder mByteOrder;
 
-    public ExifData(ByteOrder order) {
+    ExifData(ByteOrder order) {
         mByteOrder = order;
-        mGPSDateStampFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
-
-    IfdData getIfdData(int ifdId) {
-        return mIfdDatas[ifdId];
     }
 
     /**
-     * Adds IFD data. If IFD data of the same type already exists,
-     * it will be replaced by the new data.
-     */
-    void addIfdData(IfdData data) {
-        mIfdDatas[data.getId()] = data;
-    }
-
-    /**
-     * Gets the compressed thumbnail. Returns null if there is no compressed thumbnail.
+     * Gets the compressed thumbnail. Returns null if there is no compressed
+     * thumbnail.
      *
      * @see #hasCompressedThumbnail()
      */
-    public byte[] getCompressedThumbnail() {
+    protected byte[] getCompressedThumbnail() {
         return mThumbnail;
     }
 
     /**
      * Sets the compressed thumbnail.
      */
-    public void setCompressedThumbnail(byte[] thumbnail) {
+    protected void setCompressedThumbnail(byte[] thumbnail) {
         mThumbnail = thumbnail;
     }
 
     /**
      * Returns true it this header contains a compressed thumbnail.
      */
-    public boolean hasCompressedThumbnail() {
+    protected boolean hasCompressedThumbnail() {
         return mThumbnail != null;
     }
 
     /**
      * Adds an uncompressed strip.
      */
-    public void setStripBytes(int index, byte[] strip) {
+    protected void setStripBytes(int index, byte[] strip) {
         if (index < mStripBytes.size()) {
             mStripBytes.set(index, strip);
         } else {
@@ -117,135 +93,57 @@ public class ExifData {
     /**
      * Gets the strip count.
      */
-    public int getStripCount() {
+    protected int getStripCount() {
         return mStripBytes.size();
     }
 
     /**
      * Gets the strip at the specified index.
+     *
      * @exceptions #IndexOutOfBoundException
      */
-    public byte[] getStrip(int index) {
+    protected byte[] getStrip(int index) {
         return mStripBytes.get(index);
+    }
+
+    /**
+     * Returns true if this header contains uncompressed strip.
+     */
+    protected boolean hasUncompressedStrip() {
+        return mStripBytes.size() != 0;
     }
 
     /**
      * Gets the byte order.
      */
-    public ByteOrder getByteOrder() {
+    protected ByteOrder getByteOrder() {
         return mByteOrder;
     }
 
     /**
-     * Returns true if this header contains uncompressed strip of thumbnail.
+     * Returns the {@link IfdData} object corresponding to a given IFD if it
+     * exists or null.
      */
-    public boolean hasUncompressedStrip() {
-        return mStripBytes.size() != 0;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof ExifData) {
-            ExifData data = (ExifData) obj;
-            if (data.mByteOrder != mByteOrder
-                    || !Arrays.equals(data.mThumbnail, mThumbnail)
-                    || data.mStripBytes.size() != mStripBytes.size()) return false;
-
-            for (int i = 0; i < mStripBytes.size(); i++) {
-                if (!Arrays.equals(data.mStripBytes.get(i), mStripBytes.get(i))) return false;
-            }
-
-            for (int i = 0; i < IfdId.TYPE_IFD_COUNT; i++) {
-                IfdData ifd1 = data.getIfdData(i);
-                IfdData ifd2 = getIfdData(i);
-                if ((ifd1 != ifd2) && (ifd1 != null && !ifd1.equals(ifd2))) return false;
-            }
-            return true;
+    protected IfdData getIfdData(int ifdId) {
+        if (ExifTag.isValidIfd(ifdId)) {
+            return mIfdDatas[ifdId];
         }
-        return false;
+        return null;
     }
 
     /**
-     * A convenient method to adds tags {@link ExifTag#TAG_GPS_LATITUDE},
-     * {@link ExifTag#TAG_GPS_LONGITUDE}, {@link ExifTag#TAG_GPS_LATITUDE_REF} and
-     * {@link ExifTag#TAG_GPS_LONGITUDE_REF} at once with the
-     * given latitude and longitude.
+     * Adds IFD data. If IFD data of the same type already exists, it will be
+     * replaced by the new data.
      */
-    public void addGpsTags(double latitude, double longitude) {
-        IfdData gpsIfd = getIfdData(IfdId.TYPE_IFD_GPS);
-        if (gpsIfd == null) {
-            gpsIfd = new IfdData(IfdId.TYPE_IFD_GPS);
-            addIfdData(gpsIfd);
-        }
-        ExifTag latTag = new ExifTag(ExifTag.TAG_GPS_LATITUDE, ExifTag.TYPE_RATIONAL,
-                3, IfdId.TYPE_IFD_GPS);
-        ExifTag longTag = new ExifTag(ExifTag.TAG_GPS_LONGITUDE, ExifTag.TYPE_RATIONAL,
-                3, IfdId.TYPE_IFD_GPS);
-        ExifTag latRefTag = new ExifTag(ExifTag.TAG_GPS_LATITUDE_REF,
-                ExifTag.TYPE_ASCII, 2, IfdId.TYPE_IFD_GPS);
-        ExifTag longRefTag = new ExifTag(ExifTag.TAG_GPS_LONGITUDE_REF,
-                ExifTag.TYPE_ASCII, 2, IfdId.TYPE_IFD_GPS);
-        latTag.setValue(toExifLatLong(latitude));
-        longTag.setValue(toExifLatLong(longitude));
-        latRefTag.setValue(latitude >= 0
-                ? ExifTag.GpsLatitudeRef.NORTH
-                : ExifTag.GpsLatitudeRef.SOUTH);
-        longRefTag.setValue(longitude >= 0
-                ? ExifTag.GpsLongitudeRef.EAST
-                : ExifTag.GpsLongitudeRef.WEST);
-        gpsIfd.setTag(latTag);
-        gpsIfd.setTag(longTag);
-        gpsIfd.setTag(latRefTag);
-        gpsIfd.setTag(longRefTag);
+    protected void addIfdData(IfdData data) {
+        mIfdDatas[data.getId()] = data;
     }
 
     /**
-     * A convenient method to add date or time related tags (
-     * {@link ExifTag#TAG_DATE_TIME_DIGITIZED}, {@link ExifTag#TAG_DATE_TIME_ORIGINAL},
-     * and {@link ExifTag#TAG_DATE_TIME}) with the given time stamp value.
-     *
+     * Returns the {@link IfdData} object corresponding to a given IFD or
+     * generates one if none exist.
      */
-    public void addDateTimeStampTag(short tagId, long timestamp, TimeZone timezone) {
-        if (tagId == ExifTag.TAG_DATE_TIME ||
-                tagId == ExifTag.TAG_DATE_TIME_DIGITIZED ||
-                tagId == ExifTag.TAG_DATE_TIME_ORIGINAL) {
-            mDateTimeStampFormat.setTimeZone(timezone);
-            addTag(tagId).setValue(mDateTimeStampFormat.format(timestamp));
-        } else {
-            throw new IllegalArgumentException(
-                    String.format("Tag %04x is not a supported date or time stamp tag", tagId));
-        }
-    }
-
-    /**
-     * A convenient method to add both {@link ExifTag#TAG_GPS_DATE_STAMP}
-     * and {@link ExifTag#TAG_GPS_TIME_STAMP}).
-     * Note that UTC timezone will be used as specified in the EXIF standard.
-     */
-    public void addGpsDateTimeStampTag(long timestamp) {
-        addTag(ExifTag.TAG_GPS_DATE_STAMP).setValue(mGPSDateStampFormat.format(timestamp));
-
-        mGPSTimeStampCalendar.setTimeInMillis(timestamp);
-        addTag(ExifTag.TAG_GPS_TIME_STAMP).
-                setValue(new Rational[] {
-                        new Rational(mGPSTimeStampCalendar.get(Calendar.HOUR_OF_DAY), 1),
-                        new Rational(mGPSTimeStampCalendar.get(Calendar.MINUTE), 1),
-                        new Rational(mGPSTimeStampCalendar.get(Calendar.SECOND), 1)});
-    }
-
-    private static Rational[] toExifLatLong(double value) {
-        // convert to the format dd/1 mm/1 ssss/100
-        value = Math.abs(value);
-        int degrees = (int) value;
-        value = (value - degrees) * 60;
-        int minutes = (int) value;
-        value = (value - minutes) * 6000;
-        int seconds = (int) value;
-        return new Rational[] {
-                new Rational(degrees, 1), new Rational(minutes, 1), new Rational(seconds, 100)};
-    }
-
-    private IfdData getOrCreateIfdData(int ifdId) {
+    protected IfdData getOrCreateIfdData(int ifdId) {
         IfdData ifdData = mIfdDatas[ifdId];
         if (ifdData == null) {
             ifdData = new IfdData(ifdId);
@@ -255,98 +153,78 @@ public class ExifData {
     }
 
     /**
-     * Gets the tag with the given tag ID. Returns null if the tag does not exist. For tags
-     * related to interoperability or thumbnail, call {@link #getInteroperabilityTag(short)} and
-     * {@link #getThumbnailTag(short)} respectively.
+     * Returns the tag with a given TID in the given IFD if the tag exists.
+     * Otherwise returns null.
      */
-    public ExifTag getTag(short tagId) {
-        int ifdId = ExifTag.getIfdIdFromTagId(tagId);
-        IfdData ifdData = mIfdDatas[ifdId];
-        return (ifdData == null) ? null : ifdData.getTag(tagId);
+    protected ExifTag getTag(short tag, int ifd) {
+        IfdData ifdData = mIfdDatas[ifd];
+        return (ifdData == null) ? null : ifdData.getTag(tag);
     }
 
     /**
-     * Gets the thumbnail-related tag with the given tag ID.
+     * Adds the given ExifTag to its default IFD and returns an existing ExifTag
+     * with the same TID or null if none exist.
      */
-    public ExifTag getThumbnailTag(short tagId) {
-        IfdData ifdData = mIfdDatas[IfdId.TYPE_IFD_1];
-        return (ifdData == null) ? null : ifdData.getTag(tagId);
+    protected ExifTag addTag(ExifTag tag) {
+        if (tag != null) {
+            int ifd = tag.getIfd();
+            return addTag(tag, ifd);
+        }
+        return null;
     }
 
     /**
-     * Gets the interoperability-related tag with the given tag ID.
+     * Adds the given ExifTag to the given IFD and returns an existing ExifTag
+     * with the same TID or null if none exist.
      */
-    public ExifTag getInteroperabilityTag(short tagId) {
-        IfdData ifdData = mIfdDatas[IfdId.TYPE_IFD_INTEROPERABILITY];
-        return (ifdData == null) ? null : ifdData.getTag(tagId);
+    protected ExifTag addTag(ExifTag tag, int ifdId) {
+        if (tag != null && ExifTag.isValidIfd(ifdId)) {
+            IfdData ifdData = getOrCreateIfdData(ifdId);
+            return ifdData.setTag(tag);
+        }
+        return null;
     }
 
-    /**
-     * Adds a tag with the given tag ID. If the tag of the given ID already exists,
-     * the original tag will be replaced. For tags
-     * related to interoperability or thumbnail, call {@link #addInteroperabilityTag(short)} or
-     * {@link #addThumbnailTag(short)} respectively.
-     * @exception IllegalArgumentException if the tag ID is invalid.
-     */
-    public ExifTag addTag(short tagId) {
-        int ifdId = ExifTag.getIfdIdFromTagId(tagId);
-        IfdData ifdData = getOrCreateIfdData(ifdId);
-        ExifTag tag = ExifTag.buildTag(tagId);
-        ifdData.setTag(tag);
-        return tag;
-    }
-
-    /**
-     * Adds the given ExifTag to its corresponding IFD.
-     */
-    public void addTag(ExifTag tag) {
-        IfdData ifdData = getOrCreateIfdData(tag.getIfd());
-        ifdData.setTag(tag);
-    }
-
-    /**
-     * Adds a thumbnail-related tag with the given tag ID. If the tag of the given ID
-     * already exists, the original tag will be replaced.
-     * @exception IllegalArgumentException if the tag ID is invalid.
-     */
-    public ExifTag addThumbnailTag(short tagId) {
-        IfdData ifdData = getOrCreateIfdData(IfdId.TYPE_IFD_1);
-        ExifTag tag = ExifTag.buildThumbnailTag(tagId);
-        ifdData.setTag(tag);
-        return tag;
-    }
-
-    /**
-     * Adds an interoperability-related tag with the given tag ID. If the tag of the given ID
-     * already exists, the original tag will be replaced.
-     * @exception IllegalArgumentException if the tag ID is invalid.
-     */
-    public ExifTag addInteroperabilityTag(short tagId) {
-        IfdData ifdData = getOrCreateIfdData(IfdId.TYPE_IFD_INTEROPERABILITY);
-        ExifTag tag = ExifTag.buildInteroperabilityTag(tagId);
-        ifdData.setTag(tag);
-        return tag;
+    protected void clearThumbnailAndStrips() {
+        mThumbnail = null;
+        mStripBytes.clear();
     }
 
     /**
      * Removes the thumbnail and its related tags. IFD1 will be removed.
      */
-    public void removeThumbnailData() {
-        mThumbnail = null;
-        mStripBytes.clear();
+    protected void removeThumbnailData() {
+        clearThumbnailAndStrips();
         mIfdDatas[IfdId.TYPE_IFD_1] = null;
     }
 
     /**
-     * Decodes the user comment tag into string as specified in the EXIF standard.
-     * Returns null if decoding failed.
+     * Removes the tag with a given TID and IFD.
      */
-    public String decodeUserComment() {
+    protected void removeTag(short tagId, int ifdId) {
+        IfdData ifdData = mIfdDatas[ifdId];
+        if (ifdData == null) {
+            return;
+        }
+        ifdData.removeTag(tagId);
+    }
+
+    /**
+     * Decodes the user comment tag into string as specified in the EXIF
+     * standard. Returns null if decoding failed.
+     */
+    protected String getUserComment() {
         IfdData ifdData = mIfdDatas[IfdId.TYPE_IFD_0];
-        if (ifdData == null) return null;
-        ExifTag tag = ifdData.getTag(ExifTag.TAG_USER_COMMENT);
-        if (tag == null) return null;
-        if (tag.getComponentCount() < 8) return null;
+        if (ifdData == null) {
+            return null;
+        }
+        ExifTag tag = ifdData.getTag(ExifInterface.getTrueTagKey(ExifInterface.TAG_USER_COMMENT));
+        if (tag == null) {
+            return null;
+        }
+        if (tag.getComponentCount() < 8) {
+            return null;
+        }
 
         byte[] buf = new byte[tag.getComponentCount()];
         tag.getBytes(buf);
@@ -368,6 +246,103 @@ public class ExifData {
             Log.w(TAG, "Failed to decode the user comment");
             return null;
         }
-
     }
+
+    /**
+     * Returns a list of all {@link ExifTag}s in the ExifData or null if there
+     * are none.
+     */
+    protected List<ExifTag> getAllTags() {
+        ArrayList<ExifTag> ret = new ArrayList<ExifTag>();
+        for (IfdData d : mIfdDatas) {
+            if (d != null) {
+                ExifTag[] tags = d.getAllTags();
+                if (tags != null) {
+                    for (ExifTag t : tags) {
+                        ret.add(t);
+                    }
+                }
+            }
+        }
+        if (ret.size() == 0) {
+            return null;
+        }
+        return ret;
+    }
+
+    /**
+     * Returns a list of all {@link ExifTag}s in a given IFD or null if there
+     * are none.
+     */
+    protected List<ExifTag> getAllTagsForIfd(int ifd) {
+        IfdData d = mIfdDatas[ifd];
+        if (d == null) {
+            return null;
+        }
+        ExifTag[] tags = d.getAllTags();
+        if (tags == null) {
+            return null;
+        }
+        ArrayList<ExifTag> ret = new ArrayList<ExifTag>(tags.length);
+        for (ExifTag t : tags) {
+            ret.add(t);
+        }
+        if (ret.size() == 0) {
+            return null;
+        }
+        return ret;
+    }
+
+    /**
+     * Returns a list of all {@link ExifTag}s with a given TID or null if there
+     * are none.
+     */
+    protected List<ExifTag> getAllTagsForTagId(short tag) {
+        ArrayList<ExifTag> ret = new ArrayList<ExifTag>();
+        for (IfdData d : mIfdDatas) {
+            if (d != null) {
+                ExifTag t = d.getTag(tag);
+                if (t != null) {
+                    ret.add(t);
+                }
+            }
+        }
+        if (ret.size() == 0) {
+            return null;
+        }
+        return ret;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof ExifData) {
+            ExifData data = (ExifData) obj;
+            if (data.mByteOrder != mByteOrder ||
+                    data.mStripBytes.size() != mStripBytes.size() ||
+                    !Arrays.equals(data.mThumbnail, mThumbnail)) {
+                return false;
+            }
+            for (int i = 0; i < mStripBytes.size(); i++) {
+                if (!Arrays.equals(data.mStripBytes.get(i), mStripBytes.get(i))) {
+                    return false;
+                }
+            }
+            for (int i = 0; i < IfdId.TYPE_IFD_COUNT; i++) {
+                IfdData ifd1 = data.getIfdData(i);
+                IfdData ifd2 = getIfdData(i);
+                if (ifd1 != ifd2 && ifd1 != null && !ifd1.equals(ifd2)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
 }

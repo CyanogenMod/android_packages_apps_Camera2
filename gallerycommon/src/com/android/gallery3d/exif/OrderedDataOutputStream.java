@@ -29,24 +29,28 @@ class OrderedDataOutputStream extends FilterOutputStream {
         super(out);
     }
 
-    public void setByteOrder(ByteOrder order) {
+    public OrderedDataOutputStream setByteOrder(ByteOrder order) {
         mByteBuffer.order(order);
+        return this;
     }
 
-    public void writeShort(short value) throws IOException {
+    public OrderedDataOutputStream writeShort(short value) throws IOException {
         mByteBuffer.rewind();
         mByteBuffer.putShort(value);
         out.write(mByteBuffer.array(), 0, 2);
-     }
+        return this;
+    }
 
-    public void writeInt(int value) throws IOException {
+    public OrderedDataOutputStream writeInt(int value) throws IOException {
         mByteBuffer.rewind();
         mByteBuffer.putInt(value);
         out.write(mByteBuffer.array());
+        return this;
     }
 
-    public void writeRational(Rational rational) throws IOException {
-        writeInt((int) rational.getNominator());
+    public OrderedDataOutputStream writeRational(Rational rational) throws IOException {
+        writeInt((int) rational.getNumerator());
         writeInt((int) rational.getDenominator());
+        return this;
     }
 }
