@@ -84,7 +84,7 @@ public class PhotoProvider extends SQLiteContentProvider {
      */
     public static interface Photos extends BaseColumns {
         /** Internal database table used for basic photo information. */
-        public static final String TABLE = "photo";
+        public static final String TABLE = "photos";
         /** Content URI for basic photo and video information. */
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, TABLE);
 
@@ -123,7 +123,7 @@ public class PhotoProvider extends SQLiteContentProvider {
      */
     public static interface Albums extends BaseColumns {
         /** Internal database table used album information. */
-        public static final String TABLE = "album";
+        public static final String TABLE = "albums";
         /** Content URI for album information. */
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, TABLE);
 
