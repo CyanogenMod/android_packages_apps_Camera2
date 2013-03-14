@@ -404,7 +404,7 @@ class ExifOutputStream extends FilterOutputStream {
             ifd1.removeTag(ExifInterface.getTrueTagKey(ExifInterface.TAG_JPEG_INTERCHANGE_FORMAT));
             ifd1.removeTag(ExifInterface
                     .getTrueTagKey(ExifInterface.TAG_JPEG_INTERCHANGE_FORMAT_LENGTH));
-        } else {
+        } else if (ifd1 != null) {
             // Get rid of offset and length tags if there is no thumbnail.
             ifd1.removeTag(ExifInterface.getTrueTagKey(ExifInterface.TAG_STRIP_OFFSETS));
             ifd1.removeTag(ExifInterface.getTrueTagKey(ExifInterface.TAG_STRIP_BYTE_COUNTS));
