@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.android.gallery3d.exif;
 
 /**
@@ -26,4 +27,5 @@ public interface IfdId {
     public static final int TYPE_IFD_GPS = 4;
     /* This is used in ExifData to allocate enough IfdData */
     static final int TYPE_IFD_COUNT = 5;
+
 }

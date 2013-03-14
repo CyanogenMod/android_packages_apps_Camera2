@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.exif;
 
+import android.util.Log;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,10 +26,13 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExifModifier {
+class ExifModifier {
+    public static final String TAG = "ExifModifier";
+    public static final boolean DEBUG = false;
     private final ByteBuffer mByteBuffer;
     private final ExifData mTagToModified;
     private final List<TagOffset> mTagOffsets = new ArrayList<TagOffset>();
+    private final ExifInterface mInterface;
     private int mOffsetBase;
 
     private static class TagOffset {
@@ -38,33 +43,31 @@ public class ExifModifier {
             mTag = tag;
             mOffset = offset;
         }
-
-        public ExifTag getTag() {
-            return mTag;
-        }
     }
 
-    public ExifModifier(ByteBuffer byteBuffer) throws IOException, ExifInvalidFormatException {
+    protected ExifModifier(ByteBuffer byteBuffer, ExifInterface iRef) throws IOException,
+            ExifInvalidFormatException {
         mByteBuffer = byteBuffer;
         mOffsetBase = byteBuffer.position();
+        mInterface = iRef;
         InputStream is = null;
         try {
             is = new ByteBufferInputStream(byteBuffer);
             // Do not require any IFD;
-            ExifParser parser = ExifParser.parse(is, 0);
+            ExifParser parser = ExifParser.parse(is, mInterface);
             mTagToModified = new ExifData(parser.getByteOrder());
             mOffsetBase += parser.getTiffStartPosition();
             mByteBuffer.position(0);
         } finally {
-            closeSilently(is);
+            ExifInterface.closeSilently(is);
         }
     }
 
-    public ByteOrder getByteOrder() {
+    protected ByteOrder getByteOrder() {
         return mTagToModified.getByteOrder();
     }
 
-    public boolean commit() throws IOException, ExifInvalidFormatException {
+    protected boolean commit() throws IOException, ExifInvalidFormatException {
         InputStream is = null;
         try {
             is = new ByteBufferInputStream(mByteBuffer);
@@ -77,22 +80,32 @@ public class ExifModifier {
                     mTagToModified.getIfdData(IfdId.TYPE_IFD_GPS)
             };
 
-            if (ifdDatas[IfdId.TYPE_IFD_0] != null) flag |= ExifParser.OPTION_IFD_0;
-            if (ifdDatas[IfdId.TYPE_IFD_1] != null) flag |= ExifParser.OPTION_IFD_1;
-            if (ifdDatas[IfdId.TYPE_IFD_EXIF] != null) flag |= ExifParser.OPTION_IFD_EXIF;
-            if (ifdDatas[IfdId.TYPE_IFD_GPS] != null) flag |= ExifParser.OPTION_IFD_GPS;
+            if (ifdDatas[IfdId.TYPE_IFD_0] != null) {
+                flag |= ExifParser.OPTION_IFD_0;
+            }
+            if (ifdDatas[IfdId.TYPE_IFD_1] != null) {
+                flag |= ExifParser.OPTION_IFD_1;
+            }
+            if (ifdDatas[IfdId.TYPE_IFD_EXIF] != null) {
+                flag |= ExifParser.OPTION_IFD_EXIF;
+            }
+            if (ifdDatas[IfdId.TYPE_IFD_GPS] != null) {
+                flag |= ExifParser.OPTION_IFD_GPS;
+            }
             if (ifdDatas[IfdId.TYPE_IFD_INTEROPERABILITY] != null) {
                 flag |= ExifParser.OPTION_IFD_INTEROPERABILITY;
             }
 
-            ExifParser parser = ExifParser.parse(is, flag);
+            ExifParser parser = ExifParser.parse(is, flag, mInterface);
             int event = parser.next();
             IfdData currIfd = null;
             while (event != ExifParser.EVENT_END) {
                 switch (event) {
                     case ExifParser.EVENT_START_OF_IFD:
                         currIfd = ifdDatas[parser.getCurrentIfd()];
-                        if (currIfd == null) parser.skipRemainingTagsInCurrentIfd();
+                        if (currIfd == null) {
+                            parser.skipRemainingTagsInCurrentIfd();
+                        }
                         break;
                     case ExifParser.EVENT_NEW_TAG:
                         ExifTag oldTag = parser.getTag();
@@ -113,24 +126,30 @@ public class ExifModifier {
                 }
                 event = parser.next();
             }
-            for (IfdData ifd: ifdDatas) {
-                if (ifd != null && ifd.getTagCount() > 0) return false;
+            for (IfdData ifd : ifdDatas) {
+                if (ifd != null && ifd.getTagCount() > 0) {
+                    return false;
+                }
             }
             modify();
         } finally {
-            closeSilently(is);
+            ExifInterface.closeSilently(is);
         }
         return true;
     }
 
     private void modify() {
         mByteBuffer.order(getByteOrder());
-        for (TagOffset tagOffset: mTagOffsets) {
+        for (TagOffset tagOffset : mTagOffsets) {
             writeTagValue(tagOffset.mTag, tagOffset.mOffset);
         }
     }
 
     private void writeTagValue(ExifTag tag, int offset) {
+        if (DEBUG) {
+            Log.v(TAG, "modifying tag to: \n" + tag.toString());
+            Log.v(TAG, "at offset: " + offset);
+        }
         mByteBuffer.position(offset + mOffsetBase);
         switch (tag.getDataType()) {
             case ExifTag.TYPE_ASCII:
@@ -153,7 +172,7 @@ public class ExifModifier {
             case ExifTag.TYPE_UNSIGNED_RATIONAL:
                 for (int i = 0, n = tag.getComponentCount(); i < n; i++) {
                     Rational v = tag.getRational(i);
-                    mByteBuffer.putInt((int) v.getNominator());
+                    mByteBuffer.putInt((int) v.getNumerator());
                     mByteBuffer.putInt((int) v.getDenominator());
                 }
                 break;
@@ -173,14 +192,5 @@ public class ExifModifier {
 
     public void modifyTag(ExifTag tag) {
         mTagToModified.addTag(tag);
-    }
-
-    private static void closeSilently(Closeable c) {
-        if (c == null) return;
-        try {
-            c.close();
-        } catch (Throwable t) {
-            // do nothing
-        }
     }
 }
