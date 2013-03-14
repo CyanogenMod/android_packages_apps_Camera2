@@ -318,8 +318,8 @@ public class CanvasProvider extends CanvasProviderBase {
                     break;
                 case BROWSE_HEADER_CASE_DEFAULT_ITEM_WIDTH:
                 case BROWSE_HEADER_CASE_DEFAULT_ITEM_HEIGHT:
-                    obj = MediaItem
-                            .getTargetSize(MediaItem.TYPE_MICROTHUMBNAIL);
+                    int px = MediaItem.getTargetSize(MediaItem.TYPE_MICROTHUMBNAIL);
+                    obj = px / getContext().getResources().getDisplayMetrics().density;
                     break;
                 }
                 header[j] = obj;
