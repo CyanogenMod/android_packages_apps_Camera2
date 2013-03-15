@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.android.camera;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 
@@ -28,7 +29,7 @@ import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.TimeIntervalPopup;
 import com.android.gallery3d.R;
 
-public class VideoMenu extends PieController
+public class NewVideoMenu extends PieController
         implements MoreSettingPopup.Listener,
         ListPrefSettingPopup.Listener,
         TimeIntervalPopup.Listener {
@@ -39,7 +40,7 @@ public class VideoMenu extends PieController
     private static final int POS_FLASH = 3;
     private static final int POS_SWITCH = 4;
 
-    private VideoUI mUI;
+    private NewVideoUI mUI;
     private String[] mOtherKeys;
     private AbstractSettingPopup mPopup;
 
@@ -47,9 +48,9 @@ public class VideoMenu extends PieController
     private static final int POPUP_FIRST_LEVEL = 1;
     private static final int POPUP_SECOND_LEVEL = 2;
     private int mPopupStatus;
-    private CameraActivity mActivity;
+    private NewCameraActivity mActivity;
 
-    public VideoMenu(CameraActivity activity, VideoUI ui, PieRenderer pie) {
+    public NewVideoMenu(NewCameraActivity activity, NewVideoUI ui, PieRenderer pie) {
         super(activity, pie);
         mUI = ui;
         mActivity = activity;
