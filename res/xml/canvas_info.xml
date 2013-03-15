@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Launcher data. -->
-<launcher version="1">
-    <root-uri>content://com.android.gallery3d.provider.CanvasProvider/launcher</root-uri>
-</launcher>
