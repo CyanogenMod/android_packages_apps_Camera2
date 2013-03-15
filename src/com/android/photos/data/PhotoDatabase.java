@@ -90,12 +90,21 @@ public class PhotoDatabase extends SQLiteOpenHelper {
         createTable(db, Metadata.TABLE, getMetadataTableDefinition());
     }
 
+    public PhotoDatabase(Context context, String dbName, int dbVersion) {
+        super(context, dbName, null, dbVersion);
+    }
+
     public PhotoDatabase(Context context, String dbName) {
         super(context, dbName, null, DB_VERSION);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        dropTable(db, Metadata.TABLE);
+        dropTable(db, Photos.TABLE);
+        dropTable(db, Albums.TABLE);
+        dropTable(db, Accounts.TABLE);
+        onCreate(db);
     }
 
     protected List<String[]> getAlbumTableDefinition() {
@@ -161,6 +170,16 @@ public class PhotoDatabase extends SQLiteOpenHelper {
             for (String[] constraint: constraints) {
                 createTable.add(constraint);
             }
+        }
+    }
+
+    protected static void dropTable(SQLiteDatabase db, String table) {
+        db.beginTransaction();
+        try {
+            db.execSQL("drop table " + table);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
     }
 }
