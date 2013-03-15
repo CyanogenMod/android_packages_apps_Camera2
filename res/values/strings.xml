@@ -1010,4 +1010,10 @@ CHAR LIMIT = NONE] -->
     <string name="tab_photos">Photos</string>
     <!-- Title for the albums tab [CHAR LIMIT=25] -->
     <string name="tab_albums">Albums</string>
+
+    <!-- String indicating how many photos are in an album [CHAR LIMIT=15] -->
+    <plurals name="number_of_photos">
+        <item quantity="one">%1$d photo</item>
+        <item quantity="other">%1$d photos</item>
+    </plurals>
 </resources>

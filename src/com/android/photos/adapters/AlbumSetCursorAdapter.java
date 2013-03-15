@@ -41,7 +41,6 @@ public class AlbumSetCursorAdapter extends CursorAdapter {
     public void setDrawableFactory(LoaderCompatShim<Cursor> factory) {
         mDrawableFactory = factory;
     }
-    private Date mDate = new Date(); // Used for converting timestamps for display
 
     public AlbumSetCursorAdapter(Context context) {
         super(context, null, false);
@@ -53,24 +52,11 @@ public class AlbumSetCursorAdapter extends CursorAdapter {
                 R.id.album_set_item_title);
         titleTextView.setText(cursor.getString(AlbumSetLoader.INDEX_TITLE));
 
-        TextView dateTextView = (TextView) v.findViewById(
-                R.id.album_set_item_date);
-        long timestamp = cursor.getLong(AlbumSetLoader.INDEX_TIMESTAMP);
-        if (timestamp > 0) {
-            mDate.setTime(timestamp);
-            dateTextView.setText(DateFormat.getMediumDateFormat(context).format(mDate));
-        } else {
-            dateTextView.setText(null);
-        }
-
-        ProgressBar uploadProgressBar = (ProgressBar) v.findViewById(
-                R.id.album_set_item_upload_progress);
-        if (cursor.getInt(AlbumSetLoader.INDEX_COUNT_PENDING_UPLOAD) > 0) {
-            uploadProgressBar.setVisibility(View.VISIBLE);
-            uploadProgressBar.setProgress(50);
-        } else {
-            uploadProgressBar.setVisibility(View.INVISIBLE);
-        }
+        TextView countTextView = (TextView) v.findViewById(
+                R.id.album_set_item_count);
+        int count = cursor.getInt(AlbumSetLoader.INDEX_COUNT);
+        countTextView.setText(context.getResources().getQuantityString(
+                R.plurals.number_of_photos, count, count));
 
         ImageView thumbImageView = (ImageView) v.findViewById(
                 R.id.album_set_item_image);
