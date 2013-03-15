@@ -35,12 +35,12 @@ public abstract class ImageFilterRS extends ImageFilter {
     private static volatile int sHeight = 0;
 
     private static volatile Resources sResources = null;
-    private boolean mResourcesLoaded = false;
+    private volatile boolean mResourcesLoaded = false;
 
     private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
 
     // This must be used inside block synchronized on ImageFilterRS class object
-    public void prepare(Bitmap bitmap, float scaleFactor, int quality) {
+    protected void prepare(Bitmap bitmap, float scaleFactor, int quality) {
         if (mOutPixelsAllocation == null || mInPixelsAllocation == null ||
                 bitmap.getWidth() != sWidth || bitmap.getHeight() != sHeight) {
             destroyPixelAllocations();
@@ -65,14 +65,14 @@ public abstract class ImageFilterRS extends ImageFilter {
     }
 
     // This must be used inside block synchronized on ImageFilterRS class object
-    abstract public void createFilter(android.content.res.Resources res,
+    protected abstract void createFilter(android.content.res.Resources res,
             float scaleFactor, int quality);
 
     // This must be used inside block synchronized on ImageFilterRS class object
-    abstract public void runFilter();
+    protected abstract void runFilter();
 
     // This must be used inside block synchronized on ImageFilterRS class object
-    public void update(Bitmap bitmap) {
+    protected void update(Bitmap bitmap) {
         mOutPixelsAllocation.copyTo(bitmap);
     }
 
@@ -84,7 +84,7 @@ public abstract class ImageFilterRS extends ImageFilter {
         try {
             synchronized(ImageFilterRS.class) {
                 if (sRS == null)  {
-                    Log.w(LOGTAG, "Cannot apply before calling setRenderScriptContext");
+                    Log.w(LOGTAG, "Cannot apply before calling createRenderScriptContext");
                     return bitmap;
                 }
                 prepare(bitmap, scaleFactor, quality);
@@ -199,13 +199,18 @@ public abstract class ImageFilterRS extends ImageFilter {
         mResourcesLoaded = resourcesLoaded;
     }
 
+    // TODO:
+    // Ideally, every filter would destroy _every_ renderscript allocation,
+    // script, and anything else that depends on a certain RS context here.
     abstract protected void resetAllocations();
 
     public void freeResources() {
         if (!isResourcesLoaded()) {
             return;
         }
-        resetAllocations();
-        setResourcesLoaded(false);
+        synchronized(ImageFilterRS.class) {
+            resetAllocations();
+            setResourcesLoaded(false);
+        }
     }
 }
