@@ -43,6 +43,7 @@ public class FiltersManager extends BaseFiltersManager {
 
     public static void reset() {
         sInstance = null;
+        sPreviewInstance = null;
     }
 
 }
