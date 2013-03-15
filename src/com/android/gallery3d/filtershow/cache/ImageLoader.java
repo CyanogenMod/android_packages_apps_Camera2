@@ -255,6 +255,11 @@ public class ImageLoader {
         try {
             is = mContext.getContentResolver().openInputStream(uri);
             BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(is, false);
+            Rect r = new Rect(0, 0, decoder.getWidth(), decoder.getHeight());
+            // return null if bounds are not entirely within the bitmap
+            if (!r.contains(bounds)) {
+                return null;
+            }
             return decoder.decodeRegion(bounds, options);
         } catch (FileNotFoundException e) {
             Log.e(LOGTAG, "FileNotFoundException: " + uri);
