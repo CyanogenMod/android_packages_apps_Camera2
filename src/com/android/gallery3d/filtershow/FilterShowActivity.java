@@ -898,6 +898,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         if (getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_LANDSCAPE) {
             mShowingImageStatePanel = true;
+        } else if (mShowingImageStatePanel) {
+            toggleImageStatePanel();
         }
         if (mShowingHistoryPanel) {
             toggleHistoryPanel();
