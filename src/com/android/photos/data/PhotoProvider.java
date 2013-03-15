@@ -30,6 +30,8 @@ import android.net.Uri;
 import android.os.CancellationSignal;
 import android.provider.BaseColumns;
 
+import com.android.gallery3d.common.ApiHelper;
+
 import java.util.List;
 
 /**
@@ -357,9 +359,7 @@ public class PhotoProvider extends SQLiteContentProvider {
         selection = addIdToSelection(match, selection);
         selectionArgs = addIdToSelectionArgs(match, uri, selectionArgs);
         String table = getTableFromMatch(match, uri);
-        SQLiteDatabase db = getDatabaseHelper().getReadableDatabase();
-        return db.query(false, table, projection, selection, selectionArgs, null, null, sortOrder,
-                null, cancellationSignal);
+        return query(table, projection, selection, selectionArgs, sortOrder, cancellationSignal);
     }
 
     @Override
@@ -561,6 +561,17 @@ public class PhotoProvider extends SQLiteContentProvider {
                 break;
             default:
                 throw new IllegalArgumentException("Operation not allowed on an existing row.");
+        }
+    }
+
+    protected Cursor query(String table, String[] columns, String selection,
+            String[] selectionArgs, String orderBy, CancellationSignal cancellationSignal) {
+        SQLiteDatabase db = getDatabaseHelper().getReadableDatabase();
+        if (ApiHelper.HAS_CANCELLATION_SIGNAL) {
+            return db.query(false, table, columns, selection, selectionArgs, null, null,
+                    orderBy, null, cancellationSignal);
+        } else {
+            return db.query(table, columns, selection, selectionArgs, null, null, orderBy);
         }
     }
 }
