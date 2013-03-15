@@ -52,6 +52,6 @@
     <dimen name="thumbnail_margin">3dip</dimen>
 
     <!-- configuration for album set page -->
-    <dimen name="album_set_item_image_height">100dp</dimen>
+    <dimen name="album_set_item_image_height">120dp</dimen>
     <dimen name="album_set_item_width">140dp</dimen>
 </resources>
