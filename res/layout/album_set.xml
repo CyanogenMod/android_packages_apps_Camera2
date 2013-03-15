@@ -12,9 +12,11 @@
         android:columnWidth="@dimen/album_set_item_width"
         android:stretchMode="columnWidth"
         android:drawSelectorOnTop="true"
-        android:padding="10dp"
-        android:horizontalSpacing="10dp"
-        android:verticalSpacing="10dp" />
+        android:background="#E5E5E5"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:horizontalSpacing="6dp"
+        android:verticalSpacing="6dp" />
 
     <TextView
         android:id="@id/android:empty"
