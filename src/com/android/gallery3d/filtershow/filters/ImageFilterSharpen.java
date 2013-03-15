@@ -52,7 +52,7 @@ public class ImageFilterSharpen extends ImageFilterRS {
     }
 
     @Override
-    public void createFilter(android.content.res.Resources res, float scaleFactor,
+    protected void createFilter(android.content.res.Resources res, float scaleFactor,
             int quality) {
         int w = mInPixelsAllocation.getType().getX();
         int h = mInPixelsAllocation.getType().getY();
@@ -83,7 +83,7 @@ public class ImageFilterSharpen extends ImageFilterRS {
     }
 
     @Override
-    public void runFilter() {
+    protected void runFilter() {
         if (mParameters == null) {
             return;
         }
