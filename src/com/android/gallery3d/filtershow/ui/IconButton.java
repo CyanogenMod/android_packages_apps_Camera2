@@ -19,11 +19,15 @@ package com.android.gallery3d.filtershow.ui;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.widget.Button;
+
+import com.android.gallery3d.filtershow.tools.IconFactory;
+import com.android.photos.data.GalleryBitmapPool;
 
 /**
  * Class of buttons with both an image icon and text.
@@ -54,8 +58,8 @@ public class IconButton extends Button {
 
     /**
      * Set the image that the button icon will use.  The image bitmap will be scaled
-     * and cropped into the largest square bitmap that will fit cleanly within the
-     * IconButton's layout.
+     * and cropped into the largest bitmap with dimensions given by getGoodIconSideSize()
+     * that will fit cleanly within the IconButton's layout.
      *
      * @param image image that icon will be set to before next draw.
      */
@@ -66,65 +70,33 @@ public class IconButton extends Button {
     }
 
     /**
-     * Creates and sets button icon. Only call after layout.
+     * Finds a side lengths for the icon that fits within the button.
+     * Only call after layout.  The default implementation returns the best
+     * side lengths for a square icon.
+     * <p>
+     * Override this to make non-square icons or icons with different padding
+     * constraints.
      *
-     * @param image bitmap to use as icon
+     * @return  an array of ints representing the icon dimensions [ width, height ]
      */
-    private boolean makeAndSetIcon(Bitmap image) {
-        int size = getGoodIconSideSize();
-        if (size > 0) {
-            return setImageIcon(makeImageIcon(image, size, size));
-        }
-        return false;
-    }
-
-    /**
-     * Sets icon.
-     *
-     * @param image bitmap to set the icon to.
-     */
-    private boolean setImageIcon(Bitmap image) {
-        if (image == null) {
-            return false;
-        }
-        mIcon = image;
-        this.setCompoundDrawablesWithIntrinsicBounds(null,
-                new BitmapDrawable(getResources(), mIcon), null, null);
-        return true;
-    }
-
-    /**
-     * Generate an icon bitmap from a given bitmap.
-     *
-     * @param image bitmap to use as button icon
-     * @param width icon width
-     * @param height icon height
-     * @return the scaled/cropped icon bitmap
-     */
-    private Bitmap makeImageIcon(Bitmap image, int width, int height) {
-        Rect destination = new Rect(0, 0, width, height);
-        Bitmap bmap = Bitmap.createBitmap(width, height,
-                Bitmap.Config.ARGB_8888);
-        drawImage(bmap, image, destination);
-        return bmap;
-    }
-
-    /**
-     * Finds a side length for the (square) icon that fits within the button.
-     * Only call after layout.
-     *
-     * @return icon side length
-     */
-    private int getGoodIconSideSize() {
+    protected int[] getGoodIconSideSize() {
         Paint p = getPaint();
         Rect bounds = new Rect();
+        // find text bounds
         String s = getText().toString();
         p.getTextBounds(s, 0, s.length(), bounds);
+
         int inner_padding = 2 * getCompoundDrawablePadding();
+
+        // find total vertical space available for the icon
         int vert = getHeight() - getPaddingTop() - getPaddingBottom() - bounds.height()
                 - inner_padding;
+
+        // find total horizontal space available for the icon
         int horiz = getWidth() - getPaddingLeft() - getPaddingRight() - inner_padding;
-        return Math.min(vert, horiz);
+
+        int defaultSize = Math.min(vert, horiz);
+        return new int[] { defaultSize, defaultSize };
     }
 
     @Override
@@ -144,36 +116,62 @@ public class IconButton extends Button {
         super.onDraw(canvas);
     }
 
+    // Internal methods
+
     /**
-     * Draws the src image into the destination rectangle within the dst bitmap.
-     * If src is a non-square image, clips to be a square before drawing into dst.
+     * Creates and sets button icon. Only call after layout.
      *
-     * @param dst  bitmap being drawn on.
-     * @param src  bitmap to draw into dst.
-     * @param destination  square in dst in which to draw src.
+     * @param image bitmap to use as icon
      */
-    protected static void drawImage(Bitmap dst, Bitmap src, Rect destination) {
-        if (src != null && dst != null && src.getWidth() > 0 && dst.getWidth() > 0
-                && src.getHeight() > 0 && dst.getHeight() > 0) {
-            Canvas canvas = new Canvas(dst);
-            int iw = src.getWidth();
-            int ih = src.getHeight();
-            int x = 0;
-            int y = 0;
-            int size = 0;
-            Rect source = null;
-            if (iw > ih) {
-                size = ih;
-                x = (int) ((iw - size) / 2.0f);
-                y = 0;
-            } else {
-                size = iw;
-                x = 0;
-                y = (int) ((ih - size) / 2.0f);
-            }
-            source = new Rect(x, y, x + size, y + size);
-            canvas.drawBitmap(src, source, destination, new Paint());
+    private boolean makeAndSetIcon(Bitmap image) {
+        int[] sizes = getGoodIconSideSize();
+        if (sizes != null && sizes.length >= 2 && sizes[0] > 0 && sizes[1] > 0) {
+            return setImageIcon(makeImageIcon(image, sizes[0], sizes[1]));
         }
+        return false;
     }
 
+    /**
+     * Sets icon.
+     *
+     * @param image bitmap to set the icon to.
+     */
+    private boolean setImageIcon(Bitmap image) {
+        if (image == null) {
+            return false;
+        }
+        if(mIcon != null && mIcon.getConfig() == Bitmap.Config.ARGB_8888) {
+            GalleryBitmapPool.getInstance().put(mIcon);
+            mIcon = null;
+        }
+        mIcon = image;
+        this.setCompoundDrawablesWithIntrinsicBounds(null,
+                new BitmapDrawable(getResources(), mIcon), null, null);
+        return true;
+    }
+
+    /**
+     * Generate an icon bitmap from a given bitmap.
+     *
+     * @param image bitmap to use as button icon
+     * @param width icon width
+     * @param height icon height
+     * @return the scaled/cropped icon bitmap
+     */
+    private Bitmap makeImageIcon(Bitmap image, int width, int height) {
+        if (image == null || image.getHeight() < 1 || image.getWidth() < 1 ||
+                width < 1 || height < 1) {
+            throw new IllegalArgumentException("input is null, or has invalid dimensions");
+        }
+        Bitmap icon = null;
+        icon = GalleryBitmapPool.getInstance().get(width, height);
+        if (icon == null) {
+            icon = IconFactory.createIcon(image, width, height, false);
+        } else {
+            assert(icon.getWidth() == width && icon.getHeight() == height);
+            icon.eraseColor(Color.TRANSPARENT);
+            IconFactory.drawIcon(icon, image, false);
+        }
+        return icon;
+    }
 }
