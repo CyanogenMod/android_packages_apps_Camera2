@@ -50,6 +50,8 @@ public class ImageShow extends View implements OnGestureListener,
         OnDoubleTapListener {
 
     private static final String LOGTAG = "ImageShow";
+    private static final boolean ENABLE_HISTORY_SWAP = false;
+    private static final boolean ENABLE_COMPARISON = false;
 
     protected Paint mPaint = new Paint();
     protected static int mTextSize = 24;
@@ -576,7 +578,7 @@ public class ImageShow extends View implements OnGestureListener,
             mTouch.x = ex;
             mTouch.y = ey;
 
-            if (event.getPointerCount() == 2) {
+            if (!ENABLE_COMPARISON || event.getPointerCount() == 2) {
                 float scaleFactor = MasterImage.getImage().getScaleFactor();
                 if (scaleFactor >= 1) {
                     float translateX = (mTouch.x - mTouchDown.x) / scaleFactor;
@@ -657,7 +659,7 @@ public class ImageShow extends View implements OnGestureListener,
         if (endEvent.getPointerCount() == 2) {
             return false;
         }
-        if ((!mActivity.isShowingHistoryPanel() && startEvent.getX() > endEvent.getX())
+        if (ENABLE_HISTORY_SWAP && (!mActivity.isShowingHistoryPanel() && startEvent.getX() > endEvent.getX())
                 || (mActivity.isShowingHistoryPanel() && endEvent.getX() > startEvent.getX())) {
             if (!mTouchShowOriginal
                     || (mTouchShowOriginal &&
