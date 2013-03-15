@@ -17,9 +17,11 @@ package com.android.photos.data;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.InstrumentationTestCase;
 
+import com.android.photos.data.PhotoProvider.Accounts;
 import com.android.photos.data.PhotoProvider.Albums;
 import com.android.photos.data.PhotoProvider.Metadata;
 import com.android.photos.data.PhotoProvider.Photos;
@@ -67,7 +69,7 @@ public class PhotoDatabaseTest extends InstrumentationTestCase {
     }
 
     public void testAlbumsConstraints() {
-        SQLiteDatabase db = getWriteableDB();
+        SQLiteDatabase db = getWritableDB();
         db.beginTransaction();
         try {
             long accountId = 100;
@@ -108,7 +110,7 @@ public class PhotoDatabaseTest extends InstrumentationTestCase {
     }
 
     public void testPhotosConstraints() {
-        SQLiteDatabase db = getWriteableDB();
+        SQLiteDatabase db = getWritableDB();
         db.beginTransaction();
         try {
             int width = 100;
@@ -146,7 +148,7 @@ public class PhotoDatabaseTest extends InstrumentationTestCase {
     }
 
     public void testMetadataConstraints() {
-        SQLiteDatabase db = getWriteableDB();
+        SQLiteDatabase db = getWritableDB();
         db.beginTransaction();
         try {
             final String mimeType = "test/test";
@@ -167,7 +169,7 @@ public class PhotoDatabaseTest extends InstrumentationTestCase {
     }
 
     public void testAccountsConstraints() {
-        SQLiteDatabase db = getWriteableDB();
+        SQLiteDatabase db = getWritableDB();
         db.beginTransaction();
         try {
             assertFalse(PhotoDatabaseUtils.insertAccount(db, null));
@@ -178,11 +180,37 @@ public class PhotoDatabaseTest extends InstrumentationTestCase {
         }
     }
 
+    public void testUpgrade() {
+        SQLiteDatabase db = getWritableDB();
+        db.beginTransaction();
+        try {
+            assertTrue(PhotoDatabaseUtils.insertAccount(db, "Hello"));
+            assertTrue(PhotoDatabaseUtils.insertAlbum(db, PARENT_ID1, "hello",
+                    Albums.VISIBILITY_PRIVATE, 100L));
+            final String mimeType = "test/test";
+            assertTrue(PhotoDatabaseUtils.insertPhoto(db, 100, 100, 100L, PARENT_ID1, mimeType,
+                    100L));
+            // Normal insert.
+            assertTrue(PhotoDatabaseUtils.insertMetadata(db, 100L, "foo", "bar"));
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+        mDBHelper.close();
+        Context context = getInstrumentation().getTargetContext();
+        mDBHelper = new PhotoDatabase(context, DB_NAME, PhotoDatabase.DB_VERSION + 1);
+        db = getReadableDB();
+        assertEquals(0, DatabaseUtils.queryNumEntries(db, Accounts.TABLE));
+        assertEquals(0, DatabaseUtils.queryNumEntries(db, Photos.TABLE));
+        assertEquals(0, DatabaseUtils.queryNumEntries(db, Albums.TABLE));
+        assertEquals(0, DatabaseUtils.queryNumEntries(db, Metadata.TABLE));
+    }
+
     private SQLiteDatabase getReadableDB() {
         return mDBHelper.getReadableDatabase();
     }
 
-    private SQLiteDatabase getWriteableDB() {
+    private SQLiteDatabase getWritableDB() {
         return mDBHelper.getWritableDatabase();
     }
 
