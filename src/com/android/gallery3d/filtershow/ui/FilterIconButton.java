@@ -20,7 +20,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -32,6 +31,7 @@ import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.imageshow.GeometryListener;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.tools.IconFactory;
 
 // TODO: merge back IconButton and FilterIconButton?
 public class FilterIconButton extends IconButton implements View.OnClickListener,
@@ -119,8 +119,8 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
         } else {
             mIconBitmap = bmap;
             if (mOverlayBitmap != null) {
-                Rect destination = new Rect(0, 0, mIconBitmap.getWidth(), mIconBitmap.getHeight());
-                drawImage(mIconBitmap, mOverlayBitmap, destination);
+                // Draw overlay bitmap over icon
+                IconFactory.drawIcon(mIconBitmap, mOverlayBitmap, false);
             }
             setIcon(mIconBitmap);
         }
