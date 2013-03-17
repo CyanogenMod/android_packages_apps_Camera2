@@ -140,6 +140,9 @@ public class ImageFilterTinyPlanet extends SimpleImageFilter {
             int left = getInt(xmp, CROPPED_AREA_LEFT);
             int top = getInt(xmp, CROPPED_AREA_TOP);
 
+            if (fullPanoWidth == 0 || fullPanoHeight == 0) {
+                return bitmapIn;
+            }
             // Make sure the intermediate image has the similar size to the
             // input.
             Bitmap paddedBitmap = null;
