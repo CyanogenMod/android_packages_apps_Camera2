@@ -148,7 +148,8 @@ public class ComboPreferences implements
                 || key.equals(CameraSettings.KEY_VIDEO_FIRST_USE_HINT_SHOWN)
                 || key.equals(CameraSettings.KEY_VIDEO_EFFECT)
                 || key.equals(CameraSettings.KEY_TIMER)
-                || key.equals(CameraSettings.KEY_TIMER_SOUND_EFFECTS);
+                || key.equals(CameraSettings.KEY_TIMER_SOUND_EFFECTS)
+                || key.equals(CameraSettings.KEY_PHOTOSPHERE_PICTURESIZE);
     }
 
     @Override
