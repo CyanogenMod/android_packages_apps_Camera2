@@ -393,4 +393,6 @@
     <string name="menu_search" msgid="7580008232297437190">"Suchen"</string>
     <string name="tab_photos" msgid="9110813680630313419">"Fotos"</string>
     <string name="tab_albums" msgid="8079449907770685691">"Alben"</string>
+    <!-- no translation found for number_of_photos:one (6949174783125614798) -->
+    <!-- no translation found for number_of_photos:other (3813306834113858135) -->
 </resources>
