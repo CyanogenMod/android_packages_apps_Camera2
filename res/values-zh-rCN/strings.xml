@@ -21,13 +21,13 @@
     <string name="details_ms" msgid="940634969189855292">"%1$02d:%2$02d"</string>
     <string name="details_hms" msgid="3215779248094151255">"%1$d:%2$02d:%3$02d"</string>
     <string name="movie_view_label" msgid="3526526872644898229">"视频播放器"</string>
-    <string name="loading_video" msgid="4013492720121891585">"正在载入视频..."</string>
-    <string name="loading_image" msgid="1200894415793838191">"正在载入图片..."</string>
+    <string name="loading_video" msgid="4013492720121891585">"正在加载视频..."</string>
+    <string name="loading_image" msgid="1200894415793838191">"正在加载图片..."</string>
     <string name="loading_account" msgid="928195413034552034">"正在加载帐户…"</string>
     <string name="resume_playing_title" msgid="8996677350649355013">"继续播放视频"</string>
     <string name="resume_playing_message" msgid="5184414518126703481">"从 %s 开始继续播放？"</string>
     <string name="resume_playing_resume" msgid="3847915469173852416">"继续播放"</string>
-    <string name="loading" msgid="7038208555304563571">"正在载入..."</string>
+    <string name="loading" msgid="7038208555304563571">"正在加载..."</string>
     <string name="fail_to_load" msgid="8394392853646664505">"无法加载"</string>
     <string name="fail_to_load_image" msgid="6155388718549782425">"无法加载此图片"</string>
     <string name="no_thumbnail" msgid="284723185546429750">"无缩略图"</string>
@@ -393,4 +393,6 @@
     <string name="menu_search" msgid="7580008232297437190">"搜索"</string>
     <string name="tab_photos" msgid="9110813680630313419">"照片"</string>
     <string name="tab_albums" msgid="8079449907770685691">"相册"</string>
+    <!-- no translation found for number_of_photos:one (6949174783125614798) -->
+    <!-- no translation found for number_of_photos:other (3813306834113858135) -->
 </resources>
