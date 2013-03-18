@@ -313,10 +313,7 @@ public class PhotoProvider extends SQLiteContentProvider {
         int match = matchUri(uri);
         selection = addIdToSelection(match, selection);
         selectionArgs = addIdToSelectionArgs(match, uri, selectionArgs);
-        int deleted = 0;
-        SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
-        deleted = deleteCascade(db, match, selection, selectionArgs, uri);
-        return deleted;
+        return deleteCascade(uri, match, selection, selectionArgs);
     }
 
     @Override
@@ -498,58 +495,49 @@ public class PhotoProvider extends SQLiteContentProvider {
         return matchColumn + IN + NESTED_SELECT_START + query + NESTED_SELECT_END;
     }
 
-    protected int deleteCascade(SQLiteDatabase db, int match, String selection,
-            String[] selectionArgs, Uri uri) {
+    protected static String metadataSelectionFromPhotos(String where) {
+        return nestWhere(Metadata.PHOTO_ID, Photos.TABLE, where);
+    }
+
+    protected static String photoSelectionFromAlbums(String where) {
+        return nestWhere(Photos.ALBUM_ID, Albums.TABLE, where);
+    }
+
+    protected static String photoSelectionFromAccounts(String where) {
+        return nestWhere(Photos.ACCOUNT_ID, Accounts.TABLE, where);
+    }
+
+    protected static String albumSelectionFromAccounts(String where) {
+        return nestWhere(Albums.ACCOUNT_ID, Accounts.TABLE, where);
+    }
+
+    protected int deleteCascade(Uri uri, int match, String selection, String[] selectionArgs) {
         switch (match) {
             case MATCH_PHOTO:
             case MATCH_PHOTO_ID:
-                deleteCascadeMetadata(db, selection, selectionArgs);
+                deleteCascade(Metadata.CONTENT_URI, MATCH_METADATA,
+                        metadataSelectionFromPhotos(selection), selectionArgs);
                 break;
             case MATCH_ALBUM:
             case MATCH_ALBUM_ID:
-                deleteCascadePhotos(db, selection, selectionArgs);
+                deleteCascade(Photos.CONTENT_URI, MATCH_PHOTO,
+                        photoSelectionFromAlbums(selection), selectionArgs);
                 break;
             case MATCH_ACCOUNT:
             case MATCH_ACCOUNT_ID:
-                deleteCascadeAccounts(db, selection, selectionArgs);
+                deleteCascade(Photos.CONTENT_URI, MATCH_PHOTO,
+                        photoSelectionFromAccounts(selection), selectionArgs);
+                deleteCascade(Albums.CONTENT_URI, MATCH_ALBUM,
+                        albumSelectionFromAccounts(selection), selectionArgs);
                 break;
         }
+        SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
         String table = getTableFromMatch(match, uri);
         int deleted = db.delete(table, selection, selectionArgs);
         if (deleted > 0) {
             postNotifyUri(uri);
         }
         return deleted;
-    }
-
-    private void deleteCascadeAccounts(SQLiteDatabase db, String accountSelect, String[] args) {
-        // Delete all photos associated with the account
-        String photoWhere = nestWhere(Photos.ACCOUNT_ID, Accounts.TABLE, accountSelect);
-        deleteCascadeMetadata(db, photoWhere, args);
-        db.delete(Photos.TABLE, photoWhere, args);
-
-        // Delete all albums that are associated with this account
-        String albumWhere = nestWhere(Albums.ACCOUNT_ID, Accounts.TABLE, accountSelect);
-        db.delete(Albums.TABLE, albumWhere, args);
-    }
-
-    private void deleteCascadePhotos(SQLiteDatabase db, String albumSelect,
-            String[] selectArgs) {
-        String photoWhere = nestWhere(Photos.ALBUM_ID, Albums.TABLE, albumSelect);
-        deleteCascadeMetadata(db, photoWhere, selectArgs);
-        int deleted = db.delete(Photos.TABLE, photoWhere, selectArgs);
-        if (deleted > 0) {
-            postNotifyUri(Photos.CONTENT_URI);
-        }
-    }
-
-    private void deleteCascadeMetadata(SQLiteDatabase db, String photosSelect,
-            String[] selectArgs) {
-        String metadataWhere = nestWhere(Metadata.PHOTO_ID, Photos.TABLE, photosSelect);
-        int deleted = db.delete(Metadata.TABLE, metadataWhere, selectArgs);
-        if (deleted > 0) {
-            postNotifyUri(Metadata.CONTENT_URI);
-        }
     }
 
     private static void validateMatchTable(int match) {
