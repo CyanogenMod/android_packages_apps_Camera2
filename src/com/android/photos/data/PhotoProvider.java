@@ -356,7 +356,11 @@ public class PhotoProvider extends SQLiteContentProvider {
         selection = addIdToSelection(match, selection);
         selectionArgs = addIdToSelectionArgs(match, uri, selectionArgs);
         String table = getTableFromMatch(match, uri);
-        return query(table, projection, selection, selectionArgs, sortOrder, cancellationSignal);
+        Cursor c = query(table, projection, selection, selectionArgs, sortOrder, cancellationSignal);
+        if (c != null) {
+            c.setNotificationUri(getContext().getContentResolver(), uri);
+        }
+        return c;
     }
 
     @Override
@@ -481,7 +485,7 @@ public class PhotoProvider extends SQLiteContentProvider {
         if (mNotifier != null) {
             mNotifier.notifyChange(uri, syncToNetwork);
         } else {
-            resolver.notifyChange(uri, null, syncToNetwork);
+            super.notifyChange(resolver, uri, syncToNetwork);
         }
     }
 
