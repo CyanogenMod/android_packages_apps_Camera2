@@ -176,7 +176,7 @@ public class PhotoDatabase extends SQLiteOpenHelper {
     protected static void dropTable(SQLiteDatabase db, String table) {
         db.beginTransaction();
         try {
-            db.execSQL("drop table " + table);
+            db.execSQL("drop table if exists " + table);
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
