@@ -49,17 +49,17 @@
     <string name="set_wallpaper" msgid="8491121226190175017">"Setaţi imag. fundal"</string>
     <string name="wallpaper" msgid="140165383777262070">"Se setează imaginea de fundal..."</string>
     <string name="camera_setas_wallpaper" msgid="797463183863414289">"Imagine de fundal"</string>
-    <string name="delete" msgid="2839695998251824487">"Ştergeţi"</string>
+    <string name="delete" msgid="2839695998251824487">"Ștergeţi"</string>
   <plurals name="delete_selection">
-    <item quantity="one" msgid="6453379735401083732">"Ştergeţi articolul selectat?"</item>
-    <item quantity="other" msgid="5874316486520635333">"Ştergeţi articolele selectate?"</item>
+    <item quantity="one" msgid="6453379735401083732">"Ștergeţi articolul selectat?"</item>
+    <item quantity="other" msgid="5874316486520635333">"Ștergeţi articolele selectate?"</item>
   </plurals>
     <string name="confirm" msgid="8646870096527848520">"Confirmaţi"</string>
     <string name="cancel" msgid="3637516880917356226">"Anulaţi"</string>
     <string name="share" msgid="3619042788254195341">"Distribuiţi"</string>
     <string name="share_panorama" msgid="2569029972820978718">"Trimiteți panorama"</string>
     <string name="share_as_photo" msgid="8959225188897026149">"Trimiteți fotografia"</string>
-    <string name="deleted" msgid="6795433049119073871">"Ştearsă"</string>
+    <string name="deleted" msgid="6795433049119073871">"Ștearsă"</string>
     <string name="undo" msgid="2930873956446586313">"ANULAŢI"</string>
     <string name="select_all" msgid="3403283025220282175">"Selectaţi-le pe toate"</string>
     <string name="deselect_all" msgid="5758897506061723684">"Deselectaţi-le pe toate"</string>
@@ -313,7 +313,7 @@
     <string name="video_recording_started" msgid="4132915454417193503">"A început înregistrarea videoclipului."</string>
     <string name="video_recording_stopped" msgid="5086919511555808580">"Înregistrarea videoclipului s-a oprit."</string>
     <string name="disable_video_snapshot_hint" msgid="4957723267826476079">"Instant. video este dezact. când efectele speciale sunt pornite."</string>
-    <string name="clear_effects" msgid="5485339175014139481">"Ştergeţi efectul"</string>
+    <string name="clear_effects" msgid="5485339175014139481">"Ștergeţi efectul"</string>
     <string name="effect_silly_faces" msgid="8107732405347155777">"FEŢE PROSTUŢE"</string>
     <string name="effect_background" msgid="6579360207378171022">"FUNDAL"</string>
     <string name="accessibility_shutter_button" msgid="2664037763232556307">"Butonul Declanşaţi"</string>
@@ -393,4 +393,6 @@
     <string name="menu_search" msgid="7580008232297437190">"Căutați"</string>
     <string name="tab_photos" msgid="9110813680630313419">"Fotografii"</string>
     <string name="tab_albums" msgid="8079449907770685691">"Albume"</string>
+    <!-- no translation found for number_of_photos:one (6949174783125614798) -->
+    <!-- no translation found for number_of_photos:other (3813306834113858135) -->
 </resources>
