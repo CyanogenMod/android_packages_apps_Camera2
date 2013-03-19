@@ -489,6 +489,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             float previewScale = (float) largeBitmap.getWidth() / (float) mImageLoader.getOriginalBounds().width();
             pipeline.setPreviewScaleFactor(previewScale);
 
+            pipeline.turnOnPipeline(true);
             MasterImage.getImage().setOriginalGeometry(largeBitmap);
             mLoadBitmapTask = null;
 
@@ -497,7 +498,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             } else if (mAction == TINY_PLANET_ACTION) {
                 mPanelController.showComponent(findViewById(EditorTinyPlanet.ID));
             }
-            pipeline.turnOnPipeline(true);
             super.onPostExecute(result);
         }
 

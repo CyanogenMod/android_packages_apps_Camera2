@@ -182,6 +182,9 @@ public class FilteringPipeline implements Handler.Callback {
         if (mOriginalAllocation == null) {
             return;
         }
+        if (!mPipelineIsOn) {
+            return;
+        }
         int type = COMPUTE_RENDERING_REQUEST;
         if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
             type = COMPUTE_PARTIAL_RENDERING_REQUEST;
@@ -331,7 +334,7 @@ public class FilteringPipeline implements Handler.Callback {
         time = System.currentTimeMillis() - time;
         time2 = System.currentTimeMillis() - time2;
         if (DEBUG) {
-            Log.v(LOGTAG, "Applying " + type + " filters to bitmap "
+            Log.v(LOGTAG, "Applying type " + type + " filters to bitmap "
                     + bitmap + " (" + bitmap.getWidth() + " x " + bitmap.getHeight()
                     + ") took " + time + " ms, " + time2 + " ms for the filter, on thread " + thread);
         }
