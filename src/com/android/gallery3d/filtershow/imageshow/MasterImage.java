@@ -461,8 +461,11 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public void setScaleFactor(float scaleFactor) {
+        if (scaleFactor == mScaleFactor) {
+            return;
+        }
         mScaleFactor = scaleFactor;
-        needsUpdateFullResPreview();
+        invalidatePartialPreview();
     }
 
     public Point getTranslation() {
