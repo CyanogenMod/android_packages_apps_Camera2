@@ -47,8 +47,17 @@ public class ImageFilterSharpen extends ImageFilterRS {
         mParameters = parameters;
     }
 
+    @Override
     protected void resetAllocations() {
         // nothing to do
+    }
+
+    @Override
+    protected void resetScripts() {
+        if (mScript != null) {
+            mScript.destroy();
+            mScript = null;
+        }
     }
 
     @Override
@@ -65,7 +74,7 @@ public class ImageFilterSharpen extends ImageFilterRS {
         mScript.set_gHeight(h);
     }
 
-    private void computeKernel(){
+    private void computeKernel() {
         float p1 = mParameters.getValue() * mScaleFactor;
         float value = p1 / 100.0f;
         float f[] = new float[9];
