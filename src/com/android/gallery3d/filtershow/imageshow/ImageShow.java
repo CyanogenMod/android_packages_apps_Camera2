@@ -578,17 +578,15 @@ public class ImageShow extends View implements OnGestureListener,
             mTouch.x = ex;
             mTouch.y = ey;
 
-            if (!ENABLE_COMPARISON || event.getPointerCount() == 2) {
-                float scaleFactor = MasterImage.getImage().getScaleFactor();
-                if (scaleFactor >= 1) {
-                    float translateX = (mTouch.x - mTouchDown.x) / scaleFactor;
-                    float translateY = (mTouch.y - mTouchDown.y) / scaleFactor;
-                    Point originalTranslation = MasterImage.getImage().getOriginalTranslation();
-                    Point translation = MasterImage.getImage().getTranslation();
-                    translation.x = (int) (originalTranslation.x + translateX);
-                    translation.y = (int) (originalTranslation.y + translateY);
-                    MasterImage.getImage().setTranslation(translation);
-                }
+            float scaleFactor = MasterImage.getImage().getScaleFactor();
+            if (scaleFactor > 1 && (!ENABLE_COMPARISON || event.getPointerCount() == 2)) {
+                float translateX = (mTouch.x - mTouchDown.x) / scaleFactor;
+                float translateY = (mTouch.y - mTouchDown.y) / scaleFactor;
+                Point originalTranslation = MasterImage.getImage().getOriginalTranslation();
+                Point translation = MasterImage.getImage().getTranslation();
+                translation.x = (int) (originalTranslation.x + translateX);
+                translation.y = (int) (originalTranslation.y + translateY);
+                MasterImage.getImage().setTranslation(translation);
                 mTouchShowOriginal = false;
             } else if (!mOriginalDisabled && !mActivity.isShowingHistoryPanel()
                     && (System.currentTimeMillis() - mTouchShowOriginalDate
@@ -627,7 +625,6 @@ public class ImageShow extends View implements OnGestureListener,
         }
         if (scale != MasterImage.getImage().getScaleFactor()) {
             MasterImage.getImage().setScaleFactor(scale);
-            MasterImage.getImage().needsUpdateFullResPreview();
             invalidate();
         }
         return true;
