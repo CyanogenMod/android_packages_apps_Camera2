@@ -181,19 +181,27 @@ public class GeometryMetadata extends FilterRepresentation {
         return mPhotoBounds.contains(cropBounds);
     }
 
+    private boolean compareRectF(RectF a, RectF b) {
+        return ((int) a.left == (int) b.left)
+                && ((int) a.right == (int) b.right)
+                && ((int) a.top == (int) b.top)
+                && ((int) a.bottom == (int) b.bottom);
+    }
+
     @Override
     public boolean equals(FilterRepresentation o) {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (o == null || !(o instanceof GeometryMetadata))
             return false;
 
         GeometryMetadata d = (GeometryMetadata) o;
-        return (mScaleFactor == d.mScaleFactor &&
-                mRotation == d.mRotation &&
-                mStraightenRotation == d.mStraightenRotation &&
-                mFlip == d.mFlip &&
-                mCropBounds.equals(d.mCropBounds) && mPhotoBounds.equals(d.mPhotoBounds));
+        return (mScaleFactor == d.mScaleFactor
+                && mRotation == d.mRotation
+                && mStraightenRotation == d.mStraightenRotation
+                && mFlip == d.mFlip
+                && compareRectF(mCropBounds, d.mCropBounds)
+                && compareRectF(mPhotoBounds, d.mPhotoBounds));
     }
 
     @Override
