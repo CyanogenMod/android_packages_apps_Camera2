@@ -24,7 +24,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore.Files.FileColumns;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,36 +31,43 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.android.gallery3d.R;
-import com.android.photos.adapters.AlbumSetCursorAdapter;
-import com.android.photos.data.AlbumSetLoader;
+import com.android.gallery3d.app.Gallery;
+import com.android.photos.adapters.PhotoThumbnailAdapter;
+import com.android.photos.data.PhotoSetLoader;
 import com.android.photos.shims.LoaderCompatShim;
-import com.android.photos.shims.MediaSetLoader;
+import com.android.photos.shims.MediaItemsLoader;
 
 import java.util.ArrayList;
 
+public class AlbumFragment extends Fragment implements OnItemClickListener,
+    LoaderCallbacks<Cursor>, MultiChoiceManager.Delegate, SelectionManager.Client  {
 
-public class AlbumSetFragment extends Fragment implements OnItemClickListener,
-    LoaderCallbacks<Cursor>, MultiChoiceManager.Delegate, SelectionManager.Client {
+    protected static final String KEY_ALBUM_URI = "AlbumUri";
+    private static final int LOADER_ALBUM = 1;
 
-    private GridView mAlbumSetView;
+    private GridView mAlbumView;
     private View mEmptyView;
-    private AlbumSetCursorAdapter mAdapter;
+
+    private boolean mInitialLoadComplete = false;
     private LoaderCompatShim<Cursor> mLoaderCompatShim;
+    private PhotoThumbnailAdapter mAdapter;
     private MultiChoiceManager mMultiChoiceManager;
     private SelectionManager mSelectionManager;
-
-    private static final int LOADER_ALBUMSET = 1;
+    private String mAlbumPath;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Context context = getActivity();
-        mAdapter = new AlbumSetCursorAdapter(context);
+        mAdapter = new PhotoThumbnailAdapter(context);
         mMultiChoiceManager = new MultiChoiceManager(context, this);
         mMultiChoiceManager.setSelectionManager(mSelectionManager);
+        Bundle args = getArguments();
+        if (args != null) {
+            mAlbumPath = args.getString(KEY_ALBUM_URI, null);
+        }
     }
 
     @Override
@@ -75,25 +81,49 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.album_set, container, false);
-        mAlbumSetView = (GridView) root.findViewById(android.R.id.list);
+        View root = inflater.inflate(R.layout.photo_set, container, false);
+        mAlbumView = (GridView) root.findViewById(android.R.id.list);
+        // TODO: Remove once UI stabilizes
+        mAlbumView.setColumnWidth(MediaItemsLoader.getThumbnailSize());
+        mAlbumView.setOnItemClickListener(this);
         mEmptyView = root.findViewById(android.R.id.empty);
         mEmptyView.setVisibility(View.GONE);
-        mAlbumSetView.setAdapter(mAdapter);
-        mAlbumSetView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
-        mAlbumSetView.setMultiChoiceModeListener(mMultiChoiceManager);
-        mAlbumSetView.setOnItemClickListener(this);
-        getLoaderManager().initLoader(LOADER_ALBUMSET, null, this);
+        mAlbumView.setAdapter(mAdapter);
+        mAlbumView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
+        mAlbumView.setMultiChoiceModeListener(mMultiChoiceManager);
+        getLoaderManager().initLoader(LOADER_ALBUM, null, this);
         updateEmptyStatus();
         return root;
     }
 
+    private void updateEmptyStatus() {
+        boolean empty = (mAdapter == null || mAdapter.getCount() == 0);
+        mAlbumView.setVisibility(empty ? View.GONE : View.VISIBLE);
+        mEmptyView.setVisibility(empty && mInitialLoadComplete
+                ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position,
+            long id) {
+        if (mLoaderCompatShim == null) {
+            // Not fully initialized yet, discard
+            return;
+        }
+        Cursor item = mAdapter.getItem(position);
+        Uri uri = mLoaderCompatShim.uriForItem(item);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.setClass(getActivity(), Gallery.class);
+        startActivity(intent);
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        // TODO: Switch to AlbumSetLoader
-        MediaSetLoader loader = new MediaSetLoader(getActivity());
-        mAdapter.setDrawableFactory(loader);
+        // TODO: Switch to PhotoSetLoader
+        MediaItemsLoader loader = new MediaItemsLoader(getActivity(), mAlbumPath);
+        mInitialLoadComplete = false;
         mLoaderCompatShim = loader;
+        mAdapter.setDrawableFactory(mLoaderCompatShim);
         return loader;
     }
 
@@ -101,13 +131,8 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
     public void onLoadFinished(Loader<Cursor> loader,
             Cursor data) {
         mAdapter.swapCursor(data);
+        mInitialLoadComplete = true;
         updateEmptyStatus();
-    }
-
-    private void updateEmptyStatus() {
-        boolean empty = (mAdapter == null || mAdapter.getCount() == 0);
-        mAlbumSetView.setVisibility(empty ? View.GONE : View.VISIBLE);
-        mEmptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -115,29 +140,13 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
     }
 
     @Override
-    public void onItemClick(AdapterView<?> av, View v, int pos, long id) {
-        if (mLoaderCompatShim == null) {
-            // Not fully initialized yet, discard
-            return;
-        }
-        Cursor item = (Cursor) mAdapter.getItem(pos);
-        Context context = getActivity();
-        Intent intent = new Intent(context, AlbumActivity.class);
-        intent.putExtra(AlbumActivity.KEY_ALBUM_URI,
-                mLoaderCompatShim.getPathForItem(item).toString());
-        intent.putExtra(AlbumActivity.KEY_ALBUM_TITLE,
-                item.getString(AlbumSetLoader.INDEX_TITLE));
-        context.startActivity(intent);
-    }
-
-    @Override
     public int getItemMediaType(Object item) {
-        return FileColumns.MEDIA_TYPE_NONE;
+        return ((Cursor) item).getInt(PhotoSetLoader.INDEX_MEDIA_TYPE);
     }
 
     @Override
     public int getItemSupportedOperations(Object item) {
-        return ((Cursor) item).getInt(AlbumSetLoader.INDEX_SUPPORTED_OPERATIONS);
+        return ((Cursor) item).getInt(PhotoSetLoader.INDEX_SUPPORTED_OPERATIONS);
     }
 
     @Override
@@ -145,14 +154,18 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
         return mAdapter.getItem(position);
     }
 
+    private ArrayList<Uri> mSubItemUriTemp = new ArrayList<Uri>(1);
     @Override
     public ArrayList<Uri> getSubItemUrisForItem(Object item) {
-        return mLoaderCompatShim.urisForSubItems((Cursor) item);
+        mSubItemUriTemp.clear();
+        mSubItemUriTemp.add(mLoaderCompatShim.uriForItem((Cursor) item));
+        return mSubItemUriTemp;
     }
+
 
     @Override
     public Object getPathForItemAtPosition(int position) {
-        return mLoaderCompatShim.getPathForItem((Cursor) mAdapter.getItem(position));
+        return mLoaderCompatShim.getPathForItem(mAdapter.getItem(position));
     }
 
     @Override
@@ -162,12 +175,12 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
 
     @Override
     public SparseBooleanArray getSelectedItemPositions() {
-        return mAlbumSetView.getCheckedItemPositions();
+        return mAlbumView.getCheckedItemPositions();
     }
 
     @Override
     public int getSelectedItemCount() {
-        return mAlbumSetView.getCheckedItemCount();
+        return mAlbumView.getCheckedItemCount();
     }
 
     @Override
