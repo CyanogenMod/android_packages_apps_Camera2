@@ -32,13 +32,12 @@ public class FilteringPipeline implements Handler.Callback {
 
     private static volatile FilteringPipeline sPipeline = null;
     private static final String LOGTAG = "FilteringPipeline";
-    private ImagePreset mPreviousGeometryPreset = null;
-    private ImagePreset mPreviousFiltersPreset = null;
-    private GeometryMetadata mPreviousGeometry = null;
-    private float mPreviewScaleFactor = 1.0f;
+    private volatile GeometryMetadata mPreviousGeometry = null;
+    private volatile float mPreviewScaleFactor = 1.0f;
+    private volatile boolean mPipelineIsOn = false;
 
-    private Bitmap mOriginalBitmap = null;
-    private Bitmap mResizedOriginalBitmap = null;
+    private volatile Bitmap mOriginalBitmap = null;
+    private volatile Bitmap mResizedOriginalBitmap = null;
 
     private boolean DEBUG = false;
 
@@ -49,7 +48,7 @@ public class FilteringPipeline implements Handler.Callback {
     private final static int COMPUTE_RENDERING_REQUEST = 3;
     private final static int COMPUTE_PARTIAL_RENDERING_REQUEST = 4;
 
-    private boolean mHasUnhandledPreviewRequest = false;
+    private volatile boolean mHasUnhandledPreviewRequest = false;
 
     private Handler mProcessingHandler = null;
     private final Handler mUIHandler = new Handler() {
@@ -76,6 +75,9 @@ public class FilteringPipeline implements Handler.Callback {
 
     @Override
     public boolean handleMessage(Message msg) {
+        if (!mPipelineIsOn) {
+            return false;
+        }
         switch (msg.what) {
             case COMPUTE_PRESET: {
                 ImagePreset preset = (ImagePreset) msg.obj;
@@ -107,11 +109,9 @@ public class FilteringPipeline implements Handler.Callback {
     private static float RESIZE_FACTOR = 0.8f;
     private static float MAX_PROCESS_TIME = 100; // in ms
     private static long HIRES_DELAY = 100; // in ms
-    private float mResizeFactor = 1.0f;
-    private long mResizeTime = 0;
 
-    private Allocation mOriginalAllocation = null;
-    private Allocation mFiltersOnlyOriginalAllocation =  null;
+    private volatile Allocation mOriginalAllocation = null;
+    private volatile Allocation mFiltersOnlyOriginalAllocation =  null;
 
     private FilteringPipeline() {
         mHandlerThread = new HandlerThread("FilteringPipeline",
@@ -162,11 +162,13 @@ public class FilteringPipeline implements Handler.Callback {
         RenderScript RS = ImageFilterRS.getRenderScriptContext();
         if (mFiltersOnlyOriginalAllocation != null) {
             mFiltersOnlyOriginalAllocation.destroy();
+            mFiltersOnlyOriginalAllocation = null;
         }
         mFiltersOnlyOriginalAllocation = Allocation.createFromBitmap(RS, mOriginalBitmap,
                 Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
         if (mOriginalAllocation != null) {
             mOriginalAllocation.destroy();
+            mOriginalAllocation = null;
         }
         mResizedOriginalBitmap = preset.applyGeometry(mOriginalBitmap);
         mOriginalAllocation = Allocation.createFromBitmap(RS, mResizedOriginalBitmap,
@@ -214,8 +216,9 @@ public class FilteringPipeline implements Handler.Callback {
     }
 
     private void setPresetParameters(ImagePreset preset) {
-        preset.setScaleFactor(mPreviewScaleFactor);
-        if (mPreviewScaleFactor < 1.0f) {
+        float scale = mPreviewScaleFactor;
+        preset.setScaleFactor(scale);
+        if (scale < 1.0f) {
             preset.setQuality(ImagePreset.QUALITY_PREVIEW);
         } else {
             preset.setQuality(ImagePreset.QUALITY_PREVIEW);
@@ -241,7 +244,7 @@ public class FilteringPipeline implements Handler.Callback {
         return "UNKNOWN TYPE!";
     }
 
-    private void render(RenderingRequest request) {
+    private synchronized void render(RenderingRequest request) {
         if ((request.getType() != RenderingRequest.PARTIAL_RENDERING
                 && request.getBitmap() == null)
                 || request.getImagePreset() == null) {
@@ -298,7 +301,7 @@ public class FilteringPipeline implements Handler.Callback {
 
     }
 
-    private void compute(TripleBufferBitmap buffer, ImagePreset preset, int type) {
+    private synchronized void compute(TripleBufferBitmap buffer, ImagePreset preset, int type) {
         if (DEBUG) {
             Log.v(LOGTAG, "compute preset " + preset);
             preset.showFilters();
@@ -332,12 +335,6 @@ public class FilteringPipeline implements Handler.Callback {
                     + bitmap + " (" + bitmap.getWidth() + " x " + bitmap.getHeight()
                     + ") took " + time + " ms, " + time2 + " ms for the filter, on thread " + thread);
         }
-        if (type == COMPUTE_PRESET) {
-            if (mResizeFactor > 0.6 && time > MAX_PROCESS_TIME && (System.currentTimeMillis() + 1000 > mResizeTime)) {
-                mResizeTime = System.currentTimeMillis();
-                mResizeFactor *= RESIZE_FACTOR;
-            }
-        }
     }
 
     private synchronized boolean needsRepaint() {
@@ -356,5 +353,9 @@ public class FilteringPipeline implements Handler.Callback {
     public static synchronized void reset() {
         sPipeline.mHandlerThread.quit();
         sPipeline = null;
+    }
+
+    public void turnOnPipeline(boolean t) {
+        mPipelineIsOn = t;
     }
 }
