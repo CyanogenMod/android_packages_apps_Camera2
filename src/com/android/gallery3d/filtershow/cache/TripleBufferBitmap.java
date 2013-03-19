@@ -22,14 +22,14 @@ public class TripleBufferBitmap {
 
     private static String LOGTAG = "TripleBufferBitmap";
 
-    private Bitmap mBitmaps[] = new Bitmap[3];
-    private Bitmap mProducer = null;
-    private Bitmap mConsumer = null;
-    private Bitmap mIntermediate = null;
-    private boolean mNeedsSwap = false;
+    private volatile Bitmap mBitmaps[] = new Bitmap[3];
+    private volatile Bitmap mProducer = null;
+    private volatile Bitmap mConsumer = null;
+    private volatile Bitmap mIntermediate = null;
+    private volatile boolean mNeedsSwap = false;
 
     private final Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
-    private boolean mNeedsRepaint = true;
+    private volatile boolean mNeedsRepaint = true;
 
     public TripleBufferBitmap() {
 

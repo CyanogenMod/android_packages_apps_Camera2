@@ -74,6 +74,15 @@ public abstract class BaseFiltersManager {
         }
     }
 
+    public void freeRSFilterScripts() {
+        for (Class c : mFilters.keySet()) {
+            ImageFilter filter = mFilters.get(c);
+            if (filter != null && filter instanceof ImageFilterRS) {
+                ((ImageFilterRS) filter).resetScripts();
+            }
+        }
+    }
+
     protected void addFilterClasses(Vector<Class> filters) {
         filters.add(ImageFilterTinyPlanet.class);
         filters.add(ImageFilterRedEye.class);
