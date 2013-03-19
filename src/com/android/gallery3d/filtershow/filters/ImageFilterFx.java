@@ -61,7 +61,11 @@ public class ImageFilterFx extends ImageFilter {
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inScaled = false;
             mFxBitmapId = getParameters().getBitmapResource();
-            mFxBitmap = BitmapFactory.decodeResource(mResources, mFxBitmapId, o);
+            if (mFxBitmapId != 0) {
+                mFxBitmap = BitmapFactory.decodeResource(mResources, mFxBitmapId, o);
+            } else {
+                Log.w(LOGTAG, "bad resource for filter: " + mName);
+            }
         }
 
         if (mFxBitmap == null) {
