@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow;
 
 import android.content.Context;
+import android.os.Handler;
 import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -51,7 +52,9 @@ public class PanelController implements OnClickListener {
     private static final String LOGTAG = "PanelController";
     private boolean mFixedAspect = false;
 
-    public static boolean useAnimations() {
+    final Handler mHandler = new Handler();
+
+    public static boolean useAnimationsLayer() {
         int currentapiVersion = android.os.Build.VERSION.SDK_INT;
         if (currentapiVersion >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
             return true;
@@ -97,27 +100,21 @@ public class PanelController implements OnClickListener {
                 } else {
                     delta = w;
                 }
-                if (PanelController.useAnimations()) {
-                    anim.x(delta);
-                } else {
-                    mContainer.setX(delta);
-                }
+                anim.x(delta);
             } else if (move == VERTICAL_MOVE) {
-                if (PanelController.useAnimations()) {
-                    anim.y(h);
-                } else {
-                    mContainer.setY(h);
-                }
+                anim.y(h);
             }
-            if (PanelController.useAnimations()) {
-                anim.setDuration(ANIM_DURATION).withLayer().withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        mContainer.setVisibility(View.GONE);
-                        }
-                });
+            anim.setDuration(ANIM_DURATION);
+            Runnable action = new Runnable() {
+                @Override
+                public void run() {
+                    mContainer.setVisibility(View.GONE);
+                }
+            };
+            if (PanelController.useAnimationsLayer()) {
+                anim.withLayer().withEndAction(action);
             } else {
-                mContainer.setVisibility(View.GONE);
+                mHandler.postDelayed(action, ANIM_DURATION);
             }
             return anim;
         }
@@ -130,19 +127,20 @@ public class PanelController implements OnClickListener {
             ViewPropertyAnimator anim = mContainer.animate();
             int w = mRowPanel.getWidth();
             int h = mRowPanel.getHeight();
-            if (useAnimations()) {
-                if (move == HORIZONTAL_MOVE) {
-                    if (oldPos < mPosition) {
-                        mContainer.setX(w);
-                    } else {
-                        mContainer.setX(-w);
-                    }
-                    anim.x(0);
-                } else if (move == VERTICAL_MOVE) {
-                    mContainer.setY(h);
-                    anim.y(0);
+            if (move == HORIZONTAL_MOVE) {
+                if (oldPos < mPosition) {
+                    mContainer.setX(w);
+                } else {
+                    mContainer.setX(-w);
                 }
-                anim.setDuration(ANIM_DURATION).withLayer();
+                anim.x(0);
+            } else if (move == VERTICAL_MOVE) {
+                mContainer.setY(h);
+                anim.y(0);
+            }
+            anim.setDuration(ANIM_DURATION);
+            if (PanelController.useAnimationsLayer()) {
+                anim.withLayer();
             }
             return anim;
         }
@@ -231,15 +229,16 @@ public class PanelController implements OnClickListener {
             mView.setY(0);
             int h = mRowPanel.getHeight();
             anim.y(-h);
-            if (PanelController.useAnimations()) {
-                anim.setDuration(ANIM_DURATION).withLayer().withEndAction(new Runnable() {
-                        @Override
-                    public void run() {
-                        mView.setVisibility(View.GONE);
-                    }
-                });
+            Runnable action = new Runnable() {
+                @Override
+                public void run() {
+                    mView.setVisibility(View.GONE);
+                }
+            };
+            if (PanelController.useAnimationsLayer()) {
+                anim.setDuration(ANIM_DURATION).withLayer().withEndAction(action);
             } else {
-                mView.setVisibility(View.GONE);
+                mHandler.postDelayed(action, ANIM_DURATION);
             }
             mSelected = false;
             return anim;
@@ -255,7 +254,7 @@ public class PanelController implements OnClickListener {
             ViewPropertyAnimator anim = mView.animate();
             anim.y(0);
             anim.setDuration(ANIM_DURATION);
-            if (PanelController.useAnimations()) {
+            if (PanelController.useAnimationsLayer()) {
                 anim.withLayer();
             }
             return anim;

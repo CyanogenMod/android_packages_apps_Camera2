@@ -26,7 +26,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -492,7 +491,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             loading.setVisibility(View.GONE);
             final View filters = findViewById(R.id.filtersPanel);
             filters.setVisibility(View.VISIBLE);
-            if (PanelController.useAnimations()) {
+            if (PanelController.useAnimationsLayer()) {
                 float y = filters.getY();
                 filters.setY(y + filters.getHeight());
                 filters.animate().setDuration(600).y(y).withLayer().start();
@@ -949,7 +948,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                     == Configuration.ORIENTATION_PORTRAIT) {
                 // If portrait, always remove the state panel
                 mShowingImageStatePanel = false;
-                if (PanelController.useAnimations()) {
+                if (PanelController.useAnimationsLayer()) {
                     view.animate().setDuration(200).x(translate)
                             .withLayer().withEndAction(new Runnable() {
                         @Override
@@ -976,7 +975,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             if (getResources().getConfiguration().orientation
                     == Configuration.ORIENTATION_PORTRAIT) {
                 viewList.setVisibility(View.INVISIBLE);
-                if (PanelController.useAnimations()) {
+                if (PanelController.useAnimationsLayer()) {
                     view.animate().setDuration(200).x(0).withLayer()
                             .start();
                 } else {
