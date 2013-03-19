@@ -199,10 +199,15 @@ public abstract class ImageFilterRS extends ImageFilter {
         mResourcesLoaded = resourcesLoaded;
     }
 
-    // TODO:
-    // Ideally, every filter would destroy _every_ renderscript allocation,
-    // script, and anything else that depends on a certain RS context here.
+    /**
+     *  Bitmaps and RS Allocations should be cleared here
+     */
     abstract protected void resetAllocations();
+
+    /**
+     * RS Script objects (and all other RS objects) should be cleared here
+     */
+    abstract protected void resetScripts();
 
     public void freeResources() {
         if (!isResourcesLoaded()) {

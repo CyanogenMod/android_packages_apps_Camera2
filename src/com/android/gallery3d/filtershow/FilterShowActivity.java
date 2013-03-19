@@ -207,8 +207,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mPanelController.addPanel(R.id.colorsButton, R.id.colorsFxList, 3);
 
         fillFx((LinearLayout) findViewById(R.id.listFilters), R.id.fxButton);
-        LoadBordersTask loadBorders = new LoadBordersTask((LinearLayout) findViewById(R.id.listBorders));
-        loadBorders.execute();
+        setupBorders();
         fillGeometry();
         fillFilters();
 
@@ -397,52 +396,37 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mLoadBitmapTask.execute(uri);
     }
 
-    private class LoadBordersTask extends AsyncTask<Void, Boolean, Boolean> {
-        Vector<FilterRepresentation> mBorders;
-        LinearLayout mList;
-
-        public LoadBordersTask(LinearLayout list) {
-            mList = list;
-            mBorders = new Vector<FilterRepresentation>();
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            mBorders.add(new FilterImageBorderRepresentation(0));
-            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5));
-            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_brush));
-            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_grunge));
-            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_sumi_e));
-            mBorders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_tape));
-            mBorders.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, 0));
-            mBorders.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, mImageBorderSize));
-            mBorders.add(new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize, 0));
-            mBorders.add(new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize, mImageBorderSize));
-            int creamColor = Color.argb(255, 237, 237, 227);
-            mBorders.add(new FilterColorBorderRepresentation(creamColor, mImageBorderSize, 0));
-            mBorders.add(new FilterColorBorderRepresentation(creamColor, mImageBorderSize, mImageBorderSize));
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            if (!result) {
-                return;
+    private void setupBorders() {
+        LinearLayout list = (LinearLayout) findViewById(R.id.listBorders);
+        Vector<FilterRepresentation> borders = new Vector<FilterRepresentation>();
+        borders.add(new FilterImageBorderRepresentation(0));
+        borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5));
+        borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_brush));
+        borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_grunge));
+        borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_sumi_e));
+        borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_tape));
+        borders.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, 0));
+        borders.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize,
+                mImageBorderSize));
+        borders.add(new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize, 0));
+        borders.add(new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize,
+                mImageBorderSize));
+        int creamColor = Color.argb(255, 237, 237, 227);
+        borders.add(new FilterColorBorderRepresentation(creamColor, mImageBorderSize, 0));
+        borders.add(new FilterColorBorderRepresentation(creamColor, mImageBorderSize,
+                mImageBorderSize));
+        for (int i = 0; i < borders.size(); i++) {
+            FilterRepresentation filter = borders.elementAt(i);
+            filter.setName(getString(R.string.borders));
+            if (i == 0) {
+                filter.setName(getString(R.string.none));
             }
-            for (int i = 0; i < mBorders.size(); i++) {
-                FilterRepresentation filter = mBorders.elementAt(i);
-                filter.setName(getString(R.string.borders));
-                if (i == 0) {
-                    filter.setName(getString(R.string.none));
-                }
-                ImageButton borderButton = (ImageButton) findViewById(R.id.borderButton);
-                FilterIconButton b = setupFilterRepresentationButton(filter, mList, borderButton);
-                if (i == 0) {
-                    mNullBorderFilter = b;
-                    mNullBorderFilter.setSelected(true);
-                }
+            ImageButton borderButton = (ImageButton) findViewById(R.id.borderButton);
+            FilterIconButton b = setupFilterRepresentationButton(filter, list, borderButton);
+            if (i == 0) {
+                mNullBorderFilter = b;
+                mNullBorderFilter.setSelected(true);
             }
-            fillButtonIcons();
         }
     }
 
@@ -505,7 +489,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             float previewScale = (float) largeBitmap.getWidth() / (float) mImageLoader.getOriginalBounds().width();
             pipeline.setPreviewScaleFactor(previewScale);
 
-            fillButtonIcons();
             MasterImage.getImage().setOriginalGeometry(largeBitmap);
             mLoadBitmapTask = null;
 
@@ -514,7 +497,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             } else if (mAction == TINY_PLANET_ACTION) {
                 mPanelController.showComponent(findViewById(EditorTinyPlanet.ID));
             }
-
+            pipeline.turnOnPipeline(true);
             super.onPostExecute(result);
         }
 
@@ -531,40 +514,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }).execute();
     }
 
-    private void fillButtonIcons() {
-        Bitmap bmap = mImageLoader.getOriginalBitmapSmall();
-        if (bmap != null && bmap.getWidth() > 0 && bmap.getHeight() > 0) {
-            float w = bmap.getWidth();
-            float h = bmap.getHeight();
-            float f = mIconSeedSize / Math.min(w, h);
-            w = w * f;
-            h = h * f;
-            bmap = Bitmap.createScaledBitmap(bmap, (int) w, (int) h, true);
-
-            LinearLayout listColors = (LinearLayout) findViewById(R.id.listColorsFx);
-            int num_colors_buttons = listColors.getChildCount();
-            for (int i = 0; i < num_colors_buttons; i++) {
-                FilterIconButton b = (FilterIconButton) listColors.getChildAt(i);
-                b.setIcon(bmap);
-            }
-
-            LinearLayout listFilters = (LinearLayout) findViewById(R.id.listFilters);
-            int num_filters_buttons = listFilters.getChildCount();
-            for (int i = 0; i < num_filters_buttons; i++) {
-                FilterIconButton b = (FilterIconButton) listFilters.getChildAt(i);
-                b.setIcon(bmap);
-            }
-
-            LinearLayout listBorders = (LinearLayout) findViewById(R.id.listBorders);
-            int num_borders_buttons = listBorders.getChildCount();
-            for (int i = 0; i < num_borders_buttons; i++) {
-                FilterIconButton b = (FilterIconButton) listBorders.getChildAt(i);
-                b.setIcon(bmap);
-            }
-
-        }
-    }
-
     @Override
     protected void onDestroy() {
         if (mLoadBitmapTask != null) {
@@ -576,6 +525,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageFilterRS.destroyRenderScriptContext();
         FilteringPipeline.reset();
         ImageFilter.resetStatics();
+        FiltersManager.getPreviewManager().freeRSFilterScripts();
+        FiltersManager.getManager().freeRSFilterScripts();
         FiltersManager.reset();
         super.onDestroy();
     }
