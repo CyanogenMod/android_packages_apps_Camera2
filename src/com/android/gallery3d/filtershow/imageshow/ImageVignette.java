@@ -77,18 +77,21 @@ public class ImageVignette extends ImageShow {
 
         mElipse.setScrToImageMatrix(getScreenToImageMatrix(true));
 
+        boolean didComputeEllipses = false;
         switch (mask) {
             case (MotionEvent.ACTION_DOWN):
                 mElipse.actionDown(x, y, mVignetteRep);
                 break;
             case (MotionEvent.ACTION_UP):
             case (MotionEvent.ACTION_MOVE):
-
                 mElipse.actionMove(mActiveHandle, x, y, mVignetteRep);
                 setRepresentation(mVignetteRep);
+                didComputeEllipses = true;
                 break;
         }
-        computeEllipses();
+        if (!didComputeEllipses) {
+            computeEllipses();
+        }
         invalidate();
         return true;
     }
