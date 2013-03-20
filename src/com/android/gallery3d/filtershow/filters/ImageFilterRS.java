@@ -39,6 +39,12 @@ public abstract class ImageFilterRS extends ImageFilter {
 
     private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
 
+    private volatile Bitmap mSourceBitmap = null;
+
+    public Bitmap getSourceBitmap() {
+        return mSourceBitmap;
+    }
+
     // This must be used inside block synchronized on ImageFilterRS class object
     protected void prepare(Bitmap bitmap, float scaleFactor, int quality) {
         if (mOutPixelsAllocation == null || mInPixelsAllocation == null ||
@@ -87,6 +93,7 @@ public abstract class ImageFilterRS extends ImageFilter {
                     Log.w(LOGTAG, "Cannot apply before calling createRenderScriptContext");
                     return bitmap;
                 }
+                mSourceBitmap = bitmap;
                 prepare(bitmap, scaleFactor, quality);
                 runFilter();
                 update(bitmap);
@@ -101,6 +108,7 @@ public abstract class ImageFilterRS extends ImageFilter {
             displayLowMemoryToast();
             Log.e(LOGTAG, "not enough memory for filter " + getName(), e);
         }
+        mSourceBitmap = null;
         return bitmap;
     }
 
