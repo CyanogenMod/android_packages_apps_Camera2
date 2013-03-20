@@ -521,13 +521,14 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         }
         // TODO:  Using singletons is a bad design choice for many of these
         // due static reference leaks and in general.  Please refactor.
+        FilteringPipeline.getPipeline().turnOnPipeline(false);
         MasterImage.reset();
-        ImageFilterRS.destroyRenderScriptContext();
         FilteringPipeline.reset();
         ImageFilter.resetStatics();
         FiltersManager.getPreviewManager().freeRSFilterScripts();
         FiltersManager.getManager().freeRSFilterScripts();
         FiltersManager.reset();
+        ImageFilterRS.destroyRenderScriptContext();
         super.onDestroy();
     }
 
