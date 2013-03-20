@@ -169,19 +169,24 @@ public abstract class ImageFilterRS extends ImageFilter {
         return bitmapAlloc;
     }
 
-    public Allocation loadResourceAlpha(int resource) {
+    public Allocation loadScaledResourceAlpha(int resource, int inSampleSize) {
         Resources res = null;
         synchronized(ImageFilterRS.class) {
             res = sRS.getApplicationContext().getResources();
         }
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ALPHA_8;
+        options.inSampleSize      = inSampleSize;
         Bitmap bitmap = BitmapFactory.decodeResource(
                 res,
                 resource, options);
         Allocation ret = convertRGBAtoA(bitmap);
         bitmap.recycle();
         return ret;
+    }
+
+    public Allocation loadResourceAlpha(int resource) {
+        return loadScaledResourceAlpha(resource, 1);
     }
 
     public Allocation loadResource(int resource) {
