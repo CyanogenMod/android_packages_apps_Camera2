@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.presets;
 
 import android.graphics.Bitmap;
+import com.android.gallery3d.filtershow.cache.CachingPipeline;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
@@ -26,6 +27,7 @@ public class FilterEnvironment {
     private float mScaleFactor;
     private int mQuality;
     private FiltersManager mFiltersManager;
+    private CachingPipeline mCachingPipeline;
 
     public void setImagePreset(ImagePreset imagePreset) {
         mImagePreset = imagePreset;
@@ -62,7 +64,17 @@ public class FilterEnvironment {
     public Bitmap applyRepresentation(FilterRepresentation representation, Bitmap bitmap) {
         ImageFilter filter = mFiltersManager.getFilterForRepresentation(representation);
         filter.useRepresentation(representation);
-        filter.setImagePreset(mImagePreset);
-        return filter.apply(bitmap, mScaleFactor, mQuality);
+        filter.setEnvironment(this);
+        Bitmap ret = filter.apply(bitmap, mScaleFactor, mQuality);
+        filter.setEnvironment(null);
+        return ret;
+    }
+
+    public CachingPipeline getCachingPipeline() {
+        return mCachingPipeline;
+    }
+
+    public void setCachingPipeline(CachingPipeline cachingPipeline) {
+        mCachingPipeline = cachingPipeline;
     }
 }
