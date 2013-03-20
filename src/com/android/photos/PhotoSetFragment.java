@@ -16,6 +16,7 @@
 
 package com.android.photos;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
@@ -42,7 +43,7 @@ import com.android.photos.shims.MediaItemsLoader;
 import java.util.ArrayList;
 
 public class PhotoSetFragment extends Fragment implements OnItemClickListener,
-    LoaderCallbacks<Cursor>, MultiChoiceManager.Delegate, SelectionManager.Client  {
+    LoaderCallbacks<Cursor>, MultiChoiceManager.Delegate {
 
     private static final int LOADER_PHOTOSET = 1;
 
@@ -52,24 +53,25 @@ public class PhotoSetFragment extends Fragment implements OnItemClickListener,
     private boolean mInitialLoadComplete = false;
     private LoaderCompatShim<Cursor> mLoaderCompatShim;
     private PhotoThumbnailAdapter mAdapter;
-    private MultiChoiceManager mMultiChoiceManager;
-    private SelectionManager mSelectionManager;
+    private GalleryFragmentHost mHost;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Context context = getActivity();
         mAdapter = new PhotoThumbnailAdapter(context);
-        mMultiChoiceManager = new MultiChoiceManager(context, this);
-        mMultiChoiceManager.setSelectionManager(mSelectionManager);
     }
 
     @Override
-    public void setSelectionManager(SelectionManager manager) {
-        mSelectionManager = manager;
-        if (mMultiChoiceManager != null) {
-            mMultiChoiceManager.setSelectionManager(manager);
-        }
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mHost = (GalleryFragmentHost) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mHost = null;
     }
 
     @Override
@@ -84,7 +86,7 @@ public class PhotoSetFragment extends Fragment implements OnItemClickListener,
         mEmptyView.setVisibility(View.GONE);
         mPhotoSetView.setAdapter(mAdapter);
         mPhotoSetView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
-        mPhotoSetView.setMultiChoiceModeListener(mMultiChoiceManager);
+        mPhotoSetView.setMultiChoiceModeListener(mHost.getMultiChoiceManager());
         getLoaderManager().initLoader(LOADER_PHOTOSET, null, this);
         updateEmptyStatus();
         return root;
