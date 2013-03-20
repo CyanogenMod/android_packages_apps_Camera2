@@ -21,29 +21,29 @@ import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 import com.android.camera.CameraActivity;
 import com.android.gallery3d.R;
 
 import java.util.ArrayList;
 
-public class GalleryActivity extends Activity {
+public class GalleryActivity extends Activity implements GalleryFragmentHost {
 
-    private SelectionManager mSelectionManager;
+    private MultiChoiceManager mMultiChoiceManager;
     private ViewPager mViewPager;
     private TabsAdapter mTabsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSelectionManager = new SelectionManager(this);
+        mMultiChoiceManager = new MultiChoiceManager(this);
         mViewPager = new ViewPager(this);
         mViewPager.setId(R.id.viewpager);
         setContentView(mViewPager);
@@ -134,11 +134,8 @@ public class GalleryActivity extends Activity {
         @Override
         public Fragment getItem(int position) {
             TabInfo info = mTabs.get(position);
-            Fragment item = Fragment.instantiate(mActivity, info.clss.getName(),
+            return Fragment.instantiate(mActivity, info.clss.getName(),
                     info.args);
-            ((SelectionManager.Client) item).setSelectionManager(
-                    mActivity.mSelectionManager);
-            return item;
         }
 
         @Override
@@ -149,6 +146,12 @@ public class GalleryActivity extends Activity {
         @Override
         public void onPageSelected(int position) {
             mActionBar.setSelectedNavigationItem(position);
+        }
+
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            super.setPrimaryItem(container, position, object);
+            mActivity.mMultiChoiceManager.setDelegate((MultiChoiceManager.Delegate) object);
         }
 
         @Override
@@ -172,5 +175,10 @@ public class GalleryActivity extends Activity {
         @Override
         public void onTabReselected(Tab tab, FragmentTransaction ft) {
         }
+    }
+
+    @Override
+    public MultiChoiceManager getMultiChoiceManager() {
+        return mMultiChoiceManager;
     }
 }

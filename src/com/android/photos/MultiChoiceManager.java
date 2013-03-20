@@ -32,9 +32,7 @@ import android.widget.ShareActionProvider;
 import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.app.MuteVideo;
 import com.android.gallery3d.app.TrimVideo;
-import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.util.GalleryUtils;
@@ -65,13 +63,19 @@ public class MultiChoiceManager implements MultiChoiceModeListener,
 
     private ArrayList<Uri> mSelectedShareableUrisArray = new ArrayList<Uri>();
 
-    public MultiChoiceManager(Context context, Delegate delegate) {
-        mContext = context;
-        mDelegate = delegate;
+    public MultiChoiceManager(Activity activity) {
+        mContext = activity;
+        mSelectionManager = new SelectionManager(activity);
     }
 
-    public void setSelectionManager(SelectionManager selectionManager) {
-        mSelectionManager = selectionManager;
+    public void setDelegate(Delegate delegate) {
+        if (mDelegate == delegate) {
+            return;
+        }
+        if (mActionMode != null) {
+            mActionMode.finish();
+        }
+        mDelegate = delegate;
     }
 
     @Override
@@ -95,6 +99,7 @@ public class MultiChoiceManager implements MultiChoiceModeListener,
             return GalleryUtils.MIME_TYPE_ALL;
         }
     }
+
     @Override
     public void onItemCheckedStateChanged(ActionMode mode, int position, long id,
             boolean checked) {
