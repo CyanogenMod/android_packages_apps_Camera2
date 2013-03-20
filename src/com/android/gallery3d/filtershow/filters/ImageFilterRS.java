@@ -23,52 +23,14 @@ import android.support.v8.renderscript.*;
 import android.util.Log;
 import android.content.res.Resources;
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.cache.CachingPipeline;
 
 public abstract class ImageFilterRS extends ImageFilter {
     private static final String LOGTAG = "ImageFilterRS";
 
-    protected static volatile Allocation mInPixelsAllocation;
-    protected static volatile Allocation mOutPixelsAllocation;
-
     private static volatile RenderScript sRS = null;
-    private static volatile int sWidth = 0;
-    private static volatile int sHeight = 0;
-
     private static volatile Resources sResources = null;
     private volatile boolean mResourcesLoaded = false;
-
-    private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
-
-    private volatile Bitmap mSourceBitmap = null;
-
-    public Bitmap getSourceBitmap() {
-        return mSourceBitmap;
-    }
-
-    // This must be used inside block synchronized on ImageFilterRS class object
-    protected void prepare(Bitmap bitmap, float scaleFactor, int quality) {
-        if (mOutPixelsAllocation == null || mInPixelsAllocation == null ||
-                bitmap.getWidth() != sWidth || bitmap.getHeight() != sHeight) {
-            destroyPixelAllocations();
-            Bitmap bitmapBuffer = bitmap;
-            if (bitmap.getConfig() == null || bitmap.getConfig() != BITMAP_CONFIG) {
-                bitmapBuffer = bitmap.copy(BITMAP_CONFIG, true);
-            }
-            mOutPixelsAllocation = Allocation.createFromBitmap(sRS, bitmapBuffer,
-                    Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
-            mInPixelsAllocation = Allocation.createTyped(sRS,
-                    mOutPixelsAllocation.getType());
-        }
-        mInPixelsAllocation.copyFrom(bitmap);
-        if (bitmap.getWidth() != sWidth
-            || bitmap.getHeight() != sHeight || !isResourcesLoaded()) {
-            freeResources();
-            createFilter(sResources, scaleFactor, quality);
-            sWidth = bitmap.getWidth();
-            sHeight = bitmap.getHeight();
-            setResourcesLoaded(true);
-        }
-    }
 
     // This must be used inside block synchronized on ImageFilterRS class object
     protected abstract void createFilter(android.content.res.Resources res,
@@ -79,7 +41,17 @@ public abstract class ImageFilterRS extends ImageFilter {
 
     // This must be used inside block synchronized on ImageFilterRS class object
     protected void update(Bitmap bitmap) {
-        mOutPixelsAllocation.copyTo(bitmap);
+        getOutPixelsAllocation().copyTo(bitmap);
+    }
+
+    protected Allocation getInPixelsAllocation() {
+        CachingPipeline pipeline = getEnvironment().getCachingPipeline();
+        return pipeline.getInPixelsAllocation();
+    }
+
+    protected Allocation getOutPixelsAllocation() {
+        CachingPipeline pipeline = getEnvironment().getCachingPipeline();
+        return pipeline.getOutPixelsAllocation();
     }
 
     @Override
@@ -93,8 +65,14 @@ public abstract class ImageFilterRS extends ImageFilter {
                     Log.w(LOGTAG, "Cannot apply before calling createRenderScriptContext");
                     return bitmap;
                 }
-                mSourceBitmap = bitmap;
-                prepare(bitmap, scaleFactor, quality);
+                CachingPipeline pipeline = getEnvironment().getCachingPipeline();
+                boolean needsUpdate = pipeline.prepareRenderscriptAllocations(bitmap);
+                if (needsUpdate || !isResourcesLoaded()) {
+                    // the allocations changed size
+                    freeResources();
+                    createFilter(sResources, scaleFactor, quality);
+                    setResourcesLoaded(true);
+                }
                 runFilter();
                 update(bitmap);
             }
@@ -108,7 +86,6 @@ public abstract class ImageFilterRS extends ImageFilter {
             displayLowMemoryToast();
             Log.e(LOGTAG, "not enough memory for filter " + getName(), e);
         }
-        mSourceBitmap = null;
         return bitmap;
     }
 
@@ -123,24 +100,9 @@ public abstract class ImageFilterRS extends ImageFilter {
         }
         sRS = RenderScript.create(context);
         sResources = context.getResources();
-        destroyPixelAllocations();
-    }
-
-    private static synchronized void destroyPixelAllocations() {
-        if (mInPixelsAllocation != null) {
-            mInPixelsAllocation.destroy();
-            mInPixelsAllocation = null;
-        }
-        if (mOutPixelsAllocation != null) {
-            mOutPixelsAllocation.destroy();
-            mOutPixelsAllocation = null;
-        }
-        sWidth = 0;
-        sHeight = 0;
     }
 
     public static synchronized void destroyRenderScriptContext() {
-        destroyPixelAllocations();
         sRS.destroy();
         sRS = null;
         sResources = null;
