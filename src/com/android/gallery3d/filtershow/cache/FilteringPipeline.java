@@ -32,14 +32,14 @@ public class FilteringPipeline implements Handler.Callback {
 
     private static volatile FilteringPipeline sPipeline = null;
     private static final String LOGTAG = "FilteringPipeline";
-    private volatile GeometryMetadata mPreviousGeometry = null;
-    private volatile float mPreviewScaleFactor = 1.0f;
+    private boolean DEBUG = false;
+
+    private static long HIRES_DELAY = 100; // in ms
+
     private volatile boolean mPipelineIsOn = false;
 
-    private volatile Bitmap mOriginalBitmap = null;
-    private volatile Bitmap mResizedOriginalBitmap = null;
-
-    private boolean DEBUG = false;
+    private CachingPipeline mAccessoryPipeline = null;
+    private CachingPipeline mPreviewPipeline = null;
 
     private HandlerThread mHandlerThread = null;
     private final static int NEW_PRESET = 0;
@@ -82,7 +82,7 @@ public class FilteringPipeline implements Handler.Callback {
             case COMPUTE_PRESET: {
                 ImagePreset preset = (ImagePreset) msg.obj;
                 TripleBufferBitmap buffer = MasterImage.getImage().getDoubleBuffer();
-                compute(buffer, preset, COMPUTE_PRESET);
+                mPreviewPipeline.compute(buffer, preset, COMPUTE_PRESET);
                 buffer.swapProducer();
                 Message uimsg = mUIHandler.obtainMessage(NEW_PRESET);
                 mUIHandler.sendMessage(uimsg);
@@ -96,7 +96,7 @@ public class FilteringPipeline implements Handler.Callback {
                     }
                 }
                 RenderingRequest request = (RenderingRequest) msg.obj;
-                render(request);
+                mAccessoryPipeline.render(request);
                 Message uimsg = mUIHandler.obtainMessage(NEW_RENDERING_REQUEST);
                 uimsg.obj = request;
                 mUIHandler.sendMessage(uimsg);
@@ -106,18 +106,13 @@ public class FilteringPipeline implements Handler.Callback {
         return false;
     }
 
-    private static float RESIZE_FACTOR = 0.8f;
-    private static float MAX_PROCESS_TIME = 100; // in ms
-    private static long HIRES_DELAY = 100; // in ms
-
-    private volatile Allocation mOriginalAllocation = null;
-    private volatile Allocation mFiltersOnlyOriginalAllocation =  null;
-
     private FilteringPipeline() {
         mHandlerThread = new HandlerThread("FilteringPipeline",
                 Process.THREAD_PRIORITY_FOREGROUND);
         mHandlerThread.start();
         mProcessingHandler = new Handler(mHandlerThread.getLooper(), this);
+        mAccessoryPipeline = new CachingPipeline(FiltersManager.getManager());
+        mPreviewPipeline = new CachingPipeline(FiltersManager.getPreviewManager());
     }
 
     public synchronized static FilteringPipeline getPipeline() {
@@ -127,61 +122,17 @@ public class FilteringPipeline implements Handler.Callback {
         return sPipeline;
     }
 
-    public synchronized void setOriginal(Bitmap bitmap) {
-        mOriginalBitmap = bitmap;
+    public void setOriginal(Bitmap bitmap) {
+        if (mPipelineIsOn) {
+            Log.e(LOGTAG, "setOriginal called after pipeline initialization!");
+            return;
+        }
         Log.v(LOGTAG,"setOriginal, size " + bitmap.getWidth() + " x " + bitmap.getHeight());
-        ImagePreset preset = MasterImage.getImage().getPreset();
-        preset.setupEnvironment();
-        updateOriginalAllocation(preset);
-        updatePreviewBuffer();
-    }
-
-    public synchronized boolean updateOriginalAllocation(ImagePreset preset) {
-        if (mOriginalBitmap == null) {
-            return false;
-        }
-        /*
-        //FIXME: turn back on the on-the-fly resize.
-        int w = (int) (mOriginalBitmap.getWidth() * mResizeFactor);
-        int h = (int) (mOriginalBitmap.getHeight() * mResizeFactor);
-        if (!needsGeometryRepaint() && mResizedOriginalBitmap != null && w == mResizedOriginalBitmap.getWidth()) {
-            return false;
-        }
-        mResizedOriginalBitmap = Bitmap.createScaledBitmap(mOriginalBitmap, w, h, true);
-        */
-
-        GeometryMetadata geometry = preset.getGeometry();
-        if (mPreviousGeometry != null && geometry.equals(mPreviousGeometry)) {
-            return false;
-        }
-
-        if (DEBUG) {
-            Log.v(LOGTAG, "geometry has changed");
-        }
-
-        RenderScript RS = ImageFilterRS.getRenderScriptContext();
-        if (mFiltersOnlyOriginalAllocation != null) {
-            mFiltersOnlyOriginalAllocation.destroy();
-            mFiltersOnlyOriginalAllocation = null;
-        }
-        mFiltersOnlyOriginalAllocation = Allocation.createFromBitmap(RS, mOriginalBitmap,
-                Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
-        if (mOriginalAllocation != null) {
-            mOriginalAllocation.destroy();
-            mOriginalAllocation = null;
-        }
-        mResizedOriginalBitmap = preset.applyGeometry(mOriginalBitmap);
-        mOriginalAllocation = Allocation.createFromBitmap(RS, mResizedOriginalBitmap,
-                Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
-
-        mPreviousGeometry = new GeometryMetadata(geometry);
-        return true;
+        mAccessoryPipeline.setOriginal(bitmap);
+        mPreviewPipeline.setOriginal(bitmap);
     }
 
     public void postRenderingRequest(RenderingRequest request) {
-        if (mOriginalAllocation == null) {
-            return;
-        }
         if (!mPipelineIsOn) {
             return;
         }
@@ -198,15 +149,15 @@ public class FilteringPipeline implements Handler.Callback {
         }
     }
 
-    public synchronized void updatePreviewBuffer() {
-        if (mOriginalAllocation == null) {
+    public void updatePreviewBuffer() {
+        if (!mPipelineIsOn) {
             return;
         }
         mHasUnhandledPreviewRequest = true;
         if (mProcessingHandler.hasMessages(COMPUTE_PRESET)) {
             return;
         }
-        if (!needsRepaint()) {
+        if (!mPreviewPipeline.needsRepaint()) {
             return;
         }
         if (MasterImage.getImage().getPreset() == null) {
@@ -218,147 +169,24 @@ public class FilteringPipeline implements Handler.Callback {
         mProcessingHandler.sendMessageAtFrontOfQueue(msg);
     }
 
-    private void setPresetParameters(ImagePreset preset) {
-        float scale = mPreviewScaleFactor;
-        preset.setScaleFactor(scale);
-        if (scale < 1.0f) {
-            preset.setQuality(ImagePreset.QUALITY_PREVIEW);
-        } else {
-            preset.setQuality(ImagePreset.QUALITY_PREVIEW);
-        }
-    }
-
-    private String getType(RenderingRequest request) {
-        if (request.getType() == RenderingRequest.ICON_RENDERING) {
-            return "ICON_RENDERING";
-        }
-        if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
-            return "FILTERS_RENDERING";
-        }
-        if (request.getType() == RenderingRequest.FULL_RENDERING) {
-            return "FULL_RENDERING";
-        }
-        if (request.getType() == RenderingRequest.GEOMETRY_RENDERING) {
-            return "GEOMETRY_RENDERING";
-        }
-        if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
-            return "PARTIAL_RENDERING";
-        }
-        return "UNKNOWN TYPE!";
-    }
-
-    private synchronized void render(RenderingRequest request) {
-        if ((request.getType() != RenderingRequest.PARTIAL_RENDERING
-                && request.getBitmap() == null)
-                || request.getImagePreset() == null) {
-            return;
-        }
-        if (DEBUG) {
-            Log.v(LOGTAG, "render image of type " + getType(request));
-        }
-
-        Bitmap bitmap = request.getBitmap();
-        ImagePreset preset = request.getImagePreset();
-        setPresetParameters(preset);
-        preset.setupEnvironment();
-
-        if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
-            ImageLoader loader = MasterImage.getImage().getImageLoader();
-            if (loader == null) {
-                Log.w(LOGTAG, "loader not yet setup, cannot handle: " + getType(request));
-                return;
-            }
-            bitmap = loader.getScaleOneImageForPreset(null, preset,
-                    request.getBounds(), request.getDestination(), false);
-            if (bitmap == null) {
-                Log.w(LOGTAG, "could not get bitmap for: " + getType(request));
-                return;
-            }
-        }
-
-        if (request.getType() != RenderingRequest.ICON_RENDERING
-                && request.getType() != RenderingRequest.PARTIAL_RENDERING) {
-            updateOriginalAllocation(preset);
-        }
-        if (DEBUG) {
-            Log.v(LOGTAG, "after update, req bitmap (" + bitmap.getWidth() + "x" + bitmap.getHeight()
-                    +" ? resizeOriginal (" + mResizedOriginalBitmap.getWidth() + "x"
-                    + mResizedOriginalBitmap.getHeight());
-        }
-        if (request.getType() == RenderingRequest.FULL_RENDERING
-                || request.getType() == RenderingRequest.GEOMETRY_RENDERING) {
-            mOriginalAllocation.copyTo(bitmap);
-        } else if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
-            mFiltersOnlyOriginalAllocation.copyTo(bitmap);
-        }
-
-        if (request.getType() == RenderingRequest.FULL_RENDERING
-                || request.getType() == RenderingRequest.FILTERS_RENDERING
-                || request.getType() == RenderingRequest.ICON_RENDERING
-                || request.getType() == RenderingRequest.PARTIAL_RENDERING) {
-            Bitmap bmp = preset.apply(bitmap);
-            request.setBitmap(bmp);
-
-            FiltersManager.getManager().freeFilterResources(preset);
-        }
-
-    }
-
-    private synchronized void compute(TripleBufferBitmap buffer, ImagePreset preset, int type) {
-        if (DEBUG) {
-            Log.v(LOGTAG, "compute preset " + preset);
-            preset.showFilters();
-        }
-
-        String thread = Thread.currentThread().getName();
-        long time = System.currentTimeMillis();
-        setPresetParameters(preset);
-        preset.setupEnvironment(FiltersManager.getPreviewManager());
-
-        if (updateOriginalAllocation(preset)) {
-            buffer.updateBitmaps(mResizedOriginalBitmap);
-        }
-        Bitmap bitmap = buffer.getProducer();
-        long time2 = System.currentTimeMillis();
-
-        if (bitmap == null || (bitmap.getWidth() != mResizedOriginalBitmap.getWidth())
-                || (bitmap.getHeight() != mResizedOriginalBitmap.getHeight())) {
-            buffer.updateBitmaps(mResizedOriginalBitmap);
-            bitmap = buffer.getProducer();
-        }
-        mOriginalAllocation.copyTo(bitmap);
-
-        bitmap = preset.apply(bitmap);
-        FiltersManager.getPreviewManager().freeFilterResources(preset);
-
-        time = System.currentTimeMillis() - time;
-        time2 = System.currentTimeMillis() - time2;
-        if (DEBUG) {
-            Log.v(LOGTAG, "Applying type " + type + " filters to bitmap "
-                    + bitmap + " (" + bitmap.getWidth() + " x " + bitmap.getHeight()
-                    + ") took " + time + " ms, " + time2 + " ms for the filter, on thread " + thread);
-        }
-    }
-
-    private synchronized boolean needsRepaint() {
-        TripleBufferBitmap buffer = MasterImage.getImage().getDoubleBuffer();
-        return buffer.checkRepaintNeeded();
-    }
-
     public void setPreviewScaleFactor(float previewScaleFactor) {
-        mPreviewScaleFactor = previewScaleFactor;
-    }
-
-    public float getPreviewScaleFactor() {
-        return mPreviewScaleFactor;
+        mAccessoryPipeline.setPreviewScaleFactor(previewScaleFactor);
+        mPreviewPipeline.setPreviewScaleFactor(previewScaleFactor);
     }
 
     public static synchronized void reset() {
+        sPipeline.mAccessoryPipeline.reset();
+        sPipeline.mPreviewPipeline.reset();
         sPipeline.mHandlerThread.quit();
         sPipeline = null;
     }
 
     public void turnOnPipeline(boolean t) {
         mPipelineIsOn = t;
+        if (mPipelineIsOn) {
+            assert(mPreviewPipeline.isInitialized());
+            assert(mAccessoryPipeline.isInitialized());
+            updatePreviewBuffer();
+        }
     }
 }
