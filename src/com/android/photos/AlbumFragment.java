@@ -16,6 +16,7 @@
 
 package com.android.photos;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
@@ -42,7 +43,7 @@ import com.android.photos.shims.MediaItemsLoader;
 import java.util.ArrayList;
 
 public class AlbumFragment extends Fragment implements OnItemClickListener,
-    LoaderCallbacks<Cursor>, MultiChoiceManager.Delegate, SelectionManager.Client  {
+    LoaderCallbacks<Cursor>, MultiChoiceManager.Delegate {
 
     protected static final String KEY_ALBUM_URI = "AlbumUri";
     private static final int LOADER_ALBUM = 1;
@@ -53,28 +54,17 @@ public class AlbumFragment extends Fragment implements OnItemClickListener,
     private boolean mInitialLoadComplete = false;
     private LoaderCompatShim<Cursor> mLoaderCompatShim;
     private PhotoThumbnailAdapter mAdapter;
-    private MultiChoiceManager mMultiChoiceManager;
-    private SelectionManager mSelectionManager;
     private String mAlbumPath;
+    private GalleryFragmentHost mHost;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Context context = getActivity();
         mAdapter = new PhotoThumbnailAdapter(context);
-        mMultiChoiceManager = new MultiChoiceManager(context, this);
-        mMultiChoiceManager.setSelectionManager(mSelectionManager);
         Bundle args = getArguments();
         if (args != null) {
             mAlbumPath = args.getString(KEY_ALBUM_URI, null);
-        }
-    }
-
-    @Override
-    public void setSelectionManager(SelectionManager manager) {
-        mSelectionManager = manager;
-        if (mMultiChoiceManager != null) {
-            mMultiChoiceManager.setSelectionManager(manager);
         }
     }
 
@@ -90,7 +80,7 @@ public class AlbumFragment extends Fragment implements OnItemClickListener,
         mEmptyView.setVisibility(View.GONE);
         mAlbumView.setAdapter(mAdapter);
         mAlbumView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
-        mAlbumView.setMultiChoiceModeListener(mMultiChoiceManager);
+        mAlbumView.setMultiChoiceModeListener(mHost.getMultiChoiceManager());
         getLoaderManager().initLoader(LOADER_ALBUM, null, this);
         updateEmptyStatus();
         return root;
@@ -101,6 +91,18 @@ public class AlbumFragment extends Fragment implements OnItemClickListener,
         mAlbumView.setVisibility(empty ? View.GONE : View.VISIBLE);
         mEmptyView.setVisibility(empty && mInitialLoadComplete
                 ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mHost = (GalleryFragmentHost) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mHost = null;
     }
 
     @Override
