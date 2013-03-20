@@ -43,6 +43,10 @@ import java.util.List;
 public class MultiChoiceManager implements MultiChoiceModeListener,
     OnShareTargetSelectedListener, SelectionManager.SelectedUriSource {
 
+    public interface Provider {
+        public MultiChoiceManager getMultiChoiceManager();
+    }
+
     public interface Delegate {
         public SparseBooleanArray getSelectedItemPositions();
         public int getSelectedItemCount();
