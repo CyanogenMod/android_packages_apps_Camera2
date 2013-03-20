@@ -19,25 +19,30 @@ package com.android.photos;
 import android.app.Activity;
 import android.os.Bundle;
 
-public class AlbumActivity extends Activity {
+public class AlbumActivity extends Activity implements GalleryFragmentHost {
 
     public static final String KEY_ALBUM_URI = AlbumFragment.KEY_ALBUM_URI;
     public static final String KEY_ALBUM_TITLE = "AlbumTitle";
 
-    private SelectionManager mSelectionManager;
+    private MultiChoiceManager mMultiChoiceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle intentExtras = getIntent().getExtras();
-        mSelectionManager = new SelectionManager(this);
+        mMultiChoiceManager = new MultiChoiceManager(this);
         if (savedInstanceState == null) {
             AlbumFragment albumFragment = new AlbumFragment();
+            mMultiChoiceManager.setDelegate(albumFragment);
             albumFragment.setArguments(intentExtras);
-            albumFragment.setSelectionManager(mSelectionManager);
             getFragmentManager().beginTransaction().add(android.R.id.content,
                     albumFragment).commit();
         }
         getActionBar().setTitle(intentExtras.getString(KEY_ALBUM_TITLE));
+    }
+
+    @Override
+    public MultiChoiceManager getMultiChoiceManager() {
+        return mMultiChoiceManager;
     }
 }

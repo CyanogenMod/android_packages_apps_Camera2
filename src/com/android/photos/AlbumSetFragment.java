@@ -16,6 +16,7 @@
 
 package com.android.photos;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
@@ -32,7 +33,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.android.gallery3d.R;
 import com.android.photos.adapters.AlbumSetCursorAdapter;
@@ -44,14 +44,13 @@ import java.util.ArrayList;
 
 
 public class AlbumSetFragment extends Fragment implements OnItemClickListener,
-    LoaderCallbacks<Cursor>, MultiChoiceManager.Delegate, SelectionManager.Client {
+    LoaderCallbacks<Cursor>, MultiChoiceManager.Delegate {
 
     private GridView mAlbumSetView;
     private View mEmptyView;
     private AlbumSetCursorAdapter mAdapter;
     private LoaderCompatShim<Cursor> mLoaderCompatShim;
-    private MultiChoiceManager mMultiChoiceManager;
-    private SelectionManager mSelectionManager;
+    private GalleryFragmentHost mHost;
 
     private static final int LOADER_ALBUMSET = 1;
 
@@ -60,16 +59,18 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
         super.onCreate(savedInstanceState);
         Context context = getActivity();
         mAdapter = new AlbumSetCursorAdapter(context);
-        mMultiChoiceManager = new MultiChoiceManager(context, this);
-        mMultiChoiceManager.setSelectionManager(mSelectionManager);
     }
 
     @Override
-    public void setSelectionManager(SelectionManager manager) {
-        mSelectionManager = manager;
-        if (mMultiChoiceManager != null) {
-            mMultiChoiceManager.setSelectionManager(manager);
-        }
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mHost = (GalleryFragmentHost) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mHost = null;
     }
 
     @Override
@@ -81,7 +82,7 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
         mEmptyView.setVisibility(View.GONE);
         mAlbumSetView.setAdapter(mAdapter);
         mAlbumSetView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
-        mAlbumSetView.setMultiChoiceModeListener(mMultiChoiceManager);
+        mAlbumSetView.setMultiChoiceModeListener(mHost.getMultiChoiceManager());
         mAlbumSetView.setOnItemClickListener(this);
         getLoaderManager().initLoader(LOADER_ALBUMSET, null, this);
         updateEmptyStatus();
