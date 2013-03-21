@@ -104,14 +104,15 @@ public class MediaSetLoader extends AsyncTaskLoader<Cursor> implements LoaderCom
 
     @Override
     public Cursor loadInBackground() {
-        mMediaSet.loadIfDirty();
+        // TODO: This probably doesn't work
+        mMediaSet.reload();
         final MatrixCursor cursor = new MatrixCursor(AlbumSetLoader.PROJECTION);
         final Object[] row = new Object[AlbumSetLoader.PROJECTION.length];
         int count = mMediaSet.getSubMediaSetCount();
         ArrayList<MediaItem> coverItems = new ArrayList<MediaItem>(count);
         for (int i = 0; i < count; i++) {
             MediaSet m = mMediaSet.getSubMediaSet(i);
-            m.loadIfDirty();
+            m.reload();
             row[AlbumSetLoader.INDEX_ID] = i;
             row[AlbumSetLoader.INDEX_TITLE] = m.getName();
             row[AlbumSetLoader.INDEX_COUNT] = m.getMediaItemCount();

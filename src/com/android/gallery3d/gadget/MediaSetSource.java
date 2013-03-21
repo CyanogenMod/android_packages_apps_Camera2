@@ -83,7 +83,7 @@ public class MediaSetSource implements WidgetSource, ContentListener {
 
     @Override
     public void reload() {
-        long version = mSource.loadIfDirty();
+        long version = mSource.reload();
         if (mSourceVersion != version) {
             mSourceVersion = version;
             mCacheStart = 0;
