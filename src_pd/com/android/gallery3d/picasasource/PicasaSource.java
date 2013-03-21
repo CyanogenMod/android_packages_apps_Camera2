@@ -66,12 +66,8 @@ public class PicasaSource extends MediaSource {
         }
 
         @Override
-        protected boolean isDirtyLocked() {
-            return false;
-        }
-
-        @Override
-        protected void load() {
+        public long reload() {
+            return mDataVersion;
         }
     }
 

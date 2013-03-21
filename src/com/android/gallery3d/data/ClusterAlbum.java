@@ -18,7 +18,7 @@ package com.android.gallery3d.data;
 
 import java.util.ArrayList;
 
-public class ClusterAlbum extends MediaSetWrapper implements ContentListener {
+public class ClusterAlbum extends MediaSet implements ContentListener {
     @SuppressWarnings("unused")
     private static final String TAG = "ClusterAlbum";
     private ArrayList<Path> mPaths = new ArrayList<Path>();
@@ -29,7 +29,7 @@ public class ClusterAlbum extends MediaSetWrapper implements ContentListener {
 
     public ClusterAlbum(Path path, DataManager dataManager,
             MediaSet clusterAlbumSet) {
-        super(clusterAlbumSet, path, nextVersionNumber());
+        super(path, nextVersionNumber());
         mDataManager = dataManager;
         mClusterAlbumSet = clusterAlbumSet;
         mClusterAlbumSet.addContentListener(this);
@@ -103,6 +103,14 @@ public class ClusterAlbum extends MediaSetWrapper implements ContentListener {
     @Override
     public int getTotalMediaItemCount() {
         return mPaths.size();
+    }
+
+    @Override
+    public long reload() {
+        if (mClusterAlbumSet.reload() > mDataVersion) {
+            mDataVersion = nextVersionNumber();
+        }
+        return mDataVersion;
     }
 
     @Override

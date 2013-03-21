@@ -53,7 +53,7 @@ public class RealDataTest extends AndroidTestCase {
     class TestLocalImage {
         public void run() {
             MediaSet set = mDataManager.getMediaSet("/local/image");
-            set.loadIfDirty();
+            set.reload();
             Log.v(TAG, "LocalAlbumSet (Image)");
             dumpMediaSet(set, "");
         }
@@ -62,7 +62,7 @@ public class RealDataTest extends AndroidTestCase {
     class TestLocalVideo {
         public void run() {
             MediaSet set = mDataManager.getMediaSet("/local/video");
-            set.loadIfDirty();
+            set.reload();
             Log.v(TAG, "LocalAlbumSet (Video)");
             dumpMediaSet(set, "");
         }
@@ -71,7 +71,7 @@ public class RealDataTest extends AndroidTestCase {
     class TestPicasa implements Runnable {
         public void run() {
             MediaSet set = mDataManager.getMediaSet("/picasa");
-            set.loadIfDirty();
+            set.reload();
             Log.v(TAG, "PicasaAlbumSet");
             dumpMediaSet(set, "");
         }
