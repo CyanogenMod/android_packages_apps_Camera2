@@ -41,10 +41,6 @@ public class SelectionManager {
         public ArrayList<Uri> getSelectedShareableUris();
     }
 
-    public interface Client {
-        public void setSelectionManager(SelectionManager manager);
-    }
-
     public SelectionManager(Activity activity) {
         mActivity = activity;
         if (ApiHelper.AT_LEAST_16) {
