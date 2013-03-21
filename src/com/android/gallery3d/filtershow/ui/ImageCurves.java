@@ -79,6 +79,11 @@ public class ImageCurves extends ImageShow {
     }
 
     @Override
+    protected boolean enableComparison() {
+        return false;
+    }
+
+    @Override
     public boolean useUtilityPanel() {
         return true;
     }
