@@ -16,8 +16,6 @@
 
 package com.android.photos;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.Intent;
@@ -26,12 +24,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore.Files.FileColumns;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
 import com.android.gallery3d.R;
@@ -43,14 +38,10 @@ import com.android.photos.shims.MediaSetLoader;
 import java.util.ArrayList;
 
 
-public class AlbumSetFragment extends Fragment implements OnItemClickListener,
-    LoaderCallbacks<Cursor>, MultiChoiceManager.Delegate {
+public class AlbumSetFragment extends MultiSelectGridFragment implements LoaderCallbacks<Cursor> {
 
-    private GridView mAlbumSetView;
-    private View mEmptyView;
     private AlbumSetCursorAdapter mAdapter;
     private LoaderCompatShim<Cursor> mLoaderCompatShim;
-    private GalleryFragmentHost mHost;
 
     private static final int LOADER_ALBUMSET = 1;
 
@@ -62,31 +53,18 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mHost = (GalleryFragmentHost) activity;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mHost = null;
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.album_set, container, false);
-        mAlbumSetView = (GridView) root.findViewById(android.R.id.list);
-        mEmptyView = root.findViewById(android.R.id.empty);
-        mEmptyView.setVisibility(View.GONE);
-        mAlbumSetView.setAdapter(mAdapter);
-        mAlbumSetView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
-        mAlbumSetView.setMultiChoiceModeListener(mHost.getMultiChoiceManager());
-        mAlbumSetView.setOnItemClickListener(this);
+        View root = super.onCreateView(inflater, container, savedInstanceState);
         getLoaderManager().initLoader(LOADER_ALBUMSET, null, this);
-        updateEmptyStatus();
         return root;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getGridView().setColumnWidth(getActivity().getResources()
+                .getDimensionPixelSize(R.dimen.album_set_item_width));
     }
 
     @Override
@@ -102,13 +80,7 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
     public void onLoadFinished(Loader<Cursor> loader,
             Cursor data) {
         mAdapter.swapCursor(data);
-        updateEmptyStatus();
-    }
-
-    private void updateEmptyStatus() {
-        boolean empty = (mAdapter == null || mAdapter.getCount() == 0);
-        mAlbumSetView.setVisibility(empty ? View.GONE : View.VISIBLE);
-        mEmptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
+        setAdapter(mAdapter);
     }
 
     @Override
@@ -116,12 +88,12 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
     }
 
     @Override
-    public void onItemClick(AdapterView<?> av, View v, int pos, long id) {
+    public void onGridItemClick(GridView g, View v, int position, long id) {
         if (mLoaderCompatShim == null) {
             // Not fully initialized yet, discard
             return;
         }
-        Cursor item = (Cursor) mAdapter.getItem(pos);
+        Cursor item = (Cursor) getItemAtPosition(position);
         Context context = getActivity();
         Intent intent = new Intent(context, AlbumActivity.class);
         intent.putExtra(AlbumActivity.KEY_ALBUM_URI,
@@ -142,18 +114,8 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
     }
 
     @Override
-    public Object getItemAtPosition(int position) {
-        return mAdapter.getItem(position);
-    }
-
-    @Override
     public ArrayList<Uri> getSubItemUrisForItem(Object item) {
         return mLoaderCompatShim.urisForSubItems((Cursor) item);
-    }
-
-    @Override
-    public Object getPathForItemAtPosition(int position) {
-        return mLoaderCompatShim.getPathForItem((Cursor) mAdapter.getItem(position));
     }
 
     @Override
@@ -162,17 +124,12 @@ public class AlbumSetFragment extends Fragment implements OnItemClickListener,
     }
 
     @Override
-    public SparseBooleanArray getSelectedItemPositions() {
-        return mAlbumSetView.getCheckedItemPositions();
-    }
-
-    @Override
-    public int getSelectedItemCount() {
-        return mAlbumSetView.getCheckedItemCount();
-    }
-
-    @Override
     public Uri getItemUri(Object item) {
         return mLoaderCompatShim.uriForItem((Cursor) item);
+    }
+
+    @Override
+    public Object getPathForItem(Object item) {
+        return mLoaderCompatShim.getPathForItem((Cursor) item);
     }
 }
