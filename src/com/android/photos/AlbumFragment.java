@@ -16,8 +16,6 @@
 
 package com.android.photos;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.Intent;
@@ -25,15 +23,11 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
-import com.android.gallery3d.R;
 import com.android.gallery3d.app.Gallery;
 import com.android.photos.adapters.PhotoThumbnailAdapter;
 import com.android.photos.data.PhotoSetLoader;
@@ -42,20 +36,14 @@ import com.android.photos.shims.MediaItemsLoader;
 
 import java.util.ArrayList;
 
-public class AlbumFragment extends Fragment implements OnItemClickListener,
-    LoaderCallbacks<Cursor>, MultiChoiceManager.Delegate {
+public class AlbumFragment extends MultiSelectGridFragment implements LoaderCallbacks<Cursor> {
 
     protected static final String KEY_ALBUM_URI = "AlbumUri";
     private static final int LOADER_ALBUM = 1;
 
-    private GridView mAlbumView;
-    private View mEmptyView;
-
-    private boolean mInitialLoadComplete = false;
     private LoaderCompatShim<Cursor> mLoaderCompatShim;
     private PhotoThumbnailAdapter mAdapter;
     private String mAlbumPath;
-    private GalleryFragmentHost mHost;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,48 +59,25 @@ public class AlbumFragment extends Fragment implements OnItemClickListener,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.photo_set, container, false);
-        mAlbumView = (GridView) root.findViewById(android.R.id.list);
-        // TODO: Remove once UI stabilizes
-        mAlbumView.setColumnWidth(MediaItemsLoader.getThumbnailSize());
-        mAlbumView.setOnItemClickListener(this);
-        mEmptyView = root.findViewById(android.R.id.empty);
-        mEmptyView.setVisibility(View.GONE);
-        mAlbumView.setAdapter(mAdapter);
-        mAlbumView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
-        mAlbumView.setMultiChoiceModeListener(mHost.getMultiChoiceManager());
+        View root = super.onCreateView(inflater, container, savedInstanceState);
         getLoaderManager().initLoader(LOADER_ALBUM, null, this);
-        updateEmptyStatus();
         return root;
     }
 
-    private void updateEmptyStatus() {
-        boolean empty = (mAdapter == null || mAdapter.getCount() == 0);
-        mAlbumView.setVisibility(empty ? View.GONE : View.VISIBLE);
-        mEmptyView.setVisibility(empty && mInitialLoadComplete
-                ? View.VISIBLE : View.GONE);
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // TODO: Remove once UI stabilizes
+        getGridView().setColumnWidth(MediaItemsLoader.getThumbnailSize());
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mHost = (GalleryFragmentHost) activity;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mHost = null;
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position,
-            long id) {
+    public void onGridItemClick(GridView g, View v, int position, long id) {
         if (mLoaderCompatShim == null) {
             // Not fully initialized yet, discard
             return;
         }
-        Cursor item = mAdapter.getItem(position);
+        Cursor item = (Cursor) getItemAtPosition(position);
         Uri uri = mLoaderCompatShim.uriForItem(item);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.setClass(getActivity(), Gallery.class);
@@ -123,7 +88,6 @@ public class AlbumFragment extends Fragment implements OnItemClickListener,
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // TODO: Switch to PhotoSetLoader
         MediaItemsLoader loader = new MediaItemsLoader(getActivity(), mAlbumPath);
-        mInitialLoadComplete = false;
         mLoaderCompatShim = loader;
         mAdapter.setDrawableFactory(mLoaderCompatShim);
         return loader;
@@ -133,8 +97,7 @@ public class AlbumFragment extends Fragment implements OnItemClickListener,
     public void onLoadFinished(Loader<Cursor> loader,
             Cursor data) {
         mAdapter.swapCursor(data);
-        mInitialLoadComplete = true;
-        updateEmptyStatus();
+        setAdapter(mAdapter);
     }
 
     @Override
@@ -151,11 +114,6 @@ public class AlbumFragment extends Fragment implements OnItemClickListener,
         return ((Cursor) item).getInt(PhotoSetLoader.INDEX_SUPPORTED_OPERATIONS);
     }
 
-    @Override
-    public Object getItemAtPosition(int position) {
-        return mAdapter.getItem(position);
-    }
-
     private ArrayList<Uri> mSubItemUriTemp = new ArrayList<Uri>(1);
     @Override
     public ArrayList<Uri> getSubItemUrisForItem(Object item) {
@@ -164,29 +122,18 @@ public class AlbumFragment extends Fragment implements OnItemClickListener,
         return mSubItemUriTemp;
     }
 
-
-    @Override
-    public Object getPathForItemAtPosition(int position) {
-        return mLoaderCompatShim.getPathForItem(mAdapter.getItem(position));
-    }
-
     @Override
     public void deleteItemWithPath(Object itemPath) {
         mLoaderCompatShim.deleteItemWithPath(itemPath);
     }
 
     @Override
-    public SparseBooleanArray getSelectedItemPositions() {
-        return mAlbumView.getCheckedItemPositions();
-    }
-
-    @Override
-    public int getSelectedItemCount() {
-        return mAlbumView.getCheckedItemCount();
-    }
-
-    @Override
     public Uri getItemUri(Object item) {
         return mLoaderCompatShim.uriForItem((Cursor) item);
+    }
+
+    @Override
+    public Object getPathForItem(Object item) {
+        return mLoaderCompatShim.getPathForItem((Cursor) item);
     }
 }
