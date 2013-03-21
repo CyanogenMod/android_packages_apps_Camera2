@@ -736,6 +736,9 @@ public class VideoModule implements CameraModule,
                     startPreview();
                 }
             }).start();
+        } else {
+            // preview already started
+            mUI.enableShutter(true);
         }
 
         // Initializing it here after the preview is started.
