@@ -22,11 +22,11 @@ import android.widget.Toast;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
+import com.android.gallery3d.filtershow.presets.FilterEnvironment;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public abstract class ImageFilter implements Cloneable {
-
-    private ImagePreset mImagePreset;
+    private FilterEnvironment mEnvironment = null;
 
     protected String mName = "Original";
     private final String LOGTAG = "ImageFilter";
@@ -79,11 +79,7 @@ public abstract class ImageFilter implements Cloneable {
     }
 
     public ImagePreset getImagePreset() {
-        return mImagePreset;
-    }
-
-    public void setImagePreset(ImagePreset imagePreset) {
-        mImagePreset = imagePreset;
+        return getEnvironment().getImagePreset();
     }
 
     public abstract void useRepresentation(FilterRepresentation representation);
@@ -102,5 +98,13 @@ public abstract class ImageFilter implements Cloneable {
                 getImagePreset().getImageLoader().getOriginalBounds().height(),
                 w, h);
         return originalToScreen;
+    }
+
+    public void setEnvironment(FilterEnvironment environment) {
+        mEnvironment = environment;
+    }
+
+    public FilterEnvironment getEnvironment() {
+        return mEnvironment;
     }
 }

@@ -63,8 +63,8 @@ public class ImageFilterSharpen extends ImageFilterRS {
     @Override
     protected void createFilter(android.content.res.Resources res, float scaleFactor,
             int quality) {
-        int w = mInPixelsAllocation.getType().getX();
-        int h = mInPixelsAllocation.getType().getY();
+        int w = getInPixelsAllocation().getType().getX();
+        int h = getInPixelsAllocation().getType().getY();
         mScaleFactor = scaleFactor;
 
         if (mScript == null) {
@@ -97,9 +97,9 @@ public class ImageFilterSharpen extends ImageFilterRS {
             return;
         }
         computeKernel();
-        mScript.set_gIn(mInPixelsAllocation);
-        mScript.bind_gPixels(mInPixelsAllocation);
-        mScript.forEach_root(mInPixelsAllocation, mOutPixelsAllocation);
+        mScript.set_gIn(getInPixelsAllocation());
+        mScript.bind_gPixels(getInPixelsAllocation());
+        mScript.forEach_root(getInPixelsAllocation(), getOutPixelsAllocation());
     }
 
 }
