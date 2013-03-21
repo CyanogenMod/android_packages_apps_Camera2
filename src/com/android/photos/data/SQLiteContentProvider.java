@@ -241,7 +241,7 @@ public abstract class SQLiteContentProvider extends ContentProvider {
         }
     }
 
-    protected void onEndTransaction(boolean callerIsSyncAdapter) {
+    protected Set<Uri> onEndTransaction(boolean callerIsSyncAdapter) {
         Set<Uri> changed;
         synchronized (mChangedUris) {
             changed = new HashSet<Uri>(mChangedUris);
@@ -252,6 +252,7 @@ public abstract class SQLiteContentProvider extends ContentProvider {
             boolean syncToNetwork = !callerIsSyncAdapter && syncToNetwork(uri);
             notifyChange(resolver, uri, syncToNetwork);
         }
+        return changed;
     }
 
     protected void notifyChange(ContentResolver resolver, Uri uri, boolean syncToNetwork) {
