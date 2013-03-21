@@ -30,12 +30,19 @@ public class CachingPipeline {
     private static final String LOGTAG = "CachingPipeline";
     private boolean DEBUG = false;
 
+    private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
+
     private FiltersManager mFiltersManager = null;
     private volatile Bitmap mOriginalBitmap = null;
     private volatile Bitmap mResizedOriginalBitmap = null;
 
     private volatile Allocation mOriginalAllocation = null;
     private volatile Allocation mFiltersOnlyOriginalAllocation =  null;
+
+    protected volatile Allocation mInPixelsAllocation;
+    protected volatile Allocation mOutPixelsAllocation;
+    private volatile int mWidth = 0;
+    private volatile int mHeight = 0;
 
     private volatile GeometryMetadata mPreviousGeometry = null;
     private volatile float mPreviewScaleFactor = 1.0f;
@@ -60,6 +67,21 @@ public class CachingPipeline {
         }
         mPreviousGeometry = null;
         mPreviewScaleFactor = 1.0f;
+
+        destroyPixelAllocations();
+    }
+
+    private synchronized void destroyPixelAllocations() {
+        if (mInPixelsAllocation != null) {
+            mInPixelsAllocation.destroy();
+            mInPixelsAllocation = null;
+        }
+        if (mOutPixelsAllocation != null) {
+            mOutPixelsAllocation.destroy();
+            mOutPixelsAllocation = null;
+        }
+        mWidth = 0;
+        mHeight = 0;
     }
 
     private String getType(RenderingRequest request) {
@@ -85,6 +107,7 @@ public class CachingPipeline {
         preset.setScaleFactor(mPreviewScaleFactor);
         preset.setQuality(ImagePreset.QUALITY_PREVIEW);
         preset.setupEnvironment(mFiltersManager);
+        preset.getEnvironment().setCachingPipeline(this);
     }
 
     public void setOriginal(Bitmap bitmap) {
@@ -243,5 +266,39 @@ public class CachingPipeline {
 
     public synchronized boolean isInitialized() {
         return mOriginalBitmap != null;
+    }
+
+    public boolean prepareRenderscriptAllocations(Bitmap bitmap) {
+        RenderScript RS = ImageFilterRS.getRenderScriptContext();
+        boolean needsUpdate = false;
+        if (mOutPixelsAllocation == null || mInPixelsAllocation == null ||
+                bitmap.getWidth() != mWidth || bitmap.getHeight() != mHeight) {
+            destroyPixelAllocations();
+            Bitmap bitmapBuffer = bitmap;
+            if (bitmap.getConfig() == null || bitmap.getConfig() != BITMAP_CONFIG) {
+                bitmapBuffer = bitmap.copy(BITMAP_CONFIG, true);
+            }
+            mOutPixelsAllocation = Allocation.createFromBitmap(RS, bitmapBuffer,
+                    Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+            mInPixelsAllocation = Allocation.createTyped(RS,
+                    mOutPixelsAllocation.getType());
+            needsUpdate = true;
+        }
+        mInPixelsAllocation.copyFrom(bitmap);
+        if (bitmap.getWidth() != mWidth
+                || bitmap.getHeight() != mHeight) {
+            mWidth = bitmap.getWidth();
+            mHeight = bitmap.getHeight();
+            needsUpdate = true;
+        }
+        return needsUpdate;
+    }
+
+    public Allocation getInPixelsAllocation() {
+        return mInPixelsAllocation;
+    }
+
+    public Allocation getOutPixelsAllocation() {
+        return mOutPixelsAllocation;
     }
 }
