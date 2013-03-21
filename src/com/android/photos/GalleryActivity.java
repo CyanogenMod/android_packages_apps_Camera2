@@ -34,7 +34,7 @@ import com.android.gallery3d.R;
 
 import java.util.ArrayList;
 
-public class GalleryActivity extends Activity implements GalleryFragmentHost {
+public class GalleryActivity extends Activity implements MultiChoiceManager.Provider {
 
     private MultiChoiceManager mMultiChoiceManager;
     private ViewPager mViewPager;
