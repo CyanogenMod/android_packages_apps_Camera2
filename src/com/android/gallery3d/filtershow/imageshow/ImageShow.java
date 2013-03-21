@@ -28,7 +28,6 @@ import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
@@ -51,7 +50,7 @@ public class ImageShow extends View implements OnGestureListener,
 
     private static final String LOGTAG = "ImageShow";
     private static final boolean ENABLE_HISTORY_SWAP = false;
-    private static final boolean ENABLE_COMPARISON = false;
+    private static final boolean ENABLE_ZOOMED_COMPARISON = false;
 
     protected Paint mPaint = new Paint();
     protected static int mTextSize = 24;
@@ -579,7 +578,7 @@ public class ImageShow extends View implements OnGestureListener,
             mTouch.y = ey;
 
             float scaleFactor = MasterImage.getImage().getScaleFactor();
-            if (scaleFactor > 1 && (!ENABLE_COMPARISON || event.getPointerCount() == 2)) {
+            if (scaleFactor > 1 && (!ENABLE_ZOOMED_COMPARISON || event.getPointerCount() == 2)) {
                 float translateX = (mTouch.x - mTouchDown.x) / scaleFactor;
                 float translateY = (mTouch.y - mTouchDown.y) / scaleFactor;
                 Point originalTranslation = MasterImage.getImage().getOriginalTranslation();
@@ -588,7 +587,7 @@ public class ImageShow extends View implements OnGestureListener,
                 translation.y = (int) (originalTranslation.y + translateY);
                 MasterImage.getImage().setTranslation(translation);
                 mTouchShowOriginal = false;
-            } else if (!mOriginalDisabled && !mActivity.isShowingHistoryPanel()
+            } else if (enableComparison() && !mOriginalDisabled && !mActivity.isShowingHistoryPanel()
                     && (System.currentTimeMillis() - mTouchShowOriginalDate
                             > mTouchShowOriginalDelayMin)
                     && event.getPointerCount() == 1) {
@@ -608,6 +607,10 @@ public class ImageShow extends View implements OnGestureListener,
             }
         }
         invalidate();
+        return true;
+    }
+
+    protected boolean enableComparison() {
         return true;
     }
 
