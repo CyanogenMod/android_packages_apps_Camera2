@@ -60,6 +60,7 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
     public void setup(String text, PanelController controller, LinearLayout parent) {
         mController = controller;
         setText(text);
+        setContentDescription(text);
         mParentContainer = parent;
         super.setOnClickListener(this);
         MasterImage.getImage().addGeometryListener(this);
