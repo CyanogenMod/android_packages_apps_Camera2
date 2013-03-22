@@ -46,9 +46,11 @@ public class CachingPipeline {
 
     private volatile GeometryMetadata mPreviousGeometry = null;
     private volatile float mPreviewScaleFactor = 1.0f;
+    private volatile String mName = "";
 
-    public CachingPipeline(FiltersManager filtersManager) {
+    public CachingPipeline(FiltersManager filtersManager, String name) {
         mFiltersManager = filtersManager;
+        mName = name;
     }
 
     public synchronized void reset() {
@@ -72,6 +74,9 @@ public class CachingPipeline {
     }
 
     private synchronized void destroyPixelAllocations() {
+        if (DEBUG) {
+            Log.v(LOGTAG, "destroyPixelAllocations in " + getName());
+        }
         if (mInPixelsAllocation != null) {
             mInPixelsAllocation.destroy();
             mInPixelsAllocation = null;
@@ -215,6 +220,14 @@ public class CachingPipeline {
 
     }
 
+    public synchronized Bitmap renderFinalImage(Bitmap bitmap, ImagePreset preset) {
+        setPresetParameters(preset);
+        mFiltersManager.freeFilterResources(preset);
+        bitmap = preset.applyGeometry(bitmap);
+        bitmap = preset.apply(bitmap);
+        return bitmap;
+    }
+
     public synchronized void compute(TripleBufferBitmap buffer, ImagePreset preset, int type) {
         if (DEBUG) {
             Log.v(LOGTAG, "compute preset " + preset);
@@ -291,14 +304,21 @@ public class CachingPipeline {
             mHeight = bitmap.getHeight();
             needsUpdate = true;
         }
+        if (DEBUG) {
+            Log.v(LOGTAG, "prepareRenderscriptAllocations: " + needsUpdate + " in " + getName());
+        }
         return needsUpdate;
     }
 
-    public Allocation getInPixelsAllocation() {
+    public synchronized Allocation getInPixelsAllocation() {
         return mInPixelsAllocation;
     }
 
-    public Allocation getOutPixelsAllocation() {
+    public synchronized Allocation getOutPixelsAllocation() {
         return mOutPixelsAllocation;
+    }
+
+    public String getName() {
+        return mName;
     }
 }
