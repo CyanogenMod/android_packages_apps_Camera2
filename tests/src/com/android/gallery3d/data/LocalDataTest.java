@@ -66,7 +66,7 @@ public class LocalDataTest extends AndroidTestCase {
             Path path = Path.fromString(
                     mIsImage ? "/local/image" : "/local/video");
             mAlbumSet = new LocalAlbumSet(path, mApp);
-            mAlbumSet.loadIfDirty();
+            mAlbumSet.reload();
             verifyResult();
         }
 
@@ -200,7 +200,7 @@ public class LocalDataTest extends AndroidTestCase {
             sub.delete();
             mAlbumSet.fakeChange();
             latch.isOnContentDirtyBeCalled(DEFAULT_TIMEOUT);
-            mAlbumSet.loadIfDirty();
+            mAlbumSet.reload();
             assertEquals(1, mAlbumSet.getSubMediaSetCount());
         }
     }
@@ -220,7 +220,7 @@ public class LocalDataTest extends AndroidTestCase {
             assertEquals(1, sub.getMediaItemCount());
             assertTrue((sub.getSupportedOperations() & MediaSet.SUPPORT_DELETE) != 0);
             sub.delete();
-            sub.loadIfDirty();
+            sub.reload();
             assertEquals(0, sub.getMediaItemCount());
         }
     }

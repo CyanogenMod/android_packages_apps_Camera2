@@ -27,7 +27,7 @@ import java.util.ArrayList;
 // void clearDeletion();
 // int getNumberOfDeletions();
 //
-public class FilterDeleteSet extends MediaSetWrapper implements ContentListener {
+public class FilterDeleteSet extends MediaSet implements ContentListener {
     @SuppressWarnings("unused")
     private static final String TAG = "FilterDeleteSet";
 
@@ -65,7 +65,7 @@ public class FilterDeleteSet extends MediaSetWrapper implements ContentListener 
     private ArrayList<Deletion> mCurrent = new ArrayList<Deletion>();
 
     public FilterDeleteSet(Path path, MediaSet baseSet) {
-        super(baseSet, path, INVALID_DATA_VERSION);
+        super(path, INVALID_DATA_VERSION);
         mBaseSet = baseSet;
         mBaseSet.addContentListener(this);
     }
@@ -141,18 +141,14 @@ public class FilterDeleteSet extends MediaSetWrapper implements ContentListener 
         return base;
     }
 
-    @Override
-    protected boolean isDirtyLocked() {
-        synchronized (mRequests) {
-            return super.isDirtyLocked() || !mRequests.isEmpty();
-        }
-    }
-
     // We apply the pending requests in the mRequests to construct mCurrent in reload().
     @Override
-    protected void load() throws InterruptedException {
-        super.load();
+    public long reload() {
+        boolean newData = mBaseSet.reload() > mDataVersion;
         synchronized (mRequests) {
+            if (!newData && mRequests.isEmpty()) {
+                return mDataVersion;
+            }
             for (int i = 0; i < mRequests.size(); i++) {
                 Request r = mRequests.get(i);
                 switch (r.type) {
@@ -222,6 +218,9 @@ public class FilterDeleteSet extends MediaSetWrapper implements ContentListener 
             }
             mCurrent = result;
         }
+
+        mDataVersion = nextVersionNumber();
+        return mDataVersion;
     }
 
     private void sendRequest(int type, Path path, int indexHint) {
