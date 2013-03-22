@@ -106,7 +106,8 @@ public class MediaItemsLoader extends AsyncTaskLoader<Cursor> implements LoaderC
 
     @Override
     public Cursor loadInBackground() {
-        mMediaSet.loadIfDirty();
+        // TODO: This probably doesn't work
+        mMediaSet.reload();
         final MatrixCursor cursor = new MatrixCursor(PhotoSetLoader.PROJECTION);
         final Object[] row = new Object[PhotoSetLoader.PROJECTION.length];
         final SparseArray<MediaItem> mediaItems = new SparseArray<MediaItem>();

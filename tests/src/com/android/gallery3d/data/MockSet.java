@@ -82,12 +82,7 @@ public class MockSet extends MediaSet {
     }
 
     @Override
-    protected boolean isDirtyLocked() {
-        return false;
+    public long reload() {
+        return 0;
     }
-
-    @Override
-    protected void load() throws InterruptedException {
-    }
-
 }
