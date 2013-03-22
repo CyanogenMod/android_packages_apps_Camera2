@@ -393,6 +393,8 @@
     <string name="menu_search" msgid="7580008232297437190">"Recherche"</string>
     <string name="tab_photos" msgid="9110813680630313419">"Photos"</string>
     <string name="tab_albums" msgid="8079449907770685691">"Albums"</string>
-    <!-- no translation found for number_of_photos:one (6949174783125614798) -->
-    <!-- no translation found for number_of_photos:other (3813306834113858135) -->
+  <plurals name="number_of_photos">
+    <item quantity="one" msgid="6949174783125614798">"%1$d photo"</item>
+    <item quantity="other" msgid="3813306834113858135">"%1$d photos"</item>
+  </plurals>
 </resources>
