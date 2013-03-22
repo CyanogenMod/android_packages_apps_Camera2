@@ -272,7 +272,7 @@ public class SlideshowPage extends ActivityState {
 
         @Override
         public long reload() {
-            long version = mMediaSet.loadIfDirty();
+            long version = mMediaSet.reload();
             if (version != mSourceVersion) {
                 mSourceVersion = version;
                 int count = mMediaSet.getTotalMediaItemCount();
@@ -346,7 +346,7 @@ public class SlideshowPage extends ActivityState {
 
         @Override
         public long reload() {
-            long version = mMediaSet.loadIfDirty();
+            long version = mMediaSet.reload();
             if (version != mDataVersion) {
                 mDataVersion = version;
                 mData.clear();

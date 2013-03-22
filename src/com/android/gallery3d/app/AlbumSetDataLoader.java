@@ -343,7 +343,7 @@ public class AlbumSetDataLoader {
             while (mActive) {
                 synchronized (this) {
                     if (mActive && !mDirty && updateComplete) {
-                        updateLoading(false);
+                        if (!mSource.isLoading()) updateLoading(false);
                         Utils.waitWithoutInterrupt(this);
                         continue;
                     }
@@ -351,7 +351,7 @@ public class AlbumSetDataLoader {
                 mDirty = false;
                 updateLoading(true);
 
-                long version = mSource.loadIfDirty();
+                long version = mSource.reload();
                 UpdateInfo info = executeAndWait(new GetUpdateInfo(version));
                 updateComplete = info == null;
                 if (updateComplete) continue;

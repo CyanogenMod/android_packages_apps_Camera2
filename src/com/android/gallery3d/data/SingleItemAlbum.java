@@ -62,12 +62,7 @@ public class SingleItemAlbum extends MediaSet {
     }
 
     @Override
-    protected boolean isDirtyLocked() {
-        return false;
+    public long reload() {
+        return mDataVersion;
     }
-
-    @Override
-    protected void load() throws InterruptedException {
-    }
-
 }

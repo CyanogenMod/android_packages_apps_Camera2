@@ -18,8 +18,6 @@ package com.android.gallery3d.data;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.Future;
-import com.android.gallery3d.util.ThreadPool.CancelListener;
-import com.android.gallery3d.util.ThreadPool.JobContext;
 
 import java.util.ArrayList;
 import java.util.WeakHashMap;
@@ -55,9 +53,6 @@ public abstract class MediaSet extends MediaObject {
          */
         void onSyncDone(MediaSet mediaSet, int resultCode);
     }
-
-    private Object mLoadLock = new Object();
-    private boolean mIsLoading;
 
     public MediaSet(Path path, long version) {
         super(path, version);
@@ -101,6 +96,14 @@ public abstract class MediaSet extends MediaObject {
     }
 
     public boolean isCameraRoll() {
+        return false;
+    }
+
+    /**
+     * Method {@link #reload()} may process the loading task in background, this method tells
+     * its client whether the loading is still in process or not.
+     */
+    public boolean isLoading() {
         return false;
     }
 
@@ -167,76 +170,9 @@ public abstract class MediaSet extends MediaObject {
         }
     }
 
-    // TODO: Remove this once createJobContextCompat is no longer needed
-    // Note that canceling a load is not strictly supported as it can leave
-    // MediaSets with bad internal state. Fortunately they are never canceled
-    // anywhere, so the isCancelled() exists purely for completeness sake
-    private static class LoadJobContextCompat implements JobContext {
-
-        @Override
-        public boolean isCancelled() {
-            return Thread.interrupted();
-        }
-
-        @Override
-        public void setCancelListener(CancelListener listener) {
-        }
-
-        @Override
-        public boolean setMode(int mode) {
-            return false;
-        }
-    }
-
-    @Deprecated
-    protected final JobContext createJobContextCompat() {
-        return new LoadJobContextCompat();
-    }
-
-    /**
-     * Synchronously load if the MediaSet is dirty. Note that this must be called
-     * on the same thread as getMediaItem(int, int) and getSubMediaSet(int)
-     * @return DataVersion
-     */
-    public final long loadIfDirty() {
-        try {
-            boolean doLoad = false;
-            synchronized (mLoadLock) {
-                if (mIsLoading) {
-                    mLoadLock.wait();
-                }
-                doLoad = isDirtyLocked();
-                if (doLoad) {
-                    mIsLoading = true;
-                }
-            }
-            if (doLoad) {
-                load();
-                synchronized (mLoadLock) {
-                    mDataVersion = nextVersionNumber();
-                    mIsLoading = false;
-                    mLoadLock.notifyAll();
-                }
-            }
-        } catch (InterruptedException ex) {
-        }
-        return getDataVersion();
-    }
-
-    /**
-     * Called inside of synchronized(mLoadLock). It is guaranteed this will only
-     * be called once before a call to load() if this returns true. It is
-     * acceptable to clear any internal dirty flags in this function as a result.
-     * @return true if the set wants a load() call, false otherwise
-     */
-    protected abstract boolean isDirtyLocked();
-
-    /**
-     * Synchronously load the MediaSet. Only called if {@link #isDirtyLocked()}
-     * returned true
-     * @throws InterruptedException if the load was interrupted
-     */
-    protected abstract void load() throws InterruptedException;
+    // Reload the content. Return the current data version. reload() should be called
+    // in the same thread as getMediaItem(int, int) and getSubMediaSet(int).
+    public abstract long reload();
 
     @Override
     public MediaDetails getDetails() {
@@ -335,6 +271,7 @@ public abstract class MediaSet extends MediaObject {
     }
 
     private class MultiSetSyncFuture implements Future<Integer>, SyncListener {
+        @SuppressWarnings("hiding")
         private static final String TAG = "Gallery.MultiSetSync";
 
         private final SyncListener mListener;
