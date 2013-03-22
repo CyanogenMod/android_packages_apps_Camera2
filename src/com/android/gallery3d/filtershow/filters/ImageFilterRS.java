@@ -27,6 +27,7 @@ import com.android.gallery3d.filtershow.cache.CachingPipeline;
 
 public abstract class ImageFilterRS extends ImageFilter {
     private static final String LOGTAG = "ImageFilterRS";
+    private boolean DEBUG = false;
 
     private static volatile RenderScript sRS = null;
     private static volatile Resources sResources = null;
@@ -66,6 +67,9 @@ public abstract class ImageFilterRS extends ImageFilter {
                     return bitmap;
                 }
                 CachingPipeline pipeline = getEnvironment().getCachingPipeline();
+                if (DEBUG) {
+                    Log.v(LOGTAG, "apply filter " + getName() + " in pipeline " + pipeline.getName());
+                }
                 boolean needsUpdate = pipeline.prepareRenderscriptAllocations(bitmap);
                 if (needsUpdate || !isResourcesLoaded()) {
                     // the allocations changed size
@@ -75,6 +79,9 @@ public abstract class ImageFilterRS extends ImageFilter {
                 }
                 runFilter();
                 update(bitmap);
+                if (DEBUG) {
+                    Log.v(LOGTAG, "DONE apply filter " + getName() + " in pipeline " + pipeline.getName());
+                }
             }
         } catch (android.renderscript.RSIllegalArgumentException e) {
             Log.e(LOGTAG, "Illegal argument? " + e);
