@@ -24,6 +24,7 @@ import com.android.gallery3d.common.ApiHelper;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.NoSuchElementException;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -39,7 +40,6 @@ public class LocalMergeAlbum extends MediaSet implements ContentListener {
 
     private final Comparator<MediaItem> mComparator;
     private final MediaSet[] mSources;
-    private final boolean[] mDirtySources;
 
     private FetchCache[] mFetcher;
     private int mSupportedOperation;
@@ -53,11 +53,11 @@ public class LocalMergeAlbum extends MediaSet implements ContentListener {
         super(path, INVALID_DATA_VERSION);
         mComparator = comparator;
         mSources = sources;
-        mDirtySources = new boolean[mSources.length];
         mBucketId = bucketId;
         for (MediaSet set : mSources) {
             set.addContentListener(this);
         }
+        reload();
     }
 
     @Override
@@ -70,6 +70,7 @@ public class LocalMergeAlbum extends MediaSet implements ContentListener {
     }
 
     private void updateData() {
+        ArrayList<MediaSet> matches = new ArrayList<MediaSet>();
         int supported = mSources.length == 0 ? 0 : MediaItem.SUPPORT_ALL;
         mFetcher = new FetchCache[mSources.length];
         for (int i = 0, n = mSources.length; i < n; ++i) {
@@ -172,26 +173,17 @@ public class LocalMergeAlbum extends MediaSet implements ContentListener {
     }
 
     @Override
-    protected boolean isDirtyLocked() {
-        boolean dirty = false;
+    public long reload() {
+        boolean changed = false;
         for (int i = 0, n = mSources.length; i < n; ++i) {
-            mDirtySources[i] = mSources[i].isDirtyLocked();
-            dirty |= mDirtySources[i]
-                    || mSources[i].getDataVersion() > getDataVersion();
+            if (mSources[i].reload() > mDataVersion) changed = true;
         }
-        return dirty;
-    }
-
-    @Override
-    public void load() throws InterruptedException {
-        for (int i = 0, n = mSources.length; i < n; ++i) {
-            if (mDirtySources[i]) {
-                mSources[i].load();
-                mDirtySources[i] = false;
-            }
+        if (changed) {
+            mDataVersion = nextVersionNumber();
+            updateData();
+            invalidateCache();
         }
-        updateData();
-        invalidateCache();
+        return mDataVersion;
     }
 
     @Override

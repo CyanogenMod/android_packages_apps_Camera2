@@ -25,7 +25,6 @@ public class FilterTypeSet extends MediaSet implements ContentListener {
 
     private final DataManager mDataManager;
     private final MediaSet mBaseSet;
-    private boolean mBaseSetIsDirty;
     private final int mMediaType;
     private final ArrayList<Path> mPaths = new ArrayList<Path>();
     private final ArrayList<MediaSet> mAlbums = new ArrayList<MediaSet>();
@@ -66,17 +65,12 @@ public class FilterTypeSet extends MediaSet implements ContentListener {
     }
 
     @Override
-    protected boolean isDirtyLocked() {
-        mBaseSetIsDirty = mBaseSet.isDirtyLocked();
-        return mBaseSetIsDirty || mBaseSet.getDataVersion() > getDataVersion();
-    }
-
-    @Override
-    public void load() throws InterruptedException {
-        if (mBaseSetIsDirty) {
-            mBaseSet.load();
+    public long reload() {
+        if (mBaseSet.reload() > mDataVersion) {
+            updateData();
+            mDataVersion = nextVersionNumber();
         }
-        updateData();
+        return mDataVersion;
     }
 
     @Override
@@ -84,7 +78,7 @@ public class FilterTypeSet extends MediaSet implements ContentListener {
         notifyContentChanged();
     }
 
-    private void updateData() throws InterruptedException {
+    private void updateData() {
         // Albums
         mAlbums.clear();
         String basePath = "/filter/mediatype/" + mMediaType;
@@ -93,7 +87,7 @@ public class FilterTypeSet extends MediaSet implements ContentListener {
             MediaSet set = mBaseSet.getSubMediaSet(i);
             String filteredPath = basePath + "/{" + set.getPath().toString() + "}";
             MediaSet filteredSet = mDataManager.getMediaSet(filteredPath);
-            filteredSet.loadIfDirty();
+            filteredSet.reload();
             if (filteredSet.getMediaItemCount() > 0
                     || filteredSet.getSubMediaSetCount() > 0) {
                 mAlbums.add(filteredSet);
