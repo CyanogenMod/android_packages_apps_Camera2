@@ -368,7 +368,7 @@ public class AlbumDataLoader {
                     mDirty = false;
                 }
                 updateLoading(true);
-                long version = mSource.loadIfDirty();
+                long version = mSource.reload();
                 UpdateInfo info = executeAndWait(new GetUpdateInfo(version));
                 updateComplete = info == null;
                 if (updateComplete) continue;
