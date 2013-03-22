@@ -31,7 +31,9 @@ import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.exif.ExifInterface;
+import com.android.gallery3d.filtershow.cache.CachingPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.util.XmpUtilHelper;
 
@@ -182,9 +184,8 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
                 if (bitmap == null) {
                     return null;
                 }
-                preset.setupEnvironment();
-                bitmap = preset.applyGeometry(bitmap);
-                bitmap = preset.apply(bitmap);
+                CachingPipeline pipeline = new CachingPipeline(FiltersManager.getManager(), "Saving");
+                bitmap = pipeline.renderFinalImage(bitmap, preset);
 
                 Object xmp = getPanoramaXMPData(sourceUri, preset);
                 ExifInterface exif = getExifData(sourceUri);
