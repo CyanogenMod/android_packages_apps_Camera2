@@ -370,8 +370,12 @@ public class CameraActivity extends ActivityBase
     }
 
     private void unbindMediaSaveService() {
-        mMediaSaveService.setListener(null);
-        unbindService(mConnection);
+        if (mMediaSaveService != null) {
+            mMediaSaveService.setListener(null);
+        }
+        if (mConnection != null) {
+            unbindService(mConnection);
+        }
     }
 
     @Override
