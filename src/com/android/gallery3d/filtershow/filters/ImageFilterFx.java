@@ -57,10 +57,15 @@ public class ImageFilterFx extends ImageFilter {
         int w = bitmap.getWidth();
         int h = bitmap.getHeight();
 
-        if (mFxBitmap == null || mFxBitmapId != getParameters().getBitmapResource()) {
+        int bitmapResourceId = getParameters().getBitmapResource();
+        if (bitmapResourceId == 0) { // null filter fx
+            return bitmap;
+        }
+
+        if (mFxBitmap == null || mFxBitmapId != bitmapResourceId) {
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inScaled = false;
-            mFxBitmapId = getParameters().getBitmapResource();
+            mFxBitmapId = bitmapResourceId;
             if (mFxBitmapId != 0) {
                 mFxBitmap = BitmapFactory.decodeResource(mResources, mFxBitmapId, o);
             } else {
