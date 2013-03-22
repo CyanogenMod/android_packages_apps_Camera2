@@ -161,6 +161,7 @@ public class PhotoUI implements PieListener,
         if (mPieRenderer == null) {
             mPieRenderer = new PieRenderer(mActivity);
             mPieRenderer.setPieListener(this);
+            mRenderOverlay.addRenderer(mPieRenderer);
         }
         if (mMenu == null) {
             mMenu = new PhotoMenu(mActivity, this, mPieRenderer);
@@ -170,9 +171,8 @@ public class PhotoUI implements PieListener,
 
         if (mZoomRenderer == null) {
             mZoomRenderer = new ZoomRenderer(mActivity);
+            mRenderOverlay.addRenderer(mZoomRenderer);
         }
-        mRenderOverlay.addRenderer(mPieRenderer);
-        mRenderOverlay.addRenderer(mZoomRenderer);
         if (mGestures == null) {
             // this will handle gesture disambiguation and dispatching
             mGestures = new PreviewGestures(mActivity, this, mZoomRenderer, mPieRenderer);
