@@ -1032,7 +1032,7 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                 mDirty = false;
                 UpdateInfo info = executeAndWait(new GetUpdateInfo());
                 updateLoading(true);
-                long version = mSource.loadIfDirty();
+                long version = mSource.reload();
                 if (info.version != version) {
                     info.reloadContent = true;
                     info.size = mSource.getMediaItemCount();

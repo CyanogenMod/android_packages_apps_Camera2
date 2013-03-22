@@ -29,13 +29,12 @@ public class SnailAlbum extends SingleItemAlbum {
     }
 
     @Override
-    protected void load() throws InterruptedException {
-        ((SnailItem) getItem()).updateVersion();
-    }
-
-    @Override
-    protected boolean isDirtyLocked() {
-        return mDirty.compareAndSet(true, false);
+    public long reload() {
+        if (mDirty.compareAndSet(true, false)) {
+            ((SnailItem) getItem()).updateVersion();
+            mDataVersion = nextVersionNumber();
+        }
+        return mDataVersion;
     }
 
     public void notifyChange() {
