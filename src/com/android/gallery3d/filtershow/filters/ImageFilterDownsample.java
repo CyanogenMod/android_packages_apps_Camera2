@@ -77,17 +77,4 @@ public class ImageFilterDownsample extends SimpleImageFilter {
         }
         return bitmap;
     }
-
-    @Override
-    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, int quality) {
-        int w = bitmap.getWidth();
-        int h = bitmap.getHeight();
-        Bitmap ret = Bitmap.createScaledBitmap(bitmap, w / ICON_DOWNSAMPLE_FRACTION, h
-                / ICON_DOWNSAMPLE_FRACTION, false);
-        Rect dst = new Rect(0, 0, w, h);
-        Rect src = new Rect(0, 0, w / ICON_DOWNSAMPLE_FRACTION, h / ICON_DOWNSAMPLE_FRACTION);
-        Canvas c = new Canvas(bitmap);
-        c.drawBitmap(ret, src, dst, null);
-        return bitmap;
-    }
 }
