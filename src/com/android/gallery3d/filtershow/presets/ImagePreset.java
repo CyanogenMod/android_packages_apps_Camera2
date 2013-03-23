@@ -22,6 +22,7 @@ import android.util.Log;
 
 import com.android.gallery3d.filtershow.ImageStateAdapter;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.filters.BaseFiltersManager;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
@@ -35,11 +36,9 @@ public class ImagePreset {
     private static final String LOGTAG = "ImagePreset";
 
     private FilterRepresentation mBorder = null;
-    private float mScaleFactor = 1.0f;
     public static final int QUALITY_ICON = 0;
     public static final int QUALITY_PREVIEW = 1;
     public static final int QUALITY_FINAL = 2;
-    private int mQuality = QUALITY_PREVIEW;
     private ImageLoader mImageLoader = null;
 
     private Vector<FilterRepresentation> mFilters = new Vector<FilterRepresentation>();
@@ -56,8 +55,6 @@ public class ImagePreset {
     private Rect mPartialRenderingBounds;
 
     private Bitmap mPreviewImage;
-
-    private FilterEnvironment mEnvironment = new FilterEnvironment();
 
     public ImagePreset() {
         setup();
@@ -412,42 +409,31 @@ public class ImagePreset {
         // do nothing here
     }
 
-    public void setupEnvironment() {
-        setupEnvironment(FiltersManager.getManager());
-    }
-
-    public void setupEnvironment(FiltersManager filtersManager) {
-        getEnvironment().setImagePreset(this);
-        getEnvironment().setScaleFactor(mScaleFactor);
-        getEnvironment().setQuality(mQuality);
-        getEnvironment().setFiltersManager(filtersManager);
-    }
-
-    public Bitmap apply(Bitmap original) {
+    public Bitmap apply(Bitmap original, FilterEnvironment environment) {
         Bitmap bitmap = original;
-        bitmap = applyFilters(bitmap, -1, -1);
-        return applyBorder(bitmap);
+        bitmap = applyFilters(bitmap, -1, -1, environment);
+        return applyBorder(bitmap, environment);
     }
 
-    public Bitmap applyGeometry(Bitmap bitmap) {
+    public Bitmap applyGeometry(Bitmap bitmap, FilterEnvironment environment) {
         // Apply any transform -- 90 rotate, flip, straighten, crop
         // Returns a new bitmap.
         if (mDoApplyGeometry) {
             mGeoData.synchronizeRepresentation();
-            bitmap = mEnvironment.applyRepresentation(mGeoData, bitmap);
+            bitmap = environment.applyRepresentation(mGeoData, bitmap);
         }
         return bitmap;
     }
 
-    public Bitmap applyBorder(Bitmap bitmap) {
+    public Bitmap applyBorder(Bitmap bitmap, FilterEnvironment environment) {
         if (mBorder != null && mDoApplyGeometry) {
             mBorder.synchronizeRepresentation();
-            bitmap = mEnvironment.applyRepresentation(mBorder, bitmap);
+            bitmap = environment.applyRepresentation(mBorder, bitmap);
         }
         return bitmap;
     }
 
-    public Bitmap applyFilters(Bitmap bitmap, int from, int to) {
+    public Bitmap applyFilters(Bitmap bitmap, int from, int to, FilterEnvironment environment) {
         if (mDoApplyFilters) {
             if (from < 0) {
                 from = 0;
@@ -461,7 +447,7 @@ public class ImagePreset {
                     representation = mFilters.elementAt(i);
                     representation.synchronizeRepresentation();
                 }
-                bitmap = mEnvironment.applyRepresentation(representation, bitmap);
+                bitmap = environment.applyRepresentation(representation, bitmap);
             }
         }
 
@@ -500,22 +486,6 @@ public class ImagePreset {
         imageStateAdapter.notifyDataSetChanged();
     }
 
-    public float getScaleFactor() {
-        return mScaleFactor;
-    }
-
-    public int getQuality() {
-        return mQuality;
-    }
-
-    public void setQuality(int value) {
-        mQuality = value;
-    }
-
-    public void setScaleFactor(float value) {
-        mScaleFactor = value;
-    }
-
     public void setPartialRendering(boolean partialRendering, Rect bounds) {
         mPartialRendering = partialRendering;
         mPartialRenderingBounds = bounds;
@@ -537,18 +507,14 @@ public class ImagePreset {
         mPreviewImage = previewImage;
     }
 
-    public Vector<ImageFilter> getUsedFilters() {
+    public Vector<ImageFilter> getUsedFilters(BaseFiltersManager filtersManager) {
         Vector<ImageFilter> usedFilters = new Vector<ImageFilter>();
         for (int i = 0; i < mFilters.size(); i++) {
             FilterRepresentation representation = mFilters.elementAt(i);
-            FiltersManager filtersManager = getEnvironment().getFiltersManager();
             ImageFilter filter = filtersManager.getFilterForRepresentation(representation);
             usedFilters.add(filter);
         }
         return usedFilters;
     }
 
-    public FilterEnvironment getEnvironment() {
-        return mEnvironment;
-    }
 }

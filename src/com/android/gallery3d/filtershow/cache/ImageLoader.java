@@ -40,6 +40,7 @@ import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
+import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.tools.BitmapTask;
@@ -358,51 +359,28 @@ public class ImageLoader {
         }
     };
 
-    // FIXME: this currently does the loading + filtering on the UI thread --
-    // need to move this to a background thread.
-    public Bitmap getScaleOneImageForPreset(ImageShow caller, ImagePreset imagePreset, Rect bounds,
-                                            Rect destination, boolean force) {
+    public Bitmap getScaleOneImageForPreset(Rect bounds, Rect destination) {
         mLoadingLock.lock();
-        Bitmap bmp = mZoomCache.getImage(imagePreset, bounds);
-        if (force || bmp == null) {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inMutable = true;
-            if (destination != null) {
-                if (bounds.width() > destination.width()) {
-                    int sampleSize = 1;
-                    int w = bounds.width();
-                    while (w > destination.width()) {
-                        sampleSize *= 2;
-                        w /= sampleSize;
-                    }
-                    options.inSampleSize = sampleSize;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inMutable = true;
+        if (destination != null) {
+            if (bounds.width() > destination.width()) {
+                int sampleSize = 1;
+                int w = bounds.width();
+                while (w > destination.width()) {
+                    sampleSize *= 2;
+                    w /= sampleSize;
                 }
-            }
-            bmp = loadRegionBitmap(mUri, options, bounds);
-            if (destination != null) {
-                mLoadingLock.unlock();
-                return bmp;
-            }
-            if (bmp != null) {
-                float scaleFactor = imagePreset.getScaleFactor();
-                float scale = (float) bmp.getWidth() / (float) getOriginalBounds().width();
-                imagePreset.setScaleFactor(scale);
-                imagePreset.setupEnvironment();
-                bmp = imagePreset.apply(bmp);
-                imagePreset.setScaleFactor(scaleFactor);
-                mZoomCache.setImage(imagePreset, bounds, bmp);
-                mLoadingLock.unlock();
-                return bmp;
+                options.inSampleSize = sampleSize;
             }
         }
+        Bitmap bmp = loadRegionBitmap(mUri, options, bounds);
         mLoadingLock.unlock();
         return bmp;
     }
 
     public void saveImage(ImagePreset preset, final FilterShowActivity filterShowActivity,
             File destination) {
-        preset.setQuality(ImagePreset.QUALITY_FINAL);
-        preset.setScaleFactor(1.0f);
         new SaveCopyTask(mContext, mUri, destination, new SaveCopyTask.Callback() {
 
             @Override
@@ -510,9 +488,6 @@ public class ImageLoader {
 
     public void returnFilteredResult(ImagePreset preset,
             final FilterShowActivity filterShowActivity) {
-        preset.setQuality(ImagePreset.QUALITY_FINAL);
-        preset.setScaleFactor(1.0f);
-
         BitmapTask.Callbacks<ImagePreset> cb = new BitmapTask.Callbacks<ImagePreset>() {
 
             @Override
@@ -545,9 +520,9 @@ public class ImageLoader {
                             Log.w(LOGTAG, "Failed to save image!");
                             return null;
                         }
-                        param.setupEnvironment();
-                        bitmap = param.applyGeometry(bitmap);
-                        bitmap = param.apply(bitmap);
+                        CachingPipeline pipeline = new CachingPipeline(
+                                FiltersManager.getManager(), "Saving");
+                        bitmap = pipeline.renderFinalImage(bitmap, param);
                         noBitmap = false;
                     } catch (java.lang.OutOfMemoryError e) {
                         // Try 5 times before failing for good.

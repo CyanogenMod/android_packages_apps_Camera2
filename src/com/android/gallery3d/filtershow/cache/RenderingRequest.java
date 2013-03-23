@@ -19,7 +19,9 @@ package com.android.gallery3d.filtershow.cache;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import com.android.gallery3d.app.Log;
+import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
+import com.android.gallery3d.filtershow.presets.FilterEnvironment;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class RenderingRequest {
@@ -54,8 +56,9 @@ public class RenderingRequest {
         if (type == FULL_RENDERING
                 || type == GEOMETRY_RENDERING
                 || type == ICON_RENDERING) {
-            preset.setupEnvironment();
-            bitmap = preset.applyGeometry(source);
+            CachingPipeline pipeline = new CachingPipeline(
+                    FiltersManager.getManager(), "Icon");
+            bitmap = pipeline.renderGeometryIcon(source, preset);
         } else if (type != PARTIAL_RENDERING) {
             bitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), mConfig);
         }
