@@ -22,6 +22,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 
 import com.android.gallery3d.filtershow.CropExtras;
 import com.android.gallery3d.filtershow.imageshow.GeometryMath;
@@ -72,7 +73,12 @@ public class ImageFilterGeometry extends ImageFilter {
         // TODO: implement bilinear or bicubic here... for now, just use
         // canvas to do a simple implementation...
         // TODO: and be more memory efficient! (do it in native?)
-
+        RectF cb = mGeometry.getPreviewCropBounds();
+        RectF pb = mGeometry.getPhotoBounds();
+        if (cb.width() == 0 || cb.height() == 0 || pb.width() == 0 || pb.height() == 0) {
+            Log.w(LOGTAG, "Cannot apply geometry: geometry metadata has not been initialized");
+            return bitmap;
+        }
         CropExtras extras = mGeometry.getCropExtras();
         boolean useExtras = mGeometry.getUseCropExtrasFlag();
         int outputX = 0;

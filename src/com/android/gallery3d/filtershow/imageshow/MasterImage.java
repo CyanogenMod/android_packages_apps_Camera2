@@ -52,7 +52,6 @@ public class MasterImage implements RenderingRequestCaller {
     private Bitmap mGeometryOnlyBitmap = null;
     private Bitmap mFiltersOnlyBitmap = null;
     private Bitmap mPartialBitmap = null;
-    private Bitmap mThumbnailBitmap  = null;
 
     private ImageLoader mLoader = null;
     private HistoryAdapter mHistory = null;
@@ -402,59 +401,11 @@ public class MasterImage implements RenderingRequestCaller {
 
     public void hasNewGeometry() {
         updatePresets(true);
-        computeThumbnailBitmap();
         for (GeometryListener listener : mGeometryListeners) {
             listener.geometryChanged();
         }
     }
 
-    private Bitmap createSquareImage(Bitmap dst, Bitmap image, Rect destination) {
-        if (image != null) {
-            Canvas canvas = new Canvas(dst);
-            int iw = image.getWidth();
-            int ih = image.getHeight();
-            int x = 0;
-            int y = 0;
-            int size = 0;
-            Rect source = null;
-            if (iw > ih) {
-                size = ih;
-                x = (int) ((iw - size) / 2.0f);
-                y = 0;
-            } else {
-                size = iw;
-                x = 0;
-                y = (int) ((ih - size) / 2.0f);
-            }
-            source = new Rect(x, y, x + size, y + size);
-            canvas.drawBitmap(image, source, destination, new Paint());
-        }
-        return dst;
-    }
-
-    public void computeThumbnailBitmap() {
-        Bitmap bmap = mLoader.getOriginalBitmapSmall();
-        if (bmap == null) {
-            return;
-        }
-        ImagePreset geoPreset = new ImagePreset(MasterImage.getImage().getGeometryPreset());
-        geoPreset.setupEnvironment();
-        bmap = geoPreset.applyGeometry(bmap);
-        float w = bmap.getWidth();
-        float h = bmap.getHeight();
-        float s = Math.min(w, h);
-        float f = sIconSeedSize / s;
-        w = w * f;
-        h = h * f;
-        s = Math.min(w, h);
-        Bitmap bmap2 = Bitmap.createScaledBitmap(bmap, (int) s, (int) s, true);
-        bmap = createSquareImage(bmap2, bmap, new Rect(0, 0, (int) s, (int) s));
-        if (DEBUG) {
-            Log.v(LOGTAG, "Create thumbnail of size " + bmap.getWidth() + " x " + bmap.getHeight()
-                    + " seed size: " + sIconSeedSize);
-        }
-        mThumbnailBitmap = bmap;
-    }
 
     public float getScaleFactor() {
         return mScaleFactor;
@@ -494,7 +445,7 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public Bitmap getThumbnailBitmap() {
-        return mThumbnailBitmap;
+        return mLoader.getOriginalBitmapSmall();
     }
 
     public float getMaxScaleFactor() {

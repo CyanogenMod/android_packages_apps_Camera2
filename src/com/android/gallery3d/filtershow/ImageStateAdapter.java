@@ -45,7 +45,6 @@ public class ImageStateAdapter extends ArrayAdapter<FilterRepresentation> {
             view = (MovableLinearLayout) inflater.inflate(R.layout.filtershow_imagestate_row, null);
         }
         FilterRepresentation filter = getItem(position);
-        filter.synchronizeRepresentation();
         view.setFilterRepresentation(filter);
         ImageView markView = (ImageView) view.findViewById(R.id.selectedMark);
         if (filter == MasterImage.getImage().getCurrentFilterRepresentation()) {
