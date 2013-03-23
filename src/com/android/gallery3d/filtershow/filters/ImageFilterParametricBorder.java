@@ -66,11 +66,4 @@ public class ImageFilterParametricBorder extends ImageFilter {
        return bitmap;
     }
 
-    @Override
-    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, int quality) {
-        Canvas canvas = new Canvas(bitmap);
-        applyHelper(canvas, bitmap.getWidth() * 4, bitmap.getHeight() * 4);
-        return bitmap;
-    }
-
 }
