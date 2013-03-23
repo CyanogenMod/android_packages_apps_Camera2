@@ -73,16 +73,6 @@ public class ImageFilterBorder extends ImageFilter {
         return applyHelper(bitmap, scale1, scale2);
     }
 
-    @Override
-    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, int quality) {
-        if (getParameters() == null || getParameters().getDrawableResource() == 0) {
-            return bitmap;
-        }
-        float scale1 = NINEPATCH_ICON_SCALING;
-        float scale2 = BITMAP_ICON_SCALING;
-        return applyHelper(bitmap, scale1, scale2);
-    }
-
     public void setResources(Resources resources) {
         if (mResources != resources) {
             mResources = resources;
