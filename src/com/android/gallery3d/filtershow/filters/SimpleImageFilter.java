@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.filtershow.filters;
 
-import android.graphics.Bitmap;
-
 public class SimpleImageFilter extends ImageFilter {
 
     private FilterBasicRepresentation mParameters;
@@ -35,12 +33,5 @@ public class SimpleImageFilter extends ImageFilter {
 
     public FilterBasicRepresentation getParameters() {
         return mParameters;
-    }
-
-    @Override
-    public Bitmap iconApply(Bitmap bitmap, float scaleFactor, int quality) {
-        FilterRepresentation representation = getDefaultRepresentation();
-        this.useRepresentation(representation);
-        return apply(bitmap, scaleFactor, quality);
     }
 }
