@@ -34,7 +34,7 @@ import java.util.List;
 public class PhotoDatabase extends SQLiteOpenHelper {
     @SuppressWarnings("unused")
     private static final String TAG = PhotoDatabase.class.getSimpleName();
-    static final int DB_VERSION = 1;
+    static final int DB_VERSION = 2;
 
     private static final String SQL_CREATE_TABLE = "CREATE TABLE ";
 
@@ -59,6 +59,7 @@ public class PhotoDatabase extends SQLiteOpenHelper {
         { Albums.ACCOUNT_ID, "INTEGER NOT NULL" },
         // Albums.PARENT_ID is a foreign key to Albums._ID
         { Albums.PARENT_ID, "INTEGER" },
+        { Albums.ALBUM_TYPE, "TEXT" },
         { Albums.VISIBILITY, "INTEGER NOT NULL" },
         { Albums.LOCATION_STRING, "TEXT" },
         { Albums.TITLE, "TEXT NOT NULL" },
