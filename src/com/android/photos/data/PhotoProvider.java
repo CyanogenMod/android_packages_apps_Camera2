@@ -133,6 +133,8 @@ public class PhotoProvider extends SQLiteContentProvider {
         public static final String ACCOUNT_ID = "account_id";
         /** Parent directory or null if this is in the root. */
         public static final String PARENT_ID = "parent_id";
+        /** The type of album. Non-null, if album is auto-generated. String value. */
+        public static final String ALBUM_TYPE = "album_type";
         /**
          * Column name for the visibility level of the album. Can be any of the
          * VISIBILITY_* values.
