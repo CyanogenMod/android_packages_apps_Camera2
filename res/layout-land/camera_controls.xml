@@ -19,7 +19,7 @@
     style="@style/CameraControls"
     android:layout_gravity="center" >
 
-        <View
+        <com.android.camera.ui.SwitcherBackgroundView
             android:id="@+id/blocker"
             android:layout_height="match_parent"
             android:layout_width="@dimen/switcher_size"
