@@ -57,4 +57,9 @@ public class EditorRotate extends Editor implements EditorInfo {
     public boolean getOverlayOnly() {
         return true;
     }
+
+    @Override
+    public boolean showsSeekBar() {
+        return false;
+    }
 }

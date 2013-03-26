@@ -78,6 +78,11 @@ public class EditorDraw extends Editor {
         });
     }
 
+    @Override
+    public boolean showsSeekBar() {
+        return false;
+    }
+
     private void showPopupMenu(LinearLayout accessoryViewList) {
         final Button button = (Button) accessoryViewList.findViewById(
                 R.id.applyEffect);
