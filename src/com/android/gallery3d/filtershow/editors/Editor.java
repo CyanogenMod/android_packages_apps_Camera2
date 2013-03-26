@@ -17,15 +17,13 @@
 package com.android.gallery3d.filtershow.editors;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.PopupMenu;
-import android.widget.SeekBar;
+import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.android.gallery3d.R;
@@ -85,6 +83,10 @@ public class Editor implements OnSeekBarChangeListener {
         return true;
     }
 
+    public boolean showsPopupIndicator() {
+        return true;
+    }
+
     /**
      * @param actionButton the would be the area for menu etc
      * @param editControl this is the black area for sliders etc
@@ -96,6 +98,14 @@ public class Editor implements OnSeekBarChangeListener {
             mSeekBar.setVisibility(View.VISIBLE);
         } else {
             mSeekBar.setVisibility(View.INVISIBLE);
+        }
+        Button button = (Button) actionButton.findViewById(R.id.applyEffect);
+        if (button != null) {
+            if (showsPopupIndicator()) {
+                button.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.filtershow_menu_marker, 0);
+            } else {
+                button.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+            }
         }
     }
 

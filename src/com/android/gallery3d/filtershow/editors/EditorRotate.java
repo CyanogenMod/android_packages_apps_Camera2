@@ -62,4 +62,9 @@ public class EditorRotate extends Editor implements EditorInfo {
     public boolean showsSeekBar() {
         return false;
     }
+
+    @Override
+    public boolean showsPopupIndicator() {
+        return false;
+    }
 }
