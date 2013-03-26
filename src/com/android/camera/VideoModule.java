@@ -58,6 +58,7 @@ import com.android.camera.ui.PopupManager;
 import com.android.camera.ui.RotateTextToast;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
+import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.util.AccessibilityUtils;
 import com.android.gallery3d.util.UsageStatistics;
 
@@ -2213,11 +2214,12 @@ public class VideoModule implements CameraModule,
     private void storeImage(final byte[] data, Location loc) {
         long dateTaken = System.currentTimeMillis();
         String title = Util.createJpegName(dateTaken);
-        int orientation = Exif.getOrientation(data);
+        ExifInterface exif = Exif.getExif(data);
+        int orientation = Exif.getOrientation(exif);
         Size s = mParameters.getPictureSize();
         mActivity.getMediaSaveService().addImage(
-                data, title, dateTaken, loc, s.width, s.height,
-                orientation, mOnMediaSavedListener, mContentResolver);
+                data, title, dateTaken, loc, s.width, s.height, orientation,
+                exif, mOnMediaSavedListener, mContentResolver);
     }
 
     private boolean resetEffect() {
