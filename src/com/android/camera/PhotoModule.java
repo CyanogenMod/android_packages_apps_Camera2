@@ -173,6 +173,13 @@ public class PhotoModule
         }
     };
 
+    private Runnable mFlashRunnable = new Runnable() {
+        @Override
+        public void run() {
+            animateFlash();
+        }
+    };
+
     private final StringBuilder mBuilder = new StringBuilder();
     private final Formatter mFormatter = new Formatter(mBuilder);
     private final Object[] mFormatterArgs = new Object[1];
@@ -205,7 +212,6 @@ public class PhotoModule
 
     private LocationManager mLocationManager;
 
-    private final ShutterCallback mShutterCallback = new ShutterCallback();
     private final PostViewPictureCallback mPostViewPictureCallback =
             new PostViewPictureCallback();
     private final RawPictureCallback mRawPictureCallback =
@@ -721,11 +727,21 @@ public class PhotoModule
 
     private final class ShutterCallback
             implements android.hardware.Camera.ShutterCallback {
+
+        private boolean mAnimateFlash;
+
+        public ShutterCallback(boolean animateFlash) {
+            mAnimateFlash = animateFlash;
+        }
+
         @Override
         public void onShutter() {
             mShutterCallbackTime = System.currentTimeMillis();
             mShutterLag = mShutterCallbackTime - mCaptureStartTime;
             Log.v(TAG, "mShutterLag = " + mShutterLag + "ms");
+            if (mAnimateFlash) {
+                mActivity.runOnUiThread(mFlashRunnable);
+            }
         }
     }
 
@@ -988,13 +1004,10 @@ public class PhotoModule
         Util.setGpsParameters(mParameters, loc);
         mCameraDevice.setParameters(mParameters);
 
-        mCameraDevice.takePicture2(mShutterCallback, mRawPictureCallback,
-                mPostViewPictureCallback, new JpegPictureCallback(loc),
-                mCameraState, mFocusManager.getFocusState());
-
-        if (!animateBefore) {
-            animateFlash();
-        }
+        mCameraDevice.takePicture2(new ShutterCallback(!animateBefore),
+                mRawPictureCallback, mPostViewPictureCallback,
+                new JpegPictureCallback(loc), mCameraState,
+                mFocusManager.getFocusState());
 
         mNamedImages.nameNewImage(mContentResolver, mCaptureStartTime);
 
