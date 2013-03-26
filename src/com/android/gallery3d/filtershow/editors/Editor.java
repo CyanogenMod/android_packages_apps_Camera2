@@ -81,13 +81,22 @@ public class Editor implements OnSeekBarChangeListener {
         return mShowParameter;
     }
 
+    public boolean showsSeekBar() {
+        return true;
+    }
+
     /**
      * @param actionButton the would be the area for menu etc
      * @param editControl this is the black area for sliders etc
      */
     public void setUtilityPanelUI(View actionButton, View editControl) {
         mSeekBar = (SeekBar) editControl.findViewById(R.id.primarySeekBar);
-        mSeekBar.setOnSeekBarChangeListener(this);
+        if (showsSeekBar()) {
+            mSeekBar.setOnSeekBarChangeListener(this);
+            mSeekBar.setVisibility(View.VISIBLE);
+        } else {
+            mSeekBar.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
