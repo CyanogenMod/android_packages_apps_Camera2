@@ -26,6 +26,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.android.gallery3d.exif.ExifInterface;
+
 /*
  * Service for saving images in the background thread.
  */
@@ -77,14 +79,14 @@ public class MediaSaveService extends Service {
 
     // Runs in main thread
     public void addImage(final byte[] data, String title, long date, Location loc,
-            int width, int height, int orientation,
+            int width, int height, int orientation, ExifInterface exif,
             OnMediaSavedListener l, ContentResolver resolver) {
         if (isQueueFull()) {
             Log.e(TAG, "Cannot add image when the queue is full");
             return;
         }
         SaveTask t = new SaveTask(data, title, date, (loc == null) ? null : new Location(loc),
-                width, height, orientation, resolver, l);
+                width, height, orientation, exif, resolver, l);
 
         mTaskNumber++;
         if (isQueueFull()) {
@@ -114,12 +116,13 @@ public class MediaSaveService extends Service {
         private Location loc;
         private int width, height;
         private int orientation;
+        private ExifInterface exif;
         private ContentResolver resolver;
         private OnMediaSavedListener listener;
 
         public SaveTask(byte[] data, String title, long date, Location loc,
-                int width, int height, int orientation, ContentResolver resolver,
-                OnMediaSavedListener listener) {
+                int width, int height, int orientation, ExifInterface exif,
+                ContentResolver resolver, OnMediaSavedListener listener) {
             this.data = data;
             this.title = title;
             this.date = date;
@@ -127,6 +130,7 @@ public class MediaSaveService extends Service {
             this.width = width;
             this.height = height;
             this.orientation = orientation;
+            this.exif = exif;
             this.resolver = resolver;
             this.listener = listener;
         }
@@ -139,7 +143,7 @@ public class MediaSaveService extends Service {
         @Override
         protected Uri doInBackground(Void... v) {
             return Storage.addImage(
-                    resolver, title, date, loc, orientation, data, width, height);
+                    resolver, title, date, loc, orientation, exif, data, width, height);
         }
 
         @Override

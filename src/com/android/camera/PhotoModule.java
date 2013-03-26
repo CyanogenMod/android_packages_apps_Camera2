@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
@@ -31,6 +32,10 @@ import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.Size;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.media.CameraProfile;
 import android.net.Uri;
@@ -56,6 +61,9 @@ import com.android.camera.ui.PopupManager;
 import com.android.camera.ui.RotateTextToast;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
+import com.android.gallery3d.exif.ExifInterface;
+import com.android.gallery3d.exif.ExifTag;
+import com.android.gallery3d.exif.Rational;
 import com.android.gallery3d.filtershow.CropExtras;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.util.UsageStatistics;
@@ -77,7 +85,8 @@ public class PhotoModule
     CameraPreference.OnPreferenceChangedListener,
     ShutterButton.OnShutterButtonListener,
     MediaSaveService.Listener,
-    OnCountDownFinishedListener {
+    OnCountDownFinishedListener,
+    SensorEventListener {
 
     private static final String TAG = "CAM_PhotoModule";
 
@@ -238,6 +247,12 @@ public class PhotoModule
 
     CameraStartUpThread mCameraStartUpThread;
     ConditionVariable mStartPreviewPrerequisiteReady = new ConditionVariable();
+
+    private SensorManager mSensorManager;
+    private float[] mGData = new float[3];
+    private float[] mMData = new float[3];
+    private float[] mR = new float[16];
+    private int mHeading = -1;
 
     private MediaSaveService.OnMediaSavedListener mOnMediaSavedListener =
             new MediaSaveService.OnMediaSavedListener() {
@@ -417,6 +432,8 @@ public class PhotoModule
         initializeControlByIntent();
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
         mLocationManager = new LocationManager(mActivity, mUI);
+        mSensorManager = (SensorManager)(mActivity.getSystemService(Context.SENSOR_SERVICE));
+
     }
 
     private void initializeControlByIntent() {
@@ -792,7 +809,8 @@ public class PhotoModule
             if (!mIsImageCaptureIntent) {
                 // Calculate the width and the height of the jpeg.
                 Size s = mParameters.getPictureSize();
-                int orientation = Exif.getOrientation(jpegData);
+                ExifInterface exif = Exif.getExif(jpegData);
+                int orientation = Exif.getOrientation(exif);
                 int width, height;
                 if ((mJpegRotation + orientation) % 180 == 0) {
                     width = s.width;
@@ -807,9 +825,20 @@ public class PhotoModule
                     Log.e(TAG, "Unbalanced name/data pair");
                 } else {
                     if (date == -1) date = mCaptureStartTime;
+                    if (mHeading >= 0) {
+                        // heading direction has been updated by the sensor.
+                        ExifTag directionRefTag = exif.buildTag(
+                                ExifInterface.TAG_GPS_IMG_DIRECTION_REF,
+                                ExifInterface.GpsTrackRef.MAGNETIC_DIRECTION);
+                        ExifTag directionTag = exif.buildTag(
+                                ExifInterface.TAG_GPS_IMG_DIRECTION,
+                                new Rational(mHeading, 1));
+                        exif.setTag(directionRefTag);
+                        exif.setTag(directionTag);
+                    }
                     mActivity.getMediaSaveService().addImage(
                             jpegData, title, date, mLocation, width, height,
-                            orientation, mOnMediaSavedListener, mContentResolver);
+                            orientation, exif, mOnMediaSavedListener, mContentResolver);
                 }
             } else {
                 mJpegImageData = jpegData;
@@ -1091,7 +1120,8 @@ public class PhotoModule
                     Util.closeSilently(outputStream);
                 }
             } else {
-                int orientation = Exif.getOrientation(data);
+                ExifInterface exif = Exif.getExif(data);
+                int orientation = Exif.getOrientation(exif);
                 Bitmap bitmap = Util.makeBitmap(data, 50 * 1024);
                 bitmap = Util.rotate(bitmap, orientation);
                 mActivity.setResultEx(Activity.RESULT_OK,
@@ -1258,6 +1288,16 @@ public class PhotoModule
         PopupManager.getInstance(mActivity).notifyShowPopup(null);
         UsageStatistics.onContentViewChanged(
                 UsageStatistics.COMPONENT_CAMERA, "PhotoModule");
+
+        Sensor gsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        if (gsensor != null) {
+            mSensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
+        Sensor msensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        if (msensor != null) {
+            mSensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
 
     void waitCameraStartUpThread() {
@@ -1276,6 +1316,15 @@ public class PhotoModule
     @Override
     public void onPauseBeforeSuper() {
         mPaused = true;
+        Sensor gsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        if (gsensor != null) {
+            mSensorManager.unregisterListener(this, gsensor);
+        }
+
+        Sensor msensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        if (msensor != null) {
+            mSensorManager.unregisterListener(this, msensor);
+        }
     }
 
     @Override
@@ -1974,5 +2023,34 @@ public class PhotoModule
         if (mFirstTimeInitialized) {
             s.setListener(this);
         }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        int type = event.sensor.getType();
+        float[] data;
+        if (type == Sensor.TYPE_ACCELEROMETER) {
+            data = mGData;
+        } else if (type == Sensor.TYPE_MAGNETIC_FIELD) {
+            data = mMData;
+        } else {
+            // we should not be here.
+            return;
+        }
+        for (int i = 0; i < 3 ; i++) {
+            data[i] = event.values[i];
+        }
+        float[] orientation = new float[3];
+        SensorManager.getRotationMatrix(mR, null, mGData, mMData);
+        SensorManager.getOrientation(mR, orientation);
+        mHeading = (int) (orientation[0] * 180f / Math.PI) % 360;
+        if (mHeading < 0) {
+            mHeading += 360;
+        }
+        Log.v(TAG, "heading:" + mHeading);
     }
 }

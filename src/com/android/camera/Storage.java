@@ -30,6 +30,7 @@ import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 
 import com.android.gallery3d.common.ApiHelper;
+import com.android.gallery3d.exif.ExifInterface;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,7 +50,7 @@ public class Storage {
     public static final long UNAVAILABLE = -1L;
     public static final long PREPARING = -2L;
     public static final long UNKNOWN_SIZE = -3L;
-    public static final long LOW_STORAGE_THRESHOLD= 50000000;
+    public static final long LOW_STORAGE_THRESHOLD = 50000000;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private static void setImageSize(ContentValues values, int width, int height) {
@@ -77,11 +78,19 @@ public class Storage {
 
     // Save the image and add it to media store.
     public static Uri addImage(ContentResolver resolver, String title,
-            long date, Location location, int orientation, byte[] jpeg,
-            int width, int height) {
+            long date, Location location, int orientation, ExifInterface exif,
+            byte[] jpeg, int width, int height) {
         // Save the image.
         String path = generateFilepath(title);
-        writeFile(path, jpeg);
+        if (exif != null) {
+            try {
+                exif.writeExif(jpeg, path);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to write data", e);
+            }
+        } else {
+            writeFile(path, jpeg);
+        }
         return addImage(resolver, title, date, location, orientation,
                 jpeg.length, path, width, height);
     }
