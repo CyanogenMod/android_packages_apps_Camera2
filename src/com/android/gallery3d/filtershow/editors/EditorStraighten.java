@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.editors;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.gallery3d.R;
@@ -71,6 +72,11 @@ public class EditorStraighten extends Editor implements EditorInfo {
 
     @Override
     public boolean showsSeekBar() {
+        return false;
+    }
+
+    @Override
+    public boolean showsPopupIndicator() {
         return false;
     }
 }
