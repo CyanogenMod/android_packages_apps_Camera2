@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.editors;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.gallery3d.R;
@@ -58,6 +59,11 @@ public class EditorCrop extends Editor implements EditorInfo {
         } else {
             mImageCrop.setExtras(null);
         }
+    }
+
+    @Override
+    public boolean showsSeekBar() {
+        return false;
     }
 
     @Override
