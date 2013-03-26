@@ -57,4 +57,9 @@ public class EditorRedEye extends Editor {
             mImageRedEyes.setRepresentation(redEyeRep);
         }
     }
+
+    @Override
+    public boolean showsSeekBar() {
+        return false;
+    }
 }
