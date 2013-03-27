@@ -20,32 +20,35 @@ import android.util.Log;
 
 import com.android.gallery3d.exif.ExifInterface;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class Exif {
     private static final String TAG = "CameraExif";
 
-    // Returns the degrees in clockwise. Values are 0, 90, 180, or 270.
-    public static int getOrientation(byte[] jpeg) {
-        if (jpeg == null) {
-            return 0;
-        }
-
+    public static ExifInterface getExif(byte[] jpegData) {
         ExifInterface exif = new ExifInterface();
-        InputStream is = new ByteArrayInputStream(jpeg);
         try {
-            exif.readExif(is);
-            Integer val = exif.getTagIntValue(ExifInterface.TAG_ORIENTATION);
-            if (val == null) {
-                return 0;
-            } else {
-                return ExifInterface.getRotationForOrientationValue(val.shortValue());
-            }
+            exif.readExif(jpegData);
         } catch (IOException e) {
-            Log.w(TAG, "Failed to read EXIF orientation", e);
-            return 0;
+            Log.w(TAG, "Failed to read EXIF data", e);
         }
+        return exif;
+    }
+
+    // Returns the degrees in clockwise. Values are 0, 90, 180, or 270.
+    public static int getOrientation(ExifInterface exif) {
+        Integer val = exif.getTagIntValue(ExifInterface.TAG_ORIENTATION);
+        if (val == null) {
+            return 0;
+        } else {
+            return ExifInterface.getRotationForOrientationValue(val.shortValue());
+        }
+    }
+
+    public static int getOrientation(byte[] jpegData) {
+        if (jpegData == null) return 0;
+
+        ExifInterface exif = getExif(jpegData);
+        return getOrientation(exif);
     }
 }
