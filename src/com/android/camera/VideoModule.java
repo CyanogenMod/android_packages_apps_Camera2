@@ -1123,6 +1123,7 @@ public class VideoModule implements CameraModule,
         setupMediaRecorderPreviewDisplay();
         // Unlock the camera object before passing it to media recorder.
         mActivity.mCameraDevice.unlock();
+        mActivity.mCameraDevice.waitDone();
         mMediaRecorder.setCamera(mActivity.mCameraDevice.getCamera());
         if (!mCaptureTimeLapse) {
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
@@ -1647,6 +1648,7 @@ public class VideoModule implements CameraModule,
             releaseMediaRecorder();
             if (!mPaused) {
                 mActivity.mCameraDevice.lock();
+                mActivity.mCameraDevice.waitDone();
                 if (ApiHelper.HAS_SURFACE_TEXTURE &&
                     !ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
                     stopPreview();
