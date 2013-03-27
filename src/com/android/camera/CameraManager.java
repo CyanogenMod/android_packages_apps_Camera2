@@ -34,22 +34,24 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.view.SurfaceHolder;
 import android.util.Log;
+import android.view.SurfaceHolder;
 
 import com.android.gallery3d.common.ApiHelper;
 
 import java.io.IOException;
+import java.util.concurrent.SynchronousQueue;
 
 public class CameraManager {
     private static final String TAG = "CameraManager";
     private static CameraManager sCameraManager = new CameraManager();
 
-    // Thread progress signals
-    private ConditionVariable mSig = new ConditionVariable();
-
     private Parameters mParameters;
-    private IOException mReconnectException;
+    private boolean mParametersIsDirty;
+    private SynchronousQueue<Parameters> mParametersQueue =
+            new SynchronousQueue<Parameters>();
+    private SynchronousQueue<IOExceptionHolder> mReconnectExceptionQueue =
+            new SynchronousQueue<IOExceptionHolder>();
 
     private static final int RELEASE = 1;
     private static final int RECONNECT = 2;
@@ -72,14 +74,20 @@ public class CameraManager {
     private static final int SET_PARAMETERS = 19;
     private static final int GET_PARAMETERS = 20;
     private static final int SET_PARAMETERS_ASYNC = 21;
-    private static final int WAIT_FOR_IDLE = 22;
-    private static final int SET_PREVIEW_DISPLAY_ASYNC = 23;
-    private static final int SET_PREVIEW_CALLBACK = 24;
-    private static final int ENABLE_SHUTTER_SOUND = 25;
+    private static final int SET_PREVIEW_DISPLAY_ASYNC = 22;
+    private static final int SET_PREVIEW_CALLBACK = 23;
+    private static final int ENABLE_SHUTTER_SOUND = 24;
 
     private Handler mCameraHandler;
     private CameraProxy mCameraProxy;
     private android.hardware.Camera mCamera;
+
+    // This holder is used when we need to pass the exception
+    // back to the calling thread. SynchornousQueue doesn't
+    // allow we to pass a null object thus a holder is needed.
+    private class IOExceptionHolder {
+        public IOException ex;
+    }
 
     public static CameraManager instance() {
         return sCameraManager;
@@ -115,7 +123,7 @@ public class CameraManager {
         private void setPreviewTexture(Object surfaceTexture) {
             try {
                 mCamera.setPreviewTexture((SurfaceTexture) surfaceTexture);
-            } catch(IOException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -137,114 +145,119 @@ public class CameraManager {
                         mCamera.release();
                         mCamera = null;
                         mCameraProxy = null;
-                        break;
+                        return;
 
                     case RECONNECT:
-                        mReconnectException = null;
+                        IOExceptionHolder holder = new IOExceptionHolder();
+                        holder.ex = null;
                         try {
                             mCamera.reconnect();
                         } catch (IOException ex) {
-                            mReconnectException = ex;
+                            holder.ex = ex;
                         }
-                        break;
+                        try {
+                            mReconnectExceptionQueue.put(holder);
+                        } catch (InterruptedException ex) {
+                        }
+                        return;
 
                     case UNLOCK:
                         mCamera.unlock();
-                        break;
+                        return;
 
                     case LOCK:
                         mCamera.lock();
-                        break;
+                        return;
 
                     case SET_PREVIEW_TEXTURE_ASYNC:
                         setPreviewTexture(msg.obj);
-                        return;  // no need to call mSig.open()
+                        return;
 
                     case SET_PREVIEW_DISPLAY_ASYNC:
                         try {
                             mCamera.setPreviewDisplay((SurfaceHolder) msg.obj);
-                        } catch(IOException e) {
+                        } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-                        return;  // no need to call mSig.open()
+                        return;
 
                     case START_PREVIEW_ASYNC:
                         mCamera.startPreview();
-                        return;  // no need to call mSig.open()
+                        return;
 
                     case STOP_PREVIEW:
                         mCamera.stopPreview();
-                        break;
+                        return;
 
                     case SET_PREVIEW_CALLBACK_WITH_BUFFER:
                         mCamera.setPreviewCallbackWithBuffer(
                             (PreviewCallback) msg.obj);
-                        break;
+                        return;
 
                     case ADD_CALLBACK_BUFFER:
                         mCamera.addCallbackBuffer((byte[]) msg.obj);
-                        break;
+                        return;
 
                     case AUTO_FOCUS:
                         mCamera.autoFocus((AutoFocusCallback) msg.obj);
-                        break;
+                        return;
 
                     case CANCEL_AUTO_FOCUS:
                         mCamera.cancelAutoFocus();
-                        break;
+                        return;
 
                     case SET_AUTO_FOCUS_MOVE_CALLBACK:
                         setAutoFocusMoveCallback(mCamera, msg.obj);
-                        break;
+                        return;
 
                     case SET_DISPLAY_ORIENTATION:
                         mCamera.setDisplayOrientation(msg.arg1);
-                        break;
+                        return;
 
                     case SET_ZOOM_CHANGE_LISTENER:
                         mCamera.setZoomChangeListener(
                             (OnZoomChangeListener) msg.obj);
-                        break;
+                        return;
 
                     case SET_FACE_DETECTION_LISTENER:
                         setFaceDetectionListener((FaceDetectionListener) msg.obj);
-                        break;
+                        return;
 
                     case START_FACE_DETECTION:
                         startFaceDetection();
-                        break;
+                        return;
 
                     case STOP_FACE_DETECTION:
                         stopFaceDetection();
-                        break;
+                        return;
 
                     case SET_ERROR_CALLBACK:
                         mCamera.setErrorCallback((ErrorCallback) msg.obj);
-                        break;
+                        return;
 
                     case SET_PARAMETERS:
                         mCamera.setParameters((Parameters) msg.obj);
-                        break;
+                        return;
 
                     case GET_PARAMETERS:
-                        mParameters = mCamera.getParameters();
-                        break;
+                        try {
+                            mParametersQueue.put(mCamera.getParameters());
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        return;
 
                     case SET_PARAMETERS_ASYNC:
                         mCamera.setParameters((Parameters) msg.obj);
-                        return;  // no need to call mSig.open()
+                        return;
 
                     case SET_PREVIEW_CALLBACK:
                         mCamera.setPreviewCallback((PreviewCallback) msg.obj);
-                        break;
+                        return;
 
                     case ENABLE_SHUTTER_SOUND:
                         enableShutterSound((msg.arg1 == 1) ? true : false);
-                        break;
-
-                    case WAIT_FOR_IDLE:
-                        // do nothing
-                        break;
+                        return;
 
                     default:
                         throw new RuntimeException("Invalid CameraProxy message=" + msg.what);
@@ -261,7 +274,6 @@ public class CameraManager {
                 }
                 throw e;
             }
-            mSig.open();
         }
     }
 
@@ -283,6 +295,7 @@ public class CameraManager {
         mCamera = android.hardware.Camera.open(cameraId);
         if (mCamera != null) {
             mCameraProxy = new CameraProxy();
+            mParametersIsDirty = true;
             return mCameraProxy;
         } else {
             return null;
@@ -290,6 +303,15 @@ public class CameraManager {
     }
 
     public class CameraProxy {
+        private ConditionVariable mWaitDoneLock = new ConditionVariable();
+        private Runnable mUnlockRunnable = new Runnable() {
+            @Override
+            public void run() {
+                mWaitDoneLock.open();
+            }
+        };
+
+
         private CameraProxy() {
             Assert(mCamera != null);
         }
@@ -299,30 +321,27 @@ public class CameraManager {
         }
 
         public void release() {
-            mSig.close();
             mCameraHandler.sendEmptyMessage(RELEASE);
-            mSig.block();
         }
 
         public void reconnect() throws IOException {
-            mSig.close();
             mCameraHandler.sendEmptyMessage(RECONNECT);
-            mSig.block();
-            if (mReconnectException != null) {
-                throw mReconnectException;
+            IOExceptionHolder holder = null;
+            try {
+                holder = mReconnectExceptionQueue.take();
+            } catch (InterruptedException ex) {
+            }
+            if (holder == null || holder.ex != null) {
+                throw holder.ex;
             }
         }
 
         public void unlock() {
-            mSig.close();
             mCameraHandler.sendEmptyMessage(UNLOCK);
-            mSig.block();
         }
 
         public void lock() {
-            mSig.close();
             mCameraHandler.sendEmptyMessage(LOCK);
-            mSig.block();
         }
 
         @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
@@ -339,66 +358,49 @@ public class CameraManager {
         }
 
         public void stopPreview() {
-            mSig.close();
             mCameraHandler.sendEmptyMessage(STOP_PREVIEW);
-            mSig.block();
         }
 
         public void setPreviewCallback(final PreviewCallback cb) {
-            mSig.close();
             mCameraHandler.obtainMessage(SET_PREVIEW_CALLBACK, cb).sendToTarget();
-            mSig.block();
         }
 
         public void setPreviewCallbackWithBuffer(final PreviewCallback cb) {
-            mSig.close();
             mCameraHandler.obtainMessage(SET_PREVIEW_CALLBACK_WITH_BUFFER, cb).sendToTarget();
-            mSig.block();
         }
 
         public void addCallbackBuffer(byte[] callbackBuffer) {
-            mSig.close();
             mCameraHandler.obtainMessage(ADD_CALLBACK_BUFFER, callbackBuffer).sendToTarget();
-            mSig.block();
         }
 
         public void autoFocus(AutoFocusCallback cb) {
-            mSig.close();
             mCameraHandler.obtainMessage(AUTO_FOCUS, cb).sendToTarget();
-            mSig.block();
         }
 
         public void cancelAutoFocus() {
-            mSig.close();
+            mCameraHandler.removeMessages(AUTO_FOCUS);
             mCameraHandler.sendEmptyMessage(CANCEL_AUTO_FOCUS);
-            mSig.block();
         }
 
         @TargetApi(ApiHelper.VERSION_CODES.JELLY_BEAN)
         public void setAutoFocusMoveCallback(AutoFocusMoveCallback cb) {
-            mSig.close();
             mCameraHandler.obtainMessage(SET_AUTO_FOCUS_MOVE_CALLBACK, cb).sendToTarget();
-            mSig.block();
         }
 
         public void takePicture(final ShutterCallback shutter, final PictureCallback raw,
                 final PictureCallback postview, final PictureCallback jpeg) {
-            mSig.close();
             // Too many parameters, so use post for simplicity
             mCameraHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     mCamera.takePicture(shutter, raw, postview, jpeg);
-                    mSig.open();
                 }
             });
-            mSig.block();
         }
 
         public void takePicture2(final ShutterCallback shutter, final PictureCallback raw,
                 final PictureCallback postview, final PictureCallback jpeg,
                 final int cameraState, final int focusState) {
-            mSig.close();
             // Too many parameters, so use post for simplicity
             mCameraHandler.post(new Runnable() {
                 @Override
@@ -410,81 +412,69 @@ public class CameraManager {
                             + ", focusState:" + focusState);
                         throw e;
                     }
-                    mSig.open();
                 }
             });
-            mSig.block();
         }
 
         public void setDisplayOrientation(int degrees) {
-            mSig.close();
             mCameraHandler.obtainMessage(SET_DISPLAY_ORIENTATION, degrees, 0)
                     .sendToTarget();
-            mSig.block();
         }
 
         public void setZoomChangeListener(OnZoomChangeListener listener) {
-            mSig.close();
             mCameraHandler.obtainMessage(SET_ZOOM_CHANGE_LISTENER, listener).sendToTarget();
-            mSig.block();
         }
 
         @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
         public void setFaceDetectionListener(FaceDetectionListener listener) {
-            mSig.close();
             mCameraHandler.obtainMessage(SET_FACE_DETECTION_LISTENER, listener).sendToTarget();
-            mSig.block();
         }
 
         public void startFaceDetection() {
-            mSig.close();
             mCameraHandler.sendEmptyMessage(START_FACE_DETECTION);
-            mSig.block();
         }
 
         public void stopFaceDetection() {
-            mSig.close();
             mCameraHandler.sendEmptyMessage(STOP_FACE_DETECTION);
-            mSig.block();
         }
 
         public void setErrorCallback(ErrorCallback cb) {
-            mSig.close();
             mCameraHandler.obtainMessage(SET_ERROR_CALLBACK, cb).sendToTarget();
-            mSig.block();
         }
 
         public void setParameters(Parameters params) {
-            mSig.close();
+            // TODO: check if this synchronous version is necessary
+            mParametersIsDirty = true;
             mCameraHandler.obtainMessage(SET_PARAMETERS, params).sendToTarget();
-            mSig.block();
         }
 
         public void setParametersAsync(Parameters params) {
+            mParametersIsDirty = true;
             mCameraHandler.removeMessages(SET_PARAMETERS_ASYNC);
             mCameraHandler.obtainMessage(SET_PARAMETERS_ASYNC, params).sendToTarget();
         }
 
         public Parameters getParameters() {
-            mSig.close();
-            mCameraHandler.sendEmptyMessage(GET_PARAMETERS);
-            mSig.block();
-            Parameters parameters = mParameters;
-            mParameters = null;
-            return parameters;
+            if (mParametersIsDirty || mParameters == null) {
+                mCameraHandler.sendEmptyMessage(GET_PARAMETERS);
+                try {
+                    mParameters = mParametersQueue.take();
+                    mParametersIsDirty = false;
+                } catch (InterruptedException ex) {
+                }
+            }
+            return mParameters;
         }
 
         public void enableShutterSound(boolean enable) {
-            mSig.close();
             mCameraHandler.obtainMessage(
                     ENABLE_SHUTTER_SOUND, (enable ? 1 : 0), 0).sendToTarget();
-            mSig.block();
         }
 
-        public void waitForIdle() {
-            mSig.close();
-            mCameraHandler.sendEmptyMessage(WAIT_FOR_IDLE);
-            mSig.block();
+        public void waitDone() {
+            mWaitDoneLock.close();
+            mCameraHandler.post(mUnlockRunnable);
+            mWaitDoneLock.block();
         }
     }
 }
