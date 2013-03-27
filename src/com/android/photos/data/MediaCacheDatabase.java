@@ -46,7 +46,7 @@ class MediaCacheDatabase extends SQLiteOpenHelper {
     }
 
     static interface Action {
-        void execute(Uri uri, long id, MediaRetriever.MediaSize size, Object parameter);
+        void execute(Uri uri, long id, MediaSize size, Object parameter);
     }
 
     private static final String[] PROJECTION_ID = {
@@ -89,10 +89,10 @@ class MediaCacheDatabase extends SQLiteOpenHelper {
     static class QueryCacheResults {
         public QueryCacheResults(long id, int sizeVal) {
             this.id = id;
-            this.size = MediaRetriever.MediaSize.fromInteger(sizeVal);
+            this.size = MediaSize.fromInteger(sizeVal);
         }
         public long id;
-        public MediaRetriever.MediaSize size;
+        public MediaSize size;
     }
 
     public MediaCacheDatabase(Context context) {
@@ -111,7 +111,7 @@ class MediaCacheDatabase extends SQLiteOpenHelper {
         MediaCache.getInstance().clearCacheDir();
     }
 
-    public Long getCached(Uri uri, MediaRetriever.MediaSize size) {
+    public Long getCached(Uri uri, MediaSize size) {
         String where = Columns.URI + " = ? AND " + Columns.MEDIA_SIZE + " = ?";
         SQLiteDatabase db = getWritableDatabase();
         String[] whereArgs = {
@@ -140,7 +140,7 @@ class MediaCacheDatabase extends SQLiteOpenHelper {
         return id;
     }
 
-    public MediaRetriever.MediaSize executeOnBestCached(Uri uri, MediaRetriever.MediaSize size, Action action) {
+    public MediaSize executeOnBestCached(Uri uri, MediaSize size, Action action) {
         String where = Columns.URI + " = ? AND " + Columns.MEDIA_SIZE + " < ?";
         String orderBy = Columns.MEDIA_SIZE + " DESC";
         SQLiteDatabase db = getReadableDatabase();
@@ -148,10 +148,10 @@ class MediaCacheDatabase extends SQLiteOpenHelper {
                 uri.toString(), String.valueOf(size.getValue()),
         };
         Cursor cursor = db.query(TABLE, PROJECTION_CACHED, where, whereArgs, null, null, orderBy);
-        MediaRetriever.MediaSize bestSize = null;
+        MediaSize bestSize = null;
         if (cursor.moveToNext()) {
             long id = cursor.getLong(0);
-            bestSize = MediaRetriever.MediaSize.fromInteger(cursor.getInt(1));
+            bestSize = MediaSize.fromInteger(cursor.getInt(1));
             long fileSize = cursor.getLong(2);
             action.execute(uri, id, bestSize, fileSize);
         }
@@ -159,7 +159,7 @@ class MediaCacheDatabase extends SQLiteOpenHelper {
         return bestSize;
     }
 
-    public long insert(Uri uri, MediaRetriever.MediaSize size, Action action, File tempFile) {
+    public long insert(Uri uri, MediaSize size, Action action, File tempFile) {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
         try {
@@ -195,20 +195,34 @@ class MediaCacheDatabase extends SQLiteOpenHelper {
         }
     }
 
+    public void delete(Uri uri, MediaSize size, Action action) {
+        String where = Columns.URI + " = ? AND " + Columns.MEDIA_SIZE + " = ?";
+        String[] whereArgs = {
+                uri.toString(), String.valueOf(size.getValue()),
+        };
+        deleteRows(uri, where, whereArgs, action);
+    }
+
     public void delete(Uri uri, Action action) {
-        SQLiteDatabase db = getWritableDatabase();
         String where = Columns.URI + " = ?";
         String[] whereArgs = {
             uri.toString()
         };
+        deleteRows(uri, where, whereArgs, action);
+    }
+
+    private void deleteRows(Uri uri, String where, String[] whereArgs, Action action) {
+        SQLiteDatabase db = getWritableDatabase();
+        // Make this an atomic operation
+        db.beginTransaction();
         Cursor cursor = db.query(TABLE, PROJECTION_CACHED, where, whereArgs, null, null, null);
         while (cursor.moveToNext()) {
             long id = cursor.getLong(0);
-            MediaRetriever.MediaSize size = MediaRetriever.MediaSize.fromInteger(cursor.getInt(1));
-            action.execute(uri, id, size, null);
+            MediaSize size = MediaSize.fromInteger(cursor.getInt(1));
+            long length = cursor.getLong(2);
+            action.execute(uri, id, size, length);
         }
         cursor.close();
-        db.beginTransaction();
         try {
             db.delete(TABLE, where, whereArgs);
             db.setTransactionSuccessful();
