@@ -85,6 +85,12 @@ public class PhotoProvider extends SQLiteContentProvider {
      * Contains columns that can be accessed via Photos.CONTENT_URI.
      */
     public static interface Photos extends BaseColumns {
+        /**
+         * The image_type query parameter required for requesting a specific
+         * size of image.
+         */
+        public static final String MEDIA_SIZE_QUERY_PARAMETER = "media_size";
+
         /** Internal database table used for basic photo information. */
         public static final String TABLE = "photos";
         /** Content URI for basic photo and video information. */
@@ -203,49 +209,6 @@ public class PhotoProvider extends SQLiteContentProvider {
         public static final String KEY_EXIF_ISO = ExifInterface.TAG_ISO;
     }
 
-    /**
-     * Contains columns and Uri for maintaining the image cache.
-     */
-    public static interface ImageCache extends BaseColumns {
-        /** Internal database table used for the image cache */
-        public static final String TABLE = "image_cache";
-
-        /**
-         * The image_type query parameter required for accessing a specific
-         * image
-         */
-        public static final String IMAGE_TYPE_QUERY_PARAMETER = "image_type";
-
-        // ImageCache.IMAGE_TYPE values
-        public static final int IMAGE_TYPE_ALBUM_COVER = 1;
-        public static final int IMAGE_TYPE_THUMBNAIL = 2;
-        public static final int IMAGE_TYPE_PREVIEW = 3;
-        public static final int IMAGE_TYPE_ORIGINAL = 4;
-
-        /**
-         * Content URI for retrieving image paths. The
-         * IMAGE_TYPE_QUERY_PARAMETER must be used in queries.
-         */
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, TABLE);
-
-        /**
-         * Content URI for retrieving the album cover art. The album ID must be
-         * appended to the URI.
-         */
-        public static final Uri ALBUM_COVER_CONTENT_URI = Uri.withAppendedPath(CONTENT_URI,
-                Albums.TABLE);
-
-        /**
-         * An _ID from Albums or Photos, depending on whether IMAGE_TYPE is
-         * IMAGE_TYPE_ALBUM or not. Long value.
-         */
-        public static final String REMOTE_ID = "remote_id";
-        /** One of IMAGE_TYPE_* values. */
-        public static final String IMAGE_TYPE = "image_type";
-        /** The String path to the image. */
-        public static final String PATH = "path";
-    };
-
     // SQL used within this class.
     protected static final String WHERE_ID = BaseColumns._ID + " = ?";
     protected static final String WHERE_METADATA_ID = Metadata.PHOTO_ID + " = ? AND "
@@ -284,10 +247,8 @@ public class PhotoProvider extends SQLiteContentProvider {
     protected static final int MATCH_ALBUM_ID = 4;
     protected static final int MATCH_METADATA = 5;
     protected static final int MATCH_METADATA_ID = 6;
-    protected static final int MATCH_IMAGE = 7;
-    protected static final int MATCH_ALBUM_COVER = 8;
-    protected static final int MATCH_ACCOUNT = 9;
-    protected static final int MATCH_ACCOUNT_ID = 10;
+    protected static final int MATCH_ACCOUNT = 7;
+    protected static final int MATCH_ACCOUNT_ID = 8;
 
     static {
         sUriMatcher.addURI(AUTHORITY, Photos.TABLE, MATCH_PHOTO);
@@ -299,11 +260,6 @@ public class PhotoProvider extends SQLiteContentProvider {
         sUriMatcher.addURI(AUTHORITY, Metadata.TABLE, MATCH_METADATA);
         // match against metadata/<Metadata._ID>
         sUriMatcher.addURI(AUTHORITY, Metadata.TABLE + "/#", MATCH_METADATA_ID);
-        // match against image_cache/<ImageCache.PHOTO_ID>
-        sUriMatcher.addURI(AUTHORITY, ImageCache.TABLE + "/#", MATCH_IMAGE);
-        // match against image_cache/album/<Albums._ID>
-        sUriMatcher.addURI(AUTHORITY, ImageCache.TABLE + "/" + Albums.TABLE + "/#",
-                MATCH_ALBUM_COVER);
         sUriMatcher.addURI(AUTHORITY, Accounts.TABLE, MATCH_ACCOUNT);
         // match against Accounts._ID
         sUriMatcher.addURI(AUTHORITY, Accounts.TABLE + "/#", MATCH_ACCOUNT_ID);
@@ -475,9 +431,6 @@ public class PhotoProvider extends SQLiteContentProvider {
         int match = sUriMatcher.match(uri);
         if (match == UriMatcher.NO_MATCH) {
             throw unknownUri(uri);
-        }
-        if (match == MATCH_IMAGE || match == MATCH_ALBUM_COVER) {
-            throw new IllegalArgumentException("Operation not allowed on image cache database");
         }
         return match;
     }

@@ -157,7 +157,7 @@ public class MediaCacheTest extends ProviderTestCase2<PhotoProvider> {
     public void testRetrieveOriginal() throws IOException {
         copyResourceToFile(R.raw.galaxy_nexus, mImage.getPath());
         Uri uri = Uri.fromFile(mImage);
-        mMediaCache.retrieveOriginal(uri, mReady, mReady);
+        mMediaCache.retrieveOriginal(uri, mReady, null);
         assertTrue(mReady.waitForNotification());
         assertNull(mReady.mInputStream);
         assertEquals(mImage, mReady.mOriginalFile);
@@ -236,13 +236,13 @@ public class MediaCacheTest extends ProviderTestCase2<PhotoProvider> {
         copyResourceToFile(R.raw.android_lawn, mImage.getPath());
         Uri uri = Uri.fromFile(mImage);
 
-        mMediaCache.retrieveOriginal(uri, mReady, mReady);
+        mMediaCache.retrieveOriginal(uri, mReady, null);
         assertTrue(mReady.waitForNotification());
         assertNull(mReady.mInputStream);
         assertNotNull(mReady.mOriginalFile);
 
         mReady = new ReadyCollector();
-        mMediaCache.retrievePreview(uri, mReady, mReady);
+        mMediaCache.retrievePreview(uri, mReady, null);
         assertTrue(mReady.waitForNotification());
         assertNotNull(mReady.mInputStream);
         assertNull(mReady.mOriginalFile);
@@ -254,7 +254,7 @@ public class MediaCacheTest extends ProviderTestCase2<PhotoProvider> {
         assertTrue(maxDimension < (targetSize * 2));
 
         mReady = new ReadyCollector();
-        mMediaCache.retrieveThumbnail(uri, mReady, mReady);
+        mMediaCache.retrieveThumbnail(uri, mReady, null);
         assertTrue(mReady.waitForNotification());
         assertNotNull(mReady.mInputStream);
         assertNull(mReady.mOriginalFile);
@@ -269,11 +269,11 @@ public class MediaCacheTest extends ProviderTestCase2<PhotoProvider> {
     public void testFastImage() throws IOException {
         copyResourceToFile(R.raw.galaxy_nexus, mImage.getPath());
         Uri uri = Uri.fromFile(mImage);
-        mMediaCache.retrieveThumbnail(uri, mReady, mReady);
+        mMediaCache.retrieveThumbnail(uri, mReady, null);
         mReady.waitForNotification();
         mReady.mInputStream.close();
 
-        mMediaCache.retrieveOriginal(uri, mReady, mReady);
+        mMediaCache.retrieveOriginal(uri, mReady, null);
         assertTrue(mReady.waitForNotification());
         assertNotNull(mReady.mInputStream);
         mReady.mInputStream.close();
@@ -282,7 +282,7 @@ public class MediaCacheTest extends ProviderTestCase2<PhotoProvider> {
     public void testBadRetriever() {
         Uri uri = Photos.CONTENT_URI;
         try {
-            mMediaCache.retrieveOriginal(uri, mReady, mReady);
+            mMediaCache.retrieveOriginal(uri, mReady, null);
             fail("Expected exception");
         } catch (IllegalArgumentException e) {
             // expected
@@ -295,7 +295,7 @@ public class MediaCacheTest extends ProviderTestCase2<PhotoProvider> {
         copyResourceToFile(R.raw.android_lawn, mImage.getPath());
         Uri uri = Uri.fromFile(mImage);
 
-        mMediaCache.retrieveThumbnail(uri, mReady, mReady);
+        mMediaCache.retrieveThumbnail(uri, mReady, null);
         assertTrue(mReady.waitForNotification());
         mReady.mInputStream.close();
         assertNotNull(mMediaCache.getCachedFile(uri, MediaSize.Preview));
@@ -307,7 +307,7 @@ public class MediaCacheTest extends ProviderTestCase2<PhotoProvider> {
         mMediaCache.addRetriever(uri.getScheme(), uri.getAuthority(), retriever);
         retriever.setNullUri();
         try {
-            mMediaCache.retrieveOriginal(uri, mReady, mReady);
+            mMediaCache.retrieveOriginal(uri, mReady, null);
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // expected
