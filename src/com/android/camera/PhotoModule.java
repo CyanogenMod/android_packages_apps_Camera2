@@ -2051,6 +2051,5 @@ public class PhotoModule
         if (mHeading < 0) {
             mHeading += 360;
         }
-        Log.v(TAG, "heading:" + mHeading);
     }
 }
