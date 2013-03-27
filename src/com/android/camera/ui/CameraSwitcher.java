@@ -313,6 +313,8 @@ public class CameraSwitcher extends RotateImageView
                     // Verify that we weren't canceled
                     if (showsPopup()) {
                         setVisibility(View.INVISIBLE);
+                        // request layout to make sure popup is laid out correctly on ICS
+                        mPopup.requestLayout();
                     }
                 }
             };
