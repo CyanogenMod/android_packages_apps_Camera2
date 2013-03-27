@@ -65,7 +65,7 @@ public abstract class BaseFiltersManager {
         if (preset == null) {
             return;
         }
-        Vector<ImageFilter> usedFilters = preset.getUsedFilters();
+        Vector<ImageFilter> usedFilters = preset.getUsedFilters(this);
         for (Class c : mFilters.keySet()) {
             ImageFilter filter = mFilters.get(c);
             if (!usedFilters.contains(filter)) {
