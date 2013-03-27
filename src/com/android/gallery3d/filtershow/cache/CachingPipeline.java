@@ -24,6 +24,7 @@ import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
+import com.android.gallery3d.filtershow.presets.FilterEnvironment;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class CachingPipeline {
@@ -35,6 +36,8 @@ public class CachingPipeline {
     private FiltersManager mFiltersManager = null;
     private volatile Bitmap mOriginalBitmap = null;
     private volatile Bitmap mResizedOriginalBitmap = null;
+
+    private FilterEnvironment mEnvironment = new FilterEnvironment();
 
     private volatile Allocation mOriginalAllocation = null;
     private volatile Allocation mFiltersOnlyOriginalAllocation =  null;
@@ -108,18 +111,19 @@ public class CachingPipeline {
         return "UNKNOWN TYPE!";
     }
 
-    private void setPresetParameters(ImagePreset preset) {
-        preset.setScaleFactor(mPreviewScaleFactor);
-        preset.setQuality(ImagePreset.QUALITY_PREVIEW);
-        preset.setupEnvironment(mFiltersManager);
-        preset.getEnvironment().setCachingPipeline(this);
+    private void setupEnvironment(ImagePreset preset) {
+        mEnvironment.setCachingPipeline(this);
+        mEnvironment.setFiltersManager(mFiltersManager);
+        mEnvironment.setScaleFactor(mPreviewScaleFactor);
+        mEnvironment.setQuality(ImagePreset.QUALITY_PREVIEW);
+        mEnvironment.setImagePreset(preset);
     }
 
     public void setOriginal(Bitmap bitmap) {
         mOriginalBitmap = bitmap;
         Log.v(LOGTAG,"setOriginal, size " + bitmap.getWidth() + " x " + bitmap.getHeight());
         ImagePreset preset = MasterImage.getImage().getPreset();
-        preset.setupEnvironment(mFiltersManager);
+        setupEnvironment(preset);
         updateOriginalAllocation(preset);
     }
 
@@ -149,7 +153,7 @@ public class CachingPipeline {
         }
 
         Allocation originalAllocation = mOriginalAllocation;
-        mResizedOriginalBitmap = preset.applyGeometry(originalBitmap);
+        mResizedOriginalBitmap = preset.applyGeometry(originalBitmap, mEnvironment);
         mOriginalAllocation = Allocation.createFromBitmap(RS, mResizedOriginalBitmap,
                 Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
         if (originalAllocation != null) {
@@ -173,7 +177,7 @@ public class CachingPipeline {
 
         Bitmap bitmap = request.getBitmap();
         ImagePreset preset = request.getImagePreset();
-        setPresetParameters(preset);
+        setupEnvironment(preset);
         mFiltersManager.freeFilterResources(preset);
 
         if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
@@ -182,8 +186,8 @@ public class CachingPipeline {
                 Log.w(LOGTAG, "loader not yet setup, cannot handle: " + getType(request));
                 return;
             }
-            bitmap = loader.getScaleOneImageForPreset(null, preset,
-                    request.getBounds(), request.getDestination(), false);
+            bitmap = loader.getScaleOneImageForPreset(request.getBounds(),
+                    request.getDestination());
             if (bitmap == null) {
                 Log.w(LOGTAG, "could not get bitmap for: " + getType(request));
                 return;
@@ -213,7 +217,7 @@ public class CachingPipeline {
                 || request.getType() == RenderingRequest.FILTERS_RENDERING
                 || request.getType() == RenderingRequest.ICON_RENDERING
                 || request.getType() == RenderingRequest.PARTIAL_RENDERING) {
-            Bitmap bmp = preset.apply(bitmap);
+            Bitmap bmp = preset.apply(bitmap, mEnvironment);
             request.setBitmap(bmp);
             mFiltersManager.freeFilterResources(preset);
         }
@@ -221,10 +225,20 @@ public class CachingPipeline {
     }
 
     public synchronized Bitmap renderFinalImage(Bitmap bitmap, ImagePreset preset) {
-        setPresetParameters(preset);
+        setupEnvironment(preset);
+        mEnvironment.setQuality(ImagePreset.QUALITY_FINAL);
+        mEnvironment.setScaleFactor(1.0f);
         mFiltersManager.freeFilterResources(preset);
-        bitmap = preset.applyGeometry(bitmap);
-        bitmap = preset.apply(bitmap);
+        bitmap = preset.applyGeometry(bitmap, mEnvironment);
+        bitmap = preset.apply(bitmap, mEnvironment);
+        return bitmap;
+    }
+
+    public synchronized Bitmap renderGeometryIcon(Bitmap bitmap, ImagePreset preset) {
+        setupEnvironment(preset);
+        mEnvironment.setQuality(ImagePreset.QUALITY_PREVIEW);
+        mFiltersManager.freeFilterResources(preset);
+        bitmap = preset.applyGeometry(bitmap, mEnvironment);
         return bitmap;
     }
 
@@ -236,7 +250,7 @@ public class CachingPipeline {
 
         String thread = Thread.currentThread().getName();
         long time = System.currentTimeMillis();
-        setPresetParameters(preset);
+        setupEnvironment(preset);
         mFiltersManager.freeFilterResources(preset);
 
         Bitmap resizedOriginalBitmap = mResizedOriginalBitmap;
@@ -254,7 +268,7 @@ public class CachingPipeline {
         }
         mOriginalAllocation.copyTo(bitmap);
 
-        bitmap = preset.apply(bitmap);
+        bitmap = preset.apply(bitmap, mEnvironment);
 
         mFiltersManager.freeFilterResources(preset);
 
@@ -321,4 +335,5 @@ public class CachingPipeline {
     public String getName() {
         return mName;
     }
+
 }
