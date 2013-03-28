@@ -64,13 +64,16 @@ public abstract class ImageFilterRS extends ImageFilter {
             if (DEBUG) {
                 Log.v(LOGTAG, "apply filter " + getName() + " in pipeline " + pipeline.getName());
             }
-            pipeline.prepareRenderscriptAllocations(bitmap);
             Resources rsc = pipeline.getResources();
-            createFilter(rsc, scaleFactor, quality);
-            setResourcesLoaded(true);
+            if (pipeline.prepareRenderscriptAllocations(bitmap)
+                    || !isResourcesLoaded()) {
+                freeResources();
+                createFilter(rsc, scaleFactor, quality);
+                setResourcesLoaded(true);
+            }
+            bindScriptValues();
             runFilter();
             update(bitmap);
-            freeResources();
             if (DEBUG) {
                 Log.v(LOGTAG, "DONE apply filter " + getName() + " in pipeline " + pipeline.getName());
             }
@@ -157,6 +160,11 @@ public abstract class ImageFilterRS extends ImageFilter {
      * RS Script objects (and all other RS objects) should be cleared here
      */
     abstract protected void resetScripts();
+
+    /**
+     * Scripts values should be bound here
+     */
+    abstract protected void bindScriptValues();
 
     public void freeResources() {
         if (!isResourcesLoaded()) {
