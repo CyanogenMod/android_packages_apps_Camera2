@@ -588,7 +588,7 @@ public class VideoModule implements CameraModule,
 
     @Override
     public void onShutterButtonFocus(boolean pressed) {
-        // Do nothing (everything happens in onShutterButtonClick).
+        mUI.setShutterPressed(pressed);
     }
 
     private void readVideoPreferences() {
