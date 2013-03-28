@@ -29,20 +29,19 @@ public abstract class ImageFilterRS extends ImageFilter {
     private static final String LOGTAG = "ImageFilterRS";
     private boolean DEBUG = false;
 
-    private static volatile RenderScript sRS = null;
-    private static volatile Resources sResources = null;
     private volatile boolean mResourcesLoaded = false;
 
-    // This must be used inside block synchronized on ImageFilterRS class object
     protected abstract void createFilter(android.content.res.Resources res,
             float scaleFactor, int quality);
 
-    // This must be used inside block synchronized on ImageFilterRS class object
     protected abstract void runFilter();
 
-    // This must be used inside block synchronized on ImageFilterRS class object
     protected void update(Bitmap bitmap) {
         getOutPixelsAllocation().copyTo(bitmap);
+    }
+
+    protected RenderScript getRenderScriptContext() {
+        return CachingPipeline.getRenderScriptContext();
     }
 
     protected Allocation getInPixelsAllocation() {
@@ -61,24 +60,19 @@ public abstract class ImageFilterRS extends ImageFilter {
             return bitmap;
         }
         try {
-            synchronized(ImageFilterRS.class) {
-                if (sRS == null)  {
-                    Log.w(LOGTAG, "Cannot apply before calling createRenderScriptContext");
-                    return bitmap;
-                }
-                CachingPipeline pipeline = getEnvironment().getCachingPipeline();
-                if (DEBUG) {
-                    Log.v(LOGTAG, "apply filter " + getName() + " in pipeline " + pipeline.getName());
-                }
-                pipeline.prepareRenderscriptAllocations(bitmap);
-                createFilter(sResources, scaleFactor, quality);
-                setResourcesLoaded(true);
-                runFilter();
-                update(bitmap);
-                freeResources();
-                if (DEBUG) {
-                    Log.v(LOGTAG, "DONE apply filter " + getName() + " in pipeline " + pipeline.getName());
-                }
+            CachingPipeline pipeline = getEnvironment().getCachingPipeline();
+            if (DEBUG) {
+                Log.v(LOGTAG, "apply filter " + getName() + " in pipeline " + pipeline.getName());
+            }
+            pipeline.prepareRenderscriptAllocations(bitmap);
+            Resources rsc = pipeline.getResources();
+            createFilter(rsc, scaleFactor, quality);
+            setResourcesLoaded(true);
+            runFilter();
+            update(bitmap);
+            freeResources();
+            if (DEBUG) {
+                Log.v(LOGTAG, "DONE apply filter " + getName() + " in pipeline " + pipeline.getName());
             }
         } catch (android.renderscript.RSIllegalArgumentException e) {
             Log.e(LOGTAG, "Illegal argument? " + e);
@@ -93,53 +87,32 @@ public abstract class ImageFilterRS extends ImageFilter {
         return bitmap;
     }
 
-    public static synchronized RenderScript getRenderScriptContext() {
-        return sRS;
-    }
-
-    public static synchronized void createRenderscriptContext(Activity context) {
-        if( sRS != null) {
-            Log.w(LOGTAG, "A prior RS context exists when calling setRenderScriptContext");
-            destroyRenderScriptContext();
-        }
-        sRS = RenderScript.create(context);
-        sResources = context.getResources();
-    }
-
-    public static synchronized void destroyRenderScriptContext() {
-        sRS.destroy();
-        sRS = null;
-        sResources = null;
-    }
-
-    private static synchronized Allocation convertBitmap(Bitmap bitmap) {
-        return Allocation.createFromBitmap(sRS, bitmap,
+    private static Allocation convertBitmap(Bitmap bitmap) {
+        return Allocation.createFromBitmap(CachingPipeline.getRenderScriptContext(), bitmap,
                 Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
     }
 
-    private static synchronized Allocation convertRGBAtoA(Bitmap bitmap) {
-        Type.Builder tb_a8 = new Type.Builder(sRS, Element.A_8(sRS));
-        ScriptC_grey greyConvert = new ScriptC_grey(sRS,
-                sRS.getApplicationContext().getResources(), R.raw.grey);
+    private static Allocation convertRGBAtoA(Bitmap bitmap) {
+        RenderScript RS = CachingPipeline.getRenderScriptContext();
+        Type.Builder tb_a8 = new Type.Builder(RS, Element.A_8(RS));
+        ScriptC_grey greyConvert = new ScriptC_grey(RS,
+                RS.getApplicationContext().getResources(), R.raw.grey);
 
         Allocation bitmapTemp = convertBitmap(bitmap);
-        if (bitmapTemp.getType().getElement().isCompatible(Element.A_8(sRS))) {
+        if (bitmapTemp.getType().getElement().isCompatible(Element.A_8(RS))) {
             return bitmapTemp;
         }
 
         tb_a8.setX(bitmapTemp.getType().getX());
         tb_a8.setY(bitmapTemp.getType().getY());
-        Allocation bitmapAlloc = Allocation.createTyped(sRS, tb_a8.create());
+        Allocation bitmapAlloc = Allocation.createTyped(RS, tb_a8.create());
         greyConvert.forEach_RGBAtoA(bitmapTemp, bitmapAlloc);
 
         return bitmapAlloc;
     }
 
     public Allocation loadScaledResourceAlpha(int resource, int inSampleSize) {
-        Resources res = null;
-        synchronized(ImageFilterRS.class) {
-            res = sRS.getApplicationContext().getResources();
-        }
+        Resources res = CachingPipeline.getResources();
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ALPHA_8;
         options.inSampleSize      = inSampleSize;
@@ -156,10 +129,7 @@ public abstract class ImageFilterRS extends ImageFilter {
     }
 
     public Allocation loadResource(int resource) {
-        Resources res = null;
-        synchronized(ImageFilterRS.class) {
-            res = sRS.getApplicationContext().getResources();
-        }
+        Resources res = CachingPipeline.getResources();
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         Bitmap bitmap = BitmapFactory.decodeResource(
@@ -192,9 +162,7 @@ public abstract class ImageFilterRS extends ImageFilter {
         if (!isResourcesLoaded()) {
             return;
         }
-        synchronized(ImageFilterRS.class) {
-            resetAllocations();
-            setResourcesLoaded(false);
-        }
+        resetAllocations();
+        setResourcesLoaded(false);
     }
 }

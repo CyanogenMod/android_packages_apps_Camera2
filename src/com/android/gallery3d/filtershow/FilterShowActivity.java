@@ -50,6 +50,7 @@ import android.widget.Toast;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.data.LocalAlbum;
+import com.android.gallery3d.filtershow.cache.CachingPipeline;
 import com.android.gallery3d.filtershow.cache.FilteringPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.editors.BasicEditor;
@@ -135,8 +136,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         clearGalleryBitmapPool();
 
+        CachingPipeline.createRenderscriptContext(this);
         setupMasterImage();
-        ImageFilterRS.createRenderscriptContext(this);
         setDefaultValues();
         fillEditors();
 
@@ -526,7 +527,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         FiltersManager.getPreviewManager().freeRSFilterScripts();
         FiltersManager.getManager().freeRSFilterScripts();
         FiltersManager.reset();
-        ImageFilterRS.destroyRenderScriptContext();
+        CachingPipeline.destroyRenderScriptContext();
         super.onDestroy();
     }
 
