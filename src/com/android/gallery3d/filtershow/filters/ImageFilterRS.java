@@ -70,15 +70,12 @@ public abstract class ImageFilterRS extends ImageFilter {
                 if (DEBUG) {
                     Log.v(LOGTAG, "apply filter " + getName() + " in pipeline " + pipeline.getName());
                 }
-                boolean needsUpdate = pipeline.prepareRenderscriptAllocations(bitmap);
-                if (needsUpdate || !isResourcesLoaded()) {
-                    // the allocations changed size
-                    freeResources();
-                    createFilter(sResources, scaleFactor, quality);
-                    setResourcesLoaded(true);
-                }
+                pipeline.prepareRenderscriptAllocations(bitmap);
+                createFilter(sResources, scaleFactor, quality);
+                setResourcesLoaded(true);
                 runFilter();
                 update(bitmap);
+                freeResources();
                 if (DEBUG) {
                     Log.v(LOGTAG, "DONE apply filter " + getName() + " in pipeline " + pipeline.getName());
                 }
