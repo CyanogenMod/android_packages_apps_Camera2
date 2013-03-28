@@ -77,4 +77,5 @@ public class FilterEnvironment {
     public void setCachingPipeline(CachingPipeline cachingPipeline) {
         mCachingPipeline = cachingPipeline;
     }
+
 }
