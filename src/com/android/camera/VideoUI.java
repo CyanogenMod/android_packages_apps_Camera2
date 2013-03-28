@@ -320,6 +320,12 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
         return false;
     }
 
+    // disable preview gestures after shutter is pressed
+    public void setShutterPressed(boolean pressed) {
+        if (mGestures == null) return;
+        mGestures.setEnabled(!pressed);
+    }
+
     public void enableShutter(boolean enable) {
         if (mShutterButton != null) {
             mShutterButton.setEnabled(enable);
