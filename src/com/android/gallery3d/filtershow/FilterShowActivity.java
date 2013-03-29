@@ -18,10 +18,12 @@ package com.android.gallery3d.filtershow;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -972,7 +974,30 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     @Override
     public void onBackPressed() {
         if (mPanelController.onBackPressed()) {
-            saveImage();
+            if (detectSpecialExitCases()) {
+                saveImage();
+            } else if(!mImageShow.hasModifications()) {
+                done();
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.unsaved).setTitle(R.string.save_before_exit);
+                builder.setPositiveButton(R.string.save_and_exit, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        saveImage();
+                    }
+                });
+                builder.setNeutralButton(R.string.exit, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        done();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+
+                AlertDialog dialog = builder.show();
+            }
         }
     }
 
@@ -1026,27 +1051,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private boolean mOutputted = false;
 
     public void saveImage() {
-        if (mCropExtras != null) {
-            if (mCropExtras.getExtraOutput() != null) {
-                mSaveToExtraUri = true;
-                mOutputted = true;
-            }
-            if (mCropExtras.getSetAsWallpaper()) {
-                mSaveAsWallpaper = true;
-                mOutputted = true;
-            }
-            if (mCropExtras.getReturnData()) {
-
-                mReturnAsExtra = true;
-                mOutputted = true;
-            }
-
-            if (mOutputted) {
-                mImageShow.getImagePreset().mGeoData.setUseCropExtrasFlag(true);
-                showSavingProgress(null);
-                mImageShow.returnFilteredResult(this);
-            }
-        }
+        handleSpecialExitCases();
         if (!mOutputted) {
             if (mImageShow.hasModifications()) {
                 // Get the name of the album, to which the image will be saved
@@ -1057,6 +1062,33 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                 mImageShow.saveImage(this, null);
             } else {
                 done();
+            }
+        }
+    }
+
+    public boolean detectSpecialExitCases() {
+        return mCropExtras != null && (mCropExtras.getExtraOutput() != null
+                || mCropExtras.getSetAsWallpaper() || mCropExtras.getReturnData());
+    }
+
+    public void handleSpecialExitCases() {
+        if (mCropExtras != null) {
+            if (mCropExtras.getExtraOutput() != null) {
+                mSaveToExtraUri = true;
+                mOutputted = true;
+            }
+            if (mCropExtras.getSetAsWallpaper()) {
+                mSaveAsWallpaper = true;
+                mOutputted = true;
+            }
+            if (mCropExtras.getReturnData()) {
+                mReturnAsExtra = true;
+                mOutputted = true;
+            }
+            if (mOutputted) {
+                mImageShow.getImagePreset().mGeoData.setUseCropExtrasFlag(true);
+                showSavingProgress(null);
+                mImageShow.returnFilteredResult(this);
             }
         }
     }
