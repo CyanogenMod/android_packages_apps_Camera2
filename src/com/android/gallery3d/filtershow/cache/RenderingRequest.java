@@ -39,6 +39,7 @@ public class RenderingRequest {
     public static final int GEOMETRY_RENDERING = 2;
     public static final int ICON_RENDERING = 3;
     public static final int PARTIAL_RENDERING = 4;
+    public static final int HIGHRES_RENDERING = 5;
     private static final Bitmap.Config mConfig = Bitmap.Config.ARGB_8888;
 
     public static void post(Bitmap source, ImagePreset preset, int type, RenderingRequestCaller caller) {
@@ -47,8 +48,10 @@ public class RenderingRequest {
 
     public static void post(Bitmap source, ImagePreset preset, int type,
                             RenderingRequestCaller caller, Rect bounds, Rect destination) {
-        if ((type != PARTIAL_RENDERING && source == null) || preset == null || caller == null) {
-            Log.v(LOGTAG, "something null: source: " + source + " or preset: " + preset + " or caller: " + caller);
+        if (((type != PARTIAL_RENDERING && type != HIGHRES_RENDERING) && source == null)
+                || preset == null || caller == null) {
+            Log.v(LOGTAG, "something null: source: " + source
+                    + " or preset: " + preset + " or caller: " + caller);
             return;
         }
         RenderingRequest request = new RenderingRequest();
@@ -59,7 +62,7 @@ public class RenderingRequest {
             CachingPipeline pipeline = new CachingPipeline(
                     FiltersManager.getManager(), "Icon");
             bitmap = pipeline.renderGeometryIcon(source, preset);
-        } else if (type != PARTIAL_RENDERING) {
+        } else if (type != PARTIAL_RENDERING && type != HIGHRES_RENDERING) {
             bitmap = Bitmap.createBitmap(source.getWidth(), source.getHeight(), mConfig);
         }
 

@@ -323,7 +323,11 @@ public class ImageShow extends View implements OnGestureListener,
         canvas.scale(scaleFactor, scaleFactor, cx, cy);
         canvas.translate(translation.x, translation.y);
         drawBackground(canvas);
-        drawImage(canvas, getFilteredImage());
+        drawImage(canvas, getFilteredImage(), true);
+        Bitmap highresPreview = MasterImage.getImage().getHighresImage();
+        if (highresPreview != null) {
+            drawImage(canvas, highresPreview, false);
+        }
         canvas.restore();
 
         if (showTitle() && getImagePreset() != null) {
@@ -374,7 +378,7 @@ public class ImageShow extends View implements OnGestureListener,
         return MasterImage.getImage().getFilteredImage();
     }
 
-    public void drawImage(Canvas canvas, Bitmap image) {
+    public void drawImage(Canvas canvas, Bitmap image, boolean updateBounds) {
         if (image != null) {
             Rect s = new Rect(0, 0, image.getWidth(),
                     image.getHeight());
@@ -389,7 +393,9 @@ public class ImageShow extends View implements OnGestureListener,
 
             Rect d = new Rect((int) tx, (int) ty, (int) (w + tx),
                     (int) (h + ty));
-            mImageBounds = d;
+            if (updateBounds) {
+                mImageBounds = d;
+            }
             canvas.drawBitmap(image, s, d, mPaint);
         }
     }
@@ -420,7 +426,7 @@ public class ImageShow extends View implements OnGestureListener,
             Rect d = new Rect(mImageBounds.left, mImageBounds.top,
                     mImageBounds.left + px, mImageBounds.top + py);
             canvas.clipRect(d);
-            drawImage(canvas, image);
+            drawImage(canvas, image, false);
             Paint paint = new Paint();
             paint.setColor(Color.BLACK);
             paint.setStrokeWidth(3);

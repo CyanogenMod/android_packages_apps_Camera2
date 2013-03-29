@@ -94,6 +94,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private String mAction = "";
     MasterImage mMasterImage = null;
 
+    private static final long LIMIT_SUPPORTS_HIGHRES = 134217728; // 128Mb
+
     public static final String TINY_PLANET_ACTION = "com.android.camera.action.TINY_PLANET";
     public static final String LAUNCH_FULLSCREEN = "launch-fullscreen";
     public static final int MAX_BMAP_IN_INTENT = 990000;
@@ -487,7 +489,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             pipeline.setOriginal(largeBitmap);
             float previewScale = (float) largeBitmap.getWidth() / (float) mImageLoader.getOriginalBounds().width();
             pipeline.setPreviewScaleFactor(previewScale);
-
+            Bitmap highresBitmap = mImageLoader.getOriginalBitmapHighres();
+            if (highresBitmap != null) {
+                float highResPreviewScale = (float) highresBitmap.getWidth() / (float) mImageLoader.getOriginalBounds().width();
+                pipeline.setHighResPreviewScaleFactor(highResPreviewScale);
+            }
             pipeline.turnOnPipeline(true);
             MasterImage.getImage().setOriginalGeometry(largeBitmap);
             mLoadBitmapTask = null;
@@ -879,6 +885,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         mMasterImage.setStateAdapter(mImageStateAdapter);
         mMasterImage.setActivity(this);
         mMasterImage.setImageLoader(mImageLoader);
+
+        if (Runtime.getRuntime().maxMemory() > LIMIT_SUPPORTS_HIGHRES) {
+            mMasterImage.setSupportsHighRes(true);
+        } else {
+            mMasterImage.setSupportsHighRes(false);
+        }
     }
 
     // //////////////////////////////////////////////////////////////////////////////
