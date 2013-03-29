@@ -151,7 +151,7 @@ public class PanelController implements OnClickListener {
         private final View mView;
         private final LinearLayout mAccessoryViewList;
         private Vector<View> mAccessoryViews = new Vector<View>();
-        private final TextView mTextView;
+        private final Button mTextView;
         private boolean mSelected = false;
         private String mEffectName = null;
         private int mParameterValue = 0;
@@ -160,10 +160,9 @@ public class PanelController implements OnClickListener {
         public UtilityPanel(Context context, View utilityPanel) {
             mView = utilityPanel;
             View accessoryViewList = mView.findViewById(R.id.panelAccessoryViewList);
-            Button textView = (Button) mView.findViewById(R.id.applyEffect);
+            mTextView = (Button) mView.findViewById(R.id.applyEffect);
             mContext = context;
             mAccessoryViewList = (LinearLayout) accessoryViewList;
-            mTextView = (TextView) textView;
         }
 
         public boolean selected() {
@@ -212,6 +211,16 @@ public class PanelController implements OnClickListener {
         public View getEditControl() {
             return mView.findViewById(R.id.controlArea);
         }
+
+        public void removeControlChildren() {
+            LinearLayout controlArea = (LinearLayout) mView.findViewById(R.id.controlArea);
+            controlArea.removeAllViews();
+        }
+
+        public Button getEditTitle() {
+            return mTextView;
+        }
+
         public void updateText() {
             String s;
             if (mCurrentEditor == null) {
@@ -589,8 +598,10 @@ public class PanelController implements OnClickListener {
                     if (mEditorPlaceHolder.contains(representation.getEditorId())) {
                         mCurrentEditor = mEditorPlaceHolder.showEditor(
                                 representation.getEditorId());
-                        mCurrentEditor.setUtilityPanelUI(
-                                mUtilityPanel.getActionControl(), mUtilityPanel.getEditControl());
+                        mUtilityPanel.removeControlChildren();
+                        mCurrentEditor.setUpEditorUI(
+                                mUtilityPanel.getActionControl(), mUtilityPanel.getEditControl(),
+                                mUtilityPanel.getEditTitle());
                         mCurrentImage = mCurrentEditor.getImageShow();
                         mCurrentEditor.setPanelController(this);
 
