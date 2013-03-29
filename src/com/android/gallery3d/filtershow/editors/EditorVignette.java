@@ -24,7 +24,7 @@ import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterVignetteRepresentation;
 import com.android.gallery3d.filtershow.imageshow.ImageVignette;
 
-public class EditorVignette extends BasicEditor {
+public class EditorVignette extends ParametricEditor {
     public static final int ID = R.id.vignetteEditor;
     private static final String LOGTAG = "EditorVignettePlanet";
     ImageVignette mImageVignette;
