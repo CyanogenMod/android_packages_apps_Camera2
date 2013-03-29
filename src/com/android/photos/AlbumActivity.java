@@ -22,7 +22,7 @@ import android.os.Bundle;
 public class AlbumActivity extends Activity implements MultiChoiceManager.Provider {
 
     public static final String KEY_ALBUM_URI = AlbumFragment.KEY_ALBUM_URI;
-    public static final String KEY_ALBUM_TITLE = "AlbumTitle";
+    public static final String KEY_ALBUM_TITLE = AlbumFragment.KEY_ALBUM_TITLE;
 
     private MultiChoiceManager mMultiChoiceManager;
 
