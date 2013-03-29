@@ -18,6 +18,9 @@ package com.android.photos.data;
 import android.test.InstrumentationTestRunner;
 import android.test.InstrumentationTestSuite;
 
+import com.android.photos.data.TestHelper.TestInitialization;
+
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 public class DataTestRunner extends InstrumentationTestRunner {
@@ -26,6 +29,13 @@ public class DataTestRunner extends InstrumentationTestRunner {
         TestSuite suite = new InstrumentationTestSuite(this);
         suite.addTestSuite(PhotoDatabaseTest.class);
         suite.addTestSuite(PhotoProviderTest.class);
+        TestHelper.addTests(MediaCacheTest.class, suite, new TestInitialization() {
+            @Override
+            public void initialize(TestCase testCase) {
+                MediaCacheTest test = (MediaCacheTest) testCase;
+                test.setLocalContext(getContext());
+            }
+        });
         return suite;
     }
 
