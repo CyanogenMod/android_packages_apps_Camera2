@@ -17,18 +17,22 @@
 package com.android.gallery3d.filtershow.editors;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.text.Html;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.PanelController;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.controller.Control;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
@@ -43,6 +47,7 @@ public class Editor implements OnSeekBarChangeListener {
     protected ImageShow mImageShow;
     protected FrameLayout mFrameLayout;
     protected SeekBar mSeekBar;
+    Button mEditTitle;
     protected PanelController mPanelController;
     protected int mID;
     private final String LOGTAG = "Editor";
@@ -57,7 +62,7 @@ public class Editor implements OnSeekBarChangeListener {
     }
 
     public String calculateUserMessage(Context context, String effectName, Object parameterValue) {
-        String apply = context.getString(R.string.apply_effect);
+        String apply = "";
         if (mShowParameter == SHOW_VALUE_INT) {
             apply += " " + effectName + " " + parameterValue;
         } else {
@@ -83,6 +88,12 @@ public class Editor implements OnSeekBarChangeListener {
         return true;
     }
 
+    public void setUpEditorUI(View actionButton, View editControl, Button editTitle) {
+        this.mEditTitle = editTitle;
+        setMenuIcon(true);
+        setUtilityPanelUI(actionButton, editControl);
+    }
+
     public boolean showsPopupIndicator() {
         return true;
     }
@@ -92,17 +103,28 @@ public class Editor implements OnSeekBarChangeListener {
      * @param editControl this is the black area for sliders etc
      */
     public void setUtilityPanelUI(View actionButton, View editControl) {
-        mSeekBar = (SeekBar) editControl.findViewById(R.id.primarySeekBar);
+
+        AttributeSet aset;
+        Context context = editControl.getContext();
+        LayoutInflater inflater =
+                (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout lp = (LinearLayout) inflater.inflate(
+                R.layout.filtershow_seekbar, (ViewGroup) editControl, true);
+        mSeekBar = (SeekBar) lp.findViewById(R.id.primarySeekBar);
+        mSeekBar.setOnSeekBarChangeListener(this);
+
         if (showsSeekBar()) {
             mSeekBar.setOnSeekBarChangeListener(this);
             mSeekBar.setVisibility(View.VISIBLE);
         } else {
             mSeekBar.setVisibility(View.INVISIBLE);
         }
+
         Button button = (Button) actionButton.findViewById(R.id.applyEffect);
         if (button != null) {
             if (showsPopupIndicator()) {
-                button.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.filtershow_menu_marker, 0);
+                button.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0,
+                        R.drawable.filtershow_menu_marker, 0);
             } else {
                 button.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
             }
@@ -205,19 +227,29 @@ public class Editor implements OnSeekBarChangeListener {
     }
 
     public void openUtilityPanel(LinearLayout mAccessoryViewList) {
+        setMenuIcon(false);
         if (mImageShow != null) {
             mImageShow.openUtilityPanel(mAccessoryViewList);
         }
     }
 
+    protected void setMenuIcon(boolean on) {
+        mEditTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                0, 0, on ? R.drawable.filtershow_menu_marker : 0, 0);
+    }
     protected void createMenu(int[] strId, View button) {
         PopupMenu pmenu = new PopupMenu(mContext, button);
         Menu menu = pmenu.getMenu();
         for (int i = 0; i < strId.length; i++) {
             menu.add(Menu.NONE, Menu.FIRST + i, 0, mContext.getString(strId[i]));
         }
+        setMenuIcon(true);
+
     }
 
+    public Control[] getControls() {
+        return null;
+    }
     @Override
     public void onStartTrackingTouch(SeekBar arg0) {
 

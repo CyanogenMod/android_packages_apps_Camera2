@@ -65,10 +65,6 @@ public class ImageVignette extends ImageShow {
                     mActiveHandle = -1;
                     break;
                 case MotionEvent.ACTION_DOWN:
-                    if (event.getPointerCount() == 1) {
-                        Log.v(LOGTAG, "################### ACTION_DOWN odd " + mActiveHandle
-                                + " touches=1");
-                    }
                     break;
             }
         }
