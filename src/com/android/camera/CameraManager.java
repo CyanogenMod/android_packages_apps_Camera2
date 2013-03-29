@@ -321,7 +321,10 @@ public class CameraManager {
         }
 
         public void release() {
+            // release() must be synchronous so we know exactly when the camera
+            // is released and can continue on.
             mCameraHandler.sendEmptyMessage(RELEASE);
+            waitDone();
         }
 
         public void reconnect() throws IOException {
