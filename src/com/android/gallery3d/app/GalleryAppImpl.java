@@ -17,12 +17,9 @@
 package com.android.gallery3d.app;
 
 import android.app.Application;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 
-import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.DownloadCache;
 import com.android.gallery3d.data.ImageCacheService;
@@ -32,6 +29,7 @@ import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.LightCycleHelper;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.UsageStatistics;
+import com.android.photos.data.MediaCache;
 
 import java.io.File;
 
@@ -56,6 +54,7 @@ public class GalleryAppImpl extends Application implements GalleryApp {
         WidgetUtils.initialize(this);
         PicasaSource.initialize(this);
         UsageStatistics.initialize(this);
+        MediaCache.initialize(this);
 
         mStitchingProgressManager = LightCycleHelper.createStitchingManagerInstance(this);
         if (mStitchingProgressManager != null) {
