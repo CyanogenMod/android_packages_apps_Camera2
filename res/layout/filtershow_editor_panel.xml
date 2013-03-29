@@ -54,15 +54,16 @@
             android:layout_height="94dip"
             android:layout_gravity="left|center_vertical"
             android:layout_weight=".1"
-            android:background="@android:color/transparent"
+            android:background="@drawable/filtershow_button_background"
             android:gravity="center"
             android:src="@drawable/ic_menu_cancel_holo_light"
-            android:textSize="18dip" />
+            android:textSize="18dip" 
+            style="@style/FilterShowBottomButton" />
 
         <ImageView
             android:layout_width="2dp"
             android:layout_height="fill_parent"
-            android:src="@drawable/filtershow_vertical_line" />
+            android:src="@drawable/filtershow_vertical_bar" />
 
         <LinearLayout
             android:id="@+id/panelAccessoryViewList"
@@ -77,7 +78,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_gravity="center"
-                android:background="@android:color/transparent"
+                android:background="@drawable/filtershow_button_background"
                 android:gravity="center"
                 android:text="@string/apply_effect"
                 android:textSize="18dip"
@@ -87,7 +88,7 @@
         <ImageView
             android:layout_width="2dp"
             android:layout_height="fill_parent"
-            android:src="@drawable/filtershow_vertical_line" />
+            android:src="@drawable/filtershow_vertical_bar" />
 
         <ImageButton
             android:id="@+id/applyFilter"
@@ -95,10 +96,11 @@
             android:layout_height="94dip"
             android:layout_gravity="right|center_vertical"
             android:layout_weight=".1"
-            android:background="@android:color/transparent"
+            android:background="@drawable/filtershow_button_background"
             android:gravity="center"
             android:src="@drawable/ic_menu_done_holo_light"
-            android:textSize="18dip" />
+            android:textSize="18dip" 
+            style="@style/FilterShowBottomButton" />
     </LinearLayout>
 
 </LinearLayout>
