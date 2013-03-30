@@ -54,6 +54,7 @@ public class CachingPipeline {
 
     private volatile GeometryMetadata mPreviousGeometry = null;
     private volatile float mPreviewScaleFactor = 1.0f;
+    private volatile float mHighResPreviewScaleFactor = 1.0f;
     private volatile String mName = "";
 
     public CachingPipeline(FiltersManager filtersManager, String name) {
@@ -112,6 +113,7 @@ public class CachingPipeline {
             }
             mPreviousGeometry = null;
             mPreviewScaleFactor = 1.0f;
+            mHighResPreviewScaleFactor = 1.0f;
 
             destroyPixelAllocations();
         }
@@ -149,13 +151,20 @@ public class CachingPipeline {
         if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
             return "PARTIAL_RENDERING";
         }
+        if (request.getType() == RenderingRequest.HIGHRES_RENDERING) {
+            return "HIGHRES_RENDERING";
+        }
         return "UNKNOWN TYPE!";
     }
 
-    private void setupEnvironment(ImagePreset preset) {
+    private void setupEnvironment(ImagePreset preset, boolean highResPreview) {
         mEnvironment.setCachingPipeline(this);
         mEnvironment.setFiltersManager(mFiltersManager);
-        mEnvironment.setScaleFactor(mPreviewScaleFactor);
+        if (highResPreview) {
+            mEnvironment.setScaleFactor(mHighResPreviewScaleFactor);
+        } else {
+            mEnvironment.setScaleFactor(mPreviewScaleFactor);
+        }
         mEnvironment.setQuality(ImagePreset.QUALITY_PREVIEW);
         mEnvironment.setImagePreset(preset);
     }
@@ -164,7 +173,7 @@ public class CachingPipeline {
         mOriginalBitmap = bitmap;
         Log.v(LOGTAG,"setOriginal, size " + bitmap.getWidth() + " x " + bitmap.getHeight());
         ImagePreset preset = MasterImage.getImage().getPreset();
-        setupEnvironment(preset);
+        setupEnvironment(preset, false);
         updateOriginalAllocation(preset);
     }
 
@@ -210,7 +219,8 @@ public class CachingPipeline {
             if (getRenderScriptContext() == null) {
                 return;
             }
-            if ((request.getType() != RenderingRequest.PARTIAL_RENDERING
+            if (((request.getType() != RenderingRequest.PARTIAL_RENDERING
+                    && request.getType() != RenderingRequest.HIGHRES_RENDERING)
                     && request.getBitmap() == null)
                     || request.getImagePreset() == null) {
                 return;
@@ -222,7 +232,8 @@ public class CachingPipeline {
 
             Bitmap bitmap = request.getBitmap();
             ImagePreset preset = request.getImagePreset();
-            setupEnvironment(preset);
+            setupEnvironment(preset,
+                    request.getType() != RenderingRequest.HIGHRES_RENDERING);
             mFiltersManager.freeFilterResources(preset);
 
             if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
@@ -237,6 +248,12 @@ public class CachingPipeline {
                     Log.w(LOGTAG, "could not get bitmap for: " + getType(request));
                     return;
                 }
+            }
+
+            if (request.getType() == RenderingRequest.HIGHRES_RENDERING) {
+                ImageLoader loader = MasterImage.getImage().getImageLoader();
+                bitmap = loader.getOriginalBitmapHighres();
+                bitmap = preset.applyGeometry(bitmap, mEnvironment);
             }
 
             if (request.getType() == RenderingRequest.FULL_RENDERING
@@ -261,7 +278,8 @@ public class CachingPipeline {
             if (request.getType() == RenderingRequest.FULL_RENDERING
                     || request.getType() == RenderingRequest.FILTERS_RENDERING
                     || request.getType() == RenderingRequest.ICON_RENDERING
-                    || request.getType() == RenderingRequest.PARTIAL_RENDERING) {
+                    || request.getType() == RenderingRequest.PARTIAL_RENDERING
+                    || request.getType() == RenderingRequest.HIGHRES_RENDERING) {
                 Bitmap bmp = preset.apply(bitmap, mEnvironment);
                 request.setBitmap(bmp);
                 mFiltersManager.freeFilterResources(preset);
@@ -274,7 +292,7 @@ public class CachingPipeline {
             if (getRenderScriptContext() == null) {
                 return bitmap;
             }
-            setupEnvironment(preset);
+            setupEnvironment(preset, false);
             mEnvironment.setQuality(ImagePreset.QUALITY_FINAL);
             mEnvironment.setScaleFactor(1.0f);
             mFiltersManager.freeFilterResources(preset);
@@ -289,7 +307,7 @@ public class CachingPipeline {
             if (getRenderScriptContext() == null) {
                 return bitmap;
             }
-            setupEnvironment(preset);
+            setupEnvironment(preset, false);
             mEnvironment.setQuality(ImagePreset.QUALITY_PREVIEW);
             mFiltersManager.freeFilterResources(preset);
             bitmap = preset.applyGeometry(bitmap, mEnvironment);
@@ -309,7 +327,7 @@ public class CachingPipeline {
 
             String thread = Thread.currentThread().getName();
             long time = System.currentTimeMillis();
-            setupEnvironment(preset);
+            setupEnvironment(preset, false);
             mFiltersManager.freeFilterResources(preset);
 
             Bitmap resizedOriginalBitmap = mResizedOriginalBitmap;
@@ -346,9 +364,12 @@ public class CachingPipeline {
         return buffer.checkRepaintNeeded();
     }
 
-
     public void setPreviewScaleFactor(float previewScaleFactor) {
         mPreviewScaleFactor = previewScaleFactor;
+    }
+
+    public void setHighResPreviewScaleFactor(float highResPreviewScaleFactor) {
+        mHighResPreviewScaleFactor = highResPreviewScaleFactor;
     }
 
     public synchronized boolean isInitialized() {
