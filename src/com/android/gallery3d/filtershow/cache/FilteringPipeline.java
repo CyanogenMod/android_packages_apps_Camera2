@@ -105,12 +105,6 @@ public class FilteringPipeline implements Handler.Callback {
             case COMPUTE_RENDERING_REQUEST:
             case COMPUTE_PARTIAL_RENDERING_REQUEST:
             case COMPUTE_HIGHRES_RENDERING_REQUEST: {
-                if (msg.what == COMPUTE_PARTIAL_RENDERING_REQUEST
-                        || msg.what == COMPUTE_HIGHRES_RENDERING_REQUEST) {
-                    if (mProcessingHandler.hasMessages(msg.what)) {
-                        return false;
-                    }
-                }
 
                 if (DEBUG) {
                     Log.v(LOGTAG, "Compute Request: " + getType(msg.what));
@@ -168,6 +162,9 @@ public class FilteringPipeline implements Handler.Callback {
         msg.obj = request;
         if (type == COMPUTE_PARTIAL_RENDERING_REQUEST
                 || type == COMPUTE_HIGHRES_RENDERING_REQUEST) {
+            if (mProcessingHandler.hasMessages(msg.what)) {
+                mProcessingHandler.removeMessages(msg.what);
+            }
             mProcessingHandler.sendMessageDelayed(msg, HIRES_DELAY);
         } else {
             mProcessingHandler.sendMessage(msg);
