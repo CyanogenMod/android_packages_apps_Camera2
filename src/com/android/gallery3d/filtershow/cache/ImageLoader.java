@@ -42,6 +42,7 @@ import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.tools.BitmapTask;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
@@ -67,6 +68,7 @@ public class ImageLoader {
     private final Vector<ImageShow> mListeners = new Vector<ImageShow>();
     private Bitmap mOriginalBitmapSmall = null;
     private Bitmap mOriginalBitmapLarge = null;
+    private Bitmap mOriginalBitmapHighres = null;
     private Bitmap mBackgroundBitmap = null;
 
     private final ZoomCache mZoomCache = new ZoomCache();
@@ -97,6 +99,8 @@ public class ImageLoader {
     private Rect mOriginalBounds = null;
     private static int mZoomOrientation = ORI_NORMAL;
 
+    static final int MAX_BITMAP_DIM = 900;
+
     private ReentrantLock mLoadingLock = new ReentrantLock();
 
     public ImageLoader(FilterShowActivity activity, Context context) {
@@ -126,6 +130,13 @@ public class ImageLoader {
         if (mOriginalBitmapLarge == null) {
             mLoadingLock.unlock();
             return false;
+        }
+        if (MasterImage.getImage().supportsHighRes()) {
+            int highresPreviewSize = mOriginalBitmapLarge.getWidth() * 2;
+            if (highresPreviewSize > mOriginalBounds.width()) {
+                highresPreviewSize = mOriginalBounds.width();
+            }
+            mOriginalBitmapHighres = loadScaledBitmap(uri, highresPreviewSize, false);
         }
         updateBitmaps();
         mLoadingLock.unlock();
@@ -197,6 +208,9 @@ public class ImageLoader {
         if (mOrientation > 1) {
             mOriginalBitmapSmall = rotateToPortrait(mOriginalBitmapSmall, mOrientation);
             mOriginalBitmapLarge = rotateToPortrait(mOriginalBitmapLarge, mOrientation);
+            if (mOriginalBitmapHighres != null) {
+                mOriginalBitmapHighres = rotateToPortrait(mOriginalBitmapHighres, mOrientation);
+            }
         }
         mZoomOrientation = mOrientation;
         warnListeners();
@@ -272,9 +286,11 @@ public class ImageLoader {
         return null;
     }
 
-    static final int MAX_BITMAP_DIM = 900;
-
     private Bitmap loadScaledBitmap(Uri uri, int size) {
+        return loadScaledBitmap(uri, size, true);
+    }
+
+    private Bitmap loadScaledBitmap(Uri uri, int size, boolean enforceSize) {
         InputStream is = null;
         try {
             is = mContext.getContentResolver().openInputStream(uri);
@@ -291,7 +307,12 @@ public class ImageLoader {
 
             int scale = 1;
             while (true) {
-                if (width_tmp <= MAX_BITMAP_DIM && height_tmp <= MAX_BITMAP_DIM) {
+                if (width_tmp <= 2 || height_tmp <= 2) {
+                    break;
+                }
+                if (!enforceSize
+                        || (width_tmp <= MAX_BITMAP_DIM
+                        && height_tmp <= MAX_BITMAP_DIM)) {
                     if (width_tmp / 2 < size || height_tmp / 2 < size) {
                         break;
                     }
@@ -334,6 +355,10 @@ public class ImageLoader {
 
     public Bitmap getOriginalBitmapLarge() {
         return mOriginalBitmapLarge;
+    }
+
+    public Bitmap getOriginalBitmapHighres() {
+        return mOriginalBitmapHighres;
     }
 
     public void addListener(ImageShow imageShow) {
