@@ -47,8 +47,22 @@ public class FilteringPipeline implements Handler.Callback {
     private final static int COMPUTE_PRESET = 2;
     private final static int COMPUTE_RENDERING_REQUEST = 3;
     private final static int COMPUTE_PARTIAL_RENDERING_REQUEST = 4;
+    private final static int COMPUTE_HIGHRES_RENDERING_REQUEST = 5;
 
     private volatile boolean mHasUnhandledPreviewRequest = false;
+
+    private String getType(int value) {
+        if (value == COMPUTE_RENDERING_REQUEST) {
+            return "COMPUTE_RENDERING_REQUEST";
+        }
+        if (value == COMPUTE_PARTIAL_RENDERING_REQUEST) {
+            return "COMPUTE_PARTIAL_RENDERING_REQUEST";
+        }
+        if (value == COMPUTE_HIGHRES_RENDERING_REQUEST) {
+            return "COMPUTE_HIGHRES_RENDERING_REQUEST";
+        }
+        return "UNKNOWN TYPE";
+    }
 
     private Handler mProcessingHandler = null;
     private final Handler mUIHandler = new Handler() {
@@ -89,12 +103,19 @@ public class FilteringPipeline implements Handler.Callback {
                 break;
             }
             case COMPUTE_RENDERING_REQUEST:
-            case COMPUTE_PARTIAL_RENDERING_REQUEST: {
-                if (msg.what == COMPUTE_PARTIAL_RENDERING_REQUEST) {
-                    if (mProcessingHandler.hasMessages(COMPUTE_PARTIAL_RENDERING_REQUEST)) {
+            case COMPUTE_PARTIAL_RENDERING_REQUEST:
+            case COMPUTE_HIGHRES_RENDERING_REQUEST: {
+                if (msg.what == COMPUTE_PARTIAL_RENDERING_REQUEST
+                        || msg.what == COMPUTE_HIGHRES_RENDERING_REQUEST) {
+                    if (mProcessingHandler.hasMessages(msg.what)) {
                         return false;
                     }
                 }
+
+                if (DEBUG) {
+                    Log.v(LOGTAG, "Compute Request: " + getType(msg.what));
+                }
+
                 RenderingRequest request = (RenderingRequest) msg.obj;
                 mAccessoryPipeline.render(request);
                 Message uimsg = mUIHandler.obtainMessage(NEW_RENDERING_REQUEST);
@@ -140,9 +161,13 @@ public class FilteringPipeline implements Handler.Callback {
         if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
             type = COMPUTE_PARTIAL_RENDERING_REQUEST;
         }
+        if (request.getType() == RenderingRequest.HIGHRES_RENDERING) {
+            type = COMPUTE_HIGHRES_RENDERING_REQUEST;
+        }
         Message msg = mProcessingHandler.obtainMessage(type);
         msg.obj = request;
-        if (type == COMPUTE_PARTIAL_RENDERING_REQUEST) {
+        if (type == COMPUTE_PARTIAL_RENDERING_REQUEST
+                || type == COMPUTE_HIGHRES_RENDERING_REQUEST) {
             mProcessingHandler.sendMessageDelayed(msg, HIRES_DELAY);
         } else {
             mProcessingHandler.sendMessage(msg);
@@ -172,6 +197,11 @@ public class FilteringPipeline implements Handler.Callback {
     public void setPreviewScaleFactor(float previewScaleFactor) {
         mAccessoryPipeline.setPreviewScaleFactor(previewScaleFactor);
         mPreviewPipeline.setPreviewScaleFactor(previewScaleFactor);
+    }
+
+    public void setHighResPreviewScaleFactor(float highResPreviewScaleFactor) {
+        mAccessoryPipeline.setHighResPreviewScaleFactor(highResPreviewScaleFactor);
+        mPreviewPipeline.setHighResPreviewScaleFactor(highResPreviewScaleFactor);
     }
 
     public static synchronized void reset() {
