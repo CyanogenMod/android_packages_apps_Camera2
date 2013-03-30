@@ -19,15 +19,12 @@ package com.android.gallery3d.filtershow.imageshow;
 import android.graphics.*;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
-import android.util.Log;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.ImageStateAdapter;
 import com.android.gallery3d.filtershow.cache.*;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
-import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
@@ -42,6 +39,8 @@ public class MasterImage implements RenderingRequestCaller {
     private static int sIconSeedSize = 128;
     private static float sHistoryPreviewSize = 128.0f;
 
+    private boolean mSupportsHighRes = false;
+
     private ImageFilter mCurrentFilter = null;
     private ImagePreset mPreset = null;
     private ImagePreset mGeometryOnlyPreset = null;
@@ -52,6 +51,7 @@ public class MasterImage implements RenderingRequestCaller {
     private Bitmap mGeometryOnlyBitmap = null;
     private Bitmap mFiltersOnlyBitmap = null;
     private Bitmap mPartialBitmap = null;
+    private Bitmap mHighresBitmap = null;
 
     private ImageLoader mLoader = null;
     private HistoryAdapter mHistory = null;
@@ -94,6 +94,10 @@ public class MasterImage implements RenderingRequestCaller {
             sMasterImage = new MasterImage();
         }
         return sMasterImage;
+    }
+
+    public void setSupportsHighRes(boolean value) {
+        mSupportsHighRes = value;
     }
 
     public static void setIconSeedSize(int iconSeedSize) {
@@ -253,6 +257,10 @@ public class MasterImage implements RenderingRequestCaller {
         return mPartialBitmap;
     }
 
+    public Bitmap getHighresImage() {
+        return mHighresBitmap;
+    }
+
     public void notifyObservers() {
         for (ImageShow observer : mObservers) {
             observer.invalidate();
@@ -283,7 +291,6 @@ public class MasterImage implements RenderingRequestCaller {
             }
         }
         invalidatePreview();
-        needsUpdateFullResPreview();
         mActivity.enableSave(hasModifications());
     }
 
@@ -307,17 +314,27 @@ public class MasterImage implements RenderingRequestCaller {
         }
     }
 
+    public void invalidateHighresPreview() {
+        if (mHighresBitmap != null) {
+            mHighresBitmap = null;
+            notifyObservers();
+        }
+    }
+
     public void invalidatePreview() {
         mFilteredPreview.invalidate();
         invalidatePartialPreview();
-        needsUpdateFullResPreview();
+        invalidateHighresPreview();
+        needsUpdatePartialPreview();
+        needsUpdateHighResPreview();
         FilteringPipeline.getPipeline().updatePreviewBuffer();
     }
 
     public void setImageShowSize(int w, int h) {
         if (mImageShowSize.x != w || mImageShowSize.y != h) {
             mImageShowSize.set(w, h);
-            needsUpdateFullResPreview();
+            needsUpdatePartialPreview();
+            needsUpdateHighResPreview();
         }
     }
 
@@ -345,7 +362,15 @@ public class MasterImage implements RenderingRequestCaller {
         return invert;
     }
 
-    public void needsUpdateFullResPreview() {
+    public void needsUpdateHighResPreview() {
+        if (!mSupportsHighRes) {
+            return;
+        }
+        RenderingRequest.post(null, mPreset, RenderingRequest.HIGHRES_RENDERING, this);
+        invalidateHighresPreview();
+    }
+
+    public void needsUpdatePartialPreview() {
         if (!mPreset.canDoPartialRendering()) {
             invalidatePartialPreview();
             return;
@@ -376,6 +401,11 @@ public class MasterImage implements RenderingRequestCaller {
             mPartialBitmap = request.getBitmap();
             notifyObservers();
         }
+        if (request.getType() == RenderingRequest.HIGHRES_RENDERING) {
+            mHighresBitmap = request.getBitmap();
+            notifyObservers();
+        }
+
         if (request.getType() == RenderingRequest.ICON_RENDERING) {
             // History preview images
             ImagePreset preset = request.getOriginalImagePreset();
@@ -426,7 +456,7 @@ public class MasterImage implements RenderingRequestCaller {
     public void setTranslation(Point translation) {
         mTranslation.x = translation.x;
         mTranslation.y = translation.y;
-        needsUpdateFullResPreview();
+        needsUpdatePartialPreview();
     }
 
     public Point getOriginalTranslation() {
@@ -441,7 +471,7 @@ public class MasterImage implements RenderingRequestCaller {
     public void resetTranslation() {
         mTranslation.x = 0;
         mTranslation.y = 0;
-        needsUpdateFullResPreview();
+        needsUpdatePartialPreview();
     }
 
     public Bitmap getThumbnailBitmap() {
@@ -454,5 +484,9 @@ public class MasterImage implements RenderingRequestCaller {
 
     public void setMaxScaleFactor(float maxScaleFactor) {
         mMaxScaleFactor = maxScaleFactor;
+    }
+
+    public boolean supportsHighRes() {
+        return mSupportsHighRes;
     }
 }
