@@ -50,6 +50,17 @@
     <!--  Name for the overflow menu item for settings [CHAR LIMIT=20] -->
     <string name="menu_settings">Settings</string>
 
+    <!--  Exit Dialog -->
+
+    <!--  String displayed when exiting with unsaved changes [CHAR LIMIT=NONE] -->
+    <string name="unsaved">There are unsaved changes to this image.</string>
+    <!--  String displayed when exiting with unsaved changes [CHAR LIMIT=NONE] -->
+    <string name="save_before_exit">Do you want to save before exiting?</string>
+    <!--  String displayed when saving and exiting editor [CHAR LIMIT=NONE] -->
+    <string name="save_and_exit">Save and Exit</string>
+    <!--  String displayed when exiting editor[CHAR LIMIT=NONE] -->
+    <string name="exit">Exit</string>
+
     <!--  History Panel -->
 
     <!--  Text for the history panel title [CHAR LIMIT=50] -->
