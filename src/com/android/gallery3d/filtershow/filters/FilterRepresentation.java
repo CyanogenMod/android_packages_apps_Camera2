@@ -63,7 +63,8 @@ public class FilterRepresentation implements Cloneable {
         representation.setShowEditingControls(showEditingControls());
         representation.setShowParameterValue(showParameterValue());
         representation.setShowUtilityPanel(showUtilityPanel());
-        representation.mTempRepresentation = null;
+        representation.mTempRepresentation =
+                mTempRepresentation != null ? mTempRepresentation.clone() : null;
         if (DEBUG) {
             Log.v(LOGTAG, "cloning from <" + this + "> to <" + representation + ">");
         }
