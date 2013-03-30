@@ -31,6 +31,7 @@ public class RenderingRequest {
     private ImagePreset mImagePreset = null;
     private ImagePreset mOriginalImagePreset = null;
     private RenderingRequestCaller mCaller = null;
+    private float mScaleFactor = 1.0f;
     private Rect mBounds = null;
     private Rect mDestination = null;
     private int mType = FULL_RENDERING;
@@ -70,6 +71,7 @@ public class RenderingRequest {
         ImagePreset passedPreset = new ImagePreset(preset);
         passedPreset.setImageLoader(MasterImage.getImage().getImageLoader());
         request.setOriginalImagePreset(preset);
+        request.setScaleFactor(MasterImage.getImage().getScaleFactor());
 
         if (type == PARTIAL_RENDERING) {
             request.setBounds(bounds);
@@ -137,6 +139,14 @@ public class RenderingRequest {
 
     public void setBounds(Rect bounds) {
         mBounds = bounds;
+    }
+
+    public void setScaleFactor(float scaleFactor) {
+        mScaleFactor = scaleFactor;
+    }
+
+    public float getScaleFactor() {
+        return mScaleFactor;
     }
 
     public Rect getDestination() {

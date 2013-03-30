@@ -397,7 +397,8 @@ public class MasterImage implements RenderingRequestCaller {
         if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
             mFiltersOnlyBitmap = request.getBitmap();
         }
-        if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
+        if (request.getType() == RenderingRequest.PARTIAL_RENDERING
+                && request.getScaleFactor() == getScaleFactor()) {
             mPartialBitmap = request.getBitmap();
             notifyObservers();
         }
