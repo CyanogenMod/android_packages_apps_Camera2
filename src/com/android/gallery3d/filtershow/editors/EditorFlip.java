@@ -17,13 +17,18 @@
 package com.android.gallery3d.filtershow.editors;
 
 import android.content.Context;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.imageshow.ImageFlip;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 public class EditorFlip extends Editor implements EditorInfo {
+    public static final String LOGTAG = "EditorFlip";
     public static final int ID = R.id.editorFlip;
     ImageFlip mImageFlip;
 
@@ -41,6 +46,18 @@ public class EditorFlip extends Editor implements EditorInfo {
         mImageFlip.setImageLoader(MasterImage.getImage().getImageLoader());
         mImageFlip.setEditor(this);
         mImageFlip.syncLocalToMasterGeometry();
+    }
+
+    @Override
+    public void openUtilityPanel(final LinearLayout accessoryViewList) {
+        final Button button = (Button) accessoryViewList.findViewById(R.id.applyEffect);
+        button.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                mImageFlip.flip();
+                mImageFlip.saveAndSetPreset();
+            }
+        });
     }
 
     @Override
