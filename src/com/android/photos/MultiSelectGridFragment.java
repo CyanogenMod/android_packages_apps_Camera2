@@ -18,8 +18,6 @@ package com.android.photos;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.SparseBooleanArray;
@@ -34,14 +32,13 @@ import android.widget.TextView;
 
 import com.android.gallery3d.R;
 
-import java.util.ArrayList;
-
 public abstract class MultiSelectGridFragment extends Fragment
         implements MultiChoiceManager.Delegate, AdapterView.OnItemClickListener {
 
     final private Handler mHandler = new Handler();
 
     final private Runnable mRequestFocus = new Runnable() {
+        @Override
         public void run() {
             mGrid.focusableViewAvailable(mGrid);
         }
@@ -66,12 +63,6 @@ public abstract class MultiSelectGridFragment extends Fragment
      * {@link android.R.id#grid android.R.id.list} and can optionally have a
      * sibling text view id {@link android.R.id#empty android.R.id.empty} that
      * is to be shown when the grid is empty.
-     * <p>
-     * If you are overriding this method with your own custom content, consider
-     * including the standard layout R.layout.multigrid_content in your layout
-     * file, so that you continue to retain all of the standard behavior of
-     * MultiSelectGridFragment. In particular, this is currently the only way to
-     * have the built-in indeterminate progress state be shown.
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -275,7 +266,7 @@ public abstract class MultiSelectGridFragment extends Fragment
      * Get the ListAdapter associated with this activity's GridView.
      */
     public ListAdapter getAdapter() {
-        return mAdapter;
+        return mGrid.getAdapter();
     }
 
     private void ensureGrid() {
@@ -330,7 +321,7 @@ public abstract class MultiSelectGridFragment extends Fragment
 
     @Override
     public Object getItemAtPosition(int position) {
-        return mAdapter.getItem(position);
+        return getAdapter().getItem(position);
     }
 
     @Override
