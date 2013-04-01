@@ -117,15 +117,24 @@ public class ImagePreset {
         if (filterRepresentation == null) {
             return null;
         }
-        int position = getPositionForRepresentation(filterRepresentation);
-        if (position == -1) {
-            return null;
-        }
         FilterRepresentation representation = null;
-        try {
-            representation = mFilters.elementAt(position).clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+        if ((mBorder != null)
+                && (mBorder.getFilterClass() == filterRepresentation.getFilterClass())) {
+            // TODO: instead of special casing for border, we should correctly implements "filters priority set"
+            representation = mBorder;
+        } else {
+            int position = getPositionForRepresentation(filterRepresentation);
+            if (position == -1) {
+                return null;
+            }
+            representation = mFilters.elementAt(position);
+        }
+        if (representation != null) {
+            try {
+                representation = representation.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
         }
         return representation;
     }
@@ -138,9 +147,17 @@ public class ImagePreset {
             if (representation instanceof GeometryMetadata) {
                 setGeometry((GeometryMetadata) representation);
             } else {
-                int position = getPositionForRepresentation(representation);
-                FilterRepresentation old = mFilters.elementAt(position);
-                old.updateTempParametersFrom(representation);
+                if ((mBorder != null)
+                        && (mBorder.getFilterClass() == representation.getFilterClass())) {
+                    mBorder.updateTempParametersFrom(representation);
+                } else {
+                    int position = getPositionForRepresentation(representation);
+                    if (position == -1) {
+                        return;
+                    }
+                    FilterRepresentation old = mFilters.elementAt(position);
+                    old.updateTempParametersFrom(representation);
+                }
             }
         }
         MasterImage.getImage().invalidatePreview();
