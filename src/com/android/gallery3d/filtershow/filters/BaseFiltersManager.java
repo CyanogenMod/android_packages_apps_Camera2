@@ -108,6 +108,10 @@ public abstract class BaseFiltersManager {
         filters.add(ImageFilterGeometry.class);
     }
 
+    public void addBorders(Vector<FilterRepresentation> representations) {
+        // Override
+    }
+
     public void addLooks(Vector<FilterRepresentation> representations) {
         // Override
     }
