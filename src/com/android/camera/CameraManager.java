@@ -29,7 +29,6 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.ShutterCallback;
-import android.os.ConditionVariable;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -40,7 +39,6 @@ import android.view.SurfaceHolder;
 import com.android.gallery3d.common.ApiHelper;
 
 import java.io.IOException;
-import java.util.concurrent.SynchronousQueue;
 
 public class CameraManager {
     private static final String TAG = "CameraManager";
@@ -48,10 +46,7 @@ public class CameraManager {
 
     private Parameters mParameters;
     private boolean mParametersIsDirty;
-    private SynchronousQueue<Parameters> mParametersQueue =
-            new SynchronousQueue<Parameters>();
-    private SynchronousQueue<IOExceptionHolder> mReconnectExceptionQueue =
-            new SynchronousQueue<IOExceptionHolder>();
+    private IOException mReconnectIOException;
 
     private static final int RELEASE = 1;
     private static final int RECONNECT = 2;
@@ -148,16 +143,11 @@ public class CameraManager {
                         return;
 
                     case RECONNECT:
-                        IOExceptionHolder holder = new IOExceptionHolder();
-                        holder.ex = null;
+                        mReconnectIOException = null;
                         try {
                             mCamera.reconnect();
                         } catch (IOException ex) {
-                            holder.ex = ex;
-                        }
-                        try {
-                            mReconnectExceptionQueue.put(holder);
-                        } catch (InterruptedException ex) {
+                            mReconnectIOException = ex;
                         }
                         return;
 
@@ -240,11 +230,7 @@ public class CameraManager {
                         return;
 
                     case GET_PARAMETERS:
-                        try {
-                            mParametersQueue.put(mCamera.getParameters());
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+                        mParameters = mCamera.getParameters();
                         return;
 
                     case SET_PARAMETERS_ASYNC:
@@ -303,14 +289,6 @@ public class CameraManager {
     }
 
     public class CameraProxy {
-        private ConditionVariable mWaitDoneLock = new ConditionVariable();
-        private Runnable mUnlockRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mWaitDoneLock.open();
-            }
-        };
-
 
         private CameraProxy() {
             Assert(mCamera != null);
@@ -329,13 +307,9 @@ public class CameraManager {
 
         public void reconnect() throws IOException {
             mCameraHandler.sendEmptyMessage(RECONNECT);
-            IOExceptionHolder holder = null;
-            try {
-                holder = mReconnectExceptionQueue.take();
-            } catch (InterruptedException ex) {
-            }
-            if (holder != null && holder.ex != null) {
-                throw holder.ex;
+            waitDone();
+            if (mReconnectIOException != null) {
+                throw mReconnectIOException;
             }
         }
 
@@ -460,11 +434,8 @@ public class CameraManager {
         public Parameters getParameters() {
             if (mParametersIsDirty || mParameters == null) {
                 mCameraHandler.sendEmptyMessage(GET_PARAMETERS);
-                try {
-                    mParameters = mParametersQueue.take();
-                    mParametersIsDirty = false;
-                } catch (InterruptedException ex) {
-                }
+                waitDone();
+                mParametersIsDirty = false;
             }
             return mParameters;
         }
@@ -475,9 +446,24 @@ public class CameraManager {
         }
 
         public void waitDone() {
-            mWaitDoneLock.close();
-            mCameraHandler.post(mUnlockRunnable);
-            mWaitDoneLock.block();
+            final Object waitDoneLock = new Object();
+            final Runnable unlockRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (waitDoneLock) {
+                        waitDoneLock.notifyAll();
+                    }
+                }
+            };
+
+            synchronized (waitDoneLock) {
+                mCameraHandler.post(unlockRunnable);
+                try {
+                    waitDoneLock.wait();
+                } catch (InterruptedException ex) {
+                    Log.v(TAG, "waitDone interrupted");
+                }
+            }
         }
     }
 }
