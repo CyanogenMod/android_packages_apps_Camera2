@@ -106,7 +106,7 @@ public class GalleryBitmapPool {
     }
 
     public boolean put(Bitmap b) {
-        if (b == null) {
+        if (b == null || b.getConfig() != Bitmap.Config.ARGB_8888) {
             return false;
         }
         SparseArrayBitmapPool pool = getPoolForDimensions(b.getWidth(), b.getHeight());
