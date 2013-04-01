@@ -276,7 +276,7 @@ public class MediaCache {
         mCacheDir = cacheDir;
     }
 
-    private File getCacheDir() {
+    public File getCacheDir() {
         synchronized (mContext) {
             if (mCacheDir == null) {
                 String state = Environment.getExternalStorageState();
@@ -398,6 +398,10 @@ public class MediaCache {
         File file = null;
         if (cachedId != null) {
             file = createCacheImagePath(cachedId);
+            if (!file.exists()) {
+                mDatabaseHelper.delete(contentUri, size, mDeleteFile);
+                file = null;
+            }
         }
         return file;
     }
@@ -479,9 +483,9 @@ public class MediaCache {
         }
         size = retriever.normalizeMediaSize(uri, size);
 
-        Long cachedId = mDatabaseHelper.getCached(uri, size);
-        if (cachedId != null) {
-            addNotification(complete, createCacheImagePath(cachedId));
+        File cachedFile = getCachedFile(uri, size);
+        if (cachedFile != null) {
+            addNotification(complete, cachedFile);
             return;
         }
         String differentiator = getDifferentiator(uri.getScheme(), uri.getAuthority());
@@ -540,10 +544,9 @@ public class MediaCache {
     }
 
     private void processTask(ProcessingJob job) {
-        Long cachedId = mDatabaseHelper.getCached(job.contentUri, job.size);
-        if (cachedId != null) {
-            File file = createCacheImagePath(cachedId);
-            addNotification(job.complete, file);
+        File cachedFile = getCachedFile(job.contentUri, job.size);
+        if (cachedFile != null) {
+            addNotification(job.complete, cachedFile);
             return;
         }
 
