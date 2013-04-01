@@ -402,7 +402,15 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private void setupBorders() {
         LinearLayout list = (LinearLayout) findViewById(R.id.listBorders);
         Vector<FilterRepresentation> borders = new Vector<FilterRepresentation>();
+        ImageButton borderButton = (ImageButton) findViewById(R.id.borderButton);
+
+        // The "no border" implementation
         borders.add(new FilterImageBorderRepresentation(0));
+
+        // Google-build borders
+        FiltersManager.getManager().addBorders(borders);
+
+        // Regular borders
         borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5));
         borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_brush));
         borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_grunge));
@@ -424,7 +432,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             if (i == 0) {
                 filter.setName(getString(R.string.none));
             }
-            ImageButton borderButton = (ImageButton) findViewById(R.id.borderButton);
             FilterIconButton b = setupFilterRepresentationButton(filter, list, borderButton);
             if (i == 0) {
                 mNullBorderFilter = b;
