@@ -21,9 +21,12 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.util.Pools.SimplePool;
+import android.util.Pools.SynchronizedPool;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.BitmapUtils;
+import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DecodeUtils;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.util.ThreadPool.CancelListener;
@@ -33,10 +36,15 @@ import com.android.photos.data.MediaRetriever.MediaSize;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class MediaCacheUtils {
     private static final String TAG = MediaCacheUtils.class.getSimpleName();
     private static int QUALITY = 80;
+    private static final int BUFFER_SIZE = 4096;
+    private static final SimplePool<byte[]> mBufferPool = new SynchronizedPool<byte[]>(5);
+
     private static final JobContext sJobStub = new JobContext() {
 
         @Override
@@ -135,5 +143,25 @@ public class MediaCacheUtils {
             // success is already false
         }
         return success;
+    }
+
+    public static int copyStream(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = mBufferPool.acquire();
+        if (buffer == null) {
+            buffer = new byte[BUFFER_SIZE];
+        }
+        try {
+            int totalWritten = 0;
+            int bytesRead;
+            while ((bytesRead = in.read(buffer)) >= 0) {
+                out.write(buffer, 0, bytesRead);
+                totalWritten += bytesRead;
+            }
+            return totalWritten;
+        } finally {
+            Utils.closeSilently(in);
+            Utils.closeSilently(out);
+            mBufferPool.release(buffer);
+        }
     }
 }
