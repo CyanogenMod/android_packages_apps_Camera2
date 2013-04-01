@@ -27,6 +27,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.animation.Animation;
@@ -54,6 +55,8 @@ public class PieRenderer extends OverlayRenderer
     private static final int STATE_FINISHING = 2;
     private static final int STATE_PIE = 8;
 
+    private static final float MATH_PI_2 = (float)(Math.PI / 2);
+
     private Runnable mDisappear = new Disappear();
     private Animation.AnimationListener mEndAction = new EndAction();
     private static final int SCALING_UP_TIME = 600;
@@ -66,26 +69,26 @@ public class PieRenderer extends OverlayRenderer
     private static final long PIE_FADE_IN_DURATION = 200;
     private static final long PIE_XFADE_DURATION = 200;
     private static final long PIE_SELECT_FADE_DURATION = 300;
+    private static final long PIE_OPEN_SUB_DELAY = 400;
 
     private static final int MSG_OPEN = 0;
     private static final int MSG_CLOSE = 1;
-    private static final float PIE_SWEEP = (float)(Math.PI * 2 / 3);
+    private static final int MSG_OPENSUBMENU = 2;
+    private static final float PIE_SWEEP = (float)(Math.PI / 2);
     // geometry
-    private Point mCenter;
+    private Point mSliceCenter;
     private int mRadius;
-    private int mRadiusInc;
 
     // the detection if touch is inside a slice is offset
     // inbounds by this amount to allow the selection to show before the
     // finger covers it
     private int mTouchOffset;
 
-    private List<PieItem> mItems;
-
-    private PieItem mOpenItem;
+    private List<PieItem> mOpen;
 
     private Paint mSelectedPaint;
     private Paint mSubPaint;
+    private Paint mMenuArcPaint;
 
     // touch handling
     private PieItem mCurrentItem;
@@ -98,6 +101,11 @@ public class PieRenderer extends OverlayRenderer
     private int mFocusY;
     private int mCenterX;
     private int mCenterY;
+    private int mPieCenterX;
+    private int mPieCenterY;
+    private int mIconRadius;
+    private int mArcRadius;
+    private int mArcOffset;
 
     private int mDialAngle;
     private RectF mCircle;
@@ -124,7 +132,7 @@ public class PieRenderer extends OverlayRenderer
             switch(msg.what) {
             case MSG_OPEN:
                 if (mListener != null) {
-                    mListener.onPieOpened(mCenter.x, mCenter.y);
+                    mListener.onPieOpened(mPieCenterX, mPieCenterY);
                 }
                 break;
             case MSG_CLOSE:
@@ -132,7 +140,11 @@ public class PieRenderer extends OverlayRenderer
                     mListener.onPieClosed();
                 }
                 break;
+            case MSG_OPENSUBMENU:
+                onEnterOpen();
+                break;
             }
+
         }
     };
 
@@ -153,13 +165,13 @@ public class PieRenderer extends OverlayRenderer
 
     private void init(Context ctx) {
         setVisible(false);
-        mItems = new ArrayList<PieItem>();
+        mOpen = new ArrayList<PieItem>();
+        mOpen.add(new PieItem(null, 0));
         Resources res = ctx.getResources();
         mRadius = (int) res.getDimensionPixelSize(R.dimen.pie_radius_start);
         mCircleSize = mRadius - res.getDimensionPixelSize(R.dimen.focus_radius_offset);
-        mRadiusInc =  (int) res.getDimensionPixelSize(R.dimen.pie_radius_increment);
         mTouchOffset = (int) res.getDimensionPixelSize(R.dimen.pie_touch_offset);
-        mCenter = new Point(0,0);
+        mSliceCenter = new Point(0,0);
         mSelectedPaint = new Paint();
         mSelectedPaint.setColor(Color.argb(255, 51, 181, 229));
         mSelectedPaint.setAntiAlias(true);
@@ -184,6 +196,18 @@ public class PieRenderer extends OverlayRenderer
         mTouchSlopSquared = ViewConfiguration.get(ctx).getScaledTouchSlop();
         mTouchSlopSquared = mTouchSlopSquared * mTouchSlopSquared;
         mDown = new Point();
+        mMenuArcPaint = new Paint();
+        mMenuArcPaint.setAntiAlias(true);
+        mMenuArcPaint.setColor(Color.argb(140, 255, 255, 255));
+        mMenuArcPaint.setStrokeWidth(10);
+        mMenuArcPaint.setStyle(Paint.Style.STROKE);
+        mIconRadius = res.getDimensionPixelSize(R.dimen.pie_item_radius);
+        mArcRadius = res.getDimensionPixelSize(R.dimen.pie_arc_radius);
+        mArcOffset = res.getDimensionPixelSize(R.dimen.pie_arc_offset);
+    }
+
+    private PieItem getRoot() {
+        return mOpen.get(0);
     }
 
     public boolean showsItems() {
@@ -192,15 +216,11 @@ public class PieRenderer extends OverlayRenderer
 
     public void addItem(PieItem item) {
         // add the item to the pie itself
-        mItems.add(item);
-    }
-
-    public void removeItem(PieItem item) {
-        mItems.remove(item);
+        getRoot().addItem(item);
     }
 
     public void clearItems() {
-        mItems.clear();
+        getRoot().clearItems();
     }
 
     public void showInCenter() {
@@ -212,7 +232,8 @@ public class PieRenderer extends OverlayRenderer
                 cancelFocus();
             }
             mState = STATE_PIE;
-            setCenter(mCenterX, mCenterY);
+            resetPieCenter();
+            setCenter(mPieCenterX, mPieCenterY);
             mTapMode = true;
             show(true);
         }
@@ -231,10 +252,16 @@ public class PieRenderer extends OverlayRenderer
             mState = STATE_PIE;
             // ensure clean state
             mCurrentItem = null;
-            mOpenItem = null;
-            for (PieItem item : mItems) {
-                item.setSelected(false);
+            PieItem root = getRoot();
+            for (PieItem openItem : mOpen) {
+                if (openItem.hasItems()) {
+                    for (PieItem item : openItem.getItems()) {
+                        item.setSelected(false);
+                    }
+                }
             }
+            mOpen.clear();
+            mOpen.add(root);
             layoutPie();
             fadeIn();
         } else {
@@ -270,22 +297,41 @@ public class PieRenderer extends OverlayRenderer
     }
 
     public void setCenter(int x, int y) {
-        mCenter.x = x;
-        mCenter.y = y;
-        // when using the pie menu, align the focus ring
-        alignFocus(x, y);
+        mPieCenterX = x;
+        mPieCenterY = y;
+        mSliceCenter.x = x;
+        mSliceCenter.y = y - mArcOffset + mIconRadius;
+    }
+
+    @Override
+    public void layout(int l, int t, int r, int b) {
+        super.layout(l, t, r, b);
+        mCenterX = (r - l) / 2;
+        mCenterY = (b - t) / 2;
+
+        mFocusX = mCenterX;
+        mFocusY = mCenterY;
+        resetPieCenter();
+        setCircle(mFocusX, mFocusY);
+        if (isVisible() && mState == STATE_PIE) {
+            setCenter(mPieCenterX, mPieCenterY);
+            layoutPie();
+        }
+    }
+
+    private void resetPieCenter() {
+        mPieCenterX = mCenterX;
+        mPieCenterY = mCenterY + mCenterY / 3;
     }
 
     private void layoutPie() {
-        int rgap = 2;
-        int inner = mRadius + rgap;
-        int outer = mRadius + mRadiusInc - rgap;
+        int inner = mIconRadius;
+        int outer = inner + mTouchOffset;
         int gap = 1;
-        layoutItems(mItems, (float) (Math.PI / 2), inner, outer, gap);
+        layoutItems(0, getRoot().getItems(), (float) (Math.PI / 2), inner, outer, gap);
     }
 
-    private void layoutItems(List<PieItem> items, float centerAngle, int inner,
-            int outer, int gap) {
+    private void layoutItems(int level, List<PieItem> items, float centerAngle, int inner, int outer, int gap) {
         float emptyangle = PIE_SWEEP / 16;
         float sweep = (float) (PIE_SWEEP - 2 * emptyangle) / items.size();
         float angle = centerAngle - PIE_SWEEP / 2 + emptyangle + sweep / 2;
@@ -298,8 +344,10 @@ public class PieRenderer extends OverlayRenderer
                 break;
             }
         }
+        Point p = new Point(mSliceCenter);
+        p.y -= level * mTouchOffset;
         Path path = makeSlice(getDegrees(0) - gap, getDegrees(sweep) + gap,
-                outer, inner, mCenter);
+                outer, inner, p);
         for (PieItem item : items) {
             // shared between items
             item.setPath(path);
@@ -311,14 +359,14 @@ public class PieRenderer extends OverlayRenderer
             // move views to outer border
             int r = inner + (outer - inner) * 2 / 3;
             int x = (int) (r * Math.cos(angle));
-            int y = mCenter.y - (int) (r * Math.sin(angle)) - h / 2;
-            x = mCenter.x + x - w / 2;
+            int y = mSliceCenter.y - (level * mTouchOffset) - (int) (r * Math.sin(angle)) - h / 2;
+            x = mSliceCenter.x + x - w / 2;
             item.setBounds(x, y, x + w, y + h);
             float itemstart = angle - sweep / 2;
             item.setGeometry(itemstart, sweep, inner, outer);
             if (item.hasItems()) {
-                layoutItems(item.getItems(), angle, inner,
-                        outer + mRadiusInc / 2, gap);
+                layoutItems(level + 1, item.getItems(), MATH_PI_2, inner,
+                        outer, gap);
             }
             angle += sweep;
         }
@@ -378,6 +426,31 @@ public class PieRenderer extends OverlayRenderer
         mOverlay.startAnimation(mFadeOut);
     }
 
+    // root does not count
+    private boolean hasOpenItem() {
+        return mOpen.size() > 1;
+    }
+
+    // pop an item of the open item stack
+    private PieItem closeOpenItem() {
+        PieItem item = getOpenItem();
+        mOpen.remove(mOpen.size() -1);
+        return item;
+    }
+
+    private PieItem getOpenItem() {
+        return mOpen.get(mOpen.size() - 1);
+    }
+
+    // return the children either the root or parent of the current open item
+    private PieItem getParent() {
+        return mOpen.get(Math.max(0, mOpen.size() - 2));
+    }
+
+    private int getLevel() {
+        return mOpen.size() - 1;
+    }
+
     @Override
     public void onDraw(Canvas canvas) {
         float alpha = 1;
@@ -391,39 +464,55 @@ public class PieRenderer extends OverlayRenderer
         int state = canvas.save();
         if (mFadeIn != null) {
             float sf = 0.9f + alpha * 0.1f;
-            canvas.scale(sf, sf, mCenter.x, mCenter.y);
+            canvas.scale(sf, sf, mPieCenterX, mPieCenterY);
         }
-        drawFocus(canvas);
+        if (mState != STATE_PIE) {
+            drawFocus(canvas);
+        }
         if (mState == STATE_FINISHING) {
             canvas.restoreToCount(state);
             return;
         }
-        if ((mOpenItem == null) || (mXFade != null)) {
+        if (!hasOpenItem() || (mXFade != null)) {
             // draw base menu
-            for (PieItem item : mItems) {
-                drawItem(canvas, item, alpha);
+            drawArc(canvas, getLevel());
+            for (PieItem item : getParent().getItems()) {
+                drawItem(Math.max(0, mOpen.size() - 2), canvas, item, alpha);
             }
         }
-        if (mOpenItem != null) {
-            for (PieItem inner : mOpenItem.getItems()) {
+        if (hasOpenItem()) {
+            int level = getLevel();
+            drawArc(canvas, level);
+            for (PieItem inner : getOpenItem().getItems()) {
                 if (mFadeOut != null) {
-                    drawItem(canvas, inner, alpha);
+                    drawItem(level, canvas, inner, alpha);
                 } else {
-                    drawItem(canvas, inner, (mXFade != null) ? (1 - 0.5f * alpha) : 1);
+                    drawItem(level, canvas, inner, (mXFade != null) ? (1 - 0.5f * alpha) : 1);
                 }
             }
         }
         canvas.restoreToCount(state);
     }
 
-    private void drawItem(Canvas canvas, PieItem item, float alpha) {
+    private void drawArc(Canvas canvas, int level) {
+        // arc
+        if (mState == STATE_PIE) {
+            int nr = mArcRadius;
+            int cy = mPieCenterY - mArcOffset + mArcRadius  - level * mTouchOffset;
+            canvas.drawArc(new RectF(mPieCenterX - nr, cy - mArcRadius,
+                    mPieCenterX + nr, cy + mArcRadius),
+                    252, 36, false, mMenuArcPaint);
+        }
+    }
+    private void drawItem(int level, Canvas canvas, PieItem item, float alpha) {
         if (mState == STATE_PIE) {
             if (item.getPath() != null) {
+                int y = mSliceCenter.y - level * mTouchOffset;
                 if (item.isSelected()) {
                     Paint p = mSelectedPaint;
                     int state = canvas.save();
                     float r = getDegrees(item.getStartAngle());
-                    canvas.rotate(r, mCenter.x, mCenter.y);
+                    canvas.rotate(r, mSliceCenter.x, y);
                     if (mFadeOut != null) {
                         p.setAlpha((int)(255 * alpha));
                     }
@@ -448,7 +537,7 @@ public class PieRenderer extends OverlayRenderer
         float x = evt.getX();
         float y = evt.getY();
         int action = evt.getActionMasked();
-        PointF polar = getPolar(x, y, !(mTapMode));
+        PointF polar = getPolar(x, y, !mTapMode);
         if (MotionEvent.ACTION_DOWN == action) {
             mDown.x = (int) evt.getX();
             mDown.y = (int) evt.getY();
@@ -469,7 +558,7 @@ public class PieRenderer extends OverlayRenderer
                 PieItem item = mCurrentItem;
                 if (mTapMode) {
                     item = findItem(polar);
-                    if (item != null && mOpening) {
+                    if (mOpening) {
                         mOpening = false;
                         return true;
                     }
@@ -477,10 +566,11 @@ public class PieRenderer extends OverlayRenderer
                 if (item == null) {
                     mTapMode = false;
                     show(false);
-                } else if (!mOpening
-                        && !item.hasItems()) {
-                    startFadeOut(item);
-                    mTapMode = false;
+                } else if (!mOpening && !item.hasItems()) {
+                        startFadeOut(item);
+                        mTapMode = false;
+                } else {
+                    mTapMode = true;
                 }
                 return true;
             }
@@ -489,11 +579,17 @@ public class PieRenderer extends OverlayRenderer
                 show(false);
             }
             deselect();
+            mHandler.removeMessages(MSG_OPENSUBMENU);
             return false;
         } else if (MotionEvent.ACTION_MOVE == action) {
-            if (polar.y < mRadius) {
-                if (mOpenItem != null) {
-                    mOpenItem = null;
+            if (pulledToCenter(polar)) {
+                mHandler.removeMessages(MSG_OPENSUBMENU);
+                if (hasOpenItem()) {
+                    if (mCurrentItem != null) {
+                        mCurrentItem.setSelected(false);
+                    }
+                    closeOpenItem();
+                    mCurrentItem = null;
                 } else {
                     deselect();
                 }
@@ -502,21 +598,61 @@ public class PieRenderer extends OverlayRenderer
             PieItem item = findItem(polar);
             boolean moved = hasMoved(evt);
             if ((item != null) && (mCurrentItem != item) && (!mOpening || moved)) {
+                mHandler.removeMessages(MSG_OPENSUBMENU);
                 // only select if we didn't just open or have moved past slop
-                mOpening = false;
                 if (moved) {
                     // switch back to swipe mode
                     mTapMode = false;
                 }
-                onEnter(item);
+                onEnterSelect(item);
+                mHandler.sendEmptyMessageDelayed(MSG_OPENSUBMENU, PIE_OPEN_SUB_DELAY);
             }
         }
         return false;
     }
 
+    private boolean pulledToCenter(PointF polarCoords) {
+        return polarCoords.y < mIconRadius - mArcOffset;
+    }
+
+    private PointF getPolar(float x, float y, boolean useOffset) {
+        PointF res = new PointF();
+        // get angle and radius from x/y
+        res.x = (float) Math.PI / 2;
+        x = x - mSliceCenter.x;
+        y = mSliceCenter.y - getLevel() * mTouchOffset - y;
+        res.y = (float) Math.sqrt(x * x + y * y);
+        if (x != 0) {
+            res.x = (float) Math.atan2(y,  x);
+            if (res.x < 0) {
+                res.x = (float) (2 * Math.PI + res.x);
+            }
+        }
+        res.y = res.y + (useOffset ? mTouchOffset : 0);
+        return res;
+    }
+
     private boolean hasMoved(MotionEvent e) {
         return mTouchSlopSquared < (e.getX() - mDown.x) * (e.getX() - mDown.x)
                 + (e.getY() - mDown.y) * (e.getY() - mDown.y);
+    }
+
+    private void onEnterSelect(PieItem item) {
+        if (mCurrentItem != null) {
+            mCurrentItem.setSelected(false);
+        }
+        if (item != null && item.isEnabled()) {
+            item.setSelected(true);
+            mCurrentItem = item;
+        } else {
+            mCurrentItem = null;
+        }
+    }
+
+    private void onEnterOpen() {
+        if ((mCurrentItem != getOpenItem()) && mCurrentItem.hasItems()) {
+            openCurrentItem();
+        }
     }
 
     /**
@@ -531,7 +667,7 @@ public class PieRenderer extends OverlayRenderer
         if (item != null && item.isEnabled()) {
             item.setSelected(true);
             mCurrentItem = item;
-            if ((mCurrentItem != mOpenItem) && mCurrentItem.hasItems()) {
+            if ((mCurrentItem != getOpenItem()) && mCurrentItem.hasItems()) {
                 openCurrentItem();
             }
         } else {
@@ -543,22 +679,24 @@ public class PieRenderer extends OverlayRenderer
         if (mCurrentItem != null) {
             mCurrentItem.setSelected(false);
         }
-        if (mOpenItem != null) {
-            mOpenItem = null;
+        if (hasOpenItem()) {
+            PieItem item = closeOpenItem();
+            onEnter(item);
+        } else {
+            mCurrentItem = null;
         }
-        mCurrentItem = null;
     }
 
     private void openCurrentItem() {
         if ((mCurrentItem != null) && mCurrentItem.hasItems()) {
-            mCurrentItem.setSelected(false);
-            mOpenItem = mCurrentItem;
+            mOpen.add(mCurrentItem);
             mOpening = true;
             if (mFadeIn != null) {
                 mFadeIn.cancel();
             }
             mXFade = new LinearAnimation(1, 0);
             mXFade.setDuration(PIE_XFADE_DURATION);
+            final PieItem ci = mCurrentItem;
             mXFade.setAnimationListener(new AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -567,6 +705,8 @@ public class PieRenderer extends OverlayRenderer
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     mXFade = null;
+                    ci.setSelected(false);
+                    mOpening = false;
                 }
 
                 @Override
@@ -578,30 +718,13 @@ public class PieRenderer extends OverlayRenderer
         }
     }
 
-    private PointF getPolar(float x, float y, boolean useOffset) {
-        PointF res = new PointF();
-        // get angle and radius from x/y
-        res.x = (float) Math.PI / 2;
-        x = x - mCenter.x;
-        y = mCenter.y - y;
-        res.y = (float) Math.sqrt(x * x + y * y);
-        if (x != 0) {
-            res.x = (float) Math.atan2(y,  x);
-            if (res.x < 0) {
-                res.x = (float) (2 * Math.PI + res.x);
-            }
-        }
-        res.y = res.y + (useOffset ? mTouchOffset : 0);
-        return res;
-    }
-
     /**
      * @param polar x: angle, y: dist
      * @return the item at angle/dist or null
      */
     private PieItem findItem(PointF polar) {
         // find the matching item:
-        List<PieItem> items = (mOpenItem != null) ? mOpenItem.getItems() : mItems;
+        List<PieItem> items = getOpenItem().getItems();
         for (PieItem item : items) {
             if (inside(polar, item)) {
                 return item;
@@ -654,20 +777,6 @@ public class PieRenderer extends OverlayRenderer
 
     private int getRandomRange() {
         return (int)(-60 + 120 * Math.random());
-    }
-
-    @Override
-    public void layout(int l, int t, int r, int b) {
-        super.layout(l, t, r, b);
-        mCenterX = (r - l) / 2;
-        mCenterY = (b - t) / 2;
-        mFocusX = mCenterX;
-        mFocusY = mCenterY;
-        setCircle(mFocusX, mFocusY);
-        if (isVisible() && mState == STATE_PIE) {
-            setCenter(mCenterX, mCenterY);
-            layoutPie();
-        }
     }
 
     private void setCircle(int cx, int cy) {
@@ -848,7 +957,6 @@ public class PieRenderer extends OverlayRenderer
             mDialAngle = (int)(mFrom + (mTo - mFrom) * interpolatedTime);
         }
     }
-
 
     private class LinearAnimation extends Animation {
         private float mFrom;

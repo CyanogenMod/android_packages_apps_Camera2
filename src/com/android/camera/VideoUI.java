@@ -44,7 +44,8 @@ import com.android.gallery3d.common.ApiHelper;
 import java.util.List;
 
 public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
-        PreviewGestures.SingleTapListener {
+        PreviewGestures.SingleTapListener,
+        PreviewGestures.SwipeListener {
     private final static String TAG = "CAM_VideoUI";
     // module fields
     private CameraActivity mActivity;
@@ -210,7 +211,7 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
         }
         mRenderOverlay.addRenderer(mZoomRenderer);
         if (mGestures == null) {
-            mGestures = new PreviewGestures(mActivity, this, mZoomRenderer, mPieRenderer);
+            mGestures = new PreviewGestures(mActivity, this, mZoomRenderer, mPieRenderer, this);
         }
         mGestures.setRenderOverlay(mRenderOverlay);
         mGestures.clearTouchReceivers();
@@ -276,6 +277,12 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
     public void showTimeLapseUI(boolean enable) {
         if (mTimeLapseLabel != null) {
             mTimeLapseLabel.setVisibility(enable ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void openMenu() {
+        if (mPieRenderer != null) {
+            mPieRenderer.showInCenter();
         }
     }
 
@@ -513,4 +520,12 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
         public void onZoomEnd() {
         }
     }
+
+    @Override
+    public void onSwipe(int direction) {
+        if (direction == PreviewGestures.DIR_UP) {
+            openMenu();
+        }
+    }
+
 }

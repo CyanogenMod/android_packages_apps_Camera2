@@ -34,7 +34,6 @@ public class PhotoMenu extends PieController
         TimerSettingPopup.Listener,
         ListPrefSettingPopup.Listener {
     private static String TAG = "CAM_photomenu";
-    private static float FLOAT_PI_DIVIDED_BY_TWO = (float) Math.PI / 2;
     private final String mSettingOff;
 
     private PhotoUI mUI;
@@ -54,13 +53,20 @@ public class PhotoMenu extends PieController
         super.initialize(group);
         mPopup = null;
         mSecondPopup = null;
-        float sweep = FLOAT_PI_DIVIDED_BY_TWO / 2;
-        addItem(CameraSettings.KEY_FLASH_MODE, FLOAT_PI_DIVIDED_BY_TWO - sweep, sweep);
-        addItem(CameraSettings.KEY_EXPOSURE, 3 * FLOAT_PI_DIVIDED_BY_TWO - sweep, sweep);
-        addItem(CameraSettings.KEY_WHITE_BALANCE, 3 * FLOAT_PI_DIVIDED_BY_TWO + sweep, sweep);
+        float sweep = (float) (SWEEP * Math.PI);
+        PieItem item = null;
+        // flash
+        if (group.findPreference(CameraSettings.KEY_FLASH_MODE) != null) {
+            item = makeItem(CameraSettings.KEY_FLASH_MODE, CENTER - sweep, sweep);
+            mRenderer.addItem(item);
+        }
+        // exposure compensation
+        item = makeItem(CameraSettings.KEY_EXPOSURE, CENTER + sweep, sweep);
+        mRenderer.addItem(item);
+        // camera switcher
         if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
-            PieItem item = makeItem(R.drawable.ic_switch_photo_facing_holo_light);
-            item.setFixedSlice(FLOAT_PI_DIVIDED_BY_TWO + sweep, sweep);
+            item = makeItem(R.drawable.ic_switch_photo_facing_holo_light);
+            item.setFixedSlice(CENTER - 2 * sweep, sweep);
             item.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(PieItem item) {
@@ -79,10 +85,11 @@ public class PhotoMenu extends PieController
             });
             mRenderer.addItem(item);
         }
+        // hdr
         if (group.findPreference(CameraSettings.KEY_CAMERA_HDR) != null) {
-            PieItem hdr = makeItem(R.drawable.ic_hdr);
-            hdr.setFixedSlice(FLOAT_PI_DIVIDED_BY_TWO, sweep);
-            hdr.setOnClickListener(new OnClickListener() {
+            item = makeItem(R.drawable.ic_hdr);
+            item.setFixedSlice(CENTER + 2 * sweep, sweep);
+            item.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(PieItem item) {
                     // Find the index of next camera.
@@ -96,8 +103,18 @@ public class PhotoMenu extends PieController
                     }
                 }
             });
-            mRenderer.addItem(hdr);
+            mRenderer.addItem(item);
         }
+
+        // more settings
+        PieItem more = makeItem(R.drawable.ic_settings_holo_light);
+        more.setFixedSlice(CENTER, sweep);
+        mRenderer.addItem(more);
+        // white balance
+        item = makeItem(CameraSettings.KEY_WHITE_BALANCE,
+                CENTER + sweep, sweep);
+        more.addItem(item);
+        // settings popup
         mOtherKeys = new String[] {
                 CameraSettings.KEY_SCENE_MODE,
                 CameraSettings.KEY_RECORD_LOCATION,
@@ -106,8 +123,8 @@ public class PhotoMenu extends PieController
                 CameraSettings.KEY_TIMER,
                 CameraSettings.KEY_TIMER_SOUND_EFFECTS,
                 };
-        PieItem item = makeItem(R.drawable.ic_settings_holo_light);
-        item.setFixedSlice(FLOAT_PI_DIVIDED_BY_TWO * 3, sweep);
+        item = makeItem(R.drawable.ic_settings_holo_light);
+        item.setFixedSlice(CENTER, sweep);
         item.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(PieItem item) {
@@ -117,7 +134,7 @@ public class PhotoMenu extends PieController
                 mUI.showPopup(mPopup);
             }
         });
-        mRenderer.addItem(item);
+        more.addItem(item);
     }
 
     @Override

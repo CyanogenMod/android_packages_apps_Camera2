@@ -18,7 +18,6 @@ package com.android.camera;
 
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -44,6 +43,12 @@ public class PreviewGestures
     private static final int MODE_ZOOM = 2;
     private static final int MODE_MODULE = 3;
     private static final int MODE_ALL = 4;
+    private static final int MODE_SWIPE = 5;
+
+    public static final int DIR_UP = 0;
+    public static final int DIR_DOWN = 1;
+    public static final int DIR_LEFT = 2;
+    public static final int DIR_RIGHT = 3;
 
     private CameraActivity mActivity;
     private SingleTapListener mTapListener;
@@ -61,6 +66,7 @@ public class PreviewGestures
     private boolean mZoomOnly;
     private int mOrientation;
     private int[] mLocation;
+    private SwipeListener mSwipeListener;
 
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -76,8 +82,12 @@ public class PreviewGestures
         public void onSingleTapUp(View v, int x, int y);
     }
 
+    interface SwipeListener {
+        public void onSwipe(int direction);
+    }
+
     public PreviewGestures(CameraActivity ctx, SingleTapListener tapListener,
-            ZoomRenderer zoom, PieRenderer pie) {
+            ZoomRenderer zoom, PieRenderer pie, SwipeListener swipe) {
         mActivity = ctx;
         mTapListener = tapListener;
         mPie = pie;
@@ -88,6 +98,7 @@ public class PreviewGestures
         mTapTimeout = ViewConfiguration.getTapTimeout();
         mEnabled = true;
         mLocation = new int[2];
+        mSwipeListener = swipe;
     }
 
     public void setRenderOverlay(RenderOverlay overlay) {
@@ -149,6 +160,11 @@ public class PreviewGestures
             }
         } else if (mMode == MODE_NONE) {
             return false;
+        } else if (mMode == MODE_SWIPE) {
+            if (MotionEvent.ACTION_UP == m.getActionMasked()) {
+                mSwipeListener.onSwipe(getSwipeDirection(m));
+            }
+            return true;
         } else if (mMode == MODE_PIE) {
             if (MotionEvent.ACTION_POINTER_DOWN == m.getActionMasked()) {
                 sendToPie(makeCancelEvent(m));
@@ -215,18 +231,13 @@ public class PreviewGestures
                         || Math.abs(m.getY() - mDown.getY()) > mSlop) {
                     // moved too far and no timeout yet, no focus or pie
                     cancelPie();
-                    if (isSwipe(m, true)) {
+                    int dir = getSwipeDirection(m);
+                    if (dir == DIR_LEFT) {
                         mMode = MODE_MODULE;
                         return mActivity.superDispatchTouchEvent(m);
                     } else {
                         cancelActivityTouchHandling(m);
-                        if (isSwipe(m , false)) {
-                            mMode = MODE_NONE;
-                        } else if (!mZoomOnly) {
-                            mMode = MODE_PIE;
-                            openPie();
-                            sendToPie(m);
-                        }
+                        mMode = MODE_NONE;
                     }
                 }
             }
@@ -246,32 +257,31 @@ public class PreviewGestures
     }
 
     // left tests for finger moving right to left
-    private boolean isSwipe(MotionEvent m, boolean left) {
+    private int getSwipeDirection(MotionEvent m) {
         float dx = 0;
         float dy = 0;
         switch (mOrientation) {
         case 0:
             dx = m.getX() - mDown.getX();
-            dy = Math.abs(m.getY() - mDown.getY());
+            dy = m.getY() - mDown.getY();
             break;
         case 90:
             dx = - (m.getY() - mDown.getY());
-            dy = Math.abs(m.getX() - mDown.getX());
+            dy = m.getX() - mDown.getX();
             break;
         case 180:
             dx = -(m.getX() - mDown.getX());
-            dy = Math.abs(m.getY() - mDown.getY());
+            dy = m.getY() - mDown.getY();
             break;
         case 270:
             dx = m.getY() - mDown.getY();
-            dy = Math.abs(m.getX() - mDown.getX());
+            dy = m.getX() - mDown.getX();
             break;
         }
-        if (left) {
-            return (dx < 0 && dy / -dx < 0.6f);
-        } else {
-            return (dx > 0 && dy / dx < 0.6f);
-        }
+        if (dx < 0 && (Math.abs(dy) / -dx < 2)) return DIR_LEFT;
+        if (dx > 0 && (Math.abs(dy) / dx < 2)) return DIR_RIGHT;
+        if (dy > 0) return DIR_DOWN;
+        return DIR_UP;
     }
 
     private boolean isInside(MotionEvent evt, View v) {
