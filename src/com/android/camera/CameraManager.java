@@ -334,7 +334,7 @@ public class CameraManager {
                 holder = mReconnectExceptionQueue.take();
             } catch (InterruptedException ex) {
             }
-            if (holder == null || holder.ex != null) {
+            if (holder != null && holder.ex != null) {
                 throw holder.ex;
             }
         }
