@@ -22,6 +22,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
 
+import com.android.gallery3d.util.UsageStatistics;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -205,9 +207,7 @@ public class ComboPreferences implements
 
     @Override
     public boolean contains(String key) {
-        if (mPrefLocal.contains(key)) return true;
-        if (mPrefGlobal.contains(key)) return true;
-        return false;
+        return mPrefLocal.contains(key) || mPrefGlobal.contains(key);
     }
 
     private class MyEditor implements Editor {
@@ -330,5 +330,6 @@ public class ComboPreferences implements
             listener.onSharedPreferenceChanged(this, key);
         }
         BackupManager.dataChanged(mPackageName);
+        UsageStatistics.onEvent("CameraSettingsChange", null, key);
     }
 }
