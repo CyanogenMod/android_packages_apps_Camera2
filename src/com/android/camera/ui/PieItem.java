@@ -57,7 +57,9 @@ public class PieItem {
     public PieItem(Drawable drawable, int level) {
         mDrawable = drawable;
         this.level = level;
-        setAlpha(1f);
+        if (drawable != null) {
+            setAlpha(1f);
+        }
         mEnabled = true;
         setAnimationAngle(getAnimationAngle());
         start = -1;
@@ -77,6 +79,10 @@ public class PieItem {
             mItems = new ArrayList<PieItem>();
         }
         mItems.add(item);
+    }
+
+    public void clearItems() {
+        mItems = null;
     }
 
     public void setPath(Path p) {

@@ -56,7 +56,8 @@ public class PhotoUI implements PieListener,
     PreviewGestures.SingleTapListener,
     FocusUI,
     LocationManager.Listener,
-    FaceDetectionListener {
+    FaceDetectionListener,
+    PreviewGestures.SwipeListener {
 
     private static final String TAG = "CAM_UI";
 
@@ -175,7 +176,8 @@ public class PhotoUI implements PieListener,
         }
         if (mGestures == null) {
             // this will handle gesture disambiguation and dispatching
-            mGestures = new PreviewGestures(mActivity, this, mZoomRenderer, mPieRenderer);
+            mGestures = new PreviewGestures(mActivity, this, mZoomRenderer, mPieRenderer,
+                    this);
         }
         mGestures.clearTouchReceivers();
         mGestures.setRenderOverlay(mRenderOverlay);
@@ -196,20 +198,24 @@ public class PhotoUI implements PieListener,
         updateOnScreenIndicators(params, prefs);
     }
 
+    private void openMenu() {
+        if (mPieRenderer != null) {
+            // If autofocus is not finished, cancel autofocus so that the
+            // subsequent touch can be handled by PreviewGestures
+            if (mController.getCameraState() == PhotoController.FOCUSING) {
+                    mController.cancelAutoFocus();
+            }
+            mPieRenderer.showInCenter();
+        }
+    }
+
     public void initializeControlByIntent() {
         mBlocker = mActivity.findViewById(R.id.blocker);
         mMenuButton = mActivity.findViewById(R.id.menu);
         mMenuButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mPieRenderer != null) {
-                    // If autofocus is not finished, cancel autofocus so that the
-                    // subsequent touch can be handled by PreviewGestures
-                    if (mController.getCameraState() == PhotoController.FOCUSING) {
-                            mController.cancelAutoFocus();
-                    }
-                    mPieRenderer.showInCenter();
-                }
+                openMenu();
             }
         });
         if (mController.isImageCaptureIntent()) {
@@ -721,6 +727,13 @@ public class PhotoUI implements PieListener,
     @Override
     public void onFaceDetection(Face[] faces, android.hardware.Camera camera) {
         mFaceView.setFaces(faces);
+    }
+
+    @Override
+    public void onSwipe(int direction) {
+        if (direction == PreviewGestures.DIR_UP) {
+            openMenu();
+        }
     }
 
 }
