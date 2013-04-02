@@ -420,12 +420,20 @@ public class CameraManager {
         }
 
         public void setParameters(Parameters params) {
-            // TODO: check if this synchronous version is necessary
+            if (params == null) {
+                Log.v(TAG, "null parameters in setParameters()");
+                return;
+            }
             mParametersIsDirty = true;
             mCameraHandler.obtainMessage(SET_PARAMETERS, params).sendToTarget();
         }
 
         public void setParametersAsync(Parameters params) {
+            // TODO: remove this.
+            if (params == null) {
+                Log.v(TAG, "null parameters in setParameters()");
+                return;
+            }
             mParametersIsDirty = true;
             mCameraHandler.removeMessages(SET_PARAMETERS_ASYNC);
             mCameraHandler.obtainMessage(SET_PARAMETERS_ASYNC, params).sendToTarget();
@@ -434,8 +442,7 @@ public class CameraManager {
         public Parameters getParameters() {
             if (mParametersIsDirty || mParameters == null) {
                 mCameraHandler.sendEmptyMessage(GET_PARAMETERS);
-                waitDone();
-                mParametersIsDirty = false;
+                if (waitDone()) mParametersIsDirty = false;
             }
             return mParameters;
         }
@@ -445,7 +452,8 @@ public class CameraManager {
                     ENABLE_SHUTTER_SOUND, (enable ? 1 : 0), 0).sendToTarget();
         }
 
-        public void waitDone() {
+        // return false if cancelled.
+        public boolean waitDone() {
             final Object waitDoneLock = new Object();
             final Runnable unlockRunnable = new Runnable() {
                 @Override
@@ -462,8 +470,10 @@ public class CameraManager {
                     waitDoneLock.wait();
                 } catch (InterruptedException ex) {
                     Log.v(TAG, "waitDone interrupted");
+                    return false;
                 }
             }
+            return true;
         }
     }
 }
