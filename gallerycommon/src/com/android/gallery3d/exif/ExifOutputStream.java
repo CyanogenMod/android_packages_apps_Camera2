@@ -75,6 +75,7 @@ class ExifOutputStream extends FilterOutputStream {
     private int mState = STATE_SOI;
     private int mByteToSkip;
     private int mByteToCopy;
+    private byte[] mSingleByteArray = new byte[1];
     private ByteBuffer mBuffer = ByteBuffer.allocate(4);
     private final ExifInterface mInterface;
 
@@ -190,10 +191,8 @@ class ExifOutputStream extends FilterOutputStream {
      */
     @Override
     public void write(int oneByte) throws IOException {
-        byte[] buf = new byte[] {
-            (byte) (0xff & oneByte)
-        };
-        write(buf);
+        mSingleByteArray[0] = (byte) (0xff & oneByte);
+        write(mSingleByteArray);
     }
 
     /**
