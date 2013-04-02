@@ -34,7 +34,6 @@ public class VideoMenu extends PieController
         TimeIntervalPopup.Listener {
 
     private static String TAG = "CAM_VideoMenu";
-    private static float FLOAT_PI_DIVIDED_BY_TWO = (float) Math.PI / 2;
 
     private VideoUI mUI;
     private String[] mOtherKeys;
@@ -54,12 +53,13 @@ public class VideoMenu extends PieController
         super.initialize(group);
         mPopup = null;
         mPopupStatus = POPUP_NONE;
-        float sweep = FLOAT_PI_DIVIDED_BY_TWO / 2;
+        float sweep = (float)(SWEEP * Math.PI);
 
-        addItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE, FLOAT_PI_DIVIDED_BY_TWO - sweep, sweep);
-        addItem(CameraSettings.KEY_WHITE_BALANCE, 3 * FLOAT_PI_DIVIDED_BY_TWO + sweep, sweep);
+        addItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE, CENTER - sweep, sweep);
+        addItem(CameraSettings.KEY_WHITE_BALANCE, CENTER + sweep, sweep);
+        // camera switcher
         PieItem item = makeItem(R.drawable.ic_switch_video_facing_holo_light);
-        item.setFixedSlice(FLOAT_PI_DIVIDED_BY_TWO + sweep, sweep);
+        item.setFixedSlice(CENTER - 2 * sweep, sweep);
         item.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -76,15 +76,15 @@ public class VideoMenu extends PieController
             }
         });
         mRenderer.addItem(item);
+        // settings popup
         mOtherKeys = new String[] {
                 CameraSettings.KEY_VIDEO_EFFECT,
                 CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
                 CameraSettings.KEY_VIDEO_QUALITY,
                 CameraSettings.KEY_RECORD_LOCATION
         };
-
         item = makeItem(R.drawable.ic_settings_holo_light);
-        item.setFixedSlice(FLOAT_PI_DIVIDED_BY_TWO * 3, sweep);
+        item.setFixedSlice(CENTER, sweep);
         item.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(PieItem item) {
