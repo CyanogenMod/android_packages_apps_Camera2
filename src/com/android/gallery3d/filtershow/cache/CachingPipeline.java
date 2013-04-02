@@ -23,6 +23,7 @@ import android.support.v8.renderscript.Allocation;
 import android.support.v8.renderscript.RenderScript;
 import android.util.Log;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
+import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
@@ -56,6 +57,8 @@ public class CachingPipeline {
     private volatile float mPreviewScaleFactor = 1.0f;
     private volatile float mHighResPreviewScaleFactor = 1.0f;
     private volatile String mName = "";
+
+    private ImageFilterGeometry mGeometry = null;
 
     public CachingPipeline(FiltersManager filtersManager, String name) {
         mFiltersManager = filtersManager;
@@ -302,16 +305,15 @@ public class CachingPipeline {
         }
     }
 
-    public synchronized Bitmap renderGeometryIcon(Bitmap bitmap, ImagePreset preset) {
-        synchronized (CachingPipeline.class) {
-            if (getRenderScriptContext() == null) {
-                return bitmap;
-            }
-            setupEnvironment(preset, false);
-            mEnvironment.setQuality(ImagePreset.QUALITY_PREVIEW);
-            bitmap = preset.applyGeometry(bitmap, mEnvironment);
-            return bitmap;
+    public Bitmap renderGeometryIcon(Bitmap bitmap, ImagePreset preset) {
+        // Called by RenderRequest on the main thread
+        // TODO: change this -- we should reuse a pool of bitmaps instead...
+        if (mGeometry == null) {
+            mGeometry = new ImageFilterGeometry();
         }
+        mGeometry.useRepresentation(preset.getGeometry());
+        return mGeometry.apply(bitmap, mPreviewScaleFactor,
+                ImagePreset.QUALITY_PREVIEW);
     }
 
     public synchronized void compute(TripleBufferBitmap buffer, ImagePreset preset, int type) {
