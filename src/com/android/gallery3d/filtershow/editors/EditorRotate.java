@@ -17,13 +17,18 @@
 package com.android.gallery3d.filtershow.editors;
 
 import android.content.Context;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.imageshow.ImageRotate;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 public class EditorRotate extends Editor implements EditorInfo {
+    public static final String LOGTAG = "EditorRotate";
     public static final int ID = R.id.editorRotate;
     ImageRotate mImageRotate;
 
@@ -41,6 +46,19 @@ public class EditorRotate extends Editor implements EditorInfo {
         mImageRotate.setImageLoader(MasterImage.getImage().getImageLoader());
         mImageRotate.setEditor(this);
         mImageRotate.syncLocalToMasterGeometry();
+    }
+
+    @Override
+    public void openUtilityPanel(final LinearLayout accessoryViewList) {
+        final Button button = (Button) accessoryViewList.findViewById(R.id.applyEffect);
+        button.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                mImageRotate.rotate();
+                button.setText(mContext.getString(getTextId()) + " " + mImageRotate.getLocalValue());
+                mImageRotate.saveAndSetPreset();
+            }
+        });
     }
 
     @Override
