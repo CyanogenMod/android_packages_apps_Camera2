@@ -309,7 +309,6 @@ public class CachingPipeline {
             }
             setupEnvironment(preset, false);
             mEnvironment.setQuality(ImagePreset.QUALITY_PREVIEW);
-            mFiltersManager.freeFilterResources(preset);
             bitmap = preset.applyGeometry(bitmap, mEnvironment);
             return bitmap;
         }
