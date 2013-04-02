@@ -450,6 +450,8 @@ public class VideoModule implements CameraModule,
         mActivity.mCameraDevice.takePicture(null, null, null, new JpegPictureCallback(loc));
         showVideoSnapshotUI(true);
         mSnapshotInProgress = true;
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                UsageStatistics.ACTION_CAPTURE_DONE, "VideoSnapshot");
     }
 
     @Override
@@ -1547,6 +1549,8 @@ public class VideoModule implements CameraModule,
 
         updateRecordingTime();
         keepScreenOn();
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                UsageStatistics.ACTION_CAPTURE_START, "Video");
     }
 
     private void showCaptureResult() {
@@ -1662,6 +1666,10 @@ public class VideoModule implements CameraModule,
         // Update the parameters here because the parameters might have been altered
         // by MediaRecorder.
         if (!mPaused) mParameters = mActivity.mCameraDevice.getParameters();
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                fail ? UsageStatistics.ACTION_CAPTURE_FAIL :
+                    UsageStatistics.ACTION_CAPTURE_DONE, "Video",
+                    SystemClock.uptimeMillis() - mRecordingStartTime);
         return fail;
     }
 

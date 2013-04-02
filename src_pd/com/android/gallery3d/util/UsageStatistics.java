@@ -36,6 +36,10 @@ public class UsageStatistics {
     public static final String TRANSITION_BUTTON_TAP = "ButtonTap";
     public static final String TRANSITION_SWIPE = "Swipe";
 
+    public static final String ACTION_CAPTURE_START = "CaptureStart";
+    public static final String ACTION_CAPTURE_FAIL = "CaptureFail";
+    public static final String ACTION_CAPTURE_DONE = "CaptureDone";
+
     public static void initialize(Context context) {}
     public static void showOptInDialogIfNeeded(Activity activity) {}
     public static void setPendingTransitionCause(String cause) {}
