@@ -19,7 +19,6 @@ package com.android.camera.ui;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Path;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 import java.util.ArrayList;
@@ -36,12 +35,9 @@ public class PieItem {
 
     private Drawable mDrawable;
     private int level;
-    private float mCenter;
-    private float start;
-    private float sweep;
-    private float animate;
-    private int inner;
-    private int outer;
+    private int mPosition;
+    private int mCount;
+
     private boolean mSelected;
     private boolean mEnabled;
     private List<PieItem> mItems;
@@ -61,9 +57,19 @@ public class PieItem {
             setAlpha(1f);
         }
         mEnabled = true;
-        setAnimationAngle(getAnimationAngle());
-        start = -1;
-        mCenter = -1;
+    }
+
+    public void setPosition(int pos, int count) {
+        mPosition = pos;
+        mCount = count;
+    }
+
+    public int getPosition() {
+        return mPosition;
+    }
+
+    public int getCount() {
+        return mCount;
     }
 
     public boolean hasItems() {
@@ -85,6 +91,10 @@ public class PieItem {
         mItems = null;
     }
 
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
     public void setPath(Path p) {
         mPath = p;
     }
@@ -100,14 +110,6 @@ public class PieItem {
     public void setAlpha(float alpha) {
         mAlpha = alpha;
         mDrawable.setAlpha((int) (255 * alpha));
-    }
-
-    public void setAnimationAngle(float a) {
-        animate = a;
-    }
-
-    public float getAnimationAngle() {
-        return animate;
     }
 
     public void setEnabled(boolean enabled) {
@@ -137,41 +139,6 @@ public class PieItem {
         return level;
     }
 
-    public void setGeometry(float st, float sw, int inside, int outside) {
-        start = st;
-        sweep = sw;
-        inner = inside;
-        outer = outside;
-    }
-
-    public void setFixedSlice(float center, float sweep) {
-        mCenter = center;
-        this.sweep = sweep;
-    }
-
-    public float getCenter() {
-        return mCenter;
-    }
-
-    public float getStart() {
-        return start;
-    }
-
-    public float getStartAngle() {
-        return start + animate;
-    }
-
-    public float getSweep() {
-        return sweep;
-    }
-
-    public int getInnerRadius() {
-        return inner;
-    }
-
-    public int getOuterRadius() {
-        return outer;
-    }
 
     public void setOnClickListener(OnClickListener listener) {
         mOnClickListener = listener;
