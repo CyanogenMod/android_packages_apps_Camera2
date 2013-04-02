@@ -1005,17 +1005,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
                         saveImage();
                     }
                 });
-                builder.setNeutralButton(R.string.exit, new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         done();
                     }
                 });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }
-                });
-
-                AlertDialog dialog = builder.show();
+                builder.show();
             }
         }
     }
