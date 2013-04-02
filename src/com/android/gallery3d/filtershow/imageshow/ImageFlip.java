@@ -58,6 +58,22 @@ public class ImageFlip extends ImageGeometry {
         return (rot / 90) % 2 != 0;
     }
 
+    public void flip() {
+        FLIP flip = getLocalFlip();
+        boolean next = true;
+        // Picks next flip in order from enum FLIP (wrapping)
+        for (FLIP f : FLIP.values()) {
+            if (next) {
+                mNextFlip = f;
+                next = false;
+            }
+            if (f.equals(flip)) {
+                next = true;
+            }
+        }
+        setLocalFlip(mNextFlip);
+    }
+
     @Override
     protected void setActionMove(float x, float y) {
         super.setActionMove(x, y);
