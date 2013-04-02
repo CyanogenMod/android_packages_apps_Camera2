@@ -334,8 +334,11 @@ public class CameraManager {
             mCameraHandler.sendEmptyMessage(START_PREVIEW_ASYNC);
         }
 
+        // stopPreview() is synchronous because many resources should be released after
+        // the preview is stopped.
         public void stopPreview() {
             mCameraHandler.sendEmptyMessage(STOP_PREVIEW);
+            waitDone();
         }
 
         public void setPreviewCallback(final PreviewCallback cb) {
