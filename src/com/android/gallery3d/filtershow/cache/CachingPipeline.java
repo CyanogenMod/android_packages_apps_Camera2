@@ -393,7 +393,9 @@ public class CachingPipeline {
                     mOutPixelsAllocation.getType());
             needsUpdate = true;
         }
-        mInPixelsAllocation.copyFrom(bitmap);
+        if (RS != null) {
+            mInPixelsAllocation.copyFrom(bitmap);
+        }
         if (bitmap.getWidth() != mWidth
                 || bitmap.getHeight() != mHeight) {
             mWidth = bitmap.getWidth();
