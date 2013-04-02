@@ -18,6 +18,7 @@ package com.android.gallery3d.exif;
 
 import android.util.Log;
 
+import java.io.BufferedOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -58,6 +59,7 @@ import java.nio.ByteOrder;
 class ExifOutputStream extends FilterOutputStream {
     private static final String TAG = "ExifOutputStream";
     private static final boolean DEBUG = false;
+    private static final int STREAMBUFFER_SIZE = 0x00010000; // 64Kb
 
     private static final int STATE_SOI = 0;
     private static final int STATE_FRAME_HEADER = 1;
@@ -80,7 +82,7 @@ class ExifOutputStream extends FilterOutputStream {
     private final ExifInterface mInterface;
 
     protected ExifOutputStream(OutputStream ou, ExifInterface iRef) {
-        super(ou);
+        super(new BufferedOutputStream(ou, STREAMBUFFER_SIZE));
         mInterface = iRef;
     }
 
