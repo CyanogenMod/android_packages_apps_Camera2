@@ -37,6 +37,10 @@ public class PieController {
     protected static final int MODE_PHOTO = 0;
     protected static final int MODE_VIDEO = 1;
 
+    protected static float CENTER = (float) Math.PI / 2;
+    protected static final float SWEEP = 0.06f;
+
+
     protected CameraActivity mActivity;
     protected PreferenceGroup mPreferenceGroup;
     protected OnPreferenceChangedListener mListener;
@@ -84,10 +88,10 @@ public class PieController {
         return new PieItem(drawable, 0);
     }
 
-    public void addItem(String prefKey, float center, float sweep) {
+    public PieItem makeItem(String prefKey, float center, float sweep) {
         final IconListPreference pref =
                 (IconListPreference) mPreferenceGroup.findPreference(prefKey);
-        if (pref == null) return;
+        if (pref == null) return null;
         int[] iconIds = pref.getLargeIconIds();
         int resid = -1;
         if (!pref.getUseSingleIcon() && iconIds != null) {
@@ -101,7 +105,6 @@ public class PieController {
         PieItem item = makeItem(resid);
         // use center and sweep to determine layout
         item.setFixedSlice(center, sweep);
-        mRenderer.addItem(item);
         mPreferences.add(pref);
         mPreferenceMap.put(pref, item);
         int nOfEntries = pref.getEntries().length;
@@ -113,6 +116,7 @@ public class PieController {
                 } else {
                     inner = makeItem(pref.getEntries()[i]);
                 }
+                layoutInner(inner, i, nOfEntries);
                 item.addItem(inner);
                 final int index = i;
                 inner.setOnClickListener(new OnClickListener() {
@@ -125,6 +129,23 @@ public class PieController {
                 });
             }
         }
+        return item;
+    }
+
+    public PieItem makeDialItem(ListPreference pref, int iconId, float center, float sweep) {
+        PieItem item = makeItem(iconId);
+        return item;
+    }
+
+    protected void layoutInner(PieItem item, int ix, int n) {
+        float sweep = (float) (SWEEP * Math.PI);//FLOAT_PI_DIVIDED_BY_TWO / Math.max(n, 5);
+        float start = CENTER + (n - 1) * (sweep / 2f);
+        item.setFixedSlice(start - ix * sweep, sweep);
+    }
+
+    public void addItem(String prefKey, float center, float sweep) {
+        PieItem item = makeItem(prefKey, center, sweep);
+        mRenderer.addItem(item);
     }
 
     public void setPreferenceGroup(PreferenceGroup group) {
