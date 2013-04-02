@@ -38,16 +38,28 @@ public class MtpBitmapFetch {
 
     public static Bitmap getThumbnail(MtpDevice device, MtpObjectInfo info) {
         byte[] imageBytes = device.getThumbnail(info.getObjectHandle());
-        if (imageBytes == null) return null;
+        if (imageBytes == null) {
+            return null;
+        }
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, o);
-        if (o.outWidth == 0 || o.outHeight == 0) return null;
+        if (o.outWidth == 0 || o.outHeight == 0) {
+            return null;
+        }
         o.inBitmap = GalleryBitmapPool.getInstance().get(o.outWidth, o.outHeight);
         o.inMutable = true;
         o.inJustDecodeBounds = false;
         o.inSampleSize = 1;
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, o);
+        try {
+            return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, o);
+        } catch (IllegalArgumentException e) {
+            // BitmapFactory throws an exception rather than returning null
+            // when image decoding fails and an existing bitmap was supplied
+            // for recycling, even if the failure was not caused by the use
+            // of that bitmap.
+            return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+        }
     }
 
     public static BitmapWithMetadata getFullsize(MtpDevice device, MtpObjectInfo info) {
@@ -56,7 +68,9 @@ public class MtpBitmapFetch {
 
     public static BitmapWithMetadata getFullsize(MtpDevice device, MtpObjectInfo info, int maxSide) {
         byte[] imageBytes = device.getObject(info.getObjectHandle(), info.getCompressedSize());
-        if (imageBytes == null) return null;
+        if (imageBytes == null) {
+            return null;
+        }
         Bitmap created;
         if (maxSide > 0) {
             BitmapFactory.Options o = new BitmapFactory.Options();
@@ -76,7 +90,9 @@ public class MtpBitmapFetch {
         } else {
             created = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
         }
-        if (created == null) return null;
+        if (created == null) {
+            return null;
+        }
 
         return new BitmapWithMetadata(created, Exif.getOrientation(imageBytes));
     }
