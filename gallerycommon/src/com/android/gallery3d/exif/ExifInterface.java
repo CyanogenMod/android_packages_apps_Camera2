@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.SparseIntArray;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -758,7 +759,7 @@ public class ExifInterface {
         }
         InputStream is = null;
         try {
-            is = (InputStream) new FileInputStream(inFileName);
+            is = (InputStream) new BufferedInputStream(new FileInputStream(inFileName));
             readExif(is);
         } catch (IOException e) {
             closeSilently(is);
@@ -800,6 +801,7 @@ public class ExifInterface {
         }
         OutputStream s = getExifWriterStream(exifOutStream);
         s.write(jpeg, 0, jpeg.length);
+        s.flush();
     }
 
     /**
@@ -817,6 +819,7 @@ public class ExifInterface {
         }
         OutputStream s = getExifWriterStream(exifOutStream);
         bmap.compress(Bitmap.CompressFormat.JPEG, 90, s);
+        s.flush();
     }
 
     /**
@@ -834,6 +837,7 @@ public class ExifInterface {
         }
         OutputStream s = getExifWriterStream(exifOutStream);
         doExifStreamIO(jpegStream, s);
+        s.flush();
     }
 
     /**
@@ -1010,7 +1014,7 @@ public class ExifInterface {
         boolean ret;
         try {
             File temp = new File(filename);
-            is = new FileInputStream(temp);
+            is = new BufferedInputStream(new FileInputStream(temp));
 
             // Parse beginning of APP1 in exif to find size of exif header.
             ExifParser parser = null;
