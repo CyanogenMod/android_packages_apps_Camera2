@@ -54,6 +54,13 @@ public class ImageRotate extends ImageGeometry {
         mAngle = (mBaseAngle - angle) % 360;
     }
 
+    public void rotate() {
+        mAngle += 90;
+        mAngle = snappedAngle(mAngle);
+        mAngle %= 360;
+        setLocalRotation(mAngle);
+    }
+
     @Override
     protected void setActionDown(float x, float y) {
         super.setActionDown(x, y);
@@ -76,7 +83,7 @@ public class ImageRotate extends ImageGeometry {
     }
 
     @Override
-    protected int getLocalValue() {
+    public int getLocalValue() {
         return constrainedRotation(snappedAngle(getLocalRotation()));
     }
 
