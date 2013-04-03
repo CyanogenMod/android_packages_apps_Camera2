@@ -92,4 +92,17 @@ public class ExifXmlDataTestCase extends InstrumentationTestCase {
             return String.format(RES_ID_TITLE, mImageResourceId);
         }
     }
+
+    protected InputStream reopenFileStream() throws Exception {
+        try {
+            if (mImagePath != null) {
+                return new FileInputStream(mImagePath);
+            } else {
+                Resources res = getInstrumentation().getContext().getResources();
+                return res.openRawResource(mImageResourceId);
+            }
+        } catch (Exception e) {
+            throw new Exception(getImageTitle(), e);
+        }
+    }
 }

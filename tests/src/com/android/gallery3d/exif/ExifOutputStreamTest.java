@@ -18,6 +18,7 @@ package com.android.gallery3d.exif;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -125,6 +126,60 @@ public class ExifOutputStreamTest extends ExifXmlDataTestCase {
 
                 Util.closeSilently(dangerInputStream);
                 Util.closeSilently(dangerOutputStream);
+            }
+        } catch (Exception e) {
+            throw new Exception(getImageTitle(), e);
+        }
+    }
+
+    public void testOutputSpeed() throws Exception {
+        final String LOGTAG = "testOutputSpeed";
+        InputStream imageInputStream = null;
+        OutputStream imageOutputStream = null;
+        try {
+            try {
+                imageInputStream = getImageInputStream();
+                // Read the image data
+                Bitmap bmp = BitmapFactory.decodeStream(imageInputStream);
+                // The image is invalid
+                if (bmp == null) {
+                    return;
+                }
+                imageInputStream.close();
+                int nLoops = 20;
+                long totalReadDuration = 0;
+                long totalWriteDuration = 0;
+                for (int i = 0; i < nLoops; i++) {
+                    imageInputStream = reopenFileStream();
+                    // Read exif data
+                    long startTime = System.nanoTime();
+                    ExifData exifData = new ExifReader(mInterface).read(imageInputStream);
+                    long endTime = System.nanoTime();
+                    long duration = endTime - startTime;
+                    totalReadDuration += duration;
+                    Log.v(LOGTAG, " read time: " + duration);
+                    imageInputStream.close();
+
+                    // Encode the image with the exif data
+                    imageOutputStream = (OutputStream) new FileOutputStream(mTmpFile);
+                    ExifOutputStream exifOutputStream = new ExifOutputStream(imageOutputStream,
+                            mInterface);
+                    exifOutputStream.setExifData(exifData);
+                    startTime = System.nanoTime();
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 90, exifOutputStream);
+                    endTime = System.nanoTime();
+                    duration = endTime - startTime;
+                    totalWriteDuration += duration;
+                    Log.v(LOGTAG, " write time: " + duration);
+                    exifOutputStream.close();
+                }
+                Log.v(LOGTAG, "======================= normal");
+                Log.v(LOGTAG, "avg read time: " + totalReadDuration / nLoops);
+                Log.v(LOGTAG, "avg write time: " + totalWriteDuration / nLoops);
+                Log.v(LOGTAG, "=======================");
+            } finally {
+                Util.closeSilently(imageInputStream);
+                Util.closeSilently(imageOutputStream);
             }
         } catch (Exception e) {
             throw new Exception(getImageTitle(), e);
