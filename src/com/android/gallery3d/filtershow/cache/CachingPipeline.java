@@ -283,6 +283,13 @@ public class CachingPipeline {
                     || request.getType() == RenderingRequest.ICON_RENDERING
                     || request.getType() == RenderingRequest.PARTIAL_RENDERING
                     || request.getType() == RenderingRequest.HIGHRES_RENDERING) {
+
+                if (request.getType() == RenderingRequest.ICON_RENDERING) {
+                    mEnvironment.setQuality(ImagePreset.QUALITY_ICON);
+                } else {
+                    mEnvironment.setQuality(ImagePreset.QUALITY_PREVIEW);
+                }
+
                 Bitmap bmp = preset.apply(bitmap, mEnvironment);
                 request.setBitmap(bmp);
                 mFiltersManager.freeFilterResources(preset);
