@@ -27,38 +27,57 @@ import android.widget.FrameLayout.LayoutParams;
 import com.android.camera.Util;
 import com.android.gallery3d.R;
 
-/*
- * This is a simple view that has a gradient background. The background
- * needs to rotate when orientation changes, so that the side of the drawable
- * that is dark is always aligned to the side of the screen, and the side that is
- * closer to the center of the screen is transparent.
- * */
-public class SwitcherBackgroundView extends View
+public class CameraControls extends RotatableLayout
 {
-    public SwitcherBackgroundView(Context context, AttributeSet attrs) {
+    private View mBackgroundView;
+    public CameraControls(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setBackgroundResource(R.drawable.switcher_bg);
     }
 
-    public SwitcherBackgroundView(Context context) {
+    public CameraControls(Context context) {
         super(context);
-        setBackgroundResource(R.drawable.switcher_bg);
     }
+
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
+        adjustBackground();
+    }
+
+    @Override
+    public void onFinishInflate() {
+        super.onFinishInflate();
+        mBackgroundView = findViewById(R.id.blocker);
+    }
+
+    // In reverse landscape and reverse portrait, camera controls will be laid out
+    // on the wrong side of the screen. We need to make adjustment to move the controls
+    // to the USB side
+    public void adjustControlsToRightPosition() {
+        Configuration config = getResources().getConfiguration();
+        int orientation = Util.getDisplayRotation((Activity) getContext());
+        if (orientation == 270 && config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            flipChildren();
+        }
+        if (orientation == 180 && config.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            flipChildren();
+        }
+        adjustBackground();
+    }
+
+    private void adjustBackground() {
         // remove current drawable and reset rotation
-        setBackgroundDrawable(null);
-        setRotationX(0);
-        setRotationY(0);
+        mBackgroundView.setBackgroundDrawable(null);
+        mBackgroundView.setRotationX(0);
+        mBackgroundView.setRotationY(0);
         // if the switcher background is top aligned we need to flip the background
         // drawable vertically; if left aligned, flip horizontally
-        int gravity = ((LayoutParams) getLayoutParams()).gravity;
+        int gravity = ((LayoutParams) mBackgroundView.getLayoutParams()).gravity;
         if ((gravity & Gravity.TOP) == Gravity.TOP) {
-            setRotationX(180);
+            mBackgroundView.setRotationX(180);
         } else if ((gravity & Gravity.LEFT) == Gravity.LEFT) {
-            setRotationY(180);
+            mBackgroundView.setRotationY(180);
         }
-        setBackgroundResource(R.drawable.switcher_bg);
+        mBackgroundView.setBackgroundResource(R.drawable.switcher_bg);
     }
 }

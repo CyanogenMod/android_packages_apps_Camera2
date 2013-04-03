@@ -39,6 +39,10 @@ public class RotatableLayout extends FrameLayout {
 
     private static final String TAG = "RotatableLayout";
     private int mPrevRotation;
+    private RotationListener mListener = null;
+    public interface RotationListener {
+        public void onRotation(int rotation);
+    }
     public RotatableLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
@@ -53,12 +57,15 @@ public class RotatableLayout extends FrameLayout {
 
     @Override
     public void onFinishInflate() { // get initial orientation
+        super.onFinishInflate();
         mPrevRotation = Util.getDisplayRotation((Activity) getContext());
     }
 
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
+        int rotation = Util.getDisplayRotation((Activity) getContext());
+        boolean clockwise = isClockWiseRotation(mPrevRotation, rotation);
         // Change the size of the layout
         ViewGroup.LayoutParams lp = getLayoutParams();
         int width = lp.width;
@@ -66,15 +73,33 @@ public class RotatableLayout extends FrameLayout {
         lp.height = width;
         lp.width = height;
         setLayoutParams(lp);
+
         // rotate all the children
-        int rotation = Util.getDisplayRotation((Activity) getContext());
-        boolean clockwise = isClockWiseRotation(mPrevRotation, rotation);
         mPrevRotation = rotation;
+        rotateChildren(clockwise);
+    }
+
+    protected void rotateChildren(boolean clockwise) {
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
             rotate(child, clockwise);
         }
+        if (mListener != null) mListener.onRotation(clockwise ? 90 : 270);
+    }
+
+    protected void flipChildren() {
+        mPrevRotation = Util.getDisplayRotation((Activity) getContext());
+        int childCount = getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View child = getChildAt(i);
+            flip(child);
+        }
+        if (mListener != null) mListener.onRotation(180);
+    }
+
+    public void setRotationListener(RotationListener listener) {
+        mListener = listener;
     }
 
     public static boolean isClockWiseRotation(int prevRotation, int currentRotation) {
@@ -180,5 +205,11 @@ public class RotatableLayout extends FrameLayout {
         lp.width = height;
         lp.height = width;
         view.setLayoutParams(lp);
+    }
+
+    // Rotate a given view 180 degrees
+    public static void flip(View view) {
+        rotateClockwise(view);
+        rotateClockwise(view);
     }
 }
