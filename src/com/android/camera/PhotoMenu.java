@@ -34,6 +34,15 @@ public class PhotoMenu extends PieController
         TimerSettingPopup.Listener,
         ListPrefSettingPopup.Listener {
     private static String TAG = "CAM_photomenu";
+
+    private static final int POS_HDR = 0;
+    private static final int POS_EXP = 1;
+    private static final int POS_MORE = 2;
+    private static final int POS_FLASH = 3;
+    private static final int POS_SWITCH = 4;
+    private static final int POS_WB = 1;
+    private static final int POS_SET = 2;
+
     private final String mSettingOff;
 
     private PhotoUI mUI;
@@ -53,20 +62,19 @@ public class PhotoMenu extends PieController
         super.initialize(group);
         mPopup = null;
         mSecondPopup = null;
-        float sweep = (float) (SWEEP * Math.PI);
         PieItem item = null;
         // flash
         if (group.findPreference(CameraSettings.KEY_FLASH_MODE) != null) {
-            item = makeItem(CameraSettings.KEY_FLASH_MODE, CENTER - sweep, sweep);
+            item = makeItem(CameraSettings.KEY_FLASH_MODE, POS_FLASH, 5);
             mRenderer.addItem(item);
         }
         // exposure compensation
-        item = makeItem(CameraSettings.KEY_EXPOSURE, CENTER + sweep, sweep);
+        item = makeItem(CameraSettings.KEY_EXPOSURE, POS_EXP, 5);
         mRenderer.addItem(item);
         // camera switcher
         if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
             item = makeItem(R.drawable.ic_switch_photo_facing_holo_light);
-            item.setFixedSlice(CENTER - 2 * sweep, sweep);
+            item.setPosition(POS_SWITCH, 5);
             item.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(PieItem item) {
@@ -88,7 +96,7 @@ public class PhotoMenu extends PieController
         // hdr
         if (group.findPreference(CameraSettings.KEY_CAMERA_HDR) != null) {
             item = makeItem(R.drawable.ic_hdr);
-            item.setFixedSlice(CENTER + 2 * sweep, sweep);
+            item.setPosition(POS_HDR, 5);
             item.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(PieItem item) {
@@ -108,11 +116,10 @@ public class PhotoMenu extends PieController
 
         // more settings
         PieItem more = makeItem(R.drawable.ic_settings_holo_light);
-        more.setFixedSlice(CENTER, sweep);
+        more.setPosition(POS_MORE, 5);
         mRenderer.addItem(more);
         // white balance
-        item = makeItem(CameraSettings.KEY_WHITE_BALANCE,
-                CENTER + sweep, sweep);
+        item = makeItem(CameraSettings.KEY_WHITE_BALANCE, POS_WB, 5);
         more.addItem(item);
         // settings popup
         mOtherKeys = new String[] {
@@ -124,7 +131,7 @@ public class PhotoMenu extends PieController
                 CameraSettings.KEY_TIMER_SOUND_EFFECTS,
                 };
         item = makeItem(R.drawable.ic_settings_holo_light);
-        item.setFixedSlice(CENTER, sweep);
+        item.setPosition(POS_SET, 5);
         item.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(PieItem item) {
