@@ -30,6 +30,10 @@
     <string name="show_imagestate_panel" msgid="7132294085840948243">"Mostrar estado"</string>
     <string name="hide_imagestate_panel" msgid="1135313661068111161">"Ocultar estado"</string>
     <string name="menu_settings" msgid="6428291655769260831">"Configurações"</string>
+    <string name="unsaved" msgid="8704442449002374375">"Existem alterações não salvas nesta imagem."</string>
+    <string name="save_before_exit" msgid="2680660633675916712">"Deseja salvar antes de sair?"</string>
+    <string name="save_and_exit" msgid="3628425023766687419">"Salvar e sair"</string>
+    <string name="exit" msgid="242642957038770113">"Sair"</string>
     <string name="history" msgid="455767361472692409">"Histórico"</string>
     <string name="reset" msgid="9013181350779592937">"Restaurar"</string>
     <!-- no translation found for history_original (150973253194312841) -->
