@@ -118,7 +118,6 @@ public class CameraActivity extends ActivityBase
 
     public void init() {
         boolean landscape = Util.getDisplayRotation(this) % 180 == 90;
-        setMargins(landscape);
         mControlsBackground = findViewById(R.id.blocker);
         mCameraControls = findViewById(R.id.camera_controls);
         mShutter = (ShutterButton) findViewById(R.id.shutter_button);
@@ -318,22 +317,7 @@ public class CameraActivity extends ActivityBase
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
-        boolean landscape = (config.orientation == Configuration.ORIENTATION_LANDSCAPE);
-        setMargins(landscape);
         mCurrentModule.onConfigurationChanged(config);
-    }
-
-    private void setMargins(boolean landscape) {
-        ViewGroup appRoot = (ViewGroup) findViewById(R.id.content);
-        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) appRoot.getLayoutParams();
-        int navBarWidth = getResources().getDimensionPixelSize(R.dimen.navigation_bar_width);
-        int navBarHeight = getResources().getDimensionPixelSize(R.dimen.navigation_bar_height);
-        if (landscape) {
-            lp.setMargins(navBarHeight, 0, navBarHeight - navBarWidth, 0);
-        } else {
-            lp.setMargins(0, navBarHeight, 0, 0);
-        }
-        appRoot.setLayoutParams(lp);
     }
 
     @Override
