@@ -30,6 +30,10 @@
     <string name="show_imagestate_panel" msgid="7132294085840948243">"สถานะแสดงภาพ"</string>
     <string name="hide_imagestate_panel" msgid="1135313661068111161">"สถานะซ่อนภาพ"</string>
     <string name="menu_settings" msgid="6428291655769260831">"การตั้งค่า"</string>
+    <string name="unsaved" msgid="8704442449002374375">"มีการเปลี่ยนแปลงที่ไม่ได้บันทึกไปยังภาพนี้"</string>
+    <string name="save_before_exit" msgid="2680660633675916712">"คุณต้องการบันทึกก่อนที่จะออกหรือไม่"</string>
+    <string name="save_and_exit" msgid="3628425023766687419">"บันทึกและออก"</string>
+    <string name="exit" msgid="242642957038770113">"ออก"</string>
     <string name="history" msgid="455767361472692409">"ประวัติ"</string>
     <string name="reset" msgid="9013181350779592937">"รีเซ็ต"</string>
     <!-- no translation found for history_original (150973253194312841) -->
