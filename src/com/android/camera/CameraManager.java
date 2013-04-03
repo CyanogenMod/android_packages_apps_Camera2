@@ -74,7 +74,6 @@ public class CameraManager {
     private static final int ENABLE_SHUTTER_SOUND = 24;
 
     private Handler mCameraHandler;
-    private CameraProxy mCameraProxy;
     private android.hardware.Camera mCamera;
 
     // This holder is used when we need to pass the exception
@@ -139,7 +138,6 @@ public class CameraManager {
                     case RELEASE:
                         mCamera.release();
                         mCamera = null;
-                        mCameraProxy = null;
                         return;
 
                     case RECONNECT:
@@ -226,11 +224,15 @@ public class CameraManager {
                         return;
 
                     case SET_PARAMETERS:
+                        mParametersIsDirty = true;
                         mCamera.setParameters((Parameters) msg.obj);
                         return;
 
                     case GET_PARAMETERS:
-                        mParameters = mCamera.getParameters();
+                        if (mParametersIsDirty) {
+                            mParameters = mCamera.getParameters();
+                            mParametersIsDirty = false;
+                        }
                         return;
 
                     case SET_PARAMETERS_ASYNC:
@@ -256,7 +258,6 @@ public class CameraManager {
                         Log.e(TAG, "Fail to release the camera.");
                     }
                     mCamera = null;
-                    mCameraProxy = null;
                 }
                 throw e;
             }
@@ -280,9 +281,8 @@ public class CameraManager {
         // a view hierarchy can touch its views.
         mCamera = android.hardware.Camera.open(cameraId);
         if (mCamera != null) {
-            mCameraProxy = new CameraProxy();
             mParametersIsDirty = true;
-            return mCameraProxy;
+            return new CameraProxy();
         } else {
             return null;
         }
@@ -427,7 +427,6 @@ public class CameraManager {
                 Log.v(TAG, "null parameters in setParameters()");
                 return;
             }
-            mParametersIsDirty = true;
             mCameraHandler.obtainMessage(SET_PARAMETERS, params).sendToTarget();
         }
 
@@ -437,16 +436,13 @@ public class CameraManager {
                 Log.v(TAG, "null parameters in setParameters()");
                 return;
             }
-            mParametersIsDirty = true;
             mCameraHandler.removeMessages(SET_PARAMETERS_ASYNC);
             mCameraHandler.obtainMessage(SET_PARAMETERS_ASYNC, params).sendToTarget();
         }
 
         public Parameters getParameters() {
-            if (mParametersIsDirty || mParameters == null) {
-                mCameraHandler.sendEmptyMessage(GET_PARAMETERS);
-                if (waitDone()) mParametersIsDirty = false;
-            }
+            mCameraHandler.sendEmptyMessage(GET_PARAMETERS);
+            waitDone();
             return mParameters;
         }
 
