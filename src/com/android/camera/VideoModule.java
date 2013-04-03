@@ -1532,6 +1532,9 @@ public class VideoModule implements CameraModule,
         AccessibilityUtils.makeAnnouncement(mActivity.getShutterButton(),
                 mActivity.getString(R.string.video_recording_started));
 
+        // The parameters might have been altered by MediaRecorder already.
+        // We need to force mCameraDevice to refresh before getting it.
+        mActivity.mCameraDevice.refreshParameters();
         // The parameters may have been changed by MediaRecorder upon starting
         // recording. We need to alter the parameters if we support camcorder
         // zoom. To reduce latency when setting the parameters during zoom, we
