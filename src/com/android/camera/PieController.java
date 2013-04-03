@@ -37,10 +37,6 @@ public class PieController {
     protected static final int MODE_PHOTO = 0;
     protected static final int MODE_VIDEO = 1;
 
-    protected static float CENTER = (float) Math.PI / 2;
-    protected static final float SWEEP = 0.06f;
-
-
     protected CameraActivity mActivity;
     protected PreferenceGroup mPreferenceGroup;
     protected OnPreferenceChangedListener mListener;
@@ -88,7 +84,7 @@ public class PieController {
         return new PieItem(drawable, 0);
     }
 
-    public PieItem makeItem(String prefKey, float center, float sweep) {
+    public PieItem makeItem(String prefKey, int position, int count) {
         final IconListPreference pref =
                 (IconListPreference) mPreferenceGroup.findPreference(prefKey);
         if (pref == null) return null;
@@ -103,8 +99,7 @@ public class PieController {
             resid = pref.getSingleIcon();
         }
         PieItem item = makeItem(resid);
-        // use center and sweep to determine layout
-        item.setFixedSlice(center, sweep);
+        item.setPosition(position, count);
         mPreferences.add(pref);
         mPreferenceMap.put(pref, item);
         int nOfEntries = pref.getEntries().length;
@@ -116,7 +111,7 @@ public class PieController {
                 } else {
                     inner = makeItem(pref.getEntries()[i]);
                 }
-                layoutInner(inner, i, nOfEntries);
+                inner.setPosition(i, nOfEntries);
                 item.addItem(inner);
                 final int index = i;
                 inner.setOnClickListener(new OnClickListener() {
@@ -137,14 +132,8 @@ public class PieController {
         return item;
     }
 
-    protected void layoutInner(PieItem item, int ix, int n) {
-        float sweep = (float) (SWEEP * Math.PI);//FLOAT_PI_DIVIDED_BY_TWO / Math.max(n, 5);
-        float start = CENTER + (n - 1) * (sweep / 2f);
-        item.setFixedSlice(start - ix * sweep, sweep);
-    }
-
-    public void addItem(String prefKey, float center, float sweep) {
-        PieItem item = makeItem(prefKey, center, sweep);
+    public void addItem(String prefKey, int position, int count) {
+        PieItem item = makeItem(prefKey, position, count);
         mRenderer.addItem(item);
     }
 
