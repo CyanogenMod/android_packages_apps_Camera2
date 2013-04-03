@@ -83,8 +83,8 @@ public class ImageDraw extends ImageShow {
     float[] mTmpPoint = new float[2]; // so we do not malloc
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        boolean ret = super.onTouchEvent(event);
         if (event.getPointerCount() > 1) {
+            boolean ret = super.onTouchEvent(event);
             if (mFRep.getCurrentDrawing() != null) {
                 mFRep.clearCurrentSection();
                 mEditorDraw.commitLocalRepresentation();
@@ -93,7 +93,7 @@ public class ImageDraw extends ImageShow {
         }
         if (event.getAction() != MotionEvent.ACTION_DOWN) {
             if (mFRep.getCurrentDrawing() == null) {
-                return ret;
+                return super.onTouchEvent(event);
             }
         }
 
