@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.filtershow.filters;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v8.renderscript.*;
@@ -28,6 +27,8 @@ import com.android.gallery3d.filtershow.cache.CachingPipeline;
 public abstract class ImageFilterRS extends ImageFilter {
     private static final String LOGTAG = "ImageFilterRS";
     private boolean DEBUG = false;
+    private int mLastInputWidth = 0;
+    private int mLastInputHeight = 0;
 
     private volatile boolean mResourcesLoaded = false;
 
@@ -65,11 +66,19 @@ public abstract class ImageFilterRS extends ImageFilter {
                 Log.v(LOGTAG, "apply filter " + getName() + " in pipeline " + pipeline.getName());
             }
             Resources rsc = pipeline.getResources();
+            boolean sizeChanged = false;
+            if (getInPixelsAllocation() != null
+                    && ((getInPixelsAllocation().getType().getX() != mLastInputWidth)
+                    || (getInPixelsAllocation().getType().getY() != mLastInputHeight))) {
+                sizeChanged = true;
+            }
             if (pipeline.prepareRenderscriptAllocations(bitmap)
-                    || !isResourcesLoaded()) {
+                    || !isResourcesLoaded() || sizeChanged) {
                 freeResources();
                 createFilter(rsc, scaleFactor, quality);
                 setResourcesLoaded(true);
+                mLastInputWidth = getInPixelsAllocation().getType().getX();
+                mLastInputHeight = getInPixelsAllocation().getType().getY();
             }
             bindScriptValues();
             runFilter();
