@@ -13,13 +13,13 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<com.android.camera.ui.RotatableLayout
+<com.android.camera.ui.CameraControls
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/camera_controls"
     style="@style/CameraControls"
     android:layout_gravity="center" >
 
-        <com.android.camera.ui.SwitcherBackgroundView
+        <View
             android:id="@+id/blocker"
             android:layout_width="match_parent"
             android:layout_height="@dimen/switcher_size"
@@ -59,4 +59,4 @@
             android:scaleType="center"
             android:src="@drawable/btn_new_shutter" />
 
-</com.android.camera.ui.RotatableLayout>
+</com.android.camera.ui.CameraControls>
