@@ -34,6 +34,10 @@ public class VideoMenu extends PieController
         TimeIntervalPopup.Listener {
 
     private static String TAG = "CAM_VideoMenu";
+    private static final int POS_WB = 1;
+    private static final int POS_SET = 2;
+    private static final int POS_FLASH = 3;
+    private static final int POS_SWITCH = 4;
 
     private VideoUI mUI;
     private String[] mOtherKeys;
@@ -53,13 +57,14 @@ public class VideoMenu extends PieController
         super.initialize(group);
         mPopup = null;
         mPopupStatus = POPUP_NONE;
-        float sweep = (float)(SWEEP * Math.PI);
 
-        addItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE, CENTER - sweep, sweep);
-        addItem(CameraSettings.KEY_WHITE_BALANCE, CENTER + sweep, sweep);
+        PieItem item = makeItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE, POS_FLASH, 5);
+        mRenderer.addItem(item);
+        item = makeItem(CameraSettings.KEY_WHITE_BALANCE, POS_WB, 5);
+        mRenderer.addItem(item);
         // camera switcher
-        PieItem item = makeItem(R.drawable.ic_switch_video_facing_holo_light);
-        item.setFixedSlice(CENTER - 2 * sweep, sweep);
+        item = makeItem(R.drawable.ic_switch_video_facing_holo_light);
+        item.setPosition(POS_SWITCH, 5);
         item.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -84,7 +89,7 @@ public class VideoMenu extends PieController
                 CameraSettings.KEY_RECORD_LOCATION
         };
         item = makeItem(R.drawable.ic_settings_holo_light);
-        item.setFixedSlice(CENTER, sweep);
+        item.setPosition(POS_SET, 5);
         item.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(PieItem item) {
