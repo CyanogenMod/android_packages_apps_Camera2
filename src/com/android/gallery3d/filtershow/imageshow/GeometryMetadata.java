@@ -66,7 +66,6 @@ public class GeometryMetadata extends FilterRepresentation {
         super("GeometryMetadata");
         setFilterClass(ImageFilterGeometry.class);
         setEditorId(EditorCrop.ID);
-        setName("Crop");
         setTextId(0);
         setShowParameterValue(true);
     }
