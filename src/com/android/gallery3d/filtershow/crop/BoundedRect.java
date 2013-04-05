@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android.gallery3d.filtershow.imageshow;
+package com.android.gallery3d.filtershow.crop;
 
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.graphics.RectF;
+
+import com.android.gallery3d.filtershow.imageshow.GeometryMath;
 
 import java.util.Arrays;
 
@@ -30,11 +33,14 @@ public class BoundedRect {
     private RectF inner;
     private float[] innerRotated;
 
-    public BoundedRect() {
-        rot = 0;
-        outer = new RectF();
-        inner = new RectF();
-        innerRotated = new float[8];
+    public BoundedRect(float rotation, Rect outerRect, Rect innerRect) {
+        rot = rotation;
+        outer = new RectF(outerRect);
+        inner = new RectF(innerRect);
+        innerRotated = CropMath.getCornersFromRect(inner);
+        rotateInner();
+        if (!isConstrained())
+            reconstrain();
     }
 
     public BoundedRect(float rotation, RectF outerRect, RectF innerRect) {
@@ -73,8 +79,20 @@ public class BoundedRect {
             reconstrain();
     }
 
+    public void setToInner(RectF r) {
+        r.set(inner);
+    }
+
+    public void setToOuter(RectF r) {
+        r.set(outer);
+    }
+
     public RectF getInner() {
         return new RectF(inner);
+    }
+
+    public RectF getOuter() {
+        return new RectF(outer);
     }
 
     /**
