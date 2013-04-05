@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 
 /**
  * This class provides a way to replace the Exif header of a JPEG image.
@@ -212,6 +213,7 @@ class ExifOutputStream extends FilterOutputStream {
         if (DEBUG) {
             Log.v(TAG, "Writing exif data...");
         }
+        ArrayList<ExifTag> nullTags = stripNullValueTags(mExifData);
         createRequiredIfdAndTag();
         int exifSize = calculateAllOffset();
         if (exifSize + 8 > MAX_EXIF_SIZE) {
@@ -233,6 +235,20 @@ class ExifOutputStream extends FilterOutputStream {
         dataOutputStream.writeInt(8);
         writeAllTags(dataOutputStream);
         writeThumbnail(dataOutputStream);
+        for (ExifTag t : nullTags) {
+            mExifData.addTag(t);
+        }
+    }
+
+    private ArrayList<ExifTag> stripNullValueTags(ExifData data) {
+        ArrayList<ExifTag> nullTags = new ArrayList<ExifTag>();
+        for(ExifTag t : data.getAllTags()) {
+            if (t.getValue() == null && !ExifInterface.isOffsetTag(t.getTagId())) {
+                data.removeTag(t.getTagId(), t.getIfd());
+                nullTags.add(t);
+            }
+        }
+        return nullTags;
     }
 
     private void writeThumbnail(OrderedDataOutputStream dataOutputStream) throws IOException {
