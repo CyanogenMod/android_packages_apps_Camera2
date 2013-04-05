@@ -69,8 +69,10 @@ public class PhotoMenu extends PieController
             mRenderer.addItem(item);
         }
         // exposure compensation
-        item = makeItem(CameraSettings.KEY_EXPOSURE, POS_EXP, 5);
-        mRenderer.addItem(item);
+        if (group.findPreference(CameraSettings.KEY_EXPOSURE) != null) {
+            item = makeItem(CameraSettings.KEY_EXPOSURE, POS_EXP, 5);
+            mRenderer.addItem(item);
+        }
         // camera switcher
         if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
             item = makeItem(R.drawable.ic_switch_photo_facing_holo_light);
@@ -119,8 +121,10 @@ public class PhotoMenu extends PieController
         more.setPosition(POS_MORE, 5);
         mRenderer.addItem(more);
         // white balance
-        item = makeItem(CameraSettings.KEY_WHITE_BALANCE, POS_WB, 5);
-        more.addItem(item);
+        if (group.findPreference(CameraSettings.KEY_WHITE_BALANCE) != null) {
+            item = makeItem(CameraSettings.KEY_WHITE_BALANCE, POS_WB, 5);
+            more.addItem(item);
+        }
         // settings popup
         mOtherKeys = new String[] {
                 CameraSettings.KEY_SCENE_MODE,
