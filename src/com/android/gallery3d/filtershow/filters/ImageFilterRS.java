@@ -104,7 +104,8 @@ public abstract class ImageFilterRS extends ImageFilter {
 
     private static Allocation convertBitmap(Bitmap bitmap) {
         return Allocation.createFromBitmap(CachingPipeline.getRenderScriptContext(), bitmap,
-                Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
+                Allocation.MipmapControl.MIPMAP_NONE,
+                Allocation.USAGE_SCRIPT | Allocation.USAGE_GRAPHICS_TEXTURE);
     }
 
     private static Allocation convertRGBAtoA(Bitmap bitmap) {
@@ -124,7 +125,9 @@ public abstract class ImageFilterRS extends ImageFilter {
 
         tb_a8.setX(bitmapTemp.getType().getX());
         tb_a8.setY(bitmapTemp.getType().getY());
-        Allocation bitmapAlloc = Allocation.createTyped(RS, tb_a8.create());
+        Allocation bitmapAlloc = Allocation.createTyped(RS, tb_a8.create(),
+                                                        Allocation.MipmapControl.MIPMAP_NONE,
+                                                        Allocation.USAGE_SCRIPT | Allocation.USAGE_GRAPHICS_TEXTURE);
         mGreyConvert.forEach_RGBAtoA(bitmapTemp, bitmapAlloc);
         bitmapTemp.destroy();
         return bitmapAlloc;
