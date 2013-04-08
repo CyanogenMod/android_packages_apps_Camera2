@@ -37,6 +37,7 @@ public class ApiHelper {
         public static final int ICE_CREAM_SANDWICH_MR1 = 15;
         public static final int JELLY_BEAN = 16;
         public static final int JELLY_BEAN_MR1 = 17;
+        public static final int JELLY_BEAN_MR2 = 18;
     }
 
     public static final boolean AT_LEAST_16 = Build.VERSION.SDK_INT >= 16;
@@ -187,6 +188,9 @@ public class ApiHelper {
 
     public static final boolean HAS_CANCELLATION_SIGNAL =
             Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
+
+    public static final boolean HAS_MEDIA_MUXER =
+                    Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2;
 
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
