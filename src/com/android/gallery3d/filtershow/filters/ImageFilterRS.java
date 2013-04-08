@@ -30,6 +30,9 @@ public abstract class ImageFilterRS extends ImageFilter {
     private int mLastInputWidth = 0;
     private int mLastInputHeight = 0;
 
+    private static ScriptC_grey mGreyConvert = null;
+    private static RenderScript mRScache = null;
+
     private volatile boolean mResourcesLoaded = false;
 
     protected abstract void createFilter(android.content.res.Resources res,
@@ -106,9 +109,13 @@ public abstract class ImageFilterRS extends ImageFilter {
 
     private static Allocation convertRGBAtoA(Bitmap bitmap) {
         RenderScript RS = CachingPipeline.getRenderScriptContext();
+        if (RS != mRScache || mGreyConvert == null) {
+            mGreyConvert = new ScriptC_grey(RS, RS.getApplicationContext().getResources(),
+                                            R.raw.grey);
+            mRScache = RS;
+        }
+
         Type.Builder tb_a8 = new Type.Builder(RS, Element.A_8(RS));
-        ScriptC_grey greyConvert = new ScriptC_grey(RS,
-                RS.getApplicationContext().getResources(), R.raw.grey);
 
         Allocation bitmapTemp = convertBitmap(bitmap);
         if (bitmapTemp.getType().getElement().isCompatible(Element.A_8(RS))) {
@@ -118,8 +125,8 @@ public abstract class ImageFilterRS extends ImageFilter {
         tb_a8.setX(bitmapTemp.getType().getX());
         tb_a8.setY(bitmapTemp.getType().getY());
         Allocation bitmapAlloc = Allocation.createTyped(RS, tb_a8.create());
-        greyConvert.forEach_RGBAtoA(bitmapTemp, bitmapAlloc);
-
+        mGreyConvert.forEach_RGBAtoA(bitmapTemp, bitmapAlloc);
+        bitmapTemp.destroy();
         return bitmapAlloc;
     }
 
