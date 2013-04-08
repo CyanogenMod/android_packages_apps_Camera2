@@ -30,7 +30,7 @@ public abstract class ImageFilter implements Cloneable {
 
     protected String mName = "Original";
     private final String LOGTAG = "ImageFilter";
-
+    protected static final boolean SIMPLE_ICONS = true;
     // TODO: Temporary, for dogfood note memory issues with toasts for better
     // feedback. Remove this when filters actually work in low memory
     // situations.
