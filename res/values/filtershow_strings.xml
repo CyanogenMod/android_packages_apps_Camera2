@@ -184,7 +184,7 @@
     <!--  Label for the removing drawing from screen [CHAR LIMIT=14] -->
     <string name="draw_clear">Clear</string>
 
-    <!--  Label for the select the color [CHAR LIMIT=30] -->
+    <!--  Label for the select the color [CHAR LIMIT=35] -->
     <string name="color_pick_select">Choose custom color</string>
     <!--  The title for the color pick dialog [CHAR LIMIT=20] -->
     <string name="color_pick_title">Select Color</string>
