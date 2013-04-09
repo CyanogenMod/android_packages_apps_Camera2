@@ -548,6 +548,12 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
     private int translateMainPanel(View viewPanel) {
         int accessoryPanelWidth = viewPanel.getWidth();
+        if (accessoryPanelWidth == 0) {
+            // TODO: fixes this by using a fragment. Currently,
+            // the first time we get called the panel hasn't been
+            // layed out yet, so we get a size zero.
+            accessoryPanelWidth = (int) getPixelsFromDip(200);
+        }
         int mainViewWidth = findViewById(R.id.mainView).getWidth();
         int mainPanelWidth = mImageShow.getDisplayedImageBounds().width();
         if (mainPanelWidth == 0) {
