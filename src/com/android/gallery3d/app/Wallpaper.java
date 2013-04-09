@@ -27,7 +27,7 @@ import android.view.Display;
 
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.CropExtras;
+import com.android.gallery3d.filtershow.crop.CropExtras;
 
 /**
  * Wallpaper picker for the gallery application. This just redirects to the

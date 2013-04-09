@@ -21,7 +21,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.CropExtras;
+import com.android.gallery3d.filtershow.crop.CropExtras;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
