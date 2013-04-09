@@ -42,23 +42,23 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="94dip"
         android:layout_weight="1"
         android:background="@color/filtershow_background"
         android:orientation="horizontal"
+        android:baselineAligned="false"
         android:visibility="visible" >
 
         <ImageButton
             android:id="@+id/cancelFilter"
             android:layout_width="wrap_content"
-            android:layout_height="94dip"
+            android:layout_height="fill_parent"
             android:layout_gravity="left|center_vertical"
-            android:layout_weight=".1"
             android:background="@drawable/filtershow_button_background"
+            android:layout_weight=".1"
             android:gravity="center"
             android:src="@drawable/ic_menu_cancel_holo_light"
-            android:textSize="18dip" 
-            style="@style/FilterShowBottomButton" />
+            android:textSize="18dip" />
 
         <ImageView
             android:layout_width="2dp"
@@ -93,14 +93,13 @@
         <ImageButton
             android:id="@+id/applyFilter"
             android:layout_width="wrap_content"
-            android:layout_height="94dip"
+            android:layout_height="fill_parent"
             android:layout_gravity="right|center_vertical"
             android:layout_weight=".1"
             android:background="@drawable/filtershow_button_background"
             android:gravity="center"
             android:src="@drawable/ic_menu_done_holo_light"
-            android:textSize="18dip" 
-            style="@style/FilterShowBottomButton" />
+            android:textSize="18dip" />
     </LinearLayout>
 
 </LinearLayout>
