@@ -270,7 +270,7 @@ public class NewPhotoUI implements PieListener,
     }
 
     private void initIndicators() {
-        mOnScreenIndicators = mActivity.findViewById(R.id.on_screen_indicators);
+        mOnScreenIndicators = mRootView.findViewById(R.id.on_screen_indicators);
         mExposureIndicator = (ImageView) mOnScreenIndicators.findViewById(R.id.menu_exposure_indicator);
         mFlashIndicator = (ImageView) mOnScreenIndicators.findViewById(R.id.menu_flash_indicator);
         mSceneIndicator = (ImageView) mOnScreenIndicators.findViewById(R.id.menu_scenemode_indicator);
@@ -333,8 +333,8 @@ public class NewPhotoUI implements PieListener,
     }
 
     public void initializeControlByIntent() {
-        mBlocker = mActivity.findViewById(R.id.blocker);
-        mMenuButton = mActivity.findViewById(R.id.menu);
+        mBlocker = mRootView.findViewById(R.id.blocker);
+        mMenuButton = mRootView.findViewById(R.id.menu);
         mMenuButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -343,12 +343,12 @@ public class NewPhotoUI implements PieListener,
         });
         if (mController.isImageCaptureIntent()) {
             hideSwitcher();
-            ViewGroup cameraControls = (ViewGroup) mActivity.findViewById(R.id.camera_controls);
+            ViewGroup cameraControls = (ViewGroup) mRootView.findViewById(R.id.camera_controls);
             mActivity.getLayoutInflater().inflate(R.layout.review_module_control, cameraControls);
 
-            mReviewDoneButton = mActivity.findViewById(R.id.btn_done);
-            mReviewCancelButton = mActivity.findViewById(R.id.btn_cancel);
-            mReviewRetakeButton = mActivity.findViewById(R.id.btn_retake);
+            mReviewDoneButton = mRootView.findViewById(R.id.btn_done);
+            mReviewCancelButton = mRootView.findViewById(R.id.btn_cancel);
+            mReviewRetakeButton = mRootView.findViewById(R.id.btn_retake);
             mReviewCancelButton.setVisibility(View.VISIBLE);
 
             mReviewDoneButton.setOnClickListener(new OnClickListener() {

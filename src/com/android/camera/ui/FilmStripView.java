@@ -18,7 +18,6 @@ package com.android.camera.ui;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -30,7 +29,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
 
 public class FilmStripView extends ViewGroup {
-    private static final String TAG = "FilmStripView";
+    private static final String TAG = FilmStripView.class.getSimpleName();
     private static final int BUFFER_SIZE = 5;
     // Horizontal padding of children.
     private static final int H_PADDING = 50;
@@ -51,6 +50,13 @@ public class FilmStripView extends ViewGroup {
     private GeometryAnimator mGeometryAnimator;
     private int mCenterPosition = -1;
     private ViewInfo[] mViewInfo = new ViewInfo[BUFFER_SIZE];
+
+    // This is used to resolve the misalignment problem when the device
+    // orientation is changed. If the current item is in fullscreen, it might
+    // be shifted because mCenterPosition is not adjusted with the orientation.
+    // Set this to true when onSizeChanged is called to make sure we adjust
+    // mCenterPosition accordingly.
+    private boolean mAnchorPending;
 
     public interface ImageData {
         public static final int TYPE_NONE = 0;
@@ -77,8 +83,18 @@ public class FilmStripView extends ViewGroup {
     }
 
     public interface DataAdapter {
+        public interface StatusReporter {
+            public boolean isDataRemoved(int id);
+            public boolean isDataUpdated(int id);
+        }
+
         public interface Listener {
+            // Called when the whole data loading is done. No any assumption
+            // on previous data.
             public void onDataLoaded();
+            // Only some of the data is changed. The listener should check
+            // if any thing needs to be updated.
+            public void onDataUpdated(StatusReporter reporter);
             public void onDataInserted(int dataID);
             public void onDataRemoved(int dataID);
         }
@@ -170,6 +186,11 @@ public class FilmStripView extends ViewGroup {
 
     private void init(Context context) {
         mCurrentInfo = (BUFFER_SIZE - 1) / 2;
+        // This is for positioning camera controller at the same place in
+        // different orientations.
+        setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+
         setWillNotDraw(false);
         mContext = context;
         mScale = 1.0f;
@@ -191,6 +212,7 @@ public class FilmStripView extends ViewGroup {
     }
 
     public int getCurrentType() {
+        if (mDataAdapter == null) return ImageData.TYPE_NONE;
         ViewInfo curr = mViewInfo[mCurrentInfo];
         if (curr == null) return ImageData.TYPE_NONE;
         return mDataAdapter.getImageData(curr.getID()).getType();
@@ -271,8 +293,9 @@ public class FilmStripView extends ViewGroup {
         View v = mDataAdapter.getView(mContext, dataID);
         if (v == null) return null;
         v.setPadding(H_PADDING, 0, H_PADDING, 0);
-        addView(v);
-        return new ViewInfo(dataID, v);
+        ViewInfo info = new ViewInfo(dataID, v);
+        addView(info.getView());
+        return info;
     }
 
     // We try to keep the one closest to the center of the screen at position mCurrentInfo.
@@ -330,6 +353,11 @@ public class FilmStripView extends ViewGroup {
     }
 
     private void layoutChildren() {
+        if (mAnchorPending) {
+            mCenterPosition = mViewInfo[mCurrentInfo].getCenterX();
+            mAnchorPending = false;
+        }
+
         if (mGeometryAnimator.hasNewGeometry()) {
             mCenterPosition = mGeometryAnimator.getNewPosition();
             mScale = mGeometryAnimator.getNewScale();
@@ -377,6 +405,15 @@ public class FilmStripView extends ViewGroup {
         layoutChildren();
     }
 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        if (w == oldw && h == oldh) return;
+        if (mViewInfo[mCurrentInfo] != null && mScale == 1f
+                && isAnchoredTo(mViewInfo[mCurrentInfo].getID())) {
+            mAnchorPending = true;
+        }
+    }
+
     public void setDataAdapter(DataAdapter adapter) {
         mDataAdapter = adapter;
         mDataAdapter.suggestSize(getMeasuredWidth(), getMeasuredHeight());
@@ -384,6 +421,11 @@ public class FilmStripView extends ViewGroup {
             @Override
             public void onDataLoaded() {
                 reload();
+            }
+
+            @Override
+            public void onDataUpdated(DataAdapter.StatusReporter reporter) {
+                update(reporter);
             }
 
             @Override
@@ -413,18 +455,69 @@ public class FilmStripView extends ViewGroup {
         return true;
     }
 
-    public void reload() {
+    private void updateViewInfo(int infoID) {
+        ViewInfo info = mViewInfo[infoID];
+        removeView(info.getView());
+        mViewInfo[infoID] = buildInfoFromData(info.getID());
+    }
+
+    // Some of the data is changed.
+    private void update(DataAdapter.StatusReporter reporter) {
+        // No data yet.
+        if (mViewInfo[mCurrentInfo] == null) {
+            reload();
+            return;
+        }
+
+        // Check the current one.
+        ViewInfo curr = mViewInfo[mCurrentInfo];
+        int dataID = curr.getID();
+        if (reporter.isDataRemoved(dataID)) {
+            mCenterPosition = -1;
+            reload();
+            return;
+        }
+        if (reporter.isDataUpdated(dataID)) {
+            updateViewInfo(mCurrentInfo);
+        }
+
+        // Check left
+        for (int i = mCurrentInfo - 1; i >= 0; i--) {
+            curr = mViewInfo[i];
+            if (curr != null) {
+                dataID = curr.getID();
+                if (reporter.isDataRemoved(dataID) || reporter.isDataUpdated(dataID)) {
+                    updateViewInfo(i);
+                }
+            } else {
+                ViewInfo next = mViewInfo[i + 1];
+                if (next != null) mViewInfo[i] = buildInfoFromData(next.getID() - 1);
+            }
+        }
+
+        // Check right
+        for (int i = mCurrentInfo + 1; i < BUFFER_SIZE; i++) {
+            curr = mViewInfo[i];
+            if (curr != null) {
+                dataID = curr.getID();
+                if (reporter.isDataRemoved(dataID) || reporter.isDataUpdated(dataID)) {
+                    updateViewInfo(i);
+                }
+            } else {
+                ViewInfo prev = mViewInfo[i - 1];
+                if (prev != null) mViewInfo[i] = buildInfoFromData(prev.getID() + 1);
+            }
+        }
+    }
+
+    // The whole data might be totally different. Flush all and load from the start.
+    private void reload() {
         removeAllViews();
         int dataNumber = mDataAdapter.getTotalNumber();
         if (dataNumber == 0) return;
 
         int currentData = 0;
         int currentLeft = 0;
-        // previous data exists.
-        if (mViewInfo[mCurrentInfo] != null) {
-            currentLeft = mViewInfo[mCurrentInfo].getLeftPosition();
-            currentData = mViewInfo[mCurrentInfo].getID();
-        }
         mViewInfo[mCurrentInfo] = buildInfoFromData(currentData);
         mViewInfo[mCurrentInfo].setLeftPosition(currentLeft);
         if (getCurrentType() == ImageData.TYPE_CAMERA_PREVIEW
@@ -624,7 +717,7 @@ public class FilmStripView extends ViewGroup {
         @Override
         public boolean onScroll(float x, float y, float dx, float dy) {
             int deltaX = (int) (dx / mScale);
-            if (deltaX > 0 && isInCameraFullscreen() ) {
+            if (deltaX > 0 && isInCameraFullscreen()) {
                 mGeometryAnimator.unlockPosition();
                 mGeometryAnimator.scaleTo(FILM_STRIP_SCALE, DURATION_GEOMETRY_ADJUST, false);
             }

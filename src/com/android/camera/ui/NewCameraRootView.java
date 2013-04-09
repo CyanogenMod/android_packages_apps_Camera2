@@ -34,8 +34,7 @@ public class NewCameraRootView extends FrameLayout
     private int mOffset = 0;
     public NewCameraRootView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
     }
 
