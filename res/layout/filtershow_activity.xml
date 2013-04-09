@@ -93,7 +93,7 @@
                             android:inflatedId="@+id/editorPanel"
                             android:layout="@layout/filtershow_editor_panel"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:visibility="visible"  />
                     </LinearLayout>
 
