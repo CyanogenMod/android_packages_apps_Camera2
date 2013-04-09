@@ -101,6 +101,7 @@
                 android:id="@+id/fxList"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/thumbnail_size"
+                android:background="@color/background_main_toolbar"
                 android:scrollbars="none" >
 
                 <LinearLayout
@@ -116,6 +117,7 @@
                 android:id="@+id/bordersList"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/thumbnail_size"
+                android:background="@color/background_main_toolbar"
                 android:visibility="gone"
                 android:scrollbars="none" >
 
