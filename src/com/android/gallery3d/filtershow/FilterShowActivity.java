@@ -505,6 +505,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             }
             pipeline.turnOnPipeline(true);
             MasterImage.getImage().setOriginalGeometry(largeBitmap);
+            MasterImage.getImage().getHistory().setOriginalBitmap(mImageLoader.getOriginalBitmapSmall());
             mLoadBitmapTask = null;
 
             if (mAction == CROP_ACTION) {
