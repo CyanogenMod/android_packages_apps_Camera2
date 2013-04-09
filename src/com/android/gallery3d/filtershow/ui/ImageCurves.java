@@ -260,15 +260,22 @@ public class ImageCurves extends ImageShow {
             return true;
         }
 
-        float posX = e.getX() / getWidth();
-        float posY = e.getY();
         float margin = Spline.curveHandleSize() / 2;
+        float posX = e.getX();
+        if (posX < margin) {
+            posX = margin;
+        }
+        float posY = e.getY();
         if (posY < margin) {
             posY = margin;
+        }
+        if (posX > getWidth() - margin) {
+            posX = getWidth() - margin;
         }
         if (posY > getHeight() - margin) {
             posY = getHeight() - margin;
         }
+        posX = (posX - margin) / (getWidth() - 2 * margin);
         posY = (posY - margin) / (getHeight() - 2 * margin);
 
         if (e.getActionMasked() == MotionEvent.ACTION_UP) {
