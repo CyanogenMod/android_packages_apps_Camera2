@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,42 +17,31 @@
 package com.android.gallery3d.filtershow.editors;
 
 import android.content.Context;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.controller.Control;
+import com.android.gallery3d.filtershow.controller.ParameterInteger;
 import com.android.gallery3d.filtershow.filters.FilterBasicRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+
 
 /**
  * The basic editor that all the one parameter filters
  */
-public class BasicEditor extends Editor {
+public class BasicEditor extends ParametricEditor implements ParameterInteger {
     public static int ID = R.id.basicEditor;
-
-    private final String LOGTAG = "Editor";
-    private int mLayoutID = R.layout.filtershow_default_editor;
-    private int mViewID = R.id.basicEditor;
+    private final String LOGTAG = "BasicEditor";
 
     public BasicEditor() {
-        super(ID);
+        super(ID, R.layout.filtershow_default_editor, R.id.basicEditor);
     }
 
     protected BasicEditor(int id) {
-        super(id);
+        super(id, R.layout.filtershow_default_editor, R.id.basicEditor);
     }
 
     protected BasicEditor(int id, int layoutID, int viewID) {
-        super(id);
-        mLayoutID = layoutID;
-        mViewID = viewID;
-    }
-
-    @Override
-    public void createEditor(Context context, FrameLayout frameLayout) {
-        super.createEditor(context, frameLayout);
-        unpack(mViewID, mLayoutID);
+        super(id, layoutID, viewID);
     }
 
     @Override
@@ -60,36 +49,81 @@ public class BasicEditor extends Editor {
         super.reflectCurrentFilter();
         if (getLocalRepresentation() != null && getLocalRepresentation() instanceof FilterBasicRepresentation) {
             FilterBasicRepresentation interval = (FilterBasicRepresentation) getLocalRepresentation();
-            boolean f = interval.showParameterValue();
-            mSeekBar.setVisibility((f) ? View.VISIBLE : View.GONE);
-            int value = interval.getValue();
-            int min = interval.getMinimum();
-            int max = interval.getMaximum();
-            mSeekBar.setMax(max - min);
-            mSeekBar.setProgress(value - min);
+            Context context = mContext;
+            interval.getTextId();
+
         }
     }
 
-    @Override
-    public void onProgressChanged(SeekBar sbar, int progress, boolean arg2) {
-        if (getLocalRepresentation() != null && getLocalRepresentation() instanceof FilterBasicRepresentation) {
-            FilterBasicRepresentation interval = (FilterBasicRepresentation) getLocalRepresentation();
-            int value = progress + interval.getMinimum();
-            interval.setValue(value);
-            mImageShow.onNewValue(value);
-            mView.invalidate();
-            if (interval.showParameterValue()) {
-                mPanelController.onNewValue(value);
-            }
-            commitLocalRepresentation();
+    private FilterBasicRepresentation getBasicRepresentation() {
+        FilterRepresentation tmpRep = getLocalRepresentation();
+        if (tmpRep != null && tmpRep instanceof FilterBasicRepresentation) {
+            return (FilterBasicRepresentation) tmpRep;
+
         }
+        return null;
     }
 
     @Override
-    public void onStartTrackingTouch(SeekBar arg0) {
+    public int getMaximum() {
+        FilterBasicRepresentation rep = getBasicRepresentation();
+        if (rep == null) {
+            return 0;
+        }
+        return rep.getMaximum();
     }
 
     @Override
-    public void onStopTrackingTouch(SeekBar arg0) {
+    public int getMinimum() {
+        FilterBasicRepresentation rep = getBasicRepresentation();
+        if (rep == null) {
+            return 0;
+        }
+        return rep.getMinimum();
     }
+
+    @Override
+    public int getDefaultValue() {
+        return 0;
+    }
+
+    @Override
+    public int getValue() {
+        FilterBasicRepresentation rep = getBasicRepresentation();
+        if (rep == null) {
+            return 0;
+        }
+        return rep.getValue();
+    }
+
+    @Override
+    public String getValueString() {
+        return null;
+    }
+
+    @Override
+    public void setValue(int value) {
+        FilterBasicRepresentation rep = getBasicRepresentation();
+        if (rep == null) {
+            return;
+        }
+        rep.setValue(value);
+        commitLocalRepresentation();
+    }
+
+    @Override
+    public String getParameterName() {
+        FilterBasicRepresentation rep = getBasicRepresentation();
+        return mContext.getString(rep.getTextId());
+    }
+
+    @Override
+    public String getParameterType() {
+        return sParameterType;
+    }
+
+    @Override
+    public void setController(Control c) {
+    }
+
 }
