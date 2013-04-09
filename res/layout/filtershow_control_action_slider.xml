@@ -18,23 +18,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res/com.example.imagefilterharness"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
+    android:layout_height="match_parent"
     android:orientation="horizontal" >
 
     <ImageButton
         android:id="@+id/actionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="left|center_vertical"
         android:scaleType="centerInside"
+        android:layout_weight="0"
         android:background="@drawable/filtershow_button_background"
         android:src="@drawable/filtershow_addpoint"
         android:paddingBottom="8dp"  />
 
     <SeekBar
         android:id="@+id/controlValueSeekBar"
-        android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-        android:layout_gravity="fill_horizontal"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
         style="@style/FilterShowSlider" />
 </LinearLayout>
 
