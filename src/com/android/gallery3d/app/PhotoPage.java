@@ -119,6 +119,7 @@ public abstract class PhotoPage extends ActivityState implements
     public static final int MSG_ALBUMPAGE_PICKED = 4;
 
     public static final String ACTION_NEXTGEN_EDIT = "action_nextgen_edit";
+    public static final String ACTION_SIMPLE_EDIT = "action_simple_edit";
 
     private GalleryApp mApplication;
     private SelectionManager mSelectionManager;
@@ -721,6 +722,28 @@ public abstract class PhotoPage extends ActivityState implements
         overrideTransitionToEditor();
     }
 
+    private void launchSimpleEditor() {
+        MediaItem current = mModel.getMediaItem(0);
+        if (current == null || (current.getSupportedOperations()
+                & MediaObject.SUPPORT_EDIT) == 0) {
+            return;
+        }
+
+        Intent intent = new Intent(ACTION_SIMPLE_EDIT);
+
+        intent.setDataAndType(current.getContentUri(), current.getMimeType())
+                .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        if (mActivity.getPackageManager()
+                .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY).size() == 0) {
+            intent.setAction(Intent.ACTION_EDIT);
+        }
+        intent.putExtra(FilterShowActivity.LAUNCH_FULLSCREEN,
+                mActivity.isFullscreen());
+        ((Activity) mActivity).startActivityForResult(Intent.createChooser(intent, null),
+                REQUEST_EDIT);
+        overrideTransitionToEditor();
+    }
+
     private void requestDeferredUpdate() {
         mDeferUpdateUntil = SystemClock.uptimeMillis() + DEFERRED_UPDATE_MS;
         if (!mDeferredUpdateWaiting) {
@@ -1083,6 +1106,10 @@ public abstract class PhotoPage extends ActivityState implements
             }
             case R.id.action_edit: {
                 launchPhotoEditor();
+                return true;
+            }
+            case R.id.action_simple_edit: {
+                launchSimpleEditor();
                 return true;
             }
             case R.id.action_details: {
