@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<manifest android:versionCode="40008"
-        android:versionName="1.1.40008"
+<manifest android:versionCode="40009"
+        android:versionName="1.1.40009"
         xmlns:android="http://schemas.android.com/apk/res/android"
         package="com.android.gallery3d">
 
