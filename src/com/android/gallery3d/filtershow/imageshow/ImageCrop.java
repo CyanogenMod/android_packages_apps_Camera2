@@ -33,7 +33,9 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.CropExtras;
+import com.android.gallery3d.filtershow.crop.BoundedRect;
+import com.android.gallery3d.filtershow.crop.CropExtras;
+import com.android.gallery3d.filtershow.crop.CropMath;
 import com.android.gallery3d.filtershow.editors.EditorCrop;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
 

@@ -24,7 +24,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 
-import com.android.gallery3d.filtershow.CropExtras;
+import com.android.gallery3d.filtershow.crop.CropExtras;
 import com.android.gallery3d.filtershow.imageshow.GeometryMath;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 
