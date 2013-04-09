@@ -18,15 +18,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/top"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_weight="0"
+    android:baselineAligned="false"
     android:orientation="vertical"
     android:visibility="visible" >
 
     <LinearLayout
         android:id="@+id/controlArea"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal"
         android:visibility="visible" >
@@ -35,6 +36,7 @@
             android:id="@+id/primarySeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
             style="@style/FilterShowSlider" />
 
@@ -42,9 +44,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="94dip"
-        android:layout_weight="1"
-        android:background="@color/filtershow_background"
+        android:layout_height="56dip"
+        android:layout_weight="0"
+        android:layout_gravity="bottom"
+        android:background="@color/background_main_toolbar"
         android:orientation="horizontal"
         android:baselineAligned="false"
         android:visibility="visible" >
@@ -54,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_gravity="left|center_vertical"
-            android:background="@drawable/filtershow_button_background"
+            android:background="@android:color/transparent"
             android:layout_weight=".1"
             android:gravity="center"
             android:src="@drawable/ic_menu_cancel_holo_light"
@@ -78,7 +81,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_gravity="center"
-                android:background="@drawable/filtershow_button_background"
+                android:background="@android:color/transparent"
                 android:gravity="center"
                 android:text="@string/apply_effect"
                 android:textSize="18dip"
@@ -96,7 +99,7 @@
             android:layout_height="fill_parent"
             android:layout_gravity="right|center_vertical"
             android:layout_weight=".1"
-            android:background="@drawable/filtershow_button_background"
+            android:background="@android:color/transparent"
             android:gravity="center"
             android:src="@drawable/ic_menu_done_holo_light"
             android:textSize="18dip" />

@@ -1,14 +1,13 @@
 package com.android.gallery3d.filtershow.controller;
 
+import android.app.ActionBar.LayoutParams;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 
 import com.android.gallery3d.R;
@@ -25,7 +24,7 @@ public class StyleChooser implements Control, RenderingRequestCaller {
     protected Editor mEditor;
     private View mTopView;
     private int mProcessingButton = 0;
-    private Vector<Button> mIconButton = new Vector<Button>();
+    private Vector<ImageButton> mIconButton = new Vector<ImageButton>();
     protected int mLayoutID = R.layout.filtershow_control_style_chooser;
 
     @Override
@@ -41,8 +40,12 @@ public class StyleChooser implements Control, RenderingRequestCaller {
         mTopView.setVisibility(View.VISIBLE);
         int n = mParameter.getNumberOfStyles();
         mIconButton.clear();
+        LayoutParams lp = new LayoutParams(120, 120);
         for (int i = 0; i < n; i++) {
-            Button button = new Button(context);
+            ImageButton button = new ImageButton(context);
+            button.setScaleType(ScaleType.CENTER_CROP);
+            button.setLayoutParams(lp);
+            button.setBackgroundResource(android.R.color.transparent);
             mIconButton.add(button);
             final int buttonNo = i;
             button.setOnClickListener(new View.OnClickListener() {
@@ -83,13 +86,8 @@ public class StyleChooser implements Control, RenderingRequestCaller {
         }
 
         try {
-            Button button = mIconButton.get(mProcessingButton);
-            Resources res = mLinearLayout.getContext().getResources();
-            BitmapDrawable drawable = new BitmapDrawable(res, bmap);
-            float scale = 12000 / (float) button.getWidth();
-            ScaleDrawable sd = new ScaleDrawable(drawable, 0, scale, scale);
-
-            button.setCompoundDrawablesWithIntrinsicBounds(null, sd, null, null);
+            ImageButton button = mIconButton.get(mProcessingButton);
+            button.setImageBitmap(bmap);
         } catch (Exception e) {
             return;
         }
