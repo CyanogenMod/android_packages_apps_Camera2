@@ -36,7 +36,7 @@ import com.android.gallery3d.data.LocalAlbum;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
 import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.CropExtras;
+import com.android.gallery3d.filtershow.crop.CropExtras;
 
 public class WidgetConfigure extends Activity {
     @SuppressWarnings("unused")
