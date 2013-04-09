@@ -34,6 +34,7 @@ public class BasicSlider implements Control {
 
     @Override
     public void setUp(ViewGroup container, Parameter parameter, Editor editor) {
+        container.removeAllViews();
         mEditor = editor;
         Context context = container.getContext();
         mParameter = (ParameterInteger) parameter;
