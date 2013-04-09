@@ -38,6 +38,7 @@ import android.widget.LinearLayout;
 import com.android.camera.Util;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
+import com.android.gallery3d.util.LightCycleHelper;
 import com.android.gallery3d.util.UsageStatistics;
 
 public class CameraSwitcher extends RotateImageView
@@ -46,6 +47,16 @@ public class CameraSwitcher extends RotateImageView
     private static final String TAG = "CAM_Switcher";
     private static final int SWITCHER_POPUP_ANIM_DURATION = 200;
 
+    public static final int PHOTO_MODULE_INDEX = 0;
+    public static final int VIDEO_MODULE_INDEX = 1;
+    public static final int PANORAMA_MODULE_INDEX = 2;
+    public static final int LIGHTCYCLE_MODULE_INDEX = 3;
+    private static final int[] DRAW_IDS = {
+            R.drawable.ic_switch_camera,
+            R.drawable.ic_switch_video,
+            R.drawable.ic_switch_pan,
+            R.drawable.ic_switch_photosphere
+    };
     public interface CameraSwitchListener {
         public void onCameraSelected(int i);
         public void onShowSwitcherPopup();
@@ -82,6 +93,28 @@ public class CameraSwitcher extends RotateImageView
         mItemSize = context.getResources().getDimensionPixelSize(R.dimen.switcher_size);
         setOnClickListener(this);
         mIndicator = context.getResources().getDrawable(R.drawable.ic_switcher_menu_indicator);
+        initializeDrawables(context);
+    }
+
+    public void initializeDrawables(Context context) {
+        int totaldrawid = (LightCycleHelper.hasLightCycleCapture(context)
+                ? DRAW_IDS.length : DRAW_IDS.length - 1);
+        if (!ApiHelper.HAS_OLD_PANORAMA) totaldrawid--;
+
+        int[] drawids = new int[totaldrawid];
+        int[] moduleids = new int[totaldrawid];
+        int ix = 0;
+        for (int i = 0; i < DRAW_IDS.length; i++) {
+            if (i == PANORAMA_MODULE_INDEX && !ApiHelper.HAS_OLD_PANORAMA) {
+            continue; // not enabled, so don't add to UI
+            }
+            if (i == LIGHTCYCLE_MODULE_INDEX && !LightCycleHelper.hasLightCycleCapture(context)) {
+            continue; // not enabled, so don't add to UI
+            }
+            moduleids[ix] = i;
+            drawids[ix++] = DRAW_IDS[i];
+        }
+        setIds(moduleids, drawids);
     }
 
     public void setIds(int[] moduleids, int[] drawids) {

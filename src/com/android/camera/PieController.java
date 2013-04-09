@@ -16,6 +16,7 @@
 
 package com.android.camera;
 
+import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
@@ -37,7 +38,10 @@ public class PieController {
     protected static final int MODE_PHOTO = 0;
     protected static final int MODE_VIDEO = 1;
 
-    protected CameraActivity mActivity;
+    protected static float CENTER = (float) Math.PI / 2;
+    protected static final float SWEEP = 0.06f;
+
+    protected Activity mActivity;
     protected PreferenceGroup mPreferenceGroup;
     protected OnPreferenceChangedListener mListener;
     protected PieRenderer mRenderer;
@@ -49,7 +53,7 @@ public class PieController {
         mListener = listener;
     }
 
-    public PieController(CameraActivity activity, PieRenderer pie) {
+    public PieController(Activity activity, PieRenderer pie) {
         mActivity = activity;
         mRenderer = pie;
         mPreferences = new ArrayList<IconListPreference>();
