@@ -64,7 +64,7 @@ import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.exif.Rational;
-import com.android.gallery3d.filtershow.CropExtras;
+import com.android.gallery3d.filtershow.crop.CropExtras;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.util.UsageStatistics;
 
