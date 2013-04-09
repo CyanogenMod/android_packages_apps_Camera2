@@ -33,6 +33,7 @@ import android.widget.ImageView;
 
 import com.android.camera.Storage;
 import com.android.camera.ui.FilmStripView;
+import com.android.camera.ui.FilmStripView.ImageData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +80,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
 
     private List<LocalImageData> mImages;
 
-    private FilmStripView mFilmStripView;
+    private Listener mListener;
     private View mCameraPreviewView;
     private ColorDrawable mPlaceHolder;
 
@@ -101,7 +102,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
     }
 
     @Override
-    public FilmStripView.ImageData getImageData(int id) {
+    public ImageData getImageData(int id) {
         if (id >= mImages.size()) return null;
         return mImages.get(id);
     }
@@ -142,8 +143,8 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
     }
 
     @Override
-    public void setDataListener(FilmStripView v) {
-        mFilmStripView = v;
+    public void setListener(Listener listener) {
+        mListener = listener;
     }
 
     private LocalImageData buildCameraImageData(int width, int height, int orientation) {
@@ -152,6 +153,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         d.height = height;
         d.orientation = orientation;
         d.isCameraData = true;
+        d.supportedAction = ImageData.ACTION_NONE;
         return d;
     }
 
@@ -179,6 +181,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         d.orientation = c.getInt(COL_ORIENTATION);
         d.width = c.getInt(COL_WIDTH);
         d.height = c.getInt(COL_HEIGHT);
+        d.supportedAction = ImageData.ACTION_PROMOTE | ImageData.ACTION_DEMOTE;
         if (d.width <= 0 || d.height <= 0) {
             Log.v(TAG, "warning! zero dimension for "
                     + d.path + ":" + d.width + "x" + d.height);
@@ -229,6 +232,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         // width and height should be adjusted according to orientation.
         public int width;
         public int height;
+        public int supportedAction;
 
         @Override
         public int getWidth() {
@@ -238,6 +242,17 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         @Override
         public int getHeight() {
             return height;
+        }
+
+        @Override
+        public int getType() {
+            if (isCameraData) return ImageData.TYPE_CAMERA_PREVIEW;
+            return ImageData.TYPE_PHOTO;
+        }
+
+        @Override
+        public boolean isActionSupported(int action) {
+            return ((action & supportedAction) != 0);
         }
 
         @Override
@@ -281,7 +296,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
             mImages = l;
             if (first != null) addOrReplaceCameraData(first);
             // both might be null.
-            if (changed) mFilmStripView.onDataChanged();
+            if (changed && mListener != null) mListener.onDataLoaded();
         }
     }
 
