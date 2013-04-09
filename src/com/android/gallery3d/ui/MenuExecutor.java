@@ -190,6 +190,7 @@ public class MenuExecutor {
         setMenuItemVisible(menu, R.id.action_setas, supportSetAs);
         setMenuItemVisible(menu, R.id.action_show_on_map, supportShowOnMap);
         setMenuItemVisible(menu, R.id.action_edit, supportEdit);
+        setMenuItemVisible(menu, R.id.action_simple_edit, supportEdit);
         setMenuItemVisible(menu, R.id.action_details, supportInfo);
     }
 

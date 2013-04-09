@@ -167,9 +167,13 @@
     <!-- Toast message prompted when the specified item is not found [CHAR LIMIT=40]-->
     <string name="no_such_item">Couldn\'t find item.</string>
 
-    <!-- String used as a menu label. The suer can choose to edit the image
+    <!-- String used as a menu label. The user can choose to edit the image
          [CHAR_LIMIT=20]-->
     <string name="edit">Edit</string>
+
+    <!-- String used as a menu label. The user can choose to edit the image
+         [CHAR_LIMIT=20]-->
+    <string name="simple_edit">Simple Edit</string>
 
     <!-- String used as a title of a progress dialog. The user can
          choose to cache some Picasa picture albums on device, so it can
