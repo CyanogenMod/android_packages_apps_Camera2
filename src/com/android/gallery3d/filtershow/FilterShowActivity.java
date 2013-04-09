@@ -133,6 +133,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     private FilterIconButton mNullBorderFilter;
     private int mIconSeedSize = 140;
 
+    private View mImageCategoryPanel = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -219,6 +220,16 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         setupHistoryPanel();
         setupStatePanel();
+
+        mImageCategoryPanel = findViewById(R.id.imageCategoryPanel);
+    }
+
+    public void hideCategoryPanel() {
+        mImageCategoryPanel.setVisibility(View.GONE);
+    }
+
+    public void showCategoryPanel() {
+        mImageCategoryPanel.setVisibility(View.VISIBLE);
     }
 
     public void setupHistoryPanel() {
