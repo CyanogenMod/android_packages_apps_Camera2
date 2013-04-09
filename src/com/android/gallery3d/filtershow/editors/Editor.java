@@ -18,8 +18,10 @@ package com.android.gallery3d.filtershow.editors;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -41,7 +43,7 @@ import com.android.gallery3d.filtershow.presets.ImagePreset;
 /**
  * Base class for Editors Must contain a mImageShow and a top level view
  */
-public class Editor implements OnSeekBarChangeListener {
+public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonListener {
     protected Context mContext;
     protected View mView;
     protected ImageShow mImageShow;
@@ -260,4 +262,13 @@ public class Editor implements OnSeekBarChangeListener {
 
     }
 
+    @Override
+    public void swapLeft(MenuItem item) {
+
+    }
+
+    @Override
+    public void swapRight(MenuItem item) {
+
+    }
 }
