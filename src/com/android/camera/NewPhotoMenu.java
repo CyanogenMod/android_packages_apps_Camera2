@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.TimerSettingPopup;
 import com.android.gallery3d.R;
 
-public class PhotoMenu extends PieController
+public class NewPhotoMenu extends PieController
         implements MoreSettingPopup.Listener,
         TimerSettingPopup.Listener,
         ListPrefSettingPopup.Listener {
@@ -45,15 +45,15 @@ public class PhotoMenu extends PieController
 
     private final String mSettingOff;
 
-    private PhotoUI mUI;
+    private NewPhotoUI mUI;
     private String[] mOtherKeys;
     // First level popup
     private MoreSettingPopup mPopup;
     // Second level popup
     private AbstractSettingPopup mSecondPopup;
-    private CameraActivity mActivity;
+    private NewCameraActivity mActivity;
 
-    public PhotoMenu(CameraActivity activity, PhotoUI ui, PieRenderer pie) {
+    public NewPhotoMenu(NewCameraActivity activity, NewPhotoUI ui, PieRenderer pie) {
         super(activity, pie);
         mUI = ui;
         mSettingOff = activity.getString(R.string.setting_off_value);
@@ -71,10 +71,8 @@ public class PhotoMenu extends PieController
             mRenderer.addItem(item);
         }
         // exposure compensation
-        if (group.findPreference(CameraSettings.KEY_EXPOSURE) != null) {
-            item = makeItem(CameraSettings.KEY_EXPOSURE, POS_EXP, 5);
-            mRenderer.addItem(item);
-        }
+        item = makeItem(CameraSettings.KEY_EXPOSURE, POS_EXP, 5);
+        mRenderer.addItem(item);
         // camera switcher
         if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
             item = makeItem(R.drawable.ic_switch_photo_facing_holo_light);
@@ -123,10 +121,8 @@ public class PhotoMenu extends PieController
         more.setPosition(POS_MORE, 5);
         mRenderer.addItem(more);
         // white balance
-        if (group.findPreference(CameraSettings.KEY_WHITE_BALANCE) != null) {
-            item = makeItem(CameraSettings.KEY_WHITE_BALANCE, POS_WB, 5);
-            more.addItem(item);
-        }
+        item = makeItem(CameraSettings.KEY_WHITE_BALANCE, POS_WB, 5);
+        more.addItem(item);
         // settings popup
         mOtherKeys = new String[] {
                 CameraSettings.KEY_SCENE_MODE,
