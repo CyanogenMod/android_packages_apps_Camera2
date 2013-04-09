@@ -34,6 +34,8 @@ import com.android.gallery3d.filtershow.controller.Control;
 import com.android.gallery3d.filtershow.controller.Parameter;
 import com.android.gallery3d.filtershow.controller.ParameterActionAndInt;
 import com.android.gallery3d.filtershow.controller.ParameterInteger;
+import com.android.gallery3d.filtershow.controller.ParameterStyles;
+import com.android.gallery3d.filtershow.controller.StyleChooser;
 import com.android.gallery3d.filtershow.controller.TitledSlider;
 import com.android.gallery3d.filtershow.filters.FilterBasicRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
@@ -49,7 +51,8 @@ public class ParametricEditor extends Editor {
     protected Control mControl;
     public static final int MINIMUM_WIDTH = 600;
     public static final int MINIMUM_HEIGHT = 800;
-
+    View mActionButton;
+    View mEditControl;
     static HashMap<String, Class> portraitMap = new HashMap<String, Class>();
     static HashMap<String, Class> landscapeMap = new HashMap<String, Class>();
     static {
@@ -57,6 +60,8 @@ public class ParametricEditor extends Editor {
         landscapeMap.put(ParameterInteger.sParameterType, TitledSlider.class);
         portraitMap.put(ParameterActionAndInt.sParameterType, ActionSlider.class);
         landscapeMap.put(ParameterActionAndInt.sParameterType, ActionSlider.class);
+        portraitMap.put(ParameterStyles.sParameterType, StyleChooser.class);
+        landscapeMap.put(ParameterStyles.sParameterType, StyleChooser.class);
     }
 
     static Constructor getConstructor(Class cl) {
@@ -122,7 +127,7 @@ public class ParametricEditor extends Editor {
         };
     }
 
-    // TODO: need a better way to decide when which representation
+    // TODO: need a better way to decide which representation
     static boolean useCompact(Context context) {
         WindowManager w = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
         Point size = new Point();
@@ -139,13 +144,23 @@ public class ParametricEditor extends Editor {
         return false;
     }
 
+    protected Parameter getParameterToEdit(FilterRepresentation rep) {
+        if (this instanceof Parameter) {
+            return (Parameter) this;
+        } else if (rep instanceof Parameter) {
+            return ((Parameter) rep);
+        }
+        return null;
+    }
+
     @Override
     public void setUtilityPanelUI(View actionButton, View editControl) {
+        mActionButton = actionButton;
+        mEditControl = editControl;
         FilterRepresentation rep = getLocalRepresentation();
-        if (this instanceof Parameter) {
-            control((Parameter) this, editControl);
-        } else if (rep instanceof Parameter) {
-            control((Parameter) rep, editControl);
+        Parameter param = getParameterToEdit(rep);
+        if (param != null) {
+            control(param, editControl);
         } else {
             mSeekBar = new SeekBar(editControl.getContext());
             LayoutParams lp = new LinearLayout.LayoutParams(
@@ -164,7 +179,9 @@ public class ParametricEditor extends Editor {
         if (c != null) {
             try {
                 mControl = (Control) c.newInstance();
+                p.setController(mControl);
                 mControl.setUp((ViewGroup) editControl, p, this);
+
 
             } catch (Exception e) {
                 Log.e(LOGTAG, "Error in loading Control ", e);
