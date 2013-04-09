@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.filtershow.imageshow;
+package com.android.gallery3d.filtershow.crop;
 
 import android.graphics.Matrix;
 import android.graphics.RectF;
+
+import com.android.gallery3d.filtershow.imageshow.GeometryMath;
 
 import java.util.Arrays;
 
@@ -173,6 +175,33 @@ public class CropMath {
         float centY = r.centerY();
         float hw = scale * w / 2;
         float hh = scale * h / 2;
+        r.set(centX - hw, centY - hh, centX + hw, centY + hh);
+    }
+
+    /**
+     * Resizes rectangle to have a certain aspect ratio (center remains
+     * stationary) while constraining it to remain within the original rect.
+     *
+     * @param r rectangle to resize
+     * @param w new width aspect
+     * @param h new height aspect
+     */
+    public static void fixAspectRatioContained(RectF r, float w, float h) {
+        float origW = r.width();
+        float origH = r.height();
+        float origA = origW / origH;
+        float a = w / h;
+        float finalW = origW;
+        float finalH = origH;
+        if (origA < a) {
+            finalH = origH / a;
+        } else {
+            finalW = origW * a;
+        }
+        float centX = r.centerX();
+        float centY = r.centerY();
+        float hw = finalW / 2;
+        float hh = finalH / 2;
         r.set(centX - hw, centY - hh, centX + hw, centY + hh);
     }
 
