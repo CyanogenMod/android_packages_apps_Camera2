@@ -47,6 +47,10 @@
             android:title="@string/edit"
             android:showAsAction="never"
             android:visible="false" />
+    <item android:id="@+id/action_simple_edit"
+          android:title="@string/simple_edit"
+          android:showAsAction="never"
+          android:visible="false" />
     <item android:id="@+id/action_rotate_ccw"
             android:showAsAction="never"
             android:title="@string/rotate_left" />
