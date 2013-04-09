@@ -44,6 +44,8 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
     private MenuItem mRedoMenuItem = null;
     private MenuItem mResetMenuItem = null;
 
+    private Bitmap mOriginalBitmap = null;
+
     public HistoryAdapter(Context context, int resource, int textViewResourceId) {
         super(context, resource, textViewResourceId);
         FilterShowActivity activity = (FilterShowActivity) context;
@@ -199,6 +201,9 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
             }
             ImageView preview = (ImageView) view.findViewById(R.id.preview);
             Bitmap bmp = item.getPreviewImage();
+            if (position == getCount()-1 && mOriginalBitmap != null) {
+                bmp = mOriginalBitmap;
+            }
             if (bmp != null) {
                 preview.setImageBitmap(bmp);
             } else {
@@ -214,4 +219,8 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
         return view;
     }
 
+
+    public void setOriginalBitmap(Bitmap originalBitmap) {
+        mOriginalBitmap = originalBitmap;
+    }
 }
