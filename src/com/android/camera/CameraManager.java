@@ -72,6 +72,7 @@ public class CameraManager {
     private static final int SET_PREVIEW_DISPLAY_ASYNC = 22;
     private static final int SET_PREVIEW_CALLBACK = 23;
     private static final int ENABLE_SHUTTER_SOUND = 24;
+    private static final int REFRESH_PARAMETERS = 25;
 
     private Handler mCameraHandler;
     private android.hardware.Camera mCamera;
@@ -245,6 +246,10 @@ public class CameraManager {
 
                     case ENABLE_SHUTTER_SOUND:
                         enableShutterSound((msg.arg1 == 1) ? true : false);
+                        return;
+
+                    case REFRESH_PARAMETERS:
+                        mParametersIsDirty = true;
                         return;
 
                     default:
@@ -444,6 +449,10 @@ public class CameraManager {
             mCameraHandler.sendEmptyMessage(GET_PARAMETERS);
             waitDone();
             return mParameters;
+        }
+
+        public void refreshParameters() {
+            mCameraHandler.sendEmptyMessage(REFRESH_PARAMETERS);
         }
 
         public void enableShutterSound(boolean enable) {
