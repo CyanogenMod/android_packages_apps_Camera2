@@ -76,7 +76,7 @@
             android:orientation="horizontal"
             android:visibility="visible" >
 
-            <Button
+            <com.android.gallery3d.filtershow.editors.SwapButton
                 android:id="@+id/applyEffect"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
@@ -86,6 +86,7 @@
                 android:text="@string/apply_effect"
                 android:textSize="18dip"
                 android:drawableRight="@drawable/filtershow_menu_marker"/>
+
         </LinearLayout>
 
         <ImageView
