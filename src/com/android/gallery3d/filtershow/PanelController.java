@@ -31,6 +31,7 @@ import android.util.Log;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.editors.Editor;
 import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
+import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
@@ -369,6 +370,7 @@ public class PanelController implements OnClickListener {
         HistoryAdapter adapter = MasterImage.getImage().getHistory();
         int position = adapter.undo();
         MasterImage.getImage().onHistoryItemClick(position);
+        mActivity.showCategoryPanel();
         showPanel(mCurrentPanel);
         mCurrentImage.select();
         if (mCurrentEditor != null) {
@@ -586,6 +588,7 @@ public class PanelController implements OnClickListener {
         }
         mUtilityPanel.hideAccessoryViews();
         mUtilityPanel.showMenu(false);
+
         if (view instanceof FilterIconButton) {
             mCurrentEditor = null;
             FilterIconButton component = (FilterIconButton) view;
@@ -595,6 +598,9 @@ public class PanelController implements OnClickListener {
                 mUtilityPanel.setShowParameter(representation.showParameterValue());
 
                 if (representation.getEditorId() != 0) {
+                    if (representation.getEditorId() != ImageOnlyEditor.ID) {
+                        mActivity.hideCategoryPanel();
+                    }
                     if (mEditorPlaceHolder.contains(representation.getEditorId())) {
                         mCurrentEditor = mEditorPlaceHolder.showEditor(
                                 representation.getEditorId());
@@ -625,6 +631,7 @@ public class PanelController implements OnClickListener {
             return;
         }
 
+        mActivity.showCategoryPanel();
         int id = view.getId();
         if (id == EditorTinyPlanet.ID) {
             mCurrentImage = showImageView(R.id.imageTinyPlanet);
