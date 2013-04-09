@@ -24,9 +24,11 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -34,7 +36,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.android.camera.data.CameraDataAdapter;
 import com.android.camera.ui.CameraSwitcher.CameraSwitchListener;
+import com.android.camera.ui.FilmStripView;
 import com.android.camera.ui.NewCameraRootView;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
@@ -56,10 +60,11 @@ public class NewCameraActivity extends Activity
     // panorama. If the extra is not set, it is in the normal camera mode.
     public static final String SECURE_CAMERA_EXTRA = "secure_camera";
 
-
+    private CameraDataAdapter mDataAdapter;
     private int mCurrentModuleIndex;
     private NewCameraModule mCurrentModule;
     private View mRootView;
+    private FilmStripView mFilmStripView;
     private int mResultCodeForTesting;
     private Intent mResultDataForTesting;
     private OnScreenHint mStorageHint;
@@ -116,7 +121,7 @@ public class NewCameraActivity extends Activity
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        setContentView(R.layout.camera);
+        setContentView(R.layout.camera_filmstrip);
         if (ApiHelper.HAS_ROTATION_ANIMATION) {
             setRotationAnimation();
         }
@@ -140,7 +145,16 @@ public class NewCameraActivity extends Activity
                 getApplicationContext().registerReceiver(sScreenOffReceiver, filter);
             }
         }*/
-        mRootView = findViewById(R.id.camera_app_root);
+        LayoutInflater inflater = getLayoutInflater();
+        View rootLayout = inflater.inflate(R.layout.camera, null, false);
+        mRootView = rootLayout.findViewById(R.id.camera_app_root);
+        mDataAdapter = new CameraDataAdapter(
+                new ColorDrawable(getResources().getColor(R.color.photo_placeholder)));
+        mFilmStripView = (FilmStripView) findViewById(R.id.filmstrip_view);
+        // Set up the camera preview first so the preview shows up ASAP.
+        mDataAdapter.setCameraPreviewInfo(rootLayout,
+                FilmStripView.ImageData.SIZE_FULL, FilmStripView.ImageData.SIZE_FULL);
+        mFilmStripView.setDataAdapter(mDataAdapter);
         mCurrentModule = new NewPhotoModule();
         mCurrentModule.init(this, mRootView);
         mOrientationListener = new MyOrientationEventListener(this);
@@ -184,6 +198,9 @@ public class NewCameraActivity extends Activity
         mCurrentModule.onResumeBeforeSuper();
         super.onResume();
         mCurrentModule.onResumeAfterSuper();
+
+        // The loading is done in background and will update the filmstrip later.
+        mDataAdapter.requestLoad(getContentResolver());
     }
 
     @Override
@@ -200,7 +217,10 @@ public class NewCameraActivity extends Activity
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent m) {
-        return mCurrentModule.dispatchTouchEvent(m);
+        //if (mFilmStripView.isInCameraFullscreen()) {
+        //    return mCurrentModule.dispatchTouchEvent(m);
+        //}
+        return mFilmStripView.dispatchTouchEvent(m);
     }
     public boolean isAutoRotateScreen() {
         return mAutoRotateScreen;
