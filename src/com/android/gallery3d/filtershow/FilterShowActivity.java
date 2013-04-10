@@ -365,9 +365,13 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         filterBorder.setResources(res);
         filterBorder = (ImageFilterBorder) FiltersManager.getPreviewManager().getFilter(ImageFilterBorder.class);
         filterBorder.setResources(res);
+        filterBorder = (ImageFilterBorder) FiltersManager.getHighresManager().getFilter(ImageFilterBorder.class);
+        filterBorder.setResources(res);
         ImageFilterFx filterFx = (ImageFilterFx) FiltersManager.getManager().getFilter(ImageFilterFx.class);
         filterFx.setResources(res);
         filterFx = (ImageFilterFx) FiltersManager.getPreviewManager().getFilter(ImageFilterFx.class);
+        filterFx.setResources(res);
+        filterFx = (ImageFilterFx) FiltersManager.getHighresManager().getFilter(ImageFilterFx.class);
         filterFx.setResources(res);
 
         ImageShow.setDefaultBackgroundColor(res.getColor(R.color.background_screen));
@@ -554,6 +558,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageFilter.resetStatics();
         FiltersManager.getPreviewManager().freeRSFilterScripts();
         FiltersManager.getManager().freeRSFilterScripts();
+        FiltersManager.getHighresManager().freeRSFilterScripts();
         FiltersManager.reset();
         CachingPipeline.destroyRenderScriptContext();
         super.onDestroy();

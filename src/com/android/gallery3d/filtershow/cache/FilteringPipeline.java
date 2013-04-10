@@ -34,12 +34,13 @@ public class FilteringPipeline implements Handler.Callback {
     private static final String LOGTAG = "FilteringPipeline";
     private boolean DEBUG = false;
 
-    private static long HIRES_DELAY = 100; // in ms
+    private static long HIRES_DELAY = 300; // in ms
 
     private volatile boolean mPipelineIsOn = false;
 
     private CachingPipeline mAccessoryPipeline = null;
     private CachingPipeline mPreviewPipeline = null;
+    private CachingPipeline mHighresPreviewPipeline = null;
 
     private HandlerThread mHandlerThread = null;
     private final static int NEW_PRESET = 0;
@@ -111,7 +112,11 @@ public class FilteringPipeline implements Handler.Callback {
                 }
 
                 RenderingRequest request = (RenderingRequest) msg.obj;
-                mAccessoryPipeline.render(request);
+                if (msg.what == COMPUTE_HIGHRES_RENDERING_REQUEST) {
+                    mHighresPreviewPipeline.render(request);
+                } else {
+                    mAccessoryPipeline.render(request);
+                }
                 Message uimsg = mUIHandler.obtainMessage(NEW_RENDERING_REQUEST);
                 uimsg.obj = request;
                 mUIHandler.sendMessage(uimsg);
@@ -128,6 +133,7 @@ public class FilteringPipeline implements Handler.Callback {
         mProcessingHandler = new Handler(mHandlerThread.getLooper(), this);
         mAccessoryPipeline = new CachingPipeline(FiltersManager.getManager(), "Accessory");
         mPreviewPipeline = new CachingPipeline(FiltersManager.getPreviewManager(), "Preview");
+        mHighresPreviewPipeline = new CachingPipeline(FiltersManager.getHighresManager(), "Highres");
     }
 
     public synchronized static FilteringPipeline getPipeline() {
@@ -145,6 +151,7 @@ public class FilteringPipeline implements Handler.Callback {
         Log.v(LOGTAG,"setOriginal, size " + bitmap.getWidth() + " x " + bitmap.getHeight());
         mAccessoryPipeline.setOriginal(bitmap);
         mPreviewPipeline.setOriginal(bitmap);
+        mHighresPreviewPipeline.setOriginal(bitmap);
     }
 
     public void postRenderingRequest(RenderingRequest request) {
@@ -194,16 +201,19 @@ public class FilteringPipeline implements Handler.Callback {
     public void setPreviewScaleFactor(float previewScaleFactor) {
         mAccessoryPipeline.setPreviewScaleFactor(previewScaleFactor);
         mPreviewPipeline.setPreviewScaleFactor(previewScaleFactor);
+        mHighresPreviewPipeline.setPreviewScaleFactor(previewScaleFactor);
     }
 
     public void setHighResPreviewScaleFactor(float highResPreviewScaleFactor) {
         mAccessoryPipeline.setHighResPreviewScaleFactor(highResPreviewScaleFactor);
         mPreviewPipeline.setHighResPreviewScaleFactor(highResPreviewScaleFactor);
+        mHighresPreviewPipeline.setHighResPreviewScaleFactor(highResPreviewScaleFactor);
     }
 
     public static synchronized void reset() {
         sPipeline.mAccessoryPipeline.reset();
         sPipeline.mPreviewPipeline.reset();
+        sPipeline.mHighresPreviewPipeline.reset();
         sPipeline.mHandlerThread.quit();
         sPipeline = null;
     }
@@ -213,6 +223,7 @@ public class FilteringPipeline implements Handler.Callback {
         if (mPipelineIsOn) {
             assert(mPreviewPipeline.isInitialized());
             assert(mAccessoryPipeline.isInitialized());
+            assert(mHighresPreviewPipeline.isInitialized());
             updatePreviewBuffer();
         }
     }
