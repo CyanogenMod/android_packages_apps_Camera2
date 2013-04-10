@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -91,7 +90,7 @@ public class CropView extends View {
 
         // If display matrix doesn't exist, create it and its dependencies
         if (mDisplayMatrix == null || mDisplayMatrixInverse == null) {
-            mDisplayMatrix = getBitmapToDisplayMatrix(displayBounds, new RectF(
+            mDisplayMatrix = CropDrawingUtils.getBitmapToDisplayMatrix(displayBounds, new RectF(
                     displayBoundsOriginal));
             mDisplayMatrixInverse = new Matrix();
             mDisplayMatrixInverse.reset();
@@ -105,9 +104,9 @@ public class CropView extends View {
         canvas.drawBitmap(mImage, mDisplayMatrix, new Paint());
 
         if (mDisplayMatrix.mapRect(imageBounds)) {
-            drawCropRect(canvas, imageBounds);
-            drawRuleOfThird(canvas, imageBounds);
-            drawIndicators(canvas, mCropIndicator, mIndicatorSize, imageBounds,
+            CropDrawingUtils.drawCropRect(canvas, imageBounds);
+            CropDrawingUtils.drawRuleOfThird(canvas, imageBounds);
+            CropDrawingUtils.drawIndicators(canvas, mCropIndicator, mIndicatorSize, imageBounds,
                     mCropObj.isFixedAspect(), mCropObj.getSelectState());
         }
     }
@@ -193,86 +192,4 @@ public class CropView extends View {
         out_crop.set(inner);
         return true;
     }
-
-    // Helper methods
-
-    private static void drawRuleOfThird(Canvas canvas, RectF bounds) {
-        Paint p = new Paint();
-        p.setStyle(Paint.Style.STROKE);
-        p.setColor(Color.argb(128, 255, 255, 255));
-        p.setStrokeWidth(2);
-        float stepX = bounds.width() / 3.0f;
-        float stepY = bounds.height() / 3.0f;
-        float x = bounds.left + stepX;
-        float y = bounds.top + stepY;
-        for (int i = 0; i < 2; i++) {
-            canvas.drawLine(x, bounds.top, x, bounds.bottom, p);
-            x += stepX;
-        }
-        for (int j = 0; j < 2; j++) {
-            canvas.drawLine(bounds.left, y, bounds.right, y, p);
-            y += stepY;
-        }
-    }
-
-    private static void drawCropRect(Canvas canvas, RectF bounds) {
-        Paint p = new Paint();
-        p.setStyle(Paint.Style.STROKE);
-        p.setColor(Color.WHITE);
-        p.setStrokeWidth(3);
-        canvas.drawRect(bounds, p);
-    }
-
-    private static void drawIndicator(Canvas canvas, Drawable indicator, int indicatorSize,
-            float centerX, float centerY) {
-        int left = (int) centerX - indicatorSize / 2;
-        int top = (int) centerY - indicatorSize / 2;
-        indicator.setBounds(left, top, left + indicatorSize, top + indicatorSize);
-        indicator.draw(canvas);
-    }
-
-    private static void drawIndicators(Canvas canvas, Drawable cropIndicator, int indicatorSize,
-            RectF bounds, boolean fixedAspect, int selection) {
-        boolean notMoving = (selection == CropObject.MOVE_NONE);
-        if (fixedAspect) {
-            if ((selection == CropObject.TOP_LEFT) || notMoving) {
-                drawIndicator(canvas, cropIndicator, indicatorSize, bounds.left, bounds.top);
-            }
-            if ((selection == CropObject.TOP_RIGHT) || notMoving) {
-                drawIndicator(canvas, cropIndicator, indicatorSize, bounds.right, bounds.top);
-            }
-            if ((selection == CropObject.BOTTOM_LEFT) || notMoving) {
-                drawIndicator(canvas, cropIndicator, indicatorSize, bounds.left, bounds.bottom);
-            }
-            if ((selection == CropObject.BOTTOM_RIGHT) || notMoving) {
-                drawIndicator(canvas, cropIndicator, indicatorSize, bounds.right, bounds.bottom);
-            }
-        } else {
-            if (((selection & CropObject.MOVE_TOP) != 0) || notMoving) {
-                drawIndicator(canvas, cropIndicator, indicatorSize, bounds.centerX(), bounds.top);
-            }
-            if (((selection & CropObject.MOVE_BOTTOM) != 0) || notMoving) {
-                drawIndicator(canvas, cropIndicator, indicatorSize, bounds.centerX(), bounds.bottom);
-            }
-            if (((selection & CropObject.MOVE_LEFT) != 0) || notMoving) {
-                drawIndicator(canvas, cropIndicator, indicatorSize, bounds.left, bounds.centerY());
-            }
-            if (((selection & CropObject.MOVE_RIGHT) != 0) || notMoving) {
-                drawIndicator(canvas, cropIndicator, indicatorSize, bounds.right, bounds.centerY());
-            }
-        }
-    }
-
-    private static Matrix getBitmapToDisplayMatrix(RectF imageBounds, RectF displayBounds) {
-        Matrix m = new Matrix();
-        setBitmapToDisplayMatrix(m, imageBounds, displayBounds);
-        return m;
-    }
-
-    private static boolean setBitmapToDisplayMatrix(Matrix m, RectF imageBounds,
-            RectF displayBounds) {
-        m.reset();
-        return m.setRectToRect(imageBounds, displayBounds, Matrix.ScaleToFit.CENTER);
-    }
-
 }
