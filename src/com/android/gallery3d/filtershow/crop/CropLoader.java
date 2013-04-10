@@ -35,7 +35,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * This class contains reentrant static methods for loading a bitmap.
+ * This class contains static methods for loading a bitmap and
+ * mantains no instance state.
  */
 public abstract class CropLoader {
     public static final String LOGTAG = "CropLoader";
