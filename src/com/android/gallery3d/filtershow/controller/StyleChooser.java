@@ -17,13 +17,12 @@ import com.android.gallery3d.filtershow.editors.Editor;
 
 import java.util.Vector;
 
-public class StyleChooser implements Control, RenderingRequestCaller {
+public class StyleChooser implements Control {
     private final String LOGTAG = "StyleChooser";
     protected ParameterStyles mParameter;
     protected LinearLayout mLinearLayout;
     protected Editor mEditor;
     private View mTopView;
-    private int mProcessingButton = 0;
     private Vector<ImageButton> mIconButton = new Vector<ImageButton>();
     protected int mLayoutID = R.layout.filtershow_control_style_chooser;
 
@@ -42,7 +41,7 @@ public class StyleChooser implements Control, RenderingRequestCaller {
         mIconButton.clear();
         LayoutParams lp = new LayoutParams(120, 120);
         for (int i = 0; i < n; i++) {
-            ImageButton button = new ImageButton(context);
+            final ImageButton button = new ImageButton(context);
             button.setScaleType(ScaleType.CENTER_CROP);
             button.setLayoutParams(lp);
             button.setBackgroundResource(android.R.color.transparent);
@@ -55,9 +54,17 @@ public class StyleChooser implements Control, RenderingRequestCaller {
                 }
             });
             mLinearLayout.addView(button);
+            mParameter.getIcon(i, new RenderingRequestCaller() {
+                @Override
+                public void available(RenderingRequest request) {
+                    Bitmap bmap = request.getBitmap();
+                    if (bmap == null) {
+                        return;
+                    }
+                    button.setImageBitmap(bmap);
+                }
+            });
         }
-        mProcessingButton = 0;
-        mParameter.getIcon(mProcessingButton, this);
     }
 
     @Override
@@ -76,25 +83,6 @@ public class StyleChooser implements Control, RenderingRequestCaller {
         if (mParameter == null) {
             return;
         }
-    }
-
-    @Override
-    public void available(RenderingRequest request) {
-        Bitmap bmap = request.getBitmap();
-        if (bmap == null) {
-            return;
-        }
-
-        try {
-            ImageButton button = mIconButton.get(mProcessingButton);
-            button.setImageBitmap(bmap);
-        } catch (Exception e) {
-            return;
-        }
-
-        mProcessingButton++;
-        if (mProcessingButton < mParameter.getNumberOfStyles())
-            mParameter.getIcon(mProcessingButton, this);
     }
 
 }

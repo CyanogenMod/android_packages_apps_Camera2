@@ -282,10 +282,13 @@ public class CachingPipeline {
                     || request.getType() == RenderingRequest.FILTERS_RENDERING
                     || request.getType() == RenderingRequest.ICON_RENDERING
                     || request.getType() == RenderingRequest.PARTIAL_RENDERING
-                    || request.getType() == RenderingRequest.HIGHRES_RENDERING) {
+                    || request.getType() == RenderingRequest.HIGHRES_RENDERING
+                    || request.getType() == RenderingRequest.STYLE_ICON_RENDERING) {
 
                 if (request.getType() == RenderingRequest.ICON_RENDERING) {
                     mEnvironment.setQuality(ImagePreset.QUALITY_ICON);
+                } else  if (request.getType() == RenderingRequest.STYLE_ICON_RENDERING) {
+                    mEnvironment.setQuality(ImagePreset.STYLE_ICON);
                 } else {
                     mEnvironment.setQuality(ImagePreset.QUALITY_PREVIEW);
                 }
