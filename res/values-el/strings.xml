@@ -88,6 +88,7 @@
     <string name="rotate_right" msgid="6776325835923384839">"Δεξιά περιστροφή"</string>
     <string name="no_such_item" msgid="5315144556325243400">"Δεν ήταν δυνατή η εύρεση."</string>
     <string name="edit" msgid="1502273844748580847">"Επεξεργασία"</string>
+    <string name="simple_edit" msgid="2792835918347498211">"Απλή επεξεργασία"</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"Επεξεργασία αιτημάτων προσωρινής αποθήκευσης"</string>
     <string name="caching_label" msgid="4521059045896269095">"Προσωρ. αποθ..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Περικοπή"</string>
