@@ -237,7 +237,7 @@ public class TrimVideo extends Activity implements
             public void run() {
                 try {
                     VideoUtils.startTrim(mSrcFile, mDstFileInfo.mFile,
-                            mTrimStartTime, mTrimEndTime, mVideoView.getDuration());
+                            mTrimStartTime, mTrimEndTime);
                     // Update the database for adding a new video file.
                     SaveVideoFileUtils.insertContent(mDstFileInfo,
                             getContentResolver(), mUri);
