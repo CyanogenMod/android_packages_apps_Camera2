@@ -88,6 +88,7 @@
     <string name="rotate_right" msgid="6776325835923384839">"Ruota a destra"</string>
     <string name="no_such_item" msgid="5315144556325243400">"Impossibile trovare l\'elemento."</string>
     <string name="edit" msgid="1502273844748580847">"Modifica"</string>
+    <string name="simple_edit" msgid="2792835918347498211">"Modifica semplice"</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"Elaborazione richieste memorizzazione cache"</string>
     <string name="caching_label" msgid="4521059045896269095">"Memorizzazione..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Ritaglia"</string>
