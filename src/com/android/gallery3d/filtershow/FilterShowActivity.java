@@ -360,19 +360,7 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ImageFilter.setActivityForMemoryToasts(this);
 
         Resources res = getResources();
-        // TODO: add a mechanism to set the resources in FiltersManagmer
-        ImageFilterBorder filterBorder = (ImageFilterBorder) FiltersManager.getManager().getFilter(ImageFilterBorder.class);
-        filterBorder.setResources(res);
-        filterBorder = (ImageFilterBorder) FiltersManager.getPreviewManager().getFilter(ImageFilterBorder.class);
-        filterBorder.setResources(res);
-        filterBorder = (ImageFilterBorder) FiltersManager.getHighresManager().getFilter(ImageFilterBorder.class);
-        filterBorder.setResources(res);
-        ImageFilterFx filterFx = (ImageFilterFx) FiltersManager.getManager().getFilter(ImageFilterFx.class);
-        filterFx.setResources(res);
-        filterFx = (ImageFilterFx) FiltersManager.getPreviewManager().getFilter(ImageFilterFx.class);
-        filterFx.setResources(res);
-        filterFx = (ImageFilterFx) FiltersManager.getHighresManager().getFilter(ImageFilterFx.class);
-        filterFx.setResources(res);
+        FiltersManager.setResources(res);
 
         ImageShow.setDefaultBackgroundColor(res.getColor(R.color.background_screen));
         // TODO: get those values from XML.
