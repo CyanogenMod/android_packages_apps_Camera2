@@ -88,6 +88,8 @@
     <string name="rotate_right" msgid="6776325835923384839">"Gira a la dreta"</string>
     <string name="no_such_item" msgid="5315144556325243400">"No s\'ha trobat l\'element."</string>
     <string name="edit" msgid="1502273844748580847">"Edita"</string>
+    <!-- no translation found for simple_edit (2792835918347498211) -->
+    <skip />
     <string name="process_caching_requests" msgid="8722939570307386071">"S\'estan processant les sol·licituds de memòria cau"</string>
     <string name="caching_label" msgid="4521059045896269095">"S\'està desant a la memòria cau..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Retalla"</string>
