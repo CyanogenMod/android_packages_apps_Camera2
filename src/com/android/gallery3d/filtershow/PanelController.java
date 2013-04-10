@@ -359,7 +359,6 @@ public class PanelController implements OnClickListener {
             if (mCurrentEditor != null) {
                 mCurrentEditor.reflectCurrentFilter();
             }
-
         }
     }
 
@@ -590,6 +589,9 @@ public class PanelController implements OnClickListener {
         mUtilityPanel.showMenu(false);
 
         if (view instanceof FilterIconButton) {
+            if (mCurrentEditor != null) {
+                mCurrentEditor.detach();
+            }
             mCurrentEditor = null;
             FilterIconButton component = (FilterIconButton) view;
             FilterRepresentation representation = component.getFilterRepresentation();
