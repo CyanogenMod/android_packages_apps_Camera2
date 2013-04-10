@@ -23,7 +23,7 @@
         android:layout_height="fill_parent"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:scaleType="centerInside" />
+        android:scaleType="matrix" />
 
     <CheckBox
         android:id="@+id/ingest_fullsize_image_checkbox"
