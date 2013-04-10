@@ -131,9 +131,12 @@ public class FilteringPipeline implements Handler.Callback {
                 Process.THREAD_PRIORITY_FOREGROUND);
         mHandlerThread.start();
         mProcessingHandler = new Handler(mHandlerThread.getLooper(), this);
-        mAccessoryPipeline = new CachingPipeline(FiltersManager.getManager(), "Accessory");
-        mPreviewPipeline = new CachingPipeline(FiltersManager.getPreviewManager(), "Preview");
-        mHighresPreviewPipeline = new CachingPipeline(FiltersManager.getHighresManager(), "Highres");
+        mAccessoryPipeline = new CachingPipeline(
+                FiltersManager.getManager(), "Accessory");
+        mPreviewPipeline = new CachingPipeline(
+                FiltersManager.getPreviewManager(), "Preview");
+        mHighresPreviewPipeline = new CachingPipeline(
+                FiltersManager.getHighresManager(), "Highres");
     }
 
     public synchronized static FilteringPipeline getPipeline() {
