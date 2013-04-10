@@ -41,6 +41,8 @@ public class RenderingRequest {
     public static final int ICON_RENDERING = 3;
     public static final int PARTIAL_RENDERING = 4;
     public static final int HIGHRES_RENDERING = 5;
+    public static final int STYLE_ICON_RENDERING = 6;
+
     private static final Bitmap.Config mConfig = Bitmap.Config.ARGB_8888;
 
     public static void post(Bitmap source, ImagePreset preset, int type, RenderingRequestCaller caller) {
@@ -59,7 +61,8 @@ public class RenderingRequest {
         Bitmap bitmap = null;
         if (type == FULL_RENDERING
                 || type == GEOMETRY_RENDERING
-                || type == ICON_RENDERING) {
+                || type == ICON_RENDERING
+                || type == STYLE_ICON_RENDERING) {
             CachingPipeline pipeline = new CachingPipeline(
                     FiltersManager.getManager(), "Icon");
             bitmap = pipeline.renderGeometryIcon(source, preset);
