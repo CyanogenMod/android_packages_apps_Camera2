@@ -22,6 +22,7 @@ import java.util.Vector;
 public class FiltersManager extends BaseFiltersManager {
     private static FiltersManager sInstance = null;
     private static FiltersManager sPreviewInstance = null;
+    private static FiltersManager sHighresInstance = null;
 
     public FiltersManager() {
         init();
@@ -41,9 +42,17 @@ public class FiltersManager extends BaseFiltersManager {
         return sInstance;
     }
 
+    public static FiltersManager getHighresManager() {
+        if (sHighresInstance == null) {
+            sHighresInstance = new FiltersManager();
+        }
+        return sHighresInstance;
+    }
+
     public static void reset() {
         sInstance = null;
         sPreviewInstance = null;
+        sHighresInstance = null;
     }
 
 }
