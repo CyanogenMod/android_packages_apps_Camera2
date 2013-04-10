@@ -74,7 +74,7 @@
     <string name="rotate" msgid="2796802553793795371">"Drehen"</string>
     <string name="mirror" msgid="5482518108154883096">"Spiegeln"</string>
     <string name="negative" msgid="6998313764388022201">"Negativ"</string>
-    <string name="none" msgid="6633966646410296520">"Keines"</string>
+    <string name="none" msgid="6633966646410296520">"Kein Filter"</string>
     <string name="edge" msgid="7036064886242147551">"Kanten"</string>
     <string name="kmeans" msgid="1630263230946107457">"Warhol"</string>
     <string name="downsample" msgid="3552938534146980104">"Verkleinern"</string>
