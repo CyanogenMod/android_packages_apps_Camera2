@@ -15,6 +15,7 @@
  */
 package com.android.gallery3d.filtershow.filters;
 
+import android.content.res.Resources;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 import java.util.HashMap;
@@ -140,4 +141,10 @@ public abstract class BaseFiltersManager {
         representations.add(getRepresentation(ImageFilterDraw.class));
     }
 
+    public void setFilterResources(Resources resources) {
+        ImageFilterBorder filterBorder = (ImageFilterBorder) getFilter(ImageFilterBorder.class);
+        filterBorder.setResources(resources);
+        ImageFilterFx filterFx = (ImageFilterFx) getFilter(ImageFilterFx.class);
+        filterFx.setResources(resources);
+    }
 }
