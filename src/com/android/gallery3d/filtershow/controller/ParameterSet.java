@@ -16,18 +16,8 @@
 
 package com.android.gallery3d.filtershow.controller;
 
-import com.android.gallery3d.filtershow.editors.Editor;
+public interface ParameterSet {
+    int getNumberOfParameters();
 
-public interface Parameter {
-    String getParameterName();
-
-    String getParameterType();
-
-    String getValueString();
-
-    public void setController(Control c);
-
-    public void setFilterView(FilterView editor);
-
-    public void copyFrom(Parameter src);
+    Parameter getFilterParameter(int index);
 }

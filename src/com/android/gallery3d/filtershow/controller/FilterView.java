@@ -16,18 +16,10 @@
 
 package com.android.gallery3d.filtershow.controller;
 
-import com.android.gallery3d.filtershow.editors.Editor;
+import com.android.gallery3d.filtershow.cache.RenderingRequestCaller;
 
-public interface Parameter {
-    String getParameterName();
+public interface FilterView {
+    public void computeIcon(int index, RenderingRequestCaller caller);
 
-    String getParameterType();
-
-    String getValueString();
-
-    public void setController(Control c);
-
-    public void setFilterView(FilterView editor);
-
-    public void copyFrom(Parameter src);
+    public void commitLocalRepresentation();
 }

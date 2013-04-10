@@ -20,6 +20,8 @@ import android.content.Context;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.controller.Control;
+import com.android.gallery3d.filtershow.controller.FilterView;
+import com.android.gallery3d.filtershow.controller.Parameter;
 import com.android.gallery3d.filtershow.controller.ParameterInteger;
 import com.android.gallery3d.filtershow.filters.FilterBasicRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
@@ -126,4 +128,13 @@ public class BasicEditor extends ParametricEditor implements ParameterInteger {
     public void setController(Control c) {
     }
 
+    @Override
+    public void setFilterView(FilterView editor) {
+
+    }
+
+    @Override
+    public void copyFrom(Parameter src) {
+
+    }
 }
