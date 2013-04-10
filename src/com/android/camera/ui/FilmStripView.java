@@ -88,7 +88,6 @@ public class FilmStripView extends ViewGroup {
         public ImageData getImageData(int id);
         public void suggestSize(int w, int h);
 
-        public void requestLoad(ContentResolver r);
         public void setListener(Listener listener);
     }
 
