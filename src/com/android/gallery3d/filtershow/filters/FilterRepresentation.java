@@ -42,7 +42,7 @@ public class FilterRepresentation implements Cloneable {
     public static final byte TYPE_NORMAL = 5;
     public static final byte TYPE_TINYPLANET = 6;
 
-    public FilterRepresentation mTempRepresentation = null;
+    private FilterRepresentation mTempRepresentation = null;
 
     public FilterRepresentation(String name) {
         mName = name;
@@ -125,6 +125,10 @@ public class FilterRepresentation implements Cloneable {
     }
 
     public void useParametersFrom(FilterRepresentation a) {
+    }
+
+    public void clearTempRepresentation() {
+        mTempRepresentation = null;
     }
 
     public synchronized void updateTempParametersFrom(FilterRepresentation representation) {
