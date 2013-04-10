@@ -39,6 +39,8 @@ public class ImagePreset {
     public static final int QUALITY_ICON = 0;
     public static final int QUALITY_PREVIEW = 1;
     public static final int QUALITY_FINAL = 2;
+    public static final int STYLE_ICON = 3;
+
     private ImageLoader mImageLoader = null;
 
     private Vector<FilterRepresentation> mFilters = new Vector<FilterRepresentation>();
