@@ -81,7 +81,6 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
         return mID;
     }
 
-
     public byte showParameterValue() {
         return mShowParameter;
     }
@@ -269,6 +268,10 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
 
     @Override
     public void swapRight(MenuItem item) {
+
+    }
+
+    public void detach() {
 
     }
 }
