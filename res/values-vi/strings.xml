@@ -88,6 +88,8 @@
     <string name="rotate_right" msgid="6776325835923384839">"Xoay phải"</string>
     <string name="no_such_item" msgid="5315144556325243400">"Không thể tìm thấy mục."</string>
     <string name="edit" msgid="1502273844748580847">"Chỉnh sửa"</string>
+    <!-- no translation found for simple_edit (2792835918347498211) -->
+    <skip />
     <string name="process_caching_requests" msgid="8722939570307386071">"Đang xử lý yêu cầu lưu vào bộ nhớ cache"</string>
     <string name="caching_label" msgid="4521059045896269095">"Lưu cache..."</string>
     <string name="crop_action" msgid="3427470284074377001">"Cắt"</string>
