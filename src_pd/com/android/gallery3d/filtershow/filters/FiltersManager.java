@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import android.content.res.Resources;
+
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -55,4 +57,9 @@ public class FiltersManager extends BaseFiltersManager {
         sHighresInstance = null;
     }
 
+    public static void setResources(Resources resources) {
+        FiltersManager.getManager().setFilterResources(resources);
+        FiltersManager.getPreviewManager().setFilterResources(resources);
+        FiltersManager.getHighresManager().setFilterResources(resources);
+    }
 }
