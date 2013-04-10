@@ -17,6 +17,7 @@
 package com.android.gallery3d.ingest.ui;
 
 import android.content.Context;
+import android.graphics.Matrix;
 import android.mtp.MtpDevice;
 import android.mtp.MtpObjectInfo;
 import android.os.Handler;
@@ -91,10 +92,67 @@ public class MtpImageView extends ImageView {
         return MtpBitmapFetch.getFullsize(device, info);
     }
 
+    private float mLastBitmapWidth;
+    private float mLastBitmapHeight;
+    private int mLastRotationDegrees;
+    private Matrix mDrawMatrix = new Matrix();
+
+    private void updateDrawMatrix() {
+        mDrawMatrix.reset();
+        float dwidth;
+        float dheight;
+        float vheight = getHeight();
+        float vwidth = getWidth();
+        float scale;
+        boolean rotated90 = (mLastRotationDegrees % 180 != 0);
+        if (rotated90) {
+            dwidth = mLastBitmapHeight;
+            dheight = mLastBitmapWidth;
+        } else {
+            dwidth = mLastBitmapWidth;
+            dheight = mLastBitmapHeight;
+        }
+        if (dwidth <= vwidth && dheight <= vheight) {
+            scale = 1.0f;
+        } else {
+            scale = Math.min(vwidth / dwidth, vheight / dheight);
+        }
+        mDrawMatrix.setScale(scale, scale);
+        if (rotated90) {
+            mDrawMatrix.postTranslate(-dheight * scale * 0.5f,
+                    -dwidth * scale * 0.5f);
+            mDrawMatrix.postRotate(mLastRotationDegrees);
+            mDrawMatrix.postTranslate(dwidth * scale * 0.5f,
+                    dheight * scale * 0.5f);
+        }
+        mDrawMatrix.postTranslate((vwidth - dwidth * scale) * 0.5f,
+                (vheight - dheight * scale) * 0.5f);
+        if (!rotated90 && mLastRotationDegrees > 0) {
+            // rotated by a multiple of 180
+            mDrawMatrix.postRotate(mLastRotationDegrees, vwidth / 2, vheight / 2);
+        }
+        setImageMatrix(mDrawMatrix);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        if (changed && getScaleType() == ScaleType.MATRIX) {
+            updateDrawMatrix();
+        }
+    }
+
     protected void onMtpImageDataFetchedFromDevice(Object result) {
         BitmapWithMetadata bitmapWithMetadata = (BitmapWithMetadata)result;
+        if (getScaleType() == ScaleType.MATRIX) {
+            mLastBitmapHeight = bitmapWithMetadata.bitmap.getHeight();
+            mLastBitmapWidth = bitmapWithMetadata.bitmap.getWidth();
+            mLastRotationDegrees = bitmapWithMetadata.rotationDegrees;
+            updateDrawMatrix();
+        } else {
+            setRotation(bitmapWithMetadata.rotationDegrees);
+        }
         setImageBitmap(bitmapWithMetadata.bitmap);
-        setRotation(bitmapWithMetadata.rotationDegrees);
     }
 
     protected void cancelLoadingAndClear() {
@@ -104,7 +162,6 @@ public class MtpImageView extends ImageView {
             mFetchResult = null;
         }
         setImageResource(android.R.color.transparent);
-        setRotation(0);
     }
 
     @Override
