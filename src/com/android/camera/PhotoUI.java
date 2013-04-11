@@ -144,7 +144,6 @@ public class PhotoUI implements PieListener,
             }
         }
 
-        mRootView.addOnLayoutChangeListener(mLayoutListener);
     }
 
     public View getRootView() {
@@ -259,6 +258,7 @@ public class PhotoUI implements PieListener,
         mShutterButton.setImageResource(R.drawable.btn_new_shutter);
         mShutterButton.setOnShutterButtonListener(mController);
         mShutterButton.setVisibility(View.VISIBLE);
+        mRootView.addOnLayoutChangeListener(mLayoutListener);
     }
 
     // called from onResume every other time
@@ -270,6 +270,7 @@ public class PhotoUI implements PieListener,
         if (mMenu != null) {
             mMenu.reloadPreferences();
         }
+        mRootView.addOnLayoutChangeListener(mLayoutListener);
     }
 
     public void initializeZoom(Camera.Parameters params) {

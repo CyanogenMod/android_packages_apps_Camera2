@@ -590,6 +590,7 @@ public class PhotoModule
         if (mFocusManager != null) mFocusManager.setPreviewSize(width, height);
         ((CameraScreenNail) mActivity.mCameraScreenNail).setPreviewFrameLayoutSize(
                 previewWidth, previewHeight);
+        mActivity.notifyScreenNailChanged();
     }
 
     private void resetExposureCompensation() {
