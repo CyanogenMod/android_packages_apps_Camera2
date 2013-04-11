@@ -152,7 +152,9 @@ public class MtpImageView extends ImageView {
         } else {
             setRotation(bitmapWithMetadata.rotationDegrees);
         }
+        setAlpha(0f);
         setImageBitmap(bitmapWithMetadata.bitmap);
+        animate().alpha(1f);
     }
 
     protected void cancelLoadingAndClear() {
@@ -161,6 +163,7 @@ public class MtpImageView extends ImageView {
             mFetchObjectInfo = null;
             mFetchResult = null;
         }
+        animate().cancel();
         setImageResource(android.R.color.transparent);
     }
 
