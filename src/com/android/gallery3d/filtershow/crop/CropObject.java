@@ -55,11 +55,15 @@ public class CropObject {
         mBoundedRect = new BoundedRect(outerAngle % 360, outerBound, innerBound);
     }
 
-    public void setToInnerBounds(RectF r) {
+    public void resetBoundsTo(RectF inner, RectF outer) {
+        mBoundedRect.resetTo(0, outer, inner);
+    }
+
+    public void getInnerBounds(RectF r) {
         mBoundedRect.setToInner(r);
     }
 
-    public void setToOuterBounds(RectF r) {
+    public void getOuterBounds(RectF r) {
         mBoundedRect.setToOuter(r);
     }
 
