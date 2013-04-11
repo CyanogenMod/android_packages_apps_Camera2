@@ -226,6 +226,9 @@ public class PhotoProvider extends SQLiteContentProvider {
     protected static final String IN = " IN ";
     protected static final String NESTED_SELECT_START = "(";
     protected static final String NESTED_SELECT_END = ")";
+    protected static final String[] PROJECTION_COUNT = {
+        "COUNT(*)"
+    };
 
     /**
      * For selecting the mime-type for an image.
@@ -310,6 +313,7 @@ public class PhotoProvider extends SQLiteContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
             String sortOrder, CancellationSignal cancellationSignal) {
+        projection = replaceCount(projection);
         int match = matchUri(uri);
         selection = addIdToSelection(match, selection);
         selectionArgs = addIdToSelectionArgs(match, uri, selectionArgs);
@@ -520,5 +524,13 @@ public class PhotoProvider extends SQLiteContentProvider {
         } else {
             return db.query(table, columns, selection, selectionArgs, null, null, orderBy);
         }
+    }
+
+    protected static String[] replaceCount(String[] projection) {
+        if (projection != null && projection.length == 1
+                && BaseColumns._COUNT.equals(projection[0])) {
+            return PROJECTION_COUNT;
+        }
+        return projection;
     }
 }
