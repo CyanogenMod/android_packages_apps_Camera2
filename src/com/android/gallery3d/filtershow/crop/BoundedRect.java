@@ -53,6 +53,16 @@ public class BoundedRect {
             reconstrain();
     }
 
+    public void resetTo(float rotation, RectF outerRect, RectF innerRect) {
+        rot = rotation;
+        outer.set(outerRect);
+        inner.set(innerRect);
+        innerRotated = CropMath.getCornersFromRect(inner);
+        rotateInner();
+        if (!isConstrained())
+            reconstrain();
+    }
+
     /**
      * Sets inner, and re-constrains it to fit within the rotated bounding rect.
      */
