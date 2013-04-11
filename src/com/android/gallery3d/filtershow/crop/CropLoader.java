@@ -144,14 +144,16 @@ public abstract class CropLoader {
 
             // Find best downsampling size
             int imageSide = Math.max(w, h);
+            options.inSampleSize = 1;
             if (imageSide > maxSideLength) {
                 int shifts = 1 + Integer.numberOfLeadingZeros(maxSideLength)
                         - Integer.numberOfLeadingZeros(imageSide);
-                options.inSampleSize = 1 << shifts;
+                options.inSampleSize <<= shifts;
             }
 
             // Make sure sample size is reasonable
-            if (0 >= (int) (Math.min(w, h) / options.inSampleSize)) {
+            if (options.inSampleSize <= 0 ||
+                    0 >= (int) (Math.min(w, h) / options.inSampleSize)) {
                 return null;
             }
 
