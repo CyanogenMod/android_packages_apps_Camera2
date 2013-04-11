@@ -22,7 +22,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
@@ -43,10 +42,10 @@ import java.util.List;
  * A FilmStripDataProvider that provide data in the camera folder.
  *
  * The given view for camera preview won't be added until the preview info
- * has been set by setPreviewInfo(int, int, int)
+ * has been set by setCameraPreviewInfo(int, int).
  */
 public class CameraDataAdapter implements FilmStripView.DataAdapter {
-    private static final String TAG = "CamreaFilmStripDataProvider";
+    private static final String TAG = CameraDataAdapter.class.getSimpleName();
 
     private static final int DEFAULT_DECODE_SIZE = 3000;
     private static final String[] CAMERA_PATH = { Storage.DIRECTORY + "%" };
@@ -55,18 +54,23 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
 
     private Listener mListener;
     private View mCameraPreviewView;
-    private ColorDrawable mPlaceHolder;
+    private Drawable mPlaceHolder;
 
     private int mSuggestedWidth = DEFAULT_DECODE_SIZE;
     private int mSuggestedHeight = DEFAULT_DECODE_SIZE;
 
-    public CameraDataAdapter(View cameraPreviewView, int placeHolderColor) {
-        mCameraPreviewView = cameraPreviewView;
-        mPlaceHolder = new ColorDrawable(placeHolderColor);
+    public CameraDataAdapter(Drawable placeHolder) {
+        mPlaceHolder = placeHolder;
     }
 
-    public void setCameraPreviewInfo(int width, int height) {
+    public void setCameraPreviewInfo(View cameraPreview, int width, int height) {
+        mCameraPreviewView = cameraPreview;
         addOrReplaceCameraData(buildCameraImageData(width, height));
+    }
+
+    public void requestLoad(ContentResolver resolver) {
+        QueryTask qtask = new QueryTask();
+        qtask.execute(resolver);
     }
 
     @Override
@@ -90,11 +94,6 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         }
     }
 
-    public void requestLoad(ContentResolver resolver) {
-        QueryTask qtask = new QueryTask();
-        qtask.execute(resolver);
-    }
-
     @Override
     public View getView(Context c, int dataID) {
         if (dataID >= mImages.size() || dataID < 0) {
@@ -108,6 +107,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
     @Override
     public void setListener(Listener listener) {
         mListener = listener;
+        if (mImages != null) mListener.onDataLoaded();
     }
 
     private LocalData buildCameraImageData(int width, int height) {
@@ -118,15 +118,36 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
     private void addOrReplaceCameraData(LocalData data) {
         if (mImages == null) mImages = new ArrayList<LocalData>();
         if (mImages.size() == 0) {
+            // No data at all.
             mImages.add(0, data);
+            if (mListener != null) mListener.onDataLoaded();
             return;
         }
 
         LocalData first = mImages.get(0);
         if (first.getType() == ImageData.TYPE_CAMERA_PREVIEW) {
+            // Replace the old camera data.
             mImages.set(0, data);
+            if (mListener != null) {
+                mListener.onDataUpdated(new StatusReporter() {
+                    @Override
+                    public boolean isDataRemoved(int id) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean isDataUpdated(int id) {
+                        if (id == 0) return true;
+                        return false;
+                    }
+                });
+            }
         } else {
+            // Add a new camera data.
             mImages.add(0, data);
+            if (mListener != null) {
+                mListener.onDataLoaded();
+            }
         }
     }
 
@@ -161,15 +182,33 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         @Override
         protected void onPostExecute(List<LocalData> l) {
             boolean changed = (l != mImages);
-            LocalData first = null;
+            LocalData cameraData = null;
             if (mImages != null && mImages.size() > 0) {
-                first = mImages.get(0);
-                if (first.getType() != ImageData.TYPE_CAMERA_PREVIEW) first = null;
+                cameraData = mImages.get(0);
+                if (cameraData.getType() != ImageData.TYPE_CAMERA_PREVIEW) cameraData = null;
             }
+
             mImages = l;
-            if (first != null) addOrReplaceCameraData(first);
-            // both might be null.
-            if (changed) mListener.onDataLoaded();
+            if (cameraData != null) {
+                l.add(0, cameraData);
+                if (mListener != null) {
+                    mListener.onDataUpdated(new StatusReporter() {
+                        @Override
+                        public boolean isDataRemoved(int id) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean isDataUpdated(int id) {
+                            if (id == 0) return false;
+                            return true;
+                        }
+                    });
+                }
+            } else {
+                // both might be null.
+                if (changed) mListener.onDataLoaded();
+            }
         }
     }
 
@@ -199,28 +238,25 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         }
 
         @Override
-        abstract public int getType();
+        public abstract int getType();
 
         abstract View getView(Context c, int width, int height, Drawable placeHolder);
     }
 
     private class CameraPreviewData extends LocalData {
-        private int mWidth;
-        private int mHeight;
-
         CameraPreviewData(int w, int h) {
-            mWidth = w;
-            mHeight = h;
+            width = w;
+            height = h;
         }
 
         @Override
         public int getWidth() {
-            return mWidth;
+            return width;
         }
 
         @Override
         public int getHeight() {
-            return mHeight;
+            return height;
         }
 
         @Override
@@ -380,6 +416,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
                     Log.e(TAG, "Cannot decode bitmap file:" + path);
                     return;
                 }
+                mView.setScaleType(ImageView.ScaleType.FIT_XY);
                 mView.setImageBitmap(bitmap);
             }
         }
