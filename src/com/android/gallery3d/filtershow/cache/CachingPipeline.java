@@ -300,6 +300,17 @@ public class CachingPipeline {
         }
     }
 
+    public synchronized void renderImage(ImagePreset preset, Allocation in, Allocation out) {
+        synchronized (CachingPipeline.class) {
+            if (getRenderScriptContext() == null) {
+                return;
+            }
+            setupEnvironment(preset, false);
+            mFiltersManager.freeFilterResources(preset);
+            preset.applyFilters(-1, -1, in, out, mEnvironment);
+        }
+    }
+
     public synchronized Bitmap renderFinalImage(Bitmap bitmap, ImagePreset preset) {
         synchronized (CachingPipeline.class) {
             if (getRenderScriptContext() == null) {
