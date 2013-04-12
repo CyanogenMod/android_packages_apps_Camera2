@@ -59,30 +59,39 @@ public class VideoMenu extends PieController
         super.initialize(group);
         mPopup = null;
         mPopupStatus = POPUP_NONE;
-
-        PieItem item = makeItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE, POS_FLASH, 5);
-        mRenderer.addItem(item);
-        item = makeItem(CameraSettings.KEY_WHITE_BALANCE, POS_WB, 5);
-        mRenderer.addItem(item);
+        PieItem item = null;
+        // flash
+        if (group.findPreference(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE) != null) {
+            item = makeItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE, POS_FLASH, 5);
+            mRenderer.addItem(item);
+        }
+        // white balance
+        if (group.findPreference(CameraSettings.KEY_WHITE_BALANCE) != null) {
+            item = makeItem(CameraSettings.KEY_WHITE_BALANCE, POS_WB, 5);
+            mRenderer.addItem(item);
+        }
         // camera switcher
-        item = makeItem(R.drawable.ic_switch_video_facing_holo_light);
-        item.setPosition(POS_SWITCH, 5);
-        item.setOnClickListener(new OnClickListener() {
+        if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
+            item = makeItem(R.drawable.ic_switch_video_facing_holo_light);
+            item.setPosition(POS_SWITCH, 5);
+            item.setOnClickListener(new OnClickListener() {
 
-            @Override
-            public void onClick(PieItem item) {
-                // Find the index of next camera.
-                ListPreference pref = mPreferenceGroup.findPreference(CameraSettings.KEY_CAMERA_ID);
-                if (pref != null) {
-                    int index = pref.findIndexOfValue(pref.getValue());
-                    CharSequence[] values = pref.getEntryValues();
-                    index = (index + 1) % values.length;
-                    int newCameraId = Integer.parseInt((String) values[index]);
-                    mListener.onCameraPickerClicked(newCameraId);
+                @Override
+                public void onClick(PieItem item) {
+                    // Find the index of next camera.
+                    ListPreference pref =
+                            mPreferenceGroup.findPreference(CameraSettings.KEY_CAMERA_ID);
+                    if (pref != null) {
+                        int index = pref.findIndexOfValue(pref.getValue());
+                        CharSequence[] values = pref.getEntryValues();
+                        index = (index + 1) % values.length;
+                        int newCameraId = Integer.parseInt((String) values[index]);
+                        mListener.onCameraPickerClicked(newCameraId);
+                    }
                 }
-            }
-        });
-        mRenderer.addItem(item);
+            });
+            mRenderer.addItem(item);
+        }
         // settings popup
         mOtherKeys = new String[] {
                 CameraSettings.KEY_VIDEO_EFFECT,
