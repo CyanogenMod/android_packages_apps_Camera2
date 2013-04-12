@@ -18,6 +18,7 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.support.v8.renderscript.Allocation;
 import android.widget.Toast;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
@@ -63,6 +64,11 @@ public abstract class ImageFilter implements Cloneable {
 
     public String getName() {
         return mName;
+    }
+
+    public boolean supportsAllocationInput() { return false; }
+
+    public void apply(Allocation in, Allocation out) {
     }
 
     public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
