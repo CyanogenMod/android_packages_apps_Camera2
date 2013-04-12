@@ -83,7 +83,7 @@ public class FilmStripView extends ViewGroup {
     }
 
     public interface DataAdapter {
-        public interface StatusReporter {
+        public interface UpdateReporter {
             public boolean isDataRemoved(int id);
             public boolean isDataUpdated(int id);
         }
@@ -94,7 +94,7 @@ public class FilmStripView extends ViewGroup {
             public void onDataLoaded();
             // Only some of the data is changed. The listener should check
             // if any thing needs to be updated.
-            public void onDataUpdated(StatusReporter reporter);
+            public void onDataUpdated(UpdateReporter reporter);
             public void onDataInserted(int dataID);
             public void onDataRemoved(int dataID);
         }
@@ -424,7 +424,7 @@ public class FilmStripView extends ViewGroup {
             }
 
             @Override
-            public void onDataUpdated(DataAdapter.StatusReporter reporter) {
+            public void onDataUpdated(DataAdapter.UpdateReporter reporter) {
                 update(reporter);
             }
 
@@ -462,7 +462,7 @@ public class FilmStripView extends ViewGroup {
     }
 
     // Some of the data is changed.
-    private void update(DataAdapter.StatusReporter reporter) {
+    private void update(DataAdapter.UpdateReporter reporter) {
         // No data yet.
         if (mViewInfo[mCurrentInfo] == null) {
             reload();
