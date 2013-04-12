@@ -88,8 +88,7 @@
     <string name="rotate_right" msgid="6776325835923384839">"تدوير لليمين"</string>
     <string name="no_such_item" msgid="5315144556325243400">"تعذر العثور على العنصر."</string>
     <string name="edit" msgid="1502273844748580847">"تعديل"</string>
-    <!-- no translation found for simple_edit (2792835918347498211) -->
-    <skip />
+    <string name="simple_edit" msgid="2792835918347498211">"تعديل بسيط"</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"معالجة طلبات التخزين المؤقت"</string>
     <string name="caching_label" msgid="4521059045896269095">"تخزين مؤقت..."</string>
     <string name="crop_action" msgid="3427470284074377001">"اقتصاص"</string>
