@@ -671,7 +671,7 @@ public class PieRenderer extends OverlayRenderer
     }
 
     private void onEnterOpen() {
-        if ((mCurrentItem != getOpenItem()) && mCurrentItem.hasItems()) {
+        if ((mCurrentItem != null) && (mCurrentItem != getOpenItem()) && mCurrentItem.hasItems()) {
             openCurrentItem();
         }
     }
