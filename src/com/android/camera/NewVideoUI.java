@@ -139,7 +139,7 @@ public class NewVideoUI implements PieRenderer.PieListener,
         mActivity.getLayoutInflater().inflate(R.layout.new_video_module, (ViewGroup) mRootView, true);
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         mTextureView.setSurfaceTextureListener(this);
-        mTextureView.addOnLayoutChangeListener(mLayoutListener);
+        mRootView.addOnLayoutChangeListener(mLayoutListener);
         mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
         mSwitcher = (CameraSwitcher) mRootView.findViewById(R.id.camera_switcher);
         mSwitcher.setCurrentIndex(1);
@@ -253,6 +253,14 @@ public class NewVideoUI implements PieRenderer.PieListener,
         scaleY = scaledTextureHeight / height;
         mMatrix.setScale(scaleX, scaleY, (float) width / 2, (float) height / 2);
         mTextureView.setTransform(mMatrix);
+
+        if (mSurfaceView != null && mSurfaceView.getVisibility() == View.VISIBLE) {
+            LayoutParams lp = (LayoutParams) mSurfaceView.getLayoutParams();
+            lp.width = (int) mSurfaceTextureUncroppedWidth;
+            lp.height = (int) mSurfaceTextureUncroppedHeight;
+            lp.gravity = Gravity.CENTER;
+            mSurfaceView.requestLayout();
+        }
     }
 
     public void hideUI() {
@@ -333,9 +341,9 @@ public class NewVideoUI implements PieRenderer.PieListener,
     }
 
     public void showSurfaceView() {
-        // TODO: Need to transform the surface view
         mSurfaceView.setVisibility(View.VISIBLE);
         mTextureView.setVisibility(View.GONE);
+        setTransformMatrix(mPreviewWidth, mPreviewHeight);
     }
 
     private void initializeOverlay() {
@@ -497,23 +505,6 @@ public class NewVideoUI implements PieRenderer.PieListener,
     @Override
     public void onSingleTapUp(View view, int x, int y) {
         mController.onSingleTapUp(view, x, y);
-    }
-
-    // SurfaceView callback
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.v(TAG, "Surface changed. width=" + width + ". height=" + height);
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        Log.v(TAG, "Surface created");
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.v(TAG, "Surface destroyed");
-        mController.stopPreview();
     }
 
     public void showRecordingUI(boolean recording, boolean zoomSupported) {
@@ -689,6 +680,7 @@ public class NewVideoUI implements PieRenderer.PieListener,
         return mSurfaceTexture;
     }
 
+    // SurfaceTexture callbacks
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
         synchronized (mLock) {
@@ -713,4 +705,20 @@ public class NewVideoUI implements PieRenderer.PieListener,
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
     }
 
+    // SurfaceHolder callbacks
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        Log.v(TAG, "Surface changed. width=" + width + ". height=" + height);
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        Log.v(TAG, "Surface created");
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        Log.v(TAG, "Surface destroyed");
+        mController.stopPreview();
+    }
 }
