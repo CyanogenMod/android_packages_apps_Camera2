@@ -166,7 +166,7 @@ public class CropObject {
             throw new IllegalArgumentException("bad edge selected");
             // return false;
         }
-        if ((mFixAspectRatio && !checkCorner(edge)) && !checkBlock(edge)) {
+        if ((mFixAspectRatio && !checkCorner(edge)) && !checkBlock(edge) && edge != MOVE_NONE) {
             // temporary
             throw new IllegalArgumentException("bad corner selected");
             // return false;
