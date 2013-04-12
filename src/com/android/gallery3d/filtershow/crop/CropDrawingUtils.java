@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.android.gallery3d.filtershow.crop;
 
 import android.graphics.Canvas;
@@ -89,6 +90,15 @@ public abstract class CropDrawingUtils {
                 drawIndicator(canvas, cropIndicator, indicatorSize, bounds.right, bounds.centerY());
             }
         }
+    }
+
+    public static void drawShadows(Canvas canvas, Paint p, RectF innerBounds, RectF outerBounds) {
+        canvas.drawRect(outerBounds.left, outerBounds.top, innerBounds.right, innerBounds.top, p);
+        canvas.drawRect(innerBounds.right, outerBounds.top, outerBounds.right, innerBounds.bottom,
+                p);
+        canvas.drawRect(innerBounds.left, innerBounds.bottom, outerBounds.right,
+                outerBounds.bottom, p);
+        canvas.drawRect(outerBounds.left, innerBounds.top, innerBounds.left, outerBounds.bottom, p);
     }
 
     public static Matrix getBitmapToDisplayMatrix(RectF imageBounds, RectF displayBounds) {
