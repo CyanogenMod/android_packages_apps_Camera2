@@ -88,8 +88,7 @@
     <string name="rotate_right" msgid="6776325835923384839">"چرخش به راست"</string>
     <string name="no_such_item" msgid="5315144556325243400">"مورد یافت نشد."</string>
     <string name="edit" msgid="1502273844748580847">"ویرایش"</string>
-    <!-- no translation found for simple_edit (2792835918347498211) -->
-    <skip />
+    <string name="simple_edit" msgid="2792835918347498211">"ویرایش نمونه"</string>
     <string name="process_caching_requests" msgid="8722939570307386071">"پردازش درخواست‌های ذخیره در حافظهٔ پنهان"</string>
     <string name="caching_label" msgid="4521059045896269095">"در حال ذخیره در حافظهٔ پنهان..."</string>
     <string name="crop_action" msgid="3427470284074377001">"برش"</string>
