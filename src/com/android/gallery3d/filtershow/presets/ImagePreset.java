@@ -22,6 +22,7 @@ import android.support.v8.renderscript.Allocation;
 import android.util.Log;
 
 import com.android.gallery3d.filtershow.ImageStateAdapter;
+import com.android.gallery3d.filtershow.cache.CachingPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.BaseFiltersManager;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
@@ -226,6 +227,10 @@ public class ImagePreset {
 
     private void setBorder(FilterRepresentation filter) {
         mBorder = filter;
+    }
+
+    public void resetBorder() {
+        mBorder = null;
     }
 
     public boolean isFx() {
@@ -472,6 +477,16 @@ public class ImagePreset {
         }
 
         return bitmap;
+    }
+
+    public void applyBorder(Allocation in, Allocation out, FilterEnvironment environment) {
+        if (mBorder != null && mDoApplyGeometry) {
+            mBorder.synchronizeRepresentation();
+            // TODO: should keep the bitmap around
+            Allocation bitmapIn = Allocation.createTyped(CachingPipeline.getRenderScriptContext(), in.getType());
+            bitmapIn.copyFrom(out);
+            environment.applyRepresentation(mBorder, bitmapIn, out);
+        }
     }
 
     public void applyFilters(int from, int to, Allocation in, Allocation out, FilterEnvironment environment) {
