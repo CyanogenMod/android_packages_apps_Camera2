@@ -21,15 +21,14 @@ import android.graphics.Rect;
 import android.support.v8.renderscript.Allocation;
 import android.util.Log;
 
-import com.android.gallery3d.filtershow.ImageStateAdapter;
 import com.android.gallery3d.filtershow.cache.CachingPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.BaseFiltersManager;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
-import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
+import com.android.gallery3d.filtershow.state.StateAdapter;
 
 import java.util.Vector;
 
@@ -533,14 +532,11 @@ public class ImagePreset {
         return true;
     }
 
-    public void fillImageStateAdapter(ImageStateAdapter imageStateAdapter) {
+    public void fillImageStateAdapter(StateAdapter imageStateAdapter) {
         if (imageStateAdapter == null) {
             return;
         }
-        imageStateAdapter.clear();
-        // TODO: re-enable the state panel
         imageStateAdapter.addAll(mFilters);
-        imageStateAdapter.notifyDataSetChanged();
     }
 
     public void setPartialRendering(boolean partialRendering, Rect bounds) {
