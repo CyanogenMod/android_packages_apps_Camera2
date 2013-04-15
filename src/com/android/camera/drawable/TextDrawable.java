@@ -37,6 +37,10 @@ public class TextDrawable extends Drawable {
     private int mIntrinsicWidth;
     private int mIntrinsicHeight;
 
+    public TextDrawable(Resources res) {
+        this(res, "");
+    }
+
     public TextDrawable(Resources res, CharSequence text) {
         mText = text;
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -49,11 +53,24 @@ public class TextDrawable extends Drawable {
         mIntrinsicHeight = mPaint.getFontMetricsInt(null);
     }
 
+    public void setText(CharSequence txt) {
+        mText = txt;
+        if (txt == null) {
+            mIntrinsicWidth = 0;
+            mIntrinsicHeight = 0;
+        } else {
+            mIntrinsicWidth = (int) (mPaint.measureText(mText, 0, mText.length()) + .5);
+            mIntrinsicHeight = mPaint.getFontMetricsInt(null);
+        }
+    }
+
     @Override
     public void draw(Canvas canvas) {
-        Rect bounds = getBounds();
-        canvas.drawText(mText, 0, mText.length(),
-                bounds.centerX(), bounds.centerY(), mPaint);
+        if (mText != null) {
+            Rect bounds = getBounds();
+            canvas.drawText(mText, 0, mText.length(),
+                    bounds.centerX(), bounds.centerY(), mPaint);
+        }
     }
 
     @Override

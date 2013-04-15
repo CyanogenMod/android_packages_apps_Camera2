@@ -27,7 +27,6 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.animation.Animation;
@@ -35,6 +34,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.Transformation;
 
+import com.android.camera.drawable.TextDrawable;
 import com.android.gallery3d.R;
 
 import java.util.ArrayList;
@@ -133,6 +133,7 @@ public class PieRenderer extends OverlayRenderer
     private FadeOutAnimation mFadeOut;
     private volatile boolean mFocusCancelled;
     private PointF mPolar = new PointF();
+    private TextDrawable mLabel;
 
 
 
@@ -213,6 +214,7 @@ public class PieRenderer extends OverlayRenderer
         mSliceRadius = res.getDimensionPixelSize(R.dimen.pie_item_radius);
         mArcRadius = res.getDimensionPixelSize(R.dimen.pie_arc_radius);
         mArcOffset = res.getDimensionPixelSize(R.dimen.pie_arc_offset);
+        mLabel = new TextDrawable(res);
     }
 
     private PieItem getRoot() {
@@ -269,6 +271,7 @@ public class PieRenderer extends OverlayRenderer
                     }
                 }
             }
+            mLabel.setText("");
             mOpen.clear();
             mOpen.add(root);
             layoutPie();
@@ -335,6 +338,15 @@ public class PieRenderer extends OverlayRenderer
 
     private void layoutPie() {
         layoutItems(0, getRoot().getItems());
+        layoutLabel(0);
+    }
+
+    private void layoutLabel(int level) {
+        int x = mPieCenterX;
+        int y = mArcCenterY - mArcRadius - (level + 2) * mRadiusInc;
+        int w = mLabel.getIntrinsicWidth();
+        int h = mLabel.getIntrinsicHeight();
+        mLabel.setBounds(x - w/2, y - h/2, x + w/2, y + h/2);
     }
 
     private void layoutItems(int level, List<PieItem> items) {
@@ -480,6 +492,7 @@ public class PieRenderer extends OverlayRenderer
             for (PieItem item : getParent().getItems()) {
                 drawItem(Math.max(0, mOpen.size() - 2), canvas, item, alpha);
             }
+            mLabel.draw(canvas);
         }
         if (hasOpenItem()) {
             int level = getLevel();
@@ -491,6 +504,7 @@ public class PieRenderer extends OverlayRenderer
                     drawItem(level, canvas, inner, (mXFade != null) ? (1 - 0.5f * alpha) : 1);
                 }
             }
+            mLabel.draw(canvas);
         }
         canvas.restoreToCount(state);
     }
@@ -606,6 +620,7 @@ public class PieRenderer extends OverlayRenderer
                 } else {
                     deselect();
                 }
+                mLabel.setText("");
                 return false;
             }
             PieItem item = findItem(mPolar);
@@ -665,6 +680,8 @@ public class PieRenderer extends OverlayRenderer
         if (item != null && item.isEnabled()) {
             item.setSelected(true);
             mCurrentItem = item;
+            mLabel.setText(mCurrentItem.getLabel());
+            layoutLabel(getLevel());
         } else {
             mCurrentItem = null;
         }
@@ -690,6 +707,7 @@ public class PieRenderer extends OverlayRenderer
             mCurrentItem = item;
             if ((mCurrentItem != getOpenItem()) && mCurrentItem.hasItems()) {
                 openCurrentItem();
+                layoutLabel(getLevel());
             }
         } else {
             mCurrentItem = null;
@@ -728,6 +746,7 @@ public class PieRenderer extends OverlayRenderer
                     mXFade = null;
                     ci.setSelected(false);
                     mOpening = false;
+                    mLabel.setText("");
                 }
 
                 @Override
