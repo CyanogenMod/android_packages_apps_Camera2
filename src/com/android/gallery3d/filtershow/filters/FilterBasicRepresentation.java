@@ -18,6 +18,8 @@ package com.android.gallery3d.filtershow.filters;
 
 import com.android.gallery3d.app.Log;
 import com.android.gallery3d.filtershow.controller.Control;
+import com.android.gallery3d.filtershow.controller.FilterView;
+import com.android.gallery3d.filtershow.controller.Parameter;
 import com.android.gallery3d.filtershow.controller.ParameterInteger;
 
 public class FilterBasicRepresentation extends FilterRepresentation implements ParameterInteger {
@@ -153,5 +155,14 @@ public class FilterBasicRepresentation extends FilterRepresentation implements P
     @Override
     public String getParameterName() {
         return getName();
+    }
+
+    @Override
+    public void setFilterView(FilterView editor) {
+    }
+
+    @Override
+    public void copyFrom(Parameter src) {
+        useParametersFrom((FilterBasicRepresentation) src);
     }
 }
