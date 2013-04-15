@@ -787,7 +787,7 @@ public class VideoModule implements CameraModule,
         if (mParameters == null || mActivity.mCameraDevice == null) return index;
         // Set zoom parameters asynchronously
         mParameters.setZoom(mZoomValue);
-        mActivity.mCameraDevice.setParametersAsync(mParameters);
+        mActivity.mCameraDevice.setParameters(mParameters);
         Parameters p = mActivity.mCameraDevice.getParameters();
         if (p != null) return p.getZoom();
         return index;

@@ -68,14 +68,17 @@ public class CameraManager {
     private static final int SET_ERROR_CALLBACK = 18;
     private static final int SET_PARAMETERS = 19;
     private static final int GET_PARAMETERS = 20;
-    private static final int SET_PARAMETERS_ASYNC = 21;
-    private static final int SET_PREVIEW_DISPLAY_ASYNC = 22;
-    private static final int SET_PREVIEW_CALLBACK = 23;
-    private static final int ENABLE_SHUTTER_SOUND = 24;
-    private static final int REFRESH_PARAMETERS = 25;
+    private static final int SET_PREVIEW_DISPLAY_ASYNC = 21;
+    private static final int SET_PREVIEW_CALLBACK = 22;
+    private static final int ENABLE_SHUTTER_SOUND = 23;
+    private static final int REFRESH_PARAMETERS = 24;
 
     private Handler mCameraHandler;
     private android.hardware.Camera mCamera;
+
+    // Used to retain a copy of Parameters for setting parameters.
+    private Parameters mParamsToSet;
+
 
     // This holder is used when we need to pass the exception
     // back to the calling thread. SynchornousQueue doesn't
@@ -226,7 +229,8 @@ public class CameraManager {
 
                     case SET_PARAMETERS:
                         mParametersIsDirty = true;
-                        mCamera.setParameters((Parameters) msg.obj);
+                        mParamsToSet.unflatten((String) msg.obj);
+                        mCamera.setParameters(mParamsToSet);
                         return;
 
                     case GET_PARAMETERS:
@@ -234,10 +238,6 @@ public class CameraManager {
                             mParameters = mCamera.getParameters();
                             mParametersIsDirty = false;
                         }
-                        return;
-
-                    case SET_PARAMETERS_ASYNC:
-                        mCamera.setParameters((Parameters) msg.obj);
                         return;
 
                     case SET_PREVIEW_CALLBACK:
@@ -287,6 +287,9 @@ public class CameraManager {
         mCamera = android.hardware.Camera.open(cameraId);
         if (mCamera != null) {
             mParametersIsDirty = true;
+            if (mParamsToSet == null) {
+                mParamsToSet = mCamera.getParameters();
+            }
             return new CameraProxy();
         } else {
             return null;
@@ -432,17 +435,8 @@ public class CameraManager {
                 Log.v(TAG, "null parameters in setParameters()");
                 return;
             }
-            mCameraHandler.obtainMessage(SET_PARAMETERS, params).sendToTarget();
-        }
-
-        public void setParametersAsync(Parameters params) {
-            // TODO: remove this.
-            if (params == null) {
-                Log.v(TAG, "null parameters in setParameters()");
-                return;
-            }
-            mCameraHandler.removeMessages(SET_PARAMETERS_ASYNC);
-            mCameraHandler.obtainMessage(SET_PARAMETERS_ASYNC, params).sendToTarget();
+            mCameraHandler.obtainMessage(SET_PARAMETERS, params.flatten())
+                    .sendToTarget();
         }
 
         public Parameters getParameters() {
