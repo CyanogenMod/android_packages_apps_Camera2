@@ -72,8 +72,11 @@ public class VideoMenu extends PieController
         }
         // camera switcher
         if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
+            ListPreference lpref = group.findPreference(CameraSettings.KEY_CAMERA_ID);
             item = makeItem(R.drawable.ic_switch_video_facing_holo_light);
             item.setPosition(POS_SWITCH, 5);
+            item.setLabel(lpref.getLabel());
+            final PieItem fitem = item;
             item.setOnClickListener(new OnClickListener() {
 
                 @Override
@@ -87,6 +90,7 @@ public class VideoMenu extends PieController
                         index = (index + 1) % values.length;
                         int newCameraId = Integer.parseInt((String) values[index]);
                         mListener.onCameraPickerClicked(newCameraId);
+                        fitem.setLabel(pref.getLabel());
                     }
                 }
             });
@@ -101,6 +105,7 @@ public class VideoMenu extends PieController
         };
         item = makeItem(R.drawable.ic_settings_holo_light);
         item.setPosition(POS_SET, 5);
+        item.setLabel(mActivity.getResources().getString(R.string.camera_menu_settings_label));
         item.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(PieItem item) {
