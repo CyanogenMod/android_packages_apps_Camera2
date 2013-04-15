@@ -44,6 +44,7 @@ public class PieItem {
     private Path mPath;
     private OnClickListener mOnClickListener;
     private float mAlpha;
+    private CharSequence mLabel;
 
     // Gray out the view when disabled
     private static final float ENABLED_ALPHA = 1;
@@ -57,6 +58,14 @@ public class PieItem {
             setAlpha(1f);
         }
         mEnabled = true;
+    }
+
+    public void setLabel(CharSequence txt) {
+        mLabel = txt;
+    }
+
+    public CharSequence getLabel() {
+        return mLabel;
     }
 
     public void setPosition(int pos, int count) {
