@@ -17,7 +17,6 @@
 package com.android.gallery3d.filtershow;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
@@ -35,6 +34,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -75,6 +76,8 @@ import com.android.gallery3d.filtershow.imageshow.ImageTinyPlanet;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.provider.SharedImageProvider;
+import com.android.gallery3d.filtershow.state.StateAdapter;
+import com.android.gallery3d.filtershow.state.StatePanel;
 import com.android.gallery3d.filtershow.tools.BitmapTask;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.filtershow.ui.FilterIconButton;
@@ -88,8 +91,10 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Vector;
 
-public class FilterShowActivity extends Activity implements OnItemClickListener,
+public class FilterShowActivity extends FragmentActivity implements OnItemClickListener,
         OnShareTargetSelectedListener {
+
+    private String mPanelFragmentTag = "StatePanel";
 
     // fields for supporting crop action
     public static final String CROP_ACTION = "com.android.camera.action.CROP";
@@ -157,10 +162,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         } else {
             findViewById(R.id.historyPanel).setVisibility(View.GONE);
         }
-        if (mShowingImageStatePanel) {
-            findViewById(R.id.imageStatePanel).setVisibility(View.VISIBLE);
-        } else {
-            findViewById(R.id.imageStatePanel).setVisibility(View.GONE);
+        if (mShowingImageStatePanel && (savedInstanceState == null)) {
+            loadImageStatePanel();
         }
 
         setDefaultPreset();
@@ -174,7 +177,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         ((ViewStub) findViewById(R.id.stateCategoryStub)).inflate();
         ((ViewStub) findViewById(R.id.editorPanelStub)).inflate();
         ((ViewStub) findViewById(R.id.historyPanelStub)).inflate();
-        ((ViewStub) findViewById(R.id.statePanelStub)).inflate();
 
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -242,8 +244,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     }
 
     public void setupStatePanel() {
-        ListView imageStateList = (ListView) findViewById(R.id.imageStateList);
-        imageStateList.setAdapter(mMasterImage.getState());
         mImageLoader.setAdapter(mMasterImage.getHistory());
         mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
         mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList));
@@ -849,21 +849,16 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     }
 
     private void toggleImageStatePanel() {
-        final View viewList = findViewById(R.id.imageStatePanel);
-
-        if (mShowingHistoryPanel) {
-            findViewById(R.id.historyPanel).setVisibility(View.GONE);
-            mShowingHistoryPanel = false;
-        }
-
-        if (!mShowingImageStatePanel) {
-            mShowingImageStatePanel = true;
-            viewList.setVisibility(View.VISIBLE);
-        } else {
-            mShowingImageStatePanel = false;
-            viewList.setVisibility(View.GONE);
-        }
         invalidateOptionsMenu();
+    }
+
+    private void loadImageStatePanel() {
+        StatePanel statePanel = new StatePanel();
+        if (findViewById(R.id.state_panel_container) != null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.state_panel_container, statePanel, mPanelFragmentTag);
+            transaction.commit();
+        }
     }
 
     @Override
@@ -877,6 +872,9 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             mShowingImageStatePanel = true;
         } else if (mShowingImageStatePanel) {
             toggleImageStatePanel();
+        }
+        if (mShowingImageStatePanel) {
+            loadImageStatePanel();
         }
         if (mShowingHistoryPanel) {
             toggleHistoryPanel();
@@ -897,9 +895,8 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
         HistoryAdapter mHistoryAdapter = new HistoryAdapter(
                 this, R.layout.filtershow_history_operation_row,
                 R.id.rowTextView);
-        ImageStateAdapter mImageStateAdapter = new ImageStateAdapter(this,
-                R.layout.filtershow_imagestate_row);
 
+        StateAdapter mImageStateAdapter = new StateAdapter(this, 0);
         MasterImage.reset();
         mMasterImage = MasterImage.getImage();
         mMasterImage.setHistoryAdapter(mHistoryAdapter);
@@ -920,10 +917,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
     public void toggleHistoryPanel() {
         final View view = findViewById(R.id.mainPanel);
         final View viewList = findViewById(R.id.historyPanel);
-
-        if (mShowingImageStatePanel) {
-            findViewById(R.id.imageStatePanel).setVisibility(View.GONE);
-        }
 
         int translate = translateMainPanel(viewList);
         if (!mShowingHistoryPanel) {
@@ -968,10 +961,6 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             } else {
                 viewList.setVisibility(View.GONE);
                 findViewById(R.id.filtersPanel).setVisibility(View.VISIBLE);
-                // In landscape, bring back the state panel if it was there
-                if (mShowingImageStatePanel) {
-                    findViewById(R.id.imageStatePanel).setVisibility(View.VISIBLE);
-                }
             }
         }
         invalidateOptionsMenu();
