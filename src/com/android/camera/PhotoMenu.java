@@ -17,6 +17,7 @@
 package com.android.camera;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.hardware.Camera.Parameters;
 import android.view.LayoutInflater;
 
@@ -65,20 +66,26 @@ public class PhotoMenu extends PieController
         mPopup = null;
         mSecondPopup = null;
         PieItem item = null;
+        final Resources res = mActivity.getResources();
         // flash
         if (group.findPreference(CameraSettings.KEY_FLASH_MODE) != null) {
             item = makeItem(CameraSettings.KEY_FLASH_MODE, POS_FLASH, 5);
+            item.setLabel(res.getString(R.string.pref_camera_flashmode_label));
             mRenderer.addItem(item);
         }
         // exposure compensation
         if (group.findPreference(CameraSettings.KEY_EXPOSURE) != null) {
             item = makeItem(CameraSettings.KEY_EXPOSURE, POS_EXP, 5);
+            item.setLabel(res.getString(R.string.pref_exposure_label));
             mRenderer.addItem(item);
         }
         // camera switcher
         if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
             item = makeItem(R.drawable.ic_switch_photo_facing_holo_light);
+            ListPreference lpref = group.findPreference(CameraSettings.KEY_CAMERA_ID);
             item.setPosition(POS_SWITCH, 5);
+            item.setLabel(lpref.getLabel());
+            final PieItem fitem = item;
             item.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(PieItem item) {
@@ -91,6 +98,7 @@ public class PhotoMenu extends PieController
                         index = (index + 1) % values.length;
                         int newCameraId = Integer
                                 .parseInt((String) values[index]);
+                        fitem.setLabel(camPref.getLabel());
                         mListener.onCameraPickerClicked(newCameraId);
                     }
                 }
@@ -99,8 +107,11 @@ public class PhotoMenu extends PieController
         }
         // hdr
         if (group.findPreference(CameraSettings.KEY_CAMERA_HDR) != null) {
+            ListPreference lp = group.findPreference(CameraSettings.KEY_CAMERA_HDR);
             item = makeItem(R.drawable.ic_hdr);
+            item.setLabel(lp.getLabel());
             item.setPosition(POS_HDR, 5);
+            final PieItem fitem = item;
             item.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(PieItem item) {
@@ -112,6 +123,7 @@ public class PhotoMenu extends PieController
                         int index = (pref.findIndexOfValue(pref.getValue()) + 1) % 2;
                         pref.setValueIndex(index);
                         onSettingChanged(pref);
+                        fitem.setLabel(pref.getLabel());
                     }
                 }
             });
@@ -121,10 +133,12 @@ public class PhotoMenu extends PieController
         // more settings
         PieItem more = makeItem(R.drawable.ic_settings_holo_light);
         more.setPosition(POS_MORE, 5);
+        more.setLabel(res.getString(R.string.camera_menu_more_label));
         mRenderer.addItem(more);
         // white balance
         if (group.findPreference(CameraSettings.KEY_WHITE_BALANCE) != null) {
             item = makeItem(CameraSettings.KEY_WHITE_BALANCE, POS_WB, 5);
+            item.setLabel(res.getString(R.string.pref_camera_whitebalance_label));
             more.addItem(item);
         }
         // settings popup
@@ -137,6 +151,7 @@ public class PhotoMenu extends PieController
                 CameraSettings.KEY_TIMER_SOUND_EFFECTS,
                 };
         item = makeItem(R.drawable.ic_settings_holo_light);
+        item.setLabel(res.getString(R.string.camera_menu_settings_label));
         item.setPosition(POS_SET, 5);
         item.setOnClickListener(new OnClickListener() {
             @Override
