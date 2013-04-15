@@ -104,6 +104,7 @@ public class PieController {
         }
         PieItem item = makeItem(resid);
         item.setPosition(position, count);
+        item.setLabel(pref.getTitle().toUpperCase());
         mPreferences.add(pref);
         mPreferenceMap.put(pref, item);
         int nOfEntries = pref.getEntries().length;
@@ -116,6 +117,7 @@ public class PieController {
                     inner = makeItem(pref.getEntries()[i]);
                 }
                 inner.setPosition(i, nOfEntries);
+                inner.setLabel(pref.getLabels()[i]);
                 item.addItem(inner);
                 final int index = i;
                 inner.setOnClickListener(new OnClickListener() {

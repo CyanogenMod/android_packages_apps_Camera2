@@ -694,6 +694,11 @@
     <string name="pref_camera_focusmode_entry_infinity">Infinity</string>
     <string name="pref_camera_focusmode_entry_macro">Macro</string>
 
+    <!-- Menu, focus mode labels [CHAR LIMIT=50] -->
+    <string name="pref_camera_focusmode_label_auto">AUTO</string>
+    <string name="pref_camera_focusmode_label_infinity">INFINITY</string>
+    <string name="pref_camera_focusmode_label_macro">MACRO</string>
+
     <!-- Default flash mode setting.-->
     <string name="pref_camera_flashmode_default" translatable="false">auto</string>
 
@@ -702,11 +707,18 @@
 
     <!-- Settings screen, Flash mode title -->
     <string name="pref_camera_flashmode_title">Flash mode</string>
+        <!-- flash label [CHAR LIMIT=50] -->
+    <string name="pref_camera_flashmode_label">FLASH MODE</string>
 
     <!-- Settings screen, Flash mode dialog radio button choices -->
     <string name="pref_camera_flashmode_entry_auto">Auto</string>
     <string name="pref_camera_flashmode_entry_on">On</string>
     <string name="pref_camera_flashmode_entry_off">Off</string>
+
+    <!-- Menu, flash mode labels [CHAR LIMIT=50] -->
+    <string name="pref_camera_flashmode_label_auto">FLASH AUTO</string>
+    <string name="pref_camera_flashmode_label_on">FLASH ON</string>
+    <string name="pref_camera_flashmode_label_off">FLASH OFF</string>
 
     <!-- Default videocamera flash mode setting.-->
     <string name="pref_camera_video_flashmode_default" translatable="false">off</string>
@@ -716,6 +728,8 @@
 
     <!-- Settings screen, white balance title -->
     <string name="pref_camera_whitebalance_title">White balance</string>
+    <!-- Menu, white balance label -->
+    <string name="pref_camera_whitebalance_label">WHITE BALANCE</string>
 
     <!-- Settings screen, White balance dialog radio button choices -->
     <string name="pref_camera_whitebalance_entry_auto">Auto</string>
@@ -723,6 +737,13 @@
     <string name="pref_camera_whitebalance_entry_daylight">Daylight</string>
     <string name="pref_camera_whitebalance_entry_fluorescent">Fluorescent</string>
     <string name="pref_camera_whitebalance_entry_cloudy">Cloudy</string>
+
+    <!-- Menu, White balance labels [CHAR LIMIT=50] -->
+    <string name="pref_camera_whitebalance_label_auto">AUTO</string>
+    <string name="pref_camera_whitebalance_label_incandescent">INCANDESCENT</string>
+    <string name="pref_camera_whitebalance_label_daylight">DAYLIGHT</string>
+    <string name="pref_camera_whitebalance_label_fluorescent">FLUORESCENT</string>
+    <string name="pref_camera_whitebalance_label_cloudy">CLOUDY</string>
 
     <!-- Default scene mode setting. -->
     <string name="pref_camera_scenemode_default" translatable="false">auto</string>
@@ -749,9 +770,21 @@
     <!-- Exposure settings in preference -->
     <string name="pref_exposure_title">Exposure</string>
     <string name="pref_exposure_default" translatable="false">0</string>
+    <!--  menu label exposure compensation [CHAR LIMIT=50] -->
+    <string name="pref_exposure_label">EXPOSURE</string>
 
     <!-- Default HDR entry value -->
     <string name="pref_camera_hdr_default">@string/setting_off_value</string>
+
+    <!-- HDR label ON [CHAR LIMIT=60] -->
+    <string name="pref_camera_hdr_label_on">HDR OFF</string>
+    <!-- HDR label OFF [CHAR LIMIT=60] -->
+    <string name="pref_camera_hdr_label_off">HDR ON</string>
+
+    <!-- switch camera label back [CHAR LIMIT=60] -->
+    <string name="pref_camera_id_label_back">FRONT CAMERA</string>
+    <!-- switch camera label front [CHAR LIMIT=60] -->
+    <string name="pref_camera_id_label_front">BACK CAMERA</string>
 
     <!-- Dialog "OK" button. Dismisses dialog. -->
     <string name="dialog_ok">OK</string>
@@ -1014,6 +1047,13 @@ CHAR LIMIT = NONE] -->
     <string name="tab_photos">Photos</string>
     <!-- Title for the albums tab [CHAR LIMIT=25] -->
     <string name="tab_albums">Albums</string>
+
+    <!-- Camera menu labels -->
+
+    <!-- more options label [CHAR LIMIT=50] -->
+    <string name="camera_menu_more_label">MORE OPTIONS</string>
+    <!-- settings label [CHAR LIMIT=50] -->
+    <string name="camera_menu_settings_label">SETTINGS</string>
 
     <!-- String indicating how many photos are in an album [CHAR LIMIT=15] -->
     <plurals name="number_of_photos">
