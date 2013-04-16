@@ -203,6 +203,8 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
                     uri = insertContent(context, sourceUri, this.destinationFile, saveFileName,
                             time);
                 }
+                XmpPresets.writeFilterXMP(context, sourceUri, this.destinationFile, preset);
+
                 noBitmap = false;
             } catch (java.lang.OutOfMemoryError e) {
                 // Try 5 times before failing for good.
@@ -215,6 +217,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         }
         return uri;
     }
+
 
     @Override
     protected void onPostExecute(Uri result) {

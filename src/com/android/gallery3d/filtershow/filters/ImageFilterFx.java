@@ -37,6 +37,11 @@ public class ImageFilterFx extends ImageFilter {
         mFxBitmap = null;
     }
 
+    @Override
+    public FilterRepresentation getDefaultRepresentation() {
+        return null;
+    }
+
     public void useRepresentation(FilterRepresentation representation) {
         FilterFxRepresentation parameters = (FilterFxRepresentation) representation;
         mParameters = parameters;
@@ -87,4 +92,5 @@ public class ImageFilterFx extends ImageFilter {
     public void setResources(Resources resources) {
         mResources = resources;
     }
+
 }

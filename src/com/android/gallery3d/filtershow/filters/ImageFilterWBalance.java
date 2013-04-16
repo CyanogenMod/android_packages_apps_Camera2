@@ -22,6 +22,7 @@ import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 import android.graphics.Bitmap;
 
 public class ImageFilterWBalance extends ImageFilter {
+    private static final String SERIALIZATION_NAME = "WBALANCE";
     private static final String TAG = "ImageFilterWBalance";
 
     public ImageFilterWBalance() {
@@ -30,6 +31,7 @@ public class ImageFilterWBalance extends ImageFilter {
 
     public FilterRepresentation getDefaultRepresentation() {
         FilterRepresentation representation = new FilterDirectRepresentation("WBalance");
+        representation.setSerializationName(SERIALIZATION_NAME);
         representation.setFilterClass(ImageFilterWBalance.class);
         representation.setPriority(FilterRepresentation.TYPE_WBALANCE);
         representation.setTextId(R.string.wbalance);

@@ -21,7 +21,7 @@ import com.android.gallery3d.R;
 import android.graphics.Bitmap;
 
 public class ImageFilterVibrance extends SimpleImageFilter {
-
+    private static final String SERIALIZATION_NAME = "VIBRANCE";
     public ImageFilterVibrance() {
         mName = "Vibrance";
     }
@@ -30,6 +30,7 @@ public class ImageFilterVibrance extends SimpleImageFilter {
         FilterBasicRepresentation representation =
                 (FilterBasicRepresentation) super.getDefaultRepresentation();
         representation.setName("Vibrance");
+        representation.setSerializationName(SERIALIZATION_NAME);
         representation.setFilterClass(ImageFilterVibrance.class);
         representation.setTextId(R.string.vibrance);
         representation.setButtonId(R.id.vibranceButton);

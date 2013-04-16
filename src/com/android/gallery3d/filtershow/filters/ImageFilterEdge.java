@@ -21,7 +21,7 @@ import android.graphics.Bitmap;
 import com.android.gallery3d.R;
 
 public class ImageFilterEdge extends SimpleImageFilter {
-
+    private static final String SERIALIZATION_NAME = "EDGE";
     public ImageFilterEdge() {
         mName = "Edge";
     }
@@ -29,6 +29,7 @@ public class ImageFilterEdge extends SimpleImageFilter {
     public FilterRepresentation getDefaultRepresentation() {
         FilterRepresentation representation = super.getDefaultRepresentation();
         representation.setName("Edge");
+        representation.setSerializationName(SERIALIZATION_NAME);
         representation.setFilterClass(ImageFilterEdge.class);
         representation.setTextId(R.string.edge);
         representation.setButtonId(R.id.edgeButton);

@@ -21,7 +21,7 @@ import com.android.gallery3d.R;
 import android.graphics.Bitmap;
 
 public class ImageFilterShadows extends SimpleImageFilter {
-
+    private static final String SERIALIZATION_NAME = "SHADOWS";
     public ImageFilterShadows() {
         mName = "Shadows";
 
@@ -31,6 +31,7 @@ public class ImageFilterShadows extends SimpleImageFilter {
         FilterBasicRepresentation representation =
                 (FilterBasicRepresentation) super.getDefaultRepresentation();
         representation.setName("Shadows");
+        representation.setSerializationName(SERIALIZATION_NAME);
         representation.setFilterClass(ImageFilterShadows.class);
         representation.setTextId(R.string.shadow_recovery);
         representation.setButtonId(R.id.shadowRecoveryButton);
