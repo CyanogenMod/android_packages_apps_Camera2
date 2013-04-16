@@ -193,4 +193,10 @@
     <!--  The accept the draw size [CHAR LIMIT=20] -->
     <string name="draw_size_accept">OK</string>
 
+    <!--  Name used to indicate the original image in the state panel [CHAR LIMIT=20] -->
+    <string name="state_panel_original">Original</string>
+
+    <!--  Name used to indicate the final image in the state panel [CHAR LIMIT=20] -->
+    <string name="state_panel_result">Result</string>
+
 </resources>

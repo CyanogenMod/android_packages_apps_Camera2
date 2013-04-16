@@ -22,11 +22,11 @@ import android.os.Message;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
-import com.android.gallery3d.filtershow.ImageStateAdapter;
 import com.android.gallery3d.filtershow.cache.*;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.state.StateAdapter;
 
 import java.util.Vector;
 
@@ -55,7 +55,7 @@ public class MasterImage implements RenderingRequestCaller {
 
     private ImageLoader mLoader = null;
     private HistoryAdapter mHistory = null;
-    private ImageStateAdapter mState = null;
+    private StateAdapter mState = null;
 
     private FilterShowActivity mActivity = null;
 
@@ -192,7 +192,7 @@ public class MasterImage implements RenderingRequestCaller {
         return mHistory;
     }
 
-    public ImageStateAdapter getState() {
+    public StateAdapter getState() {
         return mState;
     }
 
@@ -200,7 +200,7 @@ public class MasterImage implements RenderingRequestCaller {
         mHistory = adapter;
     }
 
-    public void setStateAdapter(ImageStateAdapter adapter) {
+    public void setStateAdapter(StateAdapter adapter) {
         mState = adapter;
     }
 
