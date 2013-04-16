@@ -29,6 +29,8 @@ public class FilterBasicRepresentation extends FilterRepresentation implements P
     private int mMaximum;
     private int mDefaultValue;
     private int mPreviewValue;
+    public static final String SERIAL_NAME = "Name";
+    public static final String SERIAL_VALUE = "Value";
 
     public FilterBasicRepresentation(String name, int minimum, int value, int maximum) {
         super(name);
@@ -164,5 +166,24 @@ public class FilterBasicRepresentation extends FilterRepresentation implements P
     @Override
     public void copyFrom(Parameter src) {
         useParametersFrom((FilterBasicRepresentation) src);
+    }
+
+    @Override
+    public String[][] serializeRepresentation() {
+        String[][] ret = {
+                {SERIAL_NAME  , getName() },
+                {SERIAL_VALUE , Integer.toString(mValue)}};
+        return ret;
+    }
+
+    @Override
+    public void deSerializeRepresentation(String[][] rep) {
+        super.deSerializeRepresentation(rep);
+        for (int i = 0; i < rep.length; i++) {
+            if (SERIAL_VALUE.equals(rep[i][0])) {
+                mValue = Integer.parseInt(rep[i][1]);
+                break;
+            }
+        }
     }
 }

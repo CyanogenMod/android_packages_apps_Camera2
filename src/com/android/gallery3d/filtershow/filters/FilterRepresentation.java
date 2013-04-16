@@ -34,7 +34,7 @@ public class FilterRepresentation implements Cloneable {
     private boolean mShowEditingControls = true;
     private boolean mShowParameterValue = true;
     private boolean mShowUtilityPanel = true;
-
+    private String mSerializationName;
     public static final byte TYPE_BORDER = 1;
     public static final byte TYPE_FX = 2;
     public static final byte TYPE_WBALANCE = 3;
@@ -63,6 +63,8 @@ public class FilterRepresentation implements Cloneable {
         representation.setShowEditingControls(showEditingControls());
         representation.setShowParameterValue(showParameterValue());
         representation.setShowUtilityPanel(showUtilityPanel());
+        representation.mSerializationName = mSerializationName;
+
         representation.mTempRepresentation =
                 mTempRepresentation != null ? mTempRepresentation.clone() : null;
         if (DEBUG) {
@@ -96,12 +98,24 @@ public class FilterRepresentation implements Cloneable {
         return mName;
     }
 
-    public void setName(String name) {
+    public void setScrName(String name) {
+        mName = name;
+    }
+
+    protected void setName(String name) {
         mName = name;
     }
 
     public String getName() {
         return mName;
+    }
+
+    public void setSerializationName(String sname) {
+        mSerializationName = sname;
+    }
+
+    public String getSerializationName() {
+        return mSerializationName;
     }
 
     public void setPriority(int priority) {
@@ -241,4 +255,17 @@ public class FilterRepresentation implements Cloneable {
         return "";
     }
 
+    public String[][] serializeRepresentation() {
+        String[][] ret = { { "Name" , getName() }};
+        return ret;
+    }
+
+    public void deSerializeRepresentation(String[][] rep) {
+        for (int i = 0; i < rep.length; i++) {
+            if ("Name".equals(rep[i][0])) {
+                mName = rep[i][0];
+                break;
+            }
+        }
+    }
 }

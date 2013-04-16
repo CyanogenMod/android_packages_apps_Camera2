@@ -18,18 +18,30 @@ package com.android.gallery3d.filtershow.presets;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.support.v8.renderscript.Allocation;
+import android.util.JsonReader;
+import android.util.JsonWriter;
 import android.util.Log;
 
+import com.adobe.xmp.XMPException;
+import com.adobe.xmp.XMPMeta;
+import com.adobe.xmp.options.PropertyOptions;
+import com.android.gallery3d.filtershow.ImageStateAdapter;
 import com.android.gallery3d.filtershow.cache.CachingPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.BaseFiltersManager;
+import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.state.StateAdapter;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class ImagePreset {
@@ -41,6 +53,7 @@ public class ImagePreset {
     public static final int QUALITY_PREVIEW = 1;
     public static final int QUALITY_FINAL = 2;
     public static final int STYLE_ICON = 3;
+    public static final String PRESET_NAME = "PresetName";
 
     private ImageLoader mImageLoader = null;
 
@@ -208,11 +221,11 @@ public class ImagePreset {
         }
         for (FilterRepresentation representation : mFilters) {
             if (representation.getPriority() == FilterRepresentation.TYPE_VIGNETTE
-                && !representation.isNil()) {
+                    && !representation.isNil()) {
                 return false;
             }
             if (representation.getPriority() == FilterRepresentation.TYPE_TINYPLANET
-                && !representation.isNil()) {
+                    && !representation.isNil()) {
                 return false;
             }
         }
@@ -570,4 +583,109 @@ public class ImagePreset {
         return usedFilters;
     }
 
+    public String getJsonString(String name) {
+        StringWriter swriter = new StringWriter();
+        try {
+            JsonWriter writer = new JsonWriter(swriter);
+            writeJson(writer, name);
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return swriter.toString();
+    }
+
+    public void writeJson(JsonWriter writer, String name) {
+        int numFilters =  mFilters.size();
+        try {
+            writer.beginObject();
+            writer.name(PRESET_NAME).value(name);
+            writer.name(mGeoData.getSerializationName());
+            writer.beginObject();
+            {
+                String[][] rep = mGeoData.serializeRepresentation();
+                for (int i = 0; i < rep.length; i++) {
+                    writer.name(rep[i][0]);
+                    writer.value(rep[i][1]);
+                }
+            }
+            writer.endObject();
+
+            for (int i = 0; i < numFilters; i++) {
+                FilterRepresentation filter = mFilters.get(i);
+                String sname = filter.getSerializationName();
+                writer.name(sname);
+                writer.beginObject();
+                {
+                    String[][] rep = filter.serializeRepresentation();
+                    for (int k = 0; k < rep.length; k++) {
+                        writer.name(rep[k][0]);
+                        writer.value(rep[k][1]);
+                    }
+                }
+                writer.endObject();
+            }
+            writer.endObject();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean readJsonFromString(String filterString) {
+        StringReader sreader = new StringReader(filterString);
+        try {
+            JsonReader reader = new JsonReader(sreader);
+            boolean ok = readJson(reader);
+            if (!ok) {
+                return false;
+            }
+            reader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    public boolean readJson(JsonReader sreader) throws IOException {
+        sreader.beginObject();
+        sreader.nextName();
+        mName = sreader.nextString();
+
+        while (sreader.hasNext()) {
+            String name = sreader.nextName();
+
+            if (mGeoData.getSerializationName().equals(name)) {
+                mGeoData.deSerializeRepresentation(read(sreader));
+            } else {
+                FilterRepresentation filter = creatFilterFromName(name);
+                if (filter == null)
+                    return false;
+                filter.deSerializeRepresentation(read(sreader));
+                addFilter(filter);
+            }
+        }
+        sreader.endObject();
+        return true;
+    }
+
+    FilterRepresentation creatFilterFromName(String name) {
+        FiltersManager filtersManager = FiltersManager.getManager();
+        return filtersManager.createFilterFromName(name);
+    }
+
+    String[][] read(JsonReader reader) throws IOException {
+        ArrayList <String[]> al = new ArrayList<String[]>();
+
+        reader.beginObject();
+
+        while (reader.hasNext()) {
+            String[]kv = { reader.nextName(),reader.nextString()};
+            al.add(kv);
+
+        }
+        reader.endObject();
+        return al.toArray(new String[al.size()][]);
+    }
 }

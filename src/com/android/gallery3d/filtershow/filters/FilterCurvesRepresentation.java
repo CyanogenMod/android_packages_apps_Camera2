@@ -11,6 +11,7 @@ public class FilterCurvesRepresentation extends FilterRepresentation {
 
     public FilterCurvesRepresentation() {
         super("Curves");
+        setSerializationName("CURVES");
         setFilterClass(ImageFilterCurves.class);
         setTextId(R.string.curvesRGB);
         setButtonId(R.id.curvesButtonRGB);
