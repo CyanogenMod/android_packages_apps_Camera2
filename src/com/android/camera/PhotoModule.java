@@ -1199,10 +1199,6 @@ public class PhotoModule
         if (pressed && !canTakePicture()) return;
 
         if (pressed) {
-            if (mSceneMode == Util.SCENE_MODE_HDR) {
-                mActivity.hideSwitcher();
-                mActivity.setSwipingEnabled(false);
-            }
             mFocusManager.onShutterDown();
         } else {
             // for countdown mode, we need to postpone the shutter release
@@ -1227,6 +1223,10 @@ public class PhotoModule
         }
         Log.v(TAG, "onShutterButtonClick: mCameraState=" + mCameraState);
 
+        if (mSceneMode == Util.SCENE_MODE_HDR) {
+            mActivity.hideSwitcher();
+            mActivity.setSwipingEnabled(false);
+        }
         // If the user wants to do a snapshot while the previous one is still
         // in progress, remember the fact and do it after we finish the previous
         // one and re-start the preview. Snapshot in progress also includes the
