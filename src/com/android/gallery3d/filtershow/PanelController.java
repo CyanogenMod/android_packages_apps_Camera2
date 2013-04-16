@@ -544,6 +544,9 @@ public class PanelController implements OnClickListener {
         if (filterRepresentation == null) {
             return;
         }
+        if (filterRepresentation == MasterImage.getImage().getCurrentFilterRepresentation()) {
+            return;
+        }
         Set<View> views = mViews.keySet();
         for (View view : views) {
             if (view instanceof FilterIconButton) {
