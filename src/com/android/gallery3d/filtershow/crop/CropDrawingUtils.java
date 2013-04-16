@@ -113,4 +113,17 @@ public abstract class CropDrawingUtils {
         return m.setRectToRect(imageBounds, displayBounds, Matrix.ScaleToFit.CENTER);
     }
 
+    public static boolean setImageToScreenMatrix(Matrix dst, RectF image,
+            RectF screen, int rotation) {
+        RectF rotatedImage = new RectF();
+        dst.setRotate(rotation, image.centerX(), image.centerY());
+        if (!dst.mapRect(rotatedImage, image)) {
+            return false; // fails for rotations that are not multiples of 90
+                          // degrees
+        }
+        boolean rToR = dst.setRectToRect(rotatedImage, screen, Matrix.ScaleToFit.CENTER);
+        boolean rot = dst.preRotate(rotation, image.centerX(), image.centerY());
+        return rToR && rot;
+    }
+
 }
