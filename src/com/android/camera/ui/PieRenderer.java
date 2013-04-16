@@ -27,6 +27,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Message;
+import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.animation.Animation;
@@ -76,6 +77,7 @@ public class PieRenderer extends OverlayRenderer
     private static final int MSG_OPENSUBMENU = 2;
 
     protected static float CENTER = (float) Math.PI / 2;
+    protected static float RAD20 = (float)(Math.PI /9); // 20 degrees
     protected static final float SWEEP_SLICE = 0.14f;
     protected static final float SWEEP_ARC = 0.23f;
 
@@ -134,6 +136,9 @@ public class PieRenderer extends OverlayRenderer
     private volatile boolean mFocusCancelled;
     private PointF mPolar = new PointF();
     private TextDrawable mLabel;
+    private int mDeadZone;
+    private int mAngleZone;
+    private float mCenterAngle;
 
 
 
@@ -215,6 +220,8 @@ public class PieRenderer extends OverlayRenderer
         mArcRadius = res.getDimensionPixelSize(R.dimen.pie_arc_radius);
         mArcOffset = res.getDimensionPixelSize(R.dimen.pie_arc_offset);
         mLabel = new TextDrawable(res);
+        mDeadZone = res.getDimensionPixelSize(R.dimen.pie_deadzone_width);
+        mAngleZone = res.getDimensionPixelSize(R.dimen.pie_anglezone_width);
     }
 
     private PieItem getRoot() {
@@ -311,7 +318,7 @@ public class PieRenderer extends OverlayRenderer
     public void setCenter(int x, int y) {
         mPieCenterX = x;
         mPieCenterY = y;
-        mSliceCenterY = y - mArcOffset + mSliceRadius;
+        mSliceCenterY = y + mSliceRadius - mArcOffset;
         mArcCenterY = y - mArcOffset + mArcRadius;
     }
 
@@ -337,12 +344,14 @@ public class PieRenderer extends OverlayRenderer
     }
 
     private void layoutPie() {
+        mCenterAngle = getCenterAngle();
         layoutItems(0, getRoot().getItems());
         layoutLabel(0);
     }
 
     private void layoutLabel(int level) {
-        int x = mPieCenterX;
+        int x = mPieCenterX - (int) (FloatMath.sin(mCenterAngle - CENTER)
+                * (mArcRadius + (level + 2) * mRadiusInc));
         int y = mArcCenterY - mArcRadius - (level + 2) * mRadiusInc;
         int w = mLabel.getIntrinsicWidth();
         int h = mLabel.getIntrinsicHeight();
@@ -392,11 +401,25 @@ public class PieRenderer extends OverlayRenderer
     }
 
     private float getSliceCenter(PieItem item) {
-        return getCenter(item.getPosition(), item.getCount(), SWEEP_SLICE);
+        float center = (getCenterAngle() - CENTER) * 0.5f + CENTER;
+        return center + (item.getCount() - 1) * SWEEP_SLICE / 2f
+                - item.getPosition() * SWEEP_SLICE;
     }
 
     private float getCenter(int pos, int count, float sweep) {
-        return CENTER + (count - 1) * sweep / 2f - pos * sweep;
+        return mCenterAngle + (count - 1) * sweep / 2f - pos * sweep;
+    }
+
+    private float getCenterAngle() {
+        float center = CENTER;
+        if (mPieCenterX < mDeadZone + mAngleZone) {
+            center = CENTER - (mAngleZone - mPieCenterX + mDeadZone) * RAD20
+                    / (float) mAngleZone;
+        } else if (mPieCenterX > getWidth() - mDeadZone - mAngleZone) {
+            center = CENTER + (mPieCenterX - (getWidth() - mDeadZone - mAngleZone)) * RAD20
+                    / (float) mAngleZone;
+        }
+        return center;
     }
 
     /**
@@ -521,8 +544,10 @@ public class PieRenderer extends OverlayRenderer
                 if (p < min) min = p;
                 if (p > max) max = p;
             }
-            float start =  CENTER + (count - 1) * SWEEP_ARC / 2f - min * SWEEP_ARC + SWEEP_ARC / 2f;
-            float end =  CENTER + (count - 1) * SWEEP_ARC / 2f - max * SWEEP_ARC - SWEEP_ARC / 2f;
+            float start =  mCenterAngle + (count - 1) * SWEEP_ARC / 2f - min * SWEEP_ARC
+                    + SWEEP_ARC / 2f;
+            float end =  mCenterAngle + (count - 1) * SWEEP_ARC / 2f - max * SWEEP_ARC
+                    - SWEEP_ARC / 2f;
             int cy = mArcCenterY - level * mRadiusInc;
             canvas.drawArc(new RectF(mPieCenterX - mArcRadius, cy - mArcRadius,
                     mPieCenterX + mArcRadius, cy + mArcRadius),
@@ -566,6 +591,9 @@ public class PieRenderer extends OverlayRenderer
         int action = evt.getActionMasked();
         getPolar(x, y, !mTapMode, mPolar);
         if (MotionEvent.ACTION_DOWN == action) {
+            if ((x < mDeadZone) || (x > getWidth() - mDeadZone)) {
+                return false;
+            }
             mDown.x = (int) evt.getX();
             mDown.y = (int) evt.getY();
             mOpening = false;
