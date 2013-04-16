@@ -141,7 +141,7 @@ public abstract class ImageFilterRS extends ImageFilter {
         return bitmap;
     }
 
-    private static Allocation convertBitmap(Bitmap bitmap) {
+    protected static Allocation convertBitmap(Bitmap bitmap) {
         return Allocation.createFromBitmap(CachingPipeline.getRenderScriptContext(), bitmap,
                 Allocation.MipmapControl.MIPMAP_NONE,
                 Allocation.USAGE_SCRIPT | Allocation.USAGE_GRAPHICS_TEXTURE);
