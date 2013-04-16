@@ -175,7 +175,6 @@ public class PanoramaModule implements CameraModule,
     private CameraProxy mCameraDevice;
     private boolean mPaused;
     private boolean mIsCreatingRenderer;
-    private boolean mIsConfigPending;
 
     private class MosaicJpeg {
         public MosaicJpeg(byte[] data, int width, int height) {
@@ -245,14 +244,10 @@ public class PanoramaModule implements CameraModule,
 
                 MosaicPreviewRenderer renderer = null;
                 synchronized (mRendererLock) {
-                    try {
-                        while (mMosaicPreviewRenderer == null) {
-                            mRendererLock.wait();
-                        }
-                        renderer = mMosaicPreviewRenderer;
-                    } catch (InterruptedException e) {
-                        Log.e(TAG, "Unexpected interruption", e);
+                    if (mMosaicPreviewRenderer == null) {
+                        return;
                     }
+                    renderer = mMosaicPreviewRenderer;
                 }
                 if (mGLRootView.getVisibility() != View.VISIBLE) {
                     renderer.showPreviewFrameSync();
@@ -438,11 +433,9 @@ public class PanoramaModule implements CameraModule,
             if (mIsCreatingRenderer) {
                 mMainHandler.removeMessages(MSG_CONFIG_MOSAIC_PREVIEW);
                 mMainHandler.obtainMessage(MSG_CONFIG_MOSAIC_PREVIEW, w, h).sendToTarget();
-                mIsConfigPending = true;
                 return;
             }
             mIsCreatingRenderer = true;
-            mIsConfigPending = false;
         }
         stopCameraPreview();
         CameraScreenNail screenNail = (CameraScreenNail) mActivity.mCameraScreenNail;
@@ -464,7 +457,6 @@ public class PanoramaModule implements CameraModule,
                 SurfaceTexture surfaceTexture = screenNail.getSurfaceTexture();
                 if (surfaceTexture == null) {
                     synchronized (mRendererLock) {
-                        mIsConfigPending = true; // try config again later.
                         mIsCreatingRenderer = false;
                         mRendererLock.notifyAll();
                         return;
@@ -995,7 +987,6 @@ public class PanoramaModule implements CameraModule,
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-
         Drawable lowResReview = null;
         if (mThreadRunning) lowResReview = mReview.getDrawable();
 
