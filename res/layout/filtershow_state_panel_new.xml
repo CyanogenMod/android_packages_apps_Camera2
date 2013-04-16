@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <!--
+    <com.example.StatePanel.VerticalStatePanelTrack
+            android:id="@+id/listStates"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dip"
+            android:background="@android:color/holo_red_dark" />
+            -->
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none">
+
+    <com.android.gallery3d.filtershow.state.StatePanelTrack
+            android:id="@+id/listStates"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dip"
+            android:animateLayoutChanges="true" />
+
+    </ScrollView>
+
+    <!--
+    <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="128dip"
+            android:scrollbars="none">
+
+        <com.example.StatePanel.StatePanelTrack
+                android:id="@+id/listStates"
+                android:layout_width="match_parent"
+                android:layout_height="128dip"
+                android:animateLayoutChanges="true" />
+
+    </HorizontalScrollView>
+    -->
+
+</LinearLayout>
