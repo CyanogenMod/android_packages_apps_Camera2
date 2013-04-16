@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.filtershow.crop;
 
+import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 
@@ -203,6 +204,35 @@ public class CropMath {
         float hw = finalW / 2;
         float hh = finalH / 2;
         r.set(centX - hw, centY - hh, centX + hw, centY + hh);
+    }
+
+    /**
+     * Stretches/Scales/Translates photoBounds to match displayBounds, and
+     * and returns an equivalent stretched/scaled/translated cropBounds or null
+     * if the mapping is invalid.
+     * @param cropBounds  cropBounds to transform
+     * @param photoBounds  original bounds containing crop bounds
+     * @param displayBounds  final bounds for crop
+     * @return  the stretched/scaled/translated crop bounds that fit within displayBounds
+     */
+    public static RectF getScaledCropBounds(RectF cropBounds, RectF photoBounds,
+            RectF displayBounds) {
+        Matrix m = new Matrix();
+        m.setRectToRect(photoBounds, displayBounds, Matrix.ScaleToFit.FILL);
+        RectF trueCrop = new RectF(cropBounds);
+        if (!m.mapRect(trueCrop)) {
+            return null;
+        }
+        return trueCrop;
+    }
+
+    /**
+     * Returns the size of a bitmap in bytes.
+     * @param bmap  bitmap whose size to check
+     * @return  bitmap size in bytes
+     */
+    public static int getBitmapSize(Bitmap bmap) {
+        return bmap.getRowBytes() * bmap.getHeight();
     }
 
     private static float getUnrotated(float[] rotatedRect, float[] center, RectF unrotated) {
