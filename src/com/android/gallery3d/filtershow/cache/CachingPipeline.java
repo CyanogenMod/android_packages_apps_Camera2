@@ -308,8 +308,11 @@ public class CachingPipeline {
             setupEnvironment(preset, false);
             mFiltersManager.freeFilterResources(preset);
             preset.applyFilters(-1, -1, in, out, mEnvironment);
-            // TODO: we should render the border onto a different bitmap instead
-            preset.applyBorder(in, out, mEnvironment);
+            boolean copyOut = false;
+            if (preset.nbFilters() > 0) {
+                copyOut = true;
+            }
+            preset.applyBorder(in, out, copyOut, mEnvironment);
         }
     }
 
