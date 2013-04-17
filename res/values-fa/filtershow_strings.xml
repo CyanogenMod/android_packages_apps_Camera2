@@ -25,8 +25,6 @@
     <string name="borders" msgid="2067345080568684614">"حاشیه‌ها"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"لغو عمل"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"انجام مجدد"</string>
-    <string name="show_history_panel" msgid="7785810372502120090">"نمایش سابقه"</string>
-    <string name="hide_history_panel" msgid="2082672248771133871">"پنهان کردن سابقه"</string>
     <string name="show_imagestate_panel" msgid="7132294085840948243">"نمایش وضعیت تصویر"</string>
     <string name="hide_imagestate_panel" msgid="1135313661068111161">"پنهان کردن وضعیت تصویر"</string>
     <string name="menu_settings" msgid="6428291655769260831">"تنظیمات"</string>
@@ -93,4 +91,8 @@
     <string name="color_pick_title" msgid="6195567431995308876">"رنگ را انتخاب کنید"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"انتخاب اندازه"</string>
     <string name="draw_size_accept" msgid="6781529716526190028">"تأیید"</string>
+    <!-- no translation found for state_panel_original (9069584409934164419) -->
+    <skip />
+    <!-- no translation found for state_panel_result (318640531123298676) -->
+    <skip />
 </resources>
