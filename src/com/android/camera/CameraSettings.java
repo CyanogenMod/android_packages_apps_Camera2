@@ -247,8 +247,10 @@ public class CameraSettings {
         // show only integer values for exposure compensation
         int maxValue = Math.min(3, (int) FloatMath.floor(max * step));
         int minValue = Math.max(-3, (int) FloatMath.ceil(min * step));
+        String explabel = mContext.getResources().getString(R.string.pref_exposure_label);
         CharSequence entries[] = new CharSequence[maxValue - minValue + 1];
         CharSequence entryValues[] = new CharSequence[maxValue - minValue + 1];
+        CharSequence labels[] = new CharSequence[maxValue - minValue + 1];
         int[] icons = new int[maxValue - minValue + 1];
         TypedArray iconIds = mContext.getResources().obtainTypedArray(
                 R.array.pref_camera_exposure_icons);
@@ -257,10 +259,12 @@ public class CameraSettings {
             StringBuilder builder = new StringBuilder();
             if (i > 0) builder.append('+');
             entries[maxValue - i] = builder.append(i).toString();
+            labels[maxValue - i] = explabel + " " + builder.toString();
             icons[maxValue - i] = iconIds.getResourceId(3 + i, 0);
         }
         exposure.setUseSingleIcon(true);
         exposure.setEntries(entries);
+        exposure.setLabels(labels);
         exposure.setEntryValues(entryValues);
         exposure.setLargeIconIds(icons);
     }
