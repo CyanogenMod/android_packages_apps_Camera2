@@ -457,6 +457,10 @@ public class ImagePreset {
         return bitmap;
     }
 
+    public int nbFilters() {
+        return mFilters.size();
+    }
+
     public Bitmap applyFilters(Bitmap bitmap, int from, int to, FilterEnvironment environment) {
         if (mDoApplyFilters) {
             if (from < 0) {
@@ -478,17 +482,23 @@ public class ImagePreset {
         return bitmap;
     }
 
-    public void applyBorder(Allocation in, Allocation out, FilterEnvironment environment) {
+    public void applyBorder(Allocation in, Allocation out,
+                            boolean copyOut, FilterEnvironment environment) {
         if (mBorder != null && mDoApplyGeometry) {
             mBorder.synchronizeRepresentation();
             // TODO: should keep the bitmap around
-            Allocation bitmapIn = Allocation.createTyped(CachingPipeline.getRenderScriptContext(), in.getType());
-            bitmapIn.copyFrom(out);
+            Allocation bitmapIn = in;
+            if (copyOut) {
+                bitmapIn = Allocation.createTyped(
+                        CachingPipeline.getRenderScriptContext(), in.getType());
+                bitmapIn.copyFrom(out);
+            }
             environment.applyRepresentation(mBorder, bitmapIn, out);
         }
     }
 
-    public void applyFilters(int from, int to, Allocation in, Allocation out, FilterEnvironment environment) {
+    public void applyFilters(int from, int to, Allocation in, Allocation out,
+                             FilterEnvironment environment) {
         if (mDoApplyFilters) {
             if (from < 0) {
                 from = 0;
