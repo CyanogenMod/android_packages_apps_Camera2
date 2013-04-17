@@ -25,7 +25,6 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -133,6 +132,17 @@ public class MoviePlayer implements
             public boolean onTouch(View v, MotionEvent event) {
                 mController.show();
                 return true;
+            }
+        });
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer player) {
+                if (!mVideoView.canSeekForward() || !mVideoView.canSeekBackward()) {
+                    mController.setSeekable(false);
+                } else {
+                    mController.setSeekable(true);
+                }
+                setProgress();
             }
         });
 

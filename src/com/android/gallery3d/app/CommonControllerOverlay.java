@@ -66,6 +66,10 @@ public abstract class CommonControllerOverlay extends FrameLayout implements
 
     protected boolean mCanReplay = true;
 
+    public void setSeekable(boolean canSeek) {
+        mTimeBar.setSeekable(canSeek);
+    }
+
     public CommonControllerOverlay(Context context) {
         super(context);
 
