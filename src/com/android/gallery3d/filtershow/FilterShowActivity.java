@@ -771,8 +771,8 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
         int[] drawid = {
                 R.drawable.filtershow_fx_0005_punch,
-                R.drawable.filtershow_fx_0000_vintage,
-                R.drawable.filtershow_fx_0004_bw_contrast,
+//                R.drawable.filtershow_fx_0000_vintage,
+//                R.drawable.filtershow_fx_0004_bw_contrast,
                 R.drawable.filtershow_fx_0002_bleach,
                 R.drawable.filtershow_fx_0001_instant,
                 R.drawable.filtershow_fx_0007_washout,
@@ -783,8 +783,8 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
         int[] fxNameid = {
                 R.string.ffx_punch,
-                R.string.ffx_vintage,
-                R.string.ffx_bw_contrast,
+//                R.string.ffx_vintage,
+//                R.string.ffx_bw_contrast,
                 R.string.ffx_bleach,
                 R.string.ffx_instant,
                 R.string.ffx_washout,
