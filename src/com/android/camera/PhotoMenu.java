@@ -81,9 +81,13 @@ public class PhotoMenu extends PieController
         }
         // camera switcher
         if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
-            item = makeItem(R.drawable.ic_switch_photo_facing_holo_light);
-            ListPreference lpref = group.findPreference(CameraSettings.KEY_CAMERA_ID);
-            item.setPosition(POS_SWITCH, 5);
+            item = makeItem(R.drawable.ic_switch_back);
+            item.setPosition(POS_SWITCH,  5);
+            IconListPreference lpref = (IconListPreference) group.findPreference(
+                    CameraSettings.KEY_CAMERA_ID);
+            item.setImageResource(mActivity,
+                    ((IconListPreference) lpref).getIconIds()
+                    [lpref.findIndexOfValue(lpref.getValue())]);
             item.setLabel(lpref.getLabel());
             final PieItem fitem = item;
             item.setOnClickListener(new OnClickListener() {
@@ -99,6 +103,8 @@ public class PhotoMenu extends PieController
                         int newCameraId = Integer
                                 .parseInt((String) values[index]);
                         fitem.setLabel(camPref.getLabel());
+                        fitem.setImageResource(mActivity,
+                                ((IconListPreference) camPref).getIconIds()[index]);
                         mListener.onCameraPickerClicked(newCameraId);
                     }
                 }
