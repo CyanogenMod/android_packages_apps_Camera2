@@ -49,7 +49,6 @@ public class ImageShow extends View implements OnGestureListener,
         OnDoubleTapListener {
 
     private static final String LOGTAG = "ImageShow";
-    private static final boolean ENABLE_HISTORY_SWAP = false;
     private static final boolean ENABLE_ZOOMED_COMPARISON = false;
 
     protected Paint mPaint = new Paint();
@@ -593,7 +592,7 @@ public class ImageShow extends View implements OnGestureListener,
                 translation.y = (int) (originalTranslation.y + translateY);
                 MasterImage.getImage().setTranslation(translation);
                 mTouchShowOriginal = false;
-            } else if (enableComparison() && !mOriginalDisabled && !mActivity.isShowingHistoryPanel()
+            } else if (enableComparison() && !mOriginalDisabled
                     && (System.currentTimeMillis() - mTouchShowOriginalDate
                             > mTouchShowOriginalDelayMin)
                     && event.getPointerCount() == 1) {
@@ -664,15 +663,6 @@ public class ImageShow extends View implements OnGestureListener,
         }
         if (endEvent.getPointerCount() == 2) {
             return false;
-        }
-        if (ENABLE_HISTORY_SWAP && (!mActivity.isShowingHistoryPanel() && startEvent.getX() > endEvent.getX())
-                || (mActivity.isShowingHistoryPanel() && endEvent.getX() > startEvent.getX())) {
-            if (!mTouchShowOriginal
-                    || (mTouchShowOriginal &&
-                            (System.currentTimeMillis() - mTouchShowOriginalDate
-                            < mTouchShowOriginalDelayMax))) {
-                mActivity.toggleHistoryPanel();
-            }
         }
         return true;
     }
