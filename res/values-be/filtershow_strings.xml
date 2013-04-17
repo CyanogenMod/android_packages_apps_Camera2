@@ -25,8 +25,6 @@
     <string name="borders" msgid="2067345080568684614">"Межы"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Вярнуць"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"Паўтарыць"</string>
-    <string name="show_history_panel" msgid="7785810372502120090">"Паказаць гісторыю"</string>
-    <string name="hide_history_panel" msgid="2082672248771133871">"Схаваць гісторыю"</string>
     <string name="show_imagestate_panel" msgid="7132294085840948243">"Паказаць статус малюнка"</string>
     <string name="hide_imagestate_panel" msgid="1135313661068111161">"Схаваць статус малюнка"</string>
     <string name="menu_settings" msgid="6428291655769260831">"Налады"</string>
@@ -93,4 +91,8 @@
     <string name="color_pick_title" msgid="6195567431995308876">"Выберыце колер"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"Выберыце памер"</string>
     <string name="draw_size_accept" msgid="6781529716526190028">"OK"</string>
+    <!-- no translation found for state_panel_original (9069584409934164419) -->
+    <skip />
+    <!-- no translation found for state_panel_result (318640531123298676) -->
+    <skip />
 </resources>
