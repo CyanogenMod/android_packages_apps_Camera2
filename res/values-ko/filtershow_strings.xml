@@ -25,8 +25,6 @@
     <string name="borders" msgid="2067345080568684614">"테두리"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"실행취소"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"다시실행"</string>
-    <string name="show_history_panel" msgid="7785810372502120090">"기록 표시"</string>
-    <string name="hide_history_panel" msgid="2082672248771133871">"기록 숨기기"</string>
     <string name="show_imagestate_panel" msgid="7132294085840948243">"이미지 상태 표시"</string>
     <string name="hide_imagestate_panel" msgid="1135313661068111161">"이미지 상태 숨기기"</string>
     <string name="menu_settings" msgid="6428291655769260831">"설정"</string>
@@ -93,4 +91,8 @@
     <string name="color_pick_title" msgid="6195567431995308876">"색상 선택"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"크기 선택"</string>
     <string name="draw_size_accept" msgid="6781529716526190028">"확인"</string>
+    <!-- no translation found for state_panel_original (9069584409934164419) -->
+    <skip />
+    <!-- no translation found for state_panel_result (318640531123298676) -->
+    <skip />
 </resources>
