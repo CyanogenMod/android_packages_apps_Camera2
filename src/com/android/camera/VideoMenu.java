@@ -34,10 +34,10 @@ public class VideoMenu extends PieController
         TimeIntervalPopup.Listener {
 
     private static String TAG = "CAM_VideoMenu";
-    private static final int POS_WB = 1;
-    private static final int POS_SET = 2;
+    private static final int POS_WB = 0;
+    private static final int POS_SET = 1;
     private static final int POS_FLASH = 3;
-    private static final int POS_SWITCH = 4;
+    private static final int POS_SWITCH = 2;
 
     private VideoUI mUI;
     private String[] mOtherKeys;
@@ -72,10 +72,15 @@ public class VideoMenu extends PieController
         }
         // camera switcher
         if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
-            ListPreference lpref = group.findPreference(CameraSettings.KEY_CAMERA_ID);
-            item = makeItem(R.drawable.ic_switch_video_facing_holo_light);
+            item = makeItem(R.drawable.ic_switch_back);
             item.setPosition(POS_SWITCH, 5);
+            IconListPreference lpref = (IconListPreference) group.findPreference(
+                    CameraSettings.KEY_CAMERA_ID);
             item.setLabel(lpref.getLabel());
+            item.setImageResource(mActivity,
+                    ((IconListPreference) lpref).getIconIds()
+                    [lpref.findIndexOfValue(lpref.getValue())]);
+
             final PieItem fitem = item;
             item.setOnClickListener(new OnClickListener() {
 
@@ -89,8 +94,10 @@ public class VideoMenu extends PieController
                         CharSequence[] values = pref.getEntryValues();
                         index = (index + 1) % values.length;
                         int newCameraId = Integer.parseInt((String) values[index]);
-                        mListener.onCameraPickerClicked(newCameraId);
+                        fitem.setImageResource(mActivity,
+                                ((IconListPreference) pref).getIconIds()[index]);
                         fitem.setLabel(pref.getLabel());
+                        mListener.onCameraPickerClicked(newCameraId);
                     }
                 }
             });
