@@ -122,7 +122,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     private static int mImageBorderSize = 4; // in percent
 
     private boolean mShowingTinyPlanet = false;
-    private boolean mShowingHistoryPanel = false;
     private boolean mShowingImageStatePanel = false;
 
     private final Vector<ImageShow> mImageViews = new Vector<ImageShow>();
@@ -153,15 +152,12 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         fillEditors();
 
         loadXML();
+
         if (getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_LANDSCAPE) {
             mShowingImageStatePanel = true;
         }
-        if (mShowingHistoryPanel) {
-            findViewById(R.id.historyPanel).setVisibility(View.VISIBLE);
-        } else {
-            findViewById(R.id.historyPanel).setVisibility(View.GONE);
-        }
+
         if (mShowingImageStatePanel && (savedInstanceState == null)) {
             loadImageStatePanel();
         }
@@ -176,7 +172,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
         ((ViewStub) findViewById(R.id.stateCategoryStub)).inflate();
         ((ViewStub) findViewById(R.id.editorPanelStub)).inflate();
-        ((ViewStub) findViewById(R.id.historyPanelStub)).inflate();
 
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -221,7 +216,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
         mPanelController.addView(findViewById(R.id.applyEffect));
 
-        setupHistoryPanel();
         setupStatePanel();
 
         mImageCategoryPanel = findViewById(R.id.imageCategoryPanel);
@@ -233,14 +227,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
     public void showCategoryPanel() {
         mImageCategoryPanel.setVisibility(View.VISIBLE);
-    }
-
-    public void setupHistoryPanel() {
-        findViewById(R.id.resetOperationsButton).setOnClickListener(
-                createOnClickResetOperationsButton());
-        ListView operationsList = (ListView) findViewById(R.id.operationsList);
-        operationsList.setAdapter(mMasterImage.getHistory());
-        operationsList.setOnItemClickListener(this);
     }
 
     public void setupStatePanel() {
@@ -509,7 +495,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             }
             pipeline.turnOnPipeline(true);
             MasterImage.getImage().setOriginalGeometry(largeBitmap);
-            MasterImage.getImage().getHistory().setOriginalBitmap(mImageLoader.getOriginalBitmapSmall());
             mLoadBitmapTask = null;
 
             if (mAction == CROP_ACTION) {
@@ -660,12 +645,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.filtershow_activity_menu, menu);
-        MenuItem showHistory = menu.findItem(R.id.operationsButton);
-        if (mShowingHistoryPanel) {
-            showHistory.setTitle(R.string.hide_history_panel);
-        } else {
-            showHistory.setTitle(R.string.show_history_panel);
-        }
         MenuItem showState = menu.findItem(R.id.showImageStateButton);
         if (mShowingImageStatePanel) {
             showState.setTitle(R.string.hide_imagestate_panel);
@@ -726,10 +705,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             }
             case R.id.showImageStateButton: {
                 toggleImageStatePanel();
-                return true;
-            }
-            case R.id.operationsButton: {
-                toggleHistoryPanel();
                 return true;
             }
             case android.R.id.home: {
@@ -844,10 +819,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     // //////////////////////////////////////////////////////////////////////////////
     // imageState panel...
 
-    public boolean isShowingHistoryPanel() {
-        return mShowingHistoryPanel;
-    }
-
     private void toggleImageStatePanel() {
         invalidateOptionsMenu();
     }
@@ -875,9 +846,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         }
         if (mShowingImageStatePanel) {
             loadImageStatePanel();
-        }
-        if (mShowingHistoryPanel) {
-            toggleHistoryPanel();
         }
         if (mShowingTinyPlanet == false) {
             View tinyPlanetView = findViewById(EditorTinyPlanet.ID);
@@ -911,61 +879,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         }
     }
 
-    // //////////////////////////////////////////////////////////////////////////////
-    // history panel...
-
-    public void toggleHistoryPanel() {
-        final View view = findViewById(R.id.mainPanel);
-        final View viewList = findViewById(R.id.historyPanel);
-
-        int translate = translateMainPanel(viewList);
-        if (!mShowingHistoryPanel) {
-            mShowingHistoryPanel = true;
-            if (getResources().getConfiguration().orientation
-                    == Configuration.ORIENTATION_PORTRAIT) {
-                // If portrait, always remove the state panel
-                mShowingImageStatePanel = false;
-                if (PanelController.useAnimationsLayer()) {
-                    view.animate().setDuration(200).x(translate)
-                            .withLayer().withEndAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            viewList.setAlpha(0);
-                            viewList.setVisibility(View.VISIBLE);
-                            viewList.animate().setDuration(100)
-                                    .alpha(1.0f).start();
-                        }
-                    }).start();
-                } else {
-                    view.setX(translate);
-                    viewList.setAlpha(0);
-                    viewList.setVisibility(View.VISIBLE);
-                    viewList.animate().setDuration(100)
-                            .alpha(1.0f).start();
-                }
-            } else {
-                findViewById(R.id.filtersPanel).setVisibility(View.GONE);
-                viewList.setVisibility(View.VISIBLE);
-            }
-        } else {
-            mShowingHistoryPanel = false;
-            if (getResources().getConfiguration().orientation
-                    == Configuration.ORIENTATION_PORTRAIT) {
-                viewList.setVisibility(View.INVISIBLE);
-                if (PanelController.useAnimationsLayer()) {
-                    view.animate().setDuration(200).x(0).withLayer()
-                            .start();
-                } else {
-                    view.setX(0);
-                }
-            } else {
-                viewList.setVisibility(View.GONE);
-                findViewById(R.id.filtersPanel).setVisibility(View.VISIBLE);
-            }
-        }
-        invalidateOptionsMenu();
-    }
-
     public void dispatchNullFilterClick() {
         mNullFxFilter.onClick(mNullFxFilter);
         mNullBorderFilter.onClick(mNullBorderFilter);
@@ -979,16 +892,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         mMasterImage.setPreset(original, true);
         mPanelController.resetParameters();
         invalidateViews();
-    }
-
-    // reset button in the history panel.
-    private OnClickListener createOnClickResetOperationsButton() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                resetHistory();
-            }
-        };
     }
 
     @Override
