@@ -1930,7 +1930,7 @@ public class NewPhotoModule
         if (mParameters == null || mCameraDevice == null) return index;
         // Set zoom parameters asynchronously
         mParameters.setZoom(mZoomValue);
-        mCameraDevice.setParametersAsync(mParameters);
+        mCameraDevice.setParameters(mParameters);
         Parameters p = mCameraDevice.getParameters();
         if (p != null) return p.getZoom();
         return index;
