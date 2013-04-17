@@ -17,6 +17,7 @@
 package com.android.gallery3d.app;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -83,7 +84,8 @@ public abstract class CommonControllerOverlay extends FrameLayout implements
         // multiple ones for trimming.
         createTimeBar(context);
         addView(mTimeBar, wrapContent);
-
+        mTimeBar.setContentDescription(
+                context.getResources().getString(R.string.accessibility_time_bar));
         mLoadingView = new LinearLayout(context);
         mLoadingView.setOrientation(LinearLayout.VERTICAL);
         mLoadingView.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -97,6 +99,8 @@ public abstract class CommonControllerOverlay extends FrameLayout implements
 
         mPlayPauseReplayView = new ImageView(context);
         mPlayPauseReplayView.setImageResource(R.drawable.ic_vidcontrol_play);
+        mPlayPauseReplayView.setContentDescription(
+                context.getResources().getString(R.string.accessibility_play_video));
         mPlayPauseReplayView.setBackgroundResource(R.drawable.bg_vidcontrol);
         mPlayPauseReplayView.setScaleType(ScaleType.CENTER);
         mPlayPauseReplayView.setFocusable(true);
@@ -299,10 +303,19 @@ public abstract class CommonControllerOverlay extends FrameLayout implements
     protected void updateViews() {
         mBackground.setVisibility(View.VISIBLE);
         mTimeBar.setVisibility(View.VISIBLE);
-        mPlayPauseReplayView.setImageResource(
-                mState == State.PAUSED ? R.drawable.ic_vidcontrol_play :
-                mState == State.PLAYING ? R.drawable.ic_vidcontrol_pause :
-                R.drawable.ic_vidcontrol_reload);
+        Resources resources = getContext().getResources();
+        int imageResource = R.drawable.ic_vidcontrol_reload;
+        String contentDescription = resources.getString(R.string.accessibility_reload_video);
+        if (mState == State.PAUSED) {
+            imageResource = R.drawable.ic_vidcontrol_play;
+            contentDescription = resources.getString(R.string.accessibility_play_video);
+        } else if (mState == State.PLAYING) {
+            imageResource = R.drawable.ic_vidcontrol_pause;
+            contentDescription = resources.getString(R.string.accessibility_pause_video);
+        }
+
+        mPlayPauseReplayView.setImageResource(imageResource);
+        mPlayPauseReplayView.setContentDescription(contentDescription);
         mPlayPauseReplayView.setVisibility(
                 (mState != State.LOADING && mState != State.ERROR &&
                 !(mState == State.ENDED && !mCanReplay))
