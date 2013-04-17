@@ -30,6 +30,8 @@ public abstract class ImageFilterRS extends ImageFilter {
     private int mLastInputWidth = 0;
     private int mLastInputHeight = 0;
 
+    public static boolean PERF_LOGGING = false;
+
     private static ScriptC_grey mGreyConvert = null;
     private static RenderScript mRScache = null;
 
@@ -37,6 +39,10 @@ public abstract class ImageFilterRS extends ImageFilter {
 
     protected abstract void createFilter(android.content.res.Resources res,
             float scaleFactor, int quality);
+
+    protected void createFilter(android.content.res.Resources res,
+    float scaleFactor, int quality, Allocation in) {}
+    protected void bindScriptValues(Allocation in) {}
 
     protected abstract void runFilter();
 
@@ -57,6 +63,38 @@ public abstract class ImageFilterRS extends ImageFilter {
         CachingPipeline pipeline = getEnvironment().getCachingPipeline();
         return pipeline.getOutPixelsAllocation();
     }
+
+    @Override
+    public void apply(Allocation in, Allocation out) {
+        long startOverAll = System.nanoTime();
+        long startFilter = 0;
+        long endFilter = 0;
+        if (!mResourcesLoaded) {
+            CachingPipeline pipeline = getEnvironment().getCachingPipeline();
+            createFilter(pipeline.getResources(), getEnvironment().getScaleFactor(),
+                    getEnvironment().getQuality(), in);
+            mResourcesLoaded = true;
+        }
+        startFilter = System.nanoTime();
+        bindScriptValues(in);
+        run(in, out);
+        if (PERF_LOGGING) {
+            getRenderScriptContext().finish();
+            endFilter = System.nanoTime();
+            long endOverAll = System.nanoTime();
+            String msg = String.format("%s; image size %dx%d; ", getName(),
+                    in.getType().getX(), in.getType().getY());
+            long timeOverAll = (endOverAll - startOverAll) / 1000;
+            long timeFilter = (endFilter - startFilter) / 1000;
+            msg += String.format("over all %.2f ms (%.2f FPS); ",
+                    timeOverAll / 1000.f, 1000000.f / timeOverAll);
+            msg += String.format("run filter %.2f ms (%.2f FPS)",
+                    timeFilter / 1000.f, 1000000.f / timeFilter);
+            Log.i(LOGTAG, msg);
+        }
+    }
+
+    protected void run(Allocation in, Allocation out) {}
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
@@ -99,6 +137,7 @@ public abstract class ImageFilterRS extends ImageFilter {
             displayLowMemoryToast();
             Log.e(LOGTAG, "not enough memory for filter " + getName(), e);
         }
+
         return bitmap;
     }
 
@@ -142,6 +181,21 @@ public abstract class ImageFilterRS extends ImageFilter {
                 res,
                 resource, options);
         Allocation ret = convertRGBAtoA(bitmap);
+        bitmap.recycle();
+        return ret;
+    }
+
+    public Allocation loadScaledResourceAlpha(int resource, int w, int h, int inSampleSize) {
+        Resources res = CachingPipeline.getResources();
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ALPHA_8;
+        options.inSampleSize      = inSampleSize;
+        Bitmap bitmap = BitmapFactory.decodeResource(
+                res,
+                resource, options);
+        Bitmap resizeBitmap = Bitmap.createScaledBitmap(bitmap, w, h, true);
+        Allocation ret = convertRGBAtoA(resizeBitmap);
+        resizeBitmap.recycle();
         bitmap.recycle();
         return ret;
     }

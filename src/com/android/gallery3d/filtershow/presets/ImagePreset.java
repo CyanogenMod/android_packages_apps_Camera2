@@ -18,6 +18,7 @@ package com.android.gallery3d.filtershow.presets;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.support.v8.renderscript.Allocation;
 import android.util.Log;
 
 import com.android.gallery3d.filtershow.ImageStateAdapter;
@@ -471,6 +472,28 @@ public class ImagePreset {
         }
 
         return bitmap;
+    }
+
+    public void applyFilters(int from, int to, Allocation in, Allocation out, FilterEnvironment environment) {
+        if (mDoApplyFilters) {
+            if (from < 0) {
+                from = 0;
+            }
+            if (to == -1) {
+                to = mFilters.size();
+            }
+            for (int i = from; i < to; i++) {
+                FilterRepresentation representation = null;
+                synchronized (mFilters) {
+                    representation = mFilters.elementAt(i);
+                    representation.synchronizeRepresentation();
+                }
+                if (i > from) {
+                    in.copyFrom(out);
+                }
+                environment.applyRepresentation(representation, in, out);
+            }
+        }
     }
 
     public boolean canDoPartialRendering() {
