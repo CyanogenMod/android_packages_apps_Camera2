@@ -138,7 +138,6 @@ public class MasterImage implements RenderingRequestCaller {
         mPreset.fillImageStateAdapter(mState);
         if (addToHistory) {
             mHistory.addHistoryItem(mPreset);
-            renderHistoryPreview();
         }
         updatePresets(true);
         GeometryMetadata geo = mPreset.mGeoData;
