@@ -347,13 +347,13 @@
     </array>
 
     <array name="camera_id_icons" translatable="false">
-        <item>@drawable/ic_menuselect_camera_facing_back</item>
-        <item>@drawable/ic_menuselect_camera_facing_front</item>
+        <item>@drawable/ic_switch_back</item>
+        <item>@drawable/ic_switch_front</item>
     </array>
 
     <array name="camera_id_largeicons" translatable="false">
-        <item>@drawable/ic_viewfinder_camera_facing_back</item>
-        <item>@drawable/ic_viewfinder_camera_facing_front</item>
+        <item>@drawable/ic_switch_back</item>
+        <item>@drawable/ic_switch_front</item>
     </array>
 
     <string-array name="pref_video_effect_entries" translatable="false">
