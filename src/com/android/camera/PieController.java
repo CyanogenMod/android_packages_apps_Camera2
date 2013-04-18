@@ -133,6 +133,50 @@ public class PieController {
         return item;
     }
 
+    public PieItem makeSwitchItem(final String prefKey, int position, int count,
+            boolean addListener) {
+        final IconListPreference pref =
+                (IconListPreference) mPreferenceGroup.findPreference(prefKey);
+        if (pref == null) return null;
+        int[] iconIds = pref.getLargeIconIds();
+        int resid = -1;
+        int index = pref.findIndexOfValue(pref.getValue());
+        if (!pref.getUseSingleIcon() && iconIds != null) {
+            // Each entry has a corresponding icon.
+            resid = iconIds[index];
+        } else {
+            // The preference only has a single icon to represent it.
+            resid = pref.getSingleIcon();
+        }
+        PieItem item = makeItem(resid);
+        item.setPosition(position, count);
+        item.setLabel(pref.getLabels()[index]);
+        item.setImageResource(mActivity, resid);
+        mPreferences.add(pref);
+        mPreferenceMap.put(pref, item);
+        if (addListener) {
+            final PieItem fitem = item;
+            item.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(PieItem item) {
+                    IconListPreference pref = (IconListPreference) mPreferenceGroup
+                            .findPreference(prefKey);
+                    int index = pref.findIndexOfValue(pref.getValue());
+                    CharSequence[] values = pref.getEntryValues();
+                    index = (index + 1) % values.length;
+                    pref.setValueIndex(index);
+                    fitem.setLabel(pref.getLabels()[index]);
+                    fitem.setImageResource(mActivity,
+                            ((IconListPreference) pref).getLargeIconIds()[index]);
+                    reloadPreference(pref);
+                    onSettingChanged(pref);
+                }
+            });
+        }
+        return item;
+    }
+
+
     public PieItem makeDialItem(ListPreference pref, int iconId, float center, float sweep) {
         PieItem item = makeItem(iconId);
         return item;
@@ -141,6 +185,17 @@ public class PieController {
     public void addItem(String prefKey, int position, int count) {
         PieItem item = makeItem(prefKey, position, count);
         mRenderer.addItem(item);
+    }
+
+    public void updateItem(PieItem item, String prefKey) {
+        IconListPreference pref = (IconListPreference) mPreferenceGroup
+                .findPreference(prefKey);
+        if (pref != null) {
+            int index = pref.findIndexOfValue(pref.getValue());
+            item.setLabel(pref.getLabels()[index]);
+            item.setImageResource(mActivity,
+                    ((IconListPreference) pref).getLargeIconIds()[index]);
+        }
     }
 
     public void setPreferenceGroup(PreferenceGroup group) {
