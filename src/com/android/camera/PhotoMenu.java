@@ -41,8 +41,10 @@ public class PhotoMenu extends PieController
     private static final int POS_MORE = 2;
     private static final int POS_FLASH = 3;
     private static final int POS_SWITCH = 4;
-    private static final int POS_WB = 1;
+    private static final int POS_LOCATION = 1;
+    private static final int POS_WB = 3;
     private static final int POS_SET = 2;
+    private static final int POS_SCENE = 4;
 
     private final String mSettingOff;
 
@@ -81,61 +83,31 @@ public class PhotoMenu extends PieController
         }
         // camera switcher
         if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
-            item = makeItem(R.drawable.ic_switch_back);
-            item.setPosition(POS_SWITCH,  5);
-            IconListPreference lpref = (IconListPreference) group.findPreference(
-                    CameraSettings.KEY_CAMERA_ID);
-            item.setImageResource(mActivity,
-                    ((IconListPreference) lpref).getIconIds()
-                    [lpref.findIndexOfValue(lpref.getValue())]);
-            item.setLabel(lpref.getLabel());
-            final PieItem fitem = item;
-            item.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(PieItem item) {
-                    // Find the index of next camera.
-                    ListPreference camPref = mPreferenceGroup
-                            .findPreference(CameraSettings.KEY_CAMERA_ID);
-                    if (camPref != null) {
-                        int index = camPref.findIndexOfValue(camPref.getValue());
-                        CharSequence[] values = camPref.getEntryValues();
-                        index = (index + 1) % values.length;
-                        int newCameraId = Integer
-                                .parseInt((String) values[index]);
-                        fitem.setLabel(camPref.getLabel());
-                        fitem.setImageResource(mActivity,
-                                ((IconListPreference) camPref).getIconIds()[index]);
-                        mListener.onCameraPickerClicked(newCameraId);
-                    }
-                }
-            });
-            mRenderer.addItem(item);
-        }
-        // hdr
-        if (group.findPreference(CameraSettings.KEY_CAMERA_HDR) != null) {
-            ListPreference lp = group.findPreference(CameraSettings.KEY_CAMERA_HDR);
-            item = makeItem(R.drawable.ic_hdr);
-            item.setLabel(lp.getLabel());
-            item.setPosition(POS_HDR, 5);
+            item = makeSwitchItem(CameraSettings.KEY_CAMERA_ID, POS_SWITCH, 5, false);
             final PieItem fitem = item;
             item.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(PieItem item) {
                     // Find the index of next camera.
                     ListPreference pref = mPreferenceGroup
-                            .findPreference(CameraSettings.KEY_CAMERA_HDR);
+                            .findPreference(CameraSettings.KEY_CAMERA_ID);
                     if (pref != null) {
-                        // toggle hdr value
-                        int index = (pref.findIndexOfValue(pref.getValue()) + 1) % 2;
+                        int index = pref.findIndexOfValue(pref.getValue());
+                        CharSequence[] values = pref.getEntryValues();
+                        index = (index + 1) % values.length;
                         pref.setValueIndex(index);
-                        onSettingChanged(pref);
-                        fitem.setLabel(pref.getLabel());
+                        mListener.onCameraPickerClicked(index);
                     }
+                    updateItem(fitem, CameraSettings.KEY_CAMERA_ID);
                 }
             });
             mRenderer.addItem(item);
         }
-
+        // hdr
+        if (group.findPreference(CameraSettings.KEY_CAMERA_HDR) != null) {
+            item = makeSwitchItem(CameraSettings.KEY_CAMERA_HDR, POS_HDR, 5, true);
+            mRenderer.addItem(item);
+        }
         // more settings
         PieItem more = makeItem(R.drawable.ic_settings_holo_light);
         more.setPosition(POS_MORE, 5);
@@ -147,10 +119,21 @@ public class PhotoMenu extends PieController
             item.setLabel(res.getString(R.string.pref_camera_whitebalance_label));
             more.addItem(item);
         }
+        // location
+        if (group.findPreference(CameraSettings.KEY_RECORD_LOCATION) != null) {
+            item = makeSwitchItem(CameraSettings.KEY_RECORD_LOCATION, POS_LOCATION, 5, true);
+            more.addItem(item);
+        }
+        // scene mode
+        if (group.findPreference(CameraSettings.KEY_SCENE_MODE) != null) {
+            IconListPreference pref = (IconListPreference) group.findPreference(
+                    CameraSettings.KEY_SCENE_MODE);
+            pref.setUseSingleIcon(true);
+            item = makeItem(CameraSettings.KEY_SCENE_MODE, POS_SCENE, 5);
+            more.addItem(item);
+        }
         // settings popup
         mOtherKeys = new String[] {
-                CameraSettings.KEY_SCENE_MODE,
-                CameraSettings.KEY_RECORD_LOCATION,
                 CameraSettings.KEY_PICTURE_SIZE,
                 CameraSettings.KEY_FOCUS_MODE,
                 CameraSettings.KEY_TIMER,
