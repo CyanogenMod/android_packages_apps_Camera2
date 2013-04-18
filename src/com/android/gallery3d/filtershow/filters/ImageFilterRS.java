@@ -29,6 +29,7 @@ public abstract class ImageFilterRS extends ImageFilter {
     private boolean DEBUG = false;
     private int mLastInputWidth = 0;
     private int mLastInputHeight = 0;
+    private long mLastTimeCalled;
 
     public static boolean PERF_LOGGING = false;
 
@@ -67,6 +68,15 @@ public abstract class ImageFilterRS extends ImageFilter {
     @Override
     public void apply(Allocation in, Allocation out) {
         long startOverAll = System.nanoTime();
+        if (PERF_LOGGING) {
+            long delay = (startOverAll - mLastTimeCalled) / 1000;
+            String msg = String.format("%s; image size %dx%d; ", getName(),
+                    in.getType().getX(), in.getType().getY());
+            msg += String.format("called after %.2f ms (%.2f FPS); ",
+                    delay / 1000.f, 1000000.f / delay);
+            Log.i(LOGTAG, msg);
+        }
+        mLastTimeCalled = startOverAll;
         long startFilter = 0;
         long endFilter = 0;
         if (!mResourcesLoaded) {
