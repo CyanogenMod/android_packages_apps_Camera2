@@ -26,7 +26,7 @@ import com.android.gallery3d.filtershow.imageshow.ImageShow;
  * The editor with no slider for filters without UI
  */
 public class ImageOnlyEditor extends Editor {
-    public static int ID = R.id.imageOnlyEditor;
+    public final static int ID = R.id.imageOnlyEditor;
     private final String LOGTAG = "ImageOnlyEditor";
 
     public ImageOnlyEditor() {
@@ -35,6 +35,10 @@ public class ImageOnlyEditor extends Editor {
 
     protected ImageOnlyEditor(int id) {
         super(id);
+    }
+
+    public boolean useUtilityPanel() {
+        return false;
     }
 
     @Override
