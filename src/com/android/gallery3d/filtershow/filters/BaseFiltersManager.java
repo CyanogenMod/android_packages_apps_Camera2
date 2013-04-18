@@ -86,7 +86,7 @@ public abstract class BaseFiltersManager {
 
     protected void addFilterClasses(Vector<Class> filters) {
         filters.add(ImageFilterTinyPlanet.class);
-        //filters.add(ImageFilterRedEye.class);
+        filters.add(ImageFilterRedEye.class);
         filters.add(ImageFilterWBalance.class);
         filters.add(ImageFilterExposure.class);
         filters.add(ImageFilterVignette.class);
@@ -137,7 +137,7 @@ public abstract class BaseFiltersManager {
     }
 
     public void addTools(Vector<FilterRepresentation> representations) {
-        //representations.add(getRepresentation(ImageFilterRedEye.class));
+        representations.add(getRepresentation(ImageFilterRedEye.class));
         representations.add(getRepresentation(ImageFilterDraw.class));
     }
 
