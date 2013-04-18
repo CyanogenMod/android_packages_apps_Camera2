@@ -37,7 +37,7 @@
             camera:icons="@array/video_flashmode_icons"
             camera:largeIcons="@array/video_flashmode_largeicons"
             camera:entries="@array/pref_camera_video_flashmode_entries"
-            camera:labels="@array/pref_camera_video_flashmode_labels"
+            camera:labelList="@array/pref_camera_video_flashmode_labels"
             camera:entryValues="@array/pref_camera_video_flashmode_entryvalues"/>
     <IconListPreference
             camera:key="pref_camera_whitebalance_key"
@@ -46,7 +46,7 @@
             camera:icons="@array/whitebalance_icons"
             camera:largeIcons="@array/whitebalance_largeicons"
             camera:entries="@array/pref_camera_whitebalance_entries"
-            camera:labels="@array/pref_camera_whitebalance_labels"
+            camera:labelList="@array/pref_camera_whitebalance_labels"
             camera:entryValues="@array/pref_camera_whitebalance_entryvalues"/>
     <IconListPreference
             camera:key="pref_camera_id_key"
@@ -54,7 +54,7 @@
             camera:title="@string/pref_camera_id_title"
             camera:icons="@array/camera_id_icons"
             camera:entries="@array/camera_id_entries"
-            camera:labels="@array/camera_id_labels"
+            camera:labelList="@array/camera_id_labels"
             camera:largeIcons="@array/camera_id_largeicons"/>
     <IconListPreference
             camera:key="pref_video_effect_key"
