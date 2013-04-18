@@ -36,6 +36,7 @@ import android.os.SystemClock;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RelativeLayout;
+import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
 import com.android.camera.CameraActivity;
@@ -71,8 +72,12 @@ import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.UsageStatistics;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
+
 public abstract class PhotoPage extends ActivityState implements
-        PhotoView.Listener, AppBridge.Server,
+        PhotoView.Listener, AppBridge.Server, ShareActionProvider.OnShareTargetSelectedListener,
         PhotoPageBottomControls.Delegate, GalleryActionBar.OnAlbumModeSelectedListener {
     private static final String TAG = "PhotoPage";
 
@@ -391,7 +396,7 @@ public abstract class PhotoPage extends ActivityState implements
                             }
                             Intent shareIntent = createShareIntent(mCurrentPhoto);
 
-                            mActionBar.setShareIntents(panoramaIntent, shareIntent);
+                            mActionBar.setShareIntents(panoramaIntent, shareIntent, PhotoPage.this);
                             setNfcBeamPushUri(contentUri);
                         }
                         break;
@@ -1540,4 +1545,28 @@ public abstract class PhotoPage extends ActivityState implements
     public void onUndoBarVisibilityChanged(boolean visible) {
         refreshBottomControlsWhenReady();
     }
+
+    @Override
+    public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
+        final long timestampMillis = mCurrentPhoto.getDateInMs();
+        final String mediaType = getMediaTypeString(mCurrentPhoto);
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_GALLERY,
+                UsageStatistics.ACTION_SHARE,
+                mediaType,
+                        timestampMillis > 0
+                        ? System.currentTimeMillis() - timestampMillis
+                        : -1);
+        return false;
+    }
+
+    private static String getMediaTypeString(MediaItem item) {
+        if (item.getMediaType() == MediaObject.MEDIA_TYPE_VIDEO) {
+            return "Video";
+        } else if (item.getMediaType() == MediaObject.MEDIA_TYPE_IMAGE) {
+            return "Photo";
+        } else {
+            return "Unknown:" + item.getMediaType();
+        }
+    }
+
 }
