@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.crop;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
@@ -24,19 +25,25 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Images;
+import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.exif.ExifInterface;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 /**
  * This class contains static methods for loading a bitmap and
- * mantains no instance state.
+ * maintains no instance state.
  */
 public abstract class CropLoader {
     public static final String LOGTAG = "CropLoader";
@@ -46,6 +53,8 @@ public abstract class CropLoader {
     public static final int ORI_ROTATE_180 = ExifInterface.Orientation.BOTTOM_LEFT;
     public static final int ORI_ROTATE_270 = ExifInterface.Orientation.RIGHT_BOTTOM;
 
+    private static final String TIME_STAMP_NAME = "'IMG'_yyyyMMdd_HHmmss";
+    public static final String DEFAULT_SAVE_DIRECTORY = "EditedOnlinePhotos";
     /**
      * Returns the orientation of image at the given URI as one of 0, 90, 180,
      * 270.
@@ -199,4 +208,112 @@ public abstract class CropLoader {
         return null;
     }
 
+    // TODO: Super gnarly (copied from SaveCopyTask.java), do cleanup.
+
+    public static File getFinalSaveDirectory(Context context, Uri sourceUri) {
+        File saveDirectory = getSaveDirectory(context, sourceUri);
+        if ((saveDirectory == null) || !saveDirectory.canWrite()) {
+            saveDirectory = new File(Environment.getExternalStorageDirectory(),
+                    DEFAULT_SAVE_DIRECTORY);
+        }
+        // Create the directory if it doesn't exist
+        if (!saveDirectory.exists())
+            saveDirectory.mkdirs();
+        return saveDirectory;
+    }
+
+
+
+    public static String getNewFileName(long time) {
+        return new SimpleDateFormat(TIME_STAMP_NAME).format(new Date(time));
+    }
+
+    public static File getNewFile(Context context, Uri sourceUri, String filename) {
+        File saveDirectory = getFinalSaveDirectory(context, sourceUri);
+        return new File(saveDirectory, filename  + ".JPG");
+    }
+
+    private interface ContentResolverQueryCallback {
+
+        void onCursorResult(Cursor cursor);
+    }
+
+    private static void querySource(Context context, Uri sourceUri, String[] projection,
+            ContentResolverQueryCallback callback) {
+        ContentResolver contentResolver = context.getContentResolver();
+        Cursor cursor = null;
+        try {
+            cursor = contentResolver.query(sourceUri, projection, null, null,
+                    null);
+            if ((cursor != null) && cursor.moveToNext()) {
+                callback.onCursorResult(cursor);
+            }
+        } catch (Exception e) {
+            // Ignore error for lacking the data column from the source.
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    private static File getSaveDirectory(Context context, Uri sourceUri) {
+        final File[] dir = new File[1];
+        querySource(context, sourceUri, new String[] {
+                ImageColumns.DATA }, new ContentResolverQueryCallback() {
+                    @Override
+                    public void onCursorResult(Cursor cursor) {
+                        dir[0] = new File(cursor.getString(0)).getParentFile();
+                    }
+                });
+        return dir[0];
+    }
+
+    public static Uri insertContent(Context context, Uri sourceUri, File file, String saveFileName,
+            long time) {
+        time /= 1000;
+
+        final ContentValues values = new ContentValues();
+        values.put(Images.Media.TITLE, saveFileName);
+        values.put(Images.Media.DISPLAY_NAME, file.getName());
+        values.put(Images.Media.MIME_TYPE, "image/jpeg");
+        values.put(Images.Media.DATE_TAKEN, time);
+        values.put(Images.Media.DATE_MODIFIED, time);
+        values.put(Images.Media.DATE_ADDED, time);
+        values.put(Images.Media.ORIENTATION, 0);
+        values.put(Images.Media.DATA, file.getAbsolutePath());
+        values.put(Images.Media.SIZE, file.length());
+
+        final String[] projection = new String[] {
+                ImageColumns.DATE_TAKEN,
+                ImageColumns.LATITUDE, ImageColumns.LONGITUDE,
+        };
+        querySource(context, sourceUri, projection,
+                new ContentResolverQueryCallback() {
+
+                    @Override
+                    public void onCursorResult(Cursor cursor) {
+                        values.put(Images.Media.DATE_TAKEN, cursor.getLong(0));
+
+                        double latitude = cursor.getDouble(1);
+                        double longitude = cursor.getDouble(2);
+                        // TODO: Change || to && after the default location
+                        // issue is fixed.
+                        if ((latitude != 0f) || (longitude != 0f)) {
+                            values.put(Images.Media.LATITUDE, latitude);
+                            values.put(Images.Media.LONGITUDE, longitude);
+                        }
+                    }
+                });
+
+        return context.getContentResolver().insert(
+                Images.Media.EXTERNAL_CONTENT_URI, values);
+    }
+
+    public static Uri makeAndInsertUri(Context context, Uri sourceUri) {
+        long time = System.currentTimeMillis();
+        String filename = getNewFileName(time);
+        File file = getNewFile(context, sourceUri, filename);
+        return insertContent(context, sourceUri, file, filename, time);
+    }
 }

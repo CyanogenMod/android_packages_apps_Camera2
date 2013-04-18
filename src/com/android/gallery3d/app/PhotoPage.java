@@ -59,6 +59,7 @@ import com.android.gallery3d.data.SnailAlbum;
 import com.android.gallery3d.data.SnailItem;
 import com.android.gallery3d.data.SnailSource;
 import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.filtershow.crop.CropActivity;
 import com.android.gallery3d.picasasource.PicasaSource;
 import com.android.gallery3d.ui.DetailsHelper;
 import com.android.gallery3d.ui.DetailsHelper.CloseListener;
@@ -1081,8 +1082,8 @@ public abstract class PhotoPage extends ActivityState implements
             }
             case R.id.action_crop: {
                 Activity activity = mActivity;
-                Intent intent = new Intent(FilterShowActivity.CROP_ACTION);
-                intent.setClass(activity, FilterShowActivity.class);
+                Intent intent = new Intent(CropActivity.CROP_ACTION);
+                intent.setClass(activity, CropActivity.class);
                 intent.setDataAndType(manager.getContentUri(path), current.getMimeType())
                     .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 activity.startActivityForResult(intent, PicasaSource.isPicasaImage(current)
