@@ -28,6 +28,7 @@ import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
@@ -83,14 +84,22 @@ public class ImageShow extends View implements OnGestureListener,
     private static int mOriginalTextSize = 26;
     private static String mOriginalText = "Original";
     private boolean mZoomIn = false;
+    Point mOriginalTranslation = new Point();
+    float mOriginalScale;
+    float mStartFocusX, mStartFocusY;
+    private enum InteractionMode {
+        NONE,
+        SCALE,
+        MOVE
+    }
+    private String mToast = null;
+    private boolean mShowToast = false;
+    private boolean mImportantToast = false;
+    InteractionMode mInteractionMode = InteractionMode.NONE;
 
     protected GeometryMetadata getGeometry() {
         return new GeometryMetadata(getImagePreset().mGeoData);
     }
-
-    private String mToast = null;
-    private boolean mShowToast = false;
-    private boolean mImportantToast = false;
 
     private PanelController mController = null;
 
@@ -559,9 +568,15 @@ public class ImageShow extends View implements OnGestureListener,
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
+        int action = event.getAction();
+        action = action & MotionEvent.ACTION_MASK;
+
         mGestureDetector.onTouchEvent(event);
         boolean scaleInProgress = scaleInProgress();
         mScaleGestureDetector.onTouchEvent(event);
+        if (mInteractionMode == InteractionMode.SCALE) {
+            return true;
+        }
         if (!scaleInProgress() && scaleInProgress) {
             // If we were scaling, the scale will stop but we will
             // still issue an ACTION_UP. Let the subclasses know.
@@ -570,7 +585,8 @@ public class ImageShow extends View implements OnGestureListener,
 
         int ex = (int) event.getX();
         int ey = (int) event.getY();
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (action == MotionEvent.ACTION_DOWN) {
+            mInteractionMode = InteractionMode.MOVE;
             mTouchDown.x = ex;
             mTouchDown.y = ey;
             mTouchShowOriginalDate = System.currentTimeMillis();
@@ -578,7 +594,7 @@ public class ImageShow extends View implements OnGestureListener,
             MasterImage.getImage().setOriginalTranslation(MasterImage.getImage().getTranslation());
         }
 
-        if (event.getAction() == MotionEvent.ACTION_MOVE) {
+        if (action == MotionEvent.ACTION_MOVE && mInteractionMode == InteractionMode.MOVE) {
             mTouch.x = ex;
             mTouch.y = ey;
 
@@ -600,7 +616,8 @@ public class ImageShow extends View implements OnGestureListener,
             }
         }
 
-        if (event.getAction() == MotionEvent.ACTION_UP) {
+        if (action == MotionEvent.ACTION_UP) {
+            mInteractionMode = InteractionMode.NONE;
             mTouchShowOriginal = false;
             mTouchDown.x = 0;
             mTouchDown.y = 0;
@@ -699,7 +716,10 @@ public class ImageShow extends View implements OnGestureListener,
 
     @Override
     public boolean onScale(ScaleGestureDetector detector) {
-        float scaleFactor = MasterImage.getImage().getScaleFactor();
+        MasterImage img = MasterImage.getImage();
+        float scaleFactor = img.getScaleFactor();
+        Point pos = img.getTranslation();
+
         scaleFactor = scaleFactor * detector.getScaleFactor();
         if (scaleFactor > MasterImage.getImage().getMaxScaleFactor()) {
             scaleFactor = MasterImage.getImage().getMaxScaleFactor();
@@ -708,16 +728,36 @@ public class ImageShow extends View implements OnGestureListener,
             scaleFactor = 0.5f;
         }
         MasterImage.getImage().setScaleFactor(scaleFactor);
+        scaleFactor = img.getScaleFactor();
+        pos = img.getTranslation();
+        float focusx = detector.getFocusX();
+        float focusy = detector.getFocusY();
+        float translateX = (focusx - mStartFocusX) / scaleFactor;
+        float translateY = (focusy - mStartFocusY) / scaleFactor;
+        Point translation = MasterImage.getImage().getTranslation();
+        translation.x = (int) (mOriginalTranslation.x + translateX);
+        translation.y = (int) (mOriginalTranslation.y + translateY);
+        MasterImage.getImage().setTranslation(translation);
+
+        invalidate();
         return true;
     }
 
     @Override
     public boolean onScaleBegin(ScaleGestureDetector detector) {
+        Point pos = MasterImage.getImage().getTranslation();
+        mOriginalTranslation.x = pos.x;
+        mOriginalTranslation.y = pos.y;
+        mOriginalScale = MasterImage.getImage().getScaleFactor();
+        mStartFocusX = detector.getFocusX();
+        mStartFocusY = detector.getFocusY();
+        mInteractionMode = InteractionMode.SCALE;
         return true;
     }
 
     @Override
     public void onScaleEnd(ScaleGestureDetector detector) {
+        mInteractionMode = InteractionMode.NONE;
         if (MasterImage.getImage().getScaleFactor() < 1) {
             MasterImage.getImage().setScaleFactor(1);
             invalidate();
