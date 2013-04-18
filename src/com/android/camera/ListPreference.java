@@ -70,7 +70,7 @@ public class ListPreference extends CameraPreference {
         setEntryValues(a.getTextArray(
                 R.styleable.ListPreference_entryValues));
         setLabels(a.getTextArray(
-                R.styleable.ListPreference_labels));
+                R.styleable.ListPreference_labelList));
         a.recycle();
     }
 
