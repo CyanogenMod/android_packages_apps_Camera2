@@ -25,30 +25,46 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.crop.CropDrawingUtils;
+
 
 public class CropView extends View {
     private static final String LOGTAG = "CropView";
 
-    Bitmap mImage = null;
-    CropObject mCropObj = null;
+    private RectF mImageBounds = new RectF();
+    private RectF mScreenBounds = new RectF();
+    private RectF mScreenImageBounds = new RectF();
+    private RectF mScreenCropBounds = new RectF();
+    private Rect mShadowBounds = new Rect();
+
+    private Bitmap mBitmap;
+    private Paint mPaint = new Paint();
+
+    private NinePatchDrawable mShadow;
+    private CropObject mCropObj = null;
     private final Drawable mCropIndicator;
     private final int mIndicatorSize;
+    private int mRotation = 0;
+    private boolean mMovingBlock = false;
+    private Matrix mDisplayMatrix = null;
+    private Matrix mDisplayMatrixInverse = null;
+    private boolean mDirty = false;
 
     private float mPrevX = 0;
     private float mPrevY = 0;
 
-    private int mMinSideSize = 45;
-    private int mTouchTolerance = 20;
-    private boolean mMovingBlock = false;
-
-    private Matrix mDisplayMatrix = null;
-    private Matrix mDisplayMatrixInverse = null;
+    private int mShadowMargin = 15;
+    private int mMargin = 32;
+    private int mOverlayShadowColor = 0xCF000000;
+    private int mMinSideSize = 90;
+    private int mTouchTolerance = 40;
 
     private enum Mode {
         NONE, MOVE
@@ -58,57 +74,41 @@ public class CropView extends View {
 
     public CropView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Resources resources = context.getResources();
-        mCropIndicator = resources.getDrawable(R.drawable.camera_crop);
-        mIndicatorSize = (int) resources.getDimension(R.dimen.crop_indicator_size);
+        Resources rsc = context.getResources();
+        mShadow = (NinePatchDrawable) rsc.getDrawable(R.drawable.geometry_shadow);
+        mCropIndicator = rsc.getDrawable(R.drawable.camera_crop);
+        mIndicatorSize = (int) rsc.getDimension(R.dimen.crop_indicator_size);
+        mShadowMargin = (int) rsc.getDimension(R.dimen.shadow_margin);
+        mMargin = (int) rsc.getDimension(R.dimen.preview_margin);
+        mMinSideSize = (int) rsc.getDimension(R.dimen.crop_min_side);
+        mTouchTolerance = (int) rsc.getDimension(R.dimen.crop_touch_tolerance);
+        mOverlayShadowColor = (int) rsc.getColor(R.color.crop_shadow_color);
     }
 
-    // For unchanging parameters
-    public void setup(Bitmap image, int minSideSize, int touchTolerance) {
-        mImage = image;
-        mMinSideSize = minSideSize;
-        mTouchTolerance = touchTolerance;
-        reset();
-    }
-
-    @Override
-    public void onDraw(Canvas canvas) {
-        if (mImage == null) {
-            return;
-        }
-        int displayWidth = getWidth();
-        int displayHeight = getHeight();
-        Rect imageBoundsOriginal = new Rect(0, 0, mImage.getWidth(), mImage.getHeight());
-        Rect displayBoundsOriginal = new Rect(0, 0, displayWidth, displayHeight);
-        if (mCropObj == null) {
-            reset();
-            mCropObj = new CropObject(imageBoundsOriginal, imageBoundsOriginal, 0);
-        }
-
-        RectF imageBounds = mCropObj.getInnerBounds();
-        RectF displayBounds = mCropObj.getOuterBounds();
-
-        // If display matrix doesn't exist, create it and its dependencies
-        if (mDisplayMatrix == null || mDisplayMatrixInverse == null) {
-            mDisplayMatrix = CropDrawingUtils.getBitmapToDisplayMatrix(displayBounds, new RectF(
-                    displayBoundsOriginal));
-            mDisplayMatrixInverse = new Matrix();
-            mDisplayMatrixInverse.reset();
-            if (!mDisplayMatrix.invert(mDisplayMatrixInverse)) {
-                Log.w(LOGTAG, "could not invert display matrix");
+    public void initialize(Bitmap image, RectF newCropBounds, RectF newPhotoBounds, int rotation) {
+        mBitmap = image;
+        if (mCropObj != null) {
+            RectF crop = mCropObj.getInnerBounds();
+            RectF containing = mCropObj.getOuterBounds();
+            if (crop != newCropBounds || containing != newPhotoBounds
+                    || mRotation != rotation) {
+                mRotation = rotation;
+                mCropObj.resetBoundsTo(newCropBounds, newPhotoBounds);
+                clearDisplay();
             }
-            // Scale min side and tolerance by display matrix scale factor
-            mCropObj.setMinInnerSideSize(mDisplayMatrixInverse.mapRadius(mMinSideSize));
-            mCropObj.setTouchTolerance(mDisplayMatrixInverse.mapRadius(mTouchTolerance));
+        } else {
+            mRotation = rotation;
+            mCropObj = new CropObject(newPhotoBounds, newCropBounds, 0);
+            clearDisplay();
         }
-        canvas.drawBitmap(mImage, mDisplayMatrix, new Paint());
+    }
 
-        if (mDisplayMatrix.mapRect(imageBounds)) {
-            CropDrawingUtils.drawCropRect(canvas, imageBounds);
-            CropDrawingUtils.drawRuleOfThird(canvas, imageBounds);
-            CropDrawingUtils.drawIndicators(canvas, mCropIndicator, mIndicatorSize, imageBounds,
-                    mCropObj.isFixedAspect(), mCropObj.getSelectState());
-        }
+    public RectF getCrop() {
+        return mCropObj.getInnerBounds();
+    }
+
+    public RectF getPhoto() {
+        return mCropObj.getOuterBounds();
     }
 
     @Override
@@ -133,8 +133,6 @@ public class CropView extends View {
                     mPrevX = x;
                     mPrevY = y;
                     mState = Mode.MOVE;
-                } else {
-                    reset();
                 }
                 break;
             case (MotionEvent.ACTION_UP):
@@ -144,8 +142,6 @@ public class CropView extends View {
                     mPrevX = x;
                     mPrevY = y;
                     mState = Mode.NONE;
-                } else {
-                    reset();
                 }
                 break;
             case (MotionEvent.ACTION_MOVE):
@@ -155,41 +151,129 @@ public class CropView extends View {
                     mCropObj.moveCurrentSelection(dx, dy);
                     mPrevX = x;
                     mPrevY = y;
-                } else {
-                    reset();
                 }
                 break;
             default:
-                reset();
                 break;
         }
         invalidate();
         return true;
     }
 
-    public void reset() {
-        Log.w(LOGTAG, "reset called");
+    private void reset() {
+        Log.w(LOGTAG, "crop reset called");
         mState = Mode.NONE;
         mCropObj = null;
+        mRotation = 0;
+        mMovingBlock = false;
+        clearDisplay();
+    }
+
+    private void clearDisplay() {
         mDisplayMatrix = null;
         mDisplayMatrixInverse = null;
-        mMovingBlock = false;
         invalidate();
     }
 
-    public boolean getCropBounds(RectF out_crop, RectF in_newContaining) {
-        Matrix m = new Matrix();
-        RectF inner = mCropObj.getInnerBounds();
+    protected void configChanged() {
+        mDirty = true;
+    }
+
+    public void applyFreeAspect() {
+        mCropObj.unsetAspectRatio();
+        invalidate();
+    }
+
+    public void applyOriginalAspect() {
         RectF outer = mCropObj.getOuterBounds();
-        if (!m.setRectToRect(outer, in_newContaining, Matrix.ScaleToFit.FILL)) {
-            Log.w(LOGTAG, "failed to make transform matrix");
-            return false;
+        if (!mCropObj.setInnerAspectRatio((int) outer.width(), (int) outer.height())) {
+            Log.w(LOGTAG, "failed to set aspect ratio original");
         }
-        if (!m.mapRect(inner)) {
-            Log.w(LOGTAG, "failed to transform crop bounds");
-            return false;
+        mCropObj.resetBoundsTo(outer, outer);
+        invalidate();
+    }
+
+    public void applySquareAspect() {
+        if (!mCropObj.setInnerAspectRatio(1, 1)) {
+            Log.w(LOGTAG, "failed to set aspect ratio square");
         }
-        out_crop.set(inner);
-        return true;
+        invalidate();
+    }
+
+    @Override
+    public void onDraw(Canvas canvas) {
+        if (mBitmap == null) {
+            return;
+        }
+        if (mDirty) {
+            mDirty = false;
+            clearDisplay();
+        }
+
+        mImageBounds = new RectF(0, 0, mBitmap.getWidth(), mBitmap.getHeight());
+        mScreenBounds = new RectF(0, 0, canvas.getWidth(), canvas.getHeight());
+        mScreenBounds.inset(mMargin, mMargin);
+
+        // If crop object doesn't exist, create it and update it from master
+        // state
+        if (mCropObj == null) {
+            reset();
+            mCropObj = new CropObject(mImageBounds, mImageBounds, 0);
+        }
+
+        // If display matrix doesn't exist, create it and its dependencies
+        if (mDisplayMatrix == null || mDisplayMatrixInverse == null) {
+            mDisplayMatrix = new Matrix();
+            mDisplayMatrix.reset();
+            if (!CropDrawingUtils.setImageToScreenMatrix(mDisplayMatrix, mImageBounds, mScreenBounds,
+                    mRotation)) {
+                Log.w(LOGTAG, "failed to get screen matrix");
+                mDisplayMatrix = null;
+                return;
+            }
+            mDisplayMatrixInverse = new Matrix();
+            mDisplayMatrixInverse.reset();
+            if (!mDisplayMatrix.invert(mDisplayMatrixInverse)) {
+                Log.w(LOGTAG, "could not invert display matrix");
+                mDisplayMatrixInverse = null;
+                return;
+            }
+            // Scale min side and tolerance by display matrix scale factor
+            mCropObj.setMinInnerSideSize(mDisplayMatrixInverse.mapRadius(mMinSideSize));
+            mCropObj.setTouchTolerance(mDisplayMatrixInverse.mapRadius(mTouchTolerance));
+        }
+
+        mScreenImageBounds.set(mImageBounds);
+
+        // Draw background shadow
+        if (mDisplayMatrix.mapRect(mScreenImageBounds)) {
+            int margin = (int) mDisplayMatrix.mapRadius(mShadowMargin);
+            mScreenImageBounds.roundOut(mShadowBounds);
+            mShadowBounds.set(mShadowBounds.left - margin, mShadowBounds.top -
+                    margin, mShadowBounds.right + margin, mShadowBounds.bottom + margin);
+            mShadow.setBounds(mShadowBounds);
+            mShadow.draw(canvas);
+        }
+
+        // Draw actual bitmap
+        canvas.drawBitmap(mBitmap, mDisplayMatrix, mPaint);
+
+        mCropObj.getInnerBounds(mScreenCropBounds);
+
+        if (mDisplayMatrix.mapRect(mScreenCropBounds)) {
+
+            // Draw overlay shadows
+            Paint p = new Paint();
+            p.setColor(mOverlayShadowColor);
+            p.setStyle(Paint.Style.FILL);
+            CropDrawingUtils.drawShadows(canvas, p, mScreenCropBounds, mScreenImageBounds);
+
+            // Draw crop rect and markers
+            CropDrawingUtils.drawCropRect(canvas, mScreenCropBounds);
+            CropDrawingUtils.drawRuleOfThird(canvas, mScreenCropBounds);
+            CropDrawingUtils.drawIndicators(canvas, mCropIndicator, mIndicatorSize,
+                    mScreenCropBounds, mCropObj.isFixedAspect(), mCropObj.getSelectState());
+        }
+
     }
 }
