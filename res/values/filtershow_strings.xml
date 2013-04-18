@@ -39,10 +39,6 @@
     <string name="filtershow_undo">Undo</string>
     <!--  Text for redo menu item [CHAR LIMIT=20] -->
     <string name="filtershow_redo">Redo</string>
-    <!--  Text for the history panel menu item [CHAR LIMIT=20] -->
-    <string name="show_history_panel">Show History</string>
-    <!--  Text for the history panel menu item [CHAR LIMIT=20] -->
-    <string name="hide_history_panel">Hide History</string>
     <!--  Text for the image state panel menu item [CHAR LIMIT=20] -->
     <string name="show_imagestate_panel">Show Image State</string>
     <!--  Text for the image state panel menu item [CHAR LIMIT=20] -->

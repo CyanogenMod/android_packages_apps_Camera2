@@ -20,12 +20,6 @@
         android:id="@+id/resetHistoryButton"
         android:title="@string/reset"/>
     <item
-        android:id="@+id/operationsButton"
-        android:icon="@drawable/filtershow_button_operations"
-        android:showAsAction="never"
-        android:visible="true"
-        android:title="@string/show_history_panel"/>
-    <item
         android:id="@+id/showImageStateButton"
         android:showAsAction="never"
         android:visible="true"
