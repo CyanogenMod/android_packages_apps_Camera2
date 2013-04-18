@@ -29,6 +29,7 @@ public class FilterVignetteRepresentation extends FilterBasicRepresentation impl
 
     public FilterVignetteRepresentation() {
         super("Vignette", -100, 50, 100);
+        setSerializationName("VIGNETTE");
         setShowParameterValue(true);
         setPriority(FilterRepresentation.TYPE_VIGNETTE);
         setTextId(R.string.vignette);
@@ -110,5 +111,45 @@ public class FilterVignetteRepresentation extends FilterBasicRepresentation impl
     @Override
     public boolean isNil() {
         return getValue() == 0;
+    }
+
+    private static final String[] sParams = {
+            "Name", "value", "mCenterX", "mCenterY", "mRadiusX",
+            "mRadiusY"
+    };
+
+    @Override
+    public String[][] serializeRepresentation() {
+        String[][] ret = {
+                { sParams[0], getName() },
+                { sParams[1], Integer.toString(getValue()) },
+                { sParams[2], Float.toString(mCenterX) },
+                { sParams[3], Float.toString(mCenterY) },
+                { sParams[4], Float.toString(mRadiusX) },
+                { sParams[5], Float.toString(mRadiusY) }
+        };
+        return ret;
+    }
+
+    @Override
+    public void deSerializeRepresentation(String[][] rep) {
+        super.deSerializeRepresentation(rep);
+        for (int i = 0; i < rep.length; i++) {
+            String key = rep[i][0];
+            String value = rep[i][1];
+            if (sParams[0].equals(key)) {
+                setName(value);
+            } else if (sParams[1].equals(key)) {
+               setValue(Integer.parseInt(value));
+            } else if (sParams[2].equals(key)) {
+                mCenterX = Float.parseFloat(value);
+            } else if (sParams[3].equals(key)) {
+                mCenterY = Float.parseFloat(value);
+            } else if (sParams[4].equals(key)) {
+                mRadiusX = Float.parseFloat(value);
+            } else if (sParams[5].equals(key)) {
+                mRadiusY = Float.parseFloat(value);
+            }
+        }
     }
 }

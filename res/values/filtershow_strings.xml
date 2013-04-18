@@ -30,6 +30,8 @@
 
     <!--  Text for original image [CHAR LIMIT=20] -->
     <string name="original">Original</string>
+    <!--  Text for original image [CHAR LIMIT=20] -->
+    <string name="saved">Saved</string>
     <!--  Text for filters that apply a border to a picture [CHAR LIMIT=20] -->
     <string name="borders" msgid="4461692156695893616">Borders</string>
 
