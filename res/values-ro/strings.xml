@@ -264,16 +264,42 @@
     <string name="pref_camera_focusmode_entry_auto" msgid="7374820710300362457">"Automat"</string>
     <string name="pref_camera_focusmode_entry_infinity" msgid="3413922419264967552">"Infinit"</string>
     <string name="pref_camera_focusmode_entry_macro" msgid="4424489110551866161">"Macro"</string>
+    <!-- no translation found for pref_camera_focusmode_label_auto (8547956917516317183) -->
+    <skip />
+    <!-- no translation found for pref_camera_focusmode_label_infinity (4272904160062531778) -->
+    <skip />
+    <!-- no translation found for pref_camera_focusmode_label_macro (8749317592620908054) -->
+    <skip />
     <string name="pref_camera_flashmode_title" msgid="2287362477238791017">"Mod flash"</string>
+    <!-- no translation found for pref_camera_flashmode_label (7546741624882856171) -->
+    <skip />
     <string name="pref_camera_flashmode_entry_auto" msgid="7288383434237457709">"Automat"</string>
     <string name="pref_camera_flashmode_entry_on" msgid="5330043918845197616">"Activat"</string>
     <string name="pref_camera_flashmode_entry_off" msgid="867242186958805761">"Dezactivată"</string>
+    <!-- no translation found for pref_camera_flashmode_label_auto (8854671890619026197) -->
+    <skip />
+    <!-- no translation found for pref_camera_flashmode_label_on (7347504762794840140) -->
+    <skip />
+    <!-- no translation found for pref_camera_flashmode_label_off (3541596735596053416) -->
+    <skip />
     <string name="pref_camera_whitebalance_title" msgid="677420930596673340">"Balanţă de alb"</string>
+    <!-- no translation found for pref_camera_whitebalance_label (7467403405883190920) -->
+    <skip />
     <string name="pref_camera_whitebalance_entry_auto" msgid="6580665476983469293">"Automat"</string>
     <string name="pref_camera_whitebalance_entry_incandescent" msgid="8856667786449549938">"Incandescent"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="2534757270149561027">"Lumină de zi"</string>
     <string name="pref_camera_whitebalance_entry_fluorescent" msgid="2435332872847454032">"Fluorescent"</string>
     <string name="pref_camera_whitebalance_entry_cloudy" msgid="3531996716997959326">"Înnorat"</string>
+    <!-- no translation found for pref_camera_whitebalance_label_auto (1479694362310491429) -->
+    <skip />
+    <!-- no translation found for pref_camera_whitebalance_label_incandescent (7427628260209908900) -->
+    <skip />
+    <!-- no translation found for pref_camera_whitebalance_label_daylight (1859710806141461399) -->
+    <skip />
+    <!-- no translation found for pref_camera_whitebalance_label_fluorescent (5173251749161337707) -->
+    <skip />
+    <!-- no translation found for pref_camera_whitebalance_label_cloudy (8230173517179285320) -->
+    <skip />
     <string name="pref_camera_scenemode_title" msgid="1420535844292504016">"Mod Scenă"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="7113995286836658648">"Automat"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="2923388802899511784">"HDR"</string>
@@ -283,7 +309,17 @@
     <string name="pref_camera_scenemode_entry_party" msgid="907053529286788253">"Petrecere"</string>
     <string name="not_selectable_in_scene_mode" msgid="2970291701448555126">"Nu este selectabil în modul scenă."</string>
     <string name="pref_exposure_title" msgid="1229093066434614811">"Expunere"</string>
+    <!-- no translation found for pref_exposure_label (552624394642497940) -->
+    <skip />
     <!-- no translation found for pref_camera_hdr_default (1336869406134365882) -->
+    <skip />
+    <!-- no translation found for pref_camera_hdr_label_on (5684573770843895299) -->
+    <skip />
+    <!-- no translation found for pref_camera_hdr_label_off (3027395137861806841) -->
+    <skip />
+    <!-- no translation found for pref_camera_id_label_back (8745553500400332333) -->
+    <skip />
+    <!-- no translation found for pref_camera_id_label_front (8699439330056996709) -->
     <skip />
     <string name="dialog_ok" msgid="6263301364153382152">"OK"</string>
     <string name="spaceIsLow_content" product="nosdcard" msgid="4401325203349203177">"Spaţiul de stocare USB este aproape ocupat. Editaţi setarea de calitate sau ştergeţi câteva imagini ori alte fişiere."</string>
@@ -394,6 +430,10 @@
     <string name="menu_search" msgid="7580008232297437190">"Căutați"</string>
     <string name="tab_photos" msgid="9110813680630313419">"Fotografii"</string>
     <string name="tab_albums" msgid="8079449907770685691">"Albume"</string>
+    <!-- no translation found for camera_menu_more_label (6868642182125198710) -->
+    <skip />
+    <!-- no translation found for camera_menu_settings_label (875454962069404723) -->
+    <skip />
   <plurals name="number_of_photos">
     <item quantity="one" msgid="6949174783125614798">"%1$d fotografie"</item>
     <item quantity="other" msgid="3813306834113858135">"%1$d fotografii"</item>
