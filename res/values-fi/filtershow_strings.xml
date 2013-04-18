@@ -25,8 +25,6 @@
     <string name="borders" msgid="2067345080568684614">"Reunukset"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Kumoa"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"Toista"</string>
-    <string name="show_history_panel" msgid="7785810372502120090">"Näytä historia"</string>
-    <string name="hide_history_panel" msgid="2082672248771133871">"Piilota historia"</string>
     <string name="show_imagestate_panel" msgid="7132294085840948243">"Näytä kuvan tila"</string>
     <string name="hide_imagestate_panel" msgid="1135313661068111161">"Piilota kuvan tila"</string>
     <string name="menu_settings" msgid="6428291655769260831">"Asetukset"</string>
@@ -93,4 +91,8 @@
     <string name="color_pick_title" msgid="6195567431995308876">"Valitse väri"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"Valitse koko"</string>
     <string name="draw_size_accept" msgid="6781529716526190028">"OK"</string>
+    <!-- no translation found for state_panel_original (9069584409934164419) -->
+    <skip />
+    <!-- no translation found for state_panel_result (318640531123298676) -->
+    <skip />
 </resources>
