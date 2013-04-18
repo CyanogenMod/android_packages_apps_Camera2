@@ -250,8 +250,6 @@ public class ImageCurves extends ImageShow {
 
     @Override
     public synchronized boolean onTouchEvent(MotionEvent e) {
-        super.onTouchEvent(e);
-
         if (e.getPointerCount() != 1) {
             return true;
         }
