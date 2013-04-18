@@ -73,10 +73,6 @@ import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.UsageStatistics;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.util.Date;
-
 public abstract class PhotoPage extends ActivityState implements
         PhotoView.Listener, AppBridge.Server, ShareActionProvider.OnShareTargetSelectedListener,
         PhotoPageBottomControls.Delegate, GalleryActionBar.OnAlbumModeSelectedListener {
