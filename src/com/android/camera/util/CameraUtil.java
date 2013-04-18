@@ -120,6 +120,10 @@ public class CameraUtil {
 
     private static boolean sEnableZSL;
 
+    // Do not change the focus mode when TTF is used
+    private static boolean sNoFocusModeChangeForTouch;
+
+
     // Fields for the show-on-maps-functionality
     private static final String MAPS_PACKAGE_NAME = "com.google.android.apps.maps";
     private static final String MAPS_CLASS_NAME = "com.google.android.maps.MapsActivity";
@@ -202,10 +206,16 @@ public class CameraUtil {
         sImageFileNamer = new ImageFileNamer(
                 context.getString(R.string.image_file_name_format));
         sEnableZSL = context.getResources().getBoolean(R.bool.enableZSL);
+        sNoFocusModeChangeForTouch = context.getResources().getBoolean(
+                R.bool.useContinuosFocusForTouch);
     }
 
     public static int dpToPixel(int dp) {
         return Math.round(sPixelDensity * dp);
+    }
+
+    public static boolean noFocusModeChangeForTouch() {
+        return sNoFocusModeChangeForTouch;
     }
 
     // Rotates the bitmap by the specified degree.
