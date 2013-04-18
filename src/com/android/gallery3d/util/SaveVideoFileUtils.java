@@ -19,6 +19,7 @@ package com.android.gallery3d.util;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore.Video;
@@ -95,7 +96,7 @@ public class SaveVideoFileUtils {
             ContentResolver contentResolver, Uri uri ) {
         long nowInMs = System.currentTimeMillis();
         long nowInSec = nowInMs / 1000;
-        final ContentValues values = new ContentValues(12);
+        final ContentValues values = new ContentValues(13);
         values.put(Video.Media.TITLE, mDstFileInfo.mFileName);
         values.put(Video.Media.DISPLAY_NAME, mDstFileInfo.mFile.getName());
         values.put(Video.Media.MIME_TYPE, "video/mp4");
@@ -104,6 +105,8 @@ public class SaveVideoFileUtils {
         values.put(Video.Media.DATE_ADDED, nowInSec);
         values.put(Video.Media.DATA, mDstFileInfo.mFile.getAbsolutePath());
         values.put(Video.Media.SIZE, mDstFileInfo.mFile.length());
+        int durationMs = retriveVideoDurationMs(mDstFileInfo.mFile.getPath());
+        values.put(Video.Media.DURATION, durationMs);
         // Copy the data taken and location info from src.
         String[] projection = new String[] {
                 VideoColumns.DATE_TAKEN,
@@ -136,6 +139,20 @@ public class SaveVideoFileUtils {
                 });
 
         return contentResolver.insert(Video.Media.EXTERNAL_CONTENT_URI, values);
+    }
+
+    public static int retriveVideoDurationMs(String path) {
+        int durationMs = 0;
+        // Calculate the duration of the destination file.
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(path);
+        String duration = retriever.extractMetadata(
+                MediaMetadataRetriever.METADATA_KEY_DURATION);
+        if (duration != null) {
+            durationMs = Integer.parseInt(duration);
+        }
+        retriever.release();
+        return durationMs;
     }
 
 }
