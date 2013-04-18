@@ -21,7 +21,7 @@ import com.android.gallery3d.R;
 import android.graphics.Bitmap;
 
 public class ImageFilterExposure extends SimpleImageFilter {
-
+    private static final String SERIALIZATION_NAME = "EXPOSURE";
     public ImageFilterExposure() {
         mName = "Exposure";
     }
@@ -30,6 +30,7 @@ public class ImageFilterExposure extends SimpleImageFilter {
         FilterBasicRepresentation representation =
                 (FilterBasicRepresentation) super.getDefaultRepresentation();
         representation.setName("Exposure");
+        representation.setSerializationName(SERIALIZATION_NAME);
         representation.setFilterClass(ImageFilterExposure.class);
         representation.setTextId(R.string.exposure);
         representation.setButtonId(R.id.exposureButton);

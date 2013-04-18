@@ -22,6 +22,7 @@ import android.text.format.Time;
 import com.android.gallery3d.R;
 
 public class ImageFilterKMeans extends SimpleImageFilter {
+    private static final String SERIALIZATION_NAME = "KMEANS";
     private int mSeed = 0;
 
     public ImageFilterKMeans() {
@@ -36,6 +37,7 @@ public class ImageFilterKMeans extends SimpleImageFilter {
     public FilterRepresentation getDefaultRepresentation() {
         FilterBasicRepresentation representation = (FilterBasicRepresentation) super.getDefaultRepresentation();
         representation.setName("KMeans");
+        representation.setSerializationName(SERIALIZATION_NAME);
         representation.setFilterClass(ImageFilterKMeans.class);
         representation.setMaximum(20);
         representation.setMinimum(2);

@@ -80,6 +80,8 @@ import com.android.gallery3d.filtershow.state.StateAdapter;
 import com.android.gallery3d.filtershow.state.StatePanel;
 import com.android.gallery3d.filtershow.tools.BitmapTask;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
+import com.android.gallery3d.filtershow.tools.XmpPresets;
+import com.android.gallery3d.filtershow.tools.XmpPresets.XMresults;
 import com.android.gallery3d.filtershow.ui.FilterIconButton;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
 import com.android.gallery3d.filtershow.ui.Spline;
@@ -137,7 +139,8 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     private FilterIconButton mNullFxFilter;
     private FilterIconButton mNullBorderFilter;
     private int mIconSeedSize = 140;
-
+    private Uri mOriginalImageUri = null;
+    private ImagePreset mOriginalPreset = null;
     private View mImageCategoryPanel = null;
 
     @Override
@@ -164,6 +167,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
         setDefaultPreset();
 
+        extractXMPData();
         processIntent();
     }
 
@@ -280,9 +284,12 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         }
 
         mAction = intent.getAction();
-
-        if (intent.getData() != null) {
-            startLoadBitmap(intent.getData());
+        Uri srcUri = intent.getData();
+        if (mOriginalImageUri != null) {
+            srcUri = mOriginalImageUri;
+        }
+        if (srcUri != null) {
+            startLoadBitmap(srcUri);
         } else {
             pickImage();
         }
@@ -418,9 +425,9 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                 mImageBorderSize));
         for (int i = 0; i < borders.size(); i++) {
             FilterRepresentation filter = borders.elementAt(i);
-            filter.setName(getString(R.string.borders));
+            filter.setScrName(getString(R.string.borders));
             if (i == 0) {
-                filter.setName(getString(R.string.none));
+                filter.setScrName(getString(R.string.none));
             }
             FilterIconButton b = setupFilterRepresentationButton(filter, list, borderButton);
             if (i == 0) {
@@ -496,7 +503,10 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             pipeline.turnOnPipeline(true);
             MasterImage.getImage().setOriginalGeometry(largeBitmap);
             mLoadBitmapTask = null;
-
+            if (mOriginalPreset != null) {
+                MasterImage.getImage().setPreset(mOriginalPreset, true);
+                mOriginalPreset = null;
+            }
             if (mAction == CROP_ACTION) {
                 mPanelController.showComponent(findViewById(EditorCrop.ID));
             } else if (mAction == TINY_PLANET_ACTION) {
@@ -726,7 +736,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         FilterIconButton icon = (FilterIconButton) inflater.inflate(R.layout.filtericonbutton,
                 panel, false);
         if (representation.getTextId() != 0) {
-            representation.setName(getString(representation.getTextId()));
+            representation.setScrName(getString(representation.getTextId()));
         }
         String text = representation.getName();
         icon.setup(text, mPanelController, panel);
@@ -767,9 +777,11 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                 R.string.ffx_washout_color,
                 R.string.ffx_x_process
         };
+        FiltersManager filtersManager = FiltersManager.getManager();
 
         for (int i = 0; i < drawid.length; i++) {
             FilterFxRepresentation fx = new FilterFxRepresentation(getString(fxNameid[i]), drawid[i], fxNameid[i]);
+            filtersManager.addRepresentation(fx);
             fxArray[p++] = fx;
         }
 
@@ -1075,4 +1087,13 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         System.loadLibrary("jni_filtershow_filters");
     }
 
+    private void extractXMPData() {
+        XMresults res = XmpPresets.extractXMPData(
+                getBaseContext(), mMasterImage, getIntent().getData());
+        if (res == null)
+            return;
+
+        mOriginalImageUri = res.originalimage;
+        mOriginalPreset = res.preset;
+    }
 }

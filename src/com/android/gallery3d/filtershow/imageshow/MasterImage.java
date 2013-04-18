@@ -20,6 +20,7 @@ import android.graphics.*;
 import android.os.Handler;
 import android.os.Message;
 
+import android.util.Log;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
 import com.android.gallery3d.filtershow.cache.*;
@@ -132,6 +133,7 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public synchronized void setPreset(ImagePreset preset, boolean addToHistory) {
+        preset.showFilters();
         mPreset = preset;
         mPreset.setImageLoader(mLoader);
         setGeometry();

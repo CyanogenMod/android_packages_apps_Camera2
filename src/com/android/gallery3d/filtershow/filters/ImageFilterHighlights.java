@@ -21,6 +21,7 @@ import android.graphics.Bitmap;
 import com.android.gallery3d.R;
 
 public class ImageFilterHighlights extends SimpleImageFilter {
+    private static final String SERIALIZATION_NAME = "HIGHLIGHTS";
     private static final String LOGTAG = "ImageFilterVignette";
 
     public ImageFilterHighlights() {
@@ -33,7 +34,8 @@ public class ImageFilterHighlights extends SimpleImageFilter {
     public FilterRepresentation getDefaultRepresentation() {
         FilterBasicRepresentation representation =
                 (FilterBasicRepresentation) super.getDefaultRepresentation();
-        representation.setName("Shadows");
+        representation.setName("Highlights");
+        representation.setSerializationName(SERIALIZATION_NAME);
         representation.setFilterClass(ImageFilterHighlights.class);
         representation.setTextId(R.string.highlight_recovery);
         representation.setButtonId(R.id.highlightRecoveryButton);

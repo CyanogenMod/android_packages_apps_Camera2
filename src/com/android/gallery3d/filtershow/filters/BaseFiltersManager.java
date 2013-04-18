@@ -16,6 +16,8 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.content.res.Resources;
+import android.util.Log;
+
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 import java.util.HashMap;
@@ -23,9 +25,12 @@ import java.util.Vector;
 
 public abstract class BaseFiltersManager {
     protected HashMap<Class, ImageFilter> mFilters = null;
+    protected HashMap<String, FilterRepresentation> mRepresentationLookup = null;
+    private static final String LOGTAG = "BaseFiltersManager";
 
     protected void init() {
         mFilters = new HashMap<Class, ImageFilter>();
+        mRepresentationLookup = new HashMap<String, FilterRepresentation>();
         Vector<Class> filters = new Vector<Class>();
         addFilterClasses(filters);
         for (Class filterClass : filters) {
@@ -33,6 +38,12 @@ public abstract class BaseFiltersManager {
                 Object filterInstance = filterClass.newInstance();
                 if (filterInstance instanceof ImageFilter) {
                     mFilters.put(filterClass, (ImageFilter) filterInstance);
+
+                    FilterRepresentation rep = 
+                    		((ImageFilter) filterInstance).getDefaultRepresentation();
+                    if (rep != null) {
+                        addRepresentation(rep);
+                    }
                 }
             } catch (InstantiationException e) {
                 e.printStackTrace();
@@ -42,16 +53,26 @@ public abstract class BaseFiltersManager {
         }
     }
 
+    public void addRepresentation(FilterRepresentation rep) {
+        mRepresentationLookup.put(rep.getSerializationName(), rep);
+    }
+
+    public FilterRepresentation createFilterFromName(String name) {
+        try {
+            return mRepresentationLookup.get(name).clone();
+        } catch (Exception e) {
+            Log.v(LOGTAG, "unable to generate a filter representation for \"" + name + "\"");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public ImageFilter getFilter(Class c) {
         return mFilters.get(c);
     }
 
     public ImageFilter getFilterForRepresentation(FilterRepresentation representation) {
         return mFilters.get(representation.getFilterClass());
-    }
-
-    public void addFilter(Class filterClass, ImageFilter filter) {
-        mFilters.put(filterClass, filter);
     }
 
     public FilterRepresentation getRepresentation(Class c) {

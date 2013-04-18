@@ -21,6 +21,7 @@ import com.android.gallery3d.R;
 import android.graphics.Bitmap;
 
 public class ImageFilterContrast extends SimpleImageFilter {
+    private static final String SERIALIZATION_NAME = "CONTRAST";
 
     public ImageFilterContrast() {
         mName = "Contrast";
@@ -30,6 +31,8 @@ public class ImageFilterContrast extends SimpleImageFilter {
         FilterBasicRepresentation representation =
                 (FilterBasicRepresentation) super.getDefaultRepresentation();
         representation.setName("Contrast");
+        representation.setSerializationName(SERIALIZATION_NAME);
+
         representation.setFilterClass(ImageFilterContrast.class);
         representation.setTextId(R.string.contrast);
         representation.setButtonId(R.id.contrastButton);

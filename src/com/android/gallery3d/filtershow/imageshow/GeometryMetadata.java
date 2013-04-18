@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.Log;
 
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.crop.CropExtras;
@@ -30,7 +31,14 @@ import com.android.gallery3d.filtershow.editors.EditorStraighten;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+
 public class GeometryMetadata extends FilterRepresentation {
+    private static final String SERIALIZATION_NAME = "GEOM";
     private static final String LOGTAG = "GeometryMetadata";
     private float mScaleFactor = 1.0f;
     private float mRotation = 0;
@@ -40,7 +48,26 @@ public class GeometryMetadata extends FilterRepresentation {
     private FLIP mFlip = FLIP.NONE;
 
     public enum FLIP {
-        NONE, VERTICAL, HORIZONTAL, BOTH
+        NONE("N"), VERTICAL("V"), HORIZONTAL("H"), BOTH("B");
+        String mValue;
+
+        FLIP(String name) {
+            mValue = name;
+        }
+
+        public static FLIP parse(String name){
+            switch (name.charAt(0)) {
+                case 'N':
+                    return NONE;
+                case 'V':
+                    return VERTICAL;
+                case 'H':
+                    return HORIZONTAL;
+                case 'B':
+                    return BOTH;
+            };
+            return NONE;
+        }
     }
 
     // Output format data from intent extras
@@ -64,6 +91,7 @@ public class GeometryMetadata extends FilterRepresentation {
 
     public GeometryMetadata() {
         super("GeometryMetadata");
+        setSerializationName(SERIALIZATION_NAME);
         setFilterClass(ImageFilterGeometry.class);
         setEditorId(EditorCrop.ID);
         setTextId(0);
@@ -467,5 +495,88 @@ public class GeometryMetadata extends FilterRepresentation {
         GeometryMetadata representation = (GeometryMetadata) super.clone();
         representation.useParametersFrom(this);
         return representation;
+    }
+
+    private static final String[] sParams = {
+            "Name", "ScaleFactor", "Rotation", "StraightenRotation", "CropBoundsLeft",
+            "CropBoundsTop", "CropBoundsRight", "CropBoundsBottom", "PhotoBoundsLeft",
+            "PhotoBoundsTop", "PhotoBoundsRight", "PhotoBoundsBottom", "Flip"
+    };
+
+    @Override
+    public String[][] serializeRepresentation() {
+        String[][] ret = {
+                { "Name", getName() },
+                { "ScaleFactor", Float.toString(mScaleFactor) },
+                { "Rotation", Float.toString(mRotation) },
+                { "StraightenRotation", Float.toString(mStraightenRotation) },
+                { "CropBoundsLeft", Float.toString(mCropBounds.left) },
+                { "CropBoundsTop", Float.toString(mCropBounds.top) },
+                { "CropBoundsRight", Float.toString(mCropBounds.right) },
+                { "CropBoundsBottom", Float.toString(mCropBounds.bottom) },
+                { "PhotoBoundsLeft", Float.toString(mPhotoBounds.left) },
+                { "PhotoBoundsTop", Float.toString(mPhotoBounds.top) },
+                { "PhotoBoundsRight", Float.toString(mPhotoBounds.right) },
+                { "PhotoBoundsBottom", Float.toString(mPhotoBounds.bottom) },
+                { "Flip", mFlip.mValue } };
+        return ret;
+    }
+
+    @Override
+    public void deSerializeRepresentation(String[][] rep) {
+        HashMap<String, Integer> map = new HashMap<String, Integer>();
+        for (int i = 0; i < sParams.length; i++) {
+            map.put(sParams[i], i);
+        }
+        for (int i = 0; i < rep.length; i++) {
+            String key = rep[i][0];
+            String value = rep[i][1];
+
+            switch (map.get(key)) {
+                case -1: // Unknown
+                    break;
+                case 0:
+                    if (!getName().equals(value)) {
+                        throw new IllegalArgumentException("Not a "+getName());
+                    }
+                    break;
+                case 1: // "ScaleFactor", Float
+                    mScaleFactor = Float.parseFloat(value);
+                    break;
+                case 2: // "Rotation", Float
+                    mRotation = Float.parseFloat(value);
+                    break;
+                case 3: // "StraightenRotation", Float
+                    mStraightenRotation = Float.parseFloat(value);
+                    break;
+                case 4: // "mCropBoundsLeft", Float
+                    mCropBounds.left = Float.parseFloat(value);
+                    break;
+                case 5: // "mCropBoundsTop", Float
+                    mCropBounds.top = Float.parseFloat(value);
+                    break;
+                case 6: // "mCropBoundsRight", Float
+                    mCropBounds.right = Float.parseFloat(value);
+                    break;
+                case 7: // "mCropBoundsBottom", Float
+                    mCropBounds.bottom = Float.parseFloat(value);
+                    break;
+                case 8: // "mPhotoBoundsLeft", Float
+                    mPhotoBounds.left = Float.parseFloat(value);
+                    break;
+                case 9: // "mPhotoBoundsTop", Float
+                    mPhotoBounds.top = Float.parseFloat(value);
+                    break;
+                case 10: // "mPhotoBoundsRight", Float
+                    mPhotoBounds.right = Float.parseFloat(value);
+                    break;
+                case 11: // "mPhotoBoundsBottom", Float
+                    mPhotoBounds.bottom = Float.parseFloat(value);
+                    break;
+                case 12: // "Flip", enum
+                    mFlip = FLIP.parse(value);
+                    break;
+            }
+        }
     }
 }

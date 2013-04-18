@@ -84,5 +84,4 @@ public class BasicSlider implements Control {
         mSeekBar.setMax(mParameter.getMaximum() - mParameter.getMinimum());
         mSeekBar.setProgress(mParameter.getValue() - mParameter.getMinimum());
     }
-
 }
