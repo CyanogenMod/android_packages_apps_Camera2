@@ -48,6 +48,11 @@ public class SoundClips {
         }
     }
 
+    public static int getAudioTypeForSoundPool() {
+        return ApiHelper.getIntFieldIfExists(AudioManager.class,
+                "STREAM_SYSTEM_ENFORCED", null, AudioManager.STREAM_RING);
+    }
+
     /**
      * This class implements SoundClips.Player using MediaActionSound,
      * which exists since API level 16.
@@ -121,12 +126,10 @@ public class SoundClips {
 
         public SoundPoolPlayer(Context context) {
             mContext = context;
-            int audioType = ApiHelper.getIntFieldIfExists(AudioManager.class,
-                    "STREAM_SYSTEM_ENFORCED", null, AudioManager.STREAM_RING);
 
             mSoundIDToPlay = ID_NOT_LOADED;
 
-            mSoundPool = new SoundPool(NUM_SOUND_STREAMS, audioType, 0);
+            mSoundPool = new SoundPool(NUM_SOUND_STREAMS, getAudioTypeForSoundPool(), 0);
             mSoundPool.setOnLoadCompleteListener(this);
 
             mSoundIDs = new int[SOUND_RES.length];
