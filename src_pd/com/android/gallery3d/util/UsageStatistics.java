@@ -39,6 +39,7 @@ public class UsageStatistics {
     public static final String ACTION_CAPTURE_START = "CaptureStart";
     public static final String ACTION_CAPTURE_FAIL = "CaptureFail";
     public static final String ACTION_CAPTURE_DONE = "CaptureDone";
+    public static final String ACTION_SHARE = "Share";
 
     public static void initialize(Context context) {}
     public static void showOptInDialogIfNeeded(Activity activity) {}
