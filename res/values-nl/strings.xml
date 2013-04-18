@@ -264,16 +264,29 @@
     <string name="pref_camera_focusmode_entry_auto" msgid="7374820710300362457">"Automatisch"</string>
     <string name="pref_camera_focusmode_entry_infinity" msgid="3413922419264967552">"Oneindig"</string>
     <string name="pref_camera_focusmode_entry_macro" msgid="4424489110551866161">"Macro"</string>
+    <string name="pref_camera_focusmode_label_auto" msgid="8547956917516317183">"AUTOMATISCH"</string>
+    <string name="pref_camera_focusmode_label_infinity" msgid="4272904160062531778">"ONEINDIG"</string>
+    <string name="pref_camera_focusmode_label_macro" msgid="8749317592620908054">"MACRO"</string>
     <string name="pref_camera_flashmode_title" msgid="2287362477238791017">"Flitsmodus"</string>
+    <string name="pref_camera_flashmode_label" msgid="7546741624882856171">"FLITSMODUS"</string>
     <string name="pref_camera_flashmode_entry_auto" msgid="7288383434237457709">"Automatisch"</string>
     <string name="pref_camera_flashmode_entry_on" msgid="5330043918845197616">"Aan"</string>
     <string name="pref_camera_flashmode_entry_off" msgid="867242186958805761">"Uit"</string>
+    <string name="pref_camera_flashmode_label_auto" msgid="8854671890619026197">"FLITSER AUTOMATISCH"</string>
+    <string name="pref_camera_flashmode_label_on" msgid="7347504762794840140">"FLITSER AAN"</string>
+    <string name="pref_camera_flashmode_label_off" msgid="3541596735596053416">"FLITSER UIT"</string>
     <string name="pref_camera_whitebalance_title" msgid="677420930596673340">"Witbalans"</string>
+    <string name="pref_camera_whitebalance_label" msgid="7467403405883190920">"WITBALANS"</string>
     <string name="pref_camera_whitebalance_entry_auto" msgid="6580665476983469293">"Automatisch"</string>
     <string name="pref_camera_whitebalance_entry_incandescent" msgid="8856667786449549938">"Gloeilamp"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="2534757270149561027">"Daglicht"</string>
     <string name="pref_camera_whitebalance_entry_fluorescent" msgid="2435332872847454032">"Fluorescerend"</string>
     <string name="pref_camera_whitebalance_entry_cloudy" msgid="3531996716997959326">"Bewolkt"</string>
+    <string name="pref_camera_whitebalance_label_auto" msgid="1479694362310491429">"AUTOMATISCH"</string>
+    <string name="pref_camera_whitebalance_label_incandescent" msgid="7427628260209908900">"GLOEILAMP"</string>
+    <string name="pref_camera_whitebalance_label_daylight" msgid="1859710806141461399">"DAGLICHT"</string>
+    <string name="pref_camera_whitebalance_label_fluorescent" msgid="5173251749161337707">"FLUORESCEREND"</string>
+    <string name="pref_camera_whitebalance_label_cloudy" msgid="8230173517179285320">"BEWOLKT"</string>
     <string name="pref_camera_scenemode_title" msgid="1420535844292504016">"Scènemodus"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="7113995286836658648">"Automatisch"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="2923388802899511784">"HDR"</string>
@@ -283,8 +296,13 @@
     <string name="pref_camera_scenemode_entry_party" msgid="907053529286788253">"Feest"</string>
     <string name="not_selectable_in_scene_mode" msgid="2970291701448555126">"Kan niet worden geselecteerd in scènemodus."</string>
     <string name="pref_exposure_title" msgid="1229093066434614811">"Belichting"</string>
+    <string name="pref_exposure_label" msgid="552624394642497940">"BELICHTING"</string>
     <!-- no translation found for pref_camera_hdr_default (1336869406134365882) -->
     <skip />
+    <string name="pref_camera_hdr_label_on" msgid="5684573770843895299">"HDR UIT"</string>
+    <string name="pref_camera_hdr_label_off" msgid="3027395137861806841">"HDR AAN"</string>
+    <string name="pref_camera_id_label_back" msgid="8745553500400332333">"CAMERA AAN VOORZIJDE"</string>
+    <string name="pref_camera_id_label_front" msgid="8699439330056996709">"CAMERA AAN ACHTERZIJDE"</string>
     <string name="dialog_ok" msgid="6263301364153382152">"OK"</string>
     <string name="spaceIsLow_content" product="nosdcard" msgid="4401325203349203177">"Uw USB-opslag is bijna vol. Wijzig de kwaliteitsinstelling of verwijder enkele afbeeldingen of andere bestanden."</string>
     <string name="spaceIsLow_content" product="default" msgid="1732882643101247179">"Uw SD-kaart is bijna vol. Wijzig de kwaliteitsinstelling of verwijder enkele afbeeldingen of andere bestanden."</string>
@@ -394,6 +412,8 @@
     <string name="menu_search" msgid="7580008232297437190">"Zoeken"</string>
     <string name="tab_photos" msgid="9110813680630313419">"Foto\'s"</string>
     <string name="tab_albums" msgid="8079449907770685691">"Albums"</string>
+    <string name="camera_menu_more_label" msgid="6868642182125198710">"MEER OPTIES"</string>
+    <string name="camera_menu_settings_label" msgid="875454962069404723">"INSTELLINGEN"</string>
   <plurals name="number_of_photos">
     <item quantity="one" msgid="6949174783125614798">"%1$d foto"</item>
     <item quantity="other" msgid="3813306834113858135">"%1$d foto\'s"</item>
