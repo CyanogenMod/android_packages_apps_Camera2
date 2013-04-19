@@ -197,6 +197,9 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
                 exif.setTag(exif.buildTag(ExifInterface.TAG_ORIENTATION,
                         ExifInterface.Orientation.TOP_LEFT));
 
+                // Remove old thumbnail
+                exif.removeCompressedThumbnail();
+
                 // If we succeed in writing the bitmap as a jpeg, return a uri.
                 if (putExifData(this.destinationFile, exif, bitmap)) {
                     putPanoramaXMPData(this.destinationFile, xmp);
