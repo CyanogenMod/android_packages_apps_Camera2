@@ -180,10 +180,10 @@ public class PhotoUI implements PieListener,
             mGestures = new PreviewGestures(mActivity, this, mZoomRenderer, mPieRenderer,
                     this);
         }
-        mGestures.clearTouchReceivers();
+        mGestures.reset();
         mGestures.setRenderOverlay(mRenderOverlay);
         mGestures.addTouchReceiver(mMenuButton);
-        mGestures.addTouchReceiver(mBlocker);
+        mGestures.addUnclickableArea(mBlocker);
         // make sure to add touch targets for image capture
         if (mController.isImageCaptureIntent()) {
             if (mReviewCancelButton != null) {
