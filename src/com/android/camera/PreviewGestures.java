@@ -59,6 +59,7 @@ public class PreviewGestures
     private MotionEvent mCurrent;
     private ScaleGestureDetector mScale;
     private List<View> mReceivers;
+    private List<View> mUnclickableAreas;
     private int mMode;
     private int mSlop;
     private int mTapTimeout;
@@ -127,10 +128,39 @@ public class PreviewGestures
         mReceivers.add(v);
     }
 
+    public void addUnclickableArea(View v) {
+        if (mUnclickableAreas == null) {
+            mUnclickableAreas = new ArrayList<View>();
+        }
+        mUnclickableAreas.add(v);
+    }
+
     public void clearTouchReceivers() {
         if (mReceivers != null) {
             mReceivers.clear();
         }
+    }
+
+    public void clearUnclickableAreas() {
+        if (mUnclickableAreas != null) {
+            mUnclickableAreas.clear();
+        }
+    }
+
+    private boolean checkClickable(MotionEvent m) {
+        if (mUnclickableAreas != null) {
+            for (View v : mUnclickableAreas) {
+                if (isInside(m, v)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void reset() {
+        clearTouchReceivers();
+        clearUnclickableAreas();
     }
 
     public boolean dispatchTouch(MotionEvent m) {
@@ -149,7 +179,7 @@ public class PreviewGestures
                     mMode = MODE_PIE;
                     return sendToPie(m);
                 }
-                if (mPie != null && !mZoomOnly) {
+                if (mPie != null && !mZoomOnly && checkClickable(m)) {
                     mHandler.sendEmptyMessageDelayed(MSG_PIE, TIMEOUT_PIE);
                 }
                 if (mZoom != null) {
@@ -216,9 +246,10 @@ public class PreviewGestures
             }
             if (MotionEvent.ACTION_UP == m.getActionMasked()) {
                 cancelPie();
-                cancelActivityTouchHandling(m);
                 // must have been tap
-                if (m.getEventTime() - mDown.getEventTime() < mTapTimeout) {
+                if (m.getEventTime() - mDown.getEventTime() < mTapTimeout
+                        && checkClickable(m)) {
+                    cancelActivityTouchHandling(m);
                     mTapListener.onSingleTapUp(null,
                             (int) mDown.getX() - mOverlay.getWindowPositionX(),
                             (int) mDown.getY() - mOverlay.getWindowPositionY());
