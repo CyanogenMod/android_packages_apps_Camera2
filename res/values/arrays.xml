@@ -269,8 +269,8 @@
     </array>
 
     <array name="pref_camera_recordlocation_labels" translatable="false">
-        <item>@string/pref_camera_location_label_on</item>
-        <item>@string/pref_camera_location_label_off</item>
+        <item>@string/pref_camera_location_label</item>
+        <item>@string/pref_camera_location_label</item>
     </array>
 
     <array name="camera_recordlocation_icons" translatable="false">
@@ -326,33 +326,33 @@
 
     <!-- Camera Preferences Scene Mode dialog box entries -->
     <string-array name="pref_camera_scenemode_entries" translatable="false">
-        <item>@string/pref_camera_scenemode_entry_auto</item>
         <item>@string/pref_camera_scenemode_entry_action</item>
         <item>@string/pref_camera_scenemode_entry_night</item>
+        <item>@string/pref_camera_scenemode_entry_auto</item>
         <item>@string/pref_camera_scenemode_entry_sunset</item>
         <item>@string/pref_camera_scenemode_entry_party</item>
     </string-array>
 
     <string-array name="pref_camera_scenemode_labels">
-        <item>@string/pref_camera_scenemode_label_auto</item>
         <item>@string/pref_camera_scenemode_label_action</item>
         <item>@string/pref_camera_scenemode_label_night</item>
+        <item>@string/pref_camera_scenemode_label_auto</item>
         <item>@string/pref_camera_scenemode_label_sunset</item>
         <item>@string/pref_camera_scenemode_label_party</item>
     </string-array>
 
     <array name="pref_camera_scenemode_icons">
-        <item>@drawable/ic_sce</item>
         <item>@drawable/ic_sce_action</item>
         <item>@drawable/ic_sce_night</item>
+        <item>@drawable/ic_sce</item>
         <item>@drawable/ic_sce_sunset</item>
         <item>@drawable/ic_sce_party</item>
     </array>
 
     <string-array name="pref_camera_scenemode_entryvalues" translatable="false">
-        <item>auto</item>
         <item>action</item>
         <item>night</item>
+        <item>auto</item>
         <item>sunset</item>
         <item>party</item>
     </string-array>
@@ -422,8 +422,8 @@
     </string-array>
 
     <string-array name="pref_camera_hdr_labels" translatable="false">
-        <item>@string/pref_camera_hdr_label_off</item>
-        <item>@string/pref_camera_hdr_label_on</item>
+        <item>@string/pref_camera_hdr_label</item>
+        <item>@string/pref_camera_hdr_label</item>
     </string-array>
 
     <string-array name="pref_camera_hdr_icons" translatable="false">
@@ -462,4 +462,14 @@
         <item>@drawable/ic_exposure_p2</item>
         <item>@drawable/ic_exposure_p3</item>
     </array>
+
+    <!--  Labels for Countdown timer -->
+    <string-array name="pref_camera_countdown_labels">
+        <item>@string/pref_camera_countdown_label_off</item>
+        <item>@string/pref_camera_countdown_label_one</item>
+        <item>@string/pref_camera_countdown_label_three</item>
+        <item>@string/pref_camera_countdown_label_ten</item>
+        <item>@string/pref_camera_countdown_label_fifteen</item>
+    </string-array>
+
 </resources>
