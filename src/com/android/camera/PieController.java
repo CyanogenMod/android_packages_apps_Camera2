@@ -63,6 +63,7 @@ public class PieController {
 
     public void initialize(PreferenceGroup group) {
         mRenderer.clearItems();
+        mPreferenceMap.clear();
         setPreferenceGroup(group);
     }
 
