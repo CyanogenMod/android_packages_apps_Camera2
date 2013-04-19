@@ -23,8 +23,7 @@
             android:id="@+id/blocker"
             android:layout_width="match_parent"
             android:layout_height="@dimen/switcher_size"
-            android:layout_gravity="bottom"
-            android:clickable="true" />
+            android:layout_gravity="bottom" />
 
         <include layout="@layout/menu_indicators"
             android:layout_width="80dip"
