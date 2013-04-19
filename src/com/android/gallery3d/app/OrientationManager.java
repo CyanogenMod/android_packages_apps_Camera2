@@ -25,6 +25,7 @@ import android.provider.Settings;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 
+import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.ui.OrientationSource;
 
 public class OrientationManager implements OrientationSource {
@@ -71,7 +72,11 @@ public class OrientationManager implements OrientationSource {
     public void lockOrientation() {
         if (mOrientationLocked) return;
         mOrientationLocked = true;
-        mActivity.setRequestedOrientation(calculateCurrentScreenOrientation());
+        if (ApiHelper.HAS_ORIENTATION_LOCK) {
+            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+        } else {
+            mActivity.setRequestedOrientation(calculateCurrentScreenOrientation());
+        }
     }
 
     // Unlock the framework orientation, so it can change when the device

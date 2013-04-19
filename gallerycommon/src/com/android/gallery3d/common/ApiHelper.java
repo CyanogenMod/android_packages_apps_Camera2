@@ -186,6 +186,9 @@ public class ApiHelper {
     public static final boolean HAS_ROTATION_ANIMATION =
             hasField(WindowManager.LayoutParams.class, "rotationAnimation");
 
+    public static final boolean HAS_ORIENTATION_LOCK =
+            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2;
+
     public static final boolean HAS_CANCELLATION_SIGNAL =
             Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
 
