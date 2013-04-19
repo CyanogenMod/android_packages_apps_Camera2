@@ -187,8 +187,10 @@ public class SelectionManager {
                     MediaSet set = mSourceMediaSet.getSubMediaSet(i);
                     Path id = set.getPath();
                     if (!mClickedSet.contains(id)) {
-                        if (expandSet && !expandMediaSet(selected, set, maxSelection)) {
-                            return null;
+                        if (expandSet) {
+                            if (!expandMediaSet(selected, set, maxSelection)) {
+                                return null;
+                            }
                         } else {
                             selected.add(id);
                             if (selected.size() > maxSelection) {
@@ -199,9 +201,11 @@ public class SelectionManager {
                 }
             } else {
                 for (Path id : mClickedSet) {
-                    if (expandSet && !expandMediaSet(selected,
-                            mDataManager.getMediaSet(id), maxSelection)) {
-                        return null;
+                    if (expandSet) {
+                        if (!expandMediaSet(selected, mDataManager.getMediaSet(id),
+                                maxSelection)) {
+                            return null;
+                        }
                     } else {
                         selected.add(id);
                         if (selected.size() > maxSelection) {
