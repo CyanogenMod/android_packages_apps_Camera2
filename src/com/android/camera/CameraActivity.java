@@ -423,9 +423,10 @@ public class CameraActivity extends ActivityBase
     }
 
     // Preview area is touched. Handle touch focus.
+    // Touch to focus is handled by PreviewGestures, this function call
+    // is no longer needed. TODO: Clean it up in the next refactor
     @Override
     protected void onSingleTapUp(View view, int x, int y) {
-        mCurrentModule.onSingleTapUp(view, x, y);
     }
 
     @Override
