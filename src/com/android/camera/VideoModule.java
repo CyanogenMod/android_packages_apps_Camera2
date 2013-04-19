@@ -45,6 +45,7 @@ import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.provider.MediaStore.MediaColumns;
 import android.provider.MediaStore.Video;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -1344,10 +1345,11 @@ public class VideoModule implements CameraModule,
         String mime = convertOutputFormatToMimeType(outputFileFormat);
         String path = Storage.DIRECTORY + '/' + filename;
         String tmpPath = path + ".tmp";
-        mCurrentVideoValues = new ContentValues(7);
+        mCurrentVideoValues = new ContentValues(9);
         mCurrentVideoValues.put(Video.Media.TITLE, title);
         mCurrentVideoValues.put(Video.Media.DISPLAY_NAME, filename);
         mCurrentVideoValues.put(Video.Media.DATE_TAKEN, dateTaken);
+        mCurrentVideoValues.put(MediaColumns.DATE_MODIFIED, dateTaken / 1000);
         mCurrentVideoValues.put(Video.Media.MIME_TYPE, mime);
         mCurrentVideoValues.put(Video.Media.DATA, path);
         mCurrentVideoValues.put(Video.Media.RESOLUTION,
