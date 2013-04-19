@@ -18,15 +18,19 @@ package com.android.camera;
 
 import android.app.Service;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
+import android.provider.MediaStore.Video;
 import android.util.Log;
 
 import com.android.gallery3d.exif.ExifInterface;
+
+import java.io.File;
 
 /*
  * Service for saving images in the background thread.
@@ -85,7 +89,8 @@ public class MediaSaveService extends Service {
             Log.e(TAG, "Cannot add image when the queue is full");
             return;
         }
-        SaveTask t = new SaveTask(data, title, date, (loc == null) ? null : new Location(loc),
+        ImageSaveTask t = new ImageSaveTask(data, title, date,
+                (loc == null) ? null : new Location(loc),
                 width, height, orientation, exif, resolver, l);
 
         mTaskNumber++;
@@ -93,6 +98,13 @@ public class MediaSaveService extends Service {
             onQueueFull();
         }
         t.execute();
+    }
+
+    public void addVideo(String path, long duration, ContentValues values,
+            OnMediaSavedListener l, ContentResolver resolver) {
+        // We don't set a queue limit for video saving because the file
+        // is already in the storage. Only updating the database.
+        new VideoSaveTask(path, duration, values, l, resolver).execute();
     }
 
     public void setListener(Listener l) {
@@ -109,7 +121,7 @@ public class MediaSaveService extends Service {
         if (mListener != null) mListener.onQueueStatus(false);
     }
 
-    private class SaveTask extends AsyncTask <Void, Void, Uri> {
+    private class ImageSaveTask extends AsyncTask <Void, Void, Uri> {
         private byte[] data;
         private String title;
         private long date;
@@ -120,9 +132,9 @@ public class MediaSaveService extends Service {
         private ContentResolver resolver;
         private OnMediaSavedListener listener;
 
-        public SaveTask(byte[] data, String title, long date, Location loc,
-                int width, int height, int orientation, ExifInterface exif,
-                ContentResolver resolver, OnMediaSavedListener listener) {
+        public ImageSaveTask(byte[] data, String title, long date, Location loc,
+                             int width, int height, int orientation, ExifInterface exif,
+                             ContentResolver resolver, OnMediaSavedListener listener) {
             this.data = data;
             this.title = title;
             this.date = date;
@@ -148,9 +160,66 @@ public class MediaSaveService extends Service {
 
         @Override
         protected void onPostExecute(Uri uri) {
-            listener.onMediaSaved(uri);
+            if (listener != null) listener.onMediaSaved(uri);
             mTaskNumber--;
             if (mTaskNumber == SAVE_TASK_LIMIT - 1) onQueueAvailable();
+        }
+    }
+
+    private class VideoSaveTask extends AsyncTask <Void, Void, Uri> {
+        private String path;
+        private long duration;
+        private ContentValues values;
+        private OnMediaSavedListener listener;
+        private ContentResolver resolver;
+
+        public VideoSaveTask(String path, long duration, ContentValues values,
+                OnMediaSavedListener l, ContentResolver r) {
+            this.path = path;
+            this.duration = duration;
+            this.values = new ContentValues(values);
+            this.listener = l;
+            this.resolver = r;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            // do nothing.
+        }
+
+        @Override
+        protected Uri doInBackground(Void... v) {
+            values.put(Video.Media.SIZE, new File(path).length());
+            values.put(Video.Media.DURATION, duration);
+            Uri uri = null;
+            try {
+                Uri videoTable = Uri.parse("content://media/external/video/media");
+                uri = resolver.insert(videoTable, values);
+
+                // Rename the video file to the final name. This avoids other
+                // apps reading incomplete data.  We need to do it after we are
+                // certain that the previous insert to MediaProvider is completed.
+                String finalName = values.getAsString(
+                        Video.Media.DATA);
+                if (new File(path).renameTo(new File(finalName))) {
+                    path = finalName;
+                }
+
+                resolver.update(uri, values, null, null);
+            } catch (Exception e) {
+                // We failed to insert into the database. This can happen if
+                // the SD card is unmounted.
+                Log.e(TAG, "failed to add video to media store", e);
+                uri = null;
+            } finally {
+                Log.v(TAG, "Current video URI: " + uri);
+            }
+            return uri;
+        }
+
+        @Override
+        protected void onPostExecute(Uri uri) {
+            if (listener != null) listener.onMediaSaved(uri);
         }
     }
 }
