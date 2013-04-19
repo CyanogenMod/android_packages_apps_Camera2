@@ -348,8 +348,6 @@ public class CameraActivity extends ActivityBase
 
     private void bindMediaSaveService() {
         Intent intent = new Intent(this, MediaSaveService.class);
-        startService(intent);  // start service before binding it so the
-                               // service won't be killed if we unbind it.
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
