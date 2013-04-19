@@ -1490,6 +1490,7 @@ public class VideoModule implements CameraModule,
             return;
         }
 
+        if (!mActivity.mCameraDevice.waitDone()) return;
         mCurrentVideoUri = null;
         if (effectsActive()) {
             initializeEffectsRecording();
