@@ -151,7 +151,6 @@ public class FilteringPipeline implements Handler.Callback {
             Log.e(LOGTAG, "setOriginal called after pipeline initialization!");
             return;
         }
-        Log.v(LOGTAG,"setOriginal, size " + bitmap.getWidth() + " x " + bitmap.getHeight());
         mAccessoryPipeline.setOriginal(bitmap);
         mPreviewPipeline.setOriginal(bitmap);
         mHighresPreviewPipeline.setOriginal(bitmap);
