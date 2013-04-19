@@ -119,7 +119,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     private static final int SELECT_PICTURE = 1;
     private static final String LOGTAG = "FilterShowActivity";
     protected static final boolean ANIMATE_PANELS = true;
-    private static int mImageBorderSize = 4; // in percent
 
     private boolean mShowingTinyPlanet = false;
     private boolean mShowingImageStatePanel = false;
@@ -398,27 +397,10 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         borders.add(new FilterImageBorderRepresentation(0));
 
         // Google-build borders
-        FiltersManager.getManager().addBorders(borders);
+        FiltersManager.getManager().addBorders(this, borders);
 
-        // Regular borders
-        borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5));
-        borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_brush));
-        borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_grunge));
-        borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_sumi_e));
-        borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_tape));
-        borders.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, 0));
-        borders.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize,
-                mImageBorderSize));
-        borders.add(new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize, 0));
-        borders.add(new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize,
-                mImageBorderSize));
-        int creamColor = Color.argb(255, 237, 237, 227);
-        borders.add(new FilterColorBorderRepresentation(creamColor, mImageBorderSize, 0));
-        borders.add(new FilterColorBorderRepresentation(creamColor, mImageBorderSize,
-                mImageBorderSize));
         for (int i = 0; i < borders.size(); i++) {
             FilterRepresentation filter = borders.elementAt(i);
-            filter.setName(getString(R.string.borders));
             if (i == 0) {
                 filter.setName(getString(R.string.none));
             }
@@ -738,41 +720,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     private void fillFx(LinearLayout listFilters, int buttonId) {
-        // TODO: use listview
-        // TODO: load the filters straight from the filesystem
-
-        FilterFxRepresentation[] fxArray = new FilterFxRepresentation[18];
-        int p = 0;
-
-        int[] drawid = {
-                R.drawable.filtershow_fx_0005_punch,
-                R.drawable.filtershow_fx_0000_vintage,
-                R.drawable.filtershow_fx_0004_bw_contrast,
-                R.drawable.filtershow_fx_0002_bleach,
-                R.drawable.filtershow_fx_0001_instant,
-                R.drawable.filtershow_fx_0007_washout,
-                R.drawable.filtershow_fx_0003_blue_crush,
-                R.drawable.filtershow_fx_0008_washout_color,
-                R.drawable.filtershow_fx_0006_x_process
-        };
-
-        int[] fxNameid = {
-                R.string.ffx_punch,
-                R.string.ffx_vintage,
-                R.string.ffx_bw_contrast,
-                R.string.ffx_bleach,
-                R.string.ffx_instant,
-                R.string.ffx_washout,
-                R.string.ffx_blue_crush,
-                R.string.ffx_washout_color,
-                R.string.ffx_x_process
-        };
-
-        for (int i = 0; i < drawid.length; i++) {
-            FilterFxRepresentation fx = new FilterFxRepresentation(getString(fxNameid[i]), drawid[i], fxNameid[i]);
-            fxArray[p++] = fx;
-        }
-
         ImageButton button = (ImageButton) findViewById(buttonId);
 
         FilterFxRepresentation nullFx = new FilterFxRepresentation(getString(R.string.none), 0, R.string.none);
@@ -780,14 +727,11 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         mNullFxFilter.setSelected(true);
 
         Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
-        FiltersManager.getManager().addLooks(filtersRepresentations);
+        FiltersManager.getManager().addLooks(this, filtersRepresentations);
         for (FilterRepresentation representation : filtersRepresentations) {
             setupFilterRepresentationButton(representation, listFilters, button);
         }
 
-        for (int i = 0; i < p; i++) {
-            setupFilterRepresentationButton(fxArray[i], listFilters, button);
-        }
     }
 
     public void setDefaultPreset() {
