@@ -23,7 +23,6 @@
             android:id="@+id/blocker"
             android:layout_height="match_parent"
             android:layout_width="@dimen/switcher_size"
-            android:clickable="true"
             android:layout_gravity="right" />
 
         <include layout="@layout/menu_indicators"
