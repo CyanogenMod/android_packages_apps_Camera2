@@ -186,16 +186,26 @@ public class CropView extends View {
 
     public void applyOriginalAspect() {
         RectF outer = mCropObj.getOuterBounds();
-        if (!mCropObj.setInnerAspectRatio((int) outer.width(), (int) outer.height())) {
+        float w = outer.width();
+        float h = outer.height();
+        if (w > 0 && h > 0) {
+            applyAspect(w, h);
+            mCropObj.resetBoundsTo(outer, outer);
+        } else {
             Log.w(LOGTAG, "failed to set aspect ratio original");
         }
-        mCropObj.resetBoundsTo(outer, outer);
-        invalidate();
     }
 
     public void applySquareAspect() {
-        if (!mCropObj.setInnerAspectRatio(1, 1)) {
-            Log.w(LOGTAG, "failed to set aspect ratio square");
+        applyAspect(1, 1);
+    }
+
+    public void applyAspect(float x, float y) {
+        if (x <= 0 || y <= 0) {
+            throw new IllegalArgumentException("Bad arguments to applyAspect");
+        }
+        if (!mCropObj.setInnerAspectRatio(x, y)) {
+            Log.w(LOGTAG, "failed to set aspect ratio");
         }
         invalidate();
     }
