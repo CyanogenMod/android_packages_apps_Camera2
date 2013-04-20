@@ -80,6 +80,7 @@ inline void InterpolatePixel(const ImageRGBA &image, float x, float y,
              ax * ay * p2[4] + axn * ay * p2[0] + 0.5f);
   p++;
   p2++;
+  dest[3] = 0xFF;
 }
 
 // Wrap circular coordinates around the globe

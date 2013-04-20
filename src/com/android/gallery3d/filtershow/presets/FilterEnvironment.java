@@ -18,17 +18,51 @@ package com.android.gallery3d.filtershow.presets;
 
 import android.graphics.Bitmap;
 import android.support.v8.renderscript.Allocation;
+import android.util.Log;
+
 import com.android.gallery3d.filtershow.cache.CachingPipeline;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+
 public class FilterEnvironment {
+    private static final String LOGTAG = "FilterEnvironment";
     private ImagePreset mImagePreset;
     private float mScaleFactor;
     private int mQuality;
     private FiltersManager mFiltersManager;
     private CachingPipeline mCachingPipeline;
+    private HashMap<Long, WeakReference<Bitmap>>
+            bitmapCach = new HashMap<Long, WeakReference<Bitmap>>();
+
+    public void cache(Bitmap bitmap) {
+        if (bitmap == null) {
+            return;
+        }
+        Long key = calcKey(bitmap.getWidth(), bitmap.getHeight());
+        bitmapCach.put(key, new WeakReference<Bitmap>(bitmap));
+    }
+
+    public Bitmap getBitmap(int w, int h) {
+        Long key = calcKey(w, h);
+        WeakReference<Bitmap> ref = bitmapCach.remove(key);
+        Bitmap bitmap = null;
+        if (ref != null) {
+            bitmap = ref.get();
+        }
+        if (bitmap == null) {
+            bitmap = Bitmap.createBitmap(
+                    w, h, Bitmap.Config.ARGB_8888);
+        }
+        return bitmap;
+    }
+
+    private Long calcKey(long w, long h) {
+        return (w << 32) | (h << 32);
+    }
 
     public void setImagePreset(ImagePreset imagePreset) {
         mImagePreset = imagePreset;

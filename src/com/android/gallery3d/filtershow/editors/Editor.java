@@ -214,6 +214,7 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
     public void commitLocalRepresentation() {
         ImagePreset preset = MasterImage.getImage().getPreset();
         preset.updateFilterRepresentation(getLocalRepresentation());
+        mPanelController.onNewValue(-1);
     }
 
     /**
