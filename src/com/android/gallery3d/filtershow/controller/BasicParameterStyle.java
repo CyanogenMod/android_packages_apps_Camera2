@@ -92,8 +92,6 @@ public class BasicParameterStyle implements ParameterStyles {
 
     @Override
     public void getIcon(int index, RenderingRequestCaller caller) {
-        Log.v(LOGTAG, "############ " + ID + " getIcon " + index);
-
         mEditor.computeIcon(index, caller);
     }
 
