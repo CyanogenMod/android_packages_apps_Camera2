@@ -26,7 +26,15 @@
     <color name="toolbar_separation_line">#333333</color>
     <color name="slider_dot_color">#6464FF</color>
     <color name="slider_line_color">#33B5E5</color>
+    <color name="state_panel_separation_line">#232323</color>
     <color name="filtershow_background">#333333</color>
     <color name="filtershow_graphic">#717171</color>
-
+    <color name="filtershow_stateview_end_background">#232323</color>
+    <color name="filtershow_stateview_end_text">#a7a7a7</color>
+    <color name="filtershow_stateview_background">#464646</color>
+    <color name="filtershow_stateview_text">#FFFFFF</color>
+    <color name="filtershow_stateview_selected_background">#c8c8c8</color>
+    <color name="filtershow_stateview_selected_text">#000000</color>
+    <color name="filtershow_categoryview_background">#1a1a1a</color>
+    <color name="filtershow_categoryview_text">#a7a7a7</color>
 </resources>

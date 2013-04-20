@@ -22,7 +22,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 import java.util.Vector;
 
@@ -49,7 +51,15 @@ public class StateAdapter extends ArrayAdapter<State> {
         State state = getItem(position);
         view.setState(state);
         view.setOrientation(mOrientation);
-        view.setBackgroundAlpha(1.0f);
+        FilterRepresentation currentRep = MasterImage.getImage().getCurrentFilterRepresentation();
+        FilterRepresentation stateRep = state.getFilterRepresentation();
+        if (currentRep != null && stateRep != null
+            && currentRep.getFilterClass() == stateRep.getFilterClass()
+            && currentRep.getEditorId() != ImageOnlyEditor.ID) {
+            view.setSelected(true);
+        } else {
+            view.setSelected(false);
+        }
         return view;
     }
 
@@ -73,15 +83,16 @@ public class StateAdapter extends ArrayAdapter<State> {
         }
     }
 
-    public void addAll(Vector<FilterRepresentation> filters) {
-        clear();
+    public void addOriginal() {
         add(new State(mOriginalText));
+    }
+
+    public void addAll(Vector<FilterRepresentation> filters) {
         for (FilterRepresentation filter : filters) {
             State state = new State(filter.getName());
             state.setFilterRepresentation(filter);
             add(state);
         }
-        add(new State(mResultText));
         notifyDataSetChanged();
     }
 
@@ -94,6 +105,6 @@ public class StateAdapter extends ArrayAdapter<State> {
         super.remove(state);
         FilterRepresentation filterRepresentation = state.getFilterRepresentation();
         FilterShowActivity activity = (FilterShowActivity) getContext();
-        activity.getPanelController().removeFilterRepresentation(filterRepresentation);
+        activity.removeFilterRepresentation(filterRepresentation);
     }
 }

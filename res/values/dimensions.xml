@@ -50,6 +50,7 @@
     <!--  configuration for filtershow UI -->
     <dimen name="thumbnail_size">96dip</dimen>
     <dimen name="thumbnail_margin">3dip</dimen>
+    <dimen name="action_item_height">175dip</dimen>
 
     <!-- configuration for album set page -->
     <dimen name="album_set_item_image_height">120dp</dimen>

@@ -92,9 +92,6 @@ public class ImageStraighten extends ImageGeometry {
     @Override
     public void onNewValue(int value) {
         setLocalStraighten(GeometryMath.clamp(value, MIN_STRAIGHTEN_ANGLE, MAX_STRAIGHTEN_ANGLE));
-        if (getPanelController() != null) {
-            getPanelController().onNewValue((int) getLocalStraighten());
-        }
         invalidate();
     }
 
