@@ -28,7 +28,6 @@ import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
@@ -38,7 +37,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.PanelController;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -101,8 +99,6 @@ public class ImageShow extends View implements OnGestureListener,
         return new GeometryMetadata(getImagePreset().mGeoData);
     }
 
-    private PanelController mController = null;
-
     private FilterShowActivity mActivity = null;
 
     public static void setDefaultBackgroundColor(int value) {
@@ -156,18 +152,7 @@ public class ImageShow extends View implements OnGestureListener,
         // TODO: implement reset
     }
 
-    public void setPanelController(PanelController controller) {
-        mController = controller;
-    }
-
-    public PanelController getPanelController() {
-        return mController;
-    }
-
     public void onNewValue(int parameter) {
-        if (getPanelController() != null) {
-            getPanelController().onNewValue(parameter);
-        }
         invalidate();
         mActivity.enableSave(hasModifications());
     }
@@ -409,7 +394,8 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     public void drawPartialImage(Canvas canvas, Bitmap image) {
-        if (!mTouchShowOriginal)
+        boolean showsOriginal = MasterImage.getImage().showsOriginal();
+        if (!showsOriginal && !mTouchShowOriginal)
             return;
         canvas.save();
         if (image != null) {
@@ -429,6 +415,9 @@ public class ImageShow extends View implements OnGestureListener,
             } else {
                 px = (int) (mTouch.x - mImageBounds.left);
                 py = mImageBounds.height();
+                if (showsOriginal) {
+                    px = mImageBounds.width();
+                }
             }
 
             Rect d = new Rect(mImageBounds.left, mImageBounds.top,

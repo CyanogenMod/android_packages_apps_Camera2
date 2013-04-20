@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 public class EditorPlaceHolder {
-    private static final String LOGTAG = "PanelController";
+    private static final String LOGTAG = "EditorPlaceHolder";
 
     private FilterShowActivity mActivity = null;
     private FrameLayout mContainer = null;
@@ -88,4 +88,5 @@ public class EditorPlaceHolder {
     public Editor getEditor(int editorId) {
         return mEditors.get(editorId);
     }
+
 }
