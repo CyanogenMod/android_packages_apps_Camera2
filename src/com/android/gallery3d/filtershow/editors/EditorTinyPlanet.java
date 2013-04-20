@@ -49,4 +49,10 @@ public class EditorTinyPlanet extends BasicEditor {
             mImageTinyPlanet.setRepresentation(drawRep);
         }
     }
+
+    public void updateUI() {
+        if (mControl != null) {
+            mControl.updateUI();
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.android.gallery3d.filtershow;
 
 import android.view.View;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 
 import com.android.gallery3d.filtershow.cache.ImageLoader;
@@ -49,7 +50,14 @@ public class EditorPlaceHolder {
             editor.setImageLoader(mImageLoader);
             mContainer.setVisibility(View.VISIBLE);
             mContainer.removeAllViews();
-            mContainer.addView(editor.getTopLevelView());
+            View eview = editor.getTopLevelView();
+            ViewParent parent = eview.getParent();
+
+            if (parent != null && parent instanceof FrameLayout) {
+                ((FrameLayout) parent).removeAllViews();
+            }
+
+            mContainer.addView(eview);
             hideOldViews();
             editor.setVisibility(View.VISIBLE);
             return editor;
