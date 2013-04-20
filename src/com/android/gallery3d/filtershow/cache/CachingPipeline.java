@@ -22,9 +22,9 @@ import android.graphics.Bitmap;
 import android.support.v8.renderscript.Allocation;
 import android.support.v8.renderscript.RenderScript;
 import android.util.Log;
+
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
-import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.FilterEnvironment;
@@ -357,19 +357,25 @@ public class CachingPipeline {
             Bitmap resizedOriginalBitmap = mResizedOriginalBitmap;
             if (updateOriginalAllocation(preset)) {
                 resizedOriginalBitmap = mResizedOriginalBitmap;
-                buffer.updateBitmaps(resizedOriginalBitmap);
+                mEnvironment.cache(buffer.getProducer());
+                buffer.updateProducerBitmap(resizedOriginalBitmap);
             }
             Bitmap bitmap = buffer.getProducer();
             long time2 = System.currentTimeMillis();
 
             if (bitmap == null || (bitmap.getWidth() != resizedOriginalBitmap.getWidth())
                     || (bitmap.getHeight() != resizedOriginalBitmap.getHeight())) {
-                buffer.updateBitmaps(resizedOriginalBitmap);
+                mEnvironment.cache(buffer.getProducer());
+                buffer.updateProducerBitmap(resizedOriginalBitmap);
                 bitmap = buffer.getProducer();
             }
             mOriginalAllocation.copyTo(bitmap);
 
-            bitmap = preset.apply(bitmap, mEnvironment);
+            Bitmap tmpbitmap = preset.apply(bitmap, mEnvironment);
+            if (tmpbitmap != bitmap) {
+                mEnvironment.cache(buffer.getProducer());
+                buffer.setProducer(tmpbitmap);
+            }
 
             mFiltersManager.freeFilterResources(preset);
 
