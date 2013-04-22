@@ -21,6 +21,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.Paint.Align;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -36,6 +37,7 @@ public class TextDrawable extends Drawable {
     private CharSequence mText;
     private int mIntrinsicWidth;
     private int mIntrinsicHeight;
+    private boolean mUseDropShadow;
 
     public TextDrawable(Resources res) {
         this(res, "");
@@ -43,14 +45,27 @@ public class TextDrawable extends Drawable {
 
     public TextDrawable(Resources res, CharSequence text) {
         mText = text;
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaint.setColor(DEFAULT_COLOR);
-        mPaint.setTextAlign(Align.CENTER);
+        updatePaint();
         float textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
                 DEFAULT_TEXTSIZE, res.getDisplayMetrics());
         mPaint.setTextSize(textSize);
         mIntrinsicWidth = (int) (mPaint.measureText(mText, 0, mText.length()) + .5);
         mIntrinsicHeight = mPaint.getFontMetricsInt(null);
+    }
+
+    private void updatePaint() {
+        if (mPaint == null) {
+            mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        }
+        mPaint.setColor(DEFAULT_COLOR);
+        mPaint.setTextAlign(Align.CENTER);
+        if (mUseDropShadow) {
+            mPaint.setTypeface(Typeface.DEFAULT_BOLD);
+            mPaint.setShadowLayer(10, 0, 0, 0xff000000);
+        } else {
+            mPaint.setTypeface(Typeface.DEFAULT);
+            mPaint.setShadowLayer(0, 0, 0, 0);
+        }
     }
 
     public void setText(CharSequence txt) {
@@ -71,6 +86,11 @@ public class TextDrawable extends Drawable {
             canvas.drawText(mText, 0, mText.length(),
                     bounds.centerX(), bounds.centerY(), mPaint);
         }
+    }
+
+    public void setDropShadow(boolean shadow) {
+        mUseDropShadow = shadow;
+        updatePaint();
     }
 
     @Override
