@@ -235,6 +235,8 @@
     <string name="pref_camera_id_entry_back" msgid="5142699735103692485">"Tagasi"</string>
     <string name="pref_camera_id_entry_front" msgid="5668958706828733669">"Eestvaade"</string>
     <string name="pref_camera_recordlocation_title" msgid="371208839215448917">"Talletuse asukoht"</string>
+    <!-- no translation found for pref_camera_location_label (2254270920298609161) -->
+    <skip />
     <string name="pref_camera_timer_title" msgid="3105232208281893389">"Iseavaja taimer"</string>
   <plurals name="pref_camera_timer_entry">
     <item quantity="one" msgid="1654523400981245448">"1 sekund"</item>
@@ -264,16 +266,29 @@
     <string name="pref_camera_focusmode_entry_auto" msgid="7374820710300362457">"Automaatne"</string>
     <string name="pref_camera_focusmode_entry_infinity" msgid="3413922419264967552">"Lõpmatus"</string>
     <string name="pref_camera_focusmode_entry_macro" msgid="4424489110551866161">"Makro"</string>
+    <string name="pref_camera_focusmode_label_auto" msgid="8547956917516317183">"AUTOMAATNE"</string>
+    <string name="pref_camera_focusmode_label_infinity" msgid="4272904160062531778">"LÕPMATUS"</string>
+    <string name="pref_camera_focusmode_label_macro" msgid="8749317592620908054">"MAKRO"</string>
     <string name="pref_camera_flashmode_title" msgid="2287362477238791017">"Välgurežiim"</string>
+    <string name="pref_camera_flashmode_label" msgid="7546741624882856171">"VÄLGUREŽIIM"</string>
     <string name="pref_camera_flashmode_entry_auto" msgid="7288383434237457709">"Automaatne"</string>
     <string name="pref_camera_flashmode_entry_on" msgid="5330043918845197616">"Sees"</string>
     <string name="pref_camera_flashmode_entry_off" msgid="867242186958805761">"Väljas"</string>
+    <string name="pref_camera_flashmode_label_auto" msgid="8854671890619026197">"AUTOMAATVÄLK"</string>
+    <string name="pref_camera_flashmode_label_on" msgid="7347504762794840140">"VÄLK ON SEES"</string>
+    <string name="pref_camera_flashmode_label_off" msgid="3541596735596053416">"VÄLK ON VÄLJAS"</string>
     <string name="pref_camera_whitebalance_title" msgid="677420930596673340">"Valge tasakaal"</string>
+    <string name="pref_camera_whitebalance_label" msgid="7467403405883190920">"VALGE TASAKAAL"</string>
     <string name="pref_camera_whitebalance_entry_auto" msgid="6580665476983469293">"Automaatne"</string>
     <string name="pref_camera_whitebalance_entry_incandescent" msgid="8856667786449549938">"Hõõglamp"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="2534757270149561027">"Päevavalgus"</string>
     <string name="pref_camera_whitebalance_entry_fluorescent" msgid="2435332872847454032">"Päevavalguslamp"</string>
     <string name="pref_camera_whitebalance_entry_cloudy" msgid="3531996716997959326">"Pilves"</string>
+    <string name="pref_camera_whitebalance_label_auto" msgid="1479694362310491429">"AUTOMAATNE"</string>
+    <string name="pref_camera_whitebalance_label_incandescent" msgid="7427628260209908900">"HÕÕGLAMP"</string>
+    <string name="pref_camera_whitebalance_label_daylight" msgid="1859710806141461399">"PÄEVAVALGUS"</string>
+    <string name="pref_camera_whitebalance_label_fluorescent" msgid="5173251749161337707">"PÄEVAVALGUSLAMP"</string>
+    <string name="pref_camera_whitebalance_label_cloudy" msgid="8230173517179285320">"PILVINE"</string>
     <string name="pref_camera_scenemode_title" msgid="1420535844292504016">"Stseenirežiim"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="7113995286836658648">"Automaatne"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="2923388802899511784">"HDR"</string>
@@ -281,10 +296,32 @@
     <string name="pref_camera_scenemode_entry_night" msgid="7606898503102476329">"Öö"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="181661154611507212">"Päikeseloojang"</string>
     <string name="pref_camera_scenemode_entry_party" msgid="907053529286788253">"Pidu"</string>
+    <string name="pref_camera_scenemode_label_auto" msgid="512540269666425375">"AUTOMAATNE"</string>
+    <string name="pref_camera_scenemode_label_action" msgid="964748409622151496">"TOIMING"</string>
+    <string name="pref_camera_scenemode_label_night" msgid="1269871886845854574">"ÖÖ"</string>
+    <string name="pref_camera_scenemode_label_sunset" msgid="2802732082948866877">"PÄIKESELOOJANG"</string>
+    <string name="pref_camera_scenemode_label_party" msgid="1409459091844374828">"PIDU"</string>
+    <!-- no translation found for pref_camera_countdown_label (7592784692450586126) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label_off (4987856883590176585) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label_one (1101814103087928898) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label_three (1047399297342955649) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label_ten (6274681535347260279) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label_fifteen (4544824246687597089) -->
+    <skip />
     <string name="not_selectable_in_scene_mode" msgid="2970291701448555126">"Seda ei saa stseenirežiimis valida."</string>
     <string name="pref_exposure_title" msgid="1229093066434614811">"Säriaeg"</string>
+    <string name="pref_exposure_label" msgid="552624394642497940">"SÄRIAEG"</string>
     <!-- no translation found for pref_camera_hdr_default (1336869406134365882) -->
     <skip />
+    <!-- no translation found for pref_camera_hdr_label (7217211253357027510) -->
+    <skip />
+    <string name="pref_camera_id_label_back" msgid="8745553500400332333">"ESIKAAMERA"</string>
+    <string name="pref_camera_id_label_front" msgid="8699439330056996709">"TAGAKAAMERA"</string>
     <string name="dialog_ok" msgid="6263301364153382152">"OK"</string>
     <string name="spaceIsLow_content" product="nosdcard" msgid="4401325203349203177">"Teie USB-mäluseadme ruum on otsa saamas. Muutke kvaliteediseadeid või kustutage kujutisi või teisi faile."</string>
     <string name="spaceIsLow_content" product="default" msgid="1732882643101247179">"Teie SD-kaardi ruum on otsa saamas. Muutke kvaliteedi seadeid või kustutage kujutisi või teisi faile."</string>
@@ -335,6 +372,10 @@
     <string name="accessibility_review_cancel" msgid="9070531914908644686">"Arvustuse tühistamine"</string>
     <string name="accessibility_review_ok" msgid="7793302834271343168">"Arvustus valmis"</string>
     <string name="accessibility_review_retake" msgid="659300290054705484">"Uue võtte ülevaade"</string>
+    <string name="accessibility_play_video" msgid="7596298365794810207">"Esita videot"</string>
+    <string name="accessibility_pause_video" msgid="6526344477133046653">"Peata video"</string>
+    <string name="accessibility_reload_video" msgid="3250335917598607232">"Laadi video uuesti"</string>
+    <string name="accessibility_time_bar" msgid="1414029843602604531">"Videomängija ajariba"</string>
     <string name="capital_on" msgid="5491353494964003567">"SEES"</string>
     <string name="capital_off" msgid="7231052688467970897">"VÄLJAS"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3490489191038309496">"Väljas"</string>
@@ -394,6 +435,8 @@
     <string name="menu_search" msgid="7580008232297437190">"Otsing"</string>
     <string name="tab_photos" msgid="9110813680630313419">"Fotod"</string>
     <string name="tab_albums" msgid="8079449907770685691">"Albumid"</string>
+    <string name="camera_menu_more_label" msgid="6868642182125198710">"ROHKEM VALIKUID"</string>
+    <string name="camera_menu_settings_label" msgid="875454962069404723">"SEADED"</string>
   <plurals name="number_of_photos">
     <item quantity="one" msgid="6949174783125614798">"%1$d foto"</item>
     <item quantity="other" msgid="3813306834113858135">"%1$d fotot"</item>

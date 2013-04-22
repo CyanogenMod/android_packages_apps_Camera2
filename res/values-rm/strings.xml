@@ -381,6 +381,8 @@
     <string name="pref_camera_id_entry_back" msgid="5142699735103692485">"Enavos"</string>
     <string name="pref_camera_id_entry_front" msgid="5668958706828733669">"Frunt"</string>
     <string name="pref_camera_recordlocation_title" msgid="371208839215448917">"Memorisar la posiziun"</string>
+    <!-- no translation found for pref_camera_location_label (2254270920298609161) -->
+    <skip />
     <!-- no translation found for pref_camera_timer_title (3105232208281893389) -->
     <skip />
     <!-- no translation found for pref_camera_timer_entry:one (1654523400981245448) -->
@@ -423,16 +425,42 @@
     <string name="pref_camera_focusmode_entry_auto" msgid="7374820710300362457">"Automatic"</string>
     <string name="pref_camera_focusmode_entry_infinity" msgid="3413922419264967552">"Infinit"</string>
     <string name="pref_camera_focusmode_entry_macro" msgid="4424489110551866161">"Macro"</string>
+    <!-- no translation found for pref_camera_focusmode_label_auto (8547956917516317183) -->
+    <skip />
+    <!-- no translation found for pref_camera_focusmode_label_infinity (4272904160062531778) -->
+    <skip />
+    <!-- no translation found for pref_camera_focusmode_label_macro (8749317592620908054) -->
+    <skip />
     <string name="pref_camera_flashmode_title" msgid="2287362477238791017">"Modus da chametg (flash)"</string>
+    <!-- no translation found for pref_camera_flashmode_label (7546741624882856171) -->
+    <skip />
     <string name="pref_camera_flashmode_entry_auto" msgid="7288383434237457709">"Automatic"</string>
     <string name="pref_camera_flashmode_entry_on" msgid="5330043918845197616">"Activà"</string>
     <string name="pref_camera_flashmode_entry_off" msgid="867242186958805761">"Deactivà"</string>
+    <!-- no translation found for pref_camera_flashmode_label_auto (8854671890619026197) -->
+    <skip />
+    <!-- no translation found for pref_camera_flashmode_label_on (7347504762794840140) -->
+    <skip />
+    <!-- no translation found for pref_camera_flashmode_label_off (3541596735596053416) -->
+    <skip />
     <string name="pref_camera_whitebalance_title" msgid="677420930596673340">"Equiliber da l\'alv"</string>
+    <!-- no translation found for pref_camera_whitebalance_label (7467403405883190920) -->
+    <skip />
     <string name="pref_camera_whitebalance_entry_auto" msgid="6580665476983469293">"Automatic"</string>
     <string name="pref_camera_whitebalance_entry_incandescent" msgid="8856667786449549938">"Pair electric"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="2534757270149561027">"Glisch dal di"</string>
     <string name="pref_camera_whitebalance_entry_fluorescent" msgid="2435332872847454032">"Glisch da neon"</string>
     <string name="pref_camera_whitebalance_entry_cloudy" msgid="3531996716997959326">"Nivlus"</string>
+    <!-- no translation found for pref_camera_whitebalance_label_auto (1479694362310491429) -->
+    <skip />
+    <!-- no translation found for pref_camera_whitebalance_label_incandescent (7427628260209908900) -->
+    <skip />
+    <!-- no translation found for pref_camera_whitebalance_label_daylight (1859710806141461399) -->
+    <skip />
+    <!-- no translation found for pref_camera_whitebalance_label_fluorescent (5173251749161337707) -->
+    <skip />
+    <!-- no translation found for pref_camera_whitebalance_label_cloudy (8230173517179285320) -->
+    <skip />
     <string name="pref_camera_scenemode_title" msgid="1420535844292504016">"Modus da scena"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="7113995286836658648">"Automatic"</string>
     <!-- no translation found for pref_camera_scenemode_entry_hdr (2923388802899511784) -->
@@ -442,10 +470,40 @@
     <string name="pref_camera_scenemode_entry_sunset" msgid="181661154611507212">"Rendida dal sulegl"</string>
     <!-- no translation found for pref_camera_scenemode_entry_party (907053529286788253) -->
     <skip />
+    <!-- no translation found for pref_camera_scenemode_label_auto (512540269666425375) -->
+    <skip />
+    <!-- no translation found for pref_camera_scenemode_label_action (964748409622151496) -->
+    <skip />
+    <!-- no translation found for pref_camera_scenemode_label_night (1269871886845854574) -->
+    <skip />
+    <!-- no translation found for pref_camera_scenemode_label_sunset (2802732082948866877) -->
+    <skip />
+    <!-- no translation found for pref_camera_scenemode_label_party (1409459091844374828) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label (7592784692450586126) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label_off (4987856883590176585) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label_one (1101814103087928898) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label_three (1047399297342955649) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label_ten (6274681535347260279) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label_fifteen (4544824246687597089) -->
+    <skip />
     <!-- no translation found for not_selectable_in_scene_mode (2970291701448555126) -->
     <skip />
     <string name="pref_exposure_title" msgid="1229093066434614811">"Exposiziun"</string>
+    <!-- no translation found for pref_exposure_label (552624394642497940) -->
+    <skip />
     <!-- no translation found for pref_camera_hdr_default (1336869406134365882) -->
+    <skip />
+    <!-- no translation found for pref_camera_hdr_label (7217211253357027510) -->
+    <skip />
+    <!-- no translation found for pref_camera_id_label_back (8745553500400332333) -->
+    <skip />
+    <!-- no translation found for pref_camera_id_label_front (8699439330056996709) -->
     <skip />
     <!-- no translation found for dialog_ok (6263301364153382152) -->
     <skip />
@@ -545,6 +603,14 @@
     <!-- no translation found for accessibility_review_ok (7793302834271343168) -->
     <skip />
     <!-- no translation found for accessibility_review_retake (659300290054705484) -->
+    <skip />
+    <!-- no translation found for accessibility_play_video (7596298365794810207) -->
+    <skip />
+    <!-- no translation found for accessibility_pause_video (6526344477133046653) -->
+    <skip />
+    <!-- no translation found for accessibility_reload_video (3250335917598607232) -->
+    <skip />
+    <!-- no translation found for accessibility_time_bar (1414029843602604531) -->
     <skip />
     <!-- no translation found for capital_on (5491353494964003567) -->
     <skip />
@@ -663,6 +729,10 @@
     <!-- no translation found for tab_photos (9110813680630313419) -->
     <skip />
     <!-- no translation found for tab_albums (8079449907770685691) -->
+    <skip />
+    <!-- no translation found for camera_menu_more_label (6868642182125198710) -->
+    <skip />
+    <!-- no translation found for camera_menu_settings_label (875454962069404723) -->
     <skip />
     <!-- no translation found for number_of_photos:one (6949174783125614798) -->
     <!-- no translation found for number_of_photos:other (3813306834113858135) -->

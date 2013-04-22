@@ -235,14 +235,16 @@
     <string name="pref_camera_id_entry_back" msgid="5142699735103692485">"Задняя"</string>
     <string name="pref_camera_id_entry_front" msgid="5668958706828733669">"Передняя"</string>
     <string name="pref_camera_recordlocation_title" msgid="371208839215448917">"Геотеги"</string>
-    <string name="pref_camera_timer_title" msgid="3105232208281893389">"Таймер обратного отсчета"</string>
+    <!-- no translation found for pref_camera_location_label (2254270920298609161) -->
+    <skip />
+    <string name="pref_camera_timer_title" msgid="3105232208281893389">"Автоспуск"</string>
   <plurals name="pref_camera_timer_entry">
     <item quantity="one" msgid="1654523400981245448">"1 сек."</item>
     <item quantity="other" msgid="6455381617076792481">"%d сек."</item>
   </plurals>
     <!-- no translation found for pref_camera_timer_sound_default (7066624532144402253) -->
     <skip />
-    <string name="pref_camera_timer_sound_title" msgid="2469008631966169105">"Сигнал"</string>
+    <string name="pref_camera_timer_sound_title" msgid="2469008631966169105">"Звук таймера"</string>
     <string name="setting_off" msgid="4480039384202951946">"Выкл."</string>
     <string name="setting_on" msgid="8602246224465348901">"Вкл."</string>
     <string name="pref_video_quality_title" msgid="8245379279801096922">"Качество видео"</string>
@@ -264,16 +266,29 @@
     <string name="pref_camera_focusmode_entry_auto" msgid="7374820710300362457">"Авто"</string>
     <string name="pref_camera_focusmode_entry_infinity" msgid="3413922419264967552">"Бесконечность"</string>
     <string name="pref_camera_focusmode_entry_macro" msgid="4424489110551866161">"Макро"</string>
+    <string name="pref_camera_focusmode_label_auto" msgid="8547956917516317183">"АВТО"</string>
+    <string name="pref_camera_focusmode_label_infinity" msgid="4272904160062531778">"БЕСКОНЕЧНОСТЬ"</string>
+    <string name="pref_camera_focusmode_label_macro" msgid="8749317592620908054">"МАКРОСЪЕМКА"</string>
     <string name="pref_camera_flashmode_title" msgid="2287362477238791017">"Режим вспышки"</string>
+    <string name="pref_camera_flashmode_label" msgid="7546741624882856171">"РЕЖИМ ВСПЫШКИ"</string>
     <string name="pref_camera_flashmode_entry_auto" msgid="7288383434237457709">"Авто"</string>
     <string name="pref_camera_flashmode_entry_on" msgid="5330043918845197616">"Вкл."</string>
     <string name="pref_camera_flashmode_entry_off" msgid="867242186958805761">"Выкл."</string>
+    <string name="pref_camera_flashmode_label_auto" msgid="8854671890619026197">"АВТО"</string>
+    <string name="pref_camera_flashmode_label_on" msgid="7347504762794840140">"ВКЛ"</string>
+    <string name="pref_camera_flashmode_label_off" msgid="3541596735596053416">"ВЫКЛ"</string>
     <string name="pref_camera_whitebalance_title" msgid="677420930596673340">"Баланс белого"</string>
+    <string name="pref_camera_whitebalance_label" msgid="7467403405883190920">"БАЛАНС БЕЛОГО"</string>
     <string name="pref_camera_whitebalance_entry_auto" msgid="6580665476983469293">"Авто"</string>
     <string name="pref_camera_whitebalance_entry_incandescent" msgid="8856667786449549938">"Лампа накаливания"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="2534757270149561027">"Солнечный свет"</string>
     <string name="pref_camera_whitebalance_entry_fluorescent" msgid="2435332872847454032">"Лампа дн. света"</string>
     <string name="pref_camera_whitebalance_entry_cloudy" msgid="3531996716997959326">"Пасмурный день"</string>
+    <string name="pref_camera_whitebalance_label_auto" msgid="1479694362310491429">"АВТО"</string>
+    <string name="pref_camera_whitebalance_label_incandescent" msgid="7427628260209908900">"ЛАМПА НАКАЛИВАНИЯ"</string>
+    <string name="pref_camera_whitebalance_label_daylight" msgid="1859710806141461399">"ДНЕВНОЙ СВЕТ"</string>
+    <string name="pref_camera_whitebalance_label_fluorescent" msgid="5173251749161337707">"ЛАМПА ДНЕВНОГО СВЕТА"</string>
+    <string name="pref_camera_whitebalance_label_cloudy" msgid="8230173517179285320">"ПАСМУРНО"</string>
     <string name="pref_camera_scenemode_title" msgid="1420535844292504016">"Режим съемки"</string>
     <string name="pref_camera_scenemode_entry_auto" msgid="7113995286836658648">"Авто"</string>
     <string name="pref_camera_scenemode_entry_hdr" msgid="2923388802899511784">"Эффект HDR"</string>
@@ -281,10 +296,32 @@
     <string name="pref_camera_scenemode_entry_night" msgid="7606898503102476329">"Ночь"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="181661154611507212">"Закат"</string>
     <string name="pref_camera_scenemode_entry_party" msgid="907053529286788253">"Вечеринка"</string>
+    <string name="pref_camera_scenemode_label_auto" msgid="512540269666425375">"АВТО"</string>
+    <string name="pref_camera_scenemode_label_action" msgid="964748409622151496">"РАЗМЫТИЕ В ДВИЖЕНИИ"</string>
+    <string name="pref_camera_scenemode_label_night" msgid="1269871886845854574">"НОЧЬ"</string>
+    <string name="pref_camera_scenemode_label_sunset" msgid="2802732082948866877">"ЗАКАТ"</string>
+    <string name="pref_camera_scenemode_label_party" msgid="1409459091844374828">"ВЕЧЕРИНКА"</string>
+    <!-- no translation found for pref_camera_countdown_label (7592784692450586126) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label_off (4987856883590176585) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label_one (1101814103087928898) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label_three (1047399297342955649) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label_ten (6274681535347260279) -->
+    <skip />
+    <!-- no translation found for pref_camera_countdown_label_fifteen (4544824246687597089) -->
+    <skip />
     <string name="not_selectable_in_scene_mode" msgid="2970291701448555126">"Недоступно в режиме съемки"</string>
     <string name="pref_exposure_title" msgid="1229093066434614811">"Экспозиция"</string>
+    <string name="pref_exposure_label" msgid="552624394642497940">"ЭКСПОЗИЦИЯ"</string>
     <!-- no translation found for pref_camera_hdr_default (1336869406134365882) -->
     <skip />
+    <!-- no translation found for pref_camera_hdr_label (7217211253357027510) -->
+    <skip />
+    <string name="pref_camera_id_label_back" msgid="8745553500400332333">"ФРОНТАЛЬНАЯ КАМЕРА"</string>
+    <string name="pref_camera_id_label_front" msgid="8699439330056996709">"ОСНОВНАЯ КАМЕРА"</string>
     <string name="dialog_ok" msgid="6263301364153382152">"ОК"</string>
     <string name="spaceIsLow_content" product="nosdcard" msgid="4401325203349203177">"Место на USB-накопителе заканчивается. Измените настройки качества или удалите ненужные изображения и другие файлы."</string>
     <string name="spaceIsLow_content" product="default" msgid="1732882643101247179">"Место на вашей SD-карте заканчивается. Измените настройки качества или удалите ненужные изображения и другие файлы."</string>
@@ -335,6 +372,10 @@
     <string name="accessibility_review_cancel" msgid="9070531914908644686">"Отмена"</string>
     <string name="accessibility_review_ok" msgid="7793302834271343168">"Готово"</string>
     <string name="accessibility_review_retake" msgid="659300290054705484">"Ещё раз"</string>
+    <string name="accessibility_play_video" msgid="7596298365794810207">"Воспроизвести видео"</string>
+    <string name="accessibility_pause_video" msgid="6526344477133046653">"Пауза"</string>
+    <string name="accessibility_reload_video" msgid="3250335917598607232">"Перезагрузить видео"</string>
+    <string name="accessibility_time_bar" msgid="1414029843602604531">"Полоса прокрутки видеоплеера"</string>
     <string name="capital_on" msgid="5491353494964003567">"I"</string>
     <string name="capital_off" msgid="7231052688467970897">"O"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3490489191038309496">"Выкл."</string>
@@ -383,7 +424,7 @@
     <string name="time_lapse_interval_set" msgid="2486386210951700943">"Готово"</string>
     <string name="set_time_interval" msgid="2970567717633813771">"Задайте интервал"</string>
     <string name="set_time_interval_help" msgid="6665849510484821483">"Сначала включите режим замедленной съемки."</string>
-    <string name="set_timer_help" msgid="5007708849404589472">"Таймер обратного отсчета отключен. Включите его, чтобы сделать снимок с задержкой."</string>
+    <string name="set_timer_help" msgid="5007708849404589472">"Чтобы камера фотографировала с задержкой, включите эту функцию."</string>
     <string name="set_duration" msgid="5578035312407161304">"Время"</string>
     <string name="count_down_title_text" msgid="4976386810910453266">"Обратный отсчет перед съемкой"</string>
     <string name="remember_location_title" msgid="9060472929006917810">"Сохранять место съемки?"</string>
@@ -394,6 +435,8 @@
     <string name="menu_search" msgid="7580008232297437190">"Поиск"</string>
     <string name="tab_photos" msgid="9110813680630313419">"Фото"</string>
     <string name="tab_albums" msgid="8079449907770685691">"Альбомы"</string>
+    <string name="camera_menu_more_label" msgid="6868642182125198710">"ЕЩЁ"</string>
+    <string name="camera_menu_settings_label" msgid="875454962069404723">"НАСТРОЙКИ"</string>
   <plurals name="number_of_photos">
     <item quantity="one" msgid="6949174783125614798">"%1$d фото"</item>
     <item quantity="other" msgid="3813306834113858135">"%1$d фото"</item>
