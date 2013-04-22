@@ -20,7 +20,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.RectF;
+import android.graphics.Region;
 import android.graphics.drawable.Drawable;
 
 public abstract class CropDrawingUtils {
@@ -90,6 +92,39 @@ public abstract class CropDrawingUtils {
                 drawIndicator(canvas, cropIndicator, indicatorSize, bounds.right, bounds.centerY());
             }
         }
+    }
+
+    public static void drawWallpaperSelectionFrame(Canvas canvas, RectF cropBounds, float spotX,
+            float spotY, Paint p, Paint shadowPaint) {
+        float sx = cropBounds.width() * spotX;
+        float sy = cropBounds.height() * spotY;
+        float cx = cropBounds.centerX();
+        float cy = cropBounds.centerY();
+        RectF r1 = new RectF(cx - sx / 2, cy - sy / 2, cx + sx / 2, cy + sy / 2);
+        float temp = sx;
+        sx = sy;
+        sy = temp;
+        RectF r2 = new RectF(cx - sx / 2, cy - sy / 2, cx + sx / 2, cy + sy / 2);
+        canvas.save();
+        canvas.clipRect(cropBounds);
+        canvas.clipRect(r1, Region.Op.DIFFERENCE);
+        canvas.clipRect(r2, Region.Op.DIFFERENCE);
+        canvas.drawPaint(shadowPaint);
+        canvas.restore();
+        Path path = new Path();
+        path.moveTo(r1.left, r1.top);
+        path.lineTo(r1.left, r1.bottom);
+        path.moveTo(r1.right, r1.top);
+        path.lineTo(r1.right, r1.bottom);
+        path.moveTo(r2.left, r2.top);
+        path.lineTo(r2.right, r2.top);
+        path.moveTo(r2.right, r2.top);
+        path.lineTo(r2.right, r2.bottom);
+        path.moveTo(r2.left, r2.bottom);
+        path.lineTo(r2.right, r2.bottom);
+        path.moveTo(r2.left, r2.top);
+        path.lineTo(r2.left, r2.bottom);
+        canvas.drawPath(path, p);
     }
 
     public static void drawShadows(Canvas canvas, Paint p, RectF innerBounds, RectF outerBounds) {
