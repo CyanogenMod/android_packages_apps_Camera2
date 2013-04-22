@@ -317,6 +317,14 @@ public class PreviewGestures
 
     private boolean isInside(MotionEvent evt, View v) {
         v.getLocationInWindow(mLocation);
+        // when view is flipped horizontally
+        if ((int) v.getRotationY() == 180) {
+            mLocation[0] -= v.getWidth();
+        }
+        // when view is flipped vertically
+        if ((int) v.getRotationX() == 180) {
+            mLocation[1] -= v.getHeight();
+        }
         return (v.getVisibility() == View.VISIBLE
                 && evt.getX() >= mLocation[0] && evt.getX() < mLocation[0] + v.getWidth()
                 && evt.getY() >= mLocation[1] && evt.getY() < mLocation[1] + v.getHeight());
