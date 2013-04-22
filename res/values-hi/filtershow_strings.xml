@@ -25,8 +25,6 @@
     <string name="borders" msgid="2067345080568684614">"बॉर्डर"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"पूर्ववत करें"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"फिर से करें"</string>
-    <string name="show_history_panel" msgid="7785810372502120090">"इतिहास दिखाएं"</string>
-    <string name="hide_history_panel" msgid="2082672248771133871">"इतिहास छिपाएं"</string>
     <string name="show_imagestate_panel" msgid="7132294085840948243">"चित्र स्थिति दिखाएं"</string>
     <string name="hide_imagestate_panel" msgid="1135313661068111161">"चित्र स्थिति छिपाएं"</string>
     <string name="menu_settings" msgid="6428291655769260831">"सेटिंग"</string>
@@ -40,7 +38,7 @@
     <skip />
     <string name="imageState" msgid="8632586742752891968">"लागू किए गए प्रभाव"</string>
     <string name="compare_original" msgid="8140838959007796977">"तुलना करें"</string>
-    <string name="apply_effect" msgid="1218288221200568947">"लागू करें"</string>
+    <string name="apply_effect" msgid="1218288221200568947">"*"</string>
     <string name="reset_effect" msgid="7712605581024929564">"रीसेट करें"</string>
     <string name="aspect" msgid="4025244950820813059">"पहलू"</string>
     <string name="aspect1to1_effect" msgid="1159104543795779123">"1:1"</string>
@@ -93,4 +91,6 @@
     <string name="color_pick_title" msgid="6195567431995308876">"रंग चुनें"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"आकार चुनें"</string>
     <string name="draw_size_accept" msgid="6781529716526190028">"ठीक"</string>
+    <string name="state_panel_original" msgid="9069584409934164419">"मूल"</string>
+    <string name="state_panel_result" msgid="318640531123298676">"परिणाम"</string>
 </resources>

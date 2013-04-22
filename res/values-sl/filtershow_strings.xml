@@ -25,8 +25,6 @@
     <string name="borders" msgid="2067345080568684614">"Obrobe"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Razveljavi"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"Uveljavi"</string>
-    <string name="show_history_panel" msgid="7785810372502120090">"Pokaži zgodovino"</string>
-    <string name="hide_history_panel" msgid="2082672248771133871">"Skrij zgodovino"</string>
     <string name="show_imagestate_panel" msgid="7132294085840948243">"Pokaži stanje slike"</string>
     <string name="hide_imagestate_panel" msgid="1135313661068111161">"Skrij stanje slike"</string>
     <string name="menu_settings" msgid="6428291655769260831">"Nastavitve"</string>
@@ -93,4 +91,6 @@
     <string name="color_pick_title" msgid="6195567431995308876">"Izberite barvo"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"Izberite velikost"</string>
     <string name="draw_size_accept" msgid="6781529716526190028">"V redu"</string>
+    <string name="state_panel_original" msgid="9069584409934164419">"Izvirnik"</string>
+    <string name="state_panel_result" msgid="318640531123298676">"Rezultat"</string>
 </resources>

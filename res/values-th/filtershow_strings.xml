@@ -25,8 +25,6 @@
     <string name="borders" msgid="2067345080568684614">"ขอบ"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"เลิกทำ"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"ทำซ้ำ"</string>
-    <string name="show_history_panel" msgid="7785810372502120090">"แสดงประวัติ"</string>
-    <string name="hide_history_panel" msgid="2082672248771133871">"ซ่อนประวัติ"</string>
     <string name="show_imagestate_panel" msgid="7132294085840948243">"สถานะแสดงภาพ"</string>
     <string name="hide_imagestate_panel" msgid="1135313661068111161">"สถานะซ่อนภาพ"</string>
     <string name="menu_settings" msgid="6428291655769260831">"การตั้งค่า"</string>
@@ -93,4 +91,6 @@
     <string name="color_pick_title" msgid="6195567431995308876">"เลือกสี"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"เลือกขนาด"</string>
     <string name="draw_size_accept" msgid="6781529716526190028">"ตกลง"</string>
+    <string name="state_panel_original" msgid="9069584409934164419">"ต้นฉบับ"</string>
+    <string name="state_panel_result" msgid="318640531123298676">"ผลลัพธ์"</string>
 </resources>

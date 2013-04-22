@@ -25,8 +25,6 @@
     <string name="borders" msgid="2067345080568684614">"Облямівка"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Відмінити"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"Повторити"</string>
-    <string name="show_history_panel" msgid="7785810372502120090">"Показати історію"</string>
-    <string name="hide_history_panel" msgid="2082672248771133871">"Сховати історію"</string>
     <string name="show_imagestate_panel" msgid="7132294085840948243">"Показ. стан зображ."</string>
     <string name="hide_imagestate_panel" msgid="1135313661068111161">"Сховати стан зображ."</string>
     <string name="menu_settings" msgid="6428291655769260831">"Налаштування"</string>
@@ -93,4 +91,6 @@
     <string name="color_pick_title" msgid="6195567431995308876">"Вибрати колір"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"Вибрати розмір"</string>
     <string name="draw_size_accept" msgid="6781529716526190028">"ОК"</string>
+    <string name="state_panel_original" msgid="9069584409934164419">"Оригінал"</string>
+    <string name="state_panel_result" msgid="318640531123298676">"Результат"</string>
 </resources>

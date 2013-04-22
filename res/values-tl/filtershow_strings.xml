@@ -25,8 +25,6 @@
     <string name="borders" msgid="2067345080568684614">"Mga Border"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"I-undo"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"I-redo"</string>
-    <string name="show_history_panel" msgid="7785810372502120090">"Ipakita Kasaysayan"</string>
-    <string name="hide_history_panel" msgid="2082672248771133871">"Kasaysayan Pagtago"</string>
     <string name="show_imagestate_panel" msgid="7132294085840948243">"Ipakita Image State"</string>
     <string name="hide_imagestate_panel" msgid="1135313661068111161">"Itago Image State"</string>
     <string name="menu_settings" msgid="6428291655769260831">"Mga Setting"</string>
@@ -93,4 +91,6 @@
     <string name="color_pick_title" msgid="6195567431995308876">"Pumili ng Kulay"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"Pumili ng Laki"</string>
     <string name="draw_size_accept" msgid="6781529716526190028">"OK"</string>
+    <string name="state_panel_original" msgid="9069584409934164419">"Orihinal"</string>
+    <string name="state_panel_result" msgid="318640531123298676">"Resulta"</string>
 </resources>
