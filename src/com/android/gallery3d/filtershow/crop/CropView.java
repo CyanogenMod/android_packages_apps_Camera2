@@ -20,6 +20,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -32,7 +34,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.crop.CropDrawingUtils;
 
 
 public class CropView extends View {
@@ -59,10 +60,15 @@ public class CropView extends View {
 
     private float mPrevX = 0;
     private float mPrevY = 0;
+    private float mSpotX = 0;
+    private float mSpotY = 0;
+    private boolean mDoSpot = false;
 
     private int mShadowMargin = 15;
     private int mMargin = 32;
     private int mOverlayShadowColor = 0xCF000000;
+    private int mOverlayWPShadowColor = 0x5F000000;
+    private int mWPMarkerColor = 0x7FFFFFFF;
     private int mMinSideSize = 90;
     private int mTouchTolerance = 40;
 
@@ -83,6 +89,8 @@ public class CropView extends View {
         mMinSideSize = (int) rsc.getDimension(R.dimen.crop_min_side);
         mTouchTolerance = (int) rsc.getDimension(R.dimen.crop_touch_tolerance);
         mOverlayShadowColor = (int) rsc.getColor(R.color.crop_shadow_color);
+        mOverlayWPShadowColor = (int) rsc.getColor(R.color.crop_shadow_wp_color);
+        mWPMarkerColor = (int) rsc.getColor(R.color.crop_wp_markers);
     }
 
     public void initialize(Bitmap image, RectF newCropBounds, RectF newPhotoBounds, int rotation) {
@@ -210,6 +218,18 @@ public class CropView extends View {
         invalidate();
     }
 
+    public void setWallpaperSpotlight(float spotlightX, float spotlightY) {
+        mSpotX = spotlightX;
+        mSpotY = spotlightY;
+        if (mSpotX > 0 && mSpotY > 0) {
+            mDoSpot = true;
+        }
+    }
+
+    public void unsetWallpaperSpotlight() {
+        mDoSpot = false;
+    }
+
     @Override
     public void onDraw(Canvas canvas) {
         if (mBitmap == null) {
@@ -280,7 +300,17 @@ public class CropView extends View {
 
             // Draw crop rect and markers
             CropDrawingUtils.drawCropRect(canvas, mScreenCropBounds);
-            CropDrawingUtils.drawRuleOfThird(canvas, mScreenCropBounds);
+            if (!mDoSpot) {
+                CropDrawingUtils.drawRuleOfThird(canvas, mScreenCropBounds);
+            } else {
+                Paint wpPaint = new Paint();
+                wpPaint.setColor(mWPMarkerColor);
+                wpPaint.setStrokeWidth(3);
+                wpPaint.setStyle(Paint.Style.STROKE);
+                wpPaint.setPathEffect(new DashPathEffect(new float[] {20, 30}, 0));
+                p.setColor(mOverlayWPShadowColor);
+                CropDrawingUtils.drawWallpaperSelectionFrame(canvas, mScreenCropBounds, mSpotX, mSpotY, wpPaint, p);
+            }
             CropDrawingUtils.drawIndicators(canvas, mCropIndicator, mIndicatorSize,
                     mScreenCropBounds, mCropObj.isFixedAspect(), mCropObj.getSelectState());
         }
