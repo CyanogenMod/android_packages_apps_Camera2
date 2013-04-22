@@ -21,12 +21,16 @@
     <!-- no translation found for original_picture_text (3076213290079909698) -->
     <skip />
     <string name="setting_wallpaper" msgid="4679087092300036632">"Установка обоев…"</string>
+    <!-- no translation found for download_failure (5923323939788582895) -->
+    <skip />
     <string name="original" msgid="3524493791230430897">"Оригинал"</string>
-    <string name="borders" msgid="2067345080568684614">"Границы"</string>
+    <string name="borders" msgid="2067345080568684614">"Рамка"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Отмена"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"Повторить"</string>
-    <string name="show_imagestate_panel" msgid="7132294085840948243">"Показать состояние"</string>
-    <string name="hide_imagestate_panel" msgid="1135313661068111161">"Скрыть состояние"</string>
+    <!-- no translation found for show_imagestate_panel (281932769701043015) -->
+    <skip />
+    <!-- no translation found for hide_imagestate_panel (7207643485811695257) -->
+    <skip />
     <string name="menu_settings" msgid="6428291655769260831">"Настройки"</string>
     <string name="unsaved" msgid="8704442449002374375">"У вас есть несохраненные изменения."</string>
     <string name="save_before_exit" msgid="2680660633675916712">"Сохранить изменения?"</string>
@@ -38,7 +42,7 @@
     <skip />
     <string name="imageState" msgid="8632586742752891968">"Эффекты"</string>
     <string name="compare_original" msgid="8140838959007796977">"Сравнить"</string>
-    <string name="apply_effect" msgid="1218288221200568947">"Применить:"</string>
+    <string name="apply_effect" msgid="1218288221200568947"></string>
     <string name="reset_effect" msgid="7712605581024929564">"Сброс"</string>
     <string name="aspect" msgid="4025244950820813059">"Формат"</string>
     <string name="aspect1to1_effect" msgid="1159104543795779123">"1:1"</string>
@@ -57,18 +61,18 @@
     <string name="sharpness" msgid="6463103068318055412">"Резкость"</string>
     <string name="contrast" msgid="2310908487756769019">"Контраст"</string>
     <string name="vibrance" msgid="3326744578577835915">"Vibrance"</string>
-    <string name="saturation" msgid="7026791551032438585">"Насыщ-сть"</string>
+    <string name="saturation" msgid="7026791551032438585">"Насыщенность"</string>
     <string name="bwfilter" msgid="8927492494576933793">"Ч/Б"</string>
     <string name="wbalance" msgid="6346581563387083613">"Авторежим"</string>
     <string name="hue" msgid="6231252147971086030">"Оттенок"</string>
     <string name="shadow_recovery" msgid="3928572915300287152">"Тени"</string>
     <string name="highlight_recovery" msgid="8262208470735204243">"Блики"</string>
     <string name="curvesRGB" msgid="915010781090477550">"Кривые"</string>
-    <string name="vignette" msgid="934721068851885390">"Виньет-ние"</string>
+    <string name="vignette" msgid="934721068851885390">"Виньетирование"</string>
     <string name="redeye" msgid="4508883127049472069">"Красные глаза"</string>
     <string name="imageDraw" msgid="6918552177844486656">"Подмалевок"</string>
     <string name="straighten" msgid="26025591664983528">"Выровнять"</string>
-    <string name="crop" msgid="5781263790107850771">"Кадрирование"</string>
+    <string name="crop" msgid="5781263790107850771">"Кадрировать"</string>
     <string name="rotate" msgid="2796802553793795371">"Повернуть"</string>
     <string name="mirror" msgid="5482518108154883096">"Отразить"</string>
     <string name="negative" msgid="6998313764388022201">"Негатив"</string>
@@ -91,8 +95,6 @@
     <string name="color_pick_title" msgid="6195567431995308876">"Выберите цвет"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"Выберите размер"</string>
     <string name="draw_size_accept" msgid="6781529716526190028">"ОК"</string>
-    <!-- no translation found for state_panel_original (9069584409934164419) -->
-    <skip />
-    <!-- no translation found for state_panel_result (318640531123298676) -->
-    <skip />
+    <string name="state_panel_original" msgid="9069584409934164419">"Как в оригинале"</string>
+    <string name="state_panel_result" msgid="318640531123298676">"Результат"</string>
 </resources>
