@@ -15,9 +15,12 @@
  */
 package com.android.gallery3d.filtershow.filters;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
 
+
+import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 import java.util.HashMap;
@@ -130,12 +133,40 @@ public abstract class BaseFiltersManager {
         filters.add(ImageFilterGeometry.class);
     }
 
-    public void addBorders(Vector<FilterRepresentation> representations) {
-        // Override
+    public void addBorders(Context context, Vector<FilterRepresentation> representations) {
+
     }
 
-    public void addLooks(Vector<FilterRepresentation> representations) {
-        // Override
+    public void addLooks(Context context, Vector<FilterRepresentation> representations) {
+        int[] drawid = {
+                R.drawable.filtershow_fx_0005_punch,
+                R.drawable.filtershow_fx_0000_vintage,
+                R.drawable.filtershow_fx_0004_bw_contrast,
+                R.drawable.filtershow_fx_0002_bleach,
+                R.drawable.filtershow_fx_0001_instant,
+                R.drawable.filtershow_fx_0007_washout,
+                R.drawable.filtershow_fx_0003_blue_crush,
+                R.drawable.filtershow_fx_0008_washout_color,
+                R.drawable.filtershow_fx_0006_x_process
+        };
+
+        int[] fxNameid = {
+                R.string.ffx_punch,
+                R.string.ffx_vintage,
+                R.string.ffx_bw_contrast,
+                R.string.ffx_bleach,
+                R.string.ffx_instant,
+                R.string.ffx_washout,
+                R.string.ffx_blue_crush,
+                R.string.ffx_washout_color,
+                R.string.ffx_x_process
+        };
+
+        for (int i = 0; i < drawid.length; i++) {
+            FilterFxRepresentation fx = new FilterFxRepresentation(
+                    context.getString(fxNameid[i]), drawid[i], fxNameid[i]);
+            representations.add(fx);
+        }
     }
 
     public void addEffects(Vector<FilterRepresentation> representations) {

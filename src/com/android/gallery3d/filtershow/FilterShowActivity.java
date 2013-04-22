@@ -121,7 +121,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     private static final int SELECT_PICTURE = 1;
     private static final String LOGTAG = "FilterShowActivity";
     protected static final boolean ANIMATE_PANELS = true;
-    private static int mImageBorderSize = 4; // in percent
 
     private boolean mShowingTinyPlanet = false;
     private boolean mShowingImageStatePanel = false;
@@ -405,24 +404,8 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         borders.add(new FilterImageBorderRepresentation(0));
 
         // Google-build borders
-        FiltersManager.getManager().addBorders(borders);
+        FiltersManager.getManager().addBorders(this, borders);
 
-        // Regular borders
-        borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5));
-        borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_brush));
-        borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_grunge));
-        borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_sumi_e));
-        borders.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_tape));
-        borders.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, 0));
-        borders.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize,
-                mImageBorderSize));
-        borders.add(new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize, 0));
-        borders.add(new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize,
-                mImageBorderSize));
-        int creamColor = Color.argb(255, 237, 237, 227);
-        borders.add(new FilterColorBorderRepresentation(creamColor, mImageBorderSize, 0));
-        borders.add(new FilterColorBorderRepresentation(creamColor, mImageBorderSize,
-                mImageBorderSize));
         for (int i = 0; i < borders.size(); i++) {
             FilterRepresentation filter = borders.elementAt(i);
             filter.setScrName(getString(R.string.borders));
@@ -792,14 +775,11 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         mNullFxFilter.setSelected(true);
 
         Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
-        FiltersManager.getManager().addLooks(filtersRepresentations);
+        FiltersManager.getManager().addLooks(this, filtersRepresentations);
         for (FilterRepresentation representation : filtersRepresentations) {
             setupFilterRepresentationButton(representation, listFilters, button);
         }
 
-        for (int i = 0; i < p; i++) {
-            setupFilterRepresentationButton(fxArray[i], listFilters, button);
-        }
     }
 
     public void setDefaultPreset() {

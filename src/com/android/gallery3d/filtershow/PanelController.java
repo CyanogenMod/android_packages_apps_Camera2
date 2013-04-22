@@ -598,6 +598,7 @@ public class PanelController implements OnClickListener {
             mCurrentEditor = null;
             FilterIconButton component = (FilterIconButton) view;
             FilterRepresentation representation = component.getFilterRepresentation();
+
             if (representation != null) {
                 mUtilityPanel.setEffectName(representation.getName());
                 mUtilityPanel.setShowParameter(representation.showParameterValue());

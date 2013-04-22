@@ -16,7 +16,11 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
+
+import com.android.gallery3d.R;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -25,7 +29,7 @@ public class FiltersManager extends BaseFiltersManager {
     private static FiltersManager sInstance = null;
     private static FiltersManager sPreviewInstance = null;
     private static FiltersManager sHighresInstance = null;
-
+    private static int mImageBorderSize = 4; // in percent
     public FiltersManager() {
         init();
     }
@@ -42,6 +46,29 @@ public class FiltersManager extends BaseFiltersManager {
             sInstance = new FiltersManager();
         }
         return sInstance;
+    }
+
+    @Override
+    public void addBorders(Context context, Vector<FilterRepresentation> representations) {
+        // Regular borders
+        representations.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5));
+        representations.add(
+                new FilterImageBorderRepresentation(R.drawable.filtershow_border_brush));
+        representations.add(
+                new FilterImageBorderRepresentation(R.drawable.filtershow_border_grunge));
+        representations.add(
+                new FilterImageBorderRepresentation(R.drawable.filtershow_border_sumi_e));
+        representations.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_tape));
+        representations.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, 0));
+        representations.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize,
+                mImageBorderSize));
+        representations.add(new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize, 0));
+        representations.add(new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize,
+                mImageBorderSize));
+        int creamColor = Color.argb(255, 237, 237, 227);
+        representations.add(new FilterColorBorderRepresentation(creamColor, mImageBorderSize, 0));
+        representations.add(new FilterColorBorderRepresentation(creamColor, mImageBorderSize,
+                mImageBorderSize));
     }
 
     public static FiltersManager getHighresManager() {
