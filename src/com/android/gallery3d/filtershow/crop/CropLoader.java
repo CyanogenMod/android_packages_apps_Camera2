@@ -48,13 +48,10 @@ import java.text.SimpleDateFormat;
 public abstract class CropLoader {
     public static final String LOGTAG = "CropLoader";
     public static final String JPEG_MIME_TYPE = "image/jpeg";
-    public static final int ORI_NORMAL = ExifInterface.Orientation.TOP_LEFT;
-    public static final int ORI_ROTATE_90 = ExifInterface.Orientation.RIGHT_TOP;
-    public static final int ORI_ROTATE_180 = ExifInterface.Orientation.BOTTOM_LEFT;
-    public static final int ORI_ROTATE_270 = ExifInterface.Orientation.RIGHT_BOTTOM;
 
     private static final String TIME_STAMP_NAME = "'IMG'_yyyyMMdd_HHmmss";
     public static final String DEFAULT_SAVE_DIRECTORY = "EditedOnlinePhotos";
+
     /**
      * Returns the orientation of image at the given URI as one of 0, 90, 180,
      * 270.
@@ -63,7 +60,7 @@ public abstract class CropLoader {
      * @param context context whose ContentResolver to use.
      * @return the orientation of the image. Defaults to 0.
      */
-    public static int getMetadataOrientation(Uri uri, Context context) {
+    public static int getMetadataRotation(Uri uri, Context context) {
         if (uri == null || context == null) {
             throw new IllegalArgumentException("bad argument to getScaledBitmap");
         }
@@ -87,25 +84,11 @@ public abstract class CropLoader {
         Cursor cursor = null;
         try {
             cursor = context.getContentResolver().query(uri,
-                    new String[] {
-                        MediaStore.Images.ImageColumns.ORIENTATION
-                    },
+                    new String[] { MediaStore.Images.ImageColumns.ORIENTATION },
                     null, null, null);
             if (cursor.moveToNext()) {
                 int ori = cursor.getInt(0);
-
-                switch (ori) {
-                    case 0:
-                        return ORI_NORMAL;
-                    case 90:
-                        return ORI_ROTATE_90;
-                    case 270:
-                        return ORI_ROTATE_270;
-                    case 180:
-                        return ORI_ROTATE_180;
-                    default:
-                        return 0;
-                }
+                return (ori < 0) ? 0 : ori;
             }
         } catch (SQLiteException e) {
             return 0;

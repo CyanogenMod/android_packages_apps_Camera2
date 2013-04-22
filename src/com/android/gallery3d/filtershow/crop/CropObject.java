@@ -89,7 +89,7 @@ public class CropObject {
         clearSelectState();
     }
 
-    public boolean setInnerAspectRatio(int width, int height) {
+    public boolean setInnerAspectRatio(float width, float height) {
         if (width <= 0 || height <= 0) {
             throw new IllegalArgumentException("Width and Height must be greater than zero");
         }
