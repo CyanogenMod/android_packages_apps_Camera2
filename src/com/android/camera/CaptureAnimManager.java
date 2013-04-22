@@ -16,11 +16,14 @@
 
 package com.android.camera;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.glrenderer.GLCanvas;
 import com.android.gallery3d.glrenderer.RawTexture;
 
@@ -45,7 +48,7 @@ public class CaptureAnimManager {
 
     private final Interpolator mSlideInterpolator = new DecelerateInterpolator();
 
-    private int mAnimOrientation;  // Could be 0, 90, 180 or 270 degrees.
+    private volatile int mAnimOrientation;  // Could be 0, 90, 180 or 270 degrees.
     private long mAnimStartTime;  // milliseconds.
     private float mX;  // The center of the whole view including preview and review.
     private float mY;
@@ -58,13 +61,22 @@ public class CaptureAnimManager {
     private int mHoldW;
     private int mHoldH;
 
-    private int mOffset = 80;
+    private int mOffset;
+
+    private int mMarginRight;
+    private int mMarginTop;
+    private int mSize;
+    private Resources mResources;
 
     /* preview: camera preview view.
      * review: view of picture just taken.
      */
     public CaptureAnimManager() {
 
+    }
+
+    public void setResources(Resources res) {
+        mResources = res;
     }
 
     public void setOrientation(int displayRotation) {
@@ -90,36 +102,45 @@ public class CaptureAnimManager {
     // x, y, w and h: the rectangle area where the animation takes place.
     public void startAnimation(int x, int y, int w, int h) {
         mAnimStartTime = SystemClock.uptimeMillis();
+        setAnimationGeometry(x, y, w, h);
+    }
+
+    private void setAnimationGeometry(int x, int y, int w, int h) {
+        mMarginRight = mResources.getDimensionPixelSize(R.dimen.capture_margin_right);
+        mMarginTop = mResources.getDimensionPixelSize(R.dimen.capture_margin_top);
+        mSize = mResources.getDimensionPixelSize(R.dimen.capture_size);
+        mOffset = mMarginRight + mSize;
         // Set the views to the initial positions.
         mDrawWidth = w;
         mDrawHeight = h;
         mX = x;
         mY = y;
-        mHoldW = (int) (mDrawWidth * 0.7f);
-        mHoldH = (int) (mDrawHeight * 0.7f);
+        mHoldW = mSize;
+        mHoldH = mSize;
         switch (mAnimOrientation) {
             case 0:  // Preview is on the left.
-                mHoldX = x + w - mOffset;
-                mHoldY = y + (mDrawHeight - mHoldH) / 2;
+                mHoldX = x + w - mMarginRight - mSize;
+                mHoldY = y + mMarginTop;
                 break;
             case 90:  // Preview is below.
-                mHoldX = x + (mDrawWidth - mHoldW + 1) / 2;
-                mHoldY = y + mOffset- mHoldH;
+                mHoldX = x + mMarginTop;
+                mHoldY = y + mMarginRight + mSize;
                 break;
             case 180:  // Preview on the right.
-                mHoldX = x - w + mOffset;
-                mHoldY = y + (mDrawHeight -  mHoldH) / 2;
+                mHoldX = x + mMarginRight;
+                mHoldY = y + h - mMarginTop - mSize;
                 break;
             case 270:  // Preview is above.
-                mHoldX = x + (mDrawWidth - mHoldW + 1) / 2;
-                mHoldY = y + h - mOffset;
+                mHoldX = x + w - mMarginTop - mSize;
+                mHoldY = y + h - mMarginRight - mSize;
                 break;
         }
     }
 
     // Returns true if the animation has been drawn.
     public boolean drawAnimation(GLCanvas canvas, CameraScreenNail preview,
-                RawTexture review) {
+                RawTexture review, int lx, int ly, int lw, int lh) {
+        setAnimationGeometry(lx, ly, lw, lh);
         long timeDiff = SystemClock.uptimeMillis() - mAnimStartTime;
         // Check if the animation is over
         if (mAnimType == ANIM_SLIDE && timeDiff > TIME_SLIDE2 - TIME_HOLD) return false;
