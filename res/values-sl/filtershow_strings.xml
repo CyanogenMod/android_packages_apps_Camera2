@@ -21,12 +21,16 @@
     <!-- no translation found for original_picture_text (3076213290079909698) -->
     <skip />
     <string name="setting_wallpaper" msgid="4679087092300036632">"Nastavljanje ozadja"</string>
+    <!-- no translation found for download_failure (5923323939788582895) -->
+    <skip />
     <string name="original" msgid="3524493791230430897">"Izvirnik"</string>
     <string name="borders" msgid="2067345080568684614">"Obrobe"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Razveljavi"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"Uveljavi"</string>
-    <string name="show_imagestate_panel" msgid="7132294085840948243">"Pokaži stanje slike"</string>
-    <string name="hide_imagestate_panel" msgid="1135313661068111161">"Skrij stanje slike"</string>
+    <!-- no translation found for show_imagestate_panel (281932769701043015) -->
+    <skip />
+    <!-- no translation found for hide_imagestate_panel (7207643485811695257) -->
+    <skip />
     <string name="menu_settings" msgid="6428291655769260831">"Nastavitve"</string>
     <string name="unsaved" msgid="8704442449002374375">"Spremembe te slike niso shranjene."</string>
     <string name="save_before_exit" msgid="2680660633675916712">"Ali želite pred zapiranjem shraniti?"</string>
@@ -91,8 +95,6 @@
     <string name="color_pick_title" msgid="6195567431995308876">"Izberite barvo"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"Izberite velikost"</string>
     <string name="draw_size_accept" msgid="6781529716526190028">"V redu"</string>
-    <!-- no translation found for state_panel_original (9069584409934164419) -->
-    <skip />
-    <!-- no translation found for state_panel_result (318640531123298676) -->
-    <skip />
+    <string name="state_panel_original" msgid="9069584409934164419">"Izvirnik"</string>
+    <string name="state_panel_result" msgid="318640531123298676">"Rezultat"</string>
 </resources>
