@@ -213,9 +213,9 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
             mGestures = new PreviewGestures(mActivity, this, mZoomRenderer, mPieRenderer, this);
         }
         mGestures.setRenderOverlay(mRenderOverlay);
-        mGestures.clearTouchReceivers();
+        mGestures.reset();
         mGestures.addTouchReceiver(mMenu);
-        mGestures.addTouchReceiver(mBlocker);
+        mGestures.addUnclickableArea(mBlocker);
         if (mController.isVideoCaptureIntent()) {
             if (mReviewCancelButton != null) {
                 mGestures.addTouchReceiver(mReviewCancelButton);
