@@ -65,9 +65,11 @@ public class ImageFilterTinyPlanet extends SimpleImageFilter {
         return new FilterTinyPlanetRepresentation();
     }
 
+
     native protected void nativeApplyFilter(
             Bitmap bitmapIn, int width, int height, Bitmap bitmapOut, int outSize, float scale,
             float angle);
+
 
     @Override
     public Bitmap apply(Bitmap bitmapIn, float scaleFactor, int quality) {
@@ -75,20 +77,22 @@ public class ImageFilterTinyPlanet extends SimpleImageFilter {
         int h = bitmapIn.getHeight();
         int outputSize = (int) (w / 2f);
         ImagePreset preset = getImagePreset();
-
+        Bitmap mBitmapOut = null;
         if (preset != null) {
             XMPMeta xmp = preset.getImageLoader().getXmpObject();
             // Do nothing, just use bitmapIn as is if we don't have XMP.
             if(xmp != null) {
-              bitmapIn = applyXmp(bitmapIn, xmp, w);
+                bitmapIn = applyXmp(bitmapIn, xmp, w);
             }
         }
-
-        Bitmap mBitmapOut = null;
+        if (mBitmapOut != null) {
+            if (outputSize != mBitmapOut.getHeight()) {
+                mBitmapOut = null;
+            }
+        }
         while (mBitmapOut == null) {
             try {
-                mBitmapOut = Bitmap.createBitmap(
-                        outputSize, outputSize, Bitmap.Config.ARGB_8888);
+                mBitmapOut = getEnvironment().getBitmap(outputSize, outputSize);
             } catch (java.lang.OutOfMemoryError e) {
                 System.gc();
                 outputSize /= 2;
@@ -98,32 +102,6 @@ public class ImageFilterTinyPlanet extends SimpleImageFilter {
         nativeApplyFilter(bitmapIn, bitmapIn.getWidth(), bitmapIn.getHeight(), mBitmapOut,
                 outputSize, mParameters.getZoom() / 100f, mParameters.getAngle());
 
-        if (true) {
-            // TODO(hoford): FIXME and remove this section
-            String text = "Tiny Planet Not Working";
-            int w2 = bitmapIn.getWidth() / 2;
-            int h2 = bitmapIn.getHeight() / 2;
-            Canvas c = new Canvas(bitmapIn);
-            Paint p = new Paint();
-            Rect src = new Rect(0, 0, mBitmapOut.getWidth(), mBitmapOut.getHeight());
-            Rect dst = new Rect(0, 0, bitmapIn.getWidth(), bitmapIn.getHeight());
-            c.drawBitmap(mBitmapOut, 0, 0, p);
-            float size = Math.min(w2, h2) / 4f;
-            p.setTextSize(size);
-            p.setColor(0xFF000000);
-            p.setStyle(Paint.Style.STROKE);
-            p.setStrokeWidth(20);
-            Rect bounds = new Rect();
-            p.getTextBounds(text, 0, text.length(), bounds);
-            int tw = bounds.width() / 2;
-            c.drawText(text, w2 - tw, h2, p);
-
-            p.setColor(0xFFFF0000);
-            p.setStyle(Paint.Style.FILL);
-            p.setStrokeWidth(0);
-
-            c.drawText(text, w2 - tw, h2, p);
-        }
         return mBitmapOut;
     }
 
@@ -150,8 +128,8 @@ public class ImageFilterTinyPlanet extends SimpleImageFilter {
             while (paddedBitmap == null) {
                 try {
                     paddedBitmap = Bitmap.createBitmap(
-                    (int) (fullPanoWidth * scale), (int) (fullPanoHeight * scale),
-                    Bitmap.Config.ARGB_8888);
+                            (int) (fullPanoWidth * scale), (int) (fullPanoHeight * scale),
+                            Bitmap.Config.ARGB_8888);
                 } catch (java.lang.OutOfMemoryError e) {
                     System.gc();
                     scale /= 2;

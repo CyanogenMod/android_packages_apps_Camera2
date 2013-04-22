@@ -34,6 +34,7 @@ public class FilterTinyPlanetRepresentation extends FilterBasicRepresentation {
         setTextId(R.string.tinyplanet);
         setButtonId(R.id.tinyplanetButton);
         setEditorId(EditorTinyPlanet.ID);
+        setMinimum(1);
     }
 
     @Override
@@ -43,6 +44,14 @@ public class FilterTinyPlanetRepresentation extends FilterBasicRepresentation {
         representation.mAngle = mAngle;
         representation.setZoom(getZoom());
         return representation;
+    }
+
+    @Override
+    public void useParametersFrom(FilterRepresentation a) {
+        FilterTinyPlanetRepresentation representation = (FilterTinyPlanetRepresentation) a;
+        super.useParametersFrom(a);
+        mAngle = representation.mAngle;
+        setZoom(representation.getZoom());
     }
 
     public void setAngle(float angle) {

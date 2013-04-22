@@ -493,7 +493,8 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             if (mAction == CROP_ACTION) {
                 mPanelController.showComponent(findViewById(EditorCrop.ID));
             } else if (mAction == TINY_PLANET_ACTION) {
-                mPanelController.showComponent(findViewById(EditorTinyPlanet.ID));
+                FilterIconButton button = (FilterIconButton) findViewById(EditorTinyPlanet.ID);
+                button.onClick(button);
             }
             super.onPostExecute(result);
         }

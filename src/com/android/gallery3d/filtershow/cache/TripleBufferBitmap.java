@@ -44,6 +44,14 @@ public class TripleBufferBitmap {
         mIntermediate = mBitmaps[2];
     }
 
+    public synchronized void updateProducerBitmap(Bitmap bitmap) {
+        mProducer = bitmap.copy(mBitmapConfig, true);
+    }
+
+    public synchronized void setProducer(Bitmap producer) {
+        mProducer = producer;
+    }
+
     public synchronized Bitmap getProducer() {
         return mProducer;
     }
