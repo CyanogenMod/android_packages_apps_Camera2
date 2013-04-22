@@ -558,7 +558,7 @@ public abstract class ActivityBase extends AbstractGalleryActivity
         public ScreenNail attachScreenNail() {
             if (mCameraScreenNail == null) {
                 if (ApiHelper.HAS_SURFACE_TEXTURE) {
-                    mCameraScreenNail = new CameraScreenNail(this);
+                    mCameraScreenNail = new CameraScreenNail(this, getResources());
                 } else {
                     Bitmap b = BitmapFactory.decodeResource(getResources(),
                             R.drawable.wallpaper_picker_preview);

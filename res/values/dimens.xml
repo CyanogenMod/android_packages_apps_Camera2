@@ -97,4 +97,7 @@
     <dimen name="size_preview">600dip</dimen>
     <dimen name="navigation_bar_height">48dip</dimen>
     <dimen name="navigation_bar_width">42dip</dimen>
+    <dimen name="capture_size">48dip</dimen>
+    <dimen name="capture_margin_right">16dip</dimen>
+    <dimen name="capture_margin_top">16dip</dimen>
 </resources>
