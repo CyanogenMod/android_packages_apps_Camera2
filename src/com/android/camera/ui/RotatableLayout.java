@@ -38,6 +38,8 @@ import com.android.camera.Util;
 public class RotatableLayout extends FrameLayout {
 
     private static final String TAG = "RotatableLayout";
+    // Initial orientation of the layout (ORIENTATION_PORTRAIT, or ORIENTATION_LANDSCAPE)
+    private int mInitialOrientation;
     private int mPrevRotation;
     private RotationListener mListener = null;
     public interface RotationListener {
@@ -45,19 +47,33 @@ public class RotatableLayout extends FrameLayout {
     }
     public RotatableLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        mInitialOrientation = getResources().getConfiguration().orientation;
     }
 
     public RotatableLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mInitialOrientation = getResources().getConfiguration().orientation;
     }
 
     public RotatableLayout(Context context) {
         super(context);
+        mInitialOrientation = getResources().getConfiguration().orientation;
     }
 
     @Override
-    public void onFinishInflate() { // get initial orientation
-        super.onFinishInflate();
+    public void onAttachedToWindow() {
+        // check if there is any rotation before the view is attached to window
+        int currentOrientation = getResources().getConfiguration().orientation;
+        if (mInitialOrientation == currentOrientation) {
+            return;
+        }
+        if (mInitialOrientation == Configuration.ORIENTATION_LANDSCAPE
+                && currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            rotateLayout(true);
+        } else if (mInitialOrientation == Configuration.ORIENTATION_PORTRAIT
+                && currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            rotateLayout(false);
+        }
         mPrevRotation = Util.getDisplayRotation((Activity) getContext());
     }
 
@@ -65,7 +81,16 @@ public class RotatableLayout extends FrameLayout {
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
         int rotation = Util.getDisplayRotation((Activity) getContext());
+        if ((rotation - mPrevRotation + 360) % 180 == 0) {
+            flipChildren();
+            return;
+        }
         boolean clockwise = isClockWiseRotation(mPrevRotation, rotation);
+        rotateLayout(clockwise);
+        mPrevRotation = rotation;
+    }
+
+    protected void rotateLayout(boolean clockwise) {
         // Change the size of the layout
         ViewGroup.LayoutParams lp = getLayoutParams();
         int width = lp.width;
@@ -75,7 +100,6 @@ public class RotatableLayout extends FrameLayout {
         setLayoutParams(lp);
 
         // rotate all the children
-        mPrevRotation = rotation;
         rotateChildren(clockwise);
     }
 
