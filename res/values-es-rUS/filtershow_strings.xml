@@ -25,8 +25,6 @@
     <string name="borders" msgid="2067345080568684614">"Bordes"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Deshacer"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"Rehacer"</string>
-    <string name="show_history_panel" msgid="7785810372502120090">"Mostrar historial"</string>
-    <string name="hide_history_panel" msgid="2082672248771133871">"Ocultar historial"</string>
     <string name="show_imagestate_panel" msgid="7132294085840948243">"Mostrar estado imag."</string>
     <string name="hide_imagestate_panel" msgid="1135313661068111161">"Ocultar estado imag."</string>
     <string name="menu_settings" msgid="6428291655769260831">"Configuración"</string>
@@ -93,4 +91,6 @@
     <string name="color_pick_title" msgid="6195567431995308876">"Seleccionar color"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"Seleccionar tamaño"</string>
     <string name="draw_size_accept" msgid="6781529716526190028">"Aceptar"</string>
+    <string name="state_panel_original" msgid="9069584409934164419">"Original"</string>
+    <string name="state_panel_result" msgid="318640531123298676">"Resultado"</string>
 </resources>

@@ -25,8 +25,6 @@
     <string name="borders" msgid="2067345080568684614">"Okraje"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Vrátit zpět"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"Opakovat"</string>
-    <string name="show_history_panel" msgid="7785810372502120090">"Zobrazit historii"</string>
-    <string name="hide_history_panel" msgid="2082672248771133871">"Skrýt historii"</string>
     <string name="show_imagestate_panel" msgid="7132294085840948243">"Ukázat stav obrázku"</string>
     <string name="hide_imagestate_panel" msgid="1135313661068111161">"Skrýt stav obrázku"</string>
     <string name="menu_settings" msgid="6428291655769260831">"Nastavení"</string>
@@ -93,4 +91,6 @@
     <string name="color_pick_title" msgid="6195567431995308876">"Vyberte barvu"</string>
     <string name="draw_size_title" msgid="3121649039610273977">"Vyberte velikost"</string>
     <string name="draw_size_accept" msgid="6781529716526190028">"OK"</string>
+    <string name="state_panel_original" msgid="9069584409934164419">"Původní"</string>
+    <string name="state_panel_result" msgid="318640531123298676">"Výsledek"</string>
 </resources>
