@@ -269,7 +269,9 @@ public class CropActivity extends Activity {
         if (mOriginalBitmap != null && mCropExtras != null) {
             if (mCropExtras.getExtraOutput() != null) {
                 destinationUri = mCropExtras.getExtraOutput();
-                flags |= DO_EXTRA_OUTPUT;
+                if (destinationUri != null) {
+                    flags |= DO_EXTRA_OUTPUT;
+                }
             }
             if (mCropExtras.getSetAsWallpaper()) {
                 flags |= DO_SET_WALLPAPER;
@@ -284,7 +286,7 @@ public class CropActivity extends Activity {
                 flags |= DO_EXTRA_OUTPUT;
             }
         }
-        if ((flags & FLAG_CHECK) != 0) {
+        if ((flags & FLAG_CHECK) != 0 && mOriginalBitmap != null) {
             RectF photo = new RectF(0, 0, mOriginalBitmap.getWidth(), mOriginalBitmap.getHeight());
             RectF crop = getBitmapCrop(photo);
             startBitmapIO(flags, mOriginalBitmap, mSourceUri, destinationUri, crop,
