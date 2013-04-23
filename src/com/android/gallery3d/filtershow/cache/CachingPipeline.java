@@ -96,6 +96,10 @@ public class CachingPipeline {
         sResources = null;
     }
 
+    public void stop() {
+        mEnvironment.setStop(true);
+    }
+
     public synchronized void reset() {
         synchronized (CachingPipeline.class) {
             if (getRenderScriptContext() == null) {
@@ -170,6 +174,7 @@ public class CachingPipeline {
         }
         mEnvironment.setQuality(ImagePreset.QUALITY_PREVIEW);
         mEnvironment.setImagePreset(preset);
+        mEnvironment.setStop(false);
     }
 
     public void setOriginal(Bitmap bitmap) {
@@ -294,7 +299,9 @@ public class CachingPipeline {
                 }
 
                 Bitmap bmp = preset.apply(bitmap, mEnvironment);
-                request.setBitmap(bmp);
+                if (!mEnvironment.needsStop()) {
+                    request.setBitmap(bmp);
+                }
                 mFiltersManager.freeFilterResources(preset);
             }
         }
