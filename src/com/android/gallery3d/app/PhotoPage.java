@@ -815,11 +815,13 @@ public abstract class PhotoPage extends ActivityState implements
         int supportedOperations = mCurrentPhoto.getSupportedOperations();
         if (mSecureAlbum != null) {
             supportedOperations &= MediaObject.SUPPORT_DELETE;
-        } else if (!mHaveImageEditor) {
-            supportedOperations &= ~MediaObject.SUPPORT_EDIT;
+        } else {
+            mCurrentPhoto.getPanoramaSupport(mUpdatePanoramaMenuItemsCallback);
+            if (!mHaveImageEditor) {
+                supportedOperations &= ~MediaObject.SUPPORT_EDIT;
+            }
         }
         MenuExecutor.updateMenuOperation(menu, supportedOperations);
-        mCurrentPhoto.getPanoramaSupport(mUpdatePanoramaMenuItemsCallback);
     }
 
     private boolean canDoSlideShow() {
