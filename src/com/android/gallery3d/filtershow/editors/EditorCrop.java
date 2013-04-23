@@ -17,8 +17,13 @@
 package com.android.gallery3d.filtershow.editors;
 
 import android.content.Context;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.crop.CropExtras;
@@ -59,6 +64,38 @@ public class EditorCrop extends Editor implements EditorInfo {
         } else {
             mImageCrop.setExtras(null);
         }
+    }
+
+    @Override
+    public void openUtilityPanel(final LinearLayout accessoryViewList) {
+        Button view = (Button) accessoryViewList.findViewById(R.id.applyEffect);
+        view.setText(mContext.getString(R.string.crop));
+        view.setOnClickListener(new OnClickListener() {
+
+                @Override
+            public void onClick(View arg0) {
+                showPopupMenu(accessoryViewList);
+            }
+        });
+    }
+
+    private void showPopupMenu(LinearLayout accessoryViewList) {
+        final Button button = (Button) accessoryViewList.findViewById(
+                R.id.applyEffect);
+        if (button == null) {
+            return;
+        }
+        final PopupMenu popupMenu = new PopupMenu(mImageShow.getActivity(), button);
+        popupMenu.getMenuInflater().inflate(R.menu.filtershow_menu_crop, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                mImageCrop.setAspectButton(item.getItemId());
+                return true;
+            }
+        });
+        popupMenu.show();
     }
 
     @Override

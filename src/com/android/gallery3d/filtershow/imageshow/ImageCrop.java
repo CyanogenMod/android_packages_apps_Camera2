@@ -671,53 +671,46 @@ public class ImageCrop extends ImageGeometry {
         }
     }
 
-    private void setAspectButton(FramedTextButton button, int itemId) {
+    public void setAspectButton(int itemId) {
         switch (itemId) {
             case R.id.crop_menu_1to1: {
                 String t = getActivity().getString(R.string.aspect1to1_effect);
-                button.setText(t);
                 apply(1, 1);
                 setAspectString(t);
                 break;
             }
             case R.id.crop_menu_4to3: {
                 String t = getActivity().getString(R.string.aspect4to3_effect);
-                button.setText(t);
                 apply(4, 3);
                 setAspectString(t);
                 break;
             }
             case R.id.crop_menu_3to4: {
                 String t = getActivity().getString(R.string.aspect3to4_effect);
-                button.setText(t);
                 apply(3, 4);
                 setAspectString(t);
                 break;
             }
             case R.id.crop_menu_5to7: {
                 String t = getActivity().getString(R.string.aspect5to7_effect);
-                button.setText(t);
                 apply(5, 7);
                 setAspectString(t);
                 break;
             }
             case R.id.crop_menu_7to5: {
                 String t = getActivity().getString(R.string.aspect7to5_effect);
-                button.setText(t);
                 apply(7, 5);
                 setAspectString(t);
                 break;
             }
             case R.id.crop_menu_none: {
                 String t = getActivity().getString(R.string.aspectNone_effect);
-                button.setText(t);
                 applyClear();
                 setAspectString(t);
                 break;
             }
             case R.id.crop_menu_original: {
                 String t = getActivity().getString(R.string.aspectOriginal_effect);
-                button.setText(t);
                 applyOriginal();
                 setAspectString(t);
                 break;
