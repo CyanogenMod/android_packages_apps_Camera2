@@ -116,7 +116,8 @@ public class OnScreenIndicators {
         } else {
             if (Parameters.FLASH_MODE_AUTO.equals(value)) {
                 mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_auto);
-            } else if (Parameters.FLASH_MODE_ON.equals(value)) {
+            } else if (Parameters.FLASH_MODE_ON.equals(value)
+                    || Parameters.FLASH_MODE_TORCH.equals(value)) {
                 mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_on);
             } else {
                 mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_off);
