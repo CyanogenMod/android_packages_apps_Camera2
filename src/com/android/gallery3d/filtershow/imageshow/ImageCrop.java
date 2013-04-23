@@ -729,45 +729,6 @@ public class ImageCrop extends ImageGeometry {
         return !mFixedAspect;
     }
 
-    private void showPopupMenu(LinearLayout accessoryViewList) {
-        final FramedTextButton button = (FramedTextButton) accessoryViewList.findViewById(
-                R.id.cropUtilityButton);
-        if (button == null) {
-            return;
-        }
-        PopupMenu popupMenu = new PopupMenu(getActivity(), button);
-        popupMenu.getMenuInflater().inflate(R.menu.filtershow_menu_crop, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                setAspectButton(button, item.getItemId());
-                return true;
-            }
-        });
-        popupMenu.show();
-    }
-
-    @Override
-    public void openUtilityPanel(final LinearLayout accessoryViewList) {
-        View view = accessoryViewList.findViewById(R.id.cropUtilityButton);
-        if (view == null) {
-            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService
-                    (Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.filtershow_crop_button, accessoryViewList, false);
-            accessoryViewList.addView(view, view.getLayoutParams());
-            view.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View arg0) {
-                    showPopupMenu(accessoryViewList);
-                }
-            });
-        }
-
-        if (view != null) {
-            view.setVisibility(View.VISIBLE);
-        }
-    }
-
     public void setEditor(EditorCrop editorCrop) {
         mEditorCrop = editorCrop;
     }
