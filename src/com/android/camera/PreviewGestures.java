@@ -128,6 +128,11 @@ public class PreviewGestures
         mReceivers.add(v);
     }
 
+    public void removeTouchReceiver(View v) {
+        if (mReceivers == null || v == null) return;
+        mReceivers.remove(v);
+    }
+
     public void addUnclickableArea(View v) {
         if (mUnclickableAreas == null) {
             mUnclickableAreas = new ArrayList<View>();

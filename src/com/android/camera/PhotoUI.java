@@ -389,9 +389,7 @@ public class PhotoUI implements PieListener,
     }
 
     public boolean dispatchTouchEvent(MotionEvent m) {
-        if (mPopup != null) {
-            return mActivity.superDispatchTouchEvent(m);
-        } else if (mGestures != null && mRenderOverlay != null) {
+        if (mGestures != null && mRenderOverlay != null) {
             return mGestures.dispatchTouch(m);
         }
         return false;
@@ -462,6 +460,7 @@ public class PhotoUI implements PieListener,
                 LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER;
         ((FrameLayout) mRootView).addView(mPopup, lp);
+        mGestures.addTouchReceiver(mPopup);
     }
 
     public void dismissPopup(boolean topPopupOnly) {
@@ -475,6 +474,7 @@ public class PhotoUI implements PieListener,
         }
         setShowMenu(fullScreen);
         if (mPopup != null) {
+            mGestures.removeTouchReceiver(mPopup);
             ((FrameLayout) mRootView).removeView(mPopup);
             mPopup = null;
         }
