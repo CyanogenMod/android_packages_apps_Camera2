@@ -28,6 +28,9 @@
 
     <!--  generic strings -->
 
+
+    <!--  Text for to display on a download failure [CHAR LIMIT=NONE] -->
+    <string name="download_failure">Could not download photo. Network unavailable.</string>
     <!--  Text for original image [CHAR LIMIT=20] -->
     <string name="original">Original</string>
     <!--  Text for filters that apply a border to a picture [CHAR LIMIT=20] -->
@@ -39,8 +42,8 @@
     <string name="filtershow_undo">Undo</string>
     <!--  Text for redo menu item [CHAR LIMIT=20] -->
     <string name="filtershow_redo">Redo</string>
-    <!--  Text for the image state panel menu item [CHAR LIMIT=20] -->
-    <string name="show_imagestate_panel">Show Image State</string>
+    <!--  Text for the image menu item showing the filters that have been applied [CHAR LIMIT=20] -->
+    <string name="show_imagestate_panel">Show Applied Effects </string>
     <!--  Text for the image state panel menu item [CHAR LIMIT=20] -->
     <string name="hide_imagestate_panel">Hide Image State</string>
     <!--  Name for the overflow menu item for settings [CHAR LIMIT=20] -->
