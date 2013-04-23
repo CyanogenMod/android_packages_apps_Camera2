@@ -77,7 +77,7 @@ public class PieRenderer extends OverlayRenderer
     private static final int MSG_OPENSUBMENU = 2;
 
     protected static float CENTER = (float) Math.PI / 2;
-    protected static float RAD20 = (float)(Math.PI /9); // 20 degrees
+    protected static float RAD24 = (float)(24 * Math.PI / 180);
     protected static final float SWEEP_SLICE = 0.14f;
     protected static final float SWEEP_ARC = 0.23f;
 
@@ -220,6 +220,7 @@ public class PieRenderer extends OverlayRenderer
         mArcRadius = res.getDimensionPixelSize(R.dimen.pie_arc_radius);
         mArcOffset = res.getDimensionPixelSize(R.dimen.pie_arc_offset);
         mLabel = new TextDrawable(res);
+        mLabel.setDropShadow(true);
         mDeadZone = res.getDimensionPixelSize(R.dimen.pie_deadzone_width);
         mAngleZone = res.getDimensionPixelSize(R.dimen.pie_anglezone_width);
     }
@@ -340,7 +341,7 @@ public class PieRenderer extends OverlayRenderer
 
     private void resetPieCenter() {
         mPieCenterX = mCenterX;
-        mPieCenterY = mCenterY + mCenterY / 3;
+        mPieCenterY = (int) (getHeight() - 2.5f * mDeadZone);
     }
 
     private void layoutPie() {
@@ -413,10 +414,10 @@ public class PieRenderer extends OverlayRenderer
     private float getCenterAngle() {
         float center = CENTER;
         if (mPieCenterX < mDeadZone + mAngleZone) {
-            center = CENTER - (mAngleZone - mPieCenterX + mDeadZone) * RAD20
+            center = CENTER - (mAngleZone - mPieCenterX + mDeadZone) * RAD24
                     / (float) mAngleZone;
         } else if (mPieCenterX > getWidth() - mDeadZone - mAngleZone) {
-            center = CENTER + (mPieCenterX - (getWidth() - mDeadZone - mAngleZone)) * RAD20
+            center = CENTER + (mPieCenterX - (getWidth() - mDeadZone - mAngleZone)) * RAD24
                     / (float) mAngleZone;
         }
         return center;
@@ -757,6 +758,7 @@ public class PieRenderer extends OverlayRenderer
     private void openCurrentItem() {
         if ((mCurrentItem != null) && mCurrentItem.hasItems()) {
             mOpen.add(mCurrentItem);
+            layoutLabel(getLevel());
             mOpening = true;
             if (mFadeIn != null) {
                 mFadeIn.cancel();
@@ -774,7 +776,6 @@ public class PieRenderer extends OverlayRenderer
                     mXFade = null;
                     ci.setSelected(false);
                     mOpening = false;
-                    mLabel.setText("");
                 }
 
                 @Override
