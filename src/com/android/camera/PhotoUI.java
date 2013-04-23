@@ -20,7 +20,6 @@ package com.android.camera;
 import android.hardware.Camera;
 import android.hardware.Camera.Face;
 import android.hardware.Camera.FaceDetectionListener;
-import android.hardware.Camera.Parameters;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -32,7 +31,6 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
@@ -83,13 +81,7 @@ public class PhotoUI implements PieListener,
     private View mBlocker;
     private PhotoMenu mMenu;
 
-    // Small indicators which show the camera settings in the viewfinder.
-    private ImageView mExposureIndicator;
-    private ImageView mFlashIndicator;
-    private ImageView mSceneIndicator;
-    private ImageView mHdrIndicator;
-    // A view group that contains all the small indicators.
-    private View mOnScreenIndicators;
+    private OnScreenIndicators mOnScreenIndicators;
 
     private PieRenderer mPieRenderer;
     private ZoomRenderer mZoomRenderer;
@@ -151,11 +143,8 @@ public class PhotoUI implements PieListener,
     }
 
     private void initIndicators() {
-        mOnScreenIndicators = mActivity.findViewById(R.id.on_screen_indicators);
-        mExposureIndicator = (ImageView) mOnScreenIndicators.findViewById(R.id.menu_exposure_indicator);
-        mFlashIndicator = (ImageView) mOnScreenIndicators.findViewById(R.id.menu_flash_indicator);
-        mSceneIndicator = (ImageView) mOnScreenIndicators.findViewById(R.id.menu_scenemode_indicator);
-        mHdrIndicator = (ImageView) mOnScreenIndicators.findViewById(R.id.menu_hdr_indicator);
+        mOnScreenIndicators = new OnScreenIndicators(
+                mActivity.findViewById(R.id.on_screen_indicators));
     }
 
     public void onCameraOpened(PreferenceGroup prefGroup, ComboPreferences prefs,
@@ -294,8 +283,10 @@ public class PhotoUI implements PieListener,
         }
     }
 
+    @Override
     public void showGpsOnScreenIndicator(boolean hasSignal) { }
 
+    @Override
     public void hideGpsOnScreenIndicator() { }
 
     public void overrideSettings(final String ... keyvalues) {
@@ -305,85 +296,14 @@ public class PhotoUI implements PieListener,
     public void updateOnScreenIndicators(Camera.Parameters params,
             ComboPreferences prefs) {
         if (params == null) return;
-        updateSceneOnScreenIndicator(params.getSceneMode());
-        updateExposureOnScreenIndicator(params,
+        mOnScreenIndicators.updateSceneOnScreenIndicator(params.getSceneMode());
+        mOnScreenIndicators.updateExposureOnScreenIndicator(params,
                 CameraSettings.readExposure(prefs));
-        updateFlashOnScreenIndicator(params.getFlashMode());
-        updateHdrOnScreenIndicator(params.getSceneMode());
+        mOnScreenIndicators.updateFlashOnScreenIndicator(params.getFlashMode());
+        mOnScreenIndicators.updateHdrOnScreenIndicator(params.getSceneMode());
     }
 
-    private void updateExposureOnScreenIndicator(Camera.Parameters params, int value) {
-        if (mExposureIndicator == null) {
-            return;
-        }
-        int id = 0;
-        float step = params.getExposureCompensationStep();
-        value = (int) Math.round(value * step);
-        switch(value) {
-        case -3:
-            id = R.drawable.ic_indicator_ev_n3;
-            break;
-        case -2:
-            id = R.drawable.ic_indicator_ev_n2;
-            break;
-        case -1:
-            id = R.drawable.ic_indicator_ev_n1;
-            break;
-        case 0:
-            id = R.drawable.ic_indicator_ev_0;
-            break;
-        case 1:
-            id = R.drawable.ic_indicator_ev_p1;
-            break;
-        case 2:
-            id = R.drawable.ic_indicator_ev_p2;
-            break;
-        case 3:
-            id = R.drawable.ic_indicator_ev_p3;
-            break;
-        }
-        mExposureIndicator.setImageResource(id);
-    }
 
-    private void updateFlashOnScreenIndicator(String value) {
-        if (mFlashIndicator == null) {
-            return;
-        }
-        if (value == null || Parameters.FLASH_MODE_OFF.equals(value)) {
-            mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_off);
-        } else {
-            if (Parameters.FLASH_MODE_AUTO.equals(value)) {
-                mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_auto);
-            } else if (Parameters.FLASH_MODE_ON.equals(value)) {
-                mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_on);
-            } else {
-                mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_off);
-            }
-        }
-    }
-
-    private void updateSceneOnScreenIndicator(String value) {
-        if (mSceneIndicator == null) {
-            return;
-        }
-        if ((value == null) || Parameters.SCENE_MODE_AUTO.equals(value)
-                || Parameters.SCENE_MODE_HDR.equals(value)) {
-            mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_off);
-        } else {
-            mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_on);
-        }
-    }
-
-    private void updateHdrOnScreenIndicator(String value) {
-        if (mHdrIndicator == null) {
-            return;
-        }
-        if ((value != null) && Parameters.SCENE_MODE_HDR.equals(value)) {
-            mHdrIndicator.setImageResource(R.drawable.ic_indicator_hdr_on);
-        } else {
-            mHdrIndicator.setImageResource(R.drawable.ic_indicator_hdr_off);
-        }
-    }
 
     public void setCameraState(int state) {
     }
