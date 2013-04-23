@@ -21,12 +21,16 @@
     <!-- no translation found for original_picture_text (3076213290079909698) -->
     <skip />
     <string name="setting_wallpaper" msgid="4679087092300036632">"Встановлення фонового малюнка"</string>
+    <!-- no translation found for download_failure (5923323939788582895) -->
+    <skip />
     <string name="original" msgid="3524493791230430897">"Оригінал"</string>
     <string name="borders" msgid="2067345080568684614">"Облямівка"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Відмінити"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"Повторити"</string>
-    <string name="show_imagestate_panel" msgid="7132294085840948243">"Показ. стан зображ."</string>
-    <string name="hide_imagestate_panel" msgid="1135313661068111161">"Сховати стан зображ."</string>
+    <!-- no translation found for show_imagestate_panel (281932769701043015) -->
+    <skip />
+    <!-- no translation found for hide_imagestate_panel (7207643485811695257) -->
+    <skip />
     <string name="menu_settings" msgid="6428291655769260831">"Налаштування"</string>
     <string name="unsaved" msgid="8704442449002374375">"У зображенні є незбережені зміни."</string>
     <string name="save_before_exit" msgid="2680660633675916712">"Зберегти перед виходом?"</string>
