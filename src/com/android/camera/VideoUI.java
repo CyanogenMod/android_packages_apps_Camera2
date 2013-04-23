@@ -71,8 +71,7 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
     private PreviewGestures mGestures;
     private View mMenu;
     private View mBlocker;
-    private View mOnScreenIndicators;
-    private ImageView mFlashIndicator;
+    private OnScreenIndicators mOnScreenIndicators;
     private RotateLayout mRecordingTimeRect;
     private VideoController mController;
     private int mZoomMax;
@@ -101,8 +100,9 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
                 }
             }
         });
-        mOnScreenIndicators = mActivity.findViewById(R.id.on_screen_indicators);
-        mFlashIndicator = (ImageView) mActivity.findViewById(R.id.menu_flash_indicator);
+        mOnScreenIndicators = new OnScreenIndicators(
+                mActivity.findViewById(R.id.on_screen_indicators));
+        mOnScreenIndicators.resetToDefault();
         if (mController.isVideoCaptureIntent()) {
             mActivity.hideSwitcher();
             ViewGroup cameraControls = (ViewGroup) mActivity.findViewById(R.id.camera_controls);
@@ -252,21 +252,7 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
     }
 
     public void updateOnScreenIndicators(Parameters param) {
-        if (param == null) return;
-        String value = param.getFlashMode();
-        if (mFlashIndicator == null) return;
-        if (value == null || Parameters.FLASH_MODE_OFF.equals(value)) {
-            mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_off);
-        } else {
-            if (Parameters.FLASH_MODE_AUTO.equals(value)) {
-                mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_auto);
-            } else if (Parameters.FLASH_MODE_ON.equals(value)
-                    || Parameters.FLASH_MODE_TORCH.equals(value)) {
-                mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_on);
-            } else {
-                mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_off);
-            }
-        }
+      mOnScreenIndicators.updateFlashOnScreenIndicator(param.getFlashMode());
     }
 
     public void setAspectRatio(double ratio) {
