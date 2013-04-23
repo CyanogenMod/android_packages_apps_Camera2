@@ -768,7 +768,7 @@
     <string name="pref_camera_scenemode_entry_party">Party</string>
 
     <!-- Settings menu, scene mode labels [CHAR LIMIT=50] -->
-    <string name="pref_camera_scenemode_label_auto">AUTO</string>
+    <string name="pref_camera_scenemode_label_auto">NONE</string>
     <!-- Scene mode that takes an image quickly with little motion blur. [CHAR LIMIT=50] -->
     <string name="pref_camera_scenemode_label_action">ACTION</string>
     <!-- Scene mode that takes long exposures to capture night scenes without flash. [CHAR LIMIT=50] -->
