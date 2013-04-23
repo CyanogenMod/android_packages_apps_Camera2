@@ -202,6 +202,8 @@ public class CropActivity extends Activity {
                 if (aspectX > 0 && aspectY > 0) {
                     mCropView.applyAspect(aspectX, aspectY);
                 }
+                mCropView.setWallpaperSpotlight(mCropExtras.getSpotlightX(),
+                        mCropExtras.getSpotlightY());
             }
             enableSave(true);
         } else {
