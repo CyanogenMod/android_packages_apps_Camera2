@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.util;
 
-import android.app.Activity;
 import android.content.Context;
 
 public class UsageStatistics {
@@ -42,7 +41,6 @@ public class UsageStatistics {
     public static final String ACTION_SHARE = "Share";
 
     public static void initialize(Context context) {}
-    public static void showOptInDialogIfNeeded(Activity activity) {}
     public static void setPendingTransitionCause(String cause) {}
     public static void onContentViewChanged(String screenComponent, String screenName) {}
     public static void onEvent(String category, String action, String label) {};
