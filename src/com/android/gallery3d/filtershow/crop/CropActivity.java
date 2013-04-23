@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -122,6 +123,12 @@ public class CropActivity extends Activity {
             mLoadBitmapTask.cancel(false);
         }
         super.onDestroy();
+    }
+
+    @Override
+    public void onConfigurationChanged (Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mCropView.configChanged();
     }
 
     /**
