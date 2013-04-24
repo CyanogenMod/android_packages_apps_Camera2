@@ -31,17 +31,14 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.android.camera.ui.CameraSwitcher;
-import com.android.camera.ui.RotatableLayout;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.common.ApiHelper;
