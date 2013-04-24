@@ -17,6 +17,7 @@
 package com.android.camera;
 
 import android.annotation.TargetApi;
+import android.content.res.Resources;
 import android.graphics.SurfaceTexture;
 import android.opengl.Matrix;
 import android.util.Log;
@@ -111,8 +112,9 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
         boolean requiresSurfaceTexture();
     }
 
-    public CameraScreenNail(Listener listener) {
+    public CameraScreenNail(Listener listener, Resources res) {
         mListener = listener;
+        mCaptureAnimManager.setResources(res);
     }
 
     public void setFullScreen(boolean full) {
@@ -386,7 +388,8 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
                         // Skip the animation if no longer in full screen mode
                         drawn = false;
                     } else {
-                        drawn = mCaptureAnimManager.drawAnimation(canvas, this, mAnimTexture);
+                        drawn = mCaptureAnimManager.drawAnimation(canvas, this, mAnimTexture,
+                                x, y, width, height);
                     }
                 } else {
                     drawn = mSwitchAnimManager.drawAnimation(canvas, x, y,

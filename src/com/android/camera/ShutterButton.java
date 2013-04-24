@@ -17,13 +17,10 @@
 package com.android.camera;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-
-import com.android.camera.ui.RotatableLayout;
 
 /**
  * A button designed to be used for the on-screen shutter button.
