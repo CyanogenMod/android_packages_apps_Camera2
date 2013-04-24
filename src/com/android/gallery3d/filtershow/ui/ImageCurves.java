@@ -26,6 +26,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -157,7 +158,7 @@ public class ImageCurves extends ImageShow {
     }
 
     private Spline getSpline(int index) {
-        return curves().getSpline(index);
+        return mFilterCurvesRepresentation.getSpline(index);
     }
 
     @Override
@@ -169,8 +170,8 @@ public class ImageCurves extends ImageShow {
     }
 
     public void resetCurve() {
-        if (curves() != null) {
-            curves().reset();
+        if (mFilterCurvesRepresentation != null) {
+            mFilterCurvesRepresentation.reset();
             updateCachedImage();
         }
     }
