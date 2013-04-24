@@ -35,6 +35,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -176,6 +177,9 @@ public class PanoramaModule implements CameraModule,
     private boolean mPaused;
     private boolean mIsCreatingRenderer;
 
+    private LocationManager mLocationManager;
+    private ComboPreferences mPreferences;
+
     private class MosaicJpeg {
         public MosaicJpeg(byte[] data, int width, int height) {
             this.data = data;
@@ -278,6 +282,10 @@ public class PanoramaModule implements CameraModule,
         mDialogWaitingPreviousString = appRes.getString(R.string.pano_dialog_waiting_previous);
 
         mGLRootView = (GLRootView) mActivity.getGLRoot();
+
+        mPreferences = new ComboPreferences(mActivity);
+        CameraSettings.upgradeGlobalPreferences(mPreferences.getGlobal());
+        mLocationManager = new LocationManager(mActivity, null);
 
         mMainHandler = new Handler() {
             @Override
@@ -902,6 +910,7 @@ public class PanoramaModule implements CameraModule,
                     mActivity.getResources().getString(R.string.pano_file_name_format), mTimeTaken);
             String filepath = Storage.generateFilepath(filename);
 
+            Location loc = mLocationManager.getCurrentLocation();
             ExifInterface exif = new ExifInterface();
             try {
                 exif.readExif(jpegData);
@@ -910,17 +919,25 @@ public class PanoramaModule implements CameraModule,
                         TimeZone.getDefault());
                 exif.setTag(exif.buildTag(ExifInterface.TAG_ORIENTATION,
                         ExifInterface.getOrientationValueForRotation(orientation)));
+                writeLocation(loc, exif);
                 exif.writeExif(jpegData, filepath);
             } catch (IOException e) {
                 Log.e(TAG, "Cannot set exif for " + filepath, e);
                 Storage.writeFile(filepath, jpegData);
             }
-
             int jpegLength = (int) (new File(filepath).length());
             return Storage.addImage(mContentResolver, filename, mTimeTaken,
-                    null, orientation, jpegLength, filepath, width, height);
+                    loc, orientation, jpegLength, filepath, width, height);
         }
         return null;
+    }
+
+    private static void writeLocation(Location location, ExifInterface exif) {
+        if (location == null) {
+            return;
+        }
+        exif.addGpsTags(location.getLatitude(), location.getLongitude());
+        exif.setTag(exif.buildTag(ExifInterface.TAG_GPS_PROCESSING_METHOD, location.getProvider()));
     }
 
     private void clearMosaicFrameProcessorIfNeeded() {
@@ -943,6 +960,7 @@ public class PanoramaModule implements CameraModule,
     @Override
     public void onPauseBeforeSuper() {
         mPaused = true;
+        if (mLocationManager != null) mLocationManager.recordLocation(false);
     }
 
     @Override
@@ -1058,6 +1076,11 @@ public class PanoramaModule implements CameraModule,
             }
         }
         keepScreenOnAwhile();
+
+        // Initialize location service.
+        boolean recordLocation = RecordLocationPreference.get(mPreferences,
+                mContentResolver);
+        mLocationManager.recordLocation(recordLocation);
 
         // Dismiss open menu if exists.
         PopupManager.getInstance(mActivity).notifyShowPopup(null);
