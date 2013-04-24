@@ -281,6 +281,7 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
                 LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER;
         ((FrameLayout) mRootView).addView(mPopup, lp);
+        mGestures.addTouchReceiver(mPopup);
     }
 
     public void dismissPopup(boolean topLevelOnly) {
@@ -294,6 +295,7 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
         }
         setShowMenu(fullScreen);
         if (mPopup != null) {
+            mGestures.removeTouchReceiver(mPopup);
             ((FrameLayout) mRootView).removeView(mPopup);
             mPopup = null;
         }
@@ -472,10 +474,8 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
     }
 
     public boolean dispatchTouchEvent(MotionEvent m) {
-        if (mPopup == null && mGestures != null && mRenderOverlay != null) {
+        if (mGestures != null && mRenderOverlay != null) {
             return mGestures.dispatchTouch(m);
-        } else if (mPopup != null) {
-            return mActivity.superDispatchTouchEvent(m);
         }
         return false;
     }
