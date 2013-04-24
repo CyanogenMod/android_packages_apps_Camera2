@@ -19,7 +19,11 @@ package com.android.gallery3d.filtershow.controller;
 public interface ParameterActionAndInt extends ParameterInteger {
     static String sParameterType = "ParameterActionAndInt";
 
-    public void fireAction();
+    public void fireLeftAction();
 
-    public int getActionIcon();
+    public int getLeftIcon();
+
+    public void fireRightAction();
+
+    public int getRightIcon();
 }
