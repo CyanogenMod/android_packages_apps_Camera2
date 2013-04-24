@@ -296,7 +296,8 @@
     <string name="pref_camera_scenemode_entry_night" msgid="7606898503102476329">"กลางคืน"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="181661154611507212">"ดวงอาทิตย์ตก"</string>
     <string name="pref_camera_scenemode_entry_party" msgid="907053529286788253">"งานเลี้ยง"</string>
-    <string name="pref_camera_scenemode_label_auto" msgid="512540269666425375">"อัตโนมัติ"</string>
+    <!-- no translation found for pref_camera_scenemode_label_auto (4475096836397300237) -->
+    <skip />
     <string name="pref_camera_scenemode_label_action" msgid="964748409622151496">"การทำงาน"</string>
     <string name="pref_camera_scenemode_label_night" msgid="1269871886845854574">"กลางคืน"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="2802732082948866877">"ดวงอาทิตย์ตก"</string>
