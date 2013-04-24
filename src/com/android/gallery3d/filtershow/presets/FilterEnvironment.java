@@ -35,6 +35,16 @@ public class FilterEnvironment {
     private int mQuality;
     private FiltersManager mFiltersManager;
     private CachingPipeline mCachingPipeline;
+    private volatile boolean mStop = false;
+
+    public synchronized boolean needsStop() {
+        return mStop;
+    }
+
+    public synchronized void setStop(boolean stop) {
+        this.mStop = stop;
+    }
+
     private HashMap<Long, WeakReference<Bitmap>>
             bitmapCach = new HashMap<Long, WeakReference<Bitmap>>();
 
