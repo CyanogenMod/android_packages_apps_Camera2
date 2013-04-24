@@ -278,7 +278,7 @@
     <string name="pref_camera_flashmode_label_on" msgid="7347504762794840140">"FLASH ACTIVADO"</string>
     <string name="pref_camera_flashmode_label_off" msgid="3541596735596053416">"FLASH DESACTIVADO"</string>
     <string name="pref_camera_whitebalance_title" msgid="677420930596673340">"Balance blancos"</string>
-    <string name="pref_camera_whitebalance_label" msgid="7467403405883190920">"EQUILIBRIO DE BLANCOS"</string>
+    <string name="pref_camera_whitebalance_label" msgid="7467403405883190920">"BALANCE DE BLANCOS"</string>
     <string name="pref_camera_whitebalance_entry_auto" msgid="6580665476983469293">"Automático"</string>
     <string name="pref_camera_whitebalance_entry_incandescent" msgid="8856667786449549938">"Incandescente"</string>
     <string name="pref_camera_whitebalance_entry_daylight" msgid="2534757270149561027">"Luz del día"</string>
@@ -286,7 +286,7 @@
     <string name="pref_camera_whitebalance_entry_cloudy" msgid="3531996716997959326">"Nublado"</string>
     <string name="pref_camera_whitebalance_label_auto" msgid="1479694362310491429">"AUTOMÁTICO"</string>
     <string name="pref_camera_whitebalance_label_incandescent" msgid="7427628260209908900">"INCANDESCENTE"</string>
-    <string name="pref_camera_whitebalance_label_daylight" msgid="1859710806141461399">"LUZ DEL DÍA"</string>
+    <string name="pref_camera_whitebalance_label_daylight" msgid="1859710806141461399">"LUZ NATURAL"</string>
     <string name="pref_camera_whitebalance_label_fluorescent" msgid="5173251749161337707">"FLUORESCENTE"</string>
     <string name="pref_camera_whitebalance_label_cloudy" msgid="8230173517179285320">"NUBLADO"</string>
     <string name="pref_camera_scenemode_title" msgid="1420535844292504016">"Modo de preselección de escenas"</string>
@@ -376,7 +376,7 @@
     <string name="accessibility_play_video" msgid="7596298365794810207">"Reproducir video"</string>
     <string name="accessibility_pause_video" msgid="6526344477133046653">"Pausar video"</string>
     <string name="accessibility_reload_video" msgid="3250335917598607232">"Volver a cargar video"</string>
-    <string name="accessibility_time_bar" msgid="1414029843602604531">"Barra de tiempo del Reproductor de Google Video"</string>
+    <string name="accessibility_time_bar" msgid="1414029843602604531">"Barra de tiempo del reproductor de video"</string>
     <string name="capital_on" msgid="5491353494964003567">"ACTIVADO"</string>
     <string name="capital_off" msgid="7231052688467970897">"DESACTIVADO"</string>
     <string name="pref_video_time_lapse_frame_interval_off" msgid="3490489191038309496">"Apagado"</string>
