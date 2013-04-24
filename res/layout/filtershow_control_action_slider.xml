@@ -22,7 +22,7 @@
     android:orientation="horizontal" >
 
     <ImageButton
-        android:id="@+id/actionButton"
+        android:id="@+id/leftActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left|center_vertical"
@@ -39,5 +39,17 @@
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         style="@style/FilterShowSlider" />
+
+    <ImageButton
+        android:id="@+id/rightActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|center_vertical"
+        android:scaleType="centerInside"
+        android:layout_weight="0"
+        android:background="@drawable/filtershow_button_background"
+        android:src="@drawable/ic_menu_trash_holo_light"
+        android:paddingBottom="8dp"  />
+
 </LinearLayout>
 
