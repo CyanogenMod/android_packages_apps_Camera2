@@ -198,7 +198,9 @@ public class ParametricEditor extends Editor {
     public void commitLocalRepresentation() {
         super.commitLocalRepresentation();
         FilterRepresentation rep = getLocalRepresentation();
-        mPanelController.onNewValue(-1);
+        if (mPanelController != null) {
+            mPanelController.onNewValue(-1);
+        }
     }
 
     @Override
