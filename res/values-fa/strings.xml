@@ -267,7 +267,7 @@
     <string name="pref_camera_focusmode_entry_infinity" msgid="3413922419264967552">"بی نهایت"</string>
     <string name="pref_camera_focusmode_entry_macro" msgid="4424489110551866161">"ماکرو"</string>
     <string name="pref_camera_focusmode_label_auto" msgid="8547956917516317183">"خودکار"</string>
-    <string name="pref_camera_focusmode_label_infinity" msgid="4272904160062531778">"نامحدود"</string>
+    <string name="pref_camera_focusmode_label_infinity" msgid="4272904160062531778">"بی‌نهایت"</string>
     <string name="pref_camera_focusmode_label_macro" msgid="8749317592620908054">"ماکرو"</string>
     <string name="pref_camera_flashmode_title" msgid="2287362477238791017">"حالت فلاش"</string>
     <string name="pref_camera_flashmode_label" msgid="7546741624882856171">"حالت فلاش"</string>
@@ -275,7 +275,7 @@
     <string name="pref_camera_flashmode_entry_on" msgid="5330043918845197616">"روشن"</string>
     <string name="pref_camera_flashmode_entry_off" msgid="867242186958805761">"خاموش"</string>
     <string name="pref_camera_flashmode_label_auto" msgid="8854671890619026197">"فلاش خودکار"</string>
-    <string name="pref_camera_flashmode_label_on" msgid="7347504762794840140">"فلش روشن"</string>
+    <string name="pref_camera_flashmode_label_on" msgid="7347504762794840140">"فلاش روشن"</string>
     <string name="pref_camera_flashmode_label_off" msgid="3541596735596053416">"فلاش خاموش"</string>
     <string name="pref_camera_whitebalance_title" msgid="677420930596673340">"توازن سفیدی"</string>
     <string name="pref_camera_whitebalance_label" msgid="7467403405883190920">"توازن سفیدی"</string>
@@ -300,7 +300,7 @@
     <skip />
     <string name="pref_camera_scenemode_label_action" msgid="964748409622151496">"عملکرد"</string>
     <string name="pref_camera_scenemode_label_night" msgid="1269871886845854574">"شب"</string>
-    <string name="pref_camera_scenemode_label_sunset" msgid="2802732082948866877">"غروب آفتاب"</string>
+    <string name="pref_camera_scenemode_label_sunset" msgid="2802732082948866877">"غروب"</string>
     <string name="pref_camera_scenemode_label_party" msgid="1409459091844374828">"مهمانی"</string>
     <!-- no translation found for pref_camera_countdown_label (7592784692450586126) -->
     <skip />
