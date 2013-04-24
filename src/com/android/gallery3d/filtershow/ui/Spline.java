@@ -98,7 +98,7 @@ public class Spline {
     }
 
     public boolean isOriginal() {
-        if (this.getNbPoints() > 2) {
+        if (this.getNbPoints() != 2) {
             return false;
         }
         if (mPoints.elementAt(0).x != 0 || mPoints.elementAt(0).y != 1) {
@@ -378,6 +378,9 @@ public class Spline {
 
     public void deletePoint(int n) {
         mPoints.remove(n);
+        if (mPoints.size() < 2) {
+            reset();
+        }
         Collections.sort(mPoints);
     }
 
