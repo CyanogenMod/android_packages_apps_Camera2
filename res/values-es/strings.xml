@@ -321,7 +321,7 @@
     <skip />
     <!-- no translation found for pref_camera_hdr_label (7217211253357027510) -->
     <skip />
-    <string name="pref_camera_id_label_back" msgid="8745553500400332333">"CÁMARA DELANTERA"</string>
+    <string name="pref_camera_id_label_back" msgid="8745553500400332333">"CÁMARA FRONTAL"</string>
     <string name="pref_camera_id_label_front" msgid="8699439330056996709">"CÁMARA TRASERA"</string>
     <string name="dialog_ok" msgid="6263301364153382152">"Aceptar"</string>
     <string name="spaceIsLow_content" product="nosdcard" msgid="4401325203349203177">"No queda espacio en el almacenamiento USB. Cambia la configuración de calidad o elimina algunas imágenes u otros archivos."</string>

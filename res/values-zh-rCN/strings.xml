@@ -299,7 +299,7 @@
     <!-- no translation found for pref_camera_scenemode_label_auto (4475096836397300237) -->
     <skip />
     <string name="pref_camera_scenemode_label_action" msgid="964748409622151496">"动作"</string>
-    <string name="pref_camera_scenemode_label_night" msgid="1269871886845854574">"晚上"</string>
+    <string name="pref_camera_scenemode_label_night" msgid="1269871886845854574">"夜晚"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="2802732082948866877">"日落"</string>
     <string name="pref_camera_scenemode_label_party" msgid="1409459091844374828">"聚会"</string>
     <!-- no translation found for pref_camera_countdown_label (7592784692450586126) -->

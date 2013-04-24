@@ -285,7 +285,7 @@
     <string name="pref_camera_whitebalance_entry_fluorescent" msgid="2435332872847454032">"Fluorescentno"</string>
     <string name="pref_camera_whitebalance_entry_cloudy" msgid="3531996716997959326">"Oblačno"</string>
     <string name="pref_camera_whitebalance_label_auto" msgid="1479694362310491429">"AUTOMATSKI"</string>
-    <string name="pref_camera_whitebalance_label_incandescent" msgid="7427628260209908900">"USIJANO"</string>
+    <string name="pref_camera_whitebalance_label_incandescent" msgid="7427628260209908900">"SVJETLOST ŽARULJE"</string>
     <string name="pref_camera_whitebalance_label_daylight" msgid="1859710806141461399">"DNEVNO SVJETLO"</string>
     <string name="pref_camera_whitebalance_label_fluorescent" msgid="5173251749161337707">"FLUORESCENTNO"</string>
     <string name="pref_camera_whitebalance_label_cloudy" msgid="8230173517179285320">"OBLAČNO"</string>
