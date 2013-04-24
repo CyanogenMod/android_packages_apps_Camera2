@@ -268,6 +268,9 @@ public class PieRenderer extends OverlayRenderer
      */
     private void show(boolean show) {
         if (show) {
+            if (mXFade != null) {
+                mXFade.cancel();
+            }
             mState = STATE_PIE;
             // ensure clean state
             mCurrentItem = null;
