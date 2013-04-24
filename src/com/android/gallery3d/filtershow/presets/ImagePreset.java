@@ -489,6 +489,9 @@ public class ImagePreset {
                     representation.synchronizeRepresentation();
                 }
                 bitmap = environment.applyRepresentation(representation, bitmap);
+                if (environment.needsStop()) {
+                    return bitmap;
+                }
             }
         }
 

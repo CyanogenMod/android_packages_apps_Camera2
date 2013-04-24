@@ -117,9 +117,11 @@ public class FilteringPipeline implements Handler.Callback {
                 } else {
                     mAccessoryPipeline.render(request);
                 }
-                Message uimsg = mUIHandler.obtainMessage(NEW_RENDERING_REQUEST);
-                uimsg.obj = request;
-                mUIHandler.sendMessage(uimsg);
+                if (request.getBitmap() != null) {
+                    Message uimsg = mUIHandler.obtainMessage(NEW_RENDERING_REQUEST);
+                    uimsg.obj = request;
+                    mUIHandler.sendMessage(uimsg);
+                }
                 break;
             }
         }
@@ -185,6 +187,7 @@ public class FilteringPipeline implements Handler.Callback {
             return;
         }
         mHasUnhandledPreviewRequest = true;
+        mHighresPreviewPipeline.stop();
         if (mProcessingHandler.hasMessages(COMPUTE_PRESET)) {
             return;
         }
