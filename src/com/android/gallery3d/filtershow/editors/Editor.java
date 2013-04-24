@@ -64,13 +64,7 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
     }
 
     public String calculateUserMessage(Context context, String effectName, Object parameterValue) {
-        String apply = "";
-        if (mShowParameter == SHOW_VALUE_INT) {
-            apply += " " + effectName + " " + parameterValue;
-        } else {
-            apply += " " + effectName;
-        }
-        return apply;
+        return effectName + " " + parameterValue;
     }
 
     protected Editor(int id) {
@@ -214,7 +208,9 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
     public void commitLocalRepresentation() {
         ImagePreset preset = MasterImage.getImage().getPreset();
         preset.updateFilterRepresentation(getLocalRepresentation());
-        mPanelController.onNewValue(-1);
+        if (mPanelController != null) {
+            mPanelController.onNewValue(-1);
+        }
     }
 
     /**
