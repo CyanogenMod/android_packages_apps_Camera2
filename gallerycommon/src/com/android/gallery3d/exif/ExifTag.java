@@ -330,8 +330,13 @@ public class ExifTag {
         }
 
         byte[] buf = value.getBytes(US_ASCII);
-        byte[] finalBuf = (buf[buf.length - 1] == 0 || mDataType == TYPE_UNDEFINED) ? buf : Arrays
+        byte[] finalBuf = buf;
+        if (buf.length > 0) {
+            finalBuf = (buf[buf.length - 1] == 0 || mDataType == TYPE_UNDEFINED) ? buf : Arrays
                 .copyOf(buf, buf.length + 1);
+        } else if (mDataType == TYPE_ASCII && mComponentCountActual == 1) {
+            finalBuf = new byte[] { 0 };
+        }
         int count = finalBuf.length;
         if (checkBadComponentCount(count)) {
             return false;
@@ -868,6 +873,10 @@ public class ExifTag {
 
     protected void setHasDefinedCount(boolean d) {
         mHasDefinedDefaultComponentCount = d;
+    }
+
+    protected boolean hasDefinedCount() {
+        return mHasDefinedDefaultComponentCount;
     }
 
     private boolean checkBadComponentCount(int count) {
