@@ -18,6 +18,7 @@ package com.android.gallery3d.filtershow.state;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,18 +28,17 @@ import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 public class StatePanel extends Fragment {
     private static final String LOGTAG = "StatePanel";
-    StatePanelTrack track;
+    private StatePanelTrack track;
+    private LinearLayout mMainView;
+    public static final String FRAGMENT_TAG = "StatePanel";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        LinearLayout main = (LinearLayout) inflater.inflate(
-                R.layout.filtershow_state_panel_new, container,
-                false);
-
-        View panel = main.findViewById(R.id.listStates);
+        mMainView = (LinearLayout) inflater.inflate(R.layout.filtershow_state_panel_new, null);
+        View panel = mMainView.findViewById(R.id.listStates);
         track = (StatePanelTrack) panel;
         track.setAdapter(MasterImage.getImage().getState());
-        return main;
+        return mMainView;
     }
 }

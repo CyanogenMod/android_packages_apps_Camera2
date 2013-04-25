@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2012 The Android Open Source Project
+<!-- Copyright (C) 2013 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,18 +15,6 @@
 -->
 
 <resources>
-    <declare-styleable name="ImageButtonTitle">
-        <attr name="android:text"/>
-        <attr name="android:textColor"/>
-    </declare-styleable>
-    <declare-styleable name="CenteredLinearLayout">
-        <attr name="max_width" format="dimension" />
-    </declare-styleable>
-    <declare-styleable name="StatePanelTrack">
-        <attr name="elemSize" format="dimension" />
-        <attr name="elemEndSize" format="dimension" />
-    </declare-styleable>
-    <declare-styleable name="CategoryTrack">
-        <attr name="iconSize" format="dimension" />
-    </declare-styleable>
+    <!-- Specify the screen orientation -->
+    <bool name="only_use_portrait">true</bool>
 </resources>
