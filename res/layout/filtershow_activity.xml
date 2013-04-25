@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     Copyright (C) 2012 The Android Open Source Project
+     Copyright (C) 2013 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -16,199 +16,72 @@
 -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:iconbutton="http://schemas.android.com/apk/res/com.android.gallery3d"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/mainView"
-    android:background="@drawable/filtershow_tiled_background">
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:id="@+id/mainView"
+             android:background="@drawable/filtershow_tiled_background">
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:animateLayoutChanges="false">
+            android:orientation="vertical">
 
         <LinearLayout
-        android:id="@+id/mainPanel"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical" >
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" >
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
             <FrameLayout
-                android:id="@+id/editorContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"  />
+                    android:id="@+id/editorContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
 
             <com.android.gallery3d.filtershow.imageshow.ImageShow
-                android:id="@+id/imageShow"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                    android:id="@+id/imageShow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
-            <com.android.gallery3d.filtershow.imageshow.ImageTinyPlanet
-                android:id="@+id/imageTinyPlanet"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <ProgressBar
-                android:id="@+id/loading"
-                style="@android:style/Widget.Holo.ProgressBar.Large"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:indeterminate="true"
-                android:indeterminateOnly="true"
-                android:background="@color/background_screen" />
-
-        </FrameLayout>
+        </LinearLayout>
 
         <com.android.gallery3d.filtershow.CenteredLinearLayout
-              xmlns:custom="http://schemas.android.com/apk/res/com.android.gallery3d"
-              android:id="@+id/filtersPanel"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center"
-              custom:max_width="600dip"
-              android:orientation="vertical">
-
-              <FrameLayout
-                    android:id="@+id/secondRowPanel"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" >
-
-                    <LinearLayout
-                        android:id="@+id/filterButtonsList"
-                        android:layout_width="fill_parent"
-                        android:layout_height="@dimen/thumbnail_size"
-                        android:orientation="horizontal"
-                        android:visibility="gone" >
-
-                        <ViewStub android:id="@+id/editorPanelStub"
-                            android:inflatedId="@+id/editorPanel"
-                            android:layout="@layout/filtershow_editor_panel"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:visibility="visible"  />
-                    </LinearLayout>
-
-            <HorizontalScrollView
-                android:id="@+id/fxList"
+                xmlns:custom="http://schemas.android.com/apk/res/com.android.gallery3d"
+                android:id="@+id/mainPanel"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/thumbnail_size"
-                android:background="@color/background_main_toolbar"
-                android:scrollbars="none" >
-
-                <LinearLayout
-                    android:id="@+id/listFilters"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/thumbnail_margin"
-                    android:orientation="horizontal" >
-                </LinearLayout>
-            </HorizontalScrollView>
-
-            <HorizontalScrollView
-                android:id="@+id/bordersList"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/thumbnail_size"
-                android:background="@color/background_main_toolbar"
-                android:visibility="gone"
-                android:scrollbars="none" >
-
-                <LinearLayout
-                    android:id="@+id/listBorders"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/thumbnail_margin"
-                    android:orientation="horizontal" >
-                </LinearLayout>
-            </HorizontalScrollView>
-
-            <HorizontalScrollView
-                android:id="@+id/geometryList"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/thumbnail_size"
-                android:background="@color/background_main_toolbar"
-                android:visibility="gone"
-                android:scrollbars="none" >
-
-                <LinearLayout
-                    android:id="@+id/listGeometry"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:layout_gravity="left"
-                    android:orientation="horizontal" />
-
-            </HorizontalScrollView>
-
-            <HorizontalScrollView
-                android:id="@+id/colorsFxList"
-                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background_main_toolbar"
-                android:visibility="gone"
-                android:scrollbars="none" >
+                android:layout_gravity="center|bottom"
+                custom:max_width="650dip"
+                android:orientation="vertical" >
 
-                <LinearLayout
-                    android:id="@+id/listColorsFx"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/thumbnail_size"
-                    android:background="@color/background_main_toolbar"
-                    android:layout_marginLeft="@dimen/thumbnail_margin"
-                    android:orientation="horizontal" >
+            <FrameLayout android:id="@+id/main_panel_container"
+                         android:layout_gravity="center"
+                         android:layout_width="match_parent"
+                         android:layout_height="0dip"
+                         android:layout_weight="1" />
 
-                </LinearLayout>
-            </HorizontalScrollView>
-        </FrameLayout>
+            <FrameLayout
+                    android:layout_gravity="bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
 
-        <View
-            android:background="@color/toolbar_separation_line"
-            android:layout_height="1dip"
-            android:layout_width="match_parent" />
 
-        <com.android.gallery3d.filtershow.CenteredLinearLayout
-              xmlns:custom="http://schemas.android.com/apk/res/com.android.gallery3d"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center"
-              custom:max_width="400dip"
-              android:orientation="vertical">
+                <ProgressBar
+                        android:id="@+id/loading"
+                        style="@android:style/Widget.Holo.ProgressBar.Large"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:indeterminate="true"
+                        android:indeterminateOnly="true"
+                        android:background="@color/background_screen"/>
 
-             <ViewStub android:id="@+id/stateCategoryStub"
-                  android:inflatedId="@+id/imageCategoryPanel"
-                  android:layout="@layout/filtershow_category_panel"
-                  android:layout_width="match_parent"
-                  android:layout_height="48dip"
-                  android:visibility="visible" />
-
-        </com.android.gallery3d.filtershow.CenteredLinearLayout>
+            </FrameLayout>
 
         </com.android.gallery3d.filtershow.CenteredLinearLayout>
 
     </LinearLayout>
-
-        <ViewStub android:id="@+id/statePanelStub"
-                  android:inflatedId="@+id/imageStatePanel"
-                  android:layout="@layout/filtershow_state_panel"
-                  android:layout_width="200dip"
-                  android:layout_height="match_parent"
-                  android:layout_gravity="right"
-                  android:visibility="visible" />
-
-    </LinearLayout>
-
-    <ViewStub android:id="@+id/historyPanelStub"
-              android:inflatedId="@+id/historyPanel"
-              android:layout="@layout/filtershow_history_panel"
-              android:layout_width="200dip"
-              android:layout_height="match_parent"
-              android:layout_gravity="right"
-              android:visibility="invisible"  />
 
 </FrameLayout>

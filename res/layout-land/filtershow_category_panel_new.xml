@@ -16,16 +16,17 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/top"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:visibility="visible" >
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
 
-    <SeekBar
-        android:id="@+id/primarySeekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/FilterShowSlider" />
+    <ListView
+            android:id="@+id/listItems"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dip"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="8dip" />
 
 </LinearLayout>
