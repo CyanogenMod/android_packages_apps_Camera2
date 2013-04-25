@@ -91,6 +91,11 @@ public class MasterImage implements RenderingRequestCaller {
     private MasterImage() {
     }
 
+    // TODO: remove singleton
+    public static void setMaster(MasterImage master) {
+        sMasterImage = master;
+    }
+
     public static MasterImage getImage() {
         if (sMasterImage == null) {
             sMasterImage = new MasterImage();
