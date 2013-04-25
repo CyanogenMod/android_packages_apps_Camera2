@@ -91,7 +91,9 @@ public class CachingPipeline {
     }
 
     public static synchronized void destroyRenderScriptContext() {
-        sRS.destroy();
+        if (sRS != null) {
+            sRS.destroy();
+        }
         sRS = null;
         sResources = null;
     }

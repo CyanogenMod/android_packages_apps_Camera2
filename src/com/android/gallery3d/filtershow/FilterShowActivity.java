@@ -119,6 +119,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     private WeakReference<ProgressDialog> mSavingProgressDialog;
 
     private LoadBitmapTask mLoadBitmapTask;
+    private boolean mLoading = true;
 
     private Uri mOriginalImageUri = null;
     private ImagePreset mOriginalPreset = null;
@@ -137,6 +138,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         if (onlyUsePortrait) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
+        MasterImage.setMaster(mMasterImage);
 
         clearGalleryBitmapPool();
 
@@ -329,6 +331,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     private void startLoadBitmap(Uri uri) {
+        mLoading = true;
         final View loading = findViewById(R.id.loading);
         final View imageShow = findViewById(R.id.imageShow);
         imageShow.setVisibility(View.INVISIBLE);
@@ -467,7 +470,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
         @Override
         protected void onPostExecute(Boolean result) {
-
+            MasterImage.setMaster(mMasterImage);
             if (isCancelled()) {
                 return;
             }
@@ -510,6 +513,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             if (mAction == TINY_PLANET_ACTION) {
                 showRepresentation(mCategoryFiltersAdapter.getTinyPlanet());
             }
+            mLoading = false;
             super.onPostExecute(result);
         }
 
@@ -649,6 +653,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     @Override
     public void onPause() {
         super.onPause();
+        rsPause();
         if (mShareActionProvider != null) {
             mShareActionProvider.setOnShareTargetSelectedListener(null);
         }
@@ -657,9 +662,46 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     @Override
     public void onResume() {
         super.onResume();
+        rsResume();
         if (mShareActionProvider != null) {
             mShareActionProvider.setOnShareTargetSelectedListener(this);
         }
+    }
+
+    private void rsResume() {
+        ImageFilter.setActivityForMemoryToasts(this);
+        MasterImage.setMaster(mMasterImage);
+        if (CachingPipeline.getRenderScriptContext() == null) {
+            CachingPipeline.createRenderscriptContext(this);
+        }
+        FiltersManager.setResources(getResources());
+        if (!mLoading) {
+            Bitmap largeBitmap = mImageLoader.getOriginalBitmapLarge();
+            FilteringPipeline pipeline = FilteringPipeline.getPipeline();
+            pipeline.setOriginal(largeBitmap);
+            float previewScale = (float) largeBitmap.getWidth() /
+                    (float) mImageLoader.getOriginalBounds().width();
+            pipeline.setPreviewScaleFactor(previewScale);
+            Bitmap highresBitmap = mImageLoader.getOriginalBitmapHighres();
+            if (highresBitmap != null) {
+                float highResPreviewScale = (float) highresBitmap.getWidth() /
+                        (float) mImageLoader.getOriginalBounds().width();
+                pipeline.setHighResPreviewScaleFactor(highResPreviewScale);
+            }
+            pipeline.turnOnPipeline(true);
+            MasterImage.getImage().setOriginalGeometry(largeBitmap);
+        }
+    }
+
+    private void rsPause() {
+        FilteringPipeline.getPipeline().turnOnPipeline(false);
+        FilteringPipeline.reset();
+        ImageFilter.resetStatics();
+        FiltersManager.getPreviewManager().freeRSFilterScripts();
+        FiltersManager.getManager().freeRSFilterScripts();
+        FiltersManager.getHighresManager().freeRSFilterScripts();
+        FiltersManager.reset();
+        CachingPipeline.destroyRenderScriptContext();
     }
 
     @Override
