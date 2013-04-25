@@ -102,7 +102,7 @@ public class FilterRepresentation implements Cloneable {
         mName = name;
     }
 
-    protected void setName(String name) {
+    public void setName(String name) {
         mName = name;
     }
 

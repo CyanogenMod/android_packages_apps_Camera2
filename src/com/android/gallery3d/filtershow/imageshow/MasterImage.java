@@ -73,6 +73,8 @@ public class MasterImage implements RenderingRequestCaller {
 
     private Point mImageShowSize = new Point();
 
+    private boolean mShowsOriginal;
+
     final private static int NEW_GEOMETRY = 1;
 
     private final Handler mHandler = new Handler() {
@@ -480,6 +482,10 @@ public class MasterImage implements RenderingRequestCaller {
         return mLoader.getOriginalBitmapSmall();
     }
 
+    public Bitmap getLargeThumbnailBitmap() {
+        return mLoader.getOriginalBitmapLarge();
+    }
+
     public float getMaxScaleFactor() {
         return mMaxScaleFactor;
     }
@@ -490,5 +496,14 @@ public class MasterImage implements RenderingRequestCaller {
 
     public boolean supportsHighRes() {
         return mSupportsHighRes;
+    }
+
+    public void setShowsOriginal(boolean value) {
+        mShowsOriginal = value;
+        notifyObservers();
+    }
+
+    public boolean showsOriginal() {
+        return mShowsOriginal;
     }
 }

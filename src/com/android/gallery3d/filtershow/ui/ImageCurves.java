@@ -179,6 +179,9 @@ public class ImageCurves extends ImageShow {
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (mFilterCurvesRepresentation == null) {
+            return;
+        }
 
         gPaint.setAntiAlias(true);
 

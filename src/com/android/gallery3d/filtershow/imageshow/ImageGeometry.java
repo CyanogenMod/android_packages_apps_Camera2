@@ -284,9 +284,6 @@ public abstract class ImageGeometry extends ImageShow {
             default:
                 setNoAction();
         }
-        if (getPanelController() != null) {
-            getPanelController().onNewValue(getLocalValue());
-        }
         invalidate();
         return true;
     }

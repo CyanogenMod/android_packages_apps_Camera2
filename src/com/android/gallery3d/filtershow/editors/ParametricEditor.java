@@ -195,15 +195,6 @@ public class ParametricEditor extends Editor {
     }
 
     @Override
-    public void commitLocalRepresentation() {
-        super.commitLocalRepresentation();
-        FilterRepresentation rep = getLocalRepresentation();
-        if (mPanelController != null) {
-            mPanelController.onNewValue(-1);
-        }
-    }
-
-    @Override
     public void onProgressChanged(SeekBar sbar, int progress, boolean arg2) {
     }
 
