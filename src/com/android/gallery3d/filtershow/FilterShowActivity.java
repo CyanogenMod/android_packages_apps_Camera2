@@ -21,66 +21,54 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.*;
+import android.view.Display;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ShareActionProvider;
 import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
-import android.widget.Toast;
 
+import android.widget.Toast;
 import com.android.gallery3d.R;
 import com.android.gallery3d.data.LocalAlbum;
 import com.android.gallery3d.filtershow.cache.CachingPipeline;
 import com.android.gallery3d.filtershow.cache.FilteringPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.category.*;
 import com.android.gallery3d.filtershow.crop.CropExtras;
-import com.android.gallery3d.filtershow.editors.BasicEditor;
-import com.android.gallery3d.filtershow.editors.EditorCrop;
-import com.android.gallery3d.filtershow.editors.EditorDraw;
-import com.android.gallery3d.filtershow.editors.EditorFlip;
-import com.android.gallery3d.filtershow.editors.EditorInfo;
-import com.android.gallery3d.filtershow.editors.EditorManager;
-import com.android.gallery3d.filtershow.editors.EditorRedEye;
-import com.android.gallery3d.filtershow.editors.EditorRotate;
-import com.android.gallery3d.filtershow.editors.EditorStraighten;
-import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
-import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
+import com.android.gallery3d.filtershow.editors.*;
 import com.android.gallery3d.filtershow.filters.*;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
-import com.android.gallery3d.filtershow.imageshow.ImageTinyPlanet;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.provider.SharedImageProvider;
 import com.android.gallery3d.filtershow.state.StateAdapter;
-import com.android.gallery3d.filtershow.state.StatePanel;
 import com.android.gallery3d.filtershow.tools.BitmapTask;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
-import com.android.gallery3d.filtershow.ui.FilterIconButton;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
 import com.android.gallery3d.filtershow.ui.Spline;
 import com.android.gallery3d.util.GalleryUtils;
@@ -94,8 +82,6 @@ import java.util.Vector;
 public class FilterShowActivity extends FragmentActivity implements OnItemClickListener,
         OnShareTargetSelectedListener {
 
-    private String mPanelFragmentTag = "StatePanel";
-
     // fields for supporting crop action
     public static final String CROP_ACTION = "com.android.camera.action.CROP";
     private CropExtras mCropExtras = null;
@@ -107,10 +93,8 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     public static final String TINY_PLANET_ACTION = "com.android.camera.action.TINY_PLANET";
     public static final String LAUNCH_FULLSCREEN = "launch-fullscreen";
     public static final int MAX_BMAP_IN_INTENT = 990000;
-    private final PanelController mPanelController = new PanelController();
     private ImageLoader mImageLoader = null;
     private ImageShow mImageShow = null;
-    private ImageTinyPlanet mImageTinyPlanet = null;
 
     private View mSaveButton = null;
 
@@ -133,15 +117,21 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     private WeakReference<ProgressDialog> mSavingProgressDialog;
 
     private LoadBitmapTask mLoadBitmapTask;
-    private FilterIconButton mNullFxFilter;
-    private FilterIconButton mNullBorderFilter;
-    private int mIconSeedSize = 140;
 
-    private View mImageCategoryPanel = null;
+    private CategoryAdapter mCategoryLooksAdapter = null;
+    private CategoryAdapter mCategoryBordersAdapter = null;
+    private CategoryAdapter mCategoryGeometryAdapter = null;
+    private CategoryAdapter mCategoryFiltersAdapter = null;
+    private int mCurrentPanel = MainPanel.LOOKS;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        boolean onlyUsePortrait = getResources().getBoolean(R.bool.only_use_portrait);
+        if (onlyUsePortrait) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
 
         clearGalleryBitmapPool();
 
@@ -151,26 +141,44 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         fillEditors();
 
         loadXML();
-
-        if (getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE) {
-            mShowingImageStatePanel = true;
-        }
-
-        if (mShowingImageStatePanel && (savedInstanceState == null)) {
-            loadImageStatePanel();
-        }
+        loadMainPanel();
 
         setDefaultPreset();
 
         processIntent();
     }
 
+    public boolean isShowingImageStatePanel() {
+        return mShowingImageStatePanel;
+    }
+
+    public void loadMainPanel() {
+        if (findViewById(R.id.main_panel_container) == null) {
+            return;
+        }
+        MainPanel panel = new MainPanel();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_panel_container, panel, MainPanel.FRAGMENT_TAG);
+        transaction.commit();
+    }
+
+    public void loadEditorPanel(FilterRepresentation representation,
+                                Editor currentEditor) {
+        if (representation.getEditorId() == ImageOnlyEditor.ID) {
+            currentEditor.getImageShow().select();
+            currentEditor.reflectCurrentFilter();
+            return;
+        }
+        EditorPanel panel = new EditorPanel();
+        panel.setEditor(currentEditor.getID());
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.remove(getSupportFragmentManager().findFragmentByTag(MainPanel.FRAGMENT_TAG));
+        transaction.replace(R.id.main_panel_container, panel, MainPanel.FRAGMENT_TAG);
+        transaction.commit();
+    }
+
     private void loadXML() {
         setContentView(R.layout.filtershow_activity);
-
-        ((ViewStub) findViewById(R.id.stateCategoryStub)).inflate();
-        ((ViewStub) findViewById(R.id.editorPanelStub)).inflate();
 
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -185,70 +193,38 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         });
 
         mImageShow = (ImageShow) findViewById(R.id.imageShow);
-        mImageTinyPlanet = (ImageTinyPlanet) findViewById(R.id.imageTinyPlanet);
         mImageViews.add(mImageShow);
-        mImageViews.add(mImageTinyPlanet);
 
         setupEditors();
 
         mEditorPlaceHolder.hide();
 
         mImageShow.setImageLoader(mImageLoader);
-        mImageTinyPlanet.setImageLoader(mImageLoader);
 
-        mPanelController.clear();
-        mPanelController.setActivity(this);
-        mPanelController.setEditorPlaceHolder(mEditorPlaceHolder);
-
-        mPanelController.addImageView(findViewById(R.id.imageShow));
-        mPanelController.addImageView(findViewById(R.id.imageTinyPlanet));
-
-        mPanelController.addPanel(R.id.fxButton, R.id.fxList, 0);
-        mPanelController.addPanel(R.id.borderButton, R.id.bordersList, 1);
-        mPanelController.addPanel(R.id.geometryButton, R.id.geometryList, 2);
-        mPanelController.addPanel(R.id.colorsButton, R.id.colorsFxList, 3);
-
-        fillFx((LinearLayout) findViewById(R.id.listFilters), R.id.fxButton);
-        setupBorders();
+        fillFx();
+        fillBorders();
         fillGeometry();
         fillFilters();
 
-        mPanelController.addView(findViewById(R.id.applyEffect));
-
         setupStatePanel();
-
-        mImageCategoryPanel = findViewById(R.id.imageCategoryPanel);
-    }
-
-    public void hideCategoryPanel() {
-        mImageCategoryPanel.setVisibility(View.GONE);
-    }
-
-    public void showCategoryPanel() {
-        mImageCategoryPanel.setVisibility(View.VISIBLE);
     }
 
     public void setupStatePanel() {
         mImageLoader.setAdapter(mMasterImage.getHistory());
-        mPanelController.setRowPanel(findViewById(R.id.secondRowPanel));
-        mPanelController.setUtilityPanel(this, findViewById(R.id.filterButtonsList));
-        mPanelController.setCurrentPanel(R.id.fxButton);
-    }
-
-    private void fillPanel(Vector<FilterRepresentation> representations, int layoutId, int buttonId) {
-        ImageButton button = (ImageButton) findViewById(buttonId);
-        LinearLayout layout = (LinearLayout) findViewById(layoutId);
-
-        for (FilterRepresentation representation : representations) {
-            setupFilterRepresentationButton(representation, layout, button);
-        }
     }
 
     private void fillFilters() {
         Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
         FiltersManager filtersManager = FiltersManager.getManager();
         filtersManager.addEffects(filtersRepresentations);
-        fillPanel(filtersRepresentations, R.id.listColorsFx, R.id.colorsButton);
+
+        mCategoryFiltersAdapter = new CategoryAdapter(this);
+        for (FilterRepresentation representation : filtersRepresentations) {
+            if (representation.getTextId() != 0) {
+                representation.setName(getString(representation.getTextId()));
+            }
+            mCategoryFiltersAdapter.add(new Action(this, representation));
+        }
     }
 
     private void fillGeometry() {
@@ -265,11 +241,18 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             geometry.setTextId(editorInfo.getTextId());
             geometry.setOverlayId(editorInfo.getOverlayId());
             geometry.setOverlayOnly(editorInfo.getOverlayOnly());
+            if (geometry.getTextId() != 0) {
+                geometry.setName(getString(geometry.getTextId()));
+            }
             filtersRepresentations.add(geometry);
         }
 
         filtersManager.addTools(filtersRepresentations);
-        fillPanel(filtersRepresentations, R.id.listGeometry, R.id.geometryButton);
+
+        mCategoryGeometryAdapter = new CategoryAdapter(this);
+        for (FilterRepresentation representation : filtersRepresentations) {
+            mCategoryGeometryAdapter.add(new Action(this, representation));
+        }
     }
 
     private void processIntent() {
@@ -284,41 +267,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             startLoadBitmap(intent.getData());
         } else {
             pickImage();
-        }
-
-        // Handle behavior for various actions
-        if (mAction.equalsIgnoreCase(CROP_ACTION)) {
-            Bundle extras = intent.getExtras();
-            if (extras != null) {
-                mCropExtras = new CropExtras(extras.getInt(CropExtras.KEY_OUTPUT_X, 0),
-                        extras.getInt(CropExtras.KEY_OUTPUT_Y, 0),
-                        extras.getBoolean(CropExtras.KEY_SCALE, true) &&
-                                extras.getBoolean(CropExtras.KEY_SCALE_UP_IF_NEEDED, false),
-                        extras.getInt(CropExtras.KEY_ASPECT_X, 0),
-                        extras.getInt(CropExtras.KEY_ASPECT_Y, 0),
-                        extras.getBoolean(CropExtras.KEY_SET_AS_WALLPAPER, false),
-                        extras.getBoolean(CropExtras.KEY_RETURN_DATA, false),
-                        (Uri) extras.getParcelable(MediaStore.EXTRA_OUTPUT),
-                        extras.getString(CropExtras.KEY_OUTPUT_FORMAT),
-                        extras.getBoolean(CropExtras.KEY_SHOW_WHEN_LOCKED, false),
-                        extras.getFloat(CropExtras.KEY_SPOTLIGHT_X),
-                        extras.getFloat(CropExtras.KEY_SPOTLIGHT_Y));
-
-                if (mCropExtras.getShowWhenLocked()) {
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-                }
-                mImageShow.getImagePreset().mGeoData.setCropExtras(mCropExtras);
-
-                // FIXME: moving to editors breaks the crop action
-                EditorCrop crop = (EditorCrop) mEditorPlaceHolder.getEditor(EditorCrop.ID);
-
-                crop.setExtras(mCropExtras);
-                String s = getString(R.string.Fixed);
-                crop.setAspectString(s);
-                crop.setCropActionFlag(true);
-                mPanelController.setFixedAspect(mCropExtras.getAspectX() > 0
-                        && mCropExtras.getAspectY() > 0);
-            }
         }
     }
 
@@ -347,6 +295,9 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         Resources res = getResources();
         FiltersManager.setResources(res);
 
+        CategoryView.setMargin((int) getPixelsFromDip(8));
+        CategoryView.setTextSize((int) getPixelsFromDip(16));
+
         ImageShow.setDefaultBackgroundColor(res.getColor(R.color.background_screen));
         // TODO: get those values from XML.
         FramedTextButton.setTextSize((int) getPixelsFromDip(14));
@@ -357,9 +308,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         ImageShow.setOriginalTextMargin((int) getPixelsFromDip(4));
         ImageShow.setOriginalTextSize((int) getPixelsFromDip(18));
         ImageShow.setOriginalText(res.getString(R.string.original_picture_text));
-        mIconSeedSize = res.getDimensionPixelSize(R.dimen.thumbnail_size);
-        // TODO: pick correct value
-        // MasterImage.setIconSeedSize(mIconSeedSize);
 
         Drawable curveHandle = res.getDrawable(R.drawable.camera_crop);
         int curveHandleSize = (int) res.getDimension(R.dimen.crop_indicator_size);
@@ -372,26 +320,17 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     private void startLoadBitmap(Uri uri) {
-        final View filters = findViewById(R.id.filtersPanel);
         final View loading = findViewById(R.id.loading);
         final View imageShow = findViewById(R.id.imageShow);
         imageShow.setVisibility(View.INVISIBLE);
-        filters.setVisibility(View.INVISIBLE);
         loading.setVisibility(View.VISIBLE);
-
-        View tinyPlanetView = findViewById(EditorTinyPlanet.ID);
-        if (tinyPlanetView != null) {
-            mShowingTinyPlanet = false;
-            tinyPlanetView.setVisibility(View.GONE);
-        }
-        mLoadBitmapTask = new LoadBitmapTask(tinyPlanetView);
+        mShowingTinyPlanet = false;
+        mLoadBitmapTask = new LoadBitmapTask();
         mLoadBitmapTask.execute(uri);
     }
 
-    private void setupBorders() {
-        LinearLayout list = (LinearLayout) findViewById(R.id.listBorders);
+    private void fillBorders() {
         Vector<FilterRepresentation> borders = new Vector<FilterRepresentation>();
-        ImageButton borderButton = (ImageButton) findViewById(R.id.borderButton);
 
         // The "no border" implementation
         borders.add(new FilterImageBorderRepresentation(0));
@@ -404,20 +343,95 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             if (i == 0) {
                 filter.setName(getString(R.string.none));
             }
-            FilterIconButton b = setupFilterRepresentationButton(filter, list, borderButton);
-            if (i == 0) {
-                mNullBorderFilter = b;
-                mNullBorderFilter.setSelected(true);
+        }
+
+        mCategoryBordersAdapter = new CategoryAdapter(this);
+        for (FilterRepresentation representation : borders) {
+            if (representation.getTextId() != 0) {
+                representation.setName(getString(representation.getTextId()));
             }
+            mCategoryBordersAdapter.add(new Action(this, representation));
         }
     }
 
+    public CategoryAdapter getCategoryLooksAdapter() {
+        return mCategoryLooksAdapter;
+    }
+
+    public CategoryAdapter getCategoryBordersAdapter() {
+        return mCategoryBordersAdapter;
+    }
+
+    public CategoryAdapter getCategoryGeometryAdapter() {
+        return mCategoryGeometryAdapter;
+    }
+
+    public CategoryAdapter getCategoryFiltersAdapter() {
+        return mCategoryFiltersAdapter;
+    }
+
+    public void removeFilterRepresentation(FilterRepresentation filterRepresentation) {
+        if (filterRepresentation == null) {
+            return;
+        }
+        ImagePreset oldPreset = MasterImage.getImage().getPreset();
+        ImagePreset copy = new ImagePreset(oldPreset);
+        copy.removeFilter(filterRepresentation);
+        MasterImage.getImage().setPreset(copy, true);
+        if (MasterImage.getImage().getCurrentFilterRepresentation() == filterRepresentation) {
+            FilterRepresentation lastRepresentation = copy.getLastRepresentation();
+            MasterImage.getImage().setCurrentFilterRepresentation(lastRepresentation);
+        }
+    }
+
+    public void useFilterRepresentation(FilterRepresentation filterRepresentation) {
+        if (filterRepresentation == null) {
+            return;
+        }
+        if (MasterImage.getImage().getCurrentFilterRepresentation() == filterRepresentation) {
+            return;
+        }
+        ImagePreset oldPreset = MasterImage.getImage().getPreset();
+        ImagePreset copy = new ImagePreset(oldPreset);
+        FilterRepresentation representation = copy.getRepresentation(filterRepresentation);
+        if (representation == null) {
+            copy.addFilter(filterRepresentation);
+        } else {
+            if (filterRepresentation.allowsMultipleInstances()) {
+                representation.updateTempParametersFrom(filterRepresentation);
+                copy.setHistoryName(filterRepresentation.getName());
+                representation.synchronizeRepresentation();
+            }
+            filterRepresentation = representation;
+        }
+        MasterImage.getImage().setPreset(copy, true);
+        MasterImage.getImage().setCurrentFilterRepresentation(filterRepresentation);
+    }
+
+    public void showRepresentation(FilterRepresentation representation) {
+        useFilterRepresentation(representation);
+
+        // show representation
+        Editor mCurrentEditor = mEditorPlaceHolder.showEditor(representation.getEditorId());
+        loadEditorPanel(representation, mCurrentEditor);
+    }
+
+    public Editor getEditor(int editorID) {
+        return mEditorPlaceHolder.getEditor(editorID);
+    }
+
+    public void setCurrentPanel(int currentPanel) {
+        mCurrentPanel = currentPanel;
+    }
+
+    public int getCurrentPanel() {
+        return mCurrentPanel;
+    }
+
     private class LoadBitmapTask extends AsyncTask<Uri, Boolean, Boolean> {
-        View mTinyPlanetButton;
         int mBitmapSize;
 
-        public LoadBitmapTask(View button) {
-            mTinyPlanetButton = button;
+        public LoadBitmapTask() {
             mBitmapSize = getScreenImageSize();
         }
 
@@ -438,7 +452,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             }
             if (values[0]) {
                 mShowingTinyPlanet = true;
-                mTinyPlanetButton.setVisibility(View.VISIBLE);
             }
         }
 
@@ -455,13 +468,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
             final View loading = findViewById(R.id.loading);
             loading.setVisibility(View.GONE);
-            final View filters = findViewById(R.id.filtersPanel);
-            filters.setVisibility(View.VISIBLE);
-            if (PanelController.useAnimationsLayer()) {
-                float y = filters.getY();
-                filters.setY(y + filters.getHeight());
-                filters.animate().setDuration(600).y(y).withLayer().start();
-            }
             final View imageShow = findViewById(R.id.imageShow);
             imageShow.setVisibility(View.VISIBLE);
 
@@ -475,15 +481,19 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                 float highResPreviewScale = (float) highresBitmap.getWidth() / (float) mImageLoader.getOriginalBounds().width();
                 pipeline.setHighResPreviewScaleFactor(highResPreviewScale);
             }
+            if (!mShowingTinyPlanet) {
+                mCategoryFiltersAdapter.removeTinyPlanet();
+            }
             pipeline.turnOnPipeline(true);
             MasterImage.getImage().setOriginalGeometry(largeBitmap);
+            mCategoryLooksAdapter.imageLoaded();
+            mCategoryBordersAdapter.imageLoaded();
+            mCategoryGeometryAdapter.imageLoaded();
+            mCategoryFiltersAdapter.imageLoaded();
             mLoadBitmapTask = null;
 
-            if (mAction == CROP_ACTION) {
-                mPanelController.showComponent(findViewById(EditorCrop.ID));
-            } else if (mAction == TINY_PLANET_ACTION) {
-                FilterIconButton button = (FilterIconButton) findViewById(EditorTinyPlanet.ID);
-                button.onClick(button);
+            if (mAction == TINY_PLANET_ACTION) {
+                showRepresentation(mCategoryFiltersAdapter.getTinyPlanet());
             }
             super.onPostExecute(result);
         }
@@ -506,8 +516,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         if (mLoadBitmapTask != null) {
             mLoadBitmapTask.cancel(false);
         }
-        // TODO:  Using singletons is a bad design choice for many of these
-        // due static reference leaks and in general.  Please refactor.
+        // TODO:  refactor, don't use so many singletons.
         FilteringPipeline.getPipeline().turnOnPipeline(false);
         MasterImage.reset();
         FilteringPipeline.reset();
@@ -518,30 +527,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         FiltersManager.reset();
         CachingPipeline.destroyRenderScriptContext();
         super.onDestroy();
-    }
-
-    private int translateMainPanel(View viewPanel) {
-        int accessoryPanelWidth = viewPanel.getWidth();
-        if (accessoryPanelWidth == 0) {
-            // TODO: fixes this by using a fragment. Currently,
-            // the first time we get called the panel hasn't been
-            // layed out yet, so we get a size zero.
-            accessoryPanelWidth = (int) getPixelsFromDip(200);
-        }
-        int mainViewWidth = findViewById(R.id.mainView).getWidth();
-        int mainPanelWidth = mImageShow.getDisplayedImageBounds().width();
-        if (mainPanelWidth == 0) {
-            mainPanelWidth = mainViewWidth;
-        }
-        int filtersPanelWidth = findViewById(R.id.filtersPanel).getWidth();
-        if (mainPanelWidth < filtersPanelWidth) {
-            mainPanelWidth = filtersPanelWidth;
-        }
-        int leftOver = mainViewWidth - mainPanelWidth - accessoryPanelWidth;
-        if (leftOver < 0) {
-            return -accessoryPanelWidth;
-        }
-        return 0;
     }
 
     private int getScreenImageSize() {
@@ -666,7 +651,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.undoButton: {
-                mPanelController.resetParameters();
                 HistoryAdapter adapter = mMasterImage.getHistory();
                 int position = adapter.undo();
                 mMasterImage.onHistoryItemClick(position);
@@ -703,36 +687,18 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             mSaveButton.setEnabled(enable);
     }
 
-    public FilterIconButton setupFilterRepresentationButton(FilterRepresentation representation, LinearLayout panel, View button) {
-        LayoutInflater inflater =
-                (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        FilterIconButton icon = (FilterIconButton) inflater.inflate(R.layout.filtericonbutton,
-                panel, false);
-        if (representation.getTextId() != 0) {
-            representation.setName(getString(representation.getTextId()));
-        }
-        String text = representation.getName();
-        icon.setup(text, mPanelController, panel);
-        icon.setFilterRepresentation(representation);
-        icon.setId(representation.getEditorId());
-        mPanelController.addComponent(button, icon);
-        panel.addView(icon);
-        return icon;
-    }
-
-    private void fillFx(LinearLayout listFilters, int buttonId) {
-        ImageButton button = (ImageButton) findViewById(buttonId);
-
+    private void fillFx() {
         FilterFxRepresentation nullFx = new FilterFxRepresentation(getString(R.string.none), 0, R.string.none);
-        mNullFxFilter = setupFilterRepresentationButton(nullFx, listFilters, button);
-        mNullFxFilter.setSelected(true);
-
         Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
         FiltersManager.getManager().addLooks(this, filtersRepresentations);
-        for (FilterRepresentation representation : filtersRepresentations) {
-            setupFilterRepresentationButton(representation, listFilters, button);
-        }
 
+        mCategoryLooksAdapter = new CategoryAdapter(this);
+        int verticalItemHeight = (int) getResources().getDimension(R.dimen.action_item_height);
+        mCategoryLooksAdapter.setItemHeight(verticalItemHeight);
+        mCategoryLooksAdapter.add(new Action(this, nullFx, Action.CROP_VIEW));
+        for (FilterRepresentation representation : filtersRepresentations) {
+            mCategoryLooksAdapter.add(new Action(this, representation, Action.FULL_VIEW));
+        }
     }
 
     public void setDefaultPreset() {
@@ -764,16 +730,18 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     // //////////////////////////////////////////////////////////////////////////////
     // imageState panel...
 
-    private void toggleImageStatePanel() {
+    public void toggleImageStatePanel() {
         invalidateOptionsMenu();
-    }
-
-    private void loadImageStatePanel() {
-        StatePanel statePanel = new StatePanel();
-        if (findViewById(R.id.state_panel_container) != null) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.state_panel_container, statePanel, mPanelFragmentTag);
-            transaction.commit();
+        mShowingImageStatePanel = !mShowingImageStatePanel;
+        Fragment panel = getSupportFragmentManager().findFragmentByTag(MainPanel.FRAGMENT_TAG);
+        if (panel != null) {
+            if (panel instanceof EditorPanel) {
+                EditorPanel editorPanel = (EditorPanel) panel;
+                editorPanel.showImageStatePanel(mShowingImageStatePanel);
+            } else if (panel instanceof MainPanel) {
+                MainPanel mainPanel = (MainPanel) panel;
+                mainPanel.showImageStatePanel(mShowingImageStatePanel);
+            }
         }
     }
 
@@ -783,20 +751,10 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         super.onConfigurationChanged(newConfig);
         setDefaultValues();
         loadXML();
-        if (getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE) {
-            mShowingImageStatePanel = true;
-        } else if (mShowingImageStatePanel) {
-            toggleImageStatePanel();
-        }
-        if (mShowingImageStatePanel) {
-            loadImageStatePanel();
-        }
-        if (mShowingTinyPlanet == false) {
-            View tinyPlanetView = findViewById(EditorTinyPlanet.ID);
-            if (tinyPlanetView != null) {
-                tinyPlanetView.setVisibility(View.GONE);
-            }
+        loadMainPanel();
+
+        if (!mShowingTinyPlanet) {
+            mCategoryFiltersAdapter.removeTinyPlanet();
         }
         final View loading = findViewById(R.id.loading);
         loading.setVisibility(View.GONE);
@@ -824,27 +782,35 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         }
     }
 
-    public void dispatchNullFilterClick() {
-        mNullFxFilter.onClick(mNullFxFilter);
-        mNullBorderFilter.onClick(mNullBorderFilter);
-    }
-
     void resetHistory() {
-        dispatchNullFilterClick();
         HistoryAdapter adapter = mMasterImage.getHistory();
         adapter.reset();
         ImagePreset original = new ImagePreset(adapter.getItem(0));
         mMasterImage.setPreset(original, true);
-        mPanelController.resetParameters();
         invalidateViews();
+    }
+
+    public void showDefaultImageView() {
+        mEditorPlaceHolder.hide();
+        mImageShow.setVisibility(View.VISIBLE);
+        MasterImage.getImage().setCurrentFilter(null);
+        MasterImage.getImage().setCurrentFilterRepresentation(null);
+    }
+
+    public void backToMain() {
+        Fragment currentPanel = getSupportFragmentManager().findFragmentByTag(MainPanel.FRAGMENT_TAG);
+        if (currentPanel instanceof MainPanel) {
+            return;
+        }
+        loadMainPanel();
+        showDefaultImageView();
     }
 
     @Override
     public void onBackPressed() {
-        if (mPanelController.onBackPressed()) {
-            if (detectSpecialExitCases()) {
-                saveImage();
-            } else if(!mImageShow.hasModifications()) {
+        Fragment currentPanel = getSupportFragmentManager().findFragmentByTag(MainPanel.FRAGMENT_TAG);
+        if (currentPanel instanceof MainPanel) {
+            if (!mImageShow.hasModifications()) {
                 done();
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -861,11 +827,9 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                 });
                 builder.show();
             }
+        } else {
+            backToMain();
         }
-    }
-
-    public PanelController getPanelController() {
-        return mPanelController;
     }
 
     public void cannotLoadImage() {

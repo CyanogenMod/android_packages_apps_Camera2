@@ -32,7 +32,6 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.PanelController;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.controller.Control;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
@@ -50,18 +49,15 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
     protected FrameLayout mFrameLayout;
     protected SeekBar mSeekBar;
     Button mEditTitle;
-    protected PanelController mPanelController;
+    protected Button mFilterTitle;
     protected int mID;
     private final String LOGTAG = "Editor";
     protected FilterRepresentation mLocalRepresentation = null;
     protected byte mShowParameter = SHOW_VALUE_UNDEFINED;
+    private Button mButton;
     public static byte SHOW_VALUE_UNDEFINED = -1;
     public static byte SHOW_VALUE_OFF = 0;
     public static byte SHOW_VALUE_INT = 1;
-
-    public void setPanelController(PanelController panelController) {
-        this.mPanelController = panelController;
-    }
 
     public String calculateUserMessage(Context context, String effectName, Object parameterValue) {
         return effectName + " " + parameterValue;
@@ -83,8 +79,11 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
         return true;
     }
 
-    public void setUpEditorUI(View actionButton, View editControl, Button editTitle) {
-        this.mEditTitle = editTitle;
+    public void setUpEditorUI(View actionButton, View editControl,
+                              Button editTitle, Button stateButton) {
+        mEditTitle = editTitle;
+        mFilterTitle = stateButton;
+        mButton = editTitle;
         setMenuIcon(true);
         setUtilityPanelUI(actionButton, editControl);
     }
@@ -115,13 +114,12 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
             mSeekBar.setVisibility(View.INVISIBLE);
         }
 
-        Button button = (Button) actionButton.findViewById(R.id.applyEffect);
-        if (button != null) {
+        if (mButton != null) {
             if (showsPopupIndicator()) {
-                button.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0,
+                mButton.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0,
                         R.drawable.filtershow_menu_marker, 0);
             } else {
-                button.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+                mButton.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
             }
         }
     }
@@ -200,17 +198,25 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
                 boolean show = filterRepresentation.showParameterValue();
                 mShowParameter = show ? SHOW_VALUE_INT : SHOW_VALUE_OFF;
             }
-        }
 
+        }
         return mLocalRepresentation;
     }
 
     public void commitLocalRepresentation() {
         ImagePreset preset = MasterImage.getImage().getPreset();
         preset.updateFilterRepresentation(getLocalRepresentation());
-        if (mPanelController != null) {
-            mPanelController.onNewValue(-1);
+        if (mButton != null) {
+            updateText();
         }
+    }
+
+    protected void updateText() {
+        String s = "";
+        if (mLocalRepresentation != null) {
+            s = mContext.getString(mLocalRepresentation.getTextId());
+        }
+        mButton.setText(calculateUserMessage(mContext, s, ""));
     }
 
     /**
@@ -218,6 +224,12 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
      */
     public void reflectCurrentFilter() {
         mLocalRepresentation = null;
+        FilterRepresentation representation = getLocalRepresentation();
+        if (representation != null && mFilterTitle != null && representation.getTextId() != 0) {
+            String text = mContext.getString(representation.getTextId()).toUpperCase();
+            mFilterTitle.setText(text);
+            updateText();
+        }
     }
 
     public boolean useUtilityPanel() {
@@ -235,6 +247,7 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
         mEditTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 0, 0, on ? R.drawable.filtershow_menu_marker : 0, 0);
     }
+
     protected void createMenu(int[] strId, View button) {
         PopupMenu pmenu = new PopupMenu(mContext, button);
         Menu menu = pmenu.getMenu();
@@ -269,6 +282,8 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
     }
 
     public void detach() {
-
+        if (mImageShow != null) {
+            mImageShow.unselect();
+        }
     }
 }

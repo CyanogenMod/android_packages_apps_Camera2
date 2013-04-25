@@ -18,16 +18,22 @@ package com.android.gallery3d.filtershow.state;
 
 import android.animation.LayoutTransition;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.LinearLayout;
+import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 public class StatePanelTrack extends LinearLayout implements PanelTrack {
 
@@ -39,12 +45,34 @@ public class StatePanelTrack extends LinearLayout implements PanelTrack {
     private boolean mStartedDrag = false;
     private StateAdapter mAdapter;
     private DragListener mDragListener = new DragListener(this);
-    GestureDetector mGestureDetector;
-    private int mContainerWidth = 668; // TODO: get this from XML
-    private int mContainerHeight = 200;
+    private float mDeleteSlope = 0.2f;
+    private GestureDetector mGestureDetector;
+    private int mElemWidth;
+    private int mElemHeight;
+    private int mElemSize;
+    private int mElemEndSize;
+    private int mEndElemWidth;
+    private int mEndElemHeight;
+    private long mTouchTime;
+    private int mMaxTouchDelay = 300; // 300ms delay for touch
+    private static final boolean ALLOWS_DRAG = false;
 
     public StatePanelTrack(Context context, AttributeSet attrs) {
         super(context, attrs);
+        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.StatePanelTrack);
+        mElemSize = a.getDimensionPixelSize(R.styleable.StatePanelTrack_elemSize, 0);
+        mElemEndSize = a.getDimensionPixelSize(R.styleable.StatePanelTrack_elemEndSize, 0);
+        if (getOrientation() == LinearLayout.HORIZONTAL) {
+            mElemWidth = mElemSize;
+            mElemHeight = LayoutParams.MATCH_PARENT;
+            mEndElemWidth = mElemEndSize;
+            mEndElemHeight = LayoutParams.MATCH_PARENT;
+        } else {
+            mElemWidth = LayoutParams.MATCH_PARENT;
+            mElemHeight = mElemSize;
+            mEndElemWidth = LayoutParams.MATCH_PARENT;
+            mEndElemHeight = mElemEndSize;
+        }
         GestureDetector.SimpleOnGestureListener simpleOnGestureListener
                 = new GestureDetector.SimpleOnGestureListener(){
             @Override
@@ -100,23 +128,11 @@ public class StatePanelTrack extends LinearLayout implements PanelTrack {
         return null;
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
-        int w = MeasureSpec.getSize(widthMeasureSpec);
-        if (w > 0) {
-            mContainerWidth = w;
-        }
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        fillContent(false);
-    }
-
     public void fillContent(boolean animate) {
         if (!animate) {
             this.setLayoutTransition(null);
         }
         int n = mAdapter.getCount();
-        int w = mContainerWidth;
-        int h = mContainerHeight;
         for (int i = 0; i < getChildCount(); i++) {
             StateView child = (StateView) getChildAt(i);
             child.resetPosition();
@@ -124,10 +140,7 @@ public class StatePanelTrack extends LinearLayout implements PanelTrack {
                 removeView(child);
             }
         }
-        LayoutParams params;
-        params = new LayoutParams(w, h);
-        LayoutParams paramsEnds;
-        paramsEnds = new LayoutParams(w, h/2);
+        LayoutParams params = new LayoutParams(mElemWidth, mElemHeight);
         for (int i = 0; i < n; i++) {
             State s = mAdapter.getItem(i);
             if (findChildWithState(s) == null) {
@@ -135,6 +148,7 @@ public class StatePanelTrack extends LinearLayout implements PanelTrack {
                 addView(view, i, params);
             }
         }
+
         for (int i = 0; i < n; i++) {
             State state = mAdapter.getItem(i);
             StateView view = (StateView) getChildAt(i);
@@ -143,19 +157,10 @@ public class StatePanelTrack extends LinearLayout implements PanelTrack {
                 view.setType(StateView.BEGIN);
             } else if (i == n - 1) {
                 view.setType(StateView.END);
+            } else {
+                view.setType(StateView.DEFAULT);
             }
             view.resetPosition();
-            if (i == 0 || (i == n -1)) {
-                if (view.getWidth() != w || view.getHeight() != h/2) {
-                    view.setLayoutParams(paramsEnds);
-                    requestLayout();
-                }
-            } else {
-                if (view.getWidth() != w || view.getHeight() != h) {
-                    view.setLayoutParams(params);
-                    requestLayout();
-                }
-            }
         }
 
         if (!animate) {
@@ -180,12 +185,9 @@ public class StatePanelTrack extends LinearLayout implements PanelTrack {
         cancelEvent.setAction(MotionEvent.ACTION_CANCEL);
         mGestureDetector.onTouchEvent(cancelEvent);
         mCurrentSelectedView = mCurrentView;
-        mCurrentSelectedView.setSelected(true);
         // We have to send the event to the gesture detector
         mGestureDetector.onTouchEvent(event);
-        FilterShowActivity activity = (FilterShowActivity) getContext();
-        activity.getPanelController().showComponentWithRepresentation(
-                mCurrentSelectedView.getState().getFilterRepresentation());
+        mTouchTime = System.currentTimeMillis();
     }
 
     @Override
@@ -201,12 +203,16 @@ public class StatePanelTrack extends LinearLayout implements PanelTrack {
         if (mCurrentView == null) {
             return false;
         }
+        if (mTouchTime == 0) {
+            mTouchTime = System.currentTimeMillis();
+        }
         mGestureDetector.onTouchEvent(event);
         if (mTouchPoint == null) {
             mTouchPoint = new Point();
             mTouchPoint.x = (int) event.getX();
             mTouchPoint.y = (int) event.getY();
         }
+
         if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
             float translation = event.getY() - mTouchPoint.y;
             float alpha = 1.0f - (Math.abs(translation) / mCurrentView.getHeight());
@@ -218,11 +224,24 @@ public class StatePanelTrack extends LinearLayout implements PanelTrack {
                 mCurrentView.setTranslationY(translation);
             }
             mCurrentView.setBackgroundAlpha(alpha);
-            if (alpha < 0.7) {
+            if (ALLOWS_DRAG && alpha < 0.7) {
                 setOnDragListener(mDragListener);
                 DragShadowBuilder shadowBuilder = new DragShadowBuilder(mCurrentView);
                 mCurrentView.startDrag(null, shadowBuilder, mCurrentView, 0);
                 mStartedDrag = true;
+            }
+        }
+        if (!mExited && mCurrentView != null
+                && mCurrentView.getBackgroundAlpha() > mDeleteSlope
+                && event.getActionMasked() == MotionEvent.ACTION_UP
+                && System.currentTimeMillis() - mTouchTime < mMaxTouchDelay) {
+            FilterRepresentation representation = mCurrentView.getState().getFilterRepresentation();
+            if (representation != MasterImage.getImage().getCurrentFilterRepresentation()) {
+                FilterShowActivity activity = (FilterShowActivity) getContext();
+                activity.showRepresentation(representation);
+            }
+            if (representation.getEditorId() != ImageOnlyEditor.ID) {
+                mCurrentView.setSelected(true);
             }
         }
         if (event.getActionMasked() == MotionEvent.ACTION_UP
@@ -234,17 +253,32 @@ public class StatePanelTrack extends LinearLayout implements PanelTrack {
 
     public void checkEndState() {
         mTouchPoint = null;
-        if (mExited || mCurrentView.getAlpha() < 0.2) {
+        mTouchTime = 0;
+        if (mExited || mCurrentView.getBackgroundAlpha() < mDeleteSlope) {
             int origin = findChild(mCurrentView);
             if (origin != -1) {
                 State current = mAdapter.getItem(origin);
+                FilterRepresentation currentRep = MasterImage.getImage().getCurrentFilterRepresentation();
+                FilterRepresentation removedRep = current.getFilterRepresentation();
                 mAdapter.remove(current);
                 fillContent(true);
+                if (currentRep != null && removedRep != null
+                        && currentRep.getFilterClass() == removedRep.getFilterClass()) {
+                    FilterShowActivity activity = (FilterShowActivity) getContext();
+                    activity.backToMain();
+                    return;
+                }
             }
         } else {
             mCurrentView.setBackgroundAlpha(1.0f);
             mCurrentView.setTranslationX(0);
             mCurrentView.setTranslationY(0);
+        }
+        if (mCurrentSelectedView != null) {
+            mCurrentSelectedView.invalidate();
+        }
+        if (mCurrentView != null) {
+            mCurrentView.invalidate();
         }
         mCurrentView = null;
         mExited = false;

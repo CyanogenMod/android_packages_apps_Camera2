@@ -17,16 +17,21 @@
 package com.android.gallery3d.filtershow.state;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.*;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.LinearLayout;
+import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 public class StateView extends View {
 
+    private static final String LOGTAG = "StateView";
     private Path mPath = new Path();
     private Paint mPaint = new Paint();
 
@@ -51,6 +56,14 @@ public class StateView extends View {
     private boolean mDuplicateButton;
     private State mState;
 
+    private int mEndsBackgroundColor;
+    private int mEndsTextColor;
+    private int mBackgroundColor;
+    private int mTextColor;
+    private int mSelectedBackgroundColor;
+    private int mSelectedTextColor;
+    private Rect mTextBounds = new Rect();
+
     public StateView(Context context) {
         this(context, DEFAULT);
     }
@@ -58,10 +71,13 @@ public class StateView extends View {
     public StateView(Context context, int type) {
         super(context);
         mType = type;
-    }
-
-    public StateView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        Resources res = getResources();
+        mEndsBackgroundColor = res.getColor(R.color.filtershow_stateview_end_background);
+        mEndsTextColor = res.getColor(R.color.filtershow_stateview_end_text);
+        mBackgroundColor = res.getColor(R.color.filtershow_stateview_background);
+        mTextColor = res.getColor(R.color.filtershow_stateview_text);
+        mSelectedBackgroundColor = res.getColor(R.color.filtershow_stateview_selected_background);
+        mSelectedTextColor = res.getColor(R.color.filtershow_stateview_selected_text);
     }
 
     public String getText() {
@@ -94,6 +110,13 @@ public class StateView extends View {
             if (parent instanceof PanelTrack) {
                 ((PanelTrack) getParent()).onTouch(event, this);
             }
+            if (mType == BEGIN) {
+                MasterImage.getImage().setShowsOriginal(true);
+            }
+        }
+        if (event.getActionMasked() == MotionEvent.ACTION_UP
+                || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+            MasterImage.getImage().setShowsOriginal(false);
         }
         return true;
     }
@@ -104,17 +127,19 @@ public class StateView extends View {
         }
         mPaint.reset();
         if (isSelected()) {
-            mPaint.setColor(Color.BLACK);
+            mPaint.setColor(mSelectedTextColor);
         } else {
-            mPaint.setColor(Color.WHITE);
+            mPaint.setColor(mTextColor);
         }
+        if (mType == BEGIN) {
+            mPaint.setColor(mEndsTextColor);
+        }
+        mPaint.setTypeface(Typeface.DEFAULT_BOLD);
+        mPaint.setAntiAlias(true);
         mPaint.setTextSize(mTextSize);
-        float textWidth = mPaint.measureText(mText);
-        int x = (int) ((canvas.getWidth() - textWidth) / 2);
-        int y = canvas.getHeight() - sMargin;
-        if (canvas.getHeight() > canvas.getWidth()) {
-            y = canvas.getHeight() - (canvas.getHeight() - canvas.getWidth() - 2 * sMargin) / 2;
-        }
+        mPaint.getTextBounds(mText, 0, mText.length(), mTextBounds);
+        int x = (canvas.getWidth() - mTextBounds.width()) / 2;
+        int y = mTextBounds.height() + (canvas.getHeight() - mTextBounds.height()) / 2;
         canvas.drawText(mText, x, y, mPaint);
     }
 
@@ -137,16 +162,16 @@ public class StateView extends View {
             }
         }
 
-        if (mType == DEFAULT) {
+        if (mType == DEFAULT || mType == END) {
             if (mDuplicateButton) {
                 mPaint.setARGB(255, 200, 0, 0);
             } else if (isSelected()) {
-                mPaint.setARGB(255, 200, 200, 200);
+                mPaint.setColor(mSelectedBackgroundColor);
             } else {
-                mPaint.setARGB(255, 70, 70, 70);
+                mPaint.setColor(mBackgroundColor);
             }
         } else {
-            mPaint.setARGB(255, 150, 150, 150);
+            mPaint.setColor(mEndsBackgroundColor);
         }
         canvas.drawPath(mPath, mPaint);
         drawText(canvas);
@@ -220,14 +245,15 @@ public class StateView extends View {
     }
 
     public void setBackgroundAlpha(float alpha) {
-        if (mType != DEFAULT) {
+        if (mType == BEGIN) {
             return;
         }
         mAlpha = alpha;
+        setAlpha(alpha);
         invalidate();
     }
 
-    public float getAlpha() {
+    public float getBackgroundAlpha() {
         return mAlpha;
     }
 
@@ -246,15 +272,15 @@ public class StateView extends View {
 
     public void setState(State state) {
         mState = state;
-        mText = mState.getText();
+        mText = mState.getText().toUpperCase();
         mType = mState.getType();
-        setBackgroundAlpha(1.0f);
         invalidate();
     }
 
     public void resetPosition() {
         setTranslationX(0);
         setTranslationY(0);
+        setBackgroundAlpha(1.0f);
     }
 
     public boolean isDraggable() {
