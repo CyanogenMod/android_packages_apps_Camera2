@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  Copyright (C) 2012 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+ -->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- no translation found for title_activity_filter_show (2036539130684382763) -->
+    <skip />
+    <!-- no translation found for cannot_load_image (5023634941212959976) -->
+    <skip />
+    <!-- no translation found for original_picture_text (3076213290079909698) -->
+    <skip />
+    <!-- no translation found for setting_wallpaper (4679087092300036632) -->
+    <skip />
+    <!-- no translation found for download_failure (5923323939788582895) -->
+    <skip />
+    <!-- no translation found for original (3524493791230430897) -->
+    <skip />
+    <!-- no translation found for borders (2067345080568684614) -->
+    <!-- no translation found for borders (4461692156695893616) -->
+    <skip />
+    <!-- no translation found for filtershow_undo (6781743189243585101) -->
+    <skip />
+    <!-- no translation found for filtershow_redo (4219489910543059747) -->
+    <skip />
+    <!-- no translation found for show_imagestate_panel (281932769701043015) -->
+    <skip />
+    <!-- no translation found for hide_imagestate_panel (7207643485811695257) -->
+    <skip />
+    <!-- no translation found for menu_settings (6428291655769260831) -->
+    <skip />
+    <!-- no translation found for unsaved (8704442449002374375) -->
+    <skip />
+    <!-- no translation found for save_before_exit (2680660633675916712) -->
+    <skip />
+    <!-- no translation found for save_and_exit (3628425023766687419) -->
+    <skip />
+    <!-- no translation found for exit (242642957038770113) -->
+    <skip />
+    <!-- no translation found for history (455767361472692409) -->
+    <skip />
+    <!-- no translation found for reset (9013181350779592937) -->
+    <skip />
+    <!-- no translation found for history_original (150973253194312841) -->
+    <skip />
+    <!-- no translation found for imageState (8632586742752891968) -->
+    <skip />
+    <!-- no translation found for compare_original (8140838959007796977) -->
+    <skip />
+    <!-- no translation found for apply_effect (1218288221200568947) -->
+    <skip />
+    <!-- no translation found for reset_effect (7712605581024929564) -->
+    <skip />
+    <!-- no translation found for aspect (4025244950820813059) -->
+    <skip />
+    <!-- no translation found for aspect1to1_effect (1159104543795779123) -->
+    <skip />
+    <!-- no translation found for aspect4to3_effect (7968067847241223578) -->
+    <skip />
+    <!-- no translation found for aspect3to4_effect (7078163990979248864) -->
+    <skip />
+    <!-- no translation found for aspect4to6_effect (1410129351686165654) -->
+    <skip />
+    <!-- no translation found for aspect5to7_effect (5122395569059384741) -->
+    <skip />
+    <!-- no translation found for aspect7to5_effect (5780001758108328143) -->
+    <skip />
+    <!-- no translation found for aspect9to16_effect (7740468012919660728) -->
+    <skip />
+    <!-- no translation found for aspectNone_effect (6263330561046574134) -->
+    <skip />
+    <!-- no translation found for aspectOriginal_effect (5678516555493036594) -->
+    <skip />
+    <!-- no translation found for Fixed (8017376448916924565) -->
+    <skip />
+    <!-- no translation found for tinyplanet (2783694326474415761) -->
+    <skip />
+    <string name="exposure" msgid="6526397045949374905">"Exposiziun"</string>
+    <!-- no translation found for sharpness (6463103068318055412) -->
+    <skip />
+    <!-- no translation found for contrast (2310908487756769019) -->
+    <skip />
+    <!-- no translation found for vibrance (3326744578577835915) -->
+    <skip />
+    <!-- no translation found for saturation (7026791551032438585) -->
+    <skip />
+    <!-- no translation found for bwfilter (8927492494576933793) -->
+    <skip />
+    <!-- no translation found for wbalance (6346581563387083613) -->
+    <skip />
+    <!-- no translation found for hue (6231252147971086030) -->
+    <skip />
+    <!-- no translation found for shadow_recovery (3928572915300287152) -->
+    <skip />
+    <!-- no translation found for highlight_recovery (8262208470735204243) -->
+    <skip />
+    <!-- no translation found for curvesRGB (915010781090477550) -->
+    <skip />
+    <!-- no translation found for vignette (934721068851885390) -->
+    <skip />
+    <!-- no translation found for redeye (4508883127049472069) -->
+    <skip />
+    <!-- no translation found for imageDraw (6918552177844486656) -->
+    <skip />
+    <!-- no translation found for straighten (26025591664983528) -->
+    <!-- no translation found for straighten (5217801513491493491) -->
+    <skip />
+    <string name="crop" msgid="5781263790107850771">"Retagliar"</string>
+    <string name="rotate" msgid="2796802553793795371">"Rotar"</string>
+    <!-- no translation found for mirror (5482518108154883096) -->
+    <skip />
+    <!-- no translation found for negative (6998313764388022201) -->
+    <skip />
+    <!-- no translation found for none (6633966646410296520) -->
+    <!-- no translation found for none (3601545724573307541) -->
+    <skip />
+    <!-- no translation found for edge (7036064886242147551) -->
+    <skip />
+    <!-- no translation found for kmeans (1630263230946107457) -->
+    <skip />
+    <!-- no translation found for downsample (3552938534146980104) -->
+    <skip />
+    <!-- no translation found for curves_channel_rgb (7909209509638333690) -->
+    <skip />
+    <!-- no translation found for curves_channel_red (4199710104162111357) -->
+    <skip />
+    <!-- no translation found for curves_channel_green (3733003466905031016) -->
+    <skip />
+    <!-- no translation found for curves_channel_blue (9129211507395079371) -->
+    <skip />
+    <!-- no translation found for draw_style (2036125061987325389) -->
+    <skip />
+    <!-- no translation found for draw_size (4360005386104151209) -->
+    <skip />
+    <!-- no translation found for draw_color (2119030386987211193) -->
+    <skip />
+    <!-- no translation found for draw_style_line (9216476853904429628) -->
+    <skip />
+    <!-- no translation found for draw_style_brush_spatter (7612691122932981554) -->
+    <skip />
+    <!-- no translation found for draw_style_brush_marker (8468302322165644292) -->
+    <skip />
+    <!-- no translation found for draw_clear (6728155515454921052) -->
+    <skip />
+    <!-- no translation found for color_pick_select (734312818059057394) -->
+    <skip />
+    <!-- no translation found for color_pick_title (6195567431995308876) -->
+    <skip />
+    <!-- no translation found for draw_size_title (3121649039610273977) -->
+    <skip />
+    <!-- no translation found for draw_size_accept (6781529716526190028) -->
+    <skip />
+    <!-- no translation found for state_panel_original (9069584409934164419) -->
+    <skip />
+    <!-- no translation found for state_panel_result (318640531123298676) -->
+    <skip />
+</resources>
