@@ -15,7 +15,6 @@
 -->
 
 <resources>
-
     <!--  Title for the image editor activity [CHAR LIMIT=NONE]-->
     <string name="title_activity_filter_show">Photo Editor</string>
 
