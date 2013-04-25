@@ -16,7 +16,6 @@
 -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:iconbutton="http://schemas.android.com/apk/res/com.android.gallery3d"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:id="@+id/mainView"
@@ -46,31 +45,19 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
 
-            <com.android.gallery3d.filtershow.imageshow.ImageTinyPlanet
-                    android:id="@+id/imageTinyPlanet"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
         </LinearLayout>
 
         <LinearLayout
                 android:id="@+id/mainPanel"
                 android:layout_width="350dip"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:animateLayoutChanges="true" >
 
-            <FrameLayout android:id="@+id/state_panel_container"
+            <FrameLayout android:id="@+id/main_panel_container"
                          android:layout_width="350dip"
                          android:layout_height="0dip"
                          android:layout_weight="1" />
-
-            <ViewStub android:id="@+id/historyPanelStub"
-                      android:inflatedId="@+id/historyPanel"
-                      android:layout="@layout/filtershow_history_panel"
-                      android:layout_width="match_parent"
-                      android:layout_height="0dip"
-                      android:visibility="gone"/>
 
             <FrameLayout
                     android:layout_gravity="bottom"
@@ -90,129 +77,6 @@
                         android:background="@color/background_screen"/>
 
             </FrameLayout>
-
-            <com.android.gallery3d.filtershow.CenteredLinearLayout
-                    xmlns:custom="http://schemas.android.com/apk/res/com.android.gallery3d"
-                    android:id="@+id/filtersPanel"
-                    android:layout_width="match_parent"
-                    android:layout_height="177dip"
-                    android:layout_gravity="center|bottom"
-                    custom:max_width="600dip"
-                    android:orientation="vertical">
-
-                <FrameLayout
-                        android:id="@+id/secondRowPanel"
-                        android:layout_width="fill_parent"
-                        android:layout_height="128dip">
-
-                    <LinearLayout
-                            android:id="@+id/filterButtonsList"
-                            android:layout_width="fill_parent"
-                            android:layout_height="@dimen/thumbnail_size"
-                            android:orientation="horizontal"
-                            android:visibility="gone">
-
-                        <ViewStub android:id="@+id/editorPanelStub"
-                                  android:inflatedId="@+id/editorPanel"
-                                  android:layout="@layout/filtershow_editor_panel"
-                                  android:layout_width="match_parent"
-                                  android:layout_height="wrap_content"
-                                  android:visibility="visible"/>
-
-                    </LinearLayout>
-
-                    <HorizontalScrollView
-                            android:id="@+id/fxList"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/thumbnail_size"
-                            android:background="@color/background_main_toolbar"
-                            android:scrollbars="none">
-
-                        <LinearLayout
-                                android:id="@+id/listFilters"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_marginLeft="@dimen/thumbnail_margin"
-                                android:orientation="horizontal">
-                        </LinearLayout>
-                    </HorizontalScrollView>
-
-                    <HorizontalScrollView
-                            android:id="@+id/bordersList"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/thumbnail_size"
-                            android:background="@color/background_main_toolbar"
-                            android:visibility="gone"
-                            android:scrollbars="none">
-
-                        <LinearLayout
-                                android:id="@+id/listBorders"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_marginLeft="@dimen/thumbnail_margin"
-                                android:orientation="horizontal">
-                        </LinearLayout>
-                    </HorizontalScrollView>
-
-                    <HorizontalScrollView
-                            android:id="@+id/geometryList"
-                            android:layout_width="fill_parent"
-                            android:layout_height="@dimen/thumbnail_size"
-                            android:background="@color/background_main_toolbar"
-                            android:visibility="gone"
-                            android:scrollbars="none">
-
-                        <LinearLayout
-                                android:id="@+id/listGeometry"
-                                android:layout_width="wrap_content"
-                                android:layout_height="fill_parent"
-                                android:layout_gravity="left"
-                                android:orientation="horizontal"/>
-
-                    </HorizontalScrollView>
-
-                    <HorizontalScrollView
-                            android:id="@+id/colorsFxList"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@color/background_main_toolbar"
-                            android:visibility="gone"
-                            android:scrollbars="none">
-
-                        <LinearLayout
-                                android:id="@+id/listColorsFx"
-                                android:layout_width="wrap_content"
-                                android:layout_height="@dimen/thumbnail_size"
-                                android:background="@color/background_main_toolbar"
-                                android:layout_marginLeft="@dimen/thumbnail_margin"
-                                android:orientation="horizontal">
-
-                        </LinearLayout>
-                    </HorizontalScrollView>
-                </FrameLayout>
-
-                <View
-                        android:background="@color/toolbar_separation_line"
-                        android:layout_height="1dip"
-                        android:layout_width="match_parent"/>
-
-                <com.android.gallery3d.filtershow.CenteredLinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="48dip"
-                        android:layout_gravity="center"
-                        custom:max_width="400dip"
-                        android:orientation="vertical">
-
-                    <ViewStub android:id="@+id/stateCategoryStub"
-                              android:inflatedId="@+id/imageCategoryPanel"
-                              android:layout="@layout/filtershow_category_panel"
-                              android:layout_width="match_parent"
-                              android:layout_height="48dip"
-                              android:visibility="visible"/>
-
-                </com.android.gallery3d.filtershow.CenteredLinearLayout>
-
-            </com.android.gallery3d.filtershow.CenteredLinearLayout>
 
         </LinearLayout>
 

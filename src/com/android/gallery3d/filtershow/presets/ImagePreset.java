@@ -28,6 +28,7 @@ import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
+import com.android.gallery3d.filtershow.state.State;
 import com.android.gallery3d.filtershow.state.StateAdapter;
 
 import java.util.Vector;
@@ -369,6 +370,11 @@ public class ImagePreset {
     }
 
     public void removeFilter(FilterRepresentation filterRepresentation) {
+        if (filterRepresentation.getPriority() == FilterRepresentation.TYPE_BORDER) {
+            setBorder(null);
+            setHistoryName("Remove");
+            return;
+        }
         for (int i = 0; i < mFilters.size(); i++) {
             if (mFilters.elementAt(i).getFilterClass() == filterRepresentation.getFilterClass()) {
                 mFilters.remove(i);
@@ -539,7 +545,20 @@ public class ImagePreset {
         if (imageStateAdapter == null) {
             return;
         }
+        imageStateAdapter.clear();
+        imageStateAdapter.addOriginal();
+        // TODO: supports Geometry representations in the state panel.
+        if (false && mGeoData != null && mGeoData.hasModifications()) {
+            State geo = new State("Geometry");
+            geo.setFilterRepresentation(mGeoData);
+            imageStateAdapter.add(geo);
+        }
         imageStateAdapter.addAll(mFilters);
+        if (mBorder != null) {
+            State border = new State(mBorder.getName());
+            border.setFilterRepresentation(mBorder);
+            imageStateAdapter.add(border);
+        }
     }
 
     public void setPartialRendering(boolean partialRendering, Rect bounds) {
