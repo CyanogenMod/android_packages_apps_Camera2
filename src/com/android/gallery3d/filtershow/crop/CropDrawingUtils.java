@@ -113,7 +113,11 @@ public abstract class CropDrawingUtils {
         canvas.restore();
         Path path = new Path();
         path.moveTo(r1.left, r1.top);
+        path.lineTo(r1.right, r1.top);
+        path.moveTo(r1.left, r1.top);
         path.lineTo(r1.left, r1.bottom);
+        path.moveTo(r1.left, r1.bottom);
+        path.lineTo(r1.right, r1.bottom);
         path.moveTo(r1.right, r1.top);
         path.lineTo(r1.right, r1.bottom);
         path.moveTo(r2.left, r2.top);

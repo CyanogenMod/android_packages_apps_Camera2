@@ -71,6 +71,8 @@ public class CropView extends View {
     private int mWPMarkerColor = 0x7FFFFFFF;
     private int mMinSideSize = 90;
     private int mTouchTolerance = 40;
+    private float mDashOnLength = 20;
+    private float mDashOffLength = 10;
 
     private enum Mode {
         NONE, MOVE
@@ -91,6 +93,8 @@ public class CropView extends View {
         mOverlayShadowColor = (int) rsc.getColor(R.color.crop_shadow_color);
         mOverlayWPShadowColor = (int) rsc.getColor(R.color.crop_shadow_wp_color);
         mWPMarkerColor = (int) rsc.getColor(R.color.crop_wp_markers);
+        mDashOnLength = rsc.getDimension(R.dimen.wp_selector_dash_length);
+        mDashOffLength = rsc.getDimension(R.dimen.wp_selector_off_length);
     }
 
     public void initialize(Bitmap image, RectF newCropBounds, RectF newPhotoBounds, int rotation) {
@@ -212,6 +216,12 @@ public class CropView extends View {
         if (x <= 0 || y <= 0) {
             throw new IllegalArgumentException("Bad arguments to applyAspect");
         }
+        // If we are rotated by 90 degrees from horizontal, swap x and y
+        if (((mRotation < 0) ? -mRotation : mRotation) % 180 == 90) {
+            float tmp = x;
+            x = y;
+            y = tmp;
+        }
         if (!mCropObj.setInnerAspectRatio(x, y)) {
             Log.w(LOGTAG, "failed to set aspect ratio");
         }
@@ -228,6 +238,38 @@ public class CropView extends View {
 
     public void unsetWallpaperSpotlight() {
         mDoSpot = false;
+    }
+
+    /**
+     * Rotates first d bits in integer x to the left some number of times.
+     */
+    private int bitCycleLeft(int x, int times, int d) {
+        int mask = (1 << d) - 1;
+        int mout = x & mask;
+        times %= d;
+        int hi = mout >> (d - times);
+        int low = (mout << times) & mask;
+        int ret = x & ~mask;
+        ret |= low;
+        ret |= hi;
+        return ret;
+    }
+
+    /**
+     * Find the selected edge or corner in screen coordinates.
+     */
+    private int decode(int movingEdges, float rotation) {
+        int rot = CropMath.constrainedRotation(rotation);
+        switch (rot) {
+            case 90:
+                return bitCycleLeft(movingEdges, 1, 4);
+            case 180:
+                return bitCycleLeft(movingEdges, 2, 4);
+            case 270:
+                return bitCycleLeft(movingEdges, 3, 4);
+            default:
+                return movingEdges;
+        }
     }
 
     @Override
@@ -307,12 +349,14 @@ public class CropView extends View {
                 wpPaint.setColor(mWPMarkerColor);
                 wpPaint.setStrokeWidth(3);
                 wpPaint.setStyle(Paint.Style.STROKE);
-                wpPaint.setPathEffect(new DashPathEffect(new float[] {20, 30}, 0));
+                wpPaint.setPathEffect(new DashPathEffect(new float[]
+                        {mDashOnLength, mDashOnLength + mDashOffLength}, 0));
                 p.setColor(mOverlayWPShadowColor);
-                CropDrawingUtils.drawWallpaperSelectionFrame(canvas, mScreenCropBounds, mSpotX, mSpotY, wpPaint, p);
+                CropDrawingUtils.drawWallpaperSelectionFrame(canvas, mScreenCropBounds,
+                        mSpotX, mSpotY, wpPaint, p);
             }
             CropDrawingUtils.drawIndicators(canvas, mCropIndicator, mIndicatorSize,
-                    mScreenCropBounds, mCropObj.isFixedAspect(), mCropObj.getSelectState());
+                    mScreenCropBounds, mCropObj.isFixedAspect(), decode(mCropObj.getSelectState(), mRotation));
         }
 
     }
