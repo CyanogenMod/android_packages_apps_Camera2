@@ -16,11 +16,17 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Rect;
+import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class ImageFilterVignette extends SimpleImageFilter {
     private static final String LOGTAG = "ImageFilterVignette";
+    private Bitmap mOverlayBitmap;
 
     public ImageFilterVignette() {
         mName = "Vignette";
@@ -51,6 +57,18 @@ public class ImageFilterVignette extends SimpleImageFilter {
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
+        if (SIMPLE_ICONS && ImagePreset.QUALITY_ICON == quality) {
+            if (mOverlayBitmap == null) {
+                Resources res = getEnvironment().getCachingPipeline().getResources();
+                mOverlayBitmap = IconUtilities.getFXBitmap(res,
+                        R.drawable.filtershow_icon_vignette);
+            }
+            Canvas c = new Canvas(bitmap);
+            int dim = Math.max(bitmap.getWidth(), bitmap.getHeight());
+            Rect r = new Rect(0, 0, dim, dim);
+            c.drawBitmap(mOverlayBitmap, null, r, null);
+            return bitmap;
+        }
         FilterVignetteRepresentation rep = (FilterVignetteRepresentation) getParameters();
         if (rep == null) {
             return bitmap;

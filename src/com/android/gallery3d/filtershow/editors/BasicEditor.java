@@ -51,9 +51,6 @@ public class BasicEditor extends ParametricEditor implements ParameterInteger {
         super.reflectCurrentFilter();
         if (getLocalRepresentation() != null && getLocalRepresentation() instanceof FilterBasicRepresentation) {
             FilterBasicRepresentation interval = (FilterBasicRepresentation) getLocalRepresentation();
-            Context context = mContext;
-            interval.getTextId();
-
         }
     }
 
