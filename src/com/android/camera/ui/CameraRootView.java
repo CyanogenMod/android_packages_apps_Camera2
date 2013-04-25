@@ -32,6 +32,10 @@ import com.android.gallery3d.R;
 public class CameraRootView extends RelativeLayout
     implements RotatableLayout.RotationListener {
 
+    private int mTopMargin = 0;
+    private int mBottomMargin = 0;
+    private int mLeftMargin = 0;
+    private int mRightMargin = 0;
     private int mOffset = 0;
     public CameraRootView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -45,7 +49,23 @@ public class CameraRootView extends RelativeLayout
         super.fitSystemWindows(insets);
         // insets include status bar, navigation bar, etc
         // In this case, we are only concerned with the size of nav bar
-        if (mOffset > 0) return true;
+        if (mOffset > 0) {
+            // Add margin if necessary to the view to ensure nothing is covered
+            // by navigation bar
+            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) getLayoutParams();
+            int right, bottom;
+            if (insets.right > 0) {
+                // navigation bar on the right
+                right = mRightMargin > 0 ? 0 : insets.right;
+                bottom = 0;
+            } else {
+                // navigation bar on the bottom
+                bottom = mBottomMargin > 0 ? 0 : insets.bottom;
+                right = 0;
+            }
+            lp.setMargins(mLeftMargin, mTopMargin, mRightMargin + right, mBottomMargin + bottom);
+            return true;
+        }
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) getLayoutParams();
         if (insets.bottom > 0) {
             mOffset = insets.bottom;
@@ -54,10 +74,11 @@ public class CameraRootView extends RelativeLayout
         }
         Configuration config = getResources().getConfiguration();
         if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            lp.setMargins(0, 0, 0, mOffset);
+            mBottomMargin = mOffset;
         } else if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            lp.setMargins(0, 0, mOffset, 0);
+            mRightMargin = mOffset;
         }
+        lp.setMargins( mLeftMargin, mTopMargin, mRightMargin, mBottomMargin);
         CameraControls controls = (CameraControls) findViewById(R.id.camera_controls);
         if (controls != null) {
             controls.setRotationListener(this);
@@ -69,10 +90,10 @@ public class CameraRootView extends RelativeLayout
     @Override
     public void onRotation(int rotation) {
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) getLayoutParams();
-        int b = lp.bottomMargin;
-        int t = lp.topMargin;
-        int l = lp.leftMargin;
-        int r = lp.rightMargin;
+        int b = mBottomMargin;
+        int t = mTopMargin;
+        int l = mLeftMargin;
+        int r = mRightMargin;
         rotation = (rotation + 360) % 360;
         if (rotation == 90) {
             lp.setMargins(b, l, t, r);
@@ -81,5 +102,9 @@ public class CameraRootView extends RelativeLayout
         } else if (rotation == 180) {
             lp.setMargins(r, b, l, t);
         }
+        mLeftMargin = lp.leftMargin;
+        mTopMargin = lp.topMargin;
+        mRightMargin = lp.rightMargin;
+        mBottomMargin = lp.bottomMargin;
     }
 }
