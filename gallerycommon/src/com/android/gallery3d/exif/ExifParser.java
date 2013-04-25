@@ -510,7 +510,9 @@ class ExifParser {
      * @see #EVENT_VALUE_OF_REGISTERED_TAG
      */
     protected void registerForTagValue(ExifTag tag) {
-        mCorrespondingEvent.put(tag.getOffset(), new ExifTagEvent(tag, true));
+        if (tag.getOffset() >= mTiffStream.getReadByteCount()) {
+            mCorrespondingEvent.put(tag.getOffset(), new ExifTagEvent(tag, true));
+        }
     }
 
     private void registerIfd(int ifdType, long offset) {
@@ -563,7 +565,12 @@ class ExifParser {
                 tag.setOffset((int) offset);
             }
         } else {
+            boolean defCount = tag.hasDefinedCount();
+            // Set defined count to 0 so we can add \0 to non-terminated strings
+            tag.setHasDefinedCount(false);
+            // Read value
             readFullTagValue(tag);
+            tag.setHasDefinedCount(defCount);
             mTiffStream.skip(4 - dataSize);
             // Set the offset to the position of value.
             tag.setOffset(mTiffStream.getReadByteCount() - 4);
@@ -644,13 +651,22 @@ class ExifParser {
             if (mCorrespondingEvent.size() > 0) {
                 if (mCorrespondingEvent.firstEntry().getKey() < mTiffStream.getReadByteCount()
                         + size) {
-                    if (mCorrespondingEvent.firstEntry().getValue() instanceof ImageEvent) {
-                        // Invalid thumbnail offset: tag metadata overlaps with
-                        // strip.
+                    Object event = mCorrespondingEvent.firstEntry().getValue();
+                    if (event instanceof ImageEvent) {
+                        // Tag value overlaps thumbnail, ignore thumbnail.
+                        Log.w(TAG, "Thumbnail overlaps value for tag: \n" + tag.toString());
                         Entry<Integer, Object> entry = mCorrespondingEvent.pollFirstEntry();
-                        // Ignore thumbnail.
                         Log.w(TAG, "Invalid thumbnail offset: " + entry.getKey());
                     } else {
+                        // Tag value overlaps another tag, shorten count
+                        if (event instanceof IfdEvent) {
+                            Log.w(TAG, "Ifd " + ((IfdEvent) event).ifd
+                                    + " overlaps value for tag: \n" + tag.toString());
+                        } else if (event instanceof ExifTagEvent) {
+                            Log.w(TAG, "Tag value for tag: \n"
+                                    + ((ExifTagEvent) event).tag.toString()
+                                    + " overlaps value for tag: \n" + tag.toString());
+                        }
                         size = mCorrespondingEvent.firstEntry().getKey()
                                 - mTiffStream.getReadByteCount();
                         Log.w(TAG, "Invalid size of tag: \n" + tag.toString()
