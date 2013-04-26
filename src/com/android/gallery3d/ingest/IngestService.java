@@ -37,7 +37,6 @@ import android.widget.Adapter;
 import com.android.gallery3d.R;
 import com.android.gallery3d.app.NotificationIds;
 import com.android.gallery3d.data.MtpClient;
-import com.android.gallery3d.ingest.data.MtpBitmapFetch;
 import com.android.gallery3d.util.BucketNames;
 
 import java.util.ArrayList;
@@ -70,6 +69,7 @@ public class IngestService extends Service implements ImportTask.Listener,
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder;
     private long mLastProgressIndexTime = 0;
+    private boolean mNeedRelaunchNotification = false;
 
     @Override
     public void onCreate() {
@@ -139,7 +139,15 @@ public class IngestService extends Service implements ImportTask.Listener,
     protected void setClientActivity(IngestActivity activity) {
         if (mClientActivity == activity) return;
         mClientActivity = activity;
-        if (mClientActivity == null) return;
+        if (mClientActivity == null) {
+            if (mNeedRelaunchNotification) {
+                mNotificationBuilder.setProgress(0, 0, false)
+                    .setContentText(getResources().getText(R.string.ingest_scanning_done));
+                mNotificationManager.notify(NotificationIds.INGEST_NOTIFICATION_SCANNING,
+                    mNotificationBuilder.build());
+            }
+            return;
+        }
         mNotificationManager.cancel(NotificationIds.INGEST_NOTIFICATION_IMPORTING);
         mNotificationManager.cancel(NotificationIds.INGEST_NOTIFICATION_SCANNING);
         if (mRedeliverImportFinish) {
@@ -187,6 +195,7 @@ public class IngestService extends Service implements ImportTask.Listener,
     public void deviceRemoved(MtpDevice device) {
         if (device == mDevice) {
             setDevice(null);
+            mNeedRelaunchNotification = false;
         }
     }
 
@@ -196,6 +205,7 @@ public class IngestService extends Service implements ImportTask.Listener,
         if (pathIfSuccessful != null) {
             mScannerClient.scanPath(pathIfSuccessful);
         }
+        mNeedRelaunchNotification = false;
         if (mClientActivity != null) {
             mClientActivity.onImportProgress(visitedCount, totalCount, pathIfSuccessful);
         }
@@ -208,6 +218,7 @@ public class IngestService extends Service implements ImportTask.Listener,
     @Override
     public void onImportFinish(Collection<MtpObjectInfo> objectsNotImported) {
         stopForeground(true);
+        mNeedRelaunchNotification = true;
         if (mClientActivity != null) {
             mClientActivity.onImportFinish(objectsNotImported);
         } else {
@@ -222,6 +233,7 @@ public class IngestService extends Service implements ImportTask.Listener,
 
     @Override
     public void onObjectIndexed(MtpObjectInfo object, int numVisited) {
+        mNeedRelaunchNotification = false;
         if (mClientActivity != null) {
             mClientActivity.onObjectIndexed(object, numVisited);
         } else {
@@ -244,6 +256,7 @@ public class IngestService extends Service implements ImportTask.Listener,
 
     @Override
     public void onIndexFinish() {
+        mNeedRelaunchNotification = true;
         if (mClientActivity != null) {
             mClientActivity.onIndexFinish();
         } else {
