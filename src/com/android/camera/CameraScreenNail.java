@@ -89,6 +89,12 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
         public boolean requiresSurfaceTexture() {
             return true;
         }
+
+        @Override
+        public RawTexture copyToTexture(GLCanvas c, RawTexture texture, int w, int h) {
+            // We shouldn't be here since requireSurfaceTexture() returns true.
+            return null;
+        }
     };
     private DrawClient mDraw = mDefaultDraw;
     private float mAlpha = 1f;
@@ -110,6 +116,8 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
         void onDraw(GLCanvas canvas, int x, int y, int width, int height);
 
         boolean requiresSurfaceTexture();
+        // The client should implement this if requiresSurfaceTexture() is false;
+        RawTexture copyToTexture(GLCanvas c, RawTexture texture, int width, int height);
     }
 
     public CameraScreenNail(Listener listener, Resources res) {
@@ -410,16 +418,13 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
     }
 
     private void copyPreviewTexture(GLCanvas canvas) {
-        if (!mDraw.requiresSurfaceTexture() && mAnimTexture == null) {
-            mAnimTexture = new RawTexture(getTextureWidth(), getTextureHeight(), true);
-            mAnimTexture.setIsFlippedVertically(true);
-        }
-        int width = mAnimTexture.getWidth();
-        int height = mAnimTexture.getHeight();
-        canvas.beginRenderTarget(mAnimTexture);
         if (!mDraw.requiresSurfaceTexture()) {
-            mDraw.onDraw(canvas, 0, 0, width, height);
+            mAnimTexture =  mDraw.copyToTexture(
+                    canvas, mAnimTexture, getTextureWidth(), getTextureHeight());
         } else {
+            int width = mAnimTexture.getWidth();
+            int height = mAnimTexture.getHeight();
+            canvas.beginRenderTarget(mAnimTexture);
             // Flip preview texture vertically. OpenGL uses bottom left point
             // as the origin (0, 0).
             canvas.translate(0, height);
@@ -427,8 +432,8 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
             getSurfaceTexture().getTransformMatrix(mTextureTransformMatrix);
             updateTransformMatrix(mTextureTransformMatrix);
             canvas.drawTexture(mExtTexture, mTextureTransformMatrix, 0, 0, width, height);
+            canvas.endRenderTarget();
         }
-        canvas.endRenderTarget();
     }
 
     @Override
