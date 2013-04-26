@@ -293,6 +293,9 @@ public class PieRenderer extends OverlayRenderer
             if (mXFade != null) {
                 mXFade.cancel();
             }
+            if (mLabel != null) {
+                mLabel.setText("");
+            }
         }
         setVisible(show);
         mHandler.sendEmptyMessage(show ? MSG_OPEN : MSG_CLOSE);
@@ -513,6 +516,7 @@ public class PieRenderer extends OverlayRenderer
             canvas.restoreToCount(state);
             return;
         }
+        if (mState != STATE_PIE) return;
         if (!hasOpenItem() || (mXFade != null)) {
             // draw base menu
             drawArc(canvas, getLevel(), getParent());
