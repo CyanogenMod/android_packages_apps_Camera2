@@ -21,16 +21,13 @@
     <!-- no translation found for original_picture_text (3076213290079909698) -->
     <skip />
     <string name="setting_wallpaper" msgid="4679087092300036632">"배경화면 설정 중"</string>
-    <!-- no translation found for download_failure (5923323939788582895) -->
-    <skip />
+    <string name="download_failure" msgid="5923323939788582895">"네트워크를 사용할 수 없기 때문에 사진을 다운로드할 수 없습니다."</string>
     <string name="original" msgid="3524493791230430897">"원본"</string>
     <string name="borders" msgid="2067345080568684614">"테두리"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"실행취소"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"다시실행"</string>
-    <!-- no translation found for show_imagestate_panel (281932769701043015) -->
-    <skip />
-    <!-- no translation found for hide_imagestate_panel (7207643485811695257) -->
-    <skip />
+    <string name="show_imagestate_panel" msgid="281932769701043015">"적용된 효과 표시"</string>
+    <string name="hide_imagestate_panel" msgid="7207643485811695257">"적용된 효과 숨기기"</string>
     <string name="menu_settings" msgid="6428291655769260831">"설정"</string>
     <string name="unsaved" msgid="8704442449002374375">"이 이미지에 저장하지 않은 변경사항이 있습니다."</string>
     <string name="save_before_exit" msgid="2680660633675916712">"저장하고 나서 종료하시겠습니까?"</string>
