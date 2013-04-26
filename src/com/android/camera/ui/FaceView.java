@@ -33,15 +33,13 @@ import android.view.View;
 
 import com.android.camera.CameraActivity;
 import com.android.camera.CameraScreenNail;
-import com.android.camera.NewPhotoUI;
 import com.android.camera.Util;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
 
 @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class FaceView extends View
-    implements FocusIndicator, Rotatable,
-    NewPhotoUI.SurfaceTextureSizeChangedListener {
+    implements FocusIndicator, Rotatable {
     private static final String TAG = "CAM FaceView";
     private final boolean LOGV = false;
     // The value for android.hardware.Camera.setDisplayOrientation.
@@ -95,11 +93,6 @@ public class FaceView extends View
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Style.STROKE);
         mPaint.setStrokeWidth(res.getDimension(R.dimen.face_circle_stroke));
-    }
-
-    public void onSurfaceTextureSizeChanged(int uncroppedWidth, int uncroppedHeight) {
-        mUncroppedWidth = uncroppedWidth;
-        mUncroppedHeight = uncroppedHeight;
     }
 
     public void setFaces(Face[] faces) {
