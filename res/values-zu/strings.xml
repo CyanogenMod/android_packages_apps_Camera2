@@ -302,7 +302,7 @@
     <string name="pref_camera_scenemode_label_night" msgid="1269871886845854574">"EBUSUKU"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="2802732082948866877">"UKUSHONA KWELANGA"</string>
     <string name="pref_camera_scenemode_label_party" msgid="1409459091844374828">"IPHATHI"</string>
-    <string name="pref_camera_countdown_label" msgid="7592784692450586126">"ISIKHALI SESHIKHATHI ESIBALA NGOKWEHLA"</string>
+    <string name="pref_camera_countdown_label" msgid="7592784692450586126">"ISIBALI SESHIKHATHI ESIBALA NGOKWEHLA"</string>
     <string name="pref_camera_countdown_label_off" msgid="4987856883590176585">"ISIKALI SESIKHATHI SIVALIWE"</string>
     <string name="pref_camera_countdown_label_one" msgid="1101814103087928898">"1 ISEKHONDI"</string>
     <string name="pref_camera_countdown_label_three" msgid="1047399297342955649">"3 AMASEKHONDI"</string>
