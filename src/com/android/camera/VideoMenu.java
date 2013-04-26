@@ -62,18 +62,18 @@ public class VideoMenu extends PieController
         PieItem item = null;
         // flash
         if (group.findPreference(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE) != null) {
-            item = makeItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE, POS_FLASH, 5);
+            item = makeItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE, POS_FLASH, 4);
             mRenderer.addItem(item);
         }
         // white balance
         if (group.findPreference(CameraSettings.KEY_WHITE_BALANCE) != null) {
-            item = makeItem(CameraSettings.KEY_WHITE_BALANCE, POS_WB, 5);
+            item = makeItem(CameraSettings.KEY_WHITE_BALANCE, POS_WB, 4);
             mRenderer.addItem(item);
         }
         // camera switcher
         if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
             item = makeItem(R.drawable.ic_switch_back);
-            item.setPosition(POS_SWITCH, 5);
+            item.setPosition(POS_SWITCH, 4);
             IconListPreference lpref = (IconListPreference) group.findPreference(
                     CameraSettings.KEY_CAMERA_ID);
             item.setLabel(lpref.getLabel());
@@ -111,7 +111,7 @@ public class VideoMenu extends PieController
                 CameraSettings.KEY_RECORD_LOCATION
         };
         item = makeItem(R.drawable.ic_settings_holo_light);
-        item.setPosition(POS_SET, 5);
+        item.setPosition(POS_SET, 4);
         item.setLabel(mActivity.getResources().getString(R.string.camera_menu_settings_label));
         item.setOnClickListener(new OnClickListener() {
             @Override
