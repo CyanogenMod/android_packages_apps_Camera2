@@ -50,9 +50,6 @@ public class ImagePreset {
     private static final String LOGTAG = "ImagePreset";
 
     private FilterRepresentation mBorder = null;
-    public static final int QUALITY_ICON = 0;
-    public static final int QUALITY_PREVIEW = 1;
-    public static final int QUALITY_FINAL = 2;
     public static final int STYLE_ICON = 3;
     public static final String PRESET_NAME = "PresetName";
 
@@ -472,7 +469,7 @@ public class ImagePreset {
         if (mBorder != null && mDoApplyGeometry) {
             mBorder.synchronizeRepresentation();
             bitmap = environment.applyRepresentation(mBorder, bitmap);
-            if (environment.getQuality() == QUALITY_FINAL) {
+            if (environment.getQuality() == FilterEnvironment.QUALITY_FINAL) {
                 UsageStatistics.onEvent(UsageStatistics.COMPONENT_EDITOR,
                         "SaveBorder", mBorder.getName(), 1);
             }
@@ -499,7 +496,7 @@ public class ImagePreset {
                     representation.synchronizeRepresentation();
                 }
                 bitmap = environment.applyRepresentation(representation, bitmap);
-                if (environment.getQuality() == QUALITY_FINAL) {
+                if (environment.getQuality() == FilterEnvironment.QUALITY_FINAL) {
                     UsageStatistics.onEvent(UsageStatistics.COMPONENT_EDITOR,
                             "SaveFilter", representation.getName(), 1);
                 }

@@ -29,8 +29,9 @@ import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.FilterEnvironment;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.presets.PipelineInterface;
 
-public class CachingPipeline {
+public class CachingPipeline implements PipelineInterface {
     private static final String LOGTAG = "CachingPipeline";
     private boolean DEBUG = false;
 
@@ -65,20 +66,8 @@ public class CachingPipeline {
         mName = name;
     }
 
-    public static synchronized Resources getResources() {
-        return sResources;
-    }
-
-    public static synchronized void setResources(Resources resources) {
-        sResources = resources;
-    }
-
     public static synchronized RenderScript getRenderScriptContext() {
         return sRS;
-    }
-
-    public static synchronized void setRenderScriptContext(RenderScript RS) {
-        sRS = RS;
     }
 
     public static synchronized void createRenderscriptContext(Activity context) {
@@ -128,6 +117,10 @@ public class CachingPipeline {
         }
     }
 
+    public Resources getResources() {
+        return sRS.getApplicationContext().getResources();
+    }
+
     private synchronized void destroyPixelAllocations() {
         if (DEBUG) {
             Log.v(LOGTAG, "destroyPixelAllocations in " + getName());
@@ -167,14 +160,14 @@ public class CachingPipeline {
     }
 
     private void setupEnvironment(ImagePreset preset, boolean highResPreview) {
-        mEnvironment.setCachingPipeline(this);
+        mEnvironment.setPipeline(this);
         mEnvironment.setFiltersManager(mFiltersManager);
         if (highResPreview) {
             mEnvironment.setScaleFactor(mHighResPreviewScaleFactor);
         } else {
             mEnvironment.setScaleFactor(mPreviewScaleFactor);
         }
-        mEnvironment.setQuality(ImagePreset.QUALITY_PREVIEW);
+        mEnvironment.setQuality(FilterEnvironment.QUALITY_PREVIEW);
         mEnvironment.setImagePreset(preset);
         mEnvironment.setStop(false);
     }
@@ -293,11 +286,11 @@ public class CachingPipeline {
                     || request.getType() == RenderingRequest.STYLE_ICON_RENDERING) {
 
                 if (request.getType() == RenderingRequest.ICON_RENDERING) {
-                    mEnvironment.setQuality(ImagePreset.QUALITY_ICON);
+                    mEnvironment.setQuality(FilterEnvironment.QUALITY_ICON);
                 } else  if (request.getType() == RenderingRequest.STYLE_ICON_RENDERING) {
                     mEnvironment.setQuality(ImagePreset.STYLE_ICON);
                 } else {
-                    mEnvironment.setQuality(ImagePreset.QUALITY_PREVIEW);
+                    mEnvironment.setQuality(FilterEnvironment.QUALITY_PREVIEW);
                 }
 
                 Bitmap bmp = preset.apply(bitmap, mEnvironment);
@@ -331,7 +324,7 @@ public class CachingPipeline {
                 return bitmap;
             }
             setupEnvironment(preset, false);
-            mEnvironment.setQuality(ImagePreset.QUALITY_FINAL);
+            mEnvironment.setQuality(FilterEnvironment.QUALITY_FINAL);
             mEnvironment.setScaleFactor(1.0f);
             mFiltersManager.freeFilterResources(preset);
             bitmap = preset.applyGeometry(bitmap, mEnvironment);
@@ -348,7 +341,7 @@ public class CachingPipeline {
         }
         mGeometry.useRepresentation(preset.getGeometry());
         return mGeometry.apply(bitmap, mPreviewScaleFactor,
-                ImagePreset.QUALITY_PREVIEW);
+                FilterEnvironment.QUALITY_PREVIEW);
     }
 
     public synchronized void compute(TripleBufferBitmap buffer, ImagePreset preset, int type) {
@@ -461,4 +454,7 @@ public class CachingPipeline {
         return mName;
     }
 
+    public RenderScript getRSContext() {
+        return CachingPipeline.getRenderScriptContext();
+    }
 }

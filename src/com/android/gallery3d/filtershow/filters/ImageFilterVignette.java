@@ -22,7 +22,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.presets.FilterEnvironment;
 
 public class ImageFilterVignette extends SimpleImageFilter {
     private static final String LOGTAG = "ImageFilterVignette";
@@ -57,9 +57,9 @@ public class ImageFilterVignette extends SimpleImageFilter {
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
-        if (SIMPLE_ICONS && ImagePreset.QUALITY_ICON == quality) {
+        if (SIMPLE_ICONS && FilterEnvironment.QUALITY_ICON == quality) {
             if (mOverlayBitmap == null) {
-                Resources res = getEnvironment().getCachingPipeline().getResources();
+                Resources res = getEnvironment().getPipeline().getResources();
                 mOverlayBitmap = IconUtilities.getFXBitmap(res,
                         R.drawable.filtershow_icon_vignette);
             }
