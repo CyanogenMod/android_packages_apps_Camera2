@@ -16,6 +16,8 @@
 
 package com.android.camera;
 
+import android.content.Context;
+import android.content.res.TypedArray;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.view.View;
@@ -28,13 +30,23 @@ import com.android.gallery3d.R;
  * settings in the viewfinder.
  */
 public class OnScreenIndicators {
+    private final int[] mWBArray;
     private final View mOnScreenIndicators;
     private final ImageView mExposureIndicator;
     private final ImageView mFlashIndicator;
     private final ImageView mSceneIndicator;
-    private final ImageView mHdrIndicator;
+    private final ImageView mLocationIndicator;
+    private final ImageView mTimerIndicator;
+    private final ImageView mWBIndicator;
 
-    public OnScreenIndicators(View onScreenIndicatorsView) {
+    public OnScreenIndicators(Context ctx, View onScreenIndicatorsView) {
+        TypedArray iconIds = ctx.getResources().obtainTypedArray(
+                R.array.camera_wb_indicators);
+        final int n = iconIds.length();
+        mWBArray = new int[n];
+        for (int i = 0; i < n; i++) {
+            mWBArray[i] = iconIds.getResourceId(i, R.drawable.ic_indicator_wb_off);
+        }
         mOnScreenIndicators = onScreenIndicatorsView;
         mExposureIndicator = (ImageView) onScreenIndicatorsView.findViewById(
                 R.id.menu_exposure_indicator);
@@ -42,7 +54,12 @@ public class OnScreenIndicators {
                 R.id.menu_flash_indicator);
         mSceneIndicator = (ImageView) onScreenIndicatorsView.findViewById(
                 R.id.menu_scenemode_indicator);
-        mHdrIndicator = (ImageView) onScreenIndicatorsView.findViewById(R.id.menu_hdr_indicator);
+        mLocationIndicator = (ImageView) onScreenIndicatorsView.findViewById(
+                R.id.menu_location_indicator);
+        mTimerIndicator = (ImageView) onScreenIndicatorsView.findViewById(
+                R.id.menu_timer_indicator);
+        mWBIndicator = (ImageView) onScreenIndicatorsView.findViewById(
+                R.id.menu_wb_indicator);
     }
 
     /**
@@ -52,7 +69,9 @@ public class OnScreenIndicators {
         updateExposureOnScreenIndicator(0);
         updateFlashOnScreenIndicator(Parameters.FLASH_MODE_OFF);
         updateSceneOnScreenIndicator(Parameters.SCENE_MODE_AUTO);
-        updateHdrOnScreenIndicator(Parameters.SCENE_MODE_AUTO);
+        updateWBIndicator(2);
+        updateTimerIndicator(false);
+        updateLocationIndicator(false);
     }
 
     /**
@@ -101,6 +120,23 @@ public class OnScreenIndicators {
         mExposureIndicator.setImageResource(id);
     }
 
+    public void updateWBIndicator(int wbIndex) {
+        if (mWBIndicator == null) return;
+        mWBIndicator.setImageResource(mWBArray[wbIndex]);
+    }
+
+    public void updateTimerIndicator(boolean on) {
+        if (mTimerIndicator == null) return;
+        mTimerIndicator.setImageResource(on ? R.drawable.ic_indicator_timer_on
+                : R.drawable.ic_indicator_timer_off);
+    }
+
+    public void updateLocationIndicator(boolean on) {
+        if (mLocationIndicator == null) return;
+        mLocationIndicator.setImageResource(on ? R.drawable.ic_indicator_loc_on
+                : R.drawable.ic_indicator_loc_off);
+    }
+
     /**
      * Set the flash indicator to the given value.
      *
@@ -134,27 +170,12 @@ public class OnScreenIndicators {
         if (mSceneIndicator == null) {
             return;
         }
-        if ((value == null) || Parameters.SCENE_MODE_AUTO.equals(value)
-                || Parameters.SCENE_MODE_HDR.equals(value)) {
+        if ((value == null) || Parameters.SCENE_MODE_AUTO.equals(value)) {
             mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_off);
+        } else if (Parameters.SCENE_MODE_HDR.equals(value)) {
+            mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_hdr);
         } else {
             mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_on);
-        }
-    }
-
-    /**
-     * Sets the scene indicator to show whether HDR is on or off.
-     *
-     * @param value the current Parameters.SCENE_MODE_* value.
-     */
-    public void updateHdrOnScreenIndicator(String value) {
-        if (mHdrIndicator == null) {
-            return;
-        }
-        if ((value != null) && Parameters.SCENE_MODE_HDR.equals(value)) {
-            mHdrIndicator.setImageResource(R.drawable.ic_indicator_hdr_on);
-        } else {
-            mHdrIndicator.setImageResource(R.drawable.ic_indicator_hdr_off);
         }
     }
 
