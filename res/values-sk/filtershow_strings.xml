@@ -21,16 +21,13 @@
     <!-- no translation found for original_picture_text (3076213290079909698) -->
     <skip />
     <string name="setting_wallpaper" msgid="4679087092300036632">"Prebieha nastavovanie tapety"</string>
-    <!-- no translation found for download_failure (5923323939788582895) -->
-    <skip />
+    <string name="download_failure" msgid="5923323939788582895">"Fotografiu sa nepodarilo prevziať. Sieť nie je k dispozícii."</string>
     <string name="original" msgid="3524493791230430897">"Pôvodné"</string>
     <string name="borders" msgid="2067345080568684614">"Okraje"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Späť"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"Znova"</string>
-    <!-- no translation found for show_imagestate_panel (281932769701043015) -->
-    <skip />
-    <!-- no translation found for hide_imagestate_panel (7207643485811695257) -->
-    <skip />
+    <string name="show_imagestate_panel" msgid="281932769701043015">"Zobraziť použité efekty"</string>
+    <string name="hide_imagestate_panel" msgid="7207643485811695257">"Skryť použité efekty"</string>
     <string name="menu_settings" msgid="6428291655769260831">"Nastavenia"</string>
     <string name="unsaved" msgid="8704442449002374375">"Niektoré zmeny obrázka nie sú uložené."</string>
     <string name="save_before_exit" msgid="2680660633675916712">"Chcete zmeny pred ukončením uložiť?"</string>
