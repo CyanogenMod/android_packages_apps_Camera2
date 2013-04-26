@@ -235,8 +235,7 @@
     <string name="pref_camera_id_entry_back" msgid="5142699735103692485">"Înapoi"</string>
     <string name="pref_camera_id_entry_front" msgid="5668958706828733669">"Frontal"</string>
     <string name="pref_camera_recordlocation_title" msgid="371208839215448917">"Stocaţi locaţia"</string>
-    <!-- no translation found for pref_camera_location_label (2254270920298609161) -->
-    <skip />
+    <string name="pref_camera_location_label" msgid="2254270920298609161">"LOCAȚIE"</string>
     <string name="pref_camera_timer_title" msgid="3105232208281893389">"Cronometru numărătoare inversă"</string>
   <plurals name="pref_camera_timer_entry">
     <item quantity="one" msgid="1654523400981245448">"O secundă"</item>
@@ -296,31 +295,23 @@
     <string name="pref_camera_scenemode_entry_night" msgid="7606898503102476329">"Noapte"</string>
     <string name="pref_camera_scenemode_entry_sunset" msgid="181661154611507212">"Apus de soare"</string>
     <string name="pref_camera_scenemode_entry_party" msgid="907053529286788253">"Petrecere"</string>
-    <!-- no translation found for pref_camera_scenemode_label_auto (4475096836397300237) -->
-    <skip />
+    <string name="pref_camera_scenemode_label_auto" msgid="4475096836397300237">"NICIUNA"</string>
     <string name="pref_camera_scenemode_label_action" msgid="964748409622151496">"ACȚIUNE"</string>
     <string name="pref_camera_scenemode_label_night" msgid="1269871886845854574">"NOAPTE"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="2802732082948866877">"APUS DE SOARE"</string>
     <string name="pref_camera_scenemode_label_party" msgid="1409459091844374828">"PETRECERE"</string>
-    <!-- no translation found for pref_camera_countdown_label (7592784692450586126) -->
-    <skip />
-    <!-- no translation found for pref_camera_countdown_label_off (4987856883590176585) -->
-    <skip />
-    <!-- no translation found for pref_camera_countdown_label_one (1101814103087928898) -->
-    <skip />
-    <!-- no translation found for pref_camera_countdown_label_three (1047399297342955649) -->
-    <skip />
-    <!-- no translation found for pref_camera_countdown_label_ten (6274681535347260279) -->
-    <skip />
-    <!-- no translation found for pref_camera_countdown_label_fifteen (4544824246687597089) -->
-    <skip />
+    <string name="pref_camera_countdown_label" msgid="7592784692450586126">"CRONOMETRU NUMĂRARE INVERSĂ"</string>
+    <string name="pref_camera_countdown_label_off" msgid="4987856883590176585">"TEMPORIZATOR DEZACTIVAT"</string>
+    <string name="pref_camera_countdown_label_one" msgid="1101814103087928898">"O SECUNDĂ"</string>
+    <string name="pref_camera_countdown_label_three" msgid="1047399297342955649">"3 SECUNDE"</string>
+    <string name="pref_camera_countdown_label_ten" msgid="6274681535347260279">"10 SECUNDE"</string>
+    <string name="pref_camera_countdown_label_fifteen" msgid="4544824246687597089">"15 SECUNDE"</string>
     <string name="not_selectable_in_scene_mode" msgid="2970291701448555126">"Nu este selectabil în modul scenă."</string>
     <string name="pref_exposure_title" msgid="1229093066434614811">"Expunere"</string>
     <string name="pref_exposure_label" msgid="552624394642497940">"EXPUNERE"</string>
     <!-- no translation found for pref_camera_hdr_default (1336869406134365882) -->
     <skip />
-    <!-- no translation found for pref_camera_hdr_label (7217211253357027510) -->
-    <skip />
+    <string name="pref_camera_hdr_label" msgid="7217211253357027510">"HDR"</string>
     <string name="pref_camera_id_label_back" msgid="8745553500400332333">"CAMERA FOTO FRONTALĂ"</string>
     <string name="pref_camera_id_label_front" msgid="8699439330056996709">"CAMERA FOTO SPATE"</string>
     <string name="dialog_ok" msgid="6263301364153382152">"OK"</string>
