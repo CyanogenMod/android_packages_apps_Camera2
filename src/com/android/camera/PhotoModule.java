@@ -1909,7 +1909,7 @@ public class PhotoModule
         mLocationManager.recordLocation(recordLocation);
 
         setCameraParametersWhenIdle(UPDATE_PARAM_PREFERENCE);
-        mUI.updateOnScreenIndicators(mParameters, mPreferences);
+        mUI.updateOnScreenIndicators(mParameters, mPreferenceGroup, mPreferences);
     }
 
     @Override

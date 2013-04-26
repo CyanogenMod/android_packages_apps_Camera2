@@ -143,7 +143,7 @@ public class PhotoUI implements PieListener,
     }
 
     private void initIndicators() {
-        mOnScreenIndicators = new OnScreenIndicators(
+        mOnScreenIndicators = new OnScreenIndicators(mActivity,
                 mActivity.findViewById(R.id.on_screen_indicators));
     }
 
@@ -185,7 +185,7 @@ public class PhotoUI implements PieListener,
         mRenderOverlay.requestLayout();
 
         initializeZoom(params);
-        updateOnScreenIndicators(params, prefs);
+        updateOnScreenIndicators(params, prefGroup, prefs);
     }
 
     private void openMenu() {
@@ -294,13 +294,30 @@ public class PhotoUI implements PieListener,
     }
 
     public void updateOnScreenIndicators(Camera.Parameters params,
-            ComboPreferences prefs) {
+            PreferenceGroup group, ComboPreferences prefs) {
         if (params == null) return;
         mOnScreenIndicators.updateSceneOnScreenIndicator(params.getSceneMode());
         mOnScreenIndicators.updateExposureOnScreenIndicator(params,
                 CameraSettings.readExposure(prefs));
         mOnScreenIndicators.updateFlashOnScreenIndicator(params.getFlashMode());
-        mOnScreenIndicators.updateHdrOnScreenIndicator(params.getSceneMode());
+        int wbIndex = 2;
+        ListPreference pref = group.findPreference(CameraSettings.KEY_WHITE_BALANCE);
+        if (pref != null) {
+            wbIndex = pref.getCurrentIndex();
+        }
+        mOnScreenIndicators.updateWBIndicator(wbIndex);
+        pref = group.findPreference(CameraSettings.KEY_TIMER);
+        boolean timer = false;
+        if (pref != null) {
+            timer = !(pref.getCurrentIndex() == 0);
+        }
+        mOnScreenIndicators.updateTimerIndicator(timer);
+        boolean location = false;
+        pref = group.findPreference(CameraSettings.KEY_RECORD_LOCATION);
+        if (pref != null) {
+            location = !(pref.getCurrentIndex() == 0);
+        }
+        mOnScreenIndicators.updateLocationIndicator(location);
     }
 
 
