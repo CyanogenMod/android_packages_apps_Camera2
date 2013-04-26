@@ -16,7 +16,7 @@
 
 package com.android.gallery3d.filtershow.filters;
 
-import com.android.gallery3d.app.Log;
+import android.util.Log;
 import com.android.gallery3d.filtershow.editors.BasicEditor;
 
 public class FilterRepresentation implements Cloneable {

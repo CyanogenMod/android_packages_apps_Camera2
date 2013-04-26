@@ -18,11 +18,9 @@ package com.android.gallery3d.filtershow.presets;
 
 import android.graphics.Bitmap;
 import android.support.v8.renderscript.Allocation;
-import android.util.Log;
 
-import com.android.gallery3d.filtershow.cache.CachingPipeline;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
-import com.android.gallery3d.filtershow.filters.FiltersManager;
+import com.android.gallery3d.filtershow.filters.FiltersManagerInterface;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 
 import java.lang.ref.WeakReference;
@@ -33,9 +31,13 @@ public class FilterEnvironment {
     private ImagePreset mImagePreset;
     private float mScaleFactor;
     private int mQuality;
-    private FiltersManager mFiltersManager;
-    private CachingPipeline mCachingPipeline;
+    private FiltersManagerInterface mFiltersManager;
+    private PipelineInterface mPipeline;
     private volatile boolean mStop = false;
+
+    public static final int QUALITY_ICON = 0;
+    public static final int QUALITY_PREVIEW = 1;
+    public static final int QUALITY_FINAL = 2;
 
     public synchronized boolean needsStop() {
         return mStop;
@@ -98,11 +100,11 @@ public class FilterEnvironment {
         return mQuality;
     }
 
-    public void setFiltersManager(FiltersManager filtersManager) {
+    public void setFiltersManager(FiltersManagerInterface filtersManager) {
         mFiltersManager = filtersManager;
     }
 
-    public FiltersManager getFiltersManager() {
+    public FiltersManagerInterface getFiltersManager() {
         return mFiltersManager;
     }
 
@@ -126,12 +128,12 @@ public class FilterEnvironment {
         return ret;
     }
 
-    public CachingPipeline getCachingPipeline() {
-        return mCachingPipeline;
+    public PipelineInterface getPipeline() {
+        return mPipeline;
     }
 
-    public void setCachingPipeline(CachingPipeline cachingPipeline) {
-        mCachingPipeline = cachingPipeline;
+    public void setPipeline(PipelineInterface cachingPipeline) {
+        mPipeline = cachingPipeline;
     }
 
 }
