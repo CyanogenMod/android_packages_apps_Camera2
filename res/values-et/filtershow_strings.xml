@@ -21,16 +21,13 @@
     <!-- no translation found for original_picture_text (3076213290079909698) -->
     <skip />
     <string name="setting_wallpaper" msgid="4679087092300036632">"Taustapildi määramine"</string>
-    <!-- no translation found for download_failure (5923323939788582895) -->
-    <skip />
+    <string name="download_failure" msgid="5923323939788582895">"Fotot ei õnnestunud alla laadida, kuna võrk ei ole saadaval."</string>
     <string name="original" msgid="3524493791230430897">"Originaal"</string>
     <string name="borders" msgid="2067345080568684614">"Äärised"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Võta tagasi"</string>
     <string name="filtershow_redo" msgid="4219489910543059747">"Tee uuesti"</string>
-    <!-- no translation found for show_imagestate_panel (281932769701043015) -->
-    <skip />
-    <!-- no translation found for hide_imagestate_panel (7207643485811695257) -->
-    <skip />
+    <string name="show_imagestate_panel" msgid="281932769701043015">"Kuva rakendatud efektid"</string>
+    <string name="hide_imagestate_panel" msgid="7207643485811695257">"Peida rakendatud efektid"</string>
     <string name="menu_settings" msgid="6428291655769260831">"Seaded"</string>
     <string name="unsaved" msgid="8704442449002374375">"Kujutisel on salvestamata muudatusi."</string>
     <string name="save_before_exit" msgid="2680660633675916712">"Kas soovite enne väljumist salvestada?"</string>
