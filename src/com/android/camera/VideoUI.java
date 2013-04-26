@@ -100,7 +100,7 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
                 }
             }
         });
-        mOnScreenIndicators = new OnScreenIndicators(
+        mOnScreenIndicators = new OnScreenIndicators(mActivity,
                 mActivity.findViewById(R.id.on_screen_indicators));
         mOnScreenIndicators.resetToDefault();
         if (mController.isVideoCaptureIntent()) {
