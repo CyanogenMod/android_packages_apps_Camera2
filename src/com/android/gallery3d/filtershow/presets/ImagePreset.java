@@ -30,6 +30,7 @@ import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.state.State;
 import com.android.gallery3d.filtershow.state.StateAdapter;
+import com.android.gallery3d.util.UsageStatistics;
 
 import java.util.Vector;
 
@@ -459,6 +460,10 @@ public class ImagePreset {
         if (mBorder != null && mDoApplyGeometry) {
             mBorder.synchronizeRepresentation();
             bitmap = environment.applyRepresentation(mBorder, bitmap);
+            if (environment.getQuality() == QUALITY_FINAL) {
+                UsageStatistics.onEvent(UsageStatistics.COMPONENT_EDITOR,
+                        "SaveBorder", mBorder.getName(), 1);
+            }
         }
         return bitmap;
     }
@@ -478,6 +483,10 @@ public class ImagePreset {
                     representation.synchronizeRepresentation();
                 }
                 bitmap = environment.applyRepresentation(representation, bitmap);
+                if (environment.getQuality() == QUALITY_FINAL) {
+                    UsageStatistics.onEvent(UsageStatistics.COMPONENT_EDITOR,
+                            "SaveFilter", representation.getName(), 1);
+                }
                 if (environment.needsStop()) {
                     return bitmap;
                 }
