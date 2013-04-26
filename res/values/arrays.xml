@@ -324,6 +324,14 @@
         <item>@drawable/ic_wb_cloudy</item>
     </array>
 
+    <array name="camera_wb_indicators" translatable="false">
+        <item>@drawable/ic_indicator_wb_tungsten</item>
+        <item>@drawable/ic_indicator_wb_fluorescent</item>
+        <item>@drawable/ic_indicator_wb_off</item>
+        <item>@drawable/ic_indicator_wb_daylight</item>
+        <item>@drawable/ic_indicator_wb_cloudy</item>
+    </array>
+
     <!-- Camera Preferences Scene Mode dialog box entries -->
     <string-array name="pref_camera_scenemode_entries" translatable="false">
         <item>@string/pref_camera_scenemode_entry_action</item>
