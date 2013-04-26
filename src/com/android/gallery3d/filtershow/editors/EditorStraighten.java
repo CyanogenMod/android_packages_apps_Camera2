@@ -39,7 +39,7 @@ public class EditorStraighten extends Editor implements EditorInfo {
     @Override
     public String calculateUserMessage(Context context, String effectName, Object parameterValue) {
         String apply = context.getString(R.string.apply_effect);
-        apply += " " + effectName + " " + parameterValue;
+        apply += " " + effectName;
         return apply;
     }
 
