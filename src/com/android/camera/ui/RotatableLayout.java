@@ -62,6 +62,7 @@ public class RotatableLayout extends FrameLayout {
 
     @Override
     public void onAttachedToWindow() {
+        mPrevRotation = Util.getDisplayRotation((Activity) getContext());
         // check if there is any rotation before the view is attached to window
         int currentOrientation = getResources().getConfiguration().orientation;
         if (mInitialOrientation == currentOrientation) {
@@ -74,7 +75,6 @@ public class RotatableLayout extends FrameLayout {
                 && currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             rotateLayout(false);
         }
-        mPrevRotation = Util.getDisplayRotation((Activity) getContext());
     }
 
     @Override
