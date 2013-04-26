@@ -142,6 +142,10 @@ public class ListPreference extends CameraPreference {
         return -1;
     }
 
+    public int getCurrentIndex() {
+        return findIndexOfValue(getValue());
+    }
+
     public String getEntry() {
         return mEntries[findIndexOfValue(getValue())].toString();
     }
