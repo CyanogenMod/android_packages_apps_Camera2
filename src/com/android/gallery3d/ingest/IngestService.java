@@ -38,6 +38,7 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.app.NotificationIds;
 import com.android.gallery3d.data.MtpClient;
 import com.android.gallery3d.util.BucketNames;
+import com.android.gallery3d.util.UsageStatistics;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,6 +64,7 @@ public class IngestService extends Service implements ImportTask.Listener,
     private MtpDeviceIndex mIndex;
     private IngestActivity mClientActivity;
     private boolean mRedeliverImportFinish = false;
+    private int mRedeliverImportFinishCount = 0;
     private Collection<MtpObjectInfo> mRedeliverObjectsNotImported;
     private boolean mRedeliverNotifyIndexChanged = false;
     private boolean mRedeliverIndexFinish = false;
@@ -151,7 +153,8 @@ public class IngestService extends Service implements ImportTask.Listener,
         mNotificationManager.cancel(NotificationIds.INGEST_NOTIFICATION_IMPORTING);
         mNotificationManager.cancel(NotificationIds.INGEST_NOTIFICATION_SCANNING);
         if (mRedeliverImportFinish) {
-            mClientActivity.onImportFinish(mRedeliverObjectsNotImported);
+            mClientActivity.onImportFinish(mRedeliverObjectsNotImported,
+                    mRedeliverImportFinishCount);
             mRedeliverImportFinish = false;
             mRedeliverObjectsNotImported = null;
         }
@@ -188,6 +191,8 @@ public class IngestService extends Service implements ImportTask.Listener,
     public void deviceAdded(MtpDevice device) {
         if (mDevice == null) {
             setDevice(device);
+            UsageStatistics.onEvent(UsageStatistics.COMPONENT_IMPORTER,
+                    "DeviceConnected", null);
         }
     }
 
@@ -217,19 +222,23 @@ public class IngestService extends Service implements ImportTask.Listener,
     }
 
     @Override
-    public void onImportFinish(Collection<MtpObjectInfo> objectsNotImported) {
+    public void onImportFinish(Collection<MtpObjectInfo> objectsNotImported,
+            int visitedCount) {
         stopForeground(true);
         mNeedRelaunchNotification = true;
         if (mClientActivity != null) {
-            mClientActivity.onImportFinish(objectsNotImported);
+            mClientActivity.onImportFinish(objectsNotImported, visitedCount);
         } else {
             mRedeliverImportFinish = true;
             mRedeliverObjectsNotImported = objectsNotImported;
+            mRedeliverImportFinishCount = visitedCount;
             mNotificationBuilder.setProgress(0, 0, false)
                 .setContentText(getResources().getText(R.string.import_complete));
             mNotificationManager.notify(NotificationIds.INGEST_NOTIFICATION_IMPORTING,
                     mNotificationBuilder.build());
         }
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_IMPORTER,
+                "ImportFinished", null, visitedCount);
     }
 
     @Override
