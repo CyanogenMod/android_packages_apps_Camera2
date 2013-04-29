@@ -26,7 +26,9 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
@@ -58,6 +60,8 @@ public class CropActivity extends Activity {
     private CropExtras mCropExtras = null;
     private LoadBitmapTask mLoadBitmapTask = null;
 
+    private int mOutputX = 0;
+    private int mOutputY = 0;
     private Bitmap mOriginalBitmap = null;
     private RectF mOriginalBounds = null;
     private int mOriginalRotation = 0;
@@ -194,16 +198,20 @@ public class CropActivity extends Activity {
             if (mCropExtras != null) {
                 int aspectX = mCropExtras.getAspectX();
                 int aspectY = mCropExtras.getAspectY();
-                int outputX = mCropExtras.getOutputX();
-                int outputY = mCropExtras.getOutputY();
-                if (outputX > 0 && outputY > 0) {
-                    mCropView.applyAspect(outputX, outputY);
+                mOutputX = mCropExtras.getOutputX();
+                mOutputY = mCropExtras.getOutputY();
+                if (mOutputX > 0 && mOutputY > 0) {
+                    mCropView.applyAspect(mOutputX, mOutputY);
+
+                }
+                float spotX = mCropExtras.getSpotlightX();
+                float spotY = mCropExtras.getSpotlightY();
+                if (spotX > 0 && spotY > 0) {
+                    mCropView.setWallpaperSpotlight(spotX, spotY);
                 }
                 if (aspectX > 0 && aspectY > 0) {
                     mCropView.applyAspect(aspectX, aspectY);
                 }
-                mCropView.setWallpaperSpotlight(mCropExtras.getSpotlightX(),
-                        mCropExtras.getSpotlightY());
             }
             enableSave(true);
         } else {
@@ -318,7 +326,7 @@ public class CropActivity extends Activity {
         final View loading = findViewById(R.id.loading);
         loading.setVisibility(View.VISIBLE);
         BitmapIOTask ioTask = new BitmapIOTask(sourceUri, destUri, format, flags, cropBounds,
-                photoBounds, currentBitmapBounds, rotation);
+                photoBounds, currentBitmapBounds, rotation, mOutputX, mOutputY);
         ioTask.execute(currentBitmap);
     }
 
@@ -349,7 +357,8 @@ public class CropActivity extends Activity {
         int mRotation = 0;
 
         public BitmapIOTask(Uri sourceUri, Uri destUri, String outputFormat, int flags,
-                RectF cropBounds, RectF photoBounds, RectF originalBitmapBounds, int rotation) {
+                RectF cropBounds, RectF photoBounds, RectF originalBitmapBounds, int rotation,
+                int outputX, int outputY) {
             mOutputFormat = outputFormat;
             mOutStream = null;
             mOutUri = destUri;
@@ -363,6 +372,8 @@ public class CropActivity extends Activity {
             mRotation = (rotation < 0) ? -rotation : rotation;
             mRotation %= 360;
             mRotation = 90 * (int) (mRotation / 90);  // now mRotation is a multiple of 90
+            mOutputX = outputX;
+            mOutputY = outputY;
 
             if ((flags & DO_EXTRA_OUTPUT) != 0) {
                 if (mOutUri == null) {
@@ -470,7 +481,24 @@ public class CropActivity extends Activity {
                     failure = true;
                     return false;
                 }
-                if (mRotation > 0) {
+                if (mOutputX > 0 && mOutputY > 0) {
+                    Matrix m = new Matrix();
+                    RectF cropRect = new RectF(0, 0, crop.getWidth(), crop.getHeight());
+                    if (mRotation > 0) {
+                        m.setRotate(mRotation);
+                        m.mapRect(cropRect);
+                    }
+                    RectF returnRect = new RectF(0, 0, mOutputX, mOutputY);
+                    m.setRectToRect(cropRect, returnRect, Matrix.ScaleToFit.FILL);
+                    m.preRotate(mRotation);
+                    Bitmap tmp = Bitmap.createBitmap((int) returnRect.width(),
+                            (int) returnRect.height(), Bitmap.Config.ARGB_8888);
+                    if (tmp != null) {
+                        Canvas c = new Canvas(tmp);
+                        c.drawBitmap(crop, m, new Paint());
+                        crop = tmp;
+                    }
+                } else if (mRotation > 0) {
                     Matrix m = new Matrix();
                     m.setRotate(mRotation);
                     Bitmap tmp = Bitmap.createBitmap(crop, 0, 0, crop.getWidth(),
