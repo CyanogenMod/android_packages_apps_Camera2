@@ -135,7 +135,8 @@ public class FilterBasicRepresentation extends FilterRepresentation implements P
 
     @Override
     public String getStateRepresentation() {
-        return "" + getValue();
+        int val = getValue();
+        return ((val > 0) ? "+" : "") + val;
     }
 
     @Override
