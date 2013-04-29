@@ -34,7 +34,7 @@ public class ImportTask implements Runnable {
     public interface Listener {
         void onImportProgress(int visitedCount, int totalCount, String pathIfSuccessful);
 
-        void onImportFinish(Collection<MtpObjectInfo> objectsNotImported);
+        void onImportFinish(Collection<MtpObjectInfo> objectsNotImported, int visitedCount);
     }
 
     static private final String WAKELOCK_LABEL = "MTP Import Task";
@@ -84,7 +84,7 @@ public class ImportTask implements Runnable {
                 }
             }
             if (mListener != null) {
-                mListener.onImportFinish(objectsNotImported);
+                mListener.onImportFinish(objectsNotImported, visited);
             }
         } finally {
             mListener = null;

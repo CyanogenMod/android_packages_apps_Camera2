@@ -19,11 +19,11 @@ package com.android.gallery3d.util;
 import android.content.Context;
 
 public class UsageStatistics {
-    public static final boolean ENABLED = false;
 
     public static final String COMPONENT_GALLERY = "Gallery";
     public static final String COMPONENT_CAMERA = "Camera";
     public static final String COMPONENT_EDITOR = "Editor";
+    public static final String COMPONENT_IMPORTER = "Importer";
 
     public static final String TRANSITION_BACK_BUTTON = "BackButton";
     public static final String TRANSITION_UP_BUTTON = "UpButton";
