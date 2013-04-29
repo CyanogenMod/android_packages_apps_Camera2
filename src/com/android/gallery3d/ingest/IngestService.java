@@ -196,6 +196,7 @@ public class IngestService extends Service implements ImportTask.Listener,
         if (device == mDevice) {
             setDevice(null);
             mNeedRelaunchNotification = false;
+            mNotificationManager.cancel(NotificationIds.INGEST_NOTIFICATION_SCANNING);
         }
     }
 
