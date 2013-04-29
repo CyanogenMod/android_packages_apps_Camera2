@@ -235,6 +235,17 @@ public class CropMath {
         return bmap.getRowBytes() * bmap.getHeight();
     }
 
+    /**
+     * Constrains rotation to be in [0, 90, 180, 270] rounding down.
+     * @param rotation  any rotation value, in degrees
+     * @return  integer rotation in [0, 90, 180, 270]
+     */
+    public static int constrainedRotation(float rotation) {
+        int r = (int) ((rotation % 360) / 90);
+        r = (r < 0) ? (r + 4) : r;
+        return r * 90;
+    }
+
     private static float getUnrotated(float[] rotatedRect, float[] center, RectF unrotated) {
         float dy = rotatedRect[1] - rotatedRect[3];
         float dx = rotatedRect[0] - rotatedRect[2];
