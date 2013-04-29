@@ -178,7 +178,7 @@ public class CameraControls extends RotatableLayout {
         case 90:
             // phone landscape: above anchor on right
             result.right = r - lp.rightMargin;
-            result.left = result.right - tw + lp.leftMargin;
+            result.left = r - tw + lp.leftMargin;
             result.bottom = anchor.top - lp.bottomMargin;
             result.top = anchor.top - th + lp.topMargin;
             break;
