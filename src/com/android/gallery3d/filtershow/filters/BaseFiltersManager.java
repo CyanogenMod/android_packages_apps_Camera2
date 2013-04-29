@@ -99,7 +99,7 @@ public abstract class BaseFiltersManager {
         filters.add(ImageFilterVibrance.class);
         filters.add(ImageFilterSharpen.class);
         filters.add(ImageFilterCurves.class);
-        filters.add(ImageFilterDraw.class);
+        // filters.add(ImageFilterDraw.class);
         filters.add(ImageFilterHue.class);
         filters.add(ImageFilterSaturated.class);
         filters.add(ImageFilterBwFilter.class);
@@ -169,7 +169,7 @@ public abstract class BaseFiltersManager {
 
     public void addTools(Vector<FilterRepresentation> representations) {
         //representations.add(getRepresentation(ImageFilterRedEye.class));
-        representations.add(getRepresentation(ImageFilterDraw.class));
+        // representations.add(getRepresentation(ImageFilterDraw.class));
     }
 
     public void setFilterResources(Resources resources) {

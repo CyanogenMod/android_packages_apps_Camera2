@@ -46,6 +46,7 @@ public class EclipseControl {
     private float mDownRadiusY;
     private Matrix mScrToImg;
 
+    private boolean mShowReshapeHandles = true;
     public final static int HAN_CENTER = 0;
     public final static int HAN_NORTH = 7;
     public final static int HAN_NE = 8;
@@ -57,7 +58,7 @@ public class EclipseControl {
     public final static int HAN_NW = 6;
 
     public EclipseControl(Context context) {
-        mSliderColor = context.getResources().getColor(R.color.slider_line_color);
+        mSliderColor = Color.WHITE;
     }
 
     public void setRadius(float x, float y) {
@@ -215,29 +216,36 @@ public class EclipseControl {
         canvas.drawOval(rect, paint);
         float da = 4;
         float arclen = da + da;
-        for (int i = 0; i < 361; i += 90) {
-            float dx = rx + 10;
-            float dy = ry + 10;
-            rect.left = cx - dx;
-            rect.top = cy - dy;
-            rect.right = cx + dx;
-            rect.bottom = cy + dy;
-            canvas.drawArc(rect, i - da, arclen, false, paint);
-            dx = rx - 10;
-            dy = ry - 10;
-            rect.left = cx - dx;
-            rect.top = cy - dy;
-            rect.right = cx + dx;
-            rect.bottom = cy + dy;
-            canvas.drawArc(rect, i - da, arclen, false, paint);
+        if (mShowReshapeHandles) {
+            paint.setStyle(Paint.Style.STROKE);
+
+            for (int i = 0; i < 361; i += 90) {
+                float dx = rx + 10;
+                float dy = ry + 10;
+                rect.left = cx - dx;
+                rect.top = cy - dy;
+                rect.right = cx + dx;
+                rect.bottom = cy + dy;
+                canvas.drawArc(rect, i - da, arclen, false, paint);
+                dx = rx - 10;
+                dy = ry - 10;
+                rect.left = cx - dx;
+                rect.top = cy - dy;
+                rect.right = cx + dx;
+                rect.bottom = cy + dy;
+                canvas.drawArc(rect, i - da, arclen, false, paint);
+            }
         }
         da *= 2;
+        paint.setStyle(Paint.Style.FILL);
+
         for (int i = 45; i < 361; i += 90) {
             double angle = Math.PI * i / 180.;
             float x = cx + (float) (rx * Math.cos(angle));
             float y = cy + (float) (ry * Math.sin(angle));
             canvas.drawRect(x - da, y - da, x + da, y + da, paint);
         }
+        paint.setStyle(Paint.Style.STROKE);
         rect.left = cx - rx;
         rect.top = cy - ry;
         rect.right = cx + rx;
@@ -269,5 +277,9 @@ public class EclipseControl {
 
     public boolean isUndefined() {
         return Float.isNaN(mCenterX);
+    }
+
+    public void setShowReshapeHandles(boolean showReshapeHandles) {
+        this.mShowReshapeHandles = showReshapeHandles;
     }
 }
