@@ -306,12 +306,6 @@ public class PhotoUI implements PieListener,
             wbIndex = pref.getCurrentIndex();
         }
         mOnScreenIndicators.updateWBIndicator(wbIndex);
-        pref = group.findPreference(CameraSettings.KEY_TIMER);
-        boolean timer = false;
-        if (pref != null) {
-            timer = !(pref.getCurrentIndex() == 0);
-        }
-        mOnScreenIndicators.updateTimerIndicator(timer);
         boolean location = false;
         pref = group.findPreference(CameraSettings.KEY_RECORD_LOCATION);
         if (pref != null) {
