@@ -300,8 +300,8 @@
     <string name="pref_camera_scenemode_label_night" msgid="1269871886845854574">"MALAM"</string>
     <string name="pref_camera_scenemode_label_sunset" msgid="2802732082948866877">"MATAHARI TERBENAM"</string>
     <string name="pref_camera_scenemode_label_party" msgid="1409459091844374828">"PESTA"</string>
-    <string name="pref_camera_countdown_label" msgid="7592784692450586126">"PEWAKTU MUNDUR"</string>
-    <string name="pref_camera_countdown_label_off" msgid="4987856883590176585">"PEWAKTU NONAKTIF"</string>
+    <string name="pref_camera_countdown_label" msgid="7592784692450586126">"PENGHITUNG WAKTU MUNDUR"</string>
+    <string name="pref_camera_countdown_label_off" msgid="4987856883590176585">"PENGHITUNG WAKTU NONAKTIF"</string>
     <string name="pref_camera_countdown_label_one" msgid="1101814103087928898">"1 DETIK"</string>
     <string name="pref_camera_countdown_label_three" msgid="1047399297342955649">"3 DETIK"</string>
     <string name="pref_camera_countdown_label_ten" msgid="6274681535347260279">"10 DETIK"</string>
