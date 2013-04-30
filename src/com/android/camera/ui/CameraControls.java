@@ -75,6 +75,15 @@ public class CameraControls extends RotatableLayout {
         toLeft(mSwitcher, l, t, r, b, orientation, rotation, shutter);
         toRight(mMenu, l, t, r, b, orientation, rotation, shutter);
         toRight(mIndicators, l, t, r, b, orientation, rotation, shutter);
+        View retake = findViewById(R.id.btn_retake);
+        if (retake != null) {
+            Rect retakeRect = new Rect();
+            center(retake, l, t, r, b, orientation, rotation, retakeRect);
+            View cancel = findViewById(R.id.btn_cancel);
+            toLeft(cancel, l, t, r, b, orientation, rotation, shutter);
+            View done = findViewById(R.id.btn_done);
+            toRight(done, l, t, r, b, orientation, rotation, shutter);
+        }
     }
 
     private int correctRotation(int rotation, int orientation) {
