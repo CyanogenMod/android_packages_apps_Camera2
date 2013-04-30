@@ -87,8 +87,8 @@ public class TitledSlider implements Control {
 
     @Override
     public void updateUI() {
-        if (mControlName != null) {
-            mControlName.setText(mParameter.getParameterName());
+        if (mControlName != null && mParameter.getParameterName() != null) {
+            mControlName.setText(mParameter.getParameterName().toUpperCase());
         }
         if (mControlValue != null) {
             mControlValue.setText(
