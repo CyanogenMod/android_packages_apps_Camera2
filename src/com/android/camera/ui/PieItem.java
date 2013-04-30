@@ -35,8 +35,6 @@ public class PieItem {
 
     private Drawable mDrawable;
     private int level;
-    private int mPosition;
-    private int mCount;
 
     private boolean mSelected;
     private boolean mEnabled;
@@ -66,19 +64,6 @@ public class PieItem {
 
     public CharSequence getLabel() {
         return mLabel;
-    }
-
-    public void setPosition(int pos, int count) {
-        mPosition = pos;
-        mCount = count;
-    }
-
-    public int getPosition() {
-        return mPosition;
-    }
-
-    public int getCount() {
-        return mCount;
     }
 
     public boolean hasItems() {
