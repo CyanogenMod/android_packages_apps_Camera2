@@ -89,7 +89,7 @@ public class PieController {
         return new PieItem(drawable, 0);
     }
 
-    public PieItem makeItem(String prefKey, int position, int count) {
+    public PieItem makeItem(String prefKey) {
         final IconListPreference pref =
                 (IconListPreference) mPreferenceGroup.findPreference(prefKey);
         if (pref == null) return null;
@@ -104,7 +104,6 @@ public class PieController {
             resid = pref.getSingleIcon();
         }
         PieItem item = makeItem(resid);
-        item.setPosition(position, count);
         item.setLabel(pref.getTitle().toUpperCase());
         mPreferences.add(pref);
         mPreferenceMap.put(pref, item);
@@ -117,7 +116,6 @@ public class PieController {
                 } else {
                     inner = makeItem(pref.getEntries()[i]);
                 }
-                inner.setPosition(i, nOfEntries);
                 inner.setLabel(pref.getLabels()[i]);
                 item.addItem(inner);
                 final int index = i;
@@ -134,8 +132,7 @@ public class PieController {
         return item;
     }
 
-    public PieItem makeSwitchItem(final String prefKey, int position, int count,
-            boolean addListener) {
+    public PieItem makeSwitchItem(final String prefKey, boolean addListener) {
         final IconListPreference pref =
                 (IconListPreference) mPreferenceGroup.findPreference(prefKey);
         if (pref == null) return null;
@@ -150,7 +147,6 @@ public class PieController {
             resid = pref.getSingleIcon();
         }
         PieItem item = makeItem(resid);
-        item.setPosition(position, count);
         item.setLabel(pref.getLabels()[index]);
         item.setImageResource(mActivity, resid);
         mPreferences.add(pref);
@@ -183,8 +179,8 @@ public class PieController {
         return item;
     }
 
-    public void addItem(String prefKey, int position, int count) {
-        PieItem item = makeItem(prefKey, position, count);
+    public void addItem(String prefKey) {
+        PieItem item = makeItem(prefKey);
         mRenderer.addItem(item);
     }
 
