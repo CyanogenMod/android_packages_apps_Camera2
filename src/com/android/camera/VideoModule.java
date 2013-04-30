@@ -417,7 +417,7 @@ public class VideoModule implements CameraModule,
 
         initializeVideoControl();
         mPendingSwitchCameraId = -1;
-        mUI.updateOnScreenIndicators(mParameters);
+        mUI.updateOnScreenIndicators(mParameters, mPreferences);
 
         // Disable the shutter button if effects are ON since it might take
         // a little more time for the effects preview to be ready. We do not
@@ -2008,7 +2008,7 @@ public class VideoModule implements CameraModule,
             } else {
                 setCameraParameters();
             }
-            mUI.updateOnScreenIndicators(mParameters);
+            mUI.updateOnScreenIndicators(mParameters, mPreferences);
         }
     }
 
@@ -2046,7 +2046,7 @@ public class VideoModule implements CameraModule,
             // onFrameAvailable from the old camera may already exist.
             mHandler.sendEmptyMessage(SWITCH_CAMERA_START_ANIMATION);
         }
-        mUI.updateOnScreenIndicators(mParameters);
+        mUI.updateOnScreenIndicators(mParameters, mPreferences);
     }
 
     // Preview texture has been copied. Now camera can be released and the
