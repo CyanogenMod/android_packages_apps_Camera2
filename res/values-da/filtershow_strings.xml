@@ -21,7 +21,7 @@
     <!-- no translation found for original_picture_text (3076213290079909698) -->
     <skip />
     <string name="setting_wallpaper" msgid="4679087092300036632">"Angiver baggrund"</string>
-    <string name="download_failure" msgid="5923323939788582895">"Kunne ikke downloade foto. Netværk utilgængeligt."</string>
+    <string name="download_failure" msgid="5923323939788582895">"Kunne ikke downloade billede. Netværk utilgængeligt."</string>
     <string name="original" msgid="3524493791230430897">"Original"</string>
     <string name="borders" msgid="2067345080568684614">"Rammer"</string>
     <string name="filtershow_undo" msgid="6781743189243585101">"Fortryd"</string>
