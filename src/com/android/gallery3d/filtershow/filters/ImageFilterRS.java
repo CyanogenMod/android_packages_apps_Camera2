@@ -22,7 +22,7 @@ import android.support.v8.renderscript.*;
 import android.util.Log;
 import android.content.res.Resources;
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.cache.CachingPipeline;
+import com.android.gallery3d.filtershow.presets.PipelineInterface;
 
 public abstract class ImageFilterRS extends ImageFilter {
     private static final String LOGTAG = "ImageFilterRS";
@@ -52,16 +52,17 @@ public abstract class ImageFilterRS extends ImageFilter {
     }
 
     protected RenderScript getRenderScriptContext() {
-        return CachingPipeline.getRenderScriptContext();
+        PipelineInterface pipeline = getEnvironment().getPipeline();
+        return pipeline.getRSContext();
     }
 
     protected Allocation getInPixelsAllocation() {
-        CachingPipeline pipeline = getEnvironment().getCachingPipeline();
+        PipelineInterface pipeline = getEnvironment().getPipeline();
         return pipeline.getInPixelsAllocation();
     }
 
     protected Allocation getOutPixelsAllocation() {
-        CachingPipeline pipeline = getEnvironment().getCachingPipeline();
+        PipelineInterface pipeline = getEnvironment().getPipeline();
         return pipeline.getOutPixelsAllocation();
     }
 
@@ -80,7 +81,7 @@ public abstract class ImageFilterRS extends ImageFilter {
         long startFilter = 0;
         long endFilter = 0;
         if (!mResourcesLoaded) {
-            CachingPipeline pipeline = getEnvironment().getCachingPipeline();
+            PipelineInterface pipeline = getEnvironment().getPipeline();
             createFilter(pipeline.getResources(), getEnvironment().getScaleFactor(),
                     getEnvironment().getQuality(), in);
             mResourcesLoaded = true;
@@ -112,7 +113,7 @@ public abstract class ImageFilterRS extends ImageFilter {
             return bitmap;
         }
         try {
-            CachingPipeline pipeline = getEnvironment().getCachingPipeline();
+            PipelineInterface pipeline = getEnvironment().getPipeline();
             if (DEBUG) {
                 Log.v(LOGTAG, "apply filter " + getName() + " in pipeline " + pipeline.getName());
             }
@@ -147,18 +148,16 @@ public abstract class ImageFilterRS extends ImageFilter {
             displayLowMemoryToast();
             Log.e(LOGTAG, "not enough memory for filter " + getName(), e);
         }
-
         return bitmap;
     }
 
-    protected static Allocation convertBitmap(Bitmap bitmap) {
-        return Allocation.createFromBitmap(CachingPipeline.getRenderScriptContext(), bitmap,
+    protected static Allocation convertBitmap(RenderScript RS, Bitmap bitmap) {
+        return Allocation.createFromBitmap(RS, bitmap,
                 Allocation.MipmapControl.MIPMAP_NONE,
                 Allocation.USAGE_SCRIPT | Allocation.USAGE_GRAPHICS_TEXTURE);
     }
 
-    private static Allocation convertRGBAtoA(Bitmap bitmap) {
-        RenderScript RS = CachingPipeline.getRenderScriptContext();
+    private static Allocation convertRGBAtoA(RenderScript RS, Bitmap bitmap) {
         if (RS != mRScache || mGreyConvert == null) {
             mGreyConvert = new ScriptC_grey(RS, RS.getApplicationContext().getResources(),
                                             R.raw.grey);
@@ -167,7 +166,7 @@ public abstract class ImageFilterRS extends ImageFilter {
 
         Type.Builder tb_a8 = new Type.Builder(RS, Element.A_8(RS));
 
-        Allocation bitmapTemp = convertBitmap(bitmap);
+        Allocation bitmapTemp = convertBitmap(RS, bitmap);
         if (bitmapTemp.getType().getElement().isCompatible(Element.A_8(RS))) {
             return bitmapTemp;
         }
@@ -183,20 +182,20 @@ public abstract class ImageFilterRS extends ImageFilter {
     }
 
     public Allocation loadScaledResourceAlpha(int resource, int inSampleSize) {
-        Resources res = CachingPipeline.getResources();
+        Resources res = getEnvironment().getPipeline().getResources();
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ALPHA_8;
         options.inSampleSize      = inSampleSize;
         Bitmap bitmap = BitmapFactory.decodeResource(
                 res,
                 resource, options);
-        Allocation ret = convertRGBAtoA(bitmap);
+        Allocation ret = convertRGBAtoA(getRenderScriptContext(), bitmap);
         bitmap.recycle();
         return ret;
     }
 
     public Allocation loadScaledResourceAlpha(int resource, int w, int h, int inSampleSize) {
-        Resources res = CachingPipeline.getResources();
+        Resources res = getEnvironment().getPipeline().getResources();
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ALPHA_8;
         options.inSampleSize      = inSampleSize;
@@ -204,7 +203,7 @@ public abstract class ImageFilterRS extends ImageFilter {
                 res,
                 resource, options);
         Bitmap resizeBitmap = Bitmap.createScaledBitmap(bitmap, w, h, true);
-        Allocation ret = convertRGBAtoA(resizeBitmap);
+        Allocation ret = convertRGBAtoA(getRenderScriptContext(), resizeBitmap);
         resizeBitmap.recycle();
         bitmap.recycle();
         return ret;
@@ -215,13 +214,13 @@ public abstract class ImageFilterRS extends ImageFilter {
     }
 
     public Allocation loadResource(int resource) {
-        Resources res = CachingPipeline.getResources();
+        Resources res = getEnvironment().getPipeline().getResources();
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
         Bitmap bitmap = BitmapFactory.decodeResource(
                 res,
                 resource, options);
-        Allocation ret = convertBitmap(bitmap);
+        Allocation ret = convertBitmap(getRenderScriptContext(), bitmap);
         bitmap.recycle();
         return ret;
     }
@@ -242,7 +241,7 @@ public abstract class ImageFilterRS extends ImageFilter {
     /**
      * RS Script objects (and all other RS objects) should be cleared here
      */
-    abstract protected void resetScripts();
+    public abstract void resetScripts();
 
     /**
      * Scripts values should be bound here

@@ -16,12 +16,12 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.support.v8.renderscript.Allocation;
 import android.widget.Toast;
 
-import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.presets.FilterEnvironment;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -35,9 +35,9 @@ public abstract class ImageFilter implements Cloneable {
     // TODO: Temporary, for dogfood note memory issues with toasts for better
     // feedback. Remove this when filters actually work in low memory
     // situations.
-    private static FilterShowActivity sActivity = null;
+    private static Activity sActivity = null;
 
-    public static void setActivityForMemoryToasts(FilterShowActivity activity) {
+    public static void setActivityForMemoryToasts(Activity activity) {
         sActivity = activity;
     }
 
@@ -76,10 +76,6 @@ public abstract class ImageFilter implements Cloneable {
         return bitmap;
     }
 
-    public ImagePreset getImagePreset() {
-        return getEnvironment().getImagePreset();
-    }
-
     public abstract void useRepresentation(FilterRepresentation representation);
 
     native protected void nativeApplyGradientFilter(Bitmap bitmap, int w, int h,
@@ -90,10 +86,11 @@ public abstract class ImageFilter implements Cloneable {
     }
 
     protected Matrix getOriginalToScreenMatrix(int w, int h) {
-        GeometryMetadata geo = getImagePreset().mGeoData;
+        ImagePreset preset = getEnvironment().getImagePreset();
+        GeometryMetadata geo = getEnvironment().getImagePreset().mGeoData;
         Matrix originalToScreen = geo.getOriginalToScreen(true,
-                getImagePreset().getImageLoader().getOriginalBounds().width(),
-                getImagePreset().getImageLoader().getOriginalBounds().height(),
+                preset.getImageLoader().getOriginalBounds().width(),
+                preset.getImageLoader().getOriginalBounds().height(),
                 w, h);
         return originalToScreen;
     }

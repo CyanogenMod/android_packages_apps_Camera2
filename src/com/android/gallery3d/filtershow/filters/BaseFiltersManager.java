@@ -26,7 +26,7 @@ import com.android.gallery3d.filtershow.presets.ImagePreset;
 import java.util.HashMap;
 import java.util.Vector;
 
-public abstract class BaseFiltersManager {
+public abstract class BaseFiltersManager implements FiltersManagerInterface {
     protected HashMap<Class, ImageFilter> mFilters = null;
     protected HashMap<String, FilterRepresentation> mRepresentationLookup = null;
     private static final String LOGTAG = "BaseFiltersManager";

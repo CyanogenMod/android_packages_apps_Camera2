@@ -76,7 +76,7 @@ public class ImageFilterTinyPlanet extends SimpleImageFilter {
         int w = bitmapIn.getWidth();
         int h = bitmapIn.getHeight();
         int outputSize = (int) (w / 2f);
-        ImagePreset preset = getImagePreset();
+        ImagePreset preset = getEnvironment().getImagePreset();
         Bitmap mBitmapOut = null;
         if (preset != null) {
             XMPMeta xmp = preset.getImageLoader().getXmpObject();

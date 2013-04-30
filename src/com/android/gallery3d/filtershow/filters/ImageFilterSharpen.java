@@ -53,7 +53,7 @@ public class ImageFilterSharpen extends ImageFilterRS {
     }
 
     @Override
-    protected void resetScripts() {
+    public void resetScripts() {
         if (mScript != null) {
             mScript.destroy();
             mScript = null;

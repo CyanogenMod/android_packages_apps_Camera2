@@ -31,6 +31,7 @@ import android.graphics.PorterDuffColorFilter;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.FilterDrawRepresentation.StrokeData;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
+import com.android.gallery3d.filtershow.presets.FilterEnvironment;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 import java.util.Vector;
@@ -204,7 +205,7 @@ public class ImageFilterDraw extends ImageFilter {
 
     public void drawData(Canvas canvas, Matrix originalRotateToScreen, int quality) {
         Paint paint = new Paint();
-        if (quality == ImagePreset.QUALITY_FINAL) {
+        if (quality == FilterEnvironment.QUALITY_FINAL) {
             paint.setAntiAlias(true);
         }
         paint.setStyle(Style.STROKE);
@@ -214,7 +215,7 @@ public class ImageFilterDraw extends ImageFilter {
         if (mParameters.getDrawing().isEmpty() && mParameters.getCurrentDrawing() == null) {
             return;
         }
-        if (quality == ImagePreset.QUALITY_FINAL) {
+        if (quality == FilterEnvironment.QUALITY_FINAL) {
             for (FilterDrawRepresentation.StrokeData strokeData : mParameters.getDrawing()) {
                 paint(strokeData, canvas, originalRotateToScreen, quality);
             }
@@ -248,17 +249,17 @@ public class ImageFilterDraw extends ImageFilter {
         int n = v.size();
 
         for (int i = mCachedStrokes; i < n; i++) {
-            paint(v.get(i), drawCache, originalRotateToScreen, ImagePreset.QUALITY_PREVIEW);
+            paint(v.get(i), drawCache, originalRotateToScreen, FilterEnvironment.QUALITY_PREVIEW);
         }
         mCachedStrokes = n;
     }
 
     public void draw(Canvas canvas, Matrix originalRotateToScreen) {
         for (FilterDrawRepresentation.StrokeData strokeData : mParameters.getDrawing()) {
-            paint(strokeData, canvas, originalRotateToScreen, ImagePreset.QUALITY_PREVIEW);
+            paint(strokeData, canvas, originalRotateToScreen, FilterEnvironment.QUALITY_PREVIEW);
         }
         mDrawingsTypes[mCurrentStyle].paint(
-                null, canvas, originalRotateToScreen, ImagePreset.QUALITY_PREVIEW);
+                null, canvas, originalRotateToScreen, FilterEnvironment.QUALITY_PREVIEW);
     }
 
     @Override
