@@ -370,10 +370,12 @@ public class PieRenderer extends OverlayRenderer
         Path path = makeSlice(getDegrees(0) + extend, getDegrees(SWEEP_ARC) - extend,
                 mArcRadius, mArcRadius + mRadiusInc + mRadiusInc / 4,
                 mPieCenterX, mArcCenterY - level * mRadiusInc);
+        final int count = items.size();
+        int pos = 0;
         for (PieItem item : items) {
             // shared between items
             item.setPath(path);
-            float angle = getArcCenter(item);
+            float angle = getArcCenter(item, pos, count);
             int w = item.getIntrinsicWidth();
             int h = item.getIntrinsicHeight();
             // move views to outer border
@@ -386,6 +388,7 @@ public class PieRenderer extends OverlayRenderer
             if (item.hasItems()) {
                 layoutItems(level + 1, item.getItems());
             }
+            pos++;
         }
     }
 
@@ -403,14 +406,14 @@ public class PieRenderer extends OverlayRenderer
         return path;
     }
 
-    private float getArcCenter(PieItem item) {
-        return getCenter(item.getPosition(), item.getCount(), SWEEP_ARC);
+    private float getArcCenter(PieItem item, int pos, int count) {
+        return getCenter(pos, count, SWEEP_ARC);
     }
 
-    private float getSliceCenter(PieItem item) {
+    private float getSliceCenter(PieItem item, int pos, int count) {
         float center = (getCenterAngle() - CENTER) * 0.5f + CENTER;
-        return center + (item.getCount() - 1) * SWEEP_SLICE / 2f
-                - item.getPosition() * SWEEP_SLICE;
+        return center + (count - 1) * SWEEP_SLICE / 2f
+                - pos * SWEEP_SLICE;
     }
 
     private float getCenter(int pos, int count, float sweep) {
@@ -520,20 +523,28 @@ public class PieRenderer extends OverlayRenderer
         if (!hasOpenItem() || (mXFade != null)) {
             // draw base menu
             drawArc(canvas, getLevel(), getParent());
+            List<PieItem> items = getParent().getItems();
+            final int count = items.size();
+            int pos = 0;
             for (PieItem item : getParent().getItems()) {
-                drawItem(Math.max(0, mOpen.size() - 2), canvas, item, alpha);
+                drawItem(Math.max(0, mOpen.size() - 2), pos, count, canvas, item, alpha);
+                pos++;
             }
             mLabel.draw(canvas);
         }
         if (hasOpenItem()) {
             int level = getLevel();
             drawArc(canvas, level, getOpenItem());
-            for (PieItem inner : getOpenItem().getItems()) {
+            List<PieItem> items = getOpenItem().getItems();
+            final int count = items.size();
+            int pos = 0;
+            for (PieItem inner : items) {
                 if (mFadeOut != null) {
-                    drawItem(level, canvas, inner, alpha);
+                    drawItem(level, pos, count, canvas, inner, alpha);
                 } else {
-                    drawItem(level, canvas, inner, (mXFade != null) ? (1 - 0.5f * alpha) : 1);
+                    drawItem(level, pos, count, canvas, inner, (mXFade != null) ? (1 - 0.5f * alpha) : 1);
                 }
+                pos++;
             }
             mLabel.draw(canvas);
         }
@@ -543,19 +554,9 @@ public class PieRenderer extends OverlayRenderer
     private void drawArc(Canvas canvas, int level, PieItem item) {
         // arc
         if (mState == STATE_PIE) {
-            int min = Integer.MAX_VALUE;
-            int max = Integer.MIN_VALUE;
-            int count = 0;
-            for (PieItem child : item.getItems()) {
-                final int p = child.getPosition();
-                count = child.getCount();
-                if (p < min) min = p;
-                if (p > max) max = p;
-            }
-            float start =  mCenterAngle + (count - 1) * SWEEP_ARC / 2f - min * SWEEP_ARC
-                    + SWEEP_ARC / 2f;
-            float end =  mCenterAngle + (count - 1) * SWEEP_ARC / 2f - max * SWEEP_ARC
-                    - SWEEP_ARC / 2f;
+            final int count = item.getItems().size();
+            float start = mCenterAngle + (count * SWEEP_ARC / 2f);
+            float end =  mCenterAngle - (count * SWEEP_ARC / 2f);
             int cy = mArcCenterY - level * mRadiusInc;
             canvas.drawArc(new RectF(mPieCenterX - mArcRadius, cy - mArcRadius,
                     mPieCenterX + mArcRadius, cy + mArcRadius),
@@ -563,14 +564,14 @@ public class PieRenderer extends OverlayRenderer
         }
     }
 
-    private void drawItem(int level, Canvas canvas, PieItem item, float alpha) {
+    private void drawItem(int level, int pos, int count, Canvas canvas, PieItem item, float alpha) {
         if (mState == STATE_PIE) {
             if (item.getPath() != null) {
                 int y = mArcCenterY - level * mRadiusInc;
                 if (item.isSelected()) {
                     Paint p = mSelectedPaint;
                     int state = canvas.save();
-                    float angle = getArcCenter(item) - SWEEP_ARC / 2f;
+                    float angle = getArcCenter(item, pos, count) - SWEEP_ARC / 2f;
                     angle = getDegrees(angle);
                     canvas.rotate(angle, mPieCenterX, y);
                     if (mFadeOut != null) {
@@ -679,8 +680,8 @@ public class PieRenderer extends OverlayRenderer
         return polarCoords.y < mArcRadius - mRadiusInc;
     }
 
-    private boolean inside(PointF polar, PieItem item) {
-        float start = getSliceCenter(item) - SWEEP_SLICE / 2f;
+    private boolean inside(PointF polar, PieItem item, int pos, int count) {
+        float start = getSliceCenter(item, pos, count) - SWEEP_SLICE / 2f;
         boolean res =  (mArcRadius < polar.y)
                 && (start < polar.x)
                 && (start + SWEEP_SLICE > polar.x)
@@ -801,10 +802,13 @@ public class PieRenderer extends OverlayRenderer
     private PieItem findItem(PointF polar) {
         // find the matching item:
         List<PieItem> items = getOpenItem().getItems();
+        final int count = items.size();
+        int pos = 0;
         for (PieItem item : items) {
-            if (inside(polar, item)) {
+            if (inside(polar, item, pos, count)) {
                 return item;
             }
+            pos++;
         }
         return null;
     }
