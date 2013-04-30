@@ -440,7 +440,8 @@ public class IngestActivity extends Activity implements
     }
 
     @Override
-    public void onImportFinish(Collection<MtpObjectInfo> objectsNotImported) {
+    public void onImportFinish(Collection<MtpObjectInfo> objectsNotImported,
+            int numVisited) {
         // Not guaranteed to be called on the UI thread
         mHandler.sendEmptyMessage(ItemListHandler.MSG_PROGRESS_HIDE);
         // TODO: maybe show an extra dialog listing the ones that failed
