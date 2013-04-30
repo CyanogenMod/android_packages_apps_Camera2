@@ -101,6 +101,15 @@ public class PhotoDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        recreate(db);
+    }
+
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        recreate(db);
+    }
+
+    private void recreate(SQLiteDatabase db) {
         dropTable(db, Metadata.TABLE);
         dropTable(db, Photos.TABLE);
         dropTable(db, Albums.TABLE);
