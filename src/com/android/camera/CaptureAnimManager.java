@@ -19,7 +19,6 @@ package com.android.camera;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
@@ -67,6 +66,10 @@ public class CaptureAnimManager {
     private int mMarginTop;
     private int mSize;
     private Resources mResources;
+
+    public static int getAnimationDuration() {
+        return TIME_SLIDE2;
+    }
 
     /* preview: camera preview view.
      * review: view of picture just taken.
@@ -124,7 +127,7 @@ public class CaptureAnimManager {
                 break;
             case 90:  // Preview is below.
                 mHoldX = x + mMarginTop;
-                mHoldY = y + mMarginRight + mSize;
+                mHoldY = y + mMarginRight;
                 break;
             case 180:  // Preview on the right.
                 mHoldX = x + mMarginRight;
