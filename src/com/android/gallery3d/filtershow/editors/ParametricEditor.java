@@ -93,12 +93,12 @@ public class ParametricEditor extends Editor {
         if (mShowParameter == SHOW_VALUE_INT & useCompact(context)) {
            if (getLocalRepresentation() instanceof FilterBasicRepresentation) {
             FilterBasicRepresentation interval = (FilterBasicRepresentation) getLocalRepresentation();
-            apply += " " + effectName + " " + interval.getStateRepresentation();
+                apply += " " + effectName.toUpperCase() + " " + interval.getStateRepresentation();
            } else {
-                apply += " " + effectName + " " + parameterValue;
+                apply += " " + effectName.toUpperCase() + " " + parameterValue;
            }
         } else {
-            apply += " " + effectName;
+            apply += " " + effectName.toUpperCase();
         }
         return apply;
     }

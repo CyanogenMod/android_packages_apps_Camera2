@@ -730,7 +730,8 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     private void fillFx() {
-        FilterFxRepresentation nullFx = new FilterFxRepresentation(getString(R.string.none), 0, R.string.none);
+        FilterFxRepresentation nullFx =
+                new FilterFxRepresentation(getString(R.string.none), 0, R.string.none);
         Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
         FiltersManager.getManager().addLooks(this, filtersRepresentations);
 
