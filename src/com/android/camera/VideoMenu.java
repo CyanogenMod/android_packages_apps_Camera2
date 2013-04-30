@@ -34,10 +34,6 @@ public class VideoMenu extends PieController
         TimeIntervalPopup.Listener {
 
     private static String TAG = "CAM_VideoMenu";
-    private static final int POS_WB = 0;
-    private static final int POS_SET = 1;
-    private static final int POS_FLASH = 3;
-    private static final int POS_SWITCH = 2;
 
     private VideoUI mUI;
     private String[] mOtherKeys;
@@ -60,20 +56,34 @@ public class VideoMenu extends PieController
         mPopup = null;
         mPopupStatus = POPUP_NONE;
         PieItem item = null;
-        // flash
-        if (group.findPreference(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE) != null) {
-            item = makeItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE, POS_FLASH, 4);
-            mRenderer.addItem(item);
-        }
         // white balance
         if (group.findPreference(CameraSettings.KEY_WHITE_BALANCE) != null) {
-            item = makeItem(CameraSettings.KEY_WHITE_BALANCE, POS_WB, 4);
+            item = makeItem(CameraSettings.KEY_WHITE_BALANCE);
             mRenderer.addItem(item);
         }
+        // settings popup
+        mOtherKeys = new String[] {
+                CameraSettings.KEY_VIDEO_EFFECT,
+                CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
+                CameraSettings.KEY_VIDEO_QUALITY,
+                CameraSettings.KEY_RECORD_LOCATION
+        };
+        item = makeItem(R.drawable.ic_settings_holo_light);
+        item.setLabel(mActivity.getResources().getString(R.string.camera_menu_settings_label));
+        item.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(PieItem item) {
+                if (mPopup == null || mPopupStatus != POPUP_FIRST_LEVEL) {
+                    initializePopup();
+                    mPopupStatus = POPUP_FIRST_LEVEL;
+                }
+                mUI.showPopup(mPopup);
+            }
+        });
+        mRenderer.addItem(item);
         // camera switcher
         if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
             item = makeItem(R.drawable.ic_switch_back);
-            item.setPosition(POS_SWITCH, 4);
             IconListPreference lpref = (IconListPreference) group.findPreference(
                     CameraSettings.KEY_CAMERA_ID);
             item.setLabel(lpref.getLabel());
@@ -103,27 +113,11 @@ public class VideoMenu extends PieController
             });
             mRenderer.addItem(item);
         }
-        // settings popup
-        mOtherKeys = new String[] {
-                CameraSettings.KEY_VIDEO_EFFECT,
-                CameraSettings.KEY_VIDEO_TIME_LAPSE_FRAME_INTERVAL,
-                CameraSettings.KEY_VIDEO_QUALITY,
-                CameraSettings.KEY_RECORD_LOCATION
-        };
-        item = makeItem(R.drawable.ic_settings_holo_light);
-        item.setPosition(POS_SET, 4);
-        item.setLabel(mActivity.getResources().getString(R.string.camera_menu_settings_label));
-        item.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(PieItem item) {
-                if (mPopup == null || mPopupStatus != POPUP_FIRST_LEVEL) {
-                    initializePopup();
-                    mPopupStatus = POPUP_FIRST_LEVEL;
-                }
-                mUI.showPopup(mPopup);
-            }
-        });
-        mRenderer.addItem(item);
+        // flash
+        if (group.findPreference(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE) != null) {
+            item = makeItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE);
+            mRenderer.addItem(item);
+        }
     }
 
     @Override

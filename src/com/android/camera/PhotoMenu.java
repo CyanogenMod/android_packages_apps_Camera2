@@ -36,16 +36,6 @@ public class PhotoMenu extends PieController
         ListPrefSettingPopup.Listener {
     private static String TAG = "CAM_photomenu";
 
-    private static final int POS_HDR = 0;
-    private static final int POS_EXP = 1;
-    private static final int POS_MORE = 2;
-    private static final int POS_FLASH = 3;
-    private static final int POS_SWITCH = 4;
-    private static final int POS_LOCATION = 1;
-    private static final int POS_WB = 3;
-    private static final int POS_SET = 2;
-    private static final int POS_SCENE = 4;
-
     private final String mSettingOff;
 
     private PhotoUI mUI;
@@ -69,21 +59,32 @@ public class PhotoMenu extends PieController
         mSecondPopup = null;
         PieItem item = null;
         final Resources res = mActivity.getResources();
-        // flash
-        if (group.findPreference(CameraSettings.KEY_FLASH_MODE) != null) {
-            item = makeItem(CameraSettings.KEY_FLASH_MODE, POS_FLASH, 5);
-            item.setLabel(res.getString(R.string.pref_camera_flashmode_label));
+        // the order is from left to right in the menu
+
+        // hdr
+        if (group.findPreference(CameraSettings.KEY_CAMERA_HDR) != null) {
+            item = makeSwitchItem(CameraSettings.KEY_CAMERA_HDR, true);
             mRenderer.addItem(item);
         }
         // exposure compensation
         if (group.findPreference(CameraSettings.KEY_EXPOSURE) != null) {
-            item = makeItem(CameraSettings.KEY_EXPOSURE, POS_EXP, 5);
+            item = makeItem(CameraSettings.KEY_EXPOSURE);
             item.setLabel(res.getString(R.string.pref_exposure_label));
+            mRenderer.addItem(item);
+        }
+        // more settings
+        PieItem more = makeItem(R.drawable.ic_settings_holo_light);
+        more.setLabel(res.getString(R.string.camera_menu_more_label));
+        mRenderer.addItem(more);
+        // flash
+        if (group.findPreference(CameraSettings.KEY_FLASH_MODE) != null) {
+            item = makeItem(CameraSettings.KEY_FLASH_MODE);
+            item.setLabel(res.getString(R.string.pref_camera_flashmode_label));
             mRenderer.addItem(item);
         }
         // camera switcher
         if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
-            item = makeSwitchItem(CameraSettings.KEY_CAMERA_ID, POS_SWITCH, 5, false);
+            item = makeSwitchItem(CameraSettings.KEY_CAMERA_ID, false);
             final PieItem fitem = item;
             item.setOnClickListener(new OnClickListener() {
                 @Override
@@ -103,33 +104,9 @@ public class PhotoMenu extends PieController
             });
             mRenderer.addItem(item);
         }
-        // hdr
-        if (group.findPreference(CameraSettings.KEY_CAMERA_HDR) != null) {
-            item = makeSwitchItem(CameraSettings.KEY_CAMERA_HDR, POS_HDR, 5, true);
-            mRenderer.addItem(item);
-        }
-        // more settings
-        PieItem more = makeItem(R.drawable.ic_settings_holo_light);
-        more.setPosition(POS_MORE, 5);
-        more.setLabel(res.getString(R.string.camera_menu_more_label));
-        mRenderer.addItem(more);
-        // white balance
-        if (group.findPreference(CameraSettings.KEY_WHITE_BALANCE) != null) {
-            item = makeItem(CameraSettings.KEY_WHITE_BALANCE, POS_WB, 5);
-            item.setLabel(res.getString(R.string.pref_camera_whitebalance_label));
-            more.addItem(item);
-        }
         // location
         if (group.findPreference(CameraSettings.KEY_RECORD_LOCATION) != null) {
-            item = makeSwitchItem(CameraSettings.KEY_RECORD_LOCATION, POS_LOCATION, 5, true);
-            more.addItem(item);
-        }
-        // scene mode
-        if (group.findPreference(CameraSettings.KEY_SCENE_MODE) != null) {
-            IconListPreference pref = (IconListPreference) group.findPreference(
-                    CameraSettings.KEY_SCENE_MODE);
-            pref.setUseSingleIcon(true);
-            item = makeItem(CameraSettings.KEY_SCENE_MODE, POS_SCENE, 5);
+            item = makeSwitchItem(CameraSettings.KEY_RECORD_LOCATION, true);
             more.addItem(item);
         }
         // settings popup
@@ -141,7 +118,6 @@ public class PhotoMenu extends PieController
                 };
         item = makeItem(R.drawable.ic_settings_holo_light);
         item.setLabel(res.getString(R.string.camera_menu_settings_label));
-        item.setPosition(POS_SET, 5);
         item.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(PieItem item) {
@@ -152,6 +128,20 @@ public class PhotoMenu extends PieController
             }
         });
         more.addItem(item);
+        // white balance
+        if (group.findPreference(CameraSettings.KEY_WHITE_BALANCE) != null) {
+            item = makeItem(CameraSettings.KEY_WHITE_BALANCE);
+            item.setLabel(res.getString(R.string.pref_camera_whitebalance_label));
+            more.addItem(item);
+        }
+        // scene mode
+        if (group.findPreference(CameraSettings.KEY_SCENE_MODE) != null) {
+            IconListPreference pref = (IconListPreference) group.findPreference(
+                    CameraSettings.KEY_SCENE_MODE);
+            pref.setUseSingleIcon(true);
+            item = makeItem(CameraSettings.KEY_SCENE_MODE);
+            more.addItem(item);
+        }
     }
 
     @Override
