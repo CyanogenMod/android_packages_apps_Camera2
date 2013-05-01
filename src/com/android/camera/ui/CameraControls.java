@@ -68,15 +68,31 @@ public class CameraControls extends RotatableLayout {
     public void onLayout(boolean changed, int l, int t, int r, int b) {
         int orientation = getResources().getConfiguration().orientation;
         int rotation = Util.getDisplayRotation((Activity) getContext());
+        int size = getResources().getDimensionPixelSize(R.dimen.camera_controls_size);
         rotation = correctRotation(rotation, orientation);
         super.onLayout(changed, l, t, r, b);
         Rect shutter = new Rect();
+        topRight(mPreview, l, t, r, b, orientation, rotation);
+        if (size > 0) {
+            // restrict controls to size
+            switch (rotation) {
+            case 0:
+            case 180:
+                l = (l + r - size) / 2;
+                r = l + size;
+                break;
+            case 90:
+            case 270:
+                t = (t + b - size) / 2;
+                b = t + size;
+                break;
+            }
+        }
         center(mShutter, l, t, r, b, orientation, rotation, shutter);
         center(mBackgroundView, l, t, r, b, orientation, rotation, new Rect());
         toLeft(mSwitcher, l, t, r, b, orientation, rotation, shutter);
         toRight(mMenu, l, t, r, b, orientation, rotation, shutter);
         toRight(mIndicators, l, t, r, b, orientation, rotation, shutter);
-        topRight(mPreview, l, t, r, b, orientation, rotation);
         View retake = findViewById(R.id.btn_retake);
         if (retake != null) {
             Rect retakeRect = new Rect();
@@ -106,8 +122,8 @@ public class CameraControls extends RotatableLayout {
         switch (rotation) {
         case 0:
             // phone portrait; controls bottom
-            result.left = (r - l) / 2 - tw / 2 + lp.leftMargin;
-            result.right = (r - l) / 2 + tw / 2 - lp.rightMargin;
+            result.left = (r + l) / 2 - tw / 2 + lp.leftMargin;
+            result.right = (r + l) / 2 + tw / 2 - lp.rightMargin;
             result.bottom = b - lp.bottomMargin;
             result.top = b - th + lp.topMargin;
             break;
@@ -115,13 +131,13 @@ public class CameraControls extends RotatableLayout {
             // phone landscape: controls right
             result.right = r - lp.rightMargin;
             result.left = r - tw + lp.leftMargin;
-            result.top = (b - t) / 2 - th / 2 + lp.topMargin;
-            result.bottom = (b - t) / 2 + th / 2 - lp.bottomMargin;
+            result.top = (b + t) / 2 - th / 2 + lp.topMargin;
+            result.bottom = (b + t) / 2 + th / 2 - lp.bottomMargin;
             break;
         case 180:
             // phone upside down: controls top
-            result.left = (r - l) / 2 - tw / 2 + lp.leftMargin;
-            result.right = (r - l) / 2 + tw / 2 - lp.rightMargin;
+            result.left = (r + l) / 2 - tw / 2 + lp.leftMargin;
+            result.right = (r + l) / 2 + tw / 2 - lp.rightMargin;
             result.top = t + lp.topMargin;
             result.bottom = t + th - lp.bottomMargin;
             break;
@@ -129,8 +145,8 @@ public class CameraControls extends RotatableLayout {
             // reverse landscape: controls left
             result.left = l + lp.leftMargin;
             result.right = l + tw - lp.rightMargin;
-            result.top = (b - t) / 2 - th / 2 + lp.topMargin;
-            result.bottom = (b - t) / 2 + th / 2 - lp.bottomMargin;
+            result.top = (b + t) / 2 - th / 2 + lp.topMargin;
+            result.bottom = (b + t) / 2 + th / 2 - lp.bottomMargin;
             break;
         }
         v.layout(result.left, result.top, result.right, result.bottom);
