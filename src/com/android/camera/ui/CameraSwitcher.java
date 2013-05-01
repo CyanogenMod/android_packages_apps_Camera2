@@ -25,7 +25,6 @@ import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -202,6 +201,8 @@ public class CameraSwitcher extends RotateImageView
             }
             content.addView(item, new LinearLayout.LayoutParams(mItemSize, mItemSize));
         }
+        mPopup.measure(MeasureSpec.makeMeasureSpec(mParent.getWidth(), MeasureSpec.AT_MOST),
+                MeasureSpec.makeMeasureSpec(mParent.getHeight(), MeasureSpec.AT_MOST));
     }
 
     public boolean showsPopup() {
@@ -244,6 +245,7 @@ public class CameraSwitcher extends RotateImageView
         if (mPopup == null) {
             initPopup();
         }
+        layoutPopup();
         mPopup.setVisibility(View.VISIBLE);
         if (!animateShowPopup()) {
             setVisibility(View.INVISIBLE);
@@ -274,20 +276,34 @@ public class CameraSwitcher extends RotateImageView
         }
     }
 
-    private void updateInitialTranslations() {
+    private void layoutPopup() {
         int orientation = Util.getDisplayRotation((Activity) getContext());
+        int w = mPopup.getMeasuredWidth();
+        int h = mPopup.getMeasuredHeight();
         if (orientation == 0) {
-            mTranslationX = -getWidth() / 2;
-            mTranslationY = getHeight();
+            mPopup.layout(getRight() - w, getBottom() - h, getRight(), getBottom());
+            mTranslationX = 0;
+            mTranslationY = h / 3;
         } else if (orientation == 90) {
-            mTranslationX = getWidth();
-            mTranslationY = getHeight() / 2;
+            mTranslationX = w / 3;
+            mTranslationY = - h / 3;
+            mPopup.layout(getRight() - w, getTop(), getRight(), getTop() + h);
         } else if (orientation == 180) {
-            mTranslationX = getWidth();
-            mTranslationY = -getHeight() / 2;
+            mTranslationX = - w / 3;
+            mTranslationY = - h / 3;
+            mPopup.layout(getLeft(), getTop(), getLeft() + w, getTop() + h);
         } else {
-            mTranslationX = -getWidth();
-            mTranslationY = -getHeight() / 2;
+            mTranslationX = - w / 3;
+            mTranslationY = h - getHeight();
+            mPopup.layout(getLeft(), getBottom() - h, getLeft() + w, getBottom());
+        }
+    }
+
+    @Override
+    public void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        if (mPopup != null) {
+            layoutPopup();
         }
     }
 
@@ -295,7 +311,7 @@ public class CameraSwitcher extends RotateImageView
         if (!ApiHelper.HAS_VIEW_PROPERTY_ANIMATOR) {
             return;
         }
-        updateInitialTranslations();
+        layoutPopup();
         mPopup.setScaleX(0.3f);
         mPopup.setScaleY(0.3f);
         mPopup.setTranslationX(mTranslationX);
