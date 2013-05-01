@@ -21,5 +21,6 @@
     <dimen name="onscreen_indicators_height">@dimen/onscreen_indicators_height_large</dimen>
     <dimen name="shutter_offset">-33dp</dimen>
     <dimen name="capture_size">80dip</dimen>
-    <dimen name="capture_top_margin">16dip</dimen>
+    <dimen name="capture_margin_top">16dip</dimen>
+    <dimen name="camera_controls_size">520dip</dimen>
 </resources>

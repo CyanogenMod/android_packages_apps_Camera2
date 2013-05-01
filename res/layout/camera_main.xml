@@ -26,8 +26,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <include layout="@layout/camera_controls"
-        style="@style/CameraControls"
-        android:layout_centerInParent="true" />
+    <include layout="@layout/camera_controls" />
 
 </com.android.camera.ui.CameraRootView>
