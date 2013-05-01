@@ -251,8 +251,12 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
         mLabelsLinearLayout = (LinearLayout) mRootView.findViewById(R.id.labels);
     }
 
-    public void updateOnScreenIndicators(Parameters param) {
+    public void updateOnScreenIndicators(Parameters param, ComboPreferences prefs) {
       mOnScreenIndicators.updateFlashOnScreenIndicator(param.getFlashMode());
+      boolean location = RecordLocationPreference.get(
+              prefs, mActivity.getContentResolver());
+      mOnScreenIndicators.updateLocationIndicator(location);
+
     }
 
     public void setAspectRatio(double ratio) {
