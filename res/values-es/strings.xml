@@ -116,7 +116,7 @@
     <string name="no_albums_alert" msgid="4111744447491690896">"No hay álbumes disponibles."</string>
     <string name="empty_album" msgid="4542880442593595494">"No hay imágenes ni vídeos disponibles."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"Publicaciones"</string>
-    <string name="make_available_offline" msgid="5157950985488297112">"Disponible sin conex."</string>
+    <string name="make_available_offline" msgid="5157950985488297112">"Disponible sin conexión"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"Actualizar"</string>
     <string name="done" msgid="217672440064436595">"Listo"</string>
     <string name="sequence_in_set" msgid="7235465319919457488">"Elemento: %1$d de %2$d"</string>
