@@ -70,7 +70,7 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
 
     @Override
     public int getTextId() {
-        return R.string.borders;
+        return R.string.none;
     }
 
     public boolean allowsMultipleInstances() {

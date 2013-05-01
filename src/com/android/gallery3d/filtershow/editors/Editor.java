@@ -60,7 +60,7 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
     public static byte SHOW_VALUE_INT = 1;
 
     public String calculateUserMessage(Context context, String effectName, Object parameterValue) {
-        return effectName + " " + parameterValue;
+        return effectName.toUpperCase() + " " + parameterValue;
     }
 
     protected Editor(int id) {
