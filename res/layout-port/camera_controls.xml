@@ -58,4 +58,11 @@
             android:scaleType="center"
             android:src="@drawable/btn_new_shutter" />
 
+        <View
+            android:id="@+id/preview_thumb"
+            android:visibility="invisible"
+            android:layout_width="@dimen/capture_size"
+            android:layout_height="@dimen/capture_size"
+            android:layout_gravity="top|right" />
+
 </com.android.camera.ui.CameraControls>

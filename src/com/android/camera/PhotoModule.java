@@ -105,6 +105,7 @@ public class PhotoModule
     private static final int START_PREVIEW_DONE = 10;
     private static final int OPEN_CAMERA_FAIL = 11;
     private static final int CAMERA_DISABLED = 12;
+    private static final int CAPTURE_ANIMATION_DONE = 13;
 
     // The subset of parameters we need to update in setCameraParameters().
     private static final int UPDATE_PARAM_INITIALIZE = 1;
@@ -396,6 +397,10 @@ public class PhotoModule
                     mCameraDisabled = true;
                     Util.showErrorAndFinish(mActivity,
                             R.string.camera_disabled);
+                    break;
+                }
+                case CAPTURE_ANIMATION_DONE: {
+                    mUI.enablePreviewThumb(false);
                     break;
                 }
             }
@@ -809,7 +814,10 @@ public class PhotoModule
             if (ApiHelper.HAS_SURFACE_TEXTURE && !mIsImageCaptureIntent
                     && mActivity.mShowCameraAppView) {
                 // Finish capture animation
+                mHandler.removeMessages(CAPTURE_ANIMATION_DONE);
                 ((CameraScreenNail) mActivity.mCameraScreenNail).animateSlide();
+                mHandler.sendEmptyMessageDelayed(CAPTURE_ANIMATION_DONE,
+                        CaptureAnimManager.getAnimationDuration());
             }
             mFocusManager.updateFocusUI(); // Ensure focus indicator is hidden.
             if (!mIsImageCaptureIntent) {
@@ -968,6 +976,9 @@ public class PhotoModule
                 && mActivity.mShowCameraAppView) {
             // Start capture animation.
             ((CameraScreenNail) mActivity.mCameraScreenNail).animateFlash(mDisplayRotation);
+            mUI.enablePreviewThumb(true);
+            mHandler.sendEmptyMessageDelayed(CAPTURE_ANIMATION_DONE,
+                    CaptureAnimManager.getAnimationDuration());
         }
     }
 
