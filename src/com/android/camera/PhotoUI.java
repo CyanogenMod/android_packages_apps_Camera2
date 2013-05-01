@@ -306,15 +306,10 @@ public class PhotoUI implements PieListener,
             wbIndex = pref.getCurrentIndex();
         }
         mOnScreenIndicators.updateWBIndicator(wbIndex);
-        boolean location = false;
-        pref = group.findPreference(CameraSettings.KEY_RECORD_LOCATION);
-        if (pref != null) {
-            location = !(pref.getCurrentIndex() == 0);
-        }
+        boolean location = RecordLocationPreference.get(
+                prefs, mActivity.getContentResolver());
         mOnScreenIndicators.updateLocationIndicator(location);
     }
-
-
 
     public void setCameraState(int state) {
     }
