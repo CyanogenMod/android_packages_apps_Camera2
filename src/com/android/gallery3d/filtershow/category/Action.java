@@ -149,7 +149,15 @@ public class Action implements RenderingRequestCaller {
                     mRepresentation.getOverlayId());
         }
         if (mOverlayBitmap != null) {
-            drawCenteredImage(mOverlayBitmap, mImage, false);
+            if (getRepresentation().getPriority() == FilterRepresentation.TYPE_BORDER) {
+                Canvas canvas = new Canvas(mImage);
+                canvas.drawBitmap(mOverlayBitmap, new Rect(0, 0, mOverlayBitmap.getWidth(), mOverlayBitmap.getHeight()),
+                        new Rect(0, 0, mImage.getWidth(), mImage.getHeight()), new Paint());
+            } else {
+                Canvas canvas = new Canvas(mImage);
+                canvas.drawARGB(128, 0, 0, 0);
+                drawCenteredImage(mOverlayBitmap, mImage, false);
+            }
         }
         if (mAdapter != null) {
             mAdapter.notifyDataSetChanged();

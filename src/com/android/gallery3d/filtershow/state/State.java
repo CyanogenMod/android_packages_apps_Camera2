@@ -31,9 +31,17 @@ public class State {
        this(text, StateView.DEFAULT);
     }
 
-    State(String text, int type) {
+    public State(String text, int type) {
         mText = text;
         mType = type;
+    }
+
+    public boolean equals(State state) {
+        if (mFilterRepresentation.getFilterClass()
+                != state.mFilterRepresentation.getFilterClass()) {
+            return false;
+        }
+        return true;
     }
 
     public boolean isDraggable() {

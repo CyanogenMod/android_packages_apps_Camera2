@@ -17,7 +17,7 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:iconbutton="http://schemas.android.com/apk/res/com.android.gallery3d"
-     android:id="@+id/tinyPlanetEditor"
+    android:id="@+id/tinyPlanetEditor"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_weight="1" >
