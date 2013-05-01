@@ -352,7 +352,7 @@
     <array name="pref_camera_scenemode_icons">
         <item>@drawable/ic_sce_action</item>
         <item>@drawable/ic_sce_night</item>
-        <item>@drawable/ic_sce</item>
+        <item>@drawable/ic_sce_off</item>
         <item>@drawable/ic_sce_sunset</item>
         <item>@drawable/ic_sce_party</item>
     </array>
