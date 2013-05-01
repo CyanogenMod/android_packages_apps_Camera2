@@ -92,6 +92,7 @@ public class PhotoUI implements PieListener,
 
     private int mPreviewWidth = 0;
     private int mPreviewHeight = 0;
+    private View mPreviewThumb;
 
     private OnLayoutChangeListener mLayoutListener = new OnLayoutChangeListener() {
         @Override
@@ -173,6 +174,7 @@ public class PhotoUI implements PieListener,
         mGestures.setRenderOverlay(mRenderOverlay);
         mGestures.addTouchReceiver(mMenuButton);
         mGestures.addUnclickableArea(mBlocker);
+        enablePreviewThumb(false);
         // make sure to add touch targets for image capture
         if (mController.isImageCaptureIntent()) {
             if (mReviewCancelButton != null) {
@@ -201,6 +203,13 @@ public class PhotoUI implements PieListener,
 
     public void initializeControlByIntent() {
         mBlocker = mActivity.findViewById(R.id.blocker);
+        mPreviewThumb = mActivity.findViewById(R.id.preview_thumb);
+        mPreviewThumb.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mActivity.gotoGallery();
+            }
+        });
         mMenuButton = mActivity.findViewById(R.id.menu);
         mMenuButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -365,6 +374,16 @@ public class PhotoUI implements PieListener,
             mBlocker.setVisibility(full ? View.VISIBLE : View.GONE);
         }
         if (!full && mCountDownView != null) mCountDownView.cancelCountDown();
+    }
+
+    public void enablePreviewThumb(boolean enabled) {
+        if (enabled) {
+            mGestures.addTouchReceiver(mPreviewThumb);
+            mPreviewThumb.setVisibility(View.VISIBLE);
+        } else {
+            mGestures.removeTouchReceiver(mPreviewThumb);
+            mPreviewThumb.setVisibility(View.GONE);
+        }
     }
 
     public boolean removeTopLevelPopup() {

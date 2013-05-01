@@ -20,4 +20,6 @@
     <dimen name="setting_item_icon_width">@dimen/setting_item_icon_width_large</dimen>
     <dimen name="onscreen_indicators_height">@dimen/onscreen_indicators_height_large</dimen>
     <dimen name="shutter_offset">-33dp</dimen>
+    <dimen name="capture_size">80dip</dimen>
+    <dimen name="capture_top_margin">16dip</dimen>
 </resources>

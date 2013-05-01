@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -38,6 +37,7 @@ public class CameraControls extends RotatableLayout {
     private View mSwitcher;
     private View mMenu;
     private View mIndicators;
+    private View mPreview;
 
     public CameraControls(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -61,6 +61,7 @@ public class CameraControls extends RotatableLayout {
         mShutter = findViewById(R.id.shutter_button);
         mMenu = findViewById(R.id.menu);
         mIndicators = findViewById(R.id.on_screen_indicators);
+        mPreview = findViewById(R.id.preview_thumb);
     }
 
     @Override
@@ -75,6 +76,7 @@ public class CameraControls extends RotatableLayout {
         toLeft(mSwitcher, l, t, r, b, orientation, rotation, shutter);
         toRight(mMenu, l, t, r, b, orientation, rotation, shutter);
         toRight(mIndicators, l, t, r, b, orientation, rotation, shutter);
+        topRight(mPreview, l, t, r, b, orientation, rotation);
         View retake = findViewById(R.id.btn_retake);
         if (retake != null) {
             Rect retakeRect = new Rect();
@@ -96,6 +98,7 @@ public class CameraControls extends RotatableLayout {
         }
         return rotation;
     }
+
     private void center(View v, int l, int t, int r, int b, int orientation, int rotation, Rect result) {
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) v.getLayoutParams();
         int tw = lp.leftMargin + v.getMeasuredWidth() + lp.rightMargin;
@@ -207,6 +210,13 @@ public class CameraControls extends RotatableLayout {
             break;
         }
         v.layout(result.left, result.top, result.right, result.bottom);
+    }
+
+    private void topRight(View v, int l, int t, int r, int b, int orientation, int rotation) {
+        // layout using the specific margins; the rotation code messes up the others
+        int mt = getContext().getResources().getDimensionPixelSize(R.dimen.capture_margin_top);
+        int mr = getContext().getResources().getDimensionPixelSize(R.dimen.capture_margin_right);
+        v.layout(r - v.getMeasuredWidth() - mr, t + mt, r - mr, t + mt + v.getMeasuredHeight());
     }
 
     // In reverse landscape and reverse portrait, camera controls will be laid out
