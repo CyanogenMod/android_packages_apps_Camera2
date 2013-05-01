@@ -60,30 +60,12 @@ public class NewVideoMenu extends PieController
         super.initialize(group);
         mPopup = null;
         mPopupStatus = POPUP_NONE;
-
-        PieItem item = makeItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE, POS_FLASH, 5);
-        mRenderer.addItem(item);
-        item = makeItem(CameraSettings.KEY_WHITE_BALANCE, POS_WB, 5);
-        mRenderer.addItem(item);
-        // camera switcher
-        item = makeItem(R.drawable.ic_switch_video_facing_holo_light);
-        item.setPosition(POS_SWITCH, 5);
-        item.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(PieItem item) {
-                // Find the index of next camera.
-                ListPreference pref = mPreferenceGroup.findPreference(CameraSettings.KEY_CAMERA_ID);
-                if (pref != null) {
-                    int index = pref.findIndexOfValue(pref.getValue());
-                    CharSequence[] values = pref.getEntryValues();
-                    index = (index + 1) % values.length;
-                    int newCameraId = Integer.parseInt((String) values[index]);
-                    mListener.onCameraPickerClicked(newCameraId);
-                }
-            }
-        });
-        mRenderer.addItem(item);
+        PieItem item = null;
+        // white balance
+        if (group.findPreference(CameraSettings.KEY_WHITE_BALANCE) != null) {
+            item = makeItem(CameraSettings.KEY_WHITE_BALANCE);
+            mRenderer.addItem(item);
+        }
         // settings popup
         mOtherKeys = new String[] {
                 CameraSettings.KEY_VIDEO_EFFECT,
@@ -92,7 +74,7 @@ public class NewVideoMenu extends PieController
                 CameraSettings.KEY_RECORD_LOCATION
         };
         item = makeItem(R.drawable.ic_settings_holo_light);
-        item.setPosition(POS_SET, 5);
+        item.setLabel(mActivity.getResources().getString(R.string.camera_menu_settings_label));
         item.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(PieItem item) {
@@ -104,6 +86,43 @@ public class NewVideoMenu extends PieController
             }
         });
         mRenderer.addItem(item);
+        // camera switcher
+        if (group.findPreference(CameraSettings.KEY_CAMERA_ID) != null) {
+            item = makeItem(R.drawable.ic_switch_back);
+            IconListPreference lpref = (IconListPreference) group.findPreference(
+                    CameraSettings.KEY_CAMERA_ID);
+            item.setLabel(lpref.getLabel());
+            item.setImageResource(mActivity,
+                    ((IconListPreference) lpref).getIconIds()
+                    [lpref.findIndexOfValue(lpref.getValue())]);
+
+            final PieItem fitem = item;
+            item.setOnClickListener(new OnClickListener() {
+
+                @Override
+                public void onClick(PieItem item) {
+                    // Find the index of next camera.
+                    ListPreference pref =
+                            mPreferenceGroup.findPreference(CameraSettings.KEY_CAMERA_ID);
+                    if (pref != null) {
+                        int index = pref.findIndexOfValue(pref.getValue());
+                        CharSequence[] values = pref.getEntryValues();
+                        index = (index + 1) % values.length;
+                        int newCameraId = Integer.parseInt((String) values[index]);
+                        fitem.setImageResource(mActivity,
+                                ((IconListPreference) pref).getIconIds()[index]);
+                        fitem.setLabel(pref.getLabel());
+                        mListener.onCameraPickerClicked(newCameraId);
+                    }
+                }
+            });
+            mRenderer.addItem(item);
+        }
+        // flash
+        if (group.findPreference(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE) != null) {
+            item = makeItem(CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE);
+            mRenderer.addItem(item);
+        }
     }
 
     @Override
