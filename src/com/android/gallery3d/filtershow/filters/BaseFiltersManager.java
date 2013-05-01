@@ -120,7 +120,7 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
         filters.add(ImageFilterVibrance.class);
         filters.add(ImageFilterSharpen.class);
         filters.add(ImageFilterCurves.class);
-        // filters.add(ImageFilterDraw.class);
+        filters.add(ImageFilterDraw.class);
         filters.add(ImageFilterHue.class);
         filters.add(ImageFilterSaturated.class);
         filters.add(ImageFilterBwFilter.class);
