@@ -253,6 +253,8 @@ public abstract class ImageFilterRS extends ImageFilter {
             return;
         }
         resetAllocations();
+        mLastInputWidth = 0;
+        mLastInputHeight = 0;
         setResourcesLoaded(false);
     }
 }
