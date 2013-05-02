@@ -53,7 +53,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
     @SuppressWarnings("unused")
     private static final String TAG = "ActionModeHandler";
 
-    private static final int MAX_SELECTED_ITEMS_FOR_SHARE_INTENT = 100;
+    private static final int MAX_SELECTED_ITEMS_FOR_SHARE_INTENT = 300;
     private static final int MAX_SELECTED_ITEMS_FOR_PANORAMA_SHARE_INTENT = 10;
 
     private static final int SUPPORT_MULTIPLE_MASK = MediaObject.SUPPORT_DELETE
