@@ -107,6 +107,8 @@ public class MediaCache {
         void notifyReady();
 
         void setFile(File file) throws FileNotFoundException;
+
+        boolean isPrefetch();
     }
 
     private static class NotifyOriginalReady implements NotifyReady {
@@ -119,12 +121,19 @@ public class MediaCache {
 
         @Override
         public void notifyReady() {
-            mCallback.originalReady(mFile);
+            if (mCallback != null) {
+                mCallback.originalReady(mFile);
+            }
         }
 
         @Override
         public void setFile(File file) {
             mFile = file;
+        }
+
+        @Override
+        public boolean isPrefetch() {
+            return mCallback == null;
         }
     }
 
@@ -138,7 +147,9 @@ public class MediaCache {
 
         @Override
         public void notifyReady() {
-            mCallback.imageReady(mInputStream);
+            if (mCallback != null) {
+                mCallback.imageReady(mInputStream);
+            }
         }
 
         @Override
@@ -148,6 +159,11 @@ public class MediaCache {
 
         public void setBytes(byte[] bytes) {
             mInputStream = new ByteArrayInputStream(bytes);
+        }
+
+        @Override
+        public boolean isPrefetch() {
+            return mCallback == null;
         }
     }
 
@@ -496,7 +512,15 @@ public class MediaCache {
             }
             synchronized (tasks) {
                 ProcessingJob job = new ProcessingJob(uri, size, complete, lowResolution);
-                tasks.add(job);
+                if (complete.isPrefetch()) {
+                    tasks.add(job);
+                } else {
+                    int index = tasks.size() - 1;
+                    while (index >= 0 && tasks.get(index).complete.isPrefetch()) {
+                        index--;
+                    }
+                    tasks.add(index + 1, job);
+                }
                 tasks.notifyAll();
             }
         }
