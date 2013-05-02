@@ -307,7 +307,12 @@ public class ImageShow extends View implements OnGestureListener,
         scalingMatrix.mapRect(unscaledClipRect, unscaledClipRect);
 
         canvas.save();
-        if (!unscaledClipRect.isEmpty()) {
+
+        boolean enablePartialRendering = false;
+
+        // For now, partial rendering is disabled for all filters,
+        // so no need to clip.
+        if (enablePartialRendering && !unscaledClipRect.isEmpty()) {
             canvas.clipRect(unscaledClipRect);
         }
 
@@ -466,7 +471,7 @@ public class ImageShow extends View implements OnGestureListener,
                 canvas.drawBitmap(mBackgroundImage, s, d, mPaint);
             }
         } else {
-            canvas.drawColor(mBackgroundColor);
+            canvas.drawARGB(0, 0, 0, 0);
         }
     }
 
