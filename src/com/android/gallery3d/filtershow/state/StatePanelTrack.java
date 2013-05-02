@@ -19,6 +19,8 @@ package com.android.gallery3d.filtershow.state;
 import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.database.DataSetObserver;
+import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -56,6 +58,19 @@ public class StatePanelTrack extends LinearLayout implements PanelTrack {
     private long mTouchTime;
     private int mMaxTouchDelay = 300; // 300ms delay for touch
     private static final boolean ALLOWS_DRAG = false;
+    private DataSetObserver mObserver = new DataSetObserver() {
+        @Override
+        public void onChanged() {
+            super.onChanged();
+            fillContent(false);
+        }
+
+        @Override
+        public void onInvalidated() {
+            super.onInvalidated();
+            fillContent(false);
+        }
+    };
 
     public StatePanelTrack(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -112,7 +127,7 @@ public class StatePanelTrack extends LinearLayout implements PanelTrack {
 
     public void setAdapter(StateAdapter adapter) {
         mAdapter = adapter;
-        mAdapter.setListener(this);
+        mAdapter.registerDataSetObserver(mObserver);
         mAdapter.setOrientation(getOrientation());
         fillContent(false);
         requestLayout();
@@ -236,17 +251,22 @@ public class StatePanelTrack extends LinearLayout implements PanelTrack {
                 && event.getActionMasked() == MotionEvent.ACTION_UP
                 && System.currentTimeMillis() - mTouchTime < mMaxTouchDelay) {
             FilterRepresentation representation = mCurrentView.getState().getFilterRepresentation();
+            mCurrentView.setSelected(true);
             if (representation != MasterImage.getImage().getCurrentFilterRepresentation()) {
                 FilterShowActivity activity = (FilterShowActivity) getContext();
                 activity.showRepresentation(representation);
-            }
-            if (representation.getEditorId() != ImageOnlyEditor.ID) {
-                mCurrentView.setSelected(true);
+                mCurrentView.setSelected(false);
             }
         }
         if (event.getActionMasked() == MotionEvent.ACTION_UP
                 || (!mStartedDrag && event.getActionMasked() == MotionEvent.ACTION_CANCEL)) {
             checkEndState();
+            if (mCurrentView != null) {
+                FilterRepresentation representation = mCurrentView.getState().getFilterRepresentation();
+                if (representation.getEditorId() == ImageOnlyEditor.ID) {
+                    mCurrentView.setSelected(false);
+                }
+            }
         }
         return true;
     }

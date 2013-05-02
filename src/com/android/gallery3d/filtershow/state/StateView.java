@@ -145,6 +145,7 @@ public class StateView extends View {
 
     public void onDraw(Canvas canvas) {
         canvas.drawARGB(0, 0, 0, 0);
+        mPaint.reset();
         mPath.reset();
 
         float w = canvas.getWidth();
