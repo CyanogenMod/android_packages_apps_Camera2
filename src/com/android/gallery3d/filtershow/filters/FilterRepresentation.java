@@ -131,7 +131,7 @@ public class FilterRepresentation implements Cloneable {
     }
 
     public boolean supportsPartialRendering() {
-        return mSupportsPartialRendering;
+        return false && mSupportsPartialRendering; // disable for now
     }
 
     public void setSupportsPartialRendering(boolean value) {

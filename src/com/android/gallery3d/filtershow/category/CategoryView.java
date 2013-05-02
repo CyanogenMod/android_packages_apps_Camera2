@@ -62,11 +62,8 @@ public class CategoryView extends View implements View.OnClickListener {
             return;
         }
         text = text.toUpperCase();
-        mPaint.reset();
-        mPaint.setColor(mTextColor);
         mPaint.setTextSize(sTextSize);
         mPaint.setTypeface(Typeface.DEFAULT_BOLD);
-        mPaint.setAntiAlias(true);
         float textWidth = mPaint.measureText(text);
         mPaint.getTextBounds(text, 0, text.length(), mTextBounds);
         int x = (int) (canvas.getWidth() - textWidth - sMargin);
@@ -77,13 +74,22 @@ public class CategoryView extends View implements View.OnClickListener {
     public void onDraw(Canvas canvas) {
         canvas.drawColor(mBackgroundColor);
         if (mAction != null) {
-            drawText(canvas, mAction.getName());
+            mPaint.reset();
+            mPaint.setAntiAlias(true);
             if (mAction.getImage() == null) {
                 mAction.setImageFrame(new Rect(0, 0, canvas.getWidth(), canvas.getHeight()));
             } else {
                 Bitmap bitmap = mAction.getImage();
                 canvas.drawBitmap(bitmap, 0, 0, mPaint);
             }
+            mPaint.setColor(mBackgroundColor);
+            mPaint.setStyle(Paint.Style.STROKE);
+            mPaint.setStrokeWidth(3);
+            drawText(canvas, mAction.getName());
+            mPaint.setColor(mTextColor);
+            mPaint.setStyle(Paint.Style.FILL);
+            mPaint.setStrokeWidth(1);
+            drawText(canvas, mAction.getName());
         }
     }
 

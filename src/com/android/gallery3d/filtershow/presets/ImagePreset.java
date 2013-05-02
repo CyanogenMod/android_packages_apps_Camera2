@@ -573,20 +573,24 @@ public class ImagePreset {
         if (imageStateAdapter == null) {
             return;
         }
-        imageStateAdapter.clear();
-        imageStateAdapter.addOriginal();
+        Vector<State> states = new Vector<State>();
         // TODO: supports Geometry representations in the state panel.
         if (false && mGeoData != null && mGeoData.hasModifications()) {
             State geo = new State("Geometry");
             geo.setFilterRepresentation(mGeoData);
-            imageStateAdapter.add(geo);
+            states.add(geo);
         }
-        imageStateAdapter.addAll(mFilters);
+        for (FilterRepresentation filter : mFilters) {
+            State state = new State(filter.getName());
+            state.setFilterRepresentation(filter);
+            states.add(state);
+        }
         if (mBorder != null) {
             State border = new State(mBorder.getName());
             border.setFilterRepresentation(mBorder);
-            imageStateAdapter.add(border);
+            states.add(border);
         }
+        imageStateAdapter.fill(states);
     }
 
     public void setPartialRendering(boolean partialRendering, Rect bounds) {

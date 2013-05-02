@@ -181,8 +181,6 @@ public class ParametricEditor extends Editor {
                 mControl = (Control) c.newInstance();
                 p.setController(mControl);
                 mControl.setUp((ViewGroup) editControl, p, this);
-
-
             } catch (Exception e) {
                 Log.e(LOGTAG, "Error in loading Control ", e);
             }
