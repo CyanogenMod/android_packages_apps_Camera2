@@ -165,18 +165,39 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     public void loadEditorPanel(FilterRepresentation representation,
-                                Editor currentEditor) {
+                                final Editor currentEditor) {
         if (representation.getEditorId() == ImageOnlyEditor.ID) {
             currentEditor.getImageShow().select();
             currentEditor.reflectCurrentFilter();
             return;
         }
-        EditorPanel panel = new EditorPanel();
-        panel.setEditor(currentEditor.getID());
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.remove(getSupportFragmentManager().findFragmentByTag(MainPanel.FRAGMENT_TAG));
-        transaction.replace(R.id.main_panel_container, panel, MainPanel.FRAGMENT_TAG);
-        transaction.commit();
+        final int currentId = currentEditor.getID();
+        Runnable showEditor = new Runnable() {
+            @Override
+            public void run() {
+                EditorPanel panel = new EditorPanel();
+                panel.setEditor(currentId);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.remove(getSupportFragmentManager().findFragmentByTag(MainPanel.FRAGMENT_TAG));
+                transaction.replace(R.id.main_panel_container, panel, MainPanel.FRAGMENT_TAG);
+                transaction.commit();
+            }
+        };
+        Fragment main = getSupportFragmentManager().findFragmentByTag(MainPanel.FRAGMENT_TAG);
+        boolean doAnimation = false;
+        if (mShowingImageStatePanel
+                && getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            doAnimation = true;
+        }
+        if (doAnimation && main != null && main instanceof MainPanel) {
+            MainPanel mainPanel = (MainPanel) main;
+            View container = mainPanel.getView().findViewById(R.id.category_panel_container);
+            View bottom = mainPanel.getView().findViewById(R.id.bottom_panel);
+            int panelHeight = container.getHeight() + bottom.getHeight();
+            mainPanel.getView().animate().translationY(panelHeight).withEndAction(showEditor).start();
+        } else {
+            showEditor.run();
+        }
     }
 
     private void loadXML() {
@@ -353,7 +374,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             if (representation.getTextId() != 0) {
                 representation.setName(getString(representation.getTextId()));
             }
-            mCategoryBordersAdapter.add(new Action(this, representation));
+            mCategoryBordersAdapter.add(new Action(this, representation, Action.FULL_VIEW));
         }
     }
 
@@ -738,7 +759,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         mCategoryLooksAdapter = new CategoryAdapter(this);
         int verticalItemHeight = (int) getResources().getDimension(R.dimen.action_item_height);
         mCategoryLooksAdapter.setItemHeight(verticalItemHeight);
-        mCategoryLooksAdapter.add(new Action(this, nullFx, Action.CROP_VIEW));
+        mCategoryLooksAdapter.add(new Action(this, nullFx, Action.FULL_VIEW));
         for (FilterRepresentation representation : filtersRepresentations) {
             mCategoryLooksAdapter.add(new Action(this, representation, Action.FULL_VIEW));
         }
