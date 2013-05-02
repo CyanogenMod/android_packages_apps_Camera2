@@ -2,9 +2,15 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:custom="http://schemas.android.com/apk/res/com.android.gallery3d"
-              android:orientation="horizontal"
+              android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="wrap_content"
+              android:background="@color/background_main_toolbar">
+
+    <View
+            android:background="@color/toolbar_separation_line"
+            android:layout_height="1dip"
+            android:layout_width="match_parent"/>
 
     <HorizontalScrollView
             android:layout_width="match_parent"
@@ -22,6 +28,5 @@
                 android:animateLayoutChanges="true" />
 
     </HorizontalScrollView>
-
 
 </LinearLayout>

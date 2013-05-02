@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.state;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -30,8 +31,8 @@ import java.util.Vector;
 
 public class StateAdapter extends ArrayAdapter<State> {
 
+    private static final String LOGTAG = "StateAdapter";
     private int mOrientation;
-    private PanelTrack mListener;
     private String mOriginalText;
     private String mResultText;
 
@@ -76,28 +77,32 @@ public class StateAdapter extends ArrayAdapter<State> {
         mOrientation = orientation;
     }
 
-    @Override
-    public void notifyDataSetChanged() {
-        if (mListener != null) {
-            mListener.fillContent(false);
-        }
-    }
-
     public void addOriginal() {
         add(new State(mOriginalText));
     }
 
-    public void addAll(Vector<FilterRepresentation> filters) {
-        for (FilterRepresentation filter : filters) {
-            State state = new State(filter.getName());
-            state.setFilterRepresentation(filter);
-            add(state);
+    public boolean same(Vector<State> states) {
+        // we have the original state in addition
+        if (states.size() + 1 != getCount()) {
+            return false;
         }
-        notifyDataSetChanged();
+        for (int i = 1; i < getCount(); i++) {
+            State state = getItem(i);
+            if (!state.equals(states.elementAt(i-1))) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    void setListener(PanelTrack listener) {
-        mListener = listener;
+    public void fill(Vector<State> states) {
+        if (same(states)) {
+            return;
+        }
+        clear();
+        addOriginal();
+        addAll(states);
+        notifyDataSetChanged();
     }
 
     @Override
