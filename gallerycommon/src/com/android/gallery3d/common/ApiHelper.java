@@ -195,6 +195,9 @@ public class ApiHelper {
     public static final boolean HAS_MEDIA_MUXER =
                     Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR2;
 
+    public static final boolean HAS_DISPLAY_LISTENER =
+            Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1;
+
     public static int getIntFieldIfExists(Class<?> klass, String fieldName,
             Class<?> obj, int defaultVal) {
         try {
