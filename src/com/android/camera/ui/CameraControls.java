@@ -62,17 +62,21 @@ public class CameraControls extends RotatableLayout {
 
                 @Override
                 public void onDisplayChanged(int arg0) {
-                    int currentRotation = Util.getDisplayRotation((Activity) getContext());
-                    if ((currentRotation - mLastRotation) % 180 == 0) {
-                        flipChildren();
-                        getParent().requestLayout();
-                    }
-                    mLastRotation = currentRotation;
+                    checkLayoutFlip();
                 }
 
                 @Override
                 public void onDisplayRemoved(int arg0) {}
             };
+        }
+    }
+
+    private void checkLayoutFlip() {
+        int currentRotation = Util.getDisplayRotation((Activity) getContext());
+        if ((currentRotation - mLastRotation + 360) % 360 == 180) {
+            mLastRotation = currentRotation;
+            flipChildren();
+            getParent().requestLayout();
         }
     }
 
@@ -99,6 +103,14 @@ public class CameraControls extends RotatableLayout {
     }
 
     @Override
+    public void onWindowVisibilityChanged(int visibility) {
+        if (visibility == View.VISIBLE) {
+            // Make sure when coming back from onPause, the layout is rotated correctly
+            checkLayoutFlip();
+        }
+    }
+
+    @Override
     public void onDetachedFromWindow () {
         super.onDetachedFromWindow();
         if (ApiHelper.HAS_DISPLAY_LISTENER) {
@@ -109,6 +121,7 @@ public class CameraControls extends RotatableLayout {
 
     @Override
     public void onLayout(boolean changed, int l, int t, int r, int b) {
+        mLastRotation = Util.getDisplayRotation((Activity) getContext());
         int orientation = getResources().getConfiguration().orientation;
         int size = getResources().getDimensionPixelSize(R.dimen.camera_controls_size);
         int rotation = getUnifiedRotation();
