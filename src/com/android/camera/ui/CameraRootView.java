@@ -89,12 +89,14 @@ public class CameraRootView extends RelativeLayout {
                 left += mOffset;
                 break;
         }
-        if (mCurrentInsets.right > 0) {
-            // navigation bar on the right
-            right = right > 0 ? right : mCurrentInsets.right;
-        } else {
-            // navigation bar on the bottom
-            bottom = bottom > 0 ? bottom : mCurrentInsets.bottom;
+        if (mCurrentInsets != null) {
+            if (mCurrentInsets.right > 0) {
+                // navigation bar on the right
+                right = right > 0 ? right : mCurrentInsets.right;
+            } else {
+                // navigation bar on the bottom
+                bottom = bottom > 0 ? bottom : mCurrentInsets.bottom;
+            }
         }
         for (int i = 0; i < getChildCount(); i++) {
             View v = getChildAt(i);
