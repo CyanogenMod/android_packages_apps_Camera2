@@ -20,13 +20,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Rect;
+import android.hardware.display.DisplayManager;
+import android.hardware.display.DisplayManager.DisplayListener;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.android.camera.Util;
 import com.android.gallery3d.R;
+import com.android.gallery3d.common.ApiHelper;
 
 public class CameraControls extends RotatableLayout {
 
@@ -38,19 +40,40 @@ public class CameraControls extends RotatableLayout {
     private View mMenu;
     private View mIndicators;
     private View mPreview;
+    private Object mDisplayListener = null;
+    private int mLastRotation = 0;
 
     public CameraControls(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initDisplayListener();
     }
 
     public CameraControls(Context context) {
         super(context);
+        initDisplayListener();
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
-        adjustBackground();
+    public void initDisplayListener() {
+        if (ApiHelper.HAS_DISPLAY_LISTENER) {
+            mDisplayListener = new DisplayListener() {
+
+                @Override
+                public void onDisplayAdded(int arg0) {}
+
+                @Override
+                public void onDisplayChanged(int arg0) {
+                    int currentRotation = Util.getDisplayRotation((Activity) getContext());
+                    if ((currentRotation - mLastRotation) % 180 == 0) {
+                        flipChildren();
+                        getParent().requestLayout();
+                    }
+                    mLastRotation = currentRotation;
+                }
+
+                @Override
+                public void onDisplayRemoved(int arg0) {}
+            };
+        }
     }
 
     @Override
@@ -65,12 +88,38 @@ public class CameraControls extends RotatableLayout {
     }
 
     @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        adjustControlsToRightPosition();
+        mLastRotation = Util.getDisplayRotation((Activity) getContext());
+        if (ApiHelper.HAS_DISPLAY_LISTENER) {
+            ((DisplayManager) getContext().getSystemService(Context.DISPLAY_SERVICE))
+            .registerDisplayListener((DisplayListener) mDisplayListener, null);
+        }
+    }
+
+    @Override
+    public void onDetachedFromWindow () {
+        super.onDetachedFromWindow();
+        if (ApiHelper.HAS_DISPLAY_LISTENER) {
+            ((DisplayManager) getContext().getSystemService(Context.DISPLAY_SERVICE))
+            .unregisterDisplayListener((DisplayListener) mDisplayListener);
+        }
+    }
+
+    @Override
     public void onLayout(boolean changed, int l, int t, int r, int b) {
         int orientation = getResources().getConfiguration().orientation;
-        int rotation = Util.getDisplayRotation((Activity) getContext());
         int size = getResources().getDimensionPixelSize(R.dimen.camera_controls_size);
-        rotation = correctRotation(rotation, orientation);
+        int rotation = getUnifiedRotation();
+        adjustBackground();
         super.onLayout(changed, l, t, r, b);
+        // As l,t,r,b are positions relative to parents, we need to convert them
+        // to child's coordinates
+        r = r - l;
+        b = b - t;
+        l = 0;
+        t = 0;
         Rect shutter = new Rect();
         topRight(mPreview, l, t, r, b, orientation, rotation);
         if (size > 0) {
@@ -104,9 +153,11 @@ public class CameraControls extends RotatableLayout {
         }
     }
 
-    private int correctRotation(int rotation, int orientation) {
+    private int getUnifiedRotation() {
         // all the layout code assumes camera device orientation to be portrait
         // adjust rotation for landscape
+        int orientation = getResources().getConfiguration().orientation;
+        int rotation = Util.getDisplayRotation((Activity) getContext());
         int camOrientation = (rotation % 180 == 0) ? Configuration.ORIENTATION_PORTRAIT
                 : Configuration.ORIENTATION_LANDSCAPE;
         if (camOrientation != orientation) {
@@ -241,27 +292,28 @@ public class CameraControls extends RotatableLayout {
     public void adjustControlsToRightPosition() {
         Configuration config = getResources().getConfiguration();
         int orientation = Util.getDisplayRotation((Activity) getContext());
-        if (orientation == 270 && config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (orientation >= 180) {
             flipChildren();
         }
-        if (orientation == 180 && config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            flipChildren();
-        }
-        adjustBackground();
     }
 
     private void adjustBackground() {
+        int rotation = getUnifiedRotation();
         // remove current drawable and reset rotation
         mBackgroundView.setBackgroundDrawable(null);
         mBackgroundView.setRotationX(0);
         mBackgroundView.setRotationY(0);
         // if the switcher background is top aligned we need to flip the background
         // drawable vertically; if left aligned, flip horizontally
-        int gravity = ((LayoutParams) mBackgroundView.getLayoutParams()).gravity;
-        if ((gravity & Gravity.TOP) == Gravity.TOP) {
-            mBackgroundView.setRotationX(180);
-        } else if ((gravity & Gravity.LEFT) == Gravity.LEFT) {
-            mBackgroundView.setRotationY(180);
+        switch (rotation) {
+            case 180:
+                mBackgroundView.setRotationX(180);
+                break;
+            case 270:
+                mBackgroundView.setRotationY(180);
+                break;
+            default:
+                break;
         }
         mBackgroundView.setBackgroundResource(R.drawable.switcher_bg);
     }
