@@ -29,14 +29,14 @@ import android.widget.RelativeLayout;
 import com.android.camera.Util;
 import com.android.gallery3d.R;
 
-public class CameraRootView extends RelativeLayout
-    implements RotatableLayout.RotationListener {
+public class CameraRootView extends RelativeLayout {
 
     private int mTopMargin = 0;
     private int mBottomMargin = 0;
     private int mLeftMargin = 0;
     private int mRightMargin = 0;
     private int mOffset = 0;
+    private Rect mCurrentInsets;
     public CameraRootView(Context context, AttributeSet attrs) {
         super(context, attrs);
         // Layout the window as if we did not need navigation bar
@@ -47,64 +47,68 @@ public class CameraRootView extends RelativeLayout
     @Override
     protected boolean fitSystemWindows(Rect insets) {
         super.fitSystemWindows(insets);
+        mCurrentInsets = insets;
         // insets include status bar, navigation bar, etc
         // In this case, we are only concerned with the size of nav bar
-        if (mOffset > 0) {
-            // Add margin if necessary to the view to ensure nothing is covered
-            // by navigation bar
-            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) getLayoutParams();
-            int right, bottom;
-            if (insets.right > 0) {
-                // navigation bar on the right
-                right = mRightMargin > 0 ? 0 : insets.right;
-                bottom = 0;
-            } else {
-                // navigation bar on the bottom
-                bottom = mBottomMargin > 0 ? 0 : insets.bottom;
-                right = 0;
-            }
-            lp.setMargins(mLeftMargin, mTopMargin, mRightMargin + right, mBottomMargin + bottom);
-            return true;
-        }
-        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) getLayoutParams();
+        if (mOffset > 0) return true;
+
         if (insets.bottom > 0) {
             mOffset = insets.bottom;
         } else if (insets.right > 0) {
             mOffset = insets.right;
         }
-        Configuration config = getResources().getConfiguration();
-        if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            mBottomMargin = mOffset;
-        } else if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mRightMargin = mOffset;
-        }
-        lp.setMargins( mLeftMargin, mTopMargin, mRightMargin, mBottomMargin);
-        CameraControls controls = (CameraControls) findViewById(R.id.camera_controls);
-        if (controls != null) {
-            controls.setRotationListener(this);
-            controls.adjustControlsToRightPosition();
-        }
         return true;
     }
 
-    @Override
-    public void onRotation(int rotation) {
-        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) getLayoutParams();
-        int b = mBottomMargin;
-        int t = mTopMargin;
-        int l = mLeftMargin;
-        int r = mRightMargin;
-        rotation = (rotation + 360) % 360;
-        if (rotation == 90) {
-            lp.setMargins(b, l, t, r);
-        } else if (rotation == 270) {
-            lp.setMargins(t, r, b, l);
-        } else if (rotation == 180) {
-            lp.setMargins(r, b, l, t);
+    public void onLayout(boolean changed, int l, int t, int r, int b) {
+        int rotation = Util.getDisplayRotation((Activity) getContext());
+        // all the layout code assumes camera device orientation to be portrait
+        // adjust rotation for landscape
+        int orientation = getResources().getConfiguration().orientation;
+        int camOrientation = (rotation % 180 == 0) ? Configuration.ORIENTATION_PORTRAIT
+                : Configuration.ORIENTATION_LANDSCAPE;
+        if (camOrientation != orientation) {
+            rotation = (rotation + 90) % 360;
         }
-        mLeftMargin = lp.leftMargin;
-        mTopMargin = lp.topMargin;
-        mRightMargin = lp.rightMargin;
-        mBottomMargin = lp.bottomMargin;
+        // calculate margins
+        int left = 0;
+        int right = 0;
+        int bottom = 0;
+        int top = 0;
+        switch (rotation) {
+            case 0:
+                bottom += mOffset;
+                break;
+            case 90:
+                right += mOffset;
+                break;
+            case 180:
+                top += mOffset;
+                break;
+            case 270:
+                left += mOffset;
+                break;
+        }
+        if (mCurrentInsets.right > 0) {
+            // navigation bar on the right
+            right = right > 0 ? right : mCurrentInsets.right;
+        } else {
+            // navigation bar on the bottom
+            bottom = bottom > 0 ? bottom : mCurrentInsets.bottom;
+        }
+        for (int i = 0; i < getChildCount(); i++) {
+            View v = getChildAt(i);
+            if (v instanceof CameraControls) {
+                // Lay out camera controls to fill the short side of the screen
+                // so that they stay in place during rotation
+                if (rotation % 180 == 0) {
+                    v.layout(l, t + top, r, b - bottom);
+                } else {
+                    v.layout(l + left, t, r - right, b);
+                }
+            } else {
+                v.layout(l + left, t + top, r - right, b - bottom);
+            }
+        }
     }
 }
