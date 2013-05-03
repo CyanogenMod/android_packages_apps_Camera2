@@ -508,6 +508,7 @@ public class PhotoUI implements PieListener,
 
     @Override
     public void onPieOpened(int centerX, int centerY) {
+        dismissPopup(false);
         mActivity.cancelActivityTouchHandling();
         mActivity.setSwipingEnabled(false);
         if (mFaceView != null) {
