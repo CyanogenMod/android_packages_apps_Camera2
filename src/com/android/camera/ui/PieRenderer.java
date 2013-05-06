@@ -742,6 +742,7 @@ public class PieRenderer extends OverlayRenderer
         if (item != null && item.isEnabled()) {
             item.setSelected(true);
             mCurrentItem = item;
+            mLabel.setText(mCurrentItem.getLabel());
             if ((mCurrentItem != getOpenItem()) && mCurrentItem.hasItems()) {
                 openCurrentItem();
                 layoutLabel(getLevel());
