@@ -13,27 +13,15 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/camera_controls"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black">
-
-    <FrameLayout android:id="@+id/controls"
-        style="@style/CameraControls"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true">
-
-        <include layout="@layout/menu_indicators_keyguard"
-            android:layout_width="80dip"
-            android:layout_height="80dip"
-            android:layout_gravity="bottom|right"
-            android:layout_marginBottom="-2dip"
-            android:layout_marginRight="-5dip" />
-
-    </FrameLayout>
+    android:background="@color/default_background" >
 
     <ImageView
+        android:id="@+id/shutter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -41,20 +29,32 @@
         android:layout_marginBottom="@dimen/shutter_offset"
         android:src="@drawable/btn_new_shutter" />
 
-    <ImageView
-        style="@style/SwitcherButton"
+    <include layout="@layout/menu_indicators_keyguard"
+        android:layout_width="64dip"
+        android:layout_height="64dip"
+        android:layout_toRightOf="@id/shutter"
         android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@id/controls"
-        android:layout_marginBottom="2dip"
-        android:src="@drawable/ic_switch_camera"
-        android:scaleType="center" />
+        android:layout_marginBottom="6dip"
+        android:layout_marginRight="-5dip" />
 
     <ImageView
+        android:id="@+id/camera_switcher"
         style="@style/SwitcherButton"
+        android:layout_toLeftOf="@id/shutter"
         android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@id/controls"
         android:layout_marginBottom="2dip"
-        android:src="@drawable/ic_switcher_menu_indicator"
-        android:scaleType="center" />
+        android:scaleType="center"
+        android:contentDescription="@string/accessibility_mode_picker"
+        android:src="@drawable/ic_switch_camera" />
+
+    <ImageView
+        android:id="@+id/camera_switcher_ind"
+        style="@style/SwitcherButton"
+        android:layout_toLeftOf="@id/shutter"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="2dip"
+        android:scaleType="center"
+        android:contentDescription="@string/accessibility_mode_picker"
+        android:src="@drawable/ic_switcher_menu_indicator" />
 
 </RelativeLayout>
