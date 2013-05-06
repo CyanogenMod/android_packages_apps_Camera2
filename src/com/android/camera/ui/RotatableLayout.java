@@ -82,7 +82,7 @@ public class RotatableLayout extends FrameLayout {
         super.onConfigurationChanged(config);
         int rotation = Util.getDisplayRotation((Activity) getContext());
         if ((rotation - mPrevRotation + 360) % 180 == 0) {
-            flipChildren();
+            mPrevRotation = rotation;
             return;
         }
         boolean clockwise = isClockWiseRotation(mPrevRotation, rotation);
