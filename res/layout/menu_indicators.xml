@@ -46,7 +46,7 @@
         android:id="@+id/menu_location_indicator"
         style="@style/MenuIndicator"
         android:layout_gravity="center_horizontal|bottom"
-        android:src="@drawable/ic_indicator_loc_off" />
+        android:src="@drawable/ic_indicator_loc_on" />
 
     <ImageView
         android:id="@+id/menu_wb_indicator"
