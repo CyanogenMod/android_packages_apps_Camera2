@@ -46,7 +46,7 @@
                 android:layout_gravity="center"
                 android:indeterminate="true"
                 android:indeterminateOnly="true"
-                android:background="@color/background_screen" />
+                android:background="@android:color/transparent" />
 
         </FrameLayout>
 
