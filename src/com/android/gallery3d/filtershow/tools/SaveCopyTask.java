@@ -41,8 +41,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.TimeZone;
 
 /**
@@ -84,8 +84,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
             this.destinationFile = destination;
         }
 
-        saveFileName = new SimpleDateFormat(TIME_STAMP_NAME).format(new Date(
-                System.currentTimeMillis()));
+        saveFileName = new SimpleDateFormat(TIME_STAMP_NAME).format(new Date());
     }
 
     public static File getFinalSaveDirectory(Context context, Uri sourceUri) {
@@ -102,8 +101,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
 
     public static File getNewFile(Context context, Uri sourceUri) {
         File saveDirectory = getFinalSaveDirectory(context, sourceUri);
-        String filename = new SimpleDateFormat(TIME_STAMP_NAME).format(new Date(
-                System.currentTimeMillis()));
+        String filename = new SimpleDateFormat(TIME_STAMP_NAME).format(new Date());
         return new File(saveDirectory, filename + ".JPG");
     }
 

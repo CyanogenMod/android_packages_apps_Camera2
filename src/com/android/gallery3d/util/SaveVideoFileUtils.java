@@ -25,8 +25,8 @@ import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 
 import java.io.File;
-import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class SaveVideoFileUtils {
     // Copy from SaveCopyTask.java in terms of how to handle the destination
@@ -50,8 +50,7 @@ public class SaveVideoFileUtils {
         } else {
             dstFileInfo.mFolderName = dstFileInfo.mDirectory.getName();
         }
-        dstFileInfo.mFileName = new SimpleDateFormat(fileNameFormat).format(
-                new Date(System.currentTimeMillis()));
+        dstFileInfo.mFileName = new SimpleDateFormat(fileNameFormat).format(new Date());
 
         dstFileInfo.mFile = new File(dstFileInfo.mDirectory, dstFileInfo.mFileName + ".mp4");
         return dstFileInfo;
