@@ -80,6 +80,13 @@ public class FilmStripView extends ViewGroup {
         public int getHeight();
         public int getType();
         public boolean isActionSupported(int action);
+
+        // prepare() should be called first time before using it.
+        public void prepare();
+
+        // recycle() should be called before we nullify the reference to this
+        // data.
+        public void recycle();
     }
 
     public interface DataAdapter {
@@ -102,7 +109,7 @@ public class FilmStripView extends ViewGroup {
         public int getTotalNumber();
         public View getView(Context context, int id);
         public ImageData getImageData(int id);
-        public void suggestSize(int w, int h);
+        public void suggestDecodeSize(int w, int h);
 
         public void setListener(Listener listener);
     }
@@ -232,7 +239,7 @@ public class FilmStripView extends ViewGroup {
         int boundWidth = MeasureSpec.getSize(widthMeasureSpec);
         int boundHeight = MeasureSpec.getSize(heightMeasureSpec);
         if (mDataAdapter != null) {
-            mDataAdapter.suggestSize(boundWidth / 2, boundHeight / 2);
+            mDataAdapter.suggestDecodeSize(boundWidth / 2, boundHeight / 2);
         }
 
         int wMode = View.MeasureSpec.EXACTLY;
@@ -290,12 +297,23 @@ public class FilmStripView extends ViewGroup {
     }
 
     private ViewInfo buildInfoFromData(int dataID) {
+        ImageData data = mDataAdapter.getImageData(dataID);
+        if (data == null) return null;
+        data.prepare();
         View v = mDataAdapter.getView(mContext, dataID);
         if (v == null) return null;
         v.setPadding(H_PADDING, 0, H_PADDING, 0);
         ViewInfo info = new ViewInfo(dataID, v);
         addView(info.getView());
         return info;
+    }
+
+    private void removeInfo(int infoID) {
+        if (infoID >= mViewInfo.length || mViewInfo[infoID] == null) return;
+
+        removeView(mViewInfo[infoID].getView());
+        mDataAdapter.getImageData(mViewInfo[infoID].getID()).recycle();
+        mViewInfo[infoID] = null;
     }
 
     // We try to keep the one closest to the center of the screen at position mCurrentInfo.
@@ -307,36 +325,34 @@ public class FilmStripView extends ViewGroup {
         int adjust = nearest - mCurrentInfo;
         if (adjust > 0) {
             for (int k = 0; k < adjust; k++) {
-                if (mViewInfo[k] != null) {
-                    removeView(mViewInfo[k].getView());
-                }
+                removeInfo(k);
             }
             for (int k = 0; k + adjust < BUFFER_SIZE; k++) {
                 mViewInfo[k] = mViewInfo[k + adjust];
             }
             for (int k = BUFFER_SIZE - adjust; k < BUFFER_SIZE; k++) {
                 mViewInfo[k] = null;
-                if (mViewInfo[k - 1] != null)
+                if (mViewInfo[k - 1] != null) {
                         mViewInfo[k] = buildInfoFromData(mViewInfo[k - 1].getID() + 1);
+                }
             }
         } else {
             for (int k = BUFFER_SIZE - 1; k >= BUFFER_SIZE + adjust; k--) {
-                if (mViewInfo[k] != null) {
-                    removeView(mViewInfo[k].getView());
-                }
+                removeInfo(k);
             }
             for (int k = BUFFER_SIZE - 1; k + adjust >= 0; k--) {
                 mViewInfo[k] = mViewInfo[k + adjust];
             }
             for (int k = -1 - adjust; k >= 0; k--) {
                 mViewInfo[k] = null;
-                if (mViewInfo[k + 1] != null)
+                if (mViewInfo[k + 1] != null) {
                         mViewInfo[k] = buildInfoFromData(mViewInfo[k + 1].getID() - 1);
+                }
             }
         }
     }
 
-    // Don't go out of bound.
+    // Don't go beyond the bound.
     private void adjustCenterPosition() {
         ViewInfo curr = mViewInfo[mCurrentInfo];
         if (curr == null) return;
@@ -416,7 +432,7 @@ public class FilmStripView extends ViewGroup {
 
     public void setDataAdapter(DataAdapter adapter) {
         mDataAdapter = adapter;
-        mDataAdapter.suggestSize(getMeasuredWidth(), getMeasuredHeight());
+        mDataAdapter.suggestDecodeSize(getMeasuredWidth(), getMeasuredHeight());
         mDataAdapter.setListener(new DataAdapter.Listener() {
             @Override
             public void onDataLoaded() {
