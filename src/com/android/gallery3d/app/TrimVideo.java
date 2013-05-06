@@ -44,8 +44,8 @@ import com.android.gallery3d.util.BucketNames;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class TrimVideo extends Activity implements
         MediaPlayer.OnErrorListener,
@@ -282,8 +282,7 @@ public class TrimVideo extends Activity implements
         } else {
             saveFolderName = mSaveDirectory.getName();
         }
-        mSaveFileName = new SimpleDateFormat(TIME_STAMP_NAME).format(
-                new Date(System.currentTimeMillis()));
+        mSaveFileName = new SimpleDateFormat(TIME_STAMP_NAME).format(new Date());
 
         mDstFile = new File(mSaveDirectory, mSaveFileName + ".mp4");
         mSrcFile = new File(mSrcVideoPath);
