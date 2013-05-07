@@ -60,7 +60,8 @@ public class CameraRootView extends RelativeLayout {
         return true;
     }
 
-    public void onLayout(boolean changed, int l, int t, int r, int b) {
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int rotation = Util.getDisplayRotation((Activity) getContext());
         // all the layout code assumes camera device orientation to be portrait
         // adjust rotation for landscape
@@ -71,45 +72,60 @@ public class CameraRootView extends RelativeLayout {
             rotation = (rotation + 90) % 360;
         }
         // calculate margins
-        int left = 0;
-        int right = 0;
-        int bottom = 0;
-        int top = 0;
+        mLeftMargin = 0;
+        mRightMargin = 0;
+        mBottomMargin = 0;
+        mTopMargin = 0;
         switch (rotation) {
             case 0:
-                bottom += mOffset;
+                mBottomMargin += mOffset;
                 break;
             case 90:
-                right += mOffset;
+                mRightMargin += mOffset;
                 break;
             case 180:
-                top += mOffset;
+                mTopMargin += mOffset;
                 break;
             case 270:
-                left += mOffset;
+                mLeftMargin += mOffset;
                 break;
         }
         if (mCurrentInsets != null) {
             if (mCurrentInsets.right > 0) {
                 // navigation bar on the right
-                right = right > 0 ? right : mCurrentInsets.right;
+                mRightMargin = mRightMargin > 0 ? mRightMargin : mCurrentInsets.right;
             } else {
                 // navigation bar on the bottom
-                bottom = bottom > 0 ? bottom : mCurrentInsets.bottom;
+                mBottomMargin = mBottomMargin > 0 ? mBottomMargin : mCurrentInsets.bottom;
             }
         }
+        // make sure all the children are resized
+        super.onMeasure(widthMeasureSpec - mLeftMargin - mRightMargin,
+                heightMeasureSpec - mTopMargin - mBottomMargin);
+
+        setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
+    public void onLayout(boolean changed, int l, int t, int r, int b) {
+        int orientation = getResources().getConfiguration().orientation;
+        // Lay out children
         for (int i = 0; i < getChildCount(); i++) {
             View v = getChildAt(i);
             if (v instanceof CameraControls) {
-                // Lay out camera controls to fill the short side of the screen
+                // Lay out camera controls to center on the short side of the screen
                 // so that they stay in place during rotation
-                if (rotation % 180 == 0) {
-                    v.layout(l, t + top, r, b - bottom);
+                int width = v.getMeasuredWidth();
+                int height = v.getMeasuredHeight();
+                if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    int left = (l + r - width) / 2;
+                    v.layout(left, t + mTopMargin, left + width, b - mBottomMargin);
                 } else {
-                    v.layout(l + left, t, r - right, b);
+                    int top = (t + b - height) / 2;
+                    v.layout(l + mLeftMargin, top, r - mRightMargin, top + height);
                 }
             } else {
-                v.layout(l + left, t + top, r - right, b - bottom);
+                v.layout(l + mLeftMargin, t + mTopMargin, r - mRightMargin, b - mBottomMargin);
             }
         }
     }
