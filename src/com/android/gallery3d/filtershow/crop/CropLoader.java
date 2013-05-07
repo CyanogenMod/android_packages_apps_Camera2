@@ -38,8 +38,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * This class contains static methods for loading a bitmap and
