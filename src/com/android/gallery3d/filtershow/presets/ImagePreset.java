@@ -203,7 +203,7 @@ public class ImagePreset {
         }
         for (int i = 0; i < mFilters.size(); i++) {
             FilterRepresentation filter = mFilters.elementAt(i);
-            if (!filter.isNil()) {
+            if (!filter.isNil() && !filter.getName().equalsIgnoreCase("none")) {
                 return true;
             }
         }
