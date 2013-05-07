@@ -317,7 +317,7 @@ public class CameraControls extends RotatableLayout {
     // on the wrong side of the screen. We need to make adjustment to move the controls
     // to the USB side
     public void adjustControlsToRightPosition() {
-        int orientation = Util.getDisplayRotation((Activity) getContext());
+        int orientation = getUnifiedRotation();
         if (orientation >= 180) {
             flipChildren();
         }
