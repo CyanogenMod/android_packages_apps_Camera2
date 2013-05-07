@@ -140,8 +140,21 @@ public class GeometryMetadata extends FilterRepresentation {
         float scale = 1.0f;
         scale = GeometryMath.scale(mPhotoBounds.width(), mPhotoBounds.height(), bitmap.getWidth(),
                 bitmap.getHeight());
-        return new RectF(mCropBounds.left * scale, mCropBounds.top * scale,
+        RectF croppedRegion = new RectF(mCropBounds.left * scale, mCropBounds.top * scale,
                 mCropBounds.right * scale, mCropBounds.bottom * scale);
+
+        // If no crop has been applied, make sure to use the exact size values.
+        // Multiplying using scale will introduce rounding errors that modify
+        // even un-cropped images.
+        if (mCropBounds.left == 0 && mCropBounds.right == mPhotoBounds.right) {
+            croppedRegion.left = 0;
+            croppedRegion.right = bitmap.getWidth();
+        }
+        if (mCropBounds.top == 0 && mCropBounds.bottom == mPhotoBounds.bottom) {
+            croppedRegion.top = 0;
+            croppedRegion.bottom = bitmap.getHeight();
+        }
+        return croppedRegion;
     }
 
     public FLIP getFlipType() {
@@ -375,10 +388,21 @@ public class GeometryMetadata extends FilterRepresentation {
     public Matrix buildTotalXform(float bmWidth, float bmHeight, float[] displayCenter) {
         RectF rp = getPhotoBounds();
         RectF rc = getPreviewCropBounds();
-
         float scale = GeometryMath.scale(rp.width(), rp.height(), bmWidth, bmHeight);
         RectF scaledCrop = GeometryMath.scaleRect(rc, scale);
         RectF scaledPhoto = GeometryMath.scaleRect(rp, scale);
+
+        // If no crop has been applied, make sure to use the exact size values.
+        // Multiplying using scale will introduce rounding errors that modify
+        // even un-cropped images.
+        if (rc.left == 0 && rc.right == rp.right) {
+            scaledCrop.left = scaledPhoto.left = 0;
+            scaledCrop.right = scaledPhoto.right = bmWidth;
+        }
+        if (rc.top == 0 && rc.bottom == rp.bottom) {
+            scaledCrop.top = scaledPhoto.top = 0;
+            scaledCrop.bottom = scaledPhoto.bottom = bmHeight;
+        }
 
         Matrix m1 = GeometryMetadata.buildWanderingCropMatrix(scaledPhoto, scaledCrop,
                 getRotation(), getStraightenRotation(),
