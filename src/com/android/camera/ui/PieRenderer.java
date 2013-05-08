@@ -71,6 +71,7 @@ public class PieRenderer extends OverlayRenderer
     private static final long PIE_XFADE_DURATION = 200;
     private static final long PIE_SELECT_FADE_DURATION = 300;
     private static final long PIE_OPEN_SUB_DELAY = 400;
+    private static final long PIE_SLICE_DURATION = 80;
 
     private static final int MSG_OPEN = 0;
     private static final int MSG_CLOSE = 1;
@@ -133,6 +134,7 @@ public class PieRenderer extends OverlayRenderer
     private LinearAnimation mXFade;
     private LinearAnimation mFadeIn;
     private FadeOutAnimation mFadeOut;
+    private LinearAnimation mSlice;
     private volatile boolean mFocusCancelled;
     private PointF mPolar = new PointF();
     private TextDrawable mLabel;
@@ -571,7 +573,12 @@ public class PieRenderer extends OverlayRenderer
                 if (item.isSelected()) {
                     Paint p = mSelectedPaint;
                     int state = canvas.save();
-                    float angle = getArcCenter(item, pos, count) - SWEEP_ARC / 2f;
+                    float angle = 0;
+                    if (mSlice != null) {
+                        angle = mSlice.getValue();
+                    } else {
+                        angle = getArcCenter(item, pos, count) - SWEEP_ARC / 2f;
+                    }
                     angle = getDegrees(angle);
                     canvas.rotate(angle, mPieCenterX, y);
                     if (mFadeOut != null) {
@@ -715,6 +722,7 @@ public class PieRenderer extends OverlayRenderer
             mCurrentItem.setSelected(false);
         }
         if (item != null && item.isEnabled()) {
+            moveSelection(mCurrentItem, item);
             item.setSelected(true);
             mCurrentItem = item;
             mLabel.setText(mCurrentItem.getLabel());
@@ -761,6 +769,44 @@ public class PieRenderer extends OverlayRenderer
             onEnter(item);
         } else {
             mCurrentItem = null;
+        }
+    }
+
+    private int getItemPos(PieItem target) {
+        List<PieItem> items = getOpenItem().getItems();
+        return items.indexOf(target);
+    }
+
+    private int getCurrentCount() {
+        return getOpenItem().getItems().size();
+    }
+
+    private void moveSelection(PieItem from, PieItem to) {
+        final int count = getCurrentCount();
+        final int fromPos = getItemPos(from);
+        final int toPos = getItemPos(to);
+        if (fromPos != -1 && toPos != -1) {
+            float startAngle = getArcCenter(from, getItemPos(from), count)
+                    - SWEEP_ARC / 2f;
+            float endAngle = getArcCenter(to, getItemPos(to), count)
+                    - SWEEP_ARC / 2f;
+            mSlice = new LinearAnimation(startAngle, endAngle);
+            mSlice.setDuration(PIE_SLICE_DURATION);
+            mSlice.setAnimationListener(new AnimationListener() {
+                @Override
+                public void onAnimationEnd(Animation arg0) {
+                    mSlice = null;
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation arg0) {
+                }
+
+                @Override
+                public void onAnimationStart(Animation arg0) {
+                }
+            });
+            mOverlay.startAnimation(mSlice);
         }
     }
 
