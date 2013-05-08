@@ -27,7 +27,7 @@ public interface VideoController extends OnShutterButtonListener {
     public void onReviewPlayClicked(View view);
 
     public boolean isVideoCaptureIntent();
-
+    public boolean isInReviewMode();
     public int onZoomChanged(int index);
 
     public void onSingleTapUp(View view, int x, int y);
