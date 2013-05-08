@@ -357,7 +357,7 @@ public class PhotoUI implements PieListener,
             mFaceView.setBlockDraw(!full);
         }
         if (mPopup != null) {
-            dismissPopup(false, full);
+            dismissPopup(full);
         }
         if (mGestures != null) {
             mGestures.setEnabled(full);
@@ -389,7 +389,7 @@ public class PhotoUI implements PieListener,
     public boolean removeTopLevelPopup() {
         // Remove the top level popup or dialog box and return true if there's any
         if (mPopup != null) {
-            dismissPopup(true);
+            dismissPopup();
             return true;
         }
         return false;
@@ -408,11 +408,11 @@ public class PhotoUI implements PieListener,
         mGestures.addTouchReceiver(mPopup);
     }
 
-    public void dismissPopup(boolean topPopupOnly) {
-        dismissPopup(topPopupOnly, true);
+    public void dismissPopup() {
+        dismissPopup(true);
     }
 
-    private void dismissPopup(boolean topOnly, boolean fullScreen) {
+    private void dismissPopup(boolean fullScreen) {
         if (fullScreen) {
             mActivity.showUI();
             mBlocker.setVisibility(View.VISIBLE);
@@ -423,7 +423,7 @@ public class PhotoUI implements PieListener,
             ((FrameLayout) mRootView).removeView(mPopup);
             mPopup = null;
         }
-        mMenu.popupDismissed(topOnly);
+        mMenu.popupDismissed();
     }
 
     public void onShowSwitcherPopup() {
@@ -445,7 +445,7 @@ public class PhotoUI implements PieListener,
         // Remove all the popups/dialog boxes
         boolean ret = false;
         if (mPopup != null) {
-            dismissPopup(false);
+            dismissPopup();
             ret = true;
         }
         return ret;
@@ -508,7 +508,7 @@ public class PhotoUI implements PieListener,
 
     @Override
     public void onPieOpened(int centerX, int centerY) {
-        dismissPopup(false);
+        dismissPopup();
         mActivity.cancelActivityTouchHandling();
         mActivity.setSwipingEnabled(false);
         if (mFaceView != null) {
