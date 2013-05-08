@@ -16,34 +16,28 @@
 
 package com.android.camera;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.hardware.Camera.Parameters;
-import android.view.LayoutInflater;
 
 import com.android.camera.ui.AbstractSettingPopup;
+import com.android.camera.ui.CountdownTimerPopup;
 import com.android.camera.ui.ListPrefSettingPopup;
-import com.android.camera.ui.MoreSettingPopup;
 import com.android.camera.ui.PieItem;
 import com.android.camera.ui.PieItem.OnClickListener;
 import com.android.camera.ui.PieRenderer;
-import com.android.camera.ui.TimerSettingPopup;
 import com.android.gallery3d.R;
 
+import java.util.Locale;
+
 public class PhotoMenu extends PieController
-        implements MoreSettingPopup.Listener,
-        TimerSettingPopup.Listener,
+        implements CountdownTimerPopup.Listener,
         ListPrefSettingPopup.Listener {
     private static String TAG = "CAM_photomenu";
 
     private final String mSettingOff;
 
     private PhotoUI mUI;
-    private String[] mOtherKeys;
-    // First level popup
-    private MoreSettingPopup mPopup;
-    // Second level popup
-    private AbstractSettingPopup mSecondPopup;
+    private AbstractSettingPopup mPopup;
     private CameraActivity mActivity;
 
     public PhotoMenu(CameraActivity activity, PhotoUI ui, PieRenderer pie) {
@@ -56,9 +50,9 @@ public class PhotoMenu extends PieController
     public void initialize(PreferenceGroup group) {
         super.initialize(group);
         mPopup = null;
-        mSecondPopup = null;
         PieItem item = null;
         final Resources res = mActivity.getResources();
+        Locale locale = res.getConfiguration().locale;
         // the order is from left to right in the menu
 
         // hdr
@@ -108,22 +102,42 @@ public class PhotoMenu extends PieController
         if (group.findPreference(CameraSettings.KEY_RECORD_LOCATION) != null) {
             item = makeSwitchItem(CameraSettings.KEY_RECORD_LOCATION, true);
             more.addItem(item);
+            if (mActivity.isSecureCamera()) {
+                // Prevent location preference from getting changed in secure camera mode
+                item.setEnabled(false);
+            }
         }
-        // settings popup
-        mOtherKeys = new String[] {
-                CameraSettings.KEY_PICTURE_SIZE,
-                CameraSettings.KEY_FOCUS_MODE,
-                CameraSettings.KEY_TIMER,
-                CameraSettings.KEY_TIMER_SOUND_EFFECTS,
-                };
-        item = makeItem(R.drawable.ic_settings_holo_light);
-        item.setLabel(res.getString(R.string.camera_menu_settings_label));
+        // countdown timer
+        final ListPreference ctpref = group.findPreference(CameraSettings.KEY_TIMER);
+        final ListPreference beeppref = group.findPreference(CameraSettings.KEY_TIMER_SOUND_EFFECTS);
+        item = makeItem(R.drawable.ic_timer);
+        item.setLabel(res.getString(R.string.pref_camera_timer_title).toUpperCase(locale));
         item.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(PieItem item) {
-                if (mPopup == null) {
-                    initializePopup();
-                }
+                CountdownTimerPopup timerPopup = (CountdownTimerPopup) mActivity.getLayoutInflater().inflate(
+                        R.layout.countdown_setting_popup, null, false);
+                timerPopup.initialize(ctpref, beeppref);
+                timerPopup.setSettingChangedListener(PhotoMenu.this);
+                mUI.dismissPopup();
+                mPopup = timerPopup;
+                mUI.showPopup(mPopup);
+            }
+        });
+        more.addItem(item);
+        // image size
+        item = makeItem(R.drawable.ic_imagesize);
+        final ListPreference sizePref = group.findPreference(CameraSettings.KEY_PICTURE_SIZE);
+        item.setLabel(res.getString(R.string.pref_camera_picturesize_title).toUpperCase(locale));
+        item.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(PieItem item) {
+                ListPrefSettingPopup popup = (ListPrefSettingPopup) mActivity.getLayoutInflater().inflate(
+                        R.layout.list_pref_setting_popup, null, false);
+                popup.initialize(sizePref);
+                popup.setSettingChangedListener(PhotoMenu.this);
+                mUI.dismissPopup();
+                mPopup = popup;
                 mUI.showPopup(mPopup);
             }
         });
@@ -145,50 +159,18 @@ public class PhotoMenu extends PieController
     }
 
     @Override
-    public void reloadPreferences() {
-        super.reloadPreferences();
-        if (mPopup != null) {
-            mPopup.reloadPreference();
-        }
-    }
-
-    @Override
-    // Hit when an item in the second-level popup gets selected
+    // Hit when an item in a popup gets selected
     public void onListPrefChanged(ListPreference pref) {
-        if (mPopup != null && mSecondPopup != null) {
-                mUI.dismissPopup(true);
-                mPopup.reloadPreference();
+        if (mPopup != null) {
+            mUI.dismissPopup();
         }
         onSettingChanged(pref);
     }
 
-    @Override
-    public void overrideSettings(final String ... keyvalues) {
-        super.overrideSettings(keyvalues);
-        if (mPopup == null) initializePopup();
-        mPopup.overrideSettings(keyvalues);
-    }
-
-    protected void initializePopup() {
-        LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(
-                Context.LAYOUT_INFLATER_SERVICE);
-
-        MoreSettingPopup popup = (MoreSettingPopup) inflater.inflate(
-                R.layout.more_setting_popup, null, false);
-        popup.setSettingChangedListener(this);
-        popup.initialize(mPreferenceGroup, mOtherKeys);
-        if (mActivity.isSecureCamera()) {
-            // Prevent location preference from getting changed in secure camera mode
-            popup.setPreferenceEnabled(CameraSettings.KEY_RECORD_LOCATION, false);
-        }
-        mPopup = popup;
-    }
-
-    public void popupDismissed(boolean topPopupOnly) {
-        // if the 2nd level popup gets dismissed
-        if (mSecondPopup != null) {
-            mSecondPopup = null;
-            if (topPopupOnly) mUI.showPopup(mPopup);
+    public void popupDismissed() {
+        // the popup gets dismissed
+        if (mPopup != null) {
+            mPopup = null;
         }
     }
 
@@ -217,29 +199,4 @@ public class PhotoMenu extends PieController
         super.onSettingChanged(pref);
     }
 
-    @Override
-    // Hit when an item in the first-level popup gets selected, then bring up
-    // the second-level popup
-    public void onPreferenceClicked(ListPreference pref) {
-        if (mSecondPopup != null) return;
-
-        LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(
-                Context.LAYOUT_INFLATER_SERVICE);
-        if (CameraSettings.KEY_TIMER.equals(pref.getKey())) {
-            TimerSettingPopup timerPopup = (TimerSettingPopup) inflater.inflate(
-                    R.layout.timer_setting_popup, null, false);
-            timerPopup.initialize(pref);
-            timerPopup.setSettingChangedListener(this);
-            mUI.dismissPopup(true);
-            mSecondPopup = timerPopup;
-        } else {
-            ListPrefSettingPopup basic = (ListPrefSettingPopup) inflater.inflate(
-                    R.layout.list_pref_setting_popup, null, false);
-            basic.initialize(pref);
-            basic.setSettingChangedListener(this);
-            mUI.dismissPopup(true);
-            mSecondPopup = basic;
-        }
-        mUI.showPopup(mSecondPopup);
-    }
 }
