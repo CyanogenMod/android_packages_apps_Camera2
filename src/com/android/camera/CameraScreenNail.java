@@ -17,7 +17,7 @@
 package com.android.camera;
 
 import android.annotation.TargetApi;
-import android.content.res.Resources;
+import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.opengl.Matrix;
 import android.util.Log;
@@ -58,7 +58,7 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
     private final float[] mTextureTransformMatrix = new float[16];
 
     // Animation.
-    private CaptureAnimManager mCaptureAnimManager = new CaptureAnimManager();
+    private CaptureAnimManager mCaptureAnimManager;
     private SwitchAnimManager mSwitchAnimManager = new SwitchAnimManager();
     private int mAnimState = ANIM_NONE;
     private RawTexture mAnimTexture;
@@ -120,9 +120,9 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
         RawTexture copyToTexture(GLCanvas c, RawTexture texture, int width, int height);
     }
 
-    public CameraScreenNail(Listener listener, Resources res) {
+    public CameraScreenNail(Listener listener, Context ctx) {
         mListener = listener;
-        mCaptureAnimManager.setResources(res);
+        mCaptureAnimManager = new CaptureAnimManager(ctx);
     }
 
     public void setFullScreen(boolean full) {
@@ -293,15 +293,6 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
 
     public void animateSlide() {
         synchronized (mLock) {
-            // Ignore the case where animateFlash is skipped but animateSlide is called
-            // e.g. Double tap shutter and immediately swipe to gallery, and quickly swipe back
-            // to camera. This case only happens in monkey tests, not applicable to normal
-            // human beings.
-            if (mAnimState != ANIM_CAPTURE_RUNNING) {
-                Log.v(TAG, "Cannot animateSlide outside of animateCapture!"
-                        + " Animation state = " + mAnimState);
-                return;
-            }
             mCaptureAnimManager.animateSlide();
             mListener.requestRender();
         }
@@ -384,7 +375,7 @@ public class CameraScreenNail extends SurfaceTextureScreenNail {
                 case ANIM_CAPTURE_START:
                     copyPreviewTexture(canvas);
                     mListener.onCaptureTextureCopied();
-                    mCaptureAnimManager.startAnimation(x, y, width, height);
+                    mCaptureAnimManager.startAnimation();
                     mAnimState = ANIM_CAPTURE_RUNNING;
                     break;
             }
