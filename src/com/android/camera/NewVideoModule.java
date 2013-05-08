@@ -2341,4 +2341,9 @@ public class NewVideoModule implements NewCameraModule,
     public void onMediaSaveServiceConnected(MediaSaveService s) {
         // do nothing.
     }
+
+    @Override
+    public boolean isInReviewMode() {
+        return false;
+    }
 }
