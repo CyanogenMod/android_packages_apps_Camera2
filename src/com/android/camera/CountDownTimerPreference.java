@@ -21,25 +21,20 @@ import android.util.AttributeSet;
 
 import com.android.gallery3d.R;
 
-import java.util.List;
-
-/* CountDownTimerPreference generates entries (i.e. what users see in the UI),
- * and entry values (the actual value recorded in preference) in
- * initCountDownTimeChoices(Context context), rather than reading the entries
- * from a predefined list. When the entry values are a continuous list of numbers,
- * (e.g. 0-60), it is more efficient to auto generate the list than to predefine it.*/
 public class CountDownTimerPreference extends ListPreference {
-    private final static int MAX_DURATION = 60;
+    private static final int[] DURATIONS = {
+        0, 1, 2, 3, 4, 5, 10, 15, 20, 30, 60
+    };
     public CountDownTimerPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         initCountDownDurationChoices(context);
     }
 
     private void initCountDownDurationChoices(Context context) {
-        CharSequence[] entryValues = new CharSequence[MAX_DURATION + 1];
-        CharSequence[] entries = new CharSequence[MAX_DURATION + 1];
-        for (int i = 0; i <= MAX_DURATION; i++) {
-            entryValues[i] = Integer.toString(i);
+        CharSequence[] entryValues = new CharSequence[DURATIONS.length];
+        CharSequence[] entries = new CharSequence[DURATIONS.length];
+        for (int i = 0; i < DURATIONS.length; i++) {
+            entryValues[i] = Integer.toString(DURATIONS[i]);
             if (i == 0) {
                 entries[0] = context.getString(R.string.setting_off); // Off
             } else {
