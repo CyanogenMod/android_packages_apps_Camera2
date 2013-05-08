@@ -73,7 +73,14 @@ public class CropActivity extends Activity {
     private static final int SELECT_PICTURE = 1; // request code for picker
 
     private static final int DEFAULT_COMPRESS_QUALITY = 90;
-    public static final int MAX_BMAP_IN_INTENT = 990000;
+    /**
+     * The maximum bitmap size we allow to be returned through the intent.
+     * Intents have a maximum of 1MB in total size. However, the Bitmap seems to
+     * have some overhead to hit so that we go way below the limit here to make
+     * sure the intent stays below 1MB.We should consider just returning a byte
+     * array instead of a Bitmap instance to avoid overhead.
+     */
+    public static final int MAX_BMAP_IN_INTENT = 750000;
 
     // Flags
     private static final int DO_SET_WALLPAPER = 1;
