@@ -443,7 +443,6 @@ public class NewPhotoUI implements PieListener,
         updateExposureOnScreenIndicator(params,
                 CameraSettings.readExposure(prefs));
         updateFlashOnScreenIndicator(params.getFlashMode());
-        updateHdrOnScreenIndicator(params.getSceneMode());
     }
 
     private void updateExposureOnScreenIndicator(Camera.Parameters params, int value) {
@@ -505,17 +504,6 @@ public class NewPhotoUI implements PieListener,
             mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_off);
         } else {
             mSceneIndicator.setImageResource(R.drawable.ic_indicator_sce_on);
-        }
-    }
-
-    private void updateHdrOnScreenIndicator(String value) {
-        if (mHdrIndicator == null) {
-            return;
-        }
-        if ((value != null) && Parameters.SCENE_MODE_HDR.equals(value)) {
-            mHdrIndicator.setImageResource(R.drawable.ic_indicator_hdr_on);
-        } else {
-            mHdrIndicator.setImageResource(R.drawable.ic_indicator_hdr_off);
         }
     }
 
