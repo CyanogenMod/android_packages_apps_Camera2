@@ -135,6 +135,8 @@ public class SparseArrayBitmapPool {
         mStore.put(key, newNode);
         if (newNode.nextInPool == null) {
             mPoolNodesTail = newNode;
+        } else {
+            newNode.nextInPool.prevInPool = newNode;
         }
         mSizeBytes += bytes;
         return true;
