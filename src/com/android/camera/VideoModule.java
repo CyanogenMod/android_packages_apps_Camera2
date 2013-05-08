@@ -126,6 +126,7 @@ public class VideoModule implements CameraModule,
 
     private boolean mIsVideoCaptureIntent;
     private boolean mQuickCapture;
+    private boolean mIsInReviewMode = false;
 
     private MediaRecorder mMediaRecorder;
     private EffectsRecorder mEffectsRecorder;
@@ -541,13 +542,20 @@ public class VideoModule implements CameraModule,
 
     @OnClickAttr
     public void onReviewDoneClicked(View v) {
+        mIsInReviewMode = false;
         doReturnToCaller(true);
     }
 
     @OnClickAttr
     public void onReviewCancelClicked(View v) {
+        mIsInReviewMode = false;
         stopVideoRecording();
         doReturnToCaller(false);
+    }
+
+    @Override
+    public boolean isInReviewMode() {
+        return mIsInReviewMode;
     }
 
     private void onStopVideoRecording() {
@@ -1525,6 +1533,7 @@ public class VideoModule implements CameraModule,
     }
 
     private void showCaptureResult() {
+        mIsInReviewMode = true;
         Bitmap bitmap = null;
         if (mVideoFileDescriptor != null) {
             bitmap = Thumbnail.createVideoThumbnailBitmap(mVideoFileDescriptor.getFileDescriptor(),
