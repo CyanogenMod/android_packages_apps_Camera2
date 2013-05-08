@@ -293,6 +293,9 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
     }
 
     public void dismissPopup(boolean topLevelPopupOnly, boolean fullScreen) {
+        // In review mode, we do not want to bring up the camera UI
+        if (mController.isInReviewMode()) return;
+
         if (fullScreen) {
             mActivity.showUI();
             mBlocker.setVisibility(View.VISIBLE);
