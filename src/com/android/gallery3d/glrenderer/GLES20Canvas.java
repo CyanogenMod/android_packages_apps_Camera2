@@ -960,33 +960,6 @@ public class GLES20Canvas implements GLCanvas {
         return bufferId;
     }
 
-    @Override
-    public void enableStencil() {
-        GLES20.glEnable(GLES20.GL_STENCIL_TEST);
-    }
-
-    @Override
-    public void disableStencil() {
-        GLES20.glDisable(GLES20.GL_STENCIL_TEST);
-    }
-
-    @Override
-    public void clearStencilBuffer() {
-        GLES20.glClear(GLES20.GL_STENCIL_BUFFER_BIT);
-    }
-
-    @Override
-    public void updateStencil(boolean update) {
-        int passOp = update ? GLES20.GL_REPLACE : GLES20.GL_KEEP;
-        GLES20.glStencilOp(GLES20.GL_KEEP, GLES20.GL_KEEP, passOp);
-    }
-
-    @Override
-    public void drawOnlyOutsideStencil(boolean onlyOutside) {
-        int func = onlyOutside ? GLES20.GL_NOTEQUAL : GLES20.GL_ALWAYS;
-        GLES20.glStencilFunc(func, 1, 1);
-    }
-
     public static void checkError() {
         int error = GLES20.glGetError();
         if (error != 0) {
