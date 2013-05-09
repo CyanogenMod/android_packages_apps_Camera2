@@ -16,14 +16,16 @@
 
 package com.android.gallery3d.filtershow.filters;
 
-import com.android.gallery3d.app.Log;
+
+import android.util.Log;
+
 import com.android.gallery3d.filtershow.controller.Control;
 import com.android.gallery3d.filtershow.controller.FilterView;
 import com.android.gallery3d.filtershow.controller.Parameter;
 import com.android.gallery3d.filtershow.controller.ParameterInteger;
 
 public class FilterBasicRepresentation extends FilterRepresentation implements ParameterInteger {
-    private static final String LOGTAG = "FilterBasicRepresentation";
+    private static final String LOGTAG = "FilterBasicRep";
     private int mMinimum;
     private int mValue;
     private int mMaximum;
@@ -31,6 +33,7 @@ public class FilterBasicRepresentation extends FilterRepresentation implements P
     private int mPreviewValue;
     public static final String SERIAL_NAME = "Name";
     public static final String SERIAL_VALUE = "Value";
+    private boolean mLogVerbose = Log.isLoggable(LOGTAG, Log.VERBOSE);
 
     public FilterBasicRepresentation(String name, int minimum, int value, int maximum) {
         super(name);
@@ -50,7 +53,9 @@ public class FilterBasicRepresentation extends FilterRepresentation implements P
         representation.setMinimum(getMinimum());
         representation.setMaximum(getMaximum());
         representation.setValue(getValue());
-        Log.v(LOGTAG, "cloning from <" + this + "> to <" + representation + ">");
+        if (mLogVerbose) {
+            Log.v(LOGTAG, "cloning from <" + this + "> to <" + representation + ">");
+        }
         return representation;
     }
 
