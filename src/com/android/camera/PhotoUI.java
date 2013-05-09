@@ -448,6 +448,7 @@ public class PhotoUI implements PieListener,
             dismissPopup();
             ret = true;
         }
+        onShowSwitcherPopup();
         return ret;
     }
 
