@@ -41,7 +41,7 @@ public class BitmapDecoder {
     private static final String TAG = BitmapDecoder.class.getSimpleName();
     private static final int POOL_SIZE = 4;
     private static final int TEMP_STORAGE_SIZE_BYTES = 16 * 1024;
-    private static final int HEADER_MAX_SIZE = 16 * 1024;
+    private static final int HEADER_MAX_SIZE = 128 * 1024;
 
     private static final Pool<BitmapFactory.Options> sOptions =
             new SynchronizedPool<BitmapFactory.Options>(POOL_SIZE);
