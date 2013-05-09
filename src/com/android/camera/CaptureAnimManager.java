@@ -16,6 +16,7 @@
 
 package com.android.camera;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.SystemClock;
@@ -24,6 +25,7 @@ import android.view.animation.Interpolator;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.glrenderer.GLCanvas;
+import com.android.gallery3d.glrenderer.NinePatchTexture;
 import com.android.gallery3d.glrenderer.RawTexture;
 
 /**
@@ -66,6 +68,8 @@ public class CaptureAnimManager {
     private int mMarginTop;
     private int mSize;
     private Resources mResources;
+    private NinePatchTexture mBorder;
+    private int mShadowSize;
 
     public static int getAnimationDuration() {
         return TIME_SLIDE2;
@@ -74,12 +78,9 @@ public class CaptureAnimManager {
     /* preview: camera preview view.
      * review: view of picture just taken.
      */
-    public CaptureAnimManager() {
-
-    }
-
-    public void setResources(Resources res) {
-        mResources = res;
+    public CaptureAnimManager(Context ctx) {
+        mBorder = new NinePatchTexture(ctx, R.drawable.capture_thumbnail_shadow);
+        mResources = ctx.getResources();
     }
 
     public void setOrientation(int displayRotation) {
@@ -102,16 +103,15 @@ public class CaptureAnimManager {
         mAnimType = ANIM_BOTH;
     }
 
-    // x, y, w and h: the rectangle area where the animation takes place.
-    public void startAnimation(int x, int y, int w, int h) {
+    public void startAnimation() {
         mAnimStartTime = SystemClock.uptimeMillis();
-        setAnimationGeometry(x, y, w, h);
     }
 
     private void setAnimationGeometry(int x, int y, int w, int h) {
         mMarginRight = mResources.getDimensionPixelSize(R.dimen.capture_margin_right);
         mMarginTop = mResources.getDimensionPixelSize(R.dimen.capture_margin_top);
         mSize = mResources.getDimensionPixelSize(R.dimen.capture_size);
+        mShadowSize = mResources.getDimensionPixelSize(R.dimen.capture_border);
         mOffset = mMarginRight + mSize;
         // Set the views to the initial positions.
         mDrawWidth = w;
@@ -192,6 +192,8 @@ public class CaptureAnimManager {
         } else if (animStep == ANIM_HOLD2) {
             preview.directDraw(canvas, (int) mX, (int) mY, mDrawWidth, mDrawHeight);
             review.draw(canvas, mHoldX, mHoldY, mHoldW, mHoldH);
+            mBorder.draw(canvas, (int) mHoldX - mShadowSize, (int) mHoldY - mShadowSize,
+                    (int) mHoldW + 2 * mShadowSize, (int) mHoldH + 2 * mShadowSize);
         } else if (animStep == ANIM_SLIDE2) {
             float fraction = (float)(timeDiff) / (TIME_SLIDE2 - TIME_HOLD2);
             float x = mHoldX;
@@ -212,6 +214,8 @@ public class CaptureAnimManager {
                 break;
             }
             preview.directDraw(canvas, (int) mX, (int) mY, mDrawWidth, mDrawHeight);
+            mBorder.draw(canvas, (int) x - mShadowSize, (int) y - mShadowSize,
+                    (int) mHoldW + 2 * mShadowSize, (int) mHoldH + 2 * mShadowSize);
             review.draw(canvas, (int) x, (int) y, mHoldW, mHoldH);
         }
         return true;
