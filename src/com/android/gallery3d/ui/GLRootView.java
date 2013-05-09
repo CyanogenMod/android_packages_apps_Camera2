@@ -94,9 +94,6 @@ public class GLRootView extends GLSurfaceView
     private int mFlags = FLAG_NEED_LAYOUT;
     private volatile boolean mRenderRequested = false;
 
-    private final GalleryEGLConfigChooser mEglConfigChooser =
-            new GalleryEGLConfigChooser();
-
     private final ArrayList<CanvasAnimation> mAnimations =
             new ArrayList<CanvasAnimation>();
 
@@ -123,7 +120,11 @@ public class GLRootView extends GLSurfaceView
         mFlags |= FLAG_INITIALIZED;
         setBackgroundDrawable(null);
         setEGLContextClientVersion(ApiHelper.HAS_GLES20_REQUIRED ? 2 : 1);
-        setEGLConfigChooser(mEglConfigChooser);
+        if (ApiHelper.USE_888_PIXEL_FORMAT) {
+            setEGLConfigChooser(8, 8, 8, 0, 0, 0);
+        } else {
+            setEGLConfigChooser(5, 6, 5, 0, 0, 0);
+        }
         setRenderer(this);
         if (ApiHelper.USE_888_PIXEL_FORMAT) {
             getHolder().setFormat(PixelFormat.RGB_888);

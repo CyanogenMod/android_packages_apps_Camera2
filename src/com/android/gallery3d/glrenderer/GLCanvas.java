@@ -197,37 +197,6 @@ public interface GLCanvas {
     public abstract int uploadBuffer(java.nio.ByteBuffer buffer);
 
     /**
-     * Enable stencil test
-     */
-    public abstract void enableStencil();
-
-    /**
-     * Disable stencil.
-     */
-    public abstract void disableStencil();
-
-    /**
-     * Clears the stencil so that a new stencil can be generated.
-     */
-    public abstract void clearStencilBuffer();
-
-    /**
-     * Start/stop updating the stencil buffer.
-     *
-     * @param update True if the stencil should be updated, false otherwise.
-     */
-    public abstract void updateStencil(boolean update);
-
-    /**
-     * Changes how the stencil buffer is used.
-     *
-     * @param onlyOutside If true, only the area outside the stencil can be
-     *            changed. If false, the area inside the stencil can be drawn to
-     *            as well.
-     */
-    public abstract void drawOnlyOutsideStencil(boolean onlyOutside);
-
-    /**
      * After LightCycle makes GL calls, this method is called to restore the GL
      * configuration to the one expected by GLCanvas.
      */
