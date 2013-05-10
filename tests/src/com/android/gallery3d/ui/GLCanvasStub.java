@@ -148,21 +148,6 @@ public class GLCanvasStub implements GLCanvas {
         return 0;
     }
     @Override
-    public void enableStencil() {
-    }
-    @Override
-    public void disableStencil() {
-    }
-    @Override
-    public void clearStencilBuffer() {
-    }
-    @Override
-    public void updateStencil(boolean update) {
-    }
-    @Override
-    public void drawOnlyOutsideStencil(boolean onlyOutside) {
-    }
-    @Override
     public void recoverFromLightCycle() {
     }
     @Override

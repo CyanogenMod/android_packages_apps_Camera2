@@ -612,7 +612,6 @@ public class GLES11Canvas implements GLCanvas {
 
             // Set the background color
             gl.glClearColor(0f, 0f, 0f, 0f);
-            gl.glClearStencil(0);
 
             gl.glEnable(GL11.GL_BLEND);
             gl.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -979,33 +978,6 @@ public class GLES11Canvas implements GLCanvas {
         mGL.glBufferData(GL11.GL_ARRAY_BUFFER, buf.capacity() * elementSize, buf,
                 GL11.GL_STATIC_DRAW);
         return bufferId;
-    }
-
-    @Override
-    public void enableStencil() {
-        mGL.glEnable(GL11.GL_STENCIL_TEST);
-    }
-
-    @Override
-    public void disableStencil() {
-        mGL.glDisable(GL11.GL_STENCIL_TEST);
-    }
-
-    @Override
-    public void clearStencilBuffer() {
-        mGL.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-    }
-
-    @Override
-    public void updateStencil(boolean update) {
-        int passOp = update ? GL11.GL_REPLACE : GL11.GL_KEEP;
-        mGL.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, passOp);
-    }
-
-    @Override
-    public void drawOnlyOutsideStencil(boolean onlyOutside) {
-        int func = onlyOutside ? GL11.GL_NOTEQUAL : GL11.GL_ALWAYS;
-        mGL.glStencilFunc(func, 1, 1);
     }
 
     @Override
