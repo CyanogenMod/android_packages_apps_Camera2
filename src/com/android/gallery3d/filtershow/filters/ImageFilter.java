@@ -32,8 +32,6 @@ public abstract class ImageFilter implements Cloneable {
     protected String mName = "Original";
     private final String LOGTAG = "ImageFilter";
     protected static final boolean SIMPLE_ICONS = true;
-    private boolean mReInitNeeded = false;
-
     // TODO: Temporary, for dogfood note memory issues with toasts for better
     // feedback. Remove this when filters actually work in low memory
     // situations.
@@ -103,13 +101,5 @@ public abstract class ImageFilter implements Cloneable {
 
     public FilterEnvironment getEnvironment() {
         return mEnvironment;
-    }
-
-    public boolean getReInitNeeded() {
-        return mReInitNeeded;
-    }
-
-    public void setReInitNeeded(boolean reInitNeeded) {
-        mReInitNeeded = reInitNeeded;
     }
 }

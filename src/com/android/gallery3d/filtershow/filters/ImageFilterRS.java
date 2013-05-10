@@ -80,11 +80,7 @@ public abstract class ImageFilterRS extends ImageFilter {
         mLastTimeCalled = startOverAll;
         long startFilter = 0;
         long endFilter = 0;
-        if (!mResourcesLoaded || getReInitNeeded()) {
-            if (getReInitNeeded()) {
-                freeResources();
-                setReInitNeeded(false);
-            }
+        if (!mResourcesLoaded) {
             PipelineInterface pipeline = getEnvironment().getPipeline();
             createFilter(pipeline.getResources(), getEnvironment().getScaleFactor(),
                     getEnvironment().getQuality(), in);
@@ -129,11 +125,10 @@ public abstract class ImageFilterRS extends ImageFilter {
                 sizeChanged = true;
             }
             if (pipeline.prepareRenderscriptAllocations(bitmap)
-                    || !isResourcesLoaded() || sizeChanged || getReInitNeeded()) {
+                    || !isResourcesLoaded() || sizeChanged) {
                 freeResources();
                 createFilter(rsc, scaleFactor, quality);
                 setResourcesLoaded(true);
-                setReInitNeeded(false);
                 mLastInputWidth = getInPixelsAllocation().getType().getX();
                 mLastInputHeight = getInPixelsAllocation().getType().getY();
             }
