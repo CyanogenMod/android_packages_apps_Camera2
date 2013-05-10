@@ -78,6 +78,13 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
         return mFilters.get(representation.getFilterClass());
     }
 
+    public void setReInitNeededForEachFilter() {
+        for (Class c : mFilters.keySet()) {
+            ImageFilter filter = mFilters.get(c);
+            filter.setReInitNeeded(true);
+        }
+    }
+
     public FilterRepresentation getRepresentation(Class c) {
         ImageFilter filter = mFilters.get(c);
         if (filter != null) {
