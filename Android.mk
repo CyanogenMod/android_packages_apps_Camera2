@@ -39,7 +39,7 @@ LOCAL_SDK_VERSION := current
 ifneq (,$(TARGET_BUILD_APPS))
   LOCAL_JNI_SHARED_LIBRARIES := libjni_mosaic libjni_eglfence libjni_filtershow_filters librsjni
 else
-  LOCAL_REQUIRED_MODULES := libjni_mosaic libjni_eglfence libjni_filtershow_filters librsjni
+  LOCAL_REQUIRED_MODULES := libjni_mosaic libjni_eglfence libjni_filtershow_filters
 endif
 
 LOCAL_PROGUARD_FLAG_FILES := proguard.flags
