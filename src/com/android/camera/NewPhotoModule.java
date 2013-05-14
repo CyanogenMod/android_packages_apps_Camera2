@@ -906,7 +906,6 @@ public class NewPhotoModule
         switch (state) {
         case PhotoController.PREVIEW_STOPPED:
         case PhotoController.SNAPSHOT_IN_PROGRESS:
-        case PhotoController.FOCUSING:
         case PhotoController.SWITCHING_CAMERA:
             mUI.enableGestures(false);
             break;

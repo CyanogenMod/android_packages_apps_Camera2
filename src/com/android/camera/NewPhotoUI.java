@@ -61,11 +61,9 @@ import java.util.List;
 
 public class NewPhotoUI implements PieListener,
     NewPreviewGestures.SingleTapListener,
-    NewPreviewGestures.CancelEventListener,
     FocusUI, TextureView.SurfaceTextureListener,
     LocationManager.Listener,
-    FaceDetectionListener,
-    NewPreviewGestures.SwipeListener {
+    FaceDetectionListener {
 
     private static final String TAG = "CAM_UI";
     private static final int UPDATE_TRANSFORM_MATRIX = 1;
@@ -290,23 +288,10 @@ public class NewPhotoUI implements PieListener,
 
         if (mGestures == null) {
             // this will handle gesture disambiguation and dispatching
-            mGestures = new NewPreviewGestures(mActivity, this, mZoomRenderer, mPieRenderer,
-                    this);
-            mGestures.setCancelEventListener(this);
+            mGestures = new NewPreviewGestures(mActivity, this, mZoomRenderer, mPieRenderer);
+            mRenderOverlay.setGestures(mGestures);
         }
-        mGestures.clearTouchReceivers();
         mGestures.setRenderOverlay(mRenderOverlay);
-        mGestures.addTouchReceiver(mMenuButton);
-        mGestures.addTouchReceiver(mBlocker);
-        // make sure to add touch targets for image capture
-        if (mController.isImageCaptureIntent()) {
-            if (mReviewCancelButton != null) {
-                mGestures.addTouchReceiver(mReviewCancelButton);
-            }
-            if (mReviewDoneButton != null) {
-                mGestures.addTouchReceiver(mReviewDoneButton);
-            }
-        }
         mRenderOverlay.requestLayout();
 
         initializeZoom(params);
@@ -466,11 +451,6 @@ public class NewPhotoUI implements PieListener,
             }
         }
         return true;
-    }
-
-    @Override
-    public void onTouchEventCancelled(MotionEvent cancelEvent) {
-        mRootView.dispatchTouchEvent(cancelEvent);
     }
 
     public void enableGestures(boolean enable) {
@@ -797,10 +777,4 @@ public class NewPhotoUI implements PieListener,
         mFaceView.setFaces(faces);
     }
 
-    @Override
-    public void onSwipe(int direction) {
-        if (direction == PreviewGestures.DIR_UP) {
-            openMenu();
-        }
-    }
 }

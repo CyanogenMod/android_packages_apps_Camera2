@@ -23,6 +23,7 @@ import android.graphics.Rect;
 import android.os.Debug;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -129,6 +130,17 @@ public class NewCameraRootView extends FrameLayout {
             } else {
                 v.layout(l + mLeftMargin, t + mTopMargin, r - mRightMargin, b - mBottomMargin);
             }
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        //TODO: This scale check is temporary, should be removed once full screen notification
+        // is implemented
+        if (((View) getParent()).getScaleX() == 1.0f) {
+            return super.dispatchTouchEvent(ev);
+        } else {
+            return false;
         }
     }
 }

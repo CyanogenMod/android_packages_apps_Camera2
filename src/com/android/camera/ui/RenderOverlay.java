@@ -23,6 +23,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.android.camera.NewPreviewGestures;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class RenderOverlay extends FrameLayout {
 
     private RenderView mRenderView;
     private List<Renderer> mClients;
-
+    private NewPreviewGestures mGestures;
     // reverse list of touch clients
     private List<Renderer> mTouchClients;
     private int[] mPosition = new int[2];
@@ -55,6 +57,10 @@ public class RenderOverlay extends FrameLayout {
         mClients = new ArrayList<Renderer>(10);
         mTouchClients = new ArrayList<Renderer>(10);
         setWillNotDraw(false);
+    }
+
+    public void setGestures(NewPreviewGestures gestures) {
+        mGestures = gestures;
     }
 
     public void addRenderer(Renderer renderer) {
@@ -83,12 +89,13 @@ public class RenderOverlay extends FrameLayout {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent m) {
-        return false;
+        if (mGestures != null) mGestures.dispatchTouch(m);
+        return true;
     }
 
     public boolean directDispatchTouch(MotionEvent m, Renderer target) {
         mRenderView.setTouchTarget(target);
-        boolean res = super.dispatchTouchEvent(m);
+        boolean res = mRenderView.dispatchTouchEvent(m);
         mRenderView.setTouchTarget(null);
         return res;
     }
@@ -123,7 +130,8 @@ public class RenderOverlay extends FrameLayout {
         }
 
         @Override
-        public boolean onTouchEvent(MotionEvent evt) {
+        public boolean dispatchTouchEvent(MotionEvent evt) {
+
             if (mTouchTarget != null) {
                 return mTouchTarget.onTouchEvent(evt);
             }

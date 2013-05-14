@@ -303,6 +303,10 @@ public class PieRenderer extends OverlayRenderer
         mHandler.sendEmptyMessage(show ? MSG_OPEN : MSG_CLOSE);
     }
 
+    public boolean isOpen() {
+        return mState == STATE_PIE && isVisible();
+    }
+
     private void fadeIn() {
         mFadeIn = new LinearAnimation(0, 1);
         mFadeIn.setDuration(PIE_FADE_IN_DURATION);

@@ -55,8 +55,7 @@ import java.util.List;
 
 public class NewVideoUI implements PieRenderer.PieListener,
         NewPreviewGestures.SingleTapListener,
-        NewPreviewGestures.SwipeListener, SurfaceTextureListener,
-        SurfaceHolder.Callback {
+        SurfaceTextureListener, SurfaceHolder.Callback {
     private final static String TAG = "CAM_VideoUI";
     private static final int UPDATE_TRANSFORM_MATRIX = 1;
     // module fields
@@ -359,23 +358,10 @@ public class NewVideoUI implements PieRenderer.PieListener,
         }
         mRenderOverlay.addRenderer(mZoomRenderer);
         if (mGestures == null) {
-            mGestures = new NewPreviewGestures(mActivity, this, mZoomRenderer, mPieRenderer, this);
+            mGestures = new NewPreviewGestures(mActivity, this, mZoomRenderer, mPieRenderer);
+            mRenderOverlay.setGestures(mGestures);
         }
         mGestures.setRenderOverlay(mRenderOverlay);
-        mGestures.clearTouchReceivers();
-        mGestures.addTouchReceiver(mMenuButton);
-        mGestures.addTouchReceiver(mBlocker);
-        if (mController.isVideoCaptureIntent()) {
-            if (mReviewCancelButton != null) {
-                mGestures.addTouchReceiver(mReviewCancelButton);
-            }
-            if (mReviewDoneButton != null) {
-                mGestures.addTouchReceiver(mReviewDoneButton);
-            }
-            if (mReviewPlayButton != null) {
-                mGestures.addTouchReceiver(mReviewPlayButton);
-            }
-        }
     }
 
     public void setPrefChangedListener(OnPreferenceChangedListener listener) {
@@ -657,13 +643,6 @@ public class NewVideoUI implements PieRenderer.PieListener,
 
         @Override
         public void onZoomEnd() {
-        }
-    }
-
-    @Override
-    public void onSwipe(int direction) {
-        if (direction == PreviewGestures.DIR_UP) {
-            openMenu();
         }
     }
 

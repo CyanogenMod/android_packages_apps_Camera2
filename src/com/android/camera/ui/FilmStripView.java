@@ -16,6 +16,8 @@
 
 package com.android.camera.ui;
 
+import com.android.gallery3d.R;
+
 import android.animation.Animator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
@@ -41,6 +43,8 @@ public class FilmStripView extends ViewGroup {
     private static final int DURATION_GEOMETRY_ADJUST = 200;
     private static final float FILM_STRIP_SCALE = 0.6f;
     private static final float MAX_SCALE = 1f;
+    // Only check for intercepting touch events within first 500ms
+    private static final int SWIPE_TIME_OUT = 500;
 
     private Context mContext;
     private FilmStripGestureRecognizer mGestureRecognizer;
@@ -56,9 +60,11 @@ public class FilmStripView extends ViewGroup {
 
     private Listener mListener;
 
+    private MotionEvent mDown;
+    private boolean mCheckToIntercept = true;
     private View mCameraView;
     private ImageData mCameraData;
-
+    private int mSlop;
     private TimeInterpolator mViewAnimInterpolator;
 
     // This is used to resolve the misalignment problem when the device
@@ -253,6 +259,7 @@ public class FilmStripView extends ViewGroup {
         mViewAnimInterpolator = new LinearInterpolator();
         mGestureRecognizer =
                 new FilmStripGestureRecognizer(context, new MyGestureReceiver());
+        mSlop = (int) getContext().getResources().getDimension(R.dimen.pie_touch_slop);
     }
 
     public Controller getController() {
@@ -750,8 +757,28 @@ public class FilmStripView extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (isInCameraFullscreen()) return false;
-        return true;
+        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            mCheckToIntercept = true;
+            mDown = MotionEvent.obtain(ev);
+            return false;
+        } else if (ev.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
+            // Do not intercept touch once child is in zoom mode
+            mCheckToIntercept = false;
+            return false;
+        } else {
+            if (!mCheckToIntercept) return false;
+            if (ev.getEventTime() - ev.getDownTime() > SWIPE_TIME_OUT) return false;
+            int deltaX = (int) (ev.getX() - mDown.getX());
+            int deltaY = (int) (ev.getY() - mDown.getY());
+            if (ev.getActionMasked() == MotionEvent.ACTION_MOVE
+                    && deltaX < mSlop * (-1)) {
+                // intercept left swipe
+                if (Math.abs(deltaX) >= Math.abs(deltaY) * 2) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

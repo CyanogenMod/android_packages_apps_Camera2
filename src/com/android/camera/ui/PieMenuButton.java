@@ -36,6 +36,7 @@ public class PieMenuButton extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        boolean handled = super.onTouchEvent(event);
         if (MotionEvent.ACTION_UP == event.getAction() && mPressed) {
             // Perform a customized click as soon as the ACTION_UP event
             // is received. The reason for doing this is that Framework
@@ -45,7 +46,7 @@ public class PieMenuButton extends View {
             mReadyToClick = true;
             performClick();
         }
-        return super.onTouchEvent(event);
+        return handled;
     }
 
     @Override
