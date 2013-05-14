@@ -21,6 +21,7 @@
 
         <View
             android:id="@+id/blocker"
+            android:clickable="true"
             android:layout_height="match_parent"
             android:layout_width="@dimen/switcher_size"
             android:layout_gravity="right" />
