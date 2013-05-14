@@ -50,8 +50,9 @@ public class FilmStripGestureRecognizer {
                 context, new MyScaleListener());
     }
 
-    public boolean onTouchEvent(MotionEvent event) {
-        return mGestureDetector.onTouchEvent(event) || mScaleDetector.onTouchEvent(event);
+    public void onTouchEvent(MotionEvent event) {
+        mGestureDetector.onTouchEvent(event);
+        mScaleDetector.onTouchEvent(event);
     }
 
     private class MyGestureListener
