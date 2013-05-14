@@ -196,14 +196,13 @@ public class CropMath {
         float finalH = origH;
         if (origA < a) {
             finalH = origW / a;
+            r.top = r.centerY() - finalH / 2;
+            r.bottom = r.top + finalH;
         } else {
             finalW = origH * a;
+            r.left = r.centerX() - finalW / 2;
+            r.right = r.left + finalW;
         }
-        float centX = r.centerX();
-        float centY = r.centerY();
-        float hw = finalW / 2;
-        float hh = finalH / 2;
-        r.set(centX - hw, centY - hh, centX + hw, centY + hh);
     }
 
     /**
