@@ -19,6 +19,7 @@ package com.android.gallery3d.filtershow;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -86,13 +87,21 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
 
     public void updateMenuItems() {
         if (mUndoMenuItem != null) {
-            mUndoMenuItem.setEnabled(canUndo());
+            setEnabled(mUndoMenuItem, canUndo());
         }
         if (mRedoMenuItem != null) {
-            mRedoMenuItem.setEnabled(canRedo());
+            setEnabled(mRedoMenuItem, canRedo());
         }
         if (mResetMenuItem != null) {
-            mResetMenuItem.setEnabled(canReset());
+            setEnabled(mResetMenuItem, canReset());
+        }
+    }
+
+    private void setEnabled(MenuItem item, boolean enabled) {
+        item.setEnabled(enabled);
+        Drawable drawable = item.getIcon();
+        if (drawable != null) {
+            drawable.setAlpha(enabled ? 255 : 80);
         }
     }
 
