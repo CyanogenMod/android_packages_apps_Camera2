@@ -355,7 +355,7 @@ public class PieRenderer extends OverlayRenderer
     private void layoutPie() {
         mCenterAngle = getCenterAngle();
         layoutItems(0, getRoot().getItems());
-        layoutLabel(0);
+        layoutLabel(getLevel());
     }
 
     private void layoutLabel(int level) {
