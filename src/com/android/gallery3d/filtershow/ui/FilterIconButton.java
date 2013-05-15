@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -30,6 +31,7 @@ import com.android.gallery3d.filtershow.cache.RenderingRequestCaller;
 import com.android.gallery3d.filtershow.category.Action;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.imageshow.GeometryListener;
+import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.tools.IconFactory;
@@ -148,6 +150,12 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
         if (dst != null && mAction != null) {
             ImagePreset mPreset = new ImagePreset();
             mPreset.addFilter(mFilterRepresentation);
+
+            GeometryMetadata geometry = mPreset.mGeoData;
+            RectF bound = new RectF(0, 0, dst.getWidth(), dst.getHeight());
+            geometry.setCropBounds(bound);
+            geometry.setPhotoBounds(bound);
+
             RenderingRequest.post(dst.copy(Bitmap.Config.ARGB_8888, true),
                     mPreset, RenderingRequest.ICON_RENDERING, this);
         }
