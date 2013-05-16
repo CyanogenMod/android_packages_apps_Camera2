@@ -59,6 +59,14 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
     public static byte SHOW_VALUE_OFF = 0;
     public static byte SHOW_VALUE_INT = 1;
 
+    public static void hackFixStrings(Menu menu) {
+        int count = menu.size();
+        for (int i = 0; i < count; i++) {
+            MenuItem item = menu.getItem(i);
+            item.setTitle(item.getTitle().toString().toUpperCase());
+        }
+    }
+
     public String calculateUserMessage(Context context, String effectName, Object parameterValue) {
         return effectName.toUpperCase() + " " + parameterValue;
     }
