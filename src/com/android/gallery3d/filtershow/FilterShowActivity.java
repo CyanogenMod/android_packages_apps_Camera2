@@ -867,6 +867,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         ImagePreset original = new ImagePreset(adapter.getItem(0));
         mMasterImage.setPreset(original, true);
         invalidateViews();
+        backToMain();
     }
 
     public void showDefaultImageView() {
