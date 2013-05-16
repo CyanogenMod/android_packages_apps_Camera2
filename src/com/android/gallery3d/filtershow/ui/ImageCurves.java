@@ -36,6 +36,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.editors.Editor;
 import com.android.gallery3d.filtershow.editors.EditorCurves;
 import com.android.gallery3d.filtershow.filters.FilterCurvesRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
@@ -116,6 +117,7 @@ public class ImageCurves extends ImageShow {
                 return true;
             }
         });
+        Editor.hackFixStrings(popupMenu.getMenu());
         popupMenu.show();
     }
 
