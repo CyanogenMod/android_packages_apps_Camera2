@@ -117,6 +117,12 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         }
     }
 
+    public void removeData(int dataID) {
+        if (dataID >= mImages.size()) return;
+        LocalData d = mImages.remove(dataID);
+        mListener.onDataRemoved(dataID, d);
+    }
+
     private LocalData buildCameraImageData(int width, int height) {
         LocalData d = new CameraPreviewData(width, height);
         return d;

@@ -208,6 +208,10 @@ abstract interface LocalData extends FilmStripView.ImageData {
             ImageColumns.HEIGHT,        // 8, int
         };
 
+        private static final int mSupportedAction =
+                FilmStripView.ImageData.ACTION_DEMOTE
+                | FilmStripView.ImageData.ACTION_PROMOTE;
+
         // 32K buffer.
         private static final byte[] DECODE_TEMP_STORAGE = new byte[32 * 1024];
 
@@ -260,6 +264,11 @@ abstract interface LocalData extends FilmStripView.ImageData {
         @Override
         public int getType() {
             return TYPE_PHOTO;
+        }
+
+        @Override
+        public boolean isActionSupported(int action) {
+            return ((action & mSupportedAction) != 0);
         }
 
         @Override
@@ -327,6 +336,11 @@ abstract interface LocalData extends FilmStripView.ImageData {
         public static final int COL_WIDTH = 6;
         public static final int COL_HEIGHT = 7;
 
+        private static final int mSupportedActions =
+                FilmStripView.ImageData.ACTION_DEMOTE
+                | FilmStripView.ImageData.ACTION_PROMOTE
+                | FilmStripView.ImageData.ACTION_PLAY;
+
         static final String QUERY_ORDER = VideoColumns.DATE_TAKEN + " DESC, "
                 + VideoColumns._ID + " DESC";
         static final String[] QUERY_PROJECTION = {
@@ -379,6 +393,11 @@ abstract interface LocalData extends FilmStripView.ImageData {
         @Override
         public int getType() {
             return TYPE_PHOTO;
+        }
+
+        @Override
+        public boolean isActionSupported(int action) {
+            return ((action & mSupportedActions) != 0);
         }
 
         @Override

@@ -35,6 +35,7 @@ public class FilmStripGestureRecognizer {
         boolean onScaleBegin(float focusX, float focusY);
         boolean onScale(float focusX, float focusY, float scale);
         boolean onDown(float x, float y);
+        boolean onUp(float x, float y);
         void onScaleEnd();
     }
 
@@ -53,6 +54,9 @@ public class FilmStripGestureRecognizer {
     public void onTouchEvent(MotionEvent event) {
         mGestureDetector.onTouchEvent(event);
         mScaleDetector.onTouchEvent(event);
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            mListener.onUp(event.getX(), event.getY());
+        }
     }
 
     private class MyGestureListener

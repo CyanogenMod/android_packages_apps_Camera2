@@ -155,6 +155,18 @@ public class NewCameraActivity extends Activity
         mDataAdapter.setCameraPreviewInfo(rootLayout,
                 FilmStripView.ImageData.SIZE_FULL, FilmStripView.ImageData.SIZE_FULL);
         mFilmStripView.setDataAdapter(mDataAdapter);
+        mFilmStripView.setListener(new FilmStripView.Listener() {
+            @Override
+            public void onDataPromoted(int dataID) {
+                mDataAdapter.removeData(dataID);
+            }
+
+            @Override
+            public void onDataDemoted(int dataID) {
+                mDataAdapter.removeData(dataID);
+            }
+
+        });
         mCurrentModule = new NewPhotoModule();
         mCurrentModule.init(this, mRootView);
         mOrientationListener = new MyOrientationEventListener(this);
