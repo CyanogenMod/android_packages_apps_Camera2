@@ -10,7 +10,7 @@
         android:visibility="gone">
         <ImageButton
                 android:id="@+id/photopage_bottom_control_edit"
-                android:src="@drawable/ic_photoeditor_effects"
+                android:src="@drawable/ic_menu_edit_holo_dark"
                 android:background="@drawable/photopage_bottom_button_background"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
