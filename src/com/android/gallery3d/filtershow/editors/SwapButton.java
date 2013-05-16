@@ -51,14 +51,6 @@ public class SwapButton extends Button implements GestureDetector.OnGestureListe
         mListener = listener;
     }
 
-    public Menu getMenu() {
-        return mMenu;
-    }
-
-    public void setMenu(Menu menu) {
-        mMenu = menu;
-    }
-
     public boolean onTouchEvent(MotionEvent me) {
         if (!mDetector.onTouchEvent(me)) {
             return super.onTouchEvent(me);
