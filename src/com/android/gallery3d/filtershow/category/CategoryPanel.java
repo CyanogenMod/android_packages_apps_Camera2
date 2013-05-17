@@ -50,18 +50,22 @@ public class CategoryPanel extends Fragment {
         switch (adapter) {
             case MainPanel.LOOKS: {
                 mAdapter = activity.getCategoryLooksAdapter();
+                mAdapter.initializeSelection(MainPanel.LOOKS);
                 break;
             }
             case MainPanel.BORDERS: {
                 mAdapter = activity.getCategoryBordersAdapter();
+                mAdapter.initializeSelection(MainPanel.BORDERS);
                 break;
             }
             case MainPanel.GEOMETRY: {
                 mAdapter = activity.getCategoryGeometryAdapter();
+                mAdapter.initializeSelection(MainPanel.GEOMETRY);
                 break;
             }
             case MainPanel.FILTERS: {
                 mAdapter = activity.getCategoryFiltersAdapter();
+                mAdapter.initializeSelection(MainPanel.FILTERS);
                 break;
             }
         }
@@ -90,6 +94,7 @@ public class CategoryPanel extends Fragment {
             CategoryTrack panel = (CategoryTrack) panelView;
             mAdapter.setUseFilterIconButton(true);
             panel.setAdapter(mAdapter);
+            mAdapter.setContainer(panel);
         } else {
             ListView panel = (ListView) main.findViewById(R.id.listItems);
             panel.setAdapter(mAdapter);

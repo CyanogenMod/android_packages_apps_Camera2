@@ -29,6 +29,7 @@ import android.view.View;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.ui.SelectionRenderer;
 
 public class CategoryView extends View implements View.OnClickListener {
 
@@ -40,6 +41,9 @@ public class CategoryView extends View implements View.OnClickListener {
     private static int sTextSize = 32;
     private int mTextColor;
     private int mBackgroundColor;
+    private Paint mSelectPaint;
+    CategoryAdapter mAdapter;
+    private int mSelectionStroke;
 
     public static void setTextSize(int size) {
         sTextSize = size;
@@ -55,6 +59,10 @@ public class CategoryView extends View implements View.OnClickListener {
         Resources res = getResources();
         mBackgroundColor = res.getColor(R.color.filtershow_categoryview_background);
         mTextColor = res.getColor(R.color.filtershow_categoryview_text);
+        mSelectionStroke = res.getDimensionPixelSize(R.dimen.thumbnail_margin);
+        mSelectPaint = new Paint();
+        mSelectPaint.setStyle(Paint.Style.FILL);
+        mSelectPaint.setColor(res.getColor(R.color.filtershow_category_selection));
     }
 
     public void drawText(Canvas canvas, String text) {
@@ -71,6 +79,7 @@ public class CategoryView extends View implements View.OnClickListener {
         canvas.drawText(text, x, y, mPaint);
     }
 
+    @Override
     public void onDraw(Canvas canvas) {
         canvas.drawColor(mBackgroundColor);
         if (mAction != null) {
@@ -81,6 +90,10 @@ public class CategoryView extends View implements View.OnClickListener {
             } else {
                 Bitmap bitmap = mAction.getImage();
                 canvas.drawBitmap(bitmap, 0, 0, mPaint);
+                if (mAdapter.isSelected(this)) {
+                    SelectionRenderer.drawSelection(canvas, 0, 0, bitmap.getWidth(),
+                            bitmap.getHeight(), mSelectionStroke, mSelectPaint);
+                }
             }
             mPaint.setColor(mBackgroundColor);
             mPaint.setStyle(Paint.Style.STROKE);
@@ -93,8 +106,9 @@ public class CategoryView extends View implements View.OnClickListener {
         }
     }
 
-    public void setAction(Action action) {
+    public void setAction(Action action, CategoryAdapter adapter) {
         mAction = action;
+        mAdapter = adapter;
         invalidate();
     }
 
@@ -106,5 +120,6 @@ public class CategoryView extends View implements View.OnClickListener {
     public void onClick(View view) {
         FilterShowActivity activity = (FilterShowActivity) getContext();
         activity.showRepresentation(mAction.getRepresentation());
+        mAdapter.setSelected(this);
     }
 }
