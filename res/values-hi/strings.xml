@@ -107,14 +107,14 @@
     <string name="no_location" msgid="4043624857489331676">"कोई स्थान नहीं"</string>
     <string name="no_connectivity" msgid="7164037617297293668">"नेटवर्क समस्‍याओं के कारण कुछ स्‍थानों को पहचाना नहीं जा सका."</string>
     <string name="sync_album_error" msgid="1020688062900977530">"इस एल्बम के फ़ोटो डाउनलोड नहीं किए जा सके. बाद में पुन: प्रयास करें."</string>
-    <string name="show_images_only" msgid="7263218480867672653">"केवल छवियां"</string>
+    <string name="show_images_only" msgid="7263218480867672653">"केवल चित्र"</string>
     <string name="show_videos_only" msgid="3850394623678871697">"केवल वीडियो"</string>
-    <string name="show_all" msgid="6963292714584735149">"छवियां और वीडियो"</string>
+    <string name="show_all" msgid="6963292714584735149">"चित्र और वीडियो"</string>
     <string name="appwidget_title" msgid="6410561146863700411">"फ़ोटो गैलरी"</string>
     <string name="appwidget_empty_text" msgid="1228925628357366957">"कोई फ़ोटो नहीं."</string>
     <string name="crop_saved" msgid="1595985909779105158">"काट-छांट की गई चित्र को <xliff:g id="FOLDER_NAME">%s</xliff:g> में सहेजा गया."</string>
     <string name="no_albums_alert" msgid="4111744447491690896">"कोई एल्‍बम उपलब्‍ध नहीं."</string>
-    <string name="empty_album" msgid="4542880442593595494">"O छवियां/वीडियो उपलब्‍ध."</string>
+    <string name="empty_album" msgid="4542880442593595494">"O चित्र/वीडियो उपलब्‍ध."</string>
     <string name="picasa_posts" msgid="1497721615718760613">"पोस्ट"</string>
     <string name="make_available_offline" msgid="5157950985488297112">"ऑफ़लाइन उपलब्ध कराएं"</string>
     <string name="sync_picasa_albums" msgid="8522572542111169872">"रीफ्रेश करें"</string>
@@ -177,7 +177,7 @@
     <string name="widget_type_album" msgid="6013045393140135468">"कोई एल्बम चुनें"</string>
     <string name="widget_type_shuffle" msgid="8594622705019763768">"सभी छवियों का क्रम बदलें"</string>
     <string name="widget_type_photo" msgid="6267065337367795355">"कोई चित्र चुनें"</string>
-    <string name="widget_type" msgid="1364653978966343448">"छवियां चुनें"</string>
+    <string name="widget_type" msgid="1364653978966343448">"चित्र चुनें"</string>
     <string name="slideshow_dream_name" msgid="6915963319933437083">"स्लाइडशो"</string>
     <string name="albums" msgid="7320787705180057947">"एल्बम"</string>
     <string name="times" msgid="2023033894889499219">"इतने बार"</string>
@@ -315,8 +315,8 @@
     <string name="pref_camera_id_label_back" msgid="8745553500400332333">"सामने का कैमरा"</string>
     <string name="pref_camera_id_label_front" msgid="8699439330056996709">"पीछे का कैमरा"</string>
     <string name="dialog_ok" msgid="6263301364153382152">"ठीक"</string>
-    <string name="spaceIsLow_content" product="nosdcard" msgid="4401325203349203177">"आपके USB संग्रहण में स्थान कम है. गुणवत्ता सेटिंग बदलें या कुछ छवियां या अन्य फ़ाइलें हटाएं."</string>
-    <string name="spaceIsLow_content" product="default" msgid="1732882643101247179">"आपके SD कार्ड में स्थान कम है. गुणवत्ता सेटिंग बदलें या कुछ छवियां या अन्य फ़ाइलें हटाएं."</string>
+    <string name="spaceIsLow_content" product="nosdcard" msgid="4401325203349203177">"आपके USB संग्रहण में स्थान कम है. गुणवत्ता सेटिंग बदलें या कुछ चित्र या अन्य फ़ाइलें हटाएं."</string>
+    <string name="spaceIsLow_content" product="default" msgid="1732882643101247179">"आपके SD कार्ड में स्थान कम है. गुणवत्ता सेटिंग बदलें या कुछ चित्र या अन्य फ़ाइलें हटाएं."</string>
     <string name="video_reach_size_limit" msgid="6179877322015552390">"आकार सीमा पहुंची."</string>
     <string name="pano_too_fast_prompt" msgid="2823839093291374709">"बहुत तेज़"</string>
     <string name="pano_dialog_prepare_preview" msgid="4788441554128083543">"पैनोरामा तैयार हो रहा है"</string>
