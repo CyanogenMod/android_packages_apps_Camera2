@@ -17,18 +17,25 @@
 package com.android.gallery3d.filtershow.ui;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.cache.RenderingRequest;
 import com.android.gallery3d.filtershow.cache.RenderingRequestCaller;
 import com.android.gallery3d.filtershow.category.Action;
+import com.android.gallery3d.filtershow.category.CategoryAdapter;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.imageshow.GeometryListener;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
@@ -45,6 +52,9 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
     private FilterRepresentation mFilterRepresentation = null;
     private Bitmap mIconBitmap = null;
     private Action mAction;
+    private Paint mSelectPaint;
+    private int mSelectStroke;
+    private CategoryAdapter mAdapter;
     public FilterIconButton(Context context) {
         super(context);
     }
@@ -57,11 +67,17 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
         super(context, attrs, defStyle);
     }
 
-    public void setup(String text, LinearLayout parent) {
+    public void setup(String text, LinearLayout parent, CategoryAdapter adapter) {
+        mAdapter = adapter;
         setText(text);
         setContentDescription(text);
         super.setOnClickListener(this);
+        Resources res = getContext().getResources();
         MasterImage.getImage().addGeometryListener(this);
+        mSelectStroke = res.getDimensionPixelSize(R.dimen.thumbnail_margin);
+        mSelectPaint = new Paint();
+        mSelectPaint.setStyle(Paint.Style.FILL);
+        mSelectPaint.setColor(res.getColor(R.color.filtershow_category_selection));
         invalidate();
     }
 
@@ -69,6 +85,7 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
     public void onClick(View v) {
         FilterShowActivity activity = (FilterShowActivity) getContext();
         activity.showRepresentation(mFilterRepresentation);
+        mAdapter.setSelected(v);
     }
 
     public FilterRepresentation getFilterRepresentation() {
@@ -112,6 +129,20 @@ public class FilterIconButton extends IconButton implements View.OnClickListener
             postNewIconRenderRequest();
         } else {
             super.onDraw(canvas);
+        }
+        if (mAdapter.isSelected(this)) {
+            Drawable iconDrawable = getCompoundDrawables()[1];
+            if (iconDrawable != null) {
+                canvas.save();
+                int padding = getCompoundDrawablePadding();
+                canvas.translate(getScrollX() + padding + getPaddingLeft() - mSelectStroke - 1,
+                        getScrollY() + padding + getPaddingTop() - mSelectStroke - 1);
+                Rect r = iconDrawable.getBounds();
+                SelectionRenderer.drawSelection(canvas, r.left, r.top,
+                        r.right + 2 * mSelectStroke + 2, r.bottom + 2 * mSelectStroke + 2,
+                        mSelectStroke, mSelectPaint);
+                canvas.restore();
+            }
         }
     }
 
