@@ -21,24 +21,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
-import com.android.gallery3d.filtershow.filters.FilterTinyPlanetRepresentation;
-import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
+import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.ui.FilterIconButton;
 
 public class CategoryAdapter extends ArrayAdapter<Action> {
 
     private static final String LOGTAG = "CategoryAdapter";
     private int mItemHeight = 200;
-    private ListView mContainer;
+    private View mContainer;
     private int mItemWidth = ListView.LayoutParams.MATCH_PARENT;
     private boolean mUseFilterIconButton = false;
+    private int mSelectedPosition;
+    int mCategory;
 
     public CategoryAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
@@ -62,6 +63,22 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
         action.setAdapter(this);
     }
 
+    public void initializeSelection(int category) {
+        mCategory = category;
+        if (category == MainPanel.LOOKS || category == MainPanel.BORDERS) {
+            ImagePreset preset = MasterImage.getImage().getPreset();
+            if (preset != null) {
+                for (int i = 0; i < getCount(); i++) {
+                    if (preset.historyName().equals(getItem(i).getRepresentation().getName())) {
+                        mSelectedPosition = i;
+                    }
+                }
+            }
+        } else {
+            mSelectedPosition = -1;
+        }
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (mUseFilterIconButton) {
@@ -73,27 +90,55 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
             FilterIconButton view = (FilterIconButton) convertView;
             Action action = getItem(position);
             view.setAction(action);
-            view.setup(action.getName(), null);
+            view.setup(action.getName(), null, this);
             view.setLayoutParams(
                     new ListView.LayoutParams(mItemWidth, mItemHeight));
+            view.setTag(position);
+            if (mCategory == MainPanel.LOOKS || mCategory == MainPanel.BORDERS) {
+                view.setBackground(null);
+            }
             return view;
         }
         if (convertView == null) {
             convertView = new CategoryView(getContext());
         }
         CategoryView view = (CategoryView) convertView;
-        view.setAction(getItem(position));
+        view.setAction(getItem(position), this);
         view.setLayoutParams(
                 new ListView.LayoutParams(mItemWidth, mItemHeight));
+        view.setTag(position);
         return view;
     }
 
-    public void setContainer(ListView container) {
-        mContainer = container;
+    public void setSelected(View v) {
+        int old = mSelectedPosition;
+        mSelectedPosition = (Integer) v.getTag();
+        if (old != -1) {
+            invalidateView(old);
+        }
+        invalidateView(mSelectedPosition);
     }
 
-    public ListView getContainer() {
-        return mContainer;
+    public boolean isSelected(View v) {
+        return (Integer) v.getTag() == mSelectedPosition;
+    }
+
+    private void invalidateView(int position) {
+        View child = null;
+        if (mContainer instanceof ListView) {
+            ListView lv = (ListView) mContainer;
+            child = lv.getChildAt(position - lv.getFirstVisiblePosition());
+        } else {
+            CategoryTrack ct = (CategoryTrack) mContainer;
+            child = ct.getChildAt(position);
+        }
+        if (child != null) {
+            child.invalidate();
+        }
+    }
+
+    public void setContainer(View container) {
+        mContainer = container;
     }
 
     public void imageLoaded() {
