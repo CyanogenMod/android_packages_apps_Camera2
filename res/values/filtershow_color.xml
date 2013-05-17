@@ -37,4 +37,5 @@
     <color name="filtershow_stateview_selected_text">#000000</color>
     <color name="filtershow_categoryview_background">#1a1a1a</color>
     <color name="filtershow_categoryview_text">#a7a7a7</color>
+    <color name="filtershow_category_selection">#ffffffff</color>
 </resources>
