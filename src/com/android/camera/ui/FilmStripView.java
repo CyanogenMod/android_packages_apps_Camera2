@@ -171,6 +171,10 @@ public class FilmStripView extends ViewGroup {
             mView.setTranslationX(transX * scale);
         }
 
+        public void translateXBy(float transX, float scale) {
+            mView.setTranslationX(mView.getTranslationX() + transX * scale);
+        }
+
         public int getCenterX() {
             return mLeftPosition + mView.getWidth() / 2;
         }
@@ -275,8 +279,12 @@ public class FilmStripView extends ViewGroup {
 
             int imageWidth = mDataAdapter.getImageData(info.getID()).getWidth();
             int imageHeight = mDataAdapter.getImageData(info.getID()).getHeight();
-            if (imageWidth == ImageData.SIZE_FULL) imageWidth = boundWidth;
-            if (imageHeight == ImageData.SIZE_FULL) imageHeight = boundHeight;
+            if (imageWidth == ImageData.SIZE_FULL) {
+                imageWidth = boundWidth;
+            }
+            if (imageHeight == ImageData.SIZE_FULL) {
+                imageHeight = boundHeight;
+            }
 
             int scaledWidth = boundWidth;
             int scaledHeight = boundHeight;
@@ -452,8 +460,12 @@ public class FilmStripView extends ViewGroup {
         }
     }
 
-    private void animateViewBack(View v) {
-        v.animate().translationX(0).alpha(1f).setDuration(200).start();
+    private void slideViewBack(View v) {
+        v.animate()
+                .translationX(0)
+                .alpha(1f)
+                .setDuration(DURATION_GEOMETRY_ADJUST)
+                .start();
     }
 
     private void updateRemoval(int removedInfo, final ImageData data) {
@@ -468,15 +480,11 @@ public class FilmStripView extends ViewGroup {
         }
 
         if (removedInfo >= mCurrentInfo
-                && mViewInfo[removedInfo].getID() < mDataAdapter.getTotalNumber() - 1) {
+                && mViewInfo[removedInfo].getID() < mDataAdapter.getTotalNumber()) {
             // fill the removed info by left shift when the current one or anyone on the
             // right is removed, and there's more data on the right available.
             for (int i = removedInfo; i < BUFFER_SIZE - 1; i++) {
                 mViewInfo[i] = mViewInfo[i + 1];
-                if (mViewInfo[i] != null) {
-                    mViewInfo[i].setTranslationX(offsetX, mScale);
-                    animateViewBack(mViewInfo[i].getView());
-                }
             }
 
             // pull data out from the DataAdapter for the last one.
@@ -485,15 +493,35 @@ public class FilmStripView extends ViewGroup {
             if (mViewInfo[prev] != null) {
                 mViewInfo[curr] = buildInfoFromData(mViewInfo[prev].getID() + 1);
             }
+
+
+            for (int i = removedInfo; i < BUFFER_SIZE - 1; i++) {
+                if (mViewInfo[i] != null) {
+                    mViewInfo[i].setTranslationX(offsetX, mScale);
+                }
+            }
+
+            // The end of the filmstrip might have been changed.
+            // The mCenterPosition might be out of the bound.
+            ViewInfo currInfo = mViewInfo[mCurrentInfo];
+            if (currInfo.getID() == mDataAdapter.getTotalNumber() - 1
+                    && mCenterPosition > currInfo.getCenterX()) {
+                int adjustDiff = currInfo.getCenterX() - mCenterPosition;
+                mCenterPosition = currInfo.getCenterX();
+                for (int i = 0; i < BUFFER_SIZE; i++) {
+                    if (mViewInfo[i] != null) {
+                        mViewInfo[i].translateXBy(adjustDiff, mScale);
+                    }
+                }
+            }
         } else {
-            mCenterPosition -= offsetX;
             // fill the removed place by right shift
+            mCenterPosition -= offsetX;
+
             for (int i = removedInfo; i > 0; i--) {
                 mViewInfo[i] = mViewInfo[i - 1];
                 if (mViewInfo[i] != null) {
-                    mViewInfo[i].setLeftPosition(mViewInfo[i].getLeftPosition() - offsetX);
                     mViewInfo[i].setTranslationX(-offsetX, mScale);
-                    animateViewBack(mViewInfo[i].getView());
                 }
             }
 
@@ -505,6 +533,14 @@ public class FilmStripView extends ViewGroup {
             }
         }
 
+        // Now, slide every one back.
+        for (int i = 0; i < BUFFER_SIZE; i++) {
+            if (mViewInfo[i] != null
+                    && mViewInfo[i].getTranslationX(mScale) != 0f) {
+                slideViewBack(mViewInfo[i].getView());
+            }
+        }
+
         int transY = getHeight() / 8;
         if (removedView.getTranslationY() < 0) {
             transY = -transY;
@@ -513,7 +549,7 @@ public class FilmStripView extends ViewGroup {
                 .alpha(0f)
                 .translationYBy(transY)
                 .setInterpolator(mLinearInterpolator)
-                .setDuration(200)
+                .setDuration(DURATION_GEOMETRY_ADJUST)
                 .withEndAction(new Runnable() {
                     @Override
                     public void run() {
@@ -866,10 +902,11 @@ public class FilmStripView extends ViewGroup {
                         && transY < -halfH) {
                     promoteData(i, id);
                 } else {
+                    // put the view back.
                     mViewInfo[i].getView().animate()
                             .translationY(0f)
                             .alpha(1f)
-                            .setDuration(200)
+                            .setDuration(DURATION_GEOMETRY_ADJUST)
                             .start();
                 }
             }
