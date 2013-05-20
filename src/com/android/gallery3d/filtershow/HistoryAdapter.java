@@ -133,21 +133,8 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
     }
 
     public void addHistoryItem(ImagePreset preset) {
-        if (canAddHistoryItem(preset)) {
-            insert(preset, 0);
-            updateMenuItems();
-        }
-    }
-
-    public boolean canAddHistoryItem(ImagePreset preset) {
-        if (getCount() > 0 && getCurrent().same(preset)) {
-            // we may still want to insert if the previous
-            // history element isn't the same
-            if (getLast().historyName().equalsIgnoreCase(preset.historyName())) {
-                return false;
-            }
-        }
-        return true;
+        insert(preset, 0);
+        updateMenuItems();
     }
 
     @Override
@@ -164,9 +151,6 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
             }
             mCurrentPresetPosition = position;
             this.notifyDataSetChanged();
-            if (!canAddHistoryItem(preset)) {
-                return;
-            }
         }
         super.insert(preset, position);
         mCurrentPresetPosition = position;
