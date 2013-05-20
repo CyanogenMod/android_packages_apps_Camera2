@@ -1423,6 +1423,11 @@ public class PhotoView extends GLView {
 
     @Override
     protected void render(GLCanvas canvas) {
+        if (mFirst) {
+            // Make sure the fields are properly initialized before checking
+            // whether isCamera()
+            mPictures.get(0).reload();
+        }
         // Check if the camera preview occupies the full screen.
         boolean full = !mFilmMode && mPictures.get(0).isCamera()
                 && mPositionController.isCenter()
