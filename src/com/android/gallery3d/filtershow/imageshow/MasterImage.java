@@ -35,7 +35,7 @@ public class MasterImage implements RenderingRequestCaller {
 
     private static final String LOGTAG = "MasterImage";
     private boolean DEBUG  = false;
-
+    private static final boolean DISABLEZOOM = true;
     private static MasterImage sMasterImage = null;
     private static int sIconSeedSize = 128;
     private static float sHistoryPreviewSize = 128.0f;
@@ -451,6 +451,9 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public void setScaleFactor(float scaleFactor) {
+        if (DISABLEZOOM) {
+            return;
+        }
         if (scaleFactor == mScaleFactor) {
             return;
         }
@@ -463,6 +466,11 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public void setTranslation(Point translation) {
+        if (DISABLEZOOM) {
+            mTranslation.x = 0;
+            mTranslation.y = 0;
+            return;
+        }
         mTranslation.x = translation.x;
         mTranslation.y = translation.y;
         needsUpdatePartialPreview();
@@ -473,6 +481,9 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public void setOriginalTranslation(Point originalTranslation) {
+        if (DISABLEZOOM) {
+            return;
+        }
         mOriginalTranslation.x = originalTranslation.x;
         mOriginalTranslation.y = originalTranslation.y;
     }
@@ -492,6 +503,9 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public float getMaxScaleFactor() {
+        if (DISABLEZOOM) {
+            return 1;
+        }
         return mMaxScaleFactor;
     }
 
