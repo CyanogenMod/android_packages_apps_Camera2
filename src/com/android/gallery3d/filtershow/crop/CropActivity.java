@@ -43,6 +43,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.common.Utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -363,6 +364,20 @@ public class CropActivity extends Activity {
         Intent mResultIntent = null;
         int mRotation = 0;
 
+        // Helper to setup input stream
+        private void regenerateInputStream() {
+            if (mInUri == null) {
+                Log.w(LOGTAG, "cannot read original file, no input URI given");
+            } else {
+                Utils.closeSilently(mInStream);
+                try {
+                    mInStream = getContentResolver().openInputStream(mInUri);
+                } catch (FileNotFoundException e) {
+                    Log.w(LOGTAG, "cannot read file: " + mInUri.toString(), e);
+                }
+            }
+        }
+
         public BitmapIOTask(Uri sourceUri, Uri destUri, String outputFormat, int flags,
                 RectF cropBounds, RectF photoBounds, RectF originalBitmapBounds, int rotation,
                 int outputX, int outputY) {
@@ -395,15 +410,7 @@ public class CropActivity extends Activity {
             }
 
             if ((flags & (DO_EXTRA_OUTPUT | DO_SET_WALLPAPER)) != 0) {
-                if (mInUri == null) {
-                    Log.w(LOGTAG, "cannot read original file, no input URI given");
-                } else {
-                    try {
-                        mInStream = getContentResolver().openInputStream(mInUri);
-                    } catch (FileNotFoundException e) {
-                        Log.w(LOGTAG, "cannot read file: " + mInUri.toString(), e);
-                    }
-                }
+                regenerateInputStream();
             }
         }
 
@@ -451,17 +458,6 @@ public class CropActivity extends Activity {
 
             // Do the large cropped bitmap and/or set the wallpaper
             if ((mFlags & (DO_EXTRA_OUTPUT | DO_SET_WALLPAPER)) != 0 && mInStream != null) {
-                BitmapRegionDecoder decoder = null;
-                try {
-                    decoder = BitmapRegionDecoder.newInstance(mInStream, true);
-                } catch (IOException e) {
-                    Log.w(LOGTAG, "cannot open region decoder for file: " + mInUri.toString(), e);
-                }
-                if (decoder == null) {
-                    failure = true;
-                    return false;
-                }
-
                 // Find crop bounds (scaled to original image size)
                 RectF trueCrop = CropMath.getScaledCropBounds(mCrop, mPhoto, mOrig);
                 if (trueCrop == null) {
@@ -477,14 +473,40 @@ public class CropActivity extends Activity {
                     failure = true;
                     return false;
                 }
-                // Do region decoding to get crop bitmap
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inMutable = true;
-                Bitmap crop = decoder.decodeRegion(roundedTrueCrop, options);
-                decoder.recycle();
+
+                // Attempt to open a region decoder
+                BitmapRegionDecoder decoder = null;
+                try {
+                    decoder = BitmapRegionDecoder.newInstance(mInStream, true);
+                } catch (IOException e) {
+                    Log.w(LOGTAG, "cannot open region decoder for file: " + mInUri.toString(), e);
+                }
+
+                Bitmap crop = null;
+                if (decoder != null) {
+                    // Do region decoding to get crop bitmap
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inMutable = true;
+                    crop = decoder.decodeRegion(roundedTrueCrop, options);
+                    decoder.recycle();
+                }
 
                 if (crop == null) {
-                    Log.w(LOGTAG, "cannot region decode file: " + mInUri.toString());
+                    // BitmapRegionDecoder has failed, try to crop in-memory
+                    regenerateInputStream();
+                    Bitmap fullSize = null;
+                    if (mInStream != null) {
+                        fullSize = BitmapFactory.decodeStream(mInStream);
+                    }
+                    if (fullSize != null) {
+                        crop = Bitmap.createBitmap(fullSize, roundedTrueCrop.left,
+                                roundedTrueCrop.top, roundedTrueCrop.width(),
+                                roundedTrueCrop.height());
+                    }
+                }
+
+                if (crop == null) {
+                    Log.w(LOGTAG, "cannot decode file: " + mInUri.toString());
                     failure = true;
                     return false;
                 }
@@ -578,6 +600,8 @@ public class CropActivity extends Activity {
 
         @Override
         protected void onPostExecute(Boolean result) {
+            Utils.closeSilently(mOutStream);
+            Utils.closeSilently(mInStream);
             doneBitmapIO(result.booleanValue(), mResultIntent);
         }
 
