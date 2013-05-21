@@ -443,6 +443,9 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     public void showRepresentation(FilterRepresentation representation) {
+        if (representation == null) {
+            return;
+        }
         useFilterRepresentation(representation);
 
         // show representation
@@ -832,7 +835,8 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         loadXML();
         loadMainPanel();
 
-        if (!mShowingTinyPlanet) {
+        // mLoadBitmapTask==null implies you have looked at the intent
+        if (!mShowingTinyPlanet && (mLoadBitmapTask == null)) {
             mCategoryFiltersAdapter.removeTinyPlanet();
         }
         final View loading = findViewById(R.id.loading);
