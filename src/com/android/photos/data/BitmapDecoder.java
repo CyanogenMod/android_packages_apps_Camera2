@@ -18,6 +18,7 @@ package com.android.photos.data;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.util.Log;
 import android.util.Pools.Pool;
 import android.util.Pools.SynchronizedPool;
@@ -46,55 +47,98 @@ public class BitmapDecoder {
     private static final Pool<BitmapFactory.Options> sOptions =
             new SynchronizedPool<BitmapFactory.Options>(POOL_SIZE);
 
+    private interface Decoder<T> {
+        Bitmap decode(T input, BitmapFactory.Options options);
+
+        boolean decodeBounds(T input, BitmapFactory.Options options);
+    }
+
+    private static abstract class OnlyDecode<T> implements Decoder<T> {
+        @Override
+        public boolean decodeBounds(T input, BitmapFactory.Options options) {
+            decode(input, options);
+            return true;
+        }
+    }
+
+    private static final Decoder<InputStream> sStreamDecoder = new Decoder<InputStream>() {
+        @Override
+        public Bitmap decode(InputStream is, Options options) {
+            return BitmapFactory.decodeStream(is, null, options);
+        }
+
+        @Override
+        public boolean decodeBounds(InputStream is, Options options) {
+            is.mark(HEADER_MAX_SIZE);
+            BitmapFactory.decodeStream(is, null, options);
+            try {
+                is.reset();
+                return true;
+            } catch (IOException e) {
+                Log.e(TAG, "Could not decode stream to bitmap", e);
+                return false;
+            }
+        }
+    };
+
+    private static final Decoder<String> sFileDecoder = new OnlyDecode<String>() {
+        @Override
+        public Bitmap decode(String filePath, Options options) {
+            return BitmapFactory.decodeFile(filePath, options);
+        }
+    };
+
+    private static final Decoder<byte[]> sByteArrayDecoder = new OnlyDecode<byte[]>() {
+        @Override
+        public Bitmap decode(byte[] data, Options options) {
+            return BitmapFactory.decodeByteArray(data, 0, data.length, options);
+        }
+    };
+
+    private static <T> Bitmap delegateDecode(Decoder<T> decoder, T input) {
+        BitmapFactory.Options options = getOptions();
+        try {
+            options.inJustDecodeBounds = true;
+            if (!decoder.decodeBounds(input, options)) {
+                return null;
+            }
+            options.inJustDecodeBounds = false;
+            GalleryBitmapPool pool = GalleryBitmapPool.getInstance();
+            Bitmap reuseBitmap = pool.get(options.outWidth, options.outHeight);
+            options.inBitmap = reuseBitmap;
+            Bitmap decodedBitmap = decoder.decode(input, options);
+            if (reuseBitmap != null && decodedBitmap != reuseBitmap) {
+                pool.put(reuseBitmap);
+            }
+            return decodedBitmap;
+        } finally {
+            options.inBitmap = null;
+            options.inJustDecodeBounds = false;
+            sOptions.release(options);
+        }
+    }
+
     public static Bitmap decode(InputStream in) {
-        BitmapFactory.Options opts = getOptions();
         try {
             if (!in.markSupported()) {
                 in = new BufferedInputStream(in);
             }
-            opts.inJustDecodeBounds = true;
-            in.mark(HEADER_MAX_SIZE);
-            BitmapFactory.decodeStream(in, null, opts);
-            in.reset();
-            opts.inJustDecodeBounds = false;
-            GalleryBitmapPool pool = GalleryBitmapPool.getInstance();
-            Bitmap reuseBitmap = pool.get(opts.outWidth, opts.outHeight);
-            opts.inBitmap = reuseBitmap;
-            Bitmap decodedBitmap = BitmapFactory.decodeStream(in, null, opts);
-            if (reuseBitmap != null && decodedBitmap != reuseBitmap) {
-                pool.put(reuseBitmap);
-            }
-            return decodedBitmap;
-        } catch (IOException e) {
-            Log.e(TAG, "Could not decode stream to bitmap", e);
-            return null;
+            return delegateDecode(sStreamDecoder, in);
         } finally {
             Utils.closeSilently(in);
-            release(opts);
         }
     }
 
-    public static Bitmap decode(File in) {
-        return decodeFile(in.toString());
+    public static Bitmap decode(File file) {
+        return decodeFile(file.getPath());
     }
 
-    public static Bitmap decodeFile(String in) {
-        BitmapFactory.Options opts = getOptions();
-        try {
-            opts.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(in, opts);
-            opts.inJustDecodeBounds = false;
-            GalleryBitmapPool pool = GalleryBitmapPool.getInstance();
-            Bitmap reuseBitmap = pool.get(opts.outWidth, opts.outHeight);
-            opts.inBitmap = reuseBitmap;
-            Bitmap decodedBitmap = BitmapFactory.decodeFile(in, opts);
-            if (reuseBitmap != null && decodedBitmap != reuseBitmap) {
-                pool.put(reuseBitmap);
-            }
-            return decodedBitmap;
-        } finally {
-            release(opts);
-        }
+    public static Bitmap decodeFile(String path) {
+        return delegateDecode(sFileDecoder, path);
+    }
+
+    public static Bitmap decodeByteArray(byte[] data) {
+        return delegateDecode(sByteArrayDecoder, data);
     }
 
     public static void put(Bitmap bitmap) {
@@ -112,11 +156,5 @@ public class BitmapDecoder {
         }
 
         return opts;
-    }
-
-    private static void release(BitmapFactory.Options opts) {
-        opts.inBitmap = null;
-        opts.inJustDecodeBounds = false;
-        sOptions.release(opts);
     }
 }
