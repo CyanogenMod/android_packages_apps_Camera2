@@ -76,6 +76,7 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
     private VideoController mController;
     private int mZoomMax;
     private List<Integer> mZoomRatios;
+    private View mPreviewThumb;
 
     public VideoUI(CameraActivity activity, VideoController controller, View parent) {
         mActivity = activity;
@@ -227,6 +228,14 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
                 mGestures.addTouchReceiver(mReviewPlayButton);
             }
         }
+
+        mPreviewThumb = mActivity.findViewById(R.id.preview_thumb);
+        mPreviewThumb.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mActivity.gotoGallery();
+            }
+        });
     }
 
     public void setPrefChangedListener(OnPreferenceChangedListener listener) {
@@ -520,4 +529,16 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
         }
     }
 
+    /**
+     * Enable or disable the preview thumbnail for click events.
+     */
+    public void enablePreviewThumb(boolean enabled) {
+        if (enabled) {
+            mGestures.addTouchReceiver(mPreviewThumb);
+            mPreviewThumb.setVisibility(View.VISIBLE);
+        } else {
+            mGestures.removeTouchReceiver(mPreviewThumb);
+            mPreviewThumb.setVisibility(View.GONE);
+        }
+    }
 }
