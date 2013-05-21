@@ -44,6 +44,8 @@ public class CategoryView extends View implements View.OnClickListener {
     private Paint mSelectPaint;
     CategoryAdapter mAdapter;
     private int mSelectionStroke;
+    private Paint mBorderPaint;
+    private int mBorderStroke;
 
     public static void setTextSize(int size) {
         sTextSize = size;
@@ -63,6 +65,9 @@ public class CategoryView extends View implements View.OnClickListener {
         mSelectPaint = new Paint();
         mSelectPaint.setStyle(Paint.Style.FILL);
         mSelectPaint.setColor(res.getColor(R.color.filtershow_category_selection));
+        mBorderPaint = new Paint(mSelectPaint);
+        mBorderPaint.setColor(Color.BLACK);
+        mBorderStroke = mSelectionStroke / 3;
     }
 
     public void drawText(Canvas canvas, String text) {
@@ -91,8 +96,10 @@ public class CategoryView extends View implements View.OnClickListener {
                 Bitmap bitmap = mAction.getImage();
                 canvas.drawBitmap(bitmap, 0, 0, mPaint);
                 if (mAdapter.isSelected(this)) {
-                    SelectionRenderer.drawSelection(canvas, 0, 0, bitmap.getWidth(),
-                            bitmap.getHeight(), mSelectionStroke, mSelectPaint);
+                    SelectionRenderer.drawSelection(canvas, 0, 0,
+                            Math.min(bitmap.getWidth(), getWidth()),
+                            Math.min(bitmap.getHeight(), getHeight()),
+                            mSelectionStroke, mSelectPaint, mBorderStroke, mBorderPaint);
                 }
             }
             mPaint.setColor(mBackgroundColor);
