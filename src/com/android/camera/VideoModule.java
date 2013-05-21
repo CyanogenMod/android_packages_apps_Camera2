@@ -91,6 +91,7 @@ public class VideoModule implements CameraModule,
     private static final int SWITCH_CAMERA = 8;
     private static final int SWITCH_CAMERA_START_ANIMATION = 9;
     private static final int HIDE_SURFACE_VIEW = 10;
+    private static final int CAPTURE_ANIMATION_DONE = 11;
 
     private static final int SCREEN_DELAY = 2 * 60 * 1000;
 
@@ -293,6 +294,11 @@ public class VideoModule implements CameraModule,
 
                 case HIDE_SURFACE_VIEW: {
                     mUI.hideSurfaceView();
+                    break;
+                }
+
+                case CAPTURE_ANIMATION_DONE: {
+                    mUI.enablePreviewThumb(false);
                     break;
                 }
 
@@ -578,6 +584,14 @@ public class VideoModule implements CameraModule,
                 // the preview. This will cause the preview flicker since the preview
                 // will not be continuous for a short period of time.
                 ((CameraScreenNail) mActivity.mCameraScreenNail).animateCapture(mDisplayRotation);
+
+                mUI.enablePreviewThumb(true);
+
+                // Make sure to disable the thumbnail preview after the
+                // animation is done to disable the click target.
+                mHandler.removeMessages(CAPTURE_ANIMATION_DONE);
+                mHandler.sendEmptyMessageDelayed(CAPTURE_ANIMATION_DONE,
+                        CaptureAnimManager.getAnimationDuration());
             }
         }
     }
@@ -1457,6 +1471,7 @@ public class VideoModule implements CameraModule,
 
     private void startVideoRecording() {
         Log.v(TAG, "startVideoRecording");
+        mUI.enablePreviewThumb(false);
         mActivity.setSwipingEnabled(false);
 
         mActivity.updateStorageSpaceAndHint();

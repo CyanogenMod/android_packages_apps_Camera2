@@ -353,7 +353,7 @@ public abstract class ActivityBase extends AbstractGalleryActivity
         }
     }
 
-    protected void gotoGallery() {
+    public void gotoGallery() {
         // Move the next picture with capture animation. "1" means next.
         mAppBridge.switchWithCaptureAnimation(1);
     }
