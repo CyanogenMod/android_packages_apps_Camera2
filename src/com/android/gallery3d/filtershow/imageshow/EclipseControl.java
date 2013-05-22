@@ -118,6 +118,13 @@ public class EclipseControl {
         mScrToImg.mapPoints(point);
         x = point[0];
         y = point[1];
+
+        // Test if the matrix is swapping x and y
+        point[0] = 0;
+        point[1] = 1;
+        mScrToImg.mapVectors(point);
+        boolean swapxy = (point[0] > 0.0f);
+
         int sign = 1;
         switch (handle) {
             case HAN_CENTER:
@@ -129,14 +136,24 @@ public class EclipseControl {
             case HAN_NORTH:
                 sign = -1;
             case HAN_SOUTH:
-                float raddy = mDownRadiusY - Math.abs(mDownY - mDownCenterY);
-                oval.setRadiusY(Math.abs(y - oval.getCenterY() + sign * raddy));
+                if (swapxy) {
+                    float raddx = mDownRadiusY - Math.abs(mDownX - mDownCenterY);
+                    oval.setRadiusY(Math.abs(x - oval.getCenterY() + sign * raddx));
+                } else {
+                    float raddy = mDownRadiusY - Math.abs(mDownY - mDownCenterY);
+                    oval.setRadiusY(Math.abs(y - oval.getCenterY() + sign * raddy));
+                }
                 break;
             case HAN_EAST:
                 sign = -1;
             case HAN_WEST:
-                float raddx = mDownRadiusX - Math.abs(mDownX - mDownCenterX);
-                oval.setRadiusX(Math.abs(x - oval.getCenterX() - sign * raddx));
+                if (swapxy) {
+                    float raddy = mDownRadiusX - Math.abs(mDownY - mDownCenterX);
+                    oval.setRadiusX(Math.abs(y - oval.getCenterX() + sign * raddy));
+                } else {
+                    float raddx = mDownRadiusX - Math.abs(mDownX - mDownCenterX);
+                    oval.setRadiusX(Math.abs(x - oval.getCenterX() - sign * raddx));
+                }
                 break;
             case HAN_SE:
             case HAN_NE:
