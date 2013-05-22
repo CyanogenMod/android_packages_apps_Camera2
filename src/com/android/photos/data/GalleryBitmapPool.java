@@ -19,7 +19,7 @@ package com.android.photos.data;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.util.Pools.Pool;
-import android.util.Pools.SimplePool;
+import android.util.Pools.SynchronizedPool;
 
 import com.android.photos.data.SparseArrayBitmapPool.Node;
 
@@ -52,7 +52,7 @@ public class GalleryBitmapPool {
 
     private int mCapacityBytes;
     private SparseArrayBitmapPool [] mPools;
-    private Pool<Node> mSharedNodePool = new SimplePool<Node>(128);
+    private Pool<Node> mSharedNodePool = new SynchronizedPool<Node>(128);
 
     private GalleryBitmapPool(int capacityBytes) {
         mPools = new SparseArrayBitmapPool[3];
