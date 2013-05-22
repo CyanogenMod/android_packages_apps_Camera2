@@ -96,7 +96,7 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
                     new ListView.LayoutParams(mItemWidth, mItemHeight));
             view.setTag(position);
             if (mCategory == MainPanel.LOOKS || mCategory == MainPanel.BORDERS) {
-                view.setBackground(null);
+                view.setBackgroundResource(0);
             }
             return view;
         }
