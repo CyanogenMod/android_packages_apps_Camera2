@@ -31,6 +31,7 @@ import android.widget.Scroller;
 
 public class FilmStripView extends ViewGroup {
     private static final String TAG = FilmStripView.class.getSimpleName();
+
     private static final int BUFFER_SIZE = 5;
     // Horizontal padding of children.
     private static final int H_PADDING = 100;
@@ -46,20 +47,20 @@ public class FilmStripView extends ViewGroup {
     private DataAdapter mDataAdapter;
     private final Rect mDrawArea = new Rect();
 
-    private int mCurrentInfo;
+    private final int mCurrentInfo = (BUFFER_SIZE - 1) / 2;
     private float mScale;
     private GeometryAnimator mGeometryAnimator;
     private LinearInterpolator mLinearInterpolator;
-    private int mCenterPosition = -1;
+    private int mCenterX = -1;
     private ViewInfo[] mViewInfo = new ViewInfo[BUFFER_SIZE];
 
     private Listener mListener;
 
     // This is used to resolve the misalignment problem when the device
     // orientation is changed. If the current item is in fullscreen, it might
-    // be shifted because mCenterPosition is not adjusted with the orientation.
+    // be shifted because mCenterX is not adjusted with the orientation.
     // Set this to true when onSizeChanged is called to make sure we adjust
-    // mCenterPosition accordingly.
+    // mCenterX accordingly.
     private boolean mAnchorPending;
 
     public interface ImageData {
@@ -179,6 +180,10 @@ public class FilmStripView extends ViewGroup {
             return mLeftPosition + mView.getWidth() / 2;
         }
 
+        public int getMeasuredCenterX(float scale) {
+            return mLeftPosition + (int) (mView.getMeasuredWidth() * scale / 2);
+        }
+
         public View getView() {
             return mView;
         }
@@ -215,7 +220,6 @@ public class FilmStripView extends ViewGroup {
     }
 
     private void init(Context context) {
-        mCurrentInfo = (BUFFER_SIZE - 1) / 2;
         // This is for positioning camera controller at the same place in
         // different orientations.
         setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -240,7 +244,7 @@ public class FilmStripView extends ViewGroup {
 
     public boolean isAnchoredTo(int id) {
         if (mViewInfo[mCurrentInfo].getID() == id
-                && mViewInfo[mCurrentInfo].getCenterX() == mCenterPosition) {
+                && mViewInfo[mCurrentInfo].getCenterX() == mCenterX) {
             return true;
         }
         return false;
@@ -348,7 +352,7 @@ public class FilmStripView extends ViewGroup {
 
     // We try to keep the one closest to the center of the screen at position mCurrentInfo.
     private void stepIfNeeded() {
-        int nearest = findTheNearestView(mCenterPosition);
+        int nearest = findTheNearestView(mCenterX);
         // no change made.
         if (nearest == -1 || nearest == mCurrentInfo) return;
 
@@ -383,35 +387,44 @@ public class FilmStripView extends ViewGroup {
     }
 
     // Don't go beyond the bound.
-    private void adjustCenterPosition() {
+    private void adjustCenterX() {
         ViewInfo curr = mViewInfo[mCurrentInfo];
         if (curr == null) return;
 
-        if (curr.getID() == 0 && mCenterPosition < curr.getCenterX()) {
-            mCenterPosition = curr.getCenterX();
-            mGeometryAnimator.stopScroll();
+        if (curr.getID() == 0 && mCenterX < curr.getCenterX()) {
+            mCenterX = curr.getCenterX();
+            if (mGeometryAnimator.isScrolling()) {
+                mGeometryAnimator.stopScroll();
+            }
+            if (getCurrentType() == ImageData.TYPE_CAMERA_PREVIEW
+                    && !mGeometryAnimator.isScalling()
+                    && mScale != MAX_SCALE) {
+                mGeometryAnimator.scaleTo(MAX_SCALE, DURATION_GEOMETRY_ADJUST, false);
+            }
         }
         if (curr.getID() == mDataAdapter.getTotalNumber() - 1
-                && mCenterPosition > curr.getCenterX()) {
-            mCenterPosition = curr.getCenterX();
-            mGeometryAnimator.stopScroll();
+                && mCenterX > curr.getCenterX()) {
+            mCenterX = curr.getCenterX();
+            if (!mGeometryAnimator.isScrolling()) {
+                mGeometryAnimator.stopScroll();
+            }
         }
     }
 
     private void layoutChildren() {
         if (mAnchorPending) {
-            mCenterPosition = mViewInfo[mCurrentInfo].getCenterX();
+            mCenterX = mViewInfo[mCurrentInfo].getCenterX();
             mAnchorPending = false;
         }
 
         if (mGeometryAnimator.hasNewGeometry()) {
-            mCenterPosition = mGeometryAnimator.getNewPosition();
+            mCenterX = mGeometryAnimator.getNewPosition();
             mScale = mGeometryAnimator.getNewScale();
         }
 
-        adjustCenterPosition();
+        adjustCenterX();
 
-        mViewInfo[mCurrentInfo].layoutIn(mDrawArea, mCenterPosition, mScale);
+        mViewInfo[mCurrentInfo].layoutIn(mDrawArea, mCenterX, mScale);
 
         // images on the left
         for (int infoID = mCurrentInfo - 1; infoID >= 0; infoID--) {
@@ -420,7 +433,7 @@ public class FilmStripView extends ViewGroup {
                 ViewInfo next = mViewInfo[infoID + 1];
                 curr.setLeftPosition(
                         next.getLeftPosition() - curr.getView().getMeasuredWidth() - H_PADDING);
-                curr.layoutIn(mDrawArea, mCenterPosition, mScale);
+                curr.layoutIn(mDrawArea, mCenterX, mScale);
             }
         }
 
@@ -431,7 +444,7 @@ public class FilmStripView extends ViewGroup {
                 ViewInfo prev = mViewInfo[infoID - 1];
                 curr.setLeftPosition(
                         prev.getLeftPosition() + prev.getView().getMeasuredWidth() + H_PADDING);
-                curr.layoutIn(mDrawArea, mCenterPosition, mScale);
+                curr.layoutIn(mDrawArea, mCenterX, mScale);
             }
         }
 
@@ -449,15 +462,6 @@ public class FilmStripView extends ViewGroup {
         mDrawArea.bottom = b;
 
         layoutChildren();
-    }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        if (w == oldw && h == oldh) return;
-        if (mViewInfo[mCurrentInfo] != null && mScale == 1f
-                && isAnchoredTo(mViewInfo[mCurrentInfo].getID())) {
-            mAnchorPending = true;
-        }
     }
 
     private void slideViewBack(View v) {
@@ -502,12 +506,12 @@ public class FilmStripView extends ViewGroup {
             }
 
             // The end of the filmstrip might have been changed.
-            // The mCenterPosition might be out of the bound.
+            // The mCenterX might be out of the bound.
             ViewInfo currInfo = mViewInfo[mCurrentInfo];
             if (currInfo.getID() == mDataAdapter.getTotalNumber() - 1
-                    && mCenterPosition > currInfo.getCenterX()) {
-                int adjustDiff = currInfo.getCenterX() - mCenterPosition;
-                mCenterPosition = currInfo.getCenterX();
+                    && mCenterX > currInfo.getCenterX()) {
+                int adjustDiff = currInfo.getCenterX() - mCenterX;
+                mCenterX = currInfo.getCenterX();
                 for (int i = 0; i < BUFFER_SIZE; i++) {
                     if (mViewInfo[i] != null) {
                         mViewInfo[i].translateXBy(adjustDiff, mScale);
@@ -516,7 +520,7 @@ public class FilmStripView extends ViewGroup {
             }
         } else {
             // fill the removed place by right shift
-            mCenterPosition -= offsetX;
+            mCenterX -= offsetX;
 
             for (int i = removedInfo; i > 0; i--) {
                 mViewInfo[i] = mViewInfo[i - 1];
@@ -627,7 +631,7 @@ public class FilmStripView extends ViewGroup {
         ViewInfo curr = mViewInfo[mCurrentInfo];
         int dataID = curr.getID();
         if (reporter.isDataRemoved(dataID)) {
-            mCenterPosition = -1;
+            mCenterX = -1;
             reload();
             return;
         }
@@ -674,14 +678,11 @@ public class FilmStripView extends ViewGroup {
         int dataNumber = mDataAdapter.getTotalNumber();
         if (dataNumber == 0) return;
 
-        int currentData = 0;
-        int currentLeft = 0;
-        mViewInfo[mCurrentInfo] = buildInfoFromData(currentData);
-        mViewInfo[mCurrentInfo].setLeftPosition(currentLeft);
-        if (getCurrentType() == ImageData.TYPE_CAMERA_PREVIEW
-                && currentLeft == 0) {
+        mViewInfo[mCurrentInfo] = buildInfoFromData(0);
+        mViewInfo[mCurrentInfo].setLeftPosition(0);
+        if (getCurrentType() == ImageData.TYPE_CAMERA_PREVIEW) {
             // we are in camera mode by default.
-            mGeometryAnimator.lockPosition(currentLeft);
+            mGeometryAnimator.lockPositionAtViewInfo(mCurrentInfo);
         }
         for (int i = 1; mCurrentInfo + i < BUFFER_SIZE || mCurrentInfo - i >= 0; i++) {
             int infoID = mCurrentInfo + i;
@@ -708,6 +709,28 @@ public class FilmStripView extends ViewGroup {
         }
     }
 
+    private void swipeHorizontally(float velocityX) {
+        float scaledVelocityX = velocityX / mScale;
+        if (isInCameraFullscreen() && scaledVelocityX < 0) {
+            mGeometryAnimator.unlockPosition();
+            mGeometryAnimator.scaleTo(FILM_STRIP_SCALE, DURATION_GEOMETRY_ADJUST, false);
+        }
+        ViewInfo info = mViewInfo[mCurrentInfo];
+        if (info == null) return;
+        int w = getWidth();
+        mGeometryAnimator.fling((int) -scaledVelocityX,
+                // Estimation of possible length on the left. To ensure the
+                // velocity doesn't become too slow eventually, we add a huge number
+                // to the estimated maximum.
+                info.getLeftPosition() - (info.getID() + 100) * (w + H_PADDING),
+                // Estimation of possible length on the right. Likewise, exaggerate
+                // the possible maximum too.
+                info.getLeftPosition()
+                + (mDataAdapter.getTotalNumber() - info.getID() + 100)
+                * (w + H_PADDING));
+        layoutChildren();
+    }
+
     // GeometryAnimator controls all the geometry animations. It passively
     // tells the geometry information on demand.
     private class GeometryAnimator implements
@@ -726,9 +749,7 @@ public class FilmStripView extends ViewGroup {
         private boolean mCanStopScale;
 
         private boolean mIsPositionLocked;
-        private int mLockedPosition;
-
-        private Runnable mPostAction;
+        private int mLockedViewInfo;
 
         GeometryAnimator(Context context) {
             mScroller = new Scroller(context);
@@ -740,6 +761,18 @@ public class FilmStripView extends ViewGroup {
             mCanStopScroll = true;
             mCanStopScale = true;
             mHasNewScale = false;
+        }
+
+        boolean isScrolling() {
+            return !mScroller.isFinished();
+        }
+
+        boolean isScalling() {
+            return mScaleAnimator.isRunning();
+        }
+
+        boolean isFinished() {
+            return (!isScrolling() && !isScalling());
         }
 
         boolean hasNewGeometry() {
@@ -761,28 +794,33 @@ public class FilmStripView extends ViewGroup {
 
         // Always call hasNewGeometry() before getting the new position value.
         int getNewPosition() {
-            if (mIsPositionLocked) return mLockedPosition;
-            if (!mHasNewPosition) return mCenterPosition;
+            if (mIsPositionLocked) {
+                if (mViewInfo[mLockedViewInfo] == null) return mCenterX;
+                return mViewInfo[mLockedViewInfo].getCenterX();
+            }
+            if (!mHasNewPosition) return mCenterX;
             return mScroller.getCurrX();
         }
 
-        void lockPosition(int pos) {
+        void lockPositionAtViewInfo(int infoID) {
             mIsPositionLocked = true;
-            mLockedPosition = pos;
+            mLockedViewInfo = infoID;
         }
 
         void unlockPosition() {
             if (mIsPositionLocked) {
                 // only when the position is previously locked we set the current
                 // position to make it consistent.
-                mCenterPosition = mLockedPosition;
+                if (mViewInfo[mLockedViewInfo] != null) {
+                    mCenterX = mViewInfo[mLockedViewInfo].getCenterX();
+                }
                 mIsPositionLocked = false;
             }
         }
 
         void fling(int velocityX, int minX, int maxX) {
             if (!stopScroll() || mIsPositionLocked) return;
-            mScroller.fling(mCenterPosition, 0, velocityX, 0, minX, maxX, 0, 0);
+            mScroller.fling(mCenterX, 0, velocityX, 0, minX, maxX, 0, 0);
         }
 
         boolean stopScroll() {
@@ -808,7 +846,7 @@ public class FilmStripView extends ViewGroup {
             if (!stopScroll() || mIsPositionLocked) return;
             mCanStopScroll = interruptible;
             stopScroll();
-            mScroller.startScroll(mCenterPosition, 0, position - mCenterPosition,
+            mScroller.startScroll(mCenterX, 0, position - mCenterX,
                     0, duration);
         }
 
@@ -830,10 +868,6 @@ public class FilmStripView extends ViewGroup {
             scaleTo(scale, duration, true);
         }
 
-        void setPostAction(Runnable act) {
-            mPostAction = act;
-        }
-
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
             mHasNewScale = true;
@@ -847,16 +881,19 @@ public class FilmStripView extends ViewGroup {
 
         @Override
         public void onAnimationEnd(Animator anim) {
-            if (mPostAction != null) {
-                mPostAction.run();
-                mPostAction = null;
+            ViewInfo info = mViewInfo[mCurrentInfo];
+            if (info != null && mCenterX == info.getCenterX()) {
+                if (mScale == 1f) {
+                    lockPositionAtViewInfo(mCurrentInfo);
+                } else if (mScale == FILM_STRIP_SCALE) {
+                    unlockPosition();
+                }
             }
             mCanStopScale = true;
         }
 
         @Override
         public void onAnimationCancel(Animator anim) {
-            mPostAction = null;
         }
 
         @Override
@@ -921,7 +958,7 @@ public class FilmStripView extends ViewGroup {
                     mGeometryAnimator.unlockPosition();
                     mGeometryAnimator.scaleTo(FILM_STRIP_SCALE, DURATION_GEOMETRY_ADJUST, false);
                 }
-                mCenterPosition += deltaX;
+                mCenterX += deltaX;
             } else {
                 // Vertical part. Promote or demote.
                 //int scaledDeltaY = (int) (dy * mScale);
@@ -952,21 +989,7 @@ public class FilmStripView extends ViewGroup {
         @Override
         public boolean onFling(float velocityX, float velocityY) {
             if (Math.abs(velocityX) > Math.abs(velocityY)) {
-                float scaledVelocityX = velocityX / mScale;
-                if (isInCameraFullscreen() && scaledVelocityX < 0) {
-                    mGeometryAnimator.unlockPosition();
-                    mGeometryAnimator.scaleTo(FILM_STRIP_SCALE, DURATION_GEOMETRY_ADJUST, false);
-                }
-                ViewInfo info = mViewInfo[mCurrentInfo];
-                int w = getWidth();
-                if (info == null) return true;
-                mGeometryAnimator.fling((int) -scaledVelocityX,
-                        // estimation of possible length on the left
-                        info.getLeftPosition() - info.getID() * w * 2,
-                        // estimation of possible length on the right
-                        info.getLeftPosition()
-                        + (mDataAdapter.getTotalNumber() - info.getID()) * w * 2);
-                layoutChildren();
+                swipeHorizontally(velocityX);
             } else {
                 // ignore horizontal fling.
             }
@@ -1005,12 +1028,11 @@ public class FilmStripView extends ViewGroup {
 
                 if (getCurrentType() == ImageData.TYPE_CAMERA_PREVIEW) {
                     if (isAnchoredTo(0)) {
-                        mGeometryAnimator.lockPosition(mViewInfo[mCurrentInfo].getCenterX());
+                        mGeometryAnimator.lockPositionAtViewInfo(mCurrentInfo);
                     } else {
                         mGeometryAnimator.scrollTo(
                                 mViewInfo[mCurrentInfo].getCenterX(),
                                 DURATION_GEOMETRY_ADJUST, false);
-                        mGeometryAnimator.setPostAction(mLockPositionRunnable);
                     }
                 }
             } else {
@@ -1020,22 +1042,7 @@ public class FilmStripView extends ViewGroup {
                     return;
                 }
                 mGeometryAnimator.scaleTo(FILM_STRIP_SCALE, DURATION_GEOMETRY_ADJUST, false);
-                mGeometryAnimator.setPostAction(mUnlockPositionRunnable);
             }
         }
-
-        private Runnable mLockPositionRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mGeometryAnimator.lockPosition(mViewInfo[mCurrentInfo].getCenterX());
-            }
-        };
-
-        private Runnable mUnlockPositionRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mGeometryAnimator.unlockPosition();
-            }
-        };
     }
 }
