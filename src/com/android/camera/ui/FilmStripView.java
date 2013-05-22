@@ -56,6 +56,9 @@ public class FilmStripView extends ViewGroup {
 
     private Listener mListener;
 
+    private View mCameraView;
+    private ImageData mCameraData;
+
     // This is used to resolve the misalignment problem when the device
     // orientation is changed. If the current item is in fullscreen, it might
     // be shifted because mCenterX is not adjusted with the orientation.
@@ -338,15 +341,20 @@ public class FilmStripView extends ViewGroup {
         View v = mDataAdapter.getView(mContext, dataID);
         if (v == null) return null;
         ViewInfo info = new ViewInfo(dataID, v);
-        addView(info.getView());
+        v = info.getView();
+        if (v != mCameraView) {
+            addView(info.getView());
+        } else {
+            v.setVisibility(View.VISIBLE);
+        }
         return info;
     }
 
     private void removeInfo(int infoID) {
         if (infoID >= mViewInfo.length || mViewInfo[infoID] == null) return;
 
-        removeView(mViewInfo[infoID].getView());
-        mDataAdapter.getImageData(mViewInfo[infoID].getID()).recycle();
+        ImageData data = mDataAdapter.getImageData(mViewInfo[infoID].getID());
+        checkForRemoval(data, mViewInfo[infoID].getView());
         mViewInfo[infoID] = null;
     }
 
@@ -464,6 +472,23 @@ public class FilmStripView extends ViewGroup {
         layoutChildren();
     }
 
+    // Keeps the view in the view hierarchy if it's camera preview.
+    // Remove from the hierarchy otherwise.
+    private void checkForRemoval(ImageData data, View v) {
+        if (data.getType() != ImageData.TYPE_CAMERA_PREVIEW) {
+            removeView(v);
+            data.recycle();
+        } else {
+            v.setVisibility(View.INVISIBLE);
+            if (mCameraView != null && mCameraView != v) {
+                removeView(mCameraView);
+                mCameraData = null;
+            }
+            mCameraView = v;
+            mCameraData = data;
+        }
+    }
+
     private void slideViewBack(View v) {
         v.animate()
                 .translationX(0)
@@ -557,8 +582,7 @@ public class FilmStripView extends ViewGroup {
                 .withEndAction(new Runnable() {
                     @Override
                     public void run() {
-                        removeView(removedView);
-                        data.recycle();
+                        checkForRemoval(data, removedView);
                     }
                 })
                 .start();
