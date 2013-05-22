@@ -34,7 +34,7 @@ import com.android.gallery3d.filtershow.ui.FilterIconButton;
 public class CategoryAdapter extends ArrayAdapter<Action> {
 
     private static final String LOGTAG = "CategoryAdapter";
-    private int mItemHeight = 200;
+    private int mItemHeight;
     private View mContainer;
     private int mItemWidth = ListView.LayoutParams.MATCH_PARENT;
     private boolean mUseFilterIconButton = false;
@@ -43,6 +43,7 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
 
     public CategoryAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
+        mItemHeight = (int) (context.getResources().getDisplayMetrics().density * 100);
     }
 
     public CategoryAdapter(Context context) {
