@@ -736,6 +736,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                 int position = adapter.undo();
                 mMasterImage.onHistoryItemClick(position);
                 mImageShow.showToast("Undo");
+                backToMain();
                 invalidateViews();
                 return true;
             }
