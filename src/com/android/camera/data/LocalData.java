@@ -49,21 +49,23 @@ abstract interface LocalData extends FilmStripView.ImageData {
 
     static class NewestFirstComparator implements Comparator<LocalData> {
 
-        private static int compare(long v1, long v2) {
-            if (v1 == -1) {
-                if (v2 == -1) return 0;
-                return -1;
+        // Compare taken/modified date of LocalData in descent order to make
+        // newer data in the front.
+        // The negavive numbers here are always considered "bigger" than
+        // postive ones. Thus, if any one of the numbers is negative, the logic
+        // is reversed.
+        private static int compareDate(long v1, long v2) {
+            if (v1 >= 0 && v2 >= 0) {
+                return ((v1 > v2) ? 1 : ((v1 < v2) ? -1 : 0));
             }
-            if (v2 == -1) return 0;
-
-            return ((v1 > v2) ? 1 : ((v1 < v2) ? -1 : 0));
+            return ((v2 > v1) ? 1 : ((v2 < v1) ? -1 : 0));
         }
 
         @Override
         public int compare(LocalData d1, LocalData d2) {
-            int cmp = compare(d1.getDateTaken(), d2.getDateTaken());
+            int cmp = compareDate(d1.getDateTaken(), d2.getDateTaken());
             if (cmp == 0) {
-                cmp = compare(d1.getDateModified(), d2.getDateModified());
+                cmp = compareDate(d1.getDateModified(), d2.getDateModified());
             }
             if (cmp == 0) {
                 cmp = d1.getTitle().compareTo(d2.getTitle());
