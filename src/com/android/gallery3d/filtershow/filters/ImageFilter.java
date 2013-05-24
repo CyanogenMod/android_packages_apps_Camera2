@@ -69,10 +69,12 @@ public abstract class ImageFilter implements Cloneable {
     public boolean supportsAllocationInput() { return false; }
 
     public void apply(Allocation in, Allocation out) {
+        setGeneralParameters();
     }
 
     public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
         // do nothing here, subclasses will implement filtering here
+        setGeneralParameters();
         return bitmap;
     }
 
@@ -101,5 +103,12 @@ public abstract class ImageFilter implements Cloneable {
 
     public FilterEnvironment getEnvironment() {
         return mEnvironment;
+    }
+
+    public void setGeneralParameters() {
+        // should implement in subclass which like to transport
+        // some information to other filters. (like the style setting from RetroLux
+        // and Film to FixedFrame)
+        mEnvironment.clearGeneralParameters();
     }
 }

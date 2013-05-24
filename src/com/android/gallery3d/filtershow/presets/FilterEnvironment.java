@@ -50,6 +50,9 @@ public class FilterEnvironment {
     private HashMap<Long, WeakReference<Bitmap>>
             bitmapCach = new HashMap<Long, WeakReference<Bitmap>>();
 
+    private HashMap<Integer, Integer>
+                    generalParameters = new HashMap<Integer, Integer>();
+
     public void cache(Bitmap bitmap) {
         if (bitmap == null) {
             return;
@@ -116,6 +119,7 @@ public class FilterEnvironment {
         if (filter.supportsAllocationInput()) {
             filter.apply(in, out);
         }
+        filter.setGeneralParameters();
         filter.setEnvironment(null);
     }
 
@@ -124,6 +128,7 @@ public class FilterEnvironment {
         filter.useRepresentation(representation);
         filter.setEnvironment(this);
         Bitmap ret = filter.apply(bitmap, mScaleFactor, mQuality);
+        filter.setGeneralParameters();
         filter.setEnvironment(null);
         return ret;
     }
@@ -134,6 +139,25 @@ public class FilterEnvironment {
 
     public void setPipeline(PipelineInterface cachingPipeline) {
         mPipeline = cachingPipeline;
+    }
+
+    public synchronized void clearGeneralParameters() {
+        generalParameters = null;
+    }
+
+    public synchronized Integer getGeneralParameter(int id) {
+        if (generalParameters == null || !generalParameters.containsKey(id)) {
+            return null;
+        }
+        return generalParameters.get(id);
+    }
+
+    public synchronized void setGeneralParameter(int id, int value) {
+        if (generalParameters == null) {
+            generalParameters = new HashMap<Integer, Integer>();
+        }
+
+        generalParameters.put(id, value);
     }
 
 }
