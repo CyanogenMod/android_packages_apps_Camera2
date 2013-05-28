@@ -600,6 +600,7 @@ public class ImageShow extends View implements OnGestureListener,
                 Point translation = MasterImage.getImage().getTranslation();
                 translation.x = (int) (originalTranslation.x + translateX);
                 translation.y = (int) (originalTranslation.y + translateY);
+                constrainTranslation(translation, scaleFactor);
                 MasterImage.getImage().setTranslation(translation);
                 mTouchShowOriginal = false;
             } else if (enableComparison() && !mOriginalDisabled
@@ -644,9 +645,30 @@ public class ImageShow extends View implements OnGestureListener,
         }
         if (scale != MasterImage.getImage().getScaleFactor()) {
             MasterImage.getImage().setScaleFactor(scale);
+            float translateX = (getWidth() / 2 - arg0.getX());
+            float translateY = (getHeight() / 2 - arg0.getY());
+            Point translation = MasterImage.getImage().getTranslation();
+            translation.x = (int) (mOriginalTranslation.x + translateX);
+            translation.y = (int) (mOriginalTranslation.y + translateY);
+            constrainTranslation(translation, scale);
+            MasterImage.getImage().setTranslation(translation);
             invalidate();
         }
         return true;
+    }
+
+    private void constrainTranslation(Point translation, float scale) {
+        float maxTranslationX = getWidth() / scale;
+        float maxTranslationY = getHeight() / scale;
+        if (Math.abs(translation.x) > maxTranslationX) {
+            translation.x = (int) (Math.signum(translation.x) *
+                    maxTranslationX);
+            if (Math.abs(translation.y) > maxTranslationY) {
+                translation.y = (int) (Math.signum(translation.y) *
+                        maxTranslationY);
+            }
+
+        }
     }
 
     @Override
@@ -731,6 +753,7 @@ public class ImageShow extends View implements OnGestureListener,
         Point translation = MasterImage.getImage().getTranslation();
         translation.x = (int) (mOriginalTranslation.x + translateX);
         translation.y = (int) (mOriginalTranslation.y + translateY);
+        constrainTranslation(translation, scaleFactor);
         MasterImage.getImage().setTranslation(translation);
 
         invalidate();
