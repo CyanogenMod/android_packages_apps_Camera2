@@ -61,8 +61,6 @@ public class ImageLoader {
     private Bitmap mOriginalBitmapHighres = null;
     private Bitmap mBackgroundBitmap = null;
 
-    private final ZoomCache mZoomCache = new ZoomCache();
-
     private int mOrientation = 0;
     private HistoryAdapter mAdapter = null;
 
