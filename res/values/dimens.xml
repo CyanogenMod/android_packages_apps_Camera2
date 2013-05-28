@@ -102,4 +102,5 @@
     <dimen name="capture_margin_right">16dip</dimen>
     <dimen name="capture_margin_top">16dip</dimen>
     <dimen name="camera_controls_size">0dip</dimen>
+    <dimen name="camera_film_strip_gap">32dip</dimen>
 </resources>
