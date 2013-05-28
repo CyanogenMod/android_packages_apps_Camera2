@@ -26,7 +26,7 @@ import android.os.Bundle;
 import android.view.Display;
 
 import com.android.gallery3d.common.ApiHelper;
-import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.filtershow.crop.CropActivity;
 import com.android.gallery3d.filtershow.crop.CropExtras;
 
 /**
@@ -100,7 +100,7 @@ public class Wallpaper extends Activity {
                 Point size = getDefaultDisplaySize(new Point());
                 float spotlightX = (float) size.x / width;
                 float spotlightY = (float) size.y / height;
-                Intent request = new Intent(FilterShowActivity.CROP_ACTION)
+                Intent request = new Intent(CropActivity.CROP_ACTION)
                         .setDataAndType(mPickedItem, IMAGE_TYPE)
                         .addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT)
                         .putExtra(CropExtras.KEY_OUTPUT_X, width)

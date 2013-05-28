@@ -64,8 +64,8 @@ import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.exif.Rational;
+import com.android.gallery3d.filtershow.crop.CropActivity;
 import com.android.gallery3d.filtershow.crop.CropExtras;
-import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.util.UsageStatistics;
 
 import java.io.File;
@@ -1127,7 +1127,7 @@ public class NewPhotoModule
                 newExtras.putBoolean(CropExtras.KEY_SHOW_WHEN_LOCKED, true);
             }
 
-            Intent cropIntent = new Intent(FilterShowActivity.CROP_ACTION);
+            Intent cropIntent = new Intent(CropActivity.CROP_ACTION);
 
             cropIntent.setData(tempUri);
             cropIntent.putExtras(newExtras);

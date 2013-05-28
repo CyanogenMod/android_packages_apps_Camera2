@@ -539,13 +539,6 @@ public class ImageShow extends View implements OnGestureListener,
         mImageLoader.saveImage(getImagePreset(), filterShowActivity, file);
     }
 
-    public void saveToUri(Bitmap f, Uri u, String m, FilterShowActivity filterShowActivity) {
-        mImageLoader.saveToUri(f, u, m, filterShowActivity);
-    }
-
-    public void returnFilteredResult(FilterShowActivity filterShowActivity) {
-        mImageLoader.returnFilteredResult(getImagePreset(), filterShowActivity);
-    }
 
     public boolean scaleInProgress() {
         return mScaleGestureDetector.isInProgress();

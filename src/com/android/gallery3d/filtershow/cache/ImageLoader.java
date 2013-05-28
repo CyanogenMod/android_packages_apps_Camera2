@@ -22,12 +22,10 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Matrix;
 import android.graphics.Rect;
-import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -36,27 +34,19 @@ import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
-import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
-import com.android.gallery3d.filtershow.tools.BitmapTask;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
-import com.android.gallery3d.util.InterruptableOutputStream;
 import com.android.gallery3d.util.XmpUtilHelper;
 
-import java.io.ByteArrayInputStream;
-import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Vector;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -509,116 +499,6 @@ public class ImageLoader {
             }
         }
         return bmap;
-    }
-
-    public void returnFilteredResult(ImagePreset preset,
-            final FilterShowActivity filterShowActivity) {
-        BitmapTask.Callbacks<ImagePreset> cb = new BitmapTask.Callbacks<ImagePreset>() {
-
-            @Override
-            public void onComplete(Bitmap result) {
-                filterShowActivity.onFilteredResult(result);
-            }
-
-            @Override
-            public void onCancel() {
-            }
-
-            @Override
-            public Bitmap onExecute(ImagePreset param) {
-                if (param == null || mUri == null) {
-                    return null;
-                }
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                boolean noBitmap = true;
-                int num_tries = 0;
-                if (options.inSampleSize < 1) {
-                    options.inSampleSize = 1;
-                }
-                Bitmap bitmap = null;
-                // Stopgap fix for low-memory devices.
-                while (noBitmap) {
-                    try {
-                        // Try to do bitmap operations, downsample if low-memory
-                        bitmap = loadMutableBitmap(mContext, mUri, options);
-                        if (bitmap == null) {
-                            Log.w(LOGTAG, "Failed to save image!");
-                            return null;
-                        }
-                        CachingPipeline pipeline = new CachingPipeline(
-                                FiltersManager.getManager(), "Saving");
-                        bitmap = pipeline.renderFinalImage(bitmap, param);
-                        noBitmap = false;
-                    } catch (java.lang.OutOfMemoryError e) {
-                        // Try 5 times before failing for good.
-                        if (++num_tries >= 5) {
-                            throw e;
-                        }
-                        bitmap = null;
-                        System.gc();
-                        options.inSampleSize *= 2;
-                    }
-                }
-                return bitmap;
-            }
-        };
-
-        (new BitmapTask<ImagePreset>(cb)).execute(preset);
-    }
-
-    private String getFileExtension(String requestFormat) {
-        String outputFormat = (requestFormat == null)
-                ? "jpg"
-                : requestFormat;
-        outputFormat = outputFormat.toLowerCase();
-        return (outputFormat.equals("png") || outputFormat.equals("gif"))
-                ? "png" // We don't support gif compression.
-                : "jpg";
-    }
-
-    private CompressFormat convertExtensionToCompressFormat(String extension) {
-        return extension.equals("png") ? CompressFormat.PNG : CompressFormat.JPEG;
-    }
-
-    public void saveToUri(Bitmap bmap, Uri uri, final String outputFormat,
-            final FilterShowActivity filterShowActivity) {
-
-        OutputStream out = null;
-        try {
-            out = filterShowActivity.getContentResolver().openOutputStream(uri);
-        } catch (FileNotFoundException e) {
-            Log.w(LOGTAG, "cannot write output", e);
-            out = null;
-        } finally {
-            if (bmap == null || out == null) {
-                return;
-            }
-        }
-
-        final InterruptableOutputStream ios = new InterruptableOutputStream(out);
-
-        BitmapTask.Callbacks<Bitmap> cb = new BitmapTask.Callbacks<Bitmap>() {
-
-            @Override
-            public void onComplete(Bitmap result) {
-                filterShowActivity.done();
-            }
-
-            @Override
-            public void onCancel() {
-                ios.interrupt();
-            }
-
-            @Override
-            public Bitmap onExecute(Bitmap param) {
-                CompressFormat cf = convertExtensionToCompressFormat(getFileExtension(outputFormat));
-                param.compress(cf, DEFAULT_COMPRESS_QUALITY, ios);
-                Utils.closeSilently(ios);
-                return null;
-            }
-        };
-
-        (new BitmapTask<Bitmap>(cb)).execute(bmap);
     }
 
     public void setAdapter(HistoryAdapter adapter) {

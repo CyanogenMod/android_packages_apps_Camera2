@@ -35,7 +35,7 @@ import com.android.gallery3d.data.DataManager;
 import com.android.gallery3d.data.LocalAlbum;
 import com.android.gallery3d.data.MediaSet;
 import com.android.gallery3d.data.Path;
-import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.filtershow.crop.CropActivity;
 import com.android.gallery3d.filtershow.crop.CropExtras;
 
 public class WidgetConfigure extends Activity {
@@ -149,7 +149,7 @@ public class WidgetConfigure extends Activity {
         int widgetHeight = Math.round(height * scale);
 
         mPickedItem = data.getData();
-        Intent request = new Intent(FilterShowActivity.CROP_ACTION, mPickedItem)
+        Intent request = new Intent(CropActivity.CROP_ACTION, mPickedItem)
                 .putExtra(CropExtras.KEY_OUTPUT_X, widgetWidth)
                 .putExtra(CropExtras.KEY_OUTPUT_Y, widgetHeight)
                 .putExtra(CropExtras.KEY_ASPECT_X, widgetWidth)

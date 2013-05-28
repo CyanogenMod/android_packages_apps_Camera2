@@ -19,7 +19,6 @@ package com.android.gallery3d.filtershow;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.app.WallpaperManager;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,7 +35,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Menu;
@@ -49,17 +47,35 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
 import android.widget.ShareActionProvider;
 import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
-
 import android.widget.Toast;
+
 import com.android.gallery3d.R;
 import com.android.gallery3d.data.LocalAlbum;
 import com.android.gallery3d.filtershow.cache.CachingPipeline;
 import com.android.gallery3d.filtershow.cache.FilteringPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
-import com.android.gallery3d.filtershow.category.*;
-import com.android.gallery3d.filtershow.crop.CropExtras;
-import com.android.gallery3d.filtershow.editors.*;
-import com.android.gallery3d.filtershow.filters.*;
+import com.android.gallery3d.filtershow.category.Action;
+import com.android.gallery3d.filtershow.category.CategoryAdapter;
+import com.android.gallery3d.filtershow.category.CategoryView;
+import com.android.gallery3d.filtershow.category.MainPanel;
+import com.android.gallery3d.filtershow.editors.BasicEditor;
+import com.android.gallery3d.filtershow.editors.Editor;
+import com.android.gallery3d.filtershow.editors.EditorCrop;
+import com.android.gallery3d.filtershow.editors.EditorDraw;
+import com.android.gallery3d.filtershow.editors.EditorFlip;
+import com.android.gallery3d.filtershow.editors.EditorInfo;
+import com.android.gallery3d.filtershow.editors.EditorManager;
+import com.android.gallery3d.filtershow.editors.EditorPanel;
+import com.android.gallery3d.filtershow.editors.EditorRedEye;
+import com.android.gallery3d.filtershow.editors.EditorRotate;
+import com.android.gallery3d.filtershow.editors.EditorStraighten;
+import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
+import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
+import com.android.gallery3d.filtershow.filters.FilterFxRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterImageBorderRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.filters.FiltersManager;
+import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
@@ -67,7 +83,6 @@ import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.provider.SharedImageProvider;
 import com.android.gallery3d.filtershow.state.StateAdapter;
-import com.android.gallery3d.filtershow.tools.BitmapTask;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.filtershow.tools.XmpPresets;
 import com.android.gallery3d.filtershow.tools.XmpPresets.XMresults;
@@ -77,16 +92,12 @@ import com.android.gallery3d.util.GalleryUtils;
 import com.android.photos.data.GalleryBitmapPool;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Vector;
 
 public class FilterShowActivity extends FragmentActivity implements OnItemClickListener,
         OnShareTargetSelectedListener {
 
-    // fields for supporting crop action
-    public static final String CROP_ACTION = "com.android.camera.action.CROP";
-    private CropExtras mCropExtras = null;
     private String mAction = "";
     MasterImage mMasterImage = null;
 
@@ -94,7 +105,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
     public static final String TINY_PLANET_ACTION = "com.android.camera.action.TINY_PLANET";
     public static final String LAUNCH_FULLSCREEN = "launch-fullscreen";
-    public static final int MAX_BMAP_IN_INTENT = 990000;
     private ImageLoader mImageLoader = null;
     private ImageShow mImageShow = null;
 
@@ -957,111 +967,23 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         }
     }
 
-    private boolean mSaveToExtraUri = false;
-    private boolean mSaveAsWallpaper = false;
-    private boolean mReturnAsExtra = false;
-    private boolean mOutputted = false;
 
     public void saveImage() {
-        handleSpecialExitCases();
-        if (!mOutputted) {
-            if (mImageShow.hasModifications()) {
-                // Get the name of the album, to which the image will be saved
-                File saveDir = SaveCopyTask.getFinalSaveDirectory(this, mImageLoader.getUri());
-                int bucketId = GalleryUtils.getBucketId(saveDir.getPath());
-                String albumName = LocalAlbum.getLocalizedName(getResources(), bucketId, null);
-                showSavingProgress(albumName);
-                mImageShow.saveImage(this, null);
-            } else {
-                done();
-            }
-        }
-    }
-
-    public boolean detectSpecialExitCases() {
-        return mCropExtras != null && (mCropExtras.getExtraOutput() != null
-                || mCropExtras.getSetAsWallpaper() || mCropExtras.getReturnData());
-    }
-
-    public void handleSpecialExitCases() {
-        if (mCropExtras != null) {
-            if (mCropExtras.getExtraOutput() != null) {
-                mSaveToExtraUri = true;
-                mOutputted = true;
-            }
-            if (mCropExtras.getSetAsWallpaper()) {
-                mSaveAsWallpaper = true;
-                mOutputted = true;
-            }
-            if (mCropExtras.getReturnData()) {
-                mReturnAsExtra = true;
-                mOutputted = true;
-            }
-            if (mOutputted) {
-                mImageShow.getImagePreset().mGeoData.setUseCropExtrasFlag(true);
-                showSavingProgress(null);
-                mImageShow.returnFilteredResult(this);
-            }
-        }
-    }
-
-    public void onFilteredResult(Bitmap filtered) {
-        Intent intent = new Intent();
-        intent.putExtra(CropExtras.KEY_CROPPED_RECT, mImageShow.getImageCropBounds());
-        if (mSaveToExtraUri) {
-            mImageShow.saveToUri(filtered, mCropExtras.getExtraOutput(),
-                    mCropExtras.getOutputFormat(), this);
-        }
-        if (mSaveAsWallpaper) {
-            setWallpaperInBackground(filtered);
-        }
-        if (mReturnAsExtra) {
-            if (filtered != null) {
-                int bmapSize = filtered.getRowBytes() * filtered.getHeight();
-                /*
-                 * Max size of Binder transaction buffer is 1Mb, so constrain
-                 * Bitmap to be somewhat less than this, otherwise we get
-                 * TransactionTooLargeExceptions.
-                 */
-                if (bmapSize > MAX_BMAP_IN_INTENT) {
-                    Log.w(LOGTAG, "Bitmap too large to be returned via intent");
-                } else {
-                    intent.putExtra(CropExtras.KEY_DATA, filtered);
-                }
-            }
-        }
-        setResult(RESULT_OK, intent);
-        if (!mSaveToExtraUri) {
+        if (mImageShow.hasModifications()) {
+            // Get the name of the album, to which the image will be saved
+            File saveDir = SaveCopyTask.getFinalSaveDirectory(this, mImageLoader.getUri());
+            int bucketId = GalleryUtils.getBucketId(saveDir.getPath());
+            String albumName = LocalAlbum.getLocalizedName(getResources(), bucketId, null);
+            showSavingProgress(albumName);
+            mImageShow.saveImage(this, null);
+        } else {
             done();
         }
     }
 
-    void setWallpaperInBackground(final Bitmap bmap) {
-        Toast.makeText(this, R.string.setting_wallpaper, Toast.LENGTH_LONG).show();
-        BitmapTask.Callbacks<FilterShowActivity> cb = new BitmapTask.Callbacks<FilterShowActivity>() {
-            @Override
-            public void onComplete(Bitmap result) {}
-
-            @Override
-            public void onCancel() {}
-
-            @Override
-            public Bitmap onExecute(FilterShowActivity param) {
-                try {
-                    WallpaperManager.getInstance(param).setBitmap(bmap);
-                } catch (IOException e) {
-                    Log.w(LOGTAG, "fail to set wall paper", e);
-                }
-                return null;
-            }
-        };
-        (new BitmapTask<FilterShowActivity>(cb)).execute(this);
-    }
 
     public void done() {
-        if (mOutputted) {
-            hideSavingProgress();
-        }
+        hideSavingProgress();
         finish();
     }
 
