@@ -255,12 +255,12 @@ public class CameraSettings {
         TypedArray iconIds = mContext.getResources().obtainTypedArray(
                 R.array.pref_camera_exposure_icons);
         for (int i = minValue; i <= maxValue; ++i) {
-            entryValues[maxValue - i] = Integer.toString(Math.round(i / step));
+            entryValues[i - minValue] = Integer.toString(Math.round(i / step));
             StringBuilder builder = new StringBuilder();
             if (i > 0) builder.append('+');
-            entries[maxValue - i] = builder.append(i).toString();
-            labels[maxValue - i] = explabel + " " + builder.toString();
-            icons[maxValue - i] = iconIds.getResourceId(3 + i, 0);
+            entries[i - minValue] = builder.append(i).toString();
+            labels[i - minValue] = explabel + " " + builder.toString();
+            icons[i - minValue] = iconIds.getResourceId(3 + i, 0);
         }
         exposure.setUseSingleIcon(true);
         exposure.setEntries(entries);
