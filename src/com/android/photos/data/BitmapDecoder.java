@@ -97,13 +97,13 @@ public class BitmapDecoder {
 
     private static <T> Bitmap delegateDecode(Decoder<T> decoder, T input) {
         BitmapFactory.Options options = getOptions();
+        GalleryBitmapPool pool = GalleryBitmapPool.getInstance();
         try {
             options.inJustDecodeBounds = true;
             if (!decoder.decodeBounds(input, options)) {
                 return null;
             }
             options.inJustDecodeBounds = false;
-            GalleryBitmapPool pool = GalleryBitmapPool.getInstance();
             Bitmap reuseBitmap = pool.get(options.outWidth, options.outHeight);
             options.inBitmap = reuseBitmap;
             Bitmap decodedBitmap = decoder.decode(input, options);
@@ -111,6 +111,13 @@ public class BitmapDecoder {
                 pool.put(reuseBitmap);
             }
             return decodedBitmap;
+        } catch (IllegalArgumentException e) {
+            if (options.inBitmap == null) {
+                throw e;
+            }
+            pool.put(options.inBitmap);
+            options.inBitmap = null;
+            return decoder.decode(input, options);
         } finally {
             options.inBitmap = null;
             options.inJustDecodeBounds = false;
