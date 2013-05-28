@@ -151,6 +151,8 @@ public class NewCameraActivity extends Activity
         mDataAdapter = new CameraDataAdapter(
                 new ColorDrawable(getResources().getColor(R.color.photo_placeholder)));
         mFilmStripView = (FilmStripView) findViewById(R.id.filmstrip_view);
+        mFilmStripView.setViewGap(
+                getResources().getDimensionPixelSize(R.dimen.camera_film_strip_gap));
         // Set up the camera preview first so the preview shows up ASAP.
         mDataAdapter.setCameraPreviewInfo(rootLayout,
                 FilmStripView.ImageData.SIZE_FULL, FilmStripView.ImageData.SIZE_FULL);
