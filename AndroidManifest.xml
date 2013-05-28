@@ -74,7 +74,7 @@
                 <data android:mimeType="application/sdp" />
              </intent-filter>
              <intent-filter>
-                !-- HTTP live support -->
+                <!-- HTTP live support -->
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
