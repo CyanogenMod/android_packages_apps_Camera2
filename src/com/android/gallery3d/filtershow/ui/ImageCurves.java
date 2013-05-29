@@ -145,11 +145,6 @@ public class ImageCurves extends ImageShow {
         invalidate();
     }
 
-    @Override
-    public boolean showTitle() {
-        return false;
-    }
-
     private ImageFilterCurves curves() {
         String filterName = getFilterName();
         ImagePreset p = getImagePreset();
@@ -221,7 +216,6 @@ public class ImageCurves extends ImageShow {
         getSpline(mCurrentCurveIndex)
                 .draw(canvas, Spline.colorForCurve(mCurrentCurveIndex), getWidth(), getHeight(),
                         true, mDoingTouchMove);
-        drawToast(canvas);
 
     }
 

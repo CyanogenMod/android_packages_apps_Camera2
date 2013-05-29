@@ -183,7 +183,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     public void loadEditorPanel(FilterRepresentation representation,
                                 final Editor currentEditor) {
         if (representation.getEditorId() == ImageOnlyEditor.ID) {
-            currentEditor.getImageShow().select();
             currentEditor.reflectCurrentFilter();
             return;
         }
@@ -340,16 +339,10 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         CategoryView.setMargin((int) getPixelsFromDip(8));
         CategoryView.setTextSize((int) getPixelsFromDip(16));
 
-        ImageShow.setDefaultBackgroundColor(res.getColor(R.color.background_screen));
         // TODO: get those values from XML.
         FramedTextButton.setTextSize((int) getPixelsFromDip(14));
         FramedTextButton.setTrianglePadding((int) getPixelsFromDip(4));
         FramedTextButton.setTriangleSize((int) getPixelsFromDip(10));
-        ImageShow.setTextSize((int) getPixelsFromDip(12));
-        ImageShow.setTextPadding((int) getPixelsFromDip(10));
-        ImageShow.setOriginalTextMargin((int) getPixelsFromDip(4));
-        ImageShow.setOriginalTextSize((int) getPixelsFromDip(18));
-        ImageShow.setOriginalText(res.getString(R.string.original_picture_text));
 
         Drawable curveHandle = res.getDrawable(R.drawable.camera_crop);
         int curveHandleSize = (int) res.getDimension(R.dimen.crop_indicator_size);
@@ -745,7 +738,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                 HistoryAdapter adapter = mMasterImage.getHistory();
                 int position = adapter.undo();
                 mMasterImage.onHistoryItemClick(position);
-                mImageShow.showToast("Undo");
                 backToMain();
                 invalidateViews();
                 return true;
@@ -754,7 +746,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                 HistoryAdapter adapter = mMasterImage.getHistory();
                 int position = adapter.redo();
                 mMasterImage.onHistoryItemClick(position);
-                mImageShow.showToast("Redo");
                 invalidateViews();
                 return true;
             }
@@ -928,9 +919,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     public void cannotLoadImage() {
-        CharSequence text = getString(R.string.cannot_load_image);
-        Toast toast = Toast.makeText(this, text, Toast.LENGTH_SHORT);
-        toast.show();
+        Toast.makeText(this, R.string.cannot_load_image, Toast.LENGTH_SHORT).show();
         finish();
     }
 

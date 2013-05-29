@@ -102,7 +102,6 @@ public class EditorPanel extends Fragment {
         mEditor = activity.getEditor(mEditorID);
         if (mEditor != null) {
             mEditor.setUpEditorUI(actionControl, editControl, editTitle, toggleState);
-            mEditor.getImageShow().select();
             mEditor.reflectCurrentFilter();
             if (mEditor.useUtilityPanel()) {
                 mEditor.openUtilityPanel((LinearLayout) actionControl);

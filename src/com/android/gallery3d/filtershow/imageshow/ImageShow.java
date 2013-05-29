@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.imageshow;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -25,8 +26,6 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.net.Uri;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnDoubleTapListener;
@@ -36,6 +35,7 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
@@ -51,15 +51,12 @@ public class ImageShow extends View implements OnGestureListener,
     private static final boolean ENABLE_ZOOMED_COMPARISON = false;
 
     protected Paint mPaint = new Paint();
-    protected static int mTextSize = 24;
-    protected static int mTextPadding = 20;
+    protected int mTextSize;
+    protected int mTextPadding;
 
     protected ImageLoader mImageLoader = null;
-    private boolean mDirtyGeometry = false;
 
-    private Bitmap mBackgroundImage = null;
-    private final boolean USE_BACKGROUND_IMAGE = false;
-    private static int mBackgroundColor = Color.RED;
+    protected int mBackgroundColor;
 
     private GestureDetector mGestureDetector = null;
     private ScaleGestureDetector mScaleGestureDetector = null;
@@ -69,7 +66,6 @@ public class ImageShow extends View implements OnGestureListener,
     private boolean mTouchShowOriginal = false;
     private long mTouchShowOriginalDate = 0;
     private final long mTouchShowOriginalDelayMin = 200; // 200ms
-    private final long mTouchShowOriginalDelayMax = 300; // 300ms
     private int mShowOriginalDirection = 0;
     private static int UNVEIL_HORIZONTAL = 1;
     private static int UNVEIL_VERTICAL = 2;
@@ -78,9 +74,9 @@ public class ImageShow extends View implements OnGestureListener,
     private Point mTouch = new Point();
     private boolean mFinishedScalingOperation = false;
 
-    private static int mOriginalTextMargin = 8;
-    private static int mOriginalTextSize = 26;
-    private static String mOriginalText = "Original";
+    private int mOriginalTextMargin;
+    private int mOriginalTextSize;
+    private String mOriginalText;
     private boolean mZoomIn = false;
     Point mOriginalTranslation = new Point();
     float mOriginalScale;
@@ -90,9 +86,6 @@ public class ImageShow extends View implements OnGestureListener,
         SCALE,
         MOVE
     }
-    private String mToast = null;
-    private boolean mShowToast = false;
-    private boolean mImportantToast = false;
     InteractionMode mInteractionMode = InteractionMode.NONE;
 
     protected GeometryMetadata getGeometry() {
@@ -101,44 +94,8 @@ public class ImageShow extends View implements OnGestureListener,
 
     private FilterShowActivity mActivity = null;
 
-    public static void setDefaultBackgroundColor(int value) {
-        mBackgroundColor = value;
-    }
-
     public FilterShowActivity getActivity() {
         return mActivity;
-    }
-
-    public int getDefaultBackgroundColor() {
-        return mBackgroundColor;
-    }
-
-    public static void setTextSize(int value) {
-        mTextSize = value;
-    }
-
-    public static void setTextPadding(int value) {
-        mTextPadding = value;
-    }
-
-    public static void setOriginalTextMargin(int value) {
-        mOriginalTextMargin = value;
-    }
-
-    public static void setOriginalTextSize(int value) {
-        mOriginalTextSize = value;
-    }
-
-    public static void setOriginalText(String text) {
-        mOriginalText = text;
-    }
-
-    private final Handler mHandler = new Handler();
-
-    public void select() {
-    }
-
-    public void unselect() {
     }
 
     public boolean hasModifications() {
@@ -157,21 +114,30 @@ public class ImageShow extends View implements OnGestureListener,
         mActivity.enableSave(hasModifications());
     }
 
-    public Point getTouchPoint() {
-        return mTouch;
+    public ImageShow(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        setupImageShow(context);
     }
 
     public ImageShow(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setupImageShow(context);
 
-        setupGestureDetector(context);
-        mActivity = (FilterShowActivity) context;
-        MasterImage.getImage().addObserver(this);
     }
 
     public ImageShow(Context context) {
         super(context);
+        setupImageShow(context);
+    }
 
+    private void setupImageShow(Context context) {
+        Resources res = context.getResources();
+        mTextSize = res.getDimensionPixelSize(R.dimen.photoeditor_text_size);
+        mTextPadding = res.getDimensionPixelSize(R.dimen.photoeditor_text_padding);
+        mOriginalTextMargin = res.getDimensionPixelSize(R.dimen.photoeditor_original_text_margin);
+        mOriginalTextSize = res.getDimensionPixelSize(R.dimen.photoeditor_original_text_size);
+        mBackgroundColor = res.getColor(R.color.background_screen);
+        mOriginalText = res.getString(R.string.original_picture_text);
         setupGestureDetector(context);
         mActivity = (FilterShowActivity) context;
         MasterImage.getImage().addObserver(this);
@@ -191,25 +157,6 @@ public class ImageShow extends View implements OnGestureListener,
 
     public ImageFilter getCurrentFilter() {
         return MasterImage.getImage().getCurrentFilter();
-    }
-
-    public void showToast(String text) {
-        showToast(text, false);
-    }
-
-    public void showToast(String text, boolean important) {
-        mToast = text;
-        mShowToast = true;
-        mImportantToast = important;
-        invalidate();
-
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mShowToast = false;
-                invalidate();
-            }
-        }, 400);
     }
 
     public Rect getImageBounds() {
@@ -258,36 +205,8 @@ public class ImageShow extends View implements OnGestureListener,
         return invert;
     }
 
-    public Rect getDisplayedImageBounds() {
-        return mImageBounds;
-    }
-
     public ImagePreset getImagePreset() {
         return MasterImage.getImage().getPreset();
-    }
-
-    public void drawToast(Canvas canvas) {
-        if (mShowToast && mToast != null) {
-            Paint paint = new Paint();
-            paint.setTextSize(128);
-            float textWidth = paint.measureText(mToast);
-            int toastX = (int) ((getWidth() - textWidth) / 2.0f);
-            int toastY = (int) (getHeight() / 3.0f);
-
-            paint.setARGB(255, 0, 0, 0);
-            canvas.drawText(mToast, toastX - 2, toastY - 2, paint);
-            canvas.drawText(mToast, toastX - 2, toastY, paint);
-            canvas.drawText(mToast, toastX, toastY - 2, paint);
-            canvas.drawText(mToast, toastX + 2, toastY + 2, paint);
-            canvas.drawText(mToast, toastX + 2, toastY, paint);
-            canvas.drawText(mToast, toastX, toastY + 2, paint);
-            if (mImportantToast) {
-                paint.setARGB(255, 200, 0, 0);
-            } else {
-                paint.setARGB(255, 255, 255, 255);
-            }
-            canvas.drawText(mToast, toastX, toastY, paint);
-        }
     }
 
     @Override
@@ -320,24 +239,12 @@ public class ImageShow extends View implements OnGestureListener,
         // TODO: center scale on gesture
         canvas.scale(scaleFactor, scaleFactor, cx, cy);
         canvas.translate(translation.x, translation.y);
-        drawBackground(canvas);
         drawImage(canvas, getFilteredImage(), true);
         Bitmap highresPreview = MasterImage.getImage().getHighresImage();
         if (highresPreview != null) {
             drawImage(canvas, highresPreview, false);
         }
         canvas.restore();
-
-        if (showTitle() && getImagePreset() != null) {
-            mPaint.setARGB(200, 0, 0, 0);
-            mPaint.setTextSize(mTextSize);
-
-            Rect textRect = new Rect(0, 0, getWidth(), mTextSize + mTextPadding);
-            canvas.drawRect(textRect, mPaint);
-            mPaint.setARGB(255, 200, 200, 200);
-            canvas.drawText(getImagePreset().name(), mTextPadding,
-                    1.5f * mTextPadding, mPaint);
-        }
 
         Bitmap partialPreview = MasterImage.getImage().getPartialImage();
         if (partialPreview != null) {
@@ -353,8 +260,6 @@ public class ImageShow extends View implements OnGestureListener,
         canvas.restore();
 
         canvas.restore();
-
-        drawToast(canvas);
     }
 
     public void resetImageCaches(ImageShow caller) {
@@ -459,44 +364,12 @@ public class ImageShow extends View implements OnGestureListener,
         canvas.restore();
     }
 
-    public void drawBackground(Canvas canvas) {
-        if (USE_BACKGROUND_IMAGE) {
-            if (mBackgroundImage == null) {
-                mBackgroundImage = mImageLoader.getBackgroundBitmap(getResources());
-            }
-            if (mBackgroundImage != null) {
-                Rect s = new Rect(0, 0, mBackgroundImage.getWidth(),
-                        mBackgroundImage.getHeight());
-                Rect d = new Rect(0, 0, getWidth(), getHeight());
-                canvas.drawBitmap(mBackgroundImage, s, d, mPaint);
-            }
-        } else {
-            canvas.drawARGB(0, 0, 0, 0);
-        }
-    }
-
-    public boolean showTitle() {
-        return false;
-    }
-
     public void setImageLoader(ImageLoader loader) {
         mImageLoader = loader;
         if (mImageLoader != null) {
             mImageLoader.addListener(this);
             MasterImage.getImage().setImageLoader(mImageLoader);
         }
-    }
-
-    private void setDirtyGeometryFlag() {
-        mDirtyGeometry = true;
-    }
-
-    protected void clearDirtyGeometryFlag() {
-        mDirtyGeometry = false;
-    }
-
-    protected boolean getDirtyGeometryFlag() {
-        return mDirtyGeometry;
     }
 
     private void imageSizeChanged(Bitmap image) {
@@ -515,15 +388,8 @@ public class ImageShow extends View implements OnGestureListener,
 
     }
 
-    public boolean updateGeometryFlags() {
-        return true;
-    }
-
     public void updateImage() {
         invalidate();
-        if (!updateGeometryFlags()) {
-            return;
-        }
         Bitmap bitmap = mImageLoader.getOriginalBitmapLarge();
         if (bitmap != null) {
             imageSizeChanged(bitmap);
@@ -542,14 +408,6 @@ public class ImageShow extends View implements OnGestureListener,
 
     public boolean scaleInProgress() {
         return mScaleGestureDetector.isInProgress();
-    }
-
-    protected boolean isOriginalDisabled() {
-        return mOriginalDisabled;
-    }
-
-    protected void setOriginalDisabled(boolean originalDisabled) {
-        mOriginalDisabled = originalDisabled;
     }
 
     @Override
@@ -624,11 +482,6 @@ public class ImageShow extends View implements OnGestureListener,
         return true;
     }
 
-    // listview stuff
-    public void showOriginal(boolean show) {
-        invalidate();
-    }
-
     @Override
     public boolean onDoubleTap(MotionEvent arg0) {
         mZoomIn = !mZoomIn;
@@ -666,19 +519,16 @@ public class ImageShow extends View implements OnGestureListener,
 
     @Override
     public boolean onDoubleTapEvent(MotionEvent arg0) {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent arg0) {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public boolean onDown(MotionEvent arg0) {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -695,23 +545,19 @@ public class ImageShow extends View implements OnGestureListener,
 
     @Override
     public void onLongPress(MotionEvent arg0) {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2, float arg3) {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public void onShowPress(MotionEvent arg0) {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public boolean onSingleTapUp(MotionEvent arg0) {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -720,14 +566,12 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     public void openUtilityPanel(final LinearLayout accessoryViewList) {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public boolean onScale(ScaleGestureDetector detector) {
         MasterImage img = MasterImage.getImage();
         float scaleFactor = img.getScaleFactor();
-        Point pos = img.getTranslation();
 
         scaleFactor = scaleFactor * detector.getScaleFactor();
         if (scaleFactor > MasterImage.getImage().getMaxScaleFactor()) {
@@ -738,7 +582,6 @@ public class ImageShow extends View implements OnGestureListener,
         }
         MasterImage.getImage().setScaleFactor(scaleFactor);
         scaleFactor = img.getScaleFactor();
-        pos = img.getTranslation();
         float focusx = detector.getFocusX();
         float focusy = detector.getFocusY();
         float translateX = (focusx - mStartFocusX) / scaleFactor;

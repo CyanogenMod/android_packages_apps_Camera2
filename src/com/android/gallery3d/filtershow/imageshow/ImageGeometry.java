@@ -314,11 +314,6 @@ public abstract class ImageGeometry extends ImageShow {
         mMode = MODES.NONE;
     }
 
-    @Override
-    public boolean showTitle() {
-        return false;
-    }
-
     public String getName() {
         return "Geometry";
     }
@@ -409,10 +404,6 @@ public abstract class ImageGeometry extends ImageShow {
 
     @Override
     public void onDraw(Canvas canvas) {
-        if (getDirtyGeometryFlag()) {
-            syncLocalToMasterGeometry();
-            clearDirtyGeometryFlag();
-        }
         Bitmap image = getFiltersOnlyImage();
         if (image == null) {
             invalidate();
@@ -480,7 +471,7 @@ public abstract class ImageGeometry extends ImageShow {
         p.setStrokeWidth(2);
         canvas.drawPath(path, p);
 
-        p.setColor(getDefaultBackgroundColor());
+        p.setColor(mBackgroundColor);
         p.setAlpha(128);
         p.setStyle(Paint.Style.FILL);
         drawShadows(canvas, p, scaledCrop);
@@ -518,7 +509,7 @@ public abstract class ImageGeometry extends ImageShow {
         canvas.drawBitmap(photo, m1, p);
         canvas.restore();
 
-        p.setColor(getDefaultBackgroundColor());
+        p.setColor(mBackgroundColor);
         p.setStyle(Paint.Style.FILL);
         scaledCrop.offset(displayCenter[0] - scaledCrop.centerX(), displayCenter[1]
                 - scaledCrop.centerY());

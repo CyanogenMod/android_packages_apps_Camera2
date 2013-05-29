@@ -26,13 +26,11 @@ public class ImageDraw extends ImageShow {
     public ImageDraw(Context context, AttributeSet attrs) {
         super(context, attrs);
         resetParameter();
-        super.setOriginalDisabled(true);
     }
 
     public ImageDraw(Context context) {
         super(context);
         resetParameter();
-        super.setOriginalDisabled(true);
     }
 
     public void setEditor(EditorDraw editorDraw) {
@@ -97,8 +95,6 @@ public class ImageDraw extends ImageShow {
             }
         }
 
-        ImageFilterDraw filter = (ImageFilterDraw) getCurrentFilter();
-
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             calcScreenMapping();
             mTmpPoint[0] = event.getX();
@@ -110,7 +106,6 @@ public class ImageDraw extends ImageShow {
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
 
             int historySize = event.getHistorySize();
-            final int pointerCount = event.getPointerCount();
             for (int h = 0; h < historySize; h++) {
                 int p = 0;
                 {
