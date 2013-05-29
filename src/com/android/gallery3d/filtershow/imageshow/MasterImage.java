@@ -35,7 +35,7 @@ public class MasterImage implements RenderingRequestCaller {
 
     private static final String LOGTAG = "MasterImage";
     private boolean DEBUG  = false;
-    private static final boolean DISABLEZOOM = true;
+    private static final boolean DISABLEZOOM = false;
     private static MasterImage sMasterImage = null;
     private static int sIconSeedSize = 128;
     private static float sHistoryPreviewSize = 128.0f;
