@@ -536,13 +536,21 @@ public class FilmStripView extends ViewGroup {
                 .start();
     }
 
-    private void updateRemoval(int removedInfo, final ImageData data) {
+    private void updateRemoval(int dataID, final ImageData data) {
+        int removedInfo = findInfoByDataID(dataID);
+
+        // adjust the data id to be consistent
+        for (int i = 0; i < BUFFER_SIZE; i++) {
+            if (mViewInfo[i] == null || mViewInfo[i].getID() <= dataID) continue;
+            mViewInfo[i].setID(mViewInfo[i].getID() - 1);
+        }
+        if (removedInfo == -1) return;
+
         final View removedView = mViewInfo[removedInfo].getView();
         final int offsetX = (int) (removedView.getMeasuredWidth() + mViewGap);
 
         for (int i = removedInfo + 1; i < BUFFER_SIZE; i++) {
             if (mViewInfo[i] != null) {
-                mViewInfo[i].setID(mViewInfo[i].getID() - 1);
                 mViewInfo[i].setLeftPosition(mViewInfo[i].getLeftPosition() - offsetX);
             }
         }
@@ -732,9 +740,7 @@ public class FilmStripView extends ViewGroup {
 
             @Override
             public void onDataRemoved(int dataID, ImageData data) {
-                int info = findInfoByDataID(dataID);
-                if (info == -1) return;
-                updateRemoval(info, data);
+                updateRemoval(dataID, data);
             }
         });
     }
