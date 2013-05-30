@@ -56,9 +56,9 @@ abstract interface LocalData extends FilmStripView.ImageData {
         // is reversed.
         private static int compareDate(long v1, long v2) {
             if (v1 >= 0 && v2 >= 0) {
-                return ((v1 > v2) ? 1 : ((v1 < v2) ? -1 : 0));
+                return ((v1 < v2) ? 1 : ((v1 > v2) ? -1 : 0));
             }
-            return ((v2 > v1) ? 1 : ((v2 < v1) ? -1 : 0));
+            return ((v2 < v1) ? 1 : ((v2 > v1) ? -1 : 0));
         }
 
         @Override
