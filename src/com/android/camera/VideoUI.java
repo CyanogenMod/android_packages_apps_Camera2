@@ -345,6 +345,7 @@ public class VideoUI implements SurfaceHolder.Callback, PieRenderer.PieListener,
     // PieListener
     @Override
     public void onPieOpened(int centerX, int centerY) {
+        dismissPopup(false, true);
         mActivity.cancelActivityTouchHandling();
         mActivity.setSwipingEnabled(false);
     }
