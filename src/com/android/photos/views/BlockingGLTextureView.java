@@ -16,7 +16,6 @@
 
 package com.android.photos.views;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLSurfaceView.Renderer;
@@ -32,7 +31,9 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
-
+/**
+ * A TextureView that supports blocking rendering for synchronous drawing
+ */
 public class BlockingGLTextureView extends TextureView
         implements SurfaceTextureListener {
 
@@ -90,7 +91,9 @@ public class BlockingGLTextureView extends TextureView
     protected void finalize() throws Throwable {
         try {
             destroy();
-        } catch (Throwable t) {}
+        } catch (Throwable t) {
+            // Ignore
+        }
         super.finalize();
     }
 
@@ -135,8 +138,8 @@ public class BlockingGLTextureView extends TextureView
         }
 
         EGLContext createContext(EGL10 egl, EGLDisplay eglDisplay, EGLConfig eglConfig) {
-            int[] attrib_list = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE };
-            return egl.eglCreateContext(eglDisplay, eglConfig, EGL10.EGL_NO_CONTEXT, attrib_list);
+            int[] attribList = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE };
+            return egl.eglCreateContext(eglDisplay, eglConfig, EGL10.EGL_NO_CONTEXT, attribList);
         }
 
         /**
@@ -161,7 +164,7 @@ public class BlockingGLTextureView extends TextureView
              * We can now initialize EGL for that display
              */
             int[] version = new int[2];
-            if(!mEgl.eglInitialize(mEglDisplay, version)) {
+            if (!mEgl.eglInitialize(mEglDisplay, version)) {
                 throw new RuntimeException("eglInitialize failed");
             }
             mEglConfig = chooseEglConfig();
@@ -251,7 +254,7 @@ public class BlockingGLTextureView extends TextureView
          * @return the EGL error code from eglSwapBuffers.
          */
         public int swap() {
-            if (! mEgl.eglSwapBuffers(mEglDisplay, mEglSurface)) {
+            if (!mEgl.eglSwapBuffers(mEglDisplay, mEglSurface)) {
                 return mEgl.eglGetError();
             }
             return EGL10.EGL_SUCCESS;
@@ -368,19 +371,24 @@ public class BlockingGLTextureView extends TextureView
             exec(FINISH);
             try {
                 join();
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException e) {
+                // Ignore
+            }
         }
 
         private void exec(int msgid) {
             synchronized (mLock) {
                 if (mExecMsgId != INVALID) {
-                    throw new IllegalArgumentException("Message already set - multithreaded access?");
+                    throw new IllegalArgumentException(
+                            "Message already set - multithreaded access?");
                 }
                 mExecMsgId = msgid;
                 mLock.notify();
                 try {
                     mLock.wait();
-                } catch (InterruptedException e) {}
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
             }
         }
 
@@ -415,12 +423,15 @@ public class BlockingGLTextureView extends TextureView
                     while (mExecMsgId == INVALID) {
                         try {
                             mLock.wait();
-                        } catch (InterruptedException e) {}
+                        } catch (InterruptedException e) {
+                            // Ignore
+                        }
                     }
                     handleMessageLocked(mExecMsgId);
                     mExecMsgId = INVALID;
                     mLock.notify();
                 }
+                mExecMsgId = FINISH;
             }
         }
     }

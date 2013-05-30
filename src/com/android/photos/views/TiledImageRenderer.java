@@ -23,14 +23,19 @@ import android.graphics.RectF;
 import android.support.v4.util.LongSparseArray;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Pools.Pool;
+import android.util.Pools.SynchronizedPool;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.glrenderer.BasicTexture;
 import com.android.gallery3d.glrenderer.GLCanvas;
 import com.android.gallery3d.glrenderer.UploadedTexture;
-import com.android.photos.data.GalleryBitmapPool;
 
+/**
+ * Handles laying out, decoding, and drawing of tiles in GL
+ */
 public class TiledImageRenderer {
     public static final int SIZE_UNKNOWN = -1;
 
@@ -62,12 +67,13 @@ public class TiledImageRenderer {
     private static final int STATE_RECYCLING = 0x20;
     private static final int STATE_RECYCLED = 0x40;
 
-    private static GalleryBitmapPool sTilePool = GalleryBitmapPool.getInstance();
+    private static Pool<Bitmap> sTilePool = new SynchronizedPool<Bitmap>(64);
 
     // TILE_SIZE must be 2^N
     private int mTileSize;
 
     private TileSource mModel;
+    private BasicTexture mPreview;
     protected int mLevelCount;  // cache the value of mScaledBitmaps.length
 
     // The mLevel variable indicates which level of bitmap we should use.
@@ -116,22 +122,39 @@ public class TiledImageRenderer {
     private int mViewWidth, mViewHeight;
     private View mParent;
 
+    /**
+     * Interface for providing tiles to a {@link TiledImageRenderer}
+     */
     public static interface TileSource {
+
+        /**
+         * If the source does not care about the tile size, it should use
+         * {@link TiledImageRenderer#suggestedTileSize(Context)}
+         */
         public int getTileSize();
         public int getImageWidth();
         public int getImageHeight();
+        public int getRotation();
 
-        // The tile returned by this method can be specified this way: Assuming
-        // the image size is (width, height), first take the intersection of (0,
-        // 0) - (width, height) and (x, y) - (x + tileSize, y + tileSize). If
-        // in extending the region, we found some part of the region is outside
-        // the image, those pixels are filled with black.
-        //
-        // If level > 0, it does the same operation on a down-scaled version of
-        // the original image (down-scaled by a factor of 2^level), but (x, y)
-        // still refers to the coordinate on the original image.
-        //
-        // The method would be called by the decoder thread.
+        /**
+         * Return a Preview image if available. This will be used as the base layer
+         * if higher res tiles are not yet available
+         */
+        public BasicTexture getPreview();
+
+        /**
+         * The tile returned by this method can be specified this way: Assuming
+         * the image size is (width, height), first take the intersection of (0,
+         * 0) - (width, height) and (x, y) - (x + tileSize, y + tileSize). If
+         * in extending the region, we found some part of the region is outside
+         * the image, those pixels are filled with black.
+         *
+         * If level > 0, it does the same operation on a down-scaled version of
+         * the original image (down-scaled by a factor of 2^level), but (x, y)
+         * still refers to the coordinate on the original image.
+         *
+         * The method would be called by the decoder thread.
+         */
         public Bitmap getTile(int level, int x, int y, Bitmap reuse);
     }
 
@@ -173,19 +196,23 @@ public class TiledImageRenderer {
         if (mRotation != rotation) {
             mRotation = rotation;
             mLayoutTiles = true;
-            invalidate();
         }
     }
 
-    private static int calulateLevelCount(TileSource source) {
-        int levels = 1;
-        int maxDim = Math.max(source.getImageWidth(), source.getImageHeight());
-        int t = source.getTileSize();
-        while (t < maxDim) {
-            t <<= 1;
-            levels++;
+    private void calculateLevelCount() {
+        if (mPreview != null) {
+            mLevelCount = Math.max(0, Utils.ceilLog2(
+                mImageWidth / (float) mPreview.getWidth()));
+        } else {
+            int levels = 1;
+            int maxDim = Math.max(mImageWidth, mImageHeight);
+            int t = mTileSize;
+            while (t < maxDim) {
+                t <<= 1;
+                levels++;
+            }
+            mLevelCount = levels;
         }
-        return levels;
     }
 
     public void notifyModelInvalidated() {
@@ -194,14 +221,15 @@ public class TiledImageRenderer {
             mImageWidth = 0;
             mImageHeight = 0;
             mLevelCount = 0;
+            mPreview = null;
         } else {
             mImageWidth = mModel.getImageWidth();
             mImageHeight = mModel.getImageHeight();
-            mLevelCount = calulateLevelCount(mModel);
+            mPreview = mModel.getPreview();
             mTileSize = mModel.getTileSize();
+            calculateLevelCount();
         }
         mLayoutTiles = true;
-        invalidate();
     }
 
     public void setViewSize(int width, int height) {
@@ -211,12 +239,13 @@ public class TiledImageRenderer {
 
     public void setPosition(int centerX, int centerY, float scale) {
         if (mCenterX == centerX && mCenterY == centerY
-                && mScale == scale) return;
+                && mScale == scale) {
+            return;
+        }
         mCenterX = centerX;
         mCenterY = centerY;
         mScale = scale;
         mLayoutTiles = true;
-        invalidate();
     }
 
     // Prepare the tiles we want to use for display.
@@ -265,7 +294,9 @@ public class TiledImageRenderer {
         }
 
         // If rotation is transient, don't update the tile.
-        if (mRotation % 90 != 0) return;
+        if (mRotation % 90 != 0) {
+            return;
+        }
 
         synchronized (mQueueLock) {
             mDecodeQueue.clean();
@@ -305,7 +336,7 @@ public class TiledImageRenderer {
             mDecodeQueue.clean();
             mUploadQueue.clean();
 
-            // TODO disable decoder
+            // TODO(xx): disable decoder
             int n = mActiveTiles.size();
             for (int i = 0; i < n; i++) {
                 Tile tile = mActiveTiles.valueAt(i);
@@ -357,6 +388,7 @@ public class TiledImageRenderer {
     public void freeTextures() {
         mLayoutTiles = true;
 
+        mTileDecoder.finishAndWait();
         synchronized (mQueueLock) {
             mUploadQueue.clean();
             mDecodeQueue.clean();
@@ -375,10 +407,10 @@ public class TiledImageRenderer {
         mActiveTiles.clear();
         mTileRange.set(0, 0, 0, 0);
 
-        if (sTilePool != null) sTilePool.clear();
+        while (sTilePool.acquire() != null) {}
     }
 
-    public void draw(GLCanvas canvas) {
+    public boolean draw(GLCanvas canvas) {
         layoutTiles();
         uploadTiles(canvas);
 
@@ -388,7 +420,9 @@ public class TiledImageRenderer {
         int level = mLevel;
         int rotation = mRotation;
         int flags = 0;
-        if (rotation != 0) flags |= GLCanvas.SAVE_FLAG_MATRIX;
+        if (rotation != 0) {
+            flags |= GLCanvas.SAVE_FLAG_MATRIX;
+        }
 
         if (flags != 0) {
             canvas.save(flags);
@@ -412,9 +446,15 @@ public class TiledImageRenderer {
                         drawTile(canvas, tx, ty, level, x, y, length);
                     }
                 }
+            } else if (mPreview != null) {
+                mPreview.draw(canvas, mOffsetX, mOffsetY,
+                        Math.round(mImageWidth * mScale),
+                        Math.round(mImageHeight * mScale));
             }
         } finally {
-            if (flags != 0) canvas.restore();
+            if (flags != 0) {
+                canvas.restore();
+            }
         }
 
         if (mRenderComplete) {
@@ -424,6 +464,7 @@ public class TiledImageRenderer {
         } else {
             invalidate();
         }
+        return mRenderComplete || mPreview != null;
     }
 
     private void uploadBackgroundTiles(GLCanvas canvas) {
@@ -437,17 +478,6 @@ public class TiledImageRenderer {
         }
     }
 
-    private void queueForUpload(Tile tile) {
-        synchronized (mQueueLock) {
-            mUploadQueue.push(tile);
-        }
-        invalidate();
-        // TODO
-//        if (mTileUploader.mActive.compareAndSet(false, true)) {
-//            getGLRoot().addOnGLIdleListener(mTileUploader);
-//        }
-    }
-
    private void queueForDecode(Tile tile) {
        synchronized (mQueueLock) {
            if (tile.mTileState == STATE_ACTIVATED) {
@@ -459,9 +489,11 @@ public class TiledImageRenderer {
        }
     }
 
-    private boolean decodeTile(Tile tile) {
+    private void decodeTile(Tile tile) {
         synchronized (mQueueLock) {
-            if (tile.mTileState != STATE_IN_QUEUE) return false;
+            if (tile.mTileState != STATE_IN_QUEUE) {
+                return;
+            }
             tile.mTileState = STATE_DECODING;
         }
         boolean decodeComplete = tile.decode();
@@ -469,15 +501,19 @@ public class TiledImageRenderer {
             if (tile.mTileState == STATE_RECYCLING) {
                 tile.mTileState = STATE_RECYCLED;
                 if (tile.mDecodedTile != null) {
-                    if (sTilePool != null) sTilePool.put(tile.mDecodedTile);
+                    sTilePool.release(tile.mDecodedTile);
                     tile.mDecodedTile = null;
                 }
                 mRecycledQueue.push(tile);
-                return false;
+                return;
             }
             tile.mTileState = decodeComplete ? STATE_DECODED : STATE_DECODE_FAIL;
-            return decodeComplete;
+            if (!decodeComplete) {
+                return;
+            }
+            mUploadQueue.push(tile);
         }
+        invalidate();
     }
 
     private Tile obtainTile(int x, int y, int level) {
@@ -500,7 +536,7 @@ public class TiledImageRenderer {
             }
             tile.mTileState = STATE_RECYCLED;
             if (tile.mDecodedTile != null) {
-                if (sTilePool != null) sTilePool.put(tile.mDecodedTile);
+                sTilePool.release(tile.mDecodedTile);
                 tile.mDecodedTile = null;
             }
             mRecycledQueue.push(tile);
@@ -538,11 +574,16 @@ public class TiledImageRenderer {
             synchronized (mQueueLock) {
                 tile = mUploadQueue.pop();
             }
-            if (tile == null) break;
+            if (tile == null) {
+                break;
+            }
             if (!tile.isContentValid()) {
-                Utils.assertTrue(tile.mTileState == STATE_DECODED);
-                tile.updateContent(canvas);
-                --quota;
+                if (tile.mTileState == STATE_DECODED) {
+                    tile.updateContent(canvas);
+                    --quota;
+                } else {
+                    Log.w(TAG, "Tile in upload queue has invalid state: " + tile.mTileState);
+                }
             }
         }
         if (tile != null) {
@@ -574,7 +615,17 @@ public class TiledImageRenderer {
                     queueForDecode(tile);
                 }
             }
-            drawTile(tile, canvas, source, target);
+            if (drawTile(tile, canvas, source, target)) {
+                return;
+            }
+        }
+        if (mPreview != null) {
+            int size = mTileSize << level;
+            float scaleX = (float) mPreview.getWidth() / mImageWidth;
+            float scaleY = (float) mPreview.getHeight() / mImageHeight;
+            source.set(tx * scaleX, ty * scaleY, (tx + size) * scaleX,
+                    (ty + size) * scaleY);
+            canvas.drawTexture(mPreview, source, target);
         }
     }
 
@@ -588,7 +639,9 @@ public class TiledImageRenderer {
 
             // Parent can be divided to four quads and tile is one of the four.
             Tile parent = tile.getParentTile();
-            if (parent == null) return false;
+            if (parent == null) {
+                return false;
+            }
             if (tile.mX == parent.mX) {
                 source.left /= 2f;
                 source.right /= 2f;
@@ -623,14 +676,17 @@ public class TiledImageRenderer {
 
         @Override
         protected void onFreeBitmap(Bitmap bitmap) {
-            if (sTilePool != null) sTilePool.put(bitmap);
+            sTilePool.release(bitmap);
         }
 
         boolean decode() {
             // Get a tile from the original image. The tile is down-scaled
             // by (1 << mTilelevel) from a region in the original image.
             try {
-                Bitmap reuse = sTilePool.get(mTileSize, mTileSize);
+                Bitmap reuse = sTilePool.acquire();
+                if (reuse != null && reuse.getWidth() != mTileSize) {
+                    reuse = null;
+                }
                 mDecodedTile = mModel.getTile(mTileLevel, mX, mY, reuse);
             } catch (Throwable t) {
                 Log.w(TAG, "fail to decode tile", t);
@@ -676,7 +732,9 @@ public class TiledImageRenderer {
         }
 
         public Tile getParentTile() {
-            if (mTileLevel + 1 == mLevelCount) return null;
+            if (mTileLevel + 1 == mLevelCount) {
+                return null;
+            }
             int size = mTileSize << (mTileLevel + 1);
             int x = size * (mX / size);
             int y = size * (mY / size);
@@ -695,15 +753,32 @@ public class TiledImageRenderer {
 
         public Tile pop() {
             Tile tile = mHead;
-            if (tile != null) mHead = tile.mNext;
+            if (tile != null) {
+                mHead = tile.mNext;
+            }
             return tile;
         }
 
         public boolean push(Tile tile) {
+            if (contains(tile)) {
+                Log.w(TAG, "Attempting to add a tile already in the queue!");
+                return false;
+            }
             boolean wasEmpty = mHead == null;
             tile.mNext = mHead;
             mHead = tile;
             return wasEmpty;
+        }
+
+        private boolean contains(Tile tile) {
+            Tile other = mHead;
+            while (other != null) {
+                if (other == tile) {
+                    return true;
+                }
+                other = other.mNext;
+            }
+            return false;
         }
 
         public void clean() {
@@ -723,7 +798,7 @@ public class TiledImageRenderer {
         }
 
         private Tile waitForTile() throws InterruptedException {
-            synchronized(mQueueLock) {
+            synchronized (mQueueLock) {
                 while (true) {
                     Tile tile = mDecodeQueue.pop();
                     if (tile != null) {
@@ -739,11 +814,10 @@ public class TiledImageRenderer {
             try {
                 while (!isInterrupted()) {
                     Tile tile = waitForTile();
-                    if (decodeTile(tile)) {
-                        queueForUpload(tile);
-                    }
+                    decodeTile(tile);
                 }
             } catch (InterruptedException ex) {
+                // We were finished
             }
         }
 

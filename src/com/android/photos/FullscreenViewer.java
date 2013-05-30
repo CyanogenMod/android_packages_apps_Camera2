@@ -31,7 +31,7 @@ public class FullscreenViewer extends Activity {
 
         String path = getIntent().getData().toString();
         mTextureView = new TiledImageView(this);
-        mTextureView.setTileSource(new BitmapRegionTileSource(path));
+        mTextureView.setTileSource(new BitmapRegionTileSource(this, path, 0, 0), null);
         setContentView(mTextureView);
     }
 
