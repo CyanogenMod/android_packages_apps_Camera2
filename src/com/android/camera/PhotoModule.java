@@ -1629,6 +1629,8 @@ public class PhotoModule
                     return; // Exiting, so no need to get the surface texture.
                 }
                 mUI.setSurfaceTexture(screenNail.getSurfaceTexture());
+            } else {
+                updatePreviewSize(screenNail);
             }
             mCameraDevice.setDisplayOrientation(mCameraDisplayOrientation);
             Object st = mUI.getSurfaceTexture();
@@ -1648,6 +1650,21 @@ public class PhotoModule
         if (mSnapshotOnIdle) {
             mHandler.post(mDoSnapRunnable);
         }
+    }
+
+    private void updatePreviewSize(CameraScreenNail snail) {
+        Size size = mParameters.getPreviewSize();
+        int w = size.width;
+        int h = size.height;
+        if (mCameraDisplayOrientation % 180 != 0) {
+            w = size.height;
+            h = size.width;
+        }
+        if (snail.getWidth() != w || snail.getHeight() != h) {
+            snail.setSize(w, h);
+        }
+        snail.enableAspectRatioClamping();
+        mActivity.notifyScreenNailChanged();
     }
 
     @Override
@@ -1743,10 +1760,14 @@ public class PhotoModule
         Size original = mParameters.getPreviewSize();
         if (!original.equals(optimalSize)) {
             mParameters.setPreviewSize(optimalSize.width, optimalSize.height);
-
             // Zoom related settings will be changed for different preview
             // sizes, so set and read the parameters to get latest values
-            mCameraDevice.setParameters(mParameters);
+            if (mHandler.getLooper() == Looper.myLooper()) {
+                // On UI thread only, not when camera starts up
+                setupPreview();
+            } else {
+                mCameraDevice.setParameters(mParameters);
+            }
             mParameters = mCameraDevice.getParameters();
         }
         Log.v(TAG, "Preview size is " + optimalSize.width + "x" + optimalSize.height);
