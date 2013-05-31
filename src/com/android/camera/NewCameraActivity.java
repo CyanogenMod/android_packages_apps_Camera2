@@ -18,6 +18,7 @@ package com.android.camera;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -25,6 +26,7 @@ import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
@@ -60,6 +62,7 @@ public class NewCameraActivity extends Activity
     // panorama. If the extra is not set, it is in the normal camera mode.
     public static final String SECURE_CAMERA_EXTRA = "secure_camera";
 
+    private static final String TAG = "CAM_Activity";
     private CameraDataAdapter mDataAdapter;
     private int mCurrentModuleIndex;
     private NewCameraModule mCurrentModule;
@@ -104,6 +107,21 @@ public class NewCameraActivity extends Activity
 
     public MediaSaveService getMediaSaveService() {
         return mMediaSaveService;
+    }
+
+    public void notifyNewMedia(Uri uri) {
+        ContentResolver cr = getContentResolver();
+        String mimeType = cr.getType(uri);
+        if (mimeType.startsWith("video/")) {
+            sendBroadcast(new Intent(Util.ACTION_NEW_VIDEO, uri));
+            mDataAdapter.addNewVideo(cr, uri);
+        } else if (mimeType.startsWith("image/")) {
+            Util.broadcastNewPicture(this, uri);
+            mDataAdapter.addNewPhoto(cr, uri);
+        } else {
+            android.util.Log.w(TAG, "Unknown new media with MIME type:"
+                    + mimeType + ", uri:" + uri);
+        }
     }
 
     private void bindMediaSaveService() {

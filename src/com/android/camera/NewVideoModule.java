@@ -198,7 +198,7 @@ public class NewVideoModule implements NewCameraModule,
                 @Override
                 public void onMediaSaved(Uri uri) {
                     if (uri != null) {
-                        Util.broadcastNewPicture(mActivity, uri);
+                        mActivity.notifyNewMedia(uri);
                     }
                 }
             };
@@ -1366,8 +1366,7 @@ public class NewVideoModule implements NewCameraModule,
 
                 mContentResolver.update(mCurrentVideoUri, mCurrentVideoValues
                         , null, null);
-                mActivity.sendBroadcast(new Intent(Util.ACTION_NEW_VIDEO,
-                        mCurrentVideoUri));
+                mActivity.notifyNewMedia(mCurrentVideoUri);
             } catch (Exception e) {
                 // We failed to insert into the database. This can happen if
                 // the SD card is unmounted.

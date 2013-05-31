@@ -256,7 +256,7 @@ public class NewPhotoModule
                     if (uri != null) {
                         // TODO: Commenting out the line below for now. need to get it working
                         // mActivity.addSecureAlbumItemIfNeeded(false, uri);
-                        Util.broadcastNewPicture(mActivity, uri);
+                        mActivity.notifyNewMedia(uri);
                     }
                 }
             };

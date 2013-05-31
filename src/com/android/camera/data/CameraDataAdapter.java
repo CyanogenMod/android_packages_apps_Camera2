@@ -20,6 +20,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
@@ -33,6 +34,7 @@ import com.android.camera.ui.FilmStripView.ImageData;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -122,6 +124,44 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         if (dataID >= mImages.size()) return;
         LocalData d = mImages.remove(dataID);
         mListener.onDataRemoved(dataID, d);
+    }
+
+    private void insertData(LocalData data) {
+        if (mImages == null) {
+            mImages = new ArrayList<LocalData>();
+        }
+
+        // Since this function is mostly for adding the newest data,
+        // a simple linear search should yield the best performance over a
+        // binary search.
+        int pos = 0;
+        Comparator<LocalData> comp = new LocalData.NewestFirstComparator();
+        for (; pos < mImages.size()
+                && comp.compare(data, mImages.get(pos)) > 0; pos++);
+        mImages.add(pos, data);
+        if (mListener != null) {
+            mListener.onDataInserted(pos, data);
+        }
+    }
+
+    public void addNewVideo(ContentResolver cr, Uri uri) {
+        Cursor c = cr.query(uri,
+                LocalData.Video.QUERY_PROJECTION,
+                MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
+                LocalData.Video.QUERY_ORDER);
+        if (c != null && c.moveToFirst()) {
+            insertData(LocalData.Video.buildFromCursor(c));
+        }
+    }
+
+    public void addNewPhoto(ContentResolver cr, Uri uri) {
+        Cursor c = cr.query(uri,
+                LocalData.Photo.QUERY_PROJECTION,
+                MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
+                LocalData.Photo.QUERY_ORDER);
+        if (c != null && c.moveToFirst()) {
+            insertData(LocalData.Photo.buildFromCursor(c));
+        }
     }
 
     private LocalData buildCameraImageData(int width, int height) {
