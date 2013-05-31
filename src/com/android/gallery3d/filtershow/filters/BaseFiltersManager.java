@@ -19,7 +19,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
 
-
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
@@ -42,8 +41,8 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
                 if (filterInstance instanceof ImageFilter) {
                     mFilters.put(filterClass, (ImageFilter) filterInstance);
 
-                    FilterRepresentation rep = 
-                    		((ImageFilter) filterInstance).getDefaultRepresentation();
+                    FilterRepresentation rep =
+                        ((ImageFilter) filterInstance).getDefaultRepresentation();
                     if (rep != null) {
                         addRepresentation(rep);
                     }
@@ -74,6 +73,7 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
         return mFilters.get(c);
     }
 
+    @Override
     public ImageFilter getFilterForRepresentation(FilterRepresentation representation) {
         return mFilters.get(representation.getFilterClass());
     }
@@ -166,6 +166,7 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
             FilterFxRepresentation fx = new FilterFxRepresentation(
                     context.getString(fxNameid[i]), drawid[i], fxNameid[i]);
             representations.add(fx);
+            addRepresentation(fx);
         }
     }
 
