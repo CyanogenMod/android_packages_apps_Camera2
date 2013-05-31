@@ -106,7 +106,8 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         }
 
         return mImages.get(dataID).getView(
-                c, mSuggestedWidth, mSuggestedHeight, mPlaceHolder);
+                c, mSuggestedWidth, mSuggestedHeight,
+                mPlaceHolder.getConstantState().newDrawable());
     }
 
     @Override
