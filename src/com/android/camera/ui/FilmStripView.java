@@ -562,8 +562,8 @@ public class FilmStripView extends ViewGroup {
                 mViewInfo[curr] = buildInfoFromData(mViewInfo[prev].getID() + 1);
             }
 
-
-            for (int i = removedInfo; i < BUFFER_SIZE - 1; i++) {
+            // Translate the views to their original places.
+            for (int i = removedInfo; i < BUFFER_SIZE; i++) {
                 if (mViewInfo[i] != null) {
                     mViewInfo[i].setTranslationX(offsetX, mScale);
                 }
@@ -588,9 +588,6 @@ public class FilmStripView extends ViewGroup {
 
             for (int i = removedInfo; i > 0; i--) {
                 mViewInfo[i] = mViewInfo[i - 1];
-                if (mViewInfo[i] != null) {
-                    mViewInfo[i].setTranslationX(-offsetX, mScale);
-                }
             }
 
             // pull data out from the DataAdapter for the first one.
@@ -598,6 +595,13 @@ public class FilmStripView extends ViewGroup {
             int next = curr + 1;
             if (mViewInfo[next] != null) {
                 mViewInfo[curr] = buildInfoFromData(mViewInfo[next].getID() - 1);
+            }
+
+            // Translate the views to their original places.
+            for (int i = removedInfo; i >= 0; i--) {
+                if (mViewInfo[i] != null) {
+                    mViewInfo[i].setTranslationX(-offsetX, mScale);
+                }
             }
         }
 
