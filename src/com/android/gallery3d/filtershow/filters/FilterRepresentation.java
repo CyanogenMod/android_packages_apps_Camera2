@@ -268,4 +268,9 @@ public class FilterRepresentation implements Cloneable {
             }
         }
     }
+
+    // Override this in subclasses
+    public int getStyle() {
+        return -1;
+    }
 }
