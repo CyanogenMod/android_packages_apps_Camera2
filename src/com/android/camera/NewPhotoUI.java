@@ -105,6 +105,8 @@ public class NewPhotoUI implements PieListener,
     private float mSurfaceTextureUncroppedWidth;
     private float mSurfaceTextureUncroppedHeight;
 
+    private View mPreviewThumb;
+
     private SurfaceTextureSizeChangedListener mSurfaceTextureSizeListener;
     private TextureView mTextureView;
     private Matrix mMatrix = null;
@@ -311,6 +313,14 @@ public class NewPhotoUI implements PieListener,
 
     public void initializeControlByIntent() {
         mBlocker = mRootView.findViewById(R.id.blocker);
+        mPreviewThumb = mActivity.findViewById(R.id.preview_thumb);
+        mPreviewThumb.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: go to filmstrip
+                // mActivity.gotoGallery();
+            }
+        });
         mMenuButton = mRootView.findViewById(R.id.menu);
         mMenuButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -434,25 +444,6 @@ public class NewPhotoUI implements PieListener,
     public void setCameraState(int state) {
     }
 
-    // Gestures and touch events
-
-    public boolean dispatchTouchEvent(MotionEvent m) {
-        if (mPopup != null || mSwitcher.showsPopup()) {
-            boolean handled = mRootView.dispatchTouchEvent(m);
-            if (!handled && mPopup != null) {
-                dismissPopup();
-            }
-            return handled;
-        } else if (mGestures != null && mRenderOverlay != null) {
-            if (mGestures.dispatchTouch(m)) {
-                return true;
-            } else {
-                return mRootView.dispatchTouchEvent(m);
-            }
-        }
-        return true;
-    }
-
     public void enableGestures(boolean enable) {
         if (mGestures != null) {
             mGestures.setEnabled(enable);
@@ -509,6 +500,14 @@ public class NewPhotoUI implements PieListener,
             mBlocker.setVisibility(full ? View.VISIBLE : View.GONE);
         }
         if (!full && mCountDownView != null) mCountDownView.cancelCountDown();
+    }
+
+    public void enablePreviewThumb(boolean enabled) {
+        if (enabled) {
+            mPreviewThumb.setVisibility(View.VISIBLE);
+        } else {
+            mPreviewThumb.setVisibility(View.GONE);
+        }
     }
 
     public boolean removeTopLevelPopup() {
@@ -571,6 +570,7 @@ public class NewPhotoUI implements PieListener,
             dismissPopup();
             ret = true;
         }
+        onShowSwitcherPopup();
         return ret;
     }
 
@@ -580,6 +580,7 @@ public class NewPhotoUI implements PieListener,
         Util.fadeIn(mReviewDoneButton);
         mShutterButton.setVisibility(View.INVISIBLE);
         Util.fadeIn(mReviewRetakeButton);
+        pauseFaceDetection();
     }
 
     protected void hidePostCaptureAlert() {
@@ -588,6 +589,7 @@ public class NewPhotoUI implements PieListener,
         Util.fadeOut(mReviewDoneButton);
         mShutterButton.setVisibility(View.VISIBLE);
         Util.fadeOut(mReviewRetakeButton);
+        resumeFaceDetection();
     }
 
     public void setDisplayOrientation(int orientation) {
@@ -645,6 +647,7 @@ public class NewPhotoUI implements PieListener,
     public void onPieOpened(int centerX, int centerY) {
       //TODO:   mActivity.cancelActivityTouchHandling();
       //TODO:    mActivity.setSwipingEnabled(false);
+        dismissPopup(false);
         if (mFaceView != null) {
             mFaceView.setBlockDraw(true);
         }

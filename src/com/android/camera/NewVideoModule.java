@@ -2099,12 +2099,6 @@ public class NewVideoModule implements NewCameraModule,
         startPreview();
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent m) {
-        if (mSwitchingCamera) return true;
-        return mUI.dispatchTouchEvent(m);
-    }
-
     private void initializeVideoSnapshot() {
         if (mParameters == null) return;
         if (Util.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {

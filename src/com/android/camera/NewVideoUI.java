@@ -475,6 +475,7 @@ public class NewVideoUI implements PieRenderer.PieListener,
     public void onPieOpened(int centerX, int centerY) {
         // TODO: mActivity.cancelActivityTouchHandling();
         // mActivity.setSwipingEnabled(false);
+        dismissPopup(false, true);
     }
 
     @Override
@@ -598,24 +599,6 @@ public class NewVideoUI implements PieRenderer.PieListener,
         return mShutterButton;
     }
 
-    // Gestures and touch events
-
-    public boolean dispatchTouchEvent(MotionEvent m) {
-        if (mPopup != null || mSwitcher.showsPopup()) {
-            boolean handled = mRootView.dispatchTouchEvent(m);
-            if (!handled && mPopup != null) {
-                dismissPopup(false);
-            }
-            return handled;
-        } else if (mGestures != null && mRenderOverlay != null) {
-            if (mGestures.dispatchTouch(m)) {
-                return true;
-            } else {
-                return mRootView.dispatchTouchEvent(m);
-            }
-        }
-        return true;
-    }
     public void setRecordingTime(String text) {
         mRecordingTimeView.setText(text);
     }
