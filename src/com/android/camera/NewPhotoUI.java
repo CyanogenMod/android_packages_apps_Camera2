@@ -274,6 +274,7 @@ public class NewPhotoUI implements PieListener,
         if (mPieRenderer == null) {
             mPieRenderer = new PieRenderer(mActivity);
             mPieRenderer.setPieListener(this);
+            mRenderOverlay.addRenderer(mPieRenderer);
         }
 
         if (mMenu == null) {
@@ -284,9 +285,8 @@ public class NewPhotoUI implements PieListener,
 
         if (mZoomRenderer == null) {
             mZoomRenderer = new ZoomRenderer(mActivity);
+            mRenderOverlay.addRenderer(mZoomRenderer);
         }
-        mRenderOverlay.addRenderer(mPieRenderer);
-        mRenderOverlay.addRenderer(mZoomRenderer);
 
         if (mGestures == null) {
             // this will handle gesture disambiguation and dispatching

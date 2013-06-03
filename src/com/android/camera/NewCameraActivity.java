@@ -132,8 +132,12 @@ public class NewCameraActivity extends Activity
     }
 
     private void unbindMediaSaveService() {
-        mMediaSaveService.setListener(null);
-        unbindService(mConnection);
+        if (mMediaSaveService != null) {
+            mMediaSaveService.setListener(null);
+        }
+        if (mConnection != null) {
+            unbindService(mConnection);
+        }
     }
 
     @Override
@@ -249,9 +253,6 @@ public class NewCameraActivity extends Activity
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent m) {
-        //if (mFilmStripView.isInCameraFullscreen()) {
-        //    return mCurrentModule.dispatchTouchEvent(m);
-        //}
         return mFilmStripView.dispatchTouchEvent(m);
     }
     public boolean isAutoRotateScreen() {
@@ -370,5 +371,41 @@ public class NewCameraActivity extends Activity
 
     @Override
     public void onShowSwitcherPopup() {
+    }
+
+    // Accessor methods for getting latency times used in performance testing
+    public long getAutoFocusTime() {
+        return (mCurrentModule instanceof PhotoModule) ?
+                ((PhotoModule) mCurrentModule).mAutoFocusTime : -1;
+    }
+
+    public long getShutterLag() {
+        return (mCurrentModule instanceof PhotoModule) ?
+                ((PhotoModule) mCurrentModule).mShutterLag : -1;
+    }
+
+    public long getShutterToPictureDisplayedTime() {
+        return (mCurrentModule instanceof PhotoModule) ?
+                ((PhotoModule) mCurrentModule).mShutterToPictureDisplayedTime : -1;
+    }
+
+    public long getPictureDisplayedToJpegCallbackTime() {
+        return (mCurrentModule instanceof PhotoModule) ?
+                ((PhotoModule) mCurrentModule).mPictureDisplayedToJpegCallbackTime : -1;
+    }
+
+    public long getJpegCallbackFinishTime() {
+        return (mCurrentModule instanceof PhotoModule) ?
+                ((PhotoModule) mCurrentModule).mJpegCallbackFinishTime : -1;
+    }
+
+    public long getCaptureStartTime() {
+        return (mCurrentModule instanceof PhotoModule) ?
+                ((PhotoModule) mCurrentModule).mCaptureStartTime : -1;
+    }
+
+    public boolean isRecording() {
+        return (mCurrentModule instanceof VideoModule) ?
+                ((VideoModule) mCurrentModule).isRecording() : false;
     }
 }

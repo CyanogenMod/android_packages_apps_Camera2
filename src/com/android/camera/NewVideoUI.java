@@ -82,14 +82,14 @@ public class NewVideoUI implements PieRenderer.PieListener,
     private NewPreviewGestures mGestures;
     private View mMenuButton;
     private View mBlocker;
-    private View mOnScreenIndicators;
-    private ImageView mFlashIndicator;
+    private OnScreenIndicators mOnScreenIndicators;
     private RotateLayout mRecordingTimeRect;
     private final Object mLock = new Object();
     private SurfaceTexture mSurfaceTexture;
     private VideoController mController;
     private int mZoomMax;
     private List<Integer> mZoomRatios;
+    private View mPreviewThumb;
 
     private SurfaceView mSurfaceView = null;
     private int mPreviewWidth = 0;
@@ -168,8 +168,9 @@ public class NewVideoUI implements PieRenderer.PieListener,
         });
 
         mCameraControls = mActivity.findViewById(R.id.camera_controls);
-        mOnScreenIndicators = mActivity.findViewById(R.id.on_screen_indicators);
-        mFlashIndicator = (ImageView) mActivity.findViewById(R.id.menu_flash_indicator);
+        mOnScreenIndicators = new OnScreenIndicators(mActivity,
+                mActivity.findViewById(R.id.on_screen_indicators));
+        mOnScreenIndicators.resetToDefault();
         if (mController.isVideoCaptureIntent()) {
             hideSwitcher();
             mActivity.getLayoutInflater().inflate(R.layout.review_module_control, (ViewGroup) mCameraControls);
@@ -362,6 +363,14 @@ public class NewVideoUI implements PieRenderer.PieListener,
             mRenderOverlay.setGestures(mGestures);
         }
         mGestures.setRenderOverlay(mRenderOverlay);
+
+        mPreviewThumb = mActivity.findViewById(R.id.preview_thumb);
+        mPreviewThumb.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: Go to filmstrip view
+            }
+        });
     }
 
     public void setPrefChangedListener(OnPreferenceChangedListener listener) {
@@ -383,22 +392,12 @@ public class NewVideoUI implements PieRenderer.PieListener,
         mLabelsLinearLayout = (LinearLayout) mRootView.findViewById(R.id.labels);
     }
 
-    public void updateOnScreenIndicators(Parameters param) {
-        if (param == null) return;
-        String value = param.getFlashMode();
-        if (mFlashIndicator == null) return;
-        if (value == null || Parameters.FLASH_MODE_OFF.equals(value)) {
-            mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_off);
-        } else {
-            if (Parameters.FLASH_MODE_AUTO.equals(value)) {
-                mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_auto);
-            } else if (Parameters.FLASH_MODE_ON.equals(value)
-                    || Parameters.FLASH_MODE_TORCH.equals(value)) {
-                mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_on);
-            } else {
-                mFlashIndicator.setImageResource(R.drawable.ic_indicator_flash_off);
-            }
-        }
+    public void updateOnScreenIndicators(Parameters param, ComboPreferences prefs) {
+      mOnScreenIndicators.updateFlashOnScreenIndicator(param.getFlashMode());
+      boolean location = RecordLocationPreference.get(
+              prefs, mActivity.getContentResolver());
+      mOnScreenIndicators.updateLocationIndicator(location);
+
     }
 
     public void setAspectRatio(double ratio) {
@@ -434,6 +433,9 @@ public class NewVideoUI implements PieRenderer.PieListener,
     }
 
     public void dismissPopup(boolean topLevelPopupOnly, boolean fullScreen) {
+        // In review mode, we do not want to bring up the camera UI
+        if (mController.isInReviewMode()) return;
+
         if (fullScreen) {
             showUI();
             mBlocker.setVisibility(View.VISIBLE);
@@ -609,6 +611,17 @@ public class NewVideoUI implements PieRenderer.PieListener,
 
     public boolean isVisible() {
         return mTextureView.getVisibility() == View.VISIBLE;
+    }
+
+    /**
+     * Enable or disable the preview thumbnail for click events.
+     */
+    public void enablePreviewThumb(boolean enabled) {
+        if (enabled) {
+            mPreviewThumb.setVisibility(View.VISIBLE);
+        } else {
+            mPreviewThumb.setVisibility(View.GONE);
+        }
     }
 
     private class ZoomChangeListener implements ZoomRenderer.OnZoomChangedListener {
