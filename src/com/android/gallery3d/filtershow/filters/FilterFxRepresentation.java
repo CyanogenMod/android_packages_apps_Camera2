@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.filtershow.filters;
 
-import android.graphics.Bitmap;
-import com.android.gallery3d.app.Log;
 import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 
 public class FilterFxRepresentation extends FilterRepresentation {
@@ -30,7 +28,7 @@ public class FilterFxRepresentation extends FilterRepresentation {
 
     public FilterFxRepresentation(String name, int bitmapResource, int nameResource) {
         super(name);
-        setSerializationName(SERIALIZATION_NAME);
+        setSerializationName(SERIALIZATION_NAME + "_" + name);
 
         mBitmapResource = bitmapResource;
         mNameResource = nameResource;
@@ -44,6 +42,7 @@ public class FilterFxRepresentation extends FilterRepresentation {
         setSupportsPartialRendering(true);
     }
 
+    @Override
     public String toString() {
         return "FilterFx: " + hashCode() + " : " + getName() + " bitmap rsc: " + mBitmapResource;
     }
@@ -57,6 +56,7 @@ public class FilterFxRepresentation extends FilterRepresentation {
         return representation;
     }
 
+    @Override
     public synchronized void useParametersFrom(FilterRepresentation a) {
         if (a instanceof FilterFxRepresentation) {
             FilterFxRepresentation representation = (FilterFxRepresentation) a;
@@ -81,6 +81,7 @@ public class FilterFxRepresentation extends FilterRepresentation {
         return false;
     }
 
+    @Override
     public boolean same(FilterRepresentation representation) {
         if (!super.same(representation)) {
             return false;
@@ -88,6 +89,7 @@ public class FilterFxRepresentation extends FilterRepresentation {
         return equals(representation);
     }
 
+    @Override
     public boolean allowsMultipleInstances() {
         return true;
     }
