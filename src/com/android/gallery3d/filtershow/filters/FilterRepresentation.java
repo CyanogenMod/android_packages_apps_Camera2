@@ -31,9 +31,7 @@ public class FilterRepresentation implements Cloneable {
     private int mButtonId = 0;
     private int mOverlayId = 0;
     private boolean mOverlayOnly = false;
-    private boolean mShowEditingControls = true;
     private boolean mShowParameterValue = true;
-    private boolean mShowUtilityPanel = true;
     private String mSerializationName;
     public static final byte TYPE_BORDER = 1;
     public static final byte TYPE_FX = 2;
@@ -52,17 +50,14 @@ public class FilterRepresentation implements Cloneable {
     public FilterRepresentation clone() throws CloneNotSupportedException {
         FilterRepresentation representation = (FilterRepresentation) super.clone();
         representation.setName(getName());
-        representation.setPriority(getPriority());
         representation.setFilterClass(getFilterClass());
+        representation.setFilterType(getFilterType());
         representation.setSupportsPartialRendering(supportsPartialRendering());
         representation.setTextId(getTextId());
         representation.setEditorId(getEditorId());
-        representation.setButtonId(getButtonId());
         representation.setOverlayId(getOverlayId());
         representation.setOverlayOnly(getOverlayOnly());
-        representation.setShowEditingControls(showEditingControls());
         representation.setShowParameterValue(showParameterValue());
-        representation.setShowUtilityPanel(showUtilityPanel());
         representation.mSerializationName = mSerializationName;
 
         representation.mTempRepresentation =
@@ -86,20 +81,15 @@ public class FilterRepresentation implements Cloneable {
                 && representation.mButtonId == mButtonId
                 && representation.mOverlayId == mOverlayId
                 && representation.mOverlayOnly == mOverlayOnly
-                && representation.mShowEditingControls == mShowEditingControls
-                && representation.mShowParameterValue == mShowParameterValue
-                && representation.mShowUtilityPanel == mShowUtilityPanel) {
+                && representation.mShowParameterValue == mShowParameterValue) {
             return true;
         }
         return false;
     }
 
+    @Override
     public String toString() {
         return mName;
-    }
-
-    public void setScrName(String name) {
-        mName = name;
     }
 
     public void setName(String name) {
@@ -118,11 +108,11 @@ public class FilterRepresentation implements Cloneable {
         return mSerializationName;
     }
 
-    public void setPriority(int priority) {
+    public void setFilterType(int priority) {
         mPriority = priority;
     }
 
-    public int getPriority() {
+    public int getFilterType() {
         return mPriority;
     }
 
@@ -190,14 +180,6 @@ public class FilterRepresentation implements Cloneable {
         mTextId = textId;
     }
 
-    public int getButtonId() {
-        return mButtonId;
-    }
-
-    public void setButtonId(int buttonId) {
-        mButtonId = buttonId;
-    }
-
     public int getOverlayId() {
         return mOverlayId;
     }
@@ -227,28 +209,12 @@ public class FilterRepresentation implements Cloneable {
         mEditorId = editorId;
     }
 
-    public boolean showEditingControls() {
-        return mShowEditingControls;
-    }
-
-    public void setShowEditingControls(boolean showEditingControls) {
-        mShowEditingControls = showEditingControls;
-    }
-
     public boolean showParameterValue() {
         return mShowParameterValue;
     }
 
     public void setShowParameterValue(boolean showParameterValue) {
         mShowParameterValue = showParameterValue;
-    }
-
-    public boolean showUtilityPanel() {
-        return mShowUtilityPanel;
-    }
-
-    public void setShowUtilityPanel(boolean showUtilityPanel) {
-        mShowUtilityPanel = showUtilityPanel;
     }
 
     public String getStateRepresentation() {

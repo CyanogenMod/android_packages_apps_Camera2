@@ -29,13 +29,10 @@ public class FilterColorBorderRepresentation extends FilterRepresentation {
         mColor = color;
         mBorderSize = size;
         mBorderRadius = radius;
-        setFilterClass(ImageFilterParametricBorder.class);
-        setPriority(FilterRepresentation.TYPE_BORDER);
+        setFilterType(FilterRepresentation.TYPE_BORDER);
         setTextId(R.string.borders);
         setEditorId(ImageOnlyEditor.ID);
-        setShowEditingControls(false);
         setShowParameterValue(false);
-        setShowUtilityPanel(false);
     }
 
     public String toString() {
@@ -44,6 +41,7 @@ public class FilterColorBorderRepresentation extends FilterRepresentation {
 
     @Override
     public FilterRepresentation clone() throws CloneNotSupportedException {
+        setFilterClass(ImageFilterParametricBorder.class);
         FilterColorBorderRepresentation representation = (FilterColorBorderRepresentation) super.clone();
         representation.setName(getName());
         representation.setColor(getColor());

@@ -31,13 +31,11 @@ public class FilterVignetteRepresentation extends FilterBasicRepresentation impl
         super("Vignette", -100, 50, 100);
         setSerializationName("VIGNETTE");
         setShowParameterValue(true);
-        setPriority(FilterRepresentation.TYPE_VIGNETTE);
+        setFilterType(FilterRepresentation.TYPE_VIGNETTE);
         setTextId(R.string.vignette);
-        setButtonId(R.id.vignetteEditor);
         setEditorId(EditorVignette.ID);
         setName("Vignette");
         setFilterClass(ImageFilterVignette.class);
-
         setMinimum(-100);
         setMaximum(100);
         setDefaultValue(0);
