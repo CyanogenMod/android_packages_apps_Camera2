@@ -20,7 +20,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Rect;
-import android.os.Debug;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;

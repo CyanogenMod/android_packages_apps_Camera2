@@ -16,8 +16,6 @@
 
 package com.android.camera;
 
-import java.util.Locale;
-
 import android.content.res.Resources;
 import android.hardware.Camera.Parameters;
 
@@ -29,18 +27,12 @@ import com.android.camera.ui.PieItem.OnClickListener;
 import com.android.camera.ui.PieRenderer;
 import com.android.gallery3d.R;
 
+import java.util.Locale;
+
 public class NewPhotoMenu extends PieController
         implements CountdownTimerPopup.Listener,
         ListPrefSettingPopup.Listener {
     private static String TAG = "CAM_photomenu";
-
-    private static final int POS_HDR = 0;
-    private static final int POS_EXP = 1;
-    private static final int POS_MORE = 2;
-    private static final int POS_FLASH = 3;
-    private static final int POS_SWITCH = 4;
-    private static final int POS_WB = 1;
-    private static final int POS_SET = 2;
 
     private final String mSettingOff;
 

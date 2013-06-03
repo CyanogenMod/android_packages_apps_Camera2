@@ -105,6 +105,7 @@ public class NewPhotoModule
     private static final int START_PREVIEW_DONE = 10;
     private static final int OPEN_CAMERA_FAIL = 11;
     private static final int CAMERA_DISABLED = 12;
+    private static final int CAPTURE_ANIMATION_DONE = 13;
 
     // The subset of parameters we need to update in setCameraParameters().
     private static final int UPDATE_PARAM_INITIALIZE = 1;
@@ -125,7 +126,9 @@ public class NewPhotoModule
 
     private NewPhotoUI mUI;
 
-    // -1 means camera is not switching.
+    // The activity is going to switch to the specified camera id. This is
+    // needed because texture copy is done in GL thread. -1 means camera is not
+    // switching.
     protected int mPendingSwitchCameraId = -1;
     private boolean mOpenCameraFail;
     private boolean mCameraDisabled;
@@ -169,6 +172,13 @@ public class NewPhotoModule
         }
     };
 
+    private Runnable mFlashRunnable = new Runnable() {
+        @Override
+        public void run() {
+            animateFlash();
+        }
+    };
+
     private final StringBuilder mBuilder = new StringBuilder();
     private final Formatter mFormatter = new Formatter(mBuilder);
     private final Object[] mFormatterArgs = new Object[1];
@@ -201,7 +211,6 @@ public class NewPhotoModule
 
     private LocationManager mLocationManager;
 
-    private final ShutterCallback mShutterCallback = new ShutterCallback();
     private final PostViewPictureCallback mPostViewPictureCallback =
             new PostViewPictureCallback();
     private final RawPictureCallback mRawPictureCallback =
@@ -387,6 +396,10 @@ public class NewPhotoModule
                     mCameraDisabled = true;
                     Util.showErrorAndFinish(mActivity,
                             R.string.camera_disabled);
+                    break;
+                }
+                case CAPTURE_ANIMATION_DONE: {
+                    mUI.enablePreviewThumb(false);
                     break;
                 }
             }
@@ -687,19 +700,23 @@ public class NewPhotoModule
         }
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent m) {
-        if (mCameraState == SWITCHING_CAMERA) return true;
-        return mUI.dispatchTouchEvent(m);
-    }
-
     private final class ShutterCallback
             implements android.hardware.Camera.ShutterCallback {
+
+        private boolean mAnimateFlash;
+
+        public ShutterCallback(boolean animateFlash) {
+            mAnimateFlash = animateFlash;
+        }
+
         @Override
         public void onShutter() {
             mShutterCallbackTime = System.currentTimeMillis();
             mShutterLag = mShutterCallbackTime - mCaptureStartTime;
             Log.v(TAG, "mShutterLag = " + mShutterLag + "ms");
+            if (mAnimateFlash) {
+                mActivity.runOnUiThread(mFlashRunnable);
+            }
         }
     }
 
@@ -767,7 +784,10 @@ public class NewPhotoModule
             if (ApiHelper.HAS_SURFACE_TEXTURE && !mIsImageCaptureIntent
                     && mActivity.mShowCameraAppView) {
                 // Finish capture animation
+                mHandler.removeMessages(CAPTURE_ANIMATION_DONE);
                 ((CameraScreenNail) mActivity.mCameraScreenNail).animateSlide();
+                mHandler.sendEmptyMessageDelayed(CAPTURE_ANIMATION_DONE,
+                        CaptureAnimManager.getAnimationDuration());
             } */
             mFocusManager.updateFocusUI(); // Ensure focus indicator is hidden.
             if (!mIsImageCaptureIntent) {
@@ -924,6 +944,9 @@ public class NewPhotoModule
                 && mActivity.mShowCameraAppView) {
             // Start capture animation.
             ((CameraScreenNail) mActivity.mCameraScreenNail).animateFlash(mDisplayRotation);
+            mUI.enablePreviewThumb(true);
+            mHandler.sendEmptyMessageDelayed(CAPTURE_ANIMATION_DONE,
+                    CaptureAnimManager.getAnimationDuration());
         } */
     }
 
@@ -947,7 +970,7 @@ public class NewPhotoModule
         }
 
         // Set rotation and gps data.
-        int orientation = (360 - mDisplayRotation) % 360;
+        int orientation;
         // We need to be consistent with the framework orientation (i.e. the
         // orientation of the UI.) when the auto-rotate screen setting is on.
         if (mActivity.isAutoRotateScreen()) {
@@ -961,18 +984,17 @@ public class NewPhotoModule
         Util.setGpsParameters(mParameters, loc);
         mCameraDevice.setParameters(mParameters);
 
-        mCameraDevice.takePicture2(mShutterCallback, mRawPictureCallback,
-                mPostViewPictureCallback, new JpegPictureCallback(loc),
-                mCameraState, mFocusManager.getFocusState());
-
-        if (!animateBefore) {
-            animateFlash();
-        }
+        mCameraDevice.takePicture2(new ShutterCallback(!animateBefore),
+                mRawPictureCallback, mPostViewPictureCallback,
+                new JpegPictureCallback(loc), mCameraState,
+                mFocusManager.getFocusState());
 
         mNamedImages.nameNewImage(mContentResolver, mCaptureStartTime);
 
         mFaceDetectionStarted = false;
         setCameraState(SNAPSHOT_IN_PROGRESS);
+        UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
+                UsageStatistics.ACTION_CAPTURE_DONE, "Photo");
         return true;
     }
 
@@ -1145,10 +1167,6 @@ public class NewPhotoModule
         if (pressed && !canTakePicture()) return;
 
         if (pressed) {
-            if (mSceneMode == Util.SCENE_MODE_HDR) {
-                mUI.hideSwitcher();
-                //TODO: mActivity.setSwipingEnabled(false);
-            }
             mFocusManager.onShutterDown();
         } else {
             // for countdown mode, we need to postpone the shutter release
@@ -1173,6 +1191,10 @@ public class NewPhotoModule
         }
         Log.v(TAG, "onShutterButtonClick: mCameraState=" + mCameraState);
 
+        if (mSceneMode == Util.SCENE_MODE_HDR) {
+            mUI.hideSwitcher();
+            //TODO: mActivity.setSwipingEnabled(false);
+        }
         // If the user wants to do a snapshot while the previous one is still
         // in progress, remember the fact and do it after we finish the previous
         // one and re-start the preview. Snapshot in progress also includes the
@@ -1656,7 +1678,12 @@ public class NewPhotoModule
 
             // Zoom related settings will be changed for different preview
             // sizes, so set and read the parameters to get latest values
-            mCameraDevice.setParameters(mParameters);
+            if (mHandler.getLooper() == Looper.myLooper()) {
+                // On UI thread only, not when camera starts up
+                setupPreview();
+            } else {
+                mCameraDevice.setParameters(mParameters);
+            }
             mParameters = mCameraDevice.getParameters();
         }
         Log.v(TAG, "Preview size is " + optimalSize.width + "x" + optimalSize.height);

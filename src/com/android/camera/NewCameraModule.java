@@ -52,8 +52,6 @@ public interface NewCameraModule {
 
     public void onSingleTapUp(View view, int x, int y);
 
-    public boolean dispatchTouchEvent(MotionEvent m);
-
     public void onPreviewTextureCopied();
 
     public void onCaptureTextureCopied();
