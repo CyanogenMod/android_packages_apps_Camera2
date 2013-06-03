@@ -16,8 +16,6 @@ public class ImageFilterNegative extends ImageFilter {
         representation.setSerializationName(SERIALIZATION_NAME);
         representation.setFilterClass(ImageFilterNegative.class);
         representation.setTextId(R.string.negative);
-        representation.setButtonId(R.id.negativeButton);
-        representation.setShowEditingControls(false);
         representation.setShowParameterValue(false);
         representation.setEditorId(ImageOnlyEditor.ID);
         representation.setSupportsPartialRendering(true);

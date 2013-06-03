@@ -34,7 +34,6 @@ public class ImageFilterSaturated extends SimpleImageFilter {
         representation.setSerializationName(SERIALIZATION_NAME);
         representation.setFilterClass(ImageFilterSaturated.class);
         representation.setTextId(R.string.saturation);
-        representation.setButtonId(R.id.saturationButton);
         representation.setMinimum(-100);
         representation.setMaximum(100);
         representation.setDefaultValue(0);

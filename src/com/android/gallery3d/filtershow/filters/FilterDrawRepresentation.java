@@ -49,11 +49,10 @@ public class FilterDrawRepresentation extends FilterRepresentation {
 
     public FilterDrawRepresentation() {
         super("Draw");
-        setSerializationName("DRAW");
         setFilterClass(ImageFilterDraw.class);
-        setPriority(FilterRepresentation.TYPE_VIGNETTE);
+        setSerializationName("DRAW");
+        setFilterType(FilterRepresentation.TYPE_VIGNETTE);
         setTextId(R.string.imageDraw);
-        setButtonId(R.id.drawOnImageButton);
         setEditorId(EditorDraw.ID);
         setOverlayId(R.drawable.filtershow_drawing);
         setOverlayOnly(true);

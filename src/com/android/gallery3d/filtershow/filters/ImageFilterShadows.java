@@ -34,7 +34,6 @@ public class ImageFilterShadows extends SimpleImageFilter {
         representation.setSerializationName(SERIALIZATION_NAME);
         representation.setFilterClass(ImageFilterShadows.class);
         representation.setTextId(R.string.shadow_recovery);
-        representation.setButtonId(R.id.shadowRecoveryButton);
         representation.setMinimum(-100);
         representation.setMaximum(100);
         representation.setDefaultValue(0);

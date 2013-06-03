@@ -32,7 +32,6 @@ public class ImageFilterEdge extends SimpleImageFilter {
         representation.setSerializationName(SERIALIZATION_NAME);
         representation.setFilterClass(ImageFilterEdge.class);
         representation.setTextId(R.string.edge);
-        representation.setButtonId(R.id.edgeButton);
         representation.setSupportsPartialRendering(true);
         return representation;
     }

@@ -26,6 +26,7 @@ import android.widget.ListView;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterTinyPlanetRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -158,8 +159,8 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
         for (int i = 0; i < getCount(); i++) {
             Action action = getItem(i);
             if (action.getRepresentation() != null
-                    && action.getRepresentation().getFilterClass()
-                    == ImageFilterTinyPlanet.class) {
+                    && action.getRepresentation()
+                    instanceof FilterTinyPlanetRepresentation) {
                 return action.getRepresentation();
             }
         }
@@ -170,8 +171,8 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
         for (int i = 0; i < getCount(); i++) {
             Action action = getItem(i);
             if (action.getRepresentation() != null
-                    && action.getRepresentation().getFilterClass()
-                    == ImageFilterTinyPlanet.class) {
+                    && action.getRepresentation()
+                    instanceof FilterTinyPlanetRepresentation) {
                 remove(action);
                 return;
             }

@@ -30,9 +30,8 @@ public class FilterTinyPlanetRepresentation extends FilterBasicRepresentation {
         setSerializationName(SERIALIZATION_NAME);
         setShowParameterValue(true);
         setFilterClass(ImageFilterTinyPlanet.class);
-        setPriority(FilterRepresentation.TYPE_TINYPLANET);
+        setFilterType(FilterRepresentation.TYPE_TINYPLANET);
         setTextId(R.string.tinyplanet);
-        setButtonId(R.id.tinyplanetButton);
         setEditorId(EditorTinyPlanet.ID);
         setMinimum(1);
     }

@@ -35,8 +35,6 @@ public class ImageFilterContrast extends SimpleImageFilter {
 
         representation.setFilterClass(ImageFilterContrast.class);
         representation.setTextId(R.string.contrast);
-        representation.setButtonId(R.id.contrastButton);
-
         representation.setMinimum(-100);
         representation.setMaximum(100);
         representation.setDefaultValue(0);

@@ -218,11 +218,11 @@ public class ImagePreset {
             return false;
         }
         for (FilterRepresentation representation : mFilters) {
-            if (representation.getPriority() == FilterRepresentation.TYPE_VIGNETTE
+            if (representation.getFilterType() == FilterRepresentation.TYPE_VIGNETTE
                     && !representation.isNil()) {
                 return false;
             }
-            if (representation.getPriority() == FilterRepresentation.TYPE_TINYPLANET
+            if (representation.getFilterType() == FilterRepresentation.TYPE_TINYPLANET
                     && !representation.isNil()) {
                 return false;
             }
@@ -380,7 +380,7 @@ public class ImagePreset {
     }
 
     public void removeFilter(FilterRepresentation filterRepresentation) {
-        if (filterRepresentation.getPriority() == FilterRepresentation.TYPE_BORDER) {
+        if (filterRepresentation.getFilterType() == FilterRepresentation.TYPE_BORDER) {
             setBorder(null);
             setHistoryName("Remove");
             return;
@@ -399,13 +399,13 @@ public class ImagePreset {
             setGeometry((GeometryMetadata) representation);
             return;
         }
-        if (representation.getPriority() == FilterRepresentation.TYPE_BORDER) {
+        if (representation.getFilterType() == FilterRepresentation.TYPE_BORDER) {
             setHistoryName(representation.getName());
             setBorder(representation);
-        } else if (representation.getPriority() == FilterRepresentation.TYPE_FX) {
+        } else if (representation.getFilterType() == FilterRepresentation.TYPE_FX) {
             boolean found = false;
             for (int i = 0; i < mFilters.size(); i++) {
-                int type = mFilters.elementAt(i).getPriority();
+                int type = mFilters.elementAt(i).getFilterType();
                 if (found) {
                     if (type != FilterRepresentation.TYPE_VIGNETTE) {
                         mFilters.remove(i);
