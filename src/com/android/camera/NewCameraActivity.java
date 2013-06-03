@@ -37,8 +37,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import com.android.camera.data.CameraDataAdapter;
+import com.android.camera.data.LocalData;
 import com.android.camera.ui.CameraSwitcher.CameraSwitchListener;
 import com.android.camera.ui.FilmStripView;
 import com.android.camera.ui.NewCameraRootView;
@@ -148,8 +150,6 @@ public class NewCameraActivity extends Activity
         String action = intent.getAction();
         if (INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action)) {
             mSecureCamera = true;
-            // Use a new album when this is started from the lock screen.
-        //TODO:    sSecureAlbumId++;
         } else if (ACTION_IMAGE_CAPTURE_SECURE.equals(action)) {
             mSecureCamera = true;
         } else {
@@ -232,7 +232,20 @@ public class NewCameraActivity extends Activity
         mCurrentModule.onResumeAfterSuper();
 
         // The loading is done in background and will update the filmstrip later.
-        mDataAdapter.requestLoad(getContentResolver());
+        if (!mSecureCamera) {
+            mDataAdapter.requestLoad(getContentResolver());
+        } else {
+            // Flush out all the original data first.
+            mDataAdapter.flush();
+            ImageView v = (ImageView) getLayoutInflater().inflate(
+                    R.layout.secure_album_placeholder, null);
+            mDataAdapter.addLocalData(
+                    new LocalData.LocalViewData(
+                            v,
+                            v.getDrawable().getIntrinsicWidth(),
+                            v.getDrawable().getIntrinsicHeight(),
+                            0, 0));
+        }
     }
 
     @Override
