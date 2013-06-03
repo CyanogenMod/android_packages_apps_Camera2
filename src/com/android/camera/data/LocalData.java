@@ -21,6 +21,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
@@ -32,6 +33,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.android.camera.ui.FilmStripView;
+import com.android.gallery3d.R;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -123,16 +125,20 @@ abstract interface LocalData extends FilmStripView.ImageData {
             return false;
         }
 
-        @Override
-        public View getView(Context c,
+        protected ImageView getImageView(Context c,
                 int decodeWidth, int decodeHeight, Drawable placeHolder) {
             ImageView v = new ImageView(c);
-            v.setImageDrawable(placeHolder);
+            v.setBackground(placeHolder);
 
-            v.setScaleType(ImageView.ScaleType.FIT_XY);
             BitmapLoadTask task = getBitmapLoadTask(v, decodeWidth, decodeHeight);
             task.execute();
             return v;
+        }
+
+        @Override
+        public View getView(Context c,
+                int decodeWidth, int decodeHeight, Drawable placeHolder) {
+            return getImageView(c, decodeWidth, decodeHeight, placeHolder);
         }
 
         @Override
@@ -179,8 +185,9 @@ abstract interface LocalData extends FilmStripView.ImageData {
                     Log.e(TAG, "Failed decoding bitmap for file:" + path);
                     return;
                 }
-                mView.setScaleType(ImageView.ScaleType.FIT_XY);
-                mView.setImageBitmap(bitmap);
+                BitmapDrawable d = new BitmapDrawable(bitmap);
+                d.setGravity(android.view.Gravity.FILL);
+                mView.setBackground(d);
             }
         }
     }
@@ -400,6 +407,15 @@ abstract interface LocalData extends FilmStripView.ImageData {
         @Override
         public boolean isActionSupported(int action) {
             return ((action & mSupportedActions) != 0);
+        }
+
+        @Override
+        public View getView(Context c,
+                int decodeWidth, int decodeHeight, Drawable placeHolder) {
+            ImageView v = getImageView(c, decodeWidth, decodeHeight, placeHolder);
+            v.setImageResource(R.drawable.ic_control_play);
+            v.setScaleType(ImageView.ScaleType.CENTER);
+            return v;
         }
 
         @Override
