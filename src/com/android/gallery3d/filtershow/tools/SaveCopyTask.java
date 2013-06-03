@@ -65,7 +65,10 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         void onCursorResult(Cursor cursor);
     }
 
-    private static final String TIME_STAMP_NAME = "'IMG'_yyyyMMdd_HHmmss";
+    private static final String TIME_STAMP_NAME = "_yyyyMMdd_HHmmss";
+    private static final String PREFIX_PANO = "PANO";
+    private static final String PREFIX_IMG = "IMG";
+    private static final String POSTFIX_JPG = ".jpg";
 
     private final Context context;
     private final Uri sourceUri;
@@ -84,7 +87,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
             this.destinationFile = destination;
         }
 
-        saveFileName = new SimpleDateFormat(TIME_STAMP_NAME).format(new Date(
+        saveFileName = PREFIX_IMG +  new SimpleDateFormat(TIME_STAMP_NAME).format(new Date(
                 System.currentTimeMillis()));
     }
 
@@ -104,7 +107,10 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         File saveDirectory = getFinalSaveDirectory(context, sourceUri);
         String filename = new SimpleDateFormat(TIME_STAMP_NAME).format(new Date(
                 System.currentTimeMillis()));
-        return new File(saveDirectory, filename + ".JPG");
+        if (hasPanoPrefix(context, sourceUri)) {
+            return new File(saveDirectory, PREFIX_PANO + filename + POSTFIX_JPG);
+        }
+        return new File(saveDirectory, PREFIX_IMG + filename + POSTFIX_JPG);
     }
 
     public Object getPanoramaXMPData(Uri source, ImagePreset preset) {
@@ -261,6 +267,33 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
                     }
                 });
         return dir[0];
+    }
+
+    /**
+     * Gets the actual filename for a Uri from Gallery's ContentProvider.
+     */
+    private static String getTrueFilename(Context context, Uri src) {
+        if (context == null || src == null) {
+            return null;
+        }
+        final String[] trueName = new String[1];
+        querySource(context, src, new String[] {
+                ImageColumns.DATA
+        }, new ContentResolverQueryCallback() {
+            @Override
+            public void onCursorResult(Cursor cursor) {
+                trueName[0] = new File(cursor.getString(0)).getName();
+            }
+        });
+        return trueName[0];
+    }
+
+    /**
+     * Checks whether the true filename has the panorama image prefix.
+     */
+    private static boolean hasPanoPrefix(Context context, Uri src) {
+        String name = getTrueFilename(context, src);
+        return name != null && name.startsWith(PREFIX_PANO);
     }
 
     /**
