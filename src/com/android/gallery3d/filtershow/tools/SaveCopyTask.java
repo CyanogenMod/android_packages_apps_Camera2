@@ -131,7 +131,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
     public ExifInterface getExifData(Uri source) {
         ExifInterface exif = new ExifInterface();
         String mimeType = context.getContentResolver().getType(sourceUri);
-        if (mimeType == ImageLoader.JPEG_MIME_TYPE) {
+        if (mimeType.equals(ImageLoader.JPEG_MIME_TYPE)) {
             InputStream inStream = null;
             try {
                 inStream = context.getContentResolver().openInputStream(source);
