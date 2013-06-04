@@ -68,5 +68,6 @@
     <color name="face_detect_start">#80ffffff</color>
     <color name="face_detect_success">#8050d060</color>
     <color name="face_detect_fail">#80d05060</color>
+    <color name="gray">#FFAAAAAA</color>
 
 </resources>
