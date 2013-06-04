@@ -41,7 +41,7 @@ import java.util.Date;
 /* An abstract interface that represents the local media data. Also implements
  * Comparable interface so we can sort in DataAdapter.
  */
-abstract interface LocalData extends FilmStripView.ImageData {
+public abstract interface LocalData extends FilmStripView.ImageData {
     static final String TAG = "LocalData";
 
     abstract View getView(Context c, int width, int height, Drawable placeHolder);
@@ -452,6 +452,78 @@ abstract interface LocalData extends FilmStripView.ImageData {
                 retriever.release();
                 return bitmap;
             }
+        }
+    }
+
+    /*
+     * A LocalData that does nothing but only shows a view.
+     */
+    public static class LocalViewData implements LocalData {
+        private int mWidth;
+        private int mHeight;
+        View mView;
+        private long mDateTaken;
+        private long mDateModified;
+
+        public LocalViewData(View v,
+                int width, int height,
+                int dateTaken, int dateModified) {
+            mView = v;
+            mWidth = width;
+            mHeight = height;
+            mDateTaken = dateTaken;
+            mDateModified = dateModified;
+        }
+
+        @Override
+        public long getDateTaken() {
+            return mDateTaken;
+        }
+
+        @Override
+        public long getDateModified() {
+            return mDateModified;
+        }
+
+        @Override
+        public String getTitle() {
+            return "";
+        }
+
+        @Override
+        public int getWidth() {
+            return mWidth;
+        }
+
+        @Override
+        public int getHeight() {
+            return mHeight;
+        }
+
+        @Override
+        public int getType() {
+            return FilmStripView.ImageData.TYPE_PHOTO;
+        }
+
+        @Override
+        public boolean isActionSupported(int action) {
+            if (action == FilmStripView.ImageData.ACTION_PLAY) return true;
+            return false;
+        }
+
+        @Override
+        public View getView(Context c, int width, int height, Drawable placeHolder) {
+            return mView;
+        }
+
+        @Override
+        public void prepare() {
+            // do nothing.
+        }
+
+        @Override
+        public void recycle() {
+            // do nothing.
         }
     }
 }

@@ -164,6 +164,55 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         }
     }
 
+    // Update all the data but keep the camera data if already set.
+    private void replaceData(List<LocalData> list) {
+        boolean changed = (list != mImages);
+        LocalData cameraData = null;
+        if (mImages != null && mImages.size() > 0) {
+            cameraData = mImages.get(0);
+            if (cameraData.getType() != ImageData.TYPE_CAMERA_PREVIEW) {
+                cameraData = null;
+            }
+        }
+
+        mImages = list;
+        if (cameraData != null) {
+            // camera view exists, so we make sure at least 1 data is in the list.
+            if (mImages == null) {
+                mImages = new ArrayList<LocalData>();
+            }
+            mImages.add(0, cameraData);
+            if (mListener != null) {
+                // Only the camera data is not changed, everything else is changed.
+                mListener.onDataUpdated(new UpdateReporter() {
+                    @Override
+                    public boolean isDataRemoved(int id) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean isDataUpdated(int id) {
+                        if (id == 0) return false;
+                        return true;
+                    }
+                });
+            }
+        } else {
+            // both might be null.
+            if (changed) {
+                mListener.onDataLoaded();
+            }
+        }
+    }
+
+    public void flush() {
+        replaceData(null);
+    }
+
+    public void addLocalData(LocalData data) {
+        insertData(data);
+    }
+
     private LocalData buildCameraImageData(int width, int height) {
         LocalData d = new CameraPreviewData(width, height);
         return d;
@@ -277,43 +326,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
 
         @Override
         protected void onPostExecute(List<LocalData> l) {
-            boolean changed = (l != mImages);
-            LocalData cameraData = null;
-            if (mImages != null && mImages.size() > 0) {
-                cameraData = mImages.get(0);
-                if (cameraData.getType() != ImageData.TYPE_CAMERA_PREVIEW) {
-                    cameraData = null;
-                }
-            }
-
-            mImages = l;
-            if (cameraData != null) {
-                // camera view exists, so we make sure at least 1 data is in the list.
-                if (mImages == null) {
-                    mImages = new ArrayList<LocalData>();
-                }
-                mImages.add(0, cameraData);
-                if (mListener != null) {
-                    // Only the camera data is not changed, everything else is changed.
-                    mListener.onDataUpdated(new UpdateReporter() {
-                        @Override
-                        public boolean isDataRemoved(int id) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean isDataUpdated(int id) {
-                            if (id == 0) return false;
-                            return true;
-                        }
-                    });
-                }
-            } else {
-                // both might be null.
-                if (changed) {
-                    mListener.onDataLoaded();
-                }
-            }
+            replaceData(l);
         }
     }
 
@@ -378,5 +391,4 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
             // do nothing.
         }
     }
-
 }
