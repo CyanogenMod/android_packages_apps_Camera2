@@ -647,7 +647,7 @@ public class NewPhotoUI implements PieListener,
     public void onPieOpened(int centerX, int centerY) {
       //TODO:   mActivity.cancelActivityTouchHandling();
       //TODO:    mActivity.setSwipingEnabled(false);
-        dismissPopup(false);
+        dismissPopup();
         if (mFaceView != null) {
             mFaceView.setBlockDraw(true);
         }
