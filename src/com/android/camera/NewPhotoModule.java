@@ -263,8 +263,6 @@ public class NewPhotoModule
                 @Override
                 public void onMediaSaved(Uri uri) {
                     if (uri != null) {
-                        // TODO: Commenting out the line below for now. need to get it working
-                        // mActivity.addSecureAlbumItemIfNeeded(false, uri);
                         mActivity.notifyNewMedia(uri);
                     }
                 }

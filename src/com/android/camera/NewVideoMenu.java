@@ -35,10 +35,6 @@ public class NewVideoMenu extends PieController
         TimeIntervalPopup.Listener {
 
     private static String TAG = "CAM_VideoMenu";
-    private static final int POS_WB = 1;
-    private static final int POS_SET = 2;
-    private static final int POS_FLASH = 3;
-    private static final int POS_SWITCH = 4;
 
     private NewVideoUI mUI;
     private String[] mOtherKeys;

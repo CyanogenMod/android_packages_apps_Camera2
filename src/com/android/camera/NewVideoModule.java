@@ -45,6 +45,7 @@ import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.provider.MediaStore.MediaColumns;
 import android.provider.MediaStore.Video;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -93,6 +94,7 @@ public class NewVideoModule implements NewCameraModule,
     private static final int SWITCH_CAMERA = 8;
     private static final int SWITCH_CAMERA_START_ANIMATION = 9;
     private static final int HIDE_SURFACE_VIEW = 10;
+    private static final int CAPTURE_ANIMATION_DONE = 11;
 
     private static final int SCREEN_DELAY = 2 * 60 * 1000;
 
@@ -176,7 +178,6 @@ public class NewVideoModule implements NewCameraModule,
     private LocationManager mLocationManager;
     private OrientationManager mOrientationManager;
 
-    private VideoNamer mVideoNamer;
     private Surface mSurface;
     private int mPendingSwitchCameraId;
     private boolean mOpenCameraFail;
@@ -193,12 +194,24 @@ public class NewVideoModule implements NewCameraModule,
     private boolean mRestoreFlash;  // This is used to check if we need to restore the flash
                                     // status when going back from gallery.
 
-    private MediaSaveService.OnMediaSavedListener mOnMediaSavedListener =
+    private final MediaSaveService.OnMediaSavedListener mOnVideoSavedListener =
             new MediaSaveService.OnMediaSavedListener() {
                 @Override
                 public void onMediaSaved(Uri uri) {
                     if (uri != null) {
-                        mActivity.notifyNewMedia(uri);
+                        mActivity.sendBroadcast(
+                                new Intent(Util.ACTION_NEW_VIDEO, uri));
+                        Util.broadcastNewPicture(mActivity, uri);
+                    }
+                }
+            };
+
+    private final MediaSaveService.OnMediaSavedListener mOnPhotoSavedListener =
+            new MediaSaveService.OnMediaSavedListener() {
+                @Override
+                public void onMediaSaved(Uri uri) {
+                    if (uri != null) {
+                        Util.broadcastNewPicture(mActivity, uri);
                     }
                 }
             };
@@ -281,6 +294,11 @@ public class NewVideoModule implements NewCameraModule,
 
                     // Enable all camera controls.
                     mSwitchingCamera = false;
+                    break;
+                }
+
+                case CAPTURE_ANIMATION_DONE: {
+                    mUI.enablePreviewThumb(false);
                     break;
                 }
 
@@ -395,7 +413,7 @@ public class NewVideoModule implements NewCameraModule,
 
         initializeVideoControl();
         mPendingSwitchCameraId = -1;
-        mUI.updateOnScreenIndicators(mParameters);
+        mUI.updateOnScreenIndicators(mParameters, mPreferences);
 
         // Disable the shutter button if effects are ON since it might take
         // a little more time for the effects preview to be ready. We do not
@@ -556,6 +574,14 @@ public class NewVideoModule implements NewCameraModule,
                 // will not be continuous for a short period of time.
                 // TODO: need to get the capture animation to work 
                 // ((CameraScreenNail) mActivity.mCameraScreenNail).animateCapture(mDisplayRotation);
+
+                mUI.enablePreviewThumb(true);
+
+                // Make sure to disable the thumbnail preview after the
+                // animation is done to disable the click target.
+                mHandler.removeMessages(CAPTURE_ANIMATION_DONE);
+                mHandler.sendEmptyMessageDelayed(CAPTURE_ANIMATION_DONE,
+                        CaptureAnimManager.getAnimationDuration());
             }
         }
     }
@@ -760,7 +786,6 @@ public class NewVideoModule implements NewCameraModule,
         // Dismiss open menu if exists.
         PopupManager.getInstance(mActivity).notifyShowPopup(null);
 
-        mVideoNamer = new VideoNamer();
         UsageStatistics.onContentViewChanged(
                 UsageStatistics.COMPONENT_CAMERA, "VideoModule");
     }
@@ -936,7 +961,6 @@ public class NewVideoModule implements NewCameraModule,
             // that will close down the effects are well, thus making this if
             // condition invalid.
             closeVideoFileDescriptor();
-            clearVideoNamer();
         }
 
         releasePreviewResources();
@@ -1317,10 +1341,11 @@ public class NewVideoModule implements NewCameraModule,
         String mime = convertOutputFormatToMimeType(outputFileFormat);
         String path = Storage.DIRECTORY + '/' + filename;
         String tmpPath = path + ".tmp";
-        mCurrentVideoValues = new ContentValues(7);
+        mCurrentVideoValues = new ContentValues(9);
         mCurrentVideoValues.put(Video.Media.TITLE, title);
         mCurrentVideoValues.put(Video.Media.DISPLAY_NAME, filename);
         mCurrentVideoValues.put(Video.Media.DATE_TAKEN, dateTaken);
+        mCurrentVideoValues.put(MediaColumns.DATE_MODIFIED, dateTaken / 1000);
         mCurrentVideoValues.put(Video.Media.MIME_TYPE, mime);
         mCurrentVideoValues.put(Video.Media.DATA, path);
         mCurrentVideoValues.put(Video.Media.RESOLUTION,
@@ -1331,68 +1356,25 @@ public class NewVideoModule implements NewCameraModule,
             mCurrentVideoValues.put(Video.Media.LATITUDE, loc.getLatitude());
             mCurrentVideoValues.put(Video.Media.LONGITUDE, loc.getLongitude());
         }
-        mVideoNamer.prepareUri(mContentResolver, mCurrentVideoValues);
         mVideoFilename = tmpPath;
         Log.v(TAG, "New video filename: " + mVideoFilename);
     }
 
-    private boolean addVideoToMediaStore() {
-        boolean fail = false;
+    private void saveVideo() {
         if (mVideoFileDescriptor == null) {
-            mCurrentVideoValues.put(Video.Media.SIZE,
-                    new File(mCurrentVideoFilename).length());
             long duration = SystemClock.uptimeMillis() - mRecordingStartTime;
             if (duration > 0) {
                 if (mCaptureTimeLapse) {
                     duration = getTimeLapseVideoLength(duration);
                 }
-                mCurrentVideoValues.put(Video.Media.DURATION, duration);
             } else {
                 Log.w(TAG, "Video duration <= 0 : " + duration);
             }
-            try {
-                mCurrentVideoUri = mVideoNamer.getUri();
-                //TODO: mActivity.addSecureAlbumItemIfNeeded(true, mCurrentVideoUri);
-
-                // Rename the video file to the final name. This avoids other
-                // apps reading incomplete data.  We need to do it after the
-                // above mVideoNamer.getUri() call, so we are certain that the
-                // previous insert to MediaProvider is completed.
-                String finalName = mCurrentVideoValues.getAsString(
-                        Video.Media.DATA);
-                if (new File(mCurrentVideoFilename).renameTo(new File(finalName))) {
-                    mCurrentVideoFilename = finalName;
-                }
-
-                mContentResolver.update(mCurrentVideoUri, mCurrentVideoValues
-                        , null, null);
-                mActivity.notifyNewMedia(mCurrentVideoUri);
-            } catch (Exception e) {
-                // We failed to insert into the database. This can happen if
-                // the SD card is unmounted.
-                Log.e(TAG, "failed to add video to media store", e);
-                mCurrentVideoUri = null;
-                mCurrentVideoFilename = null;
-                fail = true;
-            } finally {
-                Log.v(TAG, "Current video URI: " + mCurrentVideoUri);
-            }
+            mActivity.getMediaSaveService().addVideo(mCurrentVideoFilename,
+                    duration, mCurrentVideoValues,
+                    mOnVideoSavedListener, mContentResolver);
         }
         mCurrentVideoValues = null;
-        return fail;
-    }
-
-    private void deleteCurrentVideo() {
-        // Remove the video and the uri if the uri is not passed in by intent.
-        if (mCurrentVideoFilename != null) {
-            deleteVideoFile(mCurrentVideoFilename);
-            mCurrentVideoFilename = null;
-            if (mCurrentVideoUri != null) {
-                mContentResolver.delete(mCurrentVideoUri, null, null);
-                mCurrentVideoUri = null;
-            }
-        }
-        mActivity.updateStorageSpaceAndHint();
     }
 
     private void deleteVideoFile(String fileName) {
@@ -1463,6 +1445,7 @@ public class NewVideoModule implements NewCameraModule,
 
     private void startVideoRecording() {
         Log.v(TAG, "startVideoRecording");
+        mUI.enablePreviewThumb(false);
         // TODO: mActivity.setSwipingEnabled(false);
 
         mActivity.updateStorageSpaceAndHint();
@@ -1471,6 +1454,7 @@ public class NewVideoModule implements NewCameraModule,
             return;
         }
 
+        if (!mCameraDevice.waitDone()) return;
         mCurrentVideoUri = null;
         if (effectsActive()) {
             initializeEffectsRecording();
@@ -1581,7 +1565,7 @@ public class NewVideoModule implements NewCameraModule,
             try {
                 if (effectsActive()) {
                     // This is asynchronous, so we can't add to media store now because thumbnail
-                    // may not be ready. In such case addVideoToMediaStore is called later
+                    // may not be ready. In such case saveVideo() is called later
                     // through a callback from the MediaEncoderFilter to EffectsRecorder,
                     // and then to the VideoModule.
                     mEffectsRecorder.stopRecording();
@@ -1629,7 +1613,7 @@ public class NewVideoModule implements NewCameraModule,
             mUI.setOrientationIndicator(0, true);
             keepScreenOnAwhile();
             if (shouldAddToMediaStoreNow) {
-                if (addVideoToMediaStore()) fail = true;
+                saveVideo();
             }
         }
         // always release media recorder if no effects running
@@ -1888,7 +1872,8 @@ public class NewVideoModule implements NewCameraModule,
             checkQualityAndStartPreview();
         } else if (effectMsg == EffectsRecorder.EFFECT_MSG_RECORDING_DONE) {
             // This follows the codepath from onStopVideoRecording.
-            if (mEffectsDisplayResult && !addVideoToMediaStore()) {
+            if (mEffectsDisplayResult) {
+                saveVideo();
                 if (mIsVideoCaptureIntent) {
                     if (mQuickCapture) {
                         doReturnToCaller(true);
@@ -1902,7 +1887,6 @@ public class NewVideoModule implements NewCameraModule,
             // had to wait till the effects recording is complete to do this.
             if (mPaused) {
                 closeVideoFileDescriptor();
-                clearVideoNamer();
             }
         } else if (effectMsg == EffectsRecorder.EFFECT_MSG_PREVIEW_RUNNING) {
             // Enable the shutter button once the preview is complete.
@@ -1994,7 +1978,7 @@ public class NewVideoModule implements NewCameraModule,
             } else {
                 setCameraParameters();
             }
-            mUI.updateOnScreenIndicators(mParameters);
+            mUI.updateOnScreenIndicators(mParameters, mPreferences);
         }
     }
 
@@ -2030,7 +2014,7 @@ public class NewVideoModule implements NewCameraModule,
         // Start switch camera animation. Post a message because
         // onFrameAvailable from the old camera may already exist.
         mHandler.sendEmptyMessage(SWITCH_CAMERA_START_ANIMATION);
-        mUI.updateOnScreenIndicators(mParameters);
+        mUI.updateOnScreenIndicators(mParameters, mPreferences);
     }
 
     // Preview texture has been copied. Now camera can be released and the
@@ -2169,7 +2153,7 @@ public class NewVideoModule implements NewCameraModule,
         Size s = mParameters.getPictureSize();
         mActivity.getMediaSaveService().addImage(
                 data, title, dateTaken, loc, s.width, s.height, orientation,
-                exif, mOnMediaSavedListener, mContentResolver);
+                exif, mOnPhotoSavedListener, mContentResolver);
     }
 
     private boolean resetEffect() {
@@ -2217,90 +2201,6 @@ public class NewVideoModule implements NewCameraModule,
         Editor editor = mPreferences.edit();
         editor.putBoolean(CameraSettings.KEY_VIDEO_FIRST_USE_HINT_SHOWN, false);
         editor.apply();
-    }
-
-    private void clearVideoNamer() {
-        if (mVideoNamer != null) {
-            mVideoNamer.finish();
-            mVideoNamer = null;
-        }
-    }
-
-    private static class VideoNamer extends Thread {
-        private boolean mRequestPending;
-        private ContentResolver mResolver;
-        private ContentValues mValues;
-        private boolean mStop;
-        private Uri mUri;
-
-        // Runs in main thread
-        public VideoNamer() {
-            start();
-        }
-
-        // Runs in main thread
-        public synchronized void prepareUri(
-                ContentResolver resolver, ContentValues values) {
-            mRequestPending = true;
-            mResolver = resolver;
-            mValues = new ContentValues(values);
-            notifyAll();
-        }
-
-        // Runs in main thread
-        public synchronized Uri getUri() {
-            // wait until the request is done.
-            while (mRequestPending) {
-                try {
-                    wait();
-                } catch (InterruptedException ex) {
-                    // ignore.
-                }
-            }
-            Uri uri = mUri;
-            mUri = null;
-            return uri;
-        }
-
-        // Runs in namer thread
-        @Override
-        public synchronized void run() {
-            while (true) {
-                if (mStop) break;
-                if (!mRequestPending) {
-                    try {
-                        wait();
-                    } catch (InterruptedException ex) {
-                        // ignore.
-                    }
-                    continue;
-                }
-                cleanOldUri();
-                generateUri();
-                mRequestPending = false;
-                notifyAll();
-            }
-            cleanOldUri();
-        }
-
-        // Runs in main thread
-        public synchronized void finish() {
-            mStop = true;
-            notifyAll();
-        }
-
-        // Runs in namer thread
-        private void generateUri() {
-            Uri videoTable = Uri.parse("content://media/external/video/media");
-            mUri = mResolver.insert(videoTable, mValues);
-        }
-
-        // Runs in namer thread
-        private void cleanOldUri() {
-            if (mUri == null) return;
-            mResolver.delete(mUri, null, null);
-            mUri = null;
-        }
     }
 
     @Override
