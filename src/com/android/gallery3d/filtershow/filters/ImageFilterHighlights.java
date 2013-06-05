@@ -38,7 +38,6 @@ public class ImageFilterHighlights extends SimpleImageFilter {
         representation.setSerializationName(SERIALIZATION_NAME);
         representation.setFilterClass(ImageFilterHighlights.class);
         representation.setTextId(R.string.highlight_recovery);
-        representation.setButtonId(R.id.highlightRecoveryButton);
         representation.setMinimum(-100);
         representation.setMaximum(100);
         representation.setDefaultValue(0);

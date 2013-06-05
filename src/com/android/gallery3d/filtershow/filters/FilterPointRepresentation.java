@@ -25,7 +25,7 @@ public abstract class FilterPointRepresentation extends FilterRepresentation {
     public FilterPointRepresentation(String type, int textid, int editorID) {
         super(type);
         setFilterClass(ImageFilterRedEye.class);
-        setPriority(FilterRepresentation.TYPE_NORMAL);
+        setFilterType(FilterRepresentation.TYPE_NORMAL);
         setTextId(textid);
         setEditorId(editorID);
     }

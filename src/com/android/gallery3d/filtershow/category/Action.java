@@ -149,7 +149,7 @@ public class Action implements RenderingRequestCaller {
                     mRepresentation.getOverlayId());
         }
         if (mOverlayBitmap != null) {
-            if (getRepresentation().getPriority() == FilterRepresentation.TYPE_BORDER) {
+            if (getRepresentation().getFilterType() == FilterRepresentation.TYPE_BORDER) {
                 Canvas canvas = new Canvas(mImage);
                 canvas.drawBitmap(mOverlayBitmap, new Rect(0, 0, mOverlayBitmap.getWidth(), mOverlayBitmap.getHeight()),
                         new Rect(0, 0, mImage.getWidth(), mImage.getHeight()), new Paint());

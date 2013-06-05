@@ -29,16 +29,13 @@ public class FilterFxRepresentation extends FilterRepresentation {
     public FilterFxRepresentation(String name, int bitmapResource, int nameResource) {
         super(name);
         setSerializationName(SERIALIZATION_NAME + "_" + name);
-
+        setFilterClass(ImageFilterFx.class);
         mBitmapResource = bitmapResource;
         mNameResource = nameResource;
-        setFilterClass(ImageFilterFx.class);
-        setPriority(FilterRepresentation.TYPE_FX);
+        setFilterType(FilterRepresentation.TYPE_FX);
         setTextId(nameResource);
         setEditorId(ImageOnlyEditor.ID);
-        setShowEditingControls(false);
         setShowParameterValue(false);
-        setShowUtilityPanel(false);
         setSupportsPartialRendering(true);
     }
 

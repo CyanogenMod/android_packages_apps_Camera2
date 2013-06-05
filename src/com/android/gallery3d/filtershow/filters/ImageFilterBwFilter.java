@@ -38,7 +38,6 @@ public class ImageFilterBwFilter extends SimpleImageFilter {
         representation.setMaximum(180);
         representation.setMinimum(-180);
         representation.setTextId(R.string.bwfilter);
-        representation.setButtonId(R.id.bwfilterButton);
         representation.setSupportsPartialRendering(true);
         return representation;
     }

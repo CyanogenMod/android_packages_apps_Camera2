@@ -45,7 +45,6 @@ public class ImageFilterKMeans extends SimpleImageFilter {
         representation.setDefaultValue(4);
         representation.setPreviewValue(4);
         representation.setTextId(R.string.kmeans);
-        representation.setButtonId(R.id.kmeansButton);
         representation.setSupportsPartialRendering(true);
         return representation;
     }

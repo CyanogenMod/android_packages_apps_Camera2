@@ -376,9 +376,9 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
         for (int i = 0; i < borders.size(); i++) {
             FilterRepresentation filter = borders.elementAt(i);
-            filter.setScrName(getString(R.string.borders));
+            filter.setName(getString(R.string.borders));
             if (i == 0) {
-                filter.setScrName(getString(R.string.none));
+                filter.setName(getString(R.string.none));
             }
         }
 

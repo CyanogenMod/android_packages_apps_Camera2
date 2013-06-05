@@ -24,14 +24,12 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
 
     public FilterImageBorderRepresentation(int drawableResource) {
         super("ImageBorder");
-        mDrawableResource = drawableResource;
         setFilterClass(ImageFilterBorder.class);
-        setPriority(FilterRepresentation.TYPE_BORDER);
+        mDrawableResource = drawableResource;
+        setFilterType(FilterRepresentation.TYPE_BORDER);
         setTextId(R.string.borders);
         setEditorId(ImageOnlyEditor.ID);
-        setShowEditingControls(false);
         setShowParameterValue(false);
-        setShowUtilityPanel(false);
     }
 
     public String toString() {
