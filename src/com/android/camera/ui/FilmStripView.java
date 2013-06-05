@@ -129,11 +129,15 @@ public class FilmStripView extends ViewGroup {
         public void suggestDecodeSize(int w, int h);
 
         public void setListener(Listener listener);
+
+        // true if the view of the data can be moved when in fullscreen.
+        public boolean canSwipeInFullScreen(int id);
     }
 
     public interface Listener {
         public void onDataPromoted(int dataID);
         public void onDataDemoted(int dataID);
+        public void onDataFullScreenChange(int dataID, boolean full);
     }
 
     public interface Controller {

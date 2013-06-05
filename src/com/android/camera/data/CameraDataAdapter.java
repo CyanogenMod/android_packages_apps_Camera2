@@ -58,6 +58,8 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
     private int mSuggestedWidth = DEFAULT_DECODE_SIZE;
     private int mSuggestedHeight = DEFAULT_DECODE_SIZE;
 
+    private boolean mCameraPreviewLocked;
+
     public CameraDataAdapter(Drawable placeHolder) {
         mPlaceHolder = placeHolder;
     }
@@ -70,6 +72,10 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
     public void requestLoad(ContentResolver resolver) {
         QueryTask qtask = new QueryTask();
         qtask.execute(resolver);
+    }
+
+    public void setCameraPreviewLock(boolean locked) {
+        mCameraPreviewLocked = locked;
     }
 
     @Override
@@ -118,6 +124,15 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         if (mImages != null) {
             mListener.onDataLoaded();
         }
+    }
+
+    @Override
+    public boolean canSwipeInFullScreen(int id) {
+        if (mImages.get(id).getType()
+                == ImageData.TYPE_CAMERA_PREVIEW) {
+            return mCameraPreviewLocked;
+        }
+        return false;
     }
 
     public void removeData(int dataID) {
