@@ -190,6 +190,9 @@ public class NewCameraActivity extends Activity
                 mDataAdapter.removeData(dataID);
             }
 
+            @Override
+            public void onDataFullScreenChange(int dataID, boolean full) {
+            }
         });
         mCurrentModule = new NewPhotoModule();
         mCurrentModule.init(this, mRootView);
