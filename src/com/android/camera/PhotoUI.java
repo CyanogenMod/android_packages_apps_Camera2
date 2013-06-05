@@ -107,9 +107,9 @@ public class PhotoUI implements PieListener,
                 w = height;
                 h = width;
             }
-            if (mPreviewWidth != w || mPreviewHeight != h) {
-                mPreviewWidth = w;
-                mPreviewHeight = h;
+            if (mPreviewWidth != width || mPreviewHeight != height) {
+                mPreviewWidth = width;
+                mPreviewHeight = height;
                 mController.onScreenSizeChanged(width, height, w, h);
             }
         }
