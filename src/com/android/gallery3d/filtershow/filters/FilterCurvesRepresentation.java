@@ -18,12 +18,9 @@ public class FilterCurvesRepresentation extends FilterRepresentation {
         setSerializationName("CURVES");
         setFilterClass(ImageFilterCurves.class);
         setTextId(R.string.curvesRGB);
-        setButtonId(R.id.curvesButtonRGB);
         setOverlayId(R.drawable.filtershow_button_colors_curve);
         setEditorId(R.id.imageCurves);
-        setShowEditingControls(false);
         setShowParameterValue(false);
-        setShowUtilityPanel(true);
         setSupportsPartialRendering(true);
         reset();
     }
