@@ -23,8 +23,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Images;
-import android.provider.MediaStore.Video;
 import android.util.Log;
 import android.view.View;
 
@@ -281,7 +279,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
             List<LocalData> l = new ArrayList<LocalData>();
             // Photos
             Cursor c = resolver[0].query(
-                    Images.Media.EXTERNAL_CONTENT_URI,
+                    LocalData.Photo.CONTENT_URI,
                     LocalData.Photo.QUERY_PROJECTION,
                     MediaStore.Images.Media.DATA + " like ? ", CAMERA_PATH,
                     LocalData.Photo.QUERY_ORDER);
@@ -306,7 +304,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
             }
 
             c = resolver[0].query(
-                    Video.Media.EXTERNAL_CONTENT_URI,
+                    LocalData.Video.CONTENT_URI,
                     LocalData.Video.QUERY_PROJECTION,
                     MediaStore.Video.Media.DATA + " like ? ", CAMERA_PATH,
                     LocalData.Video.QUERY_ORDER);

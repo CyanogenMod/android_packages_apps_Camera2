@@ -24,14 +24,21 @@ import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.android.camera.Util;
 import com.android.camera.ui.FilmStripView;
 import com.android.gallery3d.R;
 
@@ -125,9 +132,8 @@ public abstract interface LocalData extends FilmStripView.ImageData {
             return false;
         }
 
-        protected ImageView getImageView(Context c,
+        protected View fillViewBackground(Context c, View v,
                 int decodeWidth, int decodeHeight, Drawable placeHolder) {
-            ImageView v = new ImageView(c);
             v.setBackground(placeHolder);
 
             BitmapLoadTask task = getBitmapLoadTask(v, decodeWidth, decodeHeight);
@@ -138,7 +144,7 @@ public abstract interface LocalData extends FilmStripView.ImageData {
         @Override
         public View getView(Context c,
                 int decodeWidth, int decodeHeight, Drawable placeHolder) {
-            return getImageView(c, decodeWidth, decodeHeight, placeHolder);
+            return fillViewBackground(c, new ImageView(c), decodeWidth, decodeHeight, placeHolder);
         }
 
         @Override
@@ -165,16 +171,16 @@ public abstract interface LocalData extends FilmStripView.ImageData {
         public abstract int getType();
 
         protected abstract BitmapLoadTask getBitmapLoadTask(
-                ImageView v, int decodeWidth, int decodeHeight);
+                View v, int decodeWidth, int decodeHeight);
 
         /*
          * An AsyncTask class that loads the bitmap in the background thread.
          * Sub-classes should implement their own "protected Bitmap doInBackground(Void... )"
          */
         protected abstract class BitmapLoadTask extends AsyncTask<Void, Void, Bitmap> {
-            protected ImageView mView;
+            protected View mView;
 
-            protected BitmapLoadTask(ImageView v) {
+            protected BitmapLoadTask(View v) {
                 mView = v;
             }
 
@@ -186,7 +192,7 @@ public abstract interface LocalData extends FilmStripView.ImageData {
                     return;
                 }
                 BitmapDrawable d = new BitmapDrawable(bitmap);
-                d.setGravity(android.view.Gravity.FILL);
+                d.setGravity(Gravity.FILL);
                 mView.setBackground(d);
             }
         }
@@ -203,6 +209,8 @@ public abstract interface LocalData extends FilmStripView.ImageData {
         public static final int COL_WIDTH = 7;
         public static final int COL_HEIGHT = 8;
 
+        static final Uri CONTENT_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+
         static final String QUERY_ORDER = ImageColumns.DATE_TAKEN + " DESC, "
                 + ImageColumns._ID + " DESC";
         static final String[] QUERY_PROJECTION = {
@@ -217,7 +225,7 @@ public abstract interface LocalData extends FilmStripView.ImageData {
             ImageColumns.HEIGHT,        // 8, int
         };
 
-        private static final int mSupportedAction =
+        private static final int mSupportedActions =
                 FilmStripView.ImageData.ACTION_DEMOTE
                 | FilmStripView.ImageData.ACTION_PROMOTE;
 
@@ -277,12 +285,12 @@ public abstract interface LocalData extends FilmStripView.ImageData {
 
         @Override
         public boolean isActionSupported(int action) {
-            return ((action & mSupportedAction) != 0);
+            return ((action & mSupportedActions) != 0);
         }
 
         @Override
         protected BitmapLoadTask getBitmapLoadTask(
-                ImageView v, int decodeWidth, int decodeHeight) {
+                View v, int decodeWidth, int decodeHeight) {
             return new PhotoBitmapLoadTask(v, decodeWidth, decodeHeight);
         }
 
@@ -300,7 +308,7 @@ public abstract interface LocalData extends FilmStripView.ImageData {
             private int mDecodeWidth;
             private int mDecodeHeight;
 
-            public PhotoBitmapLoadTask(ImageView v, int decodeWidth, int decodeHeight) {
+            public PhotoBitmapLoadTask(View v, int decodeWidth, int decodeHeight) {
                 super(v);
                 mDecodeWidth = decodeWidth;
                 mDecodeHeight = decodeHeight;
@@ -345,10 +353,11 @@ public abstract interface LocalData extends FilmStripView.ImageData {
         public static final int COL_WIDTH = 6;
         public static final int COL_HEIGHT = 7;
 
+        static final Uri CONTENT_URI = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+
         private static final int mSupportedActions =
                 FilmStripView.ImageData.ACTION_DEMOTE
-                | FilmStripView.ImageData.ACTION_PROMOTE
-                | FilmStripView.ImageData.ACTION_PLAY;
+                | FilmStripView.ImageData.ACTION_PROMOTE;
 
         static final String QUERY_ORDER = VideoColumns.DATE_TAKEN + " DESC, "
                 + VideoColumns._ID + " DESC";
@@ -364,6 +373,8 @@ public abstract interface LocalData extends FilmStripView.ImageData {
             VideoColumns.RESOLUTION
         };
 
+        private Uri mPlayUri;
+
         static Video buildFromCursor(Cursor c) {
             Video d = new Video();
             d.id = c.getLong(COL_ID);
@@ -374,6 +385,8 @@ public abstract interface LocalData extends FilmStripView.ImageData {
             d.path = c.getString(COL_DATA);
             d.width = c.getInt(COL_WIDTH);
             d.height = c.getInt(COL_HEIGHT);
+            d.mPlayUri = CONTENT_URI.buildUpon()
+                    .appendPath(String.valueOf(d.id)).build();
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             retriever.setDataSource(d.path);
             String rotation = retriever.extractMetadata(
@@ -410,23 +423,35 @@ public abstract interface LocalData extends FilmStripView.ImageData {
         }
 
         @Override
-        public View getView(Context c,
+        public View getView(final Context c,
                 int decodeWidth, int decodeHeight, Drawable placeHolder) {
-            ImageView v = getImageView(c, decodeWidth, decodeHeight, placeHolder);
-            v.setImageResource(R.drawable.ic_control_play);
-            v.setScaleType(ImageView.ScaleType.CENTER);
-            return v;
+            FrameLayout f = new FrameLayout(c);
+            fillViewBackground(c, f, decodeWidth, decodeHeight, placeHolder);
+            ImageView icon = new ImageView(c);
+            icon.setImageResource(R.drawable.ic_control_play);
+            icon.setScaleType(ImageView.ScaleType.CENTER);
+            icon.setLayoutParams(new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+            icon.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Util.playVideo(c, mPlayUri, title);
+                }
+            });
+            f.addView(icon);
+            return f;
         }
 
         @Override
         protected BitmapLoadTask getBitmapLoadTask(
-                ImageView v, int decodeWidth, int decodeHeight) {
+                View v, int decodeWidth, int decodeHeight) {
             return new VideoBitmapLoadTask(v);
         }
 
         private final class VideoBitmapLoadTask extends BitmapLoadTask {
 
-            public VideoBitmapLoadTask(ImageView v) {
+            public VideoBitmapLoadTask(View v) {
                 super(v);
             }
 
@@ -507,7 +532,6 @@ public abstract interface LocalData extends FilmStripView.ImageData {
 
         @Override
         public boolean isActionSupported(int action) {
-            if (action == FilmStripView.ImageData.ACTION_PLAY) return true;
             return false;
         }
 

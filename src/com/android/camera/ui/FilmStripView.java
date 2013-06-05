@@ -86,7 +86,6 @@ public class FilmStripView extends ViewGroup {
         public static final int ACTION_NONE = 0;
         public static final int ACTION_PROMOTE = 1;
         public static final int ACTION_DEMOTE = (1 << 1);
-        public static final int ACTION_PLAY = (1 << 2);
 
         // SIZE_FULL means disgard the width or height when deciding the view size
         // of this ImageData, just use full screen size.

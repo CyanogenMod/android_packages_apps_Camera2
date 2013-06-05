@@ -246,6 +246,7 @@ public class NewCameraActivity extends Activity
             mDataAdapter.flush();
             ImageView v = (ImageView) getLayoutInflater().inflate(
                     R.layout.secure_album_placeholder, null);
+            // Put a lock placeholder as the last image by setting its date to 0.
             mDataAdapter.addLocalData(
                     new LocalData.LocalViewData(
                             v,

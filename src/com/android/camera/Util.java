@@ -51,8 +51,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Toast;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.app.MovieActivity;
 import com.android.gallery3d.common.ApiHelper;
 
 import java.io.Closeable;
@@ -772,6 +774,19 @@ public class Util {
             }
 
             return result;
+        }
+    }
+
+    public static void playVideo(Context context, Uri uri, String title) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW)
+                    .setDataAndType(uri, "video/*")
+                    .putExtra(Intent.EXTRA_TITLE, title)
+                    .putExtra(MovieActivity.KEY_TREAT_UP_AS_BACK, true);
+            context.startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(context, context.getString(R.string.video_err),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 }
