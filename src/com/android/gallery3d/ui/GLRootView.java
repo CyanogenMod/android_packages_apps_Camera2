@@ -409,6 +409,9 @@ public class GLRootView extends GLSurfaceView
         rotateCanvas(-mCompensation);
         if (mContentView != null) {
            mContentView.render(mCanvas);
+        } else {
+            // Make sure we always draw something to prevent displaying garbage
+            mCanvas.clearBuffer();
         }
         mCanvas.restore();
 
