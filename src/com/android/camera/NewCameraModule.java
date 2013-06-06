@@ -26,7 +26,7 @@ public interface NewCameraModule {
 
     public void init(NewCameraActivity activity, View frame);
 
-    public void onFullScreenChanged(boolean full);
+    public void onSwitchMode(boolean toCamera);
 
     public void onPauseBeforeSuper();
 

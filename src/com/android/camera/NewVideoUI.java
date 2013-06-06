@@ -269,14 +269,11 @@ public class NewVideoUI implements PieRenderer.PieListener,
 
     public void hideUI() {
         mCameraControls.setVisibility(View.INVISIBLE);
-        hideSwitcher();
-        mShutterButton.setVisibility(View.GONE);
+        mSwitcher.closePopup();
     }
 
     public void showUI() {
         mCameraControls.setVisibility(View.VISIBLE);
-        showSwitcher();
-        mShutterButton.setVisibility(View.VISIBLE);
     }
 
     public void hideSwitcher() {
@@ -562,22 +559,23 @@ public class NewVideoUI implements PieRenderer.PieListener,
         }
     }
 
-    public void onFullScreenChanged(boolean full) {
+    public void onSwitchMode(boolean toCamera) {
+        if (toCamera) {
+            showUI();
+        } else {
+            hideUI();
+        }
         if (mGestures != null) {
-            mGestures.setEnabled(full);
+            mGestures.setEnabled(toCamera);
         }
         if (mPopup != null) {
-            dismissPopup(false, full);
+            dismissPopup(false, toCamera);
         }
         if (mRenderOverlay != null) {
             // this can not happen in capture mode
-            mRenderOverlay.setVisibility(full ? View.VISIBLE : View.GONE);
+            mRenderOverlay.setVisibility(toCamera ? View.VISIBLE : View.GONE);
         }
-        setShowMenu(full);
-        if (mBlocker != null) {
-            // this can not happen in capture mode
-            mBlocker.setVisibility(full ? View.VISIBLE : View.GONE);
-        }
+        setShowMenu(toCamera);
     }
 
     public void initializePopup(PreferenceGroup pref) {

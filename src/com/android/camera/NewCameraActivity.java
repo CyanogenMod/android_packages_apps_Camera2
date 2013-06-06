@@ -193,6 +193,11 @@ public class NewCameraActivity extends Activity
             @Override
             public void onDataFullScreenChange(int dataID, boolean full) {
             }
+
+            @Override
+            public void onSwitchMode(boolean toCamera) {
+                mCurrentModule.onSwitchMode(toCamera);
+            }
         });
         mCurrentModule = new NewPhotoModule();
         mCurrentModule.init(this, mRootView);
