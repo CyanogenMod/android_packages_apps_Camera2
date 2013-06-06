@@ -23,22 +23,14 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 
 import com.android.gallery3d.common.ApiHelper;
 
-import javax.microedition.khronos.egl.EGL10;
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.egl.EGLContext;
-import javax.microedition.khronos.egl.EGLDisplay;
-import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
 @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB) // uses SurfaceTexture
 public class MosaicPreviewRenderer {
     private static final String TAG = "MosaicPreviewRenderer";
-    private static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
-    private static final boolean DEBUG = false;
 
     private int mWidth; // width of the view in UI
     private int mHeight; // height of the view in UI
@@ -48,33 +40,27 @@ public class MosaicPreviewRenderer {
 
     private ConditionVariable mEglThreadBlockVar = new ConditionVariable();
     private HandlerThread mEglThread;
-    private EGLHandler mEglHandler;
+    private MyHandler mHandler;
+    private SurfaceTextureRenderer mSTRenderer;
 
-    private EGLConfig mEglConfig;
-    private EGLDisplay mEglDisplay;
-    private EGLContext mEglContext;
-    private EGLSurface mEglSurface;
-    private SurfaceTexture mMosaicOutputSurfaceTexture;
     private SurfaceTexture mInputSurfaceTexture;
-    private EGL10 mEgl;
-    private GL10 mGl;
 
-    private class EGLHandler extends Handler {
-        public static final int MSG_INIT_EGL_SYNC = 0;
+    private class MyHandler extends Handler {
+        public static final int MSG_INIT_SYNC = 0;
         public static final int MSG_SHOW_PREVIEW_FRAME_SYNC = 1;
         public static final int MSG_SHOW_PREVIEW_FRAME = 2;
         public static final int MSG_ALIGN_FRAME_SYNC = 3;
         public static final int MSG_RELEASE = 4;
 
-        public EGLHandler(Looper looper) {
+        public MyHandler(Looper looper) {
             super(looper);
         }
 
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case MSG_INIT_EGL_SYNC:
-                    doInitGL();
+                case MSG_INIT_SYNC:
+                    doInit();
                     mEglThreadBlockVar.open();
                     break;
                 case MSG_SHOW_PREVIEW_FRAME_SYNC:
@@ -105,8 +91,7 @@ public class MosaicPreviewRenderer {
             // Now, transfer the textures from GPU to CPU memory for processing
             MosaicRenderer.transferGPUtoCPU();
             MosaicRenderer.updateMatrix();
-            draw();
-            mEgl.eglSwapBuffers(mEglDisplay, mEglSurface);
+            MosaicRenderer.step();
         }
 
         private void doShowPreviewFrame() {
@@ -117,56 +102,15 @@ public class MosaicPreviewRenderer {
             // Call preprocess to render it to low-res and high-res RGB textures.
             MosaicRenderer.preprocess(mTransformMatrix);
             MosaicRenderer.updateMatrix();
-            draw();
-            mEgl.eglSwapBuffers(mEglDisplay, mEglSurface);
+            MosaicRenderer.step();
         }
 
-        private void doInitGL() {
-            // These are copied from GLSurfaceView
-            mEgl = (EGL10) EGLContext.getEGL();
-            mEglDisplay = mEgl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
-            if (mEglDisplay == EGL10.EGL_NO_DISPLAY) {
-                throw new RuntimeException("eglGetDisplay failed");
-            }
-            int[] version = new int[2];
-            if (!mEgl.eglInitialize(mEglDisplay, version)) {
-                throw new RuntimeException("eglInitialize failed");
-            } else {
-                Log.v(TAG, "EGL version: " + version[0] + '.' + version[1]);
-            }
-            int[] attribList = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE };
-            mEglConfig = chooseConfig(mEgl, mEglDisplay);
-            mEglContext = mEgl.eglCreateContext(mEglDisplay, mEglConfig, EGL10.EGL_NO_CONTEXT,
-                                                attribList);
-
-            if (mEglContext == null || mEglContext == EGL10.EGL_NO_CONTEXT) {
-                throw new RuntimeException("failed to createContext");
-            }
-            mEglSurface = mEgl.eglCreateWindowSurface(
-                    mEglDisplay, mEglConfig, mMosaicOutputSurfaceTexture, null);
-            if (mEglSurface == null || mEglSurface == EGL10.EGL_NO_SURFACE) {
-                throw new RuntimeException("failed to createWindowSurface");
-            }
-
-            if (!mEgl.eglMakeCurrent(mEglDisplay, mEglSurface, mEglSurface, mEglContext)) {
-                throw new RuntimeException("failed to eglMakeCurrent");
-            }
-
-            mGl = (GL10) mEglContext.getGL();
-
+        private void doInit() {
             mInputSurfaceTexture = new SurfaceTexture(MosaicRenderer.init());
             MosaicRenderer.reset(mWidth, mHeight, mIsLandscape);
         }
 
         private void doRelease() {
-            mEgl.eglDestroySurface(mEglDisplay, mEglSurface);
-            mEgl.eglDestroyContext(mEglDisplay, mEglContext);
-            mEgl.eglMakeCurrent(mEglDisplay, EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_SURFACE,
-                    EGL10.EGL_NO_CONTEXT);
-            mEgl.eglTerminate(mEglDisplay);
-            mEglSurface = null;
-            mEglContext = null;
-            mEglDisplay = null;
             releaseSurfaceTexture(mInputSurfaceTexture);
             mEglThread.quit();
         }
@@ -184,82 +128,52 @@ public class MosaicPreviewRenderer {
             sendEmptyMessage(msg);
             mEglThreadBlockVar.block();
         }
-
     }
 
     public MosaicPreviewRenderer(SurfaceTexture tex, int w, int h, boolean isLandscape) {
-        mMosaicOutputSurfaceTexture = tex;
-        mWidth = w;
-        mHeight = h;
         mIsLandscape = isLandscape;
 
         mEglThread = new HandlerThread("PanoramaRealtimeRenderer");
         mEglThread.start();
-        mEglHandler = new EGLHandler(mEglThread.getLooper());
+        mHandler = new MyHandler(mEglThread.getLooper());
+        mWidth = w;
+        mHeight = h;
+
+        SurfaceTextureRenderer.FrameDrawer dummy = new SurfaceTextureRenderer.FrameDrawer() {
+            @Override
+            public void onDrawFrame(GL10 gl) {
+                // nothing, we have our draw functions.
+            }
+        };
+        mSTRenderer = new SurfaceTextureRenderer(tex, mHandler, dummy);
 
         // We need to sync this because the generation of surface texture for input is
         // done here and the client will continue with the assumption that the
         // generation is completed.
-        mEglHandler.sendMessageSync(EGLHandler.MSG_INIT_EGL_SYNC);
+        mHandler.sendMessageSync(MyHandler.MSG_INIT_SYNC);
     }
 
     public void release() {
-        mEglHandler.sendMessageSync(EGLHandler.MSG_RELEASE);
+        mSTRenderer.release();
+        mHandler.sendMessageSync(MyHandler.MSG_RELEASE);
     }
 
     public void showPreviewFrameSync() {
-        mEglHandler.sendMessageSync(EGLHandler.MSG_SHOW_PREVIEW_FRAME_SYNC);
+        mHandler.sendMessageSync(MyHandler.MSG_SHOW_PREVIEW_FRAME_SYNC);
+        mSTRenderer.draw(true);
     }
 
     public void showPreviewFrame() {
-        mEglHandler.sendEmptyMessage(EGLHandler.MSG_SHOW_PREVIEW_FRAME);
+        mHandler.sendEmptyMessage(MyHandler.MSG_SHOW_PREVIEW_FRAME);
+        mSTRenderer.draw(false);
     }
 
     public void alignFrameSync() {
-        mEglHandler.sendMessageSync(EGLHandler.MSG_ALIGN_FRAME_SYNC);
+        mHandler.sendMessageSync(MyHandler.MSG_ALIGN_FRAME_SYNC);
+        mSTRenderer.draw(true);
     }
 
     public SurfaceTexture getInputSurfaceTexture() {
         return mInputSurfaceTexture;
-    }
-
-    private void draw() {
-        MosaicRenderer.step();
-    }
-
-    private static void checkEglError(String prompt, EGL10 egl) {
-        int error;
-        while ((error = egl.eglGetError()) != EGL10.EGL_SUCCESS) {
-            Log.e(TAG, String.format("%s: EGL error: 0x%x", prompt, error));
-        }
-    }
-
-    private static final int EGL_OPENGL_ES2_BIT = 4;
-    private static final int[] CONFIG_SPEC = new int[] {
-            EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-            EGL10.EGL_RED_SIZE, 8,
-            EGL10.EGL_GREEN_SIZE, 8,
-            EGL10.EGL_BLUE_SIZE, 8,
-            EGL10.EGL_NONE
-    };
-
-    private static EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
-        int[] numConfig = new int[1];
-        if (!egl.eglChooseConfig(display, CONFIG_SPEC, null, 0, numConfig)) {
-            throw new IllegalArgumentException("eglChooseConfig failed");
-        }
-
-        int numConfigs = numConfig[0];
-        if (numConfigs <= 0) {
-            throw new IllegalArgumentException("No configs match configSpec");
-        }
-
-        EGLConfig[] configs = new EGLConfig[numConfigs];
-        if (!egl.eglChooseConfig(
-                display, CONFIG_SPEC, configs, numConfigs, numConfig)) {
-            throw new IllegalArgumentException("eglChooseConfig#2 failed");
-        }
-
-        return configs[0];
     }
 }
