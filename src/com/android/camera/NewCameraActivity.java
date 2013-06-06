@@ -254,6 +254,7 @@ public class NewCameraActivity extends Activity
                             v.getDrawable().getIntrinsicHeight(),
                             0, 0));
         }
+        setSwipingEnabled(true);
     }
 
     @Override
@@ -388,6 +389,10 @@ public class NewCameraActivity extends Activity
 
     @Override
     public void onShowSwitcherPopup() {
+    }
+
+    public void setSwipingEnabled(boolean enable) {
+        mDataAdapter.setCameraPreviewLock(!enable);
     }
 
     // Accessor methods for getting latency times used in performance testing

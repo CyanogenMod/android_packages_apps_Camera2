@@ -645,8 +645,7 @@ public class NewPhotoUI implements PieListener,
 
     @Override
     public void onPieOpened(int centerX, int centerY) {
-      //TODO:   mActivity.cancelActivityTouchHandling();
-      //TODO:    mActivity.setSwipingEnabled(false);
+        setSwipingEnabled(false);
         dismissPopup();
         if (mFaceView != null) {
             mFaceView.setBlockDraw(true);
@@ -655,10 +654,14 @@ public class NewPhotoUI implements PieListener,
 
     @Override
     public void onPieClosed() {
-      //TODO:     mActivity.setSwipingEnabled(true);
+        setSwipingEnabled(true);
         if (mFaceView != null) {
             mFaceView.setBlockDraw(false);
         }
+    }
+
+    public void setSwipingEnabled(boolean enable) {
+        mActivity.setSwipingEnabled(enable);
     }
 
     public Object getSurfaceTexture() {

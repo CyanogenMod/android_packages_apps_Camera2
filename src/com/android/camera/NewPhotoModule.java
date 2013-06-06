@@ -754,7 +754,7 @@ public class NewPhotoModule
             }
             if (mSceneMode == Util.SCENE_MODE_HDR) {
                 mUI.showSwitcher();
-                //TODO: mActivity.setSwipingEnabled(true);
+                mUI.setSwipingEnabled(true);
             }
 
             mJpegPictureCallbackTime = System.currentTimeMillis();
@@ -1191,7 +1191,7 @@ public class NewPhotoModule
 
         if (mSceneMode == Util.SCENE_MODE_HDR) {
             mUI.hideSwitcher();
-            //TODO: mActivity.setSwipingEnabled(false);
+            mUI.setSwipingEnabled(false);
         }
         // If the user wants to do a snapshot while the previous one is still
         // in progress, remember the fact and do it after we finish the previous

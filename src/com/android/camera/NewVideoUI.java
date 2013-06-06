@@ -475,14 +475,17 @@ public class NewVideoUI implements PieRenderer.PieListener,
     // PieListener
     @Override
     public void onPieOpened(int centerX, int centerY) {
-        // TODO: mActivity.cancelActivityTouchHandling();
-        // mActivity.setSwipingEnabled(false);
+        setSwipingEnabled(false);
         dismissPopup(false, true);
     }
 
     @Override
     public void onPieClosed() {
-        // TODO: mActivity.setSwipingEnabled(true);
+        setSwipingEnabled(true);
+    }
+
+    public void setSwipingEnabled(boolean enable) {
+        mActivity.setSwipingEnabled(enable);
     }
 
     public void showPreviewBorder(boolean enable) {

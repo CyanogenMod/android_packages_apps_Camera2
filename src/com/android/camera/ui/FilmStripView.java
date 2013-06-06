@@ -769,6 +769,11 @@ public class FilmStripView extends ViewGroup {
         if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
             mCheckToIntercept = true;
             mDown = MotionEvent.obtain(ev);
+            ViewInfo viewInfo = mViewInfo[mCurrentInfo];
+            // Do not intercept touch if swipe is not enabled
+            if (viewInfo != null && !mDataAdapter.canSwipeInFullScreen(viewInfo.getID())) {
+                mCheckToIntercept = false;
+            }
             return false;
         } else if (ev.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
             // Do not intercept touch once child is in zoom mode
