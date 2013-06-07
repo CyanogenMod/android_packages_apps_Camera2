@@ -17,6 +17,10 @@ public class PreparePageFadeoutTexture implements OnGLIdleListener {
     private GLView mRootPane;
 
     public PreparePageFadeoutTexture(GLView rootPane) {
+        if (rootPane == null) {
+            mCancelled = true;
+            return;
+        }
         int w = rootPane.getWidth();
         int h = rootPane.getHeight();
         if (w == 0 || h == 0) {
