@@ -1446,7 +1446,7 @@ public class NewVideoModule implements NewCameraModule,
     private void startVideoRecording() {
         Log.v(TAG, "startVideoRecording");
         mUI.enablePreviewThumb(false);
-        // TODO: mActivity.setSwipingEnabled(false);
+        mUI.setSwipingEnabled(false);
 
         mActivity.updateStorageSpaceAndHint();
         if (mActivity.getStorageSpace() <= Storage.LOW_STORAGE_THRESHOLD) {
@@ -1555,7 +1555,7 @@ public class NewVideoModule implements NewCameraModule,
 
     private boolean stopVideoRecording() {
         Log.v(TAG, "stopVideoRecording");
-        //TODO: mUI.setSwipingEnabled(true);
+        mUI.setSwipingEnabled(true);
         mUI.showSwitcher();
 
         boolean fail = false;

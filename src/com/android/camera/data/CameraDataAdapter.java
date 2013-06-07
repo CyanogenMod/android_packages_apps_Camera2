@@ -128,7 +128,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
     public boolean canSwipeInFullScreen(int id) {
         if (mImages.get(id).getType()
                 == ImageData.TYPE_CAMERA_PREVIEW) {
-            return mCameraPreviewLocked;
+            return !mCameraPreviewLocked;
         }
         return false;
     }
