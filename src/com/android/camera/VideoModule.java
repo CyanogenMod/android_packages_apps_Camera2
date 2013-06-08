@@ -2316,4 +2316,7 @@ public class VideoModule implements CameraModule,
     public void onMediaSaveServiceConnected(MediaSaveService s) {
         // do nothing.
     }
+
+    @Override
+    public void updateCameraOrientation() {}
 }

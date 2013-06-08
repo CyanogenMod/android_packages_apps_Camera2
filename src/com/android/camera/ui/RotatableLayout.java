@@ -65,9 +65,11 @@ public class RotatableLayout extends FrameLayout {
         mPrevRotation = Util.getDisplayRotation((Activity) getContext());
         // check if there is any rotation before the view is attached to window
         int currentOrientation = getResources().getConfiguration().orientation;
-        if (mInitialOrientation == currentOrientation) {
+        int orientation = getUnifiedRotation();
+        if (mInitialOrientation == currentOrientation && orientation < 180) {
             return;
         }
+
         if (mInitialOrientation == Configuration.ORIENTATION_LANDSCAPE
                 && currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
             rotateLayout(true);
@@ -75,19 +77,62 @@ public class RotatableLayout extends FrameLayout {
                 && currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             rotateLayout(false);
         }
+        // In reverse landscape and reverse portrait, camera controls will be laid out
+        // on the wrong side of the screen. We need to make adjustment to move the controls
+        // to the USB side
+        if (orientation >= 180) {
+            flipChildren();
+        }
+    }
+
+    protected int getUnifiedRotation() {
+        // all the layout code assumes camera device orientation to be portrait
+        // adjust rotation for landscape
+        int orientation = getResources().getConfiguration().orientation;
+        int rotation = Util.getDisplayRotation((Activity) getContext());
+        int camOrientation = (rotation % 180 == 0) ? Configuration.ORIENTATION_PORTRAIT
+                : Configuration.ORIENTATION_LANDSCAPE;
+        if (camOrientation != orientation) {
+            return (rotation + 90) % 360;
+        }
+        return rotation;
+    }
+
+    public void checkLayoutFlip() {
+        int currentRotation = Util.getDisplayRotation((Activity) getContext());
+        if ((currentRotation - mPrevRotation + 360) % 360 == 180) {
+            mPrevRotation = currentRotation;
+            flipChildren();
+            getParent().requestLayout();
+        }
+    }
+
+    @Override
+    public void onWindowVisibilityChanged(int visibility) {
+        if (visibility == View.VISIBLE) {
+            // Make sure when coming back from onPause, the layout is rotated correctly
+            checkLayoutFlip();
+        }
     }
 
     @Override
     public void onConfigurationChanged(Configuration config) {
         super.onConfigurationChanged(config);
         int rotation = Util.getDisplayRotation((Activity) getContext());
-        if ((rotation - mPrevRotation + 360) % 180 == 0) {
+        int diff = (rotation - mPrevRotation + 360) % 360;
+        if ( diff == 0) {
+            // No rotation
+            return;
+        } else if (diff == 180) {
+            // 180-degree rotation
             mPrevRotation = rotation;
+            flipChildren();
             return;
         }
+        // 90 or 270-degree rotation
         boolean clockwise = isClockWiseRotation(mPrevRotation, rotation);
-        rotateLayout(clockwise);
         mPrevRotation = rotation;
+        rotateLayout(clockwise);
     }
 
     protected void rotateLayout(boolean clockwise) {
@@ -113,7 +158,6 @@ public class RotatableLayout extends FrameLayout {
     }
 
     protected void flipChildren() {
-        mPrevRotation = Util.getDisplayRotation((Activity) getContext());
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
             View child = getChildAt(i);
