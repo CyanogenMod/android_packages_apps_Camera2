@@ -25,17 +25,13 @@ import android.os.Environment;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 
+import com.android.gallery3d.filtershow.tools.SaveCopyTask.ContentResolverQueryCallback;
+
 import java.io.File;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
 public class SaveVideoFileUtils {
-    // Copy from SaveCopyTask.java in terms of how to handle the destination
-    // path and filename : querySource() and getSaveDirectory().
-    public interface ContentResolverQueryCallback {
-        void onCursorResult(Cursor cursor);
-    }
-
     // This function can decide which folder to save the video file, and generate
     // the needed information for the video file including filename.
     public static SaveVideoFileInfo getDstMp4FileInfo(String fileNameFormat,
