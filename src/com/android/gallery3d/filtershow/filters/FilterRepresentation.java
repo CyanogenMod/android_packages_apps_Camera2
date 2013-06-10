@@ -24,7 +24,7 @@ public class FilterRepresentation implements Cloneable {
     private static final boolean DEBUG = false;
     private String mName;
     private int mPriority = TYPE_NORMAL;
-    private Class mFilterClass;
+    private Class<?> mFilterClass;
     private boolean mSupportsPartialRendering = false;
     private int mTextId = 0;
     private int mEditorId = BasicEditor.ID;
@@ -157,11 +157,11 @@ public class FilterRepresentation implements Cloneable {
         return false;
     }
 
-    public Class getFilterClass() {
+    public Class<?> getFilterClass() {
         return mFilterClass;
     }
 
-    public void setFilterClass(Class filterClass) {
+    public void setFilterClass(Class<?> filterClass) {
         mFilterClass = filterClass;
     }
 
