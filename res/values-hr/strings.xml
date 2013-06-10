@@ -259,7 +259,7 @@
     <string name="pref_camera_picturesize_entry_4mp" msgid="933242108272469142">"4 megapiksela"</string>
     <string name="pref_camera_picturesize_entry_3mp" msgid="741415860337400696">"3 megapiksela"</string>
     <string name="pref_camera_picturesize_entry_2mp" msgid="1753709802245460393">"2 megapiksela"</string>
-    <string name="pref_camera_picturesize_entry_2mp_wide" msgid="5359490802026616612">"2M piks. (16:9)"</string>
+    <string name="pref_camera_picturesize_entry_2mp_wide" msgid="5359490802026616612">"2 mpiks.(16:9)"</string>
     <string name="pref_camera_picturesize_entry_1_3mp" msgid="829109608140747258">"1,3 megapiksela"</string>
     <string name="pref_camera_picturesize_entry_1mp" msgid="1669725616780375066">"1 megapiksel"</string>
     <string name="pref_camera_picturesize_entry_vga" msgid="806934254162981919">"VGA"</string>
