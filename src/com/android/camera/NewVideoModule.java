@@ -2008,6 +2008,7 @@ public class NewVideoModule implements NewCameraModule,
         initializeVideoControl();
 
         // From onResume
+        mZoomValue = 0;
         mUI.initializeZoom(mParameters);
         mUI.setOrientationIndicator(0, false);
 

@@ -69,6 +69,7 @@ public class NewPreviewGestures
     private int mMode;
     private int mSlop;
     private int mTapTimeout;
+    private boolean mZoomEnabled;
     private boolean mEnabled;
     private boolean mZoomOnly;
     private int mOrientation;
@@ -148,6 +149,10 @@ public class NewPreviewGestures
         mEnabled = enabled;
     }
 
+    public void setZoomEnabled(boolean enable) {
+        mZoomEnabled = enable;
+    }
+
     public void setZoomOnly(boolean zoom) {
         mZoomOnly = zoom;
     }
@@ -178,7 +183,10 @@ public class NewPreviewGestures
             mScale.onTouchEvent(m);
             if (MotionEvent.ACTION_POINTER_DOWN == m.getActionMasked()) {
                 mMode = MODE_ZOOM;
-                mZoom.onScaleBegin(mScale);
+                if (mZoomEnabled) {
+                    // Start showing zoom UI as soon as there is a second finger down
+                    mZoom.onScaleBegin(mScale);
+                }
             } else if (MotionEvent.ACTION_POINTER_UP == m.getActionMasked()) {
                 mZoom.onScaleEnd(mScale);
             }
@@ -241,6 +249,7 @@ public class NewPreviewGestures
         if (mPie == null || !mPie.isOpen()) {
             mMode = MODE_ZOOM;
             mGestureDetector.onTouchEvent(makeCancelEvent(mCurrent));
+            if (!mZoomEnabled) return false;
             return mZoom.onScaleBegin(detector);
         }
         return false;

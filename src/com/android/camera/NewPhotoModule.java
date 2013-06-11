@@ -542,6 +542,8 @@ public class NewPhotoModule
         mFocusManager.setParameters(mInitialParams);
         setupPreview();
 
+        // reset zoom value index
+        mZoomValue = 0;
         openCameraCommon();
 
         if (ApiHelper.HAS_SURFACE_TEXTURE) {

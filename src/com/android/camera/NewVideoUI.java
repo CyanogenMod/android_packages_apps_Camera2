@@ -581,7 +581,11 @@ public class NewVideoUI implements PieRenderer.PieListener,
     }
 
     public void initializeZoom(Parameters param) {
-        if (param == null || !param.isZoomSupported()) return;
+        if (param == null || !param.isZoomSupported()) {
+            mGestures.setZoomEnabled(false);
+            return;
+        }
+        mGestures.setZoomEnabled(true);
         mZoomMax = param.getMaxZoom();
         mZoomRatios = param.getZoomRatios();
         // Currently we use immediate zoom for fast zooming to get better UX and
