@@ -17,4 +17,8 @@
 <resources>
     <!-- Specify the screen orientation -->
     <bool name="only_use_portrait">true</bool>
+
+    <!-- Text size for the state panel -->
+    <dimen name="state_panel_text_size">16dip</dimen>
+
 </resources>
