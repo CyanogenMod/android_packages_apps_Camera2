@@ -78,6 +78,7 @@ public class StateView extends View {
         mTextColor = res.getColor(R.color.filtershow_stateview_text);
         mSelectedBackgroundColor = res.getColor(R.color.filtershow_stateview_selected_background);
         mSelectedTextColor = res.getColor(R.color.filtershow_stateview_selected_text);
+        mTextSize = res.getDimensionPixelSize(R.dimen.state_panel_text_size);
     }
 
     public String getText() {
