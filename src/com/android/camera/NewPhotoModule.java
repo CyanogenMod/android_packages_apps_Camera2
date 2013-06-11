@@ -1595,7 +1595,7 @@ public class NewPhotoModule
     private void updateCameraParametersInitialize() {
         // Reset preview frame rate to the maximum because it may be lowered by
         // video camera application.
-        int[] frameRates = Util.getMaxPreviewFpsRange(mParameters);
+        int[] fpsRange = Util.getMaxPreviewFpsRange(mParameters);
         if (fpsRange.length > 0) {
             mParameters.setPreviewFpsRange(
                     fpsRange[Parameters.PREVIEW_FPS_MIN_INDEX],
