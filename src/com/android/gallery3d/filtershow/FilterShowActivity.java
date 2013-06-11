@@ -31,6 +31,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -41,6 +42,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewPropertyAnimator;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -209,7 +211,10 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             View container = mainPanel.getView().findViewById(R.id.category_panel_container);
             View bottom = mainPanel.getView().findViewById(R.id.bottom_panel);
             int panelHeight = container.getHeight() + bottom.getHeight();
-            mainPanel.getView().animate().translationY(panelHeight).withEndAction(showEditor).start();
+            ViewPropertyAnimator anim = mainPanel.getView().animate();
+            anim.translationY(panelHeight).start();
+            final Handler handler = new Handler();
+            handler.postDelayed(showEditor, anim.getDuration());
         } else {
             showEditor.run();
         }
