@@ -746,6 +746,16 @@ public class Util {
         }
     }
 
+
+    public static int[] getMaxPreviewFpsRange(Parameters params) {
+        List<int[]> frameRates = params.getSupportedPreviewFpsRange();
+        if (frameRates != null && frameRates.size() > 0) {
+            // The list is sorted. Return the last element.
+            return frameRates.get(frameRates.size() - 1);
+        }
+        return new int[0];
+    }
+
     private static class ImageFileNamer {
         private SimpleDateFormat mFormat;
 

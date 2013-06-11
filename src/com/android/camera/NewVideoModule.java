@@ -1764,7 +1764,14 @@ public class NewVideoModule implements NewCameraModule,
     @SuppressWarnings("deprecation")
     private void setCameraParameters() {
         mParameters.setPreviewSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
-        mParameters.setPreviewFrameRate(mProfile.videoFrameRate);
+        int[] fpsRange = Util.getMaxPreviewFpsRange(mParameters);
+        if (fpsRange.length > 0) {
+            mParameters.setPreviewFpsRange(
+                    fpsRange[Parameters.PREVIEW_FPS_MIN_INDEX],
+                    fpsRange[Parameters.PREVIEW_FPS_MAX_INDEX]);
+        } else {
+            mParameters.setPreviewFrameRate(mProfile.videoFrameRate);
+        }
 
         // Set flash mode.
         String flashMode;
