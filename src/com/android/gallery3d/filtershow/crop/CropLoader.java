@@ -30,6 +30,7 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.exif.ExifInterface;
@@ -64,9 +65,29 @@ public abstract class CropLoader {
         if (uri == null || context == null) {
             throw new IllegalArgumentException("bad argument to getScaledBitmap");
         }
+
+        // First try to find orientation data in Gallery's ContentProvider.
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(uri,
+                    new String[] { MediaStore.Images.ImageColumns.ORIENTATION },
+                    null, null, null);
+            if (cursor != null && cursor.moveToNext()) {
+                int ori = cursor.getInt(0);
+                return (ori < 0) ? 0 : ori;
+            }
+        } catch (SQLiteException e) {
+            // Do nothing
+        } catch (IllegalArgumentException e) {
+            // Do nothing
+        } finally {
+            Utils.closeSilently(cursor);
+        }
+
+        // Fall back to checking EXIF tags in file.
         if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
-            String mimeType = context.getContentResolver().getType(uri);
-            if (mimeType != JPEG_MIME_TYPE) {
+            String mimeType = getMimeType(uri);
+            if (!JPEG_MIME_TYPE.equals(mimeType)) {
                 return 0;
             }
             String path = uri.getPath();
@@ -74,28 +95,14 @@ public abstract class CropLoader {
             ExifInterface exif = new ExifInterface();
             try {
                 exif.readExif(path);
-                orientation = ExifInterface.getRotationForOrientationValue(
-                        exif.getTagIntValue(ExifInterface.TAG_ORIENTATION).shortValue());
+                Integer tagval = exif.getTagIntValue(ExifInterface.TAG_ORIENTATION);
+                if (tagval != null) {
+                    orientation = ExifInterface.getRotationForOrientationValue(tagval.shortValue());
+                }
             } catch (IOException e) {
                 Log.w(LOGTAG, "Failed to read EXIF orientation", e);
             }
             return orientation;
-        }
-        Cursor cursor = null;
-        try {
-            cursor = context.getContentResolver().query(uri,
-                    new String[] { MediaStore.Images.ImageColumns.ORIENTATION },
-                    null, null, null);
-            if (cursor.moveToNext()) {
-                int ori = cursor.getInt(0);
-                return (ori < 0) ? 0 : ori;
-            }
-        } catch (SQLiteException e) {
-            return 0;
-        } catch (IllegalArgumentException e) {
-            return 0;
-        } finally {
-            Utils.closeSilently(cursor);
         }
         return 0;
     }
@@ -250,6 +257,15 @@ public abstract class CropLoader {
                     }
                 });
         return dir[0];
+    }
+
+    private static String getMimeType(Uri src) {
+        String postfix = MimeTypeMap.getFileExtensionFromUrl(src.toString());
+        String ret = null;
+        if (postfix != null) {
+            ret = MimeTypeMap.getSingleton().getMimeTypeFromExtension(postfix);
+        }
+        return ret;
     }
 
     public static Uri insertContent(Context context, Uri sourceUri, File file, String saveFileName,
