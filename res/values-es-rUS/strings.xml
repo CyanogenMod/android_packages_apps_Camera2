@@ -131,7 +131,7 @@
     <string name="duration" msgid="8160058911218541616">"Duración"</string>
     <string name="mimetype" msgid="8024168704337990470">"Tipo de MIME"</string>
     <string name="file_size" msgid="8486169301588318915">"Tamaño del archivo"</string>
-    <string name="maker" msgid="7921835498034236197">"Creador"</string>
+    <string name="maker" msgid="7921835498034236197">"Fabricante"</string>
     <string name="model" msgid="8240207064064337366">"Modelo"</string>
     <string name="flash" msgid="2816779031261147723">"Flash"</string>
     <string name="aperture" msgid="5920657630303915195">"Apertura"</string>
