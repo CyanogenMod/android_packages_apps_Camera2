@@ -134,7 +134,7 @@ public class Action implements RenderingRequestCaller {
         m.mapRect(image);
         m.setRectToRect(image, frame, Matrix.ScaleToFit.FILL);
         Canvas canvas = new Canvas(destination);
-        canvas.drawBitmap(source, m, new Paint());
+        canvas.drawBitmap(source, m, new Paint(Paint.FILTER_BITMAP_FLAG));
     }
 
     @Override

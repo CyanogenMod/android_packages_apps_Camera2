@@ -103,6 +103,6 @@ public class IconFactory {
             rec.roundOut(srcRect);
         }
 
-        canvas.drawBitmap(sourceImage, srcRect, destRect, new Paint());
+        canvas.drawBitmap(sourceImage, srcRect, destRect, new Paint(Paint.FILTER_BITMAP_FLAG));
     }
 }
