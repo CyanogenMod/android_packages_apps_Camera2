@@ -754,6 +754,10 @@ public class NewPhotoModule
             if (mPaused) {
                 return;
             }
+            //TODO: We should show the picture taken rather than frozen preview here
+            if (mIsImageCaptureIntent) {
+                stopPreview();
+            }
             if (mSceneMode == Util.SCENE_MODE_HDR) {
                 mUI.showSwitcher();
                 mUI.setSwipingEnabled(true);
