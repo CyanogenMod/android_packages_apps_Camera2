@@ -30,8 +30,8 @@
         <com.android.gallery3d.filtershow.category.CategoryTrack
                 android:id="@+id/listItems"
                 android:layout_width="match_parent"
-                android:layout_height="128dip"
-                custom:iconSize="84dip"
+                android:layout_height="@dimen/category_panel_height"
+                custom:iconSize="@dimen/category_panel_icon_size"
                 android:divider="@android:color/transparent"
                 android:dividerPadding="8dip"
                 />

@@ -17,4 +17,10 @@
 <resources>
     <!-- Specify the screen orientation -->
     <bool name="only_use_portrait">false</bool>
+
+    <!-- Category Panel Height -->
+    <dimen name="category_panel_height">94dip</dimen>
+
+    <!-- Category Panel Icon Size -->
+    <dimen name="category_panel_icon_size">72dip</dimen>
 </resources>

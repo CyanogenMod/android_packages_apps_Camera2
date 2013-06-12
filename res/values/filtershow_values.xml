@@ -21,4 +21,9 @@
     <!-- Text size for the state panel -->
     <dimen name="state_panel_text_size">16dip</dimen>
 
+    <!-- Category Panel Height -->
+    <dimen name="category_panel_height">86dip</dimen>
+
+    <!-- Category Panel Icon Size -->
+    <dimen name="category_panel_icon_size">64dip</dimen>
 </resources>
