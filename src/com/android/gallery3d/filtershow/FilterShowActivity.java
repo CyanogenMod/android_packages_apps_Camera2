@@ -37,6 +37,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -511,6 +512,10 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                 cannotLoadImage();
             }
 
+            if (null == CachingPipeline.getRenderScriptContext()){
+                Log.v(LOGTAG,"RenderScript context destroyed during load");
+                return;
+            }
             final View loading = findViewById(R.id.loading);
             loading.setVisibility(View.GONE);
             final View imageShow = findViewById(R.id.imageShow);
@@ -978,6 +983,9 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
     public void done() {
         hideSavingProgress();
+        if (mLoadBitmapTask != null) {
+            mLoadBitmapTask.cancel(false);
+        }
         finish();
     }
 
