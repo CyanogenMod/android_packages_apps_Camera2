@@ -33,4 +33,6 @@ public interface VideoController extends OnShutterButtonListener {
     public void onSingleTapUp(View view, int x, int y);
 
     public void stopPreview();
+
+    public void updateCameraOrientation();
 }

@@ -1395,6 +1395,13 @@ public class NewPhotoModule
     }
 
     @Override
+    public void updateCameraOrientation() {
+        if (mDisplayRotation != Util.getDisplayRotation(mActivity)) {
+            setDisplayOrientation();
+        }
+    }
+
+    @Override
     public void onActivityResult(
             int requestCode, int resultCode, Intent data) {
         switch (requestCode) {

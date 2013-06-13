@@ -20,8 +20,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Rect;
-import android.hardware.display.DisplayManager;
-import android.hardware.display.DisplayManager.DisplayListener;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -40,44 +38,13 @@ public class CameraControls extends RotatableLayout {
     private View mMenu;
     private View mIndicators;
     private View mPreview;
-    private Object mDisplayListener = null;
-    private int mLastRotation = 0;
 
     public CameraControls(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initDisplayListener();
     }
 
     public CameraControls(Context context) {
         super(context);
-        initDisplayListener();
-    }
-
-    public void initDisplayListener() {
-        if (ApiHelper.HAS_DISPLAY_LISTENER) {
-            mDisplayListener = new DisplayListener() {
-
-                @Override
-                public void onDisplayAdded(int arg0) {}
-
-                @Override
-                public void onDisplayChanged(int arg0) {
-                    checkLayoutFlip();
-                }
-
-                @Override
-                public void onDisplayRemoved(int arg0) {}
-            };
-        }
-    }
-
-    private void checkLayoutFlip() {
-        int currentRotation = Util.getDisplayRotation((Activity) getContext());
-        if ((currentRotation - mLastRotation + 360) % 360 == 180) {
-            mLastRotation = currentRotation;
-            flipChildren();
-            getParent().requestLayout();
-        }
     }
 
     @Override
@@ -92,36 +59,7 @@ public class CameraControls extends RotatableLayout {
     }
 
     @Override
-    public void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        adjustControlsToRightPosition();
-        mLastRotation = Util.getDisplayRotation((Activity) getContext());
-        if (ApiHelper.HAS_DISPLAY_LISTENER) {
-            ((DisplayManager) getContext().getSystemService(Context.DISPLAY_SERVICE))
-            .registerDisplayListener((DisplayListener) mDisplayListener, null);
-        }
-    }
-
-    @Override
-    public void onWindowVisibilityChanged(int visibility) {
-        if (visibility == View.VISIBLE) {
-            // Make sure when coming back from onPause, the layout is rotated correctly
-            checkLayoutFlip();
-        }
-    }
-
-    @Override
-    public void onDetachedFromWindow () {
-        super.onDetachedFromWindow();
-        if (ApiHelper.HAS_DISPLAY_LISTENER) {
-            ((DisplayManager) getContext().getSystemService(Context.DISPLAY_SERVICE))
-            .unregisterDisplayListener((DisplayListener) mDisplayListener);
-        }
-    }
-
-    @Override
     public void onLayout(boolean changed, int l, int t, int r, int b) {
-        mLastRotation = Util.getDisplayRotation((Activity) getContext());
         int orientation = getResources().getConfiguration().orientation;
         int size = getResources().getDimensionPixelSize(R.dimen.camera_controls_size);
         int rotation = getUnifiedRotation();
@@ -166,19 +104,6 @@ public class CameraControls extends RotatableLayout {
             View done = findViewById(R.id.btn_done);
             toRight(done, shutter, rotation);
         }
-    }
-
-    private int getUnifiedRotation() {
-        // all the layout code assumes camera device orientation to be portrait
-        // adjust rotation for landscape
-        int orientation = getResources().getConfiguration().orientation;
-        int rotation = Util.getDisplayRotation((Activity) getContext());
-        int camOrientation = (rotation % 180 == 0) ? Configuration.ORIENTATION_PORTRAIT
-                : Configuration.ORIENTATION_LANDSCAPE;
-        if (camOrientation != orientation) {
-            return (rotation + 90) % 360;
-        }
-        return rotation;
     }
 
     private void center(View v, int l, int t, int r, int b, int orientation, int rotation, Rect result) {
@@ -311,16 +236,6 @@ public class CameraControls extends RotatableLayout {
         int mt = getContext().getResources().getDimensionPixelSize(R.dimen.capture_margin_top);
         int mr = getContext().getResources().getDimensionPixelSize(R.dimen.capture_margin_right);
         v.layout(r - v.getMeasuredWidth() - mr, t + mt, r - mr, t + mt + v.getMeasuredHeight());
-    }
-
-    // In reverse landscape and reverse portrait, camera controls will be laid out
-    // on the wrong side of the screen. We need to make adjustment to move the controls
-    // to the USB side
-    public void adjustControlsToRightPosition() {
-        int orientation = getUnifiedRotation();
-        if (orientation >= 180) {
-            flipChildren();
-        }
     }
 
     private void adjustBackground() {

@@ -20,6 +20,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Rect;
+import android.hardware.display.DisplayManager;
+import android.hardware.display.DisplayManager.DisplayListener;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -28,6 +30,7 @@ import android.widget.FrameLayout;
 
 import com.android.camera.Util;
 import com.android.gallery3d.R;
+import com.android.gallery3d.common.ApiHelper;
 
 public class NewCameraRootView extends FrameLayout {
 
@@ -37,8 +40,15 @@ public class NewCameraRootView extends FrameLayout {
     private int mRightMargin = 0;
     private Rect mCurrentInsets;
     private int mOffset = 0;
+    private Object mDisplayListener;
+    private MyDisplayListener mListener;
+    public interface MyDisplayListener {
+        public void onDisplayChanged();
+    }
+
     public NewCameraRootView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initDisplayListener();
         setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
     }
@@ -57,6 +67,46 @@ public class NewCameraRootView extends FrameLayout {
             mOffset = insets.right;
         }
         return true;
+    }
+
+    public void initDisplayListener() {
+        if (ApiHelper.HAS_DISPLAY_LISTENER) {
+            mDisplayListener = new DisplayListener() {
+
+                @Override
+                public void onDisplayAdded(int arg0) {}
+
+                @Override
+                public void onDisplayChanged(int arg0) {
+                    mListener.onDisplayChanged();
+                }
+
+                @Override
+                public void onDisplayRemoved(int arg0) {}
+            };
+        }
+    }
+
+    public void setDisplayChangeListener(MyDisplayListener listener) {
+        mListener = listener;
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (ApiHelper.HAS_DISPLAY_LISTENER) {
+            ((DisplayManager) getContext().getSystemService(Context.DISPLAY_SERVICE))
+            .registerDisplayListener((DisplayListener) mDisplayListener, null);
+        }
+    }
+
+    @Override
+    public void onDetachedFromWindow () {
+        super.onDetachedFromWindow();
+        if (ApiHelper.HAS_DISPLAY_LISTENER) {
+            ((DisplayManager) getContext().getSystemService(Context.DISPLAY_SERVICE))
+            .unregisterDisplayListener((DisplayListener) mDisplayListener);
+        }
     }
 
     @Override

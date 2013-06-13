@@ -42,7 +42,9 @@ import android.widget.TextView;
 
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.ui.AbstractSettingPopup;
+import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.CameraSwitcher;
+import com.android.camera.ui.NewCameraRootView;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.RenderOverlay;
 import com.android.camera.ui.RotateLayout;
@@ -55,6 +57,7 @@ import java.util.List;
 
 public class NewVideoUI implements PieRenderer.PieListener,
         NewPreviewGestures.SingleTapListener,
+        NewCameraRootView.MyDisplayListener,
         SurfaceTextureListener, SurfaceHolder.Callback {
     private final static String TAG = "CAM_VideoUI";
     private static final int UPDATE_TRANSFORM_MATRIX = 1;
@@ -76,7 +79,7 @@ public class NewVideoUI implements PieRenderer.PieListener,
     private RenderOverlay mRenderOverlay;
     private PieRenderer mPieRenderer;
     private NewVideoMenu mVideoMenu;
-    private View mCameraControls;
+    private CameraControls mCameraControls;
     private AbstractSettingPopup mPopup;
     private ZoomRenderer mZoomRenderer;
     private NewPreviewGestures mGestures;
@@ -139,6 +142,7 @@ public class NewVideoUI implements PieRenderer.PieListener,
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         mTextureView.setSurfaceTextureListener(this);
         mRootView.addOnLayoutChangeListener(mLayoutListener);
+        ((NewCameraRootView) mRootView).setDisplayChangeListener(this);
         mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
         mSwitcher = (CameraSwitcher) mRootView.findViewById(R.id.camera_switcher);
         mSwitcher.setCurrentIndex(1);
@@ -167,7 +171,7 @@ public class NewVideoUI implements PieRenderer.PieListener,
             }
         });
 
-        mCameraControls = mActivity.findViewById(R.id.camera_controls);
+        mCameraControls = (CameraControls) mActivity.findViewById(R.id.camera_controls);
         mOnScreenIndicators = new OnScreenIndicators(mActivity,
                 mActivity.findViewById(R.id.on_screen_indicators));
         mOnScreenIndicators.resetToDefault();
@@ -618,6 +622,11 @@ public class NewVideoUI implements PieRenderer.PieListener,
 
     public boolean isVisible() {
         return mTextureView.getVisibility() == View.VISIBLE;
+    }
+
+    public void onDisplayChanged() {
+        mCameraControls.checkLayoutFlip();
+        mController.updateCameraOrientation();
     }
 
     /**

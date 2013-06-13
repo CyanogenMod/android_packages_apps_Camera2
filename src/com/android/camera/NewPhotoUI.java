@@ -43,12 +43,14 @@ import android.widget.Toast;
 import com.android.camera.CameraPreference.OnPreferenceChangedListener;
 import com.android.camera.FocusOverlayManager.FocusUI;
 import com.android.camera.ui.AbstractSettingPopup;
+import com.android.camera.ui.CameraControls;
 import com.android.camera.ui.CameraSwitcher.CameraSwitchListener;
 import com.android.camera.ui.CountDownView;
 import com.android.camera.ui.CountDownView.OnCountDownFinishedListener;
 import com.android.camera.ui.CameraSwitcher;
 import com.android.camera.ui.FaceView;
 import com.android.camera.ui.FocusIndicator;
+import com.android.camera.ui.NewCameraRootView;
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.PieRenderer.PieListener;
 import com.android.camera.ui.RenderOverlay;
@@ -62,7 +64,7 @@ import java.util.List;
 public class NewPhotoUI implements PieListener,
     NewPreviewGestures.SingleTapListener,
     FocusUI, TextureView.SurfaceTextureListener,
-    LocationManager.Listener,
+    LocationManager.Listener, NewCameraRootView.MyDisplayListener,
     FaceDetectionListener {
 
     private static final String TAG = "CAM_UI";
@@ -88,7 +90,7 @@ public class NewPhotoUI implements PieListener,
     private View mBlocker;
     private NewPhotoMenu mMenu;
     private CameraSwitcher mSwitcher;
-    private View mCameraControls;
+    private CameraControls mCameraControls;
 
     // Small indicators which show the camera settings in the viewfinder.
     private OnScreenIndicators mOnScreenIndicators;
@@ -180,7 +182,8 @@ public class NewPhotoUI implements PieListener,
                         (SurfaceTextureSizeChangedListener) mFaceView);
             }
         }
-        mCameraControls = mRootView.findViewById(R.id.camera_controls);
+        mCameraControls = (CameraControls) mRootView.findViewById(R.id.camera_controls);
+        ((NewCameraRootView) mRootView).setDisplayChangeListener(this);
     }
 
     public void onScreenSizeChanged(int width, int height, int previewWidth, int previewHeight) {
@@ -782,6 +785,11 @@ public class NewPhotoUI implements PieListener,
     @Override
     public void onFaceDetection(Face[] faces, android.hardware.Camera camera) {
         mFaceView.setFaces(faces);
+    }
+
+    public void onDisplayChanged() {
+        mCameraControls.checkLayoutFlip();
+        mController.updateCameraOrientation();
     }
 
 }

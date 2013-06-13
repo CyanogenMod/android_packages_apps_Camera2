@@ -2101,4 +2101,5 @@ public class PhotoModule
             mHeading += 360;
         }
     }
+    public void updateCameraOrientation() {}
 }
