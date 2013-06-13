@@ -2141,8 +2141,8 @@ public class NewVideoModule implements NewCameraModule,
     }
 
     @Override
-    public void onFullScreenChanged(boolean full) {
-        mUI.onFullScreenChanged(full);
+    public void onSwitchMode(boolean toCamera) {
+        mUI.onSwitchMode(toCamera);
     }
 
     private final class JpegPictureCallback implements PictureCallback {

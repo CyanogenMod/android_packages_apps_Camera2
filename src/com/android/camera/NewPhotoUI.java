@@ -366,14 +366,11 @@ public class NewPhotoUI implements PieListener,
 
     public void hideUI() {
         mCameraControls.setVisibility(View.INVISIBLE);
-        hideSwitcher();
-        mShutterButton.setVisibility(View.GONE);
+        mSwitcher.closePopup();
     }
 
     public void showUI() {
         mCameraControls.setVisibility(View.VISIBLE);
-        showSwitcher();
-        mShutterButton.setVisibility(View.VISIBLE);
     }
 
     public void hideSwitcher() {
@@ -384,7 +381,6 @@ public class NewPhotoUI implements PieListener,
     public void showSwitcher() {
         mSwitcher.setVisibility(View.VISIBLE);
     }
-
     // called from onResume but only the first time
     public  void initializeFirstTime() {
         // Initialize shutter button.
@@ -482,28 +478,30 @@ public class NewPhotoUI implements PieListener,
         }
     }
 
-    public void onFullScreenChanged(boolean full) {
+    public void onSwitchMode(boolean toCamera) {
+        if (toCamera) {
+            showUI();
+        } else {
+            hideUI();
+        }
         if (mFaceView != null) {
-            mFaceView.setBlockDraw(!full);
+            mFaceView.setBlockDraw(!toCamera);
         }
         if (mPopup != null) {
-            dismissPopup(full);
+            dismissPopup(toCamera);
         }
         if (mGestures != null) {
-            mGestures.setEnabled(full);
+            mGestures.setEnabled(toCamera);
         }
         if (mRenderOverlay != null) {
             // this can not happen in capture mode
-            mRenderOverlay.setVisibility(full ? View.VISIBLE : View.GONE);
+            mRenderOverlay.setVisibility(toCamera ? View.VISIBLE : View.GONE);
         }
         if (mPieRenderer != null) {
-            mPieRenderer.setBlockFocus(!full);
+            mPieRenderer.setBlockFocus(!toCamera);
         }
-        setShowMenu(full);
-        if (mBlocker != null) {
-            mBlocker.setVisibility(full ? View.VISIBLE : View.GONE);
-        }
-        if (!full && mCountDownView != null) mCountDownView.cancelCountDown();
+        setShowMenu(toCamera);
+        if (!toCamera && mCountDownView != null) mCountDownView.cancelCountDown();
     }
 
     public void enablePreviewThumb(boolean enabled) {

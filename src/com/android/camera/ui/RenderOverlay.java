@@ -89,7 +89,10 @@ public class RenderOverlay extends FrameLayout {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent m) {
-        if (mGestures != null) mGestures.dispatchTouch(m);
+        if (mGestures != null) {
+            if (!mGestures.isEnabled()) return false;
+            mGestures.dispatchTouch(m);
+        }
         return true;
     }
 

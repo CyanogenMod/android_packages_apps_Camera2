@@ -137,6 +137,7 @@ public class FilmStripView extends ViewGroup {
         public void onDataPromoted(int dataID);
         public void onDataDemoted(int dataID);
         public void onDataFullScreenChange(int dataID, boolean full);
+        public void onSwitchMode(boolean toCamera);
     }
 
     public interface Controller {
@@ -455,7 +456,7 @@ public class FilmStripView extends ViewGroup {
             if (getCurrentType() == ImageData.TYPE_CAMERA_PREVIEW
                     && !mController.isScalling()
                     && mScale != MAX_SCALE) {
-                mController.scaleTo(MAX_SCALE, DURATION_GEOMETRY_ADJUST);
+                mController.gotoFullScreen();
             }
         }
         if (curr.getID() == mDataAdapter.getTotalNumber() - 1
@@ -1056,10 +1057,21 @@ public class FilmStripView extends ViewGroup {
         public void gotoFilmStrip() {
             unlockPosition();
             scaleTo(FILM_STRIP_SCALE, DURATION_GEOMETRY_ADJUST);
+            if (mListener != null) {
+                mListener.onSwitchMode(false);
+            }
         }
 
         @Override
         public void gotoFullScreen() {
+            if (mListener != null) {
+                // TODO: After full size images snapping to fill the screen at the
+                //       end of a scroll/fling is implemented, we should only make
+                //       this call when the view on the center of the screen is
+                //       camera preview
+                mListener.onSwitchMode(true);
+            }
+            if (mScale == 1f) return;
             scaleTo(1f, DURATION_GEOMETRY_ADJUST);
         }
 
@@ -1229,10 +1241,7 @@ public class FilmStripView extends ViewGroup {
         @Override
         public void onScaleEnd() {
             if (mScaleTrend >= 1f) {
-                if (mScale != 1f) {
-                    mController.gotoFullScreen();
-                }
-
+                mController.gotoFullScreen();
                 if (getCurrentType() == ImageData.TYPE_CAMERA_PREVIEW) {
                     if (isAnchoredTo(0)) {
                         mController.lockAtCurrentView();

@@ -181,15 +181,4 @@ public class NewCameraRootView extends FrameLayout {
             }
         }
     }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        //TODO: This scale check is temporary, should be removed once full screen notification
-        // is implemented
-        if (((View) getParent()).getScaleX() == 1.0f) {
-            return super.dispatchTouchEvent(ev);
-        } else {
-            return false;
-        }
-    }
 }

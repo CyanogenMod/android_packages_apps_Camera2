@@ -2020,6 +2020,12 @@ public class NewPhotoModule
             mHeading += 360;
         }
     }
+
+    @Override
+    public void onSwitchMode(boolean toCamera) {
+        mUI.onSwitchMode(toCamera);
+    }
+
 /* Below is no longer needed, except to get rid of compile error
  * TODO: Remove these
  */
@@ -2027,17 +2033,5 @@ public class NewPhotoModule
     // TODO: Delete this function after old camera code is removed
     @Override
     public void onRestorePreferencesClicked() {}
-
-    @Override
-    public void onFullScreenChanged(boolean full) {
-        /* //TODO:
-        mUI.onFullScreenChanged(full);
-        if (ApiHelper.HAS_SURFACE_TEXTURE) {
-            if (mActivity.mCameraScreenNail != null) {
-                ((CameraScreenNail) mActivity.mCameraScreenNail).setFullScreen(full);
-            }
-            return;
-        } */
-    }
 
 }
