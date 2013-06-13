@@ -362,7 +362,7 @@ public class NewCameraActivity extends Activity
                 break;
             /* TODO:
             case LIGHTCYCLE_MODULE_INDEX:
-                mCurrentModule = LightCycleHelper.createPanoramaModule();
+                mCurrentModule = LightCycleHelper.createNewPanoramaModule();
                 break; */
            default:
                break;

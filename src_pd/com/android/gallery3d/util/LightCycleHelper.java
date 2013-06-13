@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.android.camera.CameraModule;
+import com.android.camera.NewCameraModule;
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.app.StitchingProgressManager;
 
@@ -76,6 +77,10 @@ public class LightCycleHelper {
     }
 
     public static CameraModule createPanoramaModule() {
+        return null;
+    }
+
+    public static NewCameraModule createNewPanoramaModule() {
         return null;
     }
 
