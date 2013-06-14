@@ -20,28 +20,34 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Rect;
+import android.hardware.display.DisplayManager;
+import android.hardware.display.DisplayManager.DisplayListener;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
 import com.android.camera.Util;
-import com.android.gallery3d.R;
+import com.android.gallery3d.common.ApiHelper;
 
-public class CameraRootView extends RelativeLayout {
+public class CameraRootView extends FrameLayout {
 
     private int mTopMargin = 0;
     private int mBottomMargin = 0;
     private int mLeftMargin = 0;
     private int mRightMargin = 0;
-    private int mOffset = 0;
     private Rect mCurrentInsets;
+    private int mOffset = 0;
+    private Object mDisplayListener;
+    private MyDisplayListener mListener;
+    public interface MyDisplayListener {
+        public void onDisplayChanged();
+    }
+
     public CameraRootView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        // Layout the window as if we did not need navigation bar
-        setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        initDisplayListener();
+        setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
     }
 
     @Override
@@ -58,6 +64,46 @@ public class CameraRootView extends RelativeLayout {
             mOffset = insets.right;
         }
         return true;
+    }
+
+    public void initDisplayListener() {
+        if (ApiHelper.HAS_DISPLAY_LISTENER) {
+            mDisplayListener = new DisplayListener() {
+
+                @Override
+                public void onDisplayAdded(int arg0) {}
+
+                @Override
+                public void onDisplayChanged(int arg0) {
+                    mListener.onDisplayChanged();
+                }
+
+                @Override
+                public void onDisplayRemoved(int arg0) {}
+            };
+        }
+    }
+
+    public void setDisplayChangeListener(MyDisplayListener listener) {
+        mListener = listener;
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (ApiHelper.HAS_DISPLAY_LISTENER) {
+            ((DisplayManager) getContext().getSystemService(Context.DISPLAY_SERVICE))
+            .registerDisplayListener((DisplayListener) mDisplayListener, null);
+        }
+    }
+
+    @Override
+    public void onDetachedFromWindow () {
+        super.onDetachedFromWindow();
+        if (ApiHelper.HAS_DISPLAY_LISTENER) {
+            ((DisplayManager) getContext().getSystemService(Context.DISPLAY_SERVICE))
+            .unregisterDisplayListener((DisplayListener) mDisplayListener);
+        }
     }
 
     @Override
@@ -102,12 +148,15 @@ public class CameraRootView extends RelativeLayout {
         // make sure all the children are resized
         super.onMeasure(widthMeasureSpec - mLeftMargin - mRightMargin,
                 heightMeasureSpec - mTopMargin - mBottomMargin);
-
         setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
     public void onLayout(boolean changed, int l, int t, int r, int b) {
+        r -= l;
+        b -= t;
+        l = 0;
+        t = 0;
         int orientation = getResources().getConfiguration().orientation;
         // Lay out children
         for (int i = 0; i < getChildCount(); i++) {
