@@ -28,6 +28,7 @@ import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -79,6 +80,7 @@ public class NewCameraActivity extends Activity
     private boolean mSecureCamera;
     private int mLastRawOrientation;
     private MyOrientationEventListener mOrientationListener;
+    private Handler mMainHandler;
     private class MyOrientationEventListener
         extends OrientationEventListener {
         public MyOrientationEventListener(Context context) {
@@ -107,6 +109,34 @@ public class NewCameraActivity extends Activity
                 mMediaSaveService = null;
             }};
 
+    private FilmStripView.Listener mFilmStripListener = new FilmStripView.Listener() {
+            @Override
+            public void onDataPromoted(int dataID) {
+                removeData(dataID);
+            }
+
+            @Override
+            public void onDataDemoted(int dataID) {
+                removeData(dataID);
+            }
+
+            @Override
+            public void onDataFullScreenChange(int dataID, boolean full) {
+            }
+
+            @Override
+            public void onSwitchMode(boolean toCamera) {
+                mCurrentModule.onSwitchMode(toCamera);
+            }
+        };
+
+    private Runnable mDeletionRunnable = new Runnable() {
+            @Override
+            public void run() {
+                mDataAdapter.executeDeletion(NewCameraActivity.this);
+            }
+        };
+
     public MediaSaveService getMediaSaveService() {
         return mMediaSaveService;
     }
@@ -124,6 +154,12 @@ public class NewCameraActivity extends Activity
             android.util.Log.w(TAG, "Unknown new media with MIME type:"
                     + mimeType + ", uri:" + uri);
         }
+    }
+
+    private void removeData(int dataID) {
+        mDataAdapter.removeData(NewCameraActivity.this, dataID);
+        mMainHandler.removeCallbacks(mDeletionRunnable);
+        mMainHandler.postDelayed(mDeletionRunnable, 3000);
     }
 
     private void bindMediaSaveService() {
@@ -179,29 +215,11 @@ public class NewCameraActivity extends Activity
         mDataAdapter.setCameraPreviewInfo(rootLayout,
                 FilmStripView.ImageData.SIZE_FULL, FilmStripView.ImageData.SIZE_FULL);
         mFilmStripView.setDataAdapter(mDataAdapter);
-        mFilmStripView.setListener(new FilmStripView.Listener() {
-            @Override
-            public void onDataPromoted(int dataID) {
-                mDataAdapter.removeData(dataID);
-            }
-
-            @Override
-            public void onDataDemoted(int dataID) {
-                mDataAdapter.removeData(dataID);
-            }
-
-            @Override
-            public void onDataFullScreenChange(int dataID, boolean full) {
-            }
-
-            @Override
-            public void onSwitchMode(boolean toCamera) {
-                mCurrentModule.onSwitchMode(toCamera);
-            }
-        });
+        mFilmStripView.setListener(mFilmStripListener);
         mCurrentModule = new NewPhotoModule();
         mCurrentModule.init(this, mRootView);
         mOrientationListener = new MyOrientationEventListener(this);
+        mMainHandler = new Handler(getMainLooper());
         bindMediaSaveService();
     }
 
