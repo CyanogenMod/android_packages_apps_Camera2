@@ -95,7 +95,7 @@ public class FilmStripView extends ViewGroup {
         public int getWidth();
         public int getHeight();
         public int getType();
-        public boolean isActionSupported(int action);
+        public boolean isUIActionSupported(int action);
 
         // prepare() should be called first time before using it.
         public void prepare();
@@ -1151,11 +1151,11 @@ public class FilmStripView extends ViewGroup {
                 int id = mViewInfo[i].getID();
 
                 if (mDataAdapter.getImageData(id)
-                        .isActionSupported(ImageData.ACTION_DEMOTE)
+                        .isUIActionSupported(ImageData.ACTION_DEMOTE)
                         && transY > halfH) {
                     demoteData(i, id);
                 } else if (mDataAdapter.getImageData(id)
-                        .isActionSupported(ImageData.ACTION_PROMOTE)
+                        .isUIActionSupported(ImageData.ACTION_PROMOTE)
                         && transY < -halfH) {
                     promoteData(i, id);
                 } else {
@@ -1192,10 +1192,10 @@ public class FilmStripView extends ViewGroup {
 
                 ImageData data = mDataAdapter.getImageData(mViewInfo[hit].getID());
                 float transY = mViewInfo[hit].getTranslationY(mScale) - dy / mScale;
-                if (!data.isActionSupported(ImageData.ACTION_DEMOTE) && transY > 0f) {
+                if (!data.isUIActionSupported(ImageData.ACTION_DEMOTE) && transY > 0f) {
                     transY = 0f;
                 }
-                if (!data.isActionSupported(ImageData.ACTION_PROMOTE) && transY < 0f) {
+                if (!data.isUIActionSupported(ImageData.ACTION_PROMOTE) && transY < 0f) {
                     transY = 0f;
                 }
                 mViewInfo[hit].setTranslationY(transY, mScale);

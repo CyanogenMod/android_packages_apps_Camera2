@@ -16,6 +16,7 @@
 
 package com.android.camera.data;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -42,19 +43,26 @@ import com.android.camera.Util;
 import com.android.camera.ui.FilmStripView;
 import com.android.gallery3d.R;
 
+import java.io.File;
 import java.util.Comparator;
 import java.util.Date;
 
 /* An abstract interface that represents the local media data. Also implements
  * Comparable interface so we can sort in DataAdapter.
  */
-public abstract interface LocalData extends FilmStripView.ImageData {
-    static final String TAG = "LocalData";
+public interface LocalData extends FilmStripView.ImageData {
+    static final String TAG = "CAM_LocalData";
 
-    abstract View getView(Context c, int width, int height, Drawable placeHolder);
-    abstract long getDateTaken();
-    abstract long getDateModified();
-    abstract String getTitle();
+    public static final int ACTION_NONE = 0;
+    public static final int ACTION_PLAY = 1;
+    public static final int ACTION_DELETE = (1 << 1);
+
+    View getView(Context c, int width, int height, Drawable placeHolder);
+    long getDateTaken();
+    long getDateModified();
+    String getTitle();
+    boolean isDataActionSupported(int action);
+    boolean delete(Context c);
 
     static class NewestFirstComparator implements Comparator<LocalData> {
 
@@ -82,6 +90,8 @@ public abstract interface LocalData extends FilmStripView.ImageData {
             return cmp;
         }
     }
+
+    // Implementations below.
 
     /*
      * A base class for all the local media files. The bitmap is loaded in background
@@ -128,8 +138,19 @@ public abstract interface LocalData extends FilmStripView.ImageData {
         }
 
         @Override
-        public boolean isActionSupported(int action) {
+        public boolean isUIActionSupported(int action) {
             return false;
+        }
+
+        @Override
+        public boolean isDataActionSupported(int action) {
+            return false;
+        }
+
+        @Override
+        public boolean delete(Context c) {
+            File f = new File(path);
+            return f.delete();
         }
 
         protected View fillViewBackground(Context c, View v,
@@ -225,9 +246,11 @@ public abstract interface LocalData extends FilmStripView.ImageData {
             ImageColumns.HEIGHT,        // 8, int
         };
 
-        private static final int mSupportedActions =
+        private static final int mSupportedUIActions =
                 FilmStripView.ImageData.ACTION_DEMOTE
                 | FilmStripView.ImageData.ACTION_PROMOTE;
+        private static final int mSupportedDataActions =
+                LocalData.ACTION_DELETE;
 
         // 32K buffer.
         private static final byte[] DECODE_TEMP_STORAGE = new byte[32 * 1024];
@@ -284,8 +307,20 @@ public abstract interface LocalData extends FilmStripView.ImageData {
         }
 
         @Override
-        public boolean isActionSupported(int action) {
-            return ((action & mSupportedActions) != 0);
+        public boolean isUIActionSupported(int action) {
+            return ((action & mSupportedUIActions) == action);
+        }
+
+        @Override
+        public boolean isDataActionSupported(int action) {
+            return ((action & mSupportedDataActions) == action);
+        }
+
+        @Override
+        public boolean delete(Context c) {
+            ContentResolver cr = c.getContentResolver();
+            cr.delete(CONTENT_URI, ImageColumns._ID + "=" + id, null);
+            return super.delete(c);
         }
 
         @Override
@@ -355,9 +390,12 @@ public abstract interface LocalData extends FilmStripView.ImageData {
 
         static final Uri CONTENT_URI = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
 
-        private static final int mSupportedActions =
+        private static final int mSupportedUIActions =
                 FilmStripView.ImageData.ACTION_DEMOTE
                 | FilmStripView.ImageData.ACTION_PROMOTE;
+        private static final int mSupportedDataActions =
+                LocalData.ACTION_DELETE
+                | LocalData.ACTION_PLAY;
 
         static final String QUERY_ORDER = VideoColumns.DATE_TAKEN + " DESC, "
                 + VideoColumns._ID + " DESC";
@@ -418,8 +456,20 @@ public abstract interface LocalData extends FilmStripView.ImageData {
         }
 
         @Override
-        public boolean isActionSupported(int action) {
-            return ((action & mSupportedActions) != 0);
+        public boolean isUIActionSupported(int action) {
+            return ((action & mSupportedUIActions) == action);
+        }
+
+        @Override
+        public boolean isDataActionSupported(int action) {
+            return ((action & mSupportedDataActions) == action);
+        }
+
+        @Override
+        public boolean delete(Context c) {
+            ContentResolver cr = c.getContentResolver();
+            cr.delete(CONTENT_URI, VideoColumns._ID + "=" + id, null);
+            return super.delete(c);
         }
 
         @Override
@@ -531,7 +581,17 @@ public abstract interface LocalData extends FilmStripView.ImageData {
         }
 
         @Override
-        public boolean isActionSupported(int action) {
+        public boolean isUIActionSupported(int action) {
+            return false;
+        }
+
+        @Override
+        public boolean isDataActionSupported(int action) {
+            return false;
+        }
+
+        @Override
+        public boolean delete(Context c) {
             return false;
         }
 

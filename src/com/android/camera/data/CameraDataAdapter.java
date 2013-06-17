@@ -57,6 +57,7 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
     private int mSuggestedHeight = DEFAULT_DECODE_SIZE;
 
     private boolean mCameraPreviewLocked;
+    private LocalData mLocalDataToDelete;
 
     public CameraDataAdapter(Drawable placeHolder) {
         mPlaceHolder = placeHolder;
@@ -86,6 +87,10 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
 
     @Override
     public ImageData getImageData(int id) {
+        return getData(id);
+    }
+
+    public LocalData getData(int id) {
         if (mImages == null || id >= mImages.size() || id < 0) {
             return null;
         }
@@ -133,9 +138,12 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         return false;
     }
 
-    public void removeData(int dataID) {
+    public void removeData(Context c, int dataID) {
         if (dataID >= mImages.size()) return;
         LocalData d = mImages.remove(dataID);
+        // Delete previously removed data first.
+        executeDeletion(c);
+        mLocalDataToDelete = d;
         mListener.onDataRemoved(dataID, d);
     }
 
@@ -175,6 +183,23 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         if (c != null && c.moveToFirst()) {
             insertData(LocalData.Photo.buildFromCursor(c));
         }
+    }
+
+    public boolean undoDataRemoval() {
+        if (mLocalDataToDelete == null) return false;
+        LocalData d = mLocalDataToDelete;
+        mLocalDataToDelete = null;
+        insertData(d);
+        return true;
+    }
+
+    public boolean executeDeletion(Context c) {
+        if (mLocalDataToDelete == null) return false;
+
+        DeletionTask task = new DeletionTask(c);
+        task.execute(mLocalDataToDelete);
+        mLocalDataToDelete = null;
+        return true;
     }
 
     // Update all the data but keep the camera data if already set.
@@ -343,6 +368,26 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         }
     }
 
+    private class DeletionTask extends AsyncTask<LocalData, Void, Void> {
+        Context mContext;
+
+        DeletionTask(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        protected Void doInBackground(LocalData... data) {
+            for (int i = 0; i < data.length; i++) {
+                if (!data[i].isDataActionSupported(LocalData.ACTION_DELETE)) {
+                    Log.v(TAG, "Deletion is not supported:" + data[i]);
+                    continue;
+                }
+                data[i].delete(mContext);
+            }
+            return null;
+        }
+    }
+
     private class CameraPreviewData implements LocalData {
         private int width;
         private int height;
@@ -385,7 +430,17 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
         }
 
         @Override
-        public boolean isActionSupported(int action) {
+        public boolean isUIActionSupported(int action) {
+            return false;
+        }
+
+        @Override
+        public boolean isDataActionSupported(int action) {
+            return false;
+        }
+
+        @Override
+        public boolean delete(Context c) {
             return false;
         }
 
