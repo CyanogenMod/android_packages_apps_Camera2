@@ -35,6 +35,7 @@ import com.android.gallery3d.filtershow.cache.CachingPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.util.UsageStatistics;
 import com.android.gallery3d.util.XmpUtilHelper;
 
 import java.io.File;
@@ -215,6 +216,8 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
                 XmpPresets.writeFilterXMP(context, sourceUri, this.destinationFile, preset);
 
                 noBitmap = false;
+                UsageStatistics.onEvent(UsageStatistics.COMPONENT_EDITOR,
+                        "SaveComplete", null);
             } catch (java.lang.OutOfMemoryError e) {
                 // Try 5 times before failing for good.
                 if (++num_tries >= 5) {

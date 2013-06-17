@@ -40,6 +40,11 @@ public class UsageStatistics {
     public static final String ACTION_CAPTURE_DONE = "CaptureDone";
     public static final String ACTION_SHARE = "Share";
 
+    public static final String CATEGORY_LIFECYCLE = "AppLifecycle";
+    public static final String CATEGORY_BUTTON_PRESS = "ButtonPress";
+
+    public static final String LIFECYCLE_START = "Start";
+
     public static void initialize(Context context) {}
     public static void setPendingTransitionCause(String cause) {}
     public static void onContentViewChanged(String screenComponent, String screenName) {}

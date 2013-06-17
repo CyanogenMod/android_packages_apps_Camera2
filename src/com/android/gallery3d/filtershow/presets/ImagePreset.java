@@ -489,6 +489,10 @@ public class ImagePreset {
             if (to == -1) {
                 to = mFilters.size();
             }
+            if (environment.getQuality() == FilterEnvironment.QUALITY_FINAL) {
+                UsageStatistics.onEvent(UsageStatistics.COMPONENT_EDITOR,
+                        "SaveFilters", "Total", to - from + 1);
+            }
             for (int i = from; i < to; i++) {
                 FilterRepresentation representation = null;
                 synchronized (mFilters) {
