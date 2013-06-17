@@ -50,25 +50,71 @@ public class FiltersManager extends BaseFiltersManager {
 
     @Override
     public void addBorders(Context context, Vector<FilterRepresentation> representations) {
+
+        // Do not localize
+        String[] serializationNames = {
+                "FRAME_4X5",
+                "FRAME_BRUSH",
+                "FRAME_GRUNGE",
+                "FRAME_SUMI_E",
+                "FRAME_TAPE",
+                "FRAME_BLACK",
+                "FRAME_BLACK_ROUNDED",
+                "FRAME_WHITE",
+                "FRAME_WHITE_ROUNDED",
+                "FRAME_CREAM",
+                "FRAME_CREAM_ROUNDED"
+        };
+
+        int i = 0;
         // Regular borders
-        representations.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5));
-        representations.add(
-                new FilterImageBorderRepresentation(R.drawable.filtershow_border_brush));
-        representations.add(
-                new FilterImageBorderRepresentation(R.drawable.filtershow_border_grunge));
-        representations.add(
-                new FilterImageBorderRepresentation(R.drawable.filtershow_border_sumi_e));
-        representations.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_tape));
-        representations.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, 0));
-        representations.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize,
-                mImageBorderSize));
-        representations.add(new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize, 0));
-        representations.add(new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize,
-                mImageBorderSize));
+        FilterRepresentation rep = new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5);
+        rep.setSerializationName(serializationNames[i++]);
+        representations.add(rep);
+
+        rep = new FilterImageBorderRepresentation(R.drawable.filtershow_border_brush);
+        rep.setSerializationName(serializationNames[i++]);
+        representations.add(rep);
+
+        rep = new FilterImageBorderRepresentation(R.drawable.filtershow_border_grunge);
+        rep.setSerializationName(serializationNames[i++]);
+        representations.add(rep);
+
+        rep = new FilterImageBorderRepresentation(R.drawable.filtershow_border_sumi_e);
+        rep.setSerializationName(serializationNames[i++]);
+        representations.add(rep);
+
+        rep = new FilterImageBorderRepresentation(R.drawable.filtershow_border_tape);
+        rep.setSerializationName(serializationNames[i++]);
+        representations.add(rep);
+
+        rep = new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, 0);
+        rep.setSerializationName(serializationNames[i++]);
+        representations.add(rep);
+
+        rep = new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize,
+                mImageBorderSize);
+        rep.setSerializationName(serializationNames[i++]);
+        representations.add(rep);
+
+        rep = new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize, 0);
+        rep.setSerializationName(serializationNames[i++]);
+        representations.add(rep);
+
+        rep = new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize,
+                mImageBorderSize);
+        rep.setSerializationName(serializationNames[i++]);
+        representations.add(rep);
+
         int creamColor = Color.argb(255, 237, 237, 227);
-        representations.add(new FilterColorBorderRepresentation(creamColor, mImageBorderSize, 0));
-        representations.add(new FilterColorBorderRepresentation(creamColor, mImageBorderSize,
-                mImageBorderSize));
+        rep = new FilterColorBorderRepresentation(creamColor, mImageBorderSize, 0);
+        rep.setSerializationName(serializationNames[i++]);
+        representations.add(rep);
+
+        rep = new FilterColorBorderRepresentation(creamColor, mImageBorderSize,
+                mImageBorderSize);
+        rep.setSerializationName(serializationNames[i++]);
+        representations.add(rep);
     }
 
     public static FiltersManager getHighresManager() {

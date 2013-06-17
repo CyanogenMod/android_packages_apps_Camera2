@@ -471,7 +471,7 @@ public class ImagePreset {
             bitmap = environment.applyRepresentation(mBorder, bitmap);
             if (environment.getQuality() == FilterEnvironment.QUALITY_FINAL) {
                 UsageStatistics.onEvent(UsageStatistics.COMPONENT_EDITOR,
-                        "SaveBorder", mBorder.getName(), 1);
+                        "SaveBorder", mBorder.getSerializationName(), 1);
             }
         }
         return bitmap;

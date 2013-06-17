@@ -140,7 +140,9 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public synchronized void setPreset(ImagePreset preset, boolean addToHistory) {
-        preset.showFilters();
+        if (DEBUG) {
+            preset.showFilters();
+        }
         mPreset = preset;
         mPreset.setImageLoader(mLoader);
         setGeometry();
