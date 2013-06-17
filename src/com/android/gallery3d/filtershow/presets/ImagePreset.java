@@ -498,7 +498,7 @@ public class ImagePreset {
                 bitmap = environment.applyRepresentation(representation, bitmap);
                 if (environment.getQuality() == FilterEnvironment.QUALITY_FINAL) {
                     UsageStatistics.onEvent(UsageStatistics.COMPONENT_EDITOR,
-                            "SaveFilter", representation.getName(), 1);
+                            "SaveFilter", representation.getSerializationName(), 1);
                 }
                 if (environment.needsStop()) {
                     return bitmap;

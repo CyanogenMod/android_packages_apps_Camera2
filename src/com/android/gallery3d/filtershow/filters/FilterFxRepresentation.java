@@ -19,7 +19,6 @@ package com.android.gallery3d.filtershow.filters;
 import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 
 public class FilterFxRepresentation extends FilterRepresentation {
-   private static final String SERIALIZATION_NAME = "LUT3D";
    private static final String LOGTAG = "FilterFxRepresentation";
     // TODO: When implementing serialization, we should find a unique way of
     // specifying bitmaps / names (the resource IDs being random)
@@ -28,7 +27,6 @@ public class FilterFxRepresentation extends FilterRepresentation {
 
     public FilterFxRepresentation(String name, int bitmapResource, int nameResource) {
         super(name);
-        setSerializationName(SERIALIZATION_NAME + "_" + name);
         setFilterClass(ImageFilterFx.class);
         mBitmapResource = bitmapResource;
         mNameResource = nameResource;

@@ -162,9 +162,23 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
                 R.string.ffx_x_process
         };
 
+        // Do not localize.
+        String[] serializationNames = {
+                "LUT3D_PUNCH",
+                "LUT3D_VINTAGE",
+                "LUT3D_BW",
+                "LUT3D_BLEACH",
+                "LUT3D_INSTANT",
+                "LUT3D_WASHOUT",
+                "LUT3D_BLUECRUSH",
+                "LUT3D_WASHOUT",
+                "LUT3D_XPROCESS"
+        };
+
         for (int i = 0; i < drawid.length; i++) {
             FilterFxRepresentation fx = new FilterFxRepresentation(
                     context.getString(fxNameid[i]), drawid[i], fxNameid[i]);
+            fx.setSerializationName(serializationNames[i]);
             representations.add(fx);
             addRepresentation(fx);
         }
