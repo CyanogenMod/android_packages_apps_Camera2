@@ -64,7 +64,6 @@ import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
 import com.android.gallery3d.exif.Rational;
-import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.crop.CropActivity;
 import com.android.gallery3d.filtershow.crop.CropExtras;
 import com.android.gallery3d.util.UsageStatistics;
@@ -126,8 +125,6 @@ public class PhotoModule
     private boolean mPaused;
 
     private PhotoUI mUI;
-
-    // these are only used by Camera
 
     // The activity is going to switch to the specified camera id. This is
     // needed because texture copy is done in GL thread. -1 means camera is not
@@ -252,23 +249,21 @@ public class PhotoModule
     private PreferenceGroup mPreferenceGroup;
 
     private boolean mQuickCapture;
-
-    CameraStartUpThread mCameraStartUpThread;
-    ConditionVariable mStartPreviewPrerequisiteReady = new ConditionVariable();
-
     private SensorManager mSensorManager;
     private float[] mGData = new float[3];
     private float[] mMData = new float[3];
     private float[] mR = new float[16];
     private int mHeading = -1;
 
+    CameraStartUpThread mCameraStartUpThread;
+    ConditionVariable mStartPreviewPrerequisiteReady = new ConditionVariable();
+
     private MediaSaveService.OnMediaSavedListener mOnMediaSavedListener =
             new MediaSaveService.OnMediaSavedListener() {
                 @Override
                 public void onMediaSaved(Uri uri) {
                     if (uri != null) {
-                        mActivity.addSecureAlbumItemIfNeeded(false, uri);
-                        Util.broadcastNewPicture(mActivity, uri);
+                        mActivity.notifyNewMedia(uri);
                     }
                 }
             };
@@ -371,7 +366,8 @@ public class PhotoModule
                 }
 
                 case SWITCH_CAMERA_START_ANIMATION: {
-                    ((CameraScreenNail) mActivity.mCameraScreenNail).animateSwitchCamera();
+                   // TODO: Need to revisit
+                   // ((CameraScreenNail) mActivity.mCameraScreenNail).animateSwitchCamera();
                     break;
                 }
 
@@ -409,7 +405,7 @@ public class PhotoModule
     }
 
     @Override
-    public void init(CameraActivity activity, View parent, boolean reuseNail) {
+    public void init(CameraActivity activity, View parent) {
         mActivity = activity;
         mUI = new PhotoUI(activity, this, parent);
         mPreferences = new ComboPreferences(mActivity);
@@ -423,15 +419,9 @@ public class PhotoModule
         mCameraStartUpThread = new CameraStartUpThread();
         mCameraStartUpThread.start();
 
-
         // Surface texture is from camera screen nail and startPreview needs it.
         // This must be done before startPreview.
         mIsImageCaptureIntent = isImageCaptureIntent();
-        if (reuseNail) {
-            mActivity.reuseCameraScreenNail(!mIsImageCaptureIntent);
-        } else {
-            mActivity.createCameraScreenNail(!mIsImageCaptureIntent);
-        }
 
         mPreferences.setLocalId(mActivity, mCameraId);
         CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
@@ -445,7 +435,6 @@ public class PhotoModule
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
         mLocationManager = new LocationManager(mActivity, mUI);
         mSensorManager = (SensorManager)(mActivity.getSystemService(Context.SENSOR_SERVICE));
-
     }
 
     private void initializeControlByIntent() {
@@ -458,10 +447,6 @@ public class PhotoModule
     private void onPreviewStarted() {
         mCameraStartUpThread = null;
         setCameraState(IDLE);
-        if (!ApiHelper.HAS_SURFACE_TEXTURE) {
-            // This may happen if surfaceCreated has arrived.
-            mCameraDevice.setPreviewDisplayAsync(mUI.getSurfaceHolder());
-        }
         startFaceDetection();
         locationFirstRun();
     }
@@ -520,16 +505,7 @@ public class PhotoModule
         int width = root.getWidth();
         int height = root.getHeight();
         mFocusManager.setPreviewSize(width, height);
-        // Full-screen screennail
-        if (Util.getDisplayRotation(mActivity) % 180 == 0) {
-            ((CameraScreenNail) mActivity.mCameraScreenNail).setPreviewFrameLayoutSize(width, height);
-        } else {
-            ((CameraScreenNail) mActivity.mCameraScreenNail).setPreviewFrameLayoutSize(height, width);
-        }
-        // Set touch focus listener.
-        mActivity.setSingleTapUpListener(root);
         openCameraCommon();
-        onFullScreenChanged(mActivity.isInCameraApp());
     }
 
     private void switchCamera() {
@@ -566,6 +542,8 @@ public class PhotoModule
         mFocusManager.setParameters(mInitialParams);
         setupPreview();
 
+        // reset zoom value index
+        mZoomValue = 0;
         openCameraCommon();
 
         if (ApiHelper.HAS_SURFACE_TEXTURE) {
@@ -592,11 +570,7 @@ public class PhotoModule
     }
 
     public void onScreenSizeChanged(int width, int height, int previewWidth, int previewHeight) {
-        Log.d(TAG, "Preview size changed.");
         if (mFocusManager != null) mFocusManager.setPreviewSize(width, height);
-        ((CameraScreenNail) mActivity.mCameraScreenNail).setPreviewFrameLayoutSize(
-                previewWidth, previewHeight);
-        mActivity.notifyScreenNailChanged();
     }
 
     private void resetExposureCompensation() {
@@ -726,12 +700,6 @@ public class PhotoModule
         }
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent m) {
-        if (mCameraState == SWITCHING_CAMERA) return true;
-        return mUI.dispatchTouchEvent(m);
-    }
-
     private final class ShutterCallback
             implements android.hardware.Camera.ShutterCallback {
 
@@ -786,9 +754,13 @@ public class PhotoModule
             if (mPaused) {
                 return;
             }
+            //TODO: We should show the picture taken rather than frozen preview here
+            if (mIsImageCaptureIntent) {
+                stopPreview();
+            }
             if (mSceneMode == Util.SCENE_MODE_HDR) {
-                mActivity.showSwitcher();
-                mActivity.setSwipingEnabled(true);
+                mUI.showSwitcher();
+                mUI.setSwipingEnabled(true);
             }
 
             mJpegPictureCallbackTime = System.currentTimeMillis();
@@ -809,6 +781,7 @@ public class PhotoModule
             Log.v(TAG, "mPictureDisplayedToJpegCallbackTime = "
                     + mPictureDisplayedToJpegCallbackTime + "ms");
 
+             /*TODO:
             // Only animate when in full screen capture mode
             // i.e. If monkey/a user swipes to the gallery during picture taking,
             // don't show animation
@@ -819,7 +792,7 @@ public class PhotoModule
                 ((CameraScreenNail) mActivity.mCameraScreenNail).animateSlide();
                 mHandler.sendEmptyMessageDelayed(CAPTURE_ANIMATION_DONE,
                         CaptureAnimManager.getAnimationDuration());
-            }
+            } */
             mFocusManager.updateFocusUI(); // Ensure focus indicator is hidden.
             if (!mIsImageCaptureIntent) {
                 if (ApiHelper.CAN_START_PREVIEW_IN_JPEG_CALLBACK) {
@@ -957,19 +930,17 @@ public class PhotoModule
         switch (state) {
         case PhotoController.PREVIEW_STOPPED:
         case PhotoController.SNAPSHOT_IN_PROGRESS:
-        case PhotoController.FOCUSING:
         case PhotoController.SWITCHING_CAMERA:
             mUI.enableGestures(false);
             break;
         case PhotoController.IDLE:
-            if (mActivity.isInCameraApp()) {
-                mUI.enableGestures(true);
-            }
+            mUI.enableGestures(true);
             break;
         }
     }
 
     private void animateFlash() {
+        /* //TODO:
         // Only animate when in full screen capture mode
         // i.e. If monkey/a user swipes to the gallery during picture taking,
         // don't show animation
@@ -980,7 +951,7 @@ public class PhotoModule
             mUI.enablePreviewThumb(true);
             mHandler.sendEmptyMessageDelayed(CAPTURE_ANIMATION_DONE,
                     CaptureAnimManager.getAnimationDuration());
-        }
+        } */
     }
 
     @Override
@@ -1044,17 +1015,6 @@ public class PhotoModule
             return intentCameraId;
         } else {
             return CameraSettings.readPreferredCameraId(preferences);
-        }
-    }
-
-    @Override
-    public void onFullScreenChanged(boolean full) {
-        mUI.onFullScreenChanged(full);
-        if (ApiHelper.HAS_SURFACE_TEXTURE) {
-            if (mActivity.mCameraScreenNail != null) {
-                ((CameraScreenNail) mActivity.mCameraScreenNail).setFullScreen(full);
-            }
-            return;
         }
     }
 
@@ -1236,8 +1196,8 @@ public class PhotoModule
         Log.v(TAG, "onShutterButtonClick: mCameraState=" + mCameraState);
 
         if (mSceneMode == Util.SCENE_MODE_HDR) {
-            mActivity.hideSwitcher();
-            mActivity.setSwipingEnabled(false);
+            mUI.hideSwitcher();
+            mUI.setSwipingEnabled(false);
         }
         // If the user wants to do a snapshot while the previous one is still
         // in progress, remember the fact and do it after we finish the previous
@@ -1295,7 +1255,6 @@ public class PhotoModule
 
         mJpegPictureCallbackTime = 0;
         mZoomValue = 0;
-
         // Start the preview if it is not started.
         if (mCameraState == PREVIEW_STOPPED && mCameraStartUpThread == null) {
             resetExposureCompensation();
@@ -1375,8 +1334,6 @@ public class PhotoModule
             mCameraDevice.cancelAutoFocus();
         }
         stopPreview();
-        // Release surface texture.
-        ((CameraScreenNail) mActivity.mCameraScreenNail).releaseSurfaceTexture();
 
         mNamedImages = null;
 
@@ -1435,6 +1392,13 @@ public class PhotoModule
     public void onConfigurationChanged(Configuration newConfig) {
         Log.v(TAG, "onConfigurationChanged");
         setDisplayOrientation();
+    }
+
+    @Override
+    public void updateCameraOrientation() {
+        if (mDisplayRotation != Util.getDisplayRotation(mActivity)) {
+            setDisplayOrientation();
+        }
     }
 
     @Override
@@ -1507,7 +1471,7 @@ public class PhotoModule
         case KeyEvent.KEYCODE_VOLUME_UP:
         case KeyEvent.KEYCODE_VOLUME_DOWN:
         case KeyEvent.KEYCODE_FOCUS:
-            if (mActivity.isInCameraApp() && mFirstTimeInitialized) {
+            if (/*TODO: mActivity.isInCameraApp() &&*/ mFirstTimeInitialized) {
                 if (event.getRepeatCount() == 0) {
                     onShutterButtonFocus(true);
                 }
@@ -1540,7 +1504,7 @@ public class PhotoModule
         switch (keyCode) {
         case KeyEvent.KEYCODE_VOLUME_UP:
         case KeyEvent.KEYCODE_VOLUME_DOWN:
-            if (mActivity.isInCameraApp() && mFirstTimeInitialized) {
+            if (/*mActivity.isInCameraApp() && */ mFirstTimeInitialized) {
                 onShutterButtonClick();
                 return true;
             }
@@ -1573,13 +1537,15 @@ public class PhotoModule
     private void setDisplayOrientation() {
         mDisplayRotation = Util.getDisplayRotation(mActivity);
         mDisplayOrientation = Util.getDisplayOrientation(mDisplayRotation, mCameraId);
-        mCameraDisplayOrientation = Util.getDisplayOrientation(0, mCameraId);
+        mCameraDisplayOrientation = mDisplayOrientation;
         mUI.setDisplayOrientation(mDisplayOrientation);
         if (mFocusManager != null) {
             mFocusManager.setDisplayOrientation(mDisplayOrientation);
         }
-        // GLRoot also uses the DisplayRotation, and needs to be told to layout to update
-        mActivity.getGLRoot().requestLayoutContentPane();
+        // Change the camera display orientation
+        if (mCameraDevice != null) {
+            mCameraDevice.setDisplayOrientation(mCameraDisplayOrientation);
+        }
     }
 
     // Only called by UI thread.
@@ -1611,60 +1577,20 @@ public class PhotoModule
             mFocusManager.setAeAwbLock(false); // Unlock AE and AWB.
         }
         setCameraParameters(UPDATE_PARAM_ALL);
-
-        if (ApiHelper.HAS_SURFACE_TEXTURE) {
-            CameraScreenNail screenNail = (CameraScreenNail) mActivity.mCameraScreenNail;
-            if (mUI.getSurfaceTexture() == null) {
-                Size size = mParameters.getPreviewSize();
-                if (mCameraDisplayOrientation % 180 == 0) {
-                    screenNail.setSize(size.width, size.height);
-                } else {
-                    screenNail.setSize(size.height, size.width);
-                }
-                screenNail.enableAspectRatioClamping();
-                mActivity.notifyScreenNailChanged();
-                screenNail.acquireSurfaceTexture();
-                CameraStartUpThread t = mCameraStartUpThread;
-                if (t != null && t.isCanceled()) {
-                    return; // Exiting, so no need to get the surface texture.
-                }
-                mUI.setSurfaceTexture(screenNail.getSurfaceTexture());
-            } else {
-                updatePreviewSize(screenNail);
-            }
-            mCameraDevice.setDisplayOrientation(mCameraDisplayOrientation);
-            Object st = mUI.getSurfaceTexture();
-            if (st != null) {
-                mCameraDevice.setPreviewTextureAsync((SurfaceTexture) st);
-            }
-        } else {
-            mCameraDevice.setDisplayOrientation(mDisplayOrientation);
-            mCameraDevice.setPreviewDisplayAsync(mUI.getSurfaceHolder());
+        // Let UI set its expected aspect ratio
+        mUI.setPreviewSize(mParameters.getPreviewSize());
+        Object st = mUI.getSurfaceTexture();
+        if (st != null) {
+           mCameraDevice.setPreviewTextureAsync((SurfaceTexture) st);
         }
 
         Log.v(TAG, "startPreview");
         mCameraDevice.startPreviewAsync();
-
         mFocusManager.onPreviewStarted();
 
         if (mSnapshotOnIdle) {
             mHandler.post(mDoSnapRunnable);
         }
-    }
-
-    private void updatePreviewSize(CameraScreenNail snail) {
-        Size size = mParameters.getPreviewSize();
-        int w = size.width;
-        int h = size.height;
-        if (mCameraDisplayOrientation % 180 != 0) {
-            w = size.height;
-            h = size.width;
-        }
-        if (snail.getWidth() != w || snail.getHeight() != h) {
-            snail.setSize(w, h);
-        }
-        snail.enableAspectRatioClamping();
-        mActivity.notifyScreenNailChanged();
     }
 
     @Override
@@ -1682,10 +1608,11 @@ public class PhotoModule
     private void updateCameraParametersInitialize() {
         // Reset preview frame rate to the maximum because it may be lowered by
         // video camera application.
-        List<Integer> frameRates = mParameters.getSupportedPreviewFrameRates();
-        if (frameRates != null) {
-            Integer max = Collections.max(frameRates);
-            mParameters.setPreviewFrameRate(max);
+        int[] fpsRange = Util.getMaxPreviewFpsRange(mParameters);
+        if (fpsRange.length > 0) {
+            mParameters.setPreviewFpsRange(
+                    fpsRange[Parameters.PREVIEW_FPS_MIN_INDEX],
+                    fpsRange[Parameters.PREVIEW_FPS_MAX_INDEX]);
         }
 
         mParameters.set(Util.RECORDING_HINT, Util.FALSE);
@@ -1760,6 +1687,7 @@ public class PhotoModule
         Size original = mParameters.getPreviewSize();
         if (!original.equals(optimalSize)) {
             mParameters.setPreviewSize(optimalSize.width, optimalSize.height);
+
             // Zoom related settings will be changed for different preview
             // sizes, so set and read the parameters to get latest values
             if (mHandler.getLooper() == Looper.myLooper()) {
@@ -1950,16 +1878,12 @@ public class PhotoModule
         if (mPaused || mPendingSwitchCameraId != -1) return;
 
         mPendingSwitchCameraId = cameraId;
-        if (ApiHelper.HAS_SURFACE_TEXTURE) {
-            Log.v(TAG, "Start to copy texture. cameraId=" + cameraId);
-            // We need to keep a preview frame for the animation before
-            // releasing the camera. This will trigger onPreviewTextureCopied.
-            ((CameraScreenNail) mActivity.mCameraScreenNail).copyTexture();
-            // Disable all camera controls.
-            setCameraState(SWITCHING_CAMERA);
-        } else {
-            switchCamera();
-        }
+
+        Log.v(TAG, "Start to switch camera. cameraId=" + cameraId);
+        // We need to keep a preview frame for the animation before
+        // releasing the camera. This will trigger onPreviewTextureCopied.
+        //TODO: Need to animate the camera switch
+        switchCamera();
     }
 
     // Preview texture has been copied. Now camera can be released and the
@@ -1975,7 +1899,7 @@ public class PhotoModule
 
     @Override
     public void onUserInteraction() {
-        if (!mActivity.isFinishing()) keepScreenOnAwhile();
+      if (!mActivity.isFinishing()) keepScreenOnAwhile();
     }
 
     private void resetScreenOn() {
@@ -1987,11 +1911,6 @@ public class PhotoModule
         mHandler.removeMessages(CLEAR_SCREEN_DELAY);
         mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mHandler.sendEmptyMessageDelayed(CLEAR_SCREEN_DELAY, SCREEN_DELAY);
-    }
-
-    // TODO: Delete this function after old camera code is removed
-    @Override
-    public void onRestorePreferencesClicked() {
     }
 
     @Override
@@ -2024,16 +1943,6 @@ public class PhotoModule
         mSnapshotOnIdle = false;
         mFocusManager.doSnap();
         mFocusManager.onShutterUp();
-    }
-
-    @Override
-    public boolean needsSwitcher() {
-        return !mIsImageCaptureIntent;
-    }
-
-    @Override
-    public boolean needsPieMenu() {
-        return true;
     }
 
     @Override
@@ -2101,5 +2010,18 @@ public class PhotoModule
             mHeading += 360;
         }
     }
-    public void updateCameraOrientation() {}
+
+    @Override
+    public void onSwitchMode(boolean toCamera) {
+        mUI.onSwitchMode(toCamera);
+    }
+
+/* Below is no longer needed, except to get rid of compile error
+ * TODO: Remove these
+ */
+
+    // TODO: Delete this function after old camera code is removed
+    @Override
+    public void onRestorePreferencesClicked() {}
+
 }

@@ -23,7 +23,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.android.camera.NewPreviewGestures;
+import com.android.camera.PreviewGestures;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class RenderOverlay extends FrameLayout {
 
     private RenderView mRenderView;
     private List<Renderer> mClients;
-    private NewPreviewGestures mGestures;
+    private PreviewGestures mGestures;
     // reverse list of touch clients
     private List<Renderer> mTouchClients;
     private int[] mPosition = new int[2];
@@ -59,7 +59,7 @@ public class RenderOverlay extends FrameLayout {
         setWillNotDraw(false);
     }
 
-    public void setGestures(NewPreviewGestures gestures) {
+    public void setGestures(PreviewGestures gestures) {
         mGestures = gestures;
     }
 

@@ -64,14 +64,10 @@ public class StateManager {
                     StateTransitionAnimation.Transition.Incoming);
             if (mIsResumed) top.onPause();
         }
-        // Ignore the filmstrip used for the root of the camera app
-        boolean ignoreHit = (mActivity instanceof CameraActivity)
-                && mStack.isEmpty();
-        if (!ignoreHit) {
-            UsageStatistics.onContentViewChanged(
-                    UsageStatistics.COMPONENT_GALLERY,
-                    klass.getSimpleName());
-        }
+
+        UsageStatistics.onContentViewChanged(
+                UsageStatistics.COMPONENT_GALLERY,
+                klass.getSimpleName());
         state.initialize(mActivity, data);
 
         mStack.push(new StateEntry(data, state));

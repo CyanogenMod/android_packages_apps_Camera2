@@ -168,7 +168,6 @@ public class PhotoMenu extends PieController
     }
 
     public void popupDismissed() {
-        // the popup gets dismissed
         if (mPopup != null) {
             mPopup = null;
         }
@@ -198,5 +197,4 @@ public class PhotoMenu extends PieController
         }
         super.onSettingChanged(pref);
     }
-
 }

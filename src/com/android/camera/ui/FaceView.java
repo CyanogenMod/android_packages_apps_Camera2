@@ -31,9 +31,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
-import com.android.camera.CameraActivity;
-import com.android.camera.CameraScreenNail;
-import com.android.camera.NewPhotoUI;
+import com.android.camera.PhotoUI;
 import com.android.camera.Util;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.ApiHelper;
@@ -41,7 +39,7 @@ import com.android.gallery3d.common.ApiHelper;
 @TargetApi(ApiHelper.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class FaceView extends View
     implements FocusIndicator, Rotatable,
-    NewPhotoUI.SurfaceTextureSizeChangedListener {
+    PhotoUI.SurfaceTextureSizeChangedListener {
     private static final String TAG = "CAM FaceView";
     private final boolean LOGV = false;
     // The value for android.hardware.Camera.setDisplayOrientation.
@@ -190,16 +188,8 @@ public class FaceView extends View
     protected void onDraw(Canvas canvas) {
         if (!mBlocked && (mFaces != null) && (mFaces.length > 0)) {
             int rw, rh;
-            if (mUncroppedWidth == 0) {
-                // TODO: This check is temporary. It needs to be removed after the
-                // refactoring is fully functioning.
-                final CameraScreenNail sn = ((CameraActivity) getContext()).getCameraScreenNail();
-                rw = sn.getUncroppedRenderWidth();
-                rh = sn.getUncroppedRenderHeight();
-            } else {
-                rw = mUncroppedWidth;
-                rh = mUncroppedHeight;
-            }
+            rw = mUncroppedWidth;
+            rh = mUncroppedHeight;
             // Prepare the matrix.
             if (((rh > rw) && ((mDisplayOrientation == 0) || (mDisplayOrientation == 180)))
                     || ((rw > rh) && ((mDisplayOrientation == 90) || (mDisplayOrientation == 270)))) {

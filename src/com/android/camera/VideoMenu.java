@@ -16,6 +16,7 @@
 
 package com.android.camera;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 
@@ -50,6 +51,7 @@ public class VideoMenu extends PieController
         mUI = ui;
         mActivity = activity;
     }
+
 
     public void initialize(PreferenceGroup group) {
         super.initialize(group);
@@ -200,5 +202,4 @@ public class VideoMenu extends PieController
         mUI.showPopup(mPopup);
         mPopupStatus = POPUP_SECOND_LEVEL;
     }
-
 }

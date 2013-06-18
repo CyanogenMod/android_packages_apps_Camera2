@@ -24,9 +24,9 @@ import android.view.View;
 
 public interface CameraModule {
 
-    public void init(CameraActivity activity, View frame, boolean reuseScreenNail);
+    public void init(CameraActivity activity, View frame);
 
-    public void onFullScreenChanged(boolean full);
+    public void onSwitchMode(boolean toCamera);
 
     public void onPauseBeforeSuper();
 
@@ -52,8 +52,6 @@ public interface CameraModule {
 
     public void onSingleTapUp(View view, int x, int y);
 
-    public boolean dispatchTouchEvent(MotionEvent m);
-
     public void onPreviewTextureCopied();
 
     public void onCaptureTextureCopied();
@@ -63,10 +61,6 @@ public interface CameraModule {
     public boolean updateStorageHintOnResume();
 
     public void updateCameraAppView();
-
-    public boolean needsSwitcher();
-
-    public boolean needsPieMenu();
 
     public void onOrientationChanged(int orientation);
 

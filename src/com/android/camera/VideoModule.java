@@ -51,13 +51,16 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
+import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.android.camera.CameraManager.CameraProxy;
 import com.android.camera.ui.PopupManager;
 import com.android.camera.ui.RotateTextToast;
 import com.android.gallery3d.R;
+import com.android.gallery3d.app.OrientationManager;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.util.AccessibilityUtils;
@@ -113,7 +116,7 @@ public class VideoModule implements CameraModule,
     private Parameters mParameters;
 
     private Boolean mCameraOpened = false;
-
+    private boolean mIsInReviewMode;
     private boolean mSnapshotInProgress = false;
 
     private static final String EFFECT_BG_FROM_GALLERY = "gallery";
@@ -123,11 +126,8 @@ public class VideoModule implements CameraModule,
     private ComboPreferences mPreferences;
     private PreferenceGroup mPreferenceGroup;
 
-    private CameraScreenNail.OnFrameDrawnListener mFrameDrawnListener;
-
     private boolean mIsVideoCaptureIntent;
     private boolean mQuickCapture;
-    private boolean mIsInReviewMode = false;
 
     private MediaRecorder mMediaRecorder;
     private EffectsRecorder mEffectsRecorder;
@@ -176,11 +176,16 @@ public class VideoModule implements CameraModule,
     private ContentResolver mContentResolver;
 
     private LocationManager mLocationManager;
+    private OrientationManager mOrientationManager;
 
+    private Surface mSurface;
     private int mPendingSwitchCameraId;
-
+    private boolean mOpenCameraFail;
+    private boolean mCameraDisabled;
     private final Handler mHandler = new MainHandler();
     private VideoUI mUI;
+    private CameraProxy mCameraDevice;
+
     // The degrees of the device rotated clockwise from its natural orientation.
     private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
 
@@ -194,7 +199,6 @@ public class VideoModule implements CameraModule,
                 @Override
                 public void onMediaSaved(Uri uri) {
                     if (uri != null) {
-                        mActivity.addSecureAlbumItemIfNeeded(true, uri);
                         mActivity.sendBroadcast(
                                 new Intent(Util.ACTION_NEW_VIDEO, uri));
                         Util.broadcastNewPicture(mActivity, uri);
@@ -224,15 +228,15 @@ public class VideoModule implements CameraModule,
         try {
             synchronized(mCameraOpened) {
                 if (!mCameraOpened) {
-                    mActivity.mCameraDevice = Util.openCamera(mActivity, mCameraId);
+                    mCameraDevice = Util.openCamera(mActivity, mCameraId);
                     mCameraOpened = true;
                 }
             }
-            mParameters = mActivity.mCameraDevice.getParameters();
+            mParameters = mCameraDevice.getParameters();
         } catch (CameraHardwareException e) {
-            mActivity.mOpenCameraFail = true;
+            mOpenCameraFail = true;
         } catch (CameraDisabledException e) {
-            mActivity.mCameraDisabled = true;
+            mCameraDisabled = true;
         }
     }
 
@@ -285,15 +289,11 @@ public class VideoModule implements CameraModule,
                 }
 
                 case SWITCH_CAMERA_START_ANIMATION: {
-                    ((CameraScreenNail) mActivity.mCameraScreenNail).animateSwitchCamera();
+                    //TODO:
+                    //((CameraScreenNail) mActivity.mCameraScreenNail).animateSwitchCamera();
 
                     // Enable all camera controls.
                     mSwitchingCamera = false;
-                    break;
-                }
-
-                case HIDE_SURFACE_VIEW: {
-                    mUI.hideSurfaceView();
                     break;
                 }
 
@@ -345,18 +345,12 @@ public class VideoModule implements CameraModule,
 
     private void initializeSurfaceView() {
         if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {  // API level < 16
-                mFrameDrawnListener = new CameraScreenNail.OnFrameDrawnListener() {
-                    @Override
-                    public void onFrameDrawn(CameraScreenNail c) {
-                        mHandler.sendEmptyMessage(HIDE_SURFACE_VIEW);
-                    }
-                };
-            mUI.getSurfaceHolder().addCallback(mUI);
+            mUI.initializeSurfaceView();
         }
     }
 
     @Override
-    public void init(CameraActivity activity, View root, boolean reuseScreenNail) {
+    public void init(CameraActivity activity, View root) {
         mActivity = activity;
         mUI = new VideoUI(activity, this, root);
         mPreferences = new ComboPreferences(mActivity);
@@ -366,9 +360,9 @@ public class VideoModule implements CameraModule,
         mPreferences.setLocalId(mActivity, mCameraId);
         CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
 
-        mActivity.mNumberOfCameras = CameraHolder.instance().getNumberOfCameras();
         mPrefVideoEffectDefault = mActivity.getString(R.string.pref_video_effect_default);
         resetEffect();
+        mOrientationManager = new OrientationManager(mActivity);
 
         /*
          * To reduce startup time, we start the preview in another thread.
@@ -382,20 +376,15 @@ public class VideoModule implements CameraModule,
         // Surface texture is from camera screen nail and startPreview needs it.
         // This must be done before startPreview.
         mIsVideoCaptureIntent = isVideoCaptureIntent();
-        if (reuseScreenNail) {
-            mActivity.reuseCameraScreenNail(!mIsVideoCaptureIntent);
-        } else {
-            mActivity.createCameraScreenNail(!mIsVideoCaptureIntent);
-        }
         initializeSurfaceView();
 
         // Make sure camera device is opened.
         try {
             cameraOpenThread.join();
-            if (mActivity.mOpenCameraFail) {
+            if (mOpenCameraFail) {
                 Util.showErrorAndFinish(mActivity, R.string.cannot_connect_camera);
                 return;
-            } else if (mActivity.mCameraDisabled) {
+            } else if (mCameraDisabled) {
                 Util.showErrorAndFinish(mActivity, R.string.camera_disabled);
                 return;
             }
@@ -463,10 +452,10 @@ public class VideoModule implements CameraModule,
         mParameters.setRotation(rotation);
         Location loc = mLocationManager.getCurrentLocation();
         Util.setGpsParameters(mParameters, loc);
-        mActivity.mCameraDevice.setParameters(mParameters);
+        mCameraDevice.setParameters(mParameters);
 
         Log.v(TAG, "Video snapshot start");
-        mActivity.mCameraDevice.takePicture(null, null, null, new JpegPictureCallback(loc));
+        mCameraDevice.takePicture(null, null, null, new JpegPictureCallback(loc));
         showVideoSnapshotUI(true);
         mSnapshotInProgress = true;
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
@@ -583,7 +572,8 @@ public class VideoModule implements CameraModule,
                 // back to use SurfaceTexture for preview and we need to stop then start
                 // the preview. This will cause the preview flicker since the preview
                 // will not be continuous for a short period of time.
-                ((CameraScreenNail) mActivity.mCameraScreenNail).animateCapture(mDisplayRotation);
+                // TODO: need to get the capture animation to work 
+                // ((CameraScreenNail) mActivity.mCameraScreenNail).animateCapture(mDisplayRotation);
 
                 mUI.enablePreviewThumb(true);
 
@@ -694,7 +684,7 @@ public class VideoModule implements CameraModule,
 
     @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
     private void getDesiredPreviewSize() {
-        mParameters = mActivity.mCameraDevice.getParameters();
+        mParameters = mCameraDevice.getParameters();
         if (ApiHelper.HAS_GET_SUPPORTED_VIDEO_SIZE) {
             if (mParameters.getSupportedVideoSizes() == null || effectsActive()) {
                 mDesiredPreviewWidth = mProfile.videoFrameWidth;
@@ -720,6 +710,7 @@ public class VideoModule implements CameraModule,
             mDesiredPreviewWidth = mProfile.videoFrameWidth;
             mDesiredPreviewHeight = mProfile.videoFrameHeight;
         }
+        mUI.setPreviewSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
         Log.v(TAG, "mDesiredPreviewWidth=" + mDesiredPreviewWidth +
                 ". mDesiredPreviewHeight=" + mDesiredPreviewHeight);
     }
@@ -747,7 +738,7 @@ public class VideoModule implements CameraModule,
 
     @Override
     public void onResumeAfterSuper() {
-        if (mActivity.mOpenCameraFail || mActivity.mCameraDisabled)
+        if (mOpenCameraFail || mCameraDisabled)
             return;
         mUI.enableShutter(false);
         mZoomValue = 0;
@@ -757,11 +748,11 @@ public class VideoModule implements CameraModule,
         if (!mPreviewing) {
             resetEffect();
             openCamera();
-            if (mActivity.mOpenCameraFail) {
+            if (mOpenCameraFail) {
                 Util.showErrorAndFinish(mActivity,
                         R.string.cannot_connect_camera);
                 return;
-            } else if (mActivity.mCameraDisabled) {
+            } else if (mCameraDisabled) {
                 Util.showErrorAndFinish(mActivity, R.string.camera_disabled);
                 return;
             }
@@ -801,15 +792,19 @@ public class VideoModule implements CameraModule,
 
     private void setDisplayOrientation() {
         mDisplayRotation = Util.getDisplayRotation(mActivity);
-        if (ApiHelper.HAS_SURFACE_TEXTURE) {
-            // The display rotation is handled by gallery.
-            mCameraDisplayOrientation = Util.getDisplayOrientation(0, mCameraId);
-        } else {
-            // We need to consider display rotation ourselves.
-            mCameraDisplayOrientation = Util.getDisplayOrientation(mDisplayRotation, mCameraId);
+        mCameraDisplayOrientation = Util.getDisplayOrientation(mDisplayRotation, mCameraId);
+        // Change the camera display orientation
+        if (mCameraDevice != null) {
+            mCameraDevice.setDisplayOrientation(mCameraDisplayOrientation);
         }
-        // GLRoot also uses the DisplayRotation, and needs to be told to layout to update
-        mActivity.getGLRoot().requestLayoutContentPane();
+    }
+
+    @Override
+    public void updateCameraOrientation() {
+        if (mMediaRecorderRecording) return;
+        if (mDisplayRotation != Util.getDisplayRotation(mActivity)) {
+            setDisplayOrientation();
+        }
     }
 
     @Override
@@ -817,18 +812,18 @@ public class VideoModule implements CameraModule,
         // Not useful to change zoom value when the activity is paused.
         if (mPaused) return index;
         mZoomValue = index;
-        if (mParameters == null || mActivity.mCameraDevice == null) return index;
+        if (mParameters == null || mCameraDevice == null) return index;
         // Set zoom parameters asynchronously
         mParameters.setZoom(mZoomValue);
-        mActivity.mCameraDevice.setParameters(mParameters);
-        Parameters p = mActivity.mCameraDevice.getParameters();
+        mCameraDevice.setParameters(mParameters);
+        Parameters p = mCameraDevice.getParameters();
         if (p != null) return p.getZoom();
         return index;
     }
     private void startPreview() {
         Log.v(TAG, "startPreview");
 
-        mActivity.mCameraDevice.setErrorCallback(mErrorCallback);
+        mCameraDevice.setErrorCallback(mErrorCallback);
         if (mPreviewing == true) {
             stopPreview();
             if (effectsActive() && mEffectsRecorder != null) {
@@ -838,22 +833,17 @@ public class VideoModule implements CameraModule,
         }
 
         setDisplayOrientation();
-        mActivity.mCameraDevice.setDisplayOrientation(mCameraDisplayOrientation);
+        mCameraDevice.setDisplayOrientation(mCameraDisplayOrientation);
         setCameraParameters();
 
         try {
             if (!effectsActive()) {
-                if (ApiHelper.HAS_SURFACE_TEXTURE) {
-                    SurfaceTexture surfaceTexture = ((CameraScreenNail) mActivity.mCameraScreenNail)
-                            .getSurfaceTexture();
-                    if (surfaceTexture == null) {
-                        return; // The texture has been destroyed (pause, etc)
-                    }
-                    mActivity.mCameraDevice.setPreviewTextureAsync(surfaceTexture);
-                } else {
-                    mActivity.mCameraDevice.setPreviewDisplayAsync(mUI.getSurfaceHolder());
+                SurfaceTexture surfaceTexture = mUI.getSurfaceTexture();
+                if (surfaceTexture == null) {
+                    return; // The texture has been destroyed (pause, etc)
                 }
-                mActivity.mCameraDevice.startPreviewAsync();
+                mCameraDevice.setPreviewTextureAsync(surfaceTexture);
+                mCameraDevice.startPreviewAsync();
                 mPreviewing = true;
                 onPreviewStarted();
             } else {
@@ -869,9 +859,9 @@ public class VideoModule implements CameraModule,
             mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (mActivity.mOpenCameraFail) {
+                    if (mOpenCameraFail) {
                         Util.showErrorAndFinish(mActivity, R.string.cannot_connect_camera);
-                    } else if (mActivity.mCameraDisabled) {
+                    } else if (mCameraDisabled) {
                         Util.showErrorAndFinish(mActivity, R.string.camera_disabled);
                     }
                 }
@@ -886,7 +876,8 @@ public class VideoModule implements CameraModule,
 
     @Override
     public void stopPreview() {
-        mActivity.mCameraDevice.stopPreview();
+        if (!mPreviewing) return;
+        mCameraDevice.stopPreview();
         mPreviewing = false;
     }
 
@@ -922,7 +913,7 @@ public class VideoModule implements CameraModule,
     // effects also along with the camera.
     private void closeCamera(boolean closeEffectsAlso) {
         Log.v(TAG, "closeCamera");
-        if (mActivity.mCameraDevice == null) {
+        if (mCameraDevice == null) {
             Log.d(TAG, "already stopped.");
             return;
         }
@@ -933,27 +924,22 @@ public class VideoModule implements CameraModule,
             mEffectsRecorder.disconnectCamera();
         }
         if (closeEffectsAlso) closeEffects();
-        mActivity.mCameraDevice.setZoomChangeListener(null);
-        mActivity.mCameraDevice.setErrorCallback(null);
+        mCameraDevice.setZoomChangeListener(null);
+        mCameraDevice.setErrorCallback(null);
         synchronized(mCameraOpened) {
             if (mCameraOpened) {
                 CameraHolder.instance().release();
             }
             mCameraOpened = false;
         }
-        mActivity.mCameraDevice = null;
+        mCameraDevice = null;
         mPreviewing = false;
         mSnapshotInProgress = false;
     }
 
     private void releasePreviewResources() {
-        if (ApiHelper.HAS_SURFACE_TEXTURE) {
-            CameraScreenNail screenNail = (CameraScreenNail) mActivity.mCameraScreenNail;
-            screenNail.releaseSurfaceTexture();
-            if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
-                mHandler.removeMessages(HIDE_SURFACE_VIEW);
-                mUI.hideSurfaceView();
-            }
+        if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
+            mUI.hideSurfaceView();
         }
     }
 
@@ -1096,13 +1082,11 @@ public class VideoModule implements CameraModule,
 
     private void setupMediaRecorderPreviewDisplay() {
         // Nothing to do here if using SurfaceTexture.
-        if (!ApiHelper.HAS_SURFACE_TEXTURE) {
-            mMediaRecorder.setPreviewDisplay(mUI.getSurfaceHolder().getSurface());
-        } else if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
+        if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
             // We stop the preview here before unlocking the device because we
             // need to change the SurfaceTexture to SurfaceView for preview.
             stopPreview();
-            mActivity.mCameraDevice.setPreviewDisplayAsync(mUI.getSurfaceHolder());
+            mCameraDevice.setPreviewDisplayAsync(mUI.getSurfaceHolder());
             // The orientation for SurfaceTexture is different from that for
             // SurfaceView. For SurfaceTexture we don't need to consider the
             // display rotation. Just consider the sensor's orientation and we
@@ -1110,9 +1094,9 @@ public class VideoModule implements CameraModule,
             // Gallery will handle the orientation for the preview. For
             // SurfaceView we will have to take everything into account so the
             // display rotation is considered.
-            mActivity.mCameraDevice.setDisplayOrientation(
+            mCameraDevice.setDisplayOrientation(
                     Util.getDisplayOrientation(mDisplayRotation, mCameraId));
-            mActivity.mCameraDevice.startPreviewAsync();
+            mCameraDevice.startPreviewAsync();
             mPreviewing = true;
             mMediaRecorder.setPreviewDisplay(mUI.getSurfaceHolder().getSurface());
         }
@@ -1122,15 +1106,14 @@ public class VideoModule implements CameraModule,
     private void initializeRecorder() {
         Log.v(TAG, "initializeRecorder");
         // If the mCameraDevice is null, then this activity is going to finish
-        if (mActivity.mCameraDevice == null) return;
+        if (mCameraDevice == null) return;
 
-        if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING && ApiHelper.HAS_SURFACE_TEXTURE) {
+        if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
             // Set the SurfaceView to visible so the surface gets created.
             // surfaceCreated() is called immediately when the visibility is
             // changed to visible. Thus, mSurfaceViewReady should become true
             // right after calling setVisibility().
             mUI.showSurfaceView();
-            if (!mUI.isSurfaceViewReady()) return;
         }
 
         Intent intent = mActivity.getIntent();
@@ -1156,9 +1139,9 @@ public class VideoModule implements CameraModule,
 
         setupMediaRecorderPreviewDisplay();
         // Unlock the camera object before passing it to media recorder.
-        mActivity.mCameraDevice.unlock();
-        mActivity.mCameraDevice.waitDone();
-        mMediaRecorder.setCamera(mActivity.mCameraDevice.getCamera());
+        mCameraDevice.unlock();
+        mCameraDevice.waitDone();
+        mMediaRecorder.setCamera(mCameraDevice.getCamera());
         if (!mCaptureTimeLapse) {
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         }
@@ -1244,7 +1227,7 @@ public class VideoModule implements CameraModule,
     private void initializeEffectsPreview() {
         Log.v(TAG, "initializeEffectsPreview");
         // If the mCameraDevice is null, then this activity is going to finish
-        if (mActivity.mCameraDevice == null) return;
+        if (mCameraDevice == null) return;
 
         boolean inLandscape = (mActivity.getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_LANDSCAPE);
@@ -1257,7 +1240,7 @@ public class VideoModule implements CameraModule,
         // TODO: Confirm none of the following need to go to initializeEffectsRecording()
         // and none of these change even when the preview is not refreshed.
         mEffectsRecorder.setCameraDisplayOrientation(mCameraDisplayOrientation);
-        mEffectsRecorder.setCamera(mActivity.mCameraDevice);
+        mEffectsRecorder.setCamera(mCameraDevice);
         mEffectsRecorder.setCameraFacing(info.facing);
         mEffectsRecorder.setProfile(mProfile);
         mEffectsRecorder.setEffectsListener(this);
@@ -1274,9 +1257,8 @@ public class VideoModule implements CameraModule,
         }
         mEffectsRecorder.setOrientationHint(orientation);
 
-        CameraScreenNail screenNail = (CameraScreenNail) mActivity.mCameraScreenNail;
-        mEffectsRecorder.setPreviewSurfaceTexture(screenNail.getSurfaceTexture(),
-                screenNail.getWidth(), screenNail.getHeight());
+        mEffectsRecorder.setPreviewSurfaceTexture(mUI.getSurfaceTexture(),
+            mUI.getPreviewWidth(), mUI.getPreviewHeight());
 
         if (mEffectType == EffectsRecorder.EFFECT_BACKDROPPER &&
                 ((String) mEffectParameter).equals(EFFECT_BG_FROM_GALLERY)) {
@@ -1472,7 +1454,7 @@ public class VideoModule implements CameraModule,
     private void startVideoRecording() {
         Log.v(TAG, "startVideoRecording");
         mUI.enablePreviewThumb(false);
-        mActivity.setSwipingEnabled(false);
+        mUI.setSwipingEnabled(false);
 
         mActivity.updateStorageSpaceAndHint();
         if (mActivity.getStorageSpace() <= Storage.LOW_STORAGE_THRESHOLD) {
@@ -1480,7 +1462,7 @@ public class VideoModule implements CameraModule,
             return;
         }
 
-        if (!mActivity.mCameraDevice.waitDone()) return;
+        if (!mCameraDevice.waitDone()) return;
         mCurrentVideoUri = null;
         if (effectsActive()) {
             initializeEffectsRecording();
@@ -1513,31 +1495,31 @@ public class VideoModule implements CameraModule,
                 Log.e(TAG, "Could not start media recorder. ", e);
                 releaseMediaRecorder();
                 // If start fails, frameworks will not lock the camera for us.
-                mActivity.mCameraDevice.lock();
+                mCameraDevice.lock();
                 return;
             }
         }
 
         // Make sure the video recording has started before announcing
         // this in accessibility.
-        AccessibilityUtils.makeAnnouncement(mActivity.getShutterButton(),
+        AccessibilityUtils.makeAnnouncement(mUI.getShutterButton(),
                 mActivity.getString(R.string.video_recording_started));
 
         // The parameters might have been altered by MediaRecorder already.
         // We need to force mCameraDevice to refresh before getting it.
-        mActivity.mCameraDevice.refreshParameters();
+        mCameraDevice.refreshParameters();
         // The parameters may have been changed by MediaRecorder upon starting
         // recording. We need to alter the parameters if we support camcorder
         // zoom. To reduce latency when setting the parameters during zoom, we
         // update mParameters here once.
         if (ApiHelper.HAS_ZOOM_WHEN_RECORDING) {
-            mParameters = mActivity.mCameraDevice.getParameters();
+            mParameters = mCameraDevice.getParameters();
         }
 
         mUI.enableCameraControls(false);
 
         mMediaRecorderRecording = true;
-        mActivity.getOrientationManager().lockOrientation();
+        mOrientationManager.lockOrientation();
         mRecordingStartTime = SystemClock.uptimeMillis();
         mUI.showRecordingUI(true, mParameters.isZoomSupported());
 
@@ -1581,8 +1563,8 @@ public class VideoModule implements CameraModule,
 
     private boolean stopVideoRecording() {
         Log.v(TAG, "stopVideoRecording");
-        mActivity.setSwipingEnabled(true);
-        mActivity.showSwitcher();
+        mUI.setSwipingEnabled(true);
+        mUI.showSwitcher();
 
         boolean fail = false;
         if (mMediaRecorderRecording) {
@@ -1604,7 +1586,7 @@ public class VideoModule implements CameraModule,
                 mCurrentVideoFilename = mVideoFilename;
                 Log.v(TAG, "stopVideoRecording: Setting current video filename: "
                         + mCurrentVideoFilename);
-                AccessibilityUtils.makeAnnouncement(mActivity.getShutterButton(),
+                AccessibilityUtils.makeAnnouncement(mUI.getShutterButton(),
                         mActivity.getString(R.string.video_recording_stopped));
             } catch (RuntimeException e) {
                 Log.e(TAG, "stop fail",  e);
@@ -1612,7 +1594,7 @@ public class VideoModule implements CameraModule,
                 fail = true;
             }
             mMediaRecorderRecording = false;
-            mActivity.getOrientationManager().unlockOrientation();
+            mOrientationManager.unlockOrientation();
 
             // If the activity is paused, this means activity is interrupted
             // during recording. Release the camera as soon as possible because
@@ -1646,21 +1628,19 @@ public class VideoModule implements CameraModule,
         if (!effectsActive()) {
             releaseMediaRecorder();
             if (!mPaused) {
-                mActivity.mCameraDevice.lock();
-                mActivity.mCameraDevice.waitDone();
-                if (ApiHelper.HAS_SURFACE_TEXTURE &&
-                    !ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
+                mCameraDevice.lock();
+                mCameraDevice.waitDone();
+                if (!ApiHelper.HAS_SURFACE_TEXTURE_RECORDING) {
                     stopPreview();
+                    mUI.hideSurfaceView();
                     // Switch back to use SurfaceTexture for preview.
-                    ((CameraScreenNail) mActivity.mCameraScreenNail).setOneTimeOnFrameDrawnListener(
-                            mFrameDrawnListener);
                     startPreview();
                 }
             }
         }
         // Update the parameters here because the parameters might have been altered
         // by MediaRecorder.
-        if (!mPaused) mParameters = mActivity.mCameraDevice.getParameters();
+        if (!mPaused) mParameters = mCameraDevice.getParameters();
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_CAMERA,
                 fail ? UsageStatistics.ACTION_CAPTURE_FAIL :
                     UsageStatistics.ACTION_CAPTURE_DONE, "Video",
@@ -1792,11 +1772,18 @@ public class VideoModule implements CameraModule,
     @SuppressWarnings("deprecation")
     private void setCameraParameters() {
         mParameters.setPreviewSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
-        mParameters.setPreviewFrameRate(mProfile.videoFrameRate);
+        int[] fpsRange = Util.getMaxPreviewFpsRange(mParameters);
+        if (fpsRange.length > 0) {
+            mParameters.setPreviewFpsRange(
+                    fpsRange[Parameters.PREVIEW_FPS_MIN_INDEX],
+                    fpsRange[Parameters.PREVIEW_FPS_MAX_INDEX]);
+        } else {
+            mParameters.setPreviewFrameRate(mProfile.videoFrameRate);
+        }
 
         // Set flash mode.
         String flashMode;
-        if (mActivity.mShowCameraAppView) {
+        if (mUI.isVisible()) {
             flashMode = mPreferences.getString(
                     CameraSettings.KEY_VIDEOCAMERA_FLASH_MODE,
                     mActivity.getString(R.string.pref_camera_video_flashmode_default));
@@ -1867,35 +1854,9 @@ public class VideoModule implements CameraModule,
                 CameraProfile.QUALITY_HIGH);
         mParameters.setJpegQuality(jpegQuality);
 
-        mActivity.mCameraDevice.setParameters(mParameters);
+        mCameraDevice.setParameters(mParameters);
         // Keep preview size up to date.
-        mParameters = mActivity.mCameraDevice.getParameters();
-
-        updateCameraScreenNailSize(mDesiredPreviewWidth, mDesiredPreviewHeight);
-    }
-
-    private void updateCameraScreenNailSize(int width, int height) {
-        if (!ApiHelper.HAS_SURFACE_TEXTURE) return;
-
-        if (mCameraDisplayOrientation % 180 != 0) {
-            int tmp = width;
-            width = height;
-            height = tmp;
-        }
-
-        CameraScreenNail screenNail = (CameraScreenNail) mActivity.mCameraScreenNail;
-        int oldWidth = screenNail.getWidth();
-        int oldHeight = screenNail.getHeight();
-
-        if (oldWidth != width || oldHeight != height) {
-            screenNail.setSize(width, height);
-            screenNail.enableAspectRatioClamping();
-            mActivity.notifyScreenNailChanged();
-        }
-
-        if (screenNail.getSurfaceTexture() == null) {
-            screenNail.acquireSurfaceTexture();
-        }
+        mParameters = mCameraDevice.getParameters();
     }
 
     @Override
@@ -2006,7 +1967,7 @@ public class VideoModule implements CameraModule,
         synchronized (mPreferences) {
             // If mCameraDevice is not ready then we can set the parameter in
             // startPreview().
-            if (mActivity.mCameraDevice == null) return;
+            if (mCameraDevice == null) return;
 
             boolean recordLocation = RecordLocationPreference.get(
                     mPreferences, mContentResolver);
@@ -2062,14 +2023,13 @@ public class VideoModule implements CameraModule,
         initializeVideoControl();
 
         // From onResume
+        mZoomValue = 0;
         mUI.initializeZoom(mParameters);
         mUI.setOrientationIndicator(0, false);
 
-        if (ApiHelper.HAS_SURFACE_TEXTURE) {
-            // Start switch camera animation. Post a message because
-            // onFrameAvailable from the old camera may already exist.
-            mHandler.sendEmptyMessage(SWITCH_CAMERA_START_ANIMATION);
-        }
+        // Start switch camera animation. Post a message because
+        // onFrameAvailable from the old camera may already exist.
+        mHandler.sendEmptyMessage(SWITCH_CAMERA_START_ANIMATION);
         mUI.updateOnScreenIndicators(mParameters, mPreferences);
     }
 
@@ -2138,32 +2098,23 @@ public class VideoModule implements CameraModule,
         startPreview();
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent m) {
-        if (mSwitchingCamera) return true;
-        return mUI.dispatchTouchEvent(m);
-    }
-
     private void initializeVideoSnapshot() {
         if (mParameters == null) return;
         if (Util.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
-            mActivity.setSingleTapUpListener(mUI.getPreview());
             // Show the tap to focus toast if this is the first start.
             if (mPreferences.getBoolean(
                         CameraSettings.KEY_VIDEO_FIRST_USE_HINT_SHOWN, true)) {
                 // Delay the toast for one second to wait for orientation.
                 mHandler.sendEmptyMessageDelayed(SHOW_TAP_TO_SNAPSHOT_TOAST, 1000);
             }
-        } else {
-            mActivity.setSingleTapUpListener(null);
         }
     }
 
     void showVideoSnapshotUI(boolean enabled) {
         if (mParameters == null) return;
         if (Util.isVideoSnapshotSupported(mParameters) && !mIsVideoCaptureIntent) {
-            if (ApiHelper.HAS_SURFACE_TEXTURE && enabled) {
-                ((CameraScreenNail) mActivity.mCameraScreenNail).animateCapture(mDisplayRotation);
+            if (enabled) {
+             // TODO: ((CameraScreenNail) mActivity.mCameraScreenNail).animateCapture(mDisplayRotation);
             } else {
                 mUI.showPreviewBorder(enabled);
             }
@@ -2176,7 +2127,7 @@ public class VideoModule implements CameraModule,
         if (!mPreviewing || mParameters.getFlashMode() == null) return;
 
         // When going to and back from gallery, we need to turn off/on the flash.
-        if (!mActivity.mShowCameraAppView) {
+        if (!mUI.isVisible()) {
             if (mParameters.getFlashMode().equals(Parameters.FLASH_MODE_OFF)) {
                 mRestoreFlash = false;
                 return;
@@ -2190,14 +2141,8 @@ public class VideoModule implements CameraModule,
     }
 
     @Override
-    public void onFullScreenChanged(boolean full) {
-        mUI.onFullScreenChanged(full);
-        if (ApiHelper.HAS_SURFACE_TEXTURE) {
-            if (mActivity.mCameraScreenNail != null) {
-                ((CameraScreenNail) mActivity.mCameraScreenNail).setFullScreen(full);
-            }
-            return;
-        }
+    public void onSwitchMode(boolean toCamera) {
+        mUI.onSwitchMode(toCamera);
     }
 
     private final class JpegPictureCallback implements PictureCallback {
@@ -2285,26 +2230,13 @@ public class VideoModule implements CameraModule,
         if (mPaused || mPendingSwitchCameraId != -1) return;
 
         mPendingSwitchCameraId = cameraId;
-        if (ApiHelper.HAS_SURFACE_TEXTURE) {
-            Log.d(TAG, "Start to copy texture.");
-            // We need to keep a preview frame for the animation before
-            // releasing the camera. This will trigger onPreviewTextureCopied.
-            ((CameraScreenNail) mActivity.mCameraScreenNail).copyTexture();
-            // Disable all camera controls.
-            mSwitchingCamera = true;
-        } else {
-            switchCamera();
-        }
-    }
+        Log.d(TAG, "Start to copy texture.");
+        // We need to keep a preview frame for the animation before
+        // releasing the camera. This will trigger onPreviewTextureCopied.
+        // TODO: ((CameraScreenNail) mActivity.mCameraScreenNail).copyTexture();
+        // Disable all camera controls.
+        mSwitchingCamera = true;
 
-    @Override
-    public boolean needsSwitcher() {
-        return !mIsVideoCaptureIntent;
-    }
-
-    @Override
-    public boolean needsPieMenu() {
-        return true;
     }
 
     @Override
@@ -2316,7 +2248,4 @@ public class VideoModule implements CameraModule,
     public void onMediaSaveServiceConnected(MediaSaveService s) {
         // do nothing.
     }
-
-    @Override
-    public void updateCameraOrientation() {}
 }

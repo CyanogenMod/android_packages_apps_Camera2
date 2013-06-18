@@ -16,146 +16,78 @@
 
 package com.android.camera;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
+import android.widget.ImageView;
 
-import com.android.camera.ui.CameraSwitcher;
+import com.android.camera.data.CameraDataAdapter;
+import com.android.camera.data.LocalData;
+import com.android.camera.ui.CameraSwitcher.CameraSwitchListener;
+import com.android.camera.ui.FilmStripView;
 import com.android.gallery3d.R;
-import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.util.LightCycleHelper;
 
-public class CameraActivity extends ActivityBase
-        implements CameraSwitcher.CameraSwitchListener {
+public class CameraActivity extends Activity
+    implements CameraSwitchListener {
+
+    private static final String TAG = "CAM_Activity";
+
     public static final int PHOTO_MODULE_INDEX = 0;
     public static final int VIDEO_MODULE_INDEX = 1;
     public static final int PANORAMA_MODULE_INDEX = 2;
     public static final int LIGHTCYCLE_MODULE_INDEX = 3;
 
-    CameraModule mCurrentModule;
-    private FrameLayout mFrame;
-    private ShutterButton mShutter;
-    private CameraSwitcher mSwitcher;
-    private View mCameraControls;
-    private View mControlsBackground;
-    private View mPieMenuButton;
-    private Drawable[] mDrawables;
+    private static final String INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE =
+            "android.media.action.STILL_IMAGE_CAMERA_SECURE";
+    public static final String ACTION_IMAGE_CAPTURE_SECURE =
+            "android.media.action.IMAGE_CAPTURE_SECURE";
+
+    // The intent extra for camera from secure lock screen. True if the gallery
+    // should only show newly captured pictures. sSecureAlbumId does not
+    // increment. This is used when switching between camera, camcorder, and
+    // panorama. If the extra is not set, it is in the normal camera mode.
+    public static final String SECURE_CAMERA_EXTRA = "secure_camera";
+
+    private CameraDataAdapter mDataAdapter;
     private int mCurrentModuleIndex;
-    private MotionEvent mDown;
+    private CameraModule mCurrentModule;
+    private View mRootView;
+    private FilmStripView mFilmStripView;
+    private int mResultCodeForTesting;
+    private Intent mResultDataForTesting;
+    private OnScreenHint mStorageHint;
+    private long mStorageSpace = Storage.LOW_STORAGE_THRESHOLD;
+    private PhotoModule mController;
     private boolean mAutoRotateScreen;
-    private int mHeightOrWidth = -1;
-
+    private boolean mSecureCamera;
+    private boolean mShowCameraPreview;
+    private int mLastRawOrientation;
     private MyOrientationEventListener mOrientationListener;
-    // The degrees of the device rotated clockwise from its natural orientation.
-    private int mLastRawOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
-
-    private MediaSaveService mMediaSaveService;
-    private ServiceConnection mConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName className, IBinder b) {
-                mMediaSaveService = ((MediaSaveService.LocalBinder) b).getService();
-                mCurrentModule.onMediaSaveServiceConnected(mMediaSaveService);
-            }
-            @Override
-            public void onServiceDisconnected(ComponentName className) {
-                mMediaSaveService = null;
-            }};
-
-    private static final String TAG = "CAM_activity";
-
-    private static final int[] DRAW_IDS = {
-            R.drawable.ic_switch_camera,
-            R.drawable.ic_switch_video,
-            R.drawable.ic_switch_pan,
-            R.drawable.ic_switch_photosphere
-    };
-
-    @Override
-    public void onCreate(Bundle state) {
-        super.onCreate(state);
-        setContentView(R.layout.camera_main);
-        mFrame = (FrameLayout) findViewById(R.id.camera_app_root);
-        mDrawables = new Drawable[DRAW_IDS.length];
-        for (int i = 0; i < DRAW_IDS.length; i++) {
-            mDrawables[i] = getResources().getDrawable(DRAW_IDS[i]);
-        }
-        init();
-        if (MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(getIntent().getAction())
-                || MediaStore.ACTION_VIDEO_CAPTURE.equals(getIntent().getAction())) {
-            mCurrentModule = new VideoModule();
-            mCurrentModuleIndex = VIDEO_MODULE_INDEX;
-        } else {
-            mCurrentModule = new PhotoModule();
-            mCurrentModuleIndex = PHOTO_MODULE_INDEX;
-        }
-        mCurrentModule.init(this, mFrame, true);
-        mSwitcher.setCurrentIndex(mCurrentModuleIndex);
-        mOrientationListener = new MyOrientationEventListener(this);
-        bindMediaSaveService();
-    }
-
-    public void init() {
-        boolean landscape = Util.getDisplayRotation(this) % 180 == 90;
-        mControlsBackground = findViewById(R.id.blocker);
-        mCameraControls = findViewById(R.id.camera_controls);
-        mShutter = (ShutterButton) findViewById(R.id.shutter_button);
-        mSwitcher = (CameraSwitcher) findViewById(R.id.camera_switcher);
-        mPieMenuButton = findViewById(R.id.menu);
-        int totaldrawid = (LightCycleHelper.hasLightCycleCapture(this)
-                                ? DRAW_IDS.length : DRAW_IDS.length - 1);
-        if (!ApiHelper.HAS_OLD_PANORAMA) totaldrawid--;
-
-        int[] drawids = new int[totaldrawid];
-        int[] moduleids = new int[totaldrawid];
-        int ix = 0;
-        for (int i = 0; i < mDrawables.length; i++) {
-            if (i == PANORAMA_MODULE_INDEX && !ApiHelper.HAS_OLD_PANORAMA) {
-                continue; // not enabled, so don't add to UI
-            }
-            if (i == LIGHTCYCLE_MODULE_INDEX && !LightCycleHelper.hasLightCycleCapture(this)) {
-                continue; // not enabled, so don't add to UI
-            }
-            moduleids[ix] = i;
-            drawids[ix++] = DRAW_IDS[i];
-        }
-        mSwitcher.setIds(moduleids, drawids);
-        mSwitcher.setSwitchListener(this);
-        mSwitcher.setCurrentIndex(mCurrentModuleIndex);
-    }
-
-    @Override
-    public void onDestroy() {
-        unbindMediaSaveService();
-        super.onDestroy();
-    }
-
-    // Return whether the auto-rotate screen in system settings
-    // is turned on.
-    public boolean isAutoRotateScreen() {
-        return mAutoRotateScreen;
-    }
+    private Handler mMainHandler;
 
     private class MyOrientationEventListener
-            extends OrientationEventListener {
+        extends OrientationEventListener {
         public MyOrientationEventListener(Context context) {
             super(context);
         }
@@ -171,180 +103,75 @@ public class CameraActivity extends ActivityBase
         }
     }
 
-    private ObjectAnimator mCameraSwitchAnimator;
-
-    @Override
-    public void onCameraSelected(final int i) {
-        if (mPaused) return;
-        if (i != mCurrentModuleIndex) {
-            mPaused = true;
-            CameraScreenNail screenNail = getCameraScreenNail();
-            if (screenNail != null) {
-                if (mCameraSwitchAnimator != null && mCameraSwitchAnimator.isRunning()) {
-                    mCameraSwitchAnimator.cancel();
-                }
-                mCameraSwitchAnimator = ObjectAnimator.ofFloat(
-                        screenNail, "alpha", screenNail.getAlpha(), 0f);
-                mCameraSwitchAnimator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        doChangeCamera(i);
-                    }
-                });
-                mCameraSwitchAnimator.start();
-            } else {
-                doChangeCamera(i);
+    private MediaSaveService mMediaSaveService;
+    private ServiceConnection mConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName className, IBinder b) {
+                mMediaSaveService = ((MediaSaveService.LocalBinder) b).getService();
+                mCurrentModule.onMediaSaveServiceConnected(mMediaSaveService);
             }
-        }
+            @Override
+            public void onServiceDisconnected(ComponentName className) {
+                mMediaSaveService = null;
+            }};
+
+    private FilmStripView.Listener mFilmStripListener = new FilmStripView.Listener() {
+            @Override
+            public void onDataPromoted(int dataID) {
+                removeData(dataID);
+            }
+
+            @Override
+            public void onDataDemoted(int dataID) {
+                removeData(dataID);
+            }
+
+            @Override
+            public void onDataFullScreenChange(int dataID, boolean full) {
+            }
+
+            @Override
+            public void onSwitchMode(boolean toCamera) {
+                mCurrentModule.onSwitchMode(toCamera);
+            }
+        };
+
+    private Runnable mDeletionRunnable = new Runnable() {
+            @Override
+            public void run() {
+                mDataAdapter.executeDeletion(CameraActivity.this);
+            }
+        };
+
+    public MediaSaveService getMediaSaveService() {
+        return mMediaSaveService;
     }
 
-    private void doChangeCamera(int i) {
-        boolean canReuse = canReuseScreenNail();
-        CameraHolder.instance().keep();
-        closeModule(mCurrentModule);
-        mCurrentModuleIndex = i;
-        switch (i) {
-            case VIDEO_MODULE_INDEX:
-                mCurrentModule = new VideoModule();
-                break;
-            case PHOTO_MODULE_INDEX:
-                mCurrentModule = new PhotoModule();
-                break;
-            case PANORAMA_MODULE_INDEX:
-                mCurrentModule = new PanoramaModule();
-                break;
-            case LIGHTCYCLE_MODULE_INDEX:
-                mCurrentModule = LightCycleHelper.createPanoramaModule();
-                break;
-        }
-        showPieMenuButton(mCurrentModule.needsPieMenu());
-
-        openModule(mCurrentModule, canReuse);
-        mCurrentModule.onOrientationChanged(mLastRawOrientation);
-        if (mMediaSaveService != null) {
-            mCurrentModule.onMediaSaveServiceConnected(mMediaSaveService);
-        }
-        getCameraScreenNail().setAlpha(0f);
-        getCameraScreenNail().setOnFrameDrawnOneShot(mOnFrameDrawn);
-    }
-
-    public void showPieMenuButton(boolean show) {
-        if (show) {
-            findViewById(R.id.blocker).setVisibility(View.VISIBLE);
-            findViewById(R.id.menu).setVisibility(View.VISIBLE);
-            findViewById(R.id.on_screen_indicators).setVisibility(View.VISIBLE);
+    public void notifyNewMedia(Uri uri) {
+        ContentResolver cr = getContentResolver();
+        String mimeType = cr.getType(uri);
+        if (mimeType.startsWith("video/")) {
+            sendBroadcast(new Intent(Util.ACTION_NEW_VIDEO, uri));
+            mDataAdapter.addNewVideo(cr, uri);
+        } else if (mimeType.startsWith("image/")) {
+            Util.broadcastNewPicture(this, uri);
+            mDataAdapter.addNewPhoto(cr, uri);
         } else {
-            findViewById(R.id.blocker).setVisibility(View.INVISIBLE);
-            findViewById(R.id.menu).setVisibility(View.INVISIBLE);
-            findViewById(R.id.on_screen_indicators).setVisibility(View.INVISIBLE);
+            android.util.Log.w(TAG, "Unknown new media with MIME type:"
+                    + mimeType + ", uri:" + uri);
         }
     }
 
-    private Runnable mOnFrameDrawn = new Runnable() {
-
-        @Override
-        public void run() {
-            runOnUiThread(mFadeInCameraScreenNail);
-        }
-    };
-
-    private Runnable mFadeInCameraScreenNail = new Runnable() {
-
-        @Override
-        public void run() {
-            mCameraSwitchAnimator = ObjectAnimator.ofFloat(
-                    getCameraScreenNail(), "alpha", 0f, 1f);
-            mCameraSwitchAnimator.setStartDelay(50);
-            mCameraSwitchAnimator.start();
-        }
-    };
-
-    @Override
-    public void onShowSwitcherPopup() {
-        mCurrentModule.onShowSwitcherPopup();
-    }
-
-    private void openModule(CameraModule module, boolean canReuse) {
-        module.init(this, mFrame, canReuse && canReuseScreenNail());
-        mPaused = false;
-        module.onResumeBeforeSuper();
-        module.onResumeAfterSuper();
-    }
-
-    private void closeModule(CameraModule module) {
-        module.onPauseBeforeSuper();
-        module.onPauseAfterSuper();
-        mFrame.removeAllViews();
-    }
-
-    public ShutterButton getShutterButton() {
-        return mShutter;
-    }
-
-    public void hideUI() {
-        mCameraControls.setVisibility(View.INVISIBLE);
-        hideSwitcher();
-        mShutter.setVisibility(View.GONE);
-    }
-
-    public void showUI() {
-        mCameraControls.setVisibility(View.VISIBLE);
-        showSwitcher();
-        mShutter.setVisibility(View.VISIBLE);
-        // Force a layout change to show shutter button
-        mShutter.requestLayout();
-    }
-
-    public void hideSwitcher() {
-        mSwitcher.closePopup();
-        mSwitcher.setVisibility(View.INVISIBLE);
-    }
-
-    public void showSwitcher() {
-        if (mCurrentModule.needsSwitcher()) {
-            mSwitcher.setVisibility(View.VISIBLE);
-        }
-    }
-
-    public boolean isInCameraApp() {
-        return mShowCameraAppView;
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
-        mCurrentModule.onConfigurationChanged(config);
-    }
-
-    @Override
-    public void onPause() {
-        mPaused = true;
-        mOrientationListener.disable();
-        mCurrentModule.onPauseBeforeSuper();
-        super.onPause();
-        mCurrentModule.onPauseAfterSuper();
-    }
-
-    @Override
-    public void onResume() {
-        mPaused = false;
-        if (Settings.System.getInt(getContentResolver(),
-                Settings.System.ACCELEROMETER_ROTATION, 0) == 0) {// auto-rotate off
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-            mAutoRotateScreen = false;
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
-            mAutoRotateScreen = true;
-        }
-        mOrientationListener.enable();
-        mCurrentModule.onResumeBeforeSuper();
-        super.onResume();
-        mCurrentModule.onResumeAfterSuper();
+    private void removeData(int dataID) {
+        mDataAdapter.removeData(CameraActivity.this, dataID);
+        mMainHandler.removeCallbacks(mDeletionRunnable);
+        mMainHandler.postDelayed(mDeletionRunnable, 3000);
     }
 
     private void bindMediaSaveService() {
         Intent intent = new Intent(this, MediaSaveService.class);
+        startService(intent);  // start service before binding it so the
+                               // service won't be killed if we unbind it.
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -358,135 +185,57 @@ public class CameraActivity extends ActivityBase
     }
 
     @Override
-    protected void onFullScreenChanged(boolean full) {
-        if (full) {
-            showUI();
-        } else {
-            hideUI();
-        }
-        super.onFullScreenChanged(full);
+    public void onCreate(Bundle state) {
+        super.onCreate(state);
+        setContentView(R.layout.camera_filmstrip);
         if (ApiHelper.HAS_ROTATION_ANIMATION) {
-            setRotationAnimation(full);
+            setRotationAnimation();
         }
-        mCurrentModule.onFullScreenChanged(full);
+        // Check if this is in the secure camera mode.
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        if (INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action)) {
+            mSecureCamera = true;
+        } else if (ACTION_IMAGE_CAPTURE_SECURE.equals(action)) {
+            mSecureCamera = true;
+        } else {
+            mSecureCamera = intent.getBooleanExtra(SECURE_CAMERA_EXTRA, false);
+        }
+        /*TODO: if (mSecureCamera) {
+            IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+            registerReceiver(mScreenOffReceiver, filter);
+            if (sScreenOffReceiver == null) {
+                sScreenOffReceiver = new ScreenOffReceiver();
+                getApplicationContext().registerReceiver(sScreenOffReceiver, filter);
+            }
+        }*/
+        LayoutInflater inflater = getLayoutInflater();
+        View rootLayout = inflater.inflate(R.layout.camera, null, false);
+        mRootView = rootLayout.findViewById(R.id.camera_app_root);
+        mDataAdapter = new CameraDataAdapter(
+                new ColorDrawable(getResources().getColor(R.color.photo_placeholder)));
+        mFilmStripView = (FilmStripView) findViewById(R.id.filmstrip_view);
+        mFilmStripView.setViewGap(
+                getResources().getDimensionPixelSize(R.dimen.camera_film_strip_gap));
+        // Set up the camera preview first so the preview shows up ASAP.
+        mDataAdapter.setCameraPreviewInfo(rootLayout,
+                FilmStripView.ImageData.SIZE_FULL, FilmStripView.ImageData.SIZE_FULL);
+        mFilmStripView.setDataAdapter(mDataAdapter);
+        mFilmStripView.setListener(mFilmStripListener);
+        mCurrentModule = new PhotoModule();
+        mCurrentModule.init(this, mRootView);
+        mOrientationListener = new MyOrientationEventListener(this);
+        mMainHandler = new Handler(getMainLooper());
+        bindMediaSaveService();
     }
 
-    private void setRotationAnimation(boolean fullscreen) {
+    private void setRotationAnimation() {
         int rotationAnimation = WindowManager.LayoutParams.ROTATION_ANIMATION_ROTATE;
-        if (fullscreen) {
-            rotationAnimation = WindowManager.LayoutParams.ROTATION_ANIMATION_CROSSFADE;
-        }
+        rotationAnimation = WindowManager.LayoutParams.ROTATION_ANIMATION_CROSSFADE;
         Window win = getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
         winParams.rotationAnimation = rotationAnimation;
         win.setAttributes(winParams);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mCurrentModule.onStop();
-        getStateManager().clearTasks();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        getStateManager().clearActivityResult();
-    }
-
-    @Override
-    protected void installIntentFilter() {
-        super.installIntentFilter();
-        mCurrentModule.installIntentFilter();
-    }
-
-    @Override
-    protected void onActivityResult(
-            int requestCode, int resultCode, Intent data) {
-        // Only PhotoPage understands ProxyLauncher.RESULT_USER_CANCELED
-        if (resultCode == ProxyLauncher.RESULT_USER_CANCELED
-                && !(getStateManager().getTopState() instanceof PhotoPage)) {
-            resultCode = RESULT_CANCELED;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        // Unmap cancel vs. reset
-        if (resultCode == ProxyLauncher.RESULT_USER_CANCELED) {
-            resultCode = RESULT_CANCELED;
-        }
-        mCurrentModule.onActivityResult(requestCode, resultCode, data);
-    }
-
-    // Preview area is touched. Handle touch focus.
-    // Touch to focus is handled by PreviewGestures, this function call
-    // is no longer needed. TODO: Clean it up in the next refactor
-    @Override
-    protected void onSingleTapUp(View view, int x, int y) {
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (!mCurrentModule.onBackPressed()) {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return mCurrentModule.onKeyDown(keyCode,  event)
-                || super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        return mCurrentModule.onKeyUp(keyCode,  event)
-                || super.onKeyUp(keyCode, event);
-    }
-
-    public void cancelActivityTouchHandling() {
-        if (mDown != null) {
-            MotionEvent cancel = MotionEvent.obtain(mDown);
-            cancel.setAction(MotionEvent.ACTION_CANCEL);
-            super.dispatchTouchEvent(cancel);
-        }
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent m) {
-        if (m.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            mDown = m;
-        }
-        if ((mSwitcher != null) && mSwitcher.showsPopup() && !mSwitcher.isInsidePopup(m)) {
-            return mSwitcher.onTouch(null, m);
-        } else if ((mSwitcher != null) && mSwitcher.isInsidePopup(m)) {
-            return superDispatchTouchEvent(m);
-        } else {
-            return mCurrentModule.dispatchTouchEvent(m);
-        }
-    }
-
-    @Override
-    public void startActivityForResult(Intent intent, int requestCode) {
-        Intent proxyIntent = new Intent(this, ProxyLauncher.class);
-        proxyIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-        proxyIntent.putExtra(Intent.EXTRA_INTENT, intent);
-        super.startActivityForResult(proxyIntent, requestCode);
-    }
-
-    public boolean superDispatchTouchEvent(MotionEvent m) {
-        return super.dispatchTouchEvent(m);
-    }
-
-    // Preview texture has been copied. Now camera can be released and the
-    // animation can be started.
-    @Override
-    public void onPreviewTextureCopied() {
-        mCurrentModule.onPreviewTextureCopied();
-    }
-
-    @Override
-    public void onCaptureTextureCopied() {
-        mCurrentModule.onCaptureTextureCopied();
     }
 
     @Override
@@ -496,25 +245,206 @@ public class CameraActivity extends ActivityBase
     }
 
     @Override
+    public void onPause() {
+        mOrientationListener.disable();
+        mCurrentModule.onPauseBeforeSuper();
+        super.onPause();
+        mCurrentModule.onPauseAfterSuper();
+    }
+
+    @Override
+    public void onResume() {
+        if (Settings.System.getInt(getContentResolver(),
+                Settings.System.ACCELEROMETER_ROTATION, 0) == 0) {// auto-rotate off
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            mAutoRotateScreen = false;
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+            mAutoRotateScreen = true;
+        }
+        mOrientationListener.enable();
+        mCurrentModule.onResumeBeforeSuper();
+        super.onResume();
+        mCurrentModule.onResumeAfterSuper();
+
+        // The loading is done in background and will update the filmstrip later.
+        if (!mSecureCamera) {
+            mDataAdapter.requestLoad(getContentResolver());
+        } else {
+            // Flush out all the original data first.
+            mDataAdapter.flush();
+            ImageView v = (ImageView) getLayoutInflater().inflate(
+                    R.layout.secure_album_placeholder, null);
+            // Put a lock placeholder as the last image by setting its date to 0.
+            mDataAdapter.addLocalData(
+                    new LocalData.LocalViewData(
+                            v,
+                            v.getDrawable().getIntrinsicWidth(),
+                            v.getDrawable().getIntrinsicHeight(),
+                            0, 0));
+        }
+        setSwipingEnabled(true);
+    }
+
+    @Override
+    public void onDestroy() {
+        unbindMediaSaveService();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration config) {
+        super.onConfigurationChanged(config);
+        mCurrentModule.onConfigurationChanged(config);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (mCurrentModule.onKeyDown(keyCode, event)) return true;
+        // Prevent software keyboard or voice search from showing up.
+        if (keyCode == KeyEvent.KEYCODE_SEARCH
+                || keyCode == KeyEvent.KEYCODE_MENU) {
+            if (event.isLongPress()) return true;
+        }
+        if (keyCode == KeyEvent.KEYCODE_MENU && mShowCameraPreview) {
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (mCurrentModule.onKeyUp(keyCode, event)) return true;
+        if (keyCode == KeyEvent.KEYCODE_MENU && mShowCameraPreview) {
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent m) {
+        return mFilmStripView.dispatchTouchEvent(m);
+    }
+    public boolean isAutoRotateScreen() {
+        return mAutoRotateScreen;
+    }
+
+    protected void updateStorageSpace() {
+        mStorageSpace = Storage.getAvailableSpace();
+    }
+
+    protected long getStorageSpace() {
+        return mStorageSpace;
+    }
+
+    protected void updateStorageSpaceAndHint() {
+        updateStorageSpace();
+        updateStorageHint(mStorageSpace);
+    }
+
+    protected void updateStorageHint() {
+        updateStorageHint(mStorageSpace);
+    }
+
     protected boolean updateStorageHintOnResume() {
-        return mCurrentModule.updateStorageHintOnResume();
+        return true;
+    }
+
+    protected void updateStorageHint(long storageSpace) {
+        String message = null;
+        if (storageSpace == Storage.UNAVAILABLE) {
+            message = getString(R.string.no_storage);
+        } else if (storageSpace == Storage.PREPARING) {
+            message = getString(R.string.preparing_sd);
+        } else if (storageSpace == Storage.UNKNOWN_SIZE) {
+            message = getString(R.string.access_sd_fail);
+        } else if (storageSpace <= Storage.LOW_STORAGE_THRESHOLD) {
+            message = getString(R.string.spaceIsLow_content);
+        }
+
+        if (message != null) {
+            if (mStorageHint == null) {
+                mStorageHint = OnScreenHint.makeText(this, message);
+            } else {
+                mStorageHint.setText(message);
+            }
+            mStorageHint.show();
+        } else if (mStorageHint != null) {
+            mStorageHint.cancel();
+            mStorageHint = null;
+        }
+    }
+
+    protected void setResultEx(int resultCode) {
+        mResultCodeForTesting = resultCode;
+        setResult(resultCode);
+    }
+
+    protected void setResultEx(int resultCode, Intent data) {
+        mResultCodeForTesting = resultCode;
+        mResultDataForTesting = data;
+        setResult(resultCode, data);
+    }
+
+    public int getResultCode() {
+        return mResultCodeForTesting;
+    }
+
+    public Intent getResultData() {
+        return mResultDataForTesting;
+    }
+
+    public boolean isSecureCamera() {
+        return mSecureCamera;
     }
 
     @Override
-    public void updateCameraAppView() {
-        super.updateCameraAppView();
-        mCurrentModule.updateCameraAppView();
+    public void onCameraSelected(int i) {
+        if (mCurrentModuleIndex == i) return;
+
+        CameraHolder.instance().keep();
+        closeModule(mCurrentModule);
+        mCurrentModuleIndex = i;
+        switch (i) {
+            case VIDEO_MODULE_INDEX:
+                mCurrentModule = new VideoModule();
+                break;
+            case PHOTO_MODULE_INDEX:
+                mCurrentModule = new PhotoModule();
+                break;
+            case LIGHTCYCLE_MODULE_INDEX:
+                mCurrentModule = LightCycleHelper.createPanoramaModule();
+                break;
+           default:
+               break;
+        }
+
+        openModule(mCurrentModule);
+        mCurrentModule.onOrientationChanged(mLastRawOrientation);
+        if (mMediaSaveService != null) {
+            mCurrentModule.onMediaSaveServiceConnected(mMediaSaveService);
+        }
     }
 
-    private boolean canReuseScreenNail() {
-        return mCurrentModuleIndex == PHOTO_MODULE_INDEX
-                || mCurrentModuleIndex == VIDEO_MODULE_INDEX
-                || mCurrentModuleIndex == LIGHTCYCLE_MODULE_INDEX;
+    private void openModule(CameraModule module) {
+        module.init(this, mRootView);
+        module.onResumeBeforeSuper();
+        module.onResumeAfterSuper();
+    }
+
+    private void closeModule(CameraModule module) {
+        module.onPauseBeforeSuper();
+        module.onPauseAfterSuper();
+        ((ViewGroup) mRootView).removeAllViews();
     }
 
     @Override
-    public boolean isPanoramaActivity() {
-        return (mCurrentModuleIndex == PANORAMA_MODULE_INDEX);
+    public void onShowSwitcherPopup() {
+    }
+
+    public void setSwipingEnabled(boolean enable) {
+        mDataAdapter.setCameraPreviewLock(!enable);
     }
 
     // Accessor methods for getting latency times used in performance testing
@@ -551,13 +481,5 @@ public class CameraActivity extends ActivityBase
     public boolean isRecording() {
         return (mCurrentModule instanceof VideoModule) ?
                 ((VideoModule) mCurrentModule).isRecording() : false;
-    }
-
-    public CameraScreenNail getCameraScreenNail() {
-        return (CameraScreenNail) mCameraScreenNail;
-    }
-
-    public MediaSaveService getMediaSaveService() {
-        return mMediaSaveService;
     }
 }
