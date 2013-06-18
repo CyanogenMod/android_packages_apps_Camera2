@@ -23,6 +23,7 @@ import android.util.Log;
 import android.util.Pools.Pool;
 import android.util.Pools.SynchronizedPool;
 
+import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
 
 import java.io.BufferedInputStream;
@@ -43,6 +44,7 @@ public class BitmapDecoder {
     private static final int POOL_SIZE = 4;
     private static final int TEMP_STORAGE_SIZE_BYTES = 16 * 1024;
     private static final int HEADER_MAX_SIZE = 128 * 1024;
+    private static final int NO_SCALING = -1;
 
     private static final Pool<BitmapFactory.Options> sOptions =
             new SynchronizedPool<BitmapFactory.Options>(POOL_SIZE);
@@ -95,7 +97,7 @@ public class BitmapDecoder {
         }
     };
 
-    private static <T> Bitmap delegateDecode(Decoder<T> decoder, T input) {
+    private static <T> Bitmap delegateDecode(Decoder<T> decoder, T input, int width, int height) {
         BitmapFactory.Options options = getOptions();
         GalleryBitmapPool pool = GalleryBitmapPool.getInstance();
         try {
@@ -104,7 +106,12 @@ public class BitmapDecoder {
                 return null;
             }
             options.inJustDecodeBounds = false;
-            Bitmap reuseBitmap = pool.get(options.outWidth, options.outHeight);
+            Bitmap reuseBitmap = null;
+            if (width != NO_SCALING && options.outWidth >= width && options.outHeight >= height) {
+                setScaling(options, width, height);
+            } else {
+                reuseBitmap = pool.get(options.outWidth, options.outHeight);
+            }
             options.inBitmap = reuseBitmap;
             Bitmap decodedBitmap = decoder.decode(input, options);
             if (reuseBitmap != null && decodedBitmap != reuseBitmap) {
@@ -130,7 +137,7 @@ public class BitmapDecoder {
             if (!in.markSupported()) {
                 in = new BufferedInputStream(in);
             }
-            return delegateDecode(sStreamDecoder, in);
+            return delegateDecode(sStreamDecoder, in, NO_SCALING, NO_SCALING);
         } finally {
             Utils.closeSilently(in);
         }
@@ -141,15 +148,43 @@ public class BitmapDecoder {
     }
 
     public static Bitmap decodeFile(String path) {
-        return delegateDecode(sFileDecoder, path);
+        return delegateDecode(sFileDecoder, path, NO_SCALING, NO_SCALING);
     }
 
     public static Bitmap decodeByteArray(byte[] data) {
-        return delegateDecode(sByteArrayDecoder, data);
+        return delegateDecode(sByteArrayDecoder, data, NO_SCALING, NO_SCALING);
     }
 
     public static void put(Bitmap bitmap) {
         GalleryBitmapPool.getInstance().put(bitmap);
+    }
+
+    /**
+     * Decodes to a specific size. If the dimensions of the image don't match
+     * width x height, the resulting image will be in the proportions of the
+     * decoded image, but will be scaled to fill the dimensions. For example, if
+     * width and height are 10x10 and the image is 200x100, the resulting image
+     * will be scaled/sampled to 20x10.
+     */
+    public static Bitmap decodeFile(String path, int width, int height) {
+        return delegateDecode(sFileDecoder, path, width, height);
+    }
+
+    /** @see #decodeFile(String, int, int) */
+    public static Bitmap decodeByteArray(byte[] data, int width, int height) {
+        return delegateDecode(sByteArrayDecoder, data, width, height);
+    }
+
+    /** @see #decodeFile(String, int, int) */
+    public static Bitmap decode(InputStream in, int width, int height) {
+        try {
+            if (!in.markSupported()) {
+                in = new BufferedInputStream(in);
+            }
+            return delegateDecode(sStreamDecoder, in, width, height);
+        } finally {
+            Utils.closeSilently(in);
+        }
     }
 
     private static BitmapFactory.Options getOptions() {
@@ -158,10 +193,32 @@ public class BitmapDecoder {
             opts = new BitmapFactory.Options();
             opts.inMutable = true;
             opts.inPreferredConfig = Config.ARGB_8888;
-            opts.inSampleSize = 1;
             opts.inTempStorage = new byte[TEMP_STORAGE_SIZE_BYTES];
         }
+        opts.inSampleSize = 1;
+        opts.inDensity = 1;
+        opts.inTargetDensity = 1;
 
         return opts;
+    }
+
+    // Sets the options to sample then scale the image so that the image's
+    // minimum dimension will match side.
+    private static void setScaling(BitmapFactory.Options options, int width, int height) {
+        float widthScale = ((float)options.outWidth)/ width;
+        float heightScale = ((float) options.outHeight)/height;
+        int side = (widthScale < heightScale) ? width : height;
+        options.inSampleSize = BitmapUtils.computeSampleSize(options.outWidth, options.outHeight,
+                side, BitmapUtils.UNCONSTRAINED);
+        int constraint;
+        if (options.outWidth < options.outHeight) {
+            // Width is the constraint. Scale so that width = side.
+            constraint = options.outWidth;
+        } else {
+            // Height is the constraint. Scale so that height = side.
+            constraint = options.outHeight;
+        }
+        options.inDensity = constraint / options.inSampleSize;
+        options.inTargetDensity = side;
     }
 }
