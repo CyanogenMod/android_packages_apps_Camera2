@@ -17,6 +17,9 @@
 
 package com.android.camera;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -108,6 +111,8 @@ public class PhotoUI implements PieListener,
     private float mSurfaceTextureUncroppedHeight;
 
     private View mPreviewThumb;
+    private ObjectAnimator mFlashAnim;
+    private View mFlashOverlay;
 
     private SurfaceTextureSizeChangedListener mSurfaceTextureSizeListener;
     private TextureView mTextureView;
@@ -153,6 +158,26 @@ public class PhotoUI implements PieListener,
         }
     };
 
+    private ValueAnimator.AnimatorListener mAnimatorListener =
+            new ValueAnimator.AnimatorListener() {
+
+        @Override
+        public void onAnimationCancel(Animator arg0) {}
+
+        @Override
+        public void onAnimationEnd(Animator arg0) {
+            mFlashOverlay.setAlpha(0f);
+            mFlashOverlay.setVisibility(View.GONE);
+            mFlashAnim.removeListener(this);
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator arg0) {}
+
+        @Override
+        public void onAnimationStart(Animator arg0) {}
+    };
+
     public PhotoUI(CameraActivity activity, PhotoController controller, View parent) {
         mActivity = activity;
         mController = controller;
@@ -161,6 +186,7 @@ public class PhotoUI implements PieListener,
         mActivity.getLayoutInflater().inflate(R.layout.photo_module,
                 (ViewGroup) mRootView, true);
         mRenderOverlay = (RenderOverlay) mRootView.findViewById(R.id.render_overlay);
+        mFlashOverlay = mRootView.findViewById(R.id.flash_overlay);
         // display the view
         mTextureView = (TextureView) mRootView.findViewById(R.id.preview_content);
         mTextureView.setSurfaceTextureListener(this);
@@ -442,6 +468,19 @@ public class PhotoUI implements PieListener,
     }
 
     public void setCameraState(int state) {
+    }
+
+    public void animateFlash() {
+        // End the previous animation if the previous one is still running
+        if (mFlashAnim != null && mFlashAnim.isRunning()) {
+            mFlashAnim.end();
+        }
+        // Start new flash animation.
+        mFlashOverlay.setVisibility(View.VISIBLE);
+        mFlashAnim = ObjectAnimator.ofFloat((Object) mFlashOverlay, "alpha", 0.3f, 0f);
+        mFlashAnim.setDuration(300);
+        mFlashAnim.addListener(mAnimatorListener);
+        mFlashAnim.start();
     }
 
     public void enableGestures(boolean enable) {

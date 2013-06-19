@@ -49,7 +49,6 @@ import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -74,7 +73,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
 
@@ -940,18 +938,16 @@ public class PhotoModule
     }
 
     private void animateFlash() {
-        /* //TODO:
         // Only animate when in full screen capture mode
         // i.e. If monkey/a user swipes to the gallery during picture taking,
         // don't show animation
-        if (ApiHelper.HAS_SURFACE_TEXTURE && !mIsImageCaptureIntent
-                && mActivity.mShowCameraAppView) {
-            // Start capture animation.
-            ((CameraScreenNail) mActivity.mCameraScreenNail).animateFlash(mDisplayRotation);
-            mUI.enablePreviewThumb(true);
-            mHandler.sendEmptyMessageDelayed(CAPTURE_ANIMATION_DONE,
-                    CaptureAnimManager.getAnimationDuration());
-        } */
+        if (!mIsImageCaptureIntent) {
+            mUI.animateFlash();
+
+            // TODO: mUI.enablePreviewThumb(true);
+            // mHandler.sendEmptyMessageDelayed(CAPTURE_ANIMATION_DONE,
+            //        CaptureAnimManager.getAnimationDuration());
+        }
     }
 
     @Override
