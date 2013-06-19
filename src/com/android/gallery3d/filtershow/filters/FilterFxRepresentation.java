@@ -56,6 +56,7 @@ public class FilterFxRepresentation extends FilterRepresentation {
         if (a instanceof FilterFxRepresentation) {
             FilterFxRepresentation representation = (FilterFxRepresentation) a;
             setName(representation.getName());
+            setSerializationName(representation.getSerializationName());
             setBitmapResource(representation.getBitmapResource());
             setNameResource(representation.getNameResource());
         }
