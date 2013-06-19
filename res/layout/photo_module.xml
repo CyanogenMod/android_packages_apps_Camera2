@@ -28,6 +28,13 @@
         android:id="@+id/preview_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <View
+        android:id="@+id/flash_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:visibility="gone"
+        android:alpha="0" />
     <ViewStub android:id="@+id/face_view_stub"
         android:inflatedId="@+id/face_view"
         android:layout="@layout/face_view"
