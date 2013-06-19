@@ -17,10 +17,12 @@
 package com.android.camera;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -115,6 +117,14 @@ public class CameraActivity extends Activity
                 mMediaSaveService = null;
             }};
 
+    // close activity when screen turns off
+    private BroadcastReceiver mScreenOffReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            finish();
+        }
+    };
+
     private FilmStripView.Listener mFilmStripListener = new FilmStripView.Listener() {
             @Override
             public void onDataPromoted(int dataID) {
@@ -194,21 +204,25 @@ public class CameraActivity extends Activity
         // Check if this is in the secure camera mode.
         Intent intent = getIntent();
         String action = intent.getAction();
-        if (INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action)) {
-            mSecureCamera = true;
-        } else if (ACTION_IMAGE_CAPTURE_SECURE.equals(action)) {
+        if (INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action)
+                || ACTION_IMAGE_CAPTURE_SECURE.equals(action)) {
             mSecureCamera = true;
         } else {
             mSecureCamera = intent.getBooleanExtra(SECURE_CAMERA_EXTRA, false);
         }
-        /*TODO: if (mSecureCamera) {
+
+        if (mSecureCamera) {
+            // Change the window flags so that secure camera can show when locked
+            Window win = getWindow();
+            WindowManager.LayoutParams params = win.getAttributes();
+            params.flags |= WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+            win.setAttributes(params);
+
+            // Filter for screen off so that we can finish secure camera activity
+            // when screen is off.
             IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
             registerReceiver(mScreenOffReceiver, filter);
-            if (sScreenOffReceiver == null) {
-                sScreenOffReceiver = new ScreenOffReceiver();
-                getApplicationContext().registerReceiver(sScreenOffReceiver, filter);
-            }
-        }*/
+        }
         LayoutInflater inflater = getLayoutInflater();
         View rootLayout = inflater.inflate(R.layout.camera, null, false);
         mRootView = rootLayout.findViewById(R.id.camera_app_root);
@@ -289,6 +303,7 @@ public class CameraActivity extends Activity
     @Override
     public void onDestroy() {
         unbindMediaSaveService();
+        if (mSecureCamera) unregisterReceiver(mScreenOffReceiver);
         super.onDestroy();
     }
 
