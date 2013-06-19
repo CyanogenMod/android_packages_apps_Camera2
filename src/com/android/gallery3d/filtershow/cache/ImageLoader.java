@@ -394,7 +394,9 @@ public class ImageLoader {
 
     public void saveImage(ImagePreset preset, final FilterShowActivity filterShowActivity,
             File destination) {
-        new SaveCopyTask(mContext, mUri, destination, new SaveCopyTask.Callback() {
+        Uri selectedImageUri = filterShowActivity.getSelectedImageUri();
+        new SaveCopyTask(mContext, mUri, selectedImageUri, destination,
+                new SaveCopyTask.Callback() {
 
             @Override
             public void onComplete(Uri result) {

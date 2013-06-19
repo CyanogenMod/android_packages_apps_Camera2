@@ -138,6 +138,8 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     private Uri mOriginalImageUri = null;
     private ImagePreset mOriginalPreset = null;
 
+    private Uri mSelectedImageUri = null;
+
     private CategoryAdapter mCategoryLooksAdapter = null;
     private CategoryAdapter mCategoryBordersAdapter = null;
     private CategoryAdapter mCategoryGeometryAdapter = null;
@@ -310,12 +312,13 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         }
 
         mAction = intent.getAction();
-        Uri srcUri = intent.getData();
+        mSelectedImageUri = intent.getData();
+        Uri loadUri = mSelectedImageUri;
         if (mOriginalImageUri != null) {
-            srcUri = mOriginalImageUri;
+            loadUri = mOriginalImageUri;
         }
-        if (srcUri != null) {
-            startLoadBitmap(srcUri);
+        if (loadUri != null) {
+            startLoadBitmap(loadUri);
         } else {
             pickImage();
         }
@@ -925,11 +928,13 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage(R.string.unsaved).setTitle(R.string.save_before_exit);
                 builder.setPositiveButton(R.string.save_and_exit, new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int id) {
                         saveImage();
                     }
                 });
                 builder.setNegativeButton(R.string.exit, new DialogInterface.OnClickListener() {
+                    @Override
                     public void onClick(DialogInterface dialog, int id) {
                         done();
                     }
@@ -983,7 +988,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     public void saveImage() {
         if (mImageShow.hasModifications()) {
             // Get the name of the album, to which the image will be saved
-            File saveDir = SaveCopyTask.getFinalSaveDirectory(this, mImageLoader.getUri());
+            File saveDir = SaveCopyTask.getFinalSaveDirectory(this, mSelectedImageUri);
             int bucketId = GalleryUtils.getBucketId(saveDir.getPath());
             String albumName = LocalAlbum.getLocalizedName(getResources(), bucketId, null);
             showSavingProgress(albumName);
@@ -1002,10 +1007,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         finish();
     }
 
-    static {
-        System.loadLibrary("jni_filtershow_filters");
-    }
-
     private void extractXMPData() {
         XMresults res = XmpPresets.extractXMPData(
                 getBaseContext(), mMasterImage, getIntent().getData());
@@ -1015,4 +1016,14 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         mOriginalImageUri = res.originalimage;
         mOriginalPreset = res.preset;
     }
+
+    public Uri getSelectedImageUri() {
+        return mSelectedImageUri;
+    }
+
+    static {
+        System.loadLibrary("jni_filtershow_filters");
+    }
+
+
 }

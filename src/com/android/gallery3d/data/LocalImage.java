@@ -35,9 +35,9 @@ import com.android.gallery3d.app.PanoramaMetadataSupport;
 import com.android.gallery3d.app.StitchingProgressManager;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.BitmapUtils;
-import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
+import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
@@ -46,8 +46,6 @@ import com.android.gallery3d.util.UpdateHelper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel.MapMode;
 
 // LocalImage represents an image in the local storage.
 public class LocalImage extends LocalMediaItem {
@@ -271,7 +269,9 @@ public class LocalImage extends LocalMediaItem {
     public void delete() {
         GalleryUtils.assertNotInRenderThread();
         Uri baseUri = Images.Media.EXTERNAL_CONTENT_URI;
-        mApplication.getContentResolver().delete(baseUri, "_id=?",
+        ContentResolver contentResolver = mApplication.getContentResolver();
+        SaveCopyTask.deleteAuxFiles(contentResolver, getContentUri());
+        contentResolver.delete(baseUri, "_id=?",
                 new String[]{String.valueOf(id)});
     }
 
