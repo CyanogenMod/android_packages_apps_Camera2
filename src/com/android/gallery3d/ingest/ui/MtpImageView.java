@@ -27,12 +27,16 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+import com.android.gallery3d.ingest.MtpDeviceIndex;
 import com.android.gallery3d.ingest.data.BitmapWithMetadata;
 import com.android.gallery3d.ingest.data.MtpBitmapFetch;
 
 import java.lang.ref.WeakReference;
 
 public class MtpImageView extends ImageView {
+    // We will use the thumbnail for images larger than this threshold
+    private static final int MAX_FULLSIZE_PREVIEW_SIZE = 8388608; // 8 megabytes
+
     private int mObjectHandle;
     private int mGeneration;
 
@@ -89,7 +93,12 @@ public class MtpImageView extends ImageView {
     }
 
     protected Object fetchMtpImageDataFromDevice(MtpDevice device, MtpObjectInfo info) {
-        return MtpBitmapFetch.getFullsize(device, info);
+        if (info.getCompressedSize() <= MAX_FULLSIZE_PREVIEW_SIZE
+                && MtpDeviceIndex.SUPPORTED_IMAGE_FORMATS.contains(info.getFormat())) {
+            return MtpBitmapFetch.getFullsize(device, info);
+        } else {
+            return new BitmapWithMetadata(MtpBitmapFetch.getThumbnail(device, info), 0);
+        }
     }
 
     private float mLastBitmapWidth;

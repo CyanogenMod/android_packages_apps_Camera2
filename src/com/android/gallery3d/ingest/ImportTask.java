@@ -65,6 +65,7 @@ public class ImportTask implements Runnable {
             List<MtpObjectInfo> objectsNotImported = new LinkedList<MtpObjectInfo>();
             int visited = 0;
             int total = mObjectsToImport.size();
+            mListener.onImportProgress(visited, total, null);
             File dest = new File(Environment.getExternalStorageDirectory(), mDestAlbumName);
             dest.mkdirs();
             for (MtpObjectInfo object : mObjectsToImport) {

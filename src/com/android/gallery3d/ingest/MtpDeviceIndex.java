@@ -26,8 +26,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 /**
@@ -61,6 +63,27 @@ import java.util.Stack;
  * See the comments in buildLookupIndex for implementation notes.
  */
 public class MtpDeviceIndex {
+
+    public static final int FORMAT_MOV = 0x300D; // For some reason this is not in MtpConstants
+
+    public static final Set<Integer> SUPPORTED_IMAGE_FORMATS;
+    public static final Set<Integer> SUPPORTED_VIDEO_FORMATS;
+
+    static {
+        SUPPORTED_IMAGE_FORMATS = new HashSet<Integer>();
+        SUPPORTED_IMAGE_FORMATS.add(MtpConstants.FORMAT_JFIF);
+        SUPPORTED_IMAGE_FORMATS.add(MtpConstants.FORMAT_EXIF_JPEG);
+        SUPPORTED_IMAGE_FORMATS.add(MtpConstants.FORMAT_PNG);
+        SUPPORTED_IMAGE_FORMATS.add(MtpConstants.FORMAT_GIF);
+        SUPPORTED_IMAGE_FORMATS.add(MtpConstants.FORMAT_BMP);
+
+        SUPPORTED_VIDEO_FORMATS = new HashSet<Integer>();
+        SUPPORTED_VIDEO_FORMATS.add(MtpConstants.FORMAT_3GP_CONTAINER);
+        SUPPORTED_VIDEO_FORMATS.add(MtpConstants.FORMAT_AVI);
+        SUPPORTED_VIDEO_FORMATS.add(MtpConstants.FORMAT_MP4_CONTAINER);
+        SUPPORTED_VIDEO_FORMATS.add(MtpConstants.FORMAT_MPEG);
+        // TODO: add FORMAT_MOV once Media Scanner supports .mov files
+    }
 
     @Override
     public int hashCode() {
@@ -492,14 +515,12 @@ public class MtpDeviceIndex {
                     for (int objectHandle : mDevice.getObjectHandles(storageId, 0, dirHandle)) {
                         MtpObjectInfo objectInfo = mDevice.getObjectInfo(objectHandle);
                         if (objectInfo == null) throw new IndexingException();
-                        switch (objectInfo.getFormat()) {
-                            case MtpConstants.FORMAT_JFIF:
-                            case MtpConstants.FORMAT_EXIF_JPEG:
-                                addObject(objectInfo);
-                                break;
-                            case MtpConstants.FORMAT_ASSOCIATION:
-                                pendingDirectories.add(objectHandle);
-                                break;
+                        int format = objectInfo.getFormat();
+                        if (format == MtpConstants.FORMAT_ASSOCIATION) {
+                            pendingDirectories.add(objectHandle);
+                        } else if (SUPPORTED_IMAGE_FORMATS.contains(format)
+                                || SUPPORTED_VIDEO_FORMATS.contains(format)) {
+                            addObject(objectInfo);
                         }
                     }
                 }
