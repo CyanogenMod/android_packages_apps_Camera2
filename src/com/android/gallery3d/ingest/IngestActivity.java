@@ -75,6 +75,14 @@ public class IngestActivity extends Activity implements
     private MenuItem mMenuSwitcherItem;
     private MenuItem mActionMenuSwitcherItem;
 
+    // The MTP framework components don't give us fine-grained file copy
+    // progress updates, so for large photos and videos, we will be stuck
+    // with a dialog not updating for a long time. To give the user feedback,
+    // we switch to the animated indeterminate progress bar after the timeout
+    // specified by INDETERMINATE_SWITCH_TIMEOUT_MS. On the next update from
+    // the framework, we switch back to the normal progress bar.
+    private static final int INDETERMINATE_SWITCH_TIMEOUT_MS = 3000;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -437,6 +445,9 @@ public class IngestActivity extends Activity implements
         mProgressState.current = visitedCount;
         mProgressState.title = getResources().getString(R.string.ingest_importing);
         mHandler.sendEmptyMessage(ItemListHandler.MSG_PROGRESS_UPDATE);
+        mHandler.removeMessages(ItemListHandler.MSG_PROGRESS_INDETERMINATE);
+        mHandler.sendEmptyMessageDelayed(ItemListHandler.MSG_PROGRESS_INDETERMINATE,
+                INDETERMINATE_SWITCH_TIMEOUT_MS);
     }
 
     @Override
@@ -444,6 +455,7 @@ public class IngestActivity extends Activity implements
             int numVisited) {
         // Not guaranteed to be called on the UI thread
         mHandler.sendEmptyMessage(ItemListHandler.MSG_PROGRESS_HIDE);
+        mHandler.removeMessages(ItemListHandler.MSG_PROGRESS_INDETERMINATE);
         // TODO: maybe show an extra dialog listing the ones that failed
         // importing, if any?
     }
@@ -477,6 +489,11 @@ public class IngestActivity extends Activity implements
         }
     }
 
+    private void makeProgressDialogIndeterminate() {
+        ProgressDialog dialog = getProgressDialog();
+        dialog.setIndeterminate(true);
+    }
+
     private void cleanupProgressDialog() {
         if (mProgressDialog != null) {
             mProgressDialog.hide();
@@ -490,6 +507,7 @@ public class IngestActivity extends Activity implements
         public static final int MSG_PROGRESS_HIDE = 1;
         public static final int MSG_NOTIFY_CHANGED = 2;
         public static final int MSG_BULK_CHECKED_CHANGE = 3;
+        public static final int MSG_PROGRESS_INDETERMINATE = 4;
 
         WeakReference<IngestActivity> mParentReference;
 
@@ -514,6 +532,9 @@ public class IngestActivity extends Activity implements
                     break;
                 case MSG_BULK_CHECKED_CHANGE:
                     parent.mPositionMappingCheckBroker.onBulkCheckedChange();
+                    break;
+                case MSG_PROGRESS_INDETERMINATE:
+                    parent.makeProgressDialogIndeterminate();
                     break;
                 default:
                     break;
