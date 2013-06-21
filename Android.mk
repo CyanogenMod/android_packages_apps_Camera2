@@ -37,9 +37,9 @@ LOCAL_SDK_VERSION := current
 # the libraries in the APK, otherwise just put them in /system/lib and
 # leave them out of the APK
 ifneq (,$(TARGET_BUILD_APPS))
-  LOCAL_JNI_SHARED_LIBRARIES := libjni_mosaic libjni_eglfence libjni_filtershow_filters librsjni
+  LOCAL_JNI_SHARED_LIBRARIES := libjni_eglfence libjni_filtershow_filters librsjni
 else
-  LOCAL_REQUIRED_MODULES := libjni_mosaic libjni_eglfence libjni_filtershow_filters
+  LOCAL_REQUIRED_MODULES := libjni_eglfence libjni_filtershow_filters
 endif
 
 LOCAL_PROGUARD_FLAG_FILES := proguard.flags
@@ -50,7 +50,7 @@ include $(call all-makefiles-under, jni)
 
 ifeq ($(strip $(LOCAL_PACKAGE_OVERRIDES)),)
 
-# Use the following include to make gallery test apk and the mosaic library
+# Use the following include to make gallery test apk
 include $(call all-makefiles-under, $(LOCAL_PATH))
 
 endif
