@@ -17,7 +17,9 @@
 package com.android.gallery3d.ingest.ui;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.mtp.MtpDevice;
 import android.mtp.MtpObjectInfo;
 import android.os.Handler;
@@ -27,6 +29,7 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+import com.android.gallery3d.R;
 import com.android.gallery3d.ingest.MtpDeviceIndex;
 import com.android.gallery3d.ingest.data.BitmapWithMetadata;
 import com.android.gallery3d.ingest.data.MtpBitmapFetch;
@@ -46,6 +49,8 @@ public class MtpImageView extends ImageView {
     private MtpObjectInfo mFetchObjectInfo;
     private MtpDevice mFetchDevice;
     private Object mFetchResult;
+    private Drawable mOverlayIcon;
+    private boolean mShowOverlayIcon;
 
     private static final FetchImageHandler sFetchHandler = FetchImageHandler.createOnNewThread();
     private static final ShowImageHandler sFetchCompleteHandler = new ShowImageHandler();
@@ -82,6 +87,11 @@ public class MtpImageView extends ImageView {
         showPlaceholder();
         mGeneration = gen;
         mObjectHandle = handle;
+        mShowOverlayIcon = MtpDeviceIndex.SUPPORTED_VIDEO_FORMATS.contains(object.getFormat());
+        if (mShowOverlayIcon && mOverlayIcon == null) {
+            mOverlayIcon = getResources().getDrawable(R.drawable.ic_control_play);
+            updateOverlayIconBounds();
+        }
         synchronized (mFetchLock) {
             mFetchObjectInfo = object;
             mFetchDevice = device;
@@ -143,11 +153,45 @@ public class MtpImageView extends ImageView {
         setImageMatrix(mDrawMatrix);
     }
 
+    private static final int OVERLAY_ICON_SIZE_DENOMINATOR = 4;
+
+    private void updateOverlayIconBounds() {
+        int iheight = mOverlayIcon.getIntrinsicHeight();
+        int iwidth = mOverlayIcon.getIntrinsicWidth();
+        int vheight = getHeight();
+        int vwidth = getWidth();
+        float scale_height = ((float) vheight) / (iheight * OVERLAY_ICON_SIZE_DENOMINATOR);
+        float scale_width = ((float) vwidth) / (iwidth * OVERLAY_ICON_SIZE_DENOMINATOR);
+        if (scale_height >= 1f && scale_width >= 1f) {
+            mOverlayIcon.setBounds((vwidth - iwidth) / 2,
+                    (vheight - iheight) / 2,
+                    (vwidth + iwidth) / 2,
+                    (vheight + iheight) / 2);
+        } else {
+            float scale = Math.min(scale_height, scale_width);
+            mOverlayIcon.setBounds((int) (vwidth - scale * iwidth) / 2,
+                    (int) (vheight - scale * iheight) / 2,
+                    (int) (vwidth + scale * iwidth) / 2,
+                    (int) (vheight + scale * iheight) / 2);
+        }
+    }
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         if (changed && getScaleType() == ScaleType.MATRIX) {
             updateDrawMatrix();
+        }
+        if (mShowOverlayIcon && changed && mOverlayIcon != null) {
+            updateOverlayIconBounds();
+        }
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        if (mShowOverlayIcon && mOverlayIcon != null) {
+            mOverlayIcon.draw(canvas);
         }
     }
 
