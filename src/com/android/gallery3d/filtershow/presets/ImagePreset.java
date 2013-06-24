@@ -18,20 +18,19 @@ package com.android.gallery3d.filtershow.presets;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.support.v8.renderscript.Allocation;
 import android.util.JsonReader;
 import android.util.JsonWriter;
 import android.util.Log;
 
-import com.adobe.xmp.XMPException;
-import com.adobe.xmp.XMPMeta;
-import com.adobe.xmp.options.PropertyOptions;
+import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.cache.CachingPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.BaseFiltersManager;
-import com.android.gallery3d.filtershow.filters.FiltersManager;
+import com.android.gallery3d.filtershow.filters.FilterFxRepresentation;
+import com.android.gallery3d.filtershow.filters.FilterImageBorderRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
+import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
@@ -52,6 +51,8 @@ public class ImagePreset {
     private ImageLoader mImageLoader = null;
 
     private Vector<FilterRepresentation> mFilters = new Vector<FilterRepresentation>();
+
+    protected boolean mIsFxPreset = false;
 
     private boolean mDoApplyGeometry = true;
     private boolean mDoApplyFilters = true;
@@ -183,21 +184,6 @@ public class ImagePreset {
         GeometryMetadata geo = new GeometryMetadata();
         mFilters.add(0, geo); // Hard Requirement for now -- Geometry ought to be first.
         return geo;
-    }
-
-    public boolean hasModifications() {
-        for (int i = 0; i < mFilters.size(); i++) {
-            FilterRepresentation filter = mFilters.elementAt(i);
-            if (filter instanceof GeometryMetadata) {
-                if (((GeometryMetadata) filter).hasModifications()) {
-                    return true;
-                }
-            }
-            if (!filter.isNil() && !filter.getName().equalsIgnoreCase("none")) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public boolean isPanoramaSafe() {
@@ -353,14 +339,19 @@ public class ImagePreset {
         }
     }
 
+    // If the filter is an "None" effect or border, then just don't add this
+    // filter.
     public void addFilter(FilterRepresentation representation) {
         if (representation instanceof GeometryMetadata) {
             setGeometry((GeometryMetadata) representation);
             return;
         }
+
         if (representation.getFilterType() == FilterRepresentation.TYPE_BORDER) {
             removeFilter(representation);
-            mFilters.add(representation);
+            if (!isNoneBorderFilter(representation)) {
+                mFilters.add(representation);
+            }
         } else if (representation.getFilterType() == FilterRepresentation.TYPE_FX) {
             boolean found = false;
             for (int i = 0; i < mFilters.size(); i++) {
@@ -373,16 +364,30 @@ public class ImagePreset {
                 }
                 if (type == FilterRepresentation.TYPE_FX) {
                     mFilters.remove(i);
-                    mFilters.add(i, representation);
+                    if (!isNoneFxFilter(representation)) {
+                        mFilters.add(i, representation);
+                    }
                     found = true;
                 }
             }
             if (!found) {
-                mFilters.add(representation);
+                if (!isNoneFxFilter(representation)) {
+                    mFilters.add(representation);
+                }
             }
         } else {
             mFilters.add(representation);
         }
+    }
+
+    private boolean isNoneBorderFilter(FilterRepresentation representation) {
+        return representation instanceof FilterImageBorderRepresentation &&
+                ((FilterImageBorderRepresentation) representation).getDrawableResource() == 0;
+    }
+
+    private boolean isNoneFxFilter(FilterRepresentation representation) {
+        return representation instanceof FilterFxRepresentation &&
+                ((FilterFxRepresentation)representation).getNameResource() == R.string.none;
     }
 
     public FilterRepresentation getRepresentation(FilterRepresentation filterRepresentation) {

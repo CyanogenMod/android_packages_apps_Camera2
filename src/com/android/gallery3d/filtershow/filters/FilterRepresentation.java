@@ -82,7 +82,9 @@ public class FilterRepresentation implements Cloneable {
         if (representation.mFilterClass == mFilterClass
                 && representation.mName.equalsIgnoreCase(mName)
                 && representation.mPriority == mPriority
-                && representation.mSupportsPartialRendering == mSupportsPartialRendering
+                // TODO: After we enable partial rendering, we can switch back
+                // to use member variable here.
+                && representation.supportsPartialRendering() == supportsPartialRendering()
                 && representation.mTextId == mTextId
                 && representation.mEditorId == mEditorId
                 && representation.mButtonId == mButtonId
