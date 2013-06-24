@@ -99,10 +99,7 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     public boolean hasModifications() {
-        if (getImagePreset() == null) {
-            return false;
-        }
-        return getImagePreset().hasModifications();
+        return MasterImage.getImage().hasModifications();
     }
 
     public void resetParameter() {
@@ -321,9 +318,9 @@ public class ImageShow extends View implements OnGestureListener,
             int py = 0;
             if (mShowOriginalDirection == UNVEIL_VERTICAL) {
                 px = mImageBounds.width();
-                py = (int) (mTouch.y - mImageBounds.top);
+                py = mTouch.y - mImageBounds.top;
             } else {
-                px = (int) (mTouch.x - mImageBounds.left);
+                px = mTouch.x - mImageBounds.left;
                 py = mImageBounds.height();
                 if (showsOriginal) {
                     px = mImageBounds.width();

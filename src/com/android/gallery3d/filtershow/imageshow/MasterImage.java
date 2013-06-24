@@ -16,15 +16,22 @@
 
 package com.android.gallery3d.filtershow.imageshow;
 
-import android.graphics.*;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Message;
 
-import android.util.Log;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.history.HistoryAdapter;
 import com.android.gallery3d.filtershow.history.HistoryItem;
-import com.android.gallery3d.filtershow.cache.*;
+import com.android.gallery3d.filtershow.cache.FilteringPipeline;
+import com.android.gallery3d.filtershow.cache.ImageLoader;
+import com.android.gallery3d.filtershow.cache.RenderingRequest;
+import com.android.gallery3d.filtershow.cache.RenderingRequestCaller;
+import com.android.gallery3d.filtershow.cache.TripleBufferBitmap;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -45,6 +52,7 @@ public class MasterImage implements RenderingRequestCaller {
 
     private ImageFilter mCurrentFilter = null;
     private ImagePreset mPreset = null;
+    private ImagePreset mLoadedPreset = null;
     private ImagePreset mGeometryOnlyPreset = null;
     private ImagePreset mFiltersOnlyPreset = null;
 
@@ -224,9 +232,12 @@ public class MasterImage implements RenderingRequestCaller {
 
     public synchronized boolean hasModifications() {
         if (mPreset == null) {
-            return false;
+            return getLoadedPreset() != null;
+        } else {
+            // TODO: same() is quite strict check here. We should be only
+            // checking for functionality parity.
+            return !mPreset.same(getLoadedPreset());
         }
-        return mPreset.hasModifications();
     }
 
     public TripleBufferBitmap getDoubleBuffer() {
@@ -511,5 +522,13 @@ public class MasterImage implements RenderingRequestCaller {
 
     public boolean showsOriginal() {
         return mShowsOriginal;
+    }
+
+    public void setLoadedPreset(ImagePreset preset) {
+        mLoadedPreset = preset;
+    }
+
+    public ImagePreset getLoadedPreset() {
+        return mLoadedPreset;
     }
 }

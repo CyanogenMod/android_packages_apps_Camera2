@@ -36,8 +36,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -450,10 +450,12 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             copy.addFilter(filterRepresentation);
         } else {
             if (filterRepresentation.allowsSingleInstanceOnly()) {
-                representation.updateTempParametersFrom(filterRepresentation);
-                representation.synchronizeRepresentation();
+                // Don't just update the filter representation. Centralize the
+                // logic in the addFilter(), such that we can keep "None" as
+                // null.
+                copy.removeFilter(representation);
+                copy.addFilter(filterRepresentation);
             }
-            filterRepresentation = representation;
         }
         MasterImage.getImage().setPreset(copy, filterRepresentation, true);
         MasterImage.getImage().setCurrentFilterRepresentation(filterRepresentation);
@@ -565,6 +567,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             mLoadBitmapTask = null;
 
             if (mOriginalPreset != null) {
+                MasterImage.getImage().setLoadedPreset(mOriginalPreset);
                 MasterImage.getImage().setPreset(mOriginalPreset,
                         mOriginalPreset.getLastRepresentation(), true);
                 mOriginalPreset = null;
