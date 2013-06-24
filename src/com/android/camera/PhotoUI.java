@@ -526,12 +526,15 @@ public class PhotoUI implements PieListener,
         mOnScreenIndicators.updateExposureOnScreenIndicator(params,
                 CameraSettings.readExposure(prefs));
         mOnScreenIndicators.updateFlashOnScreenIndicator(params.getFlashMode());
-        int wbIndex = 2;
+        int wbIndex = -1;
+        String wb = params.getWhiteBalance();
         ListPreference pref = group.findPreference(CameraSettings.KEY_WHITE_BALANCE);
         if (pref != null) {
-            wbIndex = pref.getCurrentIndex();
+            wbIndex = pref.findIndexOfValue(wb);
         }
-        mOnScreenIndicators.updateWBIndicator(wbIndex);
+        // make sure the correct value was found
+        // otherwise use auto index
+        mOnScreenIndicators.updateWBIndicator(wbIndex < 0 ? 2 : wbIndex);
         boolean location = RecordLocationPreference.get(
                 prefs, mActivity.getContentResolver());
         mOnScreenIndicators.updateLocationIndicator(location);
