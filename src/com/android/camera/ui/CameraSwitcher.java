@@ -48,12 +48,10 @@ public class CameraSwitcher extends RotateImageView
 
     public static final int PHOTO_MODULE_INDEX = 0;
     public static final int VIDEO_MODULE_INDEX = 1;
-    public static final int PANORAMA_MODULE_INDEX = 2;
-    public static final int LIGHTCYCLE_MODULE_INDEX = 3;
+    public static final int LIGHTCYCLE_MODULE_INDEX = 2;
     private static final int[] DRAW_IDS = {
             R.drawable.ic_switch_camera,
             R.drawable.ic_switch_video,
-            R.drawable.ic_switch_pan,
             R.drawable.ic_switch_photosphere
     };
     public interface CameraSwitchListener {
@@ -98,17 +96,13 @@ public class CameraSwitcher extends RotateImageView
     public void initializeDrawables(Context context) {
         int totaldrawid = (LightCycleHelper.hasLightCycleCapture(context)
                 ? DRAW_IDS.length : DRAW_IDS.length - 1);
-        if (!ApiHelper.HAS_OLD_PANORAMA) totaldrawid--;
 
         int[] drawids = new int[totaldrawid];
         int[] moduleids = new int[totaldrawid];
         int ix = 0;
         for (int i = 0; i < DRAW_IDS.length; i++) {
-            if (i == PANORAMA_MODULE_INDEX && !ApiHelper.HAS_OLD_PANORAMA) {
-            continue; // not enabled, so don't add to UI
-            }
             if (i == LIGHTCYCLE_MODULE_INDEX && !LightCycleHelper.hasLightCycleCapture(context)) {
-            continue; // not enabled, so don't add to UI
+                continue; // not enabled, so don't add to UI
             }
             moduleids[ix] = i;
             drawids[ix++] = DRAW_IDS[i];
@@ -187,10 +181,6 @@ public class CameraSwitcher extends RotateImageView
                 case R.drawable.ic_switch_video:
                     item.setContentDescription(getContext().getResources().getString(
                             R.string.accessibility_switch_to_video));
-                    break;
-                case R.drawable.ic_switch_pan:
-                    item.setContentDescription(getContext().getResources().getString(
-                            R.string.accessibility_switch_to_panorama));
                     break;
                 case R.drawable.ic_switch_photosphere:
                     item.setContentDescription(getContext().getResources().getString(

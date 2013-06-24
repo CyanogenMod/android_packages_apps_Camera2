@@ -44,6 +44,7 @@ import android.widget.ImageView;
 
 import com.android.camera.data.CameraDataAdapter;
 import com.android.camera.data.LocalData;
+import com.android.camera.ui.CameraSwitcher;
 import com.android.camera.ui.CameraSwitcher.CameraSwitchListener;
 import com.android.camera.ui.FilmStripView;
 import com.android.gallery3d.R;
@@ -54,11 +55,6 @@ public class CameraActivity extends Activity
     implements CameraSwitchListener {
 
     private static final String TAG = "CAM_Activity";
-
-    public static final int PHOTO_MODULE_INDEX = 0;
-    public static final int VIDEO_MODULE_INDEX = 1;
-    public static final int PANORAMA_MODULE_INDEX = 2;
-    public static final int LIGHTCYCLE_MODULE_INDEX = 3;
 
     private static final String INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE =
             "android.media.action.STILL_IMAGE_CAMERA_SECURE";
@@ -422,13 +418,13 @@ public class CameraActivity extends Activity
         closeModule(mCurrentModule);
         mCurrentModuleIndex = i;
         switch (i) {
-            case VIDEO_MODULE_INDEX:
+            case CameraSwitcher.VIDEO_MODULE_INDEX:
                 mCurrentModule = new VideoModule();
                 break;
-            case PHOTO_MODULE_INDEX:
+            case CameraSwitcher.PHOTO_MODULE_INDEX:
                 mCurrentModule = new PhotoModule();
                 break;
-            case LIGHTCYCLE_MODULE_INDEX:
+            case CameraSwitcher.LIGHTCYCLE_MODULE_INDEX:
                 mCurrentModule = LightCycleHelper.createPanoramaModule();
                 break;
            default:

@@ -143,7 +143,7 @@ public class VideoUI implements PieRenderer.PieListener,
         ((CameraRootView) mRootView).setDisplayChangeListener(this);
         mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
         mSwitcher = (CameraSwitcher) mRootView.findViewById(R.id.camera_switcher);
-        mSwitcher.setCurrentIndex(1);
+        mSwitcher.setCurrentIndex(CameraSwitcher.VIDEO_MODULE_INDEX);
         mSwitcher.setSwitchListener((CameraSwitchListener) mActivity);
         initializeMiscControls();
         initializeControlByIntent();
