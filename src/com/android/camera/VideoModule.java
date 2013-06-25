@@ -394,12 +394,6 @@ public class VideoModule implements CameraModule,
 
         readVideoPreferences();
         mUI.setPrefChangedListener(this);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                startPreview();
-            }
-        }).start();
 
         mQuickCapture = mActivity.getIntent().getBooleanExtra(EXTRA_QUICK_CAPTURE, false);
         mLocationManager = new LocationManager(mActivity, null);
@@ -761,7 +755,11 @@ public class VideoModule implements CameraModule,
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    startPreview();
+                    synchronized (mCameraOpened) {
+                        if (mCameraOpened) {
+                            startPreview();
+                        }
+                    }
                 }
             }).start();
         } else {
@@ -931,8 +929,8 @@ public class VideoModule implements CameraModule,
                 CameraHolder.instance().release();
             }
             mCameraOpened = false;
+            mCameraDevice = null;
         }
-        mCameraDevice = null;
         mPreviewing = false;
         mSnapshotInProgress = false;
     }
