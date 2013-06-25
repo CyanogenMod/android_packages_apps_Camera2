@@ -148,14 +148,15 @@ public interface LocalData extends FilmStripView.ImageData {
         }
 
         @Override
-        public boolean delete(Context c) {
+        public boolean delete(Context ctx) {
             File f = new File(path);
             return f.delete();
         }
 
-        protected View fillViewBackground(Context c, View v,
+        protected ImageView fillImageView(Context ctx, ImageView v,
                 int decodeWidth, int decodeHeight, Drawable placeHolder) {
-            v.setBackground(placeHolder);
+            v.setScaleType(ImageView.ScaleType.FIT_XY);
+            v.setImageDrawable(placeHolder);
 
             BitmapLoadTask task = getBitmapLoadTask(v, decodeWidth, decodeHeight);
             task.execute();
@@ -163,9 +164,10 @@ public interface LocalData extends FilmStripView.ImageData {
         }
 
         @Override
-        public View getView(Context c,
+        public View getView(Context ctx,
                 int decodeWidth, int decodeHeight, Drawable placeHolder) {
-            return fillViewBackground(c, new ImageView(c), decodeWidth, decodeHeight, placeHolder);
+            return fillImageView(ctx, new ImageView(ctx),
+                    decodeWidth, decodeHeight, placeHolder);
         }
 
         @Override
@@ -192,16 +194,16 @@ public interface LocalData extends FilmStripView.ImageData {
         public abstract int getType();
 
         protected abstract BitmapLoadTask getBitmapLoadTask(
-                View v, int decodeWidth, int decodeHeight);
+                ImageView v, int decodeWidth, int decodeHeight);
 
         /*
          * An AsyncTask class that loads the bitmap in the background thread.
          * Sub-classes should implement their own "protected Bitmap doInBackground(Void... )"
          */
         protected abstract class BitmapLoadTask extends AsyncTask<Void, Void, Bitmap> {
-            protected View mView;
+            protected ImageView mView;
 
-            protected BitmapLoadTask(View v) {
+            protected BitmapLoadTask(ImageView v) {
                 mView = v;
             }
 
@@ -213,8 +215,8 @@ public interface LocalData extends FilmStripView.ImageData {
                     return;
                 }
                 BitmapDrawable d = new BitmapDrawable(bitmap);
-                d.setGravity(Gravity.FILL);
-                mView.setBackground(d);
+                mView.setScaleType(ImageView.ScaleType.FIT_XY);
+                mView.setImageDrawable(d);
             }
         }
     }
@@ -325,7 +327,7 @@ public interface LocalData extends FilmStripView.ImageData {
 
         @Override
         protected BitmapLoadTask getBitmapLoadTask(
-                View v, int decodeWidth, int decodeHeight) {
+                ImageView v, int decodeWidth, int decodeHeight) {
             return new PhotoBitmapLoadTask(v, decodeWidth, decodeHeight);
         }
 
@@ -343,7 +345,7 @@ public interface LocalData extends FilmStripView.ImageData {
             private int mDecodeWidth;
             private int mDecodeHeight;
 
-            public PhotoBitmapLoadTask(View v, int decodeWidth, int decodeHeight) {
+            public PhotoBitmapLoadTask(ImageView v, int decodeWidth, int decodeHeight) {
                 super(v);
                 mDecodeWidth = decodeWidth;
                 mDecodeHeight = decodeHeight;
@@ -466,18 +468,25 @@ public interface LocalData extends FilmStripView.ImageData {
         }
 
         @Override
-        public boolean delete(Context c) {
-            ContentResolver cr = c.getContentResolver();
+        public boolean delete(Context ctx) {
+            ContentResolver cr = ctx.getContentResolver();
             cr.delete(CONTENT_URI, VideoColumns._ID + "=" + id, null);
-            return super.delete(c);
+            return super.delete(ctx);
         }
 
         @Override
-        public View getView(final Context c,
+        public View getView(final Context ctx,
                 int decodeWidth, int decodeHeight, Drawable placeHolder) {
-            FrameLayout f = new FrameLayout(c);
-            fillViewBackground(c, f, decodeWidth, decodeHeight, placeHolder);
-            ImageView icon = new ImageView(c);
+
+            // ImageView for the bitmap.
+            ImageView iv = new ImageView(ctx);
+            iv.setLayoutParams(new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+            fillImageView(ctx, iv, decodeWidth, decodeHeight, placeHolder);
+
+            // ImageView for the play icon.
+            ImageView icon = new ImageView(ctx);
             icon.setImageResource(R.drawable.ic_control_play);
             icon.setScaleType(ImageView.ScaleType.CENTER);
             icon.setLayoutParams(new FrameLayout.LayoutParams(
@@ -486,22 +495,25 @@ public interface LocalData extends FilmStripView.ImageData {
             icon.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Util.playVideo(c, mPlayUri, title);
+                    Util.playVideo(ctx, mPlayUri, title);
                 }
             });
+
+            FrameLayout f = new FrameLayout(ctx);
+            f.addView(iv);
             f.addView(icon);
             return f;
         }
 
         @Override
         protected BitmapLoadTask getBitmapLoadTask(
-                View v, int decodeWidth, int decodeHeight) {
+                ImageView v, int decodeWidth, int decodeHeight) {
             return new VideoBitmapLoadTask(v);
         }
 
         private final class VideoBitmapLoadTask extends BitmapLoadTask {
 
-            public VideoBitmapLoadTask(View v) {
+            public VideoBitmapLoadTask(ImageView v) {
                 super(v);
             }
 
