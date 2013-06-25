@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.util.Log;
+
 import com.android.gallery3d.filtershow.editors.BasicEditor;
 
 public class FilterRepresentation implements Cloneable {
@@ -229,7 +230,7 @@ public class FilterRepresentation implements Cloneable {
     public void deSerializeRepresentation(String[][] rep) {
         for (int i = 0; i < rep.length; i++) {
             if ("Name".equals(rep[i][0])) {
-                mName = rep[i][0];
+                mName = rep[i][1];
                 break;
             }
         }
