@@ -195,7 +195,7 @@ public class PhotoUI implements PieListener,
 
         mShutterButton = (ShutterButton) mRootView.findViewById(R.id.shutter_button);
         mSwitcher = (CameraSwitcher) mRootView.findViewById(R.id.camera_switcher);
-        mSwitcher.setCurrentIndex(0);
+        mSwitcher.setCurrentIndex(CameraSwitcher.PHOTO_MODULE_INDEX);
         mSwitcher.setSwitchListener((CameraSwitchListener) mActivity);
         mMenuButton = mRootView.findViewById(R.id.menu);
         if (ApiHelper.HAS_FACE_DETECTION) {
