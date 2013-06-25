@@ -160,6 +160,7 @@ public class MasterImage implements RenderingRequestCaller {
             notifyGeometryChange();
         }
         mPreviousGeometry = new GeometryMetadata(geo);
+        mActivity.updateCategories();
     }
 
     private void setGeometry() {

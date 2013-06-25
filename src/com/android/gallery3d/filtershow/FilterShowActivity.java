@@ -488,6 +488,12 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         return mCurrentPanel;
     }
 
+    public void updateCategories() {
+        ImagePreset preset = mMasterImage.getPreset();
+        mCategoryLooksAdapter.reflectImagePreset(preset);
+        mCategoryBordersAdapter.reflectImagePreset(preset);
+    }
+
     private class LoadBitmapTask extends AsyncTask<Uri, Boolean, Boolean> {
         int mBitmapSize;
 

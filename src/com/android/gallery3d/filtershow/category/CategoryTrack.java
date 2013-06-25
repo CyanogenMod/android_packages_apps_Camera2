@@ -18,7 +18,9 @@ package com.android.gallery3d.filtershow.category;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.database.DataSetObserver;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import com.android.gallery3d.R;
@@ -27,6 +29,13 @@ public class CategoryTrack extends LinearLayout {
 
     private CategoryAdapter mAdapter;
     private int mElemSize;
+    private DataSetObserver mDataSetObserver = new DataSetObserver() {
+        @Override
+        public void onChanged() {
+            super.onChanged();
+            invalidate();
+        }
+    };
 
     public CategoryTrack(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -38,6 +47,7 @@ public class CategoryTrack extends LinearLayout {
         mAdapter = adapter;
         mAdapter.setItemWidth(mElemSize);
         mAdapter.setItemHeight(LayoutParams.MATCH_PARENT);
+        mAdapter.registerDataSetObserver(mDataSetObserver);
         fillContent();
     }
 
@@ -49,6 +59,14 @@ public class CategoryTrack extends LinearLayout {
             addView(view, i);
         }
         requestLayout();
+    }
+
+    @Override
+    public void invalidate() {
+        for (int i = 0; i < this.getChildCount(); i++) {
+            View child = getChildAt(i);
+            child.invalidate();
+        }
     }
 
 }

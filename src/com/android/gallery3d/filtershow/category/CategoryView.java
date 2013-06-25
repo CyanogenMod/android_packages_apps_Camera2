@@ -34,6 +34,8 @@ import com.android.gallery3d.filtershow.ui.SelectionRenderer;
 public class CategoryView extends View implements View.OnClickListener {
 
     private static final String LOGTAG = "CategoryView";
+    public static final int VERTICAL = 0;
+    public static final int HORIZONTAL = 1;
     private Paint mPaint = new Paint();
     private Action mAction;
     private Rect mTextBounds = new Rect();
@@ -46,6 +48,7 @@ public class CategoryView extends View implements View.OnClickListener {
     private int mSelectionStroke;
     private Paint mBorderPaint;
     private int mBorderStroke;
+    private int mOrientation = VERTICAL;
 
     public static void setTextSize(int size) {
         sTextSize = size;
@@ -128,5 +131,9 @@ public class CategoryView extends View implements View.OnClickListener {
         FilterShowActivity activity = (FilterShowActivity) getContext();
         activity.showRepresentation(mAction.getRepresentation());
         mAdapter.setSelected(this);
+    }
+
+    public void setOrientation(int orientation) {
+        mOrientation = orientation;
     }
 }

@@ -92,6 +92,7 @@ public class CategoryPanel extends Fragment {
         View panelView = main.findViewById(R.id.listItems);
         if (panelView instanceof CategoryTrack) {
             CategoryTrack panel = (CategoryTrack) panelView;
+            mAdapter.setOrientation(CategoryView.HORIZONTAL);
             mAdapter.setUseFilterIconButton(true);
             panel.setAdapter(mAdapter);
             mAdapter.setContainer(panel);

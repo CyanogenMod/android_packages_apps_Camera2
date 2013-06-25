@@ -41,6 +41,7 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
     private boolean mUseFilterIconButton = false;
     private int mSelectedPosition;
     int mCategory;
+    private int mOrientation;
 
     public CategoryAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
@@ -67,8 +68,13 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
 
     public void initializeSelection(int category) {
         mCategory = category;
-        // TODO: fix this
         mSelectedPosition = -1;
+        if (category == MainPanel.LOOKS) {
+            mSelectedPosition = 0;
+        }
+        if (category == MainPanel.BORDERS) {
+            mSelectedPosition = 0;
+        }
     }
 
     @Override
@@ -95,10 +101,12 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
             convertView = new CategoryView(getContext());
         }
         CategoryView view = (CategoryView) convertView;
+        view.setOrientation(mOrientation);
         view.setAction(getItem(position), this);
         view.setLayoutParams(
                 new ListView.LayoutParams(mItemWidth, mItemHeight));
         view.setTag(position);
+        view.invalidate();
         return view;
     }
 
@@ -167,5 +175,38 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
                 return;
             }
         }
+    }
+
+    public void setOrientation(int orientation) {
+        mOrientation = orientation;
+    }
+
+    public void reflectImagePreset(ImagePreset preset) {
+        int selected = 0; // if nothing found, select "none" (first element)
+        FilterRepresentation rep = null;
+        if (mCategory == MainPanel.LOOKS) {
+            int pos = preset.getPositionForType(FilterRepresentation.TYPE_FX);
+            if (pos != -1) {
+                rep = preset.getFilterRepresentation(pos);
+            }
+        } else if (mCategory == MainPanel.BORDERS) {
+            int pos = preset.getPositionForType(FilterRepresentation.TYPE_BORDER);
+            if (pos != -1) {
+                rep = preset.getFilterRepresentation(pos);
+            }
+        }
+        if (rep != null) {
+            for (int i = 0; i < getCount(); i++) {
+                if (rep.getName().equalsIgnoreCase(
+                        getItem(i).getRepresentation().getName())) {
+                    selected = i;
+                }
+            }
+        }
+        if (mSelectedPosition != selected) {
+            mSelectedPosition = selected;
+            this.notifyDataSetChanged();
+        }
+
     }
 }
