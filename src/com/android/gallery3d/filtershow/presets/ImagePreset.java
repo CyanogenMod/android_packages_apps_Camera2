@@ -113,6 +113,15 @@ public class ImagePreset {
         return null;
     }
 
+    public int getPositionForType(int type) {
+        for (int i = 0; i < mFilters.size(); i++) {
+            if (mFilters.elementAt(i).getFilterType() == type) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public FilterRepresentation getFilterRepresentationCopyFrom(FilterRepresentation filterRepresentation) {
         // TODO: add concept of position in the filters (to allow multiple instances)
         if (filterRepresentation == null) {
