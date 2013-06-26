@@ -73,7 +73,7 @@ public class FilterRepresentation implements Cloneable {
         if (representation == null) {
             return false;
         }
-        if (representation.mFilterClass == representation.mFilterClass
+        if (representation.mFilterClass == mFilterClass
                 && representation.mName.equalsIgnoreCase(mName)
                 && representation.mPriority == mPriority
                 && representation.mSupportsPartialRendering == mSupportsPartialRendering
@@ -154,7 +154,7 @@ public class FilterRepresentation implements Cloneable {
         }
     }
 
-    public boolean allowsMultipleInstances() {
+    public boolean allowsSingleInstanceOnly() {
         return false;
     }
 

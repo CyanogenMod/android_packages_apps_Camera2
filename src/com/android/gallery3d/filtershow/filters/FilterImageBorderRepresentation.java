@@ -71,7 +71,7 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
         return R.string.none;
     }
 
-    public boolean allowsMultipleInstances() {
+    public boolean allowsSingleInstanceOnly() {
         return true;
     }
 

@@ -86,7 +86,7 @@ public class FilterFxRepresentation extends FilterRepresentation {
     }
 
     @Override
-    public boolean allowsMultipleInstances() {
+    public boolean allowsSingleInstanceOnly() {
         return true;
     }
 
