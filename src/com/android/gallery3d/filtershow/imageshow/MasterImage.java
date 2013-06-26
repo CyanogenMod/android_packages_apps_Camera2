@@ -151,7 +151,7 @@ public class MasterImage implements RenderingRequestCaller {
             mHistory.addHistoryItem(mPreset);
         }
         updatePresets(true);
-        GeometryMetadata geo = mPreset.mGeoData;
+        GeometryMetadata geo = mPreset.getGeometry();
         if (!geo.equals(mPreviousGeometry)) {
             notifyGeometryChange();
         }
@@ -182,7 +182,7 @@ public class MasterImage implements RenderingRequestCaller {
         }
         float w = image.getWidth();
         float h = image.getHeight();
-        GeometryMetadata geo = mPreset.mGeoData;
+        GeometryMetadata geo = mPreset.getGeometry();
         RectF pb = geo.getPhotoBounds();
         if (w == pb.width() && h == pb.height()) {
             return;
@@ -190,6 +190,7 @@ public class MasterImage implements RenderingRequestCaller {
         RectF r = new RectF(0, 0, w, h);
         geo.setPhotoBounds(r);
         geo.setCropBounds(r);
+        mPreset.setGeometry(geo);
     }
 
     public void onHistoryItemClick(int position) {
@@ -242,7 +243,7 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public void setOriginalGeometry(Bitmap originalBitmapLarge) {
-        GeometryMetadata geo = getPreset().mGeoData;
+        GeometryMetadata geo = getPreset().getGeometry();
         float w = originalBitmapLarge.getWidth();
         float h = originalBitmapLarge.getHeight();
         RectF r = new RectF(0, 0, w, h);
@@ -349,7 +350,7 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     private Matrix getImageToScreenMatrix(boolean reflectRotation) {
-        GeometryMetadata geo = mPreset.mGeoData;
+        GeometryMetadata geo = mPreset.getGeometry();
         if (geo == null || mLoader == null
                 || mLoader.getOriginalBounds() == null
                 || mImageShowSize.x == 0) {

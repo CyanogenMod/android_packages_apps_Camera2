@@ -89,7 +89,7 @@ public abstract class ImageFilter implements Cloneable {
 
     protected Matrix getOriginalToScreenMatrix(int w, int h) {
         ImagePreset preset = getEnvironment().getImagePreset();
-        GeometryMetadata geo = getEnvironment().getImagePreset().mGeoData;
+        GeometryMetadata geo = getEnvironment().getImagePreset().getGeometry();
         Matrix originalToScreen = geo.getOriginalToScreen(true,
                 preset.getImageLoader().getOriginalBounds().width(),
                 preset.getImageLoader().getOriginalBounds().height(),

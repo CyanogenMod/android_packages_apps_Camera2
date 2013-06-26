@@ -38,7 +38,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 public class GeometryMetadata extends FilterRepresentation {
-    private static final String SERIALIZATION_NAME = "GEOM";
+    public static final String SERIALIZATION_NAME = "GEOM";
     private static final String LOGTAG = "GeometryMetadata";
     private float mScaleFactor = 1.0f;
     private float mRotation = 0;
