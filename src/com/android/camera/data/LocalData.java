@@ -272,14 +272,16 @@ public interface LocalData extends FilmStripView.ImageData {
             d.width = c.getInt(COL_WIDTH);
             d.height = c.getInt(COL_HEIGHT);
             if (d.width <= 0 || d.height <= 0) {
-                Log.v(TAG, "warning! zero dimension for "
+                Log.w(TAG, "Warning! zero dimension for "
                         + d.path + ":" + d.width + "x" + d.height);
-                BitmapFactory.Options opts = decodeDimension(d.path);
-                if (opts != null) {
+                BitmapFactory.Options opts = new BitmapFactory.Options();
+                opts.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(d.path, opts);
+                if (opts.outWidth != -1 && opts.outHeight != -1)  {
                     d.width = opts.outWidth;
                     d.height = opts.outHeight;
                 } else {
-                    Log.v(TAG, "warning! dimension decode failed for " + d.path);
+                    Log.w(TAG, "Warning! dimension decode failed for " + d.path);
                     Bitmap b = BitmapFactory.decodeFile(d.path);
                     if (b == null) {
                         return null;
@@ -329,16 +331,6 @@ public interface LocalData extends FilmStripView.ImageData {
         protected BitmapLoadTask getBitmapLoadTask(
                 ImageView v, int decodeWidth, int decodeHeight) {
             return new PhotoBitmapLoadTask(v, decodeWidth, decodeHeight);
-        }
-
-        private static BitmapFactory.Options decodeDimension(String path) {
-            BitmapFactory.Options opts = new BitmapFactory.Options();
-            opts.inJustDecodeBounds = true;
-            Bitmap b = BitmapFactory.decodeFile(path, opts);
-            if (b == null)  {
-                return null;
-            }
-            return opts;
         }
 
         private final class PhotoBitmapLoadTask extends BitmapLoadTask {

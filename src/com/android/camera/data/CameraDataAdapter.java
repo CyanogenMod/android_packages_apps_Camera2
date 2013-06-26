@@ -340,7 +340,6 @@ public class CameraDataAdapter implements FilmStripView.DataAdapter {
                     LocalData data = LocalData.Video.buildFromCursor(c);
                     if (data != null) {
                         l.add(data);
-                        Log.v(TAG, "video data added:" + data);
                     } else {
                         Log.e(TAG, "Error loading data:"
                                 + c.getString(LocalData.Video.COL_DATA));
