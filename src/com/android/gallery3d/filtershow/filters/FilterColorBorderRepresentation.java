@@ -76,7 +76,7 @@ public class FilterColorBorderRepresentation extends FilterRepresentation {
         return false;
     }
 
-    public boolean allowsMultipleInstances() {
+    public boolean allowsSingleInstanceOnly() {
         return true;
     }
 
