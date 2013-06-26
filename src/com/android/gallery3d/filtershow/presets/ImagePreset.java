@@ -49,16 +49,9 @@ public class ImagePreset {
 
     private static final String LOGTAG = "ImagePreset";
 
-    public static final int STYLE_ICON = 3;
-    public static final String PRESET_NAME = "PresetName";
-
     private ImageLoader mImageLoader = null;
 
     private Vector<FilterRepresentation> mFilters = new Vector<FilterRepresentation>();
-
-    protected String mName = "Original";
-    private String mHistoryName = "Original";
-    protected boolean mIsFxPreset = false;
 
     private boolean mDoApplyGeometry = true;
     private boolean mDoApplyFilters = true;
@@ -66,20 +59,8 @@ public class ImagePreset {
     private boolean mPartialRendering = false;
     private Rect mPartialRenderingBounds;
     private static final boolean DEBUG = false;
-    private Bitmap mPreviewImage;
 
     public ImagePreset() {
-    }
-
-    public ImagePreset(String historyName) {
-        setHistoryName(historyName);
-    }
-
-    public ImagePreset(ImagePreset source, String historyName) {
-        this(source);
-        if (historyName != null) {
-            setHistoryName(historyName);
-        }
     }
 
     public ImagePreset(ImagePreset source) {
@@ -101,11 +82,7 @@ public class ImagePreset {
         } catch (java.lang.CloneNotSupportedException e) {
             Log.v(LOGTAG, "Exception trying to clone: " + e);
         }
-        mName = source.name();
-        mHistoryName = source.name();
-        mIsFxPreset = source.isFx();
         mImageLoader = source.getImageLoader();
-        mPreviewImage = source.getPreviewImage();
     }
 
     public FilterRepresentation getFilterRepresentation(int position) {
@@ -244,23 +221,6 @@ public class ImagePreset {
         }
     }
 
-    public boolean isFx() {
-        return mIsFxPreset;
-    }
-
-    public void setIsFx(boolean value) {
-        mIsFxPreset = value;
-    }
-
-    public void setName(String name) {
-        mName = name;
-        mHistoryName = name;
-    }
-
-    public void setHistoryName(String name) {
-        mHistoryName = name;
-    }
-
     public ImageLoader getImageLoader() {
         return mImageLoader;
     }
@@ -291,10 +251,6 @@ public class ImagePreset {
         }
 
         if (preset.mFilters.size() != mFilters.size()) {
-            return false;
-        }
-
-        if (!mName.equalsIgnoreCase(preset.name())) {
             return false;
         }
 
@@ -351,14 +307,6 @@ public class ImagePreset {
         return preset.mFilters.size();
     }
 
-    public String name() {
-        return mName;
-    }
-
-    public String historyName() {
-        return mHistoryName;
-    }
-
     public void showFilters() {
         Log.v(LOGTAG, "\\\\\\ showFilters -- " + mFilters.size() + " filters");
         int n = 0;
@@ -394,7 +342,6 @@ public class ImagePreset {
                 }
             }
         }
-        setHistoryName("Remove");
     }
 
     public void addFilter(FilterRepresentation representation) {
@@ -405,7 +352,6 @@ public class ImagePreset {
         if (representation.getFilterType() == FilterRepresentation.TYPE_BORDER) {
             removeFilter(representation);
             mFilters.add(representation);
-            setHistoryName(representation.getName());
         } else if (representation.getFilterType() == FilterRepresentation.TYPE_FX) {
             boolean found = false;
             for (int i = 0; i < mFilters.size(); i++) {
@@ -419,17 +365,14 @@ public class ImagePreset {
                 if (type == FilterRepresentation.TYPE_FX) {
                     mFilters.remove(i);
                     mFilters.add(i, representation);
-                    setHistoryName(representation.getName());
                     found = true;
                 }
             }
             if (!found) {
                 mFilters.add(representation);
-                setHistoryName(representation.getName());
             }
         } else {
             mFilters.add(representation);
-            setHistoryName(representation.getName());
         }
     }
 
@@ -618,14 +561,6 @@ public class ImagePreset {
         return mPartialRenderingBounds;
     }
 
-    public Bitmap getPreviewImage() {
-        return mPreviewImage;
-    }
-
-    public void setPreviewImage(Bitmap previewImage) {
-        mPreviewImage = previewImage;
-    }
-
     public Vector<ImageFilter> getUsedFilters(BaseFiltersManager filtersManager) {
         Vector<ImageFilter> usedFilters = new Vector<ImageFilter>();
         for (int i = 0; i < mFilters.size(); i++) {
@@ -652,7 +587,6 @@ public class ImagePreset {
         int numFilters =  mFilters.size();
         try {
             writer.beginObject();
-            writer.name(PRESET_NAME).value(name);
             GeometryMetadata geoData = getGeometry();
             writer.name(geoData.getSerializationName());
             writer.beginObject();
@@ -719,8 +653,6 @@ public class ImagePreset {
      */
     public boolean readJson(JsonReader sreader) throws IOException {
         sreader.beginObject();
-        sreader.nextName();
-        mName = sreader.nextString();
 
         while (sreader.hasNext()) {
             String name = sreader.nextName();
