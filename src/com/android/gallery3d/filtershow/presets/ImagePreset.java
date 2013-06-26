@@ -49,7 +49,6 @@ public class ImagePreset {
 
     private static final String LOGTAG = "ImagePreset";
 
-    private FilterRepresentation mBorder = null;
     public static final int STYLE_ICON = 3;
     public static final String PRESET_NAME = "PresetName";
 
@@ -88,9 +87,6 @@ public class ImagePreset {
 
     public ImagePreset(ImagePreset source) {
         try {
-            if (source.mBorder != null) {
-                mBorder = source.mBorder.clone();
-            }
             for (int i = 0; i < source.mFilters.size(); i++) {
                 FilterRepresentation representation = source.mFilters.elementAt(i).clone();
                 addFilter(representation);
@@ -126,23 +122,25 @@ public class ImagePreset {
         return -1;
     }
 
+    private FilterRepresentation getFilterRepresentationForType(int type) {
+        for (int i = 0; i < mFilters.size(); i++) {
+            if (mFilters.elementAt(i).getFilterType() == type) {
+                return mFilters.elementAt(i);
+            }
+        }
+        return null;
+    }
+
     public FilterRepresentation getFilterRepresentationCopyFrom(FilterRepresentation filterRepresentation) {
         // TODO: add concept of position in the filters (to allow multiple instances)
         if (filterRepresentation == null) {
             return null;
         }
-        FilterRepresentation representation = null;
-        if ((mBorder != null)
-                && (mBorder.getFilterClass() == filterRepresentation.getFilterClass())) {
-            // TODO: instead of special casing for border, we should correctly implements "filters priority set"
-            representation = mBorder;
-        } else {
-            int position = getPositionForRepresentation(filterRepresentation);
-            if (position == -1) {
-                return null;
-            }
-            representation = mFilters.elementAt(position);
+        int position = getPositionForRepresentation(filterRepresentation);
+        if (position == -1) {
+            return null;
         }
+        FilterRepresentation representation = mFilters.elementAt(position);
         if (representation != null) {
             try {
                 representation = representation.clone();
@@ -161,17 +159,12 @@ public class ImagePreset {
             if (representation instanceof GeometryMetadata) {
                 setGeometry((GeometryMetadata) representation);
             } else {
-                if ((mBorder != null)
-                        && (mBorder.getFilterClass() == representation.getFilterClass())) {
-                    mBorder.updateTempParametersFrom(representation);
-                } else {
-                    int position = getPositionForRepresentation(representation);
-                    if (position == -1) {
-                        return;
-                    }
-                    FilterRepresentation old = mFilters.elementAt(position);
-                    old.updateTempParametersFrom(representation);
+                int position = getPositionForRepresentation(representation);
+                if (position == -1) {
+                    return;
                 }
+                FilterRepresentation old = mFilters.elementAt(position);
+                old.updateTempParametersFrom(representation);
             }
         }
         MasterImage.getImage().invalidatePreview();
@@ -195,9 +188,6 @@ public class ImagePreset {
     }
 
     public boolean hasModifications() {
-        if (mBorder != null && !mBorder.isNil()) {
-            return true;
-        }
         if (mGeoData.hasModifications()) {
             return true;
         }
@@ -211,13 +201,14 @@ public class ImagePreset {
     }
 
     public boolean isPanoramaSafe() {
-        if (mBorder != null && !mBorder.isNil()) {
-            return false;
-        }
         if (mGeoData.hasModifications()) {
             return false;
         }
         for (FilterRepresentation representation : mFilters) {
+            if (representation.getFilterType() == FilterRepresentation.TYPE_BORDER
+                    && !representation.isNil()) {
+                return false;
+            }
             if (representation.getFilterType() == FilterRepresentation.TYPE_VIGNETTE
                     && !representation.isNil()) {
                 return false;
@@ -233,14 +224,6 @@ public class ImagePreset {
     public synchronized void setGeometry(GeometryMetadata m) {
         mGeoData.set(m);
         MasterImage.getImage().notifyGeometryChange();
-    }
-
-    private void setBorder(FilterRepresentation filter) {
-        mBorder = filter;
-    }
-
-    public void resetBorder() {
-        mBorder = null;
     }
 
     public boolean isFx() {
@@ -302,14 +285,6 @@ public class ImagePreset {
         }
 
         if (mDoApplyGeometry && !mGeoData.equals(preset.mGeoData)) {
-            return false;
-        }
-
-        if (mDoApplyGeometry && mBorder != preset.mBorder) {
-            return false;
-        }
-
-        if (mBorder != null && !mBorder.equals(preset.mBorder)) {
             return false;
         }
 
@@ -381,17 +356,23 @@ public class ImagePreset {
 
     public void removeFilter(FilterRepresentation filterRepresentation) {
         if (filterRepresentation.getFilterType() == FilterRepresentation.TYPE_BORDER) {
-            setBorder(null);
-            setHistoryName("Remove");
-            return;
-        }
-        for (int i = 0; i < mFilters.size(); i++) {
-            if (mFilters.elementAt(i).getFilterClass() == filterRepresentation.getFilterClass()) {
-                mFilters.remove(i);
-                setHistoryName("Remove");
-                return;
+            for (int i = 0; i < mFilters.size();i++) {
+                if (mFilters.elementAt(i).getFilterType()
+                        == filterRepresentation.getFilterType()) {
+                    mFilters.remove(i);
+                    break;
+                }
+            }
+        } else {
+            for (int i = 0; i < mFilters.size(); i++) {
+                if (mFilters.elementAt(i).getFilterClass()
+                        == filterRepresentation.getFilterClass()) {
+                    mFilters.remove(i);
+                    break;
+                }
             }
         }
+        setHistoryName("Remove");
     }
 
     public void addFilter(FilterRepresentation representation) {
@@ -400,8 +381,9 @@ public class ImagePreset {
             return;
         }
         if (representation.getFilterType() == FilterRepresentation.TYPE_BORDER) {
+            removeFilter(representation);
+            mFilters.add(representation);
             setHistoryName(representation.getName());
-            setBorder(representation);
         } else if (representation.getFilterType() == FilterRepresentation.TYPE_FX) {
             boolean found = false;
             for (int i = 0; i < mFilters.size(); i++) {
@@ -439,9 +421,6 @@ public class ImagePreset {
                 return representation;
             }
         }
-        if (mBorder != null && mBorder.getFilterClass() == filterRepresentation.getFilterClass()) {
-            return mBorder;
-        }
         return null;
     }
 
@@ -466,12 +445,15 @@ public class ImagePreset {
     }
 
     public Bitmap applyBorder(Bitmap bitmap, FilterEnvironment environment) {
-        if (mBorder != null && mDoApplyGeometry) {
-            mBorder.synchronizeRepresentation();
-            bitmap = environment.applyRepresentation(mBorder, bitmap);
+        // get the border from the list of filters.
+        FilterRepresentation border = getFilterRepresentationForType(
+                FilterRepresentation.TYPE_BORDER);
+        if (border != null && mDoApplyGeometry) {
+            border.synchronizeRepresentation();
+            bitmap = environment.applyRepresentation(border, bitmap);
             if (environment.getQuality() == FilterEnvironment.QUALITY_FINAL) {
                 UsageStatistics.onEvent(UsageStatistics.COMPONENT_EDITOR,
-                        "SaveBorder", mBorder.getSerializationName(), 1);
+                        "SaveBorder", border.getSerializationName(), 1);
             }
         }
         return bitmap;
@@ -499,6 +481,11 @@ public class ImagePreset {
                     representation = mFilters.elementAt(i);
                     representation.synchronizeRepresentation();
                 }
+                if (representation.getFilterType() == FilterRepresentation.TYPE_BORDER) {
+                    // for now, let's skip the border as it will be applied in applyBorder()
+                    // TODO: might be worth getting rid of applyBorder.
+                    continue;
+                }
                 bitmap = environment.applyRepresentation(representation, bitmap);
                 if (environment.getQuality() == FilterEnvironment.QUALITY_FINAL) {
                     UsageStatistics.onEvent(UsageStatistics.COMPONENT_EDITOR,
@@ -515,8 +502,10 @@ public class ImagePreset {
 
     public void applyBorder(Allocation in, Allocation out,
                             boolean copyOut, FilterEnvironment environment) {
-        if (mBorder != null && mDoApplyGeometry) {
-            mBorder.synchronizeRepresentation();
+        FilterRepresentation border = getFilterRepresentationForType(
+                FilterRepresentation.TYPE_BORDER);
+        if (border != null && mDoApplyGeometry) {
+            border.synchronizeRepresentation();
             // TODO: should keep the bitmap around
             Allocation bitmapIn = in;
             if (copyOut) {
@@ -524,7 +513,7 @@ public class ImagePreset {
                         CachingPipeline.getRenderScriptContext(), in.getType());
                 bitmapIn.copyFrom(out);
             }
-            environment.applyRepresentation(mBorder, bitmapIn, out);
+            environment.applyRepresentation(border, bitmapIn, out);
         }
     }
 
@@ -543,6 +532,10 @@ public class ImagePreset {
                     representation = mFilters.elementAt(i);
                     representation.synchronizeRepresentation();
                 }
+                if (representation.getFilterType() == FilterRepresentation.TYPE_BORDER) {
+                    // for now, let's skip the border as it will be applied in applyBorder()
+                    continue;
+                }
                 if (i > from) {
                     in.copyFrom(out);
                 }
@@ -553,9 +546,6 @@ public class ImagePreset {
 
     public boolean canDoPartialRendering() {
         if (mGeoData.hasModifications()) {
-            return false;
-        }
-        if (mBorder != null && !mBorder.supportsPartialRendering()) {
             return false;
         }
         if (ImageLoader.getZoomOrientation() != ImageLoader.ORI_NORMAL) {
@@ -588,11 +578,6 @@ public class ImagePreset {
             State state = new State(filter.getName());
             state.setFilterRepresentation(filter);
             states.add(state);
-        }
-        if (mBorder != null) {
-            State border = new State(mBorder.getName());
-            border.setFilterRepresentation(mBorder);
-            states.add(border);
         }
         imageStateAdapter.fill(states);
     }
