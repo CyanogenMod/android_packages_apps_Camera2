@@ -16,18 +16,14 @@
 
 package com.android.camera;
 
-import android.os.Handler;
-import android.os.Message;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.view.ViewConfiguration;
 
 import com.android.camera.ui.PieRenderer;
 import com.android.camera.ui.RenderOverlay;
 import com.android.camera.ui.ZoomRenderer;
-import com.android.gallery3d.R;
 
 /* PreviewGestures disambiguates touch events received on RenderOverlay
  * and dispatch them to the proper recipient (i.e. zoom renderer or pie renderer).
@@ -38,21 +34,14 @@ public class PreviewGestures
 
     private static final String TAG = "CAM_gestures";
 
-    private static final long TIMEOUT_PIE = 200;
-    private static final int MSG_PIE = 1;
     private static final int MODE_NONE = 0;
-    private static final int MODE_PIE = 1;
     private static final int MODE_ZOOM = 2;
-    private static final int MODE_MODULE = 3;
-    private static final int MODE_ALL = 4;
-    private static final int MODE_SWIPE = 5;
 
     public static final int DIR_UP = 0;
     public static final int DIR_DOWN = 1;
     public static final int DIR_LEFT = 2;
     public static final int DIR_RIGHT = 3;
 
-    private CameraActivity mActivity;
     private SingleTapListener mTapListener;
     private RenderOverlay mOverlay;
     private PieRenderer mPie;
@@ -61,19 +50,16 @@ public class PreviewGestures
     private MotionEvent mCurrent;
     private ScaleGestureDetector mScale;
     private int mMode;
-    private int mSlop;
-    private int mTapTimeout;
     private boolean mZoomEnabled;
     private boolean mEnabled;
     private boolean mZoomOnly;
-    private int mOrientation;
     private GestureDetector mGestureDetector;
 
     private GestureDetector.SimpleOnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public void onLongPress (MotionEvent e) {
             // Open pie
-            if (mPie != null && !mPie.showsItems()) {
+            if (!mZoomOnly && mPie != null && !mPie.showsItems()) {
                 openPie();
             }
         }
@@ -90,7 +76,7 @@ public class PreviewGestures
 
         @Override
         public boolean onScroll (MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (mMode == MODE_ZOOM) return false;
+            if (mZoomOnly || mMode == MODE_ZOOM) return false;
             int deltaX = (int) (e1.getX() - e2.getX());
             int deltaY = (int) (e1.getY() - e2.getY());
             if (deltaY > 2 * deltaX && deltaY > -2 * deltaX) {
@@ -104,39 +90,23 @@ public class PreviewGestures
         }
     };
 
-    private Handler mHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            if (msg.what == MSG_PIE) {
-                mMode = MODE_PIE;
-                openPie();
-            }
-        }
-    };
-
     public interface SingleTapListener {
         public void onSingleTapUp(View v, int x, int y);
     }
 
     public PreviewGestures(CameraActivity ctx, SingleTapListener tapListener,
             ZoomRenderer zoom, PieRenderer pie) {
-        mActivity = ctx;
         mTapListener = tapListener;
         mPie = pie;
         mZoom = zoom;
-        mMode = MODE_ALL;
+        mMode = MODE_NONE;
         mScale = new ScaleGestureDetector(ctx, this);
-        mSlop = (int) ctx.getResources().getDimension(R.dimen.pie_touch_slop);
-        mTapTimeout = ViewConfiguration.getTapTimeout();
         mEnabled = true;
         mGestureDetector = new GestureDetector(mGestureListener);
     }
 
     public void setRenderOverlay(RenderOverlay overlay) {
         mOverlay = overlay;
-    }
-
-    public void setOrientation(int orientation) {
-        mOrientation = orientation;
     }
 
     public void setEnabled(boolean enabled) {
@@ -186,34 +156,6 @@ public class PreviewGestures
             }
         }
         return true;
-    }
-
-    // left tests for finger moving right to left
-    private int getSwipeDirection(MotionEvent m) {
-        float dx = 0;
-        float dy = 0;
-        switch (mOrientation) {
-        case 0:
-            dx = m.getX() - mDown.getX();
-            dy = m.getY() - mDown.getY();
-            break;
-        case 90:
-            dx = - (m.getY() - mDown.getY());
-            dy = m.getX() - mDown.getX();
-            break;
-        case 180:
-            dx = -(m.getX() - mDown.getX());
-            dy = m.getY() - mDown.getY();
-            break;
-        case 270:
-            dx = m.getY() - mDown.getY();
-            dy = m.getX() - mDown.getX();
-            break;
-        }
-        if (dx < 0 && (Math.abs(dy) / -dx < 2)) return DIR_LEFT;
-        if (dx > 0 && (Math.abs(dy) / dx < 2)) return DIR_RIGHT;
-        if (dy > 0) return DIR_DOWN;
-        return DIR_UP;
     }
 
     private MotionEvent makeCancelEvent(MotionEvent m) {
