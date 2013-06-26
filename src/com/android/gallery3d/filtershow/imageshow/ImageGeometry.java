@@ -29,6 +29,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.android.gallery3d.filtershow.HistoryItem;
+import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata.FLIP;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
@@ -314,22 +316,26 @@ public abstract class ImageGeometry extends ImageShow {
         mMode = MODES.NONE;
     }
 
-    public String getName() {
-        return "Geometry";
-    }
-
     public void saveAndSetPreset() {
-        ImagePreset lastHistoryItem = MasterImage.getImage().getHistory().getLast();
-        if (lastHistoryItem != null && lastHistoryItem.historyName().equalsIgnoreCase(getName())) {
+        FilterRepresentation lastAction = null;
+        HistoryItem historyItem = MasterImage.getImage().getHistory().getLast();
+        if (historyItem != null) {
+            lastAction = historyItem.getFilterRepresentation();
+        }
+
+        if (lastAction != null
+                && lastAction.getSerializationName().equalsIgnoreCase(
+                        GeometryMetadata.SERIALIZATION_NAME)) {
             getImagePreset().setGeometry(mLocalGeometry);
             resetImageCaches(this);
         } else {
             if (mLocalGeometry.hasModifications()) {
                 ImagePreset copy = new ImagePreset(getImagePreset());
                 copy.setGeometry(mLocalGeometry);
-                copy.setHistoryName(getName());
-                copy.setIsFx(false);
-                MasterImage.getImage().setPreset(copy, true);
+                // TODO: we should have multiple filter representations for each
+                // of the different geometry operations we have, otherwise we cannot
+                // differentiate them in the history/state
+                MasterImage.getImage().setPreset(copy, copy.getGeometry(), true);
             }
         }
         MasterImage.getImage().notifyGeometryChange();

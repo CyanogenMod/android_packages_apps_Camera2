@@ -67,18 +67,8 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
 
     public void initializeSelection(int category) {
         mCategory = category;
-        if (category == MainPanel.LOOKS || category == MainPanel.BORDERS) {
-            ImagePreset preset = MasterImage.getImage().getPreset();
-            if (preset != null) {
-                for (int i = 0; i < getCount(); i++) {
-                    if (preset.historyName().equals(getItem(i).getRepresentation().getName())) {
-                        mSelectedPosition = i;
-                    }
-                }
-            }
-        } else {
-            mSelectedPosition = -1;
-        }
+        // TODO: fix this
+        mSelectedPosition = -1;
     }
 
     @Override

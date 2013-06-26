@@ -23,6 +23,7 @@ import android.os.Message;
 import android.util.Log;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.HistoryAdapter;
+import com.android.gallery3d.filtershow.HistoryItem;
 import com.android.gallery3d.filtershow.cache.*;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
@@ -139,7 +140,9 @@ public class MasterImage implements RenderingRequestCaller {
         return mFiltersOnlyPreset;
     }
 
-    public synchronized void setPreset(ImagePreset preset, boolean addToHistory) {
+    public synchronized void setPreset(ImagePreset preset,
+                                       FilterRepresentation change,
+                                       boolean addToHistory) {
         if (DEBUG) {
             preset.showFilters();
         }
@@ -148,7 +151,8 @@ public class MasterImage implements RenderingRequestCaller {
         setGeometry();
         mPreset.fillImageStateAdapter(mState);
         if (addToHistory) {
-            mHistory.addHistoryItem(mPreset);
+            HistoryItem historyItem = new HistoryItem(mPreset, change);
+            mHistory.addHistoryItem(historyItem);
         }
         updatePresets(true);
         GeometryMetadata geo = mPreset.getGeometry();
@@ -156,23 +160,6 @@ public class MasterImage implements RenderingRequestCaller {
             notifyGeometryChange();
         }
         mPreviousGeometry = new GeometryMetadata(geo);
-    }
-
-    private void renderHistoryPreview() {
-        ImagePreset historyPreset = mPreset;
-        if (historyPreset != null) {
-            Bitmap preview = mLoader.getOriginalBitmapSmall();
-            if (preview != null) {
-                float s = Math.min(preview.getWidth(), preview.getHeight());
-                float f = sHistoryPreviewSize / s;
-                int w = (int) (preview.getWidth() * f);
-                int h = (int) (preview.getHeight() * f);
-                Bitmap historyPreview = Bitmap.createScaledBitmap(preview, w, h, true);
-                historyPreset.setPreviewImage(historyPreview);
-                RenderingRequest.post(historyPreview,
-                        historyPreset, RenderingRequest.ICON_RENDERING, this);
-            }
-        }
     }
 
     private void setGeometry() {
@@ -194,8 +181,11 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public void onHistoryItemClick(int position) {
-        setPreset(new ImagePreset(mHistory.getItem(position)), false);
+        HistoryItem historyItem = mHistory.getItem(position);
         // We need a copy from the history
+        ImagePreset newPreset = new ImagePreset(historyItem.getImagePreset());
+        // don't need to add it to the history
+        setPreset(newPreset, historyItem.getFilterRepresentation(), false);
         mHistory.setCurrentPreset(position);
     }
 
@@ -416,13 +406,6 @@ public class MasterImage implements RenderingRequestCaller {
         if (request.getType() == RenderingRequest.HIGHRES_RENDERING) {
             mHighresBitmap = request.getBitmap();
             notifyObservers();
-        }
-
-        if (request.getType() == RenderingRequest.ICON_RENDERING) {
-            // History preview images
-            ImagePreset preset = request.getOriginalImagePreset();
-            preset.setPreviewImage(request.getBitmap());
-            mHistory.notifyDataSetChanged();
         }
     }
 

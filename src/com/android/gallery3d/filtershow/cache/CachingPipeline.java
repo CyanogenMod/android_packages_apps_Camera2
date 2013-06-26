@@ -287,8 +287,6 @@ public class CachingPipeline implements PipelineInterface {
 
                 if (request.getType() == RenderingRequest.ICON_RENDERING) {
                     mEnvironment.setQuality(FilterEnvironment.QUALITY_ICON);
-                } else  if (request.getType() == RenderingRequest.STYLE_ICON_RENDERING) {
-                    mEnvironment.setQuality(ImagePreset.STYLE_ICON);
                 } else {
                     mEnvironment.setQuality(FilterEnvironment.QUALITY_PREVIEW);
                 }

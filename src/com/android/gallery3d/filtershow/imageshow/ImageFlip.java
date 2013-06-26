@@ -44,11 +44,6 @@ public class ImageFlip extends ImageGeometry {
     }
 
     @Override
-    public String getName() {
-        return getContext().getString(R.string.mirror);
-    }
-
-    @Override
     protected void setActionDown(float x, float y) {
         super.setActionDown(x, y);
     }

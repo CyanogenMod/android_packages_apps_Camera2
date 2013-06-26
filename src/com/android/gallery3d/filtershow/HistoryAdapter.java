@@ -33,7 +33,7 @@ import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 import java.util.Vector;
 
-public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
+public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
     private static final String LOGTAG = "HistoryAdapter";
     private int mCurrentPresetPosition = 0;
     private String mBorders = null;
@@ -115,33 +115,33 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
         if (getCount() == 0) {
             return;
         }
-        ImagePreset first = getItem(getCount() - 1);
+        HistoryItem first = getItem(getCount() - 1);
         clear();
         addHistoryItem(first);
         updateMenuItems();
     }
 
-    public ImagePreset getLast() {
+    public HistoryItem getLast() {
         if (getCount() == 0) {
             return null;
         }
         return getItem(0);
     }
 
-    public ImagePreset getCurrent() {
+    public HistoryItem getCurrent() {
         return getItem(mCurrentPresetPosition);
     }
 
-    public void addHistoryItem(ImagePreset preset) {
+    public void addHistoryItem(HistoryItem preset) {
         insert(preset, 0);
         updateMenuItems();
     }
 
     @Override
-    public void insert(ImagePreset preset, int position) {
+    public void insert(HistoryItem preset, int position) {
         if (mCurrentPresetPosition != 0) {
             // in this case, let's discount the presets before the current one
-            Vector<ImagePreset> oldItems = new Vector<ImagePreset>();
+            Vector<HistoryItem> oldItems = new Vector<HistoryItem>();
             for (int i = mCurrentPresetPosition; i < getCount(); i++) {
                 oldItems.add(getItem(i));
             }
@@ -186,14 +186,15 @@ public class HistoryAdapter extends ArrayAdapter<ImagePreset> {
             view = inflater.inflate(R.layout.filtershow_history_operation_row, null);
         }
 
-        ImagePreset item = getItem(position);
+        HistoryItem historyItem = getItem(position);
+        ImagePreset item = historyItem.getImagePreset();
         if (item != null) {
             TextView itemView = (TextView) view.findViewById(R.id.rowTextView);
-            if (itemView != null) {
-                itemView.setText(item.historyName());
+            if (itemView != null && historyItem.getFilterRepresentation() != null) {
+                itemView.setText(historyItem.getFilterRepresentation().getName());
             }
             ImageView preview = (ImageView) view.findViewById(R.id.preview);
-            Bitmap bmp = item.getPreviewImage();
+            Bitmap bmp = historyItem.getPreviewImage();
             if (position == getCount()-1 && mOriginalBitmap != null) {
                 bmp = mOriginalBitmap;
             }

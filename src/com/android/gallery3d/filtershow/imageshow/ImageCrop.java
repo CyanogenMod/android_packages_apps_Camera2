@@ -111,11 +111,6 @@ public class ImageCrop extends ImageGeometry {
         indicatorSize = (int) resources.getDimension(R.dimen.crop_indicator_size);
     }
 
-    @Override
-    public String getName() {
-        return getContext().getString(R.string.crop);
-    }
-
     private void swapAspect() {
         if (mDoingCropIntentAction) {
             return;

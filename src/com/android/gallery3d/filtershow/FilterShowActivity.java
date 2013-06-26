@@ -427,7 +427,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         ImagePreset oldPreset = MasterImage.getImage().getPreset();
         ImagePreset copy = new ImagePreset(oldPreset);
         copy.removeFilter(filterRepresentation);
-        MasterImage.getImage().setPreset(copy, true);
+        MasterImage.getImage().setPreset(copy, copy.getLastRepresentation(), true);
         if (MasterImage.getImage().getCurrentFilterRepresentation() == filterRepresentation) {
             FilterRepresentation lastRepresentation = copy.getLastRepresentation();
             MasterImage.getImage().setCurrentFilterRepresentation(lastRepresentation);
@@ -449,12 +449,11 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         } else {
             if (filterRepresentation.allowsSingleInstanceOnly()) {
                 representation.updateTempParametersFrom(filterRepresentation);
-                copy.setHistoryName(filterRepresentation.getName());
                 representation.synchronizeRepresentation();
             }
             filterRepresentation = representation;
         }
-        MasterImage.getImage().setPreset(copy, true);
+        MasterImage.getImage().setPreset(copy, filterRepresentation, true);
         MasterImage.getImage().setCurrentFilterRepresentation(filterRepresentation);
     }
 
@@ -558,7 +557,8 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             mLoadBitmapTask = null;
 
             if (mOriginalPreset != null) {
-                MasterImage.getImage().setPreset(mOriginalPreset, true);
+                MasterImage.getImage().setPreset(mOriginalPreset,
+                        mOriginalPreset.getLastRepresentation(), true);
                 mOriginalPreset = null;
             }
 
@@ -822,10 +822,10 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
     public void setDefaultPreset() {
         // Default preset (original)
-        ImagePreset preset = new ImagePreset(getString(R.string.history_original)); // empty
+        ImagePreset preset = new ImagePreset(); // empty
         preset.setImageLoader(mImageLoader);
 
-        mMasterImage.setPreset(preset, true);
+        mMasterImage.setPreset(preset, preset.getLastRepresentation(), true);
     }
 
     // //////////////////////////////////////////////////////////////////////////////
@@ -905,8 +905,9 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     void resetHistory() {
         HistoryAdapter adapter = mMasterImage.getHistory();
         adapter.reset();
-        ImagePreset original = new ImagePreset(adapter.getItem(0));
-        mMasterImage.setPreset(original, true);
+        HistoryItem historyItem = adapter.getItem(0);
+        ImagePreset original = new ImagePreset(historyItem.getImagePreset());
+        mMasterImage.setPreset(original, historyItem.getFilterRepresentation(), true);
         invalidateViews();
         backToMain();
     }
