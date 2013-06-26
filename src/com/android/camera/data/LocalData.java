@@ -430,7 +430,8 @@ public interface LocalData extends FilmStripView.ImageData {
                     MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
             }
             retriever.release();
-            if (rotation.equals("90") || rotation.equals("270")) {
+            if (rotation != null
+                    && (rotation.equals("90") || rotation.equals("270"))) {
                 int b = d.width;
                 d.width = d.height;
                 d.height = b;

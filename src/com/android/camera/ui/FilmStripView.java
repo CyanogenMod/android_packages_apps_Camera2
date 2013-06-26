@@ -24,12 +24,12 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 
 public class FilmStripView extends ViewGroup {
@@ -42,7 +42,7 @@ public class FilmStripView extends ViewGroup {
     private static final int DURATION_SCROLL_TO_FILMSTRIP = 350;
     private static final int DURATION_GEOMETRY_ADJUST = 200;
     private static final float FILM_STRIP_SCALE = 0.6f;
-    private static final float MAX_SCALE = 1f;
+    private static final float FULLSCREEN_SCALE = 1f;
     // Only check for intercepting touch events within first 500ms
     private static final int SWIPE_TIME_OUT = 500;
 
@@ -143,6 +143,7 @@ public class FilmStripView extends ViewGroup {
     public interface Controller {
         public boolean isScalling();
 
+        public void scroll(float deltaX);
         public void fling(float velocity);
         public void scrollTo(int position, int duration, boolean interruptible);
         public boolean stopScrolling();
@@ -162,6 +163,7 @@ public class FilmStripView extends ViewGroup {
         // the position of the left of the view in the whole filmstrip.
         private int mLeftPosition;
         private View mView;
+        private RectF mViewArea;
 
         public ViewInfo(int id, View v) {
             v.setPivotX(0f);
@@ -169,6 +171,7 @@ public class FilmStripView extends ViewGroup {
             mDataID = id;
             mView = v;
             mLeftPosition = -1;
+            mViewArea = new RectF();
         }
 
         public int getID() {
@@ -232,6 +235,17 @@ public class FilmStripView extends ViewGroup {
             layoutAt(left, top);
             mView.setScaleX(scale);
             mView.setScaleY(scale);
+
+            // update mViewArea for touch detection.
+            int l = mView.getLeft();
+            int t = mView.getTop();
+            mViewArea.set(l, t,
+                    l + mView.getWidth() * scale,
+                    t + mView.getHeight() * scale);
+        }
+
+        public boolean areaContains(float x, float y) {
+            return mViewArea.contains(x, y);
         }
     }
 
@@ -260,7 +274,7 @@ public class FilmStripView extends ViewGroup {
         mContext = context;
         mScale = 1.0f;
         mController = new MyController(context);
-        mViewAnimInterpolator = new LinearInterpolator();
+        mViewAnimInterpolator = new DecelerateInterpolator();
         mGestureRecognizer =
                 new FilmStripGestureRecognizer(context, new MyGestureReceiver());
         mSlop = (int) getContext().getResources().getDimension(R.dimen.pie_touch_slop);
@@ -409,6 +423,11 @@ public class FilmStripView extends ViewGroup {
 
     // We try to keep the one closest to the center of the screen at position mCurrentInfo.
     private void stepIfNeeded() {
+        if (!inFilmStrip() && !inFullScreen()) {
+            // The good timing to step to the next view is when everything is not in
+            // transition.
+            return;
+        }
         int nearest = findTheNearestView(mCenterX);
         // no change made.
         if (nearest == -1 || nearest == mCurrentInfo) return;
@@ -444,7 +463,7 @@ public class FilmStripView extends ViewGroup {
     }
 
     // Don't go beyond the bound.
-    private void adjustCenterX() {
+    private void clampCenterX() {
         ViewInfo curr = mViewInfo[mCurrentInfo];
         if (curr == null) return;
 
@@ -455,7 +474,7 @@ public class FilmStripView extends ViewGroup {
             }
             if (getCurrentType() == ImageData.TYPE_CAMERA_PREVIEW
                     && !mController.isScalling()
-                    && mScale != MAX_SCALE) {
+                    && mScale != FULLSCREEN_SCALE) {
                 mController.gotoFullScreen();
             }
         }
@@ -465,6 +484,13 @@ public class FilmStripView extends ViewGroup {
             if (!mController.isScrolling()) {
                 mController.stopScrolling();
             }
+        }
+    }
+
+    private void adjustChildZOrder() {
+        for (int i = BUFFER_SIZE - 1; i >= 0; i--) {
+            if (mViewInfo[i] == null) continue;
+            bringChildToFront(mViewInfo[i].getView());
         }
     }
 
@@ -479,33 +505,58 @@ public class FilmStripView extends ViewGroup {
             mScale = mController.getNewScale();
         }
 
-        adjustCenterX();
+        clampCenterX();
 
         mViewInfo[mCurrentInfo].layoutIn(mDrawArea, mCenterX, mScale);
+
+        int currentViewLeft = mViewInfo[mCurrentInfo].getLeftPosition();
+        int currentViewCenter = mViewInfo[mCurrentInfo].getCenterX();
+        int fullScreenWidth = mDrawArea.width() + mViewGap;
+        float scaleFraction = mViewAnimInterpolator.getInterpolation(
+                (mScale - FILM_STRIP_SCALE) / (FULLSCREEN_SCALE - FILM_STRIP_SCALE));
 
         // images on the left
         for (int infoID = mCurrentInfo - 1; infoID >= 0; infoID--) {
             ViewInfo curr = mViewInfo[infoID];
-            if (curr != null) {
-                ViewInfo next = mViewInfo[infoID + 1];
-                curr.setLeftPosition(
-                        next.getLeftPosition() - curr.getView().getMeasuredWidth() - mViewGap);
-                curr.layoutIn(mDrawArea, mCenterX, mScale);
-            }
+            if (curr == null) continue;
+
+            ViewInfo next = mViewInfo[infoID + 1];
+            int myLeft =
+                    next.getLeftPosition() - curr.getView().getMeasuredWidth() - mViewGap;
+            curr.setLeftPosition(myLeft);
+            curr.layoutIn(mDrawArea, mCenterX, mScale);
+            curr.getView().setAlpha(1f);
+            int infoDiff = mCurrentInfo - infoID;
+            curr.setTranslationX(
+                    (currentViewCenter
+                    - fullScreenWidth * infoDiff - curr.getCenterX()) * scaleFraction,
+                    mScale);
         }
 
         // images on the right
         for (int infoID = mCurrentInfo + 1; infoID < BUFFER_SIZE; infoID++) {
             ViewInfo curr = mViewInfo[infoID];
-            if (curr != null) {
-                ViewInfo prev = mViewInfo[infoID - 1];
-                curr.setLeftPosition(
-                        prev.getLeftPosition() + prev.getView().getMeasuredWidth() + mViewGap);
-                curr.layoutIn(mDrawArea, mCenterX, mScale);
+            if (curr == null) continue;
+
+            ViewInfo prev = mViewInfo[infoID - 1];
+            int myLeft =
+                    prev.getLeftPosition() + prev.getView().getMeasuredWidth() + mViewGap;
+            curr.setLeftPosition(myLeft);
+            curr.layoutIn(mDrawArea, mCenterX, mScale);
+            if (infoID == mCurrentInfo + 1) {
+                curr.getView().setAlpha(1f - scaleFraction);
+            } else {
+                if (scaleFraction == 0f) {
+                    curr.getView().setAlpha(1f);
+                } else {
+                    curr.getView().setAlpha(0f);
+                }
             }
+            curr.setTranslationX((currentViewLeft - myLeft) * scaleFraction, mScale);
         }
 
         stepIfNeeded();
+        adjustChildZOrder();
         invalidate();
     }
 
@@ -760,13 +811,23 @@ public class FilmStripView extends ViewGroup {
         });
     }
 
-    public boolean isInCameraFullscreen() {
-        return (isAnchoredTo(0) && mScale == 1f
+    public boolean inFilmStrip() {
+        return (mScale == FILM_STRIP_SCALE);
+    }
+
+    public boolean inFullScreen() {
+        return (mScale == FULLSCREEN_SCALE);
+    }
+
+    public boolean inCameraFullscreen() {
+        return (isAnchoredTo(0) && inFullScreen()
                 && getCurrentType() == ImageData.TYPE_CAMERA_PREVIEW);
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (inFilmStrip()) return true;
+
         if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
             mCheckToIntercept = true;
             mDown = MotionEvent.obtain(ev);
@@ -995,13 +1056,22 @@ public class FilmStripView extends ViewGroup {
         }
 
         @Override
+        public void scroll(float deltaX) {
+            if (mController.isScrolling()) {
+                return;
+            }
+            mCenterX += deltaX;
+        }
+
+        @Override
         public void fling(float velocityX) {
             if (!stopScrolling() || mIsPositionLocked) return;
             ViewInfo info = mViewInfo[mCurrentInfo];
             if (info == null) return;
 
             float scaledVelocityX = velocityX / mScale;
-            if (isInCameraFullscreen() && scaledVelocityX < 0) {
+            if (inCameraFullscreen() && scaledVelocityX < 0) {
+                // Swipe left in camera preview.
                 gotoFilmStrip();
             }
 
@@ -1038,6 +1108,7 @@ public class FilmStripView extends ViewGroup {
             stopScrolling();
             mScroller.startScroll(mCenterX, 0, position - mCenterX,
                     0, duration);
+            invalidate();
         }
 
         void scrollTo(int position, int duration) {
@@ -1051,6 +1122,7 @@ public class FilmStripView extends ViewGroup {
             mScaleAnimator.setInterpolator(mDecelerateInterpolator);
             mScaleAnimator.start();
             mHasNewScale = true;
+            layoutChildren();
         }
 
         @Override
@@ -1064,6 +1136,14 @@ public class FilmStripView extends ViewGroup {
 
         @Override
         public void gotoFullScreen() {
+            if (mViewInfo[mCurrentInfo] != null) {
+                mController.scrollTo(mViewInfo[mCurrentInfo].getCenterX(),
+                        DURATION_GEOMETRY_ADJUST, false);
+            }
+            enterFullScreen();
+        }
+
+        private void enterFullScreen() {
             if (mListener != null) {
                 // TODO: After full size images snapping to fill the screen at the
                 //       end of a scroll/fling is implemented, we should only make
@@ -1071,7 +1151,7 @@ public class FilmStripView extends ViewGroup {
                 //       camera preview
                 mListener.onSwitchMode(true);
             }
-            if (mScale == 1f) return;
+            if (inFullScreen()) return;
             scaleTo(1f, DURATION_GEOMETRY_ADJUST);
         }
 
@@ -1104,9 +1184,9 @@ public class FilmStripView extends ViewGroup {
         public void onAnimationEnd(Animator anim) {
             ViewInfo info = mViewInfo[mCurrentInfo];
             if (info != null && mCenterX == info.getCenterX()) {
-                if (mScale == 1f) {
+                if (inFullScreen()) {
                     lockAtCurrentView();
-                } else if (mScale == FILM_STRIP_SCALE) {
+                } else if (inFilmStrip()) {
                     unlockPosition();
                 }
             }
@@ -1127,17 +1207,40 @@ public class FilmStripView extends ViewGroup {
 
         @Override
         public boolean onSingleTapUp(float x, float y) {
+            if (inFilmStrip()) {
+                for (int i = 0; i < BUFFER_SIZE; i++) {
+                    if (mViewInfo[i] == null) continue;
+
+                    if (mViewInfo[i].areaContains(x, y)) {
+                        mController.scrollTo(mViewInfo[i].getCenterX(),
+                                DURATION_GEOMETRY_ADJUST, false);
+                        return true;
+                    }
+                }
+            }
             return false;
         }
 
         @Override
         public boolean onDoubleTap(float x, float y) {
+            if (inFilmStrip()) {
+                ViewInfo centerInfo = mViewInfo[mCurrentInfo];
+                if (centerInfo != null && centerInfo.areaContains(x, y)) {
+                    mController.gotoFullScreen();
+                    return true;
+                }
+            } else if (inFullScreen()) {
+                mController.gotoFilmStrip();
+                return true;
+            }
             return false;
         }
 
         @Override
         public boolean onDown(float x, float y) {
-            mController.stopScrolling();
+            if (mController.isScrolling()) {
+                mController.stopScrolling();
+            }
             return true;
         }
 
@@ -1172,36 +1275,43 @@ public class FilmStripView extends ViewGroup {
 
         @Override
         public boolean onScroll(float x, float y, float dx, float dy) {
-            if (Math.abs(dx) > Math.abs(dy)) {
-                int deltaX = (int) (dx / mScale);
-                if (deltaX > 0 && isInCameraFullscreen()) {
+            int deltaX = (int) (dx / mScale);
+            if (inFilmStrip()) {
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    if (deltaX > 0 && inCameraFullscreen()) {
+                        mController.gotoFilmStrip();
+                    }
+                    mController.scroll(deltaX);
+                } else {
+                    // Vertical part. Promote or demote.
+                    //int scaledDeltaY = (int) (dy * mScale);
+                    int hit = 0;
+                    Rect hitRect = new Rect();
+                    for (; hit < BUFFER_SIZE; hit++) {
+                        if (mViewInfo[hit] == null) continue;
+                        mViewInfo[hit].getView().getHitRect(hitRect);
+                        if (hitRect.contains((int) x, (int) y)) break;
+                    }
+                    if (hit == BUFFER_SIZE) return false;
+
+                    ImageData data = mDataAdapter.getImageData(mViewInfo[hit].getID());
+                    float transY = mViewInfo[hit].getTranslationY(mScale) - dy / mScale;
+                    if (!data.isUIActionSupported(ImageData.ACTION_DEMOTE) && transY > 0f) {
+                        transY = 0f;
+                    }
+                    if (!data.isUIActionSupported(ImageData.ACTION_PROMOTE) && transY < 0f) {
+                        transY = 0f;
+                    }
+                    mViewInfo[hit].setTranslationY(transY, mScale);
+                }
+            } else if (inFullScreen()) {
+                if (deltaX > 0 && inCameraFullscreen()) {
                     mController.gotoFilmStrip();
                 }
-                mCenterX += deltaX;
-            } else {
-                // Vertical part. Promote or demote.
-                //int scaledDeltaY = (int) (dy * mScale);
-                int hit = 0;
-                Rect hitRect = new Rect();
-                for (; hit < BUFFER_SIZE; hit++) {
-                    if (mViewInfo[hit] == null) continue;
-                    mViewInfo[hit].getView().getHitRect(hitRect);
-                    if (hitRect.contains((int) x, (int) y)) break;
-                }
-                if (hit == BUFFER_SIZE) return false;
-
-                ImageData data = mDataAdapter.getImageData(mViewInfo[hit].getID());
-                float transY = mViewInfo[hit].getTranslationY(mScale) - dy / mScale;
-                if (!data.isUIActionSupported(ImageData.ACTION_DEMOTE) && transY > 0f) {
-                    transY = 0f;
-                }
-                if (!data.isUIActionSupported(ImageData.ACTION_PROMOTE) && transY < 0f) {
-                    transY = 0f;
-                }
-                mViewInfo[hit].setTranslationY(transY, mScale);
+                mController.scroll(deltaX);
             }
-
             layoutChildren();
+
             return true;
         }
 
@@ -1210,29 +1320,29 @@ public class FilmStripView extends ViewGroup {
             if (Math.abs(velocityX) > Math.abs(velocityY)) {
                 mController.fling(velocityX);
             } else {
-                // ignore horizontal fling.
+                // ignore vertical fling.
             }
             return true;
         }
 
         @Override
         public boolean onScaleBegin(float focusX, float focusY) {
-            if (isInCameraFullscreen()) return false;
+            if (inCameraFullscreen()) return false;
             mScaleTrend = 1f;
             return true;
         }
 
         @Override
         public boolean onScale(float focusX, float focusY, float scale) {
-            if (isInCameraFullscreen()) return false;
+            if (inCameraFullscreen()) return false;
 
             mScaleTrend = mScaleTrend * 0.3f + scale * 0.7f;
             mScale *= scale;
             if (mScale <= FILM_STRIP_SCALE) {
                 mScale = FILM_STRIP_SCALE;
             }
-            if (mScale >= MAX_SCALE) {
-                mScale = MAX_SCALE;
+            if (mScale >= FULLSCREEN_SCALE) {
+                mScale = FULLSCREEN_SCALE;
             }
             layoutChildren();
             return true;
@@ -1242,23 +1352,10 @@ public class FilmStripView extends ViewGroup {
         public void onScaleEnd() {
             if (mScaleTrend >= 1f) {
                 mController.gotoFullScreen();
-                if (getCurrentType() == ImageData.TYPE_CAMERA_PREVIEW) {
-                    if (isAnchoredTo(0)) {
-                        mController.lockAtCurrentView();
-                    } else {
-                        mController.scrollTo(
-                                mViewInfo[mCurrentInfo].getCenterX(),
-                                DURATION_GEOMETRY_ADJUST, false);
-                    }
-                }
             } else {
-                // Scale down to film strip mode.
-                if (mScale == FILM_STRIP_SCALE) {
-                    mController.unlockPosition();
-                } else {
-                    mController.gotoFilmStrip();
-                }
+                mController.gotoFilmStrip();
             }
+            mScaleTrend = 1f;
         }
     }
 }
