@@ -447,7 +447,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         if (representation == null) {
             copy.addFilter(filterRepresentation);
         } else {
-            if (filterRepresentation.allowsMultipleInstances()) {
+            if (filterRepresentation.allowsSingleInstanceOnly()) {
                 representation.updateTempParametersFrom(filterRepresentation);
                 copy.setHistoryName(filterRepresentation.getName());
                 representation.synchronizeRepresentation();
