@@ -89,7 +89,7 @@ public class ImageShow extends View implements OnGestureListener,
     InteractionMode mInteractionMode = InteractionMode.NONE;
 
     protected GeometryMetadata getGeometry() {
-        return new GeometryMetadata(getImagePreset().mGeoData);
+        return new GeometryMetadata(getImagePreset().getGeometry());
     }
 
     private FilterShowActivity mActivity = null;
@@ -161,12 +161,12 @@ public class ImageShow extends View implements OnGestureListener,
 
     public Rect getImageBounds() {
         Rect dst = new Rect();
-        getImagePreset().mGeoData.getPhotoBounds().roundOut(dst);
+        getImagePreset().getGeometry().getPhotoBounds().roundOut(dst);
         return dst;
     }
 
     public Rect getImageCropBounds() {
-        return GeometryMath.roundNearest(getImagePreset().mGeoData.getPreviewCropBounds());
+        return GeometryMath.roundNearest(getImagePreset().getGeometry().getPreviewCropBounds());
     }
 
     /* consider moving the following 2 methods into a subclass */
@@ -177,7 +177,7 @@ public class ImageShow extends View implements OnGestureListener,
      * @return Image to Screen transformation matrix
      */
     protected Matrix getImageToScreenMatrix(boolean reflectRotation) {
-        GeometryMetadata geo = getImagePreset().mGeoData;
+        GeometryMetadata geo = getImagePreset().getGeometry();
         if (geo == null || mImageLoader == null
                 || mImageLoader.getOriginalBounds() == null) {
             return new Matrix();
@@ -377,15 +377,15 @@ public class ImageShow extends View implements OnGestureListener,
             return;
         float w = image.getWidth();
         float h = image.getHeight();
-        GeometryMetadata geo = getImagePreset().mGeoData;
+        GeometryMetadata geo = getImagePreset().getGeometry();
         RectF pb = geo.getPhotoBounds();
         if (w == pb.width() && h == pb.height()) {
             return;
         }
         RectF r = new RectF(0, 0, w, h);
-        getImagePreset().mGeoData.setPhotoBounds(r);
-        getImagePreset().mGeoData.setCropBounds(r);
-
+        geo.setPhotoBounds(r);
+        geo.setCropBounds(r);
+        getImagePreset().setGeometry(geo);
     }
 
     public void updateImage() {

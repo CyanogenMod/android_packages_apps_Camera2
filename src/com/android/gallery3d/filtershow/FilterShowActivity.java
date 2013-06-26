@@ -462,7 +462,15 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         if (representation == null) {
             return;
         }
-        useFilterRepresentation(representation);
+
+        // TODO: this check is needed because the GeometryMetadata doesn't quite
+        // follow the same pattern as the other filters to update/sync their values.
+        // We thus need to not call useFilterRepresentation() for now, as it
+        // would override the current Geometry. Once GeometryMetadata is fixed,
+        // let's remove the check and call useFilterRepresentation all the time.
+        if (!(representation instanceof GeometryMetadata)) {
+            useFilterRepresentation(representation);
+        }
 
         // show representation
         Editor mCurrentEditor = mEditorPlaceHolder.showEditor(representation.getEditorId());
