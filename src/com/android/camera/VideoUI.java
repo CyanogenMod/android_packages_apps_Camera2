@@ -315,9 +315,6 @@ public class VideoUI implements PieRenderer.PieListener,
     }
 
     public void setOrientationIndicator(int orientation, boolean animation) {
-        if (mGestures != null) {
-            mGestures.setOrientation(orientation);
-        }
         // We change the orientation of the linearlayout only for phone UI
         // because when in portrait the width is not enough.
         if (mLabelsLinearLayout != null) {
