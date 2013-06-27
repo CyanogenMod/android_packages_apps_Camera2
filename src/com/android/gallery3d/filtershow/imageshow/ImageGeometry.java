@@ -332,6 +332,7 @@ public abstract class ImageGeometry extends ImageShow {
                 MasterImage.getImage().setPreset(copy, true);
             }
         }
+        MasterImage.getImage().notifyGeometryChange();
         invalidate();
     }
 

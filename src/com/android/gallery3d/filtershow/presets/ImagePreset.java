@@ -242,7 +242,6 @@ public class ImagePreset {
         if (geoData != representation) {
             geoData.set(representation);
         }
-        MasterImage.getImage().notifyGeometryChange();
     }
 
     public boolean isFx() {
