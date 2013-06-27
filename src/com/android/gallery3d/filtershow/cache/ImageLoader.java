@@ -36,7 +36,7 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.HistoryAdapter;
+import com.android.gallery3d.filtershow.history.HistoryAdapter;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;

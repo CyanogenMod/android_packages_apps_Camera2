@@ -79,6 +79,8 @@ import com.android.gallery3d.filtershow.filters.FilterImageBorderRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
+import com.android.gallery3d.filtershow.history.HistoryAdapter;
+import com.android.gallery3d.filtershow.history.HistoryItem;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;

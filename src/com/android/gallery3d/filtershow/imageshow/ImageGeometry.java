@@ -29,7 +29,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.android.gallery3d.filtershow.HistoryItem;
+import com.android.gallery3d.filtershow.history.HistoryItem;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata.FLIP;
 import com.android.gallery3d.filtershow.presets.ImagePreset;

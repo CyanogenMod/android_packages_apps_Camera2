@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.filtershow;
+package com.android.gallery3d.filtershow.history;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -29,6 +29,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.FilterShowActivity;
+import com.android.gallery3d.filtershow.history.HistoryItem;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 import java.util.Vector;

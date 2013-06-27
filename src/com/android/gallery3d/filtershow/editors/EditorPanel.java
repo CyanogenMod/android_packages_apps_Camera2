@@ -28,7 +28,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.HistoryAdapter;
+import com.android.gallery3d.filtershow.history.HistoryAdapter;
 import com.android.gallery3d.filtershow.category.MainPanel;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.state.StatePanel;
