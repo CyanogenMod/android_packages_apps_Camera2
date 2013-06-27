@@ -566,6 +566,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                 showRepresentation(mCategoryFiltersAdapter.getTinyPlanet());
             }
             mLoading = false;
+            MasterImage.getImage().notifyGeometryChange();
             super.onPostExecute(result);
         }
 
