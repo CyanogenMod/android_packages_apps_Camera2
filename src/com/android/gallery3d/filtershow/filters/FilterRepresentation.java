@@ -16,9 +16,14 @@
 
 package com.android.gallery3d.filtershow.filters;
 
+import android.util.JsonReader;
+import android.util.JsonWriter;
 import android.util.Log;
 
 import com.android.gallery3d.filtershow.editors.BasicEditor;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class FilterRepresentation implements Cloneable {
     private static final String LOGTAG = "FilterRepresentation";
@@ -40,6 +45,7 @@ public class FilterRepresentation implements Cloneable {
     public static final byte TYPE_VIGNETTE = 4;
     public static final byte TYPE_NORMAL = 5;
     public static final byte TYPE_TINYPLANET = 6;
+    protected static final String NAME_TAG = "Name";
 
     private FilterRepresentation mTempRepresentation = null;
 
@@ -222,14 +228,47 @@ public class FilterRepresentation implements Cloneable {
         return "";
     }
 
+    /**
+     * Method must "beginObject()" add its info and "endObject()"
+     * @param writer
+     * @throws IOException
+     */
+    public void serializeRepresentation(JsonWriter writer) throws IOException {
+        writer.beginObject();
+        {
+            String[][] rep = serializeRepresentation();
+            for (int k = 0; k < rep.length; k++) {
+                writer.name(rep[k][0]);
+                writer.value(rep[k][1]);
+            }
+        }
+        writer.endObject();
+    }
+
+    // this is the old way of doing this and will be removed soon
     public String[][] serializeRepresentation() {
-        String[][] ret = { { "Name" , getName() }};
+        String[][] ret = {{NAME_TAG, getName()}};
         return ret;
     }
 
+    public void deSerializeRepresentation(JsonReader reader) throws IOException {
+        ArrayList<String[]> al = new ArrayList<String[]>();
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String[] kv = {reader.nextName(), reader.nextString()};
+            al.add(kv);
+
+        }
+        reader.endObject();
+        String[][] oldFormat = al.toArray(new String[al.size()][]);
+
+        deSerializeRepresentation(oldFormat);
+    }
+
+    // this is the old way of doing this and will be removed soon
     public void deSerializeRepresentation(String[][] rep) {
         for (int i = 0; i < rep.length; i++) {
-            if ("Name".equals(rep[i][0])) {
+            if (NAME_TAG.equals(rep[i][0])) {
                 mName = rep[i][1];
                 break;
             }

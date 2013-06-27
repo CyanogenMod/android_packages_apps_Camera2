@@ -65,7 +65,7 @@ public class ImagePreset {
 
     private boolean mPartialRendering = false;
     private Rect mPartialRenderingBounds;
-
+    private static final boolean DEBUG = false;
     private Bitmap mPreviewImage;
 
     public ImagePreset() {
@@ -642,10 +642,9 @@ public class ImagePreset {
             JsonWriter writer = new JsonWriter(swriter);
             writeJson(writer, name);
             writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            return null;
         }
-
         return swriter.toString();
     }
 
@@ -672,16 +671,14 @@ public class ImagePreset {
                     continue;
                 }
                 String sname = filter.getSerializationName();
-                writer.name(sname);
-                writer.beginObject();
-                {
-                    String[][] rep = filter.serializeRepresentation();
-                    for (int k = 0; k < rep.length; k++) {
-                        writer.name(rep[k][0]);
-                        writer.value(rep[k][1]);
+                if (DEBUG) {
+                    Log.v(LOGTAG, "Serialization: " + sname);
+                    if (sname == null) {
+                        Log.v(LOGTAG, "Serialization: " + filter);
                     }
                 }
-                writer.endObject();
+                writer.name(sname);
+                filter.serializeRepresentation(writer);
             }
             writer.endObject();
 
@@ -690,21 +687,36 @@ public class ImagePreset {
         }
     }
 
+    /**
+     * populates preset from JSON string
+     * @param filterString a JSON string
+     * @return true on success if false ImagePreset is undefined
+     */
     public boolean readJsonFromString(String filterString) {
+        if (DEBUG) {
+            Log.v(LOGTAG,"reading preset: \""+filterString+"\"");
+        }
         StringReader sreader = new StringReader(filterString);
         try {
             JsonReader reader = new JsonReader(sreader);
             boolean ok = readJson(reader);
             if (!ok) {
+                reader.close();
                 return false;
             }
             reader.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(LOGTAG,"parsing the filter parameters:",e);
+            return false;
         }
         return true;
     }
 
+    /**
+     * populates preset from JSON stream
+     * @param sreader a JSON string
+     * @return true on success if false ImagePreset is undefined
+     */
     public boolean readJson(JsonReader sreader) throws IOException {
         sreader.beginObject();
         sreader.nextName();
@@ -714,6 +726,7 @@ public class ImagePreset {
             String name = sreader.nextName();
             FilterRepresentation filter = creatFilterFromName(name);
             if (filter == null) {
+                Log.w(LOGTAG,"UNKNOWN FILTER! "+name);
                 return false;
             }
             filter.deSerializeRepresentation(read(sreader));
