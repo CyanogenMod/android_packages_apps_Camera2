@@ -36,7 +36,7 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.history.HistoryAdapter;
+import com.android.gallery3d.filtershow.history.HistoryManager;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
@@ -62,7 +62,7 @@ public class ImageLoader {
     private Bitmap mBackgroundBitmap = null;
 
     private int mOrientation = 0;
-    private HistoryAdapter mAdapter = null;
+    private HistoryManager mHistoryManager = null;
 
     private FilterShowActivity mActivity = null;
 
@@ -501,12 +501,12 @@ public class ImageLoader {
         return bmap;
     }
 
-    public void setAdapter(HistoryAdapter adapter) {
-        mAdapter = adapter;
+    public void setHistoryManager(HistoryManager historyManager) {
+        mHistoryManager = historyManager;
     }
 
-    public HistoryAdapter getHistory() {
-        return mAdapter;
+    public HistoryManager getHistory() {
+        return mHistoryManager;
     }
 
     public XMPMeta getXmpObject() {

@@ -79,7 +79,7 @@ import com.android.gallery3d.filtershow.filters.FilterImageBorderRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
-import com.android.gallery3d.filtershow.history.HistoryAdapter;
+import com.android.gallery3d.filtershow.history.HistoryManager;
 import com.android.gallery3d.filtershow.history.HistoryItem;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
@@ -262,7 +262,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     public void setupStatePanel() {
-        mImageLoader.setAdapter(mMasterImage.getHistory());
+        mImageLoader.setHistoryManager(mMasterImage.getHistory());
     }
 
     private void fillFilters() {
@@ -772,7 +772,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.undoButton: {
-                HistoryAdapter adapter = mMasterImage.getHistory();
+                HistoryManager adapter = mMasterImage.getHistory();
                 int position = adapter.undo();
                 mMasterImage.onHistoryItemClick(position);
                 backToMain();
@@ -782,7 +782,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                 return true;
             }
             case R.id.redoButton: {
-                HistoryAdapter adapter = mMasterImage.getHistory();
+                HistoryManager adapter = mMasterImage.getHistory();
                 int position = adapter.redo();
                 mMasterImage.onHistoryItemClick(position);
                 invalidateViews();
@@ -894,14 +894,11 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     public void setupMasterImage() {
         mImageLoader = new ImageLoader(this, getApplicationContext());
 
-        HistoryAdapter mHistoryAdapter = new HistoryAdapter(
-                this, R.layout.filtershow_history_operation_row,
-                R.id.rowTextView);
-
+        HistoryManager mHistoryManager = new HistoryManager();
         StateAdapter mImageStateAdapter = new StateAdapter(this, 0);
         MasterImage.reset();
         mMasterImage = MasterImage.getImage();
-        mMasterImage.setHistoryAdapter(mHistoryAdapter);
+        mMasterImage.setHistoryManager(mHistoryManager);
         mMasterImage.setStateAdapter(mImageStateAdapter);
         mMasterImage.setActivity(this);
         mMasterImage.setImageLoader(mImageLoader);
@@ -914,7 +911,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     void resetHistory() {
-        HistoryAdapter adapter = mMasterImage.getHistory();
+        HistoryManager adapter = mMasterImage.getHistory();
         adapter.reset();
         HistoryItem historyItem = adapter.getItem(0);
         ImagePreset original = new ImagePreset(historyItem.getImagePreset());

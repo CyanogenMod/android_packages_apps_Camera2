@@ -25,7 +25,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.history.HistoryAdapter;
+import com.android.gallery3d.filtershow.history.HistoryManager;
 import com.android.gallery3d.filtershow.history.HistoryItem;
 import com.android.gallery3d.filtershow.cache.FilteringPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
@@ -64,7 +64,7 @@ public class MasterImage implements RenderingRequestCaller {
     private Bitmap mHighresBitmap = null;
 
     private ImageLoader mLoader = null;
-    private HistoryAdapter mHistory = null;
+    private HistoryManager mHistory = null;
     private StateAdapter mState = null;
 
     private FilterShowActivity mActivity = null;
@@ -198,7 +198,7 @@ public class MasterImage implements RenderingRequestCaller {
         mHistory.setCurrentPreset(position);
     }
 
-    public HistoryAdapter getHistory() {
+    public HistoryManager getHistory() {
         return mHistory;
     }
 
@@ -206,7 +206,7 @@ public class MasterImage implements RenderingRequestCaller {
         return mState;
     }
 
-    public void setHistoryAdapter(HistoryAdapter adapter) {
+    public void setHistoryManager(HistoryManager adapter) {
         mHistory = adapter;
     }
 

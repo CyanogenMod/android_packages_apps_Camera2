@@ -28,7 +28,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.history.HistoryAdapter;
+import com.android.gallery3d.filtershow.history.HistoryManager;
 import com.android.gallery3d.filtershow.category.MainPanel;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.state.StatePanel;
@@ -54,7 +54,7 @@ public class EditorPanel extends Fragment {
 
     public void cancelCurrentFilter() {
         MasterImage masterImage = MasterImage.getImage();
-        HistoryAdapter adapter = masterImage.getHistory();
+        HistoryManager adapter = masterImage.getHistory();
 
         int position = adapter.undo();
         masterImage.onHistoryItemClick(position);

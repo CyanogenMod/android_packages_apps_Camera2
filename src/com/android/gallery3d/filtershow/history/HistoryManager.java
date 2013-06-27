@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2013 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,54 +16,45 @@
 
 package com.android.gallery3d.filtershow.history;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.history.HistoryItem;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 import java.util.Vector;
 
-public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
-    private static final String LOGTAG = "HistoryAdapter";
+public class HistoryManager {
+    private static final String LOGTAG = "HistoryManager";
+
+    private Vector<HistoryItem> mHistoryItems = new Vector<HistoryItem>();
     private int mCurrentPresetPosition = 0;
-    private String mBorders = null;
-    private String mCrop = null;
-    private String mRotate = null;
-    private String mStraighten = null;
-    private String mMirror = null;
     private MenuItem mUndoMenuItem = null;
     private MenuItem mRedoMenuItem = null;
     private MenuItem mResetMenuItem = null;
-
-    private Bitmap mOriginalBitmap = null;
-
-    public HistoryAdapter(Context context, int resource, int textViewResourceId) {
-        super(context, resource, textViewResourceId);
-        FilterShowActivity activity = (FilterShowActivity) context;
-        mBorders = context.getString(R.string.borders);
-        mCrop = context.getString(R.string.crop);
-        mRotate = context.getString(R.string.rotate);
-        mStraighten = context.getString(R.string.straighten);
-        mMirror = context.getString(R.string.mirror);
-    }
 
     public void setMenuItems(MenuItem undoItem, MenuItem redoItem, MenuItem resetItem) {
         mUndoMenuItem = undoItem;
         mRedoMenuItem = redoItem;
         mResetMenuItem = resetItem;
         updateMenuItems();
+    }
+
+    private int getCount() {
+        return mHistoryItems.size();
+    }
+
+    public HistoryItem getItem(int position) {
+        return mHistoryItems.elementAt(position);
+    }
+
+    private void clear() {
+        mHistoryItems.clear();
+    }
+
+    private void add(HistoryItem item) {
+        mHistoryItems.add(item);
+    }
+
+    private void notifyDataSetChanged() {
+        // TODO
     }
 
     public boolean canReset() {
@@ -110,7 +101,7 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
     public void setCurrentPreset(int n) {
         mCurrentPresetPosition = n;
         updateMenuItems();
-        this.notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     public void reset() {
@@ -139,8 +130,7 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
         updateMenuItems();
     }
 
-    @Override
-    public void insert(HistoryItem preset, int position) {
+    private void insert(HistoryItem preset, int position) {
         if (mCurrentPresetPosition != 0) {
             // in this case, let's discount the presets before the current one
             Vector<HistoryItem> oldItems = new Vector<HistoryItem>();
@@ -152,11 +142,11 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
                 add(oldItems.elementAt(i));
             }
             mCurrentPresetPosition = position;
-            this.notifyDataSetChanged();
+            notifyDataSetChanged();
         }
-        super.insert(preset, position);
+        mHistoryItems.insertElementAt(preset, position);
         mCurrentPresetPosition = position;
-        this.notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     public int redo() {
@@ -164,7 +154,7 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
         if (mCurrentPresetPosition < 0) {
             mCurrentPresetPosition = 0;
         }
-        this.notifyDataSetChanged();
+        notifyDataSetChanged();
         updateMenuItems();
         return mCurrentPresetPosition;
     }
@@ -174,49 +164,9 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
         if (mCurrentPresetPosition >= getCount()) {
             mCurrentPresetPosition = getCount() - 1;
         }
-        this.notifyDataSetChanged();
+        notifyDataSetChanged();
         updateMenuItems();
         return mCurrentPresetPosition;
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
-        if (view == null) {
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(
-                    Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.filtershow_history_operation_row, null);
-        }
-
-        HistoryItem historyItem = getItem(position);
-        ImagePreset item = historyItem.getImagePreset();
-        if (item != null) {
-            TextView itemView = (TextView) view.findViewById(R.id.rowTextView);
-            if (itemView != null && historyItem.getFilterRepresentation() != null) {
-                itemView.setText(historyItem.getFilterRepresentation().getName());
-            }
-            ImageView preview = (ImageView) view.findViewById(R.id.preview);
-            Bitmap bmp = historyItem.getPreviewImage();
-            if (position == getCount()-1 && mOriginalBitmap != null) {
-                bmp = mOriginalBitmap;
-            }
-            if (bmp != null) {
-                preview.setImageBitmap(bmp);
-            } else {
-                preview.setImageResource(android.R.color.transparent);
-            }
-            if (position == mCurrentPresetPosition) {
-                view.setBackgroundColor(Color.WHITE);
-            } else {
-                view.setBackgroundResource(R.color.background_main_toolbar);
-            }
-        }
-
-        return view;
-    }
-
-
-    public void setOriginalBitmap(Bitmap originalBitmap) {
-        mOriginalBitmap = originalBitmap;
-    }
 }
