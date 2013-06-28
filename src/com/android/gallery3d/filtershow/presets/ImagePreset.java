@@ -59,7 +59,7 @@ public class ImagePreset {
 
     private boolean mPartialRendering = false;
     private Rect mPartialRenderingBounds;
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     public ImagePreset() {
     }
@@ -675,7 +675,7 @@ public class ImagePreset {
                 Log.w(LOGTAG,"UNKNOWN FILTER! "+name);
                 return false;
             }
-            filter.deSerializeRepresentation(read(sreader));
+            filter.deSerializeRepresentation(sreader);
             addFilter(filter);
         }
         sreader.endObject();
@@ -688,19 +688,5 @@ public class ImagePreset {
         }
         FiltersManager filtersManager = FiltersManager.getManager();
         return filtersManager.createFilterFromName(name);
-    }
-
-    String[][] read(JsonReader reader) throws IOException {
-        ArrayList <String[]> al = new ArrayList<String[]>();
-
-        reader.beginObject();
-
-        while (reader.hasNext()) {
-            String[]kv = { reader.nextName(),reader.nextString()};
-            al.add(kv);
-
-        }
-        reader.endObject();
-        return al.toArray(new String[al.size()][]);
     }
 }
