@@ -231,12 +231,22 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public synchronized boolean hasModifications() {
+        // TODO: We need to have a better same effects check to see if two
+        // presets are functionally the same. Right now, we are relying on a
+        // stricter check as equals().
+        ImagePreset loadedPreset = getLoadedPreset();
         if (mPreset == null) {
-            return getLoadedPreset() != null;
+            if (loadedPreset == null) {
+                return false;
+            } else {
+                return loadedPreset.hasModifications();
+            }
         } else {
-            // TODO: same() is quite strict check here. We should be only
-            // checking for functionality parity.
-            return !mPreset.same(getLoadedPreset());
+            if (loadedPreset == null) {
+                return mPreset.hasModifications();
+            } else {
+                return !mPreset.equals(getLoadedPreset());
+            }
         }
     }
 
@@ -304,7 +314,6 @@ public class MasterImage implements RenderingRequestCaller {
             }
         }
         invalidatePreview();
-        mActivity.enableSave(hasModifications());
     }
 
     public FilterRepresentation getCurrentFilterRepresentation() {
@@ -404,20 +413,29 @@ public class MasterImage implements RenderingRequestCaller {
         if (request.getBitmap() == null) {
             return;
         }
+
+        boolean needsCheckModification = false;
         if (request.getType() == RenderingRequest.GEOMETRY_RENDERING) {
             mGeometryOnlyBitmap = request.getBitmap();
+            needsCheckModification = true;
         }
         if (request.getType() == RenderingRequest.FILTERS_RENDERING) {
             mFiltersOnlyBitmap = request.getBitmap();
+            needsCheckModification = true;
         }
         if (request.getType() == RenderingRequest.PARTIAL_RENDERING
                 && request.getScaleFactor() == getScaleFactor()) {
             mPartialBitmap = request.getBitmap();
             notifyObservers();
+            needsCheckModification = true;
         }
         if (request.getType() == RenderingRequest.HIGHRES_RENDERING) {
             mHighresBitmap = request.getBitmap();
             notifyObservers();
+            needsCheckModification = true;
+        }
+        if (needsCheckModification) {
+            mActivity.enableSave(hasModifications());
         }
     }
 

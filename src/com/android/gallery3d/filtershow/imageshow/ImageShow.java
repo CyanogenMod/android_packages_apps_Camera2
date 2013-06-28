@@ -108,7 +108,6 @@ public class ImageShow extends View implements OnGestureListener,
 
     public void onNewValue(int parameter) {
         invalidate();
-        mActivity.enableSave(hasModifications());
     }
 
     public ImageShow(Context context, AttributeSet attrs, int defStyle) {
