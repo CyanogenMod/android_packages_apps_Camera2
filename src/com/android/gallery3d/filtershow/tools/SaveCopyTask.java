@@ -279,9 +279,28 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         if (params[0] == null || mSourceUri == null || mSelectedImageUri == null) {
             return null;
         }
+
         ImagePreset preset = params[0];
-        BitmapFactory.Options options = new BitmapFactory.Options();
         Uri uri = null;
+        if (!preset.hasModifications()) {
+            // This can happen only when preset has no modification but save
+            // button is enabled, it means the file is loaded with filters in
+            // the XMP, then all the filters are removed or restore to default.
+            // In this case, when mSourceUri exists, rename it to the
+            // destination file.
+            File srcFile = getLocalFileFromUri(mContext, mSourceUri);
+            // If the source is not a local file, then skip this renaming and
+            // create a local copy as usual.
+            if (srcFile != null) {
+                srcFile.renameTo(mDestinationFile);
+                uri = insertContent(mContext, mSelectedImageUri, mDestinationFile,
+                        System.currentTimeMillis());
+                removeSelectedImage();
+                return uri;
+            }
+        }
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
         boolean noBitmap = true;
         int num_tries = 0;
 
@@ -331,12 +350,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
                 // Since we have a new image inserted to media store, we can
                 // safely remove the old one which is selected by the user.
                 if (USE_AUX_DIR) {
-                    String scheme = mSelectedImageUri.getScheme();
-                    if (scheme != null && scheme.equals(ContentResolver.SCHEME_CONTENT)) {
-                        if (mSelectedImageUri.getAuthority().equals(MediaStore.AUTHORITY)) {
-                            mContext.getContentResolver().delete(mSelectedImageUri, null, null);
-                        }
-                    }
+                    removeSelectedImage();
                 }
                 noBitmap = false;
                 UsageStatistics.onEvent(UsageStatistics.COMPONENT_EDITOR,
@@ -353,6 +367,15 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         return uri;
     }
 
+    private void removeSelectedImage() {
+        String scheme = mSelectedImageUri.getScheme();
+        if (scheme != null && scheme.equals(ContentResolver.SCHEME_CONTENT)) {
+            if (mSelectedImageUri.getAuthority().equals(MediaStore.AUTHORITY)) {
+                mContext.getContentResolver().delete(mSelectedImageUri, null, null);
+            }
+        }
+    }
+
     /**
      *  Move the source file to auxiliary directory if needed and return the Uri
      *  pointing to this new source file.
@@ -362,7 +385,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
      * @return the newSourceUri pointing to the new source image.
      */
     private Uri moveSrcToAuxIfNeeded(Uri srcUri, File dstFile) {
-        File srcFile = getFileFromUri(mContext, srcUri);
+        File srcFile = getLocalFileFromUri(mContext, srcUri);
         if (srcFile == null) {
             Log.d(LOGTAG, "Source file is not a local file, no update.");
             return srcUri;
@@ -437,7 +460,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
     }
 
     private static File getSaveDirectory(Context context, Uri sourceUri) {
-        File file = getFileFromUri(context, sourceUri);
+        File file = getLocalFileFromUri(context, sourceUri);
         if (file != null) {
             return file.getParentFile();
         } else {
@@ -450,7 +473,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
      * @return The file object. Return null if srcUri is invalid or not a local
      * file.
      */
-    private static File getFileFromUri(Context context, Uri srcUri) {
+    private static File getLocalFileFromUri(Context context, Uri srcUri) {
         if (srcUri == null) {
             Log.e(LOGTAG, "srcUri is null.");
             return null;
