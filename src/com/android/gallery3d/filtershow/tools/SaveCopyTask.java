@@ -74,6 +74,11 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
     private static final String POSTFIX_JPG = ".jpg";
     private static final String AUX_DIR_NAME = ".aux";
 
+    // When this is true, the source file will be saved into auxiliary directory
+    // and hidden from MediaStore. Otherwise, the source will be kept as the
+    // same.
+    private static final boolean USE_AUX_DIR = true;
+
     private final Context mContext;
     private final Uri mSourceUri;
     private final Callback mCallback;
@@ -283,8 +288,12 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         // If necessary, move the source file into the auxiliary directory,
         // newSourceUri is then pointing to the new location.
         // If no file is moved, newSourceUri will be the same as mSourceUri.
-        Uri newSourceUri = moveSrcToAuxIfNeeded(mSourceUri, mDestinationFile);
-
+        Uri newSourceUri;
+        if (USE_AUX_DIR) {
+            newSourceUri = moveSrcToAuxIfNeeded(mSourceUri, mDestinationFile);
+        } else {
+            newSourceUri = mSourceUri;
+        }
         // Stopgap fix for low-memory devices.
         while (noBitmap) {
             try {
@@ -321,13 +330,14 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
 
                 // Since we have a new image inserted to media store, we can
                 // safely remove the old one which is selected by the user.
-                String scheme = mSelectedImageUri.getScheme();
-                if (scheme != null && scheme.equals(ContentResolver.SCHEME_CONTENT)) {
-                    if (mSelectedImageUri.getAuthority().equals(MediaStore.AUTHORITY)) {
-                        mContext.getContentResolver().delete(mSelectedImageUri, null, null);
+                if (USE_AUX_DIR) {
+                    String scheme = mSelectedImageUri.getScheme();
+                    if (scheme != null && scheme.equals(ContentResolver.SCHEME_CONTENT)) {
+                        if (mSelectedImageUri.getAuthority().equals(MediaStore.AUTHORITY)) {
+                            mContext.getContentResolver().delete(mSelectedImageUri, null, null);
+                        }
                     }
                 }
-
                 noBitmap = false;
                 UsageStatistics.onEvent(UsageStatistics.COMPONENT_EDITOR,
                         "SaveComplete", null);
