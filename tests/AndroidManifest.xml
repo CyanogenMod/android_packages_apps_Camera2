@@ -17,7 +17,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.gallery3d.tests">
 
-    <application>
+    <application
+        android:debuggable="true">
         <uses-library android:name="android.test.runner" />
     </application>
 
@@ -32,6 +33,10 @@
     <instrumentation android:name="com.android.gallery3d.exif.ExifTestRunner"
             android:targetPackage="com.android.gallery3d"
             android:label="Tests for ExifParser."/>
+
+    <instrumentation android:name="com.android.gallery3d.jpegstream.JpegStreamTestRunner"
+            android:targetPackage="com.android.gallery3d"
+            android:label="Tests for JpegStream classes."/>
 
     <instrumentation android:name="com.android.gallery3d.stress.CameraStressTestRunner"
             android:targetPackage="com.android.gallery3d"
