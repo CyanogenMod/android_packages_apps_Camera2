@@ -84,3 +84,8 @@
   *** toArray(...);
 }
 -keep class com.android.gallery3d.util.ProfileData { *; }
+
+# - Required for running jpeg stream tests on userdebug
+-keep class com.android.gallery3d.jpegstream.JPEGOutputStream { *; }
+-keep class com.android.gallery3d.jpegstream.JPEGInputStream { *; }
+-keep class com.android.gallery3d.jpegstream.StreamUtils { *; }
