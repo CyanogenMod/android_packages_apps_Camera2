@@ -34,7 +34,7 @@ import java.util.List;
 public class PhotoDatabase extends SQLiteOpenHelper {
     @SuppressWarnings("unused")
     private static final String TAG = PhotoDatabase.class.getSimpleName();
-    static final int DB_VERSION = 2;
+    static final int DB_VERSION = 3;
 
     private static final String SQL_CREATE_TABLE = "CREATE TABLE ";
 
@@ -80,7 +80,7 @@ public class PhotoDatabase extends SQLiteOpenHelper {
 
     private static final String[][] CREATE_ACCOUNT = {
         { Accounts._ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
-        { Accounts.ACCOUNT_NAME, "TEXT NOT NULL" },
+        { Accounts.ACCOUNT_NAME, "TEXT UNIQUE NOT NULL" },
     };
 
     @Override
