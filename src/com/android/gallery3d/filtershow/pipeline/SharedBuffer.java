@@ -14,54 +14,42 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.filtershow.cache;
+package com.android.gallery3d.filtershow.pipeline;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
-public class TripleBufferBitmap {
+public class SharedBuffer {
 
-    private static String LOGTAG = "TripleBufferBitmap";
+    private static final String LOGTAG = "SharedBuffer";
 
-    private volatile Bitmap mBitmaps[] = new Bitmap[3];
-    private volatile Bitmap mProducer = null;
-    private volatile Bitmap mConsumer = null;
-    private volatile Bitmap mIntermediate = null;
+    private volatile Buffer mProducer = null;
+    private volatile Buffer mConsumer = null;
+    private volatile Buffer mIntermediate = null;
     private volatile boolean mNeedsSwap = false;
 
-    private final Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
     private volatile boolean mNeedsRepaint = true;
 
-    public TripleBufferBitmap() {
-
-    }
-
-    public synchronized void updateBitmaps(Bitmap bitmap) {
-        mBitmaps[0] = bitmap.copy(mBitmapConfig, true);
-        mBitmaps[1] = bitmap.copy(mBitmapConfig, true);
-        mBitmaps[2] = bitmap.copy(mBitmapConfig, true);
-        mProducer = mBitmaps[0];
-        mConsumer = mBitmaps[1];
-        mIntermediate = mBitmaps[2];
-    }
-
-    public synchronized void updateProducerBitmap(Bitmap bitmap) {
-        mProducer = bitmap.copy(mBitmapConfig, true);
+    public SharedBuffer() {
     }
 
     public synchronized void setProducer(Bitmap producer) {
-        mProducer = producer;
+        mProducer = new Buffer(producer);
     }
 
-    public synchronized Bitmap getProducer() {
+    public synchronized Buffer getProducer() {
         return mProducer;
     }
 
-    public synchronized Bitmap getConsumer() {
+    public synchronized Buffer getConsumer() {
         return mConsumer;
     }
 
     public synchronized void swapProducer() {
-        Bitmap intermediate = mIntermediate;
+        if (mProducer != null) {
+            mProducer.sync();
+        }
+        Buffer intermediate = mIntermediate;
         mIntermediate = mProducer;
         mProducer = intermediate;
         mNeedsSwap = true;
@@ -71,7 +59,10 @@ public class TripleBufferBitmap {
         if (!mNeedsSwap) {
             return;
         }
-        Bitmap intermediate = mIntermediate;
+        if (mConsumer != null) {
+            mConsumer.sync();
+        }
+        Buffer intermediate = mIntermediate;
         mIntermediate = mConsumer;
         mConsumer = intermediate;
         mNeedsSwap = false;
@@ -90,3 +81,4 @@ public class TripleBufferBitmap {
     }
 
 }
+

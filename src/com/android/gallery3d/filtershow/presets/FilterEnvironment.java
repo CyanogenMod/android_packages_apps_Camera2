@@ -22,6 +22,7 @@ import android.support.v8.renderscript.Allocation;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManagerInterface;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
+import com.android.gallery3d.filtershow.pipeline.Buffer;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -53,7 +54,11 @@ public class FilterEnvironment {
     private HashMap<Integer, Integer>
                     generalParameters = new HashMap<Integer, Integer>();
 
-    public void cache(Bitmap bitmap) {
+    public void cache(Buffer buffer) {
+        if (buffer == null) {
+            return;
+        }
+        Bitmap bitmap = buffer.getBitmap();
         if (bitmap == null) {
             return;
         }

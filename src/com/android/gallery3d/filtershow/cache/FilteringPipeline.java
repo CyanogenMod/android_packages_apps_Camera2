@@ -26,6 +26,7 @@ import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
+import com.android.gallery3d.filtershow.pipeline.SharedBuffer;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class FilteringPipeline implements Handler.Callback {
@@ -71,7 +72,7 @@ public class FilteringPipeline implements Handler.Callback {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case NEW_PRESET: {
-                    TripleBufferBitmap buffer = MasterImage.getImage().getDoubleBuffer();
+                    SharedBuffer buffer = MasterImage.getImage().getPreviewBuffer();
                     buffer.swapConsumer();
                     MasterImage.getImage().notifyObservers();
                     if (mHasUnhandledPreviewRequest) {
@@ -96,7 +97,7 @@ public class FilteringPipeline implements Handler.Callback {
         switch (msg.what) {
             case COMPUTE_PRESET: {
                 ImagePreset preset = (ImagePreset) msg.obj;
-                TripleBufferBitmap buffer = MasterImage.getImage().getDoubleBuffer();
+                SharedBuffer buffer = MasterImage.getImage().getPreviewBuffer();
                 mPreviewPipeline.compute(buffer, preset, COMPUTE_PRESET);
                 buffer.swapProducer();
                 Message uimsg = mUIHandler.obtainMessage(NEW_PRESET);

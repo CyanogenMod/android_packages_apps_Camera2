@@ -27,6 +27,7 @@ import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
+import com.android.gallery3d.filtershow.pipeline.SharedBuffer;
 import com.android.gallery3d.filtershow.presets.FilterEnvironment;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.presets.PipelineInterface;
@@ -342,7 +343,7 @@ public class CachingPipeline implements PipelineInterface {
                 FilterEnvironment.QUALITY_PREVIEW);
     }
 
-    public synchronized void compute(TripleBufferBitmap buffer, ImagePreset preset, int type) {
+    public synchronized void compute(SharedBuffer buffer, ImagePreset preset, int type) {
         synchronized (CachingPipeline.class) {
             if (getRenderScriptContext() == null) {
                 return;
@@ -361,16 +362,20 @@ public class CachingPipeline implements PipelineInterface {
             if (updateOriginalAllocation(preset)) {
                 resizedOriginalBitmap = mResizedOriginalBitmap;
                 mEnvironment.cache(buffer.getProducer());
-                buffer.updateProducerBitmap(resizedOriginalBitmap);
+                buffer.setProducer(resizedOriginalBitmap);
             }
-            Bitmap bitmap = buffer.getProducer();
+
+            Bitmap bitmap = null;
+            if (buffer.getProducer() != null) {
+                bitmap = buffer.getProducer().getBitmap();
+            }
             long time2 = System.currentTimeMillis();
 
             if (bitmap == null || (bitmap.getWidth() != resizedOriginalBitmap.getWidth())
                     || (bitmap.getHeight() != resizedOriginalBitmap.getHeight())) {
                 mEnvironment.cache(buffer.getProducer());
-                buffer.updateProducerBitmap(resizedOriginalBitmap);
-                bitmap = buffer.getProducer();
+                buffer.setProducer(resizedOriginalBitmap);
+                bitmap = buffer.getProducer().getBitmap();
             }
             mOriginalAllocation.copyTo(bitmap);
 
@@ -393,7 +398,7 @@ public class CachingPipeline implements PipelineInterface {
     }
 
     public boolean needsRepaint() {
-        TripleBufferBitmap buffer = MasterImage.getImage().getDoubleBuffer();
+        SharedBuffer buffer = MasterImage.getImage().getPreviewBuffer();
         return buffer.checkRepaintNeeded();
     }
 

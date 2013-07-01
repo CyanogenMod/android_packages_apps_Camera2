@@ -31,9 +31,10 @@ import com.android.gallery3d.filtershow.cache.FilteringPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.cache.RenderingRequest;
 import com.android.gallery3d.filtershow.cache.RenderingRequestCaller;
-import com.android.gallery3d.filtershow.cache.TripleBufferBitmap;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
+import com.android.gallery3d.filtershow.pipeline.Buffer;
+import com.android.gallery3d.filtershow.pipeline.SharedBuffer;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.state.StateAdapter;
 
@@ -56,7 +57,7 @@ public class MasterImage implements RenderingRequestCaller {
     private ImagePreset mGeometryOnlyPreset = null;
     private ImagePreset mFiltersOnlyPreset = null;
 
-    private TripleBufferBitmap mFilteredPreview = new TripleBufferBitmap();
+    private SharedBuffer mPreviewBuffer = new SharedBuffer();
 
     private Bitmap mGeometryOnlyBitmap = null;
     private Bitmap mFiltersOnlyBitmap = null;
@@ -250,8 +251,8 @@ public class MasterImage implements RenderingRequestCaller {
         }
     }
 
-    public TripleBufferBitmap getDoubleBuffer() {
-        return mFilteredPreview;
+    public SharedBuffer getPreviewBuffer() {
+        return mPreviewBuffer;
     }
 
     public void setOriginalGeometry(Bitmap originalBitmapLarge) {
@@ -265,7 +266,11 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public Bitmap getFilteredImage() {
-        return mFilteredPreview.getConsumer();
+        Buffer consumer = mPreviewBuffer.getConsumer();
+        if (consumer != null) {
+            return consumer.getBitmap();
+        }
+        return null;
     }
 
     public Bitmap getFiltersOnlyImage() {
@@ -344,7 +349,7 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public void invalidatePreview() {
-        mFilteredPreview.invalidate();
+        mPreviewBuffer.invalidate();
         invalidatePartialPreview();
         invalidateHighresPreview();
         needsUpdatePartialPreview();
@@ -373,7 +378,7 @@ public class MasterImage implements RenderingRequestCaller {
         Point translate = getTranslation();
         float scaleFactor = getScaleFactor();
         m.postTranslate(translate.x, translate.y);
-        m.postScale(scaleFactor, scaleFactor, mImageShowSize.x/2.0f, mImageShowSize.y/2.0f);
+        m.postScale(scaleFactor, scaleFactor, mImageShowSize.x / 2.0f, mImageShowSize.y / 2.0f);
         return m;
     }
 
