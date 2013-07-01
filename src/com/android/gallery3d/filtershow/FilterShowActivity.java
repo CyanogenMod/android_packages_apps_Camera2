@@ -812,8 +812,9 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     public void enableSave(boolean enable) {
-        if (mSaveButton != null)
+        if (mSaveButton != null) {
             mSaveButton.setEnabled(enable);
+        }
     }
 
     private void fillFx() {

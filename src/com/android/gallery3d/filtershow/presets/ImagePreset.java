@@ -186,6 +186,20 @@ public class ImagePreset {
         return geo;
     }
 
+    public boolean hasModifications() {
+        for (int i = 0; i < mFilters.size(); i++) {
+            FilterRepresentation filter = mFilters.elementAt(i);
+            if (filter instanceof GeometryMetadata) {
+                if (((GeometryMetadata) filter).hasModifications()) {
+                    return true;
+                }
+            } else if (!filter.isNil()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isPanoramaSafe() {
         for (FilterRepresentation representation : mFilters) {
             if (representation instanceof GeometryMetadata) {
