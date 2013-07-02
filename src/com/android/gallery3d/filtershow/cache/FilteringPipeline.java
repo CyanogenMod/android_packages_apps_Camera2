@@ -27,6 +27,7 @@ import com.android.gallery3d.filtershow.filters.ImageFilterRS;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.pipeline.SharedBuffer;
+import com.android.gallery3d.filtershow.pipeline.SharedPreset;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class FilteringPipeline implements Handler.Callback {
@@ -72,8 +73,6 @@ public class FilteringPipeline implements Handler.Callback {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case NEW_PRESET: {
-                    SharedBuffer buffer = MasterImage.getImage().getPreviewBuffer();
-                    buffer.swapConsumer();
                     MasterImage.getImage().notifyObservers();
                     if (mHasUnhandledPreviewRequest) {
                         updatePreviewBuffer();
@@ -96,12 +95,18 @@ public class FilteringPipeline implements Handler.Callback {
         }
         switch (msg.what) {
             case COMPUTE_PRESET: {
-                ImagePreset preset = (ImagePreset) msg.obj;
                 SharedBuffer buffer = MasterImage.getImage().getPreviewBuffer();
-                mPreviewPipeline.compute(buffer, preset, COMPUTE_PRESET);
-                buffer.swapProducer();
-                Message uimsg = mUIHandler.obtainMessage(NEW_PRESET);
-                mUIHandler.sendMessage(uimsg);
+                SharedPreset preset = MasterImage.getImage().getPreviewPreset();
+                ImagePreset renderingPreset = preset.dequeuePreset();
+                if (renderingPreset != null) {
+                    mPreviewPipeline.compute(buffer, renderingPreset, COMPUTE_PRESET);
+                    // set the preset we used in the buffer for later inspection UI-side
+                    buffer.getProducer().setPreset(renderingPreset);
+                    buffer.getProducer().sync();
+                    buffer.swapProducer(); // push back the result
+                    Message uimsg = mUIHandler.obtainMessage(NEW_PRESET);
+                    mUIHandler.sendMessage(uimsg);
+                }
                 break;
             }
             case COMPUTE_RENDERING_REQUEST:

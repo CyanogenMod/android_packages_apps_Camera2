@@ -47,8 +47,6 @@ public class FilterRepresentation implements Cloneable {
     public static final byte TYPE_TINYPLANET = 6;
     protected static final String NAME_TAG = "Name";
 
-    private FilterRepresentation mTempRepresentation = null;
-
     public FilterRepresentation(String name) {
         mName = name;
     }
@@ -67,8 +65,6 @@ public class FilterRepresentation implements Cloneable {
         representation.setShowParameterValue(showParameterValue());
         representation.mSerializationName = mSerializationName;
 
-        representation.mTempRepresentation =
-                mTempRepresentation != null ? mTempRepresentation.clone() : null;
         if (DEBUG) {
             Log.v(LOGTAG, "cloning from <" + this + "> to <" + representation + ">");
         }
@@ -138,28 +134,6 @@ public class FilterRepresentation implements Cloneable {
     }
 
     public void useParametersFrom(FilterRepresentation a) {
-    }
-
-    public void clearTempRepresentation() {
-        mTempRepresentation = null;
-    }
-
-    public synchronized void updateTempParametersFrom(FilterRepresentation representation) {
-        if (mTempRepresentation == null) {
-            try {
-                mTempRepresentation = representation.clone();
-            } catch (CloneNotSupportedException e) {
-                e.printStackTrace();
-            }
-        } else {
-            mTempRepresentation.useParametersFrom(representation);
-        }
-    }
-
-    public synchronized void synchronizeRepresentation() {
-        if (mTempRepresentation != null) {
-            useParametersFrom(mTempRepresentation);
-        }
     }
 
     public boolean allowsSingleInstanceOnly() {

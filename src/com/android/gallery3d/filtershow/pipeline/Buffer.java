@@ -20,22 +20,31 @@ import android.graphics.Bitmap;
 import android.support.v8.renderscript.Allocation;
 import android.support.v8.renderscript.RenderScript;
 import com.android.gallery3d.filtershow.cache.CachingPipeline;
+import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class Buffer {
+    private static final String LOGTAG = "Buffer";
     private Bitmap mBitmap;
     private Allocation mAllocation;
     private boolean mUseAllocation = false;
     private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
+    private ImagePreset mPreset;
 
     public Buffer(Bitmap bitmap) {
         RenderScript rs = CachingPipeline.getRenderScriptContext();
-        mBitmap = bitmap.copy(BITMAP_CONFIG, true);
+        if (bitmap != null) {
+            mBitmap = bitmap.copy(BITMAP_CONFIG, true);
+        }
         if (mUseAllocation) {
             // TODO: recreate the allocation when the RS context changes
             mAllocation = Allocation.createFromBitmap(rs, mBitmap,
                     Allocation.MipmapControl.MIPMAP_NONE,
                     Allocation.USAGE_SHARED | Allocation.USAGE_SCRIPT);
         }
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        mBitmap = bitmap.copy(BITMAP_CONFIG, true);
     }
 
     public Bitmap getBitmap() {
@@ -52,5 +61,16 @@ public class Buffer {
         }
     }
 
+    public ImagePreset getPreset() {
+        return mPreset;
+    }
+
+    public void setPreset(ImagePreset preset) {
+        if ((mPreset == null) || (!mPreset.same(preset))) {
+            mPreset = new ImagePreset(preset);
+        } else {
+            mPreset.updateWith(preset);
+        }
+    }
 }
 
