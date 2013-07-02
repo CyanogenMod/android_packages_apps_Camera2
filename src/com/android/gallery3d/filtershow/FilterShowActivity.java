@@ -498,6 +498,24 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         mCategoryBordersAdapter.reflectImagePreset(preset);
     }
 
+    private class LoadHighresBitmapTask extends AsyncTask<Void, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            mImageLoader.loadHighResBitmap();
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            Bitmap highresBitmap = mImageLoader.getOriginalBitmapHighres();
+            if (highresBitmap != null) {
+                FilteringPipeline pipeline = FilteringPipeline.getPipeline();
+                float highResPreviewScale = (float) highresBitmap.getWidth() / (float) mImageLoader.getOriginalBounds().width();
+                pipeline.setHighResPreviewScaleFactor(highResPreviewScale);
+            }
+        }
+    }
+
     private class LoadBitmapTask extends AsyncTask<Uri, Boolean, Boolean> {
         int mBitmapSize;
 
@@ -550,11 +568,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             pipeline.setOriginal(largeBitmap);
             float previewScale = (float) largeBitmap.getWidth() / (float) mImageLoader.getOriginalBounds().width();
             pipeline.setPreviewScaleFactor(previewScale);
-            Bitmap highresBitmap = mImageLoader.getOriginalBitmapHighres();
-            if (highresBitmap != null) {
-                float highResPreviewScale = (float) highresBitmap.getWidth() / (float) mImageLoader.getOriginalBounds().width();
-                pipeline.setHighResPreviewScaleFactor(highResPreviewScale);
-            }
             if (!mShowingTinyPlanet) {
                 mCategoryFiltersAdapter.removeTinyPlanet();
             }
@@ -578,6 +591,8 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             }
             mLoading = false;
             MasterImage.getImage().notifyGeometryChange();
+            LoadHighresBitmapTask highresLoad = new LoadHighresBitmapTask();
+            highresLoad.execute();
             super.onPostExecute(result);
         }
 

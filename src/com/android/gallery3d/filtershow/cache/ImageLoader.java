@@ -88,6 +88,7 @@ public class ImageLoader {
     private static int mZoomOrientation = ORI_NORMAL;
 
     static final int MAX_BITMAP_DIM = 900;
+    static final int SMALL_BITMAP_DIM = 160;
 
     private ReentrantLock mLoadingLock = new ReentrantLock();
 
@@ -104,27 +105,28 @@ public class ImageLoader {
         return mActivity;
     }
 
-    public boolean loadBitmap(Uri uri, int size) {
-        mLoadingLock.lock();
-        mUri = uri;
-        mOrientation = getOrientation(mContext, uri);
-        mOriginalBitmapSmall = loadScaledBitmap(uri, 160);
-        if (mOriginalBitmapSmall == null) {
-            // Couldn't read the bitmap, let's exit
-            mLoadingLock.unlock();
-            return false;
-        }
-        mOriginalBitmapLarge = loadScaledBitmap(uri, size);
-        if (mOriginalBitmapLarge == null) {
-            mLoadingLock.unlock();
-            return false;
-        }
+    public void loadHighResBitmap() {
         if (MasterImage.getImage().supportsHighRes()) {
             int highresPreviewSize = mOriginalBitmapLarge.getWidth() * 2;
             if (highresPreviewSize > mOriginalBounds.width()) {
                 highresPreviewSize = mOriginalBounds.width();
             }
-            mOriginalBitmapHighres = loadScaledBitmap(uri, highresPreviewSize, false);
+            mOriginalBitmapHighres = loadScaledBitmap(mUri, highresPreviewSize, false);
+            if (mOrientation > 1 && mOriginalBitmapHighres != null) {
+                mOriginalBitmapHighres = rotateToPortrait(mOriginalBitmapHighres, mOrientation);
+            }
+            warnListeners();
+        }
+    }
+
+    public boolean loadBitmap(Uri uri, int size) {
+        mLoadingLock.lock();
+        mUri = uri;
+        mOrientation = getOrientation(mContext, uri);
+        mOriginalBitmapLarge = loadScaledBitmap(uri, size);
+        if (mOriginalBitmapLarge == null) {
+            mLoadingLock.unlock();
+            return false;
         }
         updateBitmaps();
         mLoadingLock.unlock();
@@ -194,12 +196,11 @@ public class ImageLoader {
 
     private void updateBitmaps() {
         if (mOrientation > 1) {
-            mOriginalBitmapSmall = rotateToPortrait(mOriginalBitmapSmall, mOrientation);
             mOriginalBitmapLarge = rotateToPortrait(mOriginalBitmapLarge, mOrientation);
-            if (mOriginalBitmapHighres != null) {
-                mOriginalBitmapHighres = rotateToPortrait(mOriginalBitmapHighres, mOrientation);
-            }
         }
+        int sw = SMALL_BITMAP_DIM;
+        int sh = (int) (sw * (float) mOriginalBitmapLarge.getHeight() / (float) mOriginalBitmapLarge.getWidth());
+        mOriginalBitmapSmall = Bitmap.createScaledBitmap(mOriginalBitmapLarge, sw, sh, true);
         mZoomOrientation = mOrientation;
         warnListeners();
     }
@@ -369,6 +370,7 @@ public class ImageLoader {
                 ImageShow imageShow = mListeners.elementAt(i);
                 imageShow.imageLoaded();
             }
+            MasterImage.getImage().invalidatePreview();
         }
     };
 

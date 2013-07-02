@@ -257,7 +257,9 @@ public class CachingPipeline implements PipelineInterface {
             if (request.getType() == RenderingRequest.HIGHRES_RENDERING) {
                 ImageLoader loader = MasterImage.getImage().getImageLoader();
                 bitmap = loader.getOriginalBitmapHighres();
-                bitmap = preset.applyGeometry(bitmap, mEnvironment);
+                if (bitmap != null) {
+                    bitmap = preset.applyGeometry(bitmap, mEnvironment);
+                }
             }
 
             if (request.getType() == RenderingRequest.FULL_RENDERING
