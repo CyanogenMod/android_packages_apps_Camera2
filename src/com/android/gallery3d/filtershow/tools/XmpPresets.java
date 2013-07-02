@@ -26,7 +26,7 @@ import com.adobe.xmp.XMPMetaFactory;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 import com.android.gallery3d.util.XmpUtilHelper;
 
 import java.io.File;

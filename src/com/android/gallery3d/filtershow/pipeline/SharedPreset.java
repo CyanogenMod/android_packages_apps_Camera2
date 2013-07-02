@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.filtershow.pipeline;
 
-import com.android.gallery3d.filtershow.presets.ImagePreset;
-
 public class SharedPreset {
 
     private volatile ImagePreset mProducerPreset = null;
