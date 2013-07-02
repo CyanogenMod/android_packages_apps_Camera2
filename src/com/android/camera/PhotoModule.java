@@ -18,11 +18,9 @@ package com.android.camera;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
@@ -462,29 +460,12 @@ public class PhotoModule
             // If there is no back camera, do not show the prompt.
             return;
         }
+        mUI.showLocationDialog();
+    }
 
-        new AlertDialog.Builder(mActivity)
-            .setTitle(R.string.remember_location_title)
-            .setMessage(R.string.remember_location_prompt)
-            .setPositiveButton(R.string.remember_location_yes, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int arg1) {
-                    setLocationPreference(RecordLocationPreference.VALUE_ON);
-                }
-            })
-            .setNegativeButton(R.string.remember_location_no, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int arg1) {
-                    dialog.cancel();
-                }
-            })
-            .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    setLocationPreference(RecordLocationPreference.VALUE_OFF);
-                }
-            })
-            .show();
+    public void enableRecordingLocation(boolean enable) {
+        setLocationPreference(enable ? RecordLocationPreference.VALUE_ON
+                : RecordLocationPreference.VALUE_OFF);
     }
 
     private void setLocationPreference(String value) {

@@ -60,4 +60,6 @@ public interface PhotoController extends OnShutterButtonListener {
     public void onScreenSizeChanged(int width, int height, int previewWidth, int previewHeight);
 
     public void updateCameraOrientation();
+
+    public void enableRecordingLocation(boolean enable);
 }
