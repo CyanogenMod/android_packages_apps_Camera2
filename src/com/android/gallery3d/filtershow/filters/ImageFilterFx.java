@@ -51,7 +51,9 @@ public class ImageFilterFx extends ImageFilter {
         return mParameters;
     }
 
-    native protected void nativeApplyFilter(Bitmap bitmap, int w, int h,Bitmap  fxBitmap, int fxw, int fxh);
+    native protected void nativeApplyFilter(Bitmap bitmap, int w, int h,
+                                            Bitmap fxBitmap, int fxw, int fxh,
+                                            int start, int end);
 
     @Override
     public Bitmap apply(Bitmap bitmap, float scaleFactor, int quality) {
@@ -85,7 +87,20 @@ public class ImageFilterFx extends ImageFilter {
         int fxw = mFxBitmap.getWidth();
         int fxh = mFxBitmap.getHeight();
 
-        nativeApplyFilter(bitmap, w, h, mFxBitmap, fxw, fxh);
+        int stride = w * 4;
+        int max = stride * h;
+        int increment = stride * 256; // 256 lines
+        for (int i = 0; i < max; i += increment) {
+            int start = i;
+            int end = i + increment;
+            if (end > max) {
+                end = max;
+            }
+            if (!getEnvironment().needsStop()) {
+                nativeApplyFilter(bitmap, w, h, mFxBitmap, fxw, fxh, start, end);
+            }
+        }
+
         return bitmap;
     }
 

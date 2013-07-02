@@ -64,8 +64,9 @@ public class IconUtilities {
                 int h = bitmap.getHeight();
                 int fxw = fxBitmap.getWidth();
                 int fxh = fxBitmap.getHeight();
-
-                nativeApplyFilter(bitmap, w, h, fxBitmap, fxw, fxh);
+                int start = 0;
+                int end = w * h * 4;
+                nativeApplyFilter(bitmap, w, h, fxBitmap, fxw, fxh, start, end);
                 return bitmap;
             }
         };
