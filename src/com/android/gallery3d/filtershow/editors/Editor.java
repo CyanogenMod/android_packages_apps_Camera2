@@ -202,7 +202,7 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
             ImagePreset preset = MasterImage.getImage().getPreset();
             FilterRepresentation filterRepresentation = MasterImage.getImage().getCurrentFilterRepresentation();
             mLocalRepresentation = preset.getFilterRepresentationCopyFrom(filterRepresentation);
-            if (mShowParameter == SHOW_VALUE_UNDEFINED) {
+            if (mShowParameter == SHOW_VALUE_UNDEFINED && filterRepresentation != null) {
                 boolean show = filterRepresentation.showParameterValue();
                 mShowParameter = show ? SHOW_VALUE_INT : SHOW_VALUE_OFF;
             }
