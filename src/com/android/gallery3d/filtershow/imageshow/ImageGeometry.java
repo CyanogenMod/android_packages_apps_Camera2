@@ -32,7 +32,7 @@ import android.view.View;
 import com.android.gallery3d.filtershow.history.HistoryItem;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata.FLIP;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 
 public abstract class ImageGeometry extends ImageShow {
     protected boolean mVisibilityGained = false;

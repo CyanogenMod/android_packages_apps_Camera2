@@ -17,9 +17,8 @@
 package com.android.gallery3d.filtershow.controller;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.android.gallery3d.filtershow.cache.RenderingRequestCaller;
+import com.android.gallery3d.filtershow.pipeline.RenderingRequestCaller;
 
 public class BasicParameterStyle implements ParameterStyles {
     protected String mParameterName;

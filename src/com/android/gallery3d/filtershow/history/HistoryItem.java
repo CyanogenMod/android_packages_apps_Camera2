@@ -19,7 +19,7 @@ package com.android.gallery3d.filtershow.history;
 import android.graphics.Bitmap;
 import android.util.Log;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 
 public class HistoryItem {
     private static final String LOGTAG = "HistoryItem";

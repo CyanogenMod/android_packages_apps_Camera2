@@ -24,11 +24,11 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import com.android.gallery3d.filtershow.cache.RenderingRequest;
-import com.android.gallery3d.filtershow.cache.RenderingRequestCaller;
+import com.android.gallery3d.filtershow.pipeline.RenderingRequest;
+import com.android.gallery3d.filtershow.pipeline.RenderingRequestCaller;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 
 public class Action implements RenderingRequestCaller {
 

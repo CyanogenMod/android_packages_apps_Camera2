@@ -17,7 +17,6 @@
 package com.android.gallery3d.filtershow.category;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,9 +26,7 @@ import android.widget.ListView;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterTinyPlanetRepresentation;
-import com.android.gallery3d.filtershow.filters.ImageFilterTinyPlanet;
-import com.android.gallery3d.filtershow.imageshow.MasterImage;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 import com.android.gallery3d.filtershow.ui.FilterIconButton;
 
 public class CategoryAdapter extends ArrayAdapter<Action> {

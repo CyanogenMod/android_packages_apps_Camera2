@@ -23,8 +23,8 @@ import android.support.v8.renderscript.Allocation;
 import android.widget.Toast;
 
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
-import com.android.gallery3d.filtershow.presets.FilterEnvironment;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.pipeline.FilterEnvironment;
+import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 
 public abstract class ImageFilter implements Cloneable {
     private FilterEnvironment mEnvironment = null;

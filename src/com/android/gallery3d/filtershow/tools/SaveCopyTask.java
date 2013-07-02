@@ -32,10 +32,10 @@ import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.exif.ExifInterface;
-import com.android.gallery3d.filtershow.cache.CachingPipeline;
+import com.android.gallery3d.filtershow.pipeline.CachingPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 import com.android.gallery3d.util.UsageStatistics;
 import com.android.gallery3d.util.XmpUtilHelper;
 

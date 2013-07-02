@@ -22,7 +22,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.presets.FilterEnvironment;
+import com.android.gallery3d.filtershow.pipeline.FilterEnvironment;
 
 public class ImageFilterVignette extends SimpleImageFilter {
     private static final String LOGTAG = "ImageFilterVignette";

@@ -18,7 +18,7 @@ package com.android.gallery3d.filtershow.controller;
 
 import android.content.Context;
 
-import com.android.gallery3d.filtershow.cache.RenderingRequestCaller;
+import com.android.gallery3d.filtershow.pipeline.RenderingRequestCaller;
 
 public interface ParameterStyles extends Parameter {
     public static String sParameterType = "ParameterStyles";

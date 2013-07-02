@@ -31,8 +31,7 @@ import android.graphics.PorterDuffColorFilter;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.FilterDrawRepresentation.StrokeData;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
-import com.android.gallery3d.filtershow.presets.FilterEnvironment;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.pipeline.FilterEnvironment;
 
 import java.util.Vector;
 

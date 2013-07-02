@@ -20,7 +20,7 @@ import android.content.res.Resources;
 import android.util.Log;
 
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 
 import java.util.HashMap;
 import java.util.Vector;

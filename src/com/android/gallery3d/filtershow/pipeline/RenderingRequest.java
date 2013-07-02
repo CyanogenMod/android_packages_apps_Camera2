@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.filtershow.cache;
+package com.android.gallery3d.filtershow.pipeline;
 
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import com.android.gallery3d.app.Log;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
-import com.android.gallery3d.filtershow.presets.FilterEnvironment;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class RenderingRequest {
     private static final String LOGTAG = "RenderingRequest";

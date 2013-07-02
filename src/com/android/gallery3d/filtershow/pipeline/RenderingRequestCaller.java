@@ -14,18 +14,8 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.filtershow.presets;
+package com.android.gallery3d.filtershow.pipeline;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.support.v8.renderscript.Allocation;
-import android.support.v8.renderscript.RenderScript;
-
-public interface PipelineInterface {
-    public String getName();
-    public Resources getResources();
-    public Allocation getInPixelsAllocation();
-    public Allocation getOutPixelsAllocation();
-    public boolean prepareRenderscriptAllocations(Bitmap bitmap);
-    public RenderScript getRSContext();
+public interface RenderingRequestCaller {
+    public void available(RenderingRequest request);
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.filtershow.presets;
+package com.android.gallery3d.filtershow.pipeline;
 
 import android.graphics.Bitmap;
 import android.support.v8.renderscript.Allocation;
@@ -22,7 +22,6 @@ import android.support.v8.renderscript.Allocation;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManagerInterface;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
-import com.android.gallery3d.filtershow.pipeline.Buffer;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;

@@ -22,7 +22,7 @@ import android.support.v8.renderscript.*;
 import android.util.Log;
 import android.content.res.Resources;
 import com.android.gallery3d.R;
-import com.android.gallery3d.filtershow.presets.PipelineInterface;
+import com.android.gallery3d.filtershow.pipeline.PipelineInterface;
 
 public abstract class ImageFilterRS extends ImageFilter {
     private static final String LOGTAG = "ImageFilterRS";

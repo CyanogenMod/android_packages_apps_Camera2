@@ -18,14 +18,12 @@ package com.android.gallery3d.filtershow.filters;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.android.gallery3d.app.Log;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 
 /**
  * An image filter which creates a tiny planet projection.

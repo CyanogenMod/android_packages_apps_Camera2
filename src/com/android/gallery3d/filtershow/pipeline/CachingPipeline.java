@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.filtershow.cache;
+package com.android.gallery3d.filtershow.pipeline;
 
 import android.app.Activity;
 import android.content.res.Resources;
@@ -23,14 +23,11 @@ import android.support.v8.renderscript.Allocation;
 import android.support.v8.renderscript.RenderScript;
 import android.util.Log;
 
+import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilterGeometry;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
-import com.android.gallery3d.filtershow.pipeline.SharedBuffer;
-import com.android.gallery3d.filtershow.presets.FilterEnvironment;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
-import com.android.gallery3d.filtershow.presets.PipelineInterface;
 
 public class CachingPipeline implements PipelineInterface {
     private static final String LOGTAG = "CachingPipeline";

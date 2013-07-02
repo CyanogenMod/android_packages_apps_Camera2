@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.filtershow.cache;
+package com.android.gallery3d.filtershow.pipeline;
 
 import android.graphics.Bitmap;
 import android.os.*;
 import android.os.Process;
-import android.support.v8.renderscript.*;
 import android.util.Log;
 
+import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
-import com.android.gallery3d.filtershow.filters.ImageFilterRS;
-import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
-import com.android.gallery3d.filtershow.pipeline.SharedBuffer;
-import com.android.gallery3d.filtershow.pipeline.SharedPreset;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
 
 public class FilteringPipeline implements Handler.Callback {
 

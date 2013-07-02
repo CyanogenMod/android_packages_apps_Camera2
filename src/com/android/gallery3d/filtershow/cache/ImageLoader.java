@@ -39,7 +39,7 @@ import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.history.HistoryManager;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
-import com.android.gallery3d.filtershow.presets.ImagePreset;
+import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.util.XmpUtilHelper;
 
