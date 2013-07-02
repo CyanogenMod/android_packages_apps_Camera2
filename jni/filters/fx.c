@@ -29,7 +29,9 @@ __inline__ int  interp(unsigned char  *src, int p , int *off ,float dr,float dg,
     return (int)frbg ;
 }
 
-void JNIFUNCF(ImageFilterFx, nativeApplyFilter, jobject bitmap, jint width, jint height, jobject lutbitmap,jint lutwidth, jint lutheight )
+void JNIFUNCF(ImageFilterFx, nativeApplyFilter, jobject bitmap, jint width, jint height,
+        jobject lutbitmap, jint lutwidth, jint lutheight,
+        jint start, jint end)
 {
     char* destination = 0;
     char* lut = 0;
@@ -58,9 +60,7 @@ void JNIFUNCF(ImageFilterFx, nativeApplyFilter, jobject bitmap, jint width, jint
     float scale_B = (lutdim_b-1.f)/256.f;
 
     int i;
-    int len = width * height * STEP;
-
-    for (i = 0; i < len; i+=STEP)
+    for (i = start; i < end; i+= STEP)
     {
         int r = rgb[RED];
         int g = rgb[GREEN];
