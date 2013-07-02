@@ -359,16 +359,13 @@ public class CachingPipeline implements PipelineInterface {
             mFiltersManager.freeFilterResources(preset);
 
             Bitmap resizedOriginalBitmap = mResizedOriginalBitmap;
-            if (updateOriginalAllocation(preset)) {
+            if (updateOriginalAllocation(preset) || buffer.getProducer() == null) {
                 resizedOriginalBitmap = mResizedOriginalBitmap;
-                mEnvironment.cache(buffer.getProducer());
                 buffer.setProducer(resizedOriginalBitmap);
+                mEnvironment.cache(buffer.getProducer());
             }
 
-            Bitmap bitmap = null;
-            if (buffer.getProducer() != null) {
-                bitmap = buffer.getProducer().getBitmap();
-            }
+            Bitmap bitmap = buffer.getProducer().getBitmap();
             long time2 = System.currentTimeMillis();
 
             if (bitmap == null || (bitmap.getWidth() != resizedOriginalBitmap.getWidth())

@@ -35,6 +35,7 @@ import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.pipeline.Buffer;
 import com.android.gallery3d.filtershow.pipeline.SharedBuffer;
+import com.android.gallery3d.filtershow.pipeline.SharedPreset;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.state.StateAdapter;
 
@@ -58,6 +59,7 @@ public class MasterImage implements RenderingRequestCaller {
     private ImagePreset mFiltersOnlyPreset = null;
 
     private SharedBuffer mPreviewBuffer = new SharedBuffer();
+    private SharedPreset mPreviewPreset = new SharedPreset();
 
     private Bitmap mGeometryOnlyBitmap = null;
     private Bitmap mFiltersOnlyBitmap = null;
@@ -255,6 +257,10 @@ public class MasterImage implements RenderingRequestCaller {
         return mPreviewBuffer;
     }
 
+    public SharedPreset getPreviewPreset() {
+        return mPreviewPreset;
+    }
+
     public void setOriginalGeometry(Bitmap originalBitmapLarge) {
         GeometryMetadata geo = getPreset().getGeometry();
         float w = originalBitmapLarge.getWidth();
@@ -266,6 +272,7 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public Bitmap getFilteredImage() {
+        mPreviewBuffer.swapConsumerIfNeeded(); // get latest bitmap
         Buffer consumer = mPreviewBuffer.getConsumer();
         if (consumer != null) {
             return consumer.getBitmap();
@@ -349,6 +356,7 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public void invalidatePreview() {
+        mPreviewPreset.enqueuePreset(mPreset);
         mPreviewBuffer.invalidate();
         invalidatePartialPreview();
         invalidateHighresPreview();
@@ -554,4 +562,5 @@ public class MasterImage implements RenderingRequestCaller {
     public ImagePreset getLoadedPreset() {
         return mLoadedPreset;
     }
+
 }

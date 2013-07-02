@@ -17,7 +17,6 @@
 package com.android.gallery3d.filtershow.pipeline;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 public class SharedBuffer {
 
@@ -26,15 +25,15 @@ public class SharedBuffer {
     private volatile Buffer mProducer = null;
     private volatile Buffer mConsumer = null;
     private volatile Buffer mIntermediate = null;
-    private volatile boolean mNeedsSwap = false;
 
+    private volatile boolean mNeedsSwap = false;
     private volatile boolean mNeedsRepaint = true;
 
-    public SharedBuffer() {
-    }
-
-    public synchronized void setProducer(Bitmap producer) {
-        mProducer = new Buffer(producer);
+    public void setProducer(Bitmap producer) {
+        Buffer buffer = new Buffer(producer);
+        synchronized (this) {
+            mProducer = buffer;
+        }
     }
 
     public synchronized Buffer getProducer() {
@@ -46,21 +45,15 @@ public class SharedBuffer {
     }
 
     public synchronized void swapProducer() {
-        if (mProducer != null) {
-            mProducer.sync();
-        }
         Buffer intermediate = mIntermediate;
         mIntermediate = mProducer;
         mProducer = intermediate;
         mNeedsSwap = true;
     }
 
-    public synchronized void swapConsumer() {
+    public synchronized void swapConsumerIfNeeded() {
         if (!mNeedsSwap) {
             return;
-        }
-        if (mConsumer != null) {
-            mConsumer.sync();
         }
         Buffer intermediate = mIntermediate;
         mIntermediate = mConsumer;
