@@ -72,7 +72,7 @@ public class Action implements RenderingRequestCaller {
         mName = name;
     }
 
-    public void setImageFrame(Rect imageFrame) {
+    public void setImageFrame(Rect imageFrame, int orientation) {
         if (mImageFrame != null && mImageFrame.equals(imageFrame)) {
             return;
         }
@@ -81,7 +81,8 @@ public class Action implements RenderingRequestCaller {
             mImageFrame = imageFrame;
             int w = mImageFrame.width();
             int h = mImageFrame.height();
-            if (mType == CROP_VIEW) {
+            if (orientation == CategoryView.VERTICAL
+                && mType == CROP_VIEW) {
                 w /= 2;
             }
             Bitmap bitmapCrop = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);

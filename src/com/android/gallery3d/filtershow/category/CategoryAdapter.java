@@ -35,7 +35,6 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
     private int mItemHeight;
     private View mContainer;
     private int mItemWidth = ListView.LayoutParams.MATCH_PARENT;
-    private boolean mUseFilterIconButton = false;
     private int mSelectedPosition;
     int mCategory;
     private int mOrientation;
@@ -76,24 +75,6 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (mUseFilterIconButton) {
-            if (convertView == null) {
-                LayoutInflater inflater =
-                        (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.filtericonbutton, parent, false);
-            }
-            FilterIconButton view = (FilterIconButton) convertView;
-            Action action = getItem(position);
-            view.setAction(action);
-            view.setup(action.getName(), null, this);
-            view.setLayoutParams(
-                    new ListView.LayoutParams(mItemWidth, mItemHeight));
-            view.setTag(position);
-            if (mCategory == MainPanel.LOOKS || mCategory == MainPanel.BORDERS) {
-                view.setBackgroundResource(0);
-            }
-            return view;
-        }
         if (convertView == null) {
             convertView = new CategoryView(getContext());
         }
@@ -140,14 +121,6 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
 
     public void imageLoaded() {
         notifyDataSetChanged();
-    }
-
-    public void setUseFilterIconButton(boolean useFilterIconButton) {
-        mUseFilterIconButton = useFilterIconButton;
-    }
-
-    public boolean isUseFilterIconButton() {
-        return mUseFilterIconButton;
     }
 
     public FilterRepresentation getTinyPlanet() {
