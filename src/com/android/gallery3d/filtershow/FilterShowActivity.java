@@ -351,9 +351,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         Resources res = getResources();
         FiltersManager.setResources(res);
 
-        CategoryView.setMargin((int) getPixelsFromDip(8));
-        CategoryView.setTextSize((int) getPixelsFromDip(16));
-
         // TODO: get those values from XML.
         FramedTextButton.setTextSize((int) getPixelsFromDip(14));
         FramedTextButton.setTrianglePadding((int) getPixelsFromDip(4));
