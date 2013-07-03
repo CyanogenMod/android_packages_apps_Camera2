@@ -17,17 +17,14 @@
 package com.android.gallery3d.filtershow.category;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterTinyPlanetRepresentation;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
-import com.android.gallery3d.filtershow.ui.FilterIconButton;
 
 public class CategoryAdapter extends ArrayAdapter<Action> {
 
