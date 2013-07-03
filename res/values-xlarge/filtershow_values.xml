@@ -23,4 +23,10 @@
 
     <!-- Category Panel Icon Size -->
     <dimen name="category_panel_icon_size">84dip</dimen>
+
+    <!-- Category Panel Text Size -->
+    <dimen name="category_panel_text_size">14dip</dimen>
+
+    <!-- Category Panel Text Size -->
+    <dimen name="category_panel_margin">4dip</dimen>
 </resources>
