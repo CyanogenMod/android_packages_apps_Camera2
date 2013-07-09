@@ -70,7 +70,6 @@ public class RenderingRequest {
 
         request.setBitmap(bitmap);
         ImagePreset passedPreset = new ImagePreset(preset);
-        passedPreset.setImageLoader(MasterImage.getImage().getImageLoader());
         request.setOriginalImagePreset(preset);
         request.setScaleFactor(MasterImage.getImage().getScaleFactor());
 

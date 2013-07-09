@@ -25,7 +25,6 @@ import android.widget.LinearLayout;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.imageshow.ImageRotate;
-import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 public class EditorRotate extends Editor implements EditorInfo {
     public static final String LOGTAG = "EditorRotate";
@@ -43,7 +42,7 @@ public class EditorRotate extends Editor implements EditorInfo {
             mImageRotate = new ImageRotate(context);
         }
         mView = mImageShow = mImageRotate;
-        mImageRotate.setImageLoader(MasterImage.getImage().getImageLoader());
+        mImageRotate.bindAsImageLoadListener();
         mImageRotate.setEditor(this);
         mImageRotate.syncLocalToMasterGeometry();
     }

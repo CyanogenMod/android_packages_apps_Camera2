@@ -175,12 +175,12 @@ public class ImageShow extends View implements OnGestureListener,
     protected Matrix getImageToScreenMatrix(boolean reflectRotation) {
         GeometryMetadata geo = getImagePreset().getGeometry();
         if (geo == null || mImageLoader == null
-                || mImageLoader.getOriginalBounds() == null) {
+                || MasterImage.getImage().getOriginalBounds() == null) {
             return new Matrix();
         }
         Matrix m = geo.getOriginalToScreen(reflectRotation,
-                mImageLoader.getOriginalBounds().width(),
-                mImageLoader.getOriginalBounds().height(), getWidth(), getHeight());
+                MasterImage.getImage().getOriginalBounds().width(),
+                MasterImage.getImage().getOriginalBounds().height(), getWidth(), getHeight());
         Point translate = MasterImage.getImage().getTranslation();
         float scaleFactor = MasterImage.getImage().getScaleFactor();
         m.postTranslate(translate.x, translate.y);
@@ -360,12 +360,8 @@ public class ImageShow extends View implements OnGestureListener,
         canvas.restore();
     }
 
-    public void setImageLoader(ImageLoader loader) {
-        mImageLoader = loader;
-        if (mImageLoader != null) {
-            mImageLoader.addListener(this);
-            MasterImage.getImage().setImageLoader(mImageLoader);
-        }
+    public void bindAsImageLoadListener() {
+        MasterImage.getImage().addListener(this);
     }
 
     private void imageSizeChanged(Bitmap image) {
@@ -386,7 +382,7 @@ public class ImageShow extends View implements OnGestureListener,
 
     public void updateImage() {
         invalidate();
-        Bitmap bitmap = mImageLoader.getOriginalBitmapLarge();
+        Bitmap bitmap = MasterImage.getImage().getOriginalBitmapLarge();
         if (bitmap != null) {
             imageSizeChanged(bitmap);
         }
@@ -398,7 +394,7 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     public void saveImage(FilterShowActivity filterShowActivity, File file) {
-        mImageLoader.saveImage(getImagePreset(), filterShowActivity, file);
+        ImageLoader.saveImage(getImagePreset(), filterShowActivity, file);
     }
 
 

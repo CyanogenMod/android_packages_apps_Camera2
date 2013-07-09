@@ -169,8 +169,7 @@ public class FilteringPipeline implements Handler.Callback {
         }
         if (request.getType() == RenderingRequest.HIGHRES_RENDERING) {
             type = COMPUTE_HIGHRES_RENDERING_REQUEST;
-            ImageLoader imageLoader = MasterImage.getImage().getImageLoader();
-            if (imageLoader.getOriginalBitmapHighres() == null) {
+            if (MasterImage.getImage().getOriginalBitmapHighres() == null) {
                 return;
             }
         }

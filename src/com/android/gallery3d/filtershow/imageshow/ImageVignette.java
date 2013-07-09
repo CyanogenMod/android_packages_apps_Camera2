@@ -108,8 +108,8 @@ public class ImageVignette extends ImageShow {
         float[] c = new float[] {
                 mVignetteRep.getCenterX(), mVignetteRep.getCenterY() };
         if (Float.isNaN(c[0])) {
-            float cx = mImageLoader.getOriginalBounds().width() / 2;
-            float cy = mImageLoader.getOriginalBounds().height() / 2;
+            float cx = MasterImage.getImage().getOriginalBounds().width() / 2;
+            float cy = MasterImage.getImage().getOriginalBounds().height() / 2;
             float rx = Math.min(cx, cy) * .8f;
             float ry = rx;
             mVignetteRep.setCenter(cx, cy);

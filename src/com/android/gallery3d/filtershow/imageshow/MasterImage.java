@@ -21,6 +21,7 @@ import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 
@@ -43,6 +44,8 @@ import java.util.Vector;
 
 public class MasterImage implements RenderingRequestCaller {
 
+
+
     private static final String LOGTAG = "MasterImage";
     private boolean DEBUG  = false;
     private static final boolean DISABLEZOOM = false;
@@ -59,12 +62,20 @@ public class MasterImage implements RenderingRequestCaller {
     private SharedBuffer mPreviewBuffer = new SharedBuffer();
     private SharedPreset mPreviewPreset = new SharedPreset();
 
+    private Bitmap mOriginalBitmapSmall = null;
+    private Bitmap mOriginalBitmapLarge = null;
+    private Bitmap mOriginalBitmapHighres = null;
+    private int mOrientation;
+    private Rect mOriginalBounds;
+    private final Vector<ImageShow> mLoadListeners = new Vector<ImageShow>();
+    private Uri mUri = null;
+    private int mZoomOrientation = ImageLoader.ORI_NORMAL;
+
     private Bitmap mGeometryOnlyBitmap = null;
     private Bitmap mFiltersOnlyBitmap = null;
     private Bitmap mPartialBitmap = null;
     private Bitmap mHighresBitmap = null;
 
-    private ImageLoader mLoader = null;
     private HistoryManager mHistory = null;
     private StateAdapter mState = null;
 
@@ -114,6 +125,84 @@ public class MasterImage implements RenderingRequestCaller {
         return sMasterImage;
     }
 
+    public Bitmap getOriginalBitmapSmall() {
+        return mOriginalBitmapSmall;
+    }
+
+    public Bitmap getOriginalBitmapLarge() {
+        return mOriginalBitmapLarge;
+    }
+
+    public Bitmap getOriginalBitmapHighres() {
+        return mOriginalBitmapHighres;
+    }
+
+    public void setOriginalBitmapHighres(Bitmap mOriginalBitmapHighres) {
+        this.mOriginalBitmapHighres = mOriginalBitmapHighres;
+    }
+
+    public int getOrientation() {
+        return mOrientation;
+    }
+
+    public Rect getOriginalBounds() {
+        return mOriginalBounds;
+    }
+
+    public void setOriginalBounds(Rect r) {
+        mOriginalBounds = r;
+    }
+
+    public Uri getUri() {
+        return mUri;
+    }
+
+    public void setUri(Uri uri) {
+        mUri = uri;
+    }
+
+    public int getZoomOrientation() {
+        return mZoomOrientation;
+    }
+
+    public void addListener(ImageShow imageShow) {
+        if (!mLoadListeners.contains(imageShow)) {
+            mLoadListeners.add(imageShow);
+        }
+    }
+
+    public void warnListeners() {
+        mActivity.runOnUiThread(mWarnListenersRunnable);
+    }
+
+    private Runnable mWarnListenersRunnable = new Runnable() {
+        @Override
+        public void run() {
+            for (int i = 0; i < mLoadListeners.size(); i++) {
+                ImageShow imageShow = mLoadListeners.elementAt(i);
+                imageShow.imageLoaded();
+            }
+            invalidatePreview();
+        }
+    };
+
+    public boolean loadBitmap(Uri uri, int size) {
+        setUri(uri);
+        mOrientation = ImageLoader.getOrientation(mActivity, uri);
+        mOriginalBitmapLarge = ImageLoader.loadOrientedScaledBitmap(this, mActivity, uri, size,
+                true, mOrientation);
+        if (mOriginalBitmapLarge == null) {
+            return false;
+        }
+        int sw = ImageLoader.SMALL_BITMAP_DIM;
+        int sh = (int) (sw * (float) mOriginalBitmapLarge.getHeight() / (float) mOriginalBitmapLarge
+                .getWidth());
+        mOriginalBitmapSmall = Bitmap.createScaledBitmap(mOriginalBitmapLarge, sw, sh, true);
+        mZoomOrientation = mOrientation;
+        warnListeners();
+        return true;
+    }
+
     public void setSupportsHighRes(boolean value) {
         mSupportsHighRes = value;
     }
@@ -129,8 +218,8 @@ public class MasterImage implements RenderingRequestCaller {
         mActivity = activity;
     }
 
-    public ImageLoader getLoader() {
-        return mLoader;
+    public FilterShowActivity getActivity() {
+        return mActivity;
     }
 
     public synchronized ImagePreset getPreset() {
@@ -152,7 +241,6 @@ public class MasterImage implements RenderingRequestCaller {
             preset.showFilters();
         }
         mPreset = preset;
-        mPreset.setImageLoader(mLoader);
         setGeometry();
         mPreset.fillImageStateAdapter(mState);
         if (addToHistory) {
@@ -169,7 +257,7 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     private void setGeometry() {
-        Bitmap image = mLoader.getOriginalBitmapLarge();
+        Bitmap image = getOriginalBitmapLarge();
         if (image == null) {
             return;
         }
@@ -209,14 +297,6 @@ public class MasterImage implements RenderingRequestCaller {
 
     public void setStateAdapter(StateAdapter adapter) {
         mState = adapter;
-    }
-
-    public void setImageLoader(ImageLoader loader) {
-        mLoader = loader;
-    }
-
-    public ImageLoader getImageLoader() {
-        return mLoader;
     }
 
     public void setCurrentFilter(ImageFilter filter) {
@@ -304,7 +384,7 @@ public class MasterImage implements RenderingRequestCaller {
             if (force || mGeometryOnlyPreset == null
                     || !newPreset.same(mGeometryOnlyPreset)) {
                 mGeometryOnlyPreset = newPreset;
-                RenderingRequest.post(mLoader.getOriginalBitmapLarge(),
+                RenderingRequest.post(getOriginalBitmapLarge(),
                         mGeometryOnlyPreset, RenderingRequest.GEOMETRY_RENDERING, this);
             }
         }
@@ -315,7 +395,7 @@ public class MasterImage implements RenderingRequestCaller {
             if (force || mFiltersOnlyPreset == null
                     || !newPreset.same(mFiltersOnlyPreset)) {
                 mFiltersOnlyPreset = newPreset;
-                RenderingRequest.post(mLoader.getOriginalBitmapLarge(),
+                RenderingRequest.post(MasterImage.getImage().getOriginalBitmapLarge(),
                         mFiltersOnlyPreset, RenderingRequest.FILTERS_RENDERING, this);
             }
         }
@@ -369,14 +449,13 @@ public class MasterImage implements RenderingRequestCaller {
 
     private Matrix getImageToScreenMatrix(boolean reflectRotation) {
         GeometryMetadata geo = mPreset.getGeometry();
-        if (geo == null || mLoader == null
-                || mLoader.getOriginalBounds() == null
+        if (geo == null || getOriginalBounds() == null
                 || mImageShowSize.x == 0) {
             return new Matrix();
         }
         Matrix m = geo.getOriginalToScreen(reflectRotation,
-                mLoader.getOriginalBounds().width(),
-                mLoader.getOriginalBounds().height(), mImageShowSize.x, mImageShowSize.y);
+                getOriginalBounds().width(),
+                getOriginalBounds().height(), mImageShowSize.x, mImageShowSize.y);
         Point translate = getTranslation();
         float scaleFactor = getScaleFactor();
         m.postTranslate(translate.x, translate.y);
@@ -518,11 +597,11 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public Bitmap getThumbnailBitmap() {
-        return mLoader.getOriginalBitmapSmall();
+        return getOriginalBitmapSmall();
     }
 
     public Bitmap getLargeThumbnailBitmap() {
-        return mLoader.getOriginalBitmapLarge();
+        return getOriginalBitmapLarge();
     }
 
     public float getMaxScaleFactor() {

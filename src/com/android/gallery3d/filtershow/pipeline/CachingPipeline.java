@@ -238,12 +238,9 @@ public class CachingPipeline implements PipelineInterface {
             mFiltersManager.freeFilterResources(preset);
 
             if (request.getType() == RenderingRequest.PARTIAL_RENDERING) {
-                ImageLoader loader = MasterImage.getImage().getImageLoader();
-                if (loader == null) {
-                    Log.w(LOGTAG, "loader not yet setup, cannot handle: " + getType(request));
-                    return;
-                }
-                bitmap = loader.getScaleOneImageForPreset(request.getBounds(),
+                MasterImage master = MasterImage.getImage();
+                bitmap = ImageLoader.getScaleOneImageForPreset(master.getActivity(),
+                        master.getUri(), request.getBounds(),
                         request.getDestination());
                 if (bitmap == null) {
                     Log.w(LOGTAG, "could not get bitmap for: " + getType(request));
@@ -252,8 +249,7 @@ public class CachingPipeline implements PipelineInterface {
             }
 
             if (request.getType() == RenderingRequest.HIGHRES_RENDERING) {
-                ImageLoader loader = MasterImage.getImage().getImageLoader();
-                bitmap = loader.getOriginalBitmapHighres();
+                bitmap = MasterImage.getImage().getOriginalBitmapHighres();
                 if (bitmap != null) {
                     bitmap = preset.applyGeometry(bitmap, mEnvironment);
                 }

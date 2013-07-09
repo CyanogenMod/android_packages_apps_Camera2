@@ -339,7 +339,7 @@ public class GeometryMetadata extends FilterRepresentation {
         float imageWidth = cropBounds.width();
         float imageHeight = cropBounds.height();
 
-        int orientation = ImageLoader.getZoomOrientation();
+        int orientation = MasterImage.getImage().getZoomOrientation();
         Matrix imageRotation = getMatrixOriginalOrientation(orientation, originalWidth,
                 originalHeight);
         if (orientation == ImageLoader.ORI_ROTATE_90 ||

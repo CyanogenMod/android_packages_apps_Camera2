@@ -46,8 +46,6 @@ public class ImagePreset {
 
     private static final String LOGTAG = "ImagePreset";
 
-    private ImageLoader mImageLoader = null;
-
     private Vector<FilterRepresentation> mFilters = new Vector<FilterRepresentation>();
 
     protected boolean mIsFxPreset = false;
@@ -81,7 +79,6 @@ public class ImagePreset {
         } catch (java.lang.CloneNotSupportedException e) {
             Log.v(LOGTAG, "Exception trying to clone: " + e);
         }
-        mImageLoader = source.getImageLoader();
     }
 
     public FilterRepresentation getFilterRepresentation(int position) {
@@ -224,14 +221,6 @@ public class ImagePreset {
         if (geoData != representation) {
             geoData.set(representation);
         }
-    }
-
-    public ImageLoader getImageLoader() {
-        return mImageLoader;
-    }
-
-    public void setImageLoader(ImageLoader mImageLoader) {
-        this.mImageLoader = mImageLoader;
     }
 
     public boolean equals(ImagePreset preset) {
@@ -525,7 +514,7 @@ public class ImagePreset {
     }
 
     public boolean canDoPartialRendering() {
-        if (ImageLoader.getZoomOrientation() != ImageLoader.ORI_NORMAL) {
+        if (MasterImage.getImage().getZoomOrientation() != ImageLoader.ORI_NORMAL) {
             return false;
         }
         for (int i = 0; i < mFilters.size(); i++) {

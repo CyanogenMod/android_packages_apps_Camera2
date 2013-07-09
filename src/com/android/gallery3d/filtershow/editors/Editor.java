@@ -188,10 +188,6 @@ public class Editor implements OnSeekBarChangeListener, SwapButton.SwapButtonLis
         return mImageShow;
     }
 
-    public void setImageLoader(ImageLoader imageLoader) {
-        mImageShow.setImageLoader(imageLoader);
-    }
-
     public void setVisibility(int visible) {
         mView.setVisibility(visible);
     }

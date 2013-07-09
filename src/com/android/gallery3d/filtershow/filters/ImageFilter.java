@@ -23,6 +23,7 @@ import android.support.v8.renderscript.Allocation;
 import android.widget.Toast;
 
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.pipeline.FilterEnvironment;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 
@@ -91,8 +92,8 @@ public abstract class ImageFilter implements Cloneable {
         ImagePreset preset = getEnvironment().getImagePreset();
         GeometryMetadata geo = getEnvironment().getImagePreset().getGeometry();
         Matrix originalToScreen = geo.getOriginalToScreen(true,
-                preset.getImageLoader().getOriginalBounds().width(),
-                preset.getImageLoader().getOriginalBounds().height(),
+                MasterImage.getImage().getOriginalBounds().width(),
+                MasterImage.getImage().getOriginalBounds().height(),
                 w, h);
         return originalToScreen;
     }

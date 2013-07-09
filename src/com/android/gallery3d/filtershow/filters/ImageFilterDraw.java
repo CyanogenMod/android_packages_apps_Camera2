@@ -29,6 +29,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.FilterDrawRepresentation.StrokeData;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.pipeline.FilterEnvironment;
@@ -127,11 +128,13 @@ public class ImageFilterDraw extends ImageFilter {
         public Brush(int brushID) {
             mBrushID = brushID;
         }
+
         public Bitmap getBrush() {
             if (mBrush == null) {
                 BitmapFactory.Options opt = new BitmapFactory.Options();
                 opt.inPreferredConfig = Bitmap.Config.ALPHA_8;
-                mBrush = MasterImage.getImage().getImageLoader().decodeImage(mBrushID, opt);
+                mBrush = ImageLoader.decodeImage(MasterImage.getImage().getActivity(), mBrushID,
+                        opt);
                 mBrush = mBrush.extractAlpha();
             }
             return mBrush;

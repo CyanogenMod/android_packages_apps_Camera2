@@ -20,6 +20,7 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -27,6 +28,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -111,7 +113,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
     public static final String TINY_PLANET_ACTION = "com.android.camera.action.TINY_PLANET";
     public static final String LAUNCH_FULLSCREEN = "launch-fullscreen";
-    private ImageLoader mImageLoader = null;
     private ImageShow mImageShow = null;
 
     private View mSaveButton = null;
@@ -251,7 +252,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
         mEditorPlaceHolder.hide();
 
-        mImageShow.setImageLoader(mImageLoader);
+        mImageShow.bindAsImageLoadListener();
 
         fillFx();
         fillBorders();
@@ -262,7 +263,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     public void setupStatePanel() {
-        mImageLoader.setHistoryManager(mMasterImage.getHistory());
+        MasterImage.getImage().setHistoryManager(mMasterImage.getHistory());
     }
 
     private void fillFilters() {
@@ -330,7 +331,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         mEditorPlaceHolder.setContainer((FrameLayout) findViewById(R.id.editorContainer));
         EditorManager.addEditors(mEditorPlaceHolder);
         mEditorPlaceHolder.setOldViews(mImageViews);
-        mEditorPlaceHolder.setImageLoader(mImageLoader);
+
     }
 
     private void fillEditors() {
@@ -498,16 +499,29 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     private class LoadHighresBitmapTask extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected Boolean doInBackground(Void... params) {
-            mImageLoader.loadHighResBitmap();
+            MasterImage master = MasterImage.getImage();
+            Rect originalBounds = master.getOriginalBounds();
+            if (master.supportsHighRes()) {
+                int highresPreviewSize = master.getOriginalBitmapLarge().getWidth() * 2;
+                if (highresPreviewSize > originalBounds.width()) {
+                    highresPreviewSize = originalBounds.width();
+                }
+                Bitmap originalHires = ImageLoader.loadOrientedScaledBitmap(master,
+                        master.getActivity(), master.getUri(), highresPreviewSize, false,
+                        master.getOrientation());
+                master.setOriginalBitmapHighres(originalHires);
+                master.warnListeners();
+            }
             return true;
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
-            Bitmap highresBitmap = mImageLoader.getOriginalBitmapHighres();
+            Bitmap highresBitmap = MasterImage.getImage().getOriginalBitmapHighres();
             if (highresBitmap != null) {
                 FilteringPipeline pipeline = FilteringPipeline.getPipeline();
-                float highResPreviewScale = (float) highresBitmap.getWidth() / (float) mImageLoader.getOriginalBounds().width();
+                float highResPreviewScale = (float) highresBitmap.getWidth()
+                        / (float) MasterImage.getImage().getOriginalBounds().width();
                 pipeline.setHighResPreviewScaleFactor(highResPreviewScale);
             }
         }
@@ -522,10 +536,10 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
 
         @Override
         protected Boolean doInBackground(Uri... params) {
-            if (!mImageLoader.loadBitmap(params[0], mBitmapSize)) {
+            if (!MasterImage.getImage().loadBitmap(params[0], mBitmapSize)) {
                 return false;
             }
-            publishProgress(mImageLoader.queryLightCycle360());
+            publishProgress(ImageLoader.queryLightCycle360(MasterImage.getImage().getActivity()));
             return true;
         }
 
@@ -560,10 +574,11 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
             final View imageShow = findViewById(R.id.imageShow);
             imageShow.setVisibility(View.VISIBLE);
 
-            Bitmap largeBitmap = mImageLoader.getOriginalBitmapLarge();
+            Bitmap largeBitmap = MasterImage.getImage().getOriginalBitmapLarge();
             FilteringPipeline pipeline = FilteringPipeline.getPipeline();
             pipeline.setOriginal(largeBitmap);
-            float previewScale = (float) largeBitmap.getWidth() / (float) mImageLoader.getOriginalBounds().width();
+            float previewScale = (float) largeBitmap.getWidth()
+                    / (float) MasterImage.getImage().getOriginalBounds().width();
             pipeline.setPreviewScaleFactor(previewScale);
             if (!mShowingTinyPlanet) {
                 mCategoryFiltersAdapter.removeTinyPlanet();
@@ -698,7 +713,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.setType(SharedImageProvider.MIME_TYPE);
-        mSharedOutputFile = SaveCopyTask.getNewFile(this, mImageLoader.getUri());
+        mSharedOutputFile = SaveCopyTask.getNewFile(this, MasterImage.getImage().getUri());
         Uri uri = Uri.withAppendedPath(SharedImageProvider.CONTENT_URI,
                 Uri.encode(mSharedOutputFile.getAbsolutePath()));
         intent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -752,16 +767,16 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         }
         FiltersManager.setResources(getResources());
         if (!mLoading) {
-            Bitmap largeBitmap = mImageLoader.getOriginalBitmapLarge();
+            Bitmap largeBitmap = MasterImage.getImage().getOriginalBitmapLarge();
             FilteringPipeline pipeline = FilteringPipeline.getPipeline();
             pipeline.setOriginal(largeBitmap);
             float previewScale = (float) largeBitmap.getWidth() /
-                    (float) mImageLoader.getOriginalBounds().width();
+                    (float) MasterImage.getImage().getOriginalBounds().width();
             pipeline.setPreviewScaleFactor(previewScale);
-            Bitmap highresBitmap = mImageLoader.getOriginalBitmapHighres();
+            Bitmap highresBitmap = MasterImage.getImage().getOriginalBitmapHighres();
             if (highresBitmap != null) {
                 float highResPreviewScale = (float) highresBitmap.getWidth() /
-                        (float) mImageLoader.getOriginalBounds().width();
+                        (float) MasterImage.getImage().getOriginalBounds().width();
                 pipeline.setHighResPreviewScaleFactor(highResPreviewScale);
             }
             pipeline.turnOnPipeline(true);
@@ -847,8 +862,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     public void setDefaultPreset() {
         // Default preset (original)
         ImagePreset preset = new ImagePreset(); // empty
-        preset.setImageLoader(mImageLoader);
-
         mMasterImage.setPreset(preset, preset.getLastRepresentation(), true);
     }
 
@@ -905,7 +918,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     public void setupMasterImage() {
-        mImageLoader = new ImageLoader(this, getApplicationContext());
 
         HistoryManager historyManager = new HistoryManager();
         StateAdapter imageStateAdapter = new StateAdapter(this, 0);
@@ -914,7 +926,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         mMasterImage.setHistoryManager(historyManager);
         mMasterImage.setStateAdapter(imageStateAdapter);
         mMasterImage.setActivity(this);
-        mMasterImage.setImageLoader(mImageLoader);
 
         if (Runtime.getRuntime().maxMemory() > LIMIT_SUPPORTS_HIGHRES) {
             mMasterImage.setSupportsHighRes(true);

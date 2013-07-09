@@ -25,7 +25,6 @@ import android.widget.LinearLayout;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.imageshow.ImageFlip;
-import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 public class EditorFlip extends Editor implements EditorInfo {
     public static final String LOGTAG = "EditorFlip";
@@ -43,7 +42,7 @@ public class EditorFlip extends Editor implements EditorInfo {
             mImageFlip = new ImageFlip(context);
         }
         mView = mImageShow = mImageFlip;
-        mImageFlip.setImageLoader(MasterImage.getImage().getImageLoader());
+        mImageFlip.bindAsImageLoadListener();
         mImageFlip.setEditor(this);
         mImageFlip.syncLocalToMasterGeometry();
     }

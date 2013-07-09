@@ -28,7 +28,6 @@ import android.widget.PopupMenu;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.crop.CropExtras;
 import com.android.gallery3d.filtershow.imageshow.ImageCrop;
-import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 public class EditorCrop extends Editor implements EditorInfo {
     public static final int ID = R.id.editorCrop;
@@ -53,7 +52,7 @@ public class EditorCrop extends Editor implements EditorInfo {
             mImageCrop = new ImageCrop(context);
         }
         mView = mImageShow = mImageCrop;
-        mImageCrop.setImageLoader(MasterImage.getImage().getImageLoader());
+        mImageCrop.bindAsImageLoadListener();
         mImageCrop.setEditor(this);
         mImageCrop.syncLocalToMasterGeometry();
         mImageCrop.setCropActionFlag(mCropActionFlag);

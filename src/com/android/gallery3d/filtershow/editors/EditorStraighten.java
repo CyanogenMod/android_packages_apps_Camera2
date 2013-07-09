@@ -23,7 +23,6 @@ import android.widget.FrameLayout;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.imageshow.ImageStraighten;
-import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 public class EditorStraighten extends Editor implements EditorInfo {
     public static final int ID = R.id.editorStraighten;
@@ -50,7 +49,7 @@ public class EditorStraighten extends Editor implements EditorInfo {
             mImageStraighten = new ImageStraighten(context);
         }
         mView = mImageShow = mImageStraighten;
-        mImageStraighten.setImageLoader(MasterImage.getImage().getImageLoader());
+        mImageStraighten.bindAsImageLoadListener();
         mImageStraighten.setEditor(this);
         mImageStraighten.syncLocalToMasterGeometry();
     }
