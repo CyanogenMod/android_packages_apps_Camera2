@@ -583,6 +583,11 @@ public class VideoModule implements CameraModule,
                 // back to use SurfaceTexture for preview and we need to stop then start
                 // the preview. This will cause the preview flicker since the preview
                 // will not be continuous for a short period of time.
+
+                // Get orientation directly from display rotation to make sure it's up
+                // to date. OnConfigurationChanged callback usually kicks in a bit later, if
+                // device is rotated during recording.
+                mDisplayRotation = Util.getDisplayRotation(mActivity);
                 ((CameraScreenNail) mActivity.mCameraScreenNail).animateCapture(mDisplayRotation);
 
                 mUI.enablePreviewThumb(true);
@@ -1537,7 +1542,9 @@ public class VideoModule implements CameraModule,
         mUI.enableCameraControls(false);
 
         mMediaRecorderRecording = true;
-        mActivity.getOrientationManager().lockOrientation();
+        if (!Util.systemRotationLocked(mActivity)) {
+            mActivity.getOrientationManager().lockOrientation();
+        }
         mRecordingStartTime = SystemClock.uptimeMillis();
         mUI.showRecordingUI(true, mParameters.isZoomSupported());
 
@@ -1612,7 +1619,9 @@ public class VideoModule implements CameraModule,
                 fail = true;
             }
             mMediaRecorderRecording = false;
-            mActivity.getOrientationManager().unlockOrientation();
+            if (!Util.systemRotationLocked(mActivity)) {
+                mActivity.getOrientationManager().unlockOrientation();
+            }
 
             // If the activity is paused, this means activity is interrupted
             // during recording. Release the camera as soon as possible because
