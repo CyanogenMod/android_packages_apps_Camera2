@@ -348,6 +348,11 @@ public class FilmStripView extends ViewGroup {
 
         int boundWidth = MeasureSpec.getSize(widthMeasureSpec);
         int boundHeight = MeasureSpec.getSize(heightMeasureSpec);
+        if (boundWidth == 0 || boundHeight == 0) {
+            // Either width or height is unknown, can't measure children yet.
+            return;
+        }
+
         if (mDataAdapter != null) {
             mDataAdapter.suggestDecodeSize(boundWidth / 2, boundHeight / 2);
         }
@@ -368,7 +373,6 @@ public class FilmStripView extends ViewGroup {
                     View.MeasureSpec.makeMeasureSpec(
                             dim[1], View.MeasureSpec.EXACTLY));
         }
-        setMeasuredDimension(boundWidth, boundHeight);
     }
 
     private int findTheNearestView(int pointX) {
