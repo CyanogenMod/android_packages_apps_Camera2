@@ -47,8 +47,6 @@ public class MasterImage implements RenderingRequestCaller {
     private boolean DEBUG  = false;
     private static final boolean DISABLEZOOM = false;
     private static MasterImage sMasterImage = null;
-    private static int sIconSeedSize = 128;
-    private static float sHistoryPreviewSize = 128.0f;
 
     private boolean mSupportsHighRes = false;
 
@@ -118,10 +116,6 @@ public class MasterImage implements RenderingRequestCaller {
 
     public void setSupportsHighRes(boolean value) {
         mSupportsHighRes = value;
-    }
-
-    public static void setIconSeedSize(int iconSeedSize) {
-        sIconSeedSize = iconSeedSize;
     }
 
     public void addObserver(ImageShow observer) {

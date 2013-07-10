@@ -907,12 +907,12 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     public void setupMasterImage() {
         mImageLoader = new ImageLoader(this, getApplicationContext());
 
-        HistoryManager mHistoryManager = new HistoryManager();
-        StateAdapter mImageStateAdapter = new StateAdapter(this, 0);
+        HistoryManager historyManager = new HistoryManager();
+        StateAdapter imageStateAdapter = new StateAdapter(this, 0);
         MasterImage.reset();
         mMasterImage = MasterImage.getImage();
-        mMasterImage.setHistoryManager(mHistoryManager);
-        mMasterImage.setStateAdapter(mImageStateAdapter);
+        mMasterImage.setHistoryManager(historyManager);
+        mMasterImage.setStateAdapter(imageStateAdapter);
         mMasterImage.setActivity(this);
         mMasterImage.setImageLoader(mImageLoader);
 

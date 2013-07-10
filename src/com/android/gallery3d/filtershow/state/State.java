@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.filtershow.state;
 
+import com.android.gallery3d.filtershow.filters.FilterFxRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 
 public class State {
@@ -40,6 +41,9 @@ public class State {
         if (mFilterRepresentation.getFilterClass()
                 != state.mFilterRepresentation.getFilterClass()) {
             return false;
+        }
+        if (mFilterRepresentation instanceof FilterFxRepresentation) {
+            return mFilterRepresentation.equals(state.getFilterRepresentation());
         }
         return true;
     }
