@@ -16,6 +16,9 @@
 
 package com.android.camera.ui;
 
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -31,8 +34,6 @@ import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.LinearInterpolator;
 import android.view.animation.Transformation;
 
 import com.android.camera.drawable.TextDrawable;
@@ -131,10 +132,10 @@ public class PieRenderer extends OverlayRenderer
     private int mTouchSlopSquared;
     private Point mDown;
     private boolean mOpening;
-    private LinearAnimation mXFade;
-    private LinearAnimation mFadeIn;
-    private FadeOutAnimation mFadeOut;
-    private LinearAnimation mSlice;
+    private ValueAnimator mXFade;
+    private ValueAnimator mFadeIn;
+    private ValueAnimator mFadeOut;
+    private ValueAnimator mSlice;
     private volatile boolean mFocusCancelled;
     private PointF mPolar = new PointF();
     private TextDrawable mLabel;
@@ -308,24 +309,30 @@ public class PieRenderer extends OverlayRenderer
     }
 
     private void fadeIn() {
-        mFadeIn = new LinearAnimation(0, 1);
+        mFadeIn = new ValueAnimator();
+        mFadeIn.setFloatValues(0f, 1f);
         mFadeIn.setDuration(PIE_FADE_IN_DURATION);
-        mFadeIn.setAnimationListener(new AnimationListener() {
+        // linear interpolation
+        mFadeIn.setInterpolator(null);
+        mFadeIn.addListener(new AnimatorListener() {
             @Override
-            public void onAnimationStart(Animation animation) {
+            public void onAnimationStart(Animator animation) {
             }
 
             @Override
-            public void onAnimationEnd(Animation animation) {
+            public void onAnimationEnd(Animator animation) {
                 mFadeIn = null;
             }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {
+            public void onAnimationRepeat(Animator animation) {
+            }
+
+            @Override
+            public void onAnimationCancel(Animator arg0) {
             }
         });
-        mFadeIn.startNow();
-        mOverlay.startAnimation(mFadeIn);
+        mFadeIn.start();
     }
 
     public void setCenter(int x, int y) {
@@ -454,15 +461,16 @@ public class PieRenderer extends OverlayRenderer
         if (mXFade != null) {
             mXFade.cancel();
         }
-        mFadeOut = new FadeOutAnimation();
+        mFadeOut = new ValueAnimator();
+        mFadeOut.setFloatValues(1f, 0f);
         mFadeOut.setDuration(PIE_FADE_OUT_DURATION);
-        mFadeOut.setAnimationListener(new AnimationListener() {
+        mFadeOut.addListener(new AnimatorListener() {
             @Override
-            public void onAnimationStart(Animation animation) {
+            public void onAnimationStart(Animator animator) {
             }
 
             @Override
-            public void onAnimationEnd(Animation animation) {
+            public void onAnimationEnd(Animator animator) {
                 item.performClick();
                 mFadeOut = null;
                 deselect();
@@ -471,11 +479,15 @@ public class PieRenderer extends OverlayRenderer
             }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {
+            public void onAnimationRepeat(Animator animator) {
             }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+            }
+
         });
-        mFadeOut.startNow();
-        mOverlay.startAnimation(mFadeOut);
+        mFadeOut.start();
     }
 
     // root does not count
@@ -507,11 +519,11 @@ public class PieRenderer extends OverlayRenderer
     public void onDraw(Canvas canvas) {
         float alpha = 1;
         if (mXFade != null) {
-            alpha = mXFade.getValue();
+            alpha = (Float) mXFade.getAnimatedValue();
         } else if (mFadeIn != null) {
-            alpha = mFadeIn.getValue();
+            alpha = (Float) mFadeIn.getAnimatedValue();
         } else if (mFadeOut != null) {
-            alpha = mFadeOut.getValue();
+            alpha = (Float) mFadeOut.getAnimatedValue();
         }
         int state = canvas.save();
         if (mFadeIn != null) {
@@ -579,7 +591,7 @@ public class PieRenderer extends OverlayRenderer
                     int state = canvas.save();
                     float angle = 0;
                     if (mSlice != null) {
-                        angle = mSlice.getValue();
+                        angle = (Float) mSlice.getAnimatedValue();
                     } else {
                         angle = getArcCenter(item, pos, count) - SWEEP_ARC / 2f;
                     }
@@ -794,23 +806,30 @@ public class PieRenderer extends OverlayRenderer
                     - SWEEP_ARC / 2f;
             float endAngle = getArcCenter(to, getItemPos(to), count)
                     - SWEEP_ARC / 2f;
-            mSlice = new LinearAnimation(startAngle, endAngle);
+            mSlice = new ValueAnimator();
+            mSlice.setFloatValues(startAngle, endAngle);
+            // linear interpolater
+            mSlice.setInterpolator(null);
             mSlice.setDuration(PIE_SLICE_DURATION);
-            mSlice.setAnimationListener(new AnimationListener() {
+            mSlice.addListener(new AnimatorListener() {
                 @Override
-                public void onAnimationEnd(Animation arg0) {
+                public void onAnimationEnd(Animator arg0) {
                     mSlice = null;
                 }
 
                 @Override
-                public void onAnimationRepeat(Animation arg0) {
+                public void onAnimationRepeat(Animator arg0) {
                 }
 
                 @Override
-                public void onAnimationStart(Animation arg0) {
+                public void onAnimationStart(Animator arg0) {
+                }
+
+                @Override
+                public void onAnimationCancel(Animator arg0) {
                 }
             });
-            mOverlay.startAnimation(mSlice);
+            mSlice.start();
         }
     }
 
@@ -822,27 +841,33 @@ public class PieRenderer extends OverlayRenderer
             if (mFadeIn != null) {
                 mFadeIn.cancel();
             }
-            mXFade = new LinearAnimation(1, 0);
+            mXFade = new ValueAnimator();
+            mXFade.setFloatValues(1f, 0f);
             mXFade.setDuration(PIE_XFADE_DURATION);
+            // Linear interpolation
+            mXFade.setInterpolator(null);
             final PieItem ci = mCurrentItem;
-            mXFade.setAnimationListener(new AnimationListener() {
+            mXFade.addListener(new AnimatorListener() {
                 @Override
-                public void onAnimationStart(Animation animation) {
+                public void onAnimationStart(Animator animation) {
                 }
 
                 @Override
-                public void onAnimationEnd(Animation animation) {
+                public void onAnimationEnd(Animator animation) {
                     mXFade = null;
                     ci.setSelected(false);
                     mOpening = false;
                 }
 
                 @Override
-                public void onAnimationRepeat(Animation animation) {
+                public void onAnimationRepeat(Animator animation) {
+                }
+
+                @Override
+                public void onAnimationCancel(Animator arg0) {
                 }
             });
-            mXFade.startNow();
-            mOverlay.startAnimation(mXFade);
+            mXFade.start();
         }
     }
 
@@ -1044,26 +1069,6 @@ public class PieRenderer extends OverlayRenderer
         }
     }
 
-    private class FadeOutAnimation extends Animation {
-
-        private float mAlpha;
-
-        public float getValue() {
-            return mAlpha;
-        }
-
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t) {
-            if (interpolatedTime < 0.2) {
-                mAlpha = 1;
-            } else if (interpolatedTime < 0.3) {
-                mAlpha = 0;
-            } else {
-                mAlpha = 1 - (interpolatedTime - 0.3f) / 0.7f;
-            }
-        }
-    }
-
     private class ScaleAnimation extends Animation {
         private float mFrom = 1f;
         private float mTo = 1f;
@@ -1080,28 +1085,6 @@ public class PieRenderer extends OverlayRenderer
         @Override
         protected void applyTransformation(float interpolatedTime, Transformation t) {
             mDialAngle = (int)(mFrom + (mTo - mFrom) * interpolatedTime);
-        }
-    }
-
-    private class LinearAnimation extends Animation {
-        private float mFrom;
-        private float mTo;
-        private float mValue;
-
-        public LinearAnimation(float from, float to) {
-            setFillAfter(true);
-            setInterpolator(new LinearInterpolator());
-            mFrom = from;
-            mTo = to;
-        }
-
-        public float getValue() {
-            return mValue;
-        }
-
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t) {
-            mValue = (mFrom + (mTo - mFrom) * interpolatedTime);
         }
     }
 
