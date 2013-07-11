@@ -51,11 +51,13 @@ public class CategoryPanel extends Fragment {
             case MainPanel.LOOKS: {
                 mAdapter = activity.getCategoryLooksAdapter();
                 mAdapter.initializeSelection(MainPanel.LOOKS);
+                activity.updateCategories();
                 break;
             }
             case MainPanel.BORDERS: {
                 mAdapter = activity.getCategoryBordersAdapter();
                 mAdapter.initializeSelection(MainPanel.BORDERS);
+                activity.updateCategories();
                 break;
             }
             case MainPanel.GEOMETRY: {

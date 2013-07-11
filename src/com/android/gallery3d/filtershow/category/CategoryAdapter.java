@@ -167,6 +167,7 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
                 if (rep.getName().equalsIgnoreCase(
                         getItem(i).getRepresentation().getName())) {
                     selected = i;
+                    break;
                 }
             }
         }
@@ -174,6 +175,5 @@ public class CategoryAdapter extends ArrayAdapter<Action> {
             mSelectedPosition = selected;
             this.notifyDataSetChanged();
         }
-
     }
 }
