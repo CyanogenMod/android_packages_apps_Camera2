@@ -1524,6 +1524,10 @@ public class PhotoModule
         setFocusAreasIfSupported();
         setMeteringAreasIfSupported();
 
+        // initialize focus mode
+        mFocusManager.overrideFocusMode(null);
+        mParameters.setFocusMode(mFocusManager.getFocusMode());
+
         // Set picture size.
         String pictureSize = settingsManager.get(SettingsManager.SETTING_PICTURE_SIZE);
         if (pictureSize == null) {
