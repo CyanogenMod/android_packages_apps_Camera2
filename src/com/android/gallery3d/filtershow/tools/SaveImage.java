@@ -19,18 +19,18 @@ package com.android.gallery3d.filtershow.tools;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.ImageColumns;
-import android.provider.MediaStore.Images.Media;
 import android.util.Log;
 
+import com.android.gallery3d.R;
+import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.filtershow.FilterShowActivity;
@@ -39,6 +39,7 @@ import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
+import com.android.gallery3d.filtershow.pipeline.ProcessingService;
 import com.android.gallery3d.util.UsageStatistics;
 import com.android.gallery3d.util.XmpUtilHelper;
 
@@ -52,17 +53,16 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 /**
- * Asynchronous task for saving edited photo as a new copy.
+ * Handles saving edited photo
  */
-public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
-
-    private static final String LOGTAG = "SaveCopyTask";
+public class SaveImage {
+    private static final String LOGTAG = "SaveImage";
 
     /**
-     * Callback for the completed asynchronous task.
+     * Callback for updates
      */
     public interface Callback {
-        void onComplete(Uri result);
+        void onProgress(int max, int current);
     }
 
     public interface ContentResolverQueryCallback {
@@ -85,6 +85,10 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
     private final Callback mCallback;
     private final File mDestinationFile;
     private final Uri mSelectedImageUri;
+
+    private int mCurrentProcessingStep = 1;
+
+    public static final int MAX_PROCESSING_STEPS = 6;
     public static final String DEFAULT_SAVE_DIRECTORY = "EditedOnlinePhotos";
 
     // In order to support the new edit-save behavior such that user won't see
@@ -129,8 +133,8 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
      * @param callback Let the caller know the saving has completed.
      * @return the newSourceUri
      */
-    public SaveCopyTask(Context context, Uri sourceUri, Uri selectedImageUri,
-            File destination, Callback callback)  {
+    public SaveImage(Context context, Uri sourceUri, Uri selectedImageUri,
+                     File destination, Callback callback)  {
         mContext = context;
         mSourceUri = sourceUri;
         mCallback = callback;
@@ -144,10 +148,10 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
     }
 
     public static File getFinalSaveDirectory(Context context, Uri sourceUri) {
-        File saveDirectory = SaveCopyTask.getSaveDirectory(context, sourceUri);
+        File saveDirectory = SaveImage.getSaveDirectory(context, sourceUri);
         if ((saveDirectory == null) || !saveDirectory.canWrite()) {
             saveDirectory = new File(Environment.getExternalStorageDirectory(),
-                    SaveCopyTask.DEFAULT_SAVE_DIRECTORY);
+                    SaveImage.DEFAULT_SAVE_DIRECTORY);
         }
         // Create the directory if it doesn't exist
         if (!saveDirectory.exists())
@@ -275,17 +279,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         return ret;
     }
 
-    /**
-     * The task should be executed with one given bitmap to be saved.
-     */
-    @Override
-    protected Uri doInBackground(ImagePreset... params) {
-        // TODO: Support larger dimensions for photo saving.
-        if (params[0] == null || mSourceUri == null || mSelectedImageUri == null) {
-            return null;
-        }
-
-        ImagePreset preset = params[0];
+    private Uri resetToOriginalImageIfNeeded(ImagePreset preset) {
         Uri uri = null;
         if (!preset.hasModifications()) {
             // This can happen only when preset has no modification but save
@@ -298,12 +292,32 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
             // create a local copy as usual.
             if (srcFile != null) {
                 srcFile.renameTo(mDestinationFile);
-                uri = SaveCopyTask.insertContent(mContext, mSelectedImageUri, mDestinationFile,
+                uri = SaveImage.insertContent(mContext, mSelectedImageUri, mDestinationFile,
                         System.currentTimeMillis());
                 removeSelectedImage();
-                return uri;
             }
         }
+        return uri;
+    }
+
+    private void resetProgress() {
+        mCurrentProcessingStep = 0;
+    }
+
+    private void updateProgress() {
+        if (mCallback != null) {
+            mCallback.onProgress(MAX_PROCESSING_STEPS, ++mCurrentProcessingStep);
+        }
+    }
+
+    public Uri processAndSaveImage(ImagePreset preset) {
+
+        Uri uri = resetToOriginalImageIfNeeded(preset);
+        if (uri != null) {
+            return null;
+        }
+
+        resetProgress();
 
         boolean noBitmap = true;
         int num_tries = 0;
@@ -321,15 +335,19 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         // Stopgap fix for low-memory devices.
         while (noBitmap) {
             try {
+                updateProgress();
                 // Try to do bitmap operations, downsample if low-memory
                 Bitmap bitmap = ImageLoader.loadOrientedBitmapWithBackouts(mContext, newSourceUri,
                         sampleSize);
                 if (bitmap == null) {
                     return null;
                 }
+                updateProgress();
                 CachingPipeline pipeline = new CachingPipeline(FiltersManager.getManager(),
                         "Saving");
+
                 bitmap = pipeline.renderFinalImage(bitmap, preset);
+                updateProgress();
 
                 Object xmp = getPanoramaXMPData(mSelectedImageUri, preset);
                 ExifInterface exif = getExifData(mSelectedImageUri);
@@ -347,28 +365,34 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
                 // If we succeed in writing the bitmap as a jpeg, return a uri.
                 if (putExifData(mDestinationFile, exif, bitmap)) {
                     putPanoramaXMPData(mDestinationFile, xmp);
-                    uri = SaveCopyTask.insertContent(mContext, mSelectedImageUri, mDestinationFile,
+                    uri = SaveImage.insertContent(mContext, mSelectedImageUri, mDestinationFile,
                             time);
                 }
+                updateProgress();
 
                 // mDestinationFile will save the newSourceUri info in the XMP.
                 XmpPresets.writeFilterXMP(mContext, newSourceUri, mDestinationFile, preset);
+                updateProgress();
 
                 // Since we have a new image inserted to media store, we can
                 // safely remove the old one which is selected by the user.
+                // TODO: we should fix that, do an update instead of insert+remove,
+                //       as well as asking Gallery to update its cached version of the image
                 if (USE_AUX_DIR) {
                     removeSelectedImage();
                 }
+                updateProgress();
                 noBitmap = false;
                 UsageStatistics.onEvent(UsageStatistics.COMPONENT_EDITOR,
                         "SaveComplete", null);
-            } catch (java.lang.OutOfMemoryError e) {
+            } catch (OutOfMemoryError e) {
                 // Try 5 times before failing for good.
                 if (++num_tries >= 5) {
                     throw e;
                 }
                 System.gc();
                 sampleSize *= 2;
+                resetProgress();
             }
         }
         return uri;
@@ -434,13 +458,6 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         return auxDiretory;
     }
 
-    @Override
-    protected void onPostExecute(Uri result) {
-        if (mCallback != null) {
-            mCallback.onComplete(result);
-        }
-    }
-
     public static Uri makeAndInsertUri(Context context, Uri sourceUri) {
         long time = System.currentTimeMillis();
         String filename = new SimpleDateFormat(TIME_STAMP_NAME).format(new Date(time));
@@ -452,18 +469,18 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
     public static void saveImage(ImagePreset preset, final FilterShowActivity filterShowActivity,
             File destination) {
         Uri selectedImageUri = filterShowActivity.getSelectedImageUri();
-        new SaveCopyTask(filterShowActivity, MasterImage.getImage().getUri(), selectedImageUri,
-                destination,
-                new SaveCopyTask.Callback() {
+        Uri sourceImageUri = MasterImage.getImage().getUri();
 
-                    @Override
-                    public void onComplete(Uri result) {
-                        filterShowActivity.completeSaveImage(result);
-                    }
+        Intent processIntent = ProcessingService.getSaveIntent(filterShowActivity, preset,
+                destination, selectedImageUri, sourceImageUri);
 
-                }).execute(preset);
+        filterShowActivity.startService(processIntent);
+
+        if (!filterShowActivity.isSimpleEditAction()) {
+            // terminate for now
+            filterShowActivity.completeSaveImage(selectedImageUri);
+        }
     }
-
 
     public static void querySource(Context context, Uri sourceUri, String[] projection,
             ContentResolverQueryCallback callback) {
@@ -586,8 +603,8 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
                 ImageColumns.DATE_TAKEN,
                 ImageColumns.LATITUDE, ImageColumns.LONGITUDE,
         };
-        SaveCopyTask.querySource(context, sourceUri, projection,
-                new SaveCopyTask.ContentResolverQueryCallback() {
+        SaveImage.querySource(context, sourceUri, projection,
+                new SaveImage.ContentResolverQueryCallback() {
 
                     @Override
                     public void onCursorResult(Cursor cursor) {

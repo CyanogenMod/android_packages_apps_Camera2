@@ -19,28 +19,29 @@ package com.android.gallery3d.filtershow;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,20 +56,19 @@ import android.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import android.widget.Toast;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.data.LocalAlbum;
 import com.android.gallery3d.filtershow.pipeline.CachingPipeline;
 import com.android.gallery3d.filtershow.pipeline.FilteringPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.category.Action;
 import com.android.gallery3d.filtershow.category.CategoryAdapter;
-import com.android.gallery3d.filtershow.category.CategoryView;
 import com.android.gallery3d.filtershow.category.MainPanel;
 import com.android.gallery3d.filtershow.editors.BasicEditor;
 import com.android.gallery3d.filtershow.editors.Editor;
 import com.android.gallery3d.filtershow.editors.EditorCrop;
 import com.android.gallery3d.filtershow.editors.EditorDraw;
 import com.android.gallery3d.filtershow.editors.EditorFlip;
-import com.android.gallery3d.filtershow.editors.EditorInfo;
 import com.android.gallery3d.filtershow.editors.EditorManager;
 import com.android.gallery3d.filtershow.editors.EditorPanel;
 import com.android.gallery3d.filtershow.editors.EditorRedEye;
@@ -76,8 +76,6 @@ import com.android.gallery3d.filtershow.editors.EditorRotate;
 import com.android.gallery3d.filtershow.editors.EditorStraighten;
 import com.android.gallery3d.filtershow.editors.EditorTinyPlanet;
 import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
-import com.android.gallery3d.filtershow.filters.FilterFxRepresentation;
-import com.android.gallery3d.filtershow.filters.FilterImageBorderRepresentation;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
@@ -88,9 +86,10 @@ import com.android.gallery3d.filtershow.imageshow.ImageCrop;
 import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
+import com.android.gallery3d.filtershow.pipeline.ProcessingService;
 import com.android.gallery3d.filtershow.provider.SharedImageProvider;
 import com.android.gallery3d.filtershow.state.StateAdapter;
-import com.android.gallery3d.filtershow.tools.SaveCopyTask;
+import com.android.gallery3d.filtershow.tools.SaveImage;
 import com.android.gallery3d.filtershow.tools.XmpPresets;
 import com.android.gallery3d.filtershow.tools.XmpPresets.XMresults;
 import com.android.gallery3d.filtershow.ui.FramedTextButton;
@@ -101,6 +100,7 @@ import com.android.photos.data.GalleryBitmapPool;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class FilterShowActivity extends FragmentActivity implements OnItemClickListener,
@@ -149,6 +149,75 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     private CategoryAdapter mCategoryFiltersAdapter = null;
     private int mCurrentPanel = MainPanel.LOOKS;
 
+    private ProcessingService mBoundService;
+    private boolean mIsBound = false;
+
+    public ProcessingService getProcessingService() {
+        return mBoundService;
+    }
+
+    public boolean isSimpleEditAction() {
+        return !PhotoPage.ACTION_NEXTGEN_EDIT.equalsIgnoreCase(mAction);
+    }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            /*
+             * This is called when the connection with the service has been
+             * established, giving us the service object we can use to
+             * interact with the service.  Because we have bound to a explicit
+             * service that we know is running in our own process, we can
+             * cast its IBinder to a concrete class and directly access it.
+             */
+            mBoundService = ((ProcessingService.LocalBinder)service).getService();
+            mBoundService.setFiltershowActivity(FilterShowActivity.this);
+            mBoundService.onStart();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            /*
+             * This is called when the connection with the service has been
+             * unexpectedly disconnected -- that is, its process crashed.
+             * Because it is running in our same process, we should never
+             * see this happen.
+             */
+            mBoundService = null;
+        }
+    };
+
+    void doBindService() {
+        /*
+         * Establish a connection with the service.  We use an explicit
+         * class name because we want a specific service implementation that
+         * we know will be running in our own process (and thus won't be
+         * supporting component replacement by other applications).
+         */
+        bindService(new Intent(FilterShowActivity.this, ProcessingService.class),
+                mConnection, Context.BIND_AUTO_CREATE);
+        mIsBound = true;
+    }
+
+    void doUnbindService() {
+        if (mIsBound) {
+            // Detach our existing connection.
+            unbindService(mConnection);
+            mIsBound = false;
+        }
+    }
+
+    private void setupPipeline() {
+        doBindService();
+        ImageFilter.setActivityForMemoryToasts(this);
+    }
+
+    public void updateUIAfterServiceStarted() {
+        fillCategories();
+        loadMainPanel();
+        setDefaultPreset();
+        extractXMPData();
+        processIntent();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,19 +229,13 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         MasterImage.setMaster(mMasterImage);
 
         clearGalleryBitmapPool();
+        setupPipeline();
 
-        CachingPipeline.createRenderscriptContext(this);
         setupMasterImage();
         setDefaultValues();
         fillEditors();
 
         loadXML();
-        loadMainPanel();
-
-        setDefaultPreset();
-
-        extractXMPData();
-        processIntent();
         UsageStatistics.onContentViewChanged(UsageStatistics.COMPONENT_EDITOR, "Main");
         UsageStatistics.onEvent(UsageStatistics.COMPONENT_EDITOR,
                 UsageStatistics.CATEGORY_LIFECYCLE, UsageStatistics.LIFECYCLE_START);
@@ -251,26 +314,25 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         setupEditors();
 
         mEditorPlaceHolder.hide();
-
         mImageShow.bindAsImageLoadListener();
 
-        fillFx();
-        fillBorders();
-        fillGeometry();
-        fillFilters();
-
         setupStatePanel();
+    }
+
+    public void fillCategories() {
+        fillLooks();
+        fillBorders();
+        fillTools();
+        fillEffects();
     }
 
     public void setupStatePanel() {
         MasterImage.getImage().setHistoryManager(mMasterImage.getHistory());
     }
 
-    private void fillFilters() {
-        Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
+    private void fillEffects() {
         FiltersManager filtersManager = FiltersManager.getManager();
-        filtersManager.addEffects(filtersRepresentations);
-
+        ArrayList<FilterRepresentation> filtersRepresentations = filtersManager.getEffects();
         mCategoryFiltersAdapter = new CategoryAdapter(this);
         for (FilterRepresentation representation : filtersRepresentations) {
             if (representation.getTextId() != 0) {
@@ -280,28 +342,9 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         }
     }
 
-    private void fillGeometry() {
-        Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
+    private void fillTools() {
         FiltersManager filtersManager = FiltersManager.getManager();
-
-        GeometryMetadata geo = new GeometryMetadata();
-        int[] editorsId = geo.getEditorIds();
-        for (int i = 0; i < editorsId.length; i++) {
-            int editorId = editorsId[i];
-            GeometryMetadata geometry = new GeometryMetadata(geo);
-            geometry.setEditorId(editorId);
-            EditorInfo editorInfo = (EditorInfo) mEditorPlaceHolder.getEditor(editorId);
-            geometry.setTextId(editorInfo.getTextId());
-            geometry.setOverlayId(editorInfo.getOverlayId());
-            geometry.setOverlayOnly(editorInfo.getOverlayOnly());
-            if (geometry.getTextId() != 0) {
-                geometry.setName(getString(geometry.getTextId()));
-            }
-            filtersRepresentations.add(geometry);
-        }
-
-        filtersManager.addTools(filtersRepresentations);
-
+        ArrayList<FilterRepresentation> filtersRepresentations = filtersManager.getTools();
         mCategoryGeometryAdapter = new CategoryAdapter(this);
         for (FilterRepresentation representation : filtersRepresentations) {
             mCategoryGeometryAdapter.add(new Action(this, representation));
@@ -331,7 +374,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         mEditorPlaceHolder.setContainer((FrameLayout) findViewById(R.id.editorContainer));
         EditorManager.addEditors(mEditorPlaceHolder);
         mEditorPlaceHolder.setOldViews(mImageViews);
-
     }
 
     private void fillEditors() {
@@ -347,10 +389,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     private void setDefaultValues() {
-        ImageFilter.setActivityForMemoryToasts(this);
-
         Resources res = getResources();
-        FiltersManager.setResources(res);
 
         // TODO: get those values from XML.
         FramedTextButton.setTextSize((int) getPixelsFromDip(14));
@@ -379,16 +418,11 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     }
 
     private void fillBorders() {
-        Vector<FilterRepresentation> borders = new Vector<FilterRepresentation>();
-
-        // The "no border" implementation
-        borders.add(new FilterImageBorderRepresentation(0));
-
-        // Google-build borders
-        FiltersManager.getManager().addBorders(this, borders);
+        FiltersManager filtersManager = FiltersManager.getManager();
+        ArrayList<FilterRepresentation> borders = filtersManager.getBorders();
 
         for (int i = 0; i < borders.size(); i++) {
-            FilterRepresentation filter = borders.elementAt(i);
+            FilterRepresentation filter = borders.get(i);
             filter.setName(getString(R.string.borders));
             if (i == 0) {
                 filter.setName(getString(R.string.none));
@@ -628,16 +662,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         if (mLoadBitmapTask != null) {
             mLoadBitmapTask.cancel(false);
         }
-        // TODO:  refactor, don't use so many singletons.
-        FilteringPipeline.getPipeline().turnOnPipeline(false);
-        MasterImage.reset();
-        FilteringPipeline.reset();
-        ImageFilter.resetStatics();
-        FiltersManager.getPreviewManager().freeRSFilterScripts();
-        FiltersManager.getManager().freeRSFilterScripts();
-        FiltersManager.getHighresManager().freeRSFilterScripts();
-        FiltersManager.reset();
-        CachingPipeline.destroyRenderScriptContext();
+        doUnbindService();
         super.onDestroy();
     }
 
@@ -713,7 +738,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.setType(SharedImageProvider.MIME_TYPE);
-        mSharedOutputFile = SaveCopyTask.getNewFile(this, MasterImage.getImage().getUri());
+        mSharedOutputFile = SaveImage.getNewFile(this, MasterImage.getImage().getUri());
         Uri uri = Uri.withAppendedPath(SharedImageProvider.CONTENT_URI,
                 Uri.encode(mSharedOutputFile.getAbsolutePath()));
         intent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -744,7 +769,6 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     @Override
     public void onPause() {
         super.onPause();
-        rsPause();
         if (mShareActionProvider != null) {
             mShareActionProvider.setOnShareTargetSelectedListener(null);
         }
@@ -753,46 +777,9 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     @Override
     public void onResume() {
         super.onResume();
-        rsResume();
         if (mShareActionProvider != null) {
             mShareActionProvider.setOnShareTargetSelectedListener(this);
         }
-    }
-
-    private void rsResume() {
-        ImageFilter.setActivityForMemoryToasts(this);
-        MasterImage.setMaster(mMasterImage);
-        if (CachingPipeline.getRenderScriptContext() == null) {
-            CachingPipeline.createRenderscriptContext(this);
-        }
-        FiltersManager.setResources(getResources());
-        if (!mLoading) {
-            Bitmap largeBitmap = MasterImage.getImage().getOriginalBitmapLarge();
-            FilteringPipeline pipeline = FilteringPipeline.getPipeline();
-            pipeline.setOriginal(largeBitmap);
-            float previewScale = (float) largeBitmap.getWidth() /
-                    (float) MasterImage.getImage().getOriginalBounds().width();
-            pipeline.setPreviewScaleFactor(previewScale);
-            Bitmap highresBitmap = MasterImage.getImage().getOriginalBitmapHighres();
-            if (highresBitmap != null) {
-                float highResPreviewScale = (float) highresBitmap.getWidth() /
-                        (float) MasterImage.getImage().getOriginalBounds().width();
-                pipeline.setHighResPreviewScaleFactor(highResPreviewScale);
-            }
-            pipeline.turnOnPipeline(true);
-            MasterImage.getImage().setOriginalGeometry(largeBitmap);
-        }
-    }
-
-    private void rsPause() {
-        FilteringPipeline.getPipeline().turnOnPipeline(false);
-        FilteringPipeline.reset();
-        ImageFilter.resetStatics();
-        FiltersManager.getPreviewManager().freeRSFilterScripts();
-        FiltersManager.getManager().freeRSFilterScripts();
-        FiltersManager.getHighresManager().freeRSFilterScripts();
-        FiltersManager.reset();
-        CachingPipeline.destroyRenderScriptContext();
     }
 
     @Override
@@ -844,16 +831,13 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         }
     }
 
-    private void fillFx() {
-        FilterFxRepresentation nullFx =
-                new FilterFxRepresentation(getString(R.string.none), 0, R.string.none);
-        Vector<FilterRepresentation> filtersRepresentations = new Vector<FilterRepresentation>();
-        FiltersManager.getManager().addLooks(this, filtersRepresentations);
+    private void fillLooks() {
+        FiltersManager filtersManager = FiltersManager.getManager();
+        ArrayList<FilterRepresentation> filtersRepresentations = filtersManager.getLooks();
 
         mCategoryLooksAdapter = new CategoryAdapter(this);
         int verticalItemHeight = (int) getResources().getDimension(R.dimen.action_item_height);
         mCategoryLooksAdapter.setItemHeight(verticalItemHeight);
-        mCategoryLooksAdapter.add(new Action(this, nullFx, Action.FULL_VIEW));
         for (FilterRepresentation representation : filtersRepresentations) {
             mCategoryLooksAdapter.add(new Action(this, representation, Action.FULL_VIEW));
         }
@@ -1030,7 +1014,7 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     public void saveImage() {
         if (mImageShow.hasModifications()) {
             // Get the name of the album, to which the image will be saved
-            File saveDir = SaveCopyTask.getFinalSaveDirectory(this, mSelectedImageUri);
+            File saveDir = SaveImage.getFinalSaveDirectory(this, mSelectedImageUri);
             int bucketId = GalleryUtils.getBucketId(saveDir.getPath());
             String albumName = LocalAlbum.getLocalizedName(getResources(), bucketId, null);
             showSavingProgress(albumName);
@@ -1062,10 +1046,5 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
     public Uri getSelectedImageUri() {
         return mSelectedImageUri;
     }
-
-    static {
-        System.loadLibrary("jni_filtershow_filters");
-    }
-
 
 }

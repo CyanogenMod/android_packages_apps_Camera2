@@ -45,7 +45,7 @@ import android.widget.Toast;
 import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
-import com.android.gallery3d.filtershow.tools.SaveCopyTask;
+import com.android.gallery3d.filtershow.tools.SaveImage;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -264,7 +264,7 @@ public class CropActivity extends Activity {
         protected Bitmap doInBackground(Uri... params) {
             Uri uri = params[0];
             Bitmap bmap = ImageLoader.loadConstrainedBitmap(uri, mContext, mBitmapSize,
-                    mOriginalBounds);
+                    mOriginalBounds, false);
             mOrientation = ImageLoader.getMetadataRotation(mContext, uri);
             return bmap;
         }
@@ -299,7 +299,7 @@ public class CropActivity extends Activity {
             }
         }
         if (flags == 0) {
-            destinationUri = SaveCopyTask.makeAndInsertUri(this, mSourceUri);
+            destinationUri = SaveImage.makeAndInsertUri(this, mSourceUri);
             if (destinationUri != null) {
                 flags |= DO_EXTRA_OUTPUT;
             }

@@ -25,7 +25,7 @@ import android.os.Environment;
 import android.provider.MediaStore.Video;
 import android.provider.MediaStore.Video.VideoColumns;
 
-import com.android.gallery3d.filtershow.tools.SaveCopyTask.ContentResolverQueryCallback;
+import com.android.gallery3d.filtershow.tools.SaveImage.ContentResolverQueryCallback;
 
 import java.io.File;
 import java.sql.Date;

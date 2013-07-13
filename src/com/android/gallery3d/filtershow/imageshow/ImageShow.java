@@ -40,7 +40,7 @@ import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
-import com.android.gallery3d.filtershow.tools.SaveCopyTask;
+import com.android.gallery3d.filtershow.tools.SaveImage;
 
 import java.io.File;
 
@@ -395,7 +395,7 @@ public class ImageShow extends View implements OnGestureListener,
     }
 
     public void saveImage(FilterShowActivity filterShowActivity, File file) {
-        SaveCopyTask.saveImage(getImagePreset(), filterShowActivity, file);
+        SaveImage.saveImage(getImagePreset(), filterShowActivity, file);
     }
 
 

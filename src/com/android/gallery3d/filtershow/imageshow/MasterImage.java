@@ -482,6 +482,9 @@ public class MasterImage implements RenderingRequestCaller {
     }
 
     public void needsUpdatePartialPreview() {
+        if (mPreset == null) {
+            return;
+        }
         if (!mPreset.canDoPartialRendering()) {
             invalidatePartialPreview();
             return;

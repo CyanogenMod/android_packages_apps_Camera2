@@ -37,7 +37,7 @@ import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.exif.ExifTag;
-import com.android.gallery3d.filtershow.tools.SaveCopyTask;
+import com.android.gallery3d.filtershow.tools.SaveImage;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
@@ -270,7 +270,7 @@ public class LocalImage extends LocalMediaItem {
         GalleryUtils.assertNotInRenderThread();
         Uri baseUri = Images.Media.EXTERNAL_CONTENT_URI;
         ContentResolver contentResolver = mApplication.getContentResolver();
-        SaveCopyTask.deleteAuxFiles(contentResolver, getContentUri());
+        SaveImage.deleteAuxFiles(contentResolver, getContentUri());
         contentResolver.delete(baseUri, "_id=?",
                 new String[]{String.valueOf(id)});
     }

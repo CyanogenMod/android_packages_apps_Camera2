@@ -21,7 +21,6 @@ import android.os.*;
 import android.os.Process;
 import android.util.Log;
 
-import com.android.gallery3d.filtershow.cache.ImageLoader;
 import com.android.gallery3d.filtershow.filters.FiltersManager;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
 

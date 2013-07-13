@@ -18,6 +18,7 @@ package com.android.gallery3d.filtershow.cache;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
@@ -33,6 +34,7 @@ import android.webkit.MimeTypeMap;
 
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
+import com.android.gallery3d.R;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.exif.ExifInterface;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
@@ -286,17 +288,20 @@ public final class ImageLoader {
      * @param uri URI of image to open.
      * @param context context whose ContentResolver to use.
      * @param maxSideLength max side length of returned bitmap.
-     * @param originalBounds set to the actual bounds of the stored bitmap.
+     * @param originalBounds If not null, set to the actual bounds of the stored bitmap.
+     * @param useMin use min or max side of the original image
      * @return downsampled bitmap or null if this operation failed.
      */
     public static Bitmap loadConstrainedBitmap(Uri uri, Context context, int maxSideLength,
-            Rect originalBounds) {
-        if (maxSideLength <= 0 || originalBounds == null || uri == null || context == null) {
+            Rect originalBounds, boolean useMin) {
+        if (maxSideLength <= 0 || uri == null || context == null) {
             throw new IllegalArgumentException("bad argument to getScaledBitmap");
         }
         // Get width and height of stored bitmap
         Rect storedBounds = loadBitmapBounds(context, uri);
-        originalBounds.set(storedBounds);
+        if (originalBounds != null) {
+            originalBounds.set(storedBounds);
+        }
         int w = storedBounds.width();
         int h = storedBounds.height();
 
@@ -306,7 +311,12 @@ public final class ImageLoader {
         }
 
         // Find best downsampling size
-        int imageSide = Math.max(w, h);
+        int imageSide = 0;
+        if (useMin) {
+            imageSide = Math.min(w, h);
+        } else {
+            imageSide = Math.max(w, h);
+        }
         int sampleSize = 1;
         while (imageSide > maxSideLength) {
             imageSide >>>= 1;
@@ -336,7 +346,7 @@ public final class ImageLoader {
      */
     public static Bitmap loadOrientedConstrainedBitmap(Uri uri, Context context, int maxSideLength,
             int orientation, Rect originalBounds) {
-        Bitmap bmap = loadConstrainedBitmap(uri, context, maxSideLength, originalBounds);
+        Bitmap bmap = loadConstrainedBitmap(uri, context, maxSideLength, originalBounds, false);
         if (bmap != null) {
             bmap = orientBitmap(bmap, orientation);
         }

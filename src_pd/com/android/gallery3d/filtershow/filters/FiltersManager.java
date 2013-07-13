@@ -22,9 +22,6 @@ import android.graphics.Color;
 
 import com.android.gallery3d.R;
 
-import java.util.HashMap;
-import java.util.Vector;
-
 public class FiltersManager extends BaseFiltersManager {
     private static FiltersManager sInstance = null;
     private static FiltersManager sPreviewInstance = null;
@@ -49,7 +46,7 @@ public class FiltersManager extends BaseFiltersManager {
     }
 
     @Override
-    public void addBorders(Context context, Vector<FilterRepresentation> representations) {
+    public void addBorders(Context context) {
 
         // Do not localize
         String[] serializationNames = {
@@ -66,55 +63,59 @@ public class FiltersManager extends BaseFiltersManager {
                 "FRAME_CREAM_ROUNDED"
         };
 
+        // The "no border" implementation
         int i = 0;
+        FilterRepresentation rep = new FilterImageBorderRepresentation(0);
+        mBorders.add(rep);
+
         // Regular borders
-        FilterRepresentation rep = new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5);
+        rep = new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5);
         rep.setSerializationName(serializationNames[i++]);
-        representations.add(rep);
+        mBorders.add(rep);
 
         rep = new FilterImageBorderRepresentation(R.drawable.filtershow_border_brush);
         rep.setSerializationName(serializationNames[i++]);
-        representations.add(rep);
+        mBorders.add(rep);
 
         rep = new FilterImageBorderRepresentation(R.drawable.filtershow_border_grunge);
         rep.setSerializationName(serializationNames[i++]);
-        representations.add(rep);
+        mBorders.add(rep);
 
         rep = new FilterImageBorderRepresentation(R.drawable.filtershow_border_sumi_e);
         rep.setSerializationName(serializationNames[i++]);
-        representations.add(rep);
+        mBorders.add(rep);
 
         rep = new FilterImageBorderRepresentation(R.drawable.filtershow_border_tape);
         rep.setSerializationName(serializationNames[i++]);
-        representations.add(rep);
+        mBorders.add(rep);
 
         rep = new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, 0);
         rep.setSerializationName(serializationNames[i++]);
-        representations.add(rep);
+        mBorders.add(rep);
 
         rep = new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize,
                 mImageBorderSize);
         rep.setSerializationName(serializationNames[i++]);
-        representations.add(rep);
+        mBorders.add(rep);
 
         rep = new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize, 0);
         rep.setSerializationName(serializationNames[i++]);
-        representations.add(rep);
+        mBorders.add(rep);
 
         rep = new FilterColorBorderRepresentation(Color.WHITE, mImageBorderSize,
                 mImageBorderSize);
         rep.setSerializationName(serializationNames[i++]);
-        representations.add(rep);
+        mBorders.add(rep);
 
         int creamColor = Color.argb(255, 237, 237, 227);
         rep = new FilterColorBorderRepresentation(creamColor, mImageBorderSize, 0);
         rep.setSerializationName(serializationNames[i++]);
-        representations.add(rep);
+        mBorders.add(rep);
 
         rep = new FilterColorBorderRepresentation(creamColor, mImageBorderSize,
                 mImageBorderSize);
         rep.setSerializationName(serializationNames[i++]);
-        representations.add(rep);
+        mBorders.add(rep);
     }
 
     public static FiltersManager getHighresManager() {

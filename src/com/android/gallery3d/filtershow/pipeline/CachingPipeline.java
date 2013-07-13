@@ -16,7 +16,7 @@
 
 package com.android.gallery3d.filtershow.pipeline;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.support.v8.renderscript.Allocation;
@@ -68,7 +68,7 @@ public class CachingPipeline implements PipelineInterface {
         return sRS;
     }
 
-    public static synchronized void createRenderscriptContext(Activity context) {
+    public static synchronized void createRenderscriptContext(Context context) {
         if (sRS != null) {
             Log.w(LOGTAG, "A prior RS context exists when calling setRenderScriptContext");
             destroyRenderScriptContext();

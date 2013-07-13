@@ -20,8 +20,10 @@ import android.content.res.Resources;
 import android.util.Log;
 
 import com.android.gallery3d.R;
+import com.android.gallery3d.filtershow.imageshow.GeometryMetadata;
 import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -29,6 +31,11 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
     protected HashMap<Class, ImageFilter> mFilters = null;
     protected HashMap<String, FilterRepresentation> mRepresentationLookup = null;
     private static final String LOGTAG = "BaseFiltersManager";
+
+    protected ArrayList<FilterRepresentation> mLooks = new ArrayList<FilterRepresentation>();
+    protected ArrayList<FilterRepresentation> mBorders = new ArrayList<FilterRepresentation>();
+    protected ArrayList<FilterRepresentation> mTools = new ArrayList<FilterRepresentation>();
+    protected ArrayList<FilterRepresentation> mEffects = new ArrayList<FilterRepresentation>();
 
     protected void init() {
         mFilters = new HashMap<Class, ImageFilter>();
@@ -133,11 +140,27 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
         filters.add(ImageFilterGeometry.class);
     }
 
-    public void addBorders(Context context, Vector<FilterRepresentation> representations) {
+    public ArrayList<FilterRepresentation> getLooks() {
+        return mLooks;
+    }
+
+    public ArrayList<FilterRepresentation> getBorders() {
+        return mBorders;
+    }
+
+    public ArrayList<FilterRepresentation> getTools() {
+        return mTools;
+    }
+
+    public ArrayList<FilterRepresentation> getEffects() {
+        return mEffects;
+    }
+
+    public void addBorders(Context context) {
 
     }
 
-    public void addLooks(Context context, Vector<FilterRepresentation> representations) {
+    public void addLooks(Context context) {
         int[] drawid = {
                 R.drawable.filtershow_fx_0005_punch,
                 R.drawable.filtershow_fx_0000_vintage,
@@ -175,37 +198,72 @@ public abstract class BaseFiltersManager implements FiltersManagerInterface {
                 "LUT3D_XPROCESS"
         };
 
+        FilterFxRepresentation nullFx =
+                new FilterFxRepresentation(context.getString(R.string.none),
+                        0, R.string.none);
+        mLooks.add(nullFx);
+
         for (int i = 0; i < drawid.length; i++) {
             FilterFxRepresentation fx = new FilterFxRepresentation(
                     context.getString(fxNameid[i]), drawid[i], fxNameid[i]);
             fx.setSerializationName(serializationNames[i]);
-            representations.add(fx);
+            mLooks.add(fx);
             addRepresentation(fx);
         }
     }
 
-    public void addEffects(Vector<FilterRepresentation> representations) {
-        representations.add(getRepresentation(ImageFilterTinyPlanet.class));
-        representations.add(getRepresentation(ImageFilterWBalance.class));
-        representations.add(getRepresentation(ImageFilterExposure.class));
-        representations.add(getRepresentation(ImageFilterVignette.class));
-        representations.add(getRepresentation(ImageFilterContrast.class));
-        representations.add(getRepresentation(ImageFilterShadows.class));
-        representations.add(getRepresentation(ImageFilterHighlights.class));
-        representations.add(getRepresentation(ImageFilterVibrance.class));
-        representations.add(getRepresentation(ImageFilterSharpen.class));
-        representations.add(getRepresentation(ImageFilterCurves.class));
-        representations.add(getRepresentation(ImageFilterHue.class));
-        representations.add(getRepresentation(ImageFilterSaturated.class));
-        representations.add(getRepresentation(ImageFilterBwFilter.class));
-        representations.add(getRepresentation(ImageFilterNegative.class));
-        representations.add(getRepresentation(ImageFilterEdge.class));
-        representations.add(getRepresentation(ImageFilterKMeans.class));
+    public void addEffects() {
+        mEffects.add(getRepresentation(ImageFilterTinyPlanet.class));
+        mEffects.add(getRepresentation(ImageFilterWBalance.class));
+        mEffects.add(getRepresentation(ImageFilterExposure.class));
+        mEffects.add(getRepresentation(ImageFilterVignette.class));
+        mEffects.add(getRepresentation(ImageFilterContrast.class));
+        mEffects.add(getRepresentation(ImageFilterShadows.class));
+        mEffects.add(getRepresentation(ImageFilterHighlights.class));
+        mEffects.add(getRepresentation(ImageFilterVibrance.class));
+        mEffects.add(getRepresentation(ImageFilterSharpen.class));
+        mEffects.add(getRepresentation(ImageFilterCurves.class));
+        mEffects.add(getRepresentation(ImageFilterHue.class));
+        mEffects.add(getRepresentation(ImageFilterSaturated.class));
+        mEffects.add(getRepresentation(ImageFilterBwFilter.class));
+        mEffects.add(getRepresentation(ImageFilterNegative.class));
+        mEffects.add(getRepresentation(ImageFilterEdge.class));
+        mEffects.add(getRepresentation(ImageFilterKMeans.class));
     }
 
-    public void addTools(Vector<FilterRepresentation> representations) {
-        representations.add(getRepresentation(ImageFilterRedEye.class));
-        representations.add(getRepresentation(ImageFilterDraw.class));
+    public void addTools(Context context) {
+        GeometryMetadata geo = new GeometryMetadata();
+        int[] editorsId = geo.getEditorIds();
+
+        int[] textId = {
+                R.string.crop,
+                R.string.straighten,
+                R.string.rotate,
+                R.string.mirror
+        };
+
+        int[] overlayId = {
+                R.drawable.filtershow_button_geometry_crop,
+                R.drawable.filtershow_button_geometry_straighten,
+                R.drawable.filtershow_button_geometry_rotate,
+                R.drawable.filtershow_button_geometry_flip
+        };
+
+        for (int i = 0; i < editorsId.length; i++) {
+            int editorId = editorsId[i];
+            GeometryMetadata geometry = new GeometryMetadata(geo);
+            geometry.setEditorId(editorId);
+            geometry.setTextId(textId[i]);
+            geometry.setOverlayId(overlayId[i]);
+            geometry.setOverlayOnly(true);
+            if (geometry.getTextId() != 0) {
+                geometry.setName(context.getString(geometry.getTextId()));
+            }
+            mTools.add(geometry);
+        }
+
+        mTools.add(getRepresentation(ImageFilterRedEye.class));
+        mTools.add(getRepresentation(ImageFilterDraw.class));
     }
 
     public void setFilterResources(Resources resources) {
