@@ -29,18 +29,15 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.exif.ExifInterface;
-import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.imageshow.MasterImage;
-import com.android.gallery3d.filtershow.pipeline.ImagePreset;
-import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.util.XmpUtilHelper;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,8 +47,6 @@ public final class ImageLoader {
     private static final String LOGTAG = "ImageLoader";
 
     public static final String JPEG_MIME_TYPE = "image/jpeg";
-
-    public static final String DEFAULT_SAVE_DIRECTORY = "EditedOnlinePhotos";
     public static final int DEFAULT_COMPRESS_QUALITY = 95;
 
     public static final int ORI_NORMAL = ExifInterface.Orientation.TOP_LEFT;
@@ -65,42 +60,39 @@ public final class ImageLoader {
 
     private static final int BITMAP_LOAD_BACKOUT_ATTEMPTS = 5;
 
-    public static final int MAX_BITMAP_DIM = 900;
-    public static final int SMALL_BITMAP_DIM = 160;
-
     private ImageLoader() {}
 
-    public static int getOrientation(Context context, Uri uri) {
-        if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
-            String mimeType = context.getContentResolver().getType(uri);
-            if (mimeType != ImageLoader.JPEG_MIME_TYPE) {
-                return -1;
-            }
-            String path = uri.getPath();
-            int orientation = -1;
-            ExifInterface exif = new ExifInterface();
-            try {
-                exif.readExif(path);
-                orientation = ExifInterface.getRotationForOrientationValue(
-                        exif.getTagIntValue(ExifInterface.TAG_ORIENTATION).shortValue());
-            } catch (IOException e) {
-                Log.w(LOGTAG, "Failed to read EXIF orientation", e);
-            }
-            return orientation;
+    /**
+     * Returns the Mime type for a Url.  Safe to use with Urls that do not
+     * come from Gallery's content provider.
+     */
+    public static String getMimeType(Uri src) {
+        String postfix = MimeTypeMap.getFileExtensionFromUrl(src.toString());
+        String ret = null;
+        if (postfix != null) {
+            ret = MimeTypeMap.getSingleton().getMimeTypeFromExtension(postfix);
         }
+        return ret;
+    }
+
+    /**
+     * Returns the image's orientation flag.  Defaults to ORI_NORMAL if no valid
+     * orientation was found.
+     */
+    public static int getMetadataOrientation(Context context, Uri uri) {
+        if (uri == null || context == null) {
+            throw new IllegalArgumentException("bad argument to getOrientation");
+        }
+
+        // First try to find orientation data in Gallery's ContentProvider.
         Cursor cursor = null;
         try {
             cursor = context.getContentResolver().query(uri,
-                    new String[] {
-                        MediaStore.Images.ImageColumns.ORIENTATION
-                    },
+                    new String[] { MediaStore.Images.ImageColumns.ORIENTATION },
                     null, null, null);
-            if (cursor.moveToNext()) {
+            if (cursor != null && cursor.moveToNext()) {
                 int ori = cursor.getInt(0);
-
                 switch (ori) {
-                    case 0:
-                        return ORI_NORMAL;
                     case 90:
                         return ORI_ROTATE_90;
                     case 270:
@@ -108,24 +100,73 @@ public final class ImageLoader {
                     case 180:
                         return ORI_ROTATE_180;
                     default:
-                        return -1;
+                        return ORI_NORMAL;
                 }
-            } else {
-                return -1;
             }
         } catch (SQLiteException e) {
-            return -1;
+            // Do nothing
         } catch (IllegalArgumentException e) {
-            return -1;
+            // Do nothing
         } finally {
             Utils.closeSilently(cursor);
         }
+
+        // Fall back to checking EXIF tags in file.
+        if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
+            String mimeType = getMimeType(uri);
+            if (!JPEG_MIME_TYPE.equals(mimeType)) {
+                return ORI_NORMAL;
+            }
+            String path = uri.getPath();
+            ExifInterface exif = new ExifInterface();
+            try {
+                exif.readExif(path);
+                Integer tagval = exif.getTagIntValue(ExifInterface.TAG_ORIENTATION);
+                if (tagval != null) {
+                    int orientation = tagval;
+                    switch(orientation) {
+                        case ORI_NORMAL:
+                        case ORI_ROTATE_90:
+                        case ORI_ROTATE_180:
+                        case ORI_ROTATE_270:
+                        case ORI_FLIP_HOR:
+                        case ORI_FLIP_VERT:
+                        case ORI_TRANSPOSE:
+                        case ORI_TRANSVERSE:
+                            return orientation;
+                        default:
+                            return ORI_NORMAL;
+                    }
+                }
+            } catch (IOException e) {
+                Log.w(LOGTAG, "Failed to read EXIF orientation", e);
+            }
+        }
+        return ORI_NORMAL;
     }
 
-    public static Bitmap decodeImage(Context context, int id, BitmapFactory.Options options) {
-        return BitmapFactory.decodeResource(context.getResources(), id, options);
+    /**
+     * Returns the rotation of image at the given URI as one of 0, 90, 180,
+     * 270.  Defaults to 0.
+     */
+    public static int getMetadataRotation(Context context, Uri uri) {
+        int orientation = getMetadataOrientation(context, uri);
+        switch(orientation) {
+            case ORI_ROTATE_90:
+                return 90;
+            case ORI_ROTATE_180:
+                return 180;
+            case ORI_ROTATE_270:
+                return 270;
+            default:
+                return 0;
+        }
     }
 
+    /**
+     * Takes an orientation and a bitmap, and returns the bitmap transformed
+     * to that orientation.
+     */
     public static Bitmap orientBitmap(Bitmap bitmap, int ori) {
         Matrix matrix = new Matrix();
         int w = bitmap.getWidth();
@@ -166,12 +207,16 @@ public final class ImageLoader {
             default:
                 return bitmap;
         }
-
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
                 bitmap.getHeight(), matrix, true);
     }
 
-    private static Bitmap loadRegionBitmap(Context context, Uri uri, BitmapFactory.Options options,
+    /**
+     * Returns the bitmap for the rectangular region given by "bounds"
+     * if it is a subset of the bitmap stored at uri.  Otherwise returns
+     * null.
+     */
+    public static Bitmap loadRegionBitmap(Context context, Uri uri, BitmapFactory.Options options,
             Rect bounds) {
         InputStream is = null;
         try {
@@ -184,73 +229,118 @@ public final class ImageLoader {
             }
             return decoder.decodeRegion(bounds, options);
         } catch (FileNotFoundException e) {
-            Log.e(LOGTAG, "FileNotFoundException: " + uri);
-        } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(LOGTAG, "FileNotFoundException for " + uri, e);
+        } catch (IOException e) {
+            Log.e(LOGTAG, "FileNotFoundException for " + uri, e);
         } finally {
             Utils.closeSilently(is);
         }
         return null;
     }
 
-    public static Bitmap loadOrientedScaledBitmap(MasterImage master, Context context, Uri uri,
-            int size, boolean enforceSize, int orientation) {
-        Bitmap bmap = loadScaledBitmap(master, context, uri, size, enforceSize);
+    /**
+     * Returns the bounds of the bitmap stored at a given Url.
+     */
+    public static Rect loadBitmapBounds(Context context, Uri uri) {
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        loadBitmap(context, uri, o);
+        return new Rect(0, 0, o.outWidth, o.outHeight);
+    }
+
+    /**
+     * Loads a bitmap that has been downsampled using sampleSize from a given url.
+     */
+    public static Bitmap loadDownsampledBitmap(Context context, Uri uri, int sampleSize) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inMutable = true;
+        options.inSampleSize = sampleSize;
+        return loadBitmap(context, uri, options);
+    }
+
+
+    /**
+     * Returns the bitmap from the given uri loaded using the given options.
+     * Returns null on failure.
+     */
+    public static Bitmap loadBitmap(Context context, Uri uri, BitmapFactory.Options o) {
+        if (uri == null || context == null) {
+            throw new IllegalArgumentException("bad argument to loadBitmap");
+        }
+        InputStream is = null;
+        try {
+            is = context.getContentResolver().openInputStream(uri);
+            return BitmapFactory.decodeStream(is, null, o);
+        } catch (FileNotFoundException e) {
+            Log.e(LOGTAG, "FileNotFoundException for " + uri, e);
+        } finally {
+            Utils.closeSilently(is);
+        }
+        return null;
+    }
+
+    /**
+     * Loads a bitmap at a given URI that is downsampled so that both sides are
+     * smaller than maxSideLength. The Bitmap's original dimensions are stored
+     * in the rect originalBounds.
+     *
+     * @param uri URI of image to open.
+     * @param context context whose ContentResolver to use.
+     * @param maxSideLength max side length of returned bitmap.
+     * @param originalBounds set to the actual bounds of the stored bitmap.
+     * @return downsampled bitmap or null if this operation failed.
+     */
+    public static Bitmap loadConstrainedBitmap(Uri uri, Context context, int maxSideLength,
+            Rect originalBounds) {
+        if (maxSideLength <= 0 || originalBounds == null || uri == null || context == null) {
+            throw new IllegalArgumentException("bad argument to getScaledBitmap");
+        }
+        // Get width and height of stored bitmap
+        Rect storedBounds = loadBitmapBounds(context, uri);
+        originalBounds.set(storedBounds);
+        int w = storedBounds.width();
+        int h = storedBounds.height();
+
+        // If bitmap cannot be decoded, return null
+        if (w <= 0 || h <= 0) {
+            return null;
+        }
+
+        // Find best downsampling size
+        int imageSide = Math.max(w, h);
+        int sampleSize = 1;
+        while (imageSide > maxSideLength) {
+            imageSide >>>= 1;
+            sampleSize <<= 1;
+        }
+
+        // Make sure sample size is reasonable
+        if (sampleSize <= 0 ||
+                0 >= (int) (Math.min(w, h) / sampleSize)) {
+            return null;
+        }
+        return loadDownsampledBitmap(context, uri, sampleSize);
+    }
+
+    /**
+     * Loads a bitmap at a given URI that is downsampled so that both sides are
+     * smaller than maxSideLength. The Bitmap's original dimensions are stored
+     * in the rect originalBounds.  The output is also transformed to the given
+     * orientation.
+     *
+     * @param uri URI of image to open.
+     * @param context context whose ContentResolver to use.
+     * @param maxSideLength max side length of returned bitmap.
+     * @param orientation  the orientation to transform the bitmap to.
+     * @param originalBounds set to the actual bounds of the stored bitmap.
+     * @return downsampled bitmap or null if this operation failed.
+     */
+    public static Bitmap loadOrientedConstrainedBitmap(Uri uri, Context context, int maxSideLength,
+            int orientation, Rect originalBounds) {
+        Bitmap bmap = loadConstrainedBitmap(uri, context, maxSideLength, originalBounds);
         if (bmap != null) {
             bmap = orientBitmap(bmap, orientation);
         }
         return bmap;
-    }
-
-    public static Bitmap loadScaledBitmap(MasterImage master, Context context, Uri uri, int size,
-            boolean enforceSize) {
-        InputStream is = null;
-        try {
-            is = context.getContentResolver().openInputStream(uri);
-            Log.v(LOGTAG, "loading uri " + uri.getPath() + " input stream: "
-                    + is);
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(is, null, o);
-
-            int width_tmp = o.outWidth;
-            int height_tmp = o.outHeight;
-
-            master.setOriginalBounds(new Rect(0, 0, width_tmp, height_tmp));
-
-            int scale = 1;
-            while (true) {
-                if (width_tmp <= 2 || height_tmp <= 2) {
-                    break;
-                }
-                if (!enforceSize
-                        || (width_tmp <= MAX_BITMAP_DIM
-                        && height_tmp <= MAX_BITMAP_DIM)) {
-                    if (width_tmp / 2 < size || height_tmp / 2 < size) {
-                        break;
-                    }
-                }
-                width_tmp /= 2;
-                height_tmp /= 2;
-                scale *= 2;
-            }
-
-            // decode with inSampleSize
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = scale;
-            o2.inMutable = true;
-
-            Utils.closeSilently(is);
-            is = context.getContentResolver().openInputStream(uri);
-            return BitmapFactory.decodeStream(is, null, o2);
-        } catch (FileNotFoundException e) {
-            Log.e(LOGTAG, "FileNotFoundException: " + uri);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            Utils.closeSilently(is);
-        }
-        return null;
     }
 
     public static Bitmap getScaleOneImageForPreset(Context context, Uri uri, Rect bounds,
@@ -272,88 +362,53 @@ public final class ImageLoader {
         return bmp;
     }
 
-    public static void saveImage(ImagePreset preset, final FilterShowActivity filterShowActivity,
-            File destination) {
-        Uri selectedImageUri = filterShowActivity.getSelectedImageUri();
-        new SaveCopyTask(filterShowActivity, MasterImage.getImage().getUri(), selectedImageUri,
-                destination,
-                new SaveCopyTask.Callback() {
-
-                    @Override
-                    public void onComplete(Uri result) {
-                        filterShowActivity.completeSaveImage(result);
-                    }
-
-                }).execute(preset);
-    }
-
-    public static Bitmap loadMutableBitmap(Context context, Uri sourceUri) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        return loadMutableBitmap(context, sourceUri, options);
-    }
-
-    public static Bitmap loadMutableBitmap(Context context, Uri sourceUri,
-            BitmapFactory.Options options) {
-        // TODO: on <3.x we need a copy of the bitmap (inMutable doesn't
-        // exist)
-        options.inMutable = true;
-
-        Bitmap bitmap = decodeUriWithBackouts(context, sourceUri, options);
-        if (bitmap == null) {
-            return null;
-        }
-        int orientation = ImageLoader.getOrientation(context, sourceUri);
-        bitmap = ImageLoader.orientBitmap(bitmap, orientation);
-        return bitmap;
-    }
-
-    public static Bitmap decodeUriWithBackouts(Context context, Uri sourceUri,
-            BitmapFactory.Options options) {
+    /**
+     * Loads a bitmap that is downsampled by at least the input sample size. In
+     * low-memory situations, the bitmap may be downsampled further.
+     */
+    public static Bitmap loadBitmapWithBackouts(Context context, Uri sourceUri, int sampleSize) {
         boolean noBitmap = true;
         int num_tries = 0;
-        InputStream is = getInputStream(context, sourceUri);
-
-        if (options.inSampleSize < 1) {
-            options.inSampleSize = 1;
+        if (sampleSize <= 0) {
+            sampleSize = 1;
         }
-        // Stopgap fix for low-memory devices.
         Bitmap bmap = null;
         while (noBitmap) {
-            if (is == null) {
-                return null;
-            }
             try {
                 // Try to decode, downsample if low-memory.
-                bmap = BitmapFactory.decodeStream(is, null, options);
+                bmap = loadDownsampledBitmap(context, sourceUri, sampleSize);
                 noBitmap = false;
             } catch (java.lang.OutOfMemoryError e) {
-                // Try 5 times before failing for good.
+                // Try with more downsampling before failing for good.
                 if (++num_tries >= BITMAP_LOAD_BACKOUT_ATTEMPTS) {
                     throw e;
                 }
-                is = null;
                 bmap = null;
                 System.gc();
-                is = getInputStream(context, sourceUri);
-                options.inSampleSize *= 2;
+                sampleSize *= 2;
             }
         }
-        Utils.closeSilently(is);
         return bmap;
     }
 
-    private static InputStream getInputStream(Context context, Uri sourceUri) {
-        InputStream is = null;
-        try {
-            is = context.getContentResolver().openInputStream(sourceUri);
-        } catch (FileNotFoundException e) {
-            Log.w(LOGTAG, "could not load bitmap ", e);
-            Utils.closeSilently(is);
-            is = null;
+    /**
+     * Loads an oriented bitmap that is downsampled by at least the input sample
+     * size. In low-memory situations, the bitmap may be downsampled further.
+     */
+    public static Bitmap loadOrientedBitmapWithBackouts(Context context, Uri sourceUri,
+            int sampleSize) {
+        Bitmap bitmap = loadBitmapWithBackouts(context, sourceUri, sampleSize);
+        if (bitmap == null) {
+            return null;
         }
-        return is;
+        int orientation = getMetadataOrientation(context, sourceUri);
+        bitmap = orientBitmap(bitmap, orientation);
+        return bitmap;
     }
 
+    /**
+     * Loads bitmap from a resource that may be downsampled in low-memory situations.
+     */
     public static Bitmap decodeResourceWithBackouts(Resources res, BitmapFactory.Options options,
             int id) {
         boolean noBitmap = true;
@@ -370,7 +425,7 @@ public final class ImageLoader {
                         res, id, options);
                 noBitmap = false;
             } catch (java.lang.OutOfMemoryError e) {
-                // Try 5 times before failing for good.
+                // Retry before failing for good.
                 if (++num_tries >= BITMAP_LOAD_BACKOUT_ATTEMPTS) {
                     throw e;
                 }

@@ -133,15 +133,16 @@ public class ImageFilterDraw extends ImageFilter {
             if (mBrush == null) {
                 BitmapFactory.Options opt = new BitmapFactory.Options();
                 opt.inPreferredConfig = Bitmap.Config.ALPHA_8;
-                mBrush = ImageLoader.decodeImage(MasterImage.getImage().getActivity(), mBrushID,
-                        opt);
+                mBrush = BitmapFactory.decodeResource(MasterImage.getImage().getActivity()
+                        .getResources(), mBrushID, opt);
                 mBrush = mBrush.extractAlpha();
             }
             return mBrush;
         }
 
         @Override
-        public void paint(FilterDrawRepresentation.StrokeData sd, Canvas canvas, Matrix toScrMatrix,
+        public void paint(FilterDrawRepresentation.StrokeData sd, Canvas canvas,
+                Matrix toScrMatrix,
                 int quality) {
             if (sd == null || sd.mPath == null) {
                 return;

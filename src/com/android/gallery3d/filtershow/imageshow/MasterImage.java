@@ -26,29 +26,29 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.android.gallery3d.filtershow.FilterShowActivity;
-import com.android.gallery3d.filtershow.history.HistoryManager;
-import com.android.gallery3d.filtershow.history.HistoryItem;
-import com.android.gallery3d.filtershow.pipeline.FilteringPipeline;
 import com.android.gallery3d.filtershow.cache.ImageLoader;
-import com.android.gallery3d.filtershow.pipeline.RenderingRequest;
-import com.android.gallery3d.filtershow.pipeline.RenderingRequestCaller;
 import com.android.gallery3d.filtershow.filters.FilterRepresentation;
 import com.android.gallery3d.filtershow.filters.ImageFilter;
+import com.android.gallery3d.filtershow.history.HistoryItem;
+import com.android.gallery3d.filtershow.history.HistoryManager;
 import com.android.gallery3d.filtershow.pipeline.Buffer;
+import com.android.gallery3d.filtershow.pipeline.FilteringPipeline;
+import com.android.gallery3d.filtershow.pipeline.ImagePreset;
+import com.android.gallery3d.filtershow.pipeline.RenderingRequest;
+import com.android.gallery3d.filtershow.pipeline.RenderingRequestCaller;
 import com.android.gallery3d.filtershow.pipeline.SharedBuffer;
 import com.android.gallery3d.filtershow.pipeline.SharedPreset;
-import com.android.gallery3d.filtershow.pipeline.ImagePreset;
 import com.android.gallery3d.filtershow.state.StateAdapter;
 
 import java.util.Vector;
 
 public class MasterImage implements RenderingRequestCaller {
 
-
-
     private static final String LOGTAG = "MasterImage";
     private boolean DEBUG  = false;
     private static final boolean DISABLEZOOM = false;
+    public static final int SMALL_BITMAP_DIM = 160;
+    public static final int MAX_BITMAP_DIM = 900;
     private static MasterImage sMasterImage = null;
 
     private boolean mSupportsHighRes = false;
@@ -188,13 +188,16 @@ public class MasterImage implements RenderingRequestCaller {
 
     public boolean loadBitmap(Uri uri, int size) {
         setUri(uri);
-        mOrientation = ImageLoader.getOrientation(mActivity, uri);
-        mOriginalBitmapLarge = ImageLoader.loadOrientedScaledBitmap(this, mActivity, uri, size,
-                true, mOrientation);
+        mOrientation = ImageLoader.getMetadataOrientation(mActivity, uri);
+        Rect originalBounds = new Rect();
+        mOriginalBitmapLarge = ImageLoader.loadOrientedConstrainedBitmap(uri, mActivity,
+                Math.min(MAX_BITMAP_DIM, size),
+                mOrientation, originalBounds);
+        setOriginalBounds(originalBounds);
         if (mOriginalBitmapLarge == null) {
             return false;
         }
-        int sw = ImageLoader.SMALL_BITMAP_DIM;
+        int sw = SMALL_BITMAP_DIM;
         int sh = (int) (sw * (float) mOriginalBitmapLarge.getHeight() / (float) mOriginalBitmapLarge
                 .getWidth());
         mOriginalBitmapSmall = Bitmap.createScaledBitmap(mOriginalBitmapLarge, sw, sh, true);
@@ -546,7 +549,6 @@ public class MasterImage implements RenderingRequestCaller {
             listener.geometryChanged();
         }
     }
-
 
     public float getScaleFactor() {
         return mScaleFactor;

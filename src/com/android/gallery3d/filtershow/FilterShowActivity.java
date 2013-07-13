@@ -506,9 +506,11 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
                 if (highresPreviewSize > originalBounds.width()) {
                     highresPreviewSize = originalBounds.width();
                 }
-                Bitmap originalHires = ImageLoader.loadOrientedScaledBitmap(master,
-                        master.getActivity(), master.getUri(), highresPreviewSize, false,
-                        master.getOrientation());
+                Rect bounds = new Rect();
+                Bitmap originalHires = ImageLoader.loadOrientedConstrainedBitmap(master.getUri(),
+                        master.getActivity(), highresPreviewSize,
+                        master.getOrientation(), bounds);
+                master.setOriginalBounds(bounds);
                 master.setOriginalBitmapHighres(originalHires);
                 master.warnListeners();
             }
@@ -639,14 +641,12 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         super.onDestroy();
     }
 
+    // TODO: find a more robust way of handling image size selection
+    // for high screen densities.
     private int getScreenImageSize() {
-        DisplayMetrics metrics = new DisplayMetrics();
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        display.getMetrics(metrics);
-        int msize = Math.min(size.x, size.y);
-        return (133 * msize) / metrics.densityDpi;
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
+        return (int) Math.max(outMetrics.heightPixels, outMetrics.widthPixels);
     }
 
     private void showSavingProgress(String albumName) {
