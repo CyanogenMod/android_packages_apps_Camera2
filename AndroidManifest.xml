@@ -219,6 +219,11 @@
             android:grantUriPermissions="true"
             android:readPermission="com.android.gallery3d.filtershow.permission.READ"
             android:writePermission="com.android.gallery3d.filtershow.permission.WRITE" />
+
+        <service
+                android:name=".filtershow.pipeline.ProcessingService"
+                android:exported="false" />
+
         <activity
             android:name="com.android.gallery3d.filtershow.FilterShowActivity"
             android:label="@string/title_activity_filter_show"
