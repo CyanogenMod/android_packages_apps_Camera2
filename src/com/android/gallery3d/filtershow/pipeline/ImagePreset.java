@@ -55,7 +55,7 @@ public class ImagePreset {
 
     private boolean mPartialRendering = false;
     private Rect mPartialRenderingBounds;
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     public ImagePreset() {
     }
@@ -607,7 +607,7 @@ public class ImagePreset {
                 if (DEBUG) {
                     Log.v(LOGTAG, "Serialization: " + sname);
                     if (sname == null) {
-                        Log.v(LOGTAG, "Serialization: " + filter);
+                        Log.v(LOGTAG, "Serialization name null for filter: " + filter);
                     }
                 }
                 writer.name(sname);

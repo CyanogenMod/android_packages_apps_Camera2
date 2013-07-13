@@ -199,4 +199,9 @@
     <!--  Name used to indicate the final image in the state panel [CHAR LIMIT=20] -->
     <string name="state_panel_result">Result</string>
 
+    <!-- Label for the notification [CHAR LIMIT=50] -->
+    <string name="filtershow_notification_label">Saving Image</string>
+    <!-- Label for the notification message [CHAR LIMIT=50] -->
+    <string name="filtershow_notification_message">Processing...</string>
+
 </resources>
